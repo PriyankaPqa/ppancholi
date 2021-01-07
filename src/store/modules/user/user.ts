@@ -43,8 +43,10 @@ const actions: IActions = {
     // https://rctech.atlassian.net/browse/EMISDEV-5703
     await this.$services.authentications.signOut();
   },
+
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
     const accessTokenResponse = await this.$services.authentications.getAccessToken();
+
     if (accessTokenResponse?.accessToken) {
       const { account } = accessTokenResponse;
       const userData = account.idTokenClaims;

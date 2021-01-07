@@ -7,13 +7,22 @@ import { IAuthenticationsService } from './authentications.types';
 
 const msalObj = new UserAgentApplication(msalConfig);
 
+function acquireTokenRedirect() {
+  msalObj.acquireTokenRedirect(tokenRequest);
+}
+
+async function getAuthenticationAccount() {
+  const account = await msalObj.getAccount();
+  return account;
+}
+
 export class AuthenticationsService implements IAuthenticationsService {
-  /* eslint-disable no-useless-constructor */
   constructor(private readonly http: IHttpClient) {}
 
   async signIn() {
     try {
       msalObj.loginRedirect(loginRequest);
+
       return {
         success: true,
         status: null,
@@ -30,13 +39,8 @@ export class AuthenticationsService implements IAuthenticationsService {
     await msalObj.logout();
   }
 
-  async getAuthenticationAccount() {
-    const account = await msalObj.getAccount();
-    return account;
-  }
-
   async isSignedIn() {
-    const account = await this.getAuthenticationAccount();
+    const account = await getAuthenticationAccount();
     return account !== null;
   }
 
@@ -52,15 +56,11 @@ export class AuthenticationsService implements IAuthenticationsService {
     } catch (e) {
       // Acquire token silent failure, send an interactive request
       if (e.name === 'InteractionRequiredAuthError') {
-        this.acquireTokenRedirect();
+        acquireTokenRedirect();
       } else {
         // TODO: EMISDEV-5731
       }
       return null;
     }
-  }
-
-  acquireTokenRedirect() {
-    msalObj.acquireTokenRedirect(tokenRequest);
   }
 }

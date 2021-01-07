@@ -16,6 +16,7 @@ import {
 // Import other plugins
 import '@/ui/plugins/vue-toasted';
 import formatCurrency from '@/ui/plugins/formatCurrency';
+import Multilingual from '@/ui/plugins/multilingual';
 import '@/ui/plugins/vee-validate';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 
@@ -38,7 +39,7 @@ Vue.config.productionTip = false;
 
 // Some custom plugins
 Vue.use(VueMeta);
-// Vue.use(rolesAndPermissions);
+Vue.use(Multilingual);
 Vue.use(formatCurrency);
 
 if (process.env.NODE_ENV === 'development') {

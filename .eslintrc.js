@@ -43,6 +43,7 @@ module.exports = {
     'no-unused-expressions': ['error', { allowTernary: true }],
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
+    'no-useless-constructor': 'off',
   },
 
   parserOptions: {

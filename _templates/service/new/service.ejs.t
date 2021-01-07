@@ -9,7 +9,6 @@ import {
 import { I<%= Name %>Service } from './<%= name %>.types';
 
 export class <%= Name %>Service implements I<%= Name %>Service {
-  /* eslint-disable no-useless-constructor */
   constructor(private readonly http: IHttpClient) {}
 
   async example(payload: any): Promise<IRestResponse> {
