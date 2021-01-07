@@ -14,4 +14,6 @@ export interface IUser {
   readonly lastName: string;
   readonly firstName: string;
   readonly roles: Array<string>;
+  getFullName(): string;
+  getInitials(): string;
 }

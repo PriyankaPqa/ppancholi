@@ -44,7 +44,6 @@ const actions: IActions = {
     await this.$services.authentications.signOut();
   },
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
-    console.log('Fetch User called');
     const accessTokenResponse = await this.$services.authentications.getAccessToken();
     if (accessTokenResponse?.accessToken) {
       const { account } = accessTokenResponse;

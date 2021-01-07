@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import { IRootState } from './store.types';
 import { user } from './modules/user';
+import { dashboard } from './modules/dashboard';
 
 Vue.use(Vuex);
 
@@ -11,6 +12,7 @@ const store: StoreOptions<IRootState> = {
   },
   modules: {
     user,
+    dashboard,
   },
 };
 
