@@ -1,7 +1,7 @@
 import { RouteConfig } from 'vue-router';
 /* eslint-disable max-len */
 
-import { Trans } from '@/ui/plugins/Translation';
+import { Trans } from '@/ui/plugins/translation';
 import Routes from '../../constants/routes';
 
 // /* Self Registration */

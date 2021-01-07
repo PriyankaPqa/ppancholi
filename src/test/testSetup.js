@@ -14,7 +14,7 @@ import '@/ui/plugins/vee-validate';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 // import createTestStore from '@/store/store-test-config';
-import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
+
 import formatCurrency from '@/ui/plugins/formatCurrency';
 import { mockProvider } from '@/services/provider';
 
@@ -38,7 +38,6 @@ export const createLocalVue = () => {
   const localVue = clv();
   localVue.use(Vuetify);
   localVue.use(Vuex);
-  localVue.use(rolesAndPermissions);
   localVue.use(formatCurrency);
 
   return localVue;
@@ -100,25 +99,6 @@ function findDataTest(dataTest) {
   return this.find(`[data-test="${dataTest}"]`);
 }
 
-/*
-  Helper wrapper around the mount function that adds vuetify and i18n mock.
-  You must pass in your localVue instance.
-  A store is automatically created from the createTestStore utility.
-  You can set store options in options.store
-  You may also include other plugins.
-
-  const wrapper = mount(Component, {
-    localVue,
-    store: {
-      modules: {
-        user: {
-          actions,
-          state: INITIAL_STATE,
-        },
-      },
-    },
-  });
-*/
 export const mount = (Component, options) => {
   if (!options.localVue) {
     throw new Error('Must pass in localVue instance.');

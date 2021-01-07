@@ -1,15 +1,19 @@
 import { IHttpClient } from '@/services';
 import ServicesUtil from '@/services/services-util';
-import MsalService from './msal-service';
+import { UserAgentApplication } from 'msal';
+import { loginRequest, msalConfig, tokenRequest } from '@/constants/azureAD';
 import { IAuthenticationsService } from './authentications.types';
 /* eslint-disable class-methods-use-this */
+
+const msalObj = new UserAgentApplication(msalConfig);
+
 export class AuthenticationsService implements IAuthenticationsService {
   /* eslint-disable no-useless-constructor */
   constructor(private readonly http: IHttpClient) {}
 
   async signIn() {
     try {
-      MsalService.redirect();
+      msalObj.loginRedirect(loginRequest);
       return {
         success: true,
         status: null,
@@ -22,34 +26,41 @@ export class AuthenticationsService implements IAuthenticationsService {
   }
 
   async signOut() {
-    await MsalService.signOut();
-  }
-
-  async authorize(selectedRoleId?: string) {
-    try {
-      const res = await this.http.post('/Authorize', { selectedRoleId });
-      return ServicesUtil.responseBuilder(res);
-    } catch (error) {
-      return ServicesUtil.createErrorObject(error);
-    }
+    // Removes all sessions, need to call AAD endpoint to do full logout
+    await msalObj.logout();
   }
 
   async getAuthenticationAccount() {
-    return MsalService.getAccount();
+    const account = await msalObj.getAccount();
+    return account;
   }
 
   async isSignedIn() {
-    const account = await MsalService.getAccount();
+    const account = await this.getAuthenticationAccount();
     return account !== null;
   }
 
   async getAccessToken() {
-    await MsalService.acquireTokenSilent();
-    return {
-      accessToken: MsalService.accessToken,
-      rawIdToken: MsalService.rawIdToken,
-      idTokenExpiresOn: MsalService.idTokenExpiresOn,
-      account: MsalService.account,
-    };
+    try {
+      const accessTokenResponse = await msalObj.acquireTokenSilent(tokenRequest);
+      return {
+        accessToken: accessTokenResponse.accessToken,
+        account: accessTokenResponse.account,
+        rawIdToken: accessTokenResponse.idToken.rawIdToken,
+        idTokenExpiresOn: accessTokenResponse.expiresOn,
+      };
+    } catch (e) {
+      // Acquire token silent failure, send an interactive request
+      if (e.name === 'InteractionRequiredAuthError') {
+        this.acquireTokenRedirect();
+      } else {
+        // TODO: EMISDEV-5731
+      }
+      return null;
+    }
+  }
+
+  acquireTokenRedirect() {
+    msalObj.acquireTokenRedirect(tokenRequest);
   }
 }

@@ -10,7 +10,7 @@ module.exports = {
     'src/store/**/*.{js,vue}',
     'src/ui/**/*.{js,vue}',
     '!src/registerServiceWorker.js',
-    '!src/ui/helpers.js',
+    '!src/ui/helpers.ts',
     '!src/ui/template/**',
     '!src/ui/constants/**',
     '!src/ui/mixins/**',

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import { routes } from '@/ui/router/routes';
 import { provider } from '@/services/provider';
 import { i18n } from '@/ui/plugins/i18n';
+import store from '../../store/store';
 
 Vue.use(VueRouter);
 
@@ -26,12 +27,11 @@ router.beforeEach(async (to, from, next) => {
     try {
       // Get the latest sign-in status with msal service
       const isSignedIn = await Provider.authentications.isSignedIn();
-      console.log(isSignedIn);
       if (!isSignedIn) {
-        // Redirect to MSAL sign-in page
         await Provider.authentications.signIn();
         return;
       }
+      await store.dispatch('user/fetchUserData');
     } catch (e) {
       // TODO: EMISDEV-5731
       Vue.toasted.global.error(i18n.t('common.error'));

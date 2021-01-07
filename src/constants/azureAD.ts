@@ -7,6 +7,7 @@ const validateAuthority = process.env.VUE_APP_AUTH_AAD_VALIDATE_AUTHORITY;
 const navigateToLoginRequestUrl = process.env.VUE_APP_AUTH_AAD_NAVIGATE_TO_LOGIN_REQUEST_URL;
 const redirectUri = `${process.env.VUE_APP_AUTH_AAD_REDIRECT_URI}/${i18n.locale}/${routes.dashboard.path}`;
 const postLogoutRedirectUri = `${process.env.VUE_APP_AUTH_AAD_POSTLOGOUT_REDIRECT_URI}/${i18n.locale}/${routes.dashboard.path}`;
+const apiPermissions = process.env.VUE_APP_AUTH_AAD_API_PERMISSIONS;
 
 const adPolicies = {
   signUpSignIn: {
@@ -46,7 +47,7 @@ const loginRequest = {
 
 // Add here scopes for access token to be used at the API endpoints.
 const tokenRequest = {
-  // scopes: [apiPermissions],
+  scopes: [apiPermissions],
 };
 
 const ssoRequest = {
