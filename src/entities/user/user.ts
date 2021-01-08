@@ -32,4 +32,33 @@ export class User implements IUser {
     }
     return '';
   }
+
+  hasRole(role: string): boolean {
+    if (typeof role !== 'string') {
+      throw new Error(`The function $hasRole is expecting a string. A ${typeof role} was passed`);
+    }
+    return this.roles.some((r: string) => r.toLowerCase() === role.toLowerCase());
+  }
+
+  // hasHigherLevelOrSameAs
+  hasLevel(levelToCheck: string): boolean {
+    // Index n + 1, inherit from index [0,n]
+    const hierarchy = ['level1', 'level2', 'level3', 'level4', 'level5', 'level6'];
+    const levelToCheckIndex = hierarchy.indexOf(levelToCheck);
+
+    if (levelToCheckIndex === -1) {
+      throw new Error(`${levelToCheck} does not exist in ${hierarchy}`);
+    }
+
+    let highestUserLevel = 0;
+
+    this.roles.forEach((r) => {
+      const index = hierarchy.indexOf(r);
+      if (index > highestUserLevel) {
+        highestUserLevel = index;
+      }
+    });
+
+    return levelToCheckIndex <= highestUserLevel;
+  }
 }

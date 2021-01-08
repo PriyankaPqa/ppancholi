@@ -16,4 +16,6 @@ export interface IUser {
   readonly roles: Array<string>;
   getFullName(): string;
   getInitials(): string;
+  hasRole(role: string): boolean;
+  hasLevel(level: string): boolean;
 }

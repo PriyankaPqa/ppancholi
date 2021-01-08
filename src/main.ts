@@ -17,6 +17,7 @@ import {
 import '@/ui/plugins/vue-toasted';
 import formatCurrency from '@/ui/plugins/formatCurrency';
 import Multilingual from '@/ui/plugins/multilingual';
+import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import '@/ui/plugins/vee-validate';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 
@@ -41,6 +42,7 @@ Vue.config.productionTip = false;
 Vue.use(VueMeta);
 Vue.use(Multilingual);
 Vue.use(formatCurrency);
+Vue.use(rolesAndPermissions);
 
 if (process.env.NODE_ENV === 'development') {
   Vue.use(VueAxe, {
