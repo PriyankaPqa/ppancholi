@@ -13,10 +13,10 @@ import '@/ui/plugins/vee-validate';
 
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-// import createTestStore from '@/store/store-test-config';
 
 import formatCurrency from '@/ui/plugins/formatCurrency';
 import { mockProvider } from '@/services/provider';
+import { mockStore } from '@/store';
 
 jest.setTimeout(10000);
 
@@ -110,14 +110,14 @@ export const mount = (Component, options) => {
     locale: 'en',
   });
 
-  // const store = createTestStore(options.store);
+  const store = mockStore(options.store);
 
   const wrapper = m(Component, {
     vuetify,
     i18n,
     sync: false,
     ...options,
-    // store,
+    store,
     mocks: deepmerge(mocks, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });
@@ -139,14 +139,14 @@ export const shallowMount = (Component, options) => {
     locale: 'en',
   });
 
-  // const store = createTestStore(options.store);
+  const store = mockStore(options.store);
 
   const wrapper = sm(Component, {
     vuetify,
     i18n,
     sync: false,
     ...options,
-    // store,
+    store,
     mocks: deepmerge(mocks, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });
