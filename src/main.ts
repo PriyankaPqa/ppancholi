@@ -5,7 +5,6 @@ import './registerServiceWorker';
 
 // asset imports
 import '@/ui/styles/main.scss';
-import '@rctech/web-ui/dist/web-ui.css';
 
 // Import i18n related files
 
@@ -27,6 +26,7 @@ import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
 
 import VueAxe from 'vue-axe';
+
 import store from './store/store';
 
 import router from './ui/router';

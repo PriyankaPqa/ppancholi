@@ -1329,10 +1329,10 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@rctech/web-ui@^0.1.81":
-  version "0.1.81"
-  resolved "https://pkgs.dev.azure.com/RCTechnologies/EMA/_packaging/EMA/npm/registry/@rctech/web-ui/-/web-ui-0.1.81.tgz#b771fa63e8974bca73f4fc06992ff5bac78ce39c"
-  integrity sha1-t3H6Y+iXS8pz9PwGmS/1useM45w=
+"@rctech/web-ui@^0.1.86":
+  version "0.1.86"
+  resolved "https://pkgs.dev.azure.com/RCTechnologies/EMA/_packaging/EMA/npm/registry/@rctech/web-ui/-/web-ui-0.1.86.tgz#00516ccda8c429e87f04579c23b13afa9799e69f"
+  integrity sha1-AFFszajEKeh/BFecI7E6+peZ5p8=
   dependencies:
     "@googlemaps/js-api-loader" "^1.11.0"
     "@mdi/font" "^5.6.55"
