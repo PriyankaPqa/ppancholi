@@ -1,12 +1,7 @@
-import { IStorage as IUserStorage, IMockStorage as IUserStorageMock } from './user';
-import { IStorage as IDashboardStorage, IMockStorage as IDashboardStorageMock } from './dashboard';
+import { IStorage as IUserStorage } from './user';
+import { IStorage as IDashboardStorage } from './dashboard';
 
 export interface IStorage {
   user: IUserStorage
   dashboard: IDashboardStorage
-}
-
-export interface IMockStorage {
-  user: IUserStorageMock;
-  dashboard: IDashboardStorageMock;
 }
