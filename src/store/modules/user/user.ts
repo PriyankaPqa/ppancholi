@@ -1,7 +1,9 @@
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
-import { User } from '../../../entities/user';
+import { localStorageKeys } from '@/constants/localStorage';
+import authenticationProvider from '@/auth/AuthenticationProvider';
+import { User } from '@/entities/user';
 import { IRootState } from '../../store.types';
 import {
   IState, IActions, IGetters, IMutations,
@@ -39,15 +41,14 @@ const mutations: IMutations = {
 
 const actions: IActions = {
   async signOut(this: Store<IState>) {
-    // TODO: Setting the current role to null before redirecting to the signout page causing dashboard to be displayed empty.
-    // https://rctech.atlassian.net/browse/EMISDEV-5703
-    await this.$services.authentications.signOut();
+    authenticationProvider.signOut();
   },
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
-    const accessTokenResponse = await this.$services.authentications.getAccessToken();
+    const accessTokenResponse = await authenticationProvider.acquireToken();
 
     if (accessTokenResponse?.accessToken) {
+      localStorage.setItem(localStorageKeys.accessToken.name, accessTokenResponse.accessToken);
       const { account } = accessTokenResponse;
       const userData = account.idTokenClaims;
       context.commit('setUser', userData);

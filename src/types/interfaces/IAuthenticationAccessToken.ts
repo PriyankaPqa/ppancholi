@@ -1,12 +1,12 @@
-import { Account as MsalAccount } from 'msal';
+import { AccountInfo } from '@azure/msal-browser';
 
-interface Account extends Omit<MsalAccount, 'idTokenClaims'> {
+interface Account extends Omit<AccountInfo, 'idTokenClaims'> {
   idTokenClaims: Record<string, string | string[]>;
 }
 
 export interface IAuthenticationAccessToken {
   accessToken: string,
   account: Account,
-  rawIdToken: string,
+  idToken: string,
   idTokenExpiresOn: Date,
 }

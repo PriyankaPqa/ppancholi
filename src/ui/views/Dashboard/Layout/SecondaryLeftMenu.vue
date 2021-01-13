@@ -69,8 +69,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import NavigationWithValidation from '@/ui/views/Dashboard/Components/NavigationWithValidation.vue';
 import { INavigationTab } from '@/types';
+import NavigationWithValidation from './NavigationWithValidation.vue';
 
 export default Vue.extend({
   name: 'SecondaryLeftMenu',

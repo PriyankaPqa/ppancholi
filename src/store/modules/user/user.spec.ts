@@ -2,6 +2,7 @@ import { Store } from 'vuex';
 import { mockStore, IRootState } from '@/store';
 import { mockUsersData, User } from '@/entities/user';
 import { authenticationResponseData } from '@/entities/authentication';
+import authenticationProvider from '@/auth/AuthenticationProvider';
 
 describe('>>> Users Module', () => {
   let store: Store<IRootState>;
@@ -60,21 +61,21 @@ describe('>>> Users Module', () => {
 
   describe('>> Actions', () => {
     test('the signOut action calls the signOut method of the authentications service', async () => {
-      expect(store.$services.authentications.signOut).toHaveBeenCalledTimes(0);
+      expect(authenticationProvider.signOut).toHaveBeenCalledTimes(0);
 
       await store.dispatch('user/signOut');
 
-      expect(store.$services.authentications.signOut).toHaveBeenCalledTimes(1);
+      expect(authenticationProvider.signOut).toHaveBeenCalledTimes(1);
     });
 
     test('the fetchUserData calls the getAccessToken method of the authentications service and sets the user data', async () => {
       store = mockStore();
 
-      expect(store.$services.authentications.getAccessToken).toHaveBeenCalledTimes(0);
+      expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(0);
 
       await store.dispatch('user/fetchUserData');
 
-      expect(store.$services.authentications.getAccessToken).toHaveBeenCalledTimes(1);
+      expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(1);
 
       expect(store.getters['user/user']).toEqual(new User({
         oid: authenticationResponseData.account.idTokenClaims.oid as string,

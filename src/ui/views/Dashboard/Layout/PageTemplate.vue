@@ -1,6 +1,7 @@
 <template>
   <v-container fluid fill-height class="pa-0 page-detail-container">
-    <div class="full-height pageTemplate__container">
+    <page-loading v-if="loading" data-test="loading" />
+    <div v-else class="full-height pageTemplate__container">
       <secondary-left-menu
         v-if="showLeftMenu"
         ref="secondaryLeftMenu"
@@ -41,6 +42,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import PageLoading from '@/ui/components/PageLoading.vue';
 import SecondaryLeftMenu from '@/ui/views/Dashboard/Layout/SecondaryLeftMenu.vue';
 import SecondaryRightMenu from '@/ui/views/Dashboard/Layout/SecondaryRightMenu.vue';
 import { INavigationTab } from '@/types';
@@ -49,6 +51,7 @@ import routes from '@/constants/routes';
 export default Vue.extend({
   name: 'PageTemplate',
   components: {
+    PageLoading,
     SecondaryLeftMenu,
     SecondaryRightMenu,
   },

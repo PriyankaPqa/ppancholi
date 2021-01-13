@@ -15,6 +15,10 @@ const routes = {
     path: 'dashboard',
     name: 'Dashboard',
   },
+  loginError: {
+    path: 'login-error',
+    name: 'Login error',
+  },
   crc_registration: {
     path: 'registration',
     name: 'CRC Registration',

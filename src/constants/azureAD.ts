@@ -3,7 +3,6 @@ import routes from '@/constants/routes';
 
 const clientId = process.env.VUE_APP_AUTH_AAD_CLIENTID;
 const authority = process.env.VUE_APP_AUTH_AAD_AUTHORITY;
-const validateAuthority = process.env.VUE_APP_AUTH_AAD_VALIDATE_AUTHORITY;
 const navigateToLoginRequestUrl = process.env.VUE_APP_AUTH_AAD_NAVIGATE_TO_LOGIN_REQUEST_URL;
 const redirectUri = `${process.env.VUE_APP_AUTH_AAD_REDIRECT_URI}/${i18n.locale}/${routes.dashboard.path}`;
 const postLogoutRedirectUri = `${process.env.VUE_APP_AUTH_AAD_POSTLOGOUT_REDIRECT_URI}/${i18n.locale}/${routes.dashboard.path}`;
@@ -25,7 +24,6 @@ const msalConfig = {
   auth: {
     clientId,
     authority,
-    validateAuthority,
     redirectUri,
     postLogoutRedirectUri,
     navigateToLoginRequestUrl,

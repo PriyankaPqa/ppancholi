@@ -97,8 +97,8 @@ export default Vue.extend({
       });
     },
 
-    async logout() {
-      await this.$services.authentications.signOut();
+    logout() {
+      this.$storage.user.actions.signOut();
     },
   },
 });

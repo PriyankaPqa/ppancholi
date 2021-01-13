@@ -44,6 +44,7 @@ module.exports = {
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-useless-constructor': 'off',
+    'class-methods-use-this': 'off',
   },
 
   parserOptions: {

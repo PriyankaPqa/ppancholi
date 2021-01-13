@@ -1,8 +1,3 @@
-// const Vue = require('vue');
-// const Vuetify = require('vuetify');
-//
-// Vue.use(Vuetify);
-
 module.exports = {
   preset: '@vue/cli-plugin-unit-jest/presets/typescript-and-babel',
   collectCoverage: false,
@@ -34,7 +29,7 @@ module.exports = {
   roots: [
     '<rootDir>/src',
   ],
-
+  setupFilesAfterEnv: ['./jest.setup.js'],
   testEnvironmentOptions: {
     // Allow test environment to fire onload event
     // See https://github.com/jsdom/jsdom/issues/1816#issuecomment-355188615

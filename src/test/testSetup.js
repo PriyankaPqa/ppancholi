@@ -17,6 +17,7 @@ import VueI18n from 'vue-i18n';
 import formatCurrency from '@/ui/plugins/formatCurrency';
 import { mockProvider } from '@/services/provider';
 import { mockStore } from '@/store';
+import { makeStorage } from '@/store/storage';
 
 jest.setTimeout(10000);
 
@@ -71,27 +72,6 @@ const stubs = {
 };
 
 /**
- * Utility method that sets user permissions in the Vuex store. Accepts an array of string permission names
- * Usage: await wrapper.setPermissions(['EditCaseNote', 'PinCaseNote']);
- * @param {Array<string>} permissions
- */
-async function setPermissions(permissions) {
-  this.vm.$store.commit('user/setPermissions', { permissions: permissions.map((p) => ({ name: p })) });
-
-  await this.vm.$nextTick();
-}
-/**
- * Utility method that remove user permissions in the Vuex store. Accepts an array of string permission names
- * Usage: await wrapper.removePermissions(['EditCaseNote', 'PinCaseNote']);
- * @param {Array<string>} permissions
- */
-async function removePermissions(permissions) {
-  this.vm.$store.commit('user/removePermissions', { permissions: permissions.map((p) => ({ name: p })) });
-
-  await this.vm.$nextTick();
-}
-
-/**
  * Returns the results of wrapper.find with the param wrapped in the data-test query format
  * @param {String} dataTest The data test attribute to search for
  */
@@ -111,6 +91,7 @@ export const mount = (Component, options) => {
   });
 
   const store = mockStore(options.store);
+  const $storage = makeStorage(store);
 
   const wrapper = m(Component, {
     vuetify,
@@ -118,12 +99,10 @@ export const mount = (Component, options) => {
     sync: false,
     ...options,
     store,
-    mocks: deepmerge(mocks, options.mocks || {}),
+    mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });
 
-  wrapper.setPermissions = setPermissions;
-  wrapper.removePermissions = removePermissions;
   wrapper.findDataTest = findDataTest;
   return wrapper;
 };
@@ -151,8 +130,6 @@ export const shallowMount = (Component, options) => {
     stubs: deepmerge(stubs, options.stubs || {}),
   });
 
-  wrapper.setPermissions = setPermissions;
-  wrapper.removePermissions = removePermissions;
   wrapper.findDataTest = findDataTest;
   return wrapper;
 };

@@ -8,7 +8,8 @@ import Routes from '../../constants/routes';
 const DashboardPortalLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/Dashboard/Layout/DashboardLayout.vue');
 const DashboardHome = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/Dashboard/Pages/Home/Layout/HomeLayout.vue');
 
-const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/PageNotFound.vue');
+const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/PageNotFound/PageNotFound.vue');
+const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/LoginError/LoginError.vue');
 
 export const routes: Array<RouteConfig> = [
   {
@@ -36,6 +37,11 @@ export const routes: Array<RouteConfig> = [
             component: DashboardHome,
           },
         ],
+      },
+      {
+        path: Routes.loginError.path,
+        name: Routes.loginError.name,
+        component: LoginError,
       },
       {
         path: '*',

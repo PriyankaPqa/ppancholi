@@ -3,12 +3,12 @@ import { IAuthenticationAccessToken } from '@/types';
 export const authenticationResponseData: IAuthenticationAccessToken = {
   accessToken: '...',
   account: {
-    accountIdentifier: '...',
-    homeAccountIdentifier: '...',
-    userName: 'test@redcross.ca',
+    homeAccountId: '...',
+    environment: '...',
+    tenantId: '...',
+    username: 'test@redcross.ca',
+    localAccountId: '...',
     name: 'John Smith',
-    sid: 'adfasdf',
-    idToken: null,
     idTokenClaims: {
       oid: '1',
       family_name: 'Smith',
@@ -16,8 +16,7 @@ export const authenticationResponseData: IAuthenticationAccessToken = {
       email: 'test@redcross.ca',
       roles: ['level6'],
     },
-    environment: '...',
   },
-  rawIdToken: '...',
+  idToken: '...',
   idTokenExpiresOn: new Date(),
 };

@@ -1,13 +1,11 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import { routes } from '@/ui/router/routes';
-import { provider } from '@/services/provider';
-import { i18n } from '@/ui/plugins/i18n';
-import store from '../../store/store';
+import routeConstants from '@/constants/routes';
+import authenticationProvider from '@/auth/AuthenticationProvider';
+import store from '@/store/store';
 
 Vue.use(VueRouter);
-
-const Provider = provider();
 
 const router = new VueRouter({
   mode: 'history',
@@ -23,22 +21,32 @@ const router = new VueRouter({
 
 router.beforeEach(async (to, from, next) => {
   localStorage.setItem('fromOutside', (from.name === null).toString());
+
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     try {
-      // Get the latest sign-in status with msal service
-      const isSignedIn = await Provider.authentications.isSignedIn();
+      // Check if the user is already signed in and redirect to login page if not
+      const isSignedIn = await authenticationProvider.isSignedIn();
+
       if (!isSignedIn) {
-        await Provider.authentications.signIn();
-        return;
+        await authenticationProvider.signIn();
       }
+
+      // Dispatch the action to the store to fetch the user data from the JWT token
+      // and store it in module state
       await store.dispatch('user/fetchUserData');
     } catch (e) {
-      // TODO: EMISDEV-5731
-      Vue.toasted.global.error(i18n.t('common.error'));
-      // Redirect to MSAL sign-in page
-      await Provider.authentications.signIn();
+      // If there is an error, redirect to the login error page
+      next({
+        name: routeConstants.loginError.name,
+        params: {
+          lang: to.params.lang,
+        },
+      });
+
+      return;
     }
   }
+
   next();
 });
 
