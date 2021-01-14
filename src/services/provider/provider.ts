@@ -1,7 +1,7 @@
 import { http } from '@/services/http';
 import { IProvider } from './provider.types';
-import { AuthenticationsService } from '../authentications';
+import { EventsService } from '../events';
 
 export const provider = (): IProvider => ({
-  authentications: new AuthenticationsService(http),
+  events: new EventsService(http),
 });

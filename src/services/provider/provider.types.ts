@@ -1,9 +1,9 @@
-import { IAuthenticationsService, IAuthenticationsServiceMock } from '../authentications';
+import { IEventsService, IEventsServiceMock } from '../events';
 
 export interface IProvider {
-  authentications: IAuthenticationsService
+  events: IEventsService
 }
 
 export interface IProviderMock {
-  authentications: IAuthenticationsServiceMock
+  events: IEventsServiceMock
 }

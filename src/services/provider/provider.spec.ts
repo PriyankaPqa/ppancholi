@@ -1,11 +1,11 @@
 import { provider } from './index';
-import { AuthenticationsService } from '../authentications';
+import { EventsService } from '../events';
 
-jest.mock('../authentications');
+jest.mock('../events');
 
 describe('Provider', () => {
-  it('should instantiate AuthenticationsService', () => {
+  it('should instantiate EventsService', () => {
     provider();
-    expect(AuthenticationsService.prototype.constructor).toBeCalled();
+    expect(EventsService.prototype.constructor).toBeCalled();
   });
 });

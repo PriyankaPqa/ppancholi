@@ -60,7 +60,7 @@ describe('>>> Users Module', () => {
   });
 
   describe('>> Actions', () => {
-    test('the signOut action calls the signOut method of the authentications service', async () => {
+    test('the signOut action calls the signOut method of the authentication provider', async () => {
       expect(authenticationProvider.signOut).toHaveBeenCalledTimes(0);
 
       await store.dispatch('user/signOut');
@@ -68,7 +68,7 @@ describe('>>> Users Module', () => {
       expect(authenticationProvider.signOut).toHaveBeenCalledTimes(1);
     });
 
-    test('the fetchUserData calls the getAccessToken method of the authentications service and sets the user data', async () => {
+    test('the fetchUserData calls the acquireToken method of the authentications provider and sets the user data', async () => {
       store = mockStore();
 
       expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(0);

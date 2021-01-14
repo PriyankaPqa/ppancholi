@@ -8,36 +8,7 @@ import { i18n } from '@/ui/plugins/i18n';
 import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@/ui/helpers';
 
-let baseURL = '';
-switch (process.env.NODE_ENV) {
-  case 'development': {
-    // const port = EnvVarsConfiguration.value('WebAPIPort');
-    // const path = EnvVarsConfiguration.value('WebAPIPath');
-    // const version = EnvVarsConfiguration.value('WebAPIVersion');
-    // const protocol = EnvVarsConfiguration.value('WebAPIProtocol');
-    //
-    // // same origin as the Frontend URL
-    // const url = new URL(window.location.origin);
-    // // port can be different
-    // if (port !== undefined) url.port = port;
-    // // protocol can be different (http or https)
-    // if (protocol !== undefined) url.protocol = protocol;
-    // // path might have to be defined
-    // let fullPath = '';
-    // if (path !== undefined) fullPath = `${fullPath}/${path}`;
-    // if (version !== undefined) fullPath = `${fullPath}/${version}`;
-    // if (fullPath !== '') url.pathname = fullPath;
-    //
-    // // convert the URL object to string
-    // baseURL = `${url.toString()}`;
-    break;
-  }
-  case 'production': {
-    baseURL = 'webapi/api/v1';
-    break;
-  }
-  default: baseURL = 'webapi/api/v1';
-}
+const baseURL = process.env.VUE_APP_API_BASE_URL;
 
 export const http = axios.create({
   baseURL,
@@ -63,13 +34,6 @@ const sendTokenAndRole = (config = {}) => (!(Object.prototype.hasOwnProperty.cal
 
 const requestHandler = (request) => {
   if (sendTokenAndRole(request)) {
-    // Retrieve previously set current role
-    const currentRole = localStorage.getItem(localStorageKeys.currentRole.name);
-    if (currentRole) {
-      // Add the current role to the request headers
-      request.headers.common['crc-current-role'] = currentRole;
-    }
-
     const accessToken = localStorage.getItem(localStorageKeys.accessToken.name);
     if (accessToken) {
       // Add the access token to the request headers

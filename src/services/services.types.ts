@@ -10,11 +10,11 @@ export interface IHttpClientRequest {
 }
 
 export interface IHttpClient {
-  get:(url: string, request?: IHttpClientRequest) => Promise<IRestResponse>;
-  put:(url: string, data?: any, request?: IHttpClientRequest) => Promise<IRestResponse>;
-  patch:(url: string, data?: any, request?: IHttpClientRequest) => Promise<IRestResponse>;
-  post:(url: string, data?: any, request?: IHttpClientRequest) => Promise<IRestResponse>;
-  delete:(url: string, data?: any, request?: IHttpClientRequest) => Promise<IRestResponse>;
+  get:(url: string, request?: IHttpClientRequest) => Promise<IRestResponse<unknown>>;
+  put:(url: string, data?: any, request?: IHttpClientRequest) => Promise<IRestResponse<unknown>>;
+  patch:(url: string, data?: any, request?: IHttpClientRequest) => Promise<IRestResponse<unknown>>;
+  post:(url: string, data?: any, request?: IHttpClientRequest) => Promise<IRestResponse<unknown>>;
+  delete:(url: string, data?: any, request?: IHttpClientRequest) => Promise<IRestResponse<unknown>>;
 }
 
 export interface IHttpError {

@@ -24,6 +24,9 @@ const msalConfig = {
   auth: {
     clientId,
     authority,
+    knownAuthorities: [
+      authority,
+    ],
     redirectUri,
     postLogoutRedirectUri,
     navigateToLoginRequestUrl,
