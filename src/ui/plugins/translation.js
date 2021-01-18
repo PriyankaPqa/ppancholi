@@ -1,7 +1,7 @@
 import { localeChanged } from 'vee-validate';
 import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from '@/constants/trans';
 import { i18n } from '@/ui/plugins/i18n';
-import { http } from '@/services/http';
+import { httpClient } from '@/services/httpClient';
 import moment from '@/ui/plugins/moment';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 
@@ -52,7 +52,7 @@ const Trans = {
    */
   setI18nLanguageInServices(lang) {
     Trans.currentLanguage = lang;
-    http.defaults.headers.common['Accept-Language'] = lang;
+    httpClient.setHeadersLanguage(lang);
     document.querySelector('html').setAttribute('lang', lang);
     moment.locale(lang);
     vuetify.framework.lang.current = lang;
