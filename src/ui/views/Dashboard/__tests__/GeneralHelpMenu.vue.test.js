@@ -1,6 +1,8 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import Vuetify from 'vuetify';
 import { i18n } from '@/ui/plugins/i18n';
+import flushPromises from 'flush-promises';
+import { mockStorage } from '@/store/storage';
 import Component from '../Layout/GeneralHelpMenu.vue';
 
 const localVue = createLocalVue();
@@ -23,21 +25,20 @@ describe('GeneralHelpMenu.vue', () => {
           },
         },
       },
+      mocks: {
+        $storage: mockStorage(),
+      },
       propsData: {
-        isRegistrationHelpMenu: false,
         menuLinks: [],
       },
     });
   });
 
-  test('Close button closes the General Help Menu', async () => {
-    expect(wrapper.vm.$store.state.dashboard.generalHelpMenuVisible).toBe(true);
-
+  test('Click close-button will trigger updateShow', async () => {
+    jest.spyOn(wrapper.vm, 'updateShow');
     const button = wrapper.find('[data-test="close-button"]');
-
     await button.trigger('click');
-
-    expect(wrapper.vm.$store.state.dashboard.generalHelpMenuVisible).toBe(false);
+    expect(wrapper.vm.updateShow).toHaveBeenCalledWith(false);
   });
 
   test('Help Center button has a link to the Zendesk Help Center page', async () => {
@@ -88,6 +89,15 @@ describe('GeneralHelpMenu.vue', () => {
 
       const createCaseNoteLink = wrapper.find(`${generalHelpItem}-create-case-note"]`);
       expect(createCaseNoteLink.attributes('href')).toBe(i18n.t('zendesk.help_link.create_case_note'));
+    });
+  });
+
+  test('updateShow will trigger set the value for generalHelpMenuVisible', async () => {
+    wrapper.vm.updateShow(true);
+    await flushPromises();
+    expect(wrapper.vm.$storage.dashboard.mutations.setProperty).toHaveBeenCalledWith({
+      property: 'generalHelpMenuVisible',
+      value: true,
     });
   });
 });

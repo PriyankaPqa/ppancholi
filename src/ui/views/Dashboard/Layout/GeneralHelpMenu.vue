@@ -62,10 +62,6 @@ export default Vue.extend({
   name: 'GeneralHelpMenu',
 
   props: {
-    isRegistrationHelpMenu: {
-      type: Boolean,
-      default: false,
-    },
     menuLinks: {
       type: Array as () => Array<INavigationTab>,
       default: null,
@@ -77,9 +73,6 @@ export default Vue.extend({
       if (this.$store.state.dashboard) {
         return this.$store.state.dashboard.generalHelpMenuVisible;
       }
-      if (this.$store.state.registration) {
-        return this.$store.state.registration.generalHelpMenuVisible;
-      }
       return false;
     },
 
@@ -90,9 +83,8 @@ export default Vue.extend({
 
   methods: {
     updateShow(val: boolean) {
-      const property = this.isRegistrationHelpMenu ? 'generalHelpRegistrationMenuVisible' : 'generalHelpMenuVisible';
       this.$storage.dashboard.mutations.setProperty({
-        property,
+        property: 'generalHelpMenuVisible',
         value: val,
       });
     },

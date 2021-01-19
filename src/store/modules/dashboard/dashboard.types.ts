@@ -5,7 +5,6 @@ export interface IState {
   leftMenuVisible: boolean;
   rightMenuVisible: boolean;
   generalHelpMenuVisible: boolean;
-  generalHelpRegistrationMenuVisible: boolean;
 }
 
 export interface IMutations extends MutationTree<IState> {

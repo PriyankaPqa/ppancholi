@@ -14,3 +14,18 @@ export interface IStorage {
     fetchUserData(): void;
   }
 }
+
+export interface IStorageMock {
+  getters: {
+    user: jest.Mock<void>
+  }
+
+  mutations: {
+    setUser: jest.Mock<void>
+  }
+
+  actions: {
+    signOut: jest.Mock<void>
+    fetchUserData: jest.Mock<void>
+  }
+}

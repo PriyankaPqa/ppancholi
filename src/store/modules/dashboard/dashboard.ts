@@ -7,7 +7,6 @@ const getDefaultState = (): IState => ({
   leftMenuVisible: false,
   rightMenuVisible: false,
   generalHelpMenuVisible: false,
-  generalHelpRegistrationMenuVisible: false,
 });
 
 const moduleState = getDefaultState();
