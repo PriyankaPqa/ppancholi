@@ -20,10 +20,6 @@
 
       <language-selector />
 
-      <v-btn icon>
-        <v-icon>mdi-bell-alert</v-icon>
-      </v-btn>
-
       <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" @click="handleGeneralHelpMenu">
         <v-icon color="grey darken-2">
           mdi-information

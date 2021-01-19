@@ -1,5 +1,5 @@
 import Vue from 'vue';
-import VueRouter from 'vue-router';
+import VueRouter, { NavigationGuardNext, Route } from 'vue-router';
 import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
 import authenticationProvider from '@/auth/AuthenticationProvider';
@@ -19,9 +19,7 @@ const router = new VueRouter({
   },
 });
 
-router.beforeEach(async (to, from, next) => {
-  localStorage.setItem('fromOutside', (from.name === null).toString());
-
+const authorizationGuard = async (to: Route, next: NavigationGuardNext) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     try {
       // Check if the user is already signed in and redirect to login page if not
@@ -42,10 +40,14 @@ router.beforeEach(async (to, from, next) => {
           lang: to.params.lang,
         },
       });
-
-      return;
     }
   }
+};
+
+router.beforeEach(async (to, from, next) => {
+  localStorage.setItem('fromOutside', (from.name === null).toString());
+
+  await authorizationGuard(to, next);
 
   next();
 });

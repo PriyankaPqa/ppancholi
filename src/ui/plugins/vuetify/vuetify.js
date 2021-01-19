@@ -3,7 +3,7 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css';
 
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
-import fr from 'vuetify/src/locale/fr';
+import fr from '@/ui/plugins/vuetify/locales/fr';
 import DuplicateIcon from '@/ui/components/customIcons/DuplicateIcon.vue';
 import { DEFAULT_LANGUAGE } from '@/constants/trans';
 import light from './light-theme';

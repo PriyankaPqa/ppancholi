@@ -1,4 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
+import { mockUsersData } from '@/entities/user';
 import Component from '../Layout/RightMenu.vue';
 
 const localVue = createLocalVue();
@@ -18,11 +19,7 @@ describe('RightMenu.vue', () => {
         modules: {
           user: {
             actions,
-            state: {
-              given_name: 'Testy',
-              family_name: 'McTesterson',
-              email: 'testy.mctesterson@redcross.ca',
-            },
+            state: mockUsersData()[0],
           },
           dashboard: {
             state: {
@@ -44,14 +41,6 @@ describe('RightMenu.vue', () => {
     expect(wrapper.vm.$store.state.dashboard.rightMenuVisible).toBe(false);
   });
 
-  // test('account settings button redirects to the account settings page', async () => {
-  //   const button = wrapper.find('[data-test="account-settings"]');
-
-  //   await button.trigger('click');
-
-  //   expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.accountSettings.name });
-  // });
-
   test('the logout button dispatches the logout action and redirects to the sign in page', async () => {
     const button = wrapper.find('[data-test="sign-out"]');
 
@@ -63,18 +52,18 @@ describe('RightMenu.vue', () => {
   test('the avatar is displayed correctly', async () => {
     const avatar = wrapper.find('[data-test="rightMenu__avatar"]');
 
-    expect(avatar.text()).toBe('TM');
+    expect(avatar.text()).toBe('JW');
   });
 
   test('the user name is displayed correctly', async () => {
     const avatar = wrapper.find('[data-test="rightMenu__userName"]');
 
-    expect(avatar.text()).toBe('Testy McTesterson');
+    expect(avatar.text()).toBe('John White');
   });
 
   test('the email is displayed correctly', async () => {
     const avatar = wrapper.find('[data-test="rightMenu__email"]');
 
-    expect(avatar.text()).toBe('testy.mctesterson@redcross.ca');
+    expect(avatar.text()).toBe('test@test.ca');
   });
 });

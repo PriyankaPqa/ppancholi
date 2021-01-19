@@ -52,7 +52,7 @@
           <slot name="buttons" />
 
           <v-tooltip v-if="showHelp" bottom>
-            <template v-slot:activator="{ on }">
+            <template #activator="{ on }">
               <v-btn class="ml-2" icon data-test="pageContent__opeHelp" v-on="on" @click="openHelp()">
                 <v-icon color="primary lighten-2">
                   mdi-help-circle-outline

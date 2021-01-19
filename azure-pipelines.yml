@@ -1,53 +1,26 @@
-# Node.js with Vue
-# Build a Node.js project that uses Vue.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
-
 trigger:
+- feature/*
 - master
 
 pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  codecoveragehistory.directory: '$(Build.ArtifactStagingDirectory)\history'
-  codecoveragehistory.feedName: 'rctech.ema.web-$(Build.SourceBranchName)'
+- group: Build-Defaults
+- name: Patch
+  value: $[counter(format('{0}.{1}',variables['Major'],variables['Minor']),0)]
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '12.x'
-  displayName: 'Install Node.js'
+name: $(Major).$(Minor).$(Patch)
 
-# Set up custom Azure Artifacts #
-- task: Yarn@3
-  inputs:
-    customRegistry: 'useFeed'
-    customFeed: '67cb7249-b1c0-4377-9c7a-9641f7087c55'
-  displayName: 'Set up custom Azure Artifacts feed for @rctech/web-ui'
+resources: 
+  repositories: 
+  - repository: Templates
+    name: 'Shared/pipeline-templates'
+    type: git 
+    ref: master
 
-# Building app by yarn #
-- script: |
-    yarn build
-  displayName: 'Building app by yarn'
-
-# Run test #
-- script: |
-    yarn coverage  
-  displayName: 'Create reports & Merged code coverage for $(Build.Repository.Name)-$(Build.SourceBranchName)'
-
-# Publish Result #
-- task: PublishTestResults@2
-  condition: succeededOrFailed()
-  inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*result*.trx'
-    failTaskOnFailedTests: false
-  displayName: 'Publish Test Result'
-
-- task: PublishCodeCoverageResults@1
-  inputs:
-    codeCoverageTool: 'Cobertura'
-    summaryFileLocation: '**/*cobertura*.xml'
-    failIfCoverageEmpty: false 
-  displayName: 'Publish Code Coverage Result'
+stages:
+- template: stages/deploy-vue-stages.yml@Templates
+  parameters:
+    storage: $(WebAppStorage)
+    packageFeed: $(PackageFeed-Npm)

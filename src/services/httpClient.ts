@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { localStorageKeys } from '@/constants/localStorage';
 import { v4 as uuidv4 } from 'uuid';

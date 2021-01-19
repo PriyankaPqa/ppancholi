@@ -29,31 +29,6 @@ describe('AppHeader.vue', () => {
     });
   });
 
-  // describe('register beneficiaries button', () => {
-  //   test('the register beneficiary button exists only if user has permission AccessRegistrationUI ', async () => {
-  //     let registerButton = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
-  //     expect(registerButton.exists()).toBeTruthy();
-  //     wrapper.removePermissions(['AccessRegistrationUI']);
-  //     registerButton = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
-  //     expect(registerButton.exists()).toBeTruthy();
-  //   });
-
-  //   test('the register beneficiary button does not exist for landing page', async () => {
-  //     wrapper.vm.$route.name = routes.crc_registration_landing_page.name;
-
-  //     await flushPromises();
-
-  //     const registerButton = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
-  //     expect(registerButton.exists()).toBeFalsy();
-  //   });
-
-  //   test('the register beneficiary button redirects to the registration page', async () => {
-  //     const registerButton = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
-  //     await registerButton.trigger('click');
-  //     expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.crc_registration_landing_page.name });
-  //   });
-  // });
-
   describe('logo', () => {
     test('The logo is displayed correctly by changing the system language', async () => {
       const element = wrapper.find('[data-test="appHeader__logo"]');

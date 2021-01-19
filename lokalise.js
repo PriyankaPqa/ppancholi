@@ -59,10 +59,9 @@ async function up() {
     try {
       // Each loop iteration is delayed until upload operation is completed because Lokalise does not support // requests.
       /* eslint-disable no-await-in-loop */
-      const res = await uploadToLokalise(base64File, file, langISO);
-      console.log(res);
+      await uploadToLokalise(base64File, file, langISO);
     } catch (e) {
-      console.log(e);
+      throw new Error(e);
     }
   }
 }

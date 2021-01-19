@@ -39,7 +39,7 @@
       </template>
     </v-list>
 
-    <template v-slot:append>
+    <template #append>
       <v-row justify="center" class="mb-6">
         <v-btn
           color="primary"

@@ -1,6 +1,6 @@
 import * as msal from '@azure/msal-browser';
 
-import { loginRequest, msalConfig, tokenRequest } from '@/constants/azureAD';
+import { loginRequest, msalConfig, tokenRequest } from '@/auth/constants/azureAD';
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 

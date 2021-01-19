@@ -90,28 +90,4 @@ describe('GeneralHelpMenu.vue', () => {
       expect(createCaseNoteLink.attributes('href')).toBe(i18n.t('zendesk.help_link.create_case_note'));
     });
   });
-
-  // describe('Tests related to the menu for General Help - Beneficiary Registration', () => {
-  //   beforeEach(async () => {
-  //     Object.assign(wrapper.vm.$store.state.registration, {
-  //       generalHelpRegistrationMenuVisible: true,
-  //     });
-
-  //     wrapper.setProps({
-  //       isRegistrationHelpMenu: true,
-  //       menuLinks: [{
-  //         to: i18n.t('zendesk.help_link.how_to_register').toString(),
-  //         text: i18n.t('zendesk.question.how_to_register'),
-  //         test: 'zendesk-how-to-register',
-  //       }],
-  //     });
-  //   });
-
-  //   test('Test that the list items for the General Help Registration Menu show the correct links', async () => {
-  //     const generalHelpItem = '[data-test="general-help-item-zendesk';
-
-  //     const howToRegisterLink = wrapper.find(`${generalHelpItem}-how-to-register"]`);
-  //     expect(howToRegisterLink.attributes('href')).toBe(i18n.t('zendesk.help_link.how_to_register'));
-  //   });
-  // });
 });

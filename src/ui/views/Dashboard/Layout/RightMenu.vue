@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <template v-slot:append>
+    <template #append>
       <v-divider />
 
       <!--      <v-list-item data-test="account-settings" link @click="accountSettings">-->

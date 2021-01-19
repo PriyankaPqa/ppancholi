@@ -1,6 +1,6 @@
 <template>
   <v-menu offset-y>
-    <template v-slot:activator="{ on }">
+    <template #activator="{ on }">
       <v-btn
         :aria-label="$t('aria.header.language_select', {currentLanguage: currentLanguage })"
         text

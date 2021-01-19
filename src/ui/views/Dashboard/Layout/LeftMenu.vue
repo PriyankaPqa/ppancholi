@@ -19,7 +19,7 @@
         right
         :disabled="!mini"
         :open-delay="uiConstants.tooltip_open_delay">
-        <template v-slot:activator="{ on } ">
+        <template #activator="{ on } ">
           <v-list-item
             link
             class="navMenu"
