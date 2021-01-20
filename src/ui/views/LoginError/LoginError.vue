@@ -11,7 +11,7 @@
         </p>
 
         <div>
-          <v-btn color="primary" @click="signIn">
+          <v-btn color="primary" data-test="loginError__signInButton" @click="signIn">
             {{ $t('loginError.signIn') }}
           </v-btn>
         </div>
@@ -29,7 +29,7 @@ export default Vue.extend({
 
   methods: {
     signIn() {
-      authenticationProvider.signIn();
+      authenticationProvider.signIn(process.env.VUE_APP_AUTH_AAD_REDIRECT_URI);
     },
   },
 });

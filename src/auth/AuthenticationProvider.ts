@@ -18,8 +18,11 @@ export default {
   /**
    * Redirects the browser to the login page
    */
-  async signIn() {
-    await msalInstance.loginRedirect(loginRequest);
+  async signIn(redirectStartPage?: string) {
+    await msalInstance.loginRedirect({
+      ...loginRequest,
+      redirectStartPage,
+    });
   },
 
   /**
