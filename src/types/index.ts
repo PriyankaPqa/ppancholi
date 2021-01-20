@@ -10,3 +10,4 @@ export type { INavigationTab } from './interfaces/INavigationTab';
 /**
  * Enums
  */
+export { ECanadaProvinces } from './enums/ECanadaProvinces';

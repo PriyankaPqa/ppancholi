@@ -22,7 +22,7 @@ Vue.toasted.register('error', (message) => message, {
   className: 'emis-toast emis-toast-error',
   duration: null,
   action: {
-    text: 'close',
+    text: '',
     icon: 'mdi-close',
     onClick: (e, toastObject) => {
       toastObject.goAway(0);

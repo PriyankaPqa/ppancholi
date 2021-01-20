@@ -1,0 +1,16 @@
+export enum ECanadaProvinces {
+  Alberta = 1,
+  BritishColumbia,
+  Manitoba,
+  NewBrunswick,
+  NewfoundlandAndLabrador,
+  NorthwestTerritories,
+  NovaScotia,
+  Nunavut,
+  Ontario,
+  PrinceEdwardIsland,
+  Quebec,
+  Saskatchewan,
+  Yukon,
+  Other,
+}

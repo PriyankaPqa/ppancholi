@@ -57,6 +57,8 @@ module.exports = {
       files: [
         '**/__tests__/*.{j,t}s?(x)',
         '**/tests/unit/**/*.spec.{j,t}s?(x)',
+        '*.spec.{j,t}s?(x)',
+        '*.test.{j,t}s?(x)',
       ],
       env: {
         jest: true,
@@ -84,6 +86,7 @@ module.exports = {
       rules: {
         '@typescript-eslint/indent': 'off', // So there is no conflict between indents of others
         '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/no-empty-interface': 'off',
       },
     },
   ],

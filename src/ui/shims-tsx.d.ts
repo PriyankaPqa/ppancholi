@@ -10,4 +10,6 @@ declare global {
       [elem: string]: any;
     }
   }
+
+  type uuid = string;
 }
