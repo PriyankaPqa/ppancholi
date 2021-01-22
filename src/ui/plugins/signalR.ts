@@ -39,7 +39,7 @@ export class SignalRConnection {
   }
 
   private createBindings() {
-    this.connection.on(this.EVENT_CREATED, (data) => this.store.dispatch('event/addOrUpdateEvent', data));
+    this.connection.on(this.EVENT_CREATED, (data) => this.store.commit('event/addOrUpdateEvent', data.event));
   }
 }
 
