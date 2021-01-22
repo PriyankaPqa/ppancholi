@@ -25,7 +25,7 @@ describe('>>> User', () => {
     it('should instantiate name', () => {
       const event = new Event(mockEventData);
       expect(event.name).toEqual({
-        value: {
+        translation: {
           en: 'Gatineau Floods 2021',
           fr: 'Inondations Gatineau 2021',
         },
@@ -35,7 +35,7 @@ describe('>>> User', () => {
     it('should instantiate description', () => {
       const event = new Event(mockEventData);
       expect(event.description).toEqual({
-        value: {
+        translation: {
           en: 'Desc EN',
           fr: 'Desc FR',
         },
@@ -45,7 +45,7 @@ describe('>>> User', () => {
     it('should instantiate registration link', () => {
       const event = new Event(mockEventData);
       expect(event.registrationLink).toEqual({
-        value: {
+        translation: {
           en: 'https://www.redcross.ca/gatineau-floods-2021',
           fr: 'https://www.redcross.ca/inondations-gatineau-2021',
         },
@@ -56,11 +56,11 @@ describe('>>> User', () => {
       const event = new Event(mockEventData);
       expect(event.location).toEqual({
         province: 11,
-        provinceOthers: {
-          value: {},
+        provinceOther: {
+          translation: {},
         },
         region: {
-          value: {},
+          translation: {},
         },
       });
     });
@@ -103,11 +103,11 @@ describe('>>> User', () => {
 
         expect(event.validate()).toContain('The name is required');
 
-        event.name = { value: {} };
+        event.name = { translation: {} };
 
         expect(event.validate()).toContain('The name is required');
 
-        event.name = { value: { en: '', fr: '' } };
+        event.name = { translation: { en: '', fr: '' } };
 
         expect(event.validate()).toContain('The name is required');
       });
@@ -115,7 +115,7 @@ describe('>>> User', () => {
       test(`the name field has a max of ${MAX_LENGTH_MD} characters`, () => {
         const event = new Event(mockEventData);
 
-        event.name.value.en = 'x'.repeat(MAX_LENGTH_MD + 1);
+        event.name.translation.en = 'x'.repeat(MAX_LENGTH_MD + 1);
 
         expect(event.validate()).toContain(`The name field exceeds max length of ${MAX_LENGTH_MD}`);
       });
@@ -123,7 +123,7 @@ describe('>>> User', () => {
       test(`the description field has a max of ${MAX_LENGTH_LG} characters`, () => {
         const event = new Event(mockEventData);
 
-        event.description.value.en = 'x'.repeat(MAX_LENGTH_LG + 1);
+        event.description.translation.en = 'x'.repeat(MAX_LENGTH_LG + 1);
 
         expect(event.validate()).toContain(`The description field exceeds max length of ${MAX_LENGTH_LG}`);
       });
@@ -131,7 +131,7 @@ describe('>>> User', () => {
       test(`the description field has a max of ${MAX_LENGTH_LG} characters`, () => {
         const event = new Event(mockEventData);
 
-        event.description.value.en = 'x'.repeat(MAX_LENGTH_LG + 1);
+        event.description.translation.en = 'x'.repeat(MAX_LENGTH_LG + 1);
 
         expect(event.validate()).toContain(`The description field exceeds max length of ${MAX_LENGTH_LG}`);
       });
@@ -143,11 +143,11 @@ describe('>>> User', () => {
 
         expect(event.validate()).toContain('The registrationLink is required');
 
-        event.registrationLink = { value: {} };
+        event.registrationLink = { translation: {} };
 
         expect(event.validate()).toContain('The registrationLink is required');
 
-        event.registrationLink = { value: { en: '', fr: '' } };
+        event.registrationLink = { translation: { en: '', fr: '' } };
 
         expect(event.validate()).toContain('The registrationLink is required');
       });
@@ -155,7 +155,7 @@ describe('>>> User', () => {
       test(`the registration link field has a max of ${MAX_LENGTH_MD} characters`, () => {
         const event = new Event(mockEventData);
 
-        event.registrationLink.value.en = 'x'.repeat(MAX_LENGTH_MD + 1);
+        event.registrationLink.translation.en = 'x'.repeat(MAX_LENGTH_MD + 1);
 
         expect(event.validate()).toContain(`The registrationLink field exceeds max length of ${MAX_LENGTH_MD}`);
       });
@@ -178,30 +178,30 @@ describe('>>> User', () => {
         expect(event.validate()).toContain('The location.province field is required');
       });
 
-      test('location provinceOthers is required if province is Other', () => {
+      test('location provinceOther is required if province is Other', () => {
         const event = new Event(mockEventData);
 
         event.location.province = ECanadaProvinces.Other;
 
-        event.location.provinceOthers = null;
+        event.location.provinceOther = null;
 
-        expect(event.validate()).toContain('The location.provinceOthers field is required');
+        expect(event.validate()).toContain('The location.provinceOther field is required');
       });
 
-      test(`the provinceOthers field has a max length of ${MAX_LENGTH_MD}`, () => {
+      test(`the provinceOther field has a max length of ${MAX_LENGTH_MD}`, () => {
         const event = new Event(mockEventData);
 
         event.location.province = ECanadaProvinces.Other;
 
-        event.location.provinceOthers.value.en = 'x'.repeat(MAX_LENGTH_MD + 1);
+        event.location.provinceOther.translation.en = 'x'.repeat(MAX_LENGTH_MD + 1);
 
-        expect(event.validate()).toContain(`The location.provinceOthers field exceeds max length of ${MAX_LENGTH_MD}`);
+        expect(event.validate()).toContain(`The location.provinceOther field exceeds max length of ${MAX_LENGTH_MD}`);
       });
 
       test(`the region field has a max length of ${MAX_LENGTH_MD}`, () => {
         const event = new Event(mockEventData);
 
-        event.location.region.value.en = 'x'.repeat(MAX_LENGTH_MD + 1);
+        event.location.region.translation.en = 'x'.repeat(MAX_LENGTH_MD + 1);
 
         expect(event.validate()).toContain(`The location.region field exceeds max length of ${MAX_LENGTH_MD}`);
       });

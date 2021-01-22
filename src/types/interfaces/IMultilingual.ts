@@ -1,3 +1,3 @@
 export interface IMultilingual {
-  value: Record<string, string>;
+  translation: Record<string, string>;
 }

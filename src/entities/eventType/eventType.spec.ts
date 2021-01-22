@@ -28,7 +28,7 @@ describe('>>> EventType', () => {
     it('should instantiate name', () => {
       const eventType = new EventType(mockData);
       expect(eventType.name).toEqual({
-        value: {
+        translation: {
           en: 'Flood',
           fr: 'Inundation',
         },

@@ -9,7 +9,7 @@ const localVue = createLocalVue();
 localVue.use(multilingual);
 
 const testValue = {
-  value: {
+  translation: {
     en: 'HELLO',
     fr: 'BONJOUR',
   },

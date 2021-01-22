@@ -6,7 +6,7 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
   timestamp: new Date('2021-01-14T00:00:00.000Z'),
   eTag: '',
   name: {
-    value: {
+    translation: {
       en: 'Flood',
       fr: 'Inundation',
     },
@@ -17,7 +17,7 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
   timestamp: new Date('2021-01-14T00:00:00.000Z'),
   eTag: '',
   name: {
-    value: {
+    translation: {
       en: 'Wildfire',
       fr: 'Incendies',
     },
@@ -28,7 +28,7 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
   timestamp: new Date('2021-01-14T00:00:00.000Z'),
   eTag: '',
   name: {
-    value: {
+    translation: {
       en: 'Earthquake',
       fr: 'Tremblement de terre',
     },

@@ -3,6 +3,7 @@ import Vuex, { StoreOptions } from 'vuex';
 import { IRootState } from './store.types';
 import { user } from './modules/user';
 import { dashboard } from './modules/dashboard';
+import { event } from './modules/event';
 
 Vue.use(Vuex);
 
@@ -13,6 +14,7 @@ const store: StoreOptions<IRootState> = {
   modules: {
     user,
     dashboard,
+    event,
   },
 };
 

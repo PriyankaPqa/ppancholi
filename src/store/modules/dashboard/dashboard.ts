@@ -1,6 +1,6 @@
 import { Module } from 'vuex';
 import { IRootState } from '../../store.types';
-import { IMutations, IState } from './dashboard.types';
+import { IState } from './dashboard.types';
 
 const getDefaultState = (): IState => ({
   leftMenuExpanded: false,
@@ -10,9 +10,8 @@ const getDefaultState = (): IState => ({
 });
 
 const moduleState = getDefaultState();
-
-const mutations: IMutations = {
-  setProperty: (state: IState, { property, value }) => {
+const mutations = {
+  setProperty: (state: IState, { property, value }: { property: keyof IState, value: boolean }) => {
     state[property] = value;
   },
 };

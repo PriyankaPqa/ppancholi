@@ -3,30 +3,30 @@ import { IEventData } from './event.types';
 export const mockEventsData = (): IEventData[] => [{
   number: 1,
   name: {
-    value: {
+    translation: {
       en: 'Gatineau Floods 2021',
       fr: 'Inondations Gatineau 2021',
     },
   },
   description: {
-    value: {
+    translation: {
       en: 'Desc EN',
       fr: 'Desc FR',
     },
   },
   registrationLink: {
-    value: {
+    translation: {
       en: 'https://www.redcross.ca/gatineau-floods-2021',
       fr: 'https://www.redcross.ca/inondations-gatineau-2021',
     },
   },
   location: {
     province: 11,
-    provinceOthers: {
-      value: {},
+    provinceOther: {
+      translation: {},
     },
     region: {
-      value: {},
+      translation: {},
     },
   },
   schedule: {
@@ -51,33 +51,33 @@ export const mockEventsData = (): IEventData[] => [{
 }, {
   number: 2,
   name: {
-    value: {
+    translation: {
       en: 'Vegas Earthquake 2021',
       fr: 'Vegas Earthquake 2021 FR',
     },
   },
   description: {
-    value: {
+    translation: {
       en: 'Desc EN',
       fr: 'Desc FR',
     },
   },
   registrationLink: {
-    value: {
+    translation: {
       en: 'https://www.redcross.ca/vegas-earthquake-2021',
       fr: 'https://www.redcross.ca/vegas-earthquake-2021-fr',
     },
   },
   location: {
     province: 14,
-    provinceOthers: {
-      value: {
+    provinceOther: {
+      translation: {
         en: 'Nevada',
         fr: 'Nevada FR',
       },
     },
     region: {
-      value: {
+      translation: {
         en: 'Clark County',
         fr: 'Clark County FR',
       },

@@ -14,7 +14,7 @@ const store = mockStore({
 
 const storage = makeStorage(store);
 
-describe('>>> Storage', () => {
+describe('>>> User Storage', () => {
   describe('>> Getters', () => {
     it('should proxy user', () => {
       expect(storage.getters.user()).toEqual(store.getters['user/user']);

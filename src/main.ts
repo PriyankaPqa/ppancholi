@@ -21,6 +21,7 @@ import '@/ui/plugins/vee-validate';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 
 import moment from '@/ui/plugins/moment';
+import prepareSignalR from '@/ui/plugins/signalR';
 
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
@@ -34,6 +35,7 @@ import App from './ui/App.vue';
 
 prepareServices(store);
 prepareStorage(store);
+prepareSignalR(store);
 
 Vue.prototype.$i18nRoute = Trans.i18nRoute.bind(Trans);
 Vue.config.productionTip = false;

@@ -42,13 +42,13 @@ export class Event implements IEvent {
       this.eTag = data.eTag;
       this.number = data.number;
       this.name = {
-        value: {
-          ...data.name.value,
+        translation: {
+          ...data.name.translation,
         },
       };
       this.description = {
-        value: {
-          ...data.description.value,
+        translation: {
+          ...data.description.translation,
         },
       };
       this.registrationLink = data.registrationLink;
@@ -73,12 +73,12 @@ export class Event implements IEvent {
   }
 
   private reset() {
-    this.name = { value: {} };
-    this.description = { value: {} };
+    this.name = { translation: {} };
+    this.description = { translation: {} };
     this.location = {
       province: null,
-      provinceOthers: { value: {} },
-      region: { value: {} },
+      provinceOther: { translation: {} },
+      region: { translation: {} },
     };
     this.schedule = {
       openDate: null,
@@ -128,13 +128,13 @@ export class Event implements IEvent {
       }
 
       if (this.location.province === ECanadaProvinces.Other
-      && !utils.validateMultilingualFieldRequired(this.location.provinceOthers)) {
-        errors.push('The location.provinceOthers field is required');
+      && !utils.validateMultilingualFieldRequired(this.location.provinceOther)) {
+        errors.push('The location.provinceOther field is required');
       }
 
       if (this.location.province === ECanadaProvinces.Other
-      && !utils.validateMultilingualFieldLength(this.location.provinceOthers, MAX_LENGTH_MD)) {
-        errors.push(`The location.provinceOthers field exceeds max length of ${MAX_LENGTH_MD}`);
+      && !utils.validateMultilingualFieldLength(this.location.provinceOther, MAX_LENGTH_MD)) {
+        errors.push(`The location.provinceOther field exceeds max length of ${MAX_LENGTH_MD}`);
       }
 
       if (!utils.validateMultilingualFieldLength(this.location.region, MAX_LENGTH_MD)) {

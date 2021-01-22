@@ -23,7 +23,7 @@ export enum EResponseLevel {
  */
 export interface IEventLocation {
   province: ECanadaProvinces;
-  provinceOthers: IMultilingual;
+  provinceOther: IMultilingual;
   region: IMultilingual;
 }
 
@@ -67,19 +67,15 @@ export interface IEventData {
 export interface ICreateEventRequest {
   assistanceNumber: string;
   dateReported: Date | string;
-  eventType: uuid;
+  description: IMultilingual;
+  name: IMultilingual;
   province: ECanadaProvinces;
-  provinceOtherByLanguage?: Record<string, string>;
-  regionsByLanguage?: Record<string, string>;
+  provinceOther: IMultilingual;
+  region: IMultilingual;
   relatedEvents: Array<uuid>;
   responseLevel: EResponseLevel;
-  scheduledOpenDate?: Date | string;
-  scheduledCloseDate?: Date | string;
-  definitions: Array<{
-    languageCode: string;
-    name: string;
-    description?: string;
-  }>
+  scheduledCloseDate: Date | string;
+  scheduledOpenDate: Date | string;
 }
 
 /**

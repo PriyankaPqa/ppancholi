@@ -1,13 +1,12 @@
-import { IRestResponse } from '@/types';
 import { IEventTypeData } from '@/entities/eventType';
 import { IEvent, IEventData } from '@/entities/event';
 
 export interface IEventsService {
-  createEvent(payload: IEvent): Promise<IRestResponse<IEventData>>;
+  createEvent(payload: IEvent): Promise<IEventData>;
 
-  getEvents(): Promise<IRestResponse<IEventData[]>>;
+  getEvents(): Promise<IEventData[]>;
 
-  getEventTypes(): Promise<IRestResponse<IEventTypeData[]>>;
+  getEventTypes(): Promise<Array<IEventTypeData>>;
 }
 
 export interface IEventsServiceMock {

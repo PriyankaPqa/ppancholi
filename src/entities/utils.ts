@@ -5,12 +5,12 @@ export default {
   validateMultilingualFieldRequired(field: IMultilingual) {
     let isValid = true;
 
-    if (!field || !field.value || !Object.keys(field.value).length) {
+    if (!field || !field.translation || !Object.keys(field.translation).length) {
       return false;
     }
 
-    Object.keys(field.value).forEach((key) => {
-      if (!field.value[key]) {
+    Object.keys(field.translation).forEach((key) => {
+      if (!field.translation[key]) {
         isValid = false;
       }
     });
@@ -22,12 +22,12 @@ export default {
   validateMultilingualFieldLength(field: IMultilingual, maxLength: number) {
     let isValid = true;
 
-    if (!field || !field.value || !Object.keys(field.value).length) {
+    if (!field || !field.translation || !Object.keys(field.translation).length) {
       return true;
     }
 
-    Object.keys(field.value).forEach((key) => {
-      if (field.value[key].length > maxLength) {
+    Object.keys(field.translation).forEach((key) => {
+      if (field.translation[key].length > maxLength) {
         isValid = false;
       }
     });

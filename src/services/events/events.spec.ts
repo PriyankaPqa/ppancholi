@@ -9,11 +9,38 @@ describe('>>> Events Service', () => {
 
   test('createEvent is linked to the correct URL', async () => {
     await service.createEvent(new Event(mockEventsData()[0]));
-    expect(http.post).toHaveBeenCalledWith('/event/events', null); // todo
+    expect(http.post).toHaveBeenCalledWith('/event/events', expect.anything());
   });
 
   test('createEvent converts the event entity to the correct payload', async () => {
-    expect(true).toBe(true); // todo
+    await service.createEvent(new Event(mockEventsData()[0]));
+    expect(http.post).toHaveBeenCalledWith('/event/events', {
+      assistanceNumber: '514 454 4545',
+      dateReported: new Date('2021-01-01T00:00:00.000Z'),
+      description: {
+        translation: {
+          en: 'Desc EN',
+          fr: 'Desc FR',
+        },
+      },
+      name: {
+        translation: {
+          en: 'Gatineau Floods 2021',
+          fr: 'Inondations Gatineau 2021',
+        },
+      },
+      province: 11,
+      provinceOther: {
+        translation: {},
+      },
+      region: {
+        translation: {},
+      },
+      relatedEvents: [],
+      responseLevel: 3,
+      scheduledCloseDate: new Date('2021-06-15T00:00:00.000Z'),
+      scheduledOpenDate: new Date('2021-03-15T00:00:00.000Z'),
+    });
   });
 
   test('getEvents is linked to the correct URL', async () => {

@@ -3,10 +3,10 @@ import {
 } from 'vuex';
 import { localStorageKeys } from '@/constants/localStorage';
 import authenticationProvider from '@/auth/AuthenticationProvider';
-import { User } from '@/entities/user';
+import { IUserData, User } from '@/entities/user';
 import { IRootState } from '../../store.types';
 import {
-  IState, IActions, IGetters, IMutations,
+  IState,
 } from './user.types';
 
 const getDefaultState = (): IState => ({
@@ -19,7 +19,7 @@ const getDefaultState = (): IState => ({
 
 const moduleState: IState = getDefaultState();
 
-const getters: IGetters = {
+const getters = {
   user: (state: IState) => new User({
     oid: state.oid,
     family_name: state.family_name,
@@ -29,8 +29,8 @@ const getters: IGetters = {
   }),
 };
 
-const mutations: IMutations = {
-  setUser(state: IState, payload) {
+const mutations = {
+  setUser(state: IState, payload: IUserData) {
     state.oid = payload.oid;
     state.family_name = payload.family_name;
     state.given_name = payload.given_name;
@@ -39,7 +39,7 @@ const mutations: IMutations = {
   },
 };
 
-const actions: IActions = {
+const actions = {
   async signOut(this: Store<IState>) {
     authenticationProvider.signOut();
   },

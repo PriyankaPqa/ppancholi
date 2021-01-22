@@ -17,11 +17,11 @@ export interface RequestConfig extends AxiosRequestConfig {
 }
 
 export interface IHttpClient {
-  get: <T>(url: string, config?: RequestConfig) => Promise<IRestResponse<T>>;
-  post: <T>(url: string, data?: any, config?: RequestConfig) => Promise<IRestResponse<T>>;
-  patch: <T>(url: string, data?: any, config?: RequestConfig) => Promise<IRestResponse<T>>;
-  put: <T>(url: string, data?: any, config?: RequestConfig) => Promise<IRestResponse<T>>;
-  delete: <T>(url: string, config?: RequestConfig) => Promise<IRestResponse<T>>;
+  get: <T>(url: string, config?: RequestConfig) => Promise<T>;
+  post: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
+  patch: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
+  put: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
+  delete: <T>(url: string, config?: RequestConfig) => Promise<T>;
   setHeadersLanguage(lang: string): void;
 }
 
@@ -104,15 +104,6 @@ class HttpClient implements IHttpClient {
     return request;
   }
 
-  private responseBuilder <T>(response: IRestResponse<T>): IRestResponse<T> {
-    return {
-      success: true,
-      status: response.status,
-      statusText: response.statusText,
-      data: response.data,
-    };
-  }
-
   private createErrorObject <T>(error: IHttpError): IRestResponse<T> {
     return {
       success: false,
@@ -122,48 +113,48 @@ class HttpClient implements IHttpClient {
     };
   }
 
-  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<IRestResponse<T>> {
+  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response: IRestResponse<T> = await this.axios.get(url, config);
-      return this.responseBuilder(response);
+      return response.data;
     } catch (e) {
-      return this.createErrorObject(e);
+      throw this.createErrorObject(e);
     }
   }
 
-  public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<IRestResponse<T>> {
+  public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response: IRestResponse<T> = await this.axios.post(url, data, config);
-      return this.responseBuilder(response);
+      return response.data;
     } catch (e) {
-      return this.createErrorObject(e);
+      throw this.createErrorObject(e);
     }
   }
 
-  public async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<IRestResponse<T>> {
+  public async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response: IRestResponse<T> = await this.axios.patch(url, data, config);
-      return this.responseBuilder(response);
+      return response.data;
     } catch (e) {
-      return this.createErrorObject(e);
+      throw this.createErrorObject(e);
     }
   }
 
-  public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<IRestResponse<T>> {
+  public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response: IRestResponse<T> = await this.axios.put(url, data, config);
-      return this.responseBuilder(response);
+      return response.data;
     } catch (e) {
-      return this.createErrorObject(e);
+      throw this.createErrorObject(e);
     }
   }
 
-  public async delete<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<IRestResponse<T>> {
+  public async delete<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
     try {
       const response: IRestResponse<T> = await this.axios.delete(url, config);
-      return this.responseBuilder(response);
+      return response.data;
     } catch (e) {
-      return this.createErrorObject(e);
+      throw this.createErrorObject(e);
     }
   }
 }

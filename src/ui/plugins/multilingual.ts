@@ -10,8 +10,8 @@ export default {
         locale = 'en';
       }
 
-      if (m && m.value && m.value[locale]) {
-        return m.value[locale];
+      if (m && m.translation && m.translation[locale]) {
+        return m.translation[locale];
       }
 
       return '';

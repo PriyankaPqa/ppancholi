@@ -5,7 +5,7 @@ import { makeStorage } from './storage';
 const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);
 
-describe('>>> Storage', () => {
+describe('>>> Dashboard Storage', () => {
   describe('>> Mutations', () => {
     it('should proxy setDashboardProperty', () => {
       const payload = { property: 'leftMenuExpanded' as keyof IState, value: true };
