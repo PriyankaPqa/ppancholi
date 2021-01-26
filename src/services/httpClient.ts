@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import { localStorageKeys } from '@/constants/localStorage';
 import { v4 as uuidv4 } from 'uuid';
-import helpers from '@/ui/helpers';
 import Vue from 'vue';
 
 export interface IRestResponse<T> {
@@ -23,13 +22,6 @@ export interface IHttpClient {
   put: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
   delete: <T>(url: string, config?: RequestConfig) => Promise<T>;
   setHeadersLanguage(lang: string): void;
-}
-
-export interface IHttpError {
-  message: string;
-  response: {
-    status: number;
-  }
 }
 
 class HttpClient implements IHttpClient {
@@ -74,15 +66,13 @@ class HttpClient implements IHttpClient {
 
   private responseErrorHandler(error: any) {
     if (this.isGlobalHandlerEnabled(error.config)) {
-      let errorMessage = '';
-      if (error.response.data.customErrorDetailsList !== undefined) { // Display a error toast when server error occurred
-        errorMessage = helpers.formatErrorMessages(error.response.data.customErrorDetailsList, error.response.data.statusCode);
-      } else {
-        errorMessage = error;
+      if (error?.response?.data) {
+        const { errors } = error.response.data;
+        const errorMessage = Object.keys(errors).map((key) => errors[key]);
+        Vue.toasted.global.error(errorMessage);
       }
-      Vue.toasted.global.error(errorMessage);
     }
-    return Promise.reject(error);
+    return Promise.reject(error.response.data);
   }
 
   private requestHandler(request: any) {
@@ -104,13 +94,8 @@ class HttpClient implements IHttpClient {
     return request;
   }
 
-  private createErrorObject <T>(error: IHttpError): IRestResponse<T> {
-    return {
-      success: false,
-      status: error.response !== undefined ? error.response.status : 0,
-      statusText: error.message,
-      data: null,
-    };
+  private createErrorObject(error: AxiosError): AxiosError {
+    return error;
   }
 
   public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {

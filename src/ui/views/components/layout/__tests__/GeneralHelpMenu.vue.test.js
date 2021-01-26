@@ -3,7 +3,7 @@ import Vuetify from 'vuetify';
 import { i18n } from '@/ui/plugins/i18n';
 import flushPromises from 'flush-promises';
 import { mockStorage } from '@/store/storage';
-import Component from '../Layout/GeneralHelpMenu.vue';
+import Component from '../GeneralHelpMenu.vue';
 
 const localVue = createLocalVue();
 

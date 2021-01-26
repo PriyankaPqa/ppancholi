@@ -1,6 +1,6 @@
 import { IAuthenticationAccessToken } from '@/types';
 
-export const authenticationResponseData: IAuthenticationAccessToken = {
+export const mockAuthenticationData = (): IAuthenticationAccessToken => ({
   accessToken: '...',
   account: {
     homeAccountId: '...',
@@ -19,4 +19,4 @@ export const authenticationResponseData: IAuthenticationAccessToken = {
   },
   idToken: '...',
   idTokenExpiresOn: new Date(),
-};
+});

@@ -181,7 +181,7 @@ describe('>>> User', () => {
       test('location provinceOther is required if province is Other', () => {
         const event = new Event(mockEventData);
 
-        event.location.province = ECanadaProvinces.Other;
+        event.location.province = ECanadaProvinces.OT;
 
         event.location.provinceOther = null;
 
@@ -191,7 +191,7 @@ describe('>>> User', () => {
       test(`the provinceOther field has a max length of ${MAX_LENGTH_MD}`, () => {
         const event = new Event(mockEventData);
 
-        event.location.province = ECanadaProvinces.Other;
+        event.location.province = ECanadaProvinces.OT;
 
         event.location.provinceOther.translation.en = 'x'.repeat(MAX_LENGTH_MD + 1);
 

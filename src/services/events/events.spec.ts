@@ -31,10 +31,16 @@ describe('>>> Events Service', () => {
       },
       province: 11,
       provinceOther: {
-        translation: {},
+        translation: {
+          en: '',
+          fr: '',
+        },
       },
       region: {
-        translation: {},
+        translation: {
+          en: '',
+          fr: '',
+        },
       },
       relatedEvents: [],
       responseLevel: 3,

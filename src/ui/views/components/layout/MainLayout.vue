@@ -13,11 +13,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { INavigationTab } from '@/types';
-import RouterViewTransition from '@/ui/components/RouterViewTransition.vue';
-import AppHeader from '@/ui/views/Dashboard/Layout/AppHeader.vue';
-import LeftMenu from '@/ui/views/Dashboard/Layout/LeftMenu.vue';
-import RightMenu from '@/ui/views/Dashboard/Layout/RightMenu.vue';
-import GeneralHelpMenu from '@/ui/views/Dashboard/Layout/GeneralHelpMenu.vue';
+import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
+import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
+import LeftMenu from '@/ui/views/components/layout/LeftMenu.vue';
+import RightMenu from '@/ui/views/components/layout/RightMenu.vue';
+import GeneralHelpMenu from '@/ui/views/components/layout/GeneralHelpMenu.vue';
 
 export default Vue.extend({
   name: 'DashboardLayout',

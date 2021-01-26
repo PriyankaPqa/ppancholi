@@ -3,11 +3,17 @@ import {
 } from 'vuex';
 import _findIndex from 'lodash/findIndex';
 import { IRootState } from '@/store/store.types';
-import { EventType, IEventTypeData } from '@/entities/eventType';
-import { Event, IEvent, IEventData } from '@/entities/event';
+import { EventType, IEventType, IEventTypeData } from '@/entities/eventType';
+import {
+  Event, IEvent, IEventData, IOtherProvince, IRegion,
+} from '@/entities/event';
+
 import {
   IState,
 } from './event.types';
+
+let eventTypesFetched = false;
+let eventsFetched = false;
 
 const getDefaultState = (): IState => ({
   eventTypes: [],
@@ -18,11 +24,17 @@ const moduleState: IState = getDefaultState();
 
 const getters = {
   eventTypes: (state: IState) => state.eventTypes.map((e) => new EventType(e)),
+
+  events: (state: IState) => state.events.map((e) => new Event(e)),
 };
 
 const mutations = {
   setEventTypes(state: IState, payload: Array<IEventTypeData>) {
     state.eventTypes = payload;
+  },
+
+  setEvents(state: IState, payload: Array<IEventData>) {
+    state.events = payload;
   },
 
   addOrUpdateEvent(state: IState, payload: IEventData) {
@@ -41,13 +53,32 @@ const mutations = {
 };
 
 const actions = {
-  async fetchEventTypes(this: Store<IState>, context: ActionContext<IState, IState>) {
-    if (!context.state.eventTypes || !context.state.eventTypes.length) {
+  async fetchEventTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEventType[]> {
+    if (!eventTypesFetched) {
       const data = await this.$services.events.getEventTypes();
       context.commit('setEventTypes', data);
+      eventTypesFetched = true;
     }
 
     return context.getters.eventTypes;
+  },
+
+  async fetchEvents(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEvent[]> {
+    if (!eventsFetched) {
+      const data = await this.$services.events.getEvents();
+      context.commit('setEvents', data);
+      eventsFetched = true;
+    }
+
+    return context.getters.events;
+  },
+
+  async fetchOtherProvinces(this: Store<IState>): Promise<IOtherProvince[]> {
+    return this.$services.events.getOtherProvinces();
+  },
+
+  async fetchRegions(this: Store<IState>): Promise<IRegion[]> {
+    return this.$services.events.getRegions();
   },
 
   async createEvent(this: Store<IState>, context: ActionContext<IState, IState>, payload: IEvent): Promise<IEvent> {

@@ -1,6 +1,7 @@
 import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces, IMultilingual } from '@/types';
 import utils from '@/entities/utils';
+
 import {
   IEvent,
   IEventData,
@@ -32,7 +33,7 @@ export class Event implements IEvent {
 
   responseDetails: IEventResponseDetails;
 
-  relatedEvents: Array<string>;
+  relatedEvents: Array<uuid>;
 
   constructor(data?: IEventData) {
     if (data) {
@@ -62,6 +63,11 @@ export class Event implements IEvent {
         scheduledCloseDate: data.schedule.scheduledCloseDate ? new Date(data.schedule.scheduledCloseDate) : null,
         scheduledOpenDate: data.schedule.scheduledOpenDate ? new Date(data.schedule.scheduledOpenDate) : null,
       };
+      this.registrationLink = {
+        translation: {
+          ...data.registrationLink.translation,
+        },
+      };
       this.responseDetails = {
         ...data.responseDetails,
         dateReported: data.responseDetails.dateReported ? new Date(data.responseDetails.dateReported) : null,
@@ -73,12 +79,12 @@ export class Event implements IEvent {
   }
 
   private reset() {
-    this.name = { translation: {} };
-    this.description = { translation: {} };
+    this.name = utils.initMultilingualAttributes();
+    this.description = utils.initMultilingualAttributes();
     this.location = {
       province: null,
-      provinceOther: { translation: {} },
-      region: { translation: {} },
+      provinceOther: utils.initMultilingualAttributes(),
+      region: utils.initMultilingualAttributes(),
     };
     this.schedule = {
       openDate: null,
@@ -94,6 +100,7 @@ export class Event implements IEvent {
       dateReported: null,
       assistanceNumber: '',
     };
+    this.registrationLink = utils.initMultilingualAttributes();
     this.relatedEvents = [];
   }
 
@@ -127,12 +134,12 @@ export class Event implements IEvent {
         errors.push('The location.province field is required');
       }
 
-      if (this.location.province === ECanadaProvinces.Other
+      if (this.location.province === ECanadaProvinces.OT
       && !utils.validateMultilingualFieldRequired(this.location.provinceOther)) {
         errors.push('The location.provinceOther field is required');
       }
 
-      if (this.location.province === ECanadaProvinces.Other
+      if (this.location.province === ECanadaProvinces.OT
       && !utils.validateMultilingualFieldLength(this.location.provinceOther, MAX_LENGTH_MD)) {
         errors.push(`The location.provinceOther field exceeds max length of ${MAX_LENGTH_MD}`);
       }
@@ -175,10 +182,18 @@ export class Event implements IEvent {
     }
   }
 
+  public fillEmptyMultilingualAttributes() {
+    this.name = utils.getFilledMultilingualField(this.name);
+    this.description = utils.getFilledMultilingualField(this.description);
+    this.location.provinceOther = utils.getFilledMultilingualField(this.location.provinceOther);
+    this.location.region = utils.getFilledMultilingualField(this.location.region);
+    this.registrationLink = utils.getFilledMultilingualField(this.registrationLink);
+  }
+
   /**
    * Validate business rules (non specific to the application)
    */
-  validate(): Array<string> | boolean {
+  public validate(): Array<string> | boolean {
     const errors: Array<string> = [];
 
     this.validateAttributes(errors);

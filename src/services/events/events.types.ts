@@ -1,5 +1,7 @@
 import { IEventTypeData } from '@/entities/eventType';
-import { IEvent, IEventData } from '@/entities/event';
+import {
+  IEvent, IEventData, IOtherProvince, IRegion,
+} from '@/entities/event';
 
 export interface IEventsService {
   createEvent(payload: IEvent): Promise<IEventData>;
@@ -7,6 +9,10 @@ export interface IEventsService {
   getEvents(): Promise<IEventData[]>;
 
   getEventTypes(): Promise<Array<IEventTypeData>>;
+
+  getOtherProvinces(): Promise<IOtherProvince[]>;
+
+  getRegions(): Promise<IRegion[]>;
 }
 
 export interface IEventsServiceMock {
@@ -15,4 +21,8 @@ export interface IEventsServiceMock {
   getEvents: jest.Mock <IEventData[]>;
 
   getEventTypes: jest.Mock <IEventTypeData[]>;
+
+  getOtherProvinces: jest.Mock <IOtherProvince[]>;
+
+  getRegions: jest.Mock <IRegion[]>;
 }

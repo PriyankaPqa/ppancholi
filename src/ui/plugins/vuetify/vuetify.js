@@ -4,7 +4,7 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css';
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 import fr from '@/ui/plugins/vuetify/locales/fr';
-import DuplicateIcon from '@/ui/components/customIcons/DuplicateIcon.vue';
+import DuplicateIcon from '@/ui/shared-components/customIcons/DuplicateIcon.vue';
 import { DEFAULT_LANGUAGE } from '@/constants/trans';
 import light from './light-theme';
 import dark from './dark-theme';

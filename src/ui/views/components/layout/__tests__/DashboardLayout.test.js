@@ -1,9 +1,9 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import RouterViewTransition from '@/ui/components/RouterViewTransition.vue';
-import Component from '../Layout/DashboardLayout.vue';
-import AppHeader from '../Layout/AppHeader.vue';
-import LeftMenu from '../Layout/LeftMenu.vue';
-import GeneralHelpMenu from '../Layout/GeneralHelpMenu.vue';
+import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
+import Component from '../MainLayout.vue';
+import AppHeader from '../AppHeader.vue';
+import LeftMenu from '../LeftMenu.vue';
+import GeneralHelpMenu from '../GeneralHelpMenu.vue';
 
 describe('DashboardLayout.vue', () => {
   let wrapper;

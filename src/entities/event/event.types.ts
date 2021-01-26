@@ -43,6 +43,15 @@ export interface IEventResponseDetails {
   assistanceNumber: string;
 }
 
+export interface IRegion {
+  province: ECanadaProvinces;
+  name: IMultilingual;
+}
+
+export interface IOtherProvince {
+  name: IMultilingual;
+}
+
 /**
  * Interface that maps to the response structure from the API
  */
@@ -83,4 +92,5 @@ export interface ICreateEventRequest {
  */
 export interface IEvent extends IEventData {
   validate(): Array<string> | boolean;
+  fillEmptyMultilingualAttributes(): void;
 }

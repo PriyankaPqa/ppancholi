@@ -79,6 +79,14 @@ function findDataTest(dataTest) {
   return this.find(`[data-test="${dataTest}"]`);
 }
 
+function findTextFieldWithValidation(dataTest) {
+  return this.find(`[data-test="${dataTest}"]`).find('div');
+}
+
+function findSelectWithValidation(dataTest) {
+  return this.find(`[data-test="${dataTest}"]`).find('.v-input');
+}
+
 export const mount = (Component, options) => {
   if (!options.localVue) {
     throw new Error('Must pass in localVue instance.');
@@ -104,6 +112,8 @@ export const mount = (Component, options) => {
   });
 
   wrapper.findDataTest = findDataTest;
+  wrapper.findTextFieldWithValidation = findTextFieldWithValidation;
+  wrapper.findSelectWithValidation = findSelectWithValidation;
   return wrapper;
 };
 
@@ -131,5 +141,7 @@ export const shallowMount = (Component, options) => {
   });
 
   wrapper.findDataTest = findDataTest;
+  wrapper.findTextFieldWithValidation = findTextFieldWithValidation;
+  wrapper.findSelectWithValidation = findSelectWithValidation;
   return wrapper;
 };

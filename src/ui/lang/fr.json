@@ -1558,5 +1558,6 @@
     "zendesk.question.register_a_beneficiary": "Comment inscrire un bénéficiaire?",
     "zendesk.question.select_language_preferences": "Comment sélectionner mes préférences linguistiques?",
     "zendesk.referral": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360056417493",
-    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242353"
+    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242353",
+    "zendesk.help_link.createEvent": "https://rctech.zendesk.com/hc/fr/articles/360038885973-Cr%C3%A9er-un-%C3%A9v%C3%A9nement"
 }

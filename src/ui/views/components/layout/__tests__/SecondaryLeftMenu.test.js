@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import Component from '../Layout/SecondaryLeftMenu.vue';
+import Component from '../SecondaryLeftMenu.vue';
 
 describe('SecondaryLeftMenu.vue', () => {
   let wrapper;

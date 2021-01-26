@@ -1,4 +1,5 @@
-import { IEventData } from './event.types';
+import { ECanadaProvinces } from '@/types';
+import { IEventData, IOtherProvince, IRegion } from './event.types';
 
 export const mockEventsData = (): IEventData[] => [{
   number: 1,
@@ -102,4 +103,38 @@ export const mockEventsData = (): IEventData[] => [{
   created: '2021-01-20T15:45:52.2691443Z',
   timestamp: '2021-01-20T15:45:52.2699289Z',
   eTag: '*',
+}];
+
+export const mockOtherProvinceData = (): IOtherProvince[] => [{
+  name: {
+    translation: {
+      en: 'New York',
+      fr: 'New York FR',
+    },
+  },
+}, {
+  name: {
+    translation: {
+      en: 'California',
+      fr: 'Californie',
+    },
+  },
+}];
+
+export const mockRegionData = (): IRegion[] => [{
+  province: ECanadaProvinces.AB,
+  name: {
+    translation: {
+      en: 'Northern Alberta',
+      fr: 'Northern Alberta FR',
+    },
+  },
+}, {
+  province: ECanadaProvinces.AB,
+  name: {
+    translation: {
+      en: 'Southern Alberta',
+      fr: 'Southern Alberta FR',
+    },
+  },
 }];

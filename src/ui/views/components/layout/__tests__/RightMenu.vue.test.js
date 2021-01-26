@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUsersData } from '@/entities/user';
-import Component from '../Layout/RightMenu.vue';
+import Component from '../RightMenu.vue';
 
 const localVue = createLocalVue();
 

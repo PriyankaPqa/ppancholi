@@ -42,9 +42,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import PageLoading from '@/ui/components/PageLoading.vue';
-import SecondaryLeftMenu from '@/ui/views/Dashboard/Layout/SecondaryLeftMenu.vue';
-import SecondaryRightMenu from '@/ui/views/Dashboard/Layout/SecondaryRightMenu.vue';
+import PageLoading from '@/ui/shared-components/PageLoading.vue';
+import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vue';
+import SecondaryRightMenu from '@/ui/views/components/layout/SecondaryRightMenu.vue';
 import { INavigationTab } from '@/types';
 import routes from '@/constants/routes';
 
@@ -158,17 +158,17 @@ export default Vue.extend({
     },
     redirectFromOutside(): void {
       // If beneficiary profile and from outside
-      if (this.$route.name === routes.beneficiaryProfileEdit.name) {
-        this.$router.replace({ name: routes.caseFiles.name });
-      } else {
-        const routeName = this.getBackRoute();
+      // if (this.$route.name === routes.beneficiaryProfileEdit.name) {
+      //   this.$router.replace({ name: routes.caseFiles.name });
+      // } else {
+      const routeName = this.getBackRoute();
 
-        if (routeName) {
-          this.$router.replace({ name: routeName });
-        } else {
-          this.$router.replace({ name: routes.dashboard.name });
-        }
+      if (routeName) {
+        this.$router.replace({ name: routeName });
+      } else {
+        this.$router.replace({ name: routes.home.name });
       }
+      // }
     },
     redirectBack(): void {
       const routeName = this.$route.params.backRouteName || this.getBackRoute();
@@ -181,23 +181,23 @@ export default Vue.extend({
     },
     getBackRoute(): string | null {
       switch (this.$route.name) {
-        case routes.eventDetailSummary.name:
-          return routes.events.name;
-
-        case routes.teams_detail.name:
-          return routes.teams.name;
-
-        case routes.system_management_lists.name:
-          return routes.system_management.name;
-
-        case routes.system_management_user_accounts.name:
-          return routes.system_management.name;
-
-        case routes.system_management_supported_languages.name:
-          return routes.system_management.name;
-
-        case routes.system_management_roles.name:
-          return routes.system_management.name;
+        // case routes.eventDetailSummary.name:
+        //   return routes.events.name;
+        //
+        // case routes.teams_detail.name:
+        //   return routes.teams.name;
+        //
+        // case routes.system_management_lists.name:
+        //   return routes.system_management.name;
+        //
+        // case routes.system_management_user_accounts.name:
+        //   return routes.system_management.name;
+        //
+        // case routes.system_management_supported_languages.name:
+        //   return routes.system_management.name;
+        //
+        // case routes.system_management_roles.name:
+        //   return routes.system_management.name;
 
         default:
           return null;

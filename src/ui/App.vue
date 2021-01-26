@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import RouterViewTransition from '@/ui/components/RouterViewTransition.vue';
+import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
 
 export default {
   name: 'App',

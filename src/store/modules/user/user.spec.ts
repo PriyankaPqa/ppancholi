@@ -1,7 +1,7 @@
 import { Store } from 'vuex';
 import { mockStore, IRootState } from '@/store';
 import { mockUsersData, User } from '@/entities/user';
-import { authenticationResponseData } from '@/entities/authentication';
+import { mockAuthenticationData } from '@/auth/authentication.mock';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 
 describe('>>> Users Module', () => {
@@ -77,12 +77,14 @@ describe('>>> Users Module', () => {
 
       expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(1);
 
+      const authenticationData = mockAuthenticationData();
+
       expect(store.getters['user/user']).toEqual(new User({
-        oid: authenticationResponseData.account.idTokenClaims.oid as string,
-        email: authenticationResponseData.account.idTokenClaims.email as string,
-        family_name: authenticationResponseData.account.idTokenClaims.family_name as string,
-        given_name: authenticationResponseData.account.idTokenClaims.given_name as string,
-        roles: authenticationResponseData.account.idTokenClaims.roles as string[],
+        oid: authenticationData.account.idTokenClaims.oid as string,
+        email: authenticationData.account.idTokenClaims.email as string,
+        family_name: authenticationData.account.idTokenClaims.family_name as string,
+        given_name: authenticationData.account.idTokenClaims.given_name as string,
+        roles: authenticationData.account.idTokenClaims.roles as string[],
       }));
     });
   });

@@ -1,4 +1,4 @@
-import { authenticationResponseData } from '@/entities/authentication';
+import { mockAuthenticationData } from '@/auth/authentication.mock';
 
 export default {
   signIn: jest.fn(),
@@ -7,5 +7,5 @@ export default {
 
   isSignedIn: jest.fn(),
 
-  acquireToken: jest.fn(async () => ({ ...authenticationResponseData })),
+  acquireToken: jest.fn(async () => ({ ...mockAuthenticationData() })),
 };

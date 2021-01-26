@@ -1,24 +1,32 @@
-import { IEvent } from '@/entities/event';
+import { IEvent, IOtherProvince, IRegion } from '@/entities/event';
 import { IEventType } from '@/entities/eventType';
 
 export interface IStorage {
   getters: {
     eventTypes(): Array<IEventType>;
+    events(): Array<IEvent>;
   }
 
   actions: {
     fetchEventTypes(): Promise<IEventType[]>;
+    fetchEvents(): Promise<IEvent[]>;
+    fetchOtherProvinces(): Promise<IOtherProvince[]>
+    fetchRegions(): Promise<IRegion[]>;
     createEvent(payload: IEvent): Promise<IEvent>;
   }
 }
 
 export interface IStorageMock {
   getters: {
-    eventTypes: jest.Mock<void>
+    eventTypes: jest.Mock<void>;
+    events: jest.Mock<void>;
   }
 
   actions: {
-    fetchEventTypes: jest.Mock<void>
-    createEvent: jest.Mock<void>
+    fetchEventTypes: jest.Mock<void>;
+    fetchEvents: jest.Mock<void>;
+    fetchOtherProvinces: jest.Mock<void>;
+    fetchRegions: jest.Mock<void>;
+    createEvent: jest.Mock<void>;
   }
 }

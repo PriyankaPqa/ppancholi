@@ -70,7 +70,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -92,9 +91,9 @@ export default Vue.extend({
     },
 
     accountSettings() {
-      this.$router.push({
-        name: routes.accountSettings.name,
-      });
+      // this.$router.push({
+      //   name: routes.accountSettings.name,
+      // });
     },
 
     logout() {

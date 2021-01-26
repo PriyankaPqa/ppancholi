@@ -1563,5 +1563,6 @@
     "pageNotFound.message": "This page doesn't exist.",
     "loginError.title": "Unable to sign in",
     "loginError.message": "There was a problem signing you in. Please try again, or contact a system administrator.",
-    "loginError.signIn": "Sign in"
+    "loginError.signIn": "Sign in",
+    "zendesk.help_link.createEvent": "https://rctech.zendesk.com/hc/en-us/articles/360038885973-Create-an-Event"
 }

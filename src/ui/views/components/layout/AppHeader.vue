@@ -8,16 +8,6 @@
 
       <v-spacer />
 
-      <v-btn
-        v-if="($route.name === routes.crc_registration_landing_page.name && $vuetify.breakpoint.smAndUp) || $vuetify.breakpoint.mdAndUp"
-        color="primary"
-        class="mx-4 my-4"
-        data-test="appHeader__contactUs"
-        :href="getZendeskUrl"
-        target="_blank">
-        {{ $t('common.contact_us.label') }}
-      </v-btn>
-
       <language-selector />
 
       <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" @click="handleGeneralHelpMenu">
@@ -38,7 +28,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import routes from '@/constants/routes';
-import LanguageSelector from '@/ui/components/LanguageSelector.vue';
+import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
 
 export default Vue.extend({
   name: 'Header',
@@ -91,12 +81,6 @@ export default Vue.extend({
       this.$storage.dashboard.mutations.setProperty({
         property: 'generalHelpMenuVisible',
         value: !this.$store.state.dashboard.generalHelpMenuVisible,
-      });
-    },
-
-    routeToRegistration() {
-      this.$router.push({
-        name: routes.crc_registration_landing_page.name,
       });
     },
   },

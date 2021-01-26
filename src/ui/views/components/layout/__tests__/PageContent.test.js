@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import helpers from '@/ui/helpers';
-import Component from '../Layout/PageContent.vue';
+import Component from '../PageContent.vue';
 
 describe('PageContent.vue', () => {
   let wrapper;

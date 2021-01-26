@@ -63,12 +63,20 @@ export default Vue.extend({
     items(): INavigationTab[] {
       return [
         {
-          to: routes.dashboard.name,
+          to: routes.home.name,
           icon: 'mdi-home',
           text: 'dashboard.leftMenu.home_title',
           test: 'home',
           permission: null,
         },
+        // {
+        //   to: routes.events.home.name,
+        //   icon: 'mdi-calendar',
+        //   text: 'dashboard.leftMenu.events_title',
+        //   test: 'events',
+        //   exact: false,
+        //   permission: null,
+        // },
       ];
     },
 

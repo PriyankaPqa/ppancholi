@@ -19,7 +19,7 @@ const router = new VueRouter({
   },
 });
 
-const authorizationGuard = async (to: Route, next: NavigationGuardNext) => {
+const authenticationGuard = async (to: Route, next: NavigationGuardNext) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     try {
       // Check if the user is already signed in and redirect to login page if not
@@ -47,7 +47,7 @@ const authorizationGuard = async (to: Route, next: NavigationGuardNext) => {
 router.beforeEach(async (to, from, next) => {
   localStorage.setItem('fromOutside', (from.name === null).toString());
 
-  await authorizationGuard(to, next);
+  await authenticationGuard(to, next);
 
   next();
 });
