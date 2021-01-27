@@ -11,11 +11,11 @@ variables:
 
 name: $(Major).$(Minor).$(Patch)
 
-resources: 
-  repositories: 
+resources:
+  repositories:
   - repository: Templates
     name: 'Shared/pipeline-templates'
-    type: git 
+    type: git
     ref: master
 
 stages:
