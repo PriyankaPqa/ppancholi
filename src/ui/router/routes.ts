@@ -80,11 +80,13 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.events.layout.path, // events
             component: EventsLayout,
+            meta: { level: 'level4' },
             children: [
               {
                 path: Routes.events.home.path,
                 name: Routes.events.home.name,
                 component: HomeEvents,
+                meta: { level: 'level4' },
               },
               {
                 path: Routes.events.create.path,

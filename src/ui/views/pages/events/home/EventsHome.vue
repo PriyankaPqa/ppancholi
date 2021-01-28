@@ -1,25 +1,17 @@
 <template>
-  <v-container>
-    <v-row no-gutters>
-      <v-col :cols="12">
-        <v-btn @click="addEvent">
-          Click here to add event
-        </v-btn>
-      </v-col>
-    </v-row>
-  </v-container>
+  <div class="pa-4">
+    <events-table />
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import routes from '@/constants/routes';
+import EventsTable from '@/ui/views/pages/events/EventsTable.vue';
 
 export default Vue.extend({
   name: 'EventsHome',
-  methods: {
-    addEvent() {
-      this.$router.push({ name: routes.events.create.name });
-    },
+  components: {
+    EventsTable,
   },
 });
 </script>

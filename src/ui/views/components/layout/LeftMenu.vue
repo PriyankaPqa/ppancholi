@@ -78,6 +78,14 @@ export default Vue.extend({
           level: 'level1',
         },
         {
+          to: routes.events.home.name,
+          icon: 'mdi-calendar',
+          text: 'dashboard.leftMenu.events_title',
+          test: 'events',
+          exact: false,
+          level: 'level4',
+        },
+        {
           to: routes.teams.home.name,
           icon: 'mdi-account-multiple-plus',
           text: 'dashboard.leftMenu.teams_title',
@@ -93,14 +101,6 @@ export default Vue.extend({
           exact: false,
           level: 'level3',
         },
-        // {
-        //   to: routes.events.home.name,
-        //   icon: 'mdi-calendar',
-        //   text: 'dashboard.leftMenu.events_title',
-        //   test: 'events',
-        //   exact: false,
-        //   permission: null,
-        // },
       ];
     },
 

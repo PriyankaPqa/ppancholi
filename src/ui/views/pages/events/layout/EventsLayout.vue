@@ -1,7 +1,5 @@
 <template>
-  <v-container fluid fill-height class="pa-0">
-    <router-view-transition />
-  </v-container>
+  <router-view-transition />
 </template>
 
 <script lang="ts">
