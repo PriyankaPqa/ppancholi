@@ -6,8 +6,11 @@ import Routes from '../../constants/routes';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 
-const CaseFileLayout = () => import(/* webpackChunkName: "casefile" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
-const HomeCaseFile = () => import(/* webpackChunkName: "casefile" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
+const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
+const ApprovalsHome = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/home/ApprovalsHome.vue');
+
+const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
+const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
 
 const MainLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/components/layout/MainLayout.vue');
 const HomeLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
@@ -18,6 +21,9 @@ const CreateEditEvent = () => import(/* webpackChunkName: "event" */ '@/ui/views
 
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
+
+const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
+const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
 
 export const routes: Array<RouteConfig> = [
   {
@@ -46,6 +52,32 @@ export const routes: Array<RouteConfig> = [
             meta: { level: 'level1' },
           },
           {
+            path: Routes.approvals.layout.path, // approvals
+            component: ApprovalsLayout,
+            meta: { level: 'level3' },
+            children: [
+              {
+                path: Routes.approvals.home.path,
+                name: Routes.approvals.home.name,
+                component: ApprovalsHome,
+                meta: { level: 'level3' },
+              },
+            ],
+          },
+          {
+            path: Routes.caseFile.layout.path, // case files
+            component: CaseFileLayout,
+            meta: { level: 'level1' },
+            children: [
+              {
+                path: Routes.caseFile.home.path,
+                name: Routes.caseFile.home.name,
+                component: HomeCaseFile,
+                meta: { level: 'level1' },
+              },
+            ],
+          },
+          {
             path: Routes.events.layout.path, // events
             component: EventsLayout,
             children: [
@@ -62,15 +94,15 @@ export const routes: Array<RouteConfig> = [
             ],
           },
           {
-            path: Routes.caseFile.layout.path, // case files
-            component: CaseFileLayout,
-            meta: { level: 'level1' },
+            path: Routes.teams.layout.path, // teams
+            component: TeamsLayout,
+            meta: { level: 'level3' },
             children: [
               {
-                path: Routes.caseFile.home.path,
-                name: Routes.caseFile.home.name,
-                component: HomeCaseFile,
-                meta: { level: 'level1' },
+                path: Routes.teams.home.path,
+                name: Routes.teams.home.name,
+                component: TeamsHome,
+                meta: { level: 'level3' },
               },
             ],
           },

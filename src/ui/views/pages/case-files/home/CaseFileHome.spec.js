@@ -1,15 +1,15 @@
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import CaseFileTable from '@/ui/views/pages/case-files/CaseFilesTable.vue';
-import Component from './HomeLevel1.vue';
+import Component from './CaseFileHome.vue';
 
 const localVue = createLocalVue();
 
-describe('HomeLevel1.vue', () => {
+describe('CaseFileHome.vue', () => {
   let wrapper;
 
   describe('Template', () => {
     it('shows CaseFileTable component', () => {
-      wrapper = mount(Component, {
+      wrapper = shallowMount(Component, {
         localVue,
       });
       expect(wrapper.findComponent(CaseFileTable)).toBeTruthy();

@@ -6,7 +6,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import CaseFileTable from '@/ui/views/components/CaseFileTable.vue';
+import CaseFileTable from '@/ui/views/pages/case-files/CaseFilesTable.vue';
 
 export default Vue.extend({
   name: 'HomeLevel1',

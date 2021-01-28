@@ -77,6 +77,22 @@ export default Vue.extend({
           exact: false,
           level: 'level1',
         },
+        {
+          to: routes.teams.home.name,
+          icon: 'mdi-account-multiple-plus',
+          text: 'dashboard.leftMenu.teams_title',
+          test: 'teams',
+          exact: false,
+          level: 'level3',
+        },
+        {
+          to: routes.approvals.home.name,
+          icon: 'mdi-check',
+          text: 'dashboard.leftMenu.approvals_title',
+          test: 'approvals',
+          exact: false,
+          level: 'level3',
+        },
         // {
         //   to: routes.events.home.name,
         //   icon: 'mdi-calendar',

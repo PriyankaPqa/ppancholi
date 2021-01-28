@@ -1,7 +1,13 @@
 const routes = {
-  home: {
-    path: 'home',
-    name: 'home',
+  approvals: {
+    layout: {
+      path: 'approvals',
+      name: 'approvals.layout',
+    },
+    home: {
+      path: '',
+      name: 'approvals.home',
+    },
   },
   caseFile: {
     layout: {
@@ -31,9 +37,23 @@ const routes = {
       name: 'events.edit',
     },
   },
+  home: {
+    path: 'home',
+    name: 'home',
+  },
   loginError: {
     path: 'login-error',
     name: 'Login error',
+  },
+  teams: {
+    layout: {
+      path: 'teams',
+      name: 'teams.layout',
+    },
+    home: {
+      path: '',
+      name: 'teams.home',
+    },
   },
 };
 
