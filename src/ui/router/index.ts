@@ -51,7 +51,7 @@ const authenticationGuard = async (to: Route, next: NavigationGuardNext) => {
 };
 
 const authorizationGuard = async (to: Route, from: Route, next: NavigationGuardNext) => {
-  if (to.matched.some((record) => record.meta.level)) {
+  if (to.meta.level) {
     if (hasLevel(to.meta.level)) {
       next();
     } else {
