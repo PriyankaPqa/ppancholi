@@ -3,6 +3,7 @@ import { IUser, IUserData } from '@/entities/user';
 export interface IStorage {
   getters: {
     user(): IUser;
+    landingPage(): string;
   }
 
   mutations: {
@@ -18,6 +19,7 @@ export interface IStorage {
 export interface IStorageMock {
   getters: {
     user: jest.Mock<void>
+    landingPage: jest.Mock<void>
   }
 
   mutations: {

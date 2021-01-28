@@ -5,6 +5,10 @@ import { Trans } from '@/ui/plugins/translation';
 import Routes from '../../constants/routes';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
+
+const CaseFileLayout = () => import(/* webpackChunkName: "casefile" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
+const HomeCaseFile = () => import(/* webpackChunkName: "casefile" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
+
 const MainLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/components/layout/MainLayout.vue');
 const HomeLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
 
@@ -39,6 +43,7 @@ export const routes: Array<RouteConfig> = [
             path: Routes.home.path,
             name: Routes.home.name,
             component: HomeLayout,
+            meta: { level: 'level1' },
           },
           {
             path: Routes.events.layout.path, // events
@@ -48,13 +53,24 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.events.home.path,
                 name: Routes.events.home.name,
                 component: HomeEvents,
-                meta: { permissions: [''] },
               },
               {
                 path: Routes.events.create.path,
                 name: Routes.events.create.name,
                 component: CreateEditEvent,
-                meta: { permissions: [''] },
+              },
+            ],
+          },
+          {
+            path: Routes.caseFile.layout.path, // case files
+            component: CaseFileLayout,
+            meta: { level: 'level1' },
+            children: [
+              {
+                path: Routes.caseFile.home.path,
+                name: Routes.caseFile.home.name,
+                component: HomeCaseFile,
+                meta: { level: 'level1' },
               },
             ],
           },

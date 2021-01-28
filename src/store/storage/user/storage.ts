@@ -7,6 +7,10 @@ export const makeStorage = (store: IStore): IStorage => ({
     user(): IUser {
       return store.getters['user/user'];
     },
+
+    landingPage(): string {
+      return store.getters['user/landingPage'];
+    },
   },
 
   mutations: {

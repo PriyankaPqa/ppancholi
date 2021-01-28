@@ -4,6 +4,7 @@ import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import store from '@/store/store';
+import { i18n } from '@/ui/plugins/i18n';
 
 Vue.use(VueRouter);
 
@@ -18,6 +19,11 @@ const router = new VueRouter({
     return { x: 0, y: 0 };
   },
 });
+
+const hasLevel = (levelToCheck: string) => {
+  const user = store.getters['user/user'];
+  return user.hasLevel(levelToCheck);
+};
 
 const authenticationGuard = async (to: Route, next: NavigationGuardNext) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
@@ -44,10 +50,24 @@ const authenticationGuard = async (to: Route, next: NavigationGuardNext) => {
   }
 };
 
+const authorizationGuard = async (to: Route, from: Route, next: NavigationGuardNext) => {
+  if (to.matched.some((record) => record.meta.level)) {
+    if (hasLevel(to.meta.level)) {
+      next();
+    } else {
+      next(from);
+      Vue.toasted.global.error(i18n.t('error.no_permission'));
+    }
+  }
+  next();
+};
+
 router.beforeEach(async (to, from, next) => {
   localStorage.setItem('fromOutside', (from.name === null).toString());
 
   await authenticationGuard(to, next);
+
+  await authorizationGuard(to, from, next);
 
   next();
 });

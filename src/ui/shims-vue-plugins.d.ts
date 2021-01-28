@@ -20,5 +20,7 @@ declare module 'vue/types/vue' {
     $toasted: Toasted;
     $formatCurrency: IFormatCurrency;
     $m: IMFunction;
+    $hasLevel: (p: string) => boolean;
+    $hasRole: (p: string) => boolean;
   }
 }

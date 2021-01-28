@@ -1,7 +1,7 @@
 import Vue from 'vue';
 
 export type VuePlugin = Vue & {
-  hasLevel: (p: string) => boolean;
+  $hasLevel: (p: string) => boolean;
   $hasRole: (p: string) => boolean;
 };
 

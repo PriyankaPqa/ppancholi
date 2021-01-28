@@ -27,6 +27,20 @@ const getters = {
     email: state.email,
     roles: state.roles,
   }),
+
+  landingPage(state: IState) {
+    // We take the assumption that user has one role for now
+    const role = state.roles[0];
+    switch (role) {
+      case 'level1': return 'HomeLevel1';
+      case 'level2': return 'HomeLevel2';
+      case 'level3': return 'HomeLevel3';
+      case 'level4': return 'HomeLevel4';
+      case 'level5': return 'HomeLevel5';
+      case 'level6': return 'HomeLevel6';
+      default: return '';
+    }
+  },
 };
 
 const mutations = {

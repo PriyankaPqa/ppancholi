@@ -7,6 +7,6 @@ export interface INavigationTab {
   disabled?: boolean;
   to?: string;
   exact?: boolean;
-  permission?: string;
+  level?: string;
   active?: boolean;
 }

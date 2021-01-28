@@ -27,7 +27,7 @@ describe('>>> User', () => {
 
     it('should instantiate roles', () => {
       const user = new User(mockUserData);
-      expect(user.roles).toEqual(['level6', 'level1']);
+      expect(user.roles).toEqual(['level1']);
     });
   });
   describe('>> methods', () => {
@@ -92,7 +92,7 @@ describe('>>> User', () => {
     describe('hasRole', () => {
       test('should return true if the user has the role', () => {
         const user = new User(mockUsersData()[0]);
-        expect(user.hasRole('level6')).toBeTruthy();
+        expect(user.hasRole('level1')).toBeTruthy();
       });
 
       test('should return false if the user does not have the role', () => {
@@ -104,12 +104,12 @@ describe('>>> User', () => {
     describe('hasLevel', () => {
       test('should return true if the user has a higher level than the one passed', () => {
         const user = new User(mockUsersData()[0]);
-        expect(user.hasLevel('level3')).toBeTruthy();
+        expect(user.hasLevel('level1')).toBeTruthy();
       });
 
       test('should return false if the user does not have a higher level than the one passed', () => {
         const user = new User(mockUsersData()[2]);
-        expect(user.hasLevel('level3')).toBeFalsy();
+        expect(user.hasLevel('level4')).toBeFalsy();
       });
     });
   });

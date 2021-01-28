@@ -4,6 +4,7 @@ export const mockStorageUser = () : IStorageMock => ({
 
   getters: {
     user: jest.fn(),
+    landingPage: jest.fn(),
   },
 
   mutations: {

@@ -3,20 +3,13 @@ import { mockStore, IRootState } from '@/store';
 import { mockUsersData, User } from '@/entities/user';
 import { mockAuthenticationData } from '@/auth/authentication.mock';
 import authenticationProvider from '@/auth/AuthenticationProvider';
+import { mockStoreUserLevel } from '@/test/helpers';
 
 describe('>>> Users Module', () => {
   let store: Store<IRootState>;
 
   beforeEach(() => {
-    store = mockStore({
-      modules: {
-        user: {
-          state: {
-            ...mockUsersData()[0],
-          },
-        },
-      },
-    });
+    store = mockStoreUserLevel(1);
   });
 
   describe('>> Getters', () => {
@@ -30,6 +23,38 @@ describe('>>> Users Module', () => {
         given_name: mockUser.given_name,
         roles: mockUser.roles,
       }));
+    });
+
+    describe('landingPage', () => {
+      it('returns proper landing page for level 1 user', () => {
+        store = mockStoreUserLevel(1);
+        expect(store.getters['user/landingPage']).toEqual('HomeLevel1');
+      });
+
+      it('returns proper landing page for level 2 user', () => {
+        store = mockStoreUserLevel(2);
+        expect(store.getters['user/landingPage']).toEqual('HomeLevel2');
+      });
+
+      it('returns proper landing page for level 3 user', () => {
+        store = mockStoreUserLevel(3);
+        expect(store.getters['user/landingPage']).toEqual('HomeLevel3');
+      });
+
+      it('returns proper landing page for level 4 user', () => {
+        store = mockStoreUserLevel(4);
+        expect(store.getters['user/landingPage']).toEqual('HomeLevel4');
+      });
+
+      it('returns proper landing page for level 5 user', () => {
+        store = mockStoreUserLevel(5);
+        expect(store.getters['user/landingPage']).toEqual('HomeLevel5');
+      });
+
+      it('returns proper landing page for level 6 user', () => {
+        store = mockStoreUserLevel(6);
+        expect(store.getters['user/landingPage']).toEqual('HomeLevel6');
+      });
     });
   });
 

@@ -3,6 +3,16 @@ const routes = {
     path: 'home',
     name: 'home',
   },
+  caseFile: {
+    layout: {
+      path: 'casefile',
+      name: 'casefile.layout',
+    },
+    home: {
+      path: '',
+      name: 'casefile.home',
+    },
+  },
   events: {
     layout: {
       path: 'events',

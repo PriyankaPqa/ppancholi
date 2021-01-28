@@ -67,7 +67,15 @@ export default Vue.extend({
           icon: 'mdi-home',
           text: 'dashboard.leftMenu.home_title',
           test: 'home',
-          permission: null,
+          level: 'level1',
+        },
+        {
+          to: routes.caseFile.home.name,
+          icon: 'mdi-clipboard-text',
+          text: 'dashboard.leftMenu.caseFiles_title',
+          test: 'caseFile',
+          exact: false,
+          level: 'level1',
         },
         // {
         //   to: routes.events.home.name,
@@ -98,8 +106,7 @@ export default Vue.extend({
     },
 
     availableItems(): INavigationTab[] {
-      return this.items;
-      // return this.items.filter((item) => !item.permission || this.$can(item.permission));
+      return this.items.filter((item) => !item.level || this.$hasLevel(item.level));
     },
   },
 
