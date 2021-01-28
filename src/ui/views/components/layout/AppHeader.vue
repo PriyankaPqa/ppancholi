@@ -8,15 +8,26 @@
 
       <v-spacer />
 
+      <v-btn
+        v-if="$hasLevel('level1')"
+        color="primary"
+        class="mx-md-4 my-4"
+        data-test="appHeader__registerBeneficiaries">
+        <v-icon left>
+          mdi-plus
+        </v-icon>
+        {{ $t('dashboard.header.registerBeneficiaries') }}
+      </v-btn>
+
       <language-selector />
 
-      <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" @click="handleGeneralHelpMenu">
+      <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" @click.stop="handleGeneralHelpMenu">
         <v-icon color="grey darken-2">
           mdi-information
         </v-icon>
       </v-btn>
 
-      <v-btn icon data-test="right-menu-trigger" @click="handleRightMenu">
+      <v-btn icon data-test="right-menu-trigger" @click.stop="handleRightMenu">
         <v-avatar color="grey darken-2" size="36">
           <span class="white--text">{{ getAvatarName }}</span>
         </v-avatar>
@@ -48,10 +59,6 @@ export default Vue.extend({
     getAvatarName() {
       const user = this.$storage.user.getters.user();
       return user.getInitials();
-    },
-
-    getZendeskUrl() {
-      return this.$i18n.locale === 'fr' ? 'https://rctech.zendesk.com/hc/fr/requests/new' : 'https://rctech.zendesk.com/hc/en-us/requests/new';
     },
   },
 
