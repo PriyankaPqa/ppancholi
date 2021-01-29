@@ -95,6 +95,71 @@ describe('LeftMenu.vue', () => {
         expect(item.test).toBe('caseFile');
         expect(item.level).toBe('level1');
       });
+
+      test('Item[2]', () => {
+        const item = wrapper.vm.items[2];
+        expect(item.to).toBe(routes.events.home.name);
+        expect(item.icon).toBe('mdi-calendar');
+        expect(item.text).toBe('dashboard.leftMenu.events_title');
+        expect(item.test).toBe('events');
+        expect(item.level).toBe('level4');
+      });
+      test('Item[3]', () => {
+        const item = wrapper.vm.items[3];
+        expect(item.to).toBe(routes.teams.home.name);
+        expect(item.icon).toBe('mdi-account-multiple-plus');
+        expect(item.text).toBe('dashboard.leftMenu.teams_title');
+        expect(item.test).toBe('teams');
+        expect(item.level).toBe('level3');
+      });
+      test('Item[4]', () => {
+        const item = wrapper.vm.items[4];
+        expect(item.to).toBe(routes.financialAssistance.home.name);
+        expect(item.icon).toBe('mdi-currency-usd');
+        expect(item.text).toBe('dashboard.leftMenu.financial_title');
+        expect(item.test).toBe('financial');
+        expect(item.level).toBe('level6');
+      });
+      test('Item[5]', () => {
+        const item = wrapper.vm.items[5];
+        expect(item.to).toBe(routes.approvals.home.name);
+        expect(item.icon).toBe('mdi-check');
+        expect(item.text).toBe('dashboard.leftMenu.approvals_title');
+        expect(item.test).toBe('approvals');
+        expect(item.level).toBe('level3');
+      });
+      test('Item[6]', () => {
+        const item = wrapper.vm.items[6];
+        expect(item.to).toBe(routes.massActions.home.name);
+        expect(item.icon).toBe('mdi-file-document');
+        expect(item.text).toBe('dashboard.leftMenu.mass_actions_title');
+        expect(item.test).toBe('mass_actions');
+        expect(item.level).toBe('level5');
+      });
+      test('Item[7]', () => {
+        const item = wrapper.vm.items[7];
+        expect(item.to).toBe(routes.assessments.home.name);
+        expect(item.icon).toBe('mdi-poll-box');
+        expect(item.text).toBe('dashboard.leftMenu.assessments_title');
+        expect(item.test).toBe('assessments');
+        expect(item.level).toBe('level6');
+      });
+      test('Item[8]', () => {
+        const item = wrapper.vm.items[8];
+        expect(item.to).toBe(routes.systemManagement.home.name);
+        expect(item.icon).toBe('dvr');
+        expect(item.text).toBe('dashboard.system_management.leftMenu.title');
+        expect(item.test).toBe('system_management');
+        expect(item.level).toBe('level6');
+      });
+      test('Item[9]', () => {
+        const item = wrapper.vm.items[9];
+        expect(item.to).toBe(routes.reports.home.name);
+        expect(item.icon).toBe('mdi-alert-octagon');
+        expect(item.text).toBe('dashboard.leftMenu.reports_title');
+        expect(item.test).toBe('reports');
+        expect(item.level).toBe('level5');
+      });
     });
   });
 });

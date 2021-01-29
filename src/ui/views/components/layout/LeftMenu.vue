@@ -94,6 +94,14 @@ export default Vue.extend({
           level: 'level3',
         },
         {
+          to: routes.financialAssistance.home.name,
+          icon: 'mdi-currency-usd',
+          text: 'dashboard.leftMenu.financial_title',
+          test: 'financial',
+          exact: false,
+          level: 'level6',
+        },
+        {
           to: routes.approvals.home.name,
           icon: 'mdi-check',
           text: 'dashboard.leftMenu.approvals_title',
@@ -108,6 +116,21 @@ export default Vue.extend({
           test: 'mass_actions',
           exact: false,
           level: 'level5',
+        },
+        {
+          to: routes.assessments.home.name,
+          icon: 'mdi-poll-box',
+          text: 'dashboard.leftMenu.assessments_title',
+          test: 'assessments',
+          level: 'level6',
+        },
+        {
+          to: routes.systemManagement.home.name,
+          icon: 'dvr',
+          text: 'dashboard.system_management.leftMenu.title',
+          test: 'system_management',
+          exact: false,
+          level: 'level6',
         },
         {
           to: routes.reports.home.name,

@@ -6,18 +6,24 @@ import Routes from '../../constants/routes';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 
+const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');
+const AssessmentsHome = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/home/AssessmentsHome.vue');
+
 const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/layout/ApprovalsLayout.vue');
 const ApprovalsHome = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/home/ApprovalsHome.vue');
 
 const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
 const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
 
-const MainLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/components/layout/MainLayout.vue');
-const HomeLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
-
 const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/layout/EventsLayout.vue');
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
 const CreateEditEvent = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/create-edit/CreateEditEvent.vue');
+
+const MainLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/components/layout/MainLayout.vue');
+const HomeLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
+
+const FinancialAssistanceLayout = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/layout/FinancialAssistanceLayout.vue');
+const FinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/home/FinancialAssistanceHome.vue');
 
 const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
 const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
@@ -27,6 +33,9 @@ const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/view
 
 const ReportsLayout = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/layout/ReportsLayout.vue');
 const ReportsHome = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/home/ReportsHome.vue');
+
+const SystemManagementLayout = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/layout/SystemManagementLayout.vue');
+const SystemManagementHome = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/home/SystemManagementHome.vue');
 
 const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
@@ -71,6 +80,19 @@ export const routes: Array<RouteConfig> = [
             ],
           },
           {
+            path: Routes.assessments.layout.path, // assessments
+            component: AssessmentsLayout,
+            meta: { level: 'level6' },
+            children: [
+              {
+                path: Routes.assessments.home.path,
+                name: Routes.assessments.home.name,
+                component: AssessmentsHome,
+                meta: { level: 'level6' },
+              },
+            ],
+          },
+          {
             path: Routes.caseFile.layout.path, // case files
             component: CaseFileLayout,
             meta: { level: 'level1' },
@@ -102,6 +124,19 @@ export const routes: Array<RouteConfig> = [
             ],
           },
           {
+            path: Routes.financialAssistance.layout.path, // financial assistance
+            component: FinancialAssistanceLayout,
+            meta: { level: 'level6' },
+            children: [
+              {
+                path: Routes.financialAssistance.home.path,
+                name: Routes.financialAssistance.home.name,
+                component: FinancialAssistanceHome,
+                meta: { level: 'level6' },
+              },
+            ],
+          },
+          {
             path: Routes.massActions.layout.path, // mass actions
             component: MassActionsLayout,
             meta: { level: 'level5' },
@@ -124,6 +159,19 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.reports.home.name,
                 component: ReportsHome,
                 meta: { level: 'level5' },
+              },
+            ],
+          },
+          {
+            path: Routes.systemManagement.layout.path, // system management
+            component: SystemManagementLayout,
+            meta: { level: 'level6' },
+            children: [
+              {
+                path: Routes.systemManagement.home.path,
+                name: Routes.systemManagement.home.name,
+                component: SystemManagementHome,
+                meta: { level: 'level6' },
               },
             ],
           },

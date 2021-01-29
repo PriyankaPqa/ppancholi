@@ -1,4 +1,14 @@
 const routes = {
+  assessments: {
+    layout: {
+      path: 'assessments',
+      name: 'assessments.layout',
+    },
+    home: {
+      path: '',
+      name: 'assessments.home',
+    },
+  },
   approvals: {
     layout: {
       path: 'approvals',
@@ -37,6 +47,16 @@ const routes = {
       name: 'events.edit',
     },
   },
+  financialAssistance: {
+    layout: {
+      path: 'financial-assistance',
+      name: 'financialAssistance.layout',
+    },
+    home: {
+      path: '',
+      name: 'financialAssistance.home',
+    },
+  },
   massActions: {
     layout: {
       path: 'mass-actions',
@@ -63,6 +83,16 @@ const routes = {
     home: {
       path: '',
       name: 'reports.home',
+    },
+  },
+  systemManagement: {
+    layout: {
+      path: 'system-management',
+      name: 'systemManagement.layout',
+    },
+    home: {
+      path: '',
+      name: 'systemManagement.home',
     },
   },
   teams: {
