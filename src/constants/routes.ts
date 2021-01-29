@@ -37,6 +37,16 @@ const routes = {
       name: 'events.edit',
     },
   },
+  massActions: {
+    layout: {
+      path: 'mass-actions',
+      name: 'massActions.layout',
+    },
+    home: {
+      path: '',
+      name: 'massActions.home',
+    },
+  },
   home: {
     path: 'home',
     name: 'home',
@@ -44,6 +54,16 @@ const routes = {
   loginError: {
     path: 'login-error',
     name: 'Login error',
+  },
+  reports: {
+    layout: {
+      path: 'reports',
+      name: 'reports.layout',
+    },
+    home: {
+      path: '',
+      name: 'reports.home',
+    },
   },
   teams: {
     layout: {

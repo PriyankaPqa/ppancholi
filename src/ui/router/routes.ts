@@ -19,8 +19,14 @@ const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pa
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
 const CreateEditEvent = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/create-edit/CreateEditEvent.vue');
 
+const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
+const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
+
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
+
+const ReportsLayout = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/layout/ReportsLayout.vue');
+const ReportsHome = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/home/ReportsHome.vue');
 
 const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
@@ -92,6 +98,32 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.events.create.path,
                 name: Routes.events.create.name,
                 component: CreateEditEvent,
+              },
+            ],
+          },
+          {
+            path: Routes.massActions.layout.path, // mass actions
+            component: MassActionsLayout,
+            meta: { level: 'level5' },
+            children: [
+              {
+                path: Routes.massActions.home.path,
+                name: Routes.massActions.home.name,
+                component: MassActionsHome,
+                meta: { level: 'level5' },
+              },
+            ],
+          },
+          {
+            path: Routes.reports.layout.path, // reports
+            component: ReportsLayout,
+            meta: { level: 'level5' },
+            children: [
+              {
+                path: Routes.reports.home.path,
+                name: Routes.reports.home.name,
+                component: ReportsHome,
+                meta: { level: 'level5' },
               },
             ],
           },

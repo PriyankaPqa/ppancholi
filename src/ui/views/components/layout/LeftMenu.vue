@@ -101,6 +101,21 @@ export default Vue.extend({
           exact: false,
           level: 'level3',
         },
+        {
+          to: routes.massActions.home.name,
+          icon: 'mdi-file-document',
+          text: 'dashboard.leftMenu.mass_actions_title',
+          test: 'mass_actions',
+          exact: false,
+          level: 'level5',
+        },
+        {
+          to: routes.reports.home.name,
+          icon: 'mdi-alert-octagon',
+          text: 'dashboard.leftMenu.reports_title',
+          test: 'reports',
+          level: 'level5',
+        },
       ];
     },
 
