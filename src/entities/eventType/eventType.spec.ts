@@ -34,5 +34,10 @@ describe('>>> EventType', () => {
         },
       });
     });
+
+    it('should instantiate orderRank', () => {
+      const eventType = new EventType(mockData);
+      expect(eventType.orderRank).toBe(1);
+    });
   });
 });

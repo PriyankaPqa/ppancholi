@@ -57,10 +57,16 @@ describe('>>> User', () => {
       expect(event.location).toEqual({
         province: 11,
         provinceOther: {
-          translation: {},
+          translation: {
+            en: '',
+            fr: '',
+          },
         },
         region: {
-          translation: {},
+          translation: {
+            en: '',
+            fr: '',
+          },
         },
       });
     });
@@ -83,7 +89,7 @@ describe('>>> User', () => {
         responseLevel: 3,
         eventType: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
         dateReported: new Date('2021-01-01T00:00:00Z'),
-        assistanceNumber: '514 454 4545',
+        assistanceNumber: '+15144544545',
       });
     });
   });

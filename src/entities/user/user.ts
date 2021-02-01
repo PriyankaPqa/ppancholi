@@ -47,7 +47,7 @@ export class User implements IUser {
     const levelToCheckIndex = hierarchy.indexOf(levelToCheck);
 
     if (levelToCheckIndex === -1) {
-      throw new Error(`${levelToCheck} does not exist in ${hierarchy}`);
+      return false;
     }
 
     let highestUserLevel = 0;

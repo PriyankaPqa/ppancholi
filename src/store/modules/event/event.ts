@@ -2,30 +2,30 @@ import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
 import _findIndex from 'lodash/findIndex';
+import _sortBy from 'lodash/sortBy';
 import { IRootState } from '@/store/store.types';
 import { EventType, IEventType, IEventTypeData } from '@/entities/eventType';
 import {
   Event, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
-
+import helpers from '@/ui/helpers';
 import {
   IState,
 } from './event.types';
 
-let eventTypesFetched = false;
-let eventsFetched = false;
-
 const getDefaultState = (): IState => ({
   eventTypes: [],
   events: [],
+  eventTypesFetched: false,
+  eventsFetched: false,
 });
 
 const moduleState: IState = getDefaultState();
 
 const getters = {
-  eventTypes: (state: IState) => state.eventTypes.map((e) => new EventType(e)),
+  eventTypes: (state: IState) => _sortBy(state.eventTypes.map((e) => new EventType(e)), 'orderRank'),
 
-  events: (state: IState) => state.events.map((e) => new Event(e)),
+  events: (state: IState) => helpers.sortMultilingualArray(state.events.map((e) => new Event(e)), 'name'),
 };
 
 const mutations = {
@@ -54,20 +54,20 @@ const mutations = {
 
 const actions = {
   async fetchEventTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEventType[]> {
-    if (!eventTypesFetched) {
+    if (!context.state.eventTypesFetched) {
       const data = await this.$services.events.getEventTypes();
       context.commit('setEventTypes', data);
-      eventTypesFetched = true;
+      context.state.eventTypesFetched = true;
     }
 
     return context.getters.eventTypes;
   },
 
   async fetchEvents(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEvent[]> {
-    if (!eventsFetched) {
+    if (!context.state.eventsFetched) {
       const data = await this.$services.events.getEvents();
       context.commit('setEvents', data);
-      eventsFetched = true;
+      context.state.eventsFetched = true;
     }
 
     return context.getters.events;

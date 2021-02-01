@@ -131,6 +131,7 @@ export const shallowMount = (Component, options) => {
   });
 
   const store = mockStore(options.store);
+  const $storage = makeStorage(store);
 
   const wrapper = sm(Component, {
     vuetify,
@@ -138,7 +139,7 @@ export const shallowMount = (Component, options) => {
     sync: false,
     ...options,
     store,
-    mocks: deepmerge(mocks, options.mocks || {}),
+    mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });
 

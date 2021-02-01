@@ -3,7 +3,6 @@
     <ValidationObserver ref="form">
       <v-row class="justify-center">
         <v-col cols="12" xl="8" lg="9" md="11" sm="12">
-          {{ localEvent.location.provinceOther }}
           <language-tabs :language="languageMode" @click="setLanguageMode" />
 
           <v-row>
@@ -37,27 +36,29 @@
                 :disabled="isEditMode"
                 :label="`${$t('event.province')} *`"
                 :items="canadianProvinces"
-                :rules="rules.location.province" />
+                :rules="rules.location.province"
+                @input="clearRegionAndOtherProvince" />
             </v-col>
 
             <v-col v-if="otherProvinceSelected" cols="6" md="6" sm="12">
-              <v-combo-box-with-validation
-                :value="provinceOther"
+              <rc-autosuggest
+                v-model="provinceOther"
+                :items="otherProvincesSorted"
                 data-test="event-province-other"
                 :label="`${$t('event.other')} *`"
-                :items="otherProvinces"
-                :item-text="(i) => i.name.translation[languageMode]"
-                return-object
                 :rules="rules.location.provinceOther"
-                @change="provinceOther = $event" />
+                :item-text="(item) => item.name.translation[languageMode]" />
             </v-col>
 
             <v-col cols="6" md="6" sm="12">
-              <v-text-field-with-validation
-                v-model="localEvent.location.region.translation[languageMode]"
+              <rc-autosuggest
+                v-model="region"
+                :items="regionsSorted"
                 data-test="event-region"
                 :label="$t('event.region')"
-                :rules="rules.location.region" />
+                :disabled="!localEvent.location.province"
+                :rules="rules.location.region"
+                :item-text="(item) => item.name.translation[languageMode]" />
             </v-col>
           </v-row>
 
@@ -75,13 +76,14 @@
             </v-col>
 
             <v-col cols="6" md="6" sm="12">
-              <ValidationProvider v-slot="{ errors }" data-test="event-phone" :rules="rules.responseDetails.assistanceNumber">
+              <ValidationProvider v-slot="{ errors }" :rules="rules.responseDetails.assistanceNumber">
                 <rc-phone
                   :value="assistanceNumber"
                   :disabled="isEditMode"
                   outlined
                   :label="`${$t('event.number')} *`"
                   :error-messages="errors"
+                  data-test="event-phone"
                   @input="setAssistanceNumber" />
               </ValidationProvider>
             </v-col>
@@ -207,16 +209,14 @@
           <v-row>
             <v-col cols="12">
               <v-autocomplete-with-validation
-                :value="localEvent.relatedEvents"
+                v-model="localEvent.relatedEvents"
                 data-test="event-related-events"
                 item-value="id"
                 :item-text="(item) => $m(item.name)"
                 :label="$t('event.create.related_events.label')"
                 :items="relatedEventsSorted"
                 multiple
-                hide-details
-                @change="() => {}"
-                @delete="() => {}" />
+                hide-details />
             </v-col>
           </v-row>
 
@@ -244,20 +244,23 @@ import {
   VDateFieldWithValidation,
   VAutocompleteWithValidation,
   VTextAreaWithValidation,
-  VComboBoxWithValidation,
   RcPhone,
+  RcAutosuggest,
 } from '@rctech/component-library';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers';
 import {
   ECanadaProvinces, EEventResponseLevels, EEventStatus,
 } from '@/types';
-import { Event, IEvent, IOtherProvince } from '@/entities/event';
+import {
+  Event, IEvent, IOtherProvince, IRegion,
+} from '@/entities/event';
 import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { TOOLTIP_DELAY } from '@/ui/constants';
 import _cloneDeep from 'lodash/cloneDeep';
 import { IEventType } from '@/entities/eventType';
+import utils from '@/entities/utils';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -269,8 +272,8 @@ export default Vue.extend({
     VDateFieldWithValidation,
     VAutocompleteWithValidation,
     VTextAreaWithValidation,
-    VComboBoxWithValidation,
     RcPhone,
+    RcAutosuggest,
   },
 
   props: {
@@ -302,32 +305,6 @@ export default Vue.extend({
   },
 
   computed: {
-    canadianProvinces(): Record<string, unknown>[] {
-      const provinces = helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
-      const index = provinces.findIndex((e) => e.value === ECanadaProvinces.OT);
-
-      // Put the "Other" option at the bottom of the list
-      return [
-        ...provinces.slice(0, index),
-        ...provinces.slice(index + 1),
-        provinces[index],
-      ];
-    },
-
-    responseLevels(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(EEventResponseLevels, 'event.response_level');
-    },
-
-    eventTypesSorted(): Array<IEventType> {
-      const eventTypes = this.$storage.event.getters.eventTypes();
-      return [...eventTypes].sort((a, b) => this.$m(a.name).localeCompare(this.$m(b.name)));
-    },
-
-    relatedEventsSorted(): Array<IEvent> {
-      const events = this.$storage.event.getters.events();
-      return [...events].sort((a, b) => this.$m(a.name).localeCompare(this.$m(b.name)));
-    },
-
     isStatusOpen: {
       get(): boolean {
         return this.localEvent.schedule.status === EEventStatus.Open;
@@ -355,11 +332,62 @@ export default Vue.extend({
         if (typeof value === 'string') {
           this.localEvent.location.provinceOther.translation[this.languageMode] = value;
         } else {
-          this.localEvent.location.provinceOther.translation = {
-            ...value.name.translation,
-          };
+          this.localEvent.location.provinceOther.translation = { ...value.name.translation };
         }
       },
+    },
+
+    otherProvincesSorted(): Array<IOtherProvince> {
+      return helpers.sortMultilingualArray(this.otherProvinces, 'name');
+    },
+
+    region: {
+      get(): string {
+        return this.localEvent.location.region.translation[this.languageMode];
+      },
+
+      set(value: string | IRegion) {
+        if (typeof value === 'string') {
+          this.localEvent.location.region.translation[this.languageMode] = value;
+        } else {
+          this.localEvent.location.region.translation = { ...value.name.translation };
+        }
+      },
+    },
+
+    regionsSorted(): Array<IRegion> {
+      if (!this.localEvent.location.province) {
+        return [];
+      }
+
+      const sorted = helpers.sortMultilingualArray(this.regions, 'name');
+      const filtered = sorted.filter((i) => i.province === this.localEvent.location.province);
+
+      return filtered;
+    },
+
+    canadianProvinces(): Record<string, unknown>[] {
+      const provinces = helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+      const index = provinces.findIndex((e) => e.value === ECanadaProvinces.OT);
+
+      // Put the "Other" option at the bottom of the list
+      return [
+        ...provinces.slice(0, index),
+        ...provinces.slice(index + 1),
+        provinces[index],
+      ];
+    },
+
+    responseLevels(): Record<string, unknown>[] {
+      return helpers.enumToTranslatedCollection(EEventResponseLevels, 'event.response_level');
+    },
+
+    eventTypesSorted(): Array<IEventType> {
+      return this.$storage.event.getters.eventTypes();
+    },
+
+    relatedEventsSorted(): Array<IEvent> {
+      return this.$storage.event.getters.events();
     },
 
     rules(): Record<string, unknown> {
@@ -452,8 +480,6 @@ export default Vue.extend({
   },
 
   async mounted() {
-    // TODO On province changes, fetch region to populate combobox
-    // TODO if province is other, fetch other provinces to populate combobox
     if (!this.localEvent.responseDetails.dateReported) {
       this.localEvent.responseDetails.dateReported = this.today;
     }
@@ -479,6 +505,11 @@ export default Vue.extend({
     setAssistanceNumber(p: {number: string; countryISO2: string; e164Number: string}) {
       this.assistanceNumber = p;
       this.localEvent.responseDetails.assistanceNumber = p.e164Number;
+    },
+
+    clearRegionAndOtherProvince() {
+      this.localEvent.location.provinceOther = utils.initMultilingualAttributes();
+      this.localEvent.location.region = utils.initMultilingualAttributes();
     },
   },
 });

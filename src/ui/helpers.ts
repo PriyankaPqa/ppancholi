@@ -1,3 +1,4 @@
+import { IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 
 export default {
@@ -20,6 +21,28 @@ export default {
       `directories=no, titlebar=no, toolbar=no, location=no, status=no,
       menubar=no, scrollbars=yes, resizable=yes ,width=${popupWidth}, height=1040, top=0, left=${leftPos}`,
     );
+  },
+
+  scrollToFirstError(containerID: string) {
+    const containerElement = document.getElementById(containerID);
+
+    if (!containerElement) return;
+
+    const errorElements = containerElement.getElementsByClassName('failed');
+
+    if (errorElements.length > 0) {
+      if (containerID === 'app') {
+        window.scrollTo({
+          top: (errorElements[0] as HTMLElement).offsetTop - 90,
+          behavior: 'smooth',
+        });
+      } else {
+        containerElement.scrollTo({
+          top: (errorElements[0] as HTMLElement).offsetTop - 90,
+          behavior: 'smooth',
+        });
+      }
+    }
   },
 
   // This function takes a enum in parameters and output a collection with [value: value of enum, text: the translation corresponding to the enum]
@@ -47,5 +70,38 @@ export default {
     el.select();
     document.execCommand('copy');
     document.body.removeChild(el);
+  },
+
+  getMultilingualValue(m: IMultilingual) {
+    let { locale } = i18n;
+
+    if (locale !== 'en' && locale !== 'fr') {
+      locale = 'en';
+    }
+
+    if (m && m.translation && m.translation[locale]) {
+      return m.translation[locale];
+    }
+
+    return '';
+  },
+
+  sortMultilingualArray<T>(array: Array<T>, key: keyof T) {
+    return [...array]
+      .sort((a, b) => this.getMultilingualValue(a[key] as unknown as IMultilingual)
+        .localeCompare(this.getMultilingualValue(b[key] as unknown as IMultilingual)));
+  },
+
+  /**
+   * Returns a normalized string value (replaces accents and special characters)
+   * Useful for comparing string
+   * @param value The string to normalize
+   */
+  getNormalizedString(value: string) {
+    if (!value) {
+      return value;
+    }
+
+    return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   },
 };

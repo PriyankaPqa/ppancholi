@@ -43,6 +43,7 @@ export class EventsService implements IEventsService {
       responseLevel: event.responseDetails.responseLevel,
       scheduledCloseDate: event.schedule.scheduledCloseDate,
       scheduledOpenDate: event.schedule.scheduledOpenDate,
+      status: event.schedule.status,
     };
 
     return payload;

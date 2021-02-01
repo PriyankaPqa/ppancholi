@@ -5,11 +5,11 @@
         <event-form :event.sync="event" :is-edit-mode="isEditMode" />
 
         <template slot="actions">
-          <v-btn data-test="cancel" @click="back()">
+          <v-btn data-test="cancel" @click.stop="back()">
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="isEditMode ? failed || !isEventDirty : false" @click="submit">
+          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed" @click.stop="submit">
             {{ submitLabel }}
           </v-btn>
         </template>
@@ -21,11 +21,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { PageTemplate, PageContent } from '@/ui/views/components/layout';
-import EventForm from '@/ui/views/pages/events/create-edit/EventForm.vue';
+import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
+import PageContent from '@/ui/views/components/layout/PageContent.vue';
 import routes from '@/constants/routes';
 import { Event } from '@/entities/event';
 import { VForm } from '@/types';
+import helpers from '@/ui/helpers';
+import EventForm from './EventForm.vue';
 
 export default Vue.extend({
   name: 'CreateEditEvent',
@@ -46,10 +48,6 @@ export default Vue.extend({
   computed: {
     isEditMode(): boolean {
       return this.$route.name === routes.events.edit.name;
-    },
-
-    isEventDirty(): boolean {
-      return false;
     },
 
     submitLabel(): TranslateResult {
@@ -73,9 +71,13 @@ export default Vue.extend({
         try {
           this.loading = true;
           await this.$storage.event.actions.createEvent(this.event);
+          this.$toasted.global.success(this.$t('event_create.success'));
+          // TODO redirect to event details page
         } finally {
           this.loading = false;
         }
+      } else {
+        helpers.scrollToFirstError('scrollAnchor');
       }
     },
   },

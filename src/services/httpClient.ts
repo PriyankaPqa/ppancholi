@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import camelCaseKeys from 'camelcase-keys';
 import { localStorageKeys } from '@/constants/localStorage';
 import { v4 as uuidv4 } from 'uuid';
 import Vue from 'vue';
@@ -61,7 +62,7 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(response.config)) {
       // Add what you want when request is successful. It is applied globally except when { globalHandler: false }
     }
-    return response;
+    return camelCaseKeys(response, { deep: true });
   }
 
   private responseErrorHandler(error: any) {

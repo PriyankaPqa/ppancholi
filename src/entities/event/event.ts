@@ -3,6 +3,7 @@ import { ECanadaProvinces, IMultilingual } from '@/types';
 import utils from '@/entities/utils';
 
 import {
+  EEventStatus,
   IEvent,
   IEventData,
   IEventLocation,
@@ -92,7 +93,7 @@ export class Event implements IEvent {
       scheduledOpenDate: null,
       scheduledCloseDate: null,
       closeReason: '',
-      status: null,
+      status: EEventStatus.OnHold,
     };
     this.responseDetails = {
       responseLevel: null,

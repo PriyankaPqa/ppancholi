@@ -11,6 +11,7 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
       fr: 'Inundation',
     },
   },
+  orderRank: 1,
 }, {
   id: '2',
   created: new Date('2021-01-14T00:00:00.000Z'),
@@ -22,6 +23,7 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
       fr: 'Incendies',
     },
   },
+  orderRank: 2,
 }, {
   id: '3',
   created: new Date('2021-01-14T00:00:00.000Z'),
@@ -33,4 +35,5 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
       fr: 'Tremblement de terre',
     },
   },
+  orderRank: 3,
 }];

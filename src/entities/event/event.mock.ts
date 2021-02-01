@@ -24,10 +24,16 @@ export const mockEventsData = (): IEventData[] => [{
   location: {
     province: 11,
     provinceOther: {
-      translation: {},
+      translation: {
+        en: '',
+        fr: '',
+      },
     },
     region: {
-      translation: {},
+      translation: {
+        en: '',
+        fr: '',
+      },
     },
   },
   schedule: {
@@ -42,7 +48,7 @@ export const mockEventsData = (): IEventData[] => [{
     responseLevel: 3,
     eventType: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
     dateReported: '2021-01-01T00:00:00Z',
-    assistanceNumber: '514 454 4545',
+    assistanceNumber: '+15144544545',
   },
   relatedEvents: [],
   id: '7c076603-580a-4400-bef2-5ddececb0931',
@@ -96,7 +102,7 @@ export const mockEventsData = (): IEventData[] => [{
     responseLevel: 3,
     eventType: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
     dateReported: '2021-01-01T00:00:00Z',
-    assistanceNumber: '514 454 4545',
+    assistanceNumber: '+15144544545',
   },
   relatedEvents: [],
   id: '87776243-696f-426b-b961-31ee98e3a4cd',
@@ -125,16 +131,16 @@ export const mockRegionData = (): IRegion[] => [{
   province: ECanadaProvinces.AB,
   name: {
     translation: {
-      en: 'Northern Alberta',
-      fr: 'Northern Alberta FR',
+      en: 'Southern Alberta',
+      fr: 'Southern Alberta FR',
     },
   },
 }, {
   province: ECanadaProvinces.AB,
   name: {
     translation: {
-      en: 'Southern Alberta',
-      fr: 'Southern Alberta FR',
+      en: 'Northern Alberta',
+      fr: 'Northern Alberta FR',
     },
   },
 }];

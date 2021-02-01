@@ -85,6 +85,7 @@ export interface ICreateEventRequest {
   responseLevel: EResponseLevel;
   scheduledCloseDate: Date | string;
   scheduledOpenDate: Date | string;
+  status: EEventStatus;
 }
 
 /**

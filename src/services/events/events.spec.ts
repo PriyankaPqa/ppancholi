@@ -1,5 +1,6 @@
 import { Event, mockEventsData } from '@/entities/event';
 import { mockHttp } from '@/services/httpClient.mock';
+import { EEventStatus } from '@/types';
 import { EventsService } from './events';
 
 const http = mockHttp();
@@ -15,7 +16,7 @@ describe('>>> Events Service', () => {
   test('createEvent converts the event entity to the correct payload', async () => {
     await service.createEvent(new Event(mockEventsData()[0]));
     expect(http.post).toHaveBeenCalledWith('/event/events', {
-      assistanceNumber: '514 454 4545',
+      assistanceNumber: '+15144544545',
       dateReported: new Date('2021-01-01T00:00:00.000Z'),
       description: {
         translation: {
@@ -46,6 +47,7 @@ describe('>>> Events Service', () => {
       responseLevel: 3,
       scheduledCloseDate: new Date('2021-06-15T00:00:00.000Z'),
       scheduledOpenDate: new Date('2021-03-15T00:00:00.000Z'),
+      status: EEventStatus.OnHold,
     });
   });
 

@@ -6,6 +6,7 @@ export interface IEventTypeData {
   timestamp?: Date;
   eTag?: string;
   name: IMultilingual;
+  orderRank: number;
 }
 
 export interface IEventType {
@@ -14,4 +15,5 @@ export interface IEventType {
   readonly timestamp?: Date;
   readonly eTag?: string;
   readonly name: IMultilingual;
+  readonly orderRank: number;
 }

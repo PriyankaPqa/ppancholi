@@ -120,6 +120,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.events.create.path,
                 name: Routes.events.create.name,
                 component: CreateEditEvent,
+                meta: { level: 'level6' },
               },
             ],
           },
