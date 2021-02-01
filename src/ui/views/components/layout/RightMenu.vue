@@ -19,8 +19,8 @@
     </v-toolbar>
 
     <div class="flex-row align-start pa-4">
-      <v-avatar class="mr-4" color="grey lighten-4" size="32" data-test="rightMenu__avatar">
-        <span class="rc-body12 fw-medium">
+      <v-avatar class="mr-4" color="grey darken-2" size="32" data-test="rightMenu__avatar">
+        <span class="rc-body12 fw-medium white--text">
           {{ user.getInitials() }}
         </span>
       </v-avatar>
@@ -29,27 +29,41 @@
         <div class="rc-title-3 fw-medium break-word" data-test="rightMenu__userName">
           {{ user.getFullName() }}
         </div>
+      </div>
+    </div>
 
-        <div class="rc-body12 break-word" data-test="rightMenu__email">
-          {{ user.email }}
-        </div>
+    <div class="flex-row align-start align-center ps-4 pb-4">
+      <v-icon small>
+        mdi-email
+      </v-icon>
+      <div class="rc-body14 break-word pl-2" data-test="rightMenu__email">
+        {{ user.email }}
+      </div>
+    </div>
+
+    <div class="flex-row align-start align-center ps-4">
+      <v-icon small>
+        mdi-account-circle
+      </v-icon>
+      <div class="rc-body14 break-word pl-2" data-test="rightMenu__role">
+        {{ $t(`user.role.${user.currentRole()}`) }}
       </div>
     </div>
 
     <template #append>
       <v-divider />
 
-      <!--      <v-list-item data-test="account-settings" link @click="accountSettings">-->
-      <!--        <v-list-item-icon>-->
-      <!--          <v-icon>-->
-      <!--            mdi-cog-->
-      <!--          </v-icon>-->
-      <!--        </v-list-item-icon>-->
+      <v-list-item data-test="account-settings" link @click="accountSettings">
+        <v-list-item-icon>
+          <v-icon>
+            mdi-cog
+          </v-icon>
+        </v-list-item-icon>
 
-      <!--        <v-list-item-content>-->
-      <!--          <v-list-item-title>{{ $t('dashboard.rightmenu.accountSettings') }}</v-list-item-title>-->
-      <!--        </v-list-item-content>-->
-      <!--      </v-list-item>-->
+        <v-list-item-content>
+          <v-list-item-title>{{ $t('dashboard.rightmenu.accountSettings') }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
 
       <v-divider />
 
@@ -69,15 +83,16 @@
 </template>
 
 <script lang="ts">
+import { IUser } from '@/entities/user';
 import Vue from 'vue';
 
 export default Vue.extend({
   name: 'RightMenu',
   computed: {
-    show() {
+    show(): boolean {
       return this.$store.state.dashboard.rightMenuVisible;
     },
-    user() {
+    user(): IUser {
       return this.$storage.user.getters.user();
     },
   },
