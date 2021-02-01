@@ -64,7 +64,7 @@ export const routes: Array<RouteConfig> = [
             path: Routes.home.path,
             name: Routes.home.name,
             component: HomeLayout,
-            meta: { level: 'level1', roles: ['contributorIM'] },
+            meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance'] },
           },
           {
             path: Routes.approvals.layout.path, // approvals
@@ -98,7 +98,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.caseFile.home.path,
                 name: Routes.caseFile.home.name,
                 component: HomeCaseFile,
-                meta: { level: 'level1', roles: ['contributorIM'] },
+                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance'] },
               },
             ],
           },
@@ -152,7 +152,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.reports.home.path,
                 name: Routes.reports.home.name,
                 component: ReportsHome,
-                meta: { level: 'level5', roles: ['contributorIM'] },
+                meta: { level: 'level5', roles: ['contributorIM', 'contributorFinance'] },
               },
             ],
           },

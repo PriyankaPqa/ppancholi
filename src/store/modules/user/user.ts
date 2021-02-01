@@ -39,6 +39,7 @@ const getters = {
       case 'level5': return 'HomeLevel5';
       case 'level6': return 'HomeLevel6';
       case 'contributorIM': return 'ContributorIM';
+      case 'contributorFinance': return 'ContributorFinance';
       default: return '';
     }
   },

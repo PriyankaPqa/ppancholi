@@ -6,7 +6,7 @@
 import HomeLevel1 from '@/ui/views/pages/home/components/HomeLevel1.vue';
 
 export default {
-  name: 'ContributorIM',
+  name: 'ContributorFinance',
   components: {
     HomeLevel1,
   },

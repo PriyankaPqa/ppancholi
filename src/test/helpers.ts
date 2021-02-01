@@ -15,6 +15,8 @@ export const mockStoreUserLevel = (level: number) => mockStoreWithUserState(mock
 
 export const mockStoreUserContributorIM = () => mockStoreWithUserState(mockUsersData()[6]);
 
+export const mockStoreUserContributorFinance = () => mockStoreWithUserState(mockUsersData()[7]);
+
 export const mockUserStateLevel = (level: number) => ({
   modules: {
     user: {

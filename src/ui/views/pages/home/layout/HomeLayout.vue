@@ -14,6 +14,7 @@ import HomeLevel4 from '@/ui/views/pages/home/components/HomeLevel4.vue';
 import HomeLevel5 from '@/ui/views/pages/home/components/HomeLevel5.vue';
 import HomeLevel6 from '@/ui/views/pages/home/components/HomeLevel6.vue';
 import ContributorIM from '@/ui/views/pages/home/components/ContributorIM.vue';
+import ContributorFinance from '@/ui/views/pages/home/components/ContributorFinance.vue';
 
 export default Vue.extend({
   name: 'HomeLayout',
@@ -26,6 +27,7 @@ export default Vue.extend({
     HomeLevel5,
     HomeLevel6,
     ContributorIM,
+    ContributorFinance,
   },
 
   mixins: [metadata],
