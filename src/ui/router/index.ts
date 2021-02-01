@@ -25,6 +25,11 @@ const hasLevel = (levelToCheck: string) => {
   return user.hasLevel(levelToCheck);
 };
 
+const hasRole = (roleToCheck: string) => {
+  const user = store.getters['user/user'];
+  return user.hasRole(roleToCheck);
+};
+
 const authenticationGuard = async (to: Route, next: NavigationGuardNext) => {
   if (to.matched.some((record) => record.meta.requiresAuth)) {
     try {
@@ -51,15 +56,26 @@ const authenticationGuard = async (to: Route, next: NavigationGuardNext) => {
 };
 
 const authorizationGuard = async (to: Route, from: Route, next: NavigationGuardNext) => {
+  let hasProperLevel;
+  let hasProperRole;
+
   if (to.meta.level) {
-    if (hasLevel(to.meta.level)) {
-      next();
-    } else {
-      next(from);
-      Vue.toasted.global.error(i18n.t('error.no_permission'));
-    }
+    hasProperLevel = hasLevel(to.meta.level);
   } else {
+    hasProperLevel = true;
+  }
+
+  if (to.meta.roles) {
+    hasProperRole = to.meta.roles.some((r: string) => hasRole(r));
+  } else {
+    hasProperRole = false;
+  }
+
+  if (hasProperLevel || hasProperRole) {
     next();
+  } else {
+    next(from);
+    Vue.toasted.global.error(i18n.t('error.no_permission'));
   }
 };
 

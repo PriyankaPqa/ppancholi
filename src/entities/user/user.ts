@@ -40,10 +40,20 @@ export class User implements IUser {
     return this.roles.some((r: string) => r.toLowerCase() === role.toLowerCase());
   }
 
+  currentRole(): string {
+    return this.roles[0];
+  }
+
   // hasHigherLevelOrSameAs
   hasLevel(levelToCheck: string): boolean {
     // Index n + 1, inherit from index [0,n]
     const hierarchy = ['level1', 'level2', 'level3', 'level4', 'level5', 'level6'];
+    const userHasALevel = hierarchy.indexOf(this.currentRole());
+
+    if (userHasALevel === -1) {
+      return false;
+    }
+
     const levelToCheckIndex = hierarchy.indexOf(levelToCheck);
 
     if (levelToCheckIndex === -1) {
@@ -58,7 +68,6 @@ export class User implements IUser {
         highestUserLevel = index;
       }
     });
-
     return levelToCheckIndex <= highestUserLevel;
   }
 }

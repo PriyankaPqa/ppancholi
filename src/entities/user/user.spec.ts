@@ -111,6 +111,18 @@ describe('>>> User', () => {
         const user = new User(mockUsersData()[2]);
         expect(user.hasLevel('level4')).toBeFalsy();
       });
+
+      test('should return false if the user has a role which does not have the notion of level', () => {
+        const user = new User(mockUsersData()[6]);
+        expect(user.hasLevel('level1')).toBeFalsy();
+      });
+    });
+
+    describe('currentRole', () => {
+      test('should return the first index of roles', () => {
+        const user = new User(mockUsersData()[0]);
+        expect(user.currentRole()).toEqual('level1');
+      });
     });
   });
 });

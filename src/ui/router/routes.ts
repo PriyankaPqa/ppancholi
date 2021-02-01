@@ -64,12 +64,10 @@ export const routes: Array<RouteConfig> = [
             path: Routes.home.path,
             name: Routes.home.name,
             component: HomeLayout,
-            meta: { level: 'level1' },
           },
           {
             path: Routes.approvals.layout.path, // approvals
             component: ApprovalsLayout,
-            meta: { level: 'level3' },
             children: [
               {
                 path: Routes.approvals.home.path,
@@ -82,7 +80,6 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.assessments.layout.path, // assessments
             component: AssessmentsLayout,
-            meta: { level: 'level6' },
             children: [
               {
                 path: Routes.assessments.home.path,
@@ -95,26 +92,24 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.caseFile.layout.path, // case files
             component: CaseFileLayout,
-            meta: { level: 'level1' },
             children: [
               {
                 path: Routes.caseFile.home.path,
                 name: Routes.caseFile.home.name,
                 component: HomeCaseFile,
-                meta: { level: 'level1' },
+                meta: { level: 'level1', roles: ['contributorIM'] },
               },
             ],
           },
           {
             path: Routes.events.layout.path, // events
             component: EventsLayout,
-            meta: { level: 'level4' },
             children: [
               {
                 path: Routes.events.home.path,
                 name: Routes.events.home.name,
                 component: HomeEvents,
-                meta: { level: 'level4' },
+                meta: { level: 'level4', roles: ['contributorIM'] },
               },
               {
                 path: Routes.events.create.path,
@@ -127,7 +122,6 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.financialAssistance.layout.path, // financial assistance
             component: FinancialAssistanceLayout,
-            meta: { level: 'level6' },
             children: [
               {
                 path: Routes.financialAssistance.home.path,
@@ -140,7 +134,6 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.massActions.layout.path, // mass actions
             component: MassActionsLayout,
-            meta: { level: 'level5' },
             children: [
               {
                 path: Routes.massActions.home.path,
@@ -153,20 +146,18 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.reports.layout.path, // reports
             component: ReportsLayout,
-            meta: { level: 'level5' },
             children: [
               {
                 path: Routes.reports.home.path,
                 name: Routes.reports.home.name,
                 component: ReportsHome,
-                meta: { level: 'level5' },
+                meta: { level: 'level5', roles: ['contributorIM'] },
               },
             ],
           },
           {
             path: Routes.systemManagement.layout.path, // system management
             component: SystemManagementLayout,
-            meta: { level: 'level6' },
             children: [
               {
                 path: Routes.systemManagement.home.path,
@@ -179,7 +170,6 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.teams.layout.path, // teams
             component: TeamsLayout,
-            meta: { level: 'level3' },
             children: [
               {
                 path: Routes.teams.home.path,

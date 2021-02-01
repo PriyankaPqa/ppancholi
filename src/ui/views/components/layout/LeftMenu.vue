@@ -68,6 +68,7 @@ export default Vue.extend({
           text: 'dashboard.leftMenu.home_title',
           test: 'home',
           level: 'level1',
+          roles: ['contributorIM'],
         },
         {
           to: routes.caseFile.home.name,
@@ -76,6 +77,7 @@ export default Vue.extend({
           test: 'caseFile',
           exact: false,
           level: 'level1',
+          roles: ['contributorIM'],
         },
         {
           to: routes.events.home.name,
@@ -84,6 +86,7 @@ export default Vue.extend({
           test: 'events',
           exact: false,
           level: 'level4',
+          roles: ['contributorIM'],
         },
         {
           to: routes.teams.home.name,
@@ -138,6 +141,7 @@ export default Vue.extend({
           text: 'dashboard.leftMenu.reports_title',
           test: 'reports',
           level: 'level5',
+          roles: ['contributorIM'],
         },
       ];
     },
@@ -160,7 +164,16 @@ export default Vue.extend({
     },
 
     availableItems(): INavigationTab[] {
-      return this.items.filter((item) => !item.level || this.$hasLevel(item.level));
+      return this.items.filter((item) => {
+        const levelCheck = !item.level || this.$hasLevel(item.level);
+
+        let rolesCheck = false;
+
+        if (item.roles) {
+          rolesCheck = item.roles.some((r: string) => this.$hasRole(r));
+        }
+        return levelCheck || rolesCheck;
+      });
     },
   },
 

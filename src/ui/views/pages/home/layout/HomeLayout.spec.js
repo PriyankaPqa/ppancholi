@@ -1,11 +1,12 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import HomeLevel1 from '@/ui/views/pages/home/layout/HomeLevel1.vue';
-import HomeLevel2 from '@/ui/views/pages/home/layout/HomeLevel2.vue';
-import HomeLevel3 from '@/ui/views/pages/home/layout/HomeLevel3.vue';
-import HomeLevel4 from '@/ui/views/pages/home/layout/HomeLevel4.vue';
-import HomeLevel5 from '@/ui/views/pages/home/layout/HomeLevel5.vue';
-import HomeLevel6 from '@/ui/views/pages/home/layout/HomeLevel6.vue';
+import HomeLevel1 from '@/ui/views/pages/home/components/HomeLevel1.vue';
+import HomeLevel2 from '@/ui/views/pages/home/components/HomeLevel2.vue';
+import HomeLevel3 from '@/ui/views/pages/home/components/HomeLevel3.vue';
+import HomeLevel4 from '@/ui/views/pages/home/components/HomeLevel4.vue';
+import HomeLevel5 from '@/ui/views/pages/home/components/HomeLevel5.vue';
+import HomeLevel6 from '@/ui/views/pages/home/components/HomeLevel6.vue';
+import ContributorIM from '@/ui/views/pages/home/components/ContributorIM.vue';
 import Component from './HomeLayout.vue';
 
 const localVue = createLocalVue();
@@ -94,6 +95,17 @@ describe('HomeLayout.vue', () => {
         },
       });
       expect(wrapper.findComponent(HomeLevel1)).toBeTruthy();
+    });
+
+    it('shows ContributorIM component', () => {
+      storage.user.getters.landingPage.mockReturnValueOnce('ContributorIM');
+      wrapper = mount(Component, {
+        localVue,
+        mocks: {
+          $storage: storage,
+        },
+      });
+      expect(wrapper.findComponent(ContributorIM)).toBeTruthy();
     });
   });
 });

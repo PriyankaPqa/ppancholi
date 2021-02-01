@@ -1,10 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import HomeLevel5 from '@/ui/views/pages/home/layout/HomeLevel5.vue';
-import Component from './HomeLevel6.vue';
+import HomeLevel1 from '@/ui/views/pages/home/components/HomeLevel1.vue';
+import Component from './HomeLevel2.vue';
 
 const localVue = createLocalVue();
 
-describe('HomeLevel6.vue', () => {
+describe('HomeLevel2.vue', () => {
   let wrapper;
 
   describe('Template', () => {
@@ -12,7 +12,7 @@ describe('HomeLevel6.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
       });
-      expect(wrapper.findComponent(HomeLevel5)).toBeTruthy();
+      expect(wrapper.findComponent(HomeLevel1)).toBeTruthy();
     });
   });
 });

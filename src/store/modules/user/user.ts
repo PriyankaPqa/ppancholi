@@ -38,6 +38,7 @@ const getters = {
       case 'level4': return 'HomeLevel4';
       case 'level5': return 'HomeLevel5';
       case 'level6': return 'HomeLevel6';
+      case 'contributorIM': return 'ContributorIM';
       default: return '';
     }
   },

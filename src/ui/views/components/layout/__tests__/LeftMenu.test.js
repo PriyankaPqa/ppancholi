@@ -4,6 +4,7 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockUserStateLevel } from '@/test/helpers';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
+import { mockUsersData } from '@/entities/user';
 import Component from '../LeftMenu.vue';
 
 Vue.use(Vuetify);
@@ -68,6 +69,44 @@ describe('LeftMenu.vue', () => {
         });
         expect(wrapper.vm.availableItems).toMatchObject([items[0]]);
       });
+
+      it('returns items for which user has the proper role', () => {
+        const items = [
+          {
+            to: 'routes.home.name',
+            icon: 'mdi-home',
+            text: 'dashboard.leftMenu.home_title',
+            test: 'home',
+            level: 'level1',
+          },
+          {
+            to: 'routes.caseFile.home.name',
+            icon: 'mdi-clipboard-text',
+            text: 'dashboard.leftMenu.caseFiles_title',
+            test: 'caseFile',
+            level: 'level6',
+            roles: ['contributorIM'],
+          },
+        ];
+        const wrapper = mount(Component, {
+          localVue: createLocalVue(),
+          store: {
+            modules: {
+              user: {
+                state: {
+                  ...mockUsersData()[6],
+                },
+              },
+            },
+          },
+          computed: {
+            items() {
+              return items;
+            },
+          },
+        });
+        expect(wrapper.vm.availableItems).toMatchObject([items[1]]);
+      });
     });
 
     describe('items', () => {
@@ -85,6 +124,7 @@ describe('LeftMenu.vue', () => {
         expect(item.text).toBe('dashboard.leftMenu.home_title');
         expect(item.test).toBe('home');
         expect(item.level).toBe('level1');
+        expect(item.roles).toEqual(['contributorIM']);
       });
 
       test('Item[1]', () => {
@@ -94,6 +134,7 @@ describe('LeftMenu.vue', () => {
         expect(item.text).toBe('dashboard.leftMenu.caseFiles_title');
         expect(item.test).toBe('caseFile');
         expect(item.level).toBe('level1');
+        expect(item.roles).toEqual(['contributorIM']);
       });
 
       test('Item[2]', () => {
@@ -159,6 +200,7 @@ describe('LeftMenu.vue', () => {
         expect(item.text).toBe('dashboard.leftMenu.reports_title');
         expect(item.test).toBe('reports');
         expect(item.level).toBe('level5');
+        expect(item.roles).toEqual(['contributorIM']);
       });
     });
   });

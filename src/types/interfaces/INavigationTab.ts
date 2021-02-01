@@ -8,5 +8,6 @@ export interface INavigationTab {
   to?: string;
   exact?: boolean;
   level?: string;
+  roles?: string[];
   active?: boolean;
 }

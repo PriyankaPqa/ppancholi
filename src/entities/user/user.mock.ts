@@ -40,4 +40,11 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Jack',
   given_name: 'Orange',
   roles: ['level6'],
+},
+{
+  oid: '7',
+  email: 'test@test.ca',
+  family_name: 'Joe',
+  given_name: 'Pink',
+  roles: ['contributorIM'],
 }];

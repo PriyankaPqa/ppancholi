@@ -7,12 +7,13 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import metadata from '@/ui/mixins/metadata';
 
-import HomeLevel1 from '@/ui/views/pages/home/layout/HomeLevel1.vue';
-import HomeLevel2 from '@/ui/views/pages/home/layout/HomeLevel2.vue';
-import HomeLevel3 from '@/ui/views/pages/home/layout/HomeLevel3.vue';
-import HomeLevel4 from '@/ui/views/pages/home/layout/HomeLevel4.vue';
-import HomeLevel5 from '@/ui/views/pages/home/layout/HomeLevel5.vue';
-import HomeLevel6 from '@/ui/views/pages/home/layout/HomeLevel6.vue';
+import HomeLevel1 from '@/ui/views/pages/home/components/HomeLevel1.vue';
+import HomeLevel2 from '@/ui/views/pages/home/components/HomeLevel2.vue';
+import HomeLevel3 from '@/ui/views/pages/home/components/HomeLevel3.vue';
+import HomeLevel4 from '@/ui/views/pages/home/components/HomeLevel4.vue';
+import HomeLevel5 from '@/ui/views/pages/home/components/HomeLevel5.vue';
+import HomeLevel6 from '@/ui/views/pages/home/components/HomeLevel6.vue';
+import ContributorIM from '@/ui/views/pages/home/components/ContributorIM.vue';
 
 export default Vue.extend({
   name: 'HomeLayout',
@@ -24,6 +25,7 @@ export default Vue.extend({
     HomeLevel4,
     HomeLevel5,
     HomeLevel6,
+    ContributorIM,
   },
 
   mixins: [metadata],

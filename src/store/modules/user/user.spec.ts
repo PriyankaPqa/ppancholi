@@ -3,7 +3,7 @@ import { mockStore, IRootState } from '@/store';
 import { mockUsersData, User } from '@/entities/user';
 import { mockAuthenticationData } from '@/auth/authentication.mock';
 import authenticationProvider from '@/auth/AuthenticationProvider';
-import { mockStoreUserLevel } from '@/test/helpers';
+import { mockStoreUserLevel, mockStoreUserContributorIM } from '@/test/helpers';
 
 describe('>>> Users Module', () => {
   let store: Store<IRootState>;
@@ -54,6 +54,11 @@ describe('>>> Users Module', () => {
       it('returns proper landing page for level 6 user', () => {
         store = mockStoreUserLevel(6);
         expect(store.getters['user/landingPage']).toEqual('HomeLevel6');
+      });
+
+      it('returns proper landing page for contributorIM user', () => {
+        store = mockStoreUserContributorIM();
+        expect(store.getters['user/landingPage']).toEqual('ContributorIM');
       });
     });
   });
