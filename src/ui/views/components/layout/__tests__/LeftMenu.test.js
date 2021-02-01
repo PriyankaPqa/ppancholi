@@ -13,7 +13,7 @@ Vue.use(rolesAndPermissions);
 describe('LeftMenu.vue', () => {
   describe('Computed properties', () => {
     describe('availableItems', () => {
-      it('returns items with no level', () => {
+      it('does not return items with no level', () => {
         const items = [
           {
             to: 'routes.home.name',
@@ -36,7 +36,7 @@ describe('LeftMenu.vue', () => {
             },
           },
         });
-        expect(wrapper.vm.availableItems).toEqual(items);
+        expect(wrapper.vm.availableItems).toEqual([]);
       });
 
       it('returns items for which user has the proper level', () => {
@@ -167,7 +167,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-check');
         expect(item.text).toBe('dashboard.leftMenu.approvals_title');
         expect(item.test).toBe('approvals');
-        expect(item.level).toBe('level3');
+        expect(item.roles).toEqual(['level3', 'level4', 'level6']);
       });
       test('Item[6]', () => {
         const item = wrapper.vm.items[6];

@@ -110,7 +110,7 @@ export default Vue.extend({
           text: 'dashboard.leftMenu.approvals_title',
           test: 'approvals',
           exact: false,
-          level: 'level3',
+          roles: ['level3', 'level4', 'level6'],
         },
         {
           to: routes.massActions.home.name,
@@ -165,9 +165,12 @@ export default Vue.extend({
 
     availableItems(): INavigationTab[] {
       return this.items.filter((item) => {
-        const levelCheck = !item.level || this.$hasLevel(item.level);
-
+        let levelCheck = false;
         let rolesCheck = false;
+
+        if (item.level) {
+          levelCheck = this.$hasLevel(item.level);
+        }
 
         if (item.roles) {
           rolesCheck = item.roles.some((r: string) => this.$hasRole(r));

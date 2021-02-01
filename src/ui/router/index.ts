@@ -62,7 +62,7 @@ const authorizationGuard = async (to: Route, from: Route, next: NavigationGuardN
   if (to.meta.level) {
     hasProperLevel = hasLevel(to.meta.level);
   } else {
-    hasProperLevel = true;
+    hasProperLevel = false;
   }
 
   if (to.meta.roles) {

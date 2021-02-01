@@ -64,6 +64,7 @@ export const routes: Array<RouteConfig> = [
             path: Routes.home.path,
             name: Routes.home.name,
             component: HomeLayout,
+            meta: { level: 'level1', roles: ['contributorIM'] },
           },
           {
             path: Routes.approvals.layout.path, // approvals
@@ -73,7 +74,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.approvals.home.path,
                 name: Routes.approvals.home.name,
                 component: ApprovalsHome,
-                meta: { level: 'level3' },
+                meta: { roles: ['level3', 'level4', 'level6'] },
               },
             ],
           },
