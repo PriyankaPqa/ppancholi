@@ -124,7 +124,7 @@ describe('LeftMenu.vue', () => {
         expect(item.text).toBe('dashboard.leftMenu.home_title');
         expect(item.test).toBe('home');
         expect(item.level).toBe('level1');
-        expect(item.roles).toEqual(['contributorIM', 'contributorFinance']);
+        expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3']);
       });
 
       test('Item[1]', () => {
@@ -134,7 +134,7 @@ describe('LeftMenu.vue', () => {
         expect(item.text).toBe('dashboard.leftMenu.caseFiles_title');
         expect(item.test).toBe('caseFile');
         expect(item.level).toBe('level1');
-        expect(item.roles).toEqual(['contributorIM', 'contributorFinance']);
+        expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3']);
       });
 
       test('Item[2]', () => {

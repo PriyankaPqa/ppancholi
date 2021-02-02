@@ -3,7 +3,9 @@ import { mockStore, IRootState } from '@/store';
 import { mockUsersData, User } from '@/entities/user';
 import { mockAuthenticationData } from '@/auth/authentication.mock';
 import authenticationProvider from '@/auth/AuthenticationProvider';
-import { mockStoreUserLevel, mockStoreUserContributorIM, mockStoreUserContributorFinance } from '@/test/helpers';
+import {
+  mockStoreUserLevel, mockStoreUserContributorIM, mockStoreUserContributorFinance, mockStoreUserContributor3,
+} from '@/test/helpers';
 
 describe('>>> Users Module', () => {
   let store: Store<IRootState>;
@@ -28,12 +30,12 @@ describe('>>> Users Module', () => {
     describe('landingPage', () => {
       it('returns proper landing page for level 1 user', () => {
         store = mockStoreUserLevel(1);
-        expect(store.getters['user/landingPage']).toEqual('HomeLevel1');
+        expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
       });
 
       it('returns proper landing page for level 2 user', () => {
         store = mockStoreUserLevel(2);
-        expect(store.getters['user/landingPage']).toEqual('HomeLevel2');
+        expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
       });
 
       it('returns proper landing page for level 3 user', () => {
@@ -58,12 +60,17 @@ describe('>>> Users Module', () => {
 
       it('returns proper landing page for contributorIM user', () => {
         store = mockStoreUserContributorIM();
-        expect(store.getters['user/landingPage']).toEqual('ContributorIM');
+        expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
       });
 
       it('returns proper landing page for contributorFinance user', () => {
         store = mockStoreUserContributorFinance();
-        expect(store.getters['user/landingPage']).toEqual('ContributorFinance');
+        expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
+      });
+
+      it('returns proper landing page for contributor3 user', () => {
+        store = mockStoreUserContributor3();
+        expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
       });
     });
   });

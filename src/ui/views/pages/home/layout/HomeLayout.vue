@@ -7,27 +7,21 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import metadata from '@/ui/mixins/metadata';
 
-import HomeLevel1 from '@/ui/views/pages/home/components/HomeLevel1.vue';
-import HomeLevel2 from '@/ui/views/pages/home/components/HomeLevel2.vue';
+import DashboardCaseFile from '@/ui/views/pages/home/components/DashboardCaseFile.vue';
 import HomeLevel3 from '@/ui/views/pages/home/components/HomeLevel3.vue';
 import HomeLevel4 from '@/ui/views/pages/home/components/HomeLevel4.vue';
 import HomeLevel5 from '@/ui/views/pages/home/components/HomeLevel5.vue';
 import HomeLevel6 from '@/ui/views/pages/home/components/HomeLevel6.vue';
-import ContributorIM from '@/ui/views/pages/home/components/ContributorIM.vue';
-import ContributorFinance from '@/ui/views/pages/home/components/ContributorFinance.vue';
 
 export default Vue.extend({
   name: 'HomeLayout',
 
   components: {
-    HomeLevel1,
-    HomeLevel2,
+    DashboardCaseFile,
     HomeLevel3,
     HomeLevel4,
     HomeLevel5,
     HomeLevel6,
-    ContributorIM,
-    ContributorFinance,
   },
 
   mixins: [metadata],

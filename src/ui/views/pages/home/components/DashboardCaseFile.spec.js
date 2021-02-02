@@ -1,10 +1,10 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import CaseFileTable from '@/ui/views/pages/case-files/CaseFilesTable.vue';
-import Component from './HomeLevel1.vue';
+import Component from './DashboardCaseFile.vue';
 
 const localVue = createLocalVue();
 
-describe('HomeLevel1.vue', () => {
+describe('DashboardCaseFile.vue', () => {
   let wrapper;
 
   describe('Template', () => {
