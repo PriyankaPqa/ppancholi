@@ -1,7 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import Vuetify from 'vuetify';
 import { i18n } from '@/ui/plugins/i18n';
-import flushPromises from 'flush-promises';
 import { mockStorage } from '@/store/storage';
 import Component from '../GeneralHelpMenu.vue';
 
@@ -94,7 +93,7 @@ describe('GeneralHelpMenu.vue', () => {
 
   test('updateShow will trigger set the value for generalHelpMenuVisible', async () => {
     wrapper.vm.updateShow(true);
-    await flushPromises();
+    await wrapper.vm.$nextTick();
     expect(wrapper.vm.$storage.dashboard.mutations.setProperty).toHaveBeenCalledWith({
       property: 'generalHelpMenuVisible',
       value: true,
