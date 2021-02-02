@@ -9,12 +9,14 @@ export default {
   install: (V: typeof Vue) => {
     function hasLevel(this: Vue, levelToCheck: string) {
       const user = this.$storage.user.getters.user();
-      return user.hasLevel(levelToCheck);
+
+      return user ? user.hasLevel(levelToCheck) : false;
     }
 
     function hasRole(this: Vue, roleToCheck: string) {
       const user = this.$storage.user.getters.user();
-      return user.hasRole(roleToCheck);
+
+      return user ? user.hasRole(roleToCheck) : false;
     }
 
     V.prototype.$hasLevel = hasLevel;

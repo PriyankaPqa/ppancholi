@@ -5,7 +5,7 @@
     :headers="[]"
     :count="count"
     :labels="labels"
-    :show-add-button="true"
+    :show-add-button="$hasLevel('level6')"
     sort-by="startDate"
     sort-desc
     @add-button="addEvent"
