@@ -30,9 +30,9 @@ export const mockUserStateLevel = (level: number) => ({
   },
 });
 
-export const mockUserStateContributor = (number: number) => {​​​​​​​​
+export const mockUserStateContributor = (number: number) => {
   let mockUser;
-  switch (number) {​​​​​​​​
+  switch (number) {
     case 1:
       // eslint-disable-next-line prefer-destructuring
       mockUser = mockUsersData()[6];
@@ -48,18 +48,18 @@ export const mockUserStateContributor = (number: number) => {​​​​​​�
     default:
       break;
   }
-    ​​​​​​​​
-  return {​​​​​​​​
-    modules: {​​​​​​​​
-      user: {​​​​​​​​
-        state: {​​​​​​​​
+
+  return {
+    modules: {
+      user: {
+        state: {
           ...mockUser,
-        }​​​​​​​​,
-      }​​​​​​​​,
-    }​​​​​​​​,
-  }​​​​​​​​;
-}​​​​​​​​;
+        },
+      },
+    },
+  };
+};
 
 export const mockSearchParams: ISearchData = {
-  filter: 'foo'
-}
+  filter: 'foo',
+};
