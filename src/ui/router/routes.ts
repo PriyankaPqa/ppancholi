@@ -67,7 +67,7 @@ export const routes: Array<RouteConfig> = [
             path: Routes.home.path,
             name: Routes.home.name,
             component: HomeLayout,
-            meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3'] },
+            meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
           },
           {
             path: Routes.approvals.layout.path, // approvals
@@ -101,7 +101,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.caseFile.home.path,
                 name: Routes.caseFile.home.name,
                 component: HomeCaseFile,
-                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3'] },
+                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
               },
             ],
           },

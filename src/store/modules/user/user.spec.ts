@@ -4,7 +4,7 @@ import { mockUsersData, User } from '@/entities/user';
 import { mockAuthenticationData } from '@/auth/authentication.mock';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import {
-  mockStoreUserLevel, mockStoreUserContributorIM, mockStoreUserContributorFinance, mockStoreUserContributor3,
+  mockStoreUserLevel, mockStoreUserContributorIM, mockStoreUserContributorFinance, mockStoreUserContributor3, mockStoreUserReadOnly,
 } from '@/test/helpers';
 
 describe('>>> Users Module', () => {
@@ -70,6 +70,11 @@ describe('>>> Users Module', () => {
 
       it('returns proper landing page for contributor3 user', () => {
         store = mockStoreUserContributor3();
+        expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
+      });
+
+      it('returns proper landing page for ready only user', () => {
+        store = mockStoreUserReadOnly();
         expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
       });
     });

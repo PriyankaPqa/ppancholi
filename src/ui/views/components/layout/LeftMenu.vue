@@ -68,7 +68,7 @@ export default Vue.extend({
           text: 'dashboard.leftMenu.home_title',
           test: 'home',
           level: 'level1',
-          roles: ['contributorIM', 'contributorFinance', 'contributor3'],
+          roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'],
         },
         {
           to: routes.caseFile.home.name,
@@ -77,7 +77,7 @@ export default Vue.extend({
           test: 'caseFile',
           exact: false,
           level: 'level1',
-          roles: ['contributorIM', 'contributorFinance', 'contributor3'],
+          roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'],
         },
         {
           to: routes.events.home.name,

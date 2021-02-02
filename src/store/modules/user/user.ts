@@ -37,6 +37,7 @@ const getters = {
       case 'contributorIM':
       case 'contributorFinance':
       case 'contributor3':
+      case 'readonly':
         return 'DashboardCaseFile';
       case 'level3': return 'HomeLevel3';
       case 'level4': return 'HomeLevel4';
