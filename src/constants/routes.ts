@@ -29,6 +29,16 @@ const routes = {
       name: 'casefile.home',
     },
   },
+  registration: {
+    layout: {
+      path: 'registration',
+      name: 'registration',
+    },
+    home: {
+      path: '',
+      name: 'registration.home',
+    },
+  },
   events: {
     layout: {
       path: 'events',

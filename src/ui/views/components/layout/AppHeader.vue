@@ -9,10 +9,11 @@
       <v-spacer />
 
       <v-btn
-        v-if="$hasLevel('level1')"
+        v-if=" $route.name !== routes.registration.home.name && $hasLevel('level1')"
         color="primary"
         class="mx-md-4 my-4"
-        data-test="appHeader__registerBeneficiaries">
+        data-test="appHeader__registerBeneficiaries"
+        @click.stop="routeToRegistration">
         <v-icon left>
           mdi-plus
         </v-icon>
@@ -88,6 +89,12 @@ export default Vue.extend({
       this.$storage.dashboard.mutations.setProperty({
         property: 'generalHelpMenuVisible',
         value: !this.$store.state.dashboard.generalHelpMenuVisible,
+      });
+    },
+
+    routeToRegistration() {
+      this.$router.push({
+        name: routes.registration.home.name,
       });
     },
   },

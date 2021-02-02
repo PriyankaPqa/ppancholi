@@ -4,6 +4,7 @@ import { mockStore, IRootState } from '@/store';
 import { EventType, mockEventTypeData } from '@/entities/eventType';
 import { Event, mockEventsData } from '@/entities/event';
 import helpers from '@/ui/helpers';
+import { mockSearchParams } from '@/test/helpers';
 
 describe('>>> Event Module', () => {
   let store: Store<IRootState>;
@@ -165,6 +166,17 @@ describe('>>> Event Module', () => {
         expect(store.$services.events.getEvents).toHaveBeenCalledTimes(1);
       });
     });
+
+    describe('searchEvents', () => {
+      test('it calls the service with the passed params', async ()=> {
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
+
+        const params = mockSearchParams;
+        await store.dispatch('event/searchEvents', params);
+
+        expect(store.$services.events.searchEvents).toHaveBeenCalledWith(params);
+      })
+    })
 
     describe('createEvent', () => {
       test('the createEvent action calls the createEvent service and returns the new Event entity', async () => {

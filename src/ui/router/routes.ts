@@ -31,6 +31,9 @@ const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/u
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
 
+const RegistrationLayout = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/layout/RegistrationLayout.vue');
+const RegistrationHome = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/home/RegistrationHome.vue');
+
 const ReportsLayout = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/layout/ReportsLayout.vue');
 const ReportsHome = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/home/ReportsHome.vue');
 
@@ -99,6 +102,18 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.caseFile.home.name,
                 component: HomeCaseFile,
                 meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3'] },
+              },
+            ],
+          },
+          {
+            path: Routes.registration.layout.path, // registration
+            component: RegistrationLayout,
+            children: [
+              {
+                path: Routes.registration.home.path,
+                name: Routes.registration.home.name,
+                component: RegistrationHome,
+                meta: { level: 'level1' },
               },
             ],
           },

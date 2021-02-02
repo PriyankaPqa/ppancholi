@@ -1,5 +1,6 @@
 import { IEvent, IOtherProvince, IRegion } from '@/entities/event';
 import { IEventType } from '@/entities/eventType';
+import { ISearchData } from '@/types';
 
 export interface IStorage {
   getters: {
@@ -12,6 +13,7 @@ export interface IStorage {
     fetchEvents(): Promise<IEvent[]>;
     fetchOtherProvinces(): Promise<IOtherProvince[]>
     fetchRegions(): Promise<IRegion[]>;
+    searchEvents(params: ISearchData): Promise<IEvent[]>;
     createEvent(payload: IEvent): Promise<IEvent>;
   }
 }

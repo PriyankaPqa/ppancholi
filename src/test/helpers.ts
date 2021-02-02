@@ -1,5 +1,6 @@
 import { IUserData, mockUsersData } from '@/entities/user';
 import { mockStore } from '@/store';
+import { ISearchData } from '@/types';
 
 export const mockStoreWithUserState = (state: IUserData) => mockStore({
   modules: {
@@ -28,3 +29,37 @@ export const mockUserStateLevel = (level: number) => ({
     },
   },
 });
+
+export const mockUserStateContributor = (number: number) => {​​​​​​​​
+  let mockUser;
+  switch (number) {​​​​​​​​
+    case 1:
+      // eslint-disable-next-line prefer-destructuring
+      mockUser = mockUsersData()[6];
+      break;
+    case 2:
+      // eslint-disable-next-line prefer-destructuring
+      mockUser = mockUsersData()[7];
+      break;
+    case 3:
+      // eslint-disable-next-line prefer-destructuring
+      mockUser = mockUsersData()[8];
+      break;
+    default:
+      break;
+  }
+    ​​​​​​​​
+  return {​​​​​​​​
+    modules: {​​​​​​​​
+      user: {​​​​​​​​
+        state: {​​​​​​​​
+          ...mockUser,
+        }​​​​​​​​,
+      }​​​​​​​​,
+    }​​​​​​​​,
+  }​​​​​​​​;
+}​​​​​​​​;
+
+export const mockSearchParams: ISearchData = {
+  filter: 'foo'
+}

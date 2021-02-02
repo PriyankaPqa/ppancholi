@@ -3,6 +3,7 @@ import { IEventTypeData } from '@/entities/eventType';
 import {
   ICreateEventRequest, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
+import { ISearchData } from '@/types';
 import { IEventsService } from './events.types';
 
 export class EventsService implements IEventsService {
@@ -28,6 +29,10 @@ export class EventsService implements IEventsService {
 
   async getRegions(): Promise<IRegion[]> {
     return this.http.get('/search/event-regions');
+  }
+
+  async searchEvents(params: ISearchData): Promise<IEventData[]> {
+    return this.http.get('/search/events', { params, isOData: true });
   }
 
   private eventToCreateEventRequestPayload(event: IEvent): ICreateEventRequest {

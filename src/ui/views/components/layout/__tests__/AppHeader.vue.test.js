@@ -4,6 +4,8 @@ import {
   mount,
 } from '@/test/testSetup';
 import { mockUsersData } from '@/entities/user';
+import routes from '@/constants/routes';
+import { mockUserStateContributor } from '@/test/helpers';
 
 import Component from '../AppHeader.vue';
 
@@ -37,6 +39,11 @@ describe('AppHeader.vue', () => {
           user: {
             state: mockUsersData()[0],
           },
+        },
+      },
+      mocks: {
+        $route: {
+          name: routes.events.home.name,
         },
       },
     });
@@ -95,13 +102,21 @@ describe('AppHeader.vue', () => {
     });
 
     describe('handleGeneralHelpMenu', () => {
-      it('sets into the store the opposite state of generalHelpMenuVisible ', async () => {
+      it('sets into the store the opposite state of generalHelpMenuVisible', async () => {
         wrapper.vm.handleGeneralHelpMenu();
         await wrapper.vm.$nextTick();
         expect(mutations.setProperty).toHaveBeenCalledWith(expect.anything(), {
           property: 'generalHelpMenuVisible',
           value: true,
         });
+      });
+    });
+
+    describe('routeToRegistration', () => {
+      it('redirects to the registration page', async () => {
+        wrapper.vm.routeToRegistration();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.registration.home.name });
       });
     });
   });
@@ -113,9 +128,27 @@ describe('AppHeader.vue', () => {
         expect(hamburger.exists()).toBe(true);
       });
 
-      test('The page contains a Register beneficiaries button', () => {
+      test('If the user has level 1 and this is not the registration landing page, the page contains a Register beneficiaries button ', () => {
         const button = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
         expect(button.exists()).toBe(true);
+      });
+
+      test('If this is the registration landing page, the page does not contain a Register beneficiaries button ', async () => {
+        wrapper.vm.$route.name = routes.registration.home.name;
+        await wrapper.vm.$nextTick();
+        const button = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
+        expect(button.exists()).toBe(false);
+      });
+
+      test('If the user does not have level 1, the page does not contain a Register beneficiaries button ', () => {
+        const wrapper = mount(Component, {
+          localVue: createLocalVue(),
+          store: {
+            ...mockUserStateContributor(1),
+          },
+        });
+        const button = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
+        expect(button.exists()).toBe(false);
       });
 
       test('The page contains an en/fr language icon', () => {
@@ -164,6 +197,13 @@ describe('AppHeader.vue', () => {
         jest.spyOn(wrapper.vm, 'handleRightMenu').mockImplementation(() => {});
         await icon.trigger('click');
         expect(wrapper.vm.handleRightMenu).toBeCalledTimes(1);
+      });
+
+      test('Clicking on the Register Beneficiaries button calls routeToRegistration', async () => {
+        const button = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
+        jest.spyOn(wrapper.vm, 'routeToRegistration').mockImplementation(() => {});
+        await button.trigger('click');
+        expect(wrapper.vm.routeToRegistration).toBeCalledTimes(1);
       });
     });
   });

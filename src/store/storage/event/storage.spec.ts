@@ -1,5 +1,6 @@
 import { Event, mockEventsData } from '@/entities/event';
 import { mockStore } from '@/store';
+import { mockSearchParams } from '@/test/helpers';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });
@@ -35,6 +36,12 @@ describe('>>> Event Storage', () => {
     it('should proxy fetchRegions', () => {
       storage.actions.fetchRegions();
       expect(store.dispatch).toBeCalledWith('event/fetchRegions');
+    });
+
+    it('should proxy searchEvents', () => {
+      const params = mockSearchParams;
+      storage.actions.searchEvents(params);
+      expect(store.dispatch).toBeCalledWith('event/searchEvents', params);
     });
 
     it('should proxy createEvent', () => {

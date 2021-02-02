@@ -1,5 +1,6 @@
 import { Event, mockEventsData } from '@/entities/event';
 import { mockHttp } from '@/services/httpClient.mock';
+import { mockSearchParams } from '@/test/helpers';
 import { EEventStatus } from '@/types';
 import { EventsService } from './events';
 
@@ -59,5 +60,11 @@ describe('>>> Events Service', () => {
   test('getEventTypes is linked to the correct URL', async () => {
     await service.getEventTypes();
     expect(http.get).toHaveBeenCalledWith('/event/event-types');
+  });
+
+  test('searchEvents is linked to the correct URL and params', async () => {
+    const params = mockSearchParams;
+    await service.searchEvents(params);
+    expect(http.get).toHaveBeenCalledWith('/search/events', {params, isOData: true});
   });
 });

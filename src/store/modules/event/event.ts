@@ -9,6 +9,7 @@ import {
   Event, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
+import { ISearchData } from '@/types';
 import {
   IState,
 } from './event.types';
@@ -79,6 +80,10 @@ const actions = {
 
   async fetchRegions(this: Store<IState>): Promise<IRegion[]> {
     return this.$services.events.getRegions();
+  },
+
+  async searchEvents(this: Store<IState>, context: ActionContext<IState, IState>, params: ISearchData): Promise<IEventData[]> {
+    return this.$services.events.searchEvents(params);
   },
 
   async createEvent(this: Store<IState>, context: ActionContext<IState, IState>, payload: IEvent): Promise<IEvent> {

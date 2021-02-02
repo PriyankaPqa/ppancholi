@@ -2,6 +2,7 @@ import { IEventTypeData } from '@/entities/eventType';
 import {
   IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
+import { ISearchData } from '@/types';
 
 export interface IEventsService {
   createEvent(payload: IEvent): Promise<IEventData>;
@@ -13,6 +14,8 @@ export interface IEventsService {
   getOtherProvinces(): Promise<IOtherProvince[]>;
 
   getRegions(): Promise<IRegion[]>;
+
+  searchEvents(params: ISearchData): Promise<IEventData[]>;
 }
 
 export interface IEventsServiceMock {
@@ -25,4 +28,6 @@ export interface IEventsServiceMock {
   getOtherProvinces: jest.Mock <IOtherProvince[]>;
 
   getRegions: jest.Mock <IRegion[]>;
+
+  searchEvents: jest.Mock <IEventData[]>;
 }
