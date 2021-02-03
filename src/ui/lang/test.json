@@ -414,6 +414,7 @@
     "common.inputs.quick_search": "common.inputs.quick_search",
     "common.inputs.start_typing_to_search": "common.inputs.start_typing_to_search",
     "common.logout.label": "common.logout.label",
+    "common.myTeams": "",
     "common.name": "common.name",
     "common.need_authenticated": "common.need_authenticated",
     "common.new_event": "common.new_event",

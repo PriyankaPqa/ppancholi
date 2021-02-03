@@ -21,6 +21,13 @@ export default Vue.extend({
     RcDataTable,
   },
 
+  props: {
+    title: {
+      type: String,
+      default: 'dashboard.teams.teams',
+    },
+  },
+
   data() {
     return {
       items: [],
@@ -32,7 +39,7 @@ export default Vue.extend({
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
       return {
         header: {
-          title: this.$t('dashboard.teams.teams'),
+          title: this.$t(this.title),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };

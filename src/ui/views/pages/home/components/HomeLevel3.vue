@@ -7,7 +7,7 @@
             <case-files-table :limit-results="3" hide-footer />
           </v-col>
           <v-col cols="12">
-            <teams-table :limit-results="3" hide-footer />
+            <teams-table :title="'common.myTeams'" :limit-results="3" hide-footer />
           </v-col>
         </v-row>
       </v-col>

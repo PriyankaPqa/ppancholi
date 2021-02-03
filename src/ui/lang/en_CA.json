@@ -414,6 +414,7 @@
     "common.inputs.quick_search": "Quick search",
     "common.inputs.start_typing_to_search": "Start typing to search",
     "common.logout.label": "Sign out",
+    "common.myTeams": "My Teams",
     "common.name": "Name",
     "common.need_authenticated": "You need to be authenticated to access this page.",
     "common.new_event": "New event",
