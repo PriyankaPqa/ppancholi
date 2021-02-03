@@ -14,9 +14,13 @@ const routes = {
       path: 'approvals',
       name: 'approvals.layout',
     },
-    home: {
-      path: '',
-      name: 'approvals.home',
+    templates: {
+      path: 'templates',
+      name: 'approvals.templates',
+    },
+    request: {
+      path: 'request',
+      name: 'approvals.request',
     },
   },
   caseFile: {

@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import ApprovalsTable from '@/ui/views/pages/approvals/ApprovalsTable.vue';
-import Component from './ApprovalsHome.vue';
+import Component from './ApprovalsTemplates.vue';
 
 const localVue = createLocalVue();
 

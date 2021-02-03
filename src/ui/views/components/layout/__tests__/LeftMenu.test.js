@@ -1,10 +1,10 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-import { createLocalVue, mount } from '@/test/testSetup';
-import routes from '@/constants/routes';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import { mockUsersData } from '@/entities/user';
+import routes from '@/constants/routes';
 import Component from '../LeftMenu.vue';
 
 Vue.use(Vuetify);
@@ -28,7 +28,7 @@ describe('LeftMenu.vue', () => {
             test: 'caseFile',
           },
         ];
-        const wrapper = mount(Component, {
+        const wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
           computed: {
             items() {
@@ -56,7 +56,7 @@ describe('LeftMenu.vue', () => {
             level: 'level6',
           },
         ];
-        const wrapper = mount(Component, {
+        const wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
           store: {
             ...mockUserStateLevel(1),
@@ -88,7 +88,7 @@ describe('LeftMenu.vue', () => {
             roles: ['contributorIM'],
           },
         ];
-        const wrapper = mount(Component, {
+        const wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
           store: {
             modules: {
@@ -109,10 +109,42 @@ describe('LeftMenu.vue', () => {
       });
     });
 
+    describe('approvalRedirection', () => {
+      it('returns approvals home for a level 6 user', () => {
+        const wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          store: {
+            ...mockUserStateLevel(6),
+          },
+        });
+        expect(wrapper.vm.approvalRedirection).toEqual(routes.approvals.templates.name);
+      });
+
+      it('returns approvals request for a level 3 user', () => {
+        const wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          store: {
+            ...mockUserStateLevel(3),
+          },
+        });
+        expect(wrapper.vm.approvalRedirection).toEqual(routes.approvals.request.name);
+      });
+
+      it('returns approvals request for a level 4 user', () => {
+        const wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          store: {
+            ...mockUserStateLevel(4),
+          },
+        });
+        expect(wrapper.vm.approvalRedirection).toEqual(routes.approvals.request.name);
+      });
+    });
+
     describe('items', () => {
       let wrapper;
       beforeEach(() => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
         });
       });
@@ -163,7 +195,7 @@ describe('LeftMenu.vue', () => {
       });
       test('Item[5]', () => {
         const item = wrapper.vm.items[5];
-        expect(item.to).toBe(routes.approvals.home.name);
+        expect(item.to).toBe(wrapper.vm.approvalRedirection);
         expect(item.icon).toBe('mdi-check');
         expect(item.text).toBe('dashboard.leftMenu.approvals_title');
         expect(item.test).toBe('approvals');

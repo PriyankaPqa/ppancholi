@@ -105,7 +105,7 @@ export default Vue.extend({
           level: 'level6',
         },
         {
-          to: routes.approvals.home.name,
+          to: this.approvalRedirection,
           icon: 'mdi-check',
           text: 'dashboard.leftMenu.approvals_title',
           test: 'approvals',
@@ -177,6 +177,15 @@ export default Vue.extend({
         }
         return levelCheck || rolesCheck;
       });
+    },
+
+    approvalRedirection(): string {
+      if (this.$hasLevel('level6')) {
+        return routes.approvals.templates.name;
+      } if (this.$hasRole('level3') || this.$hasRole('level4')) {
+        return routes.approvals.request.name;
+      }
+      return '';
     },
   },
 
