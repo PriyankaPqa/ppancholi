@@ -22,6 +22,7 @@
                 v-model="localEvent.responseDetails.responseLevel"
                 data-test="event-level"
                 name="level"
+                attach
                 :label="`${$t('event.response_level')} *`"
                 :items="responseLevels"
                 :rules="rules.responseDetails.responseLevel" />
@@ -34,6 +35,7 @@
                 v-model="localEvent.location.province"
                 data-test="event-province"
                 :disabled="isEditMode"
+                attach
                 :label="`${$t('event.province')} *`"
                 :items="canadianProvinces"
                 :rules="rules.location.province"
@@ -45,6 +47,7 @@
                 v-model="provinceOther"
                 :items="otherProvincesSorted"
                 data-test="event-province-other"
+                attach="event-province-other"
                 :label="`${$t('event.other')} *`"
                 :rules="rules.location.provinceOther"
                 :item-text="(item) => item.name.translation[languageMode]" />
@@ -55,6 +58,7 @@
                 v-model="region"
                 :items="regionsSorted"
                 data-test="event-region"
+                attach="event-region"
                 :label="$t('event.region')"
                 :disabled="!localEvent.location.province"
                 :rules="rules.location.region"
@@ -68,6 +72,7 @@
                 v-model="localEvent.responseDetails.eventType"
                 data-test="event-type"
                 :disabled="isEditMode"
+                attach
                 :label="`${$t('event.type')} *`"
                 :items="eventTypesSorted"
                 :item-text="(item) => $m(item.name)"
