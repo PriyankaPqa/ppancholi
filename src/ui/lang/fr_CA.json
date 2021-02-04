@@ -580,6 +580,7 @@
     "dashboard.approval.min": "$ Min",
     "dashboard.approval.minimum": "$ Minimum",
     "dashboard.approval.program": "Programme",
+    "dashboard.approval.requests.title": "Demandes d'approbation",
     "dashboard.approval.roles": "Rôle(s)",
     "dashboard.approval.table_name": "Nom de la table",
     "dashboard.approval.table.title": "Tables d'approbation",
