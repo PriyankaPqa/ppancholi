@@ -1,17 +1,17 @@
 <template>
-  <router-view-transition />
+  <rc-router-view-transition />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import metadata from '@/ui/mixins/metadata';
-import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
+import { RcRouterViewTransition } from '@rctech/component-library';
 
 export default Vue.extend({
   name: 'CaseFileLayout',
   components: {
-    RouterViewTransition,
+    RcRouterViewTransition,
   },
   mixins: [metadata],
   computed: {

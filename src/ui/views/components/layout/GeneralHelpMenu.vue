@@ -40,7 +40,7 @@
     </v-list>
 
     <template #append>
-      <v-row justify="center" class="mb-6">
+      <v-row class="justify-center mb-6">
         <v-btn
           color="primary"
           data-test="help-center-button"

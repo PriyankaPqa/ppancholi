@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import PageLoading from '@/ui/shared-components/PageLoading.vue';
+import { RcPageLoading } from '@rctech/component-library';
 import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vue';
 import SecondaryRightMenu from '@/ui/views/components/layout/SecondaryRightMenu.vue';
 
@@ -148,12 +148,12 @@ describe('PageTemplate.vue', () => {
       expect(wrapper.findComponent(SecondaryLeftMenu).exists()).toBe(false);
     });
     test('loading', async () => {
-      expect(wrapper.findComponent(PageLoading).exists()).toBe(false);
+      expect(wrapper.findComponent(RcPageLoading).exists()).toBe(false);
       wrapper.setProps({
         loading: true,
       });
       await wrapper.vm.$nextTick();
-      expect(wrapper.findComponent(PageLoading).exists()).toBe(true);
+      expect(wrapper.findComponent(RcPageLoading).exists()).toBe(true);
     });
   });
   describe('Slots', () => {

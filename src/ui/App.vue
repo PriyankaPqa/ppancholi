@@ -1,17 +1,17 @@
 <template>
   <!-- App.vue -->
   <v-app>
-    <router-view-transition />
+    <rc-router-view-transition />
   </v-app>
 </template>
 
 <script>
-import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
+import { RcRouterViewTransition } from '@rctech/component-library';
 
 export default {
   name: 'App',
   components: {
-    RouterViewTransition,
+    RcRouterViewTransition,
   },
   metaInfo() {
     return {

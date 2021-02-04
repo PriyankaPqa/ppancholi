@@ -82,8 +82,9 @@ const actions = {
     return this.$services.events.getRegions();
   },
 
-  async searchEvents(this: Store<IState>, context: ActionContext<IState, IState>, params: ISearchData): Promise<IEventData[]> {
-    return this.$services.events.searchEvents(params);
+  async searchEvents(this: Store<IState>, context: ActionContext<IState, IState>, params: ISearchData): Promise<IEvent[]> {
+    const data = await this.$services.events.searchEvents(params);
+    return data.map((el: IEventData) => (new Event(el)));
   },
 
   async createEvent(this: Store<IState>, context: ActionContext<IState, IState>, payload: IEvent): Promise<IEvent> {

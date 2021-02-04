@@ -5,7 +5,7 @@
     <right-menu />
     <general-help-menu :menu-links="helpMenuLinks" />
     <v-main :class="{'menu-container': paddingLeft}">
-      <router-view-transition />
+      <rc-router-view-transition />
     </v-main>
   </div>
 </template>
@@ -13,7 +13,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { INavigationTab } from '@/types';
-import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
+import { RcRouterViewTransition } from '@rctech/component-library';
+
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import LeftMenu from '@/ui/views/components/layout/LeftMenu.vue';
 import RightMenu from '@/ui/views/components/layout/RightMenu.vue';
@@ -27,7 +28,7 @@ export default Vue.extend({
     LeftMenu,
     RightMenu,
     GeneralHelpMenu,
-    RouterViewTransition,
+    RcRouterViewTransition,
   },
 
   data() {

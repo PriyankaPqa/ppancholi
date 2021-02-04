@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
+import { RcRouterViewTransition } from '@rctech/component-library';
 import Component from './ApprovalsLayout.vue';
 
 const localVue = createLocalVue();
@@ -8,11 +8,11 @@ describe('ApprovalsLayout.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    it('shows RouterViewTransition component', () => {
+    it('shows RcRouterViewTransition component', () => {
       wrapper = shallowMount(Component, {
         localVue,
       });
-      expect(wrapper.findComponent(RouterViewTransition)).toBeTruthy();
+      expect(wrapper.findComponent(RcRouterViewTransition)).toBeTruthy();
     });
   });
 

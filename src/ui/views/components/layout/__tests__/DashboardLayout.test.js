@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
+import { RcRouterViewTransition } from '@rctech/component-library';
 import Component from '../MainLayout.vue';
 import AppHeader from '../AppHeader.vue';
 import LeftMenu from '../LeftMenu.vue';
@@ -26,8 +26,8 @@ describe('DashboardLayout.vue', () => {
     expect(wrapper.findComponent(GeneralHelpMenu)).toBeTruthy();
   });
 
-  it('should consist of RouterViewTransition component', async () => {
-    expect(wrapper.findComponent(RouterViewTransition)).toBeTruthy();
+  it('should consist of RcRouterViewTransition component', async () => {
+    expect(wrapper.findComponent(RcRouterViewTransition)).toBeTruthy();
   });
 
   test('helpMenuLinks are correct', async () => {

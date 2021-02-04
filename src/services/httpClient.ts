@@ -72,8 +72,10 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(error.config)) {
       if (error?.response?.data) {
         const { errors } = error.response.data;
-        const errorMessage = Object.keys(errors).map((key) => errors[key]);
-        Vue.toasted.global.error(errorMessage);
+        if (errors) {
+          const errorMessage = Object.keys(errors).map((key) => errors[key]);
+          Vue.toasted.global.error(errorMessage);
+        }
       }
     }
     return Promise.reject(error.response.data);

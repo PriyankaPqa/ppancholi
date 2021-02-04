@@ -1,6 +1,6 @@
 <template>
   <div class="fill-height">
-    <router-view-transition />
+    <rc-router-view-transition />
   </div>
 </template>
 
@@ -8,12 +8,12 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import metadata from '@/ui/mixins/metadata';
-import RouterViewTransition from '@/ui/shared-components/RouterViewTransition.vue';
+import { RcRouterViewTransition } from '@rctech/component-library';
 
 export default Vue.extend({
   name: 'RegistrationLayout',
   components: {
-    RouterViewTransition,
+    RcRouterViewTransition,
   },
   mixins: [metadata],
 
