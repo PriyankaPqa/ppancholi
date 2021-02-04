@@ -10,7 +10,7 @@
               <v-text-field-with-validation
                 v-model="localEvent.name.translation[languageMode]"
                 data-test="event-name"
-                name="name"
+                autocomplete="nope"
                 :label="`${$t('event.event_name')} *`"
                 :hint="$t('event.event_name.hint')"
                 persistent-hint
@@ -21,7 +21,6 @@
               <v-select-with-validation
                 v-model="localEvent.responseDetails.responseLevel"
                 data-test="event-level"
-                name="level"
                 attach
                 :label="`${$t('event.response_level')} *`"
                 :items="responseLevels"
