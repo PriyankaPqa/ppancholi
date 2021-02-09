@@ -67,7 +67,7 @@ export interface IEventData {
   location: IEventLocation;
   schedule: IEventSchedule;
   responseDetails: IEventResponseDetails;
-  relatedEvents: Array<uuid>;
+  relatedEvents?: Array<uuid>;
 }
 
 /**

@@ -73,7 +73,7 @@ export class Event implements IEvent {
         ...data.responseDetails,
         dateReported: data.responseDetails.dateReported ? new Date(data.responseDetails.dateReported) : null,
       };
-      this.relatedEvents = [...data.relatedEvents];
+      this.relatedEvents = data.relatedEvents ? [...data.relatedEvents] : [];
     } else {
       this.reset();
     }
