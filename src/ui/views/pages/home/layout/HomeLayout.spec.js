@@ -21,9 +21,22 @@ describe('HomeLayout.vue', () => {
         $storage: storage,
       },
     });
+
     describe('component', () => {
       it('should return the getter landingPage', () => {
         expect(wrapper.vm.component).toBe('HomeLevel6');
+      });
+    });
+
+    describe('metaTitle', () => {
+      it('returns the correct value', () => {
+        expect(wrapper.vm.metaTitle).toBe('metaInfo.dashboard_home.title');
+      });
+    });
+
+    describe('metaDescription', () => {
+      it('returns the correct value', () => {
+        expect(wrapper.vm.metaDescription).toBe('metaInfo.dashboard_home.description');
       });
     });
   });

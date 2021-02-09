@@ -2,11 +2,11 @@
   <div class="container">
     <div class="error-banner">
       <div class="error-message">
-        <h3 class="rc-heading-3">
+        <h3 class="rc-heading-3" data-test="pageNotFound__title">
           {{ $t('pageNotFound.title') }}
         </h3>
 
-        <p class="rc-body14">
+        <p class="rc-body14" data-test="pageNotFound__message">
           {{ $t('pageNotFound.message') }}
         </p>
       </div>
