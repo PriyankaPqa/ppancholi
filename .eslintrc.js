@@ -45,6 +45,9 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-useless-constructor': 'off',
     'class-methods-use-this': 'off',
+    'vuetify/grid-unknown-attributes': 'error',
+    'vuetify/no-legacy-grid': 'error',
+    'vuetify/no-deprecated-classes': 'error',
   },
 
   parserOptions: {
@@ -103,5 +106,5 @@ module.exports = {
     },
 
   },
-  plugins: ['vuejs-accessibility'],
+  plugins: ['vuejs-accessibility', 'vuetify'],
 };

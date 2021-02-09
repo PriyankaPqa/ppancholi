@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { ISearchData } from '@/types';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import buildQuery from 'odata-query';
+import camelCaseKeys from 'camelcase-keys';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface IRestResponse<T> {
@@ -10,7 +13,8 @@ export interface IRestResponse<T> {
 }
 
 export interface RequestConfig extends AxiosRequestConfig {
-  globalHandler: boolean;
+  globalHandler?: boolean;
+  isOData?: boolean;
 }
 
 export interface IHttpClient {
@@ -59,7 +63,7 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(response.config)) {
       // Add what you want when request is successful. It is applied globally except when { globalHandler: false }
     }
-    return response;
+    return camelCaseKeys(response, { deep: true });
   }
 
   private responseErrorHandler(error: any) {
@@ -77,6 +81,11 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(request)) {
       // Add what you want when request is sent
       // It is applied globally except when { globalHandler: false }
+    }
+
+    if (request.isOData) {
+      // build OData search query and remove the '?' that is added by the query building library at the beginning of the string
+      request.paramsSerializer = (params: ISearchData) => buildQuery(params).slice(1);
     }
 
     return request;

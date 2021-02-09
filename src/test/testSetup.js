@@ -13,6 +13,10 @@ import deepmerge from 'deepmerge';
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
 
+import { mockProvider } from '@/services/provider';
+import { mockStore } from '@/store';
+import { makeStorage } from '@/store/storage';
+
 jest.setTimeout(10000);
 
 const vuetify = new Vuetify({
@@ -56,6 +60,7 @@ const mocks = {
     },
     show: jest.fn(),
   },
+  $services: mockProvider(),
 };
 
 const stubs = {
@@ -90,12 +95,15 @@ export const mount = (Component, options) => {
     locale: 'en',
   });
 
+  const store = mockStore(options.store);
+  const $storage = makeStorage(store);
+
   const wrapper = m(Component, {
     vuetify,
     i18n,
     sync: false,
     ...options,
-    mocks: deepmerge({ ...mocks }, options.mocks || {}),
+    mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });
 
@@ -116,12 +124,15 @@ export const shallowMount = (Component, options) => {
     locale: 'en',
   });
 
+  const store = mockStore(options.store);
+  const $storage = makeStorage(store);
+
   const wrapper = sm(Component, {
     vuetify,
     i18n,
     sync: false,
     ...options,
-    mocks: deepmerge(mocks, options.mocks || {}),
+    mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });
 
