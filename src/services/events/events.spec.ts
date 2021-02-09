@@ -65,6 +65,6 @@ describe('>>> Events Service', () => {
   test('searchEvents is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
     await service.searchEvents(params);
-    expect(http.get).toHaveBeenCalledWith('/search/events', {params, isOData: true});
+    expect(http.get).toHaveBeenCalledWith('/search/events', { params, isOData: true });
   });
 });

@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver ref="form" v-slot="{ failed }" slim>
     <page-template ref="pageTemplate" :loading="false" :show-left-menu="false">
-      <page-content :title="isEditMode ? $t('event.edit.title') : $t('event.create.title')" :help-link="helpLink">
+      <rc-page-content :title="isEditMode ? $t('event.edit.title') : $t('event.create.title')" :help-link="helpLink">
         <event-form :event.sync="event" :is-edit-mode="isEditMode" />
 
         <template slot="actions">
@@ -13,7 +13,7 @@
             {{ submitLabel }}
           </v-btn>
         </template>
-      </page-content>
+      </rc-page-content>
     </page-template>
   </ValidationObserver>
 </template>
@@ -22,7 +22,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import PageContent from '@/ui/views/components/layout/PageContent.vue';
+import { RcPageContent } from '@rctech/component-library';
 import routes from '@/constants/routes';
 import { Event } from '@/entities/event';
 import { VForm } from '@/types';
@@ -34,7 +34,7 @@ export default Vue.extend({
 
   components: {
     PageTemplate,
-    PageContent,
+    RcPageContent,
     EventForm,
   },
 

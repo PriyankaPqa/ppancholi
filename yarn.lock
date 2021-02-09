@@ -1354,10 +1354,10 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
-"@rctech/component-library@^0.0.27":
-  version "0.0.27"
-  resolved "https://pkgs.dev.azure.com/RCTechnologies/EMIS/_packaging/emis-npm/npm/registry/@rctech/component-library/-/component-library-0.0.27.tgz#780ff013f1922fdc83a500c3ab046f6e3ffb9d94"
-  integrity sha1-eA/wE/GSL9yDpQDDqwRvbj/7nZQ=
+"@rctech/component-library@^0.0.30":
+  version "0.0.30"
+  resolved "https://pkgs.dev.azure.com/RCTechnologies/EMIS/_packaging/emis-npm/npm/registry/@rctech/component-library/-/component-library-0.0.30.tgz#1663034684b5dd32d720e6bcc1f477bb462eeab8"
+  integrity sha1-FmMDRoS13TLXIOa8wfR3u0Yu6rg=
   dependencies:
     "@googlemaps/js-api-loader" "^1.11.0"
 

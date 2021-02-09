@@ -3,7 +3,6 @@ export { default as GeneralHelpMenu } from './GeneralHelpMenu.vue';
 export { default as LeftMenu } from './LeftMenu.vue';
 export { default as MainLayout } from './MainLayout.vue';
 export { default as NavigationWithValidation } from './NavigationWithValidation.vue';
-export { default as PageContent } from './PageContent.vue';
 export { default as PageTemplate } from './PageTemplate.vue';
 export { default as RightMenu } from './RightMenu.vue';
 export { default as SecondaryLeftMenu } from './SecondaryLeftMenu.vue';

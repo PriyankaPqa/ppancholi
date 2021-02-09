@@ -168,15 +168,15 @@ describe('>>> Event Module', () => {
     });
 
     describe('searchEvents', () => {
-      test('it calls the service with the passed params', async ()=> {
+      test('it calls the service with the passed params', async () => {
         expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
 
         const params = mockSearchParams;
         await store.dispatch('event/searchEvents', params);
 
         expect(store.$services.events.searchEvents).toHaveBeenCalledWith(params);
-      })
-    })
+      });
+    });
 
     describe('createEvent', () => {
       test('the createEvent action calls the createEvent service and returns the new Event entity', async () => {
