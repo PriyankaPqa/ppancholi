@@ -52,7 +52,9 @@ const mocks = {
     push: jest.fn(),
     go: jest.fn(),
   },
-  $route: { params: { id: 'id' } },
+  $route: {
+    name: '',
+  },
   $t: jest.fn((key) => key),
   $tc: jest.fn((key) => key),
   $m: jest.fn((m) => m?.value?.en),
