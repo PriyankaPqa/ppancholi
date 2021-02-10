@@ -14,7 +14,8 @@
         item-value="id"
         return-object
         :label="$t('crcregistration.landingpage.selectEvent')"
-        data-test="crcRegistrationLandingPage__event" />
+        data-test="crcRegistrationLandingPage__event"
+        :menu-props="{contentClass:'registration-home-dropdown'}" />
     </div>
   </rc-registration-landing-page>
 </template>
@@ -55,11 +56,18 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped lang="scss">
+<style lang="scss">
+ .registration-home-dropdown {
+  .v-list-item {
+    word-break: break-word;
+  }
+}
+</style>
 
+<style scoped lang="scss">
 .dropdown-wrapper {
-  width: 304px;
+  width: 100%;
+  max-width: 960px;
   margin: 8px auto 0px;
 }
-
 </style>
