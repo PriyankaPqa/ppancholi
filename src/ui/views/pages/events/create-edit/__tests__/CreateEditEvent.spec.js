@@ -27,9 +27,11 @@ describe('CreatEditEvent.vue', () => {
     });
 
     describe('back', () => {
-      it('calls the router go method with -1', () => {
+      it('calls the router replace method with the events home page', () => {
         wrapper.vm.back();
-        expect(wrapper.vm.$router.go).toHaveBeenCalledWith(-1);
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+          name: routes.events.home.name,
+        });
       });
     });
 

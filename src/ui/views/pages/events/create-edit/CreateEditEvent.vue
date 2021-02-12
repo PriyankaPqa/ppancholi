@@ -61,7 +61,9 @@ export default Vue.extend({
 
   methods: {
     back(): void {
-      this.$router.go(-1);
+      this.$router.replace({
+        name: routes.events.home.name,
+      });
     },
 
     async submit() {
