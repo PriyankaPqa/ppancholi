@@ -14,8 +14,6 @@ export type { ISearchData } from './interfaces/ISearchData';
  * Enums
  */
 export { ECanadaProvinces } from './enums/ECanadaProvinces';
-export { EEventStatus } from './enums/events/EEventStatus';
-export { EEventResponseLevels } from './enums/events/EEventResponseLevels';
 
 export type VForm = Vue & {
   validate: (type?: { silent?: boolean }) => boolean;

@@ -254,10 +254,10 @@ import {
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers';
 import {
-  ECanadaProvinces, EEventResponseLevels, EEventStatus,
+  ECanadaProvinces,
 } from '@/types';
 import {
-  Event, IEvent, IOtherProvince, IRegion,
+  Event, IEvent, IOtherProvince, IRegion, EResponseLevel, EEventStatus,
 } from '@/entities/event';
 import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
@@ -383,7 +383,7 @@ export default Vue.extend({
     },
 
     responseLevels(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(EEventResponseLevels, 'event.response_level');
+      return helpers.enumToTranslatedCollection(EResponseLevel, 'event.response_level');
     },
 
     eventTypesSorted(): Array<IEventType> {

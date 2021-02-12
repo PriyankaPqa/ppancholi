@@ -3,8 +3,7 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { mockEventsData } from '@/entities/event';
-import { EEventStatus } from '@/types';
+import { EEventStatus, mockEventsData } from '@/entities/event';
 
 import Component from './RegistrationHome.vue';
 

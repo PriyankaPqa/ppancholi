@@ -1,11 +1,11 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  mockEventsData, mockOtherProvinceData, mockRegionData, Event,
+  mockEventsData, mockOtherProvinceData, mockRegionData, Event, EResponseLevel, EEventStatus,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import {
-  ECanadaProvinces, EEventResponseLevels, EEventStatus,
+  ECanadaProvinces,
 } from '@/types';
 import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
@@ -213,7 +213,7 @@ describe('EventForm.vue', () => {
 
     describe('responseLevels', () => {
       it('returns the proper data', () => {
-        expect(wrapper.vm.responseLevels).toEqual(helpers.enumToTranslatedCollection(EEventResponseLevels, 'event.response_level'));
+        expect(wrapper.vm.responseLevels).toEqual(helpers.enumToTranslatedCollection(EResponseLevel, 'event.response_level'));
       });
     });
 
@@ -245,7 +245,7 @@ describe('EventForm.vue', () => {
 
     describe('responseLevels', () => {
       it('returns the proper data', () => {
-        expect(wrapper.vm.responseLevels).toEqual(helpers.enumToTranslatedCollection(EEventResponseLevels, 'event.response_level'));
+        expect(wrapper.vm.responseLevels).toEqual(helpers.enumToTranslatedCollection(EResponseLevel, 'event.response_level'));
       });
     });
 

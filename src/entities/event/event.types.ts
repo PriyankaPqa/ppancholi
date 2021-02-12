@@ -11,11 +11,11 @@ export enum EEventStatus {
 }
 
 export enum EResponseLevel {
-  Level1 = 1,
-  Level2,
-  Level3,
-  Level4,
-  Level5,
+  Level01 = 1,
+  Level02,
+  Level03,
+  Level04,
+  Level05,
 }
 
 /**

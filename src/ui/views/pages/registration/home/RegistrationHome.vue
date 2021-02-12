@@ -22,9 +22,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IEvent } from '@/entities/event';
+import { IEvent, EEventStatus } from '@/entities/event';
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@rctech/component-library';
-import { EEventStatus } from '@/types';
 
 export default Vue.extend({
   name: 'RegistrationHome',
