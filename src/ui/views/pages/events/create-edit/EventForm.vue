@@ -219,6 +219,7 @@
                 :item-text="(item) => $m(item.name)"
                 :label="$t('event.create.related_events.label')"
                 :items="relatedEventsSorted"
+                :attach="true"
                 multiple
                 hide-details />
             </v-col>
