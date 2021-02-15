@@ -7,7 +7,7 @@ const path = require('path');
 const { LokaliseApi } = require('@lokalise/node-api');
 
 const API_KEY_READ_WRITE = '012f35ddfa553d3fe3839189b37cb6bc320ea268';
-const PROJECT_ID = '955065625d9745a35c6f72.71379721';
+const PROJECT_ID = '495058395f5240e2843ef1.45815308';
 const LANG_FOLDER_PATH = 'src/ui/lang';
 
 const lokaliseApi = new LokaliseApi({ apiKey: API_KEY_READ_WRITE });
