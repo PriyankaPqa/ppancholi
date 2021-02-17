@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import { RcRouterViewTransition } from '@rctech/component-library';
+import { RcRouterViewTransition } from '@crctech/component-library';
 
 export default {
   name: 'App',

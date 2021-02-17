@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
-import { RcDataTable } from '@rctech/component-library';
+import { RcDataTable } from '@crctech/component-library';
 import Component from './EventsTable.vue';
 
 const localVue = createLocalVue();

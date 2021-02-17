@@ -5,7 +5,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcRouterViewTransition } from '@rctech/component-library';
+import { RcRouterViewTransition } from '@crctech/component-library';
 import metadata from '@/ui/mixins/metadata';
 
 export default Vue.extend({

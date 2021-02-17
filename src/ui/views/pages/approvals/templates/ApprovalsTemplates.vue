@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDataTable } from '@rctech/component-library';
+import { RcDataTable } from '@crctech/component-library';
 
 import { TranslateResult } from 'vue-i18n';
 

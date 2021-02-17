@@ -895,6 +895,14 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
+"@crctech/component-library@^0.0.37":
+  version "0.0.37"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-0.0.37.tgz#b53deede3d41ec837c7c20ca3148c620751fa31a"
+  integrity sha1-tT3u3j1B7IN8fCDKMUjGIHUfoxo=
+  dependencies:
+    "@googlemaps/js-api-loader" "^1.11.0"
+    date-fns "^2.14.0"
+
 "@eslint/eslintrc@^0.3.0":
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.3.0.tgz#d736d6963d7003b6514e6324bec9c602ac340318"
@@ -1353,13 +1361,6 @@
   dependencies:
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
-
-"@rctech/component-library@0.0.32":
-  version "0.0.32"
-  resolved "https://pkgs.dev.azure.com/RCTechnologies/EMIS/_packaging/emis-npm/npm/registry/@rctech/component-library/-/component-library-0.0.32.tgz#eae4ca93d80763b84f2b6c178c61f3bf3a453412"
-  integrity sha1-6uTKk9gHY7hPK2wXjGHzvzpFNBI=
-  dependencies:
-    "@googlemaps/js-api-loader" "^1.11.0"
 
 "@sinonjs/commons@^1.6.0", "@sinonjs/commons@^1.7.0", "@sinonjs/commons@^1.8.1":
   version "1.8.1"
@@ -4375,6 +4376,11 @@ data-urls@^2.0.0:
     abab "^2.0.3"
     whatwg-mimetype "^2.3.0"
     whatwg-url "^8.0.0"
+
+date-fns@^2.14.0:
+  version "2.17.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.17.0.tgz#afa55daea539239db0a64e236ce716ef3d681ba1"
+  integrity sha512-ZEhqxUtEZeGgg9eHNSOAJ8O9xqSgiJdrL0lzSSfMF54x6KXWJiOH/xntSJ9YomJPrYH/p08t6gWjGWq1SDJlSA==
 
 de-indent@^1.0.2:
   version "1.0.2"

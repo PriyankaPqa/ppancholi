@@ -251,7 +251,7 @@ import {
   VTextAreaWithValidation,
   RcPhone,
   RcAutosuggest,
-} from '@rctech/component-library';
+} from '@crctech/component-library';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers';
 import {

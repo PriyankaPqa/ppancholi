@@ -12,7 +12,7 @@
 
 <script>
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { RcTab, RcTabs } from '@rctech/component-library';
+import { RcTab, RcTabs } from '@crctech/component-library';
 
 export default {
   name: 'LanguageTabs',

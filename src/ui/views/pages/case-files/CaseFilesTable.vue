@@ -16,7 +16,7 @@
 import Vue from 'vue';
 import {
   RcDataTable,
-} from '@rctech/component-library';
+} from '@crctech/component-library';
 
 export default Vue.extend({
   name: 'CaseFilesTable',

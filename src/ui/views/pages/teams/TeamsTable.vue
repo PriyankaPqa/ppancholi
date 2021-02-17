@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcDataTable } from '@rctech/component-library';
+import { RcDataTable } from '@crctech/component-library';
 
 export default Vue.extend({
   name: 'TeamsTable',

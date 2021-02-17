@@ -22,7 +22,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { RcPageContent } from '@rctech/component-library';
+import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { Event } from '@/entities/event';
 import { VForm } from '@/types';

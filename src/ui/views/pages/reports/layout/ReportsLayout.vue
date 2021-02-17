@@ -6,7 +6,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import metadata from '@/ui/mixins/metadata';
-import { RcRouterViewTransition } from '@rctech/component-library';
+import { RcRouterViewTransition } from '@crctech/component-library';
 
 export default Vue.extend({
   name: 'ReportsLayout',

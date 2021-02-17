@@ -55,7 +55,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcStatsTemplate, VSelectWithValidation } from '@rctech/component-library';
+import { RcStatsTemplate, VSelectWithValidation } from '@crctech/component-library';
 
 export default Vue.extend({
   name: 'TeamStats',

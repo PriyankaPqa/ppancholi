@@ -42,7 +42,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageLoading } from '@rctech/component-library';
+import { RcPageLoading } from '@crctech/component-library';
 import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vue';
 import SecondaryRightMenu from '@/ui/views/components/layout/SecondaryRightMenu.vue';
 import { INavigationTab } from '@/types';

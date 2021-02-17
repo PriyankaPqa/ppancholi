@@ -15,7 +15,7 @@
 import Vue from 'vue';
 import {
   RcDataTable,
-} from '@rctech/component-library';
+} from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({

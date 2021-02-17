@@ -13,7 +13,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import metadata from '@/ui/mixins/metadata';
-import { RcRouterViewTransition } from '@rctech/component-library';
+import { RcRouterViewTransition } from '@crctech/component-library';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@/types';
 import routes from '@/constants/routes';
