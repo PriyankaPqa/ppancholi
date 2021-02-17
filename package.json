@@ -21,6 +21,7 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand"
   },
   "dependencies": {
+    "@crctech/component-library": "^0.0.37",
     "@mdi/font": "^5.6.55",
     "@types/uuid": "^8.3.0",
     "awesome-phonenumber": "^2.39.0",
@@ -44,7 +45,6 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
-    "@crctech/component-library": "^0.0.37",
     "@lokalise/node-api": "^2.0.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@types/jest": "^26.0.14",
