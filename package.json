@@ -22,7 +22,6 @@
   },
   "dependencies": {
     "@mdi/font": "^5.6.55",
-    "@rctech/component-library": "^0.0.29",
     "@types/uuid": "^8.3.0",
     "awesome-phonenumber": "^2.39.0",
     "axios": "^0.21.1",
@@ -45,6 +44,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.9.6",
+    "@crctech/component-library": "^0.0.37",
     "@lokalise/node-api": "^2.0.1",
     "@testing-library/jest-dom": "^5.11.4",
     "@types/jest": "^26.0.14",

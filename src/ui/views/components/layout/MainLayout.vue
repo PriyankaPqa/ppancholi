@@ -13,7 +13,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
-import { RcPageLoading, RcRouterViewTransition } from '@rctech/component-library';
+import { RcPageLoading, RcRouterViewTransition } from '@crctech/component-library';
 
 export default Vue.extend({
   name: 'MainLayout',

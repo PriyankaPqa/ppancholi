@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcRegistrationLandingPage } from '@rctech/component-library';
+import { RcRegistrationLandingPage } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { IEvent } from '@/entities/event';
 
