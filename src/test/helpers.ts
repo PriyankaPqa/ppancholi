@@ -22,6 +22,8 @@ export const mockStoreUserContributor3 = () => mockStoreWithUserState(mockUsersD
 
 export const mockStoreUserReadOnly = () => mockStoreWithUserState(mockUsersData()[9]);
 
+export const mockStoreUserNoRole = () => mockStoreWithUserState(mockUsersData()[10]);
+
 export const mockUserStateLevel = (level: number) => ({
   modules: {
     user: {

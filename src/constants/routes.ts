@@ -1,4 +1,10 @@
 const routes = {
+  accountSettings: {
+    home: {
+      path: 'account',
+      name: 'account',
+    },
+  },
   assessments: {
     layout: {
       path: 'assessments',

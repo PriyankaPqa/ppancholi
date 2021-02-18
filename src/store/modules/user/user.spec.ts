@@ -4,7 +4,12 @@ import { mockUsersData, User } from '@/entities/user';
 import { mockAuthenticationData } from '@/auth/authentication.mock';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import {
-  mockStoreUserLevel, mockStoreUserContributorIM, mockStoreUserContributorFinance, mockStoreUserContributor3, mockStoreUserReadOnly,
+  mockStoreUserLevel,
+  mockStoreUserContributorIM,
+  mockStoreUserContributorFinance,
+  mockStoreUserContributor3,
+  mockStoreUserReadOnly,
+  mockStoreUserNoRole,
 } from '@/test/helpers';
 
 describe('>>> Users Module', () => {
@@ -77,32 +82,63 @@ describe('>>> Users Module', () => {
         store = mockStoreUserReadOnly();
         expect(store.getters['user/landingPage']).toEqual('DashboardCaseFile');
       });
+
+      it('returns proper landing page user with no role', () => {
+        store = mockStoreUserNoRole();
+        expect(store.getters['user/landingPage']).toEqual('HomeNoRole');
+      });
     });
   });
 
   describe('>> Mutations', () => {
-    test('the setUser mutation should set the user data in the store', () => {
-      store = mockStore();
+    describe('setUser', () => {
+      it('should set the user data in the store', () => {
+        store = mockStore();
 
-      expect(store.getters['user/user']).toEqual(new User({
-        oid: '',
-        email: '',
-        family_name: '',
-        given_name: '',
-        roles: [],
-      }));
+        expect(store.getters['user/user']).toEqual(new User({
+          oid: '',
+          email: '',
+          family_name: '',
+          given_name: '',
+          roles: [],
+        }));
 
-      store.commit('user/setUser', mockUsersData()[0]);
+        store.commit('user/setUser', mockUsersData()[0]);
 
-      const mockUser = mockUsersData()[0];
+        const mockUser = mockUsersData()[0];
 
-      expect(store.getters['user/user']).toEqual(new User({
-        oid: mockUser.oid,
-        email: mockUser.email,
-        family_name: mockUser.family_name,
-        given_name: mockUser.given_name,
-        roles: mockUser.roles,
-      }));
+        expect(store.getters['user/user']).toEqual(new User({
+          oid: mockUser.oid,
+          email: mockUser.email,
+          family_name: mockUser.family_name,
+          given_name: mockUser.given_name,
+          roles: mockUser.roles,
+        }));
+      });
+
+      it('uses preferred_name for email if email is not available', () => {
+        store = mockStore();
+
+        expect(store.getters['user/user']).toEqual(new User({
+          oid: '',
+          email: '',
+          family_name: '',
+          given_name: '',
+          roles: [],
+        }));
+
+        store.commit('user/setUser', mockUsersData()[1]);
+
+        const mockUser = mockUsersData()[1];
+
+        expect(store.getters['user/user']).toEqual(new User({
+          oid: mockUser.oid,
+          email: mockUser.preferred_username,
+          family_name: mockUser.family_name,
+          given_name: mockUser.given_name,
+          roles: mockUser.roles,
+        }));
+      });
     });
   });
 

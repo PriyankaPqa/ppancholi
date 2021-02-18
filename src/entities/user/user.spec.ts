@@ -119,7 +119,7 @@ describe('>>> User', () => {
     });
 
     describe('currentRole', () => {
-      test('should return the first index of roles', () => {
+      test('should return the first index of roles if user has role', () => {
         const user = new User(mockUsersData()[0]);
         expect(user.currentRole()).toEqual('level1');
       });

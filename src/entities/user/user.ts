@@ -1,5 +1,7 @@
 import { IUser, IUserData } from './user.types';
 
+export const NO_ROLE = 'no_role';
+
 export class User implements IUser {
   readonly id: string;
 
@@ -16,7 +18,7 @@ export class User implements IUser {
     this.email = data.email;
     this.lastName = data.family_name;
     this.firstName = data.given_name;
-    this.roles = data.roles;
+    this.roles = data?.roles ? data.roles : [NO_ROLE];
   }
 
   getFullName(): string {
@@ -37,7 +39,10 @@ export class User implements IUser {
     if (typeof role !== 'string') {
       throw new Error(`The function $hasRole is expecting a string. A ${typeof role} was passed`);
     }
-    return this.roles.some((r: string) => r.toLowerCase() === role.toLowerCase());
+    if (this.roles) {
+      return this.roles.some((r: string) => r.toLowerCase() === role.toLowerCase());
+    }
+    return false;
   }
 
   currentRole(): string {

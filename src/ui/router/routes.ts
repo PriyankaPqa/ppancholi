@@ -6,6 +6,8 @@ import Routes from '../../constants/routes';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 
+const AccountSettings = () => import(/* webpackChunkName: "account-settings" */ '@/ui/views/pages/account-settings/AccountSettings.vue');
+
 const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');
 const AssessmentsHome = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/home/AssessmentsHome.vue');
 
@@ -62,18 +64,24 @@ export const routes: Array<RouteConfig> = [
         component: MainLayout,
         meta: {
           requiresAuthentication: true,
-          requiresAuthorization: true,
         },
         children: [
           {
             path: Routes.home.path,
             name: Routes.home.name,
             component: HomeLayout,
-            meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+            meta: {
+              level: 'level1',
+              roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'],
+              requiresAuthorization: false,
+            },
           },
           {
             path: Routes.approvals.layout.path, // approvals
             component: ApprovalsLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.approvals.templates.path,
@@ -92,6 +100,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.assessments.layout.path, // assessments
             component: AssessmentsLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.assessments.home.path,
@@ -104,6 +115,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.caseFile.layout.path, // case files
             component: CaseFileLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.caseFile.home.path,
@@ -116,6 +130,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.registration.layout.path, // registration
             component: RegistrationLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.registration.home.path,
@@ -128,6 +145,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.events.layout.path, // events
             component: EventsLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.events.home.path,
@@ -146,6 +166,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.financialAssistance.layout.path, // financial assistance
             component: FinancialAssistanceLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.financialAssistance.home.path,
@@ -158,6 +181,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.massActions.layout.path, // mass actions
             component: MassActionsLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.massActions.home.path,
@@ -170,6 +196,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.reports.layout.path, // reports
             component: ReportsLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.reports.home.path,
@@ -182,6 +211,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.systemManagement.layout.path, // system management
             component: SystemManagementLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.systemManagement.home.path,
@@ -194,6 +226,9 @@ export const routes: Array<RouteConfig> = [
           {
             path: Routes.teams.layout.path, // teams
             component: TeamsLayout,
+            meta: {
+              requiresAuthorization: true,
+            },
             children: [
               {
                 path: Routes.teams.home.path,
@@ -202,6 +237,11 @@ export const routes: Array<RouteConfig> = [
                 meta: { level: 'level3' },
               },
             ],
+          },
+          {
+            path: Routes.accountSettings.home.path,
+            name: Routes.accountSettings.home.name,
+            component: AccountSettings,
           },
         ],
       },

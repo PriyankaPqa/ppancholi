@@ -32,7 +32,7 @@
       </div>
     </div>
 
-    <div class="flex-row align-start align-center ps-4 pb-4">
+    <div v-if="user.email" class="flex-row align-start align-center ps-4 pb-4">
       <v-icon small>
         mdi-email
       </v-icon>
@@ -46,14 +46,19 @@
         mdi-account-circle
       </v-icon>
       <div class="rc-body14 break-word pl-2" data-test="rightMenu__role">
-        {{ $t(`user.role.${user.currentRole()}`) }}
+        <template v-if="user.hasRole(NO_ROLE)">
+          {{ $t('dashboard.rightmenu.noRoleAssigned') }}
+        </template>
+        <template v-else>
+          {{ $t(`user.role.${user.currentRole()}`) }}
+        </template>
       </div>
     </div>
 
     <template #append>
       <v-divider />
 
-      <v-list-item data-test="account-settings" link @click="accountSettings">
+      <v-list-item data-test="account-settings" link @click.native="accountSettings">
         <v-list-item-icon>
           <v-icon>
             mdi-cog
@@ -83,11 +88,19 @@
 </template>
 
 <script lang="ts">
-import { IUser } from '@/entities/user';
+import { IUser, NO_ROLE } from '@/entities/user';
 import Vue from 'vue';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'RightMenu',
+
+  data() {
+    return {
+      NO_ROLE,
+    };
+  },
+
   computed: {
     show(): boolean {
       return this.$store.state.dashboard.rightMenuVisible;
@@ -106,9 +119,11 @@ export default Vue.extend({
     },
 
     accountSettings() {
-      // this.$router.push({
-      //   name: routes.accountSettings.name,
-      // });
+      if (this.$route.name !== routes.accountSettings.home.name) {
+        this.$router.push({
+          name: routes.accountSettings.home.name,
+        });
+      }
     },
 
     logout() {

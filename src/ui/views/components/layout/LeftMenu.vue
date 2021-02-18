@@ -24,13 +24,14 @@
             link
             class="navMenu"
             active-class="navMenu__active"
+            :disabled="item.disabled"
             :to="{ name: item.to }"
             :exact="typeof item.exact === 'undefined' ? true : item.exact"
             :data-test="item.test"
             v-on="on"
             @click="onClickOutside">
             <v-list-item-icon>
-              <v-icon color="primary darken-1">
+              <v-icon color="primary darken-1" :disabled="item.disabled">
                 {{ item.icon }}
               </v-icon>
             </v-list-item-icon>
@@ -48,6 +49,7 @@ import Vue from 'vue';
 import routes from '@/constants/routes';
 import { ui } from '@/constants/ui';
 import { INavigationTab } from '@/types';
+import { NO_ROLE } from '@/entities/user';
 
 export default Vue.extend({
   name: 'LeftMenu',
@@ -68,7 +70,7 @@ export default Vue.extend({
           text: 'dashboard.leftMenu.home_title',
           test: 'home',
           level: 'level1',
-          roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'],
+          roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE],
         },
         {
           to: routes.caseFile.home.name,
@@ -77,7 +79,8 @@ export default Vue.extend({
           test: 'caseFile',
           exact: false,
           level: 'level1',
-          roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'],
+          disabled: this.$hasRole(NO_ROLE),
+          roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE],
         },
         {
           to: routes.events.home.name,

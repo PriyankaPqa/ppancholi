@@ -1,11 +1,13 @@
 export interface IUserData {
    oid: string;
-   email: string;
+   email?: string;
   // eslint-disable-next-line camelcase
    family_name: string;
   // eslint-disable-next-line camelcase
    given_name: string;
    roles: Array<string>;
+  // eslint-disable-next-line camelcase
+   preferred_username?: string;
 }
 
 export interface IUser {

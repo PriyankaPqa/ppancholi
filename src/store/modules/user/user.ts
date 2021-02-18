@@ -29,8 +29,9 @@ const getters = {
   }),
 
   landingPage(state: IState) {
-    // We take the assumption that user has one role for now
-    const role = state.roles[0];
+    const user = new User(state);
+    const role = user.currentRole();
+
     switch (role) {
       case 'level1':
       case 'level2':
@@ -43,7 +44,7 @@ const getters = {
       case 'level4': return 'HomeLevel4';
       case 'level5': return 'HomeLevel5';
       case 'level6': return 'HomeLevel6';
-      default: return '';
+      default: return 'HomeNoRole';
     }
   },
 };
@@ -53,7 +54,7 @@ const mutations = {
     state.oid = payload.oid;
     state.family_name = payload.family_name;
     state.given_name = payload.given_name;
-    state.email = payload.email;
+    state.email = payload.email || payload.preferred_username;
     state.roles = payload.roles;
   },
 };

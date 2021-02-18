@@ -3,7 +3,7 @@ import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
-import { mockUsersData } from '@/entities/user';
+import { mockUsersData, NO_ROLE } from '@/entities/user';
 import routes from '@/constants/routes';
 import Component from '../LeftMenu.vue';
 
@@ -156,17 +156,34 @@ describe('LeftMenu.vue', () => {
         expect(item.text).toBe('dashboard.leftMenu.home_title');
         expect(item.test).toBe('home');
         expect(item.level).toBe('level1');
-        expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly']);
+        expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE]);
       });
 
-      test('Item[1]', () => {
-        const item = wrapper.vm.items[1];
-        expect(item.to).toBe(routes.caseFile.home.name);
-        expect(item.icon).toBe('mdi-clipboard-text');
-        expect(item.text).toBe('dashboard.leftMenu.caseFiles_title');
-        expect(item.test).toBe('caseFile');
-        expect(item.level).toBe('level1');
-        expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly']);
+      describe('Item[1]', () => {
+        test('its properties are ok', () => {
+          const item = wrapper.vm.items[1];
+          expect(item.to).toBe(routes.caseFile.home.name);
+          expect(item.icon).toBe('mdi-clipboard-text');
+          expect(item.text).toBe('dashboard.leftMenu.caseFiles_title');
+          expect(item.test).toBe('caseFile');
+          expect(item.level).toBe('level1');
+          expect(item.disabled).toBe(false);
+          expect(item.roles).toEqual(['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE]);
+        });
+        test('It is disabled if user has no role', () => {
+          const wrapper = shallowMount(Component, {
+            localVue: createLocalVue(),
+            store: {
+              modules: {
+                user: {
+                  state: mockUsersData()[10],
+                },
+              },
+            },
+          });
+          const item = wrapper.vm.items[1];
+          expect(item.disabled).toBe(true);
+        });
       });
 
       test('Item[2]', () => {
@@ -177,6 +194,7 @@ describe('LeftMenu.vue', () => {
         expect(item.test).toBe('events');
         expect(item.level).toBe('level4');
       });
+
       test('Item[3]', () => {
         const item = wrapper.vm.items[3];
         expect(item.to).toBe(routes.teams.home.name);
@@ -185,6 +203,7 @@ describe('LeftMenu.vue', () => {
         expect(item.test).toBe('teams');
         expect(item.level).toBe('level3');
       });
+
       test('Item[4]', () => {
         const item = wrapper.vm.items[4];
         expect(item.to).toBe(routes.financialAssistance.home.name);
@@ -193,6 +212,7 @@ describe('LeftMenu.vue', () => {
         expect(item.test).toBe('financial');
         expect(item.level).toBe('level6');
       });
+
       test('Item[5]', () => {
         const item = wrapper.vm.items[5];
         expect(item.to).toBe(wrapper.vm.approvalRedirection);
@@ -201,6 +221,7 @@ describe('LeftMenu.vue', () => {
         expect(item.test).toBe('approvals');
         expect(item.roles).toEqual(['level3', 'level4', 'level6']);
       });
+
       test('Item[6]', () => {
         const item = wrapper.vm.items[6];
         expect(item.to).toBe(routes.massActions.home.name);
@@ -209,6 +230,7 @@ describe('LeftMenu.vue', () => {
         expect(item.test).toBe('mass_actions');
         expect(item.level).toBe('level5');
       });
+
       test('Item[7]', () => {
         const item = wrapper.vm.items[7];
         expect(item.to).toBe(routes.assessments.home.name);
@@ -217,6 +239,7 @@ describe('LeftMenu.vue', () => {
         expect(item.test).toBe('assessments');
         expect(item.level).toBe('level6');
       });
+
       test('Item[8]', () => {
         const item = wrapper.vm.items[8];
         expect(item.to).toBe(routes.systemManagement.home.name);
@@ -225,6 +248,7 @@ describe('LeftMenu.vue', () => {
         expect(item.test).toBe('system_management');
         expect(item.level).toBe('level6');
       });
+
       test('Item[9]', () => {
         const item = wrapper.vm.items[9];
         expect(item.to).toBe(routes.reports.home.name);

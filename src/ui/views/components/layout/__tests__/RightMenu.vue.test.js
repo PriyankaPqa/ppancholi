@@ -1,5 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUsersData } from '@/entities/user';
+import routes from '@/constants/routes';
 import Component from '../RightMenu.vue';
 
 const localVue = createLocalVue();
@@ -31,6 +32,10 @@ describe('RightMenu.vue', () => {
     });
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('Template', () => {
     describe('Elements on page', () => {
       test('the avatar is displayed correctly', async () => {
@@ -57,6 +62,28 @@ describe('RightMenu.vue', () => {
         expect(role.text()).toBe('user.role.level1');
       });
 
+      test('no role is displayed correctly ', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            modules: {
+              user: {
+                actions,
+                state: mockUsersData()[10],
+              },
+              dashboard: {
+                state: {
+                  rightMenuVisible: true,
+                },
+              },
+            },
+          },
+        });
+        const role = wrapper.find('[data-test="rightMenu__role"]');
+
+        expect(role.text()).toBe('dashboard.rightmenu.noRoleAssigned');
+      });
+
       test('The page contains the Accounts settings', () => {
         const element = wrapper.find('[data-test="account-settings"]');
 
@@ -80,6 +107,23 @@ describe('RightMenu.vue', () => {
         await button.trigger('click');
 
         expect(actions.signOut).toHaveBeenCalledTimes(1);
+      });
+
+      test('the account settings button redirects to account settings page', async () => {
+        const button = wrapper.find('[data-test="account-settings"]');
+
+        await button.trigger('click');
+
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.accountSettings.home.name });
+      });
+
+      test('the account settings button do nothing if we are already on account settings page', async () => {
+        wrapper.vm.$route.name = routes.accountSettings.home.name;
+
+        const button = wrapper.find('[data-test="account-settings"]');
+        await button.trigger('click');
+
+        expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(0);
       });
     });
   });

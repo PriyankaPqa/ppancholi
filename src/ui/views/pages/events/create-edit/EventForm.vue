@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <ValidationObserver ref="form">
-      <v-row class="justify-center">
+      <v-row justify="center">
         <v-col cols="12" xl="8" lg="9" md="11" sm="12">
           <language-tabs :language="languageMode" @click="setLanguageMode" />
 
