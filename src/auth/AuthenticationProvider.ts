@@ -64,11 +64,14 @@ export default {
       throw new Error('User is not logged in.');
     }
 
-    const tokenResponse = await msalInstance.acquireTokenSilent({
-      account: accounts[0],
-      scopes: tokenRequest.scopes,
-    });
-
-    return tokenResponse;
+    try {
+      const tokenResponse = await msalInstance.acquireTokenSilent({
+        account: accounts[0],
+        scopes: tokenRequest.scopes,
+      });
+      return tokenResponse;
+    } catch (e) {
+      throw new Error(e);
+    }
   },
 };

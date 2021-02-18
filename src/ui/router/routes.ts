@@ -61,7 +61,8 @@ export const routes: Array<RouteConfig> = [
         path: '',
         component: MainLayout,
         meta: {
-          requiresAuth: true,
+          requiresAuthentication: true,
+          requiresAuthorization: true,
         },
         children: [
           {
