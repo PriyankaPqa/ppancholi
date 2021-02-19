@@ -23,15 +23,15 @@ describe('HomeNoRole.vue', () => {
     });
 
     it('displays proper title', () => {
-      expect(wrapper.findDataTest('account_settings__title').text()).toEqual('dashboard.noRoles.welcome, Albert First');
+      expect(wrapper.findDataTest('account_settings__title').text()).toEqual('noRoles.welcome, Albert First');
     });
 
     it('displays proper title', () => {
-      expect(wrapper.findDataTest('account_settings__subtitle').text()).toEqual('dashboard.noRoles.welcomeMessage');
+      expect(wrapper.findDataTest('account_settings__subtitle').text()).toEqual('noRoles.welcomeMessage');
     });
 
     it('displays proper label for action button', () => {
-      expect(wrapper.findDataTest('account_settings__submit_label').text()).toEqual('dashboard.noRoles.leftMenuTitle');
+      expect(wrapper.findDataTest('account_settings__submit_label').text()).toEqual('noRoles.leftMenuTitle');
     });
 
     it('class redirect when clicking on button', async () => {

@@ -3,7 +3,7 @@
     :navigation-tabs="tabs"
     :show-left-menu="showLeftMenu"
     :loading="false"
-    :left-menu-title="$t('dashboard.system_management.leftMenu.title')"
+    :left-menu-title="$t('system_management.leftMenu.title')"
     hide-dividers>
     <rc-router-view-transition />
   </page-template>

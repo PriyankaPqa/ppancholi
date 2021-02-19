@@ -48,7 +48,7 @@ export default Vue.extend({
     labels(): Record<string, unknown> {
       return {
         header: {
-          title: `${this.$t('dashboard.caseFiles_table.title')} (${this.count})`,
+          title: `${this.$t('caseFiles_table.title')} (${this.count})`,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };

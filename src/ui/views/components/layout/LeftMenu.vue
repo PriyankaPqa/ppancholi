@@ -67,7 +67,7 @@ export default Vue.extend({
         {
           to: routes.home.name,
           icon: 'mdi-home',
-          text: 'dashboard.leftMenu.home_title',
+          text: 'leftMenu.home_title',
           test: 'home',
           level: 'level1',
           roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE],
@@ -75,7 +75,7 @@ export default Vue.extend({
         {
           to: routes.caseFile.home.name,
           icon: 'mdi-clipboard-text',
-          text: 'dashboard.leftMenu.caseFiles_title',
+          text: 'leftMenu.caseFiles_title',
           test: 'caseFile',
           exact: false,
           level: 'level1',
@@ -85,7 +85,7 @@ export default Vue.extend({
         {
           to: routes.events.home.name,
           icon: 'mdi-calendar',
-          text: 'dashboard.leftMenu.events_title',
+          text: 'leftMenu.events_title',
           test: 'events',
           exact: false,
           level: 'level4',
@@ -94,7 +94,7 @@ export default Vue.extend({
         {
           to: routes.teams.home.name,
           icon: 'mdi-account-multiple-plus',
-          text: 'dashboard.leftMenu.teams_title',
+          text: 'leftMenu.teams_title',
           test: 'teams',
           exact: false,
           level: 'level3',
@@ -102,7 +102,7 @@ export default Vue.extend({
         {
           to: routes.financialAssistance.home.name,
           icon: 'mdi-currency-usd',
-          text: 'dashboard.leftMenu.financial_title',
+          text: 'leftMenu.financial_title',
           test: 'financial',
           exact: false,
           level: 'level6',
@@ -110,7 +110,7 @@ export default Vue.extend({
         {
           to: this.approvalRedirection,
           icon: 'mdi-check',
-          text: 'dashboard.leftMenu.approvals_title',
+          text: 'leftMenu.approvals_title',
           test: 'approvals',
           exact: false,
           roles: ['level3', 'level4', 'level6'],
@@ -118,7 +118,7 @@ export default Vue.extend({
         {
           to: routes.massActions.home.name,
           icon: 'mdi-file-document',
-          text: 'dashboard.leftMenu.mass_actions_title',
+          text: 'leftMenu.mass_actions_title',
           test: 'mass_actions',
           exact: false,
           level: 'level5',
@@ -126,14 +126,14 @@ export default Vue.extend({
         {
           to: routes.assessments.home.name,
           icon: 'mdi-poll-box',
-          text: 'dashboard.leftMenu.assessments_title',
+          text: 'leftMenu.assessments_title',
           test: 'assessments',
           level: 'level6',
         },
         {
           to: routes.systemManagement.home.name,
           icon: 'dvr',
-          text: 'dashboard.system_management.leftMenu.title',
+          text: 'system_management.leftMenu.title',
           test: 'system_management',
           exact: false,
           level: 'level6',
@@ -141,7 +141,7 @@ export default Vue.extend({
         {
           to: routes.reports.home.name,
           icon: 'mdi-alert-octagon',
-          text: 'dashboard.leftMenu.reports_title',
+          text: 'leftMenu.reports_title',
           test: 'reports',
           level: 'level5',
           roles: ['contributorIM', 'contributorFinance'],

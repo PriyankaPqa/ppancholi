@@ -41,7 +41,7 @@ export default Vue.extend({
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
       return {
         header: {
-          title: this.$t('dashboard.eventsTable.title'),
+          title: this.$t('eventsTable.title'),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };

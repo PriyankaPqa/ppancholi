@@ -10,7 +10,7 @@
     @input="updateShow">
     <v-toolbar color="grey darken-2" height="56" flat dark>
       <v-toolbar-title class="rc-title-3 white--text">
-        {{ $t('dashboard.rightmenu.title') }}
+        {{ $t('rightmenu.title') }}
       </v-toolbar-title>
       <v-spacer />
       <v-btn icon data-test="closeButton" @click="updateShow(false)">
@@ -47,7 +47,7 @@
       </v-icon>
       <div class="rc-body14 break-word pl-2" data-test="rightMenu__role">
         <template v-if="user.hasRole(NO_ROLE)">
-          {{ $t('dashboard.rightmenu.noRoleAssigned') }}
+          {{ $t('rightmenu.noRoleAssigned') }}
         </template>
         <template v-else>
           {{ $t(`user.role.${user.currentRole()}`) }}
@@ -66,7 +66,7 @@
         </v-list-item-icon>
 
         <v-list-item-content>
-          <v-list-item-title>{{ $t('dashboard.rightmenu.accountSettings') }}</v-list-item-title>
+          <v-list-item-title>{{ $t('rightmenu.accountSettings') }}</v-list-item-title>
         </v-list-item-content>
       </v-list-item>
 

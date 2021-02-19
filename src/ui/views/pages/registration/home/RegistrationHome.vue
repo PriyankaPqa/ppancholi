@@ -14,7 +14,7 @@
         item-value="id"
         return-object
         :attach="true"
-        :label="$t('crcregistration.landingpage.selectEvent')"
+        :label="$t('registration.landingpage.selectEvent')"
         data-test="crcRegistrationLandingPage__event" />
     </div>
   </rc-registration-landing-page>

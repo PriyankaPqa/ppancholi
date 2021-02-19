@@ -37,7 +37,7 @@ export default Vue.extend({
     labels(): Record<string, Record<string, TranslateResult>> {
       return {
         header: {
-          title: this.$t('dashboard.approval.template.title'),
+          title: this.$t('approval.template.title'),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };

@@ -50,7 +50,7 @@ describe('EventForm.vue', () => {
       it('displays a toast success toast notification', () => {
         helpers.copyToClipBoard = jest.fn();
         wrapper.vm.copyRegistrationLink();
-        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('dashboard.eventSummary.copyLinkSuccessful');
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.copyLinkSuccessful');
       });
     });
 

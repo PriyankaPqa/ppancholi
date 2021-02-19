@@ -1,5 +1,5 @@
 <template>
-  <rc-page-content :title="$t('dashboard.noRoles.leftMenuTitle')" />
+  <rc-page-content :title="$t('noRoles.leftMenuTitle')" />
 </template>
 
 <script lang="ts">

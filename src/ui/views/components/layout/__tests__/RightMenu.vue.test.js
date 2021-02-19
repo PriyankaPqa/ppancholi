@@ -81,7 +81,7 @@ describe('RightMenu.vue', () => {
         });
         const role = wrapper.find('[data-test="rightMenu__role"]');
 
-        expect(role.text()).toBe('dashboard.rightmenu.noRoleAssigned');
+        expect(role.text()).toBe('rightmenu.noRoleAssigned');
       });
 
       test('The page contains the Accounts settings', () => {

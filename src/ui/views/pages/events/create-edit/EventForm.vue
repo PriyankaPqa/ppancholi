@@ -193,7 +193,7 @@
                         </v-icon>
                       </v-btn>
                     </template>
-                    <span>{{ $t('dashboard.eventSummary.copyLinkTooltip') }}</span>
+                    <span>{{ $t('eventSummary.copyLinkTooltip') }}</span>
                   </v-tooltip>
                 </div>
                 <v-row>
@@ -499,7 +499,7 @@ export default Vue.extend({
   methods: {
     copyRegistrationLink() {
       helpers.copyToClipBoard(`${this.prefixRegistrationLink}${this.registrationLink}`);
-      this.$toasted.global.success(this.$t('dashboard.eventSummary.copyLinkSuccessful'));
+      this.$toasted.global.success(this.$t('eventSummary.copyLinkSuccessful'));
     },
 
     setLanguageMode(lang: string) {

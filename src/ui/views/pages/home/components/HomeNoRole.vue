@@ -1,21 +1,21 @@
 <template>
-  <rc-page-content :title="$t('dashboard.noRoles.welcome')">
+  <rc-page-content :title="$t('noRoles.welcome')">
     <v-container class="fill-height">
       <v-row justify="center">
         <v-col cols="12" md="8">
           <div class="border text-center">
             <div class="rc-body16 font-weight-bold mb-4 mt-8" data-test="account_settings__title">
-              {{ $t('dashboard.noRoles.welcome') }}, {{ user.getFullName() }}
+              {{ $t('noRoles.welcome') }}, {{ user.getFullName() }}
             </div>
             <div class="rc-body14" data-test="account_settings__subtitle">
-              {{ $t('dashboard.noRoles.welcomeMessage') }}
+              {{ $t('noRoles.welcomeMessage') }}
             </div>
             <v-btn color="primary" class="mt-8 mb-8" data-test="account_settings__submit" @click.native="redirect">
               <v-icon left>
                 mdi-cog
               </v-icon>
               <span data-test="account_settings__submit_label">
-                {{ $t('dashboard.noRoles.leftMenuTitle') }}
+                {{ $t('noRoles.leftMenuTitle') }}
               </span>
             </v-btn>
           </div>

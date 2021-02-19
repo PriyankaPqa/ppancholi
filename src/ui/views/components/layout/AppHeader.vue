@@ -17,7 +17,7 @@
         <v-icon left>
           mdi-plus
         </v-icon>
-        {{ $t('dashboard.header.registerBeneficiaries') }}
+        {{ $t('header.registerBeneficiaries') }}
       </v-btn>
 
       <language-selector />
