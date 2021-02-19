@@ -50,7 +50,13 @@ export default Vue.extend({
   },
 
   async mounted() {
-    this.events = await this.$storage.event.actions.searchEvents({ filter: { Schedule: { Status: EEventStatus.Open } } });
+    this.events = await this.$storage.event.actions.searchEvents({
+      filter: {
+        Schedule: {
+          Status: EEventStatus.Open,
+        },
+      },
+    });
   },
 });
 </script>

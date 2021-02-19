@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "preserveSymlinks": true,
     "strictNullChecks": false,
     "target": "esnext",
     "module": "esnext",

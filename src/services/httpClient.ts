@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import buildQuery from 'odata-query';
+import buildQuery from '@/services/odata-query';
 import camelCaseKeys from 'camelcase-keys';
 import { localStorageKeys } from '@/constants/localStorage';
 import { v4 as uuidv4 } from 'uuid';
