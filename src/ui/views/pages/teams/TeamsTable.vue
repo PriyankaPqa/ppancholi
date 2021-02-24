@@ -2,18 +2,14 @@
   <div>
     <rc-data-table
       data-test="teams-table"
-      :items="items"
+      :items="teamSearchResults"
       :count="count"
       :labels="labels"
       :headers="[]"
       :sort-by="'name'"
       @search="search">
-      <template #filter>
-        <filter-toolbar
-          filter-key="teams"
-          :filter-options="filters"
-          :count="count"
-          @update:appliedFilter="onApplyFilter" />
+      <template v-if="$hasLevel('level5')" #headerLeft>
+        <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="goToCreateTeam($event)" />
       </template>
     </rc-data-table>
   </div>
@@ -22,16 +18,15 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcDataTable, IFilterSettings } from '@crctech/component-library';
-
-import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { RcDataTable, RcAddButtonWithMenu } from '@crctech/component-library';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'TeamsTable',
 
   components: {
     RcDataTable,
-    FilterToolbar,
+    RcAddButtonWithMenu,
   },
 
   props: {
@@ -43,7 +38,7 @@ export default Vue.extend({
 
   data() {
     return {
-      items: [],
+      teamSearchResults: [],
       count: 0,
     };
   },
@@ -57,17 +52,36 @@ export default Vue.extend({
         },
       };
     },
-    filters(): Array<IFilterSettings> {
-      return [];
+    menuItems(): Array<Record<string, string>> {
+      return [{
+        text: this.$t('teams.types.create_standard') as string,
+        value: 'standard',
+        icon: 'mdi-account-multiple',
+        dataTest: 'create-standard-team-link',
+      }, {
+        text: this.$t('teams.types.create_adhoc') as string,
+        value: 'adhoc',
+        icon: 'mdi-account-multiple-outline',
+        dataTest: 'create-adhoc-team-link',
+      }];
     },
   },
 
   methods: {
-    search() {
-      return false;
+    goToCreateTeam(item: Record<string, string>) {
+      const teamType = item.value;
+      this.$router.push({ name: routes.teams.create.name, params: { teamType } });
     },
-    async onApplyFilter(filter: Array<string>) {
-      return filter;
+
+    async launchSearch() {
+      const data = await this.$storage.team.actions.searchTeams({ filter: { } });
+      return [];
+    },
+
+    search() {
+      // TO DO call launchSearch with the parameters from the search field
+      this.launchSearch();
+      return false;
     },
   },
 });

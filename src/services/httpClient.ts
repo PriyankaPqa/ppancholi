@@ -78,7 +78,7 @@ class HttpClient implements IHttpClient {
         }
       }
     }
-    return Promise.reject(error.response.data);
+    return Promise.reject(error?.response?.data || error);
   }
 
   private requestHandler(request: any) {

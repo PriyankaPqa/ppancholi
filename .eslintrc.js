@@ -87,6 +87,8 @@ module.exports = {
         '@typescript-eslint/indent': 'off', // So there is no conflict between indents of others
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
+        '@typescript-eslint/no-empty-function': 2,
+
       },
     },
   ],

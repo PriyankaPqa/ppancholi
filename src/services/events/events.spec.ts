@@ -1,4 +1,4 @@
-import { Event, EEventStatus, mockEventsData } from '@/entities/event';
+import { Event, mockEventsData, EEventStatus } from '@/entities/event';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { EventsService } from './events';

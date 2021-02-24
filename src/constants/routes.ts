@@ -124,6 +124,14 @@ const routes = {
       path: '',
       name: 'teams.home',
     },
+    create: {
+      path: 'create/:teamType',
+      name: 'teams.create',
+    },
+    edit: {
+      path: 'edit/:teamType',
+      name: 'teams.edit',
+    },
   },
 };
 

@@ -4,6 +4,7 @@ import { IRootState } from './store.types';
 import { user } from './modules/user';
 import { dashboard } from './modules/dashboard';
 import { event } from './modules/event';
+import { team } from './modules/team';
 
 Vue.use(Vuex);
 
@@ -15,6 +16,7 @@ const store: StoreOptions<IRootState> = {
     user,
     dashboard,
     event,
+    team,
   },
 };
 
