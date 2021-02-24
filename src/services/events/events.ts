@@ -1,5 +1,4 @@
 import { IHttpClient } from '@/services/httpClient';
-import { IEventTypeData } from '@/entities/eventType';
 import {
   ICreateEventRequest, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
@@ -17,10 +16,6 @@ export class EventsService implements IEventsService {
 
   async getEvents(): Promise<IEventData[]> {
     return this.http.get('/event/events');
-  }
-
-  async getEventTypes(): Promise<IEventTypeData[]> {
-    return this.http.get('/event/event-types');
   }
 
   async getOtherProvinces(): Promise<IOtherProvince[]> {

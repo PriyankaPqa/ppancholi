@@ -20,23 +20,31 @@ import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'SystemManagementLayout',
+
   components: {
     PageTemplate,
     RcRouterViewTransition,
   },
+
   mixins: [metadata],
+
   computed: {
     metaTitle(): TranslateResult {
-      return this.$t('metaInfo.dashboard.system_management.title');
+      return this.$t('metaInfo.system_management.title');
     },
+
     metaDescription(): TranslateResult {
-      return this.$t('metaInfo.dashboard.system_management.description');
+      return this.$t('metaInfo.system_management.description');
     },
 
     tabs(): Array<INavigationTab> {
-      return [
-
-      ];
+      return [{
+        text: this.$t('system_management.leftMenu.lists_title'),
+        test: 'systemManagement__menu__optionsLists',
+        to: routes.systemManagement.lists.name,
+        exact: false,
+        level: 'level6',
+      }];
     },
 
     showLeftMenu(): boolean {

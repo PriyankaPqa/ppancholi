@@ -9,12 +9,12 @@
       <v-card :class="{'pageContentCard full-width pageContent__card': true, 'height100': fullHeight}">
         <v-toolbar color="primary darken-1" dark flat class="flex-grow-0 toolbar">
           <v-btn v-if="showAddButton" :data-test="addButtonDataTest" class="mr-3" fab color="white" small @click="$emit('add-button')">
-            <v-icon color="secondary">
+            <v-icon color="primary">
               mdi-plus
             </v-icon>
           </v-btn>
           <v-btn v-if="showBackButton" class="mr-3" elevation="0" color="white" fab small data-test="pageContent_backButton" @click="$emit('back')">
-            <v-icon color="secondary">
+            <v-icon color="primary">
               mdi-arrow-left
             </v-icon>
           </v-btn>

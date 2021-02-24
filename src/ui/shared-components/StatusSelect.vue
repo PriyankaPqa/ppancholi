@@ -32,7 +32,7 @@
   </v-menu>
 </template>
 
-<script lang='ts'>
+<script lang="ts">
 import Vue from 'vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
@@ -75,7 +75,7 @@ export default Vue.extend({
 
 <style scoped lang="scss">
 .status-chip {
-  opacity: 1 !important;
+  opacity: 1!important;
 }
 
 ::v-deep .v-list-item--disabled {
@@ -83,6 +83,6 @@ export default Vue.extend({
 }
 
 .disabled::v-deep.v-chip--clickable {
-  cursor: initial !important;
+  cursor: initial!important;
 }
 </style>

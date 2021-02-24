@@ -115,7 +115,7 @@ export default Vue.extend({
           return colors.chips.green;
 
         case EOptionListItemStatus.Inactive:
-          return colors.chips.red;
+          return colors.chips.grey;
 
         default:
           return colors.chips.green;

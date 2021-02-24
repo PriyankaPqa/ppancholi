@@ -32,13 +32,13 @@ describe('SystemManagementLayout.vue', () => {
   describe('Computed', () => {
     describe('metaTitle', () => {
       it('returns the correct value', () => {
-        expect(wrapper.vm.metaTitle).toBe('metaInfo.dashboard.system_management.title');
+        expect(wrapper.vm.metaTitle).toBe('metaInfo.system_management.title');
       });
     });
 
     describe('metaDescription', () => {
       it('returns the correct value', () => {
-        expect(wrapper.vm.metaDescription).toBe('metaInfo.dashboard.system_management.description');
+        expect(wrapper.vm.metaDescription).toBe('metaInfo.system_management.description');
       });
     });
 

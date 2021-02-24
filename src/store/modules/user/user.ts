@@ -57,6 +57,10 @@ const mutations = {
     state.email = payload.email || payload.preferred_username;
     state.roles = payload.roles;
   },
+
+  setRole(state: IState, payload: string) {
+    state.roles = [payload];
+  },
 };
 
 const actions = {

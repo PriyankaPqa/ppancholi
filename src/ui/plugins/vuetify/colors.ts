@@ -1,5 +1,4 @@
 export default {
-
   status: {
     error: '#CC3300',
     red_pale: '#FFE5DB',

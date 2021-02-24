@@ -115,11 +115,11 @@ describe('>>> Event Module', () => {
       test('the fetchEventTypes action calls the getEventsTypes service and returns the eventTypes getter', async () => {
         const store = mockStore();
 
-        expect(store.$services.events.getEventTypes).toHaveBeenCalledTimes(0);
+        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(0);
 
         const res = await store.dispatch('event/fetchEventTypes');
 
-        expect(store.$services.events.getEventTypes).toHaveBeenCalledTimes(1);
+        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
 
         expect(store.state.event.eventTypes).toEqual(mockEventTypeData());
 
@@ -127,15 +127,15 @@ describe('>>> Event Module', () => {
       });
 
       test('if the getEventTypes action has already been called it will not call the service again', async () => {
-        expect(store.$services.events.getEventTypes).toHaveBeenCalledTimes(0);
+        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(0);
 
         await store.dispatch('event/fetchEventTypes');
 
-        expect(store.$services.events.getEventTypes).toHaveBeenCalledTimes(1);
+        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
 
         await store.dispatch('event/fetchEventTypes');
 
-        expect(store.$services.events.getEventTypes).toHaveBeenCalledTimes(1);
+        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
       });
     });
 

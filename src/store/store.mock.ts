@@ -8,6 +8,7 @@ import { mockProvider } from '@/services/provider';
 import { user } from './modules/user';
 import { dashboard } from './modules/dashboard';
 import { event } from './modules/event';
+import { optionList } from './modules/optionList';
 
 Vue.use(Vuex);
 
@@ -16,6 +17,7 @@ const mockConfig = {
     user,
     dashboard,
     event,
+    optionList,
   },
 };
 

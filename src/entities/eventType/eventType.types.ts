@@ -1,4 +1,5 @@
 import { IMultilingual } from '@/types';
+import { EOptionListItemStatus } from '@/types/enums/EOptionListItemStatus';
 
 export interface IEventTypeData {
   id?: string;
@@ -7,6 +8,8 @@ export interface IEventTypeData {
   eTag?: string;
   name: IMultilingual;
   orderRank: number;
+  status: EOptionListItemStatus;
+  itemStatus: EOptionListItemStatus;
 }
 
 export interface IEventType {
@@ -16,4 +19,6 @@ export interface IEventType {
   readonly eTag?: string;
   readonly name: IMultilingual;
   readonly orderRank: number;
+  readonly status: EOptionListItemStatus;
+  readonly itemStatus: EOptionListItemStatus;
 }

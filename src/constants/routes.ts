@@ -114,6 +114,14 @@ const routes = {
       path: '',
       name: 'systemManagement.home',
     },
+    lists: {
+      path: 'lists',
+      name: 'Lists',
+    },
+    eventTypes: {
+      path: 'lists/event-types',
+      name: 'systemManagement.lists.eventTypes',
+    },
   },
   teams: {
     layout: {

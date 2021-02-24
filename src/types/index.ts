@@ -9,11 +9,14 @@ export type { IAuthenticationAccessToken } from './interfaces/IAuthenticationAcc
 export type { IMultilingual } from './interfaces/IMultilingual';
 export type { INavigationTab } from './interfaces/ui/INavigationTab';
 export type { ISearchData } from './interfaces/ISearchData';
+export type { IOptionListItem } from './interfaces/IOptionListItem';
+export type { IOptionListSubItem } from './interfaces/IOptionListSubItem';
 
 /**
  * Enums
  */
 export { ECanadaProvinces } from './enums/ECanadaProvinces';
+export { EOptionLists } from './enums/EOptionLists';
 export { EOptionListItemStatus } from './enums/EOptionListItemStatus';
 
 export type VForm = Vue & {

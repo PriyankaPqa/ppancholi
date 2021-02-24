@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import Vue from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import buildQuery from '@/services/odata-query';
 import camelCaseKeys from 'camelcase-keys';
 import { localStorageKeys } from '@/constants/localStorage';
-import { v4 as uuidv4 } from 'uuid';
-import Vue from 'vue';
 import { ISearchData } from '@/types';
+import { i18n } from '@/ui/plugins/i18n';
 
 export interface IRestResponse<T> {
   success: boolean;
@@ -75,7 +76,11 @@ class HttpClient implements IHttpClient {
         if (errors) {
           const errorMessage = Object.keys(errors).map((key) => errors[key]);
           Vue.toasted.global.error(errorMessage);
+        } else {
+          Vue.toasted.global.error(i18n.t('error.unexpected_error'));
         }
+      } else {
+        Vue.toasted.global.error(i18n.t('error.unexpected_error'));
       }
     }
     return Promise.reject(error?.response?.data || error);

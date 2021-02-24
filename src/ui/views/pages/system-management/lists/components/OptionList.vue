@@ -1,0 +1,445 @@
+<template>
+  <page-content
+    :title="$t(title)"
+    :help-link="helpLink"
+    show-add-button
+    :show-help="!embedded"
+    show-search
+    :fullscreen="embedded"
+    @search="search = $event"
+    @add-button="addItem">
+    <template v-if="embedded" #buttons>
+      <v-btn class="ml-2" icon data-test="optionsList__closeDialog" @click="closeDialog()">
+        <v-icon color="primary lighten-2">
+          mdi-close
+        </v-icon>
+      </v-btn>
+    </template>
+
+    <v-container v-if="loading">
+      <v-row justify="center">
+        <v-col cols="12" lg="10" class="mt-10">
+          <v-skeleton-loader class="my-6" type="article" />
+          <v-skeleton-loader class="my-6" type="article" />
+          <v-skeleton-loader class="my-6" type="article" />
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <v-container v-else-if="!error" class="full-height">
+      <v-row justify="center" class="full-height">
+        <v-col cols="12" lg="10" class="mt-4 flex-parent full-height">
+          <rc-tabs>
+            <rc-tab
+              v-for="lang in supportedLanguages"
+              :key="lang.key"
+              :label="$t(`tab.${lang.key}`)"
+              :data-test="`optionsList__lang-${lang.key}`"
+              :active="languageMode === lang.key"
+              @click="setLanguageMode(lang.key)" />
+          </rc-tabs>
+
+          <v-container class="scroller" fluid>
+            <v-row class="optionsList__header">
+              <template v-if="isCascading">
+                <v-col cols="3">
+                  <span class="rc-body14 fw-bold">{{ $t('system_management.lists.header.item') }}</span>
+                </v-col>
+
+                <v-col cols="4">
+                  <span class="rc-body14 fw-bold">{{ $t('system_management.lists.header.subItem') }}</span>
+                </v-col>
+              </template>
+
+              <template v-else>
+                <v-col cols="7">
+                  <span class="rc-body14 fw-bold">{{ $t('system_management.lists.header.item') }}</span>
+                </v-col>
+              </template>
+
+              <v-col cols="3">
+                <span class="rc-body14 fw-bold">{{ $t('system_management.lists.header.status') }}</span>
+              </v-col>
+
+              <v-col cols="2" />
+            </v-row>
+
+            <draggable
+              v-model="items"
+              handle=".optionsList__dragHandle"
+              ghost-class="ghost">
+              <option-list-item
+                v-for="item in items"
+                :key="item.id"
+                :loading="itemLoading"
+                :item="item"
+                :is-cascading="isCascading"
+                :has-description="hasDescription"
+                :language-mode="languageMode"
+                :edit-mode="!!editedItem && editedItem === item.id"
+                :edit-disabled="addingMode"
+                :is-search-result="isSearchResult(item)"
+                :has-default="hasDefault"
+                :has-other="hasOther"
+                @edit-item="editItem"
+                @save-item="saveItem"
+                @change-status="changeItemStatus"
+                @cancel-edit="cancelEdit" />
+            </draggable>
+
+            <option-list-new-item
+              v-if="addingMode"
+              ref="addItem"
+              :loading="itemLoading"
+              :has-description="hasDescription"
+              :language-mode="languageMode"
+              @save="saveNewItem"
+              @cancel="cancelNewItem"
+              @add-mode="addItem" />
+          </v-container>
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <div v-else-if="error">
+      {{ $t('system_management.lists.notFoundError') }}
+    </div>
+  </page-content>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import draggable from 'vuedraggable';
+import {
+  RcTabs,
+  RcTab,
+} from '@crctech/component-library';
+import PageContent from '@/ui/views/components/layout/PageContent.vue';
+import {
+  IMultilingual,
+  IOptionListItem,
+  EOptionListItemStatus,
+} from '@/types';
+import entityUtils from '@/entities/utils';
+import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
+import OptionListItem from './OptionListItem.vue';
+import OptionListNewItem from './OptionListNewItem.vue';
+
+export default Vue.extend({
+  name: 'OptionList',
+
+  components: {
+    RcTabs,
+    RcTab,
+    draggable,
+    PageContent,
+    OptionListItem,
+    OptionListNewItem,
+  },
+
+  props: {
+    title: {
+      type: String,
+      required: true,
+    },
+
+    hasDescription: {
+      type: Boolean,
+      default: false,
+    },
+
+    isCascading: {
+      type: Boolean,
+      default: false,
+    },
+
+    embedded: {
+      type: Boolean,
+      default: false,
+    },
+
+    hasDefault: {
+      type: Boolean,
+      default: false,
+    },
+
+    hasOther: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
+  data() {
+    return {
+      languageMode: 'en',
+      addingMode: false,
+      addingItemId: '',
+      itemLoading: false,
+      loadingTimeout: null,
+      search: '',
+      helpLink: '',
+      error: false,
+      loading: false,
+      editedItem: null,
+    };
+  },
+
+  computed: {
+    items: {
+      get(): IOptionListItem[] {
+        return this.$storage.optionList.getters.items();
+      },
+
+      set(value: IOptionListItem[]) {
+        this.sortItems(value);
+      },
+    },
+
+    supportedLanguages() {
+      return SUPPORTED_LANGUAGES_INFO;
+    },
+  },
+
+  async mounted() {
+    this.fetchItems();
+  },
+
+  methods: {
+    /**
+     * Fetch the list and its items from the API
+     * @param isNewItem {boolean} Whether this method was called as a result of creating a new item
+     */
+    async fetchItems(isNewItem?: boolean) {
+      if (!isNewItem) {
+        this.loadingTimeout = setTimeout(() => {
+          this.loading = true;
+        }, 200);
+      }
+
+      try {
+        await this.$storage.optionList.actions.fetchItems();
+
+        clearTimeout(this.loadingTimeout);
+        this.loading = false;
+        this.itemLoading = false;
+      } catch (e) {
+        clearTimeout(this.loadingTimeout);
+        this.loading = false;
+        this.error = true;
+        return;
+      }
+
+      this.error = false;
+    },
+
+    /**
+     * Highlights items that match the text input in the search bar
+     * @param item The item to compare with the search value
+     */
+    isSearchResult(item: IOptionListItem) {
+      if (this.search) {
+        return item.name.translation[this.languageMode].toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+      }
+
+      return false;
+    },
+
+    /**
+     * Handles saving a new item through the API
+     * @param name The name of the new item. This value is put in both en and fr slots
+     * @param description The description of the new item. This value is put in both en and fr slots
+     * @param itemStatus The status of the item
+     */
+    async saveNewItem(name: IMultilingual, description: IMultilingual, itemStatus: EOptionListItemStatus) {
+      if (!name || !itemStatus) {
+        return;
+      }
+
+      const payload: IOptionListItem = {
+        name: entityUtils.getFilledMultilingualField(name),
+        itemStatus,
+        orderRank: this.items.length + 1,
+      };
+
+      if (this.hasDescription) {
+        if (!description) {
+          return;
+        }
+
+        payload.description = entityUtils.getFilledMultilingualField(description);
+      }
+
+      this.itemLoading = true;
+
+      try {
+        await this.$storage.optionList.actions.createOption(payload);
+      } catch {
+        this.itemLoading = false;
+        return;
+      }
+
+      this.itemLoading = false;
+      this.scrollToInput();
+    },
+
+    /**
+     * Handles editing the name of the item through the API
+     * @param item The item to be modified
+     * @param name The new name value. Sets the value for the currently selected language
+     */
+    async saveItem(item: IOptionListItem, name: IMultilingual) {
+      if (!item || !name) {
+        return;
+      }
+
+      const payloadName = entityUtils.getFilledMultilingualField(name);
+
+      this.itemLoading = true;
+
+      try {
+        await this.$storage.optionList.actions.updateName(item.id, payloadName);
+      } catch (e) {
+        this.itemLoading = false;
+        return;
+      }
+
+      this.itemLoading = false;
+      this.editedItem = null;
+    },
+
+    /**
+     * Handles changing the status of an item through the API
+     * @param item The item to be modified
+     * @param itemStatus The new status to set
+     */
+    async changeItemStatus(item: IOptionListItem, itemStatus: EOptionListItemStatus) {
+      if (!item || !itemStatus) {
+        return;
+      }
+
+      try {
+        await this.$storage.optionList.actions.updateStatus(item.id, itemStatus);
+      } catch {
+        return;
+      }
+
+      this.editedItem = null;
+    },
+
+    /**
+     * Handles changing the order of items through the API
+     */
+    async sortItems(items: IOptionListItem[]) {
+      try {
+        await this.$storage.optionList.actions.updateOrderRanks(items);
+      } catch (e) {
+        return;
+      }
+
+      this.$toasted.global.success(this.$t('system_management.lists.orderRankUpdated'));
+    },
+
+    /**
+     * Toggle the language mode between English and French
+     * @param language The language to set to, either 'en' or 'fr'
+     */
+    setLanguageMode(language: string) {
+      this.languageMode = language;
+    },
+
+    /**
+     * Scroll the view to the add item input and focus it
+     */
+    scrollToInput() {
+      this.$vuetify.goTo('.optionsList__addItem', {
+        duration: 400,
+        container: '.pageContentCard__content',
+        easing: 'easeInOutCubic',
+      }).then(() => {
+        if (this.$refs.addItem) {
+          (this.$refs.addItem as HTMLInputElement).focus();
+        }
+      });
+    },
+
+    /**
+     * Enable the add new item form when the + button is pressed.
+     * Automatically scrolls to the form element and focuses it.
+     */
+    addItem() {
+      this.editedItem = null;
+      this.addingMode = true;
+      this.addingItemId = '';
+
+      this.$nextTick(() => {
+        this.scrollToInput();
+      });
+    },
+
+    /**
+     * Triggered when the cancel button is pressed, hides the add new item form
+     */
+    cancelNewItem() {
+      this.addingMode = false;
+    },
+
+    /**
+     * Triggered when the pencil button is pushed on an item. Shows the edit form
+     */
+    editItem(item: IOptionListItem) {
+      this.editedItem = item.id;
+    },
+
+    /**
+     * Handles canceling an edit for an item or sub-item
+     */
+    cancelEdit() {
+      this.editedItem = null;
+    },
+
+    closeAddForms() {
+      this.addingMode = false;
+      this.addingItemId = '';
+    },
+
+    closeDialog() {
+      this.closeAddForms();
+      this.cancelNewItem();
+      this.cancelEdit();
+      this.$emit('close');
+    },
+  },
+});
+</script>
+
+<style scoped lang="scss">
+.optionsList__header {
+  div.col {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  div.col:last-child {
+    justify-content: flex-end;
+  }
+}
+
+.optionsList__subItemsDraggable {
+  width: 100%;
+}
+
+.ghost {
+  background-color: var(--v-primary-lighten2)!important;
+}
+
+.flex-parent {
+  display: flex;
+  flex-direction: column;
+}
+
+.scroller {
+  flex: 1;
+  overflow-y: auto;
+}
+</style>

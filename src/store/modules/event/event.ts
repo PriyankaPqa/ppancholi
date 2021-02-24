@@ -56,7 +56,7 @@ const mutations = {
 const actions = {
   async fetchEventTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEventType[]> {
     if (!context.state.eventTypesFetched) {
-      const data = await this.$services.events.getEventTypes();
+      const data = await this.$services.eventTypes.getEventTypes();
       context.commit('setEventTypes', data);
       context.state.eventTypesFetched = true;
     }

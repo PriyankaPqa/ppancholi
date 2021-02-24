@@ -15,44 +15,28 @@ describe('SystemManagementHome.vue', () => {
       wrapper = mount(Component, {
         localVue,
       });
+
+      await wrapper.setRole('level6');
     });
 
     describe('Option lists card', () => {
       it('is displayed', async () => {
-        const card = wrapper.find('[data-test="sysManagementHome__lists"]');
+        const card = wrapper.findDataTest('sysManagementHome__lists');
         expect(card.exists()).toBeTruthy();
-      });
-
-      it('calls goTo when clicking the button with correct params', async () => {
-        jest.spyOn(wrapper.vm, 'goTo');
-        await wrapper.find('[data-test="sysManagementHome__lists__button"]').trigger('click');
-        expect(wrapper.vm.goTo).toHaveBeenCalledWith('');
       });
     });
 
     describe('Roles card', () => {
       it('is displayed', async () => {
-        const card = wrapper.find('[data-test="sysManagementHome__roles"]');
+        const card = wrapper.findDataTest('sysManagementHome__roles');
         expect(card.exists()).toBeTruthy();
-      });
-
-      it('calls goTo when clicking the button with correct params', async () => {
-        jest.spyOn(wrapper.vm, 'goTo');
-        await wrapper.find('[data-test="sysManagementHome__roles__button"]').trigger('click');
-        expect(wrapper.vm.goTo).toHaveBeenCalledWith('');
       });
     });
 
     describe('User account card', () => {
       it('is displayed', async () => {
-        const card = wrapper.find('[data-test="sysManagementHome__accounts"]');
+        const card = wrapper.findDataTest('sysManagementHome__accounts');
         expect(card.exists()).toBeTruthy();
-      });
-
-      it('calls goTo when clicking the button with correct params', async () => {
-        jest.spyOn(wrapper.vm, 'goTo');
-        await wrapper.find('[data-test="sysManagementHome__accounts__button"]').trigger('click');
-        expect(wrapper.vm.goTo).toHaveBeenCalledWith('');
       });
     });
   });
@@ -112,21 +96,6 @@ describe('SystemManagementHome.vue', () => {
       it('has the correct button label', async () => {
         const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__accounts');
         expect(card.button).toBe('system_management.card.btn.user_accounts_title');
-      });
-    });
-  });
-
-  describe('Methods', () => {
-    beforeEach(async () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-      });
-    });
-
-    describe('goTo', () => {
-      it('redirects to the correct route', () => {
-        wrapper.vm.goTo('routeTest');
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: 'routeTest' });
       });
     });
   });

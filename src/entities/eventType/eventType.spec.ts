@@ -39,5 +39,10 @@ describe('>>> EventType', () => {
       const eventType = new EventType(mockData);
       expect(eventType.orderRank).toBe(1);
     });
+
+    it('should instantiate status', () => {
+      const eventType = new EventType(mockData);
+      expect(eventType.status).toBe(1);
+    });
   });
 });

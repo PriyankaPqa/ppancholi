@@ -30,7 +30,7 @@ const hasRole = (roleToCheck: string) => {
   return user.hasRole(roleToCheck);
 };
 
-const authenticationGuard = async (to: Route, next: NavigationGuardNext) => {
+const authenticationGuard = async (to: Route) => {
   if (to.matched.some((record) => record.meta.requiresAuthentication)) {
     // Check if the user is already signed in and redirect to login page if not
     const isSignedIn = await authenticationProvider.isSignedIn();
@@ -75,7 +75,7 @@ router.beforeEach(async (to, from, next) => {
   localStorage.setItem('fromOutside', (from.name === null).toString());
 
   try {
-    await authenticationGuard(to, next);
+    await authenticationGuard(to);
     await authorizationGuard(to, from, next);
     next();
   } catch (e) {

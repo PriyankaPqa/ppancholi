@@ -1,4 +1,4 @@
-import { IMultilingual } from '@/types';
+import { IMultilingual, EOptionListItemStatus } from '@/types';
 import { IEventType, IEventTypeData } from './eventType.types';
 
 export class EventType implements IEventType {
@@ -14,6 +14,10 @@ export class EventType implements IEventType {
 
   readonly orderRank: number;
 
+  readonly status: EOptionListItemStatus;
+
+  readonly itemStatus: EOptionListItemStatus;
+
   constructor(data: IEventTypeData) {
     this.id = data.id;
     this.created = data.created;
@@ -21,5 +25,7 @@ export class EventType implements IEventType {
     this.eTag = data.eTag;
     this.name = data.name;
     this.orderRank = data.orderRank;
+    this.status = data.status;
+    this.itemStatus = data.itemStatus;
   }
 }

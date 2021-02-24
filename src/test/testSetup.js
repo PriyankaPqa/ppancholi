@@ -76,6 +76,17 @@ const stubs = {
 };
 
 /**
+ * Utility method that sets user permissions in the Vuex store. Accepts a string role
+ * Usage: await wrapper.setRole('level6');
+ * @param {string} role
+ */
+async function setRole(role) {
+  this.vm.$store.commit('user/setRole', role);
+
+  await this.vm.$nextTick();
+}
+
+/**
  * Returns the results of wrapper.find with the param wrapped in the data-test query format
  * @param {String} dataTest The data test attribute to search for
  */
@@ -115,6 +126,7 @@ export const mount = (Component, options) => {
     stubs: deepmerge(stubs, options.stubs || {}),
   });
 
+  wrapper.setRole = setRole;
   wrapper.findDataTest = findDataTest;
   wrapper.findTextFieldWithValidation = findTextFieldWithValidation;
   wrapper.findSelectWithValidation = findSelectWithValidation;
@@ -145,6 +157,7 @@ export const shallowMount = (Component, options) => {
     stubs: deepmerge(stubs, options.stubs || {}),
   });
 
+  wrapper.setRole = setRole;
   wrapper.findDataTest = findDataTest;
   wrapper.findTextFieldWithValidation = findTextFieldWithValidation;
   wrapper.findSelectWithValidation = findSelectWithValidation;

@@ -56,11 +56,6 @@ describe('>>> Events Service', () => {
     expect(http.get).toHaveBeenCalledWith('/event/events');
   });
 
-  test('getEventTypes is linked to the correct URL', async () => {
-    await service.getEventTypes();
-    expect(http.get).toHaveBeenCalledWith('/event/event-types');
-  });
-
   test('searchEvents is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
     await service.searchEvents(params);

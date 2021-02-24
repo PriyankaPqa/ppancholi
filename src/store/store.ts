@@ -3,6 +3,7 @@ import Vuex, { StoreOptions } from 'vuex';
 import { IRootState } from './store.types';
 import { user } from './modules/user';
 import { dashboard } from './modules/dashboard';
+import { optionList } from './modules/optionList';
 import { event } from './modules/event';
 import { team } from './modules/team';
 
@@ -16,6 +17,7 @@ const store: StoreOptions<IRootState> = {
     user,
     dashboard,
     event,
+    optionList,
     team,
   },
 };
