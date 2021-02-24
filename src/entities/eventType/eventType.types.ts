@@ -10,6 +10,8 @@ export interface IEventTypeData {
   orderRank: number;
   status: EOptionListItemStatus;
   itemStatus: EOptionListItemStatus;
+  isOther: boolean;
+  isDefault: boolean;
 }
 
 export interface IEventType {
@@ -21,4 +23,6 @@ export interface IEventType {
   readonly orderRank: number;
   readonly status: EOptionListItemStatus;
   readonly itemStatus: EOptionListItemStatus;
+  readonly isOther: boolean;
+  readonly isDefault: boolean;
 }

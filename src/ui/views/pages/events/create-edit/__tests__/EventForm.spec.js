@@ -3,6 +3,9 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   mockEventsData, mockOtherProvinceData, mockRegionData, Event, EResponseLevel, EEventStatus,
 } from '@/entities/event';
+import {
+  mockEventTypeData,
+} from '@/entities/eventType';
 import helpers from '@/ui/helpers';
 import {
   ECanadaProvinces,
@@ -437,6 +440,18 @@ describe('EventForm.vue', () => {
     test('eventType is required', async () => {
       await wrapper.vm.$refs.form.validate();
       const el = wrapper.findSelectWithValidation('event-type');
+      expect(el.classes('invalid')).toBe(true);
+    });
+
+    test('eventType specify is required', async () => {
+      await wrapper.setData({
+        eventType: mockEventTypeData()[0],
+      });
+
+      expect(wrapper.findDataTest('event-type-specified-other').exists()).toBe(true);
+
+      await wrapper.vm.$refs.form.validate();
+      const el = wrapper.findTextFieldWithValidation('event-type-specified-other');
       expect(el.classes('invalid')).toBe(true);
     });
 

@@ -71,6 +71,7 @@ export class Event implements IEvent {
       };
       this.responseDetails = {
         ...data.responseDetails,
+        eventType: { ...data.responseDetails.eventType },
         dateReported: data.responseDetails.dateReported ? new Date(data.responseDetails.dateReported) : null,
       };
       this.relatedEvents = data.relatedEvents ? [...data.relatedEvents] : [];
@@ -97,7 +98,10 @@ export class Event implements IEvent {
     };
     this.responseDetails = {
       responseLevel: null,
-      eventType: '',
+      eventType: {
+        optionItemId: '',
+        specifiedOther: '',
+      },
       dateReported: null,
       assistanceNumber: '',
     };
@@ -169,6 +173,10 @@ export class Event implements IEvent {
 
       if (!this.responseDetails.eventType) {
         errors.push('The responseDetails.eventType field is required');
+      }
+
+      if (!this.responseDetails.eventType?.optionItemId) {
+        errors.push('The responseDetails.eventType.optionItemId field is required');
       }
 
       if (!this.responseDetails.dateReported) {

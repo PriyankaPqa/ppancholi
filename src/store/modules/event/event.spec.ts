@@ -5,6 +5,7 @@ import { EventType, mockEventTypeData } from '@/entities/eventType';
 import { Event, mockEventsData } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
+import { EOptionListItemStatus } from '@/types';
 
 describe('>>> Event Module', () => {
   let store: Store<IRootState>;
@@ -24,10 +25,12 @@ describe('>>> Event Module', () => {
 
   describe('>> Getters', () => {
     describe('eventTypes', () => {
-      test('the eventTypes getter returns an array of EventTypes sorted by orderRank', () => {
+      test('the eventTypes getter returns an array of EventTypes sorted by orderRank and filtered by status', () => {
         const mockEventTypes = mockEventTypeData().map((e) => new EventType(e));
 
-        expect(store.getters['event/eventTypes']).toEqual(_sortBy(mockEventTypes, 'orderRank'));
+        expect(store.getters['event/eventTypes']).toEqual(
+          _sortBy(mockEventTypes, 'orderRank').filter((i) => i.itemStatus === EOptionListItemStatus.Active),
+        );
       });
     });
 

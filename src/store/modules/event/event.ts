@@ -9,7 +9,7 @@ import {
   Event, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
-import { ISearchData } from '@/types';
+import { EOptionListItemStatus, ISearchData } from '@/types';
 import {
   IState,
 } from './event.types';
@@ -24,7 +24,10 @@ const getDefaultState = (): IState => ({
 const moduleState: IState = getDefaultState();
 
 const getters = {
-  eventTypes: (state: IState) => _sortBy(state.eventTypes.map((e) => new EventType(e)), 'orderRank'),
+  eventTypes: (state: IState) => (
+    _sortBy(state.eventTypes.map((e) => new EventType(e)), 'orderRank')
+      .filter((i) => i.itemStatus === EOptionListItemStatus.Active)
+  ),
 
   events: (state: IState) => helpers.sortMultilingualArray(state.events.map((e) => new Event(e)), 'name'),
 };

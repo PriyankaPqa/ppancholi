@@ -1,9 +1,7 @@
+import Vue from 'vue';
 /**
  * Interfaces
  */
-
-import Vue from 'vue';
-
 export type { IRestResponse } from './interfaces/IRestResponse';
 export type { IAuthenticationAccessToken } from './interfaces/IAuthenticationAccessToken';
 export type { IMultilingual } from './interfaces/IMultilingual';
@@ -11,6 +9,7 @@ export type { INavigationTab } from './interfaces/ui/INavigationTab';
 export type { ISearchData } from './interfaces/ISearchData';
 export type { IOptionListItem } from './interfaces/IOptionListItem';
 export type { IOptionListSubItem } from './interfaces/IOptionListSubItem';
+export type { IListOption } from './interfaces/IListOption';
 
 /**
  * Enums

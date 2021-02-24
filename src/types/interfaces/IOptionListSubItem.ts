@@ -6,6 +6,7 @@ export interface IOptionListSubItem {
   name?: IMultilingual;
   description?: IMultilingual;
   orderRank?: number;
+  status?: EOptionListItemStatus;
   itemStatus?: EOptionListItemStatus;
   isDefault?: boolean;
   isOther?: boolean;

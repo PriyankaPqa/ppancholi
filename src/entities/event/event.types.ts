@@ -1,4 +1,4 @@
-import { ECanadaProvinces, IMultilingual } from '@/types';
+import { ECanadaProvinces, IListOption, IMultilingual } from '@/types';
 
 /**
  * Enums
@@ -38,7 +38,7 @@ export interface IEventSchedule {
 
 export interface IEventResponseDetails {
   responseLevel: EResponseLevel;
-  eventType: uuid;
+  eventType: IListOption;
   dateReported: Date | string;
   assistanceNumber: string;
 }
@@ -78,6 +78,7 @@ export interface ICreateEventRequest {
   dateReported: Date | string;
   description: IMultilingual;
   name: IMultilingual;
+  eventType: IListOption;
   province: ECanadaProvinces;
   provinceOther: IMultilingual;
   region: IMultilingual;

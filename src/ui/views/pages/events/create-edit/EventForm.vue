@@ -68,15 +68,26 @@
           <v-row>
             <v-col cols="6" md="6" sm="12">
               <v-select-with-validation
-                v-model="localEvent.responseDetails.eventType"
+                v-model="eventType"
                 data-test="event-type"
                 :disabled="isEditMode"
                 attach
                 :label="`${$t('event.type')} *`"
                 :items="eventTypesSorted"
                 :item-text="(item) => $m(item.name)"
-                item-value="id"
-                :rules="rules.responseDetails.eventType" />
+                return-object
+                :rules="rules.responseDetails.eventType"
+                @change="localEvent.responseDetails.eventType.optionItemId = $event.id" />
+            </v-col>
+
+            <v-col v-if="eventType && eventType.isOther" cols="6" md="6" sm="12">
+              <v-text-field-with-validation
+                v-model="localEvent.responseDetails.eventType.specifiedOther"
+                data-test="event-type-specified-other"
+                autocomplete="nope"
+                :disabled="isEditMode"
+                :label="`${$t('common.pleaseSpecify')} *`"
+                :rules="rules.responseDetails.eventTypeOther" />
             </v-col>
 
             <v-col cols="6" md="6" sm="12">
@@ -200,7 +211,9 @@
                   <v-col cols="12" xl="12" lg="12">
                     <v-text-field
                       :value="registrationLink"
+                      background-color="white"
                       readonly
+                      outlined
                       data-test="event-registration-path"
                       :prefix="prefixRegistrationLink"
                       :label="`${$t('event.registration_link')}`" />
@@ -296,6 +309,7 @@ export default Vue.extend({
   data() {
     return {
       localEvent: _cloneDeep(this.event),
+      eventType: null,
       assistanceNumber: {
         number: '',
         countryISO2: '',
@@ -421,6 +435,9 @@ export default Vue.extend({
           eventType: {
             required: true,
           },
+          eventTypeOther: {
+            required: true,
+          },
           assistanceNumber: {
             phoneRequired: true,
             phone: true,
@@ -481,6 +498,10 @@ export default Vue.extend({
         this.$emit('update:event', newEvent);
       },
       deep: true,
+    },
+
+    eventType() {
+      this.localEvent.responseDetails.eventType.specifiedOther = '';
     },
   },
 

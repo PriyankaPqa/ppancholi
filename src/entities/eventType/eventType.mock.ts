@@ -14,6 +14,8 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
   orderRank: 1,
   status: 1,
   itemStatus: 1,
+  isOther: true,
+  isDefault: false,
 }, {
   id: '2',
   created: new Date('2021-01-14T00:00:00.000Z'),
@@ -28,6 +30,8 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
   orderRank: 2,
   status: 1,
   itemStatus: 1,
+  isOther: false,
+  isDefault: false,
 }, {
   id: '3',
   created: new Date('2021-01-14T00:00:00.000Z'),
@@ -42,4 +46,6 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
   orderRank: 3,
   status: 2,
   itemStatus: 2,
+  isOther: false,
+  isDefault: false,
 }];

@@ -36,6 +36,10 @@ export class EventsService implements IEventsService {
       dateReported: event.responseDetails.dateReported,
       description: event.description,
       name: event.name,
+      eventType: {
+        optionItemId: event.responseDetails.eventType.optionItemId,
+        specifiedOther: event.responseDetails.eventType.specifiedOther,
+      },
       province: event.location.province,
       provinceOther: event.location.provinceOther,
       region: event.location.region,

@@ -30,6 +30,10 @@ describe('>>> Events Service', () => {
           fr: 'Inondations Gatineau 2021',
         },
       },
+      eventType: {
+        optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
+        specifiedOther: '',
+      },
       province: 11,
       provinceOther: {
         translation: {

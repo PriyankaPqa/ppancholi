@@ -87,7 +87,10 @@ describe('>>> User', () => {
       const event = new Event(mockEventData);
       expect(event.responseDetails).toEqual({
         responseLevel: 3,
-        eventType: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
+        eventType: {
+          optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
+          specifiedOther: '',
+        },
         dateReported: new Date('2021-01-01T00:00:00Z'),
         assistanceNumber: '+15144544545',
       });
