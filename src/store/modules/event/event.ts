@@ -58,11 +58,10 @@ const mutations = {
 
 const actions = {
   async fetchEventTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEventType[]> {
-    if (!context.state.eventTypesFetched) {
-      const data = await this.$services.eventTypes.getEventTypes();
-      context.commit('setEventTypes', data);
-      context.state.eventTypesFetched = true;
-    }
+    // if (!context.state.eventTypesFetched) { disable caching until signalR events are implemented
+    const data = await this.$services.eventTypes.getEventTypes();
+    context.commit('setEventTypes', data);
+    context.state.eventTypesFetched = true;
 
     return context.getters.eventTypes;
   },
@@ -77,11 +76,11 @@ const actions = {
     return context.getters.events;
   },
 
-  async fetchOtherProvinces(this: Store<IState>): Promise<IOtherProvince[]> {
+  async fetchOtherProvinces(this: Store<IState>): Promise<IAzureSearchResult<IOtherProvince>> {
     return this.$services.events.getOtherProvinces();
   },
 
-  async fetchRegions(this: Store<IState>): Promise<IRegion[]> {
+  async fetchRegions(this: Store<IState>): Promise<IAzureSearchResult<IRegion>> {
     return this.$services.events.getRegions();
   },
 

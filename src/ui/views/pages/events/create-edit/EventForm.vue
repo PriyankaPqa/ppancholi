@@ -513,8 +513,21 @@ export default Vue.extend({
     await this.$storage.event.actions.fetchEventTypes();
     await this.$storage.event.actions.fetchEvents();
 
-    this.otherProvinces = await this.$storage.event.actions.fetchOtherProvinces();
-    this.regions = await this.$storage.event.actions.fetchRegions();
+    const provincesRes = await this.$storage.event.actions.fetchOtherProvinces();
+    const regionsRes = await this.$storage.event.actions.fetchRegions();
+
+    this.otherProvinces = provincesRes.value;
+    this.regions = regionsRes.value;
+
+    // Set the default event type
+    if (!this.isEditMode) {
+      const defaultEventType = this.eventTypesSorted.find((t) => t.isDefault);
+
+      if (defaultEventType) {
+        this.localEvent.responseDetails.eventType.optionItemId = defaultEventType.id;
+        this.eventType = defaultEventType;
+      }
+    }
   },
 
   methods: {

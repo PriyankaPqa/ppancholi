@@ -1,4 +1,4 @@
-import { LogLevel, HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
+import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
 import { Store } from 'vuex';
 import { IRootState } from '@/store';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
@@ -21,7 +21,7 @@ export class SignalRConnection {
 
     if (isSignedIn) {
       const connection = new HubConnectionBuilder()
-        .configureLogging(LogLevel.Debug)
+        // .configureLogging(LogLevel.Debug)
         .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
           accessTokenFactory: async () => {
             const tokenResponse = await AuthenticationProvider.acquireToken();

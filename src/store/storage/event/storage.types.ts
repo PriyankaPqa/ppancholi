@@ -11,8 +11,8 @@ export interface IStorage {
   actions: {
     fetchEventTypes(): Promise<IEventType[]>;
     fetchEvents(): Promise<IEvent[]>;
-    fetchOtherProvinces(): Promise<IOtherProvince[]>
-    fetchRegions(): Promise<IRegion[]>;
+    fetchOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>
+    fetchRegions(): Promise<IAzureSearchResult<IRegion>>;
     searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEvent>>;
     createEvent(payload: IEvent): Promise<IEvent>;
   }

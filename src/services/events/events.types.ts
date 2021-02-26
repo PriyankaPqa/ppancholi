@@ -8,9 +8,9 @@ export interface IEventsService {
 
   getEvents(): Promise<IEventData[]>;
 
-  getOtherProvinces(): Promise<IOtherProvince[]>;
+  getOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>;
 
-  getRegions(): Promise<IRegion[]>;
+  getRegions(): Promise<IAzureSearchResult<IRegion>>;
 
   searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventData>>;
 }
@@ -20,9 +20,9 @@ export interface IEventsServiceMock {
 
   getEvents: jest.Mock <IEventData[]>;
 
-  getOtherProvinces: jest.Mock <IOtherProvince[]>;
+  getOtherProvinces: jest.Mock <IAzureSearchResult<IOtherProvince>>;
 
-  getRegions: jest.Mock <IRegion[]>;
+  getRegions: jest.Mock <IAzureSearchResult<IRegion>>;
 
   searchEvents: jest.Mock <IAzureSearchResult<IEventData>>;
 }

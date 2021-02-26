@@ -129,17 +129,18 @@ describe('>>> Event Module', () => {
         expect(res).toEqual(store.getters['event/eventTypes']);
       });
 
-      test('if the getEventTypes action has already been called it will not call the service again', async () => {
-        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(0);
+      // Disable caching until signalR events implemented
+      // test('if the getEventTypes action has already been called it will not call the service again', async () => {
+      //   expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(0);
 
-        await store.dispatch('event/fetchEventTypes');
+      //   await store.dispatch('event/fetchEventTypes');
 
-        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
+      //   expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
 
-        await store.dispatch('event/fetchEventTypes');
+      //   await store.dispatch('event/fetchEventTypes');
 
-        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
-      });
+      //   expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
+      // });
     });
 
     describe('fetchEvents', () => {

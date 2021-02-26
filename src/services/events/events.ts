@@ -18,11 +18,11 @@ export class EventsService implements IEventsService {
     return this.http.get('/event/events');
   }
 
-  async getOtherProvinces(): Promise<IOtherProvince[]> {
+  async getOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>> {
     return this.http.get('/search/event-province-others');
   }
 
-  async getRegions(): Promise<IRegion[]> {
+  async getRegions(): Promise<IAzureSearchResult<IRegion>> {
     return this.http.get('/search/event-regions');
   }
 

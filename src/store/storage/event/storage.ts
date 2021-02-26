@@ -24,11 +24,11 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.dispatch('event/fetchEvents');
     },
 
-    fetchOtherProvinces(): Promise<IOtherProvince[]> {
+    fetchOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>> {
       return store.dispatch('event/fetchOtherProvinces');
     },
 
-    fetchRegions(): Promise<IRegion[]> {
+    fetchRegions(): Promise<IAzureSearchResult<IRegion>> {
       return store.dispatch('event/fetchRegions');
     },
 

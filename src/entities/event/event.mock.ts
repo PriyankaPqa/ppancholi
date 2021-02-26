@@ -119,39 +119,47 @@ export const mockEventsData = (): IEventData[] => [{
   eTag: '*',
 }];
 
-export const mockOtherProvinceData = (): IOtherProvince[] => [{
-  name: {
-    translation: {
-      en: 'New York',
-      fr: 'New York FR',
+export const mockOtherProvinceData = (): IAzureSearchResult<IOtherProvince> => ({
+  '@odataCount': 2,
+  '@odataContext': 'context',
+  value: [{
+    name: {
+      translation: {
+        en: 'New York',
+        fr: 'New York FR',
+      },
     },
-  },
-}, {
-  name: {
-    translation: {
-      en: 'California',
-      fr: 'Californie',
+  }, {
+    name: {
+      translation: {
+        en: 'California',
+        fr: 'Californie',
+      },
     },
-  },
-}];
+  }],
+});
 
-export const mockRegionData = (): IRegion[] => [{
-  province: ECanadaProvinces.AB,
-  name: {
-    translation: {
-      en: 'Southern Alberta',
-      fr: 'Southern Alberta FR',
+export const mockRegionData = (): IAzureSearchResult<IRegion> => ({
+  '@odataCount': 2,
+  '@odataContext': 'context',
+  value: [{
+    province: ECanadaProvinces.AB,
+    name: {
+      translation: {
+        en: 'Southern Alberta',
+        fr: 'Southern Alberta FR',
+      },
     },
-  },
-}, {
-  province: ECanadaProvinces.AB,
-  name: {
-    translation: {
-      en: 'Northern Alberta',
-      fr: 'Northern Alberta FR',
+  }, {
+    province: ECanadaProvinces.AB,
+    name: {
+      translation: {
+        en: 'Northern Alberta',
+        fr: 'Northern Alberta FR',
+      },
     },
-  },
-}];
+  }],
+});
 
 export const mockSearchEvents = (): IAzureSearchResult<IEventData> => ({
   '@odataCount': 2,

@@ -27,6 +27,31 @@ describe('EventForm.vue', () => {
     jest.clearAllMocks();
   });
 
+  describe('Mounted', () => {
+    it('sets the default event type if a default value', async () => {
+      wrapper = shallowMount(Component, {
+        localVue: createLocalVue(),
+        propsData: {
+          event,
+          isEditMode: false,
+        },
+        data() {
+          return {
+            prefixRegistrationLink: 'https://mytest.test/',
+          };
+        },
+      });
+
+      await flushPromises();
+
+      const defaultEventType = mockEventTypeData()[1];
+
+      expect(wrapper.vm.eventType).toEqual(defaultEventType);
+
+      expect(wrapper.vm.localEvent.responseDetails.eventType.optionItemId).toBe(defaultEventType.id);
+    });
+  });
+
   describe('Methods', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
@@ -181,7 +206,7 @@ describe('EventForm.vue', () => {
       it('returns the otherProvinces in alphabetical order', async () => {
         await flushPromises();
 
-        const otherProvinces = mockOtherProvinceData();
+        const otherProvinces = mockOtherProvinceData().value;
         expect(wrapper.vm.otherProvincesSorted).toEqual([
           otherProvinces[1], // California
           otherProvinces[0], // New York
@@ -206,7 +231,7 @@ describe('EventForm.vue', () => {
         expect(wrapper.vm.regionsSorted).toEqual([]);
 
         wrapper.vm.localEvent.location.province = ECanadaProvinces.AB;
-        const regions = mockRegionData();
+        const regions = mockRegionData().value;
         expect(wrapper.vm.regionsSorted).toEqual([
           regions[1], // Northern Alberta
           regions[0], // Southern Alberta
@@ -437,13 +462,9 @@ describe('EventForm.vue', () => {
       expect(el.classes('invalid')).toBe(false);
     });
 
-    test('eventType is required', async () => {
-      await wrapper.vm.$refs.form.validate();
-      const el = wrapper.findSelectWithValidation('event-type');
-      expect(el.classes('invalid')).toBe(true);
-    });
-
     test('eventType specify is required', async () => {
+      await flushPromises();
+
       await wrapper.setData({
         eventType: mockEventTypeData()[0],
       });

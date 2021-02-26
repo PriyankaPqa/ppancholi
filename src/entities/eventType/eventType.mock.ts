@@ -31,7 +31,7 @@ export const mockEventTypeData = (): IEventTypeData[] => [{
   status: 1,
   itemStatus: 1,
   isOther: false,
-  isDefault: false,
+  isDefault: true,
 }, {
   id: '3',
   created: new Date('2021-01-14T00:00:00.000Z'),
