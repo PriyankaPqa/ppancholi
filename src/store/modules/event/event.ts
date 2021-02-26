@@ -9,7 +9,7 @@ import {
   Event, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
-import { EOptionListItemStatus, ISearchData } from '@/types';
+import { EOptionListItemStatus, IAzureSearchParams, IAzureSearchResult } from '@/types';
 import {
   IState,
 } from './event.types';
@@ -85,9 +85,13 @@ const actions = {
     return this.$services.events.getRegions();
   },
 
-  async searchEvents(this: Store<IState>, context: ActionContext<IState, IState>, params: ISearchData): Promise<IEvent[]> {
-    const data = await this.$services.events.searchEvents(params);
-    return data.map((el: IEventData) => (new Event(el)));
+  async searchEvents(this: Store<IState>, context: ActionContext<IState, IState>, params: IAzureSearchParams): Promise<IAzureSearchResult<IEvent>> {
+    const res = await this.$services.events.searchEvents(params);
+    const data = res?.value;
+    return {
+      ...res,
+      value: data.map((el: IEventData) => (new Event(el))),
+    };
   },
 
   async createEvent(this: Store<IState>, context: ActionContext<IState, IState>, payload: IEvent): Promise<IEvent> {

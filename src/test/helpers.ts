@@ -1,6 +1,6 @@
 import { IUserData, mockUsersData } from '@/entities/user';
 import { mockStore } from '@/store';
-import { ISearchData } from '@/types';
+import { IAzureSearchParams } from '@/types';
 
 export const mockStoreWithUserState = (state: IUserData) => mockStore({
   modules: {
@@ -64,6 +64,6 @@ export const mockUserStateContributor = (number: number) => {
   };
 };
 
-export const mockSearchParams: ISearchData = {
+export const mockSearchParams: IAzureSearchParams = {
   filter: 'foo',
 };

@@ -45,6 +45,9 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-useless-constructor': 'off',
     'class-methods-use-this': 'off',
+    'vue/valid-v-slot': ['error', {
+      allowModifiers: true,
+    }],
   },
 
   parserOptions: {

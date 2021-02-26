@@ -30,7 +30,7 @@ export interface ITeamData {
   readonly status: ETeamStatus;
   readonly teamType: ETeamType;
   readonly teamMembers: Array<ITeamMember>;
-  readonly events: Array<uuid>;
+  readonly eventIds: Array<uuid>;
 }
 
 /**

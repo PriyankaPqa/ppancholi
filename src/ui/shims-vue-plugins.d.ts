@@ -22,5 +22,7 @@ declare module 'vue/types/vue' {
     $m: IMFunction;
     $hasLevel: (p: string) => boolean;
     $hasRole: (p: string) => boolean;
+    azureSearchItems: Array<unknown>;
+    azureSearchCount: number;
   }
 }

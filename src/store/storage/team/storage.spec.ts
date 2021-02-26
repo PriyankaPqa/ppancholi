@@ -2,30 +2,15 @@ import { mockStore } from '@/store';
 
 import { makeStorage } from './storage';
 
-const store = mockStore({
-  modules: {
-    team: {
-      state: {
-
-      },
-    },
-  },
-}, { commit: true, dispatch: true });
+const store = mockStore({}, { commit: true, dispatch: true });
 
 const storage = makeStorage(store);
 
-describe('>>> User Storage', () => {
-  describe('>> Getters', () => {
-    it('should contain at least one test', () => {
-      expect(true).toBeTruthy();
+describe('>>> Team Storage', () => {
+  describe('>> Actions', () => {
+    it('should proxy searchTeams', () => {
+      storage.actions.searchTeams({});
+      expect(store.dispatch).toBeCalledWith('team/searchTeams', {});
     });
   });
-
-  // describe('>> Actions', () => {
-
-  // });
-
-  // describe('>> Mutations', () => {
-
-  // });
 });

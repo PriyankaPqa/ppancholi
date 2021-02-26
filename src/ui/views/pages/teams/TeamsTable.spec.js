@@ -1,8 +1,8 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
-
 import routes from '@/constants/routes';
-
+import { mockSearchTeams } from '@/entities/team';
+import { mockStorage } from '@/store/storage';
 import Component from './TeamsTable.vue';
 
 const localVue = createLocalVue();
@@ -105,6 +105,49 @@ describe('TeamsTable.vue', () => {
         });
       });
     });
+
+    describe('headers', () => {
+      test('they are defined correctly', async () => {
+        expect(wrapper.vm.headers).toEqual([
+          {
+            text: 'teams.team_name',
+            sortable: true,
+            value: 'Name',
+            width: '40%',
+          },
+          {
+            text: 'teams.teamtype',
+            value: 'type',
+            sortable: false,
+            width: '10%',
+          },
+          {
+            text: 'teams.table.related_events',
+            value: 'events',
+            sortable: false,
+            width: '10%',
+          },
+          {
+            text: 'teams.primary_contact',
+            value: 'primaryContact',
+            sortable: false,
+            width: '30%',
+          },
+          {
+            text: 'teams.team_members',
+            value: 'members',
+            sortable: false,
+            width: '10%',
+          },
+          {
+            text: 'teams.status',
+            value: 'status',
+            sortable: false,
+            width: '10%',
+          },
+        ]);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -115,6 +158,69 @@ describe('TeamsTable.vue', () => {
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.teams.create.name, params: { teamType: 'foo' } });
       });
+    });
+
+    describe('fetchData', () => {
+      beforeEach(() => {
+        const storage = mockStorage();
+        storage.team.actions.searchTeams = jest.fn().mockImplementation(() => mockSearchTeams());
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+          },
+        });
+      });
+
+      const params = {
+        search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
+      };
+
+      it('should call storage actions with proper parameters', async () => {
+        await wrapper.vm.fetchData(params);
+        expect(wrapper.vm.$storage.team.actions.searchTeams).toHaveBeenCalledWith({
+          filter: params.filter,
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+        });
+      });
+
+      it('should set the azureSearchItems', async () => {
+        await wrapper.vm.fetchData(params);
+        expect(wrapper.vm.azureSearchItems).toEqual(mockSearchTeams().value);
+      });
+
+      it('should set the azureSearchCount', async () => {
+        await wrapper.vm.fetchData(params);
+        expect(wrapper.vm.azureSearchCount).toEqual(mockSearchTeams()['@odataCount']);
+      });
+    });
+
+    describe('getFilterParams', () => {
+      it('should get the filter with correct params', () => {
+        const params = { search: 'query' };
+        const filter = {
+          or: [
+            {
+              Name: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
+            },
+          ],
+        };
+        expect(wrapper.vm.getFilterParams(params)).toEqual(filter);
+      });
+    });
+  });
+
+  describe('Data', () => {
+    test('defaultSortBy', () => {
+      expect(wrapper.vm.defaultSortBy).toEqual('Name');
+    });
+
+    test('customColumns', () => {
+      expect(wrapper.vm.defaultSortBy).toEqual('Name');
     });
   });
 });

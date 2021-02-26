@@ -1,5 +1,7 @@
-import { ECanadaProvinces } from '@/types';
-import { IEventData, IOtherProvince, IRegion } from './event.types';
+import { ECanadaProvinces, IAzureSearchResult } from '@/types';
+import {
+  IEventData, IOtherProvince, IRegion,
+} from './event.types';
 
 export const mockEventsData = (): IEventData[] => [{
   number: 1,
@@ -150,3 +152,9 @@ export const mockRegionData = (): IRegion[] => [{
     },
   },
 }];
+
+export const mockSearchEvents = (): IAzureSearchResult<IEventData> => ({
+  '@odataCount': 2,
+  '@odataContext': 'context',
+  value: mockEventsData(),
+});

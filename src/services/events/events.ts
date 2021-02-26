@@ -2,7 +2,7 @@ import { IHttpClient } from '@/services/httpClient';
 import {
   ICreateEventRequest, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
-import { ISearchData } from '@/types';
+import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
 
 export class EventsService implements IEventsService {
@@ -26,7 +26,7 @@ export class EventsService implements IEventsService {
     return this.http.get('/search/event-regions');
   }
 
-  async searchEvents(params: ISearchData): Promise<IEventData[]> {
+  async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventData>> {
     return this.http.get('/search/events', { params, isOData: true });
   }
 

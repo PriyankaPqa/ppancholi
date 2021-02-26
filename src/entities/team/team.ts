@@ -22,7 +22,7 @@ export class Team implements ITeam {
       this.teamType = data.teamType;
       this.status = data.status;
       this.teamMembers = data.teamMembers;
-      this.eventIds = data.events;
+      this.eventIds = data.eventIds;
     } else {
       this.reset();
     }
@@ -52,6 +52,14 @@ export class Team implements ITeam {
     if (isUserInTeam) {
       this.teamMembers = updatedTeam;
     }
+  }
+
+  getPrimaryContact(prop?: keyof ITeamMember) {
+    if (this.teamMembers) {
+      const primaryContact = this.teamMembers.find((m) => m.isPrimaryContact) as ITeamMember;
+      return prop ? primaryContact[prop] : primaryContact;
+    }
+    return null;
   }
 
   private reset() {

@@ -5,7 +5,7 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import buildQuery from '@/services/odata-query';
 import camelCaseKeys from 'camelcase-keys';
 import { localStorageKeys } from '@/constants/localStorage';
-import { ISearchData } from '@/types';
+import { IAzureSearchParams } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 
 export interface IRestResponse<T> {
@@ -104,7 +104,7 @@ class HttpClient implements IHttpClient {
 
     if (request.isOData) {
       // build OData search query and remove the '?' that is added by the query building library at the beginning of the string
-      request.paramsSerializer = (params: ISearchData) => buildQuery(params).slice(1);
+      request.paramsSerializer = (params: IAzureSearchParams) => buildQuery(params).slice(1);
     }
 
     return request;

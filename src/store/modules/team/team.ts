@@ -4,14 +4,14 @@ import {
 
 import { IRootState } from '@/store/store.types';
 
-import { ITeam, ITeamData, Team } from '@/entities/team';
-import { ISearchData } from '@/types';
+import { ITeamData, Team, ITeam } from '@/entities/team';
+import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import {
   IState,
 } from './team.types';
 
 const getDefaultState = (): IState => ({
-  // dummy: '',
+  searchLoading: false,
 });
 
 const moduleState: IState = getDefaultState();
@@ -25,9 +25,18 @@ const mutations = {
 };
 
 const actions = {
-  async searchTeams(this: Store<IState>, context: ActionContext<IState, IState>, params: ISearchData): Promise<ITeam[]> {
-    const data = await this.$services.teams.searchTeams(params);
-    return data.map((el: ITeamData) => (new Team(el)));
+  async searchTeams(this: Store<IState>, context: ActionContext<IState, IState>, params: IAzureSearchParams): Promise<IAzureSearchResult<ITeam>> {
+    try {
+      context.state.searchLoading = true;
+      const res = await this.$services.teams.searchTeams(params);
+      const data = res?.value;
+      return {
+        ...res,
+        value: data.map((el: ITeamData) => (new Team(el))),
+      };
+    } finally {
+      context.state.searchLoading = false;
+    }
   },
 };
 

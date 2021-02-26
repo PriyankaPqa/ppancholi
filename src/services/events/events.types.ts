@@ -1,7 +1,7 @@
 import {
   IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
-import { ISearchData } from '@/types';
+import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 export interface IEventsService {
   createEvent(payload: IEvent): Promise<IEventData>;
@@ -12,7 +12,7 @@ export interface IEventsService {
 
   getRegions(): Promise<IRegion[]>;
 
-  searchEvents(params: ISearchData): Promise<IEventData[]>;
+  searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventData>>;
 }
 
 export interface IEventsServiceMock {
@@ -24,5 +24,5 @@ export interface IEventsServiceMock {
 
   getRegions: jest.Mock <IRegion[]>;
 
-  searchEvents: jest.Mock <IEventData[]>;
+  searchEvents: jest.Mock <IAzureSearchResult<IEventData>>;
 }

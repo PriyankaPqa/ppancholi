@@ -1,7 +1,7 @@
 import { IEvent, IOtherProvince, IRegion } from '@/entities/event';
 import { IEventType } from '@/entities/eventType';
 import { IStore } from '@/store/store.types';
-import { ISearchData } from '@/types';
+import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
@@ -32,7 +32,7 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.dispatch('event/fetchRegions');
     },
 
-    searchEvents(params: ISearchData): Promise<IEvent[]> {
+    searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEvent>> {
       return store.dispatch('event/searchEvents', params);
     },
 

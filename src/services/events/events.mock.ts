@@ -1,4 +1,6 @@
-import { mockEventsData, mockOtherProvinceData, mockRegionData } from '@/entities/event';
+import {
+  mockEventsData, mockOtherProvinceData, mockRegionData, mockSearchEvents,
+} from '@/entities/event';
 import { IEventsServiceMock } from './events.types';
 
 export const mockEventsService = (): IEventsServiceMock => ({
@@ -6,5 +8,5 @@ export const mockEventsService = (): IEventsServiceMock => ({
   getEvents: jest.fn(() => mockEventsData()),
   getOtherProvinces: jest.fn(() => mockOtherProvinceData()),
   getRegions: jest.fn(() => mockRegionData()),
-  searchEvents: jest.fn(() => []),
+  searchEvents: jest.fn(() => mockSearchEvents()),
 });

@@ -98,8 +98,8 @@ export function renderPrimitiveValue(key: string, val: any, aliases: Alias[] = [
     return `search.ismatch(${value}, '${newKey}')`
   }
   // Custom filters for Azure search equivalent of starts with
-  if(key.includes('/startswith_az')) {
-    const newKey = key.replace("/startswith_az", "");
+  if(key.includes('/startsWith_az')) {
+    const newKey = key.replace("/startsWith_az", "");
     const value = handleValue(`${val}*`, aliases);
     return `search.ismatch(${value}, '${newKey}')`
   }
