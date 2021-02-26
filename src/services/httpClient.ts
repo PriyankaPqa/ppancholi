@@ -36,6 +36,7 @@ class HttpClient implements IHttpClient {
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
+        'x-tenant-name': process.env.VUE_APP_TENANT_NAME,
       },
     });
 
