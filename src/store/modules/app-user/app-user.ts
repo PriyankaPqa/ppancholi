@@ -35,6 +35,16 @@ const getters = {
   },
   // Find a user by passing the key we are looking for and the value
   appUserWhere: (state: IState, getters: any) => (key: string, value: string) => getters.appUsersWithInfo.find((o: never) => o[key] === value),
+
+  // Find all app users whose display name contains the search term
+  appUserWithNameContaining: (state: IState) => (searchTerm: string) => state.appUsers.filter(
+    (user) => {
+      if (searchTerm && user.displayName) {
+        return user.displayName.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+      return false;
+    },
+  ),
 };
 
 const mutations = {

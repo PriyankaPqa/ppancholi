@@ -2,20 +2,23 @@
   <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
     <page-content
       :title="headerTitle"
-      :show-add-button="false">
+      :show-add-button="false"
+      :show-back-button="true"
+      @back="onCancel(dirty)">
       <v-container>
-        <v-row justify="center">
-          <v-col xl="9" md="10" sm="12">
+        <v-row justify="center" class="my-8">
+          <v-col md="10" sm="12">
             <v-row class="firstSection">
-              <v-col xl="8" md="9" sm="12">
+              <v-col md="9" sm="12">
                 <div class="flex flex-row mb-4">
                   <h5 data-test="team-title" class="rc-heading-5 mr-3">
                     {{ teamTitle }}
                   </h5>
                   <status-select
-                    v-model="currentStatus"
+                    :value="team.status"
                     :statuses="statuses"
-                    status-name="ETeamStatus" />
+                    status-name="ETeamStatus"
+                    @input="onStatusChange($event)" />
                 </div>
 
                 <v-row>
@@ -24,13 +27,15 @@
                       v-model="team.name"
                       data-test="team-name"
                       :label="`${$t('teams.form.team_name')}*`"
-                      :rules="rules.name" />
+                      :rules="rules.name"
+                      @input="resetValidation()" />
                   </v-col>
                   <v-col cols="12" md="4">
                     <v-autocomplete-with-validation
                       data-test="team-contact"
                       :label="`${$t('teams.form.primary_contact')}*`"
-                      :items="userResults"
+                      :items="primaryContactUsers"
+                      item-text="displayName"
                       :search-input.sync="primaryContactQuery"
                       :loading="fetchingUsers"
                       :rules="rules.primaryContact"
@@ -99,7 +104,6 @@
 import Vue from 'vue';
 import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
-import _debounce from 'lodash/debounce';
 import { ETeamStatus, ETeamType, Team } from '@/entities/team';
 import { EEventStatus } from '@/entities/event';
 import PageContent from '@/ui/views/components/layout/PageContent.vue';
@@ -107,11 +111,10 @@ import TeamMembersTable from '@/ui/views/pages/teams/create-edit/TeamMembersTabl
 import {
   VTextFieldWithValidation, VAutocompleteWithValidation, RcConfirmationDialog,
 } from '@crctech/component-library';
-// import helpers from '@/ui/helpers';
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { VForm } from '@/types';
+import { IAppUserData, VForm } from '@/types';
 
 export default Vue.extend({
   name: 'CreateEditTeam',
@@ -138,16 +141,18 @@ export default Vue.extend({
 
   data() {
     return {
-      isSubmitting: false,
+      isNameUnique: true,
       team: new Team(),
       availableEvents: [],
-      userResults: [],
       primaryContactQuery: '',
+      primaryContactUsers: [] as IAppUserData[],
+      currentPrimaryContact: null as IAppUserData,
       fetchingUsers: false,
       map: [null, 'standard', 'adhoc'],
       statuses: [ETeamStatus.Active, ETeamStatus.Inactive],
       currentStatus: ETeamStatus.Active,
       showCancelConfirmationDialog: false,
+      minimumContactQueryLength: 2,
     };
   },
 
@@ -160,7 +165,11 @@ export default Vue.extend({
       if (this.isEditMode) {
         return this.$t('teams.edit_team');
       }
-      return this.$t('teams.create_team');
+      return this.$t('teams.create_new_team');
+    },
+
+    isSubmitting(): boolean {
+      return this.$storage.team.getters.loading();
     },
 
     rules(): Record<string, unknown> {
@@ -168,6 +177,7 @@ export default Vue.extend({
         name: {
           required: true,
           max: MAX_LENGTH_MD,
+          customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
         },
         primaryContact: {
           required: true,
@@ -188,10 +198,6 @@ export default Vue.extend({
     submitLabel(): TranslateResult {
       return this.isEditMode ? this.$t('common.save') : this.$t('common.buttons.create');
     },
-
-    // teamStatuses(): Record<string, unknown>[] {
-    //   return helpers.enumToTranslatedCollection(ETeamStatus, 'teams.status');
-    // },
   },
 
   watch: {
@@ -207,41 +213,15 @@ export default Vue.extend({
   async mounted() {
     const res = await this.$storage.event.actions.searchEvents({ filter: { Schedule: { Status: EEventStatus.Open } } });
     this.availableEvents = res?.value;
+
+    if (!this.isEditMode) {
+      this.team.teamType = this.teamType === 'standard' ? ETeamType.Standard : ETeamType.AdHoc;
+    }
   },
 
   methods: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    searchPrimaryContacts: _debounce(async function debounced(this: any) {
-      this.fetchingUsers = true;
-      // TODO call storage user to search with this.primaryContactQuery
-      this.fetchingUsers = false;
-    }),
-
-    setPrimaryContact() {
-      // TODO Add user to team member display it on the table and flag him as primary contact
-      // TODO When primary contact is already present, flag to false the previous one
-    },
-
-    setEventIds(eventId: string | Array<string>) {
-      // if single select is used (for adhoc teams)
-      if (typeof eventId === 'string') {
-        this.team.eventIds = [eventId];
-      // if multiple select is used (for standard teams)
-      } else {
-        this.team.eventIds = eventId;
-      }
-    },
-
     isSubmitDisabled(isFailed: boolean, isDirty:boolean) {
       return isFailed || (this.isEditMode && !isDirty);
-    },
-
-    async submit() {
-      const isValid = await (this.$refs.form as VForm).validate();
-      if (isValid) {
-        this.$router.replace({ name: routes.teams.edit.name });
-      // TODO in create mode - send data to BE, get the new team ID and open the edit page with the new ID
-      }
     },
 
     navigateToHome() {
@@ -255,6 +235,67 @@ export default Vue.extend({
         this.navigateToHome();
       }
     },
+
+    onStatusChange(status: ETeamStatus) {
+      this.team.status = status;
+    },
+
+    resetValidation() {
+      if (!this.isNameUnique) {
+        this.isNameUnique = true;
+      }
+    },
+
+    async searchPrimaryContacts() {
+      const query = this.primaryContactQuery;
+
+      if (query && query.length >= this.minimumContactQueryLength) {
+        this.fetchingUsers = true;
+        this.primaryContactUsers = this.$storage.appUser.getters.appUserWithNameContaining(query);
+        this.fetchingUsers = false;
+      } else {
+        this.primaryContactUsers = [];
+      }
+    },
+
+    setEventIds(eventId: string | Array<string>) {
+      // if single select is used (for adhoc teams)
+      if (typeof eventId === 'string') {
+        this.team.eventIds = [eventId];
+      // if multiple select is used (for standard teams)
+      } else {
+        this.team.eventIds = eventId;
+      }
+    },
+
+    setPrimaryContact(appUser: IAppUserData) {
+      this.team.setPrimaryContact(appUser.id);
+      this.currentPrimaryContact = appUser;
+    },
+
+    async submit() {
+      const isValid = await (this.$refs.form as VForm).validate();
+      if (!isValid) return;
+
+      if (!this.isEditMode) {
+        try {
+          const newTeam = await this.$storage.team.actions.createTeam(this.team);
+
+          const message:TranslateResult = this.team.teamType === ETeamType.Standard
+            ? this.$t('teams.standard_team_created')
+            : this.$t('teams.adhoc_team_created');
+          this.$toasted.global.success(message);
+
+          this.$router.replace({ name: routes.teams.edit.name, params: { id: newTeam.id } });
+        } catch (e) {
+          // Temporary custom check until an error handling system is put in place
+          if (Array.isArray(e) && e.includes('Team name already exists ')) {
+            this.isNameUnique = false;
+          }
+        }
+      }
+    },
+
   },
 });
 </script>

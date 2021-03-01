@@ -36,6 +36,12 @@ describe('>>> App User Module', () => {
         expect(store.getters['appUser/appUserWhere']('givenName', 'Lena')).toEqual(mockAppUserData()[0]);
       });
     });
+
+    describe('appUserWithNameContaining', () => {
+      it('finds the app users where key equals value', () => {
+        expect(store.getters['appUser/appUserWithNameContaining']('Lena')).toEqual([mockAppUserAzureData()[0]]);
+      });
+    });
   });
 
   describe('>> Mutations', () => {

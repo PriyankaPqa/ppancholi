@@ -14,6 +14,10 @@ describe('>>> App User Storage', () => {
     it('should proxy appUserWhere', () => {
       expect(storage.getters.appUserWhere('key', 'value'));
     });
+
+    it('should proxy appUserWithNameContaining', () => {
+      expect(storage.getters.appUserWithNameContaining('searchTerm')).toEqual(store.getters['appUser/appUserWithNameContaining']('searchTerm'));
+    });
   });
 
   describe('>> Actions', () => {

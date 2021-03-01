@@ -1,3 +1,4 @@
+import { MAX_LENGTH_MD } from '@/constants/validations';
 import { Team } from './team';
 import { mockTeamsData } from './team.mock';
 import { ETeamStatus, ETeamType } from './team.types';
@@ -48,11 +49,18 @@ describe('>>> Team', () => {
 
   describe('Methods', () => {
     describe('addTeamMember', () => {
-      it('should add a team member to the team', () => {
+      it('should add a team member to the team and set it as not primary contact if it receives only one argument', () => {
         const team = new Team();
         const mockId = '1';
         team.addTeamMember(mockId);
         expect(team.teamMembers).toEqual([{ id: '1', isPrimaryContact: false }]);
+      });
+
+      it('should add a team member to the team and set it as primary contact if the second argument is TRUE', () => {
+        const team = new Team();
+        const mockId = '2';
+        team.addTeamMember(mockId, true);
+        expect(team.teamMembers).toEqual([{ id: '2', isPrimaryContact: true }]);
       });
     });
 
@@ -73,27 +81,18 @@ describe('>>> Team', () => {
         }]);
       });
 
-      it('should not change the team members if the id passed to setPrimaryContact is not an id of a team member', () => {
-        team.setPrimaryContact('guid-member-foo');
-        expect(team.teamMembers).toEqual(new Team(mockTeamData).teamMembers);
-      });
-    });
-
-    describe('addPrimaryContact', () => {
-      it('should add a new member to the team and set it as primary contact', () => {
-        const team = new Team(mockTeamData);
-        team.addPrimaryContact('guid-member-3');
-        expect(team.teamMembers).toEqual([
-          {
-            id: 'guid-member-1',
-            isPrimaryContact: false,
-          }, {
-            id: 'guid-member-2',
-            isPrimaryContact: false,
-          }, {
-            id: 'guid-member-3',
-            isPrimaryContact: true,
-          },
+      it('should add a new member to the team and set it as primary contact if it is not already a member', () => {
+        team.setPrimaryContact('guid-member-new');
+        expect(team.teamMembers).toEqual([{
+          id: 'guid-member-1',
+          isPrimaryContact: false,
+        }, {
+          id: 'guid-member-2',
+          isPrimaryContact: false,
+        }, {
+          id: 'guid-member-new',
+          isPrimaryContact: true,
+        },
         ]);
       });
     });
@@ -123,6 +122,12 @@ describe('>>> Team', () => {
         const team = new Team(mockTeamData);
         team.name = null;
         expect(team.validate()).toContain('The team name is required');
+      });
+
+      test('team name length not longer than allowed', () => {
+        const team = new Team(mockTeamData);
+        team.name = 'x'.repeat(MAX_LENGTH_MD + 1);
+        expect(team.validate()).toContain(`The team name should not be longer than ${MAX_LENGTH_MD} characters`);
       });
 
       test('teamType is required', () => {

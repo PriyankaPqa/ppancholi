@@ -9,6 +9,9 @@ export const makeStorage = (store: IStore): IStorage => ({
     appUserWhere(key: string, value: string) {
       return store.getters['appUser/appUserWhere'](key, value);
     },
+    appUserWithNameContaining(searchTerm: string) {
+      return store.getters['appUser/appUserWithNameContaining'](searchTerm);
+    },
   },
 
   actions: {

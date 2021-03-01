@@ -1,3 +1,4 @@
+import { MAX_LENGTH_MD } from '@/constants/validations';
 import {
   ETeamStatus, ETeamType, ITeam, ITeamData, ITeamMember,
 } from './team.types';
@@ -28,22 +29,19 @@ export class Team implements ITeam {
     }
   }
 
-  addPrimaryContact(userId: uuid) {
-    this.addTeamMember(userId);
-    this.setPrimaryContact(userId);
-  }
-
-  addTeamMember(userId: uuid) {
-    this.teamMembers.push({ id: userId, isPrimaryContact: false });
+  addTeamMember(userId: uuid, isPrimaryContact = false) {
+    this.teamMembers.push({ id: userId, isPrimaryContact });
   }
 
   setPrimaryContact(userId: uuid) {
     let isUserInTeam = false;
     const updatedTeam = this.teamMembers.map((member: ITeamMember) => {
+      // If the userId is the Id of a team member, its primaryContact status is set to true
       if (member.id === userId) {
         member.isPrimaryContact = true;
         isUserInTeam = true;
       } else {
+        // All other team members' primaryContact status is set to false
         member.isPrimaryContact = false;
       }
       return member;
@@ -51,6 +49,9 @@ export class Team implements ITeam {
 
     if (isUserInTeam) {
       this.teamMembers = updatedTeam;
+    } else {
+      // If the userId doesn't belong to an existent team member, the userId is added as primaryContact
+      this.addTeamMember(userId, true);
     }
   }
 
@@ -77,6 +78,9 @@ export class Team implements ITeam {
     if (!this.name) {
       errors.push('The team name is required');
     }
+    if (this.name && this.name.length > MAX_LENGTH_MD) {
+      errors.push(`The team name should not be longer than ${MAX_LENGTH_MD} characters`);
+    }
     if (!this.teamType) {
       errors.push('The team type is required');
     }
@@ -86,7 +90,6 @@ export class Team implements ITeam {
     if (!this.teamMembers || !this.teamMembers.length || !this.teamMembers.find((m) => m.isPrimaryContact)) {
       errors.push('A primary contact team member is required');
     }
-
     if (this.teamType === ETeamType.AdHoc && this.eventIds.length !== 1) {
       errors.push('An ad-hoc team should have one eventId');
     }

@@ -141,7 +141,7 @@ const routes = {
       name: 'teams.create',
     },
     edit: {
-      path: 'edit/:teamType',
+      path: 'edit/:teamType/:id',
       name: 'teams.edit',
     },
   },

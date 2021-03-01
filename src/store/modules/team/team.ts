@@ -4,20 +4,23 @@ import {
 
 import { IRootState } from '@/store/store.types';
 
-import { ITeamData, Team, ITeam } from '@/entities/team';
+import {
+  ITeam, ITeamData, Team,
+} from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import {
   IState,
 } from './team.types';
 
 const getDefaultState = (): IState => ({
+  loading: false,
   searchLoading: false,
 });
 
 const moduleState: IState = getDefaultState();
 
 const getters = {
-
+  loading: (state: IState) => state.loading,
 };
 
 const mutations = {
@@ -25,6 +28,17 @@ const mutations = {
 };
 
 const actions = {
+
+  async createTeam(this: Store<IState>, context: ActionContext<IState, IState>, payload: ITeam): Promise<ITeam> {
+    context.state.loading = true;
+    try {
+      const res = await this.$services.teams.createTeam(payload);
+      return new Team(res);
+    } finally {
+      context.state.loading = false;
+    }
+  },
+
   async searchTeams(this: Store<IState>, context: ActionContext<IState, IState>, params: IAzureSearchParams): Promise<IAzureSearchResult<ITeam>> {
     try {
       context.state.searchLoading = true;
@@ -38,6 +52,7 @@ const actions = {
       context.state.searchLoading = false;
     }
   },
+
 };
 
 export const team: Module<IState, IRootState> = {

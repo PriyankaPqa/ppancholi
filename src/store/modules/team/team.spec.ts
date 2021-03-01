@@ -1,8 +1,33 @@
-import { mockStore } from '@/store';
-import { ITeamData, Team } from '@/entities/team';
+import { Store } from 'vuex';
+import { ITeamData, mockTeamsData, Team } from '@/entities/team';
+import { mockStore, IRootState } from '@/store';
 
 describe('>>> Team Module', () => {
-  const store = mockStore();
+  let store: Store<IRootState>;
+
+  beforeEach(() => {
+    store = mockStore({
+      modules: {
+        event: {
+          state: {
+            loading: false,
+          },
+        },
+      },
+    });
+  });
+
+  describe('>> Getters', () => {
+    describe('loading', () => {
+      test('the loading getter returns a boolean', () => {
+        expect(store.getters['team/loading']).toEqual(false);
+      });
+    });
+  });
+
+  // describe('>> Mutations', () => {
+
+  // });
 
   describe('>> Actions', () => {
     describe('searchTeams', () => {
@@ -21,6 +46,18 @@ describe('>>> Team Module', () => {
           ...res,
           value: res.value.map((el: ITeamData) => (new Team(el))),
         });
+      });
+    });
+
+    describe('createTeam', () => {
+      it('calls the service createTeam with the right params', async () => {
+        const store = mockStore();
+        const payload = new Team(mockTeamsData()[0]);
+        expect(store.$services.teams.createTeam).toHaveBeenCalledTimes(0);
+
+        await store.dispatch('team/createTeam', payload);
+
+        expect(store.$services.teams.createTeam).toHaveBeenCalledWith(payload);
       });
     });
   });

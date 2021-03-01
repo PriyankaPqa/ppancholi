@@ -114,5 +114,11 @@ extend('phoneRequired', {
   message: (_, values) => i18n.t('validations.required', values),
 });
 
+extend('customValidator', {
+  params: ['isValid', 'messageKey'],
+  message: (_, values) => i18n.t(values.messageKey),
+  validate: (value, { isValid }) => isValid,
+});
+
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
