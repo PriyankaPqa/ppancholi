@@ -68,13 +68,24 @@ export default {
         data: content:;`,
     };
   },
-  created() {
+  async created() {
+    await this.fetchAllUsersInformation();
+
     if (process.env.NODE_ENV === 'development') {
       this.cspContent = this.cspContentDev;
     }
     if (process.env.NODE_ENV === 'production') {
       this.cspContent = this.cspContentProd;
     }
+  },
+  methods: {
+    async fetchAllUsersInformation() {
+      await Promise.all([
+        this.$storage.appUser.actions.fetchAllUsers(),
+        this.$storage.appUser.actions.fetchAppUsers(),
+        this.$storage.appUser.actions.fetchRoles(),
+      ]);
+    },
   },
 };
 </script>

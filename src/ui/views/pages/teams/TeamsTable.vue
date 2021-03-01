@@ -31,7 +31,7 @@
       </template>
 
       <template #item.primaryContact="{ item }">
-        <span data-test="team_primary_contact">{{ item.getPrimaryContact('id') }}</span>
+        <span data-test="team_primary_contact">{{ item.getPrimaryContact().id }}</span>
       </template>
 
       <template #item.status="{ item }">
@@ -164,11 +164,7 @@ export default Vue.extend({
         orderBy: params.orderBy,
         count: true,
       });
-
-      if (res) {
-        this.azureSearchItems = res?.value;
-        this.azureSearchCount = res['@odataCount'];
-      }
+      return res;
     },
 
     getFilterParams(params: ISearchData) {

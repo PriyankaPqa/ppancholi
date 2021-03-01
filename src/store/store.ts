@@ -6,6 +6,7 @@ import { dashboard } from './modules/dashboard';
 import { optionList } from './modules/optionList';
 import { event } from './modules/event';
 import { team } from './modules/team';
+import { appUser } from './modules/app-user';
 
 Vue.use(Vuex);
 
@@ -14,6 +15,7 @@ const store: StoreOptions<IRootState> = {
     version: '1.0.0', // a simple property
   },
   modules: {
+    appUser,
     user,
     dashboard,
     event,

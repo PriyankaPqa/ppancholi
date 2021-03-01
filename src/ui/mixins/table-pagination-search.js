@@ -3,7 +3,7 @@ export default {
     return {
       azureSearchItems: [],
       azureSearchCount: 0,
-      fetchDataParams: {
+      azureSearchParams: {
         skip: 0,
         top: 0,
         orderBy: '',
@@ -24,21 +24,24 @@ export default {
       const skip = (pageIndex - 1) * pageSize;
       const top = pageSize;
 
-      this.fetchDataParams.skip = skip;
-      this.fetchDataParams.top = top;
+      this.azureSearchParams.skip = skip;
+      this.azureSearchParams.top = top;
       if (orderBy) {
-        this.fetchDataParams.orderBy = `${orderBy} ${direction}`;
+        this.azureSearchParams.orderBy = `${orderBy} ${direction}`;
       }
     },
 
     async search(params) {
       this.buildPaginationParams(params);
 
-      if (params.search) {
-        this.fetchDataParams.filter = this.getFilterParams(params);
-      }
+      this.azureSearchParams.filter = params.search ? this.getFilterParams(params) : {};
 
-      await this.fetchData(this.fetchDataParams);
+      const res = await this.fetchData(this.azureSearchParams);
+
+      if (res) {
+        this.azureSearchItems = res?.value;
+        this.azureSearchCount = res['@odataCount'];
+      }
     },
   },
 };

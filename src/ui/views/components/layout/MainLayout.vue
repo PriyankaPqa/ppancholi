@@ -21,7 +21,7 @@ import RightMenu from '@/ui/views/components/layout/RightMenu.vue';
 import GeneralHelpMenu from '@/ui/views/components/layout/GeneralHelpMenu.vue';
 
 export default Vue.extend({
-  name: 'DashboardLayout',
+  name: 'MainLayout',
 
   components: {
     AppHeader,

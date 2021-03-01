@@ -97,5 +97,65 @@ describe('>>> Team', () => {
         ]);
       });
     });
+
+    describe('getPrimaryContact', () => {
+      it('should return the primary contact', () => {
+        const team = new Team(mockTeamsData()[0]);
+        expect(team.getPrimaryContact()).toEqual(mockTeamsData()[0].teamMembers[0]);
+      });
+    });
+  });
+
+  describe('>> validation', () => {
+    test('true is returned for a valid entity', () => {
+      const team = new Team(mockTeamData);
+      expect(team.validate()).toBe(true);
+    });
+
+    describe('> validation attributes', () => {
+      test('id is required', () => {
+        const team = new Team(mockTeamData);
+        team.id = null;
+        expect(team.validate()).toContain('The id is required');
+      });
+
+      test('name is required', () => {
+        const team = new Team(mockTeamData);
+        team.name = null;
+        expect(team.validate()).toContain('The team name is required');
+      });
+
+      test('teamType is required', () => {
+        const team = new Team(mockTeamData);
+        team.teamType = null;
+        expect(team.validate()).toContain('The team type is required');
+      });
+
+      test('The team status is required', () => {
+        const team = new Team(mockTeamData);
+        team.status = null;
+        expect(team.validate()).toContain('The team status is required');
+      });
+
+      test('The teamMembers status is required', () => {
+        const team = new Team(mockTeamData);
+        team.teamMembers = [
+          {
+            id: 'guid-member-1',
+            isPrimaryContact: false,
+          }, {
+            id: 'guid-member-2',
+            isPrimaryContact: false,
+          },
+        ];
+        expect(team.validate()).toContain('A primary contact team member is required');
+      });
+
+      test('Ad-Hoc team can only have one event attached', () => {
+        const team = new Team(mockTeamsData()[1]);
+        team.eventIds = ['0000', '0001'];
+        expect(team.validate()).toContain('An ad-hoc team should have one eventId');
+      });
+    });
   });
 });

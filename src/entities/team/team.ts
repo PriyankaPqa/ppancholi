@@ -54,10 +54,10 @@ export class Team implements ITeam {
     }
   }
 
-  getPrimaryContact(prop?: keyof ITeamMember) {
+  getPrimaryContact(): ITeamMember {
     if (this.teamMembers) {
       const primaryContact = this.teamMembers.find((m) => m.isPrimaryContact) as ITeamMember;
-      return prop ? primaryContact[prop] : primaryContact;
+      return primaryContact || null;
     }
     return null;
   }
@@ -99,7 +99,10 @@ export class Team implements ITeam {
     const errors: Array<string> = [];
 
     this.validateAttributes(errors);
+    if (!errors.length) {
+      return true;
+    }
 
-    return !errors.length;
+    return errors;
   }
 }

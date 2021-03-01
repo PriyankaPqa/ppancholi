@@ -188,14 +188,9 @@ describe('TeamsTable.vue', () => {
         });
       });
 
-      it('should set the azureSearchItems', async () => {
-        await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.azureSearchItems).toEqual(mockSearchTeams().value);
-      });
-
-      it('should set the azureSearchCount', async () => {
-        await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.azureSearchCount).toEqual(mockSearchTeams()['@odataCount']);
+      it('returns the search results set the azureSearchItems', async () => {
+        const res = await wrapper.vm.fetchData(params);
+        expect(res).toEqual(mockSearchTeams());
       });
     });
 

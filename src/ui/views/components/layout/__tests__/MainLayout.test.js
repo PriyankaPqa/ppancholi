@@ -5,7 +5,7 @@ import AppHeader from '../AppHeader.vue';
 import LeftMenu from '../LeftMenu.vue';
 import GeneralHelpMenu from '../GeneralHelpMenu.vue';
 
-describe('DashboardLayout.vue', () => {
+describe('MainLayout.vue', () => {
   let wrapper;
   const localVue = createLocalVue();
   beforeEach(async () => {
