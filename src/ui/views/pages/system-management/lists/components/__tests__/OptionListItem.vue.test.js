@@ -4,7 +4,7 @@ import {
   mount,
 } from '@/test/testSetup';
 import { EOptionListItemStatus } from '@/types';
-import { mockEventTypeData } from '@/entities/eventType';
+import { mockOptionItemData } from '@/entities/optionItem';
 import entityUtils from '@/entities/utils';
 import Component from '../OptionListItem.vue';
 
@@ -15,12 +15,12 @@ describe('OptionListItem.vue', () => {
   let items;
 
   beforeEach(async () => {
-    items = mockEventTypeData();
+    items = mockOptionItemData();
 
     wrapper = mount(Component, {
       localVue,
       propsData: {
-        item: mockEventTypeData()[0],
+        item: mockOptionItemData()[0],
         languageMode: 'en',
         isCascading: true,
         isSubItem: false,

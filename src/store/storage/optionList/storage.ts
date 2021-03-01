@@ -1,4 +1,4 @@
-import { IEventType } from '@/entities/eventType';
+import { IOptionItem } from '@/entities/optionItem';
 import { IStore } from '@/store/store.types';
 import {
   EOptionListItemStatus, EOptionLists, IMultilingual, IOptionListItem,
@@ -23,7 +23,7 @@ export const makeStorage = (store: IStore): IStorage => ({
   },
 
   actions: {
-    fetchItems(): Promise<IEventType[]> {
+    fetchItems(): Promise<IOptionItem[]> {
       return store.dispatch('optionList/fetchItems');
     },
 

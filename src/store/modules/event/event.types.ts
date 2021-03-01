@@ -1,8 +1,8 @@
-import { IEventTypeData } from '@/entities/eventType';
+import { IOptionItemData } from '@/entities/optionItem';
 import { IEventData } from '@/entities/event';
 
 export type IState = {
-  eventTypes: IEventTypeData[];
+  eventTypes: IOptionItemData[];
   events: IEventData[];
   eventTypesFetched: boolean;
   eventsFetched: boolean;

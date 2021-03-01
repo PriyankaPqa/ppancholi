@@ -1,4 +1,4 @@
-import { mockEventTypeData } from '@/entities/eventType';
+import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStore } from '@/store';
 import { EOptionListItemStatus, EOptionLists } from '@/types';
 import { makeStorage } from './storage';
@@ -62,7 +62,7 @@ describe('>>> OptionList Storage', () => {
     });
 
     it('should proxy updateOrderRanks', () => {
-      const items = mockEventTypeData();
+      const items = mockOptionItemData();
 
       storage.actions.updateOrderRanks([
         items[1],

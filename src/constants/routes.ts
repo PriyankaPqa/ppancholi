@@ -122,6 +122,10 @@ const routes = {
       path: 'lists/event-types',
       name: 'systemManagement.lists.eventTypes',
     },
+    genders: {
+      path: 'lists/genders',
+      name: 'systemManagement.lists.genders',
+    },
   },
   teams: {
     layout: {

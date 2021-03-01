@@ -277,7 +277,7 @@ import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { TOOLTIP_DELAY } from '@/ui/constants';
 import _cloneDeep from 'lodash/cloneDeep';
-import { IEventType } from '@/entities/eventType';
+import { IOptionItem } from '@/entities/optionItem';
 import utils from '@/entities/utils';
 
 export default Vue.extend({
@@ -401,7 +401,7 @@ export default Vue.extend({
       return helpers.enumToTranslatedCollection(EResponseLevel, 'event.response_level');
     },
 
-    eventTypesSorted(): Array<IEventType> {
+    eventTypesSorted(): Array<IOptionItem> {
       return this.$storage.event.getters.eventTypes();
     },
 

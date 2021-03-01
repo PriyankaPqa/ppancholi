@@ -1,11 +1,11 @@
 import { Store } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
-import { EventType, mockEventTypeData } from '@/entities/eventType';
+import { OptionItem, mockOptionItemData } from '@/entities/optionItem';
 import { Event, mockEventsData } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
-import { EOptionListItemStatus } from '@/types';
+import { EOptionListItemStatus, EOptionLists } from '@/types';
 
 describe('>>> Event Module', () => {
   let store: Store<IRootState>;
@@ -15,7 +15,7 @@ describe('>>> Event Module', () => {
       modules: {
         event: {
           state: {
-            eventTypes: mockEventTypeData(),
+            eventTypes: mockOptionItemData(),
             events: mockEventsData(),
           },
         },
@@ -26,7 +26,7 @@ describe('>>> Event Module', () => {
   describe('>> Getters', () => {
     describe('eventTypes', () => {
       test('the eventTypes getter returns an array of EventTypes sorted by orderRank and filtered by status', () => {
-        const mockEventTypes = mockEventTypeData().map((e) => new EventType(e));
+        const mockEventTypes = mockOptionItemData().map((e) => new OptionItem(e));
 
         expect(store.getters['event/eventTypes']).toEqual(
           _sortBy(mockEventTypes, 'orderRank').filter((i) => i.itemStatus === EOptionListItemStatus.Active),
@@ -50,9 +50,9 @@ describe('>>> Event Module', () => {
 
         expect(store.getters['event/eventTypes']).toEqual([]);
 
-        store.commit('event/setEventTypes', mockEventTypeData());
+        store.commit('event/setEventTypes', mockOptionItemData());
 
-        expect(store.state.event.eventTypes).toEqual(mockEventTypeData());
+        expect(store.state.event.eventTypes).toEqual(mockOptionItemData());
       });
     });
 
@@ -118,13 +118,13 @@ describe('>>> Event Module', () => {
       test('the fetchEventTypes action calls the getEventsTypes service and returns the eventTypes getter', async () => {
         const store = mockStore();
 
-        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(0);
+        expect(store.$services.optionItems.getOptionList).toHaveBeenCalledTimes(0);
 
         const res = await store.dispatch('event/fetchEventTypes');
 
-        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
+        expect(store.$services.optionItems.getOptionList).toHaveBeenCalledWith(EOptionLists.EventTypes);
 
-        expect(store.state.event.eventTypes).toEqual(mockEventTypeData());
+        expect(store.state.event.eventTypes).toEqual(mockOptionItemData());
 
         expect(res).toEqual(store.getters['event/eventTypes']);
       });

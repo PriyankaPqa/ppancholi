@@ -1,18 +1,18 @@
 import {
-  Store, Module, ActionContext, ActionTree,
+  ActionContext, ActionTree, Module, Store,
 } from 'vuex';
 import _findIndex from 'lodash/findIndex';
 import _sortBy from 'lodash/sortBy';
 import { IRootState } from '@/store/store.types';
-import { EventType, IEventType, IEventTypeData } from '@/entities/eventType';
+import { IOptionItem, IOptionItemData, OptionItem } from '@/entities/optionItem';
 import {
   Event, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
-import { EOptionListItemStatus, IAzureSearchParams, IAzureSearchResult } from '@/types';
 import {
-  IState,
-} from './event.types';
+  EOptionListItemStatus, EOptionLists, IAzureSearchParams, IAzureSearchResult,
+} from '@/types';
+import { IState } from './event.types';
 
 const getDefaultState = (): IState => ({
   eventTypes: [],
@@ -25,7 +25,7 @@ const moduleState: IState = getDefaultState();
 
 const getters = {
   eventTypes: (state: IState) => (
-    _sortBy(state.eventTypes.map((e) => new EventType(e)), 'orderRank')
+    _sortBy(state.eventTypes.map((e) => new OptionItem(e)), 'orderRank')
       .filter((i) => i.itemStatus === EOptionListItemStatus.Active)
   ),
 
@@ -33,7 +33,7 @@ const getters = {
 };
 
 const mutations = {
-  setEventTypes(state: IState, payload: Array<IEventTypeData>) {
+  setEventTypes(state: IState, payload: Array<IOptionItemData>) {
     state.eventTypes = payload;
   },
 
@@ -57,9 +57,9 @@ const mutations = {
 };
 
 const actions = {
-  async fetchEventTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEventType[]> {
+  async fetchEventTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
     // if (!context.state.eventTypesFetched) { disable caching until signalR events are implemented
-    const data = await this.$services.eventTypes.getEventTypes();
+    const data = await this.$services.optionItems.getOptionList(EOptionLists.EventTypes);
     context.commit('setEventTypes', data);
     context.state.eventTypesFetched = true;
 

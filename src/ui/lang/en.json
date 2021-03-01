@@ -1122,6 +1122,7 @@
     "system_management.lists.statusDialog.body": "Are you sure you want to edit the status to {status}?",
     "system_management.lists.statusDialog.Inactive": "Inactive",
     "system_management.lists.statusDialog.title": "Edit status",
+    "system_management.lists.genders": "Genders",
     "tab.en": "English",
     "tab.fr": "French",
     "Tag.Added": "{x} was added to the case file | {x} were added to the case file",

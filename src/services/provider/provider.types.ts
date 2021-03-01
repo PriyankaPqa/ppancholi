@@ -1,18 +1,18 @@
 import { IEventsService, IEventsServiceMock } from '../events';
-import { IEventTypesService, IEventTypesServiceMock } from '../eventTypes';
+import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
 import { ITeamsService, ITeamsServiceMock } from '../teams';
 import { IAppUsersService, IAppUsersServiceMock } from '../app-users';
 
 export interface IProvider {
-  events: IEventsService;
-  eventTypes: IEventTypesService;
-  teams: ITeamsService,
   appUsers: IAppUsersService,
+  events: IEventsService;
+  optionItems: IOptionItemsService;
+  teams: ITeamsService,
 }
 
 export interface IProviderMock {
-  events: IEventsServiceMock;
-  eventTypes: IEventTypesServiceMock;
-  teams: ITeamsServiceMock,
   appUsers: IAppUsersServiceMock,
+  events: IEventsServiceMock;
+  optionItems: IOptionItemsServiceMock;
+  teams: ITeamsServiceMock,
 }

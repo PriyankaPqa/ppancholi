@@ -65,6 +65,11 @@ export default Vue.extend({
       name: 'system_management.lists.eventTypes',
       route: routes.systemManagement.eventTypes.name,
       dataTest: 'eventTypes',
+    },
+    {
+      name: 'system_management.lists.genders',
+      route: routes.systemManagement.genders.name,
+      dataTest: 'genders',
     }];
 
     return {

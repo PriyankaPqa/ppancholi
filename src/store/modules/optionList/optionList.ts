@@ -7,7 +7,7 @@ import { IRootState } from '@/store/store.types';
 import {
   EOptionListItemStatus, EOptionLists, IMultilingual, IOptionListItem,
 } from '@/types';
-import { IEventTypeData } from '@/entities/eventType';
+import { IOptionItemData } from '@/entities/optionItem';
 import {
   IState,
 } from './optionList.types';
@@ -58,42 +58,37 @@ const actions = {
       throw new Error('You must set a value for list');
     }
 
-    if (context.state.list === EOptionLists.EventTypes) {
-      const data = await this.$services.eventTypes.getEventTypes();
-      context.commit('setItems', data);
-    }
+    const { list } = context.state;
+    const data = await this.$services.optionItems.getOptionList(list);
 
+    context.commit('setItems', data);
     return context.getters.items;
   },
 
-  async createOption(this: Store<IState>, context: ActionContext<IState, IState>, payload: IOptionListItem): Promise<IOptionListItem> {
+  async createOption(this: Store<IState>, context: ActionContext<IState, IState>, payload: IOptionItemData): Promise<IOptionListItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
 
-    if (context.state.list === EOptionLists.EventTypes) {
-      const data = await this.$services.eventTypes.createEventType(payload as IEventTypeData);
-      context.commit('addOrUpdateItem', data);
-      return data;
-    }
+    const { list } = context.state;
+    const data = await this.$services.optionItems.createOptionItem(list, payload);
+
+    if (data != null) context.commit('addOrUpdateItem', data);
 
     return null;
   },
 
-  async updateName(
-    this: Store<IState>,
+  async updateName(this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: { id: string, name: IMultilingual },
-  ): Promise<IOptionListItem> {
+    payload: { id: string, name: IMultilingual }): Promise<IOptionListItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
 
-    if (context.state.list === EOptionLists.EventTypes) {
-      const data = await this.$services.eventTypes.updateEventTypeName(payload.id, payload.name);
-      context.commit('addOrUpdateItem', data);
-      return data;
-    }
+    const { list } = context.state;
+    const data = await this.$services.optionItems.updateOptionItemName(list, payload.id, payload.name);
+
+    if (data != null) context.commit('addOrUpdateItem', data);
 
     return null;
   },
@@ -107,11 +102,10 @@ const actions = {
       throw new Error('You must set a value for list');
     }
 
-    if (context.state.list === EOptionLists.EventTypes) {
-      const data = await this.$services.eventTypes.updateEventTypeStatus(payload.id, payload.itemStatus);
-      context.commit('addOrUpdateItem', data);
-      return data;
-    }
+    const { list } = context.state;
+    const data = await this.$services.optionItems.updateOptionItemStatus(list, payload.id, payload.itemStatus);
+
+    if (data != null) context.commit('addOrUpdateItem', data);
 
     return null;
   },
@@ -139,16 +133,13 @@ const actions = {
     });
 
     try {
-      if (context.state.list === EOptionLists.EventTypes) {
-        const data = await this.$services.eventTypes.updateEventTypeOrderRanks(orderRanks);
-        return data;
-      }
+      const { list } = context.state;
+      const data = await this.$services.optionItems.updateOptionItemOrderRanks(list, orderRanks);
+      return data;
     } catch (e) {
       context.commit('setItems', originalOrder);
       throw e;
     }
-
-    return null;
   },
 
   async setIsOther(
@@ -160,8 +151,10 @@ const actions = {
       throw new Error('You must set a value for list');
     }
 
-    if (context.state.list === EOptionLists.EventTypes) {
-      const data = await this.$services.eventTypes.setEventTypeIsOther(payload.id, payload.isOther);
+    const { list } = context.state;
+    const data = await this.$services.optionItems.setOptionItemIsOther(list, payload.id, payload.isOther);
+
+    if (data != null) {
       // Unset the isOther value from all the items
       context.commit('setItems', context.state.items.map((i) => ({
         ...i,
@@ -184,8 +177,10 @@ const actions = {
       throw new Error('You must set a value for list');
     }
 
-    if (context.state.list === EOptionLists.EventTypes) {
-      const data = await this.$services.eventTypes.setEventTypeIsDefault(payload.id, payload.isDefault);
+    const { list } = context.state;
+    const data = await this.$services.optionItems.setOptionItemIsDefault(list, payload.id, payload.isDefault);
+
+    if (data != null) {
       // Unset the isDefault value from all the items
       context.commit('setItems', context.state.items.map((i) => ({
         ...i,

@@ -1,12 +1,12 @@
 import { IEvent, IOtherProvince, IRegion } from '@/entities/event';
-import { IEventType } from '@/entities/eventType';
+import { IOptionItem } from '@/entities/optionItem';
 import { IStore } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
   getters: {
-    eventTypes(): Array<IEventType> {
+    eventTypes(): Array<IOptionItem> {
       return store.getters['event/eventTypes'];
     },
 
@@ -16,7 +16,7 @@ export const makeStorage = (store: IStore): IStorage => ({
   },
 
   actions: {
-    fetchEventTypes(): Promise<IEventType[]> {
+    fetchEventTypes(): Promise<IOptionItem[]> {
       return store.dispatch('event/fetchEventTypes');
     },
 

@@ -1,15 +1,15 @@
 import { IEvent, IOtherProvince, IRegion } from '@/entities/event';
-import { IEventType } from '@/entities/eventType';
+import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 export interface IStorage {
   getters: {
-    eventTypes(): Array<IEventType>;
+    eventTypes(): Array<IOptionItem>;
     events(): Array<IEvent>;
   }
 
   actions: {
-    fetchEventTypes(): Promise<IEventType[]>;
+    fetchEventTypes(): Promise<IOptionItem[]>;
     fetchEvents(): Promise<IEvent[]>;
     fetchOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>
     fetchRegions(): Promise<IAzureSearchResult<IRegion>>;

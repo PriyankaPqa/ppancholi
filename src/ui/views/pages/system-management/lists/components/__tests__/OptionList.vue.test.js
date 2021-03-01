@@ -3,7 +3,7 @@ import {
   mount,
 } from '@/test/testSetup';
 import { EOptionLists, EOptionListItemStatus } from '@/types';
-import { mockEventTypeData } from '@/entities/eventType';
+import { mockOptionItemData } from '@/entities/optionItem';
 import Component from '../OptionList.vue';
 
 const localVue = createLocalVue();
@@ -21,7 +21,7 @@ const store = {
     optionList: {
       state: {
         list: EOptionLists.EventTypes,
-        items: mockEventTypeData(),
+        items: mockOptionItemData(),
       },
       actions,
     },
@@ -56,13 +56,13 @@ describe('OptionList.vue', () => {
   describe('> Computed', () => {
     describe('>> items', () => {
       it('returns the items from the store', () => {
-        expect(wrapper.vm.items).toEqual(mockEventTypeData());
+        expect(wrapper.vm.items).toEqual(mockOptionItemData());
       });
 
       it('fires the sortItems action when assigned', () => {
         const spy = jest.spyOn(wrapper.vm, 'sortItems').mockImplementation(() => {});
 
-        const items = mockEventTypeData();
+        const items = mockOptionItemData();
 
         wrapper.vm.items = [
           items[2],
@@ -94,7 +94,7 @@ describe('OptionList.vue', () => {
 
     describe('>> isSearchResult', () => {
       it('returns true if the name in the current language mode matches the search string', async () => {
-        const item = mockEventTypeData()[0];
+        const item = mockOptionItemData()[0];
 
         await wrapper.setData({
           search: 'flood',
@@ -173,7 +173,7 @@ describe('OptionList.vue', () => {
 
     describe('>> saveItem', () => {
       it('dispatches the updateName action', async () => {
-        const item = mockEventTypeData()[0];
+        const item = mockOptionItemData()[0];
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
 
         await wrapper.vm.saveItem(
@@ -200,7 +200,7 @@ describe('OptionList.vue', () => {
       });
 
       it('copies the translation values over to empty languages', async () => {
-        const item = mockEventTypeData()[0];
+        const item = mockOptionItemData()[0];
         const name = { translation: { en: 'English Test', fr: '' } };
 
         await wrapper.vm.saveItem(
@@ -220,7 +220,7 @@ describe('OptionList.vue', () => {
 
     describe('>> changeItemStatus', () => {
       it('dispatches the updateStatus action', async () => {
-        const item = mockEventTypeData()[0];
+        const item = mockOptionItemData()[0];
         const itemStatus = EOptionListItemStatus.Inactive;
 
         await wrapper.vm.changeItemStatus(
@@ -249,7 +249,7 @@ describe('OptionList.vue', () => {
 
     describe('>> sortItems', () => {
       it('dispatches the updateOrderRanks action', async () => {
-        const items = mockEventTypeData();
+        const items = mockOptionItemData();
 
         await wrapper.vm.sortItems([
           items[2],

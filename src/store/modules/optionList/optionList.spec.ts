@@ -1,11 +1,13 @@
 import { Store } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
-import { mockEventTypeData } from '@/entities/eventType';
+import { mockOptionItemData } from '@/entities/optionItem';
 import { EOptionListItemStatus, EOptionLists } from '@/types';
 
 describe('>>> Option List Module', () => {
   let store: Store<IRootState>;
+
+  const list = EOptionLists.EventTypes;
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -15,7 +17,7 @@ describe('>>> Option List Module', () => {
   describe('>> Getters', () => {
     describe('items', () => {
       it('returns the items in order of orderRank', () => {
-        const items = mockEventTypeData();
+        const items = mockOptionItemData();
 
         store.commit('optionList/setItems', [
           items[2],
@@ -23,7 +25,7 @@ describe('>>> Option List Module', () => {
           items[1],
         ]);
 
-        expect(store.getters['optionList/items']).toEqual(_sortBy(mockEventTypeData(), 'orderRank'));
+        expect(store.getters['optionList/items']).toEqual(_sortBy(mockOptionItemData(), 'orderRank'));
       });
     });
   });
@@ -31,7 +33,7 @@ describe('>>> Option List Module', () => {
   describe('>> Mutations', () => {
     describe('setItems', () => {
       it('sets the items in the store', () => {
-        const items = mockEventTypeData();
+        const items = mockOptionItemData();
 
         expect(store.state.optionList.items).toEqual([]);
 
@@ -51,15 +53,15 @@ describe('>>> Option List Module', () => {
       it('sets the list value in the state', () => {
         expect(store.state.optionList.list).toBe(null);
 
-        store.commit('optionList/setList', EOptionLists.EventTypes);
+        store.commit('optionList/setList', list);
 
-        expect(store.state.optionList.list).toBe(EOptionLists.EventTypes);
+        expect(store.state.optionList.list).toBe(list);
       });
     });
 
     describe('addOrUpdateItem', () => {
       test('the addOrUpdateEvent mutation adds a new event to the state', () => {
-        const item = mockEventTypeData()[0];
+        const item = mockOptionItemData()[0];
 
         expect(store.state.optionList.items).toEqual([]);
 
@@ -69,13 +71,13 @@ describe('>>> Option List Module', () => {
       });
 
       test('the addOrUpdateEvent mutation updates an existing event', () => {
-        const items = mockEventTypeData();
+        const items = mockOptionItemData();
 
         store.commit('optionList/setItems', items);
 
         expect(store.state.optionList.items).toEqual(items);
 
-        const updatedItem = mockEventTypeData()[0];
+        const updatedItem = mockOptionItemData()[0];
 
         updatedItem.name = {
           translation: {
@@ -103,8 +105,8 @@ describe('>>> Option List Module', () => {
 
     describe('resetState', () => {
       it('resets the state to default', () => {
-        store.commit('optionList/setList', EOptionLists.EventTypes);
-        store.commit('optionList/setItems', mockEventTypeData());
+        store.commit('optionList/setList', list);
+        store.commit('optionList/setItems', mockOptionItemData());
         store.commit('optionList/resetState');
 
         expect(store.state.optionList.list).toBe(null);
@@ -119,12 +121,12 @@ describe('>>> Option List Module', () => {
         await expect(store.dispatch('optionList/fetchItems')).rejects.toThrow();
       });
 
-      it('calls the getEventTypes endpoint if the list is Event Types', async () => {
-        store.commit('optionList/setList', EOptionLists.EventTypes);
+      it('calls the getOptionList endpoint with the proper list', async () => {
+        store.commit('optionList/setList', list);
 
         await store.dispatch('optionList/fetchItems');
 
-        expect(store.$services.eventTypes.getEventTypes).toHaveBeenCalledTimes(1);
+        expect(store.$services.optionItems.getOptionList).toHaveBeenCalledWith(list);
       });
     });
 
@@ -133,12 +135,12 @@ describe('>>> Option List Module', () => {
         await expect(store.dispatch('optionList/createOption')).rejects.toThrow();
       });
 
-      it('calls the createEventType endpoint if the list is Event Types', async () => {
-        store.commit('optionList/setList', EOptionLists.EventTypes);
+      it('calls the createOptionItem endpoint with the proper list', async () => {
+        store.commit('optionList/setList', list);
 
         await store.dispatch('optionList/createOption');
 
-        expect(store.$services.eventTypes.createEventType).toHaveBeenCalledTimes(1);
+        expect(store.$services.optionItems.createOptionItem).toHaveBeenCalledWith(list, undefined);
       });
     });
 
@@ -147,15 +149,16 @@ describe('>>> Option List Module', () => {
         await expect(store.dispatch('optionList/updateName')).rejects.toThrow();
       });
 
-      it('calls the updateEventTypeName endpoint if the list is Event Types', async () => {
-        store.commit('optionList/setList', EOptionLists.EventTypes);
+      it('calls the updateOptionItemName endpoint with the proper list', async () => {
+        store.commit('optionList/setList', list);
 
         await store.dispatch('optionList/updateName', {
           id: 'ID',
           name: { translation: { en: 'EN NAME', fr: 'FR NAME' } },
         });
 
-        expect(store.$services.eventTypes.updateEventTypeName).toHaveBeenCalledWith(
+        expect(store.$services.optionItems.updateOptionItemName).toHaveBeenCalledWith(
+          list,
           'ID',
           { translation: { en: 'EN NAME', fr: 'FR NAME' } },
         );
@@ -167,15 +170,17 @@ describe('>>> Option List Module', () => {
         await expect(store.dispatch('optionList/updateStatus')).rejects.toThrow();
       });
 
-      it('calls the updateEventTypeStatus endpoint if the list is Event Types', async () => {
-        store.commit('optionList/setList', EOptionLists.EventTypes);
+      it('calls the updateEventTypeStatus endpoint with the proper list', async () => {
+        store.commit('optionList/setList', list);
 
         await store.dispatch('optionList/updateStatus', {
+          list,
           id: 'ID',
           itemStatus: EOptionListItemStatus.Inactive,
         });
 
-        expect(store.$services.eventTypes.updateEventTypeStatus).toHaveBeenCalledWith(
+        expect(store.$services.optionItems.updateOptionItemStatus).toHaveBeenCalledWith(
+          list,
           'ID',
           EOptionListItemStatus.Inactive,
         );
@@ -187,10 +192,10 @@ describe('>>> Option List Module', () => {
         await expect(store.dispatch('optionList/updateOrderRanks')).rejects.toThrow();
       });
 
-      it('calls the updateEventTypeOrderRanks endpoint if the list is Event Types', async () => {
-        store.commit('optionList/setList', EOptionLists.EventTypes);
+      it('calls the updateOptionItemOrderRanks endpoint if the list is Event Types', async () => {
+        store.commit('optionList/setList', list);
 
-        const items = mockEventTypeData();
+        const items = mockOptionItemData();
 
         await store.dispatch('optionList/updateOrderRanks', [
           items[2],
@@ -198,7 +203,7 @@ describe('>>> Option List Module', () => {
           items[1],
         ]);
 
-        expect(store.$services.eventTypes.updateEventTypeOrderRanks).toHaveBeenCalledWith({
+        expect(store.$services.optionItems.updateOptionItemOrderRanks).toHaveBeenCalledWith(list, {
           [items[2].id]: 1,
           [items[0].id]: 2,
           [items[1].id]: 3,
@@ -211,15 +216,16 @@ describe('>>> Option List Module', () => {
         await expect(store.dispatch('optionList/setIsOther')).rejects.toThrow();
       });
 
-      it('calls the setEventTypeIsOther endpoint if the list is Event Types', async () => {
-        store.commit('optionList/setList', EOptionLists.EventTypes);
+      it('calls the setOptionItemIsOther endpoint if the list is Event Types', async () => {
+        store.commit('optionList/setList', list);
 
         await store.dispatch('optionList/setIsOther', {
           id: 'ID',
           isOther: true,
         });
 
-        expect(store.$services.eventTypes.setEventTypeIsOther).toHaveBeenCalledWith(
+        expect(store.$services.optionItems.setOptionItemIsOther).toHaveBeenCalledWith(
+          list,
           'ID',
           true,
         );
@@ -231,15 +237,16 @@ describe('>>> Option List Module', () => {
         await expect(store.dispatch('optionList/setIsDefault')).rejects.toThrow();
       });
 
-      it('calls the setEventTypeIsDefault endpoint if the list is Event Types', async () => {
-        store.commit('optionList/setList', EOptionLists.EventTypes);
+      it('calls the setOptionItemIsDefault endpoint if the list is Event Types', async () => {
+        store.commit('optionList/setList', list);
 
         await store.dispatch('optionList/setIsDefault', {
           id: 'ID',
           isDefault: true,
         });
 
-        expect(store.$services.eventTypes.setEventTypeIsDefault).toHaveBeenCalledWith(
+        expect(store.$services.optionItems.setOptionItemIsDefault).toHaveBeenCalledWith(
+          list,
           'ID',
           true,
         );

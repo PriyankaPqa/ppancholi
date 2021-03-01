@@ -4,8 +4,8 @@ import {
   mockEventsData, mockOtherProvinceData, mockRegionData, Event, EResponseLevel, EEventStatus,
 } from '@/entities/event';
 import {
-  mockEventTypeData,
-} from '@/entities/eventType';
+  mockOptionItemData,
+} from '@/entities/optionItem';
 import helpers from '@/ui/helpers';
 import {
   ECanadaProvinces,
@@ -44,7 +44,7 @@ describe('EventForm.vue', () => {
 
       await flushPromises();
 
-      const defaultEventType = mockEventTypeData()[1];
+      const defaultEventType = mockOptionItemData()[1];
 
       expect(wrapper.vm.eventType).toEqual(defaultEventType);
 
@@ -466,7 +466,7 @@ describe('EventForm.vue', () => {
       await flushPromises();
 
       await wrapper.setData({
-        eventType: mockEventTypeData()[0],
+        eventType: mockOptionItemData()[0],
       });
 
       expect(wrapper.findDataTest('event-type-specified-other').exists()).toBe(true);
