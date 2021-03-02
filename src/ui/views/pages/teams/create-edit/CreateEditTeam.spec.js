@@ -40,6 +40,30 @@ describe('CreateEditTeam.vue', () => {
         });
       });
 
+      describe('Status', () => {
+        it('should render', () => {
+          const element = wrapper.find('[data-test="team-status"]');
+          expect(element.exists()).toBeTruthy();
+        });
+
+        it('should be disabled in create mode', () => {
+          wrapper = mount(Component, {
+            localVue,
+            propsData: {
+              teamType: 'standard',
+            },
+            computed: {
+              isEditMode() {
+                return false;
+              },
+            },
+          });
+
+          const element = wrapper.find('[data-test="team-status"]');
+          expect(element.props('disabled')).toBeTruthy();
+        });
+      });
+
       describe('Name field', () => {
         let element;
         beforeEach(() => {
@@ -180,10 +204,6 @@ describe('CreateEditTeam.vue', () => {
             jest.spyOn(wrapper.vm, 'submit').mockImplementation(() => {});
             element.vm.$emit('click');
             expect(wrapper.vm.submit).toHaveBeenCalledTimes(1);
-          });
-
-          it('is disabled by default', () => {
-            expect(element.attributes('disabled')).toBeFalsy();
           });
 
           describe('test disabled state', () => {

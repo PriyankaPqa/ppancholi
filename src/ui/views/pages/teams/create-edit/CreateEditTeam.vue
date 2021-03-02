@@ -15,9 +15,11 @@
                     {{ teamTitle }}
                   </h5>
                   <status-select
+                    data-test="team-status"
                     :value="team.status"
                     :statuses="statuses"
                     status-name="ETeamStatus"
+                    :disabled="!isEditMode"
                     @input="onStatusChange($event)" />
                 </div>
 
