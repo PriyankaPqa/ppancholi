@@ -50,7 +50,7 @@ import { DataTableHeader } from 'vuetify';
 import { ETeamType, ETeamStatus } from '@/entities/team';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
-import TablePaginationSearchMixin from '@/ui/mixins/table-pagination-search';
+import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 
 export default Vue.extend({
   name: 'TeamsTable',
