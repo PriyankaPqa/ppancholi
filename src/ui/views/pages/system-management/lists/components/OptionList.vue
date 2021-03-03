@@ -198,6 +198,11 @@ export default Vue.extend({
     supportedLanguages() {
       return SUPPORTED_LANGUAGES_INFO;
     },
+
+    highestRank(): number {
+      const highestRankItem = this.items.reduce((prev, current) => ((prev.orderRank > current.orderRank) ? prev : current));
+      return highestRankItem.orderRank;
+    },
   },
 
   async mounted() {
@@ -258,7 +263,7 @@ export default Vue.extend({
       const payload: IOptionListItem = {
         name: entityUtils.getFilledMultilingualField(name),
         itemStatus,
-        orderRank: this.items.length + 1,
+        orderRank: this.highestRank + 1,
       };
 
       if (this.hasDescription) {

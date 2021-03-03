@@ -118,18 +118,25 @@ const actions = {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
-
-    const originalOrder = [...context.state.items];
-
-    context.commit('setItems', payload.map((i, index) => ({
-      ...i,
-      orderRank: index + 1,
-    })));
-
     const orderRanks: Record<string, number> = {};
 
-    payload.forEach((i, index) => {
-      orderRanks[i.id] = index + 1;
+    const originalOrder = _sortBy([...context.state.items], 'orderRank');
+
+    const newOrderedItems = payload.map((i, index) => {
+      const oldItem = originalOrder[index];
+
+      const newRank = oldItem.orderRank;
+
+      return {
+        ...i,
+        orderRank: newRank,
+      };
+    });
+
+    context.commit('setItems', newOrderedItems);
+
+    newOrderedItems.forEach((i) => {
+      orderRanks[i.id] = i.orderRank;
     });
 
     try {

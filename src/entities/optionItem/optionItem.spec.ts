@@ -37,12 +37,12 @@ describe('>>> Option Item', () => {
 
     it('should instantiate orderRank', () => {
       const optionItem = new OptionItem(mockData);
-      expect(optionItem.orderRank).toBe(1);
+      expect(optionItem.orderRank).toBe(mockData.orderRank);
     });
 
     it('should instantiate status', () => {
       const optionItem = new OptionItem(mockData);
-      expect(optionItem.status).toBe(1);
+      expect(optionItem.status).toBe(mockData.status);
     });
   });
 });

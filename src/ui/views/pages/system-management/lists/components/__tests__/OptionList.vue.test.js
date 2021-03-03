@@ -79,6 +79,12 @@ describe('OptionList.vue', () => {
         spy.mockRestore();
       });
     });
+
+    describe('>> highestRank', () => {
+      it('returns the highestRank among the list', () => {
+        expect(wrapper.vm.highestRank).toEqual(4);
+      });
+    });
   });
 
   describe('> Methods', () => {
@@ -129,12 +135,25 @@ describe('OptionList.vue', () => {
           itemStatus,
         );
 
+        expect(actions.createOption).toHaveBeenCalledTimes(1);
+      });
+      it('dispatches the createOption action with correct parameters', async () => {
+        const name = { translation: { en: 'English Test', fr: 'French Test' } };
+        const description = null;
+        const itemStatus = EOptionListItemStatus.Active;
+
+        await wrapper.vm.saveNewItem(
+          name,
+          description,
+          itemStatus,
+        );
+
         expect(actions.createOption).toHaveBeenCalledWith(
           expect.anything(),
           {
             name,
             itemStatus,
-            orderRank: 4,
+            orderRank: wrapper.vm.highestRank + 1,
           },
         );
       });
@@ -165,7 +184,7 @@ describe('OptionList.vue', () => {
           {
             name: { translation: { en: 'English Test', fr: 'English Test' } },
             itemStatus,
-            orderRank: 4,
+            orderRank: wrapper.vm.highestRank + 1,
           },
         );
       });

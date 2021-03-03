@@ -193,20 +193,21 @@ describe('>>> Option List Module', () => {
       });
 
       it('calls the updateOptionItemOrderRanks endpoint if the list is Event Types', async () => {
-        store.commit('optionList/setList', list);
-
         const items = mockOptionItemData();
 
+        store.commit('optionList/setList', list);
+        store.commit('optionList/setItems', items);
+
         await store.dispatch('optionList/updateOrderRanks', [
-          items[2],
-          items[0],
-          items[1],
+          items[2], // Earthquake orderRank: 4
+          items[0], // Flood orderRank: 2
+          items[1], // Wildfire orderRank: 3
         ]);
 
         expect(store.$services.optionItems.updateOptionItemOrderRanks).toHaveBeenCalledWith(list, {
-          [items[2].id]: 1,
-          [items[0].id]: 2,
-          [items[1].id]: 3,
+          [items[2].id]: 2,
+          [items[0].id]: 3,
+          [items[1].id]: 4,
         });
       });
     });
