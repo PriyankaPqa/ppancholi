@@ -162,6 +162,10 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    id: {
+      type: String,
+      default: '',
+    },
   },
 
   data() {
@@ -293,7 +297,7 @@ export default Vue.extend({
     },
 
     async loadTeam() {
-      const teamId = this.$route.params?.id;
+      const teamId = this.id;
       if (teamId) {
         this.team = await this.$storage.team.actions.getTeam(teamId);
         const primaryContactData = this.team.getPrimaryContact();

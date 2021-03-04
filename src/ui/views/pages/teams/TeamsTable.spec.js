@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
-import { mockSearchTeams } from '@/entities/team';
+import { ETeamType, mockSearchTeams } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 import Component from './TeamsTable.vue';
 
@@ -145,6 +145,11 @@ describe('TeamsTable.vue', () => {
             sortable: false,
             width: '10%',
           },
+          {
+            text: '',
+            value: 'edit',
+            width: '10%',
+          },
         ]);
       });
     });
@@ -207,6 +212,22 @@ describe('TeamsTable.vue', () => {
         expect(wrapper.vm.getFilterParams(params)).toEqual(filter);
       });
     });
+
+    describe('goToEditTeam', () => {
+      it('should redirect to the edit page with proper teamType and id for Adhoc', async () => {
+        const mockTeam = { id: '123', teamType: ETeamType.AdHoc };
+        wrapper.vm.goToEditTeam(mockTeam);
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.teams.edit.name, params: { teamType: 'adhoc', id: '123' } });
+      });
+
+      it('should redirect to the edit page with proper teamType and id for Standard', async () => {
+        const mockTeam = { id: '123', teamType: ETeamType.Standard };
+        wrapper.vm.goToEditTeam(mockTeam);
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.teams.edit.name, params: { teamType: 'standard', id: '123' } });
+      });
+    });
   });
 
   describe('Data', () => {
@@ -215,7 +236,7 @@ describe('TeamsTable.vue', () => {
     });
 
     test('customColumns', () => {
-      expect(wrapper.vm.defaultSortBy).toEqual('Name');
+      expect(wrapper.vm.customColumns).toEqual(['Name', 'type', 'members', 'events', 'primaryContact', 'status', 'edit']);
     });
   });
 });

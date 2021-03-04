@@ -358,6 +358,7 @@ describe('CreateEditTeam.vue', () => {
         },
       });
     });
+
     describe('deleteEventConfirmationMessage', () => {
       it('displays the correct message ', () => {
         wrapper = shallowMount(Component, {
@@ -562,6 +563,7 @@ describe('CreateEditTeam.vue', () => {
         localVue,
         propsData: {
           teamType: 'standard',
+          id: '123',
         },
         store: {
           modules: {
@@ -698,7 +700,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('calls the action getTeams ', async () => {
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.$storage.team.actions.getTeam).toHaveBeenCalledWith('foo');
+        expect(wrapper.vm.$storage.team.actions.getTeam).toHaveBeenCalledWith('123');
       });
 
       it('sets the right primary contact user', async () => {

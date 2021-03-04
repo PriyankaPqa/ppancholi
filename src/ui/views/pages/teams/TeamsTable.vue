@@ -37,6 +37,14 @@
       <template #item.status="{ item }">
         <status-chip data-test="team_status" :status="item.status" status-name="ETeamStatus" />
       </template>
+
+      <template #item.edit="{ item }">
+        <v-btn icon height="24" class="mr-2" :data-test="`edit_team_${item.id}`" @click="goToEditTeam(item)">
+          <v-icon size="24" color="grey darken-2">
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+      </template>
     </rc-data-table>
   </div>
 </template>
@@ -47,7 +55,7 @@ import { TranslateResult } from 'vue-i18n';
 import { RcDataTable, RcAddButtonWithMenu, ISearchData } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { DataTableHeader } from 'vuetify';
-import { ETeamType, ETeamStatus } from '@/entities/team';
+import { ETeamType, ETeamStatus, Team } from '@/entities/team';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -74,7 +82,7 @@ export default Vue.extend({
       ETeamType,
       ETeamStatus,
       defaultSortBy: 'Name',
-      customColumns: ['Name', 'type', 'members', 'events', 'primaryContact', 'status'],
+      customColumns: ['Name', 'type', 'members', 'events', 'primaryContact', 'status', 'edit'],
     };
   },
 
@@ -140,6 +148,11 @@ export default Vue.extend({
           sortable: false,
           width: '10%',
         },
+        {
+          text: '',
+          value: 'edit',
+          width: '10%',
+        },
       ];
     },
 
@@ -154,6 +167,12 @@ export default Vue.extend({
     goToCreateTeam(item: Record<string, string>) {
       const teamType = item.value;
       this.$router.push({ name: routes.teams.create.name, params: { teamType } });
+    },
+
+    goToEditTeam(team: Team) {
+      const teamType = team.teamType === ETeamType.Standard ? 'standard' : 'adhoc';
+      const { id } = team;
+      this.$router.push({ name: routes.teams.edit.name, params: { teamType, id } });
     },
 
     async fetchData(params: IAzureSearchParams) {
