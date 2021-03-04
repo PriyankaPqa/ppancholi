@@ -98,7 +98,7 @@ export class Team implements ITeam {
   /**
   * Validate business rules (non specific to the application)
   */
-  public validate(): Array<string> | boolean {
+  validate(): Array<string> | boolean {
     const errors: Array<string> = [];
 
     this.validateAttributes(errors);

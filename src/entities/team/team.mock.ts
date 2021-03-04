@@ -1,6 +1,6 @@
 import { IAzureSearchResult } from '@/types';
 import {
-  ETeamStatus, ETeamType, ITeamData,
+  ETeamStatus, ETeamType, ITeamData, ITeamMember,
 } from './team.types';
 
 export const mockTeamsData = (): ITeamData[] => [
@@ -40,4 +40,9 @@ export const mockSearchTeams = (): IAzureSearchResult<ITeamData> => ({
   '@odataCount': 2,
   '@odataContext': 'context',
   value: mockTeamsData(),
+});
+
+export const mockTeamMember = (): ITeamMember => ({
+  id: 'guid-member-1',
+  isPrimaryContact: true,
 });

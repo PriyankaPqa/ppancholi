@@ -29,10 +29,30 @@ const mutations = {
 
 const actions = {
 
+  async getTeam(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ITeam> {
+    context.state.loading = true;
+    try {
+      const res = await this.$services.teams.getTeam(id);
+      return new Team(res);
+    } finally {
+      context.state.loading = false;
+    }
+  },
+
   async createTeam(this: Store<IState>, context: ActionContext<IState, IState>, payload: ITeam): Promise<ITeam> {
     context.state.loading = true;
     try {
       const res = await this.$services.teams.createTeam(payload);
+      return new Team(res);
+    } finally {
+      context.state.loading = false;
+    }
+  },
+
+  async editTeam(this: Store<IState>, context: ActionContext<IState, IState>, payload: ITeam): Promise<ITeam> {
+    context.state.loading = true;
+    try {
+      const res = await this.$services.teams.editTeam(payload);
       return new Team(res);
     } finally {
       context.state.loading = false;

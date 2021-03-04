@@ -15,8 +15,16 @@ export const makeStorage = (store: IStore): IStorage => ({
   },
 
   actions: {
+    getTeam(id: uuid): Promise<ITeam> {
+      return store.dispatch('team/getTeam', id);
+    },
+
     createTeam(payload: ITeam): Promise<ITeam> {
       return store.dispatch('team/createTeam', payload);
+    },
+
+    editTeam(payload: ITeam): Promise<ITeam> {
+      return store.dispatch('team/editTeam', payload);
     },
 
     searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamData>> {

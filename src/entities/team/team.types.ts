@@ -25,22 +25,31 @@ export interface ITeamMember {
 * Interface that maps to the response structure from the API
 */
 export interface ITeamData {
-  readonly id: string;
-  readonly name: string;
-  readonly status: ETeamStatus;
-  readonly teamType: ETeamType;
-  readonly teamMembers: Array<ITeamMember>;
-  readonly eventIds: Array<uuid>;
+   id: string;
+   name: string;
+   status: ETeamStatus;
+   teamType: ETeamType;
+   teamMembers: Array<ITeamMember>;
+   eventIds: Array<uuid>;
 }
 
 /**
  * Interface used for the Team entity class
  */
-export interface ITeam {
-  readonly id: string;
-  readonly name: string;
-  readonly teamType: ETeamType;
-  readonly status: ETeamStatus;
-  readonly teamMembers: Array<ITeamMember>;
-  readonly eventIds: Array<uuid>;
+export interface ITeam extends ITeamData {
+  addTeamMember(userId: uuid, isPrimaryContact: boolean): void;
+  setPrimaryContact(userId: uuid): void;
+  getPrimaryContact(): ITeamMember;
+  validate(): Array<string> | boolean;
 }
+
+/**
+ * Interface for the Team edit payload
+ */
+
+export interface IEditTeamRequest {
+  name: string;
+  eventIds: Array<uuid>;
+  primaryContact: ITeamMember;
+  status: ETeamStatus;
+ }

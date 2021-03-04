@@ -1,10 +1,13 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { EEventStatus } from '@/entities/event';
+import { EEventStatus, mockEventsData } from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockAppUsers } from '@/test/helpers';
-import { mockTeamsData, ETeamStatus, ETeamType } from '@/entities/team';
-import { mockAppUserAzureData } from '@/entities/app-user';
+import {
+  mockTeamsData, ETeamStatus, ETeamType, mockTeamMember, Team,
+} from '@/entities/team';
+
+import { mockAppUserAzureData, mockAppUserData } from '@/entities/app-user';
 
 import Component from './CreateEditTeam.vue';
 
@@ -12,7 +15,13 @@ const localVue = createLocalVue();
 
 describe('CreateEditTeam.vue', () => {
   let wrapper;
-  let actions;
+  // let actions;
+
+  const actions = {
+    searchEvents: jest.fn(),
+    createTeam: jest.fn(() => mockTeamsData()[0]),
+    editTeam: jest.fn(() => mockTeamsData()[0]),
+  };
 
   describe('Template', () => {
     beforeEach(() => {
@@ -88,6 +97,12 @@ describe('CreateEditTeam.vue', () => {
           await input.setValue('foo');
           expect(wrapper.vm.team.name).toBe('foo');
         });
+
+        it('calls resetAsUnique on input', () => {
+          jest.spyOn(wrapper.vm, 'resetAsUnique').mockImplementation(() => {});
+          element.vm.$emit('input', 'foo');
+          expect(wrapper.vm.resetAsUnique).toHaveBeenCalledTimes(1);
+        });
       });
 
       describe('Primary contact field', () => {
@@ -113,6 +128,12 @@ describe('CreateEditTeam.vue', () => {
           jest.spyOn(wrapper.vm, 'setPrimaryContact').mockImplementation(() => {});
           element.vm.$emit('change', 'bar');
           expect(wrapper.vm.setPrimaryContact).toHaveBeenCalledWith('bar');
+        });
+
+        it('should call resetPrimaryContact on keydown', async () => {
+          jest.spyOn(wrapper.vm, 'resetPrimaryContact').mockImplementation(() => {});
+          element.vm.$emit('keydown');
+          expect(wrapper.vm.resetPrimaryContact).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -143,16 +164,29 @@ describe('CreateEditTeam.vue', () => {
         it('is linked to the right rule attribute', () => {
           expect(element.props('rules')).toEqual(wrapper.vm.rules.event);
         });
+
+        it('calls setEventIds when it is changed', () => {
+          jest.spyOn(wrapper.vm, 'setEventIds').mockImplementation(() => {});
+          element.vm.$emit('change', 'foo');
+          expect(wrapper.vm.setEventIds).toHaveBeenCalledTimes(1);
+        });
+
+        it('calls handleRemoveEvent when an element is deleted', () => {
+          jest.spyOn(wrapper.vm, 'handleRemoveEvent').mockImplementation(() => {});
+          element.vm.$emit('delete');
+          expect(wrapper.vm.handleRemoveEvent).toHaveBeenCalledTimes(1);
+        });
       });
 
       describe('cancel Confirmation Dialog', () => {
         let element;
-        beforeEach(() => {
+        beforeEach(async () => {
+          wrapper.vm.showCancelConfirmationDialog = true;
+          await wrapper.vm.$nextTick();
           element = wrapper.find('[data-test="createEditTeam__confirmCancelDialog"]');
         });
 
-        it('displays the cancel confirmation dialog when showCancelConfirmationDialog is true', () => {
-          wrapper.vm.showCancelConfirmationDialog = true;
+        it('displays the cancel confirmation dialog when showCancelConfirmationDialog is true', async () => {
           expect(element.exists()).toBeTruthy();
         });
 
@@ -170,6 +204,37 @@ describe('CreateEditTeam.vue', () => {
         it('sets showCancelConfirmationDialog to false when close  is called', () => {
           element.vm.$emit('close');
           expect(wrapper.vm.showCancelConfirmationDialog).toBeFalsy();
+        });
+      });
+
+      describe('Remove Event Confirmation Dialog', () => {
+        let element;
+        beforeEach(async () => {
+          wrapper.vm.showEventDeleteConfirmationDialog = true;
+          await wrapper.vm.$nextTick();
+          element = wrapper.find('[data-test="createEditTeam__confirmEventDeleteDialog"]');
+        });
+
+        it('displays the cancel confirmation dialog when showEventDeleteConfirmationDialog is true', async () => {
+          expect(element.exists()).toBeTruthy();
+        });
+
+        it('calls handleRemoveEventConfirmation with true when submit is called', () => {
+          jest.spyOn(wrapper.vm, 'handleRemoveEventConfirmation').mockImplementation(() => {});
+          element.vm.$emit('submit');
+          expect(wrapper.vm.handleRemoveEventConfirmation).toHaveBeenCalledWith(true);
+        });
+
+        it('calls handleRemoveEventConfirmation with false when cancel is called', () => {
+          jest.spyOn(wrapper.vm, 'handleRemoveEventConfirmation').mockImplementation(() => {});
+          element.vm.$emit('cancel');
+          expect(wrapper.vm.handleRemoveEventConfirmation).toHaveBeenCalledWith(false);
+        });
+
+        it('calls handleRemoveEventConfirmation with false when close is called', () => {
+          jest.spyOn(wrapper.vm, 'handleRemoveEventConfirmation').mockImplementation(() => {});
+          element.vm.$emit('close');
+          expect(wrapper.vm.handleRemoveEventConfirmation).toHaveBeenCalledWith(false);
         });
       });
 
@@ -285,6 +350,36 @@ describe('CreateEditTeam.vue', () => {
   });
 
   describe('Computed', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          teamType: 'standard',
+        },
+      });
+    });
+    describe('deleteEventConfirmationMessage', () => {
+      it('displays the correct message ', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+          },
+          computed: {
+            submitLabel() {
+              return 'mockSubmitLabel';
+            },
+            teamEventsIds() {
+              return mockEventsData();
+            },
+          },
+        });
+        // eslint-disable-next-line prefer-destructuring
+        wrapper.vm.eventsIdsAfterRemoval = mockEventsData()[1];
+        expect(wrapper.vm.deleteEventConfirmationMessage).toEqual('team.event.confirmDeleteDialog.message');
+      });
+    });
+
     describe('isEditMode', () => {
       it('should return true when we are on the edit page', () => {
         wrapper.vm.$route.name = routes.teams.edit.name;
@@ -372,21 +467,34 @@ describe('CreateEditTeam.vue', () => {
       });
     });
 
-    describe('resetValidation', () => {
+    describe('resetAsUnique', () => {
       it('sets isNameUnique to true if it is false', async () => {
         wrapper.vm.isNameUnique = false;
-        await wrapper.vm.resetValidation();
+        await wrapper.vm.resetAsUnique();
         expect(wrapper.vm.isNameUnique).toBeTruthy();
+      });
+    });
+
+    describe('teamEventsIds', () => {
+      it('returns the id of the event when team type is adhoc', async () => {
+        wrapper.vm.team.teamType = ETeamType.AdHoc;
+        await wrapper.vm.$nextTick();
+        wrapper.vm.team.eventIds = ['foo'];
+        expect(wrapper.vm.teamEventsIds).toEqual('foo');
+      });
+
+      it('returns the array of events ids when team type is standard', async () => {
+        wrapper.vm.team.teamType = ETeamType.Standard;
+        await wrapper.vm.$nextTick();
+        wrapper.vm.team.eventIds = ['foo', 'bar'];
+        expect(wrapper.vm.teamEventsIds).toEqual(['foo', 'bar']);
       });
     });
   });
 
   describe('Lifecycle', () => {
-    actions = {
-      searchEvents: jest.fn(),
-    };
-    beforeEach(() => {
-      wrapper = mount(Component, {
+    test('searchEvents action is called', async () => {
+      wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           teamType: 'standard',
@@ -399,33 +507,127 @@ describe('CreateEditTeam.vue', () => {
           },
         },
       });
+
+      expect(actions.searchEvents).toHaveBeenCalledTimes(1);
     });
 
-    test('Events should be fetched with the right filter', () => {
-      expect(actions.searchEvents).toHaveBeenCalledWith(expect.anything(), {
-        filter: { Schedule: { Status: EEventStatus.Open } },
+    it('sets the right team type for adhoc team type in create mode', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          teamType: 'standard',
+        },
+        computed: {
+          isEditMode() { return false; },
+        },
       });
+      await wrapper.vm.fetchEvents();
+      expect(wrapper.vm.team.teamType).toEqual(ETeamType.Standard);
+    });
+
+    it('sets the right team type for standard team type in create mode', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          teamType: 'adhoc',
+        },
+        computed: {
+          isEditMode() { return false; },
+        },
+      });
+      await wrapper.vm.fetchEvents();
+      expect(wrapper.vm.team.teamType).toEqual(ETeamType.AdHoc);
+    });
+
+    it('calls loadTeam in edit mode', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          teamType: 'adhoc',
+        },
+        computed: {
+          isEditMode() { return true; },
+        },
+      });
+      jest.spyOn(wrapper.vm, 'loadTeam').mockImplementation(() => {});
+
+      await wrapper.vm.fetchEvents();
+      expect(wrapper.vm.loadTeam).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
-      actions = {
-        createTeam: jest.fn(() => mockTeamsData()[0]),
-      };
-
-      wrapper = mount(Component, {
+      wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           teamType: 'standard',
         },
         store: {
           modules: {
+            event: {
+              actions,
+            },
             team: {
               actions,
             },
           },
         },
+      });
+    });
+
+    describe('fetchEvents', () => {
+      test('Events should be fetched with the right filter', () => {
+        wrapper.vm.fetchEvents();
+        expect(actions.searchEvents).toHaveBeenCalledWith(expect.anything(), {
+          filter: { Schedule: { Status: EEventStatus.Open } },
+        });
+      });
+    });
+
+    describe('handleRemoveEvent', () => {
+      it('sets the eventsIdsAfterRemoval to its argument', () => {
+        wrapper.vm.handleRemoveEvent(mockEventsData());
+        expect(wrapper.vm.eventsIdsAfterRemoval).toEqual(mockEventsData());
+      });
+      it('sets showEventDeleteConfirmationDialog  to true', () => {
+        wrapper.vm.handleRemoveEvent(mockEventsData());
+        expect(wrapper.vm.showEventDeleteConfirmationDialog).toBeTruthy();
+      });
+    });
+
+    describe('handleRemoveEventConfirmation', () => {
+      it('calls setEventIds with the eventsIdsAfterRemoval if argument is true', () => {
+        jest.spyOn(wrapper.vm, 'setEventIds').mockImplementation(() => {});
+        wrapper.vm.eventsIdsAfterRemoval = mockEventsData();
+        wrapper.vm.handleRemoveEventConfirmation(true);
+        expect(wrapper.vm.setEventIds).toHaveBeenCalledWith(mockEventsData());
+      });
+
+      it('calls setEventIds with a clone of  team.eventIds if argument is false', () => {
+        jest.spyOn(wrapper.vm, 'setEventIds').mockImplementation(() => {});
+        wrapper.vm.team.eventIds = [mockEventsData()[0]];
+        wrapper.vm.handleRemoveEventConfirmation(false);
+        expect(wrapper.vm.setEventIds).toHaveBeenCalledWith([mockEventsData()[0]]);
+      });
+
+      it('sets showEventDeleteConfirmationDialog to false', () => {
+        wrapper.vm.handleRemoveEventConfirmation(false);
+        expect(wrapper.vm.showEventDeleteConfirmationDialog).toBeFalsy();
+      });
+    });
+
+    describe('handleSubmitError', () => {
+      it('sets isNameUnique to false if this is the error in its argument', async () => {
+        await wrapper.vm.handleSubmitError(['Team name already exists ']);
+        expect(wrapper.vm.isNameUnique).toBeFalsy();
+      });
+
+      it(' opens an error toast in case of a different error', async () => {
+        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
+        await wrapper.vm.handleSubmitError('foo');
+
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('error.unexpected_error');
       });
     });
 
@@ -484,6 +686,35 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.isSubmitDisabled(false, true)).toBeFalsy();
       });
     });
+
+    describe('loadTeam', (() => {
+      beforeEach(() => {
+        wrapper.vm.team = new Team();
+        wrapper.vm.$route.params = { id: 'foo' };
+        jest.spyOn(wrapper.vm.$storage.team.actions, 'getTeam').mockImplementation(() => new Team(mockTeamsData()[0]));
+        jest.spyOn(wrapper.vm.team, 'getPrimaryContact').mockImplementation(() => mockTeamMember);
+        jest.spyOn(wrapper.vm.$storage.appUser.getters, 'appUserWhere').mockImplementation(() => mockAppUserData()[0]);
+      });
+
+      it('calls the action getTeams ', async () => {
+        await wrapper.vm.loadTeam();
+        expect(wrapper.vm.$storage.team.actions.getTeam).toHaveBeenCalledWith('foo');
+      });
+
+      it('sets the right primary contact user', async () => {
+        await wrapper.vm.loadTeam();
+        expect(wrapper.vm.currentPrimaryContact).toEqual({
+          id: mockAppUserData()[0].id,
+          displayName: mockAppUserData()[0].displayName,
+          roles: null,
+        });
+      });
+
+      it('sets the right primaryContactQuery', async () => {
+        await wrapper.vm.loadTeam();
+        expect(wrapper.vm.primaryContactQuery).toEqual(mockAppUserData()[0].displayName);
+      });
+    }));
 
     describe('navigateToHome', () => {
       wrapper = shallowMount(Component, {
@@ -566,14 +797,16 @@ describe('CreateEditTeam.vue', () => {
 
     describe('submit', () => {
       it('calls the validation method', async () => {
-        jest.spyOn(wrapper.vm.$refs.form, 'validate').mockImplementation(() => {});
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(wrapper.vm.$refs.form.validate).toHaveBeenCalledTimes(1);
       });
 
       describe('in create mode', () => {
+        jest.clearAllMocks();
+
         beforeEach(() => {
-          wrapper = mount(Component, {
+          wrapper = shallowMount(Component, {
             localVue,
             propsData: {
               teamType: 'standard',
@@ -591,43 +824,132 @@ describe('CreateEditTeam.vue', () => {
               },
             },
           });
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
         });
 
-        it('does not call createEvent unless form validation succeeds', async () => {
+        it('does not call submitCreateTeam unless form validation succeeds', async () => {
+          jest.spyOn(wrapper.vm, 'submitCreateTeam');
+          wrapper.vm.$refs.form.validate = jest.fn(() => false);
+
           await wrapper.vm.submit();
-          expect(actions.createTeam).toHaveBeenCalledTimes(0);
+          expect(wrapper.vm.submitCreateTeam).toHaveBeenCalledTimes(0);
 
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
           await wrapper.vm.submit();
-          expect(actions.createTeam).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.submitCreateTeam).toHaveBeenCalledTimes(1);
         });
+      });
 
-        it('opens a toast with a success message for standard team', async () => {
-          wrapper.vm.team.teamType = ETeamType.Standard;
+      describe('edit mode', () => {
+        jest.clearAllMocks();
+
+        beforeEach(() => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            propsData: {
+              teamType: 'standard',
+            },
+            store: {
+              modules: {
+                team: {
+                  actions,
+                },
+              },
+            },
+            computed: {
+              isEditMode() {
+                return true;
+              },
+            },
+          });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
-          await wrapper.vm.submit();
-
-          expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.standard_team_created');
         });
 
-        it('opens a toast with a success message for adhoc team', async () => {
-          wrapper.vm.team.teamType = ETeamType.Adhoc;
+        it('does not call submitEditTeam unless form validation succeeds', async () => {
+          jest.spyOn(wrapper.vm, 'submitEditTeam');
+          wrapper.vm.$refs.form.validate = jest.fn(() => false);
+
+          await wrapper.vm.submit();
+          expect(wrapper.vm.submitEditTeam).toHaveBeenCalledTimes(0);
+
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
+
           await wrapper.vm.submit();
-
-          expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.adhoc_team_created');
+          expect(wrapper.vm.submitEditTeam).toHaveBeenCalledTimes(1);
         });
+      });
+    });
 
-        it('redirects to the edit page with the id of the newly created team', async () => {
-          jest.spyOn(wrapper.vm.$router, 'replace').mockImplementation(() => {});
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          await wrapper.vm.submit();
+    describe('submitCreateTeam', () => {
+      beforeAll(() => {
+        jest.clearAllMocks();
+      });
+      it('calls createEvent action', async () => {
+        await wrapper.vm.submitCreateTeam();
+        expect(actions.createTeam).toHaveBeenCalledTimes(1);
+      });
 
-          expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.teams.edit.name, params: { id: mockTeamsData()[0].id } });
-        });
+      it('opens a toast with a success message for standard team', async () => {
+        wrapper.vm.team.teamType = ETeamType.Standard;
+        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
+        await wrapper.vm.submitCreateTeam();
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.standard_team_created');
+      });
+
+      it('opens a toast with a success message for adhoc team', async () => {
+        wrapper.vm.team.teamType = ETeamType.Adhoc;
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
+        await wrapper.vm.submitCreateTeam();
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.adhoc_team_created');
+      });
+
+      it('redirects to the edit page with the id of the newly created team', async () => {
+        jest.spyOn(wrapper.vm.$router, 'replace').mockImplementation(() => {});
+        await wrapper.vm.submitCreateTeam();
+
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
+          { name: routes.teams.edit.name, params: { id: mockTeamsData()[0].id, teamType: 'standard' } },
+        );
+      });
+
+      it('resets the form validation', async () => {
+        // wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
+        await wrapper.vm.submitCreateTeam();
+        expect(wrapper.vm.resetFormValidation).toHaveBeenCalledTimes(1);
+      });
+
+      it('sets the team id to the id of the newly created team', async () => {
+        await wrapper.vm.submitCreateTeam();
+        expect(wrapper.vm.team.id).toEqual(mockTeamsData()[0].id);
+      });
+    });
+
+    describe('submitEditTeam', () => {
+      beforeAll(() => {
+        jest.clearAllMocks();
+      });
+
+      it('calls editTeam action', async () => {
+        await wrapper.vm.submitEditTeam();
+        expect(actions.editTeam).toHaveBeenCalledTimes(1);
+      });
+
+      it('opens a toast with a success message', async () => {
+        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
+        await wrapper.vm.submitEditTeam();
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.team_updated');
+      });
+
+      it('resets the form validation', async () => {
+        // wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
+        await wrapper.vm.submitCreateTeam();
+        expect(wrapper.vm.resetFormValidation).toHaveBeenCalledTimes(1);
       });
     });
   });
