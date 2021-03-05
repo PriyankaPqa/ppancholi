@@ -1,5 +1,5 @@
-import { IMultilingual, EOptionListItemStatus } from '@/types';
-import { IOptionItem, IOptionItemData } from './optionItem.types';
+import { IMultilingual } from '@/types';
+import { IOptionItem, IOptionItemData, EOptionListItemStatus } from './optionItem.types';
 
 export class OptionItem implements IOptionItem {
   readonly id?: string;

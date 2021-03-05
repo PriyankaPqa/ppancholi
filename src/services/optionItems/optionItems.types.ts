@@ -1,6 +1,5 @@
-import { IOptionItemData } from '@/entities/optionItem';
-import { EOptionLists, IMultilingual } from '@/types';
-import { EOptionListItemStatus } from '@/types/enums/EOptionListItemStatus';
+import { IOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
+import { IMultilingual } from '@/types';
 
 export interface IOptionItemsService {
   getOptionList(target: EOptionLists): Promise<IOptionItemData[]>;

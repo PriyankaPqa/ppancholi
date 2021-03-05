@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts">
-import { EOptionLists } from '@/types';
+import { EOptionLists } from '@/entities/optionItem';
 import Vue from 'vue';
 import OptionList from '../components/OptionList.vue';
 

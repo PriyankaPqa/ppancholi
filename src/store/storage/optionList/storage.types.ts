@@ -1,10 +1,12 @@
+import { IMultilingual } from '@/types';
+
 import {
-  EOptionListItemStatus, EOptionLists, IMultilingual, IOptionListItem,
-} from '@/types';
+  IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest,
+} from '@/entities/optionItem';
 
 export interface IStorage {
   getters: {
-    items(): Array<IOptionListItem>;
+    items(): Array<IOptionItem>;
   }
 
   mutations: {
@@ -14,19 +16,19 @@ export interface IStorage {
   }
 
   actions: {
-    fetchItems(): Promise<IOptionListItem[]>;
+    fetchItems(): Promise<IOptionItem[]>;
 
-    createOption(payload: IOptionListItem): Promise<IOptionListItem>;
+    createOption(payload: ICreateOptionItemRequest): Promise<IOptionItem>;
 
-    updateName(id: string, name: IMultilingual): Promise<IOptionListItem>;
+    updateName(id: string, name: IMultilingual): Promise<IOptionItem>;
 
-    updateStatus(id: string, status: EOptionListItemStatus): Promise<IOptionListItem>;
+    updateStatus(id: string, status: EOptionListItemStatus): Promise<IOptionItem>;
 
-    updateOrderRanks(payload: Array<IOptionListItem>): Promise<IOptionListItem[]>;
+    updateOrderRanks(payload: Array<IOptionItem>): Promise<IOptionItem[]>;
 
-    setIsOther(id: string, isOther: boolean): Promise<IOptionListItem>;
+    setIsOther(id: string, isOther: boolean): Promise<IOptionItem>;
 
-    setIsDefault(id: string, isDefault: boolean): Promise<IOptionListItem>;
+    setIsDefault(id: string, isDefault: boolean): Promise<IOptionItem>;
   }
 }
 

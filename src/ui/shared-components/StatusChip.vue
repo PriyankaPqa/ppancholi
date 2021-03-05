@@ -14,7 +14,7 @@ import Vue from 'vue';
 import { RcStatusChip } from '@crctech/component-library';
 import { EEventStatus } from '@/entities/event';
 import { ETeamStatus } from '@/entities/team';
-import { EOptionListItemStatus } from '@/types';
+import { EOptionListItemStatus } from '@/entities/optionItem';
 import colors from '@/ui/plugins/vuetify/colors';
 
 export default Vue.extend({

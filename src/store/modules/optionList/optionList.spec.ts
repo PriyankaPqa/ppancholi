@@ -1,8 +1,7 @@
 import { Store } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
-import { mockOptionItemData } from '@/entities/optionItem';
-import { EOptionListItemStatus, EOptionLists } from '@/types';
+import { mockOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
 
 describe('>>> Option List Module', () => {
   let store: Store<IRootState>;

@@ -4,10 +4,10 @@ import {
 import _sortBy from 'lodash/sortBy';
 import _findIndex from 'lodash/findIndex';
 import { IRootState } from '@/store/store.types';
+import { IMultilingual } from '@/types';
 import {
-  EOptionListItemStatus, EOptionLists, IMultilingual, IOptionListItem,
-} from '@/types';
-import { IOptionItemData } from '@/entities/optionItem';
+  IOptionItemData, IOptionItem, OptionItem, EOptionListItemStatus, EOptionLists,
+} from '@/entities/optionItem';
 import {
   IState,
 } from './optionList.types';
@@ -20,11 +20,11 @@ const getDefaultState = (): IState => ({
 const moduleState: IState = getDefaultState();
 
 const getters = {
-  items: (state: IState) => _sortBy(state.items, 'orderRank'),
+  items: (state: IState) => _sortBy(state.items.map((e) => new OptionItem(e)), 'orderRank'),
 };
 
 const mutations = {
-  setItems(state: IState, payload: IOptionListItem[]) {
+  setItems(state: IState, payload: IOptionItem[]) {
     state.items = payload;
   },
 
@@ -32,7 +32,7 @@ const mutations = {
     state.list = payload;
   },
 
-  addOrUpdateItem(state: IState, payload: IOptionListItem) {
+  addOrUpdateItem(state: IState, payload: IOptionItem) {
     const index = _findIndex(state.items, { id: payload.id });
 
     if (index > -1) {
@@ -53,7 +53,7 @@ const mutations = {
 };
 
 const actions = {
-  async fetchItems(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionListItem[]> {
+  async fetchItems(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
@@ -65,7 +65,7 @@ const actions = {
     return context.getters.items;
   },
 
-  async createOption(this: Store<IState>, context: ActionContext<IState, IState>, payload: IOptionItemData): Promise<IOptionListItem> {
+  async createOption(this: Store<IState>, context: ActionContext<IState, IState>, payload: IOptionItemData): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
@@ -80,7 +80,7 @@ const actions = {
 
   async updateName(this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: { id: string, name: IMultilingual }): Promise<IOptionListItem> {
+    payload: { id: string, name: IMultilingual }): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
@@ -97,7 +97,7 @@ const actions = {
     this: Store<IState>,
     context: ActionContext<IState, IState>,
     payload: { id: string, itemStatus: EOptionListItemStatus },
-  ): Promise<IOptionListItem> {
+  ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
@@ -113,8 +113,8 @@ const actions = {
   async updateOrderRanks(
     this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: Array<IOptionListItem>,
-  ): Promise<IOptionListItem[]> {
+    payload: Array<IOptionItem>,
+  ): Promise<IOptionItem[]> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
@@ -153,7 +153,7 @@ const actions = {
     this: Store<IState>,
     context: ActionContext<IState, IState>,
     payload: { id: string, isOther: boolean },
-  ): Promise<IOptionListItem> {
+  ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
@@ -179,7 +179,7 @@ const actions = {
     this: Store<IState>,
     context: ActionContext<IState, IState>,
     payload: { id: string, isDefault: boolean },
-  ): Promise<IOptionListItem> {
+  ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }

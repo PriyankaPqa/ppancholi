@@ -1,11 +1,12 @@
 import { Store } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
-import { OptionItem, mockOptionItemData } from '@/entities/optionItem';
+import {
+  OptionItem, mockOptionItemData, EOptionListItemStatus, EOptionLists,
+} from '@/entities/optionItem';
 import { Event, mockEventsData } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
-import { EOptionListItemStatus, EOptionLists } from '@/types';
 
 describe('>>> Event Module', () => {
   let store: Store<IRootState>;

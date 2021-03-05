@@ -1,6 +1,6 @@
-import { EOptionLists, IOptionListItem } from '@/types';
+import { IOptionItem, EOptionLists } from '@/entities/optionItem';
 
 export type IState = {
-  items: IOptionListItem[];
+  items: IOptionItem[];
   list: EOptionLists;
 };

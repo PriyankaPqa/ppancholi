@@ -2,8 +2,8 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { EOptionLists, EOptionListItemStatus } from '@/types';
-import { mockOptionItemData } from '@/entities/optionItem';
+
+import { mockOptionItemData, EOptionLists, EOptionListItemStatus } from '@/entities/optionItem';
 import Component from '../OptionList.vue';
 
 const localVue = createLocalVue();

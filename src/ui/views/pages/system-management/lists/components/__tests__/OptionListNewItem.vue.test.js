@@ -3,7 +3,7 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { EOptionListItemStatus } from '@/types';
+import { EOptionListItemStatus } from '@/entities/optionItem';
 import Component from '../OptionListNewItem.vue';
 
 const localVue = createLocalVue();

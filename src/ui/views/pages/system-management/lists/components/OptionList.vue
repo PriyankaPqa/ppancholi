@@ -115,13 +115,12 @@ import {
   RcTab,
 } from '@crctech/component-library';
 import PageContent from '@/ui/views/components/layout/PageContent.vue';
-import {
-  IMultilingual,
-  IOptionListItem,
-  EOptionListItemStatus,
-} from '@/types';
+import { IMultilingual } from '@/types';
 import entityUtils from '@/entities/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
+import {
+  IOptionItem, OptionItem, EOptionListItemStatus, ICreateOptionItemRequest,
+} from '@/entities/optionItem';
 import OptionListItem from './OptionListItem.vue';
 import OptionListNewItem from './OptionListNewItem.vue';
 
@@ -186,11 +185,11 @@ export default Vue.extend({
 
   computed: {
     items: {
-      get(): IOptionListItem[] {
+      get(): OptionItem[] {
         return this.$storage.optionList.getters.items();
       },
 
-      set(value: IOptionListItem[]) {
+      set(value: IOptionItem[]) {
         this.sortItems(value);
       },
     },
@@ -206,7 +205,7 @@ export default Vue.extend({
   },
 
   async mounted() {
-    this.fetchItems();
+    await this.fetchItems();
   },
 
   methods: {
@@ -241,7 +240,7 @@ export default Vue.extend({
      * Highlights items that match the text input in the search bar
      * @param item The item to compare with the search value
      */
-    isSearchResult(item: IOptionListItem) {
+    isSearchResult(item: IOptionItem) {
       if (this.search) {
         return item.name.translation[this.languageMode].toLowerCase().indexOf(this.search.toLowerCase()) > -1;
       }
@@ -260,7 +259,7 @@ export default Vue.extend({
         return;
       }
 
-      const payload: IOptionListItem = {
+      const payload: ICreateOptionItemRequest = {
         name: entityUtils.getFilledMultilingualField(name),
         itemStatus,
         orderRank: this.highestRank + 1,
@@ -292,7 +291,7 @@ export default Vue.extend({
      * @param item The item to be modified
      * @param name The new name value. Sets the value for the currently selected language
      */
-    async saveItem(item: IOptionListItem, name: IMultilingual) {
+    async saveItem(item: IOptionItem, name: IMultilingual) {
       if (!item || !name) {
         return;
       }
@@ -317,7 +316,7 @@ export default Vue.extend({
      * @param item The item to be modified
      * @param itemStatus The new status to set
      */
-    async changeItemStatus(item: IOptionListItem, itemStatus: EOptionListItemStatus) {
+    async changeItemStatus(item: IOptionItem, itemStatus: EOptionListItemStatus) {
       if (!item || !itemStatus) {
         return;
       }
@@ -334,7 +333,7 @@ export default Vue.extend({
     /**
      * Handles changing the order of items through the API
      */
-    async sortItems(items: IOptionListItem[]) {
+    async sortItems(items: IOptionItem[]) {
       try {
         await this.$storage.optionList.actions.updateOrderRanks(items);
       } catch (e) {
@@ -391,7 +390,7 @@ export default Vue.extend({
     /**
      * Triggered when the pencil button is pushed on an item. Shows the edit form
      */
-    editItem(item: IOptionListItem) {
+    editItem(item: IOptionItem) {
       this.editedItem = item.id;
     },
 

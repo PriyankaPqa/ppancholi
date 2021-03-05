@@ -4,14 +4,14 @@ import {
 import _findIndex from 'lodash/findIndex';
 import _sortBy from 'lodash/sortBy';
 import { IRootState } from '@/store/store.types';
-import { IOptionItem, IOptionItemData, OptionItem } from '@/entities/optionItem';
+import {
+  IOptionItem, IOptionItemData, OptionItem, EOptionListItemStatus, EOptionLists,
+} from '@/entities/optionItem';
 import {
   Event, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
-import {
-  EOptionListItemStatus, EOptionLists, IAzureSearchParams, IAzureSearchResult,
-} from '@/types';
+import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IState } from './event.types';
 
 const getDefaultState = (): IState => ({

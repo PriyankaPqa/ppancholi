@@ -1,6 +1,6 @@
 import { IHttpClient } from '@/services/httpClient';
-import { IOptionItemData } from '@/entities/optionItem';
-import { EOptionListItemStatus, EOptionLists, IMultilingual } from '@/types';
+import { IOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
+import { IMultilingual } from '@/types';
 import { IOptionItemsService } from './optionItems.types';
 
 export class OptionItemsService implements IOptionItemsService {

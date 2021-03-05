@@ -1,6 +1,5 @@
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
 import { mockStore } from '@/store';
-import { EOptionListItemStatus, EOptionLists } from '@/types';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });
@@ -44,6 +43,7 @@ describe('>>> OptionList Storage', () => {
             fr: 'FR',
           },
         },
+        orderRank: 1,
         itemStatus: EOptionListItemStatus.Active,
       };
       storage.actions.createOption(optionListItem);

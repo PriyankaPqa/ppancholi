@@ -1,6 +1,5 @@
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
 import { mockHttp } from '@/services/httpClient.mock';
-import { EOptionListItemStatus, EOptionLists } from '@/types';
 import { OptionItemsService } from './optionItems';
 
 const http = mockHttp();

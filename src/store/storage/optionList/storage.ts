@@ -1,13 +1,13 @@
-import { IOptionItem } from '@/entities/optionItem';
-import { IStore } from '@/store/store.types';
 import {
-  EOptionListItemStatus, EOptionLists, IMultilingual, IOptionListItem,
-} from '@/types';
+  IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest,
+} from '@/entities/optionItem';
+import { IStore } from '@/store/store.types';
+import { IMultilingual } from '@/types';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
   getters: {
-    items(): Array<IOptionListItem> {
+    items(): Array<IOptionItem> {
       return store.getters['optionList/items'];
     },
   },
@@ -27,7 +27,7 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.dispatch('optionList/fetchItems');
     },
 
-    createOption(payload: IOptionListItem) {
+    createOption(payload: ICreateOptionItemRequest) {
       return store.dispatch('optionList/createOption', payload);
     },
 
@@ -45,7 +45,7 @@ export const makeStorage = (store: IStore): IStorage => ({
       });
     },
 
-    updateOrderRanks(payload: Array<IOptionListItem>) {
+    updateOrderRanks(payload: Array<IOptionItem>) {
       return store.dispatch('optionList/updateOrderRanks', payload);
     },
 

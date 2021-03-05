@@ -204,14 +204,10 @@ import Vue from 'vue';
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import { RcDialog } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import {
-  IOptionListItem,
-  EOptionListItemStatus,
-  IOptionListSubItem,
-  VForm,
-} from '@/types';
+import { VForm } from '@/types';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import entityUtils from '@/entities/utils';
+import { IOptionItem, EOptionListItemStatus } from '@/entities/optionItem';
 
 export default Vue.extend({
   name: 'OptionListItem',
@@ -228,7 +224,7 @@ export default Vue.extend({
      * The item or sub-item to render
      */
     item: {
-      type: Object as () => IOptionListItem | IOptionListSubItem,
+      type: Object as () => IOptionItem,
       required: true,
     },
 
@@ -323,7 +319,7 @@ export default Vue.extend({
 
       changeToStatus: null,
 
-      subItems: [] as Array<IOptionListSubItem>,
+      subItems: [] as Array<IOptionItem>,
 
       subItemsExpanded: true,
 
@@ -364,7 +360,7 @@ export default Vue.extend({
     },
 
     item() {
-      // this.subItems = _cloneDeep((this.item as IOptionListItem).optionsListSubItems);
+      // this.subItems = _cloneDeep((this.item as IOptionItem).optionsListSubItems);
     },
 
     languageMode() {
@@ -375,7 +371,7 @@ export default Vue.extend({
   },
 
   mounted() {
-    // this.subItems = _cloneDeep((this.item as IOptionListItem).optionsListSubItems);
+    // this.subItems = _cloneDeep((this.item as IOptionItem).optionsListSubItems);
   },
 
   methods: {

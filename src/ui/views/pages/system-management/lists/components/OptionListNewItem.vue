@@ -83,11 +83,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { EOptionListItemStatus, VForm } from '@/types';
+import { VForm } from '@/types';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import entityUtils from '@/entities/utils';
+import { EOptionListItemStatus } from '@/entities/optionItem';
 
 export default Vue.extend({
   name: 'OptionListNewItem',
