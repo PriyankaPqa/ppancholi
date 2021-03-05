@@ -16,7 +16,7 @@ export default Vue.extend({
 
   created() {
     this.$storage.optionList.mutations.resetState();
-    this.$storage.optionList.mutations.setList(EOptionLists.Gender);
+    this.$storage.optionList.mutations.setList(EOptionLists.Genders);
   },
 });
 </script>

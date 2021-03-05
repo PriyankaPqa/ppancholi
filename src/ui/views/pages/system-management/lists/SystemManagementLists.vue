@@ -75,6 +75,11 @@ export default Vue.extend({
       name: 'system_management.lists.preferredLanguages',
       route: routes.systemManagement.preferredLanguages.name,
       dataTest: 'preferredLanguages',
+    },
+    {
+      name: 'system_management.lists.primarySpokenLanguages',
+      route: routes.systemManagement.primarySpokenLanguages.name,
+      dataTest: 'primarySpokenLanguages',
     }];
 
     return {

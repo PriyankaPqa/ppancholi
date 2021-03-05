@@ -7,8 +7,9 @@ export enum EOptionListItemStatus {
 
 export enum EOptionLists {
   EventTypes = 1,
-  Gender,
-  PreferredLanguage,
+  Genders,
+  PreferredLanguages,
+  PrimarySpokenLanguages,
 }
 
 export interface IOptionItemData {

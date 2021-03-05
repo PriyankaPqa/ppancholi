@@ -1118,6 +1118,7 @@
     "system_management.lists.otherOptionRemoved": "system_management.lists.otherOptionRemoved",
     "system_management.lists.otherOptionSet": "system_management.lists.otherOptionSet",
     "system_management.lists.preferredLanguages": "system_management.lists.preferredLanguages",
+    "system_management.lists.primarySpokenLanguages": "system_management.lists.primarySpokenLanguages",
     "system_management.lists.status.Active": "system_management.lists.status.Active",
     "system_management.lists.status.Inactive": "system_management.lists.status.Inactive",
     "system_management.lists.statusDialog.Active": "system_management.lists.statusDialog.Active",

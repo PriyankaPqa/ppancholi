@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.preferredLanguages" has-other has-default />
+  <option-list title="system_management.lists.primarySpokenLanguages" has-other has-default />
 </template>
 
 <script lang="ts">
@@ -8,7 +8,7 @@ import Vue from 'vue';
 import OptionList from '../components/OptionList.vue';
 
 export default Vue.extend({
-  name: 'PreferredLanguage',
+  name: 'PrimarySpokenLanguage',
 
   components: {
     OptionList,
@@ -16,7 +16,7 @@ export default Vue.extend({
 
   created() {
     this.$storage.optionList.mutations.resetState();
-    this.$storage.optionList.mutations.setList(EOptionLists.PreferredLanguages);
+    this.$storage.optionList.mutations.setList(EOptionLists.PrimarySpokenLanguages);
   },
 });
 </script>

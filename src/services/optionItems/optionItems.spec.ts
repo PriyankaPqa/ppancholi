@@ -16,12 +16,16 @@ describe('>>> EventTypes Service', () => {
       expect(service.getPrefix(EOptionLists.EventTypes)).toBe('/event/event-types');
     });
 
-    it('returns correct prefix for EOptionLists.Gender', () => {
-      expect(service.getPrefix(EOptionLists.Gender)).toBe('/beneficiary/genders');
+    it('returns correct prefix for EOptionLists.Genders', () => {
+      expect(service.getPrefix(EOptionLists.Genders)).toBe('/beneficiary/genders');
     });
 
-    it('returns correct prefix for EOptionLists.PreferredLanguage', () => {
-      expect(service.getPrefix(EOptionLists.PreferredLanguage)).toBe('/beneficiary/preferred-languages');
+    it('returns correct prefix for EOptionLists.PreferredLanguages', () => {
+      expect(service.getPrefix(EOptionLists.PreferredLanguages)).toBe('/beneficiary/preferred-languages');
+    });
+    
+    it('returns correct prefix for EOptionLists.PrimarySpokenLanguages', () => {
+      expect(service.getPrefix(EOptionLists.PrimarySpokenLanguages)).toBe('/beneficiary/primary-spoken-languages');
     });
   });
 

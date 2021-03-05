@@ -130,6 +130,10 @@ const routes = {
       path: 'lists/preferred-languages',
       name: 'systemManagement.lists.preferredLanguages',
     },
+    primarySpokenLanguages: {
+      path: 'lists/primary-spoken-languages',
+      name: 'systemManagement.lists.primarySpokenLanguages',
+    },
   },
   teams: {
     layout: {
