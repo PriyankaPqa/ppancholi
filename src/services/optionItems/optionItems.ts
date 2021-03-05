@@ -12,6 +12,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/event/event-types';
       case EOptionLists.Gender:
         return '/beneficiary/genders';
+      case EOptionLists.PreferredLanguage:
+        return '/beneficiary/preferred-languages';
       default:
         return '';
     }

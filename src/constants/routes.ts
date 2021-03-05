@@ -126,6 +126,10 @@ const routes = {
       path: 'lists/genders',
       name: 'systemManagement.lists.genders',
     },
+    preferredLanguages: {
+      path: 'lists/preferred-languages',
+      name: 'systemManagement.lists.preferredLanguages',
+    },
   },
   teams: {
     layout: {

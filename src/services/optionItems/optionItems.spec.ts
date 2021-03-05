@@ -19,6 +19,10 @@ describe('>>> EventTypes Service', () => {
     it('returns correct prefix for EOptionLists.Gender', () => {
       expect(service.getPrefix(EOptionLists.Gender)).toBe('/beneficiary/genders');
     });
+
+    it('returns correct prefix for EOptionLists.PreferredLanguage', () => {
+      expect(service.getPrefix(EOptionLists.PreferredLanguage)).toBe('/beneficiary/preferred-languages');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {

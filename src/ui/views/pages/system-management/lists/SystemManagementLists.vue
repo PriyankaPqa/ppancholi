@@ -70,6 +70,11 @@ export default Vue.extend({
       name: 'system_management.lists.genders',
       route: routes.systemManagement.genders.name,
       dataTest: 'genders',
+    },
+    {
+      name: 'system_management.lists.preferredLanguages',
+      route: routes.systemManagement.preferredLanguages.name,
+      dataTest: 'preferredLanguages',
     }];
 
     return {
