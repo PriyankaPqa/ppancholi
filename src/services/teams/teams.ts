@@ -1,4 +1,6 @@
-import { ITeam, ITeamData, IEditTeamRequest } from '@/entities/team';
+import {
+  ITeam, ITeamData, IEditTeamRequest, ITeamSearchData,
+} from '@/entities/team';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { ITeamsService } from './teams.types';
@@ -19,8 +21,8 @@ export class TeamsService implements ITeamsService {
     return this.http.patch(`/team/teams/${team.id}`, payload, { globalHandler: false });
   }
 
-  async searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamData>> {
-    return this.http.get('/search/teams', { params, isOData: true });
+  async searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>> {
+    return this.http.get('/search/team-projections', { params, isOData: true });
   }
 
   private teamToEditTeamRequestPayload(team: ITeam) : IEditTeamRequest {

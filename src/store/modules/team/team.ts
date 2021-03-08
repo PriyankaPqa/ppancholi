@@ -5,7 +5,7 @@ import {
 import { IRootState } from '@/store/store.types';
 
 import {
-  ITeam, ITeamData, Team,
+  ITeam, ITeamData, ITeamSearchData, Team,
 } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import {
@@ -59,15 +59,15 @@ const actions = {
     }
   },
 
-  async searchTeams(this: Store<IState>, context: ActionContext<IState, IState>, params: IAzureSearchParams): Promise<IAzureSearchResult<ITeam>> {
+  async searchTeams(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    params: IAzureSearchParams,
+  ): Promise<IAzureSearchResult<ITeamSearchData>> {
     try {
       context.state.searchLoading = true;
       const res = await this.$services.teams.searchTeams(params);
-      const data = res?.value;
-      return {
-        ...res,
-        value: data.map((el: ITeamData) => (new Team(el))),
-      };
+      return res;
     } finally {
       context.state.searchLoading = false;
     }

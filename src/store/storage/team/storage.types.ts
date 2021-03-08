@@ -1,4 +1,4 @@
-import { ITeam, ITeamData } from '@/entities/team';
+import { ITeam, ITeamSearchData } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 export interface IStorage {
@@ -6,25 +6,17 @@ export interface IStorage {
     loading(): boolean,
   }
 
-  mutations: {
-
-  }
-
   actions: {
     getTeam(id: uuid): Promise<ITeam>;
     createTeam(payload: ITeam): Promise<ITeam>;
     editTeam(payload: ITeam): Promise<ITeam>;
-    searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamData>>;
+    searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
   }
 }
 
 export interface IStorageMock {
   getters: {
     loading: jest.Mock<void>;
-  }
-
-  mutations: {
-
   }
 
   actions: {

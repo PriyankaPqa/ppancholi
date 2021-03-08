@@ -74,15 +74,6 @@ describe('>>> Team Module', () => {
 
         expect(store.$services.teams.searchTeams).toHaveBeenCalledTimes(1);
       });
-
-      it('returns proper results and value are instance of team class', async () => {
-        const res = await store.dispatch('team/searchTeams');
-
-        expect(res).toEqual({
-          ...res,
-          value: res.value.map((el: ITeamData) => (new Team(el))),
-        });
-      });
     });
   });
 });

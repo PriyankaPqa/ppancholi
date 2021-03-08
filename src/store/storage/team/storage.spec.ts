@@ -39,8 +39,4 @@ describe('>>> Team Storage', () => {
       expect(store.dispatch).toBeCalledWith('team/searchTeams', {});
     });
   });
-
-  // describe('>> Mutations', () => {
-
-  // });
 });

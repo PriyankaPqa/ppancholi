@@ -120,8 +120,8 @@ export const mockEventsData = (): IEventData[] => [{
 }];
 
 export const mockOtherProvinceData = (): IAzureSearchResult<IOtherProvince> => ({
-  '@odataCount': 2,
-  '@odataContext': 'context',
+  odataCount: 2,
+  odataContext: 'context',
   value: [{
     name: {
       translation: {
@@ -140,8 +140,8 @@ export const mockOtherProvinceData = (): IAzureSearchResult<IOtherProvince> => (
 });
 
 export const mockRegionData = (): IAzureSearchResult<IRegion> => ({
-  '@odataCount': 2,
-  '@odataContext': 'context',
+  odataCount: 2,
+  odataContext: 'context',
   value: [{
     province: ECanadaProvinces.AB,
     name: {
@@ -162,7 +162,7 @@ export const mockRegionData = (): IAzureSearchResult<IRegion> => ({
 });
 
 export const mockSearchEvents = (): IAzureSearchResult<IEventData> => ({
-  '@odataCount': 2,
-  '@odataContext': 'context',
+  odataCount: 2,
+  odataContext: 'context',
   value: mockEventsData(),
 });

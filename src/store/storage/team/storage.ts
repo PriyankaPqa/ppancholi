@@ -1,4 +1,4 @@
-import { ITeam, ITeamData } from '@/entities/team';
+import { ITeam, ITeamSearchData } from '@/entities/team';
 import { IStore } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IStorage } from './storage.types';
@@ -8,10 +8,6 @@ export const makeStorage = (store: IStore): IStorage => ({
     loading(): boolean {
       return store.getters['team/loading'];
     },
-  },
-
-  mutations: {
-
   },
 
   actions: {
@@ -27,7 +23,7 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.dispatch('team/editTeam', payload);
     },
 
-    searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamData>> {
+    searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>> {
       return store.dispatch('team/searchTeams', params);
     },
   },

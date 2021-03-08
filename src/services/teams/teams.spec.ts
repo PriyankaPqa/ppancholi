@@ -34,6 +34,6 @@ describe('>>> Teams Service', () => {
   test('searchTeams is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
     await service.searchTeams(params);
-    expect(http.get).toHaveBeenCalledWith('/search/teams', { params, isOData: true });
+    expect(http.get).toHaveBeenCalledWith('/search/team-projections', { params, isOData: true });
   });
 });

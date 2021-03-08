@@ -1,3 +1,5 @@
+import { toPascalCase } from 'js-convert-case';
+
 export default {
   data() {
     return {
@@ -36,7 +38,7 @@ export default {
     getOrderBy(params) {
       const { orderBy, descending } = params;
       const direction = descending ? 'desc' : 'asc';
-      return `${orderBy} ${direction}`;
+      return `${toPascalCase(orderBy)} ${direction}`;
     },
 
     isNewPageIndex(params) {
@@ -68,7 +70,7 @@ export default {
 
       if (res) {
         this.azureSearchItems = res?.value;
-        this.azureSearchCount = res['@odataCount'];
+        this.azureSearchCount = res.odataCount;
       }
     },
   },

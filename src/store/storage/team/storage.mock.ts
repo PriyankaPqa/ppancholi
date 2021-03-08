@@ -6,10 +6,6 @@ export const mockStorageTeam = () : IStorageMock => ({
     loading: jest.fn(),
   },
 
-  mutations: {
-
-  },
-
   actions: {
     searchTeams: jest.fn(),
     getTeam: jest.fn(),

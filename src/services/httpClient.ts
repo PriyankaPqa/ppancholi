@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue';
 import { v4 as uuidv4 } from 'uuid';
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, {
+  AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse,
+} from 'axios';
 import buildQuery from '@/services/odata-query';
-import camelCaseKeys from 'camelcase-keys';
+import { camelKeys } from 'js-convert-case';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IAzureSearchParams } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
@@ -66,7 +68,7 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(response.config)) {
       // Add what you want when request is successful. It is applied globally except when { globalHandler: false }
     }
-    return camelCaseKeys(response, { deep: true });
+    return camelKeys(response, { recursive: true, recursiveInArray: true }) as AxiosResponse<Record<string, unknown>>;
   }
 
   private responseErrorHandler(error: any) {
@@ -106,7 +108,6 @@ class HttpClient implements IHttpClient {
       // build OData search query and remove the '?' that is added by the query building library at the beginning of the string
       request.paramsSerializer = (params: IAzureSearchParams) => buildQuery(params).slice(1);
     }
-
     return request;
   }
 

@@ -112,36 +112,36 @@ describe('TeamsTable.vue', () => {
           {
             text: 'teams.team_name',
             sortable: true,
-            value: 'Name',
+            value: 'teamName',
             width: '40%',
           },
           {
             text: 'teams.teamtype',
-            value: 'type',
+            value: 'teamType',
             sortable: false,
             width: '10%',
           },
           {
             text: 'teams.table.related_events',
-            value: 'events',
-            sortable: false,
+            value: 'eventCount',
+            sortable: true,
             width: '10%',
           },
           {
             text: 'teams.primary_contact',
-            value: 'primaryContact',
-            sortable: false,
+            value: 'primaryContactDisplayName',
+            sortable: true,
             width: '30%',
           },
           {
             text: 'teams.team_members',
-            value: 'members',
-            sortable: false,
+            value: 'teamMemberCount',
+            sortable: true,
             width: '10%',
           },
           {
             text: 'teams.status',
-            value: 'status',
+            value: 'teamStatus',
             sortable: false,
             width: '10%',
           },
@@ -205,7 +205,7 @@ describe('TeamsTable.vue', () => {
         const filter = {
           or: [
             {
-              Name: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
+              TeamName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
             },
           ],
         };
@@ -232,11 +232,11 @@ describe('TeamsTable.vue', () => {
 
   describe('Data', () => {
     test('defaultSortBy', () => {
-      expect(wrapper.vm.defaultSortBy).toEqual('Name');
+      expect(wrapper.vm.defaultSortBy).toEqual('teamName');
     });
 
     test('customColumns', () => {
-      expect(wrapper.vm.customColumns).toEqual(['Name', 'type', 'members', 'events', 'primaryContact', 'status', 'edit']);
+      expect(wrapper.vm.customColumns).toEqual(['teamName', 'teamType', 'teamStatus', 'edit']);
     });
   });
 });

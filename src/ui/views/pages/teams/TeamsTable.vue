@@ -14,28 +14,16 @@
         <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="goToCreateTeam($event)" />
       </template>
 
-      <template #item.Name="{ item }">
-        <span data-test="team_type">{{ item.name }}</span>
+      <template #item.teamName="{ item }">
+        <span data-test="team_type">{{ item.teamName }}</span>
       </template>
 
-      <template #item.type="{ item }">
+      <template #item.teamType="{ item }">
         <span data-test="team_type">{{ ETeamType[item.teamType] }}</span>
       </template>
 
-      <template #item.members="{ item }">
-        <span data-test="team_members">{{ item.teamMembers.length }}</span>
-      </template>
-
-      <template #item.events="{ item }">
-        <span data-test="team_events">{{ item.eventIds.length }}</span>
-      </template>
-
-      <template #item.primaryContact="{ item }">
-        <span data-test="team_primary_contact">{{ item.getPrimaryContact().id }}</span>
-      </template>
-
-      <template #item.status="{ item }">
-        <status-chip data-test="team_status" :status="item.status" status-name="ETeamStatus" />
+      <template #item.teamStatus="{ item }">
+        <status-chip data-test="team_status" :status="item.teamStatus" status-name="ETeamStatus" />
       </template>
 
       <template #item.edit="{ item }">
@@ -81,8 +69,8 @@ export default Vue.extend({
     return {
       ETeamType,
       ETeamStatus,
-      defaultSortBy: 'Name',
-      customColumns: ['Name', 'type', 'members', 'events', 'primaryContact', 'status', 'edit'],
+      defaultSortBy: 'teamName',
+      customColumns: ['teamName', 'teamType', 'teamStatus', 'edit'],
     };
   },
 
@@ -115,36 +103,36 @@ export default Vue.extend({
         {
           text: this.$t('teams.team_name') as string,
           sortable: true,
-          value: 'Name',
+          value: 'teamName',
           width: '40%',
         },
         {
           text: this.$t('teams.teamtype') as string,
-          value: 'type',
+          value: 'teamType',
           sortable: false,
           width: '10%',
         },
         {
           text: this.$t('teams.table.related_events') as string,
-          value: 'events',
-          sortable: false,
+          value: 'eventCount',
+          sortable: true,
           width: '10%',
         },
         {
           text: this.$t('teams.primary_contact') as string,
-          value: 'primaryContact',
-          sortable: false,
+          value: 'primaryContactDisplayName',
+          sortable: true,
           width: '30%',
         },
         {
           text: this.$t('teams.team_members') as string,
-          value: 'members',
-          sortable: false,
+          value: 'teamMemberCount',
+          sortable: true,
           width: '10%',
         },
         {
           text: this.$t('teams.status') as string,
-          value: 'status',
+          value: 'teamStatus',
           sortable: false,
           width: '10%',
         },
@@ -190,7 +178,7 @@ export default Vue.extend({
       return {
         or: [
           {
-            Name: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
+            TeamName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
             // add more props to search on if needed
           },
         ],
