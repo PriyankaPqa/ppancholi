@@ -6,6 +6,10 @@ import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 export interface IEventsService {
   createEvent(payload: IEvent): Promise<IEventData>;
 
+  updateEvent(payload: IEvent): Promise<IEventData>;
+
+  getEventById(id: uuid): Promise<IEventData>;
+
   getEvents(): Promise<IEventData[]>;
 
   getOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>;
@@ -16,9 +20,13 @@ export interface IEventsService {
 }
 
 export interface IEventsServiceMock {
-  createEvent: jest.Mock <IEventData>;
+  createEvent: jest.Mock<IEventData>;
 
-  getEvents: jest.Mock <IEventData[]>;
+  updateEvent: jest.Mock<IEventData>;
+
+  getEventById: jest.Mock<IEventData>;
+
+  getEvents: jest.Mock<IEventData[]>;
 
   getOtherProvinces: jest.Mock <IAzureSearchResult<IOtherProvince>>;
 

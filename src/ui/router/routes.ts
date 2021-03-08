@@ -21,6 +21,7 @@ const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/view
 const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/layout/EventsLayout.vue');
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
 const CreateEditEvent = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/create-edit/CreateEditEvent.vue');
+const EventDetails = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/details/EventDetails.vue');
 
 const MainLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/components/layout/MainLayout.vue');
 const HomeLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
@@ -166,6 +167,20 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.events.create.name,
                 component: CreateEditEvent,
                 meta: { level: 'level6' },
+                props: true,
+              },
+              {
+                path: Routes.events.details.path,
+                name: Routes.events.details.name,
+                component: EventDetails,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.events.edit.path,
+                name: Routes.events.edit.name,
+                component: CreateEditEvent,
+                meta: { level: 'level6' },
+                props: true,
               },
             ],
           },

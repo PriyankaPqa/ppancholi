@@ -9,12 +9,14 @@ export interface IStorage {
   }
 
   actions: {
+    fetchEvent(id: uuid): Promise<IEvent>;
     fetchEventTypes(): Promise<IOptionItem[]>;
     fetchEvents(): Promise<IEvent[]>;
     fetchOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>
     fetchRegions(): Promise<IAzureSearchResult<IRegion>>;
     searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEvent>>;
     createEvent(payload: IEvent): Promise<IEvent>;
+    updateEvent(payload: IEvent): Promise<IEvent>;
   }
 }
 
@@ -26,9 +28,11 @@ export interface IStorageMock {
 
   actions: {
     fetchEventTypes: jest.Mock<void>;
+    fetchEvent: jest.Mock<void>;
     fetchEvents: jest.Mock<void>;
     fetchOtherProvinces: jest.Mock<void>;
     fetchRegions: jest.Mock<void>;
     createEvent: jest.Mock<void>;
+    updateEvent: jest.Mock<void>;
   }
 }

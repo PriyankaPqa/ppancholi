@@ -1,6 +1,6 @@
 import { IHttpClient } from '@/services/httpClient';
 import {
-  ICreateEventRequest, IEvent, IEventData, IOtherProvince, IRegion,
+  ICreateEventRequest, IEditEventRequest, IEvent, IEventData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
@@ -11,7 +11,17 @@ export class EventsService implements IEventsService {
   async createEvent(event: IEvent): Promise<IEventData> {
     event.fillEmptyMultilingualAttributes();
     const payload = this.eventToCreateEventRequestPayload(event);
-    return this.http.post('/event/events', payload);
+    return this.http.post('/event/events', payload, { globalHandler: false });
+  }
+
+  async updateEvent(event: IEvent): Promise<IEventData> {
+    event.fillEmptyMultilingualAttributes();
+    const payload = this.eventToEditEventRequestPayload(event);
+    return this.http.patch(`/event/events/${event.id}/edit`, payload, { globalHandler: false });
+  }
+
+  async getEventById(id: uuid): Promise<IEventData> {
+    return this.http.get(`/event/events/${id}`);
   }
 
   async getEvents(): Promise<IEventData[]> {
@@ -33,7 +43,7 @@ export class EventsService implements IEventsService {
   private eventToCreateEventRequestPayload(event: IEvent): ICreateEventRequest {
     const payload: ICreateEventRequest = {
       assistanceNumber: event.responseDetails.assistanceNumber,
-      dateReported: event.responseDetails.dateReported,
+      dateReported: event.responseDetails.dateReported ? new Date(event.responseDetails.dateReported).toISOString() : null,
       description: event.description,
       name: event.name,
       eventType: {
@@ -45,11 +55,18 @@ export class EventsService implements IEventsService {
       region: event.location.region,
       relatedEvents: event.relatedEvents,
       responseLevel: event.responseDetails.responseLevel,
-      scheduledCloseDate: event.schedule.scheduledCloseDate,
-      scheduledOpenDate: event.schedule.scheduledOpenDate,
+      scheduledCloseDate: event.schedule.scheduledCloseDate ? new Date(event.schedule.scheduledCloseDate).toISOString() : null,
+      scheduledOpenDate: event.schedule.scheduledOpenDate ? new Date(event.schedule.scheduledOpenDate).toISOString() : null,
       status: event.schedule.status,
     };
 
     return payload;
+  }
+
+  private eventToEditEventRequestPayload(event: IEvent): IEditEventRequest {
+    return {
+      ...this.eventToCreateEventRequestPayload(event),
+      reOpenReason: event.schedule.reOpenReason,
+    };
   }
 }

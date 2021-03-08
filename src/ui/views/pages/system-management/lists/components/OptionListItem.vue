@@ -184,6 +184,7 @@
         data-test="optionsListItem__statusDialog"
         :title="$t('system_management.lists.statusDialog.title')"
         :submit-action-label="$t('common.buttons.confirm')"
+        :cancel-action-label="$t('common.buttons.cancel')"
         :show.sync="showStatusDialog"
         content-padding="6"
         max-width="450"

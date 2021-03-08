@@ -1,8 +1,8 @@
 <template>
   <ValidationObserver ref="form" v-slot="{ failed }" slim>
-    <page-template ref="pageTemplate" :loading="false" :show-left-menu="false">
+    <page-template ref="pageTemplate" :loading="eventLoading" :show-left-menu="false">
       <rc-page-content :title="isEditMode ? $t('event.edit.title') : $t('event.create.title')" :help-link="helpLink">
-        <event-form :event.sync="event" :is-edit-mode="isEditMode" />
+        <event-form :event.sync="event" :is-edit-mode="isEditMode" :is-name-unique.sync="isNameUnique" />
 
         <template slot="actions">
           <v-btn data-test="cancel" @click.stop="back()">
@@ -24,7 +24,7 @@ import { TranslateResult } from 'vue-i18n';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
-import { Event } from '@/entities/event';
+import { Event, IEvent } from '@/entities/event';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers';
 import EventForm from './EventForm.vue';
@@ -38,10 +38,20 @@ export default Vue.extend({
     EventForm,
   },
 
+  props: {
+    id: {
+      type: String,
+      default: '',
+    },
+  },
+
   data() {
     return {
+      eventLoading: false,
       loading: false,
-      event: new Event(),
+      error: false,
+      event: new Event() as IEvent,
+      isNameUnique: true,
     };
   },
 
@@ -55,8 +65,27 @@ export default Vue.extend({
     },
 
     helpLink(): TranslateResult {
+      if (this.isEditMode) {
+        return this.$t('zendesk.help_link.editEvent');
+      }
       return this.$t('zendesk.help_link.createEvent');
     },
+  },
+
+  async created() {
+    if (this.isEditMode) {
+      this.eventLoading = true;
+
+      try {
+        this.event = await this.$storage.event.actions.fetchEvent(this.id);
+      } catch {
+        this.error = true;
+      } finally {
+        this.eventLoading = false;
+      }
+    } else {
+      this.event = new Event();
+    }
   },
 
   methods: {
@@ -66,15 +95,36 @@ export default Vue.extend({
       });
     },
 
+    handleSubmitError(e: Error) {
+      // Temporary custom check until an error handling system is put in place
+      if (Array.isArray(e) && e.includes('An event with this name already exists.')) {
+        this.isNameUnique = false;
+      } else {
+        // Handle all other errors
+        this.$toasted.global.error(this.$t('error.unexpected_error'));
+      }
+    },
+
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
 
       if (isValid) {
         try {
           this.loading = true;
-          await this.$storage.event.actions.createEvent(this.event);
-          this.$toasted.global.success(this.$t('event_create.success'));
-          // TODO redirect to event details page
+          let eventId;
+
+          if (this.isEditMode) {
+            await this.$storage.event.actions.updateEvent(this.event);
+            eventId = this.event.id;
+            this.$toasted.global.success(this.$t('event_edit.success'));
+          } else {
+            const newEvent = await this.$storage.event.actions.createEvent(this.event);
+            eventId = newEvent.id;
+            this.$toasted.global.success(this.$t('event_create.success'));
+          }
+          this.$router.replace({ name: routes.events.details.name, params: { id: eventId } });
+        } catch (e) {
+          this.handleSubmitError(e);
         } finally {
           this.loading = false;
         }

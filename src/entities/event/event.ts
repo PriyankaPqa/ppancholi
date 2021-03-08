@@ -90,6 +90,8 @@ export class Event implements IEvent {
     };
     this.schedule = {
       openDate: null,
+      reOpenReason: '',
+      hasBeenOpen: false,
       closeDate: null,
       scheduledOpenDate: null,
       scheduledCloseDate: null,

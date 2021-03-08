@@ -144,6 +144,40 @@ describe('>>> Event Module', () => {
       // });
     });
 
+    describe('fetchEvent', () => {
+      test('the fetchEvent action calls the getEventById service and returns the event', async () => {
+        const store = mockStore();
+        const event = mockEventsData()[0];
+
+        expect(store.$services.events.getEventById).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/fetchEvent', event.id);
+
+        expect(store.$services.events.getEventById).toHaveBeenCalledWith(event.id);
+
+        expect(store.state.event.events).toEqual([
+          event,
+        ]);
+
+        expect(res).toEqual(new Event(event));
+      });
+
+      test('if the event already exists in the store, do not call the API', async () => {
+        const store = mockStore();
+        const event = mockEventsData()[0];
+
+        expect(store.$services.events.getEventById).toHaveBeenCalledTimes(0);
+
+        await store.dispatch('event/fetchEvent', event.id);
+
+        expect(store.$services.events.getEventById).toHaveBeenCalledTimes(1);
+
+        await store.dispatch('event/fetchEvent', event.id);
+
+        expect(store.$services.events.getEventById).toHaveBeenCalledTimes(1);
+      });
+    });
+
     describe('fetchEvents', () => {
       test('the fetchEvents action calls the getEvents service and returns the events getter', async () => {
         const store = mockStore();

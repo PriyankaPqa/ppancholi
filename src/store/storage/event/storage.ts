@@ -20,6 +20,10 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.dispatch('event/fetchEventTypes');
     },
 
+    fetchEvent(id: uuid): Promise<IEvent> {
+      return store.dispatch('event/fetchEvent', id);
+    },
+
     fetchEvents(): Promise<IEvent[]> {
       return store.dispatch('event/fetchEvents');
     },
@@ -38,6 +42,10 @@ export const makeStorage = (store: IStore): IStorage => ({
 
     createEvent(payload: IEvent): Promise<IEvent> {
       return store.dispatch('event/createEvent', payload);
+    },
+
+    updateEvent(payload: IEvent): Promise<IEvent> {
+      return store.dispatch('event/updateEvent', payload);
     },
   },
 });

@@ -23,6 +23,11 @@ describe('>>> Event Storage', () => {
       expect(store.dispatch).toBeCalledWith('event/fetchEventTypes');
     });
 
+    it('should proxy fetchEvent', () => {
+      storage.actions.fetchEvent('TEST_ID');
+      expect(store.dispatch).toBeCalledWith('event/fetchEvent', 'TEST_ID');
+    });
+
     it('should proxy fetchEvents', () => {
       storage.actions.fetchEvents();
       expect(store.dispatch).toBeCalledWith('event/fetchEvents');
@@ -48,6 +53,12 @@ describe('>>> Event Storage', () => {
       const event = new Event(mockEventsData()[0]);
       storage.actions.createEvent(event);
       expect(store.dispatch).toHaveBeenCalledWith('event/createEvent', event);
+    });
+
+    it('should proxy updateEvent', () => {
+      const event = new Event(mockEventsData()[0]);
+      storage.actions.updateEvent(event);
+      expect(store.dispatch).toHaveBeenCalledWith('event/updateEvent', event);
     });
   });
 });

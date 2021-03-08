@@ -80,6 +80,8 @@ describe('>>> User', () => {
         openDate: null,
         closeDate: null,
         closeReason: null,
+        hasBeenOpen: false,
+        reOpenReason: '',
       });
     });
 

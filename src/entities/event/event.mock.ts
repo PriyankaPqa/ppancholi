@@ -1,6 +1,6 @@
 import { ECanadaProvinces, IAzureSearchResult } from '@/types';
 import {
-  IEventData, IOtherProvince, IRegion,
+  EEventStatus, IEventData, IOtherProvince, IRegion,
 } from './event.types';
 
 export const mockEventsData = (): IEventData[] => [{
@@ -39,10 +39,12 @@ export const mockEventsData = (): IEventData[] => [{
     },
   },
   schedule: {
-    status: 1,
+    status: EEventStatus.OnHold,
     scheduledOpenDate: '2021-03-15T00:00:00Z',
     scheduledCloseDate: '2021-06-15T00:00:00Z',
     openDate: null,
+    reOpenReason: '',
+    hasBeenOpen: false,
     closeDate: null,
     closeReason: null,
   },
@@ -96,10 +98,12 @@ export const mockEventsData = (): IEventData[] => [{
     },
   },
   schedule: {
-    status: 1,
+    status: EEventStatus.Open,
     scheduledOpenDate: '2021-03-01T00:00:00Z',
     scheduledCloseDate: null,
     openDate: null,
+    reOpenReason: 'Re-opened',
+    hasBeenOpen: true,
     closeDate: null,
     closeReason: null,
   },

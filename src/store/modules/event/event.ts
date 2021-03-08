@@ -66,6 +66,18 @@ const actions = {
     return context.getters.eventTypes;
   },
 
+  async fetchEvent(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<IEvent> {
+    const event = context.state.events.find((event) => event.id === id);
+
+    if (event) {
+      return new Event(event);
+    }
+
+    const data = await this.$services.events.getEventById(id);
+    context.commit('addOrUpdateEvent', data);
+    return new Event(data);
+  },
+
   async fetchEvents(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEvent[]> {
     if (!context.state.eventsFetched) {
       const data = await this.$services.events.getEvents();
@@ -95,6 +107,13 @@ const actions = {
 
   async createEvent(this: Store<IState>, context: ActionContext<IState, IState>, payload: IEvent): Promise<IEvent> {
     const data = await this.$services.events.createEvent(payload);
+    context.commit('addOrUpdateEvent', data);
+
+    return new Event(data);
+  },
+
+  async updateEvent(this: Store<IState>, context: ActionContext<IState, IState>, payload: IEvent): Promise<IEvent> {
+    const data = await this.$services.events.updateEvent(payload);
     context.commit('addOrUpdateEvent', data);
 
     return new Event(data);

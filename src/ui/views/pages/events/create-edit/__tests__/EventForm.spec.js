@@ -15,9 +15,9 @@ import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import Component from '../EventForm.vue';
 
 const event = new Event(mockEventsData()[0]);
-event.schedule.scheduledCloseDate = event.schedule.scheduledCloseDate.toString();
-event.schedule.scheduledOpenDate = event.schedule.scheduledOpenDate.toString();
-event.responseDetails.dateReported = event.responseDetails.dateReported.toString();
+event.schedule.scheduledCloseDate = moment(event.schedule.scheduledCloseDate).format('YYYY-MM-DD');
+event.schedule.scheduledOpenDate = moment(event.schedule.scheduledOpenDate).format('YYYY-MM-DD');
+event.responseDetails.dateReported = moment(event.responseDetails.dateReported).format('YYYY-MM-DD');
 event.fillEmptyMultilingualAttributes = jest.fn();
 
 describe('EventForm.vue', () => {
@@ -34,6 +34,7 @@ describe('EventForm.vue', () => {
         propsData: {
           event,
           isEditMode: false,
+          isNameUnique: true,
         },
         data() {
           return {
@@ -59,6 +60,7 @@ describe('EventForm.vue', () => {
         propsData: {
           event,
           isEditMode: false,
+          isNameUnique: true,
         },
         data() {
           return {
@@ -129,6 +131,15 @@ describe('EventForm.vue', () => {
         });
       });
     });
+
+    describe('resetAsUnique', () => {
+      it('emits update:isNameUnique to true if it is false', async () => {
+        wrapper.setProps({ isNameUnique: false });
+        await wrapper.vm.$nextTick();
+        await wrapper.vm.resetAsUnique();
+        expect(wrapper.emitted('update:isNameUnique')[0][0]).toBe(true);
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -138,6 +149,7 @@ describe('EventForm.vue', () => {
         propsData: {
           event,
           isEditMode: false,
+          isNameUnique: true,
         },
         data() {
           return {
@@ -181,6 +193,44 @@ describe('EventForm.vue', () => {
 
         wrapper.vm.isStatusOpen = false;
         expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toEqual(null);
+      });
+
+      it('sets scheduledOpenData and scheduledCloseDate to initial values if toggling from OnHold => Open => OnHold in edit mode', async () => {
+        const event = new Event(mockEventsData()[0]);
+
+        wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          propsData: {
+            event,
+            isEditMode: true,
+            isNameUnique: true,
+          },
+          data() {
+            return {
+              prefixRegistrationLink: 'https://mytest.test/',
+            };
+          },
+        });
+
+        const initialOpenDate = moment(wrapper.vm.localEvent.schedule.scheduledOpenDate).format('YYYY-MM-DD');
+        const initialCloseDate = moment(wrapper.vm.localEvent.schedule.scheduledCloseDate).format('YYYY-MM-DD');
+
+        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(initialOpenDate);
+        expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toBe(initialCloseDate);
+
+        wrapper.vm.isStatusOpen = true;
+
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(wrapper.vm.today);
+        expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toBe(initialCloseDate);
+
+        wrapper.vm.isStatusOpen = false;
+
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.localEvent.schedule.scheduledOpenDate).toBe(initialOpenDate);
+        expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toBe(initialCloseDate);
       });
     });
 
@@ -320,6 +370,7 @@ describe('EventForm.vue', () => {
           propsData: {
             event,
             isEditMode: true,
+            isNameUnique: true,
           },
           data() {
             return {
@@ -328,7 +379,7 @@ describe('EventForm.vue', () => {
           },
         });
 
-        expect(wrapper.vm.statusColor).toEqual('grey darken-2 white--text');
+        expect(wrapper.vm.statusColor).toEqual('status_green_pale black--text');
       });
 
       it('returns proper color for status is open', () => {
@@ -350,6 +401,36 @@ describe('EventForm.vue', () => {
       });
     });
 
+    describe('showReOpenInput', () => {
+      it('returns true if the form is in edit mode, the event has previously been opened, and status is OnHold => Open', async () => {
+        const event = new Event(mockEventsData()[0]);
+        event.schedule.hasBeenOpen = true;
+        event.schedule.status = EEventStatus.OnHold;
+
+        wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          propsData: {
+            event,
+            isEditMode: true,
+            isNameUnique: true,
+          },
+          data() {
+            return {
+              prefixRegistrationLink: 'https://mytest.test/',
+            };
+          },
+        });
+
+        expect(wrapper.findDataTest('reopen-reason').exists()).toBe(false);
+
+        wrapper.vm.isStatusOpen = true;
+
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.findDataTest('reopen-reason').exists()).toBe(true);
+      });
+    });
+
     describe('today', () => {
       it('returns the date of today', () => {
         const today = moment(new Date()).format('YYYY-MM-DD');
@@ -365,6 +446,7 @@ describe('EventForm.vue', () => {
         propsData: {
           event,
           isEditMode: false,
+          isNameUnique: true,
         },
         data() {
           return {
@@ -397,6 +479,7 @@ describe('EventForm.vue', () => {
         propsData: {
           event: new Event(),
           isEditMode: false,
+          isNameUnique: true,
         },
         data() {
           return {

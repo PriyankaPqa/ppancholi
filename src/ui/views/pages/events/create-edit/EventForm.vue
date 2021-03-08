@@ -14,7 +14,8 @@
                 :label="`${$t('event.event_name')} *`"
                 :hint="$t('event.event_name.hint')"
                 persistent-hint
-                :rules="rules.name" />
+                :rules="rules.name"
+                @input="resetAsUnique()" />
             </v-col>
 
             <v-col cols="4">
@@ -33,7 +34,6 @@
               <v-select-with-validation
                 v-model="localEvent.location.province"
                 data-test="event-province"
-                :disabled="isEditMode"
                 attach
                 :label="`${$t('event.province')} *`"
                 :items="canadianProvinces"
@@ -70,7 +70,6 @@
               <v-select-with-validation
                 v-model="eventType"
                 data-test="event-type"
-                :disabled="isEditMode"
                 attach
                 :label="`${$t('event.type')} *`"
                 :items="eventTypesSorted"
@@ -85,7 +84,6 @@
                 v-model="localEvent.responseDetails.eventType.specifiedOther"
                 data-test="event-type-specified-other"
                 autocomplete="nope"
-                :disabled="isEditMode"
                 :label="`${$t('common.pleaseSpecify')} *`"
                 :rules="rules.responseDetails.eventTypeOther" />
             </v-col>
@@ -94,7 +92,6 @@
               <ValidationProvider v-slot="{ errors }" :rules="rules.responseDetails.assistanceNumber">
                 <rc-phone
                   :value="assistanceNumber"
-                  :disabled="isEditMode"
                   outlined
                   :label="`${$t('event.number')} *`"
                   :error-messages="errors"
@@ -109,8 +106,8 @@
               <v-date-field-with-validation
                 v-model="localEvent.responseDetails.dateReported"
                 :data-test="'event-reported-date'"
+                readonly
                 :rules="rules.responseDetails.dateReported"
-                :disabled="isEditMode"
                 :label="`${$t('event.date_reported')} *`"
                 :max="today" />
             </v-col>
@@ -126,12 +123,11 @@
                 <div :class="['event_status mb-0', statusColor]">
                   <div>
                     <span class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.on_hold') }}</span>
-                    <span v-if="isStatusOpen">{{ $t('event.start_on_a_date',) }} {{ event.schedule.scheduledOpenDate }}</span>
+                    <span v-if="isStatusOpen">{{ $t('event.start_on_a_date',) }} {{ getStringDate(event.schedule.scheduledOpenDate, 'll') }}</span>
                   </div>
 
                   <v-switch
                     v-model="isStatusOpen"
-                    :disabled="isEditMode"
                     data-test="event-switch-status"
                     class="pt-0 mt-0"
                     hide-details
@@ -139,8 +135,19 @@
                     flat />
                 </div>
 
+                <div class="mt-4">
+                  <v-text-field-with-validation
+                    v-if="showReOpenInput"
+                    v-model="localEvent.schedule.reOpenReason"
+                    data-test="reopen-reason"
+                    background-color="white"
+                    autocomplete="nope"
+                    :label="`${$t('event.reOpenReason')} *`"
+                    :rules="rules.schedule.reOpenReason" />
+                </div>
+
                 <v-row>
-                  <v-col cols="6" lg="5" md="5" class="pl-0">
+                  <v-col cols="6" lg="5" md="5" class="pl-0 pt-0">
                     <v-col>
                       <p class="rc-body16 fw-bold">
                         {{ $t('event.schedule_open_date') }}
@@ -151,17 +158,15 @@
                         :close-on-content-click="false"
                         :data-test="'event-start-date'"
                         :rules="rules.schedule.scheduledOpenDate"
-                        :disabled="isStatusOpen || isEditMode"
+                        :disabled="isStatusOpen || (isEditMode && localEvent.schedule.hasBeenOpen)"
                         prepend-inner-icon="timer"
-                        :readonly="!isEditMode"
-                        :clearable="true"
                         :label="`${$t('event.select_date')}`"
                         :placeholder="$t('event.select_date')"
                         :min="today" />
                     </v-col>
                   </v-col>
 
-                  <v-col cols="6" lg="5" md="5">
+                  <v-col cols="6" lg="5" md="5" class="pt-0">
                     <v-col>
                       <p class="fw-bold">
                         {{ $t('event.schedule_close_date') }}
@@ -172,15 +177,11 @@
                         :close-on-content-click="false"
                         :data-test="'event-end-date'"
                         :rules="rules.schedule.scheduledCloseDate"
-                        :disabled="isEditMode"
                         prepend-inner-icon="timer"
-                        :readonly="!isEditMode"
-                        :clearable="true"
                         :placeholder="$t('event.select_date')"
                         :label="`${$t('event.select_date')}`"
-                        :min="event.schedule.scheduledOpenDate"
-                        :picker-date="event.schedule.scheduledOpenDate"
-                        @click:clear="()=> {localEvent.schedule.scheduledCloseDate = ''}" />
+                        :min="localEvent.schedule.scheduledOpenDate"
+                        :picker-date="localEvent.schedule.scheduledOpenDate" />
                     </v-col>
                   </v-col>
                 </v-row>
@@ -304,22 +305,53 @@ export default Vue.extend({
       type: Event,
       required: true,
     },
+
+    isNameUnique: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data() {
+    const getStringDate = (date: Date| string, format = 'YYYY-MM-DD'): string => moment(date).utc().format(format);
+
+    const localEvent = _cloneDeep(this.event);
+
+    const assistanceNumber = {
+      number: '',
+      countryISO2: '',
+      e164Number: '',
+    };
+
+    if (this.isEditMode) {
+      localEvent.responseDetails.dateReported = getStringDate(localEvent.responseDetails.dateReported);
+
+      if (localEvent.schedule.scheduledOpenDate) {
+        localEvent.schedule.scheduledOpenDate = getStringDate(localEvent.schedule.scheduledOpenDate);
+      }
+
+      if (localEvent.schedule.scheduledCloseDate) {
+        localEvent.schedule.scheduledCloseDate = getStringDate(localEvent.schedule.scheduledCloseDate);
+      }
+
+      if (localEvent && localEvent.responseDetails.assistanceNumber) {
+        assistanceNumber.number = localEvent.responseDetails.assistanceNumber;
+      }
+    }
+
     return {
-      localEvent: _cloneDeep(this.event),
+      localEvent,
+      assistanceNumber,
       eventType: null,
-      assistanceNumber: {
-        number: '',
-        countryISO2: '',
-        e164Number: '',
-      },
       languageMode: 'en',
       prefixRegistrationLink: process.env.VUE_APP_EVENT_LINK_PREFIX,
       otherProvinces: [],
       regions: [],
       TOOLTIP_DELAY,
+      initialStatus: localEvent.schedule.status,
+      initialOpenDate: localEvent.schedule.scheduledOpenDate,
+      initialCloseDate: localEvent.schedule.scheduledCloseDate,
+      getStringDate,
     };
   },
 
@@ -331,9 +363,17 @@ export default Vue.extend({
 
       set(isOpen: boolean): void {
         this.localEvent.schedule.status = isOpen ? EEventStatus.Open : EEventStatus.OnHold;
-        this.localEvent.schedule.scheduledOpenDate = isOpen ? this.today : null;
-        if (!isOpen) {
-          this.localEvent.schedule.scheduledCloseDate = null;
+
+        if (this.isEditMode) {
+          this.localEvent.schedule.scheduledOpenDate = isOpen ? this.today : this.initialOpenDate;
+          if (!isOpen) {
+            this.localEvent.schedule.scheduledCloseDate = this.initialCloseDate;
+          }
+        } else {
+          this.localEvent.schedule.scheduledOpenDate = isOpen ? this.today : null;
+          if (!isOpen) {
+            this.localEvent.schedule.scheduledCloseDate = null;
+          }
         }
       },
     },
@@ -427,6 +467,7 @@ export default Vue.extend({
           regex: /^[a-zA-Z0-9À-ÖÜ-öÜ-ÿ'\-_ ]*$/,
           required: true,
           max: MAX_LENGTH_MD,
+          customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
         },
         responseDetails: {
           responseLevel: {
@@ -454,6 +495,9 @@ export default Vue.extend({
           scheduledCloseDate: {
             ...this.scheduledCloseDateRule,
           },
+          reOpenReason: {
+            required: true,
+          },
         },
         description: {
           max: MAX_LENGTH_LG,
@@ -480,16 +524,26 @@ export default Vue.extend({
     },
 
     statusColor(): string {
-      if (this.isEditMode) return 'grey darken-2 white--text';
       if (this.isStatusOpen) return 'status_success white--text';
       return 'status_green_pale black--text';
     },
 
     registrationLink(): string {
-      return this.localEvent.name.translation[this.languageMode].toLowerCase().split(' ').join('-');
+      if (this.isEditMode) {
+        return this.localEvent.registrationLink.translation[this.languageMode];
+      }
+
+      return escape(this.localEvent.name.translation[this.languageMode].toLowerCase().split(' ').join('-'));
     },
 
-    today(): string { return moment(new Date()).format('YYYY-MM-DD'); },
+    showReOpenInput(): boolean {
+      return this.isEditMode
+        && this.initialStatus === EEventStatus.OnHold
+        && this.localEvent.schedule.status === EEventStatus.Open
+        && this.localEvent.schedule.hasBeenOpen;
+    },
+
+    today(): string { return this.getStringDate(new Date()); },
   },
 
   watch: {
@@ -506,7 +560,7 @@ export default Vue.extend({
   },
 
   async mounted() {
-    if (!this.localEvent.responseDetails.dateReported) {
+    if (!this.isEditMode) {
       this.localEvent.responseDetails.dateReported = this.today;
     }
 
@@ -518,6 +572,10 @@ export default Vue.extend({
 
     this.otherProvinces = provincesRes.value;
     this.regions = regionsRes.value;
+
+    if (this.localEvent && this.localEvent.responseDetails.eventType.optionItemId) {
+      this.eventType = this.eventTypesSorted.find((type) => type.id === this.localEvent.responseDetails.eventType.optionItemId);
+    }
 
     // Set the default event type
     if (!this.isEditMode) {
@@ -549,6 +607,12 @@ export default Vue.extend({
     clearRegionAndOtherProvince() {
       this.localEvent.location.provinceOther = utils.initMultilingualAttributes();
       this.localEvent.location.region = utils.initMultilingualAttributes();
+    },
+
+    resetAsUnique() {
+      if (!this.isNameUnique) {
+        this.$emit('update:isNameUnique', true);
+      }
     },
   },
 });

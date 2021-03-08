@@ -62,8 +62,12 @@ const routes = {
       path: 'create',
       name: 'events.create',
     },
+    details: {
+      path: ':id',
+      name: 'events.details',
+    },
     edit: {
-      path: 'edit',
+      path: ':id/edit',
       name: 'events.edit',
     },
   },

@@ -8,9 +8,11 @@ export const mockStorageEvent = () : IStorageMock => ({
 
   actions: {
     fetchEventTypes: jest.fn(),
+    fetchEvent: jest.fn(),
     fetchEvents: jest.fn(),
     fetchOtherProvinces: jest.fn(),
     fetchRegions: jest.fn(),
     createEvent: jest.fn(),
+    updateEvent: jest.fn(),
   },
 });

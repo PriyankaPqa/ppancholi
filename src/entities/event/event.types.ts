@@ -32,6 +32,8 @@ export interface IEventSchedule {
   scheduledOpenDate: Date | string;
   scheduledCloseDate: Date | string;
   openDate: Date | string;
+  reOpenReason: string;
+  hasBeenOpen: boolean;
   closeDate: Date | string;
   closeReason: string;
 }
@@ -87,6 +89,10 @@ export interface ICreateEventRequest {
   scheduledCloseDate: Date | string;
   scheduledOpenDate: Date | string;
   status: EEventStatus;
+}
+
+export interface IEditEventRequest extends ICreateEventRequest {
+  reOpenReason: string;
 }
 
 /**
