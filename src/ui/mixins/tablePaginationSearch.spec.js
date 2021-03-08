@@ -95,12 +95,12 @@ describe('tablePaginationSearch.vue', () => {
 
     describe('getOrderBy', () => {
       it('returns correct orderBy when descending is true', () => {
-        expect(wrapper.vm.getOrderBy(params)).toBe('Name desc');
+        expect(wrapper.vm.getOrderBy(params)).toBe('name desc');
       });
 
       it('returns correct orderBy when descending is false', () => {
         const newParams = { ...params, descending: false };
-        expect(wrapper.vm.getOrderBy(newParams)).toBe('Name asc');
+        expect(wrapper.vm.getOrderBy(newParams)).toBe('name asc');
       });
     });
 
@@ -124,7 +124,7 @@ describe('tablePaginationSearch.vue', () => {
 
       it('sets orderBy previousPageIndex', () => {
         wrapper.vm.buildPaginationParams(params);
-        expect(wrapper.vm.azureSearchParams.orderBy).toEqual('Name desc');
+        expect(wrapper.vm.azureSearchParams.orderBy).toEqual('name desc');
       });
     });
 

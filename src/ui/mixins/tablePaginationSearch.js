@@ -1,5 +1,3 @@
-import { toPascalCase } from 'js-convert-case';
-
 export default {
   data() {
     return {
@@ -38,7 +36,7 @@ export default {
     getOrderBy(params) {
       const { orderBy, descending } = params;
       const direction = descending ? 'desc' : 'asc';
-      return `${toPascalCase(orderBy)} ${direction}`;
+      return `${orderBy} ${direction}`;
     },
 
     isNewPageIndex(params) {

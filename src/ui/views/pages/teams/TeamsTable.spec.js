@@ -112,36 +112,36 @@ describe('TeamsTable.vue', () => {
           {
             text: 'teams.team_name',
             sortable: true,
-            value: 'teamName',
+            value: 'TeamName',
             width: '40%',
           },
           {
             text: 'teams.teamtype',
-            value: 'teamType',
+            value: 'TeamType',
             sortable: false,
             width: '10%',
           },
           {
             text: 'teams.table.related_events',
-            value: 'eventCount',
+            value: 'EventCount',
             sortable: true,
             width: '10%',
           },
           {
             text: 'teams.primary_contact',
-            value: 'primaryContactDisplayName',
+            value: 'PrimaryContactDisplayName',
             sortable: true,
             width: '30%',
           },
           {
             text: 'teams.team_members',
-            value: 'teamMemberCount',
+            value: 'TeamMemberCount',
             sortable: true,
             width: '10%',
           },
           {
             text: 'teams.status',
-            value: 'teamStatus',
+            value: 'TeamStatus',
             sortable: false,
             width: '10%',
           },
@@ -232,11 +232,19 @@ describe('TeamsTable.vue', () => {
 
   describe('Data', () => {
     test('defaultSortBy', () => {
-      expect(wrapper.vm.defaultSortBy).toEqual('teamName');
+      expect(wrapper.vm.defaultSortBy).toEqual('TeamName');
     });
 
     test('customColumns', () => {
-      expect(wrapper.vm.customColumns).toEqual(['teamName', 'teamType', 'teamStatus', 'edit']);
+      expect(wrapper.vm.customColumns).toEqual([
+        'TeamName',
+        'TeamType',
+        'EventCount',
+        'PrimaryContactDisplayName',
+        'TeamMemberCount',
+        'TeamStatus',
+        'edit',
+      ]);
     });
   });
 });

@@ -14,15 +14,27 @@
         <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="goToCreateTeam($event)" />
       </template>
 
-      <template #item.teamName="{ item }">
+      <template #item.TeamName="{ item }">
         <span data-test="team_type">{{ item.teamName }}</span>
       </template>
 
-      <template #item.teamType="{ item }">
+      <template #item.TeamType="{ item }">
         <span data-test="team_type">{{ ETeamType[item.teamType] }}</span>
       </template>
 
-      <template #item.teamStatus="{ item }">
+      <template #item.TeamMemberCount="{ item }">
+        <span data-test="team_members">{{ item.teamMemberCount }}</span>
+      </template>
+
+      <template #item.EventCount="{ item }">
+        <span data-test="team_events">{{ item.eventCount }}</span>
+      </template>
+
+      <template #item.PrimaryContactDisplayName="{ item }">
+        <span data-test="team_primary_contact">{{ item.primaryContactDisplayName }}</span>
+      </template>
+
+      <template #item.TeamStatus="{ item }">
         <status-chip data-test="team_status" :status="item.teamStatus" status-name="ETeamStatus" />
       </template>
 
@@ -69,8 +81,8 @@ export default Vue.extend({
     return {
       ETeamType,
       ETeamStatus,
-      defaultSortBy: 'teamName',
-      customColumns: ['teamName', 'teamType', 'teamStatus', 'edit'],
+      defaultSortBy: 'TeamName',
+      customColumns: ['TeamName', 'TeamType', 'EventCount', 'PrimaryContactDisplayName', 'TeamMemberCount', 'TeamStatus', 'edit'],
     };
   },
 
@@ -103,36 +115,36 @@ export default Vue.extend({
         {
           text: this.$t('teams.team_name') as string,
           sortable: true,
-          value: 'teamName',
+          value: 'TeamName',
           width: '40%',
         },
         {
           text: this.$t('teams.teamtype') as string,
-          value: 'teamType',
+          value: 'TeamType',
           sortable: false,
           width: '10%',
         },
         {
           text: this.$t('teams.table.related_events') as string,
-          value: 'eventCount',
+          value: 'EventCount',
           sortable: true,
           width: '10%',
         },
         {
           text: this.$t('teams.primary_contact') as string,
-          value: 'primaryContactDisplayName',
+          value: 'PrimaryContactDisplayName',
           sortable: true,
           width: '30%',
         },
         {
           text: this.$t('teams.team_members') as string,
-          value: 'teamMemberCount',
+          value: 'TeamMemberCount',
           sortable: true,
           width: '10%',
         },
         {
           text: this.$t('teams.status') as string,
-          value: 'teamStatus',
+          value: 'TeamStatus',
           sortable: false,
           width: '10%',
         },
