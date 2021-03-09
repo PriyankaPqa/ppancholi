@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
-import { ETeamType, mockSearchTeams } from '@/entities/team';
+import { mockSearchTeams, mockTeamSearchData } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 import Component from './TeamsTable.vue';
 
@@ -206,6 +206,7 @@ describe('TeamsTable.vue', () => {
           or: [
             {
               TeamName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
+              PrimaryContactDisplayName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
             },
           ],
         };
@@ -215,17 +216,22 @@ describe('TeamsTable.vue', () => {
 
     describe('goToEditTeam', () => {
       it('should redirect to the edit page with proper teamType and id for Adhoc', async () => {
-        const mockTeam = { id: '123', teamType: ETeamType.AdHoc };
+        const mockTeam = mockTeamSearchData()[0];
         wrapper.vm.goToEditTeam(mockTeam);
         await wrapper.vm.$nextTick();
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.teams.edit.name, params: { teamType: 'adhoc', id: '123' } });
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.teams.edit.name, params: { teamType: 'standard', id: 'e64a9cd4-4e6b-46a7-b022-e93e0bdc24df' },
+        });
       });
 
       it('should redirect to the edit page with proper teamType and id for Standard', async () => {
-        const mockTeam = { id: '123', teamType: ETeamType.Standard };
+        const mockTeam = mockTeamSearchData()[1];
         wrapper.vm.goToEditTeam(mockTeam);
         await wrapper.vm.$nextTick();
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.teams.edit.name, params: { teamType: 'standard', id: '123' } });
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.teams.edit.name,
+          params: { teamType: 'adhoc', id: '6e2d49af-2f9a-4333-9bdb-cd37270e6591' },
+        });
       });
     });
   });

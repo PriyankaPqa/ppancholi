@@ -60,9 +60,16 @@ export default {
     },
 
     async search(params) {
-      this.buildPaginationParams(params);
+      let newParams = params;
 
-      this.azureSearchParams.filter = params.search ? this.getFilterParams(params) : {};
+      if (params.search) {
+        // We replace space by + so it works with azure search
+        newParams = { ...params, search: params.search.replace(/\s/g, '+') };
+      }
+
+      this.buildPaginationParams(newParams);
+
+      this.azureSearchParams.filter = newParams.search ? this.getFilterParams(newParams) : {};
 
       const res = await this.fetchData(this.azureSearchParams);
 

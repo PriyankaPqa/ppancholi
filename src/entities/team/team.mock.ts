@@ -45,12 +45,12 @@ export const mockTeamSearchData = (): ITeamSearchData[] => [
     teamId: '6e2d49af-2f9a-4333-9bdb-cd37270e6591',
     tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
     teamName: 'Danh Test5 Stad',
-    teamType: 1,
+    teamType: 2,
     eventCount: 0,
     primaryContactDisplayName: 'Test Five',
     teamMemberCount: 1,
     teamStatus: 1,
-    teamTypeName: { translation: { en: 'Standard', fr: 'FR-Standard' } },
+    teamTypeName: { translation: { en: 'AdHoc', fr: 'AdHoc' } },
     events: [],
     teamMembers: [
       {

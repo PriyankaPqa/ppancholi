@@ -55,7 +55,9 @@ import { TranslateResult } from 'vue-i18n';
 import { RcDataTable, RcAddButtonWithMenu, ISearchData } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { DataTableHeader } from 'vuetify';
-import { ETeamType, ETeamStatus, Team } from '@/entities/team';
+import {
+  ETeamType, ETeamStatus, ITeamSearchData,
+} from '@/entities/team';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -169,9 +171,9 @@ export default Vue.extend({
       this.$router.push({ name: routes.teams.create.name, params: { teamType } });
     },
 
-    goToEditTeam(team: Team) {
+    goToEditTeam(team: ITeamSearchData) {
       const teamType = team.teamType === ETeamType.Standard ? 'standard' : 'adhoc';
-      const { id } = team;
+      const id = team.teamId;
       this.$router.push({ name: routes.teams.edit.name, params: { teamType, id } });
     },
 
@@ -191,6 +193,7 @@ export default Vue.extend({
         or: [
           {
             TeamName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
+            PrimaryContactDisplayName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
             // add more props to search on if needed
           },
         ],

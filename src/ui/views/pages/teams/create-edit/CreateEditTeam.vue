@@ -5,7 +5,17 @@
       :show-add-button="false"
       :show-back-button="true"
       @back="onCancel(dirty || changed)">
-      <v-container>
+      <v-container v-if="isLoading">
+        <v-row justify="center">
+          <v-col cols="12" lg="10" class="mt-10">
+            <v-skeleton-loader class="my-6" type="article" />
+            <v-skeleton-loader class="my-6" type="article" />
+            <v-skeleton-loader class="my-6" type="article" />
+          </v-col>
+        </v-row>
+      </v-container>
+
+      <v-container v-else>
         <v-row justify="center" class="my-8">
           <v-col md="10" sm="12">
             <v-row class="firstSection">
@@ -79,7 +89,7 @@
                     <v-btn
                       color="primary"
                       data-test="createEditTeam__submit"
-                      :loading="isSubmitting"
+                      :loading="isLoading"
                       :disabled="isSubmitDisabled(failed, dirty || changed)"
                       @click="submit()">
                       {{ submitLabel }}
@@ -207,7 +217,7 @@ export default Vue.extend({
       return this.$route.name === routes.teams.edit.name;
     },
 
-    isSubmitting(): boolean {
+    isLoading(): boolean {
       return this.$storage.team.getters.loading();
     },
 
@@ -246,6 +256,7 @@ export default Vue.extend({
       }
       return this.$t('teams.types.adhoc');
     },
+
   },
 
   watch: {
