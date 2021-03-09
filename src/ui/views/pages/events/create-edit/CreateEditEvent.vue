@@ -1,7 +1,7 @@
 <template>
   <ValidationObserver ref="form" v-slot="{ failed }" slim>
     <page-template ref="pageTemplate" :loading="eventLoading" :show-left-menu="false">
-      <rc-page-content :title="isEditMode ? $t('event.edit.title') : $t('event.create.title')" :help-link="helpLink">
+      <rc-page-content :title="isEditMode ? $t('event.edit.title') : $t('event.create.title')" :show-help="true" :help-link="helpLink">
         <event-form :event.sync="event" :is-edit-mode="isEditMode" :is-name-unique.sync="isNameUnique" />
 
         <template slot="actions">
