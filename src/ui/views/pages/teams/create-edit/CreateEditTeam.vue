@@ -89,7 +89,7 @@
                     <v-btn
                       color="primary"
                       data-test="createEditTeam__submit"
-                      :loading="isLoading"
+                      :loading="isSubmitting"
                       :disabled="isSubmitDisabled(failed, dirty || changed)"
                       @click="submit()">
                       {{ submitLabel }}
@@ -217,8 +217,12 @@ export default Vue.extend({
       return this.$route.name === routes.teams.edit.name;
     },
 
+    isSubmitting(): boolean {
+      return this.$store.state.team.submitLoading;
+    },
+
     isLoading(): boolean {
-      return this.$storage.team.getters.loading();
+      return this.$store.state.team.getLoading;
     },
 
     rules(): Record<string, unknown> {

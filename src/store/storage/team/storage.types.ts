@@ -2,10 +2,6 @@ import { ITeam, ITeamSearchData } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 export interface IStorage {
-  getters: {
-    loading(): boolean,
-  }
-
   actions: {
     getTeam(id: uuid): Promise<ITeam>;
     createTeam(payload: ITeam): Promise<ITeam>;
@@ -15,10 +11,6 @@ export interface IStorage {
 }
 
 export interface IStorageMock {
-  getters: {
-    loading: jest.Mock<void>;
-  }
-
   actions: {
     getTeam: jest.Mock<void>;
     createTeam: jest.Mock<void>;

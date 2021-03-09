@@ -9,12 +9,6 @@ const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);
 
 describe('>>> Team Storage', () => {
-  describe('>> Getters', () => {
-    it('should proxy loading', () => {
-      expect(storage.getters.loading()).toEqual(store.getters['team/loading']);
-    });
-  });
-
   describe('>> Actions', () => {
     it('should proxy getTeam,', () => {
       const { id } = new Team(mockTeamsData()[0]);

@@ -58,6 +58,7 @@ import { DataTableHeader } from 'vuetify';
 import {
   ETeamType, ETeamStatus, ITeamSearchData,
 } from '@/entities/team';
+
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';

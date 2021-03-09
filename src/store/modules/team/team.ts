@@ -5,7 +5,7 @@ import {
 import { IRootState } from '@/store/store.types';
 
 import {
-  ITeam, ITeamData, ITeamSearchData, Team,
+  ITeam, ITeamSearchData, Team,
 } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import {
@@ -13,49 +13,42 @@ import {
 } from './team.types';
 
 const getDefaultState = (): IState => ({
-  loading: false,
+  submitLoading: false,
   searchLoading: false,
+  getLoading: false,
 });
 
 const moduleState: IState = getDefaultState();
 
-const getters = {
-  loading: (state: IState) => state.loading,
-};
-
-const mutations = {
-
-};
-
 const actions = {
 
   async getTeam(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ITeam> {
-    context.state.loading = true;
+    context.state.getLoading = true;
     try {
       const res = await this.$services.teams.getTeam(id);
       return new Team(res);
     } finally {
-      context.state.loading = false;
+      context.state.getLoading = false;
     }
   },
 
   async createTeam(this: Store<IState>, context: ActionContext<IState, IState>, payload: ITeam): Promise<ITeam> {
-    context.state.loading = true;
+    context.state.submitLoading = true;
     try {
       const res = await this.$services.teams.createTeam(payload);
       return new Team(res);
     } finally {
-      context.state.loading = false;
+      context.state.submitLoading = false;
     }
   },
 
   async editTeam(this: Store<IState>, context: ActionContext<IState, IState>, payload: ITeam): Promise<ITeam> {
-    context.state.loading = true;
+    context.state.submitLoading = true;
     try {
       const res = await this.$services.teams.editTeam(payload);
       return new Team(res);
     } finally {
-      context.state.loading = false;
+      context.state.submitLoading = false;
     }
   },
 
@@ -78,7 +71,5 @@ const actions = {
 export const team: Module<IState, IRootState> = {
   namespaced: true,
   state: moduleState as IState,
-  getters,
-  mutations,
   actions: actions as unknown as ActionTree<IState, IRootState>,
 };

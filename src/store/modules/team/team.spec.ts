@@ -1,5 +1,5 @@
 import { Store } from 'vuex';
-import { ITeamData, mockTeamsData, Team } from '@/entities/team';
+import { mockTeamsData, Team } from '@/entities/team';
 import { mockStore, IRootState } from '@/store';
 
 describe('>>> Team Module', () => {
@@ -16,18 +16,6 @@ describe('>>> Team Module', () => {
       },
     });
   });
-
-  describe('>> Getters', () => {
-    describe('loading', () => {
-      test('the loading getter returns a boolean', () => {
-        expect(store.getters['team/loading']).toEqual(false);
-      });
-    });
-  });
-
-  // describe('>> Mutations', () => {
-
-  // });
 
   describe('>> Actions', () => {
     describe('getTeam', () => {

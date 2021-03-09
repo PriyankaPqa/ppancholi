@@ -1,4 +1,5 @@
 export type IState = {
-  loading: boolean
-  searchLoading: boolean,
+  getLoading: boolean;
+  submitLoading: boolean;
+  searchLoading: boolean;
 };
