@@ -20,7 +20,6 @@ export interface IOptionItemData {
   name: IMultilingual;
   orderRank: number;
   status: EOptionListItemStatus;
-  itemStatus: EOptionListItemStatus;
   isOther: boolean;
   isDefault: boolean;
 }
@@ -33,7 +32,6 @@ export interface IOptionItem {
   name: IMultilingual;
   orderRank: number;
   status: EOptionListItemStatus;
-  itemStatus: EOptionListItemStatus;
   isOther: boolean;
   isDefault: boolean;
   description?: IMultilingual;
@@ -45,6 +43,6 @@ export interface IOptionItem {
 export interface ICreateOptionItemRequest {
   name: IMultilingual;
   orderRank: number;
-  itemStatus: EOptionListItemStatus;
+  status: EOptionListItemStatus;
   description?: IMultilingual;
 }

@@ -16,8 +16,6 @@ export class OptionItem implements IOptionItem {
 
   readonly status: EOptionListItemStatus;
 
-  readonly itemStatus: EOptionListItemStatus;
-
   readonly isOther: boolean;
 
   readonly isDefault: boolean;
@@ -30,7 +28,6 @@ export class OptionItem implements IOptionItem {
     this.name = data.name;
     this.orderRank = data.orderRank;
     this.status = data.status;
-    this.itemStatus = data.itemStatus;
     this.isOther = data.isOther;
     this.isDefault = data.isDefault;
   }

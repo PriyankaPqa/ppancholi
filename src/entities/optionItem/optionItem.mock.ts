@@ -14,7 +14,6 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     },
     orderRank: 2,
     status: 1,
-    itemStatus: 1,
     isOther: true,
     isDefault: false,
   },
@@ -31,7 +30,6 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     },
     orderRank: 3,
     status: 1,
-    itemStatus: 1,
     isOther: false,
     isDefault: true,
   },
@@ -48,7 +46,6 @@ export const mockOptionItemData = (): IOptionItemData[] => [
     },
     orderRank: 4,
     status: 2,
-    itemStatus: 2,
     isOther: false,
     isDefault: false,
   }];

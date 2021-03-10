@@ -44,7 +44,7 @@ describe('>>> OptionList Storage', () => {
           },
         },
         orderRank: 1,
-        itemStatus: EOptionListItemStatus.Active,
+        status: EOptionListItemStatus.Active,
       };
       storage.actions.createOption(optionListItem);
       expect(store.dispatch).toHaveBeenCalledWith('optionList/createOption', optionListItem);
@@ -58,7 +58,7 @@ describe('>>> OptionList Storage', () => {
 
     it('should proxy updateStatus', () => {
       storage.actions.updateStatus('ID', EOptionListItemStatus.Inactive);
-      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateStatus', { id: 'ID', itemStatus: EOptionListItemStatus.Inactive });
+      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateStatus', { id: 'ID', status: EOptionListItemStatus.Inactive });
     });
 
     it('should proxy updateOrderRanks', () => {

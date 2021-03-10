@@ -26,7 +26,7 @@ const moduleState: IState = getDefaultState();
 const getters = {
   eventTypes: (state: IState) => (
     _sortBy(state.eventTypes.map((e) => new OptionItem(e)), 'orderRank')
-      .filter((i) => i.itemStatus === EOptionListItemStatus.Active)
+      .filter((i) => i.status === EOptionListItemStatus.Active)
   ),
 
   events: (state: IState) => helpers.sortMultilingualArray(state.events.map((e) => new Event(e)), 'name'),

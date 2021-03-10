@@ -96,14 +96,14 @@ const actions = {
   async updateStatus(
     this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: { id: string, itemStatus: EOptionListItemStatus },
+    payload: { id: string, status: EOptionListItemStatus },
   ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
     }
 
     const { list } = context.state;
-    const data = await this.$services.optionItems.updateOptionItemStatus(list, payload.id, payload.itemStatus);
+    const data = await this.$services.optionItems.updateOptionItemStatus(list, payload.id, payload.status);
 
     if (data != null) context.commit('addOrUpdateItem', data);
 

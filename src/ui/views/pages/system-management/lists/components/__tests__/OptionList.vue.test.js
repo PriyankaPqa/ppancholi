@@ -127,12 +127,12 @@ describe('OptionList.vue', () => {
       it('dispatches the createOption action', async () => {
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = null;
-        const itemStatus = EOptionListItemStatus.Active;
+        const status = EOptionListItemStatus.Active;
 
         await wrapper.vm.saveNewItem(
           name,
           description,
-          itemStatus,
+          status,
         );
 
         expect(actions.createOption).toHaveBeenCalledTimes(1);
@@ -140,19 +140,19 @@ describe('OptionList.vue', () => {
       it('dispatches the createOption action with correct parameters', async () => {
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = null;
-        const itemStatus = EOptionListItemStatus.Active;
+        const status = EOptionListItemStatus.Active;
 
         await wrapper.vm.saveNewItem(
           name,
           description,
-          itemStatus,
+          status,
         );
 
         expect(actions.createOption).toHaveBeenCalledWith(
           expect.anything(),
           {
             name,
-            itemStatus,
+            status,
             orderRank: wrapper.vm.highestRank + 1,
           },
         );
@@ -171,19 +171,19 @@ describe('OptionList.vue', () => {
       it('copies the translation values over to empty languages', async () => {
         const name = { translation: { en: 'English Test', fr: '' } };
         const description = null;
-        const itemStatus = EOptionListItemStatus.Active;
+        const status = EOptionListItemStatus.Active;
 
         await wrapper.vm.saveNewItem(
           name,
           description,
-          itemStatus,
+          status,
         );
 
         expect(actions.createOption).toHaveBeenCalledWith(
           expect.anything(),
           {
             name: { translation: { en: 'English Test', fr: 'English Test' } },
-            itemStatus,
+            status,
             orderRank: wrapper.vm.highestRank + 1,
           },
         );
@@ -240,18 +240,18 @@ describe('OptionList.vue', () => {
     describe('>> changeItemStatus', () => {
       it('dispatches the updateStatus action', async () => {
         const item = mockOptionItemData()[0];
-        const itemStatus = EOptionListItemStatus.Inactive;
+        const status = EOptionListItemStatus.Inactive;
 
         await wrapper.vm.changeItemStatus(
           item,
-          itemStatus,
+          status,
         );
 
         expect(actions.updateStatus).toHaveBeenCalledWith(
           expect.anything(),
           {
             id: item.id,
-            itemStatus,
+            status,
           },
         );
       });

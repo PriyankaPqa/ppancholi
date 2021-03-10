@@ -30,7 +30,7 @@ describe('>>> Event Module', () => {
         const mockEventTypes = mockOptionItemData().map((e) => new OptionItem(e));
 
         expect(store.getters['event/eventTypes']).toEqual(
-          _sortBy(mockEventTypes, 'orderRank').filter((i) => i.itemStatus === EOptionListItemStatus.Active),
+          _sortBy(mockEventTypes, 'orderRank').filter((i) => i.status === EOptionListItemStatus.Active),
         );
       });
     });

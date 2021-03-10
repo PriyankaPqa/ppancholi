@@ -77,7 +77,7 @@
 
       <v-col :class="{ search: isSearchResult, 'pb-2': true }" cols="3">
         <status-select
-          :value="item.itemStatus"
+          :value="item.status"
           :statuses="itemStatuses"
           status-name="EOptionListItemStatus"
           data-test="optionsListItem__statusSelect"

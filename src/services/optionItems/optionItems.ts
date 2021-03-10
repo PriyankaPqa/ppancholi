@@ -35,9 +35,9 @@ export class OptionItemsService implements IOptionItemsService {
     });
   }
 
-  async updateOptionItemStatus(list: EOptionLists, id: string, itemStatus: EOptionListItemStatus): Promise<IOptionItemData> {
-    return this.http.patch(`${this.getPrefix(list)}/${id}/item-status`, {
-      itemStatus,
+  async updateOptionItemStatus(list: EOptionLists, id: string, status: EOptionListItemStatus): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${id}/status`, {
+      status,
     });
   }
 

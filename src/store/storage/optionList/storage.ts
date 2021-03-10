@@ -38,10 +38,10 @@ export const makeStorage = (store: IStore): IStorage => ({
       });
     },
 
-    updateStatus(id: string, itemStatus: EOptionListItemStatus) {
+    updateStatus(id: string, status: EOptionListItemStatus) {
       return store.dispatch('optionList/updateStatus', {
         id,
-        itemStatus,
+        status,
       });
     },
 

@@ -23,7 +23,7 @@ describe('>>> EventTypes Service', () => {
     it('returns correct prefix for EOptionLists.PreferredLanguages', () => {
       expect(service.getPrefix(EOptionLists.PreferredLanguages)).toBe('/beneficiary/preferred-languages');
     });
-    
+
     it('returns correct prefix for EOptionLists.PrimarySpokenLanguages', () => {
       expect(service.getPrefix(EOptionLists.PrimarySpokenLanguages)).toBe('/beneficiary/primary-spoken-languages');
     });
@@ -49,10 +49,10 @@ describe('>>> EventTypes Service', () => {
   });
 
   test('updateOptionItemStatus is linked to the correct URL', async () => {
-    const itemStatus = EOptionListItemStatus.Inactive;
+    const status = EOptionListItemStatus.Inactive;
     const list = EOptionLists.EventTypes;
-    await service.updateOptionItemStatus(list, 'ID', itemStatus);
-    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/item-status`, { itemStatus });
+    await service.updateOptionItemStatus(list, 'ID', status);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/status`, { status });
   });
 
   test('updateOptionItemOrderRanks is linked to the correct URL', async () => {

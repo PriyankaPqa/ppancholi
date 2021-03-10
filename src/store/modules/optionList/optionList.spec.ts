@@ -175,7 +175,7 @@ describe('>>> Option List Module', () => {
         await store.dispatch('optionList/updateStatus', {
           list,
           id: 'ID',
-          itemStatus: EOptionListItemStatus.Inactive,
+          status: EOptionListItemStatus.Inactive,
         });
 
         expect(store.$services.optionItems.updateOptionItemStatus).toHaveBeenCalledWith(

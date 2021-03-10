@@ -252,16 +252,16 @@ export default Vue.extend({
      * Handles saving a new item through the API
      * @param name The name of the new item. This value is put in both en and fr slots
      * @param description The description of the new item. This value is put in both en and fr slots
-     * @param itemStatus The status of the item
+     * @param status The status of the item
      */
-    async saveNewItem(name: IMultilingual, description: IMultilingual, itemStatus: EOptionListItemStatus) {
-      if (!name || !itemStatus) {
+    async saveNewItem(name: IMultilingual, description: IMultilingual, status: EOptionListItemStatus) {
+      if (!name || !status) {
         return;
       }
 
       const payload: ICreateOptionItemRequest = {
         name: entityUtils.getFilledMultilingualField(name),
-        itemStatus,
+        status,
         orderRank: this.highestRank + 1,
       };
 
@@ -314,15 +314,15 @@ export default Vue.extend({
     /**
      * Handles changing the status of an item through the API
      * @param item The item to be modified
-     * @param itemStatus The new status to set
+     * @param status The new status to set
      */
-    async changeItemStatus(item: IOptionItem, itemStatus: EOptionListItemStatus) {
-      if (!item || !itemStatus) {
+    async changeItemStatus(item: IOptionItem, status: EOptionListItemStatus) {
+      if (!item || !status) {
         return;
       }
 
       try {
-        await this.$storage.optionList.actions.updateStatus(item.id, itemStatus);
+        await this.$storage.optionList.actions.updateStatus(item.id, status);
       } catch {
         return;
       }
