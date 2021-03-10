@@ -69,6 +69,7 @@ export default {
     };
   },
   async created() {
+    console.log('Process env APP', process.env);
     await this.fetchAllUsersInformation();
 
     if (process.env.NODE_ENV === 'development') {

@@ -339,6 +339,8 @@ export default Vue.extend({
       }
     }
 
+    console.log('Process env COMPONENT', process.env);
+
     return {
       localEvent,
       assistanceNumber,
