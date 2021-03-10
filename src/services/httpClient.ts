@@ -71,7 +71,7 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(error.config)) {
       // Add what you want
     }
-    return Promise.reject(error.response.data);
+    return Promise.reject(error?.response?.data || error);
   }
 
   private requestHandler(request: any) {

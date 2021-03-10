@@ -9,6 +9,7 @@ import '@testing-library/jest-dom';
 import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 import deepmerge from 'deepmerge';
+import '@/ui/plugins/vee-validate';
 
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';

@@ -12,7 +12,7 @@ describe('>>> User', () => {
 
     it('should instantiate assistance number', () => {
       const event = new Event(mockEventData);
-      expect(event.assistanceNumber).toBe('+15144544545');
+      expect(event.responseDetails.assistanceNumber).toBe('+15144544545');
     });
 
     it('should instantiate name', () => {
@@ -21,16 +21,6 @@ describe('>>> User', () => {
         translation: {
           en: 'Gatineau Floods 2021',
           fr: 'Inondations Gatineau 2021',
-        },
-      });
-    });
-
-    it('should instantiate description', () => {
-      const event = new Event(mockEventData);
-      expect(event.description).toEqual({
-        translation: {
-          en: 'Desc EN',
-          fr: 'Desc FR',
         },
       });
     });

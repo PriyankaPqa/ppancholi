@@ -1,30 +1,35 @@
 <template>
-  <div>
-    <v-app-bar class="app-bar" app color="white">
-      <v-app-bar-nav-icon v-if="showNavIcon" id="hamburgerMenu" data-test="left-menu-trigger" @click.stop="handleLeftMenu" />
+  <v-app-bar clipped-left clipped-right app color="white">
+    <v-app-bar-nav-icon
+      v-if="!isLandingPage"
+      class="ml-0"
+      :aria-label="$t('aria.label.menu')"
+      color="primary darken-1"
+      data-test="left-menu-trigger"
+      @click.stop="toggleLeftMenu" />
 
-      <div :class="$i18n.locale === 'en' ? 'logoEn' : 'logoFr'" data-test="registration-portal-logo" />
+    <div :class="$i18n.locale === 'en' ? 'logoEn' : 'logoFr'" data-test="registration-portal-logo" />
 
-      <v-spacer />
+    <v-spacer />
 
-      <span class="toolbar-title fw-bold mr-2 text-truncate" data-test="registration-portal-toolbar-event-name">
-        {{ eventName }}
-      </span>
+    <span class="toolbar-title fw-bold mr-2 text-truncate" data-test="registration-portal-toolbar-event-name">
+      {{ eventName }}
+    </span>
 
-      <language-selector data-test="registration-portal-language-selector" />
+    <language-selector data-test="registration-portal-language-selector" />
 
-      <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')">
-        <v-icon color="grey darken-2">
-          mdi-information
-        </v-icon>
-      </v-btn>
-    </v-app-bar>
-  </div>
+    <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')">
+      <v-icon color="grey darken-2">
+        mdi-information
+      </v-icon>
+    </v-btn>
+  </v-app-bar>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -34,9 +39,7 @@ export default Vue.extend({
   },
 
   data() {
-    return {
-      showNavIcon: false,
-    };
+    return {};
   },
 
   computed: {
@@ -44,11 +47,15 @@ export default Vue.extend({
       const event = this.$storage.registration.getters.event();
       return this.$m(event.name);
     },
+    isLandingPage(): boolean {
+      return this.$route.name === routes.landingPage.name;
+    },
   },
 
   methods: {
-    handleLeftMenu() {
-      // TODO
+    toggleLeftMenu() {
+      const isLeftMenuOpen = this.$storage.registration.getters.isLeftMenuOpen();
+      this.$storage.registration.mutations.toggleLeftMenu(!isLeftMenuOpen);
     },
   },
 });
@@ -76,28 +83,12 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
     width: 30px;
     height: 30px;
   }
-
-  .app-bar {
-    max-height: 56px;
-  }
-
-  .toolbar-title {
-    font-size: 14px;
-    max-width: 130px;
-  }
 }
 @media only screen and (min-width: $breakpoint-sm-min) and (max-width: $breakpoint-sm-max) {
   .logoEn,
   .logoFr {
     width: 140px;
     height: 56px;
-  }
-
-  .app-bar {
-    max-height: 56px;
-  }
-  ::v-deep .v-toolbar__content {
-    max-height: 56px;
   }
 
   .toolbar-title {
@@ -112,13 +103,6 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
     height: 56px;
   }
 
-  .app-bar {
-    max-height: 56px;
-  }
-  ::v-deep .v-toolbar__content {
-    max-height: 56px;
-  }
-
   .toolbar-title {
     font-size: 18px;
     max-width: 650px;
@@ -129,13 +113,6 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
   .logoFr {
     width: 160px;
     height: 64px;
-  }
-
-  .app-bar {
-    min-height: 72px;
-  }
-  ::v-deep .v-toolbar__content {
-    min-height: 72px;
   }
 
   .toolbar-title {

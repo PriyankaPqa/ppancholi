@@ -1,7 +1,5 @@
 import { IMultilingual } from '@/types';
-import utils from '@/entities/utils';
-
-import { IEvent, IEventData } from './event.types';
+import { IEvent, IEventData, IResponseDetails } from './event.types';
 
 export class Event implements IEvent {
   id: string;
@@ -10,22 +8,17 @@ export class Event implements IEvent {
 
   name: IMultilingual;
 
-  description: IMultilingual;
-
   registrationLink: IMultilingual;
+
+  responseDetails: IResponseDetails;
 
   constructor(data?: IEventData) {
     if (data) {
       this.id = data.id;
-      this.assistanceNumber = data.assistanceNumber;
+      this.responseDetails = data.responseDetails;
       this.name = {
         translation: {
           ...data.name.translation,
-        },
-      };
-      this.description = {
-        translation: {
-          ...data.description.translation,
         },
       };
       this.registrationLink = {
@@ -33,20 +26,6 @@ export class Event implements IEvent {
           ...data.registrationLink.translation,
         },
       };
-    } else {
-      this.reset();
     }
-  }
-
-  private reset() {
-    this.name = utils.initMultilingualAttributes();
-    this.description = utils.initMultilingualAttributes();
-    this.registrationLink = utils.initMultilingualAttributes();
-  }
-
-  public fillEmptyMultilingualAttributes() {
-    this.name = utils.getFilledMultilingualField(this.name);
-    this.description = utils.getFilledMultilingualField(this.description);
-    this.registrationLink = utils.getFilledMultilingualField(this.registrationLink);
   }
 }

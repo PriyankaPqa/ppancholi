@@ -1,8 +1,7 @@
 import { IEventData } from '@/entities/event';
-import { ISearchData } from '@/types';
 
 export interface IEventsService {
-  searchEvents(params: ISearchData): Promise<IEventData[]>;
+  searchEvents(lang: string, registrationLink: string): Promise<IEventData[]>;
 }
 
 export interface IEventsServiceMock {

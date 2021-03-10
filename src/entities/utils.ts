@@ -1,88 +1,34 @@
-import { IMultilingual } from '@/types';
-import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
+import _forEach from 'lodash/forEach';
+import { i18n } from '@/ui/plugins';
+import moment from 'moment';
+import { IBirthDate } from './beneficiary/personalInformation/personalInformation.types';
 
 export default {
-  /**
-   * Validate if a multilingual field contains at least one valid value
-   * @param field
-   */
-  validateMultilingualFieldRequired(field: IMultilingual) {
-    let isValid = true;
 
-    if (!field || !field.translation || !Object.keys(field.translation).length) {
-      return false;
-    }
-
-    Object.keys(field.translation).forEach((key) => {
-      if (!field.translation[key]) {
-        isValid = false;
-      }
-    });
-
-    return isValid;
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  getEnumKeys(myEnum: any) {
+    // eslint-disable-next-line radix
+    return Object.keys(myEnum).filter((x) => !(parseInt(x, 0) >= 0));
   },
 
-  /**
-   * Validate if any of the values in a multilingual field exceed the specified max length
-   * @param field
-   * @param maxLength
-   */
-  validateMultilingualFieldLength(field: IMultilingual, maxLength: number) {
-    let isValid = true;
-
-    if (!field || !field.translation || !Object.keys(field.translation).length) {
-      return true;
-    }
-
-    Object.keys(field.translation).forEach((key) => {
-      if (field.translation[key].length > maxLength) {
-        isValid = false;
-      }
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  enumToTranslatedCollection(myEnum: any, translationPath: string) {
+    const enumKeys = this.getEnumKeys(myEnum);
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    const data: any[] = [];
+    _forEach(enumKeys, (val) => {
+      data.push({ value: val, text: i18n.t(`${translationPath}.${val}`) });
     });
-
-    return isValid;
-  },
-  /**
-   * Initialize multilingual attributes to empty string
-   */
-  initMultilingualAttributes(): IMultilingual {
-    const multiLanguageObject: Record<string, string> = {};
-
-    SUPPORTED_LANGUAGES_INFO.forEach((lang) => {
-      multiLanguageObject[lang.key] = '';
-    });
-    return { translation: multiLanguageObject };
+    return data.sort((a, b) => a.text.localeCompare(b.text));
   },
 
-  /**
-   * Copy over non empty translations to empty translations
-   * @param field A multilingual field
-   */
-  getFilledMultilingualField(field: IMultilingual): IMultilingual {
-    let firstNonEmptyValue = '';
-    const translations = field.translation;
-    const newTranslations: Record<string, string> = {};
-
-    if (!field) throw new Error('You need to specify a field');
-
-    // Get the first filled value from the field
-    SUPPORTED_LANGUAGES_INFO.forEach((lang) => {
-      if (!firstNonEmptyValue && translations[lang.key]) {
-        firstNonEmptyValue = translations[lang.key];
-      }
+  // Return moment object of a birthdate, with proper index for the month
+  getBirthDateMomentObject(birthdate: IBirthDate) {
+    const { year, month, day } = birthdate;
+    return moment({
+      year,
+      month: typeof month === 'number' ? month - 1 : 0,
+      day,
     });
-
-    // Populate all the empty keys with the value we stored earlier
-    SUPPORTED_LANGUAGES_INFO.forEach((lang) => {
-      if (!translations[lang.key]) {
-        newTranslations[lang.key] = firstNonEmptyValue;
-      } else {
-        newTranslations[lang.key] = translations[lang.key];
-      }
-    });
-
-    return {
-      translation: newTranslations,
-    };
   },
 };

@@ -33,13 +33,6 @@ describe('MainLayout.vue', () => {
     describe('Lifecycle hooks', () => {
       test('created', async () => {
         expect(wrapper.vm.$storage.registration.actions.fetchEvent).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.registration.actions.fetchEvent).toHaveBeenCalledWith({
-          filter: {
-            RegistrationLink: {
-              Translation: expect.anything(),
-            },
-          },
-        });
       });
     });
   });

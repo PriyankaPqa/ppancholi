@@ -30,14 +30,17 @@ export interface IOtherProvince {
   name: IMultilingual;
 }
 
+export interface IResponseDetails {
+  assistanceNumber: string;
+}
+
 /**
  * Interface that maps to the response structure from the API
  */
 export interface IEventData {
   id: uuid;
-  assistanceNumber: string;
   name: IMultilingual;
-  description: IMultilingual;
+  responseDetails: IResponseDetails;
   registrationLink: IMultilingual;
 }
 
