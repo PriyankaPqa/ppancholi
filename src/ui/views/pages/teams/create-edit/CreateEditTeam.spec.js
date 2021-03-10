@@ -130,9 +130,11 @@ describe('CreateEditTeam.vue', () => {
           expect(wrapper.vm.setPrimaryContact).toHaveBeenCalledWith('bar');
         });
 
-        it('should call resetPrimaryContact on keydown', async () => {
+        it('should call resetPrimaryContact on keydown.delete', async () => {
           jest.spyOn(wrapper.vm, 'resetPrimaryContact').mockImplementation(() => {});
-          element.vm.$emit('keydown');
+          element.vm.$emit('keydown', new KeyboardEvent('keydown', {
+            keyCode: 8, // delete key
+          }));
           expect(wrapper.vm.resetPrimaryContact).toHaveBeenCalledTimes(1);
         });
       });

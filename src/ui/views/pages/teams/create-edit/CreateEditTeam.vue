@@ -61,7 +61,7 @@
                       no-filter
                       :placeholder="$t('common.inputs.start_typing_to_search')"
                       @change="setPrimaryContact($event)"
-                      @keydown="resetPrimaryContact()" />
+                      @keydown.delete="resetPrimaryContact()" />
                   </v-col>
                 </v-row>
 
