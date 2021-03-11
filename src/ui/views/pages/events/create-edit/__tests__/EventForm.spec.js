@@ -12,6 +12,7 @@ import {
 } from '@/types';
 import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
+import { localStorageKeys } from '@/constants/localStorage';
 import Component from '../EventForm.vue';
 
 const event = new Event(mockEventsData()[0]);
@@ -50,6 +51,27 @@ describe('EventForm.vue', () => {
       expect(wrapper.vm.eventType).toEqual(defaultEventType);
 
       expect(wrapper.vm.localEvent.responseDetails.eventType.optionItemId).toBe(defaultEventType.id);
+    });
+
+    it('sets the right value from store into prefixRegistrationLink', async () => {
+      global.localStorage = {
+        store: {},
+        getItem: (key) => this.store[key],
+        // eslint-disable-next-line no-return-assign
+        setItem: (key, value) => this.store[key] = value,
+      };
+      global.localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, 'https://foo.test/');
+
+      wrapper = shallowMount(Component, {
+        localVue: createLocalVue(),
+        propsData: {
+          event,
+          isEditMode: false,
+          isNameUnique: true,
+        },
+      });
+
+      expect(wrapper.vm.prefixRegistrationLink).toEqual('https://foo.test/');
     });
   });
 

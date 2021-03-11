@@ -280,6 +280,7 @@ import { TOOLTIP_DELAY } from '@/ui/constants';
 import _cloneDeep from 'lodash/cloneDeep';
 import { IOptionItem } from '@/entities/optionItem';
 import utils from '@/entities/utils';
+import { localStorageKeys } from '@/constants/localStorage';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -339,14 +340,12 @@ export default Vue.extend({
       }
     }
 
-    console.log('Process env COMPONENT', process.env);
-
     return {
       localEvent,
       assistanceNumber,
       eventType: null,
       languageMode: 'en',
-      prefixRegistrationLink: process.env.VUE_APP_EVENT_LINK_PREFIX,
+      prefixRegistrationLink: localStorage.getItem(localStorageKeys.prefixRegistrationLink.name),
       otherProvinces: [],
       regions: [],
       TOOLTIP_DELAY,

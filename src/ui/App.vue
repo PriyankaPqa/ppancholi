@@ -7,6 +7,7 @@
 
 <script>
 import { RcRouterViewTransition } from '@crctech/component-library';
+import { localStorageKeys } from '@/constants/localStorage';
 
 export default {
   name: 'App',
@@ -69,7 +70,6 @@ export default {
     };
   },
   async created() {
-    console.log('Process env APP', process.env);
     await this.fetchAllUsersInformation();
 
     if (process.env.NODE_ENV === 'development') {
@@ -78,6 +78,9 @@ export default {
     if (process.env.NODE_ENV === 'production') {
       this.cspContent = this.cspContentProd;
     }
+
+    // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
+    localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, process.env.VUE_APP_EVENT_LINK_PREFIX);
   },
   methods: {
     async fetchAllUsersInformation() {
