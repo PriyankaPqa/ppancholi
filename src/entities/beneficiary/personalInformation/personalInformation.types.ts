@@ -34,7 +34,6 @@ export interface IOptionItemData {
   isOther: boolean;
   isDefault: boolean;
   status?: number;
-  itemStatus?: number;
 }
 
 export interface IIndigenousCommunityData {

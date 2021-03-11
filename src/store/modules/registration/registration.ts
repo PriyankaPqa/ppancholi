@@ -107,7 +107,7 @@ const actions = {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getGenders();
 
     if (data?.length > 0) {
-      context.state.genders = data.filter((entry) => entry.itemStatus === EOptionItemStatus.Active);
+      context.state.genders = data.filter((entry) => entry.status === EOptionItemStatus.Active);
     }
 
     return data;
@@ -117,7 +117,7 @@ const actions = {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getPreferredLanguages();
 
     if (data?.length > 0) {
-      context.state.preferredLanguages = data.filter((entry) => entry.itemStatus === EOptionItemStatus.Active);
+      context.state.preferredLanguages = data.filter((entry) => entry.status === EOptionItemStatus.Active);
     }
 
     return data;
@@ -127,7 +127,7 @@ const actions = {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getPrimarySpokenLanguages();
 
     if (data?.length > 0) {
-      context.state.primarySpokenLanguages = data.filter((entry) => entry.itemStatus === EOptionItemStatus.Active);
+      context.state.primarySpokenLanguages = data.filter((entry) => entry.status === EOptionItemStatus.Active);
     }
 
     return data;
@@ -137,7 +137,7 @@ const actions = {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getIndigenousTypes();
 
     if (data?.length > 0) {
-      context.state.indigenousTypes = data.filter((entry) => entry.itemStatus === EOptionItemStatus.Active);
+      context.state.indigenousTypes = data.filter((entry) => entry.status === EOptionItemStatus.Active);
     }
 
     return data;
