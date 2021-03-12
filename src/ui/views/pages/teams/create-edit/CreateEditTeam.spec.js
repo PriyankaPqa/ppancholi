@@ -15,7 +15,6 @@ const localVue = createLocalVue();
 
 describe('CreateEditTeam.vue', () => {
   let wrapper;
-  // let actions;
 
   const actions = {
     searchEvents: jest.fn(),
@@ -167,10 +166,10 @@ describe('CreateEditTeam.vue', () => {
           expect(element.props('rules')).toEqual(wrapper.vm.rules.event);
         });
 
-        it('calls setEventIds when it is changed', () => {
-          jest.spyOn(wrapper.vm, 'setEventIds').mockImplementation(() => {});
+        it('calls setEvents when it is changed', () => {
+          jest.spyOn(wrapper.vm, 'setEvents').mockImplementation(() => {});
           element.vm.$emit('change', 'foo');
-          expect(wrapper.vm.setEventIds).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.setEvents).toHaveBeenCalledTimes(1);
         });
 
         it('calls handleRemoveEvent when an element is deleted', () => {
@@ -378,7 +377,7 @@ describe('CreateEditTeam.vue', () => {
           },
         });
         // eslint-disable-next-line prefer-destructuring
-        wrapper.vm.eventsIdsAfterRemoval = mockEventsData()[1];
+        wrapper.vm.eventsAfterRemoval = mockEventsData()[1];
         expect(wrapper.vm.deleteEventConfirmationMessage).toEqual('team.event.confirmDeleteDialog.message');
       });
     });
@@ -475,22 +474,6 @@ describe('CreateEditTeam.vue', () => {
         wrapper.vm.isNameUnique = false;
         await wrapper.vm.resetAsUnique();
         expect(wrapper.vm.isNameUnique).toBeTruthy();
-      });
-    });
-
-    describe('teamEventsIds', () => {
-      it('returns the id of the event when team type is adhoc', async () => {
-        wrapper.vm.team.teamType = ETeamType.AdHoc;
-        await wrapper.vm.$nextTick();
-        wrapper.vm.team.eventIds = ['foo'];
-        expect(wrapper.vm.teamEventsIds).toEqual('foo');
-      });
-
-      it('returns the array of events ids when team type is standard', async () => {
-        wrapper.vm.team.teamType = ETeamType.Standard;
-        await wrapper.vm.$nextTick();
-        wrapper.vm.team.eventIds = ['foo', 'bar'];
-        expect(wrapper.vm.teamEventsIds).toEqual(['foo', 'bar']);
       });
     });
   });
@@ -592,7 +575,7 @@ describe('CreateEditTeam.vue', () => {
     describe('handleRemoveEvent', () => {
       it('sets the eventsIdsAfterRemoval to its argument', () => {
         wrapper.vm.handleRemoveEvent(mockEventsData());
-        expect(wrapper.vm.eventsIdsAfterRemoval).toEqual(mockEventsData());
+        expect(wrapper.vm.eventsAfterRemoval).toEqual(mockEventsData());
       });
       it('sets showEventDeleteConfirmationDialog  to true', () => {
         wrapper.vm.handleRemoveEvent(mockEventsData());
@@ -601,18 +584,18 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('handleRemoveEventConfirmation', () => {
-      it('calls setEventIds with the eventsIdsAfterRemoval if argument is true', () => {
-        jest.spyOn(wrapper.vm, 'setEventIds').mockImplementation(() => {});
-        wrapper.vm.eventsIdsAfterRemoval = mockEventsData();
+      it('sets team events with the eventsAfterRemoval if argument is true', async () => {
+        wrapper.vm.eventsAfterRemoval = mockEventsData();
         wrapper.vm.handleRemoveEventConfirmation(true);
-        expect(wrapper.vm.setEventIds).toHaveBeenCalledWith(mockEventsData());
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.team.events).toEqual(mockEventsData());
       });
 
-      it('calls setEventIds with a clone of  team.eventIds if argument is false', () => {
-        jest.spyOn(wrapper.vm, 'setEventIds').mockImplementation(() => {});
-        wrapper.vm.team.eventIds = [mockEventsData()[0]];
+      it('set team events with a clone of team.events if argument is false', async () => {
+        wrapper.vm.team.events = [mockEventsData()[0]];
         wrapper.vm.handleRemoveEventConfirmation(false);
-        expect(wrapper.vm.setEventIds).toHaveBeenCalledWith([mockEventsData()[0]]);
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.team.events).toEqual([mockEventsData()[0]]);
       });
 
       it('sets showEventDeleteConfirmationDialog to false', () => {
@@ -774,36 +757,43 @@ describe('CreateEditTeam.vue', () => {
       });
     });
 
-    describe('setEventIds', () => {
-      it('should set the team eventIds to the argument passed to the method, if the argument is an array', async () => {
-        await wrapper.vm.setEventIds(['foo', 'bar']);
-        expect(wrapper.vm.team.eventIds).toEqual(['foo', 'bar']);
+    describe('setEvents', () => {
+      it('should set the team events to the argument passed to the method, if the argument is an array', async () => {
+        await wrapper.vm.setEvents([{ id: 'foo' }, { id: 'bar' }]);
+        expect(wrapper.vm.team.events).toEqual([{ id: 'foo' }, { id: 'bar' }]);
       });
 
-      it('should set the team eventIds to an array containing the argument passed to the method, if the argument is a string', async () => {
-        await wrapper.vm.setEventIds('foo');
-        expect(wrapper.vm.team.eventIds).toEqual(['foo']);
+      it('should set the team events to an array containing the argument passed to the method, otherwise', async () => {
+        await wrapper.vm.setEvents({ id: 'foo' });
+        expect(wrapper.vm.team.events).toEqual([{ id: 'foo' }]);
       });
     });
 
     describe('setPrimaryContact', () => {
-      it('assigns the primary user id to currentPrimaryContact ', async () => {
+      it('assigns the primary user to currentPrimaryContact ', async () => {
         await wrapper.vm.setPrimaryContact(mockAppUsers[0]);
         expect(wrapper.vm.currentPrimaryContact).toEqual(mockAppUsers[0]);
-      });
-
-      it('calls the method setPrimaryContact of team with the id of the argument passed to  setPrimaryContact', async () => {
-        jest.spyOn(wrapper.vm.team, 'setPrimaryContact');
-        await wrapper.vm.setPrimaryContact(mockAppUsers[0]);
-        expect(wrapper.vm.team.setPrimaryContact).toHaveBeenCalledWith(mockAppUsers[0].id);
       });
     });
 
     describe('submit', () => {
       it('calls the validation method', async () => {
+        wrapper.vm.currentPrimaryContact = {
+          id: 'id',
+        };
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(wrapper.vm.$refs.form.validate).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls the method setPrimaryContact of team with the id of the currentPrimaryContact', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.currentPrimaryContact = {
+          id: 'id',
+        };
+        jest.spyOn(wrapper.vm.team, 'setPrimaryContact');
+        await wrapper.vm.submit();
+        expect(wrapper.vm.team.setPrimaryContact).toHaveBeenCalledWith('id');
       });
 
       describe('in create mode', () => {
@@ -826,6 +816,13 @@ describe('CreateEditTeam.vue', () => {
               isEditMode() {
                 return false;
               },
+            },
+            data() {
+              return {
+                currentPrimaryContact: {
+                  id: 'id',
+                },
+              };
             },
           });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -865,6 +862,13 @@ describe('CreateEditTeam.vue', () => {
               isEditMode() {
                 return true;
               },
+            },
+            data() {
+              return {
+                currentPrimaryContact: {
+                  id: 'id',
+                },
+              };
             },
           });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -941,6 +945,12 @@ describe('CreateEditTeam.vue', () => {
       it('calls editTeam action', async () => {
         await wrapper.vm.submitEditTeam();
         expect(actions.editTeam).toHaveBeenCalledTimes(1);
+      });
+
+      it('loads the team to get information for members (because primary contact dropdown is missing info', async () => {
+        jest.spyOn(wrapper.vm, 'loadTeam').mockImplementation(() => {});
+        await wrapper.vm.submitEditTeam();
+        expect(wrapper.vm.loadTeam).toHaveBeenCalledTimes(1);
       });
 
       it('opens a toast with a success message', async () => {

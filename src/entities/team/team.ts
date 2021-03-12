@@ -1,6 +1,6 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import {
-  ETeamStatus, ETeamType, ITeam, ITeamData, ITeamMember,
+  ETeamStatus, ETeamType, ITeam, ITeamData, ITeamMember, ITeamEvent,
 } from './team.types';
 
 export class Team implements ITeam {
@@ -12,7 +12,7 @@ export class Team implements ITeam {
 
   status: ETeamStatus;
 
-  eventIds: Array<uuid>;
+  events: Array<ITeamEvent>;
 
   teamMembers: Array<ITeamMember>;
 
@@ -23,7 +23,7 @@ export class Team implements ITeam {
       this.teamType = data.teamType;
       this.status = data.status;
       this.teamMembers = data.teamMembers;
-      this.eventIds = data.eventIds;
+      this.events = data.events;
     } else {
       this.reset();
     }
@@ -68,7 +68,7 @@ export class Team implements ITeam {
     this.teamType = null;
     this.status = ETeamStatus.Active;
     this.teamMembers = [];
-    this.eventIds = [];
+    this.events = [];
   }
 
   private validateAttributes(errors: Array<string>) {
@@ -90,7 +90,7 @@ export class Team implements ITeam {
     if (!this.teamMembers || !this.teamMembers.length || !this.teamMembers.find((m) => m.isPrimaryContact)) {
       errors.push('A primary contact team member is required');
     }
-    if (this.teamType === ETeamType.AdHoc && this.eventIds.length !== 1) {
+    if (this.teamType === ETeamType.AdHoc && this.events.length !== 1) {
       errors.push('An ad-hoc team should have one eventId');
     }
   }

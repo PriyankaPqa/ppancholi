@@ -82,14 +82,5 @@ export default {
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
     localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, process.env.VUE_APP_EVENT_LINK_PREFIX);
   },
-  methods: {
-    async fetchAllUsersInformation() {
-      await Promise.all([
-        this.$storage.appUser.actions.fetchAllUsers(),
-        this.$storage.appUser.actions.fetchAppUsers(),
-        this.$storage.appUser.actions.fetchRoles(),
-      ]);
-    },
-  },
 };
 </script>

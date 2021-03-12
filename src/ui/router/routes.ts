@@ -2,6 +2,7 @@ import { RouteConfig } from 'vue-router';
 /* eslint-disable max-len */
 
 import { Trans } from '@/ui/plugins/translation';
+import store from '@/store/store';
 import Routes from '../../constants/routes';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
@@ -60,7 +61,14 @@ export const routes: Array<RouteConfig> = [
     component: {
       render(c) { return c('router-view'); },
     },
-    beforeEnter: Trans.routeMiddleware,
+    beforeEnter: async (to, from, next) => {
+      await Promise.all([
+        store.dispatch('appUser/fetchAllUsers'),
+        store.dispatch('appUser/fetchAppUsers'),
+        store.dispatch('appUser/fetchRoles'),
+      ]);
+      Trans.routeMiddleware(to, from, next);
+    },
     children: [
       {
         path: '',

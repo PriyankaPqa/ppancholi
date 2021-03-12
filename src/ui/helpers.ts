@@ -104,4 +104,14 @@ export default {
 
     return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   },
+
+  // eslint-disable-next-line
+  filterCollectionByValue(collection: any, string: string) {
+    return collection.filter((o: Record<string, unknown>) => Object.keys(o).some((k) => {
+      if (typeof o[k] === 'string') {
+        return (o[k] as string).toLowerCase().includes(string.toLowerCase());
+      }
+      return false;
+    }));
+  },
 };

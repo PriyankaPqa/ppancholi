@@ -1,5 +1,5 @@
 import {
-  ITeam, ITeamData, IEditTeamRequest, ITeamSearchData,
+  ITeam, ITeamData, IEditTeamRequest, ITeamSearchData, ICreateTeamRequest,
 } from '@/entities/team';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -12,7 +12,8 @@ export class TeamsService implements ITeamsService {
     return this.http.get(`/team/teams/${id}`);
   }
 
-  async createTeam(payload: ITeam): Promise<ITeamData> {
+  async createTeam(team: ITeam): Promise<ITeamData> {
+    const payload = this.teamToCreateTeamRequestPayload(team);
     return this.http.post('/team/teams', payload, { globalHandler: false });
   }
 
@@ -26,13 +27,20 @@ export class TeamsService implements ITeamsService {
   }
 
   private teamToEditTeamRequestPayload(team: ITeam) : IEditTeamRequest {
-    const payload : IEditTeamRequest = {
+    return {
       name: team.name,
-      eventIds: team.eventIds,
+      eventIds: team.events.map((e) => e.id),
       primaryContact: team.teamMembers.find((m) => m.isPrimaryContact),
       status: team.status,
     };
+  }
 
-    return payload;
+  private teamToCreateTeamRequestPayload(team: ITeam) : ICreateTeamRequest {
+    return {
+      name: team.name,
+      eventIds: team.events.map((e) => e.id),
+      teamMembers: team.teamMembers,
+      teamType: team.teamType,
+    };
   }
 }

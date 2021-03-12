@@ -1155,6 +1155,7 @@
     "teams.case_file.inactive": "teams.case_file.inactive",
     "teams.case_file.open": "teams.case_file.open",
     "teams.count_file.close": "teams.count_file.close",
+    "teams.count_file.inactive": "",
     "teams.count_file.open": "teams.count_file.open",
     "teams.count_file.total": "teams.count_file.total",
     "teams.create_new_team": "teams.create_new_team",

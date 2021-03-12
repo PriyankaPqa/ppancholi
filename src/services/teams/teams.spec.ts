@@ -16,19 +16,27 @@ describe('>>> Teams Service', () => {
   test('createTeam is linked to the correct URL and params', async () => {
     const payload = new Team(mockTeamsData()[0]);
     await service.createTeam(payload);
-    expect(http.post).toHaveBeenCalledWith('/team/teams', payload, { globalHandler: false });
+    const expectedPayload = {
+      name: payload.name,
+      eventIds: payload.events.map((e) => e.id),
+      teamMembers: payload.teamMembers,
+      teamType: payload.teamType,
+    };
+    expect(http.post).toHaveBeenCalledWith('/team/teams', expectedPayload, { globalHandler: false });
   });
 
   test('editTeam calls the correct URL and payload', async () => {
     const payload = new Team(mockTeamsData()[0]);
     await service.editTeam(payload);
 
-    expect(http.patch).toHaveBeenCalledWith(`/team/teams/${mockTeamsData()[0].id}`, {
+    const expectedPayload = {
       name: payload.name,
-      eventIds: payload.eventIds,
+      eventIds: payload.events.map((e) => e.id),
       primaryContact: payload.teamMembers.find((m) => m.isPrimaryContact),
       status: payload.status,
-    }, { globalHandler: false });
+    };
+
+    expect(http.patch).toHaveBeenCalledWith(`/team/teams/${mockTeamsData()[0].id}`, expectedPayload, { globalHandler: false });
   });
 
   test('searchTeams is linked to the correct URL and params', async () => {

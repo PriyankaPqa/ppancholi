@@ -18,9 +18,22 @@ export enum ETeamStatus {
  * Interfaces
  */
 
+export interface ITeamEvent {
+  id: uuid;
+  name: IMultilingual;
+}
+
 export interface ITeamMember {
   id: uuid,
   isPrimaryContact: boolean,
+  displayName?: string;
+  emailAddress?: string;
+  phoneNumber?: string;
+  role?: IMultilingual;
+  teamCount?: number;
+  caseFilesCount?: number;
+  openCaseFilesCount?: number;
+  inactiveCaseFilesCount?: number;
 }
 
 /**
@@ -32,7 +45,7 @@ export interface ITeamData {
    status: ETeamStatus;
    teamType: ETeamType;
    teamMembers: Array<ITeamMember>;
-   eventIds: Array<uuid>;
+   events?: Array<ITeamEvent>,
 }
 
 export interface ITeamSearchData {
@@ -45,23 +58,9 @@ export interface ITeamSearchData {
   eventCount: number;
   primaryContactDisplayName: string;
   teamMemberCount: number;
-  events: Array<{
-    id: uuid;
-    name: IMultilingual,
-  }>,
+  events: Array<ITeamEvent>,
   teamStatus: ETeamStatus;
-  teamMembers: Array<{
-    id: uuid;
-    displayName: string;
-    isPrimaryContact: boolean;
-    emailAddress: string;
-    phoneNumber: string;
-    role: IMultilingual;
-    teamCount: number;
-    caseFilesCount: number;
-    openCaseFilesCount: number;
-    inactiveCaseFilesCount: number;
-  }>,
+  teamMembers: Array<ITeamMember>,
 }
 
 /**
@@ -84,3 +83,10 @@ export interface IEditTeamRequest {
   primaryContact: ITeamMember;
   status: ETeamStatus;
  }
+
+export interface ICreateTeamRequest {
+  name: string;
+  eventIds: Array<uuid>;
+  teamMembers: ITeamMember[];
+  teamType: ETeamType
+}

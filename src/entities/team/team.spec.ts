@@ -38,12 +38,9 @@ describe('>>> Team', () => {
       expect(team.status).toEqual(ETeamStatus.Active);
     });
 
-    it('should instantiate eventIds', () => {
+    it('should instantiate events', () => {
       const team = new Team(mockTeamData);
-      expect(team.eventIds).toEqual([
-        'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
-        'a52d45e8-1973-4d54-91f4-8ec0864f8ff9',
-      ]);
+      expect(team.events).toEqual(mockTeamData.events);
     });
   });
 
@@ -158,7 +155,26 @@ describe('>>> Team', () => {
 
       test('Ad-Hoc team can only have one event attached', () => {
         const team = new Team(mockTeamsData()[1]);
-        team.eventIds = ['0000', '0001'];
+        team.events = [
+          {
+            id: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
+            name: {
+              translation: {
+                en: 'Event 1',
+                fr: 'Event 1 - FR',
+              },
+            },
+          },
+          {
+            id: 'a52d45e8-1973-4d54-91f4-8ec0864f8ff9',
+            name: {
+              translation: {
+                en: 'Event 2',
+                fr: 'Event 2 - FR',
+              },
+            },
+          },
+        ];
         expect(team.validate()).toContain('An ad-hoc team should have one eventId');
       });
     });

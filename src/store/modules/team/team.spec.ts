@@ -19,14 +19,13 @@ describe('>>> Team Module', () => {
 
   describe('>> Actions', () => {
     describe('getTeam', () => {
-      it('calls the service getTeam with the right params', async () => {
+      it('calls the service searchTeams with the right params', async () => {
         const store = mockStore();
         const { id } = mockTeamsData()[0];
-        expect(store.$services.teams.getTeam).toHaveBeenCalledTimes(0);
 
         await store.dispatch('team/getTeam', id);
 
-        expect(store.$services.teams.getTeam).toHaveBeenCalledWith(id);
+        expect(store.$services.teams.searchTeams).toHaveBeenCalledWith({ filter: { TeamId: id } });
       });
     });
 

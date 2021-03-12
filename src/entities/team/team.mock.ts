@@ -81,9 +81,25 @@ export const mockTeamsData = (): ITeamData[] => [
       id: 'guid-member-2',
       isPrimaryContact: false,
     }],
-    eventIds: [
-      'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
-      'a52d45e8-1973-4d54-91f4-8ec0864f8ff9',
+    events: [
+      {
+        id: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
+        name: {
+          translation: {
+            en: 'Event 1',
+            fr: 'Event 1 - FR',
+          },
+        },
+      },
+      {
+        id: 'a52d45e8-1973-4d54-91f4-8ec0864f8ff9',
+        name: {
+          translation: {
+            en: 'Event 2',
+            fr: 'Event 2 - FR',
+          },
+        },
+      },
     ],
   },
   {
@@ -95,8 +111,16 @@ export const mockTeamsData = (): ITeamData[] => [
       id: 'guid-member-1',
       isPrimaryContact: true,
     }],
-    eventIds: [
-      'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
+    events: [
+      {
+        id: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',
+        name: {
+          translation: {
+            en: 'Event 1',
+            fr: 'Event 1 - FR',
+          },
+        },
+      },
     ],
   },
 ];

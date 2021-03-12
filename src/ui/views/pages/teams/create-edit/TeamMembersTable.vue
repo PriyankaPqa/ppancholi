@@ -2,9 +2,24 @@
   <div>
     <div
       :class="['table_top_header', isEditMode? 'border-radius-top no-bottom-border' : 'border-radius-all']">
-      <v-btn color="primary" data-test="add-new-member" :disabled="!isEditMode" @click="openDialog()">
-        {{ $t('teams.add_new_members') }}
-      </v-btn>
+      <div class="toolbar">
+        <v-btn color="primary" data-test="add-new-member" :disabled="!isEditMode" @click="openDialog()">
+          {{ $t('teams.add_new_members') }}
+        </v-btn>
+        <div>
+          <v-text-field
+            v-if="isEditMode"
+            v-model="search"
+            data-test="search"
+            :placeholder="$t('common.search')"
+            clearable
+            prepend-inner-icon="mdi-magnify"
+            background-color="grey lighten-4"
+            outlined
+            hide-details
+            dense />
+        </div>
+      </div>
     </div>
     <v-data-table
       v-if="isEditMode"
@@ -12,16 +27,31 @@
       data-test="teamMembers__table"
       hide-default-footer
       :headers="headers"
-      :items="teamMembers" />
+      :items="computedTeamMembers"
+      @update:sort-by="sortBy = $event"
+      @update:sort-desc="sortDesc = $event">
+      <template #item.displayName="{ item }">
+        <v-icon v-if="item.isPrimaryContact" data-test="primary_icon" size="18" color="red">
+          mdi-account
+        </v-icon>
+        <span data-test="member_name">
+          {{ item.displayName }}
+        </span>
+      </template>
+    </v-data-table>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
+import _orderBy from 'lodash/orderBy';
+import { ITeamMember } from '@/entities/team';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'TeamMembersTable',
+
   props: {
     teamMembers: {
       type: Array,
@@ -32,6 +62,15 @@ export default Vue.extend({
       required: true,
     },
   },
+
+  data() {
+    return {
+      sortDesc: false,
+      sortBy: 'displayName',
+      search: '',
+    };
+  },
+
   computed: {
     headers(): Array<DataTableHeader> {
       return [
@@ -39,31 +78,65 @@ export default Vue.extend({
           text: this.$t('teams.member_name') as string,
           class: 'team_member_header',
           filterable: false,
-          sortable: false,
-          value: '',
+          sortable: true,
+          value: 'displayName',
         },
         {
           text: this.$t('teams.member_email') as string,
           class: 'team_member_header',
           filterable: false,
           sortable: false,
-          value: '',
+          value: 'emailAddress',
         },
         {
           text: this.$t('teams.phone_number') as string,
           class: 'team_member_header',
           filterable: false,
           sortable: false,
-          value: '',
+          value: 'phoneNumber',
         },
         {
           text: this.$t('teams.member_role') as string,
           class: 'team_member_header',
           filterable: false,
           sortable: false,
-          value: '',
+          value: 'role',
+        },
+        {
+          text: this.$t('teams.teams') as string,
+          class: 'team_member_header',
+          filterable: false,
+          sortable: false,
+          value: 'teamCount',
+        },
+        {
+          text: this.$t('teams.count_file.total') as string,
+          class: 'team_member_header',
+          filterable: false,
+          sortable: true,
+          value: 'caseFilesCount',
+        },
+        {
+          text: this.$t('teams.count_file.open') as string,
+          class: 'team_member_header',
+          filterable: false,
+          sortable: true,
+          value: 'openCaseFilesCount',
+        },
+        {
+          text: this.$t('teams.count_file.inactive') as string,
+          class: 'team_member_header',
+          filterable: false,
+          sortable: true,
+          value: 'inactiveCaseFilesCount',
         },
       ];
+    },
+
+    computedTeamMembers(): Array<ITeamMember> {
+      const direction = this.sortDesc ? 'desc' : 'asc';
+      const filtered = helpers.filterCollectionByValue(this.teamMembers, this.search);
+      return _orderBy(filtered, this.sortBy, direction) as ITeamMember[];
     },
   },
 
@@ -77,6 +150,16 @@ export default Vue.extend({
 </script>
 
 <style lang="scss">
+
+.toolbar {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+
+  & div:nth-child(2) {
+    max-width: 500px;
+  }
+}
 
 .table_top_header {
   border: solid 1px var(--v-grey-lighten2);

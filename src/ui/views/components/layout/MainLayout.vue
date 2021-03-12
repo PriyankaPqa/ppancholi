@@ -30,7 +30,6 @@ export default Vue.extend({
     GeneralHelpMenu,
     RcRouterViewTransition,
   },
-
   data() {
     return {
       showLeftMenu: true,

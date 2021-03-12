@@ -5,7 +5,7 @@ import {
 import { IRootState } from '@/store/store.types';
 
 import {
-  ITeam, ITeamSearchData, Team,
+  ITeam, ITeamData, ITeamSearchData, Team,
 } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import {
@@ -20,13 +20,23 @@ const getDefaultState = (): IState => ({
 
 const moduleState: IState = getDefaultState();
 
+const teamSearchDataToTeamData = (teamSearchData: ITeamSearchData): ITeamData => ({
+  id: teamSearchData.teamId,
+  name: teamSearchData.teamName,
+  teamType: teamSearchData.teamType,
+  status: teamSearchData.teamStatus,
+  teamMembers: teamSearchData.teamMembers,
+  events: teamSearchData.events,
+});
+
 const actions = {
 
   async getTeam(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ITeam> {
     context.state.getLoading = true;
     try {
-      const res = await this.$services.teams.getTeam(id);
-      return new Team(res);
+      const res = await this.$services.teams.searchTeams({ filter: { TeamId: id } });
+      const team = res.value[0];
+      return new Team(teamSearchDataToTeamData(team));
     } finally {
       context.state.getLoading = false;
     }
