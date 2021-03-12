@@ -6,6 +6,9 @@ const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);
 
 describe('>>> Registration Storage', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   describe('>> Getters', () => {
     it('should proxy event', () => {
       expect(storage.getters.event()).toEqual(store.getters['registration/event']);
@@ -47,12 +50,12 @@ describe('>>> Registration Storage', () => {
       expect(storage.getters.primarySpokenLanguages()).toEqual(store.getters['registration/primarySpokenLanguages']);
     });
 
-    it('should proxy current indigenousTypes', () => {
-      expect(storage.getters.indigenousTypes()).toEqual(store.getters['registration/indigenousTypes']);
+    it('should proxy current indigenousTypesItems', () => {
+      expect(storage.getters.indigenousTypesItems()).toEqual(store.getters['registration/indigenousTypesItems']);
     });
 
-    it('should proxy current indigenousCommunities', () => {
-      expect(storage.getters.indigenousCommunities()).toEqual(store.getters['registration/indigenousCommunities']);
+    it('should proxy current indigenousCommunitiesItems', () => {
+      expect(storage.getters.indigenousCommunitiesItems(1)).toEqual(store.getters['registration/indigenousCommunitiesItems'](1));
     });
   });
 
@@ -92,7 +95,7 @@ describe('>>> Registration Storage', () => {
       expect(store.dispatch).toBeCalledWith('registration/fetchEvent', { lang, registrationLink });
     });
 
-    it('should proxy fetGenders', () => {
+    it('should proxy fetchGenders', () => {
       storage.actions.fetchGenders();
       expect(store.dispatch).toBeCalledWith('registration/fetchGenders');
     });
@@ -107,14 +110,10 @@ describe('>>> Registration Storage', () => {
       expect(store.dispatch).toBeCalledWith('registration/fetchPrimarySpokenLanguages');
     });
 
-    it('should proxy fetchIndigenousTypes', () => {
-      storage.actions.fetchIndigenousTypes();
-      expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousTypes');
-    });
-
-    it('should proxy fetchIndigenousCommunities', () => {
-      storage.actions.fetchIndigenousCommunities();
-      expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousCommunities');
+    it('should proxy fetchIndigenousIdentitiesByProvince', () => {
+      const provinceCode = 13;
+      storage.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
+      expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
     });
   });
 });

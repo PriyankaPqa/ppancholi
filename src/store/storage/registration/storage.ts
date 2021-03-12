@@ -1,15 +1,12 @@
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import { IEvent } from '@/entities/event';
 import { IStore } from '@/store/store.types';
-import {
-  IOptionItemData, IIndigenousCommunityData,
-} from '@/entities/beneficiary';
+import { IOptionItemData, IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
+import { TranslateResult } from 'vue-i18n';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
-
   getters: {
-
     event(): IEvent {
       return store.getters['registration/event'];
     },
@@ -50,17 +47,16 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.getters['registration/primarySpokenLanguages'];
     },
 
-    indigenousTypes(): IOptionItemData[] {
-      return store.getters['registration/indigenousTypes'];
+    indigenousTypesItems(): Record<string, TranslateResult>[] {
+      return store.getters['registration/indigenousTypesItems'];
     },
 
-    indigenousCommunities(): IIndigenousCommunityData[] {
-      return store.getters['registration/indigenousCommunities'];
+    indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[] {
+      return store.getters['registration/indigenousCommunitiesItems'](indigenousType);
     },
   },
 
   mutations: {
-
     toggleLeftMenu(isLeftMenuOpen: boolean) {
       store.commit('registration/toggleLeftMenu', isLeftMenuOpen);
     },
@@ -79,7 +75,6 @@ export const makeStorage = (store: IStore): IStorage => ({
   },
 
   actions: {
-
     fetchEvent(lang: string, registrationLink: string): Promise<IEvent> {
       return store.dispatch('registration/fetchEvent', { lang, registrationLink });
     },
@@ -96,12 +91,8 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.dispatch('registration/fetchPrimarySpokenLanguages');
     },
 
-    fetchIndigenousTypes(): Promise<IOptionItemData[]> {
-      return store.dispatch('registration/fetchIndigenousTypes');
-    },
-
-    fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]> {
-      return store.dispatch('registration/fetchIndigenousCommunities');
+    fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]> {
+      return store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
     },
   },
 });

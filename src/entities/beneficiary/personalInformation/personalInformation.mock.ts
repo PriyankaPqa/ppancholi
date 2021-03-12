@@ -1,9 +1,6 @@
-import { ECanadaProvinces } from '@/types';
-import {
-  IPersonalInformation,
-  IOptionItemData,
-  IIndigenousCommunityData,
-} from './personalInformation.types';
+import { ECanadaProvinces, IAzureSearchResult } from '@/types';
+import { TranslateResult } from 'vue-i18n';
+import { IPersonalInformation, IOptionItemData, IIndigenousIdentityData } from './personalInformation.types';
 
 export const mockPersonalInformation = (): IPersonalInformation => ({
   birthDate: {
@@ -65,7 +62,7 @@ export const mockPersonalInformation = (): IPersonalInformation => ({
   email: 'rok@sdf.ca',
   indigenousProvince: ECanadaProvinces.NL,
   indigenousType: null,
-  indigenousCommunity: null,
+  indigenousCommunityId: null,
   indigenousCommunityOther: '',
 
   validate: null,
@@ -120,7 +117,6 @@ export const mockPreferredLanguages = (): IOptionItemData[] => [
     orderRank: 2,
     isOther: true,
     isDefault: false,
-
     id: '04718e75-2ae0-4a2a-8647-326edee4bb32',
     status: 1,
   },
@@ -153,6 +149,63 @@ export const mockPrimarySpokenLanguages = (): IOptionItemData[] => [
   },
 ];
 
-export const mockIndigenousTypes = (): IOptionItemData[] => [];
+export const mockIndigenousIdentities = (): IAzureSearchResult<IIndigenousIdentityData> => ({
+  odataContext: 'test',
+  odataCount: 4,
+  value: [
+    {
+      provinceTerritory: 4,
+      communityType: 1,
+      communityName: 'Eel River Bar First Nations',
+      id: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
+      status: 1,
+    },
+    {
+      provinceTerritory: 4,
+      communityType: 1,
+      communityName: "Metepenagiag Mi'kmaq Nation",
+      id: 'c68b30e0-e348-544d-ba7e-7e8486972774',
+      status: 1,
+    },
+    {
+      provinceTerritory: 4,
+      communityType: 2,
+      communityName: 'Oromocto First Nations',
+      id: '11478c60-8e55-3a4a-9143-bf0719c86d8e',
+      status: 1,
+    },
+    {
+      provinceTerritory: 4,
+      communityType: 2,
+      communityName: 'Madawaska Maliseet First Nation',
+      id: '1fa967d0-6d92-5f47-bd1a-ba7c2b05e76a',
+      status: 1,
+    },
+  ],
+});
 
-export const mockIndigenousCommunities = (): IIndigenousCommunityData[] => [];
+export const mockIndigenousTypesItems = (): Record<string, TranslateResult>[] => [
+  {
+    value: 'FirstNations',
+    text: 'First nations',
+  },
+  {
+    value: 'InuitCommunity',
+    text: 'Inuit Community',
+  },
+  {
+    value: 'Other',
+    text: 'Other',
+  },
+];
+
+export const mockIndigenousCommunitiesItems = (): Record<string, string>[] => [
+  {
+    value: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
+    text: 'Eel River Bar First Nations',
+  },
+  {
+    value: 'c68b30e0-e348-544d-ba7e-7e8486972774',
+    text: "Metepenagiag Mi'kmaq Nation",
+  },
+];

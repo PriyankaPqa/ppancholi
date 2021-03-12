@@ -1,8 +1,7 @@
-import {
-  IOptionItemData, IIndigenousCommunityData,
-} from '@/entities/beneficiary';
+import { IOptionItemData, IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
 import { IEvent } from '@/entities/event';
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
+import { TranslateResult } from 'vue-i18n';
 
 export interface IStorage {
   getters: {
@@ -16,8 +15,8 @@ export interface IStorage {
     genders(): IOptionItemData[];
     preferredLanguages(): IOptionItemData[];
     primarySpokenLanguages(): IOptionItemData[];
-    indigenousTypes(): IOptionItemData[];
-    indigenousCommunities(): IIndigenousCommunityData[];
+    indigenousTypesItems(): Record<string, TranslateResult>[];
+    indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[];
   };
 
   mutations: {
@@ -32,8 +31,7 @@ export interface IStorage {
     fetchGenders(): Promise<IOptionItemData[]>;
     fetchPreferredLanguages(): Promise<IOptionItemData[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
-    fetchIndigenousTypes(): Promise<IOptionItemData[]>;
-    fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
+    fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]>;
   };
 }
 
@@ -49,8 +47,8 @@ export interface IStorageMock {
     genders: jest.Mock<IOptionItemData[]>;
     preferredLanguages: jest.Mock<IOptionItemData[]>;
     primarySpokenLanguages: jest.Mock<IOptionItemData[]>;
-    indigenousTypes: jest.Mock<IOptionItemData[]>;
-    indigenousCommunities: jest.Mock<IIndigenousCommunityData[]>;
+    indigenousTypesItems: jest.Mock<Record<string, TranslateResult>[]>;
+    indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
   };
 
   mutations: {
@@ -65,7 +63,6 @@ export interface IStorageMock {
     fetchGenders: jest.Mock<IOptionItemData[]>;
     fetchPreferredLanguages: jest.Mock<IOptionItemData[]>;
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
-    fetchIndigenousTypes: jest.Mock<IOptionItemData[]>;
-    fetchIndigenousCommunities: jest.Mock<IIndigenousCommunityData[]>;
+    fetchIndigenousIdentitiesByProvince: jest.Mock<IIndigenousIdentityData[]>;
   };
 }

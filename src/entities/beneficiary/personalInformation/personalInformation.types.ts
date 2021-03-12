@@ -10,8 +10,9 @@ export enum EPhoneTypes {
 }
 
 export enum EIndigenousTypes {
-  FirstNations,
-  Inuit,
+  FirstNations = 1,
+  InuitCommunity,
+  InuitHamlet,
   Metis,
   Other,
 }
@@ -36,11 +37,12 @@ export interface IOptionItemData {
   status?: number;
 }
 
-export interface IIndigenousCommunityData {
+export interface IIndigenousIdentityData {
+  provinceTerritory: number;
+  communityType: number;
+  communityName: string;
   id: string;
-  province: string;
-  indigenousTypeId: string;
-  name: IMultilingual;
+  status: number;
 }
 
 export interface IBirthDate {
@@ -87,9 +89,9 @@ export interface IPersonalInformation extends IEntity {
 
   indigenousProvince: ECanadaProvinces;
 
-  indigenousType: IOptionItemData;
+  indigenousType: EIndigenousTypes;
 
-  indigenousCommunity: IIndigenousCommunityData;
+  indigenousCommunityId: string;
 
   indigenousCommunityOther: string;
 }

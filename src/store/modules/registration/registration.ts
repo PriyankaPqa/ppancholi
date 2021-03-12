@@ -4,14 +4,14 @@ import {
 import { ILeftMenuItem } from '@/types';
 import { IRootState } from '@/store/store.types';
 import { IEvent, Event } from '@/entities/event';
-import {
-  IOptionItemData,
-  IIndigenousCommunityData,
-} from '@/entities/beneficiary';
+import { IOptionItemData, IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
 import _sortBy from 'lodash/sortBy';
 import { EOptionItemStatus } from '@/constants/EOptionItemStatus';
+import { i18n } from '@/ui/plugins';
 import { tabs } from './tabs';
 import { IState } from './registration.types';
+
+const INDIGENOUS_LIMIT_RESULTS = 1000;
 
 const getDefaultState = (): IState => ({
   event: null,
@@ -21,14 +21,13 @@ const getDefaultState = (): IState => ({
   genders: [],
   preferredLanguages: [],
   primarySpokenLanguages: [],
-  indigenousTypes: [],
-  indigenousCommunities: [],
+  indigenousIdentities: [],
+  loadingIndigenousIdentities: false,
 });
 
 const moduleState: IState = getDefaultState();
 
 const getters = {
-
   event: (state: IState) => new Event(state.event),
 
   isLeftMenuOpen: (state: IState) => state.isLeftMenuOpen,
@@ -55,9 +54,30 @@ const getters = {
 
   primarySpokenLanguages: (state: IState) => _sortBy(state.primarySpokenLanguages, 'orderRank'),
 
-  indigenousTypes: (state: IState) => _sortBy(state.indigenousTypes, 'orderRank'),
+  indigenousTypesItems: (state: IState) => [...new Set(state.indigenousIdentities.map((identity) => identity.communityType))]
+    .map((typeNumber: number) => {
+      const indigenousType: string = EIndigenousTypes[typeNumber];
+      return {
+        value: indigenousType,
+        text: i18n.t(`common.indigenous.types.${indigenousType}`),
+      };
+    })
+    .concat([
+      {
+        value: EIndigenousTypes[EIndigenousTypes.Other],
+        text: i18n.t('common.indigenous.types.Other'),
+      },
+    ]),
 
-  indigenousCommunities: (state: IState) => _sortBy(state.indigenousCommunities, 'orderRank'),
+  indigenousCommunitiesItems: (state: IState) => (indigenousType: EIndigenousTypes) => {
+    const items = state.indigenousIdentities
+      .filter((i: IIndigenousIdentityData) => i.communityType === Number(EIndigenousTypes[indigenousType]))
+      .map((i: IIndigenousIdentityData) => ({
+        value: i.id,
+        text: i.communityName,
+      }));
+    return _sortBy(items, 'text');
+  },
 };
 
 const mutations = {
@@ -133,24 +153,31 @@ const actions = {
     return data;
   },
 
-  async fetchIndigenousTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
-    const data: IOptionItemData[] = await this.$services.beneficiaries.getIndigenousTypes();
+  async fetchIndigenousIdentitiesByProvince(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    provinceCode: number,
+  ): Promise<IIndigenousIdentityData[]> {
+    context.state.loadingIndigenousIdentities = true;
+    let identities: IIndigenousIdentityData[] = [];
 
-    if (data?.length > 0) {
-      context.state.indigenousTypes = data.filter((entry) => entry.status === EOptionItemStatus.Active);
+    try {
+      const result = await this.$services.beneficiaries.searchIndigenousIdentities({
+        filter: {
+          ProvinceTerritory: provinceCode,
+        },
+        top: INDIGENOUS_LIMIT_RESULTS,
+      });
+
+      if (result?.value?.length > 0) {
+        identities = result.value.filter((entry: IIndigenousIdentityData) => entry.status === EOptionItemStatus.Active);
+      }
+    } finally {
+      context.state.indigenousIdentities = identities;
+      context.state.loadingIndigenousIdentities = false;
     }
 
-    return data;
-  },
-
-  async fetchIndigenousCommunities(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IIndigenousCommunityData[]> {
-    const data: IIndigenousCommunityData[] = await this.$services.beneficiaries.getIndigenousCommunities();
-
-    if (data?.length > 0) {
-      context.state.indigenousCommunities = data;
-    }
-
-    return data;
+    return identities;
   },
 };
 

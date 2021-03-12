@@ -4,8 +4,9 @@ import { Event, mockEventsData } from '@/entities/event';
 import { ILeftMenuItem } from '@/types';
 import {
   mockGenders,
-  mockIndigenousCommunities,
-  mockIndigenousTypes,
+  mockIndigenousCommunitiesItems,
+  mockIndigenousIdentities,
+  mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '@/entities/beneficiary';
@@ -88,15 +89,17 @@ describe('>>> Registration Module', () => {
       });
     });
 
-    describe('indigenousTypes', () => {
-      it('returns indigenousTypes', () => {
-        expect(store.getters['registration/indigenousTypes']).toEqual([]);
+    describe('indigenousTypesItems', () => {
+      it('returns indigenousTypesItems', () => {
+        store.state.registration.indigenousIdentities = mockIndigenousIdentities().value;
+        expect(store.getters['registration/indigenousTypesItems']).toEqual(mockIndigenousTypesItems());
       });
     });
 
-    describe('indigenousCommunities', () => {
-      it('returns indigenousCommunities', () => {
-        expect(store.getters['registration/indigenousCommunities']).toEqual([]);
+    describe('indigenousCommunitiesItems', () => {
+      it('returns indigenousCommunitiesItems', () => {
+        store.state.registration.indigenousIdentities = mockIndigenousIdentities().value;
+        expect(store.getters['registration/indigenousCommunitiesItems']('FirstNations')).toEqual(mockIndigenousCommunitiesItems());
       });
     });
   });
@@ -253,35 +256,19 @@ describe('>>> Registration Module', () => {
       });
     });
 
-    describe('fetchIndigenousTypes', () => {
-      it('call the getIndigenousTypes service', async () => {
-        await store.dispatch('registration/fetchIndigenousTypes');
+    describe('fetchIndigenousIdentitiesByProvince', () => {
+      it('call the searchIndigenousIdentities service', async () => {
+        await store.dispatch('registration/fetchIndigenousIdentitiesByProvince');
 
-        expect(store.$services.beneficiaries.getIndigenousTypes).toHaveBeenCalledTimes(1);
+        expect(store.$services.beneficiaries.searchIndigenousIdentities).toHaveBeenCalledTimes(1);
       });
 
-      it('sets the indigenousTypes', async () => {
-        expect(store.getters['registration/indigenousTypes']).toEqual([]);
+      it('sets the indigenousIdentities', async () => {
+        expect(store.state.registration.indigenousIdentities).toEqual([]);
 
-        await store.dispatch('registration/fetchIndigenousTypes');
+        await store.dispatch('registration/fetchIndigenousIdentitiesByProvince');
 
-        expect(store.state.registration.indigenousTypes).toEqual(mockIndigenousTypes());
-      });
-    });
-
-    describe('fetchIndigenousCommunities', () => {
-      it('call the getIndigenousCommunities service', async () => {
-        await store.dispatch('registration/fetchIndigenousCommunities');
-
-        expect(store.$services.beneficiaries.getIndigenousCommunities).toHaveBeenCalledTimes(1);
-      });
-
-      it('sets the indigenousCommunities', async () => {
-        expect(store.getters['registration/indigenousCommunities']).toEqual([]);
-
-        await store.dispatch('registration/fetchIndigenousCommunities');
-
-        expect(store.state.registration.indigenousCommunities).toEqual(mockIndigenousCommunities());
+        expect(store.state.registration.indigenousIdentities).toEqual(mockIndigenousIdentities().value);
       });
     });
   });

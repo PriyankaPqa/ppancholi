@@ -1,6 +1,6 @@
 import {
+  IIndigenousIdentityData,
   IOptionItemData,
-  IIndigenousCommunityData,
 } from '@/entities/beneficiary';
 import { IEventData } from '@/entities/event';
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
@@ -13,6 +13,6 @@ export type IState = {
   genders: IOptionItemData[];
   preferredLanguages: IOptionItemData[];
   primarySpokenLanguages: IOptionItemData[];
-  indigenousTypes: IOptionItemData[];
-  indigenousCommunities: IIndigenousCommunityData[];
+  indigenousIdentities: IIndigenousIdentityData[];
+  loadingIndigenousIdentities: boolean;
 };

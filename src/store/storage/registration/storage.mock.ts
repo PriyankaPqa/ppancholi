@@ -1,7 +1,7 @@
 import {
   mockGenders,
-  mockIndigenousCommunities,
-  mockIndigenousTypes,
+  mockIndigenousCommunitiesItems,
+  mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '@/entities/beneficiary';
@@ -19,8 +19,8 @@ export const mockStorageRegistration = (): IStorageMock => ({
     genders: jest.fn(() => mockGenders()),
     preferredLanguages: jest.fn(() => mockPreferredLanguages()),
     primarySpokenLanguages: jest.fn(() => mockPrimarySpokenLanguages()),
-    indigenousTypes: jest.fn(() => mockIndigenousTypes()),
-    indigenousCommunities: jest.fn(() => mockIndigenousCommunities()),
+    indigenousTypesItems: jest.fn(() => mockIndigenousTypesItems()),
+    indigenousCommunitiesItems: jest.fn(() => mockIndigenousCommunitiesItems()),
   },
 
   mutations: {
@@ -35,7 +35,6 @@ export const mockStorageRegistration = (): IStorageMock => ({
     fetchGenders: jest.fn(),
     fetchPreferredLanguages: jest.fn(),
     fetchPrimarySpokenLanguages: jest.fn(),
-    fetchIndigenousTypes: jest.fn(),
-    fetchIndigenousCommunities: jest.fn(),
+    fetchIndigenousIdentitiesByProvince: jest.fn(),
   },
 });

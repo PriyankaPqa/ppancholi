@@ -1,9 +1,14 @@
 import { mockHttp } from '@/services/httpClient.mock';
+import { IAzureSearchParams } from '@/types';
 import { BeneficiariesService } from './beneficiaries';
 
 const http = mockHttp();
 
 describe('>>> Beneficiaries Service', () => {
+  beforeEach(async () => {
+    jest.clearAllMocks();
+  });
+
   const service = new BeneficiariesService(http as never);
 
   test('getGenders is linked to the correct URL', async () => {
@@ -21,13 +26,14 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.get).toHaveBeenCalledWith('/beneficiary/primary-spoken-languages');
   });
 
-  test('getIndigenousTypes is linked to the correct URL', async () => {
-    await service.getIndigenousTypes();
-    expect(http.get).toHaveBeenCalledWith('/beneficiary/indigenous-types');
-  });
+  test('searchIndigenousIdentities is linked to the correct URL', async () => {
+    const params: IAzureSearchParams = {
+      filter: {
+        provinceTerritory: 13,
+      },
+    };
 
-  test('getIndigenousCommunities is linked to the correct URL', async () => {
-    await service.getIndigenousCommunities();
-    expect(http.get).toHaveBeenCalledWith('/beneficiary/indigenous-communities');
+    await service.searchIndigenousIdentities(params);
+    expect(http.get).toHaveBeenCalledWith('/public-search/indigenous-identities', { params, isOData: true });
   });
 });

@@ -3,6 +3,8 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css';
 
 import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
+import { DEFAULT_LANGUAGE } from '@/constants/trans';
+import fr from './fr';
 import light from './light-theme';
 import dark from './dark-theme';
 
@@ -20,6 +22,10 @@ export const options = {
   },
   icons: {
     iconfont: 'mdi',
+  },
+  lang: {
+    locales: { fr },
+    current: DEFAULT_LANGUAGE,
   },
 };
 

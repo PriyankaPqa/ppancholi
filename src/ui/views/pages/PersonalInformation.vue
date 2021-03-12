@@ -168,17 +168,23 @@
     <v-col cols="12" sm="6">
       <v-autocomplete-with-validation
         v-model="form.indigenousProvince"
+        clearable
         :data-test="`${prefixDataTest}__indigenousProvince`"
         :label="$t('registration.personal_info.indigenousProvince.label')"
-        :items="canadianProvincesItems" />
+        :items="canadianProvincesItems"
+        @change="onIndigenousProvinceChange" />
     </v-col>
     <v-col cols="12" sm="6">
       <v-autocomplete-with-validation
         v-model="form.indigenousType"
+        :loading="loadingIndigenousIdentities"
+        clearable
+        :disabled="loadingIndigenousIdentities || !form.indigenousProvince"
         :label="$t('registration.personal_info.indigenousType.select.label')"
         :items="indigenousTypesItems"
         :rules="rules.indigenousType"
-        :data-test="`${prefixDataTest}__indigenousType`" />
+        :data-test="`${prefixDataTest}__indigenousType`"
+        @change="onIndigenousTypeChange" />
     </v-col>
     <v-col cols="12">
       <v-text-field-with-validation
@@ -189,13 +195,14 @@
         :label="$t('registration.personal_info.indigenousCommunityOther.label')" />
       <v-autocomplete-with-validation
         v-else
-        v-model="form.indigenousCommunity"
+        v-model="form.indigenousCommunityId"
+        clearable
+        :loading="loadingIndigenousIdentities"
+        :disabled="loadingIndigenousIdentities || !form.indigenousType"
         :label="$t('registration.personal_info.indigenousCommunity.label')"
-        :items="[]"
-        :rules="rules.indigenousCommunity"
-        :item-text="(item) => $m(item.name)"
-        return-object
-        :data-test="`${prefixDataTest}__indigenousCommunity`" />
+        :items="indigenousCommunitiesItems"
+        :rules="rules.indigenousCommunityId"
+        :data-test="`${prefixDataTest}__indigenousCommunityId`" />
     </v-col>
   </v-row>
 </template>
@@ -208,11 +215,12 @@ import {
 import months from '@/constants/months';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
-  Beneficiary, IBirthDate, IOptionItemData, IPersonalInformation,
+  Beneficiary, EIndigenousTypes, IBirthDate, IOptionItemData, IPersonalInformation,
 } from '@/entities/beneficiary';
 import utils from '@/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM, MIN_AGE_REGISTRATION } from '@/constants/validations';
 import { ECanadaProvinces } from '@/types';
+import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
   name: 'PersonalInformation',
@@ -306,6 +314,16 @@ export default Vue.extend({
           email: true,
           max: MAX_LENGTH_MD,
         },
+        indigenousType: {
+          required: this.form.indigenousProvince !== null,
+        },
+        indigenousCommunityId: {
+          required: this.form.indigenousType !== null,
+        },
+        indigenousCommunityOther: {
+          required: true,
+          max: MAX_LENGTH_MD,
+        },
       };
     },
 
@@ -341,17 +359,24 @@ export default Vue.extend({
       return this.$storage.registration.getters.primarySpokenLanguages();
     },
 
-    indigenousTypesItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.indigenousTypes();
-    },
-
-    canadianProvincesItems(): Record<string, string>[] {
+    canadianProvincesItems(): Record<string, TranslateResult>[] {
       return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
+    indigenousTypesItems(): Record<string, TranslateResult>[] {
+      return this.$storage.registration.getters.indigenousTypesItems();
+    },
+
+    indigenousCommunitiesItems(): Record<string, string>[] {
+      return this.$storage.registration.getters.indigenousCommunitiesItems(this.form.indigenousType);
+    },
+
     otherIndigenousType(): boolean {
-      // return this.form.indigenousType === EIndigenousTypes.Other;
-      return true;
+      return this.form?.indigenousType?.toString() === EIndigenousTypes[EIndigenousTypes.Other];
+    },
+
+    loadingIndigenousIdentities(): boolean {
+      return this.$store.state.registration.loadingIndigenousIdentities;
     },
   },
 
@@ -371,8 +396,19 @@ export default Vue.extend({
   },
 
   methods: {
+    async onIndigenousProvinceChange(province: ECanadaProvinces) {
+      this.form.indigenousType = null;
+      this.form.indigenousCommunityId = null;
+      this.form.indigenousCommunityOther = null;
+      if (province) {
+        const provinceCode = Number(ECanadaProvinces[province]);
+        await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
+      }
+    },
+
     onIndigenousTypeChange() {
-      // todo
+      this.form.indigenousCommunityId = null;
+      this.form.indigenousCommunityOther = null;
     },
 
     prepopulate() {

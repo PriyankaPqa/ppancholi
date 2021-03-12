@@ -4,7 +4,11 @@ import PhoneNumber from 'awesome-phonenumber';
 import moment from 'moment';
 import { ECanadaProvinces } from '@/types';
 import {
-  IBirthDate, IOptionItemData, IIndigenousCommunityData, IPersonalInformation, IPhoneNumber,
+  EIndigenousTypes,
+  IBirthDate,
+  IOptionItemData,
+  IPersonalInformation,
+  IPhoneNumber,
 } from './personalInformation.types';
 import { required, maxLengthCheck } from '../../commonValidation';
 
@@ -43,9 +47,9 @@ export class PersonalInformation implements IPersonalInformation {
 
   indigenousProvince: ECanadaProvinces;
 
-  indigenousType: IOptionItemData;
+  indigenousType: EIndigenousTypes;
 
-  indigenousCommunity: IIndigenousCommunityData;
+  indigenousCommunityId: string;
 
   indigenousCommunityOther: string;
 
@@ -105,6 +109,9 @@ export class PersonalInformation implements IPersonalInformation {
     this.gender = null;
     this.preferredLanguage = null;
     this.primarySpokenLanguage = null;
+    this.indigenousType = null;
+    this.indigenousCommunityId = null;
+    this.indigenousCommunityOther = null;
   }
 
   birthday(value: IBirthDate, errorMsg: string, errors: string[]): void {
