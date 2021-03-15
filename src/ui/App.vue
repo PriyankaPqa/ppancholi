@@ -70,8 +70,6 @@ export default {
     };
   },
   async created() {
-    await this.fetchAllUsersInformation();
-
     if (process.env.NODE_ENV === 'development') {
       this.cspContent = this.cspContentDev;
     }
