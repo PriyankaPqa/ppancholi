@@ -1,4 +1,4 @@
-import { IAzureSearchResult } from '@/types';
+import { IAzureSearchResult, IMultilingual } from '@/types';
 import {
   ETeamStatus, ETeamType, ITeamData, ITeamMember, ITeamSearchData,
 } from './team.types';
@@ -28,7 +28,7 @@ export const mockTeamSearchData = (): ITeamSearchData[] => [
     teamMembers: [
       {
         id: '113e1ddf-6709-41a1-a155-a3f12260eebc',
-        displayName: 'Test Six',
+        displayName: 'Alex',
         isPrimaryContact: true,
         emailAddress: null,
         phoneNumber: null,
@@ -44,7 +44,7 @@ export const mockTeamSearchData = (): ITeamSearchData[] => [
     '@searchScore': 1,
     teamId: '6e2d49af-2f9a-4333-9bdb-cd37270e6591',
     tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
-    teamName: 'Danh Test5 Stad',
+    teamName: 'Team 2',
     teamType: 2,
     eventCount: 0,
     primaryContactDisplayName: 'Test Five',
@@ -55,7 +55,7 @@ export const mockTeamSearchData = (): ITeamSearchData[] => [
     teamMembers: [
       {
         id: 'cc1fe902-234a-4925-b94e-51d709922bae',
-        displayName: 'Test Five',
+        displayName: 'John Brown',
         isPrimaryContact: true,
         emailAddress: null,
         phoneNumber: null,
@@ -67,6 +67,8 @@ export const mockTeamSearchData = (): ITeamSearchData[] => [
       }],
   },
 ];
+
+export const mockTeamMembersSearchData = () => mockTeamSearchData().reduce((flat, t) => flat.concat(t.teamMembers), []);
 
 export const mockTeamsData = (): ITeamData[] => [
   {
@@ -134,4 +136,12 @@ export const mockSearchTeams = (): IAzureSearchResult<ITeamSearchData> => ({
 export const mockTeamMember = (): ITeamMember => ({
   id: 'guid-member-1',
   isPrimaryContact: true,
+  displayName: 'Mister Test',
+  emailAddress: 'test@test.com',
+  phoneNumber: '',
+  role: null,
+  teamCount: 0,
+  caseFilesCount: 0,
+  openCaseFilesCount: 0,
+  inactiveCaseFilesCount: 0,
 });

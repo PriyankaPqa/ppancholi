@@ -85,6 +85,41 @@
 .v-data-table__wrapper td {
   word-break: break-word;
 }
+
 .pre-formatted {
   white-space: pre-wrap;
+}
+
+
+
+.theme--light.v-data-table > .v-data-table__wrapper > table > tbody > tr:hover:not(.v-data-table__expanded__content):not(.v-data-table__empty-wrapper) {
+  background: var(--v-primary-lighten2)  !important;
+}
+
+.theme--light.v-data-table tbody tr.v-data-table__selected {
+  background: transparent !important;
+
+  &.row_disabled {
+    background-color: var(--v-grey-lighten4) !important;
+    color: var(--v-grey-base) !important;
+  }
+
+  &.row_active {
+    background-color: var(--v-primary-lighten2) !important;
+    .v-icon {
+      color:  var(--v-primary-base) !important;
+    }
+  }
+}
+
+.row_disabled {
+  background-color: var(--v-grey-lighten4);
+  color: var(--v-grey-base)
+}
+
+.row_active {
+  background-color: var(--v-primary-lighten2) !important;
+  .v-icon {
+    color:  var(--v-primary-base) !important;
+  }
 }

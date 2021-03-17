@@ -5,7 +5,7 @@ export const mockStorageAppUser = () : IStorageMock => ({
   getters: {
     appUsersWithInfo: jest.fn(),
     appUserWhere: jest.fn(),
-    appUserWithNameContaining: jest.fn(),
+    searchAppUser: jest.fn(),
   },
 
   actions: {

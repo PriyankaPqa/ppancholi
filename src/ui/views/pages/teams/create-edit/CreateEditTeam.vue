@@ -31,7 +31,7 @@
                       :value="team.status"
                       :statuses="statuses"
                       status-name="ETeamStatus"
-                      :disabled="!isEditMode"
+                      :disabled="!isEditMode || !$hasLevel('level5')"
                       @input="onStatusChange($event)" />
                   </validation-provider>
                 </div>
@@ -42,9 +42,11 @@
                       v-model="team.name"
                       data-test="team-name"
                       :label="`${$t('teams.form.team_name')}*`"
+                      :disabled="!$hasLevel('level5')"
                       :rules="rules.name"
                       @input="resetAsUnique()" />
                   </v-col>
+
                   <v-col cols="12" md="4">
                     <v-autocomplete-with-validation
                       data-test="team-contact"
@@ -58,6 +60,7 @@
                       hide-selected
                       return-object
                       no-filter
+                      :disabled="!$hasLevel('level5')"
                       :placeholder="$t('common.inputs.start_typing_to_search')"
                       @change="setPrimaryContact($event)"
                       @keydown.delete="resetPrimaryContact()" />
@@ -75,6 +78,7 @@
                       :value="teamType === 'standard'? team.events: team.events[0]"
                       :multiple="teamType === 'standard'"
                       :rules="rules.event"
+                      :disabled="!$hasLevel('level5')"
                       @change="setEvents($event)"
                       @delete="handleRemoveEvent($event)" />
                   </v-col>
@@ -82,7 +86,10 @@
 
                 <v-row>
                   <v-col cols="12" class="firstSection__actions">
-                    <v-btn data-test="createEditTeam__cancel" @click="onCancel(dirty || changed)">
+                    <v-btn
+                      :disabled="!$hasLevel('level5')"
+                      data-test="createEditTeam__cancel"
+                      @click="onCancel(dirty || changed)">
                       {{ $t('common.buttons.cancel') }}
                     </v-btn>
                     <v-btn
@@ -99,7 +106,11 @@
             </v-row>
             <v-row class="mt-12">
               <v-col class="pa-0">
-                <team-members-table :team-members="team.teamMembers" :is-edit-mode="isEditMode" />
+                <team-members-table
+                  data-test="team-members-table"
+                  :team-members="team.teamMembers"
+                  :is-edit-mode="isEditMode"
+                  @refresh-team="loadTeam()" />
               </v-col>
             </v-row>
           </v-col>
@@ -148,7 +159,7 @@ import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm } from '@/types';
-import { IAppUserAzureData } from '@/entities/app-user';
+import { IAppUserData } from '@/entities/app-user';
 
 export default Vue.extend({
   name: 'CreateEditTeam',
@@ -183,8 +194,8 @@ export default Vue.extend({
       team: new Team() as ITeam,
       availableEvents: [],
       primaryContactQuery: '',
-      primaryContactUsers: [] as IAppUserAzureData[],
-      currentPrimaryContact: null as IAppUserAzureData,
+      primaryContactUsers: [] as IAppUserData[],
+      currentPrimaryContact: null as Partial<IAppUserData>,
       map: [null, 'standard', 'adhoc'],
       statuses: [ETeamStatus.Active, ETeamStatus.Inactive],
       showCancelConfirmationDialog: false,
@@ -348,7 +359,7 @@ export default Vue.extend({
       const query = this.primaryContactQuery;
 
       if (query && query.length >= this.minimumContactQueryLength) {
-        this.primaryContactUsers = this.$storage.appUser.getters.appUserWithNameContaining(query);
+        this.primaryContactUsers = this.$storage.appUser.getters.searchAppUser(query, false, ['displayName']);
       } else {
         this.primaryContactUsers = [];
       }
@@ -362,7 +373,7 @@ export default Vue.extend({
       (this.$refs.form as VForm).reset();
     },
 
-    setPrimaryContact(appUser: IAppUserAzureData) {
+    setPrimaryContact(appUser: IAppUserData) {
       this.currentPrimaryContact = appUser;
     },
 

@@ -1,6 +1,7 @@
 import { Store } from 'vuex';
 import { mockTeamsData, Team } from '@/entities/team';
 import { mockStore, IRootState } from '@/store';
+import { mockAppUserData } from '@/entities/app-user';
 
 describe('>>> Team Module', () => {
   let store: Store<IRootState>;
@@ -60,6 +61,19 @@ describe('>>> Team Module', () => {
         await store.dispatch('team/searchTeams');
 
         expect(store.$services.teams.searchTeams).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('addTeamMembers', () => {
+      it('calls the addTeamMembers service', async () => {
+        const store = mockStore();
+        const payload = {
+          teamId: '1234',
+          teamMembers: mockAppUserData(),
+        };
+        await store.dispatch('team/addTeamMembers', payload);
+
+        expect(store.$services.teams.addTeamMembers).toHaveBeenCalledWith(payload.teamId, payload.teamMembers);
       });
     });
   });

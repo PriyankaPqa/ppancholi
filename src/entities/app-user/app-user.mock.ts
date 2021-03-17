@@ -58,4 +58,22 @@ export const mockAppUserData = (): IAppUserData[] => [
     userPrincipalName: 'lenabrown@test.com',
     roles: [mockRolesData()[0], mockRolesData()[1]],
   },
+  {
+    id: '3',
+    displayName: 'John Lenon',
+    givenName: 'John',
+    jobTitle: 'jobTitle',
+    mail: null,
+    userPrincipalName: 'john@test.com',
+    roles: [mockRolesData()[0]],
+  },
+  {
+    id: '4',
+    displayName: 'Jack Jack',
+    givenName: 'Jack',
+    jobTitle: 'jobTitle',
+    mail: null,
+    userPrincipalName: 'jack@test.com',
+    roles: [mockRolesData()[0]],
+  },
 ];

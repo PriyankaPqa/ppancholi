@@ -1,4 +1,5 @@
-import { mockTeamsData, Team } from '@/entities/team';
+import { mockTeamsData, Team, IAddTeamMembersRequest } from '@/entities/team';
+import { mockAppUserData } from '@/entities/app-user';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { TeamsService } from './teams';
@@ -43,5 +44,18 @@ describe('>>> Teams Service', () => {
     const params = mockSearchParams;
     await service.searchTeams(params);
     expect(http.get).toHaveBeenCalledWith('/search/team-projections', { params, isOData: true });
+  });
+
+  test('addTeamMembers is linked to the correct URL and params', async () => {
+    const params = {
+      teamId: '1234',
+      teamMembers: mockAppUserData(),
+    };
+    const payload = {
+      teamMemberIds: params.teamMembers.map((t) => t.id),
+    } as IAddTeamMembersRequest;
+
+    await service.addTeamMembers(params.teamId, params.teamMembers);
+    expect(http.patch).toHaveBeenCalledWith(`/team/teams/${params.teamId}/add-team-members`, payload);
   });
 });

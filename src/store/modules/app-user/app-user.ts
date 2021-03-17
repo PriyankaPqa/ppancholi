@@ -6,6 +6,7 @@ import {
   IAllUserData, IRolesData, IAppUserAzureData,
 } from '@/entities/app-user';
 
+import helpers from '@/ui/helpers';
 import {
   IState,
 } from './app-user.types';
@@ -37,14 +38,8 @@ const getters = {
   appUserWhere: (state: IState, getters: any) => (key: string, value: string) => getters.appUsersWithInfo.find((o: never) => o[key] === value),
 
   // Find all app users whose display name contains the search term
-  appUserWithNameContaining: (state: IState) => (searchTerm: string) => state.appUsers.filter(
-    (user) => {
-      if (searchTerm && user.displayName) {
-        return user.displayName.toLowerCase().includes(searchTerm.toLowerCase());
-      }
-      return false;
-    },
-  ),
+  // eslint-disable-next-line
+  searchAppUser: (state: IState, getters: any) => (searchTerm: string, searchAll = true, searchAmong: Array<string>) => helpers.filterCollectionByValue(getters.appUsersWithInfo, searchTerm, searchAll, searchAmong),
 };
 
 const mutations = {

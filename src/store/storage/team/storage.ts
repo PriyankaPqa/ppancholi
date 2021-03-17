@@ -1,6 +1,7 @@
 import { ITeam, ITeamSearchData } from '@/entities/team';
 import { IStore } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IAppUserData } from '@/entities/app-user';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
@@ -19,6 +20,10 @@ export const makeStorage = (store: IStore): IStorage => ({
 
     searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>> {
       return store.dispatch('team/searchTeams', params);
+    },
+
+    addTeamMembers(teamId: uuid, teamMembers: IAppUserData[]): Promise<ITeam> {
+      return store.dispatch('team/addTeamMembers', { teamId, teamMembers });
     },
   },
 });

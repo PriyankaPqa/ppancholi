@@ -90,3 +90,7 @@ export interface ICreateTeamRequest {
   teamMembers: ITeamMember[];
   teamType: ETeamType
 }
+
+export interface IAddTeamMembersRequest {
+  teamMemberIds: Array<uuid>;
+}

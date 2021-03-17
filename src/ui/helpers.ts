@@ -105,11 +105,22 @@ export default {
     return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   },
 
+  /**
+   * Look among an array of object, for an object whose any keys contains the query if searchAll is true
+   * Otherwise, it will look for objects whose columns specified in searchAmong contains the query
+   * Useful for comparing string
+   * @param collection
+   * @param query
+   * @param searchAll
+   * @param searchAmong
+   */
   // eslint-disable-next-line
-  filterCollectionByValue(collection: any, string: string) {
+  filterCollectionByValue(collection: any, query: string, searchAll = true, searchAmong: Array<string> = null) {
     return collection.filter((o: Record<string, unknown>) => Object.keys(o).some((k) => {
+      if (!searchAll && searchAmong.indexOf(k) === -1) return false;
+
       if (typeof o[k] === 'string') {
-        return (o[k] as string).toLowerCase().includes(string.toLowerCase());
+        return (o[k] as string).toLowerCase().includes(query.toLowerCase());
       }
       return false;
     }));

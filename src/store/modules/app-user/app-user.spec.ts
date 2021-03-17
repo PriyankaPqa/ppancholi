@@ -27,7 +27,7 @@ describe('>>> App User Module', () => {
   describe('>> Getters', () => {
     describe('appUsersWithInfo', () => {
       it('aggregates correctly different user information', () => {
-        expect(store.getters['appUser/appUsersWithInfo']).toEqual(mockAppUserData());
+        expect(store.getters['appUser/appUsersWithInfo']).toEqual([mockAppUserData()[0]]);
       });
     });
 
@@ -37,9 +37,9 @@ describe('>>> App User Module', () => {
       });
     });
 
-    describe('appUserWithNameContaining', () => {
+    describe('searchAppUser', () => {
       it('finds the app users where key equals value', () => {
-        expect(store.getters['appUser/appUserWithNameContaining']('Lena')).toEqual([mockAppUserAzureData()[0]]);
+        expect(store.getters['appUser/searchAppUser']('Lena')).toEqual([mockAppUserData()[0]]);
       });
     });
   });

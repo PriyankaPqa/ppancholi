@@ -306,7 +306,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.teams.edit.path,
                 name: Routes.teams.edit.name,
                 component: CreateEditTeam,
-                meta: { level: 'level5' },
+                meta: { level: 'level4' },
                 props: true,
               },
             ],

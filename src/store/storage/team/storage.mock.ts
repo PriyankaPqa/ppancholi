@@ -6,5 +6,6 @@ export const mockStorageTeam = () : IStorageMock => ({
     getTeam: jest.fn(),
     createTeam: jest.fn(),
     editTeam: jest.fn(),
+    addTeamMembers: jest.fn(),
   },
 });

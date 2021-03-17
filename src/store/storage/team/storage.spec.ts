@@ -1,6 +1,7 @@
 import { Team } from '@/entities/team';
 import { mockStore } from '@/store';
 
+import { mockAppUserData } from '@/entities/app-user';
 import { mockTeamsData } from '../../../entities/team/team.mock';
 import { makeStorage } from './storage';
 
@@ -31,6 +32,15 @@ describe('>>> Team Storage', () => {
     it('should proxy searchTeams', () => {
       storage.actions.searchTeams({});
       expect(store.dispatch).toBeCalledWith('team/searchTeams', {});
+    });
+
+    it('should proxy addTeamMembers', () => {
+      const payload = {
+        teamId: '1234',
+        teamMembers: mockAppUserData(),
+      };
+      storage.actions.addTeamMembers(payload.teamId, payload.teamMembers);
+      expect(store.dispatch).toBeCalledWith('team/addTeamMembers', payload);
     });
   });
 });

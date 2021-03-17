@@ -3,7 +3,7 @@
     <div
       :class="['table_top_header', isEditMode? 'border-radius-top no-bottom-border' : 'border-radius-all']">
       <div class="toolbar">
-        <v-btn color="primary" data-test="add-new-member" :disabled="!isEditMode" @click="openDialog()">
+        <v-btn color="primary" data-test="add-new-member" :disabled="!isEditMode" @click="showAddTeamMemberDialog = true">
           {{ $t('teams.add_new_members') }}
         </v-btn>
         <div>
@@ -39,6 +39,12 @@
         </span>
       </template>
     </v-data-table>
+    <add-team-members
+      v-if="showAddTeamMemberDialog"
+      data-test="add-team-members"
+      :team-members="teamMembers"
+      :show.sync="showAddTeamMemberDialog"
+      @refresh-team="$emit('refresh-team')" />
   </div>
 </template>
 
@@ -48,15 +54,20 @@ import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
 import { ITeamMember } from '@/entities/team';
 import helpers from '@/ui/helpers';
+import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 
 export default Vue.extend({
   name: 'TeamMembersTable',
+  components: {
+    AddTeamMembers,
+  },
 
   props: {
     teamMembers: {
-      type: Array,
+      type: Array as () => Array<ITeamMember>,
       required: true,
     },
+
     isEditMode: {
       type: Boolean,
       required: true,
@@ -68,6 +79,7 @@ export default Vue.extend({
       sortDesc: false,
       sortBy: 'displayName',
       search: '',
+      showAddTeamMemberDialog: false,
     };
   },
 
@@ -138,15 +150,13 @@ export default Vue.extend({
       const filtered = helpers.filterCollectionByValue(this.teamMembers, this.search);
       return _orderBy(filtered, this.sortBy, direction) as ITeamMember[];
     },
-  },
 
-  methods: {
-    openDialog() {
-      // TODO in another story
-      return false;
+    teamMembersId(): Array<string> {
+      return this.teamMembers.map((m: ITeamMember) => m.id);
     },
   },
 });
+
 </script>
 
 <style lang="scss">

@@ -8,14 +8,17 @@ import {
   ITeam, ITeamData, ITeamSearchData, Team,
 } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IAppUserData } from '@/entities/app-user';
 import {
   IState,
 } from './team.types';
 
 const getDefaultState = (): IState => ({
+  addTeamMemberLoading: false,
   submitLoading: false,
   searchLoading: false,
   getLoading: false,
+  teamId: null,
 });
 
 const moduleState: IState = getDefaultState();
@@ -36,6 +39,7 @@ const actions = {
     try {
       const res = await this.$services.teams.searchTeams({ filter: { TeamId: id } });
       const team = res.value[0];
+      context.state.teamId = team.teamId;
       return new Team(teamSearchDataToTeamData(team));
     } finally {
       context.state.getLoading = false;
@@ -68,11 +72,25 @@ const actions = {
     params: IAzureSearchParams,
   ): Promise<IAzureSearchResult<ITeamSearchData>> {
     try {
-      context.state.searchLoading = true;
+      context.state.addTeamMemberLoading = true;
       const res = await this.$services.teams.searchTeams(params);
       return res;
     } finally {
-      context.state.searchLoading = false;
+      context.state.addTeamMemberLoading = false;
+    }
+  },
+
+  async addTeamMembers(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    payload: { teamId: uuid, teamMembers: IAppUserData[] },
+  ): Promise<ITeam> {
+    context.state.addTeamMemberLoading = true;
+    try {
+      const res = await this.$services.teams.addTeamMembers(payload.teamId, payload.teamMembers);
+      return new Team(res);
+    } finally {
+      context.state.addTeamMemberLoading = false;
     }
   },
 

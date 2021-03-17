@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { EEventStatus, mockEventsData } from '@/entities/event';
 import routes from '@/constants/routes';
-import { mockAppUsers } from '@/test/helpers';
+import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
 import {
   mockTeamsData, ETeamStatus, ETeamType, mockTeamMember, Team,
 } from '@/entities/team';
@@ -25,6 +25,9 @@ describe('CreateEditTeam.vue', () => {
   describe('Template', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
+        store: {
+          ...mockUserStateLevel(5),
+        },
         localVue,
         propsData: {
           teamType: 'standard',
@@ -322,6 +325,46 @@ describe('CreateEditTeam.vue', () => {
             expect(wrapper.vm.onCancel).toHaveBeenCalledTimes(1);
           });
         });
+      });
+    });
+
+    describe('Authorization', () => {
+      beforeEach(() => {
+        wrapper = mount(Component, {
+          store: {
+            ...mockUserStateLevel(4),
+          },
+          localVue,
+          propsData: {
+            teamType: 'standard',
+          },
+        });
+        wrapper.vm.$route.name = routes.teams.edit.name;
+      });
+
+      test('Status selection is disabled for L4 or less', () => {
+        const element = wrapper.findDataTest('team-status');
+        expect(element.props('disabled')).toBeTruthy();
+      });
+
+      test('Team name input is disabled for L4 or less', () => {
+        const element = wrapper.findSelectWithValidation('team-name');
+        expect(element.props('disabled')).toBeTruthy();
+      });
+
+      test('Primary contact input is disabled for L4 or less', () => {
+        const element = wrapper.findSelectWithValidation('team-contact');
+        expect(element.props('disabled')).toBeTruthy();
+      });
+
+      test('Event selection is disabled for L4 or less', () => {
+        const element = wrapper.findSelectWithValidation('events');
+        expect(element.props('disabled')).toBeTruthy();
+      });
+
+      test('Cancel button is disabled for L4 or less', () => {
+        const element = wrapper.findDataTest('createEditTeam__cancel');
+        expect(element.props('disabled')).toBeTruthy();
       });
     });
   });
@@ -701,6 +744,13 @@ describe('CreateEditTeam.vue', () => {
         await wrapper.vm.loadTeam();
         expect(wrapper.vm.primaryContactQuery).toEqual(mockAppUserData()[0].displayName);
       });
+
+      it('is called when team members table emits refresh-team', async () => {
+        jest.spyOn(wrapper.vm, 'loadTeam').mockImplementation(() => {});
+        const component = wrapper.findDataTest('team-members-table');
+        await component.vm.$emit('refresh-team');
+        expect(wrapper.vm.loadTeam).toHaveBeenCalledTimes(1);
+      });
     }));
 
     describe('navigateToHome', () => {
@@ -738,21 +788,21 @@ describe('CreateEditTeam.vue', () => {
 
     describe('searchPrimaryContacts', () => {
       it('calls the searchAppUsers action when the query is long enough and assigns the result to primaryContactUsers', async () => {
-        jest.spyOn(wrapper.vm.$storage.appUser.getters, 'appUserWithNameContaining').mockImplementation(() => [mockAppUserAzureData()[0]]);
+        jest.spyOn(wrapper.vm.$storage.appUser.getters, 'searchAppUser').mockImplementation(() => [mockAppUserAzureData()[0]]);
         wrapper.vm.primaryContactQuery = 'ab';
         wrapper.vm.minimumContactQueryLength = 2;
         await wrapper.vm.searchPrimaryContacts();
-        expect(wrapper.vm.$storage.appUser.getters.appUserWithNameContaining).toHaveBeenCalledWith(wrapper.vm.primaryContactQuery);
+        expect(wrapper.vm.$storage.appUser.getters.searchAppUser).toHaveBeenCalledWith(wrapper.vm.primaryContactQuery, false, ['displayName']);
         expect(wrapper.vm.primaryContactUsers).toEqual([mockAppUserAzureData()[0]]);
       });
 
       it('does not call the searchAppUsers action when the query is not long enough long enough and empties the list of users', async () => {
-        jest.spyOn(wrapper.vm.$storage.appUser.getters, 'appUserWithNameContaining').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm.$storage.appUser.getters, 'searchAppUser').mockImplementation(() => {});
         wrapper.vm.primaryContactQuery = 'a';
         wrapper.vm.minimumContactQueryLength = 2;
         await wrapper.vm.searchPrimaryContacts();
 
-        expect(wrapper.vm.$storage.appUser.getters.appUserWithNameContaining).not.toHaveBeenCalled();
+        expect(wrapper.vm.$storage.appUser.getters.searchAppUser).not.toHaveBeenCalled();
         expect(wrapper.vm.primaryContactUsers.length).toEqual(0);
       });
     });

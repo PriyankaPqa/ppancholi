@@ -1,4 +1,6 @@
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { mockTeamMembersSearchData } from '@/entities/team';
+import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import Component from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
@@ -6,17 +8,17 @@ const localVue = createLocalVue();
 describe('TeamMembersTable.vue', () => {
   let wrapper;
 
-  beforeEach(() => {
-    wrapper = mount(Component, {
-      localVue,
-      propsData: {
-        teamMembers: [],
-        isEditMode: false,
-      },
-    });
-  });
-
   describe('Template', () => {
+    beforeEach(() => {
+      wrapper = mount(Component, {
+        localVue,
+        propsData: {
+          teamMembers: mockTeamMembersSearchData(),
+          isEditMode: false,
+        },
+      });
+    });
+
     describe('Rendered elements', () => {
       it('shows an Add New Member button', () => {
         const button = wrapper.find('[data-test="add-new-member"]');
@@ -61,6 +63,39 @@ describe('TeamMembersTable.vue', () => {
           expect(headers.wrappers[6].find('span').text()).toBe('teams.count_file.open');
           expect(headers.wrappers[7].find('span').text()).toBe('teams.count_file.inactive');
         });
+
+        test('items props is linked to computedTeamMembers', async () => {
+          wrapper.setProps({ isEditMode: true });
+          await wrapper.vm.$nextTick();
+
+          const element = wrapper.findDataTest('teamMembers__table');
+          expect(element.props().items).toEqual(wrapper.vm.computedTeamMembers);
+        });
+      });
+
+      describe('Add Team Members', () => {
+        it('is shown only if showAddTeamMemberDialog is true', async () => {
+          expect(wrapper.findComponent(AddTeamMembers).exists()).toBeFalsy();
+
+          await wrapper.setData({ showAddTeamMemberDialog: true });
+
+          expect(wrapper.findComponent(AddTeamMembers).exists()).toBeTruthy();
+        });
+
+        it('it relays refresh-team event', async () => {
+          await wrapper.setData({ showAddTeamMemberDialog: true });
+          const element = wrapper.findDataTest('add-team-members');
+
+          element.vm.$emit('refresh-team');
+
+          expect(wrapper.emitted('refresh-team')).toBeTruthy();
+        });
+
+        test('props teamMembers is correctly linked', async () => {
+          await wrapper.setData({ showAddTeamMemberDialog: true });
+          const element = wrapper.findDataTest('add-team-members');
+          expect(element.props().teamMembers).toEqual(wrapper.vm.teamMembers);
+        });
       });
 
       describe('Search input', () => {
@@ -75,13 +110,42 @@ describe('TeamMembersTable.vue', () => {
     });
 
     describe('Event Handlers', () => {
-      test('when the button is clicked, it calls the method openDialog', async () => {
-        jest.spyOn(wrapper.vm, 'openDialog').mockImplementation(() => {});
+      test('when the button is clicked the dialog is add team member dialog is shown', async () => {
         wrapper.setProps({ isEditMode: true });
         await wrapper.vm.$nextTick();
         const button = wrapper.find('[data-test="add-new-member"]');
         await button.trigger('click');
-        expect(wrapper.vm.openDialog).toBeCalledTimes(1);
+        expect(wrapper.vm.showAddTeamMemberDialog).toBeTruthy();
+      });
+    });
+  });
+
+  describe('Computed', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          teamMembers: mockTeamMembersSearchData(),
+          isEditMode: false,
+        },
+        data() {
+          return {
+            search: 'Alex',
+            sortBy: 'displayName',
+          };
+        },
+      });
+    });
+
+    describe('computedTeamMembers', () => {
+      it('returns filtered list', () => {
+        expect(wrapper.vm.computedTeamMembers).toEqual([wrapper.vm.teamMembers[0]]);
+      });
+    });
+
+    describe('teamMembersId', () => {
+      it('returns the list of team members id', () => {
+        expect(wrapper.vm.teamMembersId).toEqual(wrapper.vm.teamMembers.map((m) => m.id));
       });
     });
   });
