@@ -1,9 +1,12 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockTeamMembersSearchData } from '@/entities/team';
+import { mockTeamsData, Team } from '@/entities/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
+import { mockStorage } from '@/store/storage';
 import Component from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
+
+const storage = mockStorage();
 
 describe('TeamMembersTable.vue', () => {
   let wrapper;
@@ -13,7 +16,7 @@ describe('TeamMembersTable.vue', () => {
       wrapper = mount(Component, {
         localVue,
         propsData: {
-          teamMembers: mockTeamMembersSearchData(),
+          team: new Team(mockTeamsData()[0]),
           isEditMode: false,
         },
       });
@@ -52,7 +55,7 @@ describe('TeamMembersTable.vue', () => {
 
           const headers = wrapper.findAll('th');
 
-          expect(headers.length).toBe(8);
+          expect(headers.length).toBe(9);
 
           expect(headers.wrappers[0].find('span').text()).toBe('teams.member_name');
           expect(headers.wrappers[1].find('span').text()).toBe('teams.member_email');
@@ -62,6 +65,7 @@ describe('TeamMembersTable.vue', () => {
           expect(headers.wrappers[5].find('span').text()).toBe('teams.count_file.total');
           expect(headers.wrappers[6].find('span').text()).toBe('teams.count_file.open');
           expect(headers.wrappers[7].find('span').text()).toBe('teams.count_file.inactive');
+          expect(headers.wrappers[7].find('span').text()).toBe('teams.count_file.inactive');
         });
 
         test('items props is linked to computedTeamMembers', async () => {
@@ -70,6 +74,18 @@ describe('TeamMembersTable.vue', () => {
 
           const element = wrapper.findDataTest('teamMembers__table');
           expect(element.props().items).toEqual(wrapper.vm.computedTeamMembers);
+        });
+
+        test('clicking the bin will show remove confirmation dialog', async () => {
+          jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
+
+          await wrapper.setProps({
+            isEditMode: true,
+          });
+
+          const button = wrapper.findDataTest('remove_team_member_guid-member-1');
+          await button.trigger('click');
+          expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -94,7 +110,7 @@ describe('TeamMembersTable.vue', () => {
         test('props teamMembers is correctly linked', async () => {
           await wrapper.setData({ showAddTeamMemberDialog: true });
           const element = wrapper.findDataTest('add-team-members');
-          expect(element.props().teamMembers).toEqual(wrapper.vm.teamMembers);
+          expect(element.props().teamMembers).toEqual(wrapper.vm.team.teamMembers);
         });
       });
 
@@ -105,6 +121,19 @@ describe('TeamMembersTable.vue', () => {
 
           await wrapper.setProps({ isEditMode: true });
           expect(wrapper.findDataTest('search').exists()).toBeTruthy();
+        });
+      });
+
+      describe('Delete confirmation dialog', () => {
+        test('submit is linked to removeTeamMember', async () => {
+          wrapper.vm.showRemoveMemberConfirmationDialog = true;
+          await wrapper.vm.$nextTick();
+          jest.spyOn(wrapper.vm, 'removeTeamMember').mockImplementation(() => true);
+
+          const element = wrapper.findDataTest('removeTeamMember_confirmDialog');
+          element.vm.$emit('submit');
+
+          expect(wrapper.vm.removeTeamMember).toHaveBeenCalledTimes(1);
         });
       });
     });
@@ -125,12 +154,12 @@ describe('TeamMembersTable.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          teamMembers: mockTeamMembersSearchData(),
+          team: new Team(mockTeamsData()[0]),
           isEditMode: false,
         },
         data() {
           return {
-            search: 'Alex',
+            search: 'Mister',
             sortBy: 'displayName',
           };
         },
@@ -139,13 +168,55 @@ describe('TeamMembersTable.vue', () => {
 
     describe('computedTeamMembers', () => {
       it('returns filtered list', () => {
-        expect(wrapper.vm.computedTeamMembers).toEqual([wrapper.vm.teamMembers[0]]);
+        expect(wrapper.vm.computedTeamMembers).toEqual([wrapper.vm.team.teamMembers[0]]);
       });
     });
 
     describe('teamMembersId', () => {
       it('returns the list of team members id', () => {
-        expect(wrapper.vm.teamMembersId).toEqual(wrapper.vm.teamMembers.map((m) => m.id));
+        expect(wrapper.vm.teamMembersId).toEqual(wrapper.vm.team.teamMembers.map((m) => m.id));
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          team: new Team(mockTeamsData()[0]),
+          isEditMode: false,
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+    });
+    describe('showRemoveConfirmationDialog', () => {
+      it('assigns removeMemberId', () => {
+        wrapper.vm.showRemoveConfirmationDialog('123');
+        expect(wrapper.vm.removeMemberId).toBe('123');
+      });
+
+      it('sets showRemoveMemberConfirmationDialog to true', () => {
+        expect(wrapper.vm.showRemoveMemberConfirmationDialog).toBeFalsy();
+        wrapper.vm.showRemoveConfirmationDialog('123');
+        expect(wrapper.vm.showRemoveMemberConfirmationDialog).toBeTruthy();
+      });
+    });
+
+    describe('removeTeamMember', () => {
+      it('calls removeTeamMember action with correct params', () => {
+        wrapper.vm.removeMemberId = 'guid-member-1';
+        wrapper.vm.removeTeamMember();
+        expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith(wrapper.vm.team.id, 'guid-member-1');
+      });
+
+      it('calls removeTeamMember method from entity with correct params', async () => {
+        jest.spyOn(wrapper.vm.team, 'removeTeamMember').mockImplementation(() => true);
+        wrapper.vm.removeMemberId = 'guid-member-1';
+        await wrapper.vm.removeTeamMember();
+        expect(wrapper.vm.team.removeTeamMember).toHaveBeenCalledWith('guid-member-1');
       });
     });
   });

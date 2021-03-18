@@ -1,5 +1,5 @@
 <template>
-  <page-content
+  <rc-page-content
     :full-height="false"
     :outer-scroll="true"
     :title="$t('system_management.leftMenu.lists_title')"
@@ -37,13 +37,13 @@
         </v-list>
       </div>
     </div>
-  </page-content>
+  </rc-page-content>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import PageContent from '@/ui/views/components/layout/PageContent.vue';
+import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 
@@ -57,7 +57,7 @@ export default Vue.extend({
   name: 'OptionLists',
 
   components: {
-    PageContent,
+    RcPageContent,
   },
 
   data() {

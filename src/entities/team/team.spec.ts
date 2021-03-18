@@ -1,6 +1,6 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { Team } from './team';
-import { mockTeamsData } from './team.mock';
+import { mockTeamMembers, mockTeamsData } from './team.mock';
 import { ETeamStatus, ETeamType } from './team.types';
 
 const mockTeamData = mockTeamsData()[0];
@@ -19,13 +19,7 @@ describe('>>> Team', () => {
 
     it('should instantiate teamMembers', () => {
       const team = new Team(mockTeamData);
-      expect(team.teamMembers).toEqual([{
-        id: 'guid-member-1',
-        isPrimaryContact: true,
-      }, {
-        id: 'guid-member-2',
-        isPrimaryContact: false,
-      }]);
+      expect(team.teamMembers).toEqual(mockTeamMembers());
     });
 
     it('should instantiate teamType', () => {
@@ -61,36 +55,49 @@ describe('>>> Team', () => {
       });
     });
 
+    describe('removeTeamMember', () => {
+      it('should return false if member is not found', () => {
+        const team = new Team(mockTeamData);
+        const mockId = 'unknown';
+        const result = team.removeTeamMember(mockId);
+        expect(result).toBeFalsy();
+      });
+
+      it('should remove the member if he is not a primary contact and return true', () => {
+        const team = new Team(mockTeamData);
+        const mockId = 'guid-member-2';
+        const result = team.removeTeamMember(mockId);
+        expect(team.teamMembers).toEqual([mockTeamData.teamMembers[0]]);
+        expect(result).toBeTruthy();
+      });
+
+      it('should not do anything if primary contact and return false', () => {
+        const team = new Team(mockTeamData);
+        const mockId = 'guid-member-1';
+        const result = team.removeTeamMember(mockId);
+        expect(team.teamMembers).toEqual(mockTeamData.teamMembers);
+        expect(result).toBeFalsy();
+      });
+    });
+
     describe('setPrimaryContact', () => {
       let team: Team;
+
       beforeEach(() => {
         team = new Team(mockTeamData);
       });
 
       it('should set a user as primary contact and all other users should not be primary users', () => {
         team.setPrimaryContact('guid-member-2');
-        expect(team.teamMembers).toEqual([{
-          id: 'guid-member-1',
-          isPrimaryContact: false,
-        }, {
-          id: 'guid-member-2',
-          isPrimaryContact: true,
-        }]);
+        expect(team.teamMembers[0].isPrimaryContact).toBeFalsy();
+        expect(team.teamMembers[1].isPrimaryContact).toBeTruthy();
       });
 
       it('should add a new member to the team and set it as primary contact if it is not already a member', () => {
         team.setPrimaryContact('guid-member-new');
-        expect(team.teamMembers).toEqual([{
-          id: 'guid-member-1',
-          isPrimaryContact: false,
-        }, {
-          id: 'guid-member-2',
-          isPrimaryContact: false,
-        }, {
-          id: 'guid-member-new',
-          isPrimaryContact: true,
-        },
-        ]);
+        expect(team.teamMembers[0].isPrimaryContact).toBeFalsy();
+        expect(team.teamMembers[1].isPrimaryContact).toBeFalsy();
+        expect(team.teamMembers[2].isPrimaryContact).toBeTruthy();
       });
     });
 

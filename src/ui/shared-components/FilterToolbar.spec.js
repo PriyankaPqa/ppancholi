@@ -235,8 +235,6 @@ describe(Component, () => {
           exportItems: 'genericFilter.exportItems',
           formFilterName: 'genericFilter.filterName',
           formRequiredField: 'validations.required',
-          errorDialogTitle: 'common.title.error',
-          errorDialogButton: 'common.buttons.close',
           defaultFilterName: 'genericFilter.defaultFilterName',
           filterSubtitle: 'genericFilter.filterSubtitle',
           dialogTitle: 'titleDialog',

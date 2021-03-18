@@ -2,7 +2,7 @@
   <div>
     <div
       :class="['table_top_header', isEditMode? 'border-radius-top no-bottom-border' : 'border-radius-all']">
-      <div class="toolbar">
+      <div class="team_member_toolbar">
         <v-btn color="primary" data-test="add-new-member" :disabled="!isEditMode" @click="showAddTeamMemberDialog = true">
           {{ $t('teams.add_new_members') }}
         </v-btn>
@@ -38,13 +38,33 @@
           {{ item.displayName }}
         </span>
       </template>
+
+      <template #item.delete="{ item }">
+        <v-btn icon x-small :data-test="`remove_team_member_${item.id}`" @click="showRemoveConfirmationDialog(item.id)">
+          <v-icon color="grey darken-2">
+            mdi-delete
+          </v-icon>
+        </v-btn>
+      </template>
     </v-data-table>
+
     <add-team-members
       v-if="showAddTeamMemberDialog"
       data-test="add-team-members"
-      :team-members="teamMembers"
+      :team-members="team.teamMembers"
       :show.sync="showAddTeamMemberDialog"
       @refresh-team="$emit('refresh-team')" />
+
+    <rc-confirmation-dialog
+      v-if="showRemoveMemberConfirmationDialog"
+      data-test="removeTeamMember_confirmDialog"
+      :show.sync="showRemoveMemberConfirmationDialog"
+      :title="$t('teams.remove_team_members')"
+      :messages="$t('teams.remove_team_members_confirm')"
+      :loading="removeLoading"
+      @submit="removeTeamMember()"
+      @cancel="showRemoveMemberConfirmationDialog = false"
+      @close="showRemoveMemberConfirmationDialog = false" />
   </div>
 </template>
 
@@ -52,19 +72,21 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
-import { ITeamMember } from '@/entities/team';
+import { ITeamMember, Team } from '@/entities/team';
 import helpers from '@/ui/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
+import { RcConfirmationDialog } from '@crctech/component-library';
 
 export default Vue.extend({
   name: 'TeamMembersTable',
   components: {
     AddTeamMembers,
+    RcConfirmationDialog,
   },
 
   props: {
-    teamMembers: {
-      type: Array as () => Array<ITeamMember>,
+    team: {
+      type: Object as () => Team,
       required: true,
     },
 
@@ -80,6 +102,8 @@ export default Vue.extend({
       sortBy: 'displayName',
       search: '',
       showAddTeamMemberDialog: false,
+      showRemoveMemberConfirmationDialog: false,
+      removeMemberId: '',
     };
   },
 
@@ -142,26 +166,51 @@ export default Vue.extend({
           sortable: true,
           value: 'inactiveCaseFilesCount',
         },
+        {
+          text: '',
+          value: 'delete',
+          width: '10px',
+        },
       ];
     },
 
     computedTeamMembers(): Array<ITeamMember> {
       const direction = this.sortDesc ? 'desc' : 'asc';
-      const filtered = helpers.filterCollectionByValue(this.teamMembers, this.search);
+      const filtered = helpers.filterCollectionByValue(this.team.teamMembers, this.search);
       return _orderBy(filtered, this.sortBy, direction) as ITeamMember[];
     },
 
     teamMembersId(): Array<string> {
-      return this.teamMembers.map((m: ITeamMember) => m.id);
+      return this.team.teamMembers.map((m: ITeamMember) => m.id);
+    },
+
+    removeLoading(): boolean {
+      return this.$store.state.team.removeLoading;
+    },
+
+  },
+  methods: {
+    showRemoveConfirmationDialog(id: string) {
+      this.removeMemberId = id;
+      this.showRemoveMemberConfirmationDialog = true;
+    },
+
+    async removeTeamMember() {
+      await this.$storage.team.actions.removeTeamMember(this.team.id, this.removeMemberId);
+
+      if (this.team.removeTeamMember(this.removeMemberId)) {
+        this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
+      }
+      this.showRemoveMemberConfirmationDialog = false;
     },
   },
 });
 
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 
-.toolbar {
+.team_member_toolbar {
   display: flex;
   width: 100%;
   justify-content: space-between;

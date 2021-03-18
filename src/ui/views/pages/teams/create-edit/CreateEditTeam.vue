@@ -1,9 +1,11 @@
 <template>
   <validation-observer ref="form" v-slot="{ failed, dirty, changed }" slim>
-    <page-content
+    <rc-page-content
       :title="headerTitle"
       :show-add-button="false"
       :show-back-button="true"
+      :help-link="$t('zendesk.help_link.teams.create')"
+      show-help
       @back="onCancel(dirty || changed)">
       <v-container v-if="isLoading">
         <v-row justify="center">
@@ -108,7 +110,7 @@
               <v-col class="pa-0">
                 <team-members-table
                   data-test="team-members-table"
-                  :team-members="team.teamMembers"
+                  :team="team"
                   :is-edit-mode="isEditMode"
                   @refresh-team="loadTeam()" />
               </v-col>
@@ -116,7 +118,7 @@
           </v-col>
         </v-row>
       </v-container>
-    </page-content>
+    </rc-page-content>
 
     <rc-confirmation-dialog
       v-if="showCancelConfirmationDialog"
@@ -150,10 +152,9 @@ import {
   ETeamStatus, ETeamType, Team, ITeam, ITeamEvent,
 } from '@/entities/team';
 import { EEventStatus, IEvent } from '@/entities/event';
-import PageContent from '@/ui/views/components/layout/PageContent.vue';
 import TeamMembersTable from '@/ui/views/pages/teams/create-edit/TeamMembersTable.vue';
 import {
-  VTextFieldWithValidation, VAutocompleteWithValidation, RcConfirmationDialog,
+  VTextFieldWithValidation, VAutocompleteWithValidation, RcConfirmationDialog, RcPageContent,
 } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
@@ -165,7 +166,7 @@ export default Vue.extend({
   name: 'CreateEditTeam',
 
   components: {
-    PageContent,
+    RcPageContent,
     VTextFieldWithValidation,
     VAutocompleteWithValidation,
     TeamMembersTable,

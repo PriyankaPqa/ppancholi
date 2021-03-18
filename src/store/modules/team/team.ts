@@ -18,6 +18,7 @@ const getDefaultState = (): IState => ({
   submitLoading: false,
   searchLoading: false,
   getLoading: false,
+  removeLoading: false,
   teamId: null,
 });
 
@@ -91,6 +92,20 @@ const actions = {
       return new Team(res);
     } finally {
       context.state.addTeamMemberLoading = false;
+    }
+  },
+
+  async removeTeamMember(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    payload: { teamId: uuid, teamMemberId: uuid },
+  ): Promise<ITeam> {
+    context.state.removeLoading = true;
+    try {
+      const res = await this.$services.teams.removeTeamMember(payload.teamId, payload.teamMemberId);
+      return new Team(res);
+    } finally {
+      context.state.removeLoading = false;
     }
   },
 

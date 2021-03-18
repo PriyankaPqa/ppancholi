@@ -1,5 +1,5 @@
 <template>
-  <page-content
+  <rc-page-content
     :title="$t(title)"
     :help-link="helpLink"
     show-add-button
@@ -104,7 +104,7 @@
     <div v-else-if="error">
       {{ $t('system_management.lists.notFoundError') }}
     </div>
-  </page-content>
+  </rc-page-content>
 </template>
 
 <script lang="ts">
@@ -113,8 +113,8 @@ import draggable from 'vuedraggable';
 import {
   RcTabs,
   RcTab,
+  RcPageContent,
 } from '@crctech/component-library';
-import PageContent from '@/ui/views/components/layout/PageContent.vue';
 import { IMultilingual } from '@/types';
 import entityUtils from '@/entities/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
@@ -131,7 +131,7 @@ export default Vue.extend({
     RcTabs,
     RcTab,
     draggable,
-    PageContent,
+    RcPageContent,
     OptionListItem,
     OptionListNewItem,
   },

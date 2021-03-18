@@ -9,6 +9,7 @@ export interface IStorage {
     editTeam(payload: ITeam): Promise<ITeam>;
     searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
     addTeamMembers(teamId: uuid, teamMembers: IAppUserData[]): Promise<ITeam>;
+    removeTeamMember(teamId: uuid, teamMemberId: uuid): Promise<ITeam>;
   }
 }
 
@@ -19,5 +20,6 @@ export interface IStorageMock {
     editTeam: jest.Mock<void>;
     searchTeams: jest.Mock<void>;
     addTeamMembers: jest.Mock<void>;
+    removeTeamMember: jest.Mock<void>;
   }
 }

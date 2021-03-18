@@ -4,7 +4,7 @@ import { EEventStatus, mockEventsData } from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
 import {
-  mockTeamsData, ETeamStatus, ETeamType, mockTeamMember, Team,
+  mockTeamsData, ETeamStatus, ETeamType, mockTeamMembers, Team,
 } from '@/entities/team';
 
 import { mockAppUserAzureData, mockAppUserData } from '@/entities/app-user';
@@ -722,7 +722,7 @@ describe('CreateEditTeam.vue', () => {
         wrapper.vm.team = new Team();
         wrapper.vm.$route.params = { id: 'foo' };
         jest.spyOn(wrapper.vm.$storage.team.actions, 'getTeam').mockImplementation(() => new Team(mockTeamsData()[0]));
-        jest.spyOn(wrapper.vm.team, 'getPrimaryContact').mockImplementation(() => mockTeamMember);
+        jest.spyOn(wrapper.vm.team, 'getPrimaryContact').mockImplementation(() => mockTeamMembers[0]);
         jest.spyOn(wrapper.vm.$storage.appUser.getters, 'appUserWhere').mockImplementation(() => mockAppUserData()[0]);
       });
 

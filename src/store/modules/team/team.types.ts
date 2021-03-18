@@ -3,5 +3,6 @@ export type IState = {
   getLoading: boolean;
   submitLoading: boolean;
   searchLoading: boolean;
+  removeLoading: boolean;
   teamId: string;
 };

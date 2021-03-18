@@ -23,7 +23,7 @@
 import Vue from 'vue';
 import _set from 'lodash/set';
 import {
-  IFilterDTO, IFilterSettings, IFilterData, RcFilterToolbar, IFilterToolbarLabels,
+  IFilterSettings, IFilterData, RcFilterToolbar, IFilterToolbarLabels,
 } from '@crctech/component-library';
 import { EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 
@@ -96,8 +96,6 @@ export default Vue.extend({
         exportItems: this.$t('genericFilter.exportItems') as string,
         formFilterName: this.$t('genericFilter.filterName') as string,
         formRequiredField: this.$t('validations.required') as string,
-        errorDialogTitle: this.$t('common.title.error') as string,
-        errorDialogButton: this.$t('common.buttons.close') as string,
         defaultFilterName: this.$t('genericFilter.defaultFilterName') as string,
         filterSubtitle: this.$t('genericFilter.filterSubtitle') as string,
         dialogTitle: this.titleDialog,
@@ -130,13 +128,13 @@ export default Vue.extend({
     /**
      * Handles either updating or saving a new filter
      */
-    async onSave(filter: IFilterDTO) {
-      if (filter.id) {
-        // this.response = await this.$services.filterToolbars.save(filter);
-      } else {
-        // this.response = await this.$services.filterToolbars.create(filter);
-      }
-    },
+    // async onSave(filter) {
+    //   // if (filter.id) {
+    //   //   // this.response = await this.$services.filterToolbars.save(filter);
+    //   // } else {
+    //   //   // this.response = await this.$services.filterToolbars.create(filter);
+    //   // }
+    // },
 
     /**
      * Handles fetching the list of filters from the API

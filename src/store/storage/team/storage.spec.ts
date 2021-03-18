@@ -42,5 +42,14 @@ describe('>>> Team Storage', () => {
       storage.actions.addTeamMembers(payload.teamId, payload.teamMembers);
       expect(store.dispatch).toBeCalledWith('team/addTeamMembers', payload);
     });
+
+    it('should proxy removeTeamMember', () => {
+      const payload = {
+        teamId: '1234',
+        teamMemberId: '5678',
+      };
+      storage.actions.removeTeamMember(payload.teamId, payload.teamMemberId);
+      expect(store.dispatch).toBeCalledWith('team/removeTeamMember', payload);
+    });
   });
 });

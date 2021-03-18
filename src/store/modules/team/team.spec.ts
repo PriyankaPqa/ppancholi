@@ -76,5 +76,18 @@ describe('>>> Team Module', () => {
         expect(store.$services.teams.addTeamMembers).toHaveBeenCalledWith(payload.teamId, payload.teamMembers);
       });
     });
+
+    describe('removeTeamMember', () => {
+      it('calls the removeTeamMember service', async () => {
+        const store = mockStore();
+        const payload = {
+          teamId: '1234',
+          teamMemberId: '456',
+        };
+        await store.dispatch('team/removeTeamMember', payload);
+
+        expect(store.$services.teams.removeTeamMember).toHaveBeenCalledWith(payload.teamId, payload.teamMemberId);
+      });
+    });
   });
 });

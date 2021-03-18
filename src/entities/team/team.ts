@@ -33,6 +33,20 @@ export class Team implements ITeam {
     this.teamMembers.push({ id: userId, isPrimaryContact });
   }
 
+  removeTeamMember(userId: uuid): boolean {
+    const member = this.teamMembers.find((u) => u.id === userId);
+
+    if (!member) return false;
+
+    if (member && member.isPrimaryContact) {
+      return false;
+    }
+
+    this.teamMembers = this.teamMembers.filter((u) => u.id !== userId);
+
+    return true;
+  }
+
   setPrimaryContact(userId: uuid) {
     let isUserInTeam = false;
     const updatedTeam = this.teamMembers.map((member: ITeamMember) => {

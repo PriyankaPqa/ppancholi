@@ -58,4 +58,11 @@ describe('>>> Teams Service', () => {
     await service.addTeamMembers(params.teamId, params.teamMembers);
     expect(http.patch).toHaveBeenCalledWith(`/team/teams/${params.teamId}/add-team-members`, payload);
   });
+
+  test('removeTeamMember is linked to the correct URL', async () => {
+    const teamId = '123';
+    const teamMemberId = '456';
+    await service.removeTeamMember(teamId, teamMemberId);
+    expect(http.delete).toHaveBeenCalledWith(`/team/teams/${teamId}/member/${teamMemberId}`);
+  });
 });

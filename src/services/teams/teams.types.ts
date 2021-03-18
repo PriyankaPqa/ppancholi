@@ -8,6 +8,7 @@ export interface ITeamsService {
   getTeam(id: uuid): Promise<ITeamData>;
   searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
   addTeamMembers(teamId: uuid, teamMembers: IAppUserData[]): Promise<ITeamData>;
+  removeTeamMember(teamId: uuid, teamMemberId: uuid) : Promise<ITeamData>;
 }
 
 export interface ITeamsServiceMock {
@@ -16,4 +17,5 @@ export interface ITeamsServiceMock {
   getTeam: jest.Mock <ITeamData>;
   searchTeams: jest.Mock <IAzureSearchResult<ITeamSearchData>>;
   addTeamMembers: jest.Mock <ITeamData>;
+  removeTeamMember: jest.Mock <ITeamData>;
 }

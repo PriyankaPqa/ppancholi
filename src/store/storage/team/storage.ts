@@ -25,5 +25,9 @@ export const makeStorage = (store: IStore): IStorage => ({
     addTeamMembers(teamId: uuid, teamMembers: IAppUserData[]): Promise<ITeam> {
       return store.dispatch('team/addTeamMembers', { teamId, teamMembers });
     },
+
+    removeTeamMember(teamId: uuid, teamMemberId: uuid): Promise<ITeam> {
+      return store.dispatch('team/removeTeamMember', { teamId, teamMemberId });
+    },
   },
 });

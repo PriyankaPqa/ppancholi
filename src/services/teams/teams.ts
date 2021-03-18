@@ -34,6 +34,10 @@ export class TeamsService implements ITeamsService {
     return this.http.patch(`/team/teams/${teamId}/add-team-members`, payload);
   }
 
+  async removeTeamMember(teamId: uuid, teamMemberId: uuid): Promise<ITeamData> {
+    return this.http.delete(`/team/teams/${teamId}/member/${teamMemberId}`);
+  }
+
   private teamToEditTeamRequestPayload(team: ITeam) : IEditTeamRequest {
     return {
       name: team.name,
