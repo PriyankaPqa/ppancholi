@@ -33,37 +33,60 @@ const teamSearchDataToTeamData = (teamSearchData: ITeamSearchData): ITeamData =>
   events: teamSearchData.events,
 });
 
+const mutations = {
+  setGetLoading(state: IState, payload: boolean) {
+    state.getLoading = payload;
+  },
+
+  setSubmitLoading(state: IState, payload: boolean) {
+    state.submitLoading = payload;
+  },
+
+  setAddTeamMemberLoading(state: IState, payload: boolean) {
+    state.addTeamMemberLoading = payload;
+  },
+
+  setSearchLoading(state: IState, payload: boolean) {
+    state.searchLoading = payload;
+  },
+
+  setTeamId(state: IState, payload: uuid) {
+    state.teamId = payload;
+  },
+
+};
+
 const actions = {
 
   async getTeam(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ITeam> {
-    context.state.getLoading = true;
+    context.commit('setGetLoading', true);
     try {
       const res = await this.$services.teams.searchTeams({ filter: { TeamId: id } });
       const team = res.value[0];
-      context.state.teamId = team.teamId;
+      context.commit('setTeamId', team.teamId);
       return new Team(teamSearchDataToTeamData(team));
     } finally {
-      context.state.getLoading = false;
+      context.commit('setGetLoading', false);
     }
   },
 
   async createTeam(this: Store<IState>, context: ActionContext<IState, IState>, payload: ITeam): Promise<ITeam> {
-    context.state.submitLoading = true;
+    context.commit('setSubmitLoading', true);
     try {
       const res = await this.$services.teams.createTeam(payload);
       return new Team(res);
     } finally {
-      context.state.submitLoading = false;
+      context.commit('setSubmitLoading', false);
     }
   },
 
   async editTeam(this: Store<IState>, context: ActionContext<IState, IState>, payload: ITeam): Promise<ITeam> {
-    context.state.submitLoading = true;
+    context.commit('setSubmitLoading', true);
     try {
       const res = await this.$services.teams.editTeam(payload);
       return new Team(res);
     } finally {
-      context.state.submitLoading = false;
+      context.commit('setSubmitLoading', false);
     }
   },
 
@@ -73,11 +96,10 @@ const actions = {
     params: IAzureSearchParams,
   ): Promise<IAzureSearchResult<ITeamSearchData>> {
     try {
-      context.state.addTeamMemberLoading = true;
-      const res = await this.$services.teams.searchTeams(params);
-      return res;
+      context.commit('setSearchLoading', true);
+      return await this.$services.teams.searchTeams(params);
     } finally {
-      context.state.addTeamMemberLoading = false;
+      context.commit('setSearchLoading', false);
     }
   },
 
@@ -86,12 +108,12 @@ const actions = {
     context: ActionContext<IState, IState>,
     payload: { teamId: uuid, teamMembers: IAppUserData[] },
   ): Promise<ITeam> {
-    context.state.addTeamMemberLoading = true;
+    context.commit('setAddTeamMemberLoading', true);
     try {
       const res = await this.$services.teams.addTeamMembers(payload.teamId, payload.teamMembers);
       return new Team(res);
     } finally {
-      context.state.addTeamMemberLoading = false;
+      context.commit('setAddTeamMemberLoading', false);
     }
   },
 
@@ -115,4 +137,5 @@ export const team: Module<IState, IRootState> = {
   namespaced: true,
   state: moduleState as IState,
   actions: actions as unknown as ActionTree<IState, IRootState>,
+  mutations,
 };

@@ -54,6 +54,14 @@ const mutations = {
       state.events.push(payload);
     }
   },
+
+  setEventTypesFetched(state: IState, payload: boolean) {
+    state.eventTypesFetched = payload;
+  },
+
+  setEventsFetched(state: IState, payload: boolean) {
+    state.eventsFetched = payload;
+  },
 };
 
 const actions = {
@@ -61,7 +69,7 @@ const actions = {
     // if (!context.state.eventTypesFetched) { disable caching until signalR events are implemented
     const data = await this.$services.optionItems.getOptionList(EOptionLists.EventTypes);
     context.commit('setEventTypes', data);
-    context.state.eventTypesFetched = true;
+    context.commit('setEventTypesFetched', true);
 
     return context.getters.eventTypes;
   },
@@ -82,7 +90,7 @@ const actions = {
     if (!context.state.eventsFetched) {
       const data = await this.$services.events.getEvents();
       context.commit('setEvents', data);
-      context.state.eventsFetched = true;
+      context.commit('setEventsFetched', true);
     }
 
     return context.getters.events;

@@ -7,6 +7,7 @@ import {
 } from '@/entities/app-user';
 
 import helpers from '@/ui/helpers';
+import _cloneDeep from 'lodash/cloneDeep';
 import {
   IState,
 } from './app-user.types';
@@ -24,7 +25,8 @@ const moduleState: IState = getDefaultState();
 
 const getters = {
   appUsersWithInfo(state: IState) {
-    return state.appUsers.map((appUser) => {
+    const appUsers = _cloneDeep(state.appUsers);
+    return appUsers.map((appUser) => {
       // We find corresponding user matching on id
       const allUserData = state.allUsers.find((u) => u.id === appUser.id);
 
@@ -54,6 +56,19 @@ const mutations = {
   setRoles(state: IState, payload: Array<IRolesData>) {
     state.roles = payload;
   },
+
+  setAllUsersFetched(state: IState, payload: boolean) {
+    state.allUsersFetched = payload;
+  },
+
+  setAppUsersFetched(state: IState, payload: boolean) {
+    state.appUsersFetched = payload;
+  },
+
+  setRolesFetched(state: IState, payload: boolean) {
+    state.rolesFetched = payload;
+  },
+
 };
 
 const actions = {
@@ -62,7 +77,7 @@ const actions = {
       const data = await this.$services.appUsers.fetchAllUsers();
       context.commit('setAllUsers', data);
     }
-    context.state.allUsersFetched = true;
+    context.commit('setAllUsersFetched', true);
     return context.state.allUsers;
   },
 
@@ -71,7 +86,7 @@ const actions = {
       const data = await this.$services.appUsers.fetchAppUsers();
       context.commit('setAppUsers', data);
     }
-    context.state.appUsersFetched = true;
+    context.commit('setAppUsersFetched', true);
     return context.state.appUsers;
   },
 
@@ -80,7 +95,7 @@ const actions = {
       const data = await this.$services.appUsers.fetchRoles();
       context.commit('setRoles', data);
     }
-    context.state.rolesFetched = true;
+    context.commit('setRolesFetched', true);
     return context.state.roles;
   },
 };
