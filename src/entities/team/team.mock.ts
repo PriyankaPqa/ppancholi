@@ -1,4 +1,4 @@
-import { IAzureSearchResult, IMultilingual } from '@/types';
+import { IAzureSearchResult } from '@/types';
 import {
   ETeamStatus, ETeamType, ITeamData, ITeamMember, ITeamSearchData,
 } from './team.types';

@@ -37,6 +37,7 @@ const getters = {
     });
   },
   // Find a user by passing the key we are looking for and the value
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   appUserWhere: (state: IState, getters: any) => (key: string, value: string) => getters.appUsersWithInfo.find((o: never) => o[key] === value),
 
   // Find all app users whose display name contains the search term

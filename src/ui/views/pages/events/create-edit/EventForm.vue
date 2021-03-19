@@ -227,7 +227,7 @@
           <v-row>
             <v-col cols="12">
               <v-autocomplete-with-validation
-                v-model="localEvent.relatedEvents"
+                v-model="localEvent.relatedEventIds"
                 data-test="event-related-events"
                 item-value="id"
                 :item-text="(item) => $m(item.name)"

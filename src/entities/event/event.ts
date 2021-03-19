@@ -34,7 +34,7 @@ export class Event implements IEvent {
 
   responseDetails: IEventResponseDetails;
 
-  relatedEvents: Array<uuid>;
+  relatedEventIds: Array<uuid>;
 
   constructor(data?: IEventData) {
     if (data) {
@@ -74,7 +74,7 @@ export class Event implements IEvent {
         eventType: { ...data.responseDetails.eventType },
         dateReported: data.responseDetails.dateReported ? new Date(data.responseDetails.dateReported) : null,
       };
-      this.relatedEvents = data.relatedEvents ? [...data.relatedEvents] : [];
+      this.relatedEventIds = data.relatedEventIds ? [...data.relatedEventIds] : [];
     } else {
       this.reset();
     }
@@ -108,7 +108,7 @@ export class Event implements IEvent {
       assistanceNumber: '',
     };
     this.registrationLink = utils.initMultilingualAttributes();
-    this.relatedEvents = [];
+    this.relatedEventIds = [];
   }
 
   private validateAttributes(errors: Array<string>) {

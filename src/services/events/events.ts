@@ -53,7 +53,7 @@ export class EventsService implements IEventsService {
       province: event.location.province,
       provinceOther: event.location.provinceOther,
       region: event.location.region,
-      relatedEvents: event.relatedEvents,
+      relatedEventIds: event.relatedEventIds,
       responseLevel: event.responseDetails.responseLevel,
       scheduledCloseDate: event.schedule.scheduledCloseDate ? new Date(event.schedule.scheduledCloseDate).toISOString() : null,
       scheduledOpenDate: event.schedule.scheduledOpenDate ? new Date(event.schedule.scheduledOpenDate).toISOString() : null,

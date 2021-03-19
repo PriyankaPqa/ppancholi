@@ -69,7 +69,7 @@ export interface IEventData {
   location: IEventLocation;
   schedule: IEventSchedule;
   responseDetails: IEventResponseDetails;
-  relatedEvents?: Array<uuid>;
+  relatedEventIds?: Array<uuid>;
 }
 
 /**
@@ -84,7 +84,7 @@ export interface ICreateEventRequest {
   province: ECanadaProvinces;
   provinceOther: IMultilingual;
   region: IMultilingual;
-  relatedEvents: Array<uuid>;
+  relatedEventIds: Array<uuid>;
   responseLevel: EResponseLevel;
   scheduledCloseDate: Date | string;
   scheduledOpenDate: Date | string;
