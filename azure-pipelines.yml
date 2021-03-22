@@ -8,6 +8,10 @@ variables:
 - group: Build-Defaults
 - name: Patch
   value: $[counter(format('{0}.{1}',variables['Major'],variables['Minor']),0)]
+- name: cdnEndpoint
+  value: 'emis-cdne-emis'
+- name: cdnProfile
+  value: 'emis-cdnp-emis'
 
 name: $(Major).$(Minor).$(Patch)
 
@@ -23,3 +27,5 @@ stages:
   parameters:
     storage: $(EmisWebAppStorage)
     packageFeed: $(PackageFeed-Npm)
+    cdnEndpoint: $(cdnEndpoint)    
+    cdnProfile: $(cdnProfile)
