@@ -5,6 +5,7 @@ export * from './personalInformation/personalInformation.types';
 export * from './personalInformation/personalInformation.mock';
 export * from './addresses/addresses';
 export * from './addresses/addresses.types';
+export * from './addresses/addresses.mock';
 export * from './householdMembers/householdMembers';
 export * from './householdMembers/householdMembers.types.';
 export * from './reviewRegistration/reviewRegistration';

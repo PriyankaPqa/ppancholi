@@ -1,4 +1,3 @@
-import _forEach from 'lodash/forEach';
 import { i18n } from '@/ui/plugins';
 import moment from 'moment';
 import { IBirthDate } from './beneficiary/personalInformation/personalInformation.types';
@@ -11,13 +10,11 @@ export default {
     return Object.keys(myEnum).filter((x) => !(parseInt(x, 0) >= 0));
   },
 
-  /* eslint-disable  @typescript-eslint/no-explicit-any */
-  enumToTranslatedCollection(myEnum: any, translationPath: string) {
+  enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string) {
     const enumKeys = this.getEnumKeys(myEnum);
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
-    const data: any[] = [];
-    _forEach(enumKeys, (val) => {
-      data.push({ value: val, text: i18n.t(`${translationPath}.${val}`) });
+    const data = [] as Array<{value: unknown, text: string}>;
+    enumKeys.forEach((val) => {
+      data.push({ value: myEnum[val], text: i18n.t(`${translationPath}.${val}`).toString() });
     });
     return data.sort((a, b) => a.text.localeCompare(b.text));
   },

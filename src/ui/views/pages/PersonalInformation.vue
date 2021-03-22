@@ -368,7 +368,7 @@ export default Vue.extend({
       return this.$storage.registration.getters.primarySpokenLanguages();
     },
 
-    canadianProvincesItems(): Record<string, TranslateResult>[] {
+    canadianProvincesItems(): Record<string, unknown>[] {
       return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 

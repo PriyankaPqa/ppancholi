@@ -6,7 +6,9 @@ import { TranslateResult } from 'vue-i18n';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
+
   getters: {
+
     event(): IEvent {
       return store.getters['registration/event'];
     },
