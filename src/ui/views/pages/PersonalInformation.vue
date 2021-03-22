@@ -405,12 +405,11 @@ export default Vue.extend({
   },
 
   methods: {
-    async onIndigenousProvinceChange(province: ECanadaProvinces) {
+    async onIndigenousProvinceChange(provinceCode: number) {
       this.form.indigenousType = null;
       this.form.indigenousCommunityId = null;
       this.form.indigenousCommunityOther = null;
-      if (province) {
-        const provinceCode = Number(ECanadaProvinces[province]);
+      if (provinceCode) {
         await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
       }
     },

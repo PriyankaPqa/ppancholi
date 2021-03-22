@@ -38,7 +38,7 @@ export interface IOptionItemData {
 }
 
 export interface IIndigenousIdentityData {
-  provinceTerritory: number;
+  province: number;
   communityType: number;
   communityName: string;
   id: string;

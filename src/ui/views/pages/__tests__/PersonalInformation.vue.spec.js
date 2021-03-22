@@ -450,7 +450,7 @@ describe('PersonalInformation.vue', () => {
 
     describe('onIndigenousProvinceChange', () => {
       it('dispatches the action to fetch indigenous identities by province', async () => {
-        wrapper.vm.onIndigenousProvinceChange('ON');
+        wrapper.vm.onIndigenousProvinceChange(ECanadaProvinces.ON);
         expect(storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledTimes(1);
         expect(storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledWith(ECanadaProvinces.ON);
       });

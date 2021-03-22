@@ -29,7 +29,7 @@ describe('>>> Beneficiaries Service', () => {
   test('searchIndigenousIdentities is linked to the correct URL', async () => {
     const params: IAzureSearchParams = {
       filter: {
-        provinceTerritory: 13,
+        Province: 13,
       },
     };
 

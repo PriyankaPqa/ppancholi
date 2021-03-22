@@ -164,7 +164,8 @@ const actions = {
     try {
       const result = await this.$services.beneficiaries.searchIndigenousIdentities({
         filter: {
-          ProvinceTerritory: provinceCode,
+          Province: provinceCode,
+          TenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724', // hard-coded TenantId to be replaced, see story EMISV2-369 and it's subtask EMISV2-926
         },
         top: INDIGENOUS_LIMIT_RESULTS,
       });

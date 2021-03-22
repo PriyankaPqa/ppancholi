@@ -154,28 +154,28 @@ export const mockIndigenousIdentities = (): IAzureSearchResult<IIndigenousIdenti
   odataCount: 4,
   value: [
     {
-      provinceTerritory: 4,
+      province: 4,
       communityType: 1,
       communityName: 'Eel River Bar First Nations',
       id: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
       status: 1,
     },
     {
-      provinceTerritory: 4,
+      province: 4,
       communityType: 1,
       communityName: "Metepenagiag Mi'kmaq Nation",
       id: 'c68b30e0-e348-544d-ba7e-7e8486972774',
       status: 1,
     },
     {
-      provinceTerritory: 4,
+      province: 4,
       communityType: 2,
       communityName: 'Oromocto First Nations',
       id: '11478c60-8e55-3a4a-9143-bf0719c86d8e',
       status: 1,
     },
     {
-      provinceTerritory: 4,
+      province: 4,
       communityType: 2,
       communityName: 'Madawaska Maliseet First Nation',
       id: '1fa967d0-6d92-5f47-bd1a-ba7c2b05e76a',
