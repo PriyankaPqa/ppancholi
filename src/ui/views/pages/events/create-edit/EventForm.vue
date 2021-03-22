@@ -465,7 +465,6 @@ export default Vue.extend({
           },
         },
         name: {
-          regex: /^[a-zA-Z0-9À-ÖÜ-öÜ-ÿ'\-_ ]*$/,
           required: true,
           max: MAX_LENGTH_MD,
           customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
@@ -534,7 +533,15 @@ export default Vue.extend({
         return this.localEvent.registrationLink.translation[this.languageMode];
       }
 
-      return escape(this.localEvent.name.translation[this.languageMode].toLowerCase().split(' ').join('-'));
+      let link = helpers.getNormalizedString(this.localEvent.name.translation[this.languageMode]);
+      link = link.replace(/[.]/g, '');
+      link = link.replace(/[/\s]/g, '-');
+      link = encodeURIComponent(link);
+      link = link.replace(/[~]/g, '%7e');
+      link = link.replace(/[']/g, '%27');
+      link = link.toLowerCase();
+
+      return link;
     },
 
     showReOpenInput(): boolean {

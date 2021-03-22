@@ -57,8 +57,7 @@ describe('EventForm.vue', () => {
       global.localStorage = {
         store: {},
         getItem: (key) => this.store[key],
-        // eslint-disable-next-line no-return-assign
-        setItem: (key, value) => this.store[key] = value,
+        setItem: (key, value) => { this.store[key] = value; },
       };
       global.localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, 'https://foo.test/');
 
@@ -420,6 +419,22 @@ describe('EventForm.vue', () => {
       it('return the registration link as the name applying lowercase and replace space by -', () => {
         wrapper.vm.localEvent.name.translation.en = 'THIS IS A TEST EVENT';
         expect(wrapper.vm.registrationLink).toBe('this-is-a-test-event');
+      });
+
+      it('properly encodes the event name when in create mode', async () => {
+        await wrapper.setData({
+          localEvent: {
+            ...wrapper.vm.localEvent,
+            name: {
+              translation: {
+                en: 'Tempête Hivernale.Montréal >> 2021/Hello',
+                fr: 'Tempête Hivernale.Montréal >> 2021/Hello',
+              },
+            },
+          },
+        });
+
+        expect(wrapper.vm.registrationLink).toBe('tempete-hivernalemontreal-%3e%3e-2021-hello');
       });
     });
 
