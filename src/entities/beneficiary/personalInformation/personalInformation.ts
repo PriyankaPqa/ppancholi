@@ -109,6 +109,7 @@ export class PersonalInformation implements IPersonalInformation {
     this.gender = null;
     this.preferredLanguage = null;
     this.primarySpokenLanguage = null;
+    this.indigenousProvince = null;
     this.indigenousType = null;
     this.indigenousCommunityId = null;
     this.indigenousCommunityOther = null;

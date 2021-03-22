@@ -11,7 +11,7 @@
         <template slot="default">
           <v-row justify="center" class="mt-12" no-gutters>
             <v-col cols="12" xl="8" lg="8" md="12" sm="12">
-              <component :is="currentTab.componentName" :beneficiary="beneficiary" @updateEntity="updateEntity" />
+              <component :is="currentTab.componentName" :beneficiary="beneficiary" @update-entity="updateEntity" />
             </v-col>
           </v-row>
         </template>
@@ -57,6 +57,7 @@ import { Beneficiary } from '@/entities/beneficiary';
 import { IEntity, VForm } from '@/types';
 import _pickBy from 'lodash/pickBy';
 import helpers from '@/ui/helpers';
+import routes from '@/constants/routes';
 import LeftMenu from './LeftMenu.vue';
 import PrivacyStatement from './PrivacyStatement.vue';
 import PersonalInformation from './PersonalInformation.vue';
@@ -141,6 +142,11 @@ export default Vue.extend({
     },
 
     async back() {
+      if (this.currentTabIndex === 0) {
+        this.$router.push({ name: routes.landingPage.name });
+        return;
+      }
+
       await this.jump(this.currentTabIndex - 1);
     },
     async next() {

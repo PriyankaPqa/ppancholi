@@ -240,7 +240,7 @@ describe('PersonalInformation.vue', () => {
       test('event is emitted when form change', async () => {
         wrapper.vm.form.firstName = 'test';
         await wrapper.vm.$nextTick();
-        expect(wrapper.emitted('updateEntity')).toBeTruthy();
+        expect(wrapper.emitted('update-entity')).toBeTruthy();
       });
     });
 

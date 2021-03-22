@@ -1,6 +1,11 @@
+import { required } from '@/entities/commonValidation';
 import { IPrivacyStatement } from './privacyStatement.types';
 
 export class PrivacyStatement implements IPrivacyStatement {
+  isPrivacyAgreed: boolean;
+
+  privacyDateTimeConsent: string;
+
   constructor(data?: unknown) {
     if (!data) {
       this.reset();
@@ -8,10 +13,15 @@ export class PrivacyStatement implements IPrivacyStatement {
   }
 
   validate(): string[] {
-    throw new Error('Method not implemented.');
+    const errors: string[] = [];
+
+    required(this.isPrivacyAgreed, 'privacy statement is required', errors);
+
+    return errors;
   }
 
   reset(): void {
-    // TODO
+    this.isPrivacyAgreed = false;
+    this.privacyDateTimeConsent = null;
   }
 }

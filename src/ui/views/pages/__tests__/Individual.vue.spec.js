@@ -68,6 +68,7 @@ describe('Individual.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        stubs: ['i18n'],
       });
     });
     describe('Event handlers', () => {
@@ -93,7 +94,7 @@ describe('Individual.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      storage.registration.getters.currentTabIndex.mockReturnValueOnce(0);
+      storage.registration.getters.currentTabIndex.mockReturnValueOnce(2);
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
@@ -121,7 +122,7 @@ describe('Individual.vue', () => {
 
         await wrapper.vm.back();
 
-        expect(wrapper.vm.jump).toHaveBeenCalledWith(-1);
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(1);
       });
     });
     describe('next', () => {
@@ -130,7 +131,7 @@ describe('Individual.vue', () => {
 
         await wrapper.vm.next();
 
-        expect(wrapper.vm.jump).toHaveBeenCalledWith(1);
+        expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
       });
     });
     describe('updateEntity', () => {

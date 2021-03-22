@@ -41,7 +41,7 @@ export interface IStorageMock {
     isLeftMenuOpen: jest.Mock<boolean>;
     tabs: jest.Mock<boolean>;
     currentTab: jest.Mock<boolean>;
-    currentTabIndex: jest.Mock<boolean>;
+    currentTabIndex: jest.Mock<number>;
     previousTabName: jest.Mock<string>;
     nextTabName: jest.Mock<string>;
     genders: jest.Mock<IOptionItemData[]>;

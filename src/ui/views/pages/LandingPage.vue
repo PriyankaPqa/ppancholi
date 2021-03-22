@@ -18,7 +18,7 @@ export default Vue.extend({
   computed: {
     phoneNumber() {
       const event: IEvent = this.$storage.registration.getters.event();
-      return event.responseDetails.assistanceNumber;
+      return event?.responseDetails?.assistanceNumber;
     },
   },
 

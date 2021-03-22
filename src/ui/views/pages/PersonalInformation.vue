@@ -131,21 +131,30 @@
     </v-col>
 
     <v-col cols="12" sm="6">
-      <ValidationProvider v-slot="{ errors }" :rules="rules.homePhone" :data-test="`${prefixDataTest}__homePhone`">
-        <rc-phone v-model="form.homePhone" outlined :label="homePhoneLabel" :error-messages="errors" />
-      </ValidationProvider>
+      <rc-phone-with-validation
+        v-model="form.homePhone"
+        :rules="rules.homePhone"
+        outlined
+        :label="homePhoneLabel"
+        :data-test="`${prefixDataTest}__homePhone`" />
     </v-col>
 
     <v-col cols="12" sm="6">
-      <ValidationProvider v-slot="{ errors }" :rules="rules.mobilePhone" :data-test="`${prefixDataTest}__mobilePhone`">
-        <rc-phone v-model="form.mobilePhone" outlined :label="$t('registration.personal_info.mobilePhoneNumber')" :error-messages="errors" />
-      </ValidationProvider>
+      <rc-phone-with-validation
+        v-model="form.mobilePhone"
+        :rules="rules.mobilePhone"
+        outlined
+        :label="$t('registration.personal_info.mobilePhoneNumber')"
+        :data-test="`${prefixDataTest}__mobilePhone`" />
     </v-col>
 
     <v-col cols="12" sm="6">
-      <ValidationProvider v-slot="{ errors }" :rules="rules.otherPhone" :data-test="`${prefixDataTest}__otherPhone`">
-        <rc-phone v-model="form.otherPhone" outlined :label="$t('registration.personal_info.alternatePhoneNumber')" :error-messages="errors" />
-      </ValidationProvider>
+      <rc-phone-with-validation
+        v-model="form.otherPhone"
+        :rules="rules.otherPhone"
+        outlined
+        :label="$t('registration.personal_info.alternatePhoneNumber')"
+        :data-test="`${prefixDataTest}__otherPhone`" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -210,7 +219,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {
-  VSelectWithValidation, VTextFieldWithValidation, RcPhone, VAutocompleteWithValidation,
+  VSelectWithValidation, VTextFieldWithValidation, RcPhoneWithValidation, VAutocompleteWithValidation,
 } from '@crctech/component-library';
 import months from '@/constants/months';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -228,7 +237,7 @@ export default Vue.extend({
   components: {
     VSelectWithValidation,
     VTextFieldWithValidation,
-    RcPhone,
+    RcPhoneWithValidation,
     VAutocompleteWithValidation,
   },
   props: {
@@ -384,7 +393,7 @@ export default Vue.extend({
     form: {
       deep: true,
       handler(newValue: IPersonalInformation) {
-        this.$emit('updateEntity', 'personalInformation', newValue);
+        this.$emit('update-entity', 'personalInformation', newValue);
       },
     },
   },

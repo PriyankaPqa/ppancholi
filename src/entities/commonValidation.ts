@@ -1,5 +1,5 @@
 export const required = (value: unknown, errorMsg: string, errors: string[]) => {
-  if (value === undefined || value === null) {
+  if (value === undefined || value === null || value === false) {
     errors.push(errorMsg);
   } else if (typeof value === 'string' && value.trim().length === 0) {
     errors.push(errorMsg);

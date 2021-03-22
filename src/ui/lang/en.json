@@ -74,6 +74,7 @@
     "registration.addresses.temporaryAddress": "Temporary address",
     "registration.addresses.temporaryAddressType": "Temporary address type",
     "registration.addresses.temporaryAddressTypes.Campground": "Campground",
+    "registration.addresses.temporaryAddressTypes.FriendsFamily": "Friends and Family",
     "registration.addresses.temporaryAddressTypes.HotelMotel": "Hotel\/Motel",
     "registration.addresses.temporaryAddressTypes.MedicalFacility": "Medical facility",
     "registration.addresses.temporaryAddressTypes.NoFixedAddress": "No fixed home address",
@@ -202,9 +203,12 @@
     "registration.submit_registration.label": "Submit registration",
     "registration.summary.age": "Age",
     "registration.type.individual": "Registration: Family or individual",
+    "validations.canadianPostalCode": "This field must be a valid postal code.",
     "validations.email": "This field must be a valid email.",
     "validations.max": "This field must be {length} characters or less.",
     "validations.phone": "This field must be a valid phone number.",
     "validations.phoneOrEmail": "You must input a phone number or an email.",
+    "validations.postCode": "This field must be a valid postal code.",
+    "validations.regex": "Please enter a correct format",
     "validations.required": "This field is required."
 }
