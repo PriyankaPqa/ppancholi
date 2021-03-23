@@ -66,7 +66,7 @@ export const mapEventDataToSearchData = (eventData: IEventData, context: ActionC
   eventName: eventData.name,
   number: eventData.number,
   provinceName: getProvinceName(eventData.location),
-  relatedEventsInfos: getRelatedEventsInfos(eventData.relatedEventIds, context.state.events), // TODO
+  relatedEventsInfos: getRelatedEventsInfos(eventData.relatedEventIds, context.state.events),
   registrationLink: eventData.registrationLink,
   responseDetails: eventData.responseDetails,
   responseLevelName: getResponseLevelName(eventData.responseDetails.responseLevel),

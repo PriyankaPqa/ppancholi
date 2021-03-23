@@ -39,7 +39,7 @@
       </template>
 
       <template #item.edit="{ item }">
-        <v-btn icon height="24" class="mr-2" :data-test="`edit_team_${item.id}`" @click="goToEditTeam(item)">
+        <v-btn icon class="mr-2" :data-test="`edit_team_${item.id}`" @click="goToEditTeam(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>

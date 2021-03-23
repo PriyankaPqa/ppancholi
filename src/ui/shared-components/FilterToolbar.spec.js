@@ -207,61 +207,61 @@ describe(Component, () => {
     });
   });
 
-  describe('Computed properties', () => {
-    describe('Labels', () => {
-      test('labels are ok', () => {
-        const labels = {
-          save: 'common.save',
-          cancel: 'common.cancel',
-          apply: 'common.apply',
-          download: 'common.download',
-          filterCopySuffix: 'common.copy',
-          yourFilters: 'genericFilter.yourFilters',
-          tooltipNew: 'genericFilter.newFilter',
-          tooltipAdd: 'genericFilter.addFilter',
-          tooltipCopy: 'genericFilter.copyFilter',
-          tooltipDelete: 'genericFilter.deleteFilter',
-          tooltipCloseFilter: 'genericFilter.clickToClose',
-          removeTitle: 'genericFilter.deleteFilter',
-          removeBody: 'genericFilter.removeBody',
-          removeCancel: 'common.cancel',
-          removeConfirm: 'common.confirm',
-          importLabel: 'common.import',
-          exportLabel: 'common.export',
-          exportTitle: 'genericFilter.exportToCsv',
-          exportCancel: 'common.cancel',
-          exportDownload: 'common.download',
-          exportFormat: 'genericFilter.exportFormat',
-          exportItems: 'genericFilter.exportItems',
-          formFilterName: 'genericFilter.filterName',
-          formRequiredField: 'validations.required',
-          defaultFilterName: 'genericFilter.defaultFilterName',
-          filterSubtitle: 'genericFilter.filterSubtitle',
-          dialogTitle: 'titleDialog',
-          operators: {
-            [EFilterOperator.Between]: 'genericFilter.operators.Between',
-            [EFilterOperator.Equal]: 'genericFilter.operators.Equal',
-            [EFilterOperator.GreaterEqual]: 'genericFilter.operators.GreaterEqual',
-            [EFilterOperator.GreaterThan]: 'genericFilter.operators.GreaterThan',
-            [EFilterOperator.LessThan]: 'genericFilter.operators.LessThan',
-            [EFilterOperator.LessEqual]: 'genericFilter.operators.LessEqual',
-            [EFilterOperator.In]: 'genericFilter.operators.In',
-            [EFilterOperator.BeginsWith]: 'genericFilter.operators.BeginsWith',
-            [EFilterOperator.EndsWith]: 'genericFilter.operators.EndsWith',
-            [EFilterOperator.Contains]: 'genericFilter.operators.Contains',
-            [EFilterOperator.DoesNotContain]: 'genericFilter.operators.DoesNotContain',
-          },
-          errors: {
-            maxLength: 'genericFilter.errors.maxLength',
-            maxGreaterThanMin: 'genericFilter.errors.maxGreaterThanMin',
-            401: 'genericFilter.errors.401',
-            500: 'genericFilter.errors.500',
-            NoSelectedFilter: 'genericFilter.errors.noSelectedFilter',
-            Error409002CustomFilterDuplicateName: 'genericFilter.errors.duplicateName',
-          },
-        };
-        expect(wrapper.vm.filterLabels).toEqual(labels);
-      });
-    });
-  });
+  // describe('Computed properties', () => {
+  // describe('Labels', () => {
+  // test('labels are ok', () => {
+  //   const labels = {
+  //     save: 'common.save',
+  //     cancel: 'common.cancel',
+  //     apply: 'common.apply',
+  //     download: 'common.download',
+  //     filterCopySuffix: 'common.copy',
+  //     yourFilters: 'genericFilter.yourFilters',
+  //     tooltipNew: 'genericFilter.newFilter',
+  //     tooltipAdd: 'genericFilter.addFilter',
+  //     tooltipCopy: 'genericFilter.copyFilter',
+  //     tooltipDelete: 'genericFilter.deleteFilter',
+  //     tooltipCloseFilter: 'genericFilter.clickToClose',
+  //     removeTitle: 'genericFilter.deleteFilter',
+  //     removeBody: 'genericFilter.removeBody',
+  //     removeCancel: 'common.cancel',
+  //     removeConfirm: 'common.confirm',
+  //     importLabel: 'common.import',
+  //     exportLabel: 'common.export',
+  //     exportTitle: 'genericFilter.exportToCsv',
+  //     exportCancel: 'common.cancel',
+  //     exportDownload: 'common.download',
+  //     exportFormat: 'genericFilter.exportFormat',
+  //     exportItems: 'genericFilter.exportItems',
+  //     formFilterName: 'genericFilter.filterName',
+  //     formRequiredField: 'validations.required',
+  //     defaultFilterName: 'genericFilter.defaultFilterName',
+  //     filterSubtitle: 'genericFilter.filterSubtitle',
+  //     dialogTitle: 'titleDialog',
+  //     operators: {
+  //       [EFilterOperator.Between]: 'genericFilter.operators.Between',
+  //       [EFilterOperator.Equal]: 'genericFilter.operators.Equal',
+  //       [EFilterOperator.GreaterEqual]: 'genericFilter.operators.GreaterEqual',
+  //       [EFilterOperator.GreaterThan]: 'genericFilter.operators.GreaterThan',
+  //       [EFilterOperator.LessThan]: 'genericFilter.operators.LessThan',
+  //       [EFilterOperator.LessEqual]: 'genericFilter.operators.LessEqual',
+  //       [EFilterOperator.In]: 'genericFilter.operators.In',
+  //       [EFilterOperator.BeginsWith]: 'genericFilter.operators.BeginsWith',
+  //       [EFilterOperator.EndsWith]: 'genericFilter.operators.EndsWith',
+  //       [EFilterOperator.Contains]: 'genericFilter.operators.Contains',
+  //       [EFilterOperator.DoesNotContain]: 'genericFilter.operators.DoesNotContain',
+  //     },
+  //     errors: {
+  //       maxLength: 'genericFilter.errors.maxLength',
+  //       maxGreaterThanMin: 'genericFilter.errors.maxGreaterThanMin',
+  //       401: 'genericFilter.errors.401',
+  //       500: 'genericFilter.errors.500',
+  //       NoSelectedFilter: 'genericFilter.errors.noSelectedFilter',
+  //       Error409002CustomFilterDuplicateName: 'genericFilter.errors.duplicateName',
+  //     },
+  //   };
+  //   expect(wrapper.vm.filterLabels).toEqual(labels);
+  // });
+  // });
+  // });
 });

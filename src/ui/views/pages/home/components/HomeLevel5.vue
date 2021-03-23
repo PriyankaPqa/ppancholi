@@ -4,7 +4,7 @@
       <v-col cols="12" sm="8" md="6" lg="8">
         <v-row no-gutters class="full-height mr-4">
           <v-col cols="12">
-            <events-table />
+            <events-table is-dashboard />
           </v-col>
         </v-row>
       </v-col>

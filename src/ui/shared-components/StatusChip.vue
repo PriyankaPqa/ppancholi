@@ -78,7 +78,7 @@ export default Vue.extend({
     text(): string {
       switch (this.statusName) {
         case 'EEventStatus':
-          return `dashboard.eventsTable.eventStatus.${EEventStatus[this.status]}`;
+          return `eventsTable.eventStatus.${EEventStatus[this.status]}`;
         case 'EOptionListItemStatus':
           return `system_management.lists.status.${EOptionListItemStatus[this.status]}`;
         case 'ETeamStatus':

@@ -21,6 +21,7 @@ describe('>>> Event Module', () => {
           state: {
             eventTypes: mockOptionItemData(),
             events: mockEvents(),
+            searchLoading: false,
           },
         },
       },
@@ -112,6 +113,16 @@ describe('>>> Event Module', () => {
             },
           },
         ]);
+      });
+    });
+
+    describe('setSearchLoading', () => {
+      test('the setSearchLoading mutation sets the searchLoading state', () => {
+        store = mockStore();
+
+        store.commit('event/setSearchLoading', true);
+
+        expect(store.state.event.searchLoading).toBeTruthy();
       });
     });
   });

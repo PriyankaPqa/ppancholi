@@ -23,6 +23,7 @@ const getDefaultState = (): IState => ({
   events: [],
   eventTypesFetched: false,
   eventsFetched: false,
+  searchLoading: false,
 });
 
 const moduleState: IState = getDefaultState();
@@ -65,6 +66,10 @@ const mutations = {
 
   setEventsFetched(state: IState, payload: boolean) {
     state.eventsFetched = payload;
+  },
+
+  setSearchLoading(state: IState, payload: boolean) {
+    state.searchLoading = payload;
   },
 };
 
@@ -117,12 +122,17 @@ const actions = {
   },
 
   async searchEvents(this: Store<IState>, context: ActionContext<IState, IState>, params: IAzureSearchParams): Promise<IAzureSearchResult<IEvent>> {
-    const res = await this.$services.events.searchEvents(params);
-    const data = res?.value;
-    return {
-      ...res,
-      value: data.map((el: IEventSearchData) => (new Event(el))),
-    };
+    try {
+      context.commit('setSearchLoading', true);
+      const res = await this.$services.events.searchEvents(params);
+      const data = res?.value;
+      return {
+        ...res,
+        value: data.map((el: IEventSearchData) => (new Event(el))),
+      };
+    } finally {
+      context.commit('setSearchLoading', false);
+    }
   },
 
   async createEvent(this: Store<IState>, context: ActionContext<IState, IRootState>, payload: IEvent): Promise<IEvent> {
