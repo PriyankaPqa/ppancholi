@@ -1,9 +1,9 @@
 import { IOptionItemData } from '@/entities/optionItem';
-import { IEventData } from '@/entities/event';
+import { IEvent } from '@/entities/event';
 
 export type IState = {
   eventTypes: IOptionItemData[];
-  events: IEventData[];
+  events: IEvent[];
   eventTypesFetched: boolean;
   eventsFetched: boolean;
 };

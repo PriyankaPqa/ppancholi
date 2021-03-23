@@ -1,6 +1,6 @@
 import { IHttpClient } from '@/services/httpClient';
 import {
-  ICreateEventRequest, IEditEventRequest, IEvent, IEventData, IOtherProvince, IRegion,
+  ICreateEventRequest, IEditEventRequest, IEvent, IEventData, IEventSearchData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
@@ -20,14 +20,6 @@ export class EventsService implements IEventsService {
     return this.http.patch(`/event/events/${event.id}/edit`, payload, { globalHandler: false });
   }
 
-  async getEventById(id: uuid): Promise<IEventData> {
-    return this.http.get(`/event/events/${id}`);
-  }
-
-  async getEvents(): Promise<IEventData[]> {
-    return this.http.get('/event/events');
-  }
-
   async getOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>> {
     return this.http.get('/search/event-province-others');
   }
@@ -36,8 +28,8 @@ export class EventsService implements IEventsService {
     return this.http.get('/search/event-regions');
   }
 
-  async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventData>> {
-    return this.http.get('/search/events', { params, isOData: true });
+  async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>> {
+    return this.http.get('/search/event-projections', { params, isOData: true });
   }
 
   private eventToCreateEventRequestPayload(event: IEvent): ICreateEventRequest {
@@ -53,7 +45,7 @@ export class EventsService implements IEventsService {
       province: event.location.province,
       provinceOther: event.location.provinceOther,
       region: event.location.region,
-      relatedEventIds: event.relatedEventIds,
+      relatedEventIds: event.relatedEventsInfos.map((el) => el.id),
       responseLevel: event.responseDetails.responseLevel,
       scheduledCloseDate: event.schedule.scheduledCloseDate ? new Date(event.schedule.scheduledCloseDate).toISOString() : null,
       scheduledOpenDate: event.schedule.scheduledOpenDate ? new Date(event.schedule.scheduledOpenDate).toISOString() : null,

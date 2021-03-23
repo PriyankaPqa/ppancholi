@@ -1,3 +1,4 @@
+import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 
@@ -125,4 +126,25 @@ export default {
       return false;
     }));
   },
+
+  /**
+   * Fills a translation object (IMultilingual type) with all the existing translations from the i18n json translation files
+   * for a given key
+   *
+   * @param translationKey key for which the translations are used to build the translation object
+   * @param hasTranslation false if the translation key doesn't exist in the translation files. In this case, the key will be used as translation
+   * @returns translation object
+   */
+  fillAllTranslationsFromI18n(translationKey: string, hasTranslation = true): IMultilingual {
+    const multiLanguageObject: Record<string, string> = {};
+
+    SUPPORTED_LANGUAGES_INFO.forEach((lang) => {
+      const locale = lang.key;
+
+      multiLanguageObject[locale] = hasTranslation ? i18n.messages[locale]?.[translationKey] as string : translationKey;
+    });
+
+    return { translation: multiLanguageObject };
+  },
+
 };

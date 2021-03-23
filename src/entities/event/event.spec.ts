@@ -1,25 +1,15 @@
 import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces } from '@/types';
 import { Event } from './event';
-import { mockEventsData } from './event.mock';
+import { mockEventsSearchData } from './event.mock';
 
-const mockEventData = mockEventsData()[0];
+const mockEventData = mockEventsSearchData()[0];
 
 describe('>>> User', () => {
   describe('>> constructor', () => {
     it('should instantiate id', () => {
       const event = new Event(mockEventData);
       expect(event.id).toBe('7c076603-580a-4400-bef2-5ddececb0931');
-    });
-
-    it('should instantiate created', () => {
-      const event = new Event(mockEventData);
-      expect(event.created).toEqual(new Date('2021-01-20T15:12:03.4219037Z'));
-    });
-
-    it('should instantiate timestamp', () => {
-      const event = new Event(mockEventData);
-      expect(event.timestamp).toEqual(new Date('2021-01-20T15:12:03.4230487Z'));
     });
 
     it('should instantiate name', () => {
@@ -42,12 +32,22 @@ describe('>>> User', () => {
       });
     });
 
-    it('should instantiate registration link', () => {
+    it('should instantiate eventStatus', () => {
       const event = new Event(mockEventData);
-      expect(event.registrationLink).toEqual({
+      expect(event.eventStatus).toEqual(1);
+    });
+
+    it('should instantiate eventTypeId', () => {
+      const event = new Event(mockEventData);
+      expect(event.eventTypeId).toEqual('41c362cc-3bed-4707-97e3-732ef3a2ebbf');
+    });
+
+    it('should instantiate eventTypeName', () => {
+      const event = new Event(mockEventData);
+      expect(event.eventTypeName).toEqual({
         translation: {
-          en: 'https://www.redcross.ca/gatineau-floods-2021',
-          fr: 'https://www.redcross.ca/inondations-gatineau-2021',
+          en: 'Flood',
+          fr: 'Inondation',
         },
       });
     });
@@ -69,6 +69,74 @@ describe('>>> User', () => {
           },
         },
       });
+    });
+
+    it('should instantiate provinceName', () => {
+      const event = new Event(mockEventData);
+      expect(event.provinceName).toEqual({
+        translation: {
+          en: 'Alberta',
+          fr: 'Alberta FR',
+        },
+      });
+    });
+
+    it('should instantiate relatedEventsInfos', () => {
+      const event = new Event(mockEventData);
+      expect(event.relatedEventsInfos).toEqual([{
+        id: '87776243-696f-426b-b961-31ee98e3a4cd',
+        eventName: {
+          translation: {
+            en: 'Vegas Earthquake 2021',
+            fr: 'Vegas Earthquake 2021 FR',
+          },
+        },
+      }]);
+    });
+
+    it('should instantiate registration link', () => {
+      const event = new Event(mockEventData);
+      expect(event.registrationLink).toEqual({
+        translation: {
+          en: 'https://www.redcross.ca/gatineau-floods-2021',
+          fr: 'https://www.redcross.ca/inondations-gatineau-2021',
+        },
+      });
+    });
+
+    it('should instantiate responseLevelName', () => {
+      const event = new Event(mockEventData);
+      expect(event.responseLevelName).toEqual({
+        translation: {
+          en: 'Level1',
+          fr: 'Niveau1',
+        },
+      });
+    });
+
+    it('should instantiate selfRegistrationEnabled', () => {
+      const event = new Event(mockEventData);
+      expect(event.selfRegistrationEnabled).toEqual(false);
+    });
+
+    it('should instantiate scheduleEventOpenDate', () => {
+      const event = new Event(mockEventData);
+      expect(event.scheduleEventOpenDate).toEqual(new Date('2021-03-15T00:00:00Z'));
+    });
+
+    it('should instantiate scheduleEventStatusName', () => {
+      const event = new Event(mockEventData);
+      expect(event.scheduleEventStatusName).toEqual({
+        translation: {
+          en: 'On hold',
+          fr: 'En attente',
+        },
+      });
+    });
+
+    it('should instantiate tenantId', () => {
+      const event = new Event(mockEventData);
+      expect(event.tenantId).toEqual('7c076603-580a-4400-bef2-5ddececb0931');
     });
 
     it('should instantiate schedule', () => {

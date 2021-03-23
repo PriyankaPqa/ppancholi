@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces, IMultilingual } from '@/types';
 import utils from '@/entities/utils';
@@ -5,58 +6,95 @@ import utils from '@/entities/utils';
 import {
   EEventStatus,
   IEvent,
-  IEventData,
   IEventLocation,
   IEventResponseDetails,
   IEventSchedule,
+  IEventSearchData,
+  IRelatedEventsInfos,
 } from './event.types';
 
 export class Event implements IEvent {
-  id: string;
-
-  created: Date | string;
-
-  timestamp: Date | string;
-
-  eTag: string;
-
-  number: number;
-
-  name: IMultilingual;
+  id: uuid;
 
   description: IMultilingual;
 
-  registrationLink: IMultilingual;
+  eventStatus: number;
+
+  eventTypeId:uuid;
+
+  eventTypeName: IMultilingual;
 
   location: IEventLocation;
 
-  schedule: IEventSchedule;
+  name: IMultilingual;
+
+  number: number;
+
+  provinceName: IMultilingual;
+
+  registrationLink: IMultilingual;
+
+  relatedEventsInfos: Array<IRelatedEventsInfos>;
 
   responseDetails: IEventResponseDetails;
 
-  relatedEventIds: Array<uuid>;
+  responseLevelName: IMultilingual;
 
-  constructor(data?: IEventData) {
+  schedule: IEventSchedule;
+
+  scheduleEventOpenDate: Date | string;
+
+  scheduleEventStatusName: IMultilingual;
+
+  selfRegistrationEnabled: boolean;
+
+  tenantId: uuid;
+
+  constructor(data?: IEventSearchData) {
     if (data) {
-      this.id = data.id;
-      this.created = new Date(data.created);
-      this.timestamp = new Date(data.timestamp);
-      this.eTag = data.eTag;
-      this.number = data.number;
-      this.name = {
-        translation: {
-          ...data.name.translation,
-        },
-      };
+      this.id = data.eventId;
+
       this.description = {
         translation: {
-          ...data.description.translation,
+          ...data.eventDescription.translation,
         },
       };
-      this.registrationLink = data.registrationLink;
+      this.eventTypeId = data.eventTypeId;
+      this.eventTypeName = data.eventTypeName && data.eventTypeName.translation ? {
+        translation: {
+          ...data.eventTypeName.translation,
+        },
+      } : data.eventTypeName;
       this.location = {
         ...data.location,
       };
+      this.name = {
+        translation: {
+          ...data.eventName.translation,
+        },
+      };
+      this.number = data.number;
+      this.provinceName = data.provinceName ? {
+        translation: {
+          ...data.provinceName.translation,
+        },
+      } : null;
+      this.registrationLink = {
+        translation: {
+          ...data.registrationLink.translation,
+        },
+      };
+      this.relatedEventsInfos = data.relatedEventsInfos ? _cloneDeep(data.relatedEventsInfos) : [];
+      this.responseDetails = {
+        ...data.responseDetails,
+        eventType: { ...data.responseDetails.eventType },
+        dateReported: data.responseDetails.dateReported ? new Date(data.responseDetails.dateReported) : null,
+      };
+      this.responseLevelName = data.responseLevelName ? {
+        translation: {
+          ...data.responseLevelName.translation,
+        },
+      } : null;
       this.schedule = {
         ...data.schedule,
         closeDate: data.schedule.closeDate ? new Date(data.schedule.closeDate) : null,
@@ -64,30 +102,42 @@ export class Event implements IEvent {
         scheduledCloseDate: data.schedule.scheduledCloseDate ? new Date(data.schedule.scheduledCloseDate) : null,
         scheduledOpenDate: data.schedule.scheduledOpenDate ? new Date(data.schedule.scheduledOpenDate) : null,
       };
-      this.registrationLink = {
+      this.scheduleEventOpenDate = data.scheduleEventOpenDate ? new Date(data.scheduleEventOpenDate) : null;
+      this.scheduleEventStatusName = data.scheduleEventStatusName ? {
         translation: {
-          ...data.registrationLink.translation,
+          ...data.scheduleEventStatusName.translation,
         },
-      };
-      this.responseDetails = {
-        ...data.responseDetails,
-        eventType: { ...data.responseDetails.eventType },
-        dateReported: data.responseDetails.dateReported ? new Date(data.responseDetails.dateReported) : null,
-      };
-      this.relatedEventIds = data.relatedEventIds ? [...data.relatedEventIds] : [];
+      } : null;
+      this.selfRegistrationEnabled = data.selfRegistrationEnabled;
+      this.eventStatus = data.eventStatus;
+      this.tenantId = data.tenantId;
     } else {
       this.reset();
     }
   }
 
   private reset() {
-    this.name = utils.initMultilingualAttributes();
     this.description = utils.initMultilingualAttributes();
+    this.eventTypeName = utils.initMultilingualAttributes();
     this.location = {
       province: null,
       provinceOther: utils.initMultilingualAttributes(),
       region: utils.initMultilingualAttributes(),
     };
+    this.name = utils.initMultilingualAttributes();
+    this.provinceName = utils.initMultilingualAttributes();
+    this.registrationLink = utils.initMultilingualAttributes();
+    this.relatedEventsInfos = [];
+    this.responseDetails = {
+      responseLevel: null,
+      eventType: {
+        optionItemId: '',
+        specifiedOther: '',
+      },
+      dateReported: null,
+      assistanceNumber: '',
+    };
+    this.responseLevelName = utils.initMultilingualAttributes();
     this.schedule = {
       openDate: null,
       reOpenReason: '',
@@ -98,17 +148,7 @@ export class Event implements IEvent {
       closeReason: '',
       status: EEventStatus.OnHold,
     };
-    this.responseDetails = {
-      responseLevel: null,
-      eventType: {
-        optionItemId: '',
-        specifiedOther: '',
-      },
-      dateReported: null,
-      assistanceNumber: '',
-    };
-    this.registrationLink = utils.initMultilingualAttributes();
-    this.relatedEventIds = [];
+    this.scheduleEventStatusName = utils.initMultilingualAttributes();
   }
 
   private validateAttributes(errors: Array<string>) {

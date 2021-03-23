@@ -1,7 +1,7 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  mockEventsData, mockOtherProvinceData, mockRegionData, Event, EResponseLevel, EEventStatus,
+  mockEventsSearchData, mockOtherProvinceData, mockRegionData, Event, EResponseLevel, EEventStatus,
 } from '@/entities/event';
 import {
   mockOptionItemData,
@@ -15,7 +15,7 @@ import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
 import Component from '../EventForm.vue';
 
-const event = new Event(mockEventsData()[0]);
+const event = new Event(mockEventsSearchData()[0]);
 event.schedule.scheduledCloseDate = moment(event.schedule.scheduledCloseDate).format('YYYY-MM-DD');
 event.schedule.scheduledOpenDate = moment(event.schedule.scheduledOpenDate).format('YYYY-MM-DD');
 event.responseDetails.dateReported = moment(event.responseDetails.dateReported).format('YYYY-MM-DD');
@@ -131,6 +131,35 @@ describe('EventForm.vue', () => {
       });
     });
 
+    describe('setRelatedEvents', () => {
+      it('sets the correct events in the relatedEventsInfos', async () => {
+        wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          propsData: {
+            event,
+            isEditMode: false,
+            isNameUnique: true,
+          },
+          data() {
+            return {
+              prefixRegistrationLink: 'https://mytest.test/',
+            };
+          },
+          computed: {
+            relatedEventsSorted() {
+              return [event];
+            },
+          },
+        });
+
+        await wrapper.vm.setRelatedEvents([event.id]);
+        expect(wrapper.vm.localEvent.relatedEventsInfos).toEqual([{
+          id: event.id,
+          eventName: event.name,
+        }]);
+      });
+    });
+
     describe('clearRegionAndOtherProvince', () => {
       it('clears the provinceOther and region fields', () => {
         wrapper.vm.localEvent.location.provinceOther = { translation: { en: 'en', fr: 'fr' } };
@@ -217,7 +246,7 @@ describe('EventForm.vue', () => {
       });
 
       it('sets scheduledOpenData and scheduledCloseDate to initial values if toggling from OnHold => Open => OnHold in edit mode', async () => {
-        const event = new Event(mockEventsData()[0]);
+        const event = new Event(mockEventsSearchData()[0]);
 
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
@@ -440,7 +469,7 @@ describe('EventForm.vue', () => {
 
     describe('showReOpenInput', () => {
       it('returns true if the form is in edit mode, the event has previously been opened, and status is OnHold => Open', async () => {
-        const event = new Event(mockEventsData()[0]);
+        const event = new Event(mockEventsSearchData()[0]);
         event.schedule.hasBeenOpen = true;
         event.schedule.status = EEventStatus.OnHold;
 

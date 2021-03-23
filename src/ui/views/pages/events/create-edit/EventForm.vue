@@ -227,7 +227,7 @@
           <v-row>
             <v-col cols="12">
               <v-autocomplete-with-validation
-                v-model="localEvent.relatedEventIds"
+                :value="relatedEventIds"
                 data-test="event-related-events"
                 item-value="id"
                 :item-text="(item) => $m(item.name)"
@@ -235,7 +235,9 @@
                 :items="relatedEventsSorted"
                 :attach="true"
                 multiple
-                hide-details />
+                hide-details
+                @change="setRelatedEvents($event)"
+                @delete="setRelatedEvents($event)" />
             </v-col>
           </v-row>
 
@@ -446,6 +448,10 @@ export default Vue.extend({
       return this.$storage.event.getters.eventTypes();
     },
 
+    relatedEventIds(): Array<string> {
+      return this.localEvent.relatedEventsInfos.map((el) => el.id);
+    },
+
     relatedEventsSorted(): Array<IEvent> {
       return this.$storage.event.getters.events();
     },
@@ -610,6 +616,19 @@ export default Vue.extend({
     setAssistanceNumber(p: {number: string; countryISO2: string; e164Number: string}) {
       this.assistanceNumber = p;
       this.localEvent.responseDetails.assistanceNumber = p.e164Number;
+    },
+
+    setRelatedEvents(eventsIds: Array<string>) {
+      this.localEvent.relatedEventsInfos = eventsIds.map((id) => {
+        const event = this.relatedEventsSorted.find((ev) => ev.id === id);
+        if (event) {
+          return {
+            id,
+            eventName: event.name,
+          };
+        }
+        return null;
+      });
     },
 
     clearRegionAndOtherProvince() {

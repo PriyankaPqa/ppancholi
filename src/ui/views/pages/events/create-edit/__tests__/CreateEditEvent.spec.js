@@ -1,18 +1,22 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { Event, mockEventsData } from '@/entities/event';
+import { Event, mockEventsSearchData } from '@/entities/event';
 import Component from '../CreateEditEvent.vue';
 
 describe('CreatEditEvent.vue', () => {
   let wrapper;
   let actions;
+  let mockEvent;
 
   describe('Methods', () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
+      mockEvent = new Event(mockEventsSearchData()[0]);
+
       actions = {
-        createEvent: jest.fn(() => new Event(mockEventsData()[0])),
+        createEvent: jest.fn(() => mockEvent),
+        update: jest.fn(() => mockEvent),
       };
 
       wrapper = mount(Component, {
@@ -76,7 +80,7 @@ describe('CreatEditEvent.vue', () => {
         await wrapper.vm.submit();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
-          { name: routes.events.details.name, params: { id: mockEventsData()[0].id } },
+          { name: routes.events.details.name, params: { id: mockEvent.id } },
         );
       });
 
@@ -202,15 +206,17 @@ describe('CreatEditEvent.vue', () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
+      mockEvent = new Event(mockEventsSearchData()[0]);
+
       actions = {
-        fetchEvent: jest.fn(() => new Event(mockEventsData()[1])),
-        updateEvent: jest.fn(),
+        fetchEvent: jest.fn(() => mockEvent),
+        updateEvent: jest.fn(() => mockEvent),
       };
 
       wrapper = mount(Component, {
         localVue: createLocalVue(),
         propsData: {
-          id: mockEventsData()[1].id,
+          id: mockEvent.id,
         },
         store: {
           modules: {
@@ -233,7 +239,7 @@ describe('CreatEditEvent.vue', () => {
     it('calls the fetchEvent action on created', async () => {
       expect(actions.fetchEvent).toHaveBeenCalledWith(
         expect.anything(),
-        mockEventsData()[1].id,
+        mockEvent.id,
       );
     });
 
@@ -258,7 +264,7 @@ describe('CreatEditEvent.vue', () => {
       await wrapper.vm.submit();
 
       expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
-        { name: routes.events.details.name, params: { id: mockEventsData()[1].id } },
+        { name: routes.events.details.name, params: { id: mockEvent.id } },
       );
     });
   });

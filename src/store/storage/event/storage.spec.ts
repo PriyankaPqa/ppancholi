@@ -1,4 +1,4 @@
-import { Event, mockEventsData } from '@/entities/event';
+import { Event, mockEventsSearchData } from '@/entities/event';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
 import { makeStorage } from './storage';
@@ -50,13 +50,13 @@ describe('>>> Event Storage', () => {
     });
 
     it('should proxy createEvent', () => {
-      const event = new Event(mockEventsData()[0]);
+      const event = new Event(mockEventsSearchData()[0]);
       storage.actions.createEvent(event);
       expect(store.dispatch).toHaveBeenCalledWith('event/createEvent', event);
     });
 
     it('should proxy updateEvent', () => {
-      const event = new Event(mockEventsData()[0]);
+      const event = new Event(mockEventsSearchData()[0]);
       storage.actions.updateEvent(event);
       expect(store.dispatch).toHaveBeenCalledWith('event/updateEvent', event);
     });

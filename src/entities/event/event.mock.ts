@@ -1,6 +1,6 @@
 import { ECanadaProvinces, IAzureSearchResult } from '@/types';
 import {
-  EEventStatus, IEventData, IOtherProvince, IRegion,
+  EEventStatus, IEventData, IEventSearchData, IOtherProvince, IRegion,
 } from './event.types';
 
 export const mockEventsData = (): IEventData[] => [{
@@ -62,6 +62,7 @@ export const mockEventsData = (): IEventData[] => [{
   created: '2021-01-20T15:12:03.4219037Z',
   timestamp: '2021-01-20T15:12:03.4230487Z',
   eTag: '"00004331-0000-0a00-0000-600848430000"',
+  selfRegistrationEnabled: false,
 }, {
   number: 2,
   name: {
@@ -121,6 +122,7 @@ export const mockEventsData = (): IEventData[] => [{
   created: '2021-01-20T15:45:52.2691443Z',
   timestamp: '2021-01-20T15:45:52.2699289Z',
   eTag: '*',
+  selfRegistrationEnabled: false,
 }];
 
 export const mockOtherProvinceData = (): IAzureSearchResult<IOtherProvince> => ({
@@ -165,8 +167,58 @@ export const mockRegionData = (): IAzureSearchResult<IRegion> => ({
   }],
 });
 
-export const mockSearchEvents = (): IAzureSearchResult<IEventData> => ({
+export const mockEventsSearchData = () : IEventSearchData[] => [{
+  '@searchScore': 10,
+  eventId: mockEventsData()[0].id,
+  eventDescription: mockEventsData()[0].description,
+  eventName: mockEventsData()[0].name,
+  eventStatus: 1,
+  eventTypeId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
+  eventTypeName: {
+    translation: {
+      en: 'Flood',
+      fr: 'Inondation',
+    },
+  },
+  location: mockEventsData()[0].location,
+  number: 1,
+  provinceName: {
+    translation: {
+      en: 'Alberta',
+      fr: 'Alberta FR',
+    },
+  },
+  relatedEventsInfos: [{
+    id: '87776243-696f-426b-b961-31ee98e3a4cd',
+    eventName: {
+      translation: {
+        en: 'Vegas Earthquake 2021',
+        fr: 'Vegas Earthquake 2021 FR',
+      },
+    },
+  }],
+  registrationLink: mockEventsData()[0].registrationLink,
+  responseDetails: mockEventsData()[0].responseDetails,
+  responseLevelName: {
+    translation: {
+      en: 'Level1',
+      fr: 'Niveau1',
+    },
+  },
+  selfRegistrationEnabled: false,
+  schedule: mockEventsData()[0].schedule,
+  scheduleEventOpenDate: '2021-03-15T00:00:00Z',
+  scheduleEventStatusName: {
+    translation: {
+      en: 'On hold',
+      fr: 'En attente',
+    },
+  },
+  tenantId: '7c076603-580a-4400-bef2-5ddececb0931',
+}];
+
+export const mockSearchEvents = (): IAzureSearchResult<IEventSearchData> => ({
   odataCount: 2,
   odataContext: 'context',
-  value: mockEventsData(),
+  value: mockEventsSearchData(),
 });

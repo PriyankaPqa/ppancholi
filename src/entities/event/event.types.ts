@@ -54,8 +54,13 @@ export interface IOtherProvince {
   name: IMultilingual;
 }
 
+export interface IRelatedEventsInfos {
+  id: uuid;
+  eventName: IMultilingual;
+}
+
 /**
- * Interface that maps to the response structure from the API
+ * Interface that maps to the response structure from the entity API
  */
 export interface IEventData {
   id: uuid;
@@ -70,6 +75,32 @@ export interface IEventData {
   schedule: IEventSchedule;
   responseDetails: IEventResponseDetails;
   relatedEventIds?: Array<uuid>;
+  selfRegistrationEnabled: boolean;
+}
+
+/**
+ * Interface that maps to the response structure from the search API
+ */
+export interface IEventSearchData{
+  '@searchScore': number;
+  eventDescription: IMultilingual;
+  eventId: uuid;
+  eventName: IMultilingual;
+  eventStatus: number;
+  eventTypeId: uuid;
+  eventTypeName: IMultilingual;
+  location: IEventLocation;
+  number: number;
+  provinceName: IMultilingual;
+  relatedEventsInfos: Array<IRelatedEventsInfos>,
+  registrationLink: IMultilingual;
+  responseDetails: IEventResponseDetails;
+  responseLevelName: IMultilingual;
+  selfRegistrationEnabled: boolean;
+  schedule: IEventSchedule;
+  scheduleEventOpenDate: Date | string;
+  scheduleEventStatusName: IMultilingual;
+  tenantId: uuid;
 }
 
 /**
@@ -98,7 +129,25 @@ export interface IEditEventRequest extends ICreateEventRequest {
 /**
  * Interface used for the Event entity class
  */
-export interface IEvent extends IEventData {
+export interface IEvent {
+  description: IMultilingual;
+  eventTypeId:uuid;
+  eventTypeName: IMultilingual;
+  id: uuid;
+  location: IEventLocation;
+  name: IMultilingual;
+  number: number;
+  provinceName: IMultilingual;
+  registrationLink: IMultilingual;
+  relatedEventsInfos: Array<IRelatedEventsInfos>;
+  responseDetails: IEventResponseDetails;
+  responseLevelName: IMultilingual;
+  schedule: IEventSchedule;
+  scheduleEventOpenDate: Date | string;
+  scheduleEventStatusName: IMultilingual;
+  selfRegistrationEnabled: boolean;
+  eventStatus: number;
+  tenantId: uuid;
   validate(): Array<string> | boolean;
   fillEmptyMultilingualAttributes(): void;
 }

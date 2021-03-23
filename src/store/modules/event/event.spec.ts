@@ -4,12 +4,15 @@ import { mockStore, IRootState } from '@/store';
 import {
   OptionItem, mockOptionItemData, EOptionListItemStatus, EOptionLists,
 } from '@/entities/optionItem';
-import { Event, mockEventsData } from '@/entities/event';
+import { Event, IEvent, mockEventsSearchData } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
 
+jest.mock('@/store/modules/event/utils');
 describe('>>> Event Module', () => {
   let store: Store<IRootState>;
+
+  const mockEvents = (): IEvent[] => mockEventsSearchData().map((ev) => new Event(ev));
 
   beforeEach(() => {
     store = mockStore({
@@ -17,7 +20,7 @@ describe('>>> Event Module', () => {
         event: {
           state: {
             eventTypes: mockOptionItemData(),
-            events: mockEventsData(),
+            events: mockEvents(),
           },
         },
       },
@@ -37,7 +40,7 @@ describe('>>> Event Module', () => {
 
     describe('events', () => {
       test('the events getter returns an array of Events sorted by name', () => {
-        const mockEvents = mockEventsData().map((e) => new Event(e));
+        const mockEvents = mockEventsSearchData().map((e) => new Event(e));
 
         expect(store.getters['event/events']).toEqual(helpers.sortMultilingualArray(mockEvents, 'name'));
       });
@@ -63,9 +66,9 @@ describe('>>> Event Module', () => {
 
         expect(store.getters['event/events']).toEqual([]);
 
-        store.commit('event/setEvents', mockEventsData());
+        store.commit('event/setEvents', mockEvents());
 
-        expect(store.state.event.events).toEqual(mockEventsData());
+        expect(store.state.event.events).toEqual(mockEvents());
       });
     });
 
@@ -73,7 +76,7 @@ describe('>>> Event Module', () => {
       test('the addOrUpdateEvent mutation adds a new event to the state', () => {
         store = mockStore();
 
-        const event = mockEventsData()[0];
+        const event = mockEvents()[0];
 
         expect(store.state.event.events).toEqual([]);
 
@@ -83,11 +86,11 @@ describe('>>> Event Module', () => {
       });
 
       test('the addOrUpdateEvent mutation updates an existing event', () => {
-        const events = mockEventsData();
+        const events = mockEvents();
 
         expect(store.state.event.events).toEqual(events);
 
-        const updatedEvent = mockEventsData()[0];
+        const updatedEvent = mockEvents()[0];
 
         updatedEvent.name = {
           translation: {
@@ -108,7 +111,6 @@ describe('>>> Event Module', () => {
               },
             },
           },
-          events[1],
         ]);
       });
     });
@@ -147,34 +149,34 @@ describe('>>> Event Module', () => {
     describe('fetchEvent', () => {
       test('the fetchEvent action calls the getEventById service and returns the event', async () => {
         const store = mockStore();
-        const event = mockEventsData()[0];
+        const event = new Event(mockEventsSearchData()[0]);
 
-        expect(store.$services.events.getEventById).toHaveBeenCalledTimes(0);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
 
         const res = await store.dispatch('event/fetchEvent', event.id);
 
-        expect(store.$services.events.getEventById).toHaveBeenCalledWith(event.id);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledWith({ filter: { EventId: event.id } });
 
         expect(store.state.event.events).toEqual([
           event,
         ]);
 
-        expect(res).toEqual(new Event(event));
+        expect(res).toEqual(event);
       });
 
       test('if the event already exists in the store, do not call the API', async () => {
         const store = mockStore();
-        const event = mockEventsData()[0];
+        const event = mockEvents()[0];
 
-        expect(store.$services.events.getEventById).toHaveBeenCalledTimes(0);
-
-        await store.dispatch('event/fetchEvent', event.id);
-
-        expect(store.$services.events.getEventById).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
 
         await store.dispatch('event/fetchEvent', event.id);
 
-        expect(store.$services.events.getEventById).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
+
+        await store.dispatch('event/fetchEvent', event.id);
+
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -182,27 +184,27 @@ describe('>>> Event Module', () => {
       test('the fetchEvents action calls the getEvents service and returns the events getter', async () => {
         const store = mockStore();
 
-        expect(store.$services.events.getEvents).toHaveBeenCalledTimes(0);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
 
         const res = await store.dispatch('event/fetchEvents');
 
-        expect(store.$services.events.getEvents).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledWith({});
 
-        expect(store.state.event.events).toEqual(mockEventsData());
+        expect(store.state.event.events).toEqual(mockEvents());
 
         expect(res).toEqual(store.getters['event/events']);
       });
 
       test('if the getEvents action has already been called it will not call the service again', async () => {
-        expect(store.$services.events.getEvents).toHaveBeenCalledTimes(0);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
 
         await store.dispatch('event/fetchEvents');
 
-        expect(store.$services.events.getEvents).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
 
         await store.dispatch('event/fetchEvents');
 
-        expect(store.$services.events.getEvents).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -221,7 +223,7 @@ describe('>>> Event Module', () => {
       test('the createEvent action calls the createEvent service and returns the new Event entity', async () => {
         const store = mockStore();
 
-        const newEvent = new Event(mockEventsData()[0]);
+        const newEvent = mockEvents()[0];
 
         expect(store.$services.events.createEvent).toHaveBeenCalledTimes(0);
 
@@ -229,11 +231,11 @@ describe('>>> Event Module', () => {
 
         expect(store.$services.events.createEvent).toHaveBeenCalledTimes(1);
 
-        expect(res).toEqual(new Event(mockEventsData()[0]));
+        expect(res).toEqual(newEvent);
 
         expect(store.state.event.events.length).toBe(1);
 
-        expect(store.state.event.events[0]).toEqual(mockEventsData()[0]);
+        expect(store.state.event.events[0]).toEqual(newEvent);
       });
     });
   });

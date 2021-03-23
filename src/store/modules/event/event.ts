@@ -8,11 +8,15 @@ import {
   IOptionItem, IOptionItemData, OptionItem, EOptionListItemStatus, EOptionLists,
 } from '@/entities/optionItem';
 import {
-  Event, IEvent, IEventData, IOtherProvince, IRegion,
+  Event, IEvent, IEventSearchData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import {
+  IAzureSearchParams, IAzureSearchResult,
+} from '@/types';
+
 import { IState } from './event.types';
+import { mapEventDataToSearchData } from './utils';
 
 const getDefaultState = (): IState => ({
   eventTypes: [],
@@ -29,7 +33,7 @@ const getters = {
       .filter((i) => i.status === EOptionListItemStatus.Active)
   ),
 
-  events: (state: IState) => helpers.sortMultilingualArray(state.events.map((e) => new Event(e)), 'name'),
+  events: (state: IState) => helpers.sortMultilingualArray(state.events, 'name'),
 };
 
 const mutations = {
@@ -37,11 +41,11 @@ const mutations = {
     state.eventTypes = payload;
   },
 
-  setEvents(state: IState, payload: Array<IEventData>) {
+  setEvents(state: IState, payload: Array<IEvent>) {
     state.events = payload;
   },
 
-  addOrUpdateEvent(state: IState, payload: IEventData) {
+  addOrUpdateEvent(state: IState, payload: IEvent) {
     const index = _findIndex(state.events, { id: payload.id });
 
     if (index > -1) {
@@ -78,19 +82,27 @@ const actions = {
     const event = context.state.events.find((event) => event.id === id);
 
     if (event) {
-      return new Event(event);
+      return event;
     }
 
-    const data = await this.$services.events.getEventById(id);
-    context.commit('addOrUpdateEvent', data);
-    return new Event(data);
+    const params = { filter: { EventId: id } };
+    const res = await this.$services.events.searchEvents(params);
+    if (res?.value.length === 1) {
+      const data = res.value[0];
+      context.commit('addOrUpdateEvent', new Event(data));
+      return new Event(data);
+    }
+    return null;
   },
 
-  async fetchEvents(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IEvent[]> {
+  async fetchEvents(this: Store<IState>, context: ActionContext<IState, IRootState>): Promise<IEvent[]> {
     if (!context.state.eventsFetched) {
-      const data = await this.$services.events.getEvents();
-      context.commit('setEvents', data);
-      context.commit('setEventsFetched', true);
+      const res = await this.$services.events.searchEvents({});
+      const data = res?.value;
+      if (data) {
+        context.commit('setEventsFetched', true);
+        context.commit('setEvents', data.map((ev) => new Event(ev)));
+      }
     }
 
     return context.getters.events;
@@ -109,22 +121,29 @@ const actions = {
     const data = res?.value;
     return {
       ...res,
-      value: data.map((el: IEventData) => (new Event(el))),
+      value: data.map((el: IEventSearchData) => (new Event(el))),
     };
   },
 
-  async createEvent(this: Store<IState>, context: ActionContext<IState, IState>, payload: IEvent): Promise<IEvent> {
+  async createEvent(this: Store<IState>, context: ActionContext<IState, IRootState>, payload: IEvent): Promise<IEvent> {
     const data = await this.$services.events.createEvent(payload);
-    context.commit('addOrUpdateEvent', data);
-
-    return new Event(data);
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
   },
 
-  async updateEvent(this: Store<IState>, context: ActionContext<IState, IState>, payload: IEvent): Promise<IEvent> {
+  async updateEvent(this: Store<IState>, context: ActionContext<IState, IRootState>, payload: IEvent): Promise<IEvent> {
     const data = await this.$services.events.updateEvent(payload);
-    context.commit('addOrUpdateEvent', data);
 
-    return new Event(data);
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
   },
 };
 
