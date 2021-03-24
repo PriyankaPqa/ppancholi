@@ -4,7 +4,7 @@
       <v-col v-if="isSubItem" :class="{ search: isSearchResult, 'pb-2': true }" cols="3" />
 
       <v-col v-if="!editMode" :class="{ search: isSearchResult, 'pb-2': true }" :cols="isSubItem ? '4' : '7'">
-        <v-icon data-test="optionsListItem__dragHandle" class="optionsList__dragHandle mr-1">
+        <v-icon data-test="optionsListItem__dragHandle" :class="hideItemDrag ? 'hidden' : 'optionsList__dragHandle mr-1'">
           mdi-drag
         </v-icon>
 
@@ -25,8 +25,8 @@
 
         <span data-test="optionsListItem__name" class="rc-body14 fw-bold optionsListItem__name">
           {{ item.name.translation[languageMode] }}
-          <template v-if="isCascading && item.optionsListSubItems">
-            {{ ` (${item.optionsListSubItems.length})` }}
+          <template v-if="isCascading && item.subitems">
+            {{ ` (${item.subitems.length})` }}
           </template>
         </span>
 
@@ -77,6 +77,7 @@
 
       <v-col :class="{ search: isSearchResult, 'pb-2': true }" cols="3">
         <status-select
+          v-if="!hideItemStatus"
           :value="item.status"
           :statuses="itemStatuses"
           status-name="EOptionListItemStatus"
@@ -131,7 +132,7 @@
 
         <v-col
           v-if="editMode"
-          :class="{ search: isSearchResult }"
+          :class="{ search: isSearchResult, 'mb-4 py-0': true }"
           :cols="isSubItem ? '9' : '12'">
           <validation-provider v-slot="{ errors }" :rules="rules.description" slim>
             <v-text-field
@@ -170,7 +171,7 @@
 
       <v-col v-if="isCascading && subItemsExpanded" class="py-0" cols="12">
         <v-container fluid class="pa-0">
-          <v-row v-if="item.optionsListSubItems && item.optionsListSubItems.length">
+          <v-row v-if="item.subitems && item.subitems.length">
             <slot name="default" />
           </v-row>
 
@@ -305,6 +306,22 @@ export default Vue.extend({
      * If the list allows the user to set the other option
      */
     hasOther: {
+      type: Boolean,
+      default: false,
+    },
+
+    /**
+     * If the list allows the user to see and modify the status of the item
+     */
+    hideItemStatus: {
+      type: Boolean,
+      default: false,
+    },
+
+    /**
+     * If the item should hide the drag handle
+     */
+    hideItemDrag: {
       type: Boolean,
       default: false,
     },
@@ -459,6 +476,7 @@ export default Vue.extend({
 
     &.optionsList__description {
       min-height: 0px;
+      margin-bottom: 10px;
     }
   }
 
@@ -481,6 +499,10 @@ export default Vue.extend({
 
 .optionsList__dragHandle {
   cursor: grab;
+}
+
+.hidden {
+  display: none;
 }
 
 .search {

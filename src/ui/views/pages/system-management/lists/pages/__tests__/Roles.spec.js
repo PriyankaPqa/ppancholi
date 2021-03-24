@@ -5,13 +5,13 @@ import {
 
 import { EOptionLists } from '@/entities/optionItem';
 import { mockStorage } from '@/store/storage';
-import Component from '../Genders.vue';
+import Component from '../../Roles.vue';
 import OptionList from '../../components/OptionList.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('Genders.vue', () => {
+describe('Roles.vue', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('Genders.vue', () => {
     });
 
     it('uses correct title', () => {
-      expect(wrapper.findComponent(OptionList).props('title')).toBe('system_management.lists.genders');
+      expect(wrapper.findComponent(OptionList).props('title')).toBe('system_management.lists.roles');
     });
   });
 
@@ -39,7 +39,7 @@ describe('Genders.vue', () => {
     });
 
     it('set the list with correct one', () => {
-      expect(storage.optionList.mutations.setList).toHaveBeenCalledWith(EOptionLists.Genders);
+      expect(storage.optionList.mutations.setList).toHaveBeenCalledWith(EOptionLists.Roles);
     });
   });
 });

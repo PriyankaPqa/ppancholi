@@ -1,12 +1,12 @@
 import { IMultilingual } from '@/types';
 
 import {
-  IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest,
+  OptionItem, IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest,
 } from '@/entities/optionItem';
 
 export interface IStorage {
   getters: {
-    items(): Array<IOptionItem>;
+    items(): Array<OptionItem>;
   }
 
   mutations: {

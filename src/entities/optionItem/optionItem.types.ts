@@ -10,9 +10,10 @@ export enum EOptionLists {
   Genders,
   PreferredLanguages,
   PrimarySpokenLanguages,
+  Roles,
 }
 
-export interface IOptionItemData {
+export interface IOptionSubItem {
   id?: string;
   created?: Date;
   timestamp?: Date;
@@ -22,6 +23,21 @@ export interface IOptionItemData {
   status: EOptionListItemStatus;
   isOther: boolean;
   isDefault: boolean;
+  description?: IMultilingual;
+}
+
+export interface IOptionItemData {
+  id?: string;
+  created?: Date;
+  timestamp?: Date;
+  eTag?: string;
+  name: IMultilingual;
+  description?: IMultilingual;
+  orderRank: number;
+  status: EOptionListItemStatus;
+  isOther: boolean;
+  isDefault: boolean;
+  subitems: IOptionSubItem[];
 }
 
 export interface IOptionItem {
@@ -35,6 +51,7 @@ export interface IOptionItem {
   isOther: boolean;
   isDefault: boolean;
   description?: IMultilingual;
+  subitems: IOptionSubItem[];
 }
 
 /**

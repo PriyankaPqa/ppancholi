@@ -49,7 +49,7 @@ export default Vue.extend({
         title: 'system_management.card.roles_title',
         description: 'system_management.card.roles_description',
         button: 'system_management.card.btn.roles_title',
-        route: '',
+        route: routes.systemManagement.roles.name,
         dataTest: 'sysManagementHome__roles',
         level: 'level6',
       }];

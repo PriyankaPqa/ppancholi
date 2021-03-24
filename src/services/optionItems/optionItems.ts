@@ -16,6 +16,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/beneficiary/preferred-languages';
       case EOptionLists.PrimarySpokenLanguages:
         return '/beneficiary/primary-spoken-languages';
+      case EOptionLists.Roles:
+        return '/user-account/roles';
       default:
         return '';
     }

@@ -27,6 +27,10 @@ describe('>>> EventTypes Service', () => {
     it('returns correct prefix for EOptionLists.PrimarySpokenLanguages', () => {
       expect(service.getPrefix(EOptionLists.PrimarySpokenLanguages)).toBe('/beneficiary/primary-spoken-languages');
     });
+
+    it('returns correct prefix for EOptionLists.Roles', () => {
+      expect(service.getPrefix(EOptionLists.Roles)).toBe('/user-account/roles');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {

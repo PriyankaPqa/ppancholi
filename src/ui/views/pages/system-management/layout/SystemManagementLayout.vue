@@ -44,6 +44,12 @@ export default Vue.extend({
         to: routes.systemManagement.lists.name,
         exact: false,
         level: 'level6',
+      }, {
+        text: this.$t('system_management.lists.roles'),
+        test: 'systemManagement__menu__roles',
+        to: routes.systemManagement.roles.name,
+        exact: false,
+        level: 'level6',
       }];
     },
 

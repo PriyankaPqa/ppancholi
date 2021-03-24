@@ -49,6 +49,7 @@ const EventTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pag
 const Genders = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/Genders.vue');
 const PreferredLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/PreferredLanguages.vue');
 const PrimarySpokenLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/PrimarySpokenLanguages.vue');
+const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
 
 const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
@@ -278,6 +279,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.primarySpokenLanguages.path,
                 name: Routes.systemManagement.primarySpokenLanguages.name,
                 component: PrimarySpokenLanguages,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.roles.path,
+                name: Routes.systemManagement.roles.name,
+                component: Roles,
                 meta: { level: 'level6' },
               },
             ],

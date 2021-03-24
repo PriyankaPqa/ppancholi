@@ -35,6 +35,17 @@ describe('>>> Option Item', () => {
       });
     });
 
+    it('should instantiate description', () => {
+      const optionItem = new OptionItem(mockData);
+
+      expect(optionItem.description).toEqual({
+        translation: {
+          en: 'This is item 1 description',
+          fr: 'This is item 1 description FR',
+        },
+      });
+    });
+
     it('should instantiate orderRank', () => {
       const optionItem = new OptionItem(mockData);
       expect(optionItem.orderRank).toBe(mockData.orderRank);
@@ -43,6 +54,11 @@ describe('>>> Option Item', () => {
     it('should instantiate status', () => {
       const optionItem = new OptionItem(mockData);
       expect(optionItem.status).toBe(mockData.status);
+    });
+
+    it('should instantiate subitems', () => {
+      const optionItem = new OptionItem(mockData);
+      expect(optionItem.subitems).toEqual(mockData.subitems);
     });
   });
 });

@@ -1,5 +1,5 @@
 import {
-  IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest,
+  OptionItem, IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest,
 } from '@/entities/optionItem';
 import { IStore } from '@/store/store.types';
 import { IMultilingual } from '@/types';
@@ -7,7 +7,7 @@ import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
   getters: {
-    items(): Array<IOptionItem> {
+    items(): Array<OptionItem> {
       return store.getters['optionList/items'];
     },
   },

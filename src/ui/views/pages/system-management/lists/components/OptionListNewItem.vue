@@ -9,11 +9,12 @@
       <v-col v-if="isSubItem" cols="3" />
 
       <v-col v-if="!addMode && isSubItem" :cols="isSubItem ? '6' : '9'">
-        <v-btn data-test="optionListNewItem__addBtn" color="primary" small @click="enterAddMode">
+        <v-btn data-test="optionListNewItem__addBtn" height="32" color="primary" @click="enterAddMode">
           <v-icon left>
             mdi-plus
           </v-icon>
-          {{ $t('system_management.lists.addSubItem') }}
+
+          {{ $t(addSubItemLabel) }}
         </v-btn>
       </v-col>
 
@@ -131,6 +132,11 @@ export default Vue.extend({
     },
 
     languageMode: {
+      type: String,
+      required: true,
+    },
+
+    addSubItemLabel: {
       type: String,
       required: true,
     },

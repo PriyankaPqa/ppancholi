@@ -1,8 +1,8 @@
 <template>
   <rc-page-content
-    :title="$t(title)"
+    :title="formattedTitle"
     :help-link="helpLink"
-    show-add-button
+    :show-add-button="showAddButton"
     :show-help="!embedded"
     show-search
     :fullscreen="embedded"
@@ -43,11 +43,11 @@
             <v-row class="optionsList__header">
               <template v-if="isCascading">
                 <v-col cols="3">
-                  <span class="rc-body14 fw-bold">{{ $t('system_management.lists.header.item') }}</span>
+                  <span class="rc-body14 fw-bold">{{ $t(itemLabel) }}</span>
                 </v-col>
 
                 <v-col cols="4">
-                  <span class="rc-body14 fw-bold">{{ $t('system_management.lists.header.subItem') }}</span>
+                  <span class="rc-body14 fw-bold">{{ $t(subItemLabel) }}</span>
                 </v-col>
               </template>
 
@@ -81,10 +81,54 @@
                 :is-search-result="isSearchResult(item)"
                 :has-default="hasDefault"
                 :has-other="hasOther"
+                :hide-item-status="hideItemStatus"
+                :hide-item-drag="hideItemDrag"
                 @edit-item="editItem"
                 @save-item="saveItem"
                 @change-status="changeItemStatus"
-                @cancel-edit="cancelEdit" />
+                @cancel-edit="cancelEdit">
+                <v-col cols="12" class="py-0">
+                  <draggable
+                    v-model="item.subitems"
+                    class="optionsList__subItemsDraggable"
+                    handle=".optionsList__dragHandle"
+                    ghost-class="ghost"
+                    @sort="sortSubItems(item)">
+                    <option-list-item
+                      v-for="subItem in item.subitems"
+                      :key="subItem.id"
+                      :loading="itemLoading"
+                      :item="subItem"
+                      :language-mode="languageMode"
+                      :edit-mode="!!editedItem && editedItem.id === subItem.id"
+                      :edit-disabled="addingMode"
+                      :is-search-result="isSearchResult(subItem)"
+                      is-sub-item
+                      :has-description="hasDescription"
+                      @edit-item="editItem"
+                      @save-item="saveSubItem"
+                      @change-status="changeSubItemStatus"
+                      @cancel-edit="cancelEdit" />
+                  </draggable>
+                </v-col>
+
+                <template #add>
+                  <v-col cols="12" class="pb-6">
+                    <option-list-new-item
+                      v-if="isCascading"
+                      is-sub-item
+                      :has-description="hasDescription"
+                      :add-mode="addingItemId === item.id"
+                      :language-mode="languageMode"
+                      :item-id="item.id"
+                      :loading="itemLoading"
+                      :add-sub-item-label="addSubItemLabel"
+                      @save="saveNewSubItem"
+                      @add-mode="addSubItem"
+                      @cancel="closeAddForms" />
+                  </v-col>
+                </template>
+              </option-list-item>
             </draggable>
 
             <option-list-new-item
@@ -116,6 +160,7 @@ import {
   RcPageContent,
 } from '@crctech/component-library';
 import { IMultilingual } from '@/types';
+import routes from '@/constants/routes';
 import entityUtils from '@/entities/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
@@ -140,6 +185,36 @@ export default Vue.extend({
     title: {
       type: String,
       required: true,
+    },
+
+    hideItemStatus: {
+      type: Boolean,
+      default: false,
+    },
+
+    hideItemDrag: {
+      type: Boolean,
+      default: false,
+    },
+
+    itemLabel: {
+      type: String,
+      default: 'system_management.lists.header.item',
+    },
+
+    subItemLabel: {
+      type: String,
+      default: 'system_management.lists.header.subItem',
+    },
+
+    showAddButton: {
+      type: Boolean,
+      default: true,
+    },
+
+    addSubItemLabel: {
+      type: String,
+      default: 'system_management.lists.addSubItem',
     },
 
     hasDescription: {
@@ -176,7 +251,6 @@ export default Vue.extend({
       itemLoading: false,
       loadingTimeout: null,
       search: '',
-      helpLink: '',
       error: false,
       loading: false,
       editedItem: null,
@@ -184,6 +258,18 @@ export default Vue.extend({
   },
 
   computed: {
+    formattedTitle(): string {
+      return `${this.$t(this.title)} (${this.items.length})`;
+    },
+
+    helpLink(): string {
+      if (this.$route.name === routes.systemManagement.roles.name) {
+        return this.$t('zendesk.help_link.manage_roles') as string;
+      }
+
+      return this.$t('zendesk.help_link.view_option_lists') as string;
+    },
+
     items: {
       get(): OptionItem[] {
         return this.$storage.optionList.getters.items();
@@ -286,6 +372,10 @@ export default Vue.extend({
       this.scrollToInput();
     },
 
+    async saveNewSubItem() {
+      // TODO 408
+    },
+
     /**
      * Handles editing the name of the item through the API
      * @param item The item to be modified
@@ -311,6 +401,10 @@ export default Vue.extend({
       this.editedItem = null;
     },
 
+    async saveSubItem() {
+      // TODO 418
+    },
+
     /**
      * Handles changing the status of an item through the API
      * @param item The item to be modified
@@ -330,6 +424,10 @@ export default Vue.extend({
       this.editedItem = null;
     },
 
+    async changeSubItemStatus() {
+      // TODO 418
+    },
+
     /**
      * Handles changing the order of items through the API
      */
@@ -341,6 +439,14 @@ export default Vue.extend({
       }
 
       this.$toasted.global.success(this.$t('system_management.lists.orderRankUpdated'));
+    },
+
+    /**
+     * Handles changing the order of sub-items through the API
+     * @param parentItem The parent item of the sub-items that are being sorted
+     */
+    async sortSubItems() {
+      // TODO 418
     },
 
     /**
@@ -378,6 +484,10 @@ export default Vue.extend({
       this.$nextTick(() => {
         this.scrollToInput();
       });
+    },
+
+    addSubItem() {
+      // TODO 408
     },
 
     /**

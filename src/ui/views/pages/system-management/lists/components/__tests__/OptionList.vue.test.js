@@ -2,7 +2,6 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-
 import { mockOptionItemData, EOptionLists, EOptionListItemStatus } from '@/entities/optionItem';
 import Component from '../OptionList.vue';
 
@@ -49,7 +48,27 @@ describe('OptionList.vue', () => {
     test('the title prop is displayed in the page title', () => {
       const title = wrapper.findDataTest('page-title');
 
-      expect(title.text()).toBe('TITLE');
+      expect(title.text()).toBe('TITLE (3)');
+    });
+
+    test('the add button is hidden if the showAddButton prop is false', async () => {
+      expect(wrapper.findDataTest('pageContent__addBtn').exists()).toBe(true);
+
+      await wrapper.setProps({
+        showAddButton: false,
+      });
+
+      expect(wrapper.findDataTest('pageContent__addBtn').exists()).toBe(false);
+    });
+
+    test('the status select is hidden if the hideItemStatus prop is true', async () => {
+      expect(wrapper.findDataTest('optionsListItem__statusSelect').exists()).toBe(true);
+
+      await wrapper.setProps({
+        hideItemStatus: true,
+      });
+
+      expect(wrapper.findDataTest('optionsListItem__statusSelect').exists()).toBe(false);
     });
   });
 
@@ -313,6 +332,18 @@ describe('OptionList.vue', () => {
       await wrapper.findDataTest('optionsList__lang-fr').trigger('click');
 
       expect(wrapper.vm.languageMode).toBe('fr');
+    });
+
+    test('the sub items are displayed if sub-items exist and isCascading is true', async () => {
+      await wrapper.setProps({
+        isCascading: true,
+      });
+
+      const parent = wrapper.find('.optionsList__subItemsDraggable');
+
+      expect(parent.exists()).toBe(true);
+
+      expect(parent.findAll('.optionsList__item').length).toBe(1);
     });
   });
 });

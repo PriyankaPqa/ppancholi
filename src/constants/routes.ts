@@ -138,6 +138,10 @@ const routes = {
       path: 'lists/primary-spoken-languages',
       name: 'systemManagement.lists.primarySpokenLanguages',
     },
+    roles: {
+      path: 'roles',
+      name: 'systemManagement.lists.roles',
+    },
   },
   teams: {
     layout: {
