@@ -52,6 +52,11 @@ describe('>>> User', () => {
       });
     });
 
+    it('should instantiate created', () => {
+      const event = new Event(mockEventData);
+      expect(event.created).toEqual(new Date('2021-01-20T15:12:03.4219037Z'));
+    });
+
     it('should instantiate location', () => {
       const event = new Event(mockEventData);
       expect(event.location).toEqual({

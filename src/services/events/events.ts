@@ -59,6 +59,7 @@ export class EventsService implements IEventsService {
     return {
       ...this.eventToCreateEventRequestPayload(event),
       reOpenReason: event.schedule.reOpenReason,
+      selfRegistrationEnabled: event.selfRegistrationEnabled,
     };
   }
 }

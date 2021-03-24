@@ -23,6 +23,7 @@ const getDefaultState = (): IState => ({
   events: [],
   eventTypesFetched: false,
   eventsFetched: false,
+  getLoading: false,
   searchLoading: false,
 });
 
@@ -35,6 +36,14 @@ const getters = {
   ),
 
   events: (state: IState) => helpers.sortMultilingualArray(state.events, 'name'),
+
+  eventById: (state: IState) => (id: uuid) => {
+    const event = state.events.find((e) => e.id === id);
+    if (event) {
+      return event;
+    }
+    return null;
+  },
 };
 
 const mutations = {
@@ -68,6 +77,10 @@ const mutations = {
     state.eventsFetched = payload;
   },
 
+  setGetLoading(state: IState, payload: boolean) {
+    state.getLoading = payload;
+  },
+
   setSearchLoading(state: IState, payload: boolean) {
     state.searchLoading = payload;
   },
@@ -84,29 +97,41 @@ const actions = {
   },
 
   async fetchEvent(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<IEvent> {
-    const event = context.state.events.find((event) => event.id === id);
+    // const event = context.state.events.find((event) => event.id === id); { disable caching until signalR events are implemented
 
-    if (event) {
-      return event;
-    }
+    // if (event) {
+    //   return event;
+    // }
 
-    const params = { filter: { EventId: id } };
-    const res = await this.$services.events.searchEvents(params);
-    if (res?.value.length === 1) {
-      const data = res.value[0];
-      context.commit('addOrUpdateEvent', new Event(data));
-      return new Event(data);
+    try {
+      context.commit('setGetLoading', true);
+
+      const params = { filter: { EventId: id } };
+      const res = await this.$services.events.searchEvents(params);
+      if (res?.value.length === 1) {
+        const data = res.value[0];
+        context.commit('addOrUpdateEvent', new Event(data));
+        return new Event(data);
+      }
+      return null;
+    } finally {
+      context.commit('setGetLoading', false);
     }
-    return null;
   },
 
   async fetchEvents(this: Store<IState>, context: ActionContext<IState, IRootState>): Promise<IEvent[]> {
     if (!context.state.eventsFetched) {
-      const res = await this.$services.events.searchEvents({});
-      const data = res?.value;
-      if (data) {
-        context.commit('setEventsFetched', true);
-        context.commit('setEvents', data.map((ev) => new Event(ev)));
+      try {
+        context.commit('setGetLoading', true);
+
+        const res = await this.$services.events.searchEvents({});
+        const data = res?.value;
+        if (data) {
+          context.commit('setEventsFetched', true);
+          context.commit('setEvents', data.map((ev) => new Event(ev)));
+        }
+      } finally {
+        context.commit('setGetLoading', false);
       }
     }
 

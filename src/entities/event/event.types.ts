@@ -83,6 +83,7 @@ export interface IEventData {
  */
 export interface IEventSearchData{
   '@searchScore': number;
+  createdDate: Date | string;
   eventDescription: IMultilingual;
   eventId: uuid;
   eventName: IMultilingual;
@@ -124,12 +125,14 @@ export interface ICreateEventRequest {
 
 export interface IEditEventRequest extends ICreateEventRequest {
   reOpenReason: string;
+  selfRegistrationEnabled: boolean;
 }
 
 /**
  * Interface used for the Event entity class
  */
 export interface IEvent {
+  created: Date | string;
   description: IMultilingual;
   eventTypeId:uuid;
   eventTypeName: IMultilingual;

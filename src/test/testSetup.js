@@ -57,7 +57,7 @@ const mocks = {
   },
   $t: jest.fn((key) => key),
   $tc: jest.fn((key) => key),
-  $m: jest.fn((m) => m?.value?.en),
+  $m: jest.fn((m) => m?.translation?.en),
   $toasted: {
     global: {
       success: jest.fn(),

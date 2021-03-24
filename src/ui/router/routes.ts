@@ -183,6 +183,7 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.events.details.name,
                 component: EventDetails,
                 meta: { level: 'level6' },
+                props: true,
               },
               {
                 path: Routes.events.edit.path,

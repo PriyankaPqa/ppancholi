@@ -23,6 +23,7 @@ export const mockEventsData = (): IEventData[] => [{
       fr: 'https://www.redcross.ca/inondations-gatineau-2021',
     },
   },
+
   location: {
     province: 11,
     provinceOther: {
@@ -169,6 +170,7 @@ export const mockRegionData = (): IAzureSearchResult<IRegion> => ({
 
 export const mockEventsSearchData = () : IEventSearchData[] => [{
   '@searchScore': 10,
+  createdDate: mockEventsData()[0].created,
   eventId: mockEventsData()[0].id,
   eventDescription: mockEventsData()[0].description,
   eventName: mockEventsData()[0].name,

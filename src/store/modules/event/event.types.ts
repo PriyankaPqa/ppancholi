@@ -6,5 +6,6 @@ export type IState = {
   events: IEvent[];
   eventTypesFetched: boolean;
   eventsFetched: boolean;
+  getLoading: boolean;
   searchLoading: boolean,
 };

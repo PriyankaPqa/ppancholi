@@ -58,6 +58,7 @@ const getRelatedEventsInfos = (eventsIds: Array<uuid>, allEvents: IEvent[]):Arra
 };
 
 export const mapEventDataToSearchData = (eventData: IEventData, context: ActionContext<IState, IRootState>) : IEventSearchData => ({
+  createdDate: eventData.created,
   eventDescription: eventData.description,
   eventTypeId: eventData.responseDetails.eventType.optionItemId,
   eventTypeName: getEventTypeName(eventData.responseDetails.eventType, context.state.eventTypes),

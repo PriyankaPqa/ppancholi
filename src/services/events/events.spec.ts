@@ -110,6 +110,7 @@ describe('>>> Events Service', () => {
       scheduledOpenDate: '2021-03-15T00:00:00.000Z',
       reOpenReason: '',
       status: EEventStatus.OnHold,
+      selfRegistrationEnabled: false,
     }, { globalHandler: false });
   });
 

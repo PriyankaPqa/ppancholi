@@ -46,6 +46,18 @@ describe('>>> Event Module', () => {
         expect(store.getters['event/events']).toEqual(helpers.sortMultilingualArray(mockEvents, 'name'));
       });
     });
+
+    describe('eventById', () => {
+      test('the getter returns the event with the id passed in the argument', () => {
+        const mockId = mockEvents()[0].id;
+        expect(store.getters['event/eventById'](mockId)).toEqual(mockEvents()[0]);
+      });
+
+      test('the getter return null if the id passed in argument does not correspond to an event', () => {
+        const mockId = 'foo';
+        expect(store.getters['event/eventById'](mockId)).toEqual(null);
+      });
+    });
   });
 
   describe('>> Mutations', () => {
@@ -116,6 +128,16 @@ describe('>>> Event Module', () => {
       });
     });
 
+    describe('setGetLoading', () => {
+      test('the setGetLoading mutation sets the getLoading state', () => {
+        store = mockStore();
+
+        store.commit('event/setGetLoading', true);
+
+        expect(store.state.event.getLoading).toBeTruthy();
+      });
+    });
+
     describe('setSearchLoading', () => {
       test('the setSearchLoading mutation sets the searchLoading state', () => {
         store = mockStore();
@@ -175,20 +197,20 @@ describe('>>> Event Module', () => {
         expect(res).toEqual(event);
       });
 
-      test('if the event already exists in the store, do not call the API', async () => {
-        const store = mockStore();
-        const event = mockEvents()[0];
+      // test('if the event already exists in the store, do not call the API', async () => { TODO caching disabled
+      //   const store = mockStore();
+      //   const event = mockEvents()[0];
 
-        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
+      //   expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
 
-        await store.dispatch('event/fetchEvent', event.id);
+      //   await store.dispatch('event/fetchEvent', event.id);
 
-        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
+      //   expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
 
-        await store.dispatch('event/fetchEvent', event.id);
+      //   await store.dispatch('event/fetchEvent', event.id);
 
-        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
-      });
+      //   expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
+      // });
     });
 
     describe('fetchEvents', () => {

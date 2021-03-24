@@ -158,9 +158,13 @@ export default Vue.extend({
   border-left: 4px solid transparent;
 }
 
+::v-deep .v-list-item--link:before {
+    background-color: transparent;
+  }
+
 .secondaryLeftMenuTab.secondaryLeftMenuTab__active,
 .secondaryLeftMenuTab.secondaryLeftMenuTab__active--manual {
-  background: var(--v-grey-lighten5);
+  background: var(--v-grey-lighten4);
   border-left: 4px solid var(--v-secondary-base);
   & ::v-deep .v-list-item__icon > i {
     color: var(--v-secondary-base) !important;

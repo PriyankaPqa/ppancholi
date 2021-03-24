@@ -4,6 +4,7 @@ export const mockStorageEvent = () : IStorageMock => ({
   getters: {
     eventTypes: jest.fn(),
     events: jest.fn(),
+    eventById: jest.fn(),
   },
 
   actions: {

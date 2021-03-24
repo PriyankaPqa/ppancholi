@@ -16,6 +16,8 @@ import {
 export class Event implements IEvent {
   id: uuid;
 
+  created: Date | string;
+
   description: IMultilingual;
 
   eventStatus: number;
@@ -53,6 +55,8 @@ export class Event implements IEvent {
   constructor(data?: IEventSearchData) {
     if (data) {
       this.id = data.eventId;
+
+      this.created = new Date(data.createdDate);
 
       this.description = {
         translation: {

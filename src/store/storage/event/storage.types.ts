@@ -6,6 +6,7 @@ export interface IStorage {
   getters: {
     eventTypes(): Array<IOptionItem>;
     events(): Array<IEvent>;
+    eventById(id:uuid): IEvent;
   }
 
   actions: {
@@ -24,6 +25,7 @@ export interface IStorageMock {
   getters: {
     eventTypes: jest.Mock<void>;
     events: jest.Mock<void>;
+    eventById: jest.Mock<void>;
   }
 
   actions: {

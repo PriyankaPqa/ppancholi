@@ -16,6 +16,7 @@ export type { IListOption } from './interfaces/IListOption';
  * Enums
  */
 export { ECanadaProvinces } from './enums/ECanadaProvinces';
+export { EEventSummarySections } from './enums/EEventSummarySections';
 
 export type VForm = Vue & {
   validate: (type?: { silent?: boolean }) => boolean;

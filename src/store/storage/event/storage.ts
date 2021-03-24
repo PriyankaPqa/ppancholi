@@ -13,6 +13,10 @@ export const makeStorage = (store: IStore): IStorage => ({
     events(): Array<IEvent> {
       return store.getters['event/events'];
     },
+
+    eventById(id: uuid): IEvent {
+      return store.getters['event/eventById'](id);
+    },
   },
 
   actions: {
