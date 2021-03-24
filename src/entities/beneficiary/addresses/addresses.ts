@@ -1,6 +1,6 @@
 import { ECanadaProvinces } from '@/types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
-import { ETemporaryAddressTypes, IAddresses } from './addresses.types';
+import { ETemporaryAddressTypes, IAddresses, IGeoLocation } from './addresses.types';
 import { required, maxLengthCheck } from '../../commonValidation';
 
 export class Addresses implements IAddresses {
@@ -19,6 +19,8 @@ export class Addresses implements IAddresses {
   postalCode: string;
 
   temporaryAddressType: ETemporaryAddressTypes;
+
+  geoLocation: IGeoLocation;
 
   constructor(data?: unknown) {
     if (!data) {
@@ -63,6 +65,7 @@ export class Addresses implements IAddresses {
     this.city = null;
     this.postalCode = null;
     this.temporaryAddressType = null;
+    this.geoLocation = { lat: null, lng: null };
   }
 
   isValidCanadianPostalCode(value: string, errorMsg: string, errors: string[]): void {

@@ -14,6 +14,11 @@ export enum ETemporaryAddressTypes {
     Shelter = 7,
 }
 
+export interface IGeoLocation {
+    lat: string,
+    lng: string,
+}
+
 export interface IAddresses extends IEntity {
 
     noFixedHome: boolean;
@@ -32,4 +37,5 @@ export interface IAddresses extends IEntity {
 
     temporaryAddressType: ETemporaryAddressTypes;
 
+    geoLocation: IGeoLocation;
 }

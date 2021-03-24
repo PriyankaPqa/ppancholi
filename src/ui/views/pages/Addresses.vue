@@ -26,7 +26,8 @@
             outlined
             :error-messages="errors"
             :class="classes"
-            :label="`${$t('registration.addresses.country')} *`" />
+            :label="`${$t('registration.addresses.country')} *`"
+            @input="onInput" />
         </validation-provider>
       </v-col>
 
@@ -40,6 +41,7 @@
             :api-key="apiKey"
             outlined
             :placeholder="`${$t('registration.addresses.streetAddress')} *`"
+            @input="onInput"
             @on-autocompleted="streetAddressAutocomplete" />
         </validation-provider>
       </v-col>
@@ -56,7 +58,8 @@
           v-model="form.city"
           :rules="rules.city"
           :data-test="`${prefixDataTest}__city`"
-          :label="`${$t('registration.addresses.city')} *`" />
+          :label="`${$t('registration.addresses.city')} *`"
+          @input="onInput" />
       </v-col>
 
       <v-col cols="12" sm="6" md="4">
@@ -65,7 +68,8 @@
           :rules="rules.provinceTerritory"
           :data-test="`${prefixDataTest}__province`"
           :label="`${$t('registration.addresses.province')} *`"
-          :items="canadianProvincesItems" />
+          :items="canadianProvincesItems"
+          @input="onInput" />
       </v-col>
 
       <v-col cols="12" sm="6" md="4">
@@ -73,7 +77,8 @@
           v-model="form.postalCode"
           :rules="rules.postalCode"
           :data-test="`${prefixDataTest}__postalCode`"
-          :label="`${$t('registration.addresses.postalCode')} *`" />
+          :label="`${$t('registration.addresses.postalCode')} *`"
+          @input="onInput" />
       </v-col>
     </template>
 
@@ -143,6 +148,7 @@ export default Vue.extend({
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VUE_APP_GOOGLE_API_KEY,
+      isAutocompleteAddress: false,
     };
   },
 
@@ -212,13 +218,27 @@ export default Vue.extend({
       // TODO Implement this
     },
     // eslint-disable-next-line
-    streetAddressAutocomplete(event: any) {
+    async streetAddressAutocomplete(event: any) {
+      this.isAutocompleteAddress = true;
+
       this.$set(this.form, 'country', event.country);
       this.$set(this.form, 'provinceTerritory', ECanadaProvinces[event.province]);
       this.$set(this.form, 'postalCode', event.postalCode);
       this.$set(this.form, 'city', event.city);
       this.$set(this.form, 'street', event.street);
+      this.$set(this.form, 'geoLocation', event.location);
+
+      await this.$nextTick();
+      this.isAutocompleteAddress = false;
     },
+
+    onInput() {
+      if (!this.isAutocompleteAddress) {
+        this.form.geoLocation.lat = null;
+        this.form.geoLocation.lng = null;
+      }
+    },
+
     prepopulate() {
       if (!this.form.country) {
         this.form.country = 'CA';

@@ -9,6 +9,6 @@ export const mockAddresses = (): IAddresses => ({
   provinceTerritory: ECanadaProvinces.ON,
   postalCode: 'K1W 1G7',
   temporaryAddressType: ETemporaryAddressTypes.Unknown,
-
+  geoLocation: null,
   validate: null,
 });

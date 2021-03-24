@@ -133,6 +133,15 @@ describe('Addresses.vue', () => {
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.streetAddressAutocomplete).toHaveBeenCalledTimes(1);
       });
+
+      test('method is trigger when updating value', async () => {
+        wrapper.vm.onInput = jest.fn();
+
+        const element = wrapper.findDataTest('addresses__city').find('input');
+        await element.setValue('Montreal');
+
+        expect(wrapper.vm.onInput).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('Life cycle hooks', () => {
@@ -213,6 +222,10 @@ describe('Addresses.vue', () => {
           postalCode: 'J9A3V6',
           city: 'Gatineau',
           street: '140 boul. des Grives',
+          location: {
+            lat: 19.4326901,
+            lng: -99.1500028,
+          },
         };
         wrapper.vm.streetAddressAutocomplete(resultObject);
         expect(wrapper.vm.form.country).toEqual(resultObject.country);
@@ -220,6 +233,7 @@ describe('Addresses.vue', () => {
         expect(wrapper.vm.form.postalCode).toEqual(resultObject.postalCode);
         expect(wrapper.vm.form.city).toEqual(resultObject.city);
         expect(wrapper.vm.form.street).toEqual(resultObject.street);
+        expect(wrapper.vm.form.geoLocation).toEqual(resultObject.location);
       });
     });
 
@@ -233,6 +247,27 @@ describe('Addresses.vue', () => {
         wrapper.vm.form.country = null;
         wrapper.vm.prepopulate();
         expect(wrapper.vm.form.country).toEqual('CA');
+      });
+    });
+
+    describe('onInput', () => {
+      it('reset geo location if is autocomplete address', async () => {
+        const geoLocation = {
+          lat: '123',
+          lng: '456',
+        };
+
+        wrapper.vm.form.geoLocation = geoLocation;
+        wrapper.vm.isAutocompleteAddress = true;
+        wrapper.vm.onInput();
+        expect(wrapper.vm.form.geoLocation).toEqual(geoLocation);
+
+        wrapper.vm.isAutocompleteAddress = false;
+        wrapper.vm.onInput();
+        expect(wrapper.vm.form.geoLocation).toEqual({
+          lat: null,
+          lng: null,
+        });
       });
     });
   });
