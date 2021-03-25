@@ -12,7 +12,7 @@ describe(Component, () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        filterKey: 'where_to_save_filters',
+        filterKey: '1',
         filterOptions: [],
         count: 0,
         titleDialog: 'titleDialog',

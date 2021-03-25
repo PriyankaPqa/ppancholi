@@ -8,6 +8,7 @@ import {
 
 import helpers from '@/ui/helpers';
 import _cloneDeep from 'lodash/cloneDeep';
+import _pick from 'lodash/pick';
 import {
   IState,
 } from './app-user.types';
@@ -30,10 +31,24 @@ const getters = {
       // We find corresponding user matching on id
       const allUserData = state.allUsers.find((u) => u.id === appUser.id);
 
-      // We find roles info for each roles of the user
-      (appUser.roles as unknown as IRolesData[]) = appUser.roles.map((id) => state.roles.find((role) => role.id === id));
+      if (!allUserData) return appUser;
 
-      return { ...appUser, ...allUserData };
+      // We find roles info for each roles of the user
+      (appUser.roles as unknown as IRolesData[]) = appUser.roles.map((id) => {
+        const role = state.roles.find((role) => role.id === id);
+        return _pick(role, ['id', 'displayName', 'value']);
+      });
+
+      let phoneNumber = '';
+
+      if (allUserData.mobilePhone) {
+        phoneNumber = allUserData.mobilePhone;
+      } else if (allUserData.businessPhones.length > 0) {
+        [phoneNumber] = allUserData.businessPhones;
+      }
+      const newUserData = _pick(allUserData, ['id', 'displayName', 'roles']);
+
+      return { ...appUser, ...{ ...newUserData, emailAddress: allUserData.mail, phoneNumber } };
     });
   },
   // Find a user by passing the key we are looking for and the value

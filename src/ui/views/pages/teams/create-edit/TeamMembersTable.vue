@@ -17,7 +17,8 @@
             background-color="grey lighten-4"
             outlined
             hide-details
-            dense />
+            dense
+            @click:clear="search = ''" />
         </div>
       </div>
     </div>
@@ -39,8 +40,32 @@
         </span>
       </template>
 
+      <template #item.role="{ item }">
+        {{ getRole(item) }}
+      </template>
+
+      <template #item.phoneNumber="{ item }">
+        <rc-phone-display :value="item.phoneNumber" />
+      </template>
+
+      <template #item.teamCount="{ item }">
+        {{ item.teamCount || '0' }}
+      </template>
+
+      <template #item.caseFilesCount="{ item }">
+        {{ item.caseFilesCount || '0' }}
+      </template>
+
+      <template #item.openCaseFilesCount="{ item }">
+        {{ item.openCaseFilesCount || '0' }}
+      </template>
+
+      <template #item.inactiveCaseFilesCount="{ item }">
+        {{ item.inactiveCaseFilesCount || '0' }}
+      </template>
+
       <template #item.delete="{ item }">
-        <v-btn icon x-small :data-test="`remove_team_member_${item.id}`" @click="showRemoveConfirmationDialog(item.id)">
+        <v-btn v-if="!item.isPrimaryContact" icon x-small :data-test="`remove_team_member_${item.id}`" @click="showRemoveConfirmationDialog(item.id)">
           <v-icon color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -52,8 +77,7 @@
       v-if="showAddTeamMemberDialog"
       data-test="add-team-members"
       :team-members="team.teamMembers"
-      :show.sync="showAddTeamMemberDialog"
-      @refresh-team="$emit('refresh-team')" />
+      :show.sync="showAddTeamMemberDialog" />
 
     <rc-confirmation-dialog
       v-if="showRemoveMemberConfirmationDialog"
@@ -75,13 +99,15 @@ import _orderBy from 'lodash/orderBy';
 import { ITeamMember, Team } from '@/entities/team';
 import helpers from '@/ui/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
-import { RcConfirmationDialog } from '@crctech/component-library';
+import { RcConfirmationDialog, RcPhoneDisplay } from '@crctech/component-library';
+import { IAppUserData } from '@/entities/app-user';
 
 export default Vue.extend({
   name: 'TeamMembersTable',
   components: {
     AddTeamMembers,
     RcConfirmationDialog,
+    RcPhoneDisplay,
   },
 
   props: {
@@ -144,6 +170,7 @@ export default Vue.extend({
           filterable: false,
           sortable: false,
           value: 'teamCount',
+          width: '20px',
         },
         {
           text: this.$t('teams.count_file.total') as string,
@@ -151,6 +178,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'caseFilesCount',
+          width: '20px',
         },
         {
           text: this.$t('teams.count_file.open') as string,
@@ -158,6 +186,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'openCaseFilesCount',
+          width: '20px',
         },
         {
           text: this.$t('teams.count_file.inactive') as string,
@@ -165,6 +194,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'inactiveCaseFilesCount',
+          width: '20px',
         },
         {
           text: '',
@@ -196,12 +226,14 @@ export default Vue.extend({
     },
 
     async removeTeamMember() {
-      await this.$storage.team.actions.removeTeamMember(this.team.id, this.removeMemberId);
-
-      if (this.team.removeTeamMember(this.removeMemberId)) {
-        this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
-      }
+      await this.$storage.team.actions.removeTeamMember(this.removeMemberId);
+      this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
       this.showRemoveMemberConfirmationDialog = false;
+    },
+
+    getRole(user: IAppUserData): string {
+      if (user.roles) return user?.roles[0]?.displayName;
+      return '';
     },
   },
 });

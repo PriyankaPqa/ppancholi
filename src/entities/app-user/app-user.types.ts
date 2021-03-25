@@ -1,18 +1,13 @@
 export interface IAllUserData {
   id: uuid;
-  displayName: string;
-  givenName: string;
-  userPrincipalName: string;
   mail: string;
-  jobTitle: string;
+  mobilePhone: string;
+  businessPhones: Array<string>;
 }
 
 export interface IRolesData {
   id: uuid;
-  description: string;
   displayName: string;
-  isEnabled: boolean;
-  origin: string;
   value: string;
 }
 
@@ -22,6 +17,10 @@ export interface IAppUserAzureData {
   roles: Array<uuid>
 }
 
-export interface IAppUserData extends IAllUserData {
+export interface IAppUserData {
+  id: uuid;
+  emailAddress: string;
+  phoneNumber: string;
+  displayName: string
   roles: Array<IRolesData>
 }

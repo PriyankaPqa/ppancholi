@@ -14,6 +14,10 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.getters['event/events'];
     },
 
+    openEvents() {
+      return store.getters['event/openEvents'];
+    },
+
     eventById(id: uuid): IEvent {
       return store.getters['event/eventById'](id);
     },

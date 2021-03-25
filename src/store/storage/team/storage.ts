@@ -1,16 +1,28 @@
-import { ITeam, ITeamSearchData } from '@/entities/team';
+import { ITeam, ITeamSearchData, Team } from '@/entities/team';
 import { IStore } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IAppUserData } from '@/entities/app-user';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
+  getters: {
+    team() {
+      return store.getters['team/team'];
+    },
+  },
+
+  mutations: {
+    resetTeam() {
+      return store.commit('team/resetTeam');
+    },
+  },
+
   actions: {
     getTeam(id: uuid): Promise<ITeam> {
       return store.dispatch('team/getTeam', id);
     },
 
-    createTeam(payload: ITeam): Promise<ITeam> {
+    createTeam(payload: Team): Promise<ITeam> {
       return store.dispatch('team/createTeam', payload);
     },
 
@@ -22,12 +34,12 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.dispatch('team/searchTeams', params);
     },
 
-    addTeamMembers(teamId: uuid, teamMembers: IAppUserData[]): Promise<ITeam> {
-      return store.dispatch('team/addTeamMembers', { teamId, teamMembers });
+    addTeamMembers(teamMembers: IAppUserData[]): Promise<ITeam> {
+      return store.dispatch('team/addTeamMembers', { teamMembers });
     },
 
-    removeTeamMember(teamId: uuid, teamMemberId: uuid): Promise<ITeam> {
-      return store.dispatch('team/removeTeamMember', { teamId, teamMemberId });
+    removeTeamMember(teamMemberId: uuid): Promise<ITeam> {
+      return store.dispatch('team/removeTeamMember', { teamMemberId });
     },
   },
 });

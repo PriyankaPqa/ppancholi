@@ -3,6 +3,7 @@
  */
 
 import { IMultilingual } from '@/types';
+import { IAppUserData } from '@/entities/app-user';
 
 export enum ETeamType {
   Standard = 1,
@@ -23,13 +24,8 @@ export interface ITeamEvent {
   name: IMultilingual;
 }
 
-export interface ITeamMember {
-  id: uuid,
+export interface ITeamMember extends IAppUserData {
   isPrimaryContact: boolean,
-  displayName?: string;
-  emailAddress?: string;
-  phoneNumber?: string;
-  role?: IMultilingual;
   teamCount?: number;
   caseFilesCount?: number;
   openCaseFilesCount?: number;
@@ -44,12 +40,12 @@ export interface ITeamData {
    name: string;
    status: ETeamStatus;
    teamType: ETeamType;
-   teamMembers: Array<ITeamMember>;
-   events?: Array<ITeamEvent>,
+   teamMembers: Array<{ id: uuid; isPrimaryContact: boolean }>;
+   eventIds: Array<uuid>,
 }
 
 export interface ITeamSearchData {
-  '@searchScore': number;
+  '@searchScore'?: number;
   teamId: uuid;
   tenantId: string;
   teamName: string;
@@ -66,11 +62,23 @@ export interface ITeamSearchData {
 /**
  * Interface used for the Team entity class
  */
-export interface ITeam extends ITeamData {
-  addTeamMember(userId: uuid, isPrimaryContact: boolean): void;
-  setPrimaryContact(userId: uuid): void;
+export interface ITeam {
+  id: uuid;
+  tenantId: string;
+  name: string;
+  status: ETeamStatus;
+  teamType: ETeamType;
+  teamTypeName: IMultilingual;
+  primaryContactDisplayName: string;
+  teamMembers: Array<ITeamMember>;
+  teamMemberCount: number;
+  events?: Array<ITeamEvent>,
+  eventCount: number;
+  addTeamMembers(members: ITeamMember | ITeamMember[]): void;
+  setPrimaryContact(member: ITeamMember | IAppUserData): void;
   getPrimaryContact(): ITeamMember;
   validate(): Array<string> | boolean;
+  setEvents(events: ITeamEvent | ITeamEvent[]): void;
 }
 
 /**

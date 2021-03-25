@@ -5,19 +5,21 @@ import {
 export const mockAllUsersData = (): IAllUserData[] => [
   {
     id: '0',
-    displayName: 'John White',
-    givenName: 'John',
-    jobTitle: 'jobTitle',
-    mail: null,
-    userPrincipalName: 'johnwhite@test.com',
+    mail: 'test0@test.com',
+    mobilePhone: '',
+    businessPhones: [],
+  },
+  {
+    id: '1',
+    mail: 'test1@test.com',
+    mobilePhone: '',
+    businessPhones: [],
   },
   {
     id: '2',
-    displayName: 'Lena Brown',
-    givenName: 'Lena',
-    jobTitle: 'jobTitle',
-    mail: null,
-    userPrincipalName: 'lenabrown@test.com',
+    mail: 'test2@test.com',
+    mobilePhone: '',
+    businessPhones: [],
   },
 ];
 
@@ -32,18 +34,12 @@ export const mockAppUserAzureData = (): IAppUserAzureData[] => [
 export const mockRolesData = (): IRolesData[] => [
   {
     id: '0',
-    description: 'Description of role 0',
     displayName: 'Contributor M',
-    isEnabled: true,
-    origin: 'Application',
     value: 'contributorIM',
   },
   {
     id: '1',
-    description: 'Description of role 1',
     displayName: 'General Manager',
-    isEnabled: true,
-    origin: 'Application',
     value: 'level6',
   },
 ];
@@ -52,28 +48,22 @@ export const mockAppUserData = (): IAppUserData[] => [
   {
     id: '2',
     displayName: 'Lena Brown',
-    givenName: 'Lena',
-    jobTitle: 'jobTitle',
-    mail: null,
-    userPrincipalName: 'lenabrown@test.com',
+    emailAddress: 'test2@test.com',
+    phoneNumber: '',
     roles: [mockRolesData()[0], mockRolesData()[1]],
   },
   {
     id: '3',
     displayName: 'John Lenon',
-    givenName: 'John',
-    jobTitle: 'jobTitle',
-    mail: null,
-    userPrincipalName: 'john@test.com',
+    emailAddress: '',
+    phoneNumber: '',
     roles: [mockRolesData()[0]],
   },
   {
     id: '4',
     displayName: 'Jack Jack',
-    givenName: 'Jack',
-    jobTitle: 'jobTitle',
-    mail: null,
-    userPrincipalName: 'jack@test.com',
+    emailAddress: '',
+    phoneNumber: '',
     roles: [mockRolesData()[0]],
   },
 ];

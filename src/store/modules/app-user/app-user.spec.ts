@@ -33,7 +33,7 @@ describe('>>> App User Module', () => {
 
     describe('appUserWhere', () => {
       it('finds the app users where key equals value', () => {
-        expect(store.getters['appUser/appUserWhere']('givenName', 'Lena')).toEqual(mockAppUserData()[0]);
+        expect(store.getters['appUser/appUserWhere']('displayName', 'Lena Brown')).toEqual(mockAppUserData()[0]);
       });
     });
 

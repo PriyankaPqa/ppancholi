@@ -16,6 +16,10 @@ describe('>>> Event Storage', () => {
       expect(storage.getters.events()).toEqual(store.getters['event/events']);
     });
 
+    it('should proxy openEvents', () => {
+      expect(storage.getters.openEvents()).toEqual(store.getters['event/openEvents']);
+    })
+    
     it('should proxy eventById', () => {
       expect(storage.getters.eventById('TEST_ID')).toEqual(store.getters['event/eventById']('TEST_ID'));
     });

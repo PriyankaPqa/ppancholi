@@ -1,8 +1,10 @@
+import { ITeamSearchData, Team } from '@/entities/team';
+
 export type IState = {
-  addTeamMemberLoading: boolean;
   getLoading: boolean;
   submitLoading: boolean;
   searchLoading: boolean;
   removeLoading: boolean;
-  teamId: string;
+  team: Team;
+  cachedTeams: Array<ITeamSearchData>;
 };

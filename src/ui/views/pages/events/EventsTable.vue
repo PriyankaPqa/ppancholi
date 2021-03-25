@@ -64,19 +64,15 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import {
   RcDataTable,
-  IFilterSettings,
   ISearchData,
 } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import {
   EResponseLevel, EEventStatus, IEvent, IEventSchedule,
 } from '@/entities/event';
-// import { EFilterKey } from '@/entities/user';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+
+import { IAzureSearchParams } from '@/types';
 import routes from '@/constants/routes';
-import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
-import helpers from '@/ui/helpers';
 import moment from '@/ui/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';

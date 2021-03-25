@@ -6,9 +6,11 @@ const http = mockHttp();
 describe('>>> App Users Service', () => {
   const service = new AppUsersService(http as never);
 
-  test('fetchAllUsers is linked to the correct URL', async () => {
+  test('fetchAllUsers is linked to the correct URL and params', async () => {
     await service.fetchAllUsers();
-    expect(http.get).toHaveBeenCalledWith('/Graph/users');
+    expect(http.get).toHaveBeenCalledWith('/Graph/users', {
+      isOData: true, params: { select: ['id', 'mobilePhone', 'businessPhones', 'mail'] },
+    });
   });
 
   test('fetchAppUsers is linked to the correct URL', async () => {

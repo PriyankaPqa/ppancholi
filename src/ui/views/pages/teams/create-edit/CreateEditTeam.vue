@@ -48,7 +48,6 @@
                       :rules="rules.name"
                       @input="resetAsUnique()" />
                   </v-col>
-
                   <v-col cols="12" md="4">
                     <v-autocomplete-with-validation
                       data-test="team-contact"
@@ -111,8 +110,7 @@
                 <team-members-table
                   data-test="team-members-table"
                   :team="team"
-                  :is-edit-mode="isEditMode"
-                  @refresh-team="loadTeam()" />
+                  :is-edit-mode="isEditMode" />
               </v-col>
             </v-row>
           </v-col>
@@ -149,9 +147,9 @@ import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 
 import {
-  ETeamStatus, ETeamType, Team, ITeam, ITeamEvent,
+  ETeamStatus, ETeamType, Team, ITeamEvent,
 } from '@/entities/team';
-import { EEventStatus, IEvent } from '@/entities/event';
+import { IEvent } from '@/entities/event';
 import TeamMembersTable from '@/ui/views/pages/teams/create-edit/TeamMembersTable.vue';
 import {
   VTextFieldWithValidation, VAutocompleteWithValidation, RcConfirmationDialog, RcPageContent,
@@ -159,7 +157,7 @@ import {
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { VForm } from '@/types';
+import { IMultilingual, VForm } from '@/types';
 import { IAppUserData } from '@/entities/app-user';
 
 export default Vue.extend({
@@ -192,21 +190,25 @@ export default Vue.extend({
   data() {
     return {
       isNameUnique: true,
-      team: new Team() as ITeam,
-      availableEvents: [],
       primaryContactQuery: '',
       primaryContactUsers: [] as IAppUserData[],
-      currentPrimaryContact: null as Partial<IAppUserData>,
+      currentPrimaryContact: null as IAppUserData,
       map: [null, 'standard', 'adhoc'],
       statuses: [ETeamStatus.Active, ETeamStatus.Inactive],
       showCancelConfirmationDialog: false,
       showEventDeleteConfirmationDialog: false,
-      minimumContactQueryLength: 2,
+      minimumContactQueryLength: 1,
       eventsAfterRemoval: null as ITeamEvent[],
     };
   },
 
   computed: {
+    availableEvents(): {id: string; name: IMultilingual}[] {
+      return this.$storage.event.getters.openEvents().map((e) => ({
+        id: e.id,
+        name: e.name,
+      }));
+    },
     deleteEventConfirmationMessage(): TranslateResult {
       if (this.eventsAfterRemoval) {
         const removedEvent = _difference(this.team.events, this.eventsAfterRemoval);
@@ -262,6 +264,10 @@ export default Vue.extend({
       return this.$t('teams.types.adhoc');
     },
 
+    team(): Team {
+      return this.$storage.team.getters.team();
+    },
+
   },
 
   watch: {
@@ -273,6 +279,7 @@ export default Vue.extend({
   async mounted() {
     await this.fetchEvents();
     if (!this.isEditMode) {
+      this.$storage.team.mutations.resetTeam();
       this.team.teamType = this.teamType === 'standard' ? ETeamType.Standard : ETeamType.AdHoc;
       this.team.status = ETeamStatus.Active;
     } else {
@@ -283,11 +290,7 @@ export default Vue.extend({
   methods: {
 
     async fetchEvents() {
-      const res = await this.$storage.event.actions.searchEvents({ filter: { Schedule: { Status: EEventStatus.Open } } });
-      this.availableEvents = res?.value.map((e) => ({
-        id: e.id,
-        name: e.name,
-      }));
+      await this.$storage.event.actions.fetchEvents();
     },
 
     handleRemoveEvent(leftEvents: ITeamEvent[]) {
@@ -296,7 +299,8 @@ export default Vue.extend({
     },
 
     handleRemoveEventConfirmation(confirm: boolean) {
-      this.team.events = confirm ? this.eventsAfterRemoval : [...this.team.events];
+      const newEvents = confirm ? this.eventsAfterRemoval : [...this.team.events];
+      this.team.setEvents(newEvents);
       this.showEventDeleteConfirmationDialog = false;
     },
 
@@ -317,19 +321,11 @@ export default Vue.extend({
     async loadTeam() {
       const teamId = this.id;
       if (teamId) {
-        this.team = await this.$storage.team.actions.getTeam(teamId);
-        const primaryContactData = this.team.getPrimaryContact();
-        // Set the primary contact
-        if (primaryContactData) {
-          const user = this.$storage.appUser.getters.appUserWhere('id', primaryContactData.id);
-          if (user) {
-            this.currentPrimaryContact = {
-              id: user.id,
-              displayName: user.displayName,
-              roles: null,
-            };
-            this.primaryContactQuery = user.displayName;
-          }
+        await this.$storage.team.actions.getTeam(teamId);
+
+        this.currentPrimaryContact = this.team.getPrimaryContact();
+        if (this.currentPrimaryContact) {
+          this.primaryContactQuery = this.currentPrimaryContact.displayName;
         }
       }
     },
@@ -379,23 +375,23 @@ export default Vue.extend({
     },
 
     setEvents(events: IEvent | IEvent[]) {
-      this.team.events = Array.isArray(events) ? [...events] : [events];
+      this.team.setEvents(events);
     },
 
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (!isValid) return;
-      this.team.setPrimaryContact(this.currentPrimaryContact.id);
+      this.team.setPrimaryContact(this.currentPrimaryContact);
       if (!this.isEditMode) {
-        this.submitCreateTeam();
+        await this.submitCreateTeam();
       } else {
-        this.submitEditTeam();
+        await this.submitEditTeam();
       }
     },
 
     async submitCreateTeam() {
       try {
-        const newTeam = await this.$storage.team.actions.createTeam(this.team);
+        await this.$storage.team.actions.createTeam(this.team);
 
         const message:TranslateResult = this.team.teamType === ETeamType.Standard
           ? this.$t('teams.standard_team_created')
@@ -403,9 +399,7 @@ export default Vue.extend({
 
         this.$toasted.global.success(message);
 
-        this.team.id = newTeam.id;
-
-        this.$router.replace({ name: routes.teams.edit.name, params: { id: newTeam.id, teamType: this.teamType } });
+        await this.$router.replace({ name: routes.teams.edit.name, params: { id: this.team.id, teamType: this.teamType } });
 
         this.resetFormValidation();
       } catch (e) {
@@ -416,7 +410,6 @@ export default Vue.extend({
     async submitEditTeam() {
       try {
         await this.$storage.team.actions.editTeam(this.team);
-        await this.loadTeam();
         this.$toasted.global.success(this.$t('teams.team_updated'));
         this.resetFormValidation();
       } catch (e) {

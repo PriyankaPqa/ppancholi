@@ -1,19 +1,35 @@
-import { ITeam, ITeamSearchData } from '@/entities/team';
+import { ITeam, ITeamSearchData, Team } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IAppUserData } from '@/entities/app-user';
 
 export interface IStorage {
+  getters: {
+    team(): Team,
+  },
+
+  mutations: {
+    resetTeam(): void;
+  },
+
   actions: {
     getTeam(id: uuid): Promise<ITeam>;
-    createTeam(payload: ITeam): Promise<ITeam>;
-    editTeam(payload: ITeam): Promise<ITeam>;
+    createTeam(payload: Team): Promise<ITeam>;
+    editTeam(payload: Team): Promise<ITeam>;
     searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
-    addTeamMembers(teamId: uuid, teamMembers: IAppUserData[]): Promise<ITeam>;
-    removeTeamMember(teamId: uuid, teamMemberId: uuid): Promise<ITeam>;
+    addTeamMembers(teamMembers: IAppUserData[]): Promise<ITeam>;
+    removeTeamMember(teamMemberId: uuid): Promise<ITeam>;
   }
 }
 
 export interface IStorageMock {
+  getters: {
+    team: jest.Mock<void>;
+  },
+
+  mutations: {
+    resetTeam: jest.Mock<void>;
+  },
+
   actions: {
     getTeam: jest.Mock<void>;
     createTeam: jest.Mock<void>;

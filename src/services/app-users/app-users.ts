@@ -8,7 +8,10 @@ export class AppUsersService implements IAppUsersService {
   constructor(private readonly http: IHttpClient) {}
 
   async fetchAllUsers(): Promise<IAllUserData[]> {
-    return this.http.get('/Graph/users');
+    const params = {
+      select: ['id', 'mobilePhone', 'businessPhones', 'mail'],
+    };
+    return this.http.get('/Graph/users', { params, isOData: true });
   }
 
   async fetchAppUsers(): Promise<IAppUserAzureData[]> {

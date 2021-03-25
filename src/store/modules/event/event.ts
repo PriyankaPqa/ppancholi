@@ -5,15 +5,13 @@ import _findIndex from 'lodash/findIndex';
 import _sortBy from 'lodash/sortBy';
 import { IRootState } from '@/store/store.types';
 import {
-  IOptionItem, IOptionItemData, OptionItem, EOptionListItemStatus, EOptionLists,
+  EOptionListItemStatus, EOptionLists, IOptionItem, IOptionItemData, OptionItem,
 } from '@/entities/optionItem';
 import {
-  Event, IEvent, IEventSearchData, IOtherProvince, IRegion,
+  EEventStatus, Event, IEvent, IEventSearchData, IOtherProvince, IRegion,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
-import {
-  IAzureSearchParams, IAzureSearchResult,
-} from '@/types';
+import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 import { IState } from './event.types';
 import { mapEventDataToSearchData } from './utils';
@@ -36,6 +34,12 @@ const getters = {
   ),
 
   events: (state: IState) => helpers.sortMultilingualArray(state.events, 'name'),
+
+  // eslint-disable-next-line
+  openEvents: (state: IState) => {
+    const openEvents = state.events.filter((e) => e.schedule.status === EEventStatus.Open);
+    return helpers.sortMultilingualArray(openEvents, 'name');
+  },
 
   eventById: (state: IState) => (id: uuid) => {
     const event = state.events.find((e) => e.id === id);

@@ -139,8 +139,9 @@ describe('EventSummary.vue', () => {
               id: '7c076603-580a-4400-bef2-5ddececb0931',
             },
           },
+          $storage: storage,
         },
-        $storage: storage,
+
       });
     });
     describe('event', () => {

@@ -129,7 +129,7 @@ export default Vue.extend({
           class: 'team_member_header',
           filterable: false,
           sortable: false,
-          value: 'mail',
+          value: 'emailAddress',
         },
         {
           text: this.$t('teams.member_role') as string,
@@ -152,12 +152,8 @@ export default Vue.extend({
       return this.$storage.appUser.getters.searchAppUser(this.search, false, ['displayName', 'mail']);
     },
 
-    teamId(): string {
-      return this.$store.state.team.teamId;
-    },
-
     loading(): boolean {
-      return this.$store.state.team.addTeamMemberLoading;
+      return this.$store.state.team.submitLoading;
     },
   },
 
@@ -198,9 +194,8 @@ export default Vue.extend({
     },
 
     async submit() {
-      await this.$storage.team.actions.addTeamMembers(this.teamId, this.selectedUsers);
+      await this.$storage.team.actions.addTeamMembers(this.selectedUsers);
       this.$toasted.global.success(this.$t('team.add_members.success'));
-      await this.$emit('refresh-team');
       this.close();
     },
 

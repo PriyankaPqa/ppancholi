@@ -64,9 +64,9 @@ export const routes: Array<RouteConfig> = [
     },
     beforeEnter: async (to, from, next) => {
       await Promise.all([
+        store.dispatch('appUser/fetchRoles'),
         store.dispatch('appUser/fetchAllUsers'),
         store.dispatch('appUser/fetchAppUsers'),
-        store.dispatch('appUser/fetchRoles'),
       ]);
       Trans.routeMiddleware(to, from, next);
     },

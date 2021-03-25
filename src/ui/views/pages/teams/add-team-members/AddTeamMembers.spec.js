@@ -20,8 +20,7 @@ describe('AddTeamMembers.vue', () => {
         modules: {
           team: {
             state: {
-              teamId: '12345',
-              addTeamMemberLoading: true,
+              submitLoading: true,
             },
           },
         },
@@ -48,7 +47,7 @@ describe('AddTeamMembers.vue', () => {
             class: 'team_member_header',
             filterable: false,
             sortable: false,
-            value: 'mail',
+            value: 'emailAddress',
           },
           {
             text: 'teams.member_role',
@@ -78,14 +77,8 @@ describe('AddTeamMembers.vue', () => {
       });
     });
 
-    describe('teamId', () => {
-      it('is linked to the id of the team being edited', async () => {
-        expect(wrapper.vm.teamId).toEqual('12345');
-      });
-    });
-
     describe('loading', () => {
-      it('is linked to addTeamMemberLoading', async () => {
+      it('is linked to submitLoading', async () => {
         expect(wrapper.vm.loading).toEqual(true);
       });
     });
@@ -199,14 +192,9 @@ describe('AddTeamMembers.vue', () => {
     });
 
     describe('submit', () => {
-      it('calls addTeamMembers actions with correct parameters (teamId, selectedUsers)', async () => {
+      it('calls addTeamMembers actions with correct parameters (selectedUsers)', async () => {
         await wrapper.vm.submit();
-        expect(storage.team.actions.addTeamMembers).toHaveBeenCalledWith(wrapper.vm.teamId, wrapper.vm.selectedUsers);
-      });
-
-      it('emits refresh-team', async () => {
-        await wrapper.vm.submit();
-        expect(wrapper.emitted('refresh-team')).toBeTruthy();
+        expect(storage.team.actions.addTeamMembers).toHaveBeenCalledWith(wrapper.vm.selectedUsers);
       });
 
       it('calls close method', async () => {

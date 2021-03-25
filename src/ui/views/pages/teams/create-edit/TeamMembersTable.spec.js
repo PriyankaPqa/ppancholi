@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockTeamsData, Team } from '@/entities/team';
+import { mockTeamsData, mockTeamSearchData, Team } from '@/entities/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/store/storage';
 import Component from './TeamMembersTable.vue';
@@ -16,7 +16,7 @@ describe('TeamMembersTable.vue', () => {
       wrapper = mount(Component, {
         localVue,
         propsData: {
-          team: new Team(mockTeamsData()[0]),
+          team: new Team(mockTeamSearchData()[0]),
           isEditMode: false,
         },
       });
@@ -83,7 +83,7 @@ describe('TeamMembersTable.vue', () => {
             isEditMode: true,
           });
 
-          const button = wrapper.findDataTest('remove_team_member_guid-member-1');
+          const button = wrapper.findDataTest('remove_team_member_guid-member-2');
           await button.trigger('click');
           expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledTimes(1);
         });
@@ -96,15 +96,6 @@ describe('TeamMembersTable.vue', () => {
           await wrapper.setData({ showAddTeamMemberDialog: true });
 
           expect(wrapper.findComponent(AddTeamMembers).exists()).toBeTruthy();
-        });
-
-        it('it relays refresh-team event', async () => {
-          await wrapper.setData({ showAddTeamMemberDialog: true });
-          const element = wrapper.findDataTest('add-team-members');
-
-          element.vm.$emit('refresh-team');
-
-          expect(wrapper.emitted('refresh-team')).toBeTruthy();
         });
 
         test('props teamMembers is correctly linked', async () => {
@@ -209,14 +200,7 @@ describe('TeamMembersTable.vue', () => {
       it('calls removeTeamMember action with correct params', () => {
         wrapper.vm.removeMemberId = 'guid-member-1';
         wrapper.vm.removeTeamMember();
-        expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith(wrapper.vm.team.id, 'guid-member-1');
-      });
-
-      it('calls removeTeamMember method from entity with correct params', async () => {
-        jest.spyOn(wrapper.vm.team, 'removeTeamMember').mockImplementation(() => true);
-        wrapper.vm.removeMemberId = 'guid-member-1';
-        await wrapper.vm.removeTeamMember();
-        expect(wrapper.vm.team.removeTeamMember).toHaveBeenCalledWith('guid-member-1');
+        expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith('guid-member-1');
       });
     });
   });

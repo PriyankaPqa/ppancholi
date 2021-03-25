@@ -1,4 +1,4 @@
-import { mockTeamsData, Team, IAddTeamMembersRequest } from '@/entities/team';
+import { mockTeamSearchData, Team, IAddTeamMembersRequest } from '@/entities/team';
 import { mockAppUserData } from '@/entities/app-user';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
@@ -15,7 +15,7 @@ describe('>>> Teams Service', () => {
   });
 
   test('createTeam is linked to the correct URL and params', async () => {
-    const payload = new Team(mockTeamsData()[0]);
+    const payload = new Team(mockTeamSearchData()[0]);
     await service.createTeam(payload);
     const expectedPayload = {
       name: payload.name,
@@ -27,7 +27,7 @@ describe('>>> Teams Service', () => {
   });
 
   test('editTeam calls the correct URL and payload', async () => {
-    const payload = new Team(mockTeamsData()[0]);
+    const payload = new Team(mockTeamSearchData()[0]);
     await service.editTeam(payload);
 
     const expectedPayload = {
@@ -37,7 +37,7 @@ describe('>>> Teams Service', () => {
       status: payload.status,
     };
 
-    expect(http.patch).toHaveBeenCalledWith(`/team/teams/${mockTeamsData()[0].id}`, expectedPayload, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`/team/teams/${payload.id}`, expectedPayload, { globalHandler: false });
   });
 
   test('searchTeams is linked to the correct URL and params', async () => {

@@ -9,7 +9,7 @@ describe('>>> User', () => {
   describe('>> constructor', () => {
     it('should instantiate id', () => {
       const event = new Event(mockEventData);
-      expect(event.id).toBe('7c076603-580a-4400-bef2-5ddececb0931');
+      expect(event.id).toBe('7c076603-580a-4400-bef2-5ddececb0123');
     });
 
     it('should instantiate name', () => {

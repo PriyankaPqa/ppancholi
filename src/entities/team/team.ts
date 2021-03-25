@@ -1,36 +1,58 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
+
+import { IAppUserData } from '@/entities/app-user';
+import { IMultilingual } from '@/types';
 import {
-  ETeamStatus, ETeamType, ITeam, ITeamData, ITeamMember, ITeamEvent,
+  ETeamStatus, ETeamType, ITeam, ITeamSearchData, ITeamMember, ITeamEvent,
 } from './team.types';
 
 export class Team implements ITeam {
   id: string;
 
+  tenantId: string;
+
   name: string;
 
   teamType: ETeamType;
+
+  teamTypeName: IMultilingual;
+
+  primaryContactDisplayName: string;
 
   status: ETeamStatus;
 
   events: Array<ITeamEvent>;
 
+  eventCount: number;
+
   teamMembers: Array<ITeamMember>;
 
-  constructor(data?: ITeamData) {
+  teamMemberCount: number;
+
+  constructor(data?: ITeamSearchData) {
     if (data) {
-      this.id = data.id;
-      this.name = data.name;
+      this.id = data.teamId;
+      this.tenantId = data.tenantId;
+      this.name = data.teamName;
       this.teamType = data.teamType;
-      this.status = data.status;
+      this.teamTypeName = data.teamTypeName;
+      this.primaryContactDisplayName = data.primaryContactDisplayName;
+      this.status = data.teamStatus;
       this.teamMembers = data.teamMembers;
+      this.teamMemberCount = data.teamMemberCount;
       this.events = data.events;
+      this.eventCount = data.eventCount;
     } else {
       this.reset();
     }
   }
 
-  addTeamMember(userId: uuid, isPrimaryContact = false) {
-    this.teamMembers.push({ id: userId, isPrimaryContact });
+  addTeamMembers(members: ITeamMember | ITeamMember[]) {
+    if (Array.isArray(members)) {
+      this.teamMembers = this.teamMembers.concat(members);
+    } else {
+      this.teamMembers.push(members);
+    }
   }
 
   removeTeamMember(userId: uuid): boolean {
@@ -47,25 +69,25 @@ export class Team implements ITeam {
     return true;
   }
 
-  setPrimaryContact(userId: uuid) {
+  setPrimaryContact(member: ITeamMember | IAppUserData) {
     let isUserInTeam = false;
-    const updatedTeam = this.teamMembers.map((member: ITeamMember) => {
+    const updatedTeam = this.teamMembers.map((m: ITeamMember) => {
       // If the userId is the Id of a team member, its primaryContact status is set to true
-      if (member.id === userId) {
-        member.isPrimaryContact = true;
+      if (m.id === member.id) {
+        m.isPrimaryContact = true;
         isUserInTeam = true;
       } else {
         // All other team members' primaryContact status is set to false
-        member.isPrimaryContact = false;
+        m.isPrimaryContact = false;
       }
-      return member;
+      return m;
     });
 
     if (isUserInTeam) {
       this.teamMembers = updatedTeam;
     } else {
       // If the userId doesn't belong to an existent team member, the userId is added as primaryContact
-      this.addTeamMember(userId, true);
+      this.addTeamMembers({ ...member, isPrimaryContact: true });
     }
   }
 
@@ -77,18 +99,40 @@ export class Team implements ITeam {
     return null;
   }
 
+  setEvents(events: ITeamEvent | ITeamEvent[]) {
+    this.events = Array.isArray(events) ? [...events] : [events];
+  }
+
   private reset() {
     this.name = '';
+    this.tenantId = '';
     this.teamType = null;
+    this.teamTypeName = null;
+    this.primaryContactDisplayName = '';
     this.status = ETeamStatus.Active;
+    this.teamMemberCount = null;
     this.teamMembers = [];
     this.events = [];
+    this.eventCount = null;
   }
 
   private validateAttributes(errors: Array<string>) {
     if (!this.id) {
       errors.push('The id is required');
     }
+
+    if (!this.tenantId) {
+      errors.push('The tenantId is required');
+    }
+
+    if (!this.teamTypeName) {
+      errors.push('The teamTypeName is required');
+    }
+
+    if (!this.primaryContactDisplayName) {
+      errors.push('The primaryContactDisplayName is required');
+    }
+
     if (!this.name) {
       errors.push('The team name is required');
     }
