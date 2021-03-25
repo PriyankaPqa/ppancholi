@@ -749,6 +749,8 @@
     "eventSummary.locationStyle.address": "eventSummary.locationStyle.address",
     "eventSummary.registrationBeneficiaries": "eventSummary.registrationBeneficiaries",
     "eventSummary.registrationLink": "eventSummary.registrationLink",
+    "eventSummary.registrationLinkDisabled": "eventSummary.registrationLinkDisabled",
+    "eventSummary.registrationLinkEnabled": "eventSummary.registrationLinkEnabled",
     "eventSummary.registrationLocation": "eventSummary.registrationLocation",
     "eventSummary.registrationLocation.address": "eventSummary.registrationLocation.address",
     "eventSummary.registrationLocation.create.loading": "eventSummary.registrationLocation.create.loading",

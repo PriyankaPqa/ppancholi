@@ -8,6 +8,8 @@ export interface IEventsService {
 
   updateEvent(payload: IEvent): Promise<IEventData>;
 
+  toggleSelfRegistration(id: uuid, selfRegistrationEnabled: boolean): Promise<IEventData>;
+
   getOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>;
 
   getRegions(): Promise<IAzureSearchResult<IRegion>>;
@@ -19,6 +21,8 @@ export interface IEventsServiceMock {
   createEvent: jest.Mock<IEventData>;
 
   updateEvent: jest.Mock<IEventData>;
+
+  toggleSelfRegistration: jest.Mock<IEventData>;
 
   getOtherProvinces: jest.Mock <IAzureSearchResult<IOtherProvince>>;
 

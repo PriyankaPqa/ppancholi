@@ -7,13 +7,16 @@
         color="secondary">
         mdi-folder-plus
       </v-icon>
+
       <span class="rc-body12">{{ $t('eventSummary.registrationLink') }}: </span>
+
       <a
         :class="{'rc-link12 fw-bold mx-1 text-no-wrap': true}"
         data-test="event-summary-registration-link"
         :href="registrationUrl">
         {{ registrationUrl }}
       </a>
+
       <v-tooltip :open-delay="TOOLTIP_DELAY" bottom>
         <template #activator="{ on }">
           <v-btn
@@ -26,38 +29,23 @@
             </v-icon>
           </v-btn>
         </template>
+
         <span>
           {{ $t('eventSummary.copyLinkTooltip') }}
         </span>
       </v-tooltip>
-      <!-- <v-tooltip :open-delay="TOOLTIP_DELAY" bottom>
-          <template v-slot:activator="{ on }">
-            <v-btn
-              data-test="event-summary-share-link-btn"
-              icon
-              v-on="on">
-              <v-icon size="16" color="grey darken-2">
-                mdi-share-variant
-              </v-icon>
-            </v-btn>
-          </template>
-          <span>
-            {{ $t('eventSummary.shareLinkTooltip') }}
-          </span>
-        </v-tooltip> -->
+
       <v-spacer />
+
       <v-switch
-        v-if="showSwitchBtn && !updatingSelfRegistration"
+        v-if="showSwitchBtn"
         :input-value="event.selfRegistrationEnabled"
+        :loading="updatingSelfRegistration"
+        :disabled="updatingSelfRegistration"
         class="mt-0 pt-0 mr-2"
         data-test="event-summary-toggle-self-registration"
         hide-details
-        @change="toggleSelfRegistration()" />
-      <v-switch
-        v-if="showSwitchBtn && updatingSelfRegistration"
-        class="mt-0 pt-0 mr-2"
-        hide-details
-        :loading="true" />
+        @change="toggleSelfRegistration" />
     </div>
     <v-divider />
   </div>
@@ -65,7 +53,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import _cloneDeep from 'lodash/cloneDeep';
 import helpers from '@/ui/helpers';
 import { TOOLTIP_DELAY } from '@/ui/constants';
 import { localStorageKeys } from '@/constants/localStorage';
@@ -73,8 +60,7 @@ import { EEventStatus, Event } from '@/entities/event';
 
 export default Vue.extend({
   name: 'EventSummaryLink',
-  components: {
-  },
+
   props: {
     event: {
       type: Event,
@@ -102,22 +88,30 @@ export default Vue.extend({
   },
 
   methods: {
-
     copyRegistrationLink() {
       helpers.copyToClipBoard(this.registrationUrl);
       this.$toasted.global.success(this.$t('eventSummary.copyLinkSuccessful'));
     },
 
-    toggleSelfRegistration(isEnabled: boolean) {
-      // The switch component doesn't update its inner state properly when it receives new state from props
-      // so it needs to be recreated on state change
+    async toggleSelfRegistration(selfRegistrationEnabled: boolean) {
       this.updatingSelfRegistration = true;
-      const updatedEvent = _cloneDeep(this.event);
-      updatedEvent.selfRegistrationEnabled = isEnabled;
-      // Call action to update event.selfRegistrationEnabled
-      setTimeout(() => {
+
+      try {
+        await this.$storage.event.actions.toggleSelfRegistration({
+          id: this.event.id,
+          selfRegistrationEnabled,
+        });
+      } catch {
+        return;
+      } finally {
         this.updatingSelfRegistration = false;
-      });
+      }
+
+      if (selfRegistrationEnabled) {
+        this.$toasted.global.success(this.$t('eventSummary.registrationLinkEnabled'));
+      } else {
+        this.$toasted.global.success(this.$t('eventSummary.registrationLinkDisabled'));
+      }
     },
   },
 });

@@ -19,6 +19,7 @@ export interface IStorage {
     searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEvent>>;
     createEvent(payload: IEvent): Promise<IEvent>;
     updateEvent(payload: IEvent): Promise<IEvent>;
+    toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent>;
   }
 }
 
@@ -38,5 +39,6 @@ export interface IStorageMock {
     fetchRegions: jest.Mock<void>;
     createEvent: jest.Mock<void>;
     updateEvent: jest.Mock<void>;
+    toggleSelfRegistration: jest.Mock<void>;
   }
 }

@@ -88,6 +88,14 @@ const mutations = {
   setSearchLoading(state: IState, payload: boolean) {
     state.searchLoading = payload;
   },
+
+  setEventSelfRegistrationEnabled(state: IState, payload: { id: uuid; selfRegistrationEnabled: boolean }) {
+    const event = state.events.find((e) => e.id === payload.id);
+
+    if (event) {
+      event.selfRegistrationEnabled = payload.selfRegistrationEnabled;
+    }
+  },
 };
 
 const actions = {
@@ -183,6 +191,22 @@ const actions = {
       return event;
     }
     return null;
+  },
+
+  async toggleSelfRegistration(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    payload: { id: uuid, selfRegistrationEnabled: boolean },
+  ): Promise<IEvent> {
+    try {
+      context.commit('setEventSelfRegistrationEnabled', payload);
+      const data = await this.$services.events.toggleSelfRegistration(payload.id, payload.selfRegistrationEnabled);
+      const event = new Event(mapEventDataToSearchData(data, context));
+      return event;
+    } catch (e) {
+      context.commit('setEventSelfRegistrationEnabled', { id: payload.id, selfRegistrationEnabled: !payload.selfRegistrationEnabled });
+      throw e;
+    }
   },
 };
 

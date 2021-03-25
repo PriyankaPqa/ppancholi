@@ -114,6 +114,11 @@ describe('>>> Events Service', () => {
     }, { globalHandler: false });
   });
 
+  test('toggleSelfRegistration is linked to the correct url', async () => {
+    await service.toggleSelfRegistration('ID', false);
+    expect(http.patch).toHaveBeenCalledWith('/event/events/ID/self-registration-enabled', { selfRegistrationEnabled: false });
+  });
+
   test('searchEvents is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
     await service.searchEvents(params);

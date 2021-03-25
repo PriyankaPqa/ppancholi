@@ -55,5 +55,9 @@ export const makeStorage = (store: IStore): IStorage => ({
     updateEvent(payload: IEvent): Promise<IEvent> {
       return store.dispatch('event/updateEvent', payload);
     },
+
+    toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent> {
+      return store.dispatch('event/toggleSelfRegistration', payload);
+    },
   },
 });

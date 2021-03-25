@@ -8,6 +8,10 @@ import Component from '../components/EventSummaryLink.vue';
 const localVue = createLocalVue();
 const mockEvent = new Event(mockEventsSearchData()[0]);
 
+const actions = {
+  toggleSelfRegistration: jest.fn(),
+};
+
 describe('EventSummaryLink.vue', () => {
   let wrapper;
 
@@ -26,7 +30,16 @@ describe('EventSummaryLink.vue', () => {
             return true;
           },
         },
+        store: {
+          modules: {
+            event: {
+              actions,
+            },
+          },
+        },
       });
+
+      jest.clearAllMocks();
     });
 
     describe('registration Url', () => {
@@ -51,7 +64,7 @@ describe('EventSummaryLink.vue', () => {
         jest.spyOn(wrapper.vm, 'copyRegistrationLink').mockImplementation(() => {});
 
         const element = wrapper.findDataTest('event-summary-copy-link-btn');
-        await element.vm.$emit('click');
+        await element.trigger('click');
         expect(wrapper.vm.copyRegistrationLink).toHaveBeenCalledTimes(1);
       });
     });
@@ -60,14 +73,6 @@ describe('EventSummaryLink.vue', () => {
       it('renders if showSwitchBtn is true', () => {
         const element = wrapper.findDataTest('event-summary-toggle-self-registration');
         expect(element.exists()).toBeTruthy();
-      });
-
-      it('calls toggleSelfRegistration when clicked', async () => {
-        jest.spyOn(wrapper.vm, 'toggleSelfRegistration').mockImplementation(() => {});
-
-        const element = wrapper.findDataTest('event-summary-toggle-self-registration');
-        await element.trigger('click');
-        expect(wrapper.vm.toggleSelfRegistration).toHaveBeenCalledTimes(1);
       });
 
       it('does not render if showSwitchBtn is false', () => {
@@ -84,6 +89,34 @@ describe('EventSummaryLink.vue', () => {
         });
         const element = wrapper.findDataTest('event-summary-toggle-self-registration');
         expect(element.exists()).toBeFalsy();
+      });
+
+      it('calls toggleSelfRegistration when clicked', async () => {
+        expect(actions.toggleSelfRegistration).toHaveBeenCalledTimes(0);
+
+        const element = wrapper.findDataTest('event-summary-toggle-self-registration');
+        await element.trigger('click');
+
+        expect(actions.toggleSelfRegistration).toHaveBeenCalledTimes(1);
+        expect(actions.toggleSelfRegistration).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            id: mockEvent.id,
+            selfRegistrationEnabled: true,
+          },
+        );
+      });
+
+      it('shows a toast notification when toggleSelfRegistration completes', async () => {
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.toggleSelfRegistration(true);
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.registrationLinkEnabled');
+
+        await wrapper.vm.toggleSelfRegistration(false);
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.registrationLinkDisabled');
       });
     });
 
@@ -177,6 +210,7 @@ describe('EventSummaryLink.vue', () => {
           },
         });
       });
+
       describe('copyRegistrationLink', () => {
         it('calls copyToClipBoard helper', async () => {
           jest.spyOn(helpers, 'copyToClipBoard').mockImplementation(() => {});

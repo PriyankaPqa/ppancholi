@@ -20,6 +20,10 @@ export class EventsService implements IEventsService {
     return this.http.patch(`/event/events/${event.id}/edit`, payload, { globalHandler: false });
   }
 
+  async toggleSelfRegistration(id: uuid, selfRegistrationEnabled: boolean): Promise<IEventData> {
+    return this.http.patch(`/event/events/${id}/self-registration-enabled`, { selfRegistrationEnabled });
+  }
+
   async getOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>> {
     return this.http.get('/search/event-province-others');
   }

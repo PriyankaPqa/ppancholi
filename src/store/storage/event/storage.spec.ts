@@ -68,5 +68,14 @@ describe('>>> Event Storage', () => {
       storage.actions.updateEvent(event);
       expect(store.dispatch).toHaveBeenCalledWith('event/updateEvent', event);
     });
+
+    it('should proxy toggleSelfRegistration', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      storage.actions.toggleSelfRegistration({ id: event.id, selfRegistrationEnabled: false });
+      expect(store.dispatch).toHaveBeenCalledWith('event/toggleSelfRegistration', {
+        id: event.id,
+        selfRegistrationEnabled: false,
+      });
+    });
   });
 });

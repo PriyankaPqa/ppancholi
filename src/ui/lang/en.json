@@ -749,6 +749,8 @@
     "eventSummary.locationStyle.address": "Address",
     "eventSummary.registrationBeneficiaries": "Registration Beneficiaries",
     "eventSummary.registrationLink": "Registration link",
+    "eventSummary.registrationLinkDisabled": "Self-registration link disabled",
+    "eventSummary.registrationLinkEnabled": "Self-registration link enabled",
     "eventSummary.registrationLocation": "Registration location",
     "eventSummary.registrationLocation.address": "Location address",
     "eventSummary.registrationLocation.create.loading": "Creating new registration location",

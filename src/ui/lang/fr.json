@@ -749,6 +749,8 @@
     "eventSummary.locationStyle.address": "Adresse",
     "eventSummary.registrationBeneficiaries": "Inscription de bénéficiaires",
     "eventSummary.registrationLink": "Lien d'inscription",
+    "eventSummary.registrationLinkDisabled": "Lien d'inscription désactivé",
+    "eventSummary.registrationLinkEnabled": "Lien d'inscription activé",
     "eventSummary.registrationLocation": "Lieu d'inscription",
     "eventSummary.registrationLocation.address": "Adresse du lieu",
     "eventSummary.registrationLocation.create.loading": "Création d’un nouveau lieu d’inscription",
