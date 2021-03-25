@@ -306,7 +306,7 @@ export default Vue.extend({
 
     handleSubmitError(e: Error) {
       // Temporary custom check until an error handling system is put in place
-      if (Array.isArray(e) && e.includes('Team name already exists ')) {
+      if (Array.isArray(e) && e[0].includes('already exists')) {
         this.isNameUnique = false;
       } else {
         // Handle all other errors
