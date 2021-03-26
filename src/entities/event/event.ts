@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces, IMultilingual } from '@/types';
@@ -56,9 +57,9 @@ export class Event implements IEvent {
 
       this.created = new Date(data.createdDate);
 
-      this.description = data.eventDescription && data.eventDescription.translation
-        ? { translation: { ...data.eventDescription.translation } }
-        : utils.initMultilingualAttributes();
+      this.name = utils.initMultilingualAttributes(data.eventName);
+
+      this.description = utils.initMultilingualAttributes(data.eventDescription);
 
       this.eventTypeId = data.eventTypeId;
 
@@ -71,11 +72,7 @@ export class Event implements IEvent {
       this.location = {
         ...data.location,
       };
-      this.name = {
-        translation: {
-          ...data.eventName.translation,
-        },
-      };
+
       this.number = data.number;
       this.provinceName = data.provinceName ? {
         translation: {

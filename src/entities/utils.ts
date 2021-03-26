@@ -45,12 +45,21 @@ export default {
   /**
    * Initialize multilingual attributes to empty string
    */
-  initMultilingualAttributes(): IMultilingual {
+  initMultilingualAttributes(value?: IMultilingual): IMultilingual {
+    if (value && value.translation) {
+      return {
+        translation: {
+          ...value.translation,
+        },
+      };
+    }
+
     const multiLanguageObject: Record<string, string> = {};
 
     SUPPORTED_LANGUAGES_INFO.forEach((lang) => {
       multiLanguageObject[lang.key] = '';
     });
+
     return { translation: multiLanguageObject };
   },
 

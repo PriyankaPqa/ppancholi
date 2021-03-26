@@ -59,12 +59,12 @@ const getRelatedEventsInfos = (eventsIds: Array<uuid>, allEvents: IEvent[]):Arra
 
 export const mapEventDataToSearchData = (eventData: IEventData, context: ActionContext<IState, IRootState>) : IEventSearchData => ({
   createdDate: eventData.created,
-  eventDescription: eventData.description && eventData.description.translation ? eventData.description : utils.initMultilingualAttributes(),
+  eventName: utils.initMultilingualAttributes(eventData.name),
+  eventDescription: utils.initMultilingualAttributes(eventData.description),
   eventTypeId: eventData.responseDetails.eventType.optionItemId,
   eventTypeName: getEventTypeName(eventData.responseDetails.eventType, context.state.eventTypes),
   eventId: eventData.id,
   location: eventData.location,
-  eventName: eventData.name,
   number: eventData.number,
   provinceName: getProvinceName(eventData.location),
   relatedEventsInfos: getRelatedEventsInfos(eventData.relatedEventIds, context.state.events),
