@@ -99,7 +99,6 @@ export interface IEventSearchData{
   responseLevelName: IMultilingual;
   selfRegistrationEnabled: boolean;
   schedule: IEventSchedule;
-  scheduleEventOpenDate: Date | string;
   scheduleEventStatusName: IMultilingual;
   tenantId: uuid;
 }
@@ -146,7 +145,6 @@ export interface IEvent {
   responseDetails: IEventResponseDetails;
   responseLevelName: IMultilingual;
   schedule: IEventSchedule;
-  scheduleEventOpenDate: Date | string;
   scheduleEventStatusName: IMultilingual;
   selfRegistrationEnabled: boolean;
   eventStatus: number;

@@ -73,7 +73,6 @@ export const mapEventDataToSearchData = (eventData: IEventData, context: ActionC
   responseLevelName: getResponseLevelName(eventData.responseDetails.responseLevel),
   selfRegistrationEnabled: eventData.selfRegistrationEnabled,
   schedule: eventData.schedule,
-  scheduleEventOpenDate: eventData.schedule.openDate,
   scheduleEventStatusName: getScheduleEventStatusName(eventData.schedule.status),
   '@searchScore': null,
   eventStatus: null,

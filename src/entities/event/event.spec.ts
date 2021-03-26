@@ -124,11 +124,6 @@ describe('>>> User', () => {
       expect(event.selfRegistrationEnabled).toEqual(false);
     });
 
-    it('should instantiate scheduleEventOpenDate', () => {
-      const event = new Event(mockEventData);
-      expect(event.scheduleEventOpenDate).toEqual(new Date('2021-03-15T00:00:00Z'));
-    });
-
     it('should instantiate scheduleEventStatusName', () => {
       const event = new Event(mockEventData);
       expect(event.scheduleEventStatusName).toEqual({

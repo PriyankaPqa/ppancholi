@@ -210,7 +210,6 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
     },
     selfRegistrationEnabled: false,
     schedule: mockEventsData()[0].schedule,
-    scheduleEventOpenDate: '2021-03-15T00:00:00Z',
     scheduleEventStatusName: {
       translation: {
         en: 'On hold',
@@ -269,7 +268,6 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
       closeDate: null,
       closeReason: null,
     },
-    scheduleEventOpenDate: '2021-03-15T00:00:00Z',
     scheduleEventStatusName: {
       translation: {
         en: 'On hold',

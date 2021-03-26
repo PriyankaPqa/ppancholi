@@ -44,8 +44,6 @@ export class Event implements IEvent {
 
   schedule: IEventSchedule;
 
-  scheduleEventOpenDate: Date | string;
-
   scheduleEventStatusName: IMultilingual;
 
   selfRegistrationEnabled: boolean;
@@ -106,7 +104,6 @@ export class Event implements IEvent {
         scheduledCloseDate: data.schedule.scheduledCloseDate ? new Date(data.schedule.scheduledCloseDate) : null,
         scheduledOpenDate: data.schedule.scheduledOpenDate ? new Date(data.schedule.scheduledOpenDate) : null,
       };
-      this.scheduleEventOpenDate = data.scheduleEventOpenDate ? new Date(data.scheduleEventOpenDate) : null;
       this.scheduleEventStatusName = data.scheduleEventStatusName ? {
         translation: {
           ...data.scheduleEventStatusName.translation,

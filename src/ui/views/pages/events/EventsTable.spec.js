@@ -129,7 +129,7 @@ describe('EventsTable.vue', () => {
         const expectedColumns = {
           name: 'EventName/Translation/En',
           responseLevel: 'ResponseLevelName/Translation/En',
-          openDate: 'ScheduleEventOpenDate',
+          openDate: 'Schedule/OpenDate',
           daysOpen: 'DaysOpen',
           eventStatus: 'ScheduleEventStatusName/Translation/En',
         };
@@ -162,7 +162,7 @@ describe('EventsTable.vue', () => {
               return {
                 name: 'EventName/Translation/En',
                 responseLevel: 'ResponseLevelName/Translation/En',
-                openDate: 'ScheduleEventOpenDate',
+                openDate: 'Schedule/OpenDate',
                 daysOpen: 'DaysOpen',
                 eventStatus: 'ScheduleEventStatusName/Translation/En',
               };
@@ -183,7 +183,7 @@ describe('EventsTable.vue', () => {
             sortable: true,
           }, {
             text: 'eventsTable.startDate',
-            value: 'ScheduleEventOpenDate',
+            value: 'Schedule/OpenDate',
             sortable: true,
           }, {
             text: 'eventsTable.eventDuration',
@@ -309,7 +309,7 @@ describe('EventsTable.vue', () => {
               return {
                 name: 'EventName/Translation/En',
                 responseLevel: 'ResponseLevelName/Translation/En',
-                openDate: 'ScheduleEventOpenDate',
+                openDate: 'Schedule/OpenDate',
                 daysOpen: 'DaysOpen',
                 eventStatus: 'ScheduleEventStatusName/Translation/En',
               };

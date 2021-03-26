@@ -120,7 +120,7 @@ export default Vue.extend({
       return {
         name: `EventName/Translation/${this.locale}`,
         responseLevel: `ResponseLevelName/Translation/${this.locale}`,
-        openDate: 'ScheduleEventOpenDate',
+        openDate: 'Schedule/OpenDate',
         daysOpen: 'DaysOpen',
         eventStatus: `ScheduleEventStatusName/Translation/${this.locale}`,
       };
