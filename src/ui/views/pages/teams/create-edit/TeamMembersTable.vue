@@ -1,14 +1,15 @@
 <template>
   <div>
     <div
-      :class="['table_top_header', isEditMode? 'border-radius-top no-bottom-border' : 'border-radius-all']">
+      :class="['table_top_header', showMembers? 'border-radius-top no-bottom-border' : 'border-radius-all']">
       <div class="team_member_toolbar">
-        <v-btn color="primary" data-test="add-new-member" :disabled="!isEditMode" @click="showAddTeamMemberDialog = true">
+        <v-btn v-if="showAddMember" color="primary" data-test="add-new-member" :disabled="disableAddMembers" @click="showAddTeamMemberDialog = true">
           {{ $t('teams.add_new_members') }}
         </v-btn>
+        <div v-else />
         <div>
           <v-text-field
-            v-if="isEditMode"
+            v-if="showSearch"
             v-model="search"
             data-test="search"
             :placeholder="$t('common.search')"
@@ -23,7 +24,7 @@
       </div>
     </div>
     <v-data-table
-      v-if="isEditMode"
+      v-if="showMembers"
       class="table border-radius-bottom"
       data-test="teamMembers__table"
       hide-default-footer
@@ -65,7 +66,12 @@
       </template>
 
       <template #item.delete="{ item }">
-        <v-btn v-if="!item.isPrimaryContact" icon x-small :data-test="`remove_team_member_${item.id}`" @click="showRemoveConfirmationDialog(item.id)">
+        <v-btn
+          v-if="!item.isPrimaryContact"
+          icon
+          x-small
+          :data-test="`remove_team_member_${item.id}`"
+          @click="showRemoveConfirmationDialog(item.id)">
           <v-icon color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -116,9 +122,29 @@ export default Vue.extend({
       required: true,
     },
 
-    isEditMode: {
+    showSearch: {
       type: Boolean,
-      required: true,
+      default: true,
+    },
+
+    showMembers: {
+      type: Boolean,
+      default: true,
+    },
+
+    disableAddMembers: {
+      type: Boolean,
+      default: false,
+    },
+
+    showAddMember: {
+      type: Boolean,
+      default: true,
+    },
+
+    disabledDeleteMember: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -130,12 +156,22 @@ export default Vue.extend({
       showAddTeamMemberDialog: false,
       showRemoveMemberConfirmationDialog: false,
       removeMemberId: '',
+      searchAmong: [
+        'displayName',
+        'emailAddress',
+        'phoneNumber',
+        'teamCount',
+        'caseFilesCount',
+        'openCaseFilesCount',
+        'inactiveCaseFilesCount',
+        'role',
+      ],
     };
   },
 
   computed: {
     headers(): Array<DataTableHeader> {
-      return [
+      const headers = [
         {
           text: this.$t('teams.member_name') as string,
           class: 'team_member_header',
@@ -178,7 +214,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'caseFilesCount',
-          width: '20px',
+          width: '110px',
         },
         {
           text: this.$t('teams.count_file.open') as string,
@@ -186,7 +222,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'openCaseFilesCount',
-          width: '20px',
+          width: '80px',
         },
         {
           text: this.$t('teams.count_file.inactive') as string,
@@ -194,19 +230,25 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'inactiveCaseFilesCount',
-          width: '20px',
+          width: '100px',
         },
         {
           text: '',
           value: 'delete',
           width: '10px',
+          sortable: false,
+          filterable: false,
         },
       ];
+      if (this.disabledDeleteMember) {
+        return headers.filter((h) => h.value !== 'delete');
+      }
+      return headers;
     },
 
     computedTeamMembers(): Array<ITeamMember> {
       const direction = this.sortDesc ? 'desc' : 'asc';
-      const filtered = helpers.filterCollectionByValue(this.team.teamMembers, this.search);
+      const filtered = helpers.filterCollectionByValue(this.team.teamMembers, this.search, false, this.searchAmong);
       return _orderBy(filtered, this.sortBy, direction) as ITeamMember[];
     },
 

@@ -110,7 +110,9 @@
                 <team-members-table
                   data-test="team-members-table"
                   :team="team"
-                  :is-edit-mode="isEditMode" />
+                  :show-members="isEditMode"
+                  :show-search="isEditMode"
+                  :disable-add-members="!isEditMode" />
               </v-col>
             </v-row>
           </v-col>
@@ -124,7 +126,7 @@
       :show.sync="showCancelConfirmationDialog"
       :title="$t('confirmCancelDialog.title')"
       :messages="$t('confirmCancelDialog.message')"
-      @submit="navigateToHome()"
+      @submit="goBack()"
       @cancel="showCancelConfirmationDialog = false"
       @close="showCancelConfirmationDialog = false" />
 
@@ -330,15 +332,16 @@ export default Vue.extend({
       }
     },
 
-    navigateToHome() {
-      this.$router.push({ name: routes.teams.home.name });
+    goBack() {
+      const backRouteName = this.$route.params.from ? this.$route.params.from : routes.teams.home.name;
+      this.$router.push({ name: backRouteName });
     },
 
     async onCancel(isChanged: boolean) {
       if (isChanged) {
         this.showCancelConfirmationDialog = true;
       } else {
-        this.navigateToHome();
+        this.goBack();
       }
     },
 

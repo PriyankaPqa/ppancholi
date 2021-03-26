@@ -17,42 +17,54 @@ describe('TeamMembersTable.vue', () => {
         localVue,
         propsData: {
           team: new Team(mockTeamSearchData()[0]),
-          isEditMode: false,
         },
       });
     });
 
     describe('Rendered elements', () => {
-      it('shows an Add New Member button', () => {
-        const button = wrapper.find('[data-test="add-new-member"]');
-        expect(button.exists()).toBeTruthy();
-      });
+      describe('Add new member button', () => {
+        it('is displayed if showAddMember is true', () => {
+          const button = wrapper.findDataTest('add-new-member');
+          expect(button.exists()).toBeTruthy();
+        });
 
-      it('should display Add New Member button as disabled when in edit mode ', () => {
-        wrapper.setProps({ isEditMode: true });
-        const button = wrapper.find('[data-test="add-new-member"]');
-        expect(button.attributes('disabled')).toBeTruthy();
+        it('is hidden if showAddMember is false', async () => {
+          await wrapper.setProps({
+            showAddMember: false,
+          });
+          const button = wrapper.find('[data-test="add-new-member"]');
+          expect(button.exists()).toBeFalsy();
+        });
+
+        it('is disabled if disableAddMembers is true', async () => {
+          await wrapper.setProps({
+            disableAddMembers: true,
+          });
+          const button = wrapper.findDataTest('add-new-member');
+          expect(button.props('disabled')).toBeTruthy();
+        });
+
+        it('is enabled if disableAddMembers is false', async () => {
+          const button = wrapper.findDataTest('add-new-member');
+          expect(button.props('disabled')).toBeFalsy();
+        });
       });
 
       describe('Members data table', () => {
-        it('is not rendered  when in create mode', async () => {
-          wrapper.setProps({ isEditMode: false });
-          await wrapper.vm.$nextTick();
+        it('is not rendered showMembers is false', async () => {
+          await wrapper.setProps({ showMembers: false });
+
           const table = wrapper.findDataTest('teamMembers__table');
           expect(table.exists()).toBeFalsy();
         });
 
-        it('is rendered when in edit mode', async () => {
-          wrapper.setProps({ isEditMode: true });
-          await wrapper.vm.$nextTick();
+        it('is rendered if showMembers is true', async () => {
+          await wrapper.setProps({ showMembers: true });
           const table = wrapper.findDataTest('teamMembers__table');
           expect(table.exists()).toBeTruthy();
         });
 
         it('displays the correct header values when in edit mode', async () => {
-          wrapper.setProps({ isEditMode: true });
-          await wrapper.vm.$nextTick();
-
           const headers = wrapper.findAll('th');
 
           expect(headers.length).toBe(9);
@@ -69,19 +81,12 @@ describe('TeamMembersTable.vue', () => {
         });
 
         test('items props is linked to computedTeamMembers', async () => {
-          wrapper.setProps({ isEditMode: true });
-          await wrapper.vm.$nextTick();
-
           const element = wrapper.findDataTest('teamMembers__table');
           expect(element.props().items).toEqual(wrapper.vm.computedTeamMembers);
         });
 
         test('clicking the bin will show remove confirmation dialog', async () => {
           jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
-
-          await wrapper.setProps({
-            isEditMode: true,
-          });
 
           const button = wrapper.findDataTest('remove_team_member_guid-member-2');
           await button.trigger('click');
@@ -106,12 +111,13 @@ describe('TeamMembersTable.vue', () => {
       });
 
       describe('Search input', () => {
-        it('should only be displayed on edit mode', async () => {
-          await wrapper.setProps({ isEditMode: false });
-          expect(wrapper.findDataTest('search').exists()).toBeFalsy();
-
-          await wrapper.setProps({ isEditMode: true });
+        it('is displayed if showSearch is true', async () => {
           expect(wrapper.findDataTest('search').exists()).toBeTruthy();
+        });
+
+        it('is hidden if showSearch is false', async () => {
+          await wrapper.setProps({ showSearch: false });
+          expect(wrapper.findDataTest('search').exists()).toBeFalsy();
         });
       });
 
@@ -131,7 +137,6 @@ describe('TeamMembersTable.vue', () => {
 
     describe('Event Handlers', () => {
       test('when the button is clicked the dialog is add team member dialog is shown', async () => {
-        wrapper.setProps({ isEditMode: true });
         await wrapper.vm.$nextTick();
         const button = wrapper.find('[data-test="add-new-member"]');
         await button.trigger('click');
@@ -146,7 +151,6 @@ describe('TeamMembersTable.vue', () => {
         localVue,
         propsData: {
           team: new Team(mockTeamsData()[0]),
-          isEditMode: false,
         },
         data() {
           return {
@@ -176,7 +180,6 @@ describe('TeamMembersTable.vue', () => {
         localVue,
         propsData: {
           team: new Team(mockTeamsData()[0]),
-          isEditMode: false,
         },
         mocks: {
           $storage: storage,

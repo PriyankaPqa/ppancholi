@@ -10,6 +10,9 @@ export default {
         filter: {},
       },
       previousPageIndex: 0,
+      options: {
+        page: 1,
+      },
     };
   },
   methods: {

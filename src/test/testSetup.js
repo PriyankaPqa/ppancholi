@@ -54,6 +54,7 @@ const mocks = {
   },
   $route: {
     name: '',
+    params: {},
   },
   $t: jest.fn((key) => key),
   $tc: jest.fn((key) => key),

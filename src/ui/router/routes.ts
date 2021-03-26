@@ -54,6 +54,7 @@ const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/sy
 const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
 const CreateEditTeam = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/create-edit/CreateEditTeam.vue');
+const TeamDetails = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/details/TeamDetails.vue');
 
 export const routes: Array<RouteConfig> = [
   {
@@ -315,6 +316,13 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.teams.edit.name,
                 component: CreateEditTeam,
                 meta: { level: 'level4' },
+                props: true,
+              },
+              {
+                path: Routes.teams.details.path,
+                name: Routes.teams.details.name,
+                component: TeamDetails,
+                meta: { level: 'level3' },
                 props: true,
               },
             ],

@@ -193,10 +193,10 @@ describe('CreateEditTeam.vue', () => {
           expect(element.exists()).toBeTruthy();
         });
 
-        it('calls navigateToHome when submit is called', () => {
-          jest.spyOn(wrapper.vm, 'navigateToHome').mockImplementation(() => {});
+        it('calls goBack when submit is called', () => {
+          jest.spyOn(wrapper.vm, 'goBack').mockImplementation(() => {});
           element.vm.$emit('submit');
-          expect(wrapper.vm.navigateToHome).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.goBack).toHaveBeenCalledTimes(1);
         });
 
         it('sets showCancelConfirmationDialog to false when cancel is called', () => {
@@ -750,16 +750,31 @@ describe('CreateEditTeam.vue', () => {
       });
     }));
 
-    describe('navigateToHome', () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          teamType: 'standard',
-        },
+    describe('goBack', () => {
+      it('redirects to home if from param is not there', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+          },
+        });
+        jest.spyOn(wrapper.vm.$router, 'push');
+        wrapper.vm.goBack();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.teams.home.name });
       });
-      jest.spyOn(wrapper.vm.$router, 'push');
-      wrapper.vm.navigateToHome();
-      expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.teams.home.name });
+
+      it('redirects to from if from param is there', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+          },
+        });
+        wrapper.vm.$route.params.from = 'from';
+        jest.spyOn(wrapper.vm.$router, 'push');
+        wrapper.vm.goBack();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: 'from' });
+      });
     });
 
     describe('onCancel', () => {
@@ -769,10 +784,10 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.showCancelConfirmationDialog).toBeTruthy();
       });
 
-      it('calls navigateToHome if the passed argument is false', () => {
-        jest.spyOn(wrapper.vm, 'navigateToHome').mockImplementation(() => {});
+      it('calls g if the passed argument is false', () => {
+        jest.spyOn(wrapper.vm, 'goBack').mockImplementation(() => {});
         wrapper.vm.onCancel(false);
-        expect(wrapper.vm.navigateToHome).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.goBack).toHaveBeenCalledTimes(1);
       });
     });
 

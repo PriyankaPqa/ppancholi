@@ -37,6 +37,37 @@ describe('TeamsTable.vue', () => {
         expect(button.exists()).toBeFalsy();
       });
     });
+
+    describe('actions', () => {
+      test('clicking on team name redirects to team details page ', async () => {
+        await wrapper.setData({
+          azureSearchItems: mockTeamSearchData(),
+        });
+        const id = mockTeamSearchData()[0].teamId;
+        const link = wrapper.findDataTest(`team_link_${id}`);
+
+        expect(link.props('to')).toEqual({
+          name: routes.teams.details.name,
+          params: {
+            id,
+          },
+        });
+      });
+
+      test('edit button calls goToEditTeam', async () => {
+        await wrapper.setData({
+          azureSearchItems: mockTeamSearchData(),
+        });
+        const id = mockTeamSearchData()[0].teamId;
+        jest.spyOn(wrapper.vm, 'goToEditTeam').mockImplementation(() => {});
+
+        const editButton = wrapper.findDataTest(`edit_team_${id}`);
+
+        await editButton.trigger('click');
+
+        expect(wrapper.vm.goToEditTeam).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 
   describe('Event Handlers', () => {
@@ -220,7 +251,7 @@ describe('TeamsTable.vue', () => {
         wrapper.vm.goToEditTeam(mockTeam);
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-          name: routes.teams.edit.name, params: { teamType: 'standard', id: 'e64a9cd4-4e6b-46a7-b022-e93e0bdc24df' },
+          name: routes.teams.edit.name, params: { teamType: 'standard', id: 'e64a9cd4-4e6b-46a7-b022-e93e0bdc24df', from: wrapper.vm.$route.name },
         });
       });
 
@@ -230,7 +261,19 @@ describe('TeamsTable.vue', () => {
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.teams.edit.name,
-          params: { teamType: 'adhoc', id: '6e2d49af-2f9a-4333-9bdb-cd37270e6591' },
+          params: { teamType: 'adhoc', id: '6e2d49af-2f9a-4333-9bdb-cd37270e6591', from: wrapper.vm.$route.name },
+        });
+      });
+    });
+
+    describe('getTeamDetailsRoute', () => {
+      it('should return correct route', async () => {
+        const res = wrapper.vm.getTeamDetailsRoute('id');
+        expect(res).toEqual({
+          name: routes.teams.details.name,
+          params: {
+            id: 'id',
+          },
         });
       });
     });

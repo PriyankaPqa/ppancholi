@@ -9,6 +9,7 @@
     :labels="labels"
     :table-props="tableProps"
     :show-add-button="$hasLevel('level6')"
+    :options.sync="options"
     :sort-by="customColumns.openDate"
     sort-desc
     :custom-columns="[

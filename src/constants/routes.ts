@@ -160,6 +160,10 @@ const routes = {
       path: 'edit/:teamType/:id',
       name: 'teams.edit',
     },
+    details: {
+      path: ':id',
+      name: 'team.details',
+    },
   },
 };
 

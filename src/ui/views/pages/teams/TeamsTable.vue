@@ -9,13 +9,19 @@
       :headers="headers"
       :sort-by="defaultSortBy"
       :custom-columns="customColumns"
+      :options.sync="options"
       @search="search">
       <template v-if="$hasLevel('level5')" #headerLeft>
         <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="goToCreateTeam($event)" />
       </template>
 
       <template #item.TeamName="{ item }">
-        <span data-test="team_type">{{ item.teamName }}</span>
+        <router-link
+          class="rc-link14 font-weight-bold"
+          :data-test="`team_link_${item.teamId}`"
+          :to="getTeamDetailsRoute(item.teamId)">
+          {{ item.teamName }}
+        </router-link>
       </template>
 
       <template #item.TeamType="{ item }">
@@ -39,7 +45,7 @@
       </template>
 
       <template #item.edit="{ item }">
-        <v-btn icon class="mr-2" :data-test="`edit_team_${item.id}`" @click="goToEditTeam(item)">
+        <v-btn icon class="mr-2" :data-test="`edit_team_${item.teamId}`" @click="goToEditTeam(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -175,7 +181,7 @@ export default Vue.extend({
     goToEditTeam(team: ITeamSearchData) {
       const teamType = team.teamType === ETeamType.Standard ? 'standard' : 'adhoc';
       const id = team.teamId;
-      this.$router.push({ name: routes.teams.edit.name, params: { teamType, id } });
+      this.$router.push({ name: routes.teams.edit.name, params: { teamType, id, from: this.$route.name } });
     },
 
     async fetchData(params: IAzureSearchParams) {
@@ -198,6 +204,15 @@ export default Vue.extend({
             // add more props to search on if needed
           },
         ],
+      };
+    },
+
+    getTeamDetailsRoute(id: string) {
+      return {
+        name: routes.teams.details.name,
+        params: {
+          id,
+        },
       };
     },
   },
