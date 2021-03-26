@@ -68,7 +68,7 @@ export const mapEventDataToSearchData = (eventData: IEventData, context: ActionC
   number: eventData.number,
   provinceName: getProvinceName(eventData.location),
   relatedEventsInfos: getRelatedEventsInfos(eventData.relatedEventIds, context.state.events),
-  registrationLink: eventData.registrationLink,
+  registrationLink: utils.initMultilingualAttributes(eventData.registrationLink),
   responseDetails: eventData.responseDetails,
   responseLevelName: getResponseLevelName(eventData.responseDetails.responseLevel),
   selfRegistrationEnabled: eventData.selfRegistrationEnabled,

@@ -74,27 +74,29 @@ export class Event implements IEvent {
       };
 
       this.number = data.number;
-      this.provinceName = data.provinceName ? {
+
+      this.provinceName = data.provinceName && data.provinceName.translation ? {
         translation: {
           ...data.provinceName.translation,
         },
       } : null;
-      this.registrationLink = {
-        translation: {
-          ...data.registrationLink.translation,
-        },
-      };
+
+      this.registrationLink = utils.initMultilingualAttributes(data.registrationLink);
+
       this.relatedEventsInfos = data.relatedEventsInfos ? _cloneDeep(data.relatedEventsInfos) : [];
+
       this.responseDetails = {
         ...data.responseDetails,
         eventType: { ...data.responseDetails.eventType },
         dateReported: data.responseDetails.dateReported ? new Date(data.responseDetails.dateReported) : null,
       };
+
       this.responseLevelName = data.responseLevelName ? {
         translation: {
           ...data.responseLevelName.translation,
         },
       } : null;
+
       this.schedule = {
         ...data.schedule,
         closeDate: data.schedule.closeDate ? new Date(data.schedule.closeDate) : null,
@@ -102,11 +104,13 @@ export class Event implements IEvent {
         scheduledCloseDate: data.schedule.scheduledCloseDate ? new Date(data.schedule.scheduledCloseDate) : null,
         scheduledOpenDate: data.schedule.scheduledOpenDate ? new Date(data.schedule.scheduledOpenDate) : null,
       };
+
       this.scheduleEventStatusName = data.scheduleEventStatusName ? {
         translation: {
           ...data.scheduleEventStatusName.translation,
         },
       } : null;
+
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.eventStatus = data.eventStatus;
       this.tenantId = data.tenantId;

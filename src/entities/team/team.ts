@@ -1,7 +1,7 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
-
 import { IAppUserData } from '@/entities/app-user';
 import { IMultilingual } from '@/types';
+import utils from '../utils';
 import {
   ETeamStatus, ETeamType, ITeam, ITeamSearchData, ITeamMember, ITeamEvent,
 } from './team.types';
@@ -35,7 +35,7 @@ export class Team implements ITeam {
       this.tenantId = data.tenantId;
       this.name = data.teamName;
       this.teamType = data.teamType;
-      this.teamTypeName = data.teamTypeName;
+      this.teamTypeName = utils.initMultilingualAttributes(data.teamTypeName);
       this.primaryContactDisplayName = data.primaryContactDisplayName;
       this.status = data.teamStatus;
       this.teamMembers = data.teamMembers;

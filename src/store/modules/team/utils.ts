@@ -3,6 +3,7 @@ import {
 } from '@/entities/team';
 import { ActionContext } from 'vuex';
 import { IEvent } from '@/entities/event';
+import utils from '@/entities/utils';
 import { IState } from './team.types';
 import { IRootState } from '../../store.types';
 
@@ -29,7 +30,7 @@ export const buildTeamSearchDataPayload = (payload: ITeamData, context: ActionCo
   tenantId: context.state.team.tenantId,
   teamName: payload.name,
   teamType: payload.teamType,
-  teamTypeName: context.state.team.teamTypeName,
+  teamTypeName: utils.initMultilingualAttributes(context.state.team.teamTypeName),
   eventCount: context.state.team.eventCount,
   primaryContactDisplayName: context.state.team.primaryContactDisplayName,
   teamMemberCount: context.state.team.teamMemberCount,
