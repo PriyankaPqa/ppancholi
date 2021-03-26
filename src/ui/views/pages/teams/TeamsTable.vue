@@ -237,6 +237,7 @@ export default Vue.extend({
       });
       return res;
     },
+
     getTeamDetailsRoute(id: string) {
       return {
         name: routes.teams.details.name,

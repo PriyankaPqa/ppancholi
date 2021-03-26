@@ -282,12 +282,16 @@ describe('EventsTable.vue', () => {
           search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
         };
         await wrapper.vm.fetchData(params);
+
         expect(wrapper.vm.$storage.event.actions.searchEvents).toHaveBeenCalledWith({
+          search: params.search,
           filter: params.filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
+          queryType: 'full',
+          searchMode: 'all',
         });
       });
 

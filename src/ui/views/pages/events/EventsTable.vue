@@ -219,11 +219,14 @@ export default Vue.extend({
 
     async fetchData(params: IAzureSearchParams) {
       const res = await this.$storage.event.actions.searchEvents({
+        search: params.search,
         filter: params.filter,
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
+        queryType: 'full',
+        searchMode: 'all',
       });
       return res;
     },

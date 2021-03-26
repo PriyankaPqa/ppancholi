@@ -221,7 +221,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'openCaseFilesCount',
-          width: '80px',
+          width: '100px',
         },
         {
           text: this.$t('teams.count_file.inactive') as string,

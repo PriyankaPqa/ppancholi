@@ -104,7 +104,7 @@ export default {
       if (!this.params.search) {
         quickSearch = '';
       } else {
-        quickSearch = `${this.params.search}`; // `${this.params.search}*` for partial search but it's changing results. Ex: <test
+        quickSearch = `${this.params.search}`;
       }
 
       if (this.userSearchFilters && quickSearch) {

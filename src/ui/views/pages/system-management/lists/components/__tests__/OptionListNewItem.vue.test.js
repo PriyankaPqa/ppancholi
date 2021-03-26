@@ -16,6 +16,7 @@ describe('OptionListNewItem.vue', () => {
         loading: true,
         hasDescription: true,
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -40,6 +41,7 @@ describe('OptionListNewItem.vue', () => {
         hasDescription: true,
         addMode: false,
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -68,6 +70,7 @@ describe('OptionListNewItem.vue', () => {
         addMode: false,
         itemId: 'parentid',
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -82,6 +85,7 @@ describe('OptionListNewItem.vue', () => {
       localVue,
       propsData: {
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -102,6 +106,7 @@ describe('OptionListNewItem.vue', () => {
         addMode: true,
         itemId: 'parentid',
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -151,6 +156,7 @@ describe('OptionListNewItem.vue', () => {
         addMode: true,
         itemId: 'parentid',
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -207,6 +213,7 @@ describe('OptionListNewItem.vue', () => {
         addMode: true,
         itemId: 'parentid',
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -247,6 +254,7 @@ describe('OptionListNewItem.vue', () => {
       localVue,
       propsData: {
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -278,6 +286,7 @@ describe('OptionListNewItem.vue', () => {
       propsData: {
         hasDescription: true,
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -314,6 +323,7 @@ describe('OptionListNewItem.vue', () => {
       localVue,
       propsData: {
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -331,6 +341,7 @@ describe('OptionListNewItem.vue', () => {
       localVue,
       propsData: {
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
@@ -360,6 +371,7 @@ describe('OptionListNewItem.vue', () => {
       localVue,
       propsData: {
         languageMode: 'en',
+        addSubItemLabel: 'add sub item',
       },
     });
 
