@@ -6,8 +6,8 @@ import {
 import { IOptionItemData } from '@/entities/optionItem';
 import { ECanadaProvinces, IListOption, IMultilingual } from '@/types';
 import helpers from '@/ui/helpers';
+import utils from '@/entities/utils';
 import { IRootState } from '../../store.types';
-
 import { IState } from './event.types';
 
 const getEventTypeName = (eventType: IListOption, eventTypes: IOptionItemData[]): IMultilingual => {
@@ -59,7 +59,7 @@ const getRelatedEventsInfos = (eventsIds: Array<uuid>, allEvents: IEvent[]):Arra
 
 export const mapEventDataToSearchData = (eventData: IEventData, context: ActionContext<IState, IRootState>) : IEventSearchData => ({
   createdDate: eventData.created,
-  eventDescription: eventData.description,
+  eventDescription: eventData.description && eventData.description.translation ? eventData.description : utils.initMultilingualAttributes(),
   eventTypeId: eventData.responseDetails.eventType.optionItemId,
   eventTypeName: getEventTypeName(eventData.responseDetails.eventType, context.state.eventTypes),
   eventId: eventData.id,

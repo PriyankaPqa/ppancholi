@@ -22,7 +22,7 @@ export class Event implements IEvent {
 
   eventStatus: number;
 
-  eventTypeId:uuid;
+  eventTypeId: uuid;
 
   eventTypeName: IMultilingual;
 
@@ -56,17 +56,18 @@ export class Event implements IEvent {
 
       this.created = new Date(data.createdDate);
 
-      this.description = {
-        translation: {
-          ...data.eventDescription.translation,
-        },
-      };
+      this.description = data.eventDescription && data.eventDescription.translation
+        ? { translation: { ...data.eventDescription.translation } }
+        : utils.initMultilingualAttributes();
+
       this.eventTypeId = data.eventTypeId;
+
       this.eventTypeName = data.eventTypeName && data.eventTypeName.translation ? {
         translation: {
           ...data.eventTypeName.translation,
         },
       } : data.eventTypeName;
+
       this.location = {
         ...data.location,
       };
