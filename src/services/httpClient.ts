@@ -27,7 +27,7 @@ export interface IHttpClient {
   post: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
   patch: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
   put: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
-  delete: <T>(url: string, config?: RequestConfig) => Promise<T>;
+  delete: <T>(url: string, data?: any) => Promise<T>;
   setHeadersLanguage(lang: string): void;
 }
 
@@ -74,13 +74,7 @@ class HttpClient implements IHttpClient {
   private responseErrorHandler(error: any) {
     if (this.isGlobalHandlerEnabled(error.config)) {
       if (error?.response?.data) {
-        const { errors } = error.response.data;
-        if (errors) {
-          const errorMessage = Object.keys(errors).map((key) => errors[key]);
-          Vue.toasted.global.error(errorMessage);
-        } else {
-          Vue.toasted.global.error(i18n.t('error.unexpected_error'));
-        }
+        Vue.toasted.global.error(error.response.data);
       } else {
         Vue.toasted.global.error(i18n.t('error.unexpected_error'));
       }
@@ -106,7 +100,10 @@ class HttpClient implements IHttpClient {
 
     if (request.isOData) {
       // build OData search query and remove the '?' that is added by the query building library at the beginning of the string
-      request.paramsSerializer = (params: IAzureSearchParams) => buildQuery(params).slice(1);
+      request.paramsSerializer = (params: IAzureSearchParams) => {
+        const odataParams = buildQuery(params).slice(1);
+        return odataParams.replace('$search', 'search');
+      };
     }
     return request;
   }
@@ -151,9 +148,9 @@ class HttpClient implements IHttpClient {
     }
   }
 
-  public async delete<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
+  public async delete<T>(url: string, data?: any): Promise<T> {
     try {
-      const response: IRestResponse<T> = await this.axios.delete(url, config);
+      const response: IRestResponse<T> = await this.axios.delete(url, data);
       return response.data;
     } catch (e) {
       throw this.createErrorObject(e);

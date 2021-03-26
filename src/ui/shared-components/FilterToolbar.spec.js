@@ -1,9 +1,12 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import _set from 'lodash/set';
+import { EFilterKey, mockUserAccount, mockUserFilters } from '@/entities/user';
+import { mockStorage } from '@/store/storage';
 import Component from './FilterToolbar.vue';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
 
 describe(Component, () => {
   let wrapper;
@@ -12,45 +15,193 @@ describe(Component, () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        filterKey: '1',
+        filterKey: EFilterKey.Teams,
         filterOptions: [],
         count: 0,
         titleDialog: 'titleDialog',
+      },
+      data() {
+        return {
+          userFilters: mockUserFilters(),
+        };
+      },
+      mocks: {
+        $storage: storage,
       },
     });
   });
 
   describe('Methods', () => {
-    describe('convertToInteger', () => {
-      it('does nothing if filter type is not number', () => {
-        const filter = {
-          key: 'test',
-          operator: EFilterOperator.Equal,
-          type: EFilterType.Text,
-          value: '12345',
-        };
-        wrapper.vm.convertToInteger(filter);
-        expect(filter.value).toBe('12345');
+    describe('onSave', () => {
+      it('it calls editFilter in edit mode', async () => {
+        const filter = {};
+        const edit = true;
+        const filterIndex = 1;
+        jest.spyOn(wrapper.vm, 'editFilter').mockImplementation(() => null);
+
+        await wrapper.vm.onSave({ filter, edit, filterIndex });
+        expect(wrapper.vm.editFilter).toHaveBeenCalledWith(filter, filterIndex);
       });
 
-      it('converts string number to a number if filter type is number', () => {
-        const filter = {
-          key: 'test',
-          type: EFilterType.Number,
-          value: '12345',
+      it('it calls createFilter otherwise', async () => {
+        const filter = {};
+        const edit = false;
+        const filterIndex = 1;
+        jest.spyOn(wrapper.vm, 'createFilter').mockImplementation(() => null);
+
+        await wrapper.vm.onSave({ filter, edit, filterIndex });
+        expect(wrapper.vm.createFilter).toHaveBeenCalledWith(filter);
+      });
+    });
+
+    describe('editFilter', () => {
+      it('calls updateFilter service with proper payload', async () => {
+        const filter = {};
+        const filterIndex = 0;
+
+        const expectedPayload = {
+          oldFilter: mockUserFilters()[filterIndex],
+          newFilter: filter,
         };
-        wrapper.vm.convertToInteger(filter);
-        expect(filter.value).toBe(12345);
+        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        await wrapper.vm.editFilter(filter, filterIndex);
+
+        expect(wrapper.vm.$services.users.updateFilter).toHaveBeenCalledWith(expectedPayload);
       });
 
-      it('converts array of string number to array of number if filter type is number', () => {
-        const filter = {
-          key: 'test',
-          type: EFilterType.Number,
-          value: ['12345', '6789'],
-        };
-        wrapper.vm.convertToInteger(filter);
-        expect(filter.value).toEqual([12345, 6789]);
+      it('calls refreshUserFilters method', async () => {
+        const filter = {};
+        const filterIndex = 0;
+        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+
+        await wrapper.vm.editFilter(filter, filterIndex);
+
+        expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('createFilter', () => {
+      it('calls createFilter service with proper payload', async () => {
+        const filter = {};
+        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+
+        await wrapper.vm.createFilter(filter);
+
+        expect(wrapper.vm.$services.users.createFilter).toHaveBeenCalledWith(filter);
+      });
+
+      it('calls refreshUserFilters method', async () => {
+        const filter = {};
+        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+
+        await wrapper.vm.createFilter(filter);
+
+        expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('onLoadAll', () => {
+      it('calls getter filtersByKey', async () => {
+        await wrapper.vm.onLoadAll();
+        expect(storage.user.getters.filtersByKey).toHaveBeenCalledWith(wrapper.vm.filterKey);
+      });
+
+      it('assign the result to userFilters', async () => {
+        jest.spyOn(storage.user.getters, 'filtersByKey').mockImplementation(() => ['filters']);
+        await wrapper.vm.onLoadAll();
+        expect(wrapper.vm.userFilters).toEqual(['filters']);
+      });
+    });
+
+    describe('onDelete', () => {
+      it('calls removeFilter service with proper payload', async () => {
+        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        await wrapper.vm.onDelete({});
+        expect(wrapper.vm.$services.users.removeFilter).toHaveBeenCalledWith({ deleteFilter: {} });
+      });
+
+      it('calls refreshUserFilters method', async () => {
+        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        await wrapper.vm.onDelete({});
+        expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('refreshUserFilters', () => {
+      it('calls setFilters mutations with proper payload', async () => {
+        await wrapper.vm.refreshUserFilters(mockUserAccount());
+        expect(storage.user.mutations.setFilters).toHaveBeenCalledWith(mockUserAccount().filters);
+      });
+
+      it('calls filtersByKey and sets userFilters', async () => {
+        jest.spyOn(storage.user.getters, 'filtersByKey').mockImplementation(() => ['filters']);
+        await wrapper.vm.refreshUserFilters(mockUserAccount());
+        expect(storage.user.getters.filtersByKey).toHaveBeenCalledWith(wrapper.vm.filterKey);
+        expect(wrapper.vm.userFilters).toEqual(['filters']);
+      });
+    });
+
+    describe('onApplyFilter', () => {
+      it('calls prepareFiltersForOdataQuery to prepare userFilters', () => {
+        jest.spyOn(wrapper.vm, 'prepareFiltersForOdataQuery').mockImplementation(() => {});
+        const filters = [
+          {
+            type: 'text',
+            operator: EFilterOperator.BeginsWith,
+            key: 'TeamName',
+          },
+          {
+            type: 'select',
+            operator: EFilterOperator.Equal,
+            key: 'TeamStatus',
+          },
+        ];
+        wrapper.vm.onApplyFilter(filters);
+        expect(wrapper.vm.prepareFiltersForOdataQuery).toHaveBeenCalledWith([filters[1]]);
+      });
+
+      it('calls translateSearchFilter to prepare userFilters of type "search"', () => {
+        jest.spyOn(wrapper.vm, 'prepareSearchFilters').mockImplementation(() => {});
+        const filters = [
+          {
+            type: 'text',
+            operator: EFilterOperator.BeginsWith,
+            key: 'TeamName',
+          },
+          {
+            type: 'text',
+            operator: EFilterOperator.DoesNotContain,
+            key: 'UserName',
+          },
+          {
+            type: 'select',
+            operator: EFilterOperator.Equal,
+            key: 'TeamStatus',
+          },
+        ];
+        wrapper.vm.onApplyFilter(filters);
+        expect(wrapper.vm.prepareSearchFilters).toHaveBeenCalledWith([filters[0], filters[1]]);
+      });
+
+      it('emits update:appliedFilter with proper parameter', () => {
+        jest.spyOn(wrapper.vm, 'prepareFiltersForOdataQuery').mockImplementation(() => 'preparedFilters');
+        jest.spyOn(wrapper.vm, 'translateSearchFilter').mockImplementation(() => 'translateSearchFilter');
+        const filters = [
+          {
+            type: 'text',
+            operator: EFilterOperator.BeginsWith,
+            key: 'TeamName',
+          },
+          {
+            type: 'select',
+            operator: EFilterOperator.Equal,
+            key: 'TeamStatus',
+          },
+        ];
+        wrapper.vm.onApplyFilter(filters);
+        expect(wrapper.emitted('update:appliedFilter')[0][0]).toEqual(
+          { preparedFilters: 'preparedFilters', searchFilters: 'translateSearchFilter' },
+        );
       });
     });
 
@@ -140,7 +291,7 @@ describe(Component, () => {
           value: 'start',
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { startswith_az: filter.value }));
+        expect(newFilter).toEqual(_set({}, filter.key, { startsWith_az: filter.value }));
       });
 
       it('builds the proper structure for Contains operator', () => {
@@ -166,7 +317,75 @@ describe(Component, () => {
       });
     });
 
-    describe('prepareForOdataQuery', () => {
+    describe('translateSearchFilter', () => {
+      it('creates the correct string for BeginsWith operator', () => {
+        const filter = {
+          type: 'text',
+          value: 'myValue',
+          operator: EFilterOperator.BeginsWith,
+          key: 'TeamName',
+        };
+        const newFilter = wrapper.vm.translateSearchFilter(filter);
+        expect(newFilter).toEqual('TeamName:/myValue.*/');
+      });
+
+      it('creates the correct string for Contains operator', () => {
+        const filter = {
+          type: 'text',
+          value: 'myValue',
+          operator: EFilterOperator.Contains,
+          key: 'TeamName',
+        };
+        const newFilter = wrapper.vm.translateSearchFilter(filter);
+        expect(newFilter).toEqual('TeamName: "myValue"');
+      });
+
+      it('creates the correct string for DoesNotContain operator', () => {
+        const filter = {
+          type: 'text',
+          value: 'myValue',
+          operator: EFilterOperator.DoesNotContain,
+          key: 'TeamName',
+        };
+        const newFilter = wrapper.vm.translateSearchFilter(filter);
+        expect(newFilter).toEqual('TeamName:(/.*/ NOT /.*myValue.*/)');
+      });
+    });
+
+    describe('convertToInteger', () => {
+      it('does nothing if filter type is not number', () => {
+        const filter = {
+          key: 'test',
+          operator: EFilterOperator.Equal,
+          type: EFilterType.Text,
+          value: '12345',
+        };
+        wrapper.vm.convertToInteger(filter);
+        expect(filter.value).toBe('12345');
+      });
+
+      it('converts string number to a number if filter type is number', () => {
+        const filter = {
+          key: 'test',
+          type: EFilterType.Number,
+          value: '12345',
+        };
+        wrapper.vm.convertToInteger(filter);
+        expect(filter.value).toBe(12345);
+      });
+
+      it('converts array of string number to array of number if filter type is number', () => {
+        const filter = {
+          key: 'test',
+          type: EFilterType.Number,
+          value: ['12345', '6789'],
+        };
+        wrapper.vm.convertToInteger(filter);
+        expect(filter.value).toEqual([12345, 6789]);
+      });
+    });
+
+    describe('prepareFiltersForOdataQuery', () => {
       it('builds one object with all ready to use filters inside', () => {
         const filters = [
           {
@@ -182,7 +401,7 @@ describe(Component, () => {
             value: '2',
           },
         ];
-        const finalFilters = wrapper.vm.prepareForOdataQuery(filters);
+        const finalFilters = wrapper.vm.prepareFiltersForOdataQuery(filters);
         expect(finalFilters).toEqual({
           Number: 2,
           Text: '12345',
@@ -190,19 +409,54 @@ describe(Component, () => {
       });
     });
 
-    describe('onApplyFilter', () => {
-      it('calls prepareForOdataQuery with proper parameter', () => {
-        jest.spyOn(wrapper.vm, 'prepareForOdataQuery').mockImplementation(() => {});
-        const filters = { filter: 'filter' };
-        wrapper.vm.onApplyFilter(filters);
-        expect(wrapper.vm.prepareForOdataQuery).toHaveBeenCalledWith(filters);
+    describe('prepareSearchFilters', () => {
+      it('throws an error if a filter other than type text is processed', () => {
+        const filters = [
+          {
+            type: 'select',
+            operator: EFilterOperator.Equal,
+            key: 'TeamStatus',
+          },
+        ];
+        try {
+          wrapper.vm.prepareSearchFilters(filters);
+        } catch (error) {
+          expect(error).toEqual(Error('only filter whose type is text can be processed here'));
+        }
       });
 
-      it('emits update:appliedFilter with proper parameter', () => {
-        jest.spyOn(wrapper.vm, 'prepareForOdataQuery').mockImplementation(() => 'preparedFilters');
-        const filters = { filter: 'filter' };
-        wrapper.vm.onApplyFilter(filters);
-        expect(wrapper.emitted('update:appliedFilter')[0][0]).toBe('preparedFilters');
+      it('throws an error if a filter has type text but operator equals', () => {
+        const filters = [
+          {
+            type: 'text',
+            operator: EFilterOperator.Equal,
+            key: 'TeamStatus',
+          },
+        ];
+        try {
+          wrapper.vm.prepareSearchFilters(filters);
+        } catch (error) {
+          expect(error).toEqual(Error('filter with type text and operator equal cannot be processed here'));
+        }
+      });
+
+      it('creates one string for search that aggregate all filters', () => {
+        const filters = [
+          {
+            type: 'text',
+            value: 'begin',
+            operator: EFilterOperator.BeginsWith,
+            key: 'TeamName',
+          },
+          {
+            value: 'notContain',
+            type: 'text',
+            operator: EFilterOperator.DoesNotContain,
+            key: 'UserName',
+          },
+        ];
+        const finalFilters = wrapper.vm.prepareSearchFilters(filters);
+        expect(finalFilters).toEqual('TeamName:/begin.*/ AND UserName:(/.*/ NOT /.*notContain.*/)');
       });
     });
   });

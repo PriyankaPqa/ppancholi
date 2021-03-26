@@ -1,3 +1,4 @@
+import { IUsersService, IUsersServiceMock } from '../users';
 import { IEventsService, IEventsServiceMock } from '../events';
 import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
 import { ITeamsService, ITeamsServiceMock } from '../teams';
@@ -8,6 +9,7 @@ export interface IProvider {
   events: IEventsService;
   optionItems: IOptionItemsService;
   teams: ITeamsService,
+  users: IUsersService
 }
 
 export interface IProviderMock {
@@ -15,4 +17,5 @@ export interface IProviderMock {
   events: IEventsServiceMock;
   optionItems: IOptionItemsServiceMock;
   teams: ITeamsServiceMock,
+  users: IUsersServiceMock,
 }

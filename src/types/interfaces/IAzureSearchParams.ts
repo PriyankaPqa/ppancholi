@@ -7,4 +7,6 @@ export interface IAzureSearchParams {
     top?: number;
     skip?: number;
     count?: boolean;
+    queryType?: 'full',
+    searchMode?: 'all',
   }

@@ -56,7 +56,8 @@ export default {
     const enumKeys = this.getEnumKeys(myEnum);
     const data = [] as Array<{value: unknown, text: string}>;
     enumKeys.forEach((val) => {
-      data.push({ value: myEnum[val], text: i18n.t(`${translationPath}.${val}`).toString() });
+      const value = myEnum[val];
+      data.push({ value, text: i18n.t(`${translationPath}.${val}`).toString() });
     });
     return data.sort((a, b) => a.text.localeCompare(b.text));
   },

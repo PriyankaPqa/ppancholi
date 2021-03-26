@@ -10,6 +10,13 @@
       :custom-columns="customColumns"
       :options.sync="options"
       @search="search">
+      <template #filter>
+        <filter-toolbar
+          :filter-key="EFilterKey.Teams"
+          :count="azureSearchCount"
+          :filter-options="filters"
+          @update:appliedFilter="onApplyFilter" />
+      </template>
       <template v-if="$hasLevel('level5')" #headerLeft>
         <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="goToCreateTeam($event)" />
       </template>
@@ -24,7 +31,7 @@
       </template>
 
       <template #item.TeamType="{ item }">
-        <span data-test="team_type">{{ ETeamType[item.teamType] }}</span>
+        <span data-test="team_type">{{ $t(`enums.teamType.${ETeamType[item.teamType]}`) }}</span>
       </template>
 
       <template #item.TeamMemberCount="{ item }">
@@ -40,7 +47,7 @@
       </template>
 
       <template #item.TeamStatus="{ item }">
-        <status-chip data-test="team_status" :status="item.teamStatus" status-name="ETeamStatus" />
+        <status-chip v-if="item.teamStatus" data-test="team_status" :status="item.teamStatus" status-name="ETeamStatus" />
       </template>
 
       <template #item.edit="{ item }">
@@ -57,16 +64,21 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcDataTable, RcAddButtonWithMenu, ISearchData } from '@crctech/component-library';
+import {
+  RcDataTable, RcAddButtonWithMenu, ISearchData, IFilterSettings,
+} from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { DataTableHeader } from 'vuetify';
 import {
   ETeamType, ETeamStatus, ITeamSearchData,
 } from '@/entities/team';
-
+import { EFilterKey } from '@/entities/user';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'TeamsTable',
@@ -75,6 +87,7 @@ export default Vue.extend({
     RcDataTable,
     RcAddButtonWithMenu,
     StatusChip,
+    FilterToolbar,
   },
   mixins: [TablePaginationSearchMixin],
 
@@ -87,6 +100,7 @@ export default Vue.extend({
 
   data() {
     return {
+      EFilterKey,
       ETeamType,
       ETeamStatus,
       defaultSortBy: 'TeamName',
@@ -174,6 +188,28 @@ export default Vue.extend({
         loading: this.$store.state.team.searchLoading,
       };
     },
+
+    filters(): Array<IFilterSettings> {
+      return [
+        {
+          key: 'TeamName',
+          type: EFilterType.Text,
+          label: this.$t('teams.form.team_name') as string,
+        },
+        {
+          key: 'TeamType',
+          type: EFilterType.Select,
+          label: this.$t('teams.team_type') as string,
+          items: helpers.enumToTranslatedCollection(ETeamType, 'enums.teamType'),
+        },
+        {
+          key: 'TeamStatus',
+          type: EFilterType.Select,
+          label: this.$t('teams.status') as string,
+          items: helpers.enumToTranslatedCollection(ETeamStatus, 'enums.teamStatus'),
+        },
+      ];
+    },
   },
 
   methods: {
@@ -190,27 +226,17 @@ export default Vue.extend({
 
     async fetchData(params: IAzureSearchParams) {
       const res = await this.$storage.team.actions.searchTeams({
+        search: params.search,
         filter: params.filter,
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,
         count: true,
+        queryType: 'full',
+        searchMode: 'all',
       });
       return res;
     },
-
-    getFilterParams(params: ISearchData) {
-      return {
-        or: [
-          {
-            TeamName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
-            PrimaryContactDisplayName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
-            // add more props to search on if needed
-          },
-        ],
-      };
-    },
-
     getTeamDetailsRoute(id: string) {
       return {
         name: routes.teams.details.name,

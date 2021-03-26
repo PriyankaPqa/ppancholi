@@ -983,7 +983,6 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('opens a toast with a success message for standard team', async () => {
-        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
 
         expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.standard_team_created');
@@ -992,7 +991,6 @@ describe('CreateEditTeam.vue', () => {
       it('opens a toast with a success message for adhoc team', async () => {
         wrapper.vm.$store.$services.teams.createTeam = jest.fn(() => mockTeamsData()[1]);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
 
         await wrapper.vm.submitCreateTeam();
 

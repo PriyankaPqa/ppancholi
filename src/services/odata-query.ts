@@ -86,6 +86,8 @@ export type QueryOptions<T> = ExpandOptions<T> & {
   func: string | { [functionName: string]: { [parameterName: string]: any } };
   format: string;
   aliases: Alias[];
+  searchMode: string;
+  queryType: string;
 }
 
 export const ITEM_ROOT = '';
@@ -97,12 +99,14 @@ export function renderPrimitiveValue(key: string, val: any, aliases: Alias[] = [
     const value = handleValue(val, aliases);
     return `search.ismatch(${value}, '${newKey}')`
   }
+
   // Custom filters for Azure search equivalent of starts with
   if(key.includes('/startsWith_az')) {
     const newKey = key.replace("/startsWith_az", "");
     const value = handleValue(`${val}*`, aliases);
     return `search.ismatch(${value}, '${newKey}')`
   }
+
   return `${key} eq ${handleValue(val, aliases)}`;
 }
 
@@ -515,6 +519,8 @@ export default function <T> ({
   expand,
   action,
   func,
+  queryType,
+  searchMode,
 }: Partial<QueryOptions<T>> = {}) {
   let path = '';
   const aliases: Alias[] = [];
@@ -530,6 +536,10 @@ export default function <T> ({
   if (expand) params.$expand = buildExpand(expand);
 
   if (orderBy) params.$orderby = buildOrderBy(orderBy);
+
+  if (queryType) params.queryType = queryType;
+
+  if (searchMode) params.searchMode = searchMode;
 
   if (count) {
     if (typeof count === 'boolean') {

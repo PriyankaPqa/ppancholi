@@ -1,6 +1,8 @@
 import { Store } from 'vuex';
 import { mockStore, IRootState } from '@/store';
-import { mockUsersData, User } from '@/entities/user';
+import {
+  EFilterKey, mockUserFilters, mockUsersData, User,
+} from '@/entities/user';
 import { mockAuthenticationData } from '@/auth/authentication.mock';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import {
@@ -29,6 +31,7 @@ describe('>>> Users Module', () => {
         family_name: mockUser.family_name,
         given_name: mockUser.given_name,
         roles: mockUser.roles,
+        filters: mockUser.filters,
       }));
     });
 
@@ -88,6 +91,13 @@ describe('>>> Users Module', () => {
         expect(store.getters['user/landingPage']).toEqual('HomeNoRole');
       });
     });
+
+    describe('filtersByKey', () => {
+      it('returns the correct filters', () => {
+        const key = EFilterKey.CaseFiles;
+        expect(store.getters['user/filtersByKey'](key)).toEqual([mockUserFilters()[2]]);
+      });
+    });
   });
 
   describe('>> Mutations', () => {
@@ -125,6 +135,7 @@ describe('>>> Users Module', () => {
           family_name: '',
           given_name: '',
           roles: [],
+          filters: [],
         }));
 
         store.commit('user/setUser', mockUsersData()[1]);
@@ -140,6 +151,30 @@ describe('>>> Users Module', () => {
         }));
       });
     });
+
+    describe('setFilters', () => {
+      it('should set filters in the state', () => {
+        store = mockStore();
+
+        expect(store.state.user.filters).toEqual([]);
+
+        store.commit('user/setFilters', mockUserFilters());
+
+        expect(store.state.user.filters).toEqual(mockUserFilters());
+      });
+    });
+
+    describe('setRole', () => {
+      it('should set roles in the state', () => {
+        store = mockStore();
+
+        expect(store.state.user.roles).toEqual([]);
+
+        store.commit('user/setRole', 'role');
+
+        expect(store.state.user.roles).toEqual(['role']);
+      });
+    });
   });
 
   describe('>> Actions', () => {
@@ -151,24 +186,36 @@ describe('>>> Users Module', () => {
       expect(authenticationProvider.signOut).toHaveBeenCalledTimes(1);
     });
 
-    test('the fetchUserData calls the acquireToken method of the authentications provider and sets the user data', async () => {
-      store = mockStore();
+    describe('fetchUserData', () => {
+      it('calls the acquireToken method of the authentications provider and fetchUser and sets the user data', async () => {
+        store = mockStore();
 
-      expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(0);
+        await store.dispatch('user/fetchUserData');
 
-      await store.dispatch('user/fetchUserData');
+        expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(1);
 
-      expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(1);
+        const authenticationData = mockAuthenticationData();
 
-      const authenticationData = mockAuthenticationData();
+        expect(store.getters['user/user']).toEqual(new User({
+          oid: authenticationData.account.idTokenClaims.oid as string,
+          email: authenticationData.account.idTokenClaims.email as string,
+          family_name: authenticationData.account.idTokenClaims.family_name as string,
+          given_name: authenticationData.account.idTokenClaims.given_name as string,
+          roles: authenticationData.account.idTokenClaims.roles as string[],
+        }));
+      });
+    });
 
-      expect(store.getters['user/user']).toEqual(new User({
-        oid: authenticationData.account.idTokenClaims.oid as string,
-        email: authenticationData.account.idTokenClaims.email as string,
-        family_name: authenticationData.account.idTokenClaims.family_name as string,
-        given_name: authenticationData.account.idTokenClaims.given_name as string,
-        roles: authenticationData.account.idTokenClaims.roles as string[],
-      }));
+    describe('fetchUserAccount', () => {
+      it('calls fetchUser and sets the user filters', async () => {
+        const store = mockStore();
+
+        await store.dispatch('user/fetchUserAccount');
+
+        expect(store.$services.users.fetchUser).toHaveBeenCalledTimes(1);
+
+        expect(store.state.user.filters).toEqual(mockUserFilters());
+      });
     });
   });
 });

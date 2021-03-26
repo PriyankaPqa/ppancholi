@@ -68,6 +68,7 @@ export const routes: Array<RouteConfig> = [
         store.dispatch('appUser/fetchRoles'),
         store.dispatch('appUser/fetchAllUsers'),
         store.dispatch('appUser/fetchAppUsers'),
+        store.dispatch('user/fetchUserAccount'),
       ]);
       Trans.routeMiddleware(to, from, next);
     },

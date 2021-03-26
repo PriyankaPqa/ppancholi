@@ -216,6 +216,9 @@ describe('TeamsTable.vue', () => {
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
         expect(wrapper.vm.$storage.team.actions.searchTeams).toHaveBeenCalledWith({
+          search: 'query',
+          searchMode: 'all',
+          queryType: 'full',
           filter: params.filter,
           top: params.top,
           skip: params.skip,
@@ -227,21 +230,6 @@ describe('TeamsTable.vue', () => {
       it('returns the search results set the azureSearchItems', async () => {
         const res = await wrapper.vm.fetchData(params);
         expect(res).toEqual(mockSearchTeams());
-      });
-    });
-
-    describe('getFilterParams', () => {
-      it('should get the filter with correct params', () => {
-        const params = { search: 'query' };
-        const filter = {
-          or: [
-            {
-              TeamName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
-              PrimaryContactDisplayName: { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
-            },
-          ],
-        };
-        expect(wrapper.vm.getFilterParams(params)).toEqual(filter);
       });
     });
 

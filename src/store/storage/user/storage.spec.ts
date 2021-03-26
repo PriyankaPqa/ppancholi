@@ -1,5 +1,5 @@
 import { mockStore } from '@/store';
-import { mockUsersData } from '@/entities/user';
+import { EFilterKey, mockUserFilters, mockUsersData } from '@/entities/user';
 import { makeStorage } from './storage';
 
 const store = mockStore({
@@ -23,6 +23,11 @@ describe('>>> User Storage', () => {
     it('should proxy landingPage', () => {
       expect(storage.getters.landingPage()).toEqual(store.getters['user/landingPage']);
     });
+
+    it('should proxy filtersByKey', () => {
+      const key = EFilterKey.Teams;
+      expect(storage.getters.filtersByKey(key)).toEqual(store.getters['user/filtersByKey'](key));
+    });
   });
 
   describe('>> Actions', () => {
@@ -42,6 +47,12 @@ describe('>>> User Storage', () => {
       const payload = mockUsersData()[0];
       storage.mutations.setUser(payload);
       expect(store.commit).toBeCalledWith('user/setUser', payload);
+    });
+
+    it('should proxy setFilters', () => {
+      const payload = mockUserFilters();
+      storage.mutations.setFilters(payload);
+      expect(store.commit).toBeCalledWith('user/setFilters', payload);
     });
   });
 });

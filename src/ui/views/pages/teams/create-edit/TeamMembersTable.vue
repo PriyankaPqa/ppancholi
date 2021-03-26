@@ -147,7 +147,6 @@ export default Vue.extend({
       default: false,
     },
   },
-
   data() {
     return {
       sortDesc: false,

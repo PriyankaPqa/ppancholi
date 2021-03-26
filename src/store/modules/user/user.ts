@@ -3,7 +3,9 @@ import {
 } from 'vuex';
 import { localStorageKeys } from '@/constants/localStorage';
 import authenticationProvider from '@/auth/AuthenticationProvider';
-import { IUserData, User } from '@/entities/user';
+import {
+  EFilterKey, IFilter, IMSALUserData, User,
+} from '@/entities/user';
 import { IRootState } from '../../store.types';
 import {
   IState,
@@ -15,6 +17,7 @@ const getDefaultState = (): IState => ({
   given_name: '',
   email: '',
   roles: [],
+  filters: [],
 });
 
 const moduleState: IState = getDefaultState();
@@ -26,6 +29,7 @@ const getters = {
     given_name: state.given_name,
     email: state.email,
     roles: state.roles,
+    filters: state.filters,
   }),
 
   landingPage(state: IState) {
@@ -47,10 +51,12 @@ const getters = {
       default: return 'HomeNoRole';
     }
   },
+
+  filtersByKey: (state: IState) => (key: EFilterKey) => state.filters.filter((f: IFilter) => f.filterKey === key),
 };
 
 const mutations = {
-  setUser(state: IState, payload: IUserData) {
+  setUser(state: IState, payload: IMSALUserData) {
     state.oid = payload.oid;
     state.family_name = payload.family_name;
     state.given_name = payload.given_name;
@@ -61,11 +67,20 @@ const mutations = {
   setRole(state: IState, payload: string) {
     state.roles = [payload];
   },
+
+  setFilters(state: IState, payload: Array<IFilter>) {
+    state.filters = payload;
+  },
 };
 
 const actions = {
   async signOut(this: Store<IState>) {
     authenticationProvider.signOut();
+  },
+
+  async fetchUserAccount(this: Store<IState>, context: ActionContext<IState, IState>) {
+    const userAccount = await this.$services.users.fetchUser();
+    context.commit('setFilters', userAccount.filters);
   },
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
@@ -75,6 +90,7 @@ const actions = {
       localStorage.setItem(localStorageKeys.accessToken.name, accessTokenResponse.accessToken);
       const { account } = accessTokenResponse;
       const userData = account.idTokenClaims;
+
       context.commit('setUser', userData);
     }
   },
