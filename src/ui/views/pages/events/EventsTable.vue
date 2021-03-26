@@ -10,8 +10,6 @@
     :table-props="tableProps"
     :show-add-button="$hasLevel('level6')"
     :options.sync="options"
-    :sort-by="customColumns.openDate"
-    sort-desc
     :custom-columns="[
       customColumns.name, customColumns.responseLevel, customColumns.openDate, customColumns.daysOpen, customColumns.eventStatus, 'editButton'
     ]"
@@ -106,6 +104,11 @@ export default Vue.extend({
       helpData: {
         url: this.$t('zendesk.help_link.eventsTable'),
         text: '',
+      },
+      options: {
+        page: 1,
+        sortBy: ['Schedule/OpenDate'],
+        sortDesc: [true],
       },
     };
   },

@@ -25,6 +25,7 @@ describe('OptionListItem.vue', () => {
         isCascading: true,
         isSubItem: false,
         editMode: false,
+        addSubItemLabel: 'add',
       },
     });
   });

@@ -55,6 +55,20 @@
       </div>
     </div>
 
+    <v-select
+      v-if="isDev"
+      class="mt-4 pa-4"
+      outlined
+      :items="[
+        {text: 'level1', value: 'level1'},
+        {text: 'level2', value: 'level2'},
+        {text: 'level3', value: 'level3'},
+        {text: 'level4', value: 'level4'},
+        {text: 'level5', value: 'level5'},
+        {text: 'level6', value: 'level6'},
+      ]"
+      @change="$store.commit('user/setRole', $event);" />
+
     <template #append>
       <v-divider />
 
@@ -98,6 +112,7 @@ export default Vue.extend({
   data() {
     return {
       NO_ROLE,
+
     };
   },
 
@@ -107,6 +122,9 @@ export default Vue.extend({
     },
     user(): IUser {
       return this.$storage.user.getters.user();
+    },
+    isDev() {
+      return process.env.NODE_ENV === 'development';
     },
   },
 

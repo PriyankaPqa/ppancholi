@@ -67,11 +67,11 @@
 
       <template #item.delete="{ item }">
         <v-btn
-          v-if="!item.isPrimaryContact"
+          v-if="showDeleteIcon(item)"
           icon
           x-small
           :data-test="`remove_team_member_${item.id}`"
-          @click="showRemoveConfirmationDialog(item.id)">
+          @click="item.isPrimaryContact ? showPrimaryContactMessage() : showRemoveConfirmationDialog(item.id)">
           <v-icon color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -267,6 +267,10 @@ export default Vue.extend({
       this.showRemoveMemberConfirmationDialog = true;
     },
 
+    showPrimaryContactMessage() {
+      this.$toasted.global.warning(this.$t('teams.remove_team_members_change_contact'));
+    },
+
     async removeTeamMember() {
       await this.$storage.team.actions.removeTeamMember(this.removeMemberId);
       this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
@@ -277,6 +281,14 @@ export default Vue.extend({
       if (user.roles) return user?.roles[0]?.displayName;
       return '';
     },
+
+    showDeleteIcon(member: ITeamMember): boolean {
+      if (member.isPrimaryContact) {
+        return this.$hasLevel('level5');
+      }
+      return this.$hasLevel('level4');
+    },
+
   },
 });
 

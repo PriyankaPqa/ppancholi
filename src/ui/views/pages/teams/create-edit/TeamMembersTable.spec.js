@@ -1,7 +1,10 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockTeamsData, mockTeamSearchData, Team } from '@/entities/team';
+import {
+  mockTeamsData, mockTeamSearchData, Team,
+} from '@/entities/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/store/storage';
+import { mockUserStateLevel } from '@/test/helpers';
 import Component from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
@@ -17,6 +20,9 @@ describe('TeamMembersTable.vue', () => {
         localVue,
         propsData: {
           team: new Team(mockTeamSearchData()[0]),
+        },
+        store: {
+          ...mockUserStateLevel(5),
         },
       });
     });
@@ -85,12 +91,22 @@ describe('TeamMembersTable.vue', () => {
           expect(element.props().items).toEqual(wrapper.vm.computedTeamMembers);
         });
 
-        test('clicking the bin will show remove confirmation dialog', async () => {
-          jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
+        describe('Delete member', () => {
+          test('clicking the bin will show remove confirmation dialog if not a primary contact', async () => {
+            jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
 
-          const button = wrapper.findDataTest('remove_team_member_guid-member-2');
-          await button.trigger('click');
-          expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledTimes(1);
+            const button = wrapper.findDataTest('remove_team_member_guid-member-2');
+            await button.trigger('click');
+            expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledTimes(1);
+          });
+
+          test('clicking the bin will call showPrimaryContactMessage if primary contact', async () => {
+            jest.spyOn(wrapper.vm, 'showPrimaryContactMessage').mockImplementation(() => null);
+
+            const button = wrapper.findDataTest('remove_team_member_guid-member-1');
+            await button.trigger('click');
+            expect(wrapper.vm.showPrimaryContactMessage).toHaveBeenCalledTimes(1);
+          });
         });
       });
 
@@ -204,6 +220,45 @@ describe('TeamMembersTable.vue', () => {
         wrapper.vm.removeMemberId = 'guid-member-1';
         wrapper.vm.removeTeamMember();
         expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith('guid-member-1');
+      });
+    });
+
+    describe('showPrimaryContactMessage', () => {
+      it('should display a warning notification', () => {
+        wrapper.vm.showPrimaryContactMessage();
+        expect(wrapper.vm.$toasted.global.warning).toHaveBeenLastCalledWith('teams.remove_team_members_change_contact');
+      });
+    });
+
+    describe('showDeleteIcon', () => {
+      test('only l5+ user can see the delete icon for a primary contact', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            team: new Team(mockTeamSearchData()[0]),
+          },
+        });
+
+        await wrapper.setRole('level4');
+        expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: true })).toBeFalsy();
+
+        await wrapper.setRole('level5');
+        expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: true })).toBeTruthy();
+      });
+
+      test('only l4+ can see the delete icon for other members', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            team: new Team(mockTeamSearchData()[0]),
+          },
+        });
+
+        await wrapper.setRole('level3');
+        expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: false })).toBeFalsy();
+
+        await wrapper.setRole('level4');
+        expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: false })).toBeTruthy();
       });
     });
   });

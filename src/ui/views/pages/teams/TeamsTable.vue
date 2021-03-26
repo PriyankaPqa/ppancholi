@@ -7,7 +7,6 @@
       :count="azureSearchCount"
       :labels="labels"
       :headers="headers"
-      :sort-by="defaultSortBy"
       :custom-columns="customColumns"
       :options.sync="options"
       @search="search">
@@ -92,6 +91,11 @@ export default Vue.extend({
       ETeamStatus,
       defaultSortBy: 'TeamName',
       customColumns: ['TeamName', 'TeamType', 'EventCount', 'PrimaryContactDisplayName', 'TeamMemberCount', 'TeamStatus', 'edit'],
+      options: {
+        page: 1,
+        sortBy: ['TeamName'],
+        sortDesc: [false],
+      },
     };
   },
 
