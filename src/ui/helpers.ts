@@ -1,6 +1,7 @@
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
+import moment from '@/ui/plugins/moment';
 
 export default {
   // Method to format the backend error messages and display in a toast.
@@ -126,6 +127,11 @@ export default {
       }
       return false;
     }));
+  },
+
+  getStringDate(date: Date| string, format = 'YYYY-MM-DD'): string {
+    if (!date) return '';
+    return moment(date).utc().format(format);
   },
 
   /**

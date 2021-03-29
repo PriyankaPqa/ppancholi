@@ -1,5 +1,5 @@
 import {
-  Event, EEventStatus, mockEventsSearchData,
+  Event, EEventStatus, mockEventsSearchData, IEventCallCentre,
 } from '@/entities/event';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
@@ -123,5 +123,21 @@ describe('>>> Events Service', () => {
     const params = mockSearchParams;
     await service.searchEvents(params);
     expect(http.get).toHaveBeenCalledWith('/search/event-projections', { params, isOData: true });
+  });
+
+  test('addCallCentre is linked to the correct URL', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const callCentre = event.callCentres[0];
+    const { id } = event;
+    await service.addCallCentre(id, callCentre);
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/call-centres`, expect.anything());
+  });
+  test('addCallCentre is linked to the correct URL', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const callCentre1 = event.callCentres[0];
+    const callCentre2 = { ...event.callCentres[0], startDate: null } as IEventCallCentre;
+    const { id } = event;
+    await service.editCallCentre(id, { originalCallCentre: callCentre1, updatedCallCentre: callCentre2 });
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/call-centres/edit`, expect.anything());
   });
 });

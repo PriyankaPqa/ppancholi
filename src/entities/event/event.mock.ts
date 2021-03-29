@@ -1,5 +1,6 @@
 import { ECanadaProvinces, IAzureSearchResult } from '@/types';
 import {
+  EEventCallCentreStatus,
   EEventStatus, IEventData, IEventSearchData, IOtherProvince, IRegion,
 } from './event.types';
 
@@ -63,6 +64,7 @@ export const mockEventsData = (): IEventData[] => [{
   created: '2021-01-20T15:12:03.4219037Z',
   timestamp: '2021-01-20T15:12:03.4230487Z',
   eTag: '"00004331-0000-0a00-0000-600848430000"',
+  callCentres: [],
   selfRegistrationEnabled: false,
 }, {
   number: 2,
@@ -123,6 +125,7 @@ export const mockEventsData = (): IEventData[] => [{
   created: '2021-01-20T15:45:52.2691443Z',
   timestamp: '2021-01-20T15:45:52.2699289Z',
   eTag: '*',
+  callCentres: [],
   selfRegistrationEnabled: false,
 }];
 
@@ -217,6 +220,39 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
       },
     },
     tenantId: '7c076603-580a-4400-bef2-5ddececb0931',
+    callCentres: [{
+      name: {
+        translation: {
+          en: 'z call center 1',
+          fr: 'call center 1 fr',
+        },
+      },
+      startDate: '2021-03-01T00:00:00Z',
+      endDate: null,
+      status: EEventCallCentreStatus.Active,
+      details: {
+        translation: {
+          en: 'call center 1 details',
+          fr: 'call center 1  details fr',
+        },
+      },
+    }, {
+      name: {
+        translation: {
+          en: 'call center 2',
+          fr: 'call center 2 fr',
+        },
+      },
+      startDate: '2021-03-01T00:00:00Z',
+      endDate: null,
+      status: EEventCallCentreStatus.Active,
+      details: {
+        translation: {
+          en: 'call center 1 details',
+          fr: 'call center 1  details fr',
+        },
+      },
+    }],
   },
   {
     '@searchScore': 10,
@@ -275,6 +311,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
       },
     },
     tenantId: '7c076603-580a-4400-bef2-5dde28582',
+    callCentres: [],
   },
 ];
 

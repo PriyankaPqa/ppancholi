@@ -261,6 +261,7 @@ describe('EventDetails.vue', () => {
   describe('lifecycle', () => {
     beforeEach(() => {
       storage.event.actions.fetchEvents = jest.fn(() => {});
+      storage.event.actions.fetchEventTypes = jest.fn(() => {});
       storage.event.actions.fetchEvent = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
@@ -280,6 +281,12 @@ describe('EventDetails.vue', () => {
       });
     });
 
+    it('should call fetchEvents', () => {
+      expect(wrapper.vm.$storage.event.actions.fetchEvents).toHaveBeenCalledTimes(1);
+    });
+    it('should call fetchEventTypes', () => {
+      expect(wrapper.vm.$storage.event.actions.fetchEventTypes).toHaveBeenCalledTimes(1);
+    });
     it('should call fetchEvent', () => {
       expect(wrapper.vm.$storage.event.actions.fetchEvent).toHaveBeenCalledWith(wrapper.vm.id);
     });
@@ -305,14 +312,6 @@ describe('EventDetails.vue', () => {
           },
           $storage: storage,
         },
-      });
-    });
-    describe('getStringDate', () => {
-      it('returns the right date format when no format is given', () => {
-        expect(wrapper.vm.getStringDate(new Date(2020, 0, 1))).toEqual('2020-01-01');
-      });
-      it('returns the right date format when a format is given', () => {
-        expect(wrapper.vm.getStringDate(new Date(2020, 0, 1), 'll')).toEqual('Jan 1, 2020');
       });
     });
 

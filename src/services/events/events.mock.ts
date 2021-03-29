@@ -10,4 +10,6 @@ export const mockEventsService = (): IEventsServiceMock => ({
   getOtherProvinces: jest.fn(() => mockOtherProvinceData()),
   getRegions: jest.fn(() => mockRegionData()),
   searchEvents: jest.fn(() => mockSearchEvents()),
+  addCallCentre: jest.fn(() => mockEventsData()[0]),
+  editCallCentre: jest.fn(() => mockEventsData()[0]),
 });

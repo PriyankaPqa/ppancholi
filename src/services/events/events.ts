@@ -1,6 +1,6 @@
 import { IHttpClient } from '@/services/httpClient';
 import {
-  ICreateEventRequest, IEditEventRequest, IEvent, IEventData, IEventSearchData, IOtherProvince, IRegion,
+  ICreateEventRequest, IEditEventRequest, IEvent, IEventCallCentre, IEventData, IEventSearchData, IOtherProvince, IRegion, IUpdateCallCentrePayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
@@ -34,6 +34,14 @@ export class EventsService implements IEventsService {
 
   async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>> {
     return this.http.get('/search/event-projections', { params, isOData: true });
+  }
+
+  async addCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventData> {
+    return this.http.post(`/event/events/${eventId}/call-centres`, payload);
+  }
+
+  async editCallCentre(eventId:uuid, payload: IUpdateCallCentrePayload): Promise<IEventData> {
+    return this.http.post(`/event/events/${eventId}/call-centres/edit`, payload);
   }
 
   private eventToCreateEventRequestPayload(event: IEvent): ICreateEventRequest {

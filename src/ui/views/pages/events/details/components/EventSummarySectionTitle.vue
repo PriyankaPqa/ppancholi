@@ -1,7 +1,7 @@
 <template>
   <v-row class="flex-row justify-space-between ma-0 pa-2 pt-6">
     <v-col class="d-flex ma-0 pa-0" md="12" lg="6">
-      <span class="rc-heading-5" data-test="event-summary-section-title">{{ title }}</span>
+      <span class="rc-heading-5" data-test="event-summary-section-title">{{ $t(title) }}</span>
     </v-col>
     <v-col class="d-flex justify-end ma-0 pa-0" md="12" lg="6">
       <v-btn
@@ -12,7 +12,7 @@
         <v-icon left size="16" color="white">
           mdi-plus
         </v-icon>
-        {{ buttonCaption }}
+        {{ $t(buttonCaption) }}
       </v-btn>
     </v-col>
   </v-row>
@@ -39,20 +39,20 @@ export default Vue.extend({
     return {
       texts: {
         [EEventSummarySections.CallCentre]: {
-          title: this.$t('eventSummary.callCentre'),
-          buttonCaption: this.$t('eventSummary.addCallCentre'),
+          title: 'eventSummary.callCentre',
+          buttonCaption: 'eventSummary.addCallCentre',
         },
         [EEventSummarySections.RegistrationLocation]: {
-          title: this.$t('eventSummary.registrationLocation'),
-          buttonCaption: this.$t('eventSummary.addRegistrationLocation'),
+          title: 'eventSummary.registrationLocation',
+          buttonCaption: 'eventSummary.addRegistrationLocation',
         },
         [EEventSummarySections.ShelterLocation]: {
-          title: this.$t('eventSummary.shelterLocation'),
-          buttonCaption: this.$t('eventSummary.addShelterLocation'),
+          title: 'eventSummary.shelterLocation',
+          buttonCaption: 'eventSummary.addShelterLocation',
         },
         [EEventSummarySections.Agreement]: {
-          title: this.$t('eventSummary.agreement'),
-          buttonCaption: this.$t('eventSummary.addAgreement'),
+          title: 'eventSummary.agreement',
+          buttonCaption: 'eventSummary.addAgreement',
         },
       } as Record<string, {title: string, buttonCaption: string}>,
     };

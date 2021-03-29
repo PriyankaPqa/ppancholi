@@ -77,4 +77,5 @@ export const mapEventDataToSearchData = (eventData: IEventData, context: ActionC
   '@searchScore': null,
   eventStatus: null,
   tenantId: null,
+  callCentres: eventData.callCentres,
 });

@@ -18,6 +18,11 @@ export enum EResponseLevel {
   Level05,
 }
 
+export enum EEventCallCentreStatus {
+  Active= 1,
+  Inactive
+}
+
 /**
  * Value objects
  */
@@ -54,6 +59,19 @@ export interface IOtherProvince {
   name: IMultilingual;
 }
 
+export interface IEventCallCentre {
+  name: IMultilingual;
+  details: IMultilingual;
+  startDate: Date | string;
+  endDate: Date | string;
+  status: EEventCallCentreStatus;
+}
+
+export interface IUpdateCallCentrePayload {
+  updatedCallCentre: IEventCallCentre,
+  originalCallCentre: IEventCallCentre,
+}
+
 export interface IRelatedEventsInfos {
   id: uuid;
   eventName: IMultilingual;
@@ -75,6 +93,7 @@ export interface IEventData {
   schedule: IEventSchedule;
   responseDetails: IEventResponseDetails;
   relatedEventIds?: Array<uuid>;
+  callCentres:Array<IEventCallCentre>;
   selfRegistrationEnabled: boolean;
 }
 
@@ -83,6 +102,7 @@ export interface IEventData {
  */
 export interface IEventSearchData{
   '@searchScore': number;
+  callCentres: Array<IEventCallCentre>;
   createdDate: Date | string;
   eventDescription: IMultilingual;
   eventId: uuid;
@@ -131,6 +151,7 @@ export interface IEditEventRequest extends ICreateEventRequest {
  * Interface used for the Event entity class
  */
 export interface IEvent {
+  callCentres: Array<IEventCallCentre>;
   created: Date | string;
   description: IMultilingual;
   eventTypeId:uuid;

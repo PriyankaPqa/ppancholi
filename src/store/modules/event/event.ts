@@ -8,7 +8,7 @@ import {
   EOptionListItemStatus, EOptionLists, IOptionItem, IOptionItemData, OptionItem,
 } from '@/entities/optionItem';
 import {
-  EEventStatus, Event, IEvent, IEventSearchData, IOtherProvince, IRegion,
+  Event, IEvent, IEventCallCentre, IEventSearchData, IOtherProvince, IRegion, IUpdateCallCentrePayload, EEventStatus,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -184,6 +184,33 @@ const actions = {
 
   async updateEvent(this: Store<IState>, context: ActionContext<IState, IRootState>, payload: IEvent): Promise<IEvent> {
     const data = await this.$services.events.updateEvent(payload);
+
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
+  },
+
+  async addCallCentre(
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventCallCentre},
+  )
+    : Promise<IEvent> {
+    const data = await this.$services.events.addCallCentre(eventId, payload);
+
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
+  },
+
+  async editCallCentre(
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IUpdateCallCentrePayload},
+  ): Promise<IEvent> {
+    const data = await this.$services.events.editCallCentre(eventId, payload);
 
     if (data) {
       const event = new Event(mapEventDataToSearchData(data, context));

@@ -3,6 +3,8 @@ import routes from '@/constants/routes';
 import { Event, mockEventsSearchData } from '@/entities/event';
 import Component from '../CreateEditEvent.vue';
 
+const localVue = createLocalVue();
+
 describe('CreatEditEvent.vue', () => {
   let wrapper;
   let actions;
@@ -95,8 +97,28 @@ describe('CreatEditEvent.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
+      jest.clearAllMocks();
+
+      mockEvent = new Event(mockEventsSearchData()[0]);
+
+      actions = {
+        createEvent: jest.fn(() => mockEvent),
+        update: jest.fn(() => mockEvent),
+        fetchEvent: jest.fn(() => mockEvent),
+      };
+
       wrapper = shallowMount(Component, {
-        localVue: createLocalVue(),
+        localVue,
+        store: {
+          modules: {
+            event: {
+              actions,
+            },
+          },
+        },
+        propsData: {
+          id: '',
+        },
       });
     });
 
@@ -105,12 +127,21 @@ describe('CreatEditEvent.vue', () => {
         expect(wrapper.vm.isEditMode).toBe(false);
 
         const wrapper2 = shallowMount(Component, {
-          localVue: createLocalVue(),
-
+          localVue,
+          store: {
+            modules: {
+              event: {
+                actions,
+              },
+            },
+          },
           mocks: {
             $route: {
               name: routes.events.edit.name,
             },
+          },
+          propsData: {
+            id: '',
           },
         });
 
@@ -123,10 +154,17 @@ describe('CreatEditEvent.vue', () => {
         expect(wrapper.vm.submitLabel).toBe('common.buttons.create');
 
         const wrapper2 = shallowMount(Component, {
-          localVue: createLocalVue(),
+          localVue,
           mocks: {
             $route: {
               name: routes.events.edit.name,
+            },
+          },
+          store: {
+            modules: {
+              event: {
+                actions,
+              },
             },
           },
         });
@@ -138,10 +176,17 @@ describe('CreatEditEvent.vue', () => {
     describe('helpLink', () => {
       it('returns the correct value in create mode', () => {
         wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
+          localVue,
           computed: {
             isEditMode() {
               return false;
+            },
+          },
+          store: {
+            modules: {
+              event: {
+                actions,
+              },
             },
           },
         });
@@ -150,10 +195,17 @@ describe('CreatEditEvent.vue', () => {
 
       it('returns the correct value in create mode', () => {
         wrapper = shallowMount(Component, {
-          localVue: createLocalVue(),
+          localVue,
           computed: {
             isEditMode() {
               return true;
+            },
+          },
+          store: {
+            modules: {
+              event: {
+                actions,
+              },
             },
           },
         });

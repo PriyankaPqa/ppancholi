@@ -149,6 +149,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from '@/ui/plugins/moment';
+import helpers from '@/ui/helpers';
 
 import { RcPhoneDisplay } from '@crctech/component-library';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -183,6 +184,7 @@ export default Vue.extend({
       removeBorder: false,
       showExpandedLeftMenu: false,
       idDigitsCount: 6,
+      getStringDate: helpers.getStringDate,
       loading: false,
     };
   },
@@ -210,6 +212,8 @@ export default Vue.extend({
 
   async created() {
     this.loading = true;
+    await this.$storage.event.actions.fetchEventTypes();
+    await this.$storage.event.actions.fetchEvents();
     try {
       await this.$storage.event.actions.fetchEvent(this.id);
     } catch {
@@ -220,11 +224,6 @@ export default Vue.extend({
   },
 
   methods: {
-    getStringDate(date: Date| string, format = 'YYYY-MM-DD'): string {
-      if (!date) return '';
-      return moment(date).utc().format(format);
-    },
-
     /**
     * Change the style of the dates in the top right of the page
     * when the size of the element is smaller than a specific size.

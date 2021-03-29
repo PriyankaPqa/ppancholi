@@ -45,6 +45,17 @@
       <event-summary-section-title
         :section="EEventSummarySections.CallCentre"
         @click-add-button="onSectionAdd($event)" />
+      <div>
+        <div
+          v-for="callCentre in sortedCallCentres"
+          :key="callCentre.name.translation.en"
+          class="justify-end mx-2 my-0 pa-4 pb-6 event-section-item">
+          <event-call-centre-section
+            data-test="call-centre-section"
+            :call-centre="callCentre"
+            @edit="editSection($event, EEventSummarySections.CallCentre)" />
+        </div>
+      </div>
 
       <event-summary-section-title
         :section="EEventSummarySections.RegistrationLocation"
@@ -66,6 +77,13 @@
         @submit="onStatusChange($event)"
         @cancelChange="showEventStatusDialog = false" />
     </template>
+    <component
+      :is="currentDialog.component"
+      v-if="currentDialog"
+      :id="currentDialog.id"
+      :event.sync="event"
+      :is-edit-mode="currentDialog.isEditMode"
+      @close="currentDialog = null" />
   </rc-page-content>
 </template>
 
@@ -75,11 +93,29 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { RcPageContent } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
-import { EEventStatus, IEvent, Event } from '@/entities/event';
-import { EEventSummarySections } from '@/types/enums/EEventSummarySections';
+import helpers from '@/ui/helpers';
+import {
+  EEventStatus, IEvent, Event, IEventCallCentre,
+} from '@/entities/event';
+import { EEventSummarySections } from '@/types';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventStatusDialog from './components/EventStatusDialog.vue';
+import EventCallCentreDialog from './components/EventCallCentreDialog.vue';
+import EventCallCentreSection from './components/EventCallCentreSection.vue';
+
+export enum EDialogComponent {
+  CallCentre = 'EventCallCentreDialog',
+  RegistrationLocation = 'EventCallCentreDialog',
+  ShelterLocation = 'EventCallCentreDialog',
+  Agreement = 'EventCallCentreDialog',
+}
+
+interface DialogData {
+  id?: string,
+  isEditMode: boolean,
+  component: EDialogComponent,
+}
 
 export default Vue.extend({
   name: 'EventSummary',
@@ -89,17 +125,20 @@ export default Vue.extend({
     EventSummaryLink,
     EventSummarySectionTitle,
     EventStatusDialog,
+    EventCallCentreDialog,
+    EventCallCentreSection,
   },
 
   data() {
     return {
-      error: false,
+      EEventSummarySections,
+      EEventStatus,
       statuses: [EEventStatus.Open, EEventStatus.OnHold, EEventStatus.Archived, EEventStatus.Closed],
+      error: false,
       newStatus: null,
       showEventStatusDialog: false,
       loading: false,
-      EEventStatus,
-      EEventSummarySections,
+      currentDialog: null as DialogData,
     };
   },
 
@@ -109,6 +148,9 @@ export default Vue.extend({
       return this.$storage.event.getters.eventById(id) || new Event();
     },
 
+    sortedCallCentres(): Array<IEventCallCentre> {
+      return helpers.sortMultilingualArray(this.event.callCentres, 'name');
+    },
   },
 
   async created() {
@@ -155,16 +197,48 @@ export default Vue.extend({
       // call action to change status (next stories)
     },
 
-    onSectionAdd(section: string) {
-      // open dialog for adding section data ( next stories )
-      return false;
+    onSectionAdd(section: EEventSummarySections) {
+      // set the current dialog data to the component corresponding to the section to add
+      this.currentDialog = {
+        component: EDialogComponent[EEventSummarySections[section]],
+        isEditMode: false,
+      };
+    },
+
+    editSection(id: string, section: EEventSummarySections) {
+      // set the current dialog data to the component corresponding to the section to edit
+      // with the id corresponding to the selected element
+      this.currentDialog = {
+        component: EDialogComponent[EEventSummarySections[section]],
+        isEditMode: true,
+        id,
+      };
     },
   },
 });
 
 </script>
 
-<style scoped>
-  .borderLeft { border-left: thin solid lightgrey; }
-   .event-description {white-space: pre-line; }
+<style scoped lang='scss'>
+  .borderLeft {
+     border-left: thin solid lightgrey;
+  }
+
+  .event-description {white-space: pre-line; }
+
+  .event-section-item {
+    border: 1px solid var(--v-grey-lighten2);
+    border-bottom: none;
+
+    &:first-child {
+      border-top-left-radius: 4px;
+      border-top-right-radius: 4px;
+    }
+    &:last-child {
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+      border-bottom: 1px solid var(--v-grey-lighten2)  !important;
+    }
+  }
+
 </style>

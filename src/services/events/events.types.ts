@@ -1,5 +1,5 @@
 import {
-  IEvent, IEventData, IEventSearchData, IOtherProvince, IRegion,
+  IEvent, IEventCallCentre, IEventData, IEventSearchData, IOtherProvince, IRegion, IUpdateCallCentrePayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
@@ -15,6 +15,10 @@ export interface IEventsService {
   getRegions(): Promise<IAzureSearchResult<IRegion>>;
 
   searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>>;
+
+  addCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventData>;
+
+  editCallCentre(eventId:uuid, payload: IUpdateCallCentrePayload): Promise<IEventData>;
 }
 
 export interface IEventsServiceMock {
@@ -29,4 +33,8 @@ export interface IEventsServiceMock {
   getRegions: jest.Mock <IAzureSearchResult<IRegion>>;
 
   searchEvents: jest.Mock <IAzureSearchResult<IEventSearchData>>;
+
+  addCallCentre: jest.Mock <IEventData>;
+
+  editCallCentre: jest.Mock <IEventData>;
 }

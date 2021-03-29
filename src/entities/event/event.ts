@@ -7,6 +7,7 @@ import utils from '@/entities/utils';
 import {
   EEventStatus,
   IEvent,
+  IEventCallCentre,
   IEventLocation,
   IEventResponseDetails,
   IEventSchedule,
@@ -48,6 +49,8 @@ export class Event implements IEvent {
   scheduleEventStatusName: IMultilingual;
 
   selfRegistrationEnabled: boolean;
+
+  callCentres: Array<IEventCallCentre>;
 
   tenantId: uuid;
 
@@ -114,6 +117,13 @@ export class Event implements IEvent {
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.eventStatus = data.eventStatus;
       this.tenantId = data.tenantId;
+      this.callCentres = data.callCentres.map((centre) => ({
+        ...centre,
+        name: utils.initMultilingualAttributes(centre.name),
+        startDate: centre.startDate ? new Date(centre.startDate) : null,
+        endDate: centre.endDate ? new Date(centre.endDate) : null,
+        details: utils.initMultilingualAttributes(centre.details),
+      }));
     } else {
       this.reset();
     }
@@ -152,6 +162,7 @@ export class Event implements IEvent {
       status: EEventStatus.OnHold,
     };
     this.scheduleEventStatusName = utils.initMultilingualAttributes();
+    this.callCentres = [];
   }
 
   private validateAttributes(errors: Array<string>) {

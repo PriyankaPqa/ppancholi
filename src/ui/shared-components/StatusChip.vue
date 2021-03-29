@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcStatusChip } from '@crctech/component-library';
-import { EEventStatus } from '@/entities/event';
+import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
 import { ETeamStatus } from '@/entities/team';
 import { EOptionListItemStatus } from '@/entities/optionItem';
 import colors from '@/ui/plugins/vuetify/colors';
@@ -32,6 +32,7 @@ export default Vue.extend({
         [
           'EEventStatus',
           'EOptionListItemStatus',
+          'EEventCallCentreStatus',
           'ETeamStatus',
         ].indexOf(value) > -1
       ),
@@ -53,6 +54,8 @@ export default Vue.extend({
       switch (this.statusName) {
         case 'EEventStatus':
           return this.getEventStatusColor();
+        case 'EEventCallCentreStatus':
+          return this.getEventCallCentreColor();
         case 'EOptionListItemStatus':
           return this.getOptionListStatusColor();
         case 'ETeamStatus':
@@ -79,6 +82,8 @@ export default Vue.extend({
       switch (this.statusName) {
         case 'EEventStatus':
           return `eventsTable.eventStatus.${EEventStatus[this.status]}`;
+        case 'EEventCallCentreStatus':
+          return `eventSummary.status.${EEventCallCentreStatus[this.status]}`;
         case 'EOptionListItemStatus':
           return `system_management.lists.status.${EOptionListItemStatus[this.status]}`;
         case 'ETeamStatus':
@@ -103,6 +108,19 @@ export default Vue.extend({
 
         case EEventStatus.Closed:
           return colors.chips.red;
+
+        default:
+          return colors.chips.green;
+      }
+    },
+
+    getEventCallCentreColor(): string {
+      switch (this.status) {
+        case EEventCallCentreStatus.Active:
+          return colors.chips.green;
+
+        case EEventCallCentreStatus.Inactive:
+          return colors.chips.light_grey;
 
         default:
           return colors.chips.green;

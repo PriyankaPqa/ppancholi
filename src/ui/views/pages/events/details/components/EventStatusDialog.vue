@@ -20,15 +20,11 @@
         <status-chip status-name="EEventStatus" :status="toStatus" data-test="event-summary-status-chip" />
       </v-col>
       <ValidationObserver ref="form" slim>
-        <v-form data-test="event-status-confirmation-dialog" class="full-width">
-          <v-col cols="12" class="pa-0">
-            <v-text-field-with-validation
-              v-model="reason"
-              :label="label"
-              class="full-width"
-              :rules="{ max: { length: 255 } }" />
-          </v-col>
-        </v-form>
+        <v-text-field-with-validation
+          v-model="reason"
+          :label="label"
+          class="full-width"
+          :rules="{ max: { length: 255 } }" />
       </ValidationObserver>
     </div>
   </rc-dialog>

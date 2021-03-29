@@ -5,10 +5,11 @@ import {
   OptionItem, mockOptionItemData, EOptionListItemStatus, EOptionLists,
 } from '@/entities/optionItem';
 import {
-  Event, IEvent, mockEventsSearchData, mockSearchEvents,
+  Event, IEvent, IEventCallCentre, mockEventsSearchData, mockSearchEvents,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
+import { EventMessageUtils } from '@azure/msal-browser';
 
 jest.mock('@/store/modules/event/utils');
 
@@ -282,6 +283,51 @@ describe('>>> Event Module', () => {
         expect(store.state.event.events.length).toBe(1);
 
         expect(store.state.event.events[0]).toEqual(newEvent);
+      });
+    });
+
+    describe('addCallCentre', () => {
+      it('calls the addCallCentre service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const callCentre = event.callCentres[0];
+
+        expect(store.$services.events.addCallCentre).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/addCallCentre', { eventId: event.id, payload: callCentre });
+
+        expect(store.$services.events.addCallCentre).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.addCallCentre).toHaveBeenCalledWith(event.id, callCentre);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
+
+    describe('editCallCentre', () => {
+      it('calls the editCallCentre service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const callCentre1 = event.callCentres[0];
+        const callCentre2 = { ...callCentre1, startDate: null } as IEventCallCentre;
+        const payload = { originalCallCentre: callCentre1, updatedCallCentre: callCentre2 };
+
+        expect(store.$services.events.editCallCentre).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/editCallCentre', {
+          eventId: event.id,
+          payload,
+        });
+
+        expect(store.$services.events.editCallCentre).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.editCallCentre).toHaveBeenCalledWith(event.id, payload);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
       });
     });
   });

@@ -2,8 +2,11 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { Event, mockEventsSearchData, EEventStatus } from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
+import _cloneDeep from 'lodash/cloneDeep';
+import { EEventSummarySections } from '@/types';
+import helpers from '@/ui/helpers';
 
-import Component from '../EventSummary.vue';
+import Component, { EDialogComponent } from '../EventSummary.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -87,6 +90,48 @@ describe('EventSummary.vue', () => {
       });
     });
 
+    describe('call centre section', () => {
+      it('renders when the event has call centres', () => {
+        const element = wrapper.findDataTest('call-centre-section');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('calls the method editSection when method edit is emitted', () => {
+        jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
+        const element = wrapper.findDataTest('call-centre-section');
+        element.vm.$emit('edit');
+        expect(wrapper.vm.editSection).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not render when the event has no call centres', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            event() {
+              const event = _cloneDeep(mockEvent);
+              event.callCentres = [];
+              return event;
+            },
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+
+          },
+          stubs: {
+            EventStatusDialog: true,
+          },
+        });
+
+        const element = wrapper.findDataTest('call-centre-section');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
     describe('status dialog', () => {
       it('renders when showEventStatusDialog is true and newStatus is not empty', async () => {
         let element;
@@ -147,6 +192,12 @@ describe('EventSummary.vue', () => {
     describe('event', () => {
       it('return the event by id from the storage', () => {
         expect(wrapper.vm.event).toEqual(mockEvent);
+      });
+    });
+
+    describe('sortedCallCentres', () => {
+      it('return the callCentres sorted by name', () => {
+        expect(wrapper.vm.sortedCallCentres).toEqual(helpers.sortMultilingualArray(mockEvent.callCentres, 'name'));
       });
     });
   });
@@ -222,6 +273,29 @@ describe('EventSummary.vue', () => {
         jest.spyOn(wrapper.vm, 'onStatusChange').mockImplementation(() => {});
         wrapper.vm.onStatusChangeInit(EEventStatus.OnHold);
         expect(wrapper.vm.onStatusChange).toHaveBeenCalledWith({ status: EEventStatus.OnHold, reason: null });
+      });
+    });
+
+    describe('onSectionAdd', () => {
+      it('sets currentDialog to the right object', async () => {
+        wrapper.vm.currentDialog = null;
+        await wrapper.vm.onSectionAdd(EEventSummarySections.CallCentre);
+        expect(wrapper.vm.currentDialog).toEqual({
+          component: EDialogComponent.CallCentre,
+          isEditMode: false,
+        });
+      });
+    });
+
+    describe('editSection', () => {
+      it('sets currentDialog to the right object', async () => {
+        wrapper.vm.currentDialog = null;
+        await wrapper.vm.editSection('foo', EEventSummarySections.CallCentre);
+        expect(wrapper.vm.currentDialog).toEqual({
+          component: EDialogComponent.CallCentre,
+          isEditMode: true,
+          id: 'foo',
+        });
       });
     });
   });

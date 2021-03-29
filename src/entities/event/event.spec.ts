@@ -2,6 +2,7 @@ import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validat
 import { ECanadaProvinces } from '@/types';
 import { Event } from './event';
 import { mockEventsSearchData } from './event.mock';
+import { EEventCallCentreStatus } from './event.types';
 
 const mockEventData = mockEventsSearchData()[0];
 
@@ -20,6 +21,43 @@ describe('>>> User', () => {
           fr: 'Inondations Gatineau 2021',
         },
       });
+    });
+
+    it('should instantiate call centres', () => {
+      const event = new Event(mockEventData);
+      expect(event.callCentres).toEqual([{
+        name: {
+          translation: {
+            en: 'z call center 1',
+            fr: 'call center 1 fr',
+          },
+        },
+        startDate: new Date('2021-03-01T00:00:00Z'),
+        endDate: null,
+        status: EEventCallCentreStatus.Active,
+        details: {
+          translation: {
+            en: 'call center 1 details',
+            fr: 'call center 1  details fr',
+          },
+        },
+      }, {
+        name: {
+          translation: {
+            en: 'call center 2',
+            fr: 'call center 2 fr',
+          },
+        },
+        startDate: new Date('2021-03-01T00:00:00Z'),
+        endDate: null,
+        status: EEventCallCentreStatus.Active,
+        details: {
+          translation: {
+            en: 'call center 1 details',
+            fr: 'call center 1  details fr',
+          },
+        },
+      }]);
     });
 
     it('should instantiate description', () => {
