@@ -80,6 +80,11 @@ export default Vue.extend({
       name: 'system_management.lists.primarySpokenLanguages',
       route: routes.systemManagement.primarySpokenLanguages.name,
       dataTest: 'primarySpokenLanguages',
+    },
+    {
+      name: 'system_management.lists.agreementTypes',
+      route: routes.systemManagement.agreementTypes.name,
+      dataTest: 'agreementTypes',
     }];
 
     return {

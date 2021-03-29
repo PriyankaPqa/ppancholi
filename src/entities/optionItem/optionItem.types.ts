@@ -10,6 +10,7 @@ export enum EOptionLists {
   Genders,
   PreferredLanguages,
   PrimarySpokenLanguages,
+  AgreementTypes,
   Roles,
 }
 

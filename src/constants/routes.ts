@@ -138,6 +138,10 @@ const routes = {
       path: 'lists/primary-spoken-languages',
       name: 'systemManagement.lists.primarySpokenLanguages',
     },
+    agreementTypes: {
+      path: 'lists/agreement-types',
+      name: 'systemManagement.lists.agreementTypes',
+    },
     roles: {
       path: 'roles',
       name: 'systemManagement.lists.roles',

@@ -28,6 +28,10 @@ describe('>>> EventTypes Service', () => {
       expect(service.getPrefix(EOptionLists.PrimarySpokenLanguages)).toBe('/beneficiary/primary-spoken-languages');
     });
 
+    it('returns correct prefix for EOptionLists.AgreementTypes', () => {
+      expect(service.getPrefix(EOptionLists.AgreementTypes)).toBe('/event/agreement-types');
+    });
+
     it('returns correct prefix for EOptionLists.Roles', () => {
       expect(service.getPrefix(EOptionLists.Roles)).toBe('/user-account/roles');
     });
