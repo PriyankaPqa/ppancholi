@@ -45,6 +45,7 @@ describe('>>> Team utils', () => {
         events: utils.retrieveTeamEvents(payload.eventIds, mockActionsContext()),
         teamStatus: payload.status,
         teamMembers: utils.retrieveTeamMembers(payload.teamMembers, mockActionsContext()),
+        teamStatusName: mockActionsContext().state.team.statusName,
       });
     });
   });

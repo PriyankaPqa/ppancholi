@@ -2,16 +2,16 @@ import { IMultilingual } from '@/types';
 
 export enum EOptionListItemStatus {
   Active = 1,
-  Inactive,
+  Inactive = 2,
 }
 
 export enum EOptionLists {
   EventTypes = 1,
-  Genders,
-  PreferredLanguages,
-  PrimarySpokenLanguages,
-  AgreementTypes,
-  Roles,
+  Genders = 2,
+  PreferredLanguages = 3,
+  PrimarySpokenLanguages = 4,
+  AgreementTypes = 5,
+  Roles = 6,
 }
 
 export interface IOptionSubItem {

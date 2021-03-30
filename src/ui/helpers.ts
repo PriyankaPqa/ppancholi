@@ -154,4 +154,7 @@ export default {
     return { translation: multiLanguageObject };
   },
 
+  capitalize(str: string) {
+    return str.charAt(0).toUpperCase() + str.substring(1);
+  },
 };

@@ -13,14 +13,14 @@ describe('>>> Team', () => {
       expect(team.id).toBe('e64a9cd4-4e6b-46a7-b022-e93e0bdc24df');
     });
 
+    it('should instantiate tenantId', () => {
+      const team = new Team(mockTeamData);
+      expect(team.tenantId).toBe(mockTeamData.tenantId);
+    });
+
     it('should instantiate name', () => {
       const team = new Team(mockTeamData);
       expect(team.name).toEqual('Danh 2 Stad  L’Île aux Hérons');
-    });
-
-    it('should instantiate teamMembers', () => {
-      const team = new Team(mockTeamData);
-      expect(team.teamMembers).toEqual(mockTeamMembers());
     });
 
     it('should instantiate teamType', () => {
@@ -28,14 +28,44 @@ describe('>>> Team', () => {
       expect(team.teamType).toEqual(ETeamType.Standard);
     });
 
+    it('should instantiate teamTypeName', () => {
+      const team = new Team(mockTeamData);
+      expect(team.teamTypeName).toEqual(mockTeamData.teamTypeName);
+    });
+
+    it('should instantiate primaryContactDisplayName', () => {
+      const team = new Team(mockTeamData);
+      expect(team.primaryContactDisplayName).toEqual(mockTeamData.primaryContactDisplayName);
+    });
+
+    it('should instantiate statusName', () => {
+      const team = new Team(mockTeamData);
+      expect(team.statusName).toEqual(mockTeamData.teamStatusName);
+    });
+
     it('should instantiate status', () => {
       const team = new Team(mockTeamData);
       expect(team.status).toEqual(ETeamStatus.Active);
     });
 
+    it('should instantiate teamMembers', () => {
+      const team = new Team(mockTeamData);
+      expect(team.teamMembers).toEqual(mockTeamMembers());
+    });
+
+    it('should instantiate teamMemberCount', () => {
+      const team = new Team(mockTeamData);
+      expect(team.teamMemberCount).toEqual(mockTeamData.teamMemberCount);
+    });
+
     it('should instantiate events', () => {
       const team = new Team(mockTeamData);
       expect(team.events).toEqual(mockTeamData.events);
+    });
+
+    it('should instantiate eventCount', () => {
+      const team = new Team(mockTeamData);
+      expect(team.eventCount).toEqual(mockTeamData.eventCount);
     });
   });
 

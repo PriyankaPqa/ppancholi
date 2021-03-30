@@ -21,6 +21,8 @@ export class Team implements ITeam {
 
   status: ETeamStatus;
 
+  statusName: IMultilingual;
+
   events: Array<ITeamEvent>;
 
   eventCount: number;
@@ -37,6 +39,7 @@ export class Team implements ITeam {
       this.teamType = data.teamType;
       this.teamTypeName = utils.initMultilingualAttributes(data.teamTypeName);
       this.primaryContactDisplayName = data.primaryContactDisplayName;
+      this.statusName = utils.initMultilingualAttributes(data.teamStatusName);
       this.status = data.teamStatus;
       this.teamMembers = data.teamMembers;
       this.teamMemberCount = data.teamMemberCount;
@@ -110,6 +113,7 @@ export class Team implements ITeam {
     this.teamTypeName = null;
     this.primaryContactDisplayName = '';
     this.status = ETeamStatus.Active;
+    this.statusName = null;
     this.teamMemberCount = null;
     this.teamMembers = [];
     this.events = [];
@@ -136,18 +140,27 @@ export class Team implements ITeam {
     if (!this.name) {
       errors.push('The team name is required');
     }
+
     if (this.name && this.name.length > MAX_LENGTH_MD) {
       errors.push(`The team name should not be longer than ${MAX_LENGTH_MD} characters`);
     }
+
     if (!this.teamType) {
       errors.push('The team type is required');
     }
+
     if (!this.status) {
       errors.push('The team status is required');
     }
+
+    if (!this.statusName) {
+      errors.push('The statusName is required');
+    }
+
     if (!this.teamMembers || !this.teamMembers.length || !this.teamMembers.find((m) => m.isPrimaryContact)) {
       errors.push('A primary contact team member is required');
     }
+
     if (this.teamType === ETeamType.AdHoc && this.events.length !== 1) {
       errors.push('An ad-hoc team should have one eventId');
     }

@@ -143,45 +143,58 @@ describe('TeamsTable.vue', () => {
           {
             text: 'teams.team_name',
             sortable: true,
-            value: 'TeamName',
+            value: wrapper.vm.customColumns.name,
             width: '40%',
           },
           {
             text: 'teams.teamtype',
-            value: 'TeamType',
-            sortable: false,
+            value: wrapper.vm.customColumns.type,
+            sortable: true,
             width: '10%',
           },
           {
             text: 'teams.table.related_events',
-            value: 'EventCount',
+            value: wrapper.vm.customColumns.eventCount,
             sortable: true,
             width: '10%',
           },
           {
             text: 'teams.primary_contact',
-            value: 'PrimaryContactDisplayName',
+            value: wrapper.vm.customColumns.primaryContact,
             sortable: true,
             width: '30%',
           },
           {
             text: 'teams.team_members',
-            value: 'TeamMemberCount',
+            value: wrapper.vm.customColumns.teamMemberCount,
             sortable: true,
             width: '10%',
           },
           {
             text: 'teams.status',
-            value: 'TeamStatus',
-            sortable: false,
+            value: wrapper.vm.customColumns.status,
+            sortable: true,
             width: '10%',
           },
           {
             text: '',
-            value: 'edit',
+            value: wrapper.vm.customColumns.edit,
             width: '10%',
+            sortable: false,
           },
         ]);
+      });
+    });
+
+    test('customColumns', () => {
+      expect(wrapper.vm.customColumns).toEqual({
+        name: 'TeamName',
+        type: 'TeamTypeName/Translation/En',
+        eventCount: 'EventCount',
+        primaryContact: 'PrimaryContactDisplayName',
+        teamMemberCount: 'TeamMemberCount',
+        status: 'TeamStatusName/Translation/En',
+        edit: 'edit',
       });
     });
   });
@@ -264,24 +277,6 @@ describe('TeamsTable.vue', () => {
           },
         });
       });
-    });
-  });
-
-  describe('Data', () => {
-    test('defaultSortBy', () => {
-      expect(wrapper.vm.defaultSortBy).toEqual('TeamName');
-    });
-
-    test('customColumns', () => {
-      expect(wrapper.vm.customColumns).toEqual([
-        'TeamName',
-        'TeamType',
-        'EventCount',
-        'PrimaryContactDisplayName',
-        'TeamMemberCount',
-        'TeamStatus',
-        'edit',
-      ]);
     });
   });
 });

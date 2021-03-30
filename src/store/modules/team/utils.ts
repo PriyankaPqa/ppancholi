@@ -37,4 +37,5 @@ export const buildTeamSearchDataPayload = (payload: ITeamData, context: ActionCo
   events: retrieveTeamEvents(payload.eventIds, context),
   teamStatus: payload.status,
   teamMembers: retrieveTeamMembers(payload.teamMembers, context),
+  teamStatusName: utils.initMultilingualAttributes(context.state.team.statusName),
 });

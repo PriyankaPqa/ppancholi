@@ -56,6 +56,7 @@ export interface ITeamSearchData {
   teamMemberCount: number;
   events: Array<ITeamEvent>,
   teamStatus: ETeamStatus;
+  teamStatusName: IMultilingual;
   teamMembers: Array<ITeamMember>,
 }
 
@@ -67,6 +68,7 @@ export interface ITeam {
   tenantId: string;
   name: string;
   status: ETeamStatus;
+  statusName: IMultilingual;
   teamType: ETeamType;
   teamTypeName: IMultilingual;
   primaryContactDisplayName: string;

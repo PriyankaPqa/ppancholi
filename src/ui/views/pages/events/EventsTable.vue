@@ -75,6 +75,7 @@ import routes from '@/constants/routes';
 import moment from '@/ui/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'EventsTable',
@@ -115,8 +116,7 @@ export default Vue.extend({
 
   computed: {
     locale(): string {
-      const currentLocale = this.$i18n.locale;
-      return currentLocale.charAt(0).toUpperCase() + currentLocale.substring(1);
+      return helpers.capitalize(this.$i18n.locale);
     },
 
     customColumns(): Record<string, string> {

@@ -7,7 +7,7 @@
       :count="azureSearchCount"
       :labels="labels"
       :headers="headers"
-      :custom-columns="customColumns"
+      :custom-columns="Object.values(customColumns)"
       :options.sync="options"
       @search="search">
       <template #filter>
@@ -21,7 +21,7 @@
         <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="goToCreateTeam($event)" />
       </template>
 
-      <template #item.TeamName="{ item }">
+      <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
           :data-test="`team_link_${item.teamId}`"
@@ -30,27 +30,32 @@
         </router-link>
       </template>
 
-      <template #item.TeamType="{ item }">
-        <span data-test="team_type">{{ $t(`enums.teamType.${ETeamType[item.teamType]}`) }}</span>
+      <template #[`item.${customColumns.type}`]="{ item }">
+        <span data-test="team_type"> {{ $m(item.teamTypeName) }}</span>
       </template>
 
-      <template #item.TeamMemberCount="{ item }">
+      <template #[`item.${customColumns.teamMemberCount}`]="{ item }">
         <span data-test="team_members">{{ item.teamMemberCount }}</span>
       </template>
 
-      <template #item.EventCount="{ item }">
+      <template #[`item.${customColumns.eventCount}`]="{ item }">
         <span data-test="team_events">{{ item.eventCount }}</span>
       </template>
 
-      <template #item.PrimaryContactDisplayName="{ item }">
+      <template #[`item.${customColumns.primaryContact}`]="{ item }">
         <span data-test="team_primary_contact">{{ item.primaryContactDisplayName }}</span>
       </template>
 
-      <template #item.TeamStatus="{ item }">
-        <status-chip v-if="item.teamStatus" data-test="team_status" :status="item.teamStatus" status-name="ETeamStatus" />
+      <template #[`item.${customColumns.status}`]="{ item }">
+        <status-chip
+          v-if="item.teamStatus"
+          data-test="team_status"
+          :text="$m(item.teamStatusName)"
+          :status="item.teamStatus"
+          status-name="ETeamStatus" />
       </template>
 
-      <template #item.edit="{ item }">
+      <template #[`item.${customColumns.edit}`]="{ item }">
         <v-btn icon class="mr-2" :data-test="`edit_team_${item.teamId}`" @click="goToEditTeam(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
@@ -65,7 +70,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import {
-  RcDataTable, RcAddButtonWithMenu, ISearchData, IFilterSettings,
+  RcDataTable, RcAddButtonWithMenu, IFilterSettings,
 } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { DataTableHeader } from 'vuetify';
@@ -89,6 +94,7 @@ export default Vue.extend({
     StatusChip,
     FilterToolbar,
   },
+
   mixins: [TablePaginationSearchMixin],
 
   props: {
@@ -103,8 +109,6 @@ export default Vue.extend({
       EFilterKey,
       ETeamType,
       ETeamStatus,
-      defaultSortBy: 'TeamName',
-      customColumns: ['TeamName', 'TeamType', 'EventCount', 'PrimaryContactDisplayName', 'TeamMemberCount', 'TeamStatus', 'edit'],
       options: {
         page: 1,
         sortBy: ['TeamName'],
@@ -120,6 +124,18 @@ export default Vue.extend({
           title: this.$t(this.title),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
+      };
+    },
+
+    customColumns(): Record<string, string> {
+      return {
+        name: 'TeamName',
+        type: `TeamTypeName/Translation/${helpers.capitalize(this.$i18n.locale)}`,
+        eventCount: 'EventCount',
+        primaryContact: 'PrimaryContactDisplayName',
+        teamMemberCount: 'TeamMemberCount',
+        status: `TeamStatusName/Translation/${helpers.capitalize(this.$i18n.locale)}`,
+        edit: 'edit',
       };
     },
 
@@ -142,48 +158,49 @@ export default Vue.extend({
         {
           text: this.$t('teams.team_name') as string,
           sortable: true,
-          value: 'TeamName',
+          value: this.customColumns.name,
           width: '40%',
         },
         {
           text: this.$t('teams.teamtype') as string,
-          value: 'TeamType',
-          sortable: false,
+          value: this.customColumns.type,
+          sortable: true,
           width: '10%',
         },
         {
           text: this.$t('teams.table.related_events') as string,
-          value: 'EventCount',
+          value: this.customColumns.eventCount,
           sortable: true,
           width: '10%',
         },
         {
           text: this.$t('teams.primary_contact') as string,
-          value: 'PrimaryContactDisplayName',
+          value: this.customColumns.primaryContact,
           sortable: true,
           width: '30%',
         },
         {
           text: this.$t('teams.team_members') as string,
-          value: 'TeamMemberCount',
+          value: this.customColumns.teamMemberCount,
           sortable: true,
           width: '10%',
         },
         {
           text: this.$t('teams.status') as string,
-          value: 'TeamStatus',
-          sortable: false,
+          value: this.customColumns.status,
+          sortable: true,
           width: '10%',
         },
         {
           text: '',
-          value: 'edit',
+          value: this.customColumns.edit,
           width: '10%',
+          sortable: false,
         },
       ];
     },
 
-    tableProps() {
+    tableProps(): Record<string, unknown> {
       return {
         loading: this.$store.state.team.searchLoading,
       };

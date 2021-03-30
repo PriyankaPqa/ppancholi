@@ -1,7 +1,7 @@
 <template>
   <rc-status-chip :color="color" :text-color="textColor">
     <slot name="default">
-      {{ $t(text) }}
+      {{ text ? text : $t(textFromEnum) }}
       <v-icon v-if="showChevron" right>
         mdi-chevron-down
       </v-icon>
@@ -43,6 +43,11 @@ export default Vue.extend({
       required: true,
     },
 
+    text: {
+      type: String,
+      default: '',
+    },
+
     showChevron: {
       type: Boolean,
       default: false,
@@ -77,8 +82,8 @@ export default Vue.extend({
           return colors.white;
       }
     },
-
-    text(): string {
+    // Once all status are translated in the BE we won't need anymore textFromEnum
+    textFromEnum(): string {
       switch (this.statusName) {
         case 'EEventStatus':
           return `eventsTable.eventStatus.${EEventStatus[this.status]}`;

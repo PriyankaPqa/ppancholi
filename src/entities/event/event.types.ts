@@ -5,17 +5,17 @@ import { ECanadaProvinces, IListOption, IMultilingual } from '@/types';
  */
 export enum EEventStatus {
   OnHold = 1,
-  Open,
-  Closed,
-  Archived
+  Open = 2,
+  Closed = 3,
+  Archived = 4
 }
 
 export enum EResponseLevel {
   Level01 = 1,
-  Level02,
-  Level03,
-  Level04,
-  Level05,
+  Level02 = 2,
+  Level03 = 3,
+  Level04 = 4,
+  Level05 = 5,
 }
 
 export enum EEventCallCentreStatus {

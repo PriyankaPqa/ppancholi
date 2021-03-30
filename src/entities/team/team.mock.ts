@@ -61,10 +61,11 @@ export const mockTeamSearchData = (): ITeamSearchData[] => [
     eventCount: 2,
     primaryContactDisplayName: 'Test Six',
     teamMemberCount: 1,
-    teamStatus: 1,
+    teamStatus: ETeamStatus.Active,
     teamTypeName: { translation: { en: 'Standard', fr: 'FR-Standard' } },
     events: mockTeamEvents(),
     teamMembers: mockTeamMembers(),
+    teamStatusName: { translation: { en: 'Active', fr: 'Actif' } },
   },
   {
     '@searchScore': 1,
@@ -75,10 +76,11 @@ export const mockTeamSearchData = (): ITeamSearchData[] => [
     eventCount: 0,
     primaryContactDisplayName: 'Test Five',
     teamMemberCount: 1,
-    teamStatus: 1,
+    teamStatus: ETeamStatus.Inactive,
     teamTypeName: { translation: { en: 'AdHoc', fr: 'AdHoc' } },
     events: mockTeamEvents(),
     teamMembers: mockTeamMembers(),
+    teamStatusName: { translation: { en: 'Inactive', fr: 'Active' } },
   },
 ];
 
