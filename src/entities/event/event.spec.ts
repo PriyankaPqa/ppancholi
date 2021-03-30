@@ -2,7 +2,7 @@ import { Event } from './event';
 import { mockEventsData } from './event.mock';
 
 describe('>>> User', () => {
-  const mockEventData = mockEventsData()[0];
+  const mockEventData = mockEventsData().value[0];
 
   describe('>> constructor', () => {
     it('should instantiate id', () => {
@@ -33,6 +33,11 @@ describe('>>> User', () => {
           fr: 'https://www.redcross.ca/inondations-gatineau-2021',
         },
       });
+    });
+
+    it('should instantiate tenantId', () => {
+      const event = new Event(mockEventData);
+      expect(event.tenantId).toEqual(mockEventData.tenantId);
     });
   });
 });

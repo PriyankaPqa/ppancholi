@@ -24,7 +24,7 @@ module.exports = {
     'max-statements': ['error', 31, { ignoreTopLevelFunctions: true }],
     'max-lines': ['error', { max: 1000, skipBlankLines: true, skipComments: true }],
     'max-len': ['error', {
-      code: 150, tabWidth: 4, ignoreUrls: true, ignoreComments: true, ignoreRegExpLiterals: true,
+      code: 150, tabWidth: 4, ignoreUrls: true, ignoreComments: true,
     }],
     'max-lines-per-function': ['error', { max: 155, skipBlankLines: true, skipComments: true }],
     'vue/max-attributes-per-line': ['error', {
@@ -45,9 +45,9 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-useless-constructor': 'off',
     'class-methods-use-this': 'off',
-    'vuetify/grid-unknown-attributes': 'error',
-    'vuetify/no-legacy-grid': 'error',
-    'vuetify/no-deprecated-classes': 'error',
+    'vue/valid-v-slot': ['error', {
+      allowModifiers: true,
+    }],
   },
 
   parserOptions: {
@@ -90,6 +90,8 @@ module.exports = {
         '@typescript-eslint/indent': 'off', // So there is no conflict between indents of others
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
+        '@typescript-eslint/no-empty-function': 2,
+
       },
     },
   ],
@@ -106,5 +108,5 @@ module.exports = {
     },
 
   },
-  plugins: ['vuejs-accessibility', 'vuetify'],
+  plugins: ['vuejs-accessibility'],
 };

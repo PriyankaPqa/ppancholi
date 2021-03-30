@@ -42,6 +42,7 @@ export interface IEventData {
   name: IMultilingual;
   responseDetails: IResponseDetails;
   registrationLink: IMultilingual;
+  tenantId: uuid;
 }
 
 /**

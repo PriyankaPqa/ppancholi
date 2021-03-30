@@ -151,7 +151,6 @@ export const mockPrimarySpokenLanguages = (): IOptionItemData[] => [
 
 export const mockIndigenousIdentities = (): IAzureSearchResult<IIndigenousIdentityData> => ({
   odataContext: 'test',
-  odataCount: 4,
   value: [
     {
       province: 4,

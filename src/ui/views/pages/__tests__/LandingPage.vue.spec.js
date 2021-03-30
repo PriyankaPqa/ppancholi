@@ -1,4 +1,3 @@
-import flushPromises from 'flush-promises';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockEventsData } from '@/entities/event';
@@ -16,7 +15,7 @@ describe('LandingPage.vue', () => {
         modules: {
           registration: {
             state: {
-              event: mockEventsData()[0],
+              event: mockEventsData().value[0],
             },
           },
         },
@@ -40,8 +39,7 @@ describe('LandingPage.vue', () => {
     describe('Event handlers', () => {
       test('Click the start registration button redirect to individual registration page', async () => {
         const btn = wrapper.find('[data-test="startRegistration-individual-button"]');
-        btn.trigger('click');
-        await flushPromises();
+        await btn.trigger('click');
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.individual.name });
       });
 

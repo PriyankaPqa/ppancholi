@@ -1,5 +1,5 @@
 export interface IAzureSearchResult<T> {
   odataContext: string;
-  odataCount: number;
+  odataCount?: number;
   value: Array<T>;
 }

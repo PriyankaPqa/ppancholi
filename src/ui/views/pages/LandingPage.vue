@@ -1,5 +1,8 @@
 <template>
-  <rc-registration-landing-page :title="$t('registration.landingpage.welcome_self')" :phone-number="phoneNumber" @redirect="redirect" />
+  <rc-registration-landing-page
+    :title="$t('registration.landingpage.welcome_self')"
+    :phone-number="phoneNumber"
+    @redirect="redirect" />
 </template>
 
 <script lang="ts">

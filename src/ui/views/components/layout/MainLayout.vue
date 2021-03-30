@@ -1,6 +1,6 @@
 <template>
   <div class="selfReg__wrapper">
-    <rc-page-loading v-if="loadingEvent" />
+    <rc-page-loading v-if="fetchingData" />
     <template v-else>
       <app-header data-test="app-header" />
       <v-main class="full-height">
@@ -14,6 +14,10 @@
 import Vue from 'vue';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { RcPageLoading, RcRouterViewTransition } from '@crctech/component-library';
+import _isEmpty from 'lodash/isEmpty';
+import { Route, NavigationGuardNext } from 'vue-router';
+import store from '@/store/store';
+import { i18n } from '@/ui/plugins';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -23,30 +27,38 @@ export default Vue.extend({
     RcPageLoading,
     RcRouterViewTransition,
   },
+  async beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
+    const { lang, registrationLink } = to.params;
+    const event = await store.dispatch('registration/fetchEvent', { lang, registrationLink });
+    if (_isEmpty(event)) {
+      window.location.replace(i18n.t('registration.redirection_link') as string);
+    } else {
+      next();
+    }
+  },
 
   data() {
     return {
-      loadingEvent: false,
+      fetchingData: false,
     };
   },
 
   async created() {
-    let { lang, eventUrl } = this.$route.params;
+    await this.fetchData();
+  },
 
-    // TODO Remove hard code when back-end is fixed
-    lang = 'en';
-    eventUrl = 'https://www.redcross.ca/test-11feb';
+  methods: {
+    async fetchData() {
+      this.fetchingData = true;
 
-    this.loadingEvent = true;
+      await Promise.all([
+        this.$storage.registration.actions.fetchGenders(),
+        this.$storage.registration.actions.fetchPreferredLanguages(),
+        this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
+      ]);
 
-    await Promise.all([
-      this.$storage.registration.actions.fetchEvent(lang, eventUrl),
-      this.$storage.registration.actions.fetchGenders(),
-      this.$storage.registration.actions.fetchPreferredLanguages(),
-      this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
-    ]);
-
-    this.loadingEvent = false;
+      this.fetchingData = false;
+    },
   },
 });
 </script>
@@ -55,5 +67,6 @@ export default Vue.extend({
 .selfReg__wrapper {
   height: 100%;
   background-color: var(--v-grey-lighten4);
+  display: inline-flex;
 }
 </style>

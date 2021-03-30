@@ -114,11 +114,9 @@ const actions = {
     context: ActionContext<IState, IState>,
     { lang, registrationLink }: { lang: string; registrationLink: string },
   ): Promise<IEvent> {
-    const events = await this.$services.events.searchEvents(lang, registrationLink);
-
-    if (events?.length > 0) {
-      context.commit('setEvent', events[0]);
-    }
+    const result = await this.$services.events.searchEvents(lang, registrationLink);
+    const eventData = result?.value?.length > 0 ? result.value[0] : null;
+    context.commit('setEvent', eventData);
 
     return context.getters.event;
   },
@@ -165,7 +163,7 @@ const actions = {
       const result = await this.$services.beneficiaries.searchIndigenousIdentities({
         filter: {
           Province: provinceCode,
-          TenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724', // hard-coded TenantId to be replaced, see story EMISV2-369 and it's subtask EMISV2-926
+          TenantId: context.state.event.tenantId,
         },
         top: INDIGENOUS_LIMIT_RESULTS,
       });

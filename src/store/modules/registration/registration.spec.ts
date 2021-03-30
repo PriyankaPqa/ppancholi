@@ -14,7 +14,7 @@ import { tabs } from './tabs';
 
 describe('>>> Registration Module', () => {
   let store: Store<IRootState>;
-  const mockEventData = mockEventsData()[0];
+  const mockEventData = mockEventsData().value[0];
 
   beforeEach(() => {
     store = mockStore();
@@ -38,6 +38,7 @@ describe('>>> Registration Module', () => {
         expect(store.getters['registration/tabs']).toEqual(tabs);
       });
     });
+
     describe('currentTabIndex', () => {
       it('returns current tab index', () => {
         expect(store.getters['registration/currentTabIndex']).toEqual(0);
@@ -257,13 +258,22 @@ describe('>>> Registration Module', () => {
     });
 
     describe('fetchIndigenousIdentitiesByProvince', () => {
-      it('call the searchIndigenousIdentities service', async () => {
-        await store.dispatch('registration/fetchIndigenousIdentitiesByProvince');
+      it('call the searchIndigenousIdentities service with proper params', async () => {
+        const provinceCode = 'AB';
+        await store.commit('registration/setEvent', mockEventData);
+        await store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
 
-        expect(store.$services.beneficiaries.searchIndigenousIdentities).toHaveBeenCalledTimes(1);
+        expect(store.$services.beneficiaries.searchIndigenousIdentities).toHaveBeenCalledWith({
+          filter: {
+            Province: provinceCode,
+            TenantId: 'tenant-guid',
+          },
+          top: 1000,
+        });
       });
 
       it('sets the indigenousIdentities', async () => {
+        await store.commit('registration/setEvent', mockEventData);
         expect(store.state.registration.indigenousIdentities).toEqual([]);
 
         await store.dispatch('registration/fetchIndigenousIdentitiesByProvince');

@@ -30,9 +30,22 @@ describe('MainLayout.vue', () => {
       });
     });
 
-    describe('Lifecycle hooks', () => {
-      test('created', async () => {
-        expect(wrapper.vm.$storage.registration.actions.fetchEvent).toHaveBeenCalledTimes(1);
+    describe('Methods', () => {
+      describe('fetchData', () => {
+        it('calls fetchGenders', async () => {
+          await wrapper.vm.fetchData();
+          expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalledTimes(2);
+        });
+
+        it('calls fetchPreferredLanguages', async () => {
+          await wrapper.vm.fetchData();
+          expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalledTimes(2);
+        });
+
+        it('calls fetchPrimarySpokenLanguages', async () => {
+          await wrapper.vm.fetchData();
+          expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(2);
+        });
       });
     });
   });

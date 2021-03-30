@@ -1,6 +1,6 @@
 const routes = {
   registration: {
-    path: 'registration/:eventUrl',
+    path: 'registration/:registrationLink',
     name: 'registration',
   },
   landingPage: {

@@ -12,6 +12,8 @@ export class Event implements IEvent {
 
   responseDetails: IResponseDetails;
 
+  tenantId: uuid;
+
   constructor(data?: IEventData) {
     if (data) {
       this.id = data.id;
@@ -26,6 +28,7 @@ export class Event implements IEvent {
           ...data.registrationLink.translation,
         },
       };
+      this.tenantId = data.tenantId;
     }
   }
 }
