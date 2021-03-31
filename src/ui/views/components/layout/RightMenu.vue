@@ -60,6 +60,7 @@
       class="mt-4 pa-4"
       outlined
       :items="[
+        {text: 'No role', value: ''},
         {text: 'level1', value: 'level1'},
         {text: 'level2', value: 'level2'},
         {text: 'level3', value: 'level3'},

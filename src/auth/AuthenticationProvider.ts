@@ -70,8 +70,10 @@ export default {
         scopes: tokenRequest.scopes,
       });
       return tokenResponse;
-    } catch (e) {
-      throw new Error(e);
+    } catch {
+      this.signIn(process.env.VUE_APP_AUTH_AAD_REDIRECT_URI);
     }
+
+    return null;
   },
 };
