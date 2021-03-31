@@ -33,6 +33,7 @@ export default Vue.extend({
           'EEventStatus',
           'EOptionListItemStatus',
           'EEventCallCentreStatus',
+          'EEventLocationStatus',
           'ETeamStatus',
         ].indexOf(value) > -1
       ),
@@ -60,6 +61,7 @@ export default Vue.extend({
         case 'EEventStatus':
           return this.getEventStatusColor();
         case 'EEventCallCentreStatus':
+        case 'EEventLocationStatus':
           return this.getEventCallCentreColor();
         case 'EOptionListItemStatus':
           return this.getOptionListStatusColor();
@@ -88,6 +90,7 @@ export default Vue.extend({
         case 'EEventStatus':
           return `eventsTable.eventStatus.${EEventStatus[this.status]}`;
         case 'EEventCallCentreStatus':
+        case 'EEventLocationStatus':
           return `eventSummary.status.${EEventCallCentreStatus[this.status]}`;
         case 'EOptionListItemStatus':
           return `system_management.lists.status.${EOptionListItemStatus[this.status]}`;

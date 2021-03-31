@@ -132,6 +132,21 @@ describe('EventSummary.vue', () => {
       });
     });
 
+    describe('registration location section', () => {
+      it('renders when the event has registration locations', () => {
+        const section = wrapper.findDataTest('registration-location-section');
+
+        expect(section.exists()).toBeTruthy();
+      });
+
+      it('calls the method editSection when method edit is emitted', () => {
+        jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
+        const element = wrapper.findDataTest('registration-location-section');
+        element.vm.$emit('edit');
+        expect(wrapper.vm.editSection).toHaveBeenCalledTimes(1);
+      });
+    });
+
     describe('status dialog', () => {
       it('renders when showEventStatusDialog is true and newStatus is not empty', async () => {
         let element;

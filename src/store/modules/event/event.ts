@@ -8,7 +8,16 @@ import {
   EOptionListItemStatus, EOptionLists, IOptionItem, IOptionItemData, OptionItem,
 } from '@/entities/optionItem';
 import {
-  Event, IEvent, IEventCallCentre, IEventSearchData, IOtherProvince, IRegion, IUpdateCallCentrePayload, EEventStatus,
+  Event,
+  IEvent,
+  IEventCallCentre,
+  IEventGenericLocation,
+  IEventSearchData,
+  IOtherProvince,
+  IRegion,
+  IUpdateCallCentrePayload,
+  EEventStatus,
+  IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -211,6 +220,34 @@ const actions = {
     this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IUpdateCallCentrePayload},
   ): Promise<IEvent> {
     const data = await this.$services.events.editCallCentre(eventId, payload);
+
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
+  },
+
+  async addRegistrationLocation(
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventGenericLocation},
+  )
+    : Promise<IEvent> {
+    const data = await this.$services.events.addRegistrationLocation(eventId, payload);
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
+  },
+
+  async editRegistrationLocation(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    { eventId, payload }: {eventId:uuid, payload: IUpdateRegistrationLocationPayload},
+  ): Promise<IEvent> {
+    const data = await this.$services.events.editRegistrationLocation(eventId, payload);
 
     if (data) {
       const event = new Event(mapEventDataToSearchData(data, context));

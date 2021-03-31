@@ -65,6 +65,7 @@ export const mockEventsData = (): IEventData[] => [{
   timestamp: '2021-01-20T15:12:03.4230487Z',
   eTag: '"00004331-0000-0a00-0000-600848430000"',
   callCentres: [],
+  registrationLocations: [],
   selfRegistrationEnabled: false,
 }, {
   number: 2,
@@ -126,6 +127,7 @@ export const mockEventsData = (): IEventData[] => [{
   timestamp: '2021-01-20T15:45:52.2699289Z',
   eTag: '*',
   callCentres: [],
+  registrationLocations: [],
   selfRegistrationEnabled: false,
 }];
 
@@ -171,6 +173,7 @@ export const mockRegionData = (): IAzureSearchResult<IRegion> => ({
   }],
 });
 
+// eslint-disable-next-line
 export const mockEventsSearchData = () : IEventSearchData[] => [
   {
     '@searchScore': 10,
@@ -253,6 +256,23 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
         },
       },
     }],
+    registrationLocations: [{
+      status: 2,
+      name: {
+        translation: {
+          en: 'test en',
+          fr: 'test fr',
+        },
+      },
+      address: {
+        country: 'CA',
+        streetAddress: 'test address',
+        unitSuite: null,
+        province: 2,
+        city: 'test',
+        postalCode: 'h2k2k2',
+      },
+    }],
   },
   {
     '@searchScore': 10,
@@ -312,6 +332,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
     },
     tenantId: '7c076603-580a-4400-bef2-5dde28582',
     callCentres: [],
+    registrationLocations: [],
   },
 ];
 

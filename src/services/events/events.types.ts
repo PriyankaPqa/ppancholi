@@ -1,5 +1,13 @@
 import {
-  IEvent, IEventCallCentre, IEventData, IEventSearchData, IOtherProvince, IRegion, IUpdateCallCentrePayload,
+  IEvent,
+  IEventCallCentre,
+  IEventData,
+  IEventGenericLocation,
+  IEventSearchData,
+  IOtherProvince,
+  IRegion,
+  IUpdateCallCentrePayload,
+  IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
@@ -16,9 +24,13 @@ export interface IEventsService {
 
   searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>>;
 
-  addCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventData>;
+  addCallCentre(eventId: uuid, payload: IEventCallCentre): Promise<IEventData>;
 
-  editCallCentre(eventId:uuid, payload: IUpdateCallCentrePayload): Promise<IEventData>;
+  editCallCentre(eventId: uuid, payload: IUpdateCallCentrePayload): Promise<IEventData>;
+
+  addRegistrationLocation(eventId: uuid, payload: IEventGenericLocation): Promise<IEventData>;
+
+  editRegistrationLocation(eventId: uuid, payload: IUpdateRegistrationLocationPayload): Promise<IEventData>;
 }
 
 export interface IEventsServiceMock {
@@ -26,15 +38,19 @@ export interface IEventsServiceMock {
 
   updateEvent: jest.Mock<IEventData>;
 
+  getRegions: jest.Mock<IAzureSearchResult<IRegion>>;
+
+  searchEvents: jest.Mock<IAzureSearchResult<IEventSearchData>>;
+
   toggleSelfRegistration: jest.Mock<IEventData>;
 
   getOtherProvinces: jest.Mock <IAzureSearchResult<IOtherProvince>>;
 
-  getRegions: jest.Mock <IAzureSearchResult<IRegion>>;
+  addCallCentre: jest.Mock<IEventData>;
 
-  searchEvents: jest.Mock <IAzureSearchResult<IEventSearchData>>;
+  editCallCentre: jest.Mock<IEventData>;
 
-  addCallCentre: jest.Mock <IEventData>;
+  addRegistrationLocation: jest.Mock<IEventData>;
 
-  editCallCentre: jest.Mock <IEventData>;
+  editRegistrationLocation: jest.Mock<IEventData>;
 }

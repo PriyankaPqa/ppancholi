@@ -12,4 +12,6 @@ export const mockEventsService = (): IEventsServiceMock => ({
   searchEvents: jest.fn(() => mockSearchEvents()),
   addCallCentre: jest.fn(() => mockEventsData()[0]),
   editCallCentre: jest.fn(() => mockEventsData()[0]),
+  addRegistrationLocation: jest.fn(() => mockEventsData()[0]),
+  editRegistrationLocation: jest.fn(() => mockEventsData()[0]),
 });

@@ -1,5 +1,5 @@
 import {
-  IEvent, IEventCallCentre, IOtherProvince, IRegion, IUpdateCallCentrePayload,
+  IEvent, IEventCallCentre, IEventGenericLocation, IOtherProvince, IRegion, IUpdateCallCentrePayload, IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore } from '@/store/store.types';
@@ -64,6 +64,14 @@ export const makeStorage = (store: IStore): IStorage => ({
 
     editCallCentre({ eventId, payload }:{eventId: uuid, payload: IUpdateCallCentrePayload}): Promise<IEvent> {
       return store.dispatch('event/editCallCentre', { eventId, payload });
+    },
+
+    addRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent> {
+      return store.dispatch('event/addRegistrationLocation', { eventId, payload });
+    },
+
+    editRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateRegistrationLocationPayload}): Promise<IEvent> {
+      return store.dispatch('event/editRegistrationLocation', { eventId, payload });
     },
 
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent> {

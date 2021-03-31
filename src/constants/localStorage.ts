@@ -5,4 +5,7 @@ export const localStorageKeys = {
   prefixRegistrationLink: {
     name: 'prefix-registration-link',
   },
+  googleMapsAPIKey: {
+    name: 'google-maps-api-key',
+  },
 };

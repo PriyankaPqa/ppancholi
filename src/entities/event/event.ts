@@ -9,6 +9,7 @@ import {
   IEvent,
   IEventCallCentre,
   IEventLocation,
+  IEventGenericLocation,
   IEventResponseDetails,
   IEventSchedule,
   IEventSearchData,
@@ -51,6 +52,8 @@ export class Event implements IEvent {
   selfRegistrationEnabled: boolean;
 
   callCentres: Array<IEventCallCentre>;
+
+  registrationLocations: Array<IEventGenericLocation>;
 
   tenantId: uuid;
 
@@ -117,6 +120,7 @@ export class Event implements IEvent {
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.eventStatus = data.eventStatus;
       this.tenantId = data.tenantId;
+      this.registrationLocations = data.registrationLocations;
       this.callCentres = data.callCentres.map((centre) => ({
         ...centre,
         name: utils.initMultilingualAttributes(centre.name),
@@ -163,6 +167,7 @@ export class Event implements IEvent {
     };
     this.scheduleEventStatusName = utils.initMultilingualAttributes();
     this.callCentres = [];
+    this.registrationLocations = [];
   }
 
   private validateAttributes(errors: Array<string>) {

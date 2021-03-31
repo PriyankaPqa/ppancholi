@@ -1,5 +1,5 @@
 import {
-  IEvent, IEventCallCentre, IOtherProvince, IRegion, IUpdateCallCentrePayload,
+  IEvent, IEventCallCentre, IEventGenericLocation, IOtherProvince, IRegion, IUpdateCallCentrePayload, IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -23,6 +23,8 @@ export interface IStorage {
     updateEvent(payload: IEvent): Promise<IEvent>;
     addCallCentre({ eventId, payload }:{eventId: uuid, payload: IEventCallCentre}): Promise<IEvent>;
     editCallCentre({ eventId, payload }:{eventId: uuid, payload: IUpdateCallCentrePayload}): Promise<IEvent>;
+    addRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
+    editRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateRegistrationLocationPayload}): Promise<IEvent>;
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent>;
   }
 }
@@ -45,6 +47,8 @@ export interface IStorageMock {
     updateEvent: jest.Mock<void>;
     addCallCentre: jest.Mock<void>;
     editCallCentre: jest.Mock<void>;
+    addRegistrationLocation: jest.Mock<void>;
+    editRegistrationLocation: jest.Mock<void>;
     toggleSelfRegistration: jest.Mock<void>;
   }
 }

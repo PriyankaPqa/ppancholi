@@ -1,6 +1,16 @@
 import { IHttpClient } from '@/services/httpClient';
 import {
-  ICreateEventRequest, IEditEventRequest, IEvent, IEventCallCentre, IEventData, IEventSearchData, IOtherProvince, IRegion, IUpdateCallCentrePayload,
+  ICreateEventRequest,
+  IEditEventRequest,
+  IEvent,
+  IEventCallCentre,
+  IEventData,
+  IEventGenericLocation,
+  IEventSearchData,
+  IOtherProvince,
+  IRegion,
+  IUpdateCallCentrePayload,
+  IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
@@ -42,6 +52,14 @@ export class EventsService implements IEventsService {
 
   async editCallCentre(eventId:uuid, payload: IUpdateCallCentrePayload): Promise<IEventData> {
     return this.http.post(`/event/events/${eventId}/call-centres/edit`, payload);
+  }
+
+  async addRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventData> {
+    return this.http.post(`/event/events/${eventId}/registration-location`, payload);
+  }
+
+  async editRegistrationLocation(eventId:uuid, payload: IUpdateRegistrationLocationPayload): Promise<IEventData> {
+    return this.http.post(`/event/events/${eventId}/registration-location/edit`, payload);
   }
 
   private eventToCreateEventRequestPayload(event: IEvent): ICreateEventRequest {

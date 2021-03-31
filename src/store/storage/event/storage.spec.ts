@@ -1,4 +1,6 @@
-import { Event, IEventCallCentre, mockEventsSearchData } from '@/entities/event';
+import {
+  Event, IEventCallCentre, IEventGenericLocation, mockEventsSearchData,
+} from '@/entities/event';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
 import { makeStorage } from './storage';
@@ -83,6 +85,28 @@ describe('>>> Event Storage', () => {
       const payload = { originalCallCentre: callCentre1, updatedCallCentre: callCentre2 };
       storage.actions.editCallCentre({ eventId: event.id, payload });
       expect(store.dispatch).toHaveBeenCalledWith('event/editCallCentre', { eventId: event.id, payload });
+    });
+
+    it('should proxy addRegistrationLocation', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      const location = event.registrationLocations[0];
+      storage.actions.addRegistrationLocation({ eventId: event.id, payload: location });
+      expect(store.dispatch).toHaveBeenCalledWith('event/addRegistrationLocation', { eventId: event.id, payload: location });
+    });
+
+    it('should proxy editRegistrationLocation', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      const originalRegistrationLocation = event.registrationLocations[0];
+      const updatedRegistrationLocation = {
+        ...originalRegistrationLocation,
+        address: {
+          city: 'Laval',
+        },
+      } as IEventGenericLocation;
+      const payload = { originalRegistrationLocation, updatedRegistrationLocation };
+
+      storage.actions.editRegistrationLocation({ eventId: event.id, payload });
+      expect(store.dispatch).toHaveBeenCalledWith('event/editRegistrationLocation', { eventId: event.id, payload });
     });
 
     it('should proxy toggleSelfRegistration', () => {

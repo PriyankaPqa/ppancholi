@@ -79,6 +79,7 @@ export default {
 
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
     localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, process.env.VUE_APP_EVENT_LINK_PREFIX);
+    localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VUE_APP_GOOGLE_API_KEY);
   },
 };
 </script>

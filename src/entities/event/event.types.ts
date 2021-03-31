@@ -1,4 +1,6 @@
-import { ECanadaProvinces, IListOption, IMultilingual } from '@/types';
+import {
+  ECanadaProvinces, IAddress, IListOption, IMultilingual,
+} from '@/types';
 
 /**
  * Enums
@@ -19,8 +21,13 @@ export enum EResponseLevel {
 }
 
 export enum EEventCallCentreStatus {
-  Active= 1,
-  Inactive
+  Active = 1,
+  Inactive,
+}
+
+export enum EEventLocationStatus {
+  Active = 1,
+  Inactive,
 }
 
 /**
@@ -67,9 +74,20 @@ export interface IEventCallCentre {
   status: EEventCallCentreStatus;
 }
 
+export interface IEventGenericLocation {
+  name: IMultilingual;
+  status: EEventLocationStatus;
+  address: IAddress;
+}
+
 export interface IUpdateCallCentrePayload {
   updatedCallCentre: IEventCallCentre,
   originalCallCentre: IEventCallCentre,
+}
+
+export interface IUpdateRegistrationLocationPayload {
+  updatedRegistrationLocation: IEventGenericLocation,
+  originalRegistrationLocation: IEventGenericLocation,
 }
 
 export interface IRelatedEventsInfos {
@@ -93,16 +111,18 @@ export interface IEventData {
   schedule: IEventSchedule;
   responseDetails: IEventResponseDetails;
   relatedEventIds?: Array<uuid>;
-  callCentres:Array<IEventCallCentre>;
+  callCentres: Array<IEventCallCentre>;
+  registrationLocations: Array<IEventGenericLocation>;
   selfRegistrationEnabled: boolean;
 }
 
 /**
  * Interface that maps to the response structure from the search API
  */
-export interface IEventSearchData{
+export interface IEventSearchData {
   '@searchScore': number;
   callCentres: Array<IEventCallCentre>;
+  registrationLocations: Array<IEventGenericLocation>;
   createdDate: Date | string;
   eventDescription: IMultilingual;
   eventId: uuid;
@@ -113,7 +133,7 @@ export interface IEventSearchData{
   location: IEventLocation;
   number: number;
   provinceName: IMultilingual;
-  relatedEventsInfos: Array<IRelatedEventsInfos>,
+  relatedEventsInfos: Array<IRelatedEventsInfos>;
   registrationLink: IMultilingual;
   responseDetails: IEventResponseDetails;
   responseLevelName: IMultilingual;
@@ -152,9 +172,10 @@ export interface IEditEventRequest extends ICreateEventRequest {
  */
 export interface IEvent {
   callCentres: Array<IEventCallCentre>;
+  registrationLocations: Array<IEventGenericLocation>;
   created: Date | string;
   description: IMultilingual;
-  eventTypeId:uuid;
+  eventTypeId: uuid;
   eventTypeName: IMultilingual;
   id: uuid;
   location: IEventLocation;

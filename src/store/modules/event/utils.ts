@@ -78,4 +78,5 @@ export const mapEventDataToSearchData = (eventData: IEventData, context: ActionC
   eventStatus: null,
   tenantId: null,
   callCentres: eventData.callCentres,
+  registrationLocations: eventData.registrationLocations,
 });

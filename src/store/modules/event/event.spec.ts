@@ -5,11 +5,10 @@ import {
   OptionItem, mockOptionItemData, EOptionListItemStatus, EOptionLists,
 } from '@/entities/optionItem';
 import {
-  Event, IEvent, IEventCallCentre, mockEventsSearchData, mockSearchEvents,
+  Event, IEvent, IEventCallCentre, IEventGenericLocation, mockEventsSearchData, mockSearchEvents,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
-import { EventMessageUtils } from '@azure/msal-browser';
 
 jest.mock('@/store/modules/event/utils');
 
@@ -324,6 +323,56 @@ describe('>>> Event Module', () => {
 
         expect(store.$services.events.editCallCentre).toHaveBeenCalledTimes(1);
         expect(store.$services.events.editCallCentre).toHaveBeenCalledWith(event.id, payload);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
+
+    describe('addRegistrationLocation', () => {
+      it('calls the addRegistrationLocation service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const location = event.registrationLocations[0];
+
+        expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/addRegistrationLocation', { eventId: event.id, payload: location });
+
+        expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledWith(event.id, location);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
+
+    describe('editRegistrationLocation', () => {
+      it('calls the editRegistrationLocation service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const originalRegistrationLocation = event.registrationLocations[0];
+        const updatedRegistrationLocation = {
+          ...originalRegistrationLocation,
+          address: {
+            city: 'Laval',
+          },
+        } as IEventGenericLocation;
+        const payload = { originalRegistrationLocation, updatedRegistrationLocation };
+
+        expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/editRegistrationLocation', {
+          eventId: event.id,
+          payload,
+        });
+
+        expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledWith(event.id, payload);
 
         expect(res).toEqual(event);
 

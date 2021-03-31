@@ -11,6 +11,7 @@ export type { IRestResponse } from './interfaces/IRestResponse';
 export type { IAzureSearchParams } from './interfaces/IAzureSearchParams';
 export type { IAzureSearchResult } from './interfaces/IAzureSearchResult';
 export type { IListOption } from './interfaces/IListOption';
+export type { IAddress } from './interfaces/IAddress';
 
 /**
  * Enums

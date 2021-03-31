@@ -1,5 +1,5 @@
 import {
-  Event, EEventStatus, mockEventsSearchData, IEventCallCentre,
+  Event, EEventStatus, mockEventsSearchData, IEventCallCentre, IEventGenericLocation,
 } from '@/entities/event';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
@@ -139,5 +139,27 @@ describe('>>> Events Service', () => {
     const { id } = event;
     await service.editCallCentre(id, { originalCallCentre: callCentre1, updatedCallCentre: callCentre2 });
     expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/call-centres/edit`, expect.anything());
+  });
+
+  test('addRegistrationLocation is linked to the correct URL', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const location = event.registrationLocations[0];
+    const { id } = event;
+    await service.addRegistrationLocation(id, location);
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/registration-location`, expect.anything());
+  });
+
+  test('editRegistrationLocation is linked to the correct URL', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const originalRegistrationLocation = event.registrationLocations[0];
+    const updatedRegistrationLocation = {
+      ...originalRegistrationLocation,
+      address: {
+        city: 'Laval',
+      },
+    } as IEventGenericLocation;
+    const { id } = event;
+    await service.editRegistrationLocation(id, { originalRegistrationLocation, updatedRegistrationLocation });
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/registration-location/edit`, expect.anything());
   });
 });

@@ -60,6 +60,27 @@ describe('>>> User', () => {
       }]);
     });
 
+    it('should instantiate registration locations', () => {
+      const event = new Event(mockEventData);
+      expect(event.registrationLocations).toEqual([{
+        status: 2,
+        name: {
+          translation: {
+            en: 'test en',
+            fr: 'test fr',
+          },
+        },
+        address: {
+          country: 'CA',
+          streetAddress: 'test address',
+          unitSuite: null,
+          province: 2,
+          city: 'test',
+          postalCode: 'h2k2k2',
+        },
+      }]);
+    });
+
     it('should instantiate description', () => {
       const event = new Event(mockEventData);
       expect(event.description).toEqual({

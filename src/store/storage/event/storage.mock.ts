@@ -18,6 +18,8 @@ export const mockStorageEvent = () : IStorageMock => ({
     updateEvent: jest.fn(),
     addCallCentre: jest.fn(),
     editCallCentre: jest.fn(),
+    addRegistrationLocation: jest.fn(),
+    editRegistrationLocation: jest.fn(),
     toggleSelfRegistration: jest.fn(),
   },
 });
