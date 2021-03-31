@@ -347,7 +347,6 @@ export default Vue.extend({
       assistanceNumber,
       eventType: null,
       languageMode: 'en',
-      prefixRegistrationLink: localStorage.getItem(localStorageKeys.prefixRegistrationLink.name),
       otherProvinces: [],
       regions: [],
       TOOLTIP_DELAY,
@@ -532,6 +531,11 @@ export default Vue.extend({
     statusColor(): string {
       if (this.isStatusOpen) return 'status_success white--text';
       return 'status_green_pale black--text';
+    },
+
+    prefixRegistrationLink(): string {
+      const prefix = localStorage.getItem(localStorageKeys.prefixRegistrationLink.name);
+      return `${prefix}/${this.languageMode}/registration/`;
     },
 
     registrationLink(): string {

@@ -133,7 +133,7 @@ describe('EventSummaryLink.vue', () => {
       describe('registrationUrl', () => {
         it('returns the right url', () => {
           wrapper.vm.prefixRegistrationLink = 'mock-prefixRegistrationLink';
-          expect(wrapper.vm.registrationUrl).toEqual(`mock-prefixRegistrationLink${mockEvent.registrationLink.translation.en}`);
+          expect(wrapper.vm.registrationUrl).toEqual(`mock-prefixRegistrationLink/en/registration/${mockEvent.registrationLink.translation.en}`);
         });
       });
 

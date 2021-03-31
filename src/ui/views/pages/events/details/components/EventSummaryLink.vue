@@ -78,7 +78,7 @@ export default Vue.extend({
 
   computed: {
     registrationUrl(): string {
-      return `${this.prefixRegistrationLink}${this.$m(this.event.registrationLink)}`;
+      return `${this.prefixRegistrationLink}/${this.$i18n.locale}/registration/${this.$m(this.event.registrationLink)}`;
     },
 
     showSwitchBtn() {

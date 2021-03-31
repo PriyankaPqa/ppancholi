@@ -59,7 +59,7 @@ describe('EventForm.vue', () => {
         getItem: (key) => this.store[key],
         setItem: (key, value) => { this.store[key] = value; },
       };
-      global.localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, 'https://foo.test/');
+      global.localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, 'https://foo.test');
 
       wrapper = shallowMount(Component, {
         localVue: createLocalVue(),
@@ -70,7 +70,7 @@ describe('EventForm.vue', () => {
         },
       });
 
-      expect(wrapper.vm.prefixRegistrationLink).toEqual('https://foo.test/');
+      expect(wrapper.vm.prefixRegistrationLink).toEqual('https://foo.test/en/registration/');
     });
   });
 
