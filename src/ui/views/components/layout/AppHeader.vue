@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
+import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

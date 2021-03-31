@@ -74,6 +74,14 @@ export const makeStorage = (store: IStore): IStorage => ({
     jump(toIndex: number): void {
       store.commit('registration/jump', toIndex);
     },
+
+    setIsPrivacyAgreed(payload: boolean): void {
+      store.commit('registration/setIsPrivacyAgreed', payload);
+    },
+
+    setDateTimeConsent(payload: string): void {
+      store.commit('registration/setDateTimeConsent', payload);
+    },
   },
 
   actions: {

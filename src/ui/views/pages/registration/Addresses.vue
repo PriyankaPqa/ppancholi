@@ -19,15 +19,15 @@
           v-slot="{ errors, classes }"
           :rules="rules.country"
           name="country"
-          mode="aggressive"
-          :data-test="`${prefixDataTest}__country`">
+          :data-test="`${prefixDataTest}__country`"
+          mode="aggressive">
           <rc-country-select
             v-model="form.country"
             outlined
             :error-messages="errors"
             :class="classes"
             :label="`${$t('registration.addresses.country')} *`"
-            @input="onInput" />
+            @input="onInput()" />
         </validation-provider>
       </v-col>
 
@@ -36,12 +36,13 @@
           <rc-google-autocomplete
             ref="address__street_autocomplete"
             v-model="form.street"
+            data-test="address__street_autocomplete"
             :class="classes"
             :error-messages="errors"
             :api-key="apiKey"
             outlined
             :placeholder="`${$t('registration.addresses.streetAddress')} *`"
-            @input="onInput"
+            @input="onInput()"
             @on-autocompleted="streetAddressAutocomplete" />
         </validation-provider>
       </v-col>
@@ -59,7 +60,7 @@
           :rules="rules.city"
           :data-test="`${prefixDataTest}__city`"
           :label="`${$t('registration.addresses.city')} *`"
-          @input="onInput" />
+          @input="onInput()" />
       </v-col>
 
       <v-col cols="12" sm="6" md="4">
@@ -69,7 +70,7 @@
           :data-test="`${prefixDataTest}__province`"
           :label="`${$t('registration.addresses.province')} *`"
           :items="canadianProvincesItems"
-          @input="onInput" />
+          @input="onInput()" />
       </v-col>
 
       <v-col cols="12" sm="6" md="4">
@@ -78,7 +79,7 @@
           :rules="rules.postalCode"
           :data-test="`${prefixDataTest}__postalCode`"
           :label="`${$t('registration.addresses.postalCode')} *`"
-          @input="onInput" />
+          @input="onInput()" />
       </v-col>
     </template>
 
@@ -112,12 +113,10 @@ import {
   RcCountrySelect,
 } from '@crctech/component-library';
 import {
-  Beneficiary,
   ETemporaryAddressTypes,
   IAddresses,
 } from '@/entities/beneficiary';
 import utils from '@/entities/utils';
-import _cloneDeep from 'lodash/cloneDeep';
 import { ECanadaProvinces } from '@/types';
 
 export default Vue.extend({
@@ -132,10 +131,6 @@ export default Vue.extend({
   },
 
   props: {
-    beneficiary: {
-      type: Beneficiary,
-      required: true,
-    },
     prefixDataTest: {
       type: String,
       default: 'addresses',
@@ -144,7 +139,7 @@ export default Vue.extend({
 
   data() {
     return {
-      form: null as IAddresses,
+      form: null,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VUE_APP_GOOGLE_API_KEY,
@@ -153,6 +148,10 @@ export default Vue.extend({
   },
 
   computed: {
+    addresses(): IAddresses {
+      return this.$storage.beneficiary.getters.beneficiary().addresses;
+    },
+
     rules(): Record<string, unknown> {
       return {
         country: {
@@ -182,16 +181,17 @@ export default Vue.extend({
         },
       };
     },
+
     canadianProvincesItems(): Record<string, unknown>[] {
       return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
     temporaryAddressTypeItems(): Record<string, unknown>[] {
-      const returned = utils.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
-      const remainInHome = returned.find((element) => element.value === ETemporaryAddressTypes.RemainingInHome);
-      returned.splice(returned.indexOf(remainInHome), 1);
-      if (!this.form.noFixedHome) { returned.unshift(remainInHome); }
-      return returned;
+      const list = utils.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+      if (this.form.noFixedHome) {
+        return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+      }
+      return list;
     },
 
     isCanada(): boolean {
@@ -202,31 +202,30 @@ export default Vue.extend({
   watch: {
     form: {
       deep: true,
-      handler(newValue: IAddresses) {
-        this.$emit('update-entity', 'addresses', newValue);
+      handler(form: IAddresses) {
+        this.$storage.beneficiary.mutations.setAddresses(form);
       },
     },
   },
 
   created() {
-    this.form = _cloneDeep(this.beneficiary.addresses);
-    this.prepopulate();
+    this.form = this.addresses;
+    this.prePopulate();
   },
 
   methods: {
     onTemporaryAddressTypeChange() {
       // TODO Implement this
     },
-    // eslint-disable-next-line
-    async streetAddressAutocomplete(event: any) {
-      this.isAutocompleteAddress = true;
 
-      this.$set(this.form, 'country', event.country);
-      this.$set(this.form, 'provinceTerritory', ECanadaProvinces[event.province]);
-      this.$set(this.form, 'postalCode', event.postalCode);
-      this.$set(this.form, 'city', event.city);
-      this.$set(this.form, 'street', event.street);
-      this.$set(this.form, 'geoLocation', event.location);
+    async streetAddressAutocomplete(autocomplete: any) {
+      this.isAutocompleteAddress = true;
+      this.form.country = autocomplete.country;
+      this.form.provinceTerritory = ECanadaProvinces[autocomplete.province];
+      this.form.postalCode = autocomplete.postalCode;
+      this.form.city = autocomplete.city;
+      this.form.street = autocomplete.street;
+      this.form.geoLocation = autocomplete.location;
 
       await this.$nextTick();
       this.isAutocompleteAddress = false;
@@ -239,7 +238,7 @@ export default Vue.extend({
       }
     },
 
-    prepopulate() {
+    prePopulate() {
       if (!this.form.country) {
         this.form.country = 'CA';
       }

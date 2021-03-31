@@ -15,4 +15,6 @@ export type IState = {
   primarySpokenLanguages: IOptionItemData[];
   indigenousIdentities: IIndigenousIdentityData[];
   loadingIndigenousIdentities: boolean;
+  isPrivacyAgreed: boolean,
+  privacyDateTimeConsent: string,
 };

@@ -3,8 +3,8 @@ import { Trans } from '@/ui/plugins';
 import Routes from '@/constants/routes';
 
 const MainLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/components/layout/MainLayout.vue');
-const LandingPage = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/LandingPage.vue');
-const Individual = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/Individual.vue');
+const LandingPage = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/registration/LandingPage.vue');
+const Individual = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/registration/Individual.vue');
 
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 

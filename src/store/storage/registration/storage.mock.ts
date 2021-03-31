@@ -28,6 +28,8 @@ export const mockStorageRegistration = (): IStorageMock => ({
     setCurrentTabIndex: jest.fn(),
     mutateCurrentTab: jest.fn(),
     jump: jest.fn(),
+    setIsPrivacyAgreed: jest.fn(),
+    setDateTimeConsent: jest.fn(),
   },
 
   actions: {

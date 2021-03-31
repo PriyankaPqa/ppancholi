@@ -11,7 +11,7 @@
         <template slot="default">
           <v-row justify="center" class="mt-12" no-gutters>
             <v-col cols="12" xl="8" lg="8" md="12" sm="12">
-              <component :is="currentTab.componentName" :beneficiary="beneficiary" @update-entity="updateEntity" />
+              <component :is="currentTab.componentName" />
             </v-col>
           </v-row>
         </template>
@@ -54,7 +54,7 @@ import { RcPageContent } from '@crctech/component-library';
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import { TranslateResult } from 'vue-i18n';
 import { Beneficiary } from '@/entities/beneficiary';
-import { IEntity, VForm } from '@/types';
+import { VForm } from '@/types';
 import _pickBy from 'lodash/pickBy';
 import helpers from '@/ui/helpers';
 import routes from '@/constants/routes';
@@ -92,21 +92,27 @@ export default Vue.extend({
     xSmallOrSmallMenu(): boolean {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;
     },
+
     currentTab(): ILeftMenuItem {
       return this.$storage.registration.getters.currentTab();
     },
+
     currentTabIndex(): number {
       return this.$storage.registration.getters.currentTabIndex();
     },
+
     allTabs(): ILeftMenuItem[] {
       return this.$storage.registration.getters.tabs();
     },
+
     previousTabName(): TranslateResult {
       return this.$t(this.$storage.registration.getters.previousTabName());
     },
+
     nextTabName(): TranslateResult {
       return this.$t(this.$storage.registration.getters.nextTabName());
     },
+
     currentStepHasError(): boolean {
       if (this.isFormReady) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -116,11 +122,13 @@ export default Vue.extend({
       return false;
     },
   },
+
   watch: {
     currentStepHasError(hasError) {
       this.mutateStateTab(!hasError);
     },
   },
+
   mounted() {
     // Wait for the form to be mounted before doing live validation
     this.isFormReady = true;
@@ -143,20 +151,19 @@ export default Vue.extend({
 
     async back() {
       if (this.currentTabIndex === 0) {
-        this.$router.push({ name: routes.landingPage.name });
+        await this.$router.push({ name: routes.landingPage.name });
         return;
       }
 
       await this.jump(this.currentTabIndex - 1);
     },
+
     async next() {
       await this.jump(this.currentTabIndex + 1);
     },
+
     print() {
-      // TODO
-    },
-    updateEntity(propertyName: keyof Beneficiary, newValue: IEntity) {
-      (this.beneficiary[propertyName] as IEntity) = newValue;
+      return false;
     },
 
     mutateStateTab(valid: boolean) {

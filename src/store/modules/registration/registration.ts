@@ -14,6 +14,8 @@ import { IState } from './registration.types';
 const INDIGENOUS_LIMIT_RESULTS = 1000;
 
 const getDefaultState = (): IState => ({
+  isPrivacyAgreed: false,
+  privacyDateTimeConsent: '',
   event: null,
   isLeftMenuOpen: true,
   tabs,
@@ -23,6 +25,7 @@ const getDefaultState = (): IState => ({
   primarySpokenLanguages: [],
   indigenousIdentities: [],
   loadingIndigenousIdentities: false,
+
 });
 
 const moduleState: IState = getDefaultState();
@@ -106,6 +109,34 @@ const mutations = {
 
     state.currentTabIndex = toIndex;
   },
+
+  setIsPrivacyAgreed(state: IState, payload: boolean) {
+    state.isPrivacyAgreed = payload;
+  },
+
+  setDateTimeConsent(state: IState, payload: string) {
+    state.privacyDateTimeConsent = payload;
+  },
+
+  setGenders(state: IState, payload: IOptionItemData[]) {
+    state.genders = payload;
+  },
+
+  setPreferredLanguages(state: IState, payload: IOptionItemData[]) {
+    state.preferredLanguages = payload;
+  },
+
+  setPrimarySpokenLanguages(state: IState, payload: IOptionItemData[]) {
+    state.primarySpokenLanguages = payload;
+  },
+
+  setIndigenousIdentities(state: IState, payload: IIndigenousIdentityData[]) {
+    state.indigenousIdentities = payload;
+  },
+
+  setLoadingIndigenousIdentities(state: IState, payload: boolean) {
+    state.loadingIndigenousIdentities = payload;
+  },
 };
 
 const actions = {
@@ -125,7 +156,7 @@ const actions = {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getGenders();
 
     if (data?.length > 0) {
-      context.state.genders = data.filter((entry) => entry.status === EOptionItemStatus.Active);
+      context.commit('setGenders', data.filter((entry) => entry.status === EOptionItemStatus.Active));
     }
 
     return data;
@@ -135,7 +166,7 @@ const actions = {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getPreferredLanguages();
 
     if (data?.length > 0) {
-      context.state.preferredLanguages = data.filter((entry) => entry.status === EOptionItemStatus.Active);
+      context.commit('setPreferredLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
     }
 
     return data;
@@ -145,7 +176,7 @@ const actions = {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getPrimarySpokenLanguages();
 
     if (data?.length > 0) {
-      context.state.primarySpokenLanguages = data.filter((entry) => entry.status === EOptionItemStatus.Active);
+      context.commit('setPrimarySpokenLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
     }
 
     return data;
@@ -156,7 +187,7 @@ const actions = {
     context: ActionContext<IState, IState>,
     provinceCode: number,
   ): Promise<IIndigenousIdentityData[]> {
-    context.state.loadingIndigenousIdentities = true;
+    context.commit('setLoadingIndigenousIdentities', true);
     let identities: IIndigenousIdentityData[] = [];
 
     try {
@@ -172,8 +203,8 @@ const actions = {
         identities = result.value.filter((entry: IIndigenousIdentityData) => entry.status === EOptionItemStatus.Active);
       }
     } finally {
-      context.state.indigenousIdentities = identities;
-      context.state.loadingIndigenousIdentities = false;
+      context.commit('setIndigenousIdentities', identities);
+      context.commit('setLoadingIndigenousIdentities', false);
     }
 
     return identities;

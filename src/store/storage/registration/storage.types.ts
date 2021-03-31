@@ -24,6 +24,8 @@ export interface IStorage {
     setCurrentTabIndex(newIndex: number): void;
     mutateCurrentTab(callback: (currentTab: ILeftMenuItem) => void): void;
     jump(toIndex: number): void;
+    setIsPrivacyAgreed(payload: boolean): void;
+    setDateTimeConsent(payload: string): void;
   };
 
   actions: {
@@ -56,6 +58,8 @@ export interface IStorageMock {
     setCurrentTabIndex: jest.Mock<void>;
     mutateCurrentTab: jest.Mock<void>;
     jump: jest.Mock<void>;
+    setIsPrivacyAgreed: jest.Mock<void>;
+    setDateTimeConsent: jest.Mock<void>;
   };
 
   actions: {

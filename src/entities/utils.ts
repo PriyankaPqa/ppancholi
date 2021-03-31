@@ -21,7 +21,10 @@ export default {
 
   // Return moment object of a birthdate, with proper index for the month
   getBirthDateMomentObject(birthdate: IBirthDate) {
-    const { year, month, day } = birthdate;
+    const year = birthdate.year as number;
+    const month = birthdate.month as number;
+    const day = birthdate.day as number;
+
     return moment({
       year,
       month: typeof month === 'number' ? month - 1 : 0,

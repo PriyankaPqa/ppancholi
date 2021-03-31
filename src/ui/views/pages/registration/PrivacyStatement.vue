@@ -13,11 +13,10 @@
     </i18n>
     <div class="full-width grey-container py-1 px-5">
       <v-checkbox-with-validation
-        v-model="form.isPrivacyAgreed"
+        v-model="isPrivacyAgreed"
         :rules="rules.isPrivacyAgreed"
         data-test="isPrivacyAgreed"
-        :label="$t('registration.privacy_statement.agreeSelf')"
-        @input="setTimeDateConsent($event)" />
+        :label="$t('registration.privacy_statement.agreeSelf')" />
     </div>
   </div>
 </template>
@@ -25,8 +24,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@crctech/component-library';
-import { Beneficiary, IPrivacyStatement } from '@/entities/beneficiary';
-import _cloneDeep from 'lodash/cloneDeep';
+
 import moment from 'moment';
 
 export default Vue.extend({
@@ -34,19 +32,6 @@ export default Vue.extend({
 
   components: {
     VCheckboxWithValidation,
-  },
-
-  props: {
-    beneficiary: {
-      type: Beneficiary,
-      required: true,
-    },
-  },
-
-  data() {
-    return {
-      form: null as IPrivacyStatement,
-    };
   },
 
   computed: {
@@ -59,25 +44,15 @@ export default Vue.extend({
         },
       };
     },
-  },
 
-  watch: {
-    form: {
-      deep: true,
-      handler(newValue: IPrivacyStatement) {
-        this.$emit('update-entity', 'privacyStatement', newValue);
+    isPrivacyAgreed: {
+      get(): boolean {
+        return this.$store.state.registration.isPrivacyAgreed;
       },
-    },
-  },
-
-  created() {
-    this.form = _cloneDeep(this.beneficiary.privacyStatement);
-  },
-
-  methods: {
-    setTimeDateConsent(checked: boolean): void {
-      const value = checked ? moment().format() : null;
-      this.form.privacyDateTimeConsent = value;
+      set(checked: boolean) {
+        this.$storage.registration.mutations.setIsPrivacyAgreed(checked);
+        this.$storage.registration.mutations.setDateTimeConsent(checked ? moment().format() : null);
+      },
     },
   },
 });

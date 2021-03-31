@@ -6,12 +6,14 @@ import Vue from 'vue';
 import { mockProvider } from '@/services/provider';
 
 import { registration } from './modules/registration';
+import { beneficiary } from './modules/beneficiary';
 
 Vue.use(Vuex);
 
 const mockConfig = {
   modules: {
     registration,
+    beneficiary,
   },
 };
 

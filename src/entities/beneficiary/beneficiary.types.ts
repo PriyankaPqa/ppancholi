@@ -1,9 +1,7 @@
 import { IEntity } from '@/types';
 import { IPersonalInformation } from './personalInformation/personalInformation.types';
 import { IAddresses } from './addresses/addresses.types';
-import { IPrivacyStatement } from './privacyStatement/privacyStatement.types';
 import { IHouseholdMembers } from './householdMembers/householdMembers.types.';
-import { IReviewRegistration } from './reviewRegistration/reviewRegistration.types';
 
 /**
  * Enums
@@ -21,10 +19,14 @@ import { IReviewRegistration } from './reviewRegistration/reviewRegistration.typ
  * Interface used for the entity class
  */
 
-export interface IBeneficiary extends IEntity {
-  privacyStatement: IPrivacyStatement;
+export interface IBeneficiaryData {
   personalInformation: IPersonalInformation;
   addresses: IAddresses;
   householdMembers: IHouseholdMembers;
-  reviewRegistration: IReviewRegistration;
+}
+
+export interface IBeneficiary extends IEntity {
+  personalInformation: IPersonalInformation;
+  addresses: IAddresses;
+  householdMembers: IHouseholdMembers;
 }

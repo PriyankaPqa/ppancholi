@@ -51,7 +51,7 @@ const mocks = {
   $route: { params: { id: 'id' } },
   $t: jest.fn((key) => key),
   $tc: jest.fn((key) => key),
-  $m: jest.fn((m) => m?.value?.en),
+  $m: jest.fn((m) => m?.translation?.en),
   $toasted: {
     global: {
       success: jest.fn(),
@@ -104,6 +104,7 @@ export const mount = (Component, options) => {
     i18n,
     sync: false,
     ...options,
+    store,
     mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });
@@ -133,6 +134,7 @@ export const shallowMount = (Component, options) => {
     i18n,
     sync: false,
     ...options,
+    store,
     mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
     stubs: deepmerge(stubs, options.stubs || {}),
   });

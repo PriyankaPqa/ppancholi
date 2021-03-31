@@ -46,9 +46,9 @@ export interface IIndigenousIdentityData {
 }
 
 export interface IBirthDate {
-  month?: number;
-  day?: number;
-  year?: number;
+  month?: number | string;
+  day?: number | string;
+  year?: number | string;
 }
 
 /**

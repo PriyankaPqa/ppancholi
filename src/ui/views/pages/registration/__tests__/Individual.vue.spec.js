@@ -1,5 +1,4 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { PersonalInformation } from '@/entities/beneficiary';
 import { mockStorage } from '@/store/storage';
 import Component from '../Individual.vue';
 
@@ -21,8 +20,9 @@ describe('Individual.vue', () => {
         },
       });
     });
+
     describe('currentTab', () => {
-      test('returns current tab from store', async () => {
+      it('returns current tab from store', async () => {
         const tab = { id: 'personalInformation' };
 
         storage.registration.getters.currentTab.mockReturnValueOnce(tab);
@@ -30,8 +30,9 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.currentTab).toEqual(tab);
       });
     });
+
     describe('currentTabIndex', () => {
-      test('returns current tab index from store', async () => {
+      it('returns current tab index from store', async () => {
         const index = 1;
 
         storage.registration.getters.currentTabIndex.mockReturnValueOnce(index);
@@ -39,8 +40,9 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.currentTabIndex).toEqual(index);
       });
     });
+
     describe('allTabs', () => {
-      test('returns all tabs from store', async () => {
+      it('returns all tabs from store', async () => {
         const tabs = [{ id: 'personalInformation' }];
 
         storage.registration.getters.tabs.mockReturnValueOnce(tabs);
@@ -48,15 +50,17 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.allTabs).toEqual(tabs);
       });
     });
+
     describe('previousTab', () => {
-      test('returns title of previous tab', async () => {
+      it('returns title of previous tab', async () => {
         storage.registration.getters.previousTabName.mockReturnValueOnce('test');
 
         expect(wrapper.vm.previousTabName).toEqual('test');
       });
     });
+
     describe('nextTab', () => {
-      test('returns title of next tab', async () => {
+      it('returns title of next tab', async () => {
         storage.registration.getters.nextTabName.mockReturnValueOnce('test');
 
         expect(wrapper.vm.nextTabName).toEqual('test');
@@ -71,6 +75,7 @@ describe('Individual.vue', () => {
         stubs: ['i18n'],
       });
     });
+
     describe('Event handlers', () => {
       test('Click back button triggers method', async () => {
         wrapper.vm.back = jest.fn();
@@ -81,6 +86,7 @@ describe('Individual.vue', () => {
 
         expect(wrapper.vm.back).toHaveBeenCalledTimes(1);
       });
+
       test('Click next button triggers method', async () => {
         wrapper.vm.next = jest.fn();
 
@@ -102,8 +108,9 @@ describe('Individual.vue', () => {
         },
       });
     });
+
     describe('jump', () => {
-      test('jump calls mutateStateTab', async () => {
+      it('calls mutateStateTab', async () => {
         wrapper.vm.$refs.form = {
           validate: jest.fn(() => true),
         };
@@ -116,6 +123,7 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(toIndex);
       });
     });
+
     describe('back', () => {
       test('back calls jump', async () => {
         wrapper.vm.jump = jest.fn();
@@ -125,8 +133,9 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.jump).toHaveBeenCalledWith(1);
       });
     });
+
     describe('next', () => {
-      test('next calls jump', async () => {
+      it('calls jump', async () => {
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.next();
@@ -134,18 +143,9 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
       });
     });
-    describe('updateEntity', () => {
-      test('updateEntity sets entity value', async () => {
-        const propertyName = 'personalInformation';
-        const value = new PersonalInformation();
 
-        wrapper.vm.updateEntity(propertyName, value);
-
-        expect(wrapper.vm.beneficiary[propertyName]).toEqual(value);
-      });
-    });
     describe('mutateStateTab', () => {
-      test('mutateStateTab calls mutation', async () => {
+      it('calls mutation', async () => {
         wrapper.vm.mutateStateTab(true);
 
         expect(wrapper.vm.$storage.registration.mutations.mutateCurrentTab).toHaveBeenCalledTimes(1);
