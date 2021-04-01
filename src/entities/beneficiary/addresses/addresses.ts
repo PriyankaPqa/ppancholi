@@ -1,7 +1,9 @@
 import { ECanadaProvinces } from '@/types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
-import { ETemporaryAddressTypes, IAddresses, IGeoLocation } from './addresses.types';
-import { required, maxLengthCheck } from '../../commonValidation';
+import {
+  ETemporaryAddressTypes, IAddresses, IAddressesData, IGeoLocation,
+} from './addresses.types';
+import { required, maxLengthCheck, isValidCanadianPostalCode } from '../../commonValidation';
 
 export class Addresses implements IAddresses {
   noFixedHome: boolean;
@@ -22,9 +24,19 @@ export class Addresses implements IAddresses {
 
   geoLocation: IGeoLocation;
 
-  constructor(data?: unknown) {
+  constructor(data?: IAddressesData) {
     if (!data) {
       this.reset();
+    } else {
+      this.noFixedHome = data.noFixedHome;
+      this.country = data.country;
+      this.street = data.street;
+      this.unitSuite = data.unitSuite;
+      this.provinceTerritory = data.provinceTerritory;
+      this.city = data.city;
+      this.postalCode = data.postalCode;
+      this.temporaryAddressType = data.temporaryAddressType;
+      this.geoLocation = data.geoLocation;
     }
   }
 
@@ -47,7 +59,7 @@ export class Addresses implements IAddresses {
       required(this.postalCode, 'postalCode is required', errors);
 
       if (this.country === 'CA') {
-        this.isValidCanadianPostalCode(this.postalCode, 'postalCode is not valid', errors);
+        isValidCanadianPostalCode(this.postalCode, 'postalCode is not valid', errors);
       }
     }
 
@@ -66,13 +78,5 @@ export class Addresses implements IAddresses {
     this.postalCode = null;
     this.temporaryAddressType = null;
     this.geoLocation = { lat: null, lng: null };
-  }
-
-  isValidCanadianPostalCode(value: string, errorMsg: string, errors: string[]): void {
-    if (!value) return;
-
-    // eslint-disable-next-line
-    const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
-    if (!regex.test(value)) errors.push(errorMsg);
   }
 }

@@ -1,7 +1,8 @@
 import { ECanadaProvinces } from '@/types';
-import { ETemporaryAddressTypes, IAddresses } from './addresses.types';
+import { Addresses } from './addresses';
+import { ETemporaryAddressTypes, IAddresses, IAddressesData } from './addresses.types';
 
-export const mockAddresses = (): IAddresses => ({
+export const mockAddressesData = (): IAddressesData => ({
   noFixedHome: false,
   country: 'CA',
   street: '247 Some Street',
@@ -13,5 +14,6 @@ export const mockAddresses = (): IAddresses => ({
     lat: '',
     lng: '',
   },
-  validate: null,
 });
+
+export const mockAddresses = (): IAddresses => new Addresses(mockAddressesData());

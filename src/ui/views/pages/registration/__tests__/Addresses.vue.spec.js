@@ -47,6 +47,7 @@ describe('Addresses.vue', () => {
 
       it('returns the full list of temporary addresses types without remaining home if noFixedHome is true', async () => {
         wrapper.vm.form.noFixedHome = true;
+
         const list = utils.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
         const filtered = list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
         expect(wrapper.vm.temporaryAddressTypeItems).toEqual(filtered);
@@ -95,6 +96,7 @@ describe('Addresses.vue', () => {
           canadianPostalCode: true,
         });
         wrapper.vm.form.country = 'FR';
+
         expect(wrapper.vm.rules.postalCode).toEqual({
           required: true,
           max: MAX_LENGTH_MD,

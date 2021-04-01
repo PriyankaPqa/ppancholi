@@ -1,6 +1,6 @@
 import { i18n } from '@/ui/plugins';
 import moment from 'moment';
-import { IBirthDate } from './beneficiary/personalInformation/personalInformation.types';
+import { IBirthDate } from './beneficiary/person/person.types';
 
 export default {
 

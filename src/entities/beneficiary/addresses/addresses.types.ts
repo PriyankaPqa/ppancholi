@@ -19,8 +19,7 @@ export interface IGeoLocation {
     lng: string,
 }
 
-export interface IAddresses extends IEntity {
-
+export interface IAddressesData {
     noFixedHome: boolean;
 
     country: string;
@@ -38,4 +37,8 @@ export interface IAddresses extends IEntity {
     temporaryAddressType: ETemporaryAddressTypes;
 
     geoLocation: IGeoLocation;
+}
+
+export interface IAddresses extends IAddressesData, IEntity {
+
 }

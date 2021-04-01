@@ -93,8 +93,9 @@ import {
   VSelectWithValidation, VTextFieldWithValidation, RcPhoneWithValidation,
 } from '@crctech/component-library';
 import {
-  IOptionItemData, IPersonalInformation,
-} from '@/entities/beneficiary';
+  IOptionItemData,
+} from '@/types';
+import { IContactInformation, IPerson } from '@/entities/beneficiary';
 
 import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
 import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
@@ -127,8 +128,8 @@ export default Vue.extend({
 
   computed: {
 
-    personalInformation(): IPersonalInformation {
-      return this.$storage.beneficiary.getters.beneficiary().personalInformation;
+    personalInformation(): IContactInformation & IPerson {
+      return this.$storage.beneficiary.getters.personalInformation();
     },
 
     rules(): Record<string, unknown> {
@@ -188,7 +189,7 @@ export default Vue.extend({
   watch: {
     form: {
       deep: true,
-      handler(form: IPersonalInformation) {
+      handler(form: IContactInformation & IPerson) {
         this.$storage.beneficiary.mutations.setPersonalInformation(form);
       },
     },

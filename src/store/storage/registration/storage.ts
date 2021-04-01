@@ -1,8 +1,9 @@
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import { IEvent } from '@/entities/event';
 import { IStore } from '@/store/store.types';
-import { IOptionItemData, IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
+import { IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
 import { TranslateResult } from 'vue-i18n';
+import { IOptionItemData } from '@/types';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({

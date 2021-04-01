@@ -3,12 +3,14 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import utils from '@/entities/utils';
 import { ECanadaProvinces } from '@/types';
 import {
+  mockContactInformation,
+  mockPerson,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
-  mockPersonalInformation,
 } from '@/entities/beneficiary';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
+import _merge from 'lodash/merge';
 import Component from './IndigenousIdentityForm.vue';
 
 const localVue = createLocalVue();
@@ -21,7 +23,7 @@ describe('IndigenousIdentityForm.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        form: mockPersonalInformation(),
+        form: _merge(mockContactInformation(), mockPerson()),
       },
       mocks: {
         $storage: storage,
@@ -105,7 +107,7 @@ describe('IndigenousIdentityForm.vue', () => {
           loadingIndigenousIdentities() { return false; },
         },
         propsData: {
-          form: mockPersonalInformation(),
+          form: _merge(mockContactInformation(), mockPerson()),
         },
         mocks: {
           $storage: storage,

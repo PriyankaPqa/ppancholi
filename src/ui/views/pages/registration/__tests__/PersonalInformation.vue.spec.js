@@ -1,6 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
-  mockPersonalInformation,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '@/entities/beneficiary';
@@ -19,11 +18,6 @@ describe('PersonalInformation.vue', () => {
       localVue,
       mocks: {
         $storage: storage,
-      },
-      computed: {
-        personalInformation() {
-          return mockPersonalInformation();
-        },
       },
     });
   });

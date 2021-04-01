@@ -1,6 +1,6 @@
 import {
   mockGenders,
-  mockIndigenousIdentities,
+  mockIndigenousIdentitiesSearchData,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '@/entities/beneficiary';
@@ -10,5 +10,5 @@ export const mockBeneficiariesService = (): IBeneficiariesServiceMock => ({
   getGenders: jest.fn(() => mockGenders()),
   getPreferredLanguages: jest.fn(() => mockPreferredLanguages()),
   getPrimarySpokenLanguages: jest.fn(() => mockPrimarySpokenLanguages()),
-  searchIndigenousIdentities: jest.fn(() => mockIndigenousIdentities()),
+  searchIndigenousIdentities: jest.fn(() => mockIndigenousIdentitiesSearchData()),
 });

@@ -2,16 +2,17 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import {
   mockGenders,
-  mockPersonalInformation,
+  mockContactInformation, mockPerson,
 } from '@/entities/beneficiary';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM, MIN_AGE_REGISTRATION } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
+import _merge from 'lodash/merge';
 import Component from './IdentityForm.vue';
 
-const mockPersonalInformationModified = mockPersonalInformation();
-mockPersonalInformationModified.birthDate.year = '1999';
-mockPersonalInformationModified.birthDate.day = '12';
-mockPersonalInformationModified.birthDate.month = '2';
+const mockPersonModified = mockPerson();
+mockPersonModified.birthDate.year = '1999';
+mockPersonModified.birthDate.day = '12';
+mockPersonModified.birthDate.month = '2';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -23,7 +24,7 @@ describe('IdentityForm.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        form: mockPersonalInformationModified,
+        form: _merge(mockContactInformation(), mockPersonModified),
       },
       mocks: {
         $storage: storage,
@@ -135,7 +136,7 @@ describe('IdentityForm.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          form: mockPersonalInformationModified,
+          form: _merge(mockContactInformation(), mockPersonModified),
         },
       });
     });

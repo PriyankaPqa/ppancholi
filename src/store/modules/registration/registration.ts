@@ -1,10 +1,10 @@
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
-import { ILeftMenuItem } from '@/types';
+import { ILeftMenuItem, IOptionItemData } from '@/types';
 import { IRootState } from '@/store/store.types';
 import { IEvent, Event } from '@/entities/event';
-import { IOptionItemData, IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
+import { IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
 import _sortBy from 'lodash/sortBy';
 import { EOptionItemStatus } from '@/constants/EOptionItemStatus';
 import { i18n } from '@/ui/plugins';

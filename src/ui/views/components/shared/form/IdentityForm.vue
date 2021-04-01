@@ -95,7 +95,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM, MIN_AGE_REGISTRATION } from '@/constants/validations';
-import { IBirthDate, IOptionItemData } from '@/entities/beneficiary';
+import { IBirthDate } from '@/entities/beneficiary';
+import { IOptionItemData } from '@/types';
 import months from '@/constants/months';
 import { VSelectWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
 

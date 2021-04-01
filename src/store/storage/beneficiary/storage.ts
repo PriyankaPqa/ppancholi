@@ -1,5 +1,5 @@
 import { IStore } from '@/store/store.types';
-import { IAddresses, IPersonalInformation } from '@/entities/beneficiary';
+import { IAddresses, IContactInformation, IPerson } from '@/entities/beneficiary';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
@@ -7,9 +7,13 @@ export const makeStorage = (store: IStore): IStorage => ({
     beneficiary() {
       return store.getters['beneficiary/beneficiary'];
     },
+
+    personalInformation() {
+      return store.getters['beneficiary/personalInformation'];
+    },
   },
   mutations: {
-    setPersonalInformation(payload: IPersonalInformation) {
+    setPersonalInformation(payload: IContactInformation & IPerson) {
       store.commit('beneficiary/setPersonalInformation', payload);
     },
 

@@ -5,7 +5,7 @@ import { ILeftMenuItem } from '@/types';
 import {
   mockGenders,
   mockIndigenousCommunitiesItems,
-  mockIndigenousIdentities,
+  mockIndigenousIdentitiesSearchData,
   mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
@@ -92,14 +92,14 @@ describe('>>> Registration Module', () => {
 
     describe('indigenousTypesItems', () => {
       it('returns indigenousTypesItems', () => {
-        store.state.registration.indigenousIdentities = mockIndigenousIdentities().value;
+        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesSearchData().value;
         expect(store.getters['registration/indigenousTypesItems']).toEqual(mockIndigenousTypesItems());
       });
     });
 
     describe('indigenousCommunitiesItems', () => {
       it('returns indigenousCommunitiesItems', () => {
-        store.state.registration.indigenousIdentities = mockIndigenousIdentities().value;
+        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesSearchData().value;
         expect(store.getters['registration/indigenousCommunitiesItems']('FirstNations')).toEqual(mockIndigenousCommunitiesItems());
       });
     });
@@ -278,7 +278,7 @@ describe('>>> Registration Module', () => {
 
         await store.dispatch('registration/fetchIndigenousIdentitiesByProvince');
 
-        expect(store.state.registration.indigenousIdentities).toEqual(mockIndigenousIdentities().value);
+        expect(store.state.registration.indigenousIdentities).toEqual(mockIndigenousIdentitiesSearchData().value);
       });
     });
   });

@@ -1,10 +1,12 @@
+import { IPerson } from '@/entities/beneficiary/person';
 import { IBeneficiary, IBeneficiaryData } from './beneficiary.types';
 import { IAddresses } from './addresses/addresses.types';
-import { IPersonalInformation } from './personalInformation/personalInformation.types';
+import { IContactInformation } from './contactInformation/contactInformation.types';
 import { IHouseholdMembers } from './householdMembers/householdMembers.types.';
 import { Addresses } from './addresses/addresses';
-import { PersonalInformation } from './personalInformation/personalInformation';
+import { ContactInformation } from './contactInformation/contactInformation';
 import { HouseholdMembers } from './householdMembers/householdMembers';
+import { Person } from './person/person';
 
 export class Beneficiary implements IBeneficiary {
   constructor(data?: IBeneficiaryData) {
@@ -13,14 +15,17 @@ export class Beneficiary implements IBeneficiary {
     }
   }
 
-  personalInformation: IPersonalInformation;
+  person: IPerson;
+
+  contactInformation: IContactInformation;
 
   addresses: IAddresses;
 
   householdMembers: IHouseholdMembers;
 
   reset() {
-    this.personalInformation = new PersonalInformation();
+    this.person = new Person();
+    this.contactInformation = new ContactInformation();
     this.addresses = new Addresses();
     this.householdMembers = new HouseholdMembers();
   }

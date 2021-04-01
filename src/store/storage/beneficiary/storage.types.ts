@@ -1,12 +1,15 @@
-import { Beneficiary, IAddresses, IPersonalInformation } from '@/entities/beneficiary';
+import {
+  Beneficiary, IAddresses, IContactInformation, IPerson,
+} from '@/entities/beneficiary';
 
 export interface IStorage {
   getters: {
     beneficiary(): Beneficiary,
+    personalInformation(): IContactInformation & IPerson,
   };
 
   mutations: {
-    setPersonalInformation(payload: IPersonalInformation): void;
+    setPersonalInformation(payload: IContactInformation & IPerson): void;
     setAddresses(payload: IAddresses): void;
   };
 
@@ -18,6 +21,7 @@ export interface IStorage {
 export interface IStorageMock {
   getters: {
     beneficiary: jest.Mock<void>;
+    personalInformation: jest.Mock<IContactInformation & IPerson>;
   };
 
   mutations: {

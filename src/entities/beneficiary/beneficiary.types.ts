@@ -1,7 +1,8 @@
 import { IEntity } from '@/types';
-import { IPersonalInformation } from './personalInformation/personalInformation.types';
-import { IAddresses } from './addresses/addresses.types';
-import { IHouseholdMembers } from './householdMembers/householdMembers.types.';
+import { IPersonData, IPerson } from '@/entities/beneficiary/person';
+import { IContactInformation, IContactInformationData } from './contactInformation/contactInformation.types';
+import { IAddresses, IAddressesData } from './addresses/addresses.types';
+import { IHouseholdMembers, IHouseholdMembersData } from './householdMembers/householdMembers.types.';
 
 /**
  * Enums
@@ -20,13 +21,15 @@ import { IHouseholdMembers } from './householdMembers/householdMembers.types.';
  */
 
 export interface IBeneficiaryData {
-  personalInformation: IPersonalInformation;
-  addresses: IAddresses;
-  householdMembers: IHouseholdMembers;
+  person: IPersonData
+  contactInformation: IContactInformationData;
+  addresses: IAddressesData;
+  householdMembers: IHouseholdMembersData;
 }
 
 export interface IBeneficiary extends IEntity {
-  personalInformation: IPersonalInformation;
+  person: IPerson
+  contactInformation: IContactInformation;
   addresses: IAddresses;
   householdMembers: IHouseholdMembers;
 }

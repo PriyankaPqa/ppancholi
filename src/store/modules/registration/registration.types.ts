@@ -1,9 +1,10 @@
 import {
   IIndigenousIdentityData,
-  IOptionItemData,
 } from '@/entities/beneficiary';
 import { IEventData } from '@/entities/event';
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
+
+import { IOptionItemData } from '@/types';
 
 export type IState = {
   event: IEventData;

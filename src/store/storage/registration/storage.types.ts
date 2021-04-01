@@ -1,7 +1,9 @@
-import { IOptionItemData, IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
+import { IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
 import { IEvent } from '@/entities/event';
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import { TranslateResult } from 'vue-i18n';
+
+import { IOptionItemData } from '@/types';
 
 export interface IStorage {
   getters: {

@@ -1,3 +1,7 @@
 import { IEntity } from '@/types';
 
-export interface IHouseholdMembers extends IEntity {}
+export interface IHouseholdMembersData {
+
+}
+
+export interface IHouseholdMembers extends IHouseholdMembersData, IEntity {}

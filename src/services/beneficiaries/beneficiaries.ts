@@ -1,6 +1,6 @@
 import { IHttpClient } from '@/services/httpClient';
-import { IOptionItemData, IIndigenousIdentityData } from '@/entities/beneficiary';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IIndigenousIdentityData } from '@/entities/beneficiary';
+import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '@/types';
 import { IBeneficiariesService } from './beneficiaries.types';
 
 export class BeneficiariesService implements IBeneficiariesService {

@@ -1,5 +1,6 @@
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces } from '@/types';
+import { mockAddressesData } from '@/entities/beneficiary';
 import { Addresses } from './addresses';
 import { ETemporaryAddressTypes } from './addresses.types';
 
@@ -8,9 +9,23 @@ const longSmallText = 'y'.repeat(MAX_LENGTH_SM + 1);
 
 describe('>>> Addresses', () => {
   describe('>> constructor', () => {
-    it('should instantiate country', () => {
-      const p = new Addresses();
-      expect(p.country).not.toBeNull();
+    it('should initialize data if passed', () => {
+      const a = new Addresses(mockAddressesData());
+      expect(a).toEqual(mockAddressesData());
+    });
+
+    it('should reset if not data pass', () => {
+      const a = new Addresses();
+
+      expect(a.noFixedHome).toEqual(null);
+      expect(a.country).toEqual('CA');
+      expect(a.street).toEqual(null);
+      expect(a.unitSuite).toEqual(null);
+      expect(a.provinceTerritory).toEqual(null);
+      expect(a.city).toEqual(null);
+      expect(a.postalCode).toEqual(null);
+      expect(a.temporaryAddressType).toEqual(null);
+      expect(a.geoLocation).toEqual({ lat: null, lng: null });
     });
   });
 

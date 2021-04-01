@@ -1,7 +1,5 @@
-import {
-  IOptionItemData, IIndigenousIdentityData,
-} from '@/entities/beneficiary';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IIndigenousIdentityData } from '@/entities/beneficiary';
+import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '@/types';
 
 export interface IBeneficiariesService {
   getGenders(): Promise<IOptionItemData[]>;

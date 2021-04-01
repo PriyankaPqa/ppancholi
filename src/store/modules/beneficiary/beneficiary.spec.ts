@@ -2,7 +2,8 @@ import { Store } from 'vuex';
 
 import { mockStore, IRootState } from '@/store';
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockAddresses, mockPersonalInformation } from '@/entities/beneficiary';
+import { mockAddresses, mockContactInformation, mockPerson } from '@/entities/beneficiary';
+import _merge from 'lodash/merge';
 
 describe('>>> Team Module', () => {
   let store: Store<IRootState>;
@@ -17,14 +18,28 @@ describe('>>> Team Module', () => {
         expect(store.getters['beneficiary/beneficiary']).toEqual(_cloneDeep(store.state.beneficiary.beneficiary));
       });
     });
+    describe('personalInformation', () => {
+      it('returns a aggregation of contact information and person', () => {
+        const expected = _merge(
+          _cloneDeep(store.state.beneficiary.beneficiary.contactInformation),
+          _cloneDeep(store.state.beneficiary.beneficiary.person),
+        );
+
+        expect(store.getters['beneficiary/personalInformation']).toEqual(expected);
+      });
+    });
   });
 
   describe('>> Mutations', () => {
     describe('setPersonalInformation', () => {
-      it('sets personal information of the beneficiary', () => {
+      it('sets both person and contact information of a beneficiary', () => {
         store = mockStore();
-        store.commit('beneficiary/setPersonalInformation', mockPersonalInformation());
-        expect(store.state.beneficiary.beneficiary.personalInformation).toEqual(mockPersonalInformation());
+        const payload = _merge(mockContactInformation(), mockPerson());
+
+        store.commit('beneficiary/setPersonalInformation', payload);
+
+        expect(store.state.beneficiary.beneficiary.contactInformation).toEqual(mockContactInformation());
+        expect(store.state.beneficiary.beneficiary.person).toEqual(mockPerson());
       });
     });
 

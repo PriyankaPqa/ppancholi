@@ -1,10 +1,11 @@
+import { mockPerson } from '@/entities/beneficiary/person';
 import { mockAddresses } from './addresses/addresses.mock';
-import { IBeneficiary } from './beneficiary.types';
-import { mockPersonalInformation } from './personalInformation/personalInformation.mock';
+import { IBeneficiaryData } from './beneficiary.types';
+import { mockContactInformation } from './contactInformation/contactInformation.mock';
 
-export const mockBeneficiary = (): IBeneficiary => ({
-  personalInformation: mockPersonalInformation(),
+export const mockBeneficiary = (): IBeneficiaryData => ({
+  person: mockPerson(),
+  contactInformation: mockContactInformation(),
   addresses: mockAddresses(),
   householdMembers: null,
-  validate: null,
 });
