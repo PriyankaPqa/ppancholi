@@ -118,11 +118,11 @@ const actions = {
   },
 
   async fetchEvent(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<IEvent> {
-    // const event = context.state.events.find((event) => event.id === id); { disable caching until signalR events are implemented
+    const event = context.state.events.find((event) => event.id === id);
 
-    // if (event) {
-    //   return event;
-    // }
+    if (event) {
+      return event;
+    }
 
     try {
       context.commit('setGetLoading', true);
@@ -172,9 +172,14 @@ const actions = {
       context.commit('setSearchLoading', true);
       const res = await this.$services.events.searchEvents(params);
       const data = res?.value;
+
+      const value = data.map((e: IEventSearchData) => new Event(e));
+
+      value.forEach((e) => context.commit('addOrUpdateEvent', e));
+
       return {
         ...res,
-        value: data.map((el: IEventSearchData) => (new Event(el))),
+        value,
       };
     } finally {
       context.commit('setSearchLoading', false);

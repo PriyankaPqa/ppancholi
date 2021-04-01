@@ -210,20 +210,21 @@ describe('>>> Event Module', () => {
         expect(res).toEqual(event);
       });
 
-      // test('if the event already exists in the store, do not call the API', async () => { TODO caching disabled
-      //   const store = mockStore();
-      //   const event = mockEvents()[0];
+      test('if the event already exists in the store, do not call the API', async () => {
+        const store = mockStore();
+        const event = new Event(mockEventsSearchData()[0]);
+        jest.spyOn(store.$services.events, 'searchEvents').mockReturnValueOnce(mockSearchEvents(0));
 
-      //   expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
 
-      //   await store.dispatch('event/fetchEvent', event.id);
+        await store.dispatch('event/fetchEvent', event.id);
 
-      //   expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
 
-      //   await store.dispatch('event/fetchEvent', event.id);
+        await store.dispatch('event/fetchEvent', event.id);
 
-      //   expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
-      // });
+        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('fetchEvents', () => {
