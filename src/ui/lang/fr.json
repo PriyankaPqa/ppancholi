@@ -1,5 +1,6 @@
 {
     "accessibility.skip_to_main_content": "Passer au contenu principal",
+    "app.loading": "Récupération des données",
     "approval_table__copy": "Copier à partir de la bibliothèque de modèles",
     "approval_table__create": "Créer une nouvelle table",
     "approval_template__copy": "Copier un modèle existant",

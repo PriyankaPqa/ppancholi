@@ -1,5 +1,6 @@
 {
     "accessibility.skip_to_main_content": "Skip to main content",
+    "app.loading": "Fetching data",
     "approval_table__copy": "Copy from template library",
     "approval_table__create": "Create new table",
     "approval_template__copy": "Copy an existing template",

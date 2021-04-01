@@ -71,6 +71,7 @@ export const routes: Array<RouteConfig> = [
         store.dispatch('appUser/fetchAppUsers'),
         store.dispatch('user/fetchUserAccount'),
       ]);
+      store.commit('appUser/setLoading', false);
       Trans.routeMiddleware(to, from, next);
     },
     children: [

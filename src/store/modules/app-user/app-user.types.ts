@@ -7,4 +7,5 @@ export type IState = {
   allUsersFetched: boolean;
   appUsersFetched: boolean;
   rolesFetched: boolean;
+  loading: boolean;
 };

@@ -38,7 +38,7 @@ export type Aggregate = string | { [propertyName: string]: { with: StandardAggre
 
 export type OrderByOptions<T> = keyof T | [ keyof T, 'asc' | 'desc' ];
 export type ExpandOptions<T> = {
-  select: Select<T>;
+  select: Select<T> | string[];
   filter: Filter;
   orderBy: OrderBy<T>;
   top: number;

@@ -152,7 +152,7 @@ import {
   ETeamStatus, ETeamType, Team, ITeamEvent,
 } from '@/entities/team';
 import { IEvent } from '@/entities/event';
-import TeamMembersTable from '@/ui/views/pages/teams/create-edit/TeamMembersTable.vue';
+import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import {
   VTextFieldWithValidation, VAutocompleteWithValidation, RcConfirmationDialog, RcPageContent,
 } from '@crctech/component-library';

@@ -20,6 +20,7 @@ const getDefaultState = (): IState => ({
   allUsersFetched: false,
   appUsersFetched: false,
   rolesFetched: false,
+  loading: true,
 });
 
 const moduleState: IState = getDefaultState();
@@ -83,6 +84,10 @@ const mutations = {
 
   setRolesFetched(state: IState, payload: boolean) {
     state.rolesFetched = payload;
+  },
+
+  setLoading(state: IState, payload: boolean) {
+    state.loading = payload;
   },
 
 };

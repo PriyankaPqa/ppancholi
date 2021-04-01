@@ -79,7 +79,7 @@
 import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
 import { ETeamType, ITeamEvent, Team } from '@/entities/team';
-import TeamMembersTable from '@/ui/views/pages/teams/create-edit/TeamMembersTable.vue';
+import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 

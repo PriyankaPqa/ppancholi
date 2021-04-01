@@ -36,7 +36,11 @@
         <v-icon v-if="item.isPrimaryContact" data-test="primary_icon" size="18" color="red">
           mdi-account
         </v-icon>
-        <span data-test="member_name">
+        <span
+          class="rc-link14 font-weight-bold"
+          data-test="member_name"
+          @keydown.enter="viewMemberDetails(item)"
+          @click="viewMemberDetails(item)">
           {{ item.displayName }}
         </span>
       </template>
@@ -85,6 +89,8 @@
       :team-members="team.teamMembers"
       :show.sync="showAddTeamMemberDialog" />
 
+    <team-member-teams v-if="showMemberDialog" :show.sync="showMemberDialog" :member="clickedMember" />
+
     <rc-confirmation-dialog
       v-if="showRemoveMemberConfirmationDialog"
       data-test="removeTeamMember_confirmDialog"
@@ -107,13 +113,16 @@ import helpers from '@/ui/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { RcConfirmationDialog, RcPhoneDisplay } from '@crctech/component-library';
 import { IAppUserData } from '@/entities/app-user';
+import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
 
 export default Vue.extend({
   name: 'TeamMembersTable',
+
   components: {
     AddTeamMembers,
     RcConfirmationDialog,
     RcPhoneDisplay,
+    TeamMemberTeams,
   },
 
   props: {
@@ -147,6 +156,7 @@ export default Vue.extend({
       default: false,
     },
   },
+
   data() {
     return {
       sortDesc: false,
@@ -165,6 +175,8 @@ export default Vue.extend({
         'inactiveCaseFilesCount',
         'role',
       ],
+      showMemberDialog: false,
+      clickedMember: null,
     };
   },
 
@@ -198,6 +210,7 @@ export default Vue.extend({
           filterable: false,
           sortable: false,
           value: 'role',
+          width: '100px',
         },
         {
           text: this.$t('teams.teams') as string,
@@ -213,7 +226,6 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'caseFilesCount',
-          width: '110px',
         },
         {
           text: this.$t('teams.count_file.open') as string,
@@ -221,7 +233,6 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'openCaseFilesCount',
-          width: '100px',
         },
         {
           text: this.$t('teams.count_file.inactive') as string,
@@ -229,7 +240,6 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'inactiveCaseFilesCount',
-          width: '100px',
         },
         {
           text: '',
@@ -260,6 +270,7 @@ export default Vue.extend({
     },
 
   },
+
   methods: {
     showRemoveConfirmationDialog(id: string) {
       this.removeMemberId = id;
@@ -288,6 +299,10 @@ export default Vue.extend({
       return this.$hasLevel('level4');
     },
 
+    async viewMemberDetails(member: ITeamMember) {
+      this.showMemberDialog = true;
+      this.clickedMember = member;
+    },
   },
 });
 

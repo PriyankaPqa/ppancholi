@@ -1,7 +1,17 @@
 <template>
   <!-- App.vue -->
   <v-app>
-    <rc-router-view-transition />
+    <div v-if="isLoading" class="loading_container">
+      <div>
+        <div :class="`${$i18n.locale === 'en' ? 'logoEn' : 'logoFr'}`" />
+
+        <span class="mt-8 mb-4">
+          {{ $t('app.loading') }}
+        </span>
+        <v-progress-circular color="primary" indeterminate />
+      </div>
+    </div>
+    <rc-router-view-transition v-else />
   </v-app>
 </template>
 
@@ -11,9 +21,11 @@ import { localStorageKeys } from '@/constants/localStorage';
 
 export default {
   name: 'App',
+
   components: {
     RcRouterViewTransition,
   },
+
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
@@ -25,6 +37,7 @@ export default {
       ],
     };
   },
+
   data() {
     return {
       cspContent: '',
@@ -69,6 +82,13 @@ export default {
         data: content:;`,
     };
   },
+
+  computed: {
+    isLoading() {
+      return this.$store.state.appUser.loading;
+    },
+  },
+
   async created() {
     if (process.env.NODE_ENV === 'development') {
       this.cspContent = this.cspContentDev;
@@ -83,3 +103,53 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+
+.loading_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  & > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+$url-logo: "../../public/img/logo.png";
+$url-rc-en-logo: "../../public/img/logos/rc/rc-en.svg";
+$url-rc-fr-logo: "../../public/img/logos/rc/rc-fr.svg";
+
+.logoEn {
+  background-size: cover;
+  background-image: url($url-rc-en-logo);
+}
+
+.logoFr {
+  background-size: cover;
+  background-image: url($url-rc-fr-logo);
+}
+
+@media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
+  .logoEn, .logoFr {
+    background-image: url($url-logo);
+    width: 40px;
+    height: 40px;
+  }
+}
+@media only screen and (min-width: $breakpoint-sm-min) and (max-width: $breakpoint-md-max) {
+  .logoEn, .logoFr {
+    width: 133px;
+    height: 48px;
+  }
+}
+@media only screen and (min-width: $breakpoint-lg-min) {
+  .logoEn, .logoFr {
+    width:  160px;
+    height: 64px;
+  }
+}
+</style>
