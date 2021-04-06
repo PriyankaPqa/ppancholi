@@ -1,6 +1,9 @@
 import { ECanadaProvinces, IAzureSearchResult, IOptionItemData } from '@/types';
 import { TranslateResult } from 'vue-i18n';
-import { IPerson, IIndigenousIdentityData, IPersonData } from './person.types';
+import { mockCampGround } from '../temporary-address';
+import {
+  IIndigenousIdentityData, IPerson, IPersonData,
+} from './person.types';
 import { Person } from './person';
 
 export const mockGenders = (): IOptionItemData[] => [
@@ -46,6 +49,7 @@ export const mockPersonData = (): IPersonData => ({
   indigenousType: null,
   indigenousCommunityId: null,
   indigenousCommunityOther: '',
+  temporaryAddress: mockCampGround(),
 });
 
 export const mockPerson = (): IPerson => new Person(mockPersonData());

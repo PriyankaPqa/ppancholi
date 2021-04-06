@@ -10,7 +10,7 @@ import {
 
 import {
   required, maxLengthCheck, isPhone, isEmail, hasPhoneOrEmail,
-} from '../../commonValidation';
+} from '../../classValidation';
 
 export class ContactInformation implements IContactInformation {
   mobilePhone?: IPhoneNumber;

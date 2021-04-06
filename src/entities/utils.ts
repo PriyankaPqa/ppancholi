@@ -1,6 +1,6 @@
 import { i18n } from '@/ui/plugins';
 import moment from 'moment';
-import { IBirthDate } from './beneficiary/person/person.types';
+import { IBirthDate } from './value-objects/person/person.types';
 
 export default {
 
@@ -30,5 +30,13 @@ export default {
       month: typeof month === 'number' ? month - 1 : 0,
       day,
     });
+  },
+
+  isValidCanadianPostalCode(value: string, errorMsg: string, errors: string[]): void {
+    if (!value) return;
+
+    // eslint-disable-next-line
+    const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
+    if (!regex.test(value)) errors.push(errorMsg);
   },
 };

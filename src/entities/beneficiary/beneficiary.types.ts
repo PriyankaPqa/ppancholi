@@ -1,35 +1,19 @@
 import { IEntity } from '@/types';
-import { IPersonData, IPerson } from '@/entities/beneficiary/person';
-import { IContactInformation, IContactInformationData } from './contactInformation/contactInformation.types';
-import { IAddresses, IAddressesData } from './addresses/addresses.types';
-import { IHouseholdMembers, IHouseholdMembersData } from './householdMembers/householdMembers.types.';
-
-/**
- * Enums
- */
-
-/**
- * Value objects
- */
-
-/**
- * Interface that maps to the response structure from the API
- */
-
-/**
- * Interface used for the entity class
- */
+import { IPersonData, IPerson } from '@/entities/value-objects/person';
+import { IContactInformation, IContactInformationData } from '../value-objects/contact-information/contactInformation.types';
+import { IAddress, IAddressData } from '../value-objects/address/address.types';
+import { IHouseholdMembers, IHouseholdMembersData } from '../value-objects/household-members/householdMembers.types';
 
 export interface IBeneficiaryData {
   person: IPersonData
   contactInformation: IContactInformationData;
-  addresses: IAddressesData;
+  homeAddress: IAddressData;
   householdMembers: IHouseholdMembersData;
 }
 
 export interface IBeneficiary extends IEntity {
   person: IPerson
   contactInformation: IContactInformation;
-  addresses: IAddresses;
+  homeAddress: IAddress;
   householdMembers: IHouseholdMembers;
 }

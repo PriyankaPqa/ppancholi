@@ -1,4 +1,4 @@
-import { IHouseholdMembers } from './householdMembers.types.';
+import { IHouseholdMembers } from './householdMembers.types';
 
 export class HouseholdMembers implements IHouseholdMembers {
   constructor(data?: unknown) {

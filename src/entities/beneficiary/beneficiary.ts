@@ -1,36 +1,44 @@
-import { IPerson } from '@/entities/beneficiary/person';
+import { IPerson } from '@/entities/value-objects/person';
 import { IBeneficiary, IBeneficiaryData } from './beneficiary.types';
-import { IAddresses } from './addresses/addresses.types';
-import { IContactInformation } from './contactInformation/contactInformation.types';
-import { IHouseholdMembers } from './householdMembers/householdMembers.types.';
-import { Addresses } from './addresses/addresses';
-import { ContactInformation } from './contactInformation/contactInformation';
-import { HouseholdMembers } from './householdMembers/householdMembers';
-import { Person } from './person/person';
+import { IAddress, Address } from '../value-objects/address';
+import { IContactInformation, ContactInformation } from '../value-objects/contact-information';
+import { IHouseholdMembers, HouseholdMembers } from '../value-objects/household-members';
+
+import { Person } from '../value-objects/person/person';
 
 export class Beneficiary implements IBeneficiary {
-  constructor(data?: IBeneficiaryData) {
-    if (!data) {
-      this.reset();
-    }
-  }
-
   person: IPerson;
 
   contactInformation: IContactInformation;
 
-  addresses: IAddresses;
+  homeAddress: IAddress
 
   householdMembers: IHouseholdMembers;
+
+  constructor(data?: IBeneficiaryData) {
+    if (!data) {
+      this.reset();
+    } else {
+      this.person = new Person(data.person);
+      this.contactInformation = new ContactInformation(data.contactInformation);
+      this.homeAddress = new Address(data.homeAddress);
+      this.householdMembers = new HouseholdMembers(data.householdMembers);
+    }
+  }
 
   reset() {
     this.person = new Person();
     this.contactInformation = new ContactInformation();
-    this.addresses = new Addresses();
+    this.homeAddress = new Address();
     this.householdMembers = new HouseholdMembers();
   }
 
   validate(): string[] {
-    throw new Error('Method not implemented.');
+    const personErrors = this.person.validate();
+    const contactInformationErrors = this.contactInformation.validate();
+    const homeAddressErrors = this.homeAddress.validate();
+    const householdMembersErrors = this.householdMembers.validate();
+
+    return [...personErrors, ...contactInformationErrors, ...homeAddressErrors, ...householdMembersErrors];
   }
 }

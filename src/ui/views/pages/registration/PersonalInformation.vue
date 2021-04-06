@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row no-gutters>
     <identity-form :form="form" />
 
     <v-row>

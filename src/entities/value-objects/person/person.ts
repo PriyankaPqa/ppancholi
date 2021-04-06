@@ -2,7 +2,9 @@ import { ECanadaProvinces, IOptionItemData } from '@/types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import {
   maxLengthCheck, required, isValidBirthday, hasMinimumAge,
-} from '@/entities/commonValidation';
+} from '@/entities/classValidation';
+import { TemporaryAddress, ITemporaryAddress } from '../temporary-address';
+
 import {
   IPerson, IBirthDate, EIndigenousTypes, IPersonData,
 } from './person.types';
@@ -30,6 +32,8 @@ export class Person implements IPerson {
 
     indigenousCommunityOther: string;
 
+    temporaryAddress: ITemporaryAddress
+
     constructor(data?: IPersonData) {
       if (!data) {
         this.reset();
@@ -45,12 +49,21 @@ export class Person implements IPerson {
         this.indigenousType = data.indigenousType;
         this.indigenousCommunityId = data.indigenousCommunityId;
         this.indigenousCommunityOther = data.indigenousCommunityOther;
+        this.temporaryAddress = new TemporaryAddress(data.temporaryAddress);
       }
     }
 
     validate(): string[] {
       const errors: string[] = [];
 
+      this.validateIdentity(errors);
+
+      const temporaryAddressErrors = this.validateTemporaryAddress();
+
+      return [...errors, ...temporaryAddressErrors];
+    }
+
+    validateIdentity(errors: Array<string>) {
       required(this.firstName, 'first name is required', errors);
       maxLengthCheck(this.firstName, MAX_LENGTH_SM, 'first name', errors);
 
@@ -82,19 +95,28 @@ export class Person implements IPerson {
         required(this.indigenousCommunityOther, 'indigenousCommunityOther is required', errors);
         maxLengthCheck(this.indigenousCommunityOther, MAX_LENGTH_MD, 'indigenousCommunityOther', errors);
       }
-      return errors;
+    }
+
+    validateTemporaryAddress(): Array<string> {
+      return this.temporaryAddress.validate();
     }
 
     reset(): void {
+      this.firstName = '';
+      this.middleName = '';
+      this.lastName = '';
+      this.preferredName = '';
+      this.gender = null;
+      this.genderOther = '';
       this.birthDate = {
         year: null,
         month: null,
         day: null,
       };
-      this.gender = null;
       this.indigenousProvince = null;
       this.indigenousType = null;
       this.indigenousCommunityId = null;
       this.indigenousCommunityOther = null;
+      this.temporaryAddress = new TemporaryAddress();
     }
 }

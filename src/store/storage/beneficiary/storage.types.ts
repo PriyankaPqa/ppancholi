@@ -1,5 +1,5 @@
 import {
-  Beneficiary, IAddresses, IContactInformation, IPerson,
+  Beneficiary, ETemporaryAddressTypes, IAddress, IBeneficiary, IContactInformation, IPerson,
 } from '@/entities/beneficiary';
 
 export interface IStorage {
@@ -10,7 +10,10 @@ export interface IStorage {
 
   mutations: {
     setPersonalInformation(payload: IContactInformation & IPerson): void;
-    setAddresses(payload: IAddresses): void;
+    setHomeAddress(payload: IAddress): void;
+    setTemporaryAddress(payload: IAddress): void;
+    setNoFixedHome(payload: boolean): void;
+    resetTemporaryAddress(type: ETemporaryAddressTypes): void;
   };
 
   actions: {
@@ -20,13 +23,16 @@ export interface IStorage {
 
 export interface IStorageMock {
   getters: {
-    beneficiary: jest.Mock<void>;
+    beneficiary: jest.Mock<IBeneficiary>;
     personalInformation: jest.Mock<IContactInformation & IPerson>;
   };
 
   mutations: {
     setPersonalInformation: jest.Mock<void>;
-    setAddresses: jest.Mock<void>;
+    setHomeAddress: jest.Mock<void>;
+    setTemporaryAddress: jest.Mock<void>;
+    setNoFixedHome: jest.Mock<void>;
+    resetTemporaryAddress: jest.Mock<void>;
   };
 
   actions: {

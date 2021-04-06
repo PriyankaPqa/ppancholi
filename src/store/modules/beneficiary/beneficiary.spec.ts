@@ -2,7 +2,13 @@ import { Store } from 'vuex';
 
 import { mockStore, IRootState } from '@/store';
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockAddresses, mockContactInformation, mockPerson } from '@/entities/beneficiary';
+import {
+  ETemporaryAddressTypes,
+  mockAddress,
+  mockContactInformation,
+  mockPerson,
+  TemporaryAddress,
+} from '@/entities/beneficiary';
 import _merge from 'lodash/merge';
 
 describe('>>> Team Module', () => {
@@ -18,6 +24,7 @@ describe('>>> Team Module', () => {
         expect(store.getters['beneficiary/beneficiary']).toEqual(_cloneDeep(store.state.beneficiary.beneficiary));
       });
     });
+
     describe('personalInformation', () => {
       it('returns a aggregation of contact information and person', () => {
         const expected = _merge(
@@ -43,11 +50,37 @@ describe('>>> Team Module', () => {
       });
     });
 
-    describe('setAddresses', () => {
-      it('sets addresses of the beneficiary', () => {
+    describe('setHomeAddress', () => {
+      it('sets home address of the beneficiary', () => {
         store = mockStore();
-        store.commit('beneficiary/setAddresses', mockAddresses());
-        expect(store.state.beneficiary.beneficiary.addresses).toEqual(mockAddresses());
+        store.commit('beneficiary/setHomeAddress', mockAddress());
+        expect(store.state.beneficiary.beneficiary.homeAddress).toEqual(mockAddress());
+      });
+    });
+
+    describe('setTemporaryAddress', () => {
+      it('sets temporary address of the beneficiary', () => {
+        store = mockStore();
+        store.commit('beneficiary/setTemporaryAddress', mockAddress());
+        expect(store.state.beneficiary.beneficiary.person.temporaryAddress).toEqual(mockAddress());
+      });
+    });
+
+    describe('setNoFixedHome', () => {
+      it('sets noFixedHome', () => {
+        store = mockStore();
+        store.commit('beneficiary/setNoFixedHome', true);
+        expect(store.state.beneficiary.noFixedHome).toEqual(true);
+      });
+    });
+
+    describe('resetTemporaryAddress', () => {
+      it('resets temporary address of the beneficiary with passed type', () => {
+        store = mockStore();
+        store.commit('beneficiary/resetTemporaryAddress', ETemporaryAddressTypes.HotelMotel);
+        const newAddress = new TemporaryAddress();
+        newAddress.temporaryAddressType = ETemporaryAddressTypes.HotelMotel;
+        expect(store.state.beneficiary.beneficiary.person.temporaryAddress).toEqual(newAddress);
       });
     });
   });

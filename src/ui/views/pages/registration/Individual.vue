@@ -2,7 +2,7 @@
   <div class="full-height grey lighten-4">
     <left-menu @jump="jump" />
 
-    <ValidationObserver ref="form" v-slot="{ failed }" style="width: 100%" tag="div">
+    <ValidationObserver ref="form" v-slot="{ failed }" slim>
       <rc-page-content
         :title="$t(currentTab.titleKey)"
         :subtitle="$t('registration.type.individual')"
@@ -10,7 +10,7 @@
         outer-scroll>
         <template slot="default">
           <v-row justify="center" class="mt-12" no-gutters>
-            <v-col cols="12" xl="8" lg="8" md="12" sm="12">
+            <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
               <component :is="currentTab.componentName" />
             </v-col>
           </v-row>

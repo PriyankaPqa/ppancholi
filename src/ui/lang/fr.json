@@ -74,7 +74,7 @@
     "registration.addresses.temporaryAddress": "Adresse temporaire",
     "registration.addresses.temporaryAddressType": "Type d'adresse temporaire",
     "registration.addresses.temporaryAddressTypes.Campground": "Camping",
-    "registration.addresses.temporaryAddressTypes.FriendsFamily": "Amis et famille",
+    "registration.addresses.temporaryAddressTypes.FriendsFamily": "Amis \/ Famille",
     "registration.addresses.temporaryAddressTypes.HotelMotel": "Hôtel\/Motel",
     "registration.addresses.temporaryAddressTypes.MedicalFacility": "Établissement médical",
     "registration.addresses.temporaryAddressTypes.NoFixedAddress": "Sans domicile fixe",

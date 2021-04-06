@@ -1,7 +1,8 @@
 import { mockStore } from '@/store';
-import { mockAddresses, mockContactInformation, mockPerson } from '@/entities/beneficiary';
+import {
+  ETemporaryAddressTypes, mockAddress, mockContactInformation, mockPerson,
+} from '@/entities/beneficiary';
 import _merge from 'lodash/merge';
-import _cloneDeep from 'lodash/cloneDeep';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });
@@ -30,10 +31,26 @@ describe('>>> Registration Storage', () => {
       expect(store.commit).toBeCalledWith('beneficiary/setPersonalInformation', payload);
     });
 
-    it('should proxy setAddresses', () => {
-      const payload = mockAddresses();
-      storage.mutations.setAddresses(payload);
-      expect(store.commit).toBeCalledWith('beneficiary/setAddresses', payload);
+    it('should proxy setHomeAddress', () => {
+      const payload = mockAddress();
+      storage.mutations.setHomeAddress(payload);
+      expect(store.commit).toBeCalledWith('beneficiary/setHomeAddress', payload);
+    });
+
+    it('should proxy setTemporaryAddress', () => {
+      const payload = mockAddress();
+      storage.mutations.setTemporaryAddress(payload);
+      expect(store.commit).toBeCalledWith('beneficiary/setTemporaryAddress', payload);
+    });
+
+    it('should proxy setNoFixedHome', () => {
+      storage.mutations.setNoFixedHome(true);
+      expect(store.commit).toBeCalledWith('beneficiary/setNoFixedHome', true);
+    });
+
+    it('should proxy resetTemporaryAddress', () => {
+      storage.mutations.resetTemporaryAddress(ETemporaryAddressTypes.HotelMotel);
+      expect(store.commit).toBeCalledWith('beneficiary/resetTemporaryAddress', ETemporaryAddressTypes.HotelMotel);
     });
   });
 });

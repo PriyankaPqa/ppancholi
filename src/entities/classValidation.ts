@@ -2,8 +2,8 @@ import PhoneNumber from 'awesome-phonenumber';
 import utils from '@/entities/utils';
 import moment from 'moment';
 import { MIN_AGE_REGISTRATION } from '@/constants/validations';
-import { IBirthDate } from './beneficiary/person/person.types';
-import { IPhoneNumber } from './beneficiary/contactInformation/contactInformation.types';
+import { IBirthDate } from './value-objects/person/person.types';
+import { IPhoneNumber } from './value-objects/contact-information/contactInformation.types';
 
 export const required = (value: unknown, errorMsg: string, errors: string[]) => {
   if (value === undefined || value === null || value === false) {

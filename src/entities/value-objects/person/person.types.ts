@@ -1,4 +1,5 @@
 import { ECanadaProvinces, IOptionItemData, IEntity } from '@/types';
+import { ITemporaryAddress } from '../temporary-address/temporaryAddress.types';
 
 export interface IBirthDate {
     month?: number | string;
@@ -44,6 +45,8 @@ export interface IPersonData {
     indigenousCommunityId: string;
 
     indigenousCommunityOther: string;
+
+    temporaryAddress: ITemporaryAddress
 }
 
 export interface IPerson extends IPersonData, IEntity {}

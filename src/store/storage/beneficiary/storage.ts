@@ -1,5 +1,8 @@
 import { IStore } from '@/store/store.types';
-import { IAddresses, IContactInformation, IPerson } from '@/entities/beneficiary';
+import {
+  ETemporaryAddressTypes,
+  IAddress, IContactInformation, IPerson, ITemporaryAddress,
+} from '@/entities/beneficiary';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
@@ -17,8 +20,20 @@ export const makeStorage = (store: IStore): IStorage => ({
       store.commit('beneficiary/setPersonalInformation', payload);
     },
 
-    setAddresses(payload: IAddresses) {
-      store.commit('beneficiary/setAddresses', payload);
+    setHomeAddress(payload: IAddress) {
+      store.commit('beneficiary/setHomeAddress', payload);
+    },
+
+    setTemporaryAddress(payload: ITemporaryAddress) {
+      store.commit('beneficiary/setTemporaryAddress', payload);
+    },
+
+    resetTemporaryAddress(type: ETemporaryAddressTypes) {
+      store.commit('beneficiary/resetTemporaryAddress', type);
+    },
+
+    setNoFixedHome(payload: boolean) {
+      store.commit('beneficiary/setNoFixedHome', payload);
     },
   },
 

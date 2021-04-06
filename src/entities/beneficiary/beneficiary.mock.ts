@@ -1,11 +1,14 @@
-import { mockPerson } from '@/entities/beneficiary/person';
-import { mockAddresses } from './addresses/addresses.mock';
-import { IBeneficiaryData } from './beneficiary.types';
-import { mockContactInformation } from './contactInformation/contactInformation.mock';
+import { mockPersonData } from '@/entities/value-objects/person';
+import { Beneficiary } from './beneficiary';
+import { mockAddressData } from '../value-objects/address/address.mock';
+import { IBeneficiaryData, IBeneficiary } from './beneficiary.types';
+import { mockContactInformationData } from '../value-objects/contact-information/contactInformation.mock';
 
-export const mockBeneficiary = (): IBeneficiaryData => ({
-  person: mockPerson(),
-  contactInformation: mockContactInformation(),
-  addresses: mockAddresses(),
+export const mockBeneficiaryData = (): IBeneficiaryData => ({
+  person: mockPersonData(),
+  contactInformation: mockContactInformationData(),
+  homeAddress: mockAddressData(),
   householdMembers: null,
 });
+
+export const mockBeneficiary = (): IBeneficiary => new Beneficiary(mockBeneficiaryData());

@@ -1,7 +1,8 @@
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces } from '@/types';
-import { EIndigenousTypes } from '@/entities/beneficiary';
+import { TemporaryAddress } from '../temporary-address';
 import { mockPerson } from './person.mock';
+import { EIndigenousTypes } from './person.types';
 import { Person } from './person';
 
 const longText = 'x'.repeat(MAX_LENGTH_MD + 1);
@@ -13,6 +14,26 @@ describe('>>> Person', () => {
     it('should initialize data if passed', () => {
       const p = new Person(mockPerson());
       expect(p).toEqual(mockPerson());
+    });
+
+    it('should reset if not data pass', () => {
+      const p = new Person();
+      expect(p.firstName).toEqual('');
+      expect(p.middleName).toEqual('');
+      expect(p.lastName).toEqual('');
+      expect(p.preferredName).toEqual('');
+      expect(p.gender).toEqual(null);
+      expect(p.genderOther).toEqual('');
+      expect(p.birthDate).toEqual({
+        year: null,
+        month: null,
+        day: null,
+      });
+      expect(p.indigenousProvince).toEqual(null);
+      expect(p.indigenousType).toEqual(null);
+      expect(p.indigenousCommunityId).toEqual(null);
+      expect(p.indigenousCommunityOther).toEqual(null);
+      expect(p.temporaryAddress).toEqual(new TemporaryAddress());
     });
   });
 
