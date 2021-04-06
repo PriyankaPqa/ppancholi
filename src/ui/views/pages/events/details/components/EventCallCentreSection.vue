@@ -22,16 +22,16 @@
       </v-row>
 
       <v-row>
-        <v-col cols="12" xl="1" lg="2" md="3" sm="12" class="d-flex py-0 rc-body12 call-centre-date">
+        <v-col cols="12" xl="2" lg="2" md="3" sm="12" class="d-flex py-0 rc-body12 flex-column">
           <span class="pr-2">{{ $t(infoData.startDate.key) }}:</span>
           <span data-test="event-call-centre-section-start-date">{{ infoData.startDate.value }}</span>
         </v-col>
-        <v-col cols="12" xl="1" lg="2" md="3" sm="12" class="d-flex py-0 rc-body12 call-centre-date border-right">
+        <v-col cols="12" xl="2" lg="2" md="3" sm="12" class="d-flex py-0 rc-body12 flex-column border-right">
           <span class="pr-2">{{ $t(infoData.endDate.key) }}:</span>
           <span data-test="event-call-centre-section-end-date">{{ infoData.endDate.value }}</span>
         </v-col>
 
-        <v-col cols="12" xl="10" lg="8" md="6" sm="12" class="py-0 pr-16 pl-lg-8 pl-md-3 rc-body12">
+        <v-col cols="12" xl="8" lg="8" md="6" sm="12" class="py-0 pr-16 pl-lg-8 pl-md-3 rc-body12">
           <div>
             {{ $t(infoData.details.key) }}:
           </div>
@@ -132,10 +132,6 @@ export default Vue.extend({
 }
 
 @media (min-width: $breakpoint-md-min)  {
-  .call-centre-date{
-    flex-direction:column ;
-
-  }
    .border-right {
       border-right: 1px solid var(--v-grey-lighten2);
     }

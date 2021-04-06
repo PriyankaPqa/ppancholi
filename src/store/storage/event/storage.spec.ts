@@ -1,5 +1,5 @@
 import {
-  Event, IEventCallCentre, IEventGenericLocation, mockEventsSearchData,
+  Event, IEventAgreementInfos, IEventCallCentre, IEventGenericLocation, mockEventsSearchData,
 } from '@/entities/event';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
@@ -10,6 +10,10 @@ const storage = makeStorage(store);
 
 describe('>>> Event Storage', () => {
   describe('>> Getters', () => {
+    it('should proxy agreementTypes', () => {
+      expect(storage.getters.eventTypes()).toEqual(store.getters['event/agreementTypes']);
+    });
+
     it('should proxy eventTypes', () => {
       expect(storage.getters.eventTypes()).toEqual(store.getters['event/eventTypes']);
     });
@@ -28,6 +32,11 @@ describe('>>> Event Storage', () => {
   });
 
   describe('>> Actions', () => {
+    it('should proxy fetchAgreementTypes', () => {
+      storage.actions.fetchAgreementTypes();
+      expect(store.dispatch).toBeCalledWith('event/fetchAgreementTypes');
+    });
+
     it('should proxy fetchEventTypes', () => {
       storage.actions.fetchEventTypes();
       expect(store.dispatch).toBeCalledWith('event/fetchEventTypes');
@@ -85,6 +94,29 @@ describe('>>> Event Storage', () => {
       const payload = { originalCallCentre: callCentre1, updatedCallCentre: callCentre2 };
       storage.actions.editCallCentre({ eventId: event.id, payload });
       expect(store.dispatch).toHaveBeenCalledWith('event/editCallCentre', { eventId: event.id, payload });
+    });
+
+    it('should proxy addAgreement', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      const agreement = event.agreements[0];
+      storage.actions.addAgreement({ eventId: event.id, payload: agreement });
+      expect(store.dispatch).toHaveBeenCalledWith('event/addAgreement', { eventId: event.id, payload: agreement });
+    });
+
+    it('should proxy editAgreement', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      const agreement1 = event.agreements[0];
+      const agreement2 = { ...agreement1, startDate: null } as IEventAgreementInfos;
+      const payload = { originalAgreement: agreement1, updatedAgreement: agreement2 };
+      storage.actions.editAgreement({ eventId: event.id, payload });
+      expect(store.dispatch).toHaveBeenCalledWith('event/editAgreement', { eventId: event.id, payload });
+    });
+
+    it('should proxy deleteAgreement', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      const agreement = event.agreements[0];
+      storage.actions.deleteAgreement({ eventId: event.id, payload: agreement });
+      expect(store.dispatch).toHaveBeenCalledWith('event/deleteAgreement', { eventId: event.id, payload: agreement });
     });
 
     it('should proxy addRegistrationLocation', () => {

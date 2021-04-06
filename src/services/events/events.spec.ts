@@ -1,5 +1,5 @@
 import {
-  Event, EEventStatus, mockEventsSearchData, IEventCallCentre, IEventGenericLocation,
+  Event, EEventStatus, mockEventsSearchData, IEventAgreementInfos, IEventCallCentre, IEventGenericLocation,
 } from '@/entities/event';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
@@ -38,7 +38,7 @@ describe('>>> Events Service', () => {
       },
       eventType: {
         optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
-        specifiedOther: '',
+        specifiedOther: null,
       },
       province: 11,
       provinceOther: {
@@ -89,7 +89,7 @@ describe('>>> Events Service', () => {
       },
       eventType: {
         optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
-        specifiedOther: '',
+        specifiedOther: null,
       },
       province: 11,
       provinceOther: {
@@ -132,13 +132,85 @@ describe('>>> Events Service', () => {
     await service.addCallCentre(id, callCentre);
     expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/call-centres`, expect.anything());
   });
-  test('addCallCentre is linked to the correct URL', async () => {
+
+  test('editCallCentre is linked to the correct URL', async () => {
     const event = new Event(mockEventsSearchData()[0]);
     const callCentre1 = event.callCentres[0];
     const callCentre2 = { ...event.callCentres[0], startDate: null } as IEventCallCentre;
     const { id } = event;
     await service.editCallCentre(id, { originalCallCentre: callCentre1, updatedCallCentre: callCentre2 });
     expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/call-centres/edit`, expect.anything());
+  });
+
+  test('addAgreement calls the correct URL with the right payload ', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const agreement = event.agreements[0];
+    const { id } = event;
+    await service.addAgreement(id, agreement);
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/agreement`, {
+      name: agreement.name,
+      details: agreement.details,
+      startDate: new Date(agreement.startDate).toISOString(),
+      endDate: null,
+      agreementType: {
+        optionItemId: agreement.agreementType.optionItemId,
+        specifiedOther: agreement.agreementType.specifiedOther,
+      },
+    });
+  });
+
+  test('editAgreement is linked to the correct URL', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const agreement1 = event.agreements[0];
+    const agreement2 = {
+      ...event.agreements[0],
+      startDate: null,
+      agreementType: {
+        optionItemId: '2',
+        specifiedOther: '',
+      },
+    } as IEventAgreementInfos;
+    const { id } = event;
+    await service.editAgreement(id, { originalAgreement: agreement1, updatedAgreement: agreement2 });
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/agreement/edit`, {
+      originalAgreement: {
+        name: agreement1.name,
+        details: agreement1.details,
+        startDate: new Date(agreement1.startDate).toISOString(),
+        endDate: null,
+        agreementType: {
+          optionItemId: agreement1.agreementType.optionItemId,
+          specifiedOther: agreement1.agreementType.specifiedOther,
+        },
+      },
+      updatedAgreement: {
+        name: agreement2.name,
+        details: agreement2.details,
+        startDate: null,
+        endDate: null,
+        agreementType: {
+          optionItemId: agreement2.agreementType.optionItemId,
+          specifiedOther: null,
+        },
+      },
+    });
+  });
+
+  test('removeAgreement calls the correct URL with the right payload', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const agreement = event.agreements[0];
+    const { id } = event;
+    await service.removeAgreement(id, agreement);
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/agreement/remove`, {
+      name: agreement.name,
+      details: agreement.details,
+      startDate: new Date(agreement.startDate).toISOString(),
+      endDate: null,
+      agreementType: {
+        optionItemId: agreement.agreementType.optionItemId,
+        specifiedOther: agreement.agreementType.specifiedOther,
+      },
+    });
   });
 
   test('addRegistrationLocation is linked to the correct URL', async () => {

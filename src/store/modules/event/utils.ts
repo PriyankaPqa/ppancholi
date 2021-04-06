@@ -1,16 +1,40 @@
 import { ActionContext } from 'vuex';
 import {
   EEventStatus,
-  EResponseLevel, IEvent, IEventData, IEventLocation, IEventSearchData, IRelatedEventsInfos,
+  EResponseLevel,
+  IEvent,
+  IEventData,
+  IEventLocation,
+  IEventSearchData,
+  IRelatedEventsInfos,
+  IEventAgreement,
+  IEventAgreementInfos,
 } from '@/entities/event';
-import { IOptionItemData } from '@/entities/optionItem';
+import { IOptionItem } from '@/entities/optionItem';
 import { ECanadaProvinces, IListOption, IMultilingual } from '@/types';
 import helpers from '@/ui/helpers';
 import utils from '@/entities/utils';
 import { IRootState } from '../../store.types';
 import { IState } from './event.types';
 
-const getEventTypeName = (eventType: IListOption, eventTypes: IOptionItemData[]): IMultilingual => {
+const getAgreementsInfos = (agreements: IEventAgreement[], agreementTypes: IOptionItem[])
+: IEventAgreementInfos[] => agreements.map((agreement) => {
+  const agreementTypeData = agreementTypes.find((t) => t.id === agreement.agreementType.optionItemId);
+  let agreementTypeName;
+  if (!agreementTypeData) agreementTypeName = null;
+  if (agreementTypeData.isOther && agreement.agreementType.specifiedOther) {
+    agreementTypeName = helpers.fillAllTranslationsFromI18n(agreement.agreementType.specifiedOther, false);
+  } else {
+    agreementTypeName = agreementTypeData.name;
+  }
+
+  return {
+    ...agreement,
+    agreementTypeName,
+  };
+});
+
+const getEventTypeName = (eventType: IListOption, eventTypes: IOptionItem[]): IMultilingual => {
   const eventTypeData = eventTypes.find((t) => t.id === eventType.optionItemId);
 
   if (!eventTypeData) return null;
@@ -58,6 +82,7 @@ const getRelatedEventsInfos = (eventsIds: Array<uuid>, allEvents: IEvent[]):Arra
 };
 
 export const mapEventDataToSearchData = (eventData: IEventData, context: ActionContext<IState, IRootState>) : IEventSearchData => ({
+  agreements: getAgreementsInfos(eventData.agreements, context.state.agreementTypes),
   createdDate: eventData.created,
   eventName: utils.initMultilingualAttributes(eventData.name),
   eventDescription: utils.initMultilingualAttributes(eventData.description),

@@ -14,6 +14,7 @@ import {
   IEventSchedule,
   IEventSearchData,
   IRelatedEventsInfos,
+  IEventAgreementInfos,
 } from './event.types';
 
 export class Event implements IEvent {
@@ -52,6 +53,8 @@ export class Event implements IEvent {
   selfRegistrationEnabled: boolean;
 
   callCentres: Array<IEventCallCentre>;
+
+  agreements: Array<IEventAgreementInfos>;
 
   registrationLocations: Array<IEventGenericLocation>;
 
@@ -128,6 +131,15 @@ export class Event implements IEvent {
         endDate: centre.endDate ? new Date(centre.endDate) : null,
         details: utils.initMultilingualAttributes(centre.details),
       }));
+      this.agreements = data.agreements.map((agreement) => ({
+        ...agreement,
+        name: utils.initMultilingualAttributes(agreement.name),
+        startDate: agreement.startDate ? new Date(agreement.startDate) : null,
+        endDate: agreement.endDate ? new Date(agreement.endDate) : null,
+        details: utils.initMultilingualAttributes(agreement.details),
+        agreementType: { ...agreement.agreementType },
+        agreementTypeName: utils.initMultilingualAttributes(agreement.agreementTypeName),
+      }));
     } else {
       this.reset();
     }
@@ -167,6 +179,7 @@ export class Event implements IEvent {
     };
     this.scheduleEventStatusName = utils.initMultilingualAttributes();
     this.callCentres = [];
+    this.agreements = [];
     this.registrationLocations = [];
   }
 

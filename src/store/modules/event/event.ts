@@ -10,6 +10,7 @@ import {
 import {
   Event,
   IEvent,
+  IEventAgreement,
   IEventCallCentre,
   IEventGenericLocation,
   IEventSearchData,
@@ -17,6 +18,7 @@ import {
   IRegion,
   IUpdateCallCentrePayload,
   EEventStatus,
+  IUpdateAgreementPayload,
   IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
@@ -26,8 +28,10 @@ import { IState } from './event.types';
 import { mapEventDataToSearchData } from './utils';
 
 const getDefaultState = (): IState => ({
+  agreementTypes: [],
   eventTypes: [],
   events: [],
+  agreementTypesFetched: false,
   eventTypesFetched: false,
   eventsFetched: false,
   getLoading: false,
@@ -37,6 +41,11 @@ const getDefaultState = (): IState => ({
 const moduleState: IState = getDefaultState();
 
 const getters = {
+  agreementTypes: (state: IState) => (
+    _sortBy(state.agreementTypes.map((e) => new OptionItem(e)), 'orderRank')
+      .filter((i) => i.status === EOptionListItemStatus.Active)
+  ),
+
   eventTypes: (state: IState) => (
     _sortBy(state.eventTypes.map((e) => new OptionItem(e)), 'orderRank')
       .filter((i) => i.status === EOptionListItemStatus.Active)
@@ -60,6 +69,10 @@ const getters = {
 };
 
 const mutations = {
+  setAgreementTypes(state: IState, payload: Array<IOptionItemData>) {
+    state.agreementTypes = payload;
+  },
+
   setEventTypes(state: IState, payload: Array<IOptionItemData>) {
     state.eventTypes = payload;
   },
@@ -80,6 +93,10 @@ const mutations = {
     } else {
       state.events.push(payload);
     }
+  },
+
+  setAgreementTypesFetched(state: IState, payload: boolean) {
+    state.agreementTypesFetched = payload;
   },
 
   setEventTypesFetched(state: IState, payload: boolean) {
@@ -108,6 +125,15 @@ const mutations = {
 };
 
 const actions = {
+  async fetchAgreementTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
+    // if (!context.state.agreementTypesFetched) { disable caching until signalR events are implemented
+    const data = await this.$services.optionItems.getOptionList(EOptionLists.AgreementTypes);
+    context.commit('setAgreementTypes', data);
+    context.commit('setAgreementTypesFetched', true);
+
+    return context.getters.agreementTypes;
+  },
+
   async fetchEventTypes(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
     // if (!context.state.eventTypesFetched) { disable caching until signalR events are implemented
     const data = await this.$services.optionItems.getOptionList(EOptionLists.EventTypes);
@@ -226,6 +252,45 @@ const actions = {
   ): Promise<IEvent> {
     const data = await this.$services.events.editCallCentre(eventId, payload);
 
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
+  },
+
+  async addAgreement(
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventAgreement},
+  )
+    : Promise<IEvent> {
+    const data = await this.$services.events.addAgreement(eventId, payload);
+
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
+  },
+
+  async editAgreement(
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IUpdateAgreementPayload},
+  ): Promise<IEvent> {
+    const data = await this.$services.events.editAgreement(eventId, payload);
+
+    if (data) {
+      const event = new Event(mapEventDataToSearchData(data, context));
+      context.commit('addOrUpdateEvent', event);
+      return event;
+    }
+    return null;
+  },
+
+  async deleteAgreement(
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventAgreement},
+  ): Promise<IEvent> {
+    const data = await this.$services.events.removeAgreement(eventId, payload);
     if (data) {
       const event = new Event(mapEventDataToSearchData(data, context));
       context.commit('addOrUpdateEvent', event);

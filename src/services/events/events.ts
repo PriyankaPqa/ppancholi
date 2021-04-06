@@ -3,12 +3,15 @@ import {
   ICreateEventRequest,
   IEditEventRequest,
   IEvent,
+  IEventAgreement,
+  IEventAgreementInfos,
   IEventCallCentre,
   IEventData,
   IEventGenericLocation,
   IEventSearchData,
   IOtherProvince,
   IRegion,
+  IUpdateAgreementPayload,
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
@@ -54,6 +57,22 @@ export class EventsService implements IEventsService {
     return this.http.post(`/event/events/${eventId}/call-centres/edit`, payload);
   }
 
+  async addAgreement(eventId:uuid, payload: IEventAgreementInfos): Promise<IEventData> {
+    return this.http.post(`/event/events/${eventId}/agreement`, this.agreementInfoToAgreementPayload(payload));
+  }
+
+  async editAgreement(eventId:uuid, payload: IUpdateAgreementPayload): Promise<IEventData> {
+    const mappedPayload = {
+      updatedAgreement: this.agreementInfoToAgreementPayload(payload.updatedAgreement),
+      originalAgreement: this.agreementInfoToAgreementPayload(payload.originalAgreement),
+    };
+    return this.http.post(`/event/events/${eventId}/agreement/edit`, mappedPayload);
+  }
+
+  async removeAgreement(eventId:uuid, payload: IEventAgreementInfos): Promise<IEventData> {
+    return this.http.post(`/event/events/${eventId}/agreement/remove`, this.agreementInfoToAgreementPayload(payload));
+  }
+
   async addRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventData> {
     return this.http.post(`/event/events/${eventId}/registration-location`, payload);
   }
@@ -70,7 +89,7 @@ export class EventsService implements IEventsService {
       name: event.name,
       eventType: {
         optionItemId: event.responseDetails.eventType.optionItemId,
-        specifiedOther: event.responseDetails.eventType.specifiedOther,
+        specifiedOther: event.responseDetails.eventType.specifiedOther || null,
       },
       province: event.location.province,
       provinceOther: event.location.provinceOther,
@@ -90,6 +109,19 @@ export class EventsService implements IEventsService {
       ...this.eventToCreateEventRequestPayload(event),
       reOpenReason: event.schedule.reOpenReason,
       selfRegistrationEnabled: event.selfRegistrationEnabled,
+    };
+  }
+
+  private agreementInfoToAgreementPayload(agreementInfo: IEventAgreementInfos): IEventAgreement {
+    return {
+      name: agreementInfo.name,
+      details: agreementInfo.details,
+      startDate: agreementInfo.startDate ? new Date(agreementInfo.startDate).toISOString() : null,
+      endDate: agreementInfo.endDate ? new Date(agreementInfo.endDate).toISOString() : null,
+      agreementType: {
+        ...agreementInfo.agreementType,
+        specifiedOther: agreementInfo.agreementType.specifiedOther || null,
+      },
     };
   }
 }

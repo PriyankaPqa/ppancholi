@@ -2,6 +2,7 @@ import { IStorageMock } from './storage.types';
 
 export const mockStorageEvent = () : IStorageMock => ({
   getters: {
+    agreementTypes: jest.fn(),
     eventTypes: jest.fn(),
     events: jest.fn(),
     openEvents: jest.fn(),
@@ -9,6 +10,7 @@ export const mockStorageEvent = () : IStorageMock => ({
   },
 
   actions: {
+    fetchAgreementTypes: jest.fn(),
     fetchEventTypes: jest.fn(),
     fetchEvent: jest.fn(),
     fetchEvents: jest.fn(),
@@ -18,6 +20,9 @@ export const mockStorageEvent = () : IStorageMock => ({
     updateEvent: jest.fn(),
     addCallCentre: jest.fn(),
     editCallCentre: jest.fn(),
+    addAgreement: jest.fn(),
+    editAgreement: jest.fn(),
+    deleteAgreement: jest.fn(),
     addRegistrationLocation: jest.fn(),
     editRegistrationLocation: jest.fn(),
     toggleSelfRegistration: jest.fn(),

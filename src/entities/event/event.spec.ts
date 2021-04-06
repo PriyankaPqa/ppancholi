@@ -60,6 +60,36 @@ describe('>>> User', () => {
       }]);
     });
 
+    it('should instantiate agreements', () => {
+      const event = new Event(mockEventData);
+      expect(event.agreements).toEqual([{
+        name: {
+          translation: {
+            en: 'agreement 1',
+            fr: 'agreement 1 fr',
+          },
+        },
+        startDate: new Date('2021-03-01T00:00:00Z'),
+        endDate: null,
+        agreementType: {
+          optionItemId: '1',
+          specifiedOther: 'abc',
+        },
+        agreementTypeName: {
+          translation: {
+            en: 'agreement type 1',
+            fr: 'agreement type 1 fr',
+          },
+        },
+        details: {
+          translation: {
+            en: 'agreement 1 details',
+            fr: 'agreement 1  details fr',
+          },
+        },
+      }]);
+    });
+
     it('should instantiate registration locations', () => {
       const event = new Event(mockEventData);
       expect(event.registrationLocations).toEqual([{

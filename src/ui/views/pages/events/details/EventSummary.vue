@@ -73,6 +73,19 @@
       <event-summary-section-title
         :section="EEventSummarySections.Agreement"
         @click-add-button="onSectionAdd($event)" />
+      <div>
+        <div
+          v-for="agreement in sortedAgreements"
+          :key="agreement.name.translation.en"
+          class="justify-end mx-2 my-0 pa-4 pb-6 event-section-item">
+          <event-agreement-section
+            data-test="agreement-section"
+            :agreement="agreement"
+            :agreement-types="agreementTypes"
+            :event-id="event.id"
+            @edit="editSection($event, EEventSummarySections.Agreement)" />
+        </div>
+      </div>
 
       <event-status-dialog
         v-if="showEventStatusDialog && newStatus"
@@ -88,6 +101,7 @@
       :id="currentDialog.id"
       :event.sync="event"
       :is-edit-mode="currentDialog.isEditMode"
+      :agreement-types="agreementTypes"
       @close="currentDialog = null" />
   </rc-page-content>
 </template>
@@ -100,22 +114,25 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 import {
-  EEventStatus, IEvent, Event, IEventCallCentre,
+  EEventStatus, IEvent, Event, IEventCallCentre, IEventAgreement,
 } from '@/entities/event';
 import { EEventSummarySections } from '@/types';
+import { IOptionItem } from '@/entities/optionItem';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventStatusDialog from './components/EventStatusDialog.vue';
 import EventCallCentreDialog from './components/EventCallCentreDialog.vue';
-import EventRegistrationLocationDialog from './components/EventRegistrationLocationDialog.vue';
+import EventAgreementDialog from './components/EventAgreementDialog.vue';
 import EventCallCentreSection from './components/EventCallCentreSection.vue';
+import EventAgreementSection from './components/EventAgreementSection.vue';
+import EventRegistrationLocationDialog from './components/EventRegistrationLocationDialog.vue';
 import EventLocationSection from './components/EventLocationSection.vue';
 
 export enum EDialogComponent {
   CallCentre = 'EventCallCentreDialog',
   RegistrationLocation = 'EventRegistrationLocationDialog',
   ShelterLocation = 'EventCallCentreDialog',
-  Agreement = 'EventCallCentreDialog',
+  Agreement = 'EventAgreementDialog',
 }
 
 interface DialogData {
@@ -135,6 +152,8 @@ export default Vue.extend({
     EventCallCentreDialog,
     EventRegistrationLocationDialog,
     EventCallCentreSection,
+    EventAgreementSection,
+    EventAgreementDialog,
     EventLocationSection,
   },
 
@@ -152,9 +171,17 @@ export default Vue.extend({
   },
 
   computed: {
+    agreementTypes(): Array<IOptionItem> {
+      return this.$storage.event.getters.agreementTypes();
+    },
+
     event(): IEvent {
       const { id } = this.$route.params;
       return this.$storage.event.getters.eventById(id) || new Event();
+    },
+
+    sortedAgreements():Array<IEventAgreement> {
+      return helpers.sortMultilingualArray(this.event.agreements, 'name');
     },
 
     sortedCallCentres(): Array<IEventCallCentre> {
@@ -168,6 +195,7 @@ export default Vue.extend({
       if (id) {
         await this.$storage.event.actions.fetchEvent(id);
       }
+      await this.$storage.event.actions.fetchAgreementTypes();
     } catch {
       this.error = true;
     }
@@ -249,5 +277,4 @@ export default Vue.extend({
       border-bottom: 1px solid var(--v-grey-lighten2)  !important;
     }
   }
-
 </style>

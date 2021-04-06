@@ -5,7 +5,7 @@ import {
   OptionItem, mockOptionItemData, EOptionListItemStatus, EOptionLists,
 } from '@/entities/optionItem';
 import {
-  Event, IEvent, IEventCallCentre, IEventGenericLocation, mockEventsSearchData, mockSearchEvents,
+  Event, IEvent, IEventAgreement, IEventCallCentre, IEventGenericLocation, mockEventsSearchData, mockSearchEvents,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
@@ -22,9 +22,11 @@ describe('>>> Event Module', () => {
       modules: {
         event: {
           state: {
+            agreementTypes: mockOptionItemData(),
             eventTypes: mockOptionItemData(),
             events: mockEvents(),
             searchLoading: false,
+            agreementTypesFetched: false,
           },
         },
       },
@@ -32,6 +34,16 @@ describe('>>> Event Module', () => {
   });
 
   describe('>> Getters', () => {
+    describe('agreementTypes', () => {
+      it('returns an array of agreementTypes sorted by orderRank and filtered by status', () => {
+        const mockAgreementTypes = mockOptionItemData().map((e) => new OptionItem(e));
+
+        expect(store.getters['event/agreementTypes']).toEqual(
+          _sortBy(mockAgreementTypes, 'orderRank').filter((i) => i.status === EOptionListItemStatus.Active),
+        );
+      });
+    });
+
     describe('eventTypes', () => {
       it('returns an array of EventTypes sorted by orderRank and filtered by status', () => {
         const mockEventTypes = mockOptionItemData().map((e) => new OptionItem(e));
@@ -71,6 +83,17 @@ describe('>>> Event Module', () => {
   });
 
   describe('>> Mutations', () => {
+    describe('setAgreementTypes', () => {
+      it('sets the agreement types array', () => {
+        store = mockStore();
+
+        expect(store.getters['event/agreementTypes']).toEqual([]);
+
+        store.commit('event/setAgreementTypes', mockOptionItemData());
+
+        expect(store.state.event.agreementTypes).toEqual(mockOptionItemData());
+      });
+    });
     describe('setEventTypes', () => {
       it('sets the event types array', () => {
         store = mockStore();
@@ -139,6 +162,16 @@ describe('>>> Event Module', () => {
       });
     });
 
+    describe('setAgreementTypesFetched', () => {
+      test('the setAgreementTypesFetched mutation sets the agreementTypesFetched state', () => {
+        store = mockStore();
+
+        store.commit('event/setAgreementTypesFetched', true);
+
+        expect(store.state.event.agreementTypesFetched).toBeTruthy();
+      });
+    });
+
     describe('setGetLoading', () => {
       test('the setGetLoading mutation sets the getLoading state', () => {
         store = mockStore();
@@ -161,6 +194,22 @@ describe('>>> Event Module', () => {
   });
 
   describe('>> Actions', () => {
+    describe('fetchAgreementTypes', () => {
+      it('calls the getAgreementTypes service and returns the eventTypes getter', async () => {
+        const store = mockStore();
+
+        expect(store.$services.optionItems.getOptionList).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/fetchAgreementTypes');
+
+        expect(store.$services.optionItems.getOptionList).toHaveBeenCalledWith(EOptionLists.AgreementTypes);
+
+        expect(store.state.event.agreementTypes).toEqual(mockOptionItemData());
+
+        expect(res).toEqual(store.getters['event/agreementTypes']);
+      });
+    });
+
     describe('fetchEventTypes', () => {
       it('calls the getEventsTypes service and returns the eventTypes getter', async () => {
         const store = mockStore();
@@ -324,6 +373,68 @@ describe('>>> Event Module', () => {
 
         expect(store.$services.events.editCallCentre).toHaveBeenCalledTimes(1);
         expect(store.$services.events.editCallCentre).toHaveBeenCalledWith(event.id, payload);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
+
+    describe('addAgreement', () => {
+      it('calls the addAgreement service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const agreement = event.agreements[0];
+
+        expect(store.$services.events.addAgreement).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/addAgreement', { eventId: event.id, payload: agreement });
+
+        expect(store.$services.events.addAgreement).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.addAgreement).toHaveBeenCalledWith(event.id, agreement);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
+
+    describe('editAgreement', () => {
+      it('calls the editAgreement service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const agreement1 = event.agreements[0];
+        const agreement2 = { ...agreement1, startDate: null } as IEventAgreement;
+        const payload = { originalAgreement: agreement1, updatedAgreement: agreement2 };
+
+        expect(store.$services.events.editAgreement).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/editAgreement', { eventId: event.id, payload });
+
+        expect(store.$services.events.editAgreement).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.editAgreement).toHaveBeenCalledWith(event.id, payload);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
+
+    describe('deleteAgreement', () => {
+      it('calls the removeAgreement service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const agreement = event.agreements[0];
+
+        expect(store.$services.events.removeAgreement).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/deleteAgreement', { eventId: event.id, payload: agreement });
+
+        expect(store.$services.events.removeAgreement).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.removeAgreement).toHaveBeenCalledWith(event.id, agreement);
 
         expect(res).toEqual(event);
 

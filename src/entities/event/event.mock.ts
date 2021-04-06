@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { ECanadaProvinces, IAzureSearchResult } from '@/types';
 import {
   EEventCallCentreStatus,
@@ -65,6 +66,7 @@ export const mockEventsData = (): IEventData[] => [{
   timestamp: '2021-01-20T15:12:03.4230487Z',
   eTag: '"00004331-0000-0a00-0000-600848430000"',
   callCentres: [],
+  agreements: [],
   registrationLocations: [],
   selfRegistrationEnabled: false,
 }, {
@@ -127,6 +129,7 @@ export const mockEventsData = (): IEventData[] => [{
   timestamp: '2021-01-20T15:45:52.2699289Z',
   eTag: '*',
   callCentres: [],
+  agreements: [],
   registrationLocations: [],
   selfRegistrationEnabled: false,
 }];
@@ -256,6 +259,32 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
         },
       },
     }],
+    agreements: [{
+      name: {
+        translation: {
+          en: 'agreement 1',
+          fr: 'agreement 1 fr',
+        },
+      },
+      startDate: '2021-03-01T00:00:00Z',
+      endDate: null,
+      agreementType: {
+        optionItemId: '1',
+        specifiedOther: 'abc',
+      },
+      agreementTypeName: {
+        translation: {
+          en: 'agreement type 1',
+          fr: 'agreement type 1 fr',
+        },
+      },
+      details: {
+        translation: {
+          en: 'agreement 1 details',
+          fr: 'agreement 1  details fr',
+        },
+      },
+    }],
     registrationLocations: [{
       status: 2,
       name: {
@@ -332,6 +361,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
     },
     tenantId: '7c076603-580a-4400-bef2-5dde28582',
     callCentres: [],
+    agreements: [],
     registrationLocations: [],
   },
 ];

@@ -5,6 +5,7 @@ import { mockStorage } from '@/store/storage';
 import _cloneDeep from 'lodash/cloneDeep';
 import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers';
+import { mockOptionItemData } from '@/entities/optionItem';
 
 import Component, { EDialogComponent } from '../EventSummary.vue';
 
@@ -22,6 +23,9 @@ describe('EventSummary.vue', () => {
         computed: {
           event() {
             return mockEvent;
+          },
+          agreementTypes() {
+            return [];
           },
         },
         mocks: {
@@ -132,6 +136,48 @@ describe('EventSummary.vue', () => {
       });
     });
 
+    describe('agreement section', () => {
+      it('renders when the event has agreements', () => {
+        const element = wrapper.findDataTest('agreement-section');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('calls the method editSection when method edit is emitted', () => {
+        jest.spyOn(wrapper.vm, 'editSection').mockImplementation(() => {});
+        const element = wrapper.findDataTest('agreement-section');
+        element.vm.$emit('edit');
+        expect(wrapper.vm.editSection).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not render when the event has no agreements', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            event() {
+              const event = _cloneDeep(mockEvent);
+              event.agreements = [];
+              return event;
+            },
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+
+          },
+          stubs: {
+            EventStatusDialog: true,
+          },
+        });
+
+        const element = wrapper.findDataTest('agreement-section');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
     describe('registration location section', () => {
       it('renders when the event has registration locations', () => {
         const section = wrapper.findDataTest('registration-location-section');
@@ -189,6 +235,7 @@ describe('EventSummary.vue', () => {
   describe('Computed', () => {
     beforeEach(() => {
       storage.event.getters.eventById.mockReturnValueOnce(mockEvent);
+      storage.event.getters.agreementTypes.mockReturnValueOnce(mockOptionItemData());
 
       wrapper = shallowMount(Component, {
         localVue,
@@ -204,6 +251,12 @@ describe('EventSummary.vue', () => {
 
       });
     });
+
+    describe('agreementTypes', () => {
+      it('return the agreement types from the storage', () => {
+        expect(wrapper.vm.agreementTypes).toEqual(mockOptionItemData());
+      });
+    });
     describe('event', () => {
       it('return the event by id from the storage', () => {
         expect(wrapper.vm.event).toEqual(mockEvent);
@@ -215,10 +268,18 @@ describe('EventSummary.vue', () => {
         expect(wrapper.vm.sortedCallCentres).toEqual(helpers.sortMultilingualArray(mockEvent.callCentres, 'name'));
       });
     });
+
+    describe('sortedAgreements', () => {
+      it('return the agreements sorted by name', () => {
+        expect(wrapper.vm.sortedAgreements).toEqual(helpers.sortMultilingualArray(mockEvent.agreements, 'name'));
+      });
+    });
   });
+
   describe('lifecycle', () => {
     beforeEach(() => {
       storage.event.actions.fetchEvent = jest.fn(() => {});
+      storage.event.actions.fetchAgreementTypes = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,
@@ -236,6 +297,10 @@ describe('EventSummary.vue', () => {
 
     it('should call fetchEvent', () => {
       expect(wrapper.vm.$storage.event.actions.fetchEvent).toHaveBeenCalledWith(wrapper.vm.$route.params.id);
+    });
+
+    it('should call fetchAgreementTypes', () => {
+      expect(wrapper.vm.$storage.event.actions.fetchAgreementTypes).toHaveBeenCalledTimes(1);
     });
   });
 

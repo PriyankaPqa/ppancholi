@@ -85,6 +85,28 @@ export interface IUpdateCallCentrePayload {
   originalCallCentre: IEventCallCentre,
 }
 
+export interface IEventAgreement {
+  name: IMultilingual;
+  details: IMultilingual;
+  startDate: Date | string;
+  endDate: Date | string;
+  agreementType: IListOption;
+}
+
+export interface IEventAgreementInfos {
+  name: IMultilingual;
+  details: IMultilingual;
+  startDate: Date | string;
+  endDate: Date | string;
+  agreementType: IListOption;
+  agreementTypeName: IMultilingual;
+}
+
+export interface IUpdateAgreementPayload {
+  updatedAgreement: IEventAgreementInfos,
+  originalAgreement: IEventAgreementInfos,
+}
+
 export interface IUpdateRegistrationLocationPayload {
   updatedRegistrationLocation: IEventGenericLocation,
   originalRegistrationLocation: IEventGenericLocation,
@@ -111,7 +133,8 @@ export interface IEventData {
   schedule: IEventSchedule;
   responseDetails: IEventResponseDetails;
   relatedEventIds?: Array<uuid>;
-  callCentres: Array<IEventCallCentre>;
+  agreements: Array<IEventAgreement>;
+  callCentres:Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
   selfRegistrationEnabled: boolean;
 }
@@ -121,6 +144,7 @@ export interface IEventData {
  */
 export interface IEventSearchData {
   '@searchScore': number;
+  agreements: Array<IEventAgreementInfos>;
   callCentres: Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
   createdDate: Date | string;
@@ -171,6 +195,7 @@ export interface IEditEventRequest extends ICreateEventRequest {
  * Interface used for the Event entity class
  */
 export interface IEvent {
+  agreements: Array<IEventAgreementInfos>;
   callCentres: Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
   created: Date | string;

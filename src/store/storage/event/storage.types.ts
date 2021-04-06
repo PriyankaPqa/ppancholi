@@ -1,11 +1,20 @@
 import {
-  IEvent, IEventCallCentre, IEventGenericLocation, IOtherProvince, IRegion, IUpdateCallCentrePayload, IUpdateRegistrationLocationPayload,
+  IEvent,
+  IEventAgreement,
+  IEventCallCentre,
+  IEventGenericLocation,
+  IOtherProvince,
+  IRegion,
+  IUpdateAgreementPayload,
+  IUpdateCallCentrePayload,
+  IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 export interface IStorage {
   getters: {
+    agreementTypes(): Array<IOptionItem>;
     eventTypes(): Array<IOptionItem>;
     events(): Array<IEvent>;
     openEvents(): Array<IEvent>;
@@ -14,6 +23,7 @@ export interface IStorage {
 
   actions: {
     fetchEvent(id: uuid): Promise<IEvent>;
+    fetchAgreementTypes(): Promise<IOptionItem[]>;
     fetchEventTypes(): Promise<IOptionItem[]>;
     fetchEvents(): Promise<IEvent[]>;
     fetchOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>
@@ -23,6 +33,9 @@ export interface IStorage {
     updateEvent(payload: IEvent): Promise<IEvent>;
     addCallCentre({ eventId, payload }:{eventId: uuid, payload: IEventCallCentre}): Promise<IEvent>;
     editCallCentre({ eventId, payload }:{eventId: uuid, payload: IUpdateCallCentrePayload}): Promise<IEvent>;
+    addAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent>;
+    editAgreement({ eventId, payload }:{eventId: uuid, payload: IUpdateAgreementPayload}): Promise<IEvent>;
+    deleteAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent>;
     addRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
     editRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateRegistrationLocationPayload}): Promise<IEvent>;
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent>;
@@ -31,6 +44,7 @@ export interface IStorage {
 
 export interface IStorageMock {
   getters: {
+    agreementTypes: jest.Mock<void>;
     eventTypes: jest.Mock<void>;
     events: jest.Mock<void>;
     openEvents: jest.Mock<void>;
@@ -38,6 +52,7 @@ export interface IStorageMock {
   }
 
   actions: {
+    fetchAgreementTypes: jest.Mock<void>;
     fetchEventTypes: jest.Mock<void>;
     fetchEvent: jest.Mock<void>;
     fetchEvents: jest.Mock<void>;
@@ -47,6 +62,9 @@ export interface IStorageMock {
     updateEvent: jest.Mock<void>;
     addCallCentre: jest.Mock<void>;
     editCallCentre: jest.Mock<void>;
+    addAgreement: jest.Mock<void>;
+    editAgreement: jest.Mock<void>;
+    deleteAgreement: jest.Mock<void>;
     addRegistrationLocation: jest.Mock<void>;
     editRegistrationLocation: jest.Mock<void>;
     toggleSelfRegistration: jest.Mock<void>;

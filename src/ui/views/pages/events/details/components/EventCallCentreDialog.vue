@@ -1,18 +1,20 @@
 <template>
-  <rc-dialog
-    :title="title"
-    :show="true"
-    :cancel-action-label="$t('common.buttons.cancel')"
-    :submit-action-label="isEditMode? $t('common.apply'): $t('common.add')"
-    :content-only-scrolling="true"
-    :persistent="true"
-    :max-width="750"
-    :min-height="530"
-    @cancel="$emit('close')"
-    @close="$emit('close')"
-    @submit="onSubmit">
-    <v-container>
-      <ValidationObserver ref="form" slim>
+  <ValidationObserver ref="form" v-slot="{ failed, pristine }" slim>
+    <rc-dialog
+      :title="title"
+      :show="true"
+      :cancel-action-label="$t('common.buttons.cancel')"
+      :submit-action-label="isEditMode? $t('common.save'): $t('common.add')"
+      :content-only-scrolling="true"
+      :persistent="true"
+      :max-width="750"
+      :min-height="530"
+      :loading="loading"
+      :submit-button-disabled="failed || (isEditMode && pristine)"
+      @cancel="$emit('close')"
+      @close="$emit('close')"
+      @submit="onSubmit">
+      <v-container>
         <v-row justify="center">
           <v-col cols="12" class="pa-0">
             <language-tabs :language="languageMode" @click="setLanguageMode" />
@@ -49,7 +51,7 @@
               </v-col>
             </v-row>
 
-            <v-row>
+            <v-row class="mt-0">
               <v-col cols="6" sm="12" md="6" class="pb-0">
                 <v-date-field-with-validation
                   v-model="callCentre.startDate"
@@ -75,7 +77,7 @@
               </v-col>
             </v-row>
 
-            <v-row>
+            <v-row class="mt-0">
               <v-col cols="12" class="pb-0">
                 <v-text-area-with-validation
                   v-model="callCentre.details.translation[languageMode]"
@@ -88,9 +90,9 @@
             </v-row>
           </v-col>
         </v-row>
-      </ValidationObserver>
-    </v-container>
-  </rc-dialog>
+      </v-container>
+    </rc-dialog>
+  </ValidationObserver>
 </template>
 
 <script lang='ts'>
@@ -150,10 +152,10 @@ export default Vue.extend({
       },
       callCentre: null as IEventCallCentre,
       originalCallCentre: null as IEventCallCentre,
-      localEvent: _cloneDeep(this.event),
       isActive: false,
       getStringDate: helpers.getStringDate,
       isNameUnique: true,
+      loading: false,
     };
   },
 
@@ -228,28 +230,37 @@ export default Vue.extend({
       this.callCentre.details = entityUtils.getFilledMultilingualField(this.callCentre.details);
     },
 
-    makePayload() {
-      this.fillEmptyMultilingualFields();
-      this.callCentre.startDate = this.callCentre.startDate ? new Date(this.callCentre.startDate).toISOString() : null;
-      this.callCentre.endDate = this.callCentre.endDate ? new Date(this.callCentre.endDate).toISOString() : null;
+    makePayload(callCentre: IEventCallCentre): IEventCallCentre {
+      return {
+        ...callCentre,
+        startDate: callCentre.startDate ? new Date(callCentre.startDate).toISOString() : null,
+        endDate: callCentre.endDate ? new Date(callCentre.endDate).toISOString() : null,
+      };
     },
 
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        this.makePayload();
+        this.fillEmptyMultilingualFields();
+        this.loading = true;
 
-        if (this.isEditMode) {
-          this.$storage.event.actions.editCallCentre(
-            {
-              eventId: this.event.id,
-              payload: { updatedCallCentre: this.callCentre, originalCallCentre: this.originalCallCentre },
-            },
-          );
-        } else {
-          this.$storage.event.actions.addCallCentre({ eventId: this.event.id, payload: this.callCentre });
+        try {
+          if (this.isEditMode) {
+            const updatedCallCentre = this.makePayload(this.callCentre);
+            await this.$storage.event.actions.editCallCentre(
+              {
+                eventId: this.event.id,
+                payload: { updatedCallCentre, originalCallCentre: this.originalCallCentre },
+              },
+            );
+          } else {
+            const newCallCentre = this.makePayload(this.callCentre);
+            await this.$storage.event.actions.addCallCentre({ eventId: this.event.id, payload: newCallCentre });
+          }
+        } finally {
+          this.loading = false;
+          this.$emit('close');
         }
-        this.$emit('close');
       }
     },
 

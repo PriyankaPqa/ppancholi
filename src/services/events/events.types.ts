@@ -1,11 +1,13 @@
 import {
   IEvent,
+  IEventAgreement,
   IEventCallCentre,
   IEventData,
   IEventGenericLocation,
   IEventSearchData,
   IOtherProvince,
   IRegion,
+  IUpdateAgreementPayload,
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
@@ -26,7 +28,13 @@ export interface IEventsService {
 
   addCallCentre(eventId: uuid, payload: IEventCallCentre): Promise<IEventData>;
 
-  editCallCentre(eventId: uuid, payload: IUpdateCallCentrePayload): Promise<IEventData>;
+  editCallCentre(eventId:uuid, payload: IUpdateCallCentrePayload): Promise<IEventData>;
+
+  addAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventData>;
+
+  editAgreement(eventId:uuid, payload: IUpdateAgreementPayload): Promise<IEventData>;
+
+  removeAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventData>;
 
   addRegistrationLocation(eventId: uuid, payload: IEventGenericLocation): Promise<IEventData>;
 
@@ -49,6 +57,12 @@ export interface IEventsServiceMock {
   addCallCentre: jest.Mock<IEventData>;
 
   editCallCentre: jest.Mock<IEventData>;
+
+  addAgreement: jest.Mock <IEventData>;
+
+  editAgreement: jest.Mock <IEventData>;
+
+  removeAgreement: jest.Mock <IEventData>;
 
   addRegistrationLocation: jest.Mock<IEventData>;
 

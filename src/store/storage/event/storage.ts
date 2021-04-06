@@ -1,5 +1,13 @@
 import {
-  IEvent, IEventCallCentre, IEventGenericLocation, IOtherProvince, IRegion, IUpdateCallCentrePayload, IUpdateRegistrationLocationPayload,
+  IEvent,
+  IEventAgreement,
+  IEventCallCentre,
+  IEventGenericLocation,
+  IOtherProvince,
+  IRegion,
+  IUpdateAgreementPayload,
+  IUpdateCallCentrePayload,
+  IUpdateRegistrationLocationPayload,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore } from '@/store/store.types';
@@ -8,6 +16,10 @@ import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
   getters: {
+    agreementTypes(): Array<IOptionItem> {
+      return store.getters['event/agreementTypes'];
+    },
+
     eventTypes(): Array<IOptionItem> {
       return store.getters['event/eventTypes'];
     },
@@ -26,6 +38,10 @@ export const makeStorage = (store: IStore): IStorage => ({
   },
 
   actions: {
+    fetchAgreementTypes(): Promise<IOptionItem[]> {
+      return store.dispatch('event/fetchAgreementTypes');
+    },
+
     fetchEventTypes(): Promise<IOptionItem[]> {
       return store.dispatch('event/fetchEventTypes');
     },
@@ -64,6 +80,18 @@ export const makeStorage = (store: IStore): IStorage => ({
 
     editCallCentre({ eventId, payload }:{eventId: uuid, payload: IUpdateCallCentrePayload}): Promise<IEvent> {
       return store.dispatch('event/editCallCentre', { eventId, payload });
+    },
+
+    addAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent> {
+      return store.dispatch('event/addAgreement', { eventId, payload });
+    },
+
+    editAgreement({ eventId, payload }:{eventId: uuid, payload: IUpdateAgreementPayload}): Promise<IEvent> {
+      return store.dispatch('event/editAgreement', { eventId, payload });
+    },
+
+    deleteAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent> {
+      return store.dispatch('event/deleteAgreement', { eventId, payload });
     },
 
     addRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent> {
