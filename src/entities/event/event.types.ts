@@ -112,6 +112,11 @@ export interface IUpdateRegistrationLocationPayload {
   originalRegistrationLocation: IEventGenericLocation,
 }
 
+export interface IUpdateShelterLocationPayload {
+  updatedShelterLocation: IEventGenericLocation,
+  originalShelterLocation: IEventGenericLocation,
+}
+
 export interface IRelatedEventsInfos {
   id: uuid;
   eventName: IMultilingual;
@@ -136,6 +141,7 @@ export interface IEventData {
   agreements: Array<IEventAgreement>;
   callCentres:Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
+  shelterLocations: Array<IEventGenericLocation>;
   selfRegistrationEnabled: boolean;
 }
 
@@ -147,6 +153,7 @@ export interface IEventSearchData {
   agreements: Array<IEventAgreementInfos>;
   callCentres: Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
+  shelterLocations: Array<IEventGenericLocation>;
   createdDate: Date | string;
   eventDescription: IMultilingual;
   eventId: uuid;
@@ -198,6 +205,7 @@ export interface IEvent {
   agreements: Array<IEventAgreementInfos>;
   callCentres: Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
+  shelterLocations: Array<IEventGenericLocation>;
   created: Date | string;
   description: IMultilingual;
   eventTypeId: uuid;

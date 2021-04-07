@@ -58,6 +58,8 @@ export class Event implements IEvent {
 
   registrationLocations: Array<IEventGenericLocation>;
 
+  shelterLocations: Array<IEventGenericLocation>;
+
   tenantId: uuid;
 
   constructor(data?: IEventSearchData) {
@@ -124,6 +126,7 @@ export class Event implements IEvent {
       this.eventStatus = data.eventStatus;
       this.tenantId = data.tenantId;
       this.registrationLocations = data.registrationLocations;
+      this.shelterLocations = data.shelterLocations;
       this.callCentres = data.callCentres.map((centre) => ({
         ...centre,
         name: utils.initMultilingualAttributes(centre.name),
@@ -181,6 +184,7 @@ export class Event implements IEvent {
     this.callCentres = [];
     this.agreements = [];
     this.registrationLocations = [];
+    this.shelterLocations = [];
   }
 
   private validateAttributes(errors: Array<string>) {

@@ -10,6 +10,7 @@ import {
   IUpdateAgreementPayload,
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
+  IUpdateShelterLocationPayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
@@ -39,6 +40,10 @@ export interface IEventsService {
   addRegistrationLocation(eventId: uuid, payload: IEventGenericLocation): Promise<IEventData>;
 
   editRegistrationLocation(eventId: uuid, payload: IUpdateRegistrationLocationPayload): Promise<IEventData>;
+
+  addShelterLocation(eventId: uuid, payload: IEventGenericLocation): Promise<IEventData>;
+
+  editShelterLocation(eventId: uuid, payload: IUpdateShelterLocationPayload): Promise<IEventData>;
 }
 
 export interface IEventsServiceMock {
@@ -67,4 +72,8 @@ export interface IEventsServiceMock {
   addRegistrationLocation: jest.Mock<IEventData>;
 
   editRegistrationLocation: jest.Mock<IEventData>;
+
+  addShelterLocation: jest.Mock<IEventData>;
+
+  editShelterLocation: jest.Mock<IEventData>;
 }

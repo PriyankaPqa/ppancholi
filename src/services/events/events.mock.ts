@@ -17,4 +17,6 @@ export const mockEventsService = (): IEventsServiceMock => ({
   removeAgreement: jest.fn(() => mockEventsData()[0]),
   addRegistrationLocation: jest.fn(() => mockEventsData()[0]),
   editRegistrationLocation: jest.fn(() => mockEventsData()[0]),
+  addShelterLocation: jest.fn(() => mockEventsData()[0]),
+  editShelterLocation: jest.fn(() => mockEventsData()[0]),
 });

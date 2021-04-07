@@ -104,4 +104,5 @@ export const mapEventDataToSearchData = (eventData: IEventData, context: ActionC
   tenantId: null,
   callCentres: eventData.callCentres,
   registrationLocations: eventData.registrationLocations,
+  shelterLocations: eventData.shelterLocations,
 });

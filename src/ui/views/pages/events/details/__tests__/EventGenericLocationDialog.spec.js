@@ -4,13 +4,13 @@ import { MAX_LENGTH_MD } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import entityUtils from '@/entities/utils';
 
-import Component from '../components/EventRegistrationLocationDialog.vue';
+import Component from '../components/EventGenericLocationDialog.vue';
 
 const localVue = createLocalVue();
 const mockEvent = new Event(mockEventsSearchData()[0]);
 const storage = mockStorage();
 
-describe('EventRegistrationLocationDialog.vue', () => {
+describe('EventGenericLocationDialog.vue', () => {
   let wrapper;
 
   describe('Template', () => {
@@ -20,6 +20,7 @@ describe('EventRegistrationLocationDialog.vue', () => {
         propsData: {
           event: mockEvent,
           isEditMode: false,
+          isRegistrationLocation: true,
         },
         computed: {
           apiKey() {
@@ -40,6 +41,7 @@ describe('EventRegistrationLocationDialog.vue', () => {
         propsData: {
           event: mockEvent,
           isEditMode: false,
+          isRegistrationLocation: true,
         },
       });
     });
@@ -57,14 +59,56 @@ describe('EventRegistrationLocationDialog.vue', () => {
     describe('title', () => {
       it('return the right title', async () => {
         await wrapper.setProps({
+          isRegistrationLocation: true,
           isEditMode: false,
         });
         expect(wrapper.vm.title).toEqual('eventSummary.addRegistrationLocation');
 
         await wrapper.setProps({
+          isRegistrationLocation: true,
           isEditMode: true,
         });
         expect(wrapper.vm.title).toEqual('eventSummary.editRegistrationLocation');
+
+        await wrapper.setProps({
+          isRegistrationLocation: false,
+          isEditMode: false,
+        });
+        expect(wrapper.vm.title).toEqual('eventSummary.addShelterLocation');
+
+        await wrapper.setProps({
+          isRegistrationLocation: false,
+          isEditMode: true,
+        });
+        expect(wrapper.vm.title).toEqual('eventSummary.editShelterLocation');
+      });
+    });
+
+    describe('locationNameLabel', () => {
+      it('return the right label', async () => {
+        await wrapper.setProps({
+          isRegistrationLocation: true,
+        });
+        expect(wrapper.vm.locationNameLabel).toEqual('eventSummary.registrationLocation.name *');
+
+        await wrapper.setProps({
+          isRegistrationLocation: false,
+        });
+        expect(wrapper.vm.locationNameLabel).toEqual('eventSummary.shelterLocation.name *');
+      });
+    });
+
+    describe('allLocations', () => {
+      it('return the right location list', async () => {
+        await wrapper.setProps({
+          isRegistrationLocation: true,
+        });
+        expect(wrapper.vm.allLocations).toEqual(mockEvent.registrationLocations);
+
+        await wrapper.setProps({
+          isRegistrationLocation: false,
+        });
+        expect(wrapper.vm.allLocations).toEqual(mockEvent.shelterLocations);
       });
     });
 
@@ -122,6 +166,7 @@ describe('EventRegistrationLocationDialog.vue', () => {
         propsData: {
           event: mockEvent,
           isEditMode: false,
+          isRegistrationLocation: true,
         },
       });
     });
@@ -176,8 +221,15 @@ describe('EventRegistrationLocationDialog.vue', () => {
         propsData: {
           event: mockEvent,
           isEditMode: false,
+          id: mockEvent.registrationLocations[0].name.translation.en,
+          isRegistrationLocation: true,
+        },
+        mocks: {
+          $storage: storage,
         },
       });
+
+      jest.clearAllMocks();
     });
 
     describe('checkNameUniqueness', () => {
@@ -201,87 +253,133 @@ describe('EventRegistrationLocationDialog.vue', () => {
     });
 
     describe('onSubmit', () => {
-      it('onSubmit triggers event to close dialog', async () => {
+      beforeEach(() => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
+        wrapper.vm.addRegistrationLocation = jest.fn();
+        wrapper.vm.editRegistrationLocation = jest.fn();
+        wrapper.vm.addShelterLocation = jest.fn();
+        wrapper.vm.editShelterLocation = jest.fn();
+      });
+
+      it('onSubmit triggers event to close dialog', async () => {
         await wrapper.vm.onSubmit();
         expect(wrapper.emitted('close')[0]).toBeTruthy();
       });
 
-      describe('edit mode', () => {
-        storage.event.actions.editRegistrationLocation = jest.fn(() => {});
-        beforeEach(() => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              event: mockEvent,
-              isEditMode: true,
-              id: mockEvent.registrationLocations[0].name.translation.en,
-            },
-            mocks: {
-              $storage: storage,
-            },
-          });
+      it('triggers addRegistrationLocation properly', async () => {
+        await wrapper.setProps({
+          isRegistrationLocation: true,
+          isEditMode: false,
         });
-
-        it('does not call storage action editRegistrationLocation if validate is false', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => false);
-
-          await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.event.actions.editRegistrationLocation).toHaveBeenCalledTimes(0);
-        });
-
-        it('calls storage action editRegistrationLocation with the right payload', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-          [wrapper.vm.location] = wrapper.vm.event.registrationLocations;
-
-          await wrapper.vm.onSubmit();
-
-          expect(wrapper.vm.$storage.event.actions.editRegistrationLocation).toHaveBeenCalledWith({
-            eventId: wrapper.vm.event.id,
-            payload: {
-              originalRegistrationLocation: wrapper.vm.event.registrationLocations[0],
-              updatedRegistrationLocation: wrapper.vm.location,
-            },
-          });
-        });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.addRegistrationLocation).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.editRegistrationLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.addShelterLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.editShelterLocation).toHaveBeenCalledTimes(0);
       });
 
-      describe('add mode', () => {
-        storage.event.actions.addCallCentre = jest.fn(() => {});
-        beforeEach(() => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              event: mockEvent,
-              isEditMode: false,
-            },
-            mocks: {
-              $storage: storage,
-            },
-          });
+      it('triggers editRegistrationLocation properly', async () => {
+        await wrapper.setProps({
+          isRegistrationLocation: true,
+          isEditMode: true,
         });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.addRegistrationLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.editRegistrationLocation).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.addShelterLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.editShelterLocation).toHaveBeenCalledTimes(0);
+      });
 
-        it('does not call storage action addRegistrationLocation if validate is false', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => false);
-
-          await wrapper.vm.onSubmit();
-
-          expect(wrapper.vm.$storage.event.actions.addRegistrationLocation).toHaveBeenCalledTimes(0);
+      it('triggers addShelterLocation properly', async () => {
+        await wrapper.setProps({
+          isRegistrationLocation: false,
+          isEditMode: false,
         });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.addRegistrationLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.editRegistrationLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.addShelterLocation).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.editShelterLocation).toHaveBeenCalledTimes(0);
+      });
 
-        it('calls storage action addRegistrationLocation with the right payload', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
+      it('triggers editShelterLocation properly', async () => {
+        await wrapper.setProps({
+          isRegistrationLocation: false,
+          isEditMode: true,
+        });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.addRegistrationLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.editRegistrationLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.addShelterLocation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.editShelterLocation).toHaveBeenCalledTimes(1);
+      });
+    });
 
-          [wrapper.vm.location] = wrapper.vm.event.registrationLocations;
+    describe('addRegistrationLocation', () => {
+      it('calls storage action addRegistrationLocation with the right payload', async () => {
+        const [location] = mockEvent.registrationLocations;
 
-          await wrapper.vm.onSubmit();
+        wrapper.vm.location = location;
 
-          expect(wrapper.vm.$storage.event.actions.addRegistrationLocation).toHaveBeenCalledWith({
-            eventId: wrapper.vm.event.id,
-            payload: wrapper.vm.location,
-          });
+        await wrapper.vm.addRegistrationLocation();
+
+        expect(storage.event.actions.addRegistrationLocation).toHaveBeenCalledWith({
+          eventId: wrapper.vm.event.id,
+          payload: location,
+        });
+      });
+    });
+
+    describe('editRegistrationLocation', () => {
+      it('calls storage action editRegistrationLocation with the right payload', async () => {
+        const [originalLocation, location] = mockEvent.registrationLocations;
+
+        wrapper.vm.originalLocation = originalLocation;
+        wrapper.vm.location = location;
+
+        await wrapper.vm.editRegistrationLocation();
+
+        expect(storage.event.actions.editRegistrationLocation).toHaveBeenCalledWith({
+          eventId: wrapper.vm.event.id,
+          payload: {
+            originalRegistrationLocation: originalLocation,
+            updatedRegistrationLocation: location,
+          },
+        });
+      });
+    });
+
+    describe('addShelterLocation', () => {
+      it('calls storage action addShelterLocation with the right payload', async () => {
+        const [location] = mockEvent.shelterLocations;
+
+        wrapper.vm.location = location;
+
+        await wrapper.vm.addShelterLocation();
+
+        expect(storage.event.actions.addShelterLocation).toHaveBeenCalledWith({
+          eventId: wrapper.vm.event.id,
+          payload: location,
+        });
+      });
+    });
+
+    describe('editShelterLocation', () => {
+      it('calls storage action editShelterLocation with the right payload', async () => {
+        const [originalLocation, location] = mockEvent.shelterLocations;
+
+        wrapper.vm.originalLocation = originalLocation;
+        wrapper.vm.location = location;
+
+        await wrapper.vm.editShelterLocation();
+
+        expect(storage.event.actions.editShelterLocation).toHaveBeenCalledWith({
+          eventId: wrapper.vm.event.id,
+          payload: {
+            originalShelterLocation: originalLocation,
+            updatedShelterLocation: location,
+          },
         });
       });
     });

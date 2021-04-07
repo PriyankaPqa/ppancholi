@@ -141,6 +141,28 @@ describe('>>> Event Storage', () => {
       expect(store.dispatch).toHaveBeenCalledWith('event/editRegistrationLocation', { eventId: event.id, payload });
     });
 
+    it('should proxy addShelterLocation', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      const location = event.shelterLocations[0];
+      storage.actions.addShelterLocation({ eventId: event.id, payload: location });
+      expect(store.dispatch).toHaveBeenCalledWith('event/addShelterLocation', { eventId: event.id, payload: location });
+    });
+
+    it('should proxy editShelterLocation', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      const originalShelterLocation = event.shelterLocations[0];
+      const updatedShelterLocation = {
+        ...originalShelterLocation,
+        address: {
+          city: 'Laval',
+        },
+      } as IEventGenericLocation;
+      const payload = { originalShelterLocation, updatedShelterLocation };
+
+      storage.actions.editShelterLocation({ eventId: event.id, payload });
+      expect(store.dispatch).toHaveBeenCalledWith('event/editShelterLocation', { eventId: event.id, payload });
+    });
+
     it('should proxy toggleSelfRegistration', () => {
       const event = new Event(mockEventsSearchData()[0]);
       storage.actions.toggleSelfRegistration({ id: event.id, selfRegistrationEnabled: false });

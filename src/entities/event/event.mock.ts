@@ -68,6 +68,7 @@ export const mockEventsData = (): IEventData[] => [{
   callCentres: [],
   agreements: [],
   registrationLocations: [],
+  shelterLocations: [],
   selfRegistrationEnabled: false,
 }, {
   number: 2,
@@ -131,6 +132,7 @@ export const mockEventsData = (): IEventData[] => [{
   callCentres: [],
   agreements: [],
   registrationLocations: [],
+  shelterLocations: [],
   selfRegistrationEnabled: false,
 }];
 
@@ -301,7 +303,59 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
         city: 'test',
         postalCode: 'h2k2k2',
       },
+    }, {
+      name: {
+        translation: {
+          en: 'registration test',
+          fr: 'registration test',
+        },
+      },
+      status: 1,
+      address: {
+        country: 'CA',
+        streetAddress: '5150 Yonge Street',
+        unitSuite: null,
+        province: 9,
+        city: 'Toronto',
+        postalCode: 'M2N 6L7',
+      },
     }],
+    shelterLocations: [
+      {
+        name: {
+          translation: {
+            en: 'shelter en',
+            fr: 'shelter fr rt',
+          },
+        },
+        status: 2,
+        address: {
+          country: 'CA',
+          streetAddress: '2295 Rue Bercy',
+          unitSuite: null,
+          province: 11,
+          city: 'Montréal',
+          postalCode: 'H2K 2V6',
+        },
+      },
+      {
+        name: {
+          translation: {
+            en: 'shelter 1 en',
+            fr: 'shelter 1 fr',
+          },
+        },
+        status: 1,
+        address: {
+          country: 'CA',
+          streetAddress: '5157 Avenue de Courtrai',
+          unitSuite: null,
+          province: 11,
+          city: 'Montréal',
+          postalCode: 'H3W 0A9',
+        },
+      },
+    ],
   },
   {
     '@searchScore': 10,
@@ -363,6 +417,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
     callCentres: [],
     agreements: [],
     registrationLocations: [],
+    shelterLocations: [],
   },
 ];
 

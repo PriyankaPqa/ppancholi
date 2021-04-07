@@ -1,16 +1,16 @@
 <template>
-  <div v-if="sortedLocations.length > 0" class="mx-2" data-test="event-location-section-container">
+  <div v-if="sortedLocations.length > 0" class="mx-2">
     <table class="full-width border-radius-all">
       <tbody>
         <tr v-for="(location, index) in sortedLocations" :key="location.name.en">
           <td>
             <v-row class="pt-1 pl-4" align="center">
-              <v-col class="fw-bold pb-2" :data-test="`event-location-section-name-${index}`">
+              <v-col class="fw-bold pb-2" :data-test="getDataTest('name', index)">
                 {{ $m(location.name) }}
               </v-col>
               <v-col class="text-end pb-2">
-                <status-chip status-name="EEventLocationStatus" :status="location.status" :data-test="`event-location-section-status-${index}`" />
-                <v-btn icon class="mx-2" :data-test="`event-location-section-edit-${index}`" @click="$emit('edit', location.name.translation.en)">
+                <status-chip status-name="EEventLocationStatus" :status="location.status" :data-test="getDataTest('status', index)" />
+                <v-btn icon class="mx-2" :data-test="getDataTest('edit', index)" @click="$emit('edit', location.name.translation.en)">
                   <v-icon size="24" color="grey darken-2">
                     mdi-pencil
                   </v-icon>
@@ -19,10 +19,10 @@
             </v-row>
 
             <div class="pl-4 rc-body12">
-              {{ $t('eventSummary.registrationLocation.address') }}
+              {{ $t('eventSummary.registrationLocation.address') }}:
             </div>
 
-            <div class="pb-3 pl-4 rc-body12" :data-test="`event-location-section-address-${index}`">
+            <div class="pb-3 pl-4 rc-body12" :data-test="getDataTest('address', index)">
               {{ getAddress(location) }}
             </div>
           </td>
@@ -51,6 +51,11 @@ export default Vue.extend({
       type: Array as () => IEventGenericLocation[],
       required: true,
     },
+
+    dataTestPrefix: {
+      type: String,
+      required: true,
+    },
   },
 
   computed: {
@@ -73,6 +78,10 @@ export default Vue.extend({
       result += address.country;
 
       return result;
+    },
+
+    getDataTest(field: string, index: number): string {
+      return `event-${this.dataTestPrefix}-location-section-${field}-${index}`;
     },
   },
 });

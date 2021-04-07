@@ -63,12 +63,19 @@
 
       <event-location-section
         data-test="registration-location-section"
+        data-test-prefix="registration"
         :locations="event.registrationLocations"
         @edit="editSection($event, EEventSummarySections.RegistrationLocation)" />
 
       <event-summary-section-title
         :section="EEventSummarySections.ShelterLocation"
         @click-add-button="onSectionAdd($event)" />
+
+      <event-location-section
+        data-test="shelter-location-section"
+        data-test-prefix="shelter"
+        :locations="event.shelterLocations"
+        @edit="editSection($event, EEventSummarySections.ShelterLocation)" />
 
       <event-summary-section-title
         :section="EEventSummarySections.Agreement"
@@ -122,16 +129,17 @@ import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventStatusDialog from './components/EventStatusDialog.vue';
 import EventCallCentreDialog from './components/EventCallCentreDialog.vue';
+import EventRegistrationLocationDialog from './components/EventRegistrationLocationDialog.vue';
+import EventShelterLocationDialog from './components/EventShelterLocationDialog.vue';
 import EventAgreementDialog from './components/EventAgreementDialog.vue';
 import EventCallCentreSection from './components/EventCallCentreSection.vue';
 import EventAgreementSection from './components/EventAgreementSection.vue';
-import EventRegistrationLocationDialog from './components/EventRegistrationLocationDialog.vue';
 import EventLocationSection from './components/EventLocationSection.vue';
 
 export enum EDialogComponent {
   CallCentre = 'EventCallCentreDialog',
   RegistrationLocation = 'EventRegistrationLocationDialog',
-  ShelterLocation = 'EventCallCentreDialog',
+  ShelterLocation = 'EventShelterLocationDialog',
   Agreement = 'EventAgreementDialog',
 }
 
@@ -151,6 +159,7 @@ export default Vue.extend({
     EventStatusDialog,
     EventCallCentreDialog,
     EventRegistrationLocationDialog,
+    EventShelterLocationDialog,
     EventCallCentreSection,
     EventAgreementSection,
     EventAgreementDialog,

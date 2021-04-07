@@ -5,9 +5,10 @@ import {
   IEventGenericLocation,
   IOtherProvince,
   IRegion,
-  IUpdateAgreementPayload,
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
+  IUpdateShelterLocationPayload,
+  IUpdateAgreementPayload,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -38,6 +39,8 @@ export interface IStorage {
     deleteAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent>;
     addRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
     editRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateRegistrationLocationPayload}): Promise<IEvent>;
+    addShelterLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
+    editShelterLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateShelterLocationPayload}): Promise<IEvent>;
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent>;
   }
 }
@@ -67,6 +70,8 @@ export interface IStorageMock {
     deleteAgreement: jest.Mock<void>;
     addRegistrationLocation: jest.Mock<void>;
     editRegistrationLocation: jest.Mock<void>;
+    addShelterLocation: jest.Mock<void>;
+    editShelterLocation: jest.Mock<void>;
     toggleSelfRegistration: jest.Mock<void>;
   }
 }

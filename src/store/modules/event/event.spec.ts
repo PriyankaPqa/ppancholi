@@ -491,5 +491,55 @@ describe('>>> Event Module', () => {
         expect(store.state.event.events[0]).toEqual(event);
       });
     });
+
+    describe('addShelterLocation', () => {
+      it('calls the addShelterLocation service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const location = event.shelterLocations[0];
+
+        expect(store.$services.events.addShelterLocation).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/addShelterLocation', { eventId: event.id, payload: location });
+
+        expect(store.$services.events.addShelterLocation).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.addShelterLocation).toHaveBeenCalledWith(event.id, location);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
+
+    describe('editShelterLocation', () => {
+      it('calls the editShelterLocation service and returns the new Event entity', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const originalShelterLocation = event.shelterLocations[0];
+        const updatedShelterLocation = {
+          ...originalShelterLocation,
+          address: {
+            city: 'Laval',
+          },
+        } as IEventGenericLocation;
+        const payload = { originalShelterLocation, updatedShelterLocation };
+
+        expect(store.$services.events.editShelterLocation).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/editShelterLocation', {
+          eventId: event.id,
+          payload,
+        });
+
+        expect(store.$services.events.editShelterLocation).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.editShelterLocation).toHaveBeenCalledWith(event.id, payload);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
   });
 });

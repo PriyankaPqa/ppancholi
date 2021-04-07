@@ -234,4 +234,26 @@ describe('>>> Events Service', () => {
     await service.editRegistrationLocation(id, { originalRegistrationLocation, updatedRegistrationLocation });
     expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/registration-location/edit`, expect.anything());
   });
+
+  test('addShelterLocation is linked to the correct URL', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const location = event.shelterLocations[0];
+    const { id } = event;
+    await service.addShelterLocation(id, location);
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/shelter-location`, expect.anything());
+  });
+
+  test('editShelterLocation is linked to the correct URL', async () => {
+    const event = new Event(mockEventsSearchData()[0]);
+    const originalShelterLocation = event.shelterLocations[0];
+    const updatedShelterLocation = {
+      ...originalShelterLocation,
+      address: {
+        city: 'Laval',
+      },
+    } as IEventGenericLocation;
+    const { id } = event;
+    await service.editShelterLocation(id, { originalShelterLocation, updatedShelterLocation });
+    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/shelter-location/edit`, expect.anything());
+  });
 });
