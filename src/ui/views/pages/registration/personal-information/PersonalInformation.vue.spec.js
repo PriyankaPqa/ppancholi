@@ -5,7 +5,7 @@ import {
 } from '@/entities/beneficiary';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
-import Component from '../PersonalInformation.vue';
+import Component from './PersonalInformation.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

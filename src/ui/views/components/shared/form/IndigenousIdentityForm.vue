@@ -20,7 +20,7 @@
         :loading="loadingIndigenousIdentities"
         clearable
         :disabled="loadingIndigenousIdentities || !form.indigenousProvince"
-        :label="$t('registration.personal_info.indigenousType.select.label')"
+        :label="`${$t('registration.personal_info.indigenousType.select.label')}*`"
         :items="indigenousTypesItems"
         :rules="rules.indigenousType"
         :data-test="`${prefixDataTest}__indigenousType`"
@@ -32,14 +32,14 @@
         v-model="formCopy.indigenousCommunityOther"
         :rules="rules.indigenousCommunityOther"
         :data-test="`${prefixDataTest}__indigenousCommunityOther`"
-        :label="$t('registration.personal_info.indigenousCommunityOther.label')" />
+        :label="`${$t('registration.personal_info.indigenousCommunityOther.label')}*`" />
       <v-autocomplete-with-validation
         v-else
         v-model="formCopy.indigenousCommunityId"
         clearable
         :loading="loadingIndigenousIdentities"
         :disabled="loadingIndigenousIdentities || !form.indigenousType"
-        :label="$t('registration.personal_info.indigenousCommunity.label')"
+        :label="`${$t('registration.personal_info.indigenousCommunity.label')}*`"
         :items="indigenousCommunitiesItems"
         :rules="rules.indigenousCommunityId"
         :data-test="`${prefixDataTest}__indigenousCommunityId`" />

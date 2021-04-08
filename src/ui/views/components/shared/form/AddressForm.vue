@@ -17,7 +17,7 @@
           :data-test="`${prefixDataTest}__street`"
           :rules="rules.street"
           :api-key="apiKey"
-          :placeholder="`${$t('registration.addresses.streetAddress')} *`"
+          :label="`${$t('registration.addresses.streetAddress')} *`"
           @input="$resetGeoLocation()"
           @on-autocompleted="$streetAddressAutocomplete($event)" />
       </v-col>

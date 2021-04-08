@@ -1,7 +1,7 @@
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces } from '@/types';
 import { TemporaryAddress } from '../temporary-address';
-import { mockPerson } from './person.mock';
+import { mockGenderOther, mockPerson } from './person.mock';
 import { EIndigenousTypes } from './person.types';
 import { Person } from './person';
 
@@ -106,11 +106,33 @@ describe('>>> Person', () => {
     });
 
     describe('Other gender', () => {
-      it(`has a max of ${MAX_LENGTH_MD} characters`, () => {
+      it(`has a max of ${MAX_LENGTH_MD} characters if gender.isOther is true`, () => {
         const p = new Person();
+        p.gender = mockGenderOther();
         p.genderOther = longText;
 
         expect(p.validate()).toContain(`other gender exceeds max length of ${MAX_LENGTH_MD}`);
+      });
+
+      it('is required if gender.isOther is true', () => {
+        const p = new Person();
+        p.gender = mockGenderOther();
+        const results = p.validate();
+        expect(results).toContain('genderOther is required');
+      });
+
+      it('is not required if gender.isOther is false', () => {
+        const p = new Person();
+        p.gender = {
+          id: 'guid',
+          name: null,
+          orderRank: 0,
+          isOther: false,
+          isDefault: false,
+          status: 0,
+        };
+        const results = p.validate();
+        expect(results).not.toContain('genderOther is required');
       });
     });
 
@@ -145,7 +167,7 @@ describe('>>> Person', () => {
         expect(results).not.toContain('day is required');
       });
 
-      test('minimum age required', () => {
+      test('minimum age required if skipAgeRestriction is false', () => {
         const p = new Person();
         p.birthDate = {
           year: 2021,
@@ -154,6 +176,17 @@ describe('>>> Person', () => {
         };
         const results = p.validate();
         expect(results).toContain('minimum age required');
+      });
+
+      test('minimum age required is skipped skipAgeRestriction is true', () => {
+        const p = new Person();
+        p.birthDate = {
+          year: 2021,
+          month: 1,
+          day: 2,
+        };
+        const results = p.validate(true);
+        expect(results).not.toContain('minimum age required');
       });
     });
 

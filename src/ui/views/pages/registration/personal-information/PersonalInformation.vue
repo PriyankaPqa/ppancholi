@@ -1,6 +1,6 @@
 <template>
   <v-row no-gutters>
-    <identity-form :form="form" />
+    <identity-form :form="form" :min-age-restriction="MIN_AGE_REGISTRATION" />
 
     <v-row>
       <v-col cols="12" sm="6">
@@ -100,7 +100,7 @@ import { IContactInformation, IPerson } from '@/entities/beneficiary';
 import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
 import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
 
-import { MAX_LENGTH_MD } from '@/constants/validations';
+import { MAX_LENGTH_MD, MIN_AGE_REGISTRATION } from '@/constants/validations';
 
 export default Vue.extend({
   name: 'PersonalInformation',
@@ -122,6 +122,7 @@ export default Vue.extend({
 
   data() {
     return {
+      MIN_AGE_REGISTRATION,
       form: null,
     };
   },

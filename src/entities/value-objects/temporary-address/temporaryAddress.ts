@@ -1,4 +1,4 @@
-import { required, maxLengthCheck, isValidCanadianPostalCode } from '@/entities/classValidation';
+import { isValidCanadianPostalCode, maxLengthCheck, required } from '@/entities/classValidation';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { Address } from '../address';
 import { ETemporaryAddressTypes, ITemporaryAddress, ITemporaryAddressData } from './temporaryAddress.types';
@@ -13,7 +13,7 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
   shelterId?: uuid;
 
   constructor(data?: ITemporaryAddressData) {
-    super();
+    super(data);
     if (!data) {
       this.reset();
     } else {

@@ -1,3 +1,4 @@
 export interface IEntity {
-  validate(): string[];
+  validate(skipAgeRestriction?:boolean): string[];
+  reset?(): void;
 }

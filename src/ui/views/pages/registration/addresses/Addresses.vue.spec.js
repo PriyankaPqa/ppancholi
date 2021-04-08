@@ -3,7 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import AddressForm from '@/ui/views/components/shared/form/AddressForm.vue';
 import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
-import Component from '../Addresses.vue';
+import Component from './Addresses.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

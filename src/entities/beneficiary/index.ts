@@ -4,8 +4,6 @@ export * from '../value-objects/contact-information/contactInformation.mock';
 export * from '../value-objects/address/address.types';
 export * from '../value-objects/address/address.mock';
 export * from '../value-objects/address/address';
-export * from '../value-objects/household-members/householdMembers';
-export * from '../value-objects/household-members/householdMembers.types';
 export * from '../value-objects/person/person';
 export * from '../value-objects/person/person.types';
 export * from '../value-objects/person/person.mock';

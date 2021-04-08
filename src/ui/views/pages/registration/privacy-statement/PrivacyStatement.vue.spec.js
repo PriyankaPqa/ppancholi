@@ -2,7 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { Beneficiary } from '@/entities/beneficiary';
 import moment from 'moment';
 import { mockStorage } from '@/store/storage';
-import Component from '../PrivacyStatement.vue';
+import Component from './PrivacyStatement.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

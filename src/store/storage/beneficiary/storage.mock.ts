@@ -14,6 +14,9 @@ export const mockStorageBeneficiary = (): IStorageMock => ({
     setTemporaryAddress: jest.fn(),
     setNoFixedHome: jest.fn(),
     resetTemporaryAddress: jest.fn(),
+    addHouseholdMember: jest.fn(),
+    removeHouseholdMember: jest.fn(),
+    editHouseholdMember: jest.fn(),
   },
 
   actions: {

@@ -53,17 +53,17 @@ export class Person implements IPerson {
       }
     }
 
-    validate(): string[] {
+    validate(skipAgeRestriction = false): string[] {
       const errors: string[] = [];
 
-      this.validateIdentity(errors);
+      this.validateIdentity(errors, skipAgeRestriction);
 
       const temporaryAddressErrors = this.validateTemporaryAddress();
 
       return [...errors, ...temporaryAddressErrors];
     }
 
-    validateIdentity(errors: Array<string>) {
+    validateIdentity(errors: Array<string>, skipAgeRestriction: boolean) {
       required(this.firstName, 'first name is required', errors);
       maxLengthCheck(this.firstName, MAX_LENGTH_SM, 'first name', errors);
 
@@ -75,13 +75,20 @@ export class Person implements IPerson {
       maxLengthCheck(this.preferredName, MAX_LENGTH_SM, 'preferred name', errors);
 
       required(this.gender, 'gender is required', errors);
-      maxLengthCheck(this.genderOther, MAX_LENGTH_MD, 'other gender', errors);
+
+      if (this.gender?.isOther) {
+        maxLengthCheck(this.genderOther, MAX_LENGTH_MD, 'other gender', errors);
+        required(this.genderOther, 'genderOther is required', errors);
+      }
 
       required(this.birthDate.year, 'year is required', errors);
       required(this.birthDate.month, 'month is required', errors);
       required(this.birthDate.day, 'day is required', errors);
       isValidBirthday(this.birthDate, 'birth date not valid', errors);
-      hasMinimumAge(this.birthDate, 'minimum age required', errors);
+
+      if (!skipAgeRestriction) {
+        hasMinimumAge(this.birthDate, 'minimum age required', errors);
+      }
 
       if (this.indigenousProvince) {
         required(this.indigenousType, 'indigenousType is required', errors);

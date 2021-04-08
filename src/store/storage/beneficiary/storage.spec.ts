@@ -1,6 +1,6 @@
 import { mockStore } from '@/store';
 import {
-  ETemporaryAddressTypes, mockAddress, mockContactInformation, mockPerson,
+  ETemporaryAddressTypes, mockAddress, mockContactInformation, mockHouseholdMember, mockPerson,
 } from '@/entities/beneficiary';
 import _merge from 'lodash/merge';
 import { makeStorage } from './storage';
@@ -51,6 +51,23 @@ describe('>>> Registration Storage', () => {
     it('should proxy resetTemporaryAddress', () => {
       storage.mutations.resetTemporaryAddress(ETemporaryAddressTypes.HotelMotel);
       expect(store.commit).toBeCalledWith('beneficiary/resetTemporaryAddress', ETemporaryAddressTypes.HotelMotel);
+    });
+
+    it('should proxy addHouseholdMember', () => {
+      storage.mutations.addHouseholdMember(mockHouseholdMember(), true);
+      const params = { payload: mockHouseholdMember(), sameAddress: true };
+      expect(store.commit).toBeCalledWith('beneficiary/addHouseholdMember', params);
+    });
+
+    it('should proxy removeHouseholdMember', () => {
+      storage.mutations.removeHouseholdMember(1);
+      expect(store.commit).toBeCalledWith('beneficiary/removeHouseholdMember', 1);
+    });
+
+    it('should proxy editHouseholdMember', () => {
+      storage.mutations.editHouseholdMember(mockHouseholdMember(), 0, true);
+      const params = { payload: mockHouseholdMember(), sameAddress: true, index: 0 };
+      expect(store.commit).toBeCalledWith('beneficiary/editHouseholdMember', params);
     });
   });
 });

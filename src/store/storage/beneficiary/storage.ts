@@ -35,6 +35,18 @@ export const makeStorage = (store: IStore): IStorage => ({
     setNoFixedHome(payload: boolean) {
       store.commit('beneficiary/setNoFixedHome', payload);
     },
+
+    addHouseholdMember(payload: IPerson, sameAddress: boolean) {
+      store.commit('beneficiary/addHouseholdMember', { payload, sameAddress });
+    },
+
+    removeHouseholdMember(index: number) {
+      store.commit('beneficiary/removeHouseholdMember', index);
+    },
+
+    editHouseholdMember(payload: IPerson, index: number, sameAddress: boolean) {
+      store.commit('beneficiary/editHouseholdMember', { payload, index, sameAddress });
+    },
   },
 
   actions: {

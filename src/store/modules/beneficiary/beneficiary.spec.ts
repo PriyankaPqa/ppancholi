@@ -3,9 +3,10 @@ import { Store } from 'vuex';
 import { mockStore, IRootState } from '@/store';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
+  Beneficiary,
   ETemporaryAddressTypes,
   mockAddress,
-  mockContactInformation,
+  mockContactInformation, mockHouseholdMember,
   mockPerson,
   TemporaryAddress,
 } from '@/entities/beneficiary';
@@ -81,6 +82,35 @@ describe('>>> Team Module', () => {
         const newAddress = new TemporaryAddress();
         newAddress.temporaryAddressType = ETemporaryAddressTypes.HotelMotel;
         expect(store.state.beneficiary.beneficiary.person.temporaryAddress).toEqual(newAddress);
+      });
+    });
+
+    describe('addHouseholdMember', () => {
+      it('should call method from beneficiary entity with proper parameters', () => {
+        store.state.beneficiary.beneficiary = new Beneficiary();
+        jest.spyOn(store.state.beneficiary.beneficiary, 'addHouseholdMember');
+        const params = { payload: mockHouseholdMember(), sameAddress: true };
+        store.commit('beneficiary/addHouseholdMember', params);
+        expect(store.state.beneficiary.beneficiary.addHouseholdMember).toHaveBeenCalledWith(params.payload, params.sameAddress);
+      });
+    });
+
+    describe('removeHouseholdMember', () => {
+      it('should call method from beneficiary entity with proper parameters', () => {
+        store.state.beneficiary.beneficiary = new Beneficiary();
+        jest.spyOn(store.state.beneficiary.beneficiary, 'removeHouseholdMember');
+        store.commit('beneficiary/removeHouseholdMember', 1);
+        expect(store.state.beneficiary.beneficiary.removeHouseholdMember).toHaveBeenCalledWith(1);
+      });
+    });
+
+    describe('editHouseholdMember', () => {
+      it('should call method from beneficiary entity with proper parameters', () => {
+        store.state.beneficiary.beneficiary = new Beneficiary();
+        jest.spyOn(store.state.beneficiary.beneficiary, 'editHouseholdMember');
+        const params = { payload: mockHouseholdMember(), sameAddress: true, index: 1 };
+        store.commit('beneficiary/editHouseholdMember', params);
+        expect(store.state.beneficiary.beneficiary.editHouseholdMember).toHaveBeenCalledWith(params.payload, params.index, params.sameAddress);
       });
     });
   });

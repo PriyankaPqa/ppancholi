@@ -58,13 +58,13 @@ import { VForm } from '@/types';
 import _pickBy from 'lodash/pickBy';
 import helpers from '@/ui/helpers';
 import routes from '@/constants/routes';
-import LeftMenu from './LeftMenu.vue';
-import PrivacyStatement from './PrivacyStatement.vue';
-import PersonalInformation from './PersonalInformation.vue';
-import Addresses from './Addresses.vue';
-import HouseholdMembers from './HouseholdMembers.vue';
-import ReviewRegistration from './ReviewRegistration.vue';
-import ConfirmRegistration from './ConfirmRegistration.vue';
+import LeftMenu from '../../../components/layout/LeftMenu.vue';
+import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
+import PersonalInformation from '../personal-information/PersonalInformation.vue';
+import Addresses from '../addresses/Addresses.vue';
+import HouseholdMembers from '../household-members/HouseholdMembers.vue';
+import ReviewRegistration from '../ReviewRegistration.vue';
+import ConfirmRegistration from '../ConfirmRegistration.vue';
 
 export default Vue.extend({
   name: 'Individual',

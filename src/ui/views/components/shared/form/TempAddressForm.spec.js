@@ -144,28 +144,28 @@ describe('TempAddress.vue', () => {
       describe('Reset geo-location', () => {
         it('is triggered when updating city', async () => {
           const element = wrapper.findDataTest('tempAddress__city');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, '$resetGeoLocation').mockImplementation(() => null);
           await element.vm.$emit('input');
           expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
         });
 
         it('is triggered when updating street', async () => {
           const element = wrapper.findDataTest('tempAddress__street');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, '$resetGeoLocation').mockImplementation(() => null);
           await element.vm.$emit('input');
           expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
         });
 
         it('is triggered when updating province', async () => {
           const element = wrapper.findDataTest('tempAddress__province');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, '$resetGeoLocation').mockImplementation(() => null);
           await element.vm.$emit('input');
           expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
         });
 
         it('is triggered when updating postal code', async () => {
           const element = wrapper.findDataTest('tempAddress__postalCode');
-          jest.spyOn(wrapper.vm, '$resetGeoLocation');
+          jest.spyOn(wrapper.vm, '$resetGeoLocation').mockImplementation(() => null);
           await element.vm.$emit('input');
           expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
         });

@@ -1,36 +1,42 @@
-import { ECanadaProvinces, IAzureSearchResult, IOptionItemData } from '@/types';
+import { IAzureSearchResult, IOptionItemData } from '@/types';
 import { TranslateResult } from 'vue-i18n';
-import { mockCampGround } from '../temporary-address';
+import { mockCampGround, mockFriendsFamily } from '../temporary-address';
 import {
   IIndigenousIdentityData, IPerson, IPersonData,
 } from './person.types';
 import { Person } from './person';
 
+export const mockGenderFemale = (): IOptionItemData => ({
+  name: { translation: { en: 'Female', fr: 'Femme' } },
+  orderRank: 0,
+  isOther: false,
+  isDefault: false,
+  status: 1,
+  id: '676eb98b-d432-4924-90ee-2489e3acdc26',
+});
+
+export const mockGenderMale = (): IOptionItemData => ({
+  name: { translation: { en: 'Male', fr: 'Homme' } },
+  orderRank: 2,
+  isOther: false,
+  isDefault: true,
+  status: 1,
+  id: '0db033fc-a52d-470e-9126-3e21c77d9a24',
+});
+
+export const mockGenderOther = (): IOptionItemData => ({
+  name: { translation: { en: 'Please specify', fr: 'Autre: spécifier' } },
+  orderRank: 1,
+  isOther: true,
+  isDefault: false,
+  status: 1,
+  id: '04718e75-2ae0-4a2a-8647-326edee4bb32',
+});
+
 export const mockGenders = (): IOptionItemData[] => [
-  {
-    name: { translation: { en: 'Female', fr: 'Femme' } },
-    orderRank: 0,
-    isOther: false,
-    isDefault: false,
-    status: 1,
-    id: '676eb98b-d432-4924-90ee-2489e3acdc26',
-  },
-  {
-    name: { translation: { en: 'Please specify', fr: 'Autre: spécifier' } },
-    orderRank: 1,
-    isOther: true,
-    isDefault: false,
-    status: 1,
-    id: '04718e75-2ae0-4a2a-8647-326edee4bb32',
-  },
-  {
-    name: { translation: { en: 'Male', fr: 'Homme' } },
-    orderRank: 2,
-    isOther: false,
-    isDefault: true,
-    status: 1,
-    id: '0db033fc-a52d-470e-9126-3e21c77d9a24',
-  },
+  mockGenderFemale(),
+  mockGenderOther(),
+  mockGenderMale(),
 ];
 
 export const mockPersonData = (): IPersonData => ({
@@ -45,14 +51,42 @@ export const mockPersonData = (): IPersonData => ({
   gender: mockGenders()[0],
   genderOther: '',
   preferredName: 'preferredName',
-  indigenousProvince: ECanadaProvinces.NL,
+  indigenousProvince: null,
   indigenousType: null,
   indigenousCommunityId: null,
   indigenousCommunityOther: '',
   temporaryAddress: mockCampGround(),
 });
 
+export const mockHouseholdMemberData = (): IPersonData => ({
+  birthDate: {
+    year: 2000,
+    month: 2,
+    day: 6,
+  },
+  firstName: 'Jack',
+  middleName: '',
+  lastName: 'Sparrow',
+  gender: mockGenders()[0],
+  genderOther: '',
+  preferredName: '',
+  indigenousProvince: null,
+  indigenousType: null,
+  indigenousCommunityId: null,
+  indigenousCommunityOther: '',
+  temporaryAddress: mockFriendsFamily(),
+});
+
 export const mockPerson = (): IPerson => new Person(mockPersonData());
+
+export const mockHouseholdMember = (): IPerson => new Person(mockHouseholdMemberData());
+
+export const mockHouseholdMembers = (): IPerson[] => [
+  new Person(mockHouseholdMemberData()),
+  new Person(mockHouseholdMemberData()),
+  new Person(mockHouseholdMemberData()),
+  new Person(mockHouseholdMemberData()),
+];
 
 export const mockIndigenousIdentitiesSearchData = (): IAzureSearchResult<IIndigenousIdentityData> => ({
   odataContext: 'test',

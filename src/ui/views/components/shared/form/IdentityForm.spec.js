@@ -4,7 +4,7 @@ import {
   mockGenders,
   mockContactInformation, mockPerson,
 } from '@/entities/beneficiary';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM, MIN_AGE_REGISTRATION } from '@/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import _merge from 'lodash/merge';
 import Component from './IdentityForm.vue';
@@ -86,30 +86,43 @@ describe('IdentityForm.vue', () => {
       test('genderOther', () => {
         expect(wrapper.vm.rules.genderOther).toEqual({
           max: MAX_LENGTH_MD,
+          required: true,
         });
       });
 
       test('month', () => {
-        expect(wrapper.vm.rules.month).toEqual({
-          required: true,
-          birthday: { birthdate: wrapper.vm.computedBirthdate },
-          minimumAge: { birthdate: wrapper.vm.computedBirthdate, age: MIN_AGE_REGISTRATION },
-        });
+        expect(wrapper.vm.rules.month).toEqual(wrapper.vm.birthDateRule);
       });
 
       test('day', () => {
-        expect(wrapper.vm.rules.day).toEqual({
-          required: true,
-          birthday: { birthdate: wrapper.vm.computedBirthdate },
-          minimumAge: { birthdate: wrapper.vm.computedBirthdate, age: MIN_AGE_REGISTRATION },
-        });
+        expect(wrapper.vm.rules.day).toEqual(wrapper.vm.birthDateRule);
       });
 
       test('year', () => {
-        expect(wrapper.vm.rules.year).toEqual({
+        expect(wrapper.vm.rules.year).toEqual(wrapper.vm.birthDateRule);
+      });
+    });
+
+    describe('birthdateRule', () => {
+      it('should return proper data if age restriction is enable', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            form: _merge(mockContactInformation(), mockPersonModified),
+            minAgeRestriction: 15,
+          },
+        });
+        expect(wrapper.vm.birthDateRule).toEqual({
           required: true,
           birthday: { birthdate: wrapper.vm.computedBirthdate },
-          minimumAge: { birthdate: wrapper.vm.computedBirthdate, age: MIN_AGE_REGISTRATION },
+          minimumAge: { birthdate: wrapper.vm.computedBirthdate, age: wrapper.vm.minAgeRestriction },
+        });
+      });
+
+      it('should return proper data if age restriction is disabled', () => {
+        expect(wrapper.vm.birthDateRule).toEqual({
+          required: true,
+          birthday: { birthdate: wrapper.vm.computedBirthdate },
         });
       });
     });

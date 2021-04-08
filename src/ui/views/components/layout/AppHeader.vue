@@ -69,17 +69,20 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
 .logoEn {
   background-size: cover;
   background-image: url($url-rc-en-logo);
+  margin-right: 10px;
 }
 
 .logoFr {
   background-size: cover;
   background-image: url($url-rc-fr-logo);
+  margin-right: 10px;
 }
 
 @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
   .logoEn,
   .logoFr {
     background-image: url($url-logo);
+    min-width: 30px;
     width: 30px;
     height: 30px;
   }
@@ -87,6 +90,7 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
 @media only screen and (min-width: $breakpoint-sm-min) and (max-width: $breakpoint-sm-max) {
   .logoEn,
   .logoFr {
+    min-width: 140px;
     width: 140px;
     height: 56px;
   }
@@ -100,6 +104,7 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
   .logoEn,
   .logoFr {
     width: 140px;
+    min-width: 140px;
     height: 56px;
   }
 
@@ -111,6 +116,7 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
 @media only screen and (min-width: $breakpoint-lg-min) {
   .logoEn,
   .logoFr {
+    min-width: 160px;
     width: 160px;
     height: 64px;
   }

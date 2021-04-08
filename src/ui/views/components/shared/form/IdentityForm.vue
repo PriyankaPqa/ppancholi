@@ -49,7 +49,7 @@
         v-model="formCopy.genderOther"
         :data-test="`${prefixDataTest}__genderOther`"
         :rules="rules.genderOther"
-        :label="`${$t('registration.personal_info.gender.other')}`" />
+        :label="`${$t('registration.personal_info.gender.other')}*`" />
     </v-col>
 
     <v-col cols="12" class="pb-0">
@@ -94,7 +94,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM, MIN_AGE_REGISTRATION } from '@/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { IBirthDate } from '@/entities/beneficiary';
 import { IOptionItemData } from '@/types';
 import months from '@/constants/months';
@@ -117,6 +117,11 @@ export default Vue.extend({
     form: {
       type: Object,
       required: true,
+    },
+
+    minAgeRestriction: {
+      type: Number,
+      default: null,
     },
   },
 
@@ -163,22 +168,25 @@ export default Vue.extend({
         },
         genderOther: {
           max: MAX_LENGTH_MD,
+          required: true,
         },
-        month: {
+        month: this.birthDateRule,
+        day: this.birthDateRule,
+        year: this.birthDateRule,
+      };
+    },
+
+    birthDateRule(): Record<string, unknown> {
+      if (this.minAgeRestriction) {
+        return {
           required: true,
           birthday: { birthdate: this.computedBirthdate },
-          minimumAge: { birthdate: this.computedBirthdate, age: MIN_AGE_REGISTRATION },
-        },
-        day: {
-          required: true,
-          birthday: { birthdate: this.computedBirthdate },
-          minimumAge: { birthdate: this.computedBirthdate, age: MIN_AGE_REGISTRATION },
-        },
-        year: {
-          required: true,
-          birthday: { birthdate: this.computedBirthdate },
-          minimumAge: { birthdate: this.computedBirthdate, age: MIN_AGE_REGISTRATION },
-        },
+          minimumAge: { birthdate: this.computedBirthdate, age: this.minAgeRestriction },
+        };
+      }
+      return {
+        required: true,
+        birthday: { birthdate: this.computedBirthdate },
       };
     },
 

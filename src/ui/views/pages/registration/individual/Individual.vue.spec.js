@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import Component from '../Individual.vue';
+import Component from './Individual.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

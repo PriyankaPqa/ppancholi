@@ -1,10 +1,7 @@
-import { IPerson } from '@/entities/value-objects/person';
 import { IBeneficiary, IBeneficiaryData } from './beneficiary.types';
 import { IAddress, Address } from '../value-objects/address';
 import { IContactInformation, ContactInformation } from '../value-objects/contact-information';
-import { IHouseholdMembers, HouseholdMembers } from '../value-objects/household-members';
-
-import { Person } from '../value-objects/person/person';
+import { IPerson, Person } from '../value-objects/person';
 
 export class Beneficiary implements IBeneficiary {
   person: IPerson;
@@ -13,7 +10,7 @@ export class Beneficiary implements IBeneficiary {
 
   homeAddress: IAddress
 
-  householdMembers: IHouseholdMembers;
+  householdMembers: IPerson[];
 
   constructor(data?: IBeneficiaryData) {
     if (!data) {
@@ -22,22 +19,48 @@ export class Beneficiary implements IBeneficiary {
       this.person = new Person(data.person);
       this.contactInformation = new ContactInformation(data.contactInformation);
       this.homeAddress = new Address(data.homeAddress);
-      this.householdMembers = new HouseholdMembers(data.householdMembers);
+      this.householdMembers = data.householdMembers ? data.householdMembers.map((h) => new Person(h)) : [];
     }
+  }
+
+  addHouseholdMember(newPerson: IPerson, sameAddress: boolean) {
+    if (sameAddress) {
+      newPerson.temporaryAddress = this.person.temporaryAddress;
+    }
+    this.householdMembers = [...this.householdMembers, newPerson];
+  }
+
+  removeHouseholdMember(index: number) {
+    this.householdMembers = this.householdMembers.filter((h, i) => i !== index);
+  }
+
+  editHouseholdMember(newPerson: IPerson, index: number, sameAddress: boolean) {
+    if (sameAddress) {
+      newPerson.temporaryAddress = this.person.temporaryAddress;
+    }
+    const newHouseholdMembers = [...this.householdMembers];
+    newHouseholdMembers[index] = newPerson;
+    this.householdMembers = newHouseholdMembers;
   }
 
   reset() {
     this.person = new Person();
     this.contactInformation = new ContactInformation();
     this.homeAddress = new Address();
-    this.householdMembers = new HouseholdMembers();
+    this.householdMembers = [];
+  }
+
+  validateHouseholdMembers(): string[] {
+    const householdMembersErrors = this.householdMembers.map((h) => h.validate(true));
+    // We flatten the array
+    return [].concat(...householdMembersErrors);
   }
 
   validate(): string[] {
     const personErrors = this.person.validate();
     const contactInformationErrors = this.contactInformation.validate();
     const homeAddressErrors = this.homeAddress.validate();
-    const householdMembersErrors = this.householdMembers.validate();
+    const householdMembersErrors = this.validateHouseholdMembers();
 
     return [...personErrors, ...contactInformationErrors, ...homeAddressErrors, ...householdMembersErrors];
   }

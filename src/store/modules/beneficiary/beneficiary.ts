@@ -52,6 +52,18 @@ const mutations = {
     state.noFixedHome = payload;
   },
 
+  addHouseholdMember(state: IState, { payload, sameAddress }: {payload: IPerson; sameAddress: boolean}) {
+    state.beneficiary.addHouseholdMember(payload, sameAddress);
+  },
+
+  removeHouseholdMember(state: IState, index: number) {
+    state.beneficiary.removeHouseholdMember(index);
+  },
+
+  editHouseholdMember(state: IState, { payload, index, sameAddress }: {payload: IPerson; index: number; sameAddress: boolean}) {
+    state.beneficiary.editHouseholdMember(payload, index, sameAddress);
+  },
+
 };
 
 const actions = {
