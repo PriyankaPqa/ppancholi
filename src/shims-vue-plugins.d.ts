@@ -1,4 +1,5 @@
 import { IMultilingual } from '@/types';
+import { Toasted } from 'vue-toasted';
 
 interface IMFunction {
   (value: IMultilingual): string;
@@ -7,5 +8,6 @@ interface IMFunction {
 declare module 'vue/types/vue' {
   interface Vue {
     $m: IMFunction;
+    $toasted: Toasted;
   }
 }

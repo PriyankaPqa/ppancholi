@@ -66,6 +66,27 @@ describe('HouseholdMembers.vue', () => {
         wrapper.vm.deleteHouseholdMember();
         expect(wrapper.vm.showDeleteDialog).toEqual(false);
       });
+
+      it('should enable the add button only if number of members is below the limit', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              disabledAdd: true,
+            };
+          },
+          computed: {
+            householdMembers() {
+              return new Array(14).fill(mockHouseholdMember());
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.deleteHouseholdMember();
+        expect(wrapper.vm.disabledAdd).toBeFalsy();
+      });
     });
 
     describe('showConfirmationDelete', () => {
@@ -77,6 +98,40 @@ describe('HouseholdMembers.vue', () => {
       it('should set index to param', () => {
         wrapper.vm.showConfirmationDelete(0);
         expect(wrapper.vm.index).toEqual(0);
+      });
+    });
+
+    describe('addHouseholdMember', () => {
+      it('should calls showDialog with -1 if limit is not reached', () => {
+        jest.spyOn(wrapper.vm, 'showDialog');
+        wrapper.vm.addHouseholdMember();
+        expect(wrapper.vm.showDialog).toHaveBeenCalledWith(-1);
+      });
+
+      it('should display a warning message if limit is reached', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            householdMembers() {
+              return new Array(20).fill(mockHouseholdMember());
+            },
+          },
+        });
+        wrapper.vm.addHouseholdMember();
+        expect(wrapper.vm.$toasted.global.warning).toHaveBeenCalledWith('warning.max_householdmembers_reached');
+      });
+
+      it('should disabled the button add  if limit is reached', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            householdMembers() {
+              return new Array(20).fill(mockHouseholdMember());
+            },
+          },
+        });
+        wrapper.vm.addHouseholdMember();
+        expect(wrapper.vm.disabledAdd).toBe(true);
       });
     });
   });
@@ -96,11 +151,11 @@ describe('HouseholdMembers.vue', () => {
       expect(wrapper.vm.showConfirmationDelete).toHaveBeenCalledWith(0);
     });
 
-    test('Clicking add button triggers showDialog with index -1', async () => {
-      jest.spyOn(wrapper.vm, 'showDialog');
+    test('Clicking add button triggers addHouseholdMember method', async () => {
+      jest.spyOn(wrapper.vm, 'addHouseholdMember');
       const element = wrapper.findDataTest('add-householdMember');
       await element.trigger('click');
-      expect(wrapper.vm.showDialog).toHaveBeenCalledWith(-1);
+      expect(wrapper.vm.addHouseholdMember).toHaveBeenCalledTimes(1);
     });
 
     test('Validating deletion triggers deleteHouseholdMember', async () => {

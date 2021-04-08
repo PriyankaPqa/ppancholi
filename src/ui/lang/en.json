@@ -216,5 +216,6 @@
     "validations.phoneOrEmail": "You must input a phone number or an email.",
     "validations.postCode": "This field must be a valid postal code.",
     "validations.regex": "Please enter a correct format",
-    "validations.required": "This field is required."
+    "validations.required": "This field is required.",
+    "warning.max_householdmembers_reached": "You can't have more than {x} household members"
 }

@@ -7,7 +7,7 @@ import {
   i18n, Trans,
 } from '@/ui/plugins';
 import Multilingual from '@/ui/plugins/multilingual';
-
+import '@/ui/plugins/vue-toasted';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 import App from './ui/App.vue';
 import './registerServiceWorker';

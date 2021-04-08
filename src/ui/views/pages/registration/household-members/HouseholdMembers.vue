@@ -27,7 +27,12 @@
             </div>
           </div>
         </div>
-        <v-btn class="mt-2" color="primary" data-test="add-householdMember" @click.native="showDialog(-1)">
+        <v-btn
+          class="mt-2"
+          color="primary"
+          :disabled="disabledAdd"
+          data-test="add-householdMember"
+          @click.native="addHouseholdMember()">
           <v-icon left>
             mdi-plus
           </v-icon> {{ $t('registration.household_members.add.label') }}
@@ -57,6 +62,7 @@ import Vue from 'vue';
 import { IPerson, Person } from '@/entities/value-objects/person';
 import AddEditHouseholdMembers from '@/ui/views/pages/registration/household-members/AddEditHouseholdMembers.vue';
 import { RcConfirmationDialog } from '@crctech/component-library';
+import { MAX_HOUSEHOLDMEMBERS } from '@/constants/validations';
 
 export default Vue.extend({
   name: 'HouseholdMembers',
@@ -72,6 +78,7 @@ export default Vue.extend({
       currentHouseholdMember: null,
       index: -1,
       showDeleteDialog: false,
+      disabledAdd: false,
     };
   },
 
@@ -91,11 +98,24 @@ export default Vue.extend({
     deleteHouseholdMember() {
       this.$storage.beneficiary.mutations.removeHouseholdMember(this.index);
       this.showDeleteDialog = false;
+
+      if (this.householdMembers.length < MAX_HOUSEHOLDMEMBERS) {
+        this.disabledAdd = false;
+      }
     },
 
     showConfirmationDelete(index: number) {
       this.showDeleteDialog = true;
       this.index = index;
+    },
+
+    addHouseholdMember() {
+      if (this.householdMembers.length < MAX_HOUSEHOLDMEMBERS) {
+        this.showDialog(-1);
+      } else {
+        this.$toasted.global.warning(this.$t('warning.max_householdmembers_reached', { x: MAX_HOUSEHOLDMEMBERS }));
+        this.disabledAdd = true;
+      }
     },
   },
 });
