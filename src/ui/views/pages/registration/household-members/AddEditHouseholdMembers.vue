@@ -25,6 +25,7 @@ import { TranslateResult } from 'vue-i18n';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers';
 import { IPerson } from '@/entities/value-objects/person';
+import _isEqual from 'lodash/isEqual';
 
 export default Vue.extend({
   name: 'HouseholdMemberDialog',
@@ -68,6 +69,12 @@ export default Vue.extend({
       }
       return this.$t('registration.household_member.add.title');
     },
+  },
+
+  mounted() {
+    if (this.editMode) {
+      this.sameAddress = _isEqual(this.householdMember.temporaryAddress, this.$storage.beneficiary.getters.beneficiary().person.temporaryAddress);
+    }
   },
 
   methods: {

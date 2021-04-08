@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   ETemporaryAddressTypes,
-  mockBeneficiary,
+  mockBeneficiary, mockCampGround,
 } from '@/entities/beneficiary';
 import { ECanadaProvinces } from '@/types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
@@ -19,6 +19,9 @@ describe('TempAddress.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
+      propsData: {
+        temporaryAddress: mockCampGround(),
+      },
       mocks: {
         $storage: storage,
       },
@@ -26,12 +29,6 @@ describe('TempAddress.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('temporaryAddress', () => {
-      it('should be linked to temporaryAddress from beneficiary', () => {
-        expect(wrapper.vm.temporaryAddress).toEqual(mockBeneficiary().person.temporaryAddress);
-      });
-    });
-
     describe('temporaryAddressType', () => {
       it('should be linked to temporaryAddressType from beneficiary', () => {
         expect(wrapper.vm.temporaryAddressType).toEqual(mockBeneficiary().person.temporaryAddress.temporaryAddressType);
@@ -67,13 +64,6 @@ describe('TempAddress.vue', () => {
       it('should return true if country is CA', () => {
         wrapper.vm.form.country = 'CA';
         expect(wrapper.vm.isCanada).toBeTruthy();
-      });
-    });
-
-    describe('isTemporaryAddressCampground', () => {
-      it('should return true if temporary address is Campground', () => {
-        // campground is return by default by the mock
-        expect(wrapper.vm.isTemporaryAddressCampground).toBeTruthy();
       });
     });
 
@@ -118,9 +108,9 @@ describe('TempAddress.vue', () => {
 
   describe('Template', () => {
     describe('Event handlers', () => {
-      test('setTemporaryAddress is called when form changes', async () => {
+      test('update event is emitted when form changes', async () => {
         wrapper.vm.form.country = 'test';
-        expect(wrapper.vm.$storage.beneficiary.mutations.setTemporaryAddress).toHaveBeenCalledWith(wrapper.vm.form);
+        expect(wrapper.emitted('update')[0]).toEqual([wrapper.vm.form]);
       });
 
       test('autocomplete triggers $streetAddressAutocomplete', async () => {
@@ -225,24 +215,21 @@ describe('TempAddress.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('rebuildForm', () => {
+    describe('changeType', () => {
       const type = ETemporaryAddressTypes.MedicalFacility;
 
       beforeEach(() => {
+        wrapper.vm.form.reset = jest.fn();
         wrapper.vm.$refs.form.reset = jest.fn();
-        wrapper.vm.rebuildForm(type);
+        wrapper.vm.changeType(type);
       });
 
-      it('calls resetTemporaryAddress with proper param', () => {
-        expect(wrapper.vm.$storage.beneficiary.mutations.resetTemporaryAddress).toHaveBeenLastCalledWith(type);
+      it('calls reset from entity with proper param', () => {
+        expect(wrapper.vm.form.reset).toHaveBeenLastCalledWith(type);
       });
 
       it('resets the form', () => {
         expect(wrapper.vm.$refs.form.reset).toHaveBeenCalledTimes(1);
-      });
-
-      it('updates the form with the new temporary address from the store', () => {
-        expect(wrapper.vm.form).toEqual(wrapper.vm.temporaryAddress);
       });
     });
   });

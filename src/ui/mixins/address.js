@@ -38,8 +38,8 @@ export default {
       this.isAutocompleteAddress = false;
     },
 
-    $onChangeCountry() {
-      this.form.resetAddress();
+    $onChangeCountry(country) {
+      this.form.reset(country);
       (this.$refs.form).reset();
     },
   },

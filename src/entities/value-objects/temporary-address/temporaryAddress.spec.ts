@@ -1,7 +1,14 @@
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 
+import { ETemporaryAddressTypes } from '@/entities/value-objects/temporary-address/temporaryAddress.types';
 import {
-  mockCampGround, mockCampgroundData, mockFriendsFamily, mockHotelMotel, mockMedicalFacility, mockOther, mockShelter,
+  mockCampGround,
+  mockCampgroundData,
+  mockFriendsFamily,
+  mockHotelMotel,
+  mockMedicalFacility,
+  mockOther,
+  mockShelter,
 } from './temporaryAddress.mock';
 import { TemporaryAddress } from './temporaryAddress';
 
@@ -319,6 +326,44 @@ describe('>>> Temporary Address', () => {
       it('should return true for Shelter', () => {
         const p = mockShelter();
         expect(p.requiresShelterId()).toBeTruthy();
+      });
+    });
+
+    describe('reset', () => {
+      it('should reset the temporary address', () => {
+        const t = mockCampGround();
+        t.reset();
+
+        expect(t.country).toEqual('CA');
+        expect(t.street).toEqual(null);
+        expect(t.unitSuite).toEqual(null);
+        expect(t.provinceTerritory).toEqual(null);
+        expect(t.city).toEqual(null);
+        expect(t.postalCode).toEqual(null);
+        expect(t.geoLocation).toEqual({ lat: null, lng: null });
+
+        expect(t.temporaryAddressType).toEqual(null);
+        expect(t.placeName).toEqual('');
+        expect(t.placeNumber).toEqual('');
+        expect(t.shelterId).toEqual('');
+      });
+
+      it('should reset the temporary address with given type', () => {
+        const t = mockCampGround();
+        t.reset(ETemporaryAddressTypes.HotelMotel);
+
+        expect(t.country).toEqual('CA');
+        expect(t.street).toEqual(null);
+        expect(t.unitSuite).toEqual(null);
+        expect(t.provinceTerritory).toEqual(null);
+        expect(t.city).toEqual(null);
+        expect(t.postalCode).toEqual(null);
+        expect(t.geoLocation).toEqual({ lat: null, lng: null });
+
+        expect(t.temporaryAddressType).toEqual(ETemporaryAddressTypes.HotelMotel);
+        expect(t.placeName).toEqual('');
+        expect(t.placeNumber).toEqual('');
+        expect(t.shelterId).toEqual('');
       });
     });
   });

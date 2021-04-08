@@ -58,17 +58,8 @@ export class Address implements IAddress {
     return errors;
   }
 
-  resetAddress(): void {
-    this.street = null;
-    this.unitSuite = null;
-    this.provinceTerritory = null;
-    this.city = null;
-    this.postalCode = null;
-    this.geoLocation = { lat: null, lng: null };
-  }
-
-  reset(): void {
-    this.country = 'CA';
+  reset(country?: string): void {
+    this.country = country || 'CA';
     this.street = null;
     this.unitSuite = null;
     this.provinceTerritory = null;

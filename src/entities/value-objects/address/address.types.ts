@@ -23,5 +23,5 @@ export interface IAddressData {
 }
 
 export interface IAddress extends IAddressData, IEntity {
-    resetAddress(): void;
+    reset(country?: string):void;
 }

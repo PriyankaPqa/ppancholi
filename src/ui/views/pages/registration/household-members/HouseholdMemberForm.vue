@@ -18,7 +18,7 @@
                 {{ $t('registration.household_member.sameAddress.yes.detail') }}
               </span>
             </div>
-            <div v-if="false" class="flex-contain mt-2">
+            <div class="flex-contain mt-2">
               <span>
                 <v-radio data-test="sameTemporaryAddressNo" :label="$t('common.no')" :value="false" />
               </span>
@@ -27,6 +27,9 @@
               </span>
             </div>
           </v-radio-group>
+          <v-col v-if="!sameAddress" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
+            <temp-address-form :temporary-address="householdMember.temporaryAddress" />
+          </v-col>
         </v-col>
       </v-row>
     </v-col>
@@ -39,11 +42,13 @@ import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
 import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
 import months from '@/constants/months';
 import { IPerson } from '@/entities/value-objects/person';
+import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
 
 export default Vue.extend({
   name: 'HouseholdMemberForm',
 
   components: {
+    TempAddressForm,
     IdentityForm,
     IndigenousIdentityForm,
   },

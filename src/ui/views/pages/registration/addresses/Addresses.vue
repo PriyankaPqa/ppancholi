@@ -28,7 +28,11 @@
       <address-form prefix-data-test="address" />
     </template>
 
-    <temp-address-form :no-fixed-home="noFixedHome" prefix-data-test="tempAddress" />
+    <temp-address-form
+      :temporary-address="temporaryAddress"
+      :no-fixed-home="noFixedHome"
+      prefix-data-test="tempAddress"
+      @update="setTemporaryAddress($event)" />
   </v-row>
 </template>
 
@@ -38,6 +42,7 @@ import { VCheckboxWithValidation } from '@crctech/component-library';
 
 import AddressForm from '@/ui/views/components/shared/form/AddressForm.vue';
 import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
+import { ITemporaryAddress } from '@/entities/value-objects/temporary-address';
 
 export default Vue.extend({
   name: 'Addresses',
@@ -49,6 +54,10 @@ export default Vue.extend({
   },
 
   computed: {
+    temporaryAddress(): ITemporaryAddress {
+      return this.$storage.beneficiary.getters.beneficiary().person.temporaryAddress;
+    },
+
     noFixedHome: {
       get(): boolean {
         return this.$store.state.beneficiary.noFixedHome;
@@ -56,6 +65,12 @@ export default Vue.extend({
       set(checked: boolean) {
         this.$storage.beneficiary.mutations.setNoFixedHome(checked);
       },
+    },
+  },
+
+  methods: {
+    setTemporaryAddress(tmpAddress: ITemporaryAddress) {
+      this.$storage.beneficiary.mutations.setTemporaryAddress(tmpAddress);
     },
   },
 

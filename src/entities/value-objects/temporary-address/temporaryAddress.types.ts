@@ -24,7 +24,6 @@ export interface ITemporaryAddressData extends IAddressData {
 }
 
 export interface ITemporaryAddress extends ITemporaryAddressData, IEntity {
-    resetAddress(): void;
     hasPlaceNumber(): boolean;
     hasUnitSuite(): boolean;
     hasStreet(): boolean;
@@ -34,4 +33,5 @@ export interface ITemporaryAddress extends ITemporaryAddressData, IEntity {
     requiresProvinceTerritory(): boolean;
     requiresCity(): boolean;
     requiresShelterId(): boolean;
+    reset(type?: ETemporaryAddressTypes): void;
 }

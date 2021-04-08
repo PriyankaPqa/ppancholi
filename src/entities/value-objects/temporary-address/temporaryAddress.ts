@@ -65,9 +65,11 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
     return errors;
   }
 
-  reset(): void {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  reset(type?: ETemporaryAddressTypes): void {
     super.reset();
-    this.temporaryAddressType = null;
+    this.temporaryAddressType = type || null;
     this.placeName = '';
     this.placeNumber = '';
     this.shelterId = '';

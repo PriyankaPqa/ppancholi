@@ -21,7 +21,7 @@ export default {
 
     script.src = 'https://acsbapp.com/apps/app/dist/js/app.js';
     script.async = true;
-    script.onload = function () {
+    script.onload = function accessiBe() {
       // eslint-disable-next-line no-undef
       acsbJS.init({
         statementLink: '',

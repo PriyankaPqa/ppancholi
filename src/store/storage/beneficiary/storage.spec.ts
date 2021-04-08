@@ -1,6 +1,6 @@
 import { mockStore } from '@/store';
 import {
-  ETemporaryAddressTypes, mockAddress, mockContactInformation, mockHouseholdMember, mockPerson,
+  ETemporaryAddressTypes, mockAddress, mockCampGround, mockContactInformation, mockHouseholdMember, mockPerson,
 } from '@/entities/beneficiary';
 import _merge from 'lodash/merge';
 import { makeStorage } from './storage';
@@ -38,7 +38,7 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy setTemporaryAddress', () => {
-      const payload = mockAddress();
+      const payload = mockCampGround();
       storage.mutations.setTemporaryAddress(payload);
       expect(store.commit).toBeCalledWith('beneficiary/setTemporaryAddress', payload);
     });

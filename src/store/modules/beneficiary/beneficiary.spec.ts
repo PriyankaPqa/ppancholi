@@ -4,11 +4,9 @@ import { mockStore, IRootState } from '@/store';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
   Beneficiary,
-  ETemporaryAddressTypes,
   mockAddress,
   mockContactInformation, mockHouseholdMember,
   mockPerson,
-  TemporaryAddress,
 } from '@/entities/beneficiary';
 import _merge from 'lodash/merge';
 
@@ -72,16 +70,6 @@ describe('>>> Team Module', () => {
         store = mockStore();
         store.commit('beneficiary/setNoFixedHome', true);
         expect(store.state.beneficiary.noFixedHome).toEqual(true);
-      });
-    });
-
-    describe('resetTemporaryAddress', () => {
-      it('resets temporary address of the beneficiary with passed type', () => {
-        store = mockStore();
-        store.commit('beneficiary/resetTemporaryAddress', ETemporaryAddressTypes.HotelMotel);
-        const newAddress = new TemporaryAddress();
-        newAddress.temporaryAddressType = ETemporaryAddressTypes.HotelMotel;
-        expect(store.state.beneficiary.beneficiary.person.temporaryAddress).toEqual(newAddress);
       });
     });
 

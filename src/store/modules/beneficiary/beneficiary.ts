@@ -4,12 +4,10 @@ import { IRootState } from '@/store/store.types';
 import {
   Beneficiary,
   ContactInformation,
-  ETemporaryAddressTypes,
   IAddress,
   IContactInformation,
   IPerson, ITemporaryAddress,
   Person,
-  TemporaryAddress,
 } from '@/entities/beneficiary';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
@@ -36,12 +34,6 @@ const mutations = {
 
   setTemporaryAddress(state: IState, payload: ITemporaryAddress) {
     state.beneficiary.person.temporaryAddress = _cloneDeep(payload);
-  },
-
-  resetTemporaryAddress(state: IState, type: ETemporaryAddressTypes) {
-    const newAddress = new TemporaryAddress();
-    newAddress.temporaryAddressType = type;
-    state.beneficiary.person.temporaryAddress = _cloneDeep(newAddress);
   },
 
   setHomeAddress(state: IState, payload: IAddress) {

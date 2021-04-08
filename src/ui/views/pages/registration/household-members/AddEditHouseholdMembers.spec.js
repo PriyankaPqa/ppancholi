@@ -3,6 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockHouseholdMember } from '@/entities/value-objects/person';
 import { RcDialog } from '@crctech/component-library';
+import { mockCampGround } from '@/entities/value-objects/temporary-address';
 import Component from './AddEditHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -47,6 +48,7 @@ describe('AddEditHouseholdMembers.vue', () => {
       });
     });
   });
+
   describe('Methods', () => {
     describe('close', () => {
       it('should update show to false', () => {
@@ -80,6 +82,49 @@ describe('AddEditHouseholdMembers.vue', () => {
       const dialog = wrapper.findComponent(RcDialog);
       await dialog.vm.$emit('submit');
       expect(wrapper.vm.validate).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Lifecycle hook', () => {
+    describe('mounted', () => {
+      it('should set sameAddress to true if household member and beneficiary has the same temporary address in edit mode', () => {
+        const householdMember = mockHouseholdMember();
+        householdMember.temporaryAddress = mockCampGround();
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            householdMember,
+            index: 0,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.sameAddress).toBeTruthy();
+      });
+
+      it('should set sameAddress to false if household member and beneficiary does not have the same temporary address in edit mode', () => {
+        const householdMember = mockHouseholdMember();
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            householdMember,
+            index: 0,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.sameAddress).toBeFalsy();
+      });
     });
   });
 });

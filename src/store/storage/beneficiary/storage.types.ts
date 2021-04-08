@@ -1,5 +1,5 @@
 import {
-  Beneficiary, ETemporaryAddressTypes, IAddress, IBeneficiary, IContactInformation, IPerson,
+  Beneficiary, ETemporaryAddressTypes, IAddress, IBeneficiary, IContactInformation, IPerson, ITemporaryAddress,
 } from '@/entities/beneficiary';
 
 export interface IStorage {
@@ -11,7 +11,7 @@ export interface IStorage {
   mutations: {
     setPersonalInformation(payload: IContactInformation & IPerson): void;
     setHomeAddress(payload: IAddress): void;
-    setTemporaryAddress(payload: IAddress): void;
+    setTemporaryAddress(payload: ITemporaryAddress): void;
     setNoFixedHome(payload: boolean): void;
     resetTemporaryAddress(type: ETemporaryAddressTypes): void;
     addHouseholdMember(payload: IPerson, sameAddress: boolean): void;

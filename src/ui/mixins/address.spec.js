@@ -69,14 +69,14 @@ describe('googleAutocomplete', () => {
 
     describe('$onChangeCountry', () => {
       beforeEach(() => {
-        wrapper.vm.form.resetAddress = jest.fn();
+        wrapper.vm.form.reset = jest.fn();
         wrapper.vm.$refs.form = {};
         wrapper.vm.$refs.form.reset = jest.fn();
-        wrapper.vm.$onChangeCountry();
+        wrapper.vm.$onChangeCountry('FR');
       });
 
-      it('calls resetAddress from entity', () => {
-        expect(wrapper.vm.form.resetAddress).toHaveBeenCalledTimes(1);
+      it('calls resetAddress from entity with proper param', () => {
+        expect(wrapper.vm.form.reset).toHaveBeenCalledWith('FR');
       });
 
       it('resets the form', () => {

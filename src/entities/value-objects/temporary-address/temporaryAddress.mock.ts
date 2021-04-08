@@ -43,7 +43,7 @@ export const mockFriendsFamilyData = (): ITemporaryAddressData => ({
   country: 'CA',
   street: '',
   city: 'Ottawa',
-  provinceTerritory: ECanadaProvinces.ON,
+  provinceTerritory: ECanadaProvinces.ON.toString(),
   postalCode: '',
   geoLocation: null,
 });

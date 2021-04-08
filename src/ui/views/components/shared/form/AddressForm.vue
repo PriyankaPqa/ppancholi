@@ -7,7 +7,7 @@
           :rules="rules.country"
           :data-test="`${prefixDataTest}__country`"
           :label="`${$t('registration.addresses.country')} *`"
-          @change="$onChangeCountry()" />
+          @change="$onChangeCountry($event)" />
       </v-col>
 
       <v-col cols="12" sm="9" md="8">

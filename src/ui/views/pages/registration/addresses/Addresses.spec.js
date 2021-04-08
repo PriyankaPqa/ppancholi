@@ -3,6 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import AddressForm from '@/ui/views/components/shared/form/AddressForm.vue';
 import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
+import { ETemporaryAddressTypes, mockCampGround } from '@/entities/value-objects/temporary-address';
 import Component from './Addresses.vue';
 
 const localVue = createLocalVue();
@@ -31,6 +32,12 @@ describe('Addresses.vue', () => {
         expect(wrapper.vm.$storage.beneficiary.mutations.setNoFixedHome).toHaveBeenCalledWith(true);
       });
     });
+
+    describe('temporaryAddress', () => {
+      it('is linked to temporary address of the beneficiary', () => {
+        expect(wrapper.vm.temporaryAddress).toEqual(mockCampGround());
+      });
+    });
   });
 
   describe('Template', () => {
@@ -52,6 +59,23 @@ describe('Addresses.vue', () => {
         },
       });
       expect(wrapper.findComponent(AddressForm).exists()).toBeFalsy();
+    });
+  });
+
+  describe('Methods', () => {
+    describe('setTemporaryAddress', () => {
+      it('is called when event update is emitted', async () => {
+        jest.spyOn(wrapper.vm, 'setTemporaryAddress');
+        const temp = wrapper.findComponent(TempAddressForm);
+        await temp.vm.$emit('update', ETemporaryAddressTypes.HotelMotel);
+        expect(wrapper.vm.setTemporaryAddress).toHaveBeenCalledWith(ETemporaryAddressTypes.HotelMotel);
+      });
+
+      it('should call setTemporaryAddress mutations', () => {
+        wrapper.vm.setTemporaryAddress(ETemporaryAddressTypes.HotelMotel);
+        expect(wrapper.vm.$storage.beneficiary.mutations.setTemporaryAddress)
+          .toHaveBeenCalledWith(ETemporaryAddressTypes.HotelMotel);
+      });
     });
   });
 });

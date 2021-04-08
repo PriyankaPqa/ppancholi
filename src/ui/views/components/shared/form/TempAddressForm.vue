@@ -26,7 +26,7 @@
           :data-test="`${prefixDataTest}__temporaryAddressType`"
           :label="`${$t('registration.addresses.temporaryAddressType')} *`"
           :items="temporaryAddressTypeItems"
-          @change="rebuildForm($event)" />
+          @change="changeType($event)" />
       </v-col>
 
       <template v-if="temporaryAddressType">
@@ -154,6 +154,10 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    temporaryAddress: {
+      type: Object as () => ITemporaryAddress,
+      required: true,
+    },
   },
 
   data() {
@@ -164,10 +168,6 @@ export default Vue.extend({
   },
 
   computed: {
-    temporaryAddress(): ITemporaryAddress {
-      return this.$storage.beneficiary.getters.beneficiary().person.temporaryAddress;
-    },
-
     temporaryAddressType(): ETemporaryAddressTypes {
       return this.temporaryAddress.temporaryAddressType;
     },
@@ -224,10 +224,6 @@ export default Vue.extend({
       return this.form?.country === 'CA';
     },
 
-    isTemporaryAddressCampground(): boolean {
-      return this.temporaryAddressType === ETemporaryAddressTypes.Campground;
-    },
-
     placeNameLabel(): TranslateResult {
       switch (this.temporaryAddressType) {
         case (ETemporaryAddressTypes.Campground):
@@ -260,7 +256,7 @@ export default Vue.extend({
     form: {
       deep: true,
       handler(newForm: ITemporaryAddress) {
-        this.$storage.beneficiary.mutations.setTemporaryAddress(newForm);
+        this.$emit('update', newForm);
       },
     },
   },
@@ -270,12 +266,12 @@ export default Vue.extend({
   },
 
   methods: {
-    rebuildForm(type: ETemporaryAddressTypes) {
-      this.$storage.beneficiary.mutations.resetTemporaryAddress(type);
+    changeType(type: ETemporaryAddressTypes) {
+      this.form.reset(type);
       (this.$refs.form as VForm).reset();
-      this.form = this.temporaryAddress;
     },
   },
+
 });
 
 </script>
