@@ -1316,6 +1316,7 @@
     "zendesk.help_link.case_file_financial.edit_financial_assistance": "zendesk.help_link.case_file_financial.edit_financial_assistance",
     "zendesk.help_link.case_file_financial.view_financial_assistance": "zendesk.help_link.case_file_financial.view_financial_assistance",
     "zendesk.help_link.case_file_financial.view_financial_assistance.text": "zendesk.help_link.case_file_financial.view_financial_assistance.text",
+    "zendesk.help_link.change_event_status": "",
     "zendesk.help_link.create_case_note": "zendesk.help_link.create_case_note",
     "zendesk.help_link.createEvent": "zendesk.help_link.createEvent",
     "zendesk.help_link.editEvent": "zendesk.help_link.editEvent",

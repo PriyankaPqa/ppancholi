@@ -2,7 +2,7 @@ import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validat
 import { ECanadaProvinces } from '@/types';
 import { Event } from './event';
 import { mockEventsSearchData } from './event.mock';
-import { EEventCallCentreStatus } from './event.types';
+import { EEventCallCentreStatus, EEventStatus } from './event.types';
 
 const mockEventData = mockEventsSearchData()[0];
 
@@ -287,15 +287,56 @@ describe('>>> User', () => {
     it('should instantiate schedule', () => {
       const event = new Event(mockEventData);
       expect(event.schedule).toEqual({
-        status: 1,
-        scheduledOpenDate: new Date('2021-03-15T00:00:00Z'),
-        scheduledCloseDate: new Date('2021-06-15T00:00:00Z'),
-        openDate: null,
-        closeDate: null,
-        closeReason: null,
-        hasBeenOpen: false,
-        reOpenReason: '',
+        status: EEventStatus.OnHold,
+        scheduledOpenDate: null,
+        scheduledCloseDate: null,
+        openDate: new Date('2021-03-31T15:23:00.755Z'),
+        closeDate: new Date('2021-03-31T15:23:09.367Z'),
+        updateReason: null,
+        timestamp: new Date('2021-03-31T15:23:16.069Z'),
       });
+    });
+
+    it('should instantiate scheduleHistory', () => {
+      const event = new Event(mockEventData);
+      expect(event.scheduleHistory).toEqual([
+        {
+          status: EEventStatus.Open,
+          scheduledOpenDate: new Date('2021-03-31T00:00:00Z'),
+          scheduledCloseDate: new Date('2021-05-31T00:00:00Z'),
+          openDate: new Date('2021-03-31T15:23:00.755Z'),
+          closeDate: null,
+          updateReason: null,
+          timestamp: new Date('2021-03-31T15:23:00.755Z'),
+        },
+        {
+          status: EEventStatus.Closed,
+          scheduledOpenDate: new Date('2021-03-31T00:00:00Z'),
+          scheduledCloseDate: new Date('2021-05-31T00:00:00Z'),
+          openDate: new Date('2021-03-31T15:23:00.755Z'),
+          closeDate: new Date('2021-03-31T15:23:09.367Z'),
+          updateReason: 'Close Reason',
+          timestamp: new Date('2021-03-31T15:23:09.367Z'),
+        },
+        {
+          status: EEventStatus.Archived,
+          scheduledOpenDate: new Date('2021-03-31T00:00:00Z'),
+          scheduledCloseDate: new Date('2021-05-31T00:00:00Z'),
+          openDate: new Date('2021-03-31T15:23:00.755Z'),
+          closeDate: new Date('2021-03-31T15:23:09.367Z'),
+          updateReason: null,
+          timestamp: new Date('2021-03-31T15:23:13.508Z'),
+        },
+        {
+          status: EEventStatus.OnHold,
+          scheduledOpenDate: null,
+          scheduledCloseDate: null,
+          openDate: new Date('2021-03-31T15:23:00.755Z'),
+          closeDate: new Date('2021-03-31T15:23:09.367Z'),
+          updateReason: null,
+          timestamp: new Date('2021-03-31T15:23:16.069Z'),
+        },
+      ]);
     });
 
     it('should instantiate responseDetails', () => {
@@ -308,6 +349,58 @@ describe('>>> User', () => {
         },
         dateReported: new Date('2021-01-01T00:00:00Z'),
         assistanceNumber: '+15144544545',
+      });
+    });
+  });
+
+  describe('>> computed getters', () => {
+    describe('hasBeenOpen', () => {
+      it('returns true if at least one item in scheduleHistory has Open status', () => {
+        const event = new Event(mockEventData);
+
+        event.scheduleHistory = [{
+          status: EEventStatus.Open,
+          openDate: '2021-01-01T00:00:00Z',
+          closeDate: null,
+          scheduledOpenDate: '2021-01-01T00:00:00Z',
+          scheduledCloseDate: null,
+          timestamp: '2021-01-01T00:00:00Z',
+          updateReason: '',
+        }, {
+          status: EEventStatus.OnHold,
+          openDate: '2021-01-01T00:00:00Z',
+          closeDate: null,
+          scheduledOpenDate: '2021-01-01T00:00:00Z',
+          scheduledCloseDate: null,
+          timestamp: '2021-01-01T00:00:00Z',
+          updateReason: '',
+        }];
+
+        expect(event.hasBeenOpen).toBe(true);
+      });
+
+      it('returns false if the scheduleHistory does not have any items with Open status', () => {
+        const event = new Event(mockEventData);
+
+        event.scheduleHistory = [{
+          status: EEventStatus.Closed,
+          openDate: '2021-01-01T00:00:00Z',
+          closeDate: null,
+          scheduledOpenDate: '2021-01-01T00:00:00Z',
+          scheduledCloseDate: null,
+          timestamp: '2021-01-01T00:00:00Z',
+          updateReason: '',
+        }, {
+          status: EEventStatus.OnHold,
+          openDate: '2021-01-01T00:00:00Z',
+          closeDate: null,
+          scheduledOpenDate: '2021-01-01T00:00:00Z',
+          scheduledCloseDate: null,
+          timestamp: '2021-01-01T00:00:00Z',
+          updateReason: '',
+        }];
+
+        expect(event.hasBeenOpen).toBe(false);
       });
     });
   });

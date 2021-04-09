@@ -1,5 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { Event, mockEventsSearchData, EEventStatus } from '@/entities/event';
+import {
+  Event, EEventStatus, mockEventsSearchData,
+} from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -12,6 +14,34 @@ import Component, { EDialogComponent } from '../EventSummary.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockEvent = new Event(mockEventsSearchData()[0]);
+
+const mountWithStatus = (status) => {
+  const event = mockEventsSearchData()[0];
+
+  return shallowMount(Component, {
+    localVue,
+    mocks: {
+      $route: {
+        name: routes.events.edit.name,
+        params: {
+          id: '7c076603-580a-4400-bef2-5ddececb0931',
+        },
+      },
+      $storage: storage,
+    },
+    computed: {
+      event() {
+        return new Event({
+          ...event,
+          schedule: {
+            ...event.schedule,
+            status,
+          },
+        });
+      },
+    },
+  });
+};
 
 describe('EventSummary.vue', () => {
   let wrapper;
@@ -42,6 +72,7 @@ describe('EventSummary.vue', () => {
         },
       });
     });
+
     describe('status select', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('event-detail-status');
@@ -79,6 +110,33 @@ describe('EventSummary.vue', () => {
         const element = wrapper.findDataTest('event-edit-button');
         element.vm.$emit('click');
         expect(wrapper.vm.editEvent).toHaveBeenCalledTimes(1);
+      });
+
+      it('is hidden if showEditButton is false', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            event() {
+              return mockEvent;
+            },
+            showEditButton() {
+              return false;
+            },
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+          },
+          stubs: {
+            EventStatusDialog: true,
+          },
+        });
+
+        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
       });
     });
 
@@ -263,7 +321,6 @@ describe('EventSummary.vue', () => {
           },
           $storage: storage,
         },
-
       });
     });
 
@@ -281,6 +338,62 @@ describe('EventSummary.vue', () => {
     describe('sortedCallCentres', () => {
       it('return the callCentres sorted by name', () => {
         expect(wrapper.vm.sortedCallCentres).toEqual(helpers.sortMultilingualArray(mockEvent.callCentres, 'name'));
+      });
+    });
+
+    describe('showEditButton', () => {
+      it('returns true if the event status is open or on hold', () => {
+        wrapper = mountWithStatus(EEventStatus.Open);
+
+        expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.Open);
+
+        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(true);
+
+        wrapper = mountWithStatus(EEventStatus.OnHold);
+
+        expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.OnHold);
+
+        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(true);
+      });
+
+      it('returns false if the event status is closed or archived', () => {
+        wrapper = mountWithStatus(EEventStatus.Archived);
+
+        expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.Archived);
+
+        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
+
+        wrapper = mountWithStatus(EEventStatus.Closed);
+
+        expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.Closed);
+
+        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
+      });
+    });
+
+    describe('statuses', () => {
+      it('returns onhold and closed if event status is open', async () => {
+        wrapper = mountWithStatus(EEventStatus.Open);
+
+        expect(wrapper.vm.statuses).toEqual([EEventStatus.OnHold, EEventStatus.Closed]);
+      });
+
+      it('returns open and closed if event status is on hold', async () => {
+        wrapper = mountWithStatus(EEventStatus.OnHold);
+
+        expect(wrapper.vm.statuses).toEqual([EEventStatus.Open, EEventStatus.Closed]);
+      });
+
+      it('returns open, on hold and archived if event status is closed', async () => {
+        wrapper = mountWithStatus(EEventStatus.Closed);
+
+        expect(wrapper.vm.statuses).toEqual([EEventStatus.Open, EEventStatus.OnHold, EEventStatus.Archived]);
+      });
+
+      it('returns open and on hold if event status is archived', async () => {
+        wrapper = mountWithStatus(EEventStatus.Archived);
+
+        expect(wrapper.vm.statuses).toEqual([EEventStatus.Open, EEventStatus.OnHold]);
       });
     });
 
@@ -320,6 +433,10 @@ describe('EventSummary.vue', () => {
   });
 
   describe('Methods', () => {
+    const actions = {
+      setEventStatus: jest.fn(),
+    };
+
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
@@ -336,8 +453,16 @@ describe('EventSummary.vue', () => {
             },
           },
         },
+        store: {
+          modules: {
+            event: {
+              actions,
+            },
+          },
+        },
       });
     });
+
     describe('editEvent', () => {
       it('should redirect to the edit page with proper id', async () => {
         wrapper.vm.editEvent();
@@ -349,14 +474,14 @@ describe('EventSummary.vue', () => {
     });
 
     describe('onStatusChangeInit', () => {
-      it('sets the newStatus property as the argument and sets  showEventStatusDialog to true when the status is Open', () => {
+      it('sets the newStatus property as the argument and sets showEventStatusDialog to true when the status is Open', () => {
         wrapper.vm.showEventStatusDialog = false;
         wrapper.vm.newStatus = null;
         wrapper.vm.onStatusChangeInit(EEventStatus.Open);
         expect(wrapper.vm.showEventStatusDialog).toBeTruthy();
         expect(wrapper.vm.newStatus).toEqual(EEventStatus.Open);
       });
-      it('sets the newStatus property as the argument and sets  showEventStatusDialog to true when the status is Closed', () => {
+      it('sets the newStatus property as the argument and sets showEventStatusDialog to true when the status is Closed', () => {
         wrapper.vm.showEventStatusDialog = false;
         wrapper.vm.newStatus = null;
         wrapper.vm.onStatusChangeInit(EEventStatus.Closed);
@@ -368,6 +493,25 @@ describe('EventSummary.vue', () => {
         jest.spyOn(wrapper.vm, 'onStatusChange').mockImplementation(() => {});
         wrapper.vm.onStatusChangeInit(EEventStatus.OnHold);
         expect(wrapper.vm.onStatusChange).toHaveBeenCalledWith({ status: EEventStatus.OnHold, reason: null });
+      });
+    });
+
+    describe('onStatusChange', () => {
+      it('dispatches the setEventStatus action', async () => {
+        await wrapper.vm.onStatusChange({
+          status: EEventStatus.Open,
+          reason: 'Re-open',
+        });
+
+        expect(actions.setEventStatus).toHaveBeenCalledTimes(1);
+        expect(actions.setEventStatus).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            event: wrapper.vm.event,
+            status: EEventStatus.Open,
+            reason: 'Re-open',
+          },
+        );
       });
     });
 

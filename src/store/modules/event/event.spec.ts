@@ -5,7 +5,7 @@ import {
   OptionItem, mockOptionItemData, EOptionListItemStatus, EOptionLists,
 } from '@/entities/optionItem';
 import {
-  Event, IEvent, IEventAgreement, IEventCallCentre, IEventGenericLocation, mockEventsSearchData, mockSearchEvents,
+  Event, IEvent, IEventAgreement, IEventCallCentre, IEventGenericLocation, mockEventsSearchData, mockSearchEvents, EEventStatus,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
@@ -189,6 +189,31 @@ describe('>>> Event Module', () => {
         store.commit('event/setSearchLoading', true);
 
         expect(store.state.event.searchLoading).toBeTruthy();
+      });
+    });
+
+    describe('setEventSelfRegistrationEnabled', () => {
+      it('sets the value of self registration on the provided entity', () => {
+        const events = mockSearchEvents().value.map((e) => new Event(e));
+
+        const store = mockStore({
+          modules: {
+            event: {
+              state: {
+                events,
+              },
+            },
+          },
+        });
+
+        expect(store.state.event.events[0].selfRegistrationEnabled).toBe(false);
+
+        store.commit('event/setEventSelfRegistrationEnabled', {
+          id: events[0].id,
+          selfRegistrationEnabled: true,
+        });
+
+        expect(store.state.event.events[0].selfRegistrationEnabled).toBe(true);
       });
     });
   });
@@ -377,6 +402,51 @@ describe('>>> Event Module', () => {
         expect(res).toEqual(event);
 
         expect(store.state.event.events[0]).toEqual(event);
+      });
+    });
+
+    describe('toggleSelfRegistration', () => {
+      it('calls the setEventSelfRegistration service', async () => {
+        const events = mockSearchEvents().value.map((e) => new Event(e));
+
+        const store = mockStore({
+          modules: {
+            event: {
+              state: {
+                events,
+              },
+            },
+          },
+        });
+
+        expect(store.state.event.events[0].selfRegistrationEnabled).toBe(false);
+
+        await store.dispatch('event/toggleSelfRegistration', {
+          id: events[0].id,
+          selfRegistrationEnabled: true,
+        });
+
+        expect(store.$services.events.toggleSelfRegistration).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.toggleSelfRegistration).toHaveBeenCalledWith(events[0].id, true);
+
+        expect(store.state.event.events[0].selfRegistrationEnabled).toBe(true);
+      });
+    });
+
+    describe('setEventStatus', () => {
+      it('calls the setEventStatus service', async () => {
+        const events = mockSearchEvents().value.map((e) => new Event(e));
+
+        const store = mockStore();
+
+        await store.dispatch('event/setEventStatus', {
+          event: events[0],
+          status: EEventStatus.Open,
+          reason: 're-open',
+        });
+
+        expect(store.$services.events.setEventStatus).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.setEventStatus).toHaveBeenCalledWith(events[0].id, EEventStatus.Open, true, 're-open');
       });
     });
 

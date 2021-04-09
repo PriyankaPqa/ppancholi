@@ -48,6 +48,8 @@ export class Event implements IEvent {
 
   schedule: IEventSchedule;
 
+  scheduleHistory: IEventSchedule[];
+
   scheduleEventStatusName: IMultilingual;
 
   selfRegistrationEnabled: boolean;
@@ -114,7 +116,17 @@ export class Event implements IEvent {
         openDate: data.schedule.openDate ? new Date(data.schedule.openDate) : null,
         scheduledCloseDate: data.schedule.scheduledCloseDate ? new Date(data.schedule.scheduledCloseDate) : null,
         scheduledOpenDate: data.schedule.scheduledOpenDate ? new Date(data.schedule.scheduledOpenDate) : null,
+        timestamp: data.schedule.timestamp ? new Date(data.schedule.timestamp) : null,
       };
+
+      this.scheduleHistory = data.scheduleHistory.map((s) => ({
+        ...s,
+        closeDate: s.closeDate ? new Date(s.closeDate) : null,
+        openDate: s.openDate ? new Date(s.openDate) : null,
+        scheduledCloseDate: s.scheduledCloseDate ? new Date(s.scheduledCloseDate) : null,
+        scheduledOpenDate: s.scheduledOpenDate ? new Date(s.scheduledOpenDate) : null,
+        timestamp: s.timestamp ? new Date(s.timestamp) : null,
+      }));
 
       this.scheduleEventStatusName = data.scheduleEventStatusName ? {
         translation: {
@@ -148,6 +160,10 @@ export class Event implements IEvent {
     }
   }
 
+  get hasBeenOpen(): boolean {
+    return this.scheduleHistory.filter((s) => s.status === EEventStatus.Open).length > 0;
+  }
+
   private reset() {
     this.description = utils.initMultilingualAttributes();
     this.eventTypeName = utils.initMultilingualAttributes();
@@ -172,12 +188,11 @@ export class Event implements IEvent {
     this.responseLevelName = utils.initMultilingualAttributes();
     this.schedule = {
       openDate: null,
-      reOpenReason: '',
-      hasBeenOpen: false,
       closeDate: null,
       scheduledOpenDate: null,
       scheduledCloseDate: null,
-      closeReason: '',
+      updateReason: '',
+      timestamp: null,
       status: EEventStatus.OnHold,
     };
     this.scheduleEventStatusName = utils.initMultilingualAttributes();

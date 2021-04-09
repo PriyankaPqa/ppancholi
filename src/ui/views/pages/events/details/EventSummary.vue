@@ -18,7 +18,7 @@
           </span>
         </v-col>
 
-        <v-col cols="2" class="text-right ma-0 pa-0">
+        <v-col v-if="showEditButton" cols="2" class="text-right ma-0 pa-0">
           <v-btn icon data-test="event-edit-button" @click="editEvent()">
             <v-icon>
               mdi-pencil
@@ -115,7 +115,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import _cloneDeep from 'lodash/cloneDeep';
 import { RcPageContent } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
@@ -170,7 +169,6 @@ export default Vue.extend({
     return {
       EEventSummarySections,
       EEventStatus,
-      statuses: [EEventStatus.Open, EEventStatus.OnHold, EEventStatus.Archived, EEventStatus.Closed],
       error: false,
       newStatus: null,
       showEventStatusDialog: false,
@@ -187,6 +185,30 @@ export default Vue.extend({
     event(): IEvent {
       const { id } = this.$route.params;
       return this.$storage.event.getters.eventById(id) || new Event();
+    },
+
+    statuses(): EEventStatus[] {
+      if (this.event.schedule.status === EEventStatus.Open) {
+        return [EEventStatus.OnHold, EEventStatus.Closed];
+      }
+
+      if (this.event.schedule.status === EEventStatus.OnHold) {
+        return [EEventStatus.Open, EEventStatus.Closed];
+      }
+
+      if (this.event.schedule.status === EEventStatus.Closed) {
+        return [EEventStatus.Open, EEventStatus.OnHold, EEventStatus.Archived];
+      }
+
+      if (this.event.schedule.status === EEventStatus.Archived) {
+        return [EEventStatus.Open, EEventStatus.OnHold];
+      }
+
+      return [];
+    },
+
+    showEditButton(): boolean {
+      return this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold;
     },
 
     sortedAgreements():Array<IEventAgreement> {
@@ -221,7 +243,7 @@ export default Vue.extend({
     },
 
     onStatusChangeInit(status: EEventStatus) {
-      if (status === EEventStatus.Open || status === EEventStatus.Closed) {
+      if ((status === EEventStatus.Open && this.event.hasBeenOpen) || status === EEventStatus.Closed) {
         this.newStatus = status;
         this.showEventStatusDialog = true;
       } else {
@@ -231,16 +253,12 @@ export default Vue.extend({
 
     onStatusChange({ status, reason }: {status: EEventStatus, reason: string}) {
       this.showEventStatusDialog = false;
-      const updatedEvent = _cloneDeep(this.event);
-      updatedEvent.schedule.status = status;
-      if (status === EEventStatus.Open) {
-        updatedEvent.schedule.reOpenReason = reason;
-      }
-      if (status === EEventStatus.Closed) {
-        updatedEvent.schedule.closeReason = reason;
-        updatedEvent.schedule.closeDate = new Date(); // TODO complete with all the rules for changing status
-      }
-      // call action to change status (next stories)
+
+      this.$storage.event.actions.setEventStatus({
+        event: this.event,
+        status,
+        reason,
+      });
     },
 
     onSectionAdd(section: EEventSummarySections) {

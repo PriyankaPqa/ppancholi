@@ -44,10 +44,9 @@ export interface IEventSchedule {
   scheduledOpenDate: Date | string;
   scheduledCloseDate: Date | string;
   openDate: Date | string;
-  reOpenReason: string;
-  hasBeenOpen: boolean;
   closeDate: Date | string;
-  closeReason: string;
+  timestamp: Date | string;
+  updateReason: string;
 }
 
 export interface IEventResponseDetails {
@@ -136,6 +135,7 @@ export interface IEventData {
   registrationLink: IMultilingual;
   location: IEventLocation;
   schedule: IEventSchedule;
+  scheduleHistory: IEventSchedule[];
   responseDetails: IEventResponseDetails;
   relatedEventIds?: Array<uuid>;
   agreements: Array<IEventAgreement>;
@@ -170,6 +170,7 @@ export interface IEventSearchData {
   responseLevelName: IMultilingual;
   selfRegistrationEnabled: boolean;
   schedule: IEventSchedule;
+  scheduleHistory: IEventSchedule[];
   scheduleEventStatusName: IMultilingual;
   tenantId: uuid;
 }
@@ -220,10 +221,12 @@ export interface IEvent {
   responseDetails: IEventResponseDetails;
   responseLevelName: IMultilingual;
   schedule: IEventSchedule;
+  scheduleHistory: IEventSchedule[];
   scheduleEventStatusName: IMultilingual;
   selfRegistrationEnabled: boolean;
   eventStatus: number;
   tenantId: uuid;
+  hasBeenOpen: boolean;
   validate(): Array<string> | boolean;
   fillEmptyMultilingualAttributes(): void;
 }

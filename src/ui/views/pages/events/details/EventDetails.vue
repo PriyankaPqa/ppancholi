@@ -102,43 +102,24 @@
           </div>
         </div>
 
-        <div v-if="event.schedule.openDate && !event.schedule.reOpenReason" class="date">
+        <div v-for="(statusChange, $index) in statusHistory" :key="$index" class="date">
           <div class="rc-body12">
-            {{ $t('eventDetail.open') }}
+            {{ $t(statusChange.title) }}
           </div>
-          <div class="rc-body14 fw-bold" data-test="event-start-date">
-            {{ getStringDate(event.schedule.openDate) }}
-          </div>
-        </div>
 
-        <div v-if="event.schedule.closeDate" class="date">
-          <div class="rc-body12">
-            {{ $t('eventDetail.closed') }}
+          <div class="rc-body14 fw-bold" data-test="status-change-date">
+            {{ getStringDate(statusChange.date) }}
           </div>
-          <div class="rc-body14 fw-bold" data-test="event-closed-date">
-            {{ getStringDate(event.schedule.closeDate) }}
-          </div>
-          <div class="rc-body12">
-            {{ $t('eventDetail.dates.reason') }}
-          </div>
-          <div class="rc-body14 fw-bold" data-test="event-closed-date-reason">
-            {{ event.schedule.closeReason }}
-          </div>
-        </div>
 
-        <div v-if="event.schedule.hasBeenOpen && event.schedule.reOpenReason" class="date">
-          <div class="rc-body12">
-            {{ $t('eventDetail.dates.reopen') }}
-          </div>
-          <div class="rc-body14 fw-bold" data-test="event-reopen-date">
-            {{ getStringDate(event.schedule.openDate) }}
-          </div>
-          <div class="rc-body12">
-            {{ $t('eventDetail.dates.reason') }}
-          </div>
-          <div class="rc-body14 fw-bold" data-test="event-reopen-date-reason">
-            {{ event.schedule.reOpenReason }}
-          </div>
+          <template v-if="statusChange.reason">
+            <div class="rc-body12">
+              {{ $t('eventDetail.dates.reason') }}
+            </div>
+
+            <div class="rc-body14 fw-bold" data-test="status-change-reason">
+              {{ statusChange.reason }}
+            </div>
+          </template>
         </div>
       </div>
       <v-divider />
@@ -149,11 +130,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from '@/ui/plugins/moment';
+import _orderBy from 'lodash/orderBy';
 import helpers from '@/ui/helpers';
 
 import { RcPhoneDisplay } from '@crctech/component-library';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { Event, IEvent } from '@/entities/event';
+import { EEventStatus, Event, IEvent } from '@/entities/event';
 import { INavigationTab } from '@/types';
 import routes from '@/constants/routes';
 import EventSummary from './EventSummary.vue';
@@ -208,6 +190,29 @@ export default Vue.extend({
       }];
     },
 
+    statusHistory(): Array<Record<string, string>> {
+      const sorted = _orderBy(this.event.scheduleHistory, 'timestamp');
+
+      return sorted.map((s) => {
+        const item = {
+          title: '',
+          date: s.timestamp as string,
+          reason: s.updateReason,
+        };
+
+        if (s.status === EEventStatus.Open) {
+          item.title = 'eventDetail.open';
+        } else if (s.status === EEventStatus.OnHold) {
+          item.title = 'event.status.onHold';
+        } else if (s.status === EEventStatus.Closed) {
+          item.title = 'eventDetail.closed';
+        } else if (s.status === EEventStatus.Archived) {
+          item.title = 'eventDetail.archived';
+        }
+
+        return item;
+      });
+    },
   },
 
   async created() {

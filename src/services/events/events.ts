@@ -14,6 +14,7 @@ import {
   IUpdateAgreementPayload,
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
+  EEventStatus,
   IUpdateShelterLocationPayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -48,6 +49,34 @@ export class EventsService implements IEventsService {
 
   async searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>> {
     return this.http.get('/search/event-projections', { params, isOData: true });
+  }
+
+  async setEventStatus(id: uuid, status: EEventStatus, hasBeenOpen?: boolean, reason?: string): Promise<IEventData> {
+    if (status === EEventStatus.Open) {
+      if (hasBeenOpen) {
+        return this.http.post(`event/events/${id}/re-open`, {
+          reOpenReason: reason,
+        });
+      }
+
+      return this.http.post(`event/events/${id}/open`, {});
+    }
+
+    if (status === EEventStatus.Closed) {
+      return this.http.post(`event/events/${id}/close`, {
+        closeReason: reason,
+      });
+    }
+
+    if (status === EEventStatus.OnHold) {
+      return this.http.post(`event/events/${id}/place-on-hold`, {});
+    }
+
+    if (status === EEventStatus.Archived) {
+      return this.http.post(`event/events/${id}/archive`, {});
+    }
+
+    throw new Error('Invalid status');
   }
 
   async addCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventData> {
@@ -116,7 +145,7 @@ export class EventsService implements IEventsService {
   private eventToEditEventRequestPayload(event: IEvent): IEditEventRequest {
     return {
       ...this.eventToCreateEventRequestPayload(event),
-      reOpenReason: event.schedule.reOpenReason,
+      reOpenReason: event.schedule.updateReason,
       selfRegistrationEnabled: event.selfRegistrationEnabled,
     };
   }

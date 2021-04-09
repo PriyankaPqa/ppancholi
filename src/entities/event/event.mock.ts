@@ -5,6 +5,7 @@ import {
   EEventStatus, IEventData, IEventSearchData, IOtherProvince, IRegion,
 } from './event.types';
 
+// eslint-disable-next-line max-lines-per-function
 export const mockEventsData = (): IEventData[] => [{
   number: 1,
   name: {
@@ -43,14 +44,51 @@ export const mockEventsData = (): IEventData[] => [{
   },
   schedule: {
     status: EEventStatus.OnHold,
-    scheduledOpenDate: '2021-03-15T00:00:00Z',
-    scheduledCloseDate: '2021-06-15T00:00:00Z',
-    openDate: null,
-    reOpenReason: '',
-    hasBeenOpen: false,
-    closeDate: null,
-    closeReason: null,
+    scheduledOpenDate: null,
+    scheduledCloseDate: null,
+    openDate: '2021-03-31T15:23:00.755Z',
+    closeDate: '2021-03-31T15:23:09.367Z',
+    updateReason: null,
+    timestamp: '2021-03-31T15:23:16.069Z',
   },
+  scheduleHistory: [
+    {
+      status: EEventStatus.Open,
+      scheduledOpenDate: '2021-03-31T00:00:00Z',
+      scheduledCloseDate: '2021-05-31T00:00:00Z',
+      openDate: '2021-03-31T15:23:00.755Z',
+      closeDate: null,
+      updateReason: null,
+      timestamp: '2021-03-31T15:23:00.755Z',
+    },
+    {
+      status: EEventStatus.Closed,
+      scheduledOpenDate: '2021-03-31T00:00:00Z',
+      scheduledCloseDate: '2021-05-31T00:00:00Z',
+      openDate: '2021-03-31T15:23:00.755Z',
+      closeDate: '2021-03-31T15:23:09.367Z',
+      updateReason: 'Close Reason',
+      timestamp: '2021-03-31T15:23:09.367Z',
+    },
+    {
+      status: EEventStatus.Archived,
+      scheduledOpenDate: '2021-03-31T00:00:00Z',
+      scheduledCloseDate: '2021-05-31T00:00:00Z',
+      openDate: '2021-03-31T15:23:00.755Z',
+      closeDate: '2021-03-31T15:23:09.367Z',
+      updateReason: null,
+      timestamp: '2021-03-31T15:23:13.508Z',
+    },
+    {
+      status: EEventStatus.OnHold,
+      scheduledOpenDate: null,
+      scheduledCloseDate: null,
+      openDate: '2021-03-31T15:23:00.755Z',
+      closeDate: '2021-03-31T15:23:09.367Z',
+      updateReason: null,
+      timestamp: '2021-03-31T15:23:16.069Z',
+    },
+  ],
   responseDetails: {
     responseLevel: 3,
     eventType: {
@@ -107,14 +145,22 @@ export const mockEventsData = (): IEventData[] => [{
   },
   schedule: {
     status: EEventStatus.Open,
-    scheduledOpenDate: '2021-03-01T00:00:00Z',
-    scheduledCloseDate: null,
-    openDate: null,
-    reOpenReason: 'Re-opened',
-    hasBeenOpen: true,
+    scheduledOpenDate: '2021-03-31T00:00:00Z',
+    scheduledCloseDate: '2021-05-31T00:00:00Z',
+    openDate: '2021-03-31T15:23:00.755Z',
     closeDate: null,
-    closeReason: null,
+    updateReason: null,
+    timestamp: '2021-03-31T15:23:00.755Z',
   },
+  scheduleHistory: [{
+    status: EEventStatus.Open,
+    scheduledOpenDate: '2021-03-31T00:00:00Z',
+    scheduledCloseDate: '2021-05-31T00:00:00Z',
+    openDate: '2021-03-31T15:23:00.755Z',
+    closeDate: null,
+    updateReason: null,
+    timestamp: '2021-03-31T15:23:00.755Z',
+  }],
   responseDetails: {
     responseLevel: 3,
     eventType: {
@@ -221,6 +267,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
     },
     selfRegistrationEnabled: false,
     schedule: mockEventsData()[0].schedule,
+    scheduleHistory: mockEventsData()[0].scheduleHistory,
     scheduleEventStatusName: {
       translation: {
         en: 'On hold',
@@ -402,11 +449,11 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
       scheduledOpenDate: '2021-03-15T00:00:00Z',
       scheduledCloseDate: '2021-06-15T00:00:00Z',
       openDate: null,
-      reOpenReason: '',
-      hasBeenOpen: false,
       closeDate: null,
-      closeReason: null,
+      updateReason: '',
+      timestamp: null,
     },
+    scheduleHistory: [],
     scheduleEventStatusName: {
       translation: {
         en: 'On hold',

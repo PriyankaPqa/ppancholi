@@ -1,33 +1,36 @@
 <template>
-  <rc-dialog
-    :title="title"
-    :show.sync="show"
-    :cancel-action-label="$t('common.buttons.cancel')"
-    :submit-action-label="$t('common.apply')"
-    :content-only-scrolling="true"
-    :persistent="true"
-    :show-help="true"
-    help-link=""
-    :max-width="750"
-    @cancel="$emit('cancelChange')"
-    @close="$emit('cancelChange')"
-    @submit="onSubmit">
-    <div class="pa-0">
-      <v-col
-        cols="12"
-        class=" mb-8 pa-3 border-radius-all"
-        :style="{backgroundColor: toStatus=== EEventStatus.Open? colors.chips.green_pale : colors.chips.red_pale}">
-        <status-chip status-name="EEventStatus" :status="toStatus" data-test="event-summary-status-chip" />
-      </v-col>
-      <ValidationObserver ref="form" slim>
+  <ValidationObserver ref="form" v-slot="{ failed }" slim>
+    <rc-dialog
+      :title="title"
+      :show.sync="show"
+      :cancel-action-label="$t('common.buttons.cancel')"
+      :submit-action-label="$t('common.apply')"
+      :submit-button-disabled="failed"
+      :content-only-scrolling="true"
+      :persistent="true"
+      :show-help="true"
+      :help-link="$t('zendesk.help_link.change_event_status')"
+      :tooltip-label="$t('common.tooltip_label')"
+      :max-width="750"
+      @cancel="$emit('cancelChange')"
+      @close="$emit('cancelChange')"
+      @submit="onSubmit">
+      <div class="pa-0">
+        <v-col
+          cols="12"
+          class=" mb-8 pa-3 border-radius-all"
+          :style="{backgroundColor: toStatus=== EEventStatus.Open? colors.chips.green_pale : colors.chips.red_pale}">
+          <status-chip status-name="EEventStatus" :status="toStatus" data-test="event-summary-status-chip" />
+        </v-col>
+
         <v-text-field-with-validation
           v-model="reason"
           :label="label"
           class="full-width"
-          :rules="{ max: { length: 255 } }" />
-      </ValidationObserver>
-    </div>
-  </rc-dialog>
+          :rules="rules.reason" />
+      </div>
+    </rc-dialog>
+  </ValidationObserver>
 </template>
 
 <script lang='ts'>
@@ -40,6 +43,7 @@ import { VForm } from '@/types';
 import { EEventStatus } from '@/entities/event';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import colors from '@/ui/plugins/vuetify/colors';
+import { MAX_LENGTH_MD } from '@/constants/validations';
 
 export default Vue.extend({
   name: 'EventStatusDialog',
@@ -87,6 +91,15 @@ export default Vue.extend({
 
     label(): string {
       return this.texts[this.toStatus].label;
+    },
+
+    rules(): Record<string, unknown> {
+      return {
+        reason: {
+          required: true,
+          max: MAX_LENGTH_MD,
+        },
+      };
     },
   },
 

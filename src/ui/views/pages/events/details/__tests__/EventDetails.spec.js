@@ -256,6 +256,28 @@ describe('EventDetails.vue', () => {
         );
       });
     });
+
+    describe('statusHistory', () => {
+      it('returns an array of objects representing status change history', () => {
+        expect(wrapper.vm.statusHistory).toEqual([{
+          title: 'eventDetail.open',
+          date: new Date('2021-03-31T15:23:00.755Z'),
+          reason: null,
+        }, {
+          title: 'eventDetail.closed',
+          date: new Date('2021-03-31T15:23:09.367Z'),
+          reason: 'Close Reason',
+        }, {
+          title: 'eventDetail.archived',
+          date: new Date('2021-03-31T15:23:13.508Z'),
+          reason: null,
+        }, {
+          title: 'event.status.onHold',
+          date: new Date('2021-03-31T15:23:16.069Z'),
+          reason: null,
+        }]);
+      });
+    });
   });
 
   describe('lifecycle', () => {

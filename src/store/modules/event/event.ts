@@ -370,6 +370,20 @@ const actions = {
       throw e;
     }
   },
+
+  async setEventStatus(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    payload: { event: IEvent, status: EEventStatus, reason: string },
+  ): Promise<IEvent> {
+    const { event, status, reason } = payload;
+    const { hasBeenOpen } = event;
+
+    const data = await this.$services.events.setEventStatus(event.id, status, hasBeenOpen, reason);
+    const newEvent = new Event(mapEventDataToSearchData(data, context));
+    context.commit('addOrUpdateEvent', newEvent);
+    return newEvent;
+  },
 };
 
 export const event: Module<IState, IRootState> = {

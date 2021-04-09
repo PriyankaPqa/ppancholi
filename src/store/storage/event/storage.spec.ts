@@ -1,5 +1,5 @@
 import {
-  Event, IEventAgreementInfos, IEventCallCentre, IEventGenericLocation, mockEventsSearchData,
+  Event, IEventAgreementInfos, IEventCallCentre, IEventGenericLocation, mockEventsSearchData, EEventStatus,
 } from '@/entities/event';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
@@ -169,6 +169,16 @@ describe('>>> Event Storage', () => {
       expect(store.dispatch).toHaveBeenCalledWith('event/toggleSelfRegistration', {
         id: event.id,
         selfRegistrationEnabled: false,
+      });
+    });
+
+    it('should proxy setEventStatus', () => {
+      const event = new Event(mockEventsSearchData()[0]);
+      storage.actions.setEventStatus({ event, status: EEventStatus.Closed, reason: 'reason' });
+      expect(store.dispatch).toHaveBeenCalledWith('event/setEventStatus', {
+        event,
+        status: EEventStatus.Closed,
+        reason: 'reason',
       });
     });
   });

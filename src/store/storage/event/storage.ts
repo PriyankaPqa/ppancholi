@@ -7,6 +7,7 @@ import {
   IRegion,
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
+  EEventStatus,
   IUpdateShelterLocationPayload,
   IUpdateAgreementPayload,
 } from '@/entities/event';
@@ -113,6 +114,10 @@ export const makeStorage = (store: IStore): IStorage => ({
 
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent> {
       return store.dispatch('event/toggleSelfRegistration', payload);
+    },
+
+    setEventStatus(payload: { event: IEvent, status: EEventStatus, reason: string }): Promise<IEvent> {
+      return store.dispatch('event/setEventStatus', payload);
     },
   },
 });

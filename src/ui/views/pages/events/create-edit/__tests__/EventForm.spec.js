@@ -246,7 +246,7 @@ describe('EventForm.vue', () => {
       });
 
       it('sets scheduledOpenData and scheduledCloseDate to initial values if toggling from OnHold => Open => OnHold in edit mode', async () => {
-        const event = new Event(mockEventsSearchData()[0]);
+        const event = new Event(mockEventsSearchData()[1]);
 
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),

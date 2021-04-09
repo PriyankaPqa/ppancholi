@@ -7,6 +7,7 @@ import {
   IRegion,
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
+  EEventStatus,
   IUpdateShelterLocationPayload,
   IUpdateAgreementPayload,
 } from '@/entities/event';
@@ -42,6 +43,7 @@ export interface IStorage {
     addShelterLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
     editShelterLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateShelterLocationPayload}): Promise<IEvent>;
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent>;
+    setEventStatus(payload: { event: IEvent, status: EEventStatus, reason: string }): Promise<IEvent>;
   }
 }
 
@@ -73,5 +75,6 @@ export interface IStorageMock {
     addShelterLocation: jest.Mock<void>;
     editShelterLocation: jest.Mock<void>;
     toggleSelfRegistration: jest.Mock<void>;
+    setEventStatus: jest.Mock<void>;
   }
 }

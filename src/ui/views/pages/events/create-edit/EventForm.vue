@@ -138,7 +138,7 @@
                 <div class="mt-4">
                   <v-text-field-with-validation
                     v-if="showReOpenInput"
-                    v-model="localEvent.schedule.reOpenReason"
+                    v-model="localEvent.schedule.updateReason"
                     data-test="reopen-reason"
                     background-color="white"
                     autocomplete="nope"
@@ -158,7 +158,7 @@
                         :close-on-content-click="false"
                         :data-test="'event-start-date'"
                         :rules="rules.schedule.scheduledOpenDate"
-                        :disabled="isStatusOpen || (isEditMode && localEvent.schedule.hasBeenOpen)"
+                        :disabled="isStatusOpen || (isEditMode && localEvent.hasBeenOpen)"
                         prepend-inner-icon="timer"
                         :label="`${$t('event.select_date')}`"
                         :placeholder="$t('event.select_date')"
@@ -558,7 +558,7 @@ export default Vue.extend({
       return this.isEditMode
         && this.initialStatus === EEventStatus.OnHold
         && this.localEvent.schedule.status === EEventStatus.Open
-        && this.localEvent.schedule.hasBeenOpen;
+        && this.localEvent.hasBeenOpen;
     },
 
     today(): string { return this.getStringDate(new Date()); },

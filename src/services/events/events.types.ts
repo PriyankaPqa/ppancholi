@@ -10,6 +10,7 @@ import {
   IUpdateAgreementPayload,
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
+  EEventStatus,
   IUpdateShelterLocationPayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -26,6 +27,8 @@ export interface IEventsService {
   getRegions(): Promise<IAzureSearchResult<IRegion>>;
 
   searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>>;
+
+  setEventStatus(id: uuid, status: EEventStatus, hasBeenOpen?: boolean, reason?: string): Promise<IEventData>;
 
   addCallCentre(eventId: uuid, payload: IEventCallCentre): Promise<IEventData>;
 
@@ -57,7 +60,9 @@ export interface IEventsServiceMock {
 
   toggleSelfRegistration: jest.Mock<IEventData>;
 
-  getOtherProvinces: jest.Mock <IAzureSearchResult<IOtherProvince>>;
+  getOtherProvinces: jest.Mock<IAzureSearchResult<IOtherProvince>>;
+
+  setEventStatus: jest.Mock<IEventData>;
 
   addCallCentre: jest.Mock<IEventData>;
 

@@ -55,8 +55,8 @@ describe('>>> Events Service', () => {
       },
       relatedEventIds: ['87776243-696f-426b-b961-31ee98e3a4cd'],
       responseLevel: 3,
-      scheduledCloseDate: '2021-06-15T00:00:00.000Z',
-      scheduledOpenDate: '2021-03-15T00:00:00.000Z',
+      scheduledCloseDate: null,
+      scheduledOpenDate: null,
       status: EEventStatus.OnHold,
     }, { globalHandler: false });
   });
@@ -106,9 +106,9 @@ describe('>>> Events Service', () => {
       },
       relatedEventIds: ['87776243-696f-426b-b961-31ee98e3a4cd'],
       responseLevel: 3,
-      scheduledCloseDate: '2021-06-15T00:00:00.000Z',
-      scheduledOpenDate: '2021-03-15T00:00:00.000Z',
-      reOpenReason: '',
+      scheduledCloseDate: null,
+      scheduledOpenDate: null,
+      reOpenReason: null,
       status: EEventStatus.OnHold,
       selfRegistrationEnabled: false,
     }, { globalHandler: false });
@@ -123,6 +123,37 @@ describe('>>> Events Service', () => {
     const params = mockSearchParams;
     await service.searchEvents(params);
     expect(http.get).toHaveBeenCalledWith('/search/event-projections', { params, isOData: true });
+  });
+
+  describe('setEventStatus', () => {
+    it('calls the open endpoint if the status is open and hasBeenOpen is false', async () => {
+      await service.setEventStatus('ID', EEventStatus.Open, false);
+      expect(http.post).toHaveBeenCalledWith('event/events/ID/open', {});
+    });
+
+    it('calls the re-open endpoint if the status is open and hasBeenOpen is true', async () => {
+      await service.setEventStatus('ID', EEventStatus.Open, true, 'reason');
+      expect(http.post).toHaveBeenCalledWith('event/events/ID/re-open', {
+        reOpenReason: 'reason',
+      });
+    });
+
+    it('calls the close endpoint if the status is closed', async () => {
+      await service.setEventStatus('ID', EEventStatus.Closed, false, 'reason');
+      expect(http.post).toHaveBeenCalledWith('event/events/ID/close', {
+        closeReason: 'reason',
+      });
+    });
+
+    it('calls the place on hold endpoint if the status is OnHold', async () => {
+      await service.setEventStatus('ID', EEventStatus.OnHold, false, 'reason');
+      expect(http.post).toHaveBeenCalledWith('event/events/ID/place-on-hold', {});
+    });
+
+    it('calls the archive endpoint if the status is Archived', async () => {
+      await service.setEventStatus('ID', EEventStatus.Archived, false, 'reason');
+      expect(http.post).toHaveBeenCalledWith('event/events/ID/archive', {});
+    });
   });
 
   test('addCallCentre is linked to the correct URL', async () => {
