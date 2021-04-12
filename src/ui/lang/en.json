@@ -1157,6 +1157,7 @@
     "system_management.lists.roles": "Roles",
     "system_management.lists.roles.accessLevel": "Access level",
     "system_management.lists.roles.addRole": "Add role",
+    "system_management.lists.roles.nameLabel": "Role name",
     "system_management.lists.roles.role": "Role",
     "system_management.lists.status.Active": "Active",
     "system_management.lists.status.Inactive": "Inactive",

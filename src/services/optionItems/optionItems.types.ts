@@ -1,10 +1,14 @@
-import { IOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
+import {
+  IOptionItemData, EOptionListItemStatus, EOptionLists, IOptionSubItem,
+} from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
 
 export interface IOptionItemsService {
   getOptionList(target: EOptionLists): Promise<IOptionItemData[]>;
 
   createOptionItem(target: EOptionLists, eventType: IOptionItemData): Promise<IOptionItemData>;
+
+  addSubItem(target: EOptionLists, itemId: string, subItem: IOptionSubItem): Promise<IOptionItemData>;
 
   updateOptionItemName(target: EOptionLists, id: string, name: IMultilingual): Promise<IOptionItemData>;
 
@@ -21,6 +25,8 @@ export interface IOptionItemsServiceMock {
   getOptionList: jest.Mock<IOptionItemData[]>;
 
   createOptionItem: jest.Mock<IOptionItemData>;
+
+  addSubItem: jest.Mock<IOptionItemData>;
 
   updateOptionItemName: jest.Mock<IOptionItemData>;
 

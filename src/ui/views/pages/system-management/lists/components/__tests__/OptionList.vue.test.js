@@ -209,6 +209,90 @@ describe('OptionList.vue', () => {
       });
     });
 
+    describe('>> addSubItem', () => {
+      it('sets addingItemId', async () => {
+        const itemId = 'test id';
+
+        expect(wrapper.vm.addingItemId).not.toBe(itemId);
+
+        wrapper.vm.addSubItem(itemId);
+
+        expect(wrapper.vm.addingItemId).toBe(itemId);
+      });
+    });
+
+    describe('>> saveNewSubItem', () => {
+      it('dispatches the addSubItem action', async () => {
+        wrapper.vm.$storage.optionList.actions.addSubItem = jest.fn();
+
+        const name = { translation: { en: 'English Test', fr: 'French Test' } };
+        const description = { translation: { en: 'English description', fr: 'French description' } };
+        const status = EOptionListItemStatus.Active;
+        const itemId = mockOptionItemData()[0].id;
+
+        await wrapper.vm.saveNewSubItem(
+          name,
+          description,
+          status,
+          itemId,
+        );
+
+        expect(wrapper.vm.$storage.optionList.actions.addSubItem).toHaveBeenCalledTimes(1);
+      });
+
+      it('dispatches the addSubItem action with correct parameters', async () => {
+        wrapper.vm.$storage.optionList.actions.addSubItem = jest.fn();
+
+        const name = { translation: { en: 'English Test', fr: 'French Test' } };
+        const description = { translation: { en: 'English description', fr: 'French description' } };
+        const status = EOptionListItemStatus.Active;
+        const itemId = mockOptionItemData()[0].id;
+
+        await wrapper.vm.saveNewSubItem(
+          name,
+          description,
+          status,
+          itemId,
+        );
+
+        expect(wrapper.vm.$storage.optionList.actions.addSubItem).toHaveBeenCalledWith(
+          itemId,
+          {
+            name,
+            status,
+            orderRank: 2,
+            description,
+          },
+        );
+      });
+
+      it('copies the translation values over to empty languages', async () => {
+        wrapper.vm.$storage.optionList.actions.addSubItem = jest.fn();
+
+        const name = { translation: { en: 'English Test', fr: '' } };
+        const description = { translation: { en: 'English description', fr: 'French description' } };
+        const status = EOptionListItemStatus.Active;
+        const itemId = mockOptionItemData()[0].id;
+
+        await wrapper.vm.saveNewSubItem(
+          name,
+          description,
+          status,
+          itemId,
+        );
+
+        expect(wrapper.vm.$storage.optionList.actions.addSubItem).toHaveBeenCalledWith(
+          itemId,
+          {
+            name: { translation: { en: 'English Test', fr: 'English Test' } },
+            status,
+            orderRank: 2,
+            description,
+          },
+        );
+      });
+    });
+
     describe('>> saveItem', () => {
       it('dispatches the updateName action', async () => {
         const item = mockOptionItemData()[0];

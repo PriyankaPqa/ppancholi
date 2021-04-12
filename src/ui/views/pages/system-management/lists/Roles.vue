@@ -7,6 +7,7 @@
     hide-item-drag
     item-label="system_management.lists.roles.accessLevel"
     sub-item-label="system_management.lists.roles.role"
+    sub-item-name-label="system_management.lists.roles.nameLabel"
     add-sub-item-label="system_management.lists.roles.addRole"
     :show-add-button="false" />
 </template>

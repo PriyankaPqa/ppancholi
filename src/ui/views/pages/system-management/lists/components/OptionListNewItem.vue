@@ -26,7 +26,7 @@
               v-model="name.translation[languageMode]"
               data-test="optionListNewItem__nameInput"
               class="optionListItem__nameInput optionsList__addItem ml-4"
-              :label="$t('system_management.lists.itemName')"
+              :label="$t(itemNameLabel)"
               :disabled="loading"
               :error="!!errors.length"
               :hide-details="!errors.length"
@@ -34,6 +34,7 @@
               outlined
               dense
               background-color="white"
+              @input="checkNameUniqueness($event)"
               @keydown.enter.stop="save"
               @keydown.esc.stop="cancel" />
           </v-col>
@@ -84,12 +85,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VForm } from '@/types';
+import { IMultilingual, VForm } from '@/types';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import entityUtils from '@/entities/utils';
-import { EOptionListItemStatus } from '@/entities/optionItem';
+import { EOptionListItemStatus, IOptionItem } from '@/entities/optionItem';
 
 export default Vue.extend({
   name: 'OptionListNewItem',
@@ -141,12 +142,22 @@ export default Vue.extend({
       required: true,
     },
 
+    itemNameLabel: {
+      type: String,
+      default: 'system_management.lists.itemName',
+    },
+
     /**
      * The id of the parent item (if this is a sub-item)
      */
     itemId: {
       type: String,
       default: '',
+    },
+
+    items: {
+      type: Array as () => IOptionItem[],
+      default: (): IOptionItem[] => [],
     },
   },
 
@@ -158,15 +169,7 @@ export default Vue.extend({
 
       currentStatus: EOptionListItemStatus.Active,
 
-      rules: {
-        name: {
-          required: true,
-          max: MAX_LENGTH_MD,
-        },
-        description: {
-          max: MAX_LENGTH_MD,
-        },
-      },
+      isNameUnique: true,
     };
   },
 
@@ -176,6 +179,29 @@ export default Vue.extend({
         EOptionListItemStatus.Active,
         EOptionListItemStatus.Inactive,
       ];
+    },
+
+    rules(): Record<string, unknown> {
+      return {
+        name: {
+          required: true,
+          max: MAX_LENGTH_MD,
+          customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
+        },
+        description: {
+          max: MAX_LENGTH_MD,
+        },
+      };
+    },
+
+    allNames(): IMultilingual[] {
+      let names: IMultilingual[] = [];
+      this.items.forEach((item) => {
+        names.push(item.name);
+        names = names.concat(item.subitems.map((sub) => sub.name));
+      });
+
+      return names;
     },
   },
 
@@ -256,6 +282,17 @@ export default Vue.extend({
      */
     cancel() {
       this.$emit('cancel');
+    },
+
+    checkNameUniqueness(input: string) {
+      const treat = ((str: string) => str.trim().toLowerCase());
+
+      const treatedInput = treat(input);
+
+      this.isNameUnique = !this.allNames.some((name) => {
+        const langs = Object.keys(name.translation);
+        return langs.some((lang) => treat(name.translation[lang]) === treatedInput);
+      });
     },
   },
 });

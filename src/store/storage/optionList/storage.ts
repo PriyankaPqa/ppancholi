@@ -31,6 +31,13 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.dispatch('optionList/createOption', payload);
     },
 
+    addSubItem(itemId: string, subItem: ICreateOptionItemRequest) {
+      return store.dispatch('optionList/addSubItem', {
+        itemId,
+        subItem,
+      });
+    },
+
     updateName(id: string, name: IMultilingual) {
       return store.dispatch('optionList/updateName', {
         id,

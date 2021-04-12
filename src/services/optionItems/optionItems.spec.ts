@@ -1,4 +1,6 @@
-import { mockOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
+import {
+  mockOptionItemData, mockSubItem, EOptionListItemStatus, EOptionLists,
+} from '@/entities/optionItem';
 import { mockHttp } from '@/services/httpClient.mock';
 import { OptionItemsService } from './optionItems';
 
@@ -41,6 +43,16 @@ describe('>>> EventTypes Service', () => {
     const list = EOptionLists.EventTypes;
     await service.createOptionItem(list, mockOptionItemData()[0]);
     expect(http.post).toHaveBeenCalledWith(service.getPrefix(list), mockOptionItemData()[0]);
+  });
+
+  test('addSubItem is linked to the correct URL', async () => {
+    const list = EOptionLists.EventTypes;
+
+    const itemId = 'item id';
+    const subItem = mockSubItem();
+
+    await service.addSubItem(list, itemId, subItem);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/${itemId}/add-subitem`, subItem);
   });
 
   test('getOptionList is linked to the correct URL', async () => {

@@ -16,6 +16,8 @@ export const mockStorageOptionList = () : IStorageMock => ({
 
     createOption: jest.fn(),
 
+    addSubItem: jest.fn(),
+
     updateName: jest.fn(),
 
     updateStatus: jest.fn(),

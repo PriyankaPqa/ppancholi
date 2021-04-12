@@ -1,4 +1,6 @@
-import { mockOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
+import {
+  mockOptionItemData, mockSubItem, EOptionListItemStatus, EOptionLists,
+} from '@/entities/optionItem';
 import { mockStore } from '@/store';
 import { makeStorage } from './storage';
 
@@ -48,6 +50,14 @@ describe('>>> OptionList Storage', () => {
       };
       storage.actions.createOption(optionListItem);
       expect(store.dispatch).toHaveBeenCalledWith('optionList/createOption', optionListItem);
+    });
+
+    it('should proxy addSubItem', () => {
+      const itemId = 'item id';
+      const subItem = mockSubItem();
+
+      storage.actions.addSubItem(itemId, subItem);
+      expect(store.dispatch).toHaveBeenCalledWith('optionList/addSubItem', { itemId, subItem });
     });
 
     it('should proxy updateName', () => {

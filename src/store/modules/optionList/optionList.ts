@@ -6,7 +6,7 @@ import _findIndex from 'lodash/findIndex';
 import { IRootState } from '@/store/store.types';
 import { IMultilingual } from '@/types';
 import {
-  IOptionItemData, IOptionItem, OptionItem, EOptionListItemStatus, EOptionLists,
+  IOptionItemData, IOptionItem, OptionItem, EOptionListItemStatus, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';
 import {
   IState,
@@ -72,6 +72,19 @@ const actions = {
 
     const { list } = context.state;
     const data = await this.$services.optionItems.createOptionItem(list, payload);
+
+    if (data != null) context.commit('addOrUpdateItem', data);
+
+    return null;
+  },
+
+  async addSubItem(this: Store<IState>, context: ActionContext<IState, IState>,
+    payload: { itemId: string, subItem: IOptionSubItem }): Promise<IOptionItem> {
+    if (!context.state.list) {
+      throw new Error('You must set a value for list');
+    }
+
+    const data = await this.$services.optionItems.addSubItem(context.state.list, payload.itemId, payload.subItem);
 
     if (data != null) context.commit('addOrUpdateItem', data);
 

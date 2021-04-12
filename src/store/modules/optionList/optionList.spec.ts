@@ -1,7 +1,9 @@
 import { Store } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
-import { mockOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
+import {
+  mockOptionItemData, mockSubItem, EOptionListItemStatus, EOptionLists,
+} from '@/entities/optionItem';
 
 describe('>>> Option List Module', () => {
   let store: Store<IRootState>;
@@ -138,8 +140,24 @@ describe('>>> Option List Module', () => {
         store.commit('optionList/setList', list);
 
         await store.dispatch('optionList/createOption');
-
         expect(store.$services.optionItems.createOptionItem).toHaveBeenCalledWith(list, undefined);
+      });
+    });
+
+    describe('addSubItem', () => {
+      it('throws an error if list is not set in the store', async () => {
+        await expect(store.dispatch('optionList/addSubItem')).rejects.toThrow();
+      });
+
+      it('calls the addSubItem endpoint with the proper list', async () => {
+        store.commit('optionList/setList', list);
+
+        const itemId = 'item id';
+        const subItem = mockSubItem();
+
+        await store.dispatch('optionList/addSubItem', { itemId, subItem });
+
+        expect(store.$services.optionItems.addSubItem).toHaveBeenCalledWith(list, itemId, subItem);
       });
     });
 

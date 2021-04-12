@@ -1,5 +1,7 @@
 import { IHttpClient } from '@/services/httpClient';
-import { IOptionItemData, EOptionListItemStatus, EOptionLists } from '@/entities/optionItem';
+import {
+  IOptionItemData, EOptionListItemStatus, EOptionLists, IOptionSubItem,
+} from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
 import { IOptionItemsService } from './optionItems.types';
 
@@ -31,6 +33,10 @@ export class OptionItemsService implements IOptionItemsService {
 
   async createOptionItem(list: EOptionLists, optionItem: IOptionItemData): Promise<IOptionItemData> {
     return this.http.post(this.getPrefix(list), optionItem);
+  }
+
+  async addSubItem(list: EOptionLists, itemId: string, subItem: IOptionSubItem): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${itemId}/add-subitem`, subItem);
   }
 
   async updateOptionItemName(list: EOptionLists, id: string, name: IMultilingual): Promise<IOptionItemData> {

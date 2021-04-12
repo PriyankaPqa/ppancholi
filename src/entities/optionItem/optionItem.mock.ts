@@ -1,4 +1,4 @@
-import { EOptionListItemStatus, IOptionItemData } from './optionItem.types';
+import { EOptionListItemStatus, IOptionItemData, IOptionSubItem } from './optionItem.types';
 
 export const mockOptionItemData = (): IOptionItemData[] => [{
   id: '1',
@@ -72,3 +72,23 @@ export const mockOptionItemData = (): IOptionItemData[] => [{
   isDefault: false,
   subitems: [],
 }];
+
+export const mockSubItem = (): IOptionSubItem => ({
+  id: 'ID',
+  name: {
+    translation: {
+      en: 'EN',
+      fr: 'FR',
+    },
+  },
+  orderRank: 1,
+  status: EOptionListItemStatus.Active,
+  description: {
+    translation: {
+      en: 'description EN',
+      fr: 'description FR',
+    },
+  },
+  isOther: false,
+  isDefault: false,
+});

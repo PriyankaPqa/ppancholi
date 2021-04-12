@@ -117,12 +117,14 @@
                     <option-list-new-item
                       v-if="isCascading"
                       is-sub-item
+                      :items="items"
                       :has-description="hasDescription"
                       :add-mode="addingItemId === item.id"
                       :language-mode="languageMode"
                       :item-id="item.id"
                       :loading="itemLoading"
                       :add-sub-item-label="addSubItemLabel"
+                      :item-name-label="subItemNameLabel"
                       @save="saveNewSubItem"
                       @add-mode="addSubItem"
                       @cancel="closeAddForms" />
@@ -205,6 +207,11 @@ export default Vue.extend({
     subItemLabel: {
       type: String,
       default: 'system_management.lists.header.subItem',
+    },
+
+    subItemNameLabel: {
+      type: String,
+      default: 'system_management.lists.itemName',
     },
 
     showAddButton: {
@@ -372,8 +379,28 @@ export default Vue.extend({
       this.scrollToInput();
     },
 
-    async saveNewSubItem() {
-      // TODO 408
+    async saveNewSubItem(name: IMultilingual, description: IMultilingual, status: EOptionListItemStatus, itemId: string) {
+      const subItems = this.items.find((i) => i.id === itemId).subitems;
+      const highestRank = subItems.reduce((prev, current) => ((prev.orderRank > current.orderRank) ? prev : current)).orderRank;
+
+      const payload: ICreateOptionItemRequest = {
+        name: entityUtils.getFilledMultilingualField(name),
+        status,
+        orderRank: highestRank + 1,
+        description: entityUtils.getFilledMultilingualField(description),
+      };
+
+      this.itemLoading = true;
+
+      try {
+        await this.$storage.optionList.actions.addSubItem(itemId, payload);
+      } catch {
+        this.itemLoading = false;
+        return;
+      }
+
+      this.itemLoading = false;
+      this.scrollToInput();
     },
 
     /**
@@ -486,8 +513,8 @@ export default Vue.extend({
       });
     },
 
-    addSubItem() {
-      // TODO 408
+    addSubItem(addingItemId: string) {
+      this.addingItemId = addingItemId;
     },
 
     /**
