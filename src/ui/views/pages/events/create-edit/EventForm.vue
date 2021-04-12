@@ -146,7 +146,7 @@
                     :rules="rules.schedule.reOpenReason" />
                 </div>
 
-                <v-row>
+                <!-- <v-row>
                   <v-col cols="6" lg="5" md="5" class="pl-0 pt-0">
                     <v-col>
                       <p class="rc-body16 fw-bold">
@@ -184,7 +184,7 @@
                         :picker-date="localEvent.schedule.scheduledOpenDate" />
                     </v-col>
                   </v-col>
-                </v-row>
+                </v-row> -->
               </div>
             </v-col>
           </v-row>

@@ -37,10 +37,10 @@ describe('EventForm.vue', () => {
           isEditMode: false,
           isNameUnique: true,
         },
-        data() {
-          return {
-            prefixRegistrationLink: 'https://mytest.test/',
-          };
+        computed: {
+          prefixRegistrationLink() {
+            return 'https://mytest.test/';
+          },
         },
       });
 
@@ -83,10 +83,10 @@ describe('EventForm.vue', () => {
           isEditMode: false,
           isNameUnique: true,
         },
-        data() {
-          return {
-            prefixRegistrationLink: 'https://mytest.test/',
-          };
+        computed: {
+          prefixRegistrationLink() {
+            return 'https://mytest.test/';
+          },
         },
       });
     });
@@ -140,12 +140,10 @@ describe('EventForm.vue', () => {
             isEditMode: false,
             isNameUnique: true,
           },
-          data() {
-            return {
-              prefixRegistrationLink: 'https://mytest.test/',
-            };
-          },
           computed: {
+            prefixRegistrationLink() {
+              return 'https://mytest.test/';
+            },
             relatedEventsSorted() {
               return [event];
             },
@@ -201,10 +199,10 @@ describe('EventForm.vue', () => {
           isEditMode: false,
           isNameUnique: true,
         },
-        data() {
-          return {
-            prefixRegistrationLink: 'https://mytest.test/',
-          };
+        computed: {
+          prefixRegistrationLink() {
+            return 'https://mytest.test/';
+          },
         },
       });
     });
@@ -255,10 +253,10 @@ describe('EventForm.vue', () => {
             isEditMode: true,
             isNameUnique: true,
           },
-          data() {
-            return {
-              prefixRegistrationLink: 'https://mytest.test/',
-            };
+          computed: {
+            prefixRegistrationLink() {
+              return 'https://mytest.test/';
+            },
           },
         });
 
@@ -422,10 +420,10 @@ describe('EventForm.vue', () => {
             isEditMode: true,
             isNameUnique: true,
           },
-          data() {
-            return {
-              prefixRegistrationLink: 'https://mytest.test/',
-            };
+          computed: {
+            prefixRegistrationLink() {
+              return 'https://mytest.test/';
+            },
           },
         });
 
@@ -480,10 +478,10 @@ describe('EventForm.vue', () => {
             isEditMode: true,
             isNameUnique: true,
           },
-          data() {
-            return {
-              prefixRegistrationLink: 'https://mytest.test/',
-            };
+          computed: {
+            prefixRegistrationLink() {
+              return 'https://mytest.test/';
+            },
           },
         });
 
@@ -514,10 +512,10 @@ describe('EventForm.vue', () => {
           isEditMode: false,
           isNameUnique: true,
         },
-        data() {
-          return {
-            prefixRegistrationLink: 'https://mytest.test/',
-          };
+        computed: {
+          prefixRegistrationLink() {
+            return 'https://mytest.test/';
+          },
         },
       });
     });
@@ -547,10 +545,14 @@ describe('EventForm.vue', () => {
           isEditMode: false,
           isNameUnique: true,
         },
+        computed: {
+          prefixRegistrationLink() {
+            return 'https://mytest.test/';
+          },
+        },
         data() {
           return {
             languageMode: 'en',
-            prefixRegistrationLink: 'https://mytest.test/',
             assistanceNumber: {},
           };
         },
