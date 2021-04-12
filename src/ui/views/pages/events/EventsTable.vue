@@ -1,7 +1,7 @@
 <template>
   <rc-data-table
     data-test="events-table"
-    :show-help="true"
+    :show-help="$hasLevel('level6')"
     :help-data="helpData"
     :items="azureSearchItems"
     :count="azureSearchCount"
@@ -49,7 +49,7 @@
     </template>
 
     <template #[`item.editButton`]="{ item }">
-      <v-btn icon class="mr-2" data-test="edit_event" @click="goToEditEvent(item)">
+      <v-btn v-if="$hasLevel('level5')" icon class="mr-2" data-test="edit_event" @click="goToEditEvent(item)">
         <v-icon size="24" color="grey darken-2">
           mdi-pencil
         </v-icon>

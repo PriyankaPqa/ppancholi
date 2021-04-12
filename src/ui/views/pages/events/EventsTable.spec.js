@@ -77,6 +77,17 @@ describe('EventsTable.vue', () => {
         });
       });
 
+      describe('help button', () => {
+        it('displays the help button for level 6 users', () => {
+          expect(dataTable.props('showHelp')).toBe(true);
+        });
+
+        it('does not display the help button for users level 5 and below', async () => {
+          await wrapper.setRole('level5');
+          expect(dataTable.props('showHelp')).toBe(false);
+        });
+      });
+
       describe('table elements', () => {
         test('event title redirects to getEventRoute', () => {
           const link = wrapper.findDataTest('eventDetail-link');
@@ -93,6 +104,40 @@ describe('EventsTable.vue', () => {
           const editButton = wrapper.findDataTest('edit_event');
           await editButton.trigger('click');
           expect(wrapper.vm.goToEditEvent).toHaveBeenCalledTimes(1);
+        });
+
+        test('edit button is visible for level 5 users', async () => {
+          wrapper = mount(Component, {
+            localVue,
+            store: {
+              ...mockUserStateLevel(5),
+            },
+            propsData: {
+              isDashboard: false,
+            },
+          });
+          wrapper.vm.azureSearchItems = mockEvents();
+          wrapper.vm.azureSearchCount = mockEvents().length;
+          await wrapper.vm.$nextTick();
+          const editButton = wrapper.findDataTest('edit_event');
+          expect(editButton.exists()).toBeTruthy();
+        });
+
+        test('edit button is not visible for level 4 users', async () => {
+          wrapper = mount(Component, {
+            localVue,
+            store: {
+              ...mockUserStateLevel(4),
+            },
+            propsData: {
+              isDashboard: false,
+            },
+          });
+          wrapper.vm.azureSearchItems = mockEvents();
+          wrapper.vm.azureSearchCount = mockEvents().length;
+          await wrapper.vm.$nextTick();
+          const editButton = wrapper.findDataTest('edit_event');
+          expect(editButton.exists()).toBeFalsy();
         });
       });
     });
