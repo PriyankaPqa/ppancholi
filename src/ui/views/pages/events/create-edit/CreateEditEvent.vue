@@ -1,15 +1,15 @@
 <template>
-  <ValidationObserver ref="form" v-slot="{ failed }" slim>
+  <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
     <page-template ref="pageTemplate" :loading="eventLoading" :show-left-menu="false">
       <rc-page-content :title="isEditMode ? $t('event.edit.title') : $t('event.create.title')" :show-help="true" :help-link="helpLink">
-        <event-form :event.sync="event" :is-edit-mode="isEditMode" :is-name-unique.sync="isNameUnique" />
+        <event-form :event.sync="event" :is-edit-mode="isEditMode" :is-name-unique.sync="isNameUnique" :is-dirty.sync="isDirty" />
 
         <template slot="actions">
           <v-btn data-test="cancel" @click.stop="back()">
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed" @click.stop="submit">
+          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || (!dirty && !isDirty)" @click.stop="submit">
             {{ submitLabel }}
           </v-btn>
         </template>
@@ -52,6 +52,7 @@ export default Vue.extend({
       error: false,
       event: new Event() as IEvent,
       isNameUnique: true,
+      isDirty: false, // Need to manually sync dirty state because v-switch doesn't work with vee-validate
     };
   },
 
@@ -90,9 +91,18 @@ export default Vue.extend({
 
   methods: {
     back(): void {
-      this.$router.replace({
-        name: routes.events.home.name,
-      });
+      if (this.isEditMode) {
+        this.$router.replace({
+          name: routes.events.details.name,
+          params: {
+            id: this.id,
+          },
+        });
+      } else {
+        this.$router.replace({
+          name: routes.events.home.name,
+        });
+      }
     },
 
     handleSubmitError(e: Error) {

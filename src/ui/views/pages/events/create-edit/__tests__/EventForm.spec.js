@@ -1,5 +1,6 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { mockUserStateLevel } from '@/test/helpers';
 import {
   mockEventsSearchData, mockOtherProvinceData, mockRegionData, Event, EResponseLevel, EEventStatus,
 } from '@/entities/event';
@@ -517,6 +518,9 @@ describe('EventForm.vue', () => {
             return 'https://mytest.test/';
           },
         },
+        store: {
+          ...mockUserStateLevel(6),
+        },
       });
     });
 
@@ -555,6 +559,9 @@ describe('EventForm.vue', () => {
             languageMode: 'en',
             assistanceNumber: {},
           };
+        },
+        store: {
+          ...mockUserStateLevel(6),
         },
       });
     });
@@ -638,6 +645,46 @@ describe('EventForm.vue', () => {
       await wrapper.vm.$refs.form.validate();
       const el = wrapper.findTextFieldWithValidation('event-description');
       expect(el.classes('invalid')).toBe(true);
+    });
+  });
+
+  describe('Permissions', () => {
+    beforeEach(() => {
+      wrapper = mount(Component, {
+        localVue: createLocalVue(),
+        propsData: {
+          event,
+          isEditMode: true,
+          isNameUnique: true,
+        },
+      });
+    });
+
+    test('the inputDisabled prop returns true if the user does not have level 6', async () => {
+      await wrapper.setRole('level6');
+
+      expect(wrapper.vm.inputDisabled).toBe(false);
+
+      await wrapper.setRole('level5');
+
+      expect(wrapper.vm.inputDisabled).toBe(true);
+    });
+
+    test('all the inputs except for description are disabled for level 5', async () => {
+      await wrapper.setRole('level5');
+
+      expect(wrapper.findDataTest('event-name').attributes('disabled')).toBe('disabled');
+      expect(wrapper.findDataTest('event-level').attributes('disabled')).toBe('disabled');
+      expect(wrapper.findDataTest('event-province').attributes('disabled')).toBe('disabled');
+      expect(wrapper.findDataTest('event-region').attributes('disabled')).toBe('disabled');
+      expect(wrapper.findDataTest('event-type').attributes('disabled')).toBe('disabled');
+      expect(wrapper.findDataTest('event-phone').props('disabled')).toBe(true);
+      expect(wrapper.findDataTest('event-reported-date').attributes('disabled')).toBe('disabled');
+      expect(wrapper.findDataTest('event-switch-status').attributes('disabled')).toBe('disabled');
+      // expect(wrapper.findDataTest('event-start-date').attributes('disabled')).toBe('disabled');
+      // expect(wrapper.findDataTest('event-end-date').attributes('disabled')).toBe('disabled');
+      expect(wrapper.findDataTest('event-related-events').attributes('disabled')).toBe('disabled');
+      expect(wrapper.findDataTest('event-description').attributes('disabled')).toBeFalsy();
     });
   });
 });

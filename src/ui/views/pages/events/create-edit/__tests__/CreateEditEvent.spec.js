@@ -48,6 +48,37 @@ describe('CreatEditEvent.vue', () => {
           name: routes.events.home.name,
         });
       });
+
+      it('calls the router replace method with the events detail page if edit mode is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          store: {
+            modules: {
+              event: {
+                actions: {
+                  fetchEvent: jest.fn(() => mockEvent),
+                },
+              },
+            },
+          },
+          propsData: {
+            id: 'TEST_ID',
+          },
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+
+        wrapper.vm.back();
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+          name: routes.events.details.name,
+          params: {
+            id: 'TEST_ID',
+          },
+        });
+      });
     });
 
     describe('handleSubmitError', () => {
@@ -223,6 +254,9 @@ describe('CreatEditEvent.vue', () => {
 
     describe('Event handlers', () => {
       test('the save button calls the submit method', async () => {
+        await wrapper.setData({
+          isDirty: true, // force dirty state to enable button
+        });
         jest.spyOn(wrapper.vm, 'submit').mockImplementation(() => {});
         const button = wrapper.findDataTest('save');
         await button.trigger('click');
@@ -242,8 +276,6 @@ describe('CreatEditEvent.vue', () => {
     describe('Validation', () => {
       test('the save button is disabled if validation fails', async () => {
         const button = wrapper.findDataTest('save');
-
-        expect(button.attributes('disabled')).toBeFalsy();
 
         await wrapper.vm.submit();
 

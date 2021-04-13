@@ -134,8 +134,10 @@ export class EventsService implements IEventsService {
       region: event.location.region,
       relatedEventIds: event.relatedEventsInfos.map((el) => el.id),
       responseLevel: event.responseDetails.responseLevel,
-      scheduledCloseDate: event.schedule.scheduledCloseDate ? new Date(event.schedule.scheduledCloseDate).toISOString() : null,
-      scheduledOpenDate: event.schedule.scheduledOpenDate ? new Date(event.schedule.scheduledOpenDate).toISOString() : null,
+      // scheduledCloseDate: event.schedule.scheduledCloseDate ? new Date(event.schedule.scheduledCloseDate).toISOString() : null,
+      scheduledCloseDate: null,
+      // scheduledOpenDate: event.schedule.scheduledOpenDate ? new Date(event.schedule.scheduledOpenDate).toISOString() : null,
+      scheduledOpenDate: null,
       status: event.schedule.status,
     };
 

@@ -15,6 +15,7 @@
                 :hint="$t('event.event_name.hint')"
                 persistent-hint
                 :rules="rules.name"
+                :disabled="inputDisabled"
                 @input="resetAsUnique()" />
             </v-col>
 
@@ -25,6 +26,7 @@
                 attach
                 :label="`${$t('event.response_level')} *`"
                 :items="responseLevels"
+                :disabled="inputDisabled"
                 :rules="rules.responseDetails.responseLevel" />
             </v-col>
           </v-row>
@@ -38,6 +40,7 @@
                 :label="`${$t('event.province')} *`"
                 :items="canadianProvinces"
                 :rules="rules.location.province"
+                :disabled="inputDisabled"
                 @input="clearRegionAndOtherProvince" />
             </v-col>
 
@@ -49,6 +52,7 @@
                 attach="event-province-other"
                 :label="`${$t('event.other')} *`"
                 :rules="rules.location.provinceOther"
+                :disabled="inputDisabled"
                 :item-text="(item) => item.name.translation[languageMode]" />
             </v-col>
 
@@ -59,7 +63,7 @@
                 data-test="event-region"
                 attach="event-region"
                 :label="$t('event.region')"
-                :disabled="!localEvent.location.province"
+                :disabled="!localEvent.location.province || inputDisabled"
                 :rules="rules.location.region"
                 :item-text="(item) => item.name.translation[languageMode]" />
             </v-col>
@@ -76,6 +80,7 @@
                 :item-text="(item) => $m(item.name)"
                 return-object
                 :rules="rules.responseDetails.eventType"
+                :disabled="inputDisabled"
                 @change="localEvent.responseDetails.eventType.optionItemId = $event.id" />
             </v-col>
 
@@ -85,6 +90,7 @@
                 data-test="event-type-specified-other"
                 autocomplete="nope"
                 :label="`${$t('common.pleaseSpecify')} *`"
+                :disabled="inputDisabled"
                 :rules="rules.responseDetails.eventTypeOther" />
             </v-col>
 
@@ -96,6 +102,7 @@
                   :label="`${$t('event.number')} *`"
                   :error-messages="errors"
                   data-test="event-phone"
+                  :disabled="inputDisabled"
                   @input="setAssistanceNumber" />
               </ValidationProvider>
             </v-col>
@@ -109,6 +116,7 @@
                 readonly
                 :rules="rules.responseDetails.dateReported"
                 :label="`${$t('event.date_reported')} *`"
+                :disabled="inputDisabled"
                 :max="today" />
             </v-col>
           </v-row>
@@ -132,6 +140,7 @@
                     class="pt-0 mt-0"
                     hide-details
                     color="white"
+                    :disabled="inputDisabled"
                     flat />
                 </div>
 
@@ -143,6 +152,7 @@
                     background-color="white"
                     autocomplete="nope"
                     :label="`${$t('event.reOpenReason')} *`"
+                    :disabled="inputDisabled"
                     :rules="rules.schedule.reOpenReason" />
                 </div>
 
@@ -158,7 +168,7 @@
                         :close-on-content-click="false"
                         :data-test="'event-start-date'"
                         :rules="rules.schedule.scheduledOpenDate"
-                        :disabled="isStatusOpen || (isEditMode && localEvent.hasBeenOpen)"
+                        :disabled="isStatusOpen || (isEditMode && localEvent.schedule.hasBeenOpen) || inputDisabled"
                         prepend-inner-icon="timer"
                         :label="`${$t('event.select_date')}`"
                         :placeholder="$t('event.select_date')"
@@ -181,6 +191,7 @@
                         :placeholder="$t('event.select_date')"
                         :label="`${$t('event.select_date')}`"
                         :min="localEvent.schedule.scheduledOpenDate"
+                        :disabled="inputDisabled"
                         :picker-date="localEvent.schedule.scheduledOpenDate" />
                     </v-col>
                   </v-col>
@@ -236,6 +247,7 @@
                 :attach="true"
                 multiple
                 hide-details
+                :disabled="inputDisabled"
                 @change="setRelatedEvents($event)"
                 @delete="setRelatedEvents($event)" />
             </v-col>
@@ -313,6 +325,11 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+
+    isDirty: {
+      type: Boolean,
+      required: true,
+    },
   },
 
   data() {
@@ -358,6 +375,10 @@ export default Vue.extend({
   },
 
   computed: {
+    inputDisabled(): boolean {
+      return !this.$hasLevel('level6');
+    },
+
     isStatusOpen: {
       get(): boolean {
         return this.localEvent.schedule.status === EEventStatus.Open;
@@ -377,6 +398,8 @@ export default Vue.extend({
             this.localEvent.schedule.scheduledCloseDate = null;
           }
         }
+
+        this.$emit('update:is-dirty', true);
       },
     },
 
@@ -573,7 +596,9 @@ export default Vue.extend({
     },
 
     eventType() {
-      this.localEvent.responseDetails.eventType.specifiedOther = '';
+      if (!this.eventType || !this.eventType.isOther) {
+        this.localEvent.responseDetails.eventType.specifiedOther = '';
+      }
     },
   },
 
