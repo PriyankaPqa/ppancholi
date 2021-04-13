@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { Event, mockEventsSearchData } from '@/entities/event';
-import helpers from '@/ui/helpers';
 import { ECanadaProvinces } from '@/types';
+import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../components/EventLocationSection.vue';
 
@@ -12,39 +12,19 @@ const mockEvent = new Event(mockEventsSearchData()[0]);
 describe('EventLocationSection.vue', () => {
   let wrapper;
 
-  beforeEach(() => {
-    wrapper = shallowMount(Component, {
-      localVue,
-      propsData: {
-        locations: mockEvent.registrationLocations,
-        dataTestPrefix: 'registration',
-      },
-      computed: {
-        sortedLocations() {
-          return mockEvent.registrationLocations;
-        },
-      },
-    });
-  });
-
   describe('Template', () => {
-    it('table renders when the event has registration locations', () => {
-      expect(wrapper.find('table').exists()).toBeTruthy();
-
-      const locations = wrapper.findAll('tr');
-      expect(locations.length).toBe(mockEvent.registrationLocations.length);
-    });
-
-    it('does not render when the event has no locations', () => {
+    beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          locations: [],
+          location: mockEvent.registrationLocations[0],
+          index: 0,
           dataTestPrefix: 'registration',
         },
+        store: {
+          ...mockUserStateLevel(5),
+        },
       });
-
-      expect(wrapper.find('table').exists()).toBeFalsy();
     });
 
     describe('location name', () => {
@@ -55,7 +35,7 @@ describe('EventLocationSection.vue', () => {
 
       it('displays the right name', () => {
         const element = wrapper.findDataTest('event-registration-location-section-name-0');
-        expect(element.text()).toEqual(wrapper.vm.locations[0].name.translation.en);
+        expect(element.text()).toEqual(wrapper.vm.location.name.translation.en);
       });
     });
 
@@ -67,7 +47,7 @@ describe('EventLocationSection.vue', () => {
 
       it('displays the right status', () => {
         const element = wrapper.findDataTest('event-registration-location-section-status-0');
-        expect(element.props().status).toEqual(wrapper.vm.locations[0].status);
+        expect(element.props().status).toEqual(wrapper.vm.location.status);
       });
     });
 
@@ -84,32 +64,34 @@ describe('EventLocationSection.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
+      it('does not render if user is below level 5', async () => {
+        await wrapper.setRole('level4');
+
+        const element = wrapper.findDataTest('event-registration-location-section-edit-0');
+        expect(element.exists()).toBeFalsy();
+      });
+
       it('emits submit, with the right data if form is valid', async () => {
         const element = wrapper.findDataTest('event-registration-location-section-edit-0');
 
         await element.vm.$emit('click');
-        expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.locations[0].name.translation.en);
-      });
-    });
-  });
-
-  describe('computed', () => {
-    describe('sortedLocations', () => {
-      it('return the locations sorted by name', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            locations: mockEvent.registrationLocations,
-            dataTestPrefix: 'registration',
-          },
-        });
-
-        expect(wrapper.vm.sortedLocations).toEqual(helpers.sortMultilingualArray(wrapper.vm.locations, 'name'));
+        expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.location.name.translation.en);
       });
     });
   });
 
   describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          location: mockEvent.registrationLocations[0],
+          index: 0,
+          dataTestPrefix: 'registration',
+        },
+      });
+    });
+
     describe('getAddress', () => {
       it('concatenates address correctly', async () => {
         const location = {

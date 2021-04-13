@@ -7,6 +7,7 @@ import { mockStorage } from '@/store/storage';
 import _cloneDeep from 'lodash/cloneDeep';
 import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers';
+import { mockUserStateLevel } from '@/test/helpers';
 import { mockOptionItemData } from '@/entities/optionItem';
 
 import Component, { EDialogComponent } from '../EventSummary.vue';
@@ -20,6 +21,9 @@ const mountWithStatus = (status) => {
 
   return shallowMount(Component, {
     localVue,
+    store: {
+      ...mockUserStateLevel(5),
+    },
     mocks: {
       $route: {
         name: routes.events.edit.name,
@@ -27,7 +31,6 @@ const mountWithStatus = (status) => {
           id: '7c076603-580a-4400-bef2-5ddececb0931',
         },
       },
-      $storage: storage,
     },
     computed: {
       event() {
@@ -40,6 +43,7 @@ const mountWithStatus = (status) => {
         });
       },
     },
+
   });
 };
 
@@ -57,6 +61,9 @@ describe('EventSummary.vue', () => {
           agreementTypes() {
             return [];
           },
+        },
+        store: {
+          ...mockUserStateLevel(5),
         },
         mocks: {
           $route: {
@@ -77,6 +84,15 @@ describe('EventSummary.vue', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('event-detail-status');
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('is disabled for users with level below 5', async () => {
+        const element = wrapper.findDataTest('event-detail-status');
+
+        expect(element.props('disabled')).toBeFalsy();
+        await wrapper.setRole('level4');
+
+        expect(element.props('disabled')).toBeTruthy();
       });
 
       it('calls the method onStatusChangeInit on change', () => {
@@ -100,9 +116,16 @@ describe('EventSummary.vue', () => {
     });
 
     describe('edit button', () => {
-      it('renders', () => {
+      it('renders when user is above level 5', () => {
         const element = wrapper.findDataTest('event-edit-button');
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('does not render when user is below level 5', async () => {
+        await wrapper.setRole('level4');
+
+        const element = wrapper.findDataTest('event-edit-button');
+        expect(element.exists()).toBeFalsy();
       });
 
       it('calls the method editEvent on click', () => {
@@ -249,6 +272,34 @@ describe('EventSummary.vue', () => {
         element.vm.$emit('edit');
         expect(wrapper.vm.editSection).toHaveBeenCalledTimes(1);
       });
+
+      it('does not render when the event has no registration locations', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            event() {
+              const event = _cloneDeep(mockEvent);
+              event.registrationLocations = [];
+              return event;
+            },
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+
+          },
+          stubs: {
+            EventStatusDialog: true,
+          },
+        });
+
+        const element = wrapper.findDataTest('registration-location-section');
+        expect(element.exists()).toBeFalsy();
+      });
     });
 
     describe('shelter location section', () => {
@@ -263,6 +314,34 @@ describe('EventSummary.vue', () => {
         const element = wrapper.findDataTest('shelter-location-section');
         element.vm.$emit('edit');
         expect(wrapper.vm.editSection).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not render when the event has no shelter locations', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            event() {
+              const event = _cloneDeep(mockEvent);
+              event.shelterLocations = [];
+              return event;
+            },
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+
+          },
+          stubs: {
+            EventStatusDialog: true,
+          },
+        });
+
+        const element = wrapper.findDataTest('shelter-location-section');
+        expect(element.exists()).toBeFalsy();
       });
     });
 
@@ -341,6 +420,18 @@ describe('EventSummary.vue', () => {
       });
     });
 
+    describe('sortedRegistrationLocations', () => {
+      it('return the locations sorted by name', () => {
+        expect(wrapper.vm.sortedRegistrationLocations).toEqual(helpers.sortMultilingualArray(mockEvent.registrationLocations, 'name'));
+      });
+    });
+
+    describe('sortedShelterLocations', () => {
+      it('return the locations sorted by name', () => {
+        expect(wrapper.vm.sortedShelterLocations).toEqual(helpers.sortMultilingualArray(mockEvent.shelterLocations, 'name'));
+      });
+    });
+
     describe('showEditButton', () => {
       it('returns true if the event status is open or on hold', () => {
         wrapper = mountWithStatus(EEventStatus.Open);
@@ -366,6 +457,16 @@ describe('EventSummary.vue', () => {
         wrapper = mountWithStatus(EEventStatus.Closed);
 
         expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.Closed);
+
+        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
+      });
+
+      it('returns false if user level is below 5', async () => {
+        wrapper = mountWithStatus(EEventStatus.Open);
+
+        await wrapper.setRole('level4');
+
+        expect(wrapper.vm.showEditButton).toBeFalsy();
 
         expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
       });

@@ -3,6 +3,7 @@ import { Event, mockEventsSearchData } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
+import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../components/EventAgreementSection.vue';
 
@@ -22,78 +23,89 @@ describe('EventAgreementSection.vue', () => {
           agreement: mockEvent.agreements[0],
           agreementTypes: [],
           eventId: mockEvent.id,
+          index: 0,
+        },
+        store: {
+          ...mockUserStateLevel(5),
         },
       });
     });
 
     describe('agreement name', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-agreement-section-name');
+        const element = wrapper.findDataTest('event-agreement-section-name-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right name', () => {
-        const element = wrapper.findDataTest('event-agreement-section-name');
+        const element = wrapper.findDataTest('event-agreement-section-name-0');
         expect(element.text()).toEqual(wrapper.vm.agreement.name.translation.en);
       });
     });
 
     describe('agreement start date', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-agreement-section-start-date');
+        const element = wrapper.findDataTest('event-agreement-section-start-date-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right date', () => {
-        const element = wrapper.findDataTest('event-agreement-section-start-date');
+        const element = wrapper.findDataTest('event-agreement-section-start-date-0');
         expect(element.text()).toEqual(helpers.getStringDate(wrapper.vm.agreement.startDate, 'll'));
       });
     });
 
     describe('agreement end date', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-agreement-section-end-date');
+        const element = wrapper.findDataTest('event-agreement-section-end-date-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right date', () => {
-        const element = wrapper.findDataTest('event-agreement-section-end-date');
+        const element = wrapper.findDataTest('event-agreement-section-end-date-0');
         expect(element.text()).toEqual('-');
       });
     });
 
     describe('agreement details', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-agreement-section-details');
+        const element = wrapper.findDataTest('event-agreement-section-details-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right data', () => {
-        const element = wrapper.findDataTest('event-agreement-section-details');
+        const element = wrapper.findDataTest('event-agreement-section-details-0');
         expect(element.text()).toEqual(wrapper.vm.agreement.details.translation.en);
       });
     });
 
     describe('agreement type', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-agreement-section-type');
+        const element = wrapper.findDataTest('event-agreement-section-type-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right data', () => {
-        const element = wrapper.findDataTest('event-agreement-section-type');
+        const element = wrapper.findDataTest('event-agreement-section-type-0');
         expect(element.text()).toEqual(wrapper.vm.agreement.agreementTypeName.translation.en);
       });
     });
 
     describe('edit button', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('edit-event-agreement');
+        const element = wrapper.findDataTest('edit-event-agreement-0');
         expect(element.exists()).toBeTruthy();
       });
 
+      it('does not render if user is below level 5', async () => {
+        await wrapper.setRole('level4');
+
+        const element = wrapper.findDataTest('edit-event-agreement-0');
+        expect(element.exists()).toBeFalsy();
+      });
+
       it('emits submit, with the right data if form is valid', async () => {
-        const element = wrapper.findDataTest('edit-event-agreement');
+        const element = wrapper.findDataTest('edit-event-agreement-0');
 
         await element.vm.$emit('click');
         expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.agreement.name.translation.en);
@@ -102,13 +114,20 @@ describe('EventAgreementSection.vue', () => {
 
     describe('delete button', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('delete-event-agreement');
+        const element = wrapper.findDataTest('delete-event-agreement-0');
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('does not render if user is below level 5', async () => {
+        await wrapper.setRole('level4');
+
+        const element = wrapper.findDataTest('delete-event-agreement-0');
+        expect(element.exists()).toBeFalsy();
       });
 
       it('sets showDeleteConfirmationDialog to true', async () => {
         wrapper.vm.showDeleteConfirmationDialog = false;
-        const element = wrapper.findDataTest('delete-event-agreement');
+        const element = wrapper.findDataTest('delete-event-agreement-0');
 
         await element.vm.$emit('click');
         expect(wrapper.vm.showDeleteConfirmationDialog).toBeTruthy();
@@ -156,6 +175,7 @@ describe('EventAgreementSection.vue', () => {
           agreement: mockEvent.agreements[0],
           eventId: mockEvent.id,
           agreementTypes: mockOptionItemData(),
+          index: 0,
         },
       });
     });
@@ -181,6 +201,7 @@ describe('EventAgreementSection.vue', () => {
             agreement: mockEvent.agreements[0],
             eventId: mockEvent.id,
             agreementTypes: [],
+            index: 0,
           },
         });
         expect(wrapper.vm.infoData).toEqual({
@@ -214,6 +235,7 @@ describe('EventAgreementSection.vue', () => {
           agreement: mockEvent.agreements[0],
           eventId: mockEvent.id,
           agreementTypes: [],
+          index: 0,
         },
         mocks: {
           $storage: storage,

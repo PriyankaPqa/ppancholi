@@ -1,5 +1,5 @@
 <template>
-  <rc-page-content :outer-scroll="true" :title="$t('eventSummary.title')" :show-help="true" :help-link="$t('zendesk.help_link.editEvent')">
+  <rc-page-content :outer-scroll="true" :title="$t('eventSummary.title')" :show-help="true" :help-link="$t('zendesk.help_link.eventDetails')">
     <template slot="top">
       <div class="flex-row justify-space-between ma-0 pa-0 pb-4">
         <v-col class="d-flex ma-0 pa-0" cols="10">
@@ -9,6 +9,7 @@
               :value="event.schedule.status"
               :statuses="statuses"
               status-name="EEventStatus"
+              :disabled="!$hasLevel('level5')"
               @input="onStatusChangeInit($event)" />
           </span>
 
@@ -45,54 +46,51 @@
       <event-summary-section-title
         :section="EEventSummarySections.CallCentre"
         @click-add-button="onSectionAdd($event)" />
-      <div>
-        <div
-          v-for="callCentre in sortedCallCentres"
-          :key="callCentre.name.translation.en"
-          class="justify-end mx-2 my-0 pa-4 pb-6 event-section-item">
-          <event-call-centre-section
-            data-test="call-centre-section"
-            :call-centre="callCentre"
-            @edit="editSection($event, EEventSummarySections.CallCentre)" />
-        </div>
-      </div>
+      <event-summary-section-body v-slot="{item, index}" :items="sortedCallCentres">
+        <event-call-centre-section
+          data-test="call-centre-section"
+          :call-centre="item"
+          :index="index"
+          @edit="editSection($event, EEventSummarySections.CallCentre)" />
+      </event-summary-section-body>
 
       <event-summary-section-title
         :section="EEventSummarySections.RegistrationLocation"
         @click-add-button="onSectionAdd($event)" />
 
-      <event-location-section
-        data-test="registration-location-section"
-        data-test-prefix="registration"
-        :locations="event.registrationLocations"
-        @edit="editSection($event, EEventSummarySections.RegistrationLocation)" />
+      <event-summary-section-body v-slot="{item, index}" :items="sortedRegistrationLocations">
+        <event-location-section
+          data-test="registration-location-section"
+          data-test-prefix="registration"
+          :location="item"
+          :index="index"
+          @edit="editSection($event, EEventSummarySections.RegistrationLocation)" />
+      </event-summary-section-body>
 
       <event-summary-section-title
         :section="EEventSummarySections.ShelterLocation"
         @click-add-button="onSectionAdd($event)" />
-
-      <event-location-section
-        data-test="shelter-location-section"
-        data-test-prefix="shelter"
-        :locations="event.shelterLocations"
-        @edit="editSection($event, EEventSummarySections.ShelterLocation)" />
+      <event-summary-section-body v-slot="{item, index}" :items="sortedShelterLocations">
+        <event-location-section
+          data-test="shelter-location-section"
+          data-test-prefix="shelter"
+          :location="item"
+          :index="index"
+          @edit="editSection($event, EEventSummarySections.ShelterLocation)" />
+      </event-summary-section-body>
 
       <event-summary-section-title
         :section="EEventSummarySections.Agreement"
         @click-add-button="onSectionAdd($event)" />
-      <div>
-        <div
-          v-for="agreement in sortedAgreements"
-          :key="agreement.name.translation.en"
-          class="justify-end mx-2 my-0 pa-4 pb-6 event-section-item">
-          <event-agreement-section
-            data-test="agreement-section"
-            :agreement="agreement"
-            :agreement-types="agreementTypes"
-            :event-id="event.id"
-            @edit="editSection($event, EEventSummarySections.Agreement)" />
-        </div>
-      </div>
+      <event-summary-section-body v-slot="{item, index}" :items="sortedAgreements">
+        <event-agreement-section
+          data-test="agreement-section"
+          :agreement="item"
+          :agreement-types="agreementTypes"
+          :index="index"
+          :event-id="event.id"
+          @edit="editSection($event, EEventSummarySections.Agreement)" />
+      </event-summary-section-body>
 
       <event-status-dialog
         v-if="showEventStatusDialog && newStatus"
@@ -120,12 +118,13 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 import {
-  EEventStatus, IEvent, Event, IEventCallCentre, IEventAgreement,
+  EEventStatus, IEvent, Event, IEventCallCentre, IEventAgreement, IEventGenericLocation,
 } from '@/entities/event';
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@/entities/optionItem';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
+import EventSummarySectionBody from './components/EventSummarySectionBody.vue';
 import EventStatusDialog from './components/EventStatusDialog.vue';
 import EventCallCentreDialog from './components/EventCallCentreDialog.vue';
 import EventRegistrationLocationDialog from './components/EventRegistrationLocationDialog.vue';
@@ -155,6 +154,7 @@ export default Vue.extend({
     StatusSelect,
     EventSummaryLink,
     EventSummarySectionTitle,
+    EventSummarySectionBody,
     EventStatusDialog,
     EventCallCentreDialog,
     EventRegistrationLocationDialog,
@@ -208,7 +208,7 @@ export default Vue.extend({
     },
 
     showEditButton(): boolean {
-      return this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold;
+      return this.$hasLevel('level5') && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
     },
 
     sortedAgreements():Array<IEventAgreement> {
@@ -217,6 +217,14 @@ export default Vue.extend({
 
     sortedCallCentres(): Array<IEventCallCentre> {
       return helpers.sortMultilingualArray(this.event.callCentres, 'name');
+    },
+
+    sortedRegistrationLocations(): Array<IEventGenericLocation> {
+      return helpers.sortMultilingualArray(this.event.registrationLocations, 'name');
+    },
+
+    sortedShelterLocations(): Array<IEventGenericLocation> {
+      return helpers.sortMultilingualArray(this.event.shelterLocations, 'name');
     },
   },
 
@@ -290,18 +298,7 @@ export default Vue.extend({
 
   .event-description {white-space: pre-line; }
 
-  .event-section-item {
-    border: 1px solid var(--v-grey-lighten2);
-    border-bottom: none;
-
-    &:first-child {
-      border-top-left-radius: 4px;
-      border-top-right-radius: 4px;
-    }
-    &:last-child {
-      border-bottom-left-radius: 4px;
-      border-bottom-right-radius: 4px;
-      border-bottom: 1px solid var(--v-grey-lighten2)  !important;
-    }
+  ::v-deep .theme--light.v-btn:hover::before{
+    opacity: 0.2;
   }
 </style>

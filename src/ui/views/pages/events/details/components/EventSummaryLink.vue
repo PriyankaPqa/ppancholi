@@ -38,14 +38,14 @@
       <v-spacer />
 
       <v-switch
-        v-if="showSwitchBtn"
+        v-if="$hasLevel('level6') && showSwitchBtn"
         :input-value="event.selfRegistrationEnabled"
         :loading="updatingSelfRegistration"
         :disabled="updatingSelfRegistration"
         class="mt-0 pt-0 mr-2"
         data-test="event-summary-toggle-self-registration"
         hide-details
-        @change="toggleSelfRegistration" />
+        @change="toggleSelfRegistration($event)" />
     </div>
     <v-divider />
   </div>

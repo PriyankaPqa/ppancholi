@@ -1,18 +1,26 @@
 <template>
-  <v-row>
+  <v-row class="no-gutters">
     <v-col cols="12">
-      <v-row class="d-flex justify-space-between pr-0">
-        <v-col col="12" class="py-0 pl-2 pr-0 d-flex align-center justify-space-between">
+      <v-row class="d-flex justify-space-between">
+        <v-col col="12" class="pt-0 pb-1 px-2 d-flex align-center justify-space-between">
           <button
             class="rc-link16 font-weight-bold call-centre-title pa-1"
-            data-test="event-call-centre-section-name"
+            :data-test="`event-call-centre-section-name-${index}`"
             @click="showInfoDialog = true">
             {{ $m(callCentre.name) }}
           </button>
 
           <div class="d-flex justify-end align-center py-0">
-            <status-chip status-name="EEventCallCentreStatus" data-test="event-call-centre-section-status" :status="callCentre.status" />
-            <v-btn icon class="mx-2" data-test="edit-event-call-centre" @click="$emit('edit', callCentre.name.translation.en)">
+            <status-chip
+              class="mr-2"
+              status-name="EEventCallCentreStatus"
+              :data-test="`event-call-centre-section-status-${index}`"
+              :status="callCentre.status" />
+            <v-btn
+              v-if="$hasLevel('level5')"
+              icon
+              :data-test="`edit-event-call-centre-${index}`"
+              @click="$emit('edit', callCentre.name.translation.en)">
               <v-icon size="24" color="grey darken-2">
                 mdi-pencil
               </v-icon>
@@ -21,21 +29,21 @@
         </v-col>
       </v-row>
 
-      <v-row>
-        <v-col cols="12" xl="2" lg="2" md="3" sm="12" class="d-flex py-0 rc-body12 flex-column">
+      <v-row class="no-gutters mt-1">
+        <v-col cols="12" xl="1" lg="2" md="3" sm="12" class="d-flex py-0 rc-body12 flex-column">
           <span class="pr-2">{{ $t(infoData.startDate.key) }}:</span>
-          <span data-test="event-call-centre-section-start-date">{{ infoData.startDate.value }}</span>
+          <span :data-test="`event-call-centre-section-start-date-${index}`">{{ infoData.startDate.value }}</span>
         </v-col>
         <v-col cols="12" xl="2" lg="2" md="3" sm="12" class="d-flex py-0 rc-body12 flex-column border-right">
           <span class="pr-2">{{ $t(infoData.endDate.key) }}:</span>
-          <span data-test="event-call-centre-section-end-date">{{ infoData.endDate.value }}</span>
+          <span :data-test="`event-call-centre-section-end-date-${index}`">{{ infoData.endDate.value }}</span>
         </v-col>
 
         <v-col cols="12" xl="8" lg="8" md="6" sm="12" class="py-0 pr-16 pl-lg-8 pl-md-3 rc-body12">
           <div>
             {{ $t(infoData.details.key) }}:
           </div>
-          <div class="call-centre-details-text" data-test="event-call-centre-section-details">
+          <div class="call-centre-details-text" :data-test="`event-call-centre-section-details-${index}`">
             {{ infoData.details.value }}
           </div>
         </v-col>
@@ -73,6 +81,10 @@ export default Vue.extend({
   props: {
     callCentre: {
       type: Object as () => IEventCallCentre,
+      required: true,
+    },
+    index: {
+      type: Number,
       required: true,
     },
   },

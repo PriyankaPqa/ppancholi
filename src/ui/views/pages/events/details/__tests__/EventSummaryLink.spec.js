@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { Event, mockEventsSearchData, EEventStatus } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockUserStateLevel } from '@/test/helpers';
+import { mockUsersData } from '@/entities/user';
 
 import Component from '../components/EventSummaryLink.vue';
 
@@ -32,6 +33,11 @@ describe('EventSummaryLink.vue', () => {
         },
         store: {
           modules: {
+            user: {
+              state: {
+                ...mockUsersData()[5],
+              },
+            },
             event: {
               actions,
             },
@@ -70,7 +76,7 @@ describe('EventSummaryLink.vue', () => {
     });
 
     describe('toggle', () => {
-      it('renders if showSwitchBtn is true', () => {
+      it('renders if showSwitchBtn is true and user is level 6', () => {
         const element = wrapper.findDataTest('event-summary-toggle-self-registration');
         expect(element.exists()).toBeTruthy();
       });
@@ -81,12 +87,22 @@ describe('EventSummaryLink.vue', () => {
           propsData: {
             event: mockEvent,
           },
+          store: {
+            ...mockUserStateLevel(6),
+          },
           computed: {
             showSwitchBtn() {
               return false;
             },
           },
         });
+        const element = wrapper.findDataTest('event-summary-toggle-self-registration');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('does not render if the user is level below 6', async () => {
+        await wrapper.setRole('level5');
+
         const element = wrapper.findDataTest('event-summary-toggle-self-registration');
         expect(element.exists()).toBeFalsy();
       });

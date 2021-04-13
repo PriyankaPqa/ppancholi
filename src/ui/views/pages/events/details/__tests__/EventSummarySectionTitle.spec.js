@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { EEventSummarySections } from '@/types';
+import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../components/EventSummarySectionTitle.vue';
 
@@ -20,6 +21,9 @@ describe('EventSummarySectionTitle.vue', () => {
             return 'eventSummary.callCentre';
           },
         },
+        store: {
+          ...mockUserStateLevel(5),
+        },
       });
     });
 
@@ -39,6 +43,13 @@ describe('EventSummarySectionTitle.vue', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('add-section-button');
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('does not render if user is below level 5', async () => {
+        await wrapper.setRole('level4');
+
+        const element = wrapper.findDataTest('add-section-button');
+        expect(element.exists()).toBeFalsy();
       });
 
       it('emits click-add-button with the right argument', async () => {

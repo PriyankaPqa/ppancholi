@@ -1,42 +1,43 @@
 <template>
-  <div v-if="sortedLocations.length > 0" class="mx-2">
-    <table class="full-width border-radius-all">
-      <tbody>
-        <tr v-for="(location, index) in sortedLocations" :key="location.name.en">
-          <td>
-            <v-row class="pt-1 pl-4" align="center">
-              <v-col class="fw-bold pb-2" :data-test="getDataTest('name', index)">
-                {{ $m(location.name) }}
-              </v-col>
-              <v-col class="text-end pb-2">
-                <status-chip status-name="EEventLocationStatus" :status="location.status" :data-test="getDataTest('status', index)" />
-                <v-btn icon class="mx-2" :data-test="getDataTest('edit', index)" @click="$emit('edit', location.name.translation.en)">
-                  <v-icon size="24" color="grey darken-2">
-                    mdi-pencil
-                  </v-icon>
-                </v-btn>
-              </v-col>
-            </v-row>
+  <v-row class="no-gutters">
+    <v-col cols="12">
+      <v-row align="center">
+        <v-col class="fw-bold py-2 pl-3" :data-test="getDataTest('name', index)">
+          {{ $m(location.name) }}
+        </v-col>
+        <v-col class="text-end py-0 pr-2">
+          <status-chip
+            class="mr-2"
+            status-name="EEventLocationStatus"
+            :status="location.status"
+            :data-test="getDataTest('status', index)" />
+          <v-btn
+            v-if="$hasLevel('level5')"
+            icon
+            :data-test="getDataTest('edit', index)"
+            @click="$emit('edit', location.name.translation.en)">
+            <v-icon size="24" color="grey darken-2">
+              mdi-pencil
+            </v-icon>
+          </v-btn>
+        </v-col>
+      </v-row>
 
-            <div class="pl-4 rc-body12">
-              {{ $t('eventSummary.registrationLocation.address') }}:
-            </div>
+      <div class="rc-body12 mt-1">
+        {{ $t('eventSummary.registrationLocation.address') }}
+      </div>
 
-            <div class="pb-3 pl-4 rc-body12" :data-test="getDataTest('address', index)">
-              {{ getAddress(location) }}
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+      <div class="rc-body12" :data-test="getDataTest('address', index)">
+        {{ getAddress(location) }}
+      </div>
+    </v-col>
+  </v-row>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IEventGenericLocation } from '@/entities/event';
-import helpers from '@/ui/helpers';
 import { ECanadaProvinces } from '@/types';
 
 export default Vue.extend({
@@ -47,20 +48,18 @@ export default Vue.extend({
   },
 
   props: {
-    locations: {
-      type: Array as () => IEventGenericLocation[],
+    location: {
+      type: Object as () => IEventGenericLocation,
+      required: true,
+    },
+    index: {
+      type: Number,
       required: true,
     },
 
     dataTestPrefix: {
       type: String,
       required: true,
-    },
-  },
-
-  computed: {
-    sortedLocations(): Array<IEventGenericLocation> {
-      return helpers.sortMultilingualArray(this.locations, 'name');
     },
   },
 

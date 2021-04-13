@@ -1,6 +1,7 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { Event, mockEventsSearchData } from '@/entities/event';
 import helpers from '@/ui/helpers';
+import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../components/EventCallCentreSection.vue';
 
@@ -17,78 +18,89 @@ describe('EventCallCentreSection.vue', () => {
         localVue,
         propsData: {
           callCentre: mockEvent.callCentres[0],
+          index: 0,
+        },
+        store: {
+          ...mockUserStateLevel(5),
         },
       });
     });
 
     describe('call centre name', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-name');
+        const element = wrapper.findDataTest('event-call-centre-section-name-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right name', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-name');
+        const element = wrapper.findDataTest('event-call-centre-section-name-0');
         expect(element.text()).toEqual(wrapper.vm.callCentre.name.translation.en);
       });
     });
 
     describe('call centre status-chip', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-status');
+        const element = wrapper.findDataTest('event-call-centre-section-status-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right status', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-status');
+        const element = wrapper.findDataTest('event-call-centre-section-status-0');
         expect(element.props().status).toEqual(wrapper.vm.callCentre.status);
       });
     });
 
     describe('call centre start date', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-start-date');
+        const element = wrapper.findDataTest('event-call-centre-section-start-date-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right date', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-start-date');
+        const element = wrapper.findDataTest('event-call-centre-section-start-date-0');
         expect(element.text()).toEqual(helpers.getStringDate(wrapper.vm.callCentre.startDate, 'll'));
       });
     });
 
     describe('call centre end date', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-end-date');
+        const element = wrapper.findDataTest('event-call-centre-section-end-date-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right date', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-end-date');
+        const element = wrapper.findDataTest('event-call-centre-section-end-date-0');
         expect(element.text()).toEqual('-');
       });
     });
 
     describe('call centre details', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-details');
+        const element = wrapper.findDataTest('event-call-centre-section-details-0');
         expect(element.exists()).toBeTruthy();
       });
 
       it('displays the right data', () => {
-        const element = wrapper.findDataTest('event-call-centre-section-details');
+        const element = wrapper.findDataTest('event-call-centre-section-details-0');
         expect(element.text()).toEqual(wrapper.vm.callCentre.details.translation.en);
       });
     });
 
     describe('edit button', () => {
       it('renders', () => {
-        const element = wrapper.findDataTest('edit-event-call-centre');
+        const element = wrapper.findDataTest('edit-event-call-centre-0');
         expect(element.exists()).toBeTruthy();
       });
 
+      it('does not render if user is below level 5', async () => {
+        await wrapper.setRole('level4');
+
+        const element = wrapper.findDataTest('edit-event-call-centre-0');
+        expect(element.exists()).toBeFalsy();
+      });
+
       it('emits submit, with the right data if form is valid', async () => {
-        const element = wrapper.findDataTest('edit-event-call-centre');
+        const element = wrapper.findDataTest('edit-event-call-centre-0');
 
         await element.vm.$emit('click');
         expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.callCentre.name.translation.en);
@@ -96,7 +108,7 @@ describe('EventCallCentreSection.vue', () => {
     });
 
     describe('info dialog', () => {
-      it('does not rener when showInfoDialog is false', async () => {
+      it('does not render when showInfoDialog is false', async () => {
         wrapper.vm.showInfoDialog = false;
         await wrapper.vm.$nextTick();
         const element = wrapper.findDataTest('call-centre-info-dialog');
@@ -118,6 +130,7 @@ describe('EventCallCentreSection.vue', () => {
         localVue,
         propsData: {
           callCentre: mockEvent.callCentres[0],
+          index: 0,
         },
       });
     });
@@ -148,6 +161,7 @@ describe('EventCallCentreSection.vue', () => {
         localVue,
         propsData: {
           callCentre: mockEvent.callCentres[0],
+          index: 0,
         },
       });
     });

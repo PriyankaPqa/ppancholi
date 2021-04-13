@@ -1,10 +1,11 @@
 <template>
   <v-row class="flex-row justify-space-between ma-0 pa-2 pt-6">
-    <v-col class="d-flex ma-0 pa-0" md="12" lg="6">
+    <v-col class="d-flex ma-0 pa-1" md="12" lg="6">
       <span class="rc-heading-5" data-test="event-summary-section-title">{{ $t(title) }}</span>
     </v-col>
     <v-col class="d-flex justify-end ma-0 pa-0" md="12" lg="6">
       <v-btn
+        v-if="$hasLevel('level5')"
         class="pl-3 pr-4"
         color="primary"
         data-test="add-section-button"

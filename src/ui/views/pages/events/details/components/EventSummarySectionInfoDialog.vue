@@ -15,8 +15,8 @@
       <v-row class="d-flex justify-space-between pr-0 no-gutters">
         <v-col
           col="12"
-          class="py-0 pl-2 pr-0 d-flex align-center justify-space-between rc-body16  font-weight-bold">
-          <span data-test="event-section-info-dialog-name">{{ name }} </span>
+          class="py-0 pl-2 pr-0 d-flex align-center justify-space-between rc-body18  font-weight-bold">
+          <span class="py-1" data-test="event-section-info-dialog-name">{{ name }}</span>
           <div class="d-flex justify-end align-center py-0">
             <status-chip
               v-if="status"
@@ -24,7 +24,12 @@
               :status="status"
               data-test="event-section-info-dialog-status" />
 
-            <v-btn icon class="mx-2" data-test="edit-section-from-info-dialog" @click="$emit('edit')">
+            <v-btn
+              v-if="$hasLevel('level5')"
+              icon
+              class="mx-2"
+              data-test="edit-section-from-info-dialog"
+              @click="$emit('edit')">
               <v-icon size="24" color="grey darken-2">
                 mdi-pencil
               </v-icon>
@@ -99,6 +104,10 @@ export default Vue.extend({
   border-radius: 4px;
 }
 
+::v-deep .theme--light.v-btn:hover::before{
+  opacity: 0.2;
+}
+
 .table-label {
   width: 30%;
 }
@@ -106,4 +115,5 @@ export default Vue.extend({
 .table-value {
   white-space: pre-line;
 }
+
 </style>

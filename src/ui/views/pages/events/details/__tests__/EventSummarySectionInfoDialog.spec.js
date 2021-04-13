@@ -1,5 +1,6 @@
 import { RcDialog } from '@crctech/component-library';
 import { createLocalVue, mount } from '@/test/testSetup';
+import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../components/EventSummarySectionInfoDialog.vue';
 
@@ -23,6 +24,9 @@ describe('EventSummarySectionInfoDialog.vue', () => {
               value: 'mock-value',
             },
           },
+        },
+        store: {
+          ...mockUserStateLevel(5),
         },
       });
     });
@@ -98,6 +102,13 @@ describe('EventSummarySectionInfoDialog.vue', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('edit-section-from-info-dialog');
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('does not render if user is below level 5', async () => {
+        await wrapper.setRole('level4');
+
+        const element = wrapper.findDataTest('edit-section-from-info-dialog');
+        expect(element.exists()).toBeFalsy();
       });
 
       it('emits edit, with the right data if form is valid', async () => {
