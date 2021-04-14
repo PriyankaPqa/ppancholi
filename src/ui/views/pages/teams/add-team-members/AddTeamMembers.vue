@@ -5,6 +5,7 @@
     :cancel-action-label="$t('common.buttons.cancel')"
     :show.sync="show"
     content-padding="6"
+    content-only-scrolling
     fullscreen
     persistent
     show-close
@@ -14,40 +15,46 @@
     @submit="submit">
     <v-row>
       <v-col cols="8" class="px-6">
-        <p class="rc-body16 fw-bold">
-          {{ $t('teams.search_member') }}
-        </p>
-        <v-text-field
-          v-model="search"
-          clearable
-          outlined
-          prepend-inner-icon="mdi-magnify"
-          data-test="team-search-input"
-          :placeholder="$t('common.search')" />
-
-        <v-data-table
-          v-if="search"
-          data-test="table"
-          class="search_members"
-          show-select
-          hide-default-footer
-          :headers="headers"
-          :item-class="getClassRow"
-          :items="availableMembers"
-          @toggle-select-all="onSelectAll">
-          <template #item.data-table-select="{ item }">
-            <v-simple-checkbox
-              :data-test="`select_${item.id}`"
-              :ripple="false"
-              :value="isSelected(item) || isAlreadyInTeam(item)"
-              :readonly="isAlreadyInTeam(item)"
-              :disabled="isAlreadyInTeam(item)"
-              @input="updateSelection(item)" />
-          </template>
-          <template #item.role="{ item }">
-            {{ getRole(item) }}
-          </template>
-        </v-data-table>
+        <div class="left-container">
+          <div>
+            <p class="rc-body16 fw-bold">
+              {{ $t('teams.search_member') }}
+            </p>
+            <v-text-field
+              v-model="search"
+              clearable
+              outlined
+              prepend-inner-icon="mdi-magnify"
+              data-test="team-search-input"
+              :placeholder="$t('common.search')" />
+          </div>
+          <div class="table-container">
+            <v-data-table
+              v-if="search"
+              data-test="table"
+              class="search_members"
+              show-select
+              hide-default-footer
+              :headers="headers"
+              :item-class="getClassRow"
+              :items="availableMembers"
+              :items-per-page="availableMembers.length"
+              @toggle-select-all="onSelectAll">
+              <template #item.data-table-select="{ item }">
+                <v-simple-checkbox
+                  :data-test="`select_${item.id}`"
+                  :ripple="false"
+                  :value="isSelected(item) || isAlreadyInTeam(item)"
+                  :readonly="isAlreadyInTeam(item)"
+                  :disabled="isAlreadyInTeam(item)"
+                  @input="updateSelection(item)" />
+              </template>
+              <template #item.role="{ item }">
+                {{ getRole(item) }}
+              </template>
+            </v-data-table>
+          </div>
+        </div>
       </v-col>
 
       <v-col cols="4" class="px-6">
@@ -212,6 +219,12 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+
+.left-container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
 
 .right-container {
   display: flex;
