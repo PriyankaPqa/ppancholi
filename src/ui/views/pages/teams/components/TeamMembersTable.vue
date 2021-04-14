@@ -30,6 +30,7 @@
       hide-default-footer
       :headers="headers"
       :items="computedTeamMembers"
+      :items-per-page="computedTeamMembers.length"
       @update:sort-by="sortBy = $event"
       @update:sort-desc="sortDesc = $event">
       <template #item.displayName="{ item }">
