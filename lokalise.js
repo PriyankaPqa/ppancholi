@@ -29,7 +29,7 @@ function down() {
 
 // https://lokalise.com/api2docs/curl/#transition-upload-a-file-post
 // If the language does not exist in Lokalise, need to be created first in the project
-const uploadToLokalise = (base64File, fileName, langISO) => new Promise((resolve, reject) => {
+const uploadToLokalise = (base64File, fileName, langISO, tags) => new Promise((resolve, reject) => {
   const replaceModified = false;
   const tagUpdatedKeys = replaceModified;
   lokaliseApi.files.upload(PROJECT_ID, {
@@ -40,7 +40,7 @@ const uploadToLokalise = (base64File, fileName, langISO) => new Promise((resolve
     tag_updated_keys: tagUpdatedKeys,
     tag_skipped_keys: false,
     convert_placeholder: true, // Placeholder will be converted to a universal used by Lokalise
-    tags: ['DEV'],
+    tags,
     apply_tm: false,
   }).then((response) => {
     resolve(response);
@@ -48,6 +48,41 @@ const uploadToLokalise = (base64File, fileName, langISO) => new Promise((resolve
     reject(error);
   });
 });
+
+const getAllErrors = () => new Promise((resolve, reject) => {
+  let errors = {};
+
+  https.get('https://emis-api-common-dev.azurewebsites.net/api-error-templates', (resp) => {
+    let data = '';
+
+    // A chunk of data has been received.
+    resp.on('data', (chunk) => {
+      data += chunk;
+    });
+
+    resp.on('end', () => {
+      errors = JSON.parse(data);
+      resolve(errors);
+    });
+  }).on('error', (err) => {
+    reject(err.message);
+  });
+});
+
+async function uploadErrors() {
+  const finalObject = {};
+
+  const errors = await getAllErrors();
+
+  // eslint-disable-next-line no-restricted-syntax,no-unused-vars
+  for (const [key, error] of Object.entries(errors)) {
+    finalObject[error.code] = error.detail || error.message;
+  }
+
+  const encoded = Buffer.from(JSON.stringify(finalObject)).toString('base64');
+
+  await uploadToLokalise(encoded, 'en.json', 'en', ['ERRORS']);
+}
 
 async function up() {
   // We will upload all files contained in the lang folder
@@ -59,7 +94,7 @@ async function up() {
     try {
       // Each loop iteration is delayed until upload operation is completed because Lokalise does not support // requests.
       /* eslint-disable no-await-in-loop */
-      await uploadToLokalise(base64File, file, langISO);
+      await uploadToLokalise(base64File, file, langISO, ['DEV']);
     } catch (e) {
       throw new Error(e);
     }
@@ -74,6 +109,9 @@ for (let i = 0; i < process.argv.length; i += 1) {
     case 'up':
       up();
       break;
+    case 'upErrors':
+      uploadErrors();
+      break;
     default:
       break;
   }
@@ -81,3 +119,4 @@ for (let i = 0; i < process.argv.length; i += 1) {
 
 module.exports.down = down;
 module.exports.up = up;
+module.exports.uploadErrors = uploadErrors;
