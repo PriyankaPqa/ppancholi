@@ -37,6 +37,7 @@ describe('EventForm.vue', () => {
           event,
           isEditMode: false,
           isNameUnique: true,
+          isDirty: false,
         },
         computed: {
           prefixRegistrationLink() {
@@ -68,6 +69,7 @@ describe('EventForm.vue', () => {
           event,
           isEditMode: false,
           isNameUnique: true,
+          isDirty: false,
         },
       });
 
@@ -83,6 +85,7 @@ describe('EventForm.vue', () => {
           event,
           isEditMode: false,
           isNameUnique: true,
+          isDirty: false,
         },
         computed: {
           prefixRegistrationLink() {
@@ -140,6 +143,7 @@ describe('EventForm.vue', () => {
             event,
             isEditMode: false,
             isNameUnique: true,
+            isDirty: false,
           },
           computed: {
             prefixRegistrationLink() {
@@ -199,6 +203,7 @@ describe('EventForm.vue', () => {
           event,
           isEditMode: false,
           isNameUnique: true,
+          isDirty: false,
         },
         computed: {
           prefixRegistrationLink() {
@@ -253,6 +258,7 @@ describe('EventForm.vue', () => {
             event,
             isEditMode: true,
             isNameUnique: true,
+            isDirty: false,
           },
           computed: {
             prefixRegistrationLink() {
@@ -420,6 +426,7 @@ describe('EventForm.vue', () => {
             event,
             isEditMode: true,
             isNameUnique: true,
+            isDirty: false,
           },
           computed: {
             prefixRegistrationLink() {
@@ -478,6 +485,7 @@ describe('EventForm.vue', () => {
             event,
             isEditMode: true,
             isNameUnique: true,
+            isDirty: false,
           },
           computed: {
             prefixRegistrationLink() {
@@ -512,6 +520,7 @@ describe('EventForm.vue', () => {
           event,
           isEditMode: false,
           isNameUnique: true,
+          isDirty: false,
         },
         computed: {
           prefixRegistrationLink() {
@@ -548,6 +557,7 @@ describe('EventForm.vue', () => {
           event: new Event(),
           isEditMode: false,
           isNameUnique: true,
+          isDirty: false,
         },
         computed: {
           prefixRegistrationLink() {
@@ -656,6 +666,7 @@ describe('EventForm.vue', () => {
           event,
           isEditMode: true,
           isNameUnique: true,
+          isDirty: false,
         },
       });
     });

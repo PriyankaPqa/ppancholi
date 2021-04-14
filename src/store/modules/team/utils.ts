@@ -2,7 +2,7 @@ import {
   ITeamSearchData, ITeamData, ITeamMember,
 } from '@/entities/team';
 import { ActionContext } from 'vuex';
-import { IEvent } from '@/entities/event';
+import { EEventStatus, IEvent } from '@/entities/event';
 import utils from '@/entities/utils';
 import { IState } from './team.types';
 import { IRootState } from '../../store.types';
@@ -21,7 +21,7 @@ export const retrieveTeamEvents = (
   eventsIds: Array<uuid>,
   context: ActionContext<IState, IRootState>,
 ): IEvent[] => eventsIds.map((id) => {
-  const openEvents = context.rootGetters['event/openEvents'];
+  const openEvents = context.rootGetters['event/eventsByStatus']([EEventStatus.Open]);
   return openEvents.find((e: IEvent) => e.id === id);
 });
 

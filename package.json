@@ -19,7 +19,8 @@
     "lokalise": "yarn lokalise:up && yarn lokalise:down",
     "report": "vue-cli-service build --report",
     "report-json": "vue-cli-service build --report-json",
-    "coverage": "vue-cli-service test:unit --coverage --coverageReporters=cobertura"
+    "coverage": "vue-cli-service test:unit --coverage --coverageReporters=cobertura",
+    "pr": "yarn test && yarn lint"
   },
   "dependencies": {
     "@azure/msal-browser": "^2.8.0",

@@ -5,7 +5,7 @@ export const mockStorageEvent = () : IStorageMock => ({
     agreementTypes: jest.fn(),
     eventTypes: jest.fn(),
     events: jest.fn(),
-    openEvents: jest.fn(),
+    eventsByStatus: jest.fn(),
     eventById: jest.fn(),
   },
 

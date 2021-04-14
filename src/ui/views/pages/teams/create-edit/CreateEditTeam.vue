@@ -144,17 +144,20 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Route, NavigationGuardNext } from 'vue-router';
+import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 
 import {
-  ETeamStatus, ETeamType, Team, ITeamEvent,
+  ETeamStatus, ETeamType, ITeamEvent, Team,
 } from '@/entities/team';
-import { IEvent } from '@/entities/event';
+import { EEventStatus, IEvent } from '@/entities/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import {
-  VTextFieldWithValidation, VAutocompleteWithValidation, RcConfirmationDialog, RcPageContent,
+  RcConfirmationDialog,
+  RcPageContent,
+  VAutocompleteWithValidation,
+  VTextFieldWithValidation,
 } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
@@ -206,7 +209,7 @@ export default Vue.extend({
 
   computed: {
     availableEvents(): {id: string; name: IMultilingual}[] {
-      return this.$storage.event.getters.openEvents().map((e) => ({
+      return this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]).map((e: IEvent) => ({
         id: e.id,
         name: e.name,
       }));

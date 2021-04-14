@@ -54,10 +54,9 @@ const getters = {
 
   events: (state: IState) => helpers.sortMultilingualArray(state.events, 'name'),
 
-  // eslint-disable-next-line
-  openEvents: (state: IState) => {
-    const openEvents = state.events.filter((e) => e.schedule.status === EEventStatus.Open);
-    return helpers.sortMultilingualArray(openEvents, 'name');
+  eventsByStatus: (state: IState) => (statuses: Array<EEventStatus>) => {
+    const events = state.events.filter((e: IEvent) => statuses.includes(e.schedule.status));
+    return helpers.sortMultilingualArray(events, 'name');
   },
 
   eventById: (state: IState) => (id: uuid) => {

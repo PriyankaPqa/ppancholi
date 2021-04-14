@@ -6,80 +6,44 @@ import {
 } from './event.types';
 
 // eslint-disable-next-line max-lines-per-function
-export const mockEventsData = (): IEventData[] => [{
-  number: 1,
-  name: {
-    translation: {
-      en: 'Gatineau Floods 2021',
-      fr: 'Inondations Gatineau 2021',
+export const mockEventsData = (): IEventData[] => [
+  {
+    number: 1,
+    name: {
+      translation: {
+        en: 'Gatineau Floods 2021',
+        fr: 'Inondations Gatineau 2021',
+      },
     },
-  },
-  description: {
-    translation: {
-      en: 'Desc EN',
-      fr: 'Desc FR',
+    description: {
+      translation: {
+        en: 'Desc EN',
+        fr: 'Desc FR',
+      },
     },
-  },
-  registrationLink: {
-    translation: {
-      en: 'https://www.redcross.ca/gatineau-floods-2021',
-      fr: 'https://www.redcross.ca/inondations-gatineau-2021',
+    registrationLink: {
+      translation: {
+        en: 'https://www.redcross.ca/gatineau-floods-2021',
+        fr: 'https://www.redcross.ca/inondations-gatineau-2021',
+      },
     },
-  },
 
-  location: {
-    province: 11,
-    provinceOther: {
-      translation: {
-        en: '',
-        fr: '',
+    location: {
+      province: 11,
+      provinceOther: {
+        translation: {
+          en: '',
+          fr: '',
+        },
+      },
+      region: {
+        translation: {
+          en: '',
+          fr: '',
+        },
       },
     },
-    region: {
-      translation: {
-        en: '',
-        fr: '',
-      },
-    },
-  },
-  schedule: {
-    status: EEventStatus.OnHold,
-    scheduledOpenDate: null,
-    scheduledCloseDate: null,
-    openDate: '2021-03-31T15:23:00.755Z',
-    closeDate: '2021-03-31T15:23:09.367Z',
-    updateReason: null,
-    timestamp: '2021-03-31T15:23:16.069Z',
-  },
-  scheduleHistory: [
-    {
-      status: EEventStatus.Open,
-      scheduledOpenDate: '2021-03-31T00:00:00Z',
-      scheduledCloseDate: '2021-05-31T00:00:00Z',
-      openDate: '2021-03-31T15:23:00.755Z',
-      closeDate: null,
-      updateReason: null,
-      timestamp: '2021-03-31T15:23:00.755Z',
-    },
-    {
-      status: EEventStatus.Closed,
-      scheduledOpenDate: '2021-03-31T00:00:00Z',
-      scheduledCloseDate: '2021-05-31T00:00:00Z',
-      openDate: '2021-03-31T15:23:00.755Z',
-      closeDate: '2021-03-31T15:23:09.367Z',
-      updateReason: 'Close Reason',
-      timestamp: '2021-03-31T15:23:09.367Z',
-    },
-    {
-      status: EEventStatus.Archived,
-      scheduledOpenDate: '2021-03-31T00:00:00Z',
-      scheduledCloseDate: '2021-05-31T00:00:00Z',
-      openDate: '2021-03-31T15:23:00.755Z',
-      closeDate: '2021-03-31T15:23:09.367Z',
-      updateReason: null,
-      timestamp: '2021-03-31T15:23:13.508Z',
-    },
-    {
+    schedule: {
       status: EEventStatus.OnHold,
       scheduledOpenDate: null,
       scheduledCloseDate: null,
@@ -88,99 +52,137 @@ export const mockEventsData = (): IEventData[] => [{
       updateReason: null,
       timestamp: '2021-03-31T15:23:16.069Z',
     },
-  ],
-  responseDetails: {
-    responseLevel: 3,
-    eventType: {
-      optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
-      specifiedOther: '',
+    scheduleHistory: [
+      {
+        status: EEventStatus.Open,
+        scheduledOpenDate: '2021-03-31T00:00:00Z',
+        scheduledCloseDate: '2021-05-31T00:00:00Z',
+        openDate: '2021-03-31T15:23:00.755Z',
+        closeDate: null,
+        updateReason: null,
+        timestamp: '2021-03-31T15:23:00.755Z',
+      },
+      {
+        status: EEventStatus.Closed,
+        scheduledOpenDate: '2021-03-31T00:00:00Z',
+        scheduledCloseDate: '2021-05-31T00:00:00Z',
+        openDate: '2021-03-31T15:23:00.755Z',
+        closeDate: '2021-03-31T15:23:09.367Z',
+        updateReason: 'Close Reason',
+        timestamp: '2021-03-31T15:23:09.367Z',
+      },
+      {
+        status: EEventStatus.Archived,
+        scheduledOpenDate: '2021-03-31T00:00:00Z',
+        scheduledCloseDate: '2021-05-31T00:00:00Z',
+        openDate: '2021-03-31T15:23:00.755Z',
+        closeDate: '2021-03-31T15:23:09.367Z',
+        updateReason: null,
+        timestamp: '2021-03-31T15:23:13.508Z',
+      },
+      {
+        status: EEventStatus.OnHold,
+        scheduledOpenDate: null,
+        scheduledCloseDate: null,
+        openDate: '2021-03-31T15:23:00.755Z',
+        closeDate: '2021-03-31T15:23:09.367Z',
+        updateReason: null,
+        timestamp: '2021-03-31T15:23:16.069Z',
+      },
+    ],
+    responseDetails: {
+      responseLevel: 3,
+      eventType: {
+        optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
+        specifiedOther: '',
+      },
+      dateReported: '2021-01-01T00:00:00Z',
+      assistanceNumber: '+15144544545',
     },
-    dateReported: '2021-01-01T00:00:00Z',
-    assistanceNumber: '+15144544545',
+    relatedEventIds: [],
+    id: '7c076603-580a-4400-bef2-5ddececb0123',
+    created: '2021-01-20T15:12:03.4219037Z',
+    timestamp: '2021-01-20T15:12:03.4230487Z',
+    eTag: '"00004331-0000-0a00-0000-600848430000"',
+    callCentres: [],
+    agreements: [],
+    registrationLocations: [],
+    shelterLocations: [],
+    selfRegistrationEnabled: false,
   },
-  relatedEventIds: [],
-  id: '7c076603-580a-4400-bef2-5ddececb0123',
-  created: '2021-01-20T15:12:03.4219037Z',
-  timestamp: '2021-01-20T15:12:03.4230487Z',
-  eTag: '"00004331-0000-0a00-0000-600848430000"',
-  callCentres: [],
-  agreements: [],
-  registrationLocations: [],
-  shelterLocations: [],
-  selfRegistrationEnabled: false,
-}, {
-  number: 2,
-  name: {
-    translation: {
-      en: 'Vegas Earthquake 2021',
-      fr: 'Vegas Earthquake 2021 FR',
-    },
-  },
-  description: {
-    translation: {
-      en: 'Desc EN',
-      fr: 'Desc FR',
-    },
-  },
-  registrationLink: {
-    translation: {
-      en: 'https://www.redcross.ca/vegas-earthquake-2021',
-      fr: 'https://www.redcross.ca/vegas-earthquake-2021-fr',
-    },
-  },
-  location: {
-    province: 14,
-    provinceOther: {
+  {
+    number: 2,
+    name: {
       translation: {
-        en: 'Nevada',
-        fr: 'Nevada FR',
+        en: 'Vegas Earthquake 2021',
+        fr: 'Vegas Earthquake 2021 FR',
       },
     },
-    region: {
+    description: {
       translation: {
-        en: 'Clark County',
-        fr: 'Clark County FR',
+        en: 'Desc EN',
+        fr: 'Desc FR',
       },
     },
-  },
-  schedule: {
-    status: EEventStatus.Open,
-    scheduledOpenDate: '2021-03-31T00:00:00Z',
-    scheduledCloseDate: '2021-05-31T00:00:00Z',
-    openDate: '2021-03-31T15:23:00.755Z',
-    closeDate: null,
-    updateReason: null,
-    timestamp: '2021-03-31T15:23:00.755Z',
-  },
-  scheduleHistory: [{
-    status: EEventStatus.Open,
-    scheduledOpenDate: '2021-03-31T00:00:00Z',
-    scheduledCloseDate: '2021-05-31T00:00:00Z',
-    openDate: '2021-03-31T15:23:00.755Z',
-    closeDate: null,
-    updateReason: null,
-    timestamp: '2021-03-31T15:23:00.755Z',
-  }],
-  responseDetails: {
-    responseLevel: 3,
-    eventType: {
-      optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
-      specifiedOther: '',
+    registrationLink: {
+      translation: {
+        en: 'https://www.redcross.ca/vegas-earthquake-2021',
+        fr: 'https://www.redcross.ca/vegas-earthquake-2021-fr',
+      },
     },
-    dateReported: '2021-01-01T00:00:00Z',
-    assistanceNumber: '+15144544545',
-  },
-  relatedEventIds: [],
-  id: '87776243-696f-426b-b961-31ee98e3a4cd',
-  created: '2021-01-20T15:45:52.2691443Z',
-  timestamp: '2021-01-20T15:45:52.2699289Z',
-  eTag: '*',
-  callCentres: [],
-  agreements: [],
-  registrationLocations: [],
-  shelterLocations: [],
-  selfRegistrationEnabled: false,
-}];
+    location: {
+      province: 14,
+      provinceOther: {
+        translation: {
+          en: 'Nevada',
+          fr: 'Nevada FR',
+        },
+      },
+      region: {
+        translation: {
+          en: 'Clark County',
+          fr: 'Clark County FR',
+        },
+      },
+    },
+    schedule: {
+      status: EEventStatus.Open,
+      scheduledOpenDate: '2021-03-31T00:00:00Z',
+      scheduledCloseDate: '2021-05-31T00:00:00Z',
+      openDate: '2021-03-31T15:23:00.755Z',
+      closeDate: null,
+      updateReason: null,
+      timestamp: '2021-03-31T15:23:00.755Z',
+    },
+    scheduleHistory: [{
+      status: EEventStatus.Open,
+      scheduledOpenDate: '2021-03-31T00:00:00Z',
+      scheduledCloseDate: '2021-05-31T00:00:00Z',
+      openDate: '2021-03-31T15:23:00.755Z',
+      closeDate: null,
+      updateReason: null,
+      timestamp: '2021-03-31T15:23:00.755Z',
+    }],
+    responseDetails: {
+      responseLevel: 3,
+      eventType: {
+        optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
+        specifiedOther: '',
+      },
+      dateReported: '2021-01-01T00:00:00Z',
+      assistanceNumber: '+15144544545',
+    },
+    relatedEventIds: [],
+    id: '87776243-696f-426b-b961-31ee98e3a4cd',
+    created: '2021-01-20T15:45:52.2691443Z',
+    timestamp: '2021-01-20T15:45:52.2699289Z',
+    eTag: '*',
+    callCentres: [],
+    agreements: [],
+    registrationLocations: [],
+    shelterLocations: [],
+    selfRegistrationEnabled: false,
+  }];
 
 export const mockOtherProvinceData = (): IAzureSearchResult<IOtherProvince> => ({
   odataCount: 2,

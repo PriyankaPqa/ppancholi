@@ -1,6 +1,8 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { mockEventsSearchData, mockEventsData } from '@/entities/event';
+import {
+  mockEventsSearchData, mockEventsData, Event,
+} from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
 import {
@@ -520,10 +522,9 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('availableEvents', () => {
-      it('returns openEvents getter', async () => {
-        const activeEvent = [mockEventsSearchData()[1]];
-        jest.spyOn(wrapper.vm.$storage.event.getters, 'openEvents').mockImplementation(() => activeEvent);
-        const expected = activeEvent.map((e) => ({
+      it('returns on hold and open event formatted with the proper structure', async () => {
+        const events = mockEventsSearchData().map((ev) => new Event(ev));
+        const expected = events.map((e) => ({
           id: e.id,
           name: e.name,
         }));

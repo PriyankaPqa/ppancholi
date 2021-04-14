@@ -5,6 +5,7 @@ import { IRootState } from '@/store';
 
 import { IAppUserData } from '@/entities/app-user';
 
+import { IEvent } from '@/entities/event';
 import * as utils from './utils';
 
 const mockActionsContext = (): ActionContext<IState, IRootState> => ({
@@ -21,7 +22,7 @@ const mockActionsContext = (): ActionContext<IState, IRootState> => ({
   getters: {},
   rootState: null,
   rootGetters: {
-    'event/openEvents': [],
+    'event/eventsByStatus': () => [] as IEvent[],
     'appUser/appUserWhere': () => [] as IAppUserData[],
   },
 });

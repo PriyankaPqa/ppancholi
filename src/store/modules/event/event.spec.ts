@@ -62,11 +62,11 @@ describe('>>> Event Module', () => {
       });
     });
 
-    describe('openEvents', () => {
-      it('returns an array of Events sorted by name and filtered by status Open', () => {
+    describe('eventsByStatus', () => {
+      it('returns an array of Events sorted by name and filtered by statuses', () => {
         const activeEvents = [mockEventsSearchData()[1]].map((e) => new Event(e));
 
-        expect(store.getters['event/openEvents']).toEqual(helpers.sortMultilingualArray(activeEvents, 'name'));
+        expect(store.getters['event/eventsByStatus']([EEventStatus.Open])).toEqual(helpers.sortMultilingualArray(activeEvents, 'name'));
       });
       describe('eventById', () => {
         test('the getter returns the event with the id passed in the argument', () => {

@@ -30,8 +30,8 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.getters['event/events'];
     },
 
-    openEvents() {
-      return store.getters['event/openEvents'];
+    eventsByStatus(statuses: Array<EEventStatus>) {
+      return store.getters['event/eventsByStatus'](statuses);
     },
 
     eventById(id: uuid): IEvent {

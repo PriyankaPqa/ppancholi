@@ -19,7 +19,7 @@ export interface IStorage {
     agreementTypes(): Array<IOptionItem>;
     eventTypes(): Array<IOptionItem>;
     events(): Array<IEvent>;
-    openEvents(): Array<IEvent>;
+    eventsByStatus(statuses: Array<EEventStatus>): Array<IEvent>;
     eventById(id:uuid): IEvent;
   }
 
@@ -52,7 +52,7 @@ export interface IStorageMock {
     agreementTypes: jest.Mock<void>;
     eventTypes: jest.Mock<void>;
     events: jest.Mock<void>;
-    openEvents: jest.Mock<void>;
+    eventsByStatus: jest.Mock<void>;
     eventById: jest.Mock<void>;
   }
 
