@@ -27,6 +27,7 @@ import routes from '@/constants/routes';
 import { Event, IEvent } from '@/entities/event';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers';
+import { IError } from '@/services/httpClient';
 import EventForm from './EventForm.vue';
 
 export default Vue.extend({
@@ -105,14 +106,14 @@ export default Vue.extend({
       }
     },
 
-    handleSubmitError(e: Error) {
-      // Temporary custom check until an error handling system is put in place
-      if (Array.isArray(e) && e[0].includes('already exists')) {
-        this.isNameUnique = false;
-      } else {
-        // Handle all other errors
-        this.$toasted.global.error(this.$t('error.unexpected_error'));
-      }
+    handleSubmitError(errors: IError[]) {
+      errors.forEach((error) => {
+        if (error.code === 'errors.an-entity-with-this-name-already-exists') {
+          this.isNameUnique = false;
+        } else {
+          this.$toasted.global.error(this.$t(error.code));
+        }
+      });
     },
 
     async submit() {

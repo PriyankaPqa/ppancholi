@@ -147,6 +147,7 @@ import Vue from 'vue';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
+import { IError } from '@/services/httpClient';
 
 import {
   ETeamStatus, ETeamType, ITeamEvent, Team,
@@ -309,14 +310,14 @@ export default Vue.extend({
       this.showEventDeleteConfirmationDialog = false;
     },
 
-    handleSubmitError(e: Error) {
-      // Temporary custom check until an error handling system is put in place
-      if (Array.isArray(e) && e[0].includes('already exists')) {
-        this.isNameUnique = false;
-      } else {
-        // Handle all other errors
-        this.$toasted.global.error(this.$t('error.unexpected_error'));
-      }
+    handleSubmitError(errors: IError[]) {
+      errors.forEach((error) => {
+        if (error.code === 'errors.an-entity-with-this-name-already-exists') {
+          this.isNameUnique = false;
+        } else {
+          this.$toasted.global.error(this.$t(error.code));
+        }
+      });
     },
 
     isSubmitDisabled(isFailed: boolean, isChanged:boolean) {
@@ -418,8 +419,8 @@ export default Vue.extend({
         await this.$storage.team.actions.editTeam(this.team);
         this.$toasted.global.success(this.$t('teams.team_updated'));
         this.resetFormValidation();
-      } catch (e) {
-        this.handleSubmitError(e);
+      } catch (errors) {
+        this.handleSubmitError(errors);
       }
     },
 

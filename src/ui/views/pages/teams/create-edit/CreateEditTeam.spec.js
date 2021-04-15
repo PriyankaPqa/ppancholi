@@ -660,15 +660,15 @@ describe('CreateEditTeam.vue', () => {
 
     describe('handleSubmitError', () => {
       it('sets isNameUnique to false if this is the error in its argument', async () => {
-        await wrapper.vm.handleSubmitError(['Team name already exists ']);
+        await wrapper.vm.handleSubmitError([{ code: 'errors.an-entity-with-this-name-already-exists' }]);
         expect(wrapper.vm.isNameUnique).toBeFalsy();
       });
 
       it(' opens an error toast in case of a different error', async () => {
         jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
-        await wrapper.vm.handleSubmitError('foo');
+        await wrapper.vm.handleSubmitError([{ code: 'foo' }]);
 
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('error.unexpected_error');
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('foo');
       });
     });
 
@@ -845,6 +845,7 @@ describe('CreateEditTeam.vue', () => {
           id: 'id',
         };
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$refs.form.reset = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(wrapper.vm.$refs.form.validate).toHaveBeenCalledTimes(1);
       });
@@ -862,6 +863,7 @@ describe('CreateEditTeam.vue', () => {
           },
         });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$refs.form.reset = jest.fn(() => true);
         [wrapper.vm.currentPrimaryContact] = mockTeamMembers();
         jest.spyOn(wrapper.vm.team, 'setPrimaryContact');
         await wrapper.vm.submit();
@@ -898,6 +900,7 @@ describe('CreateEditTeam.vue', () => {
             },
           });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          wrapper.vm.$refs.form.reset = jest.fn(() => true);
         });
 
         it('does not call submitCreateTeam unless form validation succeeds', async () => {
@@ -940,6 +943,7 @@ describe('CreateEditTeam.vue', () => {
             },
           });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
+          wrapper.vm.$refs.form.reset = jest.fn(() => true);
         });
 
         it('does not call submitEditTeam unless form validation succeeds', async () => {
@@ -961,6 +965,7 @@ describe('CreateEditTeam.vue', () => {
       beforeAll(() => {
         jest.clearAllMocks();
       });
+
       it('calls createTeam action', async () => {
         const actions = {
           createTeam: jest.fn(),
@@ -979,17 +984,20 @@ describe('CreateEditTeam.vue', () => {
             },
           },
         });
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
         expect(actions.createTeam).toHaveBeenCalledTimes(1);
       });
 
       it('opens a toast with a success message for standard team', async () => {
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
 
         expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.standard_team_created');
       });
 
       it('opens a toast with a success message for adhoc team', async () => {
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         wrapper.vm.$store.$services.teams.createTeam = jest.fn(() => mockTeamsData()[1]);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
@@ -999,6 +1007,7 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('redirects to the edit page with the id of the newly created team', async () => {
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         jest.spyOn(wrapper.vm.$router, 'replace').mockImplementation(() => {});
 
         await wrapper.vm.submitCreateTeam();
@@ -1009,7 +1018,6 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('resets the form validation', async () => {
-        // wrapper.vm.$refs.form.validate = jest.fn(() => true);
         jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
         expect(wrapper.vm.resetFormValidation).toHaveBeenCalledTimes(1);
@@ -1022,11 +1030,13 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('calls editTeam action', async () => {
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitEditTeam();
         expect(actions.editTeam).toHaveBeenCalledTimes(1);
       });
 
       it('opens a toast with a success message', async () => {
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
         await wrapper.vm.submitEditTeam();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.team_updated');

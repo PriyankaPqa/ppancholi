@@ -31,6 +31,14 @@ export interface IHttpClient {
   setHeadersLanguage(lang: string): void;
 }
 
+export interface IError {
+  status: string,
+  code: string,
+  title: string,
+  detail: string,
+  meta: Record<string, string>
+}
+
 class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
 
@@ -72,14 +80,14 @@ class HttpClient implements IHttpClient {
   }
 
   private responseErrorHandler(error: any) {
+    const { errors } = error.response.data;
     if (this.isGlobalHandlerEnabled(error.config)) {
-      if (error?.response?.data) {
-        Vue.toasted.global.error(error.response.data);
-      } else {
-        Vue.toasted.global.error(i18n.t('error.unexpected_error'));
-      }
+      errors.forEach((error: IError) => {
+        Vue.toasted.global.error(i18n.t(`${error.code}`));
+      });
     }
-    return Promise.reject(error?.response?.data || error);
+
+    return Promise.reject(errors);
   }
 
   private requestHandler(request: any) {
