@@ -42,17 +42,17 @@ describe('TempAddress.vue', () => {
     });
 
     describe('temporaryAddressTypeItems', () => {
-      it('returns the full list of temporary addresses types if noFixedHome is false', async () => {
+      it('returns the full list of temporary addresses types if hideRemainingHome is false', async () => {
         await wrapper.setProps({
-          noFixedHome: false,
+          hideRemainingHome: false,
         });
         const list = utils.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
         expect(wrapper.vm.temporaryAddressTypeItems).toEqual(list);
       });
 
-      it('returns the full list of temporary addresses types without remaining home if noFixedHome is true', async () => {
+      it('returns the full list of temporary addresses types without remaining home if hideRemainingHome is true', async () => {
         await wrapper.setProps({
-          noFixedHome: true,
+          hideRemainingHome: true,
         });
         const list = utils.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
         const filtered = list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);

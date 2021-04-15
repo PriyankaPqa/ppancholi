@@ -150,10 +150,11 @@ export default Vue.extend({
       default: 'tempAddress',
     },
 
-    noFixedHome: {
+    hideRemainingHome: {
       type: Boolean,
       default: false,
     },
+
     temporaryAddress: {
       type: Object as () => ITemporaryAddress,
       required: true,
@@ -210,7 +211,7 @@ export default Vue.extend({
 
     temporaryAddressTypeItems(): Record<string, unknown>[] {
       const list = utils.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
-      if (this.noFixedHome) {
+      if (this.hideRemainingHome) {
         return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
       }
       return list;

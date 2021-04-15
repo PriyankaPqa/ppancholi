@@ -30,7 +30,7 @@
 
     <temp-address-form
       :temporary-address="temporaryAddress"
-      :no-fixed-home="noFixedHome"
+      :hide-remaining-home="noFixedHome"
       prefix-data-test="tempAddress"
       @update="setTemporaryAddress($event)" />
   </v-row>

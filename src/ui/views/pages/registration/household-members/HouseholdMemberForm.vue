@@ -28,7 +28,7 @@
             </div>
           </v-radio-group>
           <v-col v-if="!sameAddress" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
-            <temp-address-form :temporary-address="householdMember.temporaryAddress" />
+            <temp-address-form :temporary-address="householdMember.temporaryAddress" hide-remaining-home />
           </v-col>
         </v-col>
       </v-row>

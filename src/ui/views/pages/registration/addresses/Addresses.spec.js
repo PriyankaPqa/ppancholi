@@ -21,6 +21,15 @@ describe('Addresses.vue', () => {
     });
   });
 
+  describe('Template', () => {
+    describe('Temporary Address', () => {
+      test('hide remaining home props is linked to noFixedHome', () => {
+        const props = wrapper.findComponent(TempAddressForm).props('hideRemainingHome');
+        expect(props).toEqual(wrapper.vm.noFixedHome);
+      });
+    });
+  });
+
   describe('Computed', () => {
     describe('noFixedHome', () => {
       it('is linked to beneficiary noFixedHome state', () => {
