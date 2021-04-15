@@ -18,6 +18,7 @@ import _isEmpty from 'lodash/isEmpty';
 import { Route, NavigationGuardNext } from 'vue-router';
 import store from '@/store/store';
 import { i18n } from '@/ui/plugins';
+import { httpClient } from '@/services/httpClient';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -33,6 +34,7 @@ export default Vue.extend({
     if (_isEmpty(event)) {
       window.location.replace(i18n.t('registration.redirection_link') as string);
     } else {
+      httpClient.setHeadersTenant(event.tenantId);
       next();
     }
   },

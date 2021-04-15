@@ -82,7 +82,6 @@
     "regenerator-runtime": "^0.13.7",
     "sass": "^1.26.11",
     "sass-loader": "^10.0.2",
-    "sinon": "^9.0.3",
     "ts-jest": "^26.5.4",
     "typescript": "4.2.3",
     "unzipper": "^0.10.5",
