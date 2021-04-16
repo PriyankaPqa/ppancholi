@@ -33,7 +33,7 @@
     </template>
 
     <template #[`item.${customColumns.responseLevel}`]="{ item: event }">
-      {{ $m(event.responseLevelName) }}
+      {{ $t(`event.response_level.${EResponseLevel[event.responseDetails.responseLevel]}`) }}
     </template>
 
     <template #[`item.${customColumns.openDate}`]="{ item: event }">

@@ -34,7 +34,7 @@
         <span class="fw-bold">{{ $t('eventDetail.location') }}</span>
 
         <div class="pl-6" data-test="event-location-province">
-          {{ $m(event.provinceName) }}
+          {{ provinceName }}
         </div>
 
         <div v-if="event.location.region && $m(event.location.region)" class="rc-body14 pl-6" data-test="event-location-region">
@@ -136,8 +136,9 @@ import helpers from '@/ui/helpers';
 import { RcPhoneDisplay } from '@crctech/component-library';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { EEventStatus, Event, IEvent } from '@/entities/event';
-import { INavigationTab } from '@/types';
+import { ECanadaProvinces, INavigationTab } from '@/types';
 import routes from '@/constants/routes';
+import { TranslateResult } from 'vue-i18n';
 import EventSummary from './EventSummary.vue';
 
 export default Vue.extend({
@@ -178,6 +179,18 @@ export default Vue.extend({
 
     eventId() : string {
       return this.event?.number?.toString().padStart(this.idDigitsCount, '0');
+    },
+
+    provinceName(): string | TranslateResult {
+      const provinceCode = this.event.location.province;
+
+      if (!provinceCode) return '';
+      const isOther = provinceCode === ECanadaProvinces.OT;
+
+      if (isOther) {
+        return this.$m(this.event.location.provinceOther);
+      }
+      return this.$t(`common.provinces.${ECanadaProvinces[provinceCode]}`);
     },
 
     tabs(): Array<INavigationTab> {

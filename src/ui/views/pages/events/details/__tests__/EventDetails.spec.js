@@ -3,6 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { Event, mockEventsSearchData } from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
+import { ECanadaProvinces } from '@/types';
 
 import Component from '../EventDetails.vue';
 
@@ -25,6 +26,9 @@ describe('EventDetails.vue', () => {
           },
           eventId() {
             return '000001';
+          },
+          provinceName() {
+            return 'Alberta';
           },
         },
         mocks: {
@@ -78,7 +82,7 @@ describe('EventDetails.vue', () => {
         });
 
         it('displays the correct data', () => {
-          expect(element.text()).toEqual(mockEvent.provinceName.translation.en);
+          expect(element.text()).toEqual(wrapper.vm.provinceName);
         });
       });
 
@@ -240,6 +244,65 @@ describe('EventDetails.vue', () => {
     describe('eventId', () => {
       it('return the right format for eventID', () => {
         expect(wrapper.vm.eventId).toEqual(`00000${wrapper.vm.event.number}`);
+      });
+    });
+
+    describe('provinceName', () => {
+      it('returns the translation of the province name if province code is not other', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: '7c076603-580a-4400-bef2-5ddececb0931',
+          },
+          store: {
+            modules: {
+              event: {
+                state: {
+                  getLoading: true,
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return { ...mockEvent, location: { ...mockEvent.location, province: ECanadaProvinces.AB } };
+            },
+          },
+        });
+
+        expect(wrapper.vm.provinceName).toEqual('common.provinces.AB');
+      });
+
+      it('returns the translation of provinceOther if province code is other', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: '7c076603-580a-4400-bef2-5ddececb0931',
+          },
+          store: {
+            modules: {
+              event: {
+                state: {
+                  getLoading: true,
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return {
+                ...mockEvent,
+                location: {
+                  ...mockEvent.location,
+                  province: ECanadaProvinces.OT,
+                  provinceOther: { translation: { en: 'mock-province-name' } },
+                },
+              };
+            },
+          },
+        });
+
+        expect(wrapper.vm.provinceName).toEqual('mock-province-name');
       });
     });
 
