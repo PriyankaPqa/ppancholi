@@ -81,13 +81,19 @@ class HttpClient implements IHttpClient {
 
   private responseErrorHandler(error: any) {
     const { errors } = error.response.data;
-    if (this.isGlobalHandlerEnabled(error.config)) {
-      errors.forEach((error: IError) => {
-        Vue.toasted.global.error(i18n.t(`${error.code}`));
-      });
-    }
 
-    return Promise.reject(errors);
+    if (this.isGlobalHandlerEnabled(error.config)) {
+      if (errors && Array.isArray(errors)) {
+        errors.forEach((error: IError) => {
+          Vue.toasted.global.error(i18n.t(`${error.code}`));
+        });
+      } else {
+        Vue.toasted.global.error(i18n.t('error.unexpected_error'));
+      }
+    } else {
+      return Promise.reject(errors || error);
+    }
+    return false;
   }
 
   private requestHandler(request: any) {
