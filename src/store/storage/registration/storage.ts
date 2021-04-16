@@ -3,7 +3,7 @@ import { IEvent } from '@/entities/event';
 import { IStore } from '@/store/store.types';
 import { IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
 import { TranslateResult } from 'vue-i18n';
-import { IOptionItemData } from '@/types';
+import { ECanadaProvinces, IOptionItemData } from '@/types';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore): IStorage => ({
@@ -50,12 +50,12 @@ export const makeStorage = (store: IStore): IStorage => ({
       return store.getters['registration/primarySpokenLanguages'];
     },
 
-    indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return store.getters['registration/indigenousTypesItems'];
+    indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[] {
+      return store.getters['registration/indigenousTypesItems'](provinceCode);
     },
 
-    indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[] {
-      return store.getters['registration/indigenousCommunitiesItems'](indigenousType);
+    indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[] {
+      return store.getters['registration/indigenousCommunitiesItems'](provinceCode, indigenousType);
     },
   },
 

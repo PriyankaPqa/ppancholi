@@ -57,9 +57,11 @@ export default Vue.extend({
         this.$storage.registration.actions.fetchGenders(),
         this.$storage.registration.actions.fetchPreferredLanguages(),
         this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
-      ]);
-
-      this.fetchingData = false;
+      ]).then(() => {
+        this.fetchingData = false;
+      }).catch(() => {
+        this.fetchingData = false;
+      });
     },
   },
 });

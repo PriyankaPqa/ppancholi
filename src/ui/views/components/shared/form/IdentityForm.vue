@@ -40,7 +40,8 @@
         :item-text="(item) => $m(item.name)"
         return-object
         :rules="rules.gender"
-        :label="`${$t('registration.personal_info.gender')}*`" />
+        :label="`${$t('registration.personal_info.gender')}*`"
+        @change="genderChange($event)" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -131,6 +132,7 @@ export default Vue.extend({
       formCopy: {
         birthDate: { year: null, month: null, day: null },
         gender: {},
+        genderOther: {},
         preferredLanguage: {},
         primarySpokenLanguage: {},
         indigenousProvince: null,
@@ -208,6 +210,12 @@ export default Vue.extend({
     prePopulate() {
       if (!this.formCopy.gender) {
         this.formCopy.gender = this.gendersItems.find((option: IOptionItemData) => option.isDefault);
+      }
+    },
+
+    genderChange(gender: IOptionItemData) {
+      if (!gender.isOther) {
+        this.formCopy.genderOther = '';
       }
     },
   },

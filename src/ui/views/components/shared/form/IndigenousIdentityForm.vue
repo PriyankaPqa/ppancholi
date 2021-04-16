@@ -83,7 +83,7 @@ export default Vue.extend({
         preferredLanguage: {},
         primarySpokenLanguage: {},
         indigenousProvince: null,
-        indigenousType: null,
+        indigenousType: null as EIndigenousTypes,
         indigenousCommunityId: null,
         indigenousCommunityOther: null,
       },
@@ -91,13 +91,13 @@ export default Vue.extend({
   },
 
   computed: {
-    rules() {
+    rules(): Record<string, unknown> {
       return {
         indigenousType: {
-          required: this.form.indigenousProvince !== null,
+          required: this.formCopy.indigenousProvince !== null,
         },
         indigenousCommunityId: {
-          required: this.form.indigenousType !== null,
+          required: this.formCopy.indigenousType !== null,
         },
         indigenousCommunityOther: {
           required: true,
@@ -111,15 +111,15 @@ export default Vue.extend({
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return this.$storage.registration.getters.indigenousTypesItems();
+      return this.$storage.registration.getters.indigenousTypesItems(this.form.indigenousProvince);
     },
 
     indigenousCommunitiesItems(): Record<string, string>[] {
-      return this.$storage.registration.getters.indigenousCommunitiesItems(this.form.indigenousType);
+      return this.$storage.registration.getters.indigenousCommunitiesItems(this.form.indigenousProvince, this.form.indigenousType);
     },
 
     otherIndigenousType(): boolean {
-      return this.formCopy?.indigenousType?.toString() === EIndigenousTypes[EIndigenousTypes.Other];
+      return this.formCopy?.indigenousType === EIndigenousTypes.Other;
     },
 
     loadingIndigenousIdentities(): boolean {
@@ -127,7 +127,7 @@ export default Vue.extend({
     },
   },
 
-  mounted() {
+  async mounted() {
     this.formCopy = this.form;
   },
 

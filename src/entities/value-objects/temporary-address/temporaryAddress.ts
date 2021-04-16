@@ -69,7 +69,7 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
   // @ts-ignore
   reset(type?: ETemporaryAddressTypes): void {
     super.reset();
-    this.temporaryAddressType = type || null;
+    this.temporaryAddressType = type ?? null;
     this.placeName = '';
     this.placeNumber = '';
     this.shelterId = '';

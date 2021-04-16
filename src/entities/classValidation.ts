@@ -53,9 +53,9 @@ const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
   if (!regex.test(value)) errors.push(errorMsg);
 };
 
-export const isValidBirthday = (value: IBirthDate, errorMsg: string, errors: string[]) => {
-  const momentBirthdate = utils.getBirthDateMomentObject(value);
-  const valid = momentBirthdate.isValid() && !momentBirthdate.isSameOrAfter(moment());
+export const isValidBirthday = (birthdate: IBirthDate, errorMsg: string, errors: string[]) => {
+  const momentBirthdate = utils.getBirthDateMomentObject(birthdate);
+  const valid = birthdate.year > 0 && momentBirthdate.isValid() && !momentBirthdate.isSameOrAfter(moment());
   if (!valid) errors.push(errorMsg);
 };
 

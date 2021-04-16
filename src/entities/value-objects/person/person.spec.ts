@@ -188,6 +188,28 @@ describe('>>> Person', () => {
         const results = p.validate(true);
         expect(results).not.toContain('minimum age required');
       });
+
+      test('Should return invalid if the year is negative', () => {
+        const p = new Person();
+        p.birthDate = {
+          year: -1000,
+          day: 1,
+          month: 1,
+        };
+        const results = p.validate();
+        expect(results).toContain('birth date not valid');
+      });
+
+      test('Should return valid if birthdate is ok', () => {
+        const p = new Person();
+        p.birthDate = {
+          year: 1000,
+          day: 1,
+          month: 1,
+        };
+        const results = p.validate();
+        expect(results).not.toContain('birth date not valid');
+      });
     });
 
     describe('indigenousProvince', () => {

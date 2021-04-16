@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import {
   mockGenders,
-  mockContactInformation, mockPerson,
+  mockContactInformation, mockPerson, mockGenderFemale,
 } from '@/entities/beneficiary';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
@@ -140,6 +140,25 @@ describe('IdentityForm.vue', () => {
 
         wrapper.vm.prePopulate();
         expect(wrapper.vm.formCopy.gender).toEqual(defaultGender);
+      });
+    });
+
+    describe('genderChange', () => {
+      it('should erase genderOther if the gender is not other', async () => {
+        await wrapper.setData({
+          formCopy: {
+            genderOther: 'test',
+          },
+        });
+        wrapper.vm.genderChange(mockGenderFemale());
+        expect(wrapper.vm.form.primarySpokenLanguageOther).toBe('');
+      });
+
+      it('should be called when primary spoken language changes', () => {
+        jest.spyOn(wrapper.vm, 'genderChange');
+        const el = wrapper.findDataTest('personalInfo__gender');
+        el.vm.$emit('change', mockGenderFemale());
+        expect(wrapper.vm.genderChange).toHaveBeenCalledTimes(1);
       });
     });
   });

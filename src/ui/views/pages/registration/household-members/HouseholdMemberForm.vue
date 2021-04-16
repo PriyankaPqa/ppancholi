@@ -1,38 +1,36 @@
 <template>
-  <v-row justify="center" class="mt-12" no-gutters>
-    <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
-      <identity-form :form="householdMember" prefix-data-test="houseHoldMember" />
-      <indigenous-identity-form :form="householdMember" prefix-data-test="houseHoldMember" />
-      <v-row class="grey-container pa-2 pb-0">
-        <v-col class="pt-4 px-4">
-          <div class="rc-body16 fw-bold">
-            {{ $t('registration.household_member.sameAddress') }}
-          </div>
+  <v-row no-gutters>
+    <identity-form :form="person" prefix-data-test="houseHoldMember" />
+    <indigenous-identity-form :form="person" prefix-data-test="houseHoldMember" />
+    <v-row class="grey-container pa-2 pb-0">
+      <v-col class="pt-4 px-4">
+        <div class="rc-body16 fw-bold">
+          {{ $t('registration.household_member.sameAddress') }}
+        </div>
 
-          <v-radio-group :value="sameAddress" @change="$emit('update:sameAddress', $event)">
-            <div class="flex-contain">
-              <span>
-                <v-radio data-test="sameTemporaryAddressYes" :label="$t('common.yes')" :value="true" />
-              </span>
-              <span class="rc-body12 ml-5">
-                {{ $t('registration.household_member.sameAddress.yes.detail') }}
-              </span>
-            </div>
-            <div class="flex-contain mt-2">
-              <span>
-                <v-radio data-test="sameTemporaryAddressNo" :label="$t('common.no')" :value="false" />
-              </span>
-              <span class="rc-body12 ml-5">
-                {{ $t('registration.household_member.sameAddress.no.detail') }}
-              </span>
-            </div>
-          </v-radio-group>
-          <v-col v-if="!sameAddress" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
-            <temp-address-form :temporary-address="householdMember.temporaryAddress" hide-remaining-home />
-          </v-col>
+        <v-radio-group :value="sameAddress" @change="$emit('update:sameAddress', $event)">
+          <div class="flex-contain">
+            <span>
+              <v-radio data-test="sameTemporaryAddressYes" :label="$t('common.yes')" :value="true" />
+            </span>
+            <span class="rc-body12 ml-5">
+              {{ $t('registration.household_member.sameAddress.yes.detail') }}
+            </span>
+          </div>
+          <div class="flex-contain mt-2">
+            <span>
+              <v-radio data-test="sameTemporaryAddressNo" :label="$t('common.no')" :value="false" />
+            </span>
+            <span class="rc-body12 ml-5">
+              {{ $t('registration.household_member.sameAddress.no.detail') }}
+            </span>
+          </div>
+        </v-radio-group>
+        <v-col v-if="!sameAddress" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
+          <temp-address-form :temporary-address="person.temporaryAddress" hide-remaining-home />
         </v-col>
-      </v-row>
-    </v-col>
+      </v-col>
+    </v-row>
   </v-row>
 </template>
 
@@ -54,7 +52,7 @@ export default Vue.extend({
   },
 
   props: {
-    householdMember: {
+    person: {
       type: Object as () => IPerson,
       required: true,
     },

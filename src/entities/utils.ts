@@ -39,4 +39,20 @@ export default {
     const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
     if (!regex.test(value)) errors.push(errorMsg);
   },
+
+  getAge(birthDate: IBirthDate) {
+    return moment().diff(moment({
+      month: (birthDate.month as number) - 1,
+      day: (birthDate.day as number),
+      year: (birthDate.year as number),
+    }), 'years');
+  },
+
+  displayBirthDate(birthDate: IBirthDate) {
+    if (birthDate.year && birthDate.month && birthDate.day) {
+      const birthdate = this.getBirthDateMomentObject(birthDate);
+      return birthdate.format('ll');
+    }
+    return '';
+  },
 };

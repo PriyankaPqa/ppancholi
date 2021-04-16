@@ -1,10 +1,11 @@
 import { mockBeneficiary, mockContactInformation, mockPerson } from '@/entities/beneficiary';
 import _merge from 'lodash/merge';
+import _cloneDeep from 'lodash/cloneDeep';
 import { IStorageMock } from './storage.types';
 
 export const mockStorageBeneficiary = (): IStorageMock => ({
   getters: {
-    beneficiary: jest.fn(() => mockBeneficiary()),
+    beneficiary: jest.fn(() => _cloneDeep(mockBeneficiary())),
     personalInformation: jest.fn(() => _merge(mockContactInformation(), mockPerson())),
   },
 

@@ -17,7 +17,7 @@ describe('HouseholdMemberForm.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        householdMember: mockHouseholdMember(),
+        person: mockHouseholdMember(),
         sameAddress: true,
       },
       mocks: {

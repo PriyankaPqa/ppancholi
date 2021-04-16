@@ -63,7 +63,7 @@ import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
 import Addresses from '../addresses/Addresses.vue';
 import HouseholdMembers from '../household-members/HouseholdMembers.vue';
-import ReviewRegistration from '../ReviewRegistration.vue';
+import ReviewRegistration from '../review/ReviewRegistration.vue';
 import ConfirmRegistration from '../ConfirmRegistration.vue';
 
 export default Vue.extend({
@@ -115,8 +115,7 @@ export default Vue.extend({
 
     currentStepHasError(): boolean {
       if (this.isFormReady) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const fieldsHavingErrors = _pickBy((this.$refs.form as any).errors, (value) => value.length > 0);
+        const fieldsHavingErrors = _pickBy((this.$refs.form as VForm).errors, (value) => value.length > 0);
         return Object.keys(fieldsHavingErrors).length > 0;
       }
       return false;

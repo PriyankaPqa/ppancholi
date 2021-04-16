@@ -4,7 +4,7 @@ import {
 import { IEventData } from '@/entities/event';
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 
-import { IOptionItemData } from '@/types';
+import { ECanadaProvinces, IOptionItemData } from '@/types';
 
 export type IState = {
   event: IEventData;
@@ -14,7 +14,7 @@ export type IState = {
   genders: IOptionItemData[];
   preferredLanguages: IOptionItemData[];
   primarySpokenLanguages: IOptionItemData[];
-  indigenousIdentities: IIndigenousIdentityData[];
+  indigenousIdentities: Record<ECanadaProvinces, IIndigenousIdentityData[]>;
   loadingIndigenousIdentities: boolean;
   isPrivacyAgreed: boolean,
   privacyDateTimeConsent: string,

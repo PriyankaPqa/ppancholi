@@ -1,6 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   mockPreferredLanguages,
+  mockPrimarySpokenLanguage,
   mockPrimarySpokenLanguages,
 } from '@/entities/beneficiary';
 import { MAX_LENGTH_MD } from '@/constants/validations';
@@ -16,6 +17,11 @@ describe('PersonalInformation.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
+      data() {
+        return {
+          form: storage.beneficiary.getters.personalInformation(),
+        };
+      },
       mocks: {
         $storage: storage,
       },
@@ -219,6 +225,25 @@ describe('PersonalInformation.vue', () => {
         const expected = wrapper.vm.primarySpokenLanguagesItems.find((option) => option.isDefault);
         const res = wrapper.vm.findDefault(wrapper.vm.primarySpokenLanguagesItems);
         expect(res).toEqual(expected);
+      });
+    });
+
+    describe('primarySpokenLanguageChange', () => {
+      it('should erase primarySpokenLanguageOther if the language is not other', async () => {
+        await wrapper.setData({
+          form: {
+            primarySpokenLanguageOther: 'test',
+          },
+        });
+        wrapper.vm.primarySpokenLanguageChange(mockPrimarySpokenLanguage());
+        expect(wrapper.vm.form.primarySpokenLanguageOther).toBe('');
+      });
+
+      it('should be called when primary spoken language changes', () => {
+        jest.spyOn(wrapper.vm, 'primarySpokenLanguageChange');
+        const el = wrapper.findDataTest('personalInfo__primarySpokenLanguage');
+        el.vm.$emit('change', mockPrimarySpokenLanguage());
+        expect(wrapper.vm.primarySpokenLanguageChange).toHaveBeenCalledTimes(1);
       });
     });
   });

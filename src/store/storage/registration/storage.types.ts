@@ -3,7 +3,7 @@ import { IEvent } from '@/entities/event';
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import { TranslateResult } from 'vue-i18n';
 
-import { IOptionItemData } from '@/types';
+import { ECanadaProvinces, IOptionItemData } from '@/types';
 
 export interface IStorage {
   getters: {
@@ -17,8 +17,8 @@ export interface IStorage {
     genders(): IOptionItemData[];
     preferredLanguages(): IOptionItemData[];
     primarySpokenLanguages(): IOptionItemData[];
-    indigenousTypesItems(): Record<string, TranslateResult>[];
-    indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[];
+    indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[];
+    indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[];
   };
 
   mutations: {
@@ -51,7 +51,7 @@ export interface IStorageMock {
     genders: jest.Mock<IOptionItemData[]>;
     preferredLanguages: jest.Mock<IOptionItemData[]>;
     primarySpokenLanguages: jest.Mock<IOptionItemData[]>;
-    indigenousTypesItems: jest.Mock<Record<string, TranslateResult>[]>;
+    indigenousTypesItems: jest.Mock<Record<string, unknown>[]>;
     indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
   };
 

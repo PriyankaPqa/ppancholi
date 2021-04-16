@@ -92,6 +92,9 @@ extend('birthday', {
   params: ['birthdate'],
   validate: (value, args) => {
     const { birthdate } = args;
+
+    if (birthdate.year < 0) return false;
+
     const momentBirthdate = utils.getBirthDateMomentObject(birthdate);
     if (momentBirthdate.isValid()) {
       if (momentBirthdate.isSameOrAfter(moment())) {

@@ -12,7 +12,11 @@
       @cancel="close()"
       @close="close()"
       @submit="validate()">
-      <household-member-form :same-address.sync="sameAddress" :household-member="householdMember" />
+      <v-row justify="center" class="mt-12" no-gutters>
+        <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
+          <household-member-form :same-address.sync="sameAddress" :person="householdMember" />
+        </v-col>
+      </v-row>
     </rc-dialog>
   </validation-observer>
 </template>

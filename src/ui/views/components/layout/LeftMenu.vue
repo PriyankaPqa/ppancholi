@@ -11,7 +11,7 @@
     <v-list>
       <div class="pt-2 pb-4 pl-4">
         <v-btn class="d-md-none" data-test="self-Registration-close-icon" icon x-small>
-          <v-icon size="24" color="grey darken-2">
+          <v-icon size="24" color="grey darken-2" @click="isLeftMenuOpen = false">
             mdi-close
           </v-icon>
         </v-btn>
@@ -40,6 +40,12 @@
           </v-icon>
         </v-list-item-icon>
       </v-list-item>
+
+      <div v-if="isDev" class="dev-container">
+        <v-btn @click="prefill">
+          Fill data
+        </v-btn>
+      </div>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -47,6 +53,10 @@
 <script lang="ts">
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import Vue from 'vue';
+import _merge from 'lodash/merge';
+import {
+  mockPerson, mockAddress, mockContactInformation, mockCampGround, mockHouseholdMember,
+} from '@/entities/beneficiary';
 
 export default Vue.extend({
   name: 'LeftMenu',
@@ -77,6 +87,25 @@ export default Vue.extend({
     xSmallOrSmallMenu(): boolean {
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;
     },
+    isDev() {
+      return process.env.NODE_ENV === 'development';
+    },
+  },
+
+  methods: {
+    prefill() {
+      this.$storage.registration.mutations.setIsPrivacyAgreed(true);
+      this.$storage.beneficiary.mutations.setPersonalInformation(_merge(mockContactInformation(), mockPerson()));
+      this.$storage.beneficiary.mutations.setHomeAddress(mockAddress());
+      this.$storage.beneficiary.mutations.setTemporaryAddress(mockCampGround());
+      this.$storage.beneficiary.mutations.addHouseholdMember(mockHouseholdMember(), false);
+      this.$storage.beneficiary.mutations.addHouseholdMember(
+        mockHouseholdMember({ firstName: 'Mister', lastName: 'Test' }), false,
+      );
+      this.$storage.beneficiary.mutations.addHouseholdMember(
+        mockHouseholdMember({ firstName: 'Misses', lastName: 'Test' }), false,
+      );
+    },
   },
 });
 </script>
@@ -97,5 +126,12 @@ export default Vue.extend({
   .navMenu__active {
     background: var(--v-grey-lighten4);
   }
+}
+
+.dev-container {
+  margin-top: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 </style>

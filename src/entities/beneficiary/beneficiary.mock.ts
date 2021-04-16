@@ -1,4 +1,4 @@
-import { mockHouseholdMember, mockPersonData } from '@/entities/value-objects/person';
+import { mockHouseholdMembers, mockPersonData } from '@/entities/value-objects/person';
 import { Beneficiary } from './beneficiary';
 import { mockAddressData } from '../value-objects/address/address.mock';
 import { IBeneficiaryData, IBeneficiary } from './beneficiary.types';
@@ -8,7 +8,9 @@ export const mockBeneficiaryData = (): IBeneficiaryData => ({
   person: mockPersonData(),
   contactInformation: mockContactInformationData(),
   homeAddress: mockAddressData(),
-  householdMembers: [mockHouseholdMember()],
+  householdMembers: mockHouseholdMembers(),
 });
 
-export const mockBeneficiary = (): IBeneficiary => new Beneficiary(mockBeneficiaryData());
+export const mockBeneficiary = (force?: Partial<IBeneficiaryData>): IBeneficiary => new Beneficiary(
+  { ...mockBeneficiaryData(), ...force },
+);

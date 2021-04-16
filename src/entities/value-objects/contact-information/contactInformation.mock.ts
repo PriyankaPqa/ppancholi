@@ -2,45 +2,6 @@ import { IOptionItemData } from '@/types';
 import { ContactInformation } from './contactInformation';
 import { IContactInformationData, IContactInformation } from './contactInformation.types';
 
-export const mockContactInformationData = (): IContactInformationData => ({
-  preferredLanguage: {
-    name: {
-      translation: {
-        en: 'French',
-        fr: 'Français',
-      },
-    },
-    orderRank: 0,
-    isOther: false,
-    isDefault: false,
-    id: '3dd21738-e599-443a-aae1-496d7decc458',
-    status: 1,
-  },
-  preferredLanguageOther: '',
-  homePhone: {
-    number: '(514) 545-4548',
-    countryISO2: 'CA',
-    e164Number: '15145454548',
-  },
-  primarySpokenLanguage: {
-    name: {
-      translation: {
-        en: 'English',
-        fr: 'Anglais',
-      },
-    },
-    orderRank: 0,
-    isOther: false,
-    isDefault: true,
-    id: '5d0c1c8d-c3cd-4818-a670-c92b3cb84081',
-    status: 1,
-  },
-  primarySpokenLanguageOther: '',
-  email: 'rok@sdf.ca',
-});
-
-export const mockContactInformation = (): IContactInformation => new ContactInformation(mockContactInformationData());
-
 export const mockPreferredLanguages = (): IOptionItemData[] => [
   {
     name: { translation: { en: 'French', fr: 'Français' } },
@@ -68,6 +29,16 @@ export const mockPreferredLanguages = (): IOptionItemData[] => [
   },
 ];
 
+export const mockPrimarySpokenLanguage = (force?: Partial<IOptionItemData>): IOptionItemData => ({
+  name: { translation: { en: 'English', fr: 'Anglais' } },
+  orderRank: 0,
+  isOther: false,
+  isDefault: true,
+  id: '5d0c1c8d-c3cd-4818-a670-c92b3cb84081',
+  status: 1,
+  ...force,
+});
+
 export const mockPrimarySpokenLanguages = (): IOptionItemData[] => [
   {
     name: { translation: { en: 'English', fr: 'Anglais' } },
@@ -94,3 +65,43 @@ export const mockPrimarySpokenLanguages = (): IOptionItemData[] => [
     status: 1,
   },
 ];
+
+export const mockContactInformationData = (): IContactInformationData => ({
+  preferredLanguage: mockPreferredLanguages()[0],
+  preferredLanguageOther: '',
+  homePhone: {
+    number: '(514) 545-4548',
+    countryISO2: 'CA',
+    e164Number: '15145454548',
+  },
+  otherPhone: {
+    number: '(438) 888-8888',
+    countryISO2: 'CA',
+    e164Number: '15145454548',
+  },
+  mobilePhone: {
+    number: '(866) 866-6666',
+    countryISO2: 'CA',
+    e164Number: '15145454548',
+  },
+  otherPhoneExtension: '999',
+  primarySpokenLanguage: mockPrimarySpokenLanguage(),
+  primarySpokenLanguageOther: '',
+  email: 'test@test.ca',
+});
+
+export const mockPrimarySpokenLanguageOther = (): IContactInformation => new ContactInformation(
+  {
+    ...mockContactInformationData(),
+    primarySpokenLanguageOther: 'Japanese',
+    primarySpokenLanguage: mockPrimarySpokenLanguage({ isOther: true }),
+  },
+);
+
+export const mockPreferredLanguageOther = (): IContactInformation => new ContactInformation(
+  { ...mockContactInformationData(), preferredLanguageOther: 'Italian', preferredLanguage: null },
+);
+
+export const mockContactInformation = (force?: Partial<IContactInformation>): IContactInformation => new ContactInformation(
+  { ...mockContactInformationData(), ...force },
+);

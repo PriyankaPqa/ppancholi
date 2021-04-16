@@ -6,7 +6,7 @@ import {
   mockContactInformation,
   mockPerson,
   mockIndigenousCommunitiesItems,
-  mockIndigenousTypesItems,
+  mockIndigenousTypesItems, EIndigenousTypes,
 } from '@/entities/beneficiary';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
@@ -89,7 +89,7 @@ describe('IndigenousIdentityForm.vue', () => {
 
     describe('indigenousCommunityOther', () => {
       it('is linked to proper rules', async () => {
-        wrapper.vm.form.indigenousType = 'Other';
+        wrapper.vm.form.indigenousType = EIndigenousTypes.Other;
 
         await wrapper.vm.$nextTick();
 

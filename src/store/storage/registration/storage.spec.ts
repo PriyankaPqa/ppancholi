@@ -1,5 +1,5 @@
 import { mockStore } from '@/store';
-import { ILeftMenuItem } from '@/types';
+import { ECanadaProvinces, ILeftMenuItem } from '@/types';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });
@@ -51,11 +51,13 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy current indigenousTypesItems', () => {
-      expect(storage.getters.indigenousTypesItems()).toEqual(store.getters['registration/indigenousTypesItems']);
+      expect(storage.getters.indigenousTypesItems(ECanadaProvinces.AB))
+        .toEqual(store.getters['registration/indigenousTypesItems'](ECanadaProvinces.AB));
     });
 
     it('should proxy current indigenousCommunitiesItems', () => {
-      expect(storage.getters.indigenousCommunitiesItems(1)).toEqual(store.getters['registration/indigenousCommunitiesItems'](1));
+      expect(storage.getters.indigenousCommunitiesItems(ECanadaProvinces.AB, 1))
+        .toEqual(store.getters['registration/indigenousCommunitiesItems'](ECanadaProvinces.AB, 1));
     });
   });
 
@@ -111,7 +113,7 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy fetchIndigenousIdentitiesByProvince', () => {
-      const provinceCode = 13;
+      const provinceCode = ECanadaProvinces.AB;
       storage.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
       expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
     });

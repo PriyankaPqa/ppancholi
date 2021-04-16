@@ -1,7 +1,9 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import { mockBeneficiary, mockHouseholdMember, Person } from '@/entities/beneficiary';
+import {
+  mockBeneficiary, mockHouseholdMembers, mockHouseholdMember, Person,
+} from '@/entities/beneficiary';
 import { RcConfirmationDialog } from '@crctech/component-library';
 import Component from './HouseholdMembers.vue';
 
@@ -16,7 +18,7 @@ describe('HouseholdMembers.vue', () => {
       localVue,
       computed: {
         householdMembers() {
-          return [mockHouseholdMember()];
+          return mockHouseholdMembers();
         },
       },
       mocks: {
@@ -42,7 +44,7 @@ describe('HouseholdMembers.vue', () => {
 
       it('set currentHouseholdMember to corresponding household member to edit', async () => {
         await wrapper.vm.showDialog(0);
-        expect(wrapper.vm.currentHouseholdMember).toEqual(mockHouseholdMember());
+        expect(wrapper.vm.currentHouseholdMember).toEqual(mockHouseholdMembers()[0]);
       });
 
       it('set index to params', async () => {

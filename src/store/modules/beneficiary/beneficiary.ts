@@ -23,7 +23,7 @@ const moduleState: IState = getDefaultState();
 
 const getters = {
   beneficiary: (state: IState) => _cloneDeep(state.beneficiary),
-  personalInformation: (state: IState) => _merge(_cloneDeep(state.beneficiary.contactInformation), _cloneDeep(state.beneficiary.person)),
+  personalInformation: (state: IState) => _cloneDeep(_merge(state.beneficiary.contactInformation, state.beneficiary.person)),
 };
 
 const mutations = {

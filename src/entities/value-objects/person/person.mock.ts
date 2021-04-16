@@ -1,8 +1,7 @@
-import { IAzureSearchResult, IOptionItemData } from '@/types';
-import { TranslateResult } from 'vue-i18n';
+import { ECanadaProvinces, IAzureSearchResult, IOptionItemData } from '@/types';
 import { mockCampGround, mockFriendsFamily } from '../temporary-address';
 import {
-  IIndigenousIdentityData, IPerson, IPersonData,
+  EIndigenousTypes, IIndigenousIdentityData, IPerson, IPersonData,
 } from './person.types';
 import { Person } from './person';
 
@@ -51,9 +50,9 @@ export const mockPersonData = (): IPersonData => ({
   gender: mockGenders()[0],
   genderOther: '',
   preferredName: 'preferredName',
-  indigenousProvince: null,
-  indigenousType: null,
-  indigenousCommunityId: null,
+  indigenousProvince: ECanadaProvinces.AB,
+  indigenousType: EIndigenousTypes.FirstNations,
+  indigenousCommunityId: 'guid-community',
   indigenousCommunityOther: '',
   temporaryAddress: mockCampGround(),
 });
@@ -77,15 +76,14 @@ export const mockHouseholdMemberData = (): IPersonData => ({
   temporaryAddress: mockFriendsFamily(),
 });
 
-export const mockPerson = (): IPerson => new Person(mockPersonData());
+export const mockPerson = (force?: Partial<IPersonData>): IPerson => new Person({ ...mockPersonData(), ...force });
 
-export const mockHouseholdMember = (): IPerson => new Person(mockHouseholdMemberData());
+export const mockHouseholdMember = (force?: Partial<IPerson>): IPerson => new Person({ ...mockHouseholdMemberData(), ...force });
 
 export const mockHouseholdMembers = (): IPerson[] => [
-  new Person(mockHouseholdMemberData()),
-  new Person(mockHouseholdMemberData()),
-  new Person(mockHouseholdMemberData()),
-  new Person(mockHouseholdMemberData()),
+  mockHouseholdMember(),
+  mockHouseholdMember({ firstName: 'Mister', lastName: 'Test' }),
+  mockHouseholdMember({ firstName: 'Jack', lastName: 'Sparrow' }),
 ];
 
 export const mockIndigenousIdentitiesSearchData = (): IAzureSearchResult<IIndigenousIdentityData> => ({
@@ -122,17 +120,17 @@ export const mockIndigenousIdentitiesSearchData = (): IAzureSearchResult<IIndige
   ],
 });
 
-export const mockIndigenousTypesItems = (): Record<string, TranslateResult>[] => [
+export const mockIndigenousTypesItems = (): Record<string, unknown>[] => [
   {
-    value: 'FirstNations',
+    value: EIndigenousTypes.FirstNations,
     text: 'First nations',
   },
   {
-    value: 'InuitCommunity',
+    value: EIndigenousTypes.InuitCommunity,
     text: 'Inuit Community',
   },
   {
-    value: 'Other',
+    value: EIndigenousTypes.Other,
     text: 'Other',
   },
 ];
