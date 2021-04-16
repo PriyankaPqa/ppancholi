@@ -658,6 +658,7 @@ export default Vue.extend({
         }
         return null;
       });
+      this.$emit('update:is-dirty', true);
     },
 
     clearRegionAndOtherProvince() {

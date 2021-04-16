@@ -161,6 +161,28 @@ describe('EventForm.vue', () => {
           eventName: event.name,
         }]);
       });
+
+      it('emits isDirty when called', async () => {
+        wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          propsData: {
+            event,
+            isEditMode: false,
+            isNameUnique: true,
+            isDirty: false,
+          },
+          computed: {
+            prefixRegistrationLink() {
+              return 'https://mytest.test/';
+            },
+            relatedEventsSorted() {
+              return [event];
+            },
+          },
+        });
+        await wrapper.vm.setRelatedEvents([event.id]);
+        expect(wrapper.emitted('update:is-dirty')).toBeTruthy();
+      });
     });
 
     describe('clearRegionAndOtherProvince', () => {
