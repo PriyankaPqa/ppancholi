@@ -50,7 +50,7 @@
             text-color="grey darken-4"
             close
             @click:close="setIsOther">
-            {{ $t('common.other') }}
+            {{ $t('common.pleaseSpecify') }}
           </v-chip>
         </div>
       </v-col>
@@ -106,7 +106,7 @@
             </v-list-item>
 
             <v-list-item v-if="hasOther" @click="setIsOther">
-              {{ $t('common.other') }}
+              {{ $t('common.pleaseSpecify') }}
               <v-icon v-if="item.isOther" class="ml-2" small>
                 mdi-close
               </v-icon>
