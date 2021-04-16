@@ -217,8 +217,7 @@ export default Vue.extend({
 
   async created() {
     this.loading = true;
-    await this.$storage.event.actions.fetchEventTypes();
-    await this.$storage.event.actions.fetchEvents();
+
     try {
       await this.$storage.event.actions.fetchEvent(this.id);
     } catch {

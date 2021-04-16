@@ -34,13 +34,19 @@ const getAgreementsInfos = (agreements: IEventAgreement[], agreementTypes: IOpti
   };
 });
 
-const getEventTypeName = (eventType: IListOption, eventTypes: IOptionItem[]): IMultilingual => {
+const getEventTypeName = (eventType: IListOption, eventTypes: IOptionItem[], originalEvent: IEvent): IMultilingual => {
+  if (originalEvent && originalEvent.eventTypeName && originalEvent.eventTypeId === eventType.optionItemId) {
+    return originalEvent.eventTypeName;
+  }
+
   const eventTypeData = eventTypes.find((t) => t.id === eventType.optionItemId);
 
   if (!eventTypeData) return null;
+
   if (eventTypeData.isOther && eventType.specifiedOther) {
     return helpers.fillAllTranslationsFromI18n(eventType.specifiedOther, false);
   }
+
   return eventTypeData.name;
 };
 
@@ -66,44 +72,69 @@ const getScheduleEventStatusName = (status: EEventStatus) : IMultilingual => {
   return statusName;
 };
 
-const getRelatedEventsInfos = (eventsIds: Array<uuid>, allEvents: IEvent[]):Array<IRelatedEventsInfos> => {
+const getRelatedEventsInfos = (eventsIds: Array<uuid>, allEvents: IEvent[], originalEvent: IEvent): Array<IRelatedEventsInfos> => {
   if (!eventsIds) return [];
 
-  return eventsIds.map((id) => {
-    const event = allEvents.find((ev) => ev.id === id);
-    if (event) {
-      return {
-        id,
-        eventName: event.name,
-      };
+  const relatedEvents: IRelatedEventsInfos[] = [];
+
+  eventsIds.forEach((id) => {
+    if (originalEvent) {
+      const originalRelatedEvent = originalEvent.relatedEventsInfos.find((re) => re.id === id);
+
+      if (originalRelatedEvent) {
+        relatedEvents.push({
+          id: originalRelatedEvent.id,
+          eventName: utils.initMultilingualAttributes(originalRelatedEvent.eventName),
+        });
+
+        return;
+      }
     }
-    return null;
+
+    const cachedEvent = allEvents.find((ev) => ev.id === id);
+
+    if (cachedEvent) {
+      relatedEvents.push({
+        id,
+        eventName: cachedEvent.name,
+      });
+    }
   });
+
+  return relatedEvents;
 };
 
-export const mapEventDataToSearchData = (eventData: IEventData, context: ActionContext<IState, IRootState>) : IEventSearchData => ({
-  agreements: getAgreementsInfos(eventData.agreements, context.state.agreementTypes),
-  createdDate: eventData.created,
-  eventName: utils.initMultilingualAttributes(eventData.name),
-  eventDescription: utils.initMultilingualAttributes(eventData.description),
-  eventTypeId: eventData.responseDetails.eventType.optionItemId,
-  eventTypeName: getEventTypeName(eventData.responseDetails.eventType, context.state.eventTypes),
-  eventId: eventData.id,
-  location: eventData.location,
-  number: eventData.number,
-  provinceName: getProvinceName(eventData.location),
-  relatedEventsInfos: getRelatedEventsInfos(eventData.relatedEventIds, context.state.events),
-  registrationLink: utils.initMultilingualAttributes(eventData.registrationLink),
-  responseDetails: eventData.responseDetails,
-  responseLevelName: getResponseLevelName(eventData.responseDetails.responseLevel),
-  selfRegistrationEnabled: eventData.selfRegistrationEnabled,
-  schedule: eventData.schedule,
-  scheduleHistory: eventData.scheduleHistory,
-  scheduleEventStatusName: getScheduleEventStatusName(eventData.schedule.status),
-  '@searchScore': null,
-  eventStatus: null,
-  tenantId: null,
-  callCentres: eventData.callCentres,
-  registrationLocations: eventData.registrationLocations,
-  shelterLocations: eventData.shelterLocations,
-});
+export const mapEventDataToSearchData = (
+  eventData: IEventData,
+  context: ActionContext<IState, IRootState>,
+  originalEventId: uuid,
+) : IEventSearchData => {
+  const originalEvent = context.state.events.find((e) => e.id === originalEventId);
+
+  return {
+    agreements: getAgreementsInfos(eventData.agreements, context.state.agreementTypes),
+    createdDate: eventData.created,
+    eventName: utils.initMultilingualAttributes(eventData.name),
+    eventDescription: utils.initMultilingualAttributes(eventData.description),
+    eventTypeId: eventData.responseDetails.eventType.optionItemId,
+    eventTypeName: getEventTypeName(eventData.responseDetails.eventType, context.state.eventTypes, originalEvent),
+    eventId: eventData.id,
+    location: eventData.location,
+    number: eventData.number,
+    provinceName: getProvinceName(eventData.location),
+    relatedEventsInfos: getRelatedEventsInfos(eventData.relatedEventIds, context.state.events, originalEvent),
+    registrationLink: utils.initMultilingualAttributes(eventData.registrationLink),
+    responseDetails: eventData.responseDetails,
+    responseLevelName: getResponseLevelName(eventData.responseDetails.responseLevel),
+    selfRegistrationEnabled: eventData.selfRegistrationEnabled,
+    schedule: eventData.schedule,
+    scheduleHistory: eventData.scheduleHistory,
+    scheduleEventStatusName: getScheduleEventStatusName(eventData.schedule.status),
+    '@searchScore': null,
+    eventStatus: null,
+    tenantId: null,
+    callCentres: eventData.callCentres,
+    registrationLocations: eventData.registrationLocations,
+    shelterLocations: eventData.shelterLocations,
+  };
+};

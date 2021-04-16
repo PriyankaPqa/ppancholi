@@ -215,7 +215,7 @@ const actions = {
   async createEvent(this: Store<IState>, context: ActionContext<IState, IRootState>, payload: IEvent): Promise<IEvent> {
     const data = await this.$services.events.createEvent(payload);
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, payload.id));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -226,7 +226,7 @@ const actions = {
     const data = await this.$services.events.updateEvent(payload);
 
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, payload.id));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -234,13 +234,13 @@ const actions = {
   },
 
   async addCallCentre(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventCallCentre},
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId:uuid, payload: IEventCallCentre },
   )
     : Promise<IEvent> {
     const data = await this.$services.events.addCallCentre(eventId, payload);
 
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -248,12 +248,12 @@ const actions = {
   },
 
   async editCallCentre(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IUpdateCallCentrePayload},
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId:uuid, payload: IUpdateCallCentrePayload },
   ): Promise<IEvent> {
     const data = await this.$services.events.editCallCentre(eventId, payload);
 
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -261,13 +261,13 @@ const actions = {
   },
 
   async addAgreement(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventAgreement},
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId: uuid, payload: IEventAgreement },
   )
     : Promise<IEvent> {
     const data = await this.$services.events.addAgreement(eventId, payload);
 
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -275,12 +275,12 @@ const actions = {
   },
 
   async editAgreement(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IUpdateAgreementPayload},
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId:uuid, payload: IUpdateAgreementPayload },
   ): Promise<IEvent> {
     const data = await this.$services.events.editAgreement(eventId, payload);
 
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -288,11 +288,11 @@ const actions = {
   },
 
   async deleteAgreement(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventAgreement},
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId: uuid, payload: IEventAgreement },
   ): Promise<IEvent> {
     const data = await this.$services.events.removeAgreement(eventId, payload);
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -300,12 +300,12 @@ const actions = {
   },
 
   async addRegistrationLocation(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventGenericLocation},
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId: uuid, payload: IEventGenericLocation },
   )
     : Promise<IEvent> {
     const data = await this.$services.events.addRegistrationLocation(eventId, payload);
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -315,12 +315,12 @@ const actions = {
   async editRegistrationLocation(
     this: Store<IState>,
     context: ActionContext<IState, IRootState>,
-    { eventId, payload }: {eventId:uuid, payload: IUpdateRegistrationLocationPayload},
+    { eventId, payload }: { eventId: uuid, payload: IUpdateRegistrationLocationPayload },
   ): Promise<IEvent> {
     const data = await this.$services.events.editRegistrationLocation(eventId, payload);
 
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -328,12 +328,12 @@ const actions = {
   },
 
   async addShelterLocation(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: {eventId:uuid, payload: IEventGenericLocation},
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId: uuid, payload: IEventGenericLocation },
   )
     : Promise<IEvent> {
     const data = await this.$services.events.addShelterLocation(eventId, payload);
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -343,11 +343,11 @@ const actions = {
   async editShelterLocation(
     this: Store<IState>,
     context: ActionContext<IState, IRootState>,
-    { eventId, payload }: {eventId:uuid, payload: IUpdateShelterLocationPayload},
+    { eventId, payload }: { eventId: uuid, payload: IUpdateShelterLocationPayload },
   ): Promise<IEvent> {
     const data = await this.$services.events.editShelterLocation(eventId, payload);
     if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);
       return event;
     }
@@ -362,7 +362,7 @@ const actions = {
     try {
       context.commit('setEventSelfRegistrationEnabled', payload);
       const data = await this.$services.events.toggleSelfRegistration(payload.id, payload.selfRegistrationEnabled);
-      const event = new Event(mapEventDataToSearchData(data, context));
+      const event = new Event(mapEventDataToSearchData(data, context, payload.id));
       return event;
     } catch (e) {
       context.commit('setEventSelfRegistrationEnabled', { id: payload.id, selfRegistrationEnabled: !payload.selfRegistrationEnabled });
@@ -379,7 +379,7 @@ const actions = {
     const { hasBeenOpen } = event;
 
     const data = await this.$services.events.setEventStatus(event.id, status, hasBeenOpen, reason);
-    const newEvent = new Event(mapEventDataToSearchData(data, context));
+    const newEvent = new Event(mapEventDataToSearchData(data, context, event.id));
     context.commit('addOrUpdateEvent', newEvent);
     return newEvent;
   },

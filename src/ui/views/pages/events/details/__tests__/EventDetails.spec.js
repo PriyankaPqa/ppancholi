@@ -303,12 +303,6 @@ describe('EventDetails.vue', () => {
       });
     });
 
-    it('should call fetchEvents', () => {
-      expect(wrapper.vm.$storage.event.actions.fetchEvents).toHaveBeenCalledTimes(1);
-    });
-    it('should call fetchEventTypes', () => {
-      expect(wrapper.vm.$storage.event.actions.fetchEventTypes).toHaveBeenCalledTimes(1);
-    });
     it('should call fetchEvent', () => {
       expect(wrapper.vm.$storage.event.actions.fetchEvent).toHaveBeenCalledWith(wrapper.vm.id);
     });
