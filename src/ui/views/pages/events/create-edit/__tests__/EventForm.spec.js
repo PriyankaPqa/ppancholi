@@ -265,6 +265,7 @@ describe('EventForm.vue', () => {
       it('set scheduledCloseDate to null if false', () => {
         wrapper.vm.localEvent.schedule.scheduledCloseDate = '2020-01-02';
         wrapper.vm.isStatusOpen = true;
+
         expect(wrapper.vm.localEvent.schedule.scheduledCloseDate).toEqual('2020-01-02');
 
         wrapper.vm.isStatusOpen = false;
@@ -373,9 +374,15 @@ describe('EventForm.vue', () => {
     });
 
     describe('eventTypesSorted', () => {
-      it('returns the event types from the store', async () => {
+      it('returns the event types from the store with the initial event appended to the list', async () => {
         await flushPromises();
-        expect(wrapper.vm.eventTypesSorted).toEqual(wrapper.vm.$storage.event.getters.eventTypes());
+        expect(wrapper.vm.eventTypesSorted).toEqual([
+          ...wrapper.vm.$storage.event.getters.eventTypes(),
+          {
+            id: event.eventTypeId,
+            name: event.eventTypeName,
+          },
+        ]);
       });
     });
 

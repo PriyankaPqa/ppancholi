@@ -363,6 +363,7 @@ export default Vue.extend({
       localEvent,
       assistanceNumber,
       eventType: null,
+      initialEventType: null,
       languageMode: 'en',
       otherProvinces: [],
       regions: [],
@@ -467,7 +468,16 @@ export default Vue.extend({
     },
 
     eventTypesSorted(): Array<IOptionItem> {
-      return this.$storage.event.getters.eventTypes();
+      const eventTypes = this.$storage.event.getters.eventTypes();
+
+      if (eventTypes && eventTypes.length && this.initialEventType) {
+        return [
+          ...eventTypes,
+          this.initialEventType,
+        ];
+      }
+
+      return eventTypes;
     },
 
     relatedEventIds(): Array<string> {
@@ -617,7 +627,12 @@ export default Vue.extend({
     this.regions = regionsRes.value;
 
     if (this.localEvent && this.localEvent.responseDetails.eventType.optionItemId) {
-      this.eventType = this.eventTypesSorted.find((type) => type.id === this.localEvent.responseDetails.eventType.optionItemId);
+      this.eventType = {
+        id: this.localEvent.eventTypeId,
+        name: this.localEvent.eventTypeName,
+      };
+
+      this.initialEventType = { ...this.eventType };
     }
 
     // Set the default event type
