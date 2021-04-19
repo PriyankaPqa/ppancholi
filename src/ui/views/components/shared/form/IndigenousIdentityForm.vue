@@ -17,9 +17,9 @@
     <v-col cols="12" sm="6">
       <v-autocomplete-with-validation
         v-model="formCopy.indigenousType"
-        :loading="loadingIndigenousIdentities"
+        :loading="loading"
         clearable
-        :disabled="loadingIndigenousIdentities || !form.indigenousProvince"
+        :disabled="loading || !form.indigenousProvince"
         :label="`${$t('registration.personal_info.indigenousType.select.label')}*`"
         :items="indigenousTypesItems"
         :rules="rules.indigenousType"
@@ -37,8 +37,8 @@
         v-else
         v-model="formCopy.indigenousCommunityId"
         clearable
-        :loading="loadingIndigenousIdentities"
-        :disabled="loadingIndigenousIdentities || !form.indigenousType"
+        :loading="loading"
+        :disabled="loading || !form.indigenousType"
         :label="`${$t('registration.personal_info.indigenousCommunity.label')}*`"
         :items="indigenousCommunitiesItems"
         :rules="rules.indigenousCommunityId"
@@ -50,11 +50,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import utils from '@/entities/utils';
-import { ECanadaProvinces } from '@/types';
+
 import { TranslateResult } from 'vue-i18n';
-import { EIndigenousTypes } from '@/entities/beneficiary';
+import { EIndigenousTypes, IPerson } from '@/entities/beneficiary';
 import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import _cloneDeep from 'lodash/cloneDeep';
 
 export default Vue.extend({
   name: 'IndigenousIdentityForm',
@@ -70,23 +70,34 @@ export default Vue.extend({
     },
 
     form: {
-      type: Object,
+      type: Object as () => IPerson,
+      required: true,
+    },
+
+    canadianProvincesItems: {
+      type: Array as () => Record<string, unknown>[],
+      required: true,
+    },
+
+    indigenousTypesItems: {
+      type: Array as () => Record<string, TranslateResult>[],
+      required: true,
+    },
+
+    indigenousCommunitiesItems: {
+      type: Array as () => Record<string, string>[],
+      required: true,
+    },
+
+    loading: {
+      type: Boolean,
       required: true,
     },
   },
 
   data() {
     return {
-      formCopy: {
-        birthDate: { year: null, month: null, day: null },
-        gender: {},
-        preferredLanguage: {},
-        primarySpokenLanguage: {},
-        indigenousProvince: null,
-        indigenousType: null as EIndigenousTypes,
-        indigenousCommunityId: null,
-        indigenousCommunityOther: null,
-      },
+      formCopy: null as IPerson,
     };
   },
 
@@ -106,29 +117,23 @@ export default Vue.extend({
       };
     },
 
-    canadianProvincesItems(): Record<string, unknown>[] {
-      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
-    },
-
-    indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return this.$storage.registration.getters.indigenousTypesItems(this.form.indigenousProvince);
-    },
-
-    indigenousCommunitiesItems(): Record<string, string>[] {
-      return this.$storage.registration.getters.indigenousCommunitiesItems(this.form.indigenousProvince, this.form.indigenousType);
-    },
-
     otherIndigenousType(): boolean {
       return this.formCopy?.indigenousType === EIndigenousTypes.Other;
     },
 
-    loadingIndigenousIdentities(): boolean {
-      return this.$store.state.registration.loadingIndigenousIdentities;
+  },
+
+  watch: {
+    formCopy: {
+      deep: true,
+      handler(form: IPerson) {
+        this.$emit('change', form);
+      },
     },
   },
 
-  async mounted() {
-    this.formCopy = this.form;
+  async created() {
+    this.formCopy = _cloneDeep(this.form);
   },
 
   methods: {
@@ -137,7 +142,7 @@ export default Vue.extend({
       this.formCopy.indigenousCommunityId = null;
       this.formCopy.indigenousCommunityOther = null;
       if (provinceCode) {
-        await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
+        this.$emit('province-change', provinceCode);
       }
     },
 

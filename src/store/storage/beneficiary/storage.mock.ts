@@ -11,6 +11,10 @@ export const mockStorageBeneficiary = (): IStorageMock => ({
 
   mutations: {
     setPersonalInformation: jest.fn(),
+    setPerson: jest.fn(),
+    setIdentity: jest.fn(),
+    setIndigenousIdentity: jest.fn(),
+    setContactInformation: jest.fn(),
     setHomeAddress: jest.fn(),
     setTemporaryAddress: jest.fn(),
     setNoFixedHome: jest.fn(),

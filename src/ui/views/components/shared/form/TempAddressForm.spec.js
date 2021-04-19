@@ -108,9 +108,9 @@ describe('TempAddress.vue', () => {
 
   describe('Template', () => {
     describe('Event handlers', () => {
-      test('update event is emitted when form changes', async () => {
+      test('change event is emitted when form changes', async () => {
         wrapper.vm.form.country = 'test';
-        expect(wrapper.emitted('update')[0]).toEqual([wrapper.vm.form]);
+        expect(wrapper.emitted('change')[0]).toEqual([wrapper.vm.form]);
       });
 
       test('autocomplete triggers $streetAddressAutocomplete', async () => {

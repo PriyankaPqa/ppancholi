@@ -43,7 +43,7 @@
       v-if="showAddHouseholdMember"
       :show.sync="showAddHouseholdMember"
       :index="index"
-      :household-member="currentHouseholdMember" />
+      :person="currentHouseholdMember" />
     <rc-confirmation-dialog
       v-if="showDeleteDialog"
       submit-button-key="common.yes"

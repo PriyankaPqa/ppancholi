@@ -108,6 +108,23 @@ export class Person implements IPerson {
       return this.temporaryAddress.validate();
     }
 
+    setIdentity(data: IPersonData) {
+      this.firstName = data.firstName;
+      this.middleName = data.middleName;
+      this.lastName = data.lastName;
+      this.preferredName = data.preferredName;
+      this.gender = data.gender;
+      this.genderOther = data.genderOther;
+      this.birthDate = data.birthDate;
+    }
+
+    setIndigenousIdentity(data: IPersonData) {
+      this.indigenousProvince = data.indigenousProvince;
+      this.indigenousType = data.indigenousType;
+      this.indigenousCommunityId = data.indigenousCommunityId;
+      this.indigenousCommunityOther = data.indigenousCommunityOther;
+    }
+
     reset(): void {
       this.firstName = '';
       this.middleName = '';

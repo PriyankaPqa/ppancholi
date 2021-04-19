@@ -46,7 +46,17 @@
         @delete="showDeleteDialog(index)">
         <template #inline>
           <validation-observer :ref="`householdMember_${index}`">
-            <household-member-form :person="person" :same-address.sync="householdMembers[index].sameAddress" />
+            <household-member-form
+              :gender-items="genderItems"
+              :canadian-provinces-items="canadianProvincesItems"
+              :indigenous-communities-items="indigenousCommunitiesItems"
+              :indigenous-types-items="indigenousTypesItems"
+              :loading="loadingIndigenousIdentities"
+              :person="person"
+              :same-address.sync="householdMembers[index].sameAddress"
+              @identity-change="setIdentity($event)"
+              @indigenous-identity-change="setIndigenousIdentity($event)"
+              @province-change="onIndigenousProvinceChange($event)" />
           </validation-observer>
         </template>
         <household-member-template :person="person" />
@@ -76,7 +86,7 @@ import Vue from 'vue';
 import { IContactInformation } from '@/entities/value-objects/contact-information';
 import { IPerson } from '@/entities/value-objects/person';
 import { IBeneficiary } from '@/entities/beneficiary';
-import { VForm } from '@/types';
+import { ECanadaProvinces, IOptionItemData, VForm } from '@/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import HouseholdMemberSection from '@/ui/views/pages/registration/review/household-members/HouseholdMemberSection.vue';
 import HouseholdMemberForm from '@/ui/views/pages/registration/household-members/HouseholdMemberForm.vue';
@@ -84,6 +94,8 @@ import HouseholdMemberTemplate
   from '@/ui/views/pages/registration/review/household-members/HouseholdMemberTemplate.vue';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
+import utils from '@/entities/utils';
+import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
   name: 'ReviewRegistration',
@@ -129,6 +141,42 @@ export default Vue.extend({
     getPersonalInformation(): IContactInformation & IPerson {
       return this.$storage.beneficiary.getters.personalInformation();
     },
+
+    genderItems(): IOptionItemData[] {
+      return this.$storage.registration.getters.genders();
+    },
+
+    canadianProvincesItems(): Record<string, unknown>[] {
+      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+    },
+
+    indigenousTypesItems(): Record<string, TranslateResult>[] {
+      if (this.indexHouseholdMember !== -1) {
+        return this.$storage.registration.getters.indigenousTypesItems(
+          this.currentHouseholdMember.indigenousProvince,
+        );
+      }
+      return [];
+    },
+
+    indigenousCommunitiesItems(): Record<string, string>[] {
+      if (this.indexHouseholdMember !== -1) {
+        return this.$storage.registration.getters.indigenousCommunitiesItems(
+          this.currentHouseholdMember.indigenousProvince,
+          this.currentHouseholdMember.indigenousType,
+        );
+      }
+      return [];
+    },
+
+    loadingIndigenousIdentities(): boolean {
+      return this.$store.state.registration.loadingIndigenousIdentities;
+    },
+
+    currentHouseholdMember(): IPerson {
+      return this.householdMembersCopy[this.indexHouseholdMember];
+    },
+
   },
 
   created() {
@@ -169,6 +217,7 @@ export default Vue.extend({
     },
 
     editHouseholdMember(index: number) {
+      this.indexHouseholdMember = index;
       this.householdMembers[index].backup = _cloneDeep(this.beneficiary.householdMembers[index]);
       this.householdMembers[index].inlineEdit = true;
     },
@@ -232,6 +281,32 @@ export default Vue.extend({
     deleteHouseholdMember() {
       this.$storage.beneficiary.mutations.removeHouseholdMember(this.indexHouseholdMember);
       this.showHouseholdMemberDelete = false;
+    },
+
+    async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
+      await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
+    },
+
+    setIdentity(form: IPerson) {
+      if (this.currentHouseholdMember) {
+        this.currentHouseholdMember.setIdentity(form);
+        this.$storage.beneficiary.mutations.editHouseholdMember(
+          this.currentHouseholdMember,
+          this.indexHouseholdMember,
+          this.householdMembers[this.indexHouseholdMember].sameAddress,
+        );
+      }
+    },
+
+    setIndigenousIdentity(form: IPerson) {
+      if (this.currentHouseholdMember) {
+        this.currentHouseholdMember.setIndigenousIdentity(form);
+        this.$storage.beneficiary.mutations.editHouseholdMember(
+          this.currentHouseholdMember,
+          this.indexHouseholdMember,
+          this.householdMembers[this.indexHouseholdMember].sameAddress,
+        );
+      }
     },
   },
 });

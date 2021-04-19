@@ -157,8 +157,8 @@ export default Vue.extend({
       const province = p.indigenousProvince ? this.$t(`common.provinces.${ECanadaProvinces[p.indigenousProvince]}`) : '';
 
       const type = p.indigenousType ? this.$t(`common.indigenous.types.${EIndigenousTypes[p.indigenousType]}`) : '';
-      const community = this.$store.state.registration.indigenousIdentities[p.indigenousProvince]
-        .find((i: IIndigenousIdentityData) => i.id === p.indigenousCommunityId);
+      const community = p.indigenousProvince ? this.$store.state.registration.indigenousIdentities[p.indigenousProvince]
+        .find((i: IIndigenousIdentityData) => i.id === p.indigenousCommunityId) : null;
 
       if (this.otherIndigenousType) {
         return `${province}, ${type}, ${p.indigenousCommunityOther}`;

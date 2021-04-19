@@ -79,9 +79,7 @@ import {
   RcCountrySelectWithValidation,
 } from '@crctech/component-library';
 import { IAddress } from '@/entities/beneficiary';
-import utils from '@/entities/utils';
 import googleAutoCompleteMixin from '@/ui/mixins/address';
-import { ECanadaProvinces } from '@/types';
 
 export default Vue.extend({
   name: 'AddressForm',
@@ -100,6 +98,16 @@ export default Vue.extend({
       type: String,
       default: 'address',
     },
+
+    canadianProvincesItems: {
+      type: Array as () => Record<string, unknown>[],
+      required: true,
+    },
+
+    homeAddress: {
+      type: Object as () => IAddress,
+      required: true,
+    },
   },
 
   data() {
@@ -109,10 +117,6 @@ export default Vue.extend({
   },
 
   computed: {
-    homeAddress(): IAddress {
-      return this.$storage.beneficiary.getters.beneficiary().homeAddress;
-    },
-
     rules(): Record<string, unknown> {
       return {
         country: {
@@ -141,10 +145,6 @@ export default Vue.extend({
       };
     },
 
-    canadianProvincesItems(): Record<string, unknown>[] {
-      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
-    },
-
     isCanada(): boolean {
       return this.form?.country === 'CA';
     },
@@ -154,7 +154,7 @@ export default Vue.extend({
     form: {
       deep: true,
       handler(form: IAddress) {
-        this.$storage.beneficiary.mutations.setHomeAddress(form);
+        this.$emit('change', form);
       },
     },
   },

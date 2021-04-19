@@ -53,7 +53,6 @@
 <script lang="ts">
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import Vue from 'vue';
-import _merge from 'lodash/merge';
 import {
   mockPerson, mockAddress, mockContactInformation, mockCampGround, mockHouseholdMember,
 } from '@/entities/beneficiary';
@@ -95,7 +94,8 @@ export default Vue.extend({
   methods: {
     prefill() {
       this.$storage.registration.mutations.setIsPrivacyAgreed(true);
-      this.$storage.beneficiary.mutations.setPersonalInformation(_merge(mockContactInformation(), mockPerson()));
+      this.$storage.beneficiary.mutations.setPerson(mockPerson());
+      this.$storage.beneficiary.mutations.setContactInformation(mockContactInformation());
       this.$storage.beneficiary.mutations.setHomeAddress(mockAddress());
       this.$storage.beneficiary.mutations.setTemporaryAddress(mockCampGround());
       this.$storage.beneficiary.mutations.addHouseholdMember(mockHouseholdMember(), false);

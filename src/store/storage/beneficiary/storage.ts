@@ -20,6 +20,22 @@ export const makeStorage = (store: IStore): IStorage => ({
       store.commit('beneficiary/setPersonalInformation', payload);
     },
 
+    setPerson(payload: IPerson) {
+      store.commit('beneficiary/setPerson', payload);
+    },
+
+    setIdentity(payload: IPerson) {
+      store.commit('beneficiary/setIdentity', payload);
+    },
+
+    setIndigenousIdentity(payload: IPerson) {
+      store.commit('beneficiary/setIndigenousIdentity', payload);
+    },
+
+    setContactInformation(payload: IContactInformation) {
+      store.commit('beneficiary/setContactInformation', payload);
+    },
+
     setHomeAddress(payload: IAddress) {
       store.commit('beneficiary/setHomeAddress', payload);
     },

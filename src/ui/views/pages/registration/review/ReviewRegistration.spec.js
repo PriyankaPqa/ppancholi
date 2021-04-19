@@ -4,10 +4,18 @@ import PersonalInformationTemplate
   from '@/ui/views/pages/registration/review/personal-information/PersonalInformationTemplate.vue';
 import AddressesTemplate from '@/ui/views/pages/registration/review/addresses/AddressesTemplate.vue';
 import { mockStorage } from '@/store/storage';
-import { mockBeneficiary, mockContactInformation, mockPerson } from '@/entities/beneficiary';
+import {
+  mockBeneficiary,
+  mockContactInformation,
+  mockIndigenousCommunitiesItems,
+  mockIndigenousTypesItems,
+  mockPerson,
+} from '@/entities/beneficiary';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
+import utils from '@/entities/utils';
+import { ECanadaProvinces } from '@/types';
 import Component from './ReviewRegistration.vue';
 
 const localVue = createLocalVue();
@@ -197,6 +205,11 @@ describe('ReviewRegistration.vue', () => {
     });
 
     describe('editHouseholdMember', () => {
+      it('should set indexHouseholdMember ', () => {
+        wrapper.vm.editHouseholdMember(0);
+        expect(wrapper.vm.indexHouseholdMember).toBe(0);
+      });
+
       it('should save a backup for each member before editing', () => {
         expect(wrapper.vm.householdMembers[0].backup).toEqual(null);
         wrapper.vm.editHouseholdMember(0);
@@ -352,6 +365,61 @@ describe('ReviewRegistration.vue', () => {
         expect(wrapper.vm.showHouseholdMemberDelete).toEqual(false);
       });
     });
+
+    describe('onIndigenousProvinceChange', () => {
+      it('dispatches the action to fetch indigenous identities by province', async () => {
+        await wrapper.vm.onIndigenousProvinceChange(ECanadaProvinces.ON);
+        expect(storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledWith(ECanadaProvinces.ON);
+      });
+    });
+
+    describe('setIdentity', () => {
+      it('calls setIdentity of the class Person ', async () => {
+        wrapper.setData({
+          indexHouseholdMember: 0,
+        });
+        jest.spyOn(wrapper.vm.currentHouseholdMember, 'setIdentity');
+        await wrapper.vm.setIdentity(mockPerson());
+        expect(wrapper.vm.currentHouseholdMember.setIdentity).toHaveBeenCalledWith(mockPerson());
+      });
+
+      it('should save the new household member in the store', async () => {
+        wrapper.setData({
+          indexHouseholdMember: 0,
+        });
+        await wrapper.vm.setIdentity(mockPerson());
+        expect(wrapper.vm.$storage.beneficiary.mutations.editHouseholdMember)
+          .toHaveBeenCalledWith(
+            wrapper.vm.currentHouseholdMember,
+            0,
+            wrapper.vm.householdMembers[0].sameAddress,
+          );
+      });
+    });
+
+    describe('setIndigenousIdentity', () => {
+      it('calls setIndigenousIdentity of the class Person ', async () => {
+        wrapper.setData({
+          indexHouseholdMember: 0,
+        });
+        jest.spyOn(wrapper.vm.currentHouseholdMember, 'setIndigenousIdentity');
+        await wrapper.vm.setIndigenousIdentity(mockPerson());
+        expect(wrapper.vm.currentHouseholdMember.setIndigenousIdentity).toHaveBeenCalledWith(mockPerson());
+      });
+
+      it('should save the new household member in the store', async () => {
+        wrapper.setData({
+          indexHouseholdMember: 0,
+        });
+        await wrapper.vm.setIndigenousIdentity(mockPerson());
+        expect(wrapper.vm.$storage.beneficiary.mutations.editHouseholdMember)
+          .toHaveBeenCalledWith(
+            wrapper.vm.currentHouseholdMember,
+            0,
+            wrapper.vm.householdMembers[0].sameAddress,
+          );
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -370,6 +438,36 @@ describe('ReviewRegistration.vue', () => {
     describe('getPersonalInformation', () => {
       it('should return personalInformation', () => {
         expect(wrapper.vm.getPersonalInformation).toEqual(_merge(mockContactInformation(), mockPerson()));
+      });
+    });
+
+    describe('canadianProvincesItems', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.canadianProvincesItems).toEqual(utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
+      });
+    });
+
+    describe('indigenousTypesItems', () => {
+      it('returns the proper data', async () => {
+        wrapper.setData({
+          indexHouseholdMember: 0,
+        });
+        expect(wrapper.vm.indigenousTypesItems).toEqual(mockIndigenousTypesItems());
+      });
+    });
+
+    describe('indigenousCommunitiesItems', () => {
+      it('returns the proper data', async () => {
+        wrapper.setData({
+          indexHouseholdMember: 0,
+        });
+        expect(wrapper.vm.indigenousCommunitiesItems).toEqual(mockIndigenousCommunitiesItems());
+      });
+    });
+
+    describe('currentHouseholdMember', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.currentHouseholdMember).toEqual(wrapper.vm.householdMembersCopy[wrapper.vm.indexHouseholdMember]);
       });
     });
   });

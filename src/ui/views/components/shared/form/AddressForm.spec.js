@@ -1,25 +1,25 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockAddress, mockBeneficiary } from '@/entities/beneficiary';
-import { ECanadaProvinces } from '@/types';
+import { mockAddress } from '@/entities/beneficiary';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
-import utils from '@/entities/utils';
 import { mockStorage } from '@/store/storage';
-import Component from './AddressForm.vue';
+
 import 'regenerator-runtime';
+import utils from '@/entities/utils';
+import { ECanadaProvinces } from '@/types';
+import Component from './AddressForm.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe('Address.vue', () => {
+describe('AddressForm.vue', () => {
   let wrapper;
 
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
-      computed: {
-        homeAddress() {
-          return mockAddress();
-        },
+      propsData: {
+        homeAddress: mockAddress(),
+        canadianProvincesItems: utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
       },
       mocks: {
         $storage: storage,
@@ -28,18 +28,6 @@ describe('Address.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('homeAddress', () => {
-      it('should be linked to homeAddress from beneficiary', () => {
-        expect(wrapper.vm.homeAddress).toEqual(mockBeneficiary().homeAddress);
-      });
-    });
-
-    describe('canadianProvincesItems', () => {
-      it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
-      });
-    });
-
     describe('rules', () => {
       test('country', () => {
         expect(wrapper.vm.rules.country).toEqual({
@@ -93,11 +81,6 @@ describe('Address.vue', () => {
 
   describe('Template', () => {
     describe('Event handlers', () => {
-      test('setHomeAddress is called when form changes', async () => {
-        wrapper.vm.form.city = 'test';
-        expect(wrapper.vm.$storage.beneficiary.mutations.setHomeAddress).toHaveBeenCalledWith(wrapper.vm.form);
-      });
-
       test('autocomplete triggers $streetAddressAutocomplete', async () => {
         wrapper.vm.$streetAddressAutocomplete = jest.fn();
         const element = wrapper.findDataTest('address__street');
@@ -144,6 +127,11 @@ describe('Address.vue', () => {
           await element.vm.$emit('input');
           expect(wrapper.vm.$resetGeoLocation).toHaveBeenCalledTimes(1);
         });
+      });
+
+      test('change event is emitted when form changes', async () => {
+        wrapper.vm.form.country = 'test';
+        expect(wrapper.emitted('change')[0]).toEqual([wrapper.vm.form]);
       });
     });
 

@@ -1,7 +1,9 @@
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces } from '@/types';
 import { TemporaryAddress } from '../temporary-address';
-import { mockGenderOther, mockPerson } from './person.mock';
+import {
+  mockGenderOther, mockIdentityData, mockIndigenousData, mockPerson,
+} from './person.mock';
 import { EIndigenousTypes } from './person.types';
 import { Person } from './person';
 
@@ -250,6 +252,34 @@ describe('>>> Person', () => {
         p.indigenousCommunityOther = longText;
         const results = p.validate();
         expect(results).toContain(`indigenousCommunityOther exceeds max length of ${MAX_LENGTH_MD}`);
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('setIdentity', () => {
+      it('should set identity related attributes', () => {
+        const p = new Person();
+        p.setIdentity(mockPerson());
+        expect(p.firstName).toEqual(mockIdentityData().firstName);
+        expect(p.middleName).toEqual(mockIdentityData().middleName);
+        expect(p.lastName).toEqual(mockIdentityData().lastName);
+        expect(p.preferredName).toEqual(mockIdentityData().preferredName);
+        expect(p.gender).toEqual(mockIdentityData().gender);
+        expect(p.genderOther).toEqual(mockIdentityData().genderOther);
+        expect(p.birthDate).toEqual(mockIdentityData().birthDate);
+      });
+    });
+
+    describe('setIndigenousIdentity', () => {
+      it('should set indigenous identity related attributes', () => {
+        const p = new Person();
+        p.setIndigenousIdentity(mockPerson());
+
+        expect(p.indigenousProvince).toEqual(mockIndigenousData().indigenousProvince);
+        expect(p.indigenousType).toEqual(mockIndigenousData().indigenousType);
+        expect(p.indigenousCommunityId).toEqual(mockIndigenousData().indigenousCommunityId);
+        expect(p.indigenousCommunityOther).toEqual(mockIndigenousData().indigenousCommunityOther);
       });
     });
   });

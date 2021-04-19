@@ -36,7 +36,7 @@
       <v-select-with-validation
         v-model="formCopy.gender"
         :data-test="`${prefixDataTest}__gender`"
-        :items="gendersItems"
+        :items="genderItems"
         :item-text="(item) => $m(item.name)"
         return-object
         :rules="rules.gender"
@@ -96,10 +96,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
-import { IBirthDate } from '@/entities/beneficiary';
+import { IBirthDate, IPerson } from '@/entities/beneficiary';
 import { IOptionItemData } from '@/types';
 import months from '@/constants/months';
 import { VSelectWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import _cloneDeep from 'lodash/cloneDeep';
 
 export default Vue.extend({
   name: 'IdentityForm',
@@ -116,7 +117,7 @@ export default Vue.extend({
     },
 
     form: {
-      type: Object,
+      type: Object as () => IPerson,
       required: true,
     },
 
@@ -124,30 +125,22 @@ export default Vue.extend({
       type: Number,
       default: null,
     },
+
+    genderItems: {
+      type: Array as () => IOptionItemData[],
+      required: true,
+    },
+
   },
 
   data() {
     return {
       months,
-      formCopy: {
-        birthDate: { year: null, month: null, day: null },
-        gender: {},
-        genderOther: {},
-        preferredLanguage: {},
-        primarySpokenLanguage: {},
-        indigenousProvince: null,
-        indigenousType: null,
-        indigenousCommunityId: null,
-        indigenousCommunityOther: null,
-      },
+      formCopy: null as IPerson,
     };
   },
 
   computed: {
-
-    gendersItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.genders();
-    },
 
     rules(): Record<string, unknown> {
       return {
@@ -201,15 +194,24 @@ export default Vue.extend({
     },
   },
 
-  mounted() {
-    this.formCopy = this.form;
+  watch: {
+    formCopy: {
+      deep: true,
+      handler(form: IPerson) {
+        this.$emit('change', form);
+      },
+    },
+  },
+
+  created() {
+    this.formCopy = _cloneDeep(this.form);
     this.prePopulate();
   },
 
   methods: {
     prePopulate() {
       if (!this.formCopy.gender) {
-        this.formCopy.gender = this.gendersItems.find((option: IOptionItemData) => option.isDefault);
+        this.formCopy.gender = this.genderItems.find((option: IOptionItemData) => option.isDefault);
       }
     },
 

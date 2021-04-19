@@ -49,4 +49,7 @@ export interface IPersonData {
     temporaryAddress: ITemporaryAddress
 }
 
-export interface IPerson extends IPersonData, IEntity {}
+export interface IPerson extends IPersonData, IEntity {
+    setIdentity(data: IPersonData):void;
+    setIndigenousIdentity(data: IPersonData):void;
+}

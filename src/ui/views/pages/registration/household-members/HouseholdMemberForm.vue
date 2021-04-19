@@ -1,7 +1,19 @@
 <template>
   <v-row no-gutters>
-    <identity-form :form="person" prefix-data-test="houseHoldMember" />
-    <indigenous-identity-form :form="person" prefix-data-test="houseHoldMember" />
+    <identity-form
+      :form="person"
+      prefix-data-test="houseHoldMember"
+      :gender-items="genderItems"
+      @change="$emit('identity-change', $event)" />
+    <indigenous-identity-form
+      :canadian-provinces-items="canadianProvincesItems"
+      :indigenous-communities-items="indigenousCommunitiesItems"
+      :indigenous-types-items="indigenousTypesItems"
+      :loading="loading"
+      :form="person"
+      prefix-data-test="houseHoldMember"
+      @change="$emit('indigenous-identity-change', $event)"
+      @province-change="$emit('province-change', $event)" />
     <v-row class="grey-container pa-2 pb-0">
       <v-col class="pt-4 px-4">
         <div class="rc-body16 fw-bold">
@@ -41,6 +53,7 @@ import IndigenousIdentityForm from '@/ui/views/components/shared/form/Indigenous
 import months from '@/constants/months';
 import { IPerson } from '@/entities/value-objects/person';
 import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
+import { IOptionItemData } from '@/types';
 
 export default Vue.extend({
   name: 'HouseholdMemberForm',
@@ -56,7 +69,33 @@ export default Vue.extend({
       type: Object as () => IPerson,
       required: true,
     },
+
     sameAddress: {
+      type: Boolean,
+      required: true,
+    },
+
+    genderItems: {
+      type: Array as () => IOptionItemData[],
+      required: true,
+    },
+
+    canadianProvincesItems: {
+      type: Array as () => IOptionItemData[],
+      required: true,
+    },
+
+    indigenousCommunitiesItems: {
+      type: Array as () => IOptionItemData[],
+      required: true,
+    },
+
+    indigenousTypesItems: {
+      type: Array as () => IOptionItemData[],
+      required: true,
+    },
+
+    loading: {
       type: Boolean,
       required: true,
     },

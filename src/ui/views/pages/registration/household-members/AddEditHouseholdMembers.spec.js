@@ -1,9 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import { mockHouseholdMember } from '@/entities/value-objects/person';
+import { mockHouseholdMember, mockPerson } from '@/entities/value-objects/person';
 import { RcDialog } from '@crctech/component-library';
 import { mockCampGround } from '@/entities/value-objects/temporary-address';
+import { ECanadaProvinces } from '@/types';
+import HouseholdMemberForm from '@/ui/views/pages/registration/household-members/HouseholdMemberForm.vue';
 import Component from './AddEditHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -17,7 +19,7 @@ describe('AddEditHouseholdMembers.vue', () => {
       localVue,
       propsData: {
         show: true,
-        householdMember: mockHouseholdMember(),
+        person: mockHouseholdMember(),
         index: -1,
       },
       mocks: {
@@ -63,14 +65,58 @@ describe('AddEditHouseholdMembers.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.validate();
         expect(wrapper.vm.$storage.beneficiary.mutations.editHouseholdMember)
-          .toHaveBeenCalledWith(wrapper.vm.householdMember, 0, wrapper.vm.sameAddress);
+          .toHaveBeenCalledWith(wrapper.vm.person, 0, wrapper.vm.sameAddress);
       });
 
       it('should calls addHouseholdMember with proper params', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.validate();
         expect(wrapper.vm.$storage.beneficiary.mutations.addHouseholdMember)
-          .toHaveBeenCalledWith(wrapper.vm.householdMember, wrapper.vm.sameAddress);
+          .toHaveBeenCalledWith(wrapper.vm.person, wrapper.vm.sameAddress);
+      });
+    });
+
+    describe('onIndigenousProvinceChange', () => {
+      it('should be called when province is changing', () => {
+        jest.spyOn(wrapper.vm, 'onIndigenousProvinceChange');
+        const component = wrapper.findComponent(HouseholdMemberForm);
+        component.vm.$emit('province-change', ECanadaProvinces.ON);
+        expect(wrapper.vm.onIndigenousProvinceChange).toHaveBeenCalledWith(ECanadaProvinces.ON);
+      });
+
+      it('dispatches the action to fetch indigenous identities by province', async () => {
+        await wrapper.vm.onIndigenousProvinceChange(ECanadaProvinces.ON);
+        expect(storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledWith(ECanadaProvinces.ON);
+      });
+    });
+
+    describe('setIdentity', () => {
+      it('should be called when identity is changing', () => {
+        jest.spyOn(wrapper.vm, 'setIdentity');
+        const component = wrapper.findComponent(HouseholdMemberForm);
+        component.vm.$emit('identity-change', mockPerson());
+        expect(wrapper.vm.setIdentity).toHaveBeenCalledWith(mockPerson());
+      });
+
+      it('calls setIdentity of the class Person ', async () => {
+        jest.spyOn(wrapper.vm.person, 'setIdentity');
+        await wrapper.vm.setIdentity(mockPerson());
+        expect(wrapper.vm.person.setIdentity).toHaveBeenCalledWith(mockPerson());
+      });
+    });
+
+    describe('setIndigenousIdentity', () => {
+      it('should be called when identity is changing', () => {
+        jest.spyOn(wrapper.vm, 'setIndigenousIdentity');
+        const component = wrapper.findComponent(HouseholdMemberForm);
+        component.vm.$emit('indigenous-identity-change', mockPerson());
+        expect(wrapper.vm.setIndigenousIdentity).toHaveBeenCalledWith(mockPerson());
+      });
+
+      it('calls setIndigenousIdentity of the class Person ', async () => {
+        jest.spyOn(wrapper.vm.person, 'setIndigenousIdentity');
+        await wrapper.vm.setIndigenousIdentity(mockPerson());
+        expect(wrapper.vm.person.setIndigenousIdentity).toHaveBeenCalledWith(mockPerson());
       });
     });
   });
@@ -88,13 +134,13 @@ describe('AddEditHouseholdMembers.vue', () => {
   describe('Lifecycle hook', () => {
     describe('mounted', () => {
       it('should set sameAddress to true if household member and beneficiary has the same temporary address in edit mode', () => {
-        const householdMember = mockHouseholdMember();
-        householdMember.temporaryAddress = mockCampGround();
+        const person = mockHouseholdMember();
+        person.temporaryAddress = mockCampGround();
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             show: true,
-            householdMember,
+            person,
             index: 0,
           },
           mocks: {
@@ -108,12 +154,12 @@ describe('AddEditHouseholdMembers.vue', () => {
       });
 
       it('should set sameAddress to false if household member and beneficiary does not have the same temporary address in edit mode', () => {
-        const householdMember = mockHouseholdMember();
+        const person = mockHouseholdMember();
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             show: true,
-            householdMember,
+            person,
             index: 0,
           },
           mocks: {

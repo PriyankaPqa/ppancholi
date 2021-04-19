@@ -257,7 +257,7 @@ export default Vue.extend({
     form: {
       deep: true,
       handler(newForm: ITemporaryAddress) {
-        this.$emit('update', newForm);
+        this.$emit('change', newForm);
       },
     },
   },

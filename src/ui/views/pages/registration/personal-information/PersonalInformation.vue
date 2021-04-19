@@ -1,117 +1,49 @@
 <template>
   <v-row no-gutters>
-    <identity-form :form="form" :min-age-restriction="MIN_AGE_REGISTRATION" />
+    <identity-form
+      :form="person"
+      :gender-items="genderItems"
+      :min-age-restriction="MIN_AGE_REGISTRATION"
+      @change="setIdentity($event)" />
 
-    <v-row>
-      <v-col cols="12" sm="6">
-        <v-select-with-validation
-          v-model="form.preferredLanguage"
-          :data-test="`${prefixDataTest}__preferredLanguage`"
-          :items="preferredLanguagesItems"
-          :rules="rules.preferredLanguage"
-          :item-text="(item) => $m(item.name)"
-          return-object
-          :label="`${$t('registration.personal_info.preferredLanguage')}*`" />
-      </v-col>
+    <contact-information-form
+      :form="contactInformation"
+      :preferred-languages-items="preferredLanguagesItems"
+      :primary-spoken-languages-items="primarySpokenLanguagesItems"
+      @change="setContactInformation($event)" />
 
-      <v-col cols="12" sm="6">
-        <v-text-field-with-validation
-          v-if="form.preferredLanguage && form.preferredLanguage.isOther"
-          v-model="form.preferredLanguageOther"
-          :data-test="`${prefixDataTest}__preferredLanguageOther`"
-          :rules="rules.preferredLanguageOther"
-          :label="`${$t('registration.personal_info.preferredLanguage.other')}`" />
-      </v-col>
-
-      <v-col cols="12" sm="6">
-        <v-select-with-validation
-          v-model="form.primarySpokenLanguage"
-          :data-test="`${prefixDataTest}__primarySpokenLanguage`"
-          :items="primarySpokenLanguagesItems"
-          :rules="rules.primarySpokenLanguage"
-          :item-text="(item) => $m(item.name)"
-          return-object
-          :label="$t('registration.personal_info.primarySpokenLanguage')"
-          @change="primarySpokenLanguageChange($event)" />
-      </v-col>
-
-      <v-col cols="12" sm="6">
-        <v-text-field-with-validation
-          v-if="form.primarySpokenLanguage && form.primarySpokenLanguage.isOther"
-          v-model="form.primarySpokenLanguageOther"
-          :data-test="`${prefixDataTest}__primarySpokenLanguageOther`"
-          :rules="rules.primarySpokenLanguageOther"
-          :label="`${$t('registration.personal_info.primarySpokenLanguage.pleaseSpecify')}`" />
-      </v-col>
-
-      <v-col cols="12" sm="6">
-        <rc-phone-with-validation
-          v-model="form.homePhone"
-          :rules="rules.homePhone"
-          outlined
-          :label="homePhoneLabel"
-          :data-test="`${prefixDataTest}__homePhone`" />
-      </v-col>
-
-      <v-col cols="12" sm="6">
-        <rc-phone-with-validation
-          v-model="form.mobilePhone"
-          :rules="rules.mobilePhone"
-          outlined
-          :label="$t('registration.personal_info.mobilePhoneNumber')"
-          :data-test="`${prefixDataTest}__mobilePhone`" />
-      </v-col>
-
-      <v-col cols="12" sm="6">
-        <rc-phone-with-validation
-          v-model="form.otherPhone"
-          :rules="rules.otherPhone"
-          outlined
-          :label="$t('registration.personal_info.alternatePhoneNumber')"
-          :data-test="`${prefixDataTest}__otherPhone`" />
-      </v-col>
-
-      <v-col cols="12" sm="6">
-        <v-text-field-with-validation
-          v-model="form.otherPhoneExtension"
-          :data-test="`${prefixDataTest}__otherPhoneExtension`"
-          :rules="rules.otherPhoneExtension"
-          :label="$t('registration.personal_info.otherPhoneExtension')" />
-      </v-col>
-
-      <v-col cols="12" sm="6">
-        <v-text-field-with-validation v-model="form.email" :data-test="`${prefixDataTest}__email`" :rules="rules.email" :label="emailLabel" />
-      </v-col>
-    </v-row>
-
-    <indigenous-identity-form :form="form" />
+    <indigenous-identity-form
+      :form="person"
+      :canadian-provinces-items="canadianProvincesItems"
+      :indigenous-communities-items="indigenousCommunitiesItems"
+      :indigenous-types-items="indigenousTypesItems"
+      :loading="loadingIndigenousIdentities"
+      @change="setIndigenousIdentity($event)"
+      @province-change="onIndigenousProvinceChange($event)" />
   </v-row>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import {
-  VSelectWithValidation, VTextFieldWithValidation, RcPhoneWithValidation,
-} from '@crctech/component-library';
-import {
+  ECanadaProvinces,
   IOptionItemData,
 } from '@/types';
-import { IContactInformation, IPerson } from '@/entities/beneficiary';
-
+import { IBeneficiary, IContactInformation, IPerson } from '@/entities/beneficiary';
 import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
 import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
-
-import { MAX_LENGTH_MD, MIN_AGE_REGISTRATION } from '@/constants/validations';
+import ContactInformationForm from '@/ui/views/components/shared/form/ContactInformationForm.vue';
+import { MIN_AGE_REGISTRATION } from '@/constants/validations';
+import utils from '@/entities/utils';
+import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
   name: 'PersonalInformation',
 
   components: {
-    VSelectWithValidation,
-    VTextFieldWithValidation,
-    RcPhoneWithValidation,
     IndigenousIdentityForm,
     IdentityForm,
+    ContactInformationForm,
   },
 
   props: {
@@ -124,58 +56,20 @@ export default Vue.extend({
   data() {
     return {
       MIN_AGE_REGISTRATION,
-      form: null,
     };
   },
 
   computed: {
-    personalInformation(): IContactInformation & IPerson {
-      return this.$storage.beneficiary.getters.personalInformation();
+    person(): IPerson {
+      return this.beneficiary.person;
     },
 
-    rules(): Record<string, unknown> {
-      return {
-
-        preferredLanguage: {
-          required: true,
-        },
-        preferredLanguageOther: {
-          max: MAX_LENGTH_MD,
-        },
-        primarySpokenLanguageOther: {
-          max: MAX_LENGTH_MD,
-        },
-        homePhone: {
-          hasPhoneOrEmail: { hasPhoneOrEmail: this.hasHomePhoneAndEmail },
-          phone: true,
-        },
-        mobilePhone: {
-          phone: true,
-        },
-        otherPhone: {
-          phone: true,
-        },
-        otherPhoneExtension: {
-          max: MAX_LENGTH_MD,
-        },
-        email: {
-          hasPhoneOrEmail: { hasPhoneOrEmail: this.hasHomePhoneAndEmail },
-          email: true,
-          max: MAX_LENGTH_MD,
-        },
-      };
+    contactInformation(): IContactInformation {
+      return this.beneficiary.contactInformation;
     },
 
-    emailLabel(): string {
-      return `${this.$t('registration.personal_info.emailAddress')}${this.form.homePhone?.number ? '' : '*'}`;
-    },
-
-    homePhoneLabel(): string {
-      return `${this.$t('registration.personal_info.homePhoneNumber')}${this.form.email ? '' : '*'}`;
-    },
-
-    hasHomePhoneAndEmail(): boolean {
-      return !!(this.form.homePhone?.number || this.form.email);
+    beneficiary(): IBeneficiary {
+      return this.$storage.beneficiary.getters.beneficiary();
     },
 
     preferredLanguagesItems(): IOptionItemData[] {
@@ -185,41 +79,44 @@ export default Vue.extend({
     primarySpokenLanguagesItems(): IOptionItemData[] {
       return this.$storage.registration.getters.primarySpokenLanguages();
     },
-  },
 
-  watch: {
-    form: {
-      deep: true,
-      handler(form: IContactInformation & IPerson) {
-        this.$storage.beneficiary.mutations.setPersonalInformation(form);
-      },
+    genderItems(): IOptionItemData[] {
+      return this.$storage.registration.getters.genders();
     },
-  },
 
-  created() {
-    this.form = this.personalInformation;
+    canadianProvincesItems(): Record<string, unknown>[] {
+      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+    },
 
-    this.prePopulate();
+    indigenousTypesItems(): Record<string, TranslateResult>[] {
+      return this.$storage.registration.getters.indigenousTypesItems(this.person.indigenousProvince);
+    },
+
+    indigenousCommunitiesItems(): Record<string, string>[] {
+      return this.$storage.registration.getters.indigenousCommunitiesItems(this.person.indigenousProvince, this.person.indigenousType);
+    },
+
+    loadingIndigenousIdentities(): boolean {
+      return this.$store.state.registration.loadingIndigenousIdentities;
+    },
+
   },
 
   methods: {
-    prePopulate() {
-      if (!this.form.preferredLanguage) {
-        this.form.preferredLanguage = this.findDefault(this.preferredLanguagesItems);
-      }
-      if (!this.form.primarySpokenLanguage) {
-        this.form.primarySpokenLanguage = this.findDefault(this.primarySpokenLanguagesItems);
-      }
+    async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
+      await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
     },
 
-    findDefault(source: IOptionItemData[]): IOptionItemData {
-      return source?.find((option) => option.isDefault);
+    setIdentity(form: IPerson) {
+      this.$storage.beneficiary.mutations.setIdentity(form);
     },
 
-    primarySpokenLanguageChange(lang: IOptionItemData) {
-      if (!lang.isOther) {
-        this.form.primarySpokenLanguageOther = '';
-      }
+    setIndigenousIdentity(form: IPerson) {
+      this.$storage.beneficiary.mutations.setIndigenousIdentity(form);
+    },
+
+    setContactInformation(form: IContactInformation) {
+      this.$storage.beneficiary.mutations.setContactInformation(form);
     },
   },
 });

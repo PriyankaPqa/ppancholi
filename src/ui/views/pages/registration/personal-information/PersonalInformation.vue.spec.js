@@ -1,11 +1,18 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
+  mockBeneficiary,
+  mockContactInformation, mockGenders, mockIndigenousCommunitiesItems, mockIndigenousTypesItems,
+  mockPerson,
   mockPreferredLanguages,
-  mockPrimarySpokenLanguage,
   mockPrimarySpokenLanguages,
 } from '@/entities/beneficiary';
-import { MAX_LENGTH_MD } from '@/constants/validations';
+
 import { mockStorage } from '@/store/storage';
+import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
+import ContactInformationForm from '@/ui/views/components/shared/form/ContactInformationForm.vue';
+import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
+import utils from '@/entities/utils';
+import { ECanadaProvinces } from '@/types';
 import Component from './PersonalInformation.vue';
 
 const localVue = createLocalVue();
@@ -29,19 +36,21 @@ describe('PersonalInformation.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('hasHomePhoneAndEmail', () => {
-      it('returns true if either email or home phone number is provided', async () => {
-        wrapper.vm.$set(wrapper.vm.form, 'email', '');
+    describe('person', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.person).toEqual(mockPerson());
+      });
+    });
 
-        wrapper.vm.$set(wrapper.vm.form, 'homePhone', {
-          countryISO2: 'CA',
-          number: 123,
-          e164Number: 123,
-        });
+    describe('contactInformation', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.contactInformation).toEqual(mockContactInformation());
+      });
+    });
 
-        expect(wrapper.vm.hasHomePhoneAndEmail).toBeTruthy();
-        wrapper.vm.$set(wrapper.vm.form, 'homePhone', null);
-        expect(wrapper.vm.hasHomePhoneAndEmail).toBeFalsy();
+    describe('beneficiary', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.beneficiary).toEqual(mockBeneficiary());
       });
     });
 
@@ -57,193 +66,102 @@ describe('PersonalInformation.vue', () => {
       });
     });
 
-    describe('rules', () => {
-      test('preferredLanguage', () => {
-        expect(wrapper.vm.rules.preferredLanguage).toEqual({
-          required: true,
-        });
+    describe('genderItems', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.genderItems).toEqual(mockGenders());
       });
+    });
 
-      test('preferredLanguageOther', () => {
-        expect(wrapper.vm.rules.preferredLanguageOther).toEqual({
-          max: MAX_LENGTH_MD,
-        });
+    describe('canadianProvincesItems', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.canadianProvincesItems).toEqual(utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
       });
+    });
 
-      test('primarySpokenLanguageOther', () => {
-        expect(wrapper.vm.rules.primarySpokenLanguageOther).toEqual({
-          max: MAX_LENGTH_MD,
-        });
+    describe('indigenousTypesItems', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.indigenousTypesItems).toEqual(mockIndigenousTypesItems());
       });
+    });
 
-      test('homePhone', () => {
-        expect(wrapper.vm.rules.homePhone).toEqual({
-          hasPhoneOrEmail: { hasPhoneOrEmail: wrapper.vm.hasHomePhoneAndEmail },
-          phone: true,
-        });
-      });
-
-      test('mobilePhone', () => {
-        expect(wrapper.vm.rules.mobilePhone).toEqual({
-          phone: true,
-        });
-      });
-
-      test('otherPhone', () => {
-        expect(wrapper.vm.rules.otherPhone).toEqual({
-          phone: true,
-        });
-      });
-
-      test('otherPhoneExtension', () => {
-        expect(wrapper.vm.rules.otherPhoneExtension).toEqual({
-          max: MAX_LENGTH_MD,
-        });
-      });
-
-      test('email', () => {
-        expect(wrapper.vm.rules.email).toEqual({
-          hasPhoneOrEmail: { hasPhoneOrEmail: wrapper.vm.hasHomePhoneAndEmail },
-          email: true,
-          max: MAX_LENGTH_MD,
-        });
+    describe('indigenousCommunitiesItems', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.indigenousCommunitiesItems).toEqual(mockIndigenousCommunitiesItems());
       });
     });
   });
 
   describe('Template', () => {
-    describe('Event handlers', () => {
-      test('setPersonalInformation is called when form change', async () => {
-        wrapper.vm.form.firstName = 'test';
-        await wrapper.vm.$nextTick();
-        expect(wrapper.vm.$storage.beneficiary.mutations.setPersonalInformation).toHaveBeenCalledWith(wrapper.vm.form);
-      });
+    it('should render identity form', () => {
+      const component = wrapper.findComponent(IdentityForm);
+      expect(component.exists()).toBeTruthy();
     });
 
-    describe('Life cycle hooks', () => {
-      test('data are pre populated in the created method', async () => {
-        wrapper.vm.prePopulate = jest.fn();
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.prePopulate).toHaveBeenCalledTimes(1);
-      });
-    });
-  });
-
-  describe('Validation rules', () => {
-    describe('Preferred language', () => {
-      it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__preferredLanguage');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.preferredLanguage);
-      });
+    it('should render contact information form', () => {
+      const component = wrapper.findComponent(ContactInformationForm);
+      expect(component.exists()).toBeTruthy();
     });
 
-    describe('Preferred language other', () => {
-      it('is linked to proper rules', async () => {
-        wrapper.vm.$set(wrapper.vm.form, 'preferredLanguage', {
-          isOther: true,
-        });
-
-        await wrapper.vm.$nextTick();
-
-        const element = wrapper.findDataTest('personalInfo__preferredLanguageOther');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.preferredLanguageOther);
-      });
-    });
-
-    describe('Primary spoken language other', () => {
-      it('is linked to proper rules', async () => {
-        wrapper.vm.$set(wrapper.vm.form, 'primarySpokenLanguage', {
-          isOther: true,
-        });
-
-        await wrapper.vm.$nextTick();
-
-        const element = wrapper.findDataTest('personalInfo__primarySpokenLanguageOther');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.primarySpokenLanguageOther);
-      });
-    });
-
-    describe('Home phone', () => {
-      it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__homePhone');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.homePhone);
-      });
-    });
-
-    describe('Mobile phone', () => {
-      it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__mobilePhone');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.mobilePhone);
-      });
-    });
-
-    describe('Other phone', () => {
-      it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__otherPhone');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.otherPhone);
-      });
-    });
-
-    describe('Other phone extension', () => {
-      it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__otherPhoneExtension');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.otherPhoneExtension);
-      });
-    });
-
-    describe('Email', () => {
-      it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__email');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.email);
-      });
+    it('should render indigenous identity form', () => {
+      const component = wrapper.findComponent(IndigenousIdentityForm);
+      expect(component.exists()).toBeTruthy();
     });
   });
 
   describe('Methods', () => {
-    describe('prePopulate', () => {
-      it('should assign default value for preferredLanguage', () => {
-        wrapper.vm.form.preferredLanguage = null;
-        const expected = wrapper.vm.preferredLanguagesItems.find((option) => option.isDefault);
-
-        wrapper.vm.prePopulate();
-        expect(wrapper.vm.form.preferredLanguage).toEqual(expected);
+    describe('onIndigenousProvinceChange', () => {
+      it('should be called when province is changing', () => {
+        jest.spyOn(wrapper.vm, 'onIndigenousProvinceChange');
+        const component = wrapper.findComponent(IndigenousIdentityForm);
+        component.vm.$emit('province-change', ECanadaProvinces.ON);
+        expect(wrapper.vm.onIndigenousProvinceChange).toHaveBeenCalledWith(ECanadaProvinces.ON);
       });
 
-      it('should assign default value for primarySpokenLanguage', () => {
-        wrapper.vm.form.primarySpokenLanguage = null;
-        const expected = wrapper.vm.primarySpokenLanguagesItems.find((option) => option.isDefault);
-
-        wrapper.vm.prePopulate();
-        expect(wrapper.vm.form.primarySpokenLanguage).toEqual(expected);
+      it('dispatches the action to fetch indigenous identities by province', async () => {
+        await wrapper.vm.onIndigenousProvinceChange(ECanadaProvinces.ON);
+        expect(storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledWith(ECanadaProvinces.ON);
       });
     });
 
-    describe('findDefault', () => {
-      it('should return the default option of the list', () => {
-        const expected = wrapper.vm.primarySpokenLanguagesItems.find((option) => option.isDefault);
-        const res = wrapper.vm.findDefault(wrapper.vm.primarySpokenLanguagesItems);
-        expect(res).toEqual(expected);
+    describe('setIndigenousIdentity', () => {
+      it('should be called when indigenous identity is changed', () => {
+        jest.spyOn(wrapper.vm, 'setIndigenousIdentity');
+        const component = wrapper.findComponent(IndigenousIdentityForm);
+        component.vm.$emit('change', mockPerson());
+        expect(wrapper.vm.setIndigenousIdentity).toHaveBeenCalledWith(mockPerson());
+      });
+
+      it('triggers mutations setPerson', async () => {
+        await wrapper.vm.setIndigenousIdentity(mockPerson());
+        expect(storage.beneficiary.mutations.setIndigenousIdentity).toHaveBeenCalledWith(mockPerson());
       });
     });
 
-    describe('primarySpokenLanguageChange', () => {
-      it('should erase primarySpokenLanguageOther if the language is not other', async () => {
-        await wrapper.setData({
-          form: {
-            primarySpokenLanguageOther: 'test',
-          },
-        });
-        wrapper.vm.primarySpokenLanguageChange(mockPrimarySpokenLanguage());
-        expect(wrapper.vm.form.primarySpokenLanguageOther).toBe('');
+    describe('setIdentity', () => {
+      it('should be called when identity is changed', () => {
+        jest.spyOn(wrapper.vm, 'setIdentity');
+        const component = wrapper.findComponent(IdentityForm);
+        component.vm.$emit('change', mockPerson());
+        expect(wrapper.vm.setIdentity).toHaveBeenCalledWith(mockPerson());
       });
 
-      it('should be called when primary spoken language changes', () => {
-        jest.spyOn(wrapper.vm, 'primarySpokenLanguageChange');
-        const el = wrapper.findDataTest('personalInfo__primarySpokenLanguage');
-        el.vm.$emit('change', mockPrimarySpokenLanguage());
-        expect(wrapper.vm.primarySpokenLanguageChange).toHaveBeenCalledTimes(1);
+      it('triggers mutations setIdentity', async () => {
+        await wrapper.vm.setIdentity(mockPerson());
+        expect(storage.beneficiary.mutations.setIdentity).toHaveBeenCalledWith(mockPerson());
+      });
+    });
+
+    describe('setContactInformation', () => {
+      it('should be called when contact information is changed', () => {
+        jest.spyOn(wrapper.vm, 'setContactInformation');
+        const component = wrapper.findComponent(ContactInformationForm);
+        component.vm.$emit('change', mockContactInformation());
+        expect(wrapper.vm.setContactInformation).toHaveBeenCalledWith(mockContactInformation());
+      });
+
+      it('triggers mutations setContactInformation', async () => {
+        await wrapper.vm.setContactInformation(mockContactInformation());
+        expect(storage.beneficiary.mutations.setContactInformation).toHaveBeenCalledWith(mockContactInformation());
       });
     });
   });

@@ -32,6 +32,22 @@ const mutations = {
     state.beneficiary.person = new Person(_cloneDeep(payload));
   },
 
+  setPerson(state: IState, payload: IPerson) {
+    state.beneficiary.person = new Person(_cloneDeep(payload));
+  },
+
+  setIdentity(state: IState, payload: IPerson) {
+    state.beneficiary.person.setIdentity(_cloneDeep(payload));
+  },
+
+  setIndigenousIdentity(state: IState, payload: IPerson) {
+    state.beneficiary.person.setIndigenousIdentity(_cloneDeep(payload));
+  },
+
+  setContactInformation(state: IState, payload: IContactInformation) {
+    state.beneficiary.contactInformation = new ContactInformation(_cloneDeep(payload));
+  },
+
   setTemporaryAddress(state: IState, payload: ITemporaryAddress) {
     state.beneficiary.person.temporaryAddress = _cloneDeep(payload);
   },

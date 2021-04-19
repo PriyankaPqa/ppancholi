@@ -38,7 +38,7 @@ export const mockGenders = (): IOptionItemData[] => [
   mockGenderMale(),
 ];
 
-export const mockPersonData = (): IPersonData => ({
+export const mockIdentityData = (): Partial<IPersonData> => ({
   birthDate: {
     year: 1999,
     month: 2,
@@ -50,10 +50,18 @@ export const mockPersonData = (): IPersonData => ({
   gender: mockGenders()[0],
   genderOther: '',
   preferredName: 'preferredName',
+});
+
+export const mockIndigenousData = (): Partial<IPersonData> => ({
   indigenousProvince: ECanadaProvinces.AB,
   indigenousType: EIndigenousTypes.FirstNations,
   indigenousCommunityId: 'guid-community',
   indigenousCommunityOther: '',
+});
+
+export const mockPersonData = (): IPersonData => <IPersonData>({
+  ...mockIdentityData(),
+  ...mockIndigenousData(),
   temporaryAddress: mockCampGround(),
 });
 
@@ -69,9 +77,9 @@ export const mockHouseholdMemberData = (): IPersonData => ({
   gender: mockGenders()[0],
   genderOther: '',
   preferredName: '',
-  indigenousProvince: null,
-  indigenousType: null,
-  indigenousCommunityId: null,
+  indigenousProvince: ECanadaProvinces.AB,
+  indigenousType: EIndigenousTypes.FirstNations,
+  indigenousCommunityId: 'guid-community',
   indigenousCommunityOther: '',
   temporaryAddress: mockFriendsFamily(),
 });

@@ -10,6 +10,10 @@ export interface IStorage {
 
   mutations: {
     setPersonalInformation(payload: IContactInformation & IPerson): void;
+    setPerson(payload: IPerson): void;
+    setIdentity(payload: IPerson): void;
+    setIndigenousIdentity(payload: IPerson): void;
+    setContactInformation(payload: IContactInformation): void;
     setHomeAddress(payload: IAddress): void;
     setTemporaryAddress(payload: ITemporaryAddress): void;
     setNoFixedHome(payload: boolean): void;
@@ -32,6 +36,10 @@ export interface IStorageMock {
 
   mutations: {
     setPersonalInformation: jest.Mock<void>;
+    setPerson: jest.Mock<void>;
+    setIdentity: jest.Mock<void>;
+    setIndigenousIdentity: jest.Mock<void>;
+    setContactInformation: jest.Mock<void>;
     setHomeAddress: jest.Mock<void>;
     setTemporaryAddress: jest.Mock<void>;
     setNoFixedHome: jest.Mock<void>;

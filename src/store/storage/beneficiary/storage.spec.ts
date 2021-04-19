@@ -31,6 +31,24 @@ describe('>>> Registration Storage', () => {
       expect(store.commit).toBeCalledWith('beneficiary/setPersonalInformation', payload);
     });
 
+    it('should proxy setIdentity', () => {
+      const payload = mockPerson();
+      storage.mutations.setIdentity(payload);
+      expect(store.commit).toBeCalledWith('beneficiary/setIdentity', payload);
+    });
+
+    it('should proxy setIndigenousIdentity', () => {
+      const payload = mockPerson();
+      storage.mutations.setIndigenousIdentity(payload);
+      expect(store.commit).toBeCalledWith('beneficiary/setIndigenousIdentity', payload);
+    });
+
+    it('should proxy setContactInformation', () => {
+      const payload = mockContactInformation();
+      storage.mutations.setContactInformation(payload);
+      expect(store.commit).toBeCalledWith('beneficiary/setContactInformation', payload);
+    });
+
     it('should proxy setHomeAddress', () => {
       const payload = mockAddress();
       storage.mutations.setHomeAddress(payload);

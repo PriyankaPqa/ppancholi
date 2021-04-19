@@ -49,6 +49,24 @@ describe('>>> Team Module', () => {
       });
     });
 
+    describe('setPerson', () => {
+      it('sets person of a beneficiary', () => {
+        store = mockStore();
+        const payload = mockPerson();
+        store.commit('beneficiary/setPerson', payload);
+        expect(store.state.beneficiary.beneficiary.person).toEqual(mockPerson());
+      });
+    });
+
+    describe('setContactInformation', () => {
+      it('sets contact information of a beneficiary', () => {
+        store = mockStore();
+        const payload = mockContactInformation();
+        store.commit('beneficiary/setContactInformation', payload);
+        expect(store.state.beneficiary.beneficiary.contactInformation).toEqual(mockContactInformation());
+      });
+    });
+
     describe('setHomeAddress', () => {
       it('sets home address of the beneficiary', () => {
         store = mockStore();

@@ -25,6 +25,7 @@ describe('IdentityForm.vue', () => {
       localVue,
       propsData: {
         form: _merge(mockContactInformation(), mockPersonModified),
+        genderItems: mockGenders(),
       },
       mocks: {
         $storage: storage,
@@ -32,13 +33,14 @@ describe('IdentityForm.vue', () => {
     });
   });
 
-  describe('Computed', () => {
-    describe('gendersItems', () => {
-      it('returns the proper data', async () => {
-        expect(wrapper.vm.gendersItems).toEqual(mockGenders());
-      });
+  describe('Template', () => {
+    test('change event is emitted when form changes', async () => {
+      wrapper.vm.formCopy.firstName = 'test';
+      expect(wrapper.emitted('change')[0]).toEqual([wrapper.vm.formCopy]);
     });
+  });
 
+  describe('Computed', () => {
     describe('computedBirthdate', () => {
       it('returns an birthdate object', () => {
         const res = wrapper.vm.computedBirthdate;
@@ -110,6 +112,7 @@ describe('IdentityForm.vue', () => {
           propsData: {
             form: _merge(mockContactInformation(), mockPersonModified),
             minAgeRestriction: 15,
+            genderItems: mockGenders(),
           },
         });
         expect(wrapper.vm.birthDateRule).toEqual({
@@ -128,15 +131,11 @@ describe('IdentityForm.vue', () => {
     });
   });
 
-  describe('Template', () => {
-
-  });
-
   describe('Methods', () => {
     describe('prePopulate', () => {
       it('should assign default value for gender', () => {
         wrapper.vm.formCopy.gender = null;
-        const defaultGender = wrapper.vm.gendersItems.find((option) => option.isDefault);
+        const defaultGender = wrapper.vm.genderItems.find((option) => option.isDefault);
 
         wrapper.vm.prePopulate();
         expect(wrapper.vm.formCopy.gender).toEqual(defaultGender);
@@ -151,7 +150,7 @@ describe('IdentityForm.vue', () => {
           },
         });
         wrapper.vm.genderChange(mockGenderFemale());
-        expect(wrapper.vm.form.primarySpokenLanguageOther).toBe('');
+        expect(wrapper.vm.formCopy.primarySpokenLanguageOther).toBe('');
       });
 
       it('should be called when primary spoken language changes', () => {
@@ -169,6 +168,7 @@ describe('IdentityForm.vue', () => {
         localVue,
         propsData: {
           form: _merge(mockContactInformation(), mockPersonModified),
+          genderItems: mockGenders(),
         },
       });
     });
@@ -210,7 +210,7 @@ describe('IdentityForm.vue', () => {
 
     describe('Gender other', () => {
       it('is linked to proper rules', async () => {
-        wrapper.vm.$set(wrapper.vm.form, 'gender', {
+        wrapper.vm.$set(wrapper.vm.formCopy, 'gender', {
           isOther: true,
         });
 
@@ -245,9 +245,9 @@ describe('IdentityForm.vue', () => {
   });
 
   describe('Life cycle hooks', () => {
-    test('data are pre populated in the mounted method', async () => {
+    test('data are pre populated in the created method', async () => {
       wrapper.vm.prePopulate = jest.fn();
-      wrapper.vm.$options.mounted.forEach((hook) => {
+      wrapper.vm.$options.created.forEach((hook) => {
         hook.call(wrapper.vm);
       });
       expect(wrapper.vm.prePopulate).toHaveBeenCalledTimes(1);

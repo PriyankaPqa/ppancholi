@@ -25,14 +25,18 @@
     </v-col>
 
     <template v-if="!noFixedHome">
-      <address-form prefix-data-test="address" />
+      <address-form
+        :canadian-provinces-items="canadianProvincesItems"
+        prefix-data-test="address"
+        :home-address="homeAddress"
+        @change="setHomeAddress($event)" />
     </template>
 
     <temp-address-form
       :temporary-address="temporaryAddress"
       :hide-remaining-home="noFixedHome"
       prefix-data-test="tempAddress"
-      @update="setTemporaryAddress($event)" />
+      @change="setTemporaryAddress($event)" />
   </v-row>
 </template>
 
@@ -43,6 +47,9 @@ import { VCheckboxWithValidation } from '@crctech/component-library';
 import AddressForm from '@/ui/views/components/shared/form/AddressForm.vue';
 import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
 import { ITemporaryAddress } from '@/entities/value-objects/temporary-address';
+import utils from '@/entities/utils';
+import { ECanadaProvinces } from '@/types';
+import { IAddress } from '@/entities/value-objects/address';
 
 export default Vue.extend({
   name: 'Addresses',
@@ -58,6 +65,10 @@ export default Vue.extend({
       return this.$storage.beneficiary.getters.beneficiary().person.temporaryAddress;
     },
 
+    homeAddress(): IAddress {
+      return this.$storage.beneficiary.getters.beneficiary().homeAddress;
+    },
+
     noFixedHome: {
       get(): boolean {
         return this.$store.state.beneficiary.noFixedHome;
@@ -66,11 +77,19 @@ export default Vue.extend({
         this.$storage.beneficiary.mutations.setNoFixedHome(checked);
       },
     },
+
+    canadianProvincesItems(): Record<string, unknown>[] {
+      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+    },
   },
 
   methods: {
     setTemporaryAddress(tmpAddress: ITemporaryAddress) {
       this.$storage.beneficiary.mutations.setTemporaryAddress(tmpAddress);
+    },
+
+    setHomeAddress(homeAddress: IAddress) {
+      this.$storage.beneficiary.mutations.setHomeAddress(homeAddress);
     },
   },
 

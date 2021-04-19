@@ -14,7 +14,17 @@
       @submit="validate()">
       <v-row justify="center" class="mt-12" no-gutters>
         <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
-          <household-member-form :same-address.sync="sameAddress" :person="householdMember" />
+          <household-member-form
+            :same-address.sync="sameAddress"
+            :gender-items="genderItems"
+            :canadian-provinces-items="canadianProvincesItems"
+            :indigenous-communities-items="indigenousCommunitiesItems"
+            :indigenous-types-items="indigenousTypesItems"
+            :loading="loadingIndigenousIdentities"
+            :person="person"
+            @identity-change="setIdentity($event)"
+            @indigenous-identity-change="setIndigenousIdentity($event)"
+            @province-change="onIndigenousProvinceChange($event)" />
         </v-col>
       </v-row>
     </rc-dialog>
@@ -26,13 +36,14 @@ import HouseholdMemberForm from '@/ui/views/pages/registration/household-members
 import { RcDialog } from '@crctech/component-library';
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { VForm } from '@/types';
+import { ECanadaProvinces, IOptionItemData, VForm } from '@/types';
 import helpers from '@/ui/helpers';
 import { IPerson } from '@/entities/value-objects/person';
 import _isEqual from 'lodash/isEqual';
+import utils from '@/entities/utils';
 
 export default Vue.extend({
-  name: 'HouseholdMemberDialog',
+  name: 'AddEditHouseholdMembers',
 
   components: {
     HouseholdMemberForm,
@@ -45,7 +56,7 @@ export default Vue.extend({
       required: true,
     },
 
-    householdMember: {
+    person: {
       type: Object as () => IPerson,
       required: true,
     },
@@ -73,11 +84,31 @@ export default Vue.extend({
       }
       return this.$t('registration.household_member.add.title');
     },
+
+    genderItems(): IOptionItemData[] {
+      return this.$storage.registration.getters.genders();
+    },
+
+    canadianProvincesItems(): Record<string, unknown>[] {
+      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+    },
+
+    indigenousTypesItems(): Record<string, TranslateResult>[] {
+      return this.$storage.registration.getters.indigenousTypesItems(this.person.indigenousProvince);
+    },
+
+    indigenousCommunitiesItems(): Record<string, string>[] {
+      return this.$storage.registration.getters.indigenousCommunitiesItems(this.person.indigenousProvince, this.person.indigenousType);
+    },
+
+    loadingIndigenousIdentities(): boolean {
+      return this.$store.state.registration.loadingIndigenousIdentities;
+    },
   },
 
   mounted() {
     if (this.editMode) {
-      this.sameAddress = _isEqual(this.householdMember.temporaryAddress, this.$storage.beneficiary.getters.beneficiary().person.temporaryAddress);
+      this.sameAddress = _isEqual(this.person.temporaryAddress, this.$storage.beneficiary.getters.beneficiary().person.temporaryAddress);
     }
   },
 
@@ -95,11 +126,23 @@ export default Vue.extend({
       }
 
       if (this.editMode) {
-        this.$storage.beneficiary.mutations.editHouseholdMember(this.householdMember, this.index, this.sameAddress);
+        this.$storage.beneficiary.mutations.editHouseholdMember(this.person, this.index, this.sameAddress);
       } else {
-        this.$storage.beneficiary.mutations.addHouseholdMember(this.householdMember, this.sameAddress);
+        this.$storage.beneficiary.mutations.addHouseholdMember(this.person, this.sameAddress);
       }
       this.close();
+    },
+
+    async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
+      await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
+    },
+
+    setIdentity(form: IPerson) {
+      this.person.setIdentity(form);
+    },
+
+    setIndigenousIdentity(form: IPerson) {
+      this.person.setIndigenousIdentity(form);
     },
   },
 });

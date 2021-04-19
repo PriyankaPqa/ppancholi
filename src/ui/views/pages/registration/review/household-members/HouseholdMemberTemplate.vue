@@ -49,8 +49,8 @@ export default Vue.extend({
 
       const type = p.indigenousType ? this.$t(`common.indigenous.types.${EIndigenousTypes[p.indigenousType]}`) : '';
 
-      const community = this.$store.state.registration.indigenousIdentities[p.indigenousProvince]
-        .find((i: IIndigenousIdentityData) => i.id === p.indigenousCommunityId);
+      const community = p.indigenousProvince ? this.$store.state.registration.indigenousIdentities[p.indigenousProvince]
+        .find((i: IIndigenousIdentityData) => i.id === p.indigenousCommunityId) : null;
 
       if (p.indigenousType === EIndigenousTypes.Other) {
         return `${province}, ${type}, ${p.indigenousCommunityOther}`;
