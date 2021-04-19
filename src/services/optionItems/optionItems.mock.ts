@@ -10,9 +10,15 @@ export const mockOptionItemsServiceService = (): IOptionItemsServiceMock => ({
 
   updateOptionItemName: jest.fn(() => mockOptionItemData()[0]),
 
+  updateOptionSubItem: jest.fn(() => mockOptionItemData()[0]),
+
   updateOptionItemStatus: jest.fn(() => mockOptionItemData()[0]),
 
+  updateOptionSubItemStatus: jest.fn(() => mockOptionItemData()[0]),
+
   updateOptionItemOrderRanks: jest.fn(() => mockOptionItemData()),
+
+  updateOptionSubItemOrderRanks: jest.fn(() => mockOptionItemData()),
 
   setOptionItemIsOther: jest.fn(() => mockOptionItemData()[0]),
 

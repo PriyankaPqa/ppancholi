@@ -20,9 +20,15 @@ export const mockStorageOptionList = () : IStorageMock => ({
 
     updateName: jest.fn(),
 
+    updateSubItem: jest.fn(),
+
     updateStatus: jest.fn(),
 
+    updateSubItemStatus: jest.fn(),
+
     updateOrderRanks: jest.fn(),
+
+    updateSubItemOrderRank: jest.fn(),
 
     setIsDefault: jest.fn(),
 

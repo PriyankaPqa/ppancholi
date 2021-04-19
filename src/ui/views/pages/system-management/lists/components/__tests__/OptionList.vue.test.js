@@ -11,6 +11,7 @@ const actions = {
   fetchItems: jest.fn(),
   createOption: jest.fn(),
   updateName: jest.fn(),
+  updateSubItem: jest.fn(),
   updateStatus: jest.fn(),
   updateOrderRanks: jest.fn(),
 };
@@ -246,7 +247,9 @@ describe('OptionList.vue', () => {
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = { translation: { en: 'English description', fr: 'French description' } };
         const status = EOptionListItemStatus.Active;
-        const itemId = mockOptionItemData()[0].id;
+
+        const item = mockOptionItemData()[0];
+        const itemId = item.id;
 
         await wrapper.vm.saveNewSubItem(
           name,
@@ -260,7 +263,7 @@ describe('OptionList.vue', () => {
           {
             name,
             status,
-            orderRank: 2,
+            orderRank: item.subitems.length + 1,
             description,
           },
         );
@@ -270,9 +273,11 @@ describe('OptionList.vue', () => {
         wrapper.vm.$storage.optionList.actions.addSubItem = jest.fn();
 
         const name = { translation: { en: 'English Test', fr: '' } };
-        const description = { translation: { en: 'English description', fr: 'French description' } };
+        const description = { translation: { en: 'English description', fr: '' } };
         const status = EOptionListItemStatus.Active;
-        const itemId = mockOptionItemData()[0].id;
+
+        const item = mockOptionItemData()[0];
+        const itemId = item.id;
 
         await wrapper.vm.saveNewSubItem(
           name,
@@ -286,8 +291,8 @@ describe('OptionList.vue', () => {
           {
             name: { translation: { en: 'English Test', fr: 'English Test' } },
             status,
-            orderRank: 2,
-            description,
+            orderRank: item.subitems.length + 1,
+            description: { translation: { en: 'English description', fr: 'English description' } },
           },
         );
       });
@@ -318,7 +323,7 @@ describe('OptionList.vue', () => {
           null,
         );
 
-        expect(actions.createOption).not.toHaveBeenCalled();
+        expect(actions.updateName).not.toHaveBeenCalled();
       });
 
       it('copies the translation values over to empty languages', async () => {
@@ -340,32 +345,62 @@ describe('OptionList.vue', () => {
       });
     });
 
-    describe('>> changeItemStatus', () => {
-      it('dispatches the updateStatus action', async () => {
+    describe('>> saveSubItem', () => {
+      it('dispatches the updateSubItem action', async () => {
         const item = mockOptionItemData()[0];
-        const status = EOptionListItemStatus.Inactive;
+        const subItem = item.subitems[0];
+        const name = { translation: { en: 'name en', fr: 'name fr' } };
+        const description = { translation: { en: 'description en', fr: 'description fr' } };
 
-        await wrapper.vm.changeItemStatus(
+        await wrapper.vm.saveSubItem(
           item,
-          status,
+          subItem,
+          name,
+          description,
         );
 
-        expect(actions.updateStatus).toHaveBeenCalledWith(
+        expect(actions.updateSubItem).toHaveBeenCalledWith(
           expect.anything(),
           {
-            id: item.id,
-            status,
+            itemId: item.id,
+            subItemId: subItem.id,
+            name,
+            description,
           },
         );
       });
 
-      it('does not dispatch the action if item or status are not provided', async () => {
-        await wrapper.vm.changeItemStatus(
+      it('does not dispatch the action if item or name are not provided', async () => {
+        await wrapper.vm.saveSubItem(
           null,
           null,
         );
 
-        expect(actions.updateStatus).not.toHaveBeenCalled();
+        expect(actions.updateSubItem).not.toHaveBeenCalled();
+      });
+
+      it('copies the translation values over to empty languages', async () => {
+        const item = mockOptionItemData()[0];
+        const subItem = item.subitems[0];
+        const name = { translation: { en: 'name en', fr: '' } };
+        const description = { translation: { en: '', fr: 'description fr' } };
+
+        await wrapper.vm.saveSubItem(
+          item,
+          subItem,
+          name,
+          description,
+        );
+
+        expect(actions.updateSubItem).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            itemId: item.id,
+            subItemId: subItem.id,
+            name: { translation: { en: 'name en', fr: 'name en' } },
+            description: { translation: { en: 'description fr', fr: 'description fr' } },
+          },
+        );
       });
     });
 
@@ -387,6 +422,18 @@ describe('OptionList.vue', () => {
             items[0],
           ],
         );
+      });
+    });
+
+    describe('>> sortSubItems', () => {
+      it('dispatches the updateSubItemOrderRanks action', async () => {
+        wrapper.vm.$storage.optionList.actions.updateSubItemOrderRanks = jest.fn();
+
+        const item = mockOptionItemData()[0];
+
+        await wrapper.vm.sortSubItems(item);
+
+        expect(wrapper.vm.$storage.optionList.actions.updateSubItemOrderRanks).toHaveBeenCalledWith(item);
       });
     });
   });
@@ -427,7 +474,7 @@ describe('OptionList.vue', () => {
 
       expect(parent.exists()).toBe(true);
 
-      expect(parent.findAll('.optionsList__item').length).toBe(1);
+      expect(parent.findAll('.optionsList__item').length).toBe(mockOptionItemData()[0].subitems.length);
     });
   });
 });

@@ -68,6 +68,19 @@ describe('>>> EventTypes Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/name`, { name });
   });
 
+  test('updateOptionSubItem is linked to the correct URL', async () => {
+    const itemId = 'itemId';
+    const subItemId = 'subItemId';
+    const name = { translation: { en: 'name EN', fr: 'name FR' } };
+    const description = { translation: { en: 'description EN', fr: 'description FR' } };
+    const list = EOptionLists.EventTypes;
+    await service.updateOptionSubItem(list, itemId, subItemId, name, description);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/${itemId}/subitem/${subItemId}/name-description`, {
+      name,
+      description,
+    });
+  });
+
   test('updateOptionItemStatus is linked to the correct URL', async () => {
     const status = EOptionListItemStatus.Inactive;
     const list = EOptionLists.EventTypes;
@@ -75,11 +88,28 @@ describe('>>> EventTypes Service', () => {
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/status`, { status });
   });
 
+  test('updateOptionSubItemStatus is linked to the correct URL', async () => {
+    const itemId = 'itemId';
+    const subItemId = 'subItemId';
+    const status = EOptionListItemStatus.Inactive;
+    const list = EOptionLists.EventTypes;
+    await service.updateOptionSubItemStatus(list, itemId, subItemId, status);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/${itemId}/subitem/${subItemId}/status`, { status });
+  });
+
   test('updateOptionItemOrderRanks is linked to the correct URL', async () => {
     const reOrders = { ID_1: 1, ID_2: 2 };
     const list = EOptionLists.EventTypes;
     await service.updateOptionItemOrderRanks(list, reOrders);
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/order-ranks`, { reOrders });
+  });
+
+  test('updateOptionSubItemOrderRanks is linked to the correct URL', async () => {
+    const itemId = 'id';
+    const reOrders = { ID_1: 1, ID_2: 2 };
+    const list = EOptionLists.EventTypes;
+    await service.updateOptionSubItemOrderRanks(list, itemId, reOrders);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/${itemId}/subitem/order-ranks`, { reOrders });
   });
 
   test('setOptionItemIsOther is linked to the correct URL', async () => {

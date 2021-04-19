@@ -21,24 +21,43 @@ export const mockOptionItemData = (): IOptionItemData[] => [{
   status: 1,
   isOther: true,
   isDefault: false,
-  subitems: [{
-    name: {
-      translation: {
-        en: 'Sub-item 1',
-        fr: 'Sub-item 1',
+  subitems: [
+    {
+      name: {
+        translation: {
+          en: 'case worker 2',
+          fr: 'case worker 2 fr',
+        },
       },
-    },
-    description: {
-      translation: {
-        en: 'This is sub-item 1 description',
-        fr: 'This is sub-item 1 description FR',
+      description: {
+        translation: {
+          en: 'case worker 2 description',
+          fr: 'case worker 2 description fr',
+        },
       },
+      orderRank: 1,
+      isOther: false,
+      isDefault: false,
+      id: '66e2fd56-3e16-4158-a1f3-922126ef8a96',
+      status: 2,
+      eTag: '*',
     },
-    orderRank: 1,
-    status: EOptionListItemStatus.Active,
-    isDefault: false,
-    isOther: false,
-  }],
+    {
+      name: {
+        translation: {
+          en: 'Case Worker',
+          fr: 'Analyse de dossiers',
+        },
+      },
+      description: null,
+      orderRank: 2,
+      isOther: false,
+      isDefault: false,
+      id: 'c4ca956f-162c-49b6-b371-69ef38eab4aa',
+      status: 1,
+      eTag: '*',
+    },
+  ],
 }, {
   id: '2',
   created: new Date('2021-01-14T00:00:00.000Z'),
@@ -85,8 +104,8 @@ export const mockSubItem = (): IOptionSubItem => ({
   status: EOptionListItemStatus.Active,
   description: {
     translation: {
-      en: 'description EN',
-      fr: 'description FR',
+      en: 'subItem description EN',
+      fr: 'subItem description FR',
     },
   },
   isOther: false,

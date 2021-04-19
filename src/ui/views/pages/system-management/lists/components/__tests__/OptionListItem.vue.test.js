@@ -2,6 +2,7 @@ import flushPromises from 'flush-promises';
 import {
   createLocalVue,
   mount,
+  shallowMount,
 } from '@/test/testSetup';
 
 import { mockOptionItemData, EOptionListItemStatus } from '@/entities/optionItem';
@@ -27,6 +28,169 @@ describe('OptionListItem.vue', () => {
         editMode: false,
         addSubItemLabel: 'add',
       },
+    });
+  });
+
+  describe('Computed', () => {
+    let wrapper;
+
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          item: mockOptionItemData()[0],
+          isSubItem: true,
+          editMode: true,
+          languageMode: 'en',
+        },
+      });
+    });
+
+    describe('itemStatuses', () => {
+      it('returns the correct value', async () => {
+        expect(wrapper.vm.itemStatuses).toEqual([
+          EOptionListItemStatus.Active,
+          EOptionListItemStatus.Inactive,
+        ]);
+      });
+    });
+
+    describe('allNames', () => {
+      it('returns the correct value', async () => {
+        await wrapper.setProps({
+          items: [{
+            name: {
+              translation: {
+                en: 'name 1 en',
+                fr: 'name 1 fr',
+              },
+            },
+            subitems: [{
+              name: {
+                translation: {
+                  en: 'sub name en',
+                  fr: 'sub name fr',
+                },
+              },
+            }],
+          }, {
+            name: {
+              translation: {
+                en: 'name 2 en',
+                fr: 'name 2 fr',
+              },
+            },
+            subitems: [],
+          }],
+        });
+
+        expect(wrapper.vm.allNames).toEqual([{
+          translation: {
+            en: 'name 1 en',
+            fr: 'name 1 fr',
+          },
+        }, {
+          translation: {
+            en: 'sub name en',
+            fr: 'sub name fr',
+          },
+        }, {
+          translation: {
+            en: 'name 2 en',
+            fr: 'name 2 fr',
+          },
+        }]);
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('checkNameUniqueness', () => {
+      let wrapper;
+      beforeEach(() => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            item: mockOptionItemData()[0],
+            isSubItem: true,
+            editMode: true,
+            languageMode: 'en',
+          },
+          computed: {
+            allNames() {
+              return [{
+                translation: {
+                  en: 'name 1 en',
+                  fr: 'name 1 fr',
+                },
+              }, {
+                translation: {
+                  en: 'name 2 en',
+                  fr: 'name 2 fr  ',
+                },
+              }];
+            },
+          },
+        });
+      });
+      it('should set isNameUnique to true if the name is unique', () => {
+        wrapper.vm.checkNameUniqueness('name 3 en');
+        expect(wrapper.vm.isNameUnique).toBeTruthy();
+      });
+      it('should set isNameUnique to false if the name is not unique', () => {
+        wrapper.vm.checkNameUniqueness('name 1 en');
+        expect(wrapper.vm.isNameUnique).toBeFalsy();
+
+        wrapper.vm.checkNameUniqueness('name 1 EN');
+        expect(wrapper.vm.isNameUnique).toBeFalsy();
+
+        wrapper.vm.checkNameUniqueness('name 2 fr');
+        expect(wrapper.vm.isNameUnique).toBeFalsy();
+      });
+      it('is called when @input is emitted on sub item name', () => {
+        wrapper.vm.checkNameUniqueness = jest.fn();
+
+        const nameInput = wrapper.findDataTest('optionsListItem__nameInput');
+        nameInput.trigger('input');
+
+        expect(wrapper.vm.checkNameUniqueness).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('>> confirmChangeStatus', () => {
+      it('dispatches the updateSubItemStatus action if is subItem', async () => {
+        const items = mockOptionItemData();
+        const item = items[0];
+        const subItem = item.subitems[0];
+
+        await wrapper.setProps({
+          isSubItem: true,
+          items: mockOptionItemData(),
+          item: mockOptionItemData()[0].subitems[0],
+        });
+
+        const status = EOptionListItemStatus.Inactive;
+        wrapper.vm.changeToStatus = status;
+        wrapper.vm.$storage.optionList.actions.updateSubItemStatus = jest.fn();
+
+        await wrapper.vm.confirmChangeStatus();
+
+        expect(wrapper.vm.$storage.optionList.actions.updateSubItemStatus).toHaveBeenCalledWith(item.id, subItem.id, status);
+      });
+
+      it('dispatches the updateStatus action if is not subItem', async () => {
+        await wrapper.setProps({
+          isSubItem: false,
+        });
+
+        const status = EOptionListItemStatus.Inactive;
+        wrapper.vm.changeToStatus = status;
+        wrapper.vm.$storage.optionList.actions.updateStatus = jest.fn();
+
+        await wrapper.vm.confirmChangeStatus();
+
+        expect(wrapper.vm.$storage.optionList.actions.updateStatus).toHaveBeenCalledWith(mockOptionItemData()[0].id, status);
+      });
     });
   });
 
@@ -68,7 +232,9 @@ describe('OptionListItem.vue', () => {
     expect(wrapper.vm.$data.subItemsExpanded).toBe(false);
   });
 
-  test('selecting a status opens the status dialog, confirming emits change-status event', async () => {
+  test('selecting a status opens the status dialog, submitting dialog triggers the method confirmChangeStatus', async () => {
+    wrapper.vm.confirmChangeStatus = jest.fn();
+
     await wrapper.find('[data-test="statusSelect__chip"]').trigger('click');
 
     await wrapper.find('[data-test="statusSelect__2"]').trigger('click');
@@ -81,9 +247,7 @@ describe('OptionListItem.vue', () => {
 
     await dialog.find('[data-test="dialog-submit-action"]').trigger('click');
 
-    expect(wrapper.emitted('change-status')).toBeTruthy();
-
-    expect(wrapper.emitted('change-status')[0]).toEqual([wrapper.vm.$props.item, EOptionListItemStatus.Inactive]);
+    expect(wrapper.vm.confirmChangeStatus).toHaveBeenCalledTimes(1);
   });
 
   test('the save button emits the save event if a name is present', async () => {

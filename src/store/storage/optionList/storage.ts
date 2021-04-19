@@ -1,5 +1,5 @@
 import {
-  OptionItem, IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest,
+  OptionItem, IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
 } from '@/entities/optionItem';
 import { IStore } from '@/store/store.types';
 import { IMultilingual } from '@/types';
@@ -45,6 +45,15 @@ export const makeStorage = (store: IStore): IStorage => ({
       });
     },
 
+    updateSubItem(itemId: string, subItemId: string, name: IMultilingual, description: IMultilingual) {
+      return store.dispatch('optionList/updateSubItem', {
+        itemId,
+        subItemId,
+        name,
+        description,
+      });
+    },
+
     updateStatus(id: string, status: EOptionListItemStatus) {
       return store.dispatch('optionList/updateStatus', {
         id,
@@ -52,8 +61,20 @@ export const makeStorage = (store: IStore): IStorage => ({
       });
     },
 
+    updateSubItemStatus(itemId: string, subItemId: string, status: EOptionListItemStatus) {
+      return store.dispatch('optionList/updateSubItemStatus', {
+        itemId,
+        subItemId,
+        status,
+      });
+    },
+
     updateOrderRanks(payload: Array<IOptionItem>) {
       return store.dispatch('optionList/updateOrderRanks', payload);
+    },
+
+    updateSubItemOrderRanks(newItem: IOptionSubItem) {
+      return store.dispatch('optionList/updateSubItemOrderRanks', newItem);
     },
 
     setIsOther(id: string, isOther: boolean) {

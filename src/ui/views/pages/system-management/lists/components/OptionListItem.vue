@@ -62,7 +62,7 @@
             v-model="name.translation[languageMode]"
             data-test="optionsListItem__nameInput"
             class="optionListItem__nameInput ml-4"
-            :label="$t('system_management.lists.itemName')"
+            :label="$t(itemNameLabel)"
             :disabled="loading"
             :error="!!errors.length"
             :hide-details="!errors.length"
@@ -70,6 +70,7 @@
             outlined
             dense
             background-color="white"
+            @input="checkNameUniqueness($event)"
             @keydown.enter.stop="saveItem"
             @keydown.esc.stop="cancelEdit" />
         </v-col>
@@ -77,7 +78,7 @@
 
       <v-col :class="{ search: isSearchResult, 'pb-2': true }" cols="3">
         <status-select
-          v-if="!hideItemStatus"
+          v-if="!hideItemStatus && !editMode"
           :value="item.status"
           :statuses="itemStatuses"
           status-name="EOptionListItemStatus"
@@ -191,6 +192,8 @@
         max-width="450"
         persistent
         show-close
+        :loading="updatingStatus"
+        @close="showStatusDialog = false"
         @cancel="showStatusDialog = false"
         @submit="confirmChangeStatus">
         <div v-if="changeToStatus" class="rc-body14">
@@ -206,7 +209,7 @@ import Vue from 'vue';
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import { RcDialog } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { VForm } from '@/types';
+import { IMultilingual, VForm } from '@/types';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import entityUtils from '@/entities/utils';
 import { IOptionItem, EOptionListItemStatus } from '@/entities/optionItem';
@@ -228,6 +231,11 @@ export default Vue.extend({
     item: {
       type: Object as () => IOptionItem,
       required: true,
+    },
+
+    items: {
+      type: Array as () => IOptionItem[],
+      default: (): IOptionItem[] => [],
     },
 
     /**
@@ -325,6 +333,11 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    itemNameLabel: {
+      type: String,
+      default: 'system_management.lists.itemName',
+    },
   },
 
   data() {
@@ -341,15 +354,9 @@ export default Vue.extend({
 
       subItemsExpanded: true,
 
-      rules: {
-        name: {
-          required: true,
-          max: MAX_LENGTH_MD,
-        },
-        description: {
-          max: MAX_LENGTH_MD,
-        },
-      },
+      isNameUnique: true,
+
+      updatingStatus: false,
     };
   },
 
@@ -360,6 +367,31 @@ export default Vue.extend({
         EOptionListItemStatus.Inactive,
       ];
     },
+
+    rules(): Record<string, unknown> {
+      return {
+        name: {
+          required: true,
+          max: MAX_LENGTH_MD,
+          customValidator: { isValid: this.isNameUnique, messageKey: 'validations.alreadyExists' },
+        },
+        description: {
+          max: MAX_LENGTH_MD,
+        },
+      };
+    },
+
+    allNames(): IMultilingual[] {
+      const names: IMultilingual[] = [];
+      this.items.forEach((item) => {
+        if (item.id !== this.item.id) names.push(item.name);
+        item.subitems.forEach((sub) => {
+          if (sub.id !== this.item.id) names.push(sub.name);
+        });
+      });
+
+      return names;
+    },
   },
 
   watch: {
@@ -369,12 +401,16 @@ export default Vue.extend({
 
         if (this.item.description) {
           this.description = entityUtils.getFilledMultilingualField(this.item.description);
+        } else {
+          this.description = entityUtils.initMultilingualAttributes();
         }
 
         this.$nextTick(() => {
           (this.$refs.input as HTMLInputElement).focus();
         });
       }
+
+      this.isNameUnique = true;
     },
 
     item() {
@@ -429,9 +465,20 @@ export default Vue.extend({
     /**
      * Emits the 'change-status' event with the item and the new status value when the dialog is confirmed
      */
-    confirmChangeStatus() {
-      this.$emit('change-status', this.item, this.changeToStatus);
-      this.showStatusDialog = false;
+    async confirmChangeStatus() {
+      this.updatingStatus = true;
+
+      try {
+        if (this.isSubItem) {
+          const parentItem = this.items.find((i) => i.subitems.some((sub) => sub.id === this.item.id));
+          await this.$storage.optionList.actions.updateSubItemStatus(parentItem.id, this.item.id, this.changeToStatus);
+        } else {
+          await this.$storage.optionList.actions.updateStatus(this.item.id, this.changeToStatus);
+        }
+      } finally {
+        this.updatingStatus = false;
+        this.showStatusDialog = false;
+      }
     },
 
     getStatusKey(status: EOptionListItemStatus) {
@@ -456,6 +503,17 @@ export default Vue.extend({
       } else {
         this.$toasted.global.success(this.$t('system_management.lists.otherOptionRemoved'));
       }
+    },
+
+    checkNameUniqueness(input: string) {
+      const treat = ((str: string) => str.trim().toLowerCase());
+
+      const treatedInput = treat(input);
+
+      this.isNameUnique = !this.allNames.some((name) => {
+        const langs = Object.keys(name.translation);
+        return langs.some((lang) => treat(name.translation[lang]) === treatedInput);
+      });
     },
   },
 });

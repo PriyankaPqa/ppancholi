@@ -1,4 +1,5 @@
 import { IMultilingual } from '@/types';
+import _sortBy from 'lodash/sortBy';
 import {
   IOptionItem, IOptionItemData, EOptionListItemStatus, IOptionSubItem,
 } from './optionItem.types';
@@ -37,6 +38,6 @@ export class OptionItem implements IOptionItem {
     this.status = data.status;
     this.isOther = data.isOther;
     this.isDefault = data.isDefault;
-    this.subitems = data.subitems;
+    this.subitems = _sortBy(data.subitems, 'orderRank');
   }
 }

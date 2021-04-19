@@ -45,14 +45,40 @@ export class OptionItemsService implements IOptionItemsService {
     });
   }
 
+  // eslint-disable-next-line
+  async updateOptionSubItem(
+    list: EOptionLists,
+    itemId: string,
+    subItemId: string,
+    name: IMultilingual,
+    description: IMultilingual,
+  ): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${itemId}/subitem/${subItemId}/name-description`, {
+      name,
+      description,
+    });
+  }
+
   async updateOptionItemStatus(list: EOptionLists, id: string, status: EOptionListItemStatus): Promise<IOptionItemData> {
     return this.http.patch(`${this.getPrefix(list)}/${id}/status`, {
       status,
     });
   }
 
+  async updateOptionSubItemStatus(list: EOptionLists, itemId: string, subItemId: string, status: EOptionListItemStatus): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${itemId}/subitem/${subItemId}/status`, {
+      status,
+    });
+  }
+
   async updateOptionItemOrderRanks(target: EOptionLists, reOrders: Record<string, number>): Promise<IOptionItemData[]> {
     return this.http.patch(`${this.getPrefix(target)}/order-ranks`, {
+      reOrders,
+    });
+  }
+
+  async updateOptionSubItemOrderRanks(target: EOptionLists, itemId: string, reOrders: Record<string, number>): Promise<IOptionItemData[]> {
+    return this.http.patch(`${this.getPrefix(target)}/${itemId}/subitem/order-ranks`, {
       reOrders,
     });
   }

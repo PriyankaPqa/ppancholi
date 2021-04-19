@@ -66,9 +66,28 @@ describe('>>> OptionList Storage', () => {
       expect(store.dispatch).toHaveBeenCalledWith('optionList/updateName', { id: 'ID', name });
     });
 
+    it('should proxy updateSubItem', () => {
+      const itemId = 'item id';
+      const subItemId = 'subItemId';
+      const name = { translation: { en: 'name EN', fr: 'name FR' } };
+      const description = { translation: { en: 'description EN', fr: 'description FR' } };
+      storage.actions.updateSubItem(itemId, subItemId, name, description);
+      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateSubItem', {
+        itemId, subItemId, name, description,
+      });
+    });
+
     it('should proxy updateStatus', () => {
       storage.actions.updateStatus('ID', EOptionListItemStatus.Inactive);
       expect(store.dispatch).toHaveBeenCalledWith('optionList/updateStatus', { id: 'ID', status: EOptionListItemStatus.Inactive });
+    });
+
+    it('should proxy updateSubItemStatus', () => {
+      const itemId = 'itemId';
+      const subItemId = 'subItemId';
+      const status = EOptionListItemStatus.Inactive;
+      storage.actions.updateSubItemStatus(itemId, subItemId, status);
+      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateSubItemStatus', { itemId, subItemId, status });
     });
 
     it('should proxy updateOrderRanks', () => {
@@ -85,6 +104,14 @@ describe('>>> OptionList Storage', () => {
         items[0],
         items[2],
       ]);
+    });
+
+    it('should proxy updateSubItemOrderRanks', () => {
+      const newItem = mockOptionItemData()[0];
+
+      storage.actions.updateSubItemOrderRanks(newItem);
+
+      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateSubItemOrderRanks', newItem);
     });
 
     it('should proxy setIsOther', () => {

@@ -106,6 +106,21 @@ const actions = {
     return null;
   },
 
+  async updateSubItem(this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    payload: { itemId: string, subItemId: string, name: IMultilingual, description: IMultilingual }): Promise<IOptionItem> {
+    if (!context.state.list) {
+      throw new Error('You must set a value for list');
+    }
+
+    const { list } = context.state;
+    const data = await this.$services.optionItems.updateOptionSubItem(list, payload.itemId, payload.subItemId, payload.name, payload.description);
+
+    if (data != null) context.commit('addOrUpdateItem', data);
+
+    return null;
+  },
+
   async updateStatus(
     this: Store<IState>,
     context: ActionContext<IState, IState>,
@@ -117,6 +132,23 @@ const actions = {
 
     const { list } = context.state;
     const data = await this.$services.optionItems.updateOptionItemStatus(list, payload.id, payload.status);
+
+    if (data != null) context.commit('addOrUpdateItem', data);
+
+    return null;
+  },
+
+  async updateSubItemStatus(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    payload: { itemId: string, subItemId: string, status: EOptionListItemStatus },
+  ): Promise<IOptionItem> {
+    if (!context.state.list) {
+      throw new Error('You must set a value for list');
+    }
+
+    const { list } = context.state;
+    const data = await this.$services.optionItems.updateOptionSubItemStatus(list, payload.itemId, payload.subItemId, payload.status);
 
     if (data != null) context.commit('addOrUpdateItem', data);
 
@@ -158,6 +190,41 @@ const actions = {
       return data;
     } catch (e) {
       context.commit('setItems', originalOrder);
+      throw e;
+    }
+  },
+
+  async updateSubItemOrderRanks(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    newItem: IOptionItem,
+  ): Promise<IOptionItem[]> {
+    if (!context.state.list) {
+      throw new Error('You must set a value for list');
+    }
+    const originalItem = context.state.items.find((i) => i.id === newItem.id);
+
+    const updatedItem = {
+      ...newItem,
+      subitems: newItem.subitems.map((sub, index) => ({
+        ...sub,
+        orderRank: index + 1,
+      })),
+    };
+
+    context.commit('addOrUpdateItem', updatedItem);
+
+    const params: Record<string, number> = {};
+    updatedItem.subitems.forEach((sub, index) => {
+      params[sub.id] = index + 1;
+    });
+
+    try {
+      const data = await this.$services.optionItems.updateOptionSubItemOrderRanks(context.state.list, newItem.id, params);
+
+      return data;
+    } catch (e) {
+      context.commit('addOrUpdateItem', originalItem);
       throw e;
     }
   },

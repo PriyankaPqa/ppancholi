@@ -182,6 +182,36 @@ describe('>>> Option List Module', () => {
       });
     });
 
+    describe('updateSubItem', () => {
+      it('throws an error if list is not set in the store', async () => {
+        await expect(store.dispatch('optionList/updateSubItem')).rejects.toThrow();
+      });
+
+      it('calls the updateOptionSubItem endpoint with the proper list', async () => {
+        const itemId = 'item id';
+        const subItemId = 'subItem id';
+        const name = { translation: { en: 'name EN', fr: 'name FR' } };
+        const description = { translation: { en: 'description EN', fr: 'description FR' } };
+
+        store.commit('optionList/setList', list);
+
+        await store.dispatch('optionList/updateSubItem', {
+          itemId,
+          subItemId,
+          name,
+          description,
+        });
+
+        expect(store.$services.optionItems.updateOptionSubItem).toHaveBeenCalledWith(
+          list,
+          itemId,
+          subItemId,
+          name,
+          description,
+        );
+      });
+    });
+
     describe('updateStatus', () => {
       it('throws an error if list is not set in the store', async () => {
         await expect(store.dispatch('optionList/updateStatus')).rejects.toThrow();
@@ -201,6 +231,24 @@ describe('>>> Option List Module', () => {
           'ID',
           EOptionListItemStatus.Inactive,
         );
+      });
+    });
+
+    describe('updateSubItemStatus', () => {
+      it('throws an error if list is not set in the store', async () => {
+        await expect(store.dispatch('optionList/updateSubItemStatus')).rejects.toThrow();
+      });
+
+      it('calls the updateOptionItemStatus endpoint with the proper list', async () => {
+        store.commit('optionList/setList', list);
+
+        const itemId = 'itemId';
+        const subItemId = 'subItemId';
+        const status = EOptionListItemStatus.Inactive;
+
+        await store.dispatch('optionList/updateSubItemStatus', { itemId, subItemId, status });
+
+        expect(store.$services.optionItems.updateOptionSubItemStatus).toHaveBeenCalledWith(list, itemId, subItemId, status);
       });
     });
 
@@ -225,6 +273,29 @@ describe('>>> Option List Module', () => {
           [items[2].id]: 2,
           [items[0].id]: 3,
           [items[1].id]: 4,
+        });
+      });
+    });
+
+    describe('updateSubItemOrderRanks', () => {
+      it('throws an error if list is not set in the store', async () => {
+        await expect(store.dispatch('optionList/updateSubItemOrderRanks')).rejects.toThrow();
+      });
+
+      it('calls the updateSubItemOrderRanks endpoint if the list is Event Types', async () => {
+        const item = mockOptionItemData()[0];
+
+        item.subitems[0].orderRank = 2;
+        item.subitems[1].orderRank = 1;
+
+        store.commit('optionList/setList', list);
+        store.commit('optionList/addOrUpdateItem', item);
+
+        await store.dispatch('optionList/updateSubItemOrderRanks', item);
+
+        expect(store.$services.optionItems.updateOptionSubItemOrderRanks).toHaveBeenCalledWith(list, item.id, {
+          [item.subitems[0].id]: 1,
+          [item.subitems[1].id]: 2,
         });
       });
     });

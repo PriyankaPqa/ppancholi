@@ -85,7 +85,6 @@
                 :hide-item-drag="hideItemDrag"
                 @edit-item="editItem"
                 @save-item="saveItem"
-                @change-status="changeItemStatus"
                 @cancel-edit="cancelEdit">
                 <v-col cols="12" class="py-0">
                   <draggable
@@ -99,15 +98,16 @@
                       :key="subItem.id"
                       :loading="itemLoading"
                       :item="subItem"
+                      :items="items"
                       :language-mode="languageMode"
-                      :edit-mode="!!editedItem && editedItem.id === subItem.id"
+                      :edit-mode="!!editedItem && editedItem === subItem.id"
                       :edit-disabled="addingMode"
                       :is-search-result="isSearchResult(subItem)"
                       is-sub-item
+                      :item-name-label="subItemNameLabel"
                       :has-description="hasDescription"
                       @edit-item="editItem"
-                      @save-item="saveSubItem"
-                      @change-status="changeSubItemStatus"
+                      @save-item="(...args)=>saveSubItem(item, ...args)"
                       @cancel-edit="cancelEdit" />
                   </draggable>
                 </v-col>
@@ -166,7 +166,7 @@ import routes from '@/constants/routes';
 import entityUtils from '@/entities/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
-  IOptionItem, OptionItem, EOptionListItemStatus, ICreateOptionItemRequest,
+  IOptionItem, OptionItem, EOptionListItemStatus, ICreateOptionItemRequest, IOptionSubItem,
 } from '@/entities/optionItem';
 import OptionListItem from './OptionListItem.vue';
 import OptionListNewItem from './OptionListNewItem.vue';
@@ -428,31 +428,23 @@ export default Vue.extend({
       this.editedItem = null;
     },
 
-    async saveSubItem() {
-      // TODO 418
-    },
-
-    /**
-     * Handles changing the status of an item through the API
-     * @param item The item to be modified
-     * @param status The new status to set
-     */
-    async changeItemStatus(item: IOptionItem, status: EOptionListItemStatus) {
-      if (!item || !status) {
+    async saveSubItem(item: IOptionSubItem, subItem: IOptionSubItem, name: IMultilingual, description: IMultilingual) {
+      if (!item || !name) {
         return;
       }
+
+      const payloadName = entityUtils.getFilledMultilingualField(name);
+      const payloadDescription = entityUtils.getFilledMultilingualField(description);
+
+      this.itemLoading = true;
 
       try {
-        await this.$storage.optionList.actions.updateStatus(item.id, status);
-      } catch {
-        return;
+        await this.$storage.optionList.actions.updateSubItem(item.id, subItem.id, payloadName, payloadDescription);
+
+        this.editedItem = null;
+      } finally {
+        this.itemLoading = false;
       }
-
-      this.editedItem = null;
-    },
-
-    async changeSubItemStatus() {
-      // TODO 418
     },
 
     /**
@@ -472,8 +464,10 @@ export default Vue.extend({
      * Handles changing the order of sub-items through the API
      * @param parentItem The parent item of the sub-items that are being sorted
      */
-    async sortSubItems() {
-      // TODO 418
+    async sortSubItems(parentItem: IOptionItem) {
+      await this.$storage.optionList.actions.updateSubItemOrderRanks(parentItem);
+
+      this.$toasted.global.success(this.$t('system_management.lists.orderRankUpdated'));
     },
 
     /**
