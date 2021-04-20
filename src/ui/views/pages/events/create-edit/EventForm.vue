@@ -471,10 +471,14 @@ export default Vue.extend({
       const eventTypes = this.$storage.event.getters.eventTypes();
 
       if (eventTypes && eventTypes.length && this.initialEventType) {
-        return [
-          ...eventTypes,
-          this.initialEventType,
-        ];
+        const initialActiveEventType = eventTypes.find((e) => e.id === this.initialEventType.id);
+
+        if (!initialActiveEventType) {
+          return [
+            ...eventTypes,
+            this.initialEventType,
+          ];
+        }
       }
 
       return eventTypes;
@@ -627,12 +631,18 @@ export default Vue.extend({
     this.regions = regionsRes.value;
 
     if (this.localEvent && this.localEvent.responseDetails.eventType.optionItemId) {
-      this.eventType = {
-        id: this.localEvent.eventTypeId,
-        name: this.localEvent.eventTypeName,
-      };
+      const activeEventType = this.eventTypesSorted.find((e) => e.id === this.localEvent.responseDetails.eventType.optionItemId);
 
-      this.initialEventType = { ...this.eventType };
+      if (activeEventType) {
+        this.eventType = activeEventType;
+      } else {
+        this.eventType = {
+          id: this.localEvent.eventTypeId,
+          name: this.localEvent.eventTypeName,
+        };
+
+        this.initialEventType = { ...this.eventType };
+      }
     }
 
     // Set the default event type
