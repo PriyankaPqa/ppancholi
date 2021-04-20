@@ -38,6 +38,14 @@ const routes = {
       path: '',
       name: 'casefile.home',
     },
+    details: {
+      path: ':id',
+      name: 'casefile.details',
+    },
+    beneficiaryProfile: {
+      path: 'beneficiary/:id',
+      name: 'casefile.beneficiaryProfile',
+    },
   },
   registration: {
     layout: {

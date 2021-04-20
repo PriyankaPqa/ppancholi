@@ -1,5 +1,6 @@
 import { IStorageMock } from './storage.types';
 import { mockStorageUser } from './user';
+import { mockStorageCaseFile } from './case-file';
 import { mockStorageDashboard } from './dashboard';
 import { mockStorageEvent } from './event';
 import { mockStorageOptionList } from './optionList';
@@ -8,6 +9,7 @@ import { mockStorageAppUser } from './app-user';
 
 export const mockStorage = (): IStorageMock => ({
   appUser: mockStorageAppUser(),
+  caseFile: mockStorageCaseFile(),
   dashboard: mockStorageDashboard(),
   user: mockStorageUser(),
   event: mockStorageEvent(),

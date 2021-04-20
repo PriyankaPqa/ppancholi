@@ -16,8 +16,11 @@ const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/v
 const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
 const ApprovalsRequest = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/requests/ApprovalsRequest.vue');
 
+const BeneficiaryProfile = () => import(/* webpackChunkName: "beneficiaryProfile" */ '@/ui/views/pages/case-files/beneficiary-profile/BeneficiaryProfile.vue');
+
 const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
 const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
+const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/CaseFileDetails.vue');
 
 const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/layout/EventsLayout.vue');
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
@@ -144,6 +147,20 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.caseFile.home.name,
                 component: HomeCaseFile,
                 meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+              },
+              {
+                path: Routes.caseFile.details.path,
+                name: Routes.caseFile.details.name,
+                component: CaseFileDetails,
+                meta: { level: 'level1' },
+                props: true,
+              },
+              {
+                path: Routes.caseFile.beneficiaryProfile.path,
+                name: Routes.caseFile.beneficiaryProfile.name,
+                component: BeneficiaryProfile,
+                meta: { level: 'level1' },
+                props: true,
               },
             ],
           },

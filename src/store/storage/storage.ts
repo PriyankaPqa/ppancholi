@@ -1,6 +1,7 @@
 import { IStore } from '../store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeUserStorage } from './user';
+import { makeStorage as makeCaseFileStorage } from './case-file';
 import { makeStorage as makeDashboardStorage } from './dashboard';
 import { makeStorage as makeEventStorage } from './event';
 import { makeStorage as makeOptionListStorage } from './optionList';
@@ -10,6 +11,7 @@ import { makeStorage as makeAppUserStorage } from './app-user';
 export const makeStorage = (store: IStore): IStorage => ({
   appUser: makeAppUserStorage(store),
   user: makeUserStorage(store),
+  caseFile: makeCaseFileStorage(store),
   dashboard: makeDashboardStorage(store),
   event: makeEventStorage(store),
   optionList: makeOptionListStorage(store),

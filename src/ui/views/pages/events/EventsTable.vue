@@ -2,7 +2,7 @@
   <rc-data-table
     data-test="events-table"
     :show-help="$hasLevel('level6')"
-    :help-data="helpData"
+    :help-link="$t(helpLink)"
     :items="azureSearchItems"
     :count="azureSearchCount"
     :headers="headers"
@@ -102,10 +102,7 @@ export default Vue.extend({
       loading: false,
       EResponseLevel,
       EEventStatus,
-      helpData: {
-        url: this.$t('zendesk.help_link.eventsTable'),
-        text: '',
-      },
+      helpLink: 'zendesk.help_link.eventsTable',
       options: {
         page: 1,
         sortBy: ['Schedule/OpenDate'],

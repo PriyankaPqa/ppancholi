@@ -173,6 +173,7 @@
     "caseFile.selectedMembers": "Selected members",
     "caseFile.status.Archived": "Archived",
     "caseFile.status.Close": "Closed",
+    "caseFile.status.Closed": "Closed",
     "caseFile.status.Inactive": "Inactive",
     "caseFile.status.Open": "Open",
     "caseFile.tags.AddSelected": "Add selected",

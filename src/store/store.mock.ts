@@ -6,6 +6,7 @@ import Vue from 'vue';
 import { mockProvider } from '@/services/provider';
 
 import { user } from './modules/user';
+import { caseFile } from './modules/case-file';
 import { dashboard } from './modules/dashboard';
 import { event } from './modules/event';
 import { team } from './modules/team';
@@ -17,6 +18,7 @@ Vue.use(Vuex);
 const mockConfig = {
   modules: {
     user,
+    caseFile,
     dashboard,
     event,
     team,

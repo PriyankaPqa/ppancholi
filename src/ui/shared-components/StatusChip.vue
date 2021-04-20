@@ -16,6 +16,7 @@ import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
 import { ETeamStatus } from '@/entities/team';
 import { EOptionListItemStatus } from '@/entities/optionItem';
 import colors from '@/ui/plugins/vuetify/colors';
+import { ECaseFileStatus } from '@/entities/case-file';
 
 export default Vue.extend({
   name: 'StatusChip',
@@ -35,6 +36,7 @@ export default Vue.extend({
           'EEventCallCentreStatus',
           'EEventLocationStatus',
           'ETeamStatus',
+          'ECaseFileStatus',
         ].indexOf(value) > -1
       ),
     },
@@ -67,6 +69,8 @@ export default Vue.extend({
           return this.getOptionListStatusColor();
         case 'ETeamStatus':
           return this.getTeamStatusColor();
+        case 'ECaseFileStatus':
+          return this.getCaseFileStatusColor();
         default:
           return colors.chips.green;
       }
@@ -96,6 +100,8 @@ export default Vue.extend({
           return `system_management.lists.status.${EOptionListItemStatus[this.status]}`;
         case 'ETeamStatus':
           return `team.status.${ETeamStatus[this.status]}`;
+        case 'ECaseFileStatus':
+          return `caseFile.status.${ECaseFileStatus[this.status]}`;
         default:
           return '';
       }
@@ -155,6 +161,25 @@ export default Vue.extend({
 
         case ETeamStatus.Inactive:
           return colors.chips.light_grey;
+
+        default:
+          return colors.chips.green;
+      }
+    },
+
+    getCaseFileStatusColor(): string {
+      switch (this.status) {
+        case ECaseFileStatus.Open:
+          return colors.chips.green;
+
+        case ECaseFileStatus.Inactive:
+          return colors.chips.light_grey;
+
+        case ECaseFileStatus.Closed:
+          return colors.chips.red;
+
+        case ECaseFileStatus.Archived:
+          return colors.chips.grey;
 
         default:
           return colors.chips.green;

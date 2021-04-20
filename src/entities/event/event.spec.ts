@@ -6,7 +6,7 @@ import { EEventCallCentreStatus, EEventStatus } from './event.types';
 
 const mockEventData = mockEventsSearchData()[0];
 
-describe('>>> User', () => {
+describe('>>> Event', () => {
   describe('>> constructor', () => {
     it('should instantiate id', () => {
       const event = new Event(mockEventData);

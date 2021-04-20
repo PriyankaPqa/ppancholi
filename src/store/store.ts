@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
 import { IRootState } from './store.types';
 import { user } from './modules/user';
+import { caseFile } from './modules/case-file';
 import { dashboard } from './modules/dashboard';
 import { optionList } from './modules/optionList';
 import { event } from './modules/event';
@@ -17,6 +18,7 @@ const store: StoreOptions<IRootState> = {
   },
   modules: {
     appUser,
+    caseFile,
     user,
     dashboard,
     event,
