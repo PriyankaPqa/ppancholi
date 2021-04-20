@@ -99,8 +99,51 @@ describe('Individual.vue', () => {
   });
 
   describe('Methods', () => {
+    const tabs = [
+      {
+        id: 'privacy',
+        disabled: false,
+        isValid: true,
+        isTouched: false,
+        componentName: 'PrivacyStatement',
+      },
+      {
+        id: 'personalInfo',
+        disabled: false,
+        isValid: true,
+        isTouched: false,
+        componentName: 'PersonalInformation',
+      },
+      {
+        id: 'addresses',
+        disabled: false,
+        isValid: true,
+        isTouched: false,
+        componentName: 'Addresses',
+      },
+      {
+        id: 'householdMembers',
+        disabled: false,
+        isValid: true,
+        isTouched: false,
+        componentName: 'HouseholdMembers',
+      },
+      {
+        id: 'review',
+        disabled: false,
+        isValid: true,
+        isTouched: false,
+        componentName: 'ReviewRegistration',
+      },
+      {
+        id: 'confirmation',
+        disabled: true,
+        isValid: true,
+        isTouched: false,
+        componentName: 'ConfirmRegistration',
+      }];
+
     beforeEach(() => {
-      storage.registration.getters.currentTabIndex.mockReturnValueOnce(2);
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
@@ -110,22 +153,41 @@ describe('Individual.vue', () => {
     });
 
     describe('jump', () => {
-      it('calls mutateStateTab', async () => {
+      it('makes correct uninterrupted jump', async () => {
+        storage.registration.getters.tabs.mockReturnValueOnce(tabs);
         wrapper.vm.$refs.form = {
           validate: jest.fn(() => true),
         };
-        wrapper.vm.mutateStateTab = jest.fn();
+        wrapper.vm.$storage.mutateStateTab = jest.fn();
+        wrapper.vm.$storage.registration.mutations.mutateTabAtIndex = jest.fn();
+        wrapper.vm.$storage.registration.getters.findEffectiveJumpIndex = jest.fn(() => 4);
+        storage.registration.getters.currentTabIndex.mockReturnValueOnce(2);
 
-        const toIndex = 1;
+        const toIndex = 4;
         await wrapper.vm.jump(toIndex);
-
-        expect(wrapper.vm.mutateStateTab).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(toIndex);
+      });
+
+      it('make correct interrupted jump', async () => {
+        storage.registration.getters.tabs.mockReturnValueOnce(tabs);
+        wrapper.vm.$refs.form = {
+          validate: jest.fn(() => true),
+        };
+        wrapper.vm.$storage.mutateStateTab = jest.fn();
+        wrapper.vm.$storage.registration.getters.findEffectiveJumpIndex = jest.fn(() => 3);
+        storage.registration.getters.currentTabIndex.mockReturnValueOnce(2).mockReturnValueOnce(3);
+
+        const toIndex = 5;
+        await wrapper.vm.jump(toIndex);
+        expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(3);
       });
     });
 
     describe('back', () => {
       test('back calls jump', async () => {
+        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.back();
@@ -136,6 +198,7 @@ describe('Individual.vue', () => {
 
     describe('next', () => {
       it('calls jump', async () => {
+        wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.next();
@@ -146,6 +209,8 @@ describe('Individual.vue', () => {
 
     describe('mutateStateTab', () => {
       it('calls mutation', async () => {
+        storage.registration.getters.tabs.mockReturnValueOnce(tabs);
+
         wrapper.vm.mutateStateTab(true);
 
         expect(wrapper.vm.$storage.registration.mutations.mutateCurrentTab).toHaveBeenCalledTimes(1);

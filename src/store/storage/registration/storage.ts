@@ -57,6 +57,10 @@ export const makeStorage = (store: IStore): IStorage => ({
     indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[] {
       return store.getters['registration/indigenousCommunitiesItems'](provinceCode, indigenousType);
     },
+
+    findEffectiveJumpIndex(targetIndex: number): number {
+      return store.getters['registration/findEffectiveJumpIndex'](targetIndex);
+    },
   },
 
   mutations: {
@@ -70,6 +74,10 @@ export const makeStorage = (store: IStore): IStorage => ({
 
     mutateCurrentTab(callback: (currentTab: ILeftMenuItem) => void) {
       store.commit('registration/mutateCurrentTab', callback);
+    },
+
+    mutateTabAtIndex(targetIndex: number, callback: (currentTab: ILeftMenuItem) => void) {
+      store.commit('registration/mutateTabAtIndex', { targetIndex, callback });
     },
 
     jump(toIndex: number): void {

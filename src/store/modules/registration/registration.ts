@@ -1,10 +1,12 @@
 import {
-  Store, Module, ActionContext, ActionTree,
+  Store, Module, ActionContext, ActionTree, GetterTree,
 } from 'vuex';
 import { ECanadaProvinces, ILeftMenuItem, IOptionItemData } from '@/types';
 import { IRootState } from '@/store/store.types';
 import { IEvent, Event } from '@/entities/event';
-import { IIndigenousIdentityData, EIndigenousTypes } from '@/entities/beneficiary';
+import {
+  IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary,
+} from '@/entities/beneficiary';
 import _sortBy from 'lodash/sortBy';
 import { EOptionItemStatus } from '@/constants/EOptionItemStatus';
 import { i18n } from '@/ui/plugins';
@@ -39,12 +41,12 @@ const getDefaultState = (): IState => ({
     [ECanadaProvinces.YT]: [],
   },
   loadingIndigenousIdentities: false,
-
 });
 
 const moduleState: IState = getDefaultState();
 
 const getters = {
+
   event: (state: IState) => new Event(state.event),
 
   isLeftMenuOpen: (state: IState) => state.isLeftMenuOpen,
@@ -105,6 +107,60 @@ const getters = {
     }
     return [];
   },
+
+  findEffectiveJumpIndex(state: IState, getters: GetterTree<IState, IState>) {
+    return (targetIndex: number) => {
+      if (targetIndex <= state.currentTabIndex) {
+        return targetIndex;
+      }
+      let isValid:boolean;
+      let currentIndex;
+      const beneficiary = getters.beneficiary as unknown as IBeneficiary;
+      // For each step between where we are and where we're jumping to
+      for (currentIndex = state.currentTabIndex; currentIndex < targetIndex; currentIndex += 1) {
+        const currentTabName = state.tabs[currentIndex].componentName;
+
+        switch (currentTabName) {
+          case 'PrivacyStatement':
+            isValid = state.isPrivacyAgreed;
+            break;
+          case 'PersonalInformation':
+            isValid = beneficiary.booleanContactInformationAndIdentityIsValid();
+            break;
+          case 'Addresses':
+            isValid = beneficiary.booleanAddressesIsValid(getters.noFixedHome as unknown as boolean);
+            break;
+          case 'HouseholdMembers':
+            isValid = beneficiary.booleanHouseholdMembersIsValid();
+            break;
+          case 'ReviewRegistration':
+          case 'ConfirmRegistration':
+          default:
+            // Do nothing
+        }
+        // Return on first error found
+        if (!isValid) {
+          break;
+        }
+      }
+      return currentIndex;
+    };
+  },
+
+  privacyStatementIsValid(state: IState): boolean {
+    return state.isPrivacyAgreed;
+  },
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  beneficiary(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): IBeneficiary {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return new Beneficiary(rootGetters['beneficiary/beneficiary'] as any);
+  },
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  noFixedHome(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): boolean {
+    return rootGetters['beneficiary/noFixedHome'] as boolean;
+  },
 };
 
 const mutations = {
@@ -123,6 +179,11 @@ const mutations = {
   mutateCurrentTab(state: IState, callback: (targetTab: ILeftMenuItem) => void) {
     const currentTab = state.tabs[state.currentTabIndex];
     callback(currentTab);
+  },
+
+  mutateTabAtIndex(state: IState, { targetIndex, callback } : {targetIndex: number; callback: (targetTab: ILeftMenuItem) => void}) {
+    const targetTab = state.tabs[targetIndex];
+    callback(targetTab);
   },
 
   jump(state: IState, toIndex: number): void {

@@ -83,7 +83,6 @@ export default Vue.extend({
   data() {
     return {
       requestOnGoing: false,
-      beneficiary: new Beneficiary(),
       isFormReady: false,
     };
   },
@@ -120,6 +119,10 @@ export default Vue.extend({
       }
       return false;
     },
+
+    beneficiary(): Beneficiary {
+      return this.$storage.beneficiary.getters.beneficiary();
+    },
   },
 
   watch: {
@@ -135,17 +138,17 @@ export default Vue.extend({
 
   methods: {
     async jump(toIndex: number) {
-      const isValid = await (this.$refs.form as VForm).validate();
+      const effectiveToIndex:number = this.$storage.registration.getters.findEffectiveJumpIndex(toIndex);
+      this.setSkippedStepsToValid(this.currentTabIndex, effectiveToIndex - 1);
+      await (this.$refs.form as VForm).validate();
+      this.$storage.registration.mutations.jump(effectiveToIndex);
 
-      // TODO We should use the entity validation to stop at the first step containing an error. Then run vee validate to display errors
-      this.mutateStateTab(isValid);
-
-      if (toIndex > this.currentTabIndex && !isValid) {
+      // If we stop on a validation error and a user has seen it previously, highlight errors
+      if (effectiveToIndex !== toIndex && this.allTabs[effectiveToIndex].isTouched) {
+        this.mutateStateTab(false);
+        await (this.$refs.form as VForm).validate();
         helpers.scrollToFirstError('app');
-        return;
       }
-
-      this.$storage.registration.mutations.jump(toIndex);
     },
 
     async back() {
@@ -153,7 +156,6 @@ export default Vue.extend({
         await this.$router.push({ name: routes.landingPage.name });
         return;
       }
-
       await this.jump(this.currentTabIndex - 1);
     },
 
@@ -170,6 +172,18 @@ export default Vue.extend({
         tab.isValid = valid;
         tab.isTouched = true;
       });
+    },
+
+    setSkippedStepsToValid(indexStart: number, indexEnd: number) {
+      if (indexStart <= indexEnd) {
+        for (let i = indexStart + 1; i <= indexEnd; i += 1) {
+          this.$storage.registration.mutations.mutateTabAtIndex(i,
+            (tab: ILeftMenuItem) => {
+              tab.isValid = true;
+              tab.isTouched = true;
+            });
+        }
+      }
     },
   },
 });

@@ -66,7 +66,7 @@ export const tabs: ILeftMenuItem[] = [
     labelKey: 'registration.menu.confirmation',
     titleKey: 'registration.page.confirmation',
     icon: 'mdi-check',
-    disabled: false,
+    disabled: true,
     isValid: true,
     isTouched: false,
     backButtonTextKey: 'common.button.print',

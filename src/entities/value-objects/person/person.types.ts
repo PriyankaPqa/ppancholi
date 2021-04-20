@@ -50,6 +50,7 @@ export interface IPersonData {
 }
 
 export interface IPerson extends IPersonData, IEntity {
+    validateIdentity(errors: Array<string>, skipAgeRestriction: boolean):void;
     setIdentity(data: IPersonData):void;
     setIndigenousIdentity(data: IPersonData):void;
 }

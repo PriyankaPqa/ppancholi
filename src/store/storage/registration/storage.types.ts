@@ -17,6 +17,7 @@ export interface IStorage {
     genders(): IOptionItemData[];
     preferredLanguages(): IOptionItemData[];
     primarySpokenLanguages(): IOptionItemData[];
+    findEffectiveJumpIndex(targetIndex: number):number;
     indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[];
     indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[];
   };
@@ -25,6 +26,7 @@ export interface IStorage {
     toggleLeftMenu(isLeftMenuOpen: boolean): void;
     setCurrentTabIndex(newIndex: number): void;
     mutateCurrentTab(callback: (currentTab: ILeftMenuItem) => void): void;
+    mutateTabAtIndex(targetIndex: number, callback: (currentTab: ILeftMenuItem) => void): void;
     jump(toIndex: number): void;
     setIsPrivacyAgreed(payload: boolean): void;
     setDateTimeConsent(payload: string): void;
@@ -53,12 +55,14 @@ export interface IStorageMock {
     primarySpokenLanguages: jest.Mock<IOptionItemData[]>;
     indigenousTypesItems: jest.Mock<Record<string, unknown>[]>;
     indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
+    findEffectiveJumpIndex: jest.Mock<number>;
   };
 
   mutations: {
     toggleLeftMenu: jest.Mock<void>;
     setCurrentTabIndex: jest.Mock<void>;
     mutateCurrentTab: jest.Mock<void>;
+    mutateTabAtIndex: jest.Mock<void>;
     jump: jest.Mock<void>;
     setIsPrivacyAgreed: jest.Mock<void>;
     setDateTimeConsent: jest.Mock<void>;

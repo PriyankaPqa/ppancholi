@@ -44,7 +44,7 @@ export const mockFriendsFamilyData = (): ITemporaryAddressData => ({
   street: '888 avenue Clark',
   city: 'Ottawa',
   provinceTerritory: ECanadaProvinces.ON.toString(),
-  postalCode: 'H3L 54G',
+  postalCode: 'H3L 5G4',
   geoLocation: null,
 });
 

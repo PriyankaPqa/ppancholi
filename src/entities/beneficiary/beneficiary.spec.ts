@@ -7,6 +7,9 @@ import {
   mockHouseholdMember,
   Person,
 } from '@/entities/beneficiary';
+import { mockAddress } from '../value-objects/address';
+import { mockPerson } from '../value-objects/person';
+import { IBeneficiary } from './beneficiary.types';
 
 describe('>>> Beneficiary', () => {
   describe('>>constructor', () => {
@@ -121,6 +124,32 @@ describe('>>> Beneficiary', () => {
       });
     });
 
+    describe('validateAddresses', () => {
+      it('should call validate from person.temporaryAddress', () => {
+        const b = new Beneficiary();
+        b.person = mockPerson();
+        jest.spyOn(b.person.temporaryAddress, 'validate').mockImplementation(() => []);
+        b.validateAddresses(false);
+        expect(b.person.temporaryAddress.validate).toHaveBeenCalledTimes(1);
+      });
+
+      it('with a fixed Address should call validate from homeAddress', () => {
+        const b = new Beneficiary();
+        b.homeAddress = mockAddress();
+        jest.spyOn(b.homeAddress, 'validate').mockImplementation(() => []);
+        b.validateAddresses(false);
+        expect(b.homeAddress.validate).toHaveBeenCalledTimes(1);
+      });
+
+      it('with no fixed Address should not call validate from homeAddress', () => {
+        const b = new Beneficiary();
+        b.homeAddress = mockAddress();
+        jest.spyOn(b.homeAddress, 'validate').mockImplementation(() => []);
+        b.validateAddresses(true); // no home address
+        expect(b.homeAddress.validate).not.toHaveBeenCalled();
+      });
+    });
+
     describe('validateHouseholdMembers', () => {
       it('should call validate from Person with skipAgeRestriction', () => {
         const b = new Beneficiary();
@@ -139,6 +168,64 @@ describe('>>> Beneficiary', () => {
 
         const res = b.validateHouseholdMembers();
         expect(res).toEqual(['error1', 'error2']);
+      });
+    });
+
+    describe('validateContactInformationAndIdentity', () => {
+      it('should return true for valid Contact Information', () => {
+        const beneficiary:IBeneficiary = mockBeneficiary();
+
+        expect(beneficiary.validateContactInformationAndIdentity(false).length).toEqual(0);
+      });
+      it('should return false for invalid Contact Information', () => {
+        const beneficiary:IBeneficiary = mockBeneficiary();
+        beneficiary.contactInformation.email = null;
+        beneficiary.contactInformation.homePhone = null;
+
+        expect(beneficiary.validateContactInformationAndIdentity(false)).not.toEqual(0);
+      });
+    });
+
+    describe('booleanContactInformationAndIdentityIsValid', () => {
+      it('should return true for valid Contact Information', () => {
+        const beneficiary:IBeneficiary = mockBeneficiary();
+
+        expect(beneficiary.booleanContactInformationAndIdentityIsValid()).toBeTruthy();
+      });
+      it('should return false for invalid Contact Information', () => {
+        const beneficiary:IBeneficiary = mockBeneficiary();
+        beneficiary.contactInformation.email = null;
+        beneficiary.contactInformation.homePhone = null;
+
+        expect(beneficiary.booleanContactInformationAndIdentityIsValid()).toBeFalsy();
+      });
+    });
+
+    describe('booleanAddressesIsValid', () => {
+      it('should return true for valid Addresses', () => {
+        const beneficiary:IBeneficiary = mockBeneficiary();
+
+        expect(beneficiary.booleanAddressesIsValid(false)).toBeTruthy();
+      });
+      it('should return false for invalid Addresses', () => {
+        const beneficiary:IBeneficiary = mockBeneficiary();
+        beneficiary.homeAddress.street = null;
+
+        expect(beneficiary.booleanAddressesIsValid(false)).toBeFalsy();
+      });
+    });
+
+    describe('booleanHouseholdMembersIsValid', () => {
+      it('should return true for valid HouseholdMembers', () => {
+        const beneficiary:IBeneficiary = mockBeneficiary();
+
+        expect(beneficiary.booleanHouseholdMembersIsValid()).toBeTruthy();
+      });
+      it('should return false for invalid HouseholdMembers', () => {
+        const beneficiary:IBeneficiary = mockBeneficiary();
+        beneficiary.householdMembers[0].firstName = null;
+
+        expect(beneficiary.booleanHouseholdMembersIsValid()).toBeFalsy();
       });
     });
   });

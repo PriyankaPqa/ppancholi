@@ -6,6 +6,7 @@ export interface IStorage {
   getters: {
     beneficiary(): Beneficiary,
     personalInformation(): IContactInformation & IPerson,
+    noFixedHome(): boolean,
   };
 
   mutations: {

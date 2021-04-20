@@ -21,12 +21,14 @@ export const mockStorageRegistration = (): IStorageMock => ({
     primarySpokenLanguages: jest.fn(() => mockPrimarySpokenLanguages()),
     indigenousTypesItems: jest.fn(() => mockIndigenousTypesItems()),
     indigenousCommunitiesItems: jest.fn(() => mockIndigenousCommunitiesItems()),
+    findEffectiveJumpIndex: jest.fn(),
   },
 
   mutations: {
     toggleLeftMenu: jest.fn(),
     setCurrentTabIndex: jest.fn(),
     mutateCurrentTab: jest.fn(),
+    mutateTabAtIndex: jest.fn(),
     jump: jest.fn(),
     setIsPrivacyAgreed: jest.fn(),
     setDateTimeConsent: jest.fn(),

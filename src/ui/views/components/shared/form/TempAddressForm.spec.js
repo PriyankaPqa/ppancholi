@@ -109,7 +109,7 @@ describe('TempAddress.vue', () => {
   describe('Template', () => {
     describe('Event handlers', () => {
       test('change event is emitted when form changes', async () => {
-        wrapper.vm.form.country = 'test';
+        wrapper.vm.form.street = 'test';
         expect(wrapper.emitted('change')[0]).toEqual([wrapper.vm.form]);
       });
 

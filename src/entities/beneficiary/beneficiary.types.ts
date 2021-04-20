@@ -20,4 +20,8 @@ export interface IBeneficiary extends IEntity {
   removeHouseholdMember(index: number): void;
   editHouseholdMember(newPerson: IPerson, index: number, sameAddress: boolean): void;
   validateHouseholdMembers(): void;
+  validateContactInformationAndIdentity(skipAgeRestriction: boolean): string[];
+  booleanContactInformationAndIdentityIsValid(): boolean;
+  booleanAddressesIsValid(noFixedHome: boolean): boolean;
+  booleanHouseholdMembersIsValid(): boolean;
 }

@@ -22,6 +22,10 @@ describe('>>> Registration Storage', () => {
     it('should proxy personalInformation', () => {
       expect(storage.getters.personalInformation()).toEqual(store.getters['beneficiary/personalInformation']);
     });
+
+    it('should proxy noFixedHome', () => {
+      expect(storage.getters.noFixedHome()).toEqual(store.getters['beneficiary/noFixedHome']);
+    });
   });
 
   describe('>> Mutations', () => {

@@ -3,6 +3,7 @@ import { mockStore, IRootState } from '@/store';
 import { Event, mockEventsData } from '@/entities/event';
 import { ECanadaProvinces, ILeftMenuItem } from '@/types';
 import {
+  mockBeneficiary,
   EIndigenousTypes,
   mockGenders,
   mockIndigenousCommunitiesItems,
@@ -104,6 +105,69 @@ describe('>>> Registration Module', () => {
         store.state.registration.indigenousIdentities[ECanadaProvinces.AB] = mockIndigenousIdentitiesSearchData().value;
         expect(store.getters['registration/indigenousCommunitiesItems'](ECanadaProvinces.AB, EIndigenousTypes.FirstNations))
           .toEqual(mockIndigenousCommunitiesItems());
+      });
+    });
+
+    describe('findEffectiveJumpIndex', () => {
+      beforeEach(() => {
+        store.getters.beneficiary = mockBeneficiary();
+        store.getters['registration/beneficiary'].booleanContactInformationAndIdentityIsValid = jest.fn(() => false);
+        store.getters['registration/beneficiary'].booleanAddressesIsValid = jest.fn(() => false);
+        store.getters['registration/beneficiary'].booleanHouseholdMembersIsValid = jest.fn(() => false);
+      });
+
+      it('returns the target index when moving backwards', async () => {
+        store.state.registration.currentTabIndex = 2;
+        store.getters.beneficiary.noFixedHome = false;
+        expect(store.getters['registration/findEffectiveJumpIndex'](1)).toEqual(1);
+        expect(store.getters['registration/findEffectiveJumpIndex'](0)).toEqual(0);
+      });
+
+      it('returns the current index when no change', async () => {
+        store.getters.beneficiary.noFixedHome = false;
+        expect(store.getters['registration/findEffectiveJumpIndex'](0)).toEqual(0);
+      });
+
+      it('stops on the invalid PrivacyStatement form', async () => {
+        store.getters.beneficiary.noFixedHome = false;
+        expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(0);
+      });
+
+      it('stops on the invalid PersonalInformation form', async () => {
+        store.state.registration.isPrivacyAgreed = true;
+        store.getters.beneficiary.noFixedHome = false;
+
+        expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(1);
+      });
+
+      it('stops on the invalid Addresses form', async () => {
+        store.state.registration.isPrivacyAgreed = true;
+        store.getters.beneficiary.noFixedHome = false;
+
+        store.getters['registration/beneficiary'].booleanContactInformationAndIdentityIsValid = jest.fn(() => true);
+
+        expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(2);
+      });
+
+      it('stops on the invalid Household Members form', async () => {
+        store.state.registration.isPrivacyAgreed = true;
+        store.getters.beneficiary.noFixedHome = false;
+
+        store.getters['registration/beneficiary'].booleanContactInformationAndIdentityIsValid = jest.fn(() => true);
+        store.getters['registration/beneficiary'].booleanAddressesIsValid = jest.fn(() => true);
+
+        expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(3);
+      });
+
+      it('returns target index when all forms valid', async () => {
+        store.state.registration.isPrivacyAgreed = true;
+        store.getters.beneficiary.noFixedHome = false;
+
+        store.getters['registration/beneficiary'].booleanContactInformationAndIdentityIsValid = jest.fn(() => true);
+        store.getters['registration/beneficiary'].booleanAddressesIsValid = jest.fn(() => true);
+        store.getters['registration/beneficiary'].booleanHouseholdMembersIsValid = jest.fn(() => true);
+
+        expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(6);
       });
     });
   });

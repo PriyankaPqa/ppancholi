@@ -14,3 +14,5 @@ export const mockBeneficiaryData = (): IBeneficiaryData => ({
 export const mockBeneficiary = (force?: Partial<IBeneficiaryData>): IBeneficiary => new Beneficiary(
   { ...mockBeneficiaryData(), ...force },
 );
+
+export const mockBeneficiaryWithWrongAddress = (): IBeneficiary => mockBeneficiary({ homeAddress: mockAddressData({ street: null }) });

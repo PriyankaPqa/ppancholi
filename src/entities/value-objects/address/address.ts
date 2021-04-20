@@ -48,8 +48,9 @@ export class Address implements IAddress {
     maxLengthCheck(this.city, MAX_LENGTH_SM, 'city', errors);
 
     required(this.provinceTerritory, 'provinceTerritory is required', errors);
-    maxLengthCheck(this.provinceTerritory as string, MAX_LENGTH_SM, 'provinceTerritory', errors);
-
+    if (this.country !== 'CA') {
+      maxLengthCheck(this.provinceTerritory as string, MAX_LENGTH_SM, 'provinceTerritory', errors);
+    }
     required(this.postalCode, 'postalCode is required', errors);
 
     if (this.country === 'CA' && this.postalCode) {

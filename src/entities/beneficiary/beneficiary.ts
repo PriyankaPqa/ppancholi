@@ -56,6 +56,36 @@ export class Beneficiary implements IBeneficiary {
     return [].concat(...householdMembersErrors);
   }
 
+  validateContactInformationAndIdentity(skipAgeRestriction: boolean): string[] {
+    const result:string[] = this.contactInformation.validate();
+    this.person.validateIdentity(result, skipAgeRestriction);
+    return result;
+  }
+
+  validateAddresses(noFixedHome: boolean): string[] {
+    let homeAddressValidation:string[] = [];
+    // Only validate HomeAddress if has a fixed home
+    if (!noFixedHome) {
+      homeAddressValidation = this.homeAddress.validate();
+    }
+    return homeAddressValidation.concat(this.person.temporaryAddress.validate());
+  }
+
+  booleanContactInformationAndIdentityIsValid(): boolean {
+    const errorArray = this.validateContactInformationAndIdentity(false);
+    return !errorArray || errorArray.length === 0;
+  }
+
+  booleanAddressesIsValid(noFixedHome: boolean): boolean {
+    const errorArray = this.validateAddresses(noFixedHome);
+    return !errorArray || errorArray.length === 0;
+  }
+
+  booleanHouseholdMembersIsValid(): boolean {
+    const errorArray = this.validateHouseholdMembers();
+    return !errorArray || errorArray.length === 0;
+  }
+
   validate(): string[] {
     const personErrors = this.person.validate();
     const contactInformationErrors = this.contactInformation.validate();
