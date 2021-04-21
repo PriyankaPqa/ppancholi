@@ -236,6 +236,13 @@ describe('>>> Person', () => {
         results = p.validate();
         expect(results).toContain('indigenousCommunityId is required');
       });
+
+      it('is not required if indigenousType is other', () => {
+        const p = new Person();
+        p.indigenousType = EIndigenousTypes.Other;
+        const results = p.validate();
+        expect(results).not.toContain('indigenousCommunityId is required');
+      });
     });
 
     describe('indigenousCommunityOther', () => {

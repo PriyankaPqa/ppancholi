@@ -94,7 +94,7 @@ export class Person implements IPerson {
         required(this.indigenousType, 'indigenousType is required', errors);
       }
 
-      if (this.indigenousType) {
+      if (this.indigenousType && this.indigenousType !== EIndigenousTypes.Other) {
         required(this.indigenousCommunityId, 'indigenousCommunityId is required', errors);
       }
 
