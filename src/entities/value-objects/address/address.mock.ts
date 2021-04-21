@@ -6,7 +6,7 @@ export const mockAddressData = (force?: Partial<IAddressData>): IAddressData => 
   country: 'CA',
   street: '247 Some Street',
   city: 'Ottawa',
-  provinceTerritory: ECanadaProvinces.ON.toString(),
+  provinceTerritory: ECanadaProvinces.ON,
   postalCode: 'K1W 1G7',
   geoLocation: { lat: '', lng: '' },
   unitSuite: '',

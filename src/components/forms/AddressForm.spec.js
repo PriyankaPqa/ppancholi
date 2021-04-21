@@ -16,7 +16,7 @@ describe('AddressForm.vue', () => {
       localVue,
       propsData: {
         apiKey: '1235',
-        homeAddress: mockAddress(),
+        homeAddress: mockAddress({provinceTerritory: ECanadaProvinces.ON.toString()}),
         canadianProvincesItems: enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
       },
     });
