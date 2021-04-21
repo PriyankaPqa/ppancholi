@@ -1,0 +1,49 @@
+export default [{
+  label: 'common.month.january',
+  name: 'January',
+  number: 1,
+}, {
+  label: 'common.month.february',
+  name: 'February',
+  number: 2,
+}, {
+  label: 'common.month.march',
+  name: 'March',
+  number: 3,
+}, {
+  label: 'common.month.april',
+  name: 'April',
+  number: 4,
+}, {
+  label: 'common.month.may',
+  name: 'May',
+  number: 5,
+}, {
+  label: 'common.month.june',
+  name: 'June',
+  number: 6,
+}, {
+  label: 'common.month.july',
+  name: 'July',
+  number: 7,
+}, {
+  label: 'common.month.august',
+  name: 'August',
+  number: 8,
+}, {
+  label: 'common.month.september',
+  name: 'September',
+  number: 9,
+}, {
+  label: 'common.month.october',
+  name: 'October',
+  number: 10,
+}, {
+  label: 'common.month.november',
+  name: 'November',
+  number: 11,
+}, {
+  label: 'common.month.december',
+  name: 'December',
+  number: 12,
+}];
