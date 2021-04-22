@@ -26,7 +26,7 @@ import helpers from '@/ui/helpers';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 import { IState } from './event.types';
-import { mapEventDataToSearchData } from './utils';
+import { mapEventDataToSearchData } from './eventUtils';
 
 const getDefaultState = (): IState => ({
   agreementTypes: [],

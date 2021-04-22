@@ -70,13 +70,35 @@ const routes = {
       path: 'create',
       name: 'events.create',
     },
+    edit: {
+      path: ':id/edit',
+      name: 'events.edit',
+    },
     details: {
       path: ':id',
       name: 'events.details',
     },
+    summary: {
+      path: '',
+      name: 'events.summary',
+    },
+  },
+  programs: {
+    home: {
+      path: 'programs',
+      name: 'programs.home',
+    },
+    create: {
+      path: 'programs/create',
+      name: 'programs.create',
+    },
+    details: {
+      path: 'programs/:programId',
+      name: 'programs.details',
+    },
     edit: {
-      path: ':id/edit',
-      name: 'events.edit',
+      path: 'programs/:programId/edit',
+      name: 'programs.edit',
     },
   },
   financialAssistance: {

@@ -246,7 +246,7 @@ export default Vue.extend({
 
     getEventRoute(event: IEvent) {
       return {
-        name: routes.events.details.name,
+        name: routes.events.summary.name,
         params: {
           id: event.id,
         },

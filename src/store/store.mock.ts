@@ -12,6 +12,7 @@ import { event } from './modules/event';
 import { team } from './modules/team';
 import { optionList } from './modules/optionList';
 import { appUser } from './modules/app-user';
+import { program } from './modules/program';
 
 Vue.use(Vuex);
 
@@ -24,6 +25,7 @@ const mockConfig = {
     team,
     optionList,
     appUser,
+    program,
   },
 };
 

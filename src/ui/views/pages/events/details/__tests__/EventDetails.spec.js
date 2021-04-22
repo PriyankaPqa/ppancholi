@@ -314,7 +314,14 @@ describe('EventDetails.vue', () => {
             test: 'event-summary',
             icon: '',
             disabled: false,
-            to: routes.events.details.name,
+            to: routes.events.summary.name,
+          }, {
+            text: 'eventDetail.menu_programs',
+            test: 'event-programs',
+            icon: '',
+            disabled: false,
+            to: routes.programs.home.name,
+            exact: false,
           }],
         );
       });

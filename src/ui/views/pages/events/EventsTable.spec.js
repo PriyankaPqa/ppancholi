@@ -28,7 +28,7 @@ describe('EventsTable.vue', () => {
       wrapper.vm.azureSearchItems = mockEvents();
       wrapper.vm.azureSearchCount = mockEvents().length;
       wrapper.vm.getEventRoute = jest.fn(() => ({
-        name: routes.events.details.name,
+        name: routes.events.summary.name,
         params: {
           id: 'test-id',
         },
@@ -92,7 +92,7 @@ describe('EventsTable.vue', () => {
         test('event title redirects to getEventRoute', () => {
           const link = wrapper.findDataTest('eventDetail-link');
           expect(link.props('to')).toEqual({
-            name: routes.events.details.name,
+            name: routes.events.summary.name,
             params: {
               id: 'test-id',
             },
@@ -311,7 +311,7 @@ describe('EventsTable.vue', () => {
         wrapper.vm.azureSearchItems = mockEvents();
         wrapper.vm.azureSearchCount = mockEvents().length;
         wrapper.vm.getEventRoute = jest.fn(() => ({
-          name: routes.events.details.name,
+          name: routes.events.summary.name,
           params: {
             id: 'test-id',
           },
@@ -384,7 +384,7 @@ describe('EventsTable.vue', () => {
     describe('getEventRoute', () => {
       it('returns the right route object', () => {
         expect(wrapper.vm.getEventRoute(mockEvents()[0])).toEqual({
-          name: routes.events.details.name,
+          name: routes.events.summary.name,
           params: {
             id: mockEvents()[0].id,
           },

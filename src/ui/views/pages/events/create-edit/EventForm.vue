@@ -10,7 +10,6 @@
               <v-text-field-with-validation
                 v-model="localEvent.name.translation[languageMode]"
                 data-test="event-name"
-                autocomplete="nope"
                 :label="`${$t('event.event_name')} *`"
                 :hint="$t('event.event_name.hint')"
                 persistent-hint
@@ -693,7 +692,7 @@ export default Vue.extend({
 
     resetAsUnique() {
       if (!this.isNameUnique) {
-        this.$emit('update:isNameUnique', true);
+        this.$emit('update:is-name-unique', true);
       }
     },
   },

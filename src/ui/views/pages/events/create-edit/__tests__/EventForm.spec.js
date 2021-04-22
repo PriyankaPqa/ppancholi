@@ -208,11 +208,11 @@ describe('EventForm.vue', () => {
     });
 
     describe('resetAsUnique', () => {
-      it('emits update:isNameUnique to true if it is false', async () => {
+      it('emits update:is-name-unique to true if it is false', async () => {
         wrapper.setProps({ isNameUnique: false });
         await wrapper.vm.$nextTick();
         await wrapper.vm.resetAsUnique();
-        expect(wrapper.emitted('update:isNameUnique')[0][0]).toBe(true);
+        expect(wrapper.emitted('update:is-name-unique')[0][0]).toBe(true);
       });
     });
   });

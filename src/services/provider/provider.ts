@@ -6,6 +6,7 @@ import { OptionItemsService } from '../optionItems';
 import { TeamsService } from '../teams';
 import { AppUsersService } from '../app-users';
 import { UsersService } from '../users';
+import { ProgramsService } from '../programs';
 
 export const provider = (): IProvider => ({
   appUsers: new AppUsersService(httpClient),
@@ -14,4 +15,5 @@ export const provider = (): IProvider => ({
   optionItems: new OptionItemsService(httpClient),
   teams: new TeamsService(httpClient),
   users: new UsersService(httpClient),
+  programs: new ProgramsService(httpClient),
 });

@@ -94,7 +94,7 @@ export default Vue.extend({
     back(): void {
       if (this.isEditMode) {
         this.$router.replace({
-          name: routes.events.details.name,
+          name: routes.events.summary.name,
           params: {
             id: this.id,
           },
@@ -133,7 +133,7 @@ export default Vue.extend({
             eventId = newEvent.id;
             this.$toasted.global.success(this.$t('event_create.success'));
           }
-          this.$router.replace({ name: routes.events.details.name, params: { id: eventId } });
+          this.$router.replace({ name: routes.events.summary.name, params: { id: eventId } });
         } catch (e) {
           this.handleSubmitError(e);
         } finally {

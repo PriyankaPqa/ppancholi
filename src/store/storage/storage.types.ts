@@ -5,6 +5,7 @@ import { IStorage as IEventStorage, IStorageMock as IEventStorageMock } from './
 import { IStorage as IOptionListStorage, IStorageMock as IOptionListStorageMock } from './optionList';
 import { IStorage as ITeamStorage, IStorageMock as ITeamStorageMock } from './team';
 import { IStorage as IAppUserStorage, IStorageMock as IAppUserStorageMock } from './app-user';
+import { IStorage as IProgramStorage, IStorageMock as IProgramStorageMock } from './program';
 
 export interface IStorage {
   appUser: IAppUserStorage;
@@ -14,6 +15,7 @@ export interface IStorage {
   event: IEventStorage;
   optionList: IOptionListStorage;
   team: ITeamStorage;
+  program: IProgramStorage;
 }
 
 export interface IStorageMock {
@@ -24,4 +26,5 @@ export interface IStorageMock {
   event: IEventStorageMock;
   optionList: IOptionListStorageMock;
   team: ITeamStorageMock;
+  program: IProgramStorageMock;
 }

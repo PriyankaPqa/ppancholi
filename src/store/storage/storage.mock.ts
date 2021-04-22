@@ -6,6 +6,7 @@ import { mockStorageEvent } from './event';
 import { mockStorageOptionList } from './optionList';
 import { mockStorageTeam } from './team';
 import { mockStorageAppUser } from './app-user';
+import { mockStorageProgram } from './program';
 
 export const mockStorage = (): IStorageMock => ({
   appUser: mockStorageAppUser(),
@@ -15,4 +16,5 @@ export const mockStorage = (): IStorageMock => ({
   event: mockStorageEvent(),
   optionList: mockStorageOptionList(),
   team: mockStorageTeam(),
+  program: mockStorageProgram(),
 });

@@ -8,6 +8,7 @@ import { optionList } from './modules/optionList';
 import { event } from './modules/event';
 import { team } from './modules/team';
 import { appUser } from './modules/app-user';
+import { program } from './modules/program';
 
 Vue.use(Vuex);
 
@@ -24,6 +25,7 @@ const store: StoreOptions<IRootState> = {
     event,
     optionList,
     team,
+    program,
   },
 };
 

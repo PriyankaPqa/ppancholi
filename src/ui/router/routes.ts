@@ -26,6 +26,10 @@ const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pa
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
 const CreateEditEvent = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/create-edit/CreateEditEvent.vue');
 const EventDetails = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/details/EventDetails.vue');
+const EventSummary = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/details/EventSummary.vue');
+const ProgramsHome = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/programs/home/ProgramsHome.vue');
+const CreateEditProgram = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/programs/create-edit/CreateEditProgram.vue');
+const ProgramDetails = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/programs/details/ProgramDetails.vue');
 
 const MainLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/components/layout/MainLayout.vue');
 const HomeLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
@@ -200,18 +204,49 @@ export const routes: Array<RouteConfig> = [
                 props: true,
               },
               {
-                path: Routes.events.details.path,
-                name: Routes.events.details.name,
-                component: EventDetails,
-                meta: { level: 'level4' },
-                props: true,
-              },
-              {
                 path: Routes.events.edit.path,
                 name: Routes.events.edit.name,
                 component: CreateEditEvent,
                 meta: { level: 'level5' },
                 props: true,
+              },
+              {
+                path: Routes.events.details.path,
+                name: Routes.events.details.name,
+                component: EventDetails,
+                meta: { level: 'level4' },
+                props: true,
+                children: [{
+                  path: Routes.events.summary.path,
+                  name: Routes.events.summary.name,
+                  component: EventSummary,
+                  meta: { level: 'level4' },
+                  props: true,
+                }, {
+                  path: Routes.programs.home.path,
+                  name: Routes.programs.home.name,
+                  component: ProgramsHome,
+                  meta: { level: 'level6' },
+                  props: true,
+                }, {
+                  path: Routes.programs.create.path,
+                  name: Routes.programs.create.name,
+                  component: CreateEditProgram,
+                  meta: { level: 'level6' },
+                  props: true,
+                }, {
+                  path: Routes.programs.edit.path,
+                  name: Routes.programs.edit.name,
+                  component: CreateEditProgram,
+                  meta: { level: 'level6' },
+                  props: true,
+                }, {
+                  path: Routes.programs.details.path,
+                  name: Routes.programs.details.name,
+                  component: ProgramDetails,
+                  meta: { level: 'level6' },
+                  props: true,
+                }],
               },
             ],
           },

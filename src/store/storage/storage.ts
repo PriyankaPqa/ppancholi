@@ -7,6 +7,7 @@ import { makeStorage as makeEventStorage } from './event';
 import { makeStorage as makeOptionListStorage } from './optionList';
 import { makeStorage as makeTeamStorage } from './team';
 import { makeStorage as makeAppUserStorage } from './app-user';
+import { makeStorage as makeProgramStorage } from './program';
 
 export const makeStorage = (store: IStore): IStorage => ({
   appUser: makeAppUserStorage(store),
@@ -16,4 +17,5 @@ export const makeStorage = (store: IStore): IStorage => ({
   event: makeEventStorage(store),
   optionList: makeOptionListStorage(store),
   team: makeTeamStorage(store),
+  program: makeProgramStorage(store),
 });

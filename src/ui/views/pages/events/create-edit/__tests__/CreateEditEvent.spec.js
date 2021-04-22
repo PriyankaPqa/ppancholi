@@ -73,7 +73,7 @@ describe('CreatEditEvent.vue', () => {
 
         wrapper.vm.back();
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-          name: routes.events.details.name,
+          name: routes.events.summary.name,
           params: {
             id: 'TEST_ID',
           },
@@ -113,7 +113,7 @@ describe('CreatEditEvent.vue', () => {
         await wrapper.vm.submit();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
-          { name: routes.events.details.name, params: { id: mockEvent.id } },
+          { name: routes.events.summary.name, params: { id: mockEvent.id } },
         );
       });
 
@@ -348,7 +348,7 @@ describe('CreatEditEvent.vue', () => {
       await wrapper.vm.submit();
 
       expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
-        { name: routes.events.details.name, params: { id: mockEvent.id } },
+        { name: routes.events.summary.name, params: { id: mockEvent.id } },
       );
     });
   });

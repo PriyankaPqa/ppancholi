@@ -1,7 +1,7 @@
 <template>
   <page-template
     :loading="loading"
-    :show-right-menu="true"
+    :show-right-menu="showRightMenu"
     :left-menu-title="$m(event.name)"
     :navigation-tabs="tabs">
     <template v-if="event" slot="left-menu">
@@ -71,9 +71,7 @@
       </div>
     </template>
 
-    <template slot="default">
-      <event-summary />
-    </template>
+    <router-view />
 
     <template slot="page-right-menu-top">
       <div class="pl-2">
@@ -139,7 +137,6 @@ import { EEventStatus, Event, IEvent } from '@/entities/event';
 import { ECanadaProvinces, INavigationTab } from '@/types';
 import routes from '@/constants/routes';
 import { TranslateResult } from 'vue-i18n';
-import EventSummary from './EventSummary.vue';
 
 export default Vue.extend({
   name: 'EventDetails',
@@ -147,7 +144,6 @@ export default Vue.extend({
   components: {
     RcPhoneDisplay,
     PageTemplate,
-    EventSummary,
   },
 
   props: {
@@ -199,7 +195,14 @@ export default Vue.extend({
         test: 'event-summary',
         icon: '',
         disabled: false,
-        to: routes.events.details.name,
+        to: routes.events.summary.name,
+      }, {
+        text: this.$t('eventDetail.menu_programs'),
+        test: 'event-programs',
+        icon: '',
+        disabled: false,
+        to: routes.programs.home.name,
+        exact: false,
       }];
     },
 
@@ -225,6 +228,10 @@ export default Vue.extend({
 
         return item;
       });
+    },
+
+    showRightMenu(): boolean {
+      return this.$route.name === routes.events.summary.name;
     },
   },
 

@@ -10,7 +10,7 @@ import {
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
 
-jest.mock('@/store/modules/event/utils');
+jest.mock('@/store/modules/event/eventUtils');
 
 describe('>>> Event Module', () => {
   let store: Store<IRootState>;
