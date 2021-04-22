@@ -33,5 +33,5 @@ export interface ITemporaryAddress extends ITemporaryAddressData, IEntity {
     requiresProvinceTerritory(): boolean;
     requiresCity(): boolean;
     requiresShelterId(): boolean;
-    reset(type?: ETemporaryAddressTypes): void;
+    resetTemporaryAddress(type?: ETemporaryAddressTypes): void;
 }

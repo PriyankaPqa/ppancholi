@@ -38,8 +38,8 @@ export interface IResponseDetails {
  * Interface that maps to the response structure from the API
  */
 export interface IEventData {
-  id: uuid;
-  name: IMultilingual;
+  eventId: uuid;
+  eventName: IMultilingual;
   responseDetails: IResponseDetails;
   registrationLink: IMultilingual;
   tenantId: uuid;
@@ -48,4 +48,10 @@ export interface IEventData {
 /**
  * Interface used for the Event entity class
  */
-export interface IEvent extends IEventData {}
+export interface IEvent {
+  id: uuid;
+  name: IMultilingual;
+  responseDetails: IResponseDetails;
+  registrationLink: IMultilingual;
+  tenantId: uuid;
+}

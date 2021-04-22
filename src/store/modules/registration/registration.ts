@@ -1,17 +1,18 @@
 import {
-  Store, Module, ActionContext, ActionTree, GetterTree
+  Store, Module, ActionContext, ActionTree, GetterTree,
 } from 'vuex';
+import _sortBy from 'lodash/sortBy';
+import VueI18n from 'vue-i18n';
 import {
   ECanadaProvinces, ILeftMenuItem, IOptionItemData, EOptionItemStatus,
 } from '../../../types';
 import { IRootState } from '../../store.types';
-import _sortBy from 'lodash/sortBy';
-import VueI18n from 'vue-i18n';
-import { IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary } from '../../../entities/beneficiary';
-import { IEvent, Event } from '../../../entities/event';
+import {
+  IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary,
+} from '../../../entities/beneficiary';
+import { IEvent, Event, IEventData } from '../../../entities/event';
 import { tabs } from './tabs';
 import { IState } from './registration.types';
-
 
 const INDIGENOUS_LIMIT_RESULTS = 1000;
 
@@ -164,7 +165,7 @@ const getters = (i18n: VueI18n) => ({
 });
 
 const mutations = {
-  setEvent(state: IState, payload: IEvent) {
+  setEvent(state: IState, payload: IEventData) {
     state.event = payload;
   },
 

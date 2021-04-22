@@ -332,7 +332,7 @@ describe('>>> Temporary Address', () => {
     describe('reset', () => {
       it('should reset the temporary address', () => {
         const t = mockCampGround();
-        t.reset();
+        t.resetTemporaryAddress();
 
         expect(t.country).toEqual('CA');
         expect(t.street).toEqual(null);
@@ -350,7 +350,7 @@ describe('>>> Temporary Address', () => {
 
       it('should reset the temporary address with given type', () => {
         const t = mockCampGround();
-        t.reset(ETemporaryAddressTypes.HotelMotel);
+        t.resetTemporaryAddress(ETemporaryAddressTypes.HotelMotel);
 
         expect(t.country).toEqual('CA');
         expect(t.street).toEqual(null);

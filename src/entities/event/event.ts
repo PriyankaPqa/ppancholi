@@ -16,11 +16,11 @@ export class Event implements IEvent {
 
   constructor(data?: IEventData) {
     if (data) {
-      this.id = data.id;
+      this.id = data.eventId;
       this.responseDetails = data.responseDetails;
       this.name = {
         translation: {
-          ...data.name.translation,
+          ...data.eventName.translation,
         },
       };
       this.registrationLink = {

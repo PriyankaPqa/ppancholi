@@ -15,7 +15,7 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
   constructor(data?: ITemporaryAddressData) {
     super(data);
     if (!data) {
-      this.reset();
+      this.resetTemporaryAddress();
     } else {
       this.temporaryAddressType = data.temporaryAddressType;
       this.placeName = data.placeName;
@@ -65,9 +65,7 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
     return errors;
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  reset(type?: ETemporaryAddressTypes): void {
+  resetTemporaryAddress(type?: ETemporaryAddressTypes): void {
     super.reset();
     this.temporaryAddressType = type ?? null;
     this.placeName = '';

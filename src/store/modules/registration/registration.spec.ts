@@ -11,7 +11,7 @@ import {
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
   mockBeneficiary,
-  Beneficiary
+  Beneficiary,
 } from '../../../entities/beneficiary';
 import { tabs } from './tabs';
 

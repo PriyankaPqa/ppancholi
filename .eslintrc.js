@@ -44,6 +44,9 @@ module.exports = {
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-useless-constructor': 'off',
     'class-methods-use-this': 'off',
+    'vue/valid-v-slot': ['error', {
+      allowModifiers: true,
+    }],
   },
 
   parserOptions: {
@@ -88,7 +91,6 @@ module.exports = {
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-empty-function': 2,
         '@typescript-eslint/interface-name-prefix': 'off',
-        '@typescript-eslint/ban-ts-ignore': 'off',
 
       },
     },
