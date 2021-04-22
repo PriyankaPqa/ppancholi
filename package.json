@@ -17,11 +17,12 @@
     "lokalise:up": "node lokalise.js up",
     "report": "vue-cli-service build --report",
     "report-json": "vue-cli-service build --report-json",
-    "test": "vue-cli-service test:unit",
+    "test": "vue-cli-service test:unit --runInBand",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "pr": "yarn test && yarn lint"
   },
   "dependencies": {
+    "@crctech/registration-lib": "0.1.5",
     "@crctech/component-library": "^0.0.77",
     "@mdi/font": "^5.6.55",
     "@types/uuid": "^8.3.0",

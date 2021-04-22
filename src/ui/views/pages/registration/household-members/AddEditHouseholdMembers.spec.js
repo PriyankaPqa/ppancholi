@@ -1,11 +1,15 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import { mockHouseholdMember, mockPerson } from '@/entities/value-objects/person';
+import { mockHouseholdMember, mockPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import { RcDialog } from '@crctech/component-library';
-import { mockCampGround } from '@/entities/value-objects/temporary-address';
+import {
+  ETemporaryAddressTypes,
+  mockCampGround,
+} from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
 import { ECanadaProvinces } from '@/types';
 import HouseholdMemberForm from '@/ui/views/pages/registration/household-members/HouseholdMemberForm.vue';
+import { enumToTranslatedCollection } from '@/ui/utils';
 import Component from './AddEditHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -47,6 +51,14 @@ describe('AddEditHouseholdMembers.vue', () => {
       it('return correct title for addMode', async () => {
         await wrapper.setProps({ index: 0 - 1 });
         expect(wrapper.vm.getTitle).toBe('registration.household_member.add.title');
+      });
+    });
+
+    describe('temporaryAddressTypeItems', () => {
+      it('returns the full list of temporary addresses types without remaining home', async () => {
+        const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+        const filtered = list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+        expect(wrapper.vm.temporaryAddressTypeItems).toEqual(filtered);
       });
     });
   });

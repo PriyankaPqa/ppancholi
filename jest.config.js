@@ -13,11 +13,20 @@ module.exports = {
     '!**/*.types.ts',
     '!**/index.ts',
   ],
+  moduleFileExtensions: [
+    'js',
+    'ts',
+    'json',
+    'vue',
+  ],
   transform: {
-    'vee-validate/dist/rules': 'babel-jest',
+    '.*\\.(vue)$': 'vue-jest',
+    '^.+\\.tsx?$': 'ts-jest',
   },
   transformIgnorePatterns: [
-    '<roodDir>/node_modules/(?!vee-validate/dist/rules)',
+    // '/node_modules/(?!vee-validate/dist/rules)',
+    // 'node_modules/(?!vee-validate/dist/rules|@crctech/registration-lib/*)',
+    // '/node_modules/(?!(@crctech/registration-lib)/)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',

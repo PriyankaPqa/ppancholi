@@ -5,8 +5,8 @@ import {
   mockContactInformation,
   mockPreferredLanguageOther,
   mockPrimarySpokenLanguageOther,
-} from '@/entities/value-objects/contact-information';
-import { EIndigenousTypes, mockGenderOther, mockPerson } from '@/entities/value-objects/person';
+} from '@crctech/registration-lib/src/entities/value-objects/contact-information';
+import { EIndigenousTypes, mockGenderOther, mockPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import { ECanadaProvinces } from '@/types';
 import Component from './PersonalInformationTemplate.vue';
 

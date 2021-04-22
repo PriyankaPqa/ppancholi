@@ -15,11 +15,10 @@
 import Vue from 'vue';
 import {
   EIndigenousTypes, IContactInformation, IIndigenousIdentityData, IPerson,
-} from '@/entities/beneficiary';
-import utils from '@/entities/utils';
-import VueI18n from 'vue-i18n';
+} from '@crctech/registration-lib/src/entities/beneficiary';
+import { displayBirthDate } from '@crctech/registration-lib/src/ui/utils';
+import { TranslateResult } from 'vue-i18n';
 import { ECanadaProvinces } from '@/types';
-import TranslateResult = VueI18n.TranslateResult;
 
 export default Vue.extend({
   name: 'PersonalInformationTemplate',
@@ -108,7 +107,7 @@ export default Vue.extend({
     },
 
     getBirthDate(): string {
-      return utils.displayBirthDate(this.personalInformation.birthDate);
+      return displayBirthDate(this.personalInformation.birthDate);
     },
 
     getPrimarySpokenLanguage(): TranslateResult {

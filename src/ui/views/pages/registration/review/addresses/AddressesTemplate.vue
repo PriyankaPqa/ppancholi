@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import TemporaryAddressTemplate from '@/ui/views/pages/registration/review/addresses/TemporaryAddressTemplate.vue';
-import { IBeneficiary } from '@/entities/beneficiary';
+import { IBeneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
 import HomeAddressTemplate from '@/ui/views/pages/registration/review/addresses/HomeAddressTemplate.vue';
 
 export default Vue.extend({

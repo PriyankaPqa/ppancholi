@@ -47,7 +47,7 @@
 </template>
 
 <script lang="ts">
-import { ETemporaryAddressTypes, ITemporaryAddress } from '@/entities/value-objects/temporary-address';
+import { ETemporaryAddressTypes, ITemporaryAddress } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
 import Vue from 'vue';
 import { ECanadaProvinces } from '@/types';
 

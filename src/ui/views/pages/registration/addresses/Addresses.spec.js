@@ -1,12 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import AddressForm from '@/ui/views/components/shared/form/AddressForm.vue';
-import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
-import { ETemporaryAddressTypes, mockCampGround } from '@/entities/value-objects/temporary-address';
-import { mockAddress, mockBeneficiary } from '@/entities/beneficiary';
-import utils from '@/entities/utils';
+import { ETemporaryAddressTypes, mockCampGround } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
+import { mockAddress, mockBeneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
+import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
+import { AddressForm, TempAddressForm } from '@crctech/registration-lib';
 import Component from './Addresses.vue';
 
 const localVue = createLocalVue();
@@ -25,12 +24,7 @@ describe('Addresses.vue', () => {
   });
 
   describe('Template', () => {
-    describe('Temporary Address', () => {
-      test('hide remaining home props is linked to noFixedHome', () => {
-        const props = wrapper.findComponent(TempAddressForm).props('hideRemainingHome');
-        expect(props).toEqual(wrapper.vm.noFixedHome);
-      });
-    });
+
   });
 
   describe('Computed', () => {
@@ -59,7 +53,42 @@ describe('Addresses.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
+      });
+    });
+
+    describe('temporaryAddressTypeItems', () => {
+      it('returns the full list of temporary addresses types if noFixedHome is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            noFixedHome() {
+              return false;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+        expect(wrapper.vm.temporaryAddressTypeItems).toEqual(list);
+      });
+
+      it('returns the full list of temporary addresses types without remaining home if noFixedHome is true', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            noFixedHome() {
+              return true;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+        const filtered = list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+        expect(wrapper.vm.temporaryAddressTypeItems).toEqual(filtered);
       });
     });
   });

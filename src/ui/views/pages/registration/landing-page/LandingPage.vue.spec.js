@@ -1,6 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockEventsData } from '@/entities/event';
+import { mockEventsData } from '@crctech/registration-lib/src/entities/event';
 import Component from './LandingPage.vue';
 
 const localVue = createLocalVue();

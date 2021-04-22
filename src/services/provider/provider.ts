@@ -1,7 +1,7 @@
 import { httpClient } from '@/services/httpClient';
+import { EventsService } from '@crctech/registration-lib/src/services/events';
+import { BeneficiariesService } from '@crctech/registration-lib/src/services/beneficiaries';
 import { IProvider } from './provider.types';
-import { EventsService } from '../events';
-import { BeneficiariesService } from '../beneficiaries';
 
 export const provider = (): IProvider => ({
   events: new EventsService(httpClient),

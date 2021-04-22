@@ -55,7 +55,7 @@ import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import Vue from 'vue';
 import {
   mockPerson, mockAddress, mockContactInformation, mockCampGround, mockHouseholdMember,
-} from '@/entities/beneficiary';
+} from '@crctech/registration-lib/src/entities/beneficiary';
 
 export default Vue.extend({
   name: 'LeftMenu',

@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockEventsData } from '@/entities/event';
+import { mockEventsData } from '@crctech/registration-lib/src/entities/event';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();

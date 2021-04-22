@@ -1,6 +1,6 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { EIndigenousTypes, mockGenderOther, mockPerson } from '@/entities/value-objects/person';
+import { EIndigenousTypes, mockGenderOther, mockPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import TemporaryAddressTemplate from '@/ui/views/pages/registration/review/addresses/TemporaryAddressTemplate.vue';
 import { ECanadaProvinces } from '@/types';
 import Component from './HouseholdMemberTemplate.vue';

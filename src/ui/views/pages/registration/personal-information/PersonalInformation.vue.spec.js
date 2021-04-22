@@ -1,17 +1,16 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
+  IdentityForm, ContactInformationForm, IndigenousIdentityForm,
   mockBeneficiary,
   mockContactInformation, mockGenders, mockIndigenousCommunitiesItems, mockIndigenousTypesItems,
   mockPerson,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-} from '@/entities/beneficiary';
+} from '@crctech/registration-lib';
 
 import { mockStorage } from '@/store/storage';
-import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
-import ContactInformationForm from '@/ui/views/components/shared/form/ContactInformationForm.vue';
-import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
-import utils from '@/entities/utils';
+
+import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
 import Component from './PersonalInformation.vue';
 
@@ -74,7 +73,7 @@ describe('PersonalInformation.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
       });
     });
 

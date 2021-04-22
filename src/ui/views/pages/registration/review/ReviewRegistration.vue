@@ -83,9 +83,9 @@ import SummarySection from '@/ui/views/pages/registration/review/SummarySection.
 import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import AddressesTemplate from '@/ui/views/pages/registration/review/addresses/AddressesTemplate.vue';
 import Vue from 'vue';
-import { IContactInformation } from '@/entities/value-objects/contact-information';
-import { IPerson } from '@/entities/value-objects/person';
-import { IBeneficiary } from '@/entities/beneficiary';
+import { IContactInformation } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
+import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
+import { IBeneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
 import { ECanadaProvinces, IOptionItemData, VForm } from '@/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import HouseholdMemberSection from '@/ui/views/pages/registration/review/household-members/HouseholdMemberSection.vue';
@@ -94,7 +94,7 @@ import HouseholdMemberTemplate
   from '@/ui/views/pages/registration/review/household-members/HouseholdMemberTemplate.vue';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
-import utils from '@/entities/utils';
+import { enumToTranslatedCollection } from '@/ui/utils';
 import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
@@ -147,7 +147,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+      return enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {

@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IPerson, Person } from '@/entities/value-objects/person';
+import { IPerson, Person } from '@crctech/registration-lib/src/entities/value-objects/person';
 import AddEditHouseholdMembers from '@/ui/views/pages/registration/household-members/AddEditHouseholdMembers.vue';
 import { RcConfirmationDialog } from '@crctech/component-library';
 import { MAX_HOUSEHOLDMEMBERS } from '@/constants/validations';

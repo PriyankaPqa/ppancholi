@@ -1,6 +1,6 @@
 import { Store } from 'vuex';
-import { IState as IRegistrationState } from './modules/registration/registration.types';
-import { IState as IBeneficiaryState } from './modules/beneficiary/beneficiary.types';
+import { IState as IRegistrationState } from '@crctech/registration-lib/src/store/modules/registration/registration.types';
+import { IState as IBeneficiaryState } from '@crctech/registration-lib/src/store/modules/beneficiary/beneficiary.types';
 
 export interface IRootState {
   version: string;

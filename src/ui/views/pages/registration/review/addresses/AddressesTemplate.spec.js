@@ -2,7 +2,7 @@ import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import HomeAddressTemplate from '@/ui/views/pages/registration/review/addresses/HomeAddressTemplate.vue';
 import TemporaryAddressTemplate from '@/ui/views/pages/registration/review/addresses/TemporaryAddressTemplate.vue';
-import { mockBeneficiary } from '@/entities/beneficiary';
+import { mockBeneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
 import Component from './AddressesTemplate.vue';
 
 const localVue = createLocalVue();

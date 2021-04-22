@@ -1,5 +1,5 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { Beneficiary } from '@/entities/beneficiary';
+import { Beneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
 import moment from 'moment';
 import { mockStorage } from '@/store/storage';
 import Component from './PrivacyStatement.vue';

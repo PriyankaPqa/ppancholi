@@ -1,8 +1,9 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
+import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
+import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
+import { i18n } from '@/ui/plugins';
 import { IRootState } from './store.types';
-import { registration } from './modules/registration';
-import { beneficiary } from './modules/beneficiary';
 
 Vue.use(Vuex);
 
@@ -12,8 +13,8 @@ const store: StoreOptions<IRootState> = {
     version: '1.0.0', // a simple property
   },
   modules: {
-    beneficiary,
-    registration,
+    beneficiary: makeBeneficiaryModule(),
+    registration: makeRegistrationModule(i18n),
   },
 };
 

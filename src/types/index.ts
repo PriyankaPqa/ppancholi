@@ -18,6 +18,7 @@ export type { IAzureSearchParams } from './interfaces/IAzureSearchParams';
  * Enums
  */
 export { ECanadaProvinces } from './enums/ECanadaProvinces';
+export { EOptionItemStatus } from './enums/EOptionItemStatus';
 
 export type VForm = Vue & {
   validate: (type?: { silent?: boolean }) => boolean;

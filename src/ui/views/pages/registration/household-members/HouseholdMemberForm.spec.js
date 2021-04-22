@@ -6,12 +6,12 @@ import {
   mockHouseholdMember,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems, mockPerson,
-} from '@/entities/beneficiary';
-import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
-import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
-import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
-import utils from '@/entities/utils';
+} from '@crctech/registration-lib/src/entities/beneficiary';
+
+import { IdentityForm, IndigenousIdentityForm, TempAddressForm } from '@crctech/registration-lib';
+import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
+import { ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address/index';
 import Component from './HouseholdMemberForm.vue';
 
 const localVue = createLocalVue();
@@ -27,10 +27,12 @@ describe('HouseholdMemberForm.vue', () => {
         person: mockHouseholdMember(),
         sameAddress: true,
         genderItems: mockGenders(),
-        canadianProvincesItems: utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        canadianProvincesItems: enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
         indigenousTypesItems: mockIndigenousTypesItems(),
         indigenousCommunitiesItems: mockIndigenousCommunitiesItems(),
+        temporaryAddressTypeItems: enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
         loading: false,
+        apiKey: '1345',
       },
       mocks: {
         $storage: storage,
@@ -78,15 +80,6 @@ describe('HouseholdMemberForm.vue', () => {
         });
 
         expect(wrapper.findComponent(TempAddressForm).exists()).toBeTruthy();
-      });
-
-      test('hide remaining home props is linked to noFixedHome', async () => {
-        await wrapper.setProps({
-          sameAddress: false,
-        });
-
-        const props = wrapper.findComponent(TempAddressForm).props('hideRemainingHome');
-        expect(props).toEqual(true);
       });
     });
   });

@@ -1,6 +1,6 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockPerson } from '@/entities/value-objects/person';
+import { mockPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import Component from './HouseholdMemberSection.vue';
 
 const localVue = createLocalVue();

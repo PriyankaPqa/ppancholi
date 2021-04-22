@@ -3,17 +3,23 @@ import _cloneDeep from 'lodash/cloneDeep';
 import deepmerge from 'deepmerge';
 import Vue from 'vue';
 
+import VueI18n from 'vue-i18n';
+
 import { mockProvider } from '@/services/provider';
 
-import { registration } from './modules/registration';
-import { beneficiary } from './modules/beneficiary';
+import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
+import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
+
+const i18n = {
+  t: jest.fn(),
+} as unknown as VueI18n;
 
 Vue.use(Vuex);
 
 const mockConfig = {
   modules: {
-    registration,
-    beneficiary,
+    registration: makeRegistrationModule(i18n),
+    beneficiary: makeBeneficiaryModule(),
   },
 };
 

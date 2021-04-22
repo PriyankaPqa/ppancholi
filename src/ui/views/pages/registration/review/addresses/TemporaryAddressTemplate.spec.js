@@ -2,7 +2,7 @@ import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   mockRemainingHome, mockCampGround, mockUnknown, mockOther, mockFriendsFamily, mockShelter,
-} from '@/entities/beneficiary';
+} from '@crctech/registration-lib/src/entities/beneficiary';
 import Component from './TemporaryAddressTemplate.vue';
 
 const localVue = createLocalVue();

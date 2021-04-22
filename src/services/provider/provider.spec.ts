@@ -1,9 +1,9 @@
+import { EventsService } from '@crctech/registration-lib/src/services/events';
+import { BeneficiariesService } from '@crctech/registration-lib/src/services/beneficiaries';
 import { provider } from './index';
-import { EventsService } from '../events';
-import { BeneficiariesService } from '../beneficiaries';
 
-jest.mock('../events');
-jest.mock('../beneficiaries');
+jest.mock('@crctech/registration-lib/src/services/events');
+jest.mock('@crctech/registration-lib/src/services/beneficiaries');
 
 describe('Provider', () => {
   it('should instantiate EventsService', () => {

@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IPerson } from '@/entities/value-objects/person';
+import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 
 export default Vue.extend({
   name: 'HouseholdMemberSection',

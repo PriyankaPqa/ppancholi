@@ -3,7 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import {
   mockBeneficiary, mockHouseholdMembers, mockHouseholdMember, Person,
-} from '@/entities/beneficiary';
+} from '@crctech/registration-lib/src/entities/beneficiary';
 import { RcConfirmationDialog } from '@crctech/component-library';
 import Component from './HouseholdMembers.vue';
 

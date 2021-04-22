@@ -1,6 +1,6 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockAddress } from '@/entities/beneficiary';
+import { mockAddress } from '@crctech/registration-lib/src/entities/beneficiary';
 import Component from './HomeAddressTemplate.vue';
 
 const localVue = createLocalVue();

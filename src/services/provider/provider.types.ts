@@ -1,5 +1,5 @@
-import { IBeneficiariesService, IBeneficiariesServiceMock } from '../beneficiaries';
-import { IEventsService, IEventsServiceMock } from '../events';
+import { IBeneficiariesService, IBeneficiariesServiceMock } from '@crctech/registration-lib/src/services/beneficiaries';
+import { IEventsService, IEventsServiceMock } from '@crctech/registration-lib/src/services/events';
 
 export interface IProvider {
   events: IEventsService,

@@ -15,11 +15,13 @@
       <v-row justify="center" class="mt-12" no-gutters>
         <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
           <household-member-form
+            :api-key="apiKey"
             :same-address.sync="sameAddress"
             :gender-items="genderItems"
             :canadian-provinces-items="canadianProvincesItems"
             :indigenous-communities-items="indigenousCommunitiesItems"
             :indigenous-types-items="indigenousTypesItems"
+            :temporary-address-type-items="temporaryAddressTypeItems"
             :loading="loadingIndigenousIdentities"
             :person="person"
             @identity-change="setIdentity($event)"
@@ -38,9 +40,11 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { ECanadaProvinces, IOptionItemData, VForm } from '@/types';
 import helpers from '@/ui/helpers';
-import { IPerson } from '@/entities/value-objects/person';
+import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import _isEqual from 'lodash/isEqual';
-import utils from '@/entities/utils';
+import { enumToTranslatedCollection } from '@/ui/utils';
+import { ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address/index';
+import { localStorageKeys } from '@/constants/localStorage';
 
 export default Vue.extend({
   name: 'AddEditHouseholdMembers',
@@ -70,6 +74,9 @@ export default Vue.extend({
   data() {
     return {
       sameAddress: true,
+      apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
+        ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
+        : process.env.VUE_APP_GOOGLE_API_KEY,
     };
   },
 
@@ -90,7 +97,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+      return enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
@@ -103,6 +110,11 @@ export default Vue.extend({
 
     loadingIndigenousIdentities(): boolean {
       return this.$store.state.registration.loadingIndigenousIdentities;
+    },
+
+    temporaryAddressTypeItems(): Record<string, unknown>[] {
+      const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+      return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
     },
   },
 

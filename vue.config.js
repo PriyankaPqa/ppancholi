@@ -42,6 +42,11 @@ module.exports = {
         contextRegExp: /moment$/,
       }),
     ],
+    resolve: {
+      alias: {
+        '@': path.resolve(__dirname, 'src/'),
+      },
+    },
   },
   transpileDependencies: [
     'vuetify',

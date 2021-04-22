@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IAddress } from '@/entities/beneficiary';
+import { IAddress } from '@crctech/registration-lib/src/entities/beneficiary';
 import { ECanadaProvinces } from '@/types';
 
 export default Vue.extend({

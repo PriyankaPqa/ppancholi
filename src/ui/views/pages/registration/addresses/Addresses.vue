@@ -26,6 +26,7 @@
 
     <template v-if="!noFixedHome">
       <address-form
+        :api-key="apiKey"
         :canadian-provinces-items="canadianProvincesItems"
         prefix-data-test="address"
         :home-address="homeAddress"
@@ -33,6 +34,9 @@
     </template>
 
     <temp-address-form
+      :canadian-provinces-items="canadianProvincesItems"
+      :temporary-address-type-items="temporaryAddressTypeItems"
+      :api-key="apiKey"
       :temporary-address="temporaryAddress"
       :hide-remaining-home="noFixedHome"
       prefix-data-test="tempAddress"
@@ -43,13 +47,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@crctech/component-library';
+import { TempAddressForm, AddressForm } from '@crctech/registration-lib';
 
-import AddressForm from '@/ui/views/components/shared/form/AddressForm.vue';
-import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
-import { ITemporaryAddress } from '@/entities/value-objects/temporary-address';
-import utils from '@/entities/utils';
+import { ITemporaryAddress, ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
+import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
-import { IAddress } from '@/entities/value-objects/address';
+import { IAddress } from '@crctech/registration-lib/src/entities/value-objects/address';
+import { localStorageKeys } from '@/constants/localStorage';
 
 export default Vue.extend({
   name: 'Addresses',
@@ -58,6 +62,14 @@ export default Vue.extend({
     VCheckboxWithValidation,
     AddressForm,
     TempAddressForm,
+  },
+
+  data() {
+    return {
+      apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
+        ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
+        : process.env.VUE_APP_GOOGLE_API_KEY,
+    };
   },
 
   computed: {
@@ -79,7 +91,15 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+      return enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+    },
+
+    temporaryAddressTypeItems(): Record<string, unknown>[] {
+      const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+      if (this.noFixedHome) {
+        return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+      }
+      return list;
     },
   },
 

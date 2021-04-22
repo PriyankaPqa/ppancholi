@@ -53,7 +53,7 @@ import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
 import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import { TranslateResult } from 'vue-i18n';
-import { Beneficiary } from '@/entities/beneficiary';
+import { Beneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
 import { VForm } from '@/types';
 import _pickBy from 'lodash/pickBy';
 import helpers from '@/ui/helpers';

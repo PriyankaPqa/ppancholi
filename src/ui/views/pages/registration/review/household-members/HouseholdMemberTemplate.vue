@@ -23,12 +23,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { EIndigenousTypes, IIndigenousIdentityData, IPerson } from '@/entities/value-objects/person';
-import utils from '@/entities/utils';
+import { EIndigenousTypes, IIndigenousIdentityData, IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
+import { displayBirthDate, getAge } from '@crctech/registration-lib/src/ui/utils';
 import { ECanadaProvinces } from '@/types';
 import TemporaryAddressTemplate from '@/ui/views/pages/registration/review/addresses/TemporaryAddressTemplate.vue';
-import VueI18n from 'vue-i18n';
-import TranslateResult = VueI18n.TranslateResult;
+import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
   name: 'HouseholdMemberTemplate',
@@ -64,7 +63,7 @@ export default Vue.extend({
 
     getBirthDateLine(): string {
       // eslint-disable-next-line max-len
-      return `${this.$t('registration.personal_info.birthdate')}: ${utils.displayBirthDate(this.person.birthDate)} (${utils.getAge(this.person.birthDate)} ${this.$t('common.years')})`;
+      return `${this.$t('registration.personal_info.birthdate')}: ${displayBirthDate(this.person.birthDate)} (${getAge(this.person.birthDate)} ${this.$t('common.years')})`;
     },
 
     getGender(): TranslateResult {

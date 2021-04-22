@@ -1,6 +1,6 @@
+import { mockEventsService } from '@crctech/registration-lib/src/services/events';
+import { mockBeneficiariesService } from '@crctech/registration-lib/src/services/beneficiaries';
 import { IProviderMock } from './provider.types';
-import { mockEventsService } from '../events';
-import { mockBeneficiariesService } from '../beneficiaries';
 
 export const mockProvider = (): IProviderMock => ({
   events: mockEventsService(),

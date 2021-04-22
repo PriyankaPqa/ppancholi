@@ -1,6 +1,6 @@
+import { mockStorageRegistration } from '@crctech/registration-lib/src/store/storage/registration';
+import { mockStorageBeneficiary } from '@crctech/registration-lib/src/store/storage/beneficiary';
 import { IStorageMock } from './storage.types';
-import { mockStorageRegistration } from './registration';
-import { mockStorageBeneficiary } from './beneficiary';
 
 export const mockStorage = (): IStorageMock => ({
   registration: mockStorageRegistration(),

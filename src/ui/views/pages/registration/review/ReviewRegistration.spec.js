@@ -10,11 +10,11 @@ import {
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
   mockPerson,
-} from '@/entities/beneficiary';
+} from '@crctech/registration-lib';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
-import utils from '@/entities/utils';
+import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
 import Component from './ReviewRegistration.vue';
 
@@ -443,7 +443,7 @@ describe('ReviewRegistration.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
       });
     });
 

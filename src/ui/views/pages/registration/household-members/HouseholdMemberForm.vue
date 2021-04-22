@@ -39,7 +39,11 @@
           </div>
         </v-radio-group>
         <v-col v-if="!sameAddress" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
-          <temp-address-form :temporary-address="person.temporaryAddress" hide-remaining-home />
+          <temp-address-form
+            :canadian-provinces-items="canadianProvincesItems"
+            :temporary-address-type-items="temporaryAddressTypeItems"
+            :api-key="apiKey"
+            :temporary-address="person.temporaryAddress" />
         </v-col>
       </v-col>
     </v-row>
@@ -48,11 +52,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
-import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
+import { IndigenousIdentityForm, IdentityForm, TempAddressForm } from '@crctech/registration-lib';
 import months from '@/constants/months';
-import { IPerson } from '@/entities/value-objects/person';
-import TempAddressForm from '@/ui/views/components/shared/form/TempAddressForm.vue';
+import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import { IOptionItemData } from '@/types';
 
 export default Vue.extend({
@@ -97,6 +99,16 @@ export default Vue.extend({
 
     loading: {
       type: Boolean,
+      required: true,
+    },
+
+    apiKey: {
+      type: String,
+      required: true,
+    },
+
+    temporaryAddressTypeItems: {
+      type: Array as () => Record<string, unknown>[],
       required: true,
     },
   },

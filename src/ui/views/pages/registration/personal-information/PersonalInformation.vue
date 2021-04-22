@@ -29,12 +29,11 @@ import {
   ECanadaProvinces,
   IOptionItemData,
 } from '@/types';
-import { IBeneficiary, IContactInformation, IPerson } from '@/entities/beneficiary';
-import IndigenousIdentityForm from '@/ui/views/components/shared/form/IndigenousIdentityForm.vue';
-import IdentityForm from '@/ui/views/components/shared/form/IdentityForm.vue';
-import ContactInformationForm from '@/ui/views/components/shared/form/ContactInformationForm.vue';
+import { IBeneficiary, IContactInformation, IPerson } from '@crctech/registration-lib/src/entities/beneficiary';
+import { IndigenousIdentityForm, IdentityForm, ContactInformationForm } from '@crctech/registration-lib';
+
 import { MIN_AGE_REGISTRATION } from '@/constants/validations';
-import utils from '@/entities/utils';
+import { enumToTranslatedCollection } from '@/ui/utils';
 import { TranslateResult } from 'vue-i18n';
 
 export default Vue.extend({
@@ -85,7 +84,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return utils.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+      return enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
