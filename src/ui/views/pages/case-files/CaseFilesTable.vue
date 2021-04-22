@@ -202,7 +202,7 @@ export default Vue.extend({
 
     getCaseFileRoute(caseFile: ICaseFile) {
       return {
-        name: routes.caseFile.details.name,
+        name: routes.caseFile.activity.name,
         params: {
           id: caseFile.id,
         },

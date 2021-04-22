@@ -1,8 +1,8 @@
 <template>
   <rc-page-content :outer-scroll="true" :title="$t('eventSummary.title')" :show-help="true" :help-link="$t('zendesk.help_link.eventDetails')">
     <template slot="top">
-      <div class="flex-row justify-space-between ma-0 pa-0 pb-4">
-        <v-col class="d-flex ma-0 pa-0" cols="10">
+      <v-row class=" ma-0 pa-0 pb-4">
+        <v-col class="d-flex ma-0 pa-0 align-center" cols="10">
           <span class="pr-4">
             <status-select
               data-test="event-detail-status"
@@ -26,7 +26,7 @@
             </v-icon>
           </v-btn>
         </v-col>
-      </div>
+      </v-row>
     </template>
 
     <template slot="default">

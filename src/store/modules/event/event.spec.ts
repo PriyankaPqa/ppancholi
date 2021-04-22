@@ -68,16 +68,17 @@ describe('>>> Event Module', () => {
 
         expect(store.getters['event/eventsByStatus']([EEventStatus.Open])).toEqual(helpers.sortMultilingualArray(activeEvents, 'name'));
       });
-      describe('eventById', () => {
-        test('the getter returns the event with the id passed in the argument', () => {
-          const mockId = mockEvents()[0].id;
-          expect(store.getters['event/eventById'](mockId)).toEqual(mockEvents()[0]);
-        });
+    });
 
-        test('the getter return null if the id passed in argument does not correspond to an event', () => {
-          const mockId = 'foo';
-          expect(store.getters['event/eventById'](mockId)).toEqual(null);
-        });
+    describe('eventById', () => {
+      test('the getter returns the event with the id passed in the argument', () => {
+        const mockId = mockEvents()[0].id;
+        expect(store.getters['event/eventById'](mockId)).toEqual(mockEvents()[0]);
+      });
+
+      test('the getter return null if the id passed in argument does not correspond to an event', () => {
+        const mockId = 'foo';
+        expect(store.getters['event/eventById'](mockId)).toEqual(null);
       });
     });
   });
@@ -265,7 +266,7 @@ describe('>>> Event Module', () => {
     });
 
     describe('fetchEvent', () => {
-      it('calls the getEventById service and returns the event', async () => {
+      it('calls the searchEvents service and returns the event', async () => {
         const store = mockStore();
         const event = new Event(mockEventsSearchData()[0]);
 
@@ -302,7 +303,7 @@ describe('>>> Event Module', () => {
     });
 
     describe('fetchEvents', () => {
-      it('calls the getEvents service and returns the events getter', async () => {
+      it('calls the searchEvents service and returns the events getter', async () => {
         const store = mockStore();
 
         expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);

@@ -24,10 +24,34 @@ export enum ETriageLevel {
  * Interfaces
  */
 
+export interface ICaseFileBeneficiaryPhoneNumber {
+  number: string;
+  extension: string;
+}
+
+export interface ICaseFileBeneficiaryContactInfo {
+  email: string;
+  mobilePhoneNumber: ICaseFileBeneficiaryPhoneNumber;
+  homePhoneNumber: ICaseFileBeneficiaryPhoneNumber;
+  alternatePhoneNumber: ICaseFileBeneficiaryPhoneNumber;
+}
+
+export interface ICaseFileBeneficiaryAddress{
+  country: string;
+  streetAddress: string;
+  unitSuite: string;
+  provinceCode: IMultilingual;
+  city: string;
+  postalCode: string;
+}
+
 export interface ICaseFileBeneficiary {
   id: uuid;
   firstName: string;
   lastName: string;
+  contactInformation: ICaseFileBeneficiaryContactInfo;
+  homeAddress: ICaseFileBeneficiaryAddress;
+  householdMemberCount: number;
 }
 
 export interface ICaseFileEvent {

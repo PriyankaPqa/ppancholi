@@ -26,17 +26,12 @@ describe('CaseFilesTable.vue', () => {
       wrapper.vm.azureSearchCount = mockCaseFiles().length;
 
       wrapper.vm.getCaseFileRoute = jest.fn(() => ({
-        name: routes.caseFile.details.name,
+        name: routes.caseFile.activity.name,
         params: mockParams,
       }));
 
       wrapper.vm.getBeneficiaryRoute = jest.fn(() => ({
         name: routes.caseFile.beneficiaryProfile.name,
-        params: mockParams,
-      }));
-
-      wrapper.vm.getEventRoute = jest.fn(() => ({
-        name: routes.events.details.name,
         params: mockParams,
       }));
     });
@@ -78,7 +73,7 @@ describe('CaseFilesTable.vue', () => {
       test('case file number redirects to getCaseFileRoute', () => {
         const link = wrapper.findDataTest('caseFileDetail-link');
         expect(link.props('to')).toEqual({
-          name: routes.caseFile.details.name,
+          name: routes.caseFile.activity.name,
           params: mockParams,
         });
       });
@@ -278,7 +273,7 @@ describe('CaseFilesTable.vue', () => {
     describe('getCaseFileRoute', () => {
       it('returns the right route object', () => {
         expect(wrapper.vm.getCaseFileRoute(mockCaseFiles()[0])).toEqual({
-          name: routes.caseFile.details.name,
+          name: routes.caseFile.activity.name,
           params: {
             id: mockCaseFiles()[0].id,
           },

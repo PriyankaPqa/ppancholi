@@ -8,6 +8,29 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
       id: 'mock-beneficiary-id-1',
       firstName: 'Jane',
       lastName: 'Doe',
+      contactInformation: {
+        email: 'Jane.doe@email.com',
+        mobilePhoneNumber: {
+          number: '(514) 123 4444',
+          extension: '',
+        },
+        homePhoneNumber: null,
+        alternatePhoneNumber: null,
+      },
+      homeAddress: {
+        country: 'CA',
+        streetAddress: 'Left str',
+        unitSuite: '111',
+        provinceCode: {
+          translation: {
+            en: 'QC',
+            fr: 'QC',
+          },
+        },
+        city: 'Montreal',
+        postalCode: 'M4B 1G5',
+      },
+      householdMemberCount: 2,
     },
     caseFileNumber: '1-000001',
     caseFileStatusName: {
@@ -43,6 +66,29 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
       id: 'mock-beneficiary-id-2',
       firstName: 'John',
       lastName: 'Wood',
+      contactInformation: {
+        email: 'john.wood@email.com',
+        mobilePhoneNumber: {
+          number: '(514) 123 4567',
+          extension: '',
+        },
+        homePhoneNumber: null,
+        alternatePhoneNumber: null,
+      },
+      homeAddress: {
+        country: 'CA',
+        streetAddress: 'Peel str',
+        unitSuite: '111',
+        provinceCode: {
+          translation: {
+            en: 'QC',
+            fr: 'QC',
+          },
+        },
+        city: 'Montreal',
+        postalCode: 'M4B 1G5',
+      },
+      householdMemberCount: 2,
     },
     caseFileNumber: '2-000002',
     caseFileStatusName: {
@@ -74,11 +120,17 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
   },
 ];
 
-export const mockSearchCaseFiles = (): IAzureSearchResult<ICaseFileSearchData> => ({
-  odataCount: mockCaseFilesSearchData().length,
-  odataContext: 'context',
-  value: mockCaseFilesSearchData(),
-});
+export const mockSearchCaseFiles = (index = -1): IAzureSearchResult<ICaseFileSearchData> => {
+  let value = mockCaseFilesSearchData();
+  if (index !== -1) {
+    value = [mockCaseFilesSearchData()[index]];
+  }
+  return {
+    odataCount: 2,
+    odataContext: 'context',
+    value,
+  };
+};
 
 export const mockCaseFilesData = (): ICaseFileData[] => [{
   id: 'mock-id-1',

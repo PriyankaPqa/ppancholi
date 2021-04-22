@@ -30,7 +30,25 @@ export class CaseFile implements ICaseFile {
   constructor(data: ICaseFileSearchData) {
     this.id = data.caseFileId;
 
-    this.beneficiary = { ...data.beneficiary };
+    this.beneficiary = {
+      ...data.beneficiary,
+      contactInformation: {
+        ...data.beneficiary.contactInformation,
+        mobilePhoneNumber: data.beneficiary.contactInformation?.mobilePhoneNumber
+          ? { ...data.beneficiary.contactInformation.mobilePhoneNumber }
+          : null,
+        homePhoneNumber: data.beneficiary.contactInformation?.homePhoneNumber
+          ? { ...data.beneficiary.contactInformation?.homePhoneNumber }
+          : null,
+        alternatePhoneNumber: data.beneficiary.contactInformation?.alternatePhoneNumber
+          ? { ...data.beneficiary.contactInformation?.alternatePhoneNumber }
+          : null,
+      },
+      homeAddress: data.beneficiary.homeAddress ? {
+        ...data.beneficiary.homeAddress,
+        provinceCode: utils.initMultilingualAttributes(data.beneficiary.homeAddress?.provinceCode),
+      } : null,
+    };
 
     this.caseFileNumber = data.caseFileNumber;
 

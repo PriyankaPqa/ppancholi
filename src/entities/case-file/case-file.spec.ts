@@ -18,6 +18,29 @@ describe('>>> Case File', () => {
         id: 'mock-beneficiary-id-1',
         firstName: 'Jane',
         lastName: 'Doe',
+        contactInformation: {
+          email: 'Jane.doe@email.com',
+          mobilePhoneNumber: {
+            number: '(514) 123 4444',
+            extension: '',
+          },
+          homePhoneNumber: null,
+          alternatePhoneNumber: null,
+        },
+        homeAddress: {
+          country: 'CA',
+          streetAddress: 'Left str',
+          unitSuite: '111',
+          provinceCode: {
+            translation: {
+              en: 'QC',
+              fr: 'QC',
+            },
+          },
+          city: 'Montreal',
+          postalCode: 'M4B 1G5',
+        },
+        householdMemberCount: 2,
       });
     });
 
