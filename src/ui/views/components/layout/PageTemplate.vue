@@ -6,8 +6,6 @@
         v-if="showLeftMenu"
         ref="secondaryLeftMenu"
         :class="{ 'fixed-menu': leftMenuFixed }"
-        :validation-tabs="validationTabs"
-        :validation-store="validationStore"
         :title="leftMenuTitle"
         :subtitle="leftMenuSubtitle"
         :tabs="navigationTabsFilteredForPermissions"
@@ -19,6 +17,10 @@
         <!-- @slot Slot of secondary left menu -->
         <template slot="default">
           <slot name="left-menu" />
+        </template>
+
+        <template slot="navigation">
+          <slot name="navigation" />
         </template>
         <!-- @slot Slot bottom of secondary left menu -->
         <template slot="bottom" />
@@ -79,13 +81,6 @@ export default Vue.extend({
       default: () => [] as Array<INavigationTab>,
     },
     /**
-     * Whether the tabs use validation
-     */
-    validationTabs: {
-      type: Boolean,
-      default: false,
-    },
-    /**
      * State of load
      */
     loading: {
@@ -113,13 +108,7 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
-    /**
-     * The module to store validation state
-     */
-    validationStore: {
-      type: String,
-      default: '',
-    },
+
     /**
      * Hide the dividers
      */

@@ -7,15 +7,16 @@ const path = require('path');
 const { LokaliseApi } = require('@lokalise/node-api');
 
 const API_KEY_READ_WRITE = '012f35ddfa553d3fe3839189b37cb6bc320ea268';
-const PROJECT_ID = '955065625d9745a35c6f72.71379721';
+const EMIS_PROJECT_ID = '955065625d9745a35c6f72.71379721';
+const REGISTRATION_PROJECT_ID = '495058395f5240e2843ef1.45815308';
 const LANG_FOLDER_PATH = 'src/ui/lang';
 
 const lokaliseApi = new LokaliseApi({ apiKey: API_KEY_READ_WRITE });
 
-function down() {
-  lokaliseApi.files.download(PROJECT_ID, {
+function down(id, prefix = '') {
+  lokaliseApi.files.download(id, {
     format: 'json',
-    bundle_structure: '%LANG_ISO%.json',
+    bundle_structure: prefix ? `${prefix}.%LANG_ISO%.json` : '%LANG_ISO%.json',
     original_filenames: false,
     placeholder_format: 'icu', // Placeholder will be converted to be used with our app
     replace_breaks: false,
@@ -32,7 +33,7 @@ function down() {
 const uploadToLokalise = (base64File, fileName, langISO, tags) => new Promise((resolve, reject) => {
   const replaceModified = false;
   const tagUpdatedKeys = replaceModified;
-  lokaliseApi.files.upload(PROJECT_ID, {
+  lokaliseApi.files.upload(EMIS_PROJECT_ID, {
     data: base64File,
     filename: fileName, // fr.json, en.json, ....
     lang_iso: langISO, // fr, en, it, jp, ...
@@ -90,6 +91,9 @@ async function up() {
   for (let i = 0; i < files.length; i += 1) {
     const file = files[i];
     const langISO = path.parse(file).name;
+    if (langISO.includes('registration')) {
+      return;
+    }
     const base64File = fs.readFileSync(`${LANG_FOLDER_PATH}/${file}`, { encoding: 'base64' });
     try {
       // Each loop iteration is delayed until upload operation is completed because Lokalise does not support // requests.
@@ -104,7 +108,8 @@ async function up() {
 for (let i = 0; i < process.argv.length; i += 1) {
   switch (process.argv[i]) {
     case 'down':
-      down();
+      down(EMIS_PROJECT_ID);
+      down(REGISTRATION_PROJECT_ID, 'registration');
       break;
     case 'up':
       up();

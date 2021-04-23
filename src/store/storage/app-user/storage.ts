@@ -1,7 +1,7 @@
-import { IStore } from '@/store/store.types';
+import { IStore, IState } from '@/store/store.types';
 import { IStorage } from './storage.types';
 
-export const makeStorage = (store: IStore): IStorage => ({
+export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
     appUsersWithInfo() {
       return store.getters['appUser/appUsersWithInfo'];

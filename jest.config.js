@@ -15,12 +15,16 @@ module.exports = {
   ],
   transform: {
     'vee-validate/dist/rules': 'babel-jest',
+    '.*\\.(vue)$': 'vue-jest',
+    '^.+\\.tsx?$': 'ts-jest',
   },
   transformIgnorePatterns: [
     '<roodDir>/node_modules/(?!vee-validate/dist/rules)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
+    '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+    '\\.(gif|ttf|eot|svg)$': '<rootDir>/__mocks__/fileMock.js',
   },
   testMatch: [
     '**/*.(spec|test).(js|jsx|ts|tsx)',
@@ -44,4 +48,16 @@ module.exports = {
       },
     ],
   ],
+
+  moduleFileExtensions: [
+    'js',
+    'ts',
+    'json',
+    'vue',
+  ],
+  testURL: 'http://localhost/',
+  snapshotSerializers: [
+    'jest-serializer-vue',
+  ],
+
 };

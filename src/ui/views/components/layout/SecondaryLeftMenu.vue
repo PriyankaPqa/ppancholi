@@ -13,15 +13,9 @@
       <slot name="default" />
     </div>
     <template v-if="tabsToShow">
-      <navigation-with-validation
-        v-if="validationTabs"
-        ref="navWithValidation"
-        data-test="navigationWithValidation"
-        :validation-store="validationStore"
-        :tabs="tabs"
-        @update-tab="$emit('update-tab', $event)" />
+      <slot name="navigation" />
       <v-navigation-drawer
-        v-else
+        v-if="!$slots['navigation']"
         data-test="navigationWithoutValidation"
         floating
         color="grey lighten-5"
@@ -70,11 +64,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { INavigationTab } from '@/types';
-import NavigationWithValidation from './NavigationWithValidation.vue';
 
 export default Vue.extend({
   name: 'SecondaryLeftMenu',
-  components: { NavigationWithValidation },
   props: {
     /*
      * Title shown on the secondary left menu
@@ -102,32 +94,17 @@ export default Vue.extend({
       type: Array,
       default: () => [] as Array<INavigationTab>,
     },
-    /*
-     * Using tabs with validation
-     * Typically used when a tab reflects the validation state of a form
-     */
-    validationTabs: {
-      type: Boolean,
-      default: false,
-    },
+
     backgroundClass: {
       type: String,
       default: 'light_grey',
     },
+
     subtitle: {
       type: String,
       default: '',
     },
-    /**
-     * The module to store validation state
-     */
-    validationStore: {
-      type: String,
-      default: '',
-    },
-    /**
-     * Hide the dividers
-     */
+
     hideDividers: {
       type: Boolean,
       default: false,

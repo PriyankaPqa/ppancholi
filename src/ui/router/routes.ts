@@ -46,6 +46,7 @@ const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/view
 
 const RegistrationLayout = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/layout/RegistrationLayout.vue');
 const RegistrationHome = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/home/RegistrationHome.vue');
+const RegistrationIndividual = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/individual/RegistrationIndividual.vue');
 
 const ReportsLayout = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/layout/ReportsLayout.vue');
 const ReportsHome = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/home/ReportsHome.vue');
@@ -190,6 +191,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.registration.home.path,
                 name: Routes.registration.home.name,
                 component: RegistrationHome,
+                meta: { level: 'level1' },
+              },
+              {
+                path: Routes.registration.individual.path,
+                name: Routes.registration.individual.name,
+                component: RegistrationIndividual,
                 meta: { level: 'level1' },
               },
             ],

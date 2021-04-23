@@ -1,10 +1,10 @@
 import {
   EFilterKey, IFilter, IUser, IUserData,
 } from '@/entities/user';
-import { IStore } from '@/store/store.types';
+import { IStore, IState } from '@/store/store.types';
 import { IStorage } from './storage.types';
 
-export const makeStorage = (store: IStore): IStorage => ({
+export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
     user(): IUser {
       return store.getters['user/user'];

@@ -1,4 +1,7 @@
 import { Store } from 'vuex';
+import { IState as IRegistrationState } from '@crctech/registration-lib/src/store/modules/registration/registration.types';
+import { IState as IBeneficiaryState } from '@crctech/registration-lib/src/store/modules/beneficiary/beneficiary.types';
+import { IProvider, IProviderMock } from '@/services/provider';
 import { IState as IUserState } from './modules/user/user.types';
 import { IState as ICaseFileState } from './modules/case-file/case-file.types';
 import { IState as IDashboardState } from './modules/dashboard/dashboard.types';
@@ -18,8 +21,12 @@ export interface IRootState {
   team?: ITeamState;
   appUser?: IAppUserState;
   program?: IProgramState;
+  registration?: IRegistrationState;
+  beneficiary?: IBeneficiaryState;
 }
 
 export type IState = IRootState;
 
-export type IStore = Store<IState>
+export interface IStore<S> extends Store<S> {
+  $services: IProvider | IProviderMock;
+}

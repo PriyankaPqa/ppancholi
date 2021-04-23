@@ -12,11 +12,11 @@ import {
   IUpdateAgreementPayload,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
-import { IStore } from '@/store/store.types';
+import { IStore, IState } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IStorage } from './storage.types';
 
-export const makeStorage = (store: IStore): IStorage => ({
+export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
     agreementTypes(): Array<IOptionItem> {
       return store.getters['event/agreementTypes'];

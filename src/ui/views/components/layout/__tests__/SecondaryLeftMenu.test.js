@@ -58,16 +58,7 @@ describe('SecondaryLeftMenu.vue', () => {
       navigationWithoutValidation = wrapper.find('[data-test="navigationWithoutValidation"]');
       expect(navigationWithoutValidation.exists()).toBe(false);
     });
-    test('Tabs with validation are displayed if chosen', async () => {
-      let navigationWithValidation = wrapper.find('[data-test="navigationWithValidation"]');
-      expect(navigationWithValidation.exists()).toBe(false);
-      wrapper.setProps({
-        validationTabs: true,
-      });
-      await wrapper.vm.$nextTick();
-      navigationWithValidation = wrapper.find('[data-test="navigationWithValidation"]');
-      expect(navigationWithValidation.exists()).toBe(true);
-    });
+
     test('backButtonClicked is emitted on clicking on back', async () => {
       wrapper = mount(Component, {
         localVue,

@@ -51,16 +51,6 @@ const routes = {
       name: 'casefile.beneficiaryProfile',
     },
   },
-  registration: {
-    layout: {
-      path: 'registration',
-      name: 'registration',
-    },
-    home: {
-      path: '',
-      name: 'registration.home',
-    },
-  },
   events: {
     layout: {
       path: 'events',
@@ -87,6 +77,34 @@ const routes = {
       name: 'events.summary',
     },
   },
+  loginError: {
+    path: 'login-error',
+    name: 'Login error',
+  },
+  financialAssistance: {
+    layout: {
+      path: 'financial-assistance',
+      name: 'financialAssistance.layout',
+    },
+    home: {
+      path: '',
+      name: 'financialAssistance.home',
+    },
+  },
+  home: {
+    path: 'home',
+    name: 'home',
+  },
+  massActions: {
+    layout: {
+      path: 'mass-actions',
+      name: 'massActions.layout',
+    },
+    home: {
+      path: '',
+      name: 'massActions.home',
+    },
+  },
   programs: {
     home: {
       path: 'programs',
@@ -105,33 +123,19 @@ const routes = {
       name: 'programs.edit',
     },
   },
-  financialAssistance: {
+  registration: {
     layout: {
-      path: 'financial-assistance',
-      name: 'financialAssistance.layout',
+      path: 'registration',
+      name: 'registration',
     },
     home: {
       path: '',
-      name: 'financialAssistance.home',
+      name: 'registration.home',
     },
-  },
-  massActions: {
-    layout: {
-      path: 'mass-actions',
-      name: 'massActions.layout',
+    individual: {
+      path: 'individual',
+      name: 'registration.individual',
     },
-    home: {
-      path: '',
-      name: 'massActions.home',
-    },
-  },
-  home: {
-    path: 'home',
-    name: 'home',
-  },
-  loginError: {
-    path: 'login-error',
-    name: 'Login error',
   },
   reports: {
     layout: {

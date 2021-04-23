@@ -22,4 +22,6 @@ export { EEventSummarySections } from './enums/EEventSummarySections';
 export type VForm = Vue & {
   validate: (type?: { silent?: boolean }) => boolean;
   reset: () => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  errors: Record<string, any>
 }

@@ -1,3 +1,5 @@
+import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } from '@crctech/registration-lib/src/store/storage/registration';
+import { IStorage as IBeneficiaryStorage, IStorageMock as IBeneficiaryMock } from '@crctech/registration-lib/src/store/storage/beneficiary';
 import { IStorage as IUserStorage, IStorageMock as IUserStorageMock } from './user';
 import { IStorage as ICaseFileStorage, IStorageMock as ICaseFileStorageMock } from './case-file';
 import { IStorage as IDashboardStorage, IStorageMock as IDashboardStorageMock } from './dashboard';
@@ -16,6 +18,8 @@ export interface IStorage {
   optionList: IOptionListStorage;
   team: ITeamStorage;
   program: IProgramStorage;
+  registration: IRegistrationStorage;
+  beneficiary: IBeneficiaryStorage;
 }
 
 export interface IStorageMock {
@@ -27,4 +31,6 @@ export interface IStorageMock {
   optionList: IOptionListStorageMock;
   team: ITeamStorageMock;
   program: IProgramStorageMock;
+  registration: IRegistrationMock;
+  beneficiary: IBeneficiaryMock;
 }

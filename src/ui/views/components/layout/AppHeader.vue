@@ -7,9 +7,8 @@
       </v-toolbar-title>
 
       <v-spacer />
-
       <v-btn
-        v-if=" $route.name !== routes.registration.home.name && $hasLevel('level1')"
+        v-if="displayRegistrationButton"
         color="primary"
         class="mx-md-4 my-4"
         data-test="appHeader__registerBeneficiaries"
@@ -60,6 +59,12 @@ export default Vue.extend({
     getAvatarName() {
       const user = this.$storage.user.getters.user();
       return user.getInitials();
+    },
+
+    displayRegistrationButton(): boolean {
+      return this.$route.name !== routes.registration.home.name
+        && this.$route.name !== routes.registration.individual.name
+        && this.$hasLevel('level1');
     },
   },
 

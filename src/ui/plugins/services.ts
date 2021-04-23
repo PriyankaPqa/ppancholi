@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import { provider } from '@/services/provider';
-import { IStore } from '@/store';
+import { IStore, IState } from '@/store';
 
-export default (store: IStore): void => {
+export default (store: IStore<IState>): void => {
   store.$services = provider();
 
   Vue.mixin({

@@ -1,8 +1,9 @@
 <template>
   <rc-registration-landing-page
     :title="$t('registration.landingpage.welcome_crc')"
-    :phone-number="phoneNumber"
-    :can-register="canRegister">
+    :phone-number="assistanceNumber"
+    :can-register="canRegister"
+    @redirect="redirect">
     <div class="dropdown-wrapper">
       <v-autocomplete-with-validation
         v-model="event"
@@ -15,7 +16,8 @@
         return-object
         :attach="true"
         :label="$t('registration.landingpage.selectEvent')"
-        data-test="crcRegistrationLandingPage__event" />
+        data-test="crcRegistrationLandingPage__event"
+        @change="setEvent($event)" />
     </div>
   </rc-registration-landing-page>
 </template>
@@ -23,14 +25,19 @@
 <script lang="ts">
 import Vue from 'vue';
 import { IEvent, EEventStatus } from '@/entities/event';
+
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
+import routes from '@/constants/routes';
+import { IShelterLocation } from '@crctech/registration-lib/src/entities/event/event.types';
 
 export default Vue.extend({
   name: 'RegistrationHome',
+
   components: {
     VAutocompleteWithValidation,
     RcRegistrationLandingPage,
   },
+
   data() {
     return {
       events: [] as Array<IEvent>,
@@ -43,7 +50,8 @@ export default Vue.extend({
     canRegister(): boolean {
       return !!this.event;
     },
-    phoneNumber(): string {
+
+    assistanceNumber(): string {
       if (!this.event) return '';
       return this.event.responseDetails.assistanceNumber;
     },
@@ -58,6 +66,23 @@ export default Vue.extend({
       },
     });
     this.events = res?.value;
+  },
+
+  methods: {
+    redirect() {
+      this.$router.push({ name: routes.registration.individual.name });
+    },
+
+    setEvent(event: IEvent) {
+      this.$storage.registration.mutations.setEvent({
+        eventId: event.id,
+        eventName: event.name,
+        responseDetails: event.responseDetails,
+        registrationLink: event.registrationLink,
+        tenantId: event.tenantId,
+        shelterLocations: event.shelterLocations as unknown as IShelterLocation[],
+      });
+    },
   },
 });
 </script>

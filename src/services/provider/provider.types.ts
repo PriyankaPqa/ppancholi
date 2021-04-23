@@ -1,3 +1,8 @@
+import { IBeneficiariesService, IBeneficiariesServiceMock } from '@crctech/registration-lib/src/services/beneficiaries';
+import {
+  IEventsService as IRegistrationEventsService,
+  IEventsServiceMock as IRegistrationEventsServiceMock,
+} from '@crctech/registration-lib/src/services/events';
 import { IUsersService, IUsersServiceMock } from '../users';
 import { ICaseFilesService, ICaseFilesServiceMock } from '../case-files';
 import { IEventsService, IEventsServiceMock } from '../events';
@@ -14,6 +19,8 @@ export interface IProvider {
   teams: ITeamsService,
   users: IUsersService,
   programs: IProgramsService,
+  registrationEvents: IRegistrationEventsService,
+  beneficiaries: IBeneficiariesService,
 }
 
 export interface IProviderMock {
@@ -24,4 +31,6 @@ export interface IProviderMock {
   teams: ITeamsServiceMock,
   users: IUsersServiceMock,
   programs: IProgramsServiceMock,
+  registrationEvents: IRegistrationEventsServiceMock,
+  beneficiaries: IBeneficiariesServiceMock,
 }

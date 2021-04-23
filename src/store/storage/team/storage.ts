@@ -1,10 +1,10 @@
 import { ITeam, ITeamSearchData, Team } from '@/entities/team';
-import { IStore } from '@/store/store.types';
+import { IStore, IState } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IAppUserData } from '@/entities/app-user';
 import { IStorage } from './storage.types';
 
-export const makeStorage = (store: IStore): IStorage => ({
+export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
     team() {
       return store.getters['team/team'];

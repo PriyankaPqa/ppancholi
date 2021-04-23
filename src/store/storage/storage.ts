@@ -1,4 +1,6 @@
-import { IStore } from '../store.types';
+import { makeStorage as makeRegistrationStorage } from '@crctech/registration-lib/src/store/storage/registration';
+import { makeStorage as makeBeneficiaryStorage } from '@crctech/registration-lib/src/store/storage/beneficiary';
+import { IStore, IState } from '../store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeUserStorage } from './user';
 import { makeStorage as makeCaseFileStorage } from './case-file';
@@ -9,7 +11,7 @@ import { makeStorage as makeTeamStorage } from './team';
 import { makeStorage as makeAppUserStorage } from './app-user';
 import { makeStorage as makeProgramStorage } from './program';
 
-export const makeStorage = (store: IStore): IStorage => ({
+export const makeStorage = (store: IStore<IState>): IStorage => ({
   appUser: makeAppUserStorage(store),
   user: makeUserStorage(store),
   caseFile: makeCaseFileStorage(store),
@@ -18,4 +20,6 @@ export const makeStorage = (store: IStore): IStorage => ({
   optionList: makeOptionListStorage(store),
   team: makeTeamStorage(store),
   program: makeProgramStorage(store),
+  registration: makeRegistrationStorage(store),
+  beneficiary: makeBeneficiaryStorage(store),
 });
