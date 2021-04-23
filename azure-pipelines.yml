@@ -8,10 +8,6 @@ variables:
 - group: Build-Defaults
 - name: Patch
   value: $[counter(format('{0}.{1}',variables['Major'],variables['Minor']),0)]
-- name: cdnEndpoint
-  value: 'emis-cdne-emis-lib'
-- name: cdnProfile
-  value: 'emis-cdnp-emis-lib'
 
 name: $(Major).$(Minor).$(Patch)
 
@@ -23,12 +19,9 @@ resources:
     ref: master
 
 stages:
-- template: stages/deploy-vue-stages.yml@Templates
+- template: stages/publish-npm-package-stages.yml@Templates
   parameters:
-    storage: $(ComponentLibWebAppStorage)
     packageFeed: $(PackageFeed-Npm)
-    cdnEndpoint: $(cdnEndpoint)        
-    cdnProfile: $(cdnProfile)
-    dist: 'storybook-static'
-    buildCommand: 'build:storybook'
-    lokalise: false
+    majorVersion: $(Major)
+    minorVersion: $(Minor)
+    patchVersion: $(Patch)
