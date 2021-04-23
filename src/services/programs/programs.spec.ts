@@ -29,4 +29,12 @@ describe('>>> Programs service', () => {
       programStatus: mockProgram.programStatus,
     }, expect.anything());
   });
+
+  test('searchPrograms is linked to the correct url', async () => {
+    await service.searchPrograms({});
+    expect(http.get).toHaveBeenCalledWith('/search/program-projections', {
+      isOData: true,
+      params: {},
+    });
+  });
 });

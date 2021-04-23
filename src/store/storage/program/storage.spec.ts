@@ -12,5 +12,10 @@ describe('>>> Program Storage', () => {
       storage.actions.createProgram(program);
       expect(store.dispatch).toHaveBeenCalledWith('program/createProgram', program);
     });
+
+    it('should proxy searchPrograms', () => {
+      storage.actions.searchPrograms({});
+      expect(store.dispatch).toHaveBeenCalledWith('program/searchPrograms', {});
+    });
   });
 });

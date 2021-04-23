@@ -75,7 +75,6 @@ import routes from '@/constants/routes';
 import moment from '@/ui/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'EventsTable',
@@ -84,7 +83,6 @@ export default Vue.extend({
     RcDataTable,
     // FilterToolbar,
     StatusChip,
-
   },
 
   mixins: [TablePaginationSearchMixin],
@@ -112,17 +110,13 @@ export default Vue.extend({
   },
 
   computed: {
-    locale(): string {
-      return helpers.capitalize(this.$i18n.locale);
-    },
-
     customColumns(): Record<string, string> {
       return {
-        name: `EventName/Translation/${this.locale}`,
-        responseLevel: `ResponseLevelName/Translation/${this.locale}`,
+        name: `EventName/Translation/${this.$i18n.locale}`,
+        responseLevel: `ResponseLevelName/Translation/${this.$i18n.locale}`,
         openDate: 'Schedule/OpenDate',
         daysOpen: 'DaysOpen',
-        eventStatus: `ScheduleEventStatusName/Translation/${this.locale}`,
+        eventStatus: `ScheduleEventStatusName/Translation/${this.$i18n.locale}`,
       };
     },
 

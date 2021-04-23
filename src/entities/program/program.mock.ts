@@ -1,3 +1,4 @@
+import { IAzureSearchResult } from '@/types';
 import {
   EPaymentModalities, EProgramStatus, IProgramData, IProgramSearchData,
 } from './program.types';
@@ -75,3 +76,15 @@ export const mockProgramsSearchData = (): IProgramSearchData[] => [{
     EPaymentModalities.Voucher,
   ],
 }];
+
+export const mockSearchPrograms = (index = -1): IAzureSearchResult<IProgramSearchData> => {
+  let value = mockProgramsSearchData();
+  if (index !== -1) {
+    value = [mockProgramsSearchData()[index]];
+  }
+  return {
+    odataCount: 1,
+    odataContext: 'context',
+    value,
+  };
+};

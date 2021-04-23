@@ -130,11 +130,11 @@ export default Vue.extend({
     customColumns(): Record<string, string> {
       return {
         name: 'TeamName',
-        type: `TeamTypeName/Translation/${helpers.capitalize(this.$i18n.locale)}`,
+        type: `TeamTypeName/Translation/${this.$i18n.locale}`,
         eventCount: 'EventCount',
         primaryContact: 'PrimaryContactDisplayName',
         teamMemberCount: 'TeamMemberCount',
-        status: `TeamStatusName/Translation/${helpers.capitalize(this.$i18n.locale)}`,
+        status: `TeamStatusName/Translation/${this.$i18n.locale}`,
         edit: 'edit',
       };
     },

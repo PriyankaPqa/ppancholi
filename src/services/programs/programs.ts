@@ -1,4 +1,7 @@
-import { ICreateProgramRequest, IProgram, IProgramData } from '@/entities/program';
+import {
+  ICreateProgramRequest, IProgram, IProgramData, IProgramSearchData,
+} from '@/entities/program';
+import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IHttpClient } from '../httpClient';
 import { IProgramsService } from './programs.types';
 
@@ -9,6 +12,10 @@ export class ProgramsService implements IProgramsService {
     program.fillEmptyMultilingualAttributes();
     const payload = this.programToCreateProgramRequestPayload(program);
     return this.http.post('/event/programs', payload, { globalHandler: false });
+  }
+
+  async searchPrograms(params: IAzureSearchParams): Promise<IAzureSearchResult<IProgramSearchData>> {
+    return this.http.get('/search/program-projections', { params, isOData: true });
   }
 
   private programToCreateProgramRequestPayload(program: IProgram): ICreateProgramRequest {

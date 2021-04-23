@@ -2,6 +2,7 @@ import {
   ActionContext, ActionTree, Module, Store,
 } from 'vuex';
 import _findIndex from 'lodash/findIndex';
+import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IProgram, IProgramSearchData, Program } from '@/entities/program';
 import { IRootState } from '@/store/store.types';
 import { IState } from './program.types';
@@ -42,6 +43,24 @@ const actions = {
     }
 
     return null;
+  },
+
+  async searchPrograms(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    params: IAzureSearchParams,
+  ): Promise<IAzureSearchResult<IProgram>> {
+    const res = await this.$services.programs.searchPrograms(params);
+    const data = res?.value;
+
+    data.forEach((e: IProgramSearchData) => context.commit('addOrUpdateProgram', e));
+
+    const value = data.map((e: IProgramSearchData) => new Program(e));
+
+    return {
+      ...res,
+      value,
+    };
   },
 };
 

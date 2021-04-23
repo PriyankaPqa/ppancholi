@@ -1,5 +1,5 @@
 import { Store } from 'vuex';
-import { mockProgramsSearchData, Program } from '@/entities/program';
+import { mockProgramsSearchData, mockSearchPrograms, Program } from '@/entities/program';
 import { IRootState } from '@/store/store.types';
 import { mockStore } from '@/store';
 
@@ -75,6 +75,30 @@ describe('>>> Program Module', () => {
         expect(store.state.program.programs.length).toBe(1);
 
         expect(store.state.program.programs[0]).toEqual(mockPrograms[0]);
+      });
+    });
+
+    describe('searchPrograms', () => {
+      it('calls the searchPrograms service and caches the api results', async () => {
+        const store = mockStore();
+
+        expect(store.$services.programs.searchPrograms).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('program/searchPrograms', {});
+
+        expect(store.$services.programs.searchPrograms).toHaveBeenCalledTimes(1);
+
+        const mockSearchData = mockSearchPrograms();
+
+        expect(res).toEqual({
+          value: mockSearchData.value.map((p) => new Program(p)),
+          odataContext: 'context',
+          odataCount: 1,
+        });
+
+        expect(store.state.program.programs.length).toBe(mockSearchData.value.length);
+
+        expect(store.state.program.programs[0]).toEqual(mockSearchData.value[0]);
       });
     });
   });

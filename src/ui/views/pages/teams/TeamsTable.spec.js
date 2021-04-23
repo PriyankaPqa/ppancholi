@@ -189,11 +189,11 @@ describe('TeamsTable.vue', () => {
     test('customColumns', () => {
       expect(wrapper.vm.customColumns).toEqual({
         name: 'TeamName',
-        type: 'TeamTypeName/Translation/En',
+        type: 'TeamTypeName/Translation/en',
         eventCount: 'EventCount',
         primaryContact: 'PrimaryContactDisplayName',
         teamMemberCount: 'TeamMemberCount',
-        status: 'TeamStatusName/Translation/En',
+        status: 'TeamStatusName/Translation/en',
         edit: 'edit',
       });
     });

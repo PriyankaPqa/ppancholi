@@ -160,23 +160,17 @@ describe('EventsTable.vue', () => {
       wrapper.vm.azureSearchItems = mockEvents();
       wrapper.vm.azureSearchCount = mockEvents().length;
     });
-    describe('locale', () => {
-      it('should return the current locale with the first letter capitalized', () => {
-        wrapper.$i18n = { locale: 'en' };
-        expect(wrapper.vm.locale).toEqual('En');
-      });
-    });
 
     describe('customColumns', () => {
       it('should return the correct column names', () => {
         wrapper.$i18n = { locale: 'en' };
 
         const expectedColumns = {
-          name: 'EventName/Translation/En',
-          responseLevel: 'ResponseLevelName/Translation/En',
+          name: 'EventName/Translation/en',
+          responseLevel: 'ResponseLevelName/Translation/en',
           openDate: 'Schedule/OpenDate',
           daysOpen: 'DaysOpen',
-          eventStatus: 'ScheduleEventStatusName/Translation/En',
+          eventStatus: 'ScheduleEventStatusName/Translation/en',
         };
 
         expect(wrapper.vm.customColumns).toEqual(expectedColumns);

@@ -113,9 +113,9 @@ export default Vue.extend({
       return {
         caseFileNumber: 'CaseFileNumber',
         name: 'Beneficiary/FirstName',
-        event: `Event/Name/Translation/${this.locale}`,
-        triage: `TriageName/Translation/${this.locale}`,
-        status: `CaseFileStatusName/Translation/${this.locale}`,
+        event: `Event/Name/Translation/${this.$i18n.locale}`,
+        triage: `TriageName/Translation/${this.$i18n.locale}`,
+        status: `CaseFileStatusName/Translation/${this.$i18n.locale}`,
         created: 'CaseFileCreatedDate',
       };
     },
@@ -162,10 +162,6 @@ export default Vue.extend({
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };
-    },
-
-    locale(): string {
-      return helpers.capitalize(this.$i18n.locale);
     },
 
     tableProps(): Record<string, string> {

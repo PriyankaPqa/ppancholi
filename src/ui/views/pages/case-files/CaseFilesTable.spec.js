@@ -108,15 +108,15 @@ describe('CaseFilesTable.vue', () => {
         wrapper = mount(Component, {
           localVue,
           computed: {
-            locale() { return 'En'; },
+            locale() { return 'en'; },
           },
         });
         const expectedColumns = {
           caseFileNumber: 'CaseFileNumber',
           name: 'Beneficiary/FirstName',
-          event: 'Event/Name/Translation/En',
-          triage: 'TriageName/Translation/En',
-          status: 'CaseFileStatusName/Translation/En',
+          event: 'Event/Name/Translation/en',
+          triage: 'TriageName/Translation/en',
+          status: 'CaseFileStatusName/Translation/en',
           created: 'CaseFileCreatedDate',
         };
 
@@ -137,9 +137,9 @@ describe('CaseFilesTable.vue', () => {
               return {
                 caseFileNumber: 'CaseFileNumber',
                 name: 'Beneficiary/FirstName',
-                event: 'Event/Name/Translation/En',
-                triage: 'TriageName/Translation/En',
-                status: 'CaseFileStatusName/Translation/En',
+                event: 'Event/Name/Translation/en',
+                triage: 'TriageName/Translation/en',
+                status: 'CaseFileStatusName/Translation/en',
                 created: 'CaseFileCreatedDate',
               };
             },
@@ -160,17 +160,17 @@ describe('CaseFilesTable.vue', () => {
           {
             text: 'caseFilesTable.tableHeaders.event',
             sortable: true,
-            value: 'Event/Name/Translation/En',
+            value: 'Event/Name/Translation/en',
           },
           {
             text: 'caseFilesTable.tableHeaders.triage',
             sortable: true,
-            value: 'TriageName/Translation/En',
+            value: 'TriageName/Translation/en',
           },
           {
             text: 'caseFilesTable.tableHeaders.status',
             sortable: true,
-            value: 'CaseFileStatusName/Translation/En',
+            value: 'CaseFileStatusName/Translation/en',
           },
           {
             text: 'caseFilesTable.tableHeaders.createdDate',
@@ -189,13 +189,6 @@ describe('CaseFilesTable.vue', () => {
             searchPlaceholder: 'common.inputs.quick_search',
           },
         });
-      });
-    });
-
-    describe('locale', () => {
-      it('should return the current locale with the first letter capitalized', () => {
-        wrapper.$i18n = { locale: 'en' };
-        expect(wrapper.vm.locale).toEqual('En');
       });
     });
 
