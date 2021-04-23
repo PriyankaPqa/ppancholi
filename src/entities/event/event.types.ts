@@ -1,4 +1,5 @@
 import { ECanadaProvinces, IMultilingual } from '../../types';
+import { IAddress } from '../beneficiary';
 
 /**
  * Enums
@@ -34,6 +35,13 @@ export interface IResponseDetails {
   assistanceNumber: string;
 }
 
+export interface IShelterLocation {
+  id: uuid;
+  name: IMultilingual;
+  status: number;
+  address: IAddress;
+}
+
 /**
  * Interface that maps to the response structure from the API
  */
@@ -43,6 +51,7 @@ export interface IEventData {
   responseDetails: IResponseDetails;
   registrationLink: IMultilingual;
   tenantId: uuid;
+  shelterLocations: IShelterLocation[];
 }
 
 /**
@@ -54,4 +63,5 @@ export interface IEvent {
   responseDetails: IResponseDetails;
   registrationLink: IMultilingual;
   tenantId: uuid;
+  shelterLocations: IShelterLocation[];
 }

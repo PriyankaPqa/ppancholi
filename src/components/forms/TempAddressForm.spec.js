@@ -1,8 +1,7 @@
 import { createLocalVue, shallowMount } from '../../tests/testSetup';
-import {
-  ETemporaryAddressTypes,
-  mockBeneficiary, mockCampGround,
-} from '../../entities/beneficiary';
+import { ETemporaryAddressTypes, mockBeneficiary, mockCampGround } from '../../entities/beneficiary';
+
+import { mockShelterLocations } from '../../entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { enumToTranslatedCollection } from '../../ui/utils';
 
@@ -22,6 +21,7 @@ describe('TempAddress.vue', () => {
         temporaryAddress: mockCampGround(),
         temporaryAddressTypeItems: enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
         canadianProvincesItems: enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        shelterLocations: mockShelterLocations(),
       },
     });
   });
@@ -73,6 +73,9 @@ describe('TempAddress.vue', () => {
           },
           unitSuite: {
             max: MAX_LENGTH_SM,
+          },
+          shelterId: {
+            required: true,
           },
         });
       });
@@ -192,13 +195,13 @@ describe('TempAddress.vue', () => {
       const type = ETemporaryAddressTypes.MedicalFacility;
 
       beforeEach(() => {
-        wrapper.vm.form.reset = jest.fn();
+        wrapper.vm.form.resetTemporaryAddress = jest.fn();
         wrapper.vm.$refs.form.reset = jest.fn();
         wrapper.vm.changeType(type);
       });
 
       it('calls reset from entity with proper param', () => {
-        expect(wrapper.vm.form.reset).toHaveBeenLastCalledWith(type);
+        expect(wrapper.vm.form.resetTemporaryAddress).toHaveBeenLastCalledWith(type);
       });
 
       it('resets the form', () => {

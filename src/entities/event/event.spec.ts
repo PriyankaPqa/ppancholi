@@ -1,40 +1,36 @@
-import { mockEvent } from './event.mock';
+import { mockEventData } from './event.mock';
+import { Event } from './event';
 
-describe('>>> User', () => {
+let event = new Event(mockEventData());
+
+describe('>>> Event', () => {
   describe('>> constructor', () => {
+    beforeEach(() => {
+      event = new Event(mockEventData());
+    });
+
     it('should instantiate id', () => {
-      const event = mockEvent();
-      expect(event.id).toBe('7c076603-580a-4400-bef2-5ddececb0931');
+      expect(event.id).toBe(mockEventData().eventId);
     });
 
     it('should instantiate assistance number', () => {
-      const event = mockEvent();
-      expect(event.responseDetails.assistanceNumber).toBe('+15144544545');
+      expect(event.responseDetails.assistanceNumber).toBe(mockEventData().responseDetails.assistanceNumber);
     });
 
     it('should instantiate name', () => {
-      const event = mockEvent();
-      expect(event.name).toEqual({
-        translation: {
-          en: 'Gatineau Floods 2021',
-          fr: 'Inondations Gatineau 2021',
-        },
-      });
+      expect(event.name).toEqual(mockEventData().eventName);
     });
 
     it('should instantiate registration link', () => {
-      const event = mockEvent();
-      expect(event.registrationLink).toEqual({
-        translation: {
-          en: 'https://www.redcross.ca/gatineau-floods-2021',
-          fr: 'https://www.redcross.ca/inondations-gatineau-2021',
-        },
-      });
+      expect(event.registrationLink).toEqual(mockEventData().registrationLink);
     });
 
     it('should instantiate tenantId', () => {
-      const event = mockEvent();
-      expect(event.tenantId).toEqual(mockEvent().tenantId);
+      expect(event.tenantId).toEqual(mockEventData().tenantId);
+    });
+
+    it('should instantiate shelterLocations', () => {
+      expect(event.shelterLocations).toEqual(mockEventData().shelterLocations);
     });
   });
 });

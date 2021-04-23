@@ -110,6 +110,17 @@
             :label="`${$t('registration.addresses.postalCode')}`"
             @input="$resetGeoLocation()" />
         </v-col>
+
+        <v-col v-if="temporaryAddress.requiresShelterId()" cols="12" sm="6" md="8">
+          <v-select-with-validation
+            v-model="form.shelterId"
+            :rules="rules.shelterId"
+            :item-text="(e) => $m(e.name)"
+            item-value="id"
+            :data-test="`${prefixDataTest}__shelterLocation`"
+            :label="`${$t('registration.addresses.temporaryAddressTypes.Shelter')} *`"
+            :items="shelterLocations" />
+        </v-col>
       </template>
     </v-row>
   </validation-observer>
@@ -127,6 +138,7 @@ import { TranslateResult } from 'vue-i18n';
 import { VForm } from '../../types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { ETemporaryAddressTypes, ITemporaryAddress } from '../../entities/beneficiary';
+import { IShelterLocation } from '../../entities/event';
 
 import googleAutoCompleteMixin from './mixins/address';
 
@@ -165,6 +177,11 @@ export default Vue.extend({
 
     temporaryAddressTypeItems: {
       type: Array as () => Record<string, unknown>[],
+      required: true,
+    },
+
+    shelterLocations: {
+      type: Array as () => IShelterLocation[],
       required: true,
     },
   },
@@ -213,6 +230,9 @@ export default Vue.extend({
         },
         unitSuite: {
           max: MAX_LENGTH_SM,
+        },
+        shelterId: {
+          required: true,
         },
       };
     },
@@ -264,7 +284,7 @@ export default Vue.extend({
 
   methods: {
     changeType(type: ETemporaryAddressTypes) {
-      this.form.reset(type);
+      this.form.resetTemporaryAddress(type);
       (this.$refs.form as VForm).reset();
     },
   },

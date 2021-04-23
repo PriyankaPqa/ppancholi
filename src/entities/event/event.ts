@@ -1,5 +1,7 @@
-import { IMultilingual } from '@/types';
-import { IEvent, IEventData, IResponseDetails } from './event.types';
+import { IMultilingual } from '../../types';
+import {
+  IEvent, IEventData, IResponseDetails, IShelterLocation,
+} from './event.types';
 
 export class Event implements IEvent {
   id: string;
@@ -13,6 +15,8 @@ export class Event implements IEvent {
   responseDetails: IResponseDetails;
 
   tenantId: uuid;
+
+  shelterLocations: IShelterLocation[];
 
   constructor(data?: IEventData) {
     if (data) {
@@ -29,6 +33,7 @@ export class Event implements IEvent {
         },
       };
       this.tenantId = data.tenantId;
+      this.shelterLocations = data.shelterLocations;
     }
   }
 }

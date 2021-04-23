@@ -5,11 +5,13 @@ import {
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '../../../entities/beneficiary';
+
+import { mockEvent } from '../../../entities/event';
 import { IStorageMock } from './storage.types';
 
 export const mockStorageRegistration = (): IStorageMock => ({
   getters: {
-    event: jest.fn(),
+    event: jest.fn(() => mockEvent()),
     isLeftMenuOpen: jest.fn(),
     tabs: jest.fn(),
     currentTab: jest.fn(),

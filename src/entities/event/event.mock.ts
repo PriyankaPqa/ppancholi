@@ -1,6 +1,36 @@
-import { IAzureSearchResult } from '../../types';
-import { IEventData, IEvent } from './event.types';
+import { IAzureSearchResult, ECanadaProvinces } from '../../types';
+import {
+  IEventData, IShelterLocation, IEvent,
+} from './event.types';
+
 import { Event } from './event';
+
+export const mockShelterLocations = (): IShelterLocation[] => ([
+  {
+    id: '7c076603-580a-4400-bef2-5ddececb5555',
+    name: {
+      translation: {
+        en: 'YMCA Gym',
+        fr: 'Gymnase du YMCA',
+      },
+    },
+    status: 1,
+    address: {
+      country: 'CA',
+      street: 'Pioneer Street',
+      unitSuite: null,
+      provinceTerritory: ECanadaProvinces.BC,
+      city: 'Pemberton',
+      postalCode: 'V0N 1L0',
+      geoLocation: {
+        lat: null,
+        lng: null,
+      },
+      reset: null,
+      validate: null,
+    },
+  },
+]);
 
 export const mockEventData = (): IEventData => ({
   eventId: '7c076603-580a-4400-bef2-5ddececb0931',
@@ -20,6 +50,7 @@ export const mockEventData = (): IEventData => ({
       fr: 'https://www.redcross.ca/inondations-gatineau-2021',
     },
   },
+  shelterLocations: mockShelterLocations(),
 });
 
 export const mockSearchEventsData = (): IAzureSearchResult<IEventData> => ({
