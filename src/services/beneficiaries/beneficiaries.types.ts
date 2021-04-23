@@ -1,4 +1,4 @@
-import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '@/types';
+import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '../../types';
 import { IIndigenousIdentityData } from '../../entities/beneficiary';
 
 export interface IBeneficiariesService {

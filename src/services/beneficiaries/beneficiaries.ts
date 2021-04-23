@@ -1,5 +1,5 @@
 import { IHttpClient } from '@/services/httpClient';
-import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '@/types';
+import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '../../types';
 import { IIndigenousIdentityData } from '../../entities/beneficiary';
 import { IBeneficiariesService } from './beneficiaries.types';
 

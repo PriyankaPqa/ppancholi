@@ -1,11 +1,11 @@
-import { IStore } from '@/store/store.types';
+import { IStore, IState } from '@/store/store.types';
 import {
   ETemporaryAddressTypes,
   IAddress, IContactInformation, IPerson, ITemporaryAddress,
 } from '../../../entities/beneficiary';
 import { IStorage } from './storage.types';
 
-export const makeStorage = (store: IStore): IStorage => ({
+export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
     beneficiary() {
       return store.getters['beneficiary/beneficiary'];

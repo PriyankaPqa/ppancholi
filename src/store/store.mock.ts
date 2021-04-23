@@ -5,10 +5,11 @@ import Vue from 'vue';
 
 import VueI18n from 'vue-i18n';
 
-import { mockProvider } from '@/services/provider';
-
+import { mockProvider } from '../services/provider';
+import { tabs } from './modules/registration/tabs.mock';
 import { makeRegistrationModule } from './modules/registration';
 import { makeBeneficiaryModule } from './modules/beneficiary';
+import { IStore, IState } from './store.types';
 
 const i18n = {
   t: jest.fn((p: string) => p),
@@ -18,7 +19,7 @@ Vue.use(Vuex);
 
 const mockConfig = {
   modules: {
-    registration: makeRegistrationModule(i18n),
+    registration: makeRegistrationModule(i18n, tabs),
     beneficiary: makeBeneficiaryModule(),
   },
 };
@@ -31,7 +32,7 @@ export const mockStore = (overrides = {}, mocks = { dispatch: false, commit: fal
     arrayMerge: (dest, source) => source,
   });
 
-  const store = new Vuex.Store(mergedConfig);
+  const store = new Vuex.Store(mergedConfig) as IStore<IState>;
 
   if (mocks.dispatch) {
     store.dispatch = jest.fn();

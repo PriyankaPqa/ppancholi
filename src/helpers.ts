@@ -57,4 +57,26 @@ export default {
 
     return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
   },
+
+  scrollToFirstError(containerID: string) {
+    const containerElement = document.getElementById(containerID);
+
+    if (!containerElement) return;
+
+    const errorElements = containerElement.getElementsByClassName('failed');
+
+    if (errorElements.length > 0) {
+      if (containerID === 'app') {
+        window.scrollTo({
+          top: (errorElements[0] as HTMLElement).offsetTop - 90,
+          behavior: 'smooth',
+        });
+      } else {
+        containerElement.scrollTo({
+          top: (errorElements[0] as HTMLElement).offsetTop - 90,
+          behavior: 'smooth',
+        });
+      }
+    }
+  },
 };

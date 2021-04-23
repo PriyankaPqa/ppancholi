@@ -2,11 +2,11 @@ import { IBeneficiariesService, IBeneficiariesServiceMock } from '../beneficiari
 import { IEventsService, IEventsServiceMock } from '../events';
 
 export interface IProvider {
-  events: IEventsService;
+  registrationEvents: IEventsService;
   beneficiaries: IBeneficiariesService;
 }
 
 export interface IProviderMock {
-  events: IEventsServiceMock;
+  registrationEvents: IEventsServiceMock;
   beneficiaries: IBeneficiariesServiceMock;
 }

@@ -1,11 +1,11 @@
-import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
+import { ILeftMenuItem } from '../../../types/interfaces/ILeftMenuItem';
 
 export const tabs: ILeftMenuItem[] = [
   {
     id: 'privacy',
     labelKey: 'registration.menu.privacy',
     titleKey: 'registration.menu.privacy',
-    icon: 'mdi-shield-check',
+    icon: '',
     disabled: false,
     isValid: true,
     isTouched: false,
@@ -17,7 +17,7 @@ export const tabs: ILeftMenuItem[] = [
     id: 'personalInfo',
     labelKey: 'registration.menu.personal_info',
     titleKey: 'registration.menu.personal_info',
-    icon: 'mdi-account',
+    icon: '',
     disabled: false,
     isValid: true,
     isTouched: false,
@@ -29,7 +29,7 @@ export const tabs: ILeftMenuItem[] = [
     id: 'addresses',
     labelKey: 'registration.menu.addresses',
     titleKey: 'registration.menu.addresses',
-    icon: 'mdi-map-marker',
+    icon: '',
     disabled: false,
     isValid: true,
     isTouched: false,
@@ -41,7 +41,7 @@ export const tabs: ILeftMenuItem[] = [
     id: 'householdMembers',
     labelKey: 'registration.menu.household_members',
     titleKey: 'registration.menu.household_members',
-    icon: 'mdi-account-multiple',
+    icon: '',
     disabled: false,
     isValid: true,
     isTouched: false,
@@ -53,7 +53,7 @@ export const tabs: ILeftMenuItem[] = [
     id: 'review',
     labelKey: 'registration.menu.review',
     titleKey: 'registration.menu.review',
-    icon: 'mdi-file-search',
+    icon: '',
     disabled: false,
     isValid: true,
     isTouched: false,
@@ -65,7 +65,7 @@ export const tabs: ILeftMenuItem[] = [
     id: 'confirmation',
     labelKey: 'registration.menu.confirmation',
     titleKey: 'registration.page.confirmation',
-    icon: 'mdi-check',
+    icon: '',
     disabled: true,
     isValid: true,
     isTouched: false,

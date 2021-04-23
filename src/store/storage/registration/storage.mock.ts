@@ -32,6 +32,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     jump: jest.fn(),
     setIsPrivacyAgreed: jest.fn(),
     setDateTimeConsent: jest.fn(),
+    setEvent: jest.fn(),
   },
 
   actions: {

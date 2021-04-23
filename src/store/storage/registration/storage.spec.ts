@@ -1,5 +1,6 @@
 import { mockStore } from '@/store';
-import { ECanadaProvinces, ILeftMenuItem } from '@/types';
+import { ECanadaProvinces, ILeftMenuItem } from '../../../types';
+import { mockEventData } from '../../../entities/event';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });
@@ -86,6 +87,12 @@ describe('>>> Registration Storage', () => {
       const toIndex = 2;
       storage.mutations.jump(toIndex);
       expect(store.commit).toBeCalledWith('registration/jump', toIndex);
+    });
+
+    it('should proxy setEvent', () => {
+      const payload = mockEventData();
+      storage.mutations.setEvent(payload);
+      expect(store.commit).toBeCalledWith('registration/setEvent', payload);
     });
   });
 

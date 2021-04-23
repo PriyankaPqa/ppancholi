@@ -1,7 +1,7 @@
-import { Store } from 'vuex';
-import { mockStore, IRootState } from '@/store';
+import { mockStore } from '@/store';
 import { ECanadaProvinces, ILeftMenuItem } from '@/types';
-import { Event, mockEventsData } from '../../../entities/event';
+import { tabs } from '@/store/modules/registration/tabs.mock';
+import { Event, mockEventData, mockEvent } from '../../../entities/event';
 import {
   EIndigenousTypes,
   mockGenders,
@@ -11,14 +11,10 @@ import {
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
   mockBeneficiary,
-  Beneficiary,
 } from '../../../entities/beneficiary';
-import { tabs } from './tabs';
 
+let store = mockStore();
 describe('>>> Registration Module', () => {
-  let store: Store<IRootState>;
-  const mockEventData = mockEventsData().value[0];
-
   beforeEach(() => {
     store = mockStore();
   });
@@ -178,9 +174,9 @@ describe('>>> Registration Module', () => {
       it('sets the event', () => {
         expect(store.getters['registration/event']).toEqual(new Event());
 
-        store.commit('registration/setEvent', mockEventData);
+        store.commit('registration/setEvent', mockEventData());
 
-        expect(store.state.registration.event).toEqual(mockEventData);
+        expect(store.state.registration.event).toEqual(mockEventData());
       });
     });
 
@@ -261,11 +257,11 @@ describe('>>> Registration Module', () => {
   describe('>> Actions', () => {
     describe('fetchEvent', () => {
       it('calls the getEvent service', async () => {
-        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(0);
+        expect(store.$services.registrationEvents.searchEvents).toHaveBeenCalledTimes(0);
 
         await store.dispatch('registration/fetchEvent', { lang: 'en', registrationLink: 'link' });
 
-        expect(store.$services.events.searchEvents).toHaveBeenCalledTimes(1);
+        expect(store.$services.registrationEvents.searchEvents).toHaveBeenCalledTimes(1);
       });
 
       it('maps IEventData to IEvent, and sets the event', async () => {
@@ -273,7 +269,7 @@ describe('>>> Registration Module', () => {
 
         await store.dispatch('registration/fetchEvent', {});
 
-        expect(store.getters['registration/event']).toEqual(new Event(mockEventData));
+        expect(store.getters['registration/event']).toEqual(mockEvent());
       });
     });
 
@@ -328,7 +324,7 @@ describe('>>> Registration Module', () => {
     describe('fetchIndigenousIdentitiesByProvince', () => {
       it('call the searchIndigenousIdentities service with proper params', async () => {
         const provinceCode = ECanadaProvinces.BC;
-        await store.commit('registration/setEvent', mockEventData);
+        await store.commit('registration/setEvent', mockEventData());
         await store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
 
         expect(store.$services.beneficiaries.searchIndigenousIdentities).toHaveBeenCalledWith({
@@ -341,7 +337,7 @@ describe('>>> Registration Module', () => {
       });
 
       it('sets the indigenousIdentities', async () => {
-        await store.commit('registration/setEvent', mockEventData);
+        await store.commit('registration/setEvent', mockEventData());
 
         await store.dispatch('registration/fetchIndigenousIdentitiesByProvince', ECanadaProvinces.AB);
 

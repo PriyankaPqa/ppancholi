@@ -1,5 +1,5 @@
-import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
-import { ECanadaProvinces, IOptionItemData } from '@/types';
+import { ECanadaProvinces, IOptionItemData } from '../../../types';
+import { ILeftMenuItem } from '../../../types/interfaces/ILeftMenuItem';
 import {
   IIndigenousIdentityData,
 } from '../../../entities/beneficiary';

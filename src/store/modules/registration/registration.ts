@@ -1,22 +1,22 @@
 import {
-  Store, Module, ActionContext, ActionTree, GetterTree,
+  Module, ActionContext, ActionTree, GetterTree,
 } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import VueI18n from 'vue-i18n';
 import {
   ECanadaProvinces, ILeftMenuItem, IOptionItemData, EOptionItemStatus,
 } from '../../../types';
-import { IRootState } from '../../store.types';
+import { IRootState, IStore } from '../../store.types';
 import {
   IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary,
 } from '../../../entities/beneficiary';
 import { IEvent, Event, IEventData } from '../../../entities/event';
-import { tabs } from './tabs';
+
 import { IState } from './registration.types';
 
 const INDIGENOUS_LIMIT_RESULTS = 1000;
 
-const getDefaultState = (): IState => ({
+const getDefaultState = (tabs: ILeftMenuItem[]): IState => ({
   isPrivacyAgreed: false,
   privacyDateTimeConsent: '',
   event: null,
@@ -44,7 +44,7 @@ const getDefaultState = (): IState => ({
   loadingIndigenousIdentities: false,
 });
 
-const moduleState: IState = getDefaultState();
+const moduleState = (tabs: ILeftMenuItem[]): IState => getDefaultState(tabs);
 
 const getters = (i18n: VueI18n) => ({
 
@@ -122,6 +122,9 @@ const getters = (i18n: VueI18n) => ({
         const currentTabName = state.tabs[currentIndex].componentName;
 
         switch (currentTabName) {
+          case 'isRegistered':
+            isValid = true;
+            break;
           case 'PrivacyStatement':
             isValid = state.isPrivacyAgreed;
             break;
@@ -227,18 +230,18 @@ const mutations = {
 
 const actions = {
   async fetchEvent(
-    this: Store<IState>,
+    this: IStore<IState>,
     context: ActionContext<IState, IState>,
     { lang, registrationLink }: { lang: string; registrationLink: string },
   ): Promise<IEvent> {
-    const result = await this.$services.events.searchEvents(lang, registrationLink);
+    const result = await this.$services.registrationEvents.searchEvents(lang, registrationLink);
     const eventData = result?.value?.length > 0 ? result.value[0] : null;
     context.commit('setEvent', eventData);
 
     return context.getters.event;
   },
 
-  async fetchGenders(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
+  async fetchGenders(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getGenders();
 
     if (data?.length > 0) {
@@ -248,7 +251,7 @@ const actions = {
     return data;
   },
 
-  async fetchPreferredLanguages(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
+  async fetchPreferredLanguages(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getPreferredLanguages();
 
     if (data?.length > 0) {
@@ -258,7 +261,7 @@ const actions = {
     return data;
   },
 
-  async fetchPrimarySpokenLanguages(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
+  async fetchPrimarySpokenLanguages(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
     const data: IOptionItemData[] = await this.$services.beneficiaries.getPrimarySpokenLanguages();
 
     if (data?.length > 0) {
@@ -269,7 +272,7 @@ const actions = {
   },
 
   async fetchIndigenousIdentitiesByProvince(
-    this: Store<IState>,
+    this: IStore<IState>,
     context: ActionContext<IState, IState>,
     provinceCode: ECanadaProvinces,
   ): Promise<IIndigenousIdentityData[]> {
@@ -300,9 +303,9 @@ const actions = {
   },
 };
 
-export const makeRegistrationModule = (i18n: VueI18n): Module<IState, IRootState> => ({
+export const makeRegistrationModule = (i18n: VueI18n, tabs: ILeftMenuItem[]): Module<IState, IRootState> => ({
   namespaced: true,
-  state: moduleState as IState,
+  state: moduleState(tabs) as IState,
   getters: getters(i18n),
   mutations,
   actions: (actions as unknown) as ActionTree<IState, IRootState>,

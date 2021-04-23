@@ -1,8 +1,6 @@
-import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import { TranslateResult } from 'vue-i18n';
-
-import { ECanadaProvinces, IOptionItemData } from '@/types';
-import { IEvent } from '../../../entities/event';
+import { ECanadaProvinces, IOptionItemData, ILeftMenuItem } from '../../../types';
+import { IEvent, IEventData } from '../../../entities/event';
 import { IIndigenousIdentityData, EIndigenousTypes } from '../../../entities/beneficiary';
 
 export interface IStorage {
@@ -30,6 +28,7 @@ export interface IStorage {
     jump(toIndex: number): void;
     setIsPrivacyAgreed(payload: boolean): void;
     setDateTimeConsent(payload: string): void;
+    setEvent(payload: IEventData): void;
   };
 
   actions: {
@@ -66,6 +65,7 @@ export interface IStorageMock {
     jump: jest.Mock<void>;
     setIsPrivacyAgreed: jest.Mock<void>;
     setDateTimeConsent: jest.Mock<void>;
+    setEvent: jest.Mock<void>;
   };
 
   actions: {

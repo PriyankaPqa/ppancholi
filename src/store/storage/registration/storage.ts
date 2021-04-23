@@ -1,12 +1,11 @@
-import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
-import { IStore } from '@/store/store.types';
+import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
-import { ECanadaProvinces, IOptionItemData } from '@/types';
+import { ECanadaProvinces, IOptionItemData, ILeftMenuItem } from '../../../types';
 import { IIndigenousIdentityData, EIndigenousTypes } from '../../../entities/beneficiary';
-import { IEvent } from '../../../entities/event';
+import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
 
-export const makeStorage = (store: IStore): IStorage => ({
+export const makeStorage = (store: IStore<IState>): IStorage => ({
 
   getters: {
 
@@ -90,6 +89,10 @@ export const makeStorage = (store: IStore): IStorage => ({
 
     setDateTimeConsent(payload: string): void {
       store.commit('registration/setDateTimeConsent', payload);
+    },
+
+    setEvent(payload: IEventData): void {
+      store.commit('registration/setEvent', payload);
     },
   },
 

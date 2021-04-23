@@ -1,4 +1,4 @@
-import { IAzureSearchResult } from '@/types';
+import { IAzureSearchResult } from '../../types';
 import { IEventData } from '../../entities/event';
 
 export interface IEventsService {
