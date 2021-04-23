@@ -10,7 +10,7 @@ export interface IOptionItemsService {
 
   addSubItem(target: EOptionLists, itemId: string, subItem: IOptionSubItem): Promise<IOptionItemData>;
 
-  updateOptionItemName(target: EOptionLists, id: string, name: IMultilingual): Promise<IOptionItemData>;
+  updateOptionItem(target: EOptionLists, id: string, name: IMultilingual, description: IMultilingual): Promise<IOptionItemData>;
 
   updateOptionSubItem(
     target: EOptionLists,
@@ -40,7 +40,7 @@ export interface IOptionItemsServiceMock {
 
   addSubItem: jest.Mock<IOptionItemData>;
 
-  updateOptionItemName: jest.Mock<IOptionItemData>;
+  updateOptionItem: jest.Mock<IOptionItemData>;
 
   updateOptionSubItem: jest.Mock<IOptionItemData>;
 

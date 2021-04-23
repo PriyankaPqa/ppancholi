@@ -14,6 +14,10 @@ describe('>>> EventTypes Service', () => {
   });
 
   describe('getPrefix', () => {
+    it('returns correct prefix for EOptionLists.CaseFileTags', () => {
+      expect(service.getPrefix(EOptionLists.CaseFileTags)).toBe('/case-file/tags');
+    });
+
     it('returns correct prefix for EOptionLists.EventTypes', () => {
       expect(service.getPrefix(EOptionLists.EventTypes)).toBe('/event/event-types');
     });
@@ -61,11 +65,12 @@ describe('>>> EventTypes Service', () => {
     expect(http.get).toHaveBeenCalledWith(`${service.getPrefix(list)}/all`);
   });
 
-  test('updateOptionItemName is linked to the correct URL', async () => {
+  test('updateOptionItem is linked to the correct URL', async () => {
     const name = { translation: { en: 'ENGLISH', fr: 'FRENCH' } };
+    const description = { translation: { en: 'desc' } };
     const list = EOptionLists.EventTypes;
-    await service.updateOptionItemName(list, 'ID', name);
-    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/name`, { name });
+    await service.updateOptionItem(list, 'ID', name, description);
+    expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/name-description`, { name, description });
   });
 
   test('updateOptionSubItem is linked to the correct URL', async () => {

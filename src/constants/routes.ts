@@ -156,6 +156,10 @@ const routes = {
       path: 'lists',
       name: 'Lists',
     },
+    caseFileTags: {
+      path: 'lists/case-file-tags',
+      name: 'systemManagement.lists.caseFileTags',
+    },
     eventTypes: {
       path: 'lists/event-types',
       name: 'systemManagement.lists.eventTypes',

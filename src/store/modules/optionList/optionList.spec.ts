@@ -161,23 +161,25 @@ describe('>>> Option List Module', () => {
       });
     });
 
-    describe('updateName', () => {
+    describe('updateItem', () => {
       it('throws an error if list is not set in the store', async () => {
-        await expect(store.dispatch('optionList/updateName')).rejects.toThrow();
+        await expect(store.dispatch('optionList/updateItem')).rejects.toThrow();
       });
 
       it('calls the updateOptionItemName endpoint with the proper list', async () => {
         store.commit('optionList/setList', list);
 
-        await store.dispatch('optionList/updateName', {
+        await store.dispatch('optionList/updateItem', {
           id: 'ID',
           name: { translation: { en: 'EN NAME', fr: 'FR NAME' } },
+          description: { translation: { en: 'EN DESC', fr: 'FR DESC' } },
         });
 
-        expect(store.$services.optionItems.updateOptionItemName).toHaveBeenCalledWith(
+        expect(store.$services.optionItems.updateOptionItem).toHaveBeenCalledWith(
           list,
           'ID',
           { translation: { en: 'EN NAME', fr: 'FR NAME' } },
+          { translation: { en: 'EN DESC', fr: 'FR DESC' } },
         );
       });
     });

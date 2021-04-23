@@ -8,7 +8,7 @@ export const mockOptionItemsServiceService = (): IOptionItemsServiceMock => ({
 
   addSubItem: jest.fn(() => mockOptionItemData()[0]),
 
-  updateOptionItemName: jest.fn(() => mockOptionItemData()[0]),
+  updateOptionItem: jest.fn(() => mockOptionItemData()[0]),
 
   updateOptionSubItem: jest.fn(() => mockOptionItemData()[0]),
 

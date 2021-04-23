@@ -60,10 +60,11 @@ describe('>>> OptionList Storage', () => {
       expect(store.dispatch).toHaveBeenCalledWith('optionList/addSubItem', { itemId, subItem });
     });
 
-    it('should proxy updateName', () => {
+    it('should proxy updateItem', () => {
       const name = { translation: { en: 'EN', fr: 'FR' } };
-      storage.actions.updateName('ID', name);
-      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateName', { id: 'ID', name });
+      const description = { translation: { en: 'desc EN', fr: 'desc FR' } };
+      storage.actions.updateItem('ID', name, description);
+      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateItem', { id: 'ID', name, description });
     });
 
     it('should proxy updateSubItem', () => {

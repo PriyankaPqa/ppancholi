@@ -139,7 +139,7 @@ export default Vue.extend({
 
     addSubItemLabel: {
       type: String,
-      required: true,
+      default: '',
     },
 
     itemNameLabel: {

@@ -22,7 +22,7 @@ export interface IStorage {
 
     addSubItem(itemId: string, payload: ICreateOptionItemRequest): Promise<IOptionItem>;
 
-    updateName(id: string, name: IMultilingual): Promise<IOptionItem>;
+    updateItem(id: string, name: IMultilingual, description: IMultilingual): Promise<IOptionItem>;
 
     updateSubItem(itemId: string, subItemId: string, name: IMultilingual, description: IMultilingual): Promise<IOptionItem>;
 
@@ -58,7 +58,7 @@ export interface IStorageMock {
 
     addSubItem: jest.Mock<void>;
 
-    updateName: jest.Mock<void>;
+    updateItem: jest.Mock<void>;
 
     updateSubItem: jest.Mock<void>;
 

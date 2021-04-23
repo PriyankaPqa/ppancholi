@@ -38,10 +38,11 @@ export const makeStorage = (store: IStore): IStorage => ({
       });
     },
 
-    updateName(id: string, name: IMultilingual) {
-      return store.dispatch('optionList/updateName', {
+    updateItem(id: string, name: IMultilingual, description: IMultilingual) {
+      return store.dispatch('optionList/updateItem', {
         id,
         name,
+        description,
       });
     },
 

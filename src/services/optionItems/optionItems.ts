@@ -10,6 +10,8 @@ export class OptionItemsService implements IOptionItemsService {
 
   getPrefix(list: EOptionLists): string {
     switch (list) {
+      case EOptionLists.CaseFileTags:
+        return '/case-file/tags';
       case EOptionLists.EventTypes:
         return '/event/event-types';
       case EOptionLists.Genders:
@@ -39,10 +41,8 @@ export class OptionItemsService implements IOptionItemsService {
     return this.http.patch(`${this.getPrefix(list)}/${itemId}/add-subitem`, subItem);
   }
 
-  async updateOptionItemName(list: EOptionLists, id: string, name: IMultilingual): Promise<IOptionItemData> {
-    return this.http.patch(`${this.getPrefix(list)}/${id}/name`, {
-      name,
-    });
+  async updateOptionItem(list: EOptionLists, id: string, name: IMultilingual, description: IMultilingual): Promise<IOptionItemData> {
+    return this.http.patch(`${this.getPrefix(list)}/${id}/name-description`, { name, description });
   }
 
   // eslint-disable-next-line

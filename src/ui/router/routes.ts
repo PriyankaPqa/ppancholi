@@ -53,6 +53,7 @@ const ReportsHome = () => import(/* webpackChunkName: "reports" */ '@/ui/views/p
 const SystemManagementLayout = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/layout/SystemManagementLayout.vue');
 const SystemManagementHome = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/home/SystemManagementHome.vue');
 const SystemManagementLists = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/SystemManagementLists.vue');
+const CaseFileTags = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileTags.vue');
 const EventTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/EventTypes.vue');
 const Genders = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/Genders.vue');
 const PreferredLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/PreferredLanguages.vue');
@@ -322,6 +323,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.lists.path,
                 name: Routes.systemManagement.lists.name,
                 component: SystemManagementLists,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.caseFileTags.path,
+                name: Routes.systemManagement.caseFileTags.name,
+                component: CaseFileTags,
                 meta: { level: 'level6' },
               },
               {

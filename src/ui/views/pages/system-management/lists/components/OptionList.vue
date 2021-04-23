@@ -404,21 +404,23 @@ export default Vue.extend({
     },
 
     /**
-     * Handles editing the name of the item through the API
+     * Handles editing the item through the API
      * @param item The item to be modified
      * @param name The new name value. Sets the value for the currently selected language
+     * @param description The new description value. Sets the value for the currently selected language
      */
-    async saveItem(item: IOptionItem, name: IMultilingual) {
+    async saveItem(item: IOptionItem, name: IMultilingual, description: IMultilingual) {
       if (!item || !name) {
         return;
       }
 
       const payloadName = entityUtils.getFilledMultilingualField(name);
+      const payloadDescription = this.hasDescription ? entityUtils.getFilledMultilingualField(description) : null;
 
       this.itemLoading = true;
 
       try {
-        await this.$storage.optionList.actions.updateName(item.id, payloadName);
+        await this.$storage.optionList.actions.updateItem(item.id, payloadName, payloadDescription);
       } catch (e) {
         this.itemLoading = false;
         return;

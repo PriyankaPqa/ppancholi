@@ -62,6 +62,10 @@ export default Vue.extend({
 
   data() {
     const optionLists: Array<IList> = [{
+      name: 'system_management.lists.caseFileTags',
+      route: routes.systemManagement.caseFileTags.name,
+      dataTest: 'caseFileTags',
+    }, {
       name: 'system_management.lists.eventTypes',
       route: routes.systemManagement.eventTypes.name,
       dataTest: 'eventTypes',

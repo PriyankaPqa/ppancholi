@@ -10,7 +10,7 @@ const localVue = createLocalVue();
 const actions = {
   fetchItems: jest.fn(),
   createOption: jest.fn(),
-  updateName: jest.fn(),
+  updateItem: jest.fn(),
   updateSubItem: jest.fn(),
   updateStatus: jest.fn(),
   updateOrderRanks: jest.fn(),
@@ -299,20 +299,24 @@ describe('OptionList.vue', () => {
     });
 
     describe('>> saveItem', () => {
-      it('dispatches the updateName action', async () => {
+      it('dispatches the updateItem action', async () => {
+        await wrapper.setProps({ hasDescription: true });
         const item = mockOptionItemData()[0];
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
+        const description = { translation: { en: 'Desc English Test', fr: 'Desc French Test' } };
 
         await wrapper.vm.saveItem(
           item,
           name,
+          description,
         );
 
-        expect(actions.updateName).toHaveBeenCalledWith(
+        expect(actions.updateItem).toHaveBeenCalledWith(
           expect.anything(),
           {
             id: item.id,
             name,
+            description,
           },
         );
       });
@@ -321,25 +325,51 @@ describe('OptionList.vue', () => {
         await wrapper.vm.saveItem(
           null,
           null,
+          { translation: { en: 'English Desc', fr: '' } },
         );
 
-        expect(actions.updateName).not.toHaveBeenCalled();
+        expect(actions.updateItem).not.toHaveBeenCalled();
       });
 
-      it('copies the translation values over to empty languages', async () => {
+      it('sends description as null if hasDescription is false', async () => {
+        await wrapper.setProps({ hasDescription: false });
         const item = mockOptionItemData()[0];
         const name = { translation: { en: 'English Test', fr: '' } };
-
+        const description = { translation: { en: '', fr: '' } };
         await wrapper.vm.saveItem(
           item,
           name,
+          description,
         );
 
-        expect(actions.updateName).toHaveBeenCalledWith(
+        expect(actions.updateItem).toHaveBeenCalledWith(
           expect.anything(),
           {
             id: item.id,
             name: { translation: { en: 'English Test', fr: 'English Test' } },
+            description: null,
+          },
+        );
+      });
+
+      it('copies the translation values over to empty languages', async () => {
+        await wrapper.setProps({ hasDescription: true });
+        const item = mockOptionItemData()[0];
+        const name = { translation: { en: 'English Test', fr: '' } };
+        const description = { translation: { en: 'English Desc Test', fr: '' } };
+
+        await wrapper.vm.saveItem(
+          item,
+          name,
+          description,
+        );
+
+        expect(actions.updateItem).toHaveBeenCalledWith(
+          expect.anything(),
+          {
+            id: item.id,
+            name: { translation: { en: 'English Test', fr: 'English Test' } },
+            description: { translation: { en: 'English Desc Test', fr: 'English Desc Test' } },
           },
         );
       });
