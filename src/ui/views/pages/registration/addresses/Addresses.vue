@@ -107,7 +107,7 @@ export default Vue.extend({
     shelterLocations():IShelterLocation[] {
       const event = this.$storage.registration.getters.event();
       if (event) {
-        return event.shelterLocations.filter((s) => s.status === EOptionItemStatus.Active);
+        return event.shelterLocations.filter((s: IShelterLocation) => s.status === EOptionItemStatus.Active);
       }
       return [];
     },

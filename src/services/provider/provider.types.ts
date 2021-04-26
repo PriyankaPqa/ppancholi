@@ -1,12 +1,12 @@
 import { IBeneficiariesService, IBeneficiariesServiceMock } from '@crctech/registration-lib/src/services/beneficiaries';
-import { IEventsService, IEventsServiceMock } from '@crctech/registration-lib/src/services/events';
+import { IPublicService, IPublicServiceMock } from '@crctech/registration-lib/src/services/public';
 
 export interface IProvider {
-  registrationEvents: IEventsService,
+  publicApi: IPublicService,
   beneficiaries: IBeneficiariesService,
 }
 
 export interface IProviderMock {
-  registrationEvents: IEventsServiceMock,
+  publicApi: IPublicServiceMock,
   beneficiaries: IBeneficiariesServiceMock,
 }

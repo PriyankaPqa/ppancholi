@@ -24,19 +24,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import {
-  ECanadaProvinces,
-  IOptionItemData,
-} from '@/types';
-import { IBeneficiary, IContactInformation, IPerson } from '@crctech/registration-lib/src/entities/beneficiary';
+
 import { IndigenousIdentityForm, IdentityForm, ContactInformationForm } from '@crctech/registration-lib';
-
 import { MIN_AGE_REGISTRATION } from '@/constants/validations';
-import { enumToTranslatedCollection } from '@/ui/utils';
-import { TranslateResult } from 'vue-i18n';
 
-export default Vue.extend({
+import mixins from 'vue-typed-mixins';
+import personalInformation from '@crctech/registration-lib/src/ui/mixins/personalInformation';
+import { ECanadaProvinces } from '@/types';
+import { enumToTranslatedCollection } from '@/ui/utils';
+
+export default mixins(personalInformation).extend({
   name: 'PersonalInformation',
 
   components: {
@@ -45,12 +42,7 @@ export default Vue.extend({
     ContactInformationForm,
   },
 
-  props: {
-    prefixDataTest: {
-      type: String,
-      default: 'personalInfo',
-    },
-  },
+  mixins: [personalInformation],
 
   data() {
     return {
@@ -59,63 +51,8 @@ export default Vue.extend({
   },
 
   computed: {
-    person(): IPerson {
-      return this.beneficiary.person;
-    },
-
-    contactInformation(): IContactInformation {
-      return this.beneficiary.contactInformation;
-    },
-
-    beneficiary(): IBeneficiary {
-      return this.$storage.beneficiary.getters.beneficiary();
-    },
-
-    preferredLanguagesItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.preferredLanguages();
-    },
-
-    primarySpokenLanguagesItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.primarySpokenLanguages();
-    },
-
-    genderItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.genders();
-    },
-
     canadianProvincesItems(): Record<string, unknown>[] {
       return enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
-    },
-
-    indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return this.$storage.registration.getters.indigenousTypesItems(this.person.indigenousProvince);
-    },
-
-    indigenousCommunitiesItems(): Record<string, string>[] {
-      return this.$storage.registration.getters.indigenousCommunitiesItems(this.person.indigenousProvince, this.person.indigenousType);
-    },
-
-    loadingIndigenousIdentities(): boolean {
-      return this.$store.state.registration.loadingIndigenousIdentities;
-    },
-
-  },
-
-  methods: {
-    async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
-      await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
-    },
-
-    setIdentity(form: IPerson) {
-      this.$storage.beneficiary.mutations.setIdentity(form);
-    },
-
-    setIndigenousIdentity(form: IPerson) {
-      this.$storage.beneficiary.mutations.setIndigenousIdentity(form);
-    },
-
-    setContactInformation(form: IContactInformation) {
-      this.$storage.beneficiary.mutations.setContactInformation(form);
     },
   },
 });

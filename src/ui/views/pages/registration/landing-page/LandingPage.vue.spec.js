@@ -1,8 +1,9 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockEventData } from '@crctech/registration-lib/src/entities/event';
+import { mockStorage } from '@/store/storage';
 import Component from './LandingPage.vue';
 
+const storage = mockStorage();
 const localVue = createLocalVue();
 
 describe('LandingPage.vue', () => {
@@ -11,14 +12,8 @@ describe('LandingPage.vue', () => {
   beforeEach(() => {
     wrapper = mount(Component, {
       localVue,
-      store: {
-        modules: {
-          registration: {
-            state: {
-              event: mockEventData(),
-            },
-          },
-        },
+      mocks: {
+        $storage: storage,
       },
     });
   });

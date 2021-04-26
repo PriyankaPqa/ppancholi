@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockEventData } from '@crctech/registration-lib/src/entities/event';
+
+import { mockStorage } from '@/store/storage';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
@@ -10,14 +11,8 @@ describe('AppHeader.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
-      store: {
-        modules: {
-          registration: {
-            state: {
-              event: mockEventData(),
-            },
-          },
-        },
+      mocks: {
+        $storage: mockStorage(),
       },
     });
   });
