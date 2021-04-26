@@ -1,6 +1,6 @@
 import { mockSearchEventsData } from '../../entities/event';
-import { IEventsServiceMock } from './events.types';
+import { IPublicServiceMock } from './public.types';
 
-export const mockEventsService = (): IEventsServiceMock => ({
+export const mockPublicService = (): IPublicServiceMock => ({
   searchEvents: jest.fn(() => mockSearchEventsData()),
 });

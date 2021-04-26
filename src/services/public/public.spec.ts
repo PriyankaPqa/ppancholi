@@ -1,10 +1,10 @@
 import { mockHttp } from '@/services/httpClient.mock';
-import { EventsService } from './events';
+import { PublicService } from './public';
 
 const http = mockHttp();
 
 describe('>>> Events Service', () => {
-  const service = new EventsService(http as never);
+  const service = new PublicService(http as never);
 
   test('searchEvents is linked to the correct URL', async () => {
     const params = {

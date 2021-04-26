@@ -257,11 +257,11 @@ describe('>>> Registration Module', () => {
   describe('>> Actions', () => {
     describe('fetchEvent', () => {
       it('calls the getEvent service', async () => {
-        expect(store.$services.registrationEvents.searchEvents).toHaveBeenCalledTimes(0);
+        expect(store.$services.publicApi.searchEvents).toHaveBeenCalledTimes(0);
 
         await store.dispatch('registration/fetchEvent', { lang: 'en', registrationLink: 'link' });
 
-        expect(store.$services.registrationEvents.searchEvents).toHaveBeenCalledTimes(1);
+        expect(store.$services.publicApi.searchEvents).toHaveBeenCalledTimes(1);
       });
 
       it('maps IEventData to IEvent, and sets the event', async () => {

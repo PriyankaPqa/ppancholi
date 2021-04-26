@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue, { ComponentOptions } from "vue";
 
 declare module '*.vue' {
 
@@ -8,5 +8,4 @@ declare module '*.vue' {
     validate: (type?: { silent?: boolean }) => boolean;
     reset: () => void;
   }
-
 }

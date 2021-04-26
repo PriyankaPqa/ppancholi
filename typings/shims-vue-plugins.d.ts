@@ -1,7 +1,7 @@
 /* eslint-disable */
 
 import { Store } from 'vuex';
-import { IMultilingual } from '@/types';
+import { IMultilingual } from '../src/types';
 
 interface IFormatCurrency {
   (value: number): string;

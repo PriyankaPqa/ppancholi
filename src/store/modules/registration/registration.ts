@@ -234,7 +234,7 @@ const actions = {
     context: ActionContext<IState, IState>,
     { lang, registrationLink }: { lang: string; registrationLink: string },
   ): Promise<IEvent> {
-    const result = await this.$services.registrationEvents.searchEvents(lang, registrationLink);
+    const result = await this.$services.publicApi.searchEvents(lang, registrationLink);
     const eventData = result?.value?.length > 0 ? result.value[0] : null;
     context.commit('setEvent', eventData);
 

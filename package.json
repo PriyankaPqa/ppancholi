@@ -1,6 +1,6 @@
 {
   "name": "@crctech/registration-lib",
-  "version": "0.1.7-5",
+  "version": "0.1.7-11",
   "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -37,10 +37,7 @@
     "dist",
     "LICENSE",
     "README.md",
-    "src/shims-tsx.d.ts",
-    "src/shims-provider.d.ts",
-    "src/shims-vue.d.ts",
-    "src/shims-vuetify.d.ts"
+    "typings/**"
   ],
   "dependencies": {
     "@crctech/component-library": "0.0.81",

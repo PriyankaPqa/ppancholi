@@ -1,9 +1,9 @@
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchResult } from '@/types';
 import { IEventData } from '../../entities/event';
-import { IEventsService } from './events.types';
+import { IPublicService } from './public.types';
 
-export class EventsService implements IEventsService {
+export class PublicService implements IPublicService {
   constructor(private readonly http: IHttpClient) {}
 
   async searchEvents(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventData>> {
