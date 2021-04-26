@@ -10,6 +10,8 @@ import {
 import { ECanadaProvinces } from '@/types';
 import HouseholdMemberForm from '@/ui/views/pages/registration/household-members/HouseholdMemberForm.vue';
 import { enumToTranslatedCollection } from '@/ui/utils';
+import { mockEvent } from '@crctech/registration-lib/src/entities/event';
+import { EOptionItemStatus } from '@crctech/registration-lib/src/types';
 import Component from './AddEditHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -59,6 +61,15 @@ describe('AddEditHouseholdMembers.vue', () => {
         const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
         const filtered = list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
         expect(wrapper.vm.temporaryAddressTypeItems).toEqual(filtered);
+      });
+    });
+
+    describe('shelterLocations', () => {
+      it('should return the active shelterLocations for the current Event', () => {
+        const event = mockEvent();
+        const filtered = event.shelterLocations.filter((s) => s.status === EOptionItemStatus.Active);
+        expect(wrapper.vm.shelterLocations).toEqual(filtered);
+        expect(wrapper.vm.shelterLocations.filter((s) => s.status === EOptionItemStatus.Inactive)).toHaveLength(0);
       });
     });
   });

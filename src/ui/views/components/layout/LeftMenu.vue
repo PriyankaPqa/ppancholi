@@ -64,7 +64,6 @@ export default Vue.extend({
     return {
       showErrorIcon: true,
       showSuccessIcon: true,
-      requestOnGoing: false,
     };
   },
 

@@ -40,6 +40,7 @@
         </v-radio-group>
         <v-col v-if="!sameAddress" cols="12" class="pt-4 pb-0 px-4 pr-sm-0 pl-sm-6">
           <temp-address-form
+            :shelter-locations="shelterLocations"
             :canadian-provinces-items="canadianProvincesItems"
             :temporary-address-type-items="temporaryAddressTypeItems"
             :api-key="apiKey"
@@ -56,6 +57,7 @@ import { IndigenousIdentityForm, IdentityForm, TempAddressForm } from '@crctech/
 import months from '@/constants/months';
 import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import { IOptionItemData } from '@/types';
+import { IShelterLocation } from '@crctech/registration-lib/src/entities/event';
 
 export default Vue.extend({
   name: 'HouseholdMemberForm',
@@ -109,6 +111,11 @@ export default Vue.extend({
 
     temporaryAddressTypeItems: {
       type: Array as () => Record<string, unknown>[],
+      required: true,
+    },
+
+    shelterLocations: {
+      type: Array as () => IShelterLocation[],
       required: true,
     },
   },

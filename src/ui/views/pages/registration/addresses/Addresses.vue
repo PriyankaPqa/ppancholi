@@ -34,6 +34,7 @@
     </template>
 
     <temp-address-form
+      :shelter-locations="shelterLocations"
       :canadian-provinces-items="canadianProvincesItems"
       :temporary-address-type-items="temporaryAddressTypeItems"
       :api-key="apiKey"
@@ -51,9 +52,10 @@ import { TempAddressForm, AddressForm } from '@crctech/registration-lib';
 
 import { ITemporaryAddress, ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
 import { enumToTranslatedCollection } from '@/ui/utils';
-import { ECanadaProvinces } from '@/types';
+import { ECanadaProvinces, EOptionItemStatus } from '@/types';
 import { IAddress } from '@crctech/registration-lib/src/entities/value-objects/address';
 import { localStorageKeys } from '@/constants/localStorage';
+import { IShelterLocation } from '@crctech/registration-lib/src/entities/event';
 
 export default Vue.extend({
   name: 'Addresses',
@@ -100,6 +102,14 @@ export default Vue.extend({
         return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
       }
       return list;
+    },
+
+    shelterLocations():IShelterLocation[] {
+      const event = this.$storage.registration.getters.event();
+      if (event) {
+        return event.shelterLocations.filter((s) => s.status === EOptionItemStatus.Active);
+      }
+      return [];
     },
   },
 

@@ -10,6 +10,8 @@ import { mockProvider } from '@/services/provider';
 import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
 import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
 
+import { tabs } from '@/store/modules/registration/tabs';
+
 const i18n = {
   t: jest.fn(),
 } as unknown as VueI18n;
@@ -18,7 +20,7 @@ Vue.use(Vuex);
 
 const mockConfig = {
   modules: {
-    registration: makeRegistrationModule(i18n),
+    registration: makeRegistrationModule(i18n, tabs),
     beneficiary: makeBeneficiaryModule(),
   },
 };

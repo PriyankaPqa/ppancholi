@@ -6,6 +6,8 @@ import { mockAddress, mockBeneficiary } from '@crctech/registration-lib/src/enti
 import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
 import { AddressForm, TempAddressForm } from '@crctech/registration-lib';
+import { mockEvent } from '@crctech/registration-lib/src/entities/event';
+import { EOptionItemStatus } from '@crctech/registration-lib/src/types';
 import Component from './Addresses.vue';
 
 const localVue = createLocalVue();
@@ -21,10 +23,6 @@ describe('Addresses.vue', () => {
         $storage: storage,
       },
     });
-  });
-
-  describe('Template', () => {
-
   });
 
   describe('Computed', () => {
@@ -91,6 +89,15 @@ describe('Addresses.vue', () => {
         expect(wrapper.vm.temporaryAddressTypeItems).toEqual(filtered);
       });
     });
+
+    describe('shelterLocations', () => {
+      it('should return the active shelterLocations for the current Event', () => {
+        const event = mockEvent();
+        const filtered = event.shelterLocations.filter((s) => s.status === EOptionItemStatus.Active);
+        expect(wrapper.vm.shelterLocations).toEqual(filtered);
+        expect(wrapper.vm.shelterLocations.filter((s) => s.status === EOptionItemStatus.Inactive)).toHaveLength(0);
+      });
+    });
   });
 
   describe('Template', () => {
@@ -108,6 +115,9 @@ describe('Addresses.vue', () => {
         computed: {
           noFixedHome() {
             return true;
+          },
+          shelterLocations() {
+            return [];
           },
         },
       });
@@ -130,6 +140,7 @@ describe('Addresses.vue', () => {
           .toHaveBeenCalledWith(ETemporaryAddressTypes.HotelMotel);
       });
     });
+
     describe('setHomeAddress', () => {
       it('is called when event change is emitted', async () => {
         jest.spyOn(wrapper.vm, 'setHomeAddress');

@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockEventsData } from '@crctech/registration-lib/src/entities/event';
+import { mockEventData } from '@crctech/registration-lib/src/entities/event';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
@@ -14,7 +14,7 @@ describe('AppHeader.vue', () => {
         modules: {
           registration: {
             state: {
-              event: mockEventsData()[0],
+              event: mockEventData(),
             },
           },
         },

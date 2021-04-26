@@ -4,6 +4,6 @@ import { BeneficiariesService } from '@crctech/registration-lib/src/services/ben
 import { IProvider } from './provider.types';
 
 export const provider = (): IProvider => ({
-  events: new EventsService(httpClient),
+  registrationEvents: new EventsService(httpClient),
   beneficiaries: new BeneficiariesService(httpClient),
 });

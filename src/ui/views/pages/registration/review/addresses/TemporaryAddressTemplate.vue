@@ -66,8 +66,9 @@ export default Vue.extend({
   },
   computed: {
 
+    // TODO Update when we will get a real shelterId
     getShelterLocationName(): string {
-      return 'TO DO SHELTER NAME';
+      return this.address.shelterId;
     },
 
     hasRemainingHomeTemporaryAddress(): boolean {

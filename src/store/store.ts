@@ -3,6 +3,7 @@ import Vuex, { StoreOptions } from 'vuex';
 import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
 import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
 import { i18n } from '@/ui/plugins';
+import { tabs } from './modules/registration/tabs';
 import { IRootState } from './store.types';
 
 Vue.use(Vuex);
@@ -14,7 +15,7 @@ const store: StoreOptions<IRootState> = {
   },
   modules: {
     beneficiary: makeBeneficiaryModule(),
-    registration: makeRegistrationModule(i18n),
+    registration: makeRegistrationModule(i18n, tabs),
   },
 };
 

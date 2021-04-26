@@ -104,8 +104,11 @@ describe('TemporaryAddressTemplate.vue', () => {
 
   describe('Computed', () => {
     describe('getShelterLocationName', () => {
-      it('should return correct shelter', () => {
-        expect(wrapper.vm.getShelterLocationName).toBe('TO DO SHELTER NAME');
+      it('should return correct shelter', async () => {
+        await wrapper.setProps({
+          address: mockShelter(),
+        });
+        expect(wrapper.vm.getShelterLocationName).toBe(mockShelter().shelterId);
       });
     });
 

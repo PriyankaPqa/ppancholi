@@ -16,6 +16,7 @@
         <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
           <household-member-form
             :api-key="apiKey"
+            :shelter-locations="shelterLocations"
             :same-address.sync="sameAddress"
             :gender-items="genderItems"
             :canadian-provinces-items="canadianProvincesItems"
@@ -38,13 +39,19 @@ import HouseholdMemberForm from '@/ui/views/pages/registration/household-members
 import { RcDialog } from '@crctech/component-library';
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { ECanadaProvinces, IOptionItemData, VForm } from '@/types';
+import {
+  ECanadaProvinces,
+  EOptionItemStatus,
+  IOptionItemData,
+  VForm,
+} from '@/types';
 import helpers from '@/ui/helpers';
 import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import _isEqual from 'lodash/isEqual';
 import { enumToTranslatedCollection } from '@/ui/utils';
 import { ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address/index';
 import { localStorageKeys } from '@/constants/localStorage';
+import { IShelterLocation } from '@crctech/registration-lib/src/entities/event';
 
 export default Vue.extend({
   name: 'AddEditHouseholdMembers',
@@ -115,6 +122,14 @@ export default Vue.extend({
     temporaryAddressTypeItems(): Record<string, unknown>[] {
       const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
       return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+    },
+
+    shelterLocations():IShelterLocation[] {
+      const event = this.$storage.registration.getters.event();
+      if (event) {
+        return event.shelterLocations.filter((s) => s.status === EOptionItemStatus.Active);
+      }
+      return [];
     },
   },
 

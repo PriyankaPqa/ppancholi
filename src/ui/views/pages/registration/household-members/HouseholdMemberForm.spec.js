@@ -8,6 +8,10 @@ import {
   mockIndigenousTypesItems, mockPerson,
 } from '@crctech/registration-lib/src/entities/beneficiary';
 
+import {
+  mockShelterLocations,
+} from '@crctech/registration-lib/src/entities/event';
+
 import { IdentityForm, IndigenousIdentityForm, TempAddressForm } from '@crctech/registration-lib';
 import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
@@ -33,6 +37,7 @@ describe('HouseholdMemberForm.vue', () => {
         temporaryAddressTypeItems: enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
         loading: false,
         apiKey: '1345',
+        shelterLocations: mockShelterLocations(),
       },
       mocks: {
         $storage: storage,

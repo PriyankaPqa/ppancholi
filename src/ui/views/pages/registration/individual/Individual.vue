@@ -49,15 +49,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
-import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
-import { TranslateResult } from 'vue-i18n';
-import { Beneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
-import { VForm } from '@/types';
-import _pickBy from 'lodash/pickBy';
-import helpers from '@/ui/helpers';
 import routes from '@/constants/routes';
+import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -66,7 +61,7 @@ import HouseholdMembers from '../household-members/HouseholdMembers.vue';
 import ReviewRegistration from '../review/ReviewRegistration.vue';
 import ConfirmRegistration from '../ConfirmRegistration.vue';
 
-export default Vue.extend({
+export default mixins(individual).extend({
   name: 'Individual',
 
   components: {
@@ -80,110 +75,15 @@ export default Vue.extend({
     ConfirmRegistration,
   },
 
-  data() {
-    return {
-      requestOnGoing: false,
-      isFormReady: false,
-    };
-  },
-
-  computed: {
-    xSmallOrSmallMenu(): boolean {
-      return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;
-    },
-
-    currentTab(): ILeftMenuItem {
-      return this.$storage.registration.getters.currentTab();
-    },
-
-    currentTabIndex(): number {
-      return this.$storage.registration.getters.currentTabIndex();
-    },
-
-    allTabs(): ILeftMenuItem[] {
-      return this.$storage.registration.getters.tabs();
-    },
-
-    previousTabName(): TranslateResult {
-      return this.$t(this.$storage.registration.getters.previousTabName());
-    },
-
-    nextTabName(): TranslateResult {
-      return this.$t(this.$storage.registration.getters.nextTabName());
-    },
-
-    currentStepHasError(): boolean {
-      if (this.isFormReady) {
-        const fieldsHavingErrors = _pickBy((this.$refs.form as VForm).errors, (value) => value.length > 0);
-        return Object.keys(fieldsHavingErrors).length > 0;
-      }
-      return false;
-    },
-
-    beneficiary(): Beneficiary {
-      return this.$storage.beneficiary.getters.beneficiary();
-    },
-  },
-
-  watch: {
-    currentStepHasError(hasError) {
-      this.mutateStateTab(!hasError);
-    },
-  },
-
-  mounted() {
-    // Wait for the form to be mounted before doing live validation
-    this.isFormReady = true;
-  },
+  mixins: [individual],
 
   methods: {
-    async jump(toIndex: number) {
-      const effectiveToIndex:number = this.$storage.registration.getters.findEffectiveJumpIndex(toIndex);
-      this.setSkippedStepsToValid(this.currentTabIndex, effectiveToIndex - 1);
-      await (this.$refs.form as VForm).validate();
-      this.$storage.registration.mutations.jump(effectiveToIndex);
-
-      // If we stop on a validation error and a user has seen it previously, highlight errors
-      if (effectiveToIndex !== toIndex && this.allTabs[effectiveToIndex].isTouched) {
-        this.mutateStateTab(false);
-        await (this.$refs.form as VForm).validate();
-        helpers.scrollToFirstError('app');
-      }
-    },
-
     async back() {
       if (this.currentTabIndex === 0) {
         await this.$router.push({ name: routes.landingPage.name });
         return;
       }
       await this.jump(this.currentTabIndex - 1);
-    },
-
-    async next() {
-      await this.jump(this.currentTabIndex + 1);
-    },
-
-    print() {
-      return false;
-    },
-
-    mutateStateTab(valid: boolean) {
-      this.$storage.registration.mutations.mutateCurrentTab((tab: ILeftMenuItem) => {
-        tab.isValid = valid;
-        tab.isTouched = true;
-      });
-    },
-
-    setSkippedStepsToValid(indexStart: number, indexEnd: number) {
-      if (indexStart <= indexEnd) {
-        for (let i = indexStart + 1; i <= indexEnd; i += 1) {
-          this.$storage.registration.mutations.mutateTabAtIndex(i,
-            (tab: ILeftMenuItem) => {
-              tab.isValid = true;
-              tab.isTouched = true;
-            });
-        }
-      }
     },
   },
 });
