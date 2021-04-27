@@ -23,7 +23,17 @@ describe('>>> Program Module', () => {
   });
 
   describe('>> Getters', () => {
-    // f
+    describe('getProgramById', () => {
+      it('returns the program with the specified id', () => {
+        const id = mockPrograms[0].programId;
+
+        expect(store.getters['program/getProgramById'](id)).toEqual(new Program(mockPrograms[0]));
+      });
+
+      it('returns null if no program is found', () => {
+        expect(store.getters['program/getProgramById']('NONE')).toEqual(null);
+      });
+    });
   });
 
   describe('>> Mutations', () => {
@@ -99,6 +109,47 @@ describe('>>> Program Module', () => {
         expect(store.state.program.programs.length).toBe(mockSearchData.value.length);
 
         expect(store.state.program.programs[0]).toEqual(mockSearchData.value[0]);
+      });
+    });
+
+    describe('fetchProgram', () => {
+      it('calls the searchPrograms service with the id and returns the program', async () => {
+        const store = mockStore();
+        const program = new Program(mockPrograms[0]);
+
+        jest.spyOn(store.$services.programs, 'searchPrograms').mockReturnValueOnce(mockSearchPrograms(0));
+
+        expect(store.$services.programs.searchPrograms).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('program/fetchProgram', program.id);
+
+        expect(store.$services.programs.searchPrograms).toHaveBeenCalledWith({
+          filter: {
+            ProgramId: program.id,
+          },
+        });
+
+        expect(store.state.program.programs).toEqual([
+          mockPrograms[0],
+        ]);
+
+        expect(res).toEqual(program);
+      });
+
+      test('if the program already exists in the store, do not call the API', async () => {
+        const store = mockStore();
+        const program = new Program(mockProgramsSearchData()[0]);
+        jest.spyOn(store.$services.programs, 'searchPrograms').mockReturnValueOnce(mockSearchPrograms(0));
+
+        expect(store.$services.programs.searchPrograms).toHaveBeenCalledTimes(0);
+
+        await store.dispatch('program/fetchProgram', program.id);
+
+        expect(store.$services.programs.searchPrograms).toHaveBeenCalledTimes(1);
+
+        await store.dispatch('program/fetchProgram', program.id);
+
+        expect(store.$services.programs.searchPrograms).toHaveBeenCalledTimes(1);
       });
     });
   });

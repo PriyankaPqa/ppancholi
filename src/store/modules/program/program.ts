@@ -14,7 +14,15 @@ const getDefaultState = (): IState => ({
 
 const moduleState: IState = getDefaultState();
 
-const getters = {};
+const getters = {
+  getProgramById: (state: IState) => (id: uuid) => {
+    const program = state.programs.find((p) => p.programId === id);
+    if (program) {
+      return new Program(program);
+    }
+    return null;
+  },
+};
 
 const mutations = {
   addOrUpdateProgram(state: IState, payload: IProgramSearchData) {
@@ -61,6 +69,27 @@ const actions = {
       ...res,
       value,
     };
+  },
+
+  async fetchProgram(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    id: uuid,
+  ): Promise<IProgram> {
+    const program = context.state.programs.find((p) => p.programId === id);
+
+    if (program) {
+      return new Program(program);
+    }
+
+    const params = { filter: { ProgramId: id } };
+    const res = await this.$services.programs.searchPrograms(params);
+    if (res?.value.length === 1) {
+      const data = res.value[0];
+      context.commit('addOrUpdateProgram', data);
+      return new Program(data);
+    }
+    return null;
   },
 };
 

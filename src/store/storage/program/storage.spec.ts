@@ -17,5 +17,10 @@ describe('>>> Program Storage', () => {
       storage.actions.searchPrograms({});
       expect(store.dispatch).toHaveBeenCalledWith('program/searchPrograms', {});
     });
+
+    it('should proxy fetchProgram', () => {
+      storage.actions.fetchProgram('ID');
+      expect(store.dispatch).toHaveBeenCalledWith('program/fetchProgram', 'ID');
+    });
   });
 });
