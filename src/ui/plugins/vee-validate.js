@@ -10,6 +10,7 @@ import {
   required, min, max, email, oneOf, regex, min_value, max_value, numeric,
 } from 'vee-validate/dist/rules.umd.min';
 
+import { getBirthDateMomentObject } from '@crctech/registration-lib/src/ui/utils';
 import Vue from 'vue';
 
 import { i18n } from './i18n';
@@ -118,6 +119,59 @@ extend('customValidator', {
   params: ['isValid', 'messageKey'],
   message: (_, values) => i18n.t(values.messageKey),
   validate: (value, { isValid }) => isValid,
+});
+
+extend('hasPhoneOrEmail', {
+  computesRequired: true,
+  params: ['hasPhoneOrEmail'],
+  validate: (value, { hasPhoneOrEmail }) => hasPhoneOrEmail,
+  message: (_, values) => i18n.t('validations.phoneOrEmail', values),
+});
+
+extend('canadianPostalCode', {
+  message: (_, values) => i18n.t('validations.canadianPostalCode', values),
+  validate: (value) => {
+    const regex = /^[A-Za-z]\d[A-Za-z][ -]?\d[A-Za-z]\d$/;
+    return regex.test(value);
+  },
+});
+
+extend('birthday', {
+  message: (_, values) => i18n.t('registration.personal_info.validations.birthdate', values),
+  params: ['birthdate'],
+  validate: (value, args) => {
+    const { birthdate } = args;
+
+    if (birthdate.year < 0) return false;
+
+    const momentBirthdate = getBirthDateMomentObject(birthdate);
+    if (momentBirthdate.isValid()) {
+      if (momentBirthdate.isSameOrAfter(moment())) {
+        return i18n.t('registration.personal_info.validations.notInFuture');
+      }
+      return true;
+    }
+    return false;
+  },
+});
+
+extend('minimumAge', {
+  params: ['birthdate', 'age'],
+  validate: (value, args) => {
+    const { birthdate, age } = args;
+
+    if (!birthdate.year || !birthdate.month || !birthdate.day) return true;
+
+    const momentBirthdate = getBirthDateMomentObject(birthdate);
+    const now = moment().endOf('day');
+    now.subtract(age, 'years');
+
+    if (momentBirthdate.isSameOrBefore(now)) {
+      return true;
+    }
+
+    return i18n.t('registration.personal_info.validations.minimumAge', { x: age });
+  },
 });
 
 Vue.component('ValidationProvider', ValidationProvider);

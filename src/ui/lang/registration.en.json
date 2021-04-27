@@ -219,5 +219,6 @@
     "validations.postCode": "This field must be a valid postal code.",
     "validations.regex": "Please enter a correct format",
     "validations.required": "This field is required.",
-    "warning.max_householdmembers_reached": "You can't have more than {x} household members"
+    "warning.max_householdmembers_reached": "You can't have more than {x} household members",
+    "zendesk.registration.personalInformation": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242113"
 }

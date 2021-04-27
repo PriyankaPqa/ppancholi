@@ -219,5 +219,6 @@
     "validations.postCode": "validations.postCode",
     "validations.regex": "validations.regex",
     "validations.required": "validations.required",
-    "warning.max_householdmembers_reached": ""
+    "warning.max_householdmembers_reached": "",
+    "zendesk.registration.personalInformation": ""
 }

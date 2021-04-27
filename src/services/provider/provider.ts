@@ -1,5 +1,5 @@
 import { httpClient } from '@/services/httpClient';
-import { EventsService as RegistrationEventsService } from '@crctech/registration-lib/src/services/events';
+import { PublicService } from '@crctech/registration-lib/src/services/public';
 import { BeneficiariesService } from '@crctech/registration-lib/src/services/beneficiaries';
 import { IProvider } from './provider.types';
 import { CaseFilesService } from '../case-files';
@@ -18,6 +18,6 @@ export const provider = (): IProvider => ({
   teams: new TeamsService(httpClient),
   users: new UsersService(httpClient),
   programs: new ProgramsService(httpClient),
-  registrationEvents: new RegistrationEventsService(httpClient),
+  publicApi: new PublicService(httpClient),
   beneficiaries: new BeneficiariesService(httpClient),
 });

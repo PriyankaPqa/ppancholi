@@ -1,6 +1,6 @@
-import { ILeftMenuItem } from '@crctech/registration-lib/src/types/interfaces/ILeftMenuItem';
+import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
 
-export const tabs: ILeftMenuItem[] = [
+export const tabs: IRegistrationMenuItem[] = [
   {
     id: 'isRegistered',
     labelKey: 'registration.menu.is_registered',
@@ -12,6 +12,8 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'isRegistered',
+    helpLink: '',
+
   },
   {
     id: 'privacy',
@@ -24,6 +26,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'PrivacyStatement',
+    helpLink: '',
   },
   {
     id: 'personalInfo',
@@ -36,6 +39,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'PersonalInformation',
+    helpLink: 'zendesk.registration.personalInformation',
   },
   {
     id: 'addresses',
@@ -48,6 +52,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'Addresses',
+    helpLink: 'zendesk.registration.personalInformation',
   },
   {
     id: 'householdMembers',
@@ -60,6 +65,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'HouseholdMembers',
+    helpLink: '',
   },
   {
     id: 'review',
@@ -72,6 +78,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'registration.submit_registration.label',
     componentName: 'ReviewRegistration',
+    helpLink: '',
   },
   {
     id: 'confirmation',
@@ -84,5 +91,6 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.print',
     nextButtonTextKey: 'common.button.next',
     componentName: 'ConfirmRegistration',
+    helpLink: '',
   },
 ];

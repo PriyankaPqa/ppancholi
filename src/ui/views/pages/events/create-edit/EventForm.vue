@@ -470,7 +470,7 @@ export default Vue.extend({
       const eventTypes = this.$storage.event.getters.eventTypes();
 
       if (eventTypes && eventTypes.length && this.initialEventType) {
-        const initialActiveEventType = eventTypes.find((e) => e.id === this.initialEventType.id);
+        const initialActiveEventType = eventTypes.find((e: IOptionItem) => e.id === this.initialEventType.id);
 
         if (!initialActiveEventType) {
           return [

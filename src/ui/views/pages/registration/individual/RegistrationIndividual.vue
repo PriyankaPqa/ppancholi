@@ -12,6 +12,8 @@
 
       <validation-observer ref="form" v-slot="{ failed }" slim>
         <rc-page-content
+          :show-help="currentTab.helpLink !== '' "
+          :help-link="$t(currentTab.helpLink)"
           :title="$t(currentTab.titleKey)"
           :subtitle="$t('registration.type.individual')"
           :class="`${xSmallOrSmallMenu ? 'actions' : ''}`"
@@ -63,18 +65,37 @@ import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';
 import IsRegistered from '@/ui/views/pages/registration/is-registered/IsRegistered.vue';
+import PrivacyStatement from '@/ui/views/pages/registration/privacy-statement/PrivacyStatement.vue';
+import PersonalInformation from '@/ui/views/pages/registration/personal-information/PersonalInformation.vue';
 import mixins from 'vue-typed-mixins';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { tabs } from '@/store/modules/registration/tabs';
+import store from '@/store/store';
+import { Route, NavigationGuardNext } from 'vue-router';
 
 export default mixins(individual).extend({
   name: 'Individual',
+
+  async beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
+    const event = await store.state.registration.event;
+    if (!event) {
+      next((vm) => {
+        vm.$router.replace({
+          name: routes.registration.home.name,
+        });
+      });
+    } else {
+      next();
+    }
+  },
 
   components: {
     RcPageContent,
     PageTemplate,
     Tabs,
     IsRegistered,
+    PersonalInformation,
+    PrivacyStatement,
   },
 
   mixins: [individual],

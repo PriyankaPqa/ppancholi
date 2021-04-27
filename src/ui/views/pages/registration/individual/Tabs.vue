@@ -1,7 +1,6 @@
 <template>
   <v-navigation-drawer
     v-if="!$slots['navigation']"
-    data-test="navigationWithoutValidation"
     floating
     color="grey lighten-5"
     width="100%"
@@ -23,12 +22,12 @@
             v-text="tab.icon" />
         </v-list-item-icon>
 
-        <v-list-item-content class="rc-body14">
+        <v-list-item-content class="rc-body14 fw-bold">
           {{ $t(tab.labelKey) }}
         </v-list-item-content>
 
-        <v-list-item-icon>
-          <v-icon v-if="tab.isTouched" :class="tab.isValid ? 'status_success--text' : 'status_error--text'">
+        <v-list-item-icon class="ml-0">
+          <v-icon v-if="tab.isTouched" size="18" :class="[tab.isValid ? 'status_success--text' : 'status_error--text']">
             {{ tab.isValid ? 'mdi-checkbox-marked-circle' : 'mdi-alert-circle' }}
           </v-icon>
         </v-list-item-icon>
@@ -44,7 +43,7 @@
 </template>
 
 <script lang="ts">
-import { ILeftMenuItem } from '@crctech/registration-lib/src/types/interfaces/ILeftMenuItem';
+import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
 import Vue from 'vue';
 import {
   mockPerson, mockAddress, mockContactInformation, mockCampGround, mockHouseholdMember,
@@ -61,11 +60,11 @@ export default Vue.extend({
   },
 
   computed: {
-    tabs(): ILeftMenuItem[] {
+    tabs(): IRegistrationMenuItem[] {
       return this.$storage.registration.getters.tabs();
     },
 
-    currentTab(): ILeftMenuItem {
+    currentTab(): IRegistrationMenuItem {
       return this.$storage.registration.getters.currentTab();
     },
 
@@ -93,5 +92,10 @@ export default Vue.extend({
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.navMenu__active {
+  background: var(--v-grey-lighten4);
+  border-left: 4px solid var(--v-secondary-base);
 }
 </style>

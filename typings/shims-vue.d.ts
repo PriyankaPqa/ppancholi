@@ -8,5 +8,4 @@ declare module '*.vue' {
     validate: (type?: { silent?: boolean }) => boolean;
     reset: () => void;
   }
-
 }

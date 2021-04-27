@@ -5,6 +5,13 @@ import Vue from 'vue';
 
 import { mockProvider } from '@/services/provider';
 
+import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
+import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
+
+import { tabs } from '@/store/modules/registration/tabs';
+
+import VueI18n from 'vue-i18n';
+import { IRootState, IStore } from '@/store/store.types';
 import { user } from './modules/user';
 import { caseFile } from './modules/case-file';
 import { dashboard } from './modules/dashboard';
@@ -13,6 +20,10 @@ import { team } from './modules/team';
 import { optionList } from './modules/optionList';
 import { appUser } from './modules/app-user';
 import { program } from './modules/program';
+
+const i18n = {
+  t: jest.fn(),
+} as unknown as VueI18n;
 
 Vue.use(Vuex);
 
@@ -26,6 +37,8 @@ const mockConfig = {
     optionList,
     appUser,
     program,
+    registration: makeRegistrationModule(i18n, tabs),
+    beneficiary: makeBeneficiaryModule(),
   },
 };
 
@@ -37,7 +50,7 @@ export const mockStore = (overrides = {}, mocks = { dispatch: false, commit: fal
     arrayMerge: (dest, source) => source,
   });
 
-  const store = new Vuex.Store(mergedConfig);
+  const store = new Vuex.Store(mergedConfig) as IStore<IRootState>;
 
   if (mocks.dispatch) {
     store.dispatch = jest.fn();
