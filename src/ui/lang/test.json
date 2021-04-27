@@ -617,6 +617,7 @@
     "errors.event-number-more-than-maximum": "errors.event-number-more-than-maximum",
     "errors.event-status-has-already-been-set": "errors.event-status-has-already-been-set",
     "errors.event-status-must-be-open": "errors.event-status-must-be-open",
+    "errors.event-status-must-be-open-or-on-hold": "errors.event-status-must-be-open-or-on-hold",
     "errors.existing-domain-result-is-null": "errors.existing-domain-result-is-null",
     "errors.hotel-model-name-must-have-a-value": "errors.hotel-model-name-must-have-a-value",
     "errors.imid-max-length-failed": "errors.imid-max-length-failed",

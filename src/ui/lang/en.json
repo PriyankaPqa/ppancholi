@@ -617,6 +617,7 @@
     "errors.event-number-more-than-maximum": "Event Number must be less than {MaxNumber}",
     "errors.event-status-has-already-been-set": "Event status has already been set",
     "errors.event-status-must-be-open": "Event status must be open",
+    "errors.event-status-must-be-open-or-on-hold": "Event status must be open or on hold",
     "errors.existing-domain-result-is-null": "Existing domain result is null",
     "errors.hotel-model-name-must-have-a-value": "Hotel model name must have a value",
     "errors.imid-max-length-failed": "IMID number length must be {MaxLength} or less",
