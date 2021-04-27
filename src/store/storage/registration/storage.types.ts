@@ -1,5 +1,5 @@
 import { TranslateResult } from 'vue-i18n';
-import { ECanadaProvinces, IOptionItemData, ILeftMenuItem } from '../../../types';
+import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IIndigenousIdentityData, EIndigenousTypes } from '../../../entities/beneficiary';
 
@@ -7,8 +7,8 @@ export interface IStorage {
   getters: {
     event(): IEvent;
     isLeftMenuOpen(): boolean;
-    tabs(): ILeftMenuItem[];
-    currentTab(): ILeftMenuItem;
+    tabs(): IRegistrationMenuItem[];
+    currentTab(): IRegistrationMenuItem;
     currentTabIndex(): number;
     previousTabName(): string;
     nextTabName(): string;
@@ -23,8 +23,8 @@ export interface IStorage {
   mutations: {
     toggleLeftMenu(isLeftMenuOpen: boolean): void;
     setCurrentTabIndex(newIndex: number): void;
-    mutateCurrentTab(callback: (currentTab: ILeftMenuItem) => void): void;
-    mutateTabAtIndex(targetIndex: number, callback: (currentTab: ILeftMenuItem) => void): void;
+    mutateCurrentTab(callback: (currentTab: IRegistrationMenuItem) => void): void;
+    mutateTabAtIndex(targetIndex: number, callback: (currentTab: IRegistrationMenuItem) => void): void;
     jump(toIndex: number): void;
     setIsPrivacyAgreed(payload: boolean): void;
     setDateTimeConsent(payload: string): void;

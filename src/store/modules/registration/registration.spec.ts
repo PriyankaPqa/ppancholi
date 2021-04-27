@@ -1,5 +1,5 @@
 import { mockStore } from '@/store';
-import { ECanadaProvinces, ILeftMenuItem } from '@/types';
+import { ECanadaProvinces, IRegistrationMenuItem } from '@/types';
 import { tabs } from '@/store/modules/registration/tabs.mock';
 import { Event, mockEventData, mockEvent } from '../../../entities/event';
 import {
@@ -206,7 +206,7 @@ describe('>>> Registration Module', () => {
       it('mutates current tab', () => {
         expect(store.getters['registration/currentTab'].isValid).toBeTruthy();
 
-        store.commit('registration/mutateCurrentTab', (tab: ILeftMenuItem) => {
+        store.commit('registration/mutateCurrentTab', (tab: IRegistrationMenuItem) => {
           tab.isValid = false;
         });
 

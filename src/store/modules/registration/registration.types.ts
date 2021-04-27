@@ -1,5 +1,5 @@
 import { ECanadaProvinces, IOptionItemData } from '../../../types';
-import { ILeftMenuItem } from '../../../types/interfaces/ILeftMenuItem';
+import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 import {
   IIndigenousIdentityData,
 } from '../../../entities/beneficiary';
@@ -8,7 +8,7 @@ import { IEventData } from '../../../entities/event';
 export type IState = {
   event: IEventData;
   isLeftMenuOpen: boolean;
-  tabs: ILeftMenuItem[];
+  tabs: IRegistrationMenuItem[];
   currentTabIndex: number;
   genders: IOptionItemData[];
   preferredLanguages: IOptionItemData[];

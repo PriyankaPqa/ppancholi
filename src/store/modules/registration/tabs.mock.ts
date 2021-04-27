@@ -1,6 +1,6 @@
-import { ILeftMenuItem } from '../../../types/interfaces/ILeftMenuItem';
+import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 
-export const tabs: ILeftMenuItem[] = [
+export const tabs: IRegistrationMenuItem[] = [
   {
     id: 'privacy',
     labelKey: 'registration.menu.privacy',
@@ -12,6 +12,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'PrivacyStatement',
+    helpLink: '',
   },
   {
     id: 'personalInfo',
@@ -24,6 +25,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'PersonalInformation',
+    helpLink: '',
   },
   {
     id: 'addresses',
@@ -36,6 +38,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'Addresses',
+    helpLink: '',
   },
   {
     id: 'householdMembers',
@@ -48,6 +51,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'HouseholdMembers',
+    helpLink: '',
   },
   {
     id: 'review',
@@ -60,6 +64,7 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'registration.submit_registration.label',
     componentName: 'ReviewRegistration',
+    helpLink: '',
   },
   {
     id: 'confirmation',
@@ -72,5 +77,6 @@ export const tabs: ILeftMenuItem[] = [
     backButtonTextKey: 'common.button.print',
     nextButtonTextKey: 'common.button.next',
     componentName: 'ConfirmRegistration',
+    helpLink: '',
   },
 ];

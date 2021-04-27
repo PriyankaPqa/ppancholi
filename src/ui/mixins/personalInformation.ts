@@ -41,8 +41,6 @@ export default Vue.extend({
       return this.$storage.registration.getters.genders();
     },
 
-
-
     indigenousTypesItems(): Record<string, TranslateResult>[] {
       return this.$storage.registration.getters.indigenousTypesItems(this.person.indigenousProvince);
     },

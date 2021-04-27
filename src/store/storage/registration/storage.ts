@@ -1,6 +1,6 @@
 import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
-import { ECanadaProvinces, IOptionItemData, ILeftMenuItem } from '../../../types';
+import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
 import { IIndigenousIdentityData, EIndigenousTypes } from '../../../entities/beneficiary';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
@@ -17,11 +17,11 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['registration/isLeftMenuOpen'];
     },
 
-    tabs(): ILeftMenuItem[] {
+    tabs(): IRegistrationMenuItem[] {
       return store.getters['registration/tabs'];
     },
 
-    currentTab(): ILeftMenuItem {
+    currentTab(): IRegistrationMenuItem {
       return store.getters['registration/currentTab'];
     },
 
@@ -71,11 +71,11 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       store.commit('registration/setCurrentTabIndex', newIndex);
     },
 
-    mutateCurrentTab(callback: (currentTab: ILeftMenuItem) => void) {
+    mutateCurrentTab(callback: (currentTab: IRegistrationMenuItem) => void) {
       store.commit('registration/mutateCurrentTab', callback);
     },
 
-    mutateTabAtIndex(targetIndex: number, callback: (currentTab: ILeftMenuItem) => void) {
+    mutateTabAtIndex(targetIndex: number, callback: (currentTab: IRegistrationMenuItem) => void) {
       store.commit('registration/mutateTabAtIndex', { targetIndex, callback });
     },
 

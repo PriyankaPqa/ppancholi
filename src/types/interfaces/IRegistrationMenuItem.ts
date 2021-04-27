@@ -1,4 +1,4 @@
-export interface ILeftMenuItem {
+export interface IRegistrationMenuItem {
   id: string;
   labelKey: string;
   titleKey: string;
@@ -9,4 +9,5 @@ export interface ILeftMenuItem {
   backButtonTextKey: string;
   nextButtonTextKey: string;
   componentName: string;
+  helpLink: string;
 }

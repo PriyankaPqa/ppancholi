@@ -2,7 +2,7 @@
 import { TranslateResult } from 'vue-i18n';
 import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
-import { ILeftMenuItem, VForm } from '../../types';
+import { IRegistrationMenuItem, VForm } from '../../types';
 import { Beneficiary } from '../../entities/beneficiary';
 
 import helpers from '../../helpers';
@@ -20,7 +20,7 @@ export default Vue.extend({
       return this.$vuetify.breakpoint.xs || this.$vuetify.breakpoint.sm;
     },
 
-    currentTab(): ILeftMenuItem {
+    currentTab(): IRegistrationMenuItem {
       return this.$storage.registration.getters.currentTab();
     },
 
@@ -28,7 +28,7 @@ export default Vue.extend({
       return this.$storage.registration.getters.currentTabIndex();
     },
 
-    allTabs(): ILeftMenuItem[] {
+    allTabs(): IRegistrationMenuItem[] {
       return this.$storage.registration.getters.tabs();
     },
 
@@ -87,7 +87,7 @@ export default Vue.extend({
     },
 
     mutateStateTab(valid: boolean) {
-      this.$storage.registration.mutations.mutateCurrentTab((tab: ILeftMenuItem) => {
+      this.$storage.registration.mutations.mutateCurrentTab((tab: IRegistrationMenuItem) => {
         tab.isValid = valid;
         tab.isTouched = true;
       });
@@ -97,7 +97,7 @@ export default Vue.extend({
       if (indexStart <= indexEnd) {
         for (let i = indexStart + 1; i <= indexEnd; i += 1) {
           this.$storage.registration.mutations.mutateTabAtIndex(i,
-            (tab: ILeftMenuItem) => {
+            (tab: IRegistrationMenuItem) => {
               tab.isValid = true;
               tab.isTouched = true;
             });

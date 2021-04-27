@@ -1,5 +1,5 @@
 import { mockStore } from '@/store';
-import { ECanadaProvinces, ILeftMenuItem } from '../../../types';
+import { ECanadaProvinces, IRegistrationMenuItem } from '../../../types';
 import { mockEventData } from '../../../entities/event';
 import { makeStorage } from './storage';
 
@@ -76,7 +76,7 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy mutateCurrentTab', () => {
-      const payload = (tab: ILeftMenuItem) => {
+      const payload = (tab: IRegistrationMenuItem) => {
         tab.isValid = false;
       };
       storage.mutations.mutateCurrentTab(payload);

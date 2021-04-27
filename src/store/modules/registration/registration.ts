@@ -4,7 +4,7 @@ import {
 import _sortBy from 'lodash/sortBy';
 import VueI18n from 'vue-i18n';
 import {
-  ECanadaProvinces, ILeftMenuItem, IOptionItemData, EOptionItemStatus,
+  ECanadaProvinces, IRegistrationMenuItem, IOptionItemData, EOptionItemStatus,
 } from '../../../types';
 import { IRootState, IStore } from '../../store.types';
 import {
@@ -16,7 +16,7 @@ import { IState } from './registration.types';
 
 const INDIGENOUS_LIMIT_RESULTS = 1000;
 
-const getDefaultState = (tabs: ILeftMenuItem[]): IState => ({
+const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   isPrivacyAgreed: false,
   privacyDateTimeConsent: '',
   event: null,
@@ -44,7 +44,7 @@ const getDefaultState = (tabs: ILeftMenuItem[]): IState => ({
   loadingIndigenousIdentities: false,
 });
 
-const moduleState = (tabs: ILeftMenuItem[]): IState => getDefaultState(tabs);
+const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
 
 const getters = (i18n: VueI18n) => ({
 
@@ -180,12 +180,12 @@ const mutations = {
     state.currentTabIndex = payload;
   },
 
-  mutateCurrentTab(state: IState, callback: (targetTab: ILeftMenuItem) => void) {
+  mutateCurrentTab(state: IState, callback: (targetTab: IRegistrationMenuItem) => void) {
     const currentTab = state.tabs[state.currentTabIndex];
     callback(currentTab);
   },
 
-  mutateTabAtIndex(state: IState, { targetIndex, callback }: {targetIndex: number; callback: (targetTab: ILeftMenuItem) => void}) {
+  mutateTabAtIndex(state: IState, { targetIndex, callback }: {targetIndex: number; callback: (targetTab: IRegistrationMenuItem) => void}) {
     const targetTab = state.tabs[targetIndex];
     callback(targetTab);
   },
@@ -303,7 +303,7 @@ const actions = {
   },
 };
 
-export const makeRegistrationModule = (i18n: VueI18n, tabs: ILeftMenuItem[]): Module<IState, IRootState> => ({
+export const makeRegistrationModule = (i18n: VueI18n, tabs: IRegistrationMenuItem[]): Module<IState, IRootState> => ({
   namespaced: true,
   state: moduleState(tabs) as IState,
   getters: getters(i18n),
