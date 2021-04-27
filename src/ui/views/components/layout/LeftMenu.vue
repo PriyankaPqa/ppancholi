@@ -51,11 +51,11 @@
 </template>
 
 <script lang="ts">
-import { ILeftMenuItem } from '@/types/interfaces/ILeftMenuItem';
 import Vue from 'vue';
 import {
   mockPerson, mockAddress, mockContactInformation, mockCampGround, mockHouseholdMember,
 } from '@crctech/registration-lib/src/entities/beneficiary';
+import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
 
 export default Vue.extend({
   name: 'LeftMenu',
@@ -76,10 +76,10 @@ export default Vue.extend({
         this.$storage.registration.mutations.toggleLeftMenu(val);
       },
     },
-    tabs(): ILeftMenuItem[] {
+    tabs(): IRegistrationMenuItem[] {
       return this.$storage.registration.getters.tabs();
     },
-    currentTab(): ILeftMenuItem {
+    currentTab(): IRegistrationMenuItem {
       return this.$storage.registration.getters.currentTab();
     },
     xSmallOrSmallMenu(): boolean {
