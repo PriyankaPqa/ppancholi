@@ -1,6 +1,6 @@
 import PhoneNumber from 'awesome-phonenumber';
 import moment from 'moment';
-import { getBirthDateMomentObject } from '../ui/utils';
+import helpers from '../ui/helpers';
 import { MIN_AGE_REGISTRATION } from '../constants/validations';
 import { IBirthDate } from './value-objects/person/person.types';
 import { IPhoneNumber } from './value-objects/contact-information/contactInformation.types';
@@ -54,7 +54,7 @@ const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
 };
 
 export const isValidBirthday = (birthdate: IBirthDate, errorMsg: string, errors: string[]) => {
-  const momentBirthdate = getBirthDateMomentObject(birthdate);
+  const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
   const valid = birthdate.year > 0 && momentBirthdate.isValid() && !momentBirthdate.isSameOrAfter(moment());
   if (!valid) errors.push(errorMsg);
 };
@@ -63,7 +63,7 @@ export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: s
   if (!birthdate.year || !birthdate.month || !birthdate.day) return;
 
   const age = MIN_AGE_REGISTRATION;
-  const momentBirthdate = getBirthDateMomentObject(birthdate);
+  const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
   const now = moment().endOf('day');
   now.subtract(age, 'years');
 

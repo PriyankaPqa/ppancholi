@@ -1,6 +1,6 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import _merge from 'lodash/merge';
-import { enumToTranslatedCollection } from '../../ui/utils';
+import helpers from '../../ui/helpers';
 import { ECanadaProvinces } from '../../types';
 import {
   mockContactInformation,
@@ -21,7 +21,7 @@ describe('IndigenousIdentityForm.vue', () => {
       localVue,
       propsData: {
         form: _merge(mockContactInformation(), mockPerson()),
-        canadianProvincesItems: enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        canadianProvincesItems: helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
         indigenousTypesItems: mockIndigenousTypesItems(),
         indigenousCommunitiesItems: mockIndigenousCommunitiesItems(),
         loading: false,

@@ -22,6 +22,7 @@ export const IdentityForm: VueConstructor<Vue>;
 export const IndigenousIdentityForm: VueConstructor<Vue>;
 export const TempAddressForm: VueConstructor<Vue>;
 export const AddressForm: VueConstructor<Vue>;
+export const Addresses: VueConstructor<Vue>;
 
 /**
  * Other

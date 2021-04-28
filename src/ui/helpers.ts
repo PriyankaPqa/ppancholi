@@ -1,4 +1,62 @@
+import moment from 'moment';
+import VueI18n from 'vue-i18n';
+import { IBirthDate } from '../entities/value-objects/person/person.types';
+
 export default {
+  getEnumKeys(myEnum: Record<string, unknown>) {
+    return Object.keys(myEnum).filter((x) => !(parseInt(x, 2) >= 0));
+  },
+
+  enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, i18n: VueI18n = null) {
+    const enumKeys = this.getEnumKeys(myEnum);
+    const data = [] as Array<{value: unknown; text: string}>;
+    enumKeys.forEach((val) => {
+      if (i18n) {
+        data.push({ value: myEnum[val], text: i18n.t(`${translationPath}.${val}`).toString() });
+      } else {
+        data.push({ value: myEnum[val], text: `${translationPath}.${val}` });
+      }
+    });
+    return data.sort((a, b) => a.text.localeCompare(b.text));
+  },
+
+  // Return moment object of a birthdate, with proper index for the month
+  getBirthDateMomentObject(birthdate: IBirthDate) {
+    const year = birthdate.year as number;
+    const month = birthdate.month as number;
+    const day = birthdate.day as number;
+
+    return moment({
+      year,
+      month: typeof month === 'number' ? month - 1 : 0,
+      day,
+    });
+  },
+
+  isValidCanadianPostalCode(value: string, errorMsg: string, errors: string[]): void {
+    if (!value) return;
+
+    // eslint-disable-next-line
+    const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
+    if (!regex.test(value)) errors.push(errorMsg);
+  },
+
+  getAge(birthDate: IBirthDate) {
+    return moment().diff(moment({
+      month: (birthDate.month as number) - 1,
+      day: (birthDate.day as number),
+      year: (birthDate.year as number),
+    }), 'years');
+  },
+
+  displayBirthDate(birthDate: IBirthDate) {
+    if (birthDate.year && birthDate.month && birthDate.day) {
+      const birthdate = this.getBirthDateMomentObject(birthDate);
+      return birthdate.format('ll');
+    }
+    return '';
+  },
+
   openHelpCenterWindow(url: string, width = 500) {
     const popupWidth = width;
     const leftPos = window.innerWidth - popupWidth;
@@ -33,7 +91,7 @@ export default {
     } else {
       const link = document.createElement('a');
       if (link.download !== undefined) { // feature detection
-      // Browsers that support HTML5 download attribute
+        // Browsers that support HTML5 download attribute
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
         link.setAttribute('download', exportedFilename);
@@ -77,6 +135,19 @@ export default {
           behavior: 'smooth',
         });
       }
+    }
+  },
+
+  scrollToFirstErrorDialog(containerId: string) {
+    const containerElement = document.getElementById(containerId);
+    if (!containerElement) return;
+    const errorElements = containerElement.getElementsByClassName('failed');
+    if (errorElements.length > 0) {
+      const scrollContainer = document.getElementsByClassName('content')[0];
+      scrollContainer.scrollTo({
+        top: (errorElements[0] as HTMLElement).offsetTop - 90,
+        behavior: 'smooth',
+      });
     }
   },
 };

@@ -1,31 +1,70 @@
-/* eslint-disable no-undef */
+/* eslint-disable import/no-extraneous-dependencies */
 import {
   createLocalVue as clv,
   mount as m,
   shallowMount as sm,
+  RouterLinkStub,
 } from '@vue/test-utils';
 import '@testing-library/jest-dom';
 import Vuetify from 'vuetify';
-import Vue from 'vue';
+import Vuex from 'vuex';
 import deepmerge from 'deepmerge';
 import '@/ui/plugins/vee-validate';
 
-const vuetify = new Vuetify();
+import Vue from 'vue';
+import VueI18n from 'vue-i18n';
+
+import { mockStore } from '../store';
+import { mockStorage } from '../store/storage/storage.mock';
+
+jest.setTimeout(10000);
+
+const vuetify = new Vuetify({
+  mocks: {
+    $vuetify: {
+      goTo: jest.fn(),
+    },
+  },
+});
 
 Vue.use(Vuetify);
 
 // Create a localVue instance used for testing. A localVue prevents the global
 // Vue namespace from being polluted, so tests are isolated.
+
+// IMPORTANT: Update this function if we add more plugins to Vue.
 export const createLocalVue = () => {
   const localVue = clv();
   localVue.use(Vuetify);
-
+  localVue.use(Vuex);
+  Vue.use(VueI18n);
   return localVue;
 };
 
 const mocks = {
+  $router: {
+    replace: jest.fn(),
+    push: jest.fn(),
+    go: jest.fn(),
+  },
+  $route: { params: { id: 'id' } },
   $t: jest.fn((key) => key),
   $tc: jest.fn((key) => key),
+  $m: jest.fn((m) => m?.translation?.en),
+  $toasted: {
+    global: {
+      success: jest.fn(),
+      error: jest.fn(),
+      warning: jest.fn(),
+      info: jest.fn(),
+    },
+    show: jest.fn(),
+  },
+};
+
+const stubs = {
+  'router-link': RouterLinkStub,
+  'router-view': true,
 };
 
 /**
@@ -51,11 +90,21 @@ export const mount = (Component, options) => {
 
   document.body.setAttribute('data-app', true);
 
+  const i18n = new VueI18n({
+    locale: 'en',
+  });
+
+  const store = mockStore(options.store);
+  const $storage = mockStorage();
+
   const wrapper = m(Component, {
     vuetify,
+    i18n,
     sync: false,
     ...options,
-    mocks: deepmerge(mocks, options.mocks || {}),
+    store,
+    mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
+    stubs: deepmerge(stubs, options.stubs || {}),
   });
 
   wrapper.findDataTest = findDataTest;
@@ -71,11 +120,21 @@ export const shallowMount = (Component, options) => {
 
   document.body.setAttribute('data-app', true);
 
+  const i18n = new VueI18n({
+    locale: 'en',
+  });
+
+  const store = mockStore(options.store);
+  const $storage = mockStorage();
+
   const wrapper = sm(Component, {
     vuetify,
+    i18n,
     sync: false,
     ...options,
-    mocks: deepmerge(mocks, options.mocks || {}),
+    store,
+    mocks: deepmerge({ ...mocks, $storage }, options.mocks || {}),
+    stubs: deepmerge(stubs, options.stubs || {}),
   });
 
   wrapper.findDataTest = findDataTest;

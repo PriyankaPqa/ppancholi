@@ -2,6 +2,7 @@
 import { TranslateResult } from 'vue-i18n';
 
 import Vue from 'vue';
+import helpers from '@/ui/helpers'; // We use @ so it will point to helper from host app once used there
 import {
   ECanadaProvinces,
   IOptionItemData,
@@ -51,6 +52,10 @@ export default Vue.extend({
 
     loadingIndigenousIdentities(): boolean {
       return this.$store.state.registration.loadingIndigenousIdentities;
+    },
+
+    canadianProvincesItems(): Record<string, unknown>[] {
+      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
   },

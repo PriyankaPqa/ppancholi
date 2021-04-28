@@ -5,7 +5,7 @@ import Vue from 'vue';
 import { IRegistrationMenuItem, VForm } from '../../types';
 import { Beneficiary } from '../../entities/beneficiary';
 
-import helpers from '../../helpers';
+import helpers from '../helpers';
 
 export default Vue.extend({
   data() {

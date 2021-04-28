@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '../../tests/testSetup';
 import { mockAddress } from '../../entities/beneficiary';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
-import { enumToTranslatedCollection } from '../../ui/utils';
+import helpers from '../../ui/helpers';
 import { ECanadaProvinces } from '../../types';
 import Component from './AddressForm.vue';
 
@@ -17,7 +17,7 @@ describe('AddressForm.vue', () => {
       propsData: {
         apiKey: '1235',
         homeAddress: mockAddress({ provinceTerritory: ECanadaProvinces.ON.toString() }),
-        canadianProvincesItems: enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        canadianProvincesItems: helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
       },
     });
   });

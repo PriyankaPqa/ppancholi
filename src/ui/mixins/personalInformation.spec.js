@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '../../tests/testSetup';
 import personalInformationMixin from './personalInformation';
 import { mockStorage } from '../../store/storage/storage.mock';
-
+import helpers from '../helpers';
 import { ECanadaProvinces } from '../../types';
 
 import {
@@ -110,6 +110,12 @@ describe('personalInformationMixin', () => {
     describe('indigenousCommunitiesItems', () => {
       it('returns the proper data', async () => {
         expect(wrapper.vm.indigenousCommunitiesItems).toEqual(mockIndigenousCommunitiesItems());
+      });
+    });
+
+    describe('canadianProvincesItems', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
       });
     });
   });

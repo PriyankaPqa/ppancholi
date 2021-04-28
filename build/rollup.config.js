@@ -15,6 +15,7 @@ import minimist from 'minimist';
 import babel from 'rollup-plugin-babel';
 import del from 'rollup-plugin-delete';
 import typescript from '@rollup/plugin-typescript';
+import json from '@rollup/plugin-json';
 
 // Get browserslist config and remove ie from es build targets
 const esbrowserslist = fs.readFileSync('./.browserslistrc')
@@ -89,6 +90,7 @@ const esPlugins = [
   ...baseConfig.plugins.preVue,
   postCss(),
   bundleScss(), // bundle all styles in components into one .scss file, so that users can import it and do some custom theming.
+  json(),
   vue(baseConfig.plugins.vue),
   babel({
     ...baseConfig.plugins.babel,
@@ -113,6 +115,7 @@ const cjsPlugins = [
   ...baseConfig.plugins.preVue,
   postCss(),
   bundleScss(),
+  json(),
   vue({
     ...baseConfig.plugins.vue,
     template: {
@@ -133,6 +136,7 @@ const iifePlugins = [
   ...baseConfig.plugins.preVue,
   postCss(),
   bundleScss(),
+  json(),
   vue(baseConfig.plugins.vue),
   babel(baseConfig.plugins.babel),
   vuetify(),

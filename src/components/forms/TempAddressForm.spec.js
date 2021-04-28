@@ -3,7 +3,7 @@ import { ETemporaryAddressTypes, mockBeneficiary, mockCampGround } from '../../e
 
 import { mockShelterLocations } from '../../entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import { enumToTranslatedCollection } from '../../ui/utils';
+import helpers from '../../ui/helpers';
 
 import Component from './TempAddressForm.vue';
 import { ECanadaProvinces } from '../../types';
@@ -19,8 +19,8 @@ describe('TempAddress.vue', () => {
       propsData: {
         apiKey: '12345',
         temporaryAddress: mockCampGround(),
-        temporaryAddressTypeItems: enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
-        canadianProvincesItems: enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        temporaryAddressTypeItems: helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
+        canadianProvincesItems: helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
         shelterLocations: mockShelterLocations(),
       },
     });
