@@ -13,9 +13,9 @@ import {
 } from '@crctech/registration-lib/src/entities/event';
 
 import { IdentityForm, IndigenousIdentityForm, TempAddressForm } from '@crctech/registration-lib';
-import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
 import { ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address/index';
+import helpers from '@/ui/helpers';
 import Component from './HouseholdMemberForm.vue';
 
 const localVue = createLocalVue();
@@ -31,10 +31,10 @@ describe('HouseholdMemberForm.vue', () => {
         person: mockHouseholdMember(),
         sameAddress: true,
         genderItems: mockGenders(),
-        canadianProvincesItems: enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        canadianProvincesItems: helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
         indigenousTypesItems: mockIndigenousTypesItems(),
         indigenousCommunitiesItems: mockIndigenousCommunitiesItems(),
-        temporaryAddressTypeItems: enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
+        temporaryAddressTypeItems: helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
         loading: false,
         apiKey: '1345',
         shelterLocations: mockShelterLocations(),

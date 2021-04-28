@@ -6,8 +6,6 @@ import {
 } from '@crctech/registration-lib';
 
 import { mockStorage } from '@/store/storage';
-
-import { enumToTranslatedCollection } from '@/ui/utils';
 import { ECanadaProvinces } from '@/types';
 import Component from './PersonalInformation.vue';
 
@@ -28,14 +26,6 @@ describe('PersonalInformation.vue', () => {
       mocks: {
         $storage: storage,
       },
-    });
-  });
-
-  describe('Computed', () => {
-    describe('canadianProvincesItems', () => {
-      it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
-      });
     });
   });
 

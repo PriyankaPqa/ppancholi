@@ -94,8 +94,8 @@ import HouseholdMemberTemplate
   from '@/ui/views/pages/registration/review/household-members/HouseholdMemberTemplate.vue';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
-import { enumToTranslatedCollection } from '@/ui/utils';
 import { TranslateResult } from 'vue-i18n';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'ReviewRegistration',
@@ -147,7 +147,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {

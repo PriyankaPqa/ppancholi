@@ -9,7 +9,7 @@ import {
 } from 'vee-validate/dist/rules.umd.min';
 import moment from 'moment';
 import Vue from 'vue';
-import { getBirthDateMomentObject } from '@crctech/registration-lib/src/ui/utils';
+import helpers from '@crctech/registration-lib/src/ui/helpers';
 import { i18n } from './i18n';
 
 // Keep in mind that changing classes' name here will affect any binding done with those ones in the code
@@ -95,7 +95,7 @@ extend('birthday', {
 
     if (birthdate.year < 0) return false;
 
-    const momentBirthdate = getBirthDateMomentObject(birthdate);
+    const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
     if (momentBirthdate.isValid()) {
       if (momentBirthdate.isSameOrAfter(moment())) {
         return i18n.t('registration.personal_info.validations.notInFuture');
@@ -113,7 +113,7 @@ extend('minimumAge', {
 
     if (!birthdate.year || !birthdate.month || !birthdate.day) return true;
 
-    const momentBirthdate = getBirthDateMomentObject(birthdate);
+    const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
     const now = moment().endOf('day');
     now.subtract(age, 'years');
 

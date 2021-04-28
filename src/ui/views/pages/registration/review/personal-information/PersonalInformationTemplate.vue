@@ -16,7 +16,7 @@ import Vue from 'vue';
 import {
   EIndigenousTypes, IContactInformation, IIndigenousIdentityData, IPerson,
 } from '@crctech/registration-lib/src/entities/beneficiary';
-import { displayBirthDate } from '@crctech/registration-lib/src/ui/utils';
+import helpers from '@crctech/registration-lib/src/ui/helpers';
 import { TranslateResult } from 'vue-i18n';
 import { ECanadaProvinces } from '@/types';
 
@@ -107,7 +107,7 @@ export default Vue.extend({
     },
 
     getBirthDate(): string {
-      return displayBirthDate(this.personalInformation.birthDate);
+      return helpers.displayBirthDate(this.personalInformation.birthDate);
     },
 
     getPrimarySpokenLanguage(): TranslateResult {

@@ -48,7 +48,7 @@ import {
 import helpers from '@/ui/helpers';
 import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import _isEqual from 'lodash/isEqual';
-import { enumToTranslatedCollection } from '@/ui/utils';
+
 import { ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address/index';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IShelterLocation } from '@crctech/registration-lib/src/entities/event';
@@ -104,7 +104,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
@@ -120,7 +120,7 @@ export default Vue.extend({
     },
 
     temporaryAddressTypeItems(): Record<string, unknown>[] {
-      const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
       return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
     },
 

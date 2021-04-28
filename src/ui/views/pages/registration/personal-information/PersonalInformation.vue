@@ -30,8 +30,6 @@ import { MIN_AGE_REGISTRATION } from '@/constants/validations';
 
 import mixins from 'vue-typed-mixins';
 import personalInformation from '@crctech/registration-lib/src/ui/mixins/personalInformation';
-import { ECanadaProvinces } from '@/types';
-import { enumToTranslatedCollection } from '@/ui/utils';
 
 export default mixins(personalInformation).extend({
   name: 'PersonalInformation',
@@ -48,12 +46,6 @@ export default mixins(personalInformation).extend({
     return {
       MIN_AGE_REGISTRATION,
     };
-  },
-
-  computed: {
-    canadianProvincesItems(): Record<string, unknown>[] {
-      return enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
-    },
   },
 });
 </script>

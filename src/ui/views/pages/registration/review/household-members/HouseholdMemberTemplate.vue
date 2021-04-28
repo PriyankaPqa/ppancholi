@@ -24,7 +24,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { EIndigenousTypes, IIndigenousIdentityData, IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
-import { displayBirthDate, getAge } from '@crctech/registration-lib/src/ui/utils';
+import helpers from '@crctech/registration-lib/src/ui/helpers';
 import { ECanadaProvinces } from '@/types';
 import TemporaryAddressTemplate from '@/ui/views/pages/registration/review/addresses/TemporaryAddressTemplate.vue';
 import { TranslateResult } from 'vue-i18n';
@@ -63,7 +63,7 @@ export default Vue.extend({
 
     getBirthDateLine(): string {
       // eslint-disable-next-line max-len
-      return `${this.$t('registration.personal_info.birthdate')}: ${displayBirthDate(this.person.birthDate)} (${getAge(this.person.birthDate)} ${this.$t('common.years')})`;
+      return `${this.$t('registration.personal_info.birthdate')}: ${helpers.displayBirthDate(this.person.birthDate)} (${helpers.getAge(this.person.birthDate)} ${this.$t('common.years')})`;
     },
 
     getGender(): TranslateResult {

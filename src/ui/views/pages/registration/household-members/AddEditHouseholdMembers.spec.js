@@ -9,9 +9,9 @@ import {
 } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
 import { ECanadaProvinces } from '@/types';
 import HouseholdMemberForm from '@/ui/views/pages/registration/household-members/HouseholdMemberForm.vue';
-import { enumToTranslatedCollection } from '@/ui/utils';
 import { mockEvent } from '@crctech/registration-lib/src/entities/event';
 import { EOptionItemStatus } from '@crctech/registration-lib/src/types';
+import helpers from '@/ui/helpers';
 import Component from './AddEditHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -58,7 +58,7 @@ describe('AddEditHouseholdMembers.vue', () => {
 
     describe('temporaryAddressTypeItems', () => {
       it('returns the full list of temporary addresses types without remaining home', async () => {
-        const list = enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+        const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
         const filtered = list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
         expect(wrapper.vm.temporaryAddressTypeItems).toEqual(filtered);
       });
