@@ -67,6 +67,7 @@ import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';
 import IsRegistered from '@/ui/views/pages/registration/is-registered/IsRegistered.vue';
 import PrivacyStatement from '@/ui/views/pages/registration/privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '@/ui/views/pages/registration/personal-information/PersonalInformation.vue';
+import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import mixins from 'vue-typed-mixins';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { tabs } from '@/store/modules/registration/tabs';
@@ -96,6 +97,7 @@ export default mixins(individual).extend({
     IsRegistered,
     PersonalInformation,
     PrivacyStatement,
+    Addresses,
   },
 
   mixins: [individual],

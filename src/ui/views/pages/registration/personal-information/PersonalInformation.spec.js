@@ -7,7 +7,6 @@ import {
 
 import { mockStorage } from '@/store/storage';
 
-import helpers from '@/ui/helpers';
 import { ECanadaProvinces } from '@/types';
 import Component from './PersonalInformation.vue';
 
@@ -28,14 +27,6 @@ describe('PersonalInformation.vue', () => {
       mocks: {
         $storage: storage,
       },
-    });
-  });
-
-  describe('Computed', () => {
-    describe('canadianProvincesItems', () => {
-      it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
-      });
     });
   });
 

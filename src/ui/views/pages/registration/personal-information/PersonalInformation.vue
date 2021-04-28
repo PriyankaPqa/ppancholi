@@ -28,8 +28,6 @@ import { IndigenousIdentityForm, IdentityForm, ContactInformationForm } from '@c
 
 import mixins from 'vue-typed-mixins';
 import personalInformation from '@crctech/registration-lib/src/ui/mixins/personalInformation';
-import helpers from '@/ui/helpers';
-import { ECanadaProvinces } from '@/types';
 
 export default mixins(personalInformation).extend({
   name: 'PersonalInformation',
@@ -41,11 +39,5 @@ export default mixins(personalInformation).extend({
   },
 
   mixins: [personalInformation],
-
-  computed: {
-    canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
-    },
-  },
 });
 </script>
