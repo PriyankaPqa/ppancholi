@@ -4,7 +4,7 @@ import { IBirthDate } from '../entities/value-objects/person/person.types';
 
 export default {
   getEnumKeys(myEnum: Record<string, unknown>) {
-    return Object.keys(myEnum).filter((x) => !(parseInt(x, 2) >= 0));
+    return Object.keys(myEnum).filter((key) => Number.isNaN(Number(key)));
   },
 
   enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, i18n: VueI18n = null) {

@@ -56,7 +56,7 @@ describe('Addresses.vue', () => {
     });
 
     describe('temporaryAddressTypeItems', () => {
-      it('returns the full list of temporary addresses types if noFixedHome is false', async () => {
+      it('returns the full list of temporary addresses types if noFixedHome is false. Remaning home being first', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           data() {
@@ -70,8 +70,15 @@ describe('Addresses.vue', () => {
             },
           },
         });
-        const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
-        expect(wrapper.vm.temporaryAddressTypeItems).toEqual(list);
+        const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n)
+          .filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+        expect(wrapper.vm.temporaryAddressTypeItems).toEqual([
+          {
+            value: ETemporaryAddressTypes.RemainingInHome,
+            text: i18n.t('registration.addresses.temporaryAddressTypes.RemainingInHome').toString(),
+          },
+          ...list,
+        ]);
       });
 
       it('returns the full list of temporary addresses types without remaining home if noFixedHome is true', async () => {

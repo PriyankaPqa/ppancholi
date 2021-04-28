@@ -98,11 +98,16 @@ export default Vue.extend({
     },
 
     temporaryAddressTypeItems(): Record<string, unknown>[] {
-      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
+      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n)
+        .filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+
       if (this.noFixedHome) {
-        return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+        return list;
       }
-      return list;
+      return [
+        { value: ETemporaryAddressTypes.RemainingInHome, text: i18n.t('registration.addresses.temporaryAddressTypes.RemainingInHome').toString() },
+        ...list,
+      ];
     },
 
     shelterLocations(): IShelterLocation[] {
