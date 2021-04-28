@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount } from '../../tests/testSetup';
+import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { ETemporaryAddressTypes, mockBeneficiary, mockCampGround } from '../../entities/beneficiary';
 
 import { mockShelterLocations } from '../../entities/event';

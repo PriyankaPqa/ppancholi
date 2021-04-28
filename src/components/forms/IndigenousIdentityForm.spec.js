@@ -8,7 +8,7 @@ import {
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems, EIndigenousTypes,
 } from '../../entities/beneficiary';
-import { createLocalVue, shallowMount } from '../../tests/testSetup';
+import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './IndigenousIdentityForm.vue';
 
 const localVue = createLocalVue();

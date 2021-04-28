@@ -4,7 +4,7 @@ import {
   mockContactInformation, mockPerson, mockGenderFemale,
 } from '../../entities/beneficiary';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import { createLocalVue, shallowMount } from '../../tests/testSetup';
+import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './IdentityForm.vue';
 
 const mockPersonModified = mockPerson();

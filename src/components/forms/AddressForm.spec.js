@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount } from '../../tests/testSetup';
+import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { mockAddress } from '../../entities/beneficiary';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 

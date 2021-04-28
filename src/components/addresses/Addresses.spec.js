@@ -6,7 +6,7 @@ import { ECanadaProvinces, EOptionItemStatus } from '../../types';
 import { mockAddress, mockBeneficiary } from '../../entities/beneficiary';
 import { mockEvent } from '../../entities/event';
 import { ETemporaryAddressTypes, mockCampGround } from '../../entities/value-objects/temporary-address';
-import { createLocalVue, shallowMount } from '../../tests/testSetup';
+import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './Addresses.vue';
 
 const localVue = createLocalVue();

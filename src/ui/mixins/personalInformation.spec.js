@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount } from '../../tests/testSetup';
+import { createLocalVue, shallowMount } from '../../test/testSetup';
 import personalInformationMixin from './personalInformation';
 import { mockStorage } from '../../store/storage/storage.mock';
 import helpers from '../helpers';

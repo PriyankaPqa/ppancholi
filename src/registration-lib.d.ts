@@ -23,6 +23,8 @@ export const IndigenousIdentityForm: VueConstructor<Vue>;
 export const TempAddressForm: VueConstructor<Vue>;
 export const AddressForm: VueConstructor<Vue>;
 export const Addresses: VueConstructor<Vue>;
+export const HouseholdMembers: VueConstructor<Vue>;
+export const HouseholdMemberForm: VueConstructor<Vue>;
 
 /**
  * Other

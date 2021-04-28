@@ -5,7 +5,7 @@ import {
   mockPrimarySpokenLanguage,
 } from '../../entities/beneficiary';
 import { MAX_LENGTH_MD } from '../../constants/validations';
-import { createLocalVue, shallowMount } from '../../tests/testSetup';
+import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
 
 const localVue = createLocalVue();

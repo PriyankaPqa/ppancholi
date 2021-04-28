@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount } from '../../../tests/testSetup';
+import { createLocalVue, shallowMount } from '../../../test/testSetup';
 import googleAutocomplete from './address';
 import { ECanadaProvinces } from '../../../types';
 import { mockAddress } from '../../../entities/beneficiary';
