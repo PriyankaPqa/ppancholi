@@ -65,7 +65,7 @@ export const tabs: IRegistrationMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'HouseholdMembers',
-    helpLink: '',
+    helpLink: 'zendesk.registration.householdmembers',
   },
   {
     id: 'review',

@@ -211,6 +211,7 @@
     "registration.submit_registration.label": "registration.submit_registration.label",
     "registration.summary.age": "registration.summary.age",
     "registration.type.individual": "registration.type.individual",
+    "registration.zendesk.householdmembers": "",
     "validations.canadianPostalCode": "validations.canadianPostalCode",
     "validations.email": "validations.email",
     "validations.max": "validations.max",
