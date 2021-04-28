@@ -48,6 +48,7 @@
           <validation-observer :ref="`householdMember_${index}`">
             <household-member-form
               :gender-items="genderItems"
+              :temporary-address-type-items="temporaryAddressTypeItems"
               :canadian-provinces-items="canadianProvincesItems"
               :indigenous-communities-items="indigenousCommunitiesItems"
               :indigenous-types-items="indigenousTypesItems"
@@ -89,13 +90,15 @@ import { IBeneficiary } from '@crctech/registration-lib/src/entities/beneficiary
 import { ECanadaProvinces, IOptionItemData, VForm } from '@/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import HouseholdMemberSection from '@/ui/views/pages/registration/review/household-members/HouseholdMemberSection.vue';
-import HouseholdMemberForm from '@/ui/views/pages/registration/household-members/HouseholdMemberForm.vue';
+import { HouseholdMemberForm } from '@crctech/registration-lib';
+
 import HouseholdMemberTemplate
   from '@/ui/views/pages/registration/review/household-members/HouseholdMemberTemplate.vue';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import helpers from '@/ui/helpers';
+import { ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
 
 export default Vue.extend({
   name: 'ReviewRegistration',
@@ -175,6 +178,11 @@ export default Vue.extend({
 
     currentHouseholdMember(): IPerson {
       return this.householdMembersCopy[this.indexHouseholdMember];
+    },
+
+    temporaryAddressTypeItems(): Record<string, unknown>[] {
+      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+      return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
     },
 
   },
