@@ -11,8 +11,8 @@
         outlined
         :items="events"
         :loading="loading"
-        :item-text="(item) => $m(item.name)"
-        item-value="id"
+        :item-text="(item) => $m(item.eventName)"
+        item-value="eventId"
         return-object
         :attach="true"
         :label="$t('registration.landingpage.selectEvent')"
@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IEvent, EEventStatus } from '@/entities/event';
+import { IEventSearchData, EEventStatus } from '@/entities/event';
 
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
 import routes from '@/constants/routes';
@@ -40,7 +40,7 @@ export default Vue.extend({
 
   data() {
     return {
-      events: [] as Array<IEvent>,
+      events: [] as Array<IEventSearchData>,
       event: null,
       loading: false,
     };
@@ -58,7 +58,7 @@ export default Vue.extend({
   },
 
   async mounted() {
-    const res = await this.$storage.event.actions.searchEvents({
+    const res = await this.$services.events.searchMyEvents({
       filter: {
         Schedule: {
           Status: EEventStatus.Open,
@@ -73,10 +73,10 @@ export default Vue.extend({
       this.$router.push({ name: routes.registration.individual.name });
     },
 
-    setEvent(event: IEvent) {
+    setEvent(event: IEventSearchData) {
       this.$storage.registration.mutations.setEvent({
-        eventId: event.id,
-        eventName: event.name,
+        eventId: event.eventId,
+        eventName: event.eventName,
         responseDetails: event.responseDetails,
         registrationLink: event.registrationLink,
         tenantId: event.tenantId,

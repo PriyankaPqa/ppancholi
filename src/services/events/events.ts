@@ -51,6 +51,11 @@ export class EventsService implements IEventsService {
     return this.http.get('/search/event-projections', { params, isOData: true });
   }
 
+  // events that a user has access to
+  async searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>> {
+    return this.http.get('/search/event-projections-main-information', { params, isOData: true });
+  }
+
   async setEventStatus(id: uuid, status: EEventStatus, hasBeenOpen?: boolean, reason?: string): Promise<IEventData> {
     if (status === EEventStatus.Open) {
       if (hasBeenOpen) {

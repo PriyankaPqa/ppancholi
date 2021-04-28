@@ -125,6 +125,12 @@ describe('>>> Events Service', () => {
     expect(http.get).toHaveBeenCalledWith('/search/event-projections', { params, isOData: true });
   });
 
+  test('searchMyEvents is linked to the correct URL and params', async () => {
+    const params = mockSearchParams;
+    await service.searchMyEvents(params);
+    expect(http.get).toHaveBeenCalledWith('/search/event-projections-main-information', { params, isOData: true });
+  });
+
   describe('setEventStatus', () => {
     it('calls the open endpoint if the status is open and hasBeenOpen is false', async () => {
       await service.setEventStatus('ID', EEventStatus.Open, false);

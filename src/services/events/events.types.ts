@@ -28,6 +28,8 @@ export interface IEventsService {
 
   searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>>;
 
+  searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventSearchData>>;
+
   setEventStatus(id: uuid, status: EEventStatus, hasBeenOpen?: boolean, reason?: string): Promise<IEventData>;
 
   addCallCentre(eventId: uuid, payload: IEventCallCentre): Promise<IEventData>;
@@ -57,6 +59,8 @@ export interface IEventsServiceMock {
   getRegions: jest.Mock<IAzureSearchResult<IRegion>>;
 
   searchEvents: jest.Mock<IAzureSearchResult<IEventSearchData>>;
+
+  searchMyEvents: jest.Mock<IAzureSearchResult<IEventSearchData>>;
 
   toggleSelfRegistration: jest.Mock<IEventData>;
 
