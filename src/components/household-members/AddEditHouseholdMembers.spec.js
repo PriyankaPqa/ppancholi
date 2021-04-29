@@ -1,4 +1,5 @@
 import { RcDialog } from '@crctech/component-library';
+import { i18n } from '@/ui/plugins/i18n';
 import { mockStorage } from '../../store/storage/storage.mock';
 import helpers from '../../ui/helpers';
 import { mockEvent } from '../../entities/event';
@@ -11,7 +12,6 @@ import {
 import { mockHouseholdMember, mockPerson } from '../../entities/value-objects/person';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddEditHouseholdMembers.vue';
-import { i18n } from '@/ui/plugins/i18n';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -26,6 +26,7 @@ describe('AddEditHouseholdMembers.vue', () => {
         show: true,
         person: mockHouseholdMember(),
         index: -1,
+        i18n,
       },
       data() {
         return {
@@ -169,6 +170,7 @@ describe('AddEditHouseholdMembers.vue', () => {
             show: true,
             person,
             index: 0,
+            i18n,
           },
           data() {
             return {
@@ -193,6 +195,7 @@ describe('AddEditHouseholdMembers.vue', () => {
             show: true,
             person,
             index: 0,
+            i18n,
           },
           data() {
             return {

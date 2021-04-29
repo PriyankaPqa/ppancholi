@@ -37,7 +37,7 @@
 <script lang="ts">
 import { RcDialog } from '@crctech/component-library';
 import Vue from 'vue';
-import { TranslateResult } from 'vue-i18n';
+import VueI18n, { TranslateResult } from 'vue-i18n';
 import {
   ECanadaProvinces,
   EOptionItemStatus,
@@ -47,7 +47,6 @@ import {
 import helpers from '@/ui/helpers';
 import _isEqual from 'lodash/isEqual';
 
-import { i18n } from '@/ui/plugins/i18n';
 import { IShelterLocation } from '../../entities/event';
 import { localStorageKeys } from '../../constants/localStorage';
 import { ETemporaryAddressTypes } from '../../entities/value-objects/temporary-address/index';
@@ -75,6 +74,11 @@ export default Vue.extend({
 
     index: {
       type: Number,
+      required: true,
+    },
+
+    i18n: {
+      type: Object as () => VueI18n,
       required: true,
     },
   },
@@ -105,7 +109,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', i18n);
+      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', this.i18n);
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
@@ -121,7 +125,7 @@ export default Vue.extend({
     },
 
     temporaryAddressTypeItems(): Record<string, unknown>[] {
-      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
+      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n);
       return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
     },
 

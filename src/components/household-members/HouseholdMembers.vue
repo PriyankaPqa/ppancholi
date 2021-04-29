@@ -41,6 +41,7 @@
     </v-row>
     <add-edit-household-members
       v-if="showAddHouseholdMember"
+      :i18n="i18n"
       :show.sync="showAddHouseholdMember"
       :index="index"
       :person="currentHouseholdMember" />
@@ -60,6 +61,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcConfirmationDialog } from '@crctech/component-library';
+import VueI18n from 'vue-i18n';
 import { MAX_HOUSEHOLDMEMBERS } from '../../constants/validations';
 import AddEditHouseholdMembers from './AddEditHouseholdMembers.vue';
 import { IPerson, Person } from '../../entities/value-objects/person';
@@ -70,6 +72,13 @@ export default Vue.extend({
   components: {
     AddEditHouseholdMembers,
     RcConfirmationDialog,
+  },
+
+  props: {
+    i18n: {
+      type: Object as () => VueI18n,
+      required: true,
+    },
   },
 
   data() {

@@ -1,4 +1,4 @@
-import { i18n } from '@/ui/plugins/i18n';
+import { i18n } from '../../ui/plugins/i18n';
 import helpers from '../../ui/helpers';
 import AddressForm from '../forms/AddressForm.vue';
 import TempAddressForm from '../forms/TempAddressForm.vue';
@@ -21,6 +21,9 @@ describe('Addresses.vue', () => {
         return {
           apiKey: 'google-api-key',
         };
+      },
+      propsData: {
+        i18n,
       },
     });
   });
@@ -64,6 +67,9 @@ describe('Addresses.vue', () => {
               apiKey: 'google-api-key',
             };
           },
+          propsData: {
+            i18n,
+          },
           computed: {
             noFixedHome() {
               return false;
@@ -93,6 +99,9 @@ describe('Addresses.vue', () => {
             noFixedHome() {
               return true;
             },
+          },
+          propsData: {
+            i18n,
           },
         });
         const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
@@ -127,6 +136,9 @@ describe('Addresses.vue', () => {
           return {
             apiKey: 'google-api-key',
           };
+        },
+        propsData: {
+          i18n,
         },
         computed: {
           noFixedHome() {

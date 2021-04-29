@@ -1,4 +1,5 @@
 import { RcConfirmationDialog } from '@crctech/component-library';
+import { i18n } from '@/ui/plugins/i18n';
 import {
   mockBeneficiary, mockHouseholdMembers, mockHouseholdMember, Person,
 } from '../../entities/beneficiary';
@@ -15,6 +16,9 @@ describe('HouseholdMembers.vue', () => {
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
+      propsData: {
+        i18n,
+      },
       computed: {
         householdMembers() {
           return mockHouseholdMembers();
@@ -76,6 +80,9 @@ describe('HouseholdMembers.vue', () => {
               disabledAdd: true,
             };
           },
+          propsData: {
+            i18n,
+          },
           computed: {
             householdMembers() {
               return new Array(14).fill(mockHouseholdMember());
@@ -112,6 +119,9 @@ describe('HouseholdMembers.vue', () => {
       it('should display a warning message if limit is reached', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: {
+            i18n,
+          },
           computed: {
             householdMembers() {
               return new Array(20).fill(mockHouseholdMember());
@@ -125,6 +135,9 @@ describe('HouseholdMembers.vue', () => {
       it('should disabled the button add  if limit is reached', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: {
+            i18n,
+          },
           computed: {
             householdMembers() {
               return new Array(20).fill(mockHouseholdMember());

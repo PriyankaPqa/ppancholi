@@ -49,11 +49,11 @@
 import Vue from 'vue';
 import { VCheckboxWithValidation } from '@crctech/component-library';
 
-import { ECanadaProvinces, EOptionItemStatus } from '@/types';
-import helpers from '@/ui/helpers';
-import TempAddressForm from '@/components/forms/TempAddressForm.vue';
-import AddressForm from '@/components/forms/AddressForm.vue';
-import { i18n } from '@/ui/plugins/i18n';
+import VueI18n from 'vue-i18n';
+import AddressForm from '../forms/AddressForm.vue';
+import TempAddressForm from '../forms/TempAddressForm.vue';
+import { ECanadaProvinces, EOptionItemStatus } from '../../types';
+import helpers from '../../ui/helpers';
 import { localStorageKeys } from '../../constants/localStorage';
 import { IAddress } from '../../entities/value-objects/address';
 import { IShelterLocation } from '../../entities/event';
@@ -67,6 +67,14 @@ export default Vue.extend({
     AddressForm,
     TempAddressForm,
   },
+
+  props: {
+    i18n: {
+      type: Object as () => VueI18n,
+      required: true,
+    },
+  },
+
   data() {
     return {
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
@@ -94,18 +102,21 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', i18n);
+      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', this.i18n);
     },
 
     temporaryAddressTypeItems(): Record<string, unknown>[] {
-      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n)
+      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n)
         .filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
 
       if (this.noFixedHome) {
         return list;
       }
       return [
-        { value: ETemporaryAddressTypes.RemainingInHome, text: i18n.t('registration.addresses.temporaryAddressTypes.RemainingInHome').toString() },
+        {
+          value: ETemporaryAddressTypes.RemainingInHome,
+          text: this.i18n.t('registration.addresses.temporaryAddressTypes.RemainingInHome').toString(),
+        },
         ...list,
       ];
     },
