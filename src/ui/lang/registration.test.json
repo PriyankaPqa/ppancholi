@@ -212,6 +212,7 @@
     "registration.summary.age": "registration.summary.age",
     "registration.type.individual": "registration.type.individual",
     "registration.zendesk.householdmembers": "",
+    "validations.anyPhone": "",
     "validations.canadianPostalCode": "validations.canadianPostalCode",
     "validations.email": "validations.email",
     "validations.max": "validations.max",
