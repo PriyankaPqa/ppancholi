@@ -1,7 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import {
-  Event, EEventStatus, mockEventsSearchData, EResponseLevel,
-} from '@/entities/event';
+import { Event, EEventStatus, mockEventsSearchData } from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -111,7 +109,7 @@ describe('EventSummary.vue', () => {
 
       it('contains the right data', () => {
         const element = wrapper.findDataTest('event-summary-response-level');
-        expect(element.text()).toEqual(`event.response_level.${EResponseLevel[wrapper.vm.event.responseDetails.responseLevel]}`);
+        expect(element.text()).toEqual(wrapper.vm.event.responseLevelName.translation.en);
       });
     });
 

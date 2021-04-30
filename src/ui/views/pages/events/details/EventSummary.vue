@@ -15,7 +15,7 @@
 
           <span class="rc-body14 borderLeft pa-0 pr-1 pl-4"> {{ $t('eventSummary.response') }}: </span>
           <span class="rc-body14" data-test="event-summary-response-level">
-            {{ $t(`event.response_level.${EResponseLevel[event.responseDetails.responseLevel]}`) }}
+            {{ $m(event.responseLevelName) }}
           </span>
         </v-col>
 
@@ -118,7 +118,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 import {
-  EEventStatus, IEvent, Event, IEventCallCentre, IEventAgreement, IEventGenericLocation, EResponseLevel,
+  EEventStatus, IEvent, Event, IEventCallCentre, IEventAgreement, IEventGenericLocation,
 } from '@/entities/event';
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@/entities/optionItem';
@@ -169,7 +169,6 @@ export default Vue.extend({
     return {
       EEventSummarySections,
       EEventStatus,
-      EResponseLevel,
       error: false,
       newStatus: null,
       showEventStatusDialog: false,
