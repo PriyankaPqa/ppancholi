@@ -92,6 +92,8 @@ const actions = {
       const userData = account.idTokenClaims;
 
       context.commit('setUser', userData);
+    } else {
+      throw new Error('User data not found');
     }
   },
 };

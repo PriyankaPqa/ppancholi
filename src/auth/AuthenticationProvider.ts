@@ -70,8 +70,13 @@ export default {
         scopes: tokenRequest.scopes,
       });
       return tokenResponse;
-    } catch {
-      this.signIn(process.env.VUE_APP_AUTH_AAD_REDIRECT_URI);
+    } catch (e) {
+      // Redirect the application to the Microsoft login page if the 'login_required' error is thrown.
+      // This error is thrown in cases where the refresh token has expired.
+      // We may need to add other error types to this list in the future. Otherwise, all errors go to the LoginError.vue page
+      if (e.errorCode === 'login_required') {
+        this.signIn(process.env.VUE_APP_AUTH_AAD_REDIRECT_URI);
+      }
     }
 
     return null;

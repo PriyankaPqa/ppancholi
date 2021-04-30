@@ -14,6 +14,10 @@
           <v-btn color="primary" data-test="loginError__signInButton" @click="signIn">
             {{ $t('loginError.signIn') }}
           </v-btn>
+
+          <v-btn class="ml-4" text data-test="loginError__signOutButton" @click="signOut">
+            {{ $t('common.logout.label') }}
+          </v-btn>
         </div>
       </div>
     </div>
@@ -30,6 +34,10 @@ export default Vue.extend({
   methods: {
     signIn() {
       authenticationProvider.signIn(process.env.VUE_APP_AUTH_AAD_REDIRECT_URI);
+    },
+
+    signOut() {
+      authenticationProvider.signOut();
     },
   },
 });
