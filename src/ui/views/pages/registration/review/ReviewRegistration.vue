@@ -47,6 +47,7 @@
         <template #inline>
           <validation-observer :ref="`householdMember_${index}`">
             <household-member-form
+              :api-key="apiKey"
               :gender-items="genderItems"
               :temporary-address-type-items="temporaryAddressTypeItems"
               :canadian-provinces-items="canadianProvincesItems"
@@ -55,6 +56,7 @@
               :loading="loadingIndigenousIdentities"
               :person="person"
               :same-address.sync="householdMembers[index].sameAddress"
+              :shelter-locations="shelterLocations"
               @identity-change="setIdentity($event)"
               @indigenous-identity-change="setIndigenousIdentity($event)"
               @province-change="onIndigenousProvinceChange($event)" />
@@ -83,7 +85,6 @@ import PersonalInformation from '@/ui/views/pages/registration/personal-informat
 import SummarySection from '@/ui/views/pages/registration/review/SummarySection.vue';
 import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import AddressesTemplate from '@/ui/views/pages/registration/review/addresses/AddressesTemplate.vue';
-import Vue from 'vue';
 import { IContactInformation } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
 import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
 import { IBeneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
@@ -99,8 +100,10 @@ import { RcConfirmationDialog } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import helpers from '@/ui/helpers';
 import { ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
+import mixins from 'vue-typed-mixins';
+import address from '@/ui/mixins/address';
 
-export default Vue.extend({
+export default mixins(address).extend({
   name: 'ReviewRegistration',
 
   components: {
@@ -147,10 +150,6 @@ export default Vue.extend({
 
     genderItems(): IOptionItemData[] {
       return this.$storage.registration.getters.genders();
-    },
-
-    canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
