@@ -32,7 +32,9 @@ const store: StoreOptions<IRootState> = {
     team,
     program,
     beneficiary: makeBeneficiaryModule(),
-    registration: makeRegistrationModule(i18n, tabs),
+    registration: makeRegistrationModule({
+      i18n, tabs, skipAgeRestriction: true, skipEmailPhoneRules: true,
+    }),
   },
 };
 

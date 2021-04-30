@@ -37,7 +37,9 @@ const mockConfig = {
     optionList,
     appUser,
     program,
-    registration: makeRegistrationModule(i18n, tabs),
+    registration: makeRegistrationModule({
+      i18n, tabs, skipAgeRestriction: true, skipEmailPhoneRules: true,
+    }),
     beneficiary: makeBeneficiaryModule(),
   },
 };

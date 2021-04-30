@@ -1,43 +1,16 @@
 <template>
-  <v-row no-gutters>
-    <identity-form
-      :form="person"
-      :gender-items="genderItems"
-      @change="setIdentity($event)" />
-
-    <contact-information-form
-      :form="contactInformation"
-      :preferred-languages-items="preferredLanguagesItems"
-      :primary-spoken-languages-items="primarySpokenLanguagesItems"
-      @change="setContactInformation($event)" />
-
-    <indigenous-identity-form
-      :form="person"
-      :canadian-provinces-items="canadianProvincesItems"
-      :indigenous-communities-items="indigenousCommunitiesItems"
-      :indigenous-types-items="indigenousTypesItems"
-      :loading="loadingIndigenousIdentities"
-      @change="setIndigenousIdentity($event)"
-      @province-change="onIndigenousProvinceChange($event)" />
-  </v-row>
+  <lib-personal-information skip-phone-email-rules />
 </template>
 
 <script lang="ts">
+import Vue from 'vue';
+import { PersonalInformation as LibPersonalInformation } from '@crctech/registration-lib';
 
-import { IndigenousIdentityForm, IdentityForm, ContactInformationForm } from '@crctech/registration-lib';
-
-import mixins from 'vue-typed-mixins';
-import personalInformation from '@crctech/registration-lib/src/ui/mixins/personalInformation';
-
-export default mixins(personalInformation).extend({
+export default Vue.extend({
   name: 'PersonalInformation',
 
   components: {
-    IndigenousIdentityForm,
-    IdentityForm,
-    ContactInformationForm,
+    LibPersonalInformation,
   },
-
-  mixins: [personalInformation],
 });
 </script>

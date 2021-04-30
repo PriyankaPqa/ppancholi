@@ -173,5 +173,12 @@ extend('minimumAge', {
   },
 });
 
+extend('requiredPhone', {
+  computesRequired: true,
+  params: ['isMissing'],
+  validate: (value, { isMissing }) => !isMissing,
+  message: (_, values) => i18n.t('validations.anyPhone', values),
+});
+
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);
