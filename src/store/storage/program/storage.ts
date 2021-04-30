@@ -15,6 +15,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('program/createProgram', program);
     },
 
+    updateProgram(program: IProgram): Promise<IProgram> {
+      return store.dispatch('program/updateProgram', program);
+    },
+
     searchPrograms(params: IAzureSearchParams): Promise<IAzureSearchResult<IProgram>> {
       return store.dispatch('program/searchPrograms', params);
     },

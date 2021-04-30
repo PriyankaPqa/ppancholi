@@ -17,9 +17,9 @@ import { localStorageKeys } from '@/constants/localStorage';
 import Component from '../EventForm.vue';
 
 const event = new Event(mockEventsSearchData()[0]);
-event.schedule.scheduledCloseDate = moment(event.schedule.scheduledCloseDate).format('YYYY-MM-DD');
-event.schedule.scheduledOpenDate = moment(event.schedule.scheduledOpenDate).format('YYYY-MM-DD');
-event.responseDetails.dateReported = moment(event.responseDetails.dateReported).format('YYYY-MM-DD');
+event.schedule.scheduledCloseDate = moment(event.schedule.scheduledCloseDate).toISOString();
+event.schedule.scheduledOpenDate = moment(event.schedule.scheduledOpenDate).toISOString();
+event.responseDetails.dateReported = moment(event.responseDetails.dateReported).toISOString();
 event.fillEmptyMultilingualAttributes = jest.fn();
 
 describe('EventForm.vue', () => {

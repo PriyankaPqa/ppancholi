@@ -78,7 +78,6 @@ export default Vue.extend({
         sortBy: [`ProgramName/Translation/${this.$i18n.locale}`],
         sortDesc: [true],
       },
-      loading: false,
     };
   },
 
@@ -124,31 +123,26 @@ export default Vue.extend({
 
     tableProps(): Record<string, boolean> {
       return {
-        loading: this.loading,
+        loading: this.$store.state.program.programLoading,
       };
     },
   },
 
   methods: {
     async fetchData(params: IAzureSearchParams) {
-      this.loading = true;
+      params.filter = `EventId eq '${this.id}'`;
+      const res = await this.$storage.program.actions.searchPrograms({
+        search: params.search,
+        filter: params.filter,
+        top: params.top,
+        skip: params.skip,
+        orderBy: params.orderBy,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+      });
 
-      try {
-        params.filter = `EventId eq '${this.id}'`;
-        const res = await this.$storage.program.actions.searchPrograms({
-          search: params.search,
-          filter: params.filter,
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        });
-        return res;
-      } finally {
-        this.loading = false;
-      }
+      return res;
     },
 
     addProgram() {

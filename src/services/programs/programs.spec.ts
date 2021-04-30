@@ -12,29 +12,52 @@ describe('>>> Programs service', () => {
     jest.clearAllMocks();
   });
 
-  test('createProgram is linked to the correct url', async () => {
-    await service.createProgram(new Program(mockProgram));
-    expect(http.post).toHaveBeenCalledWith('/event/programs', expect.anything(), { globalHandler: false });
+  describe('createProgram', () => {
+    it('is linked to the correct url', async () => {
+      await service.createProgram(new Program(mockProgram));
+      expect(http.post).toHaveBeenCalledWith('/event/programs', expect.anything(), { globalHandler: false });
+    });
+
+    it('converts program entity to the correct payload', async () => {
+      await service.createProgram(new Program(mockProgram));
+      expect(http.post).toHaveBeenCalledWith('/event/programs', {
+        name: mockProgram.programName,
+        description: mockProgram.programDescription,
+        eventId: mockProgram.eventId,
+        paymentModalities: mockProgram.paymentModalities,
+        eligibilityCriteria: mockProgram.eligibilityCriteria,
+        approvalRequired: mockProgram.approvalRequired,
+        programStatus: mockProgram.programStatus,
+      }, expect.anything());
+    });
   });
 
-  test('createProgram concerts program entity to the correct payload', async () => {
-    await service.createProgram(new Program(mockProgram));
-    expect(http.post).toHaveBeenCalledWith('/event/programs', {
-      name: mockProgram.programName,
-      description: mockProgram.programDescription,
-      eventId: mockProgram.eventId,
-      paymentModalities: mockProgram.paymentModalities,
-      eligibilityCriteria: mockProgram.eligibilityCriteria,
-      approvalRequired: mockProgram.approvalRequired,
-      programStatus: mockProgram.programStatus,
-    }, expect.anything());
+  describe('updateProgram', () => {
+    it('is linked to the correct url', async () => {
+      await service.updateProgram(new Program(mockProgram));
+      expect(http.patch).toHaveBeenCalledWith(`/event/programs/${mockProgram.programId}/edit`, expect.anything(), { globalHandler: false });
+    });
+
+    it('converts program entity to the correct payload', async () => {
+      await service.updateProgram(new Program(mockProgram));
+      expect(http.patch).toHaveBeenCalledWith(`/event/programs/${mockProgram.programId}/edit`, {
+        name: mockProgram.programName,
+        description: mockProgram.programDescription,
+        paymentModalities: mockProgram.paymentModalities,
+        eligibilityCriteria: mockProgram.eligibilityCriteria,
+        approvalRequired: mockProgram.approvalRequired,
+        programStatus: mockProgram.programStatus,
+      }, expect.anything());
+    });
   });
 
-  test('searchPrograms is linked to the correct url', async () => {
-    await service.searchPrograms({});
-    expect(http.get).toHaveBeenCalledWith('/search/program-projections', {
-      isOData: true,
-      params: {},
+  describe('searchPrograms', () => {
+    it('is linked to the correct url', async () => {
+      await service.searchPrograms({});
+      expect(http.get).toHaveBeenCalledWith('/search/program-projections', {
+        isOData: true,
+        params: {},
+      });
     });
   });
 });

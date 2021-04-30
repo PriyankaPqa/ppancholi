@@ -1,5 +1,5 @@
 import {
-  ICreateProgramRequest, IProgram, IProgramData, IProgramSearchData,
+  ICreateProgramRequest, IProgram, IProgramData, IProgramSearchData, IUpdateProgramRequest,
 } from '@/entities/program';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IHttpClient } from '../httpClient';
@@ -14,6 +14,12 @@ export class ProgramsService implements IProgramsService {
     return this.http.post('/event/programs', payload, { globalHandler: false });
   }
 
+  async updateProgram(program: IProgram): Promise<IProgramData> {
+    program.fillEmptyMultilingualAttributes();
+    const payload = this.programToUpdateProgramRequestPayload(program);
+    return this.http.patch(`/event/programs/${program.id}/edit`, payload, { globalHandler: false });
+  }
+
   async searchPrograms(params: IAzureSearchParams): Promise<IAzureSearchResult<IProgramSearchData>> {
     return this.http.get('/search/program-projections', { params, isOData: true });
   }
@@ -23,6 +29,19 @@ export class ProgramsService implements IProgramsService {
       name: program.name,
       description: program.description,
       eventId: program.eventId,
+      paymentModalities: program.paymentModalities,
+      eligibilityCriteria: program.eligibilityCriteria,
+      approvalRequired: program.approvalRequired,
+      programStatus: program.programStatus,
+    };
+
+    return payload;
+  }
+
+  private programToUpdateProgramRequestPayload(program: IProgram): IUpdateProgramRequest {
+    const payload: IUpdateProgramRequest = {
+      name: program.name,
+      description: program.description,
       paymentModalities: program.paymentModalities,
       eligibilityCriteria: program.eligibilityCriteria,
       approvalRequired: program.approvalRequired,

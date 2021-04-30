@@ -7,6 +7,7 @@ export const mockStorageProgram = (): IStorageMock => ({
 
   actions: {
     createProgram: jest.fn(),
+    updateProgram: jest.fn(),
     searchPrograms: jest.fn(),
     fetchProgram: jest.fn(),
   },

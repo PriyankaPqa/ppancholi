@@ -41,6 +41,15 @@ export interface ICreateProgramRequest {
   programStatus: EProgramStatus;
 }
 
+export interface IUpdateProgramRequest {
+  name: IMultilingual;
+  description: IMultilingual;
+  paymentModalities: EPaymentModalities[];
+  eligibilityCriteria: IEligibilityCriteria;
+  approvalRequired: boolean;
+  programStatus: EProgramStatus;
+}
+
 export interface IProgramData {
   id: uuid;
   created: Date | string;

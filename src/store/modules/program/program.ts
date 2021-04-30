@@ -10,6 +10,7 @@ import { mapProgramDataToSearchData } from './programUtils';
 
 const getDefaultState = (): IState => ({
   programs: [],
+  programLoading: false,
 });
 
 const moduleState: IState = getDefaultState();
@@ -38,6 +39,10 @@ const mutations = {
       state.programs.push(payload);
     }
   },
+
+  setProgramLoading(state: IState, payload: boolean) {
+    state.programLoading = payload;
+  },
 };
 
 const actions = {
@@ -53,17 +58,32 @@ const actions = {
     return null;
   },
 
+  async updateProgram(this: Store<IState>, context: ActionContext<IState, IRootState>, payload: IProgram): Promise<IProgram> {
+    const data = await this.$services.programs.updateProgram(payload);
+
+    if (data) {
+      const program = mapProgramDataToSearchData(data);
+      context.commit('addOrUpdateProgram', program);
+      return new Program(program);
+    }
+
+    return null;
+  },
+
   async searchPrograms(
     this: Store<IState>,
     context: ActionContext<IState, IState>,
     params: IAzureSearchParams,
   ): Promise<IAzureSearchResult<IProgram>> {
+    context.commit('setProgramLoading', true);
     const res = await this.$services.programs.searchPrograms(params);
     const data = res?.value;
 
     data.forEach((e: IProgramSearchData) => context.commit('addOrUpdateProgram', e));
 
     const value = data.map((e: IProgramSearchData) => new Program(e));
+
+    context.commit('setProgramLoading', false);
 
     return {
       ...res,

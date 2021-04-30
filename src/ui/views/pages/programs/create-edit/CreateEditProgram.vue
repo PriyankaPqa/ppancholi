@@ -56,7 +56,7 @@ export default Vue.extend({
 
   data() {
     return {
-      programLoading: false,
+      programLoading: true,
       loading: false,
       error: false,
       program: new Program() as IProgram,
@@ -83,25 +83,28 @@ export default Vue.extend({
     },
   },
 
-  created() {
-    this.program = new Program();
-    this.program.eventId = this.$route.params.id;
+  async created() {
+    this.programLoading = true;
+
+    if (this.isEditMode) {
+      try {
+        const res = await this.$storage.program.actions.fetchProgram(this.programId);
+        this.program = res;
+      } finally {
+        this.programLoading = false;
+      }
+    } else {
+      this.program = new Program();
+      this.program.eventId = this.id;
+      this.programLoading = false;
+    }
   },
 
   methods: {
     back(): void {
-      if (this.isEditMode) {
-        this.$router.replace({
-          name: routes.programs.details.name,
-          params: {
-            programId: this.programId,
-          },
-        });
-      } else {
-        this.$router.replace({
-          name: routes.programs.home.name,
-        });
-      }
+      this.$router.replace({
+        name: routes.programs.home.name,
+      });
     },
 
     handleSubmitError(errors: IError[]) {
@@ -123,9 +126,9 @@ export default Vue.extend({
           let programId;
 
           if (this.isEditMode) {
-            // await this.$storage.event.actions.updateEvent(this.event);
-            // eventId = this.event.id;
-            // this.$toasted.global.success(this.$t('event_edit.success'));
+            await this.$storage.program.actions.updateProgram(this.program);
+            programId = this.program.id;
+            this.$toasted.global.success(this.$t('event.programManagement.updated'));
           } else {
             const newProgram = await this.$storage.program.actions.createProgram(this.program);
             programId = newProgram.id;

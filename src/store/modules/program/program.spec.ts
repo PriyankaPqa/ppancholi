@@ -88,6 +88,26 @@ describe('>>> Program Module', () => {
       });
     });
 
+    describe('updateProgram', () => {
+      it('calls the updateProgram service and returns the updated Program entity', async () => {
+        const store = mockStore();
+
+        const program = new Program(mockPrograms[0]);
+
+        expect(store.$services.programs.updateProgram).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('program/updateProgram', program);
+
+        expect(store.$services.programs.updateProgram).toHaveBeenCalledTimes(1);
+
+        expect(res).toEqual(program);
+
+        expect(store.state.program.programs.length).toBe(1);
+
+        expect(store.state.program.programs[0]).toEqual(mockPrograms[0]);
+      });
+    });
+
     describe('searchPrograms', () => {
       it('calls the searchPrograms service and caches the api results', async () => {
         const store = mockStore();

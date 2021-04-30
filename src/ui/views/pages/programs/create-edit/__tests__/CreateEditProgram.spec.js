@@ -15,6 +15,7 @@ describe('CreateEditProgram', () => {
     mockProgram = new Program(mockProgramsSearchData()[0]);
     actions = {
       createProgram: jest.fn(() => mockProgram),
+      updateProgram: jest.fn(() => mockProgram),
     };
 
     wrapper = shallowMount(Component, {
@@ -42,37 +43,10 @@ describe('CreateEditProgram', () => {
 
   describe('Methods', () => {
     describe('back', () => {
-      it('returns to the programs home page if in create mode', () => {
+      it('returns to the programs home page', () => {
         wrapper.vm.back();
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
           name: routes.programs.home.name,
-        });
-      });
-
-      it('returns to the program details page if in edit mode', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: 'EVENT_ID',
-            programId: 'PROGRAM_ID',
-          },
-          mocks: {
-            $route: {
-              name: routes.programs.edit.name,
-              params: {
-                id: 'EVENT_ID',
-                programId: 'PROGRAM_ID',
-              },
-            },
-          },
-        });
-
-        wrapper.vm.back();
-        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-          name: routes.programs.details.name,
-          params: {
-            programId: 'PROGRAM_ID',
-          },
         });
       });
     });
@@ -83,7 +57,7 @@ describe('CreateEditProgram', () => {
         expect(wrapper.vm.isNameUnique).toBeFalsy();
       });
 
-      it(' opens an error toast in case of a different error', async () => {
+      it('opens an error toast in case of a different error', async () => {
         jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
         await wrapper.vm.handleSubmitError([{ code: 'foo' }]);
 
@@ -96,10 +70,38 @@ describe('CreateEditProgram', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         await wrapper.vm.submit();
         expect(actions.createProgram).toHaveBeenCalledTimes(0);
+      });
 
+      it('calls createProgram if isEditMode is false', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(actions.createProgram).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls updateProgram if isEditMode is true', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'EVENT_ID',
+            programId: 'PROGRAM_ID',
+          },
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+          store: {
+            modules: {
+              program: {
+                actions,
+              },
+            },
+          },
+        });
+
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
+        expect(actions.updateProgram).toHaveBeenCalledTimes(1);
       });
 
       test('after submitting, the user is redirected to the event details page', async () => {
@@ -119,6 +121,32 @@ describe('CreateEditProgram', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.submit();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.programManagement.created');
+      });
+
+      test('after updating an event a toast notification is shown', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'EVENT_ID',
+            programId: 'PROGRAM_ID',
+          },
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+          store: {
+            modules: {
+              program: {
+                actions,
+              },
+            },
+          },
+        });
+
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.submit();
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('event.programManagement.updated');
       });
     });
   });

@@ -45,8 +45,8 @@ export const mockEventsData = (): IEventData[] => [
     },
     schedule: {
       status: EEventStatus.OnHold,
-      scheduledOpenDate: null,
-      scheduledCloseDate: null,
+      scheduledOpenDate: '2021-03-01T00:00:00.000Z',
+      scheduledCloseDate: '2021-05-15T15:00:00.000Z',
       openDate: '2021-03-31T15:23:00.755Z',
       closeDate: '2021-03-31T15:23:09.367Z',
       updateReason: null,

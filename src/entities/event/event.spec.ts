@@ -288,8 +288,8 @@ describe('>>> Event', () => {
       const event = new Event(mockEventData);
       expect(event.schedule).toEqual({
         status: EEventStatus.OnHold,
-        scheduledOpenDate: null,
-        scheduledCloseDate: null,
+        scheduledOpenDate: new Date('2021-03-01T00:00:00.000Z'),
+        scheduledCloseDate: new Date('2021-05-15T15:00:00.000Z'),
         openDate: new Date('2021-03-31T15:23:00.755Z'),
         closeDate: new Date('2021-03-31T15:23:09.367Z'),
         updateReason: null,

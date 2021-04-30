@@ -8,6 +8,7 @@ export interface IStorage {
 
   actions: {
     createProgram(program: IProgram): Promise<IProgram>;
+    updateProgram(program: IProgram): Promise<IProgram>;
     searchPrograms(params: IAzureSearchParams): Promise<IAzureSearchResult<IProgram>>;
     fetchProgram(id: uuid): Promise<IProgram>;
   }
@@ -20,6 +21,7 @@ export interface IStorageMock {
 
   actions: {
     createProgram: jest.Mock<void>;
+    updateProgram: jest.Mock<void>;
     searchPrograms: jest.Mock<void>;
     fetchProgram: jest.Mock<void>;
   },
