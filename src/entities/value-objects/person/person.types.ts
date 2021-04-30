@@ -1,4 +1,4 @@
-import { ECanadaProvinces, IOptionItemData, IEntity } from '../../../types';
+import { ECanadaProvinces, IOptionItemData } from '../../../types';
 import { ITemporaryAddress } from '../temporary-address/temporaryAddress.types';
 
 export interface IBirthDate {
@@ -49,8 +49,9 @@ export interface IPersonData {
   temporaryAddress: ITemporaryAddress;
 }
 
-export interface IPerson extends IPersonData, IEntity {
-  validateIdentity(errors: Array<string>, skipAgeRestriction: boolean): void;
+export interface IPerson extends IPersonData {
+  validate(skipAgeRestriction?: boolean): string[];
+  validateIdentity(skipAgeRestriction: boolean): string[];
   setIdentity(data: IPersonData): void;
   setIndigenousIdentity(data: IPersonData): void;
 }

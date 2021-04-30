@@ -1,4 +1,3 @@
-import { IEntity } from '../../types';
 import { IPersonData, IPerson } from '../value-objects/person';
 import { IContactInformation, IContactInformationData } from '../value-objects/contact-information/contactInformation.types';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
@@ -10,7 +9,7 @@ export interface IBeneficiaryData {
   householdMembers: IPersonData[];
 }
 
-export interface IBeneficiary extends IEntity {
+export interface IBeneficiary {
   person: IPerson;
   contactInformation: IContactInformation;
   homeAddress: IAddress;
@@ -19,9 +18,9 @@ export interface IBeneficiary extends IEntity {
   addHouseholdMember(newPerson: IPerson, sameAddress: boolean): void;
   removeHouseholdMember(index: number): void;
   editHouseholdMember(newPerson: IPerson, index: number, sameAddress: boolean): void;
-  validateHouseholdMembers(): void;
-  validateContactInformationAndIdentity(skipAgeRestriction: boolean): string[];
-  booleanContactInformationAndIdentityIsValid(): boolean;
-  booleanAddressesIsValid(noFixedHome: boolean): boolean;
-  booleanHouseholdMembersIsValid(): boolean;
+  validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): string[];
+  validateAddresses(noFixedHome: boolean): string[];
+  validateHouseholdMembers(): string[];
+  // eslint-disable-next-line
+  validate({ noFixedHome, skipAgeRestriction, skipEmailPhoneRules }: {noFixedHome: boolean; skipAgeRestriction: boolean; skipEmailPhoneRules: boolean}): string[];
 }

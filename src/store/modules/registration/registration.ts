@@ -46,7 +46,7 @@ const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
 
-const getters = (i18n: VueI18n) => ({
+const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean) => ({
 
   event: (state: IState) => new Event(state.event),
 
@@ -116,6 +116,7 @@ const getters = (i18n: VueI18n) => ({
       }
       let isValid: boolean;
       let currentIndex;
+      let errors: string[];
       const beneficiary = getters.beneficiary as unknown as IBeneficiary;
       // For each step between where we are and where we're jumping to
       for (currentIndex = state.currentTabIndex; currentIndex < targetIndex; currentIndex += 1) {
@@ -129,13 +130,16 @@ const getters = (i18n: VueI18n) => ({
             isValid = state.isPrivacyAgreed;
             break;
           case 'PersonalInformation':
-            isValid = beneficiary.booleanContactInformationAndIdentityIsValid();
+            errors = beneficiary.validatePersonalInformation(skipAgeRestriction, skipEmailPhoneRules);
+            isValid = errors.length === 0;
             break;
           case 'Addresses':
-            isValid = beneficiary.booleanAddressesIsValid(getters.noFixedHome as unknown as boolean);
+            errors = beneficiary.validateAddresses(getters.noFixedHome as unknown as boolean);
+            isValid = errors.length === 0;
             break;
           case 'HouseholdMembers':
-            isValid = beneficiary.booleanHouseholdMembersIsValid();
+            errors = beneficiary.validateHouseholdMembers();
+            isValid = errors.length === 0;
             break;
           case 'ReviewRegistration':
           case 'ConfirmRegistration':
@@ -303,10 +307,12 @@ const actions = {
   },
 };
 
-export const makeRegistrationModule = (i18n: VueI18n, tabs: IRegistrationMenuItem[]): Module<IState, IRootState> => ({
+export const makeRegistrationModule = ({
+  i18n, tabs, skipAgeRestriction, skipEmailPhoneRules,
+}: {i18n: VueI18n; tabs: IRegistrationMenuItem[]; skipAgeRestriction: boolean; skipEmailPhoneRules: boolean}): Module<IState, IRootState> => ({
   namespaced: true,
   state: moduleState(tabs) as IState,
-  getters: getters(i18n),
+  getters: getters(i18n, skipAgeRestriction, skipEmailPhoneRules),
   mutations,
   actions: (actions as unknown) as ActionTree<IState, IRootState>,
 });

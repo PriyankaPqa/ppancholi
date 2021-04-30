@@ -25,6 +25,7 @@ export const AddressForm: VueConstructor<Vue>;
 export const Addresses: VueConstructor<Vue>;
 export const HouseholdMembers: VueConstructor<Vue>;
 export const HouseholdMemberForm: VueConstructor<Vue>;
+export const PersonalInformation: VueConstructor<Vue>;
 
 /**
  * Other

@@ -24,23 +24,11 @@ describe('ContactInformationForm.vue', () => {
     });
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('Computed', () => {
-    describe('hasHomePhoneAndEmail', () => {
-      it('returns true if either email or home phone number is provided', async () => {
-        wrapper.vm.$set(wrapper.vm.formCopy, 'email', '');
-
-        wrapper.vm.$set(wrapper.vm.formCopy, 'homePhone', {
-          countryISO2: 'CA',
-          number: 123,
-          e164Number: 123,
-        });
-
-        expect(wrapper.vm.hasHomePhoneAndEmail).toBeTruthy();
-        wrapper.vm.$set(wrapper.vm.formCopy, 'homePhone', null);
-        expect(wrapper.vm.hasHomePhoneAndEmail).toBeFalsy();
-      });
-    });
-
     describe('preferredLanguagesItems', () => {
       it('returns the proper data', async () => {
         expect(wrapper.vm.preferredLanguagesItems).toEqual(mockPreferredLanguages());
@@ -73,22 +61,15 @@ describe('ContactInformationForm.vue', () => {
       });
 
       test('homePhone', () => {
-        expect(wrapper.vm.rules.homePhone).toEqual({
-          hasPhoneOrEmail: { hasPhoneOrEmail: wrapper.vm.hasHomePhoneAndEmail },
-          phone: true,
-        });
+        expect(wrapper.vm.rules.homePhone).toEqual(wrapper.vm.phoneRule);
       });
 
       test('mobilePhone', () => {
-        expect(wrapper.vm.rules.mobilePhone).toEqual({
-          phone: true,
-        });
+        expect(wrapper.vm.rules.mobilePhone).toEqual(wrapper.vm.phoneRule);
       });
 
       test('otherPhone', () => {
-        expect(wrapper.vm.rules.otherPhone).toEqual({
-          phone: true,
-        });
+        expect(wrapper.vm.rules.otherPhone).toEqual(wrapper.vm.phoneRule);
       });
 
       test('otherPhoneExtension', () => {
@@ -99,9 +80,127 @@ describe('ContactInformationForm.vue', () => {
 
       test('email', () => {
         expect(wrapper.vm.rules.email).toEqual({
-          hasPhoneOrEmail: { hasPhoneOrEmail: wrapper.vm.hasHomePhoneAndEmail },
+          required: wrapper.vm.emailRequired,
           email: true,
           max: MAX_LENGTH_MD,
+        });
+      });
+    });
+
+    describe('emailLabel', () => {
+      it('should return proper string', () => {
+        const expected = `${wrapper.vm.$t('registration.personal_info.emailAddress')}${wrapper.vm.hasAnyPhone ? '' : '*'}`;
+        expect(wrapper.vm.emailLabel).toEqual(expected);
+      });
+    });
+
+    describe('homePhoneLabel', () => {
+      it('should return proper string', () => {
+        const expected = `${wrapper.vm.$t('registration.personal_info.homePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
+        expect(wrapper.vm.homePhoneLabel).toEqual(expected);
+      });
+    });
+
+    describe('mobilePhoneLabel', () => {
+      it('should return proper string', () => {
+        const expected = `${wrapper.vm.$t('registration.personal_info.mobilePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
+        expect(wrapper.vm.mobilePhoneLabel).toEqual(expected);
+      });
+    });
+
+    describe('otherPhoneLabel', () => {
+      it('should return proper string', () => {
+        const expected = `${wrapper.vm.$t('registration.personal_info.alternatePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
+        expect(wrapper.vm.otherPhoneLabel).toEqual(expected);
+      });
+    });
+
+    describe('hasAnyPhone', () => {
+      it('should return true if homePhone is not empty', () => {
+        wrapper.vm.formCopy.homePhone.number = '12345';
+        expect(wrapper.vm.hasAnyPhone).toBeTruthy();
+      });
+
+      it('should return true if mobilePhone is not empty', () => {
+        wrapper.vm.formCopy.mobilePhone.number = '12345';
+        expect(wrapper.vm.hasAnyPhone).toBeTruthy();
+      });
+
+      it('should return true if otherPhone is not empty', () => {
+        wrapper.vm.formCopy.otherPhone.number = '12345';
+        expect(wrapper.vm.hasAnyPhone).toBeTruthy();
+      });
+    });
+
+    describe('phoneRequired', () => {
+      it('should return true if no phone and no email has been inputted', async () => {
+        await wrapper.setProps({
+          skipPhoneEmailRules: false,
+        });
+        wrapper.vm.formCopy.email = '';
+        wrapper.vm.formCopy.mobilePhone.number = '';
+        wrapper.vm.formCopy.homePhone.number = '';
+        wrapper.vm.formCopy.otherPhone.number = '';
+
+        expect(wrapper.vm.phoneRequired).toBeTruthy();
+      });
+
+      it('should return false if a phone has been inputted', async () => {
+        await wrapper.setProps({
+          skipPhoneEmailRules: false,
+        });
+        wrapper.vm.formCopy.mobilePhone.number = '12345';
+        wrapper.vm.formCopy.email = '';
+        expect(wrapper.vm.phoneRequired).toBeFalsy();
+      });
+
+      it('should return false if a email has been inputted', async () => {
+        await wrapper.setProps({
+          skipPhoneEmailRules: false,
+        });
+        wrapper.vm.formCopy.email = 'test@test.ca';
+        expect(wrapper.vm.phoneRequired).toBeFalsy();
+      });
+
+      it('should return false if skipPhoneEmailRules is true', async () => {
+        await wrapper.setProps({
+          skipPhoneEmailRules: true,
+        });
+        wrapper.vm.formCopy.email = 'test@test.ca';
+        expect(wrapper.vm.phoneRequired).toBeFalsy();
+      });
+    });
+
+    describe('emailRequired', () => {
+      it('should return false if phoneEmailRules is disabled', () => {
+        expect(wrapper.vm.emailRequired).toBeFalsy();
+      });
+
+      it('should return result of !hasAnyPhone if skipPhoneEmailRules is false', async () => {
+        await wrapper.setProps({
+          skipPhoneEmailRules: false,
+        });
+        expect(wrapper.vm.emailRequired).toEqual(!wrapper.vm.hasAnyPhone);
+      });
+    });
+
+    describe('phoneRule', () => {
+      it('should correct rule if skipPhoneEmailRules is false', async () => {
+        await wrapper.setProps({
+          skipPhoneEmailRules: false,
+        });
+        expect(wrapper.vm.phoneRule).toEqual({
+          requiredPhone: { isMissing: wrapper.vm.phoneRequired },
+          phone: true,
+        });
+      });
+
+      it('should correct rule if skipPhoneEmailRules is true', async () => {
+        await wrapper.setProps({
+          skipPhoneEmailRules: true,
+        });
+        expect(wrapper.vm.phoneRule).toEqual({
+          phone: true,
         });
       });
     });

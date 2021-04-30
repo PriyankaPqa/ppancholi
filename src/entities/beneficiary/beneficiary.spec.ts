@@ -87,28 +87,28 @@ describe('>>> Beneficiary', () => {
       it('should call validate method from Person', () => {
         const b = new Beneficiary();
         jest.spyOn(b.person, 'validate').mockImplementation(() => []);
-        b.validate();
+        b.validate({ noFixedHome: false, skipAgeRestriction: false, skipEmailPhoneRules: false });
         expect(b.person.validate).toHaveBeenCalledTimes(1);
       });
 
       it('should call validate method from contactInformation', () => {
         const b = new Beneficiary();
         jest.spyOn(b.contactInformation, 'validate').mockImplementation(() => []);
-        b.validate();
+        b.validate({ noFixedHome: false, skipAgeRestriction: false, skipEmailPhoneRules: false });
         expect(b.contactInformation.validate).toHaveBeenCalledTimes(1);
       });
 
       it('should call validate method from homeAddress', () => {
         const b = new Beneficiary();
         jest.spyOn(b.homeAddress, 'validate').mockImplementation(() => []);
-        b.validate();
+        b.validate({ noFixedHome: false, skipAgeRestriction: false, skipEmailPhoneRules: false });
         expect(b.homeAddress.validate).toHaveBeenCalledTimes(1);
       });
 
       it('should call validateHouseholdMembers', () => {
         const b = new Beneficiary();
         jest.spyOn(b, 'validateHouseholdMembers').mockImplementation(() => []);
-        b.validate();
+        b.validate({ noFixedHome: false, skipAgeRestriction: false, skipEmailPhoneRules: false });
         expect(b.validateHouseholdMembers).toHaveBeenCalledTimes(1);
       });
 
@@ -118,7 +118,7 @@ describe('>>> Beneficiary', () => {
         jest.spyOn(b.contactInformation, 'validate').mockImplementation(() => ['2']);
         jest.spyOn(b.homeAddress, 'validate').mockImplementation(() => ['3']);
         jest.spyOn(b, 'validateHouseholdMembers').mockImplementation(() => ['4']);
-        const res = b.validate();
+        const res = b.validate({ noFixedHome: false, skipAgeRestriction: false, skipEmailPhoneRules: false });
         expect(res).toEqual(['1', '2', '3', '4']);
       });
     });
@@ -173,58 +173,14 @@ describe('>>> Beneficiary', () => {
     describe('validateContactInformationAndIdentity', () => {
       it('should return true for valid Contact Information', () => {
         const beneficiary = mockBeneficiary();
-
-        expect(beneficiary.validateContactInformationAndIdentity(false).length).toEqual(0);
+        expect(beneficiary.validatePersonalInformation(false, false).length).toEqual(0);
       });
       it('should return false for invalid Contact Information', () => {
         const beneficiary = mockBeneficiary();
         beneficiary.contactInformation.email = null;
         beneficiary.contactInformation.homePhone = null;
 
-        expect(beneficiary.validateContactInformationAndIdentity(false)).not.toEqual(0);
-      });
-    });
-
-    describe('booleanContactInformationAndIdentityIsValid', () => {
-      it('should return true for valid Contact Information', () => {
-        const beneficiary = mockBeneficiary();
-
-        expect(beneficiary.booleanContactInformationAndIdentityIsValid()).toBeTruthy();
-      });
-      it('should return false for invalid Contact Information', () => {
-        const beneficiary = mockBeneficiary();
-        beneficiary.contactInformation.email = null;
-        beneficiary.contactInformation.homePhone = null;
-
-        expect(beneficiary.booleanContactInformationAndIdentityIsValid()).toBeFalsy();
-      });
-    });
-
-    describe('booleanAddressesIsValid', () => {
-      it('should return true for valid Addresses', () => {
-        const beneficiary = mockBeneficiary();
-
-        expect(beneficiary.booleanAddressesIsValid(false)).toBeTruthy();
-      });
-      it('should return false for invalid Addresses', () => {
-        const beneficiary = mockBeneficiary();
-        beneficiary.homeAddress.street = null;
-
-        expect(beneficiary.booleanAddressesIsValid(false)).toBeFalsy();
-      });
-    });
-
-    describe('booleanHouseholdMembersIsValid', () => {
-      it('should return true for valid HouseholdMembers', () => {
-        const beneficiary = mockBeneficiary();
-
-        expect(beneficiary.booleanHouseholdMembersIsValid()).toBeTruthy();
-      });
-      it('should return false for invalid HouseholdMembers', () => {
-        const beneficiary = mockBeneficiary();
-        beneficiary.householdMembers[0].firstName = null;
-
-        expect(beneficiary.booleanHouseholdMembersIsValid()).toBeFalsy();
+        expect(beneficiary.validatePersonalInformation(false, false)).not.toEqual(0);
       });
     });
   });

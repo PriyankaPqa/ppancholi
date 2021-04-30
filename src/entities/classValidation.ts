@@ -40,8 +40,11 @@ const regex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)
   if (!regex.test(value)) errors.push(errorMsg);
 };
 
-export const hasPhoneOrEmail = (homePhone: IPhoneNumber, email: string, errorMsg: string, errors: string[]) => {
-  const valid = homePhone?.number || email;
+export const hasAtLeastAPhoneIfNoEmail = ({
+  homePhone, mobilePhone, otherPhone, email, errorMsg, errors,
+}: {homePhone: IPhoneNumber; mobilePhone: IPhoneNumber; otherPhone: IPhoneNumber; email: string; errorMsg: string; errors: string[]}) => {
+  const anyPhone = !!(homePhone?.number || mobilePhone?.number || otherPhone?.number);
+  const valid = anyPhone || email !== '';
   if (!valid) errors.push(errorMsg);
 };
 

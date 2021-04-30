@@ -108,9 +108,9 @@ describe('>>> Registration Module', () => {
     describe('findEffectiveJumpIndex', () => {
       beforeEach(() => {
         store.getters.beneficiary = mockBeneficiary();
-        store.getters['registration/beneficiary'].booleanContactInformationAndIdentityIsValid = jest.fn(() => false);
-        store.getters['registration/beneficiary'].booleanAddressesIsValid = jest.fn(() => false);
-        store.getters['registration/beneficiary'].booleanHouseholdMembersIsValid = jest.fn(() => false);
+        store.getters['registration/beneficiary'].validatePersonalInformation = jest.fn(() => ['error']);
+        store.getters['registration/beneficiary'].validateAddresses = jest.fn(() => ['error']);
+        store.getters['registration/beneficiary'].validateHouseholdMembers = jest.fn(() => ['error']);
       });
 
       it('returns the target index when moving backwards', async () => {
@@ -141,7 +141,7 @@ describe('>>> Registration Module', () => {
         store.state.registration.isPrivacyAgreed = true;
         store.getters.beneficiary.noFixedHome = false;
 
-        store.getters['registration/beneficiary'].booleanContactInformationAndIdentityIsValid = jest.fn(() => true);
+        store.getters['registration/beneficiary'].validatePersonalInformation = jest.fn(() => []);
 
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(2);
       });
@@ -150,8 +150,8 @@ describe('>>> Registration Module', () => {
         store.state.registration.isPrivacyAgreed = true;
         store.getters.beneficiary.noFixedHome = false;
 
-        store.getters['registration/beneficiary'].booleanContactInformationAndIdentityIsValid = jest.fn(() => true);
-        store.getters['registration/beneficiary'].booleanAddressesIsValid = jest.fn(() => true);
+        store.getters['registration/beneficiary'].validatePersonalInformation = jest.fn(() => []);
+        store.getters['registration/beneficiary'].validateAddresses = jest.fn(() => []);
 
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(3);
       });
@@ -160,9 +160,9 @@ describe('>>> Registration Module', () => {
         store.state.registration.isPrivacyAgreed = true;
         store.getters.beneficiary.noFixedHome = false;
 
-        store.getters['registration/beneficiary'].booleanContactInformationAndIdentityIsValid = jest.fn(() => true);
-        store.getters['registration/beneficiary'].booleanAddressesIsValid = jest.fn(() => true);
-        store.getters['registration/beneficiary'].booleanHouseholdMembersIsValid = jest.fn(() => true);
+        store.getters['registration/beneficiary'].validatePersonalInformation = jest.fn(() => []);
+        store.getters['registration/beneficiary'].validateAddresses = jest.fn(() => []);
+        store.getters['registration/beneficiary'].validateHouseholdMembers = jest.fn(() => []);
 
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(6);
       });

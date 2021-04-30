@@ -50,16 +50,12 @@ export class Beneficiary implements IBeneficiary {
     this.householdMembers = [];
   }
 
-  validateHouseholdMembers(): string[] {
-    const householdMembersErrors = this.householdMembers.map((h) => h.validate(true));
-    // We flatten the array
-    return [].concat(...householdMembersErrors);
-  }
+  // Validation used for each page of registration
 
-  validateContactInformationAndIdentity(skipAgeRestriction: boolean): string[] {
-    const result: string[] = this.contactInformation.validate();
-    this.person.validateIdentity(result, skipAgeRestriction);
-    return result;
+  validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): string[] {
+    const identityErrors = this.person.validateIdentity(skipAgeRestriction);
+    const contactInformationErrors = this.contactInformation.validate(skipEmailPhoneRules);
+    return [...identityErrors, ...contactInformationErrors];
   }
 
   validateAddresses(noFixedHome: boolean): string[] {
@@ -71,25 +67,17 @@ export class Beneficiary implements IBeneficiary {
     return homeAddressValidation.concat(this.person.temporaryAddress.validate());
   }
 
-  booleanContactInformationAndIdentityIsValid(): boolean {
-    const errorArray = this.validateContactInformationAndIdentity(false);
-    return !errorArray || errorArray.length === 0;
+  validateHouseholdMembers(): string[] {
+    const householdMembersErrors = this.householdMembers.map((h) => h.validate(true));
+    // We flatten the array
+    return [].concat(...householdMembersErrors);
   }
 
-  booleanAddressesIsValid(noFixedHome: boolean): boolean {
-    const errorArray = this.validateAddresses(noFixedHome);
-    return !errorArray || errorArray.length === 0;
-  }
-
-  booleanHouseholdMembersIsValid(): boolean {
-    const errorArray = this.validateHouseholdMembers();
-    return !errorArray || errorArray.length === 0;
-  }
-
-  validate(): string[] {
-    const personErrors = this.person.validate();
-    const contactInformationErrors = this.contactInformation.validate();
-    const homeAddressErrors = this.homeAddress.validate();
+  // eslint-disable-next-line
+  validate({ noFixedHome, skipAgeRestriction, skipEmailPhoneRules }: {noFixedHome: boolean; skipAgeRestriction: boolean; skipEmailPhoneRules: boolean}): string[] {
+    const personErrors = this.person.validate(skipAgeRestriction);
+    const contactInformationErrors = this.contactInformation.validate(skipEmailPhoneRules);
+    const homeAddressErrors = noFixedHome ? [''] : this.homeAddress.validate();
     const householdMembersErrors = this.validateHouseholdMembers();
 
     return [...personErrors, ...contactInformationErrors, ...homeAddressErrors, ...householdMembersErrors];

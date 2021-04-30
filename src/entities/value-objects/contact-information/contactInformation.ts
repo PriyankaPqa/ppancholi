@@ -9,7 +9,7 @@ import {
 } from './contactInformation.types';
 
 import {
-  required, maxLengthCheck, isPhone, isEmail, hasPhoneOrEmail,
+  required, maxLengthCheck, isPhone, isEmail, hasAtLeastAPhoneIfNoEmail,
 } from '../../classValidation';
 
 export class ContactInformation implements IContactInformation {
@@ -47,7 +47,7 @@ export class ContactInformation implements IContactInformation {
     }
   }
 
-  validate(): string[] {
+  validate(skipEmailPhoneRules: boolean): string[] {
     const errors: string[] = [];
 
     required(this.preferredLanguage, 'preferred language is required', errors);
@@ -64,7 +64,20 @@ export class ContactInformation implements IContactInformation {
     isEmail(this.email, 'email not valid', errors);
     maxLengthCheck(this.email, MAX_LENGTH_MD, 'email', errors);
 
-    hasPhoneOrEmail(this.homePhone, this.email, 'missing home phone or email', errors);
+    if (!skipEmailPhoneRules) {
+      hasAtLeastAPhoneIfNoEmail({
+        homePhone: this.homePhone,
+        mobilePhone: this.mobilePhone,
+        otherPhone: this.otherPhone,
+        email: this.email,
+        errorMsg: 'at least one phone is required if no email',
+        errors,
+      });
+
+      if (this.homePhone?.number === '' && this.mobilePhone?.number === '' && this.otherPhone?.number === '') {
+        required(this.email, 'email is required if no phone', errors);
+      }
+    }
 
     return errors;
   }

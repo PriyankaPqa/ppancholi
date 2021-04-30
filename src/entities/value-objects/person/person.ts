@@ -54,16 +54,15 @@ export class Person implements IPerson {
     }
 
     validate(skipAgeRestriction = false): string[] {
-      const errors: string[] = [];
-
-      this.validateIdentity(errors, skipAgeRestriction);
+      const errors = this.validateIdentity(skipAgeRestriction);
 
       const temporaryAddressErrors = this.validateTemporaryAddress();
 
       return [...errors, ...temporaryAddressErrors];
     }
 
-    validateIdentity(errors: Array<string>, skipAgeRestriction: boolean) {
+    validateIdentity(skipAgeRestriction: boolean): string[] {
+      const errors: string[] = [];
       required(this.firstName, 'first name is required', errors);
       maxLengthCheck(this.firstName, MAX_LENGTH_SM, 'first name', errors);
 
@@ -102,6 +101,7 @@ export class Person implements IPerson {
         required(this.indigenousCommunityOther, 'indigenousCommunityOther is required', errors);
         maxLengthCheck(this.indigenousCommunityOther, MAX_LENGTH_MD, 'indigenousCommunityOther', errors);
       }
+      return errors;
     }
 
     validateTemporaryAddress(): Array<string> {

@@ -1,4 +1,4 @@
-import { IEntity, IOptionItemData } from '../../../types';
+import { IOptionItemData } from '../../../types';
 
 /**
  * Enums
@@ -44,4 +44,6 @@ export interface IContactInformationData {
   primarySpokenLanguageOther: string;
 }
 
-export interface IContactInformation extends IContactInformationData, IEntity {}
+export interface IContactInformation extends IContactInformationData {
+  validate(skipEmailPhoneRules: boolean): string[];
+}

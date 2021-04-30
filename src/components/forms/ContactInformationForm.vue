@@ -55,7 +55,7 @@
         v-model="formCopy.mobilePhone"
         :rules="rules.mobilePhone"
         outlined
-        :label="$t('registration.personal_info.mobilePhoneNumber')"
+        :label="mobilePhoneLabel"
         :data-test="`${prefixDataTest}__mobilePhone`" />
     </v-col>
 
@@ -64,7 +64,7 @@
         v-model="formCopy.otherPhone"
         :rules="rules.otherPhone"
         outlined
-        :label="$t('registration.personal_info.alternatePhoneNumber')"
+        :label="otherPhoneLabel"
         :data-test="`${prefixDataTest}__otherPhone`" />
     </v-col>
 
@@ -119,6 +119,11 @@ export default Vue.extend({
       type: Array as () => IOptionItemData[],
       required: true,
     },
+
+    skipPhoneEmailRules: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -139,21 +144,14 @@ export default Vue.extend({
         primarySpokenLanguageOther: {
           max: MAX_LENGTH_MD,
         },
-        homePhone: {
-          hasPhoneOrEmail: { hasPhoneOrEmail: this.hasHomePhoneAndEmail },
-          phone: true,
-        },
-        mobilePhone: {
-          phone: true,
-        },
-        otherPhone: {
-          phone: true,
-        },
+        homePhone: this.phoneRule,
+        mobilePhone: this.phoneRule,
+        otherPhone: this.phoneRule,
         otherPhoneExtension: {
           max: MAX_LENGTH_MD,
         },
         email: {
-          hasPhoneOrEmail: { hasPhoneOrEmail: this.hasHomePhoneAndEmail },
+          required: this.emailRequired,
           email: true,
           max: MAX_LENGTH_MD,
         },
@@ -161,15 +159,49 @@ export default Vue.extend({
     },
 
     emailLabel(): string {
-      return `${this.$t('registration.personal_info.emailAddress')}${this.formCopy.homePhone?.number ? '' : '*'}`;
+      return `${this.$t('registration.personal_info.emailAddress')}${this.emailRequired ? '*' : ''}`;
     },
 
     homePhoneLabel(): string {
-      return `${this.$t('registration.personal_info.homePhoneNumber')}${this.formCopy.email ? '' : '*'}`;
+      return `${this.$t('registration.personal_info.homePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
     },
 
-    hasHomePhoneAndEmail(): boolean {
-      return !!(this.formCopy.homePhone?.number || this.formCopy.email);
+    mobilePhoneLabel(): string {
+      return `${this.$t('registration.personal_info.mobilePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
+    },
+
+    otherPhoneLabel(): string {
+      return `${this.$t('registration.personal_info.alternatePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
+    },
+
+    hasAnyPhone(): boolean {
+      return !!(this.formCopy.homePhone?.number || this.formCopy.mobilePhone?.number || this.formCopy.otherPhone?.number);
+    },
+
+    phoneRequired(): boolean {
+      if (this.skipPhoneEmailRules) {
+        return false;
+      }
+      return (!this.hasAnyPhone && !this.formCopy.email);
+    },
+
+    emailRequired(): boolean {
+      if (this.skipPhoneEmailRules) {
+        return false;
+      }
+      return !this.hasAnyPhone;
+    },
+
+    phoneRule(): Record<string, unknown> {
+      if (this.skipPhoneEmailRules) {
+        return {
+          phone: true,
+        };
+      }
+      return {
+        requiredPhone: { isMissing: this.phoneRequired },
+        phone: true,
+      };
     },
   },
 

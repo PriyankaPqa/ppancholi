@@ -1,22 +1,61 @@
-// Mixin used for Individual.vue and RegistrationIndividual.vue
-import { TranslateResult } from 'vue-i18n';
+<template>
+  <v-row no-gutters>
+    <identity-form
+      :form="person"
+      :gender-items="genderItems"
+      :min-age-restriction="minAgeRegistration"
+      @change="setIdentity($event)" />
 
+    <contact-information-form
+      :form="contactInformation"
+      :preferred-languages-items="preferredLanguagesItems"
+      :primary-spoken-languages-items="primarySpokenLanguagesItems"
+      :skip-phone-email-rules="skipPhoneEmailRules"
+      @change="setContactInformation($event)" />
+
+    <indigenous-identity-form
+      :form="person"
+      :canadian-provinces-items="canadianProvincesItems"
+      :indigenous-communities-items="indigenousCommunitiesItems"
+      :indigenous-types-items="indigenousTypesItems"
+      :loading="loadingIndigenousIdentities"
+      @change="setIndigenousIdentity($event)"
+      @province-change="onIndigenousProvinceChange($event)" />
+  </v-row>
+</template>
+
+<script lang="ts">
 import Vue from 'vue';
-import helpers from '@/ui/helpers'; // We use @ so it will point to helper from host app once used there
-import {
-  ECanadaProvinces,
-  IOptionItemData,
-} from '../../types';
-import { IBeneficiary, IContactInformation, IPerson } from '../../entities/beneficiary';
-
-declare module 'vue/types/vue' {
-  interface Vue {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    $storage: any;
-  }
-}
+import { TranslateResult } from 'vue-i18n';
+import helpers from '../../ui/helpers';
+import { ECanadaProvinces, IOptionItemData } from '../../types';
+import { IContactInformation } from '../../entities/value-objects/contact-information';
+import { IBeneficiary } from '../../entities/beneficiary';
+import { IPerson } from '../../entities/value-objects/person';
+import ContactInformationForm from '../forms/ContactInformationForm.vue';
+import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
+import IdentityForm from '../forms/IdentityForm.vue';
 
 export default Vue.extend({
+  name: 'PersonalInformation',
+
+  components: {
+    IndigenousIdentityForm,
+    IdentityForm,
+    ContactInformationForm,
+  },
+
+  props: {
+    minAgeRegistration: {
+      type: Number,
+      default: null,
+    },
+    skipPhoneEmailRules: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   computed: {
     person(): IPerson {
       return this.beneficiary.person;
@@ -78,3 +117,4 @@ export default Vue.extend({
     },
   },
 });
+</script>
