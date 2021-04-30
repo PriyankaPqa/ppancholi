@@ -31,13 +31,21 @@ describe('CaseFileActivity.vue', () => {
       });
     });
 
-    describe('add tag button', () => {
+    describe('tags component', () => {
       let element;
       beforeEach(() => {
-        element = wrapper.findDataTest('caseFile-add-tags-btn');
+        element = wrapper.findDataTest('caseFileActivity-tags');
       });
-      it('is renders', () => {
+      it('renders', () => {
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('passes the tags as props', () => {
+        expect(element.props('tags')).toEqual(mockCaseFile.tags);
+      });
+
+      it('passes the case file id as props', () => {
+        expect(element.props('caseFileId')).toEqual(mockCaseFile.id);
       });
     });
 

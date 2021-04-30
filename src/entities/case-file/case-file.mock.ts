@@ -51,6 +51,15 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
         },
       },
     },
+    tags: [{
+      id: 'mock-tag-id-1',
+      name: {
+        translation: {
+          en: 'Do not communicate',
+          fr: 'Ne pas contacter',
+        },
+      },
+    }],
     triage: 1,
     triageName: {
       translation: {
@@ -109,6 +118,7 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
         },
       },
     },
+    tags: [],
     triage: 0,
     triageName: {
       translation: {
@@ -140,6 +150,7 @@ export const mockCaseFilesData = (): ICaseFileData[] => [{
   created: '2021-01-01',
   duplicate: false,
   eventId: 'mock-event-id-1',
+  tags: [],
   triage: 0,
   eTag: 'mock-e-tag',
   tenantId: 'mock-tenant-id-1',

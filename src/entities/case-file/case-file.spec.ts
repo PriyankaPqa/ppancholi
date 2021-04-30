@@ -87,6 +87,19 @@ describe('>>> Case File', () => {
       });
     });
 
+    it('should instantiate tags', () => {
+      const caseFile = new CaseFile(mockCaseFileData);
+      expect(caseFile.tags).toEqual([{
+        id: 'mock-tag-id-1',
+        name: {
+          translation: {
+            en: 'Do not communicate',
+            fr: 'Ne pas contacter',
+          },
+        },
+      }]);
+    });
+
     it('should instantiate triage', () => {
       const caseFile = new CaseFile(mockCaseFileData);
       expect(caseFile.triage).toEqual(1);

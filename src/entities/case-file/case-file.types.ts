@@ -1,4 +1,4 @@
-import { IMultilingual } from '@/types';
+import { IMultilingual, IListOption } from '@/types';
 
 /**
  * Enums
@@ -59,6 +59,11 @@ export interface ICaseFileEvent {
   name: IMultilingual;
 }
 
+export interface ICaseFileTagInfos {
+  id: uuid;
+  name: IMultilingual;
+}
+
 /**
  * Interface of the case file entity (returned when a case file is updated)
  */
@@ -71,6 +76,7 @@ export interface ICaseFileData {
   created: Date | string;
   duplicate: boolean;
   eventId: uuid;
+  tags: IListOption[];
   triage: ETriageLevel;
   eTag: string;
   tenantId: uuid;
@@ -89,6 +95,7 @@ export interface ICaseFileSearchData {
   caseFileStatusName: IMultilingual;
   duplicate: boolean;
   event: ICaseFileEvent;
+  tags: ICaseFileTagInfos[];
   triage: ETriageLevel;
   triageName: IMultilingual;
   tenantId: uuid;
@@ -103,6 +110,7 @@ export interface ICaseFile {
   created: Date | string;
   event: ICaseFileEvent;
   isDuplicate: boolean;
+  tags: ICaseFileTagInfos[];
   triage: ETriageLevel;
   triageName: IMultilingual;
   tenantId: uuid;

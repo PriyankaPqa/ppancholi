@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.caseFileTags" has-other has-default />
+  <option-list title="system_management.lists.caseFileTags" />
 </template>
 
 <script lang="ts">

@@ -3,8 +3,10 @@ import {
 } from '@/entities/case-file';
 import { Store } from 'vuex';
 import { mockSearchParams } from '@/test/helpers';
-
 import { mockStore, IRootState } from '@/store';
+import { IListOption } from '@/types';
+
+jest.mock('@/store/modules/case-file/case-file-utils');
 
 describe('>>> Case File Module', () => {
   let store: Store<IRootState>;
@@ -120,7 +122,7 @@ describe('>>> Case File Module', () => {
     describe('fetchCaseFile', () => {
       it('calls the searchCaseFile service and returns the caseFile', async () => {
         const store = mockStore();
-        const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+        const caseFile = mockCaseFiles()[0];
 
         jest.spyOn(store.$services.caseFiles, 'searchCaseFiles').mockImplementation(() => mockSearchCaseFiles(0));
 
@@ -162,6 +164,41 @@ describe('>>> Case File Module', () => {
         await store.dispatch('caseFile/searchCaseFiles', params);
 
         expect(store.$services.caseFiles.searchCaseFiles).toHaveBeenCalledWith(params);
+      });
+    });
+
+    describe('setCaseFileTags', () => {
+      it('calls the setCaseFileTags service and returns the new case file entity', async () => {
+        store = mockStore({
+          modules: {
+            caseFile: {
+              state: {
+                caseFiles: mockCaseFiles(),
+                searchLoading: false,
+                getLoading: false,
+                caseFilesFetched: false,
+              },
+            },
+          },
+        });
+
+        const caseFile = mockCaseFiles()[0];
+        const { id } = caseFile;
+        const tags: IListOption[] = [{ optionItemId: 'foo', specifiedOther: null }];
+
+        expect(store.$services.caseFiles.setCaseFileTags).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('caseFile/setCaseFileTags', {
+          id,
+          tags,
+        });
+
+        expect(store.$services.caseFiles.setCaseFileTags).toHaveBeenCalledTimes(1);
+        expect(store.$services.caseFiles.setCaseFileTags).toHaveBeenCalledWith(id, tags);
+
+        expect(res).toEqual(caseFile);
+
+        expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
       });
     });
   });

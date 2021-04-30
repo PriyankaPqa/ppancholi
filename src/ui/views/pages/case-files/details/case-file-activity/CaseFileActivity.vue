@@ -4,19 +4,9 @@
     :title="$t('caseFile.caseFileActivity')"
     :show-help="true"
     :help-link="$t('zendesk.help_link.caseFileActivity')">
-    <template slot="top">
-      <v-row class="no-gutters">
-        <v-btn
-          class="fw-bold"
-          text
-          small
-          data-test="caseFile-add-tags-btn">
-          <v-icon small>
-            mdi-plus
-          </v-icon>
-          {{ $t('caseFile.tags.AddTag') }}
-        </v-btn>
-      </v-row>
+    <rc-page-loading v-if="loading" />
+    <template v-if="!loading" slot="top">
+      <case-file-tags data-test="caseFileActivity-tags" :case-file-id="caseFile.id" :tags="caseFile.tags || []" />
 
       <v-row class="ma-0 pa-0">
         <v-col cols="12" md="6" class="flex-row">
@@ -63,7 +53,7 @@
       </v-row>
     </template>
 
-    <template slot="default">
+    <template v-if="!loading" slot="default">
       <v-row class="ma-0 pa-0">
         <v-btn
           class="fw-bold"
@@ -82,15 +72,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { ICaseFile, ECaseFileStatus } from '@/entities/case-file';
+import CaseFileTags from './components/CaseFileTags.vue';
 
 export default Vue.extend({
   name: 'CaseFileActivity',
   components: {
+    RcPageLoading,
     RcPageContent,
     StatusSelect,
+    CaseFileTags,
   },
 
   data() {
@@ -117,18 +110,18 @@ export default Vue.extend({
 
   async created() {
     try {
+      this.loading = true;
       const { id } = this.$route.params;
       if (id) {
         await this.$storage.caseFile.actions.fetchCaseFile(id);
       }
     } catch {
       this.error = true;
+    } finally {
+      this.loading = false;
     }
   },
 
-  methods: {
-
-  },
 });
 
 </script>
