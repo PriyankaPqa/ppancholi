@@ -25,7 +25,7 @@
                   v-model="agreementType"
                   data-test="agreement-agreementType"
                   :label="`${$t('eventSummary.agreement.agreementType')}*`"
-                  :items="agreementTypes"
+                  :items="allAgreementTypes"
                   :item-text="(item) => $m(item.name)"
                   return-object
                   :rules="rules.agreementType"
@@ -115,7 +115,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
-import { IOptionItemData } from '@/entities/optionItem';
+import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
 
 export default Vue.extend({
   name: 'EventAgreementDialog',
@@ -162,6 +162,7 @@ export default Vue.extend({
       },
       agreement: null as IEventAgreementInfos,
       originalAgreement: null as IEventAgreementInfos,
+      initialInactiveAgreementType: null,
       agreementType: null,
       getStringDate: helpers.getStringDate,
       isNameUnique: true,
@@ -170,6 +171,17 @@ export default Vue.extend({
   },
 
   computed: {
+    allAgreementTypes(): IOptionItem[] {
+      if (this.initialInactiveAgreementType) {
+        return [
+          ...this.agreementTypes,
+          this.initialInactiveAgreementType,
+        ];
+      }
+
+      return this.agreementTypes;
+    },
+
     dayAfterStartDate(): string {
       if (!this.agreement.startDate) return null;
       return (moment(this.agreement.startDate).clone().add(1, 'days').format('YYYY-MM-DD'));
@@ -235,7 +247,7 @@ export default Vue.extend({
         this.agreement.endDate = agreement.endDate ? this.getStringDate(agreement.endDate) : null;
 
         if (agreement.agreementType.optionItemId) {
-          this.agreementType = this.agreementTypes.find((type) => type.id === agreement.agreementType.optionItemId);
+          this.initAgreementTypes(agreement);
         }
       } else {
         this.agreement = this.emptyAgreement;
@@ -300,6 +312,20 @@ export default Vue.extend({
 
     setAgreementType(type: IOptionItemData) {
       this.agreement.agreementType.optionItemId = type.id;
+    },
+
+    initAgreementTypes(agreement: IEventAgreementInfos) {
+      const activeAgreementType = this.agreementTypes.find((type) => type.id === agreement.agreementType.optionItemId);
+
+      if (activeAgreementType) {
+        this.agreementType = activeAgreementType;
+      } else {
+        this.agreementType = {
+          id: this.agreement.agreementType.optionItemId,
+          name: this.agreement.agreementTypeName,
+        };
+        this.initialInactiveAgreementType = { ...this.agreementType };
+      }
     },
 
     setLanguageMode(lang: string) {

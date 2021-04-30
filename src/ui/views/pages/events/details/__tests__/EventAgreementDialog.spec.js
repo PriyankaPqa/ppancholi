@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { Event, mockEventsSearchData } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
@@ -202,8 +203,26 @@ describe('EventAgreementDialog.vue', () => {
           event: mockEvent,
           isEditMode: false,
           id: '',
-          agreementTypes: [],
+          agreementTypes: mockOptionItemData(),
         },
+      });
+    });
+
+    describe('allAgreementTypes', () => {
+      it('returns the agreement types received in props if there is no initialInactiveAgreementType', () => {
+        expect(wrapper.vm.allAgreementTypes).toEqual(wrapper.vm.agreementTypes);
+      });
+
+      it('returns the agreement types in props and the initialInactiveAgreementType if there is an initialInactiveAgreementType', () => {
+        wrapper.vm.initialInactiveAgreementType = {
+          id: 'foo',
+          name: {
+            translation: {
+              en: 'bar',
+            },
+          },
+        };
+        expect(wrapper.vm.allAgreementTypes).toEqual([...wrapper.vm.agreementTypes, wrapper.vm.initialInactiveAgreementType]);
       });
     });
 
@@ -332,6 +351,44 @@ describe('EventAgreementDialog.vue', () => {
 
       it('sets the right agreement type', () => {
         expect(wrapper.vm.agreementType).toEqual(mockOptionItemData()[0]);
+      });
+
+      it('sets the right agreementType if agreement type is inactive', () => {
+        const altMockEvent = _cloneDeep(mockEvent);
+        altMockEvent.agreements[0].agreementType.optionItemId = 'mockId';
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: altMockEvent,
+            isEditMode: true,
+            id: mockEvent.agreements[0].name.translation.en,
+            agreementTypes: mockOptionItemData(),
+          },
+        });
+
+        expect(wrapper.vm.agreementType).toEqual({
+          id: 'mockId',
+          name: altMockEvent.agreements[0].agreementTypeName,
+        });
+      });
+
+      it('sets the initialInactiveAgreementType if initial agreement type is inactive', () => {
+        const altMockEvent = _cloneDeep(mockEvent);
+        altMockEvent.agreements[0].agreementType.optionItemId = 'mockId';
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: altMockEvent,
+            isEditMode: true,
+            id: mockEvent.agreements[0].name.translation.en,
+            agreementTypes: mockOptionItemData(),
+          },
+        });
+
+        expect(wrapper.vm.initialInactiveAgreementType).toEqual({
+          id: 'mockId',
+          name: altMockEvent.agreements[0].agreementTypeName,
+        });
       });
     });
 
