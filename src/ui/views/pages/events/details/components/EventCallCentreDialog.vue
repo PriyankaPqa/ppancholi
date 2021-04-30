@@ -38,15 +38,17 @@
                     </span>
                   </div>
 
-                  <v-switch
-                    v-model="isActive"
-                    data-test="callcentre-switch-status"
-                    class="pt-0 mt-0"
-                    height="48"
-                    hide-details
-                    color="white"
-                    flat
-                    @change="updateStatus($event)" />
+                  <validation-provider>
+                    <v-switch
+                      v-model="isActive"
+                      data-test="callcentre-switch-status"
+                      class="pt-0 mt-0"
+                      height="48"
+                      hide-details
+                      color="white"
+                      flat
+                      @change="updateStatus($event)" />
+                  </validation-provider>
                 </div>
               </v-col>
             </v-row>
