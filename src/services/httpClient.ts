@@ -4,12 +4,22 @@ import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import buildQuery from 'odata-query';
 import camelCaseKeys from 'camelcase-keys';
 import { v4 as uuidv4 } from 'uuid';
+import Vue from 'vue';
+import { i18n } from '@/ui/plugins/i18n';
 
 export interface IRestResponse<T> {
   success: boolean;
   status: number;
   statusText: string;
   data: T;
+}
+
+export interface IError {
+  status: string,
+  code: string,
+  title: string,
+  detail: string,
+  meta: Record<string, string>
 }
 
 export interface RequestConfig extends AxiosRequestConfig {
@@ -72,10 +82,20 @@ class HttpClient implements IHttpClient {
   }
 
   private responseErrorHandler(error: any) {
+    const { errors } = error.response.data;
+
     if (this.isGlobalHandlerEnabled(error.config)) {
-      // Add what you want
+      if (errors && Array.isArray(errors)) {
+        errors.forEach((error: IError) => {
+          Vue.toasted.global.error(i18n.t(`${error.code}`));
+        });
+      } else {
+        Vue.toasted.global.error(i18n.t('error.unexpected_error'));
+      }
+    } else {
+      return Promise.reject(errors || error);
     }
-    return Promise.reject(error?.response?.data || error);
+    return false;
   }
 
   private requestHandler(request: any) {

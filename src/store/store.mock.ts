@@ -20,7 +20,9 @@ Vue.use(Vuex);
 
 const mockConfig = {
   modules: {
-    registration: makeRegistrationModule(i18n, tabs),
+    registration: makeRegistrationModule({
+      i18n, tabs, skipAgeRestriction: false, skipEmailPhoneRules: false,
+    }),
     beneficiary: makeBeneficiaryModule(),
   },
 };

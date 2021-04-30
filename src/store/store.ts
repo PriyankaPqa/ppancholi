@@ -15,7 +15,9 @@ const store: StoreOptions<IRootState> = {
   },
   modules: {
     beneficiary: makeBeneficiaryModule(),
-    registration: makeRegistrationModule(i18n, tabs),
+    registration: makeRegistrationModule({
+      i18n, tabs, skipAgeRestriction: false, skipEmailPhoneRules: false,
+    }),
   },
 };
 

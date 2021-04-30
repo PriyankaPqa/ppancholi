@@ -211,6 +211,8 @@
     "registration.submit_registration.label": "Soumettre l'inscription",
     "registration.summary.age": "Âge",
     "registration.type.individual": "Inscription: Famille ou individu",
+    "registration.zendesk.householdmembers": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242173",
+    "validations.anyPhone": "Vous devez saisir au moins un téléphone",
     "validations.canadianPostalCode": "Ce champ doit être un code postal valide.",
     "validations.email": "Ce champ doit contenir une adresse courriel valide.",
     "validations.max": "Ce champ doit contenir au maximum {length} caractères.",
@@ -219,5 +221,7 @@
     "validations.postCode": "Ce champ doit être un code postal valide.",
     "validations.regex": "Veuillez saisir un format correct",
     "validations.required": "Ce champ est obligatoire.",
-    "warning.max_householdmembers_reached": "Vous ne pouvez pas avoir plus de {x} membres par ménage"
+    "warning.max_householdmembers_reached": "Vous ne pouvez pas avoir plus de {x} membres par ménage",
+    "zendesk.registration.addresses": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360053455714",
+    "zendesk.registration.personalInformation": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360056417213"
 }
