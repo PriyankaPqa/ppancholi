@@ -44,7 +44,8 @@
             :canadian-provinces-items="canadianProvincesItems"
             :temporary-address-type-items="temporaryAddressTypeItems"
             :api-key="apiKey"
-            :temporary-address="person.temporaryAddress" />
+            :temporary-address="person.temporaryAddress"
+            @change="$emit('temporary-address-change', $event)" />
         </v-col>
       </v-col>
     </v-row>

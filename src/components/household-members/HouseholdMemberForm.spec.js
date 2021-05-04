@@ -3,7 +3,7 @@ import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 import TempAddressForm from '../forms/TempAddressForm.vue';
 import helpers from '../../ui/helpers';
-import { ETemporaryAddressTypes } from '../../entities/value-objects/temporary-address/index';
+import { ETemporaryAddressTypes, mockCampGround } from '../../entities/value-objects/temporary-address/index';
 import {
   mockShelterLocations,
 } from '../../entities/event';
@@ -84,6 +84,15 @@ describe('HouseholdMemberForm.vue', () => {
         });
 
         expect(wrapper.findComponent(TempAddressForm).exists()).toBeTruthy();
+      });
+
+      it('should relay change event', async () => {
+        await wrapper.setProps({
+          sameAddress: false,
+        });
+        const component = wrapper.findComponent(TempAddressForm);
+        component.vm.$emit('change', mockCampGround());
+        expect(wrapper.emitted('temporary-address-change')[0]).toEqual([mockCampGround()]);
       });
     });
   });

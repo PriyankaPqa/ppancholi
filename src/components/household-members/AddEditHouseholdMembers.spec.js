@@ -102,6 +102,22 @@ describe('AddEditHouseholdMembers.vue', () => {
         expect(wrapper.vm.$storage.beneficiary.mutations.addHouseholdMember)
           .toHaveBeenCalledWith(wrapper.vm.person, wrapper.vm.sameAddress);
       });
+
+      it('should close the dialog', async () => {
+        jest.spyOn(wrapper.vm, 'close');
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.validate();
+        expect(wrapper.vm.close).toHaveBeenCalledTimes(1);
+      });
+
+      describe('cancel', () => {
+        it('should reset household member with the backup', async () => {
+          await wrapper.setProps({ index: 0 });
+          await wrapper.vm.cancel();
+          expect(wrapper.vm.$storage.beneficiary.mutations.editHouseholdMember)
+            .toHaveBeenCalledWith(wrapper.vm.backupPerson, 0, wrapper.vm.backupSameAddress);
+        });
+      });
     });
 
     describe('onIndigenousProvinceChange', () => {
@@ -161,55 +177,83 @@ describe('AddEditHouseholdMembers.vue', () => {
 
   describe('Lifecycle hook', () => {
     describe('mounted', () => {
-      it('should set sameAddress to true if household member and beneficiary has the same temporary address in edit mode', () => {
-        const person = mockHouseholdMember();
-        person.temporaryAddress = mockCampGround();
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            show: true,
-            person,
-            index: 0,
-            i18n,
-          },
-          data() {
-            return {
-              apiKey: 'google-key',
-            };
-          },
-          mocks: {
-            $storage: storage,
-          },
+      describe('Edit mode', () => {
+        it('should set sameAddress to true if household member and beneficiary has the same temporary address', () => {
+          const person = mockHouseholdMember();
+          person.temporaryAddress = mockCampGround();
+          wrapper = shallowMount(Component, {
+            localVue,
+            propsData: {
+              show: true,
+              person,
+              index: 0,
+              i18n,
+            },
+            data() {
+              return {
+                apiKey: 'google-key',
+              };
+            },
+            mocks: {
+              $storage: storage,
+            },
+          });
+          wrapper.vm.$options.mounted.forEach((hook) => {
+            hook.call(wrapper.vm);
+          });
+          expect(wrapper.vm.sameAddress).toBeTruthy();
         });
-        wrapper.vm.$options.mounted.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.sameAddress).toBeTruthy();
-      });
 
-      it('should set sameAddress to false if household member and beneficiary does not have the same temporary address in edit mode', () => {
-        const person = mockHouseholdMember();
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            show: true,
-            person,
-            index: 0,
-            i18n,
-          },
-          data() {
-            return {
-              apiKey: 'google-key',
-            };
-          },
-          mocks: {
-            $storage: storage,
-          },
+        it('should set sameAddress to false if household member and beneficiary does not have the same temporary address', () => {
+          const person = mockHouseholdMember();
+          wrapper = shallowMount(Component, {
+            localVue,
+            propsData: {
+              show: true,
+              person,
+              index: 0,
+              i18n,
+            },
+            data() {
+              return {
+                apiKey: 'google-key',
+              };
+            },
+            mocks: {
+              $storage: storage,
+            },
+          });
+          wrapper.vm.$options.mounted.forEach((hook) => {
+            hook.call(wrapper.vm);
+          });
+          expect(wrapper.vm.sameAddress).toBeFalsy();
         });
-        wrapper.vm.$options.mounted.forEach((hook) => {
-          hook.call(wrapper.vm);
+
+        it('should backup the person and sameAddress', () => {
+          const person = mockHouseholdMember();
+          wrapper = shallowMount(Component, {
+            localVue,
+            propsData: {
+              show: true,
+              person,
+              index: 0,
+              i18n,
+            },
+            data() {
+              return {
+                apiKey: 'google-key',
+              };
+            },
+            mocks: {
+              $storage: storage,
+            },
+          });
+          wrapper.vm.$options.mounted.forEach((hook) => {
+            hook.call(wrapper.vm);
+          });
+          expect(wrapper.vm.backupPerson).toEqual(person);
+          expect(wrapper.vm.backupSameAddress).toEqual(wrapper.vm.sameAddress);
         });
-        expect(wrapper.vm.sameAddress).toBeFalsy();
       });
     });
   });

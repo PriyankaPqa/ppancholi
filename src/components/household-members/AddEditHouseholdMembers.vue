@@ -9,8 +9,8 @@
       :persistent="true"
       fullscreen
       :submit-button-disabled="failed"
-      @cancel="close()"
-      @close="close()"
+      @cancel="cancel()"
+      @close="cancel()"
       @submit="validate()">
       <v-row justify="center" class="mt-12" no-gutters>
         <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
@@ -47,6 +47,7 @@ import {
 import helpers from '@/ui/helpers';
 import _isEqual from 'lodash/isEqual';
 
+import _cloneDeep from 'lodash/cloneDeep';
 import { localStorageKeys } from '../../constants/localStorage';
 import { ETemporaryAddressTypes, IShelterLocation } from '../../entities/value-objects/temporary-address/index';
 import { IPerson } from '../../entities/value-objects/person';
@@ -88,6 +89,8 @@ export default Vue.extend({
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VUE_APP_GOOGLE_API_KEY,
+      backupPerson: null,
+      backupSameAddress: null,
     };
   },
 
@@ -140,10 +143,19 @@ export default Vue.extend({
   mounted() {
     if (this.editMode) {
       this.sameAddress = _isEqual(this.person.temporaryAddress, this.$storage.beneficiary.getters.beneficiary().person.temporaryAddress);
+      this.backupSameAddress = this.sameAddress;
+      this.backupPerson = _cloneDeep(this.person);
     }
   },
 
   methods: {
+    cancel() {
+      if (this.editMode) {
+        this.$storage.beneficiary.mutations.editHouseholdMember(this.backupPerson, this.index, this.backupSameAddress);
+      }
+      this.close();
+    },
+
     close() {
       this.$emit('update:show', false);
     },
