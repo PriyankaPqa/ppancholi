@@ -28,7 +28,7 @@ import { IEventSearchData, EEventStatus } from '@/entities/event';
 
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
 import routes from '@/constants/routes';
-import { IShelterLocation } from '@crctech/registration-lib/src/entities/event/event.types';
+import { IShelterLocation } from '@crctech/registration-lib/src/entities/beneficiary';
 
 export default Vue.extend({
   name: 'RegistrationHome',
