@@ -1,34 +1,37 @@
 import { ECanadaProvinces } from '../../../types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../../constants/validations';
-import { IAddress, IGeoLocation, IAddressData } from './address.types';
+import { IAddress, IAddressData } from './address.types';
 import { required, maxLengthCheck, isValidCanadianPostalCode } from '../../classValidation';
 
 export class Address implements IAddress {
   country?: string;
 
-  street?: string;
+  streetAddress?: string;
 
   unitSuite?: string;
 
-  provinceTerritory?: ECanadaProvinces | string;
+  province?: ECanadaProvinces | string;
 
   city?: string;
 
   postalCode?: string;
 
-  geoLocation?: IGeoLocation;
+  latitude: number;
+
+  longitude: number;
 
   constructor(data?: IAddressData) {
     if (!data) {
       this.reset();
     } else {
       this.country = data.country;
-      this.street = data.street;
+      this.streetAddress = data.streetAddress;
       this.unitSuite = data.unitSuite;
-      this.provinceTerritory = data.provinceTerritory;
+      this.province = data.province;
       this.city = data.city;
       this.postalCode = data.postalCode;
-      this.geoLocation = data.geoLocation;
+      this.latitude = data.latitude;
+      this.longitude = data.longitude;
     }
   }
 
@@ -37,8 +40,8 @@ export class Address implements IAddress {
 
     required(this.country, 'country is required', errors);
 
-    required(this.street, 'street is required', errors);
-    maxLengthCheck(this.street, MAX_LENGTH_MD, 'street', errors);
+    required(this.streetAddress, 'street is required', errors);
+    maxLengthCheck(this.streetAddress, MAX_LENGTH_MD, 'street', errors);
 
     if (this.unitSuite) {
       maxLengthCheck(this.unitSuite, MAX_LENGTH_SM, 'unitSuite', errors);
@@ -47,9 +50,9 @@ export class Address implements IAddress {
     required(this.city, 'city is required', errors);
     maxLengthCheck(this.city, MAX_LENGTH_SM, 'city', errors);
 
-    required(this.provinceTerritory, 'provinceTerritory is required', errors);
+    required(this.province, 'province is required', errors);
     if (this.country !== 'CA') {
-      maxLengthCheck(this.provinceTerritory as string, MAX_LENGTH_SM, 'provinceTerritory', errors);
+      maxLengthCheck(this.province as string, MAX_LENGTH_SM, 'province', errors);
     }
     required(this.postalCode, 'postalCode is required', errors);
 
@@ -61,11 +64,12 @@ export class Address implements IAddress {
 
   reset(country?: string): void {
     this.country = country || 'CA';
-    this.street = null;
+    this.streetAddress = null;
     this.unitSuite = null;
-    this.provinceTerritory = null;
+    this.province = null;
     this.city = null;
     this.postalCode = null;
-    this.geoLocation = { lat: null, lng: null };
+    this.latitude = 0;
+    this.longitude = 0;
   }
 }

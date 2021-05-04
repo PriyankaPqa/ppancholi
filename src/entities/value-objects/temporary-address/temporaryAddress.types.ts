@@ -1,4 +1,5 @@
-import { IEntity } from '../../../types';
+// import { IShelterLocation } from '../../event/event.types';
+import { IEntity, IMultilingual } from '../../../types';
 
 import { IAddressData } from '../address/address.types';
 
@@ -20,7 +21,26 @@ export interface ITemporaryAddressData extends IAddressData {
 
     placeNumber?: string;
 
-    shelterId?: uuid;
+    shelterLocation?: IShelterLocation;
+}
+
+export interface IShelterLocation {
+    id?: uuid;
+    name: IMultilingual;
+    status: number;
+    address: IAddressData;
+  }
+
+export interface ITemporaryAddressForCreate {
+    temporaryAddressType: ETemporaryAddressTypes;
+
+    placeName?: string;
+
+    placeNumber?: string;
+
+    shelterLocationName?: IMultilingual;
+
+    placeAddress?: IAddressData;
 }
 
 export interface ITemporaryAddress extends ITemporaryAddressData, IEntity {
@@ -30,8 +50,8 @@ export interface ITemporaryAddress extends ITemporaryAddressData, IEntity {
     hasPostalCode(): boolean;
     requiresPlaceName(): boolean;
     requiresCountry(): boolean;
-    requiresProvinceTerritory(): boolean;
+    requiresProvince(): boolean;
     requiresCity(): boolean;
-    requiresShelterId(): boolean;
+    requiresShelterLocation(): boolean;
     resetTemporaryAddress(type?: ETemporaryAddressTypes): void;
 }

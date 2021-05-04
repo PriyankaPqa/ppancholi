@@ -1,5 +1,6 @@
 import { i18n } from '../../ui/plugins/i18n';
 import helpers from '../../ui/helpers';
+import { mockStorage } from '../../store/storage/storage.mock';
 import AddressForm from '../forms/AddressForm.vue';
 import TempAddressForm from '../forms/TempAddressForm.vue';
 import { ECanadaProvinces, EOptionItemStatus } from '../../types';
@@ -10,6 +11,8 @@ import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './Addresses.vue';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
+const beneficiary = mockBeneficiary();
 
 describe('Addresses.vue', () => {
   let wrapper;
@@ -25,13 +28,16 @@ describe('Addresses.vue', () => {
       propsData: {
         i18n,
       },
+      mocks: {
+        $storage: storage,
+      },
     });
   });
 
   describe('Computed', () => {
     describe('noFixedHome', () => {
       it('is linked to beneficiary noFixedHome state', () => {
-        expect(wrapper.vm.noFixedHome).toBe(false);
+        expect(wrapper.vm.noFixedHome).toBe(beneficiary.noFixedHome);
       });
 
       it('triggers setNoFixedHome mutation when changed', () => {

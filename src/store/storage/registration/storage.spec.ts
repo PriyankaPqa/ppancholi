@@ -124,5 +124,10 @@ describe('>>> Registration Storage', () => {
       storage.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
       expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
     });
+
+    it('should proxy submitRegistration', () => {
+      storage.actions.submitRegistration();
+      expect(store.dispatch).toBeCalledWith('registration/submitRegistration');
+    });
   });
 });

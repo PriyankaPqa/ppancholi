@@ -1,15 +1,19 @@
-import { ECanadaProvinces } from '../../../types';
-import { ETemporaryAddressTypes, ITemporaryAddress, ITemporaryAddressData } from './temporaryAddress.types';
+import { ECanadaProvinces, EOptionItemStatus } from '../../../types';
+import {
+  ETemporaryAddressTypes, ITemporaryAddress, ITemporaryAddressData, ITemporaryAddressForCreate,
+} from './temporaryAddress.types';
 import { TemporaryAddress } from './temporaryAddress';
+import { mockAddressData } from '../address/address.mock';
 
 export const mockCampgroundData = (): ITemporaryAddressData => ({
   temporaryAddressType: ETemporaryAddressTypes.Campground,
   country: 'CA',
-  street: '247 Some Street',
+  streetAddress: '247 Some Street',
   city: 'Ottawa',
-  provinceTerritory: ECanadaProvinces.ON.toString(),
+  province: ECanadaProvinces.ON.toString(),
   postalCode: 'K1W 1G7',
-  geoLocation: null,
+  latitude: 0,
+  longitude: 0,
   placeName: 'test',
   placeNumber: '',
 });
@@ -17,11 +21,12 @@ export const mockCampgroundData = (): ITemporaryAddressData => ({
 export const mockHotelMotelData = (): ITemporaryAddressData => ({
   temporaryAddressType: ETemporaryAddressTypes.HotelMotel,
   country: 'CA',
-  street: '247 Some Street',
+  streetAddress: '247 Some Street',
   city: 'Ottawa',
-  provinceTerritory: ECanadaProvinces.ON.toString(),
+  province: ECanadaProvinces.ON.toString(),
   postalCode: 'K1W 1G7',
-  geoLocation: null,
+  latitude: 0,
+  longitude: 0,
   placeName: 'test',
   placeNumber: '',
 });
@@ -29,11 +34,12 @@ export const mockHotelMotelData = (): ITemporaryAddressData => ({
 export const mockMedicalFacilityTemporaryAddressData = (): ITemporaryAddressData => ({
   temporaryAddressType: ETemporaryAddressTypes.MedicalFacility,
   country: 'CA',
-  street: '247 Some Street',
+  streetAddress: '247 Some Street',
   city: 'Ottawa',
-  provinceTerritory: ECanadaProvinces.ON.toString(),
+  province: ECanadaProvinces.ON.toString(),
   postalCode: 'K1W 1G7',
-  geoLocation: null,
+  latitude: 0,
+  longitude: 0,
   placeName: 'test',
   placeNumber: '',
 });
@@ -41,41 +47,63 @@ export const mockMedicalFacilityTemporaryAddressData = (): ITemporaryAddressData
 export const mockFriendsFamilyData = (): ITemporaryAddressData => ({
   temporaryAddressType: ETemporaryAddressTypes.FriendsFamily,
   country: 'CA',
-  street: '888 avenue Clark',
+  streetAddress: '888 avenue Clark',
   city: 'Ottawa',
-  provinceTerritory: ECanadaProvinces.ON.toString(),
+  province: ECanadaProvinces.ON.toString(),
   postalCode: 'H3L 5G4',
-  geoLocation: null,
+  latitude: 0,
+  longitude: 0,
 });
 
 export const mockUnknownData = (): ITemporaryAddressData => ({
   temporaryAddressType: ETemporaryAddressTypes.Unknown,
   country: '',
-  street: '',
+  streetAddress: '',
   city: '',
-  provinceTerritory: null,
+  province: null,
   postalCode: '',
-  geoLocation: null,
+  latitude: 0,
+  longitude: 0,
 });
 
 export const mockRemainingHomeData = (): ITemporaryAddressData => ({
   temporaryAddressType: ETemporaryAddressTypes.RemainingInHome,
   country: '',
-  street: '',
+  streetAddress: '',
   city: '',
-  provinceTerritory: null,
+  province: null,
   postalCode: '',
-  geoLocation: null,
+  latitude: 0,
+  longitude: 0,
 });
 
 export const mockOtherData = (): ITemporaryAddressData => ({
   temporaryAddressType: ETemporaryAddressTypes.Other,
   placeName: 'Other address',
+  latitude: 0,
+  longitude: 0,
 });
 
 export const mockShelterData = (): ITemporaryAddressData => ({
   temporaryAddressType: ETemporaryAddressTypes.Shelter,
-  shelterId: 'shelter-guid',
+  shelterLocation: {
+    address: {
+      country: 'CA',
+      city: 'Gatineau',
+      postalCode: 'J8Y 6M3',
+      province: ECanadaProvinces.ON,
+      streetAddress: '135 Boulevard Saint-Raymond',
+    },
+    name: {
+      translation: {
+        en: 'shelter en',
+        fr: 'shelter fr',
+      },
+    },
+    status: EOptionItemStatus.Active,
+  },
+  latitude: 0,
+  longitude: 0,
 });
 
 export const mockCampGround = (force?: Partial<ITemporaryAddress>): ITemporaryAddress => new TemporaryAddress(
@@ -97,3 +125,11 @@ export const mockShelter = (): ITemporaryAddress => new TemporaryAddress(mockShe
 export const mockUnknown = (): ITemporaryAddress => new TemporaryAddress(mockUnknownData());
 
 export const mockRemainingHome = (): ITemporaryAddress => new TemporaryAddress(mockRemainingHomeData());
+
+export const mockTemporaryAddressForCreate = (): ITemporaryAddressForCreate => ({
+  temporaryAddressType: ETemporaryAddressTypes.Campground,
+  placeName: 'place name',
+  placeNumber: 'place number',
+  placeAddress: mockAddressData(),
+  shelterLocationName: null,
+});

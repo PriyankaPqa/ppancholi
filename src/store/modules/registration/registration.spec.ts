@@ -11,6 +11,7 @@ import {
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
   mockBeneficiary,
+  Beneficiary,
 } from '../../../entities/beneficiary';
 
 let store = mockStore();
@@ -343,6 +344,17 @@ describe('>>> Registration Module', () => {
 
         expect(store.state.registration.indigenousIdentities[ECanadaProvinces.AB])
           .toEqual(mockIndigenousIdentitiesSearchData().value);
+      });
+    });
+
+    describe('submitRegistration', () => {
+      it('call the submitRegistration service with proper params', async () => {
+        store.state.beneficiary.beneficiary = mockBeneficiary() as Beneficiary;
+        await store.commit('registration/setEvent', mockEventData());
+
+        await store.dispatch('registration/submitRegistration');
+
+        expect(store.$services.beneficiaries.submitRegistration).toHaveBeenCalledWith(mockBeneficiary(), mockEventData().eventId);
       });
     });
   });

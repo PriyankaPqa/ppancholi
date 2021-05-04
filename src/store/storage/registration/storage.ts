@@ -1,7 +1,7 @@
 import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
 import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
-import { IIndigenousIdentityData, EIndigenousTypes } from '../../../entities/beneficiary';
+import { IIndigenousIdentityData, EIndigenousTypes, IBeneficiaryData } from '../../../entities/beneficiary';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
 
@@ -115,6 +115,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]> {
       return store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
+    },
+
+    submitRegistration(): Promise<IBeneficiaryData> {
+      return store.dispatch('registration/submitRegistration');
     },
   },
 });

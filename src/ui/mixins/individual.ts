@@ -79,6 +79,10 @@ export default Vue.extend({
       }
     },
     async next() {
+      if (this.currentTab.id === 'review') {
+        await this.$storage.registration.actions.submitRegistration();
+      }
+
       await this.jump(this.currentTabIndex + 1);
     },
 

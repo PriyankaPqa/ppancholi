@@ -19,6 +19,7 @@ describe('>>> Beneficiary', () => {
 
     it('should reset if not data pass', () => {
       const b = new Beneficiary();
+      expect(b.noFixedHome).toEqual(false);
       expect(b.person).toEqual(new Person());
       expect(b.contactInformation).toEqual(new ContactInformation());
       expect(b.homeAddress).toEqual(new Address());

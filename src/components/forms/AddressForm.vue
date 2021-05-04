@@ -13,9 +13,9 @@
       <v-col cols="12" sm="9" md="8">
         <rc-google-autocomplete-with-validation
           ref="address__street_autocomplete"
-          v-model="form.street"
+          v-model="form.streetAddress"
           :data-test="`${prefixDataTest}__street`"
-          :rules="rules.street"
+          :rules="rules.streetAddress"
           :api-key="apiKey"
           :label="`${$t('registration.addresses.streetAddress')} *`"
           @input="$resetGeoLocation()"
@@ -41,16 +41,16 @@
       <v-col cols="12" sm="6" md="4">
         <v-select-with-validation
           v-if="isCanada"
-          v-model="form.provinceTerritory"
-          :rules="rules.provinceTerritory"
+          v-model="form.province"
+          :rules="rules.province"
           :data-test="`${prefixDataTest}__province`"
           :label="`${$t('registration.addresses.province')}*`"
           :items="canadianProvincesItems"
           @input="$resetGeoLocation()" />
         <v-text-field-with-validation
           v-else
-          v-model="form.provinceTerritory"
-          :rules="rules.provinceTerritory"
+          v-model="form.province"
+          :rules="rules.province"
           :data-test="`${prefixDataTest}__province`"
           :label="`${$t('registration.addresses.province')}*`"
           @input="$resetGeoLocation()" />
@@ -127,14 +127,14 @@ export default Vue.extend({
         country: {
           required: true,
         },
-        street: {
+        streetAddress: {
           required: true,
           max: MAX_LENGTH_MD,
         },
         unitSuite: {
           max: MAX_LENGTH_SM,
         },
-        provinceTerritory: {
+        province: {
           required: true,
           max: MAX_LENGTH_SM,
         },

@@ -1,7 +1,7 @@
 import { ECanadaProvinces, IAzureSearchResult, IOptionItemData } from '../../../types';
-import { mockCampGround, mockFriendsFamily } from '../temporary-address';
+import { mockCampGround, mockFriendsFamily, mockTemporaryAddressForCreate } from '../temporary-address';
 import {
-  EIndigenousTypes, IIndigenousIdentityData, IPerson, IPersonData,
+  EIndigenousTypes, IIndigenousIdentityData, IPerson, IPersonData, IPersonForCreate,
 } from './person.types';
 import { Person } from './person';
 
@@ -48,7 +48,7 @@ export const mockIdentityData = (): Partial<IPersonData> => ({
   middleName: 'middle',
   lastName: 'Smith',
   gender: mockGenders()[0],
-  genderOther: '',
+  genderOther: null,
   preferredName: 'preferredName',
 });
 
@@ -71,11 +71,12 @@ export const mockHouseholdMemberData = (): IPersonData => ({
     month: 2,
     day: 6,
   },
+  dateOfBirth: '2000-2-6',
   firstName: 'Jack',
   middleName: '',
   lastName: 'Sparrow',
   gender: mockGenders()[0],
-  genderOther: '',
+  genderOther: null,
   preferredName: '',
   indigenousProvince: ECanadaProvinces.AB,
   indigenousType: EIndigenousTypes.FirstNations,
@@ -153,3 +154,9 @@ export const mockIndigenousCommunitiesItems = (): Record<string, string>[] => [
     text: "Metepenagiag Mi'kmaq Nation",
   },
 ];
+
+export const mockPersonForCreate = (): IPersonForCreate => ({
+  ...mockPersonData(),
+  gender: { optionItemId: 'f0741697-e8aa-4e0b-8e45-5528be33d915', specifiedOther: 'ddddddddddddd' },
+  temporaryAddress: mockTemporaryAddressForCreate(),
+});

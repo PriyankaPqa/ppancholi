@@ -26,17 +26,18 @@ describe('>>> Temporary Address', () => {
       const t = new TemporaryAddress();
 
       expect(t.country).toEqual('CA');
-      expect(t.street).toEqual(null);
+      expect(t.streetAddress).toEqual(null);
       expect(t.unitSuite).toEqual(null);
-      expect(t.provinceTerritory).toEqual(null);
+      expect(t.province).toEqual(null);
       expect(t.city).toEqual(null);
       expect(t.postalCode).toEqual(null);
-      expect(t.geoLocation).toEqual({ lat: null, lng: null });
+      expect(t.latitude).toEqual(0);
+      expect(t.longitude).toEqual(0);
 
       expect(t.temporaryAddressType).toEqual(null);
       expect(t.placeName).toEqual('');
       expect(t.placeNumber).toEqual('');
-      expect(t.shelterId).toEqual('');
+      expect(t.shelterLocation).toEqual(null);
     });
   });
 
@@ -233,35 +234,35 @@ describe('>>> Temporary Address', () => {
       });
     });
 
-    describe('requiresProvinceTerritory', () => {
+    describe('requiresProvince', () => {
       it('should return true for Campground', () => {
         const p = mockCampGround();
-        expect(p.requiresProvinceTerritory()).toBeTruthy();
+        expect(p.requiresProvince()).toBeTruthy();
       });
 
       it('should return true for HotelMotel', () => {
         const p = mockHotelMotel();
-        expect(p.requiresProvinceTerritory()).toBeTruthy();
+        expect(p.requiresProvince()).toBeTruthy();
       });
 
       it('should return true for MedicalFacility', () => {
         const p = mockMedicalFacility();
-        expect(p.requiresProvinceTerritory()).toBeTruthy();
+        expect(p.requiresProvince()).toBeTruthy();
       });
 
       it('should return true for FriendsFamily', () => {
         const p = mockFriendsFamily();
-        expect(p.requiresProvinceTerritory()).toBeTruthy();
+        expect(p.requiresProvince()).toBeTruthy();
       });
 
       it('should return false for Other', () => {
         const p = mockOther();
-        expect(p.requiresProvinceTerritory()).toBeFalsy();
+        expect(p.requiresProvince()).toBeFalsy();
       });
 
       it('should return false for Shelter', () => {
         const p = mockShelter();
-        expect(p.requiresProvinceTerritory()).toBeFalsy();
+        expect(p.requiresProvince()).toBeFalsy();
       });
     });
 
@@ -297,35 +298,35 @@ describe('>>> Temporary Address', () => {
       });
     });
 
-    describe('requiresShelterId', () => {
+    describe('requiresShelterLocation', () => {
       it('should return false for Campground', () => {
         const p = mockCampGround();
-        expect(p.requiresShelterId()).toBeFalsy();
+        expect(p.requiresShelterLocation()).toBeFalsy();
       });
 
       it('should return false for HotelMotel', () => {
         const p = mockHotelMotel();
-        expect(p.requiresShelterId()).toBeFalsy();
+        expect(p.requiresShelterLocation()).toBeFalsy();
       });
 
       it('should return false for MedicalFacility', () => {
         const p = mockMedicalFacility();
-        expect(p.requiresShelterId()).toBeFalsy();
+        expect(p.requiresShelterLocation()).toBeFalsy();
       });
 
       it('should return false for FriendsFamily', () => {
         const p = mockFriendsFamily();
-        expect(p.requiresShelterId()).toBeFalsy();
+        expect(p.requiresShelterLocation()).toBeFalsy();
       });
 
       it('should return false for Other', () => {
         const p = mockOther();
-        expect(p.requiresShelterId()).toBeFalsy();
+        expect(p.requiresShelterLocation()).toBeFalsy();
       });
 
       it('should return true for Shelter', () => {
         const p = mockShelter();
-        expect(p.requiresShelterId()).toBeTruthy();
+        expect(p.requiresShelterLocation()).toBeTruthy();
       });
     });
 
@@ -335,17 +336,18 @@ describe('>>> Temporary Address', () => {
         t.resetTemporaryAddress();
 
         expect(t.country).toEqual('CA');
-        expect(t.street).toEqual(null);
+        expect(t.streetAddress).toEqual(null);
         expect(t.unitSuite).toEqual(null);
-        expect(t.provinceTerritory).toEqual(null);
+        expect(t.province).toEqual(null);
         expect(t.city).toEqual(null);
         expect(t.postalCode).toEqual(null);
-        expect(t.geoLocation).toEqual({ lat: null, lng: null });
+        expect(t.latitude).toEqual(0);
+        expect(t.longitude).toEqual(0);
 
         expect(t.temporaryAddressType).toEqual(null);
         expect(t.placeName).toEqual('');
         expect(t.placeNumber).toEqual('');
-        expect(t.shelterId).toEqual('');
+        expect(t.shelterLocation).toEqual(null);
       });
 
       it('should reset the temporary address with given type', () => {
@@ -353,17 +355,18 @@ describe('>>> Temporary Address', () => {
         t.resetTemporaryAddress(ETemporaryAddressTypes.HotelMotel);
 
         expect(t.country).toEqual('CA');
-        expect(t.street).toEqual(null);
+        expect(t.streetAddress).toEqual(null);
         expect(t.unitSuite).toEqual(null);
-        expect(t.provinceTerritory).toEqual(null);
+        expect(t.province).toEqual(null);
         expect(t.city).toEqual(null);
         expect(t.postalCode).toEqual(null);
-        expect(t.geoLocation).toEqual({ lat: null, lng: null });
+        expect(t.latitude).toEqual(0);
+        expect(t.longitude).toEqual(0);
 
         expect(t.temporaryAddressType).toEqual(ETemporaryAddressTypes.HotelMotel);
         expect(t.placeName).toEqual('');
         expect(t.placeNumber).toEqual('');
-        expect(t.shelterId).toEqual('');
+        expect(t.shelterLocation).toEqual(null);
       });
     });
   });
@@ -396,7 +399,7 @@ describe('>>> Temporary Address', () => {
     describe('street', () => {
       test(`when it has a max of ${MAX_LENGTH_MD} characters`, () => {
         const temporaryAddress = mockCampGround();
-        temporaryAddress.street = longText;
+        temporaryAddress.streetAddress = longText;
         expect(temporaryAddress.validate()).toContain(`street exceeds max length of ${MAX_LENGTH_MD}`);
       });
     });
@@ -419,9 +422,9 @@ describe('>>> Temporary Address', () => {
     describe('Province Territory', () => {
       test('when it is required', () => {
         const temporaryAddress = mockCampGround();
-        temporaryAddress.provinceTerritory = null;
+        temporaryAddress.province = null;
         const results = temporaryAddress.validate();
-        expect(results).toContain('provinceTerritory is required');
+        expect(results).toContain('province is required');
       });
     });
 

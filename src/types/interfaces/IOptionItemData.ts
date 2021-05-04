@@ -7,4 +7,6 @@ export interface IOptionItemData {
     isOther: boolean;
     isDefault: boolean;
     status?: number;
+    optionItemId?: string;
+    specifiedOther?: string;
 }

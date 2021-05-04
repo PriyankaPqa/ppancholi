@@ -56,8 +56,7 @@ import { ECanadaProvinces, EOptionItemStatus } from '../../types';
 import helpers from '../../ui/helpers';
 import { localStorageKeys } from '../../constants/localStorage';
 import { IAddress } from '../../entities/value-objects/address';
-import { IShelterLocation } from '../../entities/event';
-import { ITemporaryAddress, ETemporaryAddressTypes } from '../../entities/value-objects/temporary-address';
+import { ITemporaryAddress, ETemporaryAddressTypes, IShelterLocation } from '../../entities/value-objects/temporary-address';
 
 export default Vue.extend({
   name: 'Addresses',
@@ -94,7 +93,7 @@ export default Vue.extend({
 
     noFixedHome: {
       get(): boolean {
-        return this.$store.state.beneficiary.noFixedHome;
+        return this.$storage.beneficiary.getters.beneficiary().noFixedHome;
       },
       set(checked: boolean) {
         this.$storage.beneficiary.mutations.setNoFixedHome(checked);

@@ -8,7 +8,7 @@ import {
 } from '../../../types';
 import { IRootState, IStore } from '../../store.types';
 import {
-  IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary,
+  IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary, ICreateBeneficiaryRequest,
 } from '../../../entities/beneficiary';
 import { IEvent, Event, IEventData } from '../../../entities/event';
 
@@ -142,6 +142,8 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
             isValid = errors.length === 0;
             break;
           case 'ReviewRegistration':
+            isValid = true;
+            break;
           case 'ConfirmRegistration':
           default:
           // Do nothing
@@ -167,7 +169,7 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   noFixedHome(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): boolean {
-    return rootGetters['beneficiary/noFixedHome'] as boolean;
+    return (rootGetters['beneficiary/beneficiary'] as IBeneficiary).noFixedHome;
   },
 });
 
@@ -304,6 +306,15 @@ const actions = {
     }
 
     return identities;
+  },
+
+  async submitRegistration(
+    this: IStore<IState>,
+    context: ActionContext<IState, IState>,
+  ): Promise<ICreateBeneficiaryRequest> {
+    const beneficiary = context.rootGetters['beneficiary/beneficiary'] as IBeneficiary;
+    const result = await this.$services.beneficiaries.submitRegistration(beneficiary, context.state.event.eventId);
+    return result as ICreateBeneficiaryRequest;
   },
 };
 

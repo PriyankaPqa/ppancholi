@@ -25,7 +25,7 @@ describe('>>> Person', () => {
       expect(p.lastName).toEqual('');
       expect(p.preferredName).toEqual('');
       expect(p.gender).toEqual(null);
-      expect(p.genderOther).toEqual('');
+      expect(p.genderOther).toEqual(null);
       expect(p.birthDate).toEqual({
         year: null,
         month: null,

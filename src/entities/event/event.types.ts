@@ -1,5 +1,5 @@
 import { ECanadaProvinces, IMultilingual } from '../../types';
-import { IAddress } from '../beneficiary';
+import { IShelterLocation } from '../beneficiary';
 
 /**
  * Enums
@@ -33,13 +33,6 @@ export interface IOtherProvince {
 
 export interface IResponseDetails {
   assistanceNumber: string;
-}
-
-export interface IShelterLocation {
-  id: uuid;
-  name: IMultilingual;
-  status: number;
-  address: IAddress;
 }
 
 /**

@@ -16,6 +16,7 @@
     <indigenous-identity-form
       :form="person"
       :canadian-provinces-items="canadianProvincesItems"
+      :i18n="i18n"
       :indigenous-communities-items="indigenousCommunitiesItems"
       :indigenous-types-items="indigenousTypesItems"
       :loading="loadingIndigenousIdentities"
@@ -26,7 +27,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TranslateResult } from 'vue-i18n';
+import VueI18n, { TranslateResult } from 'vue-i18n';
 import helpers from '../../ui/helpers';
 import { ECanadaProvinces, IOptionItemData } from '../../types';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
@@ -53,6 +54,10 @@ export default Vue.extend({
     skipPhoneEmailRules: {
       type: Boolean,
       default: false,
+    },
+    i18n: {
+      type: Object as () => VueI18n,
+      required: true,
     },
   },
 
@@ -94,7 +99,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
+      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', this.i18n);
     },
 
   },

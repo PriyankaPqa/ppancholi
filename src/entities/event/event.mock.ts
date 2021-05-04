@@ -1,9 +1,10 @@
 import { IAzureSearchResult, ECanadaProvinces } from '../../types';
 import {
-  IEventData, IShelterLocation, IEvent,
+  IEventData, IEvent,
 } from './event.types';
 
 import { Event } from './event';
+import { IShelterLocation } from '../beneficiary';
 
 export const mockShelterLocations = (): IShelterLocation[] => ([
   {
@@ -17,17 +18,11 @@ export const mockShelterLocations = (): IShelterLocation[] => ([
     status: 1,
     address: {
       country: 'CA',
-      street: 'Pioneer Street',
+      streetAddress: 'Pioneer Street',
       unitSuite: null,
-      provinceTerritory: ECanadaProvinces.BC,
+      province: ECanadaProvinces.BC,
       city: 'Pemberton',
       postalCode: 'V0N 1L0',
-      geoLocation: {
-        lat: null,
-        lng: null,
-      },
-      reset: null,
-      validate: null,
     },
   },
 ]);

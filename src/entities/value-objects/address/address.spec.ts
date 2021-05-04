@@ -16,12 +16,13 @@ describe('>>> Address', () => {
     it('should call reset reset if not data pass', () => {
       const a = new Address();
       expect(a.country).toEqual('CA');
-      expect(a.street).toEqual(null);
+      expect(a.streetAddress).toEqual(null);
       expect(a.unitSuite).toEqual(null);
-      expect(a.provinceTerritory).toEqual(null);
+      expect(a.province).toEqual(null);
       expect(a.city).toEqual(null);
       expect(a.postalCode).toEqual(null);
-      expect(a.geoLocation).toEqual({ lat: null, lng: null });
+      expect(a.latitude).toEqual(0);
+      expect(a.longitude).toEqual(0);
     });
   });
 
@@ -44,7 +45,7 @@ describe('>>> Address', () => {
 
       it(`has a max of ${MAX_LENGTH_MD} characters`, () => {
         const p = new Address();
-        p.street = longText;
+        p.streetAddress = longText;
 
         expect(p.validate()).toContain(`street exceeds max length of ${MAX_LENGTH_MD}`);
       });
@@ -74,23 +75,23 @@ describe('>>> Address', () => {
       });
     });
 
-    describe('provinceTerritory', () => {
+    describe('province', () => {
       it('is required', () => {
         const p = new Address();
         let results = p.validate();
-        expect(results).toContain('provinceTerritory is required');
+        expect(results).toContain('province is required');
 
-        p.provinceTerritory = ECanadaProvinces.ON.toString();
+        p.province = ECanadaProvinces.ON.toString();
         results = p.validate();
-        expect(results).not.toContain('provinceTerritory is required');
+        expect(results).not.toContain('province is required');
       });
 
       it(`has a max of ${MAX_LENGTH_SM} characters`, () => {
         const p = new Address();
         p.country = 'FR';
-        p.provinceTerritory = longSmallText;
+        p.province = longSmallText;
 
-        expect(p.validate()).toContain(`provinceTerritory exceeds max length of ${MAX_LENGTH_SM}`);
+        expect(p.validate()).toContain(`province exceeds max length of ${MAX_LENGTH_SM}`);
       });
     });
 
@@ -131,24 +132,26 @@ describe('>>> Address', () => {
         const a = mockAddress();
         a.reset();
         expect(a.country).toEqual('CA');
-        expect(a.street).toEqual(null);
+        expect(a.streetAddress).toEqual(null);
         expect(a.unitSuite).toEqual(null);
-        expect(a.provinceTerritory).toEqual(null);
+        expect(a.province).toEqual(null);
         expect(a.city).toEqual(null);
         expect(a.postalCode).toEqual(null);
-        expect(a.geoLocation).toEqual({ lat: null, lng: null });
+        expect(a.latitude).toEqual(0);
+        expect(a.longitude).toEqual(0);
       });
 
       it('should reset the entity with given country', () => {
         const a = mockAddress();
         a.reset('FR');
         expect(a.country).toEqual('FR');
-        expect(a.street).toEqual(null);
+        expect(a.streetAddress).toEqual(null);
         expect(a.unitSuite).toEqual(null);
-        expect(a.provinceTerritory).toEqual(null);
+        expect(a.province).toEqual(null);
         expect(a.city).toEqual(null);
         expect(a.postalCode).toEqual(null);
-        expect(a.geoLocation).toEqual({ lat: null, lng: null });
+        expect(a.latitude).toEqual(0);
+        expect(a.longitude).toEqual(0);
       });
     });
   });

@@ -1,6 +1,7 @@
 import { IMultilingual } from '../../types';
+import { IShelterLocation } from '../beneficiary';
 import {
-  IEvent, IEventData, IResponseDetails, IShelterLocation,
+  IEvent, IEventData, IResponseDetails,
 } from './event.types';
 
 export class Event implements IEvent {

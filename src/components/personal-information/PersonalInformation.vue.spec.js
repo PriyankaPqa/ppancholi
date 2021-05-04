@@ -1,3 +1,4 @@
+import { i18n } from '@/ui/plugins/i18n';
 import { mockStorage } from '../../store/storage/storage.mock';
 import { ECanadaProvinces } from '../../types';
 import IdentityForm from '../forms/IdentityForm.vue';
@@ -31,6 +32,9 @@ describe('PersonalInformation.vue', () => {
         return {
           form: storage.beneficiary.getters.personalInformation(),
         };
+      },
+      propsData: {
+        i18n,
       },
       mocks: {
         $storage: storage,
@@ -176,7 +180,7 @@ describe('PersonalInformation.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', i18n));
       });
     });
   });

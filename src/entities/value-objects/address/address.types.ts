@@ -1,24 +1,21 @@
 import { ECanadaProvinces, IEntity } from '../../../types';
 
-export interface IGeoLocation {
-    lat: string;
-    lng: string;
-}
-
 export interface IAddressData {
     country?: string;
 
-    street?: string;
+    streetAddress?: string;
 
     unitSuite?: string;
 
-    provinceTerritory?: ECanadaProvinces | string;
+    province?: ECanadaProvinces | string;
 
     city?: string;
 
     postalCode?: string;
 
-    geoLocation?: IGeoLocation;
+    longitude?: number;
+
+    latitude?: number;
 
 }
 

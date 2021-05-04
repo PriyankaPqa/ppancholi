@@ -1,7 +1,7 @@
 import { TranslateResult } from 'vue-i18n';
 import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
 import { IEvent, IEventData } from '../../../entities/event';
-import { IIndigenousIdentityData, EIndigenousTypes } from '../../../entities/beneficiary';
+import { IIndigenousIdentityData, EIndigenousTypes, IBeneficiaryData } from '../../../entities/beneficiary';
 
 export interface IStorage {
   getters: {
@@ -37,6 +37,7 @@ export interface IStorage {
     fetchPreferredLanguages(): Promise<IOptionItemData[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]>;
+    submitRegistration(): Promise<IBeneficiaryData>;
   };
 }
 
@@ -74,5 +75,6 @@ export interface IStorageMock {
     fetchPreferredLanguages: jest.Mock<IOptionItemData[]>;
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
     fetchIndigenousIdentitiesByProvince: jest.Mock<IIndigenousIdentityData[]>;
+    submitRegistration: jest.Mock<IBeneficiaryData>;
   };
 }

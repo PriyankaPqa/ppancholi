@@ -104,8 +104,8 @@ export class ContactInformation implements IContactInformation {
     this.otherPhoneExtension = '';
     this.email = '';
     this.preferredLanguage = null;
-    this.preferredLanguageOther = '';
+    this.preferredLanguageOther = null;
     this.primarySpokenLanguage = null;
-    this.primarySpokenLanguageOther = '';
+    this.primarySpokenLanguageOther = null;
   }
 }

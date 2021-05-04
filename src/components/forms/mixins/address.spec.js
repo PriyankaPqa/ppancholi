@@ -35,14 +35,16 @@ describe('googleAutocomplete', () => {
             lng: -99.1500028,
           },
         };
+
         wrapper.vm.$streetAddressAutocomplete(resultObject);
 
         expect(wrapper.vm.form.country).toEqual(resultObject.country);
-        expect(wrapper.vm.form.provinceTerritory).toEqual(ECanadaProvinces[resultObject.province]);
+        expect(wrapper.vm.form.province).toEqual(ECanadaProvinces[resultObject.province]);
         expect(wrapper.vm.form.postalCode).toEqual(resultObject.postalCode);
         expect(wrapper.vm.form.city).toEqual(resultObject.city);
-        expect(wrapper.vm.form.street).toEqual(resultObject.street);
-        expect(wrapper.vm.form.geoLocation).toEqual(resultObject.location);
+        expect(wrapper.vm.form.streetAddress).toEqual(resultObject.street);
+        expect(wrapper.vm.form.latitude).toEqual(resultObject.location.lat);
+        expect(wrapper.vm.form.longitude).toEqual(resultObject.location.lng);
       });
     });
 
@@ -61,8 +63,8 @@ describe('googleAutocomplete', () => {
         wrapper.vm.isAutocompleteAddress = false;
         wrapper.vm.$resetGeoLocation();
         expect(wrapper.vm.form.geoLocation).toEqual({
-          lat: null,
-          lng: null,
+          lat: geoLocation.lat,
+          lng: geoLocation.lng,
         });
       });
     });

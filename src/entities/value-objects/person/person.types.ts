@@ -1,5 +1,5 @@
-import { ECanadaProvinces, IOptionItemData } from '../../../types';
-import { ITemporaryAddress } from '../temporary-address/temporaryAddress.types';
+import { ECanadaProvinces, IListOption, IOptionItemData } from '../../../types';
+import { ITemporaryAddress, ITemporaryAddressForCreate } from '../temporary-address/temporaryAddress.types';
 
 export interface IBirthDate {
   month?: number | string;
@@ -47,6 +47,13 @@ export interface IPersonData {
   indigenousCommunityOther: string;
 
   temporaryAddress: ITemporaryAddress;
+
+  dateOfBirth: string;
+}
+
+export interface IPersonForCreate extends Omit<IPersonData, 'gender' | 'temporaryAddress'> {
+  gender: IListOption;
+  temporaryAddress: ITemporaryAddressForCreate;
 }
 
 export interface IPerson extends IPersonData {

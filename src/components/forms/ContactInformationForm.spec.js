@@ -2,7 +2,6 @@ import {
   mockContactInformation,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-  mockPrimarySpokenLanguage,
 } from '../../entities/beneficiary';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
@@ -312,25 +311,6 @@ describe('ContactInformationForm.vue', () => {
         const expected = wrapper.vm.primarySpokenLanguagesItems.find((option) => option.isDefault);
         const res = wrapper.vm.findDefault(wrapper.vm.primarySpokenLanguagesItems);
         expect(res).toEqual(expected);
-      });
-    });
-
-    describe('primarySpokenLanguageChange', () => {
-      it('should erase primarySpokenLanguageOther if the language is not other', async () => {
-        await wrapper.setData({
-          form: {
-            primarySpokenLanguageOther: 'test',
-          },
-        });
-        wrapper.vm.primarySpokenLanguageChange(mockPrimarySpokenLanguage());
-        expect(wrapper.vm.formCopy.primarySpokenLanguageOther).toBe('');
-      });
-
-      it('should be called when primary spoken language changes', () => {
-        jest.spyOn(wrapper.vm, 'primarySpokenLanguageChange');
-        const el = wrapper.findDataTest('personalInfo__primarySpokenLanguage');
-        el.vm.$emit('change', mockPrimarySpokenLanguage());
-        expect(wrapper.vm.primarySpokenLanguageChange).toHaveBeenCalledTimes(1);
       });
     });
   });

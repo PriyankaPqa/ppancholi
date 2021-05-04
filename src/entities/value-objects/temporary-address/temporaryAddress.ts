@@ -1,7 +1,9 @@
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../../constants/validations';
 import { isValidCanadianPostalCode, maxLengthCheck, required } from '../../classValidation';
 import { Address } from '../address';
-import { ETemporaryAddressTypes, ITemporaryAddress, ITemporaryAddressData } from './temporaryAddress.types';
+import {
+  ETemporaryAddressTypes, IShelterLocation, ITemporaryAddress, ITemporaryAddressData,
+} from './temporaryAddress.types';
 
 export class TemporaryAddress extends Address implements ITemporaryAddress {
   temporaryAddressType: ETemporaryAddressTypes;
@@ -10,7 +12,11 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
 
   placeNumber?: string;
 
-  shelterId?: uuid;
+  shelterLocation?: IShelterLocation;
+
+  latitude: number;
+
+  longitude: number;
 
   constructor(data?: ITemporaryAddressData) {
     super(data);
@@ -20,7 +26,9 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
       this.temporaryAddressType = data.temporaryAddressType;
       this.placeName = data.placeName;
       this.placeNumber = data.placeNumber;
-      this.shelterId = data.shelterId;
+      this.shelterLocation = data.shelterLocation;
+      this.latitude = data.latitude;
+      this.longitude = data.longitude;
     }
   }
 
@@ -39,7 +47,7 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
     }
 
     if (this.hasStreet()) {
-      maxLengthCheck(this.street, MAX_LENGTH_MD, 'street', errors);
+      maxLengthCheck(this.streetAddress, MAX_LENGTH_MD, 'street', errors);
     }
 
     if (this.requiresCity()) {
@@ -47,8 +55,8 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
       maxLengthCheck(this.city, MAX_LENGTH_MD, 'city', errors);
     }
 
-    if (this.requiresProvinceTerritory()) {
-      required(this.provinceTerritory, 'provinceTerritory is required', errors);
+    if (this.requiresProvince()) {
+      required(this.province, 'province is required', errors);
     }
 
     if (this.hasPostalCode()) {
@@ -70,7 +78,7 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
     this.temporaryAddressType = type ?? null;
     this.placeName = '';
     this.placeNumber = '';
-    this.shelterId = '';
+    this.shelterLocation = null;
   }
 
   hasPlaceNumber(): boolean {
@@ -105,7 +113,7 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
         || this.temporaryAddressType === ETemporaryAddressTypes.FriendsFamily;
   }
 
-  requiresProvinceTerritory(): boolean {
+  requiresProvince(): boolean {
     return this.requiresCountry();
   }
 
@@ -113,7 +121,7 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
     return this.requiresCountry();
   }
 
-  requiresShelterId(): boolean {
+  requiresShelterLocation(): boolean {
     return this.temporaryAddressType === ETemporaryAddressTypes.Shelter;
   }
 }

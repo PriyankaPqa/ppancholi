@@ -24,6 +24,7 @@ export type { IEntity } from './interfaces/IEntity';
 export type { IRegistrationMenuItem } from './interfaces/IRegistrationMenuItem';
 export type { IAzureSearchResult } from './interfaces/IAzureSearchResult';
 export type { IAzureSearchParams } from './interfaces/IAzureSearchParams';
+export type { IListOption } from './interfaces/IListOption';
 
 /**
  * Enums

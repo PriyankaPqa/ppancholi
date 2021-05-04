@@ -47,9 +47,8 @@ import {
 import helpers from '@/ui/helpers';
 import _isEqual from 'lodash/isEqual';
 
-import { IShelterLocation } from '../../entities/event';
 import { localStorageKeys } from '../../constants/localStorage';
-import { ETemporaryAddressTypes } from '../../entities/value-objects/temporary-address/index';
+import { ETemporaryAddressTypes, IShelterLocation } from '../../entities/value-objects/temporary-address/index';
 import { IPerson } from '../../entities/value-objects/person';
 import HouseholdMemberForm from './HouseholdMemberForm.vue';
 

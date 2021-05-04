@@ -14,10 +14,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     personalInformation() {
       return store.getters['beneficiary/personalInformation'];
     },
-
-    noFixedHome() {
-      return store.getters['beneficiary/noFixedHome'];
-    },
   },
   mutations: {
     setPersonalInformation(payload: IContactInformation & IPerson) {

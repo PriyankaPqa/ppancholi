@@ -1,6 +1,6 @@
 import { IOptionItemData } from '../../../types';
 import { ContactInformation } from './contactInformation';
-import { IContactInformationData, IContactInformation } from './contactInformation.types';
+import { IContactInformationData, IContactInformation, IContactInformationForCreate } from './contactInformation.types';
 
 export const mockPreferredLanguages = (): IOptionItemData[] => [
   {
@@ -99,9 +99,15 @@ export const mockPrimarySpokenLanguageOther = (): IContactInformation => new Con
 );
 
 export const mockPreferredLanguageOther = (): IContactInformation => new ContactInformation(
-  { ...mockContactInformationData(), preferredLanguageOther: 'Italian', preferredLanguage: null },
+  { ...mockContactInformationData(), preferredLanguageOther: 'Italian', preferredLanguage: mockPreferredLanguages()[2] },
 );
 
 export const mockContactInformation = (force?: Partial<IContactInformation>): IContactInformation => new ContactInformation(
   { ...mockContactInformationData(), ...force },
 );
+
+export const mockContactInformationForCreate = (): IContactInformationForCreate => ({
+  ...mockContactInformationData(),
+  preferredLanguage: { optionItemId: 'bd84e12c-b20b-4415-b3b6-c3f205b195ab', specifiedOther: null },
+  primarySpokenLanguage: { optionItemId: '0a5956c2-16f0-4a79-acc4-4e36afcf3c3f', specifiedOther: null },
+});

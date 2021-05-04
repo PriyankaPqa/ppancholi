@@ -53,13 +53,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { IShelterLocation } from '@/entities/beneficiary';
 import { IOptionItemData } from '../../types';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 import TempAddressForm from '../forms/TempAddressForm.vue';
 import months from '../../constants/months';
 import { IPerson } from '../../entities/value-objects/person';
-import { IShelterLocation } from '../../entities/event';
 
 export default Vue.extend({
   name: 'HouseholdMemberForm',

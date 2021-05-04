@@ -49,10 +49,10 @@ describe('TempAddress.vue', () => {
           country: {
             required: wrapper.vm.temporaryAddress.requiresCountry(),
           },
-          street: {
+          streetAddress: {
             max: MAX_LENGTH_MD,
           },
-          provinceTerritory: {
+          province: {
             required: true,
             max: MAX_LENGTH_SM,
           },
@@ -74,7 +74,7 @@ describe('TempAddress.vue', () => {
           unitSuite: {
             max: MAX_LENGTH_SM,
           },
-          shelterId: {
+          shelterLocation: {
             required: true,
           },
         });
@@ -85,7 +85,7 @@ describe('TempAddress.vue', () => {
   describe('Template', () => {
     describe('Event handlers', () => {
       test('change event is emitted when form changes', async () => {
-        wrapper.vm.form.street = 'test';
+        wrapper.vm.form.streetAddress = 'test';
         expect(wrapper.emitted('change')[0]).toEqual([wrapper.vm.form]);
       });
 
@@ -149,7 +149,7 @@ describe('TempAddress.vue', () => {
       describe('Street', () => {
         it('is linked to proper rules', async () => {
           const element = wrapper.findDataTest('tempAddress__street');
-          expect(element.props('rules')).toEqual(wrapper.vm.rules.street);
+          expect(element.props('rules')).toEqual(wrapper.vm.rules.streetAddress);
         });
       });
 
@@ -163,7 +163,7 @@ describe('TempAddress.vue', () => {
       describe('Province or Territory', () => {
         it('is linked to proper rules', () => {
           const element = wrapper.findDataTest('tempAddress__province');
-          expect(element.props('rules')).toEqual(wrapper.vm.rules.provinceTerritory);
+          expect(element.props('rules')).toEqual(wrapper.vm.rules.province);
         });
       });
 

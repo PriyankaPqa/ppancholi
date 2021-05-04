@@ -36,9 +36,9 @@ describe('>>> ContactInformation', () => {
       expect(p.otherPhoneExtension).toEqual('');
       expect(p.email).toEqual('');
       expect(p.preferredLanguage).toEqual(null);
-      expect(p.preferredLanguageOther).toEqual('');
+      expect(p.preferredLanguageOther).toEqual(null);
       expect(p.primarySpokenLanguage).toEqual(null);
-      expect(p.primarySpokenLanguageOther).toEqual('');
+      expect(p.primarySpokenLanguageOther).toEqual(null);
     });
   });
 

@@ -28,8 +28,7 @@
         :rules="rules.primarySpokenLanguage"
         :item-text="(item) => $m(item.name)"
         return-object
-        :label="$t('registration.personal_info.primarySpokenLanguage')"
-        @change="primarySpokenLanguageChange($event)" />
+        :label="$t('registration.personal_info.primarySpokenLanguage')" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -231,12 +230,6 @@ export default Vue.extend({
 
     findDefault(source: IOptionItemData[]): IOptionItemData {
       return source?.find((option) => option.isDefault);
-    },
-
-    primarySpokenLanguageChange(lang: IOptionItemData) {
-      if (!lang.isOther) {
-        this.formCopy.primarySpokenLanguageOther = '';
-      }
     },
   },
 });

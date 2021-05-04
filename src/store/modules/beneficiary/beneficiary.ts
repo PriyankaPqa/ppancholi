@@ -15,7 +15,6 @@ import {
 import { IState } from './beneficiary.types';
 
 const getDefaultState = (): IState => ({
-  noFixedHome: false,
   beneficiary: new Beneficiary(),
 });
 
@@ -23,7 +22,6 @@ const moduleState: IState = getDefaultState();
 
 const getters = {
   beneficiary: (state: IState) => _cloneDeep(state.beneficiary),
-  noFixedHome: (state: IState) => state.noFixedHome,
   personalInformation: (state: IState) => _cloneDeep(_merge(state.beneficiary.contactInformation, state.beneficiary.person)),
 };
 
@@ -58,7 +56,7 @@ const mutations = {
   },
 
   setNoFixedHome(state: IState, payload: boolean) {
-    state.noFixedHome = payload;
+    state.beneficiary.noFixedHome = payload;
   },
 
   addHouseholdMember(state: IState, { payload, sameAddress }: {payload: IPerson; sameAddress: boolean}) {

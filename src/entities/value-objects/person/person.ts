@@ -24,6 +24,8 @@ export class Person implements IPerson {
 
     birthDate: IBirthDate;
 
+    dateOfBirth: string;
+
     indigenousProvince: ECanadaProvinces;
 
     indigenousType: EIndigenousTypes;
@@ -45,6 +47,7 @@ export class Person implements IPerson {
         this.gender = data.gender;
         this.genderOther = data.genderOther;
         this.birthDate = data.birthDate;
+        this.dateOfBirth = data.dateOfBirth;
         this.indigenousProvince = data.indigenousProvince;
         this.indigenousType = data.indigenousType;
         this.indigenousCommunityId = data.indigenousCommunityId;
@@ -116,6 +119,7 @@ export class Person implements IPerson {
       this.gender = data.gender;
       this.genderOther = data.genderOther;
       this.birthDate = data.birthDate;
+      this.dateOfBirth = `${this.birthDate.year}-${this.birthDate.month}-${this.birthDate.day}`;
     }
 
     setIndigenousIdentity(data: IPersonData) {
@@ -131,12 +135,13 @@ export class Person implements IPerson {
       this.lastName = '';
       this.preferredName = '';
       this.gender = null;
-      this.genderOther = '';
+      this.genderOther = null;
       this.birthDate = {
         year: null,
         month: null,
         day: null,
       };
+      this.dateOfBirth = '';
       this.indigenousProvince = null;
       this.indigenousType = null;
       this.indigenousCommunityId = null;

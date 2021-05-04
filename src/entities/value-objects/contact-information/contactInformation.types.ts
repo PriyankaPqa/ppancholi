@@ -1,4 +1,4 @@
-import { IOptionItemData } from '../../../types';
+import { IListOption, IOptionItemData } from '../../../types';
 
 /**
  * Enums
@@ -18,6 +18,13 @@ export interface IPhoneNumber {
   phoneNumberType?: EPhoneTypes;
   countryISO2?: string;
   e164Number: string;
+}
+
+export interface IPhoneNumberForCreate {
+  number: string;
+  e164Number: string;
+  countryCode?: string;
+  extension?: string;
 }
 
 /**
@@ -42,6 +49,15 @@ export interface IContactInformationData {
   primarySpokenLanguage: IOptionItemData;
 
   primarySpokenLanguageOther: string;
+}
+
+export interface IContactInformationForCreate {
+  homePhoneNumber?: IPhoneNumberForCreate;
+  mobilePhoneNumber?: IPhoneNumberForCreate;
+  alternatePhoneNumber?: IPhoneNumberForCreate;
+  email: string;
+  preferredLanguage: IListOption;
+  primarySpokenLanguage: IListOption;
 }
 
 export interface IContactInformation extends IContactInformationData {

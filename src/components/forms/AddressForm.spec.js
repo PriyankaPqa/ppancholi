@@ -31,7 +31,7 @@ describe('AddressForm.vue', () => {
       });
 
       test('street', () => {
-        expect(wrapper.vm.rules.street).toEqual({
+        expect(wrapper.vm.rules.streetAddress).toEqual({
           required: true,
           max: MAX_LENGTH_MD,
         });
@@ -43,8 +43,8 @@ describe('AddressForm.vue', () => {
         });
       });
 
-      test('provinceTerritory', () => {
-        expect(wrapper.vm.rules.provinceTerritory).toEqual({
+      test('province', () => {
+        expect(wrapper.vm.rules.province).toEqual({
           required: true,
           max: MAX_LENGTH_SM,
         });
@@ -64,7 +64,7 @@ describe('AddressForm.vue', () => {
           canadianPostalCode: true,
         });
         wrapper.vm.form.country = 'FR';
-        wrapper.vm.form.provinceTerritory = '';
+        wrapper.vm.form.province = '';
         expect(wrapper.vm.rules.postalCode).toEqual({
           required: true,
           max: MAX_LENGTH_SM,
@@ -125,7 +125,7 @@ describe('AddressForm.vue', () => {
       });
 
       test('change event is emitted when form changes', async () => {
-        wrapper.vm.form.country = 'test';
+        wrapper.vm.form.city = 'test';
         expect(wrapper.emitted('change')[0]).toEqual([wrapper.vm.form]);
       });
     });
@@ -141,7 +141,7 @@ describe('AddressForm.vue', () => {
       describe('Street', () => {
         it('is linked to proper rules', () => {
           const element = wrapper.findDataTest('address__street');
-          expect(element.props('rules')).toEqual(wrapper.vm.rules.street);
+          expect(element.props('rules')).toEqual(wrapper.vm.rules.streetAddress);
         });
       });
 
@@ -155,7 +155,7 @@ describe('AddressForm.vue', () => {
       describe('Province or Territory', () => {
         it('is linked to proper rules', () => {
           const element = wrapper.findDataTest('address__province');
-          expect(element.props('rules')).toEqual(wrapper.vm.rules.provinceTerritory);
+          expect(element.props('rules')).toEqual(wrapper.vm.rules.province);
         });
       });
 

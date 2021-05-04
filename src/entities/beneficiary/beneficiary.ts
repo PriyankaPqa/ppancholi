@@ -4,6 +4,8 @@ import { IContactInformation, ContactInformation } from '../value-objects/contac
 import { IPerson, Person } from '../value-objects/person';
 
 export class Beneficiary implements IBeneficiary {
+  noFixedHome: boolean;
+
   person: IPerson;
 
   contactInformation: IContactInformation;
@@ -16,6 +18,7 @@ export class Beneficiary implements IBeneficiary {
     if (!data) {
       this.reset();
     } else {
+      this.noFixedHome = data.noFixedHome;
       this.person = new Person(data.person);
       this.contactInformation = new ContactInformation(data.contactInformation);
       this.homeAddress = new Address(data.homeAddress);
@@ -44,6 +47,7 @@ export class Beneficiary implements IBeneficiary {
   }
 
   reset() {
+    this.noFixedHome = false;
     this.person = new Person();
     this.contactInformation = new ContactInformation();
     this.homeAddress = new Address();

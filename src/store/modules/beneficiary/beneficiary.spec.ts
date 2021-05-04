@@ -34,17 +34,6 @@ describe('>>> Beneficiary Module', () => {
         expect(store.getters['beneficiary/personalInformation']).toEqual(expected);
       });
     });
-
-    describe('noFixedHome', () => {
-      it('returns a state for the fixedHome flag', () => {
-        expect(store.getters['beneficiary/noFixedHome']).toEqual(false);
-      });
-
-      it('returns the updated state for the noFixedHome flag', () => {
-        store.state.beneficiary.noFixedHome = true;
-        expect(store.getters['beneficiary/noFixedHome']).toEqual(true);
-      });
-    });
   });
 
   describe('>> Mutations', () => {
@@ -98,7 +87,7 @@ describe('>>> Beneficiary Module', () => {
       it('sets noFixedHome', () => {
         store = mockStore();
         store.commit('beneficiary/setNoFixedHome', true);
-        expect(store.state.beneficiary.noFixedHome).toEqual(true);
+        expect(store.state.beneficiary.beneficiary.noFixedHome).toEqual(true);
       });
     });
 
