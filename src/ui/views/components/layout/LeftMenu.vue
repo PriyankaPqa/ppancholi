@@ -98,12 +98,12 @@ export default Vue.extend({
       this.$storage.beneficiary.mutations.setHomeAddress(mockAddress());
       this.$storage.beneficiary.mutations.setTemporaryAddress(mockCampGround());
       this.$storage.beneficiary.mutations.addHouseholdMember(mockHouseholdMember(), false);
-      this.$storage.beneficiary.mutations.addHouseholdMember(
-        mockHouseholdMember({ firstName: 'Mister', lastName: 'Test' }), false,
-      );
-      this.$storage.beneficiary.mutations.addHouseholdMember(
-        mockHouseholdMember({ firstName: 'Misses', lastName: 'Test' }), false,
-      );
+      // this.$storage.beneficiary.mutations.addHouseholdMember(
+      //   mockHouseholdMember({ firstName: 'Mister', lastName: 'Test' }), false,
+      // );
+      // this.$storage.beneficiary.mutations.addHouseholdMember(
+      //   mockHouseholdMember({ firstName: 'Misses', lastName: 'Test' }), false,
+      // );
     },
   },
 });

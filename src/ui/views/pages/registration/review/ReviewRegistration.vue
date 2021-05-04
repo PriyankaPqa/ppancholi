@@ -59,7 +59,8 @@
               :shelter-locations="shelterLocations"
               @identity-change="setIdentity($event)"
               @indigenous-identity-change="setIndigenousIdentity($event)"
-              @province-change="onIndigenousProvinceChange($event)" />
+              @province-change="onIndigenousProvinceChange($event)"
+              @temporary-address-change="setTemporaryAddress($event)" />
           </validation-observer>
         </template>
         <household-member-template :person="person" />
@@ -87,23 +88,18 @@ import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import AddressesTemplate from '@/ui/views/pages/registration/review/addresses/AddressesTemplate.vue';
 import { IContactInformation } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
 import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';
-import { IBeneficiary } from '@crctech/registration-lib/src/entities/beneficiary';
-import { ECanadaProvinces, IOptionItemData, VForm } from '@/types';
+import { VForm } from '@/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import HouseholdMemberSection from '@/ui/views/pages/registration/review/household-members/HouseholdMemberSection.vue';
 import { HouseholdMemberForm } from '@crctech/registration-lib';
 
 import HouseholdMemberTemplate
   from '@/ui/views/pages/registration/review/household-members/HouseholdMemberTemplate.vue';
-import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
-import { TranslateResult } from 'vue-i18n';
-import helpers from '@/ui/helpers';
-import { ETemporaryAddressTypes } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
 import mixins from 'vue-typed-mixins';
-import address from '@/ui/mixins/address';
+import householdMemberForm from '@/ui/mixins/householdMemberForm';
 
-export default mixins(address).extend({
+export default mixins(householdMemberForm).extend({
   name: 'ReviewRegistration',
 
   components: {
@@ -129,65 +125,13 @@ export default mixins(address).extend({
         backupTemporaryAddress: null,
         backupHomeAddress: null,
       },
-      householdMembers: [],
-      showHouseholdMemberDelete: false,
-      indexHouseholdMember: -1,
     };
   },
 
   computed: {
-    householdMembersCopy(): IPerson[] {
-      return _cloneDeep(this.beneficiary.householdMembers);
-    },
-
-    beneficiary(): IBeneficiary {
-      return this.$storage.beneficiary.getters.beneficiary();
-    },
-
     getPersonalInformation(): IContactInformation & IPerson {
       return this.$storage.beneficiary.getters.personalInformation();
     },
-
-    genderItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.genders();
-    },
-
-    indigenousTypesItems(): Record<string, TranslateResult>[] {
-      if (this.indexHouseholdMember !== -1) {
-        return this.$storage.registration.getters.indigenousTypesItems(
-          this.currentHouseholdMember.indigenousProvince,
-        );
-      }
-      return [];
-    },
-
-    indigenousCommunitiesItems(): Record<string, string>[] {
-      if (this.indexHouseholdMember !== -1) {
-        return this.$storage.registration.getters.indigenousCommunitiesItems(
-          this.currentHouseholdMember.indigenousProvince,
-          this.currentHouseholdMember.indigenousType,
-        );
-      }
-      return [];
-    },
-
-    loadingIndigenousIdentities(): boolean {
-      return this.$store.state.registration.loadingIndigenousIdentities;
-    },
-
-    currentHouseholdMember(): IPerson {
-      return this.householdMembersCopy[this.indexHouseholdMember];
-    },
-
-    temporaryAddressTypeItems(): Record<string, unknown>[] {
-      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
-      return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
-    },
-
-  },
-
-  created() {
-    this.buildHouseholdMembersState();
   },
 
   async beforeDestroy() {
@@ -197,21 +141,6 @@ export default mixins(address).extend({
   },
 
   methods: {
-    cancelAllHouseholdMembers() {
-      for (let i = 0; i < this.householdMembers.length; i += 1) {
-        this.cancelHouseholdMember(i);
-      }
-    },
-
-    buildHouseholdMembersState() {
-      const membersCount = this.beneficiary.householdMembers.length;
-      this.householdMembers = [...new Array(membersCount)].map((_, index) => ({
-        inlineEdit: false,
-        backup: null,
-        sameAddress: _isEqual(this.householdMembersCopy[index].temporaryAddress, this.beneficiary.person.temporaryAddress),
-      }));
-    },
-
     editPersonalInformation() {
       this.personalInformation.backup = _cloneDeep(this.getPersonalInformation);
       this.personalInformation.inlineEdit = true;
@@ -223,25 +152,10 @@ export default mixins(address).extend({
       this.addresses.inlineEdit = true;
     },
 
-    editHouseholdMember(index: number) {
-      this.indexHouseholdMember = index;
-      this.householdMembers[index].backup = _cloneDeep(this.beneficiary.householdMembers[index]);
-      this.householdMembers[index].inlineEdit = true;
-    },
-
     cancelPersonalInformation() {
       if (this.personalInformation.inlineEdit) {
         this.$storage.beneficiary.mutations.setPersonalInformation(this.personalInformation.backup);
         this.personalInformation.inlineEdit = false;
-      }
-    },
-
-    cancelHouseholdMember(index: number) {
-      if (this.householdMembers[index].inlineEdit) {
-        this.householdMembers[index].inlineEdit = false;
-        this.$storage.beneficiary.mutations.editHouseholdMember(
-          this.householdMembers[index].backup, index, this.householdMembers[index].sameAddress,
-        );
       }
     },
 
@@ -264,55 +178,6 @@ export default mixins(address).extend({
       const isValid = await (this.$refs.addresses as VForm).validate();
       if (isValid) {
         this.addresses.inlineEdit = false;
-      }
-    },
-
-    async submitHouseholdMember(index: number) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const isValid = await ((this.$refs[`householdMember_${index}`] as any)[0]).validate();
-      if (isValid) {
-        this.householdMembers[index].inlineEdit = false;
-
-        // Not watcher on this form to mutate so we need to do it here
-        this.$storage.beneficiary.mutations.editHouseholdMember(
-          this.householdMembersCopy[index], index, this.householdMembers[index].sameAddress,
-        );
-      }
-    },
-
-    showDeleteDialog(index: number) {
-      this.showHouseholdMemberDelete = true;
-      this.indexHouseholdMember = index;
-    },
-
-    deleteHouseholdMember() {
-      this.$storage.beneficiary.mutations.removeHouseholdMember(this.indexHouseholdMember);
-      this.showHouseholdMemberDelete = false;
-    },
-
-    async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
-      await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
-    },
-
-    setIdentity(form: IPerson) {
-      if (this.currentHouseholdMember) {
-        this.currentHouseholdMember.setIdentity(form);
-        this.$storage.beneficiary.mutations.editHouseholdMember(
-          this.currentHouseholdMember,
-          this.indexHouseholdMember,
-          this.householdMembers[this.indexHouseholdMember].sameAddress,
-        );
-      }
-    },
-
-    setIndigenousIdentity(form: IPerson) {
-      if (this.currentHouseholdMember) {
-        this.currentHouseholdMember.setIndigenousIdentity(form);
-        this.$storage.beneficiary.mutations.editHouseholdMember(
-          this.currentHouseholdMember,
-          this.indexHouseholdMember,
-          this.householdMembers[this.indexHouseholdMember].sameAddress,
-        );
       }
     },
   },

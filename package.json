@@ -22,8 +22,8 @@
     "pr": "yarn test && yarn lint"
   },
   "dependencies": {
-    "@crctech/component-library": "^0.0.77",
-    "@crctech/registration-lib": "^1.0.104",
+    "@crctech/component-library": "1.0.14",
+    "@crctech/registration-lib": "0.1.106",
     "@mdi/font": "^5.6.55",
     "@types/uuid": "^8.3.0",
     "awesome-phonenumber": "^2.39.0",

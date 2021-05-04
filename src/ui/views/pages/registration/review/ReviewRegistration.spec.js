@@ -10,7 +10,8 @@ import {
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
   mockPerson,
-} from '@crctech/registration-lib';
+  mockCampGround,
+} from '@crctech/registration-lib/src/entities/beneficiary';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
@@ -20,12 +21,10 @@ import Component from './ReviewRegistration.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-
+const vuetify = new Vuetify();
 describe('ReviewRegistration.vue', () => {
   let wrapper;
   beforeEach(async () => {
-    const vuetify = new Vuetify();
-
     wrapper = shallowMount(Component, {
       localVue,
       vuetify,
@@ -412,6 +411,29 @@ describe('ReviewRegistration.vue', () => {
           indexHouseholdMember: 0,
         });
         await wrapper.vm.setIndigenousIdentity(mockPerson());
+        expect(wrapper.vm.$storage.beneficiary.mutations.editHouseholdMember)
+          .toHaveBeenCalledWith(
+            wrapper.vm.currentHouseholdMember,
+            0,
+            wrapper.vm.householdMembers[0].sameAddress,
+          );
+      });
+    });
+
+    describe('setTemporaryAddress', () => {
+      it('set temporary address of the household member', async () => {
+        wrapper.setData({
+          indexHouseholdMember: 0,
+        });
+        await wrapper.vm.setTemporaryAddress(mockCampGround());
+        expect(wrapper.vm.currentHouseholdMember.temporaryAddress).toEqual(mockCampGround());
+      });
+
+      it('should save the new household member in the store', async () => {
+        wrapper.setData({
+          indexHouseholdMember: 0,
+        });
+        await wrapper.vm.setTemporaryAddress(mockCampGround());
         expect(wrapper.vm.$storage.beneficiary.mutations.editHouseholdMember)
           .toHaveBeenCalledWith(
             wrapper.vm.currentHouseholdMember,
