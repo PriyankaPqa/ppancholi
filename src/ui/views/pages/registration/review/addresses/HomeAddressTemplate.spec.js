@@ -53,7 +53,9 @@ describe('HomeAddressTemplate.vue', () => {
           modules: {
             beneficiary: {
               state: {
-                noFixedHome: true,
+                beneficiary: {
+                  noFixedHome: true,
+                },
               },
             },
           },

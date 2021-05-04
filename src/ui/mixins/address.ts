@@ -2,7 +2,7 @@ import Vue from 'vue';
 import helpers from '@/ui/helpers';
 import { ECanadaProvinces } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
-import { IShelterLocation } from '@crctech/registration-lib/src/entities/event';
+import { IShelterLocation } from '@crctech/registration-lib/src/entities/value-objects/temporary-address';
 import { EOptionItemStatus } from '@crctech/registration-lib/src/types';
 
 /**

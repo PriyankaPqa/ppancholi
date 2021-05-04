@@ -28,7 +28,7 @@
         </span>
       </div>
       <div data-test="temporaryAddress__street">
-        {{ address.street }}
+        {{ address.streetAddress }}
         <span v-if="address.hasUnitSuite() && address.unitSuite">
           {{ `#${address.unitSuite}` }}
         </span>
@@ -68,7 +68,7 @@ export default Vue.extend({
 
     // TODO Update when we will get a real shelterId
     getShelterLocationName(): string {
-      return this.address.shelterId;
+      return this.$m(this.address.shelterLocation.name);
     },
 
     hasRemainingHomeTemporaryAddress(): boolean {
@@ -91,8 +91,8 @@ export default Vue.extend({
       if (this.address.city) {
         line.push(this.address.city);
       }
-      if (this.address.provinceTerritory) {
-        line.push(ECanadaProvinces[this.address.provinceTerritory as number]);
+      if (this.address.province) {
+        line.push(ECanadaProvinces[this.address.province as number]);
       }
       if (this.address.postalCode) {
         line.push(this.address.postalCode);

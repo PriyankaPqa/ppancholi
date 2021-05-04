@@ -5,10 +5,10 @@
     </div>
     <template v-if="!noHomeAddress">
       <div data-test="homeAddress__street">
-        {{ address.street }} {{ address.unitSuite ? `#${address.unitSuite}`: '' }}
+        {{ address.streetAddress }} {{ address.unitSuite ? `#${address.unitSuite}`: '' }}
       </div>
       <div data-test="homeAddress__line">
-        {{ address.city }}, {{ ECanadaProvinces[address.provinceTerritory] }}, {{ address.postalCode }}
+        {{ address.city }}, {{ ECanadaProvinces[address.province] }}, {{ address.postalCode }}
       </div>
       <div data-test="homeAddress__country">
         {{ address.country }}
@@ -40,7 +40,7 @@ export default Vue.extend({
   },
   computed: {
     noHomeAddress(): boolean {
-      return this.$store.state.beneficiary.noFixedHome;
+      return this.$storage.beneficiary.getters.beneficiary().noFixedHome;
     },
   },
 });

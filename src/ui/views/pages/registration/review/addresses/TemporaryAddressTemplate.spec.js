@@ -70,7 +70,7 @@ describe('TemporaryAddressTemplate.vue', () => {
     describe('Street', () => {
       it('should display the street', () => {
         const el = wrapper.findDataTest('temporaryAddress__street');
-        expect(el.text()).toBe(wrapper.vm.address.street);
+        expect(el.text()).toBe(wrapper.vm.address.streetAddress);
       });
 
       it('should display the street and the unit suite if the type requires it', async () => {
@@ -78,7 +78,7 @@ describe('TemporaryAddressTemplate.vue', () => {
           address: mockFriendsFamily({ unitSuite: '123' }),
         });
         const el = wrapper.findDataTest('temporaryAddress__street');
-        const expected = `${wrapper.vm.address.street} #${wrapper.vm.address.unitSuite}`;
+        const expected = `${wrapper.vm.address.streetAddress} #${wrapper.vm.address.unitSuite}`;
         expect(el.text().replace(/\s+/g, ' ').trim()).toMatch(expected);
       });
     });
@@ -108,7 +108,7 @@ describe('TemporaryAddressTemplate.vue', () => {
         await wrapper.setProps({
           address: mockShelter(),
         });
-        expect(wrapper.vm.getShelterLocationName).toBe(mockShelter().shelterId);
+        expect(wrapper.vm.getShelterLocationName).toBe(mockShelter().shelterLocation.name.translation.en);
       });
     });
 

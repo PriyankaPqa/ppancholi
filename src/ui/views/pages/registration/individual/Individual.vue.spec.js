@@ -198,6 +198,7 @@ describe('Individual.vue', () => {
 
     describe('next', () => {
       it('calls jump', async () => {
+        storage.registration.getters.currentTab.mockReturnValueOnce(tabs[0]);
         wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
         wrapper.vm.jump = jest.fn();
 
