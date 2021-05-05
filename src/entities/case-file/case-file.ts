@@ -1,7 +1,14 @@
 import { IMultilingual } from '@/types';
 import utils from '../utils';
 import {
-  ECaseFileStatus, ETriageLevel, ICaseFile, ICaseFileBeneficiary, ICaseFileEvent, ICaseFileSearchData, ICaseFileTagInfos,
+  ECaseFileStatus,
+  ETriageLevel,
+  ICaseFile,
+  ICaseFileBeneficiary,
+  ICaseFileEvent,
+  ICaseFileLabel,
+  ICaseFileSearchData,
+  ICaseFileTagInfos,
 } from './case-file.types';
 
 export class CaseFile implements ICaseFile {
@@ -22,6 +29,8 @@ export class CaseFile implements ICaseFile {
   isDuplicate: boolean;
 
   tags: ICaseFileTagInfos[];
+
+  labels: ICaseFileLabel[];
 
   triage: ETriageLevel;
 
@@ -71,6 +80,8 @@ export class CaseFile implements ICaseFile {
       id: tag.id,
       name: utils.initMultilingualAttributes(tag.name),
     }));
+
+    this.labels = data.labels.map((l) => ({ ...l }));
 
     this.triage = data.triage;
 

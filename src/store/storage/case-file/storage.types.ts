@@ -1,4 +1,4 @@
-import { ICaseFile } from '@/entities/case-file';
+import { ICaseFile, ICaseFileLabel } from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 
@@ -13,6 +13,7 @@ export interface IStorage {
     fetchCaseFile(id: uuid): Promise<ICaseFile> ;
     searchCaseFiles(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFile>>;
     setCaseFileTags(id: uuid, tags: IListOption[]): Promise<ICaseFile>;
+    setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFile>;
   }
 }
 
@@ -27,5 +28,6 @@ export interface IStorageMock {
     fetchCaseFile: jest.Mock<void>;
     searchCaseFiles: jest.Mock<void>;
     setCaseFileTags: jest.Mock<void>;
+    setCaseFileLabels: jest.Mock<void>;
   }
 }

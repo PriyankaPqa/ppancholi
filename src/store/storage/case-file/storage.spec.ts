@@ -1,4 +1,4 @@
-import { CaseFile, mockCaseFilesSearchData } from '@/entities/case-file';
+import { CaseFile, ICaseFileLabel, mockCaseFilesSearchData } from '@/entities/case-file';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
 import { IListOption } from '@/types';
@@ -32,6 +32,20 @@ describe('>>> Case File Storage', () => {
       const tags: IListOption[] = [{ optionItemId: 'foo', specifiedOther: null }];
       storage.actions.setCaseFileTags(id, tags);
       expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileTags', { id, tags });
+    });
+
+    it('should proxy setCaseFileLabels', () => {
+      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+      const { id } = caseFile;
+      const labels: ICaseFileLabel[] = [{
+        name: 'Label One',
+        order: 1,
+      }, {
+        name: 'Label Two',
+        order: 2,
+      }];
+      storage.actions.setCaseFileLabels(id, labels);
+      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileLabels', { id, labels });
     });
   });
 });

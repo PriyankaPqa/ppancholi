@@ -1,5 +1,6 @@
 <template>
   <rc-page-content
+    content-padding="0"
     :outer-scroll="true"
     :title="$t('caseFile.caseFileActivity')"
     :show-help="true"
@@ -55,16 +56,7 @@
 
     <template v-if="!loading" slot="default">
       <v-row class="ma-0 pa-0">
-        <v-btn
-          class="fw-bold"
-          small
-          data-test="caseFileActivity-add-label-btn">
-          <v-icon small>
-            mdi-plus
-          </v-icon>
-          {{ $t('caseFileActivity.labels.addLabel') }}
-        </v-btn>
-        <v-row />
+        <case-file-labels />
       </v-row>
     </template>
   </rc-page-content>
@@ -76,6 +68,7 @@ import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { ICaseFile, ECaseFileStatus } from '@/entities/case-file';
 import CaseFileTags from './components/CaseFileTags.vue';
+import CaseFileLabels from './components/CaseFileLabels.vue';
 
 export default Vue.extend({
   name: 'CaseFileActivity',
@@ -84,6 +77,7 @@ export default Vue.extend({
     RcPageContent,
     StatusSelect,
     CaseFileTags,
+    CaseFileLabels,
   },
 
   data() {
@@ -92,6 +86,7 @@ export default Vue.extend({
       error: false,
       newStatus: null,
       showEventStatusDialog: false,
+      showLabelsDialog: false,
       loading: false,
       statuses: [ECaseFileStatus.Archived, ECaseFileStatus.Open, ECaseFileStatus.Closed, ECaseFileStatus.Inactive],
     };
@@ -121,7 +116,6 @@ export default Vue.extend({
       this.loading = false;
     }
   },
-
 });
 
 </script>

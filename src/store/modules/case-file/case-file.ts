@@ -5,7 +5,9 @@ import _findIndex from 'lodash/findIndex';
 import _sortBy from 'lodash/sortBy';
 
 import { IRootState } from '@/store/store.types';
-import { CaseFile, ICaseFile, ICaseFileSearchData } from '@/entities/case-file';
+import {
+  CaseFile, ICaseFile, ICaseFileLabel, ICaseFileSearchData,
+} from '@/entities/case-file';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 import {
   EOptionLists, IOptionItem, IOptionItemData, OptionItem,
@@ -62,11 +64,9 @@ const mutations = {
   setTagsOptions(state: IState, payload: Array<IOptionItemData>) {
     state.tagsOptions = payload;
   },
-
 };
 
 const actions = {
-
   async fetchTagsOptions(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
     // if (!context.state.tagsOptionsFetched) { disable caching until signalR events are implemented
     const data = await this.$services.optionItems.getOptionList(EOptionLists.CaseFileTags);
@@ -123,14 +123,33 @@ const actions = {
     }
   },
 
-  async setCaseFileTags(this: Store<IState>, context: ActionContext<IState, IRootState>,
-    payload: {tags: IListOption[], id:uuid}) : Promise<ICaseFile> {
+  async setCaseFileTags(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    payload: { tags: IListOption[], id: uuid },
+  ): Promise<ICaseFile> {
     const data = await this.$services.caseFiles.setCaseFileTags(payload.id, payload.tags);
     if (data) {
       const caseFile = new CaseFile(mapCaseFileDataToSearchData(data, context, payload.id));
       context.commit('addOrUpdateCaseFile', caseFile);
       return caseFile;
     }
+    return null;
+  },
+
+  async setCaseFileLabels(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    payload: { id: uuid, labels: ICaseFileLabel[] },
+  ): Promise<ICaseFile> {
+    const data = await this.$services.caseFiles.setCaseFileLabels(payload.id, payload.labels);
+
+    if (data) {
+      const caseFile = new CaseFile(mapCaseFileDataToSearchData(data, context, payload.id));
+      context.commit('addOrUpdateCaseFile', caseFile);
+      return caseFile;
+    }
+
     return null;
   },
 };

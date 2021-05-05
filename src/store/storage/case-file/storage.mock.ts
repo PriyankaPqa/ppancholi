@@ -11,5 +11,6 @@ export const mockStorageCaseFile = () : IStorageMock => ({
     searchCaseFiles: jest.fn(),
     fetchCaseFile: jest.fn(),
     setCaseFileTags: jest.fn(),
+    setCaseFileLabels: jest.fn(),
   },
 });

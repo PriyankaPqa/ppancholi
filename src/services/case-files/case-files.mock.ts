@@ -4,4 +4,5 @@ import { ICaseFilesServiceMock } from './case-files.types';
 export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   searchCaseFiles: jest.fn(() => mockSearchCaseFiles()),
   setCaseFileTags: jest.fn(() => mockCaseFilesData()[0]),
+  setCaseFileLabels: jest.fn(() => mockCaseFilesData()[0]),
 });

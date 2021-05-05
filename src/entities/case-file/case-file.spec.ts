@@ -100,6 +100,17 @@ describe('>>> Case File', () => {
       }]);
     });
 
+    it('should instantiate labels', () => {
+      const caseFile = new CaseFile(mockCaseFileData);
+      expect(caseFile.labels).toEqual([{
+        name: 'Label One',
+        order: 1,
+      }, {
+        name: 'Label Two',
+        order: 2,
+      }]);
+    });
+
     it('should instantiate triage', () => {
       const caseFile = new CaseFile(mockCaseFileData);
       expect(caseFile.triage).toEqual(1);

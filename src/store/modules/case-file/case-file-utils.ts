@@ -84,6 +84,7 @@ export const mapCaseFileDataToSearchData = (
     duplicate: caseFileData.duplicate,
     event: getEvent(originalCaseFile, caseFileData.eventId),
     tags: getTags(originalCaseFile, caseFileData.tags, context.state.tagsOptions),
+    labels: caseFileData.labels.map((l) => ({ ...l })),
     triage: caseFileData.triage,
     triageName: getTriageName(caseFileData.triage),
     tenantId: null,

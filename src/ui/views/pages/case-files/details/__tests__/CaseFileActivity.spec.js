@@ -85,16 +85,6 @@ describe('CaseFileActivity.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
     });
-
-    describe('add label button', () => {
-      let element;
-      beforeEach(() => {
-        element = wrapper.findDataTest('caseFileActivity-add-label-btn');
-      });
-      it('is renders', () => {
-        expect(element.exists()).toBeTruthy();
-      });
-    });
   });
 
   describe('Computed', () => {

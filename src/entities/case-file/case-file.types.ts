@@ -64,6 +64,11 @@ export interface ICaseFileTagInfos {
   name: IMultilingual;
 }
 
+export interface ICaseFileLabel {
+  order: number;
+  name: string;
+}
+
 /**
  * Interface of the case file entity (returned when a case file is updated)
  */
@@ -77,6 +82,7 @@ export interface ICaseFileData {
   duplicate: boolean;
   eventId: uuid;
   tags: IListOption[];
+  labels: ICaseFileLabel[];
   triage: ETriageLevel;
   eTag: string;
   tenantId: uuid;
@@ -96,6 +102,7 @@ export interface ICaseFileSearchData {
   duplicate: boolean;
   event: ICaseFileEvent;
   tags: ICaseFileTagInfos[];
+  labels: ICaseFileLabel[];
   triage: ETriageLevel;
   triageName: IMultilingual;
   tenantId: uuid;
@@ -111,6 +118,7 @@ export interface ICaseFile {
   event: ICaseFileEvent;
   isDuplicate: boolean;
   tags: ICaseFileTagInfos[];
+  labels: ICaseFileLabel[];
   triage: ETriageLevel;
   triageName: IMultilingual;
   tenantId: uuid;

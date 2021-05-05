@@ -1,5 +1,5 @@
 import {
-  CaseFile, ICaseFile, mockCaseFilesSearchData, mockSearchCaseFiles,
+  CaseFile, ICaseFile, ICaseFileLabel, mockCaseFilesSearchData, mockSearchCaseFiles,
 } from '@/entities/case-file';
 import { Store } from 'vuex';
 import { mockSearchParams } from '@/test/helpers';
@@ -200,6 +200,44 @@ describe('>>> Case File Module', () => {
 
         expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
       });
+    });
+  });
+
+  describe('setCaseFileLabels', () => {
+    it('calls the setCaseFileLabels service and returns the new case file entity', async () => {
+      store = mockStore({
+        modules: {
+          caseFile: {
+            state: {
+              caseFiles: mockCaseFiles(),
+            },
+          },
+        },
+      });
+
+      const caseFile = mockCaseFiles()[0];
+      const { id } = caseFile;
+      const labels: ICaseFileLabel[] = [{
+        name: 'Label One',
+        order: 1,
+      }, {
+        name: 'Label Two',
+        order: 2,
+      }];
+
+      expect(store.$services.caseFiles.setCaseFileLabels).toHaveBeenCalledTimes(0);
+
+      const res = await store.dispatch('caseFile/setCaseFileLabels', {
+        id,
+        labels,
+      });
+
+      expect(store.$services.caseFiles.setCaseFileLabels).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.setCaseFileLabels).toHaveBeenCalledWith(id, labels);
+
+      expect(res).toEqual(caseFile);
+
+      expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
     });
   });
 });

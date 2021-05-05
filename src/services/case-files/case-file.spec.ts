@@ -1,4 +1,4 @@
-import { mockCaseFilesSearchData } from '@/entities/case-file';
+import { ICaseFileLabel, mockCaseFilesSearchData } from '@/entities/case-file';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { IListOption } from '@/types';
@@ -13,17 +13,37 @@ describe('>>> Case File Service', () => {
     jest.clearAllMocks();
   });
 
-  test('searchEvents is linked to the correct URL and params', async () => {
-    const params = mockSearchParams;
-    await service.searchCaseFiles(params);
-    expect(http.get).toHaveBeenCalledWith('/search/case-file-projections', { params, isOData: true });
+  describe('searchCaseFiles', () => {
+    it('is linked to the correct URL and params', async () => {
+      const params = mockSearchParams;
+      await service.searchCaseFiles(params);
+      expect(http.get).toHaveBeenCalledWith('/search/case-file-projections', { params, isOData: true });
+    });
   });
 
-  test('setCaseFileTags is linked to the correct URL and params', async () => {
-    const id = mockCaseFilesSearchData()[0].caseFileId;
-    const payload: IListOption[] = [{ optionItemId: 'foo', specifiedOther: null }];
+  describe('setCaseFileTags', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const payload: IListOption[] = [{ optionItemId: 'foo', specifiedOther: null }];
 
-    await service.setCaseFileTags(id, payload);
-    expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/tags`, { tags: payload });
+      await service.setCaseFileTags(id, payload);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/tags`, { tags: payload });
+    });
+  });
+
+  describe('setCaseFileLabels', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const payload: ICaseFileLabel[] = [{
+        name: 'Label One',
+        order: 1,
+      }, {
+        name: 'Label Two',
+        order: 2,
+      }];
+
+      await service.setCaseFileLabels(id, payload);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/labels`, { labels: payload });
+    });
   });
 });

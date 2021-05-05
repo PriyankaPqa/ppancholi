@@ -60,6 +60,13 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
         },
       },
     }],
+    labels: [{
+      name: 'Label One',
+      order: 1,
+    }, {
+      name: 'Label Two',
+      order: 2,
+    }],
     triage: 1,
     triageName: {
       translation: {
@@ -119,6 +126,13 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
       },
     },
     tags: [],
+    labels: [{
+      name: 'Label One',
+      order: 1,
+    }, {
+      name: 'Label Two',
+      order: 2,
+    }],
     triage: 0,
     triageName: {
       translation: {
@@ -151,6 +165,13 @@ export const mockCaseFilesData = (): ICaseFileData[] => [{
   duplicate: false,
   eventId: 'mock-event-id-1',
   tags: [],
+  labels: [{
+    name: 'Label One',
+    order: 1,
+  }, {
+    name: 'Label Two',
+    order: 2,
+  }],
   triage: 0,
   eTag: 'mock-e-tag',
   tenantId: 'mock-tenant-id-1',
