@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  mockTeamsData, mockTeamSearchData, Team,
+  mockTeamSearchData, Team,
 } from '@/entities/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/store/storage';
@@ -11,6 +11,8 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
+const mockTeam = new Team(mockTeamSearchData()[0]);
+
 describe('TeamMembersTable.vue', () => {
   let wrapper;
 
@@ -18,11 +20,13 @@ describe('TeamMembersTable.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
-        propsData: {
-          team: new Team(mockTeamSearchData()[0]),
-        },
         store: {
           ...mockUserStateLevel(5),
+        },
+        computed: {
+          team() {
+            return mockTeam;
+          },
         },
       });
     });
@@ -94,7 +98,6 @@ describe('TeamMembersTable.vue', () => {
         describe('Delete member', () => {
           test('clicking the bin will show remove confirmation dialog if not a primary contact', async () => {
             jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
-
             const button = wrapper.findDataTest('remove_team_member_guid-member-2');
             await button.trigger('click');
             expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledTimes(1);
@@ -165,14 +168,16 @@ describe('TeamMembersTable.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        propsData: {
-          team: new Team(mockTeamsData()[0]),
-        },
         data() {
           return {
             search: 'Mister',
             sortBy: 'displayName',
           };
+        },
+        computed: {
+          team() {
+            return mockTeam;
+          },
         },
       });
     });
@@ -194,8 +199,10 @@ describe('TeamMembersTable.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
-        propsData: {
-          team: new Team(mockTeamsData()[0]),
+        computed: {
+          team() {
+            return mockTeam;
+          },
         },
         mocks: {
           $storage: storage,
@@ -216,8 +223,10 @@ describe('TeamMembersTable.vue', () => {
     });
 
     describe('removeTeamMember', () => {
-      it('calls removeTeamMember action with correct params', () => {
-        wrapper.vm.removeMemberId = 'guid-member-1';
+      it('calls removeTeamMember action with correct params', async () => {
+        await wrapper.setData({
+          removeMemberId: 'guid-member-1',
+        });
         wrapper.vm.removeTeamMember();
         expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith('guid-member-1');
       });
@@ -234,8 +243,10 @@ describe('TeamMembersTable.vue', () => {
       test('only l5+ user can see the delete icon for a primary contact', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          propsData: {
-            team: new Team(mockTeamSearchData()[0]),
+          computed: {
+            team() {
+              return mockTeam;
+            },
           },
         });
 
@@ -249,8 +260,10 @@ describe('TeamMembersTable.vue', () => {
       test('only l4+ can see the delete icon for other members', async () => {
         wrapper = shallowMount(Component, {
           localVue,
-          propsData: {
-            team: new Team(mockTeamSearchData()[0]),
+          computed: {
+            team() {
+              return mockTeam;
+            },
           },
         });
 

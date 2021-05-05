@@ -6,7 +6,7 @@ import {
 import routes from '@/constants/routes';
 import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
 import {
-  mockTeamsData, ETeamStatus, ETeamType, mockTeamMembers, Team,
+  mockTeamsData, ETeamStatus, ETeamType, mockTeamMembers, Team, mockTeamSearchData,
 } from '@/entities/team';
 
 import { mockAppUserAzureData } from '@/entities/app-user';
@@ -24,15 +24,24 @@ describe('CreateEditTeam.vue', () => {
   };
 
   describe('Template', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       wrapper = mount(Component, {
         store: {
           ...mockUserStateLevel(5),
+        },
+        data() {
+          return {
+
+          };
         },
         localVue,
         propsData: {
           teamType: 'standard',
         },
+      });
+      await wrapper.setData({
+        team: new Team(),
+        isLoading: false,
       });
     });
 
@@ -58,7 +67,7 @@ describe('CreateEditTeam.vue', () => {
           expect(element.exists()).toBeTruthy();
         });
 
-        it('should be disabled in create mode', () => {
+        it('should be disabled in create mode', async () => {
           wrapper = mount(Component, {
             localVue,
             propsData: {
@@ -69,6 +78,10 @@ describe('CreateEditTeam.vue', () => {
                 return false;
               },
             },
+          });
+          await wrapper.setData({
+            team: new Team(),
+            isLoading: false,
           });
 
           const element = wrapper.find('[data-test="team-status"]');
@@ -246,7 +259,7 @@ describe('CreateEditTeam.vue', () => {
       describe('Action buttons', () => {
         describe('submit button', () => {
           let element;
-          beforeEach(() => {
+          beforeEach(async () => {
             wrapper = shallowMount(Component, {
               localVue,
               propsData: {
@@ -257,6 +270,10 @@ describe('CreateEditTeam.vue', () => {
                   return 'mockSubmitLabel';
                 },
               },
+            });
+            await wrapper.setData({
+              team: new Team(),
+              isLoading: false,
             });
 
             element = wrapper.findDataTest('createEditTeam__submit');
@@ -284,6 +301,10 @@ describe('CreateEditTeam.vue', () => {
                   teamType: 'standard',
                 },
               });
+              wrapper.setData({
+                team: new Team(),
+                isLoading: false,
+              });
               jest.spyOn(wrapper.vm, 'isSubmitDisabled').mockImplementation(() => true);
             });
 
@@ -296,7 +317,7 @@ describe('CreateEditTeam.vue', () => {
 
         describe('cancel button', () => {
           let element;
-          beforeEach(() => {
+          beforeEach(async () => {
             wrapper = shallowMount(Component, {
               localVue,
               propsData: {
@@ -307,6 +328,11 @@ describe('CreateEditTeam.vue', () => {
                   return 'mockSubmitLabel';
                 },
               },
+            });
+
+            await wrapper.setData({
+              team: new Team(),
+              isLoading: false,
             });
 
             element = wrapper.findDataTest('createEditTeam__cancel');
@@ -330,7 +356,7 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('Authorization', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         wrapper = mount(Component, {
           store: {
             ...mockUserStateLevel(4),
@@ -339,6 +365,10 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
+        });
+        await wrapper.setData({
+          team: new Team(),
+          isLoading: false,
         });
         wrapper.vm.$route.name = routes.teams.edit.name;
       });
@@ -405,7 +435,7 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('deleteEventConfirmationMessage', () => {
-      it('displays the correct message ', () => {
+      it('displays the correct message ', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -419,6 +449,10 @@ describe('CreateEditTeam.vue', () => {
               return mockEventsData();
             },
           },
+        });
+        await wrapper.setData({
+          team: new Team(),
+          isLoading: false,
         });
         // eslint-disable-next-line prefer-destructuring
         wrapper.vm.eventsAfterRemoval = mockEventsData()[1];
@@ -552,34 +586,6 @@ describe('CreateEditTeam.vue', () => {
       expect(actions.fetchEvents).toHaveBeenCalledTimes(1);
     });
 
-    it('sets the right team type for adhoc team type in create mode', async () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          teamType: 'standard',
-        },
-        computed: {
-          isEditMode() { return false; },
-        },
-      });
-      await wrapper.vm.fetchEvents();
-      expect(wrapper.vm.team.teamType).toEqual(ETeamType.Standard);
-    });
-
-    it('sets the right team type for standard team type in create mode', async () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          teamType: 'adhoc',
-        },
-        computed: {
-          isEditMode() { return false; },
-        },
-      });
-      await wrapper.vm.fetchEvents();
-      expect(wrapper.vm.team.teamType).toEqual(ETeamType.AdHoc);
-    });
-
     it('calls loadTeam in edit mode', async () => {
       wrapper = shallowMount(Component, {
         localVue,
@@ -598,7 +604,7 @@ describe('CreateEditTeam.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
@@ -615,6 +621,10 @@ describe('CreateEditTeam.vue', () => {
             },
           },
         },
+      });
+      await wrapper.setData({
+        team: new Team(),
+        isLoading: false,
       });
     });
 
@@ -733,6 +743,7 @@ describe('CreateEditTeam.vue', () => {
         wrapper.vm.$store.commit('team/resetTeam');
         wrapper.vm.$route.params = { id: 'foo' };
         jest.spyOn(wrapper.vm.$storage.team.actions, 'getTeam');
+        jest.spyOn(wrapper.vm.$storage.team.getters, 'team').mockImplementation(() => new Team(mockTeamSearchData()[0]));
       });
 
       it('sets the right primary contact user', async () => {
@@ -748,6 +759,11 @@ describe('CreateEditTeam.vue', () => {
       it('sets the right primaryContactQuery', async () => {
         await wrapper.vm.loadTeam();
         expect(wrapper.vm.primaryContactQuery).toEqual(mockTeamMembers()[0].displayName);
+      });
+
+      it('should set the team with a cloneDeep of team from storage', async () => {
+        await wrapper.vm.loadTeam();
+        expect(wrapper.vm.team).toEqual(new Team(mockTeamSearchData()[0]));
       });
     }));
 
@@ -851,21 +867,10 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('calls the method setPrimaryContact of team with currentPrimaryContact', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            teamType: 'standard',
-          },
-          computed: {
-            team() {
-              return new Team();
-            },
-          },
-        });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$refs.form.reset = jest.fn(() => true);
         [wrapper.vm.currentPrimaryContact] = mockTeamMembers();
-        jest.spyOn(wrapper.vm.team, 'setPrimaryContact');
+        wrapper.vm.team.setPrimaryContact = jest.fn();
         await wrapper.vm.submit();
         expect(wrapper.vm.team.setPrimaryContact).toHaveBeenCalledWith(mockTeamMembers()[0]);
       });
@@ -930,15 +935,13 @@ describe('CreateEditTeam.vue', () => {
               isEditMode() {
                 return true;
               },
-              team() {
-                return new Team();
-              },
             },
             data() {
               return {
                 currentPrimaryContact: {
                   id: 'id',
                 },
+                team: new Team(),
               };
             },
           });
@@ -984,6 +987,10 @@ describe('CreateEditTeam.vue', () => {
             },
           },
         });
+        await wrapper.setData({
+          team: new Team(),
+          isLoading: false,
+        });
         jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
         expect(actions.createTeam).toHaveBeenCalledTimes(1);
@@ -999,6 +1006,7 @@ describe('CreateEditTeam.vue', () => {
       it('opens a toast with a success message for adhoc team', async () => {
         jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         wrapper.vm.$store.$services.teams.createTeam = jest.fn(() => mockTeamsData()[1]);
+        wrapper.vm.team.teamType = ETeamType.AdHoc;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.submitCreateTeam();
@@ -1009,7 +1017,7 @@ describe('CreateEditTeam.vue', () => {
       it('redirects to the edit page with the id of the newly created team', async () => {
         jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         jest.spyOn(wrapper.vm.$router, 'replace').mockImplementation(() => {});
-
+        wrapper.vm.team.id = 'guid-team-1';
         await wrapper.vm.submitCreateTeam();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
@@ -1047,6 +1055,43 @@ describe('CreateEditTeam.vue', () => {
         jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
         expect(wrapper.vm.resetFormValidation).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('prepareCreateTeam', () => {
+      it('should set the team correctly', async () => {
+        const team = new Team();
+        team.teamType = ETeamType.Standard;
+        await wrapper.vm.prepareCreateTeam();
+        expect(wrapper.vm.team).toEqual(team);
+      });
+
+      it('sets the right team type for standard team type in create mode', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+          },
+          computed: {
+            isEditMode() { return false; },
+          },
+        });
+        await wrapper.vm.prepareCreateTeam();
+        expect(wrapper.vm.team.teamType).toEqual(ETeamType.Standard);
+      });
+
+      it('sets the right team type for adhoc team type in create mode', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'adhoc',
+          },
+          computed: {
+            isEditMode() { return false; },
+          },
+        });
+        await wrapper.vm.prepareCreateTeam();
+        expect(wrapper.vm.team.teamType).toEqual(ETeamType.AdHoc);
       });
     });
   });

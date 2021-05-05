@@ -23,7 +23,7 @@ export interface IStorage {
 
 export interface IStorageMock {
   getters: {
-    team: jest.Mock<void>;
+    team: jest.Mock<void> | jest.Mock<ITeam>;
   },
 
   mutations: {

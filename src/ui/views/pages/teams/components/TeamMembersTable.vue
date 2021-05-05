@@ -127,11 +127,6 @@ export default Vue.extend({
   },
 
   props: {
-    team: {
-      type: Object as () => Team,
-      required: true,
-    },
-
     showSearch: {
       type: Boolean,
       default: true,
@@ -268,6 +263,10 @@ export default Vue.extend({
 
     removeLoading(): boolean {
       return this.$store.state.team.removeLoading;
+    },
+
+    team(): Team {
+      return this.$storage.team.getters.team();
     },
 
   },

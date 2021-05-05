@@ -109,7 +109,6 @@
               <v-col class="pa-0">
                 <team-members-table
                   data-test="team-members-table"
-                  :team="team"
                   :show-members="isEditMode"
                   :show-search="isEditMode"
                   :disable-add-members="!isEditMode" />
@@ -149,8 +148,10 @@ import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import { IError } from '@/services/httpClient';
 
+import _cloneDeep from 'lodash/cloneDeep';
+
 import {
-  ETeamStatus, ETeamType, ITeamEvent, Team,
+  ETeamStatus, ETeamType, ITeamEvent, Team, ITeam,
 } from '@/entities/team';
 import { EEventStatus, IEvent } from '@/entities/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
@@ -205,6 +206,8 @@ export default Vue.extend({
       showEventDeleteConfirmationDialog: false,
       minimumContactQueryLength: 1,
       eventsAfterRemoval: null as ITeamEvent[],
+      team: null as ITeam,
+      isLoading: true,
     };
   },
 
@@ -215,6 +218,7 @@ export default Vue.extend({
         name: e.name,
       }));
     },
+
     deleteEventConfirmationMessage(): TranslateResult {
       if (this.eventsAfterRemoval) {
         const removedEvent = _difference(this.team.events, this.eventsAfterRemoval);
@@ -237,10 +241,6 @@ export default Vue.extend({
 
     isSubmitting(): boolean {
       return this.$store.state.team.submitLoading;
-    },
-
-    isLoading(): boolean {
-      return this.$store.state.team.getLoading;
     },
 
     rules(): Record<string, unknown> {
@@ -269,11 +269,6 @@ export default Vue.extend({
       }
       return this.$t('teams.types.adhoc');
     },
-
-    team(): Team {
-      return this.$storage.team.getters.team();
-    },
-
   },
 
   watch: {
@@ -283,18 +278,17 @@ export default Vue.extend({
   },
 
   async mounted() {
+    this.isLoading = true;
     await this.fetchEvents();
     if (!this.isEditMode) {
-      this.$storage.team.mutations.resetTeam();
-      this.team.teamType = this.teamType === 'standard' ? ETeamType.Standard : ETeamType.AdHoc;
-      this.team.status = ETeamStatus.Active;
+      this.prepareCreateTeam();
     } else {
       await this.loadTeam();
     }
+    this.isLoading = false;
   },
 
   methods: {
-
     async fetchEvents() {
       await this.$storage.event.actions.fetchEvents();
     },
@@ -328,7 +322,7 @@ export default Vue.extend({
       const teamId = this.id;
       if (teamId) {
         await this.$storage.team.actions.getTeam(teamId);
-
+        this.team = _cloneDeep(this.$storage.team.getters.team());
         this.currentPrimaryContact = this.team.getPrimaryContact();
         if (this.currentPrimaryContact) {
           this.primaryContactQuery = this.currentPrimaryContact.displayName;
@@ -422,6 +416,11 @@ export default Vue.extend({
       } catch (errors) {
         this.handleSubmitError(errors);
       }
+    },
+
+    prepareCreateTeam() {
+      this.team = new Team();
+      this.team.teamType = this.teamType === 'standard' ? ETeamType.Standard : ETeamType.AdHoc;
     },
 
   },
