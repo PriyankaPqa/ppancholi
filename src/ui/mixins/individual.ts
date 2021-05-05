@@ -74,6 +74,7 @@ export default Vue.extend({
       // If we stop on a validation error and a user has seen it previously, highlight errors
       if (effectiveToIndex !== toIndex && this.allTabs[effectiveToIndex].isTouched) {
         this.mutateStateTab(false);
+        await this.$nextTick();
         await (this.$refs.form as VForm).validate();
         helpers.scrollToFirstError('app');
       }
