@@ -22,8 +22,8 @@ const mockActionsContext = (): ActionContext<IState, IRootState> => ({
   getters: {},
   rootState: null,
   rootGetters: {
-    'event/eventsByStatus': () => [] as IEvent[],
-    'appUser/appUserWhere': () => [] as IAppUserData[],
+    'event/eventsByStatus': jest.fn(() => [] as IEvent[]),
+    'appUser/appUserWhere': jest.fn(() => [] as IAppUserData[]),
   },
 });
 
@@ -48,6 +48,21 @@ describe('>>> Team utils', () => {
         teamMembers: utils.retrieveTeamMembers(payload.teamMembers, mockActionsContext()),
         teamStatusName: mockActionsContext().state.team.statusName,
       });
+    });
+  });
+
+  describe('>> retrieveTeamEvents', () => {
+    it('retrieve cached events with given ids', () => {
+      const events = [{ id: 'guid-1' }, { id: 'guid-2' }];
+      const eventsIds = ['guid-1', 'guid-2'];
+
+      const context = mockActionsContext();
+      const eventsByStatus = context.rootGetters['event/eventsByStatus'];
+
+      eventsByStatus.mockReturnValueOnce(events);
+
+      const res = utils.retrieveTeamEvents(eventsIds, context);
+      expect(res).toEqual([{ id: 'guid-1' }, { id: 'guid-2' }]);
     });
   });
 });

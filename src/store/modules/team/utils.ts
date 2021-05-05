@@ -17,13 +17,10 @@ export const retrieveTeamMembers = (
 });
 
 // map cached events with team events ids from the payload
-export const retrieveTeamEvents = (
-  eventsIds: Array<uuid>,
-  context: ActionContext<IState, IRootState>,
-): IEvent[] => eventsIds.map((id) => {
-  const openEvents = context.rootGetters['event/eventsByStatus']([EEventStatus.Open]);
-  return openEvents.find((e: IEvent) => e.id === id);
-});
+export const retrieveTeamEvents = (eventsIds: Array<uuid>, context: ActionContext<IState, IRootState>): IEvent[] => {
+  const events = context.rootGetters['event/eventsByStatus']([EEventStatus.Open, EEventStatus.OnHold]);
+  return eventsIds.map((id) => events.find((e: IEvent) => e.id === id));
+};
 
 export const buildTeamSearchDataPayload = (payload: ITeamData, context: ActionContext<IState, IRootState>) : ITeamSearchData => ({
   teamId: payload.id,
