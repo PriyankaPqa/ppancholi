@@ -35,5 +35,9 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFile> {
       return store.dispatch('caseFile/setCaseFileLabels', { id, labels });
     },
+
+    setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFile> {
+      return store.dispatch('caseFile/setCaseFileIsDuplicate', { id, isDuplicate });
+    },
   },
 });

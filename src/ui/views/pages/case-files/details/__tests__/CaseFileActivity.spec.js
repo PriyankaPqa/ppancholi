@@ -11,8 +11,11 @@ const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
 
 describe('CaseFileActivity.vue', () => {
   let wrapper;
+
   describe('Template', () => {
     beforeEach(() => {
+      jest.clearAllMocks();
+
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
@@ -89,11 +92,30 @@ describe('CaseFileActivity.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        mocks: {
+          $route: {
+            name: routes.caseFile.activity.name,
+            params: {
+              id: mockCaseFile.id,
+            },
+          },
+          $storage: storage,
+        },
+      });
+
       storage.caseFile.getters.caseFileById.mockReturnValueOnce(mockCaseFile);
     });
 
     describe('caseFile', () => {
       it('return the case file by id from the storage', () => {
+        expect(wrapper.vm.caseFile).toEqual(mockCaseFile);
+      });
+    });
+
+    describe('canMarkDuplicate', () => {
+      it('returns the true for level 1+ users', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           mocks: {
@@ -103,10 +125,17 @@ describe('CaseFileActivity.vue', () => {
                 id: mockCaseFile.id,
               },
             },
-            $storage: storage,
+          },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
           },
         });
-        expect(wrapper.vm.caseFile).toEqual(mockCaseFile);
+
+        expect(wrapper.vm.canMarkDuplicate).toBe(false);
+        await wrapper.setRole('level1');
+        expect(wrapper.vm.canMarkDuplicate).toBe(true);
       });
     });
   });
@@ -136,6 +165,42 @@ describe('CaseFileActivity.vue', () => {
 
     it('should call fetchCaseFile', () => {
       expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFile).toHaveBeenCalledWith(mockCaseFile.id);
+    });
+  });
+
+  describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        mocks: {
+          $route: {
+            name: routes.caseFile.activity.name,
+            params: {
+              id: mockCaseFile.id,
+            },
+          },
+          $storage: storage,
+        },
+        computed: {
+          caseFile() {
+            return mockCaseFile;
+          },
+        },
+      });
+    });
+
+    describe('setCaseFileIsDuplicate', () => {
+      it('calls the setCaseFileIsDuplicate action with the correct params', async () => {
+        expect(storage.caseFile.actions.setCaseFileIsDuplicate).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.setCaseFileIsDuplicate();
+
+        expect(storage.caseFile.actions.setCaseFileIsDuplicate).toHaveBeenCalledTimes(1);
+        expect(storage.caseFile.actions.setCaseFileIsDuplicate).toHaveBeenCalledWith(
+          mockCaseFile.id,
+          !mockCaseFile.isDuplicate,
+        );
+      });
     });
   });
 });

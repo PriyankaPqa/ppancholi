@@ -74,7 +74,7 @@ export class CaseFile implements ICaseFile {
       name: utils.initMultilingualAttributes(data.event?.name),
     };
 
-    this.isDuplicate = data.duplicate;
+    this.isDuplicate = data.isDuplicate;
 
     this.tags = data.tags?.map((tag) => ({
       id: tag.id,

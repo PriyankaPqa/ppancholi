@@ -17,4 +17,8 @@ export class CaseFilesService implements ICaseFilesService {
   async setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFileData> {
     return this.http.patch(`/case-file/case-files/${id}/labels`, { labels });
   }
+
+  async setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileData> {
+    return this.http.patch(`/case-file/case-files/${id}/is-duplicate`, { isDuplicate });
+  }
 }

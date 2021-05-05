@@ -26,7 +26,9 @@
             data-test="caseFileActivity-duplicateBtn"
             :class="{'no-pointer': !canMarkDuplicate}"
             icon
-            :disabled="!canMarkDuplicate">
+            :loading="duplicateLoading"
+            :disabled="!canMarkDuplicate"
+            @click="setCaseFileIsDuplicate">
             <v-icon :color="caseFile && caseFile.isDuplicate ? 'secondary' : ''">
               $rctech-duplicate
             </v-icon>
@@ -94,7 +96,11 @@ export default Vue.extend({
 
   computed: {
     canMarkDuplicate(): boolean {
-      return true;
+      return this.$hasLevel('level1');
+    },
+
+    duplicateLoading(): boolean {
+      return this.$store.state.caseFile.duplicateLoading;
     },
 
     caseFile(): ICaseFile {
@@ -115,6 +121,13 @@ export default Vue.extend({
     } finally {
       this.loading = false;
     }
+  },
+
+  methods: {
+    async setCaseFileIsDuplicate() {
+      const { id, isDuplicate } = this.caseFile;
+      await this.$storage.caseFile.actions.setCaseFileIsDuplicate(id, !isDuplicate);
+    },
   },
 });
 

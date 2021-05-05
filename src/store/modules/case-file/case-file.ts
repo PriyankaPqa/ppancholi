@@ -20,6 +20,7 @@ const getDefaultState = (): IState => ({
   tagsOptions: [],
   searchLoading: false,
   getLoading: false,
+  duplicateLoading: false,
 });
 
 const moduleState: IState = getDefaultState();
@@ -59,6 +60,10 @@ const mutations = {
 
   setSearchLoading(state: IState, payload: boolean) {
     state.searchLoading = payload;
+  },
+
+  setDuplicateLoading(state: IState, payload: boolean) {
+    state.duplicateLoading = payload;
   },
 
   setTagsOptions(state: IState, payload: Array<IOptionItemData>) {
@@ -148,6 +153,27 @@ const actions = {
       const caseFile = new CaseFile(mapCaseFileDataToSearchData(data, context, payload.id));
       context.commit('addOrUpdateCaseFile', caseFile);
       return caseFile;
+    }
+
+    return null;
+  },
+
+  async setCaseFileIsDuplicate(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    payload: { id: uuid, isDuplicate: boolean },
+  ): Promise<ICaseFile> {
+    try {
+      context.commit('setDuplicateLoading', true);
+      const data = await this.$services.caseFiles.setCaseFileIsDuplicate(payload.id, payload.isDuplicate);
+
+      if (data) {
+        const caseFile = new CaseFile(mapCaseFileDataToSearchData(data, context, payload.id));
+        context.commit('addOrUpdateCaseFile', caseFile);
+        return caseFile;
+      }
+    } finally {
+      context.commit('setDuplicateLoading', false);
     }
 
     return null;

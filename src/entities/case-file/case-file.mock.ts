@@ -41,7 +41,7 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
     },
     caseFileStatus: 4,
     caseFileCreatedDate: '2021-01-20T15:12:03.4219037Z',
-    duplicate: false,
+    isDuplicate: false,
     event: {
       id: 'e70da37e-67cd-4afb-9c36-530c7d8b191f',
       name: {
@@ -115,7 +115,7 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
     },
     caseFileStatus: 2,
     caseFileCreatedDate: '2021-03-01',
-    duplicate: true,
+    isDuplicate: true,
     event: {
       id: 'mock-event-id-2',
       name: {
@@ -162,7 +162,7 @@ export const mockCaseFilesData = (): ICaseFileData[] => [{
   caseFileNumber: '1-000001',
   caseFileStatus: 1,
   created: '2021-01-01',
-  duplicate: false,
+  isDuplicate: false,
   eventId: 'mock-event-id-1',
   tags: [],
   labels: [{

@@ -14,6 +14,7 @@ export interface IStorage {
     searchCaseFiles(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFile>>;
     setCaseFileTags(id: uuid, tags: IListOption[]): Promise<ICaseFile>;
     setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFile>;
+    setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFile>;
   }
 }
 
@@ -29,5 +30,6 @@ export interface IStorageMock {
     searchCaseFiles: jest.Mock<void>;
     setCaseFileTags: jest.Mock<void>;
     setCaseFileLabels: jest.Mock<void>;
+    setCaseFileIsDuplicate: jest.Mock<void>;
   }
 }

@@ -81,7 +81,7 @@ export const mapCaseFileDataToSearchData = (
     caseFileNumber: caseFileData.caseFileNumber,
     caseFileStatus: caseFileData.caseFileStatus,
     caseFileStatusName: getCaseFileStatusName(caseFileData.caseFileStatus),
-    duplicate: caseFileData.duplicate,
+    isDuplicate: caseFileData.isDuplicate,
     event: getEvent(originalCaseFile, caseFileData.eventId),
     tags: getTags(originalCaseFile, caseFileData.tags, context.state.tagsOptions),
     labels: caseFileData.labels.map((l) => ({ ...l })),

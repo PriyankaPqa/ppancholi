@@ -116,6 +116,18 @@ describe('>>> Case File Module', () => {
         expect(store.state.caseFile.getLoading).toBeTruthy();
       });
     });
+
+    describe('setDuplicateLoading', () => {
+      it('sets the value of duplicateLoading', () => {
+        store = mockStore();
+
+        expect(store.state.caseFile.duplicateLoading).toBe(false);
+
+        store.commit('caseFile/setDuplicateLoading', true);
+
+        expect(store.state.caseFile.duplicateLoading).toBe(true);
+      });
+    });
   });
 
   describe('>> Actions', () => {
@@ -234,6 +246,38 @@ describe('>>> Case File Module', () => {
 
       expect(store.$services.caseFiles.setCaseFileLabels).toHaveBeenCalledTimes(1);
       expect(store.$services.caseFiles.setCaseFileLabels).toHaveBeenCalledWith(id, labels);
+
+      expect(res).toEqual(caseFile);
+
+      expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
+    });
+  });
+
+  describe('setCaseFileIsDuplicate', () => {
+    it('calls the setCaseFileIsDuplicate service and returns the case file entity', async () => {
+      store = mockStore({
+        modules: {
+          caseFile: {
+            state: {
+              caseFiles: mockCaseFiles(),
+            },
+          },
+        },
+      });
+
+      const caseFile = mockCaseFiles()[0];
+      const { id } = caseFile;
+      const isDuplicate = true;
+
+      expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledTimes(0);
+
+      const res = await store.dispatch('caseFile/setCaseFileIsDuplicate', {
+        id,
+        isDuplicate,
+      });
+
+      expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledWith(id, isDuplicate);
 
       expect(res).toEqual(caseFile);
 

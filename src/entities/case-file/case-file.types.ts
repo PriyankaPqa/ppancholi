@@ -79,7 +79,7 @@ export interface ICaseFileData {
   caseFileNumber: string;
   caseFileStatus: ECaseFileStatus;
   created: Date | string;
-  duplicate: boolean;
+  isDuplicate: boolean;
   eventId: uuid;
   tags: IListOption[];
   labels: ICaseFileLabel[];
@@ -99,7 +99,7 @@ export interface ICaseFileSearchData {
   caseFileNumber: string;
   caseFileStatus: ECaseFileStatus;
   caseFileStatusName: IMultilingual;
-  duplicate: boolean;
+  isDuplicate: boolean;
   event: ICaseFileEvent;
   tags: ICaseFileTagInfos[];
   labels: ICaseFileLabel[];

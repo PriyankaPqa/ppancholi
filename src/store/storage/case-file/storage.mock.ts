@@ -12,5 +12,6 @@ export const mockStorageCaseFile = () : IStorageMock => ({
     fetchCaseFile: jest.fn(),
     setCaseFileTags: jest.fn(),
     setCaseFileLabels: jest.fn(),
+    setCaseFileIsDuplicate: jest.fn(),
   },
 });

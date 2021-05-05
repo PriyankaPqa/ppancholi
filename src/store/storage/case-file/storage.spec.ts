@@ -47,5 +47,13 @@ describe('>>> Case File Storage', () => {
       storage.actions.setCaseFileLabels(id, labels);
       expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileLabels', { id, labels });
     });
+
+    it('should proxy setCaseFileIsDuplicate', () => {
+      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+      const { id } = caseFile;
+      const isDuplicate = true;
+      storage.actions.setCaseFileIsDuplicate(id, isDuplicate);
+      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileIsDuplicate', { id, isDuplicate });
+    });
   });
 });

@@ -5,4 +5,5 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   searchCaseFiles: jest.fn(() => mockSearchCaseFiles()),
   setCaseFileTags: jest.fn(() => mockCaseFilesData()[0]),
   setCaseFileLabels: jest.fn(() => mockCaseFilesData()[0]),
+  setCaseFileIsDuplicate: jest.fn(() => mockCaseFilesData()[0]),
 });

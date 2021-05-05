@@ -46,4 +46,14 @@ describe('>>> Case File Service', () => {
       expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/labels`, { labels: payload });
     });
   });
+
+  describe('setCaseFileIsDuplicate', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const isDuplicate = true;
+
+      await service.setCaseFileIsDuplicate(id, isDuplicate);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/is-duplicate`, { isDuplicate });
+    });
+  });
 });
