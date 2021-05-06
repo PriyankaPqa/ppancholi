@@ -3,6 +3,7 @@
     :title="$t('teams.add_new_members')"
     :submit-action-label="$t('common.buttons.add')"
     :cancel-action-label="$t('common.buttons.cancel')"
+    :submit-button-disabled="selectedUsers.length === 0"
     :show.sync="show"
     content-padding="6"
     content-only-scrolling

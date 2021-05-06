@@ -1,6 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockAppUserData } from '@/entities/app-user';
+import { RcDialog } from '@crctech/component-library';
 import Component from './AddTeamMembers.vue';
 
 const localVue = createLocalVue();
@@ -28,6 +29,25 @@ describe('AddTeamMembers.vue', () => {
       mocks: {
         $storage: storage,
       },
+    });
+  });
+
+  describe('Template', () => {
+    describe('RcDialog', () => {
+      describe('submit button', () => {
+        it('is disabled if no selected members', () => {
+          const component = wrapper.findComponent(RcDialog);
+          expect(component.props('submitButtonDisabled')).toEqual(true);
+        });
+
+        it('is enabled if at least one selected members', async () => {
+          const component = wrapper.findComponent(RcDialog);
+          await wrapper.setData({
+            selectedUsers: [{}],
+          });
+          expect(component.props('submitButtonDisabled')).toEqual(false);
+        });
+      });
     });
   });
 
