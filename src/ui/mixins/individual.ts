@@ -68,8 +68,9 @@ export default Vue.extend({
     async jump(toIndex: number) {
       const effectiveToIndex = this.$storage.registration.getters.findEffectiveJumpIndex(toIndex);
       this.setSkippedStepsToValid(this.currentTabIndex, effectiveToIndex - 1);
-      await (this.$refs.form as VForm).validate();
       this.$storage.registration.mutations.jump(effectiveToIndex);
+      await this.$nextTick();
+      await (this.$refs.form as VForm).validate();
 
       // If we stop on a validation error and a user has seen it previously, highlight errors
       if (effectiveToIndex !== toIndex && this.allTabs[effectiveToIndex].isTouched) {
