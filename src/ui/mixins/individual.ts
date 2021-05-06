@@ -57,6 +57,14 @@ export default Vue.extend({
     currentStepHasError(hasError) {
       this.mutateStateTab(!hasError);
     },
+
+    async currentTab(tab) {
+      if (!tab.isValid && tab.isTouched) {
+        await this.$nextTick();
+        await (this.$refs.form as VForm).validate();
+        helpers.scrollToFirstError('app');
+      }
+    },
   },
 
   mounted() {
@@ -68,18 +76,16 @@ export default Vue.extend({
     async jump(toIndex: number) {
       const effectiveToIndex = this.$storage.registration.getters.findEffectiveJumpIndex(toIndex);
       this.setSkippedStepsToValid(this.currentTabIndex, effectiveToIndex - 1);
-      this.$storage.registration.mutations.jump(effectiveToIndex);
-      await this.$nextTick();
+      // We validate before leaving so we see error if we can't go next
       await (this.$refs.form as VForm).validate();
+      this.$storage.registration.mutations.jump(effectiveToIndex);
 
       // If we stop on a validation error and a user has seen it previously, highlight errors
       if (effectiveToIndex !== toIndex && this.allTabs[effectiveToIndex].isTouched) {
         this.mutateStateTab(false);
-        await this.$nextTick();
-        await (this.$refs.form as VForm).validate();
-        helpers.scrollToFirstError('app');
       }
     },
+
     async next() {
       if (this.currentTab.id === 'review') {
         await this.$storage.registration.actions.submitRegistration();
