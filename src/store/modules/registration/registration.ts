@@ -40,6 +40,7 @@ const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
     [ECanadaProvinces.QC]: [],
     [ECanadaProvinces.SK]: [],
     [ECanadaProvinces.YT]: [],
+    [ECanadaProvinces.OT]: [],
   },
   loadingIndigenousIdentities: false,
 });

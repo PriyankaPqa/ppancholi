@@ -16,7 +16,7 @@ describe('AddressForm.vue', () => {
       localVue,
       propsData: {
         apiKey: '1235',
-        homeAddress: mockAddress({ provinceTerritory: ECanadaProvinces.ON.toString() }),
+        homeAddress: mockAddress({ province: ECanadaProvinces.ON }),
         canadianProvincesItems: helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
       },
     });
@@ -44,7 +44,26 @@ describe('AddressForm.vue', () => {
       });
 
       test('province', () => {
+        wrapper.vm.form.country = 'CA';
         expect(wrapper.vm.rules.province).toEqual({
+          required: true,
+        });
+
+        wrapper.vm.form.country = 'FR';
+        expect(wrapper.vm.rules.province).toEqual({
+          required: false,
+        });
+      });
+
+      test('specifiedOtherProvince', () => {
+        wrapper.vm.form.country = 'CA';
+        expect(wrapper.vm.rules.specifiedOtherProvince).toEqual({
+          required: false,
+          max: MAX_LENGTH_SM,
+        });
+
+        wrapper.vm.form.country = 'FR';
+        expect(wrapper.vm.rules.specifiedOtherProvince).toEqual({
           required: true,
           max: MAX_LENGTH_SM,
         });

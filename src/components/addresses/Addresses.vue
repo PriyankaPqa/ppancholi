@@ -52,7 +52,7 @@ import { VCheckboxWithValidation } from '@crctech/component-library';
 import VueI18n from 'vue-i18n';
 import AddressForm from '../forms/AddressForm.vue';
 import TempAddressForm from '../forms/TempAddressForm.vue';
-import { ECanadaProvinces, EOptionItemStatus } from '../../types';
+import { EOptionItemStatus } from '../../types';
 import helpers from '../../ui/helpers';
 import { localStorageKeys } from '../../constants/localStorage';
 import { IAddress } from '../../entities/value-objects/address';
@@ -101,7 +101,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', this.i18n);
+      return helpers.getCanadianProvincesWithoutOther(this.i18n);
     },
 
     temporaryAddressTypeItems(): Record<string, unknown>[] {

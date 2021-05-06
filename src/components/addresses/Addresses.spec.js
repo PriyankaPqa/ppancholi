@@ -3,7 +3,7 @@ import helpers from '../../ui/helpers';
 import { mockStorage } from '../../store/storage/storage.mock';
 import AddressForm from '../forms/AddressForm.vue';
 import TempAddressForm from '../forms/TempAddressForm.vue';
-import { ECanadaProvinces, EOptionItemStatus } from '../../types';
+import { EOptionItemStatus } from '../../types';
 import { mockAddress, mockBeneficiary } from '../../entities/beneficiary';
 import { mockEvent } from '../../entities/event';
 import { ETemporaryAddressTypes, mockCampGround } from '../../entities/value-objects/temporary-address';
@@ -60,7 +60,7 @@ describe('Addresses.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', i18n));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
       });
     });
 

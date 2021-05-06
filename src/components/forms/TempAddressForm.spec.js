@@ -54,7 +54,10 @@ describe('TempAddress.vue', () => {
           },
           province: {
             required: true,
+          },
+          specifiedOtherProvince: {
             max: MAX_LENGTH_SM,
+            required: false,
           },
           city: {
             required: wrapper.vm.temporaryAddress.requiresCity(),

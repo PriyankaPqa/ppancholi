@@ -32,7 +32,8 @@ export default Vue.extend({
       } = autocomplete;
       this.isAutocompleteAddress = true;
       this.form.country = country;
-      this.form.province = country === 'CA' ? ECanadaProvinces[province] : province;
+      this.form.province = country === 'CA' ? ECanadaProvinces[province] : null;
+      this.form.specifiedOtherProvince = country === 'CA' ? null : province;
       this.form.postalCode = postalCode;
       this.form.city = city;
       this.form.streetAddress = street;

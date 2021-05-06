@@ -7,7 +7,9 @@ export interface IAddressData {
 
     unitSuite?: string;
 
-    province?: ECanadaProvinces | string;
+    province?: ECanadaProvinces;
+
+    specifiedOtherProvince?: string;
 
     city?: string;
 

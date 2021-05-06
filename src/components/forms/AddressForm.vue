@@ -49,9 +49,9 @@
           @input="$resetGeoLocation()" />
         <v-text-field-with-validation
           v-else
-          v-model="form.province"
-          :rules="rules.province"
-          :data-test="`${prefixDataTest}__province`"
+          v-model="form.specifiedOtherProvince"
+          :rules="rules.specifiedOtherProvince"
+          :data-test="`${prefixDataTest}__specifiedOtherProvince`"
           :label="`${$t('registration.addresses.province')}*`"
           @input="$resetGeoLocation()" />
       </v-col>
@@ -135,7 +135,10 @@ export default Vue.extend({
           max: MAX_LENGTH_SM,
         },
         province: {
-          required: true,
+          required: this.isCanada,
+        },
+        specifiedOtherProvince: {
+          required: !this.isCanada,
           max: MAX_LENGTH_SM,
         },
         city: {

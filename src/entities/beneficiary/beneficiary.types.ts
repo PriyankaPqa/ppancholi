@@ -43,7 +43,7 @@ export interface ICreateBeneficiaryRequest {
   person: IPersonForCreate;
   noFixedHome: boolean;
   contactInformation: IContactInformationForCreate;
-  homeAddress: IAddress;
+  homeAddress: IAddressData;
   householdMembers: IPersonForCreate[];
   eventId: uuid;
 }

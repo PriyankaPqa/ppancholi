@@ -111,7 +111,7 @@ export default Vue.extend({
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
-      return helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', this.i18n);
+      return helpers.getCanadianProvincesWithoutOther(this.i18n);
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {

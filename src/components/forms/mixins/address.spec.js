@@ -40,11 +40,18 @@ describe('googleAutocomplete', () => {
 
         expect(wrapper.vm.form.country).toEqual(resultObject.country);
         expect(wrapper.vm.form.province).toEqual(ECanadaProvinces[resultObject.province]);
+        expect(wrapper.vm.form.specifiedOtherProvince).toBeNull();
         expect(wrapper.vm.form.postalCode).toEqual(resultObject.postalCode);
         expect(wrapper.vm.form.city).toEqual(resultObject.city);
         expect(wrapper.vm.form.streetAddress).toEqual(resultObject.street);
         expect(wrapper.vm.form.latitude).toEqual(resultObject.location.lat);
         expect(wrapper.vm.form.longitude).toEqual(resultObject.location.lng);
+
+        resultObject.country = 'FR';
+        resultObject.province = 'other province';
+        wrapper.vm.$streetAddressAutocomplete(resultObject);
+        expect(wrapper.vm.form.province).toBeNull();
+        expect(wrapper.vm.form.specifiedOtherProvince).toBe('other province');
       });
     });
 

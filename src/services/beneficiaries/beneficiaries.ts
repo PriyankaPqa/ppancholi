@@ -1,7 +1,10 @@
 import { IHttpClient } from '@/services/httpClient';
-import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '../../types';
+import {
+  ECanadaProvinces, IAzureSearchParams, IAzureSearchResult, IOptionItemData,
+} from '../../types';
 import {
   ETemporaryAddressTypes,
+  IAddressData,
   IBeneficiary,
   IBeneficiaryData,
   IContactInformation,
@@ -54,7 +57,7 @@ export class BeneficiariesService implements IBeneficiariesService {
       person: this.buildPerson(person),
       contactInformation: this.buildContactInformation(contactInformation),
       householdMembers: householdMembers.map((member) => this.buildPerson(member)),
-      homeAddress: noFixedHome ? null : beneficiary.homeAddress,
+      homeAddress: noFixedHome ? null : this.buildAddress(beneficiary.homeAddress),
       eventId,
     };
   }
@@ -81,16 +84,21 @@ export class BeneficiariesService implements IBeneficiariesService {
       placeNumber: temporaryAddress.placeNumber,
       placeName: temporaryAddress.placeName,
       shelterLocationName: temporaryAddress.shelterLocation?.name,
-      placeAddress: noPlaceAddress ? null : {
-        country: temporaryAddress.country,
-        streetAddress: temporaryAddress.streetAddress,
-        unitSuite: temporaryAddress.unitSuite,
-        province: temporaryAddress.province,
-        city: temporaryAddress.city,
-        postalCode: temporaryAddress.postalCode,
-        latitude: temporaryAddress.latitude,
-        longitude: temporaryAddress.longitude,
-      },
+      placeAddress: noPlaceAddress ? null : this.buildAddress(temporaryAddress),
+    };
+  }
+
+  buildAddress(address: IAddressData): IAddressData {
+    return {
+      country: address.country,
+      streetAddress: address.streetAddress,
+      unitSuite: address.unitSuite,
+      province: address.province ?? ECanadaProvinces.OT,
+      specifiedOtherProvince: address.specifiedOtherProvince,
+      city: address.city,
+      postalCode: address.postalCode,
+      latitude: address.latitude,
+      longitude: address.longitude,
     };
   }
 

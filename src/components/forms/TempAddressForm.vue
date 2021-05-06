@@ -52,7 +52,7 @@
             :rules="rules.country"
             :data-test="`${prefixDataTest}__country`"
             :label="`${$t('registration.addresses.country')} *`"
-            @change="$onChangeCountry()" />
+            @change="$onChangeCountry($event)" />
         </v-col>
 
         <v-col v-if="temporaryAddress.hasStreet()" cols="12" sm="9" md="8">
@@ -95,9 +95,9 @@
             @input="$resetGeoLocation()" />
           <v-text-field-with-validation
             v-else
-            v-model="form.province"
-            :rules="rules.province"
-            :data-test="`${prefixDataTest}__province`"
+            v-model="form.specifiedOtherProvince"
+            :rules="rules.specifiedOtherProvince"
+            :data-test="`${prefixDataTest}__specifiedOtherProvince`"
             :label="`${$t('registration.addresses.province')}*`"
             @input="$resetGeoLocation()" />
         </v-col>
@@ -209,7 +209,10 @@ export default Vue.extend({
           max: MAX_LENGTH_MD,
         },
         province: {
-          required: this.temporaryAddress.requiresProvince(),
+          required: this.temporaryAddress.requiresProvince() && this.isCanada,
+        },
+        specifiedOtherProvince: {
+          required: this.temporaryAddress.requiresProvince() && !this.isCanada,
           max: MAX_LENGTH_SM,
         },
         city: {

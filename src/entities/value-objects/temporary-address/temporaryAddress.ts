@@ -56,7 +56,12 @@ export class TemporaryAddress extends Address implements ITemporaryAddress {
     }
 
     if (this.requiresProvince()) {
-      required(this.province, 'province is required', errors);
+      if (this.country === 'CA') {
+        required(this.province, 'province is required', errors);
+      } else {
+        required(this.specifiedOtherProvince, 'specifiedOtherProvince is required', errors);
+        maxLengthCheck(this.specifiedOtherProvince, MAX_LENGTH_SM, 'specifiedOtherProvince', errors);
+      }
     }
 
     if (this.hasPostalCode()) {

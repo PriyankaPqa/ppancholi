@@ -1,7 +1,14 @@
 import { mockHttp } from '@/services/httpClient.mock';
-import { IAzureSearchParams } from '@/types';
+import { ECanadaProvinces, IAzureSearchParams } from '@/types';
 import {
-  ETemporaryAddressTypes, IPhoneNumber, ITemporaryAddress, mockBeneficiary, mockContactInformation, mockCreateBeneficiaryRequest, mockPerson,
+  ETemporaryAddressTypes,
+  IPhoneNumber,
+  ITemporaryAddress,
+  mockAddressData,
+  mockBeneficiary,
+  mockContactInformation,
+  mockCreateBeneficiaryRequest,
+  mockPerson,
 } from '../../entities/beneficiary';
 import { BeneficiariesService } from './beneficiaries';
 
@@ -82,6 +89,18 @@ describe('>>> Beneficiaries Service', () => {
 
       temporaryAddress.temporaryAddressType = ETemporaryAddressTypes.Campground;
       expect(service.buildTemporaryAddress(temporaryAddress).placeAddress).not.toBeNull();
+    });
+
+    test('buildAddress', () => {
+      const address = mockAddressData();
+      let result = service.buildAddress(address);
+      expect(result).toEqual(address);
+
+      address.province = null;
+      address.specifiedOtherProvince = 'other province';
+      result = service.buildAddress(address);
+      expect(result.province).toBe(ECanadaProvinces.OT);
+      expect(result.specifiedOtherProvince).toBe('other province');
     });
 
     test('buildContactInformation build properly', () => {

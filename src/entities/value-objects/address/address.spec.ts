@@ -76,22 +76,53 @@ describe('>>> Address', () => {
     });
 
     describe('province', () => {
-      it('is required', () => {
-        const p = new Address();
+      it('is required if is Canada', () => {
+        const p = mockAddress();
+        p.country = 'CA';
+        p.province = null;
         let results = p.validate();
         expect(results).toContain('province is required');
 
-        p.province = ECanadaProvinces.ON.toString();
+        p.province = ECanadaProvinces.ON;
         results = p.validate();
         expect(results).not.toContain('province is required');
       });
 
-      it(`has a max of ${MAX_LENGTH_SM} characters`, () => {
-        const p = new Address();
-        p.country = 'FR';
-        p.province = longSmallText;
+      it('is not required if is not Canada', () => {
+        const p = mockAddress();
+        p.country = 'AB';
+        p.specifiedOtherProvince = 'other province';
+        const results = p.validate();
+        expect(results).not.toContain('province is required');
+      });
+    });
 
-        expect(p.validate()).toContain(`province exceeds max length of ${MAX_LENGTH_SM}`);
+    describe('specifiedOtherProvince', () => {
+      it('is required if is not Canada', () => {
+        const p = mockAddress();
+        p.country = 'AB';
+        p.specifiedOtherProvince = null;
+        let results = p.validate();
+        expect(results).toContain('specifiedOtherProvince is required');
+
+        p.specifiedOtherProvince = 'other province';
+        results = p.validate();
+        expect(results).not.toContain('province is required');
+      });
+
+      it('is not required if is Canada', () => {
+        const p = mockAddress();
+        p.specifiedOtherProvince = null;
+        const results = p.validate();
+        expect(results).not.toContain('province is required');
+      });
+
+      it(`has a max of ${MAX_LENGTH_SM} characters`, () => {
+        const p = mockAddress();
+        p.country = 'FR';
+        p.specifiedOtherProvince = longSmallText;
+
+        expect(p.validate()).toContain(`specifiedOtherProvince exceeds max length of ${MAX_LENGTH_SM}`);
       });
     });
 

@@ -10,7 +10,9 @@ export class Address implements IAddress {
 
   unitSuite?: string;
 
-  province?: ECanadaProvinces | string;
+  province?: ECanadaProvinces;
+
+  specifiedOtherProvince?: string;
 
   city?: string;
 
@@ -28,6 +30,7 @@ export class Address implements IAddress {
       this.streetAddress = data.streetAddress;
       this.unitSuite = data.unitSuite;
       this.province = data.province;
+      this.specifiedOtherProvince = data.specifiedOtherProvince;
       this.city = data.city;
       this.postalCode = data.postalCode;
       this.latitude = data.latitude;
@@ -50,10 +53,13 @@ export class Address implements IAddress {
     required(this.city, 'city is required', errors);
     maxLengthCheck(this.city, MAX_LENGTH_SM, 'city', errors);
 
-    required(this.province, 'province is required', errors);
     if (this.country !== 'CA') {
-      maxLengthCheck(this.province as string, MAX_LENGTH_SM, 'province', errors);
+      required(this.specifiedOtherProvince, 'specifiedOtherProvince is required', errors);
+      maxLengthCheck(this.specifiedOtherProvince, MAX_LENGTH_SM, 'specifiedOtherProvince', errors);
+    } else {
+      required(this.province, 'province is required', errors);
     }
+
     required(this.postalCode, 'postalCode is required', errors);
 
     if (this.country === 'CA' && this.postalCode) {
@@ -67,6 +73,7 @@ export class Address implements IAddress {
     this.streetAddress = null;
     this.unitSuite = null;
     this.province = null;
+    this.specifiedOtherProvince = null;
     this.city = null;
     this.postalCode = null;
     this.latitude = 0;

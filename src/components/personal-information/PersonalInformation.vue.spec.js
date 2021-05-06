@@ -180,7 +180,7 @@ describe('PersonalInformation.vue', () => {
 
     describe('canadianProvincesItems', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', i18n));
+        expect(wrapper.vm.canadianProvincesItems).toEqual(helpers.getCanadianProvincesWithoutOther(i18n));
       });
     });
   });

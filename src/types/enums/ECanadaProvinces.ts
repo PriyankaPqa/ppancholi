@@ -12,4 +12,5 @@ export enum ECanadaProvinces {
   QC, // Quebec
   SK, // Saskatchewan
   YT, // Yukon
+  OT, // Other
 }

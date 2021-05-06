@@ -1,5 +1,6 @@
 import moment from 'moment';
 import VueI18n from 'vue-i18n';
+import { ECanadaProvinces } from '../types/enums/ECanadaProvinces';
 import { IBirthDate } from '../entities/value-objects/person/person.types';
 
 export default {
@@ -18,6 +19,11 @@ export default {
       }
     });
     return data.sort((a, b) => a.text.localeCompare(b.text));
+  },
+
+  getCanadianProvincesWithoutOther(i18n: VueI18n) {
+    const allProvinces = this.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces', i18n);
+    return allProvinces.filter((p) => p.value !== ECanadaProvinces.OT);
   },
 
   // Return moment object of a birthdate, with proper index for the month
