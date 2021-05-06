@@ -45,8 +45,8 @@ export interface IStorageMock {
   getters: {
     event: jest.Mock<IEvent>;
     isLeftMenuOpen: jest.Mock<boolean>;
-    tabs: jest.Mock<boolean>;
-    currentTab: jest.Mock<boolean>;
+    tabs: jest.Mock<IRegistrationMenuItem[]>;
+    currentTab: jest.Mock<IRegistrationMenuItem>;
     currentTabIndex: jest.Mock<number>;
     previousTabName: jest.Mock<string>;
     nextTabName: jest.Mock<string>;

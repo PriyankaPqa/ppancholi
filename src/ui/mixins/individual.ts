@@ -42,8 +42,10 @@ export default Vue.extend({
 
     currentStepHasError(): boolean {
       if (this.isFormReady) {
-        const fieldsHavingErrors = _pickBy((this.$refs.form as VForm).errors, (value) => value.length > 0);
-        return Object.keys(fieldsHavingErrors).length > 0;
+        if (this.$refs.form) {
+          const fieldsHavingErrors = _pickBy((this.$refs.form as VForm).errors, (value) => value.length > 0);
+          return Object.keys(fieldsHavingErrors).length > 0;
+        }
       }
       return false;
     },
