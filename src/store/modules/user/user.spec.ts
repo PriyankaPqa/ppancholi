@@ -35,6 +35,12 @@ describe('>>> Users Module', () => {
       }));
     });
 
+    test('the userId getter returns the current user id', () => {
+      const mockUser = mockUsersData()[0];
+
+      expect(store.getters['user/userId']).toEqual(mockUser.oid);
+    });
+
     describe('landingPage', () => {
       it('returns proper landing page for level 1 user', () => {
         store = mockStoreUserLevel(1);

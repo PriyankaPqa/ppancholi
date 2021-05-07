@@ -5,6 +5,7 @@ import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modul
 import { i18n } from '@/ui/plugins';
 import { IRootState } from './store.types';
 import { user } from './modules/user';
+import { userAccount } from './modules/user-account';
 import { caseFile } from './modules/case-file';
 import { dashboard } from './modules/dashboard';
 import { optionList } from './modules/optionList';
@@ -26,6 +27,7 @@ const store: StoreOptions<IRootState> = {
     appUser,
     caseFile,
     user,
+    userAccount,
     dashboard,
     event,
     optionList,

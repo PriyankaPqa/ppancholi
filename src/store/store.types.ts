@@ -3,6 +3,7 @@ import { IState as IRegistrationState } from '@crctech/registration-lib/src/stor
 import { IState as IBeneficiaryState } from '@crctech/registration-lib/src/store/modules/beneficiary/beneficiary.types';
 import { IProvider, IProviderMock } from '@/services/provider';
 import { IState as IUserState } from './modules/user/user.types';
+import { IState as IUserAccountState } from './modules/user-account/user-account.types';
 import { IState as ICaseFileState } from './modules/case-file/case-file.types';
 import { IState as IDashboardState } from './modules/dashboard/dashboard.types';
 import { IState as IEventState } from './modules/event/event.types';
@@ -14,6 +15,7 @@ import { IState as IProgramState } from './modules/program/program.types';
 export interface IRootState {
   version: string;
   user?: IUserState;
+  userAccount?: IUserAccountState;
   caseFile?: ICaseFileState;
   dashboard?: IDashboardState;
   event?: IEventState;

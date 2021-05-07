@@ -9,11 +9,13 @@ import { makeStorage as makeEventStorage } from './event';
 import { makeStorage as makeOptionListStorage } from './optionList';
 import { makeStorage as makeTeamStorage } from './team';
 import { makeStorage as makeAppUserStorage } from './app-user';
+import { makeStorage as makeUserAccountStorage } from './user-account';
 import { makeStorage as makeProgramStorage } from './program';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   appUser: makeAppUserStorage(store),
   user: makeUserStorage(store),
+  userAccount: makeUserAccountStorage(store),
   caseFile: makeCaseFileStorage(store),
   dashboard: makeDashboardStorage(store),
   event: makeEventStorage(store),

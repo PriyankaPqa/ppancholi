@@ -5,6 +5,7 @@ import {
 export interface IStorage {
   getters: {
     user(): IUser;
+    userId(): uuid;
     landingPage(): string;
     filtersByKey(key: EFilterKey): IFilter[];
   }
@@ -23,6 +24,7 @@ export interface IStorage {
 export interface IStorageMock {
   getters: {
     user: jest.Mock<void>
+    userId: jest.Mock<void>
     landingPage: jest.Mock<void>
     filtersByKey: jest.Mock<void>
   }

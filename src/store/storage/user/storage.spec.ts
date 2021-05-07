@@ -20,6 +20,10 @@ describe('>>> User Storage', () => {
       expect(storage.getters.user()).toEqual(store.getters['user/user']);
     });
 
+    it('should proxy userId', () => {
+      expect(storage.getters.userId()).toEqual(store.getters['user/userId']);
+    });
+
     it('should proxy landingPage', () => {
       expect(storage.getters.landingPage()).toEqual(store.getters['user/landingPage']);
     });

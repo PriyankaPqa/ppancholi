@@ -10,6 +10,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['user/user'];
     },
 
+    userId(): uuid {
+      return store.getters['user/userId'];
+    },
+
     landingPage(): string {
       return store.getters['user/landingPage'];
     },

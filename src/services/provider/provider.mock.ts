@@ -7,6 +7,7 @@ import { mockOptionItemsServiceService } from '../optionItems';
 import { mockTeamsService } from '../teams';
 import { mockAppUsersService } from '../app-users';
 import { mockUsersService } from '../users';
+import { mockUserAccountsService } from '../user-accounts';
 import { mockProgramsService } from '../programs';
 
 export const mockProvider = (): IProviderMock => ({
@@ -16,6 +17,7 @@ export const mockProvider = (): IProviderMock => ({
   optionItems: mockOptionItemsServiceService(),
   teams: mockTeamsService(),
   users: mockUsersService(),
+  userAccounts: mockUserAccountsService(),
   programs: mockProgramsService(),
   publicApi: mockPublicService(),
   beneficiaries: mockBeneficiariesService(),

@@ -32,6 +32,8 @@ const getters = {
     filters: state.filters,
   }),
 
+  userId: (state: IState) => state.oid,
+
   landingPage(state: IState) {
     const user = new User(state);
     const role = user.currentRole();

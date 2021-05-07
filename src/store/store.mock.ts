@@ -12,6 +12,7 @@ import { tabs } from '@/store/modules/registration/tabs';
 
 import VueI18n from 'vue-i18n';
 import { IRootState, IStore } from '@/store/store.types';
+import { userAccount } from './modules/user-account/user-account';
 import { user } from './modules/user';
 import { caseFile } from './modules/case-file';
 import { dashboard } from './modules/dashboard';
@@ -30,6 +31,7 @@ Vue.use(Vuex);
 const mockConfig = {
   modules: {
     user,
+    userAccount,
     caseFile,
     dashboard,
     event,
