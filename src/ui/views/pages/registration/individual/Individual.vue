@@ -19,10 +19,18 @@
         <template slot="actions">
           <div class="actions">
             <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
-              <v-btn :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" @click="back()">
-                <v-icon v-if="currentTab.id === 'confirmation'" size="20" color="grey darken-2" class="pr-2">
+              <v-btn
+                v-if="currentTab.id === 'confirmation'"
+                class="printButton"
+                :aria-label="$t(currentTab.backButtonTextKey)"
+                data-test="printButton"
+                @click="print()">
+                <v-icon size="20" color="grey darken-2" class="pr-2">
                   mdi-printer
                 </v-icon>
+                {{ $t(currentTab.backButtonTextKey) }}
+              </v-btn>
+              <v-btn v-else :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" :disabled="submitLoading" @click="back()">
                 {{ $t(currentTab.backButtonTextKey) }}
               </v-btn>
 
@@ -35,7 +43,7 @@
                 color="primary"
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
-                :loading="requestOnGoing"
+                :loading="submitLoading"
                 :disabled="failed"
                 @click="next()">
                 {{ $t(currentTab.nextButtonTextKey) }}
@@ -59,7 +67,7 @@ import PersonalInformation from '../personal-information/PersonalInformation.vue
 import Addresses from '../addresses/Addresses.vue';
 import HouseholdMembers from '../household-members/HouseholdMembers.vue';
 import ReviewRegistration from '../review/ReviewRegistration.vue';
-import ConfirmRegistration from '../ConfirmRegistration.vue';
+import ConfirmRegistration from '../confirmation/ConfirmRegistration.vue';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -76,6 +84,12 @@ export default mixins(individual).extend({
   },
 
   mixins: [individual],
+
+  computed: {
+    submitLoading(): boolean {
+      return this.$store.state.registration.submitLoading;
+    },
+  },
 
   methods: {
     async back() {
@@ -130,5 +144,10 @@ export default mixins(individual).extend({
       align-items: flex-end;
     }
   }
+}
+
+.printButton {
+  position: absolute;
+  left: 10px;
 }
 </style>

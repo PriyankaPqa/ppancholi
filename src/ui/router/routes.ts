@@ -5,6 +5,7 @@ import Routes from '@/constants/routes';
 const MainLayout = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/components/layout/MainLayout.vue');
 const LandingPage = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/registration/landing-page/LandingPage.vue');
 const Individual = () => import(/* webpackChunkName: "dashboard" */ '@/ui/views/pages/registration/individual/Individual.vue');
+const ConfirmationPrint = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
 
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 
@@ -19,6 +20,11 @@ export const routes: Array<RouteConfig> = [
     },
     beforeEnter: Trans.routeMiddleware,
     children: [
+      {
+        path: 'print-confirmation',
+        name: 'print-confirmation',
+        component: ConfirmationPrint,
+      },
       {
         path: Routes.registration.path,
         component: MainLayout,

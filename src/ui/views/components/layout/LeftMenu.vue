@@ -20,22 +20,23 @@
         v-for="(tab, index) in tabs"
         :key="index"
         :disabled="tab.disabled"
-        :class="{ navMenu__active: currentTab.id === tab.id }"
+        :class="{ navMenu__active: currentTab.id === tab.id, 'rc-body14': true }"
         :data-test="`registration-tab-${tab.id}`"
         @click="$emit('jump', index)">
         <v-list-item-icon>
           <v-icon
+            :disabled="tab.disabled"
             :color="currentTab.id === tab.id ? 'secondary' : 'primary darken-1'"
             :data-test="`registration-tab-icon-${tab.id}`"
             v-text="tab.icon" />
         </v-list-item-icon>
 
-        <v-list-item-content class="rc-body14">
+        <v-list-item-content>
           {{ $t(tab.labelKey) }}
         </v-list-item-content>
 
         <v-list-item-icon>
-          <v-icon v-if="tab.isTouched" :class="tab.isValid ? 'status_success--text' : 'status_error--text'">
+          <v-icon v-if="tab.isTouched" :disabled="tab.disabled" :class="tab.isValid ? 'status_success--text' : 'status_error--text'">
             {{ tab.isValid ? 'mdi-checkbox-marked-circle' : 'mdi-alert-circle' }}
           </v-icon>
         </v-list-item-icon>
