@@ -164,7 +164,7 @@ import {
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { IMultilingual, VForm } from '@/types';
+import { VForm } from '@/types';
 import { IAppUserData } from '@/entities/app-user';
 
 export default Vue.extend({
@@ -208,17 +208,11 @@ export default Vue.extend({
       eventsAfterRemoval: null as ITeamEvent[],
       team: null as ITeam,
       isLoading: true,
+      availableEvents: [] as ITeamEvent[],
     };
   },
 
   computed: {
-    availableEvents(): {id: string; name: IMultilingual}[] {
-      return this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]).map((e: IEvent) => ({
-        id: e.id,
-        name: e.name,
-      }));
-    },
-
     deleteEventConfirmationMessage(): TranslateResult {
       if (this.eventsAfterRemoval) {
         const removedEvent = _difference(this.team.events, this.eventsAfterRemoval);
@@ -285,12 +279,26 @@ export default Vue.extend({
     } else {
       await this.loadTeam();
     }
+    this.getAvailableEvents();
     this.isLoading = false;
   },
 
   methods: {
     async fetchEvents() {
       await this.$storage.event.actions.fetchEvents();
+    },
+
+    getAvailableEvents() {
+      const activeEvents: ITeamEvent[] = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]).map((e: IEvent) => ({
+        id: e.id,
+        name: e.name,
+      }));
+
+      let existingInactiveEvents = [] as ITeamEvent[];
+      if (this.isEditMode) {
+        existingInactiveEvents = this.team.events.filter((ev) => !activeEvents.find((e) => e.id === ev.id));
+      }
+      this.availableEvents = [...existingInactiveEvents, ...activeEvents];
     },
 
     handleRemoveEvent(leftEvents: ITeamEvent[]) {
@@ -387,6 +395,7 @@ export default Vue.extend({
         await this.submitCreateTeam();
       } else {
         await this.submitEditTeam();
+        this.getAvailableEvents();
       }
     },
 

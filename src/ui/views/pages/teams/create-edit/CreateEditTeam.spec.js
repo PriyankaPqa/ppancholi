@@ -2,6 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import {
   mockEventsSearchData, mockEventsData, Event,
+  EEventStatus,
 } from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
@@ -10,10 +11,12 @@ import {
 } from '@/entities/team';
 
 import { mockAppUserAzureData } from '@/entities/app-user';
+import { mockStorage } from '@/store/storage';
 
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
 
 describe('CreateEditTeam.vue', () => {
   let wrapper;
@@ -554,17 +557,6 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.isNameUnique).toBeTruthy();
       });
     });
-
-    describe('availableEvents', () => {
-      it('returns on hold and open event formatted with the proper structure', async () => {
-        const events = mockEventsSearchData().map((ev) => new Event(ev));
-        const expected = events.map((e) => ({
-          id: e.id,
-          name: e.name,
-        }));
-        expect(wrapper.vm.availableEvents).toEqual(expected);
-      });
-    });
   });
 
   describe('Lifecycle', () => {
@@ -595,11 +587,51 @@ describe('CreateEditTeam.vue', () => {
         computed: {
           isEditMode() { return true; },
         },
+        data() {
+          return {
+            team: new Team(),
+            isLoading: false,
+          };
+        },
       });
-      jest.spyOn(wrapper.vm, 'loadTeam').mockImplementation(() => {});
 
-      await wrapper.vm.fetchEvents();
+      wrapper.vm.fetchEvents = jest.fn();
+      wrapper.vm.loadTeam = jest.fn();
+
+      await wrapper.vm.$options.mounted.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+
       expect(wrapper.vm.loadTeam).toHaveBeenCalledTimes(1);
+    });
+
+    it('calls getAvailableEvents', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          teamType: 'standard',
+        },
+        computed: {
+          isEditMode() { return false; },
+        },
+        data() {
+          return {
+            team: new Team(),
+            isLoading: false,
+          };
+        },
+      });
+      wrapper.vm.fetchEvents = jest.fn();
+      wrapper.vm.loadTeam = jest.fn();
+      wrapper.vm.getAvailableEvents = jest.fn();
+
+      expect(wrapper.vm.getAvailableEvents).toHaveBeenCalledTimes(0);
+
+      await wrapper.vm.$options.mounted.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+
+      expect(wrapper.vm.getAvailableEvents).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -621,6 +653,7 @@ describe('CreateEditTeam.vue', () => {
             },
           },
         },
+
       });
       await wrapper.setData({
         team: new Team(),
@@ -633,6 +666,101 @@ describe('CreateEditTeam.vue', () => {
         jest.clearAllMocks();
         wrapper.vm.fetchEvents();
         expect(actions.fetchEvents).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('getAvailableEvents', () => {
+      const options = {
+        localVue,
+        propsData: {
+          teamType: 'standard',
+          id: '123',
+        },
+        store: {
+          modules: {
+            event: {
+              actions,
+            },
+            team: {
+              actions,
+            },
+          },
+        },
+        data() {
+          return {
+            team: new Team(),
+            isLoading: false,
+          };
+        },
+        mocks: {
+          $storage: storage,
+        },
+      };
+
+      beforeEach(async () => {
+        storage.event.getters.eventsByStatus = jest.fn(() => [new Event(mockEventsSearchData()[0])]);
+        wrapper = shallowMount(Component, options);
+        await wrapper.vm.getAvailableEvents();
+      });
+
+      it('calls the storage getter to get the events with on hold and active status', async () => {
+        expect(wrapper.vm.$storage.event.getters.eventsByStatus).toHaveBeenCalledWith([EEventStatus.Open, EEventStatus.OnHold]);
+      });
+
+      it('sets into availableEvents the events returned by the storage in the right form', async () => {
+        expect(wrapper.vm.availableEvents).toEqual([{
+          id: new Event(mockEventsSearchData()[0]).id,
+          name: new Event(mockEventsSearchData()[0]).name,
+        }]);
+      });
+
+      it('adds into availableEvents the events that are existing in the team but are not currently active/on hold, only for edit mode', async () => {
+        storage.event.getters.eventsByStatus = jest.fn(() => [new Event(mockEventsSearchData()[0])]);
+        const mockTeam = new Team();
+        const inactiveEvent = { id: 'foo', name: { translation: { en: 'mock-name' } } };
+        mockTeam.events = [inactiveEvent];
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+          },
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+          store: {
+            modules: {
+              event: {
+                actions,
+              },
+              team: {
+                actions,
+              },
+            },
+          },
+          data() {
+            return {
+              currentPrimaryContact: {
+                id: 'id',
+              },
+              team: mockTeam,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        await wrapper.vm.getAvailableEvents();
+
+        expect(wrapper.vm.availableEvents).toEqual([
+          inactiveEvent,
+          {
+            id: new Event(mockEventsSearchData()[0]).id,
+            name: new Event(mockEventsSearchData()[0]).name,
+          },
+        ]);
       });
     });
 
@@ -699,6 +827,12 @@ describe('CreateEditTeam.vue', () => {
               return true;
             },
           },
+          data() {
+            return {
+              team: new Team(),
+              isLoading: false,
+            };
+          },
         });
         expect(wrapper.vm.isSubmitDisabled(false, false)).toBeTruthy();
         expect(wrapper.vm.isSubmitDisabled(true, false)).toBeTruthy();
@@ -714,6 +848,13 @@ describe('CreateEditTeam.vue', () => {
             isEditMode() {
               return false;
             },
+
+          },
+          data() {
+            return {
+              team: new Team(),
+              isLoading: false,
+            };
           },
         });
 
@@ -731,6 +872,12 @@ describe('CreateEditTeam.vue', () => {
             isEditMode() {
               return true;
             },
+          },
+          data() {
+            return {
+              team: new Team(),
+              isLoading: false,
+            };
           },
         });
 
@@ -774,6 +921,12 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
+          data() {
+            return {
+              team: new Team(),
+              isLoading: false,
+            };
+          },
         });
         jest.spyOn(wrapper.vm.$router, 'push');
         wrapper.vm.goBack();
@@ -785,6 +938,12 @@ describe('CreateEditTeam.vue', () => {
           localVue,
           propsData: {
             teamType: 'standard',
+          },
+          data() {
+            return {
+              team: new Team(),
+              isLoading: false,
+            };
           },
         });
         wrapper.vm.$route.params.from = 'from';
