@@ -192,6 +192,10 @@ const routes = {
       path: 'roles',
       name: 'systemManagement.lists.roles',
     },
+    inactiveReasons: {
+      path: 'lists/case-file-inactive-reasons',
+      name: 'systemManagement.lists.caseFileInactiveReasons',
+    },
   },
   teams: {
     layout: {

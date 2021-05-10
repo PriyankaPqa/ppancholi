@@ -60,6 +60,7 @@ const Genders = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/
 const PreferredLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/PreferredLanguages.vue');
 const PrimarySpokenLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/PrimarySpokenLanguages.vue');
 const AgreementTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/AgreementTypes.vue');
+const CaseFileInactiveReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileInactiveReasons.vue');
 const UserAccounts = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/UserAccounts.vue');
 const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
 
@@ -370,6 +371,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.agreementTypes.path,
                 name: Routes.systemManagement.agreementTypes.name,
                 component: AgreementTypes,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.inactiveReasons.path,
+                name: Routes.systemManagement.inactiveReasons.name,
+                component: CaseFileInactiveReasons,
                 meta: { level: 'level6' },
               },
               {

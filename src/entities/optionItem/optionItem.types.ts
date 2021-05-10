@@ -12,7 +12,8 @@ export enum EOptionLists {
   PrimarySpokenLanguages = 4,
   AgreementTypes = 5,
   Roles = 6,
-  CaseFileTags = 7
+  CaseFileTags = 7,
+  CaseFileInactiveReasons = 8,
 }
 
 export interface IOptionSubItem {

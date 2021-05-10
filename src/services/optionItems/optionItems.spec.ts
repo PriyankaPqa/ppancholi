@@ -41,6 +41,10 @@ describe('>>> EventTypes Service', () => {
     it('returns correct prefix for EOptionLists.Roles', () => {
       expect(service.getPrefix(EOptionLists.Roles)).toBe('/user-account/roles');
     });
+
+    it('returns correct prefix for EOptionLists.CaseFileInactiveReasons', () => {
+      expect(service.getPrefix(EOptionLists.CaseFileInactiveReasons)).toBe('/case-file/inactive-reasons');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {
