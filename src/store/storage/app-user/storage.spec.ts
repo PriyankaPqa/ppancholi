@@ -2,10 +2,16 @@ import { mockStore } from '@/store';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });
-
 const storage = makeStorage(store);
 
 describe('>>> App User Storage', () => {
+  describe('>> Mutations', () => {
+    it('should set ', () => {
+      storage.mutations.invalidateAppUserCache();
+      expect(store.commit).toBeCalledWith('appUser/invalidateAppUserCache');
+    });
+  });
+
   describe('>> Getters', () => {
     it('should proxy appUsersWithInfo', () => {
       expect(storage.getters.appUsersWithInfo()).toEqual(store.getters['appUser/appUsersWithInfo']);

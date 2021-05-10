@@ -22,9 +22,18 @@ describe('>>> User Account Storage', () => {
   });
 
   describe('>> Actions', () => {
-    it('should proxy fetchUserAccount', () => {
-      storage.actions.fetchUserAccount('TEST_ID');
-      expect(store.dispatch).toBeCalledWith('userAccount/fetchUserAccount', 'TEST_ID');
+    describe('fetchUserAccount', () => {
+      it('should proxy fetchUserAccount', () => {
+        storage.actions.fetchUserAccount('TEST_ID');
+        expect(store.dispatch).toBeCalledWith('userAccount/fetchUserAccount', 'TEST_ID');
+      });
+    });
+    describe('addRoleToUser', () => {
+      it('should proxy addRoleToUser', () => {
+        const payload = { roleId: 'uuid', userId: 'uuid' };
+        storage.actions.addRoleToUser(payload);
+        expect(store.dispatch).toBeCalledWith('userAccount/addRoleToUser', payload);
+      });
     });
   });
 });

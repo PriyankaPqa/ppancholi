@@ -1,7 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IHttpClient } from '@/services/httpClient';
 import { IUserAccountData, IFilter } from '@/entities/user';
-import { IUsersService, IEditFilterRequest, IDeleteFilterRequest } from './users.types';
+import {
+  IUsersService,
+  IEditFilterRequest,
+  IDeleteFilterRequest,
+} from './users.types';
 
 export class UsersService implements IUsersService {
   constructor(private readonly http: IHttpClient) {}

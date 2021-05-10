@@ -4,7 +4,10 @@ import {
 import { localStorageKeys } from '@/constants/localStorage';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import {
-  EFilterKey, IFilter, IMSALUserData, User,
+  EFilterKey,
+  IFilter,
+  IMSALUserData,
+  User,
 } from '@/entities/user';
 import { IRootState } from '../../store.types';
 import {

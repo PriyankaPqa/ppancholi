@@ -68,6 +68,19 @@ describe('>>> App User Module', () => {
         expect(store.state.appUser.roles).toEqual(mockRolesData());
       });
     });
+
+    describe('invalidateAppUserCache', () => {
+      it('changes rolesFetched from true to false', async () => {
+        store = mockStore();
+        expect(store.state.appUser.appUsersFetched).toBeFalsy();
+        await store.dispatch('appUser/fetchAppUsers');
+        expect(store.state.appUser.appUsersFetched).toBeTruthy();
+
+        // Set appUsersFetched back to false
+        store.commit('appUser/invalidateAppUserCache');
+        expect(store.state.appUser.appUsersFetched).toBeFalsy();
+      });
+    });
   });
 
   describe('>> Actions', () => {

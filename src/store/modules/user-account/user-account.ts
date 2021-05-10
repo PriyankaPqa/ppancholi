@@ -7,9 +7,10 @@ import {
   UserAccount,
   IUserAccount,
   IUserAccountSearchData,
+  IUserAccountData,
 } from '@/entities/user-account';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-
+import { IAddRoleToUserRequest } from '@/services/user-accounts';
 import { IRootState } from '../../store.types';
 import {
   IState,
@@ -32,7 +33,6 @@ const getters = {
     }
     return null;
   },
-
 };
 
 const mutations = {
@@ -54,7 +54,6 @@ const mutations = {
   setSearchLoading(state: IState, payload: boolean) {
     state.searchLoading = payload;
   },
-
 };
 
 const actions = {
@@ -100,6 +99,9 @@ const actions = {
     }
   },
 
+  async addRoleToUser(this: Store<IState>, context: ActionContext<IState, IState>, role:IAddRoleToUserRequest): Promise<IUserAccountData> {
+    return this.$services.userAccounts.addRoleToUser(role);
+  },
 };
 
 export const userAccount: Module<IState, IRootState> = {

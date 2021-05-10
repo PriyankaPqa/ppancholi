@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IHttpClient } from '@/services/httpClient';
-import { IUserAccountSearchData } from '@/entities/user-account';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-import { IUserAccountsService } from './user-accounts.types';
+import { IUserAccountData, IUserAccountSearchData } from '@/entities/user-account';
+import { IUserAccountsService, IAddRoleToUserRequest } from './user-accounts.types';
 
 export class UserAccountsService implements IUserAccountsService {
   constructor(private readonly http: IHttpClient) {}
@@ -15,6 +15,11 @@ export class UserAccountsService implements IUserAccountsService {
     return data;
   }
 
+  async addRoleToUser(payload: IAddRoleToUserRequest): Promise<IUserAccountData> {
+    const data = await this.http.post(`user-account/user-accounts/${payload.userId}/role`, { roleId: payload.roleId });
+    return this.getUserWithParsedFilterCriteria(data);
+  }
+
   private getUserWithParsedFilterCriteria(user: any) {
     if (user) {
       return {
@@ -25,7 +30,6 @@ export class UserAccountsService implements IUserAccountsService {
         })),
       };
     }
-
     return null;
   }
 }

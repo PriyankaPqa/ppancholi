@@ -2,6 +2,7 @@ import { Store } from 'vuex';
 import { mockStore, IRootState } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
 import { mockSearchUserAccounts, mockUserAccountSearchData, UserAccount } from '@/entities/user-account';
+import { mockUserAccount } from '@/entities/user';
 
 describe('>>> User Account Module', () => {
   let store: Store<IRootState>;
@@ -123,6 +124,18 @@ describe('>>> User Account Module', () => {
         await store.dispatch('userAccount/searchUserAccounts', params);
 
         expect(store.$services.userAccounts.searchUserAccounts).toHaveBeenCalledWith(params);
+      });
+    });
+
+    describe('addRoleToUser', () => {
+      it('calls the service with the passed payload', async () => {
+        expect(store.$services.userAccounts.addRoleToUser).toHaveBeenCalledTimes(0);
+        jest.spyOn(store.$services.userAccounts, 'addRoleToUser').mockReturnValueOnce(mockUserAccount());
+
+        const payload = { roleId: 'uuid', userId: 'uuid' };
+        await store.dispatch('userAccount/addRoleToUser', payload);
+
+        expect(store.$services.userAccounts.addRoleToUser).toHaveBeenCalledWith(payload);
       });
     });
   });

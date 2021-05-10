@@ -52,6 +52,7 @@ const getters = {
       return { ...appUser, ...{ ...newUserData, emailAddress: allUserData.mail, phoneNumber } };
     });
   },
+
   // Find a user by passing the key we are looking for and the value
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   appUserWhere: (state: IState, getters: any) => (key: string, value: string) => getters.appUsersWithInfo.find((o: never) => o[key] === value),
@@ -90,6 +91,9 @@ const mutations = {
     state.loading = payload;
   },
 
+  invalidateAppUserCache(state: IState) {
+    mutations.setAppUsersFetched(state, false);
+  },
 };
 
 const actions = {

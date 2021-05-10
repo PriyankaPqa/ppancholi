@@ -42,6 +42,11 @@ export const mockRolesData = (): IRolesData[] => [
     displayName: 'General Manager',
     value: 'level6',
   },
+  {
+    id: '2',
+    displayName: 'Contributor A',
+    value: 'contributorIA',
+  },
 ];
 
 export const mockAppUserData = (): IAppUserData[] => [

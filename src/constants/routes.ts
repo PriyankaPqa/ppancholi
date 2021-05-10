@@ -184,6 +184,10 @@ const routes = {
       path: 'lists/agreement-types',
       name: 'systemManagement.lists.agreementTypes',
     },
+    userAccounts: {
+      path: 'userAccounts',
+      name: 'systemManagement.lists.userAccounts',
+    },
     roles: {
       path: 'roles',
       name: 'systemManagement.lists.roles',

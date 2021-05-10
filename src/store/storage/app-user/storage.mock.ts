@@ -2,6 +2,10 @@ import { IStorageMock } from './storage.types';
 
 export const mockStorageAppUser = () : IStorageMock => ({
 
+  mutations: {
+    invalidateAppUserCache: jest.fn(),
+  },
+
   getters: {
     appUsersWithInfo: jest.fn(),
     appUserWhere: jest.fn(),
@@ -12,5 +16,6 @@ export const mockStorageAppUser = () : IStorageMock => ({
     fetchAllUsers: jest.fn(),
     fetchAppUsers: jest.fn(),
     fetchRoles: jest.fn(),
+    findAppUsers: jest.fn(),
   },
 });
