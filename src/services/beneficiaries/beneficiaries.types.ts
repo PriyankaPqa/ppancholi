@@ -1,5 +1,5 @@
 import {
-  IBeneficiary, IBeneficiaryData, ICreateBeneficiaryRequest, IIndigenousIdentityData,
+  IBeneficiary, ICreateBeneficiaryResponse, IIndigenousIdentityData,
 } from '../../entities/beneficiary';
 import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '../../types';
 
@@ -8,7 +8,7 @@ export interface IBeneficiariesService {
   getPreferredLanguages(): Promise<IOptionItemData[]>;
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   searchIndigenousIdentities(params: IAzureSearchParams): Promise<IAzureSearchResult<IIndigenousIdentityData>>;
-  submitRegistration(beneficiary: IBeneficiary, eventId: string): Promise<IBeneficiaryData>;
+  submitRegistration(beneficiary: IBeneficiary, eventId: string): Promise<ICreateBeneficiaryResponse>;
 }
 
 export interface IBeneficiariesServiceMock {
@@ -16,5 +16,5 @@ export interface IBeneficiariesServiceMock {
   getPreferredLanguages: jest.Mock<IOptionItemData[]>;
   getPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
   searchIndigenousIdentities: jest.Mock<IAzureSearchResult<IIndigenousIdentityData>>;
-  submitRegistration: jest.Mock<ICreateBeneficiaryRequest>;
+  submitRegistration: jest.Mock<ICreateBeneficiaryResponse>;
 }

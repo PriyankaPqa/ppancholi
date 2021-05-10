@@ -1,7 +1,9 @@
 import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
 import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
-import { IIndigenousIdentityData, EIndigenousTypes, IBeneficiaryData } from '../../../entities/beneficiary';
+import {
+  IIndigenousIdentityData, EIndigenousTypes, ICreateBeneficiaryResponse,
+} from '../../../entities/beneficiary';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
 
@@ -60,6 +62,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     findEffectiveJumpIndex(targetIndex: number): number {
       return store.getters['registration/findEffectiveJumpIndex'](targetIndex);
     },
+
+    registrationResponse(): ICreateBeneficiaryResponse {
+      return store.getters['registration/registrationResponse'];
+    },
   },
 
   mutations: {
@@ -117,7 +123,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
     },
 
-    submitRegistration(): Promise<IBeneficiaryData> {
+    submitRegistration(): Promise<ICreateBeneficiaryResponse> {
       return store.dispatch('registration/submitRegistration');
     },
   },

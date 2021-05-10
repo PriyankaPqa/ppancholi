@@ -1,6 +1,7 @@
 import { ECanadaProvinces, IOptionItemData } from '../../../types';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 import {
+  ICreateBeneficiaryResponse,
   IIndigenousIdentityData,
 } from '../../../entities/beneficiary';
 import { IEventData } from '../../../entities/event';
@@ -17,4 +18,6 @@ export type IState = {
   loadingIndigenousIdentities: boolean;
   isPrivacyAgreed: boolean;
   privacyDateTimeConsent: string;
+  registrationResponse: ICreateBeneficiaryResponse;
+  submitLoading: boolean;
 };

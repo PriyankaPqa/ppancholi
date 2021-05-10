@@ -149,10 +149,32 @@ describe('Individual.vue', () => {
         wrapper.vm.$storage.registration.getters.findEffectiveJumpIndex = jest.fn(() => 3);
         storage.registration.getters.currentTabIndex.mockReturnValueOnce(2).mockReturnValueOnce(3);
 
-        const toIndex = 5;
+        const toIndex = 4;
         await wrapper.vm.jump(toIndex);
         expect(wrapper.vm.$storage.registration.mutations.mutateTabAtIndex).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(3);
+      });
+
+      it('call handleConfirmationScreen if it is confirmation', async () => {
+        storage.registration.getters.tabs.mockReturnValueOnce(tabs);
+
+        const toIndex = 5;
+        wrapper.vm.handleConfirmationScreen = jest.fn();
+
+        await wrapper.vm.jump(toIndex);
+        expect(wrapper.vm.handleConfirmationScreen).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('handleConfirmationScreen', () => {
+      it('call disableOtherTabs and jump', () => {
+        const toIndex = 5;
+        wrapper.vm.disableOtherTabs = jest.fn();
+
+        wrapper.vm.handleConfirmationScreen(toIndex);
+
+        expect(wrapper.vm.disableOtherTabs).toHaveBeenCalledWith(toIndex);
+        expect(wrapper.vm.$storage.registration.mutations.jump).toHaveBeenCalledWith(toIndex);
       });
     });
 
@@ -164,6 +186,19 @@ describe('Individual.vue', () => {
         await wrapper.vm.next();
 
         expect(wrapper.vm.jump).toHaveBeenCalledWith(3);
+      });
+
+      it('calls closeRegistration if it is confirmation', async () => {
+        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          id: 'confirmation',
+        }));
+        wrapper.vm.closeRegistration = jest.fn();
+        wrapper.vm.jump = jest.fn();
+
+        await wrapper.vm.next();
+
+        expect(wrapper.vm.closeRegistration).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.jump).toHaveBeenCalledTimes(0);
       });
     });
 

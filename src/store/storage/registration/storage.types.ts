@@ -1,7 +1,7 @@
 import { TranslateResult } from 'vue-i18n';
 import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
 import { IEvent, IEventData } from '../../../entities/event';
-import { IIndigenousIdentityData, EIndigenousTypes, IBeneficiaryData } from '../../../entities/beneficiary';
+import { IIndigenousIdentityData, EIndigenousTypes, ICreateBeneficiaryResponse } from '../../../entities/beneficiary';
 
 export interface IStorage {
   getters: {
@@ -18,6 +18,7 @@ export interface IStorage {
     findEffectiveJumpIndex(targetIndex: number): number;
     indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[];
     indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[];
+    registrationResponse(): ICreateBeneficiaryResponse;
   };
 
   mutations: {
@@ -37,7 +38,7 @@ export interface IStorage {
     fetchPreferredLanguages(): Promise<IOptionItemData[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]>;
-    submitRegistration(): Promise<IBeneficiaryData>;
+    submitRegistration(): Promise<ICreateBeneficiaryResponse>;
   };
 }
 
@@ -56,6 +57,7 @@ export interface IStorageMock {
     indigenousTypesItems: jest.Mock<Record<string, unknown>[]>;
     indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
     findEffectiveJumpIndex: jest.Mock<number>;
+    registrationResponse: jest.Mock<ICreateBeneficiaryResponse>;
   };
 
   mutations: {
@@ -75,6 +77,6 @@ export interface IStorageMock {
     fetchPreferredLanguages: jest.Mock<IOptionItemData[]>;
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
     fetchIndigenousIdentitiesByProvince: jest.Mock<IIndigenousIdentityData[]>;
-    submitRegistration: jest.Mock<IBeneficiaryData>;
+    submitRegistration: jest.Mock<ICreateBeneficiaryResponse>;
   };
 }

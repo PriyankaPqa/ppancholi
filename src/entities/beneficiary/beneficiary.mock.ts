@@ -1,7 +1,9 @@
 import { mockHouseholdMembers, mockPersonData, mockPersonForCreate } from '../value-objects/person';
 import { Beneficiary } from './beneficiary';
 import { mockAddressData } from '../value-objects/address/address.mock';
-import { IBeneficiaryData, IBeneficiary, ICreateBeneficiaryRequest } from './beneficiary.types';
+import {
+  IBeneficiaryData, IBeneficiary, ICreateBeneficiaryRequest, ICreateBeneficiaryResponse,
+} from './beneficiary.types';
 import { mockContactInformationData, mockContactInformationForCreate } from '../value-objects/contact-information/contactInformation.mock';
 
 export const mockBeneficiaryData = (): IBeneficiaryData => ({
@@ -23,4 +25,9 @@ export const mockCreateBeneficiaryRequest = (): ICreateBeneficiaryRequest => ({
   homeAddress: null,
   householdMembers: [],
   eventId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
+});
+
+export const mockCreateBeneficiaryResponse = (): ICreateBeneficiaryResponse => ({
+  ...mockCreateBeneficiaryRequest(),
+  registrationNumber: '123',
 });

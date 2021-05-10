@@ -47,3 +47,7 @@ export interface ICreateBeneficiaryRequest {
   householdMembers: IPersonForCreate[];
   eventId: uuid;
 }
+
+export interface ICreateBeneficiaryResponse extends ICreateBeneficiaryRequest {
+  registrationNumber: string;
+}

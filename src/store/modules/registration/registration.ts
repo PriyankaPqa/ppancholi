@@ -8,7 +8,7 @@ import {
 } from '../../../types';
 import { IRootState, IStore } from '../../store.types';
 import {
-  IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary, ICreateBeneficiaryRequest,
+  IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary, ICreateBeneficiaryResponse,
 } from '../../../entities/beneficiary';
 import { IEvent, Event, IEventData } from '../../../entities/event';
 
@@ -43,6 +43,8 @@ const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
     [ECanadaProvinces.OT]: [],
   },
   loadingIndigenousIdentities: false,
+  registrationResponse: null,
+  submitLoading: false,
 });
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
@@ -61,6 +63,9 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
 
   previousTabName: (state: IState) => {
     if (state.currentTabIndex === 0) return 'registration.privacy_statement.start_registration';
+
+    if (state.tabs[state.currentTabIndex].id === 'confirmation') return '';
+
     return state.tabs[state.currentTabIndex - 1].titleKey;
   },
 
@@ -172,6 +177,8 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   noFixedHome(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): boolean {
     return (rootGetters['beneficiary/beneficiary'] as IBeneficiary).noFixedHome;
   },
+
+  registrationResponse: (state: IState) => state.registrationResponse,
 });
 
 const mutations = {
@@ -232,6 +239,14 @@ const mutations = {
 
   setLoadingIndigenousIdentities(state: IState, payload: boolean) {
     state.loadingIndigenousIdentities = payload;
+  },
+
+  setRegistrationResponse(state: IState, payload: ICreateBeneficiaryResponse) {
+    state.registrationResponse = payload;
+  },
+
+  setSubmitLoading(state: IState, payload: boolean) {
+    state.submitLoading = payload;
   },
 };
 
@@ -312,10 +327,19 @@ const actions = {
   async submitRegistration(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
-  ): Promise<ICreateBeneficiaryRequest> {
+  ): Promise<ICreateBeneficiaryResponse> {
     const beneficiary = context.rootGetters['beneficiary/beneficiary'] as IBeneficiary;
-    const result = await this.$services.beneficiaries.submitRegistration(beneficiary, context.state.event.eventId);
-    return result as ICreateBeneficiaryRequest;
+
+    let result: ICreateBeneficiaryResponse;
+    context.commit('setSubmitLoading', true);
+    try {
+      result = await this.$services.beneficiaries.submitRegistration(beneficiary, context.state.event.eventId);
+      context.commit('setRegistrationResponse', result);
+    } finally {
+      context.commit('setSubmitLoading', false);
+    }
+
+    return result;
   },
 };
 

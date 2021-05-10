@@ -1,4 +1,5 @@
 import {
+  mockCreateBeneficiaryResponse,
   mockGenders,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
@@ -24,6 +25,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     indigenousTypesItems: jest.fn(() => mockIndigenousTypesItems()),
     indigenousCommunitiesItems: jest.fn(() => mockIndigenousCommunitiesItems()),
     findEffectiveJumpIndex: jest.fn(),
+    registrationResponse: jest.fn(() => mockCreateBeneficiaryResponse()),
   },
 
   mutations: {

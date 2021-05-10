@@ -12,6 +12,7 @@ import {
   mockPrimarySpokenLanguages,
   mockBeneficiary,
   Beneficiary,
+  mockCreateBeneficiaryResponse,
 } from '../../../entities/beneficiary';
 
 let store = mockStore();
@@ -168,6 +169,16 @@ describe('>>> Registration Module', () => {
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(6);
       });
     });
+
+    describe('registrationResponse', () => {
+      it('returns registrationResponse', () => {
+        expect(store.getters['registration/registrationResponse']).toBeNull();
+
+        const response = mockCreateBeneficiaryResponse();
+        store.state.registration.registrationResponse = response;
+        expect(store.getters['registration/registrationResponse']).toBe(response);
+      });
+    });
   });
 
   describe('>> Mutations', () => {
@@ -251,6 +262,27 @@ describe('>>> Registration Module', () => {
         toIndex = tabs.length;
         await store.commit('registration/jump', toIndex);
         expect(store.getters['registration/currentTabIndex']).toEqual(0);
+      });
+    });
+
+    describe('setRegistrationResponse', () => {
+      it('sets registration response', () => {
+        expect(store.getters['registration/registrationResponse']).toBeNull();
+
+        const response = mockCreateBeneficiaryResponse();
+        store.commit('registration/setRegistrationResponse', response);
+
+        expect(store.state.registration.registrationResponse).toEqual(response);
+      });
+    });
+
+    describe('setSubmitLoading', () => {
+      it('sets setSubmitLoading', () => {
+        expect(store.state.registration.submitLoading).toBeFalsy();
+
+        store.commit('registration/setSubmitLoading', true);
+
+        expect(store.state.registration.submitLoading).toBeTruthy();
       });
     });
   });
@@ -355,6 +387,16 @@ describe('>>> Registration Module', () => {
         await store.dispatch('registration/submitRegistration');
 
         expect(store.$services.beneficiaries.submitRegistration).toHaveBeenCalledWith(mockBeneficiary(), mockEventData().eventId);
+      });
+
+      it('sets registrationResponse', async () => {
+        expect(store.getters['registration/registrationResponse']).toBeNull();
+
+        await store.commit('registration/setEvent', mockEventData());
+
+        await store.dispatch('registration/submitRegistration');
+
+        expect(store.getters['registration/registrationResponse']).toStrictEqual(mockCreateBeneficiaryResponse());
       });
     });
   });

@@ -10,7 +10,6 @@ import helpers from '../helpers';
 export default Vue.extend({
   data() {
     return {
-      requestOnGoing: false,
       isFormReady: false,
     };
   },
@@ -53,6 +52,10 @@ export default Vue.extend({
     beneficiary(): Beneficiary {
       return this.$storage.beneficiary.getters.beneficiary();
     },
+
+    redirectionLink(): string {
+      return this.$t('registration.redirection_link') as string;
+    },
   },
 
   watch: {
@@ -76,6 +79,11 @@ export default Vue.extend({
 
   methods: {
     async jump(toIndex: number) {
+      if (this.allTabs[toIndex].id === 'confirmation') {
+        this.handleConfirmationScreen(toIndex);
+        return;
+      }
+
       const effectiveToIndex = this.$storage.registration.getters.findEffectiveJumpIndex(toIndex);
       this.setSkippedStepsToValid(this.currentTabIndex, effectiveToIndex - 1);
       // We validate before leaving so we see error if we can't go next
@@ -89,6 +97,11 @@ export default Vue.extend({
     },
 
     async next() {
+      if (this.currentTab.id === 'confirmation') {
+        await this.closeRegistration();
+        return;
+      }
+
       if (this.currentTab.id === 'review') {
         await this.$storage.registration.actions.submitRegistration();
       }
@@ -97,7 +110,42 @@ export default Vue.extend({
     },
 
     print() {
-      return false;
+      const event = this.$storage.registration.getters.event();
+      const routeData = this.$router.resolve({
+        name: 'print-confirmation',
+        query: {
+          eventName: this.$m(event.name),
+          confirmationID: this.$storage.registration.getters.registrationResponse().registrationNumber,
+          phoneAssistance: event.responseDetails.assistanceNumber,
+        },
+      });
+
+      const pdfView = window.open(routeData.href, '_blank');
+      setTimeout(() => {
+        pdfView.print();
+      }, 2000);
+    },
+
+    async closeRegistration() {
+      window.location.assign(this.redirectionLink);
+    },
+
+    handleConfirmationScreen(confirmationScreenIndex: number) {
+      this.disableOtherTabs(confirmationScreenIndex);
+
+      this.$storage.registration.mutations.mutateTabAtIndex(confirmationScreenIndex, (tab: IRegistrationMenuItem) => {
+        tab.isTouched = true;
+      });
+
+      this.$storage.registration.mutations.jump(confirmationScreenIndex);
+    },
+
+    disableOtherTabs(toIndex: number) {
+      for (let index = 0; index < this.allTabs.length; index += 1) {
+        this.$storage.registration.mutations.mutateTabAtIndex(index, (tab: IRegistrationMenuItem) => {
+          tab.disabled = index !== toIndex;
+        });
+      }
     },
 
     mutateStateTab(valid: boolean) {
@@ -110,11 +158,10 @@ export default Vue.extend({
     setSkippedStepsToValid(indexStart: number, indexEnd: number) {
       if (indexStart <= indexEnd) {
         for (let i = indexStart + 1; i <= indexEnd; i += 1) {
-          this.$storage.registration.mutations.mutateTabAtIndex(i,
-            (tab: IRegistrationMenuItem) => {
-              tab.isValid = true;
-              tab.isTouched = true;
-            });
+          this.$storage.registration.mutations.mutateTabAtIndex(i, (tab: IRegistrationMenuItem) => {
+            tab.isValid = true;
+            tab.isTouched = true;
+          });
         }
       }
     },

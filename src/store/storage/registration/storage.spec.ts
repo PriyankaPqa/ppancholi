@@ -60,6 +60,10 @@ describe('>>> Registration Storage', () => {
       expect(storage.getters.indigenousCommunitiesItems(ECanadaProvinces.AB, 1))
         .toEqual(store.getters['registration/indigenousCommunitiesItems'](ECanadaProvinces.AB, 1));
     });
+
+    it('should proxy registrationResponse', () => {
+      expect(storage.getters.registrationResponse()).toEqual(store.getters['registration/registrationResponse']);
+    });
   });
 
   describe('>> Mutations', () => {

@@ -1,5 +1,5 @@
 import {
-  mockCreateBeneficiaryRequest,
+  mockCreateBeneficiaryResponse,
   mockGenders,
   mockIndigenousIdentitiesSearchData,
   mockPreferredLanguages,
@@ -12,5 +12,5 @@ export const mockBeneficiariesService = (): IBeneficiariesServiceMock => ({
   getPreferredLanguages: jest.fn(() => mockPreferredLanguages()),
   getPrimarySpokenLanguages: jest.fn(() => mockPrimarySpokenLanguages()),
   searchIndigenousIdentities: jest.fn(() => mockIndigenousIdentitiesSearchData()),
-  submitRegistration: jest.fn(() => mockCreateBeneficiaryRequest()),
+  submitRegistration: jest.fn(() => mockCreateBeneficiaryResponse()),
 });

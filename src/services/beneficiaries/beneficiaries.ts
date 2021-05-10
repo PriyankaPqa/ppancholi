@@ -6,7 +6,7 @@ import {
   ETemporaryAddressTypes,
   IAddressData,
   IBeneficiary,
-  IBeneficiaryData,
+  ICreateBeneficiaryResponse,
   IContactInformation,
   IContactInformationForCreate,
   ICreateBeneficiaryRequest,
@@ -42,7 +42,7 @@ export class BeneficiariesService implements IBeneficiariesService {
     });
   }
 
-  submitRegistration(beneficiary: IBeneficiary, eventId: string): Promise<IBeneficiaryData> {
+  submitRegistration(beneficiary: IBeneficiary, eventId: string): Promise<ICreateBeneficiaryResponse> {
     const payload = this.buildBeneficiaryPayload(beneficiary, eventId);
     return this.http.post('/beneficiary/beneficiaries', payload);
   }
