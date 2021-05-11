@@ -1018,10 +1018,10 @@
     "@googlemaps/js-api-loader" "^1.11.0"
     date-fns "^2.14.0"
 
-"@crctech/registration-lib@0.1.117":
-  version "0.1.117"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-0.1.117.tgz#fae608a772608fde33f152a018d9f593364fc4e8"
-  integrity sha1-+uYIp3Jgj94z8VKgGNn1kzZPxOg=
+"@crctech/registration-lib@0.1.118":
+  version "0.1.118"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-0.1.118.tgz#93b1b9a39ff2a1a41110dd199ba37a4739c4ef35"
+  integrity sha1-k7G5o5/yoaQREN0Zm6N6RznE7zU=
   dependencies:
     "@crctech/component-library" "1.0.14"
     axios "^0.21.1"

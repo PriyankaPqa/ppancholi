@@ -40,20 +40,6 @@ describe('Individual.vue', () => {
     });
   });
 
-  describe('Computed', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-      });
-    });
-
-    describe('submitLoading', () => {
-      it('returns proper data', () => {
-        expect(wrapper.vm.submitLoading).toBe(wrapper.vm.$store.state.registration.submitLoading);
-      });
-    });
-  });
-
   describe('Methods', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {

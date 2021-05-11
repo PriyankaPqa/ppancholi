@@ -85,12 +85,6 @@ export default mixins(individual).extend({
 
   mixins: [individual],
 
-  computed: {
-    submitLoading(): boolean {
-      return this.$store.state.registration.submitLoading;
-    },
-  },
-
   methods: {
     async back() {
       if (this.currentTabIndex === 0) {
