@@ -1,5 +1,6 @@
 import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
+import { IError } from '../../../services/httpClient';
 import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
 import {
   IIndigenousIdentityData, EIndigenousTypes, ICreateBeneficiaryResponse,
@@ -65,6 +66,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     registrationResponse(): ICreateBeneficiaryResponse {
       return store.getters['registration/registrationResponse'];
+    },
+
+    registrationErrors(): IError[] {
+      return store.getters['registration/registrationErrors'];
     },
   },
 

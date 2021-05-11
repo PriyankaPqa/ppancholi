@@ -44,7 +44,7 @@ export class BeneficiariesService implements IBeneficiariesService {
 
   submitRegistration(beneficiary: IBeneficiary, eventId: string): Promise<ICreateBeneficiaryResponse> {
     const payload = this.buildBeneficiaryPayload(beneficiary, eventId);
-    return this.http.post('/beneficiary/beneficiaries', payload);
+    return this.http.post('/beneficiary/beneficiaries', payload, { globalHandler: false });
   }
 
   buildBeneficiaryPayload(beneficiary: IBeneficiary, eventId: string): ICreateBeneficiaryRequest {

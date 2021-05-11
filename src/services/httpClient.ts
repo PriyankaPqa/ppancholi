@@ -27,6 +27,14 @@ export interface IHttpClient {
   setHeadersTenant(tenantId: string): void;
 }
 
+export interface IError {
+  status: string;
+  code: string;
+  title: string;
+  detail: string;
+  meta: Record<string, string>;
+}
+
 class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
 

@@ -1,3 +1,4 @@
+import { IError } from '../../../services/httpClient';
 import { ECanadaProvinces, IOptionItemData } from '../../../types';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 import {
@@ -19,5 +20,6 @@ export type IState = {
   isPrivacyAgreed: boolean;
   privacyDateTimeConsent: string;
   registrationResponse: ICreateBeneficiaryResponse;
+  registrationErrors: IError[];
   submitLoading: boolean;
 };

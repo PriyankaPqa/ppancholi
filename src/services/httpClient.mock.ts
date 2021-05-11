@@ -1,3 +1,5 @@
+import { IError } from '@/services/httpClient';
+
 export interface IHttpMock {
   get: jest.Mock<void>;
   post: jest.Mock<void>;
@@ -12,4 +14,12 @@ export const mockHttp = (): IHttpMock => ({
   patch: jest.fn(),
   put: jest.fn(),
   delete: jest.fn(),
+});
+
+export const mockHttpError = (): IError => ({
+  status: 'status',
+  code: 'code',
+  title: 'title',
+  detail: 'detail',
+  meta: { meta: 'x' },
 });

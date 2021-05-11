@@ -64,6 +64,10 @@ describe('>>> Registration Storage', () => {
     it('should proxy registrationResponse', () => {
       expect(storage.getters.registrationResponse()).toEqual(store.getters['registration/registrationResponse']);
     });
+
+    it('should proxy registrationErrors', () => {
+      expect(storage.getters.registrationErrors()).toEqual(store.getters['registration/registrationErrors']);
+    });
   });
 
   describe('>> Mutations', () => {

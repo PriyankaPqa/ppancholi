@@ -1,4 +1,5 @@
 import { TranslateResult } from 'vue-i18n';
+import { IError } from '../../../services/httpClient';
 import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IIndigenousIdentityData, EIndigenousTypes, ICreateBeneficiaryResponse } from '../../../entities/beneficiary';
@@ -19,6 +20,7 @@ export interface IStorage {
     indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[];
     indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[];
     registrationResponse(): ICreateBeneficiaryResponse;
+    registrationErrors(): IError[];
   };
 
   mutations: {
@@ -58,6 +60,7 @@ export interface IStorageMock {
     indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
     findEffectiveJumpIndex: jest.Mock<number>;
     registrationResponse: jest.Mock<ICreateBeneficiaryResponse>;
+    registrationErrors: jest.Mock<IError[]>;
   };
 
   mutations: {

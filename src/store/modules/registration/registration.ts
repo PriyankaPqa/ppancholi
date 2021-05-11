@@ -3,6 +3,7 @@ import {
 } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import VueI18n from 'vue-i18n';
+import { IError } from '../../../services/httpClient';
 import {
   ECanadaProvinces, IRegistrationMenuItem, IOptionItemData, EOptionItemStatus,
 } from '../../../types';
@@ -44,6 +45,7 @@ const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   },
   loadingIndigenousIdentities: false,
   registrationResponse: null,
+  registrationErrors: [],
   submitLoading: false,
 });
 
@@ -179,6 +181,8 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   },
 
   registrationResponse: (state: IState) => state.registrationResponse,
+
+  registrationErrors: (state: IState) => state.registrationErrors,
 });
 
 const mutations = {
@@ -248,6 +252,11 @@ const mutations = {
   setSubmitLoading(state: IState, payload: boolean) {
     state.submitLoading = payload;
   },
+
+  setRegistrationErrors(state: IState, payload: IError[]) {
+    state.registrationErrors = payload;
+  },
+
 };
 
 const actions = {
@@ -335,6 +344,8 @@ const actions = {
     try {
       result = await this.$services.beneficiaries.submitRegistration(beneficiary, context.state.event.eventId);
       context.commit('setRegistrationResponse', result);
+    } catch (e) {
+      context.commit('setRegistrationErrors', e);
     } finally {
       context.commit('setSubmitLoading', false);
     }

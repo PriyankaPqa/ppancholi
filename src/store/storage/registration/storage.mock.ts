@@ -26,6 +26,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     indigenousCommunitiesItems: jest.fn(() => mockIndigenousCommunitiesItems()),
     findEffectiveJumpIndex: jest.fn(),
     registrationResponse: jest.fn(() => mockCreateBeneficiaryResponse()),
+    registrationErrors: jest.fn(() => []),
   },
 
   mutations: {

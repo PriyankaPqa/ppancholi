@@ -1,6 +1,7 @@
 import { mockStore } from '@/store';
 import { ECanadaProvinces, IRegistrationMenuItem } from '@/types';
 import { tabs } from '@/store/modules/registration/tabs.mock';
+import { mockHttpError } from '@/services/httpClient.mock';
 import { Event, mockEventData, mockEvent } from '../../../entities/event';
 import {
   EIndigenousTypes,
@@ -16,6 +17,7 @@ import {
 } from '../../../entities/beneficiary';
 
 let store = mockStore();
+
 describe('>>> Registration Module', () => {
   beforeEach(() => {
     store = mockStore();
@@ -179,6 +181,12 @@ describe('>>> Registration Module', () => {
         expect(store.getters['registration/registrationResponse']).toBe(response);
       });
     });
+
+    describe('registrationErrors', () => {
+      it('returns registrationErrors', () => {
+        expect(store.getters['registration/registrationErrors']).toEqual([]);
+      });
+    });
   });
 
   describe('>> Mutations', () => {
@@ -267,7 +275,7 @@ describe('>>> Registration Module', () => {
 
     describe('setRegistrationResponse', () => {
       it('sets registration response', () => {
-        expect(store.getters['registration/registrationResponse']).toBeNull();
+        expect(store.state.registration.registrationResponse).toBeNull();
 
         const response = mockCreateBeneficiaryResponse();
         store.commit('registration/setRegistrationResponse', response);
@@ -283,6 +291,17 @@ describe('>>> Registration Module', () => {
         store.commit('registration/setSubmitLoading', true);
 
         expect(store.state.registration.submitLoading).toBeTruthy();
+      });
+    });
+
+    describe('setRegistrationErrors', () => {
+      it('sets registration error', () => {
+        expect(store.state.registration.registrationErrors).toEqual([]);
+
+        const errors = [mockHttpError()];
+        store.commit('registration/setRegistrationErrors', errors);
+
+        expect(store.state.registration.registrationErrors).toEqual(errors);
       });
     });
   });
@@ -389,7 +408,7 @@ describe('>>> Registration Module', () => {
         expect(store.$services.beneficiaries.submitRegistration).toHaveBeenCalledWith(mockBeneficiary(), mockEventData().eventId);
       });
 
-      it('sets registrationResponse', async () => {
+      it('sets registrationResponse in case of success', async () => {
         expect(store.getters['registration/registrationResponse']).toBeNull();
 
         await store.commit('registration/setEvent', mockEventData());
@@ -397,6 +416,13 @@ describe('>>> Registration Module', () => {
         await store.dispatch('registration/submitRegistration');
 
         expect(store.getters['registration/registrationResponse']).toStrictEqual(mockCreateBeneficiaryResponse());
+      });
+
+      it('sets registrationErrors in case of error', async () => {
+        await store.commit('registration/setEvent', mockEventData());
+        store.$services.beneficiaries.submitRegistration = jest.fn(() => { throw new Error(); });
+        await store.dispatch('registration/submitRegistration');
+        expect(store.getters['registration/registrationErrors']).toStrictEqual(new Error());
       });
     });
   });

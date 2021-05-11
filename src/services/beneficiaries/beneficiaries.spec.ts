@@ -137,6 +137,6 @@ describe('>>> Beneficiaries Service', () => {
 
     await service.submitRegistration(mockBeneficiary(), 'event id');
 
-    expect(http.post).toHaveBeenCalledWith('/beneficiary/beneficiaries', createBeneficiaryRequest);
+    expect(http.post).toHaveBeenCalledWith('/beneficiary/beneficiaries', createBeneficiaryRequest, { globalHandler: false });
   });
 });
