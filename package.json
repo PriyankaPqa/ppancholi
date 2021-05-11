@@ -19,11 +19,13 @@
     "report-json": "vue-cli-service build --report-json",
     "test": "vue-cli-service test:unit --runInBand",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
-    "pr": "yarn test && yarn lint"
+    "pr": "yarn test && yarn lint",
+    "link:registration": "yalc link @crctech/registration-lib",
+    "remove:registration": "yalc remove @crctech/registration-lib"
   },
   "dependencies": {
     "@crctech/component-library": "1.0.14",
-    "@crctech/registration-lib": "1.0.153",
+    "@crctech/registration-lib": "0.1.117",
     "@mdi/font": "^5.6.55",
     "@types/uuid": "^8.3.0",
     "awesome-phonenumber": "^2.39.0",

@@ -2,6 +2,8 @@ import { mockStorage } from '@/store/storage/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCreateBeneficiaryResponse } from '@crctech/registration-lib/src/entities/beneficiary';
 import { mockEvent } from '@crctech/registration-lib/src/entities/event';
+import ConfirmationError from '@/ui/views/pages/registration/confirmation/ConfirmationError.vue';
+import { mockHttpError } from '@/services/httpClient.mock';
 import Component from './ConfirmRegistration.vue';
 
 const localVue = createLocalVue();
@@ -9,7 +11,6 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 
 const computed = {
-  success: () => true,
   response: () => mockCreateBeneficiaryResponse(),
   event: () => ({
     name: {
@@ -52,6 +53,19 @@ describe('ConfirmRegistration.vue', () => {
         expect(component.text()).toBe(computed.event().name.translation.en);
       });
     });
+
+    describe('Confirmation error', () => {
+      it('should be displayed in case of errors', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            success: () => false,
+            phoneAssistance: () => 'phone',
+          },
+        });
+        expect(wrapper.findComponent(ConfirmationError).exists()).toBe(true);
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -65,8 +79,18 @@ describe('ConfirmRegistration.vue', () => {
     });
 
     describe('success', () => {
-      it('returns the proper data', async () => {
+      it('returns true if no errors', async () => {
         expect(wrapper.vm.success).toEqual(true);
+      });
+
+      it('returns false if errors', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            errors: () => [mockHttpError()],
+          },
+        });
+        expect(wrapper.vm.success).toEqual(false);
       });
     });
 
@@ -91,6 +115,12 @@ describe('ConfirmRegistration.vue', () => {
     describe('phoneAssistance', () => {
       it('returns the proper data', async () => {
         expect(wrapper.vm.phoneAssistance).toEqual(mockEvent().responseDetails.assistanceNumber);
+      });
+    });
+
+    describe('errors', () => {
+      it('returns errors from the store', async () => {
+        expect(wrapper.vm.errors).toEqual(wrapper.vm.$storage.registration.getters.registrationErrors());
       });
     });
   });
