@@ -35,6 +35,28 @@ export interface IResponseDetails {
   assistanceNumber: string;
 }
 
+export enum EEventLocationStatus {
+  Active = 1,
+  Inactive,
+}
+
+export interface IEventGenericLocationAddress {
+  country: string;
+  streetAddress: string;
+  unitSuite?: string;
+  province: ECanadaProvinces;
+  city: string;
+  postalCode: string;
+  latitude?: string;
+  longitude?: string;
+}
+
+export interface IEventGenericLocation {
+  name: IMultilingual;
+  status: EEventLocationStatus;
+  address: IEventGenericLocationAddress;
+}
+
 /**
  * Interface that maps to the response structure from the API
  */
@@ -44,6 +66,7 @@ export interface IEventData {
   responseDetails: IResponseDetails;
   registrationLink: IMultilingual;
   tenantId: uuid;
+  registrationLocations: Array<IEventGenericLocation>;
   shelterLocations: IShelterLocation[];
 }
 
@@ -57,4 +80,5 @@ export interface IEvent {
   registrationLink: IMultilingual;
   tenantId: uuid;
   shelterLocations: IShelterLocation[];
+  registrationLocations: IEventGenericLocation[];
 }

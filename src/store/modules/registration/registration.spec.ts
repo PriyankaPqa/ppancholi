@@ -1,5 +1,5 @@
 import { mockStore } from '@/store';
-import { ECanadaProvinces, IRegistrationMenuItem } from '@/types';
+import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '@/types';
 import { tabs } from '@/store/modules/registration/tabs.mock';
 import { mockHttpError } from '@/services/httpClient.mock';
 import { Event, mockEventData, mockEvent } from '../../../entities/event';
@@ -273,6 +273,86 @@ describe('>>> Registration Module', () => {
       });
     });
 
+    describe('setIsPrivacyAgreed', () => {
+      it('should set isPrivacyAgreed', () => {
+        expect(store.state.registration.isPrivacyAgreed).toEqual(false);
+        store.commit('registration/setIsPrivacyAgreed', true);
+        expect(store.state.registration.isPrivacyAgreed).toEqual(true);
+      });
+    });
+
+    describe('setDateTimeConsent', () => {
+      it('should set privacyDateTimeConsent', () => {
+        expect(store.state.registration.privacyDateTimeConsent).toEqual('');
+        store.commit('registration/setDateTimeConsent', 'date');
+        expect(store.state.registration.privacyDateTimeConsent).toEqual('date');
+      });
+    });
+
+    describe('setGenders', () => {
+      it('should set genders', () => {
+        expect(store.state.registration.genders).toEqual([]);
+        store.commit('registration/setGenders', mockGenders());
+        expect(store.state.registration.genders).toEqual(mockGenders());
+      });
+    });
+
+    describe('setPreferredLanguages', () => {
+      it('should set preferredLanguages', () => {
+        expect(store.state.registration.preferredLanguages).toEqual([]);
+        store.commit('registration/setPreferredLanguages', mockPreferredLanguages());
+        expect(store.state.registration.preferredLanguages).toEqual(mockPreferredLanguages());
+      });
+    });
+
+    describe('setPrimarySpokenLanguages', () => {
+      it('should set primarySpokenLanguages', () => {
+        expect(store.state.registration.primarySpokenLanguages).toEqual([]);
+        store.commit('registration/setPrimarySpokenLanguages', mockPrimarySpokenLanguages());
+        expect(store.state.registration.primarySpokenLanguages).toEqual(mockPrimarySpokenLanguages());
+      });
+    });
+
+    describe('setIndigenousIdentities', () => {
+      it('should set indigenousIdentities', () => {
+        const payload = mockIndigenousIdentitiesSearchData().value[0];
+        store.commit('registration/setIndigenousIdentities', { provinceCode: ECanadaProvinces.AB, identities: payload });
+        expect(store.state.registration.indigenousIdentities[ECanadaProvinces.AB]).toEqual(payload);
+      });
+    });
+
+    describe('setLoadingIndigenousIdentities', () => {
+      it('should set loadingIndigenousIdentities', () => {
+        expect(store.state.registration.loadingIndigenousIdentities).toEqual(false);
+        store.commit('registration/setLoadingIndigenousIdentities', true);
+        expect(store.state.registration.loadingIndigenousIdentities).toEqual(true);
+      });
+    });
+
+    describe('setPrivacyCRCUsername', () => {
+      it('should set privacyCRCUsername', () => {
+        expect(store.state.registration.privacyCRCUsername).toEqual('');
+        store.commit('registration/setPrivacyCRCUsername', 'user');
+        expect(store.state.registration.privacyCRCUsername).toEqual('user');
+      });
+    });
+
+    describe('setPrivacyRegistrationMethod', () => {
+      it('should set privacyRegistrationMethod', () => {
+        expect(store.state.registration.privacyRegistrationMethod).toEqual(null);
+        store.commit('registration/setPrivacyRegistrationMethod', ERegistrationMethod.InPerson);
+        expect(store.state.registration.privacyRegistrationMethod).toEqual(ERegistrationMethod.InPerson);
+      });
+    });
+
+    describe('setPrivacyRegistrationLocationName', () => {
+      it('should set privacyRegistrationLocationName', () => {
+        expect(store.state.registration.privacyRegistrationLocationName).toEqual('');
+        store.commit('registration/setPrivacyRegistrationLocationName', 'name');
+        expect(store.state.registration.privacyRegistrationLocationName).toEqual('name');
+      });
+    });
+
     describe('setRegistrationResponse', () => {
       it('sets registration response', () => {
         expect(store.state.registration.registrationResponse).toBeNull();
@@ -282,15 +362,15 @@ describe('>>> Registration Module', () => {
 
         expect(store.state.registration.registrationResponse).toEqual(response);
       });
-    });
 
-    describe('setSubmitLoading', () => {
-      it('sets setSubmitLoading', () => {
-        expect(store.state.registration.submitLoading).toBeFalsy();
+      describe('setSubmitLoading', () => {
+        it('sets setSubmitLoading', () => {
+          expect(store.state.registration.submitLoading).toBeFalsy();
 
-        store.commit('registration/setSubmitLoading', true);
+          store.commit('registration/setSubmitLoading', true);
 
-        expect(store.state.registration.submitLoading).toBeTruthy();
+          expect(store.state.registration.submitLoading).toBeTruthy();
+        });
       });
     });
 

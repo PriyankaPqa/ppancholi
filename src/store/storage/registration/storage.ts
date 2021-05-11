@@ -1,7 +1,9 @@
 import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
+import {
+  ECanadaProvinces, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
+} from '../../../types';
 import { IError } from '../../../services/httpClient';
-import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
 import {
   IIndigenousIdentityData, EIndigenousTypes, ICreateBeneficiaryResponse,
 } from '../../../entities/beneficiary';
@@ -104,6 +106,18 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     setEvent(payload: IEventData): void {
       store.commit('registration/setEvent', payload);
+    },
+
+    setPrivacyCRCUsername(payload: string): void {
+      store.commit('registration/setPrivacyCRCUsername', payload);
+    },
+
+    setPrivacyRegistrationMethod(payload: ERegistrationMethod): void {
+      store.commit('registration/setPrivacyRegistrationMethod', payload);
+    },
+
+    setPrivacyRegistrationLocationName(payload: string): void {
+      store.commit('registration/setPrivacyRegistrationLocationName', payload);
     },
   },
 

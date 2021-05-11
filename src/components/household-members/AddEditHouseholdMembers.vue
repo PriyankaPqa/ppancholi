@@ -38,16 +38,17 @@
 import { RcDialog } from '@crctech/component-library';
 import Vue from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
+import _isEqual from 'lodash/isEqual';
+import _cloneDeep from 'lodash/cloneDeep';
+
 import {
   ECanadaProvinces,
   EOptionItemStatus,
   IOptionItemData,
   VForm,
-} from '@/types';
-import helpers from '@/ui/helpers';
-import _isEqual from 'lodash/isEqual';
+} from '../../types';
+import helpers from '../../ui/helpers';
 
-import _cloneDeep from 'lodash/cloneDeep';
 import { localStorageKeys } from '../../constants/localStorage';
 import { ETemporaryAddressTypes, IShelterLocation } from '../../entities/value-objects/temporary-address/index';
 import { IPerson } from '../../entities/value-objects/person';
@@ -192,7 +193,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-@import "src/styles/breakpoints";
+@import "../../../src/styles/breakpoints";
 
 @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
   .householdMembersForm {

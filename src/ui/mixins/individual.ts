@@ -4,7 +4,6 @@ import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
 import { IRegistrationMenuItem, VForm } from '../../types';
 import { Beneficiary } from '../../entities/beneficiary';
-
 import helpers from '../helpers';
 
 export default Vue.extend({
@@ -55,6 +54,10 @@ export default Vue.extend({
 
     redirectionLink(): string {
       return this.$t('registration.redirection_link') as string;
+    },
+
+    submitLoading(): boolean {
+      return this.$store.state.registration.submitLoading;
     },
   },
 

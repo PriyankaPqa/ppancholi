@@ -7,3 +7,4 @@ export { default as Addresses } from './addresses/Addresses.vue';
 export { default as HouseholdMembers } from './household-members/HouseholdMembers.vue';
 export { default as HouseholdMemberForm } from './household-members/HouseholdMemberForm.vue';
 export { default as PersonalInformation } from './personal-information/PersonalInformation.vue';
+export { default as PrivacyStatement } from './privacy-statement/PrivacyStatement.vue';

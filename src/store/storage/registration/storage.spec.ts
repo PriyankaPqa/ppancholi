@@ -1,5 +1,5 @@
 import { mockStore } from '@/store';
-import { ECanadaProvinces, IRegistrationMenuItem } from '../../../types';
+import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
 import { mockEventData } from '../../../entities/event';
 import { makeStorage } from './storage';
 
@@ -101,6 +101,24 @@ describe('>>> Registration Storage', () => {
       const payload = mockEventData();
       storage.mutations.setEvent(payload);
       expect(store.commit).toBeCalledWith('registration/setEvent', payload);
+    });
+
+    it('should proxy setPrivacyCRCUsername', () => {
+      const payload = 'test';
+      storage.mutations.setPrivacyCRCUsername(payload);
+      expect(store.commit).toBeCalledWith('registration/setPrivacyCRCUsername', payload);
+    });
+
+    it('should proxy setPrivacyRegistrationMethod', () => {
+      const payload = ERegistrationMethod.Phone;
+      storage.mutations.setPrivacyRegistrationMethod(payload);
+      expect(store.commit).toBeCalledWith('registration/setPrivacyRegistrationMethod', payload);
+    });
+
+    it('should proxy setPrivacyRegistrationLocationName', () => {
+      const payload = 'name';
+      storage.mutations.setPrivacyRegistrationLocationName(payload);
+      expect(store.commit).toBeCalledWith('registration/setPrivacyRegistrationLocationName', payload);
     });
   });
 

@@ -13,10 +13,6 @@ describe('>>> Event', () => {
       expect(event.id).toBe(mockEventData().eventId);
     });
 
-    it('should instantiate assistance number', () => {
-      expect(event.responseDetails.assistanceNumber).toBe(mockEventData().responseDetails.assistanceNumber);
-    });
-
     it('should instantiate name', () => {
       expect(event.name).toEqual(mockEventData().eventName);
     });
@@ -31,6 +27,10 @@ describe('>>> Event', () => {
 
     it('should instantiate shelterLocations', () => {
       expect(event.shelterLocations).toEqual(mockEventData().shelterLocations);
+    });
+
+    it('should instantiate registrationLocations', () => {
+      expect(event.registrationLocations).toEqual(mockEventData().registrationLocations);
     });
   });
 });

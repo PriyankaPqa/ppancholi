@@ -111,6 +111,12 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.nextTabName).toEqual('test');
       });
     });
+
+    describe('submitLoading', () => {
+      it('returns proper data', () => {
+        expect(wrapper.vm.submitLoading).toBe(wrapper.vm.$store.state.registration.submitLoading);
+      });
+    });
   });
 
   describe('Methods', () => {

@@ -38,6 +38,9 @@ export const mockStorageRegistration = (): IStorageMock => ({
     setIsPrivacyAgreed: jest.fn(),
     setDateTimeConsent: jest.fn(),
     setEvent: jest.fn(),
+    setPrivacyCRCUsername: jest.fn(),
+    setPrivacyRegistrationMethod: jest.fn(),
+    setPrivacyRegistrationLocationName: jest.fn(),
   },
 
   actions: {

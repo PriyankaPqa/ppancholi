@@ -1,7 +1,21 @@
 {
   "name": "@crctech/registration-lib",
-  "version": "0.1.117",
+  "version": "0.1.118",
   "private": false,
+  "watch": {
+    "push": {
+      "patterns": [
+        "src",
+        "test"
+      ],
+      "extensions": "js,ts",
+      "ignore": "",
+      "quiet": true,
+      "legacyWatch": true,
+      "delay": 2500,
+      "runOnChangeOnly": true
+    }
+  },
   "scripts": {
     "serve": "vue-cli-service serve",
     "test": "vue-cli-service test:unit --runInBand",
@@ -14,11 +28,13 @@
     "build:app": "vue-cli-service build --dest dist-app",
     "build:final": "yarn lint && yarn test && yarn build:lib",
     "build:lib": "rollup --config build/rollup.config.js",
-    "build:test": "yarn version --prerelease && yarn pack",
+    "build:test": "yarn build:lib && yarn pack",
     "coverage": "vue-cli-service test:unit --coverage --coverageReporters=cobertura",
     "pre": "yarn build:lib && yarn version --prerelease",
     "patch": "yarn build:lib && yarn version --patch",
-    "pr": "yarn test && yarn lint"
+    "pr": "yarn test && yarn lint",
+    "watch": "npm-watch",
+    "push": "yarn build:lib && yalc push"
   },
   "main": "dist/registration-lib.ssr.js",
   "browser": "dist/registration-lib.esm.js",
@@ -26,7 +42,7 @@
   "unpkg": "dist/registration-lib.min.js",
   "types": "src/registration-lib.d.ts",
   "files": [
-    "src/types",
+    "src/types/**",
     "src/components",
     "src/registration-lib.d.ts",
     "src/helpers.ts",
@@ -98,6 +114,7 @@
     "lodash": "^4.17.21",
     "minimist": "^1.2.5",
     "node-sass": "^5.0.0",
+    "npm-watch": "^0.9.0",
     "postcss": "^8.2.4",
     "rollup": "^2.30.0",
     "rollup-plugin-analyzer": "^4.0.0",

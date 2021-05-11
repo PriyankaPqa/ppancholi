@@ -5,7 +5,7 @@ import _sortBy from 'lodash/sortBy';
 import VueI18n from 'vue-i18n';
 import { IError } from '../../../services/httpClient';
 import {
-  ECanadaProvinces, IRegistrationMenuItem, IOptionItemData, EOptionItemStatus,
+  ECanadaProvinces, IRegistrationMenuItem, IOptionItemData, EOptionItemStatus, ERegistrationMethod,
 } from '../../../types';
 import { IRootState, IStore } from '../../store.types';
 import {
@@ -44,6 +44,9 @@ const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
     [ECanadaProvinces.OT]: [],
   },
   loadingIndigenousIdentities: false,
+  privacyCRCUsername: '',
+  privacyRegistrationMethod: null,
+  privacyRegistrationLocationName: '',
   registrationResponse: null,
   registrationErrors: [],
   submitLoading: false,
@@ -243,6 +246,18 @@ const mutations = {
 
   setLoadingIndigenousIdentities(state: IState, payload: boolean) {
     state.loadingIndigenousIdentities = payload;
+  },
+
+  setPrivacyCRCUsername(state: IState, payload: string) {
+    state.privacyCRCUsername = payload;
+  },
+
+  setPrivacyRegistrationMethod(state: IState, payload: ERegistrationMethod) {
+    state.privacyRegistrationMethod = payload;
+  },
+
+  setPrivacyRegistrationLocationName(state: IState, payload: string) {
+    state.privacyRegistrationLocationName = payload;
   },
 
   setRegistrationResponse(state: IState, payload: ICreateBeneficiaryResponse) {

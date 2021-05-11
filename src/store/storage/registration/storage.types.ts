@@ -1,6 +1,9 @@
 import { TranslateResult } from 'vue-i18n';
+import {
+  ECanadaProvinces, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
+} from '../../../types';
 import { IError } from '../../../services/httpClient';
-import { ECanadaProvinces, IOptionItemData, IRegistrationMenuItem } from '../../../types';
+
 import { IEvent, IEventData } from '../../../entities/event';
 import { IIndigenousIdentityData, EIndigenousTypes, ICreateBeneficiaryResponse } from '../../../entities/beneficiary';
 
@@ -32,6 +35,9 @@ export interface IStorage {
     setIsPrivacyAgreed(payload: boolean): void;
     setDateTimeConsent(payload: string): void;
     setEvent(payload: IEventData): void;
+    setPrivacyCRCUsername(payload: string): void;
+    setPrivacyRegistrationMethod(payload: ERegistrationMethod): void;
+    setPrivacyRegistrationLocationName(payload: string): void;
   };
 
   actions: {
@@ -72,6 +78,9 @@ export interface IStorageMock {
     setIsPrivacyAgreed: jest.Mock<void>;
     setDateTimeConsent: jest.Mock<void>;
     setEvent: jest.Mock<void>;
+    setPrivacyCRCUsername: jest.Mock<void>;
+    setPrivacyRegistrationMethod: jest.Mock<void>;
+    setPrivacyRegistrationLocationName: jest.Mock<void>;
   };
 
   actions: {
