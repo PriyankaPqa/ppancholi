@@ -3,6 +3,7 @@ import Vuex, { StoreOptions } from 'vuex';
 import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
 import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
 import { i18n } from '@/ui/plugins';
+import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 import { tabs } from './modules/registration/tabs';
 import { IRootState } from './store.types';
 
@@ -16,7 +17,7 @@ const store: StoreOptions<IRootState> = {
   modules: {
     beneficiary: makeBeneficiaryModule(),
     registration: makeRegistrationModule({
-      i18n, tabs, skipAgeRestriction: false, skipEmailPhoneRules: false,
+      i18n, tabs: tabs(), skipAgeRestriction: false, skipEmailPhoneRules: false, mode: ERegistrationMode.Self,
     }),
   },
 };

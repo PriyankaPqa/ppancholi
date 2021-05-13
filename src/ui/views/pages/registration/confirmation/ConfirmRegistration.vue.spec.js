@@ -20,6 +20,7 @@ const computed = {
     },
   }),
   confirmationMessage: () => 'confirm message',
+  phoneAssistance: () => 'phone',
 };
 
 describe('ConfirmRegistration.vue', () => {
@@ -88,6 +89,7 @@ describe('ConfirmRegistration.vue', () => {
           localVue,
           computed: {
             errors: () => [mockHttpError()],
+            phoneAssistance: () => 'phone',
           },
         });
         expect(wrapper.vm.success).toEqual(false);

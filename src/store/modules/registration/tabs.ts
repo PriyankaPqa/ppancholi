@@ -1,6 +1,6 @@
 import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
 
-export const tabs: IRegistrationMenuItem[] = [
+export const tabs = (): IRegistrationMenuItem[] => [
   {
     id: 'privacy',
     labelKey: 'registration.menu.privacy',

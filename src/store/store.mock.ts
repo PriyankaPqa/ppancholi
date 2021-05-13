@@ -11,6 +11,7 @@ import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modu
 import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
 
 import { tabs } from '@/store/modules/registration/tabs';
+import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 
 const i18n = {
   t: jest.fn(),
@@ -21,7 +22,7 @@ Vue.use(Vuex);
 const mockConfig = {
   modules: {
     registration: makeRegistrationModule({
-      i18n, tabs, skipAgeRestriction: false, skipEmailPhoneRules: false,
+      i18n, tabs: tabs(), skipAgeRestriction: false, skipEmailPhoneRules: false, mode: ERegistrationMode.Self,
     }),
     beneficiary: makeBeneficiaryModule(),
   },
