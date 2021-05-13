@@ -21,12 +21,14 @@
     "report": "vue-cli-service build --report",
     "report-json": "vue-cli-service build --report-json",
     "coverage": "vue-cli-service test:unit --coverage --coverageReporters=cobertura",
-    "pr": "yarn test && yarn lint"
+    "pr": "yarn test && yarn lint",
+    "link:registration": "yalc link @crctech/registration-lib",
+    "remove:registration": "yalc remove @crctech/registration-lib"
   },
   "dependencies": {
     "@azure/msal-browser": "^2.8.0",
     "@crctech/component-library": "^1.0.14",
-    "@crctech/registration-lib": "0.1.106",
+    "@crctech/registration-lib": "0.1.119",
     "@mdi/font": "^5.6.55",
     "@microsoft/signalr": "^5.0.2",
     "@types/uuid": "^8.3.0",

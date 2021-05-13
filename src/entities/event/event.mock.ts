@@ -277,39 +277,40 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
       },
     },
     tenantId: '7c076603-580a-4400-bef2-5ddececb0931',
-    callCentres: [{
-      name: {
-        translation: {
-          en: 'z call center 1',
-          fr: 'call center 1 fr',
+    callCentres: [
+      {
+        name: {
+          translation: {
+            en: 'z call center 1',
+            fr: 'call center 1 fr',
+          },
         },
-      },
-      startDate: '2021-03-01T00:00:00Z',
-      endDate: null,
-      status: EEventCallCentreStatus.Active,
-      details: {
-        translation: {
-          en: 'call center 1 details',
-          fr: 'call center 1  details fr',
+        startDate: '2021-03-01T00:00:00Z',
+        endDate: null,
+        status: EEventCallCentreStatus.Active,
+        details: {
+          translation: {
+            en: 'call center 1 details',
+            fr: 'call center 1  details fr',
+          },
         },
-      },
-    }, {
-      name: {
-        translation: {
-          en: 'call center 2',
-          fr: 'call center 2 fr',
+      }, {
+        name: {
+          translation: {
+            en: 'call center 2',
+            fr: 'call center 2 fr',
+          },
         },
-      },
-      startDate: '2021-03-01T00:00:00Z',
-      endDate: null,
-      status: EEventCallCentreStatus.Active,
-      details: {
-        translation: {
-          en: 'call center 1 details',
-          fr: 'call center 1  details fr',
+        startDate: '2021-03-01T00:00:00Z',
+        endDate: null,
+        status: EEventCallCentreStatus.Active,
+        details: {
+          translation: {
+            en: 'call center 1 details',
+            fr: 'call center 1  details fr',
+          },
         },
-      },
-    }],
+      }],
     agreements: [{
       name: {
         translation: {
@@ -336,39 +337,40 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
         },
       },
     }],
-    registrationLocations: [{
-      status: 2,
-      name: {
-        translation: {
-          en: 'test en',
-          fr: 'test fr',
+    registrationLocations: [
+      {
+        status: 2,
+        name: {
+          translation: {
+            en: 'test en',
+            fr: 'test fr',
+          },
         },
-      },
-      address: {
-        country: 'CA',
-        streetAddress: 'test address',
-        unitSuite: null,
-        province: 2,
-        city: 'test',
-        postalCode: 'h2k2k2',
-      },
-    }, {
-      name: {
-        translation: {
-          en: 'registration test',
-          fr: 'registration test',
+        address: {
+          country: 'CA',
+          streetAddress: 'test address',
+          unitSuite: null,
+          province: 2,
+          city: 'test',
+          postalCode: 'h2k2k2',
         },
-      },
-      status: 1,
-      address: {
-        country: 'CA',
-        streetAddress: '5150 Yonge Street',
-        unitSuite: null,
-        province: 9,
-        city: 'Toronto',
-        postalCode: 'M2N 6L7',
-      },
-    }],
+      }, {
+        name: {
+          translation: {
+            en: 'registration test',
+            fr: 'registration test',
+          },
+        },
+        status: 1,
+        address: {
+          country: 'CA',
+          streetAddress: '5150 Yonge Street',
+          unitSuite: null,
+          province: 9,
+          city: 'Toronto',
+          postalCode: 'M2N 6L7',
+        },
+      }],
     shelterLocations: [
       {
         name: {

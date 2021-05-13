@@ -7,6 +7,7 @@ import { EEventStatus, mockEventsSearchData } from '@/entities/event';
 
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
+import { tabs } from '@/store/modules/registration/tabs';
 import Component from './RegistrationHome.vue';
 
 const localVue = createLocalVue();
@@ -43,9 +44,29 @@ describe('RegistrationHome.vue', () => {
   });
 
   describe('Lifecycle', () => {
-    test('Events should be fetched with the right filter', () => {
-      expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
-        filter: { Schedule: { Status: EEventStatus.Open } },
+    describe('mounted', () => {
+      it('should call fetchActiveEvents', () => {
+        jest.spyOn(wrapper.vm, 'fetchActiveEvents');
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.fetchActiveEvents).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call resetBeneficiaryModule', () => {
+        jest.spyOn(wrapper.vm, 'resetBeneficiaryModule');
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.resetBeneficiaryModule).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call resetRegistrationModule', () => {
+        jest.spyOn(wrapper.vm, 'resetRegistrationModule');
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.resetRegistrationModule).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -68,7 +89,31 @@ describe('RegistrationHome.vue', () => {
           registrationLink: mockEvent.registrationLink,
           tenantId: mockEvent.tenantId,
           shelterLocations: mockEvent.shelterLocations,
+          registrationLocations: mockEvent.registrationLocations,
         });
+      });
+    });
+
+    describe('fetchActiveEvents', () => {
+      it('should fetch the proper events', () => {
+        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
+          filter: { Schedule: { Status: EEventStatus.Open } },
+        });
+      });
+    });
+
+    describe('resetRegistrationModule', () => {
+      it('should call resetState from registration storage', () => {
+        wrapper.vm.resetRegistrationModule();
+        expect(wrapper.vm.$storage.registration.mutations.resetState).toHaveBeenCalledWith(tabs());
+      });
+    });
+
+    describe('resetBeneficiaryModule', () => {
+      it('should call resetState from beneficiary storage', () => {
+        jest.clearAllMocks();
+        wrapper.vm.resetBeneficiaryModule();
+        expect(wrapper.vm.$storage.beneficiary.mutations.resetState).toHaveBeenCalledWith();
       });
     });
   });

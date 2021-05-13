@@ -1,7 +1,9 @@
 import { ETeamStatus, ETeamType } from '@/entities/team';
 import {
-  EFilterKey, IFilter, IFilterData, IUserAccountData, IUserData,
+  EFilterKey, IFilter, IFilterData, IUserAccountData, IUserData, IUser,
 } from './user.types';
+
+import { User } from './user';
 
 export const mockUserFilters = (): IFilter[] => [
   {
@@ -55,6 +57,16 @@ export const mockUserAccount = () : IUserAccountData => ({
   status: 1,
   eTag: 'string',
   filters: mockUserFilters(),
+});
+
+export const mockUserData = (force?: Partial<IUserData>): IUserData => ({
+  oid: '1',
+  email: 'test@test.ca',
+  family_name: 'White',
+  given_name: 'John',
+  roles: ['level1'],
+  filters: mockUserFilters(),
+  ...force,
 });
 
 export const mockUsersData = (): IUserData[] => [{
@@ -147,3 +159,10 @@ export const mockUsersData = (): IUserData[] => [{
   filters: mockUserFilters(),
 },
 ];
+
+export const mockUserL1 = (): IUser => new User(mockUsersData()[0]);
+export const mockUserL2 = (): IUser => new User(mockUsersData()[1]);
+export const mockUserL3 = (): IUser => new User(mockUsersData()[2]);
+export const mockUserL4 = (): IUser => new User(mockUsersData()[3]);
+export const mockUserL5 = (): IUser => new User(mockUsersData()[4]);
+export const mockUserL6 = (): IUser => new User(mockUsersData()[5]);

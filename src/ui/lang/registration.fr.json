@@ -215,6 +215,7 @@
     "registration.summary.age": "Âge",
     "registration.type.individual": "Inscription: Famille ou individu",
     "registration.zendesk.householdmembers": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242173",
+    "registration.zendesk.privacyStatement": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360053455734",
     "validations.anyPhone": "Vous devez saisir au moins un téléphone",
     "validations.canadianPostalCode": "Ce champ doit être un code postal valide.",
     "validations.email": "Ce champ doit contenir une adresse courriel valide.",

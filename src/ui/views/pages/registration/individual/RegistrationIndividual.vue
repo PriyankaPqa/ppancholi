@@ -45,7 +45,7 @@
                   color="primary"
                   data-test="nextButton"
                   :aria-label="$t(currentTab.nextButtonTextKey)"
-                  :loading="requestOnGoing"
+                  :loading="submitLoading"
                   :disabled="failed"
                   @click="next()">
                   {{ $t(currentTab.nextButtonTextKey) }}
@@ -106,7 +106,7 @@ export default mixins(individual).extend({
 
   data() {
     return {
-      tabs,
+      tabs: tabs(),
     };
   },
 

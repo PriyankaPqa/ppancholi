@@ -22,3 +22,7 @@ yarn-error.log*
 *.sln
 *.sw?
 .vs
+
+
+.yalc
+yalc.lock

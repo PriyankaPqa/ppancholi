@@ -29,6 +29,8 @@ import { IEventSearchData, EEventStatus } from '@/entities/event';
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { IShelterLocation } from '@crctech/registration-lib/src/entities/beneficiary';
+import { IEventData as IRegistrationEventData } from '@crctech/registration-lib/src/entities/event';
+import { tabs } from '@/store/modules/registration/tabs';
 
 export default Vue.extend({
   name: 'RegistrationHome',
@@ -58,14 +60,9 @@ export default Vue.extend({
   },
 
   async mounted() {
-    const res = await this.$services.events.searchMyEvents({
-      filter: {
-        Schedule: {
-          Status: EEventStatus.Open,
-        },
-      },
-    });
-    this.events = res?.value;
+    this.resetBeneficiaryModule();
+    this.resetRegistrationModule();
+    await this.fetchActiveEvents();
   },
 
   methods: {
@@ -74,15 +71,38 @@ export default Vue.extend({
     },
 
     setEvent(event: IEventSearchData) {
-      this.$storage.registration.mutations.setEvent({
+      const registrationEvent = {
         eventId: event.eventId,
         eventName: event.eventName,
         responseDetails: event.responseDetails,
         registrationLink: event.registrationLink,
         tenantId: event.tenantId,
+        registrationLocations: event.registrationLocations,
         shelterLocations: event.shelterLocations as unknown as IShelterLocation[],
-      });
+      } as IRegistrationEventData;
+
+      this.$storage.registration.mutations.setEvent(registrationEvent);
     },
+
+    resetRegistrationModule() {
+      this.$storage.registration.mutations.resetState(tabs());
+    },
+
+    resetBeneficiaryModule() {
+      this.$storage.beneficiary.mutations.resetState();
+    },
+
+    async fetchActiveEvents() {
+      const res = await this.$services.events.searchMyEvents({
+        filter: {
+          Schedule: {
+            Status: EEventStatus.Open,
+          },
+        },
+      });
+      this.events = res?.value;
+    },
+
   },
 });
 </script>

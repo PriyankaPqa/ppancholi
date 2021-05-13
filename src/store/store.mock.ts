@@ -7,6 +7,7 @@ import { mockProvider } from '@/services/provider';
 
 import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
 import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
+import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 
 import { tabs } from '@/store/modules/registration/tabs';
 
@@ -40,7 +41,7 @@ const mockConfig = {
     appUser,
     program,
     registration: makeRegistrationModule({
-      i18n, tabs, skipAgeRestriction: true, skipEmailPhoneRules: true,
+      i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),
     beneficiary: makeBeneficiaryModule(),
   },

@@ -1,6 +1,6 @@
 import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
 
-export const tabs: IRegistrationMenuItem[] = [
+export const tabs = (): IRegistrationMenuItem[] => [
   {
     id: 'isRegistered',
     labelKey: 'registration.menu.is_registered',
@@ -26,7 +26,7 @@ export const tabs: IRegistrationMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'PrivacyStatement',
-    helpLink: '',
+    helpLink: 'registration.zendesk.privacyStatement',
   },
   {
     id: 'personalInfo',
@@ -65,7 +65,7 @@ export const tabs: IRegistrationMenuItem[] = [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'HouseholdMembers',
-    helpLink: 'zendesk.registration.householdmembers',
+    helpLink: 'registration.zendesk.householdmembers',
   },
   {
     id: 'review',
