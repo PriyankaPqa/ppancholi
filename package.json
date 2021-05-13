@@ -1,6 +1,6 @@
 {
   "name": "@crctech/registration-lib",
-  "version": "0.1.119",
+  "version": "0.1.123",
   "private": false,
   "watch": {
     "push": {
@@ -43,7 +43,6 @@
   "types": "src/registration-lib.d.ts",
   "files": [
     "src/types/**",
-    "src/components",
     "src/registration-lib.d.ts",
     "src/helpers.ts",
     "src/entities",
@@ -135,6 +134,7 @@
     "vue-cli-plugin-vuetify": "~2.0.9",
     "vue-i18n": "^8.21.1",
     "vue-template-compiler": "^2.6.12",
+    "vue-typed-mixins": "^0.2.0",
     "vuetify": "^2.4.2",
     "vuetify-loader": "^1.6.0"
   }

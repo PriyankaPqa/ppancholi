@@ -54,6 +54,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import VueI18n from 'vue-i18n';
 import { IShelterLocation } from '../../entities/beneficiary';
 import { IOptionItemData } from '../../types';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
@@ -119,6 +120,11 @@ export default Vue.extend({
 
     shelterLocations: {
       type: Array as () => IShelterLocation[],
+      required: true,
+    },
+
+    i18n: {
+      type: Object as () => VueI18n,
       required: true,
     },
   },

@@ -68,7 +68,7 @@ const mutations = {
   },
 
   editHouseholdMember(state: IState, { payload, index, sameAddress }: {payload: IPerson; index: number; sameAddress: boolean}) {
-    state.beneficiary.editHouseholdMember(payload, index, sameAddress);
+    state.beneficiary.editHouseholdMember(_cloneDeep(payload), index, sameAddress);
   },
 
   resetState(state: IState) {

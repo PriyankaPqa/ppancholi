@@ -21,3 +21,4 @@ export const HouseholdMembers: VueConstructor<Vue>;
 export const HouseholdMemberForm: VueConstructor<Vue>;
 export const PersonalInformation: VueConstructor<Vue>;
 export const PrivacyStatement: VueConstructor<Vue>;
+export const ReviewRegistration: VueConstructor<Vue>;

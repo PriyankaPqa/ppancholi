@@ -16,6 +16,7 @@
         <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
           <household-member-form
             :api-key="apiKey"
+            :i18n="i18n"
             :shelter-locations="shelterLocations"
             :same-address.sync="sameAddress"
             :gender-items="genderItems"

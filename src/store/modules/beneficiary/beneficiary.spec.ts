@@ -4,10 +4,7 @@ import { mockStore, IRootState } from '@/store';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import {
-  Beneficiary,
-  mockAddress,
-  mockContactInformation, mockHouseholdMember,
-  mockPerson,
+  Beneficiary, mockAddress, mockContactInformation, mockHouseholdMember, mockPerson,
 } from '../../../entities/beneficiary';
 
 describe('>>> Beneficiary Module', () => {
@@ -113,10 +110,14 @@ describe('>>> Beneficiary Module', () => {
     describe('editHouseholdMember', () => {
       it('should call method from beneficiary entity with proper parameters', () => {
         store.state.beneficiary.beneficiary = new Beneficiary();
-        jest.spyOn(store.state.beneficiary.beneficiary, 'editHouseholdMember');
+        store.state.beneficiary.beneficiary.editHouseholdMember = jest.fn();
         const params = { payload: mockHouseholdMember(), sameAddress: true, index: 1 };
         store.commit('beneficiary/editHouseholdMember', params);
-        expect(store.state.beneficiary.beneficiary.editHouseholdMember).toHaveBeenCalledWith(params.payload, params.index, params.sameAddress);
+        expect(store.state.beneficiary.beneficiary.editHouseholdMember).toHaveBeenCalledWith(
+          _cloneDeep(params.payload),
+          params.index,
+          params.sameAddress,
+        );
       });
     });
 

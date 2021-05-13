@@ -1,3 +1,4 @@
+import { i18n } from '@/ui/plugins/i18n';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { mockAddress } from '../../entities/beneficiary';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
@@ -17,7 +18,7 @@ describe('AddressForm.vue', () => {
       propsData: {
         apiKey: '1235',
         homeAddress: mockAddress({ province: ECanadaProvinces.ON }),
-        canadianProvincesItems: helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
       },
     });
   });

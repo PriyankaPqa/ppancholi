@@ -1,3 +1,4 @@
+import { i18n } from '@/ui/plugins/i18n';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { ETemporaryAddressTypes, mockBeneficiary, mockCampGround } from '../../entities/beneficiary';
 
@@ -6,7 +7,6 @@ import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import helpers from '../../ui/helpers';
 
 import Component from './TempAddressForm.vue';
-import { ECanadaProvinces } from '../../types';
 
 const localVue = createLocalVue();
 
@@ -20,7 +20,7 @@ describe('TempAddress.vue', () => {
         apiKey: '12345',
         temporaryAddress: mockCampGround(),
         temporaryAddressTypeItems: helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
-        canadianProvincesItems: helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
         shelterLocations: mockShelterLocations(),
       },
     });

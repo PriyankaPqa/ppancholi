@@ -1,3 +1,4 @@
+import { i18n } from '@/ui/plugins/i18n';
 import { ECanadaProvinces } from '@/types';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
@@ -30,13 +31,14 @@ describe('HouseholdMemberForm.vue', () => {
         person: mockHouseholdMember(),
         sameAddress: true,
         genderItems: mockGenders(),
-        canadianProvincesItems: helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces'),
+        canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
         indigenousTypesItems: mockIndigenousTypesItems(),
         indigenousCommunitiesItems: mockIndigenousCommunitiesItems(),
         temporaryAddressTypeItems: helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes'),
         loading: false,
         apiKey: 'google-api-key',
         shelterLocations: mockShelterLocations(),
+        i18n,
       },
       mocks: {
         $storage: storage,
