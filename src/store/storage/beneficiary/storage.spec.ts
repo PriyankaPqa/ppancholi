@@ -87,5 +87,10 @@ describe('>>> Registration Storage', () => {
       const params = { payload: mockHouseholdMember(), sameAddress: true, index: 0 };
       expect(store.commit).toBeCalledWith('beneficiary/editHouseholdMember', params);
     });
+
+    it('should proxy resetState', () => {
+      storage.mutations.resetState();
+      expect(store.commit).toBeCalledWith('beneficiary/resetState');
+    });
   });
 });

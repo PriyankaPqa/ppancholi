@@ -22,6 +22,7 @@ export const mockStorageBeneficiary = (): IStorageMock => ({
     addHouseholdMember: jest.fn(),
     removeHouseholdMember: jest.fn(),
     editHouseholdMember: jest.fn(),
+    resetState: jest.fn(),
   },
 
   actions: {

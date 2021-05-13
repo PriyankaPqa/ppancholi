@@ -119,5 +119,15 @@ describe('>>> Beneficiary Module', () => {
         expect(store.state.beneficiary.beneficiary.editHouseholdMember).toHaveBeenCalledWith(params.payload, params.index, params.sameAddress);
       });
     });
+
+    describe('resetState', () => {
+      it('should reset the state to default', () => {
+        store.commit('beneficiary/setPerson', mockPerson());
+        store.commit('beneficiary/resetState');
+        expect(store.state.beneficiary).toEqual({
+          beneficiary: new Beneficiary(),
+        });
+      });
+    });
   });
 });

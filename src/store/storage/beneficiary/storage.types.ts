@@ -21,6 +21,7 @@ export interface IStorage {
     addHouseholdMember(payload: IPerson, sameAddress: boolean): void;
     removeHouseholdMember(index: number): void;
     editHouseholdMember(payload: IPerson, index: number, sameAddress: boolean): void;
+    resetState(): void;
   };
 
   actions: {
@@ -47,6 +48,7 @@ export interface IStorageMock {
     addHouseholdMember: jest.Mock<void>;
     removeHouseholdMember: jest.Mock<void>;
     editHouseholdMember: jest.Mock<void>;
+    resetState: jest.Mock<void>;
   };
 
   actions: {

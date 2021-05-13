@@ -1,23 +1,29 @@
 import {
-  Module, ActionContext, ActionTree, GetterTree,
+  ActionContext, ActionTree, GetterTree, Module, MutationTree,
 } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import VueI18n from 'vue-i18n';
+import { ERegistrationMode } from '../../../types/enums/ERegistrationMode';
 import { IError } from '../../../services/httpClient';
 import {
-  ECanadaProvinces, IRegistrationMenuItem, IOptionItemData, EOptionItemStatus, ERegistrationMethod,
+  ECanadaProvinces, EOptionItemStatus, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
 import { IRootState, IStore } from '../../store.types';
 import {
-  IIndigenousIdentityData, EIndigenousTypes, IBeneficiary, Beneficiary, ICreateBeneficiaryResponse,
+  Beneficiary, EIndigenousTypes, IBeneficiary, ICreateBeneficiaryResponse, IIndigenousIdentityData,
 } from '../../../entities/beneficiary';
-import { IEvent, Event, IEventData } from '../../../entities/event';
+import { Event, IEvent, IEventData } from '../../../entities/event';
+
+import { resetVuexModuleState } from '../../storeUtils';
+import {
+  isRegisteredValid, privacyStatementValid, personalInformationValid, addressesValid, householdMembersValid, reviewRegistrationValid,
+} from './registrationUtils';
 
 import { IState } from './registration.types';
 
 const INDIGENOUS_LIMIT_RESULTS = 1000;
 
-const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
+export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   isPrivacyAgreed: false,
   privacyDateTimeConsent: '',
   event: null,
@@ -54,7 +60,7 @@ const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
 
-const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean) => ({
+const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean, mode: ERegistrationMode) => ({
 
   event: (state: IState) => new Event(state.event),
 
@@ -127,7 +133,6 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
       }
       let isValid: boolean;
       let currentIndex;
-      let errors: string[];
       const beneficiary = getters.beneficiary as unknown as IBeneficiary;
       // For each step between where we are and where we're jumping to
       for (currentIndex = state.currentTabIndex; currentIndex < targetIndex; currentIndex += 1) {
@@ -135,25 +140,22 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
 
         switch (currentTabName) {
           case 'isRegistered':
-            isValid = true;
+            isValid = isRegisteredValid();
             break;
           case 'PrivacyStatement':
-            isValid = state.isPrivacyAgreed;
+            isValid = privacyStatementValid(mode, state);
             break;
           case 'PersonalInformation':
-            errors = beneficiary.validatePersonalInformation(skipAgeRestriction, skipEmailPhoneRules);
-            isValid = errors.length === 0;
+            isValid = personalInformationValid(beneficiary, skipAgeRestriction, skipEmailPhoneRules);
             break;
           case 'Addresses':
-            errors = beneficiary.validateAddresses(getters.noFixedHome as unknown as boolean);
-            isValid = errors.length === 0;
+            isValid = addressesValid(beneficiary, getters.noFixedHome as unknown as boolean);
             break;
           case 'HouseholdMembers':
-            errors = beneficiary.validateHouseholdMembers();
-            isValid = errors.length === 0;
+            isValid = householdMembersValid(beneficiary);
             break;
           case 'ReviewRegistration':
-            isValid = true;
+            isValid = reviewRegistrationValid();
             break;
           case 'ConfirmRegistration':
           default:
@@ -188,7 +190,7 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   registrationErrors: (state: IState) => state.registrationErrors,
 });
 
-const mutations = {
+const mutations = (): MutationTree<IState> => ({
   setEvent(state: IState, payload: IEventData) {
     state.event = payload;
   },
@@ -272,7 +274,11 @@ const mutations = {
     state.registrationErrors = payload;
   },
 
-};
+  resetState(state: IState, tabs: IRegistrationMenuItem[]) {
+    resetVuexModuleState(state, getDefaultState(tabs));
+  },
+
+});
 
 const actions = {
   async fetchEvent(
@@ -369,12 +375,18 @@ const actions = {
   },
 };
 
-export const makeRegistrationModule = ({
-  i18n, tabs, skipAgeRestriction, skipEmailPhoneRules,
-}: {i18n: VueI18n; tabs: IRegistrationMenuItem[]; skipAgeRestriction: boolean; skipEmailPhoneRules: boolean}): Module<IState, IRootState> => ({
+export const makeRegistrationModule = (
+  {
+    i18n,
+    tabs,
+    skipAgeRestriction,
+    skipEmailPhoneRules,
+    mode,
+  }: {i18n: VueI18n; tabs: IRegistrationMenuItem[]; skipAgeRestriction: boolean; skipEmailPhoneRules: boolean; mode: ERegistrationMode},
+): Module<IState, IRootState> => ({
   namespaced: true,
   state: moduleState(tabs) as IState,
-  getters: getters(i18n, skipAgeRestriction, skipEmailPhoneRules),
-  mutations,
+  getters: getters(i18n, skipAgeRestriction, skipEmailPhoneRules, mode),
+  mutations: mutations(),
   actions: (actions as unknown) as ActionTree<IState, IRootState>,
 });

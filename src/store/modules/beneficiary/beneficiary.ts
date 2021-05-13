@@ -71,6 +71,10 @@ const mutations = {
     state.beneficiary.editHouseholdMember(payload, index, sameAddress);
   },
 
+  resetState(state: IState) {
+    state.beneficiary = new Beneficiary();
+  },
+
 };
 
 const actions = {

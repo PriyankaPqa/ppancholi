@@ -32,3 +32,4 @@ export type { IListOption } from './interfaces/IListOption';
 export { ECanadaProvinces } from './enums/ECanadaProvinces';
 export { EOptionItemStatus } from './enums/EOptionItemStatus';
 export { ERegistrationMethod } from './enums/ERegistrationMethod';
+export { ERegistrationMode } from './enums/ERegistrationMode';

@@ -1,8 +1,9 @@
 import { mockStore } from '@/store';
 import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '@/types';
-import { tabs } from '@/store/modules/registration/tabs.mock';
+import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import { mockHttpError } from '@/services/httpClient.mock';
 import { Event, mockEventData, mockEvent } from '../../../entities/event';
+import { getDefaultState } from './registration';
 import {
   EIndigenousTypes,
   mockGenders,
@@ -16,11 +17,54 @@ import {
   mockCreateBeneficiaryResponse,
 } from '../../../entities/beneficiary';
 
+import * as registrationUtils from './registrationUtils';
+
 let store = mockStore();
 
 describe('>>> Registration Module', () => {
   beforeEach(() => {
     store = mockStore();
+  });
+
+  describe('>> State', () => {
+    describe('Default state', () => {
+      it('should return proper data', () => {
+        expect(getDefaultState(mockTabs())).toEqual({
+          isPrivacyAgreed: false,
+          privacyDateTimeConsent: '',
+          event: null,
+          isLeftMenuOpen: true,
+          tabs: mockTabs(),
+          currentTabIndex: 0,
+          genders: [],
+          preferredLanguages: [],
+          primarySpokenLanguages: [],
+          indigenousIdentities: {
+            [ECanadaProvinces.AB]: [],
+            [ECanadaProvinces.BC]: [],
+            [ECanadaProvinces.MB]: [],
+            [ECanadaProvinces.NB]: [],
+            [ECanadaProvinces.NL]: [],
+            [ECanadaProvinces.NT]: [],
+            [ECanadaProvinces.NS]: [],
+            [ECanadaProvinces.NU]: [],
+            [ECanadaProvinces.ON]: [],
+            [ECanadaProvinces.PE]: [],
+            [ECanadaProvinces.QC]: [],
+            [ECanadaProvinces.SK]: [],
+            [ECanadaProvinces.YT]: [],
+            [ECanadaProvinces.OT]: [],
+          },
+          loadingIndigenousIdentities: false,
+          privacyCRCUsername: '',
+          privacyRegistrationMethod: null,
+          privacyRegistrationLocationName: '',
+          registrationResponse: null,
+          registrationErrors: [],
+          submitLoading: false,
+        });
+      });
+    });
   });
 
   describe('>> Getters', () => {
@@ -38,7 +82,7 @@ describe('>>> Registration Module', () => {
 
     describe('tabs', () => {
       it('returns tabs', () => {
-        expect(store.getters['registration/tabs']).toEqual(tabs);
+        expect(store.getters['registration/tabs']).toEqual(mockTabs());
       });
     });
 
@@ -50,7 +94,7 @@ describe('>>> Registration Module', () => {
 
     describe('currentTab', () => {
       it('returns current tab', () => {
-        expect(store.getters['registration/currentTab']).toEqual(tabs[0]);
+        expect(store.getters['registration/currentTab']).toEqual(mockTabs()[0]);
       });
     });
 
@@ -62,7 +106,7 @@ describe('>>> Registration Module', () => {
 
     describe('nextTabName', () => {
       it('returns nextTabName', () => {
-        expect(store.getters['registration/nextTabName']).toEqual(tabs[1].titleKey);
+        expect(store.getters['registration/nextTabName']).toEqual(mockTabs()[1].titleKey);
       });
     });
 
@@ -112,9 +156,7 @@ describe('>>> Registration Module', () => {
     describe('findEffectiveJumpIndex', () => {
       beforeEach(() => {
         store.getters.beneficiary = mockBeneficiary();
-        store.getters['registration/beneficiary'].validatePersonalInformation = jest.fn(() => ['error']);
-        store.getters['registration/beneficiary'].validateAddresses = jest.fn(() => ['error']);
-        store.getters['registration/beneficiary'].validateHouseholdMembers = jest.fn(() => ['error']);
+        jest.spyOn(registrationUtils, 'isRegisteredValid').mockReturnValue(true);
       });
 
       it('returns the target index when moving backwards', async () => {
@@ -130,43 +172,37 @@ describe('>>> Registration Module', () => {
       });
 
       it('stops on the invalid PrivacyStatement form', async () => {
-        store.getters.beneficiary.noFixedHome = false;
+        jest.spyOn(registrationUtils, 'privacyStatementValid').mockReturnValue(false);
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(0);
       });
 
       it('stops on the invalid PersonalInformation form', async () => {
-        store.state.registration.isPrivacyAgreed = true;
-        store.getters.beneficiary.noFixedHome = false;
-
+        jest.spyOn(registrationUtils, 'privacyStatementValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'personalInformationValid').mockReturnValue(false);
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(1);
       });
 
       it('stops on the invalid Addresses form', async () => {
-        store.state.registration.isPrivacyAgreed = true;
-        store.getters.beneficiary.noFixedHome = false;
-
-        store.getters['registration/beneficiary'].validatePersonalInformation = jest.fn(() => []);
-
+        jest.spyOn(registrationUtils, 'privacyStatementValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'personalInformationValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'addressesValid').mockReturnValue(false);
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(2);
       });
 
       it('stops on the invalid Household Members form', async () => {
-        store.state.registration.isPrivacyAgreed = true;
-        store.getters.beneficiary.noFixedHome = false;
-
-        store.getters['registration/beneficiary'].validatePersonalInformation = jest.fn(() => []);
-        store.getters['registration/beneficiary'].validateAddresses = jest.fn(() => []);
+        jest.spyOn(registrationUtils, 'privacyStatementValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'personalInformationValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'addressesValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'householdMembersValid').mockReturnValue(false);
 
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(3);
       });
 
       it('returns target index when all forms valid', async () => {
-        store.state.registration.isPrivacyAgreed = true;
-        store.getters.beneficiary.noFixedHome = false;
-
-        store.getters['registration/beneficiary'].validatePersonalInformation = jest.fn(() => []);
-        store.getters['registration/beneficiary'].validateAddresses = jest.fn(() => []);
-        store.getters['registration/beneficiary'].validateHouseholdMembers = jest.fn(() => []);
+        jest.spyOn(registrationUtils, 'privacyStatementValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'personalInformationValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'addressesValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'householdMembersValid').mockReturnValue(true);
 
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(6);
       });
@@ -267,7 +303,7 @@ describe('>>> Registration Module', () => {
         await store.commit('registration/jump', toIndex);
         expect(store.getters['registration/currentTabIndex']).toEqual(0);
 
-        toIndex = tabs.length;
+        toIndex = mockTabs().length;
         await store.commit('registration/jump', toIndex);
         expect(store.getters['registration/currentTabIndex']).toEqual(0);
       });
@@ -382,6 +418,15 @@ describe('>>> Registration Module', () => {
         store.commit('registration/setRegistrationErrors', errors);
 
         expect(store.state.registration.registrationErrors).toEqual(errors);
+      });
+    });
+
+    describe('resetState', () => {
+      it('should reset the state to default', () => {
+        const defaultState = getDefaultState(mockTabs());
+        store.commit('registration/setEvent', mockEventData());
+        store.commit('registration/resetState', mockTabs());
+        expect(store.state.registration).toEqual(defaultState);
       });
     });
   });

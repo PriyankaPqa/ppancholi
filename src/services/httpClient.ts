@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ISearchData } from '@/types';
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import buildQuery from 'odata-query';
 import camelCaseKeys from 'camelcase-keys';
 import { v4 as uuidv4 } from 'uuid';
+import { ISearchData } from '../types';
 
 export interface IRestResponse<T> {
   success: boolean;

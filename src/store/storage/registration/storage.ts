@@ -119,6 +119,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     setPrivacyRegistrationLocationName(payload: string): void {
       store.commit('registration/setPrivacyRegistrationLocationName', payload);
     },
+
+    resetState(tabs: IRegistrationMenuItem[]): void {
+      store.commit('registration/resetState', tabs);
+    },
   },
 
   actions: {

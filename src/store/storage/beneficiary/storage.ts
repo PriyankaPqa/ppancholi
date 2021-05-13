@@ -63,6 +63,11 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     editHouseholdMember(payload: IPerson, index: number, sameAddress: boolean) {
       store.commit('beneficiary/editHouseholdMember', { payload, index, sameAddress });
     },
+
+    resetState() {
+      store.commit('beneficiary/resetState');
+    },
+
   },
 
   actions: {

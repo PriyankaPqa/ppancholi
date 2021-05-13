@@ -38,6 +38,7 @@ export interface IStorage {
     setPrivacyCRCUsername(payload: string): void;
     setPrivacyRegistrationMethod(payload: ERegistrationMethod): void;
     setPrivacyRegistrationLocationName(payload: string): void;
+    resetState(tabs: IRegistrationMenuItem[]): void;
   };
 
   actions: {
@@ -81,6 +82,7 @@ export interface IStorageMock {
     setPrivacyCRCUsername: jest.Mock<void>;
     setPrivacyRegistrationMethod: jest.Mock<void>;
     setPrivacyRegistrationLocationName: jest.Mock<void>;
+    resetState: jest.Mock<void>;
   };
 
   actions: {

@@ -1,4 +1,5 @@
 import { mockStore } from '@/store';
+import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
 import { mockEventData } from '../../../entities/event';
 import { makeStorage } from './storage';
@@ -119,6 +120,12 @@ describe('>>> Registration Storage', () => {
       const payload = 'name';
       storage.mutations.setPrivacyRegistrationLocationName(payload);
       expect(store.commit).toBeCalledWith('registration/setPrivacyRegistrationLocationName', payload);
+    });
+
+    it('should proxy resetState', () => {
+      const payload = mockTabs();
+      storage.mutations.resetState(mockTabs());
+      expect(store.commit).toBeCalledWith('registration/resetState', payload);
     });
   });
 

@@ -1,6 +1,6 @@
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 
-export const tabs: IRegistrationMenuItem[] = [
+export const mockTabs = (): IRegistrationMenuItem[] => [
   {
     id: 'privacy',
     labelKey: 'registration.menu.privacy',

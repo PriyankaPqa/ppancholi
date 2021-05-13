@@ -1,4 +1,4 @@
-import { IError } from '@/services/httpClient';
+import { IError } from './httpClient';
 
 export interface IHttpMock {
   get: jest.Mock<void>;
