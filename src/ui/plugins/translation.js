@@ -78,7 +78,7 @@ const Trans = {
    * @return {Promise<*>|*}
    */
   loadLanguageFile(lang) {
-    return import(/* webpackChunkName: "lang-[request]" */ `@/ui/lang/${lang}.json`);
+    return import(/* webpackChunkName: "lang-[request]" */ `@/ui/lang/emis/${lang}.json`);
   },
   /**
    * Checks if a lang is supported

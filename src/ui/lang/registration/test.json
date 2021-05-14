@@ -227,5 +227,6 @@
     "validations.required": "validations.required",
     "warning.max_householdmembers_reached": "warning.max_householdmembers_reached",
     "zendesk.registration.addresses": "zendesk.registration.addresses",
-    "zendesk.registration.personalInformation": "zendesk.registration.personalInformation"
+    "zendesk.registration.personalInformation": "zendesk.registration.personalInformation",
+    "zendesk.registration.review": ""
 }

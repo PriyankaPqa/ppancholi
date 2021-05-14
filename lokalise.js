@@ -9,31 +9,42 @@ const { LokaliseApi } = require('@lokalise/node-api');
 const API_KEY_READ_WRITE = '012f35ddfa553d3fe3839189b37cb6bc320ea268';
 const EMIS_PROJECT_ID = '955065625d9745a35c6f72.71379721';
 const REGISTRATION_PROJECT_ID = '495058395f5240e2843ef1.45815308';
-const LANG_FOLDER_PATH = 'src/ui/lang';
+const LANG_FOLDER_PATH_EMIS = 'src/ui/lang/emis';
+const LANG_FOLDER_PATH_REGISTRATION = 'src/ui/lang/registration';
 
 const lokaliseApi = new LokaliseApi({ apiKey: API_KEY_READ_WRITE });
 
-function down(id, prefix = '') {
-  lokaliseApi.files.download(id, {
+function down(projectId, path) {
+  lokaliseApi.files.download(projectId, {
     format: 'json',
-    bundle_structure: prefix ? `${prefix}.%LANG_ISO%.json` : '%LANG_ISO%.json',
+    bundle_structure: '%LANG_ISO%.json',
     original_filenames: false,
     placeholder_format: 'icu', // Placeholder will be converted to be used with our app
     replace_breaks: false,
   }).then((data) => {
     // DOWNLOAD A ZIP OF TRANSLATIONS
     https.get(data.bundle_url, (response) => {
-      response.pipe(unzipper.Extract({ path: LANG_FOLDER_PATH }));
+      response.pipe(unzipper.Extract({ path }));
     });
   });
 }
 
+async function downloadEmis() {
+  await down(EMIS_PROJECT_ID, LANG_FOLDER_PATH_EMIS);
+}
+
+async function downloadRegistration() {
+  await down(REGISTRATION_PROJECT_ID, LANG_FOLDER_PATH_REGISTRATION);
+}
+
 // https://lokalise.com/api2docs/curl/#transition-upload-a-file-post
 // If the language does not exist in Lokalise, need to be created first in the project
-const uploadToLokalise = (base64File, fileName, langISO, tags) => new Promise((resolve, reject) => {
+const uploadToLokalise = ({
+  base64File, fileName, langISO, tags, projectId,
+}) => new Promise((resolve, reject) => {
   const replaceModified = false;
   const tagUpdatedKeys = replaceModified;
-  lokaliseApi.files.upload(EMIS_PROJECT_ID, {
+  lokaliseApi.files.upload(projectId, {
     data: base64File,
     filename: fileName, // fr.json, en.json, ....
     lang_iso: langISO, // fr, en, it, jp, ...
@@ -85,34 +96,40 @@ async function uploadErrors() {
   await uploadToLokalise(encoded, 'en.json', 'en', ['ERRORS']);
 }
 
-async function up() {
+async function up(projectId, folderPath) {
   // We will upload all files contained in the lang folder
-  const files = fs.readdirSync(LANG_FOLDER_PATH);
+  const files = fs.readdirSync(folderPath);
   for (let i = 0; i < files.length; i += 1) {
     const file = files[i];
     const langISO = path.parse(file).name;
-    if (langISO.includes('registration')) {
-      return;
-    }
-    const base64File = fs.readFileSync(`${LANG_FOLDER_PATH}/${file}`, { encoding: 'base64' });
+    const base64File = fs.readFileSync(`${folderPath}/${file}`, { encoding: 'base64' });
     try {
       // Each loop iteration is delayed until upload operation is completed because Lokalise does not support // requests.
       /* eslint-disable no-await-in-loop */
-      await uploadToLokalise(base64File, file, langISO, ['DEV']);
+      await uploadToLokalise({
+        base64File, fileName: file, langISO, tags: ['DEV'], projectId,
+      });
     } catch (e) {
       throw new Error(e);
     }
   }
 }
 
+async function uploadEmis() {
+  await up(EMIS_PROJECT_ID, LANG_FOLDER_PATH_EMIS);
+}
+
+async function uploadRegistration() {
+  await up(REGISTRATION_PROJECT_ID, LANG_FOLDER_PATH_REGISTRATION);
+}
+
 for (let i = 0; i < process.argv.length; i += 1) {
   switch (process.argv[i]) {
     case 'down':
-      down(EMIS_PROJECT_ID);
-      down(REGISTRATION_PROJECT_ID, 'registration');
+      downloadEmis().then(() => downloadRegistration());
       break;
     case 'up':
-      up();
+      uploadEmis().then(() => uploadRegistration());
       break;
     case 'upErrors':
       uploadErrors();

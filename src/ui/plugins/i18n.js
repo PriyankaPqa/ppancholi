@@ -1,10 +1,10 @@
 import VueI18n from 'vue-i18n';
 import Vue from 'vue';
 import { DEFAULT_LANGUAGE, FALLBACK_LANGUAGE } from '@/constants/trans';
-import en from '@/ui/lang/en.json';
-import fr from '@/ui/lang/fr.json';
-import registrationEn from '@/ui/lang/registration.en.json';
-import registrationFr from '@/ui/lang/registration.fr.json';
+import en from '@/ui/lang/emis/en.json';
+import fr from '@/ui/lang/emis/fr.json';
+import registrationEn from '@/ui/lang/registration/en.json';
+import registrationFr from '@/ui/lang/registration/fr.json';
 
 Vue.use(VueI18n);
 
