@@ -5,6 +5,7 @@ import Vue from 'vue';
 import Vuetify from 'vuetify/lib';
 import fr from '@/ui/plugins/vuetify/locales/fr';
 import DuplicateIcon from '@/ui/shared-components/customIcons/DuplicateIcon.vue';
+import ActionsIcon from '@/ui/shared-components/customIcons/ActionsIcon.vue';
 import { DEFAULT_LANGUAGE } from '@/constants/trans';
 import light from './light-theme';
 import dark from './dark-theme';
@@ -26,6 +27,9 @@ export const options = {
     values: {
       'rctech-duplicate': {
         component: DuplicateIcon,
+      },
+      'rctech-actions': {
+        component: ActionsIcon,
       },
     },
   },

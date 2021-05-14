@@ -21,6 +21,14 @@ describe('>>> Case File Service', () => {
     });
   });
 
+  describe('fetchCaseFileActivities', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = 'MOCK_ID';
+      await service.fetchCaseFileActivities(id);
+      expect(http.get).toHaveBeenCalledWith(`/case-file/case-files/${id}/activities`);
+    });
+  });
+
   describe('setCaseFileTags', () => {
     it('is linked to the correct URL and params', async () => {
       const id = mockCaseFilesSearchData()[0].caseFileId;

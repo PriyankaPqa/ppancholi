@@ -1,5 +1,5 @@
 <template>
-  <div class="flex-row caseFileLabels__row">
+  <div class="flex-row caseFileLabels__row pl-6">
     <v-btn
       class="mr-4"
       small

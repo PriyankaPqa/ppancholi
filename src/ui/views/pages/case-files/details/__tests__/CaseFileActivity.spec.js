@@ -1,37 +1,41 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { CaseFile, mockCaseFilesSearchData } from '@/entities/case-file';
+import { CaseFile, mockCaseFilesSearchData, mockCaseFileActivities } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
+import moment from '@/ui/plugins/moment';
 
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+const mockActivities = mockCaseFileActivities();
 
 describe('CaseFileActivity.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       jest.clearAllMocks();
 
       wrapper = shallowMount(Component, {
         localVue,
-        mocks: {
-          $route: {
-            name: routes.caseFile.activity.name,
-            params: {
-              id: mockCaseFile.id,
-            },
-          },
+        data() {
+          return {
+            caseFileActivities: mockActivities,
+          };
         },
         computed: {
+          id() {
+            return mockCaseFile.id;
+          },
           caseFile() {
             return mockCaseFile;
           },
         },
       });
+
+      await wrapper.setData({ loading: false });
     });
 
     describe('tags component', () => {
@@ -50,6 +54,14 @@ describe('CaseFileActivity.vue', () => {
       it('passes the case file id as props', () => {
         expect(element.props('caseFileId')).toEqual(mockCaseFile.id);
       });
+
+      it('calls fetchCaseFileActivities when updateActivities is emitted', async () => {
+        jest.spyOn(wrapper.vm, 'fetchCaseFileActivities').mockImplementation(() => {});
+        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
+        await element.vm.$emit('updateActivities');
+
+        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('status select', () => {
@@ -64,7 +76,7 @@ describe('CaseFileActivity.vue', () => {
       beforeEach(() => {
         element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
       });
-      it('is renders', () => {
+      it('renders', () => {
         expect(element.exists()).toBeTruthy();
       });
     });
@@ -106,6 +118,12 @@ describe('CaseFileActivity.vue', () => {
       });
 
       storage.caseFile.getters.caseFileById.mockReturnValueOnce(mockCaseFile);
+    });
+
+    describe('id', () => {
+      it('returns the right value', () => {
+        expect(wrapper.vm.id).toEqual(mockCaseFile.id);
+      });
     });
 
     describe('caseFile', () => {
@@ -166,26 +184,64 @@ describe('CaseFileActivity.vue', () => {
     it('should call fetchCaseFile', () => {
       expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFile).toHaveBeenCalledWith(mockCaseFile.id);
     });
+
+    // it('should call setLastAction', async () => {
+    //   wrapper.vm.setLastAction = jest.fn();
+
+    //   expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(0);
+
+    //   await wrapper.vm.$options.created.forEach((hook) => {
+    //     hook.call(wrapper.vm);
+    //   });
+
+    //   expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(1);
+    // });
+
+    it('should call fetchCaseFileActivities', async () => {
+      wrapper.vm.fetchCaseFileActivities = jest.fn();
+
+      expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
+
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+
+      expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
+      storage.caseFile.actions.fetchCaseFileActivities = jest.fn(() => mockCaseFileActivities());
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
-          $route: {
-            name: routes.caseFile.activity.name,
-            params: {
-              id: mockCaseFile.id,
-            },
-          },
           $storage: storage,
         },
         computed: {
+          id() {
+            return mockCaseFile.id;
+          },
           caseFile() {
             return mockCaseFile;
           },
         },
+      });
+    });
+
+    describe('fetchCaseFileActivities', () => {
+      it('calls fetchCaseFileActivities action from storage', async () => {
+        jest.clearAllMocks();
+        expect(storage.caseFile.actions.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.fetchCaseFileActivities(0);
+
+        expect(storage.caseFile.actions.fetchCaseFileActivities).toHaveBeenCalled();
+      });
+
+      it('sets the response from the storage action into caseFileActivities', async () => {
+        await wrapper.vm.fetchCaseFileActivities();
+        expect(wrapper.vm.caseFileActivities).toEqual(mockCaseFileActivities());
       });
     });
 
@@ -200,6 +256,30 @@ describe('CaseFileActivity.vue', () => {
           mockCaseFile.id,
           !mockCaseFile.isDuplicate,
         );
+      });
+    });
+
+    describe('setLastAction', () => {
+      it('sets the right value into lastActionAgo', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            id() {
+              return mockCaseFile.id;
+            },
+            caseFile() {
+              const altCaseFile = { ...mockCaseFile };
+              altCaseFile.timestamp = moment().subtract(2, 'days');
+              return altCaseFile;
+            },
+          },
+        });
+
+        await wrapper.vm.setLastAction();
+        expect(wrapper.vm.lastActionAgo).toEqual('2 days ago');
       });
     });
   });

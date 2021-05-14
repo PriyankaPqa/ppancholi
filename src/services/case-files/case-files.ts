@@ -1,4 +1,6 @@
-import { ICaseFileData, ICaseFileLabel, ICaseFileSearchData } from '@/entities/case-file';
+import {
+  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData,
+} from '@/entities/case-file';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 import { ICaseFilesService } from './case-files.types';
@@ -8,6 +10,10 @@ export class CaseFilesService implements ICaseFilesService {
 
   async searchCaseFiles(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFileSearchData>> {
     return this.http.get('/search/case-file-projections', { params, isOData: true });
+  }
+
+  async fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]> {
+    return this.http.get(`/case-file/case-files/${id}/activities`);
   }
 
   async setCaseFileTags(id: uuid, payload: IListOption[]): Promise<ICaseFileData> {

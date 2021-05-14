@@ -1,4 +1,4 @@
-import { ICaseFile, ICaseFileLabel } from '@/entities/case-file';
+import { ICaseFile, ICaseFileActivity, ICaseFileLabel } from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
@@ -18,6 +18,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   actions: {
     fetchTagsOptions(): Promise<IOptionItem[]> {
       return store.dispatch('caseFile/fetchTagsOptions');
+    },
+
+    fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity> {
+      return store.dispatch('caseFile/fetchCaseFileActivities', id);
     },
 
     fetchCaseFile(id: uuid): Promise<ICaseFile> {

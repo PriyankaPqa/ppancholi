@@ -15,6 +15,11 @@ describe('>>> Case File Storage', () => {
   });
 
   describe('>> Actions', () => {
+    it('should proxy fetchCaseFileActivities', () => {
+      storage.actions.fetchCaseFileActivities('TEST_ID');
+      expect(store.dispatch).toBeCalledWith('caseFile/fetchCaseFileActivities', 'TEST_ID');
+    });
+
     it('should proxy fetchCaseFile', () => {
       storage.actions.fetchCaseFile('TEST_ID');
       expect(store.dispatch).toBeCalledWith('caseFile/fetchCaseFile', 'TEST_ID');

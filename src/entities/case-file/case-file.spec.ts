@@ -1,6 +1,5 @@
 import { CaseFile } from './case-file';
 import { mockCaseFilesSearchData } from './case-file.mock';
-import { } from './case-file.types';
 
 const mockCaseFileData = mockCaseFilesSearchData()[0];
 
@@ -109,6 +108,11 @@ describe('>>> Case File', () => {
         name: 'Label Two',
         order: 2,
       }]);
+    });
+
+    it('should instantiate timestamp', () => {
+      const caseFile = new CaseFile(mockCaseFileData);
+      expect(caseFile.timestamp).toEqual(new Date(mockCaseFileData.timestamp));
     });
 
     it('should instantiate triage', () => {

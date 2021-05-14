@@ -131,6 +131,17 @@ describe('>>> Case File Module', () => {
   });
 
   describe('>> Actions', () => {
+    describe('fetchCaseFileActivities', () => {
+      it('calls the service with the passed params', async () => {
+        expect(store.$services.caseFiles.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
+
+        const id = 'MOCK_ID';
+        await store.dispatch('caseFile/fetchCaseFileActivities', id);
+
+        expect(store.$services.caseFiles.fetchCaseFileActivities).toHaveBeenCalledWith(id);
+      });
+    });
+
     describe('fetchCaseFile', () => {
       it('calls the searchCaseFile service and returns the caseFile', async () => {
         const store = mockStore();

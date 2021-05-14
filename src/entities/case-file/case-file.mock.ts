@@ -1,5 +1,7 @@
 import { IAzureSearchResult } from '@/types';
-import { ICaseFileData, ICaseFileSearchData } from './case-file.types';
+import {
+  ECaseFileActivityType, ICaseFileData, ICaseFileSearchData, ICaseFileActivity,
+} from './case-file.types';
 
 export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
   {
@@ -51,6 +53,7 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
         },
       },
     },
+    timestamp: '2021-04-30',
     tags: [{
       id: 'mock-tag-id-1',
       name: {
@@ -126,6 +129,7 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
       },
     },
     tags: [],
+    timestamp: '2021-04-30',
     labels: [{
       name: 'Label One',
       order: 1,
@@ -176,4 +180,39 @@ export const mockCaseFilesData = (): ICaseFileData[] => [{
   eTag: 'mock-e-tag',
   tenantId: 'mock-tenant-id-1',
   timestamp: '2021-01-01',
+}];
+
+export const mockCaseFileActivities = (): ICaseFileActivity[] => [{
+  id: 'mock-activity-id-1',
+  caseFileId: 'mock-id-1',
+  user: { id: '1', name: 'Jane Doe' },
+  role: {
+    id: '2',
+    name: {
+      translation:
+     { en: 'sys admin', fr: 'admin de systeme' },
+    },
+  },
+  created: '2021-01-02 12:00',
+  activityType: ECaseFileActivityType.AddedTag,
+  details: {
+    tags:
+    [{ id: 'tag-id-3', name: { translation: { en: 'tag 1', fr: 'tag 1 fr' } } },
+      { id: 'tag-id-4', name: { translation: { en: 'Tag 2', fr: 'Tag 2 fr' } } }],
+  },
+},
+{
+  id: 'mock-activity-id-2',
+  caseFileId: 'mock-id-1',
+  user: { id: '1', name: 'Jane Doe' },
+  role: {
+    id: '2',
+    name: {
+      translation:
+     { en: 'sys admin', fr: 'admin de systeme' },
+    },
+  },
+  created: '2021-05-04',
+  activityType: ECaseFileActivityType.RemovedTag,
+  details: { tags: [{ id: 'tag-id-5', name: { translation: { en: 'tag 4', fr: 'tag 4 fr' } } }] },
 }];

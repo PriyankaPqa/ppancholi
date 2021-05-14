@@ -95,10 +95,9 @@ import {
   EOptionListItemStatus,
   IOptionItem,
 } from '@/entities/optionItem';
-import { IListOption } from '@/types';
-import { ICaseFileTagInfos } from '@/entities/case-file';
+import { IListOption, IIdMultilingualName } from '@/types';
 
-interface IListTag extends ICaseFileTagInfos {
+interface IListTag extends IIdMultilingualName {
   existing: boolean;
   selected: boolean;
   active: boolean;
@@ -113,7 +112,7 @@ export default Vue.extend({
   },
   props: {
     tags: {
-      type: Array as ()=> ICaseFileTagInfos[],
+      type: Array as ()=> IIdMultilingualName[],
       required: true,
     },
     caseFileId: {
@@ -124,15 +123,15 @@ export default Vue.extend({
 
   data() {
     return {
-      existingTags: [] as ICaseFileTagInfos[],
+      existingTags: [] as IIdMultilingualName[],
       listTags: [] as IListTag[],
-      tagToDelete: null as ICaseFileTagInfos,
+      tagToDelete: null as IIdMultilingualName,
       showAddTagsDialog: false,
       showDeleteTagDialog: false,
       isSubmitting: false,
       isLoadingTags: false,
       disabled: false,
-      initialInactiveTags: [] as ICaseFileTagInfos[],
+      initialInactiveTags: [] as IIdMultilingualName[],
     };
   },
 
@@ -146,7 +145,7 @@ export default Vue.extend({
       return `${this.$t('caseFile.tags.removeTag')} "${this.$m(this.tagToDelete.name)}"`;
     },
 
-    remainingTags(): ICaseFileTagInfos[] {
+    remainingTags(): IIdMultilingualName[] {
       if (this.tagToDelete) {
         return this.existingTags.filter((t) => t.id !== this.tagToDelete.id);
       }
@@ -191,7 +190,7 @@ export default Vue.extend({
       }));
     },
 
-    initDeleteTag(tag: ICaseFileTagInfos) {
+    initDeleteTag(tag: IIdMultilingualName) {
       this.tagToDelete = tag;
       this.showDeleteTagDialog = true;
     },
@@ -222,7 +221,7 @@ export default Vue.extend({
     async submitAddTags() {
       this.isSubmitting = true;
 
-      const tabsToSubmit : ICaseFileTagInfos[] = this.listTags.filter((t) => t.selected || t.existing);
+      const tabsToSubmit : IIdMultilingualName[] = this.listTags.filter((t) => t.selected || t.existing);
       const payload: IListOption[] = this.makePayload(tabsToSubmit);
 
       try {
@@ -230,6 +229,7 @@ export default Vue.extend({
         if (res) {
           // Update the tags displayed on the page only after the patch call was successful
           this.updateExistingTagsAfterAdd();
+          this.$emit('updateActivities');
         }
       } finally {
         this.isSubmitting = false;
@@ -246,6 +246,7 @@ export default Vue.extend({
         if (res) {
           // Update the tags displayed on the page only after the patch call was successful
           this.existingTags = this.remainingTags;
+          this.$emit('updateActivities');
         }
       } finally {
         this.isSubmitting = false;
@@ -254,7 +255,7 @@ export default Vue.extend({
       }
     },
 
-    makePayload(tags: ICaseFileTagInfos[]): IListOption[] {
+    makePayload(tags: IIdMultilingualName[]): IListOption[] {
       if (!tags) return [];
       return tags.map((tag) => ({
         optionItemId: tag.id,
@@ -265,7 +266,7 @@ export default Vue.extend({
     updateExistingTagsAfterAdd() {
       const caseFileTags = this.listTags
         .filter((t) => t.selected || t.existing)
-        .map((tag: IListTag): ICaseFileTagInfos => {
+        .map((tag: IListTag): IIdMultilingualName => {
         // Remove the fields 'selected' and 'existing' from the list tag before setting them as existing case files to be displayed
           const {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars

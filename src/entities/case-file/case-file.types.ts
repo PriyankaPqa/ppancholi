@@ -1,4 +1,4 @@
-import { IMultilingual, IListOption } from '@/types';
+import { IMultilingual, IListOption, IIdMultilingualName } from '@/types';
 
 /**
  * Enums
@@ -18,6 +18,11 @@ export enum ETriageLevel {
   Tier3 = 3,
   Tier4 = 4,
   Tier5 = 5,
+}
+
+export enum ECaseFileActivityType {
+  AddedTag = 1,
+  RemovedTag = 2,
 }
 
 /**
@@ -54,19 +59,24 @@ export interface ICaseFileBeneficiary {
   householdMemberCount: number;
 }
 
-export interface ICaseFileEvent {
-  id: uuid;
-  name: IMultilingual;
-}
-
-export interface ICaseFileTagInfos {
-  id: uuid;
-  name: IMultilingual;
-}
-
 export interface ICaseFileLabel {
   order: number;
   name: string;
+}
+
+export interface ICaseFileActivityUser {
+  id: string,
+  name: string;
+}
+
+export interface ICaseFileActivity {
+  id: uuid;
+  caseFileId: uuid;
+  user: ICaseFileActivityUser;
+  role: IIdMultilingualName;
+  created: Date | string;
+  activityType: ECaseFileActivityType;
+  details: Record<string, IIdMultilingualName[]>;
 }
 
 /**
@@ -100,9 +110,10 @@ export interface ICaseFileSearchData {
   caseFileStatus: ECaseFileStatus;
   caseFileStatusName: IMultilingual;
   isDuplicate: boolean;
-  event: ICaseFileEvent;
-  tags: ICaseFileTagInfos[];
+  event: IIdMultilingualName;
+  tags: IIdMultilingualName[];
   labels: ICaseFileLabel[];
+  timestamp: Date | string;
   triage: ETriageLevel;
   triageName: IMultilingual;
   tenantId: uuid;
@@ -115,10 +126,11 @@ export interface ICaseFile {
   caseFileStatus: ECaseFileStatus;
   caseFileStatusName: IMultilingual;
   created: Date | string;
-  event: ICaseFileEvent;
+  event: IIdMultilingualName;
   isDuplicate: boolean;
-  tags: ICaseFileTagInfos[];
+  tags: IIdMultilingualName[];
   labels: ICaseFileLabel[];
+  timestamp: Date | string;
   triage: ETriageLevel;
   triageName: IMultilingual;
   tenantId: uuid;

@@ -6,7 +6,7 @@ import _sortBy from 'lodash/sortBy';
 
 import { IRootState } from '@/store/store.types';
 import {
-  CaseFile, ICaseFile, ICaseFileLabel, ICaseFileSearchData,
+  CaseFile, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData,
 } from '@/entities/case-file';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 import {
@@ -79,6 +79,10 @@ const actions = {
     // context.commit('setTagsOptionsFetched', true);
 
     return context.getters.tagsOptions;
+  },
+
+  async fetchCaseFileActivities(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ICaseFileActivity[]> {
+    return this.$services.caseFiles.fetchCaseFileActivities(id);
   },
 
   async fetchCaseFile(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ICaseFile> {

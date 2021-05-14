@@ -504,6 +504,11 @@ describe('CaseFileTags.vue', () => {
         await wrapper.vm.submitAddTags();
         expect(wrapper.vm.updateExistingTagsAfterAdd).toHaveBeenCalledTimes(0);
       });
+
+      it('emits updateActivities', async () => {
+        await wrapper.vm.submitAddTags();
+        expect(wrapper.emitted('updateActivities')).toBeTruthy();
+      });
     });
 
     describe('submitDeleteTag', () => {
@@ -629,6 +634,11 @@ describe('CaseFileTags.vue', () => {
 
         await wrapper.vm.submitDeleteTag();
         expect(wrapper.vm.existingTags).toEqual([]);
+      });
+
+      it('emits updateActivities', async () => {
+        await wrapper.vm.submitAddTags();
+        expect(wrapper.emitted('updateActivities')).toBeTruthy();
       });
     });
 

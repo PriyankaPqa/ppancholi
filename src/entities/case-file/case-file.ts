@@ -1,14 +1,12 @@
-import { IMultilingual } from '@/types';
+import { IIdMultilingualName, IMultilingual } from '@/types';
 import utils from '../utils';
 import {
   ECaseFileStatus,
   ETriageLevel,
   ICaseFile,
   ICaseFileBeneficiary,
-  ICaseFileEvent,
   ICaseFileLabel,
   ICaseFileSearchData,
-  ICaseFileTagInfos,
 } from './case-file.types';
 
 export class CaseFile implements ICaseFile {
@@ -24,13 +22,15 @@ export class CaseFile implements ICaseFile {
 
   created: Date | string;
 
-  event: ICaseFileEvent;
+  event: IIdMultilingualName;
 
   isDuplicate: boolean;
 
-  tags: ICaseFileTagInfos[];
+  tags: IIdMultilingualName[];
 
   labels: ICaseFileLabel[];
+
+  timestamp: Date | string;
 
   triage: ETriageLevel;
 
@@ -41,7 +41,7 @@ export class CaseFile implements ICaseFile {
   constructor(data: ICaseFileSearchData) {
     this.id = data.caseFileId;
 
-    this.beneficiary = {
+    this.beneficiary = data.beneficiary ? {
       ...data.beneficiary,
       contactInformation: {
         ...data.beneficiary.contactInformation,
@@ -59,7 +59,7 @@ export class CaseFile implements ICaseFile {
         ...data.beneficiary.homeAddress,
         provinceCode: utils.initMultilingualAttributes(data.beneficiary.homeAddress?.provinceCode),
       } : null,
-    };
+    } : null;
 
     this.caseFileNumber = data.caseFileNumber;
 
@@ -82,6 +82,8 @@ export class CaseFile implements ICaseFile {
     }));
 
     this.labels = data.labels.map((l) => ({ ...l }));
+
+    this.timestamp = data.timestamp ? new Date(data.timestamp) : null;
 
     this.triage = data.triage;
 

@@ -8,6 +8,7 @@ export const mockStorageCaseFile = () : IStorageMock => ({
 
   actions: {
     fetchTagsOptions: jest.fn(),
+    fetchCaseFileActivities: jest.fn(),
     searchCaseFiles: jest.fn(),
     fetchCaseFile: jest.fn(),
     setCaseFileTags: jest.fn(),

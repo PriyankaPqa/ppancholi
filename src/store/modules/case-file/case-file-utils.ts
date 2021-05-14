@@ -6,12 +6,10 @@ import {
   ICaseFileBeneficiary,
   ICaseFileData,
   ICaseFileSearchData,
-  ICaseFileEvent,
-  ICaseFileTagInfos,
 } from '@/entities/case-file';
 
 import { IOptionItem } from '@/entities/optionItem';
-import { IListOption, IMultilingual } from '@/types';
+import { IIdMultilingualName, IListOption, IMultilingual } from '@/types';
 import helpers from '@/ui/helpers';
 import utils from '@/entities/utils';
 import { IRootState } from '../../store.types';
@@ -34,19 +32,19 @@ const getBeneficiary = (originalCaseFile: ICaseFile, beneficiaryId: uuid): ICase
   return null;
 };
 
-const getEvent = (originalCaseFile: ICaseFile, eventId: uuid): ICaseFileEvent => {
+const getEvent = (originalCaseFile: ICaseFile, eventId: uuid): IIdMultilingualName => {
   if (originalCaseFile && originalCaseFile.event.id === eventId) {
     return originalCaseFile.event;
   }
   return null;
 };
 
-const getTags = (originalCaseFile: ICaseFile, tags: IListOption[], tagOptions: IOptionItem[]): ICaseFileTagInfos[] => {
-  const caseFileTags: ICaseFileTagInfos[] = [];
+const getTags = (originalCaseFile: ICaseFile, tags: IListOption[], tagOptions: IOptionItem[]): IIdMultilingualName[] => {
+  const caseFileTags: IIdMultilingualName[] = [];
 
   tags.forEach((tag: IListOption) => {
-    const originalTag: ICaseFileTagInfos = originalCaseFile?.tags && originalCaseFile.tags
-      .find((t: ICaseFileTagInfos) => t.id === tag.optionItemId);
+    const originalTag: IIdMultilingualName = originalCaseFile?.tags && originalCaseFile.tags
+      .find((t: IIdMultilingualName) => t.id === tag.optionItemId);
 
     if (originalTag) {
       caseFileTags.push({
@@ -85,6 +83,7 @@ export const mapCaseFileDataToSearchData = (
     event: getEvent(originalCaseFile, caseFileData.eventId),
     tags: getTags(originalCaseFile, caseFileData.tags, context.state.tagsOptions),
     labels: caseFileData.labels.map((l) => ({ ...l })),
+    timestamp: caseFileData.timestamp,
     triage: caseFileData.triage,
     triageName: getTriageName(caseFileData.triage),
     tenantId: null,
