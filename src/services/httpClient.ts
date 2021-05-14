@@ -6,6 +6,7 @@ import camelCaseKeys from 'camelcase-keys';
 import { v4 as uuidv4 } from 'uuid';
 import Vue from 'vue';
 import { i18n } from '@/ui/plugins/i18n';
+import helpers from '@/ui/helpers';
 
 export interface IRestResponse<T> {
   success: boolean;
@@ -25,6 +26,7 @@ export interface IError {
 export interface RequestConfig extends AxiosRequestConfig {
   globalHandler?: boolean;
   isOData?: boolean;
+  containsEncodedURL?: boolean;
 }
 
 export interface IHttpClient {
@@ -106,6 +108,14 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(request)) {
       // Add what you want when request is sent
       // It is applied globally except when { globalHandler: false }
+    }
+
+    // The registration link might contain characters that need encoding, which should not be handled by the default axios paramsSerializer
+    // because it encodes them in a manner that's not consistent with the way the back-end encodes these characters.
+    // In order to keep the encoding consistency back-end/front-end, the registration link will be encoded in a custom manner by the same helper that encodes
+    // the event name into the registration link when the event is created
+    if (request.containsEncodedURL) {
+      request.paramsSerializer = (params: Record<string, string>) => helpers.objectToQueryString(params);
     }
 
     if (request.isOData) {
