@@ -82,7 +82,8 @@ export default Vue.extend({
     },
 
     temporaryAddressTypeItems(): Record<string, unknown>[] {
-      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes');
+      // eslint-disable-next-line
+      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', (this as any).i18n);
       return list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
     },
   },
