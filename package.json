@@ -1,6 +1,6 @@
 {
   "name": "@crctech/registration-lib",
-  "version": "0.1.125",
+  "version": "0.1.126",
   "private": false,
   "watch": {
     "push": {
@@ -8,7 +8,7 @@
         "src",
         "test"
       ],
-      "extensions": "js,ts",
+      "extensions": "js,ts,vue",
       "ignore": "",
       "quiet": true,
       "legacyWatch": true,

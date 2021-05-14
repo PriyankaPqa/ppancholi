@@ -93,8 +93,8 @@ export default Vue.extend({
       await (this.$refs.form as VForm).validate();
       this.$storage.registration.mutations.jump(effectiveToIndex);
 
-      // If we stop on a validation error and a user has seen it previously, highlight errors
-      if (effectiveToIndex !== toIndex && this.allTabs[effectiveToIndex].isTouched) {
+      // If we stop on a step having errors, highlight errors
+      if (effectiveToIndex !== toIndex) {
         this.mutateStateTab(false);
       }
     },
