@@ -21,6 +21,8 @@ describe('RegistrationHome.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     wrapper = mount(Component, {
       localVue,
       vuetify,
@@ -45,9 +47,9 @@ describe('RegistrationHome.vue', () => {
 
   describe('Lifecycle', () => {
     describe('mounted', () => {
-      it('should call fetchActiveEvents', () => {
-        jest.spyOn(wrapper.vm, 'fetchActiveEvents');
-        wrapper.vm.$options.mounted.forEach((hook) => {
+      it('should call fetchActiveEvents', async () => {
+        wrapper.vm.fetchActiveEvents = jest.fn();
+        await wrapper.vm.$options.mounted.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.fetchActiveEvents).toHaveBeenCalledTimes(1);
@@ -67,6 +69,14 @@ describe('RegistrationHome.vue', () => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.resetRegistrationModule).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call fetchDataForRegistration', async () => {
+        wrapper.vm.fetchDataForRegistration = jest.fn();
+        await wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.fetchDataForRegistration).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -114,6 +124,20 @@ describe('RegistrationHome.vue', () => {
         jest.clearAllMocks();
         wrapper.vm.resetBeneficiaryModule();
         expect(wrapper.vm.$storage.beneficiary.mutations.resetState).toHaveBeenCalledWith();
+      });
+    });
+
+    describe('fetchDataForRegistration', () => {
+      it('should fetch genders', () => {
+        expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalledTimes(1);
+      });
+
+      it('should fetch fetchPreferredLanguages', () => {
+        expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalledTimes(1);
+      });
+
+      it('should fetch fetchPrimarySpokenLanguages', () => {
+        expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
     });
   });

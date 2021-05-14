@@ -15,7 +15,6 @@
           :show-help="currentTab.helpLink !== '' "
           :help-link="$t(currentTab.helpLink)"
           :title="$t(currentTab.titleKey)"
-          :subtitle="$t('registration.type.individual')"
           :class="`${xSmallOrSmallMenu ? 'actions' : ''}`"
           outer-scroll>
           <template slot="default">
@@ -69,6 +68,7 @@ import PrivacyStatement from '@/ui/views/pages/registration/privacy-statement/Pr
 import PersonalInformation from '@/ui/views/pages/registration/personal-information/PersonalInformation.vue';
 import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import HouseholdMembers from '@/ui/views/pages/registration/household-members/HouseholdMembers.vue';
+import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegistration.vue';
 import mixins from 'vue-typed-mixins';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { tabs } from '@/store/modules/registration/tabs';
@@ -100,6 +100,7 @@ export default mixins(individual).extend({
     PrivacyStatement,
     Addresses,
     HouseholdMembers,
+    ReviewRegistration,
   },
 
   mixins: [individual],
@@ -114,6 +115,10 @@ export default mixins(individual).extend({
     eventName() {
       const event = this.$storage.registration.getters.event();
       return this.$m(event.name);
+    },
+
+    submitLoading(): boolean {
+      return false;
     },
   },
   methods: {

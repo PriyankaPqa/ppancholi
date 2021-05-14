@@ -62,6 +62,7 @@ export default Vue.extend({
   async mounted() {
     this.resetBeneficiaryModule();
     this.resetRegistrationModule();
+    await this.fetchDataForRegistration();
     await this.fetchActiveEvents();
   },
 
@@ -101,6 +102,12 @@ export default Vue.extend({
         },
       });
       this.events = res?.value;
+    },
+
+    async fetchDataForRegistration() {
+      this.$storage.registration.actions.fetchGenders();
+      this.$storage.registration.actions.fetchPreferredLanguages();
+      this.$storage.registration.actions.fetchPrimarySpokenLanguages();
     },
 
   },

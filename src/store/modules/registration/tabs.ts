@@ -78,7 +78,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'registration.submit_registration.label',
     componentName: 'ReviewRegistration',
-    helpLink: '',
+    helpLink: 'zendesk.registration.review',
   },
   {
     id: 'confirmation',
