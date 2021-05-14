@@ -20,6 +20,7 @@ export interface IRestResponse<T> {
 export interface RequestConfig extends AxiosRequestConfig {
   globalHandler?: boolean;
   isOData?: boolean;
+  containsEncodedURL? : boolean;
 }
 
 export interface IHttpClient {

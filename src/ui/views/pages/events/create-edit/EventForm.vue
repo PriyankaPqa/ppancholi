@@ -281,6 +281,7 @@ import {
 } from '@crctech/component-library';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers';
+import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import {
   ECanadaProvinces,
 } from '@/types';
@@ -579,13 +580,7 @@ export default Vue.extend({
         return this.localEvent.registrationLink.translation[this.languageMode];
       }
 
-      let link = helpers.getNormalizedString(this.localEvent.name.translation[this.languageMode]);
-      link = link.replace(/[.]/g, '');
-      link = link.replace(/[/\s]/g, '-');
-      link = encodeURIComponent(link);
-      link = link.replace(/[~]/g, '%7e');
-      link = link.replace(/[']/g, '%27');
-      link = link.toLowerCase();
+      const link = libHelpers.encodeUrl(this.localEvent.name.translation[this.languageMode]);
 
       return link;
     },
