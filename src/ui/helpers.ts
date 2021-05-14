@@ -156,4 +156,23 @@ export default {
       });
     }
   },
+
+  /**
+   * It encodes a string that contains special characters, in a manner that matches the encoding done in the backend.
+   * Used for registration links, which are required to contain special characters
+   *
+   * @param value String to be encoded
+   * @returns Encoded string
+   */
+
+  encodeUrl(value: string): string {
+    let s = this.getNormalizedString(value);
+    s = s.replace(/[.|~|"]/g, '');
+    s = s.replace(/[/\s]/g, '-');
+    s = encodeURIComponent(s);
+    s = s.replace(/[']/g, '%27');
+    s = s.toLowerCase();
+    return s;
+  },
+
 };

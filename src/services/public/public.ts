@@ -12,6 +12,7 @@ export class PublicService implements IPublicService {
         language: lang,
         registrationLink,
       },
+      containsEncodedURL: true,
     });
   }
 }

@@ -13,6 +13,6 @@ describe('>>> Events Service', () => {
     };
 
     await service.searchEvents(params.language, params.registrationLink);
-    expect(http.get).toHaveBeenCalledWith('/public-search/beneficiary-event', { params });
+    expect(http.get).toHaveBeenCalledWith('/public-search/beneficiary-event', { params, containsEncodedURL: true });
   });
 });
