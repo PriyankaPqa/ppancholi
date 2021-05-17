@@ -64,6 +64,7 @@ const CaseFileInactiveReasons = () => import(/* webpackChunkName: "system" */ '@
 const UserAccounts = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/UserAccounts.vue');
 const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
 const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
+const CaseFileCloseReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
 
 const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
@@ -393,6 +394,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.caseNoteCategories.path,
                 name: Routes.systemManagement.caseNoteCategories.name,
                 component: CaseNoteCategories,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.caseFileCloseReasons.path,
+                name: Routes.systemManagement.caseFileCloseReasons.name,
+                component: CaseFileCloseReasons,
                 meta: { level: 'level6' },
               },
             ],

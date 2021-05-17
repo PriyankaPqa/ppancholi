@@ -200,6 +200,10 @@ const routes = {
       path: 'lists/case-note-categories',
       name: 'systemManagement.lists.caseNoteCategories',
     },
+    caseFileCloseReasons: {
+      path: 'lists/case-file-close-reasons',
+      name: 'systemManagement.lists.caseFileCloseReasons',
+    },
   },
   teams: {
     layout: {

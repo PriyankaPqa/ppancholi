@@ -1313,6 +1313,7 @@
     "system_management.lists.addSubItem": "Ajouter un sous-élément",
     "system_management.lists.agreementType": "Type d'accord",
     "system_management.lists.agreementTypes": "Types d'accord",
+    "system_management.lists.caseFileCloseReasons": "Raisons de clôture des dossiers",
     "system_management.lists.caseFileTags": "Attributs de dossier",
     "system_management.lists.caseNoteCategories": "Catégories de notes évolutives",
     "system_management.lists.defaultOptionRemoved": "L'élément \"Par défaut\" a été supprimé avec succès.",

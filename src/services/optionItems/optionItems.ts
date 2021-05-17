@@ -28,6 +28,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/case-file/inactive-reasons';
       case EOptionLists.CaseNoteCategories:
         return '/case-file/case-note-categories';
+      case EOptionLists.CaseFileCloseReasons:
+        return '/case-file/close-reasons';
       default:
         return '';
     }

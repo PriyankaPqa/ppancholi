@@ -101,6 +101,11 @@ export default Vue.extend({
         route: routes.systemManagement.caseNoteCategories.name,
         dataTest: 'caseNoteCategories',
       },
+      {
+        name: 'system_management.lists.caseFileCloseReasons',
+        route: routes.systemManagement.caseFileCloseReasons.name,
+        dataTest: 'caseFileCloseReasons',
+      },
     ];
 
     return {

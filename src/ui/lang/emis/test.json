@@ -1313,6 +1313,7 @@
     "system_management.lists.addSubItem": "system_management.lists.addSubItem",
     "system_management.lists.agreementType": "system_management.lists.agreementType",
     "system_management.lists.agreementTypes": "system_management.lists.agreementTypes",
+    "system_management.lists.caseFileCloseReasons": "",
     "system_management.lists.caseFileTags": "system_management.lists.caseFileTags",
     "system_management.lists.caseNoteCategories": "system_management.lists.caseNoteCategories",
     "system_management.lists.defaultOptionRemoved": "system_management.lists.defaultOptionRemoved",

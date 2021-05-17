@@ -49,6 +49,10 @@ describe('>>> EventTypes Service', () => {
     it('returns correct prefix for EOptionLists.CaseNoteCategories', () => {
       expect(service.getPrefix(EOptionLists.CaseNoteCategories)).toBe('/case-file/case-note-categories');
     });
+
+    it('returns correct prefix for EOptionLists.CaseFileCloseReasons', () => {
+      expect(service.getPrefix(EOptionLists.CaseFileCloseReasons)).toBe('/case-file/close-reasons');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {
