@@ -1,6 +1,6 @@
 import { IAzureSearchResult, ECanadaProvinces } from '../../types';
 import {
-  IEventData, IEvent, IEventGenericLocation,
+  IEventData, IEvent, IEventGenericLocation, EEventStatus,
 } from './event.types';
 
 import { Event } from './event';
@@ -67,6 +67,10 @@ export const mockEventData = (): IEventData => ({
   },
   shelterLocations: mockShelterLocations(),
   registrationLocations: mockRegistrationLocations(),
+  schedule: {
+    status: EEventStatus.Open,
+  },
+  selfRegistrationEnabled: true,
 });
 
 export const mockSearchEventsData = (): IAzureSearchResult<IEventData> => ({

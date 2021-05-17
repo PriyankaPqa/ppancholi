@@ -32,5 +32,13 @@ describe('>>> Event', () => {
     it('should instantiate registrationLocations', () => {
       expect(event.registrationLocations).toEqual(mockEventData().registrationLocations);
     });
+
+    it('should instantiate schedule', () => {
+      expect(event.schedule).toEqual(mockEventData().schedule);
+    });
+
+    it('should instantiate selfRegistrationEnabled', () => {
+      expect(event.selfRegistrationEnabled).toEqual(mockEventData().selfRegistrationEnabled);
+    });
   });
 });

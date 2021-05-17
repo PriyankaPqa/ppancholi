@@ -35,6 +35,10 @@ export interface IResponseDetails {
   assistanceNumber: string;
 }
 
+export interface IEventSchedule {
+  status: EEventStatus;
+}
+
 export enum EEventLocationStatus {
   Active = 1,
   Inactive,
@@ -68,6 +72,8 @@ export interface IEventData {
   tenantId: uuid;
   registrationLocations: Array<IEventGenericLocation>;
   shelterLocations: IShelterLocation[];
+  selfRegistrationEnabled: boolean;
+  schedule: IEventSchedule;
 }
 
 /**
@@ -81,4 +87,6 @@ export interface IEvent {
   tenantId: uuid;
   shelterLocations: IShelterLocation[];
   registrationLocations: IEventGenericLocation[];
+  selfRegistrationEnabled: boolean;
+  schedule: IEventSchedule;
 }
