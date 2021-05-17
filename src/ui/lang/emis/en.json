@@ -1311,6 +1311,7 @@
     "system_management.lists.agreementType": "Agreement type",
     "system_management.lists.agreementTypes": "Agreement types",
     "system_management.lists.caseFileTags": "Case file tags",
+    "system_management.lists.caseNoteCategories": "Case note categories",
     "system_management.lists.defaultOptionRemoved": "The \"Default\" item has been successfully removed.",
     "system_management.lists.defaultOptionSet": "The \"Default\" item has been successfully assigned.",
     "system_management.lists.eventTypes": "Event types",

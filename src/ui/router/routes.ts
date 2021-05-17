@@ -63,6 +63,7 @@ const AgreementTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views
 const CaseFileInactiveReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileInactiveReasons.vue');
 const UserAccounts = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/UserAccounts.vue');
 const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
+const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
 
 const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
@@ -386,6 +387,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.roles.path,
                 name: Routes.systemManagement.roles.name,
                 component: Roles,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.caseNoteCategories.path,
+                name: Routes.systemManagement.caseNoteCategories.name,
+                component: CaseNoteCategories,
                 meta: { level: 'level6' },
               },
             ],

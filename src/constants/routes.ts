@@ -196,6 +196,10 @@ const routes = {
       path: 'lists/case-file-inactive-reasons',
       name: 'systemManagement.lists.caseFileInactiveReasons',
     },
+    caseNoteCategories: {
+      path: 'lists/case-note-categories',
+      name: 'systemManagement.lists.caseNoteCategories',
+    },
   },
   teams: {
     layout: {

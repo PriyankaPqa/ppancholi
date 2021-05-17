@@ -14,6 +14,7 @@ export enum EOptionLists {
   Roles = 6,
   CaseFileTags = 7,
   CaseFileInactiveReasons = 8,
+  CaseNoteCategories= 9
 }
 
 export interface IOptionSubItem {

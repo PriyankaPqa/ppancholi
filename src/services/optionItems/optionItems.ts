@@ -26,6 +26,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/user-account/roles';
       case EOptionLists.CaseFileInactiveReasons:
         return '/case-file/inactive-reasons';
+      case EOptionLists.CaseNoteCategories:
+        return '/case-file/case-note-categories';
       default:
         return '';
     }

@@ -61,39 +61,47 @@ export default Vue.extend({
   },
 
   data() {
-    const optionLists: Array<IList> = [{
-      name: 'system_management.lists.caseFileTags',
-      route: routes.systemManagement.caseFileTags.name,
-      dataTest: 'caseFileTags',
-    }, {
-      name: 'system_management.lists.eventTypes',
-      route: routes.systemManagement.eventTypes.name,
-      dataTest: 'eventTypes',
-    },
-    {
-      name: 'system_management.lists.genders',
-      route: routes.systemManagement.genders.name,
-      dataTest: 'genders',
-    },
-    {
-      name: 'system_management.lists.preferredLanguages',
-      route: routes.systemManagement.preferredLanguages.name,
-      dataTest: 'preferredLanguages',
-    },
-    {
-      name: 'system_management.lists.primarySpokenLanguages',
-      route: routes.systemManagement.primarySpokenLanguages.name,
-      dataTest: 'primarySpokenLanguages',
-    },
-    {
-      name: 'system_management.lists.agreementTypes',
-      route: routes.systemManagement.agreementTypes.name,
-      dataTest: 'agreementTypes',
-    }, {
-      name: 'system_management.lists.inactiveReasons',
-      route: routes.systemManagement.inactiveReasons.name,
-      dataTest: 'inactiveReasons',
-    }];
+    const optionLists: Array<IList> = [
+      {
+        name: 'system_management.lists.caseFileTags',
+        route: routes.systemManagement.caseFileTags.name,
+        dataTest: 'caseFileTags',
+      }, {
+        name: 'system_management.lists.eventTypes',
+        route: routes.systemManagement.eventTypes.name,
+        dataTest: 'eventTypes',
+      },
+      {
+        name: 'system_management.lists.genders',
+        route: routes.systemManagement.genders.name,
+        dataTest: 'genders',
+      },
+      {
+        name: 'system_management.lists.preferredLanguages',
+        route: routes.systemManagement.preferredLanguages.name,
+        dataTest: 'preferredLanguages',
+      },
+      {
+        name: 'system_management.lists.primarySpokenLanguages',
+        route: routes.systemManagement.primarySpokenLanguages.name,
+        dataTest: 'primarySpokenLanguages',
+      },
+      {
+        name: 'system_management.lists.agreementTypes',
+        route: routes.systemManagement.agreementTypes.name,
+        dataTest: 'agreementTypes',
+      },
+      {
+        name: 'system_management.lists.inactiveReasons',
+        route: routes.systemManagement.inactiveReasons.name,
+        dataTest: 'inactiveReasons',
+      },
+      {
+        name: 'system_management.lists.caseNoteCategories',
+        route: routes.systemManagement.caseNoteCategories.name,
+        dataTest: 'caseNoteCategories',
+      },
+    ];
 
     return {
       ascendingSort: true,
@@ -130,18 +138,10 @@ export default Vue.extend({
   },
 
   methods: {
-    /**
-     * Clear the search related data.
-     * @public
-     */
     clearSearch() {
       this.searchString = '';
     },
 
-    /**
-     * Instract to change the order direction (asc/desc)
-     * @public
-     */
     toggleSorting() {
       this.ascendingSort = !this.ascendingSort;
     },
