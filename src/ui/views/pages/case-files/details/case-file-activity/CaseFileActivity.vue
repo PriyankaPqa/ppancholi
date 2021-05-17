@@ -11,7 +11,7 @@
         data-test="caseFileActivity-tags"
         :case-file-id="caseFile.id"
         :tags="caseFile.tags || []"
-        @updateActivities="fetchCaseFileActivities(800)" />
+        @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
 
       <v-row class="ma-0 pa-0">
         <v-col cols="12" md="6" class="flex-row">
@@ -125,6 +125,7 @@ export default Vue.extend({
       statuses: [ECaseFileStatus.Archived, ECaseFileStatus.Open, ECaseFileStatus.Closed, ECaseFileStatus.Inactive],
       lastActionAgo: null,
       caseFileActivities: [] as ICaseFileActivity[],
+      activityFetchDelay: 800,
     };
   },
 
@@ -180,13 +181,14 @@ export default Vue.extend({
       return 'CaseFileActivityListItem';
     },
 
-    setLastAction() {
-      this.lastActionAgo = moment.utc(this.caseFile.timestamp).local().locale(moment.locale()).fromNow();
-    },
+    // setLastAction() {
+    //   this.lastActionAgo = moment.utc(this.caseFile.timestamp).local().locale(moment.locale()).fromNow();
+    // },
 
     async setCaseFileIsDuplicate() {
       const { id, isDuplicate } = this.caseFile;
       await this.$storage.caseFile.actions.setCaseFileIsDuplicate(id, !isDuplicate);
+      this.fetchCaseFileActivities(this.activityFetchDelay);
     },
   },
 });

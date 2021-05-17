@@ -27,8 +27,8 @@ export interface IStorageMock {
 
   actions: {
     fetchTagsOptions: jest.Mock<void>;
-    fetchCaseFile: jest.Mock<void>;
-    fetchCaseFileActivities: jest.Mock<void>;
+    fetchCaseFile: jest.Mock<ICaseFile>;
+    fetchCaseFileActivities: jest.Mock<ICaseFileActivity[]>;
     searchCaseFiles: jest.Mock<void>;
     setCaseFileTags: jest.Mock<void>;
     setCaseFileLabels: jest.Mock<void>;

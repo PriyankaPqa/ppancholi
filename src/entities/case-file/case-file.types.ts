@@ -23,6 +23,8 @@ export enum ETriageLevel {
 export enum ECaseFileActivityType {
   AddedTag = 1,
   RemovedTag = 2,
+  AddedDuplicateFlag = 3,
+  RemovedDuplicateFlag = 4,
 }
 
 /**

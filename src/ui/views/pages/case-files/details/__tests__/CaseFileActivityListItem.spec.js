@@ -115,6 +115,30 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.content).toEqual(mockContent);
       });
 
+      it('returns the correct data when action type is AddedDuplicateFlag', async () => {
+        const mockContent = { title: 'mock-title', body: 'mock-body' };
+        jest.spyOn(wrapper.vm, 'makeContentForAddedDuplicateFlag').mockImplementation(() => (mockContent));
+        await wrapper.setProps({
+          item: {
+            activityType: ECaseFileActivityType.AddedDuplicateFlag,
+          },
+        });
+        expect(wrapper.vm.makeContentForAddedDuplicateFlag).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.content).toEqual(mockContent);
+      });
+
+      it('returns the correct data when action type is RemovedDuplicateFlag', async () => {
+        const mockContent = { title: 'mock-title', body: 'mock-body' };
+        jest.spyOn(wrapper.vm, 'makeContentForRemovedDuplicateFlag').mockImplementation(() => (mockContent));
+        await wrapper.setProps({
+          item: {
+            activityType: ECaseFileActivityType.RemovedDuplicateFlag,
+          },
+        });
+        expect(wrapper.vm.makeContentForRemovedDuplicateFlag).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.content).toEqual(mockContent);
+      });
+
       it('returns the right object in default case', async () => {
         await wrapper.setProps({
           item: {
@@ -150,6 +174,30 @@ describe('CaseFileActivityListItem.vue', () => {
           },
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when action type is AddedDuplicateFlag', async () => {
+        await wrapper.setProps({
+          item: {
+            userName: 'Jane Doe',
+            roleName: { translation: { en: 'sys admin' } },
+            actionDateTime: '2021-01-02',
+            activityType: ECaseFileActivityType.AddedDuplicateFlag,
+          },
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-duplicate');
+      });
+
+      it('returns the correct icon when action type is RemovedDuplicateFlag', async () => {
+        await wrapper.setProps({
+          item: {
+            userName: 'Jane Doe',
+            roleName: { translation: { en: 'sys admin' } },
+            actionDateTime: '2021-01-02',
+            activityType: ECaseFileActivityType.RemovedDuplicateFlag,
+          },
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-duplicate');
       });
 
       it('returns the correct icon in default case', async () => {

@@ -1,3 +1,4 @@
+import { CaseFile, mockCaseFileActivities, mockCaseFilesSearchData } from '@/entities/case-file';
 import { IStorageMock } from './storage.types';
 
 export const mockStorageCaseFile = () : IStorageMock => ({
@@ -8,9 +9,9 @@ export const mockStorageCaseFile = () : IStorageMock => ({
 
   actions: {
     fetchTagsOptions: jest.fn(),
-    fetchCaseFileActivities: jest.fn(),
+    fetchCaseFileActivities: jest.fn(() => mockCaseFileActivities()),
     searchCaseFiles: jest.fn(),
-    fetchCaseFile: jest.fn(),
+    fetchCaseFile: jest.fn(() => new CaseFile(mockCaseFilesSearchData()[0])),
     setCaseFileTags: jest.fn(),
     setCaseFileLabels: jest.fn(),
     setCaseFileIsDuplicate: jest.fn(),

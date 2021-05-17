@@ -2,7 +2,6 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFile, mockCaseFilesSearchData, mockCaseFileActivities } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import moment from '@/ui/plugins/moment';
 
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
@@ -160,8 +159,6 @@ describe('CaseFileActivity.vue', () => {
 
   describe('lifecycle', () => {
     beforeEach(() => {
-      storage.caseFile.actions.fetchCaseFile = jest.fn(() => {});
-
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
@@ -257,30 +254,38 @@ describe('CaseFileActivity.vue', () => {
           !mockCaseFile.isDuplicate,
         );
       });
-    });
 
-    describe('setLastAction', () => {
-      it('sets the right value into lastActionAgo', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
-          computed: {
-            id() {
-              return mockCaseFile.id;
-            },
-            caseFile() {
-              const altCaseFile = { ...mockCaseFile };
-              altCaseFile.timestamp = moment().subtract(2, 'days');
-              return altCaseFile;
-            },
-          },
-        });
+      it('calls fetchCaseFileActivities', async () => {
+        jest.spyOn(wrapper.vm, 'fetchCaseFileActivities').mockImplementation(() => mockActivities);
+        wrapper.vm.activityFetchDelay = 500;
 
-        await wrapper.vm.setLastAction();
-        expect(wrapper.vm.lastActionAgo).toEqual('2 days ago');
+        await wrapper.vm.setCaseFileIsDuplicate();
+        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledWith(wrapper.vm.activityFetchDelay);
       });
     });
+
+    // describe('setLastAction', () => {
+    //   it('sets the right value into lastActionAgo', async () => {
+    //     wrapper = shallowMount(Component, {
+    //       localVue,
+    //       mocks: {
+    //         $storage: storage,
+    //       },
+    //       computed: {
+    //         id() {
+    //           return mockCaseFile.id;
+    //         },
+    //         caseFile() {
+    //           const altCaseFile = { ...mockCaseFile };
+    //           altCaseFile.timestamp = moment().subtract(2, 'days');
+    //           return altCaseFile;
+    //         },
+    //       },
+    //     });
+
+  //     await wrapper.vm.setLastAction();
+  //     expect(wrapper.vm.lastActionAgo).toEqual('2 days ago');
+  //   });
+  // });
   });
 });

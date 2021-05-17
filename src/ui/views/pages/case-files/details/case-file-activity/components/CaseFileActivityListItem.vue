@@ -34,11 +34,18 @@ export default Vue.extend({
   computed: {
     content(): {title: TranslateResult, body: TranslateResult} {
       const { activityType } = this.item;
+
       switch (activityType) {
         case ECaseFileActivityType.AddedTag:
-        case ECaseFileActivityType.RemovedTag: {
+        case ECaseFileActivityType.RemovedTag:
           return this.makeContentForTags(activityType);
-        }
+
+        case ECaseFileActivityType.AddedDuplicateFlag:
+          return this.makeContentForAddedDuplicateFlag();
+
+        case ECaseFileActivityType.RemovedDuplicateFlag:
+          return this.makeContentForRemovedDuplicateFlag();
+
         default:
           return null;
       }
@@ -49,6 +56,10 @@ export default Vue.extend({
         case ECaseFileActivityType.AddedTag:
         case ECaseFileActivityType.RemovedTag:
           return '$rctech-actions';
+
+        case ECaseFileActivityType.AddedDuplicateFlag:
+        case ECaseFileActivityType.RemovedDuplicateFlag:
+          return '$rctech-duplicate';
 
         default:
           return 'mdi-message-text';
@@ -65,6 +76,20 @@ export default Vue.extend({
       const body = `${this.$t('caseFileActivity.activityList.tags.tag_names')}: ${tagsString}`;
 
       return { title, body };
+    },
+
+    makeContentForAddedDuplicateFlag(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.addedDuplicateFlag'),
+        body: this.$t('DuplicateStatus.Added'),
+      };
+    },
+
+    makeContentForRemovedDuplicateFlag(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.removedDuplicateFlag'),
+        body: this.$t('DuplicateStatus.Removed'),
+      };
     },
   },
 });
