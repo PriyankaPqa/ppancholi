@@ -6,5 +6,6 @@ export type IState = {
   getLoading: boolean,
   searchLoading: boolean,
   duplicateLoading: boolean;
+  triageLoading: boolean;
   tagsOptions: Array<IOptionItemData>,
 };

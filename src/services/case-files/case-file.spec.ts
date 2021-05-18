@@ -1,4 +1,4 @@
-import { ICaseFileLabel, mockCaseFilesSearchData } from '@/entities/case-file';
+import { ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData } from '@/entities/case-file';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { IListOption } from '@/types';
@@ -62,6 +62,16 @@ describe('>>> Case File Service', () => {
 
       await service.setCaseFileIsDuplicate(id, isDuplicate);
       expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/is-duplicate`, { isDuplicate });
+    });
+  });
+
+  describe('setCaseFileTriage', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const triage = ECaseFileTriage.Tier1;
+
+      await service.setCaseFileTriage(id, triage);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/triage`, { triage });
     });
   });
 });

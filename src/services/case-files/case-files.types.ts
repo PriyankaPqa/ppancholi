@@ -1,5 +1,5 @@
 import {
-  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData,
+  ECaseFileTriage, ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData,
 } from '@/entities/case-file';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 
@@ -9,6 +9,7 @@ export interface ICaseFilesService {
   setCaseFileTags(id: uuid, payload: IListOption[]): Promise<ICaseFileData>;
   setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFileData>;
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileData>;
+  setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFileData>;
 }
 
 export interface ICaseFilesServiceMock {
@@ -17,4 +18,5 @@ export interface ICaseFilesServiceMock {
   setCaseFileTags: jest.Mock<ICaseFileData>;
   setCaseFileLabels: jest.Mock<ICaseFileData>;
   setCaseFileIsDuplicate: jest.Mock<ICaseFileData>;
+  setCaseFileTriage: jest.Mock<ICaseFileData>;
 }

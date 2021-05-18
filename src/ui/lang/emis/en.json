@@ -217,6 +217,7 @@
     "caseFileActivity.labels.label2": "Label 2",
     "caseFileActivity.labels.label3": "Label 3",
     "caseFileActivity.labels.label4": "Label 4",
+    "caseFileActivity.triage": "Triage",
     "caseFileActivity.triageLevel.None": "N\/A",
     "caseFileActivity.triageLevel.Tier1": "Tier 1",
     "caseFileActivity.triageLevel.Tier2": "Tier 2",

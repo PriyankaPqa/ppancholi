@@ -14,13 +14,28 @@
         @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
 
       <v-row class="ma-0 pa-0">
-        <v-col cols="12" md="6" class="flex-row">
+        <v-col cols="12" md="6" class="flex-row align-center">
           <status-select
             data-test="event-detail-status-select"
             :value="caseFile.caseFileStatus"
             :statuses="statuses"
             status-name="ECaseFileStatus"
             :disabled="true" />
+
+          <v-divider
+            vertical
+            class="ml-4 mr-4" />
+
+          <span class="pr-2 rc-body12">{{ $t('caseFileActivity.triage') }}:</span>
+          <v-select
+            :value="caseFile.triage"
+            class="triage-select"
+            data-test="caseFileActivity-triage-select"
+            :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-triage-dropdown', maxWidth: 'fit-content' }"
+            :items="triageLevels"
+            :loading="triageLoading"
+            hide-details
+            @change="setCaseFileTriage($event)" />
 
           <v-divider
             vertical
@@ -91,10 +106,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import _sortBy from 'lodash/sortBy';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import { ICaseFile, ECaseFileStatus, ICaseFileActivity } from '@/entities/case-file';
+import {
+  ICaseFile, ECaseFileStatus, ICaseFileActivity, ECaseFileTriage,
+} from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
+import helpers from '@/ui/helpers';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
@@ -138,12 +157,21 @@ export default Vue.extend({
       return this.$hasLevel('level1');
     },
 
+    caseFile(): ICaseFile {
+      return this.$storage.caseFile.getters.caseFileById(this.id);
+    },
+
     duplicateLoading(): boolean {
       return this.$store.state.caseFile.duplicateLoading;
     },
 
-    caseFile(): ICaseFile {
-      return this.$storage.caseFile.getters.caseFileById(this.id);
+    triageLevels(): {value: unknown, text: string}[] {
+      const levels = helpers.enumToTranslatedCollection(ECaseFileTriage, 'enums.Triage');
+      return _sortBy(levels, 'value');
+    },
+
+    triageLoading(): boolean {
+      return this.$store.state.caseFile.triageLoading;
     },
   },
 
@@ -181,6 +209,7 @@ export default Vue.extend({
       return 'CaseFileActivityListItem';
     },
 
+    // Will be implemented in a future story
     // setLastAction() {
     //   this.lastActionAgo = moment.utc(this.caseFile.timestamp).local().locale(moment.locale()).fromNow();
     // },
@@ -190,20 +219,68 @@ export default Vue.extend({
       await this.$storage.caseFile.actions.setCaseFileIsDuplicate(id, !isDuplicate);
       this.fetchCaseFileActivities(this.activityFetchDelay);
     },
+
+    async setCaseFileTriage(triage: number) {
+      await this.$storage.caseFile.actions.setCaseFileTriage(this.id, triage);
+      // Will be implemented in a future story
+      // this.fetchCaseFileActivities(this.activityFetchDelay);
+    },
   },
 });
 
 </script>
+
+<style  lang='scss'>
+
+  .case-file-triage-dropdown {
+    margin-top: -5px;
+
+    .v-list-item__title {
+      font-size: 12px;
+    }
+  }
+</style>
 
 <style scoped lang='scss'>
   .borderLeft {
      border-left: thin solid lightgrey;
   }
 
-      .caseFileActivity__lastAction {
-        display: flex;
-        justify-content: flex-end;
-        margin-top: 16px;
+  .caseFileActivity__lastAction {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 16px;
+  }
+
+  .triage-select{
+    margin-top: 2px;
+    padding: 0 4px;
+    max-width: fit-content;
+    min-width: 80px;
+    font-size: 12px;
+  }
+
+  ::v-deep {
+    .v-input__slot:before {
+      display: none;
     }
+
+    .v-input__slot:after {
+      visibility: hidden;
+    }
+
+    .v-text-field.v-input--is-focused > .v-input__control > .v-input__slot:after {
+      visibility: visible;
+    }
+
+    .v-text-field .v-input__append-inner {
+      padding-left: 0;
+    }
+
+    .v-select__selections input {
+      max-width: 4px;
+    }
+
+  }
 
 </style>

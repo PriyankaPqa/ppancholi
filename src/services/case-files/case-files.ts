@@ -1,5 +1,5 @@
 import {
-  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData,
+  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ECaseFileTriage,
 } from '@/entities/case-file';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
@@ -26,5 +26,9 @@ export class CaseFilesService implements ICaseFilesService {
 
   async setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileData> {
     return this.http.patch(`/case-file/case-files/${id}/is-duplicate`, { isDuplicate });
+  }
+
+  async setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFileData> {
+    return this.http.patch(`/case-file/case-files/${id}/triage`, { triage });
   }
 }

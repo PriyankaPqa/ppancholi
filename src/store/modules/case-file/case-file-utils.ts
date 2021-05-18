@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import {
   ECaseFileStatus,
-  ETriageLevel,
+  ECaseFileTriage,
   ICaseFile,
   ICaseFileBeneficiary,
   ICaseFileData,
@@ -15,8 +15,8 @@ import utils from '@/entities/utils';
 import { IRootState } from '../../store.types';
 import { IState } from './case-file.types';
 
-const getTriageName = (triage: ETriageLevel) : IMultilingual => {
-  const triageName = helpers.fillAllTranslationsFromI18n(`caseFileActivity.triageLevel.${ETriageLevel[triage]}`);
+const getTriageName = (triage: ECaseFileTriage) : IMultilingual => {
+  const triageName = helpers.fillAllTranslationsFromI18n(`enums.Triage.${ECaseFileTriage[triage]}`);
   return triageName;
 };
 

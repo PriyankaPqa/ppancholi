@@ -1,5 +1,5 @@
 import {
-  CaseFile, ICaseFile, ICaseFileLabel, mockCaseFilesSearchData, mockSearchCaseFiles,
+  CaseFile, ECaseFileTriage, ICaseFile, ICaseFileLabel, mockCaseFilesSearchData, mockSearchCaseFiles,
 } from '@/entities/case-file';
 import { Store } from 'vuex';
 import { mockSearchParams } from '@/test/helpers';
@@ -126,6 +126,18 @@ describe('>>> Case File Module', () => {
         store.commit('caseFile/setDuplicateLoading', true);
 
         expect(store.state.caseFile.duplicateLoading).toBe(true);
+      });
+    });
+
+    describe('setTriageLoading', () => {
+      it('sets the value of triageLoading', () => {
+        store = mockStore();
+
+        expect(store.state.caseFile.triageLoading).toBe(false);
+
+        store.commit('caseFile/setTriageLoading', true);
+
+        expect(store.state.caseFile.triageLoading).toBe(true);
       });
     });
   });
@@ -289,6 +301,38 @@ describe('>>> Case File Module', () => {
 
       expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledTimes(1);
       expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledWith(id, isDuplicate);
+
+      expect(res).toEqual(caseFile);
+
+      expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
+    });
+  });
+
+  describe('setCaseFileTriage', () => {
+    it('calls the setCaseFileTriage service and returns the case file entity', async () => {
+      store = mockStore({
+        modules: {
+          caseFile: {
+            state: {
+              caseFiles: mockCaseFiles(),
+            },
+          },
+        },
+      });
+
+      const caseFile = mockCaseFiles()[0];
+      const { id } = caseFile;
+      const triage = ECaseFileTriage.Tier1;
+
+      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(0);
+
+      const res = await store.dispatch('caseFile/setCaseFileTriage', {
+        id,
+        triage,
+      });
+
+      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledWith(id, triage);
 
       expect(res).toEqual(caseFile);
 

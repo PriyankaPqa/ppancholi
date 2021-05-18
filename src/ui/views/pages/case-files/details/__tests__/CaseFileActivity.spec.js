@@ -1,5 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { CaseFile, mockCaseFilesSearchData, mockCaseFileActivities } from '@/entities/case-file';
+import {
+  CaseFile, mockCaseFilesSearchData, mockCaseFileActivities, ECaseFileTriage,
+} from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 
@@ -70,6 +72,21 @@ describe('CaseFileActivity.vue', () => {
       });
     });
 
+    describe('triage select', () => {
+      it('renders', () => {
+        const element = wrapper.findDataTest('caseFileActivity-triage-select');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('calls setTriage when the value is changed', async () => {
+        jest.spyOn(wrapper.vm, 'setCaseFileTriage').mockImplementation(() => {});
+
+        const element = wrapper.findDataTest('caseFileActivity-triage-select');
+        await element.vm.$emit('change');
+        expect(wrapper.vm.setCaseFileTriage).toBeCalledTimes(1);
+      });
+    });
+
     describe('duplicate button', () => {
       let element;
       beforeEach(() => {
@@ -114,6 +131,14 @@ describe('CaseFileActivity.vue', () => {
           },
           $storage: storage,
         },
+        store: {
+          modules: {
+            caseFile: {
+              triageLoading: false,
+              duplicateLoading: false,
+            },
+          },
+        },
       });
 
       storage.caseFile.getters.caseFileById.mockReturnValueOnce(mockCaseFile);
@@ -154,6 +179,18 @@ describe('CaseFileActivity.vue', () => {
         await wrapper.setRole('level1');
         expect(wrapper.vm.canMarkDuplicate).toBe(true);
       });
+    });
+
+    describe('duplicateLoading', () => {
+      it('returns the right value', (() => {
+        expect(wrapper.vm.duplicateLoading).toEqual(wrapper.vm.$store.state.caseFile.duplicateLoading);
+      }));
+    });
+
+    describe('triageLoading', () => {
+      it('returns the right value', (() => {
+        expect(wrapper.vm.triageLoading).toEqual(wrapper.vm.$store.state.caseFile.triageLoading);
+      }));
     });
   });
 
@@ -209,7 +246,6 @@ describe('CaseFileActivity.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      storage.caseFile.actions.fetchCaseFileActivities = jest.fn(() => mockCaseFileActivities());
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
@@ -261,6 +297,22 @@ describe('CaseFileActivity.vue', () => {
 
         await wrapper.vm.setCaseFileIsDuplicate();
         expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledWith(wrapper.vm.activityFetchDelay);
+      });
+    });
+
+    describe('setCaseFileTriage', () => {
+      it('calls the setTriage action with the correct params', async () => {
+        expect(storage.caseFile.actions.setCaseFileTriage).toHaveBeenCalledTimes(0);
+
+        const triage = ECaseFileTriage.Tier1;
+
+        await wrapper.vm.setCaseFileTriage(triage);
+
+        expect(storage.caseFile.actions.setCaseFileTriage).toHaveBeenCalledTimes(1);
+        expect(storage.caseFile.actions.setCaseFileTriage).toHaveBeenCalledWith(
+          mockCaseFile.id,
+          triage,
+        );
       });
     });
 

@@ -6,7 +6,7 @@ import _sortBy from 'lodash/sortBy';
 
 import { IRootState } from '@/store/store.types';
 import {
-  CaseFile, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData,
+  CaseFile, ECaseFileTriage, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData,
 } from '@/entities/case-file';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 import {
@@ -21,6 +21,7 @@ const getDefaultState = (): IState => ({
   searchLoading: false,
   getLoading: false,
   duplicateLoading: false,
+  triageLoading: false,
 });
 
 const moduleState: IState = getDefaultState();
@@ -64,6 +65,10 @@ const mutations = {
 
   setDuplicateLoading(state: IState, payload: boolean) {
     state.duplicateLoading = payload;
+  },
+
+  setTriageLoading(state: IState, payload: boolean) {
+    state.triageLoading = payload;
   },
 
   setTagsOptions(state: IState, payload: Array<IOptionItemData>) {
@@ -178,6 +183,27 @@ const actions = {
       }
     } finally {
       context.commit('setDuplicateLoading', false);
+    }
+
+    return null;
+  },
+
+  async setCaseFileTriage(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    payload: { id: uuid, triage: ECaseFileTriage },
+  ): Promise<ICaseFile> {
+    try {
+      context.commit('setTriageLoading', true);
+      const data = await this.$services.caseFiles.setCaseFileTriage(payload.id, payload.triage);
+
+      if (data) {
+        const caseFile = new CaseFile(mapCaseFileDataToSearchData(data, context, payload.id));
+        context.commit('addOrUpdateCaseFile', caseFile);
+        return caseFile;
+      }
+    } finally {
+      context.commit('setTriageLoading', false);
     }
 
     return null;

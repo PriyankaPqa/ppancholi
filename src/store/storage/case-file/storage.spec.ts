@@ -1,4 +1,6 @@
-import { CaseFile, ICaseFileLabel, mockCaseFilesSearchData } from '@/entities/case-file';
+import {
+  CaseFile, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData,
+} from '@/entities/case-file';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
 import { IListOption } from '@/types';
@@ -59,6 +61,14 @@ describe('>>> Case File Storage', () => {
       const isDuplicate = true;
       storage.actions.setCaseFileIsDuplicate(id, isDuplicate);
       expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileIsDuplicate', { id, isDuplicate });
+    });
+
+    it('should proxy setCaseFileTriage', () => {
+      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+      const { id } = caseFile;
+      const triage = ECaseFileTriage.Tier1;
+      storage.actions.setCaseFileTriage(id, triage);
+      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileTriage', { id, triage });
     });
   });
 });

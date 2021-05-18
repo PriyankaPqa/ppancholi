@@ -11,7 +11,7 @@ export enum ECaseFileStatus {
   Archived = 4,
 }
 
-export enum ETriageLevel {
+export enum ECaseFileTriage {
   None = 0,
   Tier1 = 1,
   Tier2 = 2,
@@ -95,7 +95,7 @@ export interface ICaseFileData {
   eventId: uuid;
   tags: IListOption[];
   labels: ICaseFileLabel[];
-  triage: ETriageLevel;
+  triage: ECaseFileTriage;
   eTag: string;
   tenantId: uuid;
   timestamp: Date | string;
@@ -116,7 +116,7 @@ export interface ICaseFileSearchData {
   tags: IIdMultilingualName[];
   labels: ICaseFileLabel[];
   timestamp: Date | string;
-  triage: ETriageLevel;
+  triage: ECaseFileTriage;
   triageName: IMultilingual;
   tenantId: uuid;
 }
@@ -133,7 +133,7 @@ export interface ICaseFile {
   tags: IIdMultilingualName[];
   labels: ICaseFileLabel[];
   timestamp: Date | string;
-  triage: ETriageLevel;
+  triage: ECaseFileTriage;
   triageName: IMultilingual;
   tenantId: uuid;
   validate(): Array<string> | boolean;

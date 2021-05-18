@@ -1,4 +1,6 @@
-import { ICaseFile, ICaseFileActivity, ICaseFileLabel } from '@/entities/case-file';
+import {
+  ECaseFileTriage, ICaseFile, ICaseFileActivity, ICaseFileLabel,
+} from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
@@ -42,6 +44,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFile> {
       return store.dispatch('caseFile/setCaseFileIsDuplicate', { id, isDuplicate });
+    },
+
+    setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFile> {
+      return store.dispatch('caseFile/setCaseFileTriage', { id, triage });
     },
   },
 });

@@ -2,7 +2,7 @@ import { IIdMultilingualName, IMultilingual } from '@/types';
 import utils from '../utils';
 import {
   ECaseFileStatus,
-  ETriageLevel,
+  ECaseFileTriage,
   ICaseFile,
   ICaseFileBeneficiary,
   ICaseFileLabel,
@@ -32,7 +32,7 @@ export class CaseFile implements ICaseFile {
 
   timestamp: Date | string;
 
-  triage: ETriageLevel;
+  triage: ECaseFileTriage;
 
   triageName: IMultilingual;
 
