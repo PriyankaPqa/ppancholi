@@ -55,11 +55,16 @@
         </rc-page-content>
       </validation-observer>
     </page-template>
+    <rc-confirmation-dialog
+      ref="confirmLeavePopup"
+      :show.sync="showExitConfirmation"
+      :title="titleLeave"
+      :messages="messagesLeave" />
   </div>
 </template>
 
 <script lang="ts">
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent, RcConfirmationDialog } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';
@@ -74,6 +79,8 @@ import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { tabs } from '@/store/modules/registration/tabs';
 import store from '@/store/store';
 import { Route, NavigationGuardNext } from 'vue-router';
+import { TranslateResult } from 'vue-i18n';
+import { ConfirmationDialog } from '@/types';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -91,6 +98,15 @@ export default mixins(individual).extend({
     }
   },
 
+  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
+    if (this.currentTab.id !== 'confirmation') {
+      const userChoice = await (this.$refs.confirmLeavePopup as ConfirmationDialog).open();
+      next(userChoice);
+    } else {
+      next();
+    }
+  },
+
   components: {
     RcPageContent,
     PageTemplate,
@@ -101,6 +117,7 @@ export default mixins(individual).extend({
     Addresses,
     HouseholdMembers,
     ReviewRegistration,
+    RcConfirmationDialog,
   },
 
   mixins: [individual],
@@ -108,6 +125,7 @@ export default mixins(individual).extend({
   data() {
     return {
       tabs: tabs(),
+      showExitConfirmation: false,
     };
   },
 
@@ -119,6 +137,16 @@ export default mixins(individual).extend({
 
     submitLoading(): boolean {
       return false;
+    },
+
+    titleLeave(): TranslateResult {
+      return this.$t('confirmLeaveDialog.title');
+    },
+    messagesLeave(): Array<TranslateResult> {
+      return [
+        this.$t('confirmLeaveDialog.message_1'),
+        this.$t('confirmLeaveDialog.message_2'),
+      ];
     },
   },
   methods: {

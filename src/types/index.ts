@@ -26,3 +26,7 @@ export type VForm = Vue & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: Record<string, any>
 }
+
+export type ConfirmationDialog = Vue & {
+  open: () => Promise<unknown>;
+}
