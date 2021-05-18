@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
-  mockTeamSearchData, Team,
+  mockTeamSearchDataAggregate, Team,
 } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 import Component from './TeamMemberTeams.vue';
@@ -16,7 +16,7 @@ describe('TeamMemberTeams.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        member: new Team(mockTeamSearchData()[0]).teamMembers[0],
+        member: new Team(mockTeamSearchDataAggregate()[0]).teamMembers[0],
         show: true,
       },
       mocks: {
@@ -39,7 +39,7 @@ describe('TeamMemberTeams.vue', () => {
         TeamMembers: {
           any: {
             Id: {
-              eq: wrapper.vm.member.id,
+              eq: wrapper.vm.member.userAccountId,
             },
           },
         },
@@ -66,7 +66,7 @@ describe('TeamMemberTeams.vue', () => {
       });
 
       it('should generate the correct string', () => {
-        const { events } = mockTeamSearchData()[0];
+        const { events } = mockTeamSearchDataAggregate()[0];
         const res = wrapper.vm.buildEventsString(events);
         expect(res).toBe('Event 1, Event 2');
       });

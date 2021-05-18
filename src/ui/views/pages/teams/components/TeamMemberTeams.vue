@@ -49,7 +49,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog } from '@crctech/component-library';
-import { ITeamEvent, ITeamMember } from '@/entities/team';
+import { ITeamEvent, ITeamMemberData } from '@/entities/team';
 
 export default Vue.extend({
   name: 'TeamMemberTeams',
@@ -60,7 +60,7 @@ export default Vue.extend({
 
   props: {
     member: {
-      type: Object as () => ITeamMember,
+      type: Object as () => ITeamMemberData,
       required: true,
     },
     show: {
@@ -78,7 +78,7 @@ export default Vue.extend({
         TeamMembers: {
           any: {
             Id: {
-              eq: this.member.id,
+              eq: this.member.userAccountId,
             },
           },
         },

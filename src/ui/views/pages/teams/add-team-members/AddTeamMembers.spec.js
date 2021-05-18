@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockAppUserData } from '@/entities/app-user';
+import { mockTeamMembersData } from '@/entities/team';
 import { RcDialog } from '@crctech/component-library';
 import Component from './AddTeamMembers.vue';
 
@@ -15,7 +15,7 @@ describe('AddTeamMembers.vue', () => {
       localVue,
       propsData: {
         show: true,
-        teamMembers: mockAppUserData(),
+        teamMembers: mockTeamMembersData(),
       },
       store: {
         modules: {
@@ -93,7 +93,7 @@ describe('AddTeamMembers.vue', () => {
 
         await wrapper.vm.$nextTick();
 
-        expect(storage.appUser.getters.searchAppUser).toHaveBeenCalledWith('test', false, ['displayName', 'mail']);
+        expect(storage.userAccount.getters.searchUserAccounts).toHaveBeenCalledWith('test', ['displayName', 'emailAddress']);
       });
     });
 
@@ -115,35 +115,35 @@ describe('AddTeamMembers.vue', () => {
     describe('getClassRow', () => {
       it('returns row_disabled if the user is already in the team', () => {
         jest.spyOn(wrapper.vm, 'isAlreadyInTeam').mockImplementation(() => true);
-        const user = mockAppUserData()[0];
+        const user = mockTeamMembersData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('row_disabled');
       });
 
       it('returns row_active if the user is currently selected', () => {
         jest.spyOn(wrapper.vm, 'isAlreadyInTeam').mockImplementation(() => false);
         jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => true);
-        const user = mockAppUserData()[0];
+        const user = mockTeamMembersData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('row_active');
       });
 
       it('returns "" otherwise', () => {
         jest.spyOn(wrapper.vm, 'isAlreadyInTeam').mockImplementation(() => false);
         jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => false);
-        const user = mockAppUserData()[0];
+        const user = mockTeamMembersData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('');
       });
     });
 
     describe('getRole', () => {
       it('returns the displayName property of the role from Azure AD', () => {
-        const user = mockAppUserData()[0];
-        expect(wrapper.vm.getRole(user)).toEqual('Contributor M');
+        const user = mockTeamMembersData()[0];
+        expect(wrapper.vm.getRole(user)).toEqual('Role 1');
       });
     });
 
     describe('isAlreadyInTeam', () => {
       it('returns true if the user is already in the team', () => {
-        const user = mockAppUserData()[0];
+        const user = mockTeamMembersData()[0];
         expect(wrapper.vm.isAlreadyInTeam(user)).toBeTruthy();
       });
 
@@ -163,13 +163,13 @@ describe('AddTeamMembers.vue', () => {
 
     describe('isSelected', () => {
       it('returns true if the user is being selected', () => {
-        const user = mockAppUserData()[0];
-        wrapper.vm.selectedUsers = mockAppUserData();
+        const user = mockTeamMembersData()[0];
+        wrapper.vm.selectedUsers = mockTeamMembersData();
         expect(wrapper.vm.isSelected(user)).toBeTruthy();
       });
 
       it('returns false if the user is not selected', () => {
-        const user = mockAppUserData()[0];
+        const user = mockTeamMembersData()[0];
         wrapper.vm.selectedUsers = [];
         expect(wrapper.vm.isSelected(user)).toBeFalsy();
       });
@@ -177,7 +177,7 @@ describe('AddTeamMembers.vue', () => {
 
     describe('onSelectAll', () => {
       it('updates selectedUsers with all selected members when user is selecting', () => {
-        wrapper.vm.selectedUsers = mockAppUserData();
+        wrapper.vm.selectedUsers = mockTeamMembersData();
         const items = [
           {
             id: '5',
@@ -190,7 +190,7 @@ describe('AddTeamMembers.vue', () => {
           },
         ];
         wrapper.vm.onSelectAll({ items, value: true });
-        expect(wrapper.vm.selectedUsers).toEqual([...mockAppUserData(), ...items]);
+        expect(wrapper.vm.selectedUsers).toEqual([...mockTeamMembersData(), ...items]);
       });
 
       it('updates selectedUsers by removing unselected members', () => {
@@ -205,9 +205,9 @@ describe('AddTeamMembers.vue', () => {
             roles: [],
           },
         ];
-        wrapper.vm.selectedUsers = [...mockAppUserData(), ...items];
+        wrapper.vm.selectedUsers = [...mockTeamMembersData(), ...items];
         wrapper.vm.onSelectAll({ items, value: false });
-        expect(wrapper.vm.selectedUsers).toEqual(mockAppUserData());
+        expect(wrapper.vm.selectedUsers).toEqual(mockTeamMembersData());
       });
     });
 

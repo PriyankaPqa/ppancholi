@@ -1,10 +1,10 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { IRolesData } from '@/entities/app-user';
+import { EUserAccountStatus } from '../user-account';
 import { Team } from './team';
-import { mockTeamEvents, mockTeamMembers, mockTeamSearchData } from './team.mock';
-import { ETeamStatus, ETeamType } from './team.types';
+import { mockTeamEvents, mockTeamMembersData, mockTeamSearchDataAggregate } from './team.mock';
+import { ETeamStatus, ETeamType, ITeamMemberData } from './team.types';
 
-const mockTeamData = mockTeamSearchData()[0];
+const mockTeamData = mockTeamSearchDataAggregate()[0];
 
 describe('>>> Team', () => {
   describe('>> constructor', () => {
@@ -50,7 +50,7 @@ describe('>>> Team', () => {
 
     it('should instantiate teamMembers', () => {
       const team = new Team(mockTeamData);
-      expect(team.teamMembers).toEqual(mockTeamMembers());
+      expect(team.teamMembers).toEqual(mockTeamMembersData());
     });
 
     it('should instantiate teamMemberCount', () => {
@@ -71,18 +71,24 @@ describe('>>> Team', () => {
 
   describe('Methods', () => {
     describe('addTeamMembers', () => {
-      it('should add the member to the team', () => {
+      it('should add the member to the team and increment their team count', () => {
         const team = new Team();
-        const member = mockTeamMembers()[0];
+        const member = mockTeamMembersData()[0];
         team.addTeamMembers(member);
-        expect(team.teamMembers).toEqual([member]);
+        expect(team.teamMembers).toEqual([{
+          ...member,
+          teamCount: member.teamCount + 1,
+        }]);
       });
 
-      it('should add all members to the team', () => {
+      it('should add all members to the team and increment their team counts', () => {
         const team = new Team();
-        const member = mockTeamMembers();
+        const member = mockTeamMembersData();
         team.addTeamMembers(member);
-        expect(team.teamMembers).toEqual(member);
+        expect(team.teamMembers).toEqual(member.map((m) => ({
+          ...m,
+          teamCount: m.teamCount + 1,
+        })));
       });
     });
 
@@ -119,20 +125,35 @@ describe('>>> Team', () => {
       });
 
       it('should set a user as primary contact and all other users should not be primary users', () => {
-        const nonPrimaryContactMember = mockTeamMembers()[1];
+        const nonPrimaryContactMember = mockTeamMembersData()[1];
         team.setPrimaryContact(nonPrimaryContactMember);
         expect(team.teamMembers[0].isPrimaryContact).toBeFalsy();
         expect(team.teamMembers[1].isPrimaryContact).toBeTruthy();
       });
 
       it('should add a new member to the team and set it as primary contact if it is not already a member', () => {
-        const member = {
-          isPrimaryContact: false,
-          id: 'guid-member-new',
+        const member: ITeamMemberData = {
+          userAccountId: 'guid-member-x',
+          isPrimaryContact: true,
           displayName: 'Mister Test',
+          givenName: 'Mister',
+          surname: 'Test',
+          tenantId: '...',
+          userAccountStatus: EUserAccountStatus.Active,
+          filters: [],
           emailAddress: 'test@test.com',
           phoneNumber: '',
-          roles: [] as Array<IRolesData>,
+          roleId: 'role-id-1',
+          roleName: {
+            translation: {
+              en: 'Role 1',
+              fr: 'Role 1',
+            },
+          },
+          teamCount: 5,
+          caseFilesCount: 3,
+          openCaseFilesCount: 3,
+          inactiveCaseFilesCount: 3,
         };
         team.setPrimaryContact(member);
         expect(team.teamMembers[0].isPrimaryContact).toBeFalsy();
@@ -143,8 +164,8 @@ describe('>>> Team', () => {
 
     describe('getPrimaryContact', () => {
       it('should return the primary contact', () => {
-        const team = new Team(mockTeamSearchData()[0]);
-        expect(team.getPrimaryContact()).toEqual(mockTeamSearchData()[0].teamMembers[0]);
+        const team = new Team(mockTeamSearchDataAggregate()[0]);
+        expect(team.getPrimaryContact()).toEqual(mockTeamSearchDataAggregate()[0].teamMembers[0]);
       });
     });
 
@@ -219,7 +240,7 @@ describe('>>> Team', () => {
       });
 
       test('The teamMembers status is required', () => {
-        const team = new Team(mockTeamSearchData()[0]);
+        const team = new Team(mockTeamSearchDataAggregate()[0]);
 
         team.teamMembers[0].isPrimaryContact = false;
         team.teamMembers[1].isPrimaryContact = false;
@@ -228,7 +249,7 @@ describe('>>> Team', () => {
       });
 
       test('Ad-Hoc team can only have one event attached', () => {
-        const team = new Team(mockTeamSearchData()[1]);
+        const team = new Team(mockTeamSearchDataAggregate()[1]);
         team.events = [
           {
             id: 'd52d45e8-1973-4d54-91f4-8ec0864f8ff9',

@@ -1,8 +1,6 @@
 import { Team } from '@/entities/team';
 import { mockStore } from '@/store';
-
-import { mockAppUserData } from '@/entities/app-user';
-import { mockTeamSearchData } from '../../../entities/team/team.mock';
+import { mockTeamMembersData, mockTeamSearchDataAggregate } from '@/entities/team/team.mock';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });
@@ -12,19 +10,19 @@ const storage = makeStorage(store);
 describe('>>> Team Storage', () => {
   describe('>> Actions', () => {
     it('should proxy getTeam,', () => {
-      const { id } = new Team(mockTeamSearchData()[0]);
+      const { id } = new Team(mockTeamSearchDataAggregate()[0]);
       storage.actions.getTeam(id);
       expect(store.dispatch).toBeCalledWith('team/getTeam', id);
     });
 
     it('should proxy createTeam,', () => {
-      const payload = new Team(mockTeamSearchData()[0]);
+      const payload = new Team(mockTeamSearchDataAggregate()[0]);
       storage.actions.createTeam(payload);
       expect(store.dispatch).toBeCalledWith('team/createTeam', payload);
     });
 
     it('should proxy editTeam,', () => {
-      const payload = new Team(mockTeamSearchData()[0]);
+      const payload = new Team(mockTeamSearchDataAggregate()[0]);
       storage.actions.editTeam(payload);
       expect(store.dispatch).toBeCalledWith('team/editTeam', payload);
     });
@@ -36,7 +34,7 @@ describe('>>> Team Storage', () => {
 
     it('should proxy addTeamMembers', () => {
       const payload = {
-        teamMembers: mockAppUserData(),
+        teamMembers: mockTeamMembersData(),
       };
       storage.actions.addTeamMembers(payload.teamMembers);
       expect(store.dispatch).toBeCalledWith('team/addTeamMembers', payload);

@@ -1,9 +1,9 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { IAppUserData } from '@/entities/app-user';
 import { IMultilingual } from '@/types';
 import utils from '../utils';
 import {
-  ETeamStatus, ETeamType, ITeam, ITeamSearchData, ITeamMember, ITeamEvent,
+  ETeamStatus, ETeamType, ITeam, ITeamEvent, ITeamSearchDataAggregate, ITeamMemberData,
 } from './team.types';
 
 export class Team implements ITeam {
@@ -27,11 +27,11 @@ export class Team implements ITeam {
 
   eventCount: number;
 
-  teamMembers: Array<ITeamMember>;
+  teamMembers: Array<ITeamMemberData>;
 
   teamMemberCount: number;
 
-  constructor(data?: ITeamSearchData) {
+  constructor(data?: ITeamSearchDataAggregate) {
     if (data) {
       this.id = data.teamId;
       this.tenantId = data.tenantId;
@@ -50,16 +50,26 @@ export class Team implements ITeam {
     }
   }
 
-  addTeamMembers(members: ITeamMember | ITeamMember[]) {
+  addTeamMembers(members: ITeamMemberData | ITeamMemberData[]) {
     if (Array.isArray(members)) {
-      this.teamMembers = this.teamMembers.concat(members);
+      const teamMembers = _cloneDeep(members);
+      // Increment the team count for newly added members to account for their new team
+      teamMembers.forEach((m) => {
+        m.teamCount += 1;
+      });
+
+      this.teamMembers = this.teamMembers.concat(teamMembers);
     } else {
-      this.teamMembers.push(members);
+      this.teamMembers.push({
+        ...members,
+        // Increment the team count for newly added members to account for their new team
+        teamCount: members.teamCount + 1,
+      });
     }
   }
 
   removeTeamMember(userId: uuid): boolean {
-    const member = this.teamMembers.find((u) => u.id === userId);
+    const member = this.teamMembers.find((u) => u.userAccountId === userId);
 
     if (!member) return false;
 
@@ -67,16 +77,16 @@ export class Team implements ITeam {
       return false;
     }
 
-    this.teamMembers = this.teamMembers.filter((u) => u.id !== userId);
+    this.teamMembers = this.teamMembers.filter((u) => u.userAccountId !== userId);
 
     return true;
   }
 
-  setPrimaryContact(member: ITeamMember | IAppUserData) {
+  setPrimaryContact(member: ITeamMemberData) {
     let isUserInTeam = false;
-    const updatedTeam = this.teamMembers.map((m: ITeamMember) => {
+    const updatedTeam = this.teamMembers.map((m: ITeamMemberData) => {
       // If the userId is the Id of a team member, its primaryContact status is set to true
-      if (m.id === member.id) {
+      if (m.userAccountId === member.userAccountId) {
         m.isPrimaryContact = true;
         isUserInTeam = true;
       } else {
@@ -94,9 +104,9 @@ export class Team implements ITeam {
     }
   }
 
-  getPrimaryContact(): ITeamMember {
+  getPrimaryContact(): ITeamMemberData {
     if (this.teamMembers) {
-      const primaryContact = this.teamMembers.find((m) => m.isPrimaryContact) as ITeamMember;
+      const primaryContact = this.teamMembers.find((m) => m.isPrimaryContact) as ITeamMemberData;
       return primaryContact || null;
     }
     return null;

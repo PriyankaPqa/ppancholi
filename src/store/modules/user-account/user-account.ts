@@ -11,6 +11,7 @@ import {
 } from '@/entities/user-account';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IAddRoleToUserRequest } from '@/services/user-accounts';
+import helpers from '@/ui/helpers';
 import { IRootState } from '../../store.types';
 import {
   IState,
@@ -25,7 +26,6 @@ const getDefaultState = (): IState => ({
 const moduleState: IState = getDefaultState();
 
 const getters = {
-
   userAccountById: (state: IState) => (id: uuid): IUserAccount => {
     const userAccount = state.userAccounts.find((u) => u.userAccountId === id);
     if (userAccount) {
@@ -33,6 +33,9 @@ const getters = {
     }
     return null;
   },
+
+  searchUserAccounts:
+    (state: IState) => (search: string, searchAmong: [string]) => helpers.filterCollectionByValue(state.userAccounts, search, false, searchAmong),
 };
 
 const mutations = {
@@ -64,13 +67,11 @@ const actions = {
       const res = await this.$services.userAccounts.searchUserAccounts(params);
       const data = res?.value;
 
-      const value = data.map((a: IUserAccountSearchData) => new UserAccount(a));
-
-      value.forEach((a) => context.commit('addOrUpdateUserAccount', a));
+      data.forEach((a) => context.commit('addOrUpdateUserAccount', a));
 
       return {
         ...res,
-        value,
+        value: data.map((a: IUserAccountSearchData) => new UserAccount(a)),
       };
     } finally {
       context.commit('setSearchLoading', false);

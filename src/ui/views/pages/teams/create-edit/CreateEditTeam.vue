@@ -165,7 +165,7 @@ import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm } from '@/types';
-import { IAppUserData } from '@/entities/app-user';
+import { IUserAccountSearchData } from '@/entities/user-account';
 
 export default Vue.extend({
   name: 'CreateEditTeam',
@@ -198,8 +198,8 @@ export default Vue.extend({
     return {
       isNameUnique: true,
       primaryContactQuery: '',
-      primaryContactUsers: [] as IAppUserData[],
-      currentPrimaryContact: null as IAppUserData,
+      primaryContactUsers: [] as IUserAccountSearchData[],
+      currentPrimaryContact: null as IUserAccountSearchData,
       map: [null, 'standard', 'adhoc'],
       statuses: [ETeamStatus.Active, ETeamStatus.Inactive],
       showCancelConfirmationDialog: false,
@@ -274,6 +274,7 @@ export default Vue.extend({
   async mounted() {
     this.isLoading = true;
     await this.fetchEvents();
+    await this.fetchUserAccounts();
     if (!this.isEditMode) {
       this.prepareCreateTeam();
     } else {
@@ -289,16 +290,19 @@ export default Vue.extend({
     },
 
     getAvailableEvents() {
-      const activeEvents: ITeamEvent[] = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]).map((e: IEvent) => ({
-        id: e.id,
-        name: e.name,
-      }));
+      const eventsByStatus = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
+      if (eventsByStatus) {
+        const activeEvents: ITeamEvent[] = eventsByStatus.map((e: IEvent) => ({
+          id: e.id,
+          name: e.name,
+        }));
 
-      let existingInactiveEvents = [] as ITeamEvent[];
-      if (this.isEditMode) {
-        existingInactiveEvents = this.team.events.filter((ev) => !activeEvents.find((e) => e.id === ev.id));
+        let existingInactiveEvents = [] as ITeamEvent[];
+        if (this.isEditMode) {
+          existingInactiveEvents = this.team.events.filter((ev) => !activeEvents.find((e) => e.id === ev.id));
+        }
+        this.availableEvents = [...existingInactiveEvents, ...activeEvents];
       }
-      this.availableEvents = [...existingInactiveEvents, ...activeEvents];
     },
 
     handleRemoveEvent(leftEvents: ITeamEvent[]) {
@@ -365,7 +369,7 @@ export default Vue.extend({
       const query = this.primaryContactQuery;
 
       if (query && query.length >= this.minimumContactQueryLength) {
-        this.primaryContactUsers = this.$storage.appUser.getters.searchAppUser(query, false, ['displayName']);
+        this.primaryContactUsers = this.$storage.userAccount.getters.searchUserAccounts(query, ['displayName']);
       } else {
         this.primaryContactUsers = [];
       }
@@ -379,7 +383,7 @@ export default Vue.extend({
       (this.$refs.form as VForm).reset();
     },
 
-    setPrimaryContact(appUser: IAppUserData) {
+    setPrimaryContact(appUser: IUserAccountSearchData) {
       this.currentPrimaryContact = appUser;
     },
 
@@ -390,7 +394,9 @@ export default Vue.extend({
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (!isValid) return;
-      this.team.setPrimaryContact(this.currentPrimaryContact);
+
+      this.setPrimaryContactTeam();
+
       if (!this.isEditMode) {
         await this.submitCreateTeam();
       } else {
@@ -399,11 +405,20 @@ export default Vue.extend({
       }
     },
 
+    setPrimaryContactTeam() {
+      this.team.setPrimaryContact({
+        ...this.currentPrimaryContact,
+        isPrimaryContact: true,
+      });
+    },
+
     async submitCreateTeam() {
       try {
-        await this.$storage.team.actions.createTeam(this.team);
+        const res = await this.$storage.team.actions.createTeam(this.team);
 
-        const message:TranslateResult = this.team.teamType === ETeamType.Standard
+        this.team = _cloneDeep(res);
+
+        const message: TranslateResult = this.team.teamType === ETeamType.Standard
           ? this.$t('teams.standard_team_created')
           : this.$t('teams.adhoc_team_created');
 
@@ -432,12 +447,15 @@ export default Vue.extend({
       this.team.teamType = this.teamType === 'standard' ? ETeamType.Standard : ETeamType.AdHoc;
     },
 
+    async fetchUserAccounts() {
+      await this.$storage.userAccount.actions.searchUserAccounts({});
+    },
+
   },
 });
 </script>
 
 <style scoped lang="scss">
-
 .firstSection {
   display: flex;
   flex-direction: column;

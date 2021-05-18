@@ -1,9 +1,9 @@
 import {
   ITeam, ITeamData, IEditTeamRequest, ITeamSearchData, ICreateTeamRequest, IAddTeamMembersRequest,
 } from '@/entities/team';
+import { IUserAccountSearchData } from '@/entities/user-account';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-import { IAppUserData } from '@/entities/app-user';
 import { ITeamsService } from './teams.types';
 
 export class TeamsService implements ITeamsService {
@@ -27,9 +27,9 @@ export class TeamsService implements ITeamsService {
     return this.http.get('/search/team-projections', { params, isOData: true });
   }
 
-  async addTeamMembers(teamId: uuid, teamMembers: IAppUserData[]): Promise<ITeamData> {
+  async addTeamMembers(teamId: uuid, teamMembers: IUserAccountSearchData[]): Promise<ITeamData> {
     const payload = {
-      teamMemberIds: teamMembers.map((t) => t.id),
+      teamMemberIds: teamMembers.map((t) => t.userAccountId),
     } as IAddTeamMembersRequest;
     return this.http.patch(`/team/teams/${teamId}/add-team-members`, payload);
   }
@@ -39,19 +39,30 @@ export class TeamsService implements ITeamsService {
   }
 
   private teamToEditTeamRequestPayload(team: ITeam) : IEditTeamRequest {
+    const primaryContactMember = team.teamMembers.find((m) => m.isPrimaryContact);
+    const primaryContact = {
+      id: primaryContactMember.userAccountId,
+      isPrimaryContact: true,
+    };
+
     return {
       name: team.name,
       eventIds: team.events.map((e) => e.id),
-      primaryContact: team.teamMembers.find((m) => m.isPrimaryContact),
+      primaryContact,
       status: team.status,
     };
   }
 
   private teamToCreateTeamRequestPayload(team: ITeam) : ICreateTeamRequest {
+    const teamMembers = team.teamMembers.map((m) => ({
+      id: m.userAccountId,
+      isPrimaryContact: m.isPrimaryContact,
+    }));
+
     return {
       name: team.name,
       eventIds: team.events.map((e) => e.id),
-      teamMembers: team.teamMembers,
+      teamMembers,
       teamType: team.teamType,
     };
   }

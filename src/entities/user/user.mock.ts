@@ -1,4 +1,3 @@
-import { ETeamStatus, ETeamType } from '@/entities/team';
 import {
   EFilterKey, IFilter, IFilterData, IUserAccountData, IUserData, IUser,
 } from './user.types';
@@ -16,8 +15,6 @@ export const mockUserFilters = (): IFilter[] => [
     filterKey: EFilterKey.Teams,
     criteria: [
       ['TeamName', 'Equal', 'test1'],
-      ['TeamType', 'Equal', ETeamType.Standard],
-      ['TeamStatus', 'Equal', ETeamStatus.Active],
     ],
   },
   {
@@ -38,8 +35,6 @@ export const mockUserFiltersData = (): IFilterData[] => [
     filterKey: EFilterKey.Teams,
     criteria: [
       '["TeamName", "Equal", "test1"]',
-      '["TeamType", "Equal", 1]',
-      '["TeamStatus", "Equal", 1]',
     ],
   },
   {

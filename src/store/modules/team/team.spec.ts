@@ -1,12 +1,11 @@
 import { Store } from 'vuex';
 import {
-  Team, mockTeamSearchData, mockTeamsData, mockTeamMembers,
+  Team, mockTeamSearchDataAggregate, mockTeamsData, mockTeamMembersData,
 } from '@/entities/team';
 import { mockStore, IRootState } from '@/store';
-import { mockAppUserData } from '@/entities/app-user';
 import _cloneDeep from 'lodash/cloneDeep';
 
-import * as utils from './utils';
+jest.mock('@/store/modules/team/teamUtils');
 
 describe('>>> Team Module', () => {
   let store: Store<IRootState>;
@@ -48,7 +47,7 @@ describe('>>> Team Module', () => {
 
         await store.dispatch('team/getTeam', id);
 
-        const expected = mockTeamSearchData()[0];
+        const expected = mockTeamSearchDataAggregate()[0];
 
         expect(mutations.setTeam).toHaveBeenCalledWith(expect.anything(), expected);
       });
@@ -56,7 +55,7 @@ describe('>>> Team Module', () => {
 
     describe('createTeam', () => {
       it('calls the service createTeam with the right params', async () => {
-        const payload = new Team(mockTeamSearchData()[0]);
+        const payload = new Team(mockTeamSearchDataAggregate()[0]);
         expect(store.$services.teams.createTeam).toHaveBeenCalledTimes(0);
 
         await store.dispatch('team/createTeam', payload);
@@ -65,17 +64,16 @@ describe('>>> Team Module', () => {
       });
 
       it('calls mutation setTeam with result of buildTeamSearchDataPayload', async () => {
-        const payload = new Team(mockTeamSearchData()[0]);
-        jest.spyOn(utils, 'buildTeamSearchDataPayload').mockImplementation(() => null);
+        const payload = new Team(mockTeamSearchDataAggregate()[0]);
         await store.dispatch('team/createTeam', payload);
 
-        expect(mutations.setTeam).toHaveBeenCalledWith(expect.anything(), null);
+        expect(mutations.setTeam).toHaveBeenCalledWith(expect.anything(), mockTeamSearchDataAggregate()[0]);
       });
     });
 
     describe('editTeam', () => {
       it('calls the service editTeam with the right params', async () => {
-        const payload = new Team(mockTeamSearchData()[0]);
+        const payload = new Team(mockTeamSearchDataAggregate()[0]);
         expect(store.$services.teams.editTeam).toHaveBeenCalledTimes(0);
 
         await store.dispatch('team/editTeam', payload);
@@ -84,11 +82,10 @@ describe('>>> Team Module', () => {
       });
 
       it('calls mutation setTeam with result of buildTeamSearchDataPayload', async () => {
-        const payload = new Team(mockTeamSearchData()[0]);
-        jest.spyOn(utils, 'buildTeamSearchDataPayload').mockImplementation(() => null);
+        const payload = new Team(mockTeamSearchDataAggregate()[0]);
         await store.dispatch('team/editTeam', payload);
 
-        expect(mutations.setTeam).toHaveBeenCalledWith(expect.anything(), null);
+        expect(mutations.setTeam).toHaveBeenCalledWith(expect.anything(), mockTeamSearchDataAggregate()[0]);
       });
     });
 
@@ -108,7 +105,7 @@ describe('>>> Team Module', () => {
         store.state.team.team = new Team();
         store.state.team.team.id = '1234';
         const payload = {
-          teamMembers: mockAppUserData(),
+          teamMembers: mockTeamMembersData(),
         };
         await store.dispatch('team/addTeamMembers', payload);
 
@@ -176,9 +173,9 @@ describe('>>> Team Module', () => {
       it('sets team with a new instance of team', () => {
         store = mockStore();
         store.state.team.team = null;
-        store.commit('team/setTeam', mockTeamSearchData()[0]);
+        store.commit('team/setTeam', mockTeamSearchDataAggregate()[0]);
 
-        expect(store.state.team.team).toEqual(new Team(mockTeamSearchData()[0]));
+        expect(store.state.team.team).toEqual(new Team(mockTeamSearchDataAggregate()[0]));
       });
     });
 
@@ -195,7 +192,7 @@ describe('>>> Team Module', () => {
     describe('resetTeam', () => {
       it('reset team with a new instance of team', () => {
         store = mockStore();
-        store.commit('team/setTeam', mockTeamSearchData()[0]);
+        store.commit('team/setTeam', mockTeamSearchDataAggregate()[0]);
         store.commit('team/resetTeam');
 
         expect(store.state.team.team).toEqual(new Team());
@@ -215,8 +212,8 @@ describe('>>> Team Module', () => {
       it('should call addTeamMembers method from team entity with proper parameters', () => {
         store.state.team.team = new Team();
         jest.spyOn(store.state.team.team, 'addTeamMembers');
-        store.commit('team/addTeamMembers', mockTeamMembers());
-        expect(store.state.team.team.addTeamMembers).toHaveBeenCalledWith(mockTeamMembers());
+        store.commit('team/addTeamMembers', mockTeamMembersData());
+        expect(store.state.team.team.addTeamMembers).toHaveBeenCalledWith(mockTeamMembersData());
       });
     });
   });

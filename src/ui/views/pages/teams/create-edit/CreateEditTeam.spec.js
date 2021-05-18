@@ -7,24 +7,20 @@ import {
 import routes from '@/constants/routes';
 import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
 import {
-  mockTeamsData, ETeamStatus, ETeamType, mockTeamMembers, Team, mockTeamSearchData,
+  ETeamStatus, ETeamType, mockTeamMembersData, Team, mockTeamSearchDataAggregate, mockTeam,
 } from '@/entities/team';
-
-import { mockAppUserAzureData } from '@/entities/app-user';
+import { mockUserAccountSearchData } from '@/entities/user-account';
 import { mockStorage } from '@/store/storage';
 
 import Component from './CreateEditTeam.vue';
+
+jest.mock('@/store/modules/team/teamUtils');
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
 describe('CreateEditTeam.vue', () => {
   let wrapper;
-
-  const actions = {
-    fetchEvents: jest.fn(),
-    editTeam: jest.fn(() => mockTeamsData()[0]),
-  };
 
   describe('Template', () => {
     beforeEach(async () => {
@@ -43,7 +39,7 @@ describe('CreateEditTeam.vue', () => {
         },
       });
       await wrapper.setData({
-        team: new Team(),
+        team: mockTeam(),
         isLoading: false,
       });
     });
@@ -83,7 +79,7 @@ describe('CreateEditTeam.vue', () => {
             },
           });
           await wrapper.setData({
-            team: new Team(),
+            team: mockTeam(),
             isLoading: false,
           });
 
@@ -275,7 +271,7 @@ describe('CreateEditTeam.vue', () => {
               },
             });
             await wrapper.setData({
-              team: new Team(),
+              team: mockTeam(),
               isLoading: false,
             });
 
@@ -305,7 +301,7 @@ describe('CreateEditTeam.vue', () => {
                 },
               });
               wrapper.setData({
-                team: new Team(),
+                team: mockTeam(),
                 isLoading: false,
               });
               jest.spyOn(wrapper.vm, 'isSubmitDisabled').mockImplementation(() => true);
@@ -334,7 +330,7 @@ describe('CreateEditTeam.vue', () => {
             });
 
             await wrapper.setData({
-              team: new Team(),
+              team: mockTeam(),
               isLoading: false,
             });
 
@@ -370,7 +366,7 @@ describe('CreateEditTeam.vue', () => {
           },
         });
         await wrapper.setData({
-          team: new Team(),
+          team: mockTeam(),
           isLoading: false,
         });
         wrapper.vm.$route.name = routes.teams.edit.name;
@@ -434,6 +430,11 @@ describe('CreateEditTeam.vue', () => {
         propsData: {
           teamType: 'standard',
         },
+        data() {
+          return {
+            team: mockTeam(),
+          };
+        },
       });
     });
 
@@ -454,7 +455,7 @@ describe('CreateEditTeam.vue', () => {
           },
         });
         await wrapper.setData({
-          team: new Team(),
+          team: mockTeam(),
           isLoading: false,
         });
         // eslint-disable-next-line prefer-destructuring
@@ -560,78 +561,46 @@ describe('CreateEditTeam.vue', () => {
   });
 
   describe('Lifecycle', () => {
-    test('fetchEvents action is called', async () => {
+    beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           teamType: 'standard',
         },
-        store: {
-          modules: {
-            event: {
-              actions,
-            },
-          },
-        },
-      });
-
-      expect(actions.fetchEvents).toHaveBeenCalledTimes(1);
-    });
-
-    it('calls loadTeam in edit mode', async () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          teamType: 'adhoc',
-        },
-        computed: {
-          isEditMode() { return true; },
+        mocks: {
+          $storage: storage,
         },
         data() {
           return {
-            team: new Team(),
-            isLoading: false,
+            team: mockTeam(),
           };
         },
       });
-
       wrapper.vm.fetchEvents = jest.fn();
-      wrapper.vm.loadTeam = jest.fn();
+      wrapper.vm.getAvailableEvents = jest.fn();
+      wrapper.vm.fetchUserAccounts = jest.fn();
+    });
 
+    it('calls fetchEvents', async () => {
       await wrapper.vm.$options.mounted.forEach((hook) => {
         hook.call(wrapper.vm);
       });
-
-      expect(wrapper.vm.loadTeam).toHaveBeenCalledTimes(1);
+      expect(wrapper.vm.fetchEvents).toHaveBeenCalledTimes(1);
     });
 
     it('calls getAvailableEvents', async () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          teamType: 'standard',
-        },
-        computed: {
-          isEditMode() { return false; },
-        },
-        data() {
-          return {
-            team: new Team(),
-            isLoading: false,
-          };
-        },
-      });
-      wrapper.vm.fetchEvents = jest.fn();
-      wrapper.vm.loadTeam = jest.fn();
-      wrapper.vm.getAvailableEvents = jest.fn();
-
-      expect(wrapper.vm.getAvailableEvents).toHaveBeenCalledTimes(0);
-
       await wrapper.vm.$options.mounted.forEach((hook) => {
         hook.call(wrapper.vm);
       });
-
       expect(wrapper.vm.getAvailableEvents).toHaveBeenCalledTimes(1);
+    });
+
+    it('should calls fetchUserAccounts', async () => {
+      jest.clearAllMocks();
+      await wrapper.vm.$options.mounted.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(wrapper.vm.fetchUserAccounts).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -643,20 +612,12 @@ describe('CreateEditTeam.vue', () => {
           teamType: 'standard',
           id: '123',
         },
-        store: {
-          modules: {
-            event: {
-              actions,
-            },
-            team: {
-              actions,
-            },
-          },
+        mocks: {
+          $storage: storage,
         },
-
       });
       await wrapper.setData({
-        team: new Team(),
+        team: mockTeam(),
         isLoading: false,
       });
     });
@@ -665,7 +626,7 @@ describe('CreateEditTeam.vue', () => {
       test('Events should be fetched', () => {
         jest.clearAllMocks();
         wrapper.vm.fetchEvents();
-        expect(actions.fetchEvents).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.event.actions.fetchEvents).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -676,19 +637,9 @@ describe('CreateEditTeam.vue', () => {
           teamType: 'standard',
           id: '123',
         },
-        store: {
-          modules: {
-            event: {
-              actions,
-            },
-            team: {
-              actions,
-            },
-          },
-        },
         data() {
           return {
-            team: new Team(),
+            team: mockTeam(),
             isLoading: false,
           };
         },
@@ -716,9 +667,9 @@ describe('CreateEditTeam.vue', () => {
 
       it('adds into availableEvents the events that are existing in the team but are not currently active/on hold, only for edit mode', async () => {
         storage.event.getters.eventsByStatus = jest.fn(() => [new Event(mockEventsSearchData()[0])]);
-        const mockTeam = new Team();
+        const myTeam = mockTeam();
         const inactiveEvent = { id: 'foo', name: { translation: { en: 'mock-name' } } };
-        mockTeam.events = [inactiveEvent];
+        myTeam.events = [inactiveEvent];
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -729,22 +680,12 @@ describe('CreateEditTeam.vue', () => {
               return true;
             },
           },
-          store: {
-            modules: {
-              event: {
-                actions,
-              },
-              team: {
-                actions,
-              },
-            },
-          },
           data() {
             return {
               currentPrimaryContact: {
                 id: 'id',
               },
-              team: mockTeam,
+              team: myTeam,
             };
           },
           mocks: {
@@ -829,7 +770,7 @@ describe('CreateEditTeam.vue', () => {
           },
           data() {
             return {
-              team: new Team(),
+              team: new Team(mockTeamSearchDataAggregate()[0]),
               isLoading: false,
             };
           },
@@ -852,7 +793,7 @@ describe('CreateEditTeam.vue', () => {
           },
           data() {
             return {
-              team: new Team(),
+              team: mockTeam(),
               isLoading: false,
             };
           },
@@ -875,7 +816,7 @@ describe('CreateEditTeam.vue', () => {
           },
           data() {
             return {
-              team: new Team(),
+              team: new Team(mockTeamSearchDataAggregate()[0]),
               isLoading: false,
             };
           },
@@ -889,13 +830,13 @@ describe('CreateEditTeam.vue', () => {
       beforeEach(async () => {
         wrapper.vm.$store.commit('team/resetTeam');
         wrapper.vm.$route.params = { id: 'foo' };
-        jest.spyOn(wrapper.vm.$storage.team.actions, 'getTeam');
-        jest.spyOn(wrapper.vm.$storage.team.getters, 'team').mockImplementation(() => new Team(mockTeamSearchData()[0]));
+        jest.spyOn(wrapper.vm.$storage.team.actions, 'getTeam').mockImplementation(() => new Team(mockTeamSearchDataAggregate()[0]));
+        jest.spyOn(wrapper.vm.$storage.team.getters, 'team').mockImplementation(() => new Team(mockTeamSearchDataAggregate()[0]));
       });
 
       it('sets the right primary contact user', async () => {
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.currentPrimaryContact).toEqual(mockTeamMembers()[0]);
+        expect(wrapper.vm.currentPrimaryContact).toEqual(mockTeamMembersData()[0]);
       });
 
       it('calls the action getTeam', async () => {
@@ -905,12 +846,12 @@ describe('CreateEditTeam.vue', () => {
 
       it('sets the right primaryContactQuery', async () => {
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.primaryContactQuery).toEqual(mockTeamMembers()[0].displayName);
+        expect(wrapper.vm.primaryContactQuery).toEqual(mockTeamMembersData()[0].displayName);
       });
 
       it('should set the team with a cloneDeep of team from storage', async () => {
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.team).toEqual(new Team(mockTeamSearchData()[0]));
+        expect(wrapper.vm.team).toEqual(new Team(mockTeamSearchDataAggregate()[0]));
       });
     }));
 
@@ -923,7 +864,7 @@ describe('CreateEditTeam.vue', () => {
           },
           data() {
             return {
-              team: new Team(),
+              team: mockTeam(),
               isLoading: false,
             };
           },
@@ -941,7 +882,7 @@ describe('CreateEditTeam.vue', () => {
           },
           data() {
             return {
-              team: new Team(),
+              team: mockTeam(),
               isLoading: false,
             };
           },
@@ -976,12 +917,13 @@ describe('CreateEditTeam.vue', () => {
 
     describe('searchPrimaryContacts', () => {
       it('calls the searchAppUsers action when the query is long enough and assigns the result to primaryContactUsers', async () => {
-        jest.spyOn(wrapper.vm.$storage.appUser.getters, 'searchAppUser').mockImplementation(() => [mockAppUserAzureData()[0]]);
+        jest.spyOn(wrapper.vm.$storage.userAccount.getters, 'searchUserAccounts').mockImplementation(() => [mockUserAccountSearchData()[0]]);
         wrapper.vm.primaryContactQuery = 'ab';
         wrapper.vm.minimumContactQueryLength = 2;
         await wrapper.vm.searchPrimaryContacts();
-        expect(wrapper.vm.$storage.appUser.getters.searchAppUser).toHaveBeenCalledWith(wrapper.vm.primaryContactQuery, false, ['displayName']);
-        expect(wrapper.vm.primaryContactUsers).toEqual([mockAppUserAzureData()[0]]);
+        expect(wrapper.vm.$storage.userAccount.getters.searchUserAccounts)
+          .toHaveBeenCalledWith(wrapper.vm.primaryContactQuery, ['displayName']);
+        expect(wrapper.vm.primaryContactUsers).toEqual([mockUserAccountSearchData()[0]]);
       });
 
       it('does not call the searchAppUsers action when the query is not long enough long enough and empties the list of users', async () => {
@@ -1015,6 +957,36 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('submit', () => {
+      let actions;
+      beforeEach(async () => {
+        jest.clearAllMocks();
+
+        actions = {
+          createTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[0])),
+        };
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+            id: '123',
+          },
+          data() {
+            return {
+              team: mockTeam(),
+              isLoading: false,
+            };
+          },
+          store: {
+            modules: {
+              team: {
+                actions,
+              },
+            },
+          },
+        });
+      });
+
       it('calls the validation method', async () => {
         wrapper.vm.currentPrimaryContact = {
           id: 'id',
@@ -1027,11 +999,10 @@ describe('CreateEditTeam.vue', () => {
 
       it('calls the method setPrimaryContact of team with currentPrimaryContact', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.$refs.form.reset = jest.fn(() => true);
-        [wrapper.vm.currentPrimaryContact] = mockTeamMembers();
-        wrapper.vm.team.setPrimaryContact = jest.fn();
+        wrapper.vm.submitCreateTeam = jest.fn();
+        wrapper.vm.setPrimaryContactTeam = jest.fn();
         await wrapper.vm.submit();
-        expect(wrapper.vm.team.setPrimaryContact).toHaveBeenCalledWith(mockTeamMembers()[0]);
+        expect(wrapper.vm.setPrimaryContactTeam).toHaveBeenCalledTimes(1);
       });
 
       describe('in create mode', () => {
@@ -1043,13 +1014,6 @@ describe('CreateEditTeam.vue', () => {
             propsData: {
               teamType: 'standard',
             },
-            store: {
-              modules: {
-                team: {
-                  actions,
-                },
-              },
-            },
             computed: {
               isEditMode() {
                 return false;
@@ -1060,6 +1024,7 @@ describe('CreateEditTeam.vue', () => {
                 currentPrimaryContact: {
                   id: 'id',
                 },
+                team: mockTeam(),
               };
             },
           });
@@ -1100,7 +1065,7 @@ describe('CreateEditTeam.vue', () => {
                 currentPrimaryContact: {
                   id: 'id',
                 },
-                team: new Team(),
+                team: mockTeam(),
               };
             },
           });
@@ -1124,14 +1089,14 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('submitCreateTeam', () => {
-      beforeAll(() => {
+      let actions;
+      beforeEach(async () => {
         jest.clearAllMocks();
-      });
 
-      it('calls createTeam action', async () => {
-        const actions = {
-          createTeam: jest.fn(),
+        actions = {
+          createTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[0])),
         };
+
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -1146,25 +1111,58 @@ describe('CreateEditTeam.vue', () => {
             },
           },
         });
+
         await wrapper.setData({
-          team: new Team(),
+          team: mockTeam(),
           isLoading: false,
         });
+
         jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
+      });
+
+      it('calls createTeam action', async () => {
         await wrapper.vm.submitCreateTeam();
         expect(actions.createTeam).toHaveBeenCalledTimes(1);
       });
 
       it('opens a toast with a success message for standard team', async () => {
-        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
 
         expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.standard_team_created');
       });
 
+      it('sets the value of the team in data', async () => {
+        await wrapper.vm.submitCreateTeam();
+        expect(wrapper.vm.team).toEqual(new Team(mockTeamSearchDataAggregate()[0]));
+      });
+
       it('opens a toast with a success message for adhoc team', async () => {
+        actions = {
+          createTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[1])),
+        };
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'adhoc',
+            id: '123',
+          },
+          store: {
+            modules: {
+              team: {
+                actions,
+              },
+            },
+          },
+        });
+
+        await wrapper.setData({
+          team: mockTeam(),
+          isLoading: false,
+        });
+
         jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
-        wrapper.vm.$store.$services.teams.createTeam = jest.fn(() => mockTeamsData()[1]);
+
         wrapper.vm.team.teamType = ETeamType.AdHoc;
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
@@ -1174,44 +1172,64 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('redirects to the edit page with the id of the newly created team', async () => {
-        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
-        jest.spyOn(wrapper.vm.$router, 'replace').mockImplementation(() => {});
         wrapper.vm.team.id = 'guid-team-1';
         await wrapper.vm.submitCreateTeam();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith(
-          { name: routes.teams.edit.name, params: { id: mockTeamsData()[0].id, teamType: 'standard' } },
+          { name: routes.teams.edit.name, params: { id: mockTeamSearchDataAggregate()[0].teamId, teamType: 'standard' } },
         );
       });
 
       it('resets the form validation', async () => {
-        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
         expect(wrapper.vm.resetFormValidation).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('submitEditTeam', () => {
-      beforeAll(() => {
+      let actions;
+
+      beforeEach(async () => {
         jest.clearAllMocks();
+
+        actions = {
+          editTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[0])),
+        };
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+            id: '123',
+          },
+          store: {
+            modules: {
+              team: {
+                actions,
+              },
+            },
+          },
+        });
+
+        await wrapper.setData({
+          team: mockTeam(),
+          isLoading: false,
+        });
+
+        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
       });
 
       it('calls editTeam action', async () => {
-        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitEditTeam();
         expect(actions.editTeam).toHaveBeenCalledTimes(1);
       });
 
       it('opens a toast with a success message', async () => {
-        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
-        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
         await wrapper.vm.submitEditTeam();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.team_updated');
       });
 
       it('resets the form validation', async () => {
-        // wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        jest.spyOn(wrapper.vm, 'resetFormValidation').mockImplementation(() => {});
         await wrapper.vm.submitCreateTeam();
         expect(wrapper.vm.resetFormValidation).toHaveBeenCalledTimes(1);
       });
@@ -1251,6 +1269,24 @@ describe('CreateEditTeam.vue', () => {
         });
         await wrapper.vm.prepareCreateTeam();
         expect(wrapper.vm.team.teamType).toEqual(ETeamType.AdHoc);
+      });
+    });
+
+    describe('fetchUserAccounts', () => {
+      it('should call searchUserAccounts actions with proper param', async () => {
+        await wrapper.vm.fetchUserAccounts();
+        expect(wrapper.vm.$storage.userAccount.actions.searchUserAccounts).toHaveBeenCalledWith({});
+      });
+    });
+
+    describe('setPrimaryContactTeam', () => {
+      it('should set the primary contact of the team', () => {
+        wrapper.vm.team.setPrimaryContact = jest.fn();
+        wrapper.vm.setPrimaryContactTeam();
+        expect(wrapper.vm.team.setPrimaryContact).toHaveBeenCalledWith({
+          ...wrapper.vm.currentPrimaryContact,
+          isPrimaryContact: true,
+        });
       });
     });
   });

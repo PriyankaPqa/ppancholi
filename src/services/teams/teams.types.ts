@@ -1,13 +1,15 @@
-import { ITeam, ITeamData, ITeamSearchData } from '@/entities/team';
+import {
+  ITeam, ITeamData, ITeamSearchData,
+} from '@/entities/team';
+import { IUserAccountSearchData } from '@/entities/user-account';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-import { IAppUserData } from '@/entities/app-user';
 
 export interface ITeamsService {
   createTeam(payload: ITeam): Promise<ITeamData>;
   editTeam(payload: ITeam): Promise<ITeamData>;
   getTeam(id: uuid): Promise<ITeamData>;
   searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
-  addTeamMembers(teamId: uuid, teamMembers: IAppUserData[]): Promise<ITeamData>;
+  addTeamMembers(teamId: uuid, teamMembers: IUserAccountSearchData[]): Promise<ITeamData>;
   removeTeamMember(teamId: uuid, teamMemberId: uuid) : Promise<ITeamData>;
 }
 

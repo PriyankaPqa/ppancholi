@@ -5,14 +5,14 @@ import {
 import { IRootState } from '@/store/store.types';
 
 import {
-  ITeam, ITeamMember, ITeamSearchData, Team,
+  ITeam, ITeamMemberData, ITeamSearchData, ITeamSearchDataAggregate, Team,
 } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-import { IAppUserData } from '@/entities/app-user';
+import { IProvider } from '@/services/provider';
 import _cloneDeep from 'lodash/cloneDeep';
 import { IState } from './team.types';
 
-import { buildTeamSearchDataPayload } from './utils';
+import { buildTeamSearchDataPayload, aggregateTeamSearchDataWithMembers } from './teamUtils';
 
 const getDefaultState = (): IState => ({
   submitLoading: false, // used when adding members and saving
@@ -46,7 +46,7 @@ const mutations = {
     state.removeLoading = payload;
   },
 
-  setTeam(state: IState, payload: ITeamSearchData) {
+  setTeam(state: IState, payload: ITeamSearchDataAggregate) {
     state.team = new Team(payload);
   },
 
@@ -62,14 +62,13 @@ const mutations = {
     state.team.removeTeamMember(id);
   },
 
-  addTeamMembers(state: IState, teamMembers: ITeamMember[]) {
+  addTeamMembers(state: IState, teamMembers: ITeamMemberData[]) {
     state.team.addTeamMembers(teamMembers);
   },
 
 };
 
 const actions = {
-
   async getTeam(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ITeam> {
     context.commit('setGetLoading', true);
     try {
@@ -85,7 +84,13 @@ const actions = {
 
       // TODO - Remove when signal R is ready
       const res = await this.$services.teams.searchTeams({ filter: { TeamId: id } });
-      context.commit('setTeam', res.value[0]);
+      if (res && res.value && res.value[0]) {
+        const team = res.value[0];
+
+        const aggregate = await aggregateTeamSearchDataWithMembers(this.$services as IProvider, team);
+
+        context.commit('setTeam', aggregate);
+      }
 
       return context.state.team;
     } finally {
@@ -97,7 +102,7 @@ const actions = {
     context.commit('setSubmitLoading', true);
     try {
       const res = await this.$services.teams.createTeam(payload);
-      context.commit('setTeam', buildTeamSearchDataPayload(res, context));
+      context.commit('setTeam', await buildTeamSearchDataPayload(res, context, this.$services));
       return context.state.team;
     } finally {
       context.commit('setSubmitLoading', false);
@@ -108,7 +113,7 @@ const actions = {
     context.commit('setSubmitLoading', true);
     try {
       const res = await this.$services.teams.editTeam(payload);
-      context.commit('setTeam', buildTeamSearchDataPayload(res, context));
+      context.commit('setTeam', await buildTeamSearchDataPayload(res, context, this.$services));
       return context.state.team;
     } finally {
       context.commit('setSubmitLoading', false);
@@ -133,7 +138,7 @@ const actions = {
   async addTeamMembers(
     this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: { teamMembers: IAppUserData[] },
+    payload: { teamMembers: ITeamMemberData[] },
   ): Promise<ITeam> {
     context.commit('setSubmitLoading', true);
     try {

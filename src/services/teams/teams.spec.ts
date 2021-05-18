@@ -1,5 +1,7 @@
-import { mockTeamSearchData, Team, IAddTeamMembersRequest } from '@/entities/team';
-import { mockAppUserData } from '@/entities/app-user';
+import {
+  mockTeamSearchDataAggregate, Team, IAddTeamMembersRequest,
+} from '@/entities/team';
+import { mockUserAccountSearchData } from '@/entities/user-account';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { TeamsService } from './teams';
@@ -15,25 +17,30 @@ describe('>>> Teams Service', () => {
   });
 
   test('createTeam is linked to the correct URL and params', async () => {
-    const payload = new Team(mockTeamSearchData()[0]);
+    const payload = new Team(mockTeamSearchDataAggregate()[0]);
     await service.createTeam(payload);
     const expectedPayload = {
       name: payload.name,
       eventIds: payload.events.map((e) => e.id),
-      teamMembers: payload.teamMembers,
+      teamMembers: payload.teamMembers.map((m) => ({ id: m.userAccountId, isPrimaryContact: m.isPrimaryContact })),
       teamType: payload.teamType,
     };
     expect(http.post).toHaveBeenCalledWith('/team/teams', expectedPayload, { globalHandler: false });
   });
 
   test('editTeam calls the correct URL and payload', async () => {
-    const payload = new Team(mockTeamSearchData()[0]);
+    const payload = new Team(mockTeamSearchDataAggregate()[0]);
     await service.editTeam(payload);
+
+    const primaryContact = payload.teamMembers.find((m) => m.isPrimaryContact);
 
     const expectedPayload = {
       name: payload.name,
       eventIds: payload.events.map((e) => e.id),
-      primaryContact: payload.teamMembers.find((m) => m.isPrimaryContact),
+      primaryContact: {
+        id: primaryContact.userAccountId,
+        isPrimaryContact: true,
+      },
       status: payload.status,
     };
 
@@ -49,10 +56,10 @@ describe('>>> Teams Service', () => {
   test('addTeamMembers is linked to the correct URL and params', async () => {
     const params = {
       teamId: '1234',
-      teamMembers: mockAppUserData(),
+      teamMembers: mockUserAccountSearchData(),
     };
     const payload = {
-      teamMemberIds: params.teamMembers.map((t) => t.id),
+      teamMemberIds: params.teamMembers.map((t) => t.userAccountId),
     } as IAddTeamMembersRequest;
 
     await service.addTeamMembers(params.teamId, params.teamMembers);

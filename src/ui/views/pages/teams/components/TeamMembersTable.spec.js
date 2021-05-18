@@ -1,6 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  mockTeamSearchData, Team,
+  mockTeamSearchDataAggregate, Team,
 } from '@/entities/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/store/storage';
@@ -11,7 +11,7 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-const mockTeam = new Team(mockTeamSearchData()[0]);
+const mockTeam = new Team(mockTeamSearchDataAggregate()[0]);
 
 describe('TeamMembersTable.vue', () => {
   let wrapper;
@@ -190,7 +190,7 @@ describe('TeamMembersTable.vue', () => {
 
     describe('teamMembersId', () => {
       it('returns the list of team members id', () => {
-        expect(wrapper.vm.teamMembersId).toEqual(wrapper.vm.team.teamMembers.map((m) => m.id));
+        expect(wrapper.vm.teamMembersId).toEqual(wrapper.vm.team.teamMembers.map((m) => m.userAccountId));
       });
     });
   });

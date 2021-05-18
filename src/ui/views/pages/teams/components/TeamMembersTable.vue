@@ -30,7 +30,7 @@
       hide-default-footer
       :headers="headers"
       :items="computedTeamMembers"
-      :items-per-page="computedTeamMembers.length"
+      :items-per-page="Math.max(computedTeamMembers.length, 1)"
       @update:sort-by="sortBy = $event"
       @update:sort-desc="sortDesc = $event">
       <template #item.displayName="{ item }">
@@ -75,8 +75,8 @@
           v-if="showDeleteIcon(item)"
           icon
           x-small
-          :data-test="`remove_team_member_${item.id}`"
-          @click="item.isPrimaryContact ? showPrimaryContactMessage() : showRemoveConfirmationDialog(item.id)">
+          :data-test="`remove_team_member_${item.userAccountId}`"
+          @click="item.isPrimaryContact ? showPrimaryContactMessage() : showRemoveConfirmationDialog(item.userAccountId)">
           <v-icon color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -109,11 +109,10 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
-import { ITeamMember, Team } from '@/entities/team';
+import { ITeamMemberData, Team } from '@/entities/team';
 import helpers from '@/ui/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { RcConfirmationDialog, RcPhoneDisplay } from '@crctech/component-library';
-import { IAppUserData } from '@/entities/app-user';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
 
 export default Vue.extend({
@@ -251,14 +250,14 @@ export default Vue.extend({
       return headers;
     },
 
-    computedTeamMembers(): Array<ITeamMember> {
+    computedTeamMembers(): Array<ITeamMemberData> {
       const direction = this.sortDesc ? 'desc' : 'asc';
       const filtered = helpers.filterCollectionByValue(this.team.teamMembers, this.search, false, this.searchAmong);
-      return _orderBy(filtered, this.sortBy, direction) as ITeamMember[];
+      return _orderBy(filtered, this.sortBy, direction) as ITeamMemberData[];
     },
 
     teamMembersId(): Array<string> {
-      return this.team.teamMembers.map((m: ITeamMember) => m.id);
+      return this.team.teamMembers.map((m: ITeamMemberData) => m.userAccountId);
     },
 
     removeLoading(): boolean {
@@ -287,19 +286,19 @@ export default Vue.extend({
       this.showRemoveMemberConfirmationDialog = false;
     },
 
-    getRole(user: IAppUserData): string {
-      if (user.roles) return user?.roles[0]?.displayName;
+    getRole(user: ITeamMemberData): string {
+      if (user.roleName) return this.$m(user.roleName);
       return '';
     },
 
-    showDeleteIcon(member: ITeamMember): boolean {
+    showDeleteIcon(member: ITeamMemberData): boolean {
       if (member.isPrimaryContact) {
         return this.$hasLevel('level5');
       }
       return this.$hasLevel('level4');
     },
 
-    async viewMemberDetails(member: ITeamMember) {
+    async viewMemberDetails(member: ITeamMemberData) {
       this.showMemberDialog = true;
       this.clickedMember = member;
     },

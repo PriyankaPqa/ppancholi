@@ -1,12 +1,14 @@
-import { mockTeamsData, mockTeamSearchData, Team } from '@/entities/team';
 import { ActionContext } from 'vuex';
 import { IState } from '@/store/modules/team/team.types';
 import { IRootState } from '@/store';
-
+import { mockProvider } from '@/services/provider';
 import { IAppUserData } from '@/entities/app-user';
-
+import {
+  mockTeamMembersData,
+  mockTeamsData, mockTeamSearchData, mockTeamSearchDataAggregate, Team,
+} from '@/entities/team';
 import { IEvent } from '@/entities/event';
-import * as utils from './utils';
+import * as utils from './teamUtils';
 
 const mockActionsContext = (): ActionContext<IState, IRootState> => ({
   commit: jest.fn(),
@@ -16,7 +18,7 @@ const mockActionsContext = (): ActionContext<IState, IRootState> => ({
     searchLoading: false, // used in team list table
     getLoading: false, // used when loading a team
     removeLoading: false, // used when removing a member
-    team: new Team(mockTeamSearchData()[0]),
+    team: new Team(mockTeamSearchDataAggregate()[0]),
     cachedTeams: [],
   },
   getters: {},
@@ -29,10 +31,17 @@ const mockActionsContext = (): ActionContext<IState, IRootState> => ({
 
 describe('>>> Team utils', () => {
   describe('>> buildTeamSearchDataPayload', () => {
-    it('should build the payload correctly', () => {
+    it('should build the payload correctly', async () => {
+      const services = mockProvider();
       const payload = mockTeamsData()[0];
 
-      const res = utils.buildTeamSearchDataPayload(payload, mockActionsContext());
+      jest.spyOn(services.userAccounts, 'searchUserAccounts').mockImplementation(() => ({
+        odataCount: 2,
+        odataContext: 'context',
+        value: mockTeamMembersData(),
+      }));
+
+      const res = await utils.buildTeamSearchDataPayload(payload, mockActionsContext(), services);
 
       expect(res).toEqual({
         teamId: payload.id,
@@ -45,8 +54,49 @@ describe('>>> Team utils', () => {
         teamMemberCount: mockActionsContext().state.team.teamMemberCount,
         events: utils.retrieveTeamEvents(payload.eventIds, mockActionsContext()),
         teamStatus: payload.status,
-        teamMembers: utils.retrieveTeamMembers(payload.teamMembers, mockActionsContext()),
+        teamMembers: mockTeamMembersData(),
         teamStatusName: mockActionsContext().state.team.statusName,
+      });
+    });
+  });
+
+  describe('>> aggregateTeamSearchDataWithMembers', () => {
+    it('should call the user-accounts search api with the list of team member ids', async () => {
+      const team = mockTeamSearchData()[0];
+      const services = mockProvider();
+      jest.spyOn(services.userAccounts, 'searchUserAccounts').mockImplementation(() => ({
+        odataCount: 2,
+        odataContext: 'context',
+        value: mockTeamMembersData(),
+      }));
+
+      await utils.aggregateTeamSearchDataWithMembers(
+        services,
+        team,
+      );
+
+      expect(services.userAccounts.searchUserAccounts).toHaveBeenCalledWith({
+        filter: "search.in(UserAccountId, 'guid-member-1|guid-member-2', '|')",
+      });
+    });
+
+    it('should return the team aggregated with the users from user-accounts', async () => {
+      const team = mockTeamSearchData()[0];
+      const services = mockProvider();
+      jest.spyOn(services.userAccounts, 'searchUserAccounts').mockImplementation(() => ({
+        odataCount: 2,
+        odataContext: 'context',
+        value: mockTeamMembersData(),
+      }));
+
+      const res = await utils.aggregateTeamSearchDataWithMembers(
+        services,
+        team,
+      );
+
+      expect(res).toEqual({
+        ...team,
+        teamMembers: mockTeamMembersData(),
       });
     });
   });

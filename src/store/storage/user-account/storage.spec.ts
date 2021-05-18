@@ -35,5 +35,12 @@ describe('>>> User Account Storage', () => {
         expect(store.dispatch).toBeCalledWith('userAccount/addRoleToUser', payload);
       });
     });
+
+    describe('searchUserAccounts', () => {
+      it('should proxy searchUserAccounts', () => {
+        storage.actions.searchUserAccounts({});
+        expect(store.dispatch).toHaveBeenCalledWith('userAccount/searchUserAccounts', {});
+      });
+    });
   });
 });

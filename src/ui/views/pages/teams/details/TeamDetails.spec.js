@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { mockTeamSearchData, Team } from '@/entities/team';
+import { mockTeam, mockTeamSearchDataAggregate, Team } from '@/entities/team';
 
 import { RcPageContent } from '@crctech/component-library';
 import { mockUserStateLevel } from '@/test/helpers';
@@ -9,6 +9,8 @@ import Component from './TeamDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
+
+jest.mock('@/store/modules/team/teamUtils');
 
 describe('TeamDetails.vue', () => {
   let wrapper;
@@ -21,7 +23,7 @@ describe('TeamDetails.vue', () => {
       },
       computed: {
         team() {
-          return new Team(mockTeamSearchData()[0]);
+          return mockTeam();
         },
       },
       mocks: {
@@ -43,7 +45,7 @@ describe('TeamDetails.vue', () => {
           },
           computed: {
             team() {
-              return new Team(mockTeamSearchData()[0]);
+              return mockTeam();
             },
           },
         });
@@ -61,7 +63,7 @@ describe('TeamDetails.vue', () => {
           },
           computed: {
             team() {
-              return new Team(mockTeamSearchData()[0]);
+              return mockTeam();
             },
           },
         });
@@ -123,7 +125,7 @@ describe('TeamDetails.vue', () => {
       });
 
       it('should generate the correct string', () => {
-        const { events } = mockTeamSearchData()[0];
+        const { events } = mockTeam();
         const res = wrapper.vm.buildEventsString(events);
         expect(res).toBe('Event 1, Event 2');
       });
@@ -140,7 +142,7 @@ describe('TeamDetails.vue', () => {
 
     describe('team', () => {
       it('should be linked to team getters team', () => {
-        const mockTeam = mockTeamSearchData()[1];
+        const mockTeam = mockTeamSearchDataAggregate()[1];
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {

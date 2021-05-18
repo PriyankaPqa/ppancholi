@@ -3,7 +3,7 @@
  */
 
 import { IMultilingual } from '@/types';
-import { IAppUserData } from '@/entities/app-user';
+import { IUserAccountSearchData } from '@/entities/user-account';
 
 export enum ETeamType {
   Standard = 1,
@@ -24,12 +24,15 @@ export interface ITeamEvent {
   name: IMultilingual;
 }
 
-export interface ITeamMember extends IAppUserData {
+// Member schema from teams projection
+export interface ITeamMemberSearchData {
+  id: uuid;
   isPrimaryContact: boolean,
-  teamCount?: number;
-  caseFilesCount?: number;
-  openCaseFilesCount?: number;
-  inactiveCaseFilesCount?: number;
+}
+
+// Member schema from user-accounts projection, plus isPrimaryContact
+export interface ITeamMemberData extends IUserAccountSearchData {
+  isPrimaryContact: boolean;
 }
 
 /**
@@ -40,10 +43,13 @@ export interface ITeamData {
    name: string;
    status: ETeamStatus;
    teamType: ETeamType;
-   teamMembers: Array<{ id: uuid; isPrimaryContact: boolean }>;
+   teamMembers: Array<ITeamMemberSearchData>;
    eventIds: Array<uuid>,
 }
 
+/**
+ * Team schema from teams projection
+ */
 export interface ITeamSearchData {
   '@searchScore'?: number;
   teamId: uuid;
@@ -57,7 +63,26 @@ export interface ITeamSearchData {
   events: Array<ITeamEvent>,
   teamStatus: ETeamStatus;
   teamStatusName: IMultilingual;
-  teamMembers: Array<ITeamMember>,
+  teamMembers: Array<ITeamMemberSearchData>,
+}
+
+/**
+ * Team schema from teams projection aggregated with users from user-accounts projection
+ */
+export interface ITeamSearchDataAggregate {
+  '@searchScore'?: number;
+  teamId: uuid;
+  tenantId: string;
+  teamName: string;
+  teamType: ETeamType;
+  teamTypeName: IMultilingual;
+  eventCount: number;
+  primaryContactDisplayName: string;
+  teamMemberCount: number;
+  events: Array<ITeamEvent>,
+  teamStatus: ETeamStatus;
+  teamStatusName: IMultilingual;
+  teamMembers: Array<ITeamMemberData>,
 }
 
 /**
@@ -72,13 +97,13 @@ export interface ITeam {
   teamType: ETeamType;
   teamTypeName: IMultilingual;
   primaryContactDisplayName: string;
-  teamMembers: Array<ITeamMember>;
+  teamMembers: Array<ITeamMemberData>;
   teamMemberCount: number;
   events?: Array<ITeamEvent>,
   eventCount: number;
-  addTeamMembers(members: ITeamMember | ITeamMember[]): void;
-  setPrimaryContact(member: ITeamMember | IAppUserData): void;
-  getPrimaryContact(): ITeamMember;
+  addTeamMembers(members: ITeamMemberData | ITeamMemberData[]): void;
+  setPrimaryContact(member: ITeamMemberData): void;
+  getPrimaryContact(): ITeamMemberData;
   validate(): Array<string> | boolean;
   setEvents(events: ITeamEvent | ITeamEvent[]): void;
 }
@@ -86,19 +111,18 @@ export interface ITeam {
 /**
  * Interface for the Team edit payload
  */
-
 export interface IEditTeamRequest {
   name: string;
   eventIds: Array<uuid>;
-  primaryContact: ITeamMember;
+  primaryContact: ITeamMemberSearchData;
   status: ETeamStatus;
  }
 
 export interface ICreateTeamRequest {
   name: string;
   eventIds: Array<uuid>;
-  teamMembers: ITeamMember[];
-  teamType: ETeamType
+  teamMembers: ITeamMemberSearchData[];
+  teamType: ETeamType;
 }
 
 export interface IAddTeamMembersRequest {
