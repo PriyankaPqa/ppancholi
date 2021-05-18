@@ -281,9 +281,12 @@ export default Vue.extend({
     },
 
     async removeTeamMember() {
-      await this.$storage.team.actions.removeTeamMember(this.removeMemberId);
-      this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
-      this.showRemoveMemberConfirmationDialog = false;
+      try {
+        await this.$storage.team.actions.removeTeamMember(this.removeMemberId);
+        this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
+      } finally {
+        this.showRemoveMemberConfirmationDialog = false;
+      }
     },
 
     getRole(user: ITeamMemberData): string {

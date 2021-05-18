@@ -80,9 +80,22 @@ class HttpClient implements IHttpClient {
     return camelKeys(response, { recursive: true, recursiveInArray: true }) as AxiosResponse<Record<string, unknown>>;
   }
 
-  private responseErrorHandler(error: any) {
-    const { errors } = error.response.data;
+  private async error401Handler() {
+    Vue.toasted.global.warning(i18n.t('error.401.refresh'));
+    setTimeout(() => {
+      window.location.reload();
+    }, 4000);
+  }
 
+  private async responseErrorHandler(error: any) {
+    if (!error || !error.response) return false;
+
+    if (error.response.status === 401) {
+      await this.error401Handler();
+      return false;
+    }
+
+    const { errors } = error.response.data;
     if (this.isGlobalHandlerEnabled(error.config)) {
       if (errors && Array.isArray(errors)) {
         errors.forEach((error: IError) => {
