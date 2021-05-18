@@ -1,6 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
+import { mockEvent } from '@crctech/registration-lib/src/entities/event';
 import Component from './LandingPage.vue';
 
 const storage = mockStorage();
@@ -41,6 +42,29 @@ describe('LandingPage.vue', () => {
       test('The start registration phone number is displayed correctly', async () => {
         const element = wrapper.find('[data-test="registration__phoneNumber"]');
         expect(element.exists()).toBe(true);
+      });
+    });
+  });
+
+  describe('Computed', () => {
+    describe('phoneNumber', () => {
+      it('should return the phone number of the event', () => {
+        expect(wrapper.vm.phoneNumber).toEqual(mockEvent().responseDetails.assistanceNumber);
+      });
+    });
+
+    describe('event', () => {
+      it('should return the event from the storage', () => {
+        expect(wrapper.vm.event).toEqual(mockEvent());
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('redirect', () => {
+      it('should redirect to home page of registration', () => {
+        wrapper.vm.redirect();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.individual.name });
       });
     });
   });

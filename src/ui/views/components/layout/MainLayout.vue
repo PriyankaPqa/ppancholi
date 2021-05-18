@@ -15,10 +15,11 @@ import Vue from 'vue';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { RcPageLoading, RcRouterViewTransition } from '@crctech/component-library';
 import _isEmpty from 'lodash/isEmpty';
-import { Route, NavigationGuardNext } from 'vue-router';
+import { NavigationGuardNext, Route } from 'vue-router';
 import store from '@/store/store';
 import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
+import { EEventStatus, IEvent } from '@crctech/registration-lib/src/entities/event';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -30,8 +31,8 @@ export default Vue.extend({
   },
   async beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
     const { lang, registrationLink } = to.params;
-    const event = await store.dispatch('registration/fetchEvent', { lang, registrationLink });
-    if (_isEmpty(event)) {
+    const event: IEvent = await store.dispatch('registration/fetchEvent', { lang, registrationLink });
+    if (_isEmpty(event) || !event.selfRegistrationEnabled || event.schedule.status !== EEventStatus.Open) {
       window.location.replace(i18n.t('registration.redirection_link') as string);
     } else {
       httpClient.setHeadersTenant(event.tenantId);
