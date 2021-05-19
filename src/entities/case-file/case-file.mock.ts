@@ -182,37 +182,91 @@ export const mockCaseFilesData = (): ICaseFileData[] => [{
   timestamp: '2021-01-01',
 }];
 
-export const mockCaseFileActivities = (): ICaseFileActivity[] => [{
-  id: 'mock-activity-id-1',
-  caseFileId: 'mock-id-1',
-  user: { id: '1', name: 'Jane Doe' },
-  role: {
-    id: '2',
-    name: {
-      translation:
+export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICaseFileActivity[] => {
+  const activities = [{
+    id: 'mock-activity-id-1',
+    caseFileId: 'mock-id-1',
+    user: { id: '1', name: 'Jane Doe' },
+    role: {
+      id: '2',
+      name: {
+        translation:
      { en: 'sys admin', fr: 'admin de systeme' },
+      },
     },
-  },
-  created: '2021-01-02 12:00',
-  activityType: ECaseFileActivityType.AddedTag,
-  details: {
-    tags:
+    created: '2021-01-02 12:00',
+    activityType: ECaseFileActivityType.AddedTag,
+    details: {
+      tags:
     [{ id: 'tag-id-3', name: { translation: { en: 'tag 1', fr: 'tag 1 fr' } } },
       { id: 'tag-id-4', name: { translation: { en: 'Tag 2', fr: 'Tag 2 fr' } } }],
-  },
-},
-{
-  id: 'mock-activity-id-2',
-  caseFileId: 'mock-id-1',
-  user: { id: '1', name: 'Jane Doe' },
-  role: {
-    id: '2',
-    name: {
-      translation:
-     { en: 'sys admin', fr: 'admin de systeme' },
     },
   },
-  created: '2021-05-04',
-  activityType: ECaseFileActivityType.RemovedTag,
-  details: { tags: [{ id: 'tag-id-5', name: { translation: { en: 'tag 4', fr: 'tag 4 fr' } } }] },
-}];
+  {
+    id: 'mock-activity-id-2',
+    caseFileId: 'mock-id-1',
+    user: { id: '1', name: 'Jane Doe' },
+    role: {
+      id: '2',
+      name: {
+        translation:
+     { en: 'sys admin', fr: 'admin de systeme' },
+      },
+    },
+    created: '2021-05-04',
+    activityType: ECaseFileActivityType.RemovedTag,
+    details: { tags: [{ id: 'tag-id-5', name: { translation: { en: 'tag 4', fr: 'tag 4 fr' } } }] },
+  },
+  {
+    id: 'mock-activity-id-3',
+    caseFileId: 'mock-id-1',
+    user: { id: '1', name: 'Jane Doe' },
+    role: {
+      id: '2',
+      name: {
+        translation:
+     { en: 'sys admin', fr: 'admin de systeme' },
+      },
+    },
+    created: '2021-05-04',
+    activityType: ECaseFileActivityType.AddedDuplicateFlag,
+    details: null,
+  },
+  {
+    id: 'mock-activity-id-4',
+    caseFileId: 'mock-id-1',
+    user: { id: '1', name: 'Jane Doe' },
+    role: {
+      id: '2',
+      name: {
+        translation:
+     { en: 'sys admin', fr: 'admin de systeme' },
+      },
+    },
+    created: '2021-05-04',
+    activityType: ECaseFileActivityType.RemovedDuplicateFlag,
+    details: null,
+  },
+  {
+    id: 'mock-activity-id-5',
+    caseFileId: 'mock-id-1',
+    user: { id: '1', name: 'Jane Doe' },
+    role: {
+      id: '2',
+      name: {
+        translation:
+     { en: 'sys admin', fr: 'admin de systeme' },
+      },
+    },
+    created: '2021-05-04',
+    activityType: ECaseFileActivityType.TriageUpdated,
+    details: { triageName: { translation: { en: 'Tier 1', fr: 'Categorie 1' } } },
+  },
+  ];
+
+  if (type) {
+    return activities.filter((a) => a.activityType === type);
+  }
+
+  return activities;
+};

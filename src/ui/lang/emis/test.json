@@ -212,6 +212,8 @@
     "caseFileActivity.activityList.title.AddedTag": "caseFileActivity.activityList.title.AddedTag",
     "caseFileActivity.activityList.title.removedDuplicateFlag": "",
     "caseFileActivity.activityList.title.RemovedTag": "caseFileActivity.activityList.title.RemovedTag",
+    "caseFileActivity.activityList.title.triageUpdated": "",
+    "caseFileActivity.activityList.triage.new_triage": "",
     "caseFileActivity.labels.addLabel": "caseFileActivity.labels.addLabel",
     "caseFileActivity.labels.label1": "caseFileActivity.labels.label1",
     "caseFileActivity.labels.label2": "caseFileActivity.labels.label2",

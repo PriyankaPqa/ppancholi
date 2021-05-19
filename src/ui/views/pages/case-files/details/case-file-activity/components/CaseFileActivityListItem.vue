@@ -16,7 +16,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
 import { ECaseFileActivityType, ICaseFileActivity } from '@/entities/case-file';
-import { IIdMultilingualName } from '@/types';
+import { IIdMultilingualName, IMultilingual } from '@/types';
 
 export default Vue.extend({
   name: 'CaseFileActivityListItem',
@@ -46,6 +46,9 @@ export default Vue.extend({
         case ECaseFileActivityType.RemovedDuplicateFlag:
           return this.makeContentForRemovedDuplicateFlag();
 
+        case ECaseFileActivityType.TriageUpdated:
+          return this.makeContentForTriageUpdated();
+
         default:
           return null;
       }
@@ -55,6 +58,7 @@ export default Vue.extend({
       switch (this.item.activityType) {
         case ECaseFileActivityType.AddedTag:
         case ECaseFileActivityType.RemovedTag:
+        case ECaseFileActivityType.TriageUpdated:
           return '$rctech-actions';
 
         case ECaseFileActivityType.AddedDuplicateFlag:
@@ -72,7 +76,7 @@ export default Vue.extend({
     makeContentForTags(activityType:ECaseFileActivityType): {title: TranslateResult, body: TranslateResult} {
       const title = this.$t(`caseFileActivity.activityList.title.${ECaseFileActivityType[activityType]}`);
 
-      const tagsString = this.item.details.tags.map((tag: IIdMultilingualName) => this.$m(tag.name)).join(', ');
+      const tagsString = (this.item.details.tags as IIdMultilingualName[]).map((tag) => this.$m(tag.name)).join(', ');
       const body = `${this.$t('caseFileActivity.activityList.tags.tag_names')}: ${tagsString}`;
 
       return { title, body };
@@ -89,6 +93,13 @@ export default Vue.extend({
       return {
         title: this.$t('caseFileActivity.activityList.title.removedDuplicateFlag'),
         body: this.$t('DuplicateStatus.Removed'),
+      };
+    },
+
+    makeContentForTriageUpdated(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.triageUpdated'),
+        body: `${this.$t('caseFileActivity.activityList.triage.new_triage')}: ${this.$m(this.item.details.triageName as IMultilingual)}`,
       };
     },
   },

@@ -94,10 +94,7 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForTags').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: {
-
-            activityType: ECaseFileActivityType.AddedTag,
-          },
+          item: mockCaseFileActivities(ECaseFileActivityType.AddedTag)[0],
         });
         expect(wrapper.vm.makeContentForTags).toHaveBeenCalledWith(ECaseFileActivityType.AddedTag);
         expect(wrapper.vm.content).toEqual(mockContent);
@@ -107,9 +104,7 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForTags').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: {
-            activityType: ECaseFileActivityType.RemovedTag,
-          },
+          item: mockCaseFileActivities(ECaseFileActivityType.RemovedTag)[0],
         });
         expect(wrapper.vm.makeContentForTags).toHaveBeenCalledWith(ECaseFileActivityType.RemovedTag);
         expect(wrapper.vm.content).toEqual(mockContent);
@@ -119,9 +114,7 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForAddedDuplicateFlag').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: {
-            activityType: ECaseFileActivityType.AddedDuplicateFlag,
-          },
+          item: mockCaseFileActivities(ECaseFileActivityType.AddedDuplicateFlag)[0],
         });
         expect(wrapper.vm.makeContentForAddedDuplicateFlag).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.content).toEqual(mockContent);
@@ -131,11 +124,19 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForRemovedDuplicateFlag').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: {
-            activityType: ECaseFileActivityType.RemovedDuplicateFlag,
-          },
+          item: mockCaseFileActivities(ECaseFileActivityType.RemovedDuplicateFlag)[0],
         });
         expect(wrapper.vm.makeContentForRemovedDuplicateFlag).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.content).toEqual(mockContent);
+      });
+
+      it('returns the correct data when action type is TriageUpdated', async () => {
+        const mockContent = { title: 'mock-title', body: 'mock-body' };
+        jest.spyOn(wrapper.vm, 'makeContentForTriageUpdated').mockImplementation(() => (mockContent));
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.TriageUpdated)[0],
+        });
+        expect(wrapper.vm.makeContentForTriageUpdated).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.content).toEqual(mockContent);
       });
 
@@ -152,52 +153,38 @@ describe('CaseFileActivityListItem.vue', () => {
     describe('icon', () => {
       it('returns the correct icon when action type is AddedTag', async () => {
         await wrapper.setProps({
-          item: {
-            userName: 'Jane Doe',
-            roleName: { translation: { en: 'sys admin' } },
-            actionDateTime: '2021-01-02',
-            activityType: ECaseFileActivityType.AddedTag,
-            details: { tags: [{ name: { translation: { en: 'tag 1' } } }, { name: { translation: { en: 'Tag 2' } } }] },
-          },
+          item: mockCaseFileActivities(ECaseFileActivityType.AddedTag)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is RemovedTag', async () => {
         await wrapper.setProps({
-          item: {
-            userName: 'Jane Doe',
-            roleName: { translation: { en: 'sys admin' } },
-            actionDateTime: '2021-01-02',
-            activityType: ECaseFileActivityType.RemovedTag,
-            details: { tags: [{ name: { translation: { en: 'tag 1' } } }, { name: { translation: { en: 'Tag 2' } } }] },
-          },
+          item: mockCaseFileActivities(ECaseFileActivityType.RemovedTag)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is AddedDuplicateFlag', async () => {
         await wrapper.setProps({
-          item: {
-            userName: 'Jane Doe',
-            roleName: { translation: { en: 'sys admin' } },
-            actionDateTime: '2021-01-02',
-            activityType: ECaseFileActivityType.AddedDuplicateFlag,
-          },
+          item: mockCaseFileActivities(ECaseFileActivityType.AddedDuplicateFlag)[0],
+
         });
         expect(wrapper.vm.icon).toEqual('$rctech-duplicate');
       });
 
       it('returns the correct icon when action type is RemovedDuplicateFlag', async () => {
         await wrapper.setProps({
-          item: {
-            userName: 'Jane Doe',
-            roleName: { translation: { en: 'sys admin' } },
-            actionDateTime: '2021-01-02',
-            activityType: ECaseFileActivityType.RemovedDuplicateFlag,
-          },
+          item: mockCaseFileActivities(ECaseFileActivityType.RemovedDuplicateFlag)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-duplicate');
+      });
+
+      it('returns the correct icon when action type is TriageUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.TriageUpdated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon in default case', async () => {
@@ -221,13 +208,8 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForTags', () => {
         it('returns the correct data when action type is AddedTag', async () => {
           await wrapper.setProps({
-            item: {
-              userName: 'Jane Doe',
-              roleName: { translation: { en: 'sys admin' } },
-              actionDateTime: '2021-01-02',
-              activityType: ECaseFileActivityType.AddedTag,
-              details: { tags: [{ name: { translation: { en: 'tag 1' } } }, { name: { translation: { en: 'Tag 2' } } }] },
-            },
+            item: mockCaseFileActivities(ECaseFileActivityType.AddedTag)[0],
+
           });
           expect(wrapper.vm.makeContentForTags(ECaseFileActivityType.AddedTag)).toEqual({
             title: `caseFileActivity.activityList.title.${ECaseFileActivityType[ECaseFileActivityType.AddedTag]}`,
@@ -237,18 +219,51 @@ describe('CaseFileActivityListItem.vue', () => {
 
         it('returns the correct data when action type is RemovedTag', async () => {
           await wrapper.setProps({
-            item: {
-              userName: 'Jane Doe',
-              roleName: { translation: { en: 'sys admin' } },
-              actionDateTime: '2021-01-02',
-              activityType: ECaseFileActivityType.RemovedTag,
-              details: { tags: [{ name: { translation: { en: 'tag 1' } } }, { name: { translation: { en: 'Tag 2' } } }] },
-            },
+            item: mockCaseFileActivities(ECaseFileActivityType.RemovedTag)[0],
           });
 
           expect(wrapper.vm.makeContentForTags(ECaseFileActivityType.RemovedTag)).toEqual({
             title: `caseFileActivity.activityList.title.${ECaseFileActivityType[ECaseFileActivityType.RemovedTag]}`,
-            body: 'caseFileActivity.activityList.tags.tag_names: tag 1, Tag 2',
+            body: 'caseFileActivity.activityList.tags.tag_names: tag 4',
+          });
+        });
+      });
+
+      describe('makeContentForAddedDuplicateFlag', () => {
+        it('returns the correct data when action type is AddedDuplicateFlag', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.AddedDuplicateFlag)[0],
+          });
+
+          expect(wrapper.vm.makeContentForAddedDuplicateFlag()).toEqual({
+            title: 'caseFileActivity.activityList.title.addedDuplicateFlag',
+            body: 'DuplicateStatus.Added',
+          });
+        });
+      });
+
+      describe('makeContentForRemovedDuplicateFlag', () => {
+        it('returns the correct data when action type is RemovedDuplicateFlag', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.RemovedDuplicateFlag)[0],
+          });
+
+          expect(wrapper.vm.makeContentForRemovedDuplicateFlag()).toEqual({
+            title: 'caseFileActivity.activityList.title.removedDuplicateFlag',
+            body: 'DuplicateStatus.Removed',
+          });
+        });
+      });
+
+      describe('makeContentForTriageUpdated', () => {
+        it('returns the correct data when action type is TriageUpdated', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.TriageUpdated)[0],
+          });
+
+          expect(wrapper.vm.makeContentForTriageUpdated()).toEqual({
+            title: 'caseFileActivity.activityList.title.triageUpdated',
+            body: 'caseFileActivity.activityList.triage.new_triage: Tier 1',
           });
         });
       });

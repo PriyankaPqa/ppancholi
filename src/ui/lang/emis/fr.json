@@ -212,6 +212,8 @@
     "caseFileActivity.activityList.title.AddedTag": "Attribut(s) ajouté(s)",
     "caseFileActivity.activityList.title.removedDuplicateFlag": "Suppression de l'indicateur de potentiel duplicata",
     "caseFileActivity.activityList.title.RemovedTag": "Attribut(s) supprimé(s)",
+    "caseFileActivity.activityList.title.triageUpdated": "Changement du niveau de triage",
+    "caseFileActivity.activityList.triage.new_triage": "Nouveau triage",
     "caseFileActivity.labels.addLabel": "Étiquettes",
     "caseFileActivity.labels.label1": "Étiquette 1",
     "caseFileActivity.labels.label2": "Étiquette 2",

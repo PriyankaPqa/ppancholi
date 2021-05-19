@@ -222,8 +222,7 @@ export default Vue.extend({
 
     async setCaseFileTriage(triage: number) {
       await this.$storage.caseFile.actions.setCaseFileTriage(this.id, triage);
-      // Will be implemented in a future story
-      // this.fetchCaseFileActivities(this.activityFetchDelay);
+      this.fetchCaseFileActivities(this.activityFetchDelay);
     },
   },
 });

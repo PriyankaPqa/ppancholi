@@ -25,6 +25,7 @@ export enum ECaseFileActivityType {
   RemovedTag = 2,
   AddedDuplicateFlag = 3,
   RemovedDuplicateFlag = 4,
+  TriageUpdated = 9
 }
 
 /**
@@ -78,7 +79,7 @@ export interface ICaseFileActivity {
   role: IIdMultilingualName;
   created: Date | string;
   activityType: ECaseFileActivityType;
-  details: Record<string, IIdMultilingualName[]>;
+  details: Record<string, unknown>;
 }
 
 /**

@@ -314,6 +314,16 @@ describe('CaseFileActivity.vue', () => {
           triage,
         );
       });
+
+      it('calls fetchCaseFileActivities', async () => {
+        jest.spyOn(wrapper.vm, 'fetchCaseFileActivities').mockImplementation(() => mockActivities);
+        wrapper.vm.activityFetchDelay = 500;
+
+        const triage = ECaseFileTriage.Tier1;
+
+        await wrapper.vm.setCaseFileTriage(triage);
+        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledWith(wrapper.vm.activityFetchDelay);
+      });
     });
 
     // describe('setLastAction', () => {
