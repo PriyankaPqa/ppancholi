@@ -46,6 +46,10 @@ const routes = {
       path: '',
       name: 'casefile.activity',
     },
+    note: {
+      path: 'note',
+      name: 'casefile.note',
+    },
     beneficiaryProfile: {
       path: 'beneficiary/:id',
       name: 'casefile.beneficiaryProfile',

@@ -3,14 +3,19 @@ import {
   ICaseFile,
   ICaseFileLabel,
   mockCaseFilesSearchData,
+  mockCaseNoteCategories,
+  mockCaseNote,
   mockSearchCaseFiles,
-  ECaseFileStatus,
   ECaseFileTriage,
+  mockTagsOptions,
+  ECaseFileStatus,
 } from '@/entities/case-file';
+import _sortBy from 'lodash/sortBy';
 import { Store } from 'vuex';
 import { mockSearchParams } from '@/test/helpers';
 import { mockStore, IRootState } from '@/store';
 import { IListOption } from '@/types';
+import { OptionItem } from '@/entities/optionItem';
 
 jest.mock('@/store/modules/case-file/case-file-utils');
 
@@ -29,6 +34,8 @@ describe('>>> Case File Module', () => {
             searchLoading: false,
             getLoading: false,
             caseFilesFetched: false,
+            caseNoteCategories: mockCaseNoteCategories(),
+            tagsOptions: mockTagsOptions(),
           },
         },
       },
@@ -45,6 +52,28 @@ describe('>>> Case File Module', () => {
       test('the getter return null if the id passed in argument does not correspond to a case file', () => {
         const mockId = 'foo';
         expect(store.getters['caseFile/caseFileById'](mockId)).toEqual(null);
+      });
+    });
+
+    describe('tagsOptions', () => {
+      test('the getter returns the sorted tagsOptions', () => {
+        expect(store.getters['caseFile/tagsOptions']).toEqual(
+          _sortBy(
+            mockTagsOptions().map((e) => new OptionItem(e)),
+            'orderRank',
+          ),
+        );
+      });
+    });
+
+    describe('caseNoteCategories', () => {
+      test('the getter returns the sorted case note categories', () => {
+        expect(store.getters['caseFile/caseNoteCategories']).toEqual(
+          _sortBy(
+            mockCaseNoteCategories().map((e) => new OptionItem(e)),
+            'orderRank',
+          ),
+        );
       });
     });
   });
@@ -132,6 +161,29 @@ describe('>>> Case File Module', () => {
         store.commit('caseFile/setDuplicateLoading', true);
 
         expect(store.state.caseFile.duplicateLoading).toBe(true);
+      });
+    });
+
+    describe('setCaseNoteCategories', () => {
+      test('the setCaseNoteCategories mutation sets the caseNoteCategories state', () => {
+        store = mockStore();
+        const category = mockCaseNoteCategories()[0];
+
+        store.commit('caseFile/setCaseNoteCategories', category);
+
+        expect(store.state.caseFile.caseNoteCategories).toBe(category);
+      });
+    });
+
+    describe('setTriageLoading', () => {
+      it('sets the value of triageLoading', () => {
+        store = mockStore();
+
+        expect(store.state.caseFile.triageLoading).toBe(false);
+
+        store.commit('caseFile/setTriageLoading', true);
+
+        expect(store.state.caseFile.triageLoading).toBe(true);
       });
     });
   });
@@ -337,6 +389,31 @@ describe('>>> Case File Module', () => {
 
     expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
   });
+
+  describe('fetchActiveCaseNoteCategories', () => {
+    it('calls the service', async () => {
+      expect(store.$services.caseFiles.fetchActiveCaseNoteCategories).toHaveBeenCalledTimes(0);
+
+      await store.dispatch('caseFile/fetchActiveCaseNoteCategories');
+
+      expect(store.$services.caseFiles.fetchActiveCaseNoteCategories).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('addCaseNote', () => {
+    it('calls the service', async () => {
+      expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledTimes(0);
+
+      const id = 'id';
+      const caseNote = mockCaseNote();
+
+      await store.dispatch('caseFile/addCaseNote', { id, caseNote });
+
+      expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledWith(id, caseNote);
+    });
+  });
+
   describe('setCaseFileIsDuplicate', () => {
     it('calls the setCaseFileIsDuplicate service and returns the case file entity', async () => {
       store = mockStore({

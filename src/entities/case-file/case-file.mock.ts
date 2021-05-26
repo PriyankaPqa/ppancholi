@@ -1,6 +1,7 @@
 import { IAzureSearchResult } from '@/types';
+import { IOptionItem } from '../optionItem';
 import {
-  ECaseFileActivityType, ICaseFileData, ICaseFileSearchData, ICaseFileActivity,
+  ECaseFileActivityType, ICaseFileData, ICaseFileSearchData, ICaseFileActivity, ICaseNote,
 } from './case-file.types';
 
 export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
@@ -54,22 +55,27 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
       },
     },
     timestamp: '2021-04-30',
-    tags: [{
-      id: 'mock-tag-id-1',
-      name: {
-        translation: {
-          en: 'Do not communicate',
-          fr: 'Ne pas contacter',
+    tags: [
+      {
+        id: 'mock-tag-id-1',
+        name: {
+          translation: {
+            en: 'Do not communicate',
+            fr: 'Ne pas contacter',
+          },
         },
       },
-    }],
-    labels: [{
-      name: 'Label One',
-      order: 1,
-    }, {
-      name: 'Label Two',
-      order: 2,
-    }],
+    ],
+    labels: [
+      {
+        name: 'Label One',
+        order: 1,
+      },
+      {
+        name: 'Label Two',
+        order: 2,
+      },
+    ],
     triage: 1,
     triageName: {
       translation: {
@@ -130,13 +136,16 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
     },
     tags: [],
     timestamp: '2021-04-30',
-    labels: [{
-      name: 'Label One',
-      order: 1,
-    }, {
-      name: 'Label Two',
-      order: 2,
-    }],
+    labels: [
+      {
+        name: 'Label One',
+        order: 1,
+      },
+      {
+        name: 'Label Two',
+        order: 2,
+      },
+    ],
     triage: 0,
     triageName: {
       translation: {
@@ -160,108 +169,110 @@ export const mockSearchCaseFiles = (index = -1): IAzureSearchResult<ICaseFileSea
   };
 };
 
-export const mockCaseFilesData = (): ICaseFileData[] => [{
-  id: 'mock-id-1',
-  beneficiaryId: 'mock-beneficiary-id-1',
-  caseFileNumber: '1-000001',
-  caseFileStatus: 1,
-  created: '2021-01-01',
-  isDuplicate: false,
-  eventId: 'mock-event-id-1',
-  tags: [],
-  labels: [{
-    name: 'Label One',
-    order: 1,
-  }, {
-    name: 'Label Two',
-    order: 2,
-  }],
-  triage: 0,
-  eTag: 'mock-e-tag',
-  tenantId: 'mock-tenant-id-1',
-  timestamp: '2021-01-01',
-}];
+export const mockCaseFilesData = (): ICaseFileData[] => [
+  {
+    id: 'mock-id-1',
+    beneficiaryId: 'mock-beneficiary-id-1',
+    caseFileNumber: '1-000001',
+    caseFileStatus: 1,
+    created: '2021-01-01',
+    isDuplicate: false,
+    eventId: 'mock-event-id-1',
+    tags: [],
+    labels: [
+      {
+        name: 'Label One',
+        order: 1,
+      },
+      {
+        name: 'Label Two',
+        order: 2,
+      },
+    ],
+    triage: 0,
+    eTag: 'mock-e-tag',
+    tenantId: 'mock-tenant-id-1',
+    timestamp: '2021-01-01',
+  },
+];
 
 export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICaseFileActivity[] => {
-  const activities = [{
-    id: 'mock-activity-id-1',
-    caseFileId: 'mock-id-1',
-    user: { id: '1', name: 'Jane Doe' },
-    role: {
-      id: '2',
-      name: {
-        translation:
-     { en: 'sys admin', fr: 'admin de systeme' },
+  const activities = [
+    {
+      id: 'mock-activity-id-1',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: {
+        id: '2',
+        name: {
+          translation: { en: 'sys admin', fr: 'admin de systeme' },
+        },
+      },
+      created: '2021-01-02 12:00',
+      activityType: ECaseFileActivityType.AddedTag,
+      details: {
+        tags: [
+          { id: 'tag-id-3', name: { translation: { en: 'tag 1', fr: 'tag 1 fr' } } },
+          { id: 'tag-id-4', name: { translation: { en: 'Tag 2', fr: 'Tag 2 fr' } } },
+        ],
       },
     },
-    created: '2021-01-02 12:00',
-    activityType: ECaseFileActivityType.AddedTag,
-    details: {
-      tags:
-    [{ id: 'tag-id-3', name: { translation: { en: 'tag 1', fr: 'tag 1 fr' } } },
-      { id: 'tag-id-4', name: { translation: { en: 'Tag 2', fr: 'Tag 2 fr' } } }],
-    },
-  },
-  {
-    id: 'mock-activity-id-2',
-    caseFileId: 'mock-id-1',
-    user: { id: '1', name: 'Jane Doe' },
-    role: {
-      id: '2',
-      name: {
-        translation:
-     { en: 'sys admin', fr: 'admin de systeme' },
+    {
+      id: 'mock-activity-id-2',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: {
+        id: '2',
+        name: {
+          translation: { en: 'sys admin', fr: 'admin de systeme' },
+        },
       },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.RemovedTag,
+      details: { tags: [{ id: 'tag-id-5', name: { translation: { en: 'tag 4', fr: 'tag 4 fr' } } }] },
     },
-    created: '2021-05-04',
-    activityType: ECaseFileActivityType.RemovedTag,
-    details: { tags: [{ id: 'tag-id-5', name: { translation: { en: 'tag 4', fr: 'tag 4 fr' } } }] },
-  },
-  {
-    id: 'mock-activity-id-3',
-    caseFileId: 'mock-id-1',
-    user: { id: '1', name: 'Jane Doe' },
-    role: {
-      id: '2',
-      name: {
-        translation:
-     { en: 'sys admin', fr: 'admin de systeme' },
+    {
+      id: 'mock-activity-id-3',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: {
+        id: '2',
+        name: {
+          translation: { en: 'sys admin', fr: 'admin de systeme' },
+        },
       },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.AddedDuplicateFlag,
+      details: null,
     },
-    created: '2021-05-04',
-    activityType: ECaseFileActivityType.AddedDuplicateFlag,
-    details: null,
-  },
-  {
-    id: 'mock-activity-id-4',
-    caseFileId: 'mock-id-1',
-    user: { id: '1', name: 'Jane Doe' },
-    role: {
-      id: '2',
-      name: {
-        translation:
-     { en: 'sys admin', fr: 'admin de systeme' },
+    {
+      id: 'mock-activity-id-4',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: {
+        id: '2',
+        name: {
+          translation: { en: 'sys admin', fr: 'admin de systeme' },
+        },
       },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.RemovedDuplicateFlag,
+      details: null,
     },
-    created: '2021-05-04',
-    activityType: ECaseFileActivityType.RemovedDuplicateFlag,
-    details: null,
-  },
-  {
-    id: 'mock-activity-id-5',
-    caseFileId: 'mock-id-1',
-    user: { id: '1', name: 'Jane Doe' },
-    role: {
-      id: '2',
-      name: {
-        translation:
-     { en: 'sys admin', fr: 'admin de systeme' },
+    {
+      id: 'mock-activity-id-5',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: {
+        id: '2',
+        name: {
+          translation: { en: 'sys admin', fr: 'admin de systeme' },
+        },
       },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.TriageUpdated,
+      details: { triageName: { translation: { en: 'Tier 1', fr: 'Categorie 1' } } },
     },
-    created: '2021-05-04',
-    activityType: ECaseFileActivityType.TriageUpdated,
-    details: { triageName: { translation: { en: 'Tier 1', fr: 'Categorie 1' } } },
-  },
   ];
 
   if (type) {
@@ -270,3 +281,99 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
 
   return activities;
 };
+
+export const mockCaseNoteCategories = (): IOptionItem[] => [
+  {
+    name: { translation: { en: 'Change in file status', fr: 'Changement à l’état du dossier' } },
+    orderRank: 3,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+    id: '0a137a3f-ae72-4fab-b521-7f96da9ece12',
+    status: 1,
+  },
+  {
+    name: { translation: { en: 'Assistance', fr: 'Assistance' } },
+    description: null,
+    orderRank: 2,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+    id: '39e3042d-0884-4505-9b18-2cf969706dfc',
+    status: 1,
+    eTag: '"0900cd2f-0000-0a00-0000-609ed58b0000"',
+  },
+  {
+    name: { translation: { en: 'Action logrterte', fr: 'Registre d’action au dossier' } },
+    description: null,
+    orderRank: 1,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+    id: '09bda590-ad8b-4f29-af4e-c63eedd337a0',
+    status: 1,
+    eTag: '"0b002262-0000-0a00-0000-60a268d40000"',
+  },
+  {
+    name: { translation: { en: 'Other', fr: 'Autre' } },
+    description: null,
+    orderRank: 5,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+    id: '69a5d7c2-37ac-4326-ac42-2a661ffd9ab9',
+    status: 1,
+    eTag: '"0900cf2f-0000-0a00-0000-609ed58b0000"',
+  },
+  {
+    name: { translation: { en: 'Escalation', fr: 'Processus d’escalade' } },
+    description: null,
+    orderRank: 4,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+    id: '71d90801-9a9d-45fe-ae54-cb50a82afb7b',
+    status: 1,
+    eTag: '"0900d02f-0000-0a00-0000-609ed58b0000"',
+  },
+  {
+    name: { translation: { en: 'test thl en1', fr: 'test thl fr1' } },
+    description: { translation: { en: 'desc en1', fr: 'desc fr1' } },
+    orderRank: 7,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+    id: '47fb3c8a-02a8-4b39-b23f-bc4c0167e901',
+    status: 1,
+    eTag: '"0b001262-0000-0a00-0000-60a268d00000"',
+  },
+  {
+    name: { translation: { en: "New Category for English é l'ê", fr: "New Category for English é l'ê FR" } },
+    description: { translation: {} },
+    orderRank: 11,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+    id: '067df21e-e9f8-4d49-9778-91a7b1ba74b9',
+    status: 1,
+    eTag: '"09009c33-0000-0a00-0000-609ed8b40000"',
+  },
+];
+
+export const mockCaseNote = (): ICaseNote => ({
+  subject: 'mock subject',
+  category: mockCaseNoteCategories()[0],
+  description: 'mock description',
+});
+
+export const mockTagsOptions = (): IOptionItem[] => [
+  {
+    name: { translation: { en: 'tag option en', fr: 'tag option fr' } },
+    orderRank: 3,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+    id: '0a137a3f-ae72-4fab-b521-7f96da9ece12',
+    status: 1,
+  },
+];

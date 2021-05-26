@@ -1,5 +1,5 @@
 import {
-  ICaseFile, ICaseFileActivity, ICaseFileLabel, ECaseFileStatus, ECaseFileTriage,
+  ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseNote, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
@@ -16,9 +16,14 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['caseFile/tagsOptions'];
     },
 
+    caseNoteCategories(): Array<IOptionItem> {
+      return store.getters['caseFile/caseNoteCategories'];
+    },
+
     inactiveReasons(): Array<IOptionItem> {
       return store.getters['caseFile/inactiveReasons'];
     },
+
     closeReasons(): Array<IOptionItem> {
       return store.getters['caseFile/closeReasons'];
     },
@@ -68,6 +73,14 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFile> {
       return store.dispatch('caseFile/setCaseFileIsDuplicate', { id, isDuplicate });
+    },
+
+    fetchActiveCaseNoteCategories(): Promise<IOptionItem[]> {
+      return store.dispatch('caseFile/fetchActiveCaseNoteCategories');
+    },
+
+    addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote[]> {
+      return store.dispatch('caseFile/addCaseNote', { id, caseNote });
     },
 
     setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFile> {

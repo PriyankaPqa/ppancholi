@@ -1,5 +1,5 @@
 import {
-  ICaseFile, ICaseFileActivity, ICaseFileLabel, ECaseFileStatus, ECaseFileTriage,
+  ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseNote, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
 import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
@@ -8,6 +8,7 @@ export interface IStorage {
   getters: {
     caseFileById(id: uuid): ICaseFile;
     tagsOptions(): Array<IOptionItem>;
+    caseNoteCategories(): Array<IOptionItem>;
     inactiveReasons(): Array<IOptionItem>;
     closeReasons(): Array<IOptionItem>;
   };
@@ -23,6 +24,8 @@ export interface IStorage {
     setCaseFileStatus(id: uuid, status: ECaseFileStatus, rationale?: string, reason?: IListOption): Promise<ICaseFile>;
     setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFile>;
     setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFile>;
+    fetchActiveCaseNoteCategories(): Promise<IOptionItem[]>;
+    addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote[]>;
     setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFile>;
   };
 }
@@ -31,6 +34,7 @@ export interface IStorageMock {
   getters: {
     caseFileById: jest.Mock<void>;
     tagsOptions: jest.Mock<void>;
+    caseNoteCategories: jest.Mock<IOptionItem[]>;
     inactiveReasons: jest.Mock<void>;
     closeReasons: jest.Mock<void>;
   };
@@ -46,6 +50,8 @@ export interface IStorageMock {
     setCaseFileStatus: jest.Mock<void>;
     setCaseFileLabels: jest.Mock<void>;
     setCaseFileIsDuplicate: jest.Mock<void>;
+    fetchActiveCaseNoteCategories: jest.Mock<void>;
+    addCaseNote: jest.Mock<void>;
     setCaseFileTriage: jest.Mock<ICaseFile>;
   };
 }

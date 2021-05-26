@@ -1,5 +1,5 @@
 import {
-  CaseFile, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData, ECaseFileStatus,
+  CaseFile, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData, mockCaseNote, ECaseFileStatus,
 } from '@/entities/case-file';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
@@ -13,6 +13,10 @@ describe('>>> Case File Storage', () => {
   describe('>> Getters', () => {
     it('should proxy caseFileById', () => {
       expect(storage.getters.caseFileById('TEST_ID')).toEqual(store.getters['caseFile/caseFileById']('TEST_ID'));
+    });
+
+    it('should proxy caseNoteCategories', () => {
+      expect(storage.getters.caseNoteCategories()).toEqual(store.getters['caseFile/caseNoteCategories']);
     });
   });
 
@@ -96,12 +100,24 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileIsDuplicate', { id, isDuplicate });
     });
 
+    it('should proxy fetchActiveCaseNoteCategories', () => {
+      storage.actions.fetchActiveCaseNoteCategories();
+      expect(store.dispatch).toBeCalledWith('caseFile/fetchActiveCaseNoteCategories');
+    });
+
     it('should proxy setCaseFileTriage', () => {
       const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
       const { id } = caseFile;
       const triage = ECaseFileTriage.Tier1;
       storage.actions.setCaseFileTriage(id, triage);
       expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileTriage', { id, triage });
+    });
+
+    it('should proxy addCaseNote', () => {
+      const caseNote = mockCaseNote();
+      const id = 'id';
+      storage.actions.addCaseNote(id, caseNote);
+      expect(store.dispatch).toBeCalledWith('caseFile/addCaseNote', { id, caseNote });
     });
   });
 });

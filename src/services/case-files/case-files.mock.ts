@@ -1,4 +1,6 @@
-import { mockCaseFileActivities, mockCaseFilesData, mockSearchCaseFiles } from '@/entities/case-file';
+import {
+  mockCaseFileActivities, mockCaseFilesData, mockCaseNoteCategories, mockSearchCaseFiles,
+} from '@/entities/case-file';
 import { ICaseFilesServiceMock } from './case-files.types';
 
 export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
@@ -8,5 +10,7 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   setCaseFileStatus: jest.fn(() => mockCaseFilesData()[0]),
   setCaseFileLabels: jest.fn(() => mockCaseFilesData()[0]),
   setCaseFileIsDuplicate: jest.fn(() => mockCaseFilesData()[0]),
+  fetchActiveCaseNoteCategories: jest.fn(() => mockCaseNoteCategories()),
+  addCaseNote: jest.fn(),
   setCaseFileTriage: jest.fn(() => mockCaseFilesData()[0]),
 });

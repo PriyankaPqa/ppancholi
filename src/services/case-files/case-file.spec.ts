@@ -1,5 +1,5 @@
 import {
-  ECaseFileStatus, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData,
+  ICaseFileLabel, mockCaseFilesSearchData, mockCaseNote, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
@@ -70,7 +70,7 @@ describe('>>> Case File Service', () => {
       const rationale = 'Some rationale';
 
       await service.setCaseFileStatus(id, status, rationale, null);
-      expect(http.patch).toHaveBeenCalledWith(`case-file/case-files/${id}/reopen`, { rationale});
+      expect(http.patch).toHaveBeenCalledWith(`case-file/case-files/${id}/reopen`, { rationale });
     });
   });
 
@@ -82,7 +82,7 @@ describe('>>> Case File Service', () => {
       const reason: IListOption = { optionItemId: 'foo', specifiedOther: null };
 
       await service.setCaseFileStatus(id, status, rationale, reason);
-      expect(http.patch).toHaveBeenCalledWith(`case-file/case-files/${id}/close`, { rationale,reason});
+      expect(http.patch).toHaveBeenCalledWith(`case-file/case-files/${id}/close`, { rationale, reason });
     });
   });
 
@@ -112,6 +112,28 @@ describe('>>> Case File Service', () => {
 
       await service.setCaseFileIsDuplicate(id, isDuplicate);
       expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/is-duplicate`, { isDuplicate });
+    });
+  });
+
+  describe('fetchActiveCaseNoteCategories', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.fetchActiveCaseNoteCategories();
+      expect(http.get).toHaveBeenCalledWith('/case-file/case-note-categories');
+    });
+  });
+
+  describe('addCaseNote', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = 'id';
+      const caseNote = mockCaseNote();
+      await service.addCaseNote(id, caseNote);
+      expect(http.post).toHaveBeenCalledWith(`/case-file/case-files/${id}/case-notes`, {
+        subject: caseNote.subject,
+        description: caseNote.description,
+        category: {
+          optionItemId: caseNote.category.id,
+        },
+      });
     });
   });
 

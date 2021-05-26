@@ -22,6 +22,7 @@ const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/vi
 const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
 const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/CaseFileDetails.vue');
 const CaseFileActivity = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
+const CaseNote = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-note/CaseNote.vue');
 
 const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/layout/EventsLayout.vue');
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
@@ -170,6 +171,13 @@ export const routes: Array<RouteConfig> = [
                     path: Routes.caseFile.activity.path,
                     name: Routes.caseFile.activity.name,
                     component: CaseFileActivity,
+                    meta: { level: 'level1' },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.note.path,
+                    name: Routes.caseFile.note.name,
+                    component: CaseNote,
                     meta: { level: 'level1' },
                     props: true,
                   },

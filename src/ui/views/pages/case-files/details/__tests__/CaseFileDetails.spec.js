@@ -529,7 +529,7 @@ describe('CaseFileDetails.vue', () => {
           }, {
             text: 'caseFileDetail.menu_case_note',
             test: 'case-note',
-            disabled: true,
+            to: 'casefile.note',
           }, {
             text: 'caseFileDetail.menu_documents',
             test: 'attached-documents',

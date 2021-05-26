@@ -218,8 +218,7 @@ export default Vue.extend({
       }, {
         text: this.$t('caseFileDetail.menu_case_note') as string,
         test: 'case-note',
-        disabled: true,
-        // to: routes.caseNote.name,
+        to: routes.caseFile.note.name,
 
       }, {
         text: this.$t('caseFileDetail.menu_documents') as string,

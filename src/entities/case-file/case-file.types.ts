@@ -1,4 +1,5 @@
 import { IMultilingual, IListOption, IIdMultilingualName } from '@/types';
+import { IOptionItem } from '../optionItem';
 
 /**
  * Enums
@@ -138,4 +139,10 @@ export interface ICaseFile {
   triageName: IMultilingual;
   tenantId: uuid;
   validate(): Array<string> | boolean;
+}
+
+export interface ICaseNote {
+  subject: string;
+  category: IOptionItem;
+  description: string;
 }

@@ -1,6 +1,7 @@
 import {
-  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ECaseFileTriage, ECaseFileStatus,
+  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ICaseNote, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
+import { IOptionItem } from '@/entities/optionItem';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 import { ICaseFilesService } from './case-files.types';
@@ -54,6 +55,20 @@ export class CaseFilesService implements ICaseFilesService {
 
   async setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileData> {
     return this.http.patch(`/case-file/case-files/${id}/is-duplicate`, { isDuplicate });
+  }
+
+  async fetchActiveCaseNoteCategories(): Promise<IOptionItem[]> {
+    return this.http.get('/case-file/case-note-categories');
+  }
+
+  async addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote[]> {
+    return this.http.post(`/case-file/case-files/${id}/case-notes`, {
+      subject: caseNote.subject,
+      description: caseNote.description,
+      category: {
+        optionItemId: caseNote.category.id,
+      },
+    });
   }
 
   async setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFileData> {

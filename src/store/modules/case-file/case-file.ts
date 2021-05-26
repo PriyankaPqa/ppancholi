@@ -6,7 +6,7 @@ import _sortBy from 'lodash/sortBy';
 
 import { IRootState } from '@/store/store.types';
 import {
-  CaseFile, ECaseFileStatus, ECaseFileTriage, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData,
+  CaseFile, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData, ICaseNote, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 import {
@@ -21,6 +21,7 @@ const getDefaultState = (): IState => ({
   searchLoading: false,
   getLoading: false,
   duplicateLoading: false,
+  caseNoteCategories: [],
   inactiveReasons: [],
   closeReasons: [],
   triageLoading: false,
@@ -39,6 +40,11 @@ const getters = {
 
   tagsOptions: (state: IState) => _sortBy(
     state.tagsOptions.map((e) => new OptionItem(e)),
+    'orderRank',
+  ),
+
+  caseNoteCategories: (state: IState) => _sortBy(
+    state.caseNoteCategories.map((e) => new OptionItem(e)),
     'orderRank',
   ),
 
@@ -83,9 +89,14 @@ const mutations = {
     state.tagsOptions = payload;
   },
 
+  setCaseNoteCategories(state: IState, payload: Array<IOptionItemData>) {
+    state.caseNoteCategories = payload;
+  },
+
   setInactiveReasons(state: IState, payload: Array<IOptionItemData>) {
     state.inactiveReasons = payload;
   },
+
   setCloseReasons(state: IState, payload: Array<IOptionItemData>) {
     state.closeReasons = payload;
   },
@@ -233,6 +244,19 @@ const actions = {
     }
 
     return null;
+  },
+
+  async fetchActiveCaseNoteCategories(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
+    const results = await this.$services.caseFiles.fetchActiveCaseNoteCategories();
+    const categories = results ?? [];
+
+    context.commit('setCaseNoteCategories', categories);
+    return categories;
+  },
+
+  async addCaseNote(this: Store<IState>, context: ActionContext<IState, IState>, payload: { id: uuid; caseNote: ICaseNote }): Promise<ICaseNote[]> {
+    const result = await this.$services.caseFiles.addCaseNote(payload.id, payload.caseNote);
+    return result;
   },
 
   async setCaseFileTriage(
