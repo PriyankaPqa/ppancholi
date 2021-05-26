@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.inactiveReasons" has-other />
+  <option-list title="system_management.lists.caseFileInactiveReasons" has-other />
 </template>
 
 <script lang="ts">

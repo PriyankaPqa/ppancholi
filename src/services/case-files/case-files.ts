@@ -1,5 +1,5 @@
 import {
-  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ECaseFileTriage,
+  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
@@ -14,6 +14,34 @@ export class CaseFilesService implements ICaseFilesService {
 
   async fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]> {
     return this.http.get(`/case-file/case-files/${id}/activities`);
+  }
+
+  async setCaseFileStatus(id: uuid, status: ECaseFileStatus, rationale?: string, reason?: IListOption): Promise<ICaseFileData> {
+    if (status === ECaseFileStatus.Open) {
+      return this.http.patch(`case-file/case-files/${id}/reopen`, {
+        rationale,
+      });
+    }
+
+    if (status === ECaseFileStatus.Closed) {
+      return this.http.patch(`case-file/case-files/${id}/close`, {
+        reason,
+        rationale,
+      });
+    }
+
+    if (status === ECaseFileStatus.Inactive) {
+      return this.http.patch(`case-file/case-files/${id}/deactivate`, {
+        reason,
+        rationale,
+      });
+    }
+
+    if (status === ECaseFileStatus.Archived) {
+      return this.http.patch(`case-file/case-files/${id}/archive`, {});
+    }
+
+    throw new Error('Invalid status');
   }
 
   async setCaseFileTags(id: uuid, payload: IListOption[]): Promise<ICaseFileData> {

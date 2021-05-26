@@ -14,17 +14,11 @@
         @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
 
       <v-row class="ma-0 pa-0">
-        <v-col cols="12" md="6" class="flex-row align-center">
-          <status-select
-            data-test="event-detail-status-select"
-            :value="caseFile.caseFileStatus"
-            :statuses="statuses"
-            status-name="ECaseFileStatus"
-            :disabled="true" />
+        <v-col cols="12" md="6" class="flex-row">
+          <case-file-status
+            :case-file="caseFile" />
 
-          <v-divider
-            vertical
-            class="ml-4 mr-4" />
+          <v-divider vertical class="ml-4 mr-4" />
 
           <span class="pr-2 rc-body12">{{ $t('caseFileActivity.triage') }}:</span>
           <v-select
@@ -43,7 +37,7 @@
 
           <v-btn
             data-test="caseFileActivity-duplicateBtn"
-            :class="{'no-pointer': !canMarkDuplicate}"
+            :class="{ 'no-pointer': !canMarkDuplicate }"
             icon
             :loading="duplicateLoading"
             :disabled="!canMarkDuplicate"
@@ -59,22 +53,18 @@
             <!-- <v-icon class="mr-1" color="status_warning">
               mdi-alert
             </v-icon> -->
-            {{ $t('caseFileDetail.notAssigned') }}
+            {{ $t("caseFileDetail.notAssigned") }}
           </div>
 
-          <v-btn
-            color="primary"
-            small
-            data-test="case-file-assign-btn">
+          <v-btn color="primary" small data-test="case-file-assign-btn">
             <v-icon left>
               mdi-plus
             </v-icon>
-            {{ $t('caseFileDetail.assignTo') }}
+            {{ $t("caseFileDetail.assignTo") }}
           </v-btn>
         </v-col>
       </v-row>
     </template>
-
     <template v-if="!loading" slot="default">
       <v-row class="ma-0 pa-0">
         <case-file-labels />
@@ -108,14 +98,12 @@
 import Vue from 'vue';
 import _sortBy from 'lodash/sortBy';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
-import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
-import {
-  ICaseFile, ECaseFileStatus, ICaseFileActivity, ECaseFileTriage,
-} from '@/entities/case-file';
+import { ICaseFile, ICaseFileActivity, ECaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
+import CaseFileStatus from './components/CaseFileStatus.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
 import CaseFileActivityListItem from './components/CaseFileActivityListItem.vue';
 
@@ -124,9 +112,9 @@ export default Vue.extend({
   components: {
     RcPageLoading,
     RcPageContent,
-    StatusSelect,
     CaseFileTags,
     CaseFileListWrapper,
+    CaseFileStatus,
     CaseFileLabels,
     CaseFileActivityListItem,
   },
@@ -134,14 +122,10 @@ export default Vue.extend({
   data() {
     return {
       moment,
-      ECaseFileStatus,
       error: false,
-      newStatus: null,
-      showEventStatusDialog: false,
       showLabelsDialog: false,
       loading: false,
       loadingActivity: false,
-      statuses: [ECaseFileStatus.Archived, ECaseFileStatus.Open, ECaseFileStatus.Closed, ECaseFileStatus.Inactive],
       lastActionAgo: null,
       caseFileActivities: [] as ICaseFileActivity[],
       activityFetchDelay: 800,
@@ -226,7 +210,6 @@ export default Vue.extend({
     },
   },
 });
-
 </script>
 
 <style  lang='scss'>

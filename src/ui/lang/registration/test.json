@@ -54,6 +54,7 @@
     "common.provinces.SK": "common.provinces.SK",
     "common.provinces.YT": "common.provinces.YT",
     "common.save": "common.save",
+    "common.tooltip_label": "",
     "common.years": "common.years",
     "common.yes": "common.yes",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate": "errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate",
@@ -226,7 +227,13 @@
     "validations.regex": "validations.regex",
     "validations.required": "validations.required",
     "warning.max_householdmembers_reached": "warning.max_householdmembers_reached",
+    "zendesk.beneficiary_registration.addresses": "zendesk.beneficiary_registration.addresses",
+    "zendesk.beneficiary_registration.household_members": "zendesk.beneficiary_registration.household_members",
+    "zendesk.beneficiary_registration.introduction": "zendesk.beneficiary_registration.introduction",
+    "zendesk.beneficiary_registration.personal_information": "zendesk.beneficiary_registration.personal_information",
+    "zendesk.beneficiary_registration.privacy_statement": "zendesk.beneficiary_registration.privacy_statement",
+    "zendesk.beneficiary_registration.review_confirm": "zendesk.beneficiary_registration.review_confirm",
     "zendesk.registration.addresses": "zendesk.registration.addresses",
     "zendesk.registration.personalInformation": "zendesk.registration.personalInformation",
-    "zendesk.registration.review": ""
+    "zendesk.registration.review": "zendesk.registration.review"
 }

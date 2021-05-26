@@ -6,11 +6,11 @@ import _sortBy from 'lodash/sortBy';
 
 import { IRootState } from '@/store/store.types';
 import {
-  CaseFile, ECaseFileTriage, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData,
+  CaseFile, ECaseFileStatus, ECaseFileTriage, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData,
 } from '@/entities/case-file';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 import {
-  EOptionLists, IOptionItem, IOptionItemData, OptionItem,
+  EOptionListItemStatus, EOptionLists, IOptionItem, IOptionItemData, OptionItem,
 } from '@/entities/optionItem';
 import { IState } from './case-file.types';
 import { mapCaseFileDataToSearchData } from './case-file-utils';
@@ -21,6 +21,8 @@ const getDefaultState = (): IState => ({
   searchLoading: false,
   getLoading: false,
   duplicateLoading: false,
+  inactiveReasons: [],
+  closeReasons: [],
   triageLoading: false,
 });
 
@@ -35,9 +37,19 @@ const getters = {
     return null;
   },
 
-  tagsOptions: (state: IState) => (
-    _sortBy(state.tagsOptions.map((e) => new OptionItem(e)), 'orderRank')
+  tagsOptions: (state: IState) => _sortBy(
+    state.tagsOptions.map((e) => new OptionItem(e)),
+    'orderRank',
   ),
+
+  inactiveReasons: (state: IState) => _sortBy(
+    state.inactiveReasons.map((e) => new OptionItem(e)),
+    'orderRank',
+  ).filter((i) => i.status === EOptionListItemStatus.Active),
+  closeReasons: (state: IState) => _sortBy(
+    state.closeReasons.map((e) => new OptionItem(e)),
+    'orderRank',
+  ).filter((i) => i.status === EOptionListItemStatus.Active),
 };
 
 const mutations = {
@@ -45,11 +57,7 @@ const mutations = {
     const index = _findIndex(state.caseFiles, { id: payload.id });
 
     if (index > -1) {
-      state.caseFiles = [
-        ...state.caseFiles.slice(0, index),
-        payload,
-        ...state.caseFiles.slice(index + 1),
-      ];
+      state.caseFiles = [...state.caseFiles.slice(0, index), payload, ...state.caseFiles.slice(index + 1)];
     } else {
       state.caseFiles.push(payload);
     }
@@ -74,6 +82,13 @@ const mutations = {
   setTagsOptions(state: IState, payload: Array<IOptionItemData>) {
     state.tagsOptions = payload;
   },
+
+  setInactiveReasons(state: IState, payload: Array<IOptionItemData>) {
+    state.inactiveReasons = payload;
+  },
+  setCloseReasons(state: IState, payload: Array<IOptionItemData>) {
+    state.closeReasons = payload;
+  },
 };
 
 const actions = {
@@ -84,6 +99,24 @@ const actions = {
     // context.commit('setTagsOptionsFetched', true);
 
     return context.getters.tagsOptions;
+  },
+
+  async fetchInactiveReasons(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
+    // if (!context.state.tagsOptionsFetched) { disable caching until signalR events are implemented
+    const data = await this.$services.optionItems.getOptionList(EOptionLists.CaseFileInactiveReasons);
+    context.commit('setInactiveReasons', data);
+    // context.commit('setInactiveReasons', true);
+
+    return context.getters.inactiveReasons;
+  },
+
+  async fetchCloseReasons(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
+    // if (!context.state.tagsOptionsFetched) { disable caching until signalR events are implemented
+    const data = await this.$services.optionItems.getOptionList(EOptionLists.CaseFileCloseReasons);
+    context.commit('setCloseReasons', data);
+    // context.commit('setCloseReasons', true);
+
+    return context.getters.closeReasons;
   },
 
   async fetchCaseFileActivities(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ICaseFileActivity[]> {
@@ -140,9 +173,23 @@ const actions = {
   async setCaseFileTags(
     this: Store<IState>,
     context: ActionContext<IState, IRootState>,
-    payload: { tags: IListOption[], id: uuid },
+    payload: { tags: IListOption[]; id: uuid },
   ): Promise<ICaseFile> {
     const data = await this.$services.caseFiles.setCaseFileTags(payload.id, payload.tags);
+    if (data) {
+      const caseFile = new CaseFile(mapCaseFileDataToSearchData(data, context, payload.id));
+      context.commit('addOrUpdateCaseFile', caseFile);
+      return caseFile;
+    }
+    return null;
+  },
+
+  async setCaseFileStatus(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    payload: { id: uuid; status: ECaseFileStatus; rationale: string; reason: IListOption },
+  ): Promise<ICaseFile> {
+    const data = await this.$services.caseFiles.setCaseFileStatus(payload.id, payload.status, payload.rationale, payload.reason);
     if (data) {
       const caseFile = new CaseFile(mapCaseFileDataToSearchData(data, context, payload.id));
       context.commit('addOrUpdateCaseFile', caseFile);
@@ -154,7 +201,7 @@ const actions = {
   async setCaseFileLabels(
     this: Store<IState>,
     context: ActionContext<IState, IRootState>,
-    payload: { id: uuid, labels: ICaseFileLabel[] },
+    payload: { id: uuid; labels: ICaseFileLabel[] },
   ): Promise<ICaseFile> {
     const data = await this.$services.caseFiles.setCaseFileLabels(payload.id, payload.labels);
 
@@ -170,7 +217,7 @@ const actions = {
   async setCaseFileIsDuplicate(
     this: Store<IState>,
     context: ActionContext<IState, IRootState>,
-    payload: { id: uuid, isDuplicate: boolean },
+    payload: { id: uuid; isDuplicate: boolean },
   ): Promise<ICaseFile> {
     try {
       context.commit('setDuplicateLoading', true);
@@ -191,7 +238,7 @@ const actions = {
   async setCaseFileTriage(
     this: Store<IState>,
     context: ActionContext<IState, IRootState>,
-    payload: { id: uuid, triage: ECaseFileTriage },
+    payload: { id: uuid; triage: ECaseFileTriage },
   ): Promise<ICaseFile> {
     try {
       context.commit('setTriageLoading', true);
@@ -215,5 +262,5 @@ export const caseFile: Module<IState, IRootState> = {
   state: moduleState as IState,
   getters,
   mutations,
-  actions: actions as unknown as ActionTree<IState, IRootState>,
+  actions: (actions as unknown) as ActionTree<IState, IRootState>,
 };

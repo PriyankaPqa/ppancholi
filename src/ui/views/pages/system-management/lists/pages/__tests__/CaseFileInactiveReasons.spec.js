@@ -29,7 +29,7 @@ describe('CaseFileInactiveReasons.vue', () => {
     });
 
     it('uses correct title', () => {
-      expect(wrapper.findComponent(OptionList).props('title')).toBe('system_management.lists.inactiveReasons');
+      expect(wrapper.findComponent(OptionList).props('title')).toBe('system_management.lists.caseFileInactiveReasons');
     });
   });
 

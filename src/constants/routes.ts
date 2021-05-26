@@ -192,7 +192,7 @@ const routes = {
       path: 'roles',
       name: 'systemManagement.lists.roles',
     },
-    inactiveReasons: {
+    caseFileInactiveReasons: {
       path: 'lists/case-file-inactive-reasons',
       name: 'systemManagement.lists.caseFileInactiveReasons',
     },

@@ -1,5 +1,11 @@
 import {
-  CaseFile, ECaseFileTriage, ICaseFile, ICaseFileLabel, mockCaseFilesSearchData, mockSearchCaseFiles,
+  CaseFile,
+  ICaseFile,
+  ICaseFileLabel,
+  mockCaseFilesSearchData,
+  mockSearchCaseFiles,
+  ECaseFileStatus,
+  ECaseFileTriage,
 } from '@/entities/case-file';
 import { Store } from 'vuex';
 import { mockSearchParams } from '@/test/helpers';
@@ -128,18 +134,6 @@ describe('>>> Case File Module', () => {
         expect(store.state.caseFile.duplicateLoading).toBe(true);
       });
     });
-
-    describe('setTriageLoading', () => {
-      it('sets the value of triageLoading', () => {
-        store = mockStore();
-
-        expect(store.state.caseFile.triageLoading).toBe(false);
-
-        store.commit('caseFile/setTriageLoading', true);
-
-        expect(store.state.caseFile.triageLoading).toBe(true);
-      });
-    });
   });
 
   describe('>> Actions', () => {
@@ -167,9 +161,7 @@ describe('>>> Case File Module', () => {
 
         expect(store.$services.caseFiles.searchCaseFiles).toHaveBeenCalledWith({ filter: { CaseFileId: caseFile.id } });
 
-        expect(store.state.caseFile.caseFiles).toEqual([
-          caseFile,
-        ]);
+        expect(store.state.caseFile.caseFiles).toEqual([caseFile]);
 
         expect(res).toEqual(caseFile);
       });
@@ -236,6 +228,44 @@ describe('>>> Case File Module', () => {
         expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
       });
     });
+
+    describe('setCaseFileStatus', () => {
+      it('calls the setCaseFileStatus service and returns the new case file entity', async () => {
+        store = mockStore({
+          modules: {
+            caseFile: {
+              state: {
+                caseFiles: mockCaseFiles(),
+                searchLoading: false,
+                getLoading: false,
+                caseFilesFetched: false,
+              },
+            },
+          },
+        });
+
+        const caseFile = mockCaseFiles()[0];
+        const { id } = caseFile;
+        const status: ECaseFileStatus = ECaseFileStatus.Inactive;
+        const rationale = 'Some rationale';
+        const reason: IListOption = { optionItemId: 'foo', specifiedOther: null };
+        expect(store.$services.caseFiles.setCaseFileStatus).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('caseFile/setCaseFileStatus', {
+          id,
+          status,
+          rationale,
+          reason,
+        });
+
+        expect(store.$services.caseFiles.setCaseFileStatus).toHaveBeenCalledTimes(1);
+        expect(store.$services.caseFiles.setCaseFileStatus).toHaveBeenCalledWith(id, status, rationale, reason);
+
+        expect(res).toEqual(caseFile);
+
+        expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
+      });
+    });
   });
 
   describe('setCaseFileLabels', () => {
@@ -252,13 +282,16 @@ describe('>>> Case File Module', () => {
 
       const caseFile = mockCaseFiles()[0];
       const { id } = caseFile;
-      const labels: ICaseFileLabel[] = [{
-        name: 'Label One',
-        order: 1,
-      }, {
-        name: 'Label Two',
-        order: 2,
-      }];
+      const labels: ICaseFileLabel[] = [
+        {
+          name: 'Label One',
+          order: 1,
+        },
+        {
+          name: 'Label Two',
+          order: 2,
+        },
+      ];
 
       expect(store.$services.caseFiles.setCaseFileLabels).toHaveBeenCalledTimes(0);
 
@@ -275,7 +308,35 @@ describe('>>> Case File Module', () => {
       expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
     });
   });
+  it('calls the setCaseFileTriage service and returns the case file entity', async () => {
+    store = mockStore({
+      modules: {
+        caseFile: {
+          state: {
+            caseFiles: mockCaseFiles(),
+          },
+        },
+      },
+    });
 
+    const caseFile = mockCaseFiles()[0];
+    const { id } = caseFile;
+    const triage = ECaseFileTriage.Tier1;
+
+    expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(0);
+
+    const res = await store.dispatch('caseFile/setCaseFileTriage', {
+      id,
+      triage,
+    });
+
+    expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(1);
+    expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledWith(id, triage);
+
+    expect(res).toEqual(caseFile);
+
+    expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
+  });
   describe('setCaseFileIsDuplicate', () => {
     it('calls the setCaseFileIsDuplicate service and returns the case file entity', async () => {
       store = mockStore({
@@ -301,38 +362,6 @@ describe('>>> Case File Module', () => {
 
       expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledTimes(1);
       expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledWith(id, isDuplicate);
-
-      expect(res).toEqual(caseFile);
-
-      expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
-    });
-  });
-
-  describe('setCaseFileTriage', () => {
-    it('calls the setCaseFileTriage service and returns the case file entity', async () => {
-      store = mockStore({
-        modules: {
-          caseFile: {
-            state: {
-              caseFiles: mockCaseFiles(),
-            },
-          },
-        },
-      });
-
-      const caseFile = mockCaseFiles()[0];
-      const { id } = caseFile;
-      const triage = ECaseFileTriage.Tier1;
-
-      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(0);
-
-      const res = await store.dispatch('caseFile/setCaseFileTriage', {
-        id,
-        triage,
-      });
-
-      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(1);
-      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledWith(id, triage);
 
       expect(res).toEqual(caseFile);
 

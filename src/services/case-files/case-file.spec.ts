@@ -1,4 +1,6 @@
-import { ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData } from '@/entities/case-file';
+import {
+  ECaseFileStatus, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData,
+} from '@/entities/case-file';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { IListOption } from '@/types';
@@ -39,16 +41,64 @@ describe('>>> Case File Service', () => {
     });
   });
 
+  describe('setCaseFileStatus - inactive', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const status: ECaseFileStatus = ECaseFileStatus.Inactive;
+      const rationale = 'Some rationale';
+      const reason: IListOption = { optionItemId: 'foo', specifiedOther: null };
+
+      await service.setCaseFileStatus(id, status, rationale, reason);
+      expect(http.patch).toHaveBeenCalledWith(`case-file/case-files/${id}/deactivate`, { reason, rationale });
+    });
+  });
+
+  describe('setCaseFileStatus - archive', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const status: ECaseFileStatus = ECaseFileStatus.Archived;
+
+      await service.setCaseFileStatus(id, status, null, null);
+      expect(http.patch).toHaveBeenCalledWith(`case-file/case-files/${id}/archive`, {});
+    });
+  });
+
+  describe('setCaseFileStatus - reopen', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const status: ECaseFileStatus = ECaseFileStatus.Open;
+      const rationale = 'Some rationale';
+
+      await service.setCaseFileStatus(id, status, rationale, null);
+      expect(http.patch).toHaveBeenCalledWith(`case-file/case-files/${id}/reopen`, { rationale});
+    });
+  });
+
+  describe('setCaseFileStatus - close', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const status: ECaseFileStatus = ECaseFileStatus.Closed;
+      const rationale = 'Some rationale';
+      const reason: IListOption = { optionItemId: 'foo', specifiedOther: null };
+
+      await service.setCaseFileStatus(id, status, rationale, reason);
+      expect(http.patch).toHaveBeenCalledWith(`case-file/case-files/${id}/close`, { rationale,reason});
+    });
+  });
+
   describe('setCaseFileLabels', () => {
     it('is linked to the correct URL and params', async () => {
       const id = mockCaseFilesSearchData()[0].caseFileId;
-      const payload: ICaseFileLabel[] = [{
-        name: 'Label One',
-        order: 1,
-      }, {
-        name: 'Label Two',
-        order: 2,
-      }];
+      const payload: ICaseFileLabel[] = [
+        {
+          name: 'Label One',
+          order: 1,
+        },
+        {
+          name: 'Label Two',
+          order: 2,
+        },
+      ];
 
       await service.setCaseFileLabels(id, payload);
       expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/labels`, { labels: payload });

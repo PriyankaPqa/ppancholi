@@ -92,9 +92,9 @@ export default Vue.extend({
         dataTest: 'agreementTypes',
       },
       {
-        name: 'system_management.lists.inactiveReasons',
-        route: routes.systemManagement.inactiveReasons.name,
-        dataTest: 'inactiveReasons',
+        name: 'system_management.lists.caseFileInactiveReasons',
+        route: routes.systemManagement.caseFileInactiveReasons.name,
+        dataTest: 'caseFileInactiveReasons',
       },
       {
         name: 'system_management.lists.caseNoteCategories',

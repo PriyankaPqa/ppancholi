@@ -1,5 +1,5 @@
 import {
-  ECaseFileTriage, ICaseFile, ICaseFileActivity, ICaseFileLabel,
+  ICaseFile, ICaseFileActivity, ICaseFileLabel, ECaseFileStatus, ECaseFileTriage,
 } from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
@@ -15,11 +15,26 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     tagsOptions(): Array<IOptionItem> {
       return store.getters['caseFile/tagsOptions'];
     },
+
+    inactiveReasons(): Array<IOptionItem> {
+      return store.getters['caseFile/inactiveReasons'];
+    },
+    closeReasons(): Array<IOptionItem> {
+      return store.getters['caseFile/closeReasons'];
+    },
   },
 
   actions: {
     fetchTagsOptions(): Promise<IOptionItem[]> {
       return store.dispatch('caseFile/fetchTagsOptions');
+    },
+
+    fetchInactiveReasons(): Promise<IOptionItem[]> {
+      return store.dispatch('caseFile/fetchInactiveReasons');
+    },
+
+    fetchCloseReasons(): Promise<IOptionItem[]> {
+      return store.dispatch('caseFile/fetchCloseReasons');
     },
 
     fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity> {
@@ -36,6 +51,15 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     setCaseFileTags(id: uuid, tags: IListOption[]): Promise<ICaseFile> {
       return store.dispatch('caseFile/setCaseFileTags', { id, tags });
+    },
+
+    setCaseFileStatus(id: uuid, status: ECaseFileStatus, rationale?: string, reason?: IListOption): Promise<ICaseFile> {
+      return store.dispatch('caseFile/setCaseFileStatus', {
+        id,
+        status,
+        rationale,
+        reason,
+      });
     },
 
     setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFile> {

@@ -373,8 +373,8 @@ export const routes: Array<RouteConfig> = [
                 meta: { level: 'level6' },
               },
               {
-                path: Routes.systemManagement.inactiveReasons.path,
-                name: Routes.systemManagement.inactiveReasons.name,
+                path: Routes.systemManagement.caseFileInactiveReasons.path,
+                name: Routes.systemManagement.caseFileInactiveReasons.name,
                 component: CaseFileInactiveReasons,
                 meta: { level: 'level6' },
               },

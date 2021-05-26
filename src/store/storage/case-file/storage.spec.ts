@@ -1,5 +1,5 @@
 import {
-  CaseFile, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData,
+  CaseFile, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData, ECaseFileStatus,
 } from '@/entities/case-file';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
@@ -27,6 +27,21 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith('caseFile/fetchCaseFile', 'TEST_ID');
     });
 
+    it('should proxy fetchInactiveReasons', () => {
+      storage.actions.fetchInactiveReasons();
+      expect(store.dispatch).toBeCalledWith('caseFile/fetchInactiveReasons');
+    });
+
+    it('should proxy fetchCloseReasons', () => {
+      storage.actions.fetchCloseReasons();
+      expect(store.dispatch).toBeCalledWith('caseFile/fetchCloseReasons');
+    });
+
+    it('should proxy fetchTagsOptions', () => {
+      storage.actions.fetchTagsOptions();
+      expect(store.dispatch).toBeCalledWith('caseFile/fetchTagsOptions');
+    });
+
     it('should proxy searchCaseFiles', () => {
       const params = mockSearchParams;
       storage.actions.searchCaseFiles(params);
@@ -41,16 +56,34 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileTags', { id, tags });
     });
 
+    it('should proxy setCaseFileStatus', () => {
+      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+      const { id } = caseFile;
+      const status: ECaseFileStatus = ECaseFileStatus.Inactive;
+      const rationale = 'Some rationale';
+      const reason: IListOption = { optionItemId: 'foo', specifiedOther: null };
+      storage.actions.setCaseFileStatus(id, status, rationale, reason);
+      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileStatus', {
+        id,
+        status,
+        rationale,
+        reason,
+      });
+    });
+
     it('should proxy setCaseFileLabels', () => {
       const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
       const { id } = caseFile;
-      const labels: ICaseFileLabel[] = [{
-        name: 'Label One',
-        order: 1,
-      }, {
-        name: 'Label Two',
-        order: 2,
-      }];
+      const labels: ICaseFileLabel[] = [
+        {
+          name: 'Label One',
+          order: 1,
+        },
+        {
+          name: 'Label Two',
+          order: 2,
+        },
+      ];
       storage.actions.setCaseFileLabels(id, labels);
       expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileLabels', { id, labels });
     });

@@ -65,13 +65,6 @@ describe('CaseFileActivity.vue', () => {
       });
     });
 
-    describe('status select', () => {
-      it('renders', () => {
-        const element = wrapper.findDataTest('event-detail-status-select');
-        expect(element.exists()).toBeTruthy();
-      });
-    });
-
     describe('triage select', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('caseFileActivity-triage-select');

@@ -1,0 +1,145 @@
+<template>
+  <div>
+    <status-select
+      data-test="case-file-detail-status-select"
+      :value="caseFile.caseFileStatus"
+      :statuses="statuses"
+      :disabled="!$hasLevel('level2')"
+      status-name="ECaseFileStatus"
+      @input="onStatusChangeInit($event)" />
+
+    <case-file-status-dialog
+      v-if="showCaseFileStatusDialog && newStatus"
+      data-test="case-file-summary-status-dialog"
+      :to-status="newStatus"
+      :show.sync="showCaseFileStatusDialog"
+      @submit="onSubmitDialog($event)"
+      @cancelChange="showCaseFileStatusDialog = false" />
+
+    <rc-confirmation-dialog
+      v-if="showConfirmationDialog"
+      :loading="loading"
+      :show-help="newStatus === ECaseFileStatus.Archived "
+      :help-link="helpLink"
+      data-test="case-file-status-confirmation-dialog"
+      :show.sync="showConfirmationDialog"
+      :title="confirmationDialogText.title"
+      :messages="confirmationDialogText.message"
+      @submit="submitStatusChange()"
+      @cancel="showConfirmationDialog = false"
+      @close="showConfirmationDialog = false" />
+  </div>
+</template>
+
+<script lang='ts'>
+import Vue from 'vue';
+import {
+  RcConfirmationDialog,
+} from '@crctech/component-library';
+import { ICaseFile, ECaseFileStatus } from '@/entities/case-file';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
+import { IListOption } from '@/types/interfaces/IListOption';
+import CaseFileStatusDialog from './CaseFileStatusDialog.vue';
+
+export default Vue.extend({
+  name: 'CaseFileStatus',
+
+  components: {
+    RcConfirmationDialog,
+    CaseFileStatusDialog,
+    StatusSelect,
+  },
+
+  props: {
+    caseFile: {
+      type: Object as () => ICaseFile,
+      required: true,
+    },
+  },
+
+  data() {
+    return {
+      ECaseFileStatus,
+      newStatus: null,
+      rationale: null,
+      loading: false,
+      reason: null,
+      showCaseFileStatusDialog: false,
+      showConfirmationDialog: false,
+    };
+  },
+
+  computed: {
+
+    statuses(): Array<ECaseFileStatus> {
+      if (this.$hasLevel('level3')) {
+        return [ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive, ECaseFileStatus.Open];
+      }
+      return [ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive];
+    },
+
+    confirmationDialogText() : {title:string, message:string} {
+      switch (this.newStatus) {
+        case ECaseFileStatus.Inactive:
+          return {
+            title: this.$t('caseFile.changeStatusConfirmTitle.Inactive') as string,
+            message: this.$t('caseFile.changeStatusConfirmBody.Inactive') as string,
+          };
+        case ECaseFileStatus.Open:
+          return {
+            title: this.$t('caseFile.changeStatusConfirmTitle.Open') as string,
+            message: this.$t('caseFile.changeStatusConfirmBody.Open') as string,
+          };
+        case ECaseFileStatus.Closed:
+          return {
+            title: this.$t('caseFile.changeStatusConfirmTitle.Close') as string,
+            message: this.$t('caseFile.changeStatusConfirmBody.Close') as string,
+          };
+        case ECaseFileStatus.Archived:
+          return {
+            title: this.$t('caseFile.changeStatusConfirmTitle.Archived') as string,
+            message: this.$t('caseFile.changeStatusConfirmBody.Archived') as string,
+          };
+        default:
+          return { title: '', message: '' };
+      }
+    },
+
+    helpLink() : string {
+      if (this.newStatus === ECaseFileStatus.Archived) {
+        return this.$t('zendesk.help_link.change_caseFile_status_archived') as string;
+      }
+      return null;
+    },
+  },
+  methods: {
+    onStatusChangeInit(status: ECaseFileStatus) {
+      this.newStatus = status;
+      if (this.newStatus === ECaseFileStatus.Archived) {
+        this.showConfirmationDialog = true;
+      } else {
+        this.showCaseFileStatusDialog = true;
+      }
+    },
+
+    onSubmitDialog(payload: { rationale:string, reason:IListOption }) {
+      this.showCaseFileStatusDialog = false;
+      this.showConfirmationDialog = true;
+      this.rationale = payload.rationale;
+      this.reason = payload.reason;
+    },
+
+    submitStatusChange() {
+      try {
+        this.loading = true;
+        this.$storage.caseFile.actions.setCaseFileStatus(this.caseFile.id, this.newStatus, this.rationale, this.reason);
+      } finally {
+        this.loading = false;
+        this.showConfirmationDialog = false;
+      }
+    },
+  },
+
+});
+
+</script>
