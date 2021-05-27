@@ -1,5 +1,11 @@
 import {
-  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ICaseNote, ECaseFileTriage, ECaseFileStatus,
+  ICaseFileActivity,
+  ICaseFileData,
+  ICaseFileLabel,
+  ICaseFileSearchData,
+  ICaseNote,
+  ECaseFileTriage,
+  ECaseFileStatus,
 } from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';

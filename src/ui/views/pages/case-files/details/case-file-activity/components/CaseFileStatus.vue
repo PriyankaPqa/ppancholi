@@ -129,10 +129,11 @@ export default Vue.extend({
       this.reason = payload.reason;
     },
 
-    submitStatusChange() {
+    async submitStatusChange() {
       try {
         this.loading = true;
-        this.$storage.caseFile.actions.setCaseFileStatus(this.caseFile.id, this.newStatus, this.rationale, this.reason);
+        await this.$storage.caseFile.actions.setCaseFileStatus(this.caseFile.id, this.newStatus, this.rationale, this.reason);
+        this.$emit('updateActivities');
       } finally {
         this.loading = false;
         this.showConfirmationDialog = false;

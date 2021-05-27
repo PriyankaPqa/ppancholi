@@ -202,12 +202,7 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       id: 'mock-activity-id-1',
       caseFileId: 'mock-id-1',
       user: { id: '1', name: 'Jane Doe' },
-      role: {
-        id: '2',
-        name: {
-          translation: { en: 'sys admin', fr: 'admin de systeme' },
-        },
-      },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-01-02 12:00',
       activityType: ECaseFileActivityType.AddedTag,
       details: {
@@ -221,12 +216,7 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       id: 'mock-activity-id-2',
       caseFileId: 'mock-id-1',
       user: { id: '1', name: 'Jane Doe' },
-      role: {
-        id: '2',
-        name: {
-          translation: { en: 'sys admin', fr: 'admin de systeme' },
-        },
-      },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
       activityType: ECaseFileActivityType.RemovedTag,
       details: { tags: [{ id: 'tag-id-5', name: { translation: { en: 'tag 4', fr: 'tag 4 fr' } } }] },
@@ -235,12 +225,7 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       id: 'mock-activity-id-3',
       caseFileId: 'mock-id-1',
       user: { id: '1', name: 'Jane Doe' },
-      role: {
-        id: '2',
-        name: {
-          translation: { en: 'sys admin', fr: 'admin de systeme' },
-        },
-      },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
       activityType: ECaseFileActivityType.AddedDuplicateFlag,
       details: null,
@@ -249,12 +234,7 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       id: 'mock-activity-id-4',
       caseFileId: 'mock-id-1',
       user: { id: '1', name: 'Jane Doe' },
-      role: {
-        id: '2',
-        name: {
-          translation: { en: 'sys admin', fr: 'admin de systeme' },
-        },
-      },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
       activityType: ECaseFileActivityType.RemovedDuplicateFlag,
       details: null,
@@ -263,12 +243,67 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       id: 'mock-activity-id-5',
       caseFileId: 'mock-id-1',
       user: { id: '1', name: 'Jane Doe' },
-      role: {
-        id: '2',
-        name: {
-          translation: { en: 'sys admin', fr: 'admin de systeme' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.CaseFileStatusDeactivated,
+      details: {
+        reason: {
+          id: '5e26b639-1cdd-476f-8c1c-1eab255e5eb2',
+          name: {
+            translation: {
+              en: 'Deceased',
+              fr: 'Décès',
+            },
+          },
         },
+        rationale: 'test',
       },
+    },
+    {
+      id: 'mock-activity-id-6',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.CaseFileStatusClosed,
+      details: {
+        reason: {
+          id: 'b5a484fb-eaa2-4d25-9dc5-c34a72e86100',
+          name: {
+            translation: {
+              en: 'End of CRC support',
+              fr: 'Fin du soutien de la CRC',
+            },
+          },
+        },
+        rationale: 'test',
+      },
+    },
+    {
+      id: 'mock-activity-id-7',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.CaseFileStatusArchived,
+      details: null,
+    },
+    {
+      id: 'mock-activity-id-8',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.CaseFileStatusReopened,
+      details: {
+        rationale: 'test',
+      },
+    },
+    {
+      id: 'mock-activity-id-9',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       created: '2021-05-04',
       activityType: ECaseFileActivityType.TriageUpdated,
       details: { triageName: { translation: { en: 'Tier 1', fr: 'Categorie 1' } } },

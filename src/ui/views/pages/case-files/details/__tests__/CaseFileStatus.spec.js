@@ -136,10 +136,10 @@ describe('CaseFileStatus.vue', () => {
       });
 
       describe('submitStatusChange', () => {
-        it('call setCaseFileStatus and sets showConfirmationDialog to false', () => {
+        it('call setCaseFileStatus and sets showConfirmationDialog to false', async () => {
           wrapper.vm.showConfirmationDialog = true;
 
-          wrapper.vm.submitStatusChange();
+          await wrapper.vm.submitStatusChange();
           expect(wrapper.vm.showConfirmationDialog).toBeFalsy();
           expect(actions.setCaseFileStatus).toHaveBeenCalledTimes(1);
         });

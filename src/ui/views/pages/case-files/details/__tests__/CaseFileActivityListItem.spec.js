@@ -187,6 +187,34 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
+      it('returns the correct icon when action type is CaseFileStatusDeactivated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusDeactivated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when action type is CaseFileStatusClosed', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusClosed)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-lock');
+      });
+
+      it('returns the correct icon when action type is CaseFileStatusReopen', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusReopened)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-lock-open');
+      });
+
+      it('returns the correct icon when action type is CaseFileStatusArchived', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusArchived)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
       it('returns the correct icon in default case', async () => {
         await wrapper.setProps({
           item: {
@@ -264,6 +292,58 @@ describe('CaseFileActivityListItem.vue', () => {
           expect(wrapper.vm.makeContentForTriageUpdated()).toEqual({
             title: 'caseFileActivity.activityList.title.triageUpdated',
             body: 'caseFileActivity.activityList.triage.new_triage: Tier 1',
+          });
+        });
+      });
+
+      describe('makeContentForCaseFileStatusDeactivated', () => {
+        it('returns the correct data when action type is CaseFileStatusDeactivated', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusDeactivated)[0],
+          });
+
+          expect(wrapper.vm.makeContentForCaseFileStatusDeactivated()).toEqual({
+            title: 'caseFileActivity.activityList.title.CaseFileStatusDeactivated',
+            body: 'caseFileActivity.activityList.status.reason: Deceased\ncaseFileActivity.activityList.status.rationale: test',
+          });
+        });
+      });
+
+      describe('makeContentForCaseFileStatusClosed', () => {
+        it('returns the correct data when action type is CaseFileStatusClosed', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusClosed)[0],
+          });
+
+          expect(wrapper.vm.makeContentForCaseFileStatusClosed()).toEqual({
+            title: 'caseFileActivity.activityList.title.CaseFileStatusClosed',
+            body: 'caseFileActivity.activityList.status.reason: End of CRC support\ncaseFileActivity.activityList.status.rationale: test',
+          });
+        });
+      });
+
+      describe('makeContentForCaseFileStatusArchived', () => {
+        it('returns the correct data when action type is CaseFileStatusArchived', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusArchived)[0],
+          });
+
+          expect(wrapper.vm.makeContentForCaseFileStatusArchived()).toEqual({
+            title: 'caseFileActivity.activityList.title.CaseFileStatusArchived',
+            body: null,
+          });
+        });
+      });
+
+      describe('makeContentForCaseFileStatusReopened', () => {
+        it('returns the correct data when action type is CaseFileStatusReopened', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusReopened)[0],
+          });
+
+          expect(wrapper.vm.makeContentForCaseFileStatusReopened()).toEqual({
+            title: 'caseFileActivity.activityList.title.CaseFileStatusReopened',
+            body: 'caseFileActivity.activityList.status.rationale: test',
           });
         });
       });

@@ -9,6 +9,6 @@ export type IState = {
   inactiveReasons: Array<IOptionItemData>;
   closeReasons: Array<IOptionItemData>;
   triageLoading: boolean;
-  tagsOptions: Array<IOptionItemData>,
-  caseNoteCategories: Array<IOptionItemData>,
+  tagsOptions: Array<IOptionItemData>;
+  caseNoteCategories: Array<IOptionItemData>;
 };

@@ -26,7 +26,11 @@ export enum ECaseFileActivityType {
   RemovedTag = 2,
   AddedDuplicateFlag = 3,
   RemovedDuplicateFlag = 4,
-  TriageUpdated = 9
+  CaseFileStatusDeactivated = 5,
+  CaseFileStatusClosed = 6,
+  CaseFileStatusArchived = 7,
+  CaseFileStatusReopened = 8,
+  TriageUpdated = 9,
 }
 
 /**
@@ -45,7 +49,7 @@ export interface ICaseFileBeneficiaryContactInfo {
   alternatePhoneNumber: ICaseFileBeneficiaryPhoneNumber;
 }
 
-export interface ICaseFileBeneficiaryAddress{
+export interface ICaseFileBeneficiaryAddress {
   country: string;
   streetAddress: string;
   unitSuite: string;
@@ -69,7 +73,7 @@ export interface ICaseFileLabel {
 }
 
 export interface ICaseFileActivityUser {
-  id: string,
+  id: string;
   name: string;
 }
 

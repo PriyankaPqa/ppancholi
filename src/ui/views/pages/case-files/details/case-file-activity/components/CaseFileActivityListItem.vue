@@ -4,8 +4,8 @@
       <div class="rc-body16 fw-bold" data-test="caseFileActivity-listItem-content-title">
         {{ content.title }}
       </div>
-      <div class="rc-body14" data-test="caseFileActivity-listItem-content-body">
-        {{ content.body }}
+      <div data-test="caseFileActivity-listItem-content-body">
+        <span class="rc-body14 content-body">{{ content.body }}</span>
       </div>
     </div>
   </case-file-list-item-wrapper>
@@ -49,6 +49,15 @@ export default Vue.extend({
         case ECaseFileActivityType.TriageUpdated:
           return this.makeContentForTriageUpdated();
 
+        case ECaseFileActivityType.CaseFileStatusDeactivated:
+          return this.makeContentForCaseFileStatusDeactivated();
+        case ECaseFileActivityType.CaseFileStatusClosed:
+          return this.makeContentForCaseFileStatusClosed();
+        case ECaseFileActivityType.CaseFileStatusArchived:
+          return this.makeContentForCaseFileStatusArchived();
+        case ECaseFileActivityType.CaseFileStatusReopened:
+          return this.makeContentForCaseFileStatusReopened();
+
         default:
           return null;
       }
@@ -59,11 +68,19 @@ export default Vue.extend({
         case ECaseFileActivityType.AddedTag:
         case ECaseFileActivityType.RemovedTag:
         case ECaseFileActivityType.TriageUpdated:
+        case ECaseFileActivityType.CaseFileStatusDeactivated:
+        case ECaseFileActivityType.CaseFileStatusArchived:
           return '$rctech-actions';
 
         case ECaseFileActivityType.AddedDuplicateFlag:
         case ECaseFileActivityType.RemovedDuplicateFlag:
           return '$rctech-duplicate';
+
+        case ECaseFileActivityType.CaseFileStatusClosed:
+          return 'mdi-lock';
+
+        case ECaseFileActivityType.CaseFileStatusReopened:
+          return 'mdi-lock-open';
 
         default:
           return 'mdi-message-text';
@@ -102,6 +119,47 @@ export default Vue.extend({
         body: `${this.$t('caseFileActivity.activityList.triage.new_triage')}: ${this.$m(this.item.details.triageName as IMultilingual)}`,
       };
     },
+
+    makeContentForCaseFileStatusDeactivated(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.CaseFileStatusDeactivated');
+
+      const reasonString = this.$m((this.item.details.reason as IIdMultilingualName).name);
+      const rationaleString = this.item.details.rationale as string;
+      let body = `${this.$t('caseFileActivity.activityList.status.reason')}: ${reasonString}`;
+      if (rationaleString) body = body.concat(`\n${this.$t('caseFileActivity.activityList.status.rationale')}: ${rationaleString}`);
+      return { title, body };
+    },
+
+    makeContentForCaseFileStatusClosed(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.CaseFileStatusClosed');
+
+      const reasonString = this.$m((this.item.details.reason as IIdMultilingualName).name);
+      const rationaleString = this.item.details.rationale as string;
+
+      const body = `${this.$t('caseFileActivity.activityList.status.reason')}: ${reasonString}`
+      + `\n${this.$t('caseFileActivity.activityList.status.rationale')}: ${rationaleString}`;
+      return { title, body };
+    },
+
+    makeContentForCaseFileStatusReopened(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.CaseFileStatusReopened');
+      const rationaleString = this.item.details.rationale as string;
+      const body = `${this.$t('caseFileActivity.activityList.status.rationale')}: ${rationaleString}`;
+      return { title, body };
+    },
+
+    makeContentForCaseFileStatusArchived(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.CaseFileStatusArchived'),
+        body: null,
+      };
+    },
   },
 });
 </script>
+
+<style scoped lang="scss">
+  .content-body {
+    white-space: pre-line;
+  }
+</style>
