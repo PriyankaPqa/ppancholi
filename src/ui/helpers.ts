@@ -25,4 +25,15 @@ export default {
       : encodeURIComponent(obj[k])}`)
       .join('&');
   },
+
+  openHelpCenterWindow(url: string, width = 500) {
+    const popupWidth = width;
+    const leftPos = window.innerWidth - popupWidth;
+    window.open(
+      url,
+      'helpCenter',
+      `directories=no, titlebar=no, toolbar=no, location=no, status=no,
+      menubar=no, scrollbars=yes, resizable=yes ,width=${popupWidth}, height=1040, top=0, left=${leftPos}`,
+    );
+  },
 };

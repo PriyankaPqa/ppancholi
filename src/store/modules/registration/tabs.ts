@@ -12,7 +12,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'PrivacyStatement',
-    helpLink: '',
+    helpLink: 'zendesk.beneficiary_registration.privacy_statement',
   },
   {
     id: 'personalInfo',
@@ -25,7 +25,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'PersonalInformation',
-    helpLink: '',
+    helpLink: 'zendesk.beneficiary_registration.personal_information',
   },
   {
     id: 'addresses',
@@ -38,7 +38,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'Addresses',
-    helpLink: '',
+    helpLink: 'zendesk.beneficiary_registration.addresses',
   },
   {
     id: 'householdMembers',
@@ -51,7 +51,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'HouseholdMembers',
-    helpLink: '',
+    helpLink: 'zendesk.beneficiary_registration.household_members',
   },
   {
     id: 'review',
@@ -64,7 +64,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'registration.submit_registration.label',
     componentName: 'ReviewRegistration',
-    helpLink: '',
+    helpLink: 'zendesk.beneficiary_registration.review_confirm',
   },
   {
     id: 'confirmation',
@@ -77,6 +77,6 @@ export const tabs = (): IRegistrationMenuItem[] => [
     backButtonTextKey: 'common.button.print',
     nextButtonTextKey: 'registration.close_registration.label',
     componentName: 'ConfirmRegistration',
-    helpLink: '',
+    helpLink: 'zendesk.beneficiary_registration.review_confirm',
   },
 ];

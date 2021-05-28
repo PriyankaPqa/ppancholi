@@ -18,7 +18,7 @@
 
     <language-selector data-test="registration-portal-language-selector" />
 
-    <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')">
+    <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" @click="openHelp()">
       <v-icon color="grey darken-2">
         mdi-information
       </v-icon>
@@ -30,6 +30,7 @@
 import Vue from 'vue';
 import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
 import routes from '@/constants/routes';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -39,7 +40,9 @@ export default Vue.extend({
   },
 
   data() {
-    return {};
+    return {
+      helpLink: 'zendesk.beneficiary_registration.introduction',
+    };
   },
 
   computed: {
@@ -56,6 +59,9 @@ export default Vue.extend({
     toggleLeftMenu() {
       const isLeftMenuOpen = this.$storage.registration.getters.isLeftMenuOpen();
       this.$storage.registration.mutations.toggleLeftMenu(!isLeftMenuOpen);
+    },
+    openHelp() {
+      helpers.openHelpCenterWindow(this.$t(this.helpLink) as string, 300);
     },
   },
 });
