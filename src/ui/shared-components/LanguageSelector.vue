@@ -50,10 +50,10 @@ export default Vue.extend({
       const locales: Array<Record<string, unknown>> = [];
 
       Trans.supportedLanguages.forEach((language) => {
-        // 'test' is not a valid language in production
-        if (process.env.NODE_ENV === 'production' && language === 'test') {
-          return;
-        }
+        // // 'test' is not a valid language in production
+        // if (process.env.NODE_ENV === 'production' && language === 'test') {
+        //   return;
+        // }
 
         switch (language) {
           case 'fr':
