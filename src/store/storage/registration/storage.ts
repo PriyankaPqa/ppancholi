@@ -1,12 +1,13 @@
 import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
+import { IHouseholdData } from '../../../entities/household';
 import {
   ECanadaProvinces, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
 import { IError } from '../../../services/httpClient';
 import {
-  IIndigenousIdentityData, EIndigenousTypes, ICreateBeneficiaryResponse,
-} from '../../../entities/beneficiary';
+  IIndigenousIdentityData, EIndigenousTypes,
+} from '../../../entities/household-create';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
 
@@ -66,7 +67,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['registration/findEffectiveJumpIndex'](targetIndex);
     },
 
-    registrationResponse(): ICreateBeneficiaryResponse {
+    registrationResponse(): IHouseholdData {
       return store.getters['registration/registrationResponse'];
     },
 
@@ -146,7 +147,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
     },
 
-    submitRegistration(): Promise<ICreateBeneficiaryResponse> {
+    submitRegistration(): Promise<IHouseholdData> {
       return store.dispatch('registration/submitRegistration');
     },
   },

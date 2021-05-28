@@ -43,6 +43,24 @@ export default Vue.extend({
       await this.$nextTick();
       this.isAutocompleteAddress = false;
     },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    async $streetCurrentAddressAutocomplete(autocomplete: any) {
+      const {
+        country, province, postalCode, city, street, location,
+      } = autocomplete;
+      this.isAutocompleteAddress = true;
+      this.form.address.country = country;
+      this.form.address.province = country === 'CA' ? ECanadaProvinces[province] : null;
+      this.form.address.specifiedOtherProvince = country === 'CA' ? null : province;
+      this.form.address.postalCode = postalCode;
+      this.form.address.city = city;
+      this.form.address.streetAddress = street;
+      this.form.address.latitude = location.lat;
+      this.form.address.longitude = location.lng;
+
+      await this.$nextTick();
+      this.isAutocompleteAddress = false;
+    },
 
     $onChangeCountry(country: string) {
       this.form.reset(country);

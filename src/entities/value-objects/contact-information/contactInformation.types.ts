@@ -1,29 +1,9 @@
 import { IListOption, IOptionItemData } from '../../../types';
 
-/**
- * Enums
- */
-export enum EPhoneTypes {
-  Mobile = 'Mobile',
-  Home = 'Home',
-  Other = 'Other',
-}
-
-/**
- * Value objects
- */
 export interface IPhoneNumber {
-  id?: string;
-  number: string;
-  phoneNumberType?: EPhoneTypes;
-  countryISO2?: string;
-  e164Number: string;
-}
-
-export interface IPhoneNumberForCreate {
-  number: string;
-  e164Number: string;
+  number?: string;
   countryCode?: string;
+  e164Number: string;
   extension?: string;
 }
 
@@ -32,13 +12,11 @@ export interface IPhoneNumberForCreate {
  */
 
 export interface IContactInformationData {
-  mobilePhone?: IPhoneNumber;
+  mobilePhoneNumber?: IPhoneNumber;
 
-  homePhone?: IPhoneNumber;
+  homePhoneNumber?: IPhoneNumber;
 
-  otherPhone?: IPhoneNumber;
-
-  otherPhoneExtension?: string;
+  alternatePhoneNumber?: IPhoneNumber;
 
   email: string;
 
@@ -51,10 +29,10 @@ export interface IContactInformationData {
   primarySpokenLanguageOther: string;
 }
 
-export interface IContactInformationForCreate {
-  homePhoneNumber?: IPhoneNumberForCreate;
-  mobilePhoneNumber?: IPhoneNumberForCreate;
-  alternatePhoneNumber?: IPhoneNumberForCreate;
+export interface IContactInformationCreateRequest {
+  homePhoneNumber?: IPhoneNumber;
+  mobilePhoneNumber?: IPhoneNumber;
+  alternatePhoneNumber?: IPhoneNumber;
   email: string;
   preferredLanguage: IListOption;
   primarySpokenLanguage: IListOption;

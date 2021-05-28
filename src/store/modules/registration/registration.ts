@@ -3,6 +3,7 @@ import {
 } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import VueI18n from 'vue-i18n';
+import { IHouseholdData } from '../../../entities/household';
 import { ERegistrationMode } from '../../../types/enums/ERegistrationMode';
 import { IError } from '../../../services/httpClient';
 import {
@@ -10,13 +11,13 @@ import {
 } from '../../../types';
 import { IRootState, IStore } from '../../store.types';
 import {
-  Beneficiary, EIndigenousTypes, IBeneficiary, ICreateBeneficiaryResponse, IIndigenousIdentityData,
-} from '../../../entities/beneficiary';
+  HouseholdCreate, EIndigenousTypes, IHouseholdCreate, IIndigenousIdentityData,
+} from '../../../entities/household-create';
 import { Event, IEvent, IEventData } from '../../../entities/event';
 
 import { resetVuexModuleState } from '../../storeUtils';
 import {
-  isRegisteredValid, privacyStatementValid, personalInformationValid, addressesValid, householdMembersValid, reviewRegistrationValid,
+  isRegisteredValid, privacyStatementValid, personalInformationValid, addressesValid, additionalMembersValid, reviewRegistrationValid,
 } from './registrationUtils';
 
 import { IState } from './registration.types';
@@ -133,7 +134,7 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
       }
       let isValid: boolean;
       let currentIndex;
-      const beneficiary = getters.beneficiary as unknown as IBeneficiary;
+      const householdCreate = getters.householdCreate as unknown as IHouseholdCreate;
       // For each step between where we are and where we're jumping to
       for (currentIndex = state.currentTabIndex; currentIndex < targetIndex; currentIndex += 1) {
         const currentTabName = state.tabs[currentIndex].componentName;
@@ -146,13 +147,13 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
             isValid = privacyStatementValid(mode, state);
             break;
           case 'PersonalInformation':
-            isValid = personalInformationValid(beneficiary, skipAgeRestriction, skipEmailPhoneRules);
+            isValid = personalInformationValid(householdCreate, skipAgeRestriction, skipEmailPhoneRules);
             break;
           case 'Addresses':
-            isValid = addressesValid(beneficiary, getters.noFixedHome as unknown as boolean);
+            isValid = addressesValid(householdCreate, getters.noFixedHome as unknown as boolean);
             break;
-          case 'HouseholdMembers':
-            isValid = householdMembersValid(beneficiary);
+          case 'AdditionalMembers':
+            isValid = additionalMembersValid(householdCreate);
             break;
           case 'ReviewRegistration':
             isValid = reviewRegistrationValid();
@@ -175,14 +176,14 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   },
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  beneficiary(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): IBeneficiary {
+  householdCreate(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): IHouseholdCreate {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return new Beneficiary(rootGetters['beneficiary/beneficiary'] as any);
+    return new HouseholdCreate(rootGetters['household/householdCreate'] as any);
   },
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   noFixedHome(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): boolean {
-    return (rootGetters['beneficiary/beneficiary'] as IBeneficiary).noFixedHome;
+    return (rootGetters['household/householdCreate'] as IHouseholdCreate).noFixedHome;
   },
 
   registrationResponse: (state: IState) => state.registrationResponse,
@@ -262,7 +263,7 @@ const mutations = (): MutationTree<IState> => ({
     state.privacyRegistrationLocationName = payload;
   },
 
-  setRegistrationResponse(state: IState, payload: ICreateBeneficiaryResponse) {
+  setRegistrationResponse(state: IState, payload: IHouseholdData) {
     state.registrationResponse = payload;
   },
 
@@ -294,7 +295,7 @@ const actions = {
   },
 
   async fetchGenders(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
-    const data: IOptionItemData[] = await this.$services.beneficiaries.getGenders();
+    const data: IOptionItemData[] = await this.$services.households.getGenders();
 
     if (data?.length > 0) {
       context.commit('setGenders', data.filter((entry) => entry.status === EOptionItemStatus.Active));
@@ -304,7 +305,7 @@ const actions = {
   },
 
   async fetchPreferredLanguages(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
-    const data: IOptionItemData[] = await this.$services.beneficiaries.getPreferredLanguages();
+    const data: IOptionItemData[] = await this.$services.households.getPreferredLanguages();
 
     if (data?.length > 0) {
       context.commit('setPreferredLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
@@ -314,7 +315,7 @@ const actions = {
   },
 
   async fetchPrimarySpokenLanguages(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
-    const data: IOptionItemData[] = await this.$services.beneficiaries.getPrimarySpokenLanguages();
+    const data: IOptionItemData[] = await this.$services.households.getPrimarySpokenLanguages();
 
     if (data?.length > 0) {
       context.commit('setPrimarySpokenLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
@@ -334,7 +335,7 @@ const actions = {
       context.commit('setLoadingIndigenousIdentities', true);
 
       try {
-        const result = await this.$services.beneficiaries.searchIndigenousIdentities({
+        const result = await this.$services.households.searchIndigenousIdentities({
           filter: {
             Province: provinceCode,
             TenantId: context.state.event.tenantId,
@@ -357,13 +358,13 @@ const actions = {
   async submitRegistration(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
-  ): Promise<ICreateBeneficiaryResponse> {
-    const beneficiary = context.rootGetters['beneficiary/beneficiary'] as IBeneficiary;
+  ): Promise<IHouseholdData> {
+    const householdCreate = context.rootGetters['household/householdCreate'] as IHouseholdCreate;
 
-    let result: ICreateBeneficiaryResponse;
+    let result: IHouseholdData;
     context.commit('setSubmitLoading', true);
     try {
-      result = await this.$services.beneficiaries.submitRegistration(beneficiary, context.state.event.eventId);
+      result = await this.$services.households.submitRegistration(householdCreate, context.state.event.eventId);
       context.commit('setRegistrationResponse', result);
     } catch (e) {
       context.commit('setRegistrationErrors', e);

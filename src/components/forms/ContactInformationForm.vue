@@ -42,37 +42,37 @@
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
-        v-model="formCopy.homePhone"
-        :rules="rules.homePhone"
+        v-model="formCopy.homePhoneNumber"
+        :rules="rules.homePhoneNumber"
         outlined
-        :label="homePhoneLabel"
-        :data-test="`${prefixDataTest}__homePhone`" />
+        :label="homePhoneNumberLabel"
+        :data-test="`${prefixDataTest}__homePhoneNumber`" />
     </v-col>
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
-        v-model="formCopy.mobilePhone"
-        :rules="rules.mobilePhone"
+        v-model="formCopy.mobilePhoneNumber"
+        :rules="rules.mobilePhoneNumber"
         outlined
-        :label="mobilePhoneLabel"
-        :data-test="`${prefixDataTest}__mobilePhone`" />
+        :label="mobilePhoneNumberLabel"
+        :data-test="`${prefixDataTest}__mobilePhoneNumber`" />
     </v-col>
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
-        v-model="formCopy.otherPhone"
-        :rules="rules.otherPhone"
+        v-model="formCopy.alternatePhoneNumber"
+        :rules="rules.alternatePhoneNumber"
         outlined
-        :label="otherPhoneLabel"
-        :data-test="`${prefixDataTest}__otherPhone`" />
+        :label="alternatePhoneNumberLabel"
+        :data-test="`${prefixDataTest}__alternatePhoneNumber`" />
     </v-col>
 
     <v-col cols="12" sm="6">
       <v-text-field-with-validation
-        v-model="formCopy.otherPhoneExtension"
-        :data-test="`${prefixDataTest}__otherPhoneExtension`"
-        :rules="rules.otherPhoneExtension"
-        :label="$t('registration.personal_info.otherPhoneExtension')" />
+        v-model="formCopy.alternatePhoneNumber.extension"
+        :data-test="`${prefixDataTest}__alternatePhoneNumberExtension`"
+        :rules="rules.alternatePhoneNumberExtension"
+        :label="$t('registration.personal_info.alternatePhoneNumberExtension')" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -143,10 +143,10 @@ export default Vue.extend({
         primarySpokenLanguageOther: {
           max: MAX_LENGTH_MD,
         },
-        homePhone: this.phoneRule,
-        mobilePhone: this.phoneRule,
-        otherPhone: this.phoneRule,
-        otherPhoneExtension: {
+        homePhoneNumber: this.phoneRule,
+        mobilePhoneNumber: this.phoneRule,
+        alternatePhoneNumber: this.phoneRule,
+        alternatePhoneNumberExtension: {
           max: MAX_LENGTH_MD,
         },
         email: {
@@ -161,20 +161,20 @@ export default Vue.extend({
       return `${this.$t('registration.personal_info.emailAddress')}${this.emailRequired ? '*' : ''}`;
     },
 
-    homePhoneLabel(): string {
+    homePhoneNumberLabel(): string {
       return `${this.$t('registration.personal_info.homePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
     },
 
-    mobilePhoneLabel(): string {
+    mobilePhoneNumberLabel(): string {
       return `${this.$t('registration.personal_info.mobilePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
     },
 
-    otherPhoneLabel(): string {
+    alternatePhoneNumberLabel(): string {
       return `${this.$t('registration.personal_info.alternatePhoneNumber')}${this.phoneRequired ? '*' : ''}`;
     },
 
     hasAnyPhone(): boolean {
-      return !!(this.formCopy.homePhone?.number || this.formCopy.mobilePhone?.number || this.formCopy.otherPhone?.number);
+      return !!(this.formCopy.homePhoneNumber?.number || this.formCopy.mobilePhoneNumber?.number || this.formCopy.alternatePhoneNumber?.number);
     },
 
     phoneRequired(): boolean {

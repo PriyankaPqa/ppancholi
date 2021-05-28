@@ -3,7 +3,7 @@ import { TranslateResult } from 'vue-i18n';
 import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
 import { IRegistrationMenuItem, VForm } from '../../types';
-import { Beneficiary } from '../../entities/beneficiary';
+import { HouseholdCreate } from '../../entities/household-create';
 import helpers from '../helpers';
 
 export default Vue.extend({
@@ -48,8 +48,8 @@ export default Vue.extend({
       return false;
     },
 
-    beneficiary(): Beneficiary {
-      return this.$storage.beneficiary.getters.beneficiary();
+    household(): HouseholdCreate {
+      return this.$storage.household.getters.householdCreate();
     },
 
     redirectionLink(): string {

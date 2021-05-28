@@ -1,5 +1,4 @@
 import { MAX_LENGTH_MD } from '../../../constants/validations';
-import { EPhoneTypes } from '../../beneficiary';
 import { mockContactInformation, mockContactInformationData } from './contactInformation.mock';
 import { ContactInformation } from './contactInformation';
 
@@ -15,25 +14,24 @@ describe('>>> ContactInformation', () => {
 
     it('should reset if not data pass', () => {
       const p = new ContactInformation();
-      expect(p.mobilePhone).toEqual({
+      expect(p.mobilePhoneNumber).toEqual({
         number: '',
-        phoneNumberType: EPhoneTypes.Mobile,
-        countryISO2: 'CA',
+        countryCode: 'CA',
         e164Number: '',
+        extension: '',
       });
-      expect(p.homePhone).toEqual({
+      expect(p.homePhoneNumber).toEqual({
         number: '',
-        phoneNumberType: EPhoneTypes.Home,
-        countryISO2: 'CA',
+        countryCode: 'CA',
         e164Number: '',
+        extension: '',
       });
-      expect(p.otherPhone).toEqual({
+      expect(p.alternatePhoneNumber).toEqual({
         number: '',
-        phoneNumberType: EPhoneTypes.Other,
-        countryISO2: 'CA',
+        countryCode: 'CA',
         e164Number: '',
+        extension: '',
       });
-      expect(p.otherPhoneExtension).toEqual('');
       expect(p.email).toEqual('');
       expect(p.preferredLanguage).toEqual(null);
       expect(p.preferredLanguageOther).toEqual(null);
@@ -43,11 +41,11 @@ describe('>>> ContactInformation', () => {
   });
 
   describe('>> validation', () => {
-    describe('mobilePhone', () => {
+    describe('mobilePhoneNumber', () => {
       it('should be valid', () => {
         const p = new ContactInformation();
-        p.mobilePhone = {
-          countryISO2: 'CA',
+        p.mobilePhoneNumber = {
+          countryCode: 'CA',
           number: '123',
           e164Number: '234',
         };
@@ -56,11 +54,11 @@ describe('>>> ContactInformation', () => {
       });
     });
 
-    describe('homePhone', () => {
+    describe('homePhoneNumber', () => {
       it('should be valid', () => {
         const p = new ContactInformation();
-        p.homePhone = {
-          countryISO2: 'CA',
+        p.homePhoneNumber = {
+          countryCode: 'CA',
           number: '123',
           e164Number: '234',
         };
@@ -69,11 +67,11 @@ describe('>>> ContactInformation', () => {
       });
     });
 
-    describe('otherPhone', () => {
+    describe('alternatePhoneNumber', () => {
       it('should be valid', () => {
         const p = new ContactInformation();
-        p.otherPhone = {
-          countryISO2: 'CA',
+        p.alternatePhoneNumber = {
+          countryCode: 'CA',
           number: '123',
           e164Number: '234',
         };
@@ -82,12 +80,12 @@ describe('>>> ContactInformation', () => {
       });
     });
 
-    describe('otherPhoneExtension', () => {
+    describe('alternatePhoneNumber extension', () => {
       it(`has a max of ${MAX_LENGTH_MD} characters`, () => {
         const p = new ContactInformation();
-        p.otherPhoneExtension = longText;
+        p.alternatePhoneNumber.extension = longText;
 
-        expect(p.validate(false)).toContain(`other phone extension exceeds max length of ${MAX_LENGTH_MD}`);
+        expect(p.validate(false)).toContain(`alternate phone extension exceeds max length of ${MAX_LENGTH_MD}`);
       });
     });
 
@@ -159,21 +157,21 @@ describe('>>> ContactInformation', () => {
           expect(p.validate(false)).not.toContain('at least phone is required if no email');
         });
 
-        it('should return false if mobilePhone', () => {
+        it('should return false if mobilePhoneNumber', () => {
           const p = new ContactInformation();
-          p.mobilePhone.number = '123';
+          p.mobilePhoneNumber.number = '123';
           expect(p.validate(false)).not.toContain('at least phone is required if no email');
         });
 
-        it('should return false if otherPhone', () => {
+        it('should return false if alternatePhoneNumber', () => {
           const p = new ContactInformation();
-          p.otherPhone.number = '123';
+          p.alternatePhoneNumber.number = '123';
           expect(p.validate(false)).not.toContain('at least phone is required if no email');
         });
 
-        it('should return false if homePhone', () => {
+        it('should return false if homePhoneNumber', () => {
           const p = new ContactInformation();
-          p.homePhone.number = '123';
+          p.homePhoneNumber.number = '123';
           expect(p.validate(false)).not.toContain('at least phone is required if no email');
         });
       });
@@ -184,21 +182,21 @@ describe('>>> ContactInformation', () => {
           expect(p.validate(false)).toContain('email is required if no phone');
         });
 
-        it('should return false if homePhone', () => {
+        it('should return false if homePhoneNumber', () => {
           const p = new ContactInformation();
-          p.homePhone.number = '123';
+          p.homePhoneNumber.number = '123';
           expect(p.validate(false)).not.toContain('email is required if no phone');
         });
 
-        it('should return false if otherPhone', () => {
+        it('should return false if alternatePhoneNumber', () => {
           const p = new ContactInformation();
-          p.otherPhone.number = '123';
+          p.alternatePhoneNumber.number = '123';
           expect(p.validate(false)).not.toContain('email is required if no phone');
         });
 
-        it('should return false if mobilePhone', () => {
+        it('should return false if mobilePhoneNumber', () => {
           const p = new ContactInformation();
-          p.mobilePhone.number = '123';
+          p.mobilePhoneNumber.number = '123';
           expect(p.validate(false)).not.toContain('email is required if no phone');
         });
 

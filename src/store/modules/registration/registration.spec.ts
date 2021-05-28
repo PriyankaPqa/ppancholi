@@ -12,10 +12,11 @@ import {
   mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-  mockBeneficiary,
-  Beneficiary,
-  mockCreateBeneficiaryResponse,
-} from '../../../entities/beneficiary';
+  HouseholdCreate,
+  mockHouseholdCreate,
+} from '../../../entities/household-create';
+
+import { mockHousehold } from '../../../entities/household';
 
 import * as registrationUtils from './registrationUtils';
 
@@ -155,19 +156,19 @@ describe('>>> Registration Module', () => {
 
     describe('findEffectiveJumpIndex', () => {
       beforeEach(() => {
-        store.getters.beneficiary = mockBeneficiary();
+        store.getters.household = mockHouseholdCreate();
         jest.spyOn(registrationUtils, 'isRegisteredValid').mockReturnValue(true);
       });
 
       it('returns the target index when moving backwards', async () => {
         store.state.registration.currentTabIndex = 2;
-        store.getters.beneficiary.noFixedHome = false;
+        store.getters.household.noFixedHome = false;
         expect(store.getters['registration/findEffectiveJumpIndex'](1)).toEqual(1);
         expect(store.getters['registration/findEffectiveJumpIndex'](0)).toEqual(0);
       });
 
       it('returns the current index when no change', async () => {
-        store.getters.beneficiary.noFixedHome = false;
+        store.getters.household.noFixedHome = false;
         expect(store.getters['registration/findEffectiveJumpIndex'](0)).toEqual(0);
       });
 
@@ -193,7 +194,7 @@ describe('>>> Registration Module', () => {
         jest.spyOn(registrationUtils, 'privacyStatementValid').mockReturnValue(true);
         jest.spyOn(registrationUtils, 'personalInformationValid').mockReturnValue(true);
         jest.spyOn(registrationUtils, 'addressesValid').mockReturnValue(true);
-        jest.spyOn(registrationUtils, 'householdMembersValid').mockReturnValue(false);
+        jest.spyOn(registrationUtils, 'additionalMembersValid').mockReturnValue(false);
 
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(3);
       });
@@ -202,7 +203,7 @@ describe('>>> Registration Module', () => {
         jest.spyOn(registrationUtils, 'privacyStatementValid').mockReturnValue(true);
         jest.spyOn(registrationUtils, 'personalInformationValid').mockReturnValue(true);
         jest.spyOn(registrationUtils, 'addressesValid').mockReturnValue(true);
-        jest.spyOn(registrationUtils, 'householdMembersValid').mockReturnValue(true);
+        jest.spyOn(registrationUtils, 'additionalMembersValid').mockReturnValue(true);
 
         expect(store.getters['registration/findEffectiveJumpIndex'](6)).toEqual(6);
       });
@@ -212,7 +213,7 @@ describe('>>> Registration Module', () => {
       it('returns registrationResponse', () => {
         expect(store.getters['registration/registrationResponse']).toBeNull();
 
-        const response = mockCreateBeneficiaryResponse();
+        const response = mockHousehold();
         store.state.registration.registrationResponse = response;
         expect(store.getters['registration/registrationResponse']).toBe(response);
       });
@@ -393,7 +394,7 @@ describe('>>> Registration Module', () => {
       it('sets registration response', () => {
         expect(store.state.registration.registrationResponse).toBeNull();
 
-        const response = mockCreateBeneficiaryResponse();
+        const response = mockHousehold();
         store.commit('registration/setRegistrationResponse', response);
 
         expect(store.state.registration.registrationResponse).toEqual(response);
@@ -454,7 +455,7 @@ describe('>>> Registration Module', () => {
       it('call the getGenders service', async () => {
         await store.dispatch('registration/fetchGenders');
 
-        expect(store.$services.beneficiaries.getGenders).toHaveBeenCalledTimes(1);
+        expect(store.$services.households.getGenders).toHaveBeenCalledTimes(1);
       });
 
       it('sets the genders', async () => {
@@ -470,7 +471,7 @@ describe('>>> Registration Module', () => {
       it('call the getPreferredLanguages service', async () => {
         await store.dispatch('registration/fetchPreferredLanguages');
 
-        expect(store.$services.beneficiaries.getPreferredLanguages).toHaveBeenCalledTimes(1);
+        expect(store.$services.households.getPreferredLanguages).toHaveBeenCalledTimes(1);
       });
 
       it('sets the preferredLanguages', async () => {
@@ -486,7 +487,7 @@ describe('>>> Registration Module', () => {
       it('call the getPrimaryLanguages service', async () => {
         await store.dispatch('registration/fetchPrimarySpokenLanguages');
 
-        expect(store.$services.beneficiaries.getPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
+        expect(store.$services.households.getPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
 
       it('sets the primarySpokenLanguages', async () => {
@@ -504,7 +505,7 @@ describe('>>> Registration Module', () => {
         await store.commit('registration/setEvent', mockEventData());
         await store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
 
-        expect(store.$services.beneficiaries.searchIndigenousIdentities).toHaveBeenCalledWith({
+        expect(store.$services.households.searchIndigenousIdentities).toHaveBeenCalledWith({
           filter: {
             Province: provinceCode,
             TenantId: 'tenant-guid',
@@ -525,12 +526,12 @@ describe('>>> Registration Module', () => {
 
     describe('submitRegistration', () => {
       it('call the submitRegistration service with proper params', async () => {
-        store.state.beneficiary.beneficiary = mockBeneficiary() as Beneficiary;
+        store.state.household.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         await store.commit('registration/setEvent', mockEventData());
 
         await store.dispatch('registration/submitRegistration');
 
-        expect(store.$services.beneficiaries.submitRegistration).toHaveBeenCalledWith(mockBeneficiary(), mockEventData().eventId);
+        expect(store.$services.households.submitRegistration).toHaveBeenCalledWith(mockHouseholdCreate(), mockEventData().eventId);
       });
 
       it('sets registrationResponse in case of success', async () => {
@@ -540,12 +541,12 @@ describe('>>> Registration Module', () => {
 
         await store.dispatch('registration/submitRegistration');
 
-        expect(store.getters['registration/registrationResponse']).toStrictEqual(mockCreateBeneficiaryResponse());
+        expect(store.getters['registration/registrationResponse']).toStrictEqual(mockHousehold());
       });
 
       it('sets registrationErrors in case of error', async () => {
         await store.commit('registration/setEvent', mockEventData());
-        store.$services.beneficiaries.submitRegistration = jest.fn(() => { throw new Error(); });
+        store.$services.households.submitRegistration = jest.fn(() => { throw new Error(); });
         await store.dispatch('registration/submitRegistration');
         expect(store.getters['registration/registrationErrors']).toStrictEqual(new Error());
       });

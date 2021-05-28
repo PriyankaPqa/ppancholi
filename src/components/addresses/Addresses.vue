@@ -33,15 +33,15 @@
         @change="setHomeAddress($event)" />
     </template>
 
-    <temp-address-form
+    <current-address-form
       :shelter-locations="shelterLocations"
       :canadian-provinces-items="canadianProvincesItems"
-      :temporary-address-type-items="temporaryAddressTypeItems"
+      :current-address-type-items="currentAddressTypeItems"
       :api-key="apiKey"
-      :temporary-address="temporaryAddress"
+      :current-address="currentAddress"
       :hide-remaining-home="noFixedHome"
       prefix-data-test="tempAddress"
-      @change="setTemporaryAddress($event)" />
+      @change="setCurrentAddress($event)" />
   </v-row>
 </template>
 
@@ -51,12 +51,12 @@ import { VCheckboxWithValidation } from '@crctech/component-library';
 
 import VueI18n from 'vue-i18n';
 import AddressForm from '../forms/AddressForm.vue';
-import TempAddressForm from '../forms/TempAddressForm.vue';
+import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { EOptionItemStatus } from '../../types';
 import helpers from '../../ui/helpers';
 import { localStorageKeys } from '../../constants/localStorage';
 import { IAddress } from '../../entities/value-objects/address';
-import { ITemporaryAddress, ETemporaryAddressTypes, IShelterLocation } from '../../entities/value-objects/temporary-address';
+import { ICurrentAddress, ECurrentAddressTypes, IShelterLocationData } from '../../entities/value-objects/current-address';
 
 export default Vue.extend({
   name: 'Addresses',
@@ -64,7 +64,7 @@ export default Vue.extend({
   components: {
     VCheckboxWithValidation,
     AddressForm,
-    TempAddressForm,
+    CurrentAddressForm,
   },
 
   props: {
@@ -83,20 +83,20 @@ export default Vue.extend({
   },
 
   computed: {
-    temporaryAddress(): ITemporaryAddress {
-      return this.$storage.beneficiary.getters.beneficiary().person.temporaryAddress;
+    currentAddress(): ICurrentAddress {
+      return this.$storage.household.getters.householdCreate().primaryBeneficiary.currentAddress;
     },
 
     homeAddress(): IAddress {
-      return this.$storage.beneficiary.getters.beneficiary().homeAddress;
+      return this.$storage.household.getters.householdCreate().homeAddress;
     },
 
     noFixedHome: {
       get(): boolean {
-        return this.$storage.beneficiary.getters.beneficiary().noFixedHome;
+        return this.$storage.household.getters.householdCreate().noFixedHome;
       },
       set(checked: boolean) {
-        this.$storage.beneficiary.mutations.setNoFixedHome(checked);
+        this.$storage.household.mutations.setNoFixedHome(checked);
       },
     },
 
@@ -104,38 +104,38 @@ export default Vue.extend({
       return helpers.getCanadianProvincesWithoutOther(this.i18n);
     },
 
-    temporaryAddressTypeItems(): Record<string, unknown>[] {
-      const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n)
-        .filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
+    currentAddressTypeItems(): Record<string, unknown>[] {
+      const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n)
+        .filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
 
       if (this.noFixedHome) {
         return list;
       }
       return [
         {
-          value: ETemporaryAddressTypes.RemainingInHome,
+          value: ECurrentAddressTypes.RemainingInHome,
           text: this.i18n.t('registration.addresses.temporaryAddressTypes.RemainingInHome').toString(),
         },
         ...list,
       ];
     },
 
-    shelterLocations(): IShelterLocation[] {
+    shelterLocations(): IShelterLocationData[] {
       const event = this.$storage.registration.getters.event();
       if (event) {
-        return event.shelterLocations.filter((s: IShelterLocation) => s.status === EOptionItemStatus.Active);
+        return event.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active);
       }
       return [];
     },
   },
 
   methods: {
-    setTemporaryAddress(tmpAddress: ITemporaryAddress) {
-      this.$storage.beneficiary.mutations.setTemporaryAddress(tmpAddress);
+    setCurrentAddress(tmpAddress: ICurrentAddress) {
+      this.$storage.household.mutations.setCurrentAddress(tmpAddress);
     },
 
     setHomeAddress(homeAddress: IAddress) {
-      this.$storage.beneficiary.mutations.setHomeAddress(homeAddress);
+      this.$storage.household.mutations.setHomeAddress(homeAddress);
     },
   },
 

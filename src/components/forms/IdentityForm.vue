@@ -83,7 +83,6 @@
           <v-text-field-with-validation
             v-model="formCopy.birthDate.year"
             :data-test="`${prefixDataTest}__year`"
-            type="number"
             :rules="rules.year"
             :label="`${$t('registration.personal_info.year')}*`" />
         </v-col>
@@ -97,7 +96,7 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VTextFieldWithValidation, VSelectWithValidation } from '@crctech/component-library';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import { IBirthDate, IPerson } from '../../entities/beneficiary';
+import { IBirthDate, IIdentitySet } from '../../entities/household-create';
 import { IOptionItemData } from '../../types';
 import months from '../../constants/months';
 
@@ -116,7 +115,7 @@ export default Vue.extend({
     },
 
     form: {
-      type: Object as () => IPerson,
+      type: Object as () => IIdentitySet,
       required: true,
     },
 
@@ -135,7 +134,7 @@ export default Vue.extend({
   data() {
     return {
       months,
-      formCopy: null as IPerson,
+      formCopy: null as IIdentitySet,
     };
   },
 
@@ -196,7 +195,7 @@ export default Vue.extend({
   watch: {
     formCopy: {
       deep: true,
-      handler(form: IPerson) {
+      handler(form: IIdentitySet) {
         this.$emit('change', form);
       },
     },

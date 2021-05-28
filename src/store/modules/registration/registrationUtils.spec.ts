@@ -1,8 +1,8 @@
-import { mockBeneficiary } from '@/entities/beneficiary';
+import { mockHouseholdCreate } from '@/entities/household-create';
 import { ERegistrationMethod, ERegistrationMode } from '@/types';
 import {
   addressesValid,
-  householdMembersValid,
+  additionalMembersValid,
   isRegisteredValid,
   personalInformationValid,
   privacyStatementValid,
@@ -10,7 +10,7 @@ import {
 } from './registrationUtils';
 import { IState } from './registration.types';
 
-const beneficiary = mockBeneficiary();
+const household = mockHouseholdCreate();
 
 describe('>>> Registration utils', () => {
   describe('isRegisteredValid', () => {
@@ -21,7 +21,7 @@ describe('>>> Registration utils', () => {
   });
 
   describe('privacyStatementValid', () => {
-    describe('Beneficiary registration', () => {
+    describe('Household registration', () => {
       it('should return true if privacy statement is checked', () => {
         const mode = ERegistrationMode.Self;
         const state = {
@@ -92,25 +92,25 @@ describe('>>> Registration utils', () => {
   });
 
   describe('personalInformationValid', () => {
-    it('should return the result of beneficiary validatePersonalInformation method', () => {
-      const isValid = personalInformationValid(beneficiary, false, false);
-      const expected = beneficiary.validatePersonalInformation(false, false);
+    it('should return the result of household validatePersonalInformation method', () => {
+      const isValid = personalInformationValid(household, false, false);
+      const expected = household.validatePersonalInformation(false, false);
       expect(isValid).toEqual(expected.length === 0);
     });
   });
 
   describe('addressesValid', () => {
-    it('should return the result of beneficiary validateAddresses method', () => {
-      const isValid = addressesValid(beneficiary, false);
-      const expected = beneficiary.validateAddresses(false);
+    it('should return the result of household validateAddresses method', () => {
+      const isValid = addressesValid(household, false);
+      const expected = household.validateAddresses(false);
       expect(isValid).toEqual(expected.length === 0);
     });
   });
 
-  describe('householdMembersValid', () => {
-    it('should return the result of beneficiary validateHouseholdMembers method', () => {
-      const isValid = householdMembersValid(beneficiary);
-      const expected = beneficiary.validateHouseholdMembers();
+  describe('additionalMembersValid', () => {
+    it('should return the result of household validateAdditionalMembers method', () => {
+      const isValid = additionalMembersValid(household);
+      const expected = household.validateAdditionalMembers();
       expect(isValid).toEqual(expected.length === 0);
     });
   });

@@ -1,12 +1,12 @@
-import { IBeneficiariesService, IBeneficiariesServiceMock } from '../beneficiaries';
+import { IHouseholdsService, IHouseholdsServiceMock } from '../households';
 import { IPublicService, IPublicServiceMock } from '../public';
 
 export interface IProvider {
   publicApi: IPublicService;
-  beneficiaries: IBeneficiariesService;
+  households: IHouseholdsService;
 }
 
 export interface IProviderMock {
   publicApi: IPublicServiceMock;
-  beneficiaries: IBeneficiariesServiceMock;
+  households: IHouseholdsServiceMock;
 }

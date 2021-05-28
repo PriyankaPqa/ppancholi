@@ -78,7 +78,7 @@ import {
   RcCountrySelectWithValidation,
 } from '@crctech/component-library';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import { IAddress } from '../../entities/beneficiary';
+import { IAddress } from '../../entities/household-create';
 import googleAutoCompleteMixin from './mixins/address';
 
 export default Vue.extend({

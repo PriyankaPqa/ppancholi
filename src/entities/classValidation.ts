@@ -2,7 +2,7 @@ import PhoneNumber from 'awesome-phonenumber';
 import moment from 'moment';
 import helpers from '../ui/helpers';
 import { MIN_AGE_REGISTRATION } from '../constants/validations';
-import { IBirthDate } from './value-objects/person/person.types';
+import { IBirthDate } from './value-objects/identity-set/identitySet.types';
 import { IPhoneNumber } from './value-objects/contact-information/contactInformation.types';
 
 export const required = (value: unknown, errorMsg: string, errors: string[]) => {
@@ -22,12 +22,12 @@ export const maxLengthCheck = (value: string, length: number, fieldName: string,
 export const isPhone = (value: IPhoneNumber, errorMsg: string, errors: string[]) => {
   if (!value) return;
 
-  const { number, countryISO2 } = value;
+  const { number, countryCode } = value;
   if (!number || typeof number !== 'string') {
     return;
   }
 
-  const pn = new PhoneNumber(number, countryISO2);
+  const pn = new PhoneNumber(number, countryCode);
 
   if (!pn.isValid()) errors.push(errorMsg);
 };
@@ -41,9 +41,16 @@ const regex = /(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)
 };
 
 export const hasAtLeastAPhoneIfNoEmail = ({
-  homePhone, mobilePhone, otherPhone, email, errorMsg, errors,
-}: {homePhone: IPhoneNumber; mobilePhone: IPhoneNumber; otherPhone: IPhoneNumber; email: string; errorMsg: string; errors: string[]}) => {
-  const anyPhone = !!(homePhone?.number || mobilePhone?.number || otherPhone?.number);
+  homePhoneNumber, mobilePhoneNumber, alternatePhoneNumber, email, errorMsg, errors,
+}: {
+  homePhoneNumber: IPhoneNumber;
+  mobilePhoneNumber: IPhoneNumber;
+  alternatePhoneNumber: IPhoneNumber;
+  email: string;
+  errorMsg: string;
+  errors: string[];
+}) => {
+  const anyPhone = !!(homePhoneNumber?.number || mobilePhoneNumber?.number || alternatePhoneNumber?.number);
   const valid = anyPhone || email !== '';
   if (!valid) errors.push(errorMsg);
 };

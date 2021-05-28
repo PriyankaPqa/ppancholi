@@ -1,6 +1,6 @@
 import { ERegistrationMethod, ERegistrationMode } from '../../../types';
 import { IState } from './registration.types';
-import { IBeneficiary } from '../../../entities/beneficiary';
+import { IHouseholdCreate } from '../../../entities/household-create';
 
 export const isRegisteredValid = (): boolean => true;
 
@@ -23,10 +23,10 @@ export const privacyStatementValid = (mode: ERegistrationMode, state: IState): b
 };
 
 // eslint-disable-next-line
-export const personalInformationValid = (beneficiary: IBeneficiary, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): boolean => beneficiary.validatePersonalInformation(skipAgeRestriction, skipEmailPhoneRules).length === 0;
+export const personalInformationValid = (household: IHouseholdCreate, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): boolean => household.validatePersonalInformation(skipAgeRestriction, skipEmailPhoneRules).length === 0;
 
-export const addressesValid = (beneficiary: IBeneficiary, noFixedHome: boolean): boolean => beneficiary.validateAddresses(noFixedHome).length === 0;
+export const addressesValid = (household: IHouseholdCreate, noFixedHome: boolean): boolean => household.validateAddresses(noFixedHome).length === 0;
 
-export const householdMembersValid = (beneficiary: IBeneficiary): boolean => beneficiary.validateHouseholdMembers().length === 0;
+export const additionalMembersValid = (household: IHouseholdCreate): boolean => household.validateAdditionalMembers().length === 0;
 
 export const reviewRegistrationValid = (): boolean => true;

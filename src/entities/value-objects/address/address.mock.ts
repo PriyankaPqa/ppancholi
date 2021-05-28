@@ -1,3 +1,4 @@
+import deepmerge from 'deepmerge';
 import { ECanadaProvinces } from '../../../types';
 import { IAddress, IAddressData } from './address.types';
 import { Address } from './address';
@@ -14,4 +15,4 @@ export const mockAddressData = (force?: Partial<IAddressData>): IAddressData => 
   ...force,
 });
 
-export const mockAddress = (force?: Partial<IAddress>): IAddress => new Address({ ...mockAddressData(), ...force });
+export const mockAddress = (force?: Partial<IAddress>): IAddress => new Address(deepmerge(mockAddressData(), force || {}));

@@ -1,7 +1,7 @@
 import moment from 'moment';
 import VueI18n from 'vue-i18n';
 import { ECanadaProvinces } from '../types/enums/ECanadaProvinces';
-import { IBirthDate } from '../entities/value-objects/person/person.types';
+import { IBirthDate } from '../entities/value-objects/identity-set/identitySet.types';
 
 export default {
   getEnumKeys(myEnum: Record<string, unknown>) {

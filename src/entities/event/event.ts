@@ -1,5 +1,5 @@
 import { IMultilingual } from '../../types';
-import { IShelterLocation } from '../beneficiary';
+import { IShelterLocationData } from '../household-create';
 import {
   IEvent, IEventData, IEventGenericLocation, IEventSchedule, IResponseDetails,
 } from './event.types';
@@ -15,7 +15,7 @@ export class Event implements IEvent {
 
   tenantId: uuid;
 
-  shelterLocations: IShelterLocation[];
+  shelterLocations: IShelterLocationData[];
 
   registrationLocations: IEventGenericLocation[];
 

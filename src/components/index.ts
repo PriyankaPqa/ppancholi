@@ -2,10 +2,10 @@ export { default as ContactInformationForm } from './forms/ContactInformationFor
 export { default as IdentityForm } from './forms/IdentityForm.vue';
 export { default as IndigenousIdentityForm } from './forms/IndigenousIdentityForm.vue';
 export { default as AddressForm } from './forms/AddressForm.vue';
-export { default as TempAddressForm } from './forms/TempAddressForm.vue';
+export { default as CurrentAddressForm } from './forms/CurrentAddressForm.vue';
 export { default as Addresses } from './addresses/Addresses.vue';
-export { default as HouseholdMembers } from './household-members/HouseholdMembers.vue';
-export { default as HouseholdMemberForm } from './household-members/HouseholdMemberForm.vue';
+export { default as AdditionalMembers } from './additional-members/AdditionalMembers.vue';
+export { default as AdditionalMemberForm } from './additional-members/AdditionalMemberForm.vue';
 export { default as PersonalInformation } from './personal-information/PersonalInformation.vue';
-export { default as ReviewRegistration } from './forms/review/ReviewRegistration.vue';
+export { default as ReviewRegistration } from './review/ReviewRegistration.vue';
 export { default as PrivacyStatement } from './privacy-statement/PrivacyStatement.vue';

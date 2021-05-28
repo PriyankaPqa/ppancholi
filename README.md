@@ -13,9 +13,9 @@ Hence, we will have compilation here since not everything needed is present.
 
 ## How to use in host app
 
-`import { IPerson } from '@crctech/registration-lib/src/entities/value-objects/person';`
+`import { IMember } from '@crctech/registration-lib/src/entities/value-objects/member';`
 
-`import { IBeneficiary } from '@crctech/registration-lib/src/entities/beneficiary';`
+`import { IHouseholdCreate } from '@crctech/registration-lib/src/entities/household';`
 
 
 ###

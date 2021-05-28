@@ -5,7 +5,6 @@ import {
   IContactInformation,
   IContactInformationData,
   IPhoneNumber,
-  EPhoneTypes,
 } from './contactInformation.types';
 
 import {
@@ -13,13 +12,11 @@ import {
 } from '../../classValidation';
 
 export class ContactInformation implements IContactInformation {
-  mobilePhone?: IPhoneNumber;
+  mobilePhoneNumber?: IPhoneNumber;
 
-  homePhone?: IPhoneNumber;
+  homePhoneNumber?: IPhoneNumber;
 
-  otherPhone?: IPhoneNumber;
-
-  otherPhoneExtension?: string;
+  alternatePhoneNumber?: IPhoneNumber;
 
   email: string;
 
@@ -35,10 +32,9 @@ export class ContactInformation implements IContactInformation {
     if (!data) {
       this.reset();
     } else {
-      this.mobilePhone = data.mobilePhone;
-      this.homePhone = data.homePhone;
-      this.otherPhone = data.otherPhone;
-      this.otherPhoneExtension = data.otherPhoneExtension;
+      this.mobilePhoneNumber = data.mobilePhoneNumber;
+      this.homePhoneNumber = data.homePhoneNumber;
+      this.alternatePhoneNumber = data.alternatePhoneNumber;
       this.email = data.email;
       this.preferredLanguage = data.preferredLanguage;
       this.preferredLanguageOther = data.preferredLanguageOther;
@@ -55,26 +51,26 @@ export class ContactInformation implements IContactInformation {
 
     maxLengthCheck(this.primarySpokenLanguageOther, MAX_LENGTH_MD, 'other primary spoken language', errors);
 
-    isPhone(this.homePhone, 'home phone not valid', errors);
-    isPhone(this.mobilePhone, 'mobile phone not valid', errors);
-    isPhone(this.otherPhone, 'other phone not valid', errors);
+    isPhone(this.homePhoneNumber, 'home phone not valid', errors);
+    isPhone(this.mobilePhoneNumber, 'mobile phone not valid', errors);
+    isPhone(this.alternatePhoneNumber, 'other phone not valid', errors);
 
-    maxLengthCheck(this.otherPhoneExtension, MAX_LENGTH_MD, 'other phone extension', errors);
+    maxLengthCheck(this.alternatePhoneNumber.extension, MAX_LENGTH_MD, 'alternate phone extension', errors);
 
     isEmail(this.email, 'email not valid', errors);
     maxLengthCheck(this.email, MAX_LENGTH_MD, 'email', errors);
 
     if (!skipEmailPhoneRules) {
       hasAtLeastAPhoneIfNoEmail({
-        homePhone: this.homePhone,
-        mobilePhone: this.mobilePhone,
-        otherPhone: this.otherPhone,
+        homePhoneNumber: this.homePhoneNumber,
+        mobilePhoneNumber: this.mobilePhoneNumber,
+        alternatePhoneNumber: this.alternatePhoneNumber,
         email: this.email,
         errorMsg: 'at least one phone is required if no email',
         errors,
       });
 
-      if (this.homePhone?.number === '' && this.mobilePhone?.number === '' && this.otherPhone?.number === '') {
+      if (this.homePhoneNumber?.number === '' && this.mobilePhoneNumber?.number === '' && this.alternatePhoneNumber?.number === '') {
         required(this.email, 'email is required if no phone', errors);
       }
     }
@@ -83,25 +79,24 @@ export class ContactInformation implements IContactInformation {
   }
 
   reset(): void {
-    this.mobilePhone = {
+    this.mobilePhoneNumber = {
       number: '',
-      phoneNumberType: EPhoneTypes.Mobile,
-      countryISO2: 'CA',
+      countryCode: 'CA',
       e164Number: '',
+      extension: '',
     };
-    this.homePhone = {
+    this.homePhoneNumber = {
       number: '',
-      phoneNumberType: EPhoneTypes.Home,
-      countryISO2: 'CA',
+      countryCode: 'CA',
       e164Number: '',
+      extension: '',
     };
-    this.otherPhone = {
+    this.alternatePhoneNumber = {
       number: '',
-      phoneNumberType: EPhoneTypes.Other,
-      countryISO2: 'CA',
+      countryCode: 'CA',
       e164Number: '',
+      extension: '',
     };
-    this.otherPhoneExtension = '';
     this.email = '';
     this.preferredLanguage = null;
     this.preferredLanguageOther = null;

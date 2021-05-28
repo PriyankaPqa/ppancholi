@@ -1,16 +1,15 @@
-import _merge from 'lodash/merge';
 import {
   mockGenders,
-  mockContactInformation, mockPerson,
-} from '../../entities/beneficiary';
+  mockIdentitySet,
+} from '../../entities/household-create';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './IdentityForm.vue';
 
-const mockPersonModified = mockPerson();
-mockPersonModified.birthDate.year = '1999';
-mockPersonModified.birthDate.day = '12';
-mockPersonModified.birthDate.month = '2';
+const mockIdentitySetModified = mockIdentitySet();
+mockIdentitySetModified.birthDate.year = '1999';
+mockIdentitySetModified.birthDate.day = '12';
+mockIdentitySetModified.birthDate.month = '2';
 
 const localVue = createLocalVue();
 
@@ -21,7 +20,7 @@ describe('IdentityForm.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        form: _merge(mockContactInformation(), mockPersonModified),
+        form: mockIdentitySetModified,
         genderItems: mockGenders(),
       },
     });
@@ -104,7 +103,7 @@ describe('IdentityForm.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            form: _merge(mockContactInformation(), mockPersonModified),
+            form: mockIdentitySetModified,
             minAgeRestriction: 15,
             genderItems: mockGenders(),
           },
@@ -142,7 +141,7 @@ describe('IdentityForm.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          form: _merge(mockContactInformation(), mockPersonModified),
+          form: mockIdentitySetModified,
           genderItems: mockGenders(),
         },
       });

@@ -1,5 +1,5 @@
 import { ECanadaProvinces, IMultilingual } from '../../types';
-import { IShelterLocation } from '../beneficiary';
+import { IShelterLocationData } from '../household-create';
 
 /**
  * Enums
@@ -71,7 +71,7 @@ export interface IEventData {
   registrationLink: IMultilingual;
   tenantId: uuid;
   registrationLocations: Array<IEventGenericLocation>;
-  shelterLocations: IShelterLocation[];
+  shelterLocations: IShelterLocationData[];
   selfRegistrationEnabled: boolean;
   schedule: IEventSchedule;
 }
@@ -85,7 +85,7 @@ export interface IEvent {
   responseDetails: IResponseDetails;
   registrationLink: IMultilingual;
   tenantId: uuid;
-  shelterLocations: IShelterLocation[];
+  shelterLocations: IShelterLocationData[];
   registrationLocations: IEventGenericLocation[];
   selfRegistrationEnabled: boolean;
   schedule: IEventSchedule;

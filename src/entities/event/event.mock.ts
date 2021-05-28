@@ -1,12 +1,13 @@
+import deepmerge from 'deepmerge';
 import { IAzureSearchResult, ECanadaProvinces } from '../../types';
 import {
   IEventData, IEvent, IEventGenericLocation, EEventStatus,
 } from './event.types';
 
 import { Event } from './event';
-import { IShelterLocation } from '../beneficiary';
+import { IShelterLocationData } from '../household-create';
 
-export const mockShelterLocations = (): IShelterLocation[] => ([
+export const mockShelterLocations = (): IShelterLocationData[] => ([
   {
     id: '7c076603-580a-4400-bef2-5ddececb5555',
     name: {
@@ -80,4 +81,4 @@ export const mockSearchEventsData = (): IAzureSearchResult<IEventData> => ({
   ],
 });
 
-export const mockEvent = (force?: Partial<IEventData>): IEvent => new Event({ ...mockEventData(), ...force });
+export const mockEvent = (force?: Partial<IEventData>): IEvent => new Event(deepmerge(mockEventData(), force || {}));

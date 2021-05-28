@@ -9,7 +9,7 @@ import { ERegistrationMode } from '../types/enums/ERegistrationMode';
 import { mockProvider } from '../services/provider';
 import { mockTabs } from './modules/registration/tabs.mock';
 import { makeRegistrationModule } from './modules/registration';
-import { makeBeneficiaryModule } from './modules/beneficiary';
+import { makeHouseholdModule } from './modules/household';
 import { IState, IStore } from './store.types';
 
 const i18n = {
@@ -23,7 +23,7 @@ const mockConfig = {
     registration: makeRegistrationModule({
       i18n, tabs: mockTabs(), skipAgeRestriction: false, skipEmailPhoneRules: false, mode: ERegistrationMode.Self,
     }),
-    beneficiary: makeBeneficiaryModule(),
+    household: makeHouseholdModule(),
   },
 };
 

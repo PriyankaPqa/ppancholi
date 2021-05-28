@@ -1,12 +1,12 @@
 import { Store } from 'vuex';
 import { IProvider, IProviderMock } from '@/services/provider';
 import { IState as IRegistrationState } from './modules/registration/registration.types';
-import { IState as IBeneficiaryState } from './modules/beneficiary/beneficiary.types';
+import { IState as IHouseholdState } from './modules/household/household.types';
 
 export interface IRootState {
   version: string;
   registration?: IRegistrationState;
-  beneficiary?: IBeneficiaryState;
+  household?: IHouseholdState;
 }
 
 export type IState = IRootState;

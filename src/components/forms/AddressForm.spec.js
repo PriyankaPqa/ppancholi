@@ -1,6 +1,6 @@
 import { i18n } from '@/ui/plugins/i18n';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
-import { mockAddress } from '../../entities/beneficiary';
+import { mockAddress } from '../../entities/household-create';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
 import helpers from '../../ui/helpers';

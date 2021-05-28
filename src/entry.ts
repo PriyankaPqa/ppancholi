@@ -30,4 +30,4 @@ export default Components;
 // each can be registered via Vue.component()
 export * from '@/components/index';
 
-export * from '@/entities/beneficiary';
+export * from '@/entities/household-create';

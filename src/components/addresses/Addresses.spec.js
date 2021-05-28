@@ -2,17 +2,17 @@ import { i18n } from '../../ui/plugins/i18n';
 import helpers from '../../ui/helpers';
 import { mockStorage } from '../../store/storage/storage.mock';
 import AddressForm from '../forms/AddressForm.vue';
-import TempAddressForm from '../forms/TempAddressForm.vue';
+import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { EOptionItemStatus } from '../../types';
-import { mockAddress, mockBeneficiary } from '../../entities/beneficiary';
+import { mockAddress, mockHouseholdCreate } from '../../entities/household-create';
 import { mockEvent } from '../../entities/event';
-import { ETemporaryAddressTypes, mockCampGround } from '../../entities/value-objects/temporary-address';
+import { ECurrentAddressTypes, mockCampGround } from '../../entities/value-objects/current-address';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './Addresses.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const beneficiary = mockBeneficiary();
+const household = mockHouseholdCreate();
 
 describe('Addresses.vue', () => {
   let wrapper;
@@ -36,25 +36,25 @@ describe('Addresses.vue', () => {
 
   describe('Computed', () => {
     describe('noFixedHome', () => {
-      it('is linked to beneficiary noFixedHome state', () => {
-        expect(wrapper.vm.noFixedHome).toBe(beneficiary.noFixedHome);
+      it('is linked to household noFixedHome state', () => {
+        expect(wrapper.vm.noFixedHome).toBe(household.noFixedHome);
       });
 
       it('triggers setNoFixedHome mutation when changed', () => {
         wrapper.vm.noFixedHome = true;
-        expect(wrapper.vm.$storage.beneficiary.mutations.setNoFixedHome).toHaveBeenCalledWith(true);
+        expect(wrapper.vm.$storage.household.mutations.setNoFixedHome).toHaveBeenCalledWith(true);
       });
     });
 
-    describe('temporaryAddress', () => {
-      it('is linked to temporary address of the beneficiary', () => {
-        expect(wrapper.vm.temporaryAddress).toEqual(mockCampGround());
+    describe('currentAddress', () => {
+      it('is linked to temporary address of the household', () => {
+        expect(wrapper.vm.currentAddress).toEqual(mockCampGround());
       });
     });
 
     describe('homeAddress', () => {
-      it('should be linked to homeAddress from beneficiary', () => {
-        expect(wrapper.vm.homeAddress).toEqual(mockBeneficiary().homeAddress);
+      it('should be linked to homeAddress from household', () => {
+        expect(wrapper.vm.homeAddress).toEqual(mockHouseholdCreate().homeAddress);
       });
     });
 
@@ -64,7 +64,7 @@ describe('Addresses.vue', () => {
       });
     });
 
-    describe('temporaryAddressTypeItems', () => {
+    describe('currentAddressTypeItems', () => {
       it('returns the full list of temporary addresses types if noFixedHome is false. Remaning home being first', async () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -82,11 +82,11 @@ describe('Addresses.vue', () => {
             },
           },
         });
-        const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n)
-          .filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
-        expect(wrapper.vm.temporaryAddressTypeItems).toEqual([
+        const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n)
+          .filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+        expect(wrapper.vm.currentAddressTypeItems).toEqual([
           {
-            value: ETemporaryAddressTypes.RemainingInHome,
+            value: ECurrentAddressTypes.RemainingInHome,
             text: i18n.t('registration.addresses.temporaryAddressTypes.RemainingInHome').toString(),
           },
           ...list,
@@ -110,9 +110,9 @@ describe('Addresses.vue', () => {
             i18n,
           },
         });
-        const list = helpers.enumToTranslatedCollection(ETemporaryAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
-        const filtered = list.filter((item) => item.value !== ETemporaryAddressTypes.RemainingInHome);
-        expect(wrapper.vm.temporaryAddressTypeItems).toEqual(filtered);
+        const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
+        const filtered = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(filtered);
       });
     });
 
@@ -127,8 +127,8 @@ describe('Addresses.vue', () => {
   });
 
   describe('Template', () => {
-    it('should display TempAddressForm component', () => {
-      expect(wrapper.findComponent(TempAddressForm).exists()).toBeTruthy();
+    it('should display CurrentAddressForm component', () => {
+      expect(wrapper.findComponent(CurrentAddressForm).exists()).toBeTruthy();
     });
 
     it('should display AddressForm component', () => {
@@ -160,18 +160,18 @@ describe('Addresses.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('setTemporaryAddress', () => {
+    describe('setCurrentAddress', () => {
       it('is called when event change is emitted', async () => {
-        jest.spyOn(wrapper.vm, 'setTemporaryAddress');
-        const temp = wrapper.findComponent(TempAddressForm);
-        await temp.vm.$emit('change', ETemporaryAddressTypes.HotelMotel);
-        expect(wrapper.vm.setTemporaryAddress).toHaveBeenCalledWith(ETemporaryAddressTypes.HotelMotel);
+        jest.spyOn(wrapper.vm, 'setCurrentAddress');
+        const temp = wrapper.findComponent(CurrentAddressForm);
+        await temp.vm.$emit('change', ECurrentAddressTypes.HotelMotel);
+        expect(wrapper.vm.setCurrentAddress).toHaveBeenCalledWith(ECurrentAddressTypes.HotelMotel);
       });
 
-      it('should call setTemporaryAddress mutations', () => {
-        wrapper.vm.setTemporaryAddress(ETemporaryAddressTypes.HotelMotel);
-        expect(wrapper.vm.$storage.beneficiary.mutations.setTemporaryAddress)
-          .toHaveBeenCalledWith(ETemporaryAddressTypes.HotelMotel);
+      it('should call setCurrentAddress mutations', () => {
+        wrapper.vm.setCurrentAddress(ECurrentAddressTypes.HotelMotel);
+        expect(wrapper.vm.$storage.household.mutations.setCurrentAddress)
+          .toHaveBeenCalledWith(ECurrentAddressTypes.HotelMotel);
       });
     });
 
@@ -185,7 +185,7 @@ describe('Addresses.vue', () => {
 
       it('should call setHomeAddress mutations', () => {
         wrapper.vm.setHomeAddress(mockAddress());
-        expect(wrapper.vm.$storage.beneficiary.mutations.setHomeAddress)
+        expect(wrapper.vm.$storage.household.mutations.setHomeAddress)
           .toHaveBeenCalledWith(mockAddress());
       });
     });

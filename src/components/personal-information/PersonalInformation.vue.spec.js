@@ -5,15 +5,15 @@ import IdentityForm from '../forms/IdentityForm.vue';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import {
-  mockPerson,
+  mockMember,
   mockContactInformation,
-  mockBeneficiary,
+  mockHouseholdCreate,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
   mockGenders,
   mockIndigenousTypesItems,
-  mockIndigenousCommunitiesItems,
-} from '../../entities/beneficiary';
+  mockIndigenousCommunitiesItems, mockIdentitySet,
+} from '../../entities/household-create';
 
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './PersonalInformation.vue';
@@ -30,7 +30,7 @@ describe('PersonalInformation.vue', () => {
       localVue,
       data() {
         return {
-          form: storage.beneficiary.getters.personalInformation(),
+          form: storage.household.getters.personalInformation(),
         };
       },
       propsData: {
@@ -90,35 +90,35 @@ describe('PersonalInformation.vue', () => {
     });
 
     describe('setIndigenousIdentity', () => {
-      it('triggers mutations setPerson', async () => {
-        await wrapper.vm.setIndigenousIdentity(mockPerson());
-        expect(storage.beneficiary.mutations.setIndigenousIdentity).toHaveBeenCalledWith(mockPerson());
+      it('triggers mutations setPrimaryBeneficiary', async () => {
+        await wrapper.vm.setIndigenousIdentity(mockMember());
+        expect(storage.household.mutations.setIndigenousIdentity).toHaveBeenCalledWith(mockMember());
       });
       it('should be called when indigenous identity is changed', () => {
         jest.spyOn(wrapper.vm, 'setIndigenousIdentity');
         const component = wrapper.findComponent(IndigenousIdentityForm);
-        component.vm.$emit('change', mockPerson());
-        expect(wrapper.vm.setIndigenousIdentity).toHaveBeenCalledWith(mockPerson());
+        component.vm.$emit('change', mockMember());
+        expect(wrapper.vm.setIndigenousIdentity).toHaveBeenCalledWith(mockMember());
       });
     });
 
     describe('setIdentity', () => {
       it('triggers mutations setIdentity', async () => {
-        await wrapper.vm.setIdentity(mockPerson());
-        expect(storage.beneficiary.mutations.setIdentity).toHaveBeenCalledWith(mockPerson());
+        await wrapper.vm.setIdentity(mockMember());
+        expect(storage.household.mutations.setIdentity).toHaveBeenCalledWith(mockMember());
       });
       it('should be called when identity is changed', () => {
         jest.spyOn(wrapper.vm, 'setIdentity');
         const component = wrapper.findComponent(IdentityForm);
-        component.vm.$emit('change', mockPerson());
-        expect(wrapper.vm.setIdentity).toHaveBeenCalledWith(mockPerson());
+        component.vm.$emit('change', mockMember());
+        expect(wrapper.vm.setIdentity).toHaveBeenCalledWith(mockMember());
       });
     });
 
     describe('setContactInformation', () => {
       it('triggers mutations setContactInformation', async () => {
         await wrapper.vm.setContactInformation(mockContactInformation());
-        expect(storage.beneficiary.mutations.setContactInformation).toHaveBeenCalledWith(mockContactInformation());
+        expect(storage.household.mutations.setContactInformation).toHaveBeenCalledWith(mockContactInformation());
       });
       it('should be called when contact information is changed', () => {
         jest.spyOn(wrapper.vm, 'setContactInformation');
@@ -130,9 +130,9 @@ describe('PersonalInformation.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('person', () => {
+    describe('identitySet', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.person).toEqual(mockPerson());
+        expect(wrapper.vm.identitySet).toEqual(mockIdentitySet());
       });
     });
 
@@ -142,9 +142,9 @@ describe('PersonalInformation.vue', () => {
       });
     });
 
-    describe('beneficiary', () => {
+    describe('householdCreate', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.beneficiary).toEqual(mockBeneficiary());
+        expect(wrapper.vm.householdCreate).toEqual(mockHouseholdCreate());
       });
     });
 

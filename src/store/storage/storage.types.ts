@@ -1,12 +1,12 @@
 import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } from './registration';
-import { IStorage as IBeneficiaryStorage, IStorageMock as IBeneficiaryMock } from './beneficiary';
+import { IStorage as IHouseholdStorage, IStorageMock as IHouseholdMock } from './household';
 
 export interface IStorage {
   registration: IRegistrationStorage;
-  beneficiary: IBeneficiaryStorage;
+  household: IHouseholdStorage;
 }
 
 export interface IStorageMock {
   registration: IRegistrationMock;
-  beneficiary: IBeneficiaryMock;
+  household: IHouseholdMock;
 }

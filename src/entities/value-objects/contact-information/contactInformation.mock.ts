@@ -1,6 +1,7 @@
+import deepmerge from 'deepmerge';
 import { IOptionItemData } from '../../../types';
 import { ContactInformation } from './contactInformation';
-import { IContactInformationData, IContactInformation, IContactInformationForCreate } from './contactInformation.types';
+import { IContactInformationData, IContactInformation, IContactInformationCreateRequest } from './contactInformation.types';
 
 export const mockPreferredLanguages = (): IOptionItemData[] => [
   {
@@ -69,22 +70,22 @@ export const mockPrimarySpokenLanguages = (): IOptionItemData[] => [
 export const mockContactInformationData = (): IContactInformationData => ({
   preferredLanguage: mockPreferredLanguages()[0],
   preferredLanguageOther: '',
-  homePhone: {
+  homePhoneNumber: {
     number: '(514) 545-4548',
-    countryISO2: 'CA',
+    countryCode: 'CA',
     e164Number: '15145454548',
   },
-  otherPhone: {
+  alternatePhoneNumber: {
     number: '(438) 888-8888',
-    countryISO2: 'CA',
+    countryCode: 'CA',
     e164Number: '15145454548',
+    extension: '1234',
   },
-  mobilePhone: {
+  mobilePhoneNumber: {
     number: '(866) 866-6666',
-    countryISO2: 'CA',
+    countryCode: 'CA',
     e164Number: '15145454548',
   },
-  otherPhoneExtension: '999',
   primarySpokenLanguage: mockPrimarySpokenLanguage(),
   primarySpokenLanguageOther: '',
   email: 'test@test.ca',
@@ -103,10 +104,10 @@ export const mockPreferredLanguageOther = (): IContactInformation => new Contact
 );
 
 export const mockContactInformation = (force?: Partial<IContactInformation>): IContactInformation => new ContactInformation(
-  { ...mockContactInformationData(), ...force },
+  deepmerge(mockContactInformationData(), force || {}),
 );
 
-export const mockContactInformationForCreate = (): IContactInformationForCreate => ({
+export const mockContactInformationCreateRequest = (): IContactInformationCreateRequest => ({
   ...mockContactInformationData(),
   preferredLanguage: { optionItemId: 'bd84e12c-b20b-4415-b3b6-c3f205b195ab', specifiedOther: null },
   primarySpokenLanguage: { optionItemId: '0a5956c2-16f0-4a79-acc4-4e36afcf3c3f', specifiedOther: null },

@@ -41,7 +41,7 @@ export const mockTabs = (): IRegistrationMenuItem[] => [
     helpLink: '',
   },
   {
-    id: 'householdMembers',
+    id: 'additionalMembers',
     labelKey: 'registration.menu.household_members',
     titleKey: 'registration.menu.household_members',
     icon: '',
@@ -50,7 +50,7 @@ export const mockTabs = (): IRegistrationMenuItem[] => [
     isTouched: false,
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
-    componentName: 'HouseholdMembers',
+    componentName: 'AdditionalMembers',
     helpLink: '',
   },
   {

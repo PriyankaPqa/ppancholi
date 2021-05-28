@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { createLocalVue, mount, shallowMount } from '../../test/testSetup';
 import { mockStorage } from '../../store/storage';
-import { Beneficiary } from '../../entities/beneficiary';
+import { HouseholdCreate } from '../../entities/household-create';
 import Component from './PrivacyStatement.vue';
 
 const localVue = createLocalVue();
@@ -15,7 +15,7 @@ describe('PrivacyStatement.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          beneficiary: new Beneficiary(),
+          household: new HouseholdCreate(),
           checkboxLabel: 'label',
         },
         store: {
@@ -70,7 +70,7 @@ describe('PrivacyStatement.vue', () => {
       wrapper = mount(Component, {
         localVue,
         propsData: {
-          beneficiary: new Beneficiary(),
+          household: new HouseholdCreate(),
           checkboxLabel: 'label',
         },
         stubs: ['i18n'],

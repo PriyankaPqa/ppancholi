@@ -5,7 +5,8 @@ import {
 import { IError } from '../../../services/httpClient';
 
 import { IEvent, IEventData } from '../../../entities/event';
-import { IIndigenousIdentityData, EIndigenousTypes, ICreateBeneficiaryResponse } from '../../../entities/beneficiary';
+import { IIndigenousIdentityData, EIndigenousTypes } from '../../../entities/household-create';
+import { IHouseholdData } from '../../../entities/household';
 
 export interface IStorage {
   getters: {
@@ -22,7 +23,7 @@ export interface IStorage {
     findEffectiveJumpIndex(targetIndex: number): number;
     indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[];
     indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[];
-    registrationResponse(): ICreateBeneficiaryResponse;
+    registrationResponse(): IHouseholdData;
     registrationErrors(): IError[];
   };
 
@@ -47,7 +48,7 @@ export interface IStorage {
     fetchPreferredLanguages(): Promise<IOptionItemData[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]>;
-    submitRegistration(): Promise<ICreateBeneficiaryResponse>;
+    submitRegistration(): Promise<IHouseholdData>;
   };
 }
 
@@ -66,7 +67,7 @@ export interface IStorageMock {
     indigenousTypesItems: jest.Mock<Record<string, unknown>[]>;
     indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
     findEffectiveJumpIndex: jest.Mock<number>;
-    registrationResponse: jest.Mock<ICreateBeneficiaryResponse>;
+    registrationResponse: jest.Mock<IHouseholdData>;
     registrationErrors: jest.Mock<IError[]>;
   };
 
@@ -91,6 +92,6 @@ export interface IStorageMock {
     fetchPreferredLanguages: jest.Mock<IOptionItemData[]>;
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
     fetchIndigenousIdentitiesByProvince: jest.Mock<IIndigenousIdentityData[]>;
-    submitRegistration: jest.Mock<ICreateBeneficiaryResponse>;
+    submitRegistration: jest.Mock<IHouseholdData>;
   };
 }

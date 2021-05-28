@@ -1,11 +1,11 @@
+import { mockHousehold } from '../../../entities/household';
 import {
-  mockCreateBeneficiaryResponse,
   mockGenders,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-} from '../../../entities/beneficiary';
+} from '../../../entities/household-create';
 
 import { mockEvent } from '../../../entities/event';
 import { IStorageMock } from './storage.types';
@@ -25,7 +25,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     indigenousTypesItems: jest.fn(() => mockIndigenousTypesItems()),
     indigenousCommunitiesItems: jest.fn(() => mockIndigenousCommunitiesItems()),
     findEffectiveJumpIndex: jest.fn(),
-    registrationResponse: jest.fn(() => mockCreateBeneficiaryResponse()),
+    registrationResponse: jest.fn(() => mockHousehold()),
     registrationErrors: jest.fn(() => []),
   },
 

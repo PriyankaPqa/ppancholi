@@ -5,10 +5,10 @@ import helpers from '../../ui/helpers';
 import { ECanadaProvinces } from '../../types';
 import {
   mockContactInformation,
-  mockPerson,
+  mockMember,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems, EIndigenousTypes,
-} from '../../entities/beneficiary';
+} from '../../entities/household-create';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './IndigenousIdentityForm.vue';
 
@@ -21,7 +21,7 @@ describe('IndigenousIdentityForm.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        form: _merge(mockContactInformation(), mockPerson()),
+        form: _merge(mockContactInformation(), mockMember()),
         canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
         indigenousTypesItems: mockIndigenousTypesItems(),
         indigenousCommunitiesItems: mockIndigenousCommunitiesItems(),
@@ -70,9 +70,11 @@ describe('IndigenousIdentityForm.vue', () => {
 
     describe('indigenousCommunityOther', () => {
       it('is linked to proper rules', async () => {
-        wrapper.vm.formCopy.indigenousType = EIndigenousTypes.Other;
-
-        await wrapper.vm.$nextTick();
+        await wrapper.setData({
+          formCopy: {
+            indigenousType: EIndigenousTypes.Other,
+          },
+        });
 
         const element = wrapper.findDataTest('personalInfo__indigenousCommunityOther');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.indigenousCommunityOther);
@@ -97,9 +99,16 @@ describe('IndigenousIdentityForm.vue', () => {
       it('clears the community id and other field', async () => {
         wrapper.vm.formCopy.indigenousCommunityId = 'test';
         wrapper.vm.formCopy.indigenousCommunityOther = 'test';
-        await wrapper.vm.onIndigenousTypeChange();
+        await wrapper.vm.onIndigenousTypeChange(EIndigenousTypes.FirstNations);
         expect(wrapper.vm.formCopy.indigenousCommunityId).toBeNull();
         expect(wrapper.vm.formCopy.indigenousCommunityOther).toBeNull();
+      });
+
+      it('sets the community id if other has been picked ', async () => {
+        wrapper.vm.formCopy.indigenousCommunityId = 'test';
+        await wrapper.vm.onIndigenousTypeChange(EIndigenousTypes.Other);
+        const otherCommunity = mockIndigenousCommunitiesItems()[0];
+        expect(wrapper.vm.formCopy.indigenousCommunityId).toBe(otherCommunity.value);
       });
     });
   });

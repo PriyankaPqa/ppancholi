@@ -12,7 +12,7 @@
         :data-test="`${prefixDataTest}__indigenousProvince`"
         :label="$t('registration.personal_info.indigenousProvince.label')"
         :items="canadianProvincesItems"
-        @change="onIndigenousProvinceChange" />
+        @change="onIndigenousProvinceChange($event)" />
     </v-col>
     <v-col cols="12" sm="6">
       <v-autocomplete-with-validation
@@ -24,7 +24,7 @@
         :items="indigenousTypesItems"
         :rules="rules.indigenousType"
         :data-test="`${prefixDataTest}__indigenousType`"
-        @change="onIndigenousTypeChange" />
+        @change="onIndigenousTypeChange($event)" />
     </v-col>
     <v-col cols="12">
       <v-text-field-with-validation
@@ -54,8 +54,8 @@ import { TranslateResult } from 'vue-i18n';
 
 import _cloneDeep from 'lodash/cloneDeep';
 
-import { VTextFieldWithValidation, VAutocompleteWithValidation } from '@crctech/component-library';
-import { EIndigenousTypes, IPerson } from '../../entities/beneficiary';
+import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import { EIndigenousTypes, IIdentitySet } from '../../entities/household-create';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 
 export default Vue.extend({
@@ -72,7 +72,7 @@ export default Vue.extend({
     },
 
     form: {
-      type: Object as () => IPerson,
+      type: Object as () => IIdentitySet,
       required: true,
     },
 
@@ -99,7 +99,7 @@ export default Vue.extend({
 
   data() {
     return {
-      formCopy: null as IPerson,
+      formCopy: null as IIdentitySet,
     };
   },
 
@@ -128,7 +128,7 @@ export default Vue.extend({
   watch: {
     formCopy: {
       deep: true,
-      handler(form: IPerson) {
+      handler(form: IIdentitySet) {
         this.$emit('change', form);
       },
     },
@@ -148,9 +148,17 @@ export default Vue.extend({
       }
     },
 
-    onIndigenousTypeChange() {
+    async onIndigenousTypeChange(indigenousType: EIndigenousTypes) {
       this.formCopy.indigenousCommunityId = null;
       this.formCopy.indigenousCommunityOther = null;
+
+      if (indigenousType === EIndigenousTypes.Other) {
+        // Need to wait for indigenousCommunitiesItems to be updated
+        await this.$nextTick();
+        // There is only one community for other
+        const otherCommunity = this.indigenousCommunitiesItems[0];
+        this.formCopy.indigenousCommunityId = otherCommunity.value;
+      }
     },
   },
 });

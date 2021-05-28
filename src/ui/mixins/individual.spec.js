@@ -29,11 +29,11 @@ const tabs = [
     componentName: 'Addresses',
   },
   {
-    id: 'householdMembers',
+    id: 'additionalMembers',
     disabled: false,
     isValid: true,
     isTouched: false,
-    componentName: 'HouseholdMembers',
+    componentName: 'AdditionalMembers',
   },
   {
     id: 'review',

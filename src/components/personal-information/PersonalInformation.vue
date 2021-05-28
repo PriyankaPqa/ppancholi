@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters>
     <identity-form
-      :form="person"
+      :form="identitySet"
       :gender-items="genderItems"
       :min-age-restriction="minAgeRegistration"
       @change="setIdentity($event)" />
@@ -14,7 +14,7 @@
       @change="setContactInformation($event)" />
 
     <indigenous-identity-form
-      :form="person"
+      :form="identitySet"
       :canadian-provinces-items="canadianProvincesItems"
       :i18n="i18n"
       :indigenous-communities-items="indigenousCommunitiesItems"
@@ -31,8 +31,7 @@ import VueI18n, { TranslateResult } from 'vue-i18n';
 import helpers from '../../ui/helpers';
 import { ECanadaProvinces, IOptionItemData } from '../../types';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
-import { IBeneficiary } from '../../entities/beneficiary';
-import { IPerson } from '../../entities/value-objects/person';
+import { IHouseholdCreate, IIdentitySet } from '../../entities/household-create';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
@@ -62,16 +61,16 @@ export default Vue.extend({
   },
 
   computed: {
-    person(): IPerson {
-      return this.beneficiary.person;
+    identitySet(): IIdentitySet {
+      return this.householdCreate.primaryBeneficiary.identitySet;
     },
 
     contactInformation(): IContactInformation {
-      return this.beneficiary.contactInformation;
+      return this.householdCreate.primaryBeneficiary.contactInformation;
     },
 
-    beneficiary(): IBeneficiary {
-      return this.$storage.beneficiary.getters.beneficiary();
+    householdCreate(): IHouseholdCreate {
+      return this.$storage.household.getters.householdCreate();
     },
 
     preferredLanguagesItems(): IOptionItemData[] {
@@ -87,11 +86,11 @@ export default Vue.extend({
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return this.$storage.registration.getters.indigenousTypesItems(this.person.indigenousProvince);
+      return this.$storage.registration.getters.indigenousTypesItems(this.identitySet.indigenousProvince);
     },
 
     indigenousCommunitiesItems(): Record<string, string>[] {
-      return this.$storage.registration.getters.indigenousCommunitiesItems(this.person.indigenousProvince, this.person.indigenousType);
+      return this.$storage.registration.getters.indigenousCommunitiesItems(this.identitySet.indigenousProvince, this.identitySet.indigenousType);
     },
 
     loadingIndigenousIdentities(): boolean {
@@ -109,16 +108,16 @@ export default Vue.extend({
       await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
     },
 
-    setIdentity(form: IPerson) {
-      this.$storage.beneficiary.mutations.setIdentity(form);
+    setIdentity(form: IIdentitySet) {
+      this.$storage.household.mutations.setIdentity(form);
     },
 
-    setIndigenousIdentity(form: IPerson) {
-      this.$storage.beneficiary.mutations.setIndigenousIdentity(form);
+    setIndigenousIdentity(form: IIdentitySet) {
+      this.$storage.household.mutations.setIndigenousIdentity(form);
     },
 
     setContactInformation(form: IContactInformation) {
-      this.$storage.beneficiary.mutations.setContactInformation(form);
+      this.$storage.household.mutations.setContactInformation(form);
     },
   },
 });

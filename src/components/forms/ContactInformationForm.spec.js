@@ -2,7 +2,7 @@ import {
   mockContactInformation,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-} from '../../entities/beneficiary';
+} from '../../entities/household-create';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
@@ -59,20 +59,20 @@ describe('ContactInformationForm.vue', () => {
         });
       });
 
-      test('homePhone', () => {
-        expect(wrapper.vm.rules.homePhone).toEqual(wrapper.vm.phoneRule);
+      test('homePhoneNumber', () => {
+        expect(wrapper.vm.rules.homePhoneNumber).toEqual(wrapper.vm.phoneRule);
       });
 
-      test('mobilePhone', () => {
-        expect(wrapper.vm.rules.mobilePhone).toEqual(wrapper.vm.phoneRule);
+      test('mobilePhoneNumber', () => {
+        expect(wrapper.vm.rules.mobilePhoneNumber).toEqual(wrapper.vm.phoneRule);
       });
 
-      test('otherPhone', () => {
-        expect(wrapper.vm.rules.otherPhone).toEqual(wrapper.vm.phoneRule);
+      test('alternatePhoneNumber', () => {
+        expect(wrapper.vm.rules.alternatePhoneNumber).toEqual(wrapper.vm.phoneRule);
       });
 
-      test('otherPhoneExtension', () => {
-        expect(wrapper.vm.rules.otherPhoneExtension).toEqual({
+      test('alternatePhoneNumberExtension', () => {
+        expect(wrapper.vm.rules.alternatePhoneNumberExtension).toEqual({
           max: MAX_LENGTH_MD,
         });
       });
@@ -93,40 +93,40 @@ describe('ContactInformationForm.vue', () => {
       });
     });
 
-    describe('homePhoneLabel', () => {
+    describe('homePhoneNumberLabel', () => {
       it('should return proper string', () => {
         const expected = `${wrapper.vm.$t('registration.personal_info.homePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
-        expect(wrapper.vm.homePhoneLabel).toEqual(expected);
+        expect(wrapper.vm.homePhoneNumberLabel).toEqual(expected);
       });
     });
 
-    describe('mobilePhoneLabel', () => {
+    describe('mobilePhoneNumberLabel', () => {
       it('should return proper string', () => {
         const expected = `${wrapper.vm.$t('registration.personal_info.mobilePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
-        expect(wrapper.vm.mobilePhoneLabel).toEqual(expected);
+        expect(wrapper.vm.mobilePhoneNumberLabel).toEqual(expected);
       });
     });
 
-    describe('otherPhoneLabel', () => {
+    describe('alternatePhoneNumberLabel', () => {
       it('should return proper string', () => {
         const expected = `${wrapper.vm.$t('registration.personal_info.alternatePhoneNumber')}${wrapper.vm.phoneRequired ? '*' : ''}`;
-        expect(wrapper.vm.otherPhoneLabel).toEqual(expected);
+        expect(wrapper.vm.alternatePhoneNumberLabel).toEqual(expected);
       });
     });
 
     describe('hasAnyPhone', () => {
-      it('should return true if homePhone is not empty', () => {
-        wrapper.vm.formCopy.homePhone.number = '12345';
+      it('should return true if homePhoneNumber is not empty', () => {
+        wrapper.vm.formCopy.homePhoneNumber.number = '12345';
         expect(wrapper.vm.hasAnyPhone).toBeTruthy();
       });
 
-      it('should return true if mobilePhone is not empty', () => {
-        wrapper.vm.formCopy.mobilePhone.number = '12345';
+      it('should return true if mobilePhoneNumber is not empty', () => {
+        wrapper.vm.formCopy.mobilePhoneNumber.number = '12345';
         expect(wrapper.vm.hasAnyPhone).toBeTruthy();
       });
 
-      it('should return true if otherPhone is not empty', () => {
-        wrapper.vm.formCopy.otherPhone.number = '12345';
+      it('should return true if alternatePhoneNumber is not empty', () => {
+        wrapper.vm.formCopy.alternatePhoneNumber.number = '12345';
         expect(wrapper.vm.hasAnyPhone).toBeTruthy();
       });
     });
@@ -137,9 +137,9 @@ describe('ContactInformationForm.vue', () => {
           skipPhoneEmailRules: false,
         });
         wrapper.vm.formCopy.email = '';
-        wrapper.vm.formCopy.mobilePhone.number = '';
-        wrapper.vm.formCopy.homePhone.number = '';
-        wrapper.vm.formCopy.otherPhone.number = '';
+        wrapper.vm.formCopy.mobilePhoneNumber.number = '';
+        wrapper.vm.formCopy.homePhoneNumber.number = '';
+        wrapper.vm.formCopy.alternatePhoneNumber.number = '';
 
         expect(wrapper.vm.phoneRequired).toBeTruthy();
       });
@@ -148,7 +148,7 @@ describe('ContactInformationForm.vue', () => {
         await wrapper.setProps({
           skipPhoneEmailRules: false,
         });
-        wrapper.vm.formCopy.mobilePhone.number = '12345';
+        wrapper.vm.formCopy.mobilePhoneNumber.number = '12345';
         wrapper.vm.formCopy.email = '';
         expect(wrapper.vm.phoneRequired).toBeFalsy();
       });
@@ -253,29 +253,29 @@ describe('ContactInformationForm.vue', () => {
 
     describe('Home phone', () => {
       it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__homePhone');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.homePhone);
+        const element = wrapper.findDataTest('personalInfo__homePhoneNumber');
+        expect(element.props('rules')).toEqual(wrapper.vm.rules.homePhoneNumber);
       });
     });
 
     describe('Mobile phone', () => {
       it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__mobilePhone');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.mobilePhone);
+        const element = wrapper.findDataTest('personalInfo__mobilePhoneNumber');
+        expect(element.props('rules')).toEqual(wrapper.vm.rules.mobilePhoneNumber);
       });
     });
 
     describe('Other phone', () => {
       it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__otherPhone');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.otherPhone);
+        const element = wrapper.findDataTest('personalInfo__alternatePhoneNumber');
+        expect(element.props('rules')).toEqual(wrapper.vm.rules.alternatePhoneNumber);
       });
     });
 
     describe('Other phone extension', () => {
       it('is linked to proper rules', () => {
-        const element = wrapper.findDataTest('personalInfo__otherPhoneExtension');
-        expect(element.props('rules')).toEqual(wrapper.vm.rules.otherPhoneExtension);
+        const element = wrapper.findDataTest('personalInfo__alternatePhoneNumberExtension');
+        expect(element.props('rules')).toEqual(wrapper.vm.rules.alternatePhoneNumberExtension);
       });
     });
 

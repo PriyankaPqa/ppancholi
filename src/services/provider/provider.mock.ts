@@ -1,8 +1,8 @@
 import { IProviderMock } from './provider.types';
 import { mockPublicService } from '../public';
-import { mockBeneficiariesService } from '../beneficiaries';
+import { mockHouseholdsService } from '../households';
 
 export const mockProvider = (): IProviderMock => ({
   publicApi: mockPublicService(),
-  beneficiaries: mockBeneficiariesService(),
+  households: mockHouseholdsService(),
 });
