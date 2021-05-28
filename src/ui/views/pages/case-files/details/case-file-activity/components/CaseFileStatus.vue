@@ -4,7 +4,7 @@
       data-test="case-file-detail-status-select"
       :value="caseFile.caseFileStatus"
       :statuses="statuses"
-      :disabled="!$hasLevel('level2')"
+      :disabled="disableStatus"
       status-name="ECaseFileStatus"
       @input="onStatusChangeInit($event)" />
 
@@ -75,7 +75,15 @@ export default Vue.extend({
       if (this.$hasLevel('level3')) {
         return [ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive, ECaseFileStatus.Open];
       }
+
       return [ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive];
+    },
+
+    disableStatus() {
+      if (this.caseFile.caseFileStatus === ECaseFileStatus.Archived && !this.$hasLevel('level5')) {
+        return true;
+      }
+      return !this.$hasLevel('level2');
     },
 
     confirmationDialogText() : {title:string, message:string} {

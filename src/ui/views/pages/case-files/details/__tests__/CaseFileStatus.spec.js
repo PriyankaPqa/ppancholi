@@ -1,5 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { CaseFile, mockCaseFilesSearchData, ECaseFileStatus } from '@/entities/case-file';
+import _cloneDeep from 'lodash/cloneDeep';
 
 import Component from '../case-file-activity/components/CaseFileStatus.vue';
 
@@ -25,6 +26,59 @@ describe('CaseFileStatus.vue', () => {
           propsData: {
             caseFile: mockCaseFile,
           },
+        });
+      });
+      describe('statuses', () => {
+        it('returns the proper statuses value', async () => {
+          await wrapper.setRole('level3');
+          expect(wrapper.vm.statuses).toEqual([
+            ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive, ECaseFileStatus.Open,
+          ]);
+          await wrapper.setRole('level2');
+          expect(wrapper.vm.statuses).toEqual([ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive]);
+        });
+      });
+
+      describe('disableStatus', () => {
+        it('returns the proper disable status value for L1', async () => {
+          await wrapper.setRole('level1');
+          expect(wrapper.vm.disableStatus).toBe(true);
+        });
+        it('returns the proper disable status value for L2+', async () => {
+          const altMockCaseFile = _cloneDeep(mockCaseFile);
+          altMockCaseFile.caseFileStatus = ECaseFileStatus.Open;
+          wrapper = shallowMount(Component, {
+            localVue,
+            propsData: {
+              caseFile: altMockCaseFile,
+            },
+          });
+
+          await wrapper.setRole('level2');
+          expect(wrapper.vm.disableStatus).toBe(false);
+
+          await wrapper.setRole('level3');
+          expect(wrapper.vm.disableStatus).toBe(false);
+
+          await wrapper.setRole('level4');
+          expect(wrapper.vm.disableStatus).toBe(false);
+
+          await wrapper.setRole('level5');
+          expect(wrapper.vm.disableStatus).toBe(false);
+        });
+
+        it('returns the proper disable status value for L5 and lower when archived', async () => {
+          const altMockCaseFile = _cloneDeep(mockCaseFile);
+          altMockCaseFile.caseFileStatus = ECaseFileStatus.Archived;
+          wrapper = shallowMount(Component, {
+            localVue,
+            propsData: {
+              caseFile: altMockCaseFile,
+            },
+          });
+          await wrapper.setRole('level4');
+
+          expect(wrapper.vm.disableStatus).toBe(true);
         });
       });
 

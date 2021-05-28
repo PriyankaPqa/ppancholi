@@ -43,7 +43,7 @@
           :label="`${$t('common.pleaseSpecify')} *`"
           :rules="rules.specifiedOther" />
 
-        <v-text-field-with-validation
+        <v-text-area-with-validation
           v-model="rationale"
           :label="`${$t('caseFile.changeStatusConfirm.Rationale')} ${rationaleRequired ? '*' : '' } `"
 
@@ -59,6 +59,7 @@ import Vue from 'vue';
 import {
   RcDialog,
   VTextFieldWithValidation,
+  VTextAreaWithValidation,
   VSelectWithValidation,
 } from '@crctech/component-library';
 import { VForm } from '@/types';
@@ -76,6 +77,7 @@ export default Vue.extend({
     RcDialog,
     StatusChip,
     VTextFieldWithValidation,
+    VTextAreaWithValidation,
     VSelectWithValidation,
   },
 
