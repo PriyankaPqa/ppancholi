@@ -1,6 +1,7 @@
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
+import helpers from '@/ui/helpers';
 import _sortBy from 'lodash/sortBy';
 import _findIndex from 'lodash/findIndex';
 import { IRootState } from '@/store/store.types';
@@ -63,6 +64,23 @@ const actions = {
 
     context.commit('setItems', data);
     return context.getters.items;
+  },
+
+  async fetchSubItems(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionSubItem[]> {
+    if (!context.state.list) {
+      throw new Error('You must set a value for list');
+    }
+    const { list } = context.state;
+    const parentData: IOptionItem[] = await this.$services.optionItems.getOptionList(list);
+    let data: IOptionSubItem[] = [];
+
+    if (parentData) {
+      parentData.forEach((element) => {
+        element.subitems.forEach((subItem) => data.push(subItem));
+      });
+      data = helpers.sortMultilingualArray(data, 'name', true); // Trim
+    }
+    return data;
   },
 
   async createOption(this: Store<IState>, context: ActionContext<IState, IState>, payload: IOptionItemData): Promise<IOptionItem> {

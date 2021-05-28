@@ -2,7 +2,7 @@ import { IMultilingual } from '@/types';
 import { IFilter } from '@/entities/user';
 import utils from '../utils';
 import {
-  EUserAccountStatus, IUserAccount, IUserAccountSearchData,
+  EUserAccountStatus, EAccountStatus, IUserAccount, IUserAccountSearchData,
 } from './user-account.types';
 
 export const NO_ROLE = 'no_role';
@@ -24,7 +24,9 @@ export class UserAccount implements IUserAccount {
 
   roleName: IMultilingual;
 
-  accountStatus: EUserAccountStatus;
+  accountStatus: EAccountStatus;
+
+  status: EUserAccountStatus;
 
   filters: Array<IFilter>;
 
@@ -42,7 +44,8 @@ export class UserAccount implements IUserAccount {
     this.id = data.userAccountId;
     this.email = data.emailAddress;
     this.phoneNumber = data.phoneNumber;
-    this.accountStatus = data.userAccountStatus;
+    this.accountStatus = data.accountStatus;
+    this.status = data.userAccountStatus; // Do not confuse the FE/BE status names
     this.firstName = data.givenName;
     this.lastName = data.surname;
     this.displayName = data.displayName;

@@ -1,15 +1,44 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockAppUserData, mockRolesData, mockAppUserAzureData } from '@/entities/app-user';
+import { mockAppUserData, mockRolesData } from '@/entities/app-user';
 import Component from './AddEmisUser.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-
+const mockSubRole = {
+  id: '123',
+  name: {
+    translation: {
+      en: 'case worker 2',
+      fr: 'case worker 2 fr',
+    },
+  },
+};
 const usersTestData = [
-  { displayName: 'C' },
-  { displayName: 'B' },
-  { displayName: 'A' },
+  {
+    id: '1',
+    displayName: 'C',
+    givenName: 'Some Person',
+    surname: '',
+    emailAddress: 'fake@email.com',
+    phoneNumber: '123-456-7890',
+  },
+  {
+    id: '2',
+    displayName: 'B',
+    givenName: 'Another Person',
+    surname: '',
+    emailAddress: 'faker@email.com',
+    phoneNumber: '123-456-5555',
+  },
+  {
+    id: '3',
+    displayName: 'A',
+    givenName: 'Other Person',
+    surname: '',
+    emailAddress: 'fakest@email.com',
+    phoneNumber: '123-654-0987',
+  },
 ];
 const optionData = [
   {
@@ -25,6 +54,7 @@ const optionData = [
     },
     subitems: [
       {
+        id: '123',
         name: {
           translation: {
             en: 'case worker 2',
@@ -46,6 +76,7 @@ const optionData = [
     },
     subitems: [
       {
+        id: '456',
         name: {
           translation: {
             en: 'case worker 3',
@@ -64,21 +95,21 @@ describe('AddEmisUser.vue', () => {
     wrapper = mount(Component, {
       localVue,
       propsData: {
+        allEmisUsers: [],
         show: true,
+        allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
       },
       data() {
         return {
           error: false,
           formReady: false,
           searchTerm: '',
-          allUsers: [],
-          allRoles: [],
+          appUsers: [],
           searchResults: [],
           selectedUsers: [],
-          isDirty: false,
           componentKey: 0,
           loading: false,
-          submitButtonEnabled: true,
+          isSubmitAllowed: false,
         };
       },
       mocks: {
@@ -89,15 +120,13 @@ describe('AddEmisUser.vue', () => {
 
   describe('Mounted', () => {
     it('loads lookup lists', async () => {
-      jest.spyOn(wrapper.vm, 'fetchAllEMISUsers').mockImplementation(() => true);
-      jest.spyOn(wrapper.vm, 'loadAllRoles').mockImplementation(() => true);
+      jest.spyOn(wrapper.vm, 'fetchAllAppUsers').mockImplementation(() => true);
 
       wrapper.vm.$options.mounted.forEach((hook) => {
         hook.call(wrapper.vm);
       });
 
-      expect(wrapper.vm.fetchAllEMISUsers).toHaveBeenCalledTimes(1);
-      expect(wrapper.vm.loadAllRoles).toHaveBeenCalledTimes(1);
+      expect(wrapper.vm.fetchAllAppUsers).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -111,6 +140,7 @@ describe('AddEmisUser.vue', () => {
             filterable: false,
             sortable: true,
             value: 'displayName',
+            width: '35%',
           },
           {
             text: 'system_management.userAccounts.member_email',
@@ -151,6 +181,17 @@ describe('AddEmisUser.vue', () => {
         );
       });
     });
+
+    describe('itemsPerPage', () => {
+      it('gives correct default for empty list', async () => {
+        wrapper.vm.searchResults = null;
+        expect(wrapper.vm.itemsPerPage).toEqual(10);
+      });
+      it('gives correct value for populated list', async () => {
+        wrapper.vm.searchResults = [{ name: 'me' }, { name: 'you' }];
+        expect(wrapper.vm.itemsPerPage).toEqual(2);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -158,21 +199,21 @@ describe('AddEmisUser.vue', () => {
       wrapper = mount(Component, {
         localVue,
         propsData: {
+          allEmisUsers: [],
           show: true,
+          allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
         },
         data() {
           return {
             error: false,
             formReady: false,
             searchTerm: '',
-            allUsers: [],
-            allRoles: [],
+            appUsers: [],
             searchResults: [],
             selectedUsers: [],
-            isDirty: false,
             componentKey: 0,
             loading: false,
-            submitButtonEnabled: false,
+            isSubmitAllowed: false,
           };
         },
         mocks: {
@@ -188,55 +229,84 @@ describe('AddEmisUser.vue', () => {
       });
     });
 
-    describe('getClassRow', () => {
-      it('returns row_disabled if the user is already in the team', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInEMIS').mockImplementation(() => true);
-        const user = mockAppUserData()[0];
-        expect(wrapper.vm.getClassRow(user)).toEqual('row_disabled');
-      });
-
-      it('returns row_active if the user is currently selected', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInEMIS').mockImplementation(() => false);
-        jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => true);
-        const user = mockAppUserData()[0];
-        expect(wrapper.vm.getClassRow(user)).toEqual('row_active');
-      });
-
-      it('returns "" otherwise', () => {
-        jest.spyOn(wrapper.vm, 'isAlreadyInEMIS').mockImplementation(() => false);
-        jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => false);
-        const user = mockAppUserData()[0];
-        expect(wrapper.vm.getClassRow(user)).toEqual('');
+    describe('back', () => {
+      it('emit hide', () => {
+        wrapper.vm.back();
+        expect(wrapper.emitted('hide')).toBeTruthy();
       });
     });
 
-    describe('sortOnDisplayName', () => {
-      it('returns Users in ascending alphabetical order by displayName', () => {
-        expect(optionData[0].id).toEqual('1');
-        expect(optionData[1].id).toEqual('2');
-        wrapper.vm.sortOnLocaleName(optionData);
-        expect(optionData[0].id).toEqual('2');
-        expect(optionData[1].id).toEqual('1');
+    describe('fetchAllAppUsers', () => {
+      it('appUsers.fetchAllAppUsers has been called and formReady is true', async () => {
+        jest.spyOn(wrapper.vm.$storage.userAccount.actions, 'fetchAllUserAccounts').mockImplementation(() => mockAppUserData());
+        wrapper.vm.fetchAllAppUsers();
+        expect(wrapper.vm.$storage.userAccount.actions.fetchAllUserAccounts).toHaveBeenCalled();
+        expect(wrapper.vm.formReady).toBeTruthy();
       });
     });
 
-    describe('sortOnLocaleName', () => {
-      it('returns Users in ascending alphabetical order by displayName', () => {
-        wrapper.vm.sortOnDisplayName(usersTestData);
-        expect(usersTestData[0].displayName).toEqual('A');
-        expect(usersTestData[1].displayName).toEqual('B');
-        expect(usersTestData[2].displayName).toEqual('C');
+    describe('findUsers', () => {
+      it('empty results with no search term', async () => {
+        jest.spyOn(wrapper.vm.$storage.appUser.actions, 'findAppUsers').mockImplementation(() => mockAppUserData());
+        wrapper.vm.searchTerm = '';
+        wrapper.vm.findUsers();
+        expect(wrapper.vm.$storage.appUser.actions.findAppUsers).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$data.searchResults).toEqual([]);
+      });
+
+      it('correct service call with valid search term', async () => {
+        jest.spyOn(wrapper.vm.$storage.appUser.actions, 'findAppUsers').mockImplementation(() => mockAppUserData());
+        wrapper.vm.searchTerm = 't';
+        wrapper.vm.findUsers();
+        expect(wrapper.vm.$storage.appUser.actions.findAppUsers).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.appUser.actions.findAppUsers).toHaveBeenCalledWith('t');
       });
     });
 
     describe('isAlreadyInEmis', () => {
-      it('returns true for a user that is in the allUsers array', () => {
-        wrapper.vm.allUsers = usersTestData;
-        expect(wrapper.vm.isAlreadyInEMIS(usersTestData[0])).toBeTruthy();
+      beforeEach(() => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            allEmisUsers: usersTestData,
+            show: true,
+            allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
+          },
+          data() {
+            return {
+              appUsers: usersTestData,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
       });
-      it('returns false for a user that is not in the allUsers array', () => {
-        wrapper.vm.allUsers = usersTestData;
-        expect(wrapper.vm.isAlreadyInEMIS({ displayName: 'Some Person', id: '9393-39393-39393-help' })).toBeFalsy();
+
+      it('returns true for an active user that is in the appUsers and allEmisUsers arrays', () => {
+        const tempUser = usersTestData[0];
+        wrapper.vm.appUsers = usersTestData;
+        tempUser.accountStatus = 1;
+        tempUser.status = 1;
+        expect(wrapper.vm.isAlreadyInEmis(tempUser)).toBeTruthy();
+      });
+
+      it('returns false for a user that is not in the appUsers array', () => {
+        const testUser = { displayName: 'Some Person', id: '9393-39393-39393-help' };
+        wrapper.vm.allEmisUsers.push(testUser);
+
+        expect(wrapper.vm.isAlreadyInEmis(
+          {
+            displayName: 'Some Person',
+            id: '9393-39393-39393-help',
+          },
+        )).toBeFalsy();
+      });
+
+      it('returns false for a user that is not in the allEmisUsers array', () => {
+        const testUser = { displayName: 'Some Person', id: '9393-39393-39393-help' };
+        wrapper.vm.appUsers = usersTestData;
+        expect(wrapper.vm.isAlreadyInEmis(testUser)).toBeFalsy();
       });
     });
 
@@ -256,72 +326,49 @@ describe('AddEmisUser.vue', () => {
       });
     });
 
-    describe('fetchAllEMISUsers', () => {
-      it('appUsers.fetchAppUsers has been called and formReady is true', async () => {
-        wrapper.vm.$storage.appUser.actions.fetchAppUsers = jest.fn(() => mockAppUserAzureData());
-        wrapper.vm.fetchAllEMISUsers();
-        expect(wrapper.vm.$storage.appUser.actions.fetchAppUsers).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.formReady).toBeTruthy();
-      });
-    });
-
-    describe('loadAllRoles', () => {
-      it('data and element alphabetic ordering are correct', async () => {
-        wrapper.vm.$services.appUsers.fetchRoles = jest.fn(() => mockRolesData());
-        wrapper.vm.loadAllRoles();
-        expect(wrapper.vm.$services.optionItems.getOptionList).toHaveBeenCalled();
-      });
-    });
-
-    describe('findUsers', () => {
-      it('empty results with no search term', async () => {
-        jest.spyOn(wrapper.vm.$services.appUsers, 'findAppUsers').mockImplementation(() => mockAppUserData());
-        wrapper.vm.searchTerm = '';
-        wrapper.vm.findUsers();
-        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledTimes(0);
-        expect(wrapper.vm.$data.isDirty).toBeFalsy();
-        expect(wrapper.vm.$data.searchResults).toEqual([]);
-      });
-
-      it('correct service call with valid search term', async () => {
-        jest.spyOn(wrapper.vm.$services.appUsers, 'findAppUsers').mockImplementation(() => mockAppUserData());
-        wrapper.vm.searchTerm = 't';
-        wrapper.vm.findUsers();
-        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledWith('t');
-        expect(wrapper.vm.$data.isDirty).toBeTruthy();
-      });
-    });
-
     describe('toggleUserSelection', () => {
       const testUser = { id: '1234-1234-1234' };
       it('toggling unselected user adds it to selectedUsers array', async () => {
-        wrapper.vm.updateSubmitButton = jest.fn();
-        expect(wrapper.vm.isDirty).toBeFalsy();
         expect(wrapper.vm.selectedUsers).not.toContain(testUser);
 
         wrapper.vm.toggleUserSelection(testUser);
         expect(wrapper.vm.selectedUsers).toContain(testUser);
-        expect(wrapper.vm.isDirty).toBeTruthy();
-        expect(wrapper.vm.updateSubmitButton).toHaveBeenCalledTimes(1);
       });
 
       it('toggling selected user removes it from selectedUsers array', async () => {
-        wrapper.vm.updateSubmitButton = jest.fn();
         wrapper.vm.selectedUsers.push(testUser);
-        expect(wrapper.vm.isDirty).toBeFalsy();
         expect(wrapper.vm.selectedUsers).toContain(testUser);
 
         wrapper.vm.toggleUserSelection(testUser);
         expect(wrapper.vm.selectedUsers).not.toContain(testUser);
-        expect(wrapper.vm.isDirty).toBeTruthy();
-        expect(wrapper.vm.updateSubmitButton).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('getClassRow', () => {
+      it('returns row_disabled if the user is already in the team', () => {
+        jest.spyOn(wrapper.vm, 'isAlreadyInEmis').mockImplementation(() => true);
+        const user = mockAppUserData()[0];
+        expect(wrapper.vm.getClassRow(user)).toEqual('row_disabled');
+      });
+
+      it('returns row_active if the user is currently selected', () => {
+        jest.spyOn(wrapper.vm, 'isAlreadyInEmis').mockImplementation(() => false);
+        jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => true);
+        const user = mockAppUserData()[0];
+        expect(wrapper.vm.getClassRow(user)).toEqual('row_active');
+      });
+
+      it('returns "" otherwise', () => {
+        jest.spyOn(wrapper.vm, 'isAlreadyInEmis').mockImplementation(() => false);
+        jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => false);
+        const user = mockAppUserData()[0];
+        expect(wrapper.vm.getClassRow(user)).toEqual('');
       });
     });
 
     describe('onSelectAll', () => {
       it('updates selectedUsers with all selected members when user is selecting', () => {
-        wrapper.vm.allUsers = mockAppUserData();
+        wrapper.vm.appUsers = mockAppUserData();
         wrapper.vm.selectedUsers = mockAppUserData();
         const items = [
           {
@@ -339,7 +386,7 @@ describe('AddEmisUser.vue', () => {
       });
 
       it('updates selectedUsers by removing unselected members', () => {
-        wrapper.vm.allUsers = [];
+        wrapper.vm.appUsers = [];
         wrapper.vm.searchResults = mockAppUserData();
         const items = [
           {
@@ -358,35 +405,32 @@ describe('AddEmisUser.vue', () => {
       });
     });
 
+    describe('sortOnDisplayName', () => {
+      it('returns Users in ascending alphabetical order by displayName', () => {
+        expect(usersTestData[0].id).toEqual('1');
+        expect(usersTestData[1].id).toEqual('2');
+        expect(usersTestData[2].id).toEqual('3');
+        wrapper.vm.sortOnDisplayName(usersTestData);
+        expect(usersTestData[0].id).toEqual('3');
+        expect(usersTestData[1].id).toEqual('2');
+        expect(usersTestData[2].id).toEqual('1');
+      });
+    });
+
     describe('assignRoleToUser', () => {
       it('updates selected user with correct role and enables submit button', () => {
         wrapper.vm.selectedUsers = [...mockAppUserData()];
         wrapper.vm.selectedUsers[0].roles = [];
-        expect(wrapper.vm.submitButtonEnabled).toBeFalsy();
+        expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
         wrapper.vm.assignRoleToUser(optionData[0], wrapper.vm.selectedUsers[0]);
         expect(wrapper.vm.selectedUsers[0].roles[0]).toEqual(
           {
-            id: optionData[0].subitems[0].id,
-            displayName: optionData[0].subitems[0].name.translation.en,
+            id: optionData[0].id,
+            displayName: optionData[0].name.translation.en,
             value: null,
           },
         );
-        expect(wrapper.vm.submitButtonEnabled).toBeTruthy();
-      });
-    });
-
-    describe('updateSubmitButton', () => {
-      it('submit button goes from disabled to enabled when selected user is given a role', () => {
-        wrapper.vm.selectedUsers = [...mockAppUserData()];
-        wrapper.vm.selectedUsers[0].roles = [];
-        expect(wrapper.vm.submitButtonEnabled).toBeFalsy();
-
-        wrapper.vm.updateSubmitButton();
-        expect(wrapper.vm.submitButtonEnabled).toBeFalsy();
-
-        wrapper.vm.selectedUsers[0].roles.push(mockRolesData()[0]);
-        wrapper.vm.updateSubmitButton();
-        expect(wrapper.vm.submitButtonEnabled).toBeTruthy();
+        expect(wrapper.vm.isSubmitAllowed).toBeTruthy();
       });
     });
 
@@ -411,18 +455,111 @@ describe('AddEmisUser.vue', () => {
 
     describe('submit', () => {
       it('should not run if submit button is disabled', () => {
+        wrapper.vm.isSubmitAllowed = false;
         wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn();
-        wrapper.vm.submitButtonEnabled = false;
         wrapper.vm.submit();
-        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).not.toHaveBeenCalled();
       });
 
-      it('should call service once for each user', () => {
+      it('should call services correctly', async () => {
+        wrapper.vm.isSubmitAllowed = true;
         wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn();
+        wrapper.vm.$storage.appUser.mutations.invalidateAppUserCache = jest.fn();
+        wrapper.vm.$storage.appUser.mutations.invalidateAllUserCache = jest.fn();
+        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn(() => usersTestData[0]);
+        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
+        wrapper.vm.selectedUsers = [usersTestData[0]];
+        wrapper.vm.selectedUsers[0].roles = [mockSubRole];
+        await wrapper.vm.submit();
+
+        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalled();
+      });
+
+      it('emits users-added', async () => {
+        wrapper.vm.isSubmitAllowed = true;
+        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn((u) => u);
+        wrapper.vm.$storage.appUser.mutations.invalidateAppUserCache = jest.fn();
+        wrapper.vm.$storage.appUser.mutations.invalidateAllUserCache = jest.fn();
+        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
+        wrapper.vm.selectedUsers = [mockAppUserData()[0]];
+        wrapper.vm.selectedUsers[0].roles = [mockSubRole];
+        await wrapper.vm.submit();
+        wrapper.vm.$nextTick();
+
+        expect(wrapper.emitted('users-added')).toBeTruthy();
+        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalledTimes(1);
+      });
+
+      it('opens a toast on success', async () => {
+        wrapper.vm.isSubmitAllowed = true;
+        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
+        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn((u) => u);
+        wrapper.vm.$storage.appUser.mutations.invalidateAppUserCache = jest.fn();
+        wrapper.vm.$storage.appUser.mutations.invalidateAllUserCache = jest.fn();
+        wrapper.vm.selectedUsers = [mockAppUserData()[0]];
+        wrapper.vm.selectedUsers[0].roles = [mockSubRole];
+        await wrapper.vm.submit();
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalled();
+      });
+    });
+
+    describe('getSubRoleById', () => {
+      it('retrieves the correct sub-role from a user', async () => {
+        const user = usersTestData[0];
+        user.roleId = wrapper.vm.allSubRoles[0].id;
+        expect(wrapper.vm.getSubRoleById(user.roleId)).toEqual(wrapper.vm.allSubRoles[0]);
+      });
+    });
+
+    describe('setUserRole', () => {
+      it('should call services correctly', async () => {
         wrapper.vm.selectedUsers = [mockAppUserData()[0], mockAppUserData()[1]];
-        wrapper.vm.submitButtonEnabled = true;
-        wrapper.vm.submit();
-        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalledTimes(wrapper.vm.selectedUsers.length);
+        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn(() => mockAppUserData()[0]);
+        wrapper.vm.createUserAccount = jest.fn();
+        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
+
+        await wrapper.vm.setUserRole(wrapper.vm.selectedUsers[0]);
+        wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.add_users.success');
+      });
+
+      it('emits error toast on null response', async () => {
+        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
+        wrapper.vm.selectedUsers = [mockAppUserData()[0], mockAppUserData()[1]];
+        wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
+        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn(() => null);
+
+        await wrapper.vm.setUserRole(wrapper.vm.selectedUsers[0]);
+        wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('system_management.add_users.error');
+      });
+    });
+
+    describe('updateIsSubmitAllowed', () => {
+      it('return false for null selection list', async () => {
+        wrapper.vm.selectedUsers = null;
+        wrapper.vm.updateIsSubmitAllowed();
+        expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
+      });
+      it('return false for empty selection list', async () => {
+        wrapper.vm.selectedUsers = [];
+        wrapper.vm.updateIsSubmitAllowed();
+        expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
+      });
+      it('return false for populated list with no roles assigned', async () => {
+        wrapper.vm.selectedUsers = usersTestData;
+        wrapper.vm.updateIsSubmitAllowed();
+        expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
+      });
+      it('return true for populated list with roles assigned', async () => {
+        wrapper.vm.selectedUsers = [usersTestData[0]];
+        wrapper.vm.selectedUsers[0].roles = [{ id: '123' }];
+        wrapper.vm.updateIsSubmitAllowed();
+        expect(wrapper.vm.isSubmitAllowed).toBeTruthy();
       });
     });
   });

@@ -1,6 +1,6 @@
 import { IAzureSearchResult } from '@/types';
 import { Team } from '@/entities/team/team';
-import { EUserAccountStatus } from '../user-account';
+import { EAccountStatus, EUserAccountStatus } from '../user-account';
 import {
   ETeamStatus, ETeamType, ITeam, ITeamData, ITeamEvent, ITeamMemberData, ITeamMemberSearchData, ITeamSearchData, ITeamSearchDataAggregate,
 } from './team.types';
@@ -45,6 +45,7 @@ export const mockTeamMembersData = (): ITeamMemberData[] => [
     surname: 'Test',
     tenantId: '...',
     userAccountStatus: EUserAccountStatus.Active,
+    accountStatus: EAccountStatus.Active,
     filters: [],
     emailAddress: 'test@test.com',
     phoneNumber: '',
@@ -68,6 +69,7 @@ export const mockTeamMembersData = (): ITeamMemberData[] => [
     surname: 'Test2',
     tenantId: '...',
     userAccountStatus: EUserAccountStatus.Active,
+    accountStatus: EAccountStatus.Active,
     filters: [],
     emailAddress: 'test2@test.com',
     phoneNumber: '',

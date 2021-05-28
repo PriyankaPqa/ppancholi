@@ -1,7 +1,12 @@
 import { Store } from 'vuex';
 import { mockStore, IRootState } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
-import { mockSearchUserAccounts, mockUserAccountSearchData, UserAccount } from '@/entities/user-account';
+import {
+  IUserAccountData,
+  mockSearchUserAccounts,
+  mockUserAccountSearchData,
+  UserAccount,
+} from '@/entities/user-account';
 import { mockUserAccount } from '@/entities/user';
 
 describe('>>> User Account Module', () => {
@@ -54,16 +59,16 @@ describe('>>> User Account Module', () => {
 
         const updatedAccount = mockUserAccountSearchData()[0];
 
-        updatedAccount.caseFilesCount = 22;
+        updatedAccount.caseFilesCount = 10;
 
         store.commit('userAccount/addOrUpdateUserAccount', updatedAccount);
 
-        expect(store.state.userAccount.userAccounts).toEqual([
+        expect(store.state.userAccount.userAccounts[0]).toEqual(
           {
             ...userAccounts[0],
-            caseFilesCount: 22,
+            caseFilesCount: 10,
           },
-        ]);
+        );
       });
     });
 
@@ -74,6 +79,32 @@ describe('>>> User Account Module', () => {
         store.commit('userAccount/setSearchLoading', true);
 
         expect(store.state.userAccount.searchLoading).toBeTruthy();
+      });
+    });
+
+    describe('setUserAccounts', () => {
+      it('sets the userAccounts state correctly', () => {
+        store = mockStore();
+        const userAccounts = [mockUserAccount()];
+        store.commit('userAccount/setUserAccounts', userAccounts);
+
+        expect(store.state.userAccount.userAccounts).toEqual(userAccounts);
+      });
+    });
+
+    describe('deleteUserAccount', () => {
+      it('sets the userAccounts state correctly', () => {
+        store = mockStore();
+        const userAccounts = mockUserAccountSearchData();
+        store.commit('userAccount/setUserAccounts', userAccounts);
+        expect(store.state.userAccount.userAccounts).toEqual(userAccounts);
+        store.$services.userAccounts.deleteUserAccount = jest.fn();
+
+        store.commit('userAccount/deleteUserAccount', userAccounts[1].userAccountId);
+        const deletedAccount = store.state.userAccount.userAccounts.filter((u) => u.userAccountId === userAccounts[1].userAccountId)[0];
+        expect(deletedAccount).toBeTruthy();
+        expect(deletedAccount.accountStatus).toEqual(1);
+        expect(deletedAccount.userAccountStatus).toEqual(1);
       });
     });
   });
@@ -129,13 +160,50 @@ describe('>>> User Account Module', () => {
 
     describe('addRoleToUser', () => {
       it('calls the service with the passed payload', async () => {
-        expect(store.$services.userAccounts.addRoleToUser).toHaveBeenCalledTimes(0);
-        jest.spyOn(store.$services.userAccounts, 'addRoleToUser').mockReturnValueOnce(mockUserAccount());
-
-        const payload = { roleId: 'uuid', userId: 'uuid' };
-        await store.dispatch('userAccount/addRoleToUser', payload);
+        const role = {
+          id: '123',
+          name: {
+            translation: {
+              en: 'case worker 2',
+              fr: 'case worker 2 fr',
+            },
+          },
+        };
+        const user = mockUserAccount();
+        user.id = 'mock-id';
+        jest.spyOn(store.$services.userAccounts, 'addRoleToUser').mockReturnValue(user);
+        const payload = { subRole: role, userId: 'mock-id' };
+        const resultPayload:IUserAccountData = await store.dispatch('userAccount/addRoleToUser', payload);
 
         expect(store.$services.userAccounts.addRoleToUser).toHaveBeenCalledWith(payload);
+        expect(resultPayload).toEqual(user);
+      });
+    });
+
+    describe('fetchAllUserAccounts', () => {
+      it('calls the service', async () => {
+        expect(store.$services.userAccounts.fetchAllUserAccounts).toHaveBeenCalledTimes(0);
+        jest.spyOn(store.$services.userAccounts, 'fetchAllUserAccounts').mockReturnValue(mockSearchUserAccounts());
+
+        await store.dispatch('userAccount/fetchAllUserAccounts');
+
+        expect(store.$services.userAccounts.fetchAllUserAccounts).toHaveBeenCalled();
+      });
+    });
+
+    describe('deleteUserAccount', () => {
+      it('calls the correct service', async () => {
+        store = mockStore();
+        const userAccounts = mockUserAccountSearchData();
+        store.commit('userAccount/setUserAccounts', userAccounts);
+
+        jest.spyOn(store.$services.userAccounts, 'deleteUserAccount');
+
+        expect(store.$services.userAccounts.deleteUserAccount).toHaveBeenCalledTimes(0);
+
+        await store.dispatch('userAccount/deleteUserAccount', userAccounts[0].userAccountId);
+
+        expect(store.$services.userAccounts.deleteUserAccount).toHaveBeenCalledTimes(1);
       });
     });
   });

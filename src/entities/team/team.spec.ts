@@ -1,5 +1,5 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { EUserAccountStatus } from '../user-account';
+import { EAccountStatus, EUserAccountStatus } from '../user-account';
 import { Team } from './team';
 import { mockTeamEvents, mockTeamMembersData, mockTeamSearchDataAggregate } from './team.mock';
 import { ETeamStatus, ETeamType, ITeamMemberData } from './team.types';
@@ -140,6 +140,7 @@ describe('>>> Team', () => {
           surname: 'Test',
           tenantId: '...',
           userAccountStatus: EUserAccountStatus.Active,
+          accountStatus: EAccountStatus.Active,
           filters: [],
           emailAddress: 'test@test.com',
           phoneNumber: '',

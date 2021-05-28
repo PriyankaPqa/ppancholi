@@ -47,8 +47,14 @@ describe('>>> User Account', () => {
 
     it('should instantiate accountStatus', () => {
       const user = new UserAccount(mockUserAccountData);
-      expect(user.accountStatus).toEqual(mockUserAccountData.userAccountStatus);
+      expect(user.accountStatus).toEqual(mockUserAccountData.accountStatus);
     });
+
+    it('should instantiate userAccountStatus', () => {
+      const user = new UserAccount(mockUserAccountData);
+      expect(user.status).toEqual(mockUserAccountData.userAccountStatus);
+    });
+
     it('should instantiate filters', () => {
       const user = new UserAccount(mockUserAccountData);
       expect(user.filters).toEqual(mockUserAccountData.filters);

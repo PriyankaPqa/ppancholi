@@ -2,30 +2,36 @@ import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
 import _findIndex from 'lodash/findIndex';
-
 import {
   UserAccount,
   IUserAccount,
   IUserAccountSearchData,
   IUserAccountData,
+  EAccountStatus,
+  EUserAccountStatus,
 } from '@/entities/user-account';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IAddRoleToUserRequest } from '@/services/user-accounts';
 import helpers from '@/ui/helpers';
+import _cloneDeep from 'lodash/cloneDeep';
 import { IRootState } from '../../store.types';
 import {
   IState,
 } from './user-account.types';
+import { mapUserAccountToSearchData } from './user-account-utils';
 
 const getDefaultState = (): IState => ({
   userAccounts: [],
   searchLoading: false,
-  userAccountsFetched: false,
 });
 
 const moduleState: IState = getDefaultState();
 
 const getters = {
+
+  // eslint-disable-next-line
+  userAccounts: (state: IState) => state.userAccounts,
+
   userAccountById: (state: IState) => (id: uuid): IUserAccount => {
     const userAccount = state.userAccounts.find((u) => u.userAccountId === id);
     if (userAccount) {
@@ -34,6 +40,10 @@ const getters = {
     return null;
   },
 
+  userAccountSearchDataById: (state: IState) => (id: uuid): IUserAccountSearchData => state.userAccounts.find(
+    (u) => (u as unknown as UserAccount).id === id,
+  ),
+
   searchUserAccounts:
     (state: IState) => (search: string, searchAmong: [string]) => helpers.filterCollectionByValue(state.userAccounts, search, false, searchAmong),
 };
@@ -41,7 +51,7 @@ const getters = {
 const mutations = {
 
   addOrUpdateUserAccount(state: IState, payload: IUserAccountSearchData) {
-    const index = _findIndex(state.userAccounts, { userAccountId: payload.userAccountId });
+    const index = _findIndex(state.userAccounts as unknown as IUserAccount[], { id: payload.userAccountId });
 
     if (index > -1) {
       state.userAccounts = [
@@ -56,6 +66,14 @@ const mutations = {
 
   setSearchLoading(state: IState, payload: boolean) {
     state.searchLoading = payload;
+  },
+
+  setUserAccounts(state: IState, payload: Array<IUserAccountSearchData>) {
+    state.userAccounts = payload;
+  },
+
+  deleteUserAccount(state: IState, userId: string) {
+    state.userAccounts = state.userAccounts.filter((u) => (u as unknown as IUserAccount).id !== userId);
   },
 };
 
@@ -100,8 +118,43 @@ const actions = {
     }
   },
 
-  async addRoleToUser(this: Store<IState>, context: ActionContext<IState, IState>, role:IAddRoleToUserRequest): Promise<IUserAccountData> {
-    return this.$services.userAccounts.addRoleToUser(role);
+  async addRoleToUser(this: Store<IState>, context: ActionContext<IState, IState>, role: IAddRoleToUserRequest): Promise<IUserAccountData> {
+    const payload: IUserAccountData = await this.$services.userAccounts.addRoleToUser(role);
+    const user: IUserAccountSearchData = mapUserAccountToSearchData(payload, context, payload.id);
+    user.roleId = role.subRole.id;
+    user.roleName = role.subRole.name;
+    user.userAccountStatus = payload.status;
+    user.accountStatus = payload.accountStatus;
+    user.userAccountId = payload.id;
+    (user as unknown as IUserAccount).id = payload.id; // Required for round-trip
+    context.commit('addOrUpdateUserAccount', user);
+
+    return payload;
+  },
+
+  async fetchAllUserAccounts(this: Store<IState>, context: ActionContext<IState, IState>):Promise<IUserAccount[]> {
+    let value: IUserAccount[];
+    const result = await this.$services.userAccounts.fetchAllUserAccounts();
+    const data = result?.value;
+    if (data) {
+      value = data.map((a: IUserAccountSearchData) => new UserAccount(a));
+    } else {
+      value = [];
+    }
+    context.commit('setUserAccounts', value);
+
+    return context.getters.userAccounts;
+  },
+
+  async deleteUserAccount(this: Store<IState>, context: ActionContext<IState, IState>, userId: string) {
+    await this.$services.userAccounts.deleteUserAccount(userId);
+
+    const deletedUser = _cloneDeep(context.state.userAccounts.find((account) => account.userAccountId === userId) as IUserAccountSearchData);
+    if (deletedUser) {
+      deletedUser.accountStatus = EAccountStatus.Disabled;
+      deletedUser.userAccountStatus = EUserAccountStatus.Inactive;
+      context.commit('addOrUpdateUserAccount', deletedUser);
+    }
   },
 };
 

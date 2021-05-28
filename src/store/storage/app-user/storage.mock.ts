@@ -4,6 +4,7 @@ export const mockStorageAppUser = () : IStorageMock => ({
 
   mutations: {
     invalidateAppUserCache: jest.fn(),
+    invalidateAllUserCache: jest.fn(),
   },
 
   getters: {

@@ -12,7 +12,9 @@ export interface IStorage {
 
   actions: {
     fetchUserAccount(id: uuid): Promise<IUserAccount>;
-    addRoleToUser(role:IAddRoleToUserRequest): Promise<IUserAccount>;
+    fetchAllUserAccounts(): Promise<IUserAccount[]>;
+    addRoleToUser(role: IAddRoleToUserRequest): Promise<IUserAccount>;
+    deleteUserAccount(userId: string): void;
     searchUserAccounts(params: IAzureSearchParams): Promise<IAzureSearchResult<IUserAccount>>;
   }
 }
@@ -25,7 +27,9 @@ export interface IStorageMock {
 
   actions: {
     fetchUserAccount: jest.Mock<void>;
+    fetchAllUserAccounts: jest.Mock<void>;
     addRoleToUser: jest.Mock<void>;
+    deleteUserAccount: jest.Mock<void>;
     searchUserAccounts: jest.Mock<void>;
   }
 }

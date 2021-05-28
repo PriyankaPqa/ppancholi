@@ -1,6 +1,8 @@
+import { EOptionListItemStatus, IOptionSubItem } from '@/entities/optionItem';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { UserAccountsService } from './user-accounts';
+import { IAddRoleToUserRequest } from './user-accounts.types';
 
 const http = mockHttp();
 
@@ -13,9 +15,30 @@ describe('>>> User Account Service', () => {
     expect(http.get).toHaveBeenCalledWith('/search/user-account-projections', { params, isOData: true });
   });
 
+  test('fetchAllUserAccounts is linked to the correct URL and params', async () => {
+    await service.fetchAllUserAccounts();
+    expect(http.get).toHaveBeenCalledWith('/search/user-account-projections', { isOData: true });
+  });
+
   test('addRoleToUser is linked to the correct URL', async () => {
-    const payload = { roleId: '1234567', userId: '123' };
+    const payload:IAddRoleToUserRequest = {
+      subRole: {
+        id: '123',
+        name: {
+          translation: {
+            en: 'case worker 2',
+            fr: 'case worker 2 fr',
+          },
+        },
+        isDefault: false,
+        isOther: false,
+        orderRank: null,
+        status: EOptionListItemStatus.Active,
+      } as IOptionSubItem,
+      userId: '123',
+    };
+
     await service.addRoleToUser(payload);
-    expect(http.post).toHaveBeenCalledWith(`user-account/user-accounts/${payload.userId}/role`, { roleId: payload.roleId });
+    expect(http.post).toHaveBeenCalledWith(`user-account/user-accounts/${payload.userId}/role`, { roleId: payload.subRole.id });
   });
 });

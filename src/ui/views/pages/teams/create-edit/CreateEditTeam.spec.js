@@ -1275,7 +1275,9 @@ describe('CreateEditTeam.vue', () => {
     describe('fetchUserAccounts', () => {
       it('should call searchUserAccounts actions with proper param', async () => {
         await wrapper.vm.fetchUserAccounts();
-        expect(wrapper.vm.$storage.userAccount.actions.searchUserAccounts).toHaveBeenCalledWith({});
+        expect(wrapper.vm.$storage.userAccount.actions.searchUserAccounts).toHaveBeenCalledWith({
+          top: 999,
+        });
       });
     });
 

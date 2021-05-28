@@ -75,7 +75,8 @@ export default {
     document.body.removeChild(el);
   },
 
-  getMultilingualValue(m: IMultilingual) {
+  // eslint-disable-next-line
+  getMultilingualValue(m: IMultilingual, trim: boolean = false) {
     let { locale } = i18n;
 
     if (locale !== 'en' && locale !== 'fr') {
@@ -83,16 +84,17 @@ export default {
     }
 
     if (m && m.translation && m.translation[locale]) {
-      return m.translation[locale];
+      return trim ? m.translation[locale].trim() : m.translation[locale];
     }
 
     return '';
   },
 
-  sortMultilingualArray<T>(array: Array<T>, key: keyof T) {
+  // eslint-disable-next-line
+  sortMultilingualArray<T>(array: Array<T>, key: keyof T, trim: boolean = false) {
     return [...array]
-      .sort((a, b) => this.getMultilingualValue(a[key] as unknown as IMultilingual)
-        .localeCompare(this.getMultilingualValue(b[key] as unknown as IMultilingual)));
+      .sort((a, b) => this.getMultilingualValue(a[key] as unknown as IMultilingual, trim)
+        .localeCompare(this.getMultilingualValue(b[key] as unknown as IMultilingual, trim)));
   },
 
   /**

@@ -3,7 +3,7 @@ import {
 } from 'vuex';
 import { IRootState } from '@/store/store.types';
 import {
-  IAllUserData, IRolesData, IAppUserAzureData,
+  IAllUserData, IRolesData, IAppUserAzureData, IAppUserData,
 } from '@/entities/app-user';
 
 import helpers from '@/ui/helpers';
@@ -94,6 +94,10 @@ const mutations = {
   invalidateAppUserCache(state: IState) {
     mutations.setAppUsersFetched(state, false);
   },
+
+  invalidateAllUserCache(state: IState) {
+    mutations.setAllUsersFetched(state, false);
+  },
 };
 
 const actions = {
@@ -122,6 +126,14 @@ const actions = {
     }
     context.commit('setRolesFetched', true);
     return context.state.roles;
+  },
+
+  async findAppUsers(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    searchTerm: string,
+  ): Promise<IAppUserData[]> {
+    return this.$services.appUsers.findAppUsers(searchTerm);
   },
 };
 

@@ -4,6 +4,7 @@ export interface IStorage {
 
   mutations: {
     invalidateAppUserCache(): void;
+    invalidateAllUserCache(): void;
   },
 
   getters: {
@@ -15,6 +16,7 @@ export interface IStorage {
     fetchAllUsers(): Promise<IAllUserData[]>;
     fetchAppUsers(): Promise<IAppUserData[]>;
     fetchRoles(): Promise<IRolesData[]>;
+    findAppUsers(searchTerm: string): Promise<IAppUserData[]>;
   }
 }
 
@@ -22,6 +24,7 @@ export interface IStorageMock {
 
   mutations: {
     invalidateAppUserCache(): jest.Mock<void>;
+    invalidateAllUserCache(): jest.Mock<void>;
   },
 
   getters: {

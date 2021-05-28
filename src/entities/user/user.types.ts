@@ -29,6 +29,7 @@ export interface IUserAccountData {
   tenantId: uuid;
   created: string;
   timestamp: string;
+  accountStatus: 0 | 1 | 2;
   status: 1 | 2;
   eTag: string;
   filters: IFilter[]

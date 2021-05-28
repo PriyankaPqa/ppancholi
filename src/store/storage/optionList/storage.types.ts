@@ -1,7 +1,7 @@
 import { IMultilingual } from '@/types';
 
 import {
-  OptionItem, IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest,
+  OptionItem, IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
 } from '@/entities/optionItem';
 
 export interface IStorage {
@@ -17,6 +17,8 @@ export interface IStorage {
 
   actions: {
     fetchItems(): Promise<IOptionItem[]>;
+
+    fetchSubItems(): Promise<IOptionSubItem[]>;
 
     createOption(payload: ICreateOptionItemRequest): Promise<IOptionItem>;
 
@@ -53,6 +55,8 @@ export interface IStorageMock {
 
   actions: {
     fetchItems: jest.Mock<void>;
+
+    fetchSubItems: jest.Mock<void>;
 
     createOption: jest.Mock<void>;
 

@@ -1,5 +1,6 @@
 import { mockStore } from '@/store';
 import { mockUserAccountSearchData } from '@/entities/user-account';
+import { EOptionListItemStatus } from '@/entities/optionItem';
 import { makeStorage } from './storage';
 
 const store = mockStore({
@@ -13,6 +14,19 @@ const store = mockStore({
 }, { commit: true, dispatch: true });
 
 const storage = makeStorage(store);
+const mockSubRole = {
+  id: '123',
+  name: {
+    translation: {
+      en: 'case worker 2',
+      fr: 'case worker 2 fr',
+    },
+  },
+  orderRank: 1,
+  status: EOptionListItemStatus.Active,
+  isOther: false,
+  isDefault: false,
+};
 
 describe('>>> User Account Storage', () => {
   describe('>> Getters', () => {
@@ -28,9 +42,17 @@ describe('>>> User Account Storage', () => {
         expect(store.dispatch).toBeCalledWith('userAccount/fetchUserAccount', 'TEST_ID');
       });
     });
+
+    describe('fetchAllUserAccounts', () => {
+      it('should proxy fetchUserAccount', () => {
+        storage.actions.fetchAllUserAccounts();
+        expect(store.dispatch).toBeCalledWith('userAccount/fetchAllUserAccounts');
+      });
+    });
+
     describe('addRoleToUser', () => {
       it('should proxy addRoleToUser', () => {
-        const payload = { roleId: 'uuid', userId: 'uuid' };
+        const payload = { subRole: mockSubRole, userId: 'uuid' };
         storage.actions.addRoleToUser(payload);
         expect(store.dispatch).toBeCalledWith('userAccount/addRoleToUser', payload);
       });

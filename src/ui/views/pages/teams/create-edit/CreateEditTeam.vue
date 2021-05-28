@@ -448,9 +448,10 @@ export default Vue.extend({
     },
 
     async fetchUserAccounts() {
-      await this.$storage.userAccount.actions.searchUserAccounts({});
+      await this.$storage.userAccount.actions.searchUserAccounts({
+        top: 999,
+      });
     },
-
   },
 });
 </script>

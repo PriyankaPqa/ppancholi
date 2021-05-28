@@ -6,9 +6,14 @@ const storage = makeStorage(store);
 
 describe('>>> App User Storage', () => {
   describe('>> Mutations', () => {
-    it('should set ', () => {
+    it('should proxy invalidateAppUserCache', () => {
       storage.mutations.invalidateAppUserCache();
       expect(store.commit).toBeCalledWith('appUser/invalidateAppUserCache');
+    });
+
+    it('should proxy invalidateAllUserCache', () => {
+      storage.mutations.invalidateAllUserCache();
+      expect(store.commit).toBeCalledWith('appUser/invalidateAllUserCache');
     });
   });
 
@@ -41,6 +46,12 @@ describe('>>> App User Storage', () => {
     it('should proxy fetchRoles', () => {
       storage.actions.fetchRoles();
       expect(store.dispatch).toBeCalledWith('appUser/fetchRoles');
+    });
+
+    it('should proxy findAppUsers', () => {
+      const searchTerm = 'term';
+      storage.actions.findAppUsers(searchTerm);
+      expect(store.dispatch).toBeCalledWith('appUser/findAppUsers', searchTerm);
     });
   });
 });

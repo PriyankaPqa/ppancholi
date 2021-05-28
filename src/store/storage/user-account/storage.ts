@@ -20,8 +20,16 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('userAccount/fetchUserAccount', id);
     },
 
+    fetchAllUserAccounts(): Promise<IUserAccount[]> {
+      return store.dispatch('userAccount/fetchAllUserAccounts');
+    },
+
     addRoleToUser(role:IAddRoleToUserRequest): Promise<IUserAccount> {
       return store.dispatch('userAccount/addRoleToUser', role);
+    },
+
+    deleteUserAccount(userId:string):void {
+      store.dispatch('userAccount/deleteUserAccount', userId);
     },
 
     searchUserAccounts(params: IAzureSearchParams): Promise<IAzureSearchResult<IUserAccount>> {

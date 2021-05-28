@@ -49,6 +49,7 @@ export const mockUserAccount = () : IUserAccountData => ({
   tenantId: '1254',
   created: '21',
   timestamp: 'string',
+  accountStatus: 1,
   status: 1,
   eTag: 'string',
   filters: mockUserFilters(),

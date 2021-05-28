@@ -5,11 +5,19 @@ export enum EUserAccountStatus {
   Active = 1,
   Inactive = 2
 }
+
+export enum EAccountStatus {
+  None = 0,
+  Active = 1,
+  Disabled = 2,
+}
+
 export interface IUserAccountData {
   id: uuid;
   tenantId: uuid;
   created: string;
   timestamp: string;
+  accountStatus: 0 | 1 | 2;
   status: 1 | 2;
   eTag: string;
   filters: IFilter[]
@@ -25,6 +33,7 @@ export interface IUserAccountSearchData {
   roleId: uuid;
   roleName: IMultilingual;
   userAccountStatus: EUserAccountStatus;
+  accountStatus: EAccountStatus;
   filters: Array<IFilter>;
   tenantId: uuid;
   teamCount: number;
@@ -42,10 +51,10 @@ export interface IUserAccount {
   phoneNumber: string;
   roleId: uuid;
   roleName: IMultilingual;
-  accountStatus: EUserAccountStatus;
+  accountStatus: EAccountStatus;
+  status: EUserAccountStatus;
   filters: Array<IFilter>;
   tenantId: uuid;
-
   teamCount: number;
   caseFilesCount: number;
   openCaseFilesCount: number;

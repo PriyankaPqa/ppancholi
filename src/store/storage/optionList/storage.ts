@@ -27,6 +27,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('optionList/fetchItems');
     },
 
+    fetchSubItems(): Promise<IOptionSubItem[]> {
+      return store.dispatch('optionList/fetchSubItems');
+    },
+
     createOption(payload: ICreateOptionItemRequest) {
       return store.dispatch('optionList/createOption', payload);
     },

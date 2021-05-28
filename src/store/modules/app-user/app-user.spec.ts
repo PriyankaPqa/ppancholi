@@ -70,7 +70,7 @@ describe('>>> App User Module', () => {
     });
 
     describe('invalidateAppUserCache', () => {
-      it('changes rolesFetched from true to false', async () => {
+      it('changes appUsersFetched from true to false', async () => {
         store = mockStore();
         expect(store.state.appUser.appUsersFetched).toBeFalsy();
         await store.dispatch('appUser/fetchAppUsers');
@@ -79,6 +79,19 @@ describe('>>> App User Module', () => {
         // Set appUsersFetched back to false
         store.commit('appUser/invalidateAppUserCache');
         expect(store.state.appUser.appUsersFetched).toBeFalsy();
+      });
+    });
+
+    describe('invalidateAllUserCache', () => {
+      it('changes allUsersFetched from true to false', async () => {
+        store = mockStore();
+        expect(store.state.appUser.allUsersFetched).toBeFalsy();
+        await store.dispatch('appUser/fetchAllUsers');
+        expect(store.state.appUser.allUsersFetched).toBeTruthy();
+
+        // Set allUsersFetched back to false
+        store.commit('appUser/invalidateAllUserCache');
+        expect(store.state.appUser.allUsersFetched).toBeFalsy();
       });
     });
   });
@@ -141,6 +154,18 @@ describe('>>> App User Module', () => {
         await store.dispatch('appUser/fetchRoles');
 
         expect(store.state.appUser.rolesFetched).toBeTruthy();
+      });
+    });
+
+    describe('findAppUsers', () => {
+      it('calls fetchRoles from appUser service and setRoles getters', async () => {
+        const searchTerm = 'term';
+        jest.spyOn(store.$services.appUsers, 'findAppUsers').mockImplementation(() => mockAppUserData());
+
+        const result = await store.dispatch('appUser/findAppUsers', searchTerm);
+
+        expect(store.$services.appUsers.findAppUsers).toHaveBeenCalledTimes(1);
+        expect(result).toEqual(mockAppUserData());
       });
     });
   });

@@ -114,7 +114,7 @@ export default Vue.extend({
         case 'EProgramStatus':
           return `common.program_status.${EProgramStatus[this.status]}`;
         case 'EUserAccountStatus':
-          return `common.program_status.${EUserAccountStatus[this.status]}`;
+          return `common.account_status.${EUserAccountStatus[this.status]}`;
         default:
           return '';
       }

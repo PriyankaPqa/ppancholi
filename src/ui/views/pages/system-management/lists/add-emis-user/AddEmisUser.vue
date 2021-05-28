@@ -2,7 +2,8 @@
   <rc-dialog
     :title="$t('system_management.userAccounts.add_user_account_title')"
     :submit-action-label="$t('common.buttons.add')"
-    :submit-button-disabled="!submitButtonEnabled"
+    :submit-button-disabled="!isSubmitAllowed"
+    :loading="loading"
     :cancel-action-label="$t('common.buttons.cancel')"
     :show.sync="show"
     :help-link="$t('zendesk.help_link.addEMISUser')"
@@ -34,7 +35,7 @@
           </div>
           <div class="table-container">
             <v-data-table
-              v-if="isDirty"
+              v-if="searchTerm"
               ref="userResultTable"
               :key="componentKey"
               data-test="table"
@@ -55,9 +56,9 @@
                 <v-simple-checkbox
                   :data-test="`select_${item.id}`"
                   :ripple="false"
-                  :value="isSelected(item) || isAlreadyInEMIS(item)"
-                  :readonly="isAlreadyInEMIS(item)"
-                  :disabled="isAlreadyInEMIS(item)"
+                  :value="isSelected(item) || isAlreadyInEmis(item)"
+                  :readonly="isAlreadyInEmis(item)"
+                  :disabled="isAlreadyInEmis(item)"
                   @input="toggleUserSelection(item)" />
               </template>
               <template #item.displayName="{ item }">
@@ -84,9 +85,10 @@
                   dense
                   outlined
                   return-object
-                  :item-text="(e) => e.subitems ? $m(e.subitems[0].name) : ''"
+                  hide-details
+                  :item-text="(item) => item ? $m(item.name) : ''"
                   :label="$t('system_management.userAccounts.role_header')"
-                  :items="allRoles"
+                  :items="allSubRoles"
                   @change="assignRoleToUser($event, user)" />
                 <v-tooltip bottom>
                   <template #activator="{ on }">
@@ -120,9 +122,12 @@ import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import _debounce from 'lodash/debounce';
 import { DataTableHeader } from 'vuetify';
-import { IUserAccountData } from '@/entities/user';
-import { EOptionLists, IOptionItemData } from '@/entities/optionItem';
+import {
+  IOptionSubItem,
+} from '@/entities/optionItem';
 import { i18n } from '@/ui/plugins';
+import { EUserAccountStatus, IUserAccount } from '@/entities/user-account';
+import _cloneDeep from 'lodash/cloneDeep';
 
 export default Vue.extend({
   name: 'AddEmisUser',
@@ -137,6 +142,16 @@ export default Vue.extend({
       type: Boolean,
       required: true,
     },
+    allSubRoles: {
+      type: Array,
+      default: () => [] as Array<IOptionSubItem>,
+      required: true,
+    },
+    allEmisUsers: {
+      type: Array,
+      default: () => [] as IUserAccount[],
+      required: true,
+    },
   },
 
   data() {
@@ -144,14 +159,12 @@ export default Vue.extend({
       error: false,
       formReady: false,
       searchTerm: '', // The search term
-      allUsers: [] as IAppUserAzureData[],
-      allRoles: [] as IOptionItemData[],
+      appUsers: [] as IAppUserAzureData[],
       searchResults: [] as IAppUserData[],
       selectedUsers: [] as IAppUserData[],
-      isDirty: false,
       componentKey: 0,
       loading: false,
-      submitButtonEnabled: false,
+      isSubmitAllowed: false as boolean,
     };
   },
 
@@ -164,6 +177,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'displayName',
+          width: '35%',
         },
         {
           text: this.$t('system_management.userAccounts.member_email') as string,
@@ -175,7 +189,7 @@ export default Vue.extend({
       ];
     },
 
-    loadingText():TranslateResult {
+    loadingText(): TranslateResult {
       return this.$t('system_management.userAccounts.loading_users');
     },
 
@@ -200,13 +214,7 @@ export default Vue.extend({
   },
 
   mounted() {
-    this.$nextTick(() => {
-      if (this.$refs?.userSearch) {
-        (this.$refs.userSearch as HTMLInputElement).focus();
-      }
-    });
-    this.fetchAllEMISUsers();
-    this.loadAllRoles();
+    this.fetchAllAppUsers();
   },
 
   methods: {
@@ -214,26 +222,20 @@ export default Vue.extend({
       this.$emit('update:show', false);
     },
 
-    back(): void {
+    back() {
       this.$emit('hide');
     },
 
-    async fetchAllEMISUsers() {
-      this.allUsers = await this.$storage.appUser.actions.fetchAppUsers();
+    async fetchAllAppUsers() {
+      this.appUsers = await this.$storage.userAccount.actions.fetchAllUserAccounts();
       this.formReady = true;
-    },
-
-    async loadAllRoles() {
-      this.allRoles = await this.$services.optionItems.getOptionList(EOptionLists.Roles);
-      this.sortOnLocaleName(this.allRoles);
     },
 
     async findUsers() {
       if (this.searchTerm) {
-        this.isDirty = true;
         this.loading = true;
-        const result:IAppUserData[] = await this.$services.appUsers.findAppUsers(this.searchTerm) as IAppUserData[];
-        this.searchResults = result;
+        const result:IAppUserData[] = await this.$storage.appUser.actions.findAppUsers(this.searchTerm) as IAppUserData[];
+        this.searchResults = _cloneDeep(result);
         this.sortOnDisplayName(this.searchResults);
         this.componentKey = new Date().getTime(); // Force a redraw of the results list
         this.loading = false;
@@ -242,9 +244,15 @@ export default Vue.extend({
       }
     },
 
-    isAlreadyInEMIS(user: IAppUserData):boolean {
-      const returned = this.allUsers && this.allUsers.findIndex((u) => user.id === u.id) > -1;
-      return returned;
+    isAlreadyInEmis(user: IAppUserData): boolean {
+      if (this.appUsers && this.allEmisUsers) {
+        const foundUser:IAppUserAzureData = this.appUsers.find((u) => user.id === u.id);
+        const emisUser:IUserAccount = (this.allEmisUsers as IUserAccount[]).find((u) => user.id === u.id);
+        if (foundUser && emisUser && emisUser.status === EUserAccountStatus.Active) {
+          return true;
+        }
+      }
+      return false;
     },
 
     isSelected(user: IAppUserData):boolean {
@@ -261,13 +269,12 @@ export default Vue.extend({
           this.selectedUsers.push(user);
         }
         this.sortOnDisplayName(this.selectedUsers);
-        this.isDirty = true;
-        this.updateSubmitButton();
+        this.updateIsSubmitAllowed();
       }
     },
 
     getClassRow(user: IAppUserData): string {
-      if (this.isAlreadyInEMIS(user)) {
+      if (this.isAlreadyInEmis(user)) {
         return 'row_disabled';
       }
       if (this.isSelected(user)) {
@@ -278,7 +285,7 @@ export default Vue.extend({
 
     onSelectAll({ items, value }: {items: Array<IAppUserData>; value: boolean}) {
       if (value) { // select all, get the new ones + old ones
-        this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInEMIS(i))];
+        this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInEmis(i))];
       } else { // deselect, only remove what is currently removed
         this.selectedUsers = _difference(this.selectedUsers, items);
       }
@@ -290,60 +297,76 @@ export default Vue.extend({
       }
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    sortOnLocaleName(entities: any[]) {
-      const { locale } = i18n;
-      if (entities && entities.length > 0) {
-        entities.sort((a, b) => a.name.translation[locale].localeCompare(b.name.translation[locale]));
-      }
-    },
-
-    assignRoleToUser(roleData:IOptionItemData, user:IAppUserData) {
-      if (roleData && roleData.subitems && roleData.subitems[0]) {
-        const roleSubItem = roleData.subitems[0];
+    assignRoleToUser(roleData: IOptionSubItem, user: IAppUserData) {
+      if (roleData) {
         const { locale } = i18n;
-        if (roleSubItem) {
-          user.roles = [
-            {
-              id: roleData.subitems[0].id,
-              displayName: roleData.subitems[0].name.translation[locale],
-              value: null,
-            },
-          ];
-        }
-        this.updateSubmitButton();
+        user.roles = [
+          {
+            id: roleData.id,
+            displayName: roleData.name.translation[locale],
+            value: null,
+          },
+        ];
+        this.updateIsSubmitAllowed();
       }
     },
 
-    updateSubmitButton() {
-      this.submitButtonEnabled = this.selectedUsers.length > 0 && this.allSelectedUsersHaveRole(this.selectedUsers);
-    },
-
-    allSelectedUsersHaveRole(users:IAppUserData[]):boolean {
+    allSelectedUsersHaveRole(users: IAppUserData[]): boolean {
       return !users
-      || users.length === 0
-      || (users.filter((u) => !!u.roles && u.roles.length > 0).length === users.length);
+        || users.length === 0
+        || (users.filter((u) => u.roles?.length > 0).length === users.length);
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     debounceSearch: _debounce(function func(this:any, value) { this.findUsers(value); }, 500),
 
     async submit() {
-      if (this.submitButtonEnabled) {
-        let userAccount:IUserAccountData;
-        this.selectedUsers.forEach(async (user) => {
-          const payload = { roleId: user.roles[0].id, userId: user.id } as IAddRoleToUserRequest;
-          userAccount = await this.$storage.userAccount.actions.addRoleToUser(payload);
-          if (userAccount) {
-            this.selectedUsers.splice(this.selectedUsers.indexOf(user), 1);
-            this.$toasted.global.success(this.$t('system_management.add_users.success'));
-          } else {
-            this.$toasted.global.error(this.$t('system_management.add_users.error'));
+      if (this.isSubmitAllowed) {
+        this.loading = true; // So the user knows we're working
+        const successfulCreations: IUserAccount[] = [];
+        let successfulCreation;
+        // eslint-disable-next-line
+        for (let user of this.selectedUsers) {
+          // eslint-disable-next-line
+          successfulCreation = await this.setUserRole(user);
+          if (successfulCreation) {
+            successfulCreations.push(successfulCreation);
           }
-        });
-        await this.$storage.appUser.mutations.invalidateAppUserCache();
+        }
         this.close();
+        this.$emit('users-added', successfulCreations);
+        this.selectedUsers = [];
+        this.loading = false;
       }
+    },
+
+    getSubRoleById(roleId: string) {
+      return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
+    },
+
+    async setUserRole(user: IAppUserData): Promise<IUserAccount> {
+      let successfulCreation:IUserAccount;
+      const subRole:IOptionSubItem = this.getSubRoleById(user.roles[0].id);
+
+      if (subRole) {
+        const payload = {
+          subRole,
+          userId: user.id,
+        } as IAddRoleToUserRequest;
+
+        const userAccount: IUserAccount = await this.$storage.userAccount.actions.addRoleToUser(payload);
+        if (userAccount) {
+          successfulCreation = await this.$storage.userAccount.actions.fetchUserAccount(user.id);
+          this.$toasted.global.success(this.$t('system_management.add_users.success'));
+        } else {
+          this.$toasted.global.error(this.$t('system_management.add_users.error'));
+        }
+      }
+      return successfulCreation;
+    },
+
+    updateIsSubmitAllowed() {
+      this.isSubmitAllowed = this.selectedUsers?.length > 0 && this.allSelectedUsersHaveRole(this.selectedUsers);
     },
   },
 });

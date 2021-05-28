@@ -7,17 +7,30 @@ import { IUserAccountsService, IAddRoleToUserRequest } from './user-accounts.typ
 export class UserAccountsService implements IUserAccountsService {
   constructor(private readonly http: IHttpClient) {}
 
-  async searchUserAccounts(params: IAzureSearchParams): Promise<IAzureSearchResult<IUserAccountSearchData>> {
-    const data: IAzureSearchResult<IUserAccountSearchData> = await this.http.get('/search/user-account-projections', { params, isOData: true });
+  async searchUserAccounts(params?: IAzureSearchParams): Promise<IAzureSearchResult<IUserAccountSearchData>> {
+    const payload = params ? { params, isOData: true } : { isOData: true };
+    const data: IAzureSearchResult<IUserAccountSearchData> = await this.http.get('/search/user-account-projections', payload);
     if (data && data.value) {
       data.value = data.value.map((user) => this.getUserWithParsedFilterCriteria(user));
     }
     return data;
   }
 
+  public fetchAllUserAccounts(): Promise<IAzureSearchResult<IUserAccountSearchData>> {
+    return this.searchUserAccounts();
+  }
+
+  public async deleteUserAccount(userId: string) {
+    await this.http.delete(`user-account/user-accounts/${userId}`);
+  }
+
   async addRoleToUser(payload: IAddRoleToUserRequest): Promise<IUserAccountData> {
-    const data = await this.http.post(`user-account/user-accounts/${payload.userId}/role`, { roleId: payload.roleId });
-    return this.getUserWithParsedFilterCriteria(data);
+    const data = await this.http.post(`user-account/user-accounts/${payload.userId}/role`, { roleId: payload.subRole.id });
+    const tempUser = this.getUserWithParsedFilterCriteria(data);
+    if (data) {
+      tempUser.userAccountStatus = (data as any).status;
+    }
+    return tempUser;
   }
 
   private getUserWithParsedFilterCriteria(user: any) {
