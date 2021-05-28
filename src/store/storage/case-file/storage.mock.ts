@@ -1,6 +1,7 @@
 import {
-  CaseFile, mockCaseFileActivities, mockCaseFilesSearchData, mockCaseNoteCategories,
+  CaseFile, mockCaseFileActivities, mockCaseFilesSearchData,
 } from '@/entities/case-file';
+import { mockCaseNoteCategories } from '@/entities/case-file/case-note';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { IStorageMock } from './storage.types';
 
@@ -26,6 +27,7 @@ export const mockStorageCaseFile = (): IStorageMock => ({
     setCaseFileIsDuplicate: jest.fn(),
     fetchActiveCaseNoteCategories: jest.fn(),
     addCaseNote: jest.fn(),
+    searchCaseNotes: jest.fn(),
     setCaseFileTriage: jest.fn(() => new CaseFile(mockCaseFilesSearchData()[0])),
   },
 });

@@ -1,6 +1,7 @@
 import {
-  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ICaseNote, ECaseFileTriage, ECaseFileStatus,
+  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
+import { ICaseNote, ICaseNoteData, ICaseNoteSearchData } from '@/entities/case-file/case-note';
 import { IOptionItem } from '@/entities/optionItem';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
@@ -61,7 +62,7 @@ export class CaseFilesService implements ICaseFilesService {
     return this.http.get('/case-file/case-note-categories');
   }
 
-  async addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote[]> {
+  async addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNoteData> {
     return this.http.post(`/case-file/case-files/${id}/case-notes`, {
       subject: caseNote.subject,
       description: caseNote.description,
@@ -69,6 +70,10 @@ export class CaseFilesService implements ICaseFilesService {
         optionItemId: caseNote.category.id,
       },
     });
+  }
+
+  async searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNoteSearchData>> {
+    return this.http.get('/search/case-note-projections', { params, isOData: true });
   }
 
   async setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFileData> {

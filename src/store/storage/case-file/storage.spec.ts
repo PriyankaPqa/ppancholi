@@ -1,6 +1,7 @@
 import {
-  CaseFile, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData, mockCaseNote, ECaseFileStatus,
+  CaseFile, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData, ECaseFileStatus,
 } from '@/entities/case-file';
+import { mockCaseNote } from '@/entities/case-file/case-note';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
 import { IListOption } from '@/types';
@@ -118,6 +119,12 @@ describe('>>> Case File Storage', () => {
       const id = 'id';
       storage.actions.addCaseNote(id, caseNote);
       expect(store.dispatch).toBeCalledWith('caseFile/addCaseNote', { id, caseNote });
+    });
+
+    it('should proxy searchCaseNotes', () => {
+      const params = mockSearchParams;
+      storage.actions.searchCaseNotes(params);
+      expect(store.dispatch).toBeCalledWith('caseFile/searchCaseNotes', params);
     });
   });
 });

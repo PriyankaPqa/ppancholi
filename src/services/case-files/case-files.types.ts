@@ -1,12 +1,7 @@
 import {
-  ICaseFileActivity,
-  ICaseFileData,
-  ICaseFileLabel,
-  ICaseFileSearchData,
-  ICaseNote,
-  ECaseFileTriage,
-  ECaseFileStatus,
+  ICaseFileActivity, ICaseFileData, ICaseFileLabel, ICaseFileSearchData, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
+import { ICaseNote, ICaseNoteData, ICaseNoteSearchData } from '@/entities/case-file/case-note';
 import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 
@@ -18,7 +13,8 @@ export interface ICaseFilesService {
   setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFileData>;
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileData>;
   fetchActiveCaseNoteCategories(): Promise<IOptionItem[]>;
-  addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote[]>;
+  addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNoteData>;
+  searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNoteSearchData>>;
   setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFileData>;
 }
 
@@ -30,6 +26,7 @@ export interface ICaseFilesServiceMock {
   setCaseFileLabels: jest.Mock<ICaseFileData>;
   setCaseFileIsDuplicate: jest.Mock<ICaseFileData>;
   fetchActiveCaseNoteCategories: jest.Mock<IOptionItem[]>;
-  addCaseNote: jest.Mock<ICaseNote[]>;
+  addCaseNote: jest.Mock<ICaseNoteData>;
+  searchCaseNotes: jest.Mock<IAzureSearchResult<ICaseNoteSearchData>>;
   setCaseFileTriage: jest.Mock<ICaseFileData>;
 }

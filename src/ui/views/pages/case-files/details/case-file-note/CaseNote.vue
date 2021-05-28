@@ -13,18 +13,19 @@
     @add-button="isBeingCreated = true">
     <rc-page-loading v-if="loading" />
     <template v-else>
-      <filter-toolbar class="caseNote__filter" :filter-options="filterOptions" :count="filterCount" :filter-key="EFilterKey.CaseNotes">
-        <template #toolbarActions>
-          <div class="flex-row">
-            <span class="rc-body14 mr-4 noselect pointer" data-test="caseNote__sortBtn">
-              {{ $t('caseNote.sortByDate') }}
-              <!-- TODO: implement the sort icon dyamically -->
-              <v-icon>{{ true ? 'mdi-menu-down' : ' mdi-menu-up' }}</v-icon>
-            </span>
-          </div>
-        </template>
-      </filter-toolbar>
+      <div class="caseNote__filter">
+        <v-toolbar elevation="1" color="grey lighten-5" />
+      </div>
+
       <case-note-form v-if="isBeingCreated" :action-title="$t('caseNote.create.rowTitle')" @close-case-note-form="isBeingCreated = false" />
+
+      <case-file-list-wrapper :loading="loading" :empty="caseNotes.length === 0">
+        <case-notes-list-item v-for="item in caseNotes" :key="item.id" :item="item" @saved="onSaved($event)" />
+      </case-file-list-wrapper>
+    </template>
+
+    <template v-if="!loading" #actions>
+      <v-data-footer v-if="false" :options.sync="options" :pagination.sync="pagination" :items-per-page-options="[5, 10, 15, 20]" />
     </template>
   </rc-page-content>
 </template>
@@ -33,42 +34,70 @@
 import Vue from 'vue';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import { EFilterKey } from '@/entities/user';
-import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { ICaseNote } from '@/entities/case-file/case-note';
 import CaseNoteForm from './components/CaseNoteForm.vue';
+import CaseNotesListItem from './components/CaseNotesListItem.vue';
+import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
 
 export default Vue.extend({
   name: 'CaseNote',
   components: {
     RcPageContent,
     RcPageLoading,
-    FilterToolbar,
     CaseNoteForm,
+    CaseFileListWrapper,
+    CaseNotesListItem,
   },
 
   data() {
     return {
+      caseNotes: [] as ICaseNote[],
       loading: false,
       isBeingCreated: false,
       EFilterKey,
-      filterCount: 0,
+      totalCount: 0,
+      options: {
+        page: 1,
+        itemsPerPage: 10,
+      },
     };
   },
   computed: {
     title(): string {
-      return `${this.$t('caseNote.caseNotes')}`;
+      return `${this.$t('caseNote.caseNotes')} (${this.totalCount})`;
     },
     filterOptions(): Array<Record<string, unknown>> {
       return [];
+    },
+    pagination(): Record<string, number> {
+      return { };
     },
   },
 
   async created() {
     try {
       this.loading = true;
+
       await this.$storage.caseFile.actions.fetchActiveCaseNoteCategories();
+
+      const res = await this.$storage.caseFile.actions.searchCaseNotes({
+        filter: {
+          CaseFileId: this.$route.params.id,
+        },
+        count: true,
+      });
+
+      this.caseNotes = res.value;
+      this.totalCount = res.odataCount;
     } finally {
       this.loading = false;
     }
+  },
+
+  methods: {
+    onSaved() {
+      // TODO
+    },
   },
 });
 </script>

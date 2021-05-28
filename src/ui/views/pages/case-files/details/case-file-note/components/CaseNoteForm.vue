@@ -68,7 +68,8 @@ import {
 } from '@crctech/component-library';
 import { IOptionItem } from '@/entities/optionItem';
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';
-import { ICaseFile, ICaseNote } from '@/entities/case-file';
+import { ICaseFile } from '@/entities/case-file';
+import { ICaseNote } from '@/entities/case-file/case-note';
 
 export default Vue.extend({
   name: 'CaseNoteForm',

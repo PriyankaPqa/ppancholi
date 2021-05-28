@@ -1,6 +1,7 @@
 import {
-  ICaseFileLabel, mockCaseFilesSearchData, mockCaseNote, ECaseFileTriage, ECaseFileStatus,
+  ICaseFileLabel, mockCaseFilesSearchData, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
+import { mockCaseNote } from '@/entities/case-file/case-note';
 import { mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { IListOption } from '@/types';
@@ -134,6 +135,14 @@ describe('>>> Case File Service', () => {
           optionItemId: caseNote.category.id,
         },
       });
+    });
+  });
+
+  describe('searchCaseNotes', () => {
+    it('is linked to the correct URL and params', async () => {
+      const params = mockSearchParams;
+      await service.searchCaseNotes(params);
+      expect(http.get).toHaveBeenCalledWith('/search/case-note-projections', { params, isOData: true });
     });
   });
 

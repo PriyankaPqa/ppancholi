@@ -1,6 +1,7 @@
 import {
-  ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseNote, ECaseFileTriage, ECaseFileStatus,
+  ICaseFile, ICaseFileActivity, ICaseFileLabel, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
+import { ICaseNote } from '@/entities/case-file/case-note';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
@@ -79,8 +80,12 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('caseFile/fetchActiveCaseNoteCategories');
     },
 
-    addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote[]> {
+    addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote> {
       return store.dispatch('caseFile/addCaseNote', { id, caseNote });
+    },
+
+    searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNote>> {
+      return store.dispatch('caseFile/searchCaseNotes', params);
     },
 
     setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFile> {

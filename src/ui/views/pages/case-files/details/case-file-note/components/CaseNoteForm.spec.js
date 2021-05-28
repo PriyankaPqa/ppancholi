@@ -1,7 +1,8 @@
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockCaseNote, mockCaseNoteCategories, mockCaseFilesSearchData } from '@/entities/case-file';
+import { mockCaseFilesSearchData } from '@/entities/case-file';
+import { mockCaseNote, mockCaseNoteCategories } from '@/entities/case-file/case-note';
 
 import Component from './CaseNoteForm.vue';
 

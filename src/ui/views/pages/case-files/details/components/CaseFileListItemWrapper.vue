@@ -14,6 +14,26 @@
           {{ moment.utc(item.created).local().format('lll') }}
         </span>
       </div>
+
+      <div>
+        <v-icon v-if="item.isPinned" size="medium" color="primary" class="ml-1" data-test="caseFileItem__pinIcon">
+          mdi-pin
+        </v-icon>
+
+        <v-menu v-if="showMenu" offest-y data-test="caseFileItem__menu">
+          <template #activator="{ on }">
+            <v-btn icon x-small class="ml-1" data-test="items__menuButton" v-on="on">
+              <v-icon size="medium">
+                mdi-dots-vertical
+              </v-icon>
+            </v-btn>
+          </template>
+
+          <v-list>
+            <slot name="menu" />
+          </v-list>
+        </v-menu>
+      </div>
     </div>
 
     <v-card class="item border-radius-bottom" elevation="0">
@@ -25,6 +45,14 @@
 
       <div class="item__content ">
         <slot name="content" />
+
+        <div v-if="item.lastModifiedByFullName" class="item__footer">
+          <div class="item__editedBy rc-caption10">
+            {{ $t('item.lastEditBy') }}
+            <strong class="mr-2" data-test="caseFileItem__lastEditBy">{{ item.lastModifiedByFullName }}</strong>
+            <span data-test="caseFileItem__lastModifiedDate">{{ moment(item.lastModifiedDate).format('ll') }}</span>
+          </div>
+        </div>
       </div>
     </v-card>
   </div>
@@ -51,6 +79,10 @@ export default Vue.extend({
     sidebarIcon: {
       type: String,
       default: 'mdi-message-text',
+    },
+    showMenu: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -95,4 +127,17 @@ export default Vue.extend({
   word-break: break-word;
 }
 
+.item__footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  margin-top: 16px;
+  margin-bottom: -16px;
+}
+
+.item__editedBy {
+  background: var(--v-grey-lighten4);
+  padding: 0 8px;
+  border-radius: 3px 0;
+}
 </style>

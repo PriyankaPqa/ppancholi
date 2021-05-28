@@ -1,5 +1,7 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFileActivities } from '@/entities/case-file';
+import { mockCaseNote } from '@/entities/case-file/case-note';
+import moment from '@/ui/plugins/moment';
 
 import Component from '../components/CaseFileListItemWrapper.vue';
 
@@ -50,6 +52,36 @@ describe('CaseFileListItemWrapper.vue', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('caseFileItem__created');
         expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('last modified by full name', () => {
+      it('renders', async () => {
+        const item = mockCaseNote();
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            item,
+          },
+        });
+
+        const element = wrapper.findDataTest('caseFileItem__lastEditBy');
+        expect(element.text()).toBe(item.lastModifiedByFullName);
+      });
+    });
+
+    describe('last modified date', () => {
+      it('renders', async () => {
+        const item = mockCaseNote();
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            item,
+          },
+        });
+
+        const element = wrapper.findDataTest('caseFileItem__lastModifiedDate');
+        expect(element.text()).toBe(moment(item.lastModifiedDate).format('ll'));
       });
     });
   });

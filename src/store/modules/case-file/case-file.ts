@@ -6,12 +6,13 @@ import _sortBy from 'lodash/sortBy';
 
 import { IRootState } from '@/store/store.types';
 import {
-  CaseFile, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData, ICaseNote, ECaseFileTriage, ECaseFileStatus,
+  CaseFile, ICaseFile, ICaseFileActivity, ICaseFileLabel, ICaseFileSearchData, ECaseFileTriage, ECaseFileStatus,
 } from '@/entities/case-file';
 import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
 import {
   EOptionListItemStatus, EOptionLists, IOptionItem, IOptionItemData, OptionItem,
 } from '@/entities/optionItem';
+import { ICaseNote, CaseNote, ICaseNoteSearchData } from '@/entities/case-file/case-note';
 import { IState } from './case-file.types';
 import { mapCaseFileDataToSearchData } from './case-file-utils';
 
@@ -52,6 +53,7 @@ const getters = {
     state.inactiveReasons.map((e) => new OptionItem(e)),
     'orderRank',
   ).filter((i) => i.status === EOptionListItemStatus.Active),
+
   closeReasons: (state: IState) => _sortBy(
     state.closeReasons.map((e) => new OptionItem(e)),
     'orderRank',
@@ -254,9 +256,25 @@ const actions = {
     return categories;
   },
 
-  async addCaseNote(this: Store<IState>, context: ActionContext<IState, IState>, payload: { id: uuid; caseNote: ICaseNote }): Promise<ICaseNote[]> {
+  async addCaseNote(this: Store<IState>, context: ActionContext<IState, IState>, payload: { id: uuid; caseNote: ICaseNote }): Promise<ICaseNote> {
     const result = await this.$services.caseFiles.addCaseNote(payload.id, payload.caseNote);
-    return result;
+    return result ? payload.caseNote : null;
+  },
+
+  async searchCaseNotes(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    params: IAzureSearchParams,
+  ): Promise<IAzureSearchResult<ICaseNote>> {
+    const res = await this.$services.caseFiles.searchCaseNotes(params);
+    const data = res?.value;
+
+    const value = data.map((cn: ICaseNoteSearchData) => new CaseNote(cn));
+
+    return {
+      ...res,
+      value,
+    };
   },
 
   async setCaseFileTriage(

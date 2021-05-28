@@ -33,8 +33,9 @@ describe('CaseNote.vue', () => {
 
   describe('Computed', () => {
     describe('title', () => {
-      it('should return proper data', () => {
-        expect(wrapper.vm.title).toEqual('caseNote.caseNotes');
+      it('should return proper data', async () => {
+        wrapper.vm.totalCount = 99;
+        expect(wrapper.vm.title).toEqual('caseNote.caseNotes (99)');
       });
     });
     describe('filterOptions', () => {

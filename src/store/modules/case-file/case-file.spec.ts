@@ -3,8 +3,6 @@ import {
   ICaseFile,
   ICaseFileLabel,
   mockCaseFilesSearchData,
-  mockCaseNoteCategories,
-  mockCaseNote,
   mockSearchCaseFiles,
   ECaseFileTriage,
   mockTagsOptions,
@@ -16,6 +14,7 @@ import { mockSearchParams } from '@/test/helpers';
 import { mockStore, IRootState } from '@/store';
 import { IListOption } from '@/types';
 import { OptionItem } from '@/entities/optionItem';
+import { mockCaseNote, mockCaseNoteCategories } from '@/entities/case-file/case-note';
 
 jest.mock('@/store/modules/case-file/case-file-utils');
 
@@ -411,6 +410,41 @@ describe('>>> Case File Module', () => {
 
       expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledTimes(1);
       expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledWith(id, caseNote);
+    });
+  });
+
+  describe('fetchActiveCaseNoteCategories', () => {
+    it('calls the service', async () => {
+      expect(store.$services.caseFiles.fetchActiveCaseNoteCategories).toHaveBeenCalledTimes(0);
+
+      await store.dispatch('caseFile/fetchActiveCaseNoteCategories');
+
+      expect(store.$services.caseFiles.fetchActiveCaseNoteCategories).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('addCaseNote', () => {
+    it('calls the service', async () => {
+      expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledTimes(0);
+
+      const id = 'id';
+      const caseNote = mockCaseNote();
+
+      await store.dispatch('caseFile/addCaseNote', { id, caseNote });
+
+      expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledWith(id, caseNote);
+    });
+  });
+
+  describe('searchCaseNotes', () => {
+    it('calls the service with the passed params', async () => {
+      expect(store.$services.caseFiles.searchCaseNotes).toHaveBeenCalledTimes(0);
+
+      const params = mockSearchParams;
+      await store.dispatch('caseFile/searchCaseNotes', params);
+
+      expect(store.$services.caseFiles.searchCaseNotes).toHaveBeenCalledWith(params);
     });
   });
 
