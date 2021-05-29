@@ -9,6 +9,7 @@ export class AppUsersService implements IAppUsersService {
 
   async fetchAllUsers(): Promise<IAllUserData[]> {
     const params = {
+      top: 999,
       select: ['id', 'mobilePhone', 'businessPhones', 'mail'],
     };
     return this.http.get('/Graph/users', { params, isOData: true });

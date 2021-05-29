@@ -17,7 +17,7 @@ describe('>>> User Account Service', () => {
 
   test('fetchAllUserAccounts is linked to the correct URL and params', async () => {
     await service.fetchAllUserAccounts();
-    expect(http.get).toHaveBeenCalledWith('/search/user-account-projections', { isOData: true });
+    expect(http.get).toHaveBeenCalledWith('/search/user-account-projections', { params: { top: 999 }, isOData: true });
   });
 
   test('addRoleToUser is linked to the correct URL', async () => {

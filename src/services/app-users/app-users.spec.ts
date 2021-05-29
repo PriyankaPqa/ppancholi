@@ -13,7 +13,7 @@ describe('>>> App Users Service', () => {
   test('fetchAllUsers is linked to the correct URL and params', async () => {
     await service.fetchAllUsers();
     expect(http.get).toHaveBeenCalledWith('/Graph/users', {
-      isOData: true, params: { select: ['id', 'mobilePhone', 'businessPhones', 'mail'] },
+      isOData: true, params: { top: 999, select: ['id', 'mobilePhone', 'businessPhones', 'mail'] },
     });
   });
 

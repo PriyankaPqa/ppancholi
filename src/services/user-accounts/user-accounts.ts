@@ -8,7 +8,7 @@ export class UserAccountsService implements IUserAccountsService {
   constructor(private readonly http: IHttpClient) {}
 
   async searchUserAccounts(params?: IAzureSearchParams): Promise<IAzureSearchResult<IUserAccountSearchData>> {
-    const payload = params ? { params, isOData: true } : { isOData: true };
+    const payload = params ? { params, isOData: true } : { params: { top: 999 }, isOData: true };
     const data: IAzureSearchResult<IUserAccountSearchData> = await this.http.get('/search/user-account-projections', payload);
     if (data && data.value) {
       data.value = data.value.map((user) => this.getUserWithParsedFilterCriteria(user));
