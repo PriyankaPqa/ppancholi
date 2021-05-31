@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
-import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
+import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
+import { makeHouseholdModule } from '@crctech/registration-lib/src/store/modules/household';
 import { i18n } from '@/ui/plugins';
 import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 import { IRootState } from './store.types';
@@ -34,7 +34,7 @@ const store: StoreOptions<IRootState> = {
     optionList,
     team,
     program,
-    beneficiary: makeBeneficiaryModule(),
+    household: makeHouseholdModule(),
     registration: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),

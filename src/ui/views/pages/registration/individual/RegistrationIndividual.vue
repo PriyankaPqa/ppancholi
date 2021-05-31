@@ -45,7 +45,7 @@
                   data-test="nextButton"
                   :aria-label="$t(currentTab.nextButtonTextKey)"
                   :loading="submitLoading"
-                  :disabled="failed"
+                  :disabled="failed || inlineEdit"
                   @click="next()">
                   {{ $t(currentTab.nextButtonTextKey) }}
                 </v-btn>
@@ -72,7 +72,7 @@ import IsRegistered from '@/ui/views/pages/registration/is-registered/IsRegister
 import PrivacyStatement from '@/ui/views/pages/registration/privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '@/ui/views/pages/registration/personal-information/PersonalInformation.vue';
 import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
-import HouseholdMembers from '@/ui/views/pages/registration/household-members/HouseholdMembers.vue';
+import HouseholdMembers from '@/ui/views/pages/registration/additional-members/AdditionalMembers.vue';
 import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegistration.vue';
 import mixins from 'vue-typed-mixins';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';

@@ -1,4 +1,4 @@
-import { IBeneficiariesService, IBeneficiariesServiceMock } from '@crctech/registration-lib/src/services/beneficiaries';
+import { IHouseholdsService, IHouseholdsServiceMock } from '@crctech/registration-lib/src/services/households';
 import {
   IPublicService,
   IPublicServiceMock,
@@ -22,7 +22,7 @@ export interface IProvider {
   userAccounts: IUserAccountsService,
   programs: IProgramsService,
   publicApi: IPublicService,
-  beneficiaries: IBeneficiariesService,
+  households: IHouseholdsService,
 }
 
 export interface IProviderMock {
@@ -35,5 +35,5 @@ export interface IProviderMock {
   userAccounts: IUserAccountsServiceMock,
   programs: IProgramsServiceMock,
   publicApi: IPublicServiceMock,
-  beneficiaries: IBeneficiariesServiceMock,
+  households: IHouseholdsServiceMock,
 }

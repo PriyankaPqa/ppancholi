@@ -1,5 +1,5 @@
 import { mockPublicService } from '@crctech/registration-lib/src/services/public';
-import { mockBeneficiariesService } from '@crctech/registration-lib/src/services/beneficiaries';
+import { mockHouseholdsService } from '@crctech/registration-lib/src/services/households';
 import { IProviderMock } from './provider.types';
 import { mockEventsService } from '../events';
 import { mockCaseFilesService } from '../case-files';
@@ -20,5 +20,5 @@ export const mockProvider = (): IProviderMock => ({
   userAccounts: mockUserAccountsService(),
   programs: mockProgramsService(),
   publicApi: mockPublicService(),
-  beneficiaries: mockBeneficiariesService(),
+  households: mockHouseholdsService(),
 });

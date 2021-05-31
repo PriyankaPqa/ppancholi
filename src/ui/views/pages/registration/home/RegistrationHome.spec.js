@@ -55,12 +55,12 @@ describe('RegistrationHome.vue', () => {
         expect(wrapper.vm.fetchActiveEvents).toHaveBeenCalledTimes(1);
       });
 
-      it('should call resetBeneficiaryModule', () => {
-        jest.spyOn(wrapper.vm, 'resetBeneficiaryModule');
+      it('should call resetHouseholdModule', () => {
+        jest.spyOn(wrapper.vm, 'resetHouseholdModule');
         wrapper.vm.$options.mounted.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.resetBeneficiaryModule).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.resetHouseholdModule).toHaveBeenCalledTimes(1);
       });
 
       it('should call resetRegistrationModule', () => {
@@ -119,11 +119,11 @@ describe('RegistrationHome.vue', () => {
       });
     });
 
-    describe('resetBeneficiaryModule', () => {
+    describe('resetHouseholdModule', () => {
       it('should call resetState from beneficiary storage', () => {
         jest.clearAllMocks();
-        wrapper.vm.resetBeneficiaryModule();
-        expect(wrapper.vm.$storage.beneficiary.mutations.resetState).toHaveBeenCalledWith();
+        wrapper.vm.resetHouseholdModule();
+        expect(wrapper.vm.$storage.household.mutations.resetState).toHaveBeenCalledWith();
       });
     });
 

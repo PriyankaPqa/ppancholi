@@ -1,5 +1,5 @@
 import { makeStorage as makeRegistrationStorage } from '@crctech/registration-lib/src/store/storage/registration';
-import { makeStorage as makeBeneficiaryStorage } from '@crctech/registration-lib/src/store/storage/beneficiary';
+import { makeStorage as makeHouseholdStorage } from '@crctech/registration-lib/src/store/storage/household';
 import { IStore, IState } from '../store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeUserStorage } from './user';
@@ -23,5 +23,5 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   team: makeTeamStorage(store),
   program: makeProgramStorage(store),
   registration: makeRegistrationStorage(store),
-  beneficiary: makeBeneficiaryStorage(store),
+  household: makeHouseholdStorage(store),
 });

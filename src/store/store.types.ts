@@ -1,6 +1,6 @@
 import { Store } from 'vuex';
 import { IState as IRegistrationState } from '@crctech/registration-lib/src/store/modules/registration/registration.types';
-import { IState as IBeneficiaryState } from '@crctech/registration-lib/src/store/modules/beneficiary/beneficiary.types';
+import { IState as IHouseholdState } from '@crctech/registration-lib/src/store/modules/household/household.types';
 import { IProvider, IProviderMock } from '@/services/provider';
 import { IState as IUserState } from './modules/user/user.types';
 import { IState as IUserAccountState } from './modules/user-account/user-account.types';
@@ -24,7 +24,7 @@ export interface IRootState {
   appUser?: IAppUserState;
   program?: IProgramState;
   registration?: IRegistrationState;
-  beneficiary?: IBeneficiaryState;
+  household?: IHouseholdState;
 }
 
 export type IState = IRootState;

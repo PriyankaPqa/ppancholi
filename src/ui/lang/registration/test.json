@@ -231,6 +231,7 @@
     "validations.postCode": "validations.postCode",
     "validations.regex": "validations.regex",
     "validations.required": "validations.required",
+    "warning.MAX_ADDITIONAL_MEMBERS_reached": "warning.MAX_ADDITIONAL_MEMBERS_reached",
     "warning.max_householdmembers_reached": "warning.max_householdmembers_reached",
     "zendesk.beneficiary_registration.addresses": "zendesk.beneficiary_registration.addresses",
     "zendesk.beneficiary_registration.household_members": "zendesk.beneficiary_registration.household_members",

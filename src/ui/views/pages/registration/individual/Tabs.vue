@@ -46,8 +46,8 @@
 import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
 import Vue from 'vue';
 import {
-  mockPerson, mockAddress, mockContactInformation, mockCampGround, mockHouseholdMember,
-} from '@crctech/registration-lib/src/entities/beneficiary';
+  mockMember, mockAddress, mockContactInformation, mockCampGround, mockAdditionalMember,
+} from '@crctech/registration-lib/src/entities/household-create';
 
 export default Vue.extend({
   name: 'Tabs',
@@ -76,11 +76,11 @@ export default Vue.extend({
   methods: {
     prefill() {
       this.$storage.registration.mutations.setIsPrivacyAgreed(true);
-      this.$storage.beneficiary.mutations.setPerson(mockPerson());
-      this.$storage.beneficiary.mutations.setContactInformation(mockContactInformation());
-      this.$storage.beneficiary.mutations.setHomeAddress(mockAddress());
-      this.$storage.beneficiary.mutations.setTemporaryAddress(mockCampGround());
-      this.$storage.beneficiary.mutations.addHouseholdMember(mockHouseholdMember(), false);
+      this.$storage.household.mutations.setPrimaryBeneficiary(mockMember());
+      this.$storage.household.mutations.setContactInformation(mockContactInformation());
+      this.$storage.household.mutations.setHomeAddress(mockAddress());
+      this.$storage.household.mutations.setCurrentAddress(mockCampGround());
+      this.$storage.household.mutations.addHouseholdMember(mockAdditionalMember(), false);
     },
   },
 });

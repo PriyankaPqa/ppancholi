@@ -5,8 +5,8 @@ import Vue from 'vue';
 
 import { mockProvider } from '@/services/provider';
 
-import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
-import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
+import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
+import { makeHouseholdModule } from '@crctech/registration-lib/src/store/modules/household';
 import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 
 import { tabs } from '@/store/modules/registration/tabs';
@@ -43,7 +43,7 @@ const mockConfig = {
     registration: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),
-    beneficiary: makeBeneficiaryModule(),
+    household: makeHouseholdModule(),
   },
 };
 

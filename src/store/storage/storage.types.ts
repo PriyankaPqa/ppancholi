@@ -1,5 +1,5 @@
 import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } from '@crctech/registration-lib/src/store/storage/registration';
-import { IStorage as IBeneficiaryStorage, IStorageMock as IBeneficiaryMock } from '@crctech/registration-lib/src/store/storage/beneficiary';
+import { IStorage as IHouseholdStorage, IStorageMock as IHouseholdMock } from '@crctech/registration-lib/src/store/storage/household';
 import { IStorage as IUserStorage, IStorageMock as IUserStorageMock } from './user';
 import { IStorage as IUserAccountStorage, IStorageMock as IUserAccountStorageMock } from './user-account';
 import { IStorage as ICaseFileStorage, IStorageMock as ICaseFileStorageMock } from './case-file';
@@ -21,7 +21,7 @@ export interface IStorage {
   team: ITeamStorage;
   program: IProgramStorage;
   registration: IRegistrationStorage;
-  beneficiary: IBeneficiaryStorage;
+  household: IHouseholdStorage;
 }
 
 export interface IStorageMock {
@@ -35,5 +35,5 @@ export interface IStorageMock {
   team: ITeamStorageMock;
   program: IProgramStorageMock;
   registration: IRegistrationMock;
-  beneficiary: IBeneficiaryMock;
+  household: IHouseholdMock;
 }

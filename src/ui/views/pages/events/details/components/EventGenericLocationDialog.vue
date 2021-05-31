@@ -131,7 +131,7 @@ import { MAX_LENGTH_MD } from '@/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
 import _includes from 'lodash/includes';
 import helpers from '@/ui/helpers';
-import { IShelterLocation } from '@crctech/registration-lib/src/entities/beneficiary';
+import { IShelterLocationData } from '@crctech/registration-lib/src/entities/household-create';
 
 export default Vue.extend({
   name: 'EventGenericLocationDialog',
@@ -291,10 +291,10 @@ export default Vue.extend({
     },
 
     initShelterLocationEdit() {
-      const thisLocation = (this.allLocations as unknown as IShelterLocation[])
-        .find((location: IShelterLocation) => location.name.translation.en === this.id);
+      const thisLocation = (this.allLocations as unknown as IShelterLocationData[])
+        .find((location: IShelterLocationData) => location.name.translation.en === this.id);
         // Store the id and the location without the Id separately in the state
-        // This is a temporary solution until registration location and shelter location schemas align and registration locationn will have an id too
+        // This is a temporary solution until registration location and shelter location schemas align and registration location will have an id too
       const { id, ...originalLocation } = thisLocation;
       this.originalLocation = originalLocation as unknown as IEventGenericLocation;
       this.shelterLocationId = id;

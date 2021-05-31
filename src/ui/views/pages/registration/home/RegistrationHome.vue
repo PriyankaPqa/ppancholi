@@ -28,7 +28,7 @@ import { IEventSearchData, EEventStatus } from '@/entities/event';
 
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
 import routes from '@/constants/routes';
-import { IShelterLocation } from '@crctech/registration-lib/src/entities/beneficiary';
+import { IShelterLocationData } from '@crctech/registration-lib/src/entities/household-create';
 import { IEventData as IRegistrationEventData } from '@crctech/registration-lib/src/entities/event';
 import { tabs } from '@/store/modules/registration/tabs';
 
@@ -60,7 +60,7 @@ export default Vue.extend({
   },
 
   async mounted() {
-    this.resetBeneficiaryModule();
+    this.resetHouseholdModule();
     this.resetRegistrationModule();
     await this.fetchDataForRegistration();
     await this.fetchActiveEvents();
@@ -79,8 +79,8 @@ export default Vue.extend({
         registrationLink: event.registrationLink,
         tenantId: event.tenantId,
         registrationLocations: event.registrationLocations,
-        shelterLocations: event.shelterLocations as unknown as IShelterLocation[],
-      } as IRegistrationEventData;
+        shelterLocations: event.shelterLocations as unknown as IShelterLocationData[],
+      } as unknown as IRegistrationEventData;
 
       this.$storage.registration.mutations.setEvent(registrationEvent);
     },
@@ -89,8 +89,8 @@ export default Vue.extend({
       this.$storage.registration.mutations.resetState(tabs());
     },
 
-    resetBeneficiaryModule() {
-      this.$storage.beneficiary.mutations.resetState();
+    resetHouseholdModule() {
+      this.$storage.household.mutations.resetState();
     },
 
     async fetchActiveEvents() {
