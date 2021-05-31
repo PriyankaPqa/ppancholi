@@ -15,11 +15,11 @@ export class OptionItemsService implements IOptionItemsService {
       case EOptionLists.EventTypes:
         return '/event/event-types';
       case EOptionLists.Genders:
-        return '/beneficiary/genders';
+        return '/household/genders';
       case EOptionLists.PreferredLanguages:
-        return '/beneficiary/preferred-languages';
+        return '/household/preferred-languages';
       case EOptionLists.PrimarySpokenLanguages:
-        return '/beneficiary/primary-spoken-languages';
+        return '/household/primary-spoken-languages';
       case EOptionLists.AgreementTypes:
         return '/event/agreement-types';
       case EOptionLists.Roles:

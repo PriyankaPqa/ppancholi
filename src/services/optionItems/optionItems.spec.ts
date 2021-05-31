@@ -23,15 +23,15 @@ describe('>>> EventTypes Service', () => {
     });
 
     it('returns correct prefix for EOptionLists.Genders', () => {
-      expect(service.getPrefix(EOptionLists.Genders)).toBe('/beneficiary/genders');
+      expect(service.getPrefix(EOptionLists.Genders)).toBe('/household/genders');
     });
 
     it('returns correct prefix for EOptionLists.PreferredLanguages', () => {
-      expect(service.getPrefix(EOptionLists.PreferredLanguages)).toBe('/beneficiary/preferred-languages');
+      expect(service.getPrefix(EOptionLists.PreferredLanguages)).toBe('/household/preferred-languages');
     });
 
     it('returns correct prefix for EOptionLists.PrimarySpokenLanguages', () => {
-      expect(service.getPrefix(EOptionLists.PrimarySpokenLanguages)).toBe('/beneficiary/primary-spoken-languages');
+      expect(service.getPrefix(EOptionLists.PrimarySpokenLanguages)).toBe('/household/primary-spoken-languages');
     });
 
     it('returns correct prefix for EOptionLists.AgreementTypes', () => {
