@@ -131,6 +131,7 @@ describe('>>> Event', () => {
       const event = new Event(mockEventData);
       expect(event.shelterLocations).toEqual([
         {
+          id: 'shelter-id-1',
           name: {
             translation: {
               en: 'shelter en',
@@ -148,6 +149,7 @@ describe('>>> Event', () => {
           },
         },
         {
+          id: 'shelter-id-2',
           name: {
             translation: {
               en: 'shelter 1 en',

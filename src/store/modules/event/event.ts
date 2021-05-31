@@ -20,7 +20,6 @@ import {
   EEventStatus,
   IUpdateAgreementPayload,
   IUpdateRegistrationLocationPayload,
-  IUpdateShelterLocationPayload,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -343,9 +342,9 @@ const actions = {
   async editShelterLocation(
     this: Store<IState>,
     context: ActionContext<IState, IRootState>,
-    { eventId, payload }: { eventId: uuid, payload: IUpdateShelterLocationPayload },
+    { eventId, shelterLocationId, payload }: { eventId: uuid, shelterLocationId:uuid, payload: IEventGenericLocation },
   ): Promise<IEvent> {
-    const data = await this.$services.events.editShelterLocation(eventId, payload);
+    const data = await this.$services.events.editShelterLocation(eventId, shelterLocationId, payload);
     if (data) {
       const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);

@@ -8,7 +8,6 @@ import {
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
   EEventStatus,
-  IUpdateShelterLocationPayload,
   IUpdateAgreementPayload,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
@@ -41,7 +40,8 @@ export interface IStorage {
     addRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
     editRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateRegistrationLocationPayload}): Promise<IEvent>;
     addShelterLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
-    editShelterLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateShelterLocationPayload}): Promise<IEvent>;
+    editShelterLocation({ eventId, shelterLocationId, payload }:{eventId: uuid, shelterLocationId: uuid, payload: IEventGenericLocation})
+    : Promise<IEvent>;
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent>;
     setEventStatus(payload: { event: IEvent, status: EEventStatus, reason: string }): Promise<IEvent>;
   }

@@ -150,17 +150,10 @@ describe('>>> Event Storage', () => {
 
     it('should proxy editShelterLocation', () => {
       const event = new Event(mockEventsSearchData()[0]);
-      const originalShelterLocation = event.shelterLocations[0];
-      const updatedShelterLocation = {
-        ...originalShelterLocation,
-        address: {
-          city: 'Laval',
-        },
-      } as IEventGenericLocation;
-      const payload = { originalShelterLocation, updatedShelterLocation };
+      const { id: shelterLocationId, ...shelterLocation } = event.shelterLocations[0];
 
-      storage.actions.editShelterLocation({ eventId: event.id, payload });
-      expect(store.dispatch).toHaveBeenCalledWith('event/editShelterLocation', { eventId: event.id, payload });
+      storage.actions.editShelterLocation({ eventId: event.id, shelterLocationId, payload: shelterLocation });
+      expect(store.dispatch).toHaveBeenCalledWith('event/editShelterLocation', { eventId: event.id, shelterLocationId, payload: shelterLocation });
     });
 
     it('should proxy toggleSelfRegistration', () => {

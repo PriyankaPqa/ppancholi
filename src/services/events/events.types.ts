@@ -11,7 +11,6 @@ import {
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
   EEventStatus,
-  IUpdateShelterLocationPayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
@@ -48,7 +47,7 @@ export interface IEventsService {
 
   addShelterLocation(eventId: uuid, payload: IEventGenericLocation): Promise<IEventData>;
 
-  editShelterLocation(eventId: uuid, payload: IUpdateShelterLocationPayload): Promise<IEventData>;
+  editShelterLocation(eventId:uuid, shelterLocationId:uuid, payload: IEventGenericLocation): Promise<IEventData>;
 }
 
 export interface IEventsServiceMock {

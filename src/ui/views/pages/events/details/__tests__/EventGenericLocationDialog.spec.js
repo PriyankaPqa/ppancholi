@@ -214,6 +214,44 @@ describe('EventGenericLocationDialog.vue', () => {
     });
   });
 
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('should call initEditMode when edit mode is true', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: true,
+            id: mockEvent.registrationLocations[0].name.translation.en,
+            isRegistrationLocation: true,
+          },
+        });
+        wrapper.vm.initEditMode = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.initEditMode).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call initCreateMode when edit mode is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            id: mockEvent.registrationLocations[0].name.translation.en,
+            isRegistrationLocation: true,
+          },
+        });
+        wrapper.vm.initCreateMode = jest.fn();
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.initCreateMode).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
   describe('Methods', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
@@ -241,6 +279,211 @@ describe('EventGenericLocationDialog.vue', () => {
       it('sets isNameUnique to false if the name is used in other locations', async () => {
         await wrapper.vm.checkNameUniqueness(mockEvent.registrationLocations[0].name.translation.fr);
         expect(wrapper.vm.isNameUnique).toBeFalsy();
+      });
+    });
+
+    describe('initCreateMode', () => {
+      it('sets location to an empty location', async () => {
+        await wrapper.vm.initCreateMode();
+        expect(wrapper.vm.location).toEqual({
+          name: { translation: { en: '', fr: '' } },
+          status: EEventLocationStatus.Active,
+          address: {
+            country: null,
+            streetAddress: null,
+            province: null,
+            city: null,
+            postalCode: null,
+          },
+        });
+      });
+
+      it('sets isActive to true', async () => {
+        await wrapper.vm.initCreateMode();
+        expect(wrapper.vm.isActive).toBeTruthy();
+      });
+    });
+
+    describe('initEditMode', () => {
+      it('calls initRegistrationLocationEdit if isRegistrationLocation', async () => {
+        wrapper.setProps({ isRegistrationLocation: true });
+        jest.spyOn(wrapper.vm, 'initRegistrationLocationEdit').mockImplementation(() => {});
+        expect(wrapper.vm.initRegistrationLocationEdit).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.initEditMode();
+        expect(wrapper.vm.initRegistrationLocationEdit).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls initShelterLocationEdit if isRegistrationLocation is false', async () => {
+        jest.spyOn(wrapper.vm, 'initShelterLocationEdit').mockImplementation(() => {});
+        await wrapper.setProps({ isRegistrationLocation: false });
+        expect(wrapper.vm.initShelterLocationEdit).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.initEditMode();
+        expect(wrapper.vm.initShelterLocationEdit).toHaveBeenCalledTimes(1);
+      });
+
+      it('sets isActive to true if location status is active', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            id: mockEvent.registrationLocations[0].name.translation.en,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            allLocations() {
+              return [{
+                name: { translation: { en: mockEvent.registrationLocations[0].name.translation.en, fr: 'mock fr' } },
+                status: EEventLocationStatus.Active,
+                address: {
+                  country: null,
+                  streetAddress: null,
+                  province: null,
+                  city: null,
+                  postalCode: null,
+                },
+              }];
+            },
+          },
+        });
+
+        await wrapper.setProps({ isRegistrationLocation: false });
+
+        await wrapper.vm.initEditMode();
+
+        expect(wrapper.vm.isActive).toBeTruthy();
+      });
+
+      it('sets isActive to false if location status is inactive', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            id: mockEvent.registrationLocations[0].name.translation.en,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            allLocations() {
+              return [{
+                name: { translation: { en: mockEvent.registrationLocations[0].name.translation.en, fr: 'mock fr' } },
+                status: EEventLocationStatus.Inactive,
+                address: {
+                  country: null,
+                  streetAddress: null,
+                  province: null,
+                  city: null,
+                  postalCode: null,
+                },
+              }];
+            },
+          },
+        });
+
+        await wrapper.setProps({ isRegistrationLocation: false });
+
+        await wrapper.vm.initEditMode();
+
+        expect(wrapper.vm.isActive).toBeFalsy();
+      });
+    });
+
+    describe('initRegistrationLocationEdit', () => {
+      it('sets the original location and location to the right values', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            id: mockEvent.registrationLocations[0].name.translation.en,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            allLocations() {
+              return [mockEvent.registrationLocations[0]];
+            },
+          },
+        });
+
+        await wrapper.vm.initRegistrationLocationEdit();
+        expect(wrapper.vm.originalLocation).toEqual(mockEvent.registrationLocations[0]);
+        expect(wrapper.vm.location).toEqual(mockEvent.registrationLocations[0]);
+      });
+    });
+
+    describe('initShelterLocationEdit', () => {
+      it('sets the original location, shelterLocationId and location to the right values', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            id: 'shelter en',
+            isRegistrationLocation: true,
+          },
+          computed: {
+            allLocations() {
+              return [{
+                id: 'shelter-id-1',
+                name: {
+                  translation: {
+                    en: 'shelter en',
+                    fr: 'shelter fr rt',
+                  },
+                },
+                status: 2,
+                address: {
+                  country: 'CA',
+                  streetAddress: '2295 Rue Bercy',
+                  unitSuite: null,
+                  province: 11,
+                  city: 'Montréal',
+                  postalCode: 'H2K 2V6',
+                },
+              }];
+            },
+          },
+        });
+
+        await wrapper.vm.initShelterLocationEdit();
+        expect(wrapper.vm.originalLocation).toEqual({
+          name: {
+            translation: {
+              en: 'shelter en',
+              fr: 'shelter fr rt',
+            },
+          },
+          status: 2,
+          address: {
+            country: 'CA',
+            streetAddress: '2295 Rue Bercy',
+            unitSuite: null,
+            province: 11,
+            city: 'Montréal',
+            postalCode: 'H2K 2V6',
+          },
+        });
+        expect(wrapper.vm.location).toEqual({
+          name: {
+            translation: {
+              en: 'shelter en',
+              fr: 'shelter fr rt',
+            },
+          },
+          status: 2,
+          address: {
+            country: 'CA',
+            streetAddress: '2295 Rue Bercy',
+            unitSuite: null,
+            province: 11,
+            city: 'Montréal',
+            postalCode: 'H2K 2V6',
+          },
+        });
+
+        expect(wrapper.vm.shelterLocationId).toEqual('shelter-id-1');
       });
     });
 
@@ -367,19 +610,19 @@ describe('EventGenericLocationDialog.vue', () => {
 
     describe('editShelterLocation', () => {
       it('calls storage action editShelterLocation with the right payload', async () => {
-        const [originalLocation, location] = mockEvent.shelterLocations;
+        const shelterLocationData = mockEvent.shelterLocations[0];
 
-        wrapper.vm.originalLocation = originalLocation;
+        const { shelterLocationId, ...location } = shelterLocationData;
+
         wrapper.vm.location = location;
+        wrapper.vm.shelterLocationId = shelterLocationId;
 
         await wrapper.vm.editShelterLocation();
 
         expect(storage.event.actions.editShelterLocation).toHaveBeenCalledWith({
           eventId: wrapper.vm.event.id,
-          payload: {
-            originalShelterLocation: originalLocation,
-            updatedShelterLocation: location,
-          },
+          shelterLocationId: wrapper.shelterLocationId,
+          payload: location,
         });
       });
     });

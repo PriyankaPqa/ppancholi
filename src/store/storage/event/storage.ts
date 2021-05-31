@@ -8,7 +8,6 @@ import {
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
   EEventStatus,
-  IUpdateShelterLocationPayload,
   IUpdateAgreementPayload,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
@@ -108,8 +107,9 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('event/addShelterLocation', { eventId, payload });
     },
 
-    editShelterLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateShelterLocationPayload}): Promise<IEvent> {
-      return store.dispatch('event/editShelterLocation', { eventId, payload });
+    editShelterLocation({ eventId, shelterLocationId, payload }:{eventId: uuid, shelterLocationId: uuid, payload: IEventGenericLocation}):
+    Promise<IEvent> {
+      return store.dispatch('event/editShelterLocation', { eventId, shelterLocationId, payload });
     },
 
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent> {

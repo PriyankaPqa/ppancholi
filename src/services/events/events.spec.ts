@@ -282,15 +282,10 @@ describe('>>> Events Service', () => {
 
   test('editShelterLocation is linked to the correct URL', async () => {
     const event = new Event(mockEventsSearchData()[0]);
-    const originalShelterLocation = event.shelterLocations[0];
-    const updatedShelterLocation = {
-      ...originalShelterLocation,
-      address: {
-        city: 'Laval',
-      },
-    } as IEventGenericLocation;
+    const shelterLocation = event.shelterLocations[0];
     const { id } = event;
-    await service.editShelterLocation(id, { originalShelterLocation, updatedShelterLocation });
-    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/shelter-location/edit`, expect.anything());
+    const shelterLocationId = shelterLocation.id;
+    await service.editShelterLocation(id, shelterLocationId, shelterLocation);
+    expect(http.patch).toHaveBeenCalledWith(`/event/events/${id}/shelter-location/${shelterLocationId}/edit`, expect.anything());
   });
 });

@@ -15,7 +15,6 @@ import {
   IUpdateCallCentrePayload,
   IUpdateRegistrationLocationPayload,
   EEventStatus,
-  IUpdateShelterLocationPayload,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
@@ -120,8 +119,8 @@ export class EventsService implements IEventsService {
     return this.http.post(`/event/events/${eventId}/shelter-location`, payload);
   }
 
-  async editShelterLocation(eventId:uuid, payload: IUpdateShelterLocationPayload): Promise<IEventData> {
-    return this.http.post(`/event/events/${eventId}/shelter-location/edit`, payload);
+  async editShelterLocation(eventId:uuid, shelterLocationId:uuid, payload: IEventGenericLocation): Promise<IEventData> {
+    return this.http.patch(`/event/events/${eventId}/shelter-location/${shelterLocationId}/edit`, payload);
   }
 
   private eventToCreateEventRequestPayload(event: IEvent): ICreateEventRequest {

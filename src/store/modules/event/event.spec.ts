@@ -588,24 +588,19 @@ describe('>>> Event Module', () => {
         const store = mockStore();
 
         const event = mockEvents()[0];
-        const originalShelterLocation = event.shelterLocations[0];
-        const updatedShelterLocation = {
-          ...originalShelterLocation,
-          address: {
-            city: 'Laval',
-          },
-        } as IEventGenericLocation;
-        const payload = { originalShelterLocation, updatedShelterLocation };
+        const shelterLocation = event.shelterLocations[0];
+        const shelterLocationId = shelterLocation.id;
 
         expect(store.$services.events.editShelterLocation).toHaveBeenCalledTimes(0);
 
         const res = await store.dispatch('event/editShelterLocation', {
           eventId: event.id,
-          payload,
+          shelterLocationId,
+          payload: shelterLocation,
         });
 
         expect(store.$services.events.editShelterLocation).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.editShelterLocation).toHaveBeenCalledWith(event.id, payload);
+        expect(store.$services.events.editShelterLocation).toHaveBeenCalledWith(event.id, shelterLocationId, shelterLocation);
 
         expect(res).toEqual(event);
 

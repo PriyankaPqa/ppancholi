@@ -373,6 +373,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
       }],
     shelterLocations: [
       {
+        id: 'shelter-id-1',
         name: {
           translation: {
             en: 'shelter en',
@@ -390,6 +391,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
         },
       },
       {
+        id: 'shelter-id-2',
         name: {
           translation: {
             en: 'shelter 1 en',

@@ -121,7 +121,9 @@ import {
 } from '@crctech/component-library';
 
 import { ECanadaProvinces, VForm } from '@/types';
-import { EEventLocationStatus, Event, IEventGenericLocation } from '@/entities/event';
+import {
+  EEventLocationStatus, Event, IEventGenericLocation, IEventShelterLocation,
+} from '@/entities/event';
 import _cloneDeep from 'lodash/cloneDeep';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
@@ -129,6 +131,7 @@ import { MAX_LENGTH_MD } from '@/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
 import _includes from 'lodash/includes';
 import helpers from '@/ui/helpers';
+import { IShelterLocation } from '@crctech/registration-lib/src/entities/beneficiary';
 
 export default Vue.extend({
   name: 'EventGenericLocationDialog',
@@ -166,6 +169,7 @@ export default Vue.extend({
     return {
       languageMode: 'en',
       location: null as IEventGenericLocation,
+      shelterLocationId: '',
       originalLocation: null as IEventGenericLocation,
       isActive: false,
       loading: false,
@@ -233,17 +237,31 @@ export default Vue.extend({
         : process.env.VUE_APP_GOOGLE_API_KEY;
     },
 
-    allLocations(): IEventGenericLocation[] {
+    allLocations(): IEventGenericLocation[] | IEventShelterLocation[] {
       return this.isRegistrationLocation ? this.event.registrationLocations : this.event.shelterLocations;
     },
   },
 
   created() {
     if (this.isEditMode) {
-      this.originalLocation = this.allLocations.find((location) => location.name.translation.en === this.id);
-      this.location = _cloneDeep(this.originalLocation);
-      this.isActive = this.location.status === EEventLocationStatus.Active;
+      this.initEditMode();
     } else {
+      this.initCreateMode();
+    }
+  },
+
+  methods: {
+
+    checkNameUniqueness(name: string) {
+      let otherLocations = this.allLocations;
+      if (this.isEditMode) {
+        otherLocations = otherLocations.filter((location) => location.name.translation.en !== this.originalLocation.name.translation.en);
+      }
+      const nameExists = otherLocations.some((location) => _includes(location.name.translation, name));
+      this.isNameUnique = !nameExists;
+    },
+
+    initCreateMode() {
       this.location = {
         name: entityUtils.initMultilingualAttributes(),
         status: EEventLocationStatus.Active,
@@ -256,17 +274,31 @@ export default Vue.extend({
         },
       };
       this.isActive = true;
-    }
-  },
+    },
 
-  methods: {
-    checkNameUniqueness(name: string) {
-      let otherLocations = this.allLocations;
-      if (this.isEditMode) {
-        otherLocations = otherLocations.filter((location) => location.name.translation.en !== this.originalLocation.name.translation.en);
+    initEditMode() {
+      if (this.isRegistrationLocation) {
+        this.initRegistrationLocationEdit();
+      } else {
+        this.initShelterLocationEdit();
       }
-      const nameExists = otherLocations.some((location) => _includes(location.name.translation, name));
-      this.isNameUnique = !nameExists;
+      this.isActive = this.location.status === EEventLocationStatus.Active;
+    },
+
+    initRegistrationLocationEdit() {
+      this.originalLocation = this.allLocations.find((location) => location.name.translation.en === this.id);
+      this.location = _cloneDeep(this.originalLocation);
+    },
+
+    initShelterLocationEdit() {
+      const thisLocation = (this.allLocations as unknown as IShelterLocation[])
+        .find((location: IShelterLocation) => location.name.translation.en === this.id);
+        // Store the id and the location without the Id separately in the state
+        // This is a temporary solution until registration location and shelter location schemas align and registration locationn will have an id too
+      const { id, ...originalLocation } = thisLocation;
+      this.originalLocation = originalLocation as unknown as IEventGenericLocation;
+      this.shelterLocationId = id;
+      this.location = _cloneDeep(this.originalLocation);
     },
 
     fillEmptyMultilingualFields() {
@@ -325,10 +357,8 @@ export default Vue.extend({
     async editShelterLocation() {
       const params = {
         eventId: this.event.id,
-        payload: {
-          originalShelterLocation: this.originalLocation,
-          updatedShelterLocation: this.location,
-        },
+        shelterLocationId: this.shelterLocationId,
+        payload: this.location,
       };
 
       await this.$storage.event.actions.editShelterLocation(params);
