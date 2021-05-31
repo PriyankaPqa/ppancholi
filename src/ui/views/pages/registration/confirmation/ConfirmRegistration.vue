@@ -39,13 +39,14 @@
 </template>
 
 <script lang="ts">
-import { ICreateBeneficiaryResponse } from '@crctech/registration-lib/src/entities/beneficiary';
+import { IHouseholdData } from '@crctech/registration-lib/src/entities/household';
 import { IEventData } from '@crctech/registration-lib/src/entities/event';
 import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
 import { IError } from '@/services/httpClient';
 import ConfirmationError from '@/ui/views/pages/registration/confirmation/ConfirmationError.vue';
 import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types';
+import { IHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
 
 export default Vue.extend({
   name: 'ConfirmRegistration',
@@ -55,8 +56,12 @@ export default Vue.extend({
       return this.errors?.length === 0;
     },
 
-    response(): ICreateBeneficiaryResponse {
+    response(): IHouseholdData {
       return this.$storage.registration.getters.registrationResponse();
+    },
+
+    household(): IHouseholdCreate {
+      return this.$storage.household.getters.householdCreate();
     },
 
     errors(): IError[] {
@@ -69,7 +74,8 @@ export default Vue.extend({
 
     confirmationMessage(): TranslateResult {
       if (this.response) {
-        const fullName = `${this.response.person.firstName} ${this.response.person.middleName} ${this.response.person.lastName}`;
+        const identity = this.household.primaryBeneficiary.identitySet;
+        const fullName = `${identity.firstName} ${identity.middleName} ${identity.lastName}`;
         return this.$t('registration.confirmation.thank_you', { x: fullName });
       }
       return '';

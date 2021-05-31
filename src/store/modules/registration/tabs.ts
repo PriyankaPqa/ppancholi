@@ -41,7 +41,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.beneficiary_registration.addresses',
   },
   {
-    id: 'householdMembers',
+    id: 'additionalMembers',
     labelKey: 'registration.menu.household_members',
     titleKey: 'registration.menu.household_members',
     icon: 'mdi-account-multiple',
@@ -50,7 +50,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     isTouched: false,
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
-    componentName: 'HouseholdMembers',
+    componentName: 'AdditionalMembers',
     helpLink: 'zendesk.beneficiary_registration.household_members',
   },
   {

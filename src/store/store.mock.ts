@@ -8,7 +8,7 @@ import VueI18n from 'vue-i18n';
 import { mockProvider } from '@/services/provider';
 
 import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
-import { makeBeneficiaryModule } from '@crctech/registration-lib/src/store/modules/beneficiary/';
+import { makeHouseholdModule } from '@crctech/registration-lib/src/store/modules/household/';
 
 import { tabs } from '@/store/modules/registration/tabs';
 import { ERegistrationMode } from '@crctech/registration-lib/src/types';
@@ -24,7 +24,7 @@ const mockConfig = {
     registration: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: false, skipEmailPhoneRules: false, mode: ERegistrationMode.Self,
     }),
-    beneficiary: makeBeneficiaryModule(),
+    household: makeHouseholdModule(),
   },
 };
 

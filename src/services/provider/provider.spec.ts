@@ -1,9 +1,9 @@
 import { PublicService } from '@crctech/registration-lib/src/services/public';
-import { BeneficiariesService } from '@crctech/registration-lib/src/services/beneficiaries';
+import { HouseholdsService } from '@crctech/registration-lib/src/services/households';
 import { provider } from './index';
 
 jest.mock('@crctech/registration-lib/src/services/public');
-jest.mock('@crctech/registration-lib/src/services/beneficiaries');
+jest.mock('@crctech/registration-lib/src/services/households');
 
 describe('Provider', () => {
   it('should instantiate PublicService', () => {
@@ -11,8 +11,8 @@ describe('Provider', () => {
     expect(PublicService.prototype.constructor).toBeCalled();
   });
 
-  it('should instantiate BeneficiariesService', () => {
+  it('should instantiate HouseholdsService', () => {
     provider();
-    expect(BeneficiariesService.prototype.constructor).toBeCalled();
+    expect(HouseholdsService.prototype.constructor).toBeCalled();
   });
 });

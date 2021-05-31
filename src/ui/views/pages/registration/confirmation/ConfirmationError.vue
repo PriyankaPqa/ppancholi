@@ -5,7 +5,7 @@
         mdi-alert-outline
       </v-icon>
       <v-row class="row full-width rc-body14 pt-2" no-gutters>
-        <v-col cols="12" class="rc-body18 fw-bold" data-test="confirmation-errorRegistration-errorTitle">
+        <v-col v-if="firstError" cols="12" class="rc-body18 fw-bold" data-test="confirmation-errorRegistration-errorTitle">
           {{ $t(firstError.code) }}
         </v-col>
         <v-col class="col" cols="12">
@@ -58,6 +58,8 @@ export default Vue.extend({
         'errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate',
         'errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number',
         'errors.the-household-have-duplicate-first-name-last-name-birthdate',
+        'errors.the-email-provided-already-exists-in-the-system',
+        'errors.person-identified-as-duplicate',
       ],
     };
   },
@@ -68,7 +70,10 @@ export default Vue.extend({
     },
 
     isDuplicateError(): boolean {
-      return this.errors.some((e) => this.keysForDuplicateErrors.includes(e.code));
+      if (Array.isArray(this.errors)) {
+        return this.errors.some((e) => this.keysForDuplicateErrors.includes(e.code));
+      }
+      return false;
     },
 
     errorMessage(): TranslateResult {

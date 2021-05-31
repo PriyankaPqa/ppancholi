@@ -1,18 +1,18 @@
 <template>
-  <lib-household-members :i18n="i18n" />
+  <lib-additional-members :i18n="i18n" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
-import { HouseholdMembers as LibHouseholdMembers } from '@crctech/registration-lib';
+import { AdditionalMembers as LibAdditionalMembers } from '@crctech/registration-lib';
 import { i18n } from '@/ui/plugins';
 
 export default Vue.extend({
-  name: 'HouseholdMembers',
+  name: 'AdditionalMembers',
 
   components: {
-    LibHouseholdMembers,
+    LibAdditionalMembers,
   },
 
   data() {

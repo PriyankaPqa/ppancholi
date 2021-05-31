@@ -59,6 +59,24 @@ describe('ConfirmRegistration.vue', () => {
         });
         expect(wrapper.vm.isDuplicateError).toEqual(true);
       });
+
+      it('returns true if the error is a duplicate of a kind', async () => {
+        await wrapper.setProps({
+          errors: [
+            mockHttpError({ code: 'errors.the-email-provided-already-exists-in-the-system' }),
+          ],
+        });
+        expect(wrapper.vm.isDuplicateError).toEqual(true);
+      });
+
+      it('returns true if the error is a duplicate of a kind', async () => {
+        await wrapper.setProps({
+          errors: [
+            mockHttpError({ code: 'errors.person-identified-as-duplicate' }),
+          ],
+        });
+        expect(wrapper.vm.isDuplicateError).toEqual(true);
+      });
     });
 
     describe('errorMessage', () => {

@@ -46,7 +46,7 @@
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
                 :loading="submitLoading"
-                :disabled="failed"
+                :disabled="failed || inlineEdit"
                 @click="next()">
                 {{ $t(currentTab.nextButtonTextKey) }}
               </v-btn>
@@ -67,7 +67,7 @@ import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
 import Addresses from '../addresses/Addresses.vue';
-import HouseholdMembers from '../household-members/HouseholdMembers.vue';
+import AdditionalMembers from '../additional-members/AdditionalMembers.vue';
 import ReviewRegistration from '../review/ReviewRegistration.vue';
 import ConfirmRegistration from '../confirmation/ConfirmRegistration.vue';
 
@@ -80,7 +80,7 @@ export default mixins(individual).extend({
     PrivacyStatement,
     PersonalInformation,
     Addresses,
-    HouseholdMembers,
+    AdditionalMembers,
     ReviewRegistration,
     ConfirmRegistration,
   },
