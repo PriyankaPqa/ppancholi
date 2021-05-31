@@ -23,6 +23,10 @@ export class Member implements IMember {
     }
   }
 
+  setCurrentAddress(currentAddress: ICurrentAddress) {
+    this.currentAddress = currentAddress;
+  }
+
   validate(skipAgeRestriction = false, skipEmailPhoneRules = false): string[] {
     const identityErrors = this.validateIdentity(skipAgeRestriction);
 

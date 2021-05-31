@@ -59,6 +59,10 @@ export default Vue.extend({
     submitLoading(): boolean {
       return this.$store.state.registration.submitLoading;
     },
+
+    inlineEdit(): boolean {
+      return this.$store.state.registration.inlineEditCounter > 0;
+    },
   },
 
   watch: {

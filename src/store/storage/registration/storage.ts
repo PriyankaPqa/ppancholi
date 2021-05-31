@@ -124,6 +124,14 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     resetState(tabs: IRegistrationMenuItem[]): void {
       store.commit('registration/resetState', tabs);
     },
+
+    increaseInlineEditCounter(): void {
+      store.commit('registration/increaseInlineEditCounter');
+    },
+
+    decreaseInlineEditCounter(): void {
+      store.commit('registration/decreaseInlineEditCounter');
+    },
   },
 
   actions: {

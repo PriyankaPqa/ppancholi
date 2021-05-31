@@ -40,6 +40,8 @@ export interface IStorage {
     setPrivacyRegistrationMethod(payload: ERegistrationMethod): void;
     setPrivacyRegistrationLocationName(payload: string): void;
     resetState(tabs: IRegistrationMenuItem[]): void;
+    decreaseInlineEditCounter(): void;
+    increaseInlineEditCounter(): void;
   };
 
   actions: {
@@ -84,6 +86,8 @@ export interface IStorageMock {
     setPrivacyRegistrationMethod: jest.Mock<void>;
     setPrivacyRegistrationLocationName: jest.Mock<void>;
     resetState: jest.Mock<void>;
+    decreaseInlineEditCounter(): jest.Mock<void>;
+    increaseInlineEditCounter(): jest.Mock<void>;
   };
 
   actions: {

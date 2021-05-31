@@ -127,6 +127,16 @@ describe('>>> Registration Storage', () => {
       storage.mutations.resetState(mockTabs());
       expect(store.commit).toBeCalledWith('registration/resetState', payload);
     });
+
+    it('should proxy increaseInlineEditCounter', () => {
+      storage.mutations.increaseInlineEditCounter();
+      expect(store.commit).toBeCalledWith('registration/increaseInlineEditCounter');
+    });
+
+    it('should proxy decreaseInlineEditCounter', () => {
+      storage.mutations.decreaseInlineEditCounter();
+      expect(store.commit).toBeCalledWith('registration/decreaseInlineEditCounter');
+    });
   });
 
   describe('>> Actions', () => {

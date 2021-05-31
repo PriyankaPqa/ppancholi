@@ -57,6 +57,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   registrationResponse: null,
   registrationErrors: [],
   submitLoading: false,
+  inlineEditCounter: 0,
 });
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
@@ -275,10 +276,19 @@ const mutations = (): MutationTree<IState> => ({
     state.registrationErrors = payload;
   },
 
+  increaseInlineEditCounter(state: IState) {
+    state.inlineEditCounter += 1;
+  },
+
+  decreaseInlineEditCounter(state: IState) {
+    if (state.inlineEditCounter >= 1) {
+      state.inlineEditCounter -= 1;
+    }
+  },
+
   resetState(state: IState, tabs: IRegistrationMenuItem[]) {
     resetVuexModuleState(state, getDefaultState(tabs));
   },
-
 });
 
 const actions = {

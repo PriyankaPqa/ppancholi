@@ -73,10 +73,20 @@ describe('>>> Household Module', () => {
     });
 
     describe('setCurrentAddress', () => {
-      it('sets current address of the household', () => {
+      it('sets current address of the primaryBeneficiary', () => {
         store = mockStore();
         store.commit('household/setCurrentAddress', mockAddress());
         expect(store.state.household.householdCreate.primaryBeneficiary.currentAddress).toEqual(mockAddress());
+      });
+
+      it('sets current address of any additional members having the same current address as beneficiary', () => {
+        store = mockStore();
+        store.state.household.householdCreate = new HouseholdCreate();
+        store.commit('household/setCurrentAddress', mockAddress());
+        store.commit('household/addAdditionalMember', { payload: mockAdditionalMember(), sameAddress: true });
+        store.commit('household/addAdditionalMember', { payload: mockAdditionalMember(), sameAddress: false });
+        expect(store.state.household.householdCreate.additionalMembers[0].currentAddress).toEqual(mockAddress());
+        expect(store.state.household.householdCreate.additionalMembers[1].currentAddress).not.toEqual(mockAddress());
       });
     });
 

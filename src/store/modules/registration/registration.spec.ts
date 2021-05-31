@@ -63,6 +63,7 @@ describe('>>> Registration Module', () => {
           registrationResponse: null,
           registrationErrors: [],
           submitLoading: false,
+          inlineEditCounter: 0,
         });
       });
     });
@@ -428,6 +429,25 @@ describe('>>> Registration Module', () => {
         store.commit('registration/setEvent', mockEventData());
         store.commit('registration/resetState', mockTabs());
         expect(store.state.registration).toEqual(defaultState);
+      });
+    });
+
+    describe('increaseInlineEditCounter', () => {
+      it('should increase the inline counter', () => {
+        store.commit('registration/increaseInlineEditCounter');
+        expect(store.state.registration.inlineEditCounter).toEqual(1);
+      });
+    });
+
+    describe('decreaseInlineEditCounter', () => {
+      it('should increase the inline counter', () => {
+        store.commit('registration/decreaseInlineEditCounter');
+        expect(store.state.registration.inlineEditCounter).toEqual(0);
+
+        store.commit('registration/increaseInlineEditCounter');
+
+        store.commit('registration/decreaseInlineEditCounter');
+        expect(store.state.registration.inlineEditCounter).toEqual(0);
       });
     });
   });

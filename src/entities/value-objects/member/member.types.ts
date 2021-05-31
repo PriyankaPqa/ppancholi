@@ -19,6 +19,7 @@ export interface MemberCreateRequest {
 }
 
 export interface IMember extends IMemberData {
+  setCurrentAddress(currentAddress: ICurrentAddress): void;
   validate(skipAgeRestriction?: boolean): string[];
   validateIdentity(skipAgeRestriction: boolean): string[];
   validateCurrentAddress(): string[];

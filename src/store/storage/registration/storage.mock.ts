@@ -42,6 +42,8 @@ export const mockStorageRegistration = (): IStorageMock => ({
     setPrivacyRegistrationMethod: jest.fn(),
     setPrivacyRegistrationLocationName: jest.fn(),
     resetState: jest.fn(),
+    decreaseInlineEditCounter: jest.fn(),
+    increaseInlineEditCounter: jest.fn(),
   },
 
   actions: {

@@ -2,6 +2,7 @@ import { Module, ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
 
 import _cloneDeep from 'lodash/cloneDeep';
+import _isEqual from 'lodash/isEqual';
 import _merge from 'lodash/merge';
 import { IdentitySet, IIdentitySetData } from '../../../entities/value-objects/identity-set';
 import {
@@ -51,6 +52,13 @@ const mutations = {
   },
 
   setCurrentAddress(state: IState, payload: ICurrentAddress) {
+    const oldAddress = state.householdCreate.primaryBeneficiary.currentAddress;
+
+    state.householdCreate.additionalMembers.forEach((m: IMember) => {
+      if (_isEqual(m.currentAddress, oldAddress)) {
+        m.setCurrentAddress(_cloneDeep(payload));
+      }
+    });
     state.householdCreate.primaryBeneficiary.currentAddress = _cloneDeep(payload);
   },
 

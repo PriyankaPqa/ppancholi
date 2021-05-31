@@ -1,6 +1,6 @@
 import { IdentitySet } from '@/entities/value-objects/identity-set';
 import { ContactInformation } from '@/entities/value-objects/contact-information';
-import { CurrentAddress } from '../current-address';
+import { CurrentAddress, mockCampGround } from '../current-address';
 import { mockMember } from './member.mock';
 import { Member } from './member';
 
@@ -53,6 +53,14 @@ describe('Member', () => {
           ...p.validateCurrentAddress(),
           ...p.validateContactInformation(false),
         ]);
+      });
+    });
+
+    describe('setCurrentAddress', () => {
+      it('should set the current address', () => {
+        const p = new Member();
+        p.setCurrentAddress(mockCampGround());
+        expect(p.currentAddress).toEqual(mockCampGround());
       });
     });
   });

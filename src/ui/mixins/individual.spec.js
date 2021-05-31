@@ -117,6 +117,12 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.submitLoading).toBe(wrapper.vm.$store.state.registration.submitLoading);
       });
     });
+
+    describe('inlineEdit', () => {
+      it('returns proper data', () => {
+        expect(wrapper.vm.inlineEdit).toBe(false);
+      });
+    });
   });
 
   describe('Methods', () => {

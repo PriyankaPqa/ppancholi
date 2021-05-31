@@ -26,4 +26,5 @@ export type IState = {
   registrationResponse: IHouseholdData;
   registrationErrors: IError[];
   submitLoading: boolean;
+  inlineEditCounter: number;
 };

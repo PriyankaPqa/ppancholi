@@ -186,6 +186,11 @@ describe('ReviewRegistration.vue', () => {
         wrapper.vm.editPersonalInformation();
         expect(wrapper.vm.personalInformation.inlineEdit).toEqual(true);
       });
+
+      it('should increase inline edit counter', () => {
+        wrapper.vm.editPersonalInformation();
+        expect(wrapper.vm.$storage.registration.mutations.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('editAddresses', () => {
@@ -206,6 +211,11 @@ describe('ReviewRegistration.vue', () => {
         wrapper.vm.editAddresses();
         expect(wrapper.vm.addresses.inlineEdit).toEqual(true);
       });
+
+      it('should increase inline edit counter', () => {
+        wrapper.vm.editAddresses();
+        expect(wrapper.vm.$storage.registration.mutations.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('editAdditionalMember', () => {
@@ -224,6 +234,11 @@ describe('ReviewRegistration.vue', () => {
         expect(wrapper.vm.additionalMembers[0].inlineEdit).toEqual(false);
         wrapper.vm.editAdditionalMember(0);
         expect(wrapper.vm.additionalMembers[0].inlineEdit).toEqual(true);
+      });
+
+      it('should increase inline edit counter', () => {
+        wrapper.vm.editAdditionalMember(0);
+        expect(wrapper.vm.$storage.registration.mutations.increaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -245,6 +260,12 @@ describe('ReviewRegistration.vue', () => {
       it('should so nothing if inline mode is not on', () => {
         expect(wrapper.vm.$storage.household.mutations.setPersonalInformation).toHaveBeenCalledTimes(0);
       });
+
+      it('should decrease inline edit counter', () => {
+        wrapper.vm.editPersonalInformation();
+        wrapper.vm.cancelPersonalInformation();
+        expect(wrapper.vm.$storage.registration.mutations.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('cancelAdditionalMember', () => {
@@ -260,6 +281,12 @@ describe('ReviewRegistration.vue', () => {
         wrapper.vm.cancelAdditionalMember(0);
         expect(wrapper.vm.$storage.household.mutations.editAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.additionalMembers[0].backup, 0, wrapper.vm.additionalMembers[0].sameAddress);
+      });
+
+      it('should decrease inline edit counter', () => {
+        wrapper.vm.editAdditionalMember(0);
+        wrapper.vm.cancelAdditionalMember(0);
+        expect(wrapper.vm.$storage.registration.mutations.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -283,6 +310,12 @@ describe('ReviewRegistration.vue', () => {
         wrapper.vm.cancelAddresses();
         expect(wrapper.vm.$storage.household.mutations.setCurrentAddress)
           .toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
+      });
+
+      it('should decrease inline edit counter', () => {
+        wrapper.vm.editAddresses();
+        wrapper.vm.cancelAddresses();
+        expect(wrapper.vm.$storage.registration.mutations.decreaseInlineEditCounter).toHaveBeenCalledTimes(1);
       });
     });
 

@@ -112,11 +112,13 @@ export default Vue.extend({
       this.indexAdditionalMember = index;
       this.additionalMembers[index].backup = _cloneDeep(this.householdCreate.additionalMembers[index]);
       this.additionalMembers[index].inlineEdit = true;
+      this.$storage.registration.mutations.increaseInlineEditCounter();
     },
 
     cancelAdditionalMember(index: number) {
       if (this.additionalMembers[index].inlineEdit) {
         this.additionalMembers[index].inlineEdit = false;
+        this.$storage.registration.mutations.decreaseInlineEditCounter();
         this.$storage.household.mutations.editAdditionalMember(
           this.additionalMembers[index].backup, index, this.additionalMembers[index].sameAddress,
         );
@@ -128,6 +130,7 @@ export default Vue.extend({
       const isValid = await ((this.$refs[`additionalMember_${index}`] as any)[0]).validate();
       if (isValid) {
         this.additionalMembers[index].inlineEdit = false;
+        this.$storage.registration.mutations.decreaseInlineEditCounter();
 
         // Not watcher on this form to mutate so we need to do it here
         this.$storage.household.mutations.editAdditionalMember(

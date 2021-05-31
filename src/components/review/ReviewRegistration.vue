@@ -159,24 +159,28 @@ export default mixins(additionalMemberForm).extend({
     editPersonalInformation() {
       this.personalInformation.backup = _cloneDeep(this.getPersonalInformation);
       this.personalInformation.inlineEdit = true;
+      this.$storage.registration.mutations.increaseInlineEditCounter();
     },
 
     editAddresses() {
       this.addresses.backupCurrentAddress = _cloneDeep(this.householdCreate.primaryBeneficiary.currentAddress);
       this.addresses.backupHomeAddress = _cloneDeep(this.householdCreate.homeAddress);
       this.addresses.inlineEdit = true;
+      this.$storage.registration.mutations.increaseInlineEditCounter();
     },
 
     cancelPersonalInformation() {
       if (this.personalInformation.inlineEdit) {
         this.$storage.household.mutations.setPersonalInformation(this.personalInformation.backup);
         this.personalInformation.inlineEdit = false;
+        this.$storage.registration.mutations.decreaseInlineEditCounter();
       }
     },
 
     cancelAddresses() {
       if (this.addresses.inlineEdit) {
         this.addresses.inlineEdit = false;
+        this.$storage.registration.mutations.decreaseInlineEditCounter();
         this.$storage.household.mutations.setHomeAddress(this.addresses.backupHomeAddress);
         this.$storage.household.mutations.setCurrentAddress(this.addresses.backupCurrentAddress);
       }
@@ -186,6 +190,7 @@ export default mixins(additionalMemberForm).extend({
       const isValid = await (this.$refs.personalInfo as VForm).validate();
       if (isValid) {
         this.personalInformation.inlineEdit = false;
+        this.$storage.registration.mutations.decreaseInlineEditCounter();
       }
     },
 
@@ -193,6 +198,7 @@ export default mixins(additionalMemberForm).extend({
       const isValid = await (this.$refs.addresses as VForm).validate();
       if (isValid) {
         this.addresses.inlineEdit = false;
+        this.$storage.registration.mutations.decreaseInlineEditCounter();
       }
     },
   },
