@@ -32,6 +32,7 @@
 
     <template #[`item.${customColumns.name}`]="{ item: caseFile }">
       <router-link
+        v-if="caseFile.household"
         class="rc-link14"
         data-test="beneficiaryName-link"
         :to="getHouseholdProfileRoute(caseFile)">
@@ -198,7 +199,7 @@ export default Vue.extend({
       return {
         name: routes.caseFile.householdProfile.name,
         params: {
-          id: caseFile.household.id,
+          id: caseFile.household?.id,
         },
       };
     },
