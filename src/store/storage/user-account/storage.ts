@@ -6,6 +6,10 @@ import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
+    userAccounts(): IUserAccount[] {
+      return store.getters['userAccount/userAccounts']();
+    },
+
     userAccountById(id: uuid): IUserAccount {
       return store.getters['userAccount/userAccountById'](id);
     },

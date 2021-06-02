@@ -163,7 +163,6 @@ export default Vue.extend({
       showDeleteUserAccountDialog: false,
       userToDelete: null as IUserAccount,
       loading: true,
-      originalUsers: [] as IUserAccount[], // All users from Azure
       allUsers: [] as IUserAccount[], // All users, minus "deleted in EMIS"
       allSubRoles: [] as IOptionSubItem[],
       changedAccounts: [] as IUserAccount[],
@@ -266,6 +265,10 @@ export default Vue.extend({
       }
       return filteredUsers;
     },
+
+    originalUsers(): IUserAccount[] {
+      return this.$storage.userAccount.getters.userAccounts();
+    },
   },
 
   mounted() {
@@ -323,6 +326,7 @@ export default Vue.extend({
           user.roleName = request.subRole.name;
           user.roleId = request.subRole.id;
           this.changedAccounts.splice(this.changedAccounts.indexOf(user), 1);
+          this.replaceOrAddToAllUsersById([user]);
           this.$toasted.global.success(this.$t('system_management.userAccounts.role_update_success'));
         } catch (errors) {
           this.$toasted.global.error(this.$t('errors.user-account-role-assign.fail'));
@@ -374,7 +378,7 @@ export default Vue.extend({
 
     async fetchAllEmisUsers() {
       this.loading = true;
-      this.originalUsers = await this.$storage.userAccount.actions.fetchAllUserAccounts();
+      await this.$storage.userAccount.actions.fetchAllUserAccounts();
       this.allUsers = this.excludeDeletedUsers(_cloneDeep(this.originalUsers));
       this.loading = false;
     },

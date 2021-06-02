@@ -30,7 +30,7 @@ const moduleState: IState = getDefaultState();
 const getters = {
 
   // eslint-disable-next-line
-  userAccounts: (state: IState) => state.userAccounts,
+  userAccounts: (state: IState) => (): IUserAccount[] => state.userAccounts.map((u) => new UserAccount(u)),
 
   userAccountById: (state: IState) => (id: uuid): IUserAccount => {
     const userAccount = state.userAccounts.find((u) => u.userAccountId === id);
@@ -51,7 +51,7 @@ const getters = {
 const mutations = {
 
   addOrUpdateUserAccount(state: IState, payload: IUserAccountSearchData) {
-    const index = _findIndex(state.userAccounts as unknown as IUserAccount[], { id: payload.userAccountId });
+    const index = _findIndex(state.userAccounts, { userAccountId: payload.userAccountId });
 
     if (index > -1) {
       state.userAccounts = [
@@ -133,17 +133,14 @@ const actions = {
   },
 
   async fetchAllUserAccounts(this: Store<IState>, context: ActionContext<IState, IState>):Promise<IUserAccount[]> {
-    let value: IUserAccount[];
     const result = await this.$services.userAccounts.fetchAllUserAccounts();
     const data = result?.value;
     if (data) {
-      value = data.map((a: IUserAccountSearchData) => new UserAccount(a));
+      context.commit('setUserAccounts', data);
     } else {
-      value = [];
+      context.commit('setUserAccounts', []);
     }
-    context.commit('setUserAccounts', value);
-
-    return context.getters.userAccounts;
+    return data.map((a: IUserAccountSearchData) => new UserAccount(a));
   },
 
   async deleteUserAccount(this: Store<IState>, context: ActionContext<IState, IState>, userId: string) {

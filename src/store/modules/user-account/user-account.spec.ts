@@ -25,6 +25,12 @@ describe('>>> User Account Module', () => {
   });
 
   describe('>> Getters', () => {
+    describe('userAccounts', () => {
+      test('the getter returns all user accounts as UserAccount objects', () => {
+        expect(store.getters['userAccount/userAccounts']()).toEqual(mockUserAccountSearchData().map((u) => new UserAccount(u)));
+      });
+    });
+
     describe('userAccountById', () => {
       test('the getter returns the user account with the id passed in the argument', () => {
         const mockId = mockUserAccountSearchData()[0].userAccountId;

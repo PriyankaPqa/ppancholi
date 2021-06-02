@@ -39,7 +39,6 @@ describe('UserAccounts.vue', () => {
           showDeleteUserAccountDialog: false,
           userToDelete: null,
           loading: true,
-          originalUsers: [],
           allUsers: [],
           allSubRoles: [],
           changedAccounts: [],
@@ -81,7 +80,6 @@ describe('UserAccounts.vue', () => {
             showDeleteUserAccountDialog: false,
             userToDelete: null,
             loading: true,
-            originalUsers: [],
             allUsers: [],
             allSubRoles: [],
             changedAccounts: [],
@@ -223,6 +221,13 @@ describe('UserAccounts.vue', () => {
         expect(wrapper.vm.filteredUserAccounts).toEqual(usersTestData);
       });
     });
+
+    describe('originalUsers', () => {
+      it('is correctly defined', async () => {
+        wrapper.vm.$storage.userAccount.getters.userAccounts = jest.fn(() => usersTestData);
+        expect(wrapper.vm.originalUsers).toEqual(usersTestData);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -242,7 +247,6 @@ describe('UserAccounts.vue', () => {
             showDeleteUserAccountDialog: false,
             userToDelete: null,
             loading: true,
-            originalUsers: [],
             allUsers: [],
             allSubRoles: [],
             changedAccounts: [],
@@ -346,7 +350,6 @@ describe('UserAccounts.vue', () => {
           accountStatus: EAccountStatus.Active,
           status: EUserAccountStatus.Active,
         };
-
         wrapper.vm.itemIsChanged = jest.fn(() => true);
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
         wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn(() => changedUser);
@@ -379,7 +382,7 @@ describe('UserAccounts.vue', () => {
         };
         const origUsers = _cloneDeep(usersTestData);
         origUsers.push(user);
-        wrapper.vm.originalUsers = origUsers;
+        wrapper.vm.$storage.userAccount.getters.userAccounts = jest.fn(() => origUsers);
         wrapper.vm.changedAccounts.push(changedUser);
         expect(wrapper.vm.changedAccounts.indexOf(changedUser)).toBeGreaterThanOrEqual(0); // Found
         wrapper.vm.cancelRoleChange(changedUser);
@@ -403,7 +406,7 @@ describe('UserAccounts.vue', () => {
         };
         const origUsers = _cloneDeep(usersTestData);
         origUsers.push(user);
-        wrapper.vm.originalUsers = origUsers;
+        wrapper.vm.$storage.userAccount.getters.userAccounts = jest.fn(() => origUsers);
         wrapper.vm.revertToOriginalRole(changedUser);
         expect(changedUser.roleId).toEqual(user.roleId);
         expect(changedUser.roleName).toEqual(user.roleName);
@@ -447,6 +450,7 @@ describe('UserAccounts.vue', () => {
 
     describe('fetchAllEmisUsers', () => {
       it('invokes the correct storage function', async () => {
+        wrapper.vm.$storage.userAccount.getters.userAccounts = jest.fn(() => usersTestData);
         wrapper.vm.$storage.userAccount.actions.fetchAllUserAccounts = jest.fn(() => usersTestData);
         await wrapper.vm.fetchAllEmisUsers();
         expect(wrapper.vm.allUsers).toEqual(usersTestData);

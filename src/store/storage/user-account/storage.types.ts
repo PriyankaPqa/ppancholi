@@ -6,6 +6,7 @@ import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 export interface IStorage {
   getters: {
+    userAccounts(): IUserAccount[];
     userAccountById(id: uuid): IUserAccount;
     searchUserAccounts(search: string, searchAmong: string[]): IUserAccountSearchData[];
   }
@@ -21,6 +22,7 @@ export interface IStorage {
 
 export interface IStorageMock {
   getters: {
+    userAccounts: jest.Mock<void>;
     userAccountById: jest.Mock<void>;
     searchUserAccounts: jest.Mock<void>;
   }

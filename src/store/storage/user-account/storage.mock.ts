@@ -3,6 +3,7 @@ import { IStorageMock } from './storage.types';
 export const mockStorageUserAccount = () : IStorageMock => ({
 
   getters: {
+    userAccounts: jest.fn(),
     userAccountById: jest.fn(),
     searchUserAccounts: jest.fn(),
   },

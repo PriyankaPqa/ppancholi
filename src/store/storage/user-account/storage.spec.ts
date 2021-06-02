@@ -30,6 +30,10 @@ const mockSubRole = {
 
 describe('>>> User Account Storage', () => {
   describe('>> Getters', () => {
+    it('should proxy userAccounts', () => {
+      expect(storage.getters.userAccounts()).toEqual(store.getters['userAccount/userAccounts']());
+    });
+
     it('should proxy userAccountById', () => {
       expect(storage.getters.userAccountById('TEST_ID')).toEqual(store.getters['userAccount/userAccountById']('TEST_ID'));
     });
