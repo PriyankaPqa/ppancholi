@@ -72,6 +72,16 @@ export class CaseFilesService implements ICaseFilesService {
     });
   }
 
+  async editCaseNote(id: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNoteData> {
+    return this.http.patch(`/case-file/case-files/${id}/case-notes/${caseNoteId}/edit`, {
+      subject: caseNote.subject,
+      description: caseNote.description,
+      category: {
+        optionItemId: caseNote.category.id,
+      },
+    });
+  }
+
   async searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNoteSearchData>> {
     return this.http.get('/search/case-note-projections', { params, isOData: true });
   }

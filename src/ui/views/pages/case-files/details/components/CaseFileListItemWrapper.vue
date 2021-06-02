@@ -46,7 +46,7 @@
       <div class="item__content ">
         <slot name="content" />
 
-        <div v-if="item.lastModifiedByFullName" class="item__footer">
+        <div v-if="item.lastModifiedByFullName || item.lastModifiedDate" class="item__footer">
           <div class="item__editedBy rc-caption10">
             {{ $t('item.lastEditBy') }}
             <strong class="mr-2" data-test="caseFileItem__lastEditBy">{{ item.lastModifiedByFullName }}</strong>

@@ -72,6 +72,16 @@ describe('CaseNote.vue', () => {
       });
     });
 
+    describe('isSaving', () => {
+      it('should be linked to proper state', () => {
+        wrapper.vm.$store.state.caseFile.isSavingCaseNote = true;
+        expect(wrapper.vm.isSaving).toEqual(true);
+
+        wrapper.vm.$store.state.caseFile.isSavingCaseNote = false;
+        expect(wrapper.vm.isSaving).toEqual(false);
+      });
+    });
+
     describe('caseNoteCategories', () => {
       it('return proper data', () => {
         expect(wrapper.vm.caseNoteCategories).toStrictEqual(mockCaseNoteCategories());
@@ -144,37 +154,65 @@ describe('CaseNote.vue', () => {
       describe('user level is level 1 or level 2 or level 3', () => {
         it('shows confirmation dialog', async () => {
           wrapper.vm.$hasLevel = jest.fn(() => false);
-          wrapper.vm.addCaseNote = jest.fn();
 
           wrapper.vm.save();
           expect(wrapper.vm.showConfirmationDialog).toBeTruthy();
         });
 
-        it('does not calls addCaseNote', async () => {
+        it('does not calls addOrEdit', async () => {
           wrapper.vm.$hasLevel = jest.fn(() => false);
-          wrapper.vm.addCaseNote = jest.fn();
+          wrapper.vm.addOrEdit = jest.fn();
 
           wrapper.vm.save();
-          expect(wrapper.vm.addCaseNote).toHaveBeenCalledTimes(0);
+          expect(wrapper.vm.addOrEdit).toHaveBeenCalledTimes(0);
         });
       });
 
       describe('user level higher than 3', () => {
         it('does not show confirmation dialog', async () => {
           wrapper.vm.$hasLevel = jest.fn(() => true);
-          wrapper.vm.addCaseNote = jest.fn();
 
           wrapper.vm.save();
           expect(wrapper.vm.showConfirmationDialog).toBeFalsy();
         });
 
-        it('calls addCaseNote', async () => {
+        it('calls addOrEdit', async () => {
           wrapper.vm.$hasLevel = jest.fn(() => true);
-          wrapper.vm.addCaseNote = jest.fn();
+          wrapper.vm.addOrEdit = jest.fn();
 
           wrapper.vm.save();
-          expect(wrapper.vm.addCaseNote).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.addOrEdit).toHaveBeenCalledTimes(1);
         });
+      });
+    });
+
+    describe('addOrEdit', () => {
+      it('should call editCaseNote if is edit mode', async () => {
+        await wrapper.setProps({
+          isEdit: true,
+        });
+
+        wrapper.vm.addCaseNote = jest.fn();
+        wrapper.vm.editCaseNote = jest.fn();
+
+        await wrapper.vm.addOrEdit();
+
+        expect(wrapper.vm.addCaseNote).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.editCaseNote).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call addCaseNote if is not edit mode', async () => {
+        await wrapper.setProps({
+          isEdit: false,
+        });
+
+        wrapper.vm.addCaseNote = jest.fn();
+        wrapper.vm.editCaseNote = jest.fn();
+
+        await wrapper.vm.addOrEdit();
+
+        expect(wrapper.vm.addCaseNote).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.editCaseNote).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -188,6 +226,24 @@ describe('CaseNote.vue', () => {
 
         wrapper.vm.addCaseNote();
         expect(wrapper.vm.$storage.caseFile.actions.addCaseNote).toHaveBeenCalledWith(mockCaseFileId, caseNote);
+      });
+
+      it('should emit event', () => {
+        wrapper.vm.save();
+        expect(wrapper.emitted('close-case-note-form'));
+      });
+    });
+
+    describe('editCaseNote', () => {
+      it('should call storage to edit case note', async () => {
+        const caseNote = mockCaseNote();
+
+        await wrapper.setData({
+          localCaseNote: caseNote,
+        });
+
+        wrapper.vm.editCaseNote();
+        expect(wrapper.vm.$storage.caseFile.actions.editCaseNote).toHaveBeenCalledWith(mockCaseFileId, caseNote.id, caseNote);
       });
 
       it('should emit event', () => {

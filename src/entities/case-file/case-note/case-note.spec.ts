@@ -5,6 +5,11 @@ const mockData = mockCaseNoteSearchData()[0];
 
 describe('>>> Case Note', () => {
   describe('>> constructor', () => {
+    it('should instantiate id', () => {
+      const caseNote = new CaseNote(mockData);
+      expect(caseNote.id).toBe(mockData.id);
+    });
+
     it('should instantiate subject', () => {
       const caseNote = new CaseNote(mockData);
       expect(caseNote.subject).toBe(mockData.subject);
@@ -20,6 +25,11 @@ describe('>>> Case Note', () => {
       expect(caseNote.category.name).toBe(mockData.caseNoteCategoryName);
     });
 
+    it('should instantiate created', () => {
+      const caseNote = new CaseNote(mockData);
+      expect(caseNote.created).toBe(mockData.caseNoteCreatedDate);
+    });
+
     it('should instantiate user', () => {
       const caseNote = new CaseNote(mockData);
       expect(caseNote.user.name).toBe(mockData.createdBy.userName);
@@ -30,7 +40,26 @@ describe('>>> Case Note', () => {
       expect(caseNote.role.name).toBe(mockData.createdBy.roleName);
     });
 
-    it('should instantiate lastModifiedByFullName', () => {
+    it('should instantiate lastModifiedDate if updatedBy exists', () => {
+      const caseNote = new CaseNote(mockData);
+      expect(caseNote.lastModifiedDate).toBe(mockData.caseNoteUpdatedDate);
+    });
+
+    it('should instantiate lastModifiedByFullName if updatedBy exists', () => {
+      const caseNote = new CaseNote(mockData);
+      expect(caseNote.lastModifiedByFullName).toBe(mockData.updatedBy.userName);
+    });
+
+    it('should instantiate lastModifiedDate with createdBy if updatedBy not exists', () => {
+      mockData.updatedBy = null;
+
+      const caseNote = new CaseNote(mockData);
+      expect(caseNote.lastModifiedDate).toBe(mockData.caseNoteCreatedDate);
+    });
+
+    it('should instantiate lastModifiedByFullName with createdBy if updatedBy not exists', () => {
+      mockData.updatedBy = null;
+
       const caseNote = new CaseNote(mockData);
       expect(caseNote.lastModifiedByFullName).toBe(mockData.createdBy.userName);
     });

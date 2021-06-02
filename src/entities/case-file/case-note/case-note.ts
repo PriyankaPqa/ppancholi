@@ -3,6 +3,8 @@ import { IOptionItem } from '../../optionItem';
 import { ICaseNote, ICaseNoteSearchData, ICaseNoteUser } from './case-note.types';
 
 export class CaseNote implements ICaseNote {
+  id: uuid;
+
   subject: string;
 
   category: IOptionItem;
@@ -15,16 +17,21 @@ export class CaseNote implements ICaseNote {
 
   role?: IIdMultilingualName;
 
+  lastModifiedDate: Date | string;
+
   lastModifiedByFullName?: string;
 
   constructor(data: ICaseNoteSearchData) {
     const { createdBy } = data;
+
+    this.id = data.id;
 
     this.subject = data.subject;
 
     this.description = data.description;
 
     this.category = {
+      id: data.caseNoteCategoryId,
       name: data.caseNoteCategoryName,
       orderRank: null,
       status: null,
@@ -43,7 +50,13 @@ export class CaseNote implements ICaseNote {
       name: createdBy?.roleName,
     };
 
-    this.lastModifiedByFullName = createdBy?.userName;
+    if (data.updatedBy) {
+      this.lastModifiedByFullName = data.updatedBy?.userName;
+      this.lastModifiedDate = data.caseNoteUpdatedDate;
+    } else {
+      this.lastModifiedByFullName = data.createdBy.userName;
+      this.lastModifiedDate = data.caseNoteCreatedDate;
+    }
 
     this.created = data.caseNoteCreatedDate;
   }

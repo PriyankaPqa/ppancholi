@@ -126,10 +126,12 @@ export const mockCaseNoteData = (): ICaseNoteData[] => [
 
 export const mockCaseNoteSearchData = (): ICaseNoteSearchData[] => [
   {
+    id: '98cc878d-a6c6-4bd2-ac06-8db381d292c0',
     caseFileId: '38106287-9046-47b9-8981-76ede656d305',
     tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
     subject: 'test subject',
     description: 'test desc',
+    caseNoteCategoryId: '0a137a3f-ae72-4fab-b521-7f96da9ece12',
     caseNoteCategoryName: {
       translation: {
         en: 'Action log',
@@ -145,7 +147,11 @@ export const mockCaseNoteSearchData = (): ICaseNoteSearchData[] => [
         },
       },
     },
+    updatedBy: {
+      userName: 'updated by user',
+    },
     caseNoteCreatedDate: '2021-05-25T19:53:36.6898336Z',
+    caseNoteUpdatedDate: '2021-05-26T14:35:30.4529931Z',
     caseNoteStatusName: {
       translation: {
         en: 'Active',

@@ -26,6 +26,7 @@ const getDefaultState = (): IState => ({
   inactiveReasons: [],
   closeReasons: [],
   triageLoading: false,
+  isSavingCaseNote: false,
 });
 
 const moduleState: IState = getDefaultState();
@@ -101,6 +102,10 @@ const mutations = {
 
   setCloseReasons(state: IState, payload: Array<IOptionItemData>) {
     state.closeReasons = payload;
+  },
+
+  setIsSavingCaseNote(state: IState, payload: boolean) {
+    state.isSavingCaseNote = payload;
   },
 };
 
@@ -257,7 +262,20 @@ const actions = {
   },
 
   async addCaseNote(this: Store<IState>, context: ActionContext<IState, IState>, payload: { id: uuid; caseNote: ICaseNote }): Promise<ICaseNote> {
+    context.commit('setIsSavingCaseNote', true);
     const result = await this.$services.caseFiles.addCaseNote(payload.id, payload.caseNote);
+    context.commit('setIsSavingCaseNote', false);
+    return result ? payload.caseNote : null;
+  },
+
+  async editCaseNote(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    payload: { caseFileId: uuid; caseNoteId: uuid, caseNote: ICaseNote },
+  ): Promise<ICaseNote> {
+    context.commit('setIsSavingCaseNote', true);
+    const result = await this.$services.caseFiles.editCaseNote(payload.caseFileId, payload.caseNoteId, payload.caseNote);
+    context.commit('setIsSavingCaseNote', false);
     return result ? payload.caseNote : null;
   },
 

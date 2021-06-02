@@ -185,6 +185,16 @@ describe('>>> Case File Module', () => {
         expect(store.state.caseFile.triageLoading).toBe(true);
       });
     });
+
+    describe('setIsSavingCaseNote', () => {
+      test('the setIsSavingCaseNote mutation sets the isSavingCaseNote state', () => {
+        store = mockStore();
+
+        store.commit('caseFile/setIsSavingCaseNote', true);
+
+        expect(store.state.caseFile.isSavingCaseNote).toBeTruthy();
+      });
+    });
   });
 
   describe('>> Actions', () => {
@@ -434,6 +444,21 @@ describe('>>> Case File Module', () => {
 
       expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledTimes(1);
       expect(store.$services.caseFiles.addCaseNote).toHaveBeenCalledWith(id, caseNote);
+    });
+  });
+
+  describe('editCaseNote', () => {
+    it('calls the service', async () => {
+      expect(store.$services.caseFiles.editCaseNote).toHaveBeenCalledTimes(0);
+
+      const caseFileId = 'case file id';
+      const caseNoteId = 'case note id';
+      const caseNote = mockCaseNote();
+
+      await store.dispatch('caseFile/editCaseNote', { caseFileId, caseNoteId, caseNote });
+
+      expect(store.$services.caseFiles.editCaseNote).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.editCaseNote).toHaveBeenCalledWith(caseFileId, caseNoteId, caseNote);
     });
   });
 

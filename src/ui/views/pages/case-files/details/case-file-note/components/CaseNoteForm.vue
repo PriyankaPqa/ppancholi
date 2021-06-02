@@ -44,7 +44,7 @@
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn class="ml-3" color="primary" data-test="case-note-form-save" :loading="isSaving" :disabled="invalid" @click="save">
-          {{ $t('common.add') }}
+          {{ isEdit ? $t('common.save') : $t('common.add') }}
         </v-btn>
       </div>
     </ValidationObserver>
@@ -70,6 +70,7 @@ import { IOptionItem } from '@/entities/optionItem';
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';
 import { ICaseFile } from '@/entities/case-file';
 import { ICaseNote } from '@/entities/case-file/case-note';
+import _cloneDeep from 'lodash/cloneDeep';
 
 export default Vue.extend({
   name: 'CaseNoteForm',
@@ -88,6 +89,10 @@ export default Vue.extend({
       type: String,
       default: '',
     },
+    isEdit: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -97,7 +102,6 @@ export default Vue.extend({
         category: null,
         description: null,
       } as ICaseNote,
-      isSaving: false,
       showConfirmationDialog: false,
     };
   },
@@ -119,6 +123,10 @@ export default Vue.extend({
       };
     },
 
+    isSaving(): boolean {
+      return this.$store.state.caseFile.isSavingCaseNote;
+    },
+
     caseNoteCategories(): IOptionItem[] {
       return this.$storage.caseFile.getters.caseNoteCategories();
     },
@@ -130,28 +138,37 @@ export default Vue.extend({
 
   created() {
     if (this.caseNote !== null) {
-      this.localCaseNote = this.caseNote;
+      this.localCaseNote = _cloneDeep(this.caseNote);
     }
   },
 
   methods: {
     async save() {
       if (this.$hasLevel('level4')) {
-        await this.addCaseNote();
+        await this.addOrEdit();
       } else {
         this.showConfirmationDialog = true;
       }
     },
 
+    async addOrEdit() {
+      this.isEdit ? await this.editCaseNote() : await this.addCaseNote();
+    },
+
     async addCaseNote() {
       this.closeConfirmationDialog();
 
-      this.isSaving = true;
       const result = await this.$storage.caseFile.actions.addCaseNote(this.caseFile.id, this.localCaseNote);
       if (result) {
         this.closeCaseNoteForm();
       }
-      this.isSaving = false;
+    },
+
+    async editCaseNote() {
+      const result = await this.$storage.caseFile.actions.editCaseNote(this.caseFile.id, this.localCaseNote.id, this.localCaseNote);
+      if (result) {
+        this.closeCaseNoteForm();
+      }
     },
 
     closeConfirmationDialog() {

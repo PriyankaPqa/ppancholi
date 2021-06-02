@@ -11,4 +11,5 @@ export type IState = {
   triageLoading: boolean;
   tagsOptions: Array<IOptionItemData>;
   caseNoteCategories: Array<IOptionItemData>;
+  isSavingCaseNote: boolean;
 };

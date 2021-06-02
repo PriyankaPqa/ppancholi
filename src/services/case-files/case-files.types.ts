@@ -14,6 +14,7 @@ export interface ICaseFilesService {
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileData>;
   fetchActiveCaseNoteCategories(): Promise<IOptionItem[]>;
   addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNoteData>;
+  editCaseNote(id: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNoteData>;
   searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNoteSearchData>>;
   setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFileData>;
 }
@@ -27,6 +28,7 @@ export interface ICaseFilesServiceMock {
   setCaseFileIsDuplicate: jest.Mock<ICaseFileData>;
   fetchActiveCaseNoteCategories: jest.Mock<IOptionItem[]>;
   addCaseNote: jest.Mock<ICaseNoteData>;
+  editCaseNote: jest.Mock<ICaseNoteData>;
   searchCaseNotes: jest.Mock<IAzureSearchResult<ICaseNoteSearchData>>;
   setCaseFileTriage: jest.Mock<ICaseFileData>;
 }

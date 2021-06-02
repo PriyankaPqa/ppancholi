@@ -84,6 +84,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('caseFile/addCaseNote', { id, caseNote });
     },
 
+    editCaseNote(caseFileId: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNote> {
+      return store.dispatch('caseFile/editCaseNote', { caseFileId, caseNoteId, caseNote });
+    },
+
     searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNote>> {
       return store.dispatch('caseFile/searchCaseNotes', params);
     },

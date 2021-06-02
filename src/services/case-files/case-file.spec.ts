@@ -138,6 +138,22 @@ describe('>>> Case File Service', () => {
     });
   });
 
+  describe('editCaseNote', () => {
+    it('is linked to the correct URL and params', async () => {
+      const caseFileId = 'case file id';
+      const caseNoteId = 'case note id';
+      const caseNote = mockCaseNote();
+      await service.editCaseNote(caseFileId, caseNoteId, caseNote);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${caseFileId}/case-notes/${caseNoteId}/edit`, {
+        subject: caseNote.subject,
+        description: caseNote.description,
+        category: {
+          optionItemId: caseNote.category.id,
+        },
+      });
+    });
+  });
+
   describe('searchCaseNotes', () => {
     it('is linked to the correct URL and params', async () => {
       const params = mockSearchParams;

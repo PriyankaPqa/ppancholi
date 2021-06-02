@@ -7,6 +7,7 @@ export interface ICaseNoteUser {
 }
 
 export interface ICaseNote {
+  id?: uuid;
   subject: string;
   category: IOptionItem;
   description: string;
@@ -14,7 +15,7 @@ export interface ICaseNote {
   user?: ICaseNoteUser;
   role?: IIdMultilingualName;
   lastModifiedByFullName?: string;
-  lastModifiedDate?: string;
+  lastModifiedDate?: Date | string;
 }
 
 export interface ICaseNoteData {
@@ -34,15 +35,21 @@ export interface ICaseNoteData {
 }
 
 export interface ICaseNoteSearchData {
+  id: uuid;
   caseFileId: uuid;
   tenantId: uuid;
   subject: string,
   description: string,
   caseNoteCreatedDate: Date | string,
   caseNoteStatusName: IMultilingual,
+  caseNoteCategoryId: uuid,
   caseNoteCategoryName: IMultilingual,
   createdBy: {
     userName: string,
     roleName: IMultilingual,
-},
+  },
+  caseNoteUpdatedDate: Date | string,
+  updatedBy: {
+    userName: string,
+  }
 }
