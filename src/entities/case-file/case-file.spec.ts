@@ -13,34 +13,7 @@ describe('>>> Case File', () => {
     it('should instantiate beneficiary', () => {
       const caseFile = new CaseFile(mockCaseFileData);
 
-      expect(caseFile.beneficiary).toEqual({
-        id: 'mock-beneficiary-id-1',
-        firstName: 'Jane',
-        lastName: 'Doe',
-        contactInformation: {
-          email: 'Jane.doe@email.com',
-          mobilePhoneNumber: {
-            number: '(514) 123 4444',
-            extension: '',
-          },
-          homePhoneNumber: null,
-          alternatePhoneNumber: null,
-        },
-        homeAddress: {
-          country: 'CA',
-          streetAddress: 'Left str',
-          unitSuite: '111',
-          provinceCode: {
-            translation: {
-              en: 'QC',
-              fr: 'QC',
-            },
-          },
-          city: 'Montreal',
-          postalCode: 'M4B 1G5',
-        },
-        householdMemberCount: 2,
-      });
+      expect(caseFile.household).toEqual(mockCaseFileData.household);
     });
 
     it('should instantiate caseFileNumber', () => {
@@ -144,13 +117,13 @@ describe('>>> Case File', () => {
     });
 
     describe('> validation attributes', () => {
-      test('beneficiary id is required', () => {
-        const caseFile = new CaseFile(mockCaseFileData);
+      // test('beneficiary id is required', () => {
+      //   const caseFile = new CaseFile(mockCaseFileData);
 
-        caseFile.beneficiary.id = null;
+      //   caseFile.beneficiary.id = null;
 
-        expect(caseFile.validate()).toContain('The beneficiary id is required');
-      });
+      //   expect(caseFile.validate()).toContain('The beneficiary id is required');
+      // });
 
       test('caseFile Number is required', () => {
         const caseFile = new CaseFile(mockCaseFileData);

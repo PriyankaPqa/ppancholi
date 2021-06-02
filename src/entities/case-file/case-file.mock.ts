@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import { IAzureSearchResult } from '@/types';
 import { IOptionItem } from '../optionItem';
 import {
@@ -7,33 +8,50 @@ import {
 export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
   {
     caseFileId: 'mock-id-1',
-    beneficiary: {
-      id: 'mock-beneficiary-id-1',
-      firstName: 'Jane',
-      lastName: 'Doe',
-      contactInformation: {
-        email: 'Jane.doe@email.com',
-        mobilePhoneNumber: {
-          number: '(514) 123 4444',
-          extension: '',
-        },
-        homePhoneNumber: null,
-        alternatePhoneNumber: null,
-      },
-      homeAddress: {
-        country: 'CA',
-        streetAddress: 'Left str',
-        unitSuite: '111',
-        provinceCode: {
-          translation: {
-            en: 'QC',
-            fr: 'QC',
+    household: {
+      id: 'mock-household-id-1',
+      members: [],
+      addressHistory: [],
+      address: {
+        address: {
+          country: 'CA',
+          streetAddress: 'Left str',
+          unitSuite: '111',
+          provinceCode: {
+            translation: {
+              en: 'QC',
+              fr: 'QC',
+            },
           },
+          city: 'Montreal',
+          postalCode: 'M4B 1G5',
         },
-        city: 'Montreal',
-        postalCode: 'M4B 1G5',
+        from: '',
+        to: '',
       },
-      householdMemberCount: 2,
+      primaryBeneficiary: {
+        id: 'mock-beneficiary-id-1',
+        identitySet: {
+          firstName: 'Jane',
+          middleName: 'Mary',
+          lastName: 'Doe',
+          preferredName: '',
+          dateOfBirth: '',
+        },
+        contactInformation: {
+          email: 'Jane.doe@email.com',
+          mobilePhoneNumber: {
+            number: '(514) 123 4444',
+            extension: '',
+          },
+          homePhoneNumber: null,
+          alternatePhoneNumber: null,
+        },
+
+      },
+      houseHoldMemberCount: 1,
+      registrationNumber: ' 123',
+
     },
     caseFileNumber: '1-000001',
     caseFileStatusName: {
@@ -87,33 +105,50 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
   },
   {
     caseFileId: 'mock-id-2',
-    beneficiary: {
-      id: 'mock-beneficiary-id-2',
-      firstName: 'John',
-      lastName: 'Wood',
-      contactInformation: {
-        email: 'john.wood@email.com',
-        mobilePhoneNumber: {
-          number: '(514) 123 4567',
-          extension: '',
-        },
-        homePhoneNumber: null,
-        alternatePhoneNumber: null,
-      },
-      homeAddress: {
-        country: 'CA',
-        streetAddress: 'Peel str',
-        unitSuite: '111',
-        provinceCode: {
-          translation: {
-            en: 'QC',
-            fr: 'QC',
+    household: {
+      id: 'mock-household-id-2',
+      members: [],
+      addressHistory: [],
+      address: {
+        address: {
+          country: 'CA',
+          streetAddress: 'Left str',
+          unitSuite: '111',
+          provinceCode: {
+            translation: {
+              en: 'QC',
+              fr: 'QC',
+            },
           },
+          city: 'Montreal',
+          postalCode: 'M4B 1G5',
         },
-        city: 'Montreal',
-        postalCode: 'M4B 1G5',
+        from: '',
+        to: '',
       },
-      householdMemberCount: 2,
+      primaryBeneficiary: {
+        id: 'mock-beneficiary-id-2',
+        identitySet: {
+          firstName: 'Jane',
+          middleName: 'Mary',
+          lastName: 'Doe',
+          preferredName: '',
+          dateOfBirth: '',
+        },
+        contactInformation: {
+          email: 'Jane.doe@email.com',
+          mobilePhoneNumber: {
+            number: '(514) 123 4444',
+            extension: '',
+          },
+          homePhoneNumber: null,
+          alternatePhoneNumber: null,
+        },
+
+      },
+      houseHoldMemberCount: 1,
+      registrationNumber: ' 123',
+
     },
     caseFileNumber: '2-000002',
     caseFileStatusName: {
@@ -172,7 +207,7 @@ export const mockSearchCaseFiles = (index = -1): IAzureSearchResult<ICaseFileSea
 export const mockCaseFilesData = (): ICaseFileData[] => [
   {
     id: 'mock-id-1',
-    beneficiaryId: 'mock-beneficiary-id-1',
+    householdId: 'mock-beneficiary-id-1',
     caseFileNumber: '1-000001',
     caseFileStatus: 1,
     created: '2021-01-01',

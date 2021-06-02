@@ -30,8 +30,8 @@ describe('CaseFilesTable.vue', () => {
         params: mockParams,
       }));
 
-      wrapper.vm.getBeneficiaryRoute = jest.fn(() => ({
-        name: routes.caseFile.beneficiaryProfile.name,
+      wrapper.vm.getHouseholdProfileRoute = jest.fn(() => ({
+        name: routes.caseFile.householdProfile.name,
         params: mockParams,
       }));
     });
@@ -78,10 +78,10 @@ describe('CaseFilesTable.vue', () => {
         });
       });
 
-      test('name redirects to getBeneficiaryRoute', () => {
+      test('name redirects to getHouseholdProfileRoute', () => {
         const link = wrapper.findDataTest('beneficiaryName-link');
         expect(link.props('to')).toEqual({
-          name: routes.caseFile.beneficiaryProfile.name,
+          name: routes.caseFile.householdProfile.name,
           params: mockParams,
         });
       });
@@ -113,7 +113,7 @@ describe('CaseFilesTable.vue', () => {
         });
         const expectedColumns = {
           caseFileNumber: 'CaseFileNumber',
-          name: 'Beneficiary/FirstName',
+          name: 'Household/PrimaryBeneficiary/IdentitySet/FirstName',
           event: 'Event/Name/Translation/en',
           triage: 'TriageName/Translation/en',
           status: 'CaseFileStatusName/Translation/en',
@@ -136,7 +136,7 @@ describe('CaseFilesTable.vue', () => {
             customColumns() {
               return {
                 caseFileNumber: 'CaseFileNumber',
-                name: 'Beneficiary/FirstName',
+                name: 'Household/PrimaryBeneficiary/IdentitySet/FirstName',
                 event: 'Event/Name/Translation/en',
                 triage: 'TriageName/Translation/en',
                 status: 'CaseFileStatusName/Translation/en',
@@ -155,7 +155,7 @@ describe('CaseFilesTable.vue', () => {
           {
             text: 'caseFilesTable.tableHeaders.name',
             sortable: true,
-            value: 'Beneficiary/FirstName',
+            value: 'Household/PrimaryBeneficiary/IdentitySet/FirstName',
           },
           {
             text: 'caseFilesTable.tableHeaders.event',
@@ -252,12 +252,12 @@ describe('CaseFilesTable.vue', () => {
       });
     });
 
-    describe('getBeneficiaryRoute', () => {
+    describe('getHouseholdProfileRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getBeneficiaryRoute(mockCaseFiles()[0])).toEqual({
-          name: routes.caseFile.beneficiaryProfile.name,
+        expect(wrapper.vm.getHouseholdProfileRoute(mockCaseFiles()[0])).toEqual({
+          name: routes.caseFile.householdProfile.name,
           params: {
-            id: mockCaseFiles()[0].beneficiary.id,
+            id: mockCaseFiles()[0].household.id,
           },
         });
       });

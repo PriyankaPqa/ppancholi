@@ -257,24 +257,6 @@ describe('CaseFileDetails.vue', () => {
         expect(element.text()).toContain(wrapper.vm.addressFirstLine);
         expect(element.text()).toContain(wrapper.vm.addressSecondLine);
       });
-
-      it('is NOT rendered if the beneficiary does not have a alternate number', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          computed: {
-            caseFile() {
-              const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.beneficiary.homePhoneNumber = null;
-              return altCaseFile;
-            },
-          },
-        });
-        element = wrapper.findDataTest('caseFileDetails-alternate-phone-number');
-        expect(element.exists()).toBeFalsy();
-      });
     });
 
     describe('household member count', () => {
@@ -290,17 +272,17 @@ describe('CaseFileDetails.vue', () => {
     describe('beneficiary profile button', () => {
       let element;
       beforeEach(() => {
-        element = wrapper.findDataTest('beneficiary-profile-btn');
+        element = wrapper.findDataTest('household-profile-btn');
       });
       it('is renders', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('calls goToBeneficiaryProfile when clicked', async () => {
-        jest.spyOn(wrapper.vm, 'goToBeneficiaryProfile').mockImplementation(() => {});
+      it('calls goToHouseholdProfile when clicked', async () => {
+        jest.spyOn(wrapper.vm, 'goToHouseholdProfile').mockImplementation(() => {});
 
         await element.vm.$emit('click');
-        expect(wrapper.vm.goToBeneficiaryProfile).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.goToHouseholdProfile).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -320,8 +302,8 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.beneficiary.homeAddress.unitSuite = '100';
-              altCaseFile.beneficiary.homeAddress.streetAddress = '200 Left ave';
+              altCaseFile.household.address.address.unitSuite = '100';
+              altCaseFile.household.address.address.streetAddress = '200 Left ave';
               return altCaseFile;
             },
           },
@@ -338,8 +320,8 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.beneficiary.homeAddress.unitSuite = '';
-              altCaseFile.beneficiary.homeAddress.streetAddress = '200 Main ave';
+              altCaseFile.household.address.address.unitSuite = '';
+              altCaseFile.household.address.address.streetAddress = '200 Main ave';
               return altCaseFile;
             },
           },
@@ -358,9 +340,9 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.beneficiary.homeAddress.postalCode = 'H2H 2H2';
-              altCaseFile.beneficiary.homeAddress.city = 'Montreal';
-              altCaseFile.beneficiary.homeAddress.provinceCode.translation.en = 'QC';
+              altCaseFile.household.address.address.postalCode = 'H2H 2H2';
+              altCaseFile.household.address.address.city = 'Montreal';
+              altCaseFile.household.address.address.provinceCode.translation.en = 'QC';
               return altCaseFile;
             },
           },
@@ -397,7 +379,11 @@ describe('CaseFileDetails.vue', () => {
             },
           },
         });
-        expect(wrapper.vm.beneficiaryFullName).toEqual(`${wrapper.vm.caseFile.beneficiary.firstName} ${wrapper.vm.caseFile.beneficiary.lastName}`);
+        expect(wrapper.vm.beneficiaryFullName).toEqual(
+          `${wrapper.vm.caseFile.household.primaryBeneficiary.identitySet.firstName}`
+          + ` ${wrapper.vm.caseFile.household.primaryBeneficiary.identitySet.middleName}`
+          + ` ${wrapper.vm.caseFile.household.primaryBeneficiary.identitySet.lastName}`,
+        );
       });
     });
 
@@ -414,7 +400,7 @@ describe('CaseFileDetails.vue', () => {
             },
           },
         });
-        expect(wrapper.vm.contactInfo).toEqual(wrapper.vm.caseFile.beneficiary.contactInformation);
+        expect(wrapper.vm.contactInfo).toEqual(wrapper.vm.caseFile.household.primaryBeneficiary.contactInformation);
       });
     });
 
@@ -428,12 +414,12 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.beneficiary.contactInformation.homePhoneNumber = {
+              altCaseFile.household.primaryBeneficiary.contactInformation.homePhoneNumber = {
                 number: '514-555-5555',
                 extension: '',
               };
-              altCaseFile.beneficiary.contactInformation.mobilePhoneNumber = null;
-              altCaseFile.beneficiary.contactInformation.alternatePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.mobilePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.alternatePhoneNumber = null;
               return altCaseFile;
             },
           },
@@ -451,12 +437,12 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.beneficiary.contactInformation.mobilePhoneNumber = {
+              altCaseFile.household.primaryBeneficiary.contactInformation.mobilePhoneNumber = {
                 number: '514-555-5555',
                 extension: '',
               };
-              altCaseFile.beneficiary.contactInformation.homePhoneNumber = null;
-              altCaseFile.beneficiary.contactInformation.alternatePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.homePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.alternatePhoneNumber = null;
               return altCaseFile;
             },
           },
@@ -474,12 +460,12 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.beneficiary.contactInformation.alternatePhoneNumber = {
+              altCaseFile.household.primaryBeneficiary.contactInformation.alternatePhoneNumber = {
                 number: '514-555-5555',
                 extension: '',
               };
-              altCaseFile.beneficiary.contactInformation.homePhoneNumber = null;
-              altCaseFile.beneficiary.contactInformation.mobilePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.homePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.mobilePhoneNumber = null;
               return altCaseFile;
             },
           },
@@ -497,9 +483,9 @@ describe('CaseFileDetails.vue', () => {
           computed: {
             caseFile() {
               const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.beneficiary.contactInformation.alternatePhoneNumber = null;
-              altCaseFile.beneficiary.contactInformation.homePhoneNumber = null;
-              altCaseFile.beneficiary.contactInformation.mobilePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.alternatePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.homePhoneNumber = null;
+              altCaseFile.household.primaryBeneficiary.contactInformation.mobilePhoneNumber = null;
               return altCaseFile;
             },
           },
@@ -596,14 +582,14 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
-    describe('goToBeneficiaryProfile', () => {
-      it('should redirect to the beneficiary profile page', async () => {
-        wrapper.vm.goToBeneficiaryProfile();
+    describe('goToHouseholdProfile', () => {
+      it('should redirect to the household profile page', async () => {
+        wrapper.vm.goToHouseholdProfile();
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-          name: routes.caseFile.beneficiaryProfile.name,
+          name: routes.caseFile.householdProfile.name,
           params: {
-            beneficiaryId: wrapper.vm.caseFile.beneficiary.id,
+            householdId: wrapper.vm.caseFile.household.id,
           },
         });
       });

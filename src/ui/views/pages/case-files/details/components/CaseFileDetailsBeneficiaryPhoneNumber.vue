@@ -13,14 +13,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFileBeneficiaryPhoneNumber } from '@/entities/case-file';
+import { ICaseFileHouseholdPhoneNumber } from '@/entities/case-file';
 
 export default Vue.extend({
   name: 'CaseFileDetailsBeneficiaryPhoneNumber',
 
   props: {
     phoneNumber: {
-      type: Object as ()=> ICaseFileBeneficiaryPhoneNumber,
+      type: Object as ()=> ICaseFileHouseholdPhoneNumber,
       required: true,
     },
     label: {

@@ -16,8 +16,6 @@ const ApprovalsLayout = () => import(/* webpackChunkName: "approvals" */ '@/ui/v
 const ApprovalsTemplates = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/templates/ApprovalsTemplates.vue');
 const ApprovalsRequest = () => import(/* webpackChunkName: "approvals" */ '@/ui/views/pages/approvals/requests/ApprovalsRequest.vue');
 
-const BeneficiaryProfile = () => import(/* webpackChunkName: "beneficiaryProfile" */ '@/ui/views/pages/case-files/beneficiary-profile/BeneficiaryProfile.vue');
-
 const CaseFileLayout = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/layout/CaseFileLayout.vue');
 const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/home/CaseFileHome.vue');
 const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/CaseFileDetails.vue');
@@ -35,6 +33,8 @@ const ProgramDetails = () => import(/* webpackChunkName: "event" */ '@/ui/views/
 
 const MainLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/components/layout/MainLayout.vue');
 const HomeLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
+
+const HouseholdProfile = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/case-files/household/HouseholdProfile.vue');
 
 const FinancialAssistanceLayout = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/layout/FinancialAssistanceLayout.vue');
 const FinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/home/FinancialAssistanceHome.vue');
@@ -184,9 +184,9 @@ export const routes: Array<RouteConfig> = [
                 ],
               },
               {
-                path: Routes.caseFile.beneficiaryProfile.path,
-                name: Routes.caseFile.beneficiaryProfile.name,
-                component: BeneficiaryProfile,
+                path: Routes.caseFile.householdProfile.path,
+                name: Routes.caseFile.householdProfile.name,
+                component: HouseholdProfile,
                 meta: { level: 'level1' },
                 props: true,
               },

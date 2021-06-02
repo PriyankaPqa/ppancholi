@@ -249,6 +249,7 @@
     "caseFileDetail.beneficiaryPhoneNumber.homeInitial": "caseFileDetail.beneficiaryPhoneNumber.homeInitial",
     "caseFileDetail.beneficiaryPhoneNumber.mobileInitial": "caseFileDetail.beneficiaryPhoneNumber.mobileInitial",
     "caseFileDetail.fullHouseHold": "caseFileDetail.fullHouseHold",
+    "caseFileDetail.household_profile.button": "",
     "caseFileDetail.houseHoldMembers": "caseFileDetail.houseHoldMembers",
     "caseFileDetail.impactValidationDialog.address": "caseFileDetail.impactValidationDialog.address",
     "caseFileDetail.impactValidationDialog.loading": "caseFileDetail.impactValidationDialog.loading",

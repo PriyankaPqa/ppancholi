@@ -34,8 +34,8 @@
       <router-link
         class="rc-link14"
         data-test="beneficiaryName-link"
-        :to="getBeneficiaryRoute(caseFile)">
-        {{ caseFile.beneficiary.firstName + " "+ caseFile.beneficiary.lastName }}
+        :to="getHouseholdProfileRoute(caseFile)">
+        {{ getBeneficiaryName(caseFile) }}
       </router-link>
     </template>
 
@@ -109,10 +109,11 @@ export default Vue.extend({
   },
 
   computed: {
+
     customColumns(): Record<string, string> {
       return {
         caseFileNumber: 'CaseFileNumber',
-        name: 'Beneficiary/FirstName',
+        name: 'Household/PrimaryBeneficiary/IdentitySet/FirstName',
         event: `Event/Name/Translation/${this.$i18n.locale}`,
         triage: `TriageName/Translation/${this.$i18n.locale}`,
         status: `CaseFileStatusName/Translation/${this.$i18n.locale}`,
@@ -187,11 +188,17 @@ export default Vue.extend({
       return res;
     },
 
-    getBeneficiaryRoute(caseFile: ICaseFile) {
+    getBeneficiaryName(caseFile: ICaseFile): string {
+      if (!caseFile.household) return '';
+      const { firstName, middleName, lastName } = caseFile.household.primaryBeneficiary.identitySet;
+      return `${firstName} ${middleName ? `${middleName} ` : ''}${lastName}`;
+    },
+
+    getHouseholdProfileRoute(caseFile: ICaseFile) {
       return {
-        name: routes.caseFile.beneficiaryProfile.name,
+        name: routes.caseFile.householdProfile.name,
         params: {
-          id: caseFile.beneficiary.id,
+          id: caseFile.household.id,
         },
       };
     },

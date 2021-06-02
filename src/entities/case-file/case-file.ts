@@ -1,10 +1,11 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { IIdMultilingualName, IMultilingual } from '@/types';
 import utils from '../utils';
 import {
   ECaseFileStatus,
   ECaseFileTriage,
   ICaseFile,
-  ICaseFileBeneficiary,
+  ICaseFileHousehold,
   ICaseFileLabel,
   ICaseFileSearchData,
 } from './case-file.types';
@@ -12,7 +13,7 @@ import {
 export class CaseFile implements ICaseFile {
   id: uuid;
 
-  beneficiary: ICaseFileBeneficiary;
+  household: ICaseFileHousehold;
 
   caseFileNumber: string;
 
@@ -41,26 +42,6 @@ export class CaseFile implements ICaseFile {
   constructor(data: ICaseFileSearchData) {
     this.id = data.caseFileId;
 
-    this.beneficiary = data.beneficiary ? {
-      ...data.beneficiary,
-      contactInformation: {
-        ...data.beneficiary.contactInformation,
-        mobilePhoneNumber: data.beneficiary.contactInformation?.mobilePhoneNumber
-          ? { ...data.beneficiary.contactInformation.mobilePhoneNumber }
-          : null,
-        homePhoneNumber: data.beneficiary.contactInformation?.homePhoneNumber
-          ? { ...data.beneficiary.contactInformation?.homePhoneNumber }
-          : null,
-        alternatePhoneNumber: data.beneficiary.contactInformation?.alternatePhoneNumber
-          ? { ...data.beneficiary.contactInformation?.alternatePhoneNumber }
-          : null,
-      },
-      homeAddress: data.beneficiary.homeAddress ? {
-        ...data.beneficiary.homeAddress,
-        provinceCode: utils.initMultilingualAttributes(data.beneficiary.homeAddress?.provinceCode),
-      } : null,
-    } : null;
-
     this.caseFileNumber = data.caseFileNumber;
 
     this.caseFileStatus = data.caseFileStatus;
@@ -75,6 +56,8 @@ export class CaseFile implements ICaseFile {
     };
 
     this.isDuplicate = data.isDuplicate;
+
+    this.household = data.household ? _cloneDeep(data.household) : null;
 
     this.tags = data.tags?.map((tag) => ({
       id: tag.id,
@@ -93,8 +76,8 @@ export class CaseFile implements ICaseFile {
   }
 
   private validateAttributes(errors: Array<string>) {
-    if (!this.beneficiary.id) {
-      errors.push('The beneficiary id is required');
+    if (!this.household.id) {
+      errors.push('The household id is required');
     }
 
     if (!this.caseFileNumber) {

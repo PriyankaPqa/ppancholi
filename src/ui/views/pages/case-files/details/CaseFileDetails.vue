@@ -86,7 +86,7 @@
       </div>
 
       <div
-        v-if="caseFile.beneficiary.homeAddress"
+        v-if="caseFile.household && caseFile.household.address"
         class="d-flex flex-row align-start mb-2 rc-body14">
         <v-icon small class="mr-2 mt-1">
           mdi-map-marker
@@ -103,18 +103,18 @@
           mdi-account-multiple
         </v-icon>
         <span data-test="caseFileDetails-household-member-count">
-          {{ $t('caseFileDetail.fullHouseHold', {x: caseFile.beneficiary.householdMemberCount}) }}
+          {{ $t('caseFileDetail.fullHouseHold', {x: caseFile.household.houseHoldMemberCount}) }}
         </span>
       </div>
 
       <v-btn
-        v-if="caseFile.beneficiary"
+        v-if="caseFile.household"
         small
         color="primary"
         class="my-4"
-        data-test="beneficiary-profile-btn"
-        @click="goToBeneficiaryProfile()">
-        {{ $t('caseFileDetail.beneficiary_profile.button') }}
+        data-test="household-profile-btn"
+        @click="goToHouseholdProfile()">
+        {{ $t('caseFileDetail.household_profile.button') }}
       </v-btn>
     </template>
 
@@ -126,7 +126,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFile, ICaseFileBeneficiaryContactInfo } from '@/entities/case-file';
+import { ICaseFile, ICaseFileHouseholdMemberContactInfo } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@/types';
 import routes from '@/constants/routes';
@@ -159,20 +159,14 @@ export default Vue.extend({
 
   computed: {
     addressFirstLine(): string {
-      if (this.caseFile.beneficiary.homeAddress) {
-        const address = this.caseFile.beneficiary.homeAddress;
-        const unitSuite = address.unitSuite ? `${address.unitSuite}-` : '';
-        return unitSuite + address.streetAddress;
-      }
-      return '';
+      const { address } = this.caseFile.household.address;
+      const unitSuite = address.unitSuite ? `${address.unitSuite}-` : '';
+      return unitSuite + address.streetAddress;
     },
 
     addressSecondLine(): string {
-      if (this.caseFile.beneficiary.homeAddress) {
-        const address = this.caseFile.beneficiary.homeAddress;
-        return `${address.city}, ${this.$m(address.provinceCode)} ${address.postalCode}`;
-      }
-      return '';
+      const { address } = this.caseFile.household.address;
+      return `${address.city}, ${this.$m(address.provinceCode)} ${address.postalCode}`;
     },
 
     caseFile(): ICaseFile {
@@ -180,8 +174,9 @@ export default Vue.extend({
     },
 
     beneficiaryFullName(): string {
-      if (!this.caseFile) return '';
-      return `${this.caseFile.beneficiary.firstName} ${this.caseFile.beneficiary.lastName}`;
+      if (!this.caseFile || !this.caseFile.household) return '';
+      const { firstName, middleName, lastName } = this.caseFile.household.primaryBeneficiary.identitySet;
+      return `${firstName} ${middleName ? `${middleName} ` : ''}${lastName}`;
     },
 
     canVerifyIdentity(): boolean {
@@ -200,12 +195,13 @@ export default Vue.extend({
       return 'status_success';
     },
 
-    contactInfo() : ICaseFileBeneficiaryContactInfo {
-      return this.caseFile.beneficiary?.contactInformation;
+    contactInfo() : ICaseFileHouseholdMemberContactInfo {
+      return this.caseFile.household?.primaryBeneficiary.contactInformation;
     },
 
     hasPhoneNumbers(): boolean {
-      const { contactInformation } = this.caseFile.beneficiary;
+      if (!this.caseFile.household) return false;
+      const { contactInformation } = this.caseFile.household.primaryBeneficiary;
       return !!(contactInformation.mobilePhoneNumber || contactInformation.homePhoneNumber || contactInformation.alternatePhoneNumber);
     },
 
@@ -264,11 +260,11 @@ export default Vue.extend({
 
   methods: {
 
-    goToBeneficiaryProfile() {
+    goToHouseholdProfile() {
       this.$router.push({
-        name: routes.caseFile.beneficiaryProfile.name,
+        name: routes.caseFile.householdProfile.name,
         params: {
-          beneficiaryId: this.caseFile.beneficiary.id,
+          householdId: this.caseFile.household.id,
         },
       });
     },

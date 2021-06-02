@@ -249,6 +249,7 @@
     "caseFileDetail.beneficiaryPhoneNumber.homeInitial": "H",
     "caseFileDetail.beneficiaryPhoneNumber.mobileInitial": "M",
     "caseFileDetail.fullHouseHold": "Total household: {x}",
+    "caseFileDetail.household_profile.button": "Household profile",
     "caseFileDetail.houseHoldMembers": "{x} household member | {x} household member | {x} household members",
     "caseFileDetail.impactValidationDialog.address": "Address",
     "caseFileDetail.impactValidationDialog.loading": "Editing validation of impact",

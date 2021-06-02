@@ -50,9 +50,9 @@ const routes = {
       path: 'note',
       name: 'casefile.note',
     },
-    beneficiaryProfile: {
-      path: 'beneficiary/:id',
-      name: 'casefile.beneficiaryProfile',
+    householdProfile: {
+      path: 'household/:id',
+      name: 'casefile.householdProfile',
     },
   },
   events: {

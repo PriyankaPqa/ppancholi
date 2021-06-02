@@ -37,19 +37,19 @@ export enum ECaseFileActivityType {
  * Interfaces
  */
 
-export interface ICaseFileBeneficiaryPhoneNumber {
+export interface ICaseFileHouseholdPhoneNumber {
   number: string;
   extension: string;
 }
 
-export interface ICaseFileBeneficiaryContactInfo {
+export interface ICaseFileHouseholdMemberContactInfo {
   email: string;
-  mobilePhoneNumber: ICaseFileBeneficiaryPhoneNumber;
-  homePhoneNumber: ICaseFileBeneficiaryPhoneNumber;
-  alternatePhoneNumber: ICaseFileBeneficiaryPhoneNumber;
+  mobilePhoneNumber: ICaseFileHouseholdPhoneNumber;
+  homePhoneNumber: ICaseFileHouseholdPhoneNumber;
+  alternatePhoneNumber: ICaseFileHouseholdPhoneNumber;
 }
 
-export interface ICaseFileBeneficiaryAddress {
+export interface ICaseFileHouseholdAddress {
   country: string;
   streetAddress: string;
   unitSuite: string;
@@ -58,13 +58,34 @@ export interface ICaseFileBeneficiaryAddress {
   postalCode: string;
 }
 
-export interface ICaseFileBeneficiary {
-  id: uuid;
+export interface ICaseFileHouseholdAddressData {
+  address?: ICaseFileHouseholdAddress;
+  from?: string;
+  to?: string;
+}
+
+export interface ICaseFileHouseholdMemberIdentitySet {
   firstName: string;
+  middleName: string;
   lastName: string;
-  contactInformation: ICaseFileBeneficiaryContactInfo;
-  homeAddress: ICaseFileBeneficiaryAddress;
-  householdMemberCount: number;
+  preferredName: string;
+  dateOfBirth: string;
+}
+
+export interface ICaseFileHouseholdMember {
+  id: uuid;
+  identitySet: ICaseFileHouseholdMemberIdentitySet;
+  contactInformation: ICaseFileHouseholdMemberContactInfo;
+}
+
+export interface ICaseFileHousehold {
+  id: uuid;
+  address: ICaseFileHouseholdAddressData;
+  addressHistory: ICaseFileHouseholdAddressData[];
+  houseHoldMemberCount: number;
+  members: uuid[],
+  primaryBeneficiary: ICaseFileHouseholdMember;
+  registrationNumber: string;
 }
 
 export interface ICaseFileLabel {
@@ -93,14 +114,14 @@ export interface ICaseFileActivity {
 
 export interface ICaseFileData {
   id: uuid;
-  beneficiaryId: uuid;
   caseFileNumber: string;
   caseFileStatus: ECaseFileStatus;
   created: Date | string;
   isDuplicate: boolean;
   eventId: uuid;
-  tags: IListOption[];
+  householdId: uuid;
   labels: ICaseFileLabel[];
+  tags: IListOption[];
   triage: ECaseFileTriage;
   eTag: string;
   tenantId: uuid;
@@ -112,15 +133,15 @@ export interface ICaseFileData {
  */
 export interface ICaseFileSearchData {
   caseFileId: uuid;
-  beneficiary: ICaseFileBeneficiary;
   caseFileCreatedDate: Date | string;
   caseFileNumber: string;
   caseFileStatus: ECaseFileStatus;
   caseFileStatusName: IMultilingual;
-  isDuplicate: boolean;
   event: IIdMultilingualName;
-  tags: IIdMultilingualName[];
+  household: ICaseFileHousehold;
+  isDuplicate: boolean;
   labels: ICaseFileLabel[];
+  tags: IIdMultilingualName[];
   timestamp: Date | string;
   triage: ECaseFileTriage;
   triageName: IMultilingual;
@@ -129,15 +150,15 @@ export interface ICaseFileSearchData {
 
 export interface ICaseFile {
   id: uuid;
-  beneficiary: ICaseFileBeneficiary;
   caseFileNumber: string;
   caseFileStatus: ECaseFileStatus;
   caseFileStatusName: IMultilingual;
   created: Date | string;
   event: IIdMultilingualName;
+  household: ICaseFileHousehold;
   isDuplicate: boolean;
-  tags: IIdMultilingualName[];
   labels: ICaseFileLabel[];
+  tags: IIdMultilingualName[];
   timestamp: Date | string;
   triage: ECaseFileTriage;
   triageName: IMultilingual;

@@ -1,6 +1,6 @@
 <template>
   <div>
-    Case file beneficiary profile
+    Case file household profile spage
   </div>
 </template>
 
@@ -8,7 +8,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'BeneficiaryProfile',
+  name: 'HouseholdProfile',
 
   components: {
 

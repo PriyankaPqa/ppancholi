@@ -3,7 +3,7 @@ import {
   ECaseFileStatus,
   ECaseFileTriage,
   ICaseFile,
-  ICaseFileBeneficiary,
+  ICaseFileHousehold,
   ICaseFileData,
   ICaseFileSearchData,
 } from '@/entities/case-file';
@@ -25,9 +25,9 @@ const getCaseFileStatusName = (status: ECaseFileStatus) : IMultilingual => {
   return statusName;
 };
 
-const getBeneficiary = (originalCaseFile: ICaseFile, beneficiaryId: uuid): ICaseFileBeneficiary => {
-  if (originalCaseFile && originalCaseFile.beneficiary.id === beneficiaryId) {
-    return originalCaseFile.beneficiary;
+const getHousehold = (originalCaseFile: ICaseFile, householdId: uuid): ICaseFileHousehold => {
+  if (originalCaseFile && originalCaseFile.household.id === householdId) {
+    return originalCaseFile.household;
   }
   return null;
 };
@@ -74,7 +74,7 @@ export const mapCaseFileDataToSearchData = (
 
   return {
     caseFileId: caseFileData.id,
-    beneficiary: getBeneficiary(originalCaseFile, caseFileData.beneficiaryId),
+    household: getHousehold(originalCaseFile, caseFileData.householdId),
     caseFileCreatedDate: caseFileData.created,
     caseFileNumber: caseFileData.caseFileNumber,
     caseFileStatus: caseFileData.caseFileStatus,
