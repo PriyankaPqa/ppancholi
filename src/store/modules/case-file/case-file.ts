@@ -27,6 +27,7 @@ const getDefaultState = (): IState => ({
   closeReasons: [],
   triageLoading: false,
   isSavingCaseNote: false,
+  isLoadingCaseNotes: false,
 });
 
 const moduleState: IState = getDefaultState();
@@ -106,6 +107,10 @@ const mutations = {
 
   setIsSavingCaseNote(state: IState, payload: boolean) {
     state.isSavingCaseNote = payload;
+  },
+
+  setIsLoadingCaseNotes(state: IState, payload: boolean) {
+    state.isLoadingCaseNotes = payload;
   },
 };
 
@@ -254,7 +259,9 @@ const actions = {
   },
 
   async fetchActiveCaseNoteCategories(this: Store<IState>, context: ActionContext<IState, IState>): Promise<IOptionItem[]> {
+    context.commit('setIsLoadingCaseNotes', true);
     const results = await this.$services.caseFiles.fetchActiveCaseNoteCategories();
+    context.commit('setIsLoadingCaseNotes', false);
     const categories = results ?? [];
 
     context.commit('setCaseNoteCategories', categories);
@@ -284,7 +291,9 @@ const actions = {
     context: ActionContext<IState, IState>,
     params: IAzureSearchParams,
   ): Promise<IAzureSearchResult<ICaseNote>> {
+    context.commit('setIsLoadingCaseNotes', true);
     const res = await this.$services.caseFiles.searchCaseNotes(params);
+    context.commit('setIsLoadingCaseNotes', false);
     const data = res?.value;
 
     const value = data.map((cn: ICaseNoteSearchData) => new CaseNote(cn));

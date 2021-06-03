@@ -195,6 +195,16 @@ describe('>>> Case File Module', () => {
         expect(store.state.caseFile.isSavingCaseNote).toBeTruthy();
       });
     });
+
+    describe('setIsLoadingCaseNotes', () => {
+      test('the setIsLoadingCaseNotes mutation sets the isLoadingCaseNotes state', () => {
+        store = mockStore();
+
+        store.commit('caseFile/setIsLoadingCaseNotes', true);
+
+        expect(store.state.caseFile.isLoadingCaseNotes).toBeTruthy();
+      });
+    });
   });
 
   describe('>> Actions', () => {

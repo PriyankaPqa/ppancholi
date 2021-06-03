@@ -9,7 +9,7 @@
     content-padding="6"
     actions-padding="2"
     :help-link="$t('caseNote.help_link')"
-    @search="searchString = $event"
+    @search="search"
     @add-button="isBeingCreated = true">
     <rc-page-loading v-if="loading" />
     <template v-else>
@@ -52,13 +52,20 @@ export default Vue.extend({
   data() {
     return {
       caseNotes: [] as ICaseNote[],
-      loading: false,
       isBeingCreated: false,
       EFilterKey,
       totalCount: 0,
       options: {
         page: 1,
         itemsPerPage: 10,
+      },
+      searchTimeout: null,
+      params: {
+        filter: {
+          CaseFileId: this.$route.params.id,
+        },
+        search: '',
+        count: true,
       },
     };
   },
@@ -72,31 +79,31 @@ export default Vue.extend({
     pagination(): Record<string, number> {
       return { };
     },
+    loading(): boolean {
+      return this.$store.state.caseFile.isLoadingCaseNotes;
+    },
   },
 
   async created() {
-    try {
-      this.loading = true;
-
-      await this.$storage.caseFile.actions.fetchActiveCaseNoteCategories();
-
-      const res = await this.$storage.caseFile.actions.searchCaseNotes({
-        filter: {
-          CaseFileId: this.$route.params.id,
-        },
-        count: true,
-      });
-
-      this.caseNotes = res.value;
-      this.totalCount = res.odataCount;
-    } finally {
-      this.loading = false;
-    }
+    await this.$storage.caseFile.actions.fetchActiveCaseNoteCategories();
+    await this.searchCaseNotes();
   },
 
   methods: {
     onSaved() {
       // TODO
+    },
+
+    search(keyword: string) {
+      this.params.search = keyword || '';
+      clearTimeout(this.searchTimeout);
+      this.searchTimeout = setTimeout(() => this.searchCaseNotes(), 500);
+    },
+
+    async searchCaseNotes() {
+      const res = await this.$storage.caseFile.actions.searchCaseNotes(this.params);
+      this.caseNotes = res.value;
+      this.totalCount = res.odataCount;
     },
   },
 });

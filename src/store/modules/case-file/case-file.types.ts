@@ -12,4 +12,5 @@ export type IState = {
   tagsOptions: Array<IOptionItemData>;
   caseNoteCategories: Array<IOptionItemData>;
   isSavingCaseNote: boolean;
+  isLoadingCaseNotes: boolean;
 };
