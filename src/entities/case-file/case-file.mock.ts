@@ -8,6 +8,8 @@ import {
 export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
   {
     caseFileId: 'mock-id-1',
+    assignedIndividualIds: ['mock-assigned-individual-id-1', 'mock-assigned-individual-id-2'],
+    assignedTeamIds: ['mock-assigned-team-id-1'],
     household: {
       id: 'mock-household-id-1',
       members: [],
@@ -105,6 +107,8 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
   },
   {
     caseFileId: 'mock-id-2',
+    assignedIndividualIds: [],
+    assignedTeamIds: [],
     household: {
       id: 'mock-household-id-2',
       members: [],
@@ -207,6 +211,8 @@ export const mockSearchCaseFiles = (index = -1): IAzureSearchResult<ICaseFileSea
 export const mockCaseFilesData = (): ICaseFileData[] => [
   {
     id: 'mock-id-1',
+    assignedIndividualIds: [],
+    assignedTeamIds: [],
     householdId: 'mock-beneficiary-id-1',
     caseFileNumber: '1-000001',
     caseFileStatus: 1,

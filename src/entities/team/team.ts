@@ -5,6 +5,7 @@ import utils from '../utils';
 import {
   ETeamStatus, ETeamType, ITeam, ITeamEvent, ITeamSearchDataAggregate, ITeamMemberData,
 } from './team.types';
+import { EUserAccountStatus } from '../user-account';
 
 export class Team implements ITeam {
   id: string;
@@ -114,6 +115,11 @@ export class Team implements ITeam {
 
   setEvents(events: ITeamEvent | ITeamEvent[]) {
     this.events = Array.isArray(events) ? [...events] : [events];
+  }
+
+  getActiveMemberCount(): number {
+    if (!this.teamMembers) return 0;
+    return this.teamMembers.filter((member) => member.userAccountStatus === EUserAccountStatus.Active).length;
   }
 
   private reset() {

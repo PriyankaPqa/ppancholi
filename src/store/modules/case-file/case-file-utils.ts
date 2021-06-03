@@ -74,6 +74,8 @@ export const mapCaseFileDataToSearchData = (
 
   return {
     caseFileId: caseFileData.id,
+    assignedIndividualIds: caseFileData.assignedIndividualIds,
+    assignedTeamIds: caseFileData.assignedTeamIds,
     household: getHousehold(originalCaseFile, caseFileData.householdId),
     caseFileCreatedDate: caseFileData.created,
     caseFileNumber: caseFileData.caseFileNumber,

@@ -9,8 +9,8 @@ export const mockStorageUserAccount = () : IStorageMock => ({
   },
 
   actions: {
-    fetchUserAccount: jest.fn(),
     fetchAllUserAccounts: jest.fn(),
+    fetchUserAccount: jest.fn(),
     addRoleToUser: jest.fn(),
     deleteUserAccount: jest.fn(),
     searchUserAccounts: jest.fn(),

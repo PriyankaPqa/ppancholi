@@ -18,6 +18,7 @@ export interface IStorage {
     searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
     addTeamMembers(teamMembers: IUserAccountSearchData[]): Promise<ITeam>;
     removeTeamMember(teamMemberId: uuid): Promise<ITeam>;
+    searchAggregatedTeams(params: IAzureSearchParams): Promise<ITeam[]>;
   }
 }
 
@@ -34,8 +35,9 @@ export interface IStorageMock {
     getTeam: jest.Mock<void>;
     createTeam: jest.Mock<void>;
     editTeam: jest.Mock<void>;
-    searchTeams: jest.Mock<void>;
+    searchTeams: jest.Mock<IAzureSearchResult<ITeamSearchData>>;
     addTeamMembers: jest.Mock<void>;
     removeTeamMember: jest.Mock<void>;
+    searchAggregatedTeams: jest.Mock<ITeam[]>;
   }
 }

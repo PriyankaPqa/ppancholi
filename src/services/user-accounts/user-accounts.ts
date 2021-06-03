@@ -39,7 +39,13 @@ export class UserAccountsService implements IUserAccountsService {
         ...user,
         filters: user.filters.map((f: any) => ({
           ...f,
-          criteria: f.criteria.map((c: any) => JSON.parse(c)),
+          criteria: f.criteria.map((c: any) => {
+            try {
+              return JSON.parse(c);
+            } catch {
+              return c;
+            }
+          }),
         })),
       };
     }

@@ -99,6 +99,23 @@ describe('>>> Team Module', () => {
       });
     });
 
+    describe('searchAggregatedTeams', () => {
+      it('calls the searchTeams service', async () => {
+        expect(store.$services.teams.searchTeams).toHaveBeenCalledTimes(0);
+
+        await store.dispatch('team/searchAggregatedTeams');
+
+        expect(store.$services.teams.searchTeams).toHaveBeenCalledTimes(1);
+      });
+
+      it('returns a list of aggregated teams', async () => {
+        const params = { filter: { TeamId: 'mockId' } };
+        const res = await store.dispatch('team/searchAggregatedTeams', params);
+
+        expect(res).toEqual([new Team(mockTeamSearchDataAggregate()[0]), new Team(mockTeamSearchDataAggregate()[0])]);
+      });
+    });
+
     describe('addTeamMembers', () => {
       it('calls the addTeamMembers service', async () => {
         // We need to re-instantiate the team as a class since method are removed in test

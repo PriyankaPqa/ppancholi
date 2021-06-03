@@ -47,5 +47,11 @@ describe('>>> Team Storage', () => {
       storage.actions.removeTeamMember(payload.teamMemberId);
       expect(store.dispatch).toBeCalledWith('team/removeTeamMember', payload);
     });
+
+    it('should proxy searchAggregatedTeams', () => {
+      const params = { filter: { TeamId: '5678' } };
+      storage.actions.searchAggregatedTeams(params);
+      expect(store.dispatch).toBeCalledWith('team/searchAggregatedTeams', params);
+    });
   });
 });

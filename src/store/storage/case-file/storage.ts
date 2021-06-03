@@ -95,5 +95,9 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFile> {
       return store.dispatch('caseFile/setCaseFileTriage', { id, triage });
     },
+
+    setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFile> {
+      return store.dispatch('caseFile/setCaseFileAssign', { id, individuals, teams });
+    },
   },
 });

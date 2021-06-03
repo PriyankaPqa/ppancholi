@@ -114,6 +114,8 @@ export interface ICaseFileActivity {
 
 export interface ICaseFileData {
   id: uuid;
+  assignedIndividualIds: uuid[];
+  assignedTeamIds: uuid[];
   caseFileNumber: string;
   caseFileStatus: ECaseFileStatus;
   created: Date | string;
@@ -133,6 +135,8 @@ export interface ICaseFileData {
  */
 export interface ICaseFileSearchData {
   caseFileId: uuid;
+  assignedIndividualIds: uuid[];
+  assignedTeamIds: uuid[];
   caseFileCreatedDate: Date | string;
   caseFileNumber: string;
   caseFileStatus: ECaseFileStatus;
@@ -150,6 +154,8 @@ export interface ICaseFileSearchData {
 
 export interface ICaseFile {
   id: uuid;
+  assignedIndividualIds: uuid[];
+  assignedTeamIds: uuid[];
   caseFileNumber: string;
   caseFileStatus: ECaseFileStatus;
   caseFileStatusName: IMultilingual;
@@ -163,6 +169,7 @@ export interface ICaseFile {
   triage: ECaseFileTriage;
   triageName: IMultilingual;
   tenantId: uuid;
+
   validate(): Array<string> | boolean;
 }
 

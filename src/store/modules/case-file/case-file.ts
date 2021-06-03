@@ -315,6 +315,22 @@ const actions = {
 
     return null;
   },
+
+  async setCaseFileAssign(
+    this: Store<IState>,
+    context: ActionContext<IState, IRootState>,
+    payload: { id: uuid, individuals: uuid[]; teams: uuid[] },
+  ): Promise<ICaseFile> {
+    const data = await this.$services.caseFiles.setCaseFileAssign(payload.id, payload.individuals, payload.teams);
+
+    if (data) {
+      const caseFile = new CaseFile(mapCaseFileDataToSearchData(data, context, payload.id));
+
+      context.commit('addOrUpdateCaseFile', caseFile);
+      return caseFile;
+    }
+    return null;
+  },
 };
 
 export const caseFile: Module<IState, IRootState> = {

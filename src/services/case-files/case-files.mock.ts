@@ -16,4 +16,5 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   editCaseNote: jest.fn(() => mockCaseNoteData()[0]),
   searchCaseNotes: jest.fn(() => mockSearchCaseNotes()),
   setCaseFileTriage: jest.fn(() => mockCaseFilesData()[0]),
+  setCaseFileAssign: jest.fn(() => mockCaseFilesData()[0]),
 });

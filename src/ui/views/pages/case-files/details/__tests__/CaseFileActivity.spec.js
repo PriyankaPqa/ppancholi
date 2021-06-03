@@ -93,17 +93,7 @@ describe('CaseFileActivity.vue', () => {
     describe('case file assignments info', () => {
       let element;
       beforeEach(() => {
-        element = wrapper.findDataTest('case-file-assigned-info');
-      });
-      it('is renders', () => {
-        expect(element.exists()).toBeTruthy();
-      });
-    });
-
-    describe('case file assign button', () => {
-      let element;
-      beforeEach(() => {
-        element = wrapper.findDataTest('case-file-assign-btn');
+        element = wrapper.findDataTest('case-file-assignments');
       });
       it('is renders', () => {
         expect(element.exists()).toBeTruthy();

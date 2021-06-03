@@ -89,4 +89,8 @@ export class CaseFilesService implements ICaseFilesService {
   async setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFileData> {
     return this.http.patch(`/case-file/case-files/${id}/triage`, { triage });
   }
+
+  async setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFileData> {
+    return this.http.patch(`/case-file/case-files/${id}/assign`, { individuals, teams });
+  }
 }

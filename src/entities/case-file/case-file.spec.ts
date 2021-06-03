@@ -7,80 +7,62 @@ describe('>>> Case File', () => {
   describe('>> constructor', () => {
     it('should instantiate id', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.id).toBe('mock-id-1');
+      expect(caseFile.id).toBe(mockCaseFileData.caseFileId);
+    });
+
+    it('should instantiate assignedIndividualIds', () => {
+      const caseFile = new CaseFile(mockCaseFileData);
+      expect(caseFile.assignedIndividualIds).toEqual(mockCaseFileData.assignedIndividualIds);
+    });
+
+    it('should instantiate assignedTeamIds', () => {
+      const caseFile = new CaseFile(mockCaseFileData);
+      expect(caseFile.assignedTeamIds).toEqual(mockCaseFileData.assignedTeamIds);
     });
 
     it('should instantiate beneficiary', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-
       expect(caseFile.household).toEqual(mockCaseFileData.household);
     });
 
     it('should instantiate caseFileNumber', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.caseFileNumber).toEqual('1-000001');
+      expect(caseFile.caseFileNumber).toEqual(mockCaseFileData.caseFileNumber);
     });
 
     it('should instantiate caseFileStatusName', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.caseFileStatusName).toEqual({
-        translation: {
-          en: 'Archived',
-          fr: 'Archive',
-        },
-      });
+      expect(caseFile.caseFileStatusName).toEqual(mockCaseFileData.caseFileStatusName);
     });
 
     it('should instantiate caseFileStatus', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.caseFileStatus).toEqual(4);
+      expect(caseFile.caseFileStatus).toEqual(mockCaseFileData.caseFileStatus);
     });
 
     it('should instantiate created', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.created).toEqual(new Date('2021-01-20T15:12:03.4219037Z'));
+      expect(caseFile.created).toEqual(new Date(mockCaseFileData.caseFileCreatedDate));
     });
 
     it('should instantiate isDuplicate', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.isDuplicate).toEqual(false);
+      expect(caseFile.isDuplicate).toEqual(mockCaseFileData.isDuplicate);
     });
 
     it('should instantiate event', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.event).toEqual({
-        id: 'e70da37e-67cd-4afb-9c36-530c7d8b191f',
-        name: {
-          translation: {
-            en: 'Event 1 EN',
-            fr: 'Event 1 FR',
-          },
-        },
-      });
+      expect(caseFile.event).toEqual(mockCaseFileData.event);
     });
 
     it('should instantiate tags', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.tags).toEqual([{
-        id: 'mock-tag-id-1',
-        name: {
-          translation: {
-            en: 'Do not communicate',
-            fr: 'Ne pas contacter',
-          },
-        },
-      }]);
+      expect(caseFile.tags).toEqual(mockCaseFileData.tags);
     });
 
     it('should instantiate labels', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.labels).toEqual([{
-        name: 'Label One',
-        order: 1,
-      }, {
-        name: 'Label Two',
-        order: 2,
-      }]);
+      expect(caseFile.labels).toEqual(mockCaseFileData.labels);
     });
 
     it('should instantiate timestamp', () => {
@@ -90,22 +72,17 @@ describe('>>> Case File', () => {
 
     it('should instantiate triage', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.triage).toEqual(1);
+      expect(caseFile.triage).toEqual(mockCaseFileData.triage);
     });
 
     it('should instantiate triageName', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.triageName).toEqual({
-        translation: {
-          en: 'Level 1',
-          fr: 'Sans objet',
-        },
-      });
+      expect(caseFile.triageName).toEqual(mockCaseFileData.triageName);
     });
 
     it('should instantiate tenantId', () => {
       const caseFile = new CaseFile(mockCaseFileData);
-      expect(caseFile.tenantId).toEqual('mock-tenant-id-1');
+      expect(caseFile.tenantId).toEqual(mockCaseFileData.tenantId);
     });
   });
 

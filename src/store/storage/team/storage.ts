@@ -41,5 +41,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     removeTeamMember(teamMemberId: uuid): Promise<ITeam> {
       return store.dispatch('team/removeTeamMember', { teamMemberId });
     },
+
+    searchAggregatedTeams(params: IAzureSearchParams): Promise<ITeam[]> {
+      return store.dispatch('team/searchAggregatedTeams', params);
+    },
+
   },
 });

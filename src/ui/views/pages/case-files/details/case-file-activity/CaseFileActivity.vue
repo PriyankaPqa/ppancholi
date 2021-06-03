@@ -49,21 +49,7 @@
           </v-btn>
         </v-col>
 
-        <v-col cols="12" md="6" class="flex-row justify-end">
-          <div class="d-flex align-center rc-body12 mr-4" data-test="case-file-assigned-info">
-            <!-- <v-icon class="mr-1" color="status_warning">
-              mdi-alert
-            </v-icon> -->
-            {{ $t("caseFileDetail.notAssigned") }}
-          </div>
-
-          <v-btn color="primary" small data-test="case-file-assign-btn">
-            <v-icon left>
-              mdi-plus
-            </v-icon>
-            {{ $t("caseFileDetail.assignTo") }}
-          </v-btn>
-        </v-col>
+        <case-file-assignments :case-file="caseFile" data-test="case-file-assignments" />
       </v-row>
     </template>
     <template v-if="!loading" slot="default">
@@ -107,6 +93,8 @@ import CaseFileLabels from './components/CaseFileLabels.vue';
 import CaseFileStatus from './components/CaseFileStatus.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
 import CaseFileActivityListItem from './components/CaseFileActivityListItem.vue';
+import AssignCaseFile from './components/AssignCaseFile.vue';
+import CaseFileAssignments from './components/CaseFileAssignments.vue';
 
 export default Vue.extend({
   name: 'CaseFileActivity',
@@ -118,6 +106,8 @@ export default Vue.extend({
     CaseFileStatus,
     CaseFileLabels,
     CaseFileActivityListItem,
+    AssignCaseFile,
+    CaseFileAssignments,
   },
 
   data() {

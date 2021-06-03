@@ -114,6 +114,16 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileTriage', { id, triage });
     });
 
+    it('should proxy setCaseFileAssign', () => {
+      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+      const { id } = caseFile;
+      const individuals = ['mock-individual-id'];
+      const teams = ['mock-teams-id'];
+
+      storage.actions.setCaseFileAssign(id, individuals, teams);
+      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileAssign', { id, individuals, teams });
+    });
+
     it('should proxy addCaseNote', () => {
       const caseNote = mockCaseNote();
       const id = 'id';

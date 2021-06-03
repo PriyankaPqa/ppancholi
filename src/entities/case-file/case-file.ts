@@ -13,7 +13,9 @@ import {
 export class CaseFile implements ICaseFile {
   id: uuid;
 
-  household: ICaseFileHousehold;
+  assignedTeamIds: uuid[];
+
+  assignedIndividualIds: uuid[];
 
   caseFileNumber: string;
 
@@ -24,6 +26,8 @@ export class CaseFile implements ICaseFile {
   created: Date | string;
 
   event: IIdMultilingualName;
+
+  household: ICaseFileHousehold;
 
   isDuplicate: boolean;
 
@@ -41,6 +45,10 @@ export class CaseFile implements ICaseFile {
 
   constructor(data: ICaseFileSearchData) {
     this.id = data.caseFileId;
+
+    this.assignedIndividualIds = [...data.assignedIndividualIds];
+
+    this.assignedTeamIds = [...data.assignedTeamIds];
 
     this.caseFileNumber = data.caseFileNumber;
 

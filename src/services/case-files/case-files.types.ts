@@ -17,6 +17,7 @@ export interface ICaseFilesService {
   editCaseNote(id: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNoteData>;
   searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNoteSearchData>>;
   setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFileData>;
+  setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFileData>;
 }
 
 export interface ICaseFilesServiceMock {
@@ -31,4 +32,5 @@ export interface ICaseFilesServiceMock {
   editCaseNote: jest.Mock<ICaseNoteData>;
   searchCaseNotes: jest.Mock<IAzureSearchResult<ICaseNoteSearchData>>;
   setCaseFileTriage: jest.Mock<ICaseFileData>;
+  setCaseFileAssign: jest.Mock<ICaseFileData>;
 }

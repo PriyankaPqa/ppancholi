@@ -369,34 +369,37 @@ describe('>>> Case File Module', () => {
       expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
     });
   });
-  it('calls the setCaseFileTriage service and returns the case file entity', async () => {
-    store = mockStore({
-      modules: {
-        caseFile: {
-          state: {
-            caseFiles: mockCaseFiles(),
+
+  describe('setCaseFileTriage', () => {
+    it('calls the setCaseFileTriage service and returns the case file entity', async () => {
+      store = mockStore({
+        modules: {
+          caseFile: {
+            state: {
+              caseFiles: mockCaseFiles(),
+            },
           },
         },
-      },
+      });
+
+      const caseFile = mockCaseFiles()[0];
+      const { id } = caseFile;
+      const triage = ECaseFileTriage.Tier1;
+
+      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(0);
+
+      const res = await store.dispatch('caseFile/setCaseFileTriage', {
+        id,
+        triage,
+      });
+
+      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledWith(id, triage);
+
+      expect(res).toEqual(caseFile);
+
+      expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
     });
-
-    const caseFile = mockCaseFiles()[0];
-    const { id } = caseFile;
-    const triage = ECaseFileTriage.Tier1;
-
-    expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(0);
-
-    const res = await store.dispatch('caseFile/setCaseFileTriage', {
-      id,
-      triage,
-    });
-
-    expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledTimes(1);
-    expect(store.$services.caseFiles.setCaseFileTriage).toHaveBeenCalledWith(id, triage);
-
-    expect(res).toEqual(caseFile);
-
-    expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
   });
 
   describe('fetchActiveCaseNoteCategories', () => {
@@ -498,6 +501,40 @@ describe('>>> Case File Module', () => {
 
       expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledTimes(1);
       expect(store.$services.caseFiles.setCaseFileIsDuplicate).toHaveBeenCalledWith(id, isDuplicate);
+
+      expect(res).toEqual(caseFile);
+
+      expect(store.state.caseFile.caseFiles[0]).toEqual(caseFile);
+    });
+  });
+
+  describe('setCaseFileAssign', () => {
+    it('calls the setCaseFileAssign service and returns the case file entity', async () => {
+      store = mockStore({
+        modules: {
+          caseFile: {
+            state: {
+              caseFiles: mockCaseFiles(),
+            },
+          },
+        },
+      });
+
+      const caseFile = mockCaseFiles()[0];
+      const { id } = caseFile;
+      const individuals = ['mock-individual-id'];
+      const teams = ['mock-teams-id'];
+
+      expect(store.$services.caseFiles.setCaseFileAssign).toHaveBeenCalledTimes(0);
+
+      const res = await store.dispatch('caseFile/setCaseFileAssign', {
+        id,
+        individuals,
+        teams,
+      });
+
+      expect(store.$services.caseFiles.setCaseFileAssign).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.setCaseFileAssign).toHaveBeenCalledWith(id, individuals, teams);
 
       expect(res).toEqual(caseFile);
 

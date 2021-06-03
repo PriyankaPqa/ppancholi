@@ -170,6 +170,17 @@ describe('>>> Team', () => {
       });
     });
 
+    describe('getActiveMemberCount', () => {
+      it('should return the number of active members', () => {
+        const team = new Team(mockTeamSearchDataAggregate()[0]);
+        team.teamMembers = [
+          { ...team.teamMembers[0], userAccountStatus: EUserAccountStatus.Active },
+          { ...team.teamMembers[1], userAccountStatus: EUserAccountStatus.Inactive },
+        ];
+        expect(team.getActiveMemberCount()).toEqual(1);
+      });
+    });
+
     describe('setEvents', () => {
       it('should set events if an array', () => {
         const team = new Team();

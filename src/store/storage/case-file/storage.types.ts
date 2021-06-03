@@ -30,6 +30,7 @@ export interface IStorage {
     editCaseNote(caseFileId: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNote>;
     searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNote>>;
     setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFile>;
+    setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFile>;
   };
 }
 
@@ -58,5 +59,6 @@ export interface IStorageMock {
     editCaseNote: jest.Mock<void>;
     searchCaseNotes: jest.Mock<void>;
     setCaseFileTriage: jest.Mock<ICaseFile>;
+    setCaseFileAssign: jest.Mock<ICaseFile>;
   };
 }

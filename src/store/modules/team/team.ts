@@ -135,6 +135,33 @@ const actions = {
     }
   },
 
+  /**
+   * Allows to search for teams with any search filter and returns the full information of the team and its members
+   * Use case: Find all teams that are assigned to an event, with the filter:  { Events: { any: { Id: eventId } } }
+   *
+   * @param params  Search params
+   * @returns An array of teams with aggregated data for the team members
+   */
+  async searchAggregatedTeams(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    params: IAzureSearchParams,
+  ): Promise<ITeam[]> {
+    const res = await this.$services.teams.searchTeams(params);
+
+    if (res && res.value && res.value.length) {
+      const teams = res.value;
+      const aggregatedTeams = await Promise.all(
+        teams.map(async (t) => {
+          const team = await aggregateTeamSearchDataWithMembers(this.$services as IProvider, t);
+          return new Team(team);
+        }),
+      );
+      return aggregatedTeams;
+    }
+    return [];
+  },
+
   async addTeamMembers(
     this: Store<IState>,
     context: ActionContext<IState, IState>,

@@ -171,4 +171,15 @@ describe('>>> Case File Service', () => {
       expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/triage`, { triage });
     });
   });
+
+  describe('setCaseFileAssign', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = mockCaseFilesSearchData()[0].caseFileId;
+      const individuals = ['mock-individual-id'];
+      const teams = ['mock-teams-id'];
+
+      await service.setCaseFileAssign(id, individuals, teams);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/assign`, { individuals, teams });
+    });
+  });
 });

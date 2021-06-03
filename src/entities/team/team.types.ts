@@ -104,6 +104,7 @@ export interface ITeam {
   addTeamMembers(members: ITeamMemberData | ITeamMemberData[]): void;
   setPrimaryContact(member: ITeamMemberData): void;
   getPrimaryContact(): ITeamMemberData;
+  getActiveMemberCount(): number;
   validate(): Array<string> | boolean;
   setEvents(events: ITeamEvent | ITeamEvent[]): void;
 }
