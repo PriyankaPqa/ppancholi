@@ -4,7 +4,7 @@
       <div class="rc-body16 fw-bold" data-test="caseFileActivity-listItem-content-title">
         {{ content.title }}
       </div>
-      <div data-test="caseFileActivity-listItem-content-body">
+      <div v-if="content.body" data-test="caseFileActivity-listItem-content-body">
         <span class="rc-body14 content-body">{{ content.body }}</span>
       </div>
     </div>
@@ -51,12 +51,21 @@ export default Vue.extend({
 
         case ECaseFileActivityType.CaseFileStatusDeactivated:
           return this.makeContentForCaseFileStatusDeactivated();
+
         case ECaseFileActivityType.CaseFileStatusClosed:
           return this.makeContentForCaseFileStatusClosed();
+
         case ECaseFileActivityType.CaseFileStatusArchived:
           return this.makeContentForCaseFileStatusArchived();
+
         case ECaseFileActivityType.CaseFileStatusReopened:
           return this.makeContentForCaseFileStatusReopened();
+
+        case ECaseFileActivityType.AssignedToCaseFile:
+          return this.makeContentForAssignedToCaseFile();
+
+        case ECaseFileActivityType.UnassignedFromCaseFile:
+          return this.makeContentForUnassignedFromCaseFile();
 
         default:
           return null;
@@ -70,6 +79,8 @@ export default Vue.extend({
         case ECaseFileActivityType.TriageUpdated:
         case ECaseFileActivityType.CaseFileStatusDeactivated:
         case ECaseFileActivityType.CaseFileStatusArchived:
+        case ECaseFileActivityType.AssignedToCaseFile:
+        case ECaseFileActivityType.UnassignedFromCaseFile:
           return '$rctech-actions';
 
         case ECaseFileActivityType.AddedDuplicateFlag:
@@ -154,6 +165,34 @@ export default Vue.extend({
         body: null,
       };
     },
+
+    makeContentForAssignedToCaseFile():{title: TranslateResult, body: TranslateResult} {
+      let title = null;
+      let body = null;
+      const individuals = (this.item.details.individuals as {name: string}[]).map((i) => i.name);
+      const teams = (this.item.details.teams as {name: string}[]).map((i) => i.name);
+      if ((individuals).length + (teams).length === 1) {
+        const name = individuals[0] || teams[0];
+        title = this.$t('caseFileActivity.activityList.title.AssignedToCaseFile', { x: name });
+      } else {
+        title = this.$t('caseFileActivity.activityList.title.assigned_new_users_teams');
+        body = `${this.$t('caseFileActivity.activityList.assign.new_user')}: ${individuals.length ? individuals.join(', ') : '-'}`
+      + `\n${this.$t('caseFileActivity.activityList.assign.new_team')}: ${teams.length ? teams.join(', ') : '-'}`;
+      }
+
+      return { title, body };
+    },
+
+    makeContentForUnassignedFromCaseFile():{title: TranslateResult, body: TranslateResult} {
+      const names = ([...this.item.details.individuals as {name: string}[], ...this.item.details.teams as {name: string}[]])
+        .map((i) => i.name)
+        .join(', ');
+
+      const title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
+
+      return { title, body: null };
+    },
+
   },
 });
 </script>

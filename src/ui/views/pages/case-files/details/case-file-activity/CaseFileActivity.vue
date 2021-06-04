@@ -49,7 +49,10 @@
           </v-btn>
         </v-col>
 
-        <case-file-assignments :case-file="caseFile" data-test="case-file-assignments" />
+        <case-file-assignments
+          :case-file="caseFile"
+          data-test="case-file-assignments"
+          @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
       </v-row>
     </template>
     <template v-if="!loading" slot="default">

@@ -24,7 +24,8 @@
       data-test="assignments-dialog"
       :case-file="caseFile"
       :show.sync="showAssignmentsDialog"
-      @updateAssignmentsInfo="setAssignmentsInfoFromData" />
+      @updateAssignmentsInfo="setAssignmentsInfoFromData"
+      @updateActivities="$emit('updateActivities')" />
   </v-col>
 </template>
 

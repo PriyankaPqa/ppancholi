@@ -215,6 +215,20 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
+      it('returns the correct icon when action type is AssignedToCaseFile', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.AssignedToCaseFile)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when action type is UnassignedFromCaseFile', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.UnassignedFromCaseFile)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
       it('returns the correct icon in default case', async () => {
         await wrapper.setProps({
           item: {
@@ -344,6 +358,80 @@ describe('CaseFileActivityListItem.vue', () => {
           expect(wrapper.vm.makeContentForCaseFileStatusReopened()).toEqual({
             title: 'caseFileActivity.activityList.title.CaseFileStatusReopened',
             body: 'caseFileActivity.activityList.status.rationale: test',
+          });
+        });
+      });
+
+      describe('makeContentForAssignedToCaseFile', () => {
+        it('returns the correct data when action type is makeContentForAssignedToCaseFile and there is only one name to display', async () => {
+          const activity = {
+            ...mockCaseFileActivities(ECaseFileActivityType.AssignedToCaseFile)[0],
+            details: {
+              teams: [],
+              individuals: [{ id: '1', name: 'Jack White' }],
+            },
+
+          };
+          await wrapper.setProps({
+            item: activity,
+          });
+
+          expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
+            title: 'caseFileActivity.activityList.title.AssignedToCaseFile',
+            body: null,
+          });
+        });
+
+        it('returns the correct data when action type is makeContentForAssignedToCaseFile and there are several individuals and no team',
+          async () => {
+            const activity = {
+              ...mockCaseFileActivities(ECaseFileActivityType.AssignedToCaseFile)[0],
+              details: {
+                teams: [],
+                individuals: [{ id: '1', name: 'Jack White' }, { id: '2', name: 'Joe Black' }],
+              },
+
+            };
+            await wrapper.setProps({
+              item: activity,
+            });
+
+            expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
+              title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
+              body: 'caseFileActivity.activityList.assign.new_user: Jack White, Joe Black\ncaseFileActivity.activityList.assign.new_team: -',
+            });
+          });
+
+        it('returns the correct data when action type is makeContentForAssignedToCaseFile and there are several teams and no individuals',
+          async () => {
+            const activity = {
+              ...mockCaseFileActivities(ECaseFileActivityType.AssignedToCaseFile)[0],
+              details: {
+                teams: [{ id: '1', name: 'Team 1' }, { id: '1', name: 'Team 2' }],
+                individuals: [],
+              },
+
+            };
+            await wrapper.setProps({
+              item: activity,
+            });
+
+            expect(wrapper.vm.makeContentForAssignedToCaseFile()).toEqual({
+              title: 'caseFileActivity.activityList.title.assigned_new_users_teams',
+              body: 'caseFileActivity.activityList.assign.new_user: -\ncaseFileActivity.activityList.assign.new_team: Team 1, Team 2',
+            });
+          });
+      });
+
+      describe('makeContentForUnassignedFromCaseFile', () => {
+        it('returns the correct data when action type is CaseFileStatusReopened', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.UnassignedFromCaseFile)[0],
+          });
+
+          expect(wrapper.vm.makeContentForUnassignedFromCaseFile()).toEqual({
+            title: 'caseFileActivity.activityList.title.UnassignedFromCaseFile',
+            body: null,
           });
         });
       });

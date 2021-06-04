@@ -31,6 +31,8 @@ export enum ECaseFileActivityType {
   CaseFileStatusArchived = 7,
   CaseFileStatusReopened = 8,
   TriageUpdated = 9,
+  AssignedToCaseFile = 10,
+  UnassignedFromCaseFile = 11
 }
 
 /**

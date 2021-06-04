@@ -347,6 +347,30 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       activityType: ECaseFileActivityType.TriageUpdated,
       details: { triageName: { translation: { en: 'Tier 1', fr: 'Categorie 1' } } },
     },
+    {
+      id: 'mock-activity-id-10',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.AssignedToCaseFile,
+      details: {
+        teams: [{ id: 'team-id-1', name: 'Team 1' }, { id: 'team-id-2', name: 'Team 2' }],
+        individuals: [{ id: 'individual-id-1', name: 'John Stevenson' }, { id: 'individual-id-2', name: 'Steven Johnson' }],
+      },
+    },
+    {
+      id: 'mock-activity-id-11',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.UnassignedFromCaseFile,
+      details: {
+        teams: [{ id: 'team-id-1', name: 'Team 1' }, { id: 'team-id-2', name: 'Team 2' }],
+        individuals: [{ id: 'individual-id-1', name: 'John Stevenson' }, { id: 'individual-id-2', name: 'Steven Johnson' }],
+      },
+    },
   ];
 
   if (type) {

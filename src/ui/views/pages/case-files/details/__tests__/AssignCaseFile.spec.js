@@ -400,6 +400,11 @@ describe('AssignCaseFile.vue', () => {
         await wrapper.vm.submit();
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
       });
+
+      it('emits updateActivities', async () => {
+        await wrapper.vm.submit();
+        expect(wrapper.emitted('updateActivities')).toBeTruthy();
+      });
     });
   });
 });

@@ -324,6 +324,7 @@ export default Vue.extend({
           return member;
         });
         this.$emit('updateAssignmentsInfo', { teams: this.assignedTeams, individuals });
+        this.$emit('updateActivities');
       } finally {
         this.loading = false;
         this.$emit('update:show', false);
