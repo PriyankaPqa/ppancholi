@@ -65,6 +65,11 @@ describe('>>> Case File', () => {
       expect(caseFile.labels).toEqual(mockCaseFileData.labels);
     });
 
+    it('should instantiate last action date', () => {
+      const caseFile = new CaseFile(mockCaseFileData);
+      expect(caseFile.lastActionDate).toEqual(new Date(mockCaseFileData.lastActionDate));
+    });
+
     it('should instantiate timestamp', () => {
       const caseFile = new CaseFile(mockCaseFileData);
       expect(caseFile.timestamp).toEqual(new Date(mockCaseFileData.timestamp));

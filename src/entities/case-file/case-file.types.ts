@@ -83,7 +83,7 @@ export interface ICaseFileHousehold {
   address: ICaseFileHouseholdAddressData;
   addressHistory: ICaseFileHouseholdAddressData[];
   houseHoldMemberCount: number;
-  members: uuid[],
+  members: uuid[];
   primaryBeneficiary: ICaseFileHouseholdMember;
   registrationNumber: string;
 }
@@ -143,6 +143,7 @@ export interface ICaseFileSearchData {
   caseFileStatusName: IMultilingual;
   event: IIdMultilingualName;
   household: ICaseFileHousehold;
+  lastActionDate: Date | string;
   isDuplicate: boolean;
   labels: ICaseFileLabel[];
   tags: IIdMultilingualName[];
@@ -162,6 +163,7 @@ export interface ICaseFile {
   created: Date | string;
   event: IIdMultilingualName;
   household: ICaseFileHousehold;
+  lastActionDate: Date | string;
   isDuplicate: boolean;
   labels: ICaseFileLabel[];
   tags: IIdMultilingualName[];

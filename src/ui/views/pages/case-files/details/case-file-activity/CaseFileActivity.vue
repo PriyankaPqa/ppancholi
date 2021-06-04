@@ -26,7 +26,7 @@
             :value="caseFile.triage"
             class="triage-select"
             data-test="caseFileActivity-triage-select"
-            :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-triage-dropdown', maxWidth: 'fit-content' }"
+            :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content' }"
             :items="triageLevels"
             :loading="triageLoading"
             hide-details
@@ -60,13 +60,23 @@
       <v-row class="ma-0 px-2 pt-0 no-gutters">
         <v-col cols="12">
           <case-file-list-wrapper :empty="caseFileActivities.length === 0" :loading="loadingActivity" class="pa-4">
-            <!-- <div v-if="caseFile && caseFile.timestamp" class="rc-body12">
-              {{ $t('caseFileDetail.lastAction') }}:
-              {{ moment.utc(caseFile.timestamp).local().format('ll') }}
-              <span class="fw-bold ml-1">
-                ({{ lastActionAgo }})
-              </span>
-            </div> -->
+            <v-row>
+              <v-col class="rc-body12" data-test="caseFileActivity-last-action-date" cols="12" md="6">
+                {{ $t('caseFileActivity.lastAction', {x: lastActionDate }) }} <span class="fw-bold ml-1">({{ daysAgo }})</span>
+              </v-col>
+              <v-col cols="12" md="6" class="d-flex justify-end align-center rc-body14">
+                <span> {{ $t('caseFileActivity.sortBy') }}: </span>
+                <v-select
+                  class="case-file-activity-sort-select"
+                  :placeholder="$t('caseFileActivity.date')"
+                  data-test="caseFileActivity-case-file-activity-sort-select"
+                  :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content' }"
+                  :items="sortingListItems"
+                  :min-width="500"
+                  hide-details
+                  @change="sortCaseFileActivities($event)" />
+              </v-col>
+            </v-row>
 
             <component
               :is="getComponentName(item.activityType)"
@@ -84,6 +94,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _sortBy from 'lodash/sortBy';
+import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import { ICaseFile, ICaseFileActivity, ECaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
@@ -117,17 +128,29 @@ export default Vue.extend({
       showLabelsDialog: false,
       loading: false,
       loadingActivity: false,
-      lastActionAgo: null,
+      lastActionDate: null,
+      daysAgo: null,
       caseFileActivities: [] as ICaseFileActivity[],
       activityFetchDelay: 800,
+      sortingListItems: [
+        {
+          value: 'asc', text: this.$t('caseFileActivity.ascending'),
+        },
+        {
+          value: 'desc', text: this.$t('caseFileActivity.descending'),
+        },
+      ]
+      ,
     };
   },
-
   computed: {
     id() {
       return this.$route.params.id;
     },
 
+    locale() {
+      return this.$i18n.locale;
+    },
     canMarkDuplicate(): boolean {
       return this.$hasLevel('level1');
     },
@@ -149,6 +172,11 @@ export default Vue.extend({
       return this.$store.state.caseFile.triageLoading;
     },
   },
+  watch: {
+    locale() {
+      this.setLastAction();
+    },
+  },
 
   async created() {
     try {
@@ -156,7 +184,7 @@ export default Vue.extend({
 
       await this.$storage.caseFile.actions.fetchCaseFile(this.id);
 
-      // this.setLastAction();
+      this.setLastAction();
       await this.fetchCaseFileActivities();
     } catch {
       this.error = true;
@@ -172,6 +200,7 @@ export default Vue.extend({
         // wait for a few milliseconds before making the call after the case file was modified, to give the backend time to process the modification
         await new Promise((resolve) => setTimeout(resolve, delay));
         const activity: ICaseFileActivity[] = await this.$storage.caseFile.actions.fetchCaseFileActivities(this.id);
+
         this.caseFileActivities = activity;
       } catch {
         this.error = true;
@@ -184,10 +213,11 @@ export default Vue.extend({
       return 'CaseFileActivityListItem';
     },
 
-    // Will be implemented in a future story
-    // setLastAction() {
-    //   this.lastActionAgo = moment.utc(this.caseFile.timestamp).local().locale(moment.locale()).fromNow();
-    // },
+    setLastAction() {
+      const date = moment(this.caseFile.lastActionDate).local();
+      this.lastActionDate = date.format('ll');
+      this.daysAgo = date.locale(moment.locale()).fromNow();
+    },
 
     async setCaseFileIsDuplicate() {
       const { id, isDuplicate } = this.caseFile;
@@ -199,13 +229,17 @@ export default Vue.extend({
       await this.$storage.caseFile.actions.setCaseFileTriage(this.id, triage);
       this.fetchCaseFileActivities(this.activityFetchDelay);
     },
+
+    async sortCaseFileActivities(direction: 'asc' | 'desc') {
+      this.caseFileActivities = _orderBy(this.caseFileActivities, 'created', direction);
+    },
   },
 });
 </script>
 
 <style  lang='scss'>
 
-  .case-file-triage-dropdown {
+  .case-file-activity-dropdown {
     margin-top: -5px;
 
     .v-list-item__title {
@@ -231,7 +265,6 @@ export default Vue.extend({
     max-width: fit-content;
     min-width: 80px;
     font-size: 12px;
-  }
 
   ::v-deep {
     .v-input__slot:before {
@@ -254,6 +287,23 @@ export default Vue.extend({
       max-width: 4px;
     }
 
+  }
+  }
+
+  .case-file-activity-sort-select{
+    margin-top: 2px;
+    padding: 0 6px;
+    max-width: fit-content;
+    min-width: 80px;
+    font-size: 12px;
+
+      ::v-deep {
+
+    .v-select__selections input {
+      max-width: 25px;
+      }
+
+   }
   }
 
 </style>

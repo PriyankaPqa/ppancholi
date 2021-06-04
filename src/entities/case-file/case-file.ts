@@ -2,12 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { IIdMultilingualName, IMultilingual } from '@/types';
 import utils from '../utils';
 import {
-  ECaseFileStatus,
-  ECaseFileTriage,
-  ICaseFile,
-  ICaseFileHousehold,
-  ICaseFileLabel,
-  ICaseFileSearchData,
+  ECaseFileStatus, ECaseFileTriage, ICaseFile, ICaseFileHousehold, ICaseFileLabel, ICaseFileSearchData,
 } from './case-file.types';
 
 export class CaseFile implements ICaseFile {
@@ -28,6 +23,8 @@ export class CaseFile implements ICaseFile {
   event: IIdMultilingualName;
 
   household: ICaseFileHousehold;
+
+  lastActionDate: Date | string;
 
   isDuplicate: boolean;
 
@@ -66,6 +63,8 @@ export class CaseFile implements ICaseFile {
     this.isDuplicate = data.isDuplicate;
 
     this.household = data.household ? _cloneDeep(data.household) : null;
+
+    this.lastActionDate = data.lastActionDate ? new Date(data.lastActionDate) : null;
 
     this.tags = data.tags?.map((tag) => ({
       id: tag.id,
@@ -106,8 +105,8 @@ export class CaseFile implements ICaseFile {
   }
 
   /**
-  * Validate business rules (non specific to the application)
-  */
+   * Validate business rules (non specific to the application)
+   */
   validate(): Array<string> | boolean {
     const errors: Array<string> = [];
 

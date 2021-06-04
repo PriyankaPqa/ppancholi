@@ -49,11 +49,9 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
           homePhoneNumber: null,
           alternatePhoneNumber: null,
         },
-
       },
       houseHoldMemberCount: 1,
       registrationNumber: ' 123',
-
     },
     caseFileNumber: '1-000001',
     caseFileStatusName: {
@@ -62,6 +60,7 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
         fr: 'Archive',
       },
     },
+    lastActionDate: '2021-04-30',
     caseFileStatus: 4,
     caseFileCreatedDate: '2021-01-20T15:12:03.4219037Z',
     isDuplicate: false,
@@ -148,11 +147,9 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
           homePhoneNumber: null,
           alternatePhoneNumber: null,
         },
-
       },
       houseHoldMemberCount: 1,
       registrationNumber: ' 123',
-
     },
     caseFileNumber: '2-000002',
     caseFileStatusName: {
@@ -161,6 +158,7 @@ export const mockCaseFilesSearchData = (): ICaseFileSearchData[] => [
         fr: 'Ouvert',
       },
     },
+    lastActionDate: '2021-04-30',
     caseFileStatus: 2,
     caseFileCreatedDate: '2021-03-01',
     isDuplicate: true,

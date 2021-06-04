@@ -1,11 +1,6 @@
 import { ActionContext } from 'vuex';
 import {
-  ECaseFileStatus,
-  ECaseFileTriage,
-  ICaseFile,
-  ICaseFileHousehold,
-  ICaseFileData,
-  ICaseFileSearchData,
+  ECaseFileStatus, ECaseFileTriage, ICaseFile, ICaseFileHousehold, ICaseFileData, ICaseFileSearchData,
 } from '@/entities/case-file';
 
 import { IOptionItem } from '@/entities/optionItem';
@@ -15,12 +10,12 @@ import utils from '@/entities/utils';
 import { IRootState } from '../../store.types';
 import { IState } from './case-file.types';
 
-const getTriageName = (triage: ECaseFileTriage) : IMultilingual => {
+const getTriageName = (triage: ECaseFileTriage): IMultilingual => {
   const triageName = helpers.fillAllTranslationsFromI18n(`enums.Triage.${ECaseFileTriage[triage]}`);
   return triageName;
 };
 
-const getCaseFileStatusName = (status: ECaseFileStatus) : IMultilingual => {
+const getCaseFileStatusName = (status: ECaseFileStatus): IMultilingual => {
   const statusName = helpers.fillAllTranslationsFromI18n(`caseFile.status.${ECaseFileStatus[status]}`);
   return statusName;
 };
@@ -43,8 +38,8 @@ const getTags = (originalCaseFile: ICaseFile, tags: IListOption[], tagOptions: I
   const caseFileTags: IIdMultilingualName[] = [];
 
   tags.forEach((tag: IListOption) => {
-    const originalTag: IIdMultilingualName = originalCaseFile?.tags && originalCaseFile.tags
-      .find((t: IIdMultilingualName) => t.id === tag.optionItemId);
+    const originalTag:
+      IIdMultilingualName = originalCaseFile?.tags && originalCaseFile.tags.find((t: IIdMultilingualName) => t.id === tag.optionItemId);
 
     if (originalTag) {
       caseFileTags.push({
@@ -69,7 +64,7 @@ export const mapCaseFileDataToSearchData = (
   caseFileData: ICaseFileData,
   context: ActionContext<IState, IRootState>,
   originalCaseFileId: uuid,
-) : ICaseFileSearchData => {
+): ICaseFileSearchData => {
   const originalCaseFile = context.state.caseFiles.find((e) => e.id === originalCaseFileId);
 
   return {
@@ -82,6 +77,7 @@ export const mapCaseFileDataToSearchData = (
     caseFileStatus: caseFileData.caseFileStatus,
     caseFileStatusName: getCaseFileStatusName(caseFileData.caseFileStatus),
     isDuplicate: caseFileData.isDuplicate,
+    lastActionDate: null,
     event: getEvent(originalCaseFile, caseFileData.eventId),
     tags: getTags(originalCaseFile, caseFileData.tags, context.state.tagsOptions),
     labels: caseFileData.labels.map((l) => ({ ...l })),

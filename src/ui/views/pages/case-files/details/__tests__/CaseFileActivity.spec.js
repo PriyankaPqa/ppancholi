@@ -5,6 +5,7 @@ import {
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 
+import moment from '@/ui/plugins/moment';
 import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();
@@ -77,6 +78,26 @@ describe('CaseFileActivity.vue', () => {
         const element = wrapper.findDataTest('caseFileActivity-triage-select');
         await element.vm.$emit('change');
         expect(wrapper.vm.setCaseFileTriage).toBeCalledTimes(1);
+      });
+    });
+
+    describe('sort activity details select', () => {
+      let element;
+      beforeEach(() => {
+        element = wrapper.findDataTest('caseFileActivity-case-file-activity-sort-select');
+      });
+      it('is renders', () => {
+        expect(element.exists()).toBeTruthy();
+      });
+    });
+
+    describe('Last action date info', () => {
+      let element;
+      beforeEach(() => {
+        element = wrapper.findDataTest('caseFileActivity-last-action-date');
+      });
+      it('is renders', () => {
+        expect(element.exists()).toBeTruthy();
       });
     });
 
@@ -202,17 +223,17 @@ describe('CaseFileActivity.vue', () => {
       expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFile).toHaveBeenCalledWith(mockCaseFile.id);
     });
 
-    // it('should call setLastAction', async () => {
-    //   wrapper.vm.setLastAction = jest.fn();
+    it('should call setLastAction', async () => {
+      wrapper.vm.setLastAction = jest.fn();
 
-    //   expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(0);
+      expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(0);
 
-    //   await wrapper.vm.$options.created.forEach((hook) => {
-    //     hook.call(wrapper.vm);
-    //   });
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
 
-    //   expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(1);
-    // });
+      expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(1);
+    });
 
     it('should call fetchCaseFileActivities', async () => {
       wrapper.vm.fetchCaseFileActivities = jest.fn();
@@ -309,28 +330,59 @@ describe('CaseFileActivity.vue', () => {
       });
     });
 
-    // describe('setLastAction', () => {
-    //   it('sets the right value into lastActionAgo', async () => {
-    //     wrapper = shallowMount(Component, {
-    //       localVue,
-    //       mocks: {
-    //         $storage: storage,
-    //       },
-    //       computed: {
-    //         id() {
-    //           return mockCaseFile.id;
-    //         },
-    //         caseFile() {
-    //           const altCaseFile = { ...mockCaseFile };
-    //           altCaseFile.timestamp = moment().subtract(2, 'days');
-    //           return altCaseFile;
-    //         },
-    //       },
-    //     });
+    describe('setLastAction', () => {
+      it('sets the right value into daysAgo', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            id() {
+              return mockCaseFile.id;
+            },
+            caseFile() {
+              const altCaseFile = { ...mockCaseFile };
+              altCaseFile.lastActionDate = moment().subtract(2, 'days');
+              return altCaseFile;
+            },
+          },
+        });
 
-  //     await wrapper.vm.setLastAction();
-  //     expect(wrapper.vm.lastActionAgo).toEqual('2 days ago');
-  //   });
-  // });
+        await wrapper.vm.setLastAction();
+        expect(wrapper.vm.daysAgo).toEqual('2 days ago');
+      });
+    });
+
+    describe('sortCaseFileActivities', () => {
+      beforeEach(async () => {
+        wrapper.vm.caseFileActivities = [{
+          id: 'mock-activity-id-1',
+          caseFileId: 'mock-id-1',
+          user: { id: '1', name: 'Jane Doe' },
+          role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+          created: '2021-01-01',
+
+        },
+        {
+          id: 'mock-activity-id-2',
+          caseFileId: 'mock-id-1',
+          user: { id: '1', name: 'Jane Doe' },
+          role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+          created: '2021-01-10',
+        }];
+      });
+
+      it('sort CaseFile activities asc', async () => {
+        wrapper.vm.caseFileActivities = mockActivities;
+        await wrapper.vm.sortCaseFileActivities('asc');
+        expect(wrapper.vm.caseFileActivities[0].id).toEqual('mock-activity-id-1');
+      });
+
+      it('sort CaseFile activities desc', async () => {
+        await wrapper.vm.sortCaseFileActivities('desc');
+        expect(wrapper.vm.caseFileActivities[0].id).toEqual('mock-activity-id-2');
+      });
+    });
   });
 });
