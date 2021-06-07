@@ -20,21 +20,35 @@
       <case-note-form v-if="isBeingCreated" :action-title="$t('caseNote.create.rowTitle')" @close-case-note-form="isBeingCreated = false" />
 
       <case-file-list-wrapper :loading="loading" :empty="caseNotes.length === 0">
-        <case-notes-list-item v-for="item in caseNotes" :key="item.id" :item="item" @saved="onSaved($event)" />
+        <case-notes-list-item
+          v-for="item in caseNotes"
+          :key="item.id"
+          :item="item"
+          @setIsEdit="isBeingEdited = $event"
+          @saved="onSaved($event)" />
       </case-file-list-wrapper>
     </template>
 
     <template v-if="!loading" #actions>
       <v-data-footer v-if="false" :options.sync="options" :pagination.sync="pagination" :items-per-page-options="[5, 10, 15, 20]" />
     </template>
+
+    <rc-confirmation-dialog
+      ref="confirmLeavePopup"
+      :show.sync="showExitConfirmation"
+      :title="titleLeave"
+      :messages="messagesLeave" />
   </rc-page-content>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageContent, RcPageLoading } from '@crctech/component-library';
+import { RcPageContent, RcPageLoading, RcConfirmationDialog } from '@crctech/component-library';
 import { EFilterKey } from '@/entities/user';
 import { ICaseNote } from '@/entities/case-file/case-note';
+import { NavigationGuardNext, Route } from 'vue-router';
+import { TranslateResult } from 'vue-i18n';
+import { ConfirmationDialog } from '@/types';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
@@ -47,12 +61,25 @@ export default Vue.extend({
     CaseNoteForm,
     CaseFileListWrapper,
     CaseNotesListItem,
+    RcConfirmationDialog,
+  },
+
+  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
+    if (this.isBeingCreated || this.isBeingEdited) {
+      const leavingConfirmed = await (this.$refs.confirmLeavePopup as ConfirmationDialog).open();
+      if (leavingConfirmed) {
+        next();
+      }
+    } else {
+      next();
+    }
   },
 
   data() {
     return {
       caseNotes: [] as ICaseNote[],
       isBeingCreated: false,
+      isBeingEdited: false,
       EFilterKey,
       totalCount: 0,
       options: {
@@ -60,6 +87,7 @@ export default Vue.extend({
         itemsPerPage: 10,
       },
       searchTimeout: null,
+      showExitConfirmation: false,
       params: {
         filter: {
           CaseFileId: this.$route.params.id,
@@ -81,6 +109,15 @@ export default Vue.extend({
     },
     loading(): boolean {
       return this.$store.state.caseFile.isLoadingCaseNotes;
+    },
+    titleLeave(): TranslateResult {
+      return this.$t('confirmLeaveDialog.title');
+    },
+    messagesLeave(): Array<TranslateResult> {
+      return [
+        this.$t('confirmLeaveDialog.message_1'),
+        this.$t('confirmLeaveDialog.message_2'),
+      ];
     },
   },
 

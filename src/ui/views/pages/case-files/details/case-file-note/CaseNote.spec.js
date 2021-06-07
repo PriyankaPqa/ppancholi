@@ -30,6 +30,45 @@ describe('CaseNote.vue', () => {
     });
   });
 
+  describe('beforeRouteLeave', () => {
+    let next;
+    beforeEach(() => {
+      next = jest.fn(() => {});
+      wrapper.vm.$refs.confirmLeavePopup.open = jest.fn(() => true);
+    });
+
+    it('opens the dialog if isBeingCreated is true', async () => {
+      await wrapper.setData({ isBeingCreated: true });
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      expect(wrapper.vm.$refs.confirmLeavePopup.open).toHaveBeenCalled();
+    });
+
+    it('opens the dialog if isBeingEdited is true', async () => {
+      await wrapper.setData({ isBeingEdited: true });
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      expect(wrapper.vm.$refs.confirmLeavePopup.open).toHaveBeenCalled();
+    });
+
+    it('calls next if the confirmation dialog returns true', async () => {
+      await wrapper.setData({ isBeingCreated: true });
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      expect(next).toBeCalled();
+    });
+
+    it('does not call next if the confirmation dialog returns false', async () => {
+      wrapper.vm.$refs.confirmLeavePopup.open = jest.fn(() => false);
+      await wrapper.setData({ isBeingCreated: true });
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      expect(next).not.toBeCalled();
+    });
+
+    it('calls next if isBeingEdited and isBeingCreated are false', async () => {
+      await wrapper.setData({ isBeingCreated: false, isBeingEdited: false });
+      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
+      expect(next).toBeCalled();
+    });
+  });
+
   describe('Computed', () => {
     describe('title', () => {
       it('should return proper data', async () => {
@@ -51,6 +90,18 @@ describe('CaseNote.vue', () => {
 
         wrapper.vm.$store.state.caseFile.isLoadingCaseNotes = false;
         expect(wrapper.vm.loading).toEqual(false);
+      });
+    });
+
+    describe('titleLeave', () => {
+      it('returns the right text', () => {
+        expect(wrapper.vm.titleLeave).toEqual('confirmLeaveDialog.title');
+      });
+    });
+
+    describe('messagesLeave', () => {
+      it('returns the right text', () => {
+        expect(wrapper.vm.messagesLeave).toEqual(['confirmLeaveDialog.message_1', 'confirmLeaveDialog.message_2']);
       });
     });
   });

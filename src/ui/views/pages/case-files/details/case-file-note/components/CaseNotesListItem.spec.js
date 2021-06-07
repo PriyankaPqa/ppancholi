@@ -96,5 +96,21 @@ describe('CaseNotesListItem.vue', () => {
         expect(wrapper.vm.isEdit).toBeTruthy();
       });
     });
+
+    describe('closeCaseNoteEdit', () => {
+      it('sets isEdit to be false', async () => {
+        wrapper.vm.isEdit = true;
+
+        expect(wrapper.vm.isEdit).toBeTruthy();
+        await wrapper.vm.closeCaseNoteEdit();
+
+        expect(wrapper.vm.isEdit).toBeFalsy();
+      });
+      it('emits setIsEdit', async () => {
+        await wrapper.vm.closeCaseNoteEdit();
+
+        expect(wrapper.emitted('setIsEdit'));
+      });
+    });
   });
 });

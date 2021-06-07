@@ -1,6 +1,11 @@
 <template>
   <div>
-    <case-note-form v-if="isEdit" :case-note="item" :action-title="$t('caseNote.edit.rowTitle')" is-edit @close-case-note-form="isEdit = false" />
+    <case-note-form
+      v-if="isEdit"
+      :case-note="item"
+      :action-title="$t('caseNote.edit.rowTitle')"
+      is-edit
+      @close-case-note-form="closeCaseNoteEdit()" />
     <case-file-list-item-wrapper v-else :item="item" show-menu>
       <template slot="content">
         <div class="mb-2">
@@ -79,6 +84,12 @@ export default Vue.extend({
   methods: {
     editCaseNote() {
       this.isEdit = true;
+      this.$emit('setIsEdit', true);
+    },
+
+    closeCaseNoteEdit() {
+      this.isEdit = false;
+      this.$emit('setIsEdit', false);
     },
 
     emitPinEvent() {
