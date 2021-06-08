@@ -95,7 +95,7 @@ export default Vue.extend({
           CaseFileId: this.$route.params.id,
         },
         search: '',
-        orderBy: 'IsPinned desc',
+        orderBy: 'IsPinned desc, CaseNoteCreatedDate desc',
         count: true,
       },
     };
@@ -151,7 +151,7 @@ export default Vue.extend({
         await this.$storage.caseFile.actions.pinCaseNote(this.$route.params.id, caseNote.id, !caseNote.isPinned);
         // Since back end search has a delay, update case note and sort case note list locally
         caseNote.isPinned = !caseNote.isPinned;
-        this.caseNotes = _orderBy(this.caseNotes, ['isPinned'], ['desc']);
+        this.caseNotes = _orderBy(this.caseNotes, ['isPinned', 'created'], ['desc', 'desc']);
       // eslint-disable-next-line no-empty
       } catch (e) {}
     },

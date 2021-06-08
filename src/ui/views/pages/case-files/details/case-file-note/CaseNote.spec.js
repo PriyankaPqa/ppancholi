@@ -122,6 +122,10 @@ describe('CaseNote.vue', () => {
         expect(wrapper.vm.$storage.caseFile.actions.fetchActiveCaseNoteCategories).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.searchCaseNotes).toHaveBeenCalledTimes(1);
       });
+
+      it('should fetch case notes with multiple orderBy', async () => {
+        expect(wrapper.vm.params.orderBy).toBe('IsPinned desc, CaseNoteCreatedDate desc');
+      });
     });
   });
 
@@ -174,16 +178,26 @@ describe('CaseNote.vue', () => {
 
         expect(mockCaseNote.isPinned).toBe(true);
       });
-      it('should sort case note by isPinned', async () => {
+      it('should sort case note by isPinned and created', async () => {
         await wrapper.setData({ caseNotes });
 
         expect(wrapper.vm.caseNotes[0].isPinned).toBe(false);
         expect(wrapper.vm.caseNotes[1].isPinned).toBe(false);
+        expect(wrapper.vm.caseNotes[2].isPinned).toBe(false);
+
+        expect(wrapper.vm.caseNotes[0].created).toBe('2021-05-25T19:53:36.6898336Z');
+        expect(wrapper.vm.caseNotes[1].created).toBe('2021-03-04T16:01:06.5213921Z');
+        expect(wrapper.vm.caseNotes[2].created).toBe('2021-06-04T16:01:06.5213921Z');
 
         await wrapper.vm.pinCaseNote(wrapper.vm.caseNotes[1]);
 
         expect(wrapper.vm.caseNotes[0].isPinned).toBe(true);
         expect(wrapper.vm.caseNotes[1].isPinned).toBe(false);
+        expect(wrapper.vm.caseNotes[2].isPinned).toBe(false);
+
+        expect(wrapper.vm.caseNotes[0].created).toBe('2021-03-04T16:01:06.5213921Z');
+        expect(wrapper.vm.caseNotes[1].created).toBe('2021-06-04T16:01:06.5213921Z');
+        expect(wrapper.vm.caseNotes[2].created).toBe('2021-05-25T19:53:36.6898336Z');
       });
     });
   });
