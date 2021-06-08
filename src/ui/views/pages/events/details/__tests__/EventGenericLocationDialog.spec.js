@@ -1,8 +1,10 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { Event, mockEventsSearchData, EEventLocationStatus } from '@/entities/event';
-import { MAX_LENGTH_MD } from '@/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import entityUtils from '@/entities/utils';
+import helpers from '@/ui/helpers';
+import { ECanadaProvinces } from '@/types';
 
 import Component from '../components/EventGenericLocationDialog.vue';
 
@@ -32,6 +34,86 @@ describe('EventGenericLocationDialog.vue', () => {
         },
       });
     });
+
+    describe('province', () => {
+      it('renders when country is Canada', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return true;
+            },
+          },
+        });
+
+        const element = wrapper.findDataTest('location-province');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('does not render when country is not Canada', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return false;
+            },
+          },
+        });
+
+        const element = wrapper.findDataTest('location-province');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
+
+    describe('specifyOtherProvince', () => {
+      it('renders when country is not Canada', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return false;
+            },
+          },
+        });
+
+        const element = wrapper.findDataTest('location-specifiedOtherProvince');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('does not render when country is  Canada', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return true;
+            },
+          },
+        });
+
+        const element = wrapper.findDataTest('location-specifiedOtherProvince');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -43,6 +125,46 @@ describe('EventGenericLocationDialog.vue', () => {
           isEditMode: false,
           isRegistrationLocation: true,
         },
+      });
+    });
+
+    describe('canadian provinces', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          event: mockEvent,
+          isEditMode: false,
+          isRegistrationLocation: true,
+        },
+      });
+
+      it('calls the helper enumToTranslatedCollection and returns the result of the call without the province Other ', async () => {
+        jest.spyOn(helpers, 'enumToTranslatedCollection')
+          .mockImplementation(() => ([{ value: ECanadaProvinces.QC }, { value: ECanadaProvinces.OT }]));
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+        });
+
+        expect(wrapper.vm.canadianProvinces).toEqual([{ value: ECanadaProvinces.QC }]);
+        expect(helpers.enumToTranslatedCollection).toHaveBeenCalled();
+      });
+    });
+
+    describe('isCanada', () => {
+      it('returns true is location country is Canada', async () => {
+        await wrapper.setData({ location: { address: { country: 'CA' } } });
+        expect(wrapper.vm.isCanada).toBeTruthy();
+      });
+
+      it('returns true is location country is Canada', async () => {
+        await wrapper.setData({ location: { address: { country: 'RO' } } });
+        expect(wrapper.vm.isCanada).toBeFalsy();
       });
     });
 
@@ -143,9 +265,81 @@ describe('EventGenericLocationDialog.vue', () => {
         });
       });
 
-      test('province', async () => {
+      test('province when country is Canada', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return true;
+            },
+          },
+        });
         expect(wrapper.vm.rules.province).toEqual({
           required: true,
+        });
+      });
+
+      test('province when country is not Canada', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return false;
+            },
+          },
+        });
+        expect(wrapper.vm.rules.province).toEqual({
+          required: false,
+        });
+      });
+
+      test('specifiedOtherProvince when country is Canada', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.rules.specifiedOtherProvince).toEqual({
+          required: false,
+          max: MAX_LENGTH_SM,
+        });
+      });
+
+      test('specifiedOtherProvince when country is not Canada', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return false;
+            },
+          },
+        });
+        expect(wrapper.vm.rules.specifiedOtherProvince).toEqual({
+          required: true,
+          max: MAX_LENGTH_SM,
         });
       });
 
@@ -201,8 +395,41 @@ describe('EventGenericLocationDialog.vue', () => {
 
     describe('province', () => {
       it('is linked to proper rules', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return true;
+            },
+          },
+        });
         const element = wrapper.findDataTest('location-province');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.province);
+      });
+    });
+
+    describe('specifiedOtherProvince', () => {
+      it('is linked to proper rules', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            isRegistrationLocation: true,
+          },
+          computed: {
+            isCanada() {
+              return false;
+            },
+          },
+        });
+        const element = wrapper.findDataTest('location-specifiedOtherProvince');
+        expect(element.props('rules')).toEqual(wrapper.vm.rules.specifiedOtherProvince);
       });
     });
 
@@ -292,6 +519,7 @@ describe('EventGenericLocationDialog.vue', () => {
             country: null,
             streetAddress: null,
             province: null,
+            specifiedOtherProvince: null,
             city: null,
             postalCode: null,
           },
@@ -495,6 +723,18 @@ describe('EventGenericLocationDialog.vue', () => {
       });
     });
 
+    describe('onChangeCountry', () => {
+      it('resets location address fields', async () => {
+        await wrapper.vm.onChangeCountry('CA');
+        expect(wrapper.vm.location.address.country).toEqual('CA');
+        expect(wrapper.vm.location.address.streetAddress).toBeNull();
+        expect(wrapper.vm.location.address.province).toBeNull();
+        expect(wrapper.vm.location.address.specifiedOtherProvince).toBeNull();
+        expect(wrapper.vm.location.address.city).toBeNull();
+        expect(wrapper.vm.location.address.postalCode).toBeNull();
+      });
+    });
+
     describe('onSubmit', () => {
       beforeEach(() => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -651,6 +891,46 @@ describe('EventGenericLocationDialog.vue', () => {
         wrapper.vm.location.status = EEventLocationStatus.Active;
         await wrapper.vm.updateStatus(false);
         expect(wrapper.vm.location.status).toEqual(EEventLocationStatus.Inactive);
+      });
+    });
+
+    describe('streetAddressAutocomplete', () => {
+      it('sets into the location object the data it receives as argument correctly when country is Canada', async () => {
+        const mockAutocomplete = {
+          country: 'CA',
+          street: '2295 Rue Bercy',
+          unitSuite: null,
+          province: 'QC',
+          city: 'Montréal',
+          postalCode: 'H2K 2V6',
+        };
+        await wrapper.vm.streetAddressAutocomplete(mockAutocomplete);
+
+        expect(wrapper.vm.location.address.country).toEqual(mockAutocomplete.country);
+        expect(wrapper.vm.location.address.streetAddress).toEqual(mockAutocomplete.street);
+        expect(wrapper.vm.location.address.province).toEqual(Number(ECanadaProvinces[mockAutocomplete.province]));
+        expect(wrapper.vm.location.address.specifiedOtherProvince).toEqual(null);
+        expect(wrapper.vm.location.address.city).toEqual(mockAutocomplete.city);
+        expect(wrapper.vm.location.address.postalCode).toEqual(mockAutocomplete.postalCode);
+      });
+
+      it('sets into the location object the data it receives as argument correctly when country is not Canada', async () => {
+        const mockAutocomplete = {
+          country: 'US',
+          street: '2295 South Str',
+          unitSuite: null,
+          province: 'NY',
+          city: 'New York',
+          postalCode: '12345',
+        };
+        await wrapper.vm.streetAddressAutocomplete(mockAutocomplete);
+
+        expect(wrapper.vm.location.address.country).toEqual(mockAutocomplete.country);
+        expect(wrapper.vm.location.address.streetAddress).toEqual(mockAutocomplete.street);
+        expect(wrapper.vm.location.address.province).toEqual(ECanadaProvinces.OT);
+        expect(wrapper.vm.location.address.specifiedOtherProvince).toEqual(mockAutocomplete.province);
+        expect(wrapper.vm.location.address.city).toEqual(mockAutocomplete.city);
+        expect(wrapper.vm.location.address.postalCode).toEqual(mockAutocomplete.postalCode);
       });
     });
   });

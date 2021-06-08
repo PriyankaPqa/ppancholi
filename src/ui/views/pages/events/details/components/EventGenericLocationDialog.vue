@@ -61,7 +61,8 @@
                     outlined
                     :error-messages="errors"
                     :class="classes"
-                    :label="`${$t('common.address.country')} *`" />
+                    :label="`${$t('common.address.country')} *`"
+                    @change="onChangeCountry($event)" />
                 </validation-provider>
               </v-col>
 
@@ -89,13 +90,20 @@
                   :label="`${$t('common.address.city')} *`" />
               </v-col>
 
-              <v-col cols="12" sm="6" md="4" class="pb-0">
+              <v-col cols="12" sm="6" md="4">
                 <v-select-with-validation
+                  v-if="isCanada"
                   v-model="location.address.province"
                   :rules="rules.province"
                   data-test="location-province"
-                  :label="`${$t('common.address.province')} *`"
+                  :label="`${$t('common.address.province')}*`"
                   :items="canadianProvinces" />
+                <v-text-field-with-validation
+                  v-else
+                  v-model="location.address.specifiedOtherProvince"
+                  :rules="rules.specifiedOtherProvince"
+                  data-test="location-specifiedOtherProvince"
+                  :label="`${$t('common.address.province')}*`" />
               </v-col>
 
               <v-col cols="12" sm="6" md="4" class="pb-0">
@@ -127,7 +135,7 @@ import {
 import _cloneDeep from 'lodash/cloneDeep';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
-import { MAX_LENGTH_MD } from '@/constants/validations';
+import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
 import _includes from 'lodash/includes';
 import helpers from '@/ui/helpers';
@@ -180,10 +188,12 @@ export default Vue.extend({
   computed: {
     canadianProvinces(): Record<string, unknown>[] {
       const provinces = helpers.enumToTranslatedCollection(ECanadaProvinces, 'common.provinces');
-      const index = provinces.findIndex((e) => e.value === ECanadaProvinces.OT);
+      // Remove the "Other" option
+      return provinces.filter((e) => e.value !== ECanadaProvinces.OT);
+    },
 
-      // Put the "Other" option at the bottom of the list
-      return [...provinces.slice(0, index), ...provinces.slice(index + 1), provinces[index]];
+    isCanada(): boolean {
+      return this.location.address?.country === 'CA';
     },
 
     rules(): Record<string, unknown> {
@@ -205,7 +215,11 @@ export default Vue.extend({
           max: MAX_LENGTH_MD,
         },
         province: {
-          required: true,
+          required: this.isCanada,
+        },
+        specifiedOtherProvince: {
+          required: !this.isCanada,
+          max: MAX_LENGTH_SM,
         },
         postalCode: {
           max: MAX_LENGTH_MD,
@@ -269,6 +283,7 @@ export default Vue.extend({
           country: null,
           streetAddress: null,
           province: null,
+          specifiedOtherProvince: null,
           city: null,
           postalCode: null,
         },
@@ -303,6 +318,17 @@ export default Vue.extend({
 
     fillEmptyMultilingualFields() {
       this.location.name = entityUtils.getFilledMultilingualField(this.location.name);
+    },
+
+    onChangeCountry(country: string) {
+      this.location.address = {
+        country,
+        streetAddress: null,
+        province: null,
+        specifiedOtherProvince: null,
+        city: null,
+        postalCode: null,
+      };
     },
 
     async onSubmit() {
@@ -374,14 +400,16 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    streetAddressAutocomplete(event: any) {
-      this.location.address.country = event.country;
-      this.location.address.streetAddress = event.street;
-      this.location.address.city = event.city;
-      this.location.address.postalCode = event.postalCode;
-
-      const province = Number(ECanadaProvinces[event.province]);
-      this.location.address.province = province || ECanadaProvinces.OT;
+    streetAddressAutocomplete(autocomplete: any) {
+      const {
+        country, province, postalCode, city, street,
+      } = autocomplete;
+      this.location.address.country = country;
+      this.location.address.streetAddress = street;
+      this.location.address.city = city;
+      this.location.address.postalCode = postalCode;
+      this.location.address.province = country === 'CA' ? Number(ECanadaProvinces[province]) : ECanadaProvinces.OT;
+      this.location.address.specifiedOtherProvince = country === 'CA' ? null : province;
     },
   },
 });
