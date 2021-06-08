@@ -50,8 +50,8 @@ describe('ProgramDetails.vue', () => {
   describe('Methods', () => {
     describe('getTranslatedPaymentModality', () => {
       it('returns the correct translation key for the payment modality', () => {
-        expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.EFT))
-          .toBe('event.programManagement.paymentModalities.EFT');
+        expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.ETransfer))
+          .toBe('event.programManagement.paymentModalities.ETransfer');
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.Cheque))
           .toBe('event.programManagement.paymentModalities.Cheque');
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.DirectDeposit))

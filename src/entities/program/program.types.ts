@@ -9,7 +9,7 @@ export enum EProgramStatus {
 }
 
 export enum EPaymentModalities {
-  EFT = 1,
+  ETransfer = 1,
   Cheque = 2,
   DirectDeposit = 3,
   GiftCard = 4,
