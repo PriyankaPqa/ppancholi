@@ -131,6 +131,14 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith('caseFile/addCaseNote', { id, caseNote });
     });
 
+    it('should proxy pinCaseNote', () => {
+      const caseFileId = 'case file id';
+      const caseNoteId = 'case note id';
+      const isPinned = true;
+      storage.actions.pinCaseNote(caseFileId, caseNoteId, isPinned);
+      expect(store.dispatch).toBeCalledWith('caseFile/pinCaseNote', { caseFileId, caseNoteId, isPinned });
+    });
+
     it('should proxy editCaseNote', () => {
       const caseNote = mockCaseNote();
       const caseFileId = 'case file id';

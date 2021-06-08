@@ -460,6 +460,21 @@ describe('>>> Case File Module', () => {
     });
   });
 
+  describe('pinCaseNote', () => {
+    it('calls the service', async () => {
+      expect(store.$services.caseFiles.pinCaseNote).toHaveBeenCalledTimes(0);
+
+      const caseFileId = 'case file id';
+      const caseNoteId = 'case note id';
+      const isPinned = true;
+
+      await store.dispatch('caseFile/pinCaseNote', { caseFileId, caseNoteId, isPinned });
+
+      expect(store.$services.caseFiles.pinCaseNote).toHaveBeenCalledTimes(1);
+      expect(store.$services.caseFiles.pinCaseNote).toHaveBeenCalledWith(caseFileId, caseNoteId, isPinned);
+    });
+  });
+
   describe('editCaseNote', () => {
     it('calls the service', async () => {
       expect(store.$services.caseFiles.editCaseNote).toHaveBeenCalledTimes(0);

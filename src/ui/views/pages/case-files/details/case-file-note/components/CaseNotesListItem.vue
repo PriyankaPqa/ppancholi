@@ -33,7 +33,7 @@
           <v-list-item-title>{{ $t('caseFileItem.edit') }}</v-list-item-title>
         </v-list-item>
 
-        <v-list-item data-test="items__pinButton" @click="emitPinEvent">
+        <v-list-item data-test="items__pinButton" @click="emitPinEvent()">
           <v-list-item-title v-if="item.isPinned">
             {{ $t('caseFileItem.unpinItem') }}
           </v-list-item-title>
@@ -93,7 +93,7 @@ export default Vue.extend({
     },
 
     emitPinEvent() {
-      // todo
+      this.$emit('pin-case-note', this.item);
     },
   },
 });

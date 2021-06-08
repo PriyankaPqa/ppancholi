@@ -25,6 +25,7 @@
           :key="item.id"
           :item="item"
           @setIsEdit="isBeingEdited = $event"
+          @pin-case-note="pinCaseNote"
           @saved="onSaved($event)" />
       </case-file-list-wrapper>
     </template>
@@ -46,6 +47,7 @@ import Vue from 'vue';
 import { RcPageContent, RcPageLoading, RcConfirmationDialog } from '@crctech/component-library';
 import { EFilterKey } from '@/entities/user';
 import { ICaseNote } from '@/entities/case-file/case-note';
+import _orderBy from 'lodash/orderBy';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import { ConfirmationDialog } from '@/types';
@@ -93,6 +95,7 @@ export default Vue.extend({
           CaseFileId: this.$route.params.id,
         },
         search: '',
+        orderBy: 'IsPinned desc',
         count: true,
       },
     };
@@ -141,6 +144,16 @@ export default Vue.extend({
       const res = await this.$storage.caseFile.actions.searchCaseNotes(this.params);
       this.caseNotes = res.value;
       this.totalCount = res.odataCount;
+    },
+
+    async pinCaseNote(caseNote: ICaseNote) {
+      try {
+        await this.$storage.caseFile.actions.pinCaseNote(this.$route.params.id, caseNote.id, !caseNote.isPinned);
+        // Since back end search has a delay, update case note and sort case note list locally
+        caseNote.isPinned = !caseNote.isPinned;
+        this.caseNotes = _orderBy(this.caseNotes, ['isPinned'], ['desc']);
+      // eslint-disable-next-line no-empty
+      } catch (e) {}
     },
   },
 });

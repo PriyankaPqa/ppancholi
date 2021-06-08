@@ -138,6 +138,16 @@ describe('>>> Case File Service', () => {
     });
   });
 
+  describe('pinCaseNote', () => {
+    it('is linked to the correct URL and params', async () => {
+      const caseFileId = 'case file id';
+      const caseNoteId = 'case note id';
+      const isPinned = true;
+      await service.pinCaseNote(caseFileId, caseNoteId, isPinned);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${caseFileId}/case-notes/${caseNoteId}/pin/${isPinned}`);
+    });
+  });
+
   describe('editCaseNote', () => {
     it('is linked to the correct URL and params', async () => {
       const caseFileId = 'case file id';

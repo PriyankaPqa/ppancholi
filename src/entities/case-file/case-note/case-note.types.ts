@@ -16,6 +16,7 @@ export interface ICaseNote {
   role?: IIdMultilingualName;
   lastModifiedByFullName?: string;
   lastModifiedDate?: Date | string;
+  isPinned: boolean;
 }
 
 export interface ICaseNoteData {
@@ -32,6 +33,7 @@ export interface ICaseNoteData {
     roleId: uuid,
     roleName: IMultilingual,
   },
+  isPinned: boolean;
 }
 
 export interface ICaseNoteSearchData {
@@ -52,4 +54,5 @@ export interface ICaseNoteSearchData {
   updatedBy: {
     userName: string,
   }
+  isPinned: boolean;
 }

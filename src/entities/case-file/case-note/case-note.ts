@@ -21,6 +21,8 @@ export class CaseNote implements ICaseNote {
 
   lastModifiedByFullName?: string;
 
+  isPinned: boolean;
+
   constructor(data: ICaseNoteSearchData) {
     const { createdBy } = data;
 
@@ -59,6 +61,8 @@ export class CaseNote implements ICaseNote {
     }
 
     this.created = data.caseNoteCreatedDate;
+
+    this.isPinned = data.isPinned;
   }
 
   private validateAttributes(errors: Array<string>) {

@@ -275,6 +275,17 @@ const actions = {
     return result ? payload.caseNote : null;
   },
 
+  async pinCaseNote(
+    this: Store<IState>,
+    context: ActionContext<IState, IState>,
+    payload: { caseFileId: uuid; caseNoteId: uuid, isPinned: boolean },
+  ): Promise<ICaseNote> {
+    context.commit('setIsLoadingCaseNotes', true);
+    await this.$services.caseFiles.pinCaseNote(payload.caseFileId, payload.caseNoteId, payload.isPinned);
+    context.commit('setIsLoadingCaseNotes', false);
+    return null;
+  },
+
   async editCaseNote(
     this: Store<IState>,
     context: ActionContext<IState, IState>,

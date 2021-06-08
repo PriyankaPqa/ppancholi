@@ -84,6 +84,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('caseFile/addCaseNote', { id, caseNote });
     },
 
+    pinCaseNote(caseFileId: uuid, caseNoteId: uuid, isPinned: boolean): Promise<ICaseNote> {
+      return store.dispatch('caseFile/pinCaseNote', { caseFileId, caseNoteId, isPinned });
+    },
+
     editCaseNote(caseFileId: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNote> {
       return store.dispatch('caseFile/editCaseNote', { caseFileId, caseNoteId, caseNote });
     },

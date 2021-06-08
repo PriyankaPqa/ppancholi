@@ -27,6 +27,7 @@ export interface IStorage {
     setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFile>;
     fetchActiveCaseNoteCategories(): Promise<IOptionItem[]>;
     addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote>;
+    pinCaseNote(caseFileId: uuid, caseNoteId: uuid, isPinned: boolean): Promise<ICaseNote>;
     editCaseNote(caseFileId: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNote>;
     searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNote>>;
     setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFile>;
@@ -56,6 +57,7 @@ export interface IStorageMock {
     setCaseFileIsDuplicate: jest.Mock<void>;
     fetchActiveCaseNoteCategories: jest.Mock<void>;
     addCaseNote: jest.Mock<void>;
+    pinCaseNote: jest.Mock<void>;
     editCaseNote: jest.Mock<void>;
     searchCaseNotes: jest.Mock<void>;
     setCaseFileTriage: jest.Mock<ICaseFile>;

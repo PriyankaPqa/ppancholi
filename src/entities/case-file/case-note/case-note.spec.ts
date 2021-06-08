@@ -63,6 +63,11 @@ describe('>>> Case Note', () => {
       const caseNote = new CaseNote(mockData);
       expect(caseNote.lastModifiedByFullName).toBe(mockData.createdBy.userName);
     });
+
+    it('should instantiate isPinned', () => {
+      const caseNote = new CaseNote(mockData);
+      expect(caseNote.isPinned).toBe(mockData.isPinned);
+    });
   });
 
   describe('>> validation', () => {

@@ -1,6 +1,6 @@
 <template>
   <div class="mt-4">
-    <div class="item__header">
+    <div :class="{ 'item__header': true, 'item__header--pinned': item.isPinned }">
       <div>
         <span class="rc-caption12 fw-bold" data-test="caseFileItem__userName">
           {{ item.user.name }}
@@ -105,6 +105,10 @@ export default Vue.extend({
   justify-content: space-between;
   border-radius: 4px 4px 0 0;
   padding: 0 8px 0 16px;
+}
+
+.item__header--pinned {
+  background: var(--v-status_yellow_pale-base);
 }
 
 .item {

@@ -40,7 +40,7 @@ describe('CaseNotesListItem.vue', () => {
     });
 
     describe('click edit button', () => {
-      it('is triggers event', async () => {
+      it('triggers event', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -63,6 +63,19 @@ describe('CaseNotesListItem.vue', () => {
         editBtn.vm.$emit('click');
 
         expect(wrapper.vm.editCaseNote).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('click pin button', () => {
+      it('triggers event', async () => {
+        wrapper.vm.emitPinEvent = jest.fn();
+
+        expect(wrapper.vm.emitPinEvent).toHaveBeenCalledTimes(0);
+
+        const pinBtn = wrapper.findDataTest('items__pinButton');
+        pinBtn.vm.$emit('click');
+
+        expect(wrapper.vm.emitPinEvent).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -94,6 +107,15 @@ describe('CaseNotesListItem.vue', () => {
         wrapper.vm.editCaseNote();
 
         expect(wrapper.vm.isEdit).toBeTruthy();
+      });
+    });
+
+    describe('emitPinEvent', () => {
+      it('emits event', async () => {
+        wrapper.vm.emitPinEvent();
+
+        expect(wrapper.emitted('pin-case-note')).toBeTruthy();
+        expect(wrapper.emitted('pin-case-note')[0][0]).toBe(caseNote);
       });
     });
 

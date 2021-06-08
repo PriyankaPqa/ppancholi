@@ -1,8 +1,11 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { mockCaseNote, mockCaseNotes } from '@/entities/case-file/case-note';
 import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 
 const localVue = createLocalVue();
+const caseNote = mockCaseNote();
+const caseNotes = mockCaseNotes();
 
 describe('CaseNote.vue', () => {
   let wrapper;
@@ -144,6 +147,43 @@ describe('CaseNote.vue', () => {
         await wrapper.vm.searchCaseNotes();
 
         expect(wrapper.vm.$storage.caseFile.actions.searchCaseNotes).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('pinCaseNote', () => {
+      it('should call storage', async () => {
+        wrapper.vm.$storage.caseFile.actions.pinCaseNote = jest.fn();
+
+        const id = 'case file id';
+        wrapper.vm.$route = {
+          params: { id },
+        };
+        const { isPinned } = caseNote;
+
+        await wrapper.vm.pinCaseNote(caseNote);
+
+        expect(wrapper.vm.$storage.caseFile.actions.pinCaseNote).toHaveBeenCalledWith(id, caseNote.id, !isPinned);
+      });
+      it('should update isPinned in case note', async () => {
+        const mockCaseNote = {
+          id: 'id',
+          isPinned: false,
+        };
+
+        await wrapper.vm.pinCaseNote(mockCaseNote);
+
+        expect(mockCaseNote.isPinned).toBe(true);
+      });
+      it('should sort case note by isPinned', async () => {
+        await wrapper.setData({ caseNotes });
+
+        expect(wrapper.vm.caseNotes[0].isPinned).toBe(false);
+        expect(wrapper.vm.caseNotes[1].isPinned).toBe(false);
+
+        await wrapper.vm.pinCaseNote(wrapper.vm.caseNotes[1]);
+
+        expect(wrapper.vm.caseNotes[0].isPinned).toBe(true);
+        expect(wrapper.vm.caseNotes[1].isPinned).toBe(false);
       });
     });
   });

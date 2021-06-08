@@ -72,6 +72,10 @@ export class CaseFilesService implements ICaseFilesService {
     });
   }
 
+  async pinCaseNote(id: uuid, caseNoteId: uuid, isPinned: boolean): Promise<ICaseNoteData> {
+    return this.http.patch(`/case-file/case-files/${id}/case-notes/${caseNoteId}/pin/${isPinned}`);
+  }
+
   async editCaseNote(id: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNoteData> {
     return this.http.patch(`/case-file/case-files/${id}/case-notes/${caseNoteId}/edit`, {
       subject: caseNote.subject,

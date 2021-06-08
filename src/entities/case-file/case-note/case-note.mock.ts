@@ -101,6 +101,7 @@ export const mockCaseNoteData = (): ICaseNoteData[] => [
         },
       },
     },
+    isPinned: false,
   },
   {
     caseFileId: '38106287-9046-47b9-8981-76ede656d305',
@@ -121,6 +122,7 @@ export const mockCaseNoteData = (): ICaseNoteData[] => [
         },
       },
     },
+    isPinned: true,
   },
 ];
 
@@ -158,6 +160,40 @@ export const mockCaseNoteSearchData = (): ICaseNoteSearchData[] => [
         fr: 'Actif',
       },
     },
+    isPinned: false,
+  },
+  {
+    id: '0c390599-219d-4b8c-9fd0-49557d7a17e2',
+    caseFileId: '793ad408-17e8-4ce4-a3c9-6242f6fb5179',
+    tenantId: 'c400f50d-7a56-4ef2-8e44-211bfa434724',
+    subject: '33',
+    description: 'fgdg',
+    caseNoteCategoryId: '71d90801-9a9d-45fe-ae54-cb50a82afb7b',
+    isPinned: false,
+    caseNoteCreatedDate: '2021-06-04T16:01:06.5213921Z',
+    caseNoteUpdatedDate: '0001-01-01T00:00:00',
+    caseNoteStatusName: {
+      translation: {
+        en: 'Active',
+        fr: 'Actif',
+      },
+    },
+    caseNoteCategoryName: {
+      translation: {
+        en: 'Escalation',
+        fr: 'Processus d\\u2019escalade',
+      },
+    },
+    createdBy: {
+      userName: 'user name',
+      roleName: {
+        translation: {
+          en: 'System Admin',
+          fr: 'Administrateur(-trice) de syst\\u00e8me',
+        },
+      },
+    },
+    updatedBy: null,
   },
 ];
 
@@ -167,6 +203,6 @@ export const mockSearchCaseNotes = (): IAzureSearchResult<ICaseNoteSearchData> =
   value: mockCaseNoteSearchData(),
 });
 
-export const mockCaseNote = (): ICaseNote => (new CaseNote(mockCaseNoteSearchData()[0]));
+export const mockCaseNote = (): ICaseNote => new CaseNote(mockCaseNoteSearchData()[0]);
 
-export const mockCaseNotes = (): ICaseNote[] => [mockCaseNote()];
+export const mockCaseNotes = (): ICaseNote[] => mockCaseNoteSearchData().map((c) => new CaseNote(c));
