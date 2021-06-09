@@ -173,13 +173,13 @@ export default Vue.extend({
       if (this.minAgeRestriction) {
         return {
           required: true,
-          birthday: { birthdate: this.computedBirthdate },
-          minimumAge: { birthdate: this.computedBirthdate, age: this.minAgeRestriction },
+          birthday: this.fullDate ? { birthdate: this.computedBirthdate } : false,
+          minimumAge: this.fullDate ? { birthdate: this.computedBirthdate, age: this.minAgeRestriction } : false,
         };
       }
       return {
         required: true,
-        birthday: { birthdate: this.computedBirthdate },
+        birthday: this.fullDate ? { birthdate: this.computedBirthdate } : false,
       };
     },
 
@@ -190,6 +190,13 @@ export default Vue.extend({
         day: this.form.birthDate.day,
       };
     },
+
+    fullDate(): boolean {
+      return this.form.birthDate.day !== null && this.form.birthDate.day !== ''
+        && this.form.birthDate.month !== null && this.form.birthDate.month !== ''
+        && this.form.birthDate.year !== null && this.form.birthDate.year !== '';
+    },
+
   },
 
   watch: {

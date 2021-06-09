@@ -26,6 +26,10 @@ describe('IdentityForm.vue', () => {
     });
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('Template', () => {
     test('change event is emitted when form changes', async () => {
       wrapper.vm.formCopy.firstName = 'test';
@@ -110,16 +114,70 @@ describe('IdentityForm.vue', () => {
         });
         expect(wrapper.vm.birthDateRule).toEqual({
           required: true,
-          birthday: { birthdate: wrapper.vm.computedBirthdate },
-          minimumAge: { birthdate: wrapper.vm.computedBirthdate, age: wrapper.vm.minAgeRestriction },
+          birthday: wrapper.vm.fullDate ? { birthdate: wrapper.vm.computedBirthdate } : false,
+          minimumAge: wrapper.vm.fullDate ? { birthdate: wrapper.vm.computedBirthdate, age: wrapper.vm.minAgeRestriction } : false,
         });
       });
 
       it('should return proper data if age restriction is disabled', () => {
         expect(wrapper.vm.birthDateRule).toEqual({
           required: true,
-          birthday: { birthdate: wrapper.vm.computedBirthdate },
+          birthday: wrapper.vm.fullDate ? { birthdate: wrapper.vm.computedBirthdate } : false,
         });
+      });
+    });
+
+    describe('fullDate', () => {
+      it('should return false if only day is not empty', async () => {
+        await wrapper.setData({
+          form: {
+            birthDate: {
+              day: '12',
+              month: '',
+              year: '',
+            },
+          },
+        });
+        expect(wrapper.vm.fullDate).toBe(false);
+      });
+
+      it('should return false if only month is not empty', async () => {
+        await wrapper.setData({
+          form: {
+            birthDate: {
+              day: '',
+              month: '01',
+              year: '',
+            },
+          },
+        });
+        expect(wrapper.vm.fullDate).toBe(false);
+      });
+
+      it('should return false if only year is not empty', async () => {
+        await wrapper.setData({
+          form: {
+            birthDate: {
+              day: '',
+              month: '',
+              year: '01',
+            },
+          },
+        });
+        expect(wrapper.vm.fullDate).toBe(false);
+      });
+
+      it('should return true if all components are not empty', async () => {
+        await wrapper.setData({
+          form: {
+            birthDate: {
+              day: '01',
+              month: '01',
+              year: '01',
+            },
+          },
+        });
+        expect(wrapper.vm.fullDate).toBe(true);
       });
     });
   });
