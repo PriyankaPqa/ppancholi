@@ -189,7 +189,7 @@ describe('ContactInformationForm.vue', () => {
           skipPhoneEmailRules: false,
         });
         expect(wrapper.vm.phoneRule).toEqual({
-          requiredPhone: { isMissing: wrapper.vm.phoneRequired },
+          requiredPhone: wrapper.vm.focusPhoneCounter >= wrapper.vm.triggerPhoneMessage ? { isMissing: this.phoneRequired }: false,
           phone: true,
         });
       });
@@ -311,6 +311,35 @@ describe('ContactInformationForm.vue', () => {
         const expected = wrapper.vm.primarySpokenLanguagesItems.find((option) => option.isDefault);
         const res = wrapper.vm.findDefault(wrapper.vm.primarySpokenLanguagesItems);
         expect(res).toEqual(expected);
+      });
+    });
+
+    describe('incrementFocusPhoneCounter', function () {
+      it('should increment focusPhoneCounter', function () {
+        expect(wrapper.vm.focusPhoneCounter).toEqual(0);
+        wrapper.vm.incrementFocusPhoneCounter();
+        expect(wrapper.vm.focusPhoneCounter).toEqual(1);
+      });
+
+      it('should be called when focusing out homePhoneNumber', function () {
+        wrapper.vm.incrementFocusPhoneCounter = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__homePhoneNumber');
+        element.vm.$emit('focusout')
+        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1)
+      });
+
+      it('should be called when focusing out mobilePhoneNumber', function () {
+        wrapper.vm.incrementFocusPhoneCounter = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__mobilePhoneNumber');
+        element.vm.$emit('focusout')
+        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1)
+      });
+
+      it('should be called when focusing out alternatePhoneNumber', function () {
+        wrapper.vm.incrementFocusPhoneCounter = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__alternatePhoneNumber');
+        element.vm.$emit('focusout')
+        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1)
       });
     });
   });

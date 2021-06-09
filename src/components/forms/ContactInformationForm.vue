@@ -44,6 +44,7 @@
       <rc-phone-with-validation
         v-model="formCopy.homePhoneNumber"
         :rules="rules.homePhoneNumber"
+        @focusout="incrementFocusPhoneCounter()"
         outlined
         :label="homePhoneNumberLabel"
         :data-test="`${prefixDataTest}__homePhoneNumber`" />
@@ -52,6 +53,7 @@
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
         v-model="formCopy.mobilePhoneNumber"
+        @focusout="incrementFocusPhoneCounter()"
         :rules="rules.mobilePhoneNumber"
         outlined
         :label="mobilePhoneNumberLabel"
@@ -61,6 +63,7 @@
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
         v-model="formCopy.alternatePhoneNumber"
+        @focusout="incrementFocusPhoneCounter()"
         :rules="rules.alternatePhoneNumber"
         outlined
         :label="alternatePhoneNumberLabel"
@@ -128,6 +131,8 @@ export default Vue.extend({
   data() {
     return {
       formCopy: null,
+      focusPhoneCounter: 0,
+      triggerPhoneMessage: 3
     };
   },
 
@@ -198,7 +203,7 @@ export default Vue.extend({
         };
       }
       return {
-        requiredPhone: { isMissing: this.phoneRequired },
+        requiredPhone: this.focusPhoneCounter >= this.triggerPhoneMessage ? { isMissing: this.phoneRequired }: false,
         phone: true,
       };
     },
@@ -231,6 +236,10 @@ export default Vue.extend({
     findDefault(source: IOptionItemData[]): IOptionItemData {
       return source?.find((option) => option.isDefault);
     },
+
+    incrementFocusPhoneCounter() {
+      this.focusPhoneCounter += 1;
+    }
   },
 });
 </script>
