@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@crctech/component-library": "1.0.19",
-    "@crctech/registration-lib": "1.0.232",
+    "@crctech/registration-lib": "1.0.237",
     "@mdi/font": "^5.6.55",
     "@types/uuid": "^8.3.0",
     "awesome-phonenumber": "^2.39.0",
