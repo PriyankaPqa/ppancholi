@@ -37,37 +37,37 @@
         v-model="formCopy.primarySpokenLanguageOther"
         :data-test="`${prefixDataTest}__primarySpokenLanguageOther`"
         :rules="rules.primarySpokenLanguageOther"
-        :label="`${$t('registration.personal_info.primarySpokenLanguage.pleaseSpecify')}`" />
+        :label="`${$t('registration.personal_info.primarySpokenLanguage.pleaseSpecify')}*`" />
     </v-col>
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
         v-model="formCopy.homePhoneNumber"
         :rules="rules.homePhoneNumber"
-        @focusout="incrementFocusPhoneCounter()"
         outlined
         :label="homePhoneNumberLabel"
-        :data-test="`${prefixDataTest}__homePhoneNumber`" />
+        :data-test="`${prefixDataTest}__homePhoneNumber`"
+        @focusout="incrementFocusPhoneCounter()" />
     </v-col>
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
         v-model="formCopy.mobilePhoneNumber"
-        @focusout="incrementFocusPhoneCounter()"
         :rules="rules.mobilePhoneNumber"
         outlined
         :label="mobilePhoneNumberLabel"
-        :data-test="`${prefixDataTest}__mobilePhoneNumber`" />
+        :data-test="`${prefixDataTest}__mobilePhoneNumber`"
+        @focusout="incrementFocusPhoneCounter()" />
     </v-col>
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
         v-model="formCopy.alternatePhoneNumber"
-        @focusout="incrementFocusPhoneCounter()"
         :rules="rules.alternatePhoneNumber"
         outlined
         :label="alternatePhoneNumberLabel"
-        :data-test="`${prefixDataTest}__alternatePhoneNumber`" />
+        :data-test="`${prefixDataTest}__alternatePhoneNumber`"
+        @focusout="incrementFocusPhoneCounter()" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -130,9 +130,9 @@ export default Vue.extend({
 
   data() {
     return {
-      formCopy: null,
+      formCopy: null as IContactInformation,
       focusPhoneCounter: 0,
-      triggerPhoneMessage: 3
+      triggerPhoneMessage: 3,
     };
   },
 
@@ -146,6 +146,7 @@ export default Vue.extend({
           max: MAX_LENGTH_MD,
         },
         primarySpokenLanguageOther: {
+          required: this.formCopy.primarySpokenLanguage && this.formCopy.primarySpokenLanguage.isOther,
           max: MAX_LENGTH_MD,
         },
         homePhoneNumber: this.phoneRule,
@@ -203,7 +204,7 @@ export default Vue.extend({
         };
       }
       return {
-        requiredPhone: this.focusPhoneCounter >= this.triggerPhoneMessage ? { isMissing: this.phoneRequired }: false,
+        requiredPhone: this.focusPhoneCounter >= this.triggerPhoneMessage ? { isMissing: this.phoneRequired } : false,
         phone: true,
       };
     },
@@ -239,7 +240,7 @@ export default Vue.extend({
 
     incrementFocusPhoneCounter() {
       this.focusPhoneCounter += 1;
-    }
+    },
   },
 });
 </script>

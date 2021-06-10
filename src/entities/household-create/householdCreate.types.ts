@@ -38,4 +38,5 @@ export interface ICreateHouseholdRequest {
   homeAddress: IAddressData;
   additionalMembers: MemberCreateRequest[];
   eventId: uuid;
+  privacyDateTimeConsent: string;
 }

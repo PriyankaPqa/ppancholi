@@ -60,7 +60,7 @@ describe('PrivacyStatement.vue', () => {
 
       it('calls setDateTimeConsent with date of now if checked', () => {
         wrapper.vm.isPrivacyAgreed = true;
-        expect(wrapper.vm.$storage.registration.mutations.setDateTimeConsent).toHaveBeenCalledWith(moment().format());
+        expect(wrapper.vm.$storage.registration.mutations.setDateTimeConsent).toHaveBeenCalledWith(moment.utc(moment()).format());
       });
     });
   });

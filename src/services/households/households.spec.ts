@@ -48,7 +48,7 @@ describe('>>> Beneficiaries Service', () => {
   test('submitRegistration is linked to the correct URL', async () => {
     service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
 
-    await service.submitRegistration(mockHouseholdCreate(), 'event id');
+    await service.submitRegistration(mockHouseholdCreate(), 'event id', 'privacy consent date time');
 
     expect(http.post).toHaveBeenCalledWith('/household/households', createBeneficiaryRequest, { globalHandler: false });
   });
@@ -121,6 +121,10 @@ describe('>>> Beneficiaries Service', () => {
 
       expect(payload.preferredLanguage.specifiedOther).toBe('other preferred language');
       expect(payload.primarySpokenLanguage.specifiedOther).toBe('other primary spoken language');
+
+      contactInformation.primarySpokenLanguage = null;
+      payload = service.parseContactInformation(contactInformation);
+      expect(payload.primarySpokenLanguage).toBeNull();
     });
   });
 
@@ -172,14 +176,14 @@ describe('>>> Beneficiaries Service', () => {
     it('does not generate homeAddress if noFixedHome', () => {
       const household = mockHouseholdCreate();
       household.noFixedHome = true;
-      expect(service.parseHouseholdPayload(household, null).homeAddress).toBeNull();
+      expect(service.parseHouseholdPayload(household, null, null).homeAddress).toBeNull();
     });
 
     it('generate homeAddress otherwise', () => {
       service.parseAddress = jest.fn(() => mockAddressData());
       const household = mockHouseholdCreate();
       household.noFixedHome = false;
-      const built = service.parseHouseholdPayload(household, null);
+      const built = service.parseHouseholdPayload(household, null, null);
       expect(built.homeAddress).toEqual(mockAddressData());
     });
   });

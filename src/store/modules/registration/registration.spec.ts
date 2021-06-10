@@ -549,9 +549,16 @@ describe('>>> Registration Module', () => {
         store.state.household.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         await store.commit('registration/setEvent', mockEventData());
 
+        const mockConsentDateTime = '2000-06-02T04:00:00Z';
+        await store.commit('registration/setDateTimeConsent', mockConsentDateTime);
+
         await store.dispatch('registration/submitRegistration');
 
-        expect(store.$services.households.submitRegistration).toHaveBeenCalledWith(mockHouseholdCreate(), mockEventData().eventId);
+        expect(store.$services.households.submitRegistration).toHaveBeenCalledWith(
+          mockHouseholdCreate(),
+          mockEventData().eventId,
+          mockConsentDateTime,
+        );
       });
 
       it('sets registrationResponse in case of success', async () => {

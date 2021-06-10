@@ -4,6 +4,7 @@ import helpers from '../ui/helpers';
 import { MIN_AGE_REGISTRATION } from '../constants/validations';
 import { IBirthDate } from './value-objects/identity-set/identitySet.types';
 import { IPhoneNumber } from './value-objects/contact-information/contactInformation.types';
+import { IOptionItemData } from '../types';
 
 export const required = (value: unknown, errorMsg: string, errors: string[]) => {
   if (value === undefined || value === null || value === false) {
@@ -82,4 +83,9 @@ export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: s
   }
 
   errors.push(errorMsg);
+};
+
+export const isValidOption = (option: IOptionItemData, specifiedOther: string, errorMsg: string, errors: string[]) => {
+  const valid = !option?.isOther || (option.isOther && specifiedOther);
+  if (!valid) errors.push(errorMsg);
 };

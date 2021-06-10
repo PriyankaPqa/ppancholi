@@ -8,7 +8,7 @@ import {
 } from './contactInformation.types';
 
 import {
-  required, maxLengthCheck, isPhone, isEmail, hasAtLeastAPhoneIfNoEmail,
+  required, maxLengthCheck, isPhone, isEmail, hasAtLeastAPhoneIfNoEmail, isValidOption,
 } from '../../classValidation';
 
 export class ContactInformation implements IContactInformation {
@@ -50,6 +50,7 @@ export class ContactInformation implements IContactInformation {
     maxLengthCheck(this.preferredLanguageOther, MAX_LENGTH_MD, 'other preferred language', errors);
 
     maxLengthCheck(this.primarySpokenLanguageOther, MAX_LENGTH_MD, 'other primary spoken language', errors);
+    isValidOption(this.primarySpokenLanguage, this.primarySpokenLanguageOther, 'other primary spoken language is required', errors);
 
     isPhone(this.homePhoneNumber, 'home phone not valid', errors);
     isPhone(this.mobilePhoneNumber, 'mobile phone not valid', errors);

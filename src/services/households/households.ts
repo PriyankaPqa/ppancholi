@@ -39,18 +39,19 @@ export class HouseholdsService implements IHouseholdsService {
     });
   }
 
-  submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdData> {
-    const payload = this.parseHouseholdPayload(household, eventId);
+  submitRegistration(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): Promise<IHouseholdData> {
+    const payload = this.parseHouseholdPayload(household, eventId, privacyDateTimeConsent);
     return this.http.post('/household/households', payload, { globalHandler: false });
   }
 
-  parseHouseholdPayload(household: IHouseholdCreate, eventId: string): ICreateHouseholdRequest {
+  parseHouseholdPayload(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): ICreateHouseholdRequest {
     return {
       noFixedHome: household.noFixedHome,
       primaryBeneficiary: this.parseMember(household.primaryBeneficiary),
       additionalMembers: household.additionalMembers.map((member) => this.parseAdditionalMember(member)),
       homeAddress: household.noFixedHome ? null : this.parseAddress(household.homeAddress),
       eventId,
+      privacyDateTimeConsent,
     };
   }
 
@@ -110,10 +111,10 @@ export class HouseholdsService implements IHouseholdsService {
         optionItemId: contactInformation.preferredLanguage.id,
         specifiedOther: contactInformation.preferredLanguage.isOther ? contactInformation.preferredLanguageOther : null,
       },
-      primarySpokenLanguage: {
+      primarySpokenLanguage: contactInformation.primarySpokenLanguage ? {
         optionItemId: contactInformation.primarySpokenLanguage.id,
         specifiedOther: contactInformation.primarySpokenLanguage.isOther ? contactInformation.primarySpokenLanguageOther : null,
-      },
+      } : null,
     };
   }
 

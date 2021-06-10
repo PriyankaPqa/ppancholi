@@ -59,7 +59,7 @@ export default Vue.extend({
       },
       set(checked: boolean) {
         this.$storage.registration.mutations.setIsPrivacyAgreed(checked);
-        this.$storage.registration.mutations.setDateTimeConsent(checked ? moment().format() : null);
+        this.$storage.registration.mutations.setDateTimeConsent(checked ? moment.utc(moment()).format() : null);
       },
     },
   },

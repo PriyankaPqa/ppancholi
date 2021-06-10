@@ -187,6 +187,15 @@ describe('PersonalInformationTemplate.vue', () => {
     });
 
     describe('getPrimarySpokenLanguage', () => {
+      it('returns null', async () => {
+        const personalInformation = _merge(mockPrimarySpokenLanguageOther(), mockIdentitySet());
+        personalInformation.primarySpokenLanguage = null;
+
+        await wrapper.setProps({ personalInformation });
+
+        expect(wrapper.vm.getPrimarySpokenLanguage).toBeNull();
+      });
+
       it('returns primarySpokenLanguageOther', async () => {
         await wrapper.setProps({
           personalInformation: _merge(mockPrimarySpokenLanguageOther(), mockIdentitySet()),

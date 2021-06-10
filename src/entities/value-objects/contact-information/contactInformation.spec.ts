@@ -142,6 +142,21 @@ describe('>>> ContactInformation', () => {
 
         expect(p.validate(false)).toContain(`other primary spoken language exceeds max length of ${MAX_LENGTH_MD}`);
       });
+
+      it('is specified if select other', () => {
+        const p = new ContactInformation();
+        p.primarySpokenLanguage = {
+          isOther: true,
+          specifiedOther: null,
+          id: '',
+          name: null,
+          orderRank: 1,
+          isDefault: false,
+        };
+        p.primarySpokenLanguageOther = null;
+
+        expect(p.validate(false)).toContain('other primary spoken language is required');
+      });
     });
 
     describe('Only if skipEmailPhoneRules is false', () => {

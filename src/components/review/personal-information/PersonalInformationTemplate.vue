@@ -122,6 +122,7 @@ export default Vue.extend({
     },
 
     getPrimarySpokenLanguage(): TranslateResult {
+      if (!this.personalInformation.primarySpokenLanguage) return null;
       if (this.personalInformation.primarySpokenLanguage.isOther) return this.personalInformation.primarySpokenLanguageOther;
       return this.$m(this.personalInformation.primarySpokenLanguage.name);
     },

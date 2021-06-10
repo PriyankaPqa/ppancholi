@@ -53,8 +53,24 @@ describe('ContactInformationForm.vue', () => {
         });
       });
 
-      test('primarySpokenLanguageOther', () => {
+      test('primarySpokenLanguageOther', async () => {
+        await wrapper.setData({
+          formCopy: {
+            primarySpokenLanguage: { isOther: false },
+          },
+        });
         expect(wrapper.vm.rules.primarySpokenLanguageOther).toEqual({
+          required: false,
+          max: MAX_LENGTH_MD,
+        });
+
+        await wrapper.setData({
+          formCopy: {
+            primarySpokenLanguage: { isOther: true },
+          },
+        });
+        expect(wrapper.vm.rules.primarySpokenLanguageOther).toEqual({
+          required: true,
           max: MAX_LENGTH_MD,
         });
       });
@@ -189,7 +205,7 @@ describe('ContactInformationForm.vue', () => {
           skipPhoneEmailRules: false,
         });
         expect(wrapper.vm.phoneRule).toEqual({
-          requiredPhone: wrapper.vm.focusPhoneCounter >= wrapper.vm.triggerPhoneMessage ? { isMissing: this.phoneRequired }: false,
+          requiredPhone: wrapper.vm.focusPhoneCounter >= wrapper.vm.triggerPhoneMessage ? { isMissing: this.phoneRequired } : false,
           phone: true,
         });
       });
@@ -314,32 +330,32 @@ describe('ContactInformationForm.vue', () => {
       });
     });
 
-    describe('incrementFocusPhoneCounter', function () {
-      it('should increment focusPhoneCounter', function () {
+    describe('incrementFocusPhoneCounter', () => {
+      it('should increment focusPhoneCounter', () => {
         expect(wrapper.vm.focusPhoneCounter).toEqual(0);
         wrapper.vm.incrementFocusPhoneCounter();
         expect(wrapper.vm.focusPhoneCounter).toEqual(1);
       });
 
-      it('should be called when focusing out homePhoneNumber', function () {
+      it('should be called when focusing out homePhoneNumber', () => {
         wrapper.vm.incrementFocusPhoneCounter = jest.fn();
         const element = wrapper.findDataTest('personalInfo__homePhoneNumber');
-        element.vm.$emit('focusout')
-        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1)
+        element.vm.$emit('focusout');
+        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1);
       });
 
-      it('should be called when focusing out mobilePhoneNumber', function () {
+      it('should be called when focusing out mobilePhoneNumber', () => {
         wrapper.vm.incrementFocusPhoneCounter = jest.fn();
         const element = wrapper.findDataTest('personalInfo__mobilePhoneNumber');
-        element.vm.$emit('focusout')
-        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1)
+        element.vm.$emit('focusout');
+        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1);
       });
 
-      it('should be called when focusing out alternatePhoneNumber', function () {
+      it('should be called when focusing out alternatePhoneNumber', () => {
         wrapper.vm.incrementFocusPhoneCounter = jest.fn();
         const element = wrapper.findDataTest('personalInfo__alternatePhoneNumber');
-        element.vm.$emit('focusout')
-        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1)
+        element.vm.$emit('focusout');
+        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1);
       });
     });
   });

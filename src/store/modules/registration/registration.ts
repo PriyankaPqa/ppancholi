@@ -374,7 +374,7 @@ const actions = {
     let result: IHouseholdData;
     context.commit('setSubmitLoading', true);
     try {
-      result = await this.$services.households.submitRegistration(householdCreate, context.state.event.eventId);
+      result = await this.$services.households.submitRegistration(householdCreate, context.state.event.eventId, context.state.privacyDateTimeConsent);
       context.commit('setRegistrationResponse', result);
     } catch (e) {
       context.commit('setRegistrationErrors', e);

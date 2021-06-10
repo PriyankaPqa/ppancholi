@@ -11,7 +11,7 @@ export interface IHouseholdsService {
   getPreferredLanguages(): Promise<IOptionItemData[]>;
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   searchIndigenousIdentities(params: IAzureSearchParams): Promise<IAzureSearchResult<IIndigenousIdentityData>>;
-  submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdData>;
+  submitRegistration(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): Promise<IHouseholdData>;
 }
 
 export interface IHouseholdsServiceMock {
