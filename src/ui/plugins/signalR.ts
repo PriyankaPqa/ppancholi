@@ -1,14 +1,13 @@
-import { HubConnectionBuilder, HubConnection } from '@microsoft/signalr';
-import { Store } from 'vuex';
-import { IRootState } from '@/store';
-import AuthenticationProvider from '@/auth/AuthenticationProvider';
+/* eslint-disable */
+import AuthenticationProvider from "@/auth/AuthenticationProvider";
+import { IRootState } from "@/store";
+import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import { Store } from "vuex";
 
 export class SignalRConnection {
   private connection: HubConnection;
 
   private store;
-
-  private EVENT_CREATED = 'event.EventCreated';
 
   constructor(store: Store<IRootState>) {
     this.store = store;
@@ -26,8 +25,10 @@ export class SignalRConnection {
           accessTokenFactory: async () => {
             const tokenResponse = await AuthenticationProvider.acquireToken();
             return tokenResponse.accessToken;
-          },
+          }
         })
+        // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
+        .withAutomaticReconnect()
         .build();
 
       connection.start();
@@ -38,8 +39,18 @@ export class SignalRConnection {
     }
   }
 
-  private createBindings() {
-    this.connection.on(this.EVENT_CREATED, (data) => this.store.commit('event/addOrUpdateEvent', data.event));
+  private createBindings() {    
+    this.listenForEntityChanges('event', 'AgreementType');
+    this.listenForEntityChanges('event', 'Event');
+    this.listenForEntityChanges('event', 'EventMetadata');
+    this.listenForEntityChanges('event', 'EventType');
+    this.listenForEntityChanges('event', 'Program');
+    this.listenForEntityChanges('event', 'ProgramMetadata');
+  }
+
+  private listenForEntityChanges(domain: string, entityName: string) {
+    this.connection.on(`${domain}.${entityName}Created`, data => { console.log(`${domain}.${entityName}Created`, data) });
+    this.connection.on(`${domain}.${entityName}Updated`, data => { console.log(`${domain}.${entityName}Updated`, data) });    
   }
 }
 
