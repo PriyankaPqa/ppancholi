@@ -208,6 +208,10 @@ const routes = {
       path: 'lists/case-file-close-reasons',
       name: 'systemManagement.lists.caseFileCloseReasons',
     },
+    financialAssistance: {
+      path: 'lists/financial-assistance',
+      name: 'systemManagement.lists.financialAssistance',
+    },
   },
   teams: {
     layout: {

@@ -381,7 +381,11 @@ export default Vue.extend({
 
     async saveNewSubItem(name: IMultilingual, description: IMultilingual, status: EOptionListItemStatus, itemId: string) {
       const subItems = this.items.find((i) => i.id === itemId).subitems;
-      const highestRank = subItems.reduce((prev, current) => ((prev.orderRank > current.orderRank) ? prev : current)).orderRank;
+      let highestRank = 0;
+
+      if (subItems.length > 0) {
+        highestRank = subItems.reduce((prev, current) => ((prev.orderRank > current.orderRank) ? prev : current)).orderRank;
+      }
 
       const payload: ICreateOptionItemRequest = {
         name: entityUtils.getFilledMultilingualField(name),

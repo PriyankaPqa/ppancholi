@@ -1356,6 +1356,7 @@
     "system_management.lists.defaultOptionRemoved": "L'élément \"Par défaut\" a été supprimé avec succès.",
     "system_management.lists.defaultOptionSet": "L'élément \"Par défaut\" a été attribué avec succès.",
     "system_management.lists.eventTypes": "Types d'événement",
+    "system_management.lists.financialAssistance": "Catégories d'aide financière",
     "system_management.lists.genders": "Genres",
     "system_management.lists.header.item": "Élément",
     "system_management.lists.header.status": "Statut",

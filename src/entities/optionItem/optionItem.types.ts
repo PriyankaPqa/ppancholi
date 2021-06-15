@@ -16,6 +16,7 @@ export enum EOptionLists {
   CaseFileInactiveReasons = 8,
   CaseNoteCategories= 9,
   CaseFileCloseReasons = 10,
+  FinancialAssistance = 11,
 }
 
 export interface IOptionSubItem {
