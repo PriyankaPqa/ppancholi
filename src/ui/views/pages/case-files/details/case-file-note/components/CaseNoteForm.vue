@@ -25,7 +25,7 @@
               :item-text="(c) => $m(c.name)"
               return-object
               :items="caseNoteCategories"
-              :label="$t('caseNote.categories')"
+              :label="$t('caseNote.category')"
               :rules="rules.category"
               data-test="case-note-form-categories" />
           </v-col>

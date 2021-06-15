@@ -351,6 +351,7 @@
     "caseNote.caseNotes": "Case notes",
     "caseNote.caseNotesPlural": "no case notes | 1 case note | {count} case notes",
     "caseNote.categories": "Categories *",
+    "caseNote.category": "Category *",
     "caseNote.create_caseNote.help_link": "",
     "caseNote.create_caseNote.rowTitle": "Add case note",
     "caseNote.create.rowTitle": "Add case note",

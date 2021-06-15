@@ -351,6 +351,7 @@
     "caseNote.caseNotes": "Notes évolutives",
     "caseNote.caseNotesPlural": "Aucune note évolutive | 1 note évolutive | {count} notes évolutives",
     "caseNote.categories": "Catégories *",
+    "caseNote.category": "Catégorie *",
     "caseNote.create_caseNote.help_link": "",
     "caseNote.create_caseNote.rowTitle": "Ajouter une note évolutive",
     "caseNote.create.rowTitle": "Ajouter une note évolutive",
