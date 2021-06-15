@@ -12,7 +12,7 @@
                 </v-icon>
               </v-btn>
             </template>
-            <span>{{ $t('common.help') }}</span>
+            <span>{{ $t('tooltip.temporary_address') }}</span>
           </v-tooltip>
         </h5>
       </v-col>
