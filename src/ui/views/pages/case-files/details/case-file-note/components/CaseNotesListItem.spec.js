@@ -66,18 +66,18 @@ describe('CaseNotesListItem.vue', () => {
       });
     });
 
-    describe('click pin button', () => {
-      it('triggers event', async () => {
-        wrapper.vm.emitPinEvent = jest.fn();
-
-        expect(wrapper.vm.emitPinEvent).toHaveBeenCalledTimes(0);
-
-        const pinBtn = wrapper.findDataTest('items__pinButton');
-        pinBtn.vm.$emit('click');
-
-        expect(wrapper.vm.emitPinEvent).toHaveBeenCalledTimes(1);
-      });
-    });
+    // describe('click pin button', () => {
+    //   it('triggers event', async () => {
+    //     wrapper.vm.emitPinEvent = jest.fn();
+    //
+    //     expect(wrapper.vm.emitPinEvent).toHaveBeenCalledTimes(0);
+    //
+    //     const pinBtn = wrapper.findDataTest('items__pinButton');
+    //     pinBtn.vm.$emit('click');
+    //
+    //     expect(wrapper.vm.emitPinEvent).toHaveBeenCalledTimes(1);
+    //   });
+    // });
   });
 
   describe('Computed', () => {

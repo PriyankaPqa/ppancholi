@@ -6,7 +6,7 @@
       :action-title="$t('caseNote.edit.rowTitle')"
       is-edit
       @close-case-note-form="closeCaseNoteEdit()" />
-    <case-file-list-item-wrapper v-else :item="item" show-menu>
+    <case-file-list-item-wrapper v-else :item="item" :show-menu="canEditCaseNote">
       <template slot="content">
         <div class="mb-2">
           <div class="rc-body16 fw-bold" data-test="caseNotes__subject">
@@ -33,15 +33,15 @@
           <v-list-item-title>{{ $t('caseFileItem.edit') }}</v-list-item-title>
         </v-list-item>
 
-        <v-list-item data-test="items__pinButton" @click="emitPinEvent()">
-          <v-list-item-title v-if="item.isPinned">
-            {{ $t('caseFileItem.unpinItem') }}
-          </v-list-item-title>
+        <!--        <v-list-item data-test="items__pinButton" @click="emitPinEvent()">-->
+        <!--          <v-list-item-title v-if="item.isPinned">-->
+        <!--            {{ $t('caseFileItem.unpinItem') }}-->
+        <!--          </v-list-item-title>-->
 
-          <v-list-item-title v-else>
-            {{ $t('caseFileItem.pinItem') }}
-          </v-list-item-title>
-        </v-list-item>
+        <!--          <v-list-item-title v-else>-->
+        <!--            {{ $t('caseFileItem.pinItem') }}-->
+        <!--          </v-list-item-title>-->
+        <!--        </v-list-item>-->
       </template>
     </case-file-list-item-wrapper>
   </div>
