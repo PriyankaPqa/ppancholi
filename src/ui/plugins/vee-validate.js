@@ -73,12 +73,12 @@ extend('email', {
 
 extend('phone', {
   validate: (phone) => {
-    const { number, countryISO2 } = phone;
+    const { number, countryCode } = phone;
     if (!number || typeof number !== 'string') {
       return true;
     }
 
-    const pn = new PhoneNumber(number, countryISO2);
+    const pn = new PhoneNumber(number, countryCode);
 
     return pn.isValid();
   },
