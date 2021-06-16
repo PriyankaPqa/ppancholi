@@ -98,6 +98,7 @@ describe('AddEmisUser.vue', () => {
         allEmisUsers: [],
         show: true,
         allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
+        allAccessLevelRoles: [],
       },
       data() {
         return {
@@ -202,6 +203,7 @@ describe('AddEmisUser.vue', () => {
           allEmisUsers: [],
           show: true,
           allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
+          allAccessLevelRoles: [],
         },
         data() {
           return {
@@ -271,6 +273,7 @@ describe('AddEmisUser.vue', () => {
             allEmisUsers: usersTestData,
             show: true,
             allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
+            allAccessLevelRoles: [],
           },
           data() {
             return {
@@ -422,7 +425,8 @@ describe('AddEmisUser.vue', () => {
         wrapper.vm.selectedUsers = [...mockAppUserData()];
         wrapper.vm.selectedUsers[0].roles = [];
         expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
-        wrapper.vm.assignRoleToUser(optionData[0], wrapper.vm.selectedUsers[0]);
+        const roleData = { value: optionData[0].id, text: optionData[0].name };
+        wrapper.vm.assignRoleToUser(roleData, wrapper.vm.selectedUsers[0]);
         expect(wrapper.vm.selectedUsers[0].roles[0]).toEqual(
           {
             id: optionData[0].id,

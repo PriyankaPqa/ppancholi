@@ -19,6 +19,7 @@
         <v-data-table
           data-test="teams-table"
           hide-header
+          must-sort
           :loading="loading"
           :loading-text="loadingText"
           :items="filteredUserAccounts"
@@ -47,10 +48,10 @@
               return-object
               hide-details
               data-test="user_roleId"
-              :value="getSubRoleById(item.roleId)"
-              :item-text="(item) => item ? $m(item.name) : ''"
+              :value="getRoleListItem(item.roleId)"
+              :item-text="(item) => item ? $m(item.text): ''"
               :label="$t('system_management.userAccounts.role_header')"
-              :items="allSubRoles"
+              :items="allAccessLevelRoles"
               @change="assignRoleToUser($event, item)" />
           </template>
 
@@ -99,6 +100,7 @@
       v-if="showAddEmisUserDialog"
       data-test="add-emis-user"
       :all-sub-roles="allSubRoles"
+      :all-access-level-roles="allAccessLevelRoles"
       :all-emis-users="allUsers"
       :show.sync="showAddEmisUserDialog"
       @hide="showAddEmisUserDialog = false"
@@ -131,13 +133,14 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
   EOptionListItemStatus,
   EOptionLists,
-  IOptionItemData,
+  IOptionItem,
   IOptionSubItem,
 } from '@/entities/optionItem';
 import { IAddRoleToUserRequest } from '@/services/user-accounts/user-accounts.types';
 import { EUserAccountStatus, IUserAccount } from '@/entities/user-account';
 import { isEmpty } from 'lodash';
 import _cloneDeep from 'lodash/cloneDeep';
+import { IMultilingual } from '@/types';
 
 export default Vue.extend({
   name: 'UserAccounts',
@@ -165,6 +168,7 @@ export default Vue.extend({
       loading: true,
       allUsers: [] as IUserAccount[], // All users, minus "deleted in EMIS"
       allSubRoles: [] as IOptionSubItem[],
+      allAccessLevelRoles: [],
       changedAccounts: [] as IUserAccount[],
     };
   },
@@ -273,7 +277,7 @@ export default Vue.extend({
 
   mounted() {
     this.fetchAllEmisUsers();
-    this.loadAllActiveSubRoles();
+    this.setRoles();
   },
 
   methods: {
@@ -301,10 +305,22 @@ export default Vue.extend({
       return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
     },
 
-    assignRoleToUser(roleData: IOptionItemData, user: IUserAccount) {
+    getRoleListItem(roleId: string) : {text:IMultilingual, value: string} {
+      const role = this.getSubRoleById(roleId);
+      if (role) {
+        return {
+          text: role.name,
+          value: role.id,
+        };
+      }
+      return null;
+    },
+
+    assignRoleToUser(roleData: {text: IMultilingual, value: string}, user: IUserAccount) {
       // Only update if this changes the user role
-      if (roleData && user && roleData.id !== user.roleId) {
-        const role:IOptionSubItem = this.allSubRoles.find((r) => r.id === roleData.id);
+      if (roleData && user && roleData.value !== user.roleId) {
+        const role:IOptionSubItem = this.allSubRoles.find((r) => r.id === roleData.value);
+
         user.roleId = role.id;
         user.roleName = role.name;
         this.changedAccounts.push(user); // Register for pending change
@@ -312,11 +328,12 @@ export default Vue.extend({
     },
 
     async applyRoleChange(user: IUserAccount) {
-      if (this.itemIsChanged(user) && this.getSubRoleById(user.roleId)) {
+      const newRole = this.getSubRoleById(user.roleId);
+      if (this.itemIsChanged(user) && newRole) {
         try {
           this.loading = true; // Visual cue of busy state
           const request:IAddRoleToUserRequest = {
-            subRole: this.getSubRoleById(user.roleId),
+            subRole: newRole,
             userId: user.id,
           };
           const resultAccount:IUserAccount = await this.$storage.userAccount.actions.addRoleToUser(request);
@@ -383,10 +400,36 @@ export default Vue.extend({
       this.loading = false;
     },
 
-    async loadAllActiveSubRoles() {
-      await this.$storage.optionList.mutations.setList(EOptionLists.Roles);
-      const subRoles = await this.$storage.optionList.actions.fetchSubItems();
+    async setRoles() {
+      this.$storage.optionList.mutations.setList(EOptionLists.Roles);
+      const roles = await this.$storage.optionList.actions.fetchItems();
+      this.setAllActiveSubRoles(roles);
+      this.setAllAccessLevelRoles(roles);
+    },
+
+    setAllActiveSubRoles(roles: IOptionItem[]) {
+      const subRoles = roles.reduce((acc: IOptionSubItem[], curr:IOptionItem) => {
+        acc.push(...curr.subitems);
+        return acc;
+      }, []);
       this.allSubRoles = subRoles ? subRoles.filter((role: IOptionSubItem) => role.status === EOptionListItemStatus.Active) : [];
+    },
+
+    // set the hierarchical list of roles and subroles in the format needed for the dropdown of the select component
+    setAllAccessLevelRoles(roles: IOptionItem[]) {
+      roles.forEach((accessLevel : IOptionItem) => {
+        this.allAccessLevelRoles.push({
+          header: this.$m(accessLevel.name),
+        });
+        accessLevel.subitems.forEach((role: IOptionSubItem) => {
+          if (role.status === EOptionListItemStatus.Active) {
+            this.allAccessLevelRoles.push({
+              text: role.name,
+              value: role.id,
+            });
+          }
+        });
+      });
     },
 
     excludeDeletedUsers(users: IUserAccount[]): IUserAccount[] {
@@ -424,5 +467,11 @@ export default Vue.extend({
   }
   .align-vertical-centre {
     align-items: center;
+  }
+</style>
+
+<style  lang="scss">
+  .v-select-with-validation-dropdown {
+    max-width: min-content;
   }
 </style>

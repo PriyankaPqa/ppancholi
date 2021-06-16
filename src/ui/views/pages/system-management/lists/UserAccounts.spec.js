@@ -9,7 +9,6 @@ import Component from './UserAccounts.vue';
 const localVue = createLocalVue();
 const storage = mockStorage();
 const usersTestData = mockUserAccountSearchData();
-const mockSubItemData = [...mockOptionItemData()[0].subitems, mockOptionItemData()[1]];
 const fakeSubRole = {
   id: '123',
   name: {
@@ -24,6 +23,8 @@ describe('UserAccounts.vue', () => {
   let wrapper;
 
   beforeEach(() => {
+    storage.optionList.mutations.setList = jest.fn();
+    storage.optionList.actions.fetchItems = jest.fn(() => mockOptionItemData());
     wrapper = shallowMount(Component, {
       localVue,
       data() {
@@ -53,13 +54,13 @@ describe('UserAccounts.vue', () => {
   describe('Mounted', () => {
     it('loads lookup lists', async () => {
       jest.spyOn(wrapper.vm, 'fetchAllEmisUsers').mockImplementation(() => true);
-      jest.spyOn(wrapper.vm, 'loadAllActiveSubRoles').mockImplementation(() => mockSubItemData);
+      jest.spyOn(wrapper.vm, 'setRoles').mockImplementation(() => mockOptionItemData());
 
       wrapper.vm.$options.mounted.forEach((hook) => {
         hook.call(wrapper.vm);
       });
       expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalledTimes(1);
-      expect(wrapper.vm.loadAllActiveSubRoles).toHaveBeenCalledTimes(1);
+      expect(wrapper.vm.setRoles).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -306,6 +307,13 @@ describe('UserAccounts.vue', () => {
       });
     });
 
+    describe('getRoleListItem', () => {
+      it('returns the right value', () => {
+        jest.spyOn(wrapper.vm, 'getSubRoleById').mockImplementation(() => ({ name: 'mock-name', id: 'mock-id' }));
+        expect(wrapper.vm.getRoleListItem('mock-id')).toEqual({ text: 'mock-name', value: 'mock-id' });
+      });
+    });
+
     describe('assignRoleToUser', () => {
       it('assigns the correct sub-role to a user', async () => {
         const user = {
@@ -314,8 +322,9 @@ describe('UserAccounts.vue', () => {
           roleName: 'ROLE',
         };
         wrapper.vm.allSubRoles = mockOptionItemData()[0].subitems;
+        const roleData = { value: wrapper.vm.allSubRoles[0].id };
 
-        wrapper.vm.assignRoleToUser(wrapper.vm.allSubRoles[0], user);
+        wrapper.vm.assignRoleToUser(roleData, user);
 
         expect(user.roleId).toEqual(wrapper.vm.allSubRoles[0].id);
         expect(user.roleName).toEqual(wrapper.vm.allSubRoles[0].name);
@@ -458,14 +467,42 @@ describe('UserAccounts.vue', () => {
       });
     });
 
-    describe('loadAllActiveSubRoles', () => {
+    describe('setRoles', () => {
       it('invokes the correct storage function', async () => {
-        wrapper.vm.$storage.optionList.mutations.setList = jest.fn();
-        wrapper.vm.$storage.optionList.actions.fetchSubItems = jest.fn(() => mockSubItemData);
+        jest.clearAllMocks();
+        await wrapper.vm.setRoles();
+        expect(storage.optionList.mutations.setList).toBeCalledWith(6); // EOptionLists.Roles
+        expect(storage.optionList.actions.fetchItems).toBeCalledTimes(1);
+      });
 
-        await wrapper.vm.loadAllActiveSubRoles();
-        expect(wrapper.vm.$storage.optionList.mutations.setList).toBeCalledWith(6); // EOptionLists.Roles
-        expect(wrapper.vm.$storage.optionList.actions.fetchSubItems).toBeCalledTimes(1);
+      it('calls setAllActiveSubRoles and setAllAccessLevelRoles with the result of the storage call', async () => {
+        jest.spyOn(wrapper.vm, 'setAllActiveSubRoles').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm, 'setAllAccessLevelRoles').mockImplementation(() => {});
+
+        await wrapper.vm.setRoles();
+
+        expect(wrapper.vm.setAllActiveSubRoles).toHaveBeenCalledWith(mockOptionItemData());
+        expect(wrapper.vm.setAllAccessLevelRoles).toHaveBeenCalledWith(mockOptionItemData());
+      });
+    });
+
+    describe('setAllActiveSubRoles', () => {
+      it('sets the right data into allSubRoles', async () => {
+        await wrapper.vm.setAllActiveSubRoles(mockOptionItemData());
+        expect(wrapper.vm.allSubRoles).toEqual([mockOptionItemData()[0].subitems[1]]);
+      });
+    });
+
+    describe('setAllAccessLevelRoles', () => {
+      it('sets the right data into allAccessLevelRoles', async () => {
+        wrapper.vm.allAccessLevelRoles = [];
+        await wrapper.vm.setAllAccessLevelRoles(mockOptionItemData());
+        expect(wrapper.vm.allAccessLevelRoles).toEqual([
+          { header: mockOptionItemData()[0].name.translation.en },
+          { text: mockOptionItemData()[0].subitems[1].name, value: mockOptionItemData()[0].subitems[1].id },
+          { header: mockOptionItemData()[1].name.translation.en },
+          { header: mockOptionItemData()[2].name.translation.en },
+        ]);
       });
     });
 

@@ -42,6 +42,7 @@
               class="search_members"
               show-select
               hide-default-footer
+              must-sort
               :loading-text="loadingText"
               :headers="headers"
               :item-class="getClassRow"
@@ -52,7 +53,7 @@
               <template slot="no-data">
                 <div>{{ $t('system_management.userAccounts.no_users_found') }}</div>
               </template>
-              <template #item.data-table-select="{ item }">
+              <template #[`item.data-table-select`]="{ item }">
                 <v-simple-checkbox
                   :data-test="`select_${item.id}`"
                   :ripple="false"
@@ -61,10 +62,10 @@
                   :disabled="isAlreadyInEmis(item)"
                   @input="toggleUserSelection(item)" />
               </template>
-              <template #item.displayName="{ item }">
+              <template #[`item.displayName`]="{ item }">
                 {{ item.displayName }}
               </template>
-              <template #item.emailAddress="{ item }">
+              <template #[`item.emailAddress`]="{ item }">
                 {{ item.mail }}
               </template>
             </v-data-table>
@@ -86,9 +87,9 @@
                   outlined
                   return-object
                   hide-details
-                  :item-text="(item) => item ? $m(item.name) : ''"
+                  :item-text="(item) => item ? $m(item.text) : ''"
                   :label="$t('system_management.userAccounts.role_header')"
-                  :items="allSubRoles"
+                  :items="allAccessLevelRoles"
                   @change="assignRoleToUser($event, user)" />
                 <v-tooltip bottom>
                   <template #activator="{ on }">
@@ -128,6 +129,7 @@ import {
 import { i18n } from '@/ui/plugins';
 import { EUserAccountStatus, IUserAccount } from '@/entities/user-account';
 import _cloneDeep from 'lodash/cloneDeep';
+import { IMultilingual } from '@/types';
 
 export default Vue.extend({
   name: 'AddEmisUser',
@@ -145,6 +147,10 @@ export default Vue.extend({
     allSubRoles: {
       type: Array,
       default: () => [] as Array<IOptionSubItem>,
+      required: true,
+    },
+    allAccessLevelRoles: {
+      type: Array as ()=> {header?: string, value?: string, name?: IMultilingual}[],
       required: true,
     },
     allEmisUsers: {
@@ -297,13 +303,13 @@ export default Vue.extend({
       }
     },
 
-    assignRoleToUser(roleData: IOptionSubItem, user: IAppUserData) {
+    assignRoleToUser(roleData: {text: IMultilingual, value: string}, user: IAppUserData) {
       if (roleData) {
         const { locale } = i18n;
         user.roles = [
           {
-            id: roleData.id,
-            displayName: roleData.name.translation[locale],
+            id: roleData.value,
+            displayName: roleData.text.translation[locale],
             value: null,
           },
         ];
