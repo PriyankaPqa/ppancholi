@@ -123,13 +123,13 @@ describe('EventForm.vue', () => {
 
     describe('setAssistanceNumber', () => {
       it('sets assistanceNumber with the phone object', () => {
-        const phoneObject = { number: '12345', countryISO2: 'fr', e164Number: '12345' };
+        const phoneObject = { number: '12345', countryCode: 'fr', e164Number: '12345' };
         wrapper.vm.setAssistanceNumber(phoneObject);
         expect(wrapper.vm.assistanceNumber).toEqual(phoneObject);
       });
 
       it('sets the assistanceNumber of the localEvent to the e164Number', () => {
-        const phoneObject = { number: '12345', countryISO2: 'fr', e164Number: '12345' };
+        const phoneObject = { number: '12345', countryCode: 'fr', e164Number: '12345' };
         wrapper.vm.setAssistanceNumber(phoneObject);
         expect(wrapper.vm.localEvent.responseDetails.assistanceNumber).toEqual(phoneObject.e164Number);
       });
@@ -570,7 +570,7 @@ describe('EventForm.vue', () => {
         await input.setValue('1234567890');
 
         expect(wrapper.vm.setAssistanceNumber).toHaveBeenCalledWith({
-          countryISO2: 'CA',
+          countryCode: 'CA',
           e164Number: '+11234567890',
           number: '1234567890',
         });

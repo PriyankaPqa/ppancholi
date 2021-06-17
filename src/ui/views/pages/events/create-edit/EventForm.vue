@@ -339,7 +339,7 @@ export default Vue.extend({
 
     const assistanceNumber = {
       number: '',
-      countryISO2: '',
+      countryCode: '',
       e164Number: '',
     };
 
@@ -661,7 +661,7 @@ export default Vue.extend({
       this.localEvent.fillEmptyMultilingualAttributes();
     },
 
-    setAssistanceNumber(p: {number: string; countryISO2: string; e164Number: string}) {
+    setAssistanceNumber(p: {number: string; countryCode: string; e164Number: string}) {
       this.assistanceNumber = p;
       this.localEvent.responseDetails.assistanceNumber = p.e164Number;
     },
