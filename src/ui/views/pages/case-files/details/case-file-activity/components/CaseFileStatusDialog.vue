@@ -66,7 +66,7 @@ import { VForm } from '@/types';
 import { ECaseFileStatus } from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { IUserAccount } from '@/entities/user-account';
+import { IUserAccountCombined } from '@/entities/user-account';
 import colors from '@/ui/plugins/vuetify/colors';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 
@@ -136,8 +136,8 @@ export default Vue.extend({
       return { backgroundColor: color };
     },
 
-    user(): IUserAccount {
-      return this.$storage.userAccount.getters.userAccountById(this.userId);
+    user(): IUserAccountCombined {
+      return this.$storage.userAccount.getters.get(this.userId);
     },
 
     rules(): Record<string, unknown> {
@@ -191,7 +191,7 @@ export default Vue.extend({
     const userId = this.$storage.user.getters.userId();
     this.userId = userId;
     if (userId) {
-      await this.$storage.userAccount.actions.fetchUserAccount(userId);
+      await this.$storage.userAccount.actions.fetch(userId);
     }
   },
 

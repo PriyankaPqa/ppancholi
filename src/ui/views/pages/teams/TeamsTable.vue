@@ -12,7 +12,7 @@
       @search="search">
       <template #filter>
         <filter-toolbar
-          :filter-key="EFilterKey.Teams"
+          :filter-key="FilterKey.Teams"
           :count="azureSearchCount"
           :filter-options="filters"
           @update:appliedFilter="onApplyFilter" />
@@ -77,7 +77,7 @@ import { DataTableHeader } from 'vuetify';
 import {
   ETeamType, ETeamStatus, ITeamSearchData,
 } from '@/entities/team';
-import { EFilterKey } from '@/entities/user';
+import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -106,7 +106,7 @@ export default Vue.extend({
 
   data() {
     return {
-      EFilterKey,
+      FilterKey,
       ETeamType,
       ETeamStatus,
       options: {

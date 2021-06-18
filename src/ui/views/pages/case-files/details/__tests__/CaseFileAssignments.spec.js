@@ -1,7 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFile, mockCaseFilesSearchData } from '@/entities/case-file';
 import { mockTeamsData, mockSearchTeams } from '@/entities/team';
-import { mockUserAccountSearchData, UserAccount } from '@/entities/user-account';
 import { mockStorage } from '@/store/storage';
 import { mockUserStateLevel } from '@/test/helpers';
 
@@ -131,6 +130,9 @@ describe('CaseFileAssignments.vue', () => {
           store: {
             ...mockUserStateLevel(2),
           },
+          mocks: {
+            $storage: storage,
+          },
         });
         jest.spyOn(wrapper.vm, 'setAssignmentsInfo');
         wrapper.vm.$options.created.forEach((hook) => {
@@ -143,7 +145,6 @@ describe('CaseFileAssignments.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      storage.userAccount.actions.searchUserAccounts = jest.fn(() => ({ value: [new UserAccount(mockUserAccountSearchData)] }));
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
@@ -203,20 +204,26 @@ describe('CaseFileAssignments.vue', () => {
     });
 
     describe('getAssignedIndividualsInfo', () => {
-      it('calls storage action searchUserAccounts with the right ids', async () => {
+      it('calls storage action fetchAll', async () => {
         jest.clearAllMocks();
-        const ids = [wrapper.vm.caseFile.assignedIndividualIds[0], wrapper.vm.caseFile.assignedIndividualIds[1]];
         await wrapper.vm.getAssignedIndividualsInfo();
-        expect(storage.userAccount.actions.searchUserAccounts).toHaveBeenCalledTimes(1);
-        expect(storage.userAccount.actions.searchUserAccounts)
-          .toHaveBeenCalledWith({ filter: `search.in(UserAccountId, '${ids[0]}|${ids[1]}', '|')` });
+        expect(wrapper.vm.$storage.userAccount.actions.fetchAll).toHaveBeenCalledTimes(1);
       });
 
       it('calls createAssignedIndividualsInfo with the storage call results', async () => {
-        jest.spyOn(wrapper.vm, 'createAssignedIndividualsInfo').mockImplementation(() => 'mock-individual-name');
+        const userAccounts = wrapper.vm.$storage.userAccount.actions.fetchAll();
+        jest.spyOn(wrapper.vm, 'createAssignedIndividualsInfo');
+        const assignedIds = [userAccounts[0].entity.id];
+        await wrapper.setData({
+          caseFile: {
+            assignedIndividualIds: assignedIds,
+          },
+        });
+        const expected = userAccounts.filter((u) => assignedIds.includes(u.entity.id)).map((u) => u.metadata.displayName);
+
         await wrapper.vm.getAssignedIndividualsInfo();
-        expect(wrapper.vm.createAssignedIndividualsInfo)
-          .toHaveBeenCalledWith([new UserAccount(mockUserAccountSearchData)]);
+
+        expect(wrapper.vm.createAssignedIndividualsInfo).toHaveBeenCalledWith(expected);
       });
 
       it('returns the response of createAssignedIndividualsInfo ', async () => {
@@ -228,12 +235,12 @@ describe('CaseFileAssignments.vue', () => {
 
     describe('createAssignedIndividualsInfo', () => {
       it('returns the correct name if there is one user', () => {
-        const users = [{ displayName: 'John Doe' }];
+        const users = ['John Doe'];
         expect(wrapper.vm.createAssignedIndividualsInfo(users)).toEqual('John Doe');
       });
 
       it('returns the correct name if there are two users', () => {
-        const users = [{ displayName: 'John Doe' }, { displayName: 'Jane Smith' }];
+        const users = ['John Doe', 'Jane Smith'];
         expect(wrapper.vm.createAssignedIndividualsInfo(users)).toEqual('John Doe common.and Jane Smith');
       });
       it('returns empty string if there are no users', () => {

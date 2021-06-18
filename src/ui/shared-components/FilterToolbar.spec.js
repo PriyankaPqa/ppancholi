@@ -1,21 +1,21 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import _set from 'lodash/set';
-import { EFilterKey, mockUserAccount, mockUserFilters } from '@/entities/user';
+import { mockUserAccountEntity, mockUserFilters, FilterKey } from '@/entities/user-account';
 import { mockStorage } from '@/store/storage';
 import Component from './FilterToolbar.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-describe(Component, () => {
+describe('Filter Toolbar', () => {
   let wrapper;
 
   beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
-        filterKey: EFilterKey.Teams,
+        filterKey: FilterKey.Teams,
         filterOptions: [],
         count: 0,
         titleDialog: 'titleDialog',
@@ -55,7 +55,7 @@ describe(Component, () => {
     });
 
     describe('editFilter', () => {
-      it('calls updateFilter service with proper payload', async () => {
+      it('calls editFilter action', async () => {
         const filter = {};
         const filterIndex = 0;
 
@@ -66,7 +66,7 @@ describe(Component, () => {
         jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
         await wrapper.vm.editFilter(filter, filterIndex);
 
-        expect(wrapper.vm.$services.users.updateFilter).toHaveBeenCalledWith(expectedPayload);
+        expect(wrapper.vm.$storage.userAccount.actions.editFilter).toHaveBeenCalledWith(expectedPayload);
       });
 
       it('calls refreshUserFilters method', async () => {
@@ -81,13 +81,13 @@ describe(Component, () => {
     });
 
     describe('createFilter', () => {
-      it('calls createFilter service with proper payload', async () => {
+      it('calls addFilter action with proper payload', async () => {
         const filter = {};
         jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
 
         await wrapper.vm.createFilter(filter);
 
-        expect(wrapper.vm.$services.users.createFilter).toHaveBeenCalledWith(filter);
+        expect(wrapper.vm.$storage.userAccount.actions.addFilter).toHaveBeenCalledWith(filter);
       });
 
       it('calls refreshUserFilters method', async () => {
@@ -101,23 +101,23 @@ describe(Component, () => {
     });
 
     describe('onLoadAll', () => {
-      it('calls getter filtersByKey', async () => {
+      it('calls getter currentUserFiltersByKey', async () => {
         await wrapper.vm.onLoadAll();
-        expect(storage.user.getters.filtersByKey).toHaveBeenCalledWith(wrapper.vm.filterKey);
+        expect(storage.userAccount.getters.currentUserFiltersByKey).toHaveBeenCalledWith(wrapper.vm.filterKey);
       });
 
       it('assign the result to userFilters', async () => {
-        jest.spyOn(storage.user.getters, 'filtersByKey').mockImplementation(() => ['filters']);
+        jest.spyOn(storage.userAccount.getters, 'currentUserFiltersByKey').mockImplementation(() => ['filters']);
         await wrapper.vm.onLoadAll();
         expect(wrapper.vm.userFilters).toEqual(['filters']);
       });
     });
 
     describe('onDelete', () => {
-      it('calls removeFilter service with proper payload', async () => {
+      it('calls deleteFilter action with proper payload', async () => {
         jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
-        await wrapper.vm.onDelete({});
-        expect(wrapper.vm.$services.users.removeFilter).toHaveBeenCalledWith({ deleteFilter: {} });
+        await wrapper.vm.onDelete(mockUserFilters()[0]);
+        expect(wrapper.vm.$storage.userAccount.actions.deleteFilter).toHaveBeenCalledWith(mockUserFilters()[0]);
       });
 
       it('calls refreshUserFilters method', async () => {
@@ -128,15 +128,15 @@ describe(Component, () => {
     });
 
     describe('refreshUserFilters', () => {
-      it('calls setFilters mutations with proper payload', async () => {
-        await wrapper.vm.refreshUserFilters(mockUserAccount());
-        expect(storage.user.mutations.setFilters).toHaveBeenCalledWith(mockUserAccount().filters);
+      it('calls setCurrentUserAccount mutations with proper payload', async () => {
+        await wrapper.vm.refreshUserFilters(mockUserAccountEntity());
+        expect(storage.userAccount.mutations.setCurrentUserAccount).toHaveBeenCalledWith(mockUserAccountEntity());
       });
 
       it('calls filtersByKey and sets userFilters', async () => {
-        jest.spyOn(storage.user.getters, 'filtersByKey').mockImplementation(() => ['filters']);
-        await wrapper.vm.refreshUserFilters(mockUserAccount());
-        expect(storage.user.getters.filtersByKey).toHaveBeenCalledWith(wrapper.vm.filterKey);
+        jest.spyOn(storage.userAccount.getters, 'currentUserFiltersByKey').mockImplementation(() => ['filters']);
+        await wrapper.vm.refreshUserFilters(mockUserAccountEntity());
+        expect(storage.userAccount.getters.currentUserFiltersByKey).toHaveBeenCalledWith(wrapper.vm.filterKey);
         expect(wrapper.vm.userFilters).toEqual(['filters']);
       });
     });

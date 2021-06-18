@@ -1,11 +1,11 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { IMultilingual } from '@/types';
+import { Status } from '@/entities/base';
 import utils from '../utils';
 import {
   ETeamStatus, ETeamType, ITeam, ITeamEvent, ITeamSearchDataAggregate, ITeamMemberData,
 } from './team.types';
-import { EUserAccountStatus } from '../user-account';
 
 export class Team implements ITeam {
   id: string;
@@ -70,7 +70,7 @@ export class Team implements ITeam {
   }
 
   removeTeamMember(userId: uuid): boolean {
-    const member = this.teamMembers.find((u) => u.userAccountId === userId);
+    const member = this.teamMembers.find((u) => u.id === userId);
 
     if (!member) return false;
 
@@ -78,7 +78,7 @@ export class Team implements ITeam {
       return false;
     }
 
-    this.teamMembers = this.teamMembers.filter((u) => u.userAccountId !== userId);
+    this.teamMembers = this.teamMembers.filter((u) => u.id !== userId);
 
     return true;
   }
@@ -87,7 +87,7 @@ export class Team implements ITeam {
     let isUserInTeam = false;
     const updatedTeam = this.teamMembers.map((m: ITeamMemberData) => {
       // If the userId is the Id of a team member, its primaryContact status is set to true
-      if (m.userAccountId === member.userAccountId) {
+      if (m.id === member.id) {
         m.isPrimaryContact = true;
         isUserInTeam = true;
       } else {
@@ -119,7 +119,7 @@ export class Team implements ITeam {
 
   getActiveMemberCount(): number {
     if (!this.teamMembers) return 0;
-    return this.teamMembers.filter((member) => member.userAccountStatus === EUserAccountStatus.Active).length;
+    return this.teamMembers.filter((member) => member.status === Status.Active).length;
   }
 
   private reset() {

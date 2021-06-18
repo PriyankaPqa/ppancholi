@@ -43,7 +43,7 @@
               @toggle-select-all="onSelectAll">
               <template #item.data-table-select="{ item }">
                 <v-simple-checkbox
-                  :data-test="`select_${item.userAccountId}`"
+                  :data-test="`select_${item.id}`"
                   :ripple="false"
                   :value="isSelected(item) || isAlreadyInTeam(item)"
                   :readonly="isAlreadyInTeam(item)"
@@ -64,7 +64,7 @@
             {{ $t('teams.selected_members') }}
           </div>
           <ul class="selected__members_container">
-            <li v-for="user in selectedUsers" :key="user.userAccountId">
+            <li v-for="user in selectedUsers" :key="user.id">
               <div class="py-2">
                 <span class="rc-body14 fw-bold"> {{ user.displayName }}</span>
                 <v-tooltip bottom>
@@ -73,7 +73,7 @@
                       icon
                       x-small
                       class="mr-4"
-                      :data-test="`unselect_${user.userAccountId}`"
+                      :data-test="`unselect_${user.id}`"
                       @click="updateSelection(user)"
                       v-on="on">
                       <v-icon>mdi-close</v-icon>
@@ -96,7 +96,8 @@ import { RcDialog } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import _difference from 'lodash/difference';
 import { ITeamMemberData } from '@/entities/team';
-import { IUserAccountSearchData } from '@/entities/user-account';
+import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'AddTeamMembers',
@@ -120,7 +121,7 @@ export default Vue.extend({
     return {
       search: '',
       selectedUsers: [],
-      users: [] as Array<IUserAccountSearchData>,
+      users: [] as Array<IUserAccountCombined>,
     };
   },
 
@@ -159,7 +160,20 @@ export default Vue.extend({
     },
 
     availableMembers(): ITeamMemberData[] {
-      return this.$storage.userAccount.getters.searchUserAccounts(this.search, ['displayName', 'emailAddress']) || [];
+      const result:IUserAccountCombined[] = this.$storage.userAccount.getters.getByCriteria(
+        this.search, false, ['displayName', 'emailAddress'],
+      ) || [];
+      return result.filter(
+        (u) => u.entity.status === Status.Active && u.entity.accountStatus === AccountStatus.Active,
+      ).map(
+        // eslint-disable-next-line
+        (tm) => {
+          return {
+            ...tm.entity,
+            ...tm.metadata,
+          } as ITeamMemberData;
+        },
+      );
     },
 
     loading(): boolean {
@@ -187,11 +201,11 @@ export default Vue.extend({
     },
 
     isAlreadyInTeam(user: ITeamMemberData): boolean {
-      return this.teamMembers.findIndex((u) => user.userAccountId === u.userAccountId) !== -1;
+      return this.teamMembers.findIndex((u) => user.id === u.id) !== -1;
     },
 
     isSelected(user: ITeamMemberData): boolean {
-      return this.selectedUsers.findIndex((u) => user.userAccountId === u.userAccountId) !== -1;
+      return this.selectedUsers.findIndex((u) => user.id === u.id) !== -1;
     },
 
     onSelectAll({ items, value }: {items: Array<ITeamMemberData>; value: boolean}) {
@@ -210,7 +224,7 @@ export default Vue.extend({
 
     updateSelection(user: ITeamMemberData) {
       if (this.isSelected(user)) { // remove
-        this.selectedUsers = this.selectedUsers.filter((u) => u.userAccountId !== user.userAccountId);
+        this.selectedUsers = this.selectedUsers.filter((u) => u.id !== user.id);
       } else { // add
         this.selectedUsers = [...this.selectedUsers, user];
       }

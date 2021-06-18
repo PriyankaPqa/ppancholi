@@ -34,8 +34,8 @@ import Vue from 'vue';
 import { ICaseFile } from '@/entities/case-file';
 
 import { IAzureSearchResult } from '@/types';
-import { ITeam, ITeamSearchData } from '@/entities/team';
-import { IUserAccount } from '@/entities/user-account';
+import { ITeam, ITeamMemberData, ITeamSearchData } from '@/entities/team';
+import { IUserAccountCombined } from '@/entities/user-account';
 import AssignCaseFile from './AssignCaseFile.vue';
 
 export default Vue.extend({
@@ -83,9 +83,10 @@ export default Vue.extend({
     /**
      * Set the assignment info by using the data sent back from the assign-case-file dialog after an assignment was done
      */
-    setAssignmentsInfoFromData({ individuals, teams }: {individuals: IUserAccount[], teams: ITeam[]}) {
+    setAssignmentsInfoFromData({ individuals, teams }: {individuals: ITeamMemberData[], teams: ITeam[]}) {
       this.assignedTeamInfo = teams[0] ? teams[0].name : '';
-      this.assignedIndividualsInfo = this.createAssignedIndividualsInfo([individuals[0], individuals[1]]);
+      const individualsNames = individuals.map((i) => (i.displayName));
+      this.assignedIndividualsInfo = this.createAssignedIndividualsInfo([individualsNames[0], individualsNames[1]]);
     },
 
     /**
@@ -108,32 +109,23 @@ export default Vue.extend({
     async getAssignedIndividualsInfo() {
       if (!this.caseFile.assignedIndividualIds.length) { return null; }
 
-      // Filter example:  search.in(UserAccountId, 'ab596336-a90a-4ef0-a645-2f9a87f11c02|dd596336-a90a-4ef0-a645-2f9a87f15421', '|')
-      const filter = `search.in(UserAccountId, '${this.caseFile.assignedIndividualIds.slice(0, 2).join('|')}', '|')`;
+      let userAccounts = await this.$storage.userAccount.actions.fetchAll() as IUserAccountCombined[];
 
-      const usersResponse = await this.$storage.userAccount.actions.searchUserAccounts({
-        filter,
-      });
-
-      if (usersResponse && usersResponse.value) {
-        const users = usersResponse.value;
-        return this.createAssignedIndividualsInfo(users);
+      if (userAccounts && userAccounts.length > 0) {
+        userAccounts = userAccounts.filter((u) => this.caseFile.assignedIndividualIds.includes(u.entity.id));
+        const userNames = userAccounts.map((u) => u.metadata.displayName);
+        return this.createAssignedIndividualsInfo(userNames);
       }
 
       return null;
     },
 
-    createAssignedIndividualsInfo(users:IUserAccount[]): string {
-      if (!users.length) return '';
-      let name0 = '';
-      let name1 = '';
-      if (users[0]) { name0 = users[0].displayName; }
-      if (users[1]) { name1 = users[1].displayName; }
-      const and = users[0] && users[1] ? ` ${this.$t('common.and')} ` : '';
-      return name0 + and + name1;
+    createAssignedIndividualsInfo(userNames:string[]): string {
+      if (!userNames.length) return '';
+      const and = userNames[0] && userNames[1] ? ` ${this.$t('common.and')} ` : '';
+      return (userNames[0] || '') + and + (userNames[1] || '');
     },
   },
 
 });
-
 </script>

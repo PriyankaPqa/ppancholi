@@ -8,7 +8,6 @@ import {
   ITeam, ITeamMemberData, ITeamSearchData, ITeamSearchDataAggregate, Team,
 } from '@/entities/team';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-import { IProvider } from '@/services/provider';
 import _cloneDeep from 'lodash/cloneDeep';
 import { IState } from './team.types';
 
@@ -69,7 +68,7 @@ const mutations = {
 };
 
 const actions = {
-  async getTeam(this: Store<IState>, context: ActionContext<IState, IState>, id: uuid): Promise<ITeam> {
+  async getTeam(this: Store<IState>, context: ActionContext<IState, IRootState>, id: uuid): Promise<ITeam> {
     context.commit('setGetLoading', true);
     try {
       // TODO - uncomment when Signal R is ready to leverage cached teams
@@ -87,7 +86,7 @@ const actions = {
       if (res && res.value && res.value[0]) {
         const team = res.value[0];
 
-        const aggregate = await aggregateTeamSearchDataWithMembers(this.$services as IProvider, team);
+        const aggregate = await aggregateTeamSearchDataWithMembers(context, team);
 
         context.commit('setTeam', aggregate);
       }
@@ -102,7 +101,7 @@ const actions = {
     context.commit('setSubmitLoading', true);
     try {
       const res = await this.$services.teams.createTeam(payload);
-      context.commit('setTeam', await buildTeamSearchDataPayload(res, context, this.$services));
+      context.commit('setTeam', await buildTeamSearchDataPayload(res, context));
       return context.state.team;
     } finally {
       context.commit('setSubmitLoading', false);
@@ -113,7 +112,7 @@ const actions = {
     context.commit('setSubmitLoading', true);
     try {
       const res = await this.$services.teams.editTeam(payload);
-      context.commit('setTeam', await buildTeamSearchDataPayload(res, context, this.$services));
+      context.commit('setTeam', await buildTeamSearchDataPayload(res, context));
       return context.state.team;
     } finally {
       context.commit('setSubmitLoading', false);
@@ -144,7 +143,7 @@ const actions = {
    */
   async searchAggregatedTeams(
     this: Store<IState>,
-    context: ActionContext<IState, IState>,
+    context: ActionContext<IState, IRootState>,
     params: IAzureSearchParams,
   ): Promise<ITeam[]> {
     const res = await this.$services.teams.searchTeams(params);
@@ -153,7 +152,7 @@ const actions = {
       const teams = res.value;
       const aggregatedTeams = await Promise.all(
         teams.map(async (t) => {
-          const team = await aggregateTeamSearchDataWithMembers(this.$services as IProvider, t);
+          const team = await aggregateTeamSearchDataWithMembers(context, t);
           return new Team(team);
         }),
       );

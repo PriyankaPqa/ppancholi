@@ -27,7 +27,7 @@ import {
   IFilterSettings, IFilterData, RcFilterToolbar, IFilterToolbarLabels,
 } from '@crctech/component-library';
 import { EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
-import { IFilter, IUserAccountData } from '@/entities/user';
+import { IFilter, IUserAccountEntity } from '@/entities/user-account';
 
 // A wrapper around the web-ui filter component to make integration as easy and consistent as possible
 // Includes translations for labels as well as handling API requests to create/save/delete filters
@@ -117,12 +117,6 @@ export default Vue.extend({
           [EFilterOperator.DoesNotContain]: this.$t('genericFilter.operators.DoesNotContain') as string,
         },
         errors: {
-          maxLength: this.$t('genericFilter.errors.maxLength') as string,
-          maxGreaterThanMin: this.$t('genericFilter.errors.maxGreaterThanMin') as string,
-          401: this.$t('genericFilter.errors.401') as string,
-          500: this.$t('genericFilter.errors.500') as string,
-          NoSelectedFilter: this.$t('genericFilter.errors.noSelectedFilter') as string,
-          Error409002CustomFilterDuplicateName: this.$t('genericFilter.errors.duplicateName') as string,
         },
       };
     },
@@ -150,7 +144,7 @@ export default Vue.extend({
       };
       this.loading = true;
       try {
-        const userAccount = await this.$services.users.updateFilter(payload);
+        const userAccount = await this.$storage.userAccount.actions.editFilter(payload);
         this.refreshUserFilters(userAccount);
         this.$toasted.global.success(this.$t('filters.edit.success'));
       } finally {
@@ -161,7 +155,7 @@ export default Vue.extend({
     async createFilter(filter: IFilter) {
       this.loading = true;
       try {
-        const userAccount = await this.$services.users.createFilter(filter);
+        const userAccount = await this.$storage.userAccount.actions.addFilter(filter);
         this.refreshUserFilters(userAccount);
         this.$toasted.global.success(this.$t('filters.create.success'));
       } finally {
@@ -173,7 +167,7 @@ export default Vue.extend({
      * Loading filters from the store
      */
     onLoadAll() {
-      this.userFilters = this.$storage.user.getters.filtersByKey(this.filterKey);
+      this.userFilters = this.$storage.userAccount.getters.currentUserFiltersByKey(this.filterKey);
     },
 
     /**
@@ -182,7 +176,7 @@ export default Vue.extend({
     async onDelete(filter: IFilter) {
       this.loading = true;
       try {
-        const userAccount = await this.$services.users.removeFilter({ deleteFilter: filter });
+        const userAccount = await this.$storage.userAccount.actions.deleteFilter(filter);
         this.refreshUserFilters(userAccount);
         this.$toasted.global.success(this.$t('filters.create.success'));
       } finally {
@@ -190,9 +184,9 @@ export default Vue.extend({
       }
     },
 
-    refreshUserFilters(userAccount: IUserAccountData) {
-      this.$storage.user.mutations.setFilters(userAccount.filters);
-      this.userFilters = this.$storage.user.getters.filtersByKey(this.filterKey);
+    refreshUserFilters(userAccount: IUserAccountEntity) {
+      this.$storage.userAccount.mutations.setCurrentUserAccount(userAccount);
+      this.userFilters = this.$storage.userAccount.getters.currentUserFiltersByKey(this.filterKey);
     },
 
     /**

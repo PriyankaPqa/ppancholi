@@ -7,9 +7,11 @@ const getDefaultState = (): IState => ({
   leftMenuVisible: false,
   rightMenuVisible: false,
   generalHelpMenuVisible: false,
+  initLoading: true,
 });
 
 const moduleState = getDefaultState();
+
 const mutations = {
   setProperty: (state: IState, { property, value }: { property: keyof IState, value: boolean }) => {
     state[property] = value;

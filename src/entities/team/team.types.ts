@@ -3,7 +3,7 @@
  */
 
 import { IMultilingual } from '@/types';
-import { IUserAccountSearchData } from '@/entities/user-account';
+import { IUserAccountEntity, IUserAccountMetadata } from '@/entities/user-account';
 
 export enum ETeamType {
   Standard = 1,
@@ -31,7 +31,7 @@ export interface ITeamMemberSearchData {
 }
 
 // Member schema from user-accounts projection, plus isPrimaryContact
-export interface ITeamMemberData extends IUserAccountSearchData {
+export interface ITeamMemberData extends IUserAccountEntity, IUserAccountMetadata {
   isPrimaryContact: boolean;
 }
 

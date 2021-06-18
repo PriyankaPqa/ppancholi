@@ -39,7 +39,7 @@ describe('TeamMemberTeams.vue', () => {
         TeamMembers: {
           any: {
             Id: {
-              eq: wrapper.vm.member.userAccountId,
+              eq: wrapper.vm.member.id,
             },
           },
         },

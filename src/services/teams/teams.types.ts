@@ -1,7 +1,6 @@
 import {
-  ITeam, ITeamData, ITeamSearchData,
+  ITeam, ITeamData, ITeamMemberData, ITeamSearchData,
 } from '@/entities/team';
-import { IUserAccountSearchData } from '@/entities/user-account';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
 export interface ITeamsService {
@@ -9,7 +8,7 @@ export interface ITeamsService {
   editTeam(payload: ITeam): Promise<ITeamData>;
   getTeam(id: uuid): Promise<ITeamData>;
   searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
-  addTeamMembers(teamId: uuid, teamMembers: IUserAccountSearchData[]): Promise<ITeamData>;
+  addTeamMembers(teamId: uuid, teamMembers: ITeamMemberData[]): Promise<ITeamData>;
   removeTeamMember(teamId: uuid, teamMemberId: uuid) : Promise<ITeamData>;
 }
 

@@ -82,7 +82,7 @@ describe('TeamDetails.vue', () => {
       });
 
       test('Primary Contact', () => {
-        expect(wrapper.findDataTest('team_primary_contact').text()).toBe('Mister Test');
+        expect(wrapper.findDataTest('team_primary_contact').text()).toBe('Jane Smith');
       });
 
       test('Team events', () => {

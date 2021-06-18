@@ -93,7 +93,7 @@ describe('AddTeamMembers.vue', () => {
 
         await wrapper.vm.$nextTick();
 
-        expect(storage.userAccount.getters.searchUserAccounts).toHaveBeenCalledWith('test', ['displayName', 'emailAddress']);
+        expect(storage.userAccount.getters.getByCriteria).toHaveBeenCalledWith('test', false, ['displayName', 'emailAddress']);
       });
     });
 
@@ -137,7 +137,7 @@ describe('AddTeamMembers.vue', () => {
     describe('getRole', () => {
       it('returns the displayName property of the role from Azure AD', () => {
         const user = mockTeamMembersData()[0];
-        expect(wrapper.vm.getRole(user)).toEqual('Role 1');
+        expect(wrapper.vm.getRole(user)).toEqual(user.roleName.translation.en);
       });
     });
 

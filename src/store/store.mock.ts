@@ -13,14 +13,18 @@ import { tabs } from '@/store/modules/registration/tabs';
 
 import VueI18n from 'vue-i18n';
 import { IRootState, IStore } from '@/store/store.types';
-import { userAccount } from './modules/user-account/user-account';
+import * as vuexModule from '@/constants/vuex-modules';
+import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
+import { UserAccountsService } from '@/services/user-accounts/entity';
+import { httpClient } from '@/services/httpClient';
+import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
+import { UserAccountsMetadataService } from '@/services/user-accounts/metadata';
 import { user } from './modules/user';
 import { caseFile } from './modules/case-file';
 import { dashboard } from './modules/dashboard';
 import { event } from './modules/event';
 import { team } from './modules/team';
 import { optionList } from './modules/optionList';
-import { appUser } from './modules/app-user';
 import { program } from './modules/program';
 
 const i18n = {
@@ -31,19 +35,19 @@ Vue.use(Vuex);
 
 const mockConfig = {
   modules: {
-    user,
-    userAccount,
-    caseFile,
-    dashboard,
-    event,
-    team,
-    optionList,
-    appUser,
-    program,
-    registration: makeRegistrationModule({
+    [vuexModule.CASE_FILE_MODULE]: caseFile,
+    [vuexModule.USER_MODULE]: user,
+    [vuexModule.DASHBOARD_MODULE]: dashboard,
+    [vuexModule.EVENT_MODULE]: event,
+    [vuexModule.OPTION_LIST_MODULE]: optionList,
+    [vuexModule.TEAM_MODULE]: team,
+    [vuexModule.PROGRAM_MODULE]: program,
+    [vuexModule.HOUSEHOLD_MODULE]: makeHouseholdModule(),
+    [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),
-    household: makeHouseholdModule(),
+    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(new UserAccountsService(httpClient)).getModule(),
+    [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(new UserAccountsMetadataService(httpClient)).getModule(),
   },
 };
 

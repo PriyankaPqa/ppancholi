@@ -1,5 +1,3 @@
-import { IUserData, IFilter } from '@/entities/user';
+import { IUserData } from '@/entities/user';
 
-export interface IState extends IUserData {
-  filters: IFilter[]
-}
+export interface IState extends IUserData {}

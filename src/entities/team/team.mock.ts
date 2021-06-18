@@ -1,8 +1,8 @@
 import { IAzureSearchResult } from '@/types';
 import { Team } from '@/entities/team/team';
-import { EAccountStatus, EUserAccountStatus } from '../user-account';
+import { mockCombinedUserAccount } from '@/entities/user-account';
 import {
-  ETeamStatus, ETeamType, ITeam, ITeamData, ITeamEvent, ITeamMemberData, ITeamMemberSearchData, ITeamSearchData, ITeamSearchDataAggregate,
+  ETeamStatus, ETeamType, ITeam, ITeamData, ITeamEvent, ITeamMemberData, ITeamSearchData, ITeamSearchDataAggregate,
 } from './team.types';
 
 export const mockTeamEvents = (): ITeamEvent[] => [
@@ -26,64 +26,19 @@ export const mockTeamEvents = (): ITeamEvent[] => [
   },
 ];
 
-// User data received from teams projection
-export const mockTeamMembersSearchData = (): ITeamMemberSearchData[] => [{
-  id: 'guid-member-1',
-  isPrimaryContact: true,
-}, {
-  id: 'guid-member-2',
-  isPrimaryContact: false,
-}];
-
 // Data received from user-account projection
 export const mockTeamMembersData = (): ITeamMemberData[] => [
   {
-    userAccountId: 'guid-member-1',
+    ...mockCombinedUserAccount({ id: 'guid-member-1' }).entity,
+    ...mockCombinedUserAccount({ id: 'guid-member-1' }).metadata,
     isPrimaryContact: true,
-    displayName: 'Mister Test',
-    givenName: 'Mister',
-    surname: 'Test',
-    tenantId: '...',
-    userAccountStatus: EUserAccountStatus.Active,
-    accountStatus: EAccountStatus.Active,
-    filters: [],
-    emailAddress: 'test@test.com',
-    phoneNumber: '',
-    roleId: 'role-id-1',
-    roleName: {
-      translation: {
-        en: 'Role 1',
-        fr: 'Role 1',
-      },
-    },
-    teamCount: 5,
-    caseFilesCount: 3,
-    openCaseFilesCount: 3,
-    inactiveCaseFilesCount: 3,
+    id: 'guid-member-1',
   },
   {
-    userAccountId: 'guid-member-2',
+    ...mockCombinedUserAccount({ id: 'guid-member-2' }).entity,
+    ...mockCombinedUserAccount({ id: 'guid-member-2' }).metadata,
     isPrimaryContact: false,
-    displayName: 'Missus Test2',
-    givenName: 'Missus',
-    surname: 'Test2',
-    tenantId: '...',
-    userAccountStatus: EUserAccountStatus.Active,
-    accountStatus: EAccountStatus.Active,
-    filters: [],
-    emailAddress: 'test2@test.com',
-    phoneNumber: '',
-    roleId: 'role-id-2',
-    roleName: {
-      translation: {
-        en: 'Role 2',
-        fr: 'Role 2',
-      },
-    },
-    teamCount: 0,
-    caseFilesCount: 0,
-    openCaseFilesCount: 0,
-    inactiveCaseFilesCount: 0,
+    id: 'guid-member-2',
   },
 ];
 
@@ -122,7 +77,7 @@ export const mockTeamSearchDataAggregate = (): ITeamSearchDataAggregate[] => [
 
 export const mockTeamSearchData = (): ITeamSearchData[] => mockTeamSearchDataAggregate().map((t) => ({
   ...t,
-  teamMembers: mockTeamMembersSearchData(),
+  teamMembers: mockTeamMembersData(),
 }));
 
 export const mockSearchTeams = (): IAzureSearchResult<ITeamSearchData> => ({
@@ -143,7 +98,7 @@ export const mockTeamsData = (): ITeamData[] => [
     name: 'Standard Active Team 1',
     teamType: ETeamType.Standard,
     status: ETeamStatus.Active,
-    teamMembers: mockTeamMembersSearchData(),
+    teamMembers: mockTeamMembersData(),
     eventIds: ['id-1'],
   },
   {
@@ -151,7 +106,7 @@ export const mockTeamsData = (): ITeamData[] => [
     name: 'AdHoc Inactive Team 1',
     teamType: ETeamType.AdHoc,
     status: ETeamStatus.Inactive,
-    teamMembers: mockTeamMembersSearchData(),
+    teamMembers: mockTeamMembersData(),
     eventIds: ['id-1'],
   },
 ];

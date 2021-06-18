@@ -6,12 +6,10 @@ export const mockStorageUser = () : IStorageMock => ({
     user: jest.fn(),
     userId: jest.fn(),
     landingPage: jest.fn(),
-    filtersByKey: jest.fn(),
   },
 
   mutations: {
     setUser: jest.fn(),
-    setFilters: jest.fn(),
   },
 
   actions: {

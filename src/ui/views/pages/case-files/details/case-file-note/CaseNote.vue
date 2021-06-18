@@ -45,7 +45,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent, RcPageLoading, RcConfirmationDialog } from '@crctech/component-library';
-import { EFilterKey } from '@/entities/user';
+import { FilterKey } from '@/entities/user-account';
 import { ICaseNote } from '@/entities/case-file/case-note';
 import _orderBy from 'lodash/orderBy';
 import { NavigationGuardNext, Route } from 'vue-router';
@@ -82,7 +82,7 @@ export default Vue.extend({
       caseNotes: [] as ICaseNote[],
       isBeingCreated: false,
       isBeingEdited: false,
-      EFilterKey,
+      FilterKey,
       totalCount: 0,
       options: {
         page: 1,

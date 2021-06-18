@@ -170,7 +170,7 @@ describe('TeamMembersTable.vue', () => {
         localVue,
         data() {
           return {
-            search: 'Mister',
+            search: 'Jane',
             sortBy: 'displayName',
           };
         },
@@ -184,13 +184,13 @@ describe('TeamMembersTable.vue', () => {
 
     describe('computedTeamMembers', () => {
       it('returns filtered list', () => {
-        expect(wrapper.vm.computedTeamMembers).toEqual([wrapper.vm.team.teamMembers[0]]);
+        expect(wrapper.vm.computedTeamMembers).toEqual(wrapper.vm.team.teamMembers);
       });
     });
 
     describe('teamMembersId', () => {
       it('returns the list of team members id', () => {
-        expect(wrapper.vm.teamMembersId).toEqual(wrapper.vm.team.teamMembers.map((m) => m.userAccountId));
+        expect(wrapper.vm.teamMembersId).toEqual(wrapper.vm.team.teamMembers.map((m) => m.id));
       });
     });
   });

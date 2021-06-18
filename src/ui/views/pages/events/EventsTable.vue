@@ -17,7 +17,7 @@
     @search="search">
     <!-- <template v-if="!isDashboard" #filter>
       <filter-toolbar
-        filter-key="EFilterKey.Events"
+        filter-key="FilterKey.Events"
         :filter-options="filters"
         :count="count"
         @update:appliedFilter="onApplyFilter($event)" />

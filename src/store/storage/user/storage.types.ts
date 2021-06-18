@@ -1,5 +1,5 @@
 import {
-  EFilterKey, IFilter, IUser, IUserData,
+  IUser, IUserData,
 } from '@/entities/user';
 
 export interface IStorage {
@@ -7,12 +7,10 @@ export interface IStorage {
     user(): IUser;
     userId(): uuid;
     landingPage(): string;
-    filtersByKey(key: EFilterKey): IFilter[];
   }
 
   mutations: {
     setUser(payload: IUserData): void;
-    setFilters(payload: Array<IFilter>): void;
   }
 
   actions: {
@@ -26,12 +24,10 @@ export interface IStorageMock {
     user: jest.Mock<void>
     userId: jest.Mock<void>
     landingPage: jest.Mock<void>
-    filtersByKey: jest.Mock<void>
   }
 
   mutations: {
     setUser: jest.Mock<void>
-    setFilters: jest.Mock<void>
   }
 
   actions: {

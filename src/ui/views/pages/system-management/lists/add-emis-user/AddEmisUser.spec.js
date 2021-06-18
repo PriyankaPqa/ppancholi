@@ -14,7 +14,53 @@ const mockSubRole = {
     },
   },
 };
-const usersTestData = [
+
+const usersTestData = () => [
+  {
+    entity: {
+      id: '1',
+      status: 1,
+    },
+    metadata: {
+      id: '1',
+      displayName: 'C',
+      givenName: 'Some Person',
+      surname: '',
+      emailAddress: 'fake@email.com',
+      phoneNumber: '123-456-7890',
+    },
+  },
+  {
+    entity: {
+      id: '2',
+      status: 1,
+    },
+    metadata: {
+      id: '2',
+      displayName: 'B',
+      givenName: 'Another Person',
+      surname: '',
+      emailAddress: 'faker@email.com',
+      phoneNumber: '123-456-5555',
+    },
+  },
+  {
+    entity: {
+      id: '2',
+      status: 1,
+    },
+    metadata: {
+      id: '2',
+      displayName: 'A',
+      givenName: 'Other Person',
+      surname: '',
+      emailAddress: 'fakest@email.com',
+      phoneNumber: '123-654-0987',
+    },
+  },
+];
+
+const appUsersTestData = () => [
   {
     id: '1',
     displayName: 'C',
@@ -22,24 +68,28 @@ const usersTestData = [
     surname: '',
     emailAddress: 'fake@email.com',
     phoneNumber: '123-456-7890',
+    roles: [mockSubRole],
   },
   {
     id: '2',
     displayName: 'B',
-    givenName: 'Another Person',
+    givenName: 'Other Person',
     surname: '',
     emailAddress: 'faker@email.com',
     phoneNumber: '123-456-5555',
+    roles: [mockSubRole],
   },
   {
     id: '3',
     displayName: 'A',
-    givenName: 'Other Person',
+    givenName: 'Another Person',
     surname: '',
     emailAddress: 'fakest@email.com',
     phoneNumber: '123-654-0987',
+    roles: [mockSubRole],
   },
 ];
+
 const optionData = [
   {
     id: '1',
@@ -240,28 +290,28 @@ describe('AddEmisUser.vue', () => {
 
     describe('fetchAllAppUsers', () => {
       it('appUsers.fetchAllAppUsers has been called and formReady is true', async () => {
-        jest.spyOn(wrapper.vm.$storage.userAccount.actions, 'fetchAllUserAccounts').mockImplementation(() => mockAppUserData());
+        jest.spyOn(wrapper.vm.$storage.userAccount.actions, 'fetchAll').mockImplementation(() => usersTestData());
         wrapper.vm.fetchAllAppUsers();
-        expect(wrapper.vm.$storage.userAccount.actions.fetchAllUserAccounts).toHaveBeenCalled();
+        expect(wrapper.vm.$storage.userAccount.actions.fetchAll).toHaveBeenCalled();
         expect(wrapper.vm.formReady).toBeTruthy();
       });
     });
 
     describe('findUsers', () => {
       it('empty results with no search term', async () => {
-        jest.spyOn(wrapper.vm.$storage.appUser.actions, 'findAppUsers').mockImplementation(() => mockAppUserData());
+        jest.spyOn(wrapper.vm.$services.appUsers, 'findAppUsers').mockImplementation(() => mockAppUserData());
         wrapper.vm.searchTerm = '';
         wrapper.vm.findUsers();
-        expect(wrapper.vm.$storage.appUser.actions.findAppUsers).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$data.searchResults).toEqual([]);
       });
 
       it('correct service call with valid search term', async () => {
-        jest.spyOn(wrapper.vm.$storage.appUser.actions, 'findAppUsers').mockImplementation(() => mockAppUserData());
+        jest.spyOn(wrapper.vm.$services.appUsers, 'findAppUsers').mockImplementation(() => mockAppUserData());
         wrapper.vm.searchTerm = 't';
         wrapper.vm.findUsers();
-        expect(wrapper.vm.$storage.appUser.actions.findAppUsers).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$storage.appUser.actions.findAppUsers).toHaveBeenCalledWith('t');
+        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$services.appUsers.findAppUsers).toHaveBeenCalledWith('t');
       });
     });
 
@@ -270,14 +320,14 @@ describe('AddEmisUser.vue', () => {
         wrapper = mount(Component, {
           localVue,
           propsData: {
-            allEmisUsers: usersTestData,
+            allEmisUsers: usersTestData(),
             show: true,
             allSubRoles: [...optionData[0].subitems, ...optionData[1].subitems],
             allAccessLevelRoles: [],
           },
           data() {
             return {
-              appUsers: usersTestData,
+              appUsers: appUsersTestData,
             };
           },
           mocks: {
@@ -287,38 +337,35 @@ describe('AddEmisUser.vue', () => {
       });
 
       it('returns true for an active user that is in the appUsers and allEmisUsers arrays', () => {
-        const tempUser = usersTestData[0];
-        wrapper.vm.appUsers = usersTestData;
-        tempUser.accountStatus = 1;
+        const tempUser = appUsersTestData()[0];
         tempUser.status = 1;
         expect(wrapper.vm.isAlreadyInEmis(tempUser)).toBeTruthy();
       });
 
       it('returns false for a user that is not in the appUsers array', () => {
-        const testUser = { displayName: 'Some Person', id: '9393-39393-39393-help' };
-        wrapper.vm.allEmisUsers.push(testUser);
-
-        expect(wrapper.vm.isAlreadyInEmis(
-          {
-            displayName: 'Some Person',
+        const testUser = {
+          entity: {
             id: '9393-39393-39393-help',
           },
-        )).toBeFalsy();
+          metadata: {
+            id: '9393-39393-39393-help',
+            displayName: 'Some Person',
+          },
+        };
+        wrapper.vm.appUsers = usersTestData();
+        expect(wrapper.vm.isAlreadyInEmis({ id: testUser.entity.id })).toBeFalsy();
       });
 
       it('returns false for a user that is not in the allEmisUsers array', () => {
-        const testUser = { displayName: 'Some Person', id: '9393-39393-39393-help' };
-        wrapper.vm.appUsers = usersTestData;
+        wrapper.setProps({ allEmisUsers: usersTestData() });
+        const testUser = { entity: { id: '9393-39393-39393-help' }, metadata: { displayName: 'Some Person', id: '9393-39393-39393-help' } };
+        wrapper.vm.appUsers = usersTestData();
         expect(wrapper.vm.isAlreadyInEmis(testUser)).toBeFalsy();
       });
     });
 
     describe('isSelected', () => {
-      const testUser = {
-        id: '1234-1234-12324-asdf',
-        displayName: 'Test User',
-        mail: 'test@best.com',
-      };
+      const testUser = { metadada: { displayName: 'Some Person', id: '9393-39393-39393-asdf', mail: 'test@best.com' } };
       it('returns false for unselected User', async () => {
         wrapper.vm.selectedUsers = [];
         expect(wrapper.vm.isSelected(testUser)).toBeFalsy();
@@ -330,7 +377,7 @@ describe('AddEmisUser.vue', () => {
     });
 
     describe('toggleUserSelection', () => {
-      const testUser = { id: '1234-1234-1234' };
+      const testUser = { entity: { id: '1234-1234-1234' } };
       it('toggling unselected user adds it to selectedUsers array', async () => {
         expect(wrapper.vm.selectedUsers).not.toContain(testUser);
 
@@ -371,21 +418,24 @@ describe('AddEmisUser.vue', () => {
 
     describe('onSelectAll', () => {
       it('updates selectedUsers with all selected members when user is selecting', () => {
-        wrapper.vm.appUsers = mockAppUserData();
-        wrapper.vm.selectedUsers = mockAppUserData();
+        wrapper.vm.appUsers = usersTestData();
+        wrapper.vm.selectedUsers = appUsersTestData();
         const items = [
           {
             id: '5',
+            roles: [],
+            status: 1,
+            accountStatus: 1,
             displayName: 'Test Brown',
             givenName: 'Test',
             jobTitle: 'jobTitle',
             mail: null,
             userPrincipalName: 'test@test.com',
-            roles: [],
           },
         ];
+        wrapper.vm.isAlreadyInEmis = jest.fn(() => false);
         wrapper.vm.onSelectAll({ items, value: true });
-        expect(wrapper.vm.selectedUsers).toEqual([...mockAppUserData(), ...items]);
+        expect(wrapper.vm.selectedUsers).toEqual([...appUsersTestData(), ...items]);
       });
 
       it('updates selectedUsers by removing unselected members', () => {
@@ -410,19 +460,20 @@ describe('AddEmisUser.vue', () => {
 
     describe('sortOnDisplayName', () => {
       it('returns Users in ascending alphabetical order by displayName', () => {
-        expect(usersTestData[0].id).toEqual('1');
-        expect(usersTestData[1].id).toEqual('2');
-        expect(usersTestData[2].id).toEqual('3');
-        wrapper.vm.sortOnDisplayName(usersTestData);
-        expect(usersTestData[0].id).toEqual('3');
-        expect(usersTestData[1].id).toEqual('2');
-        expect(usersTestData[2].id).toEqual('1');
+        const appUsers = appUsersTestData();
+        expect(appUsers[0].id).toEqual('1');
+        expect(appUsers[1].id).toEqual('2');
+        expect(appUsers[2].id).toEqual('3');
+        wrapper.vm.sortOnDisplayName(appUsers);
+        expect(appUsers[0].id).toEqual('3');
+        expect(appUsers[1].id).toEqual('2');
+        expect(appUsers[2].id).toEqual('1');
       });
     });
 
     describe('assignRoleToUser', () => {
       it('updates selected user with correct role and enables submit button', () => {
-        wrapper.vm.selectedUsers = [...mockAppUserData()];
+        wrapper.vm.selectedUsers = [...appUsersTestData()];
         wrapper.vm.selectedUsers[0].roles = [];
         expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
         const roleData = { value: optionData[0].id, text: optionData[0].name };
@@ -445,13 +496,13 @@ describe('AddEmisUser.vue', () => {
       });
 
       it('returns false if a selected user has no role', () => {
-        wrapper.vm.selectedUsers = mockAppUserData();
+        wrapper.vm.selectedUsers = usersTestData();
         wrapper.vm.selectedUsers[0].roles = [];
         expect(wrapper.vm.allSelectedUsersHaveRole(wrapper.vm.selectedUsers)).toBeFalsy();
       });
 
       it('returns true if all selected users have roles', () => {
-        wrapper.vm.selectedUsers = mockAppUserData();
+        wrapper.vm.selectedUsers = usersTestData();
         wrapper.vm.selectedUsers.forEach((user) => { user.roles = [mockRolesData[0]]; });
         expect(wrapper.vm.allSelectedUsersHaveRole()).toBeTruthy();
       });
@@ -460,47 +511,40 @@ describe('AddEmisUser.vue', () => {
     describe('submit', () => {
       it('should not run if submit button is disabled', () => {
         wrapper.vm.isSubmitAllowed = false;
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn();
+        wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn();
         wrapper.vm.submit();
-        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).not.toHaveBeenCalled();
+        expect(wrapper.vm.$storage.userAccount.actions.assignRole).not.toHaveBeenCalled();
       });
 
       it('should call services correctly', async () => {
         wrapper.vm.isSubmitAllowed = true;
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn();
-        wrapper.vm.$storage.appUser.mutations.invalidateAppUserCache = jest.fn();
-        wrapper.vm.$storage.appUser.mutations.invalidateAllUserCache = jest.fn();
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn(() => usersTestData[0]);
+        wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn(() => usersTestData[0]);
         wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
-        wrapper.vm.selectedUsers = [usersTestData[0]];
+        wrapper.vm.selectedUsers = [usersTestData()[0]];
         wrapper.vm.selectedUsers[0].roles = [mockSubRole];
         await wrapper.vm.submit();
 
-        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalled();
+        expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalled();
       });
 
       it('emits users-added', async () => {
         wrapper.vm.isSubmitAllowed = true;
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn((u) => u);
-        wrapper.vm.$storage.appUser.mutations.invalidateAppUserCache = jest.fn();
-        wrapper.vm.$storage.appUser.mutations.invalidateAllUserCache = jest.fn();
+        wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn((u) => u);
         wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
-        wrapper.vm.selectedUsers = [mockAppUserData()[0]];
+        wrapper.vm.selectedUsers = [usersTestData()[0]];
         wrapper.vm.selectedUsers[0].roles = [mockSubRole];
         await wrapper.vm.submit();
         wrapper.vm.$nextTick();
 
         expect(wrapper.emitted('users-added')).toBeTruthy();
-        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalledTimes(1);
       });
 
       it('opens a toast on success', async () => {
         wrapper.vm.isSubmitAllowed = true;
         jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn((u) => u);
-        wrapper.vm.$storage.appUser.mutations.invalidateAppUserCache = jest.fn();
-        wrapper.vm.$storage.appUser.mutations.invalidateAllUserCache = jest.fn();
-        wrapper.vm.selectedUsers = [mockAppUserData()[0]];
+        wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn((u) => u);
+        wrapper.vm.selectedUsers = [usersTestData()[0]];
         wrapper.vm.selectedUsers[0].roles = [mockSubRole];
         await wrapper.vm.submit();
 
@@ -510,7 +554,7 @@ describe('AddEmisUser.vue', () => {
 
     describe('getSubRoleById', () => {
       it('retrieves the correct sub-role from a user', async () => {
-        const user = usersTestData[0];
+        const user = usersTestData()[0];
         user.roleId = wrapper.vm.allSubRoles[0].id;
         expect(wrapper.vm.getSubRoleById(user.roleId)).toEqual(wrapper.vm.allSubRoles[0]);
       });
@@ -518,23 +562,24 @@ describe('AddEmisUser.vue', () => {
 
     describe('setUserRole', () => {
       it('should call services correctly', async () => {
-        wrapper.vm.selectedUsers = [mockAppUserData()[0], mockAppUserData()[1]];
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn(() => mockAppUserData()[0]);
+        wrapper.vm.selectedUsers = [appUsersTestData()[0], appUsersTestData()[1]];
+        wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn(() => usersTestData()[0]);
         wrapper.vm.createUserAccount = jest.fn();
         wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
 
         await wrapper.vm.setUserRole(wrapper.vm.selectedUsers[0]);
         wrapper.vm.$nextTick();
 
-        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.add_users.success');
       });
 
       it('emits error toast on null response', async () => {
         jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
-        wrapper.vm.selectedUsers = [mockAppUserData()[0], mockAppUserData()[1]];
+        wrapper.vm.selectedUsers = [appUsersTestData()[0], appUsersTestData()[1]];
         wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn(() => null);
+        wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn(() => null);
+        wrapper.vm.selectedUsers[0].roles[0] = mockSubRole;
 
         await wrapper.vm.setUserRole(wrapper.vm.selectedUsers[0]);
         wrapper.vm.$nextTick();
@@ -555,12 +600,12 @@ describe('AddEmisUser.vue', () => {
         expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
       });
       it('return false for populated list with no roles assigned', async () => {
-        wrapper.vm.selectedUsers = usersTestData;
+        wrapper.vm.selectedUsers = usersTestData();
         wrapper.vm.updateIsSubmitAllowed();
         expect(wrapper.vm.isSubmitAllowed).toBeFalsy();
       });
       it('return true for populated list with roles assigned', async () => {
-        wrapper.vm.selectedUsers = [usersTestData[0]];
+        wrapper.vm.selectedUsers = [usersTestData()[0]];
         wrapper.vm.selectedUsers[0].roles = [{ id: '123' }];
         wrapper.vm.updateIsSubmitAllowed();
         expect(wrapper.vm.isSubmitAllowed).toBeTruthy();

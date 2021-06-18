@@ -75,8 +75,8 @@
           v-if="showDeleteIcon(item)"
           icon
           x-small
-          :data-test="`remove_team_member_${item.userAccountId}`"
-          @click="item.isPrimaryContact ? showPrimaryContactMessage() : showRemoveConfirmationDialog(item.userAccountId)">
+          :data-test="`remove_team_member_${item.id}`"
+          @click="item.isPrimaryContact ? showPrimaryContactMessage() : showRemoveConfirmationDialog(item.id)">
           <v-icon color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -257,7 +257,7 @@ export default Vue.extend({
     },
 
     teamMembersId(): Array<string> {
-      return this.team.teamMembers.map((m: ITeamMemberData) => m.userAccountId);
+      return this.team.teamMembers.map((m: ITeamMemberData) => m.id);
     },
 
     removeLoading(): boolean {

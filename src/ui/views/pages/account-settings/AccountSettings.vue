@@ -13,10 +13,10 @@
                 <th class="text-left">
                   <span class="fw-normal">
                     <status-chip
-                      v-if="user.accountStatus"
+                      v-if="user.entity.accountStatus"
                       data-test="userAccount-status-chip"
-                      status-name="EUserAccountStatus"
-                      :status="user.accountStatus" />
+                      status-name="AccountStatus"
+                      :status="user.entity.accountStatus" />
                   </span>
                 </th>
                 <th class="text-right">
@@ -32,7 +32,7 @@
                   {{ $t('user.accountSettings.first_name') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-firstName">
-                  {{ user.firstName }}
+                  {{ user.metadata.givenName }}
                 </td>
               </tr>
               <tr>
@@ -40,7 +40,7 @@
                   {{ $t('user.accountSettings.last_name') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-lastName">
-                  {{ user.lastName }}
+                  {{ user.metadata.surname }}
                 </td>
               </tr>
               <tr>
@@ -48,7 +48,7 @@
                   {{ $t('user.accountSettings.role') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-roleName">
-                  {{ $m(user.roleName) }}
+                  {{ $m(user.metadata.roleName) }}
                 </td>
               </tr>
             </tbody>
@@ -70,7 +70,7 @@
                   {{ $t('user.accountSettings.email_username') }}
                 </td>
                 <td class="fw-bold" data-test="userAccount-status-email">
-                  {{ user.email }}
+                  {{ user.metadata.emailAddress }}
                 </td>
               </tr>
               <tr>
@@ -78,7 +78,7 @@
                   {{ $t('user.accountSettings.phone') }}
                 </td>
                 <td class="fw-bold" data-test="userAccount-status-phoneNumber">
-                  {{ user.phoneNumber }}
+                  {{ user.metadata.phoneNumber }}
                 </td>
               </tr>
             </tbody>
@@ -114,7 +114,7 @@
                     :items="languages"
                     :item-text="(item) => item.name"
                     return-object
-                    :disabled="false" />
+                    @change="setPreferredLanguage($event)" />
                 </td>
                 <td />
               </tr>
@@ -133,7 +133,7 @@ import {
   RcPageLoading,
   VSelectWithValidation,
 } from '@crctech/component-library';
-import { IUserAccount, EUserAccountStatus } from '@/entities/user-account';
+import { IUserAccountCombined, AccountStatus } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
@@ -150,18 +150,15 @@ export default Vue.extend({
   data() {
     return {
       id: null,
-      EUserAccountStatus,
-      preferredLanguage: { key: 'en', name: 'English' }, // Temporary mock until preferred language setting mechanism is put in place
+      AccountStatus,
+      preferredLanguage: null,
+      loading: false,
     };
   },
 
   computed: {
-    loading(): boolean {
-      return this.$store.state.userAccount.searchLoading;
-    },
-
-    user(): IUserAccount {
-      return this.$storage.userAccount.getters.userAccountById(this.id);
+    user(): IUserAccountCombined {
+      return this.$storage.userAccount.getters.get(this.id);
     },
 
     languages(): Record<string, string>[] {
@@ -169,12 +166,25 @@ export default Vue.extend({
     },
   },
 
-  async  created() {
-    const id = this.$storage.user.getters.userId();
-    this.id = id;
-    if (id) {
-      await this.$storage.userAccount.actions.fetchUserAccount(id);
+  async created() {
+    try {
+      this.loading = true;
+      const id = this.$storage.user.getters.userId();
+      this.id = id;
+      if (id) {
+        await this.$storage.userAccount.actions.fetch(id);
+      }
+    } finally {
+      this.loading = false;
     }
+
+    this.preferredLanguage = this.languages.find((l) => l.key === this.user.metadata.preferredLanguage);
+  },
+
+  methods: {
+    setPreferredLanguage({ key }: {key:string;}) {
+      this.$storage.userAccount.actions.setCurrentUserPreferredLanguage(key);
+    },
   },
 
 });

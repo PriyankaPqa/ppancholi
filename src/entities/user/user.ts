@@ -1,4 +1,4 @@
-import { IFilter, IUser, IUserData } from './user.types';
+import { IUser, IUserData } from './user.types';
 
 export const NO_ROLE = 'no_role';
 
@@ -13,15 +13,12 @@ export class User implements IUser {
 
   readonly roles: Array<string>;
 
-  readonly filters: Array<IFilter>;
-
   constructor(data: IUserData) {
     this.id = data.oid;
     this.email = data.email;
     this.lastName = data.family_name;
     this.firstName = data.given_name;
     this.roles = data?.roles ? data.roles : [NO_ROLE];
-    this.filters = data.filters ? data.filters : [];
   }
 
   getFullName(): string {

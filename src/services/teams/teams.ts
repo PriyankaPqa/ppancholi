@@ -1,9 +1,9 @@
 import {
-  ITeam, ITeamData, IEditTeamRequest, ITeamSearchData, ICreateTeamRequest, IAddTeamMembersRequest,
+  ITeam, ITeamData, IEditTeamRequest, ITeamSearchData, ICreateTeamRequest, IAddTeamMembersRequest, ITeamMemberData,
 } from '@/entities/team';
-import { IUserAccountSearchData } from '@/entities/user-account';
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+
 import { ITeamsService } from './teams.types';
 
 export class TeamsService implements ITeamsService {
@@ -27,9 +27,9 @@ export class TeamsService implements ITeamsService {
     return this.http.get('/search/team-projections', { params, isOData: true });
   }
 
-  async addTeamMembers(teamId: uuid, teamMembers: IUserAccountSearchData[]): Promise<ITeamData> {
+  async addTeamMembers(teamId: uuid, teamMembers: ITeamMemberData[]): Promise<ITeamData> {
     const payload = {
-      teamMemberIds: teamMembers.map((t) => t.userAccountId),
+      teamMemberIds: teamMembers.map((t) => t.id),
     } as IAddTeamMembersRequest;
     return this.http.patch(`/team/teams/${teamId}/add-team-members`, payload);
   }
@@ -41,7 +41,7 @@ export class TeamsService implements ITeamsService {
   private teamToEditTeamRequestPayload(team: ITeam) : IEditTeamRequest {
     const primaryContactMember = team.teamMembers.find((m) => m.isPrimaryContact);
     const primaryContact = {
-      id: primaryContactMember.userAccountId,
+      id: primaryContactMember.id,
       isPrimaryContact: true,
     };
 
@@ -55,7 +55,7 @@ export class TeamsService implements ITeamsService {
 
   private teamToCreateTeamRequestPayload(team: ITeam) : ICreateTeamRequest {
     const teamMembers = team.teamMembers.map((m) => ({
-      id: m.userAccountId,
+      id: m.id,
       isPrimaryContact: m.isPrimaryContact,
     }));
 

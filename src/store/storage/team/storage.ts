@@ -1,7 +1,11 @@
-import { ITeam, ITeamSearchData, Team } from '@/entities/team';
+import {
+  ITeam,
+  ITeamMemberData,
+  ITeamSearchData,
+  Team,
+} from '@/entities/team';
 import { IStore, IState } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-import { IUserAccountSearchData } from '@/entities/user-account';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
@@ -34,7 +38,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('team/searchTeams', params);
     },
 
-    addTeamMembers(teamMembers: IUserAccountSearchData[]): Promise<ITeam> {
+    addTeamMembers(teamMembers: ITeamMemberData[]): Promise<ITeam> {
       return store.dispatch('team/addTeamMembers', { teamMembers });
     },
 

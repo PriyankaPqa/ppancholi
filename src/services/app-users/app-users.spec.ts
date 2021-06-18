@@ -10,23 +10,6 @@ describe('>>> App Users Service', () => {
     service = new AppUsersService(http as never);
   });
 
-  test('fetchAllUsers is linked to the correct URL and params', async () => {
-    await service.fetchAllUsers();
-    expect(http.get).toHaveBeenCalledWith('/Graph/users', {
-      isOData: true, params: { top: 999, select: ['id', 'mobilePhone', 'businessPhones', 'mail'] },
-    });
-  });
-
-  test('fetchAppUsers is linked to the correct URL', async () => {
-    await service.fetchAppUsers();
-    expect(http.get).toHaveBeenCalledWith('/Graph/app-users');
-  });
-
-  test('fetchRoles is linked to the correct URL', async () => {
-    await service.fetchRoles();
-    expect(http.get).toHaveBeenCalledWith('/Graph/roles');
-  });
-
   test('findAppUsers is linked to the correct URL', async () => {
     await service.findAppUsers('t');
     expect(http.get).toHaveBeenCalledWith('/Graph/users', {

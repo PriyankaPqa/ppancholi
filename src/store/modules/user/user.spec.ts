@@ -1,7 +1,7 @@
 import { Store } from 'vuex';
 import { mockStore, IRootState } from '@/store';
 import {
-  EFilterKey, mockUserFilters, mockUsersData, User,
+  mockUsersData, User,
 } from '@/entities/user';
 import { mockAuthenticationData } from '@/auth/authentication.mock';
 import authenticationProvider from '@/auth/AuthenticationProvider';
@@ -31,7 +31,6 @@ describe('>>> Users Module', () => {
         family_name: mockUser.family_name,
         given_name: mockUser.given_name,
         roles: mockUser.roles,
-        filters: mockUser.filters,
       }));
     });
 
@@ -97,13 +96,6 @@ describe('>>> Users Module', () => {
         expect(store.getters['user/landingPage']).toEqual('HomeNoRole');
       });
     });
-
-    describe('filtersByKey', () => {
-      it('returns the correct filters', () => {
-        const key = EFilterKey.CaseFiles;
-        expect(store.getters['user/filtersByKey'](key)).toEqual([mockUserFilters()[2]]);
-      });
-    });
   });
 
   describe('>> Mutations', () => {
@@ -141,7 +133,6 @@ describe('>>> Users Module', () => {
           family_name: '',
           given_name: '',
           roles: [],
-          filters: [],
         }));
 
         store.commit('user/setUser', mockUsersData()[1]);
@@ -155,18 +146,6 @@ describe('>>> Users Module', () => {
           given_name: mockUser.given_name,
           roles: mockUser.roles,
         }));
-      });
-    });
-
-    describe('setFilters', () => {
-      it('should set filters in the state', () => {
-        store = mockStore();
-
-        expect(store.state.user.filters).toEqual([]);
-
-        store.commit('user/setFilters', mockUserFilters());
-
-        expect(store.state.user.filters).toEqual(mockUserFilters());
       });
     });
 
@@ -209,18 +188,6 @@ describe('>>> Users Module', () => {
           given_name: authenticationData.account.idTokenClaims.given_name as string,
           roles: authenticationData.account.idTokenClaims.roles as string[],
         }));
-      });
-    });
-
-    describe('fetchUserAccount', () => {
-      it('calls fetchUser and sets the user filters', async () => {
-        const store = mockStore();
-
-        await store.dispatch('user/fetchUserAccount');
-
-        expect(store.$services.users.fetchUser).toHaveBeenCalledTimes(1);
-
-        expect(store.state.user.filters).toEqual(mockUserFilters());
       });
     });
   });

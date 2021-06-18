@@ -1,5 +1,6 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { EAccountStatus, EUserAccountStatus } from '../user-account';
+import { mockBaseData, Status } from '@/entities/base';
+import { AccountStatus } from '../user-account';
 import { Team } from './team';
 import { mockTeamEvents, mockTeamMembersData, mockTeamSearchDataAggregate } from './team.mock';
 import { ETeamStatus, ETeamType, ITeamMemberData } from './team.types';
@@ -133,15 +134,15 @@ describe('>>> Team', () => {
 
       it('should add a new member to the team and set it as primary contact if it is not already a member', () => {
         const member: ITeamMemberData = {
-          userAccountId: 'guid-member-x',
+          ...mockBaseData(),
+          id: 'guid-member-x',
+          accountStatus: AccountStatus.Active,
           isPrimaryContact: true,
+          filters: [],
           displayName: 'Mister Test',
           givenName: 'Mister',
           surname: 'Test',
           tenantId: '...',
-          userAccountStatus: EUserAccountStatus.Active,
-          accountStatus: EAccountStatus.Active,
-          filters: [],
           emailAddress: 'test@test.com',
           phoneNumber: '',
           roleId: 'role-id-1',
@@ -174,8 +175,14 @@ describe('>>> Team', () => {
       it('should return the number of active members', () => {
         const team = new Team(mockTeamSearchDataAggregate()[0]);
         team.teamMembers = [
-          { ...team.teamMembers[0], userAccountStatus: EUserAccountStatus.Active },
-          { ...team.teamMembers[1], userAccountStatus: EUserAccountStatus.Inactive },
+          {
+            ...team.teamMembers[0],
+            status: Status.Active,
+          },
+          {
+            ...team.teamMembers[1],
+            status: Status.Inactive,
+          },
         ];
         expect(team.getActiveMemberCount()).toEqual(1);
       });

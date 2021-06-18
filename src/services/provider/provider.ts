@@ -7,8 +7,7 @@ import { EventsService } from '../events';
 import { OptionItemsService } from '../optionItems';
 import { TeamsService } from '../teams';
 import { AppUsersService } from '../app-users';
-import { UsersService } from '../users';
-import { UserAccountsService } from '../user-accounts';
+import { UserAccountsService } from '../user-accounts/entity';
 import { ProgramsService } from '../programs';
 
 export const provider = (): IProvider => ({
@@ -17,9 +16,8 @@ export const provider = (): IProvider => ({
   events: new EventsService(httpClient),
   optionItems: new OptionItemsService(httpClient),
   teams: new TeamsService(httpClient),
-  users: new UsersService(httpClient),
-  userAccounts: new UserAccountsService(httpClient),
   programs: new ProgramsService(httpClient),
   publicApi: new PublicService(httpClient),
   households: new HouseholdsService(httpClient),
+  userAccounts: new UserAccountsService(httpClient),
 });

@@ -9,9 +9,9 @@ import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
 import {
   ETeamStatus, ETeamType, mockTeamMembersData, Team, mockTeamSearchDataAggregate, mockTeam,
 } from '@/entities/team';
-import { mockUserAccountSearchData } from '@/entities/user-account';
 import { mockStorage } from '@/store/storage';
 
+import { mockCombinedUserAccount } from '@/entities/user-account';
 import Component from './CreateEditTeam.vue';
 
 jest.mock('@/store/modules/team/teamUtils');
@@ -917,22 +917,28 @@ describe('CreateEditTeam.vue', () => {
 
     describe('searchPrimaryContacts', () => {
       it('calls the searchAppUsers action when the query is long enough and assigns the result to primaryContactUsers', async () => {
-        jest.spyOn(wrapper.vm.$storage.userAccount.getters, 'searchUserAccounts').mockImplementation(() => [mockUserAccountSearchData()[0]]);
+        jest.spyOn(wrapper.vm.$storage.userAccount.getters, 'getByCriteria').mockImplementation(() => [mockCombinedUserAccount()]);
         wrapper.vm.primaryContactQuery = 'ab';
         wrapper.vm.minimumContactQueryLength = 2;
         await wrapper.vm.searchPrimaryContacts();
-        expect(wrapper.vm.$storage.userAccount.getters.searchUserAccounts)
-          .toHaveBeenCalledWith(wrapper.vm.primaryContactQuery, ['displayName']);
-        expect(wrapper.vm.primaryContactUsers).toEqual([mockUserAccountSearchData()[0]]);
+        expect(wrapper.vm.$storage.userAccount.getters.getByCriteria)
+          .toHaveBeenCalledWith(wrapper.vm.primaryContactQuery, false, ['displayName']);
+        const flattenedCombinedUserAccount = {
+          ...mockCombinedUserAccount().entity,
+          ...mockCombinedUserAccount().metadata,
+          isPrimaryContact: false,
+        };
+        expect(wrapper.vm.primaryContactUsers).toEqual([flattenedCombinedUserAccount]);
       });
 
       it('does not call the searchAppUsers action when the query is not long enough long enough and empties the list of users', async () => {
-        jest.spyOn(wrapper.vm.$storage.appUser.getters, 'searchAppUser').mockImplementation(() => {});
+        jest.clearAllMocks();
+        jest.spyOn(wrapper.vm.$storage.userAccount.getters, 'getByCriteria').mockImplementation(() => {});
         wrapper.vm.primaryContactQuery = 'a';
         wrapper.vm.minimumContactQueryLength = 2;
         await wrapper.vm.searchPrimaryContacts();
 
-        expect(wrapper.vm.$storage.appUser.getters.searchAppUser).not.toHaveBeenCalled();
+        expect(wrapper.vm.$storage.userAccount.getters.getByCriteria).not.toHaveBeenCalled();
         expect(wrapper.vm.primaryContactUsers.length).toEqual(0);
       });
     });
@@ -1273,11 +1279,9 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('fetchUserAccounts', () => {
-      it('should call searchUserAccounts actions with proper param', async () => {
+      it('should call fetchAll actions', async () => {
         await wrapper.vm.fetchUserAccounts();
-        expect(wrapper.vm.$storage.userAccount.actions.searchUserAccounts).toHaveBeenCalledWith({
-          top: 999,
-        });
+        expect(wrapper.vm.$storage.userAccount.actions.fetchAll).toBeCalled();
       });
     });
 

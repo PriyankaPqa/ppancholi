@@ -147,11 +147,9 @@ import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import { IError } from '@/services/httpClient';
-
 import _cloneDeep from 'lodash/cloneDeep';
-
 import {
-  ETeamStatus, ETeamType, ITeamEvent, Team, ITeam,
+  ETeamStatus, ETeamType, ITeamEvent, Team, ITeam, ITeamMemberData,
 } from '@/entities/team';
 import { EEventStatus, IEvent } from '@/entities/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
@@ -165,7 +163,7 @@ import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm } from '@/types';
-import { IUserAccountSearchData } from '@/entities/user-account';
+import { IUserAccountCombined } from '@/entities/user-account';
 
 export default Vue.extend({
   name: 'CreateEditTeam',
@@ -198,8 +196,9 @@ export default Vue.extend({
     return {
       isNameUnique: true,
       primaryContactQuery: '',
-      primaryContactUsers: [] as IUserAccountSearchData[],
-      currentPrimaryContact: null as IUserAccountSearchData,
+      userAccounts: [] as IUserAccountCombined[],
+      primaryContactUsers: [] as ITeamMemberData[],
+      currentPrimaryContact: null as ITeamMemberData,
       map: [null, 'standard', 'adhoc'],
       statuses: [ETeamStatus.Active, ETeamStatus.Inactive],
       showCancelConfirmationDialog: false,
@@ -369,7 +368,10 @@ export default Vue.extend({
       const query = this.primaryContactQuery;
 
       if (query && query.length >= this.minimumContactQueryLength) {
-        this.primaryContactUsers = this.$storage.userAccount.getters.searchUserAccounts(query, ['displayName']);
+        const userMatches:IUserAccountCombined[] = this.$storage.userAccount.getters.getByCriteria(query, false, ['displayName']);
+        this.primaryContactUsers = userMatches.map(
+          (u) => ({ ...u.entity, ...u.metadata, isPrimaryContact: u.entity.id === this.currentPrimaryContact?.id }),
+        );
       } else {
         this.primaryContactUsers = [];
       }
@@ -383,7 +385,7 @@ export default Vue.extend({
       (this.$refs.form as VForm).reset();
     },
 
-    setPrimaryContact(appUser: IUserAccountSearchData) {
+    setPrimaryContact(appUser: ITeamMemberData) {
       this.currentPrimaryContact = appUser;
     },
 
@@ -406,10 +408,12 @@ export default Vue.extend({
     },
 
     setPrimaryContactTeam() {
-      this.team.setPrimaryContact({
-        ...this.currentPrimaryContact,
-        isPrimaryContact: true,
-      });
+      this.team.setPrimaryContact(
+        {
+          ...this.currentPrimaryContact,
+          isPrimaryContact: true,
+        },
+      );
     },
 
     async submitCreateTeam() {
@@ -448,9 +452,7 @@ export default Vue.extend({
     },
 
     async fetchUserAccounts() {
-      await this.$storage.userAccount.actions.searchUserAccounts({
-        top: 999,
-      });
+      this.userAccounts = await this.$storage.userAccount.actions.fetchAll();
     },
   },
 });

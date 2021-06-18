@@ -1,12 +1,12 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { ECaseFileStatus } from '@/entities/case-file';
 import colors from '@/ui/plugins/vuetify/colors';
-import { UserAccount, mockUserAccountSearchData } from '@/entities/user-account';
+import { mockCombinedUserAccount } from '@/entities/user-account';
 import { mockStorage } from '@/store/storage';
 import Component from '../case-file-activity/components/CaseFileStatusDialog.vue';
 
 const localVue = createLocalVue();
-const mockUser = new UserAccount(mockUserAccountSearchData()[0]);
+const mockUser = mockCombinedUserAccount();
 const storage = mockStorage();
 
 describe('CaseFileStatusDialog.vue', () => {

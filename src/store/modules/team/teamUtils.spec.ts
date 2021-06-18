@@ -1,13 +1,14 @@
 import { ActionContext } from 'vuex';
 import { IState } from '@/store/modules/team/team.types';
 import { IRootState } from '@/store';
-import { mockProvider } from '@/services/provider';
+
 import { IAppUserData } from '@/entities/app-user';
 import {
   mockTeamMembersData,
   mockTeamsData, mockTeamSearchData, mockTeamSearchDataAggregate, Team,
 } from '@/entities/team';
 import { IEvent } from '@/entities/event';
+import { mockUserAccountEntity, mockUserAccountMetadata } from '@/entities/user-account';
 import * as utils from './teamUtils';
 
 const mockActionsContext = (): ActionContext<IState, IRootState> => ({
@@ -32,16 +33,21 @@ const mockActionsContext = (): ActionContext<IState, IRootState> => ({
 describe('>>> Team utils', () => {
   describe('>> buildTeamSearchDataPayload', () => {
     it('should build the payload correctly', async () => {
-      const services = mockProvider();
       const payload = mockTeamsData()[0];
 
-      jest.spyOn(services.userAccounts, 'searchUserAccounts').mockImplementation(() => ({
-        odataCount: 2,
-        odataContext: 'context',
-        value: mockTeamMembersData(),
-      }));
+      const context = mockActionsContext();
+      const userAccountsEntities = [
+        mockUserAccountEntity({ id: 'guid-member-1' }),
+        mockUserAccountEntity({ id: 'guid-member-2' }),
+      ];
 
-      const res = await utils.buildTeamSearchDataPayload(payload, mockActionsContext(), services);
+      const userAccountsMetadata = [
+        mockUserAccountMetadata({ id: 'guid-member-1' }),
+        mockUserAccountMetadata({ id: 'guid-member-2' }),
+      ];
+      context.dispatch = jest.fn().mockReturnValueOnce(userAccountsEntities).mockReturnValueOnce(userAccountsMetadata);
+
+      const res = await utils.buildTeamSearchDataPayload(payload, context);
 
       expect(res).toEqual({
         teamId: payload.id,
@@ -61,38 +67,20 @@ describe('>>> Team utils', () => {
   });
 
   describe('>> aggregateTeamSearchDataWithMembers', () => {
-    it('should call the user-accounts search api with the list of team member ids', async () => {
-      const team = mockTeamSearchData()[0];
-      const services = mockProvider();
-      jest.spyOn(services.userAccounts, 'searchUserAccounts').mockImplementation(() => ({
-        odataCount: 2,
-        odataContext: 'context',
-        value: mockTeamMembersData(),
-      }));
-
-      await utils.aggregateTeamSearchDataWithMembers(
-        services,
-        team,
-      );
-
-      expect(services.userAccounts.searchUserAccounts).toHaveBeenCalledWith({
-        filter: "search.in(UserAccountId, 'guid-member-1|guid-member-2', '|')",
-      });
-    });
-
     it('should return the team aggregated with the users from user-accounts', async () => {
-      const team = mockTeamSearchData()[0];
-      const services = mockProvider();
-      jest.spyOn(services.userAccounts, 'searchUserAccounts').mockImplementation(() => ({
-        odataCount: 2,
-        odataContext: 'context',
-        value: mockTeamMembersData(),
-      }));
+      const context = mockActionsContext();
+      const userAccountsEntities = [
+        mockUserAccountEntity({ id: 'guid-member-1' }),
+        mockUserAccountEntity({ id: 'guid-member-2' }),
+      ];
 
-      const res = await utils.aggregateTeamSearchDataWithMembers(
-        services,
-        team,
-      );
+      const userAccountsMetadata = [
+        mockUserAccountMetadata({ id: 'guid-member-1' }),
+        mockUserAccountMetadata({ id: 'guid-member-2' }),
+      ];
+      context.dispatch = jest.fn().mockReturnValueOnce(userAccountsEntities).mockReturnValueOnce(userAccountsMetadata);
+      const team = mockTeamSearchData()[0];
+      const res = await utils.aggregateTeamSearchDataWithMembers(context, team);
 
       expect(res).toEqual({
         ...team,

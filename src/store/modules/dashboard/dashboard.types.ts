@@ -3,4 +3,5 @@ export interface IState {
   leftMenuVisible: boolean;
   rightMenuVisible: boolean;
   generalHelpMenuVisible: boolean;
+  initLoading: boolean;
 }

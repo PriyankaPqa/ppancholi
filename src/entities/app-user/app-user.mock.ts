@@ -1,35 +1,4 @@
-import {
-  IAllUserData, IAppUserAzureData, IRolesData, IAppUserData,
-} from './app-user.types';
-
-export const mockAllUsersData = (): IAllUserData[] => [
-  {
-    id: '0',
-    mail: 'test0@test.com',
-    mobilePhone: '',
-    businessPhones: [],
-  },
-  {
-    id: '1',
-    mail: 'test1@test.com',
-    mobilePhone: '',
-    businessPhones: [],
-  },
-  {
-    id: '2',
-    mail: 'test2@test.com',
-    mobilePhone: '',
-    businessPhones: [],
-  },
-];
-
-export const mockAppUserAzureData = (): IAppUserAzureData[] => [
-  {
-    id: '2',
-    displayName: 'Lena Brown',
-    roles: ['0', '1'],
-  },
-];
+import { IRolesData, IAppUserData } from './app-user.types';
 
 export const mockRolesData = (): IRolesData[] => [
   {

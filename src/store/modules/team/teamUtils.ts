@@ -1,10 +1,11 @@
 import {
-  ITeamData, ITeamSearchData, ITeamSearchDataAggregate,
+  ITeamData, ITeamMemberSearchData, ITeamSearchData, ITeamSearchDataAggregate,
 } from '@/entities/team';
 import { ActionContext } from 'vuex';
 import { EEventStatus, IEvent } from '@/entities/event';
 import utils from '@/entities/utils';
-import { IProvider, IProviderMock } from '@/services/provider';
+import { USER_ACCOUNT_ENTITIES, USER_ACCOUNT_METADATA } from '@/constants/vuex-modules';
+import { IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata } from '@/entities/user-account';
 import { IState } from './team.types';
 import { IRootState } from '../../store.types';
 
@@ -15,32 +16,42 @@ export const retrieveTeamEvents = (eventsIds: Array<uuid>, context: ActionContex
 };
 
 export const aggregateTeamSearchDataWithMembers = async (
-  services: IProvider | IProviderMock,
+  context: ActionContext<IState, IRootState>,
   team: ITeamSearchData,
 ): Promise<ITeamSearchDataAggregate> => {
+  const teamMemberIds = team.teamMembers.map((t) => t.id);
   const aggregate: ITeamSearchDataAggregate = {
     ...team,
     teamMembers: [],
   };
 
-  const teamMemberIds = team.teamMembers.map((t) => t.id);
-
-  if (teamMemberIds.length) {
-    const filter = `search.in(UserAccountId, '${teamMemberIds.join('|')}', '|')`;
-
-    const teamMembers = await services.userAccounts.searchUserAccounts({
-      filter,
-    });
-
-    aggregate.teamMembers = teamMembers.value.map((t) => {
-      const member = team.teamMembers.find((member) => member.id === t.userAccountId);
-
-      return {
-        ...t,
-        isPrimaryContact: member.isPrimaryContact,
-      };
-    });
+  if (teamMemberIds.length === 0) {
+    return aggregate;
   }
+
+  const userAccountEntities = await context.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchAll`, {}, { root: true });
+  const userAccountMetadata = await context.dispatch(`${USER_ACCOUNT_METADATA}/fetchAll`, {}, { root: true });
+
+  const combinedUserAccounts = userAccountEntities.map((e: IUserAccountEntity) => {
+    const match = userAccountMetadata.find((m: IUserAccountMetadata) => m.id === e.id);
+    return {
+      entity: e,
+      metadata: match,
+    };
+  });
+
+  aggregate.teamMembers = team.teamMembers.map((t: ITeamMemberSearchData) => {
+    const userAccount = combinedUserAccounts.find((userAccount: IUserAccountCombined) => userAccount.entity.id === t.id);
+    let entity = null;
+    if (userAccount?.entity) {
+      entity = {
+        ...userAccount.entity,
+        ...userAccount.metadata,
+        isPrimaryContact: t.isPrimaryContact,
+      };
+    }
+    return entity;
+  }).filter((e) => e != null);
 
   return aggregate;
 };
@@ -48,7 +59,6 @@ export const aggregateTeamSearchDataWithMembers = async (
 export const buildTeamSearchDataPayload = async (
   payload: ITeamData,
   context: ActionContext<IState, IRootState>,
-  services: IProvider | IProviderMock,
 ) : Promise<ITeamSearchDataAggregate> => {
   const team: ITeamSearchData = {
     teamId: payload.id,
@@ -65,7 +75,7 @@ export const buildTeamSearchDataPayload = async (
     teamStatusName: utils.initMultilingualAttributes(context.state.team.statusName),
   };
 
-  const aggregate = await aggregateTeamSearchDataWithMembers(services, team);
+  const aggregate = await aggregateTeamSearchDataWithMembers(context, team);
 
   return aggregate;
 };

@@ -1,3 +1,3 @@
-export * from './user-account';
-export * from './user-account.types';
-export * from './user-account.mock';
+export * from './userAccount.types';
+export * from './userAccount.mock';
+export * from './userAccount';

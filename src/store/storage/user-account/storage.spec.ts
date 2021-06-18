@@ -1,71 +1,99 @@
 import { mockStore } from '@/store';
-import { mockUserAccountSearchData } from '@/entities/user-account';
-import { EOptionListItemStatus } from '@/entities/optionItem';
-import { makeStorage } from './storage';
+import { UserAccountStorage } from '@/store/storage/user-account/storage';
+import { USER_ACCOUNT_ENTITIES, USER_ACCOUNT_METADATA } from '@/constants/vuex-modules';
+import { FilterKey, mockUserAccountEntity, mockUserFilters } from '@/entities/user-account';
+import { IAddRoleToUserRequest } from '@/services/user-accounts/entity';
+
+const entityModuleName = USER_ACCOUNT_ENTITIES;
+const metadataModuleName = USER_ACCOUNT_METADATA;
 
 const store = mockStore({
   modules: {
-    user: {
+    [entityModuleName]: {
       state: {
-        userAccounts: mockUserAccountSearchData(),
+        currentUserAccount: mockUserAccountEntity(),
       },
     },
   },
 }, { commit: true, dispatch: true });
 
-const storage = makeStorage(store);
-const mockSubRole = {
-  id: '123',
-  name: {
-    translation: {
-      en: 'case worker 2',
-      fr: 'case worker 2 fr',
-    },
-  },
-  orderRank: 1,
-  status: EOptionListItemStatus.Active,
-  isOther: false,
-  isDefault: false,
-};
+const storage = new UserAccountStorage(store, entityModuleName, metadataModuleName).make();
 
 describe('>>> User Account Storage', () => {
-  describe('>> Getters', () => {
-    it('should proxy userAccounts', () => {
-      expect(storage.getters.userAccounts()).toEqual(store.getters['userAccount/userAccounts']());
+  describe('>> Actions', () => {
+    it('should proxy addFilter', () => {
+      const filter = mockUserFilters()[0];
+      storage.actions.addFilter(filter);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/addFilter`, filter);
     });
 
-    it('should proxy userAccountById', () => {
-      expect(storage.getters.userAccountById('TEST_ID')).toEqual(store.getters['userAccount/userAccountById']('TEST_ID'));
+    it('should proxy editFilter', () => {
+      const oldFilter = mockUserFilters()[0];
+      const newFilter = mockUserFilters()[0];
+      storage.actions.editFilter(oldFilter, newFilter);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/editFilter`, { oldFilter, newFilter });
+    });
+
+    it('should proxy deleteFilter', () => {
+      const filter = mockUserFilters()[0];
+      storage.actions.deleteFilter(filter);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/deleteFilter`, filter);
+    });
+
+    it('should proxy assignRole', () => {
+      const payload = {
+        subRole: {},
+        userId: '123',
+      } as IAddRoleToUserRequest;
+
+      storage.actions.assignRole(payload);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/assignRole`, payload);
+    });
+
+    it('should proxy setUserPreferredLanguage', () => {
+      const payload = {
+        id: '123',
+        languageCode: 'fr',
+      };
+
+      storage.actions.setUserPreferredLanguage(payload.id, payload.languageCode);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setUserPreferredLanguage`, payload);
+    });
+
+    it('should proxy setCurrentUserPreferredLanguage', () => {
+      const payload = 'fr';
+
+      storage.actions.setCurrentUserPreferredLanguage(payload);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCurrentUserPreferredLanguage`, payload);
+    });
+
+    it('should proxy fetchCurrentUserAccount', () => {
+      storage.actions.fetchCurrentUserAccount();
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCurrentUserAccount`);
     });
   });
 
-  describe('>> Actions', () => {
-    describe('fetchUserAccount', () => {
-      it('should proxy fetchUserAccount', () => {
-        storage.actions.fetchUserAccount('TEST_ID');
-        expect(store.dispatch).toBeCalledWith('userAccount/fetchUserAccount', 'TEST_ID');
+  describe('>> Getters', () => {
+    describe('currentUserFiltersByKey', () => {
+      it('should proxy currentUserFiltersByKey', () => {
+        store.commit(`${entityModuleName}/setCurrentUserAccount`, mockUserAccountEntity());
+        const storageGetter = storage.getters.currentUserFiltersByKey(FilterKey.CaseFiles);
+        const storeGetter = store.getters[`${entityModuleName}/currentUserFiltersByKey`]((FilterKey.CaseFiles));
+        expect(storageGetter).toEqual(storeGetter);
       });
     });
+  });
 
-    describe('fetchAllUserAccounts', () => {
-      it('should proxy fetchUserAccount', () => {
-        storage.actions.fetchAllUserAccounts();
-        expect(store.dispatch).toBeCalledWith('userAccount/fetchAllUserAccounts');
-      });
-    });
-
-    describe('addRoleToUser', () => {
-      it('should proxy addRoleToUser', () => {
-        const payload = { subRole: mockSubRole, userId: 'uuid' };
-        storage.actions.addRoleToUser(payload);
-        expect(store.dispatch).toBeCalledWith('userAccount/addRoleToUser', payload);
-      });
-    });
-
-    describe('searchUserAccounts', () => {
-      it('should proxy searchUserAccounts', () => {
-        storage.actions.searchUserAccounts({});
-        expect(store.dispatch).toHaveBeenCalledWith('userAccount/searchUserAccounts', {});
+  describe('>> Mutations', () => {
+    describe('setCurrentUserAccount', () => {
+      it('should proxy setCurrentUserAccount', () => {
+        const payload = mockUserAccountEntity();
+        storage.mutations.setCurrentUserAccount(payload);
+        expect(store.commit).toBeCalledWith(`${entityModuleName}/setCurrentUserAccount`, payload);
       });
     });
   });

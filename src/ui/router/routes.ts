@@ -3,6 +3,7 @@ import { RouteConfig } from 'vue-router';
 
 import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
+import { USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE } from '@/constants/vuex-modules';
 import Routes from '../../constants/routes';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
@@ -82,12 +83,9 @@ export const routes: Array<RouteConfig> = [
     },
     beforeEnter: async (to, from, next) => {
       await Promise.all([
-        store.dispatch('appUser/fetchRoles'),
-        store.dispatch('appUser/fetchAllUsers'),
-        store.dispatch('appUser/fetchAppUsers'),
-        store.dispatch('user/fetchUserAccount'),
+        store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`),
       ]);
-      store.commit('appUser/setLoading', false);
+      store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: false });
       Trans.routeMiddleware(to, from, next);
     },
     children: [
@@ -163,7 +161,6 @@ export const routes: Array<RouteConfig> = [
               },
               {
                 path: Routes.caseFile.details.path,
-                name: Routes.caseFile.details.name,
                 component: CaseFileDetails,
                 meta: { level: 'level1' },
                 props: true,
@@ -243,7 +240,6 @@ export const routes: Array<RouteConfig> = [
               },
               {
                 path: Routes.events.details.path,
-                name: Routes.events.details.name,
                 component: EventDetails,
                 meta: { level: 'level4' },
                 props: true,

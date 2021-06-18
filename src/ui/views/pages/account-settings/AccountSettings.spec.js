@@ -1,12 +1,12 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { UserAccount, mockUserAccountSearchData } from '@/entities/user-account';
+import { mockCombinedUserAccount } from '@/entities/user-account';
 import { mockStorage } from '@/store/storage';
 
 import Component from './AccountSettings.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockUser = new UserAccount(mockUserAccountSearchData()[0]);
+const mockUser = mockCombinedUserAccount();
 
 describe('AccountSettings.vue', () => {
   let wrapper;
@@ -33,7 +33,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.props('status')).toEqual(wrapper.vm.user.accountStatus);
+        expect(element.props('status')).toEqual(wrapper.vm.user.entity.accountStatus);
       });
     });
 
@@ -48,7 +48,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.firstName);
+        expect(element.text()).toEqual(wrapper.vm.user.metadata.givenName);
       });
     });
 
@@ -63,7 +63,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.lastName);
+        expect(element.text()).toEqual(wrapper.vm.user.metadata.surname);
       });
     });
 
@@ -78,7 +78,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.roleName.translation.en);
+        expect(element.text()).toEqual(wrapper.vm.user.metadata.roleName.translation.en);
       });
     });
 
@@ -93,7 +93,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.email);
+        expect(element.text()).toEqual(wrapper.vm.user.metadata.emailAddress);
       });
     });
 
@@ -108,7 +108,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.phoneNumber);
+        expect(element.text()).toEqual(wrapper.vm.user.metadata.phoneNumber);
       });
     });
 
@@ -127,7 +127,7 @@ describe('AccountSettings.vue', () => {
   describe('life cycle', () => {
     beforeEach(() => {
       storage.user.getters.userId = jest.fn(() => 'mock-id');
-      storage.userAccount.actions.fetchUserAccount = jest.fn(() => {});
+      storage.userAccount.actions.fetch = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,
@@ -140,14 +140,14 @@ describe('AccountSettings.vue', () => {
     it('should get the id from the user storage ', () => {
       expect(wrapper.vm.$storage.user.getters.userId).toHaveBeenCalledTimes(1);
     });
-    it('should call fetchUserAccount with the response of the user storage getter', () => {
-      expect(wrapper.vm.$storage.userAccount.actions.fetchUserAccount).toHaveBeenCalledWith('mock-id');
+    it('should call fetchCurrentUserAccount with the response of the user storage getter', () => {
+      expect(wrapper.vm.$storage.userAccount.actions.fetch).toHaveBeenCalledWith('mock-id');
     });
   });
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.userAccount.getters.userAccountById = jest.fn(() => mockUser);
+      storage.userAccount.getters.get = jest.fn(() => mockUser);
 
       wrapper = shallowMount(Component, {
         localVue,
@@ -167,10 +167,32 @@ describe('AccountSettings.vue', () => {
         expect(wrapper.vm.user).toEqual(mockUser);
       });
     });
+  });
 
-    describe('loading', () => {
-      it('return the user account by id from the storage', () => {
-        expect(wrapper.vm.loading).toEqual(false);
+  describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        store: {
+          userAccount: {
+            searchLoading: false,
+          },
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+    });
+    describe('setPreferredLanguage', () => {
+      it('should be called when changing language', () => {
+        const element = wrapper.findDataTest('userAccount-language-preferences');
+        wrapper.vm.setPreferredLanguage = jest.fn();
+        element.vm.$emit('change', 'bar');
+        expect(wrapper.vm.setPreferredLanguage).toHaveBeenCalledWith('bar');
+      });
+      it('should call setCurrentUserPreferredLanguage with correct param ', () => {
+        wrapper.vm.setPreferredLanguage({ key: 'fr' });
+        expect(wrapper.vm.$storage.userAccount.actions.setCurrentUserPreferredLanguage).toHaveBeenCalledWith('fr');
       });
     });
   });

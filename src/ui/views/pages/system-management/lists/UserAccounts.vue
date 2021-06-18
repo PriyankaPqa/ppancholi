@@ -17,7 +17,7 @@
     <div class="lists__container">
       <div>
         <v-data-table
-          data-test="teams-table"
+          data-test="users-table"
           hide-header
           must-sort
           :loading="loading"
@@ -27,6 +27,8 @@
           :count="filteredUserAccounts.length"
           :labels="labels"
           :headers="headers"
+          :sort-by.sync="options.sortBy"
+          :sort-desc.sync="options.sortDesc"
           :custom-columns="Object.values(customColumns)"
           :options.sync="options">
           <template slot="default">
@@ -34,11 +36,11 @@
           </template>
 
           <template #[`item.${customColumns.displayName}`]="{ item }">
-            <span data-test="user_displayName"> {{ item.displayName }}</span>
+            <span data-test="user_displayName"> {{ item.metadata.displayName }}</span>
           </template>
 
           <template #[`item.${customColumns.email}`]="{ item }">
-            <span data-test="user_email"> {{ item.email }}</span>
+            <span data-test="user_email"> {{ item.metadata.emailAddress }}</span>
           </template>
 
           <template #[`item.${customColumns.roleId}`]="{ item }">
@@ -48,7 +50,7 @@
               return-object
               hide-details
               data-test="user_roleId"
-              :value="getRoleListItem(item.roleId)"
+              :value="getRoleListItem(item.metadata.roleId)"
               :item-text="(item) => item ? $m(item.text): ''"
               :label="$t('system_management.userAccounts.role_header')"
               :items="allAccessLevelRoles"
@@ -58,8 +60,8 @@
           <template #[`item.${customColumns.accountStatus}`]="{ item }">
             <status-chip
               data-test="user_status"
-              status-name="EUserAccountStatus"
-              :status="item.accountStatus" />
+              status-name="AccountStatus"
+              :status="item.entity.accountStatus" />
           </template>
 
           <template #[`item.${customColumns.edit}`]="{ item }">
@@ -136,10 +138,11 @@ import {
   IOptionItem,
   IOptionSubItem,
 } from '@/entities/optionItem';
-import { IAddRoleToUserRequest } from '@/services/user-accounts/user-accounts.types';
-import { EUserAccountStatus, IUserAccount } from '@/entities/user-account';
+
 import { isEmpty } from 'lodash';
 import _cloneDeep from 'lodash/cloneDeep';
+import { IUserAccountCombined, IUserAccountEntity } from '@/entities/user-account';
+import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
 
 export default Vue.extend({
@@ -158,18 +161,18 @@ export default Vue.extend({
       routes,
       options: {
         page: 1,
-        sortBy: ['displayName'],
+        sortBy: ['metadata.displayName'],
         sortDesc: [false],
       },
       search: '',
       showAddEmisUserDialog: false,
       showDeleteUserAccountDialog: false,
-      userToDelete: null as IUserAccount,
+      userToDelete: null as IUserAccountCombined,
       loading: true,
-      allUsers: [] as IUserAccount[], // All users, minus "deleted in EMIS"
+      allUsers: [] as IUserAccountCombined[], // All users, minus "deleted in EMIS"
       allSubRoles: [] as IOptionSubItem[],
       allAccessLevelRoles: [],
-      changedAccounts: [] as IUserAccount[],
+      changedAccounts: [] as IUserAccountCombined[],
     };
   },
 
@@ -182,7 +185,7 @@ export default Vue.extend({
           filterable: true,
           sortable: true,
           align: 'start',
-          value: 'displayName',
+          value: 'metadata.displayName',
           width: '25%',
         },
         {
@@ -190,7 +193,7 @@ export default Vue.extend({
           class: 'emis_member_header',
           filterable: true,
           sortable: true,
-          value: 'email',
+          value: 'metadata.emailAddress',
           width: '25%',
         },
         {
@@ -198,7 +201,7 @@ export default Vue.extend({
           class: 'emis_member_header',
           filterable: false,
           sortable: true,
-          value: 'roleId',
+          value: 'metadata.roleId',
           width: '25%',
         },
         {
@@ -206,7 +209,7 @@ export default Vue.extend({
           class: 'emis_member_header',
           filterable: false,
           sortable: true,
-          value: 'accountStatus',
+          value: 'entity.accountStatus',
         },
         {
           text: '',
@@ -228,10 +231,10 @@ export default Vue.extend({
 
     customColumns(): Record<string, string> {
       return {
-        displayName: 'displayName',
-        email: 'email',
-        roleId: 'roleId',
-        accountStatus: 'accountStatus',
+        displayName: 'metadata.displayName',
+        email: 'metadata.email',
+        roleId: 'metadata.roleId',
+        accountStatus: 'entity.accountStatus',
         edit: 'edit',
         delete: 'delete',
       };
@@ -260,18 +263,20 @@ export default Vue.extend({
       };
     },
 
-    filteredUserAccounts(): IUserAccount[] {
-      let filteredUsers:IUserAccount[];
+    filteredUserAccounts(): IUserAccountCombined[] {
+      let filteredUsers:IUserAccountCombined[];
       if (isEmpty(this.search) || this.allUsers === null) {
-        filteredUsers = this.allUsers;
+        filteredUsers = this.allUsers ? this.allUsers : [];
       } else {
-        filteredUsers = this.allUsers.filter((user) => user.displayName && user.displayName.toLowerCase().indexOf(this.search.toLowerCase()) >= 0);
+        filteredUsers = this.allUsers.filter(
+          (user) => user.metadata.displayName && user.metadata.displayName.toLowerCase().indexOf(this.search.toLowerCase()) >= 0,
+        );
       }
       return filteredUsers;
     },
 
-    originalUsers(): IUserAccount[] {
-      return this.$storage.userAccount.getters.userAccounts();
+    originalUsers(): IUserAccountCombined[] {
+      return this.$storage.userAccount.getters.getAll();
     },
   },
 
@@ -297,7 +302,7 @@ export default Vue.extend({
       this.showAddEmisUserDialog = true;
     },
 
-    itemIsChanged(user: IUserAccount): boolean {
+    itemIsChanged(user: IUserAccountCombined): boolean {
       return this.changedAccounts.indexOf(user) >= 0;
     },
 
@@ -316,44 +321,41 @@ export default Vue.extend({
       return null;
     },
 
-    assignRoleToUser(roleData: {text: IMultilingual, value: string}, user: IUserAccount) {
+    assignRoleToUser(roleData: {text: IMultilingual, value: string}, user: IUserAccountCombined) {
       // Only update if this changes the user role
-      if (roleData && user && roleData.value !== user.roleId) {
+      if (roleData && user && roleData.value !== user.metadata.roleId) {
         const role:IOptionSubItem = this.allSubRoles.find((r) => r.id === roleData.value);
 
-        user.roleId = role.id;
-        user.roleName = role.name;
+        user.metadata.roleId = role.id;
+        user.metadata.roleName = role.name;
         this.changedAccounts.push(user); // Register for pending change
       }
     },
 
-    async applyRoleChange(user: IUserAccount) {
-      const newRole = this.getSubRoleById(user.roleId);
+    async applyRoleChange(user: IUserAccountCombined) {
+      const newRole = this.getSubRoleById(user.metadata.roleId);
       if (this.itemIsChanged(user) && newRole) {
         try {
           this.loading = true; // Visual cue of busy state
-          const request:IAddRoleToUserRequest = {
+          const request = {
             subRole: newRole,
-            userId: user.id,
+            userId: user.entity.id,
           };
-          const resultAccount:IUserAccount = await this.$storage.userAccount.actions.addRoleToUser(request);
+          const resultAccount:IUserAccountEntity = await this.$storage.userAccount.actions.assignRole(request);
           // Update status
-          user.status = resultAccount.status;
-          user.accountStatus = resultAccount.accountStatus;
-          user.roleName = request.subRole.name;
-          user.roleId = request.subRole.id;
+          user.entity = resultAccount;
+          user.metadata.roleName = request.subRole.name;
+          user.metadata.roleId = request.subRole.id;
           this.changedAccounts.splice(this.changedAccounts.indexOf(user), 1);
           this.replaceOrAddToAllUsersById([user]);
           this.$toasted.global.success(this.$t('system_management.userAccounts.role_update_success'));
-        } catch (errors) {
-          this.$toasted.global.error(this.$t('errors.user-account-role-assign.fail'));
         } finally {
           this.loading = false;
         }
       }
     },
 
-    cancelRoleChange(user: IUserAccount) {
+    cancelRoleChange(user: IUserAccountCombined) {
       // Remove from pending role change
       if (this.itemIsChanged(user)) {
         this.changedAccounts.splice(this.changedAccounts.indexOf(user), 1);
@@ -361,13 +363,13 @@ export default Vue.extend({
       this.revertToOriginalRole(user);
     },
 
-    revertToOriginalRole(user: IUserAccount) {
-      const originalUser = this.originalUsers.find((u) => u.id === user.id);
-      user.roleId = originalUser.roleId;
-      user.roleName = originalUser.roleName;
+    revertToOriginalRole(user: IUserAccountCombined) {
+      const originalUser = this.originalUsers.find((u) => u.entity.id === user.entity.id);
+      user.metadata.roleId = originalUser.metadata.roleId;
+      user.metadata.roleName = originalUser.metadata.roleName;
     },
 
-    deleteUserAccount(user: IUserAccount) {
+    deleteUserAccount(user: IUserAccountCombined) {
       this.userToDelete = user;
       this.showDeleteUserAccountDialog = true;
     },
@@ -376,12 +378,10 @@ export default Vue.extend({
       if (this.userToDelete) {
         this.loading = true;
         try {
-          await this.$storage.userAccount.actions.deleteUserAccount(this.userToDelete.id);
-          this.removeUserAccountById(this.allUsers, this.userToDelete.id);
+          await this.$storage.userAccount.actions.deactivate(this.userToDelete.entity.id);
+          this.removeUserAccountById(this.allUsers, this.userToDelete.entity.id);
           this.clearDeletionStatus();
           this.$toasted.global.success(this.$t('system_management.userAccounts.delete_success'));
-        } catch (errors) {
-          this.$toasted.global.error(this.$t('errors.user-account-deleted.fail'));
         } finally {
           this.loading = false;
         }
@@ -395,7 +395,7 @@ export default Vue.extend({
 
     async fetchAllEmisUsers() {
       this.loading = true;
-      await this.$storage.userAccount.actions.fetchAllUserAccounts();
+      await this.$storage.userAccount.actions.fetchAll();
       this.allUsers = this.excludeDeletedUsers(_cloneDeep(this.originalUsers));
       this.loading = false;
     },
@@ -432,27 +432,28 @@ export default Vue.extend({
       });
     },
 
-    excludeDeletedUsers(users: IUserAccount[]): IUserAccount[] {
+    excludeDeletedUsers(users: IUserAccountCombined[]): IUserAccountCombined[] {
       if (users) {
-        return users.filter((u) => u.status !== EUserAccountStatus.Inactive);
+        return users.filter((u) => u.entity.status === Status.Active);
       }
       return [];
     },
 
-    handleUsersAdded(users: IUserAccount[]) {
+    handleUsersAdded(users: IUserAccountCombined[]) {
       this.replaceOrAddToAllUsersById(users);
     },
 
-    replaceOrAddToAllUsersById(newUsers: IUserAccount[]) {
-      newUsers.forEach((u) => this.removeUserAccountById(this.allUsers, u.id));
+    replaceOrAddToAllUsersById(newUsers: IUserAccountCombined[]) {
+      // Replace the "guts" of these updated users and build new ones, as needed
+      newUsers.forEach((u) => this.removeUserAccountById(this.allUsers, u.entity.id));
       this.allUsers = this.excludeDeletedUsers(this.allUsers.concat(newUsers));
     },
 
-    findUserAccountById(array: IUserAccount[], userId: string): IUserAccount {
-      return array.find((u) => u.id === userId);
+    findUserAccountById(array: IUserAccountCombined[], userId: string): IUserAccountCombined {
+      return array.find((u) => u.entity.id === userId);
     },
 
-    removeUserAccountById(array: IUserAccount[], userId: string) {
+    removeUserAccountById(array: IUserAccountCombined[], userId: string) {
       const item = this.findUserAccountById(array, userId);
       if (item) {
         array.splice(array.indexOf(item), 1);
@@ -461,6 +462,7 @@ export default Vue.extend({
   },
 });
 </script>
+
 <style scoped lang="scss">
   .inline-flex {
     display: inline-flex;

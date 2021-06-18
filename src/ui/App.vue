@@ -85,7 +85,7 @@ export default {
 
   computed: {
     isLoading() {
-      return this.$store.state.appUser.loading;
+      return this.$store.state.dashboard.initLoading;
     },
   },
 

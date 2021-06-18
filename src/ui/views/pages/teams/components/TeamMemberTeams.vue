@@ -78,7 +78,7 @@ export default Vue.extend({
         TeamMembers: {
           any: {
             Id: {
-              eq: this.member.userAccountId,
+              eq: this.member.id,
             },
           },
         },

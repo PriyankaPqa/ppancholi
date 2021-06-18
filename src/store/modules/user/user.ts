@@ -4,8 +4,6 @@ import {
 import { localStorageKeys } from '@/constants/localStorage';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import {
-  EFilterKey,
-  IFilter,
   IMSALUserData,
   User,
 } from '@/entities/user';
@@ -20,7 +18,6 @@ const getDefaultState = (): IState => ({
   given_name: '',
   email: '',
   roles: [],
-  filters: [],
 });
 
 const moduleState: IState = getDefaultState();
@@ -32,7 +29,6 @@ const getters = {
     given_name: state.given_name,
     email: state.email,
     roles: state.roles,
-    filters: state.filters,
   }),
 
   userId: (state: IState) => state.oid,
@@ -56,8 +52,6 @@ const getters = {
       default: return 'HomeNoRole';
     }
   },
-
-  filtersByKey: (state: IState) => (key: EFilterKey) => state.filters.filter((f: IFilter) => f.filterKey === key),
 };
 
 const mutations = {
@@ -72,20 +66,11 @@ const mutations = {
   setRole(state: IState, payload: string) {
     state.roles = [payload];
   },
-
-  setFilters(state: IState, payload: Array<IFilter>) {
-    state.filters = payload;
-  },
 };
 
 const actions = {
   async signOut(this: Store<IState>) {
     authenticationProvider.signOut();
-  },
-
-  async fetchUserAccount(this: Store<IState>, context: ActionContext<IState, IState>) {
-    const userAccount = await this.$services.users.fetchUser();
-    context.commit('setFilters', userAccount.filters);
   },
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
@@ -95,7 +80,6 @@ const actions = {
       localStorage.setItem(localStorageKeys.accessToken.name, accessTokenResponse.accessToken);
       const { account } = accessTokenResponse;
       const userData = account.idTokenClaims;
-
       context.commit('setUser', userData);
     } else {
       throw new Error('User data not found');

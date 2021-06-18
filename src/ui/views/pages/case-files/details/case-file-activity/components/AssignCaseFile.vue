@@ -73,7 +73,7 @@
           show-select
           hide-default-footer
           must-sort
-          item-key="userAccountId"
+          item-key="id"
           :options="{sortBy: ['displayName'], sortDesc: [false]}"
           :item-class="(item)=> isSelected(item)? 'row_active': ''"
           :items="displayedMembers"
@@ -134,9 +134,9 @@
             <v-list-item-group>
               <v-list-item
                 v-for="member in assignedMembers"
-                :key="member.userAccountId"
+                :key="member.id"
                 class="pl-3 assigned-list-item"
-                :data-test="`assigned-individuals-list-item-${member.userAccountId}`">
+                :data-test="`assigned-individuals-list-item-${member.id}`">
                 <v-list-item-content class="py-1">
                   <span class="rc-body14 fw-bold">{{ member.displayName }}</span>
                 </v-list-item-content>
@@ -146,7 +146,7 @@
                       <v-btn
                         icon
                         x-small
-                        :data-test="`unassign_${member.userAccountId}`"
+                        :data-test="`unassign_${member.id}`"
                         @click="removeMember(member)"
                         v-on="on">
                         <v-icon>mdi-close</v-icon>
@@ -173,7 +173,7 @@ import {
 } from '@/entities/team';
 import { CaseFile, ICaseFile } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
-import { EUserAccountStatus } from '@/entities/user-account';
+import { AccountStatus } from '@/entities/user-account';
 
 interface IIndividual extends ITeamMemberData{
   translatedRoleName: string;
@@ -265,7 +265,7 @@ export default Vue.extend({
       this.allTeams.forEach((t) => {
         t.teamMembers.forEach((member :ITeamMemberData) => {
           // If team member is active and has not already been added, he is added to the allMembers list
-          if (!allMembers.find((m) => m.userAccountId === member.userAccountId) && member.userAccountStatus === EUserAccountStatus.Active) {
+          if (!allMembers.find((m) => m.id === member.id) && member.accountStatus === AccountStatus.Active) {
             allMembers.push({
               ...member,
               translatedRoleName: member.roleName.translation[this.$i18n.locale],
@@ -279,8 +279,8 @@ export default Vue.extend({
 
     setAssignedMembers() {
       this.caseFile.assignedIndividualIds.forEach((id) => {
-        const assignedMember = this.allMembers.find((m:IIndividual) => m.userAccountId === id);
-        if (assignedMember && assignedMember.userAccountStatus === EUserAccountStatus.Active) {
+        const assignedMember = this.allMembers.find((m:IIndividual) => m.id === id);
+        if (assignedMember && assignedMember.accountStatus === AccountStatus.Active) {
           this.assignedMembers.push(assignedMember);
         }
       });
@@ -296,11 +296,11 @@ export default Vue.extend({
     },
 
     isSelected(user: IIndividual): boolean {
-      return this.assignedMembers.findIndex((u) => user.userAccountId === u.userAccountId) !== -1;
+      return this.assignedMembers.findIndex((u) => user.id === u.id) !== -1;
     },
 
     removeMember(member: IIndividual) {
-      this.assignedMembers = this.assignedMembers.filter((m) => m.userAccountId !== member.userAccountId);
+      this.assignedMembers = this.assignedMembers.filter((m) => m.id !== member.id);
     },
 
     removeTeam(team: {name: string, id: string, type: string}) {
@@ -309,7 +309,7 @@ export default Vue.extend({
 
     async submit() {
       try {
-        const individualsPayload = this.assignedMembers.map((m) => m.userAccountId);
+        const individualsPayload = this.assignedMembers.map((m) => m.id);
         const teamsPayload = this.assignedTeams.map((t) => t.id);
         this.loading = true;
         const res: ICaseFile = await this.$storage.caseFile.actions.setCaseFileAssign(this.caseFile.id, individualsPayload, teamsPayload);

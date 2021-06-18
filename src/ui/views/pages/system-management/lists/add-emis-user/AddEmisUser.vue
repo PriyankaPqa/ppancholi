@@ -117,8 +117,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog, VSelectWithValidation } from '@crctech/component-library';
-import { IAppUserAzureData, IAppUserData } from '@/entities/app-user';
-import { IAddRoleToUserRequest } from '@/services/user-accounts/user-accounts.types';
+import { IAppUserData } from '@/entities/app-user';
 import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import _debounce from 'lodash/debounce';
@@ -127,8 +126,9 @@ import {
   IOptionSubItem,
 } from '@/entities/optionItem';
 import { i18n } from '@/ui/plugins';
-import { EUserAccountStatus, IUserAccount } from '@/entities/user-account';
+import { IUserAccountEntity, IUserAccountCombined } from '@/entities/user-account';
 import _cloneDeep from 'lodash/cloneDeep';
+import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
 
 export default Vue.extend({
@@ -155,7 +155,7 @@ export default Vue.extend({
     },
     allEmisUsers: {
       type: Array,
-      default: () => [] as IUserAccount[],
+      default: () => [] as IUserAccountCombined[],
       required: true,
     },
   },
@@ -165,7 +165,7 @@ export default Vue.extend({
       error: false,
       formReady: false,
       searchTerm: '', // The search term
-      appUsers: [] as IAppUserAzureData[],
+      appUsers: [] as IUserAccountCombined[],
       searchResults: [] as IAppUserData[],
       selectedUsers: [] as IAppUserData[],
       componentKey: 0,
@@ -233,14 +233,15 @@ export default Vue.extend({
     },
 
     async fetchAllAppUsers() {
-      this.appUsers = await this.$storage.userAccount.actions.fetchAllUserAccounts();
+      this.appUsers = await this.$storage.userAccount.actions.fetchAll();
       this.formReady = true;
     },
 
     async findUsers() {
       if (this.searchTerm) {
         this.loading = true;
-        const result:IAppUserData[] = await this.$storage.appUser.actions.findAppUsers(this.searchTerm) as IAppUserData[];
+        // Exception here since we should normally not call the service directly
+        const result:IAppUserData[] = await this.$services.appUsers.findAppUsers(this.searchTerm);
         this.searchResults = _cloneDeep(result);
         this.sortOnDisplayName(this.searchResults);
         this.componentKey = new Date().getTime(); // Force a redraw of the results list
@@ -252,9 +253,9 @@ export default Vue.extend({
 
     isAlreadyInEmis(user: IAppUserData): boolean {
       if (this.appUsers && this.allEmisUsers) {
-        const foundUser:IAppUserAzureData = this.appUsers.find((u) => user.id === u.id);
-        const emisUser:IUserAccount = (this.allEmisUsers as IUserAccount[]).find((u) => user.id === u.id);
-        if (foundUser && emisUser && emisUser.status === EUserAccountStatus.Active) {
+        const foundUser = this.appUsers.find((u) => user.id === u.entity.id);
+        const emisUser = (this.allEmisUsers as IUserAccountCombined[]).find((u) => user.id === u.entity.id);
+        if (foundUser && emisUser && emisUser.entity.status === Status.Active) {
           return true;
         }
       }
@@ -329,7 +330,7 @@ export default Vue.extend({
     async submit() {
       if (this.isSubmitAllowed) {
         this.loading = true; // So the user knows we're working
-        const successfulCreations: IUserAccount[] = [];
+        const successfulCreations = [];
         let successfulCreation;
         // eslint-disable-next-line
         for (let user of this.selectedUsers) {
@@ -350,19 +351,19 @@ export default Vue.extend({
       return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
     },
 
-    async setUserRole(user: IAppUserData): Promise<IUserAccount> {
-      let successfulCreation:IUserAccount;
+    async setUserRole(user: IAppUserData): Promise<IUserAccountEntity> {
+      let successfulCreation;
       const subRole:IOptionSubItem = this.getSubRoleById(user.roles[0].id);
 
       if (subRole) {
         const payload = {
           subRole,
           userId: user.id,
-        } as IAddRoleToUserRequest;
+        };
 
-        const userAccount: IUserAccount = await this.$storage.userAccount.actions.addRoleToUser(payload);
+        const userAccount = await this.$storage.userAccount.actions.assignRole(payload);
         if (userAccount) {
-          successfulCreation = await this.$storage.userAccount.actions.fetchUserAccount(user.id);
+          successfulCreation = await this.$storage.userAccount.actions.fetch(user.id);
           this.$toasted.global.success(this.$t('system_management.add_users.success'));
         } else {
           this.$toasted.global.error(this.$t('system_management.add_users.error'));

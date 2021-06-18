@@ -2,13 +2,14 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
-import { mockUserAccountSearchData, EAccountStatus, EUserAccountStatus } from '@/entities/user-account';
+import { AccountStatus, mockCombinedUserAccounts } from '@/entities/user-account';
 import _cloneDeep from 'lodash/cloneDeep';
+import { Status } from '@/entities/base';
 import Component from './UserAccounts.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const usersTestData = mockUserAccountSearchData();
+const usersTestData = mockCombinedUserAccounts();
 const fakeSubRole = {
   id: '123',
   name: {
@@ -101,7 +102,7 @@ describe('UserAccounts.vue', () => {
             filterable: true,
             sortable: true,
             align: 'start',
-            value: 'displayName',
+            value: 'metadata.displayName',
             width: '25%',
           },
           {
@@ -109,7 +110,7 @@ describe('UserAccounts.vue', () => {
             class: 'emis_member_header',
             filterable: true,
             sortable: true,
-            value: 'email',
+            value: 'metadata.emailAddress',
             width: '25%',
           },
           {
@@ -117,7 +118,7 @@ describe('UserAccounts.vue', () => {
             class: 'emis_member_header',
             filterable: false,
             sortable: true,
-            value: 'roleId',
+            value: 'metadata.roleId',
             width: '25%',
           },
           {
@@ -125,7 +126,7 @@ describe('UserAccounts.vue', () => {
             class: 'emis_member_header',
             filterable: false,
             sortable: true,
-            value: 'accountStatus',
+            value: 'entity.accountStatus',
           },
           {
             text: '',
@@ -150,10 +151,10 @@ describe('UserAccounts.vue', () => {
       it('is correctly defined', async () => {
         expect(wrapper.vm.customColumns).toEqual(
           {
-            displayName: 'displayName',
-            email: 'email',
-            roleId: 'roleId',
-            accountStatus: 'accountStatus',
+            displayName: 'metadata.displayName',
+            email: 'metadata.email',
+            roleId: 'metadata.roleId',
+            accountStatus: 'entity.accountStatus',
             edit: 'edit',
             delete: 'delete',
           },
@@ -184,7 +185,7 @@ describe('UserAccounts.vue', () => {
         expect(wrapper.vm.itemsPerPage).toEqual(usersTestData.length);
       });
       it('returns correct count of zero for null array', async () => {
-        wrapper.vm.allUers = null;
+        wrapper.vm.allUsers = null;
         expect(wrapper.vm.itemsPerPage).toEqual(0);
       });
     });
@@ -205,7 +206,7 @@ describe('UserAccounts.vue', () => {
     describe('filteredUserAccounts', () => {
       it('returns correct count for populated array', async () => {
         wrapper.vm.allUsers = usersTestData;
-        wrapper.vm.search = usersTestData[0].displayName.substring(3);
+        wrapper.vm.search = usersTestData[0].metadata.displayName.substring(3);
         wrapper.vm.$nextTick();
         expect(wrapper.vm.filteredUserAccounts[0]).toEqual(usersTestData[0]);
       });
@@ -317,17 +318,22 @@ describe('UserAccounts.vue', () => {
     describe('assignRoleToUser', () => {
       it('assigns the correct sub-role to a user', async () => {
         const user = {
-          id: '12345',
-          roleId: '123',
-          roleName: 'ROLE',
+          entity: {
+            id: '12345',
+          },
+          metadata: {
+            id: '12345',
+            roleId: '123',
+            roleName: 'ROLE',
+          },
         };
         wrapper.vm.allSubRoles = mockOptionItemData()[0].subitems;
         const roleData = { value: wrapper.vm.allSubRoles[0].id };
 
         wrapper.vm.assignRoleToUser(roleData, user);
 
-        expect(user.roleId).toEqual(wrapper.vm.allSubRoles[0].id);
-        expect(user.roleName).toEqual(wrapper.vm.allSubRoles[0].name);
+        expect(user.metadata.roleId).toEqual(wrapper.vm.allSubRoles[0].id);
+        expect(user.metadata.roleName).toEqual(wrapper.vm.allSubRoles[0].name);
         expect(wrapper.vm.changedAccounts.indexOf(user)).toBeGreaterThanOrEqual(0);
       });
     });
@@ -337,42 +343,60 @@ describe('UserAccounts.vue', () => {
         wrapper.vm.itemIsChanged = jest.fn(() => false);
         wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn();
         const user = {
-          id: '12345',
-          roleId: '123',
-          roleName: 'ROLE',
+          entity: {
+            id: '12345',
+          },
+          metadata: {
+            id: '12345',
+            roleId: '123',
+            roleName: 'ROLE',
+          },
         };
-        wrapper.vm.applyRoleChange(user);
+        await wrapper.vm.applyRoleChange(user);
         expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).not.toHaveBeenCalled();
       });
 
       it('applies a pending role change and triggers a success toast', async () => {
         wrapper.vm.$toasted.global.success = jest.fn();
         const user = {
-          id: '12345',
-          roleId: '123',
-          roleName: 'ROLE',
+          entity: {
+            id: '12345',
+            status: 1,
+            accountStatus: AccountStatus.Active,
+          },
+          metadata: {
+            id: '12345',
+            roleId: '123',
+            roleName: 'ROLE',
+          },
         };
         const changedUser = {
-          id: '12345',
-          roleId: fakeSubRole.id,
-          roleName: fakeSubRole.name,
-          accountStatus: EAccountStatus.Active,
-          status: EUserAccountStatus.Active,
+          entity: {
+            id: '12345',
+            status: Status.Active,
+            accountStatus: AccountStatus.Active,
+          },
+          metadata: {
+            id: '12345',
+            status: Status.Active,
+            roleId: fakeSubRole.id,
+            roleName: fakeSubRole.name,
+          },
         };
         wrapper.vm.itemIsChanged = jest.fn(() => true);
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn(() => changedUser);
+        wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn(() => changedUser.entity);
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
         await wrapper.vm.applyRoleChange(user);
         wrapper.vm.$nextTick();
 
-        expect(user.roleName).toEqual(fakeSubRole.name);
-        expect(user.roleId).toEqual(fakeSubRole.id);
-        expect(user.accountStatus).toEqual(changedUser.accountStatus);
-        expect(user.status).toEqual(changedUser.status);
+        expect(user.metadata.roleName).toEqual(fakeSubRole.name);
+        expect(user.metadata.roleId).toEqual(fakeSubRole.id);
+        expect(user.entity.accountStatus).toEqual(changedUser.entity.accountStatus);
+        expect(user.entity.status).toEqual(changedUser.entity.status);
         expect(wrapper.vm.loading).toBeFalsy();
 
-        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
       });
     });
@@ -380,45 +404,69 @@ describe('UserAccounts.vue', () => {
     describe('cancelRoleChange', () => {
       it('cancels a pending role change', () => {
         const user = {
-          id: '12345',
-          roleId: '123',
-          roleName: 'ROLE',
+          entity: {
+            id: '12345',
+            status: 1,
+          },
+          metadata: {
+            id: '12345',
+            roleId: '123',
+            roleName: 'ROLE',
+          },
         };
         const changedUser = {
-          id: '12345',
-          roleId: '456',
-          roleName: 'NEW ROLE',
+          entity: {
+            id: '12345',
+            status: 1,
+          },
+          metadata: {
+            id: '12345',
+            roleId: '456',
+            roleName: 'NEW ROLE',
+          },
         };
         const origUsers = _cloneDeep(usersTestData);
         origUsers.push(user);
-        wrapper.vm.$storage.userAccount.getters.userAccounts = jest.fn(() => origUsers);
+        wrapper.vm.$storage.userAccount.getters.getAll = jest.fn(() => origUsers);
         wrapper.vm.changedAccounts.push(changedUser);
         expect(wrapper.vm.changedAccounts.indexOf(changedUser)).toBeGreaterThanOrEqual(0); // Found
         wrapper.vm.cancelRoleChange(changedUser);
         expect(wrapper.vm.changedAccounts.indexOf(changedUser)).not.toBeGreaterThanOrEqual(0); // Not found
-        expect(changedUser.roleId).toEqual(user.roleId);
-        expect(changedUser.roleName).toEqual(user.roleName);
+        expect(changedUser.metadata.roleId).toEqual(user.metadata.roleId);
+        expect(changedUser.metadata.roleName).toEqual(user.metadata.roleName);
       });
     });
 
     describe('revertToOriginalRole', () => {
       it('restores the user\'s original role', () => {
         const user = {
-          id: '12345',
-          roleId: '123',
-          roleName: 'ROLE',
+          entity: {
+            id: '12345',
+            status: 1,
+          },
+          metadata: {
+            id: '12345',
+            roleId: '123',
+            roleName: 'ROLE',
+          },
         };
         const changedUser = {
-          id: '12345',
-          roleId: '456',
-          roleName: 'NEW ROLE',
+          entity: {
+            id: '12345',
+            status: 1,
+          },
+          metadata: {
+            id: '12345',
+            roleId: '456',
+            roleName: 'NEW ROLE',
+          },
         };
         const origUsers = _cloneDeep(usersTestData);
         origUsers.push(user);
-        wrapper.vm.$storage.userAccount.getters.userAccounts = jest.fn(() => origUsers);
+        wrapper.vm.$storage.userAccount.getters.getAll = jest.fn(() => origUsers);
         wrapper.vm.revertToOriginalRole(changedUser);
-        expect(changedUser.roleId).toEqual(user.roleId);
-        expect(changedUser.roleName).toEqual(user.roleName);
+        expect(changedUser.metadata.roleId).toEqual(user.metadata.roleId);
+        expect(changedUser.metadata.roleName).toEqual(user.metadata.roleName);
       });
     });
 
@@ -433,15 +481,15 @@ describe('UserAccounts.vue', () => {
 
     describe('applyDeleteUserAccount', () => {
       it('deletes the user and clears out the account deletion variables', async () => {
-        wrapper.vm.$storage.userAccount.actions.deleteUserAccount = jest.fn();
+        wrapper.vm.$storage.userAccount.actions.deactivate = jest.fn();
         wrapper.vm.clearDeletionStatus = jest.fn();
         wrapper.vm.removeUserAccountById = jest.fn();
-        const user = { id: '12345', accountStatus: EAccountStatus.Active, status: EUserAccountStatus.Active };
+        const user = { entity: { id: '12345', accountStatus: AccountStatus.Active, status: Status.Active } };
         wrapper.vm.userToDelete = user;
         wrapper.vm.showDeleteUserAccountDialog = true;
         await wrapper.vm.applyDeleteUserAccount();
         wrapper.vm.$nextTick();
-        expect(wrapper.vm.$storage.userAccount.actions.deleteUserAccount).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.userAccount.actions.deactivate).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.removeUserAccountById).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.clearDeletionStatus).toHaveBeenCalledTimes(1);
       });
@@ -459,8 +507,8 @@ describe('UserAccounts.vue', () => {
 
     describe('fetchAllEmisUsers', () => {
       it('invokes the correct storage function', async () => {
-        wrapper.vm.$storage.userAccount.getters.userAccounts = jest.fn(() => usersTestData);
-        wrapper.vm.$storage.userAccount.actions.fetchAllUserAccounts = jest.fn(() => usersTestData);
+        wrapper.vm.$storage.userAccount.getters.getAll = jest.fn(() => usersTestData);
+        wrapper.vm.$storage.userAccount.actions.fetchAll = jest.fn(() => usersTestData);
         await wrapper.vm.fetchAllEmisUsers();
         expect(wrapper.vm.allUsers).toEqual(usersTestData);
         expect(wrapper.vm.filteredUserAccounts).toEqual(usersTestData);
@@ -512,10 +560,10 @@ describe('UserAccounts.vue', () => {
       });
 
       it('removes deleted accounts', async () => {
-        const users = mockUserAccountSearchData();
+        const users = mockCombinedUserAccounts();
         expect(wrapper.vm.excludeDeletedUsers(users)).toEqual(users);
-        users[0].status = EAccountStatus.Disabled;
-        expect(wrapper.vm.excludeDeletedUsers(users)).toEqual(users.splice(-1, 1));
+        users[0].entity.status = Status.Inactive;
+        expect(wrapper.vm.excludeDeletedUsers(users)).toEqual([users[1]]);
       });
     });
 
@@ -530,38 +578,39 @@ describe('UserAccounts.vue', () => {
     describe('replaceOrAddToAllUsersById', () => {
       it('finds a user by id', () => {
         wrapper.vm.allUsers = [
-          { id: '123' },
-          { id: '345' },
-          { id: '678' },
+          { entity: { id: '123', status: 1 } },
+          { entity: { id: '456', status: 1 } },
+          { entity: { id: '789', status: 1 } },
         ];
         const arrayToRemoveOrReplace = [
-          { id: '123', displayName: 'some name' },
-          { id: '999' },
+          { entity: { id: '123', displayName: 'some name', status: 1 } },
+          { entity: { id: '999', status: 1 } },
         ];
         wrapper.vm.replaceOrAddToAllUsersById(arrayToRemoveOrReplace);
-        expect(wrapper.vm.allUsers.find((u) => u.id === arrayToRemoveOrReplace[0].id).displayName).toEqual(arrayToRemoveOrReplace[0].displayName);
+        const entityMatch = wrapper.vm.allUsers.find((u) => u.entity.id === arrayToRemoveOrReplace[0].entity.id);
+        expect(entityMatch.entity.displayName).toEqual(arrayToRemoveOrReplace[0].entity.displayName);
         expect(wrapper.vm.allUsers[3]).toEqual(arrayToRemoveOrReplace[1]);
       });
     });
 
     describe('findUserAccountById', () => {
       it('finds a user by id', () => {
-        const array = [{ id: '123' }, { id: '345' }, { id: '678' }];
-        expect(wrapper.vm.findUserAccountById(array, array[1].id)).toEqual(array[1]);
+        const array = [{ entity: { id: '123' } }, { entity: { id: '345' } }, { entity: { id: '567' } }];
+        expect(wrapper.vm.findUserAccountById(array, array[1].entity.id)).toEqual(array[1]);
       });
     });
 
     describe('removeUserAccountById', () => {
       it('removes account by id', async () => {
-        const users = _cloneDeep(mockUserAccountSearchData());
+        const users = _cloneDeep(mockCombinedUserAccounts());
         const removedUser = users[0];
-        wrapper.vm.removeUserAccountById(users, mockUserAccountSearchData()[0].id);
+        wrapper.vm.removeUserAccountById(users, mockCombinedUserAccounts()[0].entity.id);
         expect(users).not.toContain(removedUser);
       });
 
       it('does not change array if no match found', async () => {
-        const users = _cloneDeep(mockUserAccountSearchData());
-        wrapper.vm.removeUserAccountById(users, { id: '1234567' });
+        const users = _cloneDeep(mockCombinedUserAccounts());
+        wrapper.vm.removeUserAccountById(users, { entity: { id: '1234567' } });
         expect(users).toEqual(users);
       });
     });

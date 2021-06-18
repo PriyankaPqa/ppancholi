@@ -4,17 +4,20 @@ import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modu
 import { makeHouseholdModule } from '@crctech/registration-lib/src/store/modules/household';
 import { i18n } from '@/ui/plugins';
 import { ERegistrationMode } from '@crctech/registration-lib/src/types';
+import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
+import { UserAccountsService } from '@/services/user-accounts/entity';
+import { UserAccountsMetadataService } from '@/services/user-accounts/metadata';
+import { httpClient } from '@/services/httpClient';
+import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
+import * as vuexModule from '@/constants/vuex-modules';
 import { IRootState } from './store.types';
 import { user } from './modules/user';
-import { userAccount } from './modules/user-account';
 import { caseFile } from './modules/case-file';
 import { dashboard } from './modules/dashboard';
 import { optionList } from './modules/optionList';
 import { event } from './modules/event';
 import { team } from './modules/team';
-import { appUser } from './modules/app-user';
 import { program } from './modules/program';
-
 import { tabs } from './modules/registration/tabs';
 
 Vue.use(Vuex);
@@ -25,19 +28,19 @@ const store: StoreOptions<IRootState> = {
     version: '1.0.0', // a simple property
   },
   modules: {
-    appUser,
-    caseFile,
-    user,
-    userAccount,
-    dashboard,
-    event,
-    optionList,
-    team,
-    program,
-    household: makeHouseholdModule(),
-    registration: makeRegistrationModule({
+    [vuexModule.CASE_FILE_MODULE]: caseFile,
+    [vuexModule.USER_MODULE]: user,
+    [vuexModule.DASHBOARD_MODULE]: dashboard,
+    [vuexModule.EVENT_MODULE]: event,
+    [vuexModule.OPTION_LIST_MODULE]: optionList,
+    [vuexModule.TEAM_MODULE]: team,
+    [vuexModule.PROGRAM_MODULE]: program,
+    [vuexModule.HOUSEHOLD_MODULE]: makeHouseholdModule(),
+    [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),
+    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(new UserAccountsService(httpClient)).getModule(),
+    [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(new UserAccountsMetadataService(httpClient)).getModule(),
   },
 };
 

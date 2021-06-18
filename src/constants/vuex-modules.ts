@@ -1,0 +1,11 @@
+export const CASE_FILE_MODULE = 'caseFile';
+export const USER_MODULE = 'user';
+export const DASHBOARD_MODULE = 'dashboard';
+export const EVENT_MODULE = 'event';
+export const OPTION_LIST_MODULE = 'optionList';
+export const TEAM_MODULE = 'team';
+export const PROGRAM_MODULE = 'program';
+export const HOUSEHOLD_MODULE = 'household';
+export const REGISTRATION_MODULE = 'registration';
+export const USER_ACCOUNT_ENTITIES = 'userAccountEntities';
+export const USER_ACCOUNT_METADATA = 'userAccountMetadata';

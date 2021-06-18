@@ -1,43 +1,53 @@
-import { IAddRoleToUserRequest } from '@/services/user-accounts';
-import { IStore, IState } from '@/store/store.types';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-import { IUserAccount, IUserAccountSearchData } from '../../../entities/user-account/user-account.types';
-import { IStorage } from './storage.types';
+import { IStore, IState } from '@/store';
 
-export const makeStorage = (store: IStore<IState>): IStorage => ({
-  getters: {
-    userAccounts(): IUserAccount[] {
-      return store.getters['userAccount/userAccounts']();
-    },
+import {
+  FilterKey,
+  IFilter, IUserAccountEntity, IUserAccountMetadata,
+} from '@/entities/user-account';
+import { IStorage } from '@/store/storage/user-account/storage.types';
+import { Base } from '@/store/storage/base/base';
+import { IAddRoleToUserRequest } from '@/services/user-accounts/entity';
 
-    userAccountById(id: uuid): IUserAccount {
-      return store.getters['userAccount/userAccountById'](id);
-    },
+export class UserAccountStorage
+  extends Base<IUserAccountEntity, IUserAccountMetadata> implements IStorage {
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
+    super(pStore, pEntityModuleName, pMetadataModuleName);
+  }
 
-    searchUserAccounts(search: string, searchAmong: string[]): IUserAccountSearchData[] {
-      return store.getters['userAccount/searchUserAccounts'](search, searchAmong);
-    },
-  },
+  private getters = {
+    ...this.baseGetters,
+    currentUserFiltersByKey: (key: FilterKey): IFilter[] => this.store.getters[`${this.entityModuleName}/currentUserFiltersByKey`](key),
+  }
 
-  actions: {
-    fetchUserAccount(id: uuid): Promise<IUserAccount> {
-      return store.dispatch('userAccount/fetchUserAccount', id);
-    },
+  private actions = {
+    ...this.baseActions,
 
-    fetchAllUserAccounts(): Promise<IUserAccount[]> {
-      return store.dispatch('userAccount/fetchAllUserAccounts');
-    },
+    addFilter: (filter: IFilter): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/addFilter`, filter),
+    // eslint-disable-next-line
+    editFilter: (oldFilter: IFilter, newFilter: IFilter): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/editFilter`, { oldFilter, newFilter }),
 
-    addRoleToUser(role:IAddRoleToUserRequest): Promise<IUserAccount> {
-      return store.dispatch('userAccount/addRoleToUser', role);
-    },
+    deleteFilter: (filter: IFilter): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/deleteFilter`, filter),
 
-    deleteUserAccount(userId:string):void {
-      store.dispatch('userAccount/deleteUserAccount', userId);
-    },
+    assignRole: (payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/assignRole`, payload),
+    // eslint-disable-next-line
+    setUserPreferredLanguage: (id: uuid, languageCode: string): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/setUserPreferredLanguage`, { id, languageCode }),
+    // eslint-disable-next-line
+    setCurrentUserPreferredLanguage: (languageCode: string): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/setCurrentUserPreferredLanguage`, languageCode),
 
-    searchUserAccounts(params: IAzureSearchParams): Promise<IAzureSearchResult<IUserAccount>> {
-      return store.dispatch('userAccount/searchUserAccounts', params);
+    fetchCurrentUserAccount: (): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/fetchCurrentUserAccount`),
+  }
+
+  private mutations = {
+    ...this.baseMutations,
+
+    setCurrentUserAccount: (entity: IUserAccountEntity) => {
+      this.store.commit(`${this.entityModuleName}/setCurrentUserAccount`, entity);
     },
-  },
-});
+  }
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  })
+}

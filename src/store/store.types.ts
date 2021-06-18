@@ -2,29 +2,31 @@ import { Store } from 'vuex';
 import { IState as IRegistrationState } from '@crctech/registration-lib/src/store/modules/registration/registration.types';
 import { IState as IHouseholdState } from '@crctech/registration-lib/src/store/modules/household/household.types';
 import { IProvider, IProviderMock } from '@/services/provider';
+import * as vuexModule from '@/constants/vuex-modules';
+import { IUserAccountMetadata } from '@/entities/user-account';
 import { IState as IUserState } from './modules/user/user.types';
-import { IState as IUserAccountState } from './modules/user-account/user-account.types';
+import { IUserAccountEntityState } from './modules/user-account/userAccountEntity.types';
 import { IState as ICaseFileState } from './modules/case-file/case-file.types';
 import { IState as IDashboardState } from './modules/dashboard/dashboard.types';
 import { IState as IEventState } from './modules/event/event.types';
 import { IState as IOptionListState } from './modules/optionList/optionList.types';
 import { IState as ITeamState } from './modules/team/team.types';
-import { IState as IAppUserState } from './modules/app-user/app-user.types';
 import { IState as IProgramState } from './modules/program/program.types';
+import { IState as IBaseState } from './modules/base/base.types';
 
 export interface IRootState {
   version: string;
-  user?: IUserState;
-  userAccount?: IUserAccountState;
-  caseFile?: ICaseFileState;
-  dashboard?: IDashboardState;
-  event?: IEventState;
-  optionList?: IOptionListState;
-  team?: ITeamState;
-  appUser?: IAppUserState;
-  program?: IProgramState;
-  registration?: IRegistrationState;
-  household?: IHouseholdState;
+  [vuexModule.CASE_FILE_MODULE]?: ICaseFileState,
+  [vuexModule.USER_MODULE]?: IUserState,
+  [vuexModule.USER_ACCOUNT_ENTITIES]?: IUserAccountEntityState,
+  [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>
+  [vuexModule.DASHBOARD_MODULE]?: IDashboardState,
+  [vuexModule.EVENT_MODULE]?: IEventState,
+  [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
+  [vuexModule.TEAM_MODULE]?: ITeamState,
+  [vuexModule.PROGRAM_MODULE]?: IProgramState,
+  [vuexModule.HOUSEHOLD_MODULE]?: IHouseholdState
+  [vuexModule.REGISTRATION_MODULE]?: IRegistrationState
 }
 
 export type IState = IRootState;
