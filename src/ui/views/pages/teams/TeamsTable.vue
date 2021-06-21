@@ -56,7 +56,7 @@
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn icon class="mr-2" :data-test="`edit_team_${item.teamId}`" @click="goToEditTeam(item)">
+        <v-btn v-if="$hasLevel('level4')" icon class="mr-2" :data-test="`edit_team_${item.teamId}`" @click="goToEditTeam(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>

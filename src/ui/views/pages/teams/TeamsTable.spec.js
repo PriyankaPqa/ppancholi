@@ -38,6 +38,36 @@ describe('TeamsTable.vue', () => {
       });
     });
 
+    describe('edit-button', () => {
+      it('should be visible for level 4 and above', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(4),
+          },
+          data() {
+            return {
+              azureSearchItems: mockTeamSearchData(),
+              azureSearchCount: 10,
+            };
+          },
+        });
+        const button = wrapper.find('[data-test="edit_team_6e2d49af-2f9a-4333-9bdb-cd37270e6591"]');
+        expect(button.exists()).toBe(true);
+      });
+
+      it('should be hidden for level 3 and below', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(3),
+          },
+        });
+        const button = wrapper.find('[data-test="edit_team_6e2d49af-2f9a-4333-9bdb-cd37270e6591"]');
+        expect(button.exists()).toBeFalsy();
+      });
+    });
+
     describe('actions', () => {
       test('clicking on team name redirects to team details page ', async () => {
         await wrapper.setData({
