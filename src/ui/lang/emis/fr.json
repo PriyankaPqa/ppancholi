@@ -1377,6 +1377,7 @@
     "system_management.lists.roles.addRole": "Ajouter un rôle",
     "system_management.lists.roles.nameLabel": "Nom du rôle",
     "system_management.lists.roles.role": "Rôle",
+    "system_management.lists.screeningId": "Identifiants fournis",
     "system_management.lists.status.Active": "Actif",
     "system_management.lists.status.Inactive": "Inactif",
     "system_management.lists.statusDialog.Active": "Actif",

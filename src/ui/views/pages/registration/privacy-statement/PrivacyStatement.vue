@@ -137,8 +137,9 @@ export default Vue.extend({
 
     setRegistrationLocation(location: IEventGenericLocation) {
       this.privacyRegistrationLocation = location;
-      // BE needs the whole name object, later we will replace by id
-      this.$storage.registration.mutations.setPrivacyRegistrationLocationName(location.name);
+      // TODO: BE needs the whole name object, later we will replace by id
+      // eslint-disable-next-line
+      this.$storage.registration.mutations.setPrivacyRegistrationLocationName(location.name as any);
     },
 
     loadRegistrationLocation() {

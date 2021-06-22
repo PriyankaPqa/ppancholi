@@ -56,6 +56,9 @@ describe('>>> EventTypes Service', () => {
     it('returns correct prefix for EOptionLists.FinancialAssistance', () => {
       expect(service.getPrefix(EOptionLists.FinancialAssistance)).toBe('/financial-assistance/financial-assistance-categories');
     });
+    it('returns correct prefix for EOptionLists.ScreeningId', () => {
+      expect(service.getPrefix(EOptionLists.ScreeningId)).toBe('/household/screening-ids');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {

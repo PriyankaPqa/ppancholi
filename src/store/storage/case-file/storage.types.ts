@@ -18,7 +18,7 @@ export interface IStorage {
     fetchTagsOptions(): Promise<IOptionItem[]>;
     fetchInactiveReasons(): Promise<IOptionItem[]>;
     fetchCloseReasons(): Promise<IOptionItem[]>;
-    fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity>;
+    fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]>;
     fetchCaseFile(id: uuid): Promise<ICaseFile>;
     searchCaseFiles(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFile>>;
     setCaseFileTags(id: uuid, tags: IListOption[]): Promise<ICaseFile>;

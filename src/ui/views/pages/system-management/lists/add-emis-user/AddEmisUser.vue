@@ -126,7 +126,7 @@ import {
   IOptionSubItem,
 } from '@/entities/optionItem';
 import { i18n } from '@/ui/plugins';
-import { IUserAccountEntity, IUserAccountCombined } from '@/entities/user-account';
+import { IUserAccountCombined } from '@/entities/user-account';
 import _cloneDeep from 'lodash/cloneDeep';
 import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
@@ -351,7 +351,7 @@ export default Vue.extend({
       return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
     },
 
-    async setUserRole(user: IAppUserData): Promise<IUserAccountEntity> {
+    async setUserRole(user: IAppUserData): Promise<boolean> {
       let successfulCreation;
       const subRole:IOptionSubItem = this.getSubRoleById(user.roles[0].id);
 
@@ -369,7 +369,7 @@ export default Vue.extend({
           this.$toasted.global.error(this.$t('system_management.add_users.error'));
         }
       }
-      return successfulCreation;
+      return !!successfulCreation;
     },
 
     updateIsSubmitAllowed() {

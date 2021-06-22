@@ -2,7 +2,6 @@ import {
   ITeam,
   ITeamMemberData,
   ITeamSearchData,
-  Team,
 } from '@/entities/team';
 import { IStore, IState } from '@/store/store.types';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -26,7 +25,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('team/getTeam', id);
     },
 
-    createTeam(payload: Team): Promise<ITeam> {
+    createTeam(payload: ITeam): Promise<ITeam> {
       return store.dispatch('team/createTeam', payload);
     },
 

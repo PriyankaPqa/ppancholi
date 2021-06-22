@@ -144,7 +144,7 @@ export default Vue.extend({
       };
       this.loading = true;
       try {
-        const userAccount = await this.$storage.userAccount.actions.editFilter(payload);
+        const userAccount = await this.$storage.userAccount.actions.editFilter(payload.oldFilter, payload.newFilter);
         this.refreshUserFilters(userAccount);
         this.$toasted.global.success(this.$t('filters.edit.success'));
       } finally {

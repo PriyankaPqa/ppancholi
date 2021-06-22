@@ -1377,6 +1377,7 @@
     "system_management.lists.roles.addRole": "system_management.lists.roles.addRole",
     "system_management.lists.roles.nameLabel": "system_management.lists.roles.nameLabel",
     "system_management.lists.roles.role": "system_management.lists.roles.role",
+    "system_management.lists.screeningId": "system_management.lists.screeningId",
     "system_management.lists.status.Active": "system_management.lists.status.Active",
     "system_management.lists.status.Inactive": "system_management.lists.status.Inactive",
     "system_management.lists.statusDialog.Active": "system_management.lists.statusDialog.Active",

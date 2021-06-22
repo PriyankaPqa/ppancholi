@@ -80,7 +80,7 @@ export default Vue.extend({
       this.$storage.household.mutations.setContactInformation(mockContactInformation());
       this.$storage.household.mutations.setHomeAddress(mockAddress());
       this.$storage.household.mutations.setCurrentAddress(mockCampGround());
-      this.$storage.household.mutations.addHouseholdMember(mockAdditionalMember(), false);
+      this.$storage.household.mutations.addAdditionalMember(mockAdditionalMember(), false);
     },
   },
 });

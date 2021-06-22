@@ -111,6 +111,11 @@ export default Vue.extend({
         route: routes.systemManagement.financialAssistance.name,
         dataTest: 'financialAssistance',
       },
+      {
+        name: 'system_management.lists.screeningId',
+        route: routes.systemManagement.screeningId.name,
+        dataTest: 'screeningId',
+      },
     ];
 
     return {

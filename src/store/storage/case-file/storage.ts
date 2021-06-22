@@ -43,7 +43,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('caseFile/fetchCloseReasons');
     },
 
-    fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity> {
+    fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]> {
       return store.dispatch('caseFile/fetchCaseFileActivities', id);
     },
 

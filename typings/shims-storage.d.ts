@@ -10,13 +10,13 @@ declare module 'vue/types/options' {
 
 declare module 'vue/types/vue' {
   interface Vue {
-    $storage: any
+    $storage: IStorage
   }
 }
 
 declare module 'vuex/types/index' {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface Store<S> {
-    $storage: any
+    $storage: IStorage
   }
 }

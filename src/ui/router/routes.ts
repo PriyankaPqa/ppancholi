@@ -68,6 +68,7 @@ const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/sy
 const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
 const CaseFileCloseReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
 const FinancialAssistanceItems = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/FinancialAssistance.vue');
+const ScreeningId = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ScreeningId.vue');
 
 const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
@@ -412,6 +413,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.financialAssistance.path,
                 name: Routes.systemManagement.financialAssistance.name,
                 component: FinancialAssistanceItems,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.screeningId.path,
+                name: Routes.systemManagement.screeningId.name,
+                component: ScreeningId,
                 meta: { level: 'level6' },
               },
             ],

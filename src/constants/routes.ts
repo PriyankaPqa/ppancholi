@@ -212,6 +212,10 @@ const routes = {
       path: 'lists/financial-assistance',
       name: 'systemManagement.lists.financialAssistance',
     },
+    screeningId: {
+      path: 'lists/screening-id',
+      name: 'systemManagement.lists.screeningId',
+    },
   },
   teams: {
     layout: {

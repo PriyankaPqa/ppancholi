@@ -17,8 +17,8 @@ export interface IStorage {
 
   actions: {
     getTeam(id: uuid): Promise<ITeam>;
-    createTeam(payload: Team): Promise<ITeam>;
-    editTeam(payload: Team): Promise<ITeam>;
+    createTeam(payload: ITeam): Promise<ITeam>;
+    editTeam(payload: ITeam): Promise<ITeam>;
     searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
     addTeamMembers(teamMembers: ITeamMemberData[]): Promise<ITeam>;
     removeTeamMember(teamMemberId: uuid): Promise<ITeam>;

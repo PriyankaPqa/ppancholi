@@ -66,7 +66,7 @@ describe('Filter Toolbar', () => {
         jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
         await wrapper.vm.editFilter(filter, filterIndex);
 
-        expect(wrapper.vm.$storage.userAccount.actions.editFilter).toHaveBeenCalledWith(expectedPayload);
+        expect(wrapper.vm.$storage.userAccount.actions.editFilter).toHaveBeenCalledWith(expectedPayload.oldFilter, expectedPayload.newFilter);
       });
 
       it('calls refreshUserFilters method', async () => {
