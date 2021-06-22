@@ -42,7 +42,7 @@ export default Vue.extend({
         title: 'system_management.card.user_accounts_title',
         description: 'system_management.card.user_accounts_description',
         button: 'system_management.card.btn.user_accounts_title',
-        route: routes.systemManagement.userAccounts.name,
+        route: routes.systemManagement.userAccounts.home.name,
         dataTest: 'sysManagementHome__accounts',
         level: 'level6',
       }, {

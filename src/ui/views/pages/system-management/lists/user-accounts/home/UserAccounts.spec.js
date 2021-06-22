@@ -614,5 +614,17 @@ describe('UserAccounts.vue', () => {
         expect(users).toEqual(users);
       });
     });
+
+    describe('getUserAccountDetailsRoute', () => {
+      it('returns route to detailed account settings', async () => {
+        const res = wrapper.vm.getUserAccountDetailsRoute('myid');
+        expect(res).toEqual({
+          name: routes.systemManagement.userAccounts.details.name,
+          params: {
+            id: 'myid',
+          },
+        });
+      });
+    });
   });
 });

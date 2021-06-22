@@ -7,9 +7,6 @@ import { USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE } from '@/constants/vuex-module
 import Routes from '../../constants/routes';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
-
-const AccountSettings = () => import(/* webpackChunkName: "account-settings" */ '@/ui/views/pages/account-settings/AccountSettings.vue');
-
 const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');
 const AssessmentsHome = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/home/AssessmentsHome.vue');
 
@@ -63,7 +60,8 @@ const PreferredLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/v
 const PrimarySpokenLanguages = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/PrimarySpokenLanguages.vue');
 const AgreementTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/AgreementTypes.vue');
 const CaseFileInactiveReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileInactiveReasons.vue');
-const UserAccounts = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/UserAccounts.vue');
+const UserAccounts = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/user-accounts/home/UserAccounts.vue');
+const AccountSettings = () => import(/* webpackChunkName: "account-settings" */ '@/ui/views/pages/system-management/lists/user-accounts/account-settings/AccountSettings.vue');
 const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
 const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
 const CaseFileCloseReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
@@ -385,9 +383,15 @@ export const routes: Array<RouteConfig> = [
                 meta: { level: 'level6' },
               },
               {
-                path: Routes.systemManagement.userAccounts.path,
-                name: Routes.systemManagement.userAccounts.name,
+                path: Routes.systemManagement.userAccounts.home.path,
+                name: Routes.systemManagement.userAccounts.home.name,
                 component: UserAccounts,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.userAccounts.details.path,
+                name: Routes.systemManagement.userAccounts.details.name,
+                component: AccountSettings,
                 meta: { level: 'level6' },
               },
               {

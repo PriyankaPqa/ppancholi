@@ -36,7 +36,12 @@
           </template>
 
           <template #[`item.${customColumns.displayName}`]="{ item }">
-            <span data-test="user_displayName"> {{ item.metadata.displayName }}</span>
+            <router-link
+              class="rc-link14 font-weight-bold"
+              :data-test="`user_link_${item.entity.id}`"
+              :to="getUserAccountDetailsRoute(item.entity.id)">
+              <span data-test="user_displayName"> {{ item.metadata.displayName }}</span>
+            </router-link>
           </template>
 
           <template #[`item.${customColumns.email}`]="{ item }">
@@ -458,6 +463,15 @@ export default Vue.extend({
       if (item) {
         array.splice(array.indexOf(item), 1);
       }
+    },
+
+    getUserAccountDetailsRoute(id: string) {
+      return {
+        name: routes.systemManagement.userAccounts.details.name,
+        params: {
+          id,
+        },
+      };
     },
   },
 });

@@ -1,7 +1,7 @@
 import { IEntity, IEntityCombined, Status } from '@/entities/base';
 import { IStore, IState } from '@/store';
 import { IAzureSearchParams } from '@/types';
-import { IAzureCombinedSearchResult, ICombinedIndex } from '@/types/interfaces/IAzureSearchResult';
+import { ICombinedIndex } from '@/types/interfaces/IAzureSearchResult';
 import _cloneDeep from 'lodash/cloneDeep';
 import { IBaseStorage } from './base.types';
 

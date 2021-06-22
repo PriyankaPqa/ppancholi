@@ -126,7 +126,7 @@ describe('User account entity module', () => {
       it('returns the correct parsed filters', () => {
         module.mutations.setCurrentUserAccount(module.state, mockUserAccountEntity());
         const key = FilterKey.CaseFiles;
-        const res = module.getters.currentUserFiltersByKey()(key);
+        const res = module.getters.currentUserFiltersByKey(module.state)(key);
         const userAccount = new UserAccountEntity(mockUserAccountEntity());
         expect(res).toEqual([userAccount.filters[2]]);
       });

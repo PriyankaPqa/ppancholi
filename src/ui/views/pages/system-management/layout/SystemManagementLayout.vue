@@ -47,7 +47,7 @@ export default Vue.extend({
       }, {
         text: this.$t('system_management.leftMenu.user_accounts_title'),
         test: 'systemManagement__menu__userAccounts',
-        to: routes.systemManagement.userAccounts.name,
+        to: routes.systemManagement.userAccounts.home.name,
         exact: false,
         level: 'level6',
       }, {

@@ -29,9 +29,9 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity> {
 
   public getters = {
     ...this.baseGetters,
-    currentUserFiltersByKey: () => (key: FilterKey) => {
-      if (this.state.currentUserAccount) {
-        const userAccount = new UserAccountEntity(this.state.currentUserAccount);
+    currentUserFiltersByKey: (state: IUserAccountEntityState) => (key: FilterKey) => {
+      if (state.currentUserAccount) {
+        const userAccount = new UserAccountEntity(state.currentUserAccount);
         return userAccount.filters.filter((f: IFilter) => f.filterKey === key);
       }
       return [];

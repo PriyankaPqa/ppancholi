@@ -29,11 +29,11 @@ export class BaseModule<T extends IEntity> {
   }
 
   protected baseGetters = {
-    getAll: () => _cloneDeep(this.baseState.items),
-    get: () => (id: uuid) => _cloneDeep(this.baseState.items.find((e) => e.id === id)),
+    getAll: (state:IState<T>) => _cloneDeep(state.items),
+    get: (state:IState<T>) => (id: uuid) => _cloneDeep(state.items.find((e) => e.id === id)),
     // eslint-disable-next-line
-    getByCriteria: () => (query: string, searchAll: boolean, searchAmong: string[]) => helpers.filterCollectionByValue(this.baseState.items, query, searchAll, searchAmong),
-    getByIds: () => (ids: uuid[]) => ids.map((id) => _cloneDeep(this.baseState.items.find((e) => e.id === id))),
+    getByCriteria: (state:IState<T>) => (query: string, searchAll: boolean, searchAmong: string[]) => helpers.filterCollectionByValue(state.items, query, searchAll, searchAmong),
+    getByIds: (state:IState<T>) => (ids: uuid[]) => ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id))),
   }
 
   protected baseActions = {
