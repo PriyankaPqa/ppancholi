@@ -4,6 +4,8 @@ import { ActionContext, ActionTree } from 'vuex';
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import helpers from '@/ui/helpers';
+import { IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 
@@ -31,6 +33,7 @@ export class BaseModule<T extends IEntity> {
     get: () => (id: uuid) => _cloneDeep(this.baseState.items.find((e) => e.id === id)),
     // eslint-disable-next-line
     getByCriteria: () => (query: string, searchAll: boolean, searchAmong: string[]) => helpers.filterCollectionByValue(this.baseState.items, query, searchAll, searchAmong),
+    getByIds: () => (ids: uuid[]) => ids.map((id) => _cloneDeep(this.baseState.items.find((e) => e.id === id))),
   }
 
   protected baseActions = {
@@ -82,6 +85,12 @@ export class BaseModule<T extends IEntity> {
       } catch (e) {
         return null;
       }
+    },
+
+    search: async (context: ActionContext<IState<T>, IState<T>>, { params, searchEndpoint }: {params: IAzureSearchParams, searchEndpoint?: string}):
+    Promise<IAzureCombinedSearchResult<T, unknown>> => {
+      const res = await this.service.search(params, searchEndpoint);
+      return res;
     },
   }
 

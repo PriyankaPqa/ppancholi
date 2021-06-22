@@ -185,6 +185,47 @@ describe('BaseStorage', () => {
         expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/activate`, id);
       });
     });
+
+    describe('search', () => {
+      it('should call action search with the payload', async () => {
+        const params = { filter: 'foo' };
+        await storage.actions.search(params);
+        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`, { params, searchEndpoint: null });
+      });
+
+      it('should call commit set for both entity and metadata', async () => {
+        store.dispatch = jest.fn().mockReturnValueOnce(Promise.resolve(
+          {
+            odataContext: 'foo',
+            odataCount: 1,
+            value: [{
+              entityETag: 'mock-Entity-Etag', metadataETag: 'mock-metadata-Etag', entity: mockEntities[0], metadata: mockMetadatum[0],
+            }],
+          },
+        ));
+
+        const params = { filter: 'foo' };
+        await storage.actions.search(params);
+        expect(store.commit).toBeCalledWith(`${storage.entityModuleName}/set`, { ...mockEntities[0], eTag: 'mock-Entity-Etag' });
+        expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/set`, { ...mockMetadatum[0], eTag: 'mock-metadata-Etag' });
+      });
+
+      it('should return a list of ids', async () => {
+        store.dispatch = jest.fn().mockReturnValueOnce(Promise.resolve(
+          {
+            odataContext: 'foo',
+            odataCount: 1,
+            value: [{
+              entityETag: 'mock-Entity-Etag', metadataETag: 'mock-metadata-Etag', entity: mockEntities[0], metadata: mockMetadatum[0],
+            }],
+          },
+        ));
+
+        const params = { filter: 'foo' };
+        const res = await storage.actions.search(params);
+        expect(res).toEqual([mockEntities[0].id]);
+      });
+    });
   });
 
   describe('baseMutations', () => {

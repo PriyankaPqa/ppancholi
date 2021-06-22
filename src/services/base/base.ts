@@ -1,12 +1,17 @@
 import { IHttpClient } from '@/services/httpClient';
 import { IEntity } from '@/entities/base/base.types';
+import { IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
 import { IDomainBaseService } from './base.types';
 
 export class DomainBaseService<T extends IEntity> implements IDomainBaseService<T> {
   baseUrl: string;
 
+  controller: string;
+
   constructor(protected readonly http: IHttpClient, apiUrlSuffix: string, controller: string) {
     this.baseUrl = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}/${controller}`;
+    this.controller = controller;
   }
 
   async get(id: uuid): Promise<T> {
@@ -27,5 +32,9 @@ export class DomainBaseService<T extends IEntity> implements IDomainBaseService<
 
   async deactivate(id: uuid): Promise<T> {
     return this.http.delete<T>(`${this.baseUrl}/${id}`);
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<T, unknown>> {
+    return this.http.post(`search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
   }
 }

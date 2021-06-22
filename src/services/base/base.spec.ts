@@ -56,4 +56,19 @@ describe('>>> Domain Base Service', () => {
       expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${id}`);
     });
   });
+
+  describe('search', () => {
+    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
+      const params = { filter: '123' };
+      const searchEndpoint = 'mock-endpoint';
+      await service.search(params, searchEndpoint);
+      expect(http.post).toHaveBeenCalledWith(`search/${searchEndpoint}`, { params, isOData: true });
+    });
+
+    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+      const params = { filter: '123' };
+      await service.search(params);
+      expect(http.post).toHaveBeenCalledWith(`search/${CONTROLLER}`, { params, isOData: true });
+    });
+  });
 });

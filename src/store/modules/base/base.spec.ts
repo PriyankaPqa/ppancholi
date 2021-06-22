@@ -68,11 +68,21 @@ describe('Base Module', () => {
       });
     });
 
-    describe('getBy', () => {
+    describe('getByCriteria', () => {
       it('should call filterCollectionByValue with correct params', () => {
         helpers.filterCollectionByValue = jest.fn();
         baseModule.getters.getByCriteria()('query', false, ['id', 'emailAddress']);
         expect(helpers.filterCollectionByValue).toHaveBeenCalledWith(baseModule.state.items, 'query', false, ['id', 'emailAddress']);
+      });
+    });
+
+    describe('getByIds', () => {
+      it('should return the right list of items', () => {
+        baseModule.mutations.setAll(baseModule.state, mockUserAccountEntities());
+        const ids = ['1'];
+        expect(baseModule.getters.getByIds()(ids)).toEqual([mockUserAccountEntities()[0]]);
+        const ids2 = ['1', '2'];
+        expect(baseModule.getters.getByIds()(ids2)).toEqual(mockUserAccountEntities());
       });
     });
   });
@@ -161,6 +171,17 @@ describe('Base Module', () => {
         await baseModule.actions.activate(actionContext, id);
 
         expect(actionContext.commit).toBeCalledWith('set', res);
+      });
+    });
+
+    describe('search', () => {
+      it('should call search method from the service', async () => {
+        baseModule.service.search = jest.fn();
+        const params = { filter: 'foo' };
+        const endpoint = 'bar';
+
+        await baseModule.actions.search(actionContext, { params, searchEndpoint: endpoint });
+        expect(baseModule.service.search).toHaveBeenCalledWith(params, endpoint);
       });
     });
   });
