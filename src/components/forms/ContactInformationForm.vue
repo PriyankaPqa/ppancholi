@@ -204,7 +204,7 @@ export default Vue.extend({
         };
       }
       return {
-        requiredPhone: this.focusPhoneCounter >= this.triggerPhoneMessage ? { isMissing: this.phoneRequired } : false,
+        requiredPhone: (this.focusPhoneCounter >= this.triggerPhoneMessage) ? { isMissing: this.phoneRequired } : false,
         phone: true,
       };
     },

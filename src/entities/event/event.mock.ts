@@ -76,6 +76,7 @@ export const mockEventData = (): IEventData => ({
 
 export const mockSearchEventsData = (): IAzureSearchResult<IEventData> => ({
   odataContext: 'test',
+  odataCount: 1,
   value: [
     mockEventData(),
   ],

@@ -30,7 +30,7 @@ export default Vue.extend({
   computed: {
 
     householdCreate(): IHouseholdCreate {
-      return this.$storage.household.getters.householdCreate();
+      return this.$storage.registration.getters.householdCreate();
     },
 
     additionalMembersCopy(): IMember[] {
@@ -119,7 +119,7 @@ export default Vue.extend({
       if (this.additionalMembers[index].inlineEdit) {
         this.additionalMembers[index].inlineEdit = false;
         this.$storage.registration.mutations.decreaseInlineEditCounter();
-        this.$storage.household.mutations.editAdditionalMember(
+        this.$storage.registration.mutations.editAdditionalMember(
           this.additionalMembers[index].backup, index, this.additionalMembers[index].sameAddress,
         );
       }
@@ -133,7 +133,7 @@ export default Vue.extend({
         this.$storage.registration.mutations.decreaseInlineEditCounter();
 
         // Not watcher on this form to mutate so we need to do it here
-        this.$storage.household.mutations.editAdditionalMember(
+        this.$storage.registration.mutations.editAdditionalMember(
           this.additionalMembersCopy[index], index, this.additionalMembers[index].sameAddress,
         );
       }
@@ -145,14 +145,14 @@ export default Vue.extend({
     },
 
     deleteAdditionalMember() {
-      this.$storage.household.mutations.removeAdditionalMember(this.indexAdditionalMember);
+      this.$storage.registration.mutations.removeAdditionalMember(this.indexAdditionalMember);
       this.showAdditionalMemberDelete = false;
     },
 
     setIdentity(form: IIdentitySet) {
       if (this.currentAdditionalMember) {
         this.currentAdditionalMember.identitySet.setIdentity(form);
-        this.$storage.household.mutations.editAdditionalMember(
+        this.$storage.registration.mutations.editAdditionalMember(
           this.currentAdditionalMember,
           this.indexAdditionalMember,
           this.additionalMembers[this.indexAdditionalMember].sameAddress,
@@ -163,7 +163,7 @@ export default Vue.extend({
     setIndigenousIdentity(form: IIdentitySet) {
       if (this.currentAdditionalMember) {
         this.currentAdditionalMember.identitySet.setIndigenousIdentity(form);
-        this.$storage.household.mutations.editAdditionalMember(
+        this.$storage.registration.mutations.editAdditionalMember(
           this.currentAdditionalMember,
           this.indexAdditionalMember,
           this.additionalMembers[this.indexAdditionalMember].sameAddress,
@@ -174,7 +174,7 @@ export default Vue.extend({
     setCurrentAddress(form: ICurrentAddress) {
       if (this.currentAdditionalMember) {
         this.currentAdditionalMember.currentAddress = _cloneDeep(form);
-        this.$storage.household.mutations.editAdditionalMember(
+        this.$storage.registration.mutations.editAdditionalMember(
           this.currentAdditionalMember,
           this.indexAdditionalMember,
           this.additionalMembers[this.indexAdditionalMember].sameAddress,

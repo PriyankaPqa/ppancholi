@@ -30,7 +30,7 @@ describe('PersonalInformation.vue', () => {
       localVue,
       data() {
         return {
-          form: storage.household.getters.personalInformation(),
+          form: storage.registration.getters.personalInformation(),
         };
       },
       propsData: {
@@ -92,7 +92,7 @@ describe('PersonalInformation.vue', () => {
     describe('setIndigenousIdentity', () => {
       it('triggers mutations setPrimaryBeneficiary', async () => {
         await wrapper.vm.setIndigenousIdentity(mockMember());
-        expect(storage.household.mutations.setIndigenousIdentity).toHaveBeenCalledWith(mockMember());
+        expect(storage.registration.mutations.setIndigenousIdentity).toHaveBeenCalledWith(mockMember());
       });
       it('should be called when indigenous identity is changed', () => {
         jest.spyOn(wrapper.vm, 'setIndigenousIdentity');
@@ -105,7 +105,7 @@ describe('PersonalInformation.vue', () => {
     describe('setIdentity', () => {
       it('triggers mutations setIdentity', async () => {
         await wrapper.vm.setIdentity(mockMember());
-        expect(storage.household.mutations.setIdentity).toHaveBeenCalledWith(mockMember());
+        expect(storage.registration.mutations.setIdentity).toHaveBeenCalledWith(mockMember());
       });
       it('should be called when identity is changed', () => {
         jest.spyOn(wrapper.vm, 'setIdentity');
@@ -118,7 +118,7 @@ describe('PersonalInformation.vue', () => {
     describe('setContactInformation', () => {
       it('triggers mutations setContactInformation', async () => {
         await wrapper.vm.setContactInformation(mockContactInformation());
-        expect(storage.household.mutations.setContactInformation).toHaveBeenCalledWith(mockContactInformation());
+        expect(storage.registration.mutations.setContactInformation).toHaveBeenCalledWith(mockContactInformation());
       });
       it('should be called when contact information is changed', () => {
         jest.spyOn(wrapper.vm, 'setContactInformation');

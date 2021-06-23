@@ -64,7 +64,7 @@ describe('AdditionalMembers.vue', () => {
     describe('deleteAdditionalMember', () => {
       it('should call removeAdditionalMember mutations with current index', () => {
         wrapper.vm.deleteAdditionalMember();
-        expect(wrapper.vm.$storage.household.mutations.removeAdditionalMember).toHaveBeenLastCalledWith(wrapper.vm.index);
+        expect(wrapper.vm.$storage.registration.mutations.removeAdditionalMember).toHaveBeenLastCalledWith(wrapper.vm.index);
       });
 
       it('should set showDeleteDialog to false', () => {

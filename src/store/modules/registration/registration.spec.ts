@@ -2,6 +2,8 @@ import { mockStore } from '@/store';
 import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '@/types';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import { mockHttpError } from '@/services/httpClient.mock';
+import _cloneDeep from 'lodash/cloneDeep';
+import _merge from 'lodash/merge';
 import { Event, mockEventData, mockEvent } from '../../../entities/event';
 import { getDefaultState } from './registration';
 import {
@@ -13,10 +15,10 @@ import {
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
   HouseholdCreate,
-  mockHouseholdCreate,
+  mockHouseholdCreate, mockContactInformation, mockIdentitySet, mockMember, mockAddress, mockAdditionalMember,
 } from '../../../entities/household-create';
 
-import { mockHousehold } from '../../../entities/household';
+import { mockHouseholdEntity } from '../../../entities/household';
 
 import * as registrationUtils from './registrationUtils';
 
@@ -64,6 +66,8 @@ describe('>>> Registration Module', () => {
           registrationErrors: [],
           submitLoading: false,
           inlineEditCounter: 0,
+          householdResultsShown: false,
+          householdCreate: new HouseholdCreate(),
         });
       });
     });
@@ -214,7 +218,7 @@ describe('>>> Registration Module', () => {
       it('returns registrationResponse', () => {
         expect(store.getters['registration/registrationResponse']).toBeNull();
 
-        const response = mockHousehold();
+        const response = mockHouseholdEntity();
         store.state.registration.registrationResponse = response;
         expect(store.getters['registration/registrationResponse']).toBe(response);
       });
@@ -223,6 +227,23 @@ describe('>>> Registration Module', () => {
     describe('registrationErrors', () => {
       it('returns registrationErrors', () => {
         expect(store.getters['registration/registrationErrors']).toEqual([]);
+      });
+    });
+
+    describe('household', () => {
+      it('returns a deep clone of the household', () => {
+        expect(store.getters['registration/householdCreate']).toEqual(_cloneDeep(store.state.registration.householdCreate));
+      });
+    });
+
+    describe('personalInformation', () => {
+      it('returns a aggregation of contact information and member', () => {
+        const expected = _merge(
+          _cloneDeep(store.state.registration.householdCreate.primaryBeneficiary.contactInformation),
+          _cloneDeep(store.state.registration.householdCreate.primaryBeneficiary.identitySet),
+        );
+
+        expect(store.getters['registration/personalInformation']).toEqual(expected);
       });
     });
   });
@@ -395,7 +416,7 @@ describe('>>> Registration Module', () => {
       it('sets registration response', () => {
         expect(store.state.registration.registrationResponse).toBeNull();
 
-        const response = mockHousehold();
+        const response = mockHouseholdEntity();
         store.commit('registration/setRegistrationResponse', response);
 
         expect(store.state.registration.registrationResponse).toEqual(response);
@@ -448,6 +469,121 @@ describe('>>> Registration Module', () => {
 
         store.commit('registration/decreaseInlineEditCounter');
         expect(store.state.registration.inlineEditCounter).toEqual(0);
+      });
+    });
+
+    describe('setHouseholdResultsShown', () => {
+      it('sets registration error', () => {
+        expect(store.state.registration.householdResultsShown).toEqual(false);
+
+        store.commit('registration/setHouseholdResultsShown', true);
+
+        expect(store.state.registration.householdResultsShown).toEqual(true);
+      });
+    });
+
+    describe('setPersonalInformation', () => {
+      it('sets both member identitySet and contact information', () => {
+        store = mockStore();
+        const payload = _merge(mockContactInformation(), mockIdentitySet());
+
+        store.commit('registration/setPersonalInformation', payload);
+
+        expect(store.state.registration.householdCreate.primaryBeneficiary.contactInformation).toEqual(mockContactInformation());
+        expect(store.state.registration.householdCreate.primaryBeneficiary.identitySet).toEqual(mockIdentitySet());
+      });
+    });
+
+    describe('setPrimaryBeneficiary', () => {
+      it('sets primary beneficiary of a household', () => {
+        store = mockStore();
+        const payload = mockMember();
+        store.commit('registration/setPrimaryBeneficiary', payload);
+        expect(store.state.registration.householdCreate.primaryBeneficiary).toEqual(mockMember());
+      });
+    });
+
+    describe('setContactInformation', () => {
+      it('sets contact information of a household', () => {
+        store = mockStore();
+        const payload = mockContactInformation();
+        store.commit('registration/setContactInformation', payload);
+        expect(store.state.registration.householdCreate.primaryBeneficiary.contactInformation).toEqual(mockContactInformation());
+      });
+    });
+
+    describe('setHomeAddress', () => {
+      it('sets home address of the household', () => {
+        store = mockStore();
+        store.commit('registration/setHomeAddress', mockAddress());
+        expect(store.state.registration.householdCreate.homeAddress).toEqual(mockAddress());
+      });
+    });
+
+    describe('setCurrentAddress', () => {
+      it('sets current address of the primaryBeneficiary', () => {
+        store = mockStore();
+        store.commit('registration/setCurrentAddress', mockAddress());
+        expect(store.state.registration.householdCreate.primaryBeneficiary.currentAddress).toEqual(mockAddress());
+      });
+
+      it('sets current address of any additional members having the same current address as beneficiary', () => {
+        store = mockStore();
+        store.state.registration.householdCreate = new HouseholdCreate();
+        store.commit('registration/setCurrentAddress', mockAddress());
+        store.commit('registration/addAdditionalMember', { payload: mockAdditionalMember(), sameAddress: true });
+        store.commit('registration/addAdditionalMember', { payload: mockAdditionalMember(), sameAddress: false });
+        expect(store.state.registration.householdCreate.additionalMembers[0].currentAddress).toEqual(mockAddress());
+        expect(store.state.registration.householdCreate.additionalMembers[1].currentAddress).not.toEqual(mockAddress());
+      });
+    });
+
+    describe('setNoFixedHome', () => {
+      it('sets noFixedHome', () => {
+        store = mockStore();
+        store.commit('registration/setNoFixedHome', true);
+        expect(store.state.registration.householdCreate.noFixedHome).toEqual(true);
+      });
+    });
+
+    describe('addAdditionalMember', () => {
+      it('should call method from household entity with proper parameters', () => {
+        store.state.registration.householdCreate = new HouseholdCreate();
+        jest.spyOn(store.state.registration.householdCreate, 'addAdditionalMember');
+        const params = { payload: mockAdditionalMember(), sameAddress: true };
+        store.commit('registration/addAdditionalMember', params);
+        expect(store.state.registration.householdCreate.addAdditionalMember).toHaveBeenCalledWith(params.payload, params.sameAddress);
+      });
+    });
+
+    describe('removeAdditionalMember', () => {
+      it('should call method from household entity with proper parameters', () => {
+        store.state.registration.householdCreate = new HouseholdCreate();
+        jest.spyOn(store.state.registration.householdCreate, 'removeAdditionalMember');
+        store.commit('registration/removeAdditionalMember', 1);
+        expect(store.state.registration.householdCreate.removeAdditionalMember).toHaveBeenCalledWith(1);
+      });
+    });
+
+    describe('editAdditionalMember', () => {
+      it('should call method from household entity with proper parameters', () => {
+        store.state.registration.householdCreate = new HouseholdCreate();
+        store.state.registration.householdCreate.editAdditionalMember = jest.fn();
+        const params = { payload: mockAdditionalMember(), sameAddress: true, index: 1 };
+        store.commit('registration/editAdditionalMember', params);
+        expect(store.state.registration.householdCreate.editAdditionalMember).toHaveBeenCalledWith(
+          _cloneDeep(params.payload),
+          params.index,
+          params.sameAddress,
+        );
+      });
+    });
+
+    describe('resetHouseholdCreate', () => {
+      it('should reset the state to default', () => {
+        store.commit('registration/setPrimaryBeneficiary', mockMember());
+        store.commit('registration/resetHouseholdCreate');
+        expect(store.state.registration.householdCreate).toEqual(new HouseholdCreate());
       });
     });
   });
@@ -546,7 +682,7 @@ describe('>>> Registration Module', () => {
 
     describe('submitRegistration', () => {
       it('call the submitRegistration service with proper params', async () => {
-        store.state.household.householdCreate = mockHouseholdCreate() as HouseholdCreate;
+        store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         await store.commit('registration/setEvent', mockEventData());
 
         const mockConsentDateTime = '2000-06-02T04:00:00Z';
@@ -555,7 +691,7 @@ describe('>>> Registration Module', () => {
         await store.dispatch('registration/submitRegistration');
 
         expect(store.$services.households.submitRegistration).toHaveBeenCalledWith(
-          mockHouseholdCreate(),
+          store.state.registration.householdCreate,
           mockEventData().eventId,
           mockConsentDateTime,
         );
@@ -568,7 +704,7 @@ describe('>>> Registration Module', () => {
 
         await store.dispatch('registration/submitRegistration');
 
-        expect(store.getters['registration/registrationResponse']).toStrictEqual(mockHousehold());
+        expect(store.getters['registration/registrationResponse']).toStrictEqual(mockHouseholdEntity());
       });
 
       it('sets registrationErrors in case of error', async () => {

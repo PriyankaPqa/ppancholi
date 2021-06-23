@@ -1,4 +1,4 @@
-import { IHouseholdsService, IHouseholdsServiceMock } from '../households';
+import { IHouseholdsService, IHouseholdsServiceMock } from '../households/entity';
 import { IPublicService, IPublicServiceMock } from '../public';
 
 export interface IProvider {

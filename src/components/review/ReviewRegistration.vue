@@ -145,7 +145,7 @@ export default mixins(additionalMemberForm).extend({
 
   computed: {
     getPersonalInformation(): IContactInformation & IMember {
-      return this.$storage.household.getters.personalInformation();
+      return this.$storage.registration.getters.personalInformation();
     },
   },
 
@@ -171,7 +171,7 @@ export default mixins(additionalMemberForm).extend({
 
     cancelPersonalInformation() {
       if (this.personalInformation.inlineEdit) {
-        this.$storage.household.mutations.setPersonalInformation(this.personalInformation.backup);
+        this.$storage.registration.mutations.setPersonalInformation(this.personalInformation.backup);
         this.personalInformation.inlineEdit = false;
         this.$storage.registration.mutations.decreaseInlineEditCounter();
       }
@@ -181,8 +181,8 @@ export default mixins(additionalMemberForm).extend({
       if (this.addresses.inlineEdit) {
         this.addresses.inlineEdit = false;
         this.$storage.registration.mutations.decreaseInlineEditCounter();
-        this.$storage.household.mutations.setHomeAddress(this.addresses.backupHomeAddress);
-        this.$storage.household.mutations.setCurrentAddress(this.addresses.backupCurrentAddress);
+        this.$storage.registration.mutations.setHomeAddress(this.addresses.backupHomeAddress);
+        this.$storage.registration.mutations.setCurrentAddress(this.addresses.backupCurrentAddress);
       }
     },
 

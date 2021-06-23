@@ -84,19 +84,19 @@ export default Vue.extend({
 
   computed: {
     currentAddress(): ICurrentAddress {
-      return this.$storage.household.getters.householdCreate().primaryBeneficiary.currentAddress;
+      return this.$storage.registration.getters.householdCreate().primaryBeneficiary.currentAddress;
     },
 
     homeAddress(): IAddress {
-      return this.$storage.household.getters.householdCreate().homeAddress;
+      return this.$storage.registration.getters.householdCreate().homeAddress;
     },
 
     noFixedHome: {
       get(): boolean {
-        return this.$storage.household.getters.householdCreate().noFixedHome;
+        return this.$storage.registration.getters.householdCreate().noFixedHome;
       },
       set(checked: boolean) {
-        this.$storage.household.mutations.setNoFixedHome(checked);
+        this.$storage.registration.mutations.setNoFixedHome(checked);
       },
     },
 
@@ -131,11 +131,11 @@ export default Vue.extend({
 
   methods: {
     setCurrentAddress(tmpAddress: ICurrentAddress) {
-      this.$storage.household.mutations.setCurrentAddress(tmpAddress);
+      this.$storage.registration.mutations.setCurrentAddress(tmpAddress);
     },
 
     setHomeAddress(homeAddress: IAddress) {
-      this.$storage.household.mutations.setHomeAddress(homeAddress);
+      this.$storage.registration.mutations.setHomeAddress(homeAddress);
     },
   },
 

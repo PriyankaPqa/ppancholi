@@ -1,4 +1,6 @@
+import { IPhoneNumber } from '../value-objects/contact-information';
 import { IAddressData } from '../value-objects/address';
+import { IEntity, IEntityCombined } from '../base';
 
 export interface IHouseholdAddress {
   address?: IAddressData;
@@ -8,16 +10,25 @@ export interface IHouseholdAddress {
 
 export type Status = 1 | 2;
 
-export interface IHouseholdData {
-  id?: string;
-  tenantId?: string;
-  created?: string;
-  timestamp?: string;
-  status?: Status;
-  eTag?: string;
+export interface IHouseholdEntity extends IEntity {
   address?: IHouseholdAddress;
   addressHistory?: Array<IHouseholdAddress>;
   members?: Array<string>;
   primaryBeneficiary?: string;
   registrationNumber?: string;
 }
+export interface IMemberMetadata {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  email?: string;
+  homePhoneNumber?: IPhoneNumber;
+  mobilePhoneNumber?: IPhoneNumber;
+  alternatePhoneNumber?: IPhoneNumber;
+}
+
+export interface IHouseholdMetadata extends IEntity {
+  memberMetadata: Array<IMemberMetadata>;
+}
+
+export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, IHouseholdMetadata>

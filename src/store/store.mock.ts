@@ -9,8 +9,10 @@ import { ERegistrationMode } from '../types/enums/ERegistrationMode';
 import { mockProvider } from '../services/provider';
 import { mockTabs } from './modules/registration/tabs.mock';
 import { makeRegistrationModule } from './modules/registration';
-import { makeHouseholdModule } from './modules/household';
+import { HouseholdEntityModule } from './modules/household';
 import { IState, IStore } from './store.types';
+import { httpClient } from '../services/httpClient';
+import { HouseholdsService } from '../services/households/entity';
 
 const i18n = {
   t: jest.fn((p: string) => p),
@@ -23,7 +25,7 @@ const mockConfig = {
     registration: makeRegistrationModule({
       i18n, tabs: mockTabs(), skipAgeRestriction: false, skipEmailPhoneRules: false, mode: ERegistrationMode.Self,
     }),
-    household: makeHouseholdModule(),
+    household: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
   },
 };
 

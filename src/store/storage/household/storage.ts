@@ -1,71 +1,28 @@
-import { IStore, IState } from '@/store/store.types';
-import {
-  IAddress, IContactInformation, IMember, ICurrentAddress, IIdentitySetData,
-} from '../../../entities/household-create';
+import { IStore, IState } from '../../../store/store.types';
+import { Base } from '../../../store/storage/base';
+import { IHouseholdEntity, IHouseholdMetadata } from '../../../entities/household';
 import { IStorage } from './storage.types';
 
-export const makeStorage = (store: IStore<IState>): IStorage => ({
-  getters: {
-    householdCreate() {
-      return store.getters['household/householdCreate'];
-    },
+export class HouseholdStorage extends Base<IHouseholdEntity, IHouseholdMetadata> implements IStorage {
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
+    super(pStore, pEntityModuleName, pMetadataModuleName);
+  }
 
-    personalInformation() {
-      return store.getters['household/personalInformation'];
-    },
-  },
-  mutations: {
-    setPersonalInformation(payload: IContactInformation & IMember) {
-      store.commit('household/setPersonalInformation', payload);
-    },
+  private getters = {
+    ...this.baseGetters,
+  }
 
-    setPrimaryBeneficiary(payload: IMember) {
-      store.commit('household/setPrimaryBeneficiary', payload);
-    },
+  private actions = {
+    ...this.baseActions,
+  }
 
-    setIdentity(payload: IIdentitySetData) {
-      store.commit('household/setIdentity', payload);
-    },
+  private mutations = {
+    ...this.baseMutations,
+  }
 
-    setIndigenousIdentity(payload: IIdentitySetData) {
-      store.commit('household/setIndigenousIdentity', payload);
-    },
-
-    setContactInformation(payload: IContactInformation) {
-      store.commit('household/setContactInformation', payload);
-    },
-
-    setHomeAddress(payload: IAddress) {
-      store.commit('household/setHomeAddress', payload);
-    },
-
-    setCurrentAddress(payload: ICurrentAddress) {
-      store.commit('household/setCurrentAddress', payload);
-    },
-
-    setNoFixedHome(payload: boolean) {
-      store.commit('household/setNoFixedHome', payload);
-    },
-
-    addAdditionalMember(payload: IMember, sameAddress: boolean) {
-      store.commit('household/addAdditionalMember', { payload, sameAddress });
-    },
-
-    removeAdditionalMember(index: number) {
-      store.commit('household/removeAdditionalMember', index);
-    },
-
-    editAdditionalMember(payload: IMember, index: number, sameAddress: boolean) {
-      store.commit('household/editAdditionalMember', { payload, index, sameAddress });
-    },
-
-    resetState() {
-      store.commit('household/resetState');
-    },
-
-  },
-
-  actions: {
-
-  },
-});
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  })
+}

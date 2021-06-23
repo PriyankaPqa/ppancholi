@@ -42,6 +42,7 @@ export const mockGenders = (): IOptionItemData[] => [
 
 export const mockIndigenousIdentitiesSearchData = (): IAzureSearchResult<IIndigenousIdentityData> => ({
   odataContext: 'test',
+  odataCount: 1,
   value: [
     {
       province: 4,

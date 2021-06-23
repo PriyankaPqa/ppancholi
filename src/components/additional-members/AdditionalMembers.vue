@@ -93,7 +93,7 @@ export default Vue.extend({
 
   computed: {
     additionalMembers(): IMember[] {
-      return this.$storage.household.getters.householdCreate().additionalMembers;
+      return this.$storage.registration.getters.householdCreate().additionalMembers;
     },
   },
 
@@ -105,7 +105,7 @@ export default Vue.extend({
     },
 
     deleteAdditionalMember() {
-      this.$storage.household.mutations.removeAdditionalMember(this.index);
+      this.$storage.registration.mutations.removeAdditionalMember(this.index);
       this.showDeleteDialog = false;
 
       if (this.additionalMembers.length < MAX_ADDITIONAL_MEMBERS) {

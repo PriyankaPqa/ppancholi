@@ -1,12 +1,12 @@
-import { mockHttp } from '@/services/httpClient.mock';
 import { ECanadaProvinces, IAzureSearchParams } from '@/types';
+import { mockHttp } from '../../httpClient.mock';
 import {
   mockAddressData,
   mockHouseholdCreate,
   mockContactInformation,
   mockCreateHouseholdRequest,
   mockMember, ECurrentAddressTypes, mockIdentitySet, mockHotelMotel,
-} from '../../entities/household-create';
+} from '../../../entities/household-create';
 import { HouseholdsService } from './households';
 
 const http = mockHttp();
@@ -21,17 +21,17 @@ describe('>>> Beneficiaries Service', () => {
 
   test('getGenders is linked to the correct URL', async () => {
     await service.getGenders();
-    expect(http.get).toHaveBeenCalledWith('/household/genders');
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/genders`);
   });
 
   test('getPreferredLanguages is linked to the correct URL', async () => {
     await service.getPreferredLanguages();
-    expect(http.get).toHaveBeenCalledWith('/household/preferred-languages');
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/preferred-languages`);
   });
 
   test('getPrimarySpokenLanguages is linked to the correct URL', async () => {
     await service.getPrimarySpokenLanguages();
-    expect(http.get).toHaveBeenCalledWith('/household/primary-spoken-languages');
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/primary-spoken-languages`);
   });
 
   test('searchIndigenousIdentities is linked to the correct URL', async () => {
@@ -50,7 +50,7 @@ describe('>>> Beneficiaries Service', () => {
 
     await service.submitRegistration(mockHouseholdCreate(), 'event id', 'privacy consent date time');
 
-    expect(http.post).toHaveBeenCalledWith('/household/households', createBeneficiaryRequest, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}`, createBeneficiaryRequest, { globalHandler: false });
   });
 
   describe('parseMember', () => {

@@ -3,7 +3,10 @@ import {
 } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import VueI18n from 'vue-i18n';
-import { IHouseholdData } from '../../../entities/household';
+import _cloneDeep from 'lodash/cloneDeep';
+import _merge from 'lodash/merge';
+import _isEqual from 'lodash/isEqual';
+import { IHouseholdEntity } from '../../../entities/household';
 import { ERegistrationMode } from '../../../types/enums/ERegistrationMode';
 import { IError } from '../../../services/httpClient';
 import {
@@ -11,7 +14,17 @@ import {
 } from '../../../types';
 import { IRootState, IStore } from '../../store.types';
 import {
-  HouseholdCreate, EIndigenousTypes, IHouseholdCreate, IIndigenousIdentityData,
+  HouseholdCreate,
+  EIndigenousTypes,
+  IHouseholdCreate,
+  IIndigenousIdentityData,
+  IContactInformation,
+  IdentitySet,
+  ContactInformation,
+  IMember,
+  Member,
+  IIdentitySetData,
+  ICurrentAddress, IAddress,
 } from '../../../entities/household-create';
 import { Event, IEvent, IEventData } from '../../../entities/event';
 
@@ -58,6 +71,8 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   registrationErrors: [],
   submitLoading: false,
   inlineEditCounter: 0,
+  householdResultsShown: false,
+  householdCreate: new HouseholdCreate(),
 });
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
@@ -176,20 +191,19 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
     return state.isPrivacyAgreed;
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  householdCreate(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): IHouseholdCreate {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return new HouseholdCreate(rootGetters['household/householdCreate'] as any);
-  },
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  noFixedHome(state: IState, getters: GetterTree<IState, IState>, rootState: IRootState, rootGetters: any): boolean {
-    return (rootGetters['household/householdCreate'] as IHouseholdCreate).noFixedHome;
+  noFixedHome(state: IState): boolean {
+    return state.householdCreate.noFixedHome;
   },
 
   registrationResponse: (state: IState) => state.registrationResponse,
 
   registrationErrors: (state: IState) => state.registrationErrors,
+
+  householdCreate: (state: IState) => _cloneDeep(state.householdCreate),
+
+  personalInformation: (state: IState) => _cloneDeep(
+    _merge(state.householdCreate.primaryBeneficiary.contactInformation, state.householdCreate.primaryBeneficiary.identitySet),
+  ),
 });
 
 const mutations = (): MutationTree<IState> => ({
@@ -264,7 +278,7 @@ const mutations = (): MutationTree<IState> => ({
     state.privacyRegistrationLocationName = payload;
   },
 
-  setRegistrationResponse(state: IState, payload: IHouseholdData) {
+  setRegistrationResponse(state: IState, payload: IHouseholdEntity) {
     state.registrationResponse = payload;
   },
 
@@ -286,8 +300,68 @@ const mutations = (): MutationTree<IState> => ({
     }
   },
 
+  setHouseholdResultsShown(state: IState, payload: boolean) {
+    state.householdResultsShown = payload;
+  },
+
   resetState(state: IState, tabs: IRegistrationMenuItem[]) {
     resetVuexModuleState(state, getDefaultState(tabs));
+  },
+
+  setPersonalInformation(state: IState, payload: IContactInformation & IdentitySet) {
+    state.householdCreate.primaryBeneficiary.contactInformation = new ContactInformation(_cloneDeep(payload));
+    state.householdCreate.primaryBeneficiary.identitySet = new IdentitySet(_cloneDeep(payload));
+  },
+
+  setPrimaryBeneficiary(state: IState, payload: IMember) {
+    state.householdCreate.primaryBeneficiary = new Member(_cloneDeep(payload));
+  },
+
+  setIdentity(state: IState, payload: IIdentitySetData) {
+    state.householdCreate.primaryBeneficiary.identitySet.setIdentity(_cloneDeep(payload));
+  },
+
+  setIndigenousIdentity(state: IState, payload: IIdentitySetData) {
+    state.householdCreate.primaryBeneficiary.identitySet.setIndigenousIdentity(_cloneDeep(payload));
+  },
+
+  setContactInformation(state: IState, payload: IContactInformation) {
+    state.householdCreate.primaryBeneficiary.contactInformation = new ContactInformation(_cloneDeep(payload));
+  },
+
+  setCurrentAddress(state: IState, payload: ICurrentAddress) {
+    const oldAddress = state.householdCreate.primaryBeneficiary.currentAddress;
+
+    state.householdCreate.additionalMembers.forEach((m: IMember) => {
+      if (_isEqual(m.currentAddress, oldAddress)) {
+        m.setCurrentAddress(_cloneDeep(payload));
+      }
+    });
+    state.householdCreate.primaryBeneficiary.currentAddress = _cloneDeep(payload);
+  },
+
+  setHomeAddress(state: IState, payload: IAddress) {
+    state.householdCreate.homeAddress = _cloneDeep(payload);
+  },
+
+  setNoFixedHome(state: IState, payload: boolean) {
+    state.householdCreate.noFixedHome = payload;
+  },
+
+  addAdditionalMember(state: IState, { payload, sameAddress }: {payload: IMember; sameAddress: boolean}) {
+    state.householdCreate.addAdditionalMember(payload, sameAddress);
+  },
+
+  removeAdditionalMember(state: IState, index: number) {
+    state.householdCreate.removeAdditionalMember(index);
+  },
+
+  editAdditionalMember(state: IState, { payload, index, sameAddress }: {payload: IMember; index: number; sameAddress: boolean}) {
+    state.householdCreate.editAdditionalMember(_cloneDeep(payload), index, sameAddress);
+  },
+
+  resetHouseholdCreate(state: IState) {
+    state.householdCreate = new HouseholdCreate();
   },
 });
 
@@ -368,13 +442,15 @@ const actions = {
   async submitRegistration(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
-  ): Promise<IHouseholdData> {
-    const householdCreate = context.rootGetters['household/householdCreate'] as IHouseholdCreate;
-
-    let result: IHouseholdData;
+  ): Promise<IHouseholdEntity> {
+    let result: IHouseholdEntity;
     context.commit('setSubmitLoading', true);
     try {
-      result = await this.$services.households.submitRegistration(householdCreate, context.state.event.eventId, context.state.privacyDateTimeConsent);
+      result = await this.$services.households.submitRegistration(
+        context.state.householdCreate,
+        context.state.event.eventId,
+        context.state.privacyDateTimeConsent,
+      );
       context.commit('setRegistrationResponse', result);
     } catch (e) {
       context.commit('setRegistrationErrors', e);

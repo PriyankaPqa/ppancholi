@@ -1,56 +1,41 @@
+import { IHouseholdEntity, IHouseholdMetadata } from '../../../entities/household';
 import {
-  HouseholdCreate, IAddress, IHouseholdCreate, IContactInformation, IMember, ICurrentAddress, IIdentitySet,
-} from '../../../entities/household-create';
+  IBaseActions,
+  IBaseGetters,
+  IBaseMutations,
+  IBaseActionsMock,
+  IBaseGettersMock,
+  IBaseMutationsMock,
+} from '../base/base.types';
 
-export interface IStorage {
-  getters: {
-    householdCreate(): HouseholdCreate;
-    personalInformation(): IContactInformation & IMember;
-  };
+export interface IActions extends IBaseActions<IHouseholdEntity, IHouseholdMetadata> {}
 
-  mutations: {
-    setPersonalInformation(payload: IContactInformation & IMember): void;
-    setPrimaryBeneficiary(payload: IMember): void;
-    setIdentity(payload: IIdentitySet): void;
-    setIndigenousIdentity(payload: IIdentitySet): void;
-    setContactInformation(payload: IContactInformation): void;
-    setHomeAddress(payload: IAddress): void;
-    setCurrentAddress(payload: ICurrentAddress): void;
-    setNoFixedHome(payload: boolean): void;
-    addAdditionalMember(payload: IMember, sameAddress: boolean): void;
-    removeAdditionalMember(index: number): void;
-    editAdditionalMember(payload: IMember, index: number, sameAddress: boolean): void;
-    resetState(): void;
-  };
+export interface IActionsMock extends IBaseActionsMock<IHouseholdEntity, IHouseholdMetadata> {}
 
-  actions: {
+export interface IGetters extends IBaseGetters<IHouseholdEntity, IHouseholdMetadata> {}
 
-  };
+export interface IGettersMock extends IBaseGettersMock<IHouseholdEntity, IHouseholdMetadata> {}
+
+export interface IMutations extends IBaseMutations<IHouseholdEntity, IHouseholdMetadata> {}
+
+export interface IMutationsMock extends IBaseMutationsMock<IHouseholdEntity, IHouseholdMetadata> {}
+
+export interface IStorageMake {
+  getters: IGetters;
+  actions: IActions;
+  mutations: IMutations;
 }
 
-export interface IStorageMock {
-  getters: {
-    householdCreate: jest.Mock<IHouseholdCreate>;
-    personalInformation: jest.Mock<IContactInformation & IMember>;
-  };
+export interface IStorageMakeMock {
+  getters: IGettersMock;
+  actions: IActionsMock;
+  mutations: IMutationsMock;
+}
 
-  mutations: {
-    setPersonalInformation: jest.Mock<void>;
-    setPrimaryBeneficiary: jest.Mock<void>;
-    setIdentity: jest.Mock<void>;
-    setIndigenousIdentity: jest.Mock<void>;
-    setContactInformation: jest.Mock<void>;
-    setHomeAddress: jest.Mock<void>;
-    setCurrentAddress: jest.Mock<void>;
-    setNoFixedHome: jest.Mock<void>;
-    resetCurrentAddress: jest.Mock<void>;
-    addAdditionalMember: jest.Mock<void>;
-    removeAdditionalMember: jest.Mock<void>;
-    editAdditionalMember: jest.Mock<void>;
-    resetState: jest.Mock<void>;
-  };
+export interface IStorage {
+  make(): IStorageMake;
+}
 
-  actions: {
-
-  };
+export interface IHouseholdStorageMock {
+  make(): IStorageMakeMock;
 }

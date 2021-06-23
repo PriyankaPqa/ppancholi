@@ -1,8 +1,11 @@
-import { mockHousehold } from '../../../entities/household';
+import _cloneDeep from 'lodash/cloneDeep';
+import _merge from 'lodash/merge';
+import { mockHouseholdEntity } from '../../../entities/household';
 import {
-  mockGenders,
+  mockContactInformation,
+  mockGenders, mockHouseholdCreate,
   mockIndigenousCommunitiesItems,
-  mockIndigenousTypesItems,
+  mockIndigenousTypesItems, mockMember,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '../../../entities/household-create';
@@ -25,8 +28,10 @@ export const mockStorageRegistration = (): IStorageMock => ({
     indigenousTypesItems: jest.fn(() => mockIndigenousTypesItems()),
     indigenousCommunitiesItems: jest.fn(() => mockIndigenousCommunitiesItems()),
     findEffectiveJumpIndex: jest.fn(),
-    registrationResponse: jest.fn(() => mockHousehold()),
+    registrationResponse: jest.fn(() => mockHouseholdEntity()),
     registrationErrors: jest.fn(() => []),
+    householdCreate: jest.fn(() => _cloneDeep(mockHouseholdCreate())),
+    personalInformation: jest.fn(() => _merge(mockContactInformation(), mockMember())),
   },
 
   mutations: {
@@ -44,6 +49,20 @@ export const mockStorageRegistration = (): IStorageMock => ({
     resetState: jest.fn(),
     decreaseInlineEditCounter: jest.fn(),
     increaseInlineEditCounter: jest.fn(),
+    setHouseholdResultsShown: jest.fn(),
+    setPersonalInformation: jest.fn(),
+    setPrimaryBeneficiary: jest.fn(),
+    setIdentity: jest.fn(),
+    setIndigenousIdentity: jest.fn(),
+    setContactInformation: jest.fn(),
+    setHomeAddress: jest.fn(),
+    setCurrentAddress: jest.fn(),
+    setNoFixedHome: jest.fn(),
+    resetCurrentAddress: jest.fn(),
+    addAdditionalMember: jest.fn(),
+    removeAdditionalMember: jest.fn(),
+    editAdditionalMember: jest.fn(),
+    resetHouseholdCreate: jest.fn(),
   },
 
   actions: {

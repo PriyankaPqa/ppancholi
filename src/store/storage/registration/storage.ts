@@ -1,18 +1,18 @@
 import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
-import { IHouseholdData } from '../../../entities/household';
+import { IHouseholdEntity } from '../../../entities/household';
 import {
   ECanadaProvinces, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
 import { IError } from '../../../services/httpClient';
 import {
-  IIndigenousIdentityData, EIndigenousTypes,
+  IIndigenousIdentityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress,
 } from '../../../entities/household-create';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
 
+// eslint-disable-next-line
 export const makeStorage = (store: IStore<IState>): IStorage => ({
-
   getters: {
 
     event(): IEvent {
@@ -67,12 +67,20 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['registration/findEffectiveJumpIndex'](targetIndex);
     },
 
-    registrationResponse(): IHouseholdData {
+    registrationResponse(): IHouseholdEntity {
       return store.getters['registration/registrationResponse'];
     },
 
     registrationErrors(): IError[] {
       return store.getters['registration/registrationErrors'];
+    },
+
+    householdCreate() {
+      return store.getters['registration/householdCreate'];
+    },
+
+    personalInformation() {
+      return store.getters['registration/personalInformation'];
     },
   },
 
@@ -132,6 +140,58 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     decreaseInlineEditCounter(): void {
       store.commit('registration/decreaseInlineEditCounter');
     },
+
+    setHouseholdResultsShown(payload: boolean): void {
+      store.commit('registration/setHouseholdResultsShown', payload);
+    },
+
+    setPersonalInformation(payload: IContactInformation & IMember) {
+      store.commit('registration/setPersonalInformation', payload);
+    },
+
+    setPrimaryBeneficiary(payload: IMember) {
+      store.commit('registration/setPrimaryBeneficiary', payload);
+    },
+
+    setIdentity(payload: IIdentitySetData) {
+      store.commit('registration/setIdentity', payload);
+    },
+
+    setIndigenousIdentity(payload: IIdentitySetData) {
+      store.commit('registration/setIndigenousIdentity', payload);
+    },
+
+    setContactInformation(payload: IContactInformation) {
+      store.commit('registration/setContactInformation', payload);
+    },
+
+    setHomeAddress(payload: IAddress) {
+      store.commit('registration/setHomeAddress', payload);
+    },
+
+    setCurrentAddress(payload: ICurrentAddress) {
+      store.commit('registration/setCurrentAddress', payload);
+    },
+
+    setNoFixedHome(payload: boolean) {
+      store.commit('registration/setNoFixedHome', payload);
+    },
+
+    addAdditionalMember(payload: IMember, sameAddress: boolean) {
+      store.commit('registration/addAdditionalMember', { payload, sameAddress });
+    },
+
+    removeAdditionalMember(index: number) {
+      store.commit('registration/removeAdditionalMember', index);
+    },
+
+    editAdditionalMember(payload: IMember, index: number, sameAddress: boolean) {
+      store.commit('registration/editAdditionalMember', { payload, index, sameAddress });
+    },
+
+    resetHouseholdCreate() {
+      store.commit('registration/resetHouseholdCreate');
+    },
   },
 
   actions: {
@@ -155,7 +215,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
     },
 
-    submitRegistration(): Promise<IHouseholdData> {
+    submitRegistration(): Promise<IHouseholdEntity> {
       return store.dispatch('registration/submitRegistration');
     },
   },

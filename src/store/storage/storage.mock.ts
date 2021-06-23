@@ -1,8 +1,8 @@
+import { HouseholdStorageMock } from '@/store/storage/household';
 import { mockStorageRegistration } from './registration';
-import { mockStorageHousehold } from './household';
 import { IStorageMock } from './storage.types';
 
 export const mockStorage = (): IStorageMock => ({
   registration: mockStorageRegistration(),
-  household: mockStorageHousehold(),
+  household: new HouseholdStorageMock().make(),
 });

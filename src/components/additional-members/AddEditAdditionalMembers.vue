@@ -148,7 +148,7 @@ export default Vue.extend({
 
   mounted() {
     if (this.editMode) {
-      this.sameAddress = _isEqual(this.member.currentAddress, this.$storage.household.getters.householdCreate().primaryBeneficiary.currentAddress);
+      this.sameAddress = _isEqual(this.member.currentAddress, this.$storage.registration.getters.householdCreate().primaryBeneficiary.currentAddress);
       this.backupSameAddress = this.sameAddress;
       this.backupPerson = _cloneDeep(this.member);
     }
@@ -157,7 +157,7 @@ export default Vue.extend({
   methods: {
     cancel() {
       if (this.editMode) {
-        this.$storage.household.mutations.editAdditionalMember(this.backupPerson, this.index, this.backupSameAddress);
+        this.$storage.registration.mutations.editAdditionalMember(this.backupPerson, this.index, this.backupSameAddress);
       }
       this.close();
     },
@@ -175,9 +175,9 @@ export default Vue.extend({
       }
 
       if (this.editMode) {
-        this.$storage.household.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
+        this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
       } else {
-        this.$storage.household.mutations.addAdditionalMember(this.member, this.sameAddress);
+        this.$storage.registration.mutations.addAdditionalMember(this.member, this.sameAddress);
       }
       this.close();
     },

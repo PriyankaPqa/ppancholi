@@ -5,8 +5,17 @@ import {
 import { IError } from '../../../services/httpClient';
 
 import { IEvent, IEventData } from '../../../entities/event';
-import { IIndigenousIdentityData, EIndigenousTypes } from '../../../entities/household-create';
-import { IHouseholdData } from '../../../entities/household';
+import {
+  IIndigenousIdentityData,
+  EIndigenousTypes,
+  IContactInformation,
+  IMember,
+  IIdentitySet,
+  IAddress,
+  ICurrentAddress,
+  HouseholdCreate, IHouseholdCreate,
+} from '../../../entities/household-create';
+import { IHouseholdEntity } from '../../../entities/household';
 
 export interface IStorage {
   getters: {
@@ -23,8 +32,10 @@ export interface IStorage {
     findEffectiveJumpIndex(targetIndex: number): number;
     indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[];
     indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[];
-    registrationResponse(): IHouseholdData;
+    registrationResponse(): IHouseholdEntity;
     registrationErrors(): IError[];
+    householdCreate(): HouseholdCreate;
+    personalInformation(): IContactInformation & IMember;
   };
 
   mutations: {
@@ -42,6 +53,19 @@ export interface IStorage {
     resetState(tabs: IRegistrationMenuItem[]): void;
     decreaseInlineEditCounter(): void;
     increaseInlineEditCounter(): void;
+    setHouseholdResultsShown(payload: boolean): void;
+    setPersonalInformation(payload: IContactInformation & IMember): void;
+    setPrimaryBeneficiary(payload: IMember): void;
+    setIdentity(payload: IIdentitySet): void;
+    setIndigenousIdentity(payload: IIdentitySet): void;
+    setContactInformation(payload: IContactInformation): void;
+    setHomeAddress(payload: IAddress): void;
+    setCurrentAddress(payload: ICurrentAddress): void;
+    setNoFixedHome(payload: boolean): void;
+    addAdditionalMember(payload: IMember, sameAddress: boolean): void;
+    removeAdditionalMember(index: number): void;
+    editAdditionalMember(payload: IMember, index: number, sameAddress: boolean): void;
+    resetHouseholdCreate(): void;
   };
 
   actions: {
@@ -50,7 +74,7 @@ export interface IStorage {
     fetchPreferredLanguages(): Promise<IOptionItemData[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]>;
-    submitRegistration(): Promise<IHouseholdData>;
+    submitRegistration(): Promise<IHouseholdEntity>;
   };
 }
 
@@ -69,8 +93,10 @@ export interface IStorageMock {
     indigenousTypesItems: jest.Mock<Record<string, unknown>[]>;
     indigenousCommunitiesItems: jest.Mock<Record<string, string>[]>;
     findEffectiveJumpIndex: jest.Mock<number>;
-    registrationResponse: jest.Mock<IHouseholdData>;
+    registrationResponse: jest.Mock<IHouseholdEntity>;
     registrationErrors: jest.Mock<IError[]>;
+    householdCreate: jest.Mock<IHouseholdCreate>;
+    personalInformation: jest.Mock<IContactInformation & IMember>;
   };
 
   mutations: {
@@ -88,6 +114,20 @@ export interface IStorageMock {
     resetState: jest.Mock<void>;
     decreaseInlineEditCounter(): jest.Mock<void>;
     increaseInlineEditCounter(): jest.Mock<void>;
+    setHouseholdResultsShown(): jest.Mock<void>;
+    setPersonalInformation: jest.Mock<void>;
+    setPrimaryBeneficiary: jest.Mock<void>;
+    setIdentity: jest.Mock<void>;
+    setIndigenousIdentity: jest.Mock<void>;
+    setContactInformation: jest.Mock<void>;
+    setHomeAddress: jest.Mock<void>;
+    setCurrentAddress: jest.Mock<void>;
+    setNoFixedHome: jest.Mock<void>;
+    resetCurrentAddress: jest.Mock<void>;
+    addAdditionalMember: jest.Mock<void>;
+    removeAdditionalMember: jest.Mock<void>;
+    editAdditionalMember: jest.Mock<void>;
+    resetHouseholdCreate: jest.Mock<void>;
   };
 
   actions: {
@@ -96,6 +136,6 @@ export interface IStorageMock {
     fetchPreferredLanguages: jest.Mock<IOptionItemData[]>;
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
     fetchIndigenousIdentitiesByProvince: jest.Mock<IIndigenousIdentityData[]>;
-    submitRegistration: jest.Mock<IHouseholdData>;
+    submitRegistration: jest.Mock<IHouseholdEntity>;
   };
 }

@@ -70,7 +70,7 @@ export default Vue.extend({
     },
 
     householdCreate(): IHouseholdCreate {
-      return this.$storage.household.getters.householdCreate();
+      return this.$storage.registration.getters.householdCreate();
     },
 
     preferredLanguagesItems(): IOptionItemData[] {
@@ -109,15 +109,15 @@ export default Vue.extend({
     },
 
     setIdentity(form: IIdentitySet) {
-      this.$storage.household.mutations.setIdentity(form);
+      this.$storage.registration.mutations.setIdentity(form);
     },
 
     setIndigenousIdentity(form: IIdentitySet) {
-      this.$storage.household.mutations.setIndigenousIdentity(form);
+      this.$storage.registration.mutations.setIndigenousIdentity(form);
     },
 
     setContactInformation(form: IContactInformation) {
-      this.$storage.household.mutations.setContactInformation(form);
+      this.$storage.registration.mutations.setContactInformation(form);
     },
   },
 });

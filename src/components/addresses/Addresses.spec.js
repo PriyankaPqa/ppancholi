@@ -42,7 +42,7 @@ describe('Addresses.vue', () => {
 
       it('triggers setNoFixedHome mutation when changed', () => {
         wrapper.vm.noFixedHome = true;
-        expect(wrapper.vm.$storage.household.mutations.setNoFixedHome).toHaveBeenCalledWith(true);
+        expect(wrapper.vm.$storage.registration.mutations.setNoFixedHome).toHaveBeenCalledWith(true);
       });
     });
 
@@ -170,7 +170,7 @@ describe('Addresses.vue', () => {
 
       it('should call setCurrentAddress mutations', () => {
         wrapper.vm.setCurrentAddress(ECurrentAddressTypes.HotelMotel);
-        expect(wrapper.vm.$storage.household.mutations.setCurrentAddress)
+        expect(wrapper.vm.$storage.registration.mutations.setCurrentAddress)
           .toHaveBeenCalledWith(ECurrentAddressTypes.HotelMotel);
       });
     });
@@ -185,7 +185,7 @@ describe('Addresses.vue', () => {
 
       it('should call setHomeAddress mutations', () => {
         wrapper.vm.setHomeAddress(mockAddress());
-        expect(wrapper.vm.$storage.household.mutations.setHomeAddress)
+        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress)
           .toHaveBeenCalledWith(mockAddress());
       });
     });

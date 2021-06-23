@@ -49,7 +49,7 @@ export default Vue.extend({
     },
 
     household(): HouseholdCreate {
-      return this.$storage.household.getters.householdCreate();
+      return this.$storage.registration.getters.householdCreate();
     },
 
     redirectionLink(): string {

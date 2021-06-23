@@ -2,10 +2,11 @@ import { ECanadaProvinces, ERegistrationMethod, IOptionItemData } from '../../..
 import { IError } from '../../../services/httpClient';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 import {
+  HouseholdCreate,
   IIndigenousIdentityData,
 } from '../../../entities/household-create';
 
-import { IHouseholdData } from '../../../entities/household';
+import { IHouseholdEntity } from '../../../entities/household';
 import { IEventData } from '../../../entities/event';
 
 export type IState = {
@@ -23,8 +24,10 @@ export type IState = {
   privacyCRCUsername: string;
   privacyRegistrationMethod: ERegistrationMethod;
   privacyRegistrationLocationName: string;
-  registrationResponse: IHouseholdData;
+  registrationResponse: IHouseholdEntity;
   registrationErrors: IError[];
   submitLoading: boolean;
   inlineEditCounter: number;
+  householdResultsShown: boolean;
+  householdCreate: HouseholdCreate;
 };

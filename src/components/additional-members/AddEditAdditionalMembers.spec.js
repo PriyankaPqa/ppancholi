@@ -93,14 +93,14 @@ describe('AddEditAdditionalMembers.vue', () => {
         await wrapper.setProps({ index: 0 });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.validate();
-        expect(wrapper.vm.$storage.household.mutations.editAdditionalMember)
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.member, 0, wrapper.vm.sameAddress);
       });
 
       it('should calls addAdditionalMember with proper params', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.validate();
-        expect(wrapper.vm.$storage.household.mutations.addAdditionalMember)
+        expect(wrapper.vm.$storage.registration.mutations.addAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.member, wrapper.vm.sameAddress);
       });
 
@@ -115,7 +115,7 @@ describe('AddEditAdditionalMembers.vue', () => {
         it('should reset household member with the backup', async () => {
           await wrapper.setProps({ index: 0 });
           await wrapper.vm.cancel();
-          expect(wrapper.vm.$storage.household.mutations.editAdditionalMember)
+          expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
             .toHaveBeenCalledWith(wrapper.vm.backupPerson, 0, wrapper.vm.backupSameAddress);
         });
       });

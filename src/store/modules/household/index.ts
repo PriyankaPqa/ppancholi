@@ -1,2 +1,2 @@
-export * from './household';
-export * from './household.types';
+export * from './householdEntity';
+export * from './householdEntity.types';

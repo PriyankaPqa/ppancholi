@@ -1,8 +1,14 @@
 import { mockStore } from '@/store';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
-import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
-import { mockEventData } from '../../../entities/event';
+import _merge from 'lodash/merge';
+import { mockContactInformation } from '@/entities/value-objects/contact-information';
+import { mockAdditionalMember, mockMember } from '@/entities/value-objects/member';
+import { mockIdentitySet } from '@/entities/value-objects/identity-set';
+import { mockAddress } from '@/entities/value-objects/address';
+import { mockCampGround } from '@/entities/value-objects/current-address';
 import { makeStorage } from './storage';
+import { mockEventData } from '../../../entities/event';
+import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
 
 const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);
@@ -68,6 +74,14 @@ describe('>>> Registration Storage', () => {
 
     it('should proxy registrationErrors', () => {
       expect(storage.getters.registrationErrors()).toEqual(store.getters['registration/registrationErrors']);
+    });
+
+    it('should proxy householdCreate', () => {
+      expect(storage.getters.householdCreate()).toEqual(store.getters['registration/householdCreate']);
+    });
+
+    it('should proxy personalInformation', () => {
+      expect(storage.getters.personalInformation()).toEqual(store.getters['registration/personalInformation']);
     });
   });
 
@@ -136,6 +150,80 @@ describe('>>> Registration Storage', () => {
     it('should proxy decreaseInlineEditCounter', () => {
       storage.mutations.decreaseInlineEditCounter();
       expect(store.commit).toBeCalledWith('registration/decreaseInlineEditCounter');
+    });
+
+    it('should proxy setHouseholdResultsShown', () => {
+      storage.mutations.setHouseholdResultsShown(true);
+      expect(store.commit).toBeCalledWith('registration/setHouseholdResultsShown', true);
+    });
+
+    it('should proxy setPersonalInformation', () => {
+      const payload = _merge(mockContactInformation(), mockMember());
+      storage.mutations.setPersonalInformation(payload);
+      expect(store.commit).toBeCalledWith('registration/setPersonalInformation', payload);
+    });
+
+    it('should proxy setPrimaryBeneficiary', () => {
+      const payload = mockMember();
+      storage.mutations.setPrimaryBeneficiary(payload);
+      expect(store.commit).toBeCalledWith('registration/setPrimaryBeneficiary', payload);
+    });
+
+    it('should proxy setIdentity', () => {
+      const payload = mockIdentitySet();
+      storage.mutations.setIdentity(payload);
+      expect(store.commit).toBeCalledWith('registration/setIdentity', payload);
+    });
+
+    it('should proxy setIndigenousIdentity', () => {
+      const payload = mockIdentitySet();
+      storage.mutations.setIndigenousIdentity(payload);
+      expect(store.commit).toBeCalledWith('registration/setIndigenousIdentity', payload);
+    });
+
+    it('should proxy setContactInformation', () => {
+      const payload = mockContactInformation();
+      storage.mutations.setContactInformation(payload);
+      expect(store.commit).toBeCalledWith('registration/setContactInformation', payload);
+    });
+
+    it('should proxy setHomeAddress', () => {
+      const payload = mockAddress();
+      storage.mutations.setHomeAddress(payload);
+      expect(store.commit).toBeCalledWith('registration/setHomeAddress', payload);
+    });
+
+    it('should proxy setCurrentAddress', () => {
+      const payload = mockCampGround();
+      storage.mutations.setCurrentAddress(payload);
+      expect(store.commit).toBeCalledWith('registration/setCurrentAddress', payload);
+    });
+
+    it('should proxy setNoFixedHome', () => {
+      storage.mutations.setNoFixedHome(true);
+      expect(store.commit).toBeCalledWith('registration/setNoFixedHome', true);
+    });
+
+    it('should proxy addAdditionalMember', () => {
+      storage.mutations.addAdditionalMember(mockAdditionalMember(), true);
+      const params = { payload: mockAdditionalMember(), sameAddress: true };
+      expect(store.commit).toBeCalledWith('registration/addAdditionalMember', params);
+    });
+
+    it('should proxy removeAdditionalMember', () => {
+      storage.mutations.removeAdditionalMember(1);
+      expect(store.commit).toBeCalledWith('registration/removeAdditionalMember', 1);
+    });
+
+    it('should proxy editAdditionalMember', () => {
+      storage.mutations.editAdditionalMember(mockAdditionalMember(), 0, true);
+      const params = { payload: mockAdditionalMember(), sameAddress: true, index: 0 };
+      expect(store.commit).toBeCalledWith('registration/editAdditionalMember', params);
+    });
+
+    it('should proxy resetHouseholdCreate', () => {
+      storage.mutations.resetHouseholdCreate();
+      expect(store.commit).toBeCalledWith('registration/resetHouseholdCreate');
     });
   });
 

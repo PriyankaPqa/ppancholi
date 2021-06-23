@@ -253,12 +253,12 @@ describe('ReviewRegistration.vue', () => {
       it('should restore the backup into the store', () => {
         wrapper.vm.editPersonalInformation();
         wrapper.vm.cancelPersonalInformation();
-        expect(wrapper.vm.$storage.household.mutations.setPersonalInformation)
+        expect(wrapper.vm.$storage.registration.mutations.setPersonalInformation)
           .toHaveBeenCalledWith(wrapper.vm.personalInformation.backup);
       });
 
       it('should so nothing if inline mode is not on', () => {
-        expect(wrapper.vm.$storage.household.mutations.setPersonalInformation).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$storage.registration.mutations.setPersonalInformation).toHaveBeenCalledTimes(0);
       });
 
       it('should decrease inline edit counter', () => {
@@ -279,7 +279,7 @@ describe('ReviewRegistration.vue', () => {
       it('should restore the backup into the store', () => {
         wrapper.vm.editAdditionalMember(0);
         wrapper.vm.cancelAdditionalMember(0);
-        expect(wrapper.vm.$storage.household.mutations.editAdditionalMember)
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.additionalMembers[0].backup, 0, wrapper.vm.additionalMembers[0].sameAddress);
       });
 
@@ -301,14 +301,14 @@ describe('ReviewRegistration.vue', () => {
       it('should restore the home address back up into the store', () => {
         wrapper.vm.editAddresses();
         wrapper.vm.cancelAddresses();
-        expect(wrapper.vm.$storage.household.mutations.setHomeAddress)
+        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress)
           .toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
       });
 
       it('should restore the temporary address back up into the store', () => {
         wrapper.vm.editAddresses();
         wrapper.vm.cancelAddresses();
-        expect(wrapper.vm.$storage.household.mutations.setCurrentAddress)
+        expect(wrapper.vm.$storage.registration.mutations.setCurrentAddress)
           .toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
       });
 
@@ -374,7 +374,7 @@ describe('ReviewRegistration.vue', () => {
       });
 
       it('should save the change in the store', () => {
-        expect(wrapper.vm.$storage.household.mutations.editAdditionalMember)
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.additionalMembersCopy[0], 0, wrapper.vm.additionalMembers[0].sameAddress);
       });
     });
@@ -394,7 +394,7 @@ describe('ReviewRegistration.vue', () => {
     describe('deleteAdditionalMember', () => {
       it('should call removeAdditionalMember mutations with current index', () => {
         wrapper.vm.deleteAdditionalMember();
-        expect(wrapper.vm.$storage.household.mutations.removeAdditionalMember).toHaveBeenLastCalledWith(wrapper.vm.indexAdditionalMember);
+        expect(wrapper.vm.$storage.registration.mutations.removeAdditionalMember).toHaveBeenLastCalledWith(wrapper.vm.indexAdditionalMember);
       });
 
       it('should set showDeleteDialog to false', () => {
@@ -425,7 +425,7 @@ describe('ReviewRegistration.vue', () => {
           indexAdditionalMember: 0,
         });
         await wrapper.vm.setIdentity(mockIdentitySet());
-        expect(wrapper.vm.$storage.household.mutations.editAdditionalMember)
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
           .toHaveBeenCalledWith(
             wrapper.vm.currentAdditionalMember,
             0,
@@ -449,7 +449,7 @@ describe('ReviewRegistration.vue', () => {
           indexAdditionalMember: 0,
         });
         await wrapper.vm.setIndigenousIdentity(mockIdentitySet());
-        expect(wrapper.vm.$storage.household.mutations.editAdditionalMember)
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
           .toHaveBeenCalledWith(
             wrapper.vm.currentAdditionalMember,
             0,
@@ -472,7 +472,7 @@ describe('ReviewRegistration.vue', () => {
           indexAdditionalMember: 0,
         });
         await wrapper.vm.setCurrentAddress(mockCampGround());
-        expect(wrapper.vm.$storage.household.mutations.editAdditionalMember)
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
           .toHaveBeenCalledWith(
             wrapper.vm.currentAdditionalMember,
             0,

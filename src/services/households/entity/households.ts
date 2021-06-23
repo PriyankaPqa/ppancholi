@@ -1,9 +1,9 @@
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '../../../services/httpClient';
 import moment from 'moment';
-import { IHouseholdData } from '../../entities/household';
+import { IHouseholdEntity } from '../../../entities/household';
 import {
   ECanadaProvinces, IAzureSearchParams, IAzureSearchResult, IOptionItemData,
-} from '../../types';
+} from '../../../types';
 import {
   IAddressData,
   IHouseholdCreate,
@@ -14,22 +14,28 @@ import {
   IMember,
   ICurrentAddress,
   ICurrentAddressCreateRequest, ECurrentAddressTypes, MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IIndigenousIdentityOption,
-} from '../../entities/household-create';
+} from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
+import { DomainBaseService } from '../../base';
 
-export class HouseholdsService implements IHouseholdsService {
-  constructor(private readonly http: IHttpClient) {}
+const API_URL_SUFFIX = 'household';
+const CONTROLLER = 'households';
+
+export class HouseholdsService extends DomainBaseService<IHouseholdEntity> implements IHouseholdsService {
+  constructor(http: IHttpClient) {
+    super(http, API_URL_SUFFIX, CONTROLLER);
+  }
 
   getGenders(): Promise<IOptionItemData[]> {
-    return this.http.get<IOptionItemData[]>('/household/genders');
+    return this.http.get<IOptionItemData[]>(`${this.baseApi}/genders`);
   }
 
   getPreferredLanguages(): Promise<IOptionItemData[]> {
-    return this.http.get<IOptionItemData[]>('/household/preferred-languages');
+    return this.http.get<IOptionItemData[]>(`${this.baseApi}/preferred-languages`);
   }
 
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]> {
-    return this.http.get<IOptionItemData[]>('/household/primary-spoken-languages');
+    return this.http.get<IOptionItemData[]>(`${this.baseApi}/primary-spoken-languages`);
   }
 
   searchIndigenousIdentities(params: IAzureSearchParams): Promise<IAzureSearchResult<IIndigenousIdentityData>> {
@@ -39,9 +45,9 @@ export class HouseholdsService implements IHouseholdsService {
     });
   }
 
-  submitRegistration(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): Promise<IHouseholdData> {
+  submitRegistration(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): Promise<IHouseholdEntity> {
     const payload = this.parseHouseholdPayload(household, eventId, privacyDateTimeConsent);
-    return this.http.post('/household/households', payload, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}`, payload, { globalHandler: false });
   }
 
   parseHouseholdPayload(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): ICreateHouseholdRequest {

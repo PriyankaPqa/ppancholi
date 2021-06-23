@@ -175,4 +175,16 @@ export default {
     return s;
   },
 
+  // eslint-disable-next-line
+  filterCollectionByValue(collection: any, query: string, searchAll = true, searchAmong: Array<string> = null) {
+    return collection.filter((o: Record<string, unknown>) => Object.keys(o).some((k) => {
+      if (!searchAll && searchAmong.indexOf(k) === -1) return false;
+
+      if (typeof o[k] === 'string') {
+        return (o[k] as string).toLowerCase().includes(query.toLowerCase());
+      }
+      return false;
+    }));
+  },
+
 };
