@@ -1,5 +1,4 @@
 import { Store } from 'vuex';
-import { IProvider, IProviderMock } from '../services/provider';
 import { IState as IRegistrationState } from './modules/registration/registration.types';
 import { IHouseholdEntityState } from './modules/household/householdEntity.types';
 
@@ -12,5 +11,6 @@ export interface IRootState {
 export type IState = IRootState;
 
 export interface IStore<S> extends Store<S> {
-  $services: IProvider | IProviderMock;
+  // eslint-disable-next-line
+  $services: any;
 }
