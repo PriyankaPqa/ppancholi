@@ -44,6 +44,7 @@ const store = mockStore({
         'entityModule/getAll': () => mockEntities,
         'entityModule/getByCriteria': () => () => [mockEntities[0]],
         'entityModule/get': () => () => mockEntities[0],
+        'entityModule/getByIds': () => () => [mockEntities[0]]
       },
     },
     metadataModule: {
@@ -51,6 +52,7 @@ const store = mockStore({
         'metadataModule/getAll': () => mockMetadatum,
         'metadataModule/getByCriteria': () => () => [mockMetadatum[0]],
         'metadataModule/get': () => () => mockMetadatum[0],
+        'metadataModule/getByIds': () => () => [mockMetadatum[0]],
       },
     },
   },
@@ -102,6 +104,14 @@ describe('BaseStorage', () => {
         expect(result[0].metadata.propA).toEqual(mockMetadatum[0].propA); // From meta
         expect(result[0].entity.status).toEqual(mockMetadatum[0].status); // From meta
         expect(result[0].entity.id).toEqual(mockEntities[0].id); // From entity
+      });
+    });
+
+    describe('getByIds', () => {
+      it('should return a list of entities and metadata filtered by the ids', () => {
+        const ids = [mockEntities[0].id];
+        const expected = [{ entity: mockEntities[0], metadata: mockMetadatum[0] }];
+        expect(storage.getters.getByIds(ids)).toEqual(expected);
       });
     });
   });

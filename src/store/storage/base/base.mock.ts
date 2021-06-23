@@ -12,6 +12,7 @@ export class BaseMock<T, S> {
     getAll: jest.fn(() => this.combinedEntitiesAndMetaData),
     get: jest.fn(() => this.combinedEntitiesAndMetaData[0]),
     getByCriteria: jest.fn(() => this.combinedEntitiesAndMetaData),
+    getByIds: jest.fn(() => this.combinedEntitiesAndMetaData),
   }
 
   protected baseActions = {

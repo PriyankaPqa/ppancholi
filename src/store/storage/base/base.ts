@@ -65,6 +65,13 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity> implements
 
       return this.combinedCollections(foundEntities, foundMetadata);
     },
+
+    getByIds: (ids: uuid[]) => {
+      const entities = this.store.getters[`${this.entityModuleName}/getByIds`](ids);
+      const metadata = this.store.getters[`${this.metadataModuleName}/getByIds`](ids);
+
+      return this.combinedCollections(entities, metadata);
+    },
   }
 
   protected baseActions = {
