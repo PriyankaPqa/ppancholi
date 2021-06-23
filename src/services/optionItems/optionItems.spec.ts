@@ -53,6 +53,9 @@ describe('>>> EventTypes Service', () => {
     it('returns correct prefix for EOptionLists.CaseFileCloseReasons', () => {
       expect(service.getPrefix(EOptionLists.CaseFileCloseReasons)).toBe('/case-file/close-reasons');
     });
+    it('returns correct prefix for EOptionLists.ReferralOutcomeStatus', () => {
+      expect(service.getPrefix(EOptionLists.ReferralOutcomeStatus)).toBe('/case-file/referral-outcome-statuses');
+    });
     it('returns correct prefix for EOptionLists.FinancialAssistance', () => {
       expect(service.getPrefix(EOptionLists.FinancialAssistance)).toBe('/financial-assistance/financial-assistance-categories');
     });

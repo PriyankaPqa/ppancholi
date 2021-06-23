@@ -107,6 +107,11 @@ export default Vue.extend({
         dataTest: 'caseFileCloseReasons',
       },
       {
+        name: 'system_management.lists.referralOutcomeStatuses',
+        route: routes.systemManagement.referralOutcomeStatuses.name,
+        dataTest: 'referralOutcomeStatuses',
+      },
+      {
         name: 'system_management.lists.financialAssistance',
         route: routes.systemManagement.financialAssistance.name,
         dataTest: 'financialAssistance',

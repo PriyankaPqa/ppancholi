@@ -218,6 +218,10 @@ const routes = {
       path: 'lists/financial-assistance',
       name: 'systemManagement.lists.financialAssistance',
     },
+    referralOutcomeStatuses: {
+      path: 'lists/referral-outcome-statuses',
+      name: 'systemManagement.lists.referralOutcomeStatuses',
+    },
     screeningId: {
       path: 'lists/screening-id',
       name: 'systemManagement.lists.screeningId',

@@ -292,8 +292,11 @@ export default Vue.extend({
     },
 
     highestRank(): number {
-      const highestRankItem = this.items.reduce((prev, current) => ((prev.orderRank > current.orderRank) ? prev : current));
-      return highestRankItem.orderRank;
+      if (this.items.length > 0) {
+        const highestRankItem = this.items.reduce((prev, current) => ((prev.orderRank > current.orderRank) ? prev : current));
+        return highestRankItem.orderRank;
+      }
+      return 0;
     },
   },
 

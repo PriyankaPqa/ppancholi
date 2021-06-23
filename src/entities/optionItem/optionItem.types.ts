@@ -18,6 +18,7 @@ export enum EOptionLists {
   CaseFileCloseReasons = 10,
   FinancialAssistance = 11,
   ScreeningId = 12,
+  ReferralOutcomeStatus = 13,
 }
 
 export interface IOptionSubItem {

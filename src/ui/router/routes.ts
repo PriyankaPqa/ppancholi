@@ -65,6 +65,7 @@ const AccountSettings = () => import(/* webpackChunkName: "account-settings" */ 
 const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
 const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
 const CaseFileCloseReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
+const ReferralOutcomeStatuses = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ReferralOutcomeStatuses.vue');
 const FinancialAssistanceItems = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/FinancialAssistance.vue');
 const ScreeningId = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ScreeningId.vue');
 
@@ -412,7 +413,12 @@ export const routes: Array<RouteConfig> = [
                 component: CaseFileCloseReasons,
                 meta: { level: 'level6' },
               },
-
+              {
+                path: Routes.systemManagement.referralOutcomeStatuses.path,
+                name: Routes.systemManagement.referralOutcomeStatuses.name,
+                component: ReferralOutcomeStatuses,
+                meta: { level: 'level6' },
+              },
               {
                 path: Routes.systemManagement.financialAssistance.path,
                 name: Routes.systemManagement.financialAssistance.name,

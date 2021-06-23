@@ -34,6 +34,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/financial-assistance/financial-assistance-categories';
       case EOptionLists.ScreeningId:
         return '/household/screening-ids';
+      case EOptionLists.ReferralOutcomeStatus:
+        return '/case-file/referral-outcome-statuses';
       default:
         return '';
     }

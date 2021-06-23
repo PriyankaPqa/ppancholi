@@ -104,6 +104,10 @@ describe('OptionList.vue', () => {
       it('returns the highestRank among the list', () => {
         expect(wrapper.vm.highestRank).toEqual(4);
       });
+      it('returns 0 when list is empty', () => {
+        wrapper.vm.$storage.optionList.getters.items = jest.fn(() => []);
+        expect(wrapper.vm.highestRank).toEqual(0);
+      });
     });
   });
 
