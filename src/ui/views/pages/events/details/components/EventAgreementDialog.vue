@@ -15,7 +15,7 @@
       @close="$emit('close')"
       @submit="onSubmit">
       <v-container>
-        <v-row class="justify-center">
+        <v-row v-if="agreement" class="justify-center">
           <v-col cols="12" class="pa-0">
             <language-tabs :language="languageMode" @click="setLanguageMode" />
 
@@ -47,7 +47,7 @@
                   data-test="agreement-name"
                   :label="`${$t('eventSummary.agreement.name')}*`"
                   :rules="rules.name"
-                  @input="checkNameUniqueness($event)" />
+                  @input="resetAsUnique()" />
               </v-col>
             </v-row>
 
@@ -96,10 +96,10 @@
 </template>
 
 <script lang='ts'>
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
+import _cloneDeep from 'lodash/cloneDeep';
 import { TranslateResult } from 'vue-i18n';
 import moment from '@/ui/plugins/moment';
-import _includes from 'lodash/includes';
 import {
   RcDialog,
   VTextFieldWithValidation,
@@ -108,16 +108,16 @@ import {
   VSelectWithValidation,
 } from '@crctech/component-library';
 import helpers from '@/ui/helpers';
-
-import { VForm } from '@/types';
+import { EEventSummarySections, VForm } from '@/types';
 import { Event, IEventAgreementInfos } from '@/entities/event';
-import _cloneDeep from 'lodash/cloneDeep';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
-import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
+import { IOptionItem } from '@/entities/optionItem';
+import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 
-export default Vue.extend({
+export default mixins(handleUniqueNameSubmitError).extend({
+
   name: 'EventAgreementDialog',
 
   components: {
@@ -143,7 +143,7 @@ export default Vue.extend({
       required: true,
     },
     agreementTypes: {
-      type: Array as ()=> Array<IOptionItemData>,
+      type: Array as ()=> Array<IOptionItem>,
       required: true,
     },
   },
@@ -161,11 +161,9 @@ export default Vue.extend({
         agreementTypeName: { translation: {} },
       },
       agreement: null as IEventAgreementInfos,
-      originalAgreement: null as IEventAgreementInfos,
       initialInactiveAgreementType: null,
       agreementType: null,
       getStringDate: helpers.getStringDate,
-      isNameUnique: true,
       loading: false,
     };
   },
@@ -238,23 +236,14 @@ export default Vue.extend({
 
   created() {
     if (this.isEditMode) {
-      // use the English name of the agreement as identifier, as call centre names are supposed to be unique for an event
-      const agreement = this.event.agreements?.find((agr) => agr.name.translation.en === this.id);
-      if (agreement) {
-        this.originalAgreement = agreement;
-        this.agreement = _cloneDeep(agreement);
-        this.agreement.startDate = agreement.startDate ? this.getStringDate(agreement.startDate) : null;
-        this.agreement.endDate = agreement.endDate ? this.getStringDate(agreement.endDate) : null;
-
-        if (agreement.agreementType.optionItemId) {
-          this.initAgreementTypes(agreement);
-        }
-      } else {
-        this.agreement = this.emptyAgreement;
-        this.$toasted.global.error(this.$t('error.unexpected_error'));
-        this.error = true;
-      }
+      this.initEditMode();
     } else {
+      this.initCreateMode();
+    }
+  },
+
+  methods: {
+    initCreateMode() {
       const { emptyAgreement } = this;
       emptyAgreement.name = entityUtils.initMultilingualAttributes();
       emptyAgreement.details = entityUtils.initMultilingualAttributes();
@@ -262,23 +251,25 @@ export default Vue.extend({
       this.agreement = emptyAgreement;
 
       // Set the default agreement type
-      const defaultAgreementType = this.agreementTypes.find((t) => t.isDefault);
+      const defaultAgreementType = this.agreementTypes.find((t:IOptionItem) => t.isDefault);
 
       if (defaultAgreementType) {
         this.agreement.agreementType.optionItemId = defaultAgreementType.id;
         this.agreementType = defaultAgreementType;
       }
-    }
-  },
+    },
 
-  methods: {
-    checkNameUniqueness(name: string) {
-      let otherAgreements = this.event.agreements;
-      if (this.isEditMode) {
-        otherAgreements = this.event.agreements.filter((agr) => agr.name.translation.en !== this.originalAgreement.name.translation.en);
+    initEditMode() {
+      const agreement = this.event.agreements?.find((agr: IEventAgreementInfos) => agr.id === this.id);
+      if (agreement) {
+        this.agreement = _cloneDeep(agreement);
+        this.agreement.startDate = agreement.startDate ? this.getStringDate(agreement.startDate) : null;
+        this.agreement.endDate = agreement.endDate ? this.getStringDate(agreement.endDate) : null;
+
+        if (agreement.agreementType.optionItemId) {
+          this.initAgreementTypes(agreement);
+        }
       }
-      const nameExists = otherAgreements.some((agr) => _includes(agr.name.translation, name));
-      this.isNameUnique = !nameExists;
     },
 
     fillEmptyMultilingualFields() {
@@ -293,29 +284,31 @@ export default Vue.extend({
         this.loading = true;
 
         try {
-          if (this.isEditMode) {
-            await this.$storage.event.actions.editAgreement(
-              {
-                eventId: this.event.id,
-                payload: { updatedAgreement: this.agreement, originalAgreement: this.originalAgreement },
-              },
-            );
-          } else {
-            await this.$storage.event.actions.addAgreement({ eventId: this.event.id, payload: this.agreement });
-          }
+          await this.submitAgreement();
+          this.$emit('close');
+        } catch (e) {
+          this.handleSubmitError(e);
         } finally {
           this.loading = false;
-          this.$emit('close');
         }
       }
     },
 
-    setAgreementType(type: IOptionItemData) {
+    async submitAgreement() {
+      await this.$storage.event.actions.updateEventSection({
+        eventId: this.event.id,
+        payload: this.agreement,
+        section: EEventSummarySections.Agreement,
+        action: this.isEditMode ? 'edit' : 'add',
+      });
+    },
+
+    setAgreementType(type: IOptionItem) {
       this.agreement.agreementType.optionItemId = type.id;
     },
 
     initAgreementTypes(agreement: IEventAgreementInfos) {
-      const activeAgreementType = this.agreementTypes.find((type) => type.id === agreement.agreementType.optionItemId);
+      const activeAgreementType = this.agreementTypes.find((type:IOptionItem) => type.id === agreement.agreementType.optionItemId);
 
       if (activeAgreementType) {
         this.agreementType = activeAgreementType;

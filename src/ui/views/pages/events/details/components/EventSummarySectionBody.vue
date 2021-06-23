@@ -2,7 +2,7 @@
   <v-row class="no-gutters flex-column mt-0 px-2">
     <v-col
       v-for="(item, index) in items"
-      :key="item.name.translation.en"
+      :key="item.id"
       col="12"
       class="justify-end my-0 pa-4 event-section-item">
       <slot name="default" :item="item" :index="index" />

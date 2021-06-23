@@ -550,14 +550,6 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.submitLabel).toBe('common.save');
       });
     });
-
-    describe('resetAsUnique', () => {
-      it('sets isNameUnique to true if it is false', async () => {
-        wrapper.vm.isNameUnique = false;
-        await wrapper.vm.resetAsUnique();
-        expect(wrapper.vm.isNameUnique).toBeTruthy();
-      });
-    });
   });
 
   describe('Lifecycle', () => {
@@ -734,20 +726,6 @@ describe('CreateEditTeam.vue', () => {
       it('sets showEventDeleteConfirmationDialog to false', () => {
         wrapper.vm.handleRemoveEventConfirmation(false);
         expect(wrapper.vm.showEventDeleteConfirmationDialog).toBeFalsy();
-      });
-    });
-
-    describe('handleSubmitError', () => {
-      it('sets isNameUnique to false if this is the error in its argument', async () => {
-        await wrapper.vm.handleSubmitError([{ code: 'errors.an-entity-with-this-name-already-exists' }]);
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
-      });
-
-      it(' opens an error toast in case of a different error', async () => {
-        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
-        await wrapper.vm.handleSubmitError([{ code: 'foo' }]);
-
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('foo');
       });
     });
 

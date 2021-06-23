@@ -4,17 +4,15 @@ import {
   IEditEventRequest,
   IEvent,
   IEventAgreement,
-  IEventAgreementInfos,
   IEventCallCentre,
   IEventData,
   IEventGenericLocation,
   IEventSearchData,
   IOtherProvince,
   IRegion,
-  IUpdateAgreementPayload,
-  IUpdateCallCentrePayload,
-  IUpdateRegistrationLocationPayload,
+
   EEventStatus,
+  IEventAgreementInfos,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
@@ -31,7 +29,7 @@ export class EventsService implements IEventsService {
   async updateEvent(event: IEvent): Promise<IEventData> {
     event.fillEmptyMultilingualAttributes();
     const payload = this.eventToEditEventRequestPayload(event);
-    return this.http.patch(`/event/events/${event.id}/edit`, payload, { globalHandler: false });
+    return this.http.patch(`/event/events/${event.id}`, payload, { globalHandler: false });
   }
 
   async toggleSelfRegistration(id: uuid, selfRegistrationEnabled: boolean): Promise<IEventData> {
@@ -84,43 +82,40 @@ export class EventsService implements IEventsService {
   }
 
   async addCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventData> {
-    return this.http.post(`/event/events/${eventId}/call-centres`, payload);
+    return this.http.post(`/event/events/${eventId}/call-centres`, payload, { globalHandler: false });
   }
 
-  async editCallCentre(eventId:uuid, payload: IUpdateCallCentrePayload): Promise<IEventData> {
-    return this.http.post(`/event/events/${eventId}/call-centres/edit`, payload);
+  async editCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventData> {
+    return this.http.patch(`/event/events/${eventId}/call-centres/${payload.id}`, payload, { globalHandler: false });
   }
 
   async addAgreement(eventId:uuid, payload: IEventAgreementInfos): Promise<IEventData> {
-    return this.http.post(`/event/events/${eventId}/agreement`, this.agreementInfoToAgreementPayload(payload));
+    return this.http.post(`/event/events/${eventId}/agreement`, this.agreementInfoToAgreementPayload(payload), { globalHandler: false });
   }
 
-  async editAgreement(eventId:uuid, payload: IUpdateAgreementPayload): Promise<IEventData> {
-    const mappedPayload = {
-      updatedAgreement: this.agreementInfoToAgreementPayload(payload.updatedAgreement),
-      originalAgreement: this.agreementInfoToAgreementPayload(payload.originalAgreement),
-    };
-    return this.http.post(`/event/events/${eventId}/agreement/edit`, mappedPayload);
+  async editAgreement(eventId:uuid, payload: IEventAgreementInfos): Promise<IEventData> {
+    return this.http.patch(`/event/events/${eventId}/agreement/${payload.id}`,
+      this.agreementInfoToAgreementPayload(payload), { globalHandler: false });
   }
 
-  async removeAgreement(eventId:uuid, payload: IEventAgreementInfos): Promise<IEventData> {
-    return this.http.post(`/event/events/${eventId}/agreement/remove`, this.agreementInfoToAgreementPayload(payload));
+  async removeAgreement(eventId:uuid, agreementId: uuid): Promise<IEventData> {
+    return this.http.delete(`/event/events/${eventId}/agreement/${agreementId}`);
   }
 
   async addRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventData> {
-    return this.http.post(`/event/events/${eventId}/registration-location`, payload);
+    return this.http.post(`/event/events/${eventId}/registration-location`, payload, { globalHandler: false });
   }
 
-  async editRegistrationLocation(eventId:uuid, payload: IUpdateRegistrationLocationPayload): Promise<IEventData> {
-    return this.http.post(`/event/events/${eventId}/registration-location/edit`, payload);
+  async editRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventData> {
+    return this.http.patch(`/event/events/${eventId}/registration-location/${payload.id}`, payload, { globalHandler: false });
   }
 
   async addShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventData> {
-    return this.http.post(`/event/events/${eventId}/shelter-location`, payload);
+    return this.http.post(`/event/events/${eventId}/shelter-location`, payload, { globalHandler: false });
   }
 
-  async editShelterLocation(eventId:uuid, shelterLocationId:uuid, payload: IEventGenericLocation): Promise<IEventData> {
-    return this.http.patch(`/event/events/${eventId}/shelter-location/${shelterLocationId}/edit`, payload);
+  async editShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventData> {
+    return this.http.patch(`/event/events/${eventId}/shelter-location/${payload.id}`, payload, { globalHandler: false });
   }
 
   private eventToCreateEventRequestPayload(event: IEvent): ICreateEventRequest {

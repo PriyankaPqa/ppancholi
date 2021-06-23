@@ -1,17 +1,15 @@
 import {
   IEvent,
-  IEventAgreement,
   IEventCallCentre,
   IEventGenericLocation,
   IOtherProvince,
   IRegion,
-  IUpdateCallCentrePayload,
-  IUpdateRegistrationLocationPayload,
   EEventStatus,
-  IUpdateAgreementPayload,
+  IEventAgreementInfos,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { EEventSummarySections } from '../../../types/enums/EEventSummarySections';
 
 export interface IStorage {
   getters: {
@@ -32,16 +30,12 @@ export interface IStorage {
     searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEvent>>;
     createEvent(payload: IEvent): Promise<IEvent>;
     updateEvent(payload: IEvent): Promise<IEvent>;
-    addCallCentre({ eventId, payload }:{eventId: uuid, payload: IEventCallCentre}): Promise<IEvent>;
-    editCallCentre({ eventId, payload }:{eventId: uuid, payload: IUpdateCallCentrePayload}): Promise<IEvent>;
-    addAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent>;
-    editAgreement({ eventId, payload }:{eventId: uuid, payload: IUpdateAgreementPayload}): Promise<IEvent>;
-    deleteAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent>;
-    addRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
-    editRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateRegistrationLocationPayload}): Promise<IEvent>;
-    addShelterLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent>;
-    editShelterLocation({ eventId, shelterLocationId, payload }:{eventId: uuid, shelterLocationId: uuid, payload: IEventGenericLocation})
-    : Promise<IEvent>;
+    updateEventSection({
+      eventId, payload, section, action,
+    }:
+      {eventId: uuid, payload: IEventCallCentre | IEventAgreementInfos | IEventGenericLocation, section: EEventSummarySections, action: string})
+      : Promise<IEvent>;
+    deleteAgreement({ eventId, agreementId }:{eventId: uuid, agreementId: uuid}): Promise<IEvent>;
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent>;
     setEventStatus(payload: { event: IEvent, status: EEventStatus, reason: string }): Promise<IEvent>;
   }
@@ -65,15 +59,8 @@ export interface IStorageMock {
     fetchRegions: jest.Mock<void>;
     createEvent: jest.Mock<void>;
     updateEvent: jest.Mock<void>;
-    addCallCentre: jest.Mock<void>;
-    editCallCentre: jest.Mock<void>;
-    addAgreement: jest.Mock<void>;
-    editAgreement: jest.Mock<void>;
+    updateEventSection: jest.Mock<void>;
     deleteAgreement: jest.Mock<void>;
-    addRegistrationLocation: jest.Mock<void>;
-    editRegistrationLocation: jest.Mock<void>;
-    addShelterLocation: jest.Mock<void>;
-    editShelterLocation: jest.Mock<void>;
     toggleSelfRegistration: jest.Mock<void>;
     setEventStatus: jest.Mock<void>;
   }

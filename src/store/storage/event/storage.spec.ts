@@ -1,8 +1,7 @@
-import {
-  Event, IEventAgreementInfos, IEventCallCentre, IEventGenericLocation, mockEventsSearchData, EEventStatus,
-} from '@/entities/event';
+import { Event, mockEventsSearchData, EEventStatus } from '@/entities/event';
 import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
+import { EEventSummarySections } from '@/types';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });
@@ -80,80 +79,23 @@ describe('>>> Event Storage', () => {
       expect(store.dispatch).toHaveBeenCalledWith('event/updateEvent', event);
     });
 
-    it('should proxy addCallCentre', () => {
+    it('should proxy updateEventSection', () => {
       const event = new Event(mockEventsSearchData()[0]);
       const callCentre = event.callCentres[0];
-      storage.actions.addCallCentre({ eventId: event.id, payload: callCentre });
-      expect(store.dispatch).toHaveBeenCalledWith('event/addCallCentre', { eventId: event.id, payload: callCentre });
-    });
-
-    it('should proxy editCallCentre', () => {
-      const event = new Event(mockEventsSearchData()[0]);
-      const callCentre1 = event.callCentres[0];
-      const callCentre2 = { ...callCentre1, startDate: null } as IEventCallCentre;
-      const payload = { originalCallCentre: callCentre1, updatedCallCentre: callCentre2 };
-      storage.actions.editCallCentre({ eventId: event.id, payload });
-      expect(store.dispatch).toHaveBeenCalledWith('event/editCallCentre', { eventId: event.id, payload });
-    });
-
-    it('should proxy addAgreement', () => {
-      const event = new Event(mockEventsSearchData()[0]);
-      const agreement = event.agreements[0];
-      storage.actions.addAgreement({ eventId: event.id, payload: agreement });
-      expect(store.dispatch).toHaveBeenCalledWith('event/addAgreement', { eventId: event.id, payload: agreement });
-    });
-
-    it('should proxy editAgreement', () => {
-      const event = new Event(mockEventsSearchData()[0]);
-      const agreement1 = event.agreements[0];
-      const agreement2 = { ...agreement1, startDate: null } as IEventAgreementInfos;
-      const payload = { originalAgreement: agreement1, updatedAgreement: agreement2 };
-      storage.actions.editAgreement({ eventId: event.id, payload });
-      expect(store.dispatch).toHaveBeenCalledWith('event/editAgreement', { eventId: event.id, payload });
+      storage.actions.updateEventSection({
+        eventId: event.id, payload: callCentre, section: EEventSummarySections.CallCentre, action: 'add',
+      });
+      expect(store.dispatch).toHaveBeenCalledWith('event/updateEventSection',
+        {
+          eventId: event.id, payload: callCentre, section: EEventSummarySections.CallCentre, action: 'add',
+        });
     });
 
     it('should proxy deleteAgreement', () => {
       const event = new Event(mockEventsSearchData()[0]);
-      const agreement = event.agreements[0];
-      storage.actions.deleteAgreement({ eventId: event.id, payload: agreement });
-      expect(store.dispatch).toHaveBeenCalledWith('event/deleteAgreement', { eventId: event.id, payload: agreement });
-    });
-
-    it('should proxy addRegistrationLocation', () => {
-      const event = new Event(mockEventsSearchData()[0]);
-      const location = event.registrationLocations[0];
-      storage.actions.addRegistrationLocation({ eventId: event.id, payload: location });
-      expect(store.dispatch).toHaveBeenCalledWith('event/addRegistrationLocation', { eventId: event.id, payload: location });
-    });
-
-    it('should proxy editRegistrationLocation', () => {
-      const event = new Event(mockEventsSearchData()[0]);
-      const originalRegistrationLocation = event.registrationLocations[0];
-      const updatedRegistrationLocation = {
-        ...originalRegistrationLocation,
-        address: {
-          city: 'Laval',
-        },
-      } as IEventGenericLocation;
-      const payload = { originalRegistrationLocation, updatedRegistrationLocation };
-
-      storage.actions.editRegistrationLocation({ eventId: event.id, payload });
-      expect(store.dispatch).toHaveBeenCalledWith('event/editRegistrationLocation', { eventId: event.id, payload });
-    });
-
-    it('should proxy addShelterLocation', () => {
-      const event = new Event(mockEventsSearchData()[0]);
-      const location = event.shelterLocations[0];
-      storage.actions.addShelterLocation({ eventId: event.id, payload: location });
-      expect(store.dispatch).toHaveBeenCalledWith('event/addShelterLocation', { eventId: event.id, payload: location });
-    });
-
-    it('should proxy editShelterLocation', () => {
-      const event = new Event(mockEventsSearchData()[0]);
-      const { id: shelterLocationId, ...shelterLocation } = event.shelterLocations[0];
-
-      storage.actions.editShelterLocation({ eventId: event.id, shelterLocationId, payload: shelterLocation });
-      expect(store.dispatch).toHaveBeenCalledWith('event/editShelterLocation', { eventId: event.id, shelterLocationId, payload: shelterLocation });
+      const agreementId = event.agreements[0].id;
+      storage.actions.deleteAgreement({ eventId: event.id, agreementId });
+      expect(store.dispatch).toHaveBeenCalledWith('event/deleteAgreement', { eventId: event.id, agreementId });
     });
 
     it('should proxy toggleSelfRegistration', () => {

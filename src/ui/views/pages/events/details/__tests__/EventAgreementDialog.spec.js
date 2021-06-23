@@ -1,10 +1,10 @@
-import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { Event, mockEventsSearchData } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import entityUtils from '@/entities/utils';
 import { mockOptionItemData } from '@/entities/optionItem';
+import { EEventSummarySections } from '@/types';
 
 import Component from '../components/EventAgreementDialog.vue';
 
@@ -131,10 +131,10 @@ describe('EventAgreementDialog.vue', () => {
         expect(element.props('rules')).toEqual(wrapper.vm.rules.name);
       });
 
-      it('calls checkNameUniqueness when it is changed', () => {
-        jest.spyOn(wrapper.vm, 'checkNameUniqueness').mockImplementation(() => {});
+      it('calls resetAsUnique when it is changed', () => {
+        jest.spyOn(wrapper.vm, 'resetAsUnique').mockImplementation(() => {});
         element.vm.$emit('input', 'foo');
-        expect(wrapper.vm.checkNameUniqueness).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.resetAsUnique).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -304,107 +304,60 @@ describe('EventAgreementDialog.vue', () => {
   });
 
   describe('Life cycle', () => {
-    describe('edit mode', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-            isEditMode: true,
-            id: mockEvent.agreements[0].name.translation.en,
-            agreementTypes: mockOptionItemData(),
-          },
-        });
+    it('should call initCreateMode if isEditMode is false', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          event: mockEvent,
+          isEditMode: false,
+          id: mockEvent.agreements[0].id,
+          agreementTypes: mockOptionItemData(),
+        },
       });
-
-      it('sets the right agreement data', () => {
-        const agreement = mockEvent.agreements[0];
-        expect(wrapper.vm.agreement).toEqual({
-          name: {
-            translation: {
-              en: 'agreement 1',
-              fr: 'agreement 1 fr',
-            },
-          },
-          startDate: '2021-03-01',
-          endDate: null,
-          agreementType: {
-            optionItemId: '1',
-            specifiedOther: '',
-          },
-          agreementTypeName: {
-            translation: {
-              en: 'agreement type 1',
-              fr: 'agreement type 1 fr',
-            },
-          },
-          details: {
-            translation: {
-              en: 'agreement 1 details',
-              fr: 'agreement 1  details fr',
-            },
-          },
-        });
-
-        expect(wrapper.vm.originalAgreement).toEqual(agreement);
+      wrapper.vm.initCreateMode = jest.fn();
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
       });
+      expect(wrapper.vm.initCreateMode).toHaveBeenCalledTimes(1);
+    });
 
-      it('sets the right agreement type', () => {
-        expect(wrapper.vm.agreementType).toEqual(mockOptionItemData()[0]);
+    it('should call initEditMode if isEditMode is true', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          event: mockEvent,
+          isEditMode: true,
+          id: mockEvent.agreements[0].id,
+          agreementTypes: mockOptionItemData(),
+        },
       });
-
-      it('sets the right agreementType if agreement type is inactive', () => {
-        const altMockEvent = _cloneDeep(mockEvent);
-        altMockEvent.agreements[0].agreementType.optionItemId = 'mockId';
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: altMockEvent,
-            isEditMode: true,
-            id: mockEvent.agreements[0].name.translation.en,
-            agreementTypes: mockOptionItemData(),
-          },
-        });
-
-        expect(wrapper.vm.agreementType).toEqual({
-          id: 'mockId',
-          name: altMockEvent.agreements[0].agreementTypeName,
-        });
+      wrapper.vm.initEditMode = jest.fn();
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
       });
+      expect(wrapper.vm.initEditMode).toHaveBeenCalledTimes(1);
+    });
+  });
 
-      it('sets the initialInactiveAgreementType if initial agreement type is inactive', () => {
-        const altMockEvent = _cloneDeep(mockEvent);
-        altMockEvent.agreements[0].agreementType.optionItemId = 'mockId';
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: altMockEvent,
-            isEditMode: true,
-            id: mockEvent.agreements[0].name.translation.en,
-            agreementTypes: mockOptionItemData(),
-          },
-        });
-
-        expect(wrapper.vm.initialInactiveAgreementType).toEqual({
-          id: 'mockId',
-          name: altMockEvent.agreements[0].agreementTypeName,
-        });
+  describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          event: mockEvent,
+          isEditMode: false,
+          agreementTypes: mockOptionItemData(),
+        },
+        mocks: {
+          $storage: storage,
+        },
       });
     });
 
-    describe('add mode', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-            isEditMode: false,
-            agreementTypes: mockOptionItemData(),
-          },
-        });
-      });
-
-      it('sets the right agreement data', () => {
+    describe('initCreateMode', () => {
+      it('sets the right call centre data', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.initCreateMode();
         expect(wrapper.vm.agreement).toEqual({
           name: {
             translation: {
@@ -426,34 +379,38 @@ describe('EventAgreementDialog.vue', () => {
           },
         });
       });
-
-      it('sets the right default agreement type', () => {
-        expect(wrapper.vm.agreementType).toEqual(mockOptionItemData()[1]); // isDefault: true
-      });
     });
-  });
 
-  describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          event: mockEvent,
-          isEditMode: false,
-          id: '',
-          agreementTypes: [],
-        },
+    describe('initEditMode', () => {
+      beforeEach(() => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: true,
+            id: mockEvent.agreements[0].id,
+            agreementTypes: mockOptionItemData(),
+          },
+        });
       });
-    });
-    describe('checkNameUniqueness', () => {
-      it('sets isNameUnique to true if the name is not used in other agreements', async () => {
-        await wrapper.vm.checkNameUniqueness('foo');
-        expect(wrapper.vm.isNameUnique).toBeTruthy();
+      it('sets the right agreement data', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: true,
+            id: mockEvent.agreements[0].id,
+            agreementTypes: mockOptionItemData(),
+          },
+        });
+        await wrapper.vm.initEditMode();
+        expect(wrapper.vm.agreementType).toEqual(mockOptionItemData()[0]);
       });
 
-      it('sets isNameUnique to false if the name is used in other agreements', async () => {
-        await wrapper.vm.checkNameUniqueness(mockEvent.agreements[0].name.translation.fr);
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
+      it('calls initAgreementTypes', async () => {
+        jest.spyOn(wrapper.vm, 'initAgreementTypes').mockImplementation(() => {});
+        await wrapper.vm.initEditMode();
+        expect(wrapper.vm.initAgreementTypes).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -488,79 +445,41 @@ describe('EventAgreementDialog.vue', () => {
         expect(wrapper.vm.fillEmptyMultilingualFields).toHaveBeenCalledTimes(0);
       });
 
-      describe('edit mode', () => {
-        storage.event.actions.editAgreement = jest.fn(() => {});
-        beforeEach(() => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              event: mockEvent,
-              isEditMode: true,
-              id: mockEvent.agreements[0].name.translation.en,
-              agreementTypes: [],
-            },
-            mocks: {
-              $storage: storage,
-            },
-          });
-        });
+      it('does not call submitAgreement if validate is false', async () => {
+        jest.spyOn(wrapper.vm, 'submitAgreement').mockImplementation(() => {});
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
 
-        it('does not call storage action editAgreement if validate is false', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => false);
-
-          await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.event.actions.editAgreement).toHaveBeenCalledTimes(0);
-        });
-
-        it('calls storage action editAgreement with the right payload', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-          wrapper.vm.agreement = { ...wrapper.vm.event.agreements[0], startDate: '2020-01-01', endDate: null };
-
-          await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.event.actions.editAgreement).toHaveBeenCalledWith({
-            eventId: wrapper.vm.event.id,
-            payload: {
-              originalAgreement: wrapper.vm.event.agreements[0],
-              updatedAgreement: { ...wrapper.vm.event.agreements[0], startDate: '2020-01-01' },
-            },
-          });
-        });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.submitAgreement).toHaveBeenCalledTimes(0);
       });
 
-      describe('add mode', () => {
-        storage.event.actions.addAgreement = jest.fn(() => {});
-        beforeEach(() => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              event: mockEvent,
-              isEditMode: false,
-              agreementTypes: [],
-            },
-            mocks: {
-              $storage: storage,
-            },
-          });
-        });
+      it('calls submitAgreement if validate is true', async () => {
+        jest.spyOn(wrapper.vm, 'submitAgreement').mockImplementation(() => {});
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
-        it('does not call storage action addAgreement if validate is false', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.submitAgreement).toHaveBeenCalledTimes(1);
+      });
 
-          await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.event.actions.addAgreement).toHaveBeenCalledTimes(0);
-        });
+      it('calls handleSubmitError if there is an error', async () => {
+        jest.spyOn(wrapper.vm, 'submitAgreement').mockImplementation(() => { throw new Error(); });
+        jest.spyOn(wrapper.vm, 'handleSubmitError').mockImplementation(() => { });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
-        it('calls storage action addAgreement with the right payload', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.handleSubmitError).toHaveBeenCalledTimes(1);
+      });
+    });
 
-          wrapper.vm.agreement = { ...wrapper.vm.event.agreements[0], startDate: '2020-01-01', endDate: null };
+    describe('submitAgreement', () => {
+      it('calls the storage action updateEventSection with the right payload', async () => {
+        await wrapper.vm.submitAgreement();
 
-          await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.event.actions.addAgreement).toHaveBeenCalledWith({
-            eventId: wrapper.vm.event.id,
-            payload: { ...wrapper.vm.event.agreements[0], startDate: '2020-01-01' },
-          });
+        expect(wrapper.vm.$storage.event.actions.updateEventSection).toHaveBeenCalledWith({
+          eventId: wrapper.vm.event.id,
+          payload: wrapper.vm.agreement,
+          section: EEventSummarySections.Agreement,
+          action: 'add',
         });
       });
     });

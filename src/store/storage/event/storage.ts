@@ -1,18 +1,15 @@
 import {
   IEvent,
-  IEventAgreement,
   IEventCallCentre,
   IEventGenericLocation,
   IOtherProvince,
   IRegion,
-  IUpdateCallCentrePayload,
-  IUpdateRegistrationLocationPayload,
   EEventStatus,
-  IUpdateAgreementPayload,
+  IEventAgreementInfos,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IAzureSearchParams, IAzureSearchResult, EEventSummarySections } from '@/types';
 import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
@@ -75,41 +72,17 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('event/updateEvent', payload);
     },
 
-    addCallCentre({ eventId, payload }:{eventId: uuid, payload: IEventCallCentre}): Promise<IEvent> {
-      return store.dispatch('event/addCallCentre', { eventId, payload });
+    updateEventSection({
+      eventId, payload, section, action,
+    } : {eventId: uuid, payload: IEventCallCentre | IEventAgreementInfos | IEventGenericLocation, section: EEventSummarySections, action: string})
+      : Promise<IEvent> {
+      return store.dispatch('event/updateEventSection', {
+        eventId, payload, section, action,
+      });
     },
 
-    editCallCentre({ eventId, payload }:{eventId: uuid, payload: IUpdateCallCentrePayload}): Promise<IEvent> {
-      return store.dispatch('event/editCallCentre', { eventId, payload });
-    },
-
-    addAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent> {
-      return store.dispatch('event/addAgreement', { eventId, payload });
-    },
-
-    editAgreement({ eventId, payload }:{eventId: uuid, payload: IUpdateAgreementPayload}): Promise<IEvent> {
-      return store.dispatch('event/editAgreement', { eventId, payload });
-    },
-
-    deleteAgreement({ eventId, payload }:{eventId: uuid, payload: IEventAgreement}): Promise<IEvent> {
-      return store.dispatch('event/deleteAgreement', { eventId, payload });
-    },
-
-    addRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent> {
-      return store.dispatch('event/addRegistrationLocation', { eventId, payload });
-    },
-
-    editRegistrationLocation({ eventId, payload }:{eventId: uuid, payload: IUpdateRegistrationLocationPayload}): Promise<IEvent> {
-      return store.dispatch('event/editRegistrationLocation', { eventId, payload });
-    },
-
-    addShelterLocation({ eventId, payload }:{eventId: uuid, payload: IEventGenericLocation}): Promise<IEvent> {
-      return store.dispatch('event/addShelterLocation', { eventId, payload });
-    },
-
-    editShelterLocation({ eventId, shelterLocationId, payload }:{eventId: uuid, shelterLocationId: uuid, payload: IEventGenericLocation}):
-    Promise<IEvent> {
-      return store.dispatch('event/editShelterLocation', { eventId, shelterLocationId, payload });
+    deleteAgreement({ eventId, agreementId }:{eventId: uuid, agreementId: uuid}): Promise<IEvent> {
+      return store.dispatch('event/deleteAgreement', { eventId, agreementId });
     },
 
     toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent> {

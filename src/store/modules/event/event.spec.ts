@@ -5,10 +5,11 @@ import {
   OptionItem, mockOptionItemData, EOptionListItemStatus, EOptionLists,
 } from '@/entities/optionItem';
 import {
-  Event, IEvent, IEventAgreement, IEventCallCentre, IEventGenericLocation, mockEventsSearchData, mockSearchEvents, EEventStatus,
+  Event, IEvent, mockEventsSearchData, mockSearchEvents, EEventStatus,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockSearchParams } from '@/test/helpers';
+import { EEventSummarySections } from '@/types';
 
 jest.mock('@/store/modules/event/eventUtils');
 
@@ -361,51 +362,6 @@ describe('>>> Event Module', () => {
       });
     });
 
-    describe('addCallCentre', () => {
-      it('calls the addCallCentre service and returns the new Event entity', async () => {
-        const store = mockStore();
-
-        const event = mockEvents()[0];
-        const callCentre = event.callCentres[0];
-
-        expect(store.$services.events.addCallCentre).toHaveBeenCalledTimes(0);
-
-        const res = await store.dispatch('event/addCallCentre', { eventId: event.id, payload: callCentre });
-
-        expect(store.$services.events.addCallCentre).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.addCallCentre).toHaveBeenCalledWith(event.id, callCentre);
-
-        expect(res).toEqual(event);
-
-        expect(store.state.event.events[0]).toEqual(event);
-      });
-    });
-
-    describe('editCallCentre', () => {
-      it('calls the editCallCentre service and returns the new Event entity', async () => {
-        const store = mockStore();
-
-        const event = mockEvents()[0];
-        const callCentre1 = event.callCentres[0];
-        const callCentre2 = { ...callCentre1, startDate: null } as IEventCallCentre;
-        const payload = { originalCallCentre: callCentre1, updatedCallCentre: callCentre2 };
-
-        expect(store.$services.events.editCallCentre).toHaveBeenCalledTimes(0);
-
-        const res = await store.dispatch('event/editCallCentre', {
-          eventId: event.id,
-          payload,
-        });
-
-        expect(store.$services.events.editCallCentre).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.editCallCentre).toHaveBeenCalledWith(event.id, payload);
-
-        expect(res).toEqual(event);
-
-        expect(store.state.event.events[0]).toEqual(event);
-      });
-    });
-
     describe('toggleSelfRegistration', () => {
       it('calls the setEventSelfRegistration service', async () => {
         const events = mockSearchEvents().value.map((e) => new Event(e));
@@ -451,8 +407,48 @@ describe('>>> Event Module', () => {
       });
     });
 
-    describe('addAgreement', () => {
-      it('calls the addAgreement service and returns the new Event entity', async () => {
+    describe('updateEventSection', () => {
+      it('calls the addCallCentre service and returns the new Event entity, if section is call centre and action is add', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const callCentre = event.callCentres[0];
+
+        expect(store.$services.events.addCallCentre).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/updateEventSection', {
+          eventId: event.id, payload: callCentre, section: EEventSummarySections.CallCentre, action: 'add',
+        });
+
+        expect(store.$services.events.addCallCentre).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.addCallCentre).toHaveBeenCalledWith(event.id, callCentre);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+
+      it('calls the editCallCentre service and returns the new Event entity, if section is call centre and action is edit', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const callCentre = event.callCentres[0];
+
+        expect(store.$services.events.editCallCentre).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/updateEventSection', {
+          eventId: event.id, payload: callCentre, section: EEventSummarySections.CallCentre, action: 'edit',
+        });
+
+        expect(store.$services.events.editCallCentre).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.editCallCentre).toHaveBeenCalledWith(event.id, callCentre);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+
+      it(' calls the addAgreement service and returns the new Event entity, if section is agreement and action is add', async () => {
         const store = mockStore();
 
         const event = mockEvents()[0];
@@ -460,7 +456,9 @@ describe('>>> Event Module', () => {
 
         expect(store.$services.events.addAgreement).toHaveBeenCalledTimes(0);
 
-        const res = await store.dispatch('event/addAgreement', { eventId: event.id, payload: agreement });
+        const res = await store.dispatch('event/updateEventSection', {
+          eventId: event.id, payload: agreement, section: EEventSummarySections.Agreement, action: 'add',
+        });
 
         expect(store.$services.events.addAgreement).toHaveBeenCalledTimes(1);
         expect(store.$services.events.addAgreement).toHaveBeenCalledWith(event.id, agreement);
@@ -469,23 +467,112 @@ describe('>>> Event Module', () => {
 
         expect(store.state.event.events[0]).toEqual(event);
       });
-    });
 
-    describe('editAgreement', () => {
-      it('calls the editAgreement service and returns the new Event entity', async () => {
+      it('calls the editAgreement service and returns the new Event entity, if  section is agreement and action is edit,', async () => {
         const store = mockStore();
 
         const event = mockEvents()[0];
-        const agreement1 = event.agreements[0];
-        const agreement2 = { ...agreement1, startDate: null } as IEventAgreement;
-        const payload = { originalAgreement: agreement1, updatedAgreement: agreement2 };
+        const agreement = event.agreements[0];
 
         expect(store.$services.events.editAgreement).toHaveBeenCalledTimes(0);
 
-        const res = await store.dispatch('event/editAgreement', { eventId: event.id, payload });
+        const res = await store.dispatch('event/updateEventSection', {
+          eventId: event.id, payload: agreement, section: EEventSummarySections.Agreement, action: 'edit',
+        });
 
         expect(store.$services.events.editAgreement).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.editAgreement).toHaveBeenCalledWith(event.id, payload);
+        expect(store.$services.events.editAgreement).toHaveBeenCalledWith(event.id, agreement);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+
+      it('calls the addRegistrationLocation service and returns the new Event entity, if section is registration location and action is add',
+        async () => {
+          const store = mockStore();
+
+          const event = mockEvents()[0];
+          const location = event.registrationLocations[0];
+
+          expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledTimes(0);
+
+          const res = await store.dispatch('event/updateEventSection', {
+            eventId: event.id, payload: location, section: EEventSummarySections.RegistrationLocation, action: 'add',
+          });
+
+          expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledTimes(1);
+          expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledWith(event.id, location);
+
+          expect(res).toEqual(event);
+
+          expect(store.state.event.events[0]).toEqual(event);
+        });
+
+      it('calls the editRegistrationLocation service and returns the new Event entity, if section is registration location and action is edit',
+        async () => {
+          const store = mockStore();
+
+          const event = mockEvents()[0];
+          const registrationLocation = event.registrationLocations[0];
+
+          expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledTimes(0);
+
+          const res = await store.dispatch('event/updateEventSection', {
+            eventId: event.id,
+            payload: registrationLocation,
+            section: EEventSummarySections.RegistrationLocation,
+            action: 'edit',
+          });
+
+          expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledTimes(1);
+          expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledWith(event.id, registrationLocation);
+
+          expect(res).toEqual(event);
+
+          expect(store.state.event.events[0]).toEqual(event);
+        });
+
+      it('calls the addShelterLocation service and returns the new Event entity,if section is shelter location and action is add', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const location = event.shelterLocations[0];
+
+        expect(store.$services.events.addShelterLocation).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/updateEventSection', {
+          eventId: event.id,
+          payload: location,
+          section: EEventSummarySections.ShelterLocation,
+          action: 'add',
+        });
+
+        expect(store.$services.events.addShelterLocation).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.addShelterLocation).toHaveBeenCalledWith(event.id, location);
+
+        expect(res).toEqual(event);
+
+        expect(store.state.event.events[0]).toEqual(event);
+      });
+
+      it('calls the editShelterLocation service and returns the new Event entity,if section is shelter location and action is edit', async () => {
+        const store = mockStore();
+
+        const event = mockEvents()[0];
+        const location = event.shelterLocations[0];
+
+        expect(store.$services.events.editShelterLocation).toHaveBeenCalledTimes(0);
+
+        const res = await store.dispatch('event/updateEventSection', {
+          eventId: event.id,
+          payload: location,
+          section: EEventSummarySections.ShelterLocation,
+          action: 'edit',
+        });
+
+        expect(store.$services.events.editShelterLocation).toHaveBeenCalledTimes(1);
+        expect(store.$services.events.editShelterLocation).toHaveBeenCalledWith(event.id, location);
 
         expect(res).toEqual(event);
 
@@ -498,109 +585,14 @@ describe('>>> Event Module', () => {
         const store = mockStore();
 
         const event = mockEvents()[0];
-        const agreement = event.agreements[0];
+        const agreementId = event.agreements[0].id;
 
         expect(store.$services.events.removeAgreement).toHaveBeenCalledTimes(0);
 
-        const res = await store.dispatch('event/deleteAgreement', { eventId: event.id, payload: agreement });
+        const res = await store.dispatch('event/deleteAgreement', { eventId: event.id, agreementId });
 
         expect(store.$services.events.removeAgreement).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.removeAgreement).toHaveBeenCalledWith(event.id, agreement);
-
-        expect(res).toEqual(event);
-
-        expect(store.state.event.events[0]).toEqual(event);
-      });
-    });
-
-    describe('addRegistrationLocation', () => {
-      it('calls the addRegistrationLocation service and returns the new Event entity', async () => {
-        const store = mockStore();
-
-        const event = mockEvents()[0];
-        const location = event.registrationLocations[0];
-
-        expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledTimes(0);
-
-        const res = await store.dispatch('event/addRegistrationLocation', { eventId: event.id, payload: location });
-
-        expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.addRegistrationLocation).toHaveBeenCalledWith(event.id, location);
-
-        expect(res).toEqual(event);
-
-        expect(store.state.event.events[0]).toEqual(event);
-      });
-    });
-
-    describe('editRegistrationLocation', () => {
-      it('calls the editRegistrationLocation service and returns the new Event entity', async () => {
-        const store = mockStore();
-
-        const event = mockEvents()[0];
-        const originalRegistrationLocation = event.registrationLocations[0];
-        const updatedRegistrationLocation = {
-          ...originalRegistrationLocation,
-          address: {
-            city: 'Laval',
-          },
-        } as IEventGenericLocation;
-        const payload = { originalRegistrationLocation, updatedRegistrationLocation };
-
-        expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledTimes(0);
-
-        const res = await store.dispatch('event/editRegistrationLocation', {
-          eventId: event.id,
-          payload,
-        });
-
-        expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.editRegistrationLocation).toHaveBeenCalledWith(event.id, payload);
-
-        expect(res).toEqual(event);
-
-        expect(store.state.event.events[0]).toEqual(event);
-      });
-    });
-
-    describe('addShelterLocation', () => {
-      it('calls the addShelterLocation service and returns the new Event entity', async () => {
-        const store = mockStore();
-
-        const event = mockEvents()[0];
-        const location = event.shelterLocations[0];
-
-        expect(store.$services.events.addShelterLocation).toHaveBeenCalledTimes(0);
-
-        const res = await store.dispatch('event/addShelterLocation', { eventId: event.id, payload: location });
-
-        expect(store.$services.events.addShelterLocation).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.addShelterLocation).toHaveBeenCalledWith(event.id, location);
-
-        expect(res).toEqual(event);
-
-        expect(store.state.event.events[0]).toEqual(event);
-      });
-    });
-
-    describe('editShelterLocation', () => {
-      it('calls the editShelterLocation service and returns the new Event entity', async () => {
-        const store = mockStore();
-
-        const event = mockEvents()[0];
-        const shelterLocation = event.shelterLocations[0];
-        const shelterLocationId = shelterLocation.id;
-
-        expect(store.$services.events.editShelterLocation).toHaveBeenCalledTimes(0);
-
-        const res = await store.dispatch('event/editShelterLocation', {
-          eventId: event.id,
-          shelterLocationId,
-          payload: shelterLocation,
-        });
-
-        expect(store.$services.events.editShelterLocation).toHaveBeenCalledTimes(1);
-        expect(store.$services.events.editShelterLocation).toHaveBeenCalledWith(event.id, shelterLocationId, shelterLocation);
+        expect(store.$services.events.removeAgreement).toHaveBeenCalledWith(event.id, agreementId);
 
         expect(res).toEqual(event);
 

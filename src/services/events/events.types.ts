@@ -1,16 +1,13 @@
 import {
   IEvent,
-  IEventAgreement,
   IEventCallCentre,
   IEventData,
   IEventGenericLocation,
   IEventSearchData,
   IOtherProvince,
   IRegion,
-  IUpdateAgreementPayload,
-  IUpdateCallCentrePayload,
-  IUpdateRegistrationLocationPayload,
   EEventStatus,
+  IEventAgreementInfos,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
@@ -33,21 +30,21 @@ export interface IEventsService {
 
   addCallCentre(eventId: uuid, payload: IEventCallCentre): Promise<IEventData>;
 
-  editCallCentre(eventId:uuid, payload: IUpdateCallCentrePayload): Promise<IEventData>;
+  editCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventData>;
 
-  addAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventData>;
+  addAgreement(eventId:uuid, payload: IEventAgreementInfos): Promise<IEventData>;
 
-  editAgreement(eventId:uuid, payload: IUpdateAgreementPayload): Promise<IEventData>;
+  editAgreement(eventId:uuid, payload: IEventAgreementInfos): Promise<IEventData>;
 
-  removeAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventData>;
+  removeAgreement(eventId:uuid, agreementId: uuid): Promise<IEventData>;
 
   addRegistrationLocation(eventId: uuid, payload: IEventGenericLocation): Promise<IEventData>;
 
-  editRegistrationLocation(eventId: uuid, payload: IUpdateRegistrationLocationPayload): Promise<IEventData>;
+  editRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventData>;
 
   addShelterLocation(eventId: uuid, payload: IEventGenericLocation): Promise<IEventData>;
 
-  editShelterLocation(eventId:uuid, shelterLocationId:uuid, payload: IEventGenericLocation): Promise<IEventData>;
+  editShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventData>;
 }
 
 export interface IEventsServiceMock {

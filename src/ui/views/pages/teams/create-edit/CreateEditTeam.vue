@@ -142,11 +142,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
-import { IError } from '@/services/httpClient';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
   ETeamStatus, ETeamType, ITeamEvent, Team, ITeam, ITeamMemberData,
@@ -164,8 +163,10 @@ import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm } from '@/types';
 import { IUserAccountCombined } from '@/entities/user-account';
+import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 
-export default Vue.extend({
+export default mixins(handleUniqueNameSubmitError).extend({
+
   name: 'CreateEditTeam',
 
   components: {
@@ -194,7 +195,6 @@ export default Vue.extend({
 
   data() {
     return {
-      isNameUnique: true,
       primaryContactQuery: '',
       userAccounts: [] as IUserAccountCombined[],
       primaryContactUsers: [] as ITeamMemberData[],
@@ -215,7 +215,7 @@ export default Vue.extend({
     deleteEventConfirmationMessage(): TranslateResult {
       if (this.eventsAfterRemoval) {
         const removedEvent = _difference(this.team.events, this.eventsAfterRemoval);
-        const name = this.$m(removedEvent[0]?.name);
+        const name = this.$m((removedEvent[0] as ITeamEvent)?.name);
         return this.$t('team.event.confirmDeleteDialog.message', { name });
       }
       return '';
@@ -298,7 +298,7 @@ export default Vue.extend({
 
         let existingInactiveEvents = [] as ITeamEvent[];
         if (this.isEditMode) {
-          existingInactiveEvents = this.team.events.filter((ev) => !activeEvents.find((e) => e.id === ev.id));
+          existingInactiveEvents = this.team.events.filter((ev: ITeamEvent) => !activeEvents.find((e) => e.id === ev.id));
         }
         this.availableEvents = [...existingInactiveEvents, ...activeEvents];
       }
@@ -313,16 +313,6 @@ export default Vue.extend({
       const newEvents = confirm ? this.eventsAfterRemoval : [...this.team.events];
       this.team.setEvents(newEvents);
       this.showEventDeleteConfirmationDialog = false;
-    },
-
-    handleSubmitError(errors: IError[]) {
-      errors.forEach((error) => {
-        if (error.code === 'errors.an-entity-with-this-name-already-exists') {
-          this.isNameUnique = false;
-        } else {
-          this.$toasted.global.error(this.$t(error.code));
-        }
-      });
     },
 
     isSubmitDisabled(isFailed: boolean, isChanged:boolean) {
@@ -356,12 +346,6 @@ export default Vue.extend({
 
     onStatusChange(status: ETeamStatus) {
       this.team.status = status;
-    },
-
-    resetAsUnique() {
-      if (!this.isNameUnique) {
-        this.isNameUnique = true;
-      }
     },
 
     async searchPrimaryContacts() {

@@ -15,7 +15,7 @@
             v-if="$hasLevel('level5')"
             icon
             :data-test="getDataTest('edit', index)"
-            @click="$emit('edit', location.name.translation.en)">
+            @click="$emit('edit', location.id)">
             <v-icon size="24" color="grey darken-2">
               mdi-pencil
             </v-icon>

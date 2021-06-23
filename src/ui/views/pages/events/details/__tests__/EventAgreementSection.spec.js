@@ -108,7 +108,7 @@ describe('EventAgreementSection.vue', () => {
         const element = wrapper.findDataTest('edit-event-agreement-0');
 
         await element.vm.$emit('click');
-        expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.agreement.name.translation.en);
+        expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.agreement.id);
       });
     });
 
@@ -261,7 +261,7 @@ describe('EventAgreementSection.vue', () => {
         await wrapper.vm.deleteAgreement();
         expect(wrapper.vm.$storage.event.actions.deleteAgreement).toHaveBeenCalledWith({
           eventId: wrapper.vm.eventId,
-          payload: wrapper.vm.agreement,
+          agreementId: wrapper.vm.agreement.id,
         });
       });
 

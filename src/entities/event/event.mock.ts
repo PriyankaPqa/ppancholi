@@ -279,6 +279,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
     tenantId: '7c076603-580a-4400-bef2-5ddececb0931',
     callCentres: [
       {
+        id: 'call-centre-id-1',
         name: {
           translation: {
             en: 'z call center 1',
@@ -295,6 +296,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
           },
         },
       }, {
+        id: 'call-centre-id-2',
         name: {
           translation: {
             en: 'call center 2',
@@ -312,6 +314,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
         },
       }],
     agreements: [{
+      id: 'agreement-id-1',
       name: {
         translation: {
           en: 'agreement 1',
@@ -339,6 +342,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
     }],
     registrationLocations: [
       {
+        id: 'registration-location-id-1',
         status: 2,
         name: {
           translation: {
@@ -356,6 +360,7 @@ export const mockEventsSearchData = () : IEventSearchData[] => [
           postalCode: 'h2k2k2',
         },
       }, {
+        id: 'registration-location-id-2',
         name: {
           translation: {
             en: 'registration test',

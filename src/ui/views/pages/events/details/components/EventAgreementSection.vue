@@ -16,7 +16,7 @@
               icon
               class="mr-2"
               :data-test="`edit-event-agreement-${index}`"
-              @click="$emit('edit', agreement.name.translation.en)">
+              @click="$emit('edit', agreement.id)">
               <v-icon size="24" color="grey darken-2">
                 mdi-pencil
               </v-icon>
@@ -164,7 +164,7 @@ export default Vue.extend({
     },
 
     deleteAgreement() {
-      this.$storage.event.actions.deleteAgreement({ eventId: this.eventId, payload: this.agreement });
+      this.$storage.event.actions.deleteAgreement({ eventId: this.eventId, agreementId: this.agreement.id });
       this.showDeleteConfirmationDialog = false;
     },
   },

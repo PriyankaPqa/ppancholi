@@ -66,6 +66,7 @@ export interface IOtherProvince {
 }
 
 export interface IEventCallCentre {
+  id?: uuid;
   name: IMultilingual;
   details: IMultilingual;
   startDate: Date | string;
@@ -74,21 +75,14 @@ export interface IEventCallCentre {
 }
 
 export interface IEventGenericLocation {
+  id?: uuid;
   name: IMultilingual;
   status: EEventLocationStatus;
   address: IAddress;
 }
 
-export interface IEventShelterLocation extends IEventGenericLocation {
-  id: uuid;
-}
-
-export interface IUpdateCallCentrePayload {
-  updatedCallCentre: IEventCallCentre,
-  originalCallCentre: IEventCallCentre,
-}
-
 export interface IEventAgreement {
+  id?: uuid;
   name: IMultilingual;
   details: IMultilingual;
   startDate: Date | string;
@@ -96,23 +90,8 @@ export interface IEventAgreement {
   agreementType: IListOption;
 }
 
-export interface IEventAgreementInfos {
-  name: IMultilingual;
-  details: IMultilingual;
-  startDate: Date | string;
-  endDate: Date | string;
-  agreementType: IListOption;
+export interface IEventAgreementInfos extends IEventAgreement {
   agreementTypeName: IMultilingual;
-}
-
-export interface IUpdateAgreementPayload {
-  updatedAgreement: IEventAgreementInfos,
-  originalAgreement: IEventAgreementInfos,
-}
-
-export interface IUpdateRegistrationLocationPayload {
-  updatedRegistrationLocation: IEventGenericLocation,
-  originalRegistrationLocation: IEventGenericLocation,
 }
 
 export interface IRelatedEventsInfos {
@@ -140,7 +119,7 @@ export interface IEventData {
   agreements: Array<IEventAgreement>;
   callCentres:Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
-  shelterLocations: Array<IEventShelterLocation>;
+  shelterLocations: Array<IEventGenericLocation>;
   selfRegistrationEnabled: boolean;
 }
 
@@ -152,7 +131,7 @@ export interface IEventSearchData {
   agreements: Array<IEventAgreementInfos>;
   callCentres: Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
-  shelterLocations: Array<IEventShelterLocation>;
+  shelterLocations: Array<IEventGenericLocation>;
   createdDate: Date | string;
   eventDescription: IMultilingual;
   eventId: uuid;
@@ -205,7 +184,7 @@ export interface IEvent {
   agreements: Array<IEventAgreementInfos>;
   callCentres: Array<IEventCallCentre>;
   registrationLocations: Array<IEventGenericLocation>;
-  shelterLocations: Array<IEventShelterLocation>;
+  shelterLocations: Array<IEventGenericLocation>;
   created: Date | string;
   description: IMultilingual;
   eventTypeId: uuid;

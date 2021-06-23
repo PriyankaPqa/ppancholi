@@ -203,8 +203,9 @@ export default Vue.extend({
         // wait for a few milliseconds before making the call after the case file was modified, to give the backend time to process the modification
         await new Promise((resolve) => setTimeout(resolve, delay));
         const activity: ICaseFileActivity[] = await this.$storage.caseFile.actions.fetchCaseFileActivities(this.id);
-
-        this.caseFileActivities = activity;
+        if (activity) {
+          this.caseFileActivities = activity;
+        }
       } catch {
         this.error = true;
       } finally {

@@ -20,7 +20,7 @@
               v-if="$hasLevel('level5')"
               icon
               :data-test="`edit-event-call-centre-${index}`"
-              @click="$emit('edit', callCentre.name.translation.en)">
+              @click="$emit('edit', callCentre.id)">
               <v-icon size="24" color="grey darken-2">
                 mdi-pencil
               </v-icon>

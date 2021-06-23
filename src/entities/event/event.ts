@@ -15,7 +15,6 @@ import {
   IEventSearchData,
   IRelatedEventsInfos,
   IEventAgreementInfos,
-  IEventShelterLocation,
 } from './event.types';
 
 export class Event implements IEvent {
@@ -61,7 +60,7 @@ export class Event implements IEvent {
 
   registrationLocations: Array<IEventGenericLocation>;
 
-  shelterLocations: Array<IEventShelterLocation>;
+  shelterLocations: Array<IEventGenericLocation>;
 
   tenantId: uuid;
 

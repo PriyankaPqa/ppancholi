@@ -15,7 +15,7 @@
       @close="$emit('close')"
       @submit="onSubmit">
       <v-container>
-        <v-row justify="center">
+        <v-row v-if="location" justify="center">
           <v-col cols="12" class="pa-0">
             <language-tabs :language="languageMode" @click="setLanguageMode" />
 
@@ -26,7 +26,7 @@
                   data-test="location-name"
                   :label="locationNameLabel"
                   :rules="rules.name"
-                  @input="checkNameUniqueness($event)" />
+                  @input="resetAsUnique()" />
               </v-col>
 
               <v-col cols="4" md="4" sm="12">
@@ -122,28 +122,24 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
+import _cloneDeep from 'lodash/cloneDeep';
 import { TranslateResult } from 'vue-i18n';
 import {
   RcDialog, VTextFieldWithValidation, VSelectWithValidation, RcGoogleAutocomplete, RcCountrySelect,
 } from '@crctech/component-library';
-
-import { ECanadaProvinces, VForm } from '@/types';
-import {
-  EEventLocationStatus, Event, IEventGenericLocation, IEventShelterLocation,
-} from '@/entities/event';
-import _cloneDeep from 'lodash/cloneDeep';
+import { ECanadaProvinces, EEventSummarySections, VForm } from '@/types';
+import { EEventLocationStatus, Event, IEventGenericLocation } from '@/entities/event';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
-import _includes from 'lodash/includes';
 import helpers from '@/ui/helpers';
-import { IShelterLocationData } from '@crctech/registration-lib/src/entities/household-create';
+import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 
-export default Vue.extend({
+export default mixins(handleUniqueNameSubmitError).extend({
+
   name: 'EventGenericLocationDialog',
-
   components: {
     RcDialog,
     LanguageTabs,
@@ -181,7 +177,6 @@ export default Vue.extend({
       originalLocation: null as IEventGenericLocation,
       isActive: false,
       loading: false,
-      isNameUnique: true,
     };
   },
 
@@ -251,7 +246,7 @@ export default Vue.extend({
         : process.env.VUE_APP_GOOGLE_API_KEY;
     },
 
-    allLocations(): IEventGenericLocation[] | IEventShelterLocation[] {
+    allLocations(): IEventGenericLocation[] {
       return this.isRegistrationLocation ? this.event.registrationLocations : this.event.shelterLocations;
     },
   },
@@ -265,16 +260,6 @@ export default Vue.extend({
   },
 
   methods: {
-
-    checkNameUniqueness(name: string) {
-      let otherLocations = this.allLocations;
-      if (this.isEditMode) {
-        otherLocations = otherLocations.filter((location) => location.name.translation.en !== this.originalLocation.name.translation.en);
-      }
-      const nameExists = otherLocations.some((location) => _includes(location.name.translation, name));
-      this.isNameUnique = !nameExists;
-    },
-
     initCreateMode() {
       this.location = {
         name: entityUtils.initMultilingualAttributes(),
@@ -292,28 +277,11 @@ export default Vue.extend({
     },
 
     initEditMode() {
-      if (this.isRegistrationLocation) {
-        this.initRegistrationLocationEdit();
-      } else {
-        this.initShelterLocationEdit();
+      const location = this.allLocations.find((location: IEventGenericLocation) => location.id === this.id);
+      if (location) {
+        this.location = _cloneDeep(location);
+        this.isActive = this.location.status === EEventLocationStatus.Active;
       }
-      this.isActive = this.location.status === EEventLocationStatus.Active;
-    },
-
-    initRegistrationLocationEdit() {
-      this.originalLocation = this.allLocations.find((location) => location.name.translation.en === this.id);
-      this.location = _cloneDeep(this.originalLocation);
-    },
-
-    initShelterLocationEdit() {
-      const thisLocation = (this.allLocations as unknown as IShelterLocationData[])
-        .find((location: IShelterLocationData) => location.name.translation.en === this.id);
-        // Store the id and the location without the Id separately in the state
-        // This is a temporary solution until registration location and shelter location schemas align and registration location will have an id too
-      const { id, ...originalLocation } = thisLocation;
-      this.originalLocation = originalLocation as unknown as IEventGenericLocation;
-      this.shelterLocationId = id;
-      this.location = _cloneDeep(this.originalLocation);
     },
 
     fillEmptyMultilingualFields() {
@@ -335,59 +303,27 @@ export default Vue.extend({
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
         this.fillEmptyMultilingualFields();
-
         this.loading = true;
         try {
-          if (this.isEditMode) {
-            this.isRegistrationLocation ? await this.editRegistrationLocation() : await this.editShelterLocation();
-          } else {
-            this.isRegistrationLocation ? await this.addRegistrationLocation() : await this.addShelterLocation();
-          }
+          await this.submitLocation();
+          this.$emit('close');
+        } catch (e) {
+          this.handleSubmitError(e);
         } finally {
           this.loading = false;
-          this.$emit('close');
         }
       }
     },
 
-    async addRegistrationLocation() {
+    async submitLocation() {
       const params = {
         eventId: this.event.id,
         payload: this.location,
+        section: this.isRegistrationLocation ? EEventSummarySections.RegistrationLocation : EEventSummarySections.ShelterLocation,
+        action: this.isEditMode ? 'edit' : 'add',
       };
 
-      await this.$storage.event.actions.addRegistrationLocation(params);
-    },
-
-    async editRegistrationLocation() {
-      const params = {
-        eventId: this.event.id,
-        payload: {
-          originalRegistrationLocation: this.originalLocation,
-          updatedRegistrationLocation: this.location,
-        },
-      };
-
-      await this.$storage.event.actions.editRegistrationLocation(params);
-    },
-
-    async addShelterLocation() {
-      const params = {
-        eventId: this.event.id,
-        payload: this.location,
-      };
-
-      await this.$storage.event.actions.addShelterLocation(params);
-    },
-
-    async editShelterLocation() {
-      const params = {
-        eventId: this.event.id,
-        shelterLocationId: this.shelterLocationId,
-        payload: this.location,
-      };
-
-      await this.$storage.event.actions.editShelterLocation(params);
+      await this.$storage.event.actions.updateEventSection(params);
     },
 
     setLanguageMode(lang: string) {

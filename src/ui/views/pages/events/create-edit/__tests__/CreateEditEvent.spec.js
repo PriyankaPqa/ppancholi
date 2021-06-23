@@ -81,20 +81,6 @@ describe('CreatEditEvent.vue', () => {
       });
     });
 
-    describe('handleSubmitError', () => {
-      it('sets isNameUnique to false if this is the error in its argument', async () => {
-        await wrapper.vm.handleSubmitError([{ code: 'errors.an-entity-with-this-name-already-exists' }]);
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
-      });
-
-      it(' opens an error toast in case of a different error', async () => {
-        jest.spyOn(wrapper.vm.$toasted.global, 'error').mockImplementation(() => {});
-        await wrapper.vm.handleSubmitError([{ code: 'foo' }]);
-
-        expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('foo');
-      });
-    });
-
     describe('submit', () => {
       it('does not call createEvent unless form validation succeeds', async () => {
         await wrapper.vm.submit();

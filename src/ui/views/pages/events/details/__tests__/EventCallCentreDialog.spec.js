@@ -4,6 +4,7 @@ import { Event, mockEventsSearchData, EEventCallCentreStatus } from '@/entities/
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import entityUtils from '@/entities/utils';
+import { EEventSummarySections } from '@/types';
 
 import Component from '../components/EventCallCentreDialog.vue';
 
@@ -63,10 +64,10 @@ describe('EventCallCentreDialog.vue', () => {
         expect(element.props('rules')).toEqual(wrapper.vm.rules.name);
       });
 
-      it('calls checkNameUniqueness when it is changed', () => {
-        jest.spyOn(wrapper.vm, 'checkNameUniqueness').mockImplementation(() => {});
+      it('calls resetAsUnique when it is changed', () => {
+        jest.spyOn(wrapper.vm, 'resetAsUnique').mockImplementation(() => {});
         element.vm.$emit('input', 'foo');
-        expect(wrapper.vm.checkNameUniqueness).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.resetAsUnique).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -237,56 +238,58 @@ describe('EventCallCentreDialog.vue', () => {
   });
 
   describe('Life cycle', () => {
-    describe('edit mode', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-            isEditMode: true,
-            id: mockEvent.callCentres[0].name.translation.en,
-          },
-        });
+    it('should call initCreateMode if isEditMode is false', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          event: mockEvent,
+          isEditMode: false,
+          id: mockEvent.callCentres[0].id,
+        },
       });
+      wrapper.vm.initCreateMode = jest.fn();
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(wrapper.vm.initCreateMode).toHaveBeenCalledTimes(1);
+    });
 
-      it('sets the right call centre data', () => {
-        const callCentre = mockEvent.callCentres[0];
-        expect(wrapper.vm.callCentre).toEqual({
-          name: {
-            translation: {
-              en: 'z call center 1',
-              fr: 'call center 1 fr',
-            },
-          },
-          startDate: '2021-03-01',
-          endDate: null,
-          status: EEventCallCentreStatus.Active,
-          details: {
-            translation: {
-              en: 'call center 1 details',
-              fr: 'call center 1  details fr',
-            },
-          },
-        });
+    it('should call initEditMode if isEditMode is true', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          event: mockEvent,
+          isEditMode: true,
+          id: mockEvent.callCentres[0].id,
+        },
+      });
+      wrapper.vm.initEditMode = jest.fn();
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(wrapper.vm.initEditMode).toHaveBeenCalledTimes(1);
+    });
+  });
 
-        expect(wrapper.vm.originalCallCentre).toEqual(callCentre);
-
-        expect(wrapper.vm.isActive).toBeTruthy();
+  describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          event: mockEvent,
+          isEditMode: false,
+          id: '',
+        },
+        mocks: {
+          $storage: storage,
+        },
       });
     });
 
-    describe('add mode', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-            isEditMode: false,
-          },
-        });
-      });
-
-      it('sets the right call centre data', () => {
+    describe('initCreateMode', () => {
+      it('sets the right call centre data', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.initCreateMode();
         expect(wrapper.vm.callCentre).toEqual({
           name: {
             translation: {
@@ -306,28 +309,20 @@ describe('EventCallCentreDialog.vue', () => {
         });
       });
     });
-  });
 
-  describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          event: mockEvent,
-          isEditMode: false,
-          id: '',
-        },
-      });
-    });
-    describe('checkNameUniqueness', () => {
-      it('sets isNameUnique to true if the name is not used in other call centres', async () => {
-        await wrapper.vm.checkNameUniqueness('foo');
-        expect(wrapper.vm.isNameUnique).toBeTruthy();
-      });
-
-      it('sets isNameUnique to false if the name is used in other call centres', async () => {
-        await wrapper.vm.checkNameUniqueness(mockEvent.callCentres[0].name.translation.fr);
-        expect(wrapper.vm.isNameUnique).toBeFalsy();
+    describe('initEditMode', () => {
+      it('sets the right call centre data', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: true,
+            id: mockEvent.callCentres[0].id,
+          },
+        });
+        await wrapper.vm.initEditMode();
+        expect(wrapper.vm.callCentre).toEqual({ ...mockEvent.callCentres[0], startDate: '2021-03-01' });
+        expect(wrapper.vm.isActive).toBeTruthy();
       });
     });
 
@@ -395,78 +390,42 @@ describe('EventCallCentreDialog.vue', () => {
         expect(wrapper.vm.fillEmptyMultilingualFields).toHaveBeenCalledTimes(0);
       });
 
-      describe('edit mode', () => {
-        storage.event.actions.editCallCentre = jest.fn(() => {});
-        beforeEach(() => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              event: mockEvent,
-              isEditMode: true,
-              id: mockEvent.callCentres[0].name.translation.en,
-            },
-            mocks: {
-              $storage: storage,
-            },
-          });
-        });
+      it('does not call submitCallCentre if validate is false', async () => {
+        jest.spyOn(wrapper.vm, 'submitCallCentre').mockImplementation(() => {});
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
 
-        it('does not call storage action editCallCentre if validate is false', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => false);
-
-          await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.event.actions.editCallCentre).toHaveBeenCalledTimes(0);
-        });
-
-        it('calls storage action editCallCentre with the right payload', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
-          wrapper.vm.callCentre = { ...wrapper.vm.event.callCentres[0], startDate: '2020-01-01', endDate: null };
-
-          await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.event.actions.editCallCentre).toHaveBeenCalledWith({
-            eventId: wrapper.vm.event.id,
-            payload: {
-              originalCallCentre: { ...wrapper.vm.event.callCentres[0], startDate: new Date(wrapper.vm.event.callCentres[0].startDate) },
-              updatedCallCentre: { ...wrapper.vm.event.callCentres[0], startDate: new Date('2020-01-01').toISOString() },
-            },
-          });
-        });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.submitCallCentre).toHaveBeenCalledTimes(0);
       });
 
-      describe('add mode', () => {
-        jest.clearAllMocks();
-        storage.event.actions.addCallCentre = jest.fn(() => {});
-        beforeEach(() => {
-          wrapper = shallowMount(Component, {
-            localVue,
-            propsData: {
-              event: mockEvent,
-              isEditMode: false,
-            },
-            mocks: {
-              $storage: storage,
-            },
-          });
-        });
+      it('calls submitCallCentre if validate is true', async () => {
+        jest.spyOn(wrapper.vm, 'submitCallCentre').mockImplementation(() => {});
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
-        it('does not call storage action addCallCentre if validate is false', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.submitCallCentre).toHaveBeenCalledTimes(1);
+      });
 
-          await wrapper.vm.onSubmit();
-          expect(wrapper.vm.$storage.event.actions.addCallCentre).toHaveBeenCalledTimes(0);
-        });
+      it('calls handleSubmitError if there is an error', async () => {
+        jest.spyOn(wrapper.vm, 'submitCallCentre').mockImplementation(() => { throw new Error(); });
+        jest.spyOn(wrapper.vm, 'handleSubmitError').mockImplementation(() => { });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
-        it('calls storage action addCallCentre with the right payload', async () => {
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          wrapper.vm.callCentre = { ...mockEvent.callCentres[0], startDate: '2020-01-01', endDate: null };
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.handleSubmitError).toHaveBeenCalledTimes(1);
+      });
+    });
 
-          await wrapper.vm.onSubmit();
+    describe('submitCallCentre', () => {
+      it('calls the storage action updateEventSection with the right payload', async () => {
+        wrapper.vm.callCentre = { ...mockEvent.callCentres[0], startDate: '2020-01-01', endDate: null };
+        await wrapper.vm.submitCallCentre();
 
-          expect(wrapper.vm.$storage.event.actions.addCallCentre).toHaveBeenCalledWith({
-            eventId: wrapper.vm.event.id,
-            payload: { ...mockEvent.callCentres[0], startDate: new Date('2020-01-01').toISOString() },
-          });
+        expect(wrapper.vm.$storage.event.actions.updateEventSection).toHaveBeenCalledWith({
+          eventId: wrapper.vm.event.id,
+          payload: { ...mockEvent.callCentres[0], startDate: new Date('2020-01-01').toISOString() },
+          section: EEventSummarySections.CallCentre,
+          action: 'add',
         });
       });
     });

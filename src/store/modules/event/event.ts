@@ -10,19 +10,17 @@ import {
 import {
   Event,
   IEvent,
-  IEventAgreement,
   IEventCallCentre,
   IEventGenericLocation,
   IEventSearchData,
   IOtherProvince,
   IRegion,
-  IUpdateCallCentrePayload,
   EEventStatus,
-  IUpdateAgreementPayload,
-  IUpdateRegistrationLocationPayload,
+  IEventAgreementInfos,
+  IEventData,
 } from '@/entities/event';
 import helpers from '@/ui/helpers';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IAzureSearchParams, IAzureSearchResult, EEventSummarySections } from '@/types';
 
 import { IState } from './event.types';
 import { mapEventDataToSearchData } from './eventUtils';
@@ -232,51 +230,19 @@ const actions = {
     return null;
   },
 
-  async addCallCentre(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId:uuid, payload: IEventCallCentre },
+  async updateEventSection(
+    this: Store<IState>, context: ActionContext<IState, IRootState>, {
+      eventId, payload, section, action,
+    }:
+    { eventId:uuid,
+      payload: IEventCallCentre | IEventAgreementInfos | IEventGenericLocation,
+      section: EEventSummarySections, action: 'add' | 'edit'
+    },
   )
     : Promise<IEvent> {
-    const data = await this.$services.events.addCallCentre(eventId, payload);
-
-    if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context, eventId));
-      context.commit('addOrUpdateEvent', event);
-      return event;
-    }
-    return null;
-  },
-
-  async editCallCentre(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId:uuid, payload: IUpdateCallCentrePayload },
-  ): Promise<IEvent> {
-    const data = await this.$services.events.editCallCentre(eventId, payload);
-
-    if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context, eventId));
-      context.commit('addOrUpdateEvent', event);
-      return event;
-    }
-    return null;
-  },
-
-  async addAgreement(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId: uuid, payload: IEventAgreement },
-  )
-    : Promise<IEvent> {
-    const data = await this.$services.events.addAgreement(eventId, payload);
-
-    if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context, eventId));
-      context.commit('addOrUpdateEvent', event);
-      return event;
-    }
-    return null;
-  },
-
-  async editAgreement(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId:uuid, payload: IUpdateAgreementPayload },
-  ): Promise<IEvent> {
-    const data = await this.$services.events.editAgreement(eventId, payload);
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const data: IEventData = await this.$services.events[`${action}${section}`](eventId, payload);
 
     if (data) {
       const event = new Event(mapEventDataToSearchData(data, context, eventId));
@@ -287,64 +253,9 @@ const actions = {
   },
 
   async deleteAgreement(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId: uuid, payload: IEventAgreement },
+    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, agreementId }: { eventId: uuid, agreementId: uuid },
   ): Promise<IEvent> {
-    const data = await this.$services.events.removeAgreement(eventId, payload);
-    if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context, eventId));
-      context.commit('addOrUpdateEvent', event);
-      return event;
-    }
-    return null;
-  },
-
-  async addRegistrationLocation(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId: uuid, payload: IEventGenericLocation },
-  )
-    : Promise<IEvent> {
-    const data = await this.$services.events.addRegistrationLocation(eventId, payload);
-    if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context, eventId));
-      context.commit('addOrUpdateEvent', event);
-      return event;
-    }
-    return null;
-  },
-
-  async editRegistrationLocation(
-    this: Store<IState>,
-    context: ActionContext<IState, IRootState>,
-    { eventId, payload }: { eventId: uuid, payload: IUpdateRegistrationLocationPayload },
-  ): Promise<IEvent> {
-    const data = await this.$services.events.editRegistrationLocation(eventId, payload);
-
-    if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context, eventId));
-      context.commit('addOrUpdateEvent', event);
-      return event;
-    }
-    return null;
-  },
-
-  async addShelterLocation(
-    this: Store<IState>, context: ActionContext<IState, IRootState>, { eventId, payload }: { eventId: uuid, payload: IEventGenericLocation },
-  )
-    : Promise<IEvent> {
-    const data = await this.$services.events.addShelterLocation(eventId, payload);
-    if (data) {
-      const event = new Event(mapEventDataToSearchData(data, context, eventId));
-      context.commit('addOrUpdateEvent', event);
-      return event;
-    }
-    return null;
-  },
-
-  async editShelterLocation(
-    this: Store<IState>,
-    context: ActionContext<IState, IRootState>,
-    { eventId, shelterLocationId, payload }: { eventId: uuid, shelterLocationId:uuid, payload: IEventGenericLocation },
-  ): Promise<IEvent> {
-    const data = await this.$services.events.editShelterLocation(eventId, shelterLocationId, payload);
+    const data = await this.$services.events.removeAgreement(eventId, agreementId);
     if (data) {
       const event = new Event(mapEventDataToSearchData(data, context, eventId));
       context.commit('addOrUpdateEvent', event);

@@ -26,6 +26,7 @@ describe('>>> Event', () => {
     it('should instantiate call centres', () => {
       const event = new Event(mockEventData);
       expect(event.callCentres).toEqual([{
+        id: 'call-centre-id-1',
         name: {
           translation: {
             en: 'z call center 1',
@@ -42,6 +43,7 @@ describe('>>> Event', () => {
           },
         },
       }, {
+        id: 'call-centre-id-2',
         name: {
           translation: {
             en: 'call center 2',
@@ -63,6 +65,7 @@ describe('>>> Event', () => {
     it('should instantiate agreements', () => {
       const event = new Event(mockEventData);
       expect(event.agreements).toEqual([{
+        id: 'agreement-id-1',
         name: {
           translation: {
             en: 'agreement 1',

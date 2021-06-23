@@ -2,7 +2,11 @@
   <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
     <page-template ref="pageTemplate" :loading="eventLoading" :show-left-menu="false">
       <rc-page-content :title="isEditMode ? $t('event.edit.title') : $t('event.create.title')" :show-help="true" :help-link="helpLink">
-        <event-form :event.sync="event" :is-edit-mode="isEditMode" :is-name-unique.sync="isNameUnique" :is-dirty.sync="isDirty" />
+        <event-form
+          :event.sync="event"
+          :is-edit-mode="isEditMode"
+          :is-name-unique.sync="isNameUnique"
+          :is-dirty.sync="isDirty" />
 
         <template slot="actions">
           <v-btn data-test="cancel" @click.stop="back()">
@@ -19,7 +23,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { RcPageContent } from '@crctech/component-library';
@@ -27,10 +30,11 @@ import routes from '@/constants/routes';
 import { Event, IEvent } from '@/entities/event';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers';
-import { IError } from '@/services/httpClient';
+import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import mixins from 'vue-typed-mixins';
 import EventForm from './EventForm.vue';
 
-export default Vue.extend({
+export default mixins(handleUniqueNameSubmitError).extend({
   name: 'CreateEditEvent',
 
   components: {
@@ -52,7 +56,6 @@ export default Vue.extend({
       loading: false,
       error: false,
       event: new Event() as IEvent,
-      isNameUnique: true,
       isDirty: false, // Need to manually sync dirty state because v-switch doesn't work with vee-validate
     };
   },
@@ -104,16 +107,6 @@ export default Vue.extend({
           name: routes.events.home.name,
         });
       }
-    },
-
-    handleSubmitError(errors: IError[]) {
-      errors.forEach((error) => {
-        if (error.code === 'errors.an-entity-with-this-name-already-exists') {
-          this.isNameUnique = false;
-        } else {
-          this.$toasted.global.error(this.$t(error.code));
-        }
-      });
     },
 
     async submit() {

@@ -15,7 +15,7 @@
       @close="$emit('close')"
       @submit="onSubmit">
       <v-container>
-        <v-row justify="center">
+        <v-row v-if="callCentre" justify="center">
           <v-col cols="12" class="pa-0">
             <language-tabs :language="languageMode" @click="setLanguageMode" />
 
@@ -26,7 +26,7 @@
                   data-test="callCentre-name"
                   :label="`${$t('eventSummary.callCentre.name')}*`"
                   :rules="rules.name"
-                  @input="checkNameUniqueness($event)" />
+                  @input="resetAsUnique()" />
               </v-col>
 
               <v-col cols="4" md="4" sm="12">
@@ -98,9 +98,9 @@
 </template>
 
 <script lang='ts'>
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
+import _cloneDeep from 'lodash/cloneDeep';
 import { TranslateResult } from 'vue-i18n';
-import _includes from 'lodash/includes';
 import {
   RcDialog,
   VTextFieldWithValidation,
@@ -108,15 +108,14 @@ import {
   VTextAreaWithValidation,
 } from '@crctech/component-library';
 import helpers from '@/ui/helpers';
-
-import { VForm } from '@/types';
+import { EEventSummarySections, VForm } from '@/types';
 import { EEventCallCentreStatus, Event, IEventCallCentre } from '@/entities/event';
-import _cloneDeep from 'lodash/cloneDeep';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
+import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 
-export default Vue.extend({
+export default mixins(handleUniqueNameSubmitError).extend({
   name: 'EventCallCentreDialog',
 
   components: {
@@ -153,10 +152,8 @@ export default Vue.extend({
         details: null,
       },
       callCentre: null as IEventCallCentre,
-      originalCallCentre: null as IEventCallCentre,
       isActive: false,
       getStringDate: helpers.getStringDate,
-      isNameUnique: true,
       loading: false,
     };
   },
@@ -202,29 +199,28 @@ export default Vue.extend({
 
   created() {
     if (this.isEditMode) {
-      // use the English name of the call center as identifier, as call centre names are supposed to be unique for an event
-      const callCentre = this.event.callCentres.find((centre) => centre.name.translation.en === this.id);
-      this.originalCallCentre = callCentre;
-      this.callCentre = _cloneDeep(callCentre);
-      this.callCentre.startDate = callCentre.startDate ? this.getStringDate(callCentre.startDate) : null;
-      this.callCentre.endDate = callCentre.endDate ? this.getStringDate(callCentre.endDate) : null;
-      this.isActive = callCentre.status === EEventCallCentreStatus.Active;
+      this.initEditMode();
     } else {
-      const emptyCentre = this.emptyCallCentre;
-      emptyCentre.name = entityUtils.initMultilingualAttributes();
-      emptyCentre.details = entityUtils.initMultilingualAttributes();
-      this.callCentre = emptyCentre;
+      this.initCreateMode();
     }
   },
 
   methods: {
-    checkNameUniqueness(name: string) {
-      let otherCentres = this.event.callCentres;
-      if (this.isEditMode) {
-        otherCentres = this.event.callCentres.filter((centre) => centre.name.translation.en !== this.originalCallCentre.name.translation.en);
+    initCreateMode() {
+      const emptyCentre = this.emptyCallCentre;
+      emptyCentre.name = entityUtils.initMultilingualAttributes();
+      emptyCentre.details = entityUtils.initMultilingualAttributes();
+      this.callCentre = emptyCentre;
+    },
+
+    initEditMode() {
+      const callCentre = this.event.callCentres.find((centre:IEventCallCentre) => centre.id === this.id);
+      if (callCentre) {
+        this.callCentre = _cloneDeep(callCentre);
+        this.callCentre.startDate = callCentre.startDate ? this.getStringDate(callCentre.startDate) : null;
+        this.callCentre.endDate = callCentre.endDate ? this.getStringDate(callCentre.endDate) : null;
+        this.isActive = callCentre.status === EEventCallCentreStatus.Active;
       }
-      const nameExists = otherCentres.some((centre) => _includes(centre.name.translation, name));
-      this.isNameUnique = !nameExists;
     },
 
     fillEmptyMultilingualFields() {
@@ -245,25 +241,27 @@ export default Vue.extend({
       if (isValid) {
         this.fillEmptyMultilingualFields();
         this.loading = true;
-
         try {
-          if (this.isEditMode) {
-            const updatedCallCentre = this.makePayload(this.callCentre);
-            await this.$storage.event.actions.editCallCentre(
-              {
-                eventId: this.event.id,
-                payload: { updatedCallCentre, originalCallCentre: this.originalCallCentre },
-              },
-            );
-          } else {
-            const newCallCentre = this.makePayload(this.callCentre);
-            await this.$storage.event.actions.addCallCentre({ eventId: this.event.id, payload: newCallCentre });
-          }
+          await this.submitCallCentre();
+          this.$emit('close');
+        } catch (e) {
+          this.handleSubmitError(e);
         } finally {
           this.loading = false;
-          this.$emit('close');
         }
       }
+    },
+
+    async submitCallCentre() {
+      const callCentrePayload = this.makePayload(this.callCentre);
+      await this.$storage.event.actions.updateEventSection(
+        {
+          eventId: this.event.id,
+          payload: callCentrePayload,
+          section: EEventSummarySections.CallCentre,
+          action: this.isEditMode ? 'edit' : 'add',
+        },
+      );
     },
 
     setLanguageMode(lang: string) {

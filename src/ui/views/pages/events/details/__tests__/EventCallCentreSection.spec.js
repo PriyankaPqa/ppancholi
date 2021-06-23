@@ -103,7 +103,7 @@ describe('EventCallCentreSection.vue', () => {
         const element = wrapper.findDataTest('edit-event-call-centre-0');
 
         await element.vm.$emit('click');
-        expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.callCentre.name.translation.en);
+        expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.callCentre.id);
       });
     });
 

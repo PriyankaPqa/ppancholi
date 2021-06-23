@@ -75,7 +75,7 @@ describe('EventLocationSection.vue', () => {
         const element = wrapper.findDataTest('event-registration-location-section-edit-0');
 
         await element.vm.$emit('click');
-        expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.location.name.translation.en);
+        expect(wrapper.emitted('edit')[0][0]).toEqual(wrapper.vm.location.id);
       });
     });
   });
