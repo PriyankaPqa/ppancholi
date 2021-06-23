@@ -62,13 +62,13 @@ describe('>>> Domain Base Service', () => {
       const params = { filter: '123' };
       const searchEndpoint = 'mock-endpoint';
       await service.search(params, searchEndpoint);
-      expect(http.post).toHaveBeenCalledWith(`search/${searchEndpoint}`, { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith(`search/${searchEndpoint}`, { params, isOData: true });
     });
 
     it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
       const params = { filter: '123' };
       await service.search(params);
-      expect(http.post).toHaveBeenCalledWith(`search/${CONTROLLER}`, { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith(`search/${CONTROLLER}`, { params, isOData: true });
     });
   });
 });

@@ -13,7 +13,8 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
 export interface IBaseGetters<TEntity extends IEntity, TMetadata extends IEntity> {
   get(id: uuid): IEntityCombined<TEntity, TMetadata>;
   getAll(): Array<IEntityCombined<TEntity, TMetadata>>;
-  getByCriteria (query: string, searchAll: boolean, searchAmong: string[]): Array<IEntityCombined<TEntity, TMetadata>>
+  getByCriteria (query: string, searchAll: boolean, searchAmong: string[]): Array<IEntityCombined<TEntity, TMetadata>>;
+  getByIds (ids: uuid[]): Array<IEntityCombined<TEntity, TMetadata>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -39,6 +40,8 @@ export interface IBaseStorage <TEntity extends IEntity, TMetadata extends IEntit
 export interface IBaseGettersMock<TEntity extends IEntity, TMetadata extends IEntity> {
   get: jest.Mock<IEntityCombined<TEntity, TMetadata>>,
   getAll: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,
+  getByCriteria: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,
+  getByIds: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -35,6 +35,6 @@ export class DomainBaseService<T extends IEntity> implements IDomainBaseService<
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<T, unknown>> {
-    return this.http.post(`search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
+    return this.http.get(`search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
   }
 }
