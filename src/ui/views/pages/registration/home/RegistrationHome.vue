@@ -60,7 +60,7 @@ export default Vue.extend({
   },
 
   async mounted() {
-    this.resetHouseholdModule();
+    this.resetHouseholdCreate();
     this.resetRegistrationModule();
     await this.fetchDataForRegistration();
     await this.fetchActiveEvents();
@@ -89,8 +89,8 @@ export default Vue.extend({
       this.$storage.registration.mutations.resetState(tabs());
     },
 
-    resetHouseholdModule() {
-      this.$storage.household.mutations.resetState();
+    resetHouseholdCreate() {
+      this.$storage.registration.mutations.resetHouseholdCreate();
     },
 
     async fetchActiveEvents() {

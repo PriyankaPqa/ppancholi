@@ -5,8 +5,11 @@ import Vue from 'vue';
 
 import { mockProvider } from '@/services/provider';
 
-import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
-import { makeHouseholdModule } from '@crctech/registration-lib/src/store/modules/household';
+import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
+import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
+import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
+import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata/index';
+import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
 import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 
 import { tabs } from '@/store/modules/registration/tabs';
@@ -42,7 +45,8 @@ const mockConfig = {
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_MODULE]: team,
     [vuexModule.PROGRAM_MODULE]: program,
-    [vuexModule.HOUSEHOLD_MODULE]: makeHouseholdModule(),
+    [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
+    [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),

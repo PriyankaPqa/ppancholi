@@ -55,7 +55,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     helpLink: 'zendesk.registration.addresses',
   },
   {
-    id: 'householdMembers',
+    id: 'additionalMembers',
     labelKey: 'registration.menu.household_members',
     titleKey: 'registration.menu.household_members',
     icon: '',
@@ -64,7 +64,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     isTouched: false,
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
-    componentName: 'HouseholdMembers',
+    componentName: 'AdditionalMembers',
     helpLink: 'registration.zendesk.householdmembers',
   },
   {

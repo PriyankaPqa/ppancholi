@@ -55,12 +55,12 @@ describe('RegistrationHome.vue', () => {
         expect(wrapper.vm.fetchActiveEvents).toHaveBeenCalledTimes(1);
       });
 
-      it('should call resetHouseholdModule', () => {
-        jest.spyOn(wrapper.vm, 'resetHouseholdModule');
+      it('should call resetHouseholdCreate', () => {
+        jest.spyOn(wrapper.vm, 'resetHouseholdCreate');
         wrapper.vm.$options.mounted.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.resetHouseholdModule).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.resetHouseholdCreate).toHaveBeenCalledTimes(1);
       });
 
       it('should call resetRegistrationModule', () => {
@@ -119,11 +119,11 @@ describe('RegistrationHome.vue', () => {
       });
     });
 
-    describe('resetHouseholdModule', () => {
+    describe('resetHouseholdCreate', () => {
       it('should call resetState from beneficiary storage', () => {
         jest.clearAllMocks();
-        wrapper.vm.resetHouseholdModule();
-        expect(wrapper.vm.$storage.household.mutations.resetState).toHaveBeenCalledWith();
+        wrapper.vm.resetHouseholdCreate();
+        expect(wrapper.vm.$storage.registration.mutations.resetHouseholdCreate).toBeCalled();
       });
     });
 

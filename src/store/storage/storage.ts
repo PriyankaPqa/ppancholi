@@ -1,5 +1,5 @@
 import { makeStorage as makeRegistrationStorage } from '@crctech/registration-lib/src/store/storage/registration';
-import { makeStorage as makeHouseholdStorage } from '@crctech/registration-lib/src/store/storage/household';
+import { HouseholdStorage } from '@crctech/registration-lib/src/store/storage/household';
 import { UserAccountStorage } from '@/store/storage/user-account/storage';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IStore, IState } from '../store.types';
@@ -21,6 +21,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   team: makeTeamStorage(store),
   program: makeProgramStorage(store),
   registration: makeRegistrationStorage(store),
-  household: makeHouseholdStorage(store),
+  household: new HouseholdStorage(store, vuexModule.HOUSEHOLD_ENTITIES, vuexModule.HOUSEHOLD_METADATA).make(),
   userAccount: new UserAccountStorage(store, vuexModule.USER_ACCOUNT_ENTITIES, vuexModule.USER_ACCOUNT_METADATA).make(),
 });

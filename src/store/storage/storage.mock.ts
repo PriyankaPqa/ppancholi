@@ -1,5 +1,5 @@
 import { mockStorageRegistration } from '@crctech/registration-lib/src/store/storage/registration';
-import { mockStorageHousehold } from '@crctech/registration-lib/src/store/storage/household';
+import { HouseholdStorageMock } from '@crctech/registration-lib/src/store/storage/household';
 import { UserAccountStorageMock } from '@/store/storage/user-account/storage.mock';
 import { IStorageMock } from './storage.types';
 import { mockStorageUser } from './user';
@@ -19,6 +19,6 @@ export const mockStorage = (): IStorageMock => ({
   team: mockStorageTeam(),
   program: mockStorageProgram(),
   registration: mockStorageRegistration(),
-  household: mockStorageHousehold(),
+  household: new HouseholdStorageMock().make(),
   userAccount: new UserAccountStorageMock().make(),
 });

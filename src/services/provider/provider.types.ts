@@ -1,4 +1,4 @@
-import { IHouseholdsService, IHouseholdsServiceMock } from '@crctech/registration-lib/src/services/households';
+import { IHouseholdsService, IHouseholdsServiceMock } from '@crctech/registration-lib/src/services/households/entity';
 import {
   IPublicService,
   IPublicServiceMock,

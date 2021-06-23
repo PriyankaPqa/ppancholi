@@ -1,5 +1,5 @@
 import { mockPublicService } from '@crctech/registration-lib/src/services/public';
-import { mockHouseholdsService } from '@crctech/registration-lib/src/services/households';
+import { mockHouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
 import { IProviderMock } from './provider.types';
 import { mockEventsService } from '../events';
 import { mockCaseFilesService } from '../case-files';

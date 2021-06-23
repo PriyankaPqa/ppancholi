@@ -1,9 +1,10 @@
 import { Store } from 'vuex';
 import { IState as IRegistrationState } from '@crctech/registration-lib/src/store/modules/registration/registration.types';
-import { IState as IHouseholdState } from '@crctech/registration-lib/src/store/modules/household/household.types';
+import { IHouseholdEntityState } from '@crctech/registration-lib/src/store/modules/household/householdEntity.types';
 import { IProvider, IProviderMock } from '@/services/provider';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IUserAccountMetadata } from '@/entities/user-account';
+import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { IState as IUserState } from './modules/user/user.types';
 import { IUserAccountEntityState } from './modules/user-account/userAccountEntity.types';
 import { IState as ICaseFileState } from './modules/case-file/case-file.types';
@@ -25,7 +26,8 @@ export interface IRootState {
   [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
   [vuexModule.TEAM_MODULE]?: ITeamState,
   [vuexModule.PROGRAM_MODULE]?: IProgramState,
-  [vuexModule.HOUSEHOLD_MODULE]?: IHouseholdState
+  [vuexModule.HOUSEHOLD_ENTITIES]?: IHouseholdEntityState
+  [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
   [vuexModule.REGISTRATION_MODULE]?: IRegistrationState
 }
 

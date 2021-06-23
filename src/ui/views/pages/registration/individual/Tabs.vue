@@ -76,11 +76,11 @@ export default Vue.extend({
   methods: {
     prefill() {
       this.$storage.registration.mutations.setIsPrivacyAgreed(true);
-      this.$storage.household.mutations.setPrimaryBeneficiary(mockMember());
-      this.$storage.household.mutations.setContactInformation(mockContactInformation());
-      this.$storage.household.mutations.setHomeAddress(mockAddress());
-      this.$storage.household.mutations.setCurrentAddress(mockCampGround());
-      this.$storage.household.mutations.addAdditionalMember(mockAdditionalMember(), false);
+      this.$storage.registration.mutations.setPrimaryBeneficiary(mockMember());
+      this.$storage.registration.mutations.setContactInformation(mockContactInformation());
+      this.$storage.registration.mutations.setHomeAddress(mockAddress());
+      this.$storage.registration.mutations.setCurrentAddress(mockCampGround());
+      this.$storage.registration.mutations.addAdditionalMember(mockAdditionalMember(), false);
     },
   },
 });

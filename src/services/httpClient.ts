@@ -30,6 +30,7 @@ export interface IHttpClient {
   put: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
   delete: <T>(url: string, data?: any) => Promise<T>;
   setHeadersLanguage(lang: string): void;
+  setHeadersTenant(tenantId: string): void;
 }
 
 export interface IError {
@@ -61,6 +62,10 @@ class HttpClient implements IHttpClient {
       (response) => this.responseSuccessHandler(response),
       (error) => this.responseErrorHandler(error),
     );
+  }
+
+  public setHeadersTenant(tenantId: string) {
+    this.axios.defaults.headers.common['x-tenant-id'] = tenantId;
   }
 
   public setHeadersLanguage(lang: string) {
