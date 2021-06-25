@@ -80,6 +80,16 @@ const routes = {
       path: '',
       name: 'events.summary',
     },
+    financialAssistance: {
+      home: {
+        path: 'financial-assistance',
+        name: 'events.financialAssistance.home',
+      },
+      create: {
+        path: 'financial-assistance/create',
+        name: 'events.financialAssistance.create',
+      },
+    },
   },
   loginError: {
     path: 'login-error',

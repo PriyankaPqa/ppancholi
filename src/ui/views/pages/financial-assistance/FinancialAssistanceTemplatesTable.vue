@@ -8,20 +8,25 @@
     sort-by="createdDate"
     sort-desc
     :hide-footer="hideFooter"
-    @search="search" />
+    show-help
+    @search="search">
+    <template v-if="$hasLevel('level6')" #headerLeft>
+      <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="onClickMenuItem($event)" />
+    </template>
+  </rc-data-table>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import {
-  RcDataTable,
-} from '@crctech/component-library';
+import { RcDataTable, RcAddButtonWithMenu } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'FinancialAssistanceTemplatesTable',
   components: {
     RcDataTable,
+    RcAddButtonWithMenu,
   },
   props: {
     showFiltersBar: {
@@ -48,17 +53,41 @@ export default Vue.extend({
     labels(): Record<string, Record<string, TranslateResult>> {
       return {
         header: {
-          title: this.$t('financialAssistance.table.title'),
+          title: this.$t('financialAssistance.table.title.table'),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };
+    },
+
+    menuItems(): Array<Record<string, string>> {
+      return [
+        {
+          text: this.$t('financialAssistance.createNewTable') as string,
+          value: 'new',
+          icon: 'mdi-file',
+          dataTest: 'financialAssistanceTables__createNew',
+        },
+        {
+          text: this.$t('financialAssistance.createTableFromExisting') as string,
+          value: 'copy',
+          icon: 'mdi-file-multiple',
+          dataTest: 'financialAssistanceTables__copyExisting',
+        },
+      ];
     },
   },
   methods: {
     search() {
       return false;
     },
-  },
 
+    onClickMenuItem(item: Record<string, string>) {
+      if (item.value === 'new') {
+        this.$router.push({
+          name: routes.events.financialAssistance.create.name,
+        });
+      }
+    },
+  },
 });
 </script>

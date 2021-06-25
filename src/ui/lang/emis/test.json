@@ -1573,6 +1573,7 @@
     "zendesk.help_link.change_caseFile_status_reopen": "zendesk.help_link.change_caseFile_status_reopen",
     "zendesk.help_link.change_event_status": "zendesk.help_link.change_event_status",
     "zendesk.help_link.create_case_note": "zendesk.help_link.create_case_note",
+    "zendesk.help_link.create_financial_assistance_table": "",
     "zendesk.help_link.create_program": "zendesk.help_link.create_program",
     "zendesk.help_link.createEvent": "zendesk.help_link.createEvent",
     "zendesk.help_link.edit_program": "zendesk.help_link.edit_program",

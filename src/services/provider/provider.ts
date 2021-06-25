@@ -9,6 +9,7 @@ import { TeamsService } from '../teams';
 import { AppUsersService } from '../app-users';
 import { UserAccountsService } from '../user-accounts/entity';
 import { ProgramsService } from '../programs';
+import { FinancialAssistanceTablesService } from '../financial-assistance-tables';
 
 export const provider = (): IProvider => ({
   appUsers: new AppUsersService(httpClient),
@@ -19,5 +20,6 @@ export const provider = (): IProvider => ({
   programs: new ProgramsService(httpClient),
   publicApi: new PublicService(httpClient),
   households: new HouseholdsService(httpClient),
+  financialAssistanceTables: new FinancialAssistanceTablesService(httpClient),
   userAccounts: new UserAccountsService(httpClient),
 });

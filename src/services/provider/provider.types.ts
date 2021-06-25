@@ -10,6 +10,7 @@ import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
 import { ITeamsService, ITeamsServiceMock } from '../teams';
 import { IAppUsersService, IAppUsersServiceMock } from '../app-users';
 import { IProgramsService, IProgramsServiceMock } from '../programs';
+import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '../financial-assistance-tables';
 
 export interface IProvider {
   appUsers: IAppUsersService,
@@ -20,6 +21,7 @@ export interface IProvider {
   programs: IProgramsService,
   publicApi: IPublicService,
   households: IHouseholdsService,
+  financialAssistanceTables: IFinancialAssistanceTablesService,
   userAccounts: UserAccountsService,
 }
 
@@ -32,5 +34,6 @@ export interface IProviderMock {
   programs: IProgramsServiceMock,
   publicApi: IPublicServiceMock,
   households: IHouseholdsServiceMock,
+  financialAssistanceTables: IFinancialAssistanceTablesServiceMock,
   userAccounts: IUserAccountsServiceMock,
 }

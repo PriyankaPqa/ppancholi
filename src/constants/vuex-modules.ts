@@ -8,5 +8,6 @@ export const PROGRAM_MODULE = 'program';
 export const HOUSEHOLD_ENTITIES = 'householdEntities';
 export const HOUSEHOLD_METADATA = 'householdMetadata';
 export const REGISTRATION_MODULE = 'registration';
+export const FINANCIAL_ASSISTANCE_MODULE = 'financialAssistance';
 export const USER_ACCOUNT_ENTITIES = 'userAccountEntities';
 export const USER_ACCOUNT_METADATA = 'userAccountMetadata';

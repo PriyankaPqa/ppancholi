@@ -14,18 +14,20 @@ import { IState as IOptionListState } from './modules/optionList/optionList.type
 import { IState as ITeamState } from './modules/team/team.types';
 import { IState as IProgramState } from './modules/program/program.types';
 import { IState as IBaseState } from './modules/base/base.types';
+import { IState as IFinancialAssistanceState } from './modules/financial-assistance/financial-assistance.types';
 
 export interface IRootState {
   version: string;
   [vuexModule.CASE_FILE_MODULE]?: ICaseFileState,
   [vuexModule.USER_MODULE]?: IUserState,
   [vuexModule.USER_ACCOUNT_ENTITIES]?: IUserAccountEntityState,
-  [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>
+  [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>,
   [vuexModule.DASHBOARD_MODULE]?: IDashboardState,
   [vuexModule.EVENT_MODULE]?: IEventState,
   [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
   [vuexModule.TEAM_MODULE]?: ITeamState,
   [vuexModule.PROGRAM_MODULE]?: IProgramState,
+  [vuexModule.FINANCIAL_ASSISTANCE_MODULE]?: IFinancialAssistanceState,
   [vuexModule.HOUSEHOLD_ENTITIES]?: IHouseholdEntityState
   [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
   [vuexModule.REGISTRATION_MODULE]?: IRegistrationState

@@ -21,6 +21,8 @@ import { optionList } from './modules/optionList';
 import { event } from './modules/event';
 import { team } from './modules/team';
 import { program } from './modules/program';
+import { financialAssistance } from './modules/financial-assistance';
+
 import { tabs } from './modules/registration/tabs';
 
 Vue.use(Vuex);
@@ -38,6 +40,7 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_MODULE]: team,
     [vuexModule.PROGRAM_MODULE]: program,
+    [vuexModule.FINANCIAL_ASSISTANCE_MODULE]: financialAssistance,
     [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
     [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({

@@ -190,6 +190,13 @@ export default Vue.extend({
         disabled: false,
         to: routes.programs.home.name,
         exact: false,
+      }, {
+        text: this.$t('eventDetail.menu_financial'),
+        test: 'event-financial-assitance',
+        icon: '',
+        disabled: false,
+        to: routes.events.financialAssistance.home.name,
+        exact: false,
       }];
     },
 
