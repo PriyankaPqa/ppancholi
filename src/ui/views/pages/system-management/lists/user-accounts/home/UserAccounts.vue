@@ -57,8 +57,9 @@
               data-test="user_roleId"
               :value="getRoleListItem(item.metadata.roleId)"
               :item-text="(item) => item ? $m(item.text): ''"
+              :item-disabled="(item) => item.isInactive"
               :label="$t('system_management.userAccounts.role_header')"
-              :items="allAccessLevelRoles"
+              :items="getRolesForUser(item)"
               @change="assignRoleToUser($event, item)" />
           </template>
 
@@ -106,7 +107,7 @@
     <add-emis-user
       v-if="showAddEmisUserDialog"
       data-test="add-emis-user"
-      :all-sub-roles="allSubRoles"
+      :all-sub-roles="allActiveSubRoles"
       :all-access-level-roles="allAccessLevelRoles"
       :all-emis-users="allUsers"
       :show.sync="showAddEmisUserDialog"
@@ -176,6 +177,7 @@ export default Vue.extend({
       loading: true,
       allUsers: [] as IUserAccountCombined[], // All users, minus "deleted in EMIS"
       allSubRoles: [] as IOptionSubItem[],
+      allActiveSubRoles: [] as IOptionSubItem[],
       allAccessLevelRoles: [],
       changedAccounts: [] as IUserAccountCombined[],
     };
@@ -315,15 +317,23 @@ export default Vue.extend({
       return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
     },
 
-    getRoleListItem(roleId: string) : {text:IMultilingual, value: string} {
+    getRoleListItem(roleId: string) : {text:IMultilingual, value: string, isInactive: boolean} {
       const role = this.getSubRoleById(roleId);
       if (role) {
         return {
           text: role.name,
           value: role.id,
+          isInactive: role.status === EOptionListItemStatus.Inactive,
         };
       }
       return null;
+    },
+
+    getRolesForUser(user: IUserAccountCombined) {
+      if (this.allAccessLevelRoles.find((x) => x.value === user.entity.roles[0]?.optionItemId)) {
+        return this.allAccessLevelRoles;
+      }
+      return [this.getRoleListItem(user.entity.roles[0]?.optionItemId), ...this.allAccessLevelRoles];
     },
 
     assignRoleToUser(roleData: {text: IMultilingual, value: string}, user: IUserAccountCombined) {
@@ -413,27 +423,31 @@ export default Vue.extend({
     },
 
     setAllActiveSubRoles(roles: IOptionItem[]) {
-      const subRoles = roles.reduce((acc: IOptionSubItem[], curr:IOptionItem) => {
+      this.allSubRoles = roles.reduce((acc: IOptionSubItem[], curr:IOptionItem) => {
         acc.push(...curr.subitems);
         return acc;
       }, []);
-      this.allSubRoles = subRoles ? subRoles.filter((role: IOptionSubItem) => role.status === EOptionListItemStatus.Active) : [];
+      this.allActiveSubRoles = this.allSubRoles?.filter((role: IOptionSubItem) => role.status === EOptionListItemStatus.Active) || [];
     },
 
     // set the hierarchical list of roles and subroles in the format needed for the dropdown of the select component
     setAllAccessLevelRoles(roles: IOptionItem[]) {
       roles.forEach((accessLevel : IOptionItem) => {
-        this.allAccessLevelRoles.push({
-          header: this.$m(accessLevel.name),
-        });
+        const activeSubRoles: {text: IMultilingual, value: string}[] = [];
         accessLevel.subitems.forEach((role: IOptionSubItem) => {
           if (role.status === EOptionListItemStatus.Active) {
-            this.allAccessLevelRoles.push({
+            activeSubRoles.push({
               text: role.name,
               value: role.id,
             });
           }
         });
+        if (activeSubRoles.length) {
+          this.allAccessLevelRoles.push({
+            header: this.$m(accessLevel.name),
+          });
+          activeSubRoles.forEach((a) => this.allAccessLevelRoles.push(a));
+        }
       });
     },
 

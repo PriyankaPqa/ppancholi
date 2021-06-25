@@ -43,6 +43,7 @@ describe('UserAccounts.vue', () => {
           loading: true,
           allUsers: [],
           allSubRoles: [],
+          allActiveSubRoles: [],
           changedAccounts: [],
         };
       },
@@ -84,6 +85,7 @@ describe('UserAccounts.vue', () => {
             loading: true,
             allUsers: [],
             allSubRoles: [],
+            allActiveSubRoles: [],
             changedAccounts: [],
           };
         },
@@ -251,6 +253,7 @@ describe('UserAccounts.vue', () => {
             loading: true,
             allUsers: [],
             allSubRoles: [],
+            allActiveSubRoles: [],
             changedAccounts: [],
           };
         },
@@ -311,7 +314,19 @@ describe('UserAccounts.vue', () => {
     describe('getRoleListItem', () => {
       it('returns the right value', () => {
         jest.spyOn(wrapper.vm, 'getSubRoleById').mockImplementation(() => ({ name: 'mock-name', id: 'mock-id' }));
-        expect(wrapper.vm.getRoleListItem('mock-id')).toEqual({ text: 'mock-name', value: 'mock-id' });
+        expect(wrapper.vm.getRoleListItem('mock-id')).toEqual({ text: 'mock-name', value: 'mock-id', isInactive: false });
+      });
+    });
+
+    describe('getRolesForUser', () => {
+      it('includes current user\'s inactive role', async () => {
+        wrapper.vm.allSubRoles = [{ id: -999, name: 'outdated', status: 2 }];
+        await wrapper.vm.setAllAccessLevelRoles(mockOptionItemData());
+        const user = usersTestData[0];
+        user.entity.roles[0] = { optionItemId: -999 };
+        const rolesReturned = wrapper.vm.getRolesForUser(user);
+        expect(rolesReturned).toContainEqual({ text: 'outdated', value: -999, isInactive: true });
+        expect(rolesReturned.length).toEqual(wrapper.vm.allAccessLevelRoles.length + 1);
       });
     });
 
@@ -535,9 +550,9 @@ describe('UserAccounts.vue', () => {
     });
 
     describe('setAllActiveSubRoles', () => {
-      it('sets the right data into allSubRoles', async () => {
+      it('sets the right data into allActiveSubRoles', async () => {
         await wrapper.vm.setAllActiveSubRoles(mockOptionItemData());
-        expect(wrapper.vm.allSubRoles).toEqual([mockOptionItemData()[0].subitems[1]]);
+        expect(wrapper.vm.allActiveSubRoles).toEqual([mockOptionItemData()[0].subitems[1]]);
       });
     });
 
@@ -548,8 +563,6 @@ describe('UserAccounts.vue', () => {
         expect(wrapper.vm.allAccessLevelRoles).toEqual([
           { header: mockOptionItemData()[0].name.translation.en },
           { text: mockOptionItemData()[0].subitems[1].name, value: mockOptionItemData()[0].subitems[1].id },
-          { header: mockOptionItemData()[1].name.translation.en },
-          { header: mockOptionItemData()[2].name.translation.en },
         ]);
       });
     });

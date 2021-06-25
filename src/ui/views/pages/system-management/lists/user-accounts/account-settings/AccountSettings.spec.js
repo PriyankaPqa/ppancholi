@@ -366,9 +366,21 @@ describe('AccountSettings.vue', () => {
           expect(wrapper.vm.allAccessLevelRoles).toEqual([
             { header: mockOptionItemData()[0].name.translation.en },
             mockOptionItemData()[0].subitems[1],
-            { header: mockOptionItemData()[1].name.translation.en },
-            { header: mockOptionItemData()[2].name.translation.en },
           ]);
+        });
+        it('includes current user\'s inactive role', async () => {
+          const itemData = mockOptionItemData();
+          itemData.forEach((a) => { a.subitems.forEach((s) => { s.status = 1; }); });
+          itemData[0].subitems[0].status = 0;
+          storage.optionList.mutations.setList = jest.fn();
+          wrapper.vm.$storage.optionList.actions.fetchItems = jest.fn(() => itemData);
+
+          const user = mockUser;
+          user.entity.roles[0].optionItemId = itemData[0].subitems[0].id;
+
+          await wrapper.vm.setRoles();
+          expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[1]);
+          expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[0]);
         });
       });
     });

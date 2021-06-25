@@ -52,6 +52,7 @@
                     <v-select-with-validation
                       v-model="currentRole"
                       item-value="id"
+                      :item-disabled="(item) => item.status !== activeStatus"
                       :item-text="(item) => item ? $m(item.name) : ''"
                       dense
                       outlined
@@ -192,6 +193,7 @@ export default Vue.extend({
       loading: false,
       currentRole: null as IOptionSubItem,
       allAccessLevelRoles: [] as Array<IOptionSubItem|{header: string, id?: string}>,
+      activeStatus: EOptionListItemStatus.Active,
     };
   },
 
@@ -241,14 +243,18 @@ export default Vue.extend({
     setAllAccessLevelRoles(roles: IOptionItem[]) {
       if (roles?.length) {
         roles.forEach((accessLevel : IOptionItem) => {
-          this.allAccessLevelRoles.push({
-            header: this.$m(accessLevel.name),
-          });
+          const activeSubRoles : IOptionSubItem[] = [];
           accessLevel.subitems.forEach((role: IOptionSubItem) => {
-            if (role.status === EOptionListItemStatus.Active) {
-              this.allAccessLevelRoles.push(role);
+            if (role.status === EOptionListItemStatus.Active || (this.user.entity.roles && this.user.entity.roles[0]?.optionItemId === role.id)) {
+              activeSubRoles.push(role);
             }
           });
+          if (activeSubRoles.length) {
+            this.allAccessLevelRoles.push({
+              header: this.$m(accessLevel.name),
+            });
+            activeSubRoles.forEach((a) => this.allAccessLevelRoles.push(a));
+          }
         });
       }
     },
