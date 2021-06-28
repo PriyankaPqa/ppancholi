@@ -21,7 +21,7 @@ export class BaseMock<T, S> {
     fetchAllIncludingInactive: jest.fn(() => this.combinedEntitiesAndMetaData),
     deactivate: jest.fn(() => this.entity),
     activate: jest.fn(() => this.entity),
-    search: jest.fn(() => ['1']),
+    search: jest.fn(() => ({ ids: ['1'], count: 1 })),
   }
 
   protected baseMutations = {

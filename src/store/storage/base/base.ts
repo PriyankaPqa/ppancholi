@@ -1,7 +1,7 @@
 import { IEntity, IEntityCombined, Status } from '@/entities/base';
 import { IStore, IState } from '@/store';
 import { IAzureSearchParams } from '@/types';
-import { ICombinedIndex } from '@/types/interfaces/IAzureSearchResult';
+import { IAzureTableSearchResults, ICombinedIndex } from '@/types/interfaces/IAzureSearchResult';
 import _cloneDeep from 'lodash/cloneDeep';
 import { IBaseStorage } from './base.types';
 
@@ -109,22 +109,23 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity> implements
 
     activate: (id: uuid): Promise<TEntity> => this.store.dispatch(`${this.entityModuleName}/activate`, id),
 
-    search: async (params: IAzureSearchParams, searchEndpoint: string = null): Promise<uuid[]> => {
+    search: async (params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureTableSearchResults> => {
       const res = await this.store.dispatch(`${this.entityModuleName}/search`,
         { params, searchEndpoint });
 
-      const value = res?.value;
-      if (value) {
-        return value.map((res: ICombinedIndex<TEntity, TMetadata>) => {
+      const data = res?.value;
+      if (data) {
+        const ids = data.map((res: ICombinedIndex<TEntity, TMetadata>) => {
           const entity = { ...res.entity, eTag: res.entityETag };
           const metadata = { ...res.metadata, eTag: res.metadataETag };
           this.store.commit(`${this.entityModuleName}/set`, entity);
           this.store.commit(`${this.metadataModuleName}/set`, metadata);
           return entity.id;
         });
+        return { ids, count: res.odataCount };
       }
 
-      return [];
+      return { ids: [], count: 0 };
     },
   }
 

@@ -1,5 +1,6 @@
 import { IEntity, IEntityCombined } from '@/entities/base';
 import { IAzureSearchParams } from '@/types';
+import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
 export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity> {
   fetch(id: uuid): Promise<IEntityCombined<TEntity, TMetadata>>;
@@ -7,7 +8,7 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
   fetchAllIncludingInactive(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   deactivate(id: uuid): Promise<TEntity>;
   activate(id: uuid): Promise<TEntity>;
-  search(params: IAzureSearchParams, searchEndpoint?: string): Promise<uuid[]>
+  search(params: IAzureSearchParams, searchEndpoint?: string): Promise<IAzureTableSearchResults>
 }
 
 export interface IBaseGetters<TEntity extends IEntity, TMetadata extends IEntity> {
@@ -53,7 +54,7 @@ export interface IBaseActionsMock<TEntity extends IEntity, TMetadata extends IEn
   fetchAllIncludingInactive: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,
   deactivate: jest.Mock<TEntity>;
   activate: jest.Mock<TEntity>;
-  search: jest.Mock<uuid[]>;
+  search: jest.Mock<IAzureTableSearchResults>;
 }
 
 export interface IStorageMakeMock<TEntity extends IEntity, TMetadata extends IEntity> {

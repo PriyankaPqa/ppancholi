@@ -220,7 +220,7 @@ describe('BaseStorage', () => {
         expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/set`, { ...mockMetadatum[0], eTag: 'mock-metadata-Etag' });
       });
 
-      it('should return a list of ids', async () => {
+      it('should return a list of ids and the total count of items', async () => {
         store.dispatch = jest.fn().mockReturnValueOnce(Promise.resolve(
           {
             odataContext: 'foo',
@@ -233,7 +233,7 @@ describe('BaseStorage', () => {
 
         const params = { filter: 'foo' };
         const res = await storage.actions.search(params);
-        expect(res).toEqual([mockEntities[0].id]);
+        expect(res).toEqual({ ids: [mockEntities[0].id], count: 1 });
       });
     });
   });
