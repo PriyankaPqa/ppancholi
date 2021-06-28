@@ -145,16 +145,6 @@
       :title="$t('confirmLeaveDialog.title')"
       :messages="[$t('confirmLeaveDialog.message_1'), $t('confirmLeaveDialog.message_2')]"
       :show.sync="showConfirm" />
-
-    <confirm-before-action
-      :title="$t('financialAssistance.confirmSaveAsTemplateTitle')"
-      :messages="$t('financialAssistance.confirmSaveAsTemplateMessage')"
-      :show.sync="showSaveAsTemplateDialog"
-      :submit-action-label="$t('common.yes')"
-      :cancel-action-label="$t('common.no')"
-      :loading="isSaving"
-      @submit="dispatchSaveAction(true)"
-      @cancel="dispatchSaveAction(false)" />
   </validation-observer>
 </template>
 
@@ -220,7 +210,6 @@ export default Vue.extend({
       loadingPrograms: false,
       error: false,
       showConfirm: false,
-      showSaveAsTemplateDialog: false,
       attemptedSave: false,
     };
   },
@@ -432,25 +421,18 @@ export default Vue.extend({
           return;
         }
 
-        if (this.isTableMode && !this.isEdit) {
-          this.showSaveAsTemplateDialog = true;
-        } else {
-          await this.dispatchSaveAction(false);
-        }
+        await this.dispatchSaveAction();
       } else {
         helpers.scrollToFirstError('scrollAnchor');
       }
     },
 
-    async dispatchSaveAction(saveAsTemplate: boolean): Promise<void> {
+    async dispatchSaveAction(): Promise<void> {
       this.isSaving = true;
-      if (saveAsTemplate) {
-        // todo
-      }
-      const res: unknown = await this.$storage.financialAssistance.actions.createFinancialAssistance(this.isTableMode);
+
+      const res = await this.$storage.financialAssistance.actions.createFinancialAssistance(this.isTableMode);
 
       this.isSaving = false;
-      this.showSaveAsTemplateDialog = false;
 
       if (res) {
         if (this.isTableMode) {

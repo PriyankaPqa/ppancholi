@@ -61,12 +61,6 @@ export const mockStorageFinancialAssistance = () : IStorageMock => ({
 
   actions: {
     createFinancialAssistance: jest.fn(),
-    fetchFinancialAssistanceTable: jest.fn(),
-    updateFinancialAssistance: jest.fn(),
-    addSubItem: jest.fn(),
-    updateSubItem: jest.fn(),
-    deleteItem: jest.fn(),
-    deleteSubItem: jest.fn(),
     fetchActiveCategories: jest.fn(),
   },
 });

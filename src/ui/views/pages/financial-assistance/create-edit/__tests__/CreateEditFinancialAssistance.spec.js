@@ -203,22 +203,6 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
         expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('financialAssistance.errors.needItemSubItem');
       });
-
-      it('shows saveAsTemplateDialog', async () => {
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.validateItemsAndSubItems = jest.fn(() => true);
-
-        await wrapper.setProps({
-          isTableMode: true,
-          isEdit: false,
-        });
-
-        expect(wrapper.vm.showSaveAsTemplateDialog).toBe(false);
-
-        await wrapper.vm.save();
-
-        expect(wrapper.vm.showSaveAsTemplateDialog).toBe(true);
-      });
     });
 
     describe('dispatchSaveAction', () => {

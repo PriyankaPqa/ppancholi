@@ -36,6 +36,7 @@ const HouseholdProfile = () => import(/* webpackChunkName: "household" */ '@/ui/
 
 const FinancialAssistanceLayout = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/layout/FinancialAssistanceLayout.vue');
 const FinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/home/FinancialAssistanceHome.vue');
+const EventFinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/events/details/components/EventFinancialAssistanceHome.vue');
 const CreateEditFinancialAssistance = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/create-edit/CreateEditFinancialAssistance.vue');
 
 const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
@@ -277,7 +278,7 @@ export const routes: Array<RouteConfig> = [
                 }, {
                   path: Routes.events.financialAssistance.home.path,
                   name: Routes.events.financialAssistance.home.name,
-                  component: FinancialAssistanceHome,
+                  component: EventFinancialAssistanceHome,
                   meta: { level: 'level6' },
                   props: true,
                 }, {

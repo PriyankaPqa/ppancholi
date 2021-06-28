@@ -67,12 +67,12 @@ export default Vue.extend({
           icon: 'mdi-file',
           dataTest: 'financialAssistanceTables__createNew',
         },
-        {
-          text: this.$t('financialAssistance.createTableFromExisting') as string,
-          value: 'copy',
-          icon: 'mdi-file-multiple',
-          dataTest: 'financialAssistanceTables__copyExisting',
-        },
+        // {
+        //   text: this.$t('financialAssistance.createTableFromExisting') as string,
+        //   value: 'copy',
+        //   icon: 'mdi-file-multiple',
+        //   dataTest: 'financialAssistanceTables__copyExisting',
+        // },
       ];
     },
   },

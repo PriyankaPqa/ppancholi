@@ -3,6 +3,7 @@ import {
   EFinancialAmountModes,
   EFinancialAssistanceStatus,
   EFinancialFrequency,
+  IFinancialAssistanceTableData,
   IFinancialAssistanceTableRow,
   IFinancialAssistanceTableSubRow,
 } from '@/entities/financial-assistance';
@@ -69,13 +70,7 @@ export interface IStorage {
   };
 
   actions: {
-    createFinancialAssistance(table: boolean): void;
-    fetchFinancialAssistanceTable(id: string, onlyUpdateItems: boolean): void;
-    updateFinancialAssistance(): void;
-    addSubItem(subItem: IFinancialAssistanceTableSubRow, index: number, table: boolean): void;
-    updateSubItem(subItem: IFinancialAssistanceTableSubRow, index: number, parentIndex: number, table: boolean): void;
-    deleteItem(index: number, table: boolean): void;
-    deleteSubItem(index: number, parentIndex: number, table: boolean): void;
+    createFinancialAssistance(table: boolean): Promise<IFinancialAssistanceTableData>;
     fetchActiveCategories(): Promise<IOptionItem[]>;
   };
 }
@@ -141,12 +136,6 @@ export interface IStorageMock {
 
   actions: {
     createFinancialAssistance: jest.Mock<void>;
-    fetchFinancialAssistanceTable: jest.Mock<void>;
-    updateFinancialAssistance: jest.Mock<void>;
-    addSubItem: jest.Mock<void>;
-    updateSubItem: jest.Mock<void>;
-    deleteItem: jest.Mock<void>;
-    deleteSubItem: jest.Mock<void>;
     fetchActiveCategories: jest.Mock<void>;
   };
 }

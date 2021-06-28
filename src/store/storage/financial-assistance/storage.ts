@@ -2,6 +2,7 @@ import {
   EFinancialAmountModes,
   EFinancialAssistanceStatus,
   EFinancialFrequency,
+  IFinancialAssistanceTableData,
   IFinancialAssistanceTableRow,
   IFinancialAssistanceTableSubRow,
 } from '@/entities/financial-assistance';
@@ -224,32 +225,8 @@ const getMutations = (store: IStore<IState>) => ({
 });
 
 const getActions = (store: IStore<IState>) => ({
-  createFinancialAssistance(table: boolean) {
+  createFinancialAssistance(table: boolean): Promise<IFinancialAssistanceTableData> {
     return store.dispatch('financialAssistance/createFinancialAssistance', { table });
-  },
-
-  fetchFinancialAssistanceTable(id: string, onlyUpdateItems: boolean) {
-    return store.dispatch('financialAssistance/fetchFinancialAssistanceTable', { id, onlyUpdateItems });
-  },
-
-  updateFinancialAssistance() {
-    return store.dispatch('financialAssistance/updateFinancialAssistance');
-  },
-
-  addSubItem(subItem: IFinancialAssistanceTableSubRow, index: number) {
-    return store.dispatch('financialAssistance/addSubItem', { subItem, index });
-  },
-
-  updateSubItem(subItem: IFinancialAssistanceTableSubRow, index: number, parentIndex: number) {
-    return store.dispatch('financialAssistance/updateSubItem', { subItem, index, parentIndex });
-  },
-
-  deleteItem(index: number) {
-    return store.dispatch('financialAssistance/deleteItem', { index });
-  },
-
-  deleteSubItem(index: number, parentIndex: number) {
-    return store.dispatch('financialAssistance/deleteSubItem', { index, parentIndex });
   },
 
   fetchActiveCategories() {

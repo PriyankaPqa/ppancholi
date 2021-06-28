@@ -13,7 +13,7 @@
       item-sub-item="subRows"
       show-add-item
       show-add-sub-item
-      sortable
+      :sortable="false"
       collapsible
       :disable-add-item="isOperating"
       :disable-add-sub-item="disableAddSubItem"
