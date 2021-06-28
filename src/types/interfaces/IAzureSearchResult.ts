@@ -21,3 +21,8 @@ export interface IAzureCombinedSearchResult <TEntity, TMetadata> {
   odataCount: number;
   value: Array<ICombinedIndex<TEntity, TMetadata>>;
 }
+
+export interface IAzureTableSearchResults {
+  count: number;
+  ids: Array<uuid>;
+}
