@@ -77,6 +77,7 @@ export const mockCombinedUserAccount = (force?: Partial<IEntity>): IUserAccountC
   entity: mockUserAccountEntity(force),
   metadata: mockUserAccountMetadata(force),
 });
+
 export const mockCombinedUserAccounts = (): IUserAccountCombined[] => [
   mockCombinedUserAccount({ id: '1' }),
   mockCombinedUserAccount({ id: '2' }),

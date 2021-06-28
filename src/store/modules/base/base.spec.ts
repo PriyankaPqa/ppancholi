@@ -53,13 +53,12 @@ describe('Base Module', () => {
   });
 
   describe('baseGetters', () => {
-    // TODO: Fix this test
-    // describe('getAll', () => {
-    //   it('should return all items from the state', () => {
-    //     baseModule.mutations.setAll(baseModule.state, mockUserAccountEntities());
-    //     expect(baseModule.getters.getAll()).toEqual(baseModule.state.items);
-    //   });
-    // });
+    describe('getAll', () => {
+      it('should return all items from the state', () => {
+        baseModule.mutations.setAll(baseModule.state, mockUserAccountEntities());
+        expect(baseModule.getters.getAll(baseModule.state)).toEqual(baseModule.state.items);
+      });
+    });
 
     describe('get', () => {
       it('should return entity having this id', () => {
@@ -177,7 +176,7 @@ describe('Base Module', () => {
     describe('search', () => {
       it('should call search method from the service', async () => {
         baseModule.service.search = jest.fn();
-        const params = { filter: 'foo' };
+        const params = { filter: { Foo: 'foo' } };
         const endpoint = 'bar';
 
         await baseModule.actions.search(actionContext, { params, searchEndpoint: endpoint });

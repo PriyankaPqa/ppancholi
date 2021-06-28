@@ -1,0 +1,265 @@
+<template>
+  <div>
+    <v-col cols="12">
+      <div class="rc-heading-5 mb-8">
+        <template v-if="items.length > 0">
+          {{ $t('registration.isRegistered.search_result', { length: items.length }) }}
+        </template>
+        <template v-else>
+          {{ $t('registration.isRegistered.no_result') }}
+        </template>
+      </div>
+    </v-col>
+    <v-col cols="12">
+      <rc-data-table
+        class="elevation-0 rc-body14 full-width"
+        data-test="resultsTable"
+        :headers="headers"
+        :items="formattedItems"
+        :hide-toolbar="true"
+        :custom-columns="['name', 'actions', 'birthDate', 'phone', 'isRegisteredToEvent', 'registrationNumber', 'emailAddress']"
+        sort-by="name"
+        :hide-header="true"
+        :hide-footer="true"
+        :count="items.length">
+        <template #item.name="{ item: household }">
+          <div>
+            <v-icon data-test="iconType" small class="icon success--text mr-2">
+              mdi-account-box
+            </v-icon>
+            <span data-test="name" class="fw-bold">
+              {{ household.primaryBeneficiary.firstName }} {{ household.primaryBeneficiary.lastName }}
+            </span>
+          </div>
+          <div v-for="(member,i) in household.additionalMembers" :key="i">
+            <v-icon data-test="iconType" small color="grey" class="mr-2">
+              mdi-account-supervisor
+            </v-icon>
+            <span :data-test="`name__houseHoldMember_${i}`" class="fw-bold">
+              {{ member.firstName }}  {{ member.lastName }}
+            </span>
+          </div>
+        </template>
+        <template #item.emailAddress="{ item: household }">
+          <div :class="{'align-top': hasHouseholdMember(household)}">
+            <span data-test="emailAddress">
+              {{ household.primaryBeneficiary.email }}
+            </span>
+          </div>
+        </template>
+        <template #item.phone="{ item: household }">
+          <div :class="{'align-top': hasHouseholdMember(household)}">
+            <span data-test="phoneNumber">
+              {{ getPhone(household) }}
+            </span>
+          </div>
+        </template>
+        <template #item.birthDate="{ item: household }">
+          <div :class="{'firstData': hasHouseholdMember(household)}">
+            <span data-test="birthDate">
+              {{ moment(household.primaryBeneficiary.dateOfBirth).format('ll') }}
+            </span>
+          </div>
+          <div v-if="hasHouseholdMember(household)">
+            <div v-for="(member,i) in household.additionalMembers" :key="i">
+              <span :data-test="`birthdate__houseHoldMember_${i}`">
+                {{ moment(member.dateOfBirth).format('ll') }}
+              </span>
+            </div>
+          </div>
+        </template>
+        <template #item.registrationNumber="{item: household}">
+          <div :class="{'firstData': hasHouseholdMember(household)}">
+            <span data-test="registrationNumber">
+              {{ household.primaryBeneficiary.registrationNumber }}
+            </span>
+          </div>
+          <div v-if="hasHouseholdMember(household)">
+            <div v-for="(member,i) in household.additionalMembers" :key="i">
+              <span :data-test="`registrationNumber__houseHoldMember_${i}`">
+                {{ member.registrationNumber }}
+              </span>
+            </div>
+          </div>
+        </template>
+        <!--        <template #item.isRegisteredToEvent="{ item: household }">-->
+        <!--          <v-icon v-if="household.isRegisteredToEvent" width="48" data-test="isRegistered" small>-->
+        <!--            mdi-check-circle-outline-->
+        <!--          </v-icon>-->
+        <!--        </template>-->
+        <!--        <template #item.actions="{item: beneficiary}">-->
+        <!--          <div :class="{'align-top': hasHouseholdMember(beneficiary)}">-->
+        <!--            <v-btn small color="primary" data-test="details__button" @click="viewDetails(beneficiary)">-->
+        <!--              {{ $t('registration.isRegistered.details') }}-->
+        <!--            </v-btn>-->
+        <!--          </div>-->
+        <!--        </template>-->
+      </rc-data-table>
+      <div class="legend">
+        <div class="mr-4 rc-body12">
+          <v-icon small class="status success--text mr-1">
+            mdi-account-box
+          </v-icon>
+          {{ $t('registration.isRegistered.primary_account') }}
+        </div>
+        <div class="rc-body12">
+          <v-icon small color="grey" class="mr-1">
+            mdi-account-supervisor
+          </v-icon>
+          {{ $t('registration.isRegistered.household_member') }}
+        </div>
+        <div class="rc-body12">
+          <v-icon small color="grey" class="ml-2 mr-1 ">
+            mdi-check-circle-outline
+          </v-icon>
+          {{ $t('registration.isRegistered.registered_current_event') }}
+        </div>
+      </div>
+    </v-col>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import moment from 'moment';
+import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
+import { IPhoneNumber } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
+import { RcDataTable } from '@crctech/component-library';
+
+export interface IMember {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string;
+  email?: string;
+  homePhoneNumber?: IPhoneNumber;
+  mobilePhoneNumber?: IPhoneNumber;
+  alternatePhoneNumber?: IPhoneNumber;
+  isPrimary: boolean;
+  registrationNumber: string;
+}
+
+export interface IFormattedHousehold {
+  primaryBeneficiary: IMember;
+  additionalMembers: IMember[];
+}
+
+export default Vue.extend({
+  name: 'HouseholdResults',
+  components: {
+    RcDataTable,
+  },
+  props: {
+    items: {
+      type: Array as () => IHouseholdCombined[],
+      required: true,
+    },
+  },
+  data() {
+    return {
+      moment,
+    };
+  },
+  computed: {
+    headers(): Array<Record<string, unknown>> {
+      return [
+        {
+          text: this.$t('registration.isRegistered.table.name'),
+          value: 'name',
+          sortable: true,
+        },
+        {
+          text: this.$t('registration.isRegistered.table.email'),
+          value: 'emailAddress',
+          sortable: true,
+        },
+        {
+          text: this.$t('registration.isRegistered.table.phone'),
+          value: 'phone',
+          sortable: true,
+          width: '180px',
+        },
+        {
+          text: this.$t('registration.isRegistered.table.birthDate'),
+          value: 'birthDate',
+          sortable: true,
+          width: '150px',
+        },
+        {
+          text: this.$t('registration.isRegistered.table.registrationNumber'),
+          value: 'registrationNumber',
+          sortable: true,
+          width: '170px',
+        },
+        {
+          text: '',
+          value: 'isRegisteredToEvent',
+          sortable: false,
+          width: '10px',
+        },
+        {
+          text: '',
+          value: 'actions',
+          sortable: false,
+          width: '110px',
+        },
+      ];
+    },
+    formattedItems(): IFormattedHousehold[] {
+      return this.items.map((household: IHouseholdCombined) => {
+        const final = {
+          primaryBeneficiary: {},
+          additionalMembers: [],
+        } as IFormattedHousehold;
+
+        household.metadata.memberMetadata.forEach((member) => {
+          if (household.entity.primaryBeneficiary === member.id) {
+            final.primaryBeneficiary = {
+              ...member,
+              isPrimary: true,
+              registrationNumber: household.entity.registrationNumber,
+            };
+          } else {
+            final.additionalMembers.push({
+              ...member,
+              isPrimary: false,
+              registrationNumber: household.entity.registrationNumber,
+            });
+          }
+        });
+        return final;
+      });
+    },
+  },
+  methods: {
+    hasHouseholdMember(household: IFormattedHousehold) {
+      if (household.additionalMembers) return household.additionalMembers.length > 0;
+      return false;
+    },
+    async viewDetails(household: IFormattedHousehold) {
+      // eslint-disable-next-line
+      const p = household;
+      // await this.$store.dispatch('beneficiary/fetchBeneficiary', { beneficiaryId: household.id });
+      // // if (this.currentCaseFileID) {
+      // //   this.$store.commit('registration/setProperties', { currentCaseFileId: this.currentCaseFileID });
+      // // }
+      // this.$store.commit('registration/setProperties', { existingBeneficiaryMode: true });
+      // this.$store.commit('registration/setProperties', { beneficiaryRegisteredForCurrentEvent: household.isRegisteredToEvent });
+      // this.$store.commit('registration/setProperties', { activeTabIndex: this.registrationTabOrders.indexOf('review') });
+      return true;
+    },
+    getPhone(household: IFormattedHousehold): string {
+      const mPhone = household.primaryBeneficiary.mobilePhoneNumber;
+      if (mPhone) return mPhone.number;
+      const hPhone = household.primaryBeneficiary.homePhoneNumber;
+      if (hPhone) return hPhone.number;
+      const oPhone = household.primaryBeneficiary.alternatePhoneNumber;
+      if (oPhone) return oPhone.number;
+      return '';
+    },
+  },
+});
+</script>
+
+<style lang="sccs" scoped>
+
+</style>

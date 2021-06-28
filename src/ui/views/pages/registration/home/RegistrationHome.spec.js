@@ -108,6 +108,7 @@ describe('RegistrationHome.vue', () => {
       it('should fetch the proper events', () => {
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
           filter: { Schedule: { Status: EEventStatus.Open } },
+          top: 999,
         });
       });
     });

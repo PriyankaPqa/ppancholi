@@ -198,7 +198,7 @@ describe('BaseStorage', () => {
 
     describe('search', () => {
       it('should call action search with the payload', async () => {
-        const params = { filter: 'foo' };
+        const params = { filter: { Foo: 'foo' } };
         await storage.actions.search(params);
         expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`, { params, searchEndpoint: null });
       });
@@ -214,7 +214,7 @@ describe('BaseStorage', () => {
           },
         ));
 
-        const params = { filter: 'foo' };
+        const params = { filter: { Foo: 'foo' } };
         await storage.actions.search(params);
         expect(store.commit).toBeCalledWith(`${storage.entityModuleName}/set`, { ...mockEntities[0], eTag: 'mock-Entity-Etag' });
         expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/set`, { ...mockMetadatum[0], eTag: 'mock-metadata-Etag' });
@@ -231,7 +231,7 @@ describe('BaseStorage', () => {
           },
         ));
 
-        const params = { filter: 'foo' };
+        const params = { filter: { Foo: 'foo' } };
         const res = await storage.actions.search(params);
         expect(res).toEqual({ ids: [mockEntities[0].id], count: 1 });
       });

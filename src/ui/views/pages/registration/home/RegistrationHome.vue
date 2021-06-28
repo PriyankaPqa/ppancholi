@@ -100,6 +100,7 @@ export default Vue.extend({
             Status: EEventStatus.Open,
           },
         },
+        top: 999,
       });
       this.events = res?.value;
     },

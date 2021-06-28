@@ -1,5 +1,6 @@
 // Documentation https://rctech.atlassian.net/wiki/spaces/EW/pages/373030919/Fields+Size+Standard?focusedCommentId=375783487&#comment-375783487
 
+export const MAX_LENGTH_9 = 9;
 export const MAX_LENGTH_XS = 20;
 export const MAX_LENGTH_SM = 50;
 export const MAX_LENGTH_MD = 250;

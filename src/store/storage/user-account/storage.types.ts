@@ -64,5 +64,5 @@ export interface IStorage {
 }
 
 export interface IStorageMock {
-  make(): IStorageMake
+  make(): IStorageMakeMock
 }

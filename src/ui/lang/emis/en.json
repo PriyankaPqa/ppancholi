@@ -1259,7 +1259,7 @@
     "registration.isRegistered.registered_current_event": "Registered in current event",
     "registration.isRegistered.registrationNumber": "Registration number",
     "registration.isRegistered.search": "Search",
-    "registration.isRegistered.search_result": "The search for {searchCriteria} returned {length} results.",
+    "registration.isRegistered.search_result": "The search returned {length} results.",
     "registration.isRegistered.table.birthDate": "Date of birth",
     "registration.isRegistered.table.email": "Email address",
     "registration.isRegistered.table.name": "Name",
@@ -1607,5 +1607,6 @@
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
     "zendesk.question.select_language_preferences": "How do I select my language preferences?",
     "zendesk.referral": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360056417493",
-    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242353"
+    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242353",
+    "validations.registrationNumber": "Must be exactly {length} digits prefixed with 0"
 }

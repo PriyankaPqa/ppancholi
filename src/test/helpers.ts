@@ -65,7 +65,7 @@ export const mockUserStateContributor = (number: number) => {
 };
 
 export const mockSearchParams: IAzureSearchParams = {
-  filter: 'foo',
+  filter: { Foo: 'foo' },
 };
 
 export const mockAppUsers = [{

@@ -28,6 +28,11 @@ extend('numeric', {
   message: (_, values) => i18n.t('validations.numeric', values),
 });
 
+extend('registrationNumber', {
+  message: () => i18n.t('validations.registrationNumber', { length: 9 }),
+  validate: (value) => /^[0-9]*$/.test(value) && value.length === 9,
+});
+
 // Declare only used rules
 extend('oneOf', {
   ...oneOf,

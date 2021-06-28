@@ -14,7 +14,7 @@ describe('AccountSettings.vue', () => {
   let roleHasChanged = false;
   let isLevel6 = false;
 
-  const doMount = function () {
+  const doMount = function doMount() {
     wrapper = mount(Component, {
       localVue,
       computed: {

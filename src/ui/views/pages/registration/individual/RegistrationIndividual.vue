@@ -19,7 +19,7 @@
           outer-scroll>
           <template slot="default">
             <v-row justify="center" class="mt-12" no-gutters>
-              <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
+              <v-col cols="12" xl="10" lg="10" md="11" sm="12" xs="12">
                 <component :is="currentTab.componentName" />
               </v-col>
             </v-row>
@@ -151,10 +151,16 @@ export default mixins(individual).extend({
   },
   methods: {
     async back() {
+      if (this.currentTab.id === 'isRegistered' && this.$store.state.registration.householdResultsShown) {
+        this.$storage.registration.mutations.setHouseholdResultsShown(false);
+        return;
+      }
+
       if (this.currentTabIndex === 0) {
         await this.$router.push({ name: routes.registration.home.name });
         return;
       }
+
       await this.jump(this.currentTabIndex - 1);
     },
   },
