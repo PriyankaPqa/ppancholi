@@ -39,7 +39,7 @@
 </template>
 
 <script lang="ts">
-import { IHouseholdData } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
 import { IEventData } from '@crctech/registration-lib/src/entities/event';
 import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
@@ -56,12 +56,12 @@ export default Vue.extend({
       return this.errors?.length === 0;
     },
 
-    response(): IHouseholdData {
+    response(): IHouseholdEntity {
       return this.$storage.registration.getters.registrationResponse();
     },
 
     household(): IHouseholdCreate {
-      return this.$storage.household.getters.householdCreate();
+      return this.$storage.registration.getters.householdCreate();
     },
 
     errors(): IError[] {

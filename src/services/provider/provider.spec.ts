@@ -1,9 +1,9 @@
 import { PublicService } from '@crctech/registration-lib/src/services/public';
-import { HouseholdsService } from '@crctech/registration-lib/src/services/households';
+import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
 import { provider } from './index';
 
 jest.mock('@crctech/registration-lib/src/services/public');
-jest.mock('@crctech/registration-lib/src/services/households');
+jest.mock('@crctech/registration-lib/src/services/households/entity');
 
 describe('Provider', () => {
   it('should instantiate PublicService', () => {

@@ -1,6 +1,6 @@
 import { mockStorage } from '@/store/storage/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockHousehold } from '@crctech/registration-lib/src/entities/household';
+import { mockHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
 import { mockEvent } from '@crctech/registration-lib/src/entities/event';
 import ConfirmationError from '@/ui/views/pages/registration/confirmation/ConfirmationError.vue';
 import { mockHttpError } from '@/services/httpClient.mock';
@@ -11,7 +11,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 
 const computed = {
-  response: () => mockHousehold(),
+  response: () => mockHouseholdEntity(),
   event: () => ({
     name: {
       translation: {
@@ -98,7 +98,7 @@ describe('ConfirmRegistration.vue', () => {
 
     describe('response', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.response).toEqual(mockHousehold());
+        expect(wrapper.vm.response).toEqual(mockHouseholdEntity());
       });
     });
 

@@ -1,12 +1,16 @@
 import { Store } from 'vuex';
 import { IState as IRegistrationState } from '@crctech/registration-lib/src/store/modules/registration/registration.types';
-import { IState as IHouseholdState } from '@crctech/registration-lib/src/store/modules/household/household.types';
+import { IHouseholdEntityState } from '@crctech/registration-lib/src/store/modules/household/householdEntity.types';
 import { IProvider, IProviderMock } from '@/services/provider';
+import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
+import * as vuexModule from '@/constants/vuex-modules';
+import { IState as IBaseState } from '@crctech/registration-lib/src/store/modules/base/base.types';
 
 export interface IRootState {
   version: string;
   registration?: IRegistrationState;
-  household?: IHouseholdState;
+  [vuexModule.HOUSEHOLD_ENTITIES]?: IHouseholdEntityState
+  [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
 }
 
 export type IState = IRootState;

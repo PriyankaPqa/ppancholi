@@ -1018,10 +1018,19 @@
     "@googlemaps/js-api-loader" "^1.11.0"
     date-fns "^2.14.0"
 
-"@crctech/registration-lib@1.0.244":
-  version "1.0.244"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.244.tgz#10f2e2c3ed41ce676f8daa3f004e7c677760907f"
-  integrity sha1-EPLiw+1Bzmdvjao/AE58Z3dgkH8=
+"@crctech/component-library@1.0.34":
+  version "1.0.34"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.34.tgz#8f082cf57da50fde11e075cf3b903af9731f2423"
+  integrity sha1-jwgs9X2lD94R4HXPO5A6+XMfJCM=
+  dependencies:
+    "@googlemaps/js-api-loader" "^1.11.0"
+    date-fns "^2.14.0"
+    vuedraggable "^2.24.1"
+
+"@crctech/registration-lib@1.0.260":
+  version "1.0.260"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.260.tgz#6bad789bce463263a91bda4007abbe24f55552d0"
+  integrity sha1-a614m85GMmOpG9pAB6u+JPVVUtA=
   dependencies:
     "@crctech/component-library" "1.0.19"
     axios "^0.21.1"
@@ -11129,6 +11138,11 @@ sort-keys@^1.0.0:
   dependencies:
     is-plain-obj "^1.0.0"
 
+sortablejs@1.10.2:
+  version "1.10.2"
+  resolved "https://registry.yarnpkg.com/sortablejs/-/sortablejs-1.10.2.tgz#6e40364d913f98b85a14f6678f92b5c1221f5290"
+  integrity sha512-YkPGufevysvfwn5rfdlGyrGjt7/CRHwvRPogD/lC+TnvcN29jDpCifKP+rBqf+LRldfXSTh+0CGLcSg0VIxq3A==
+
 source-list-map@^2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/source-list-map/-/source-list-map-2.0.1.tgz#3993bd873bfc48479cca9ea3a547835c7c154b34"
@@ -12493,6 +12507,13 @@ vue@^2.6.11:
   version "2.6.12"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.6.12.tgz#f5ebd4fa6bd2869403e29a896aed4904456c9123"
   integrity sha512-uhmLFETqPPNyuLLbsKz6ioJ4q7AZHzD8ZVFNATNyICSZouqP2Sz0rotWQC8UNBF6VGSCs5abnKJoStA6JbCbfg==
+
+vuedraggable@^2.24.1:
+  version "2.24.3"
+  resolved "https://registry.yarnpkg.com/vuedraggable/-/vuedraggable-2.24.3.tgz#43c93849b746a24ce503e123d5b259c701ba0d19"
+  integrity sha512-6/HDXi92GzB+Hcs9fC6PAAozK1RLt1ewPTLjK0anTYguXLAeySDmcnqE8IC0xa7shvSzRjQXq3/+dsZ7ETGF3g==
+  dependencies:
+    sortablejs "1.10.2"
 
 vuetify-loader@^1.6.0:
   version "1.7.2"

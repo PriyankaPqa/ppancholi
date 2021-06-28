@@ -44,7 +44,7 @@ class HttpClient implements IHttpClient {
 
   constructor() {
     this.axios = axios.create({
-      baseURL: process.env.VUE_APP_API_BASE_URL,
+      baseURL: `${process.env.VUE_APP_API_BASE_URL}/`,
       withCredentials: true,
       headers: {
         Accept: 'application/json',
