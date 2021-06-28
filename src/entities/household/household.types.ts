@@ -18,6 +18,7 @@ export interface IHouseholdEntity extends IEntity {
   registrationNumber?: string;
 }
 export interface IMemberMetadata {
+  id?: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
