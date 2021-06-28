@@ -1,6 +1,7 @@
 import { IAzureSearchResult } from '@/types';
 import { Team } from '@/entities/team/team';
 import { mockCombinedUserAccount } from '@/entities/user-account';
+import _sortBy from 'lodash/sortBy';
 import {
   ETeamStatus, ETeamType, ITeam, ITeamData, ITeamEvent, ITeamMemberData, ITeamSearchData, ITeamSearchDataAggregate,
 } from './team.types';
@@ -111,4 +112,12 @@ export const mockTeamsData = (): ITeamData[] => [
   },
 ];
 
+export const getOriginalData = (team: ITeam, wrapper: any) => ({
+  name: team.name,
+  status: team.status,
+  events: wrapper.vm.teamType === 'standard' ? _sortBy(team.events, ['id']) : team.events[0],
+  primaryContact: (wrapper.vm.currentPrimaryContact || {}).emailAddress,
+});
+
 export const mockTeam = (): ITeam => new Team(mockTeamSearchDataAggregate()[0]);
+export const mockTeamTwo = (): ITeam => new Team(mockTeamSearchDataAggregate()[1]);

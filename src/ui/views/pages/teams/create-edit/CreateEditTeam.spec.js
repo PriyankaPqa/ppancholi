@@ -7,7 +7,7 @@ import {
 import routes from '@/constants/routes';
 import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
 import {
-  ETeamStatus, ETeamType, mockTeamMembersData, Team, mockTeamSearchDataAggregate, mockTeam,
+  ETeamStatus, ETeamType, mockTeamMembersData, Team, mockTeamSearchDataAggregate, mockTeam, mockTeamTwo, getOriginalData,
 } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 
@@ -293,6 +293,7 @@ describe('CreateEditTeam.vue', () => {
           });
 
           describe('test disabled state', () => {
+            let mockFn;
             beforeEach(() => {
               wrapper = shallowMount(Component, {
                 localVue,
@@ -304,12 +305,43 @@ describe('CreateEditTeam.vue', () => {
                 team: mockTeam(),
                 isLoading: false,
               });
-              jest.spyOn(wrapper.vm, 'isSubmitDisabled').mockImplementation(() => true);
+              mockFn = jest.spyOn(wrapper.vm, 'isSubmitDisabled');
+              mockFn.mockImplementation(() => true);
             });
 
             it('is disabled when isSubmitDisabled is true', () => {
               element = wrapper.findDataTest('createEditTeam__submit');
               expect(element.attributes('disabled')).toBeTruthy();
+            });
+          });
+          describe('test disabled state on data manipulation', () => {
+            beforeEach(async () => {
+              wrapper = shallowMount(Component, {
+                localVue,
+                propsData: {
+                  teamType: 'standard',
+                },
+              });
+              const team = mockTeam();
+              await wrapper.setData({
+                team,
+                isLoading: false,
+              });
+              wrapper.vm.setOriginalData();
+              jest.spyOn(wrapper.vm, 'isSubmitDisabled').mockImplementation((isFailed, isChanged) => !isChanged);
+            });
+            it('is enabled when data is changed', async () => {
+              await wrapper.setData({ team: mockTeamTwo() });
+              element = wrapper.findDataTest('createEditTeam__submit');
+              expect(element.attributes('disabled')).toBe(undefined);
+            });
+
+            it('is disabled when data is changed to original', async () => {
+              await wrapper.setData({ team: mockTeamTwo() });
+              element = wrapper.findDataTest('createEditTeam__submit');
+              const isEnabledAfterChanged = element.attributes('disabled') === undefined;
+              await wrapper.setData({ team: mockTeam() });
+              expect(wrapper.findDataTest('createEditTeam__submit').attributes('disabled') && isEnabledAfterChanged).toBeTruthy();
             });
           });
         });
@@ -540,6 +572,33 @@ describe('CreateEditTeam.vue', () => {
       });
     });
 
+    describe('changed', () => {
+      beforeEach(async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+            id: '123',
+          },
+        });
+        await wrapper.setData({
+          team: mockTeam(),
+          isLoading: false,
+        });
+        wrapper.vm.setOriginalData();
+      });
+      it('check if changed value changes on changing team values', async () => {
+        await wrapper.setData({ team: mockTeamTwo() });
+        const isEnabledAfterChanged = wrapper.vm.changed;
+        await wrapper.setData({ team: mockTeam() });
+        expect(!wrapper.vm.changed && isEnabledAfterChanged).toBeTruthy();
+      });
+
+      it('check if the value is unchanged', () => {
+        expect(wrapper.vm.changed).toBeFalsy();
+      });
+    });
+
     describe('submitLabel', () => {
       it('should return the right label when we are in create mode', () => {
         wrapper.vm.$route.name = routes.teams.create.name;
@@ -694,6 +753,27 @@ describe('CreateEditTeam.vue', () => {
             name: new Event(mockEventsSearchData()[0]).name,
           },
         ]);
+      });
+    });
+
+    describe('setOriginalData', () => {
+      let team;
+      beforeEach(async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+          },
+        });
+        team = mockTeam();
+        await wrapper.setData({
+          team,
+          isLoading: false,
+        });
+      });
+      it('is disabled when data is changed to original', async () => {
+        wrapper.vm.setOriginalData();
+        expect(wrapper.vm.$data.original).toEqual(getOriginalData(team, wrapper));
       });
     });
 

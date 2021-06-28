@@ -1,5 +1,5 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed, dirty, changed }" slim>
+  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
     <rc-page-content
       :title="headerTitle"
       :show-add-button="false"
@@ -54,9 +54,10 @@
                       :label="`${$t('teams.form.primary_contact')}*`"
                       :items="primaryContactUsers"
                       item-text="displayName"
+                      item-value="emailAddress"
                       :search-input.sync="primaryContactQuery"
                       :rules="rules.primaryContact"
-                      :value="currentPrimaryContact"
+                      :value="(currentPrimaryContact || {}).emailAddress"
                       hide-no-data
                       hide-selected
                       return-object
@@ -97,7 +98,7 @@
                       color="primary"
                       data-test="createEditTeam__submit"
                       :loading="isSubmitting"
-                      :disabled="isSubmitDisabled(failed, dirty || changed)"
+                      :disabled="isSubmitDisabled(failed, changed)"
                       @click="submit()">
                       {{ submitLabel }}
                     </v-btn>
@@ -163,6 +164,8 @@ import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm } from '@/types';
 import { IUserAccountCombined } from '@/entities/user-account';
+import _isEqual from 'lodash/isEqual';
+import _sortBy from 'lodash/sortBy';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 
 export default mixins(handleUniqueNameSubmitError).extend({
@@ -208,6 +211,11 @@ export default mixins(handleUniqueNameSubmitError).extend({
       team: null as ITeam,
       isLoading: true,
       availableEvents: [] as ITeamEvent[],
+      original: {
+        name: null,
+        events: null as ITeamEvent[],
+        primaryContact: null as ITeamMemberData,
+      },
     };
   },
 
@@ -262,6 +270,14 @@ export default mixins(handleUniqueNameSubmitError).extend({
       }
       return this.$t('teams.types.adhoc');
     },
+    changed(): boolean {
+      return !_isEqual(this.original, {
+        name: this.team.name,
+        status: this.team.status,
+        events: this.teamType === 'standard' ? _sortBy(this.team.events, ['id']) : this.team.events[0],
+        primaryContact: (this.currentPrimaryContact || {}).emailAddress,
+      });
+    },
   },
 
   watch: {
@@ -280,14 +296,22 @@ export default mixins(handleUniqueNameSubmitError).extend({
       await this.loadTeam();
     }
     this.getAvailableEvents();
+    this.setOriginalData();
     this.isLoading = false;
   },
 
   methods: {
+    setOriginalData() {
+      this.$data.original = _cloneDeep({
+        name: this.team.name,
+        status: this.team.status,
+        events: this.teamType === 'standard' ? _sortBy(this.team.events, ['id']) : this.team.events[0],
+        primaryContact: (this.currentPrimaryContact || {}).emailAddress,
+      });
+    },
     async fetchEvents() {
       await this.$storage.event.actions.fetchEvents();
     },
-
     getAvailableEvents() {
       const eventsByStatus = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
       if (eventsByStatus) {
@@ -389,6 +413,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         await this.submitEditTeam();
         this.getAvailableEvents();
       }
+      this.setOriginalData();
     },
 
     setPrimaryContactTeam() {
