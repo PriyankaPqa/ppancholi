@@ -30,6 +30,7 @@ export interface IMemberMetadata {
 
 export interface IHouseholdMetadata extends IEntity {
   memberMetadata: Array<IMemberMetadata>;
+  eventIds: Array<uuid>
 }
 
 export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, IHouseholdMetadata>

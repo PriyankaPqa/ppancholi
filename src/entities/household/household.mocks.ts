@@ -62,6 +62,7 @@ export const mockMemberMetadata = (force?: Partial<IMemberMetadata>): IMemberMet
 export const mockHouseholdMetadata = (force?: Partial<IHouseholdMetadata>): IHouseholdMetadata => ({
   ...mockBaseEntity(),
   memberMetadata: [mockMemberMetadata()],
+  eventIds: ['1', '2'],
   ...force,
 });
 
