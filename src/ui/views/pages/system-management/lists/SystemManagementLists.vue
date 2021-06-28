@@ -76,11 +76,12 @@ export default Vue.extend({
         route: routes.systemManagement.genders.name,
         dataTest: 'genders',
       },
-      {
-        name: 'system_management.lists.preferredLanguages',
-        route: routes.systemManagement.preferredLanguages.name,
-        dataTest: 'preferredLanguages',
-      },
+      // commenting because this may be used in the future again
+      // {
+      //   name: 'system_management.lists.preferredLanguages',
+      //   route: routes.systemManagement.preferredLanguages.name,
+      //   dataTest: 'preferredLanguages',
+      // },
       {
         name: 'system_management.lists.primarySpokenLanguages',
         route: routes.systemManagement.primarySpokenLanguages.name,
