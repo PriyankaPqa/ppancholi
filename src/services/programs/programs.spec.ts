@@ -35,12 +35,12 @@ describe('>>> Programs service', () => {
   describe('updateProgram', () => {
     it('is linked to the correct url', async () => {
       await service.updateProgram(new Program(mockProgram));
-      expect(http.patch).toHaveBeenCalledWith(`/event/programs/${mockProgram.programId}/edit`, expect.anything(), { globalHandler: false });
+      expect(http.patch).toHaveBeenCalledWith(`/event/programs/${mockProgram.programId}`, expect.anything(), { globalHandler: false });
     });
 
     it('converts program entity to the correct payload', async () => {
       await service.updateProgram(new Program(mockProgram));
-      expect(http.patch).toHaveBeenCalledWith(`/event/programs/${mockProgram.programId}/edit`, {
+      expect(http.patch).toHaveBeenCalledWith(`/event/programs/${mockProgram.programId}`, {
         name: mockProgram.programName,
         description: mockProgram.programDescription,
         paymentModalities: mockProgram.paymentModalities,

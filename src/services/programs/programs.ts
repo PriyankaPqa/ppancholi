@@ -17,7 +17,7 @@ export class ProgramsService implements IProgramsService {
   async updateProgram(program: IProgram): Promise<IProgramData> {
     program.fillEmptyMultilingualAttributes();
     const payload = this.programToUpdateProgramRequestPayload(program);
-    return this.http.patch(`/event/programs/${program.id}/edit`, payload, { globalHandler: false });
+    return this.http.patch(`/event/programs/${program.id}`, payload, { globalHandler: false });
   }
 
   async searchPrograms(params: IAzureSearchParams): Promise<IAzureSearchResult<IProgramSearchData>> {
