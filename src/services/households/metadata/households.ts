@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DomainBaseService } from '../../../services/base';
-import { IHouseholdMetadataService } from '../../../services/households/metadata/households.types';
+import { DomainBaseService } from '../../base';
+import { IHouseholdMetadataService } from './households.types';
 import { IHttpClient } from '../../httpClient';
 
 import { IHouseholdMetadata } from '../../../entities/household';

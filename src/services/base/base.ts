@@ -1,4 +1,4 @@
-import { IHttpClient } from '../../services/httpClient';
+import { IHttpClient } from '../httpClient';
 import { IEntity } from '../../entities/base/base.types';
 import { IAzureSearchParams } from '../../types';
 import { IAzureCombinedSearchResult } from '../../types/interfaces/IAzureSearchResult';

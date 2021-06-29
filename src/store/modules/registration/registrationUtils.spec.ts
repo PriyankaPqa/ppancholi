@@ -58,7 +58,11 @@ describe('>>> Registration utils', () => {
         const mode = ERegistrationMode.CRC;
         const state = {
           isPrivacyAgreed: true,
-          privacyRegistrationMethod: null,
+          householdCreate: {
+            consentInformation: {
+              registrationMethod: null,
+            },
+          },
         } as IState;
 
         const isValid = privacyStatementValid(mode, state);
@@ -69,8 +73,12 @@ describe('>>> Registration utils', () => {
         const mode = ERegistrationMode.CRC;
         const state = {
           isPrivacyAgreed: true,
-          privacyRegistrationMethod: ERegistrationMethod.InPerson,
-          privacyRegistrationLocationName: '',
+          householdCreate: {
+            consentInformation: {
+              registrationMethod: ERegistrationMethod.InPerson,
+              registrationLocationId: null,
+            },
+          },
         } as IState;
 
         const isValid = privacyStatementValid(mode, state);
@@ -81,8 +89,12 @@ describe('>>> Registration utils', () => {
         const mode = ERegistrationMode.CRC;
         const state = {
           isPrivacyAgreed: true,
-          privacyRegistrationMethod: ERegistrationMethod.InPerson,
-          privacyRegistrationLocationName: 'location',
+          householdCreate: {
+            consentInformation: {
+              registrationMethod: ERegistrationMethod.InPerson,
+              registrationLocationId: 'id',
+            },
+          },
         } as IState;
 
         const isValid = privacyStatementValid(mode, state);

@@ -1,4 +1,4 @@
 export enum ERegistrationMethod {
-  InPerson = 'InPerson',
-  Phone = 'Phone',
+  InPerson = 1,
+  Phone,
 }

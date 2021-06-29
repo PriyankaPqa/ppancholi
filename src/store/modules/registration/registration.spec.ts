@@ -1,11 +1,13 @@
 import { mockStore } from '@/store';
-import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '@/types';
+import {
+  ECanadaProvinces, ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
+} from '@/types';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import { mockHttpError } from '@/services/httpClient.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import { Event, mockEventData, mockEvent } from '../../../entities/event';
-import { getDefaultState } from './registration';
+import { getDefaultState, makeRegistrationModule } from './registration';
 import {
   EIndigenousTypes,
   mockGenders,
@@ -34,7 +36,6 @@ describe('>>> Registration Module', () => {
       it('should return proper data', () => {
         expect(getDefaultState(mockTabs())).toEqual({
           isPrivacyAgreed: false,
-          privacyDateTimeConsent: '',
           event: null,
           isLeftMenuOpen: true,
           tabs: mockTabs(),
@@ -59,9 +60,6 @@ describe('>>> Registration Module', () => {
             [ECanadaProvinces.OT]: [],
           },
           loadingIndigenousIdentities: false,
-          privacyCRCUsername: '',
-          privacyRegistrationMethod: null,
-          privacyRegistrationLocationName: '',
           registrationResponse: null,
           registrationErrors: [],
           submitLoading: false,
@@ -342,9 +340,9 @@ describe('>>> Registration Module', () => {
 
     describe('setDateTimeConsent', () => {
       it('should set privacyDateTimeConsent', () => {
-        expect(store.state.registration.privacyDateTimeConsent).toEqual('');
+        expect(store.state.registration.householdCreate.consentInformation.privacyDateTimeConsent).toEqual(null);
         store.commit('registration/setDateTimeConsent', 'date');
-        expect(store.state.registration.privacyDateTimeConsent).toEqual('date');
+        expect(store.state.registration.householdCreate.consentInformation.privacyDateTimeConsent).toEqual('date');
       });
     });
 
@@ -388,27 +386,27 @@ describe('>>> Registration Module', () => {
       });
     });
 
-    describe('setPrivacyCRCUsername', () => {
-      it('should set privacyCRCUsername', () => {
-        expect(store.state.registration.privacyCRCUsername).toEqual('');
+    describe('sePrivacyCRCUsername', () => {
+      it('should set cRCUsername', () => {
+        expect(store.state.registration.householdCreate.consentInformation.crcUserName).toEqual(null);
         store.commit('registration/setPrivacyCRCUsername', 'user');
-        expect(store.state.registration.privacyCRCUsername).toEqual('user');
+        expect(store.state.registration.householdCreate.consentInformation.crcUserName).toEqual('user');
       });
     });
 
     describe('setPrivacyRegistrationMethod', () => {
-      it('should set privacyRegistrationMethod', () => {
-        expect(store.state.registration.privacyRegistrationMethod).toEqual(null);
+      it('should set registrationMethod', () => {
+        expect(store.state.registration.householdCreate.consentInformation.registrationMethod).toEqual(null);
         store.commit('registration/setPrivacyRegistrationMethod', ERegistrationMethod.InPerson);
-        expect(store.state.registration.privacyRegistrationMethod).toEqual(ERegistrationMethod.InPerson);
+        expect(store.state.registration.householdCreate.consentInformation.registrationMethod).toEqual(ERegistrationMethod.InPerson);
       });
     });
 
-    describe('setPrivacyRegistrationLocationName', () => {
-      it('should set privacyRegistrationLocationName', () => {
-        expect(store.state.registration.privacyRegistrationLocationName).toEqual('');
-        store.commit('registration/setPrivacyRegistrationLocationName', 'name');
-        expect(store.state.registration.privacyRegistrationLocationName).toEqual('name');
+    describe('setPrivacyRegistrationLocationId', () => {
+      it('should set registrationLocationId', () => {
+        expect(store.state.registration.householdCreate.consentInformation.registrationLocationId).toEqual(null);
+        store.commit('registration/setPrivacyRegistrationLocationId', 'location id');
+        expect(store.state.registration.householdCreate.consentInformation.registrationLocationId).toEqual('location id');
       });
     });
 
@@ -681,19 +679,35 @@ describe('>>> Registration Module', () => {
     });
 
     describe('submitRegistration', () => {
+      it('calls difference service according to mode', async () => {
+        await store.commit('registration/setEvent', mockEventData());
+        await store.dispatch('registration/submitRegistration');
+
+        expect(store.$services.households.submitRegistration).toHaveBeenCalledTimes(1);
+        expect(store.$services.households.submitCRCRegistration).toHaveBeenCalledTimes(0);
+
+        store = mockStore({
+          modules: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            registration: makeRegistrationModule({ mode: ERegistrationMode.CRC } as any),
+          },
+        });
+        await store.commit('registration/setEvent', mockEventData());
+        await store.dispatch('registration/submitRegistration');
+
+        expect(store.$services.households.submitRegistration).toHaveBeenCalledTimes(0);
+        expect(store.$services.households.submitCRCRegistration).toHaveBeenCalledTimes(1);
+      });
+
       it('call the submitRegistration service with proper params', async () => {
         store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         await store.commit('registration/setEvent', mockEventData());
-
-        const mockConsentDateTime = '2000-06-02T04:00:00Z';
-        await store.commit('registration/setDateTimeConsent', mockConsentDateTime);
 
         await store.dispatch('registration/submitRegistration');
 
         expect(store.$services.households.submitRegistration).toHaveBeenCalledWith(
           store.state.registration.householdCreate,
           mockEventData().eventId,
-          mockConsentDateTime,
         );
       });
 

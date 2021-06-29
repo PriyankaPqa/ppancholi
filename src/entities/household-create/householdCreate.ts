@@ -1,4 +1,4 @@
-import { IHouseholdCreate, IHouseholdCreateData } from './householdCreate.types';
+import { IConsentInformation, IHouseholdCreate, IHouseholdCreateData } from './householdCreate.types';
 import { IAddress, Address } from '../value-objects/address';
 import { IMember, Member } from '../value-objects/member';
 
@@ -14,6 +14,8 @@ export class HouseholdCreate implements IHouseholdCreate {
   homeAddress: IAddress
 
   additionalMembers: IMember[];
+
+  consentInformation: IConsentInformation;
 
   constructor(data?: IHouseholdCreateData) {
     if (!data) {
@@ -51,6 +53,12 @@ export class HouseholdCreate implements IHouseholdCreate {
     this.primaryBeneficiary = new Member();
     this.homeAddress = new Address();
     this.additionalMembers = [];
+    this.consentInformation = {
+      crcUserName: null,
+      registrationMethod: null,
+      registrationLocationId: null,
+      privacyDateTimeConsent: null,
+    };
   }
 
   // Validation used for each page of registration

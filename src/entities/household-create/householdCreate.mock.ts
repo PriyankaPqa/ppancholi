@@ -13,6 +13,7 @@ export const mockHouseholdCreateData = (): IHouseholdCreateData => ({
   primaryBeneficiary: mockMemberData(),
   homeAddress: mockAddressData(),
   additionalMembers: mockAdditionalMembers(),
+  consentInformation: null,
 });
 
 export const mockHouseholdCreate = (force?: Partial<IHouseholdCreateData>): IHouseholdCreate => new HouseholdCreate(
@@ -25,5 +26,5 @@ export const mockCreateHouseholdRequest = (): ICreateHouseholdRequest => ({
   homeAddress: null,
   additionalMembers: [],
   eventId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
-  privacyDateTimeConsent: '2021-06-10T10:35:30-04:00',
+  consentInformation: null,
 });

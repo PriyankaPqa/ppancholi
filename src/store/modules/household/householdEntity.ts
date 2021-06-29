@@ -1,7 +1,7 @@
-import { IHouseholdEntity } from '../../../entities/household';
-import { BaseModule, IState } from '../../../store/modules/base';
-import { HouseholdsService } from '../../../services/households/entity';
 import { ActionTree } from 'vuex';
+import { IHouseholdEntity } from '../../../entities/household';
+import { BaseModule, IState } from '../base';
+import { HouseholdsService } from '../../../services/households/entity';
 
 import { IRootState } from '../../store.types';
 

@@ -1,5 +1,5 @@
-import { IHttpClient } from '../../../services/httpClient';
 import moment from 'moment';
+import { IHttpClient } from '../../httpClient';
 import { IHouseholdEntity } from '../../../entities/household';
 import {
   ECanadaProvinces, IAzureSearchParams, IAzureSearchResult, IOptionItemData,
@@ -45,19 +45,24 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     });
   }
 
-  submitRegistration(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): Promise<IHouseholdEntity> {
-    const payload = this.parseHouseholdPayload(household, eventId, privacyDateTimeConsent);
+  submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {
+    const payload = this.parseHouseholdPayload(household, eventId);
+    return this.http.post(`${this.baseUrl}/public`, payload, { globalHandler: false });
+  }
+
+  submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {
+    const payload = this.parseHouseholdPayload(household, eventId);
     return this.http.post(`${this.baseUrl}`, payload, { globalHandler: false });
   }
 
-  parseHouseholdPayload(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): ICreateHouseholdRequest {
+  parseHouseholdPayload(household: IHouseholdCreate, eventId: string): ICreateHouseholdRequest {
     return {
       noFixedHome: household.noFixedHome,
       primaryBeneficiary: this.parseMember(household.primaryBeneficiary),
       additionalMembers: household.additionalMembers.map((member) => this.parseAdditionalMember(member)),
       homeAddress: household.noFixedHome ? null : this.parseAddress(household.homeAddress),
       eventId,
-      privacyDateTimeConsent,
+      consentInformation: household.consentInformation,
     };
   }
 

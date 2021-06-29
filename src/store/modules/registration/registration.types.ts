@@ -1,4 +1,4 @@
-import { ECanadaProvinces, ERegistrationMethod, IOptionItemData } from '../../../types';
+import { ECanadaProvinces, IOptionItemData } from '../../../types';
 import { IError } from '../../../services/httpClient';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 import {
@@ -20,10 +20,6 @@ export type IState = {
   indigenousIdentities: Record<ECanadaProvinces, IIndigenousIdentityData[]>;
   loadingIndigenousIdentities: boolean;
   isPrivacyAgreed: boolean;
-  privacyDateTimeConsent: string;
-  privacyCRCUsername: string;
-  privacyRegistrationMethod: ERegistrationMethod;
-  privacyRegistrationLocationName: string;
   registrationResponse: IHouseholdEntity;
   registrationErrors: IError[];
   submitLoading: boolean;

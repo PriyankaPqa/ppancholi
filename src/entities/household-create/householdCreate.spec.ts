@@ -22,6 +22,12 @@ describe('>>> Household', () => {
       expect(h.primaryBeneficiary).toEqual(new Member());
       expect(h.homeAddress).toEqual(new Address());
       expect(h.additionalMembers).toEqual([]);
+      expect(h.consentInformation).toEqual({
+        crcUserName: null,
+        registrationMethod: null,
+        registrationLocationId: null,
+        privacyDateTimeConsent: null,
+      });
     });
   });
 

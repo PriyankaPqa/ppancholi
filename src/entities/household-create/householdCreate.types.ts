@@ -1,3 +1,4 @@
+import { ERegistrationMethod } from '@/types';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
 import { IMemberData, IMember, MemberCreateRequest } from '../value-objects/member';
 
@@ -6,6 +7,14 @@ export interface IHouseholdCreateData {
   noFixedHome: boolean;
   homeAddress: IAddressData;
   additionalMembers: IMemberData[];
+  consentInformation: IConsentInformation;
+}
+
+export interface IConsentInformation {
+  crcUserName: string;
+  registrationLocationId: string;
+  registrationMethod: ERegistrationMethod;
+  privacyDateTimeConsent: string;
 }
 
 export interface IHouseholdCreate {
@@ -13,6 +22,7 @@ export interface IHouseholdCreate {
   noFixedHome: boolean;
   homeAddress: IAddress;
   additionalMembers: IMember[];
+  consentInformation: IConsentInformation;
 
   addAdditionalMember(newPerson: IMember, sameAddress: boolean): void;
   removeAdditionalMember(index: number): void;
@@ -38,5 +48,5 @@ export interface ICreateHouseholdRequest {
   homeAddress: IAddressData;
   additionalMembers: MemberCreateRequest[];
   eventId: uuid;
-  privacyDateTimeConsent: string;
+  consentInformation: IConsentInformation;
 }

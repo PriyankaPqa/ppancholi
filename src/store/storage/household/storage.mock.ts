@@ -1,4 +1,4 @@
-import { BaseMock } from '../../../store/storage/base/base.mock';
+import { BaseMock } from '../base/base.mock';
 
 import {
   IHouseholdCombined, IHouseholdEntity, mockCombinedHouseholds, mockHouseholdEntity,

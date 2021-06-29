@@ -11,7 +11,8 @@ export interface IHouseholdsService {
   getPreferredLanguages(): Promise<IOptionItemData[]>;
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   searchIndigenousIdentities(params: IAzureSearchParams): Promise<IAzureSearchResult<IIndigenousIdentityData>>;
-  submitRegistration(household: IHouseholdCreate, eventId: string, privacyDateTimeConsent: string): Promise<IHouseholdEntity>;
+  submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
+  submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
 }
 
 export interface IHouseholdsServiceMock {
@@ -20,4 +21,5 @@ export interface IHouseholdsServiceMock {
   getPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
   searchIndigenousIdentities: jest.Mock<IAzureSearchResult<IIndigenousIdentityData>>;
   submitRegistration: jest.Mock<IHouseholdEntity>;
+  submitCRCRegistration: jest.Mock<IHouseholdEntity>;
 }

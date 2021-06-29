@@ -1,4 +1,4 @@
-import { BaseModule } from '../../../store/modules/base';
+import { BaseModule } from '../base';
 import { IHouseholdMetadata } from '../../../entities/household';
 
 export class HouseholdMetadataModule extends BaseModule<IHouseholdMetadata> {}

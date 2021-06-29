@@ -1,10 +1,10 @@
-import { DomainBaseService } from '../../../services/base';
-import { IEntity } from '../../../entities/base/base.types';
 import { ActionContext, ActionTree } from 'vuex';
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import helpers from '../../..//ui/helpers';
-import { IAzureSearchParams } from '../../..//types';
+import { IEntity } from '../../../entities/base/base.types';
+import { DomainBaseService } from '../../../services/base';
+import helpers from '../../../ui/helpers';
+import { IAzureSearchParams } from '../../../types';
 import { IAzureCombinedSearchResult } from '../../../types/interfaces/IAzureSearchResult';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';

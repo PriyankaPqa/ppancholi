@@ -13,4 +13,5 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   getPrimarySpokenLanguages: jest.fn(() => mockPrimarySpokenLanguages()),
   searchIndigenousIdentities: jest.fn(() => mockIndigenousIdentitiesSearchData()),
   submitRegistration: jest.fn(() => mockHouseholdEntity()),
+  submitCRCRegistration: jest.fn(() => mockHouseholdEntity()),
 });

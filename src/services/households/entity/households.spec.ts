@@ -48,7 +48,15 @@ describe('>>> Beneficiaries Service', () => {
   test('submitRegistration is linked to the correct URL', async () => {
     service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
 
-    await service.submitRegistration(mockHouseholdCreate(), 'event id', 'privacy consent date time');
+    await service.submitRegistration(mockHouseholdCreate(), 'event id');
+
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public`, createBeneficiaryRequest, { globalHandler: false });
+  });
+
+  test('submitCRCRegistration is linked to the correct URL', async () => {
+    service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
+
+    await service.submitCRCRegistration(mockHouseholdCreate(), 'event id');
 
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}`, createBeneficiaryRequest, { globalHandler: false });
   });
@@ -176,14 +184,14 @@ describe('>>> Beneficiaries Service', () => {
     it('does not generate homeAddress if noFixedHome', () => {
       const household = mockHouseholdCreate();
       household.noFixedHome = true;
-      expect(service.parseHouseholdPayload(household, null, null).homeAddress).toBeNull();
+      expect(service.parseHouseholdPayload(household, null).homeAddress).toBeNull();
     });
 
     it('generate homeAddress otherwise', () => {
       service.parseAddress = jest.fn(() => mockAddressData());
       const household = mockHouseholdCreate();
       household.noFixedHome = false;
-      const built = service.parseHouseholdPayload(household, null, null);
+      const built = service.parseHouseholdPayload(household, null);
       expect(built.homeAddress).toEqual(mockAddressData());
     });
   });

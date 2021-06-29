@@ -112,6 +112,12 @@ describe('>>> Registration Storage', () => {
       expect(store.commit).toBeCalledWith('registration/jump', toIndex);
     });
 
+    it('should proxy setDateTimeConsent', () => {
+      const privacyDateTimeConsent = 'date time consent';
+      storage.mutations.setDateTimeConsent(privacyDateTimeConsent);
+      expect(store.commit).toBeCalledWith('registration/setDateTimeConsent', privacyDateTimeConsent);
+    });
+
     it('should proxy setEvent', () => {
       const payload = mockEventData();
       storage.mutations.setEvent(payload);
@@ -130,10 +136,10 @@ describe('>>> Registration Storage', () => {
       expect(store.commit).toBeCalledWith('registration/setPrivacyRegistrationMethod', payload);
     });
 
-    it('should proxy setPrivacyRegistrationLocationName', () => {
+    it('should proxy setPrivacyRegistrationLocationId', () => {
       const payload = 'name';
-      storage.mutations.setPrivacyRegistrationLocationName(payload);
-      expect(store.commit).toBeCalledWith('registration/setPrivacyRegistrationLocationName', payload);
+      storage.mutations.setPrivacyRegistrationLocationId(payload);
+      expect(store.commit).toBeCalledWith('registration/setPrivacyRegistrationLocationId', payload);
     });
 
     it('should proxy resetState', () => {

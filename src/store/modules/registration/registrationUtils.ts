@@ -11,10 +11,10 @@ export const privacyStatementValid = (mode: ERegistrationMode, state: IState): b
   } else if (mode === ERegistrationMode.CRC) {
     if (!state.isPrivacyAgreed) {
       isValid = false;
-    } else if (state.privacyRegistrationMethod === null) {
+    } else if (state.householdCreate.consentInformation.registrationMethod === null) {
       isValid = false;
-    } else if (state.privacyRegistrationMethod === ERegistrationMethod.InPerson) {
-      isValid = state.privacyRegistrationLocationName !== '';
+    } else if (state.householdCreate.consentInformation.registrationMethod === ERegistrationMethod.InPerson) {
+      isValid = state.householdCreate.consentInformation.registrationLocationId !== null;
     } else {
       isValid = true;
     }

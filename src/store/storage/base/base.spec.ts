@@ -44,7 +44,7 @@ const store = mockStore({
         'entityModule/getAll': () => mockEntities,
         'entityModule/getByCriteria': () => () => [mockEntities[0]],
         'entityModule/get': () => () => mockEntities[0],
-        'entityModule/getByIds': () => () => [mockEntities[0]]
+        'entityModule/getByIds': () => () => [mockEntities[0]],
       },
     },
     metadataModule: {

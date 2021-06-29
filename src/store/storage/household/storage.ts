@@ -1,5 +1,5 @@
-import { IStore, IState } from '../../../store/store.types';
-import { Base } from '../../../store/storage/base';
+import { IStore, IState } from '../../store.types';
+import { Base } from '../base';
 import { IHouseholdEntity, IHouseholdMetadata } from '../../../entities/household';
 import { IStorage } from './storage.types';
 

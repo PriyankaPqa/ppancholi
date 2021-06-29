@@ -39,7 +39,6 @@ const INDIGENOUS_LIMIT_RESULTS = 1000;
 
 export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   isPrivacyAgreed: false,
-  privacyDateTimeConsent: '',
   event: null,
   isLeftMenuOpen: true,
   tabs,
@@ -64,9 +63,6 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
     [ECanadaProvinces.OT]: [],
   },
   loadingIndigenousIdentities: false,
-  privacyCRCUsername: '',
-  privacyRegistrationMethod: null,
-  privacyRegistrationLocationName: '',
   registrationResponse: null,
   registrationErrors: [],
   submitLoading: false,
@@ -243,7 +239,7 @@ const mutations = (): MutationTree<IState> => ({
   },
 
   setDateTimeConsent(state: IState, payload: string) {
-    state.privacyDateTimeConsent = payload;
+    state.householdCreate.consentInformation.privacyDateTimeConsent = payload;
   },
 
   setGenders(state: IState, payload: IOptionItemData[]) {
@@ -267,15 +263,15 @@ const mutations = (): MutationTree<IState> => ({
   },
 
   setPrivacyCRCUsername(state: IState, payload: string) {
-    state.privacyCRCUsername = payload;
+    state.householdCreate.consentInformation.crcUserName = payload;
   },
 
   setPrivacyRegistrationMethod(state: IState, payload: ERegistrationMethod) {
-    state.privacyRegistrationMethod = payload;
+    state.householdCreate.consentInformation.registrationMethod = payload;
   },
 
-  setPrivacyRegistrationLocationName(state: IState, payload: string) {
-    state.privacyRegistrationLocationName = payload;
+  setPrivacyRegistrationLocationId(state: IState, payload: string) {
+    state.householdCreate.consentInformation.registrationLocationId = payload;
   },
 
   setRegistrationResponse(state: IState, payload: IHouseholdEntity) {
@@ -365,7 +361,7 @@ const mutations = (): MutationTree<IState> => ({
   },
 });
 
-const actions = {
+const actions = (mode: ERegistrationMode) => ({
   async fetchEvent(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
@@ -446,11 +442,12 @@ const actions = {
     let result: IHouseholdEntity;
     context.commit('setSubmitLoading', true);
     try {
-      result = await this.$services.households.submitRegistration(
-        context.state.householdCreate,
-        context.state.event.eventId,
-        context.state.privacyDateTimeConsent,
-      );
+      let result;
+      if (mode === ERegistrationMode.Self) {
+        result = this.$services.households.submitRegistration(context.state.householdCreate, context.state.event.eventId);
+      } else {
+        result = this.$services.households.submitCRCRegistration(context.state.householdCreate, context.state.event.eventId);
+      }
       context.commit('setRegistrationResponse', result);
     } catch (e) {
       context.commit('setRegistrationErrors', e);
@@ -460,7 +457,7 @@ const actions = {
 
     return result;
   },
-};
+});
 
 export const makeRegistrationModule = (
   {
@@ -475,5 +472,5 @@ export const makeRegistrationModule = (
   state: moduleState(tabs) as IState,
   getters: getters(i18n, skipAgeRestriction, skipEmailPhoneRules, mode),
   mutations: mutations(),
-  actions: (actions as unknown) as ActionTree<IState, IRootState>,
+  actions: actions(mode) as unknown as ActionTree<IState, IRootState>,
 });
