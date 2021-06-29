@@ -372,6 +372,39 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       },
     },
     {
+      id: 'mock-activity-id-12',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.IdentityAuthenticationUpdated,
+      details: {
+        status: 1
+      },
+    },
+    {
+      id: 'mock-activity-id-13',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.IdentityAuthenticationUpdated,
+      details: {
+        status: 2
+      },
+    },
+    {
+      id: 'mock-activity-id-14',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.IdentityAuthenticationUpdated,
+      details: {
+        status: 0
+      },
+    },
+    {
       id: 'mock-activity-id-15',
       caseFileId: 'mock-id-1',
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },

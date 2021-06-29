@@ -33,7 +33,15 @@ export enum ECaseFileActivityType {
   TriageUpdated = 9,
   AssignedToCaseFile = 10,
   UnassignedFromCaseFile = 11,
+  IdentityAuthenticationUpdated = 12,
   ImpactStatusValidationUpdated = 13,
+}
+
+export enum IdentityAuthenticationStatus
+{
+  NotVerified = 0,
+  Passed = 1,
+  Failed = 2,
 }
 
 export enum ValidationOfImpactStatus

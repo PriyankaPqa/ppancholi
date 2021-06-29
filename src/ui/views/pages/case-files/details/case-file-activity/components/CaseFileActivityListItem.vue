@@ -15,7 +15,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
-import { ECaseFileActivityType, ICaseFileActivity, ValidationOfImpactStatus } from '@/entities/case-file';
+import { ECaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, ValidationOfImpactStatus  } from '@/entities/case-file';
 import { IIdMultilingualName, IMultilingual } from '@/types';
 
 export default Vue.extend({
@@ -67,6 +67,9 @@ export default Vue.extend({
         case ECaseFileActivityType.UnassignedFromCaseFile:
           return this.makeContentForUnassignedFromCaseFile();
 
+        case ECaseFileActivityType.IdentityAuthenticationUpdated:
+          return this.makeContentForIdentityAuthenticationUpdated();
+
         case ECaseFileActivityType.ImpactStatusValidationUpdated:
           return this.makeContentForImpactStatusValidationUpdated();
 
@@ -95,6 +98,9 @@ export default Vue.extend({
 
         case ECaseFileActivityType.CaseFileStatusReopened:
           return 'mdi-lock-open';
+
+        case ECaseFileActivityType.IdentityAuthenticationUpdated:
+          return 'mdi-shield-check';
 
         case ECaseFileActivityType.ImpactStatusValidationUpdated:
           return 'mdi-map-check';
@@ -197,6 +203,25 @@ export default Vue.extend({
       const title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
 
       return { title, body: null };
+    },
+
+    makeContentForIdentityAuthenticationUpdated():{title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.IdentityAuthenticationUpdated');
+
+      let body = `${this.$t('caseFileActivity.activityList.identity_authentication_updated')}: `;
+      switch (this.item.details.status) {
+        case IdentityAuthenticationStatus.Passed:
+          body += this.$t('caseFile.beneficiaryIdentityVerificationStatus.Passed');
+          break;
+        case IdentityAuthenticationStatus.Failed:
+          body += this.$t('caseFile.beneficiaryIdentityVerificationStatus.Failed');
+          break;
+        default:
+          body += this.$t('caseFile.beneficiaryIdentityVerificationStatus.NotVerified');
+          break;
+      }
+
+      return { title, body };
     },
 
     makeContentForImpactStatusValidationUpdated():{title: TranslateResult, body: TranslateResult} {
