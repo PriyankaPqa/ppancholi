@@ -102,7 +102,6 @@ export default Vue.extend({
       });
 
       this.searchResults = this.$storage.household.getters.getByIds(res.ids);
-
       this.$storage.registration.mutations.setHouseholdResultsShown(true);
     },
   },

@@ -41,26 +41,32 @@
           </div>
         </template>
         <template #item.emailAddress="{ item: household }">
-          <div :class="{'align-top': hasHouseholdMember(household)}">
+          <div>
             <span data-test="emailAddress">
-              {{ household.primaryBeneficiary.email }}
+              {{ household.primaryBeneficiary.email || '-' }}
             </span>
+            <div v-for="(member) in household.additionalMembers" :key="member.id">
+              <span>-</span>
+            </div>
           </div>
         </template>
         <template #item.phone="{ item: household }">
-          <div :class="{'align-top': hasHouseholdMember(household)}">
+          <div>
             <span data-test="phoneNumber">
               {{ getPhone(household) }}
             </span>
+            <div v-for="(member) in household.additionalMembers" :key="member.id">
+              <span>-</span>
+            </div>
           </div>
         </template>
         <template #item.birthDate="{ item: household }">
-          <div :class="{'firstData': hasHouseholdMember(household)}">
+          <div>
             <span data-test="birthDate">
               {{ moment(household.primaryBeneficiary.dateOfBirth).format('ll') }}
             </span>
           </div>
-          <div v-if="hasHouseholdMember(household)">
+          <div v-if="hasAdditionalMember(household)">
             <div v-for="(member,i) in household.additionalMembers" :key="i">
               <span :data-test="`birthdate__houseHoldMember_${i}`">
                 {{ moment(member.dateOfBirth).format('ll') }}
@@ -69,12 +75,12 @@
           </div>
         </template>
         <template #item.registrationNumber="{item: household}">
-          <div :class="{'firstData': hasHouseholdMember(household)}">
+          <div>
             <span data-test="registrationNumber">
               {{ household.primaryBeneficiary.registrationNumber }}
             </span>
           </div>
-          <div v-if="hasHouseholdMember(household)">
+          <div v-if="hasAdditionalMember(household)">
             <div v-for="(member,i) in household.additionalMembers" :key="i">
               <span :data-test="`registrationNumber__houseHoldMember_${i}`">
                 {{ member.registrationNumber }}
@@ -82,18 +88,18 @@
             </div>
           </div>
         </template>
-        <!--        <template #item.isRegisteredToEvent="{ item: household }">-->
-        <!--          <v-icon v-if="household.isRegisteredToEvent" width="48" data-test="isRegistered" small>-->
-        <!--            mdi-check-circle-outline-->
-        <!--          </v-icon>-->
-        <!--        </template>-->
-        <!--        <template #item.actions="{item: beneficiary}">-->
-        <!--          <div :class="{'align-top': hasHouseholdMember(beneficiary)}">-->
-        <!--            <v-btn small color="primary" data-test="details__button" @click="viewDetails(beneficiary)">-->
-        <!--              {{ $t('registration.isRegistered.details') }}-->
-        <!--            </v-btn>-->
-        <!--          </div>-->
-        <!--        </template>-->
+        <template #item.isRegisteredToEvent="{ item: household }">
+          <v-icon v-if="isRegisteredInCurrentEvent(household)" width="48" data-test="isRegistered" small>
+            mdi-check-circle-outline
+          </v-icon>
+        </template>
+        <template #item.actions="{item: beneficiary}">
+          <div>
+            <v-btn small color="primary" data-test="details__button" @click="viewDetails(beneficiary)">
+              {{ $t('registration.isRegistered.details') }}
+            </v-btn>
+          </div>
+        </template>
       </rc-data-table>
       <div class="legend">
         <div class="mr-4 rc-body12">
@@ -141,6 +147,7 @@ export interface IMember {
 export interface IFormattedHousehold {
   primaryBeneficiary: IMember;
   additionalMembers: IMember[];
+  eventIds: string[];
 }
 
 export default Vue.extend({
@@ -165,29 +172,29 @@ export default Vue.extend({
         {
           text: this.$t('registration.isRegistered.table.name'),
           value: 'name',
-          sortable: true,
+          sortable: false,
         },
         {
           text: this.$t('registration.isRegistered.table.email'),
           value: 'emailAddress',
-          sortable: true,
+          sortable: false,
         },
         {
           text: this.$t('registration.isRegistered.table.phone'),
           value: 'phone',
-          sortable: true,
+          sortable: false,
           width: '180px',
         },
         {
           text: this.$t('registration.isRegistered.table.birthDate'),
           value: 'birthDate',
-          sortable: true,
+          sortable: false,
           width: '150px',
         },
         {
           text: this.$t('registration.isRegistered.table.registrationNumber'),
           value: 'registrationNumber',
-          sortable: true,
+          sortable: false,
           width: '170px',
         },
         {
@@ -225,19 +232,22 @@ export default Vue.extend({
               registrationNumber: household.entity.registrationNumber,
             });
           }
+          final.eventIds = household.metadata.eventIds;
         });
         return final;
       });
     },
+    currentEventId(): string {
+      return this.$storage.registration.getters.event().id;
+    },
   },
   methods: {
-    hasHouseholdMember(household: IFormattedHousehold) {
+    hasAdditionalMember(household: IFormattedHousehold) {
       if (household.additionalMembers) return household.additionalMembers.length > 0;
       return false;
     },
-    async viewDetails(household: IFormattedHousehold) {
-      // eslint-disable-next-line
-      const p = household;
+    async viewDetails() {
+      // TODO Need to update with new code but below is an example
       // await this.$store.dispatch('beneficiary/fetchBeneficiary', { beneficiaryId: household.id });
       // // if (this.currentCaseFileID) {
       // //   this.$store.commit('registration/setProperties', { currentCaseFileId: this.currentCaseFileID });
@@ -256,10 +266,20 @@ export default Vue.extend({
       if (oPhone) return oPhone.number;
       return '';
     },
+    isRegisteredInCurrentEvent(household: IFormattedHousehold) {
+      return household.eventIds.includes(this.currentEventId);
+    },
   },
 });
 </script>
 
-<style lang="sccs" scoped>
-
+<style lang="scss" scoped>
+.icon {
+  margin-top: -3px;
+}
+.legend {
+  display:flex;
+  margin-left: 16px;
+  margin-top: 20px;
+}
 </style>
