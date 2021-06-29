@@ -32,9 +32,16 @@ export enum ECaseFileActivityType {
   CaseFileStatusReopened = 8,
   TriageUpdated = 9,
   AssignedToCaseFile = 10,
-  UnassignedFromCaseFile = 11
+  UnassignedFromCaseFile = 11,
+  ImpactStatusValidationUpdated = 13,
 }
 
+export enum ValidationOfImpactStatus
+{
+    Undetermined = 0,
+    Impacted = 1,
+    NotImpacted = 2
+}
 /**
  * Interfaces
  */

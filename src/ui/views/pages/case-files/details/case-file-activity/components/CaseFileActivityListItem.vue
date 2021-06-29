@@ -15,7 +15,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
-import { ECaseFileActivityType, ICaseFileActivity } from '@/entities/case-file';
+import { ECaseFileActivityType, ICaseFileActivity, ValidationOfImpactStatus } from '@/entities/case-file';
 import { IIdMultilingualName, IMultilingual } from '@/types';
 
 export default Vue.extend({
@@ -67,6 +67,9 @@ export default Vue.extend({
         case ECaseFileActivityType.UnassignedFromCaseFile:
           return this.makeContentForUnassignedFromCaseFile();
 
+        case ECaseFileActivityType.ImpactStatusValidationUpdated:
+          return this.makeContentForImpactStatusValidationUpdated();
+
         default:
           return null;
       }
@@ -92,6 +95,9 @@ export default Vue.extend({
 
         case ECaseFileActivityType.CaseFileStatusReopened:
           return 'mdi-lock-open';
+
+        case ECaseFileActivityType.ImpactStatusValidationUpdated:
+          return 'mdi-map-check';
 
         default:
           return 'mdi-message-text';
@@ -191,6 +197,25 @@ export default Vue.extend({
       const title = this.$t('caseFileActivity.activityList.title.UnassignedFromCaseFile', { x: names });
 
       return { title, body: null };
+    },
+
+    makeContentForImpactStatusValidationUpdated():{title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.ImpactStatusValidationUpdated');
+
+      let body = `${this.$t('caseFileActivity.activityList.impact_status_validation_updated')}: `;
+      switch (this.item.details.status) {
+        case ValidationOfImpactStatus.Impacted:
+          body += this.$t('caseFile.beneficiaryImpactValidationStatus.Impacted');
+          break;
+        case ValidationOfImpactStatus.NotImpacted:
+          body += this.$t('caseFile.beneficiaryImpactValidationStatus.NotImpacted');
+          break;
+        default:
+          body += this.$t('caseFile.beneficiaryImpactValidationStatus.Undetermined');
+          break;
+      }
+
+      return { title, body };
     },
 
   },

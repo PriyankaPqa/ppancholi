@@ -229,6 +229,12 @@ describe('CaseFileActivityListItem.vue', () => {
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
+      it('returns the correct icon when action type is ImpactStatusValidationUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(ECaseFileActivityType.ImpactStatusValidationUpdated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-map-check');
+      });
       it('returns the correct icon in default case', async () => {
         await wrapper.setProps({
           item: {
@@ -432,6 +438,40 @@ describe('CaseFileActivityListItem.vue', () => {
           expect(wrapper.vm.makeContentForUnassignedFromCaseFile()).toEqual({
             title: 'caseFileActivity.activityList.title.UnassignedFromCaseFile',
             body: null,
+          });
+        });
+      });
+      describe('makeContentForImpactStatusValidationUpdated', () => {
+        it('returns the correct data when action type is ImpactStatusValidationUpdated and status is Impacted', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.ImpactStatusValidationUpdated)[0],
+          });
+
+          expect(wrapper.vm.makeContentForImpactStatusValidationUpdated()).toEqual({
+            title: 'caseFileActivity.activityList.title.ImpactStatusValidationUpdated',
+            body: 'caseFileActivity.activityList.impact_status_validation_updated: caseFile.beneficiaryImpactValidationStatus.Impacted',
+          });
+        });
+
+        it('returns the correct data when action type is ImpactStatusValidationUpdated and status is NotImpacted', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.ImpactStatusValidationUpdated)[1],
+          });
+
+          expect(wrapper.vm.makeContentForImpactStatusValidationUpdated()).toEqual({
+            title: 'caseFileActivity.activityList.title.ImpactStatusValidationUpdated',
+            body: 'caseFileActivity.activityList.impact_status_validation_updated: caseFile.beneficiaryImpactValidationStatus.NotImpacted',
+          });
+        });
+
+        it('returns the correct data when action type is ImpactStatusValidationUpdated and status is Undetermined', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(ECaseFileActivityType.ImpactStatusValidationUpdated)[2],
+          });
+
+          expect(wrapper.vm.makeContentForImpactStatusValidationUpdated()).toEqual({
+            title: 'caseFileActivity.activityList.title.ImpactStatusValidationUpdated',
+            body: 'caseFileActivity.activityList.impact_status_validation_updated: caseFile.beneficiaryImpactValidationStatus.Undetermined',
           });
         });
       });

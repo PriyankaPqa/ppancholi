@@ -371,6 +371,39 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
         individuals: [{ id: 'individual-id-1', name: 'John Stevenson' }, { id: 'individual-id-2', name: 'Steven Johnson' }],
       },
     },
+    {
+      id: 'mock-activity-id-15',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.ImpactStatusValidationUpdated,
+      details: {
+        status: 1,
+      },
+    },
+    {
+      id: 'mock-activity-id-16',
+      caseFileId: 'mock-id-1',
+      user: { id: '1', name: 'Jane Doe' },
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.ImpactStatusValidationUpdated,
+      details: {
+        status: 2,
+      },
+    },
+    {
+      id: 'mock-activity-id-17',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: ECaseFileActivityType.ImpactStatusValidationUpdated,
+      details: {
+        status: 0,
+      },
+    },
   ];
 
   if (type) {
