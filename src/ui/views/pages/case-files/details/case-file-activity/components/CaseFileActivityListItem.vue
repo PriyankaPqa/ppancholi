@@ -15,7 +15,9 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
-import { ECaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, ValidationOfImpactStatus  } from '@/entities/case-file';
+import {
+  ECaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, ValidationOfImpactStatus,
+} from '@/entities/case-file';
 import { IIdMultilingualName, IMultilingual } from '@/types';
 
 export default Vue.extend({

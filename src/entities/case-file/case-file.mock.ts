@@ -379,7 +379,7 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       created: '2021-05-04',
       activityType: ECaseFileActivityType.IdentityAuthenticationUpdated,
       details: {
-        status: 1
+        status: 1,
       },
     },
     {
@@ -390,7 +390,7 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       created: '2021-05-04',
       activityType: ECaseFileActivityType.IdentityAuthenticationUpdated,
       details: {
-        status: 2
+        status: 2,
       },
     },
     {
@@ -401,7 +401,7 @@ export const mockCaseFileActivities = (type: ECaseFileActivityType = null): ICas
       created: '2021-05-04',
       activityType: ECaseFileActivityType.IdentityAuthenticationUpdated,
       details: {
-        status: 0
+        status: 0,
       },
     },
     {

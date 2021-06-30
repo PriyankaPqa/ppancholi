@@ -63,7 +63,7 @@
         <template #item.birthDate="{ item: household }">
           <div>
             <span data-test="birthDate">
-              {{ moment(household.primaryBeneficiary.dateOfBirth).format('ll') }}
+              {{ moment(household.primaryBeneficiary.dateOfBirth).utc().format('ll') }}
             </span>
           </div>
           <div v-if="hasAdditionalMember(household)">
