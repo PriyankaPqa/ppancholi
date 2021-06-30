@@ -12,8 +12,8 @@ export class DomainBaseService<T extends IEntity> implements IDomainBaseService<
   controller: string;
 
   constructor(protected readonly http: IHttpClient, apiUrlSuffix: string, controller: string) {
-    this.baseApi = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}`;
-    this.baseUrl = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}/${controller}`;
+    this.baseApi = `${apiUrlSuffix}`;
+    this.baseUrl = `${apiUrlSuffix}/${controller}`;
     this.controller = controller;
   }
 
