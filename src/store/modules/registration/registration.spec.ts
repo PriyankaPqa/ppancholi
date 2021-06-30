@@ -1,11 +1,11 @@
 import { mockStore } from '@/store';
-import {
-  ECanadaProvinces, ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
-} from '@/types';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import { mockHttpError } from '@/services/httpClient.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
+import {
+  ECanadaProvinces, ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
+} from '../../../types';
 import { Event, mockEventData, mockEvent } from '../../../entities/event';
 import { getDefaultState, makeRegistrationModule } from './registration';
 import {

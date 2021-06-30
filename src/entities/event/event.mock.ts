@@ -30,6 +30,7 @@ export const mockShelterLocations = (): IShelterLocationData[] => ([
 
 export const mockRegistrationLocations = (): IEventGenericLocation[] => ([
   {
+    id: '7c076603-580a-4400-bef2-5ddececb5555',
     name: {
       translation: {
         en: 'YMCA Gym',

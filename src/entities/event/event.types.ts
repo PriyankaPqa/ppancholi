@@ -56,6 +56,7 @@ export interface IEventGenericLocationAddress {
 }
 
 export interface IEventGenericLocation {
+  id: uuid;
   name: IMultilingual;
   status: EEventLocationStatus;
   address: IEventGenericLocationAddress;

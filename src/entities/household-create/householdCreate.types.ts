@@ -1,4 +1,4 @@
-import { ERegistrationMethod } from '@/types';
+import { ERegistrationMethod } from '../../types';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
 import { IMemberData, IMember, MemberCreateRequest } from '../value-objects/member';
 
