@@ -126,7 +126,7 @@ export default Vue.extend({
 
   methods: {
     resetPrivacyRegistrationLocation() {
-      this.$storage.registration.mutations.setPrivacyRegistrationLocationName('');
+      this.$storage.registration.mutations.setPrivacyRegistrationLocationId('');
     },
 
     autoFillUserName() {
@@ -139,7 +139,7 @@ export default Vue.extend({
       this.privacyRegistrationLocation = location;
       // TODO: BE needs the whole name object, later we will replace by id
       // eslint-disable-next-line
-      this.$storage.registration.mutations.setPrivacyRegistrationLocationName(location.name as any);
+      this.$storage.registration.mutations.setPrivacyRegistrationLocationId(location.name as any);
     },
 
     loadRegistrationLocation() {

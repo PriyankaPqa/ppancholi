@@ -102,9 +102,9 @@ describe('PrivacyStatement.vue', () => {
 
   describe('Methods', () => {
     describe('resetPrivacyRegistrationLocation', () => {
-      it('should reset privacyRegistrationLocationName ', () => {
+      it('should reset privacyRegistrationLocationId ', () => {
         wrapper.vm.resetPrivacyRegistrationLocation();
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationName).toHaveBeenCalledWith('');
+        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationId).toHaveBeenCalledWith('');
       });
 
       it('should be called when registration method changes', async () => {
@@ -130,10 +130,10 @@ describe('PrivacyStatement.vue', () => {
         expect(wrapper.vm.privacyRegistrationLocation).toBe(location);
       });
 
-      it('should call setPrivacyRegistrationLocationName mutation with only the name', () => {
+      it('should call setPrivacyRegistrationLocationId mutation with only the name', () => {
         const location = mockRegistrationLocations()[0];
         wrapper.vm.setRegistrationLocation(location);
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationName).toHaveBeenCalledWith(location.name);
+        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationId).toHaveBeenCalledWith(location.name);
       });
 
       it('should be called when registration location changes', async () => {
