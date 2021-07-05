@@ -66,7 +66,7 @@ export default Vue.extend({
 
     privacyCRCUsername: {
       get(): string {
-        return this.$store.state.registration.privacyCRCUsername;
+        return this.$store.state.registration.householdCreate.consentInformation.crcUserName;
       },
       set(userName: string) {
         this.$storage.registration.mutations.setPrivacyCRCUsername(userName);
@@ -75,7 +75,7 @@ export default Vue.extend({
 
     privacyRegistrationMethod: {
       get(): string {
-        return this.$store.state.registration.privacyRegistrationMethod;
+        return this.$store.state.registration.householdCreate.consentInformation.registrationMethod;
       },
       set(method: ERegistrationMethod) {
         this.$storage.registration.mutations.setPrivacyRegistrationMethod(method);
@@ -126,7 +126,7 @@ export default Vue.extend({
 
   methods: {
     resetPrivacyRegistrationLocation() {
-      this.$storage.registration.mutations.setPrivacyRegistrationLocationId('');
+      this.$storage.registration.mutations.setPrivacyRegistrationLocationId(null);
     },
 
     autoFillUserName() {
@@ -137,14 +137,12 @@ export default Vue.extend({
 
     setRegistrationLocation(location: IEventGenericLocation) {
       this.privacyRegistrationLocation = location;
-      // TODO: BE needs the whole name object, later we will replace by id
-      // eslint-disable-next-line
-      this.$storage.registration.mutations.setPrivacyRegistrationLocationId(location.name as any);
+      this.$storage.registration.mutations.setPrivacyRegistrationLocationId(location.id);
     },
 
     loadRegistrationLocation() {
       const registrationLocation = this.activeRegistrationLocations.find(
-        (r) => r.name === this.$store.state.registration.privacyRegistrationLocationName,
+        (r) => r.id === this.$store.state.registration.householdCreate.consentInformation.registrationLocationId,
       );
       if (registrationLocation) {
         this.privacyRegistrationLocation = registrationLocation;

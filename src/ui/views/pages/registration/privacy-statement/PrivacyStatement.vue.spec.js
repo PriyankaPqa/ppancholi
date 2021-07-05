@@ -41,7 +41,7 @@ describe('PrivacyStatement.vue', () => {
 
     describe('privacyCRCUsername', () => {
       it('is linked to privacyCRCUsername in the store', () => {
-        expect(wrapper.vm.privacyCRCUsername).toEqual(wrapper.vm.$store.state.registration.privacyCRCUsername);
+        expect(wrapper.vm.privacyCRCUsername).toEqual(wrapper.vm.$store.state.registration.householdCreate.consentInformation.crcUserName);
       });
 
       it('calls setPrivacyCRCUsername with value', () => {
@@ -52,7 +52,9 @@ describe('PrivacyStatement.vue', () => {
 
     describe('privacyRegistrationMethod', () => {
       it('is linked to privacyRegistrationMethod in the store', () => {
-        expect(wrapper.vm.privacyRegistrationMethod).toEqual(wrapper.vm.$store.state.registration.privacyRegistrationMethod);
+        expect(wrapper.vm.privacyRegistrationMethod).toEqual(
+          wrapper.vm.$store.state.registration.householdCreate.consentInformation.registrationMethod,
+        );
       });
 
       it('calls setPrivacyRegistrationMethod with value', () => {
@@ -104,7 +106,7 @@ describe('PrivacyStatement.vue', () => {
     describe('resetPrivacyRegistrationLocation', () => {
       it('should reset privacyRegistrationLocationId ', () => {
         wrapper.vm.resetPrivacyRegistrationLocation();
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationId).toHaveBeenCalledWith('');
+        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationId).toHaveBeenCalledWith(null);
       });
 
       it('should be called when registration method changes', async () => {
@@ -133,7 +135,7 @@ describe('PrivacyStatement.vue', () => {
       it('should call setPrivacyRegistrationLocationId mutation with only the name', () => {
         const location = mockRegistrationLocations()[0];
         wrapper.vm.setRegistrationLocation(location);
-        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationId).toHaveBeenCalledWith(location.name);
+        expect(wrapper.vm.$storage.registration.mutations.setPrivacyRegistrationLocationId).toHaveBeenCalledWith(location.id);
       });
 
       it('should be called when registration location changes', async () => {
@@ -164,7 +166,7 @@ describe('PrivacyStatement.vue', () => {
             },
             activeRegistrationLocations() {
               return [{
-                name: 'location',
+                id: 'location id',
               }];
             },
           },
@@ -172,14 +174,18 @@ describe('PrivacyStatement.vue', () => {
             modules: {
               registration: {
                 state: {
-                  privacyRegistrationLocationName: 'location',
+                  householdCreate: {
+                    consentInformation: {
+                      registrationLocationId: 'location id',
+                    },
+                  },
                 },
               },
             },
           },
         });
         wrapper.vm.loadRegistrationLocation();
-        expect(wrapper.vm.privacyRegistrationLocation).toEqual({ name: 'location' });
+        expect(wrapper.vm.privacyRegistrationLocation).toEqual({ id: 'location id' });
       });
     });
   });
