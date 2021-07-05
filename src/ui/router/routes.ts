@@ -68,6 +68,7 @@ const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/sy
 const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
 const CaseFileCloseReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
 const ReferralOutcomeStatuses = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ReferralOutcomeStatuses.vue');
+const ReferralTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ReferralTypes.vue');
 const FinancialAssistanceItems = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/FinancialAssistance.vue');
 const ScreeningId = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ScreeningId.vue');
 
@@ -431,6 +432,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.referralOutcomeStatuses.path,
                 name: Routes.systemManagement.referralOutcomeStatuses.name,
                 component: ReferralOutcomeStatuses,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.referralTypes.path,
+                name: Routes.systemManagement.referralTypes.name,
+                component: ReferralTypes,
                 meta: { level: 'level6' },
               },
               {

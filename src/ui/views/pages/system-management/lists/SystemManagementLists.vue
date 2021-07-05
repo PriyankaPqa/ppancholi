@@ -113,6 +113,11 @@ export default Vue.extend({
         dataTest: 'referralOutcomeStatuses',
       },
       {
+        name: 'system_management.lists.referralTypes',
+        route: routes.systemManagement.referralTypes.name,
+        dataTest: 'referralTypes',
+      },
+      {
         name: 'system_management.lists.financialAssistance',
         route: routes.systemManagement.financialAssistance.name,
         dataTest: 'financialAssistance',

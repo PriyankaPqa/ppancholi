@@ -56,6 +56,9 @@ describe('>>> EventTypes Service', () => {
     it('returns correct prefix for EOptionLists.ReferralOutcomeStatus', () => {
       expect(service.getPrefix(EOptionLists.ReferralOutcomeStatus)).toBe('/case-file/referral-outcome-statuses');
     });
+    it('returns correct prefix for EOptionLists.ReferralTypes', () => {
+      expect(service.getPrefix(EOptionLists.ReferralTypes)).toBe('/case-file/referral-types');
+    });
     it('returns correct prefix for EOptionLists.FinancialAssistance', () => {
       expect(service.getPrefix(EOptionLists.FinancialAssistance)).toBe('/financial-assistance/financial-assistance-categories');
     });

@@ -19,6 +19,7 @@ export enum EOptionLists {
   FinancialAssistance = 11,
   ScreeningId = 12,
   ReferralOutcomeStatus = 13,
+  ReferralTypes = 14,
 }
 
 export interface IOptionSubItem {

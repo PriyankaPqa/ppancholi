@@ -232,6 +232,10 @@ const routes = {
       path: 'lists/referral-outcome-statuses',
       name: 'systemManagement.lists.referralOutcomeStatuses',
     },
+    referralTypes: {
+      path: 'lists/referral-types',
+      name: 'systemManagement.lists.referralTypes',
+    },
     screeningId: {
       path: 'lists/screening-id',
       name: 'systemManagement.lists.screeningId',

@@ -36,6 +36,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/household/screening-ids';
       case EOptionLists.ReferralOutcomeStatus:
         return '/case-file/referral-outcome-statuses';
+      case EOptionLists.ReferralTypes:
+        return '/case-file/referral-types';
       default:
         return '';
     }

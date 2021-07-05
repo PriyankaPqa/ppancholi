@@ -1392,6 +1392,7 @@
     "system_management.lists.preferredLanguages": "Preferred languages",
     "system_management.lists.primarySpokenLanguages": "Primary spoken languages",
     "system_management.lists.referralOutcomeStatuses": "Referral Outcome Statuses",
+    "system_management.lists.referralTypes": "Referral Types",
     "system_management.lists.roles": "Roles",
     "system_management.lists.roles.accessLevel": "Access level",
     "system_management.lists.roles.addRole": "Add role",
