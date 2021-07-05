@@ -17,6 +17,8 @@ export class HouseholdCreate implements IHouseholdCreate {
 
   consentInformation: IConsentInformation;
 
+  id: uuid;
+
   constructor(data?: IHouseholdCreateData) {
     if (!data) {
       this.reset();
@@ -25,6 +27,8 @@ export class HouseholdCreate implements IHouseholdCreate {
       this.primaryBeneficiary = new Member(data.primaryBeneficiary);
       this.homeAddress = new Address(data.homeAddress);
       this.additionalMembers = data.additionalMembers ? data.additionalMembers.map((h) => new Member(h)) : [];
+      this.consentInformation = data.consentInformation;
+      this.id = data.id;
     }
   }
 
@@ -59,6 +63,7 @@ export class HouseholdCreate implements IHouseholdCreate {
       registrationLocationId: null,
       privacyDateTimeConsent: null,
     };
+    this.id = '';
   }
 
   // Validation used for each page of registration

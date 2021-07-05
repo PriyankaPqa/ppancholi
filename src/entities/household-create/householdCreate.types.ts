@@ -8,6 +8,7 @@ export interface IHouseholdCreateData {
   homeAddress: IAddressData;
   additionalMembers: IMemberData[];
   consentInformation: IConsentInformation;
+  id?: uuid;
 }
 
 export interface IConsentInformation {

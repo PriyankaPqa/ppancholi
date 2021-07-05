@@ -7,7 +7,7 @@
           {{ $t('registration.details.registered') }} {{ moment(householdCreate.primaryBeneficiary.created).format('ll') }}
         </div>
       </div>
-      <div>to do: use new search case file. use case file module or store in registration module. check with dana</div>
+      <slot name="previous-events"></slot>
       <template v-if="!householdAlreadyRegistered">
         <div data-test="title" class="rc-heading-5 fw-bold  mb-2 mt-8">
           {{ $t('registration.menu.privacy') }}
