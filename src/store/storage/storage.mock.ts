@@ -1,4 +1,4 @@
-import { HouseholdStorageMock } from '@/store/storage/household';
+import { HouseholdStorageMock } from '../storage/household';
 import { mockStorageRegistration } from './registration';
 import { IStorageMock } from './storage.types';
 

@@ -107,7 +107,7 @@ export const mockIdentitySetData = (): IIdentitySetData => ({
     month: 2,
     day: 12,
   },
-  dateOfBirth: '',
+  dateOfBirth: '1999-02-12',
   firstName: 'Bob',
   middleName: 'middle',
   lastName: 'Smith',
