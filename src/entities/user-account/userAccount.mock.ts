@@ -53,6 +53,12 @@ export const mockUserAccountMetadata = (force?: Partial<IUserAccountMetadata>): 
     },
   },
   teamCount: 1,
+  teams: [{
+    teamId: 'team-mock-id',
+    teamTypeName: null,
+    events: [],
+    name: "Test team 1"
+  }],
   caseFilesCount: 10,
   openCaseFilesCount: 10,
   inactiveCaseFilesCount: 0,

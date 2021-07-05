@@ -30,6 +30,17 @@ export enum AccountStatus {
   Inactive = 2,
 }
 
+export interface IUserAccountTeamEvent {
+  name: IMultilingual;
+}
+
+export interface IUserAccountTeam {
+  teamId: string;
+  name: string;
+  teamTypeName: IMultilingual;
+  events: Array<IUserAccountTeamEvent>;
+}
+
 export interface IUserAccountEntity extends IEntity {
   filters?: Array<IFilter>;
   roles?: Array<IListOption>;
@@ -44,6 +55,7 @@ export interface IUserAccountMetadata extends IEntity {
   roleId?: string;
   roleName?: IMultilingual;
   teamCount?: number;
+  teams?: Array<IUserAccountTeam>;
   caseFilesCount?: number;
   openCaseFilesCount?: number;
   inactiveCaseFilesCount?: number;

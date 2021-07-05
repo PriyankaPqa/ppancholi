@@ -3,16 +3,18 @@ import {
   mockTeamSearchDataAggregate, Team,
 } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
+import { mockCombinedUserAccounts } from '@/entities/user-account';
 import Component from './TeamMemberTeams.vue';
 
 const localVue = createLocalVue();
-
+const usersTestData = mockCombinedUserAccounts();
 const storage = mockStorage();
 
 describe('TeamMemberTeams.vue', () => {
   let wrapper;
 
   beforeEach(() => {
+    storage.userAccount.actions.fetch = jest.fn(() => usersTestData[0]);
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
@@ -25,37 +27,12 @@ describe('TeamMemberTeams.vue', () => {
     });
   });
 
-  describe('Data', () => {
-    test('orderBy', () => {
-      expect(wrapper.vm.orderBy).toEqual('TeamName asc');
-    });
-
-    test('select', () => {
-      expect(wrapper.vm.select).toEqual(['Events', 'TeamName', 'TeamTypeName']);
-    });
-
-    test('filter', () => {
-      expect(wrapper.vm.filter).toEqual({
-        TeamMembers: {
-          any: {
-            Id: {
-              eq: wrapper.vm.member.id,
-            },
-          },
-        },
-      });
-    });
-  });
-
   describe('Methods', () => {
     describe('fetchMemberTeams', () => {
-      it('should call search teams with proper params', async () => {
+      it('should call search user account fetch and assign teams', async () => {
         await wrapper.vm.fetchMemberTeams();
-        expect(wrapper.vm.$storage.team.actions.searchTeams).toHaveBeenCalledWith({
-          filter: wrapper.vm.filter,
-          select: wrapper.vm.select,
-          orderBy: wrapper.vm.orderBy,
-        });
+        expect(wrapper.vm.$storage.userAccount.actions.fetch).toHaveBeenCalledWith(wrapper.vm.member.id);
+        expect(wrapper.vm.teams).toEqual(usersTestData[0].metadata.teams);
       });
     });
 

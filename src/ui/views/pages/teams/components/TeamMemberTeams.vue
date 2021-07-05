@@ -32,7 +32,7 @@
           v-for="(team, index) in teams"
           :key="index">
           <td data-test="team_name">
-            {{ team.teamName }}
+            {{ team.name }}
           </td>
           <td data-test="team_type">
             {{ $m(team.teamTypeName) }}
@@ -49,7 +49,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog } from '@crctech/component-library';
-import { ITeamEvent, ITeamMemberData } from '@/entities/team';
+import { ITeamMemberData } from '@/entities/team';
+import { IUserAccountTeamEvent, IUserAccountTeam } from '@/entities/user-account';
 
 export default Vue.extend({
   name: 'TeamMemberTeams',
@@ -71,18 +72,7 @@ export default Vue.extend({
 
   data() {
     return {
-      teams: null,
-      select: ['Events', 'TeamName', 'TeamTypeName'],
-      orderBy: 'TeamName asc',
-      filter: {
-        TeamMembers: {
-          any: {
-            Id: {
-              eq: this.member.id,
-            },
-          },
-        },
-      },
+      teams: null as Array<IUserAccountTeam>,
     };
   },
 
@@ -98,20 +88,16 @@ export default Vue.extend({
 
   methods: {
     async fetchMemberTeams() {
-      const res = await this.$storage.team.actions.searchTeams({
-        filter: this.filter,
-        select: this.select,
-        orderBy: this.orderBy,
-      });
+      const res = await this.$storage.userAccount.actions.fetch(this.member.id);
 
-      if (res?.value) {
-        this.teams = res.value;
+      if (res && res.metadata && res.metadata.teams) {
+        this.teams = res.metadata.teams;
       }
     },
 
-    buildEventsString(events: ITeamEvent[]): string {
+    buildEventsString(events: IUserAccountTeamEvent[]): string {
       if (events.length === 0) return '';
-      return events.map((e: ITeamEvent) => this.$m(e.name)).join(', ');
+      return events.map((e: IUserAccountTeamEvent) => this.$m(e.name)).join(', ');
     },
   },
 
