@@ -69,7 +69,7 @@
           <div v-if="hasAdditionalMember(household)">
             <div v-for="(member,i) in household.additionalMembers" :key="i">
               <span :data-test="`birthdate__houseHoldMember_${i}`">
-                {{ moment(member.dateOfBirth).format('ll') }}
+                {{ moment(member.dateOfBirth).utc().format('ll') }}
               </span>
             </div>
           </div>
