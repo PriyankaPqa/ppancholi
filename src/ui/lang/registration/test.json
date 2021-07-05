@@ -242,6 +242,7 @@
     "zendesk.beneficiary_registration.privacy_statement": "zendesk.beneficiary_registration.privacy_statement",
     "zendesk.beneficiary_registration.review_confirm": "zendesk.beneficiary_registration.review_confirm",
     "zendesk.registration.addresses": "zendesk.registration.addresses",
+    "zendesk.registration.isRegistered": "",
     "zendesk.registration.personalInformation": "zendesk.registration.personalInformation",
     "zendesk.registration.review": "zendesk.registration.review"
 }

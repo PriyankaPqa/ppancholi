@@ -12,7 +12,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     backButtonTextKey: 'common.button.back',
     nextButtonTextKey: 'common.button.next',
     componentName: 'isRegistered',
-    helpLink: '',
+    helpLink: 'zendesk.registration.isRegistered',
 
   },
   {
