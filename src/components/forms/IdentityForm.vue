@@ -210,6 +210,7 @@ export default Vue.extend({
 
   created() {
     this.formCopy = _cloneDeep(this.form);
+    this.loadGender();
     this.prePopulate();
   },
 
@@ -217,6 +218,12 @@ export default Vue.extend({
     prePopulate() {
       if (!this.formCopy.gender) {
         this.formCopy.gender = this.genderItems.find((option: IOptionItemData) => option.isDefault);
+      }
+    },
+    loadGender() {
+      if (this.form.gender.optionItemId) {
+        const gender = this.genderItems.find((option: IOptionItemData) => option.id === this.form.gender.optionItemId);
+        this.formCopy.gender = gender;
       }
     },
   },

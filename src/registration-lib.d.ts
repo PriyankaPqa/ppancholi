@@ -22,3 +22,4 @@ export const AdditionalMemberForm: VueConstructor<Vue>;
 export const PersonalInformation: VueConstructor<Vue>;
 export const PrivacyStatement: VueConstructor<Vue>;
 export const ReviewRegistration: VueConstructor<Vue>;
+export const CrcPrivacyStatement: VueConstructor<Vue>;

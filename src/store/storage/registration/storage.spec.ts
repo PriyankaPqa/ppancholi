@@ -6,6 +6,7 @@ import { mockAdditionalMember, mockMember } from '@/entities/value-objects/membe
 import { mockIdentitySet } from '@/entities/value-objects/identity-set';
 import { mockAddress } from '@/entities/value-objects/address';
 import { mockCampGround } from '@/entities/value-objects/current-address';
+import { mockHouseholdCreateData } from '@/entities/household-create';
 import { makeStorage } from './storage';
 import { mockEventData } from '../../../entities/event';
 import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
@@ -230,6 +231,21 @@ describe('>>> Registration Storage', () => {
     it('should proxy resetHouseholdCreate', () => {
       storage.mutations.resetHouseholdCreate();
       expect(store.commit).toBeCalledWith('registration/resetHouseholdCreate');
+    });
+
+    it('should proxy setHouseholdAlreadyRegistered', () => {
+      storage.mutations.setHouseholdAlreadyRegistered(true);
+      expect(store.commit).toBeCalledWith('registration/setHouseholdAlreadyRegistered', true);
+    });
+
+    it('should proxy setHouseholdAssociationMode', () => {
+      storage.mutations.setHouseholdAssociationMode(true);
+      expect(store.commit).toBeCalledWith('registration/setHouseholdAssociationMode', true);
+    });
+
+    it('should proxy setHouseholdCreate', () => {
+      storage.mutations.setHouseholdCreate(mockHouseholdCreateData());
+      expect(store.commit).toBeCalledWith('registration/setHouseholdCreate', mockHouseholdCreateData());
     });
   });
 

@@ -145,6 +145,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity> implements
     setAllMetadata: (payload: TMetadata[]) => {
       this.store.commit(`${this.metadataModuleName}/setAll`, payload);
     },
+
+    reset: () => {
+      this.store.commit(`${this.entityModuleName}/reset`);
+      this.store.commit(`${this.metadataModuleName}/reset`);
+    },
   }
 
   public make = () => ({

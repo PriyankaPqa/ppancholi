@@ -29,5 +29,6 @@ export class BaseMock<T, S> {
     setAllEntities: jest.fn(),
     setMetadata: jest.fn(),
     setAllMetadata: jest.fn(),
+    reset: jest.fn(),
   }
 }

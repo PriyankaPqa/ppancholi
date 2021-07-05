@@ -266,6 +266,18 @@ describe('Base Module', () => {
         expect(baseModule.state.items).toEqual(items);
       });
     });
+
+    describe('reset', () => {
+      it('should reset items', () => {
+        const baseModule = new BaseModuleTest(service);
+        const entity = mockBaseEntity();
+
+        baseModule.mutations.set(baseModule.state, entity);
+        baseModule.mutations.reset(baseModule.state);
+
+        expect(baseModule.state.items).toEqual([]);
+      });
+    });
   });
 
   describe('getModule', () => {

@@ -63,6 +63,10 @@ export default Vue.extend({
     inlineEdit(): boolean {
       return this.$store.state.registration.inlineEditCounter > 0;
     },
+
+    associationMode(): boolean {
+      return this.$store.state.registration.householdAssociationMode;
+    },
   },
 
   watch: {
@@ -110,6 +114,15 @@ export default Vue.extend({
       }
 
       if (this.currentTab.id === 'review') {
+        if (this.associationMode) {
+          const isValid = await (this.$refs.form as VForm).validate();
+          if (!isValid) {
+            helpers.scrollToFirstError('app');
+            return;
+          }
+          // TODO Associate the household. Maybe same call as submit? Need to confirm
+          return;
+        }
         await this.$storage.registration.actions.submitRegistration();
       }
 

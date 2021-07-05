@@ -72,6 +72,7 @@
 
     <v-col cols="12" sm="6">
       <v-text-field-with-validation
+        v-if="formCopy.alternatePhoneNumber"
         v-model="formCopy.alternatePhoneNumber.extension"
         :data-test="`${prefixDataTest}__alternatePhoneNumberExtension`"
         :rules="rules.alternatePhoneNumberExtension"

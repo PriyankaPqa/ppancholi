@@ -1,6 +1,6 @@
 import moment from 'moment';
 import {
-  IIdentitySet, IIdentitySetData, IBirthDate, EIndigenousTypes,
+  IIdentitySet, IIdentitySetData, IBirthDate, EIndigenousTypes, IIndigenousIdentityOption,
 } from './identitySet.types';
 import { ECanadaProvinces, IOptionItemData } from '../../../types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../../constants/validations';
@@ -34,6 +34,8 @@ export class IdentitySet implements IIdentitySet {
 
   indigenousCommunityOther: string;
 
+  indigenousIdentity: IIndigenousIdentityOption;
+
   constructor(data?: IIdentitySetData) {
     if (!data) {
       this.reset();
@@ -50,6 +52,7 @@ export class IdentitySet implements IIdentitySet {
       this.indigenousType = data.indigenousType;
       this.indigenousCommunityId = data.indigenousCommunityId;
       this.indigenousCommunityOther = data.indigenousCommunityOther;
+      this.indigenousIdentity = data.indigenousIdentity;
     }
   }
 
@@ -112,6 +115,15 @@ export class IdentitySet implements IIdentitySet {
     this.indigenousType = data.indigenousType;
     this.indigenousCommunityId = data.indigenousCommunityId;
     this.indigenousCommunityOther = data.indigenousCommunityOther;
+
+    if (this.indigenousCommunityId === null && this.indigenousCommunityOther === null) {
+      this.indigenousIdentity = null;
+    } else {
+      this.indigenousIdentity = {
+        indigenousCommunityId: this.indigenousCommunityId,
+        specifiedOther: this.indigenousCommunityOther,
+      };
+    }
   }
 
   reset(): void {
@@ -131,5 +143,6 @@ export class IdentitySet implements IIdentitySet {
     this.indigenousType = null;
     this.indigenousCommunityId = null;
     this.indigenousCommunityOther = null;
+    this.indigenousIdentity = null;
   }
 }

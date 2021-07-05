@@ -61,6 +61,11 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}`, createBeneficiaryRequest, { globalHandler: false });
   });
 
+  test('getPerson is linked to the correct URL', async () => {
+    await service.getPerson('123');
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}`);
+  });
+
   describe('parseMember', () => {
     it('should return the correct object', () => {
       const member = mockMember();
@@ -151,31 +156,7 @@ describe('>>> Beneficiaries Service', () => {
           optionItemId: identitySet.gender.id,
           specifiedOther: identitySet.gender.isOther ? identitySet.genderOther : null,
         },
-        indigenousIdentity: {
-          indigenousCommunityId: identitySet.indigenousCommunityId,
-          specifiedOther: identitySet.indigenousCommunityOther,
-        },
-      });
-    });
-  });
-
-  describe('parseIndigenousIdentity', () => {
-    it('should return null if both properties are null', () => {
-      const identitySet = mockIdentitySet();
-      identitySet.indigenousCommunityId = null;
-      identitySet.indigenousCommunityOther = null;
-
-      const built = service.parseIndigenousIdentity(identitySet);
-      expect(built).toEqual(null);
-    });
-
-    it('should return both id and other properties', () => {
-      const identitySet = mockIdentitySet();
-
-      const built = service.parseIndigenousIdentity(identitySet);
-      expect(built).toEqual({
-        indigenousCommunityId: identitySet.indigenousCommunityId,
-        specifiedOther: identitySet.indigenousCommunityOther,
+        indigenousIdentity: null,
       });
     });
   });

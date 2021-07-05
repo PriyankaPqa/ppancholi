@@ -61,6 +61,8 @@ export interface IIdentitySetData {
   indigenousCommunityId: string;
 
   indigenousCommunityOther: string;
+
+  indigenousIdentity?: IIndigenousIdentityOption;
 }
 
 export interface IIdentitySet extends IIdentitySetData {

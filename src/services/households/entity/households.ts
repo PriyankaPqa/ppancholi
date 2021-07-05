@@ -13,7 +13,12 @@ import {
   IIndigenousIdentityData,
   IMember,
   ICurrentAddress,
-  ICurrentAddressCreateRequest, ECurrentAddressTypes, MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IIndigenousIdentityOption,
+  ICurrentAddressCreateRequest,
+  ECurrentAddressTypes,
+  MemberCreateRequest,
+  IIdentitySet,
+  IIdentitySetCreateRequest,
+  IMemberData,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
@@ -53,6 +58,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {
     const payload = this.parseHouseholdPayload(household, eventId);
     return this.http.post(`${this.baseUrl}`, payload, { globalHandler: false });
+  }
+
+  getPerson(id: uuid): Promise<IMemberData> {
+    return this.http.get<IMemberData>(`${this.baseApi}/persons/${id}`);
   }
 
   parseHouseholdPayload(household: IHouseholdCreate, eventId: string): ICreateHouseholdRequest {
@@ -140,17 +149,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
         optionItemId: identitySet.gender.id,
         specifiedOther: identitySet.gender.isOther ? identitySet.genderOther : null,
       },
-      indigenousIdentity: this.parseIndigenousIdentity(identitySet),
-    };
-  }
-
-  parseIndigenousIdentity(identitySet: IIdentitySet): IIndigenousIdentityOption {
-    if (identitySet.indigenousCommunityId === null && identitySet.indigenousCommunityOther === null) {
-      return null;
-    }
-    return {
-      indigenousCommunityId: identitySet.indigenousCommunityId,
-      specifiedOther: identitySet.indigenousCommunityOther,
+      indigenousIdentity: identitySet.indigenousIdentity,
     };
   }
 }

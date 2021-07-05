@@ -13,7 +13,7 @@ import {
   IIdentitySet,
   IAddress,
   ICurrentAddress,
-  HouseholdCreate, IHouseholdCreate,
+  HouseholdCreate, IHouseholdCreate, IHouseholdCreateData,
 } from '../../../entities/household-create';
 import { IHouseholdEntity } from '../../../entities/household';
 
@@ -66,6 +66,9 @@ export interface IStorage {
     removeAdditionalMember(index: number): void;
     editAdditionalMember(payload: IMember, index: number, sameAddress: boolean): void;
     resetHouseholdCreate(): void;
+    setHouseholdAssociationMode(payload: boolean): void;
+    setHouseholdAlreadyRegistered(payload: boolean): void;
+    setHouseholdCreate(payload: IHouseholdCreateData): void;
   };
 
   actions: {
@@ -112,9 +115,9 @@ export interface IStorageMock {
     setPrivacyRegistrationMethod: jest.Mock<void>;
     setPrivacyRegistrationLocationId: jest.Mock<void>;
     resetState: jest.Mock<void>;
-    decreaseInlineEditCounter(): jest.Mock<void>;
-    increaseInlineEditCounter(): jest.Mock<void>;
-    setHouseholdResultsShown(): jest.Mock<void>;
+    decreaseInlineEditCounter: jest.Mock<void>;
+    increaseInlineEditCounter: jest.Mock<void>;
+    setHouseholdResultsShown: jest.Mock<void>;
     setPersonalInformation: jest.Mock<void>;
     setPrimaryBeneficiary: jest.Mock<void>;
     setIdentity: jest.Mock<void>;
@@ -128,6 +131,9 @@ export interface IStorageMock {
     removeAdditionalMember: jest.Mock<void>;
     editAdditionalMember: jest.Mock<void>;
     resetHouseholdCreate: jest.Mock<void>;
+    setHouseholdAssociationMode: jest.Mock<void>;
+    setHouseholdAlreadyRegistered: jest.Mock<void>;
+    setHouseholdCreate: jest.Mock<void>;
   };
 
   actions: {

@@ -26,4 +26,6 @@ export type IState = {
   inlineEditCounter: number;
   householdResultsShown: boolean;
   householdCreate: HouseholdCreate;
+  householdAssociationMode: boolean;
+  householdAlreadyRegistered: boolean;
 };

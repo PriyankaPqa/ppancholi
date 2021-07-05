@@ -6,7 +6,7 @@ import {
 } from '../../../types';
 import { IError } from '../../../services/httpClient';
 import {
-  IIndigenousIdentityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress,
+  IIndigenousIdentityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress, IHouseholdCreateData,
 } from '../../../entities/household-create';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
@@ -191,6 +191,18 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     resetHouseholdCreate() {
       store.commit('registration/resetHouseholdCreate');
+    },
+
+    setHouseholdAssociationMode(payload: boolean) {
+      store.commit('registration/setHouseholdAssociationMode', payload);
+    },
+
+    setHouseholdAlreadyRegistered(payload: boolean) {
+      store.commit('registration/setHouseholdAlreadyRegistered', payload);
+    },
+
+    setHouseholdCreate(payload: IHouseholdCreateData) {
+      store.commit('registration/setHouseholdCreate', payload);
     },
   },
 

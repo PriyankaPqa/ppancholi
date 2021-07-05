@@ -17,7 +17,7 @@ import {
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
   HouseholdCreate,
-  mockHouseholdCreate, mockContactInformation, mockIdentitySet, mockMember, mockAddress, mockAdditionalMember,
+  mockHouseholdCreate, mockContactInformation, mockIdentitySet, mockMember, mockAddress, mockAdditionalMember, mockHouseholdCreateData,
 } from '../../../entities/household-create';
 
 import { mockHouseholdEntity } from '../../../entities/household';
@@ -66,6 +66,8 @@ describe('>>> Registration Module', () => {
           inlineEditCounter: 0,
           householdResultsShown: false,
           householdCreate: new HouseholdCreate(),
+          householdAlreadyRegistered: false,
+          householdAssociationMode: false,
         });
       });
     });
@@ -245,7 +247,7 @@ describe('>>> Registration Module', () => {
       });
     });
   });
-
+  /* eslint-disable max-statements */
   describe('>> Mutations', () => {
     describe('setEvent', () => {
       it('sets the event', () => {
@@ -582,6 +584,27 @@ describe('>>> Registration Module', () => {
         store.commit('registration/setPrimaryBeneficiary', mockMember());
         store.commit('registration/resetHouseholdCreate');
         expect(store.state.registration.householdCreate).toEqual(new HouseholdCreate());
+      });
+    });
+
+    describe('setHouseholdAssociationMode', () => {
+      it('should set householdAssociationMode', () => {
+        store.commit('registration/setHouseholdAssociationMode', true);
+        expect(store.state.registration.householdAssociationMode).toEqual(true);
+      });
+    });
+
+    describe('setHouseholdAlreadyRegistered', () => {
+      it('should set householdAlreadyRegistered', () => {
+        store.commit('registration/setHouseholdAlreadyRegistered', true);
+        expect(store.state.registration.householdAlreadyRegistered).toEqual(true);
+      });
+    });
+
+    describe('setHouseholdCreate', () => {
+      it('should set householdCreate', () => {
+        store.commit('registration/setHouseholdCreate', mockHouseholdCreateData());
+        expect(store.state.registration.householdCreate).toEqual(new HouseholdCreate(mockHouseholdCreateData()));
       });
     });
   });

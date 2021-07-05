@@ -108,6 +108,9 @@ export class BaseModule<T extends IEntity> {
       this.upsert(state, item);
     },
 
+    reset: (state: IState<T>) => {
+      state.items = [];
+    },
   }
 
   public getModule = () => ({

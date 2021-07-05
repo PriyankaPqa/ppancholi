@@ -118,6 +118,7 @@ export const mockIdentitySetData = (): IIdentitySetData => ({
   indigenousType: EIndigenousTypes.FirstNations,
   indigenousCommunityId: 'guid-community',
   indigenousCommunityOther: '',
+  indigenousIdentity: null,
 });
 
 export const mockIdentitySet = (force?: Partial<IIdentitySetData>): IIdentitySet => new IdentitySet(deepmerge(mockIdentitySetData(), force || {}));

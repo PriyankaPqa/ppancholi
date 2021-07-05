@@ -271,6 +271,14 @@ describe('BaseStorage', () => {
         expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/setAll`, payload);
       });
     });
+
+    describe('reset', () => {
+      it('should reset all entities and metadata', () => {
+        storage.mutations.reset();
+        expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/reset`);
+        expect(store.commit).toBeCalledWith(`${storage.entityModuleName}/reset`);
+      });
+    });
   });
 
   describe('make', () => {

@@ -1,15 +1,16 @@
 import { IIdentitySet, IIdentitySetCreateRequest } from '../identity-set';
 import { IContactInformation, IContactInformationCreateRequest } from '../contact-information';
 import { ICurrentAddress, ICurrentAddressCreateRequest } from '../current-address/currentAddress.types';
+import { IEntity } from '../../base';
 
-export interface IMemberData {
-  tenantId: uuid;
-
+export interface IMemberData extends IEntity {
   identitySet: IIdentitySet;
 
   currentAddress: ICurrentAddress;
 
   contactInformation: IContactInformation;
+
+  addressHistory: Array<string>;
 }
 
 export interface MemberCreateRequest {

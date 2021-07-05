@@ -1,7 +1,7 @@
 import { mockHouseholdEntity } from '../../../entities/household';
 import {
   mockGenders,
-  mockIndigenousIdentitiesSearchData,
+  mockIndigenousIdentitiesSearchData, mockMemberData,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '../../../entities/household-create';
@@ -13,5 +13,6 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   getPrimarySpokenLanguages: jest.fn(() => mockPrimarySpokenLanguages()),
   searchIndigenousIdentities: jest.fn(() => mockIndigenousIdentitiesSearchData()),
   submitRegistration: jest.fn(() => mockHouseholdEntity()),
+  getPerson: jest.fn(() => mockMemberData()),
   submitCRCRegistration: jest.fn(() => mockHouseholdEntity()),
 });

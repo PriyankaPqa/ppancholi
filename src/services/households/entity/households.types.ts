@@ -1,5 +1,5 @@
 import {
-  IHouseholdCreate, IIndigenousIdentityData,
+  IHouseholdCreate, IIndigenousIdentityData, IMemberData,
 } from '../../../entities/household-create';
 import { IAzureSearchParams, IAzureSearchResult, IOptionItemData } from '../../../types';
 import {
@@ -11,6 +11,7 @@ export interface IHouseholdsService {
   getPreferredLanguages(): Promise<IOptionItemData[]>;
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   searchIndigenousIdentities(params: IAzureSearchParams): Promise<IAzureSearchResult<IIndigenousIdentityData>>;
+  getPerson(id: uuid): Promise<IMemberData>;
   submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
 }
@@ -21,5 +22,6 @@ export interface IHouseholdsServiceMock {
   getPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
   searchIndigenousIdentities: jest.Mock<IAzureSearchResult<IIndigenousIdentityData>>;
   submitRegistration: jest.Mock<IHouseholdEntity>;
+  getPerson: jest.Mock<IMemberData>;
   submitCRCRegistration: jest.Mock<IHouseholdEntity>;
 }

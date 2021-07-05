@@ -34,6 +34,7 @@ describe('Identity Set', () => {
       expect(p.indigenousType).toEqual(null);
       expect(p.indigenousCommunityId).toEqual(null);
       expect(p.indigenousCommunityOther).toEqual(null);
+      expect(p.indigenousIdentity).toEqual(null);
     });
   });
 
@@ -62,6 +63,10 @@ describe('Identity Set', () => {
         expect(p.indigenousType).toEqual(mockIdentitySetData().indigenousType);
         expect(p.indigenousCommunityId).toEqual(mockIdentitySetData().indigenousCommunityId);
         expect(p.indigenousCommunityOther).toEqual(mockIdentitySetData().indigenousCommunityOther);
+        expect(p.indigenousIdentity).toEqual({
+          indigenousCommunityId: mockIdentitySetData().indigenousCommunityId,
+          specifiedOther: mockIdentitySetData().indigenousCommunityOther,
+        });
       });
     });
 

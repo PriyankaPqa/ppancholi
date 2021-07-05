@@ -24,7 +24,7 @@ import {
   IMember,
   Member,
   IIdentitySetData,
-  ICurrentAddress, IAddress,
+  ICurrentAddress, IAddress, IHouseholdCreateData,
 } from '../../../entities/household-create';
 import { Event, IEvent, IEventData } from '../../../entities/event';
 
@@ -69,6 +69,8 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   inlineEditCounter: 0,
   householdResultsShown: false,
   householdCreate: new HouseholdCreate(),
+  householdAssociationMode: false,
+  householdAlreadyRegistered: false,
 });
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
@@ -359,6 +361,19 @@ const mutations = (): MutationTree<IState> => ({
   resetHouseholdCreate(state: IState) {
     state.householdCreate = new HouseholdCreate();
   },
+
+  setHouseholdAssociationMode(state: IState, payload: boolean) {
+    state.householdAssociationMode = payload;
+  },
+
+  setHouseholdAlreadyRegistered(state: IState, payload: boolean) {
+    state.householdAlreadyRegistered = payload;
+  },
+
+  setHouseholdCreate(state: IState, payload: IHouseholdCreateData) {
+    state.householdCreate = new HouseholdCreate(payload);
+  },
+
 });
 
 const actions = (mode: ERegistrationMode) => ({

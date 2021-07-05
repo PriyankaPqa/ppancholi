@@ -1,5 +1,23 @@
 <template>
   <div id="summary">
+    <template v-if="associationMode">
+      <div class="mb-8" data-test="summary__existingBeneficiary__section">
+        <span class="rc-heading-3">{{ getPersonalInformation.firstName }} {{ getPersonalInformation.lastName }}</span>
+        <div class="rc-body14">
+          {{ $t('registration.details.registered') }} {{ moment(householdCreate.primaryBeneficiary.created).format('ll') }}
+        </div>
+      </div>
+      <div>to do: use new search case file. use case file module or store in registration module. check with dana</div>
+      <template v-if="!householdAlreadyRegistered">
+        <div data-test="title" class="rc-heading-5 fw-bold  mb-2 mt-8">
+          {{ $t('registration.menu.privacy') }}
+        </div>
+        <validation-observer ref="privacyStatement">
+          <crc-privacy-statement :i18n="i18n" />
+        </validation-observer>
+      </template>
+    </template>
+
     <summary-section
       data-test="personalInformation"
       :title="$t('registration.menu.personal_info')"
@@ -87,6 +105,8 @@ import VueI18n from 'vue-i18n';
 import { VForm } from '@/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
+import CrcPrivacyStatement from '@/components/privacy-statement/CrcPrivacyStatement.vue';
+import moment from 'moment';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
 import { IMember } from '../../entities/value-objects/member';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
@@ -112,6 +132,7 @@ export default mixins(additionalMemberForm).extend({
     PersonalInformation,
     Addresses,
     RcConfirmationDialog,
+    CrcPrivacyStatement,
   },
 
   props: {
@@ -131,6 +152,7 @@ export default mixins(additionalMemberForm).extend({
 
   data() {
     return {
+      moment,
       personalInformation: {
         inlineEdit: false,
         backup: null,
@@ -146,6 +168,13 @@ export default mixins(additionalMemberForm).extend({
   computed: {
     getPersonalInformation(): IContactInformation & IMember {
       return this.$storage.registration.getters.personalInformation();
+    },
+    associationMode(): boolean {
+      return this.$store.state.registration.householdAssociationMode;
+    },
+
+    householdAlreadyRegistered(): boolean {
+      return this.$store.state.registration.householdAlreadyRegistered;
     },
   },
 

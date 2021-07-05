@@ -1,25 +1,29 @@
+import { BaseEntity } from '@/entities/base';
 import { ContactInformation, IContactInformation } from '../contact-information';
 import { IdentitySet, IIdentitySet } from '../identity-set';
 import { CurrentAddress, ICurrentAddress } from '../current-address';
 
 import { IMember, IMemberData } from './member.types';
 
-export class Member implements IMember {
-  tenantId: uuid;
-
+export class Member extends BaseEntity implements IMember {
   identitySet: IIdentitySet
 
   currentAddress: ICurrentAddress;
 
   contactInformation: IContactInformation;
 
+  addressHistory: string[];
+
   constructor(data?: IMemberData) {
     if (!data) {
+      super();
       this.reset();
     } else {
+      super(data);
       this.identitySet = new IdentitySet(data.identitySet);
       this.currentAddress = new CurrentAddress(data.currentAddress);
       this.contactInformation = new ContactInformation(data.contactInformation);
+      this.addressHistory = data.addressHistory;
     }
   }
 
@@ -53,5 +57,6 @@ export class Member implements IMember {
     this.identitySet = new IdentitySet();
     this.contactInformation = new ContactInformation();
     this.currentAddress = new CurrentAddress();
+    this.addressHistory = [];
   }
 }
