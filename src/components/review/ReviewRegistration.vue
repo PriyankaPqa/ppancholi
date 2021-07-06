@@ -7,7 +7,7 @@
           {{ $t('registration.details.registered') }} {{ moment(householdCreate.primaryBeneficiary.created).format('ll') }}
         </div>
       </div>
-      <slot name="previous-events"></slot>
+      <slot name="previous-events" />
       <template v-if="!householdAlreadyRegistered">
         <div data-test="title" class="rc-heading-5 fw-bold  mb-2 mt-8">
           {{ $t('registration.menu.privacy') }}
@@ -19,6 +19,7 @@
     </template>
 
     <summary-section
+      :show-edit-button="!householdAlreadyRegistered"
       data-test="personalInformation"
       :title="$t('registration.menu.personal_info')"
       :inline-edit="personalInformation.inlineEdit"
@@ -34,6 +35,7 @@
     </summary-section>
 
     <summary-section
+      :show-edit-button="!householdAlreadyRegistered"
       data-test="addresses"
       :title="$t('registration.menu.addresses')"
       :inline-edit="addresses.inlineEdit"
@@ -55,6 +57,7 @@
     <template v-for="(member, index) in additionalMembersCopy" data-test="leo">
       <additional-member-section
         :key="index"
+        :show-edit-button="!householdAlreadyRegistered"
         :data-test="`additionalMember_${index}`"
         :member="member"
         :inline-edit="additionalMembers[index].inlineEdit"
@@ -169,6 +172,7 @@ export default mixins(additionalMemberForm).extend({
     getPersonalInformation(): IContactInformation & IMember {
       return this.$storage.registration.getters.personalInformation();
     },
+
     associationMode(): boolean {
       return this.$store.state.registration.householdAssociationMode;
     },
