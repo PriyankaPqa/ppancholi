@@ -63,10 +63,6 @@ export default Vue.extend({
     inlineEdit(): boolean {
       return this.$store.state.registration.inlineEditCounter > 0;
     },
-
-    associationMode(): boolean {
-      return this.$store.state.registration.householdAssociationMode;
-    },
   },
 
   watch: {
