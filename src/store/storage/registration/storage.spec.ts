@@ -19,6 +19,10 @@ describe('>>> Registration Storage', () => {
     jest.clearAllMocks();
   });
   describe('>> Getters', () => {
+    it('should proxy isCRCRegistration', () => {
+      expect(storage.getters.isCRCRegistration()).toEqual(store.getters['registration/isCRCRegistration']);
+    });
+
     it('should proxy event', () => {
       expect(storage.getters.event()).toEqual(store.getters['registration/event']);
     });

@@ -19,6 +19,7 @@ import { IHouseholdEntity } from '../../../entities/household';
 
 export interface IStorage {
   getters: {
+    isCRCRegistration(): boolean;
     event(): IEvent;
     isLeftMenuOpen(): boolean;
     tabs(): IRegistrationMenuItem[];
@@ -83,6 +84,7 @@ export interface IStorage {
 
 export interface IStorageMock {
   getters: {
+    isCRCRegistration: jest.Mock<boolean>;
     event: jest.Mock<IEvent>;
     isLeftMenuOpen: jest.Mock<boolean>;
     tabs: jest.Mock<IRegistrationMenuItem[]>;

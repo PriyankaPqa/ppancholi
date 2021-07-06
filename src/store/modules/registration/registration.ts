@@ -76,6 +76,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
 
 const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules: boolean, mode: ERegistrationMode) => ({
+  isCRCRegistration: () => mode === ERegistrationMode.CRC,
 
   event: (state: IState) => new Event(state.event),
 
@@ -459,9 +460,9 @@ const actions = (mode: ERegistrationMode) => ({
     try {
       let result;
       if (mode === ERegistrationMode.Self) {
-        result = this.$services.households.submitRegistration(context.state.householdCreate, context.state.event.eventId);
+        result = await this.$services.households.submitRegistration(context.state.householdCreate, context.state.event.eventId);
       } else {
-        result = this.$services.households.submitCRCRegistration(context.state.householdCreate, context.state.event.eventId);
+        result = await this.$services.households.submitCRCRegistration(context.state.householdCreate, context.state.event.eventId);
       }
       context.commit('setRegistrationResponse', result);
     } catch (e) {

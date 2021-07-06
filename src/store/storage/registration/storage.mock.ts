@@ -15,6 +15,7 @@ import { IStorageMock } from './storage.types';
 
 export const mockStorageRegistration = (): IStorageMock => ({
   getters: {
+    isCRCRegistration: jest.fn(() => true),
     event: jest.fn(() => mockEvent()),
     isLeftMenuOpen: jest.fn(),
     tabs: jest.fn(),

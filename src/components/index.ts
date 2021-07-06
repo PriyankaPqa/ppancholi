@@ -9,4 +9,6 @@ export { default as AdditionalMemberForm } from './additional-members/Additional
 export { default as PersonalInformation } from './personal-information/PersonalInformation.vue';
 export { default as ReviewRegistration } from './review/ReviewRegistration.vue';
 export { default as PrivacyStatement } from './privacy-statement/PrivacyStatement.vue';
+export { default as ConfirmRegistration } from './confirm-registration/ConfirmRegistration.vue';
+export { default as ConfirmationPrint } from './confirm-registration/ConfirmationPrint.vue';
 export { default as CrcPrivacyStatement } from './privacy-statement/CrcPrivacyStatement.vue';

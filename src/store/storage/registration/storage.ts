@@ -14,6 +14,9 @@ import { IStorage } from './storage.types';
 // eslint-disable-next-line
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
+    isCRCRegistration(): boolean {
+      return store.getters['registration/isCRCRegistration'];
+    },
 
     event(): IEvent {
       return store.getters['registration/event'];

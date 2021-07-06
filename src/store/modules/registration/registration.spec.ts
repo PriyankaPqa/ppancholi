@@ -74,6 +74,20 @@ describe('>>> Registration Module', () => {
   });
 
   describe('>> Getters', () => {
+    describe('isCRCRegistration', () => {
+      it('returns isCRCRegistration', () => {
+        expect(store.getters['registration/isCRCRegistration']).toEqual(false);
+
+        store = mockStore({
+          modules: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            registration: makeRegistrationModule({ mode: ERegistrationMode.CRC } as any),
+          },
+        });
+        expect(store.getters['registration/isCRCRegistration']).toEqual(true);
+      });
+    });
+
     describe('event', () => {
       it('returns a default event', () => {
         expect(store.getters['registration/event']).toEqual(new Event());
