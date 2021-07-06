@@ -1,21 +1,23 @@
 import { makeStorage as makeRegistrationStorage } from '@crctech/registration-lib/src/store/storage/registration';
 import { HouseholdStorage } from '@crctech/registration-lib/src/store/storage/household';
 import { UserAccountStorage } from '@/store/storage/user-account/storage';
+import { CaseFileStorage } from '@/store/storage/case-file/storage';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IStore, IState } from '../store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeUserStorage } from './user';
-import { makeStorage as makeCaseFileStorage } from './case-file';
 import { makeStorage as makeDashboardStorage } from './dashboard';
 import { makeStorage as makeEventStorage } from './event';
 import { makeStorage as makeOptionListStorage } from './optionList';
 import { makeStorage as makeTeamStorage } from './team';
 import { makeStorage as makeProgramStorage } from './program';
 import { makeStorage as makeFinancialAssistanceStorage } from './financial-assistance';
+import { CaseNoteStorage } from './case-note';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   user: makeUserStorage(store),
-  caseFile: makeCaseFileStorage(store),
+  caseFile: new CaseFileStorage(store, vuexModule.CASE_FILE_ENTITIES, vuexModule.CASE_FILE_METADATA).make(),
+  caseNote: new CaseNoteStorage(store, vuexModule.CASE_NOTE_ENTITIES, vuexModule.CASE_NOTE_METADATA).make(),
   dashboard: makeDashboardStorage(store),
   event: makeEventStorage(store),
   optionList: makeOptionListStorage(store),

@@ -1,18 +1,18 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFileActivities } from '@/entities/case-file';
-import { mockCaseNote } from '@/entities/case-file/case-note';
+import { mockCombinedCaseNote } from '@/entities/case-note';
 import moment from '@/ui/plugins/moment';
 
 import Component from '../components/CaseFileListItemWrapper.vue';
 
 const localVue = createLocalVue();
-const item = mockCaseFileActivities()[0];
+const item = mockCombinedCaseNote();
 
 describe('CaseFileListItemWrapper.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       jest.clearAllMocks();
 
       wrapper = mount(Component, {
@@ -20,6 +20,18 @@ describe('CaseFileListItemWrapper.vue', () => {
         propsData: {
           item,
           sidebarIcon: 'mock-icon',
+          isCaseNote: true,
+        },
+        computed: {
+          listItem() {
+            return ({
+              userName: item.entity.userCreatedBy.userName,
+              roleName: item.entity.userCreatedBy.roleName,
+              created: item.entity.created,
+              lastModifiedDate: item.entity.updatedDate,
+              lastModifiedByFullName: item.entity.userCreatedBy.userName,
+            });
+          },
         },
       });
     });
@@ -32,7 +44,7 @@ describe('CaseFileListItemWrapper.vue', () => {
 
       it('contains the right data', () => {
         const element = wrapper.findDataTest('caseFileItem__userName');
-        expect(element.text()).toEqual(wrapper.vm.item.user.name);
+        expect(element.text()).toEqual(wrapper.vm.listItem.userName);
       });
     });
 
@@ -44,7 +56,7 @@ describe('CaseFileListItemWrapper.vue', () => {
 
       it('contains the right data', () => {
         const element = wrapper.findDataTest('caseFileItem__roleName');
-        expect(element.text()).toEqual(`(${wrapper.vm.item.role.name.translation.en})`);
+        expect(element.text()).toEqual(`(${wrapper.vm.listItem.roleName.translation.en})`);
       });
     });
 
@@ -57,31 +69,61 @@ describe('CaseFileListItemWrapper.vue', () => {
 
     describe('last modified by full name', () => {
       it('renders', async () => {
-        const item = mockCaseNote();
-        wrapper = mount(Component, {
-          localVue,
-          propsData: {
-            item,
-          },
-        });
-
         const element = wrapper.findDataTest('caseFileItem__lastEditBy');
-        expect(element.text()).toBe(item.lastModifiedByFullName);
+        expect(element.text()).toBe(wrapper.vm.listItem.lastModifiedByFullName);
       });
     });
 
     describe('last modified date', () => {
       it('renders', async () => {
-        const item = mockCaseNote();
+        const element = wrapper.findDataTest('caseFileItem__lastModifiedDate');
+        expect(element.text()).toBe(moment(wrapper.vm.listItem.lastModifiedDate).format('ll'));
+      });
+    });
+  });
+
+  describe('computed', () => {
+    describe('listItem', () => {
+      it('sets the right  data if item is case note', () => {
         wrapper = mount(Component, {
           localVue,
           propsData: {
             item,
+            sidebarIcon: 'mock-icon',
+            isCaseNote: true,
           },
         });
 
-        const element = wrapper.findDataTest('caseFileItem__lastModifiedDate');
-        expect(element.text()).toBe(moment(item.lastModifiedDate).format('ll'));
+        expect(wrapper.vm.listItem).toEqual({
+          userName: item.entity.userCreatedBy.userName,
+          roleName: item.entity.userCreatedBy.roleName,
+          isPinned: item.entity.isPinned,
+          lastModifiedByFullName: item.entity.userUpdatedBy
+            ? item.entity.userUpdatedBy.userName
+            : item.entity.userCreatedBy.userName,
+          lastModifiedDate: item.entity.updatedDate
+            ? item.entity.updatedDate
+            : item.entity.created,
+          created: item.entity.created,
+        });
+      });
+
+      it('sets the right data if item is an activity item', () => {
+        const item = mockCaseFileActivities()[0];
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            item: mockCaseFileActivities()[0],
+            sidebarIcon: 'mock-icon',
+            isCaseNote: false,
+          },
+        });
+
+        expect(wrapper.vm.listItem).toEqual({
+          userName: item.user.name,
+          roleName: item.role.name,
+          created: item.created,
+        });
       });
     });
   });

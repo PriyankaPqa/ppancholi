@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { CaseFile, mockCaseFilesSearchData, mockCaseFilesData } from '@/entities/case-file';
+import { mockCombinedCaseFile, mockCaseFileEntity } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { RcDialog, RcConfirmationDialog } from '@crctech/component-library';
@@ -12,7 +12,7 @@ import Component from '../case-file-activity/components/CaseFileTags.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+const mockCaseFile = mockCombinedCaseFile();
 
 describe('CaseFileTags.vue', () => {
   let wrapper;
@@ -21,19 +21,19 @@ describe('CaseFileTags.vue', () => {
       wrapper = mount(Component, {
         localVue,
         propsData: {
-          tags: mockCaseFile.tags,
-          caseFileId: mockCaseFile.id,
+          tags: mockCaseFile.metadata.tags,
+          caseFileId: mockCaseFile.entity.id,
         },
         mocks: {
           $route: {
             name: routes.caseFile.activity.name,
             params: {
-              id: mockCaseFile.id,
+              id: mockCaseFile.entity.id,
             },
           },
         },
       });
-      wrapper.vm.existingTags = mockCaseFile.tags;
+      wrapper.vm.existingTags = mockCaseFile.metadata.tags;
     });
 
     describe('tags chips', () => {
@@ -104,7 +104,7 @@ describe('CaseFileTags.vue', () => {
     describe('add tag dialog list tags', () => {
       it('renders when the dialog is open, if the list tag is active', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...mockCaseFile.tags[0], active: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], active: true }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -113,7 +113,7 @@ describe('CaseFileTags.vue', () => {
 
       it('displays the tag name', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...mockCaseFile.tags[0], active: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], active: true }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -122,7 +122,7 @@ describe('CaseFileTags.vue', () => {
 
       it('does not render when the dialog is open, if list tag is not active', async () => {
         wrapper.vm.showAddTagsDialog = true;
-        wrapper.vm.listTags = [{ ...mockCaseFile.tags[0], active: false }];
+        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], active: false }];
         await wrapper.vm.$nextTick();
 
         const element = wrapper.findDataTest(`checkbox-item-${wrapper.vm.listTags[0].id}`);
@@ -161,14 +161,14 @@ describe('CaseFileTags.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          tags: mockCaseFile.tags,
-          caseFileId: mockCaseFile.id,
+          tags: mockCaseFile.metadata.tags,
+          caseFileId: mockCaseFile.entity.id,
         },
         mocks: {
           $route: {
             name: routes.caseFile.activity.name,
             params: {
-              id: mockCaseFile.id,
+              id: mockCaseFile.entity.id,
             },
           },
         },
@@ -177,13 +177,13 @@ describe('CaseFileTags.vue', () => {
 
     describe('addButtonDisabled', () => {
       it('returns false if some list tags are selected ', () => {
-        wrapper.vm.listTags = [{ ...mockCaseFile.tags[0], selected: true }];
+        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], selected: true }];
 
         expect(wrapper.vm.addButtonDisabled).toBeFalsy();
       });
 
       it('returns true if no list tags are selected ', () => {
-        wrapper.vm.listTags = [{ ...mockCaseFile.tags[0], selected: false }];
+        wrapper.vm.listTags = [{ ...mockCaseFile.metadata.tags[0], selected: false }];
 
         expect(wrapper.vm.addButtonDisabled).toBeTruthy();
       });
@@ -204,15 +204,15 @@ describe('CaseFileTags.vue', () => {
 
     describe('remainingTags', () => {
       it('returns the existing tags when there is no tagToRemove', () => {
-        wrapper.vm.existingTags = mockCaseFile.tags;
+        wrapper.vm.existingTags = mockCaseFile.metadata.tags;
         wrapper.vm.tagToDelete = null;
 
         expect(wrapper.vm.remainingTags).toEqual(wrapper.vm.existingTags);
       });
 
       it('returns the existing tags without the tagToRemove when there is a tagToRemove', () => {
-        wrapper.vm.existingTags = [mockCaseFile.tags[0]];
-        wrapper.vm.tagToDelete = { id: mockCaseFile.tags[0].id, name: { translation: { en: 'foo' } } };
+        wrapper.vm.existingTags = [mockCaseFile.metadata.tags[0]];
+        wrapper.vm.tagToDelete = { id: mockCaseFile.metadata.tags[0].id, name: { translation: { en: 'foo' } } };
 
         expect(wrapper.vm.remainingTags).toEqual([]);
       });
@@ -224,39 +224,39 @@ describe('CaseFileTags.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          tags: mockCaseFile.tags,
-          caseFileId: mockCaseFile.id,
+          tags: mockCaseFile.metadata.tags,
+          caseFileId: mockCaseFile.entity.id,
         },
         mocks: {
           $route: {
             name: routes.caseFile.activity.name,
             params: {
-              id: mockCaseFile.id,
+              id: mockCaseFile.entity.id,
             },
           },
 
         },
       });
-      expect(wrapper.vm.existingTags).toEqual(mockCaseFile.tags);
+      expect(wrapper.vm.existingTags).toEqual(mockCaseFile.metadata.tags);
     });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
       storage.caseFile.actions.fetchTagsOptions.mockReturnValueOnce(mockOptionItemData());
-      storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFilesData()[0]);
+      storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
 
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          tags: mockCaseFile.tags,
-          caseFileId: mockCaseFile.id,
+          tags: mockCaseFile.metadata.tags,
+          caseFileId: mockCaseFile.entity.id,
         },
         mocks: {
           $route: {
             name: routes.caseFile.activity.name,
             params: {
-              id: mockCaseFile.id,
+              id: mockCaseFile.entity.id,
             },
           },
           $storage: storage,
@@ -438,19 +438,19 @@ describe('CaseFileTags.vue', () => {
 
       it('calls the storage action setCaseFileTags with the result from the makePayload call', async () => {
         jest.clearAllMocks();
-        storage.caseFile.actions.setCaseFileTags = jest.fn(() => mockCaseFilesData()[0]);
+        storage.caseFile.actions.setCaseFileTags = jest.fn(() => mockCaseFileEntity());
 
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            tags: mockCaseFile.tags,
-            caseFileId: mockCaseFile.id,
+            tags: mockCaseFile.metadata.tags,
+            caseFileId: mockCaseFile.entity.id,
           },
           mocks: {
             $route: {
               name: routes.caseFile.activity.name,
               params: {
-                id: mockCaseFile.id,
+                id: mockCaseFile.entity.id,
               },
             },
             $storage: storage,
@@ -484,14 +484,14 @@ describe('CaseFileTags.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            tags: mockCaseFile.tags,
-            caseFileId: mockCaseFile.id,
+            tags: mockCaseFile.metadata.tags,
+            caseFileId: mockCaseFile.entity.id,
           },
           mocks: {
             $route: {
               name: routes.caseFile.activity.name,
               params: {
-                id: mockCaseFile.id,
+                id: mockCaseFile.entity.id,
               },
             },
             $storage: storage,
@@ -516,8 +516,8 @@ describe('CaseFileTags.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            tags: mockCaseFile.tags,
-            caseFileId: mockCaseFile.id,
+            tags: mockCaseFile.metadata.tags,
+            caseFileId: mockCaseFile.entity.id,
           },
           computed: {
             remainingTag() {
@@ -528,7 +528,7 @@ describe('CaseFileTags.vue', () => {
             $route: {
               name: routes.caseFile.activity.name,
               params: {
-                id: mockCaseFile.id,
+                id: mockCaseFile.entity.id,
               },
             },
             $storage: storage,
@@ -542,13 +542,13 @@ describe('CaseFileTags.vue', () => {
 
       it('calls the storage action setCaseFileTags with the result from the makePayload call', async () => {
         jest.clearAllMocks();
-        storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFilesData()[0]);
+        storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
 
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            tags: mockCaseFile.tags,
-            caseFileId: mockCaseFile.id,
+            tags: mockCaseFile.metadata.tags,
+            caseFileId: mockCaseFile.entity.id,
           },
           computed: {
             remainingTag() {
@@ -559,7 +559,7 @@ describe('CaseFileTags.vue', () => {
             $route: {
               name: routes.caseFile.activity.name,
               params: {
-                id: mockCaseFile.id,
+                id: mockCaseFile.entity.id,
               },
             },
             $storage: storage,
@@ -580,13 +580,13 @@ describe('CaseFileTags.vue', () => {
       it('sets existing tags to remaining tags if the storage action returns a result', async () => {
         jest.clearAllMocks();
 
-        storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFilesData()[0]);
+        storage.caseFile.actions.setCaseFileTags.mockReturnValueOnce(mockCaseFileEntity());
 
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            tags: mockCaseFile.tags,
-            caseFileId: mockCaseFile.id,
+            tags: mockCaseFile.metadata.tags,
+            caseFileId: mockCaseFile.entity.id,
           },
           computed: {
             remainingTag() {
@@ -597,7 +597,7 @@ describe('CaseFileTags.vue', () => {
             $route: {
               name: routes.caseFile.activity.name,
               params: {
-                id: mockCaseFile.id,
+                id: mockCaseFile.entity.id,
               },
             },
             $storage: storage,
@@ -616,14 +616,14 @@ describe('CaseFileTags.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            tags: mockCaseFile.tags,
-            caseFileId: mockCaseFile.id,
+            tags: mockCaseFile.metadata.tags,
+            caseFileId: mockCaseFile.entity.id,
           },
           mocks: {
             $route: {
               name: routes.caseFile.activity.name,
               params: {
-                id: mockCaseFile.id,
+                id: mockCaseFile.entity.id,
               },
             },
             $storage: storage,

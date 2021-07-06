@@ -16,7 +16,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
 import {
-  ECaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, ValidationOfImpactStatus,
+  CaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, ValidationOfImpactStatus,
 } from '@/entities/case-file';
 import { IIdMultilingualName, IMultilingual } from '@/types';
 
@@ -38,41 +38,41 @@ export default Vue.extend({
       const { activityType } = this.item;
 
       switch (activityType) {
-        case ECaseFileActivityType.AddedTag:
-        case ECaseFileActivityType.RemovedTag:
+        case CaseFileActivityType.AddedTag:
+        case CaseFileActivityType.RemovedTag:
           return this.makeContentForTags(activityType);
 
-        case ECaseFileActivityType.AddedDuplicateFlag:
+        case CaseFileActivityType.AddedDuplicateFlag:
           return this.makeContentForAddedDuplicateFlag();
 
-        case ECaseFileActivityType.RemovedDuplicateFlag:
+        case CaseFileActivityType.RemovedDuplicateFlag:
           return this.makeContentForRemovedDuplicateFlag();
 
-        case ECaseFileActivityType.TriageUpdated:
+        case CaseFileActivityType.TriageUpdated:
           return this.makeContentForTriageUpdated();
 
-        case ECaseFileActivityType.CaseFileStatusDeactivated:
+        case CaseFileActivityType.CaseFileStatusDeactivated:
           return this.makeContentForCaseFileStatusDeactivated();
 
-        case ECaseFileActivityType.CaseFileStatusClosed:
+        case CaseFileActivityType.CaseFileStatusClosed:
           return this.makeContentForCaseFileStatusClosed();
 
-        case ECaseFileActivityType.CaseFileStatusArchived:
+        case CaseFileActivityType.CaseFileStatusArchived:
           return this.makeContentForCaseFileStatusArchived();
 
-        case ECaseFileActivityType.CaseFileStatusReopened:
+        case CaseFileActivityType.CaseFileStatusReopened:
           return this.makeContentForCaseFileStatusReopened();
 
-        case ECaseFileActivityType.AssignedToCaseFile:
+        case CaseFileActivityType.AssignedToCaseFile:
           return this.makeContentForAssignedToCaseFile();
 
-        case ECaseFileActivityType.UnassignedFromCaseFile:
+        case CaseFileActivityType.UnassignedFromCaseFile:
           return this.makeContentForUnassignedFromCaseFile();
 
-        case ECaseFileActivityType.IdentityAuthenticationUpdated:
+        case CaseFileActivityType.IdentityAuthenticationUpdated:
           return this.makeContentForIdentityAuthenticationUpdated();
 
-        case ECaseFileActivityType.ImpactStatusValidationUpdated:
+        case CaseFileActivityType.ImpactStatusValidationUpdated:
           return this.makeContentForImpactStatusValidationUpdated();
 
         default:
@@ -82,29 +82,29 @@ export default Vue.extend({
 
     icon(): string {
       switch (this.item.activityType) {
-        case ECaseFileActivityType.AddedTag:
-        case ECaseFileActivityType.RemovedTag:
-        case ECaseFileActivityType.TriageUpdated:
-        case ECaseFileActivityType.CaseFileStatusDeactivated:
-        case ECaseFileActivityType.CaseFileStatusArchived:
-        case ECaseFileActivityType.AssignedToCaseFile:
-        case ECaseFileActivityType.UnassignedFromCaseFile:
+        case CaseFileActivityType.AddedTag:
+        case CaseFileActivityType.RemovedTag:
+        case CaseFileActivityType.TriageUpdated:
+        case CaseFileActivityType.CaseFileStatusDeactivated:
+        case CaseFileActivityType.CaseFileStatusArchived:
+        case CaseFileActivityType.AssignedToCaseFile:
+        case CaseFileActivityType.UnassignedFromCaseFile:
           return '$rctech-actions';
 
-        case ECaseFileActivityType.AddedDuplicateFlag:
-        case ECaseFileActivityType.RemovedDuplicateFlag:
+        case CaseFileActivityType.AddedDuplicateFlag:
+        case CaseFileActivityType.RemovedDuplicateFlag:
           return '$rctech-duplicate';
 
-        case ECaseFileActivityType.CaseFileStatusClosed:
+        case CaseFileActivityType.CaseFileStatusClosed:
           return 'mdi-lock';
 
-        case ECaseFileActivityType.CaseFileStatusReopened:
+        case CaseFileActivityType.CaseFileStatusReopened:
           return 'mdi-lock-open';
 
-        case ECaseFileActivityType.IdentityAuthenticationUpdated:
+        case CaseFileActivityType.IdentityAuthenticationUpdated:
           return 'mdi-shield-check';
 
-        case ECaseFileActivityType.ImpactStatusValidationUpdated:
+        case CaseFileActivityType.ImpactStatusValidationUpdated:
           return 'mdi-map-check';
 
         default:
@@ -115,8 +115,8 @@ export default Vue.extend({
   },
 
   methods: {
-    makeContentForTags(activityType:ECaseFileActivityType): {title: TranslateResult, body: TranslateResult} {
-      const title = this.$t(`caseFileActivity.activityList.title.${ECaseFileActivityType[activityType]}`);
+    makeContentForTags(activityType:CaseFileActivityType): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t(`caseFileActivity.activityList.title.${CaseFileActivityType[activityType]}`);
 
       const tagsString = (this.item.details.tags as IIdMultilingualName[]).map((tag) => this.$m(tag.name)).join(', ');
       const body = `${this.$t('caseFileActivity.activityList.tags.tag_names')}: ${tagsString}`;

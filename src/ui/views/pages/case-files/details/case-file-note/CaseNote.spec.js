@@ -1,20 +1,23 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCaseNote, mockCaseNotes } from '@/entities/case-file/case-note';
+import { mockCombinedCaseNote } from '@/entities/case-note';
+import { mockStorage } from '@/store/storage';
 import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 
 const localVue = createLocalVue();
-const caseNote = mockCaseNote();
-const caseNotes = mockCaseNotes();
+const caseNote = mockCombinedCaseNote();
+const storage = mockStorage();
 
 describe('CaseNote.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
     jest.clearAllMocks();
-
     wrapper = shallowMount(Component, {
       localVue,
+      mocks: {
+        $storage: storage,
+      },
     });
   });
 
@@ -73,6 +76,26 @@ describe('CaseNote.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('caseNotes', () => {
+      it('calls the getByIds getter and sets the result into caseNotes, ordered by ', () => {
+        const caseFiles = [
+          mockCombinedCaseNote({ id: '1', isPinned: false, created: '2020-01-02' }),
+          mockCombinedCaseNote({ id: '2', isPinned: true, created: '2020-01-01' }),
+          mockCombinedCaseNote({ id: '3', isPinned: false, created: '2020-01-03' }),
+        ];
+        storage.caseNote.getters.getByIds = jest.fn(() => caseFiles);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.caseNotes).toEqual([caseFiles[1], caseFiles[2], caseFiles[0]]);
+      });
+    });
+
     describe('title', () => {
       it('should return proper data', async () => {
         wrapper.vm.totalCount = 99;
@@ -88,10 +111,10 @@ describe('CaseNote.vue', () => {
 
     describe('loading', () => {
       it('should be linked to proper state', () => {
-        wrapper.vm.$store.state.caseFile.isLoadingCaseNotes = true;
+        wrapper.vm.$store.state.caseNoteEntities.isLoadingCaseNotes = true;
         expect(wrapper.vm.loading).toEqual(true);
 
-        wrapper.vm.$store.state.caseFile.isLoadingCaseNotes = false;
+        wrapper.vm.$store.state.caseNoteEntities.isLoadingCaseNotes = false;
         expect(wrapper.vm.loading).toEqual(false);
       });
     });
@@ -111,25 +134,33 @@ describe('CaseNote.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call fetchActiveCaseNoteCategories and searchCaseNotes', async () => {
-        wrapper.vm.$storage.caseFile.actions.fetchActiveCaseNoteCategories = jest.fn();
+      it('should call fetchCaseNoteCategories and searchCaseNotes', async () => {
+        wrapper.vm.$storage.caseNote.actions.fetchCaseNoteCategories = jest.fn();
         wrapper.vm.searchCaseNotes = jest.fn();
 
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.$storage.caseFile.actions.fetchActiveCaseNoteCategories).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.caseNote.actions.fetchCaseNoteCategories).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.searchCaseNotes).toHaveBeenCalledTimes(1);
       });
 
       it('should fetch case notes with multiple orderBy', async () => {
-        expect(wrapper.vm.params.orderBy).toBe('IsPinned desc, CaseNoteCreatedDate desc');
+        expect(wrapper.vm.params.orderBy).toBe('Entity/IsPinned desc, Entity/Created desc');
       });
     });
   });
 
   describe('Methods', () => {
+    describe('addNewCaseNoteId', () => {
+      it('adds the id in the argument to the beginning of the ids', async () => {
+        wrapper.vm.caseNoteIds = ['1', '2'];
+        await wrapper.vm.addNewCaseNoteId('0');
+        expect(wrapper.vm.caseNoteIds).toEqual(['0', '1', '2']);
+      });
+    });
+
     describe('search', () => {
       it('should call searchCaseNotes', async () => {
         wrapper.vm.searchCaseNotes = jest.fn();
@@ -143,20 +174,20 @@ describe('CaseNote.vue', () => {
 
     describe('searchCaseNotes', () => {
       it('should call storage', async () => {
-        wrapper.vm.$storage.caseFile.actions.searchCaseNotes = jest.fn(() => ({
-          value: [],
-          odataCount: 0,
+        wrapper.vm.$storage.caseNote.actions.search = jest.fn(() => ({
+          ids: [],
+          count: 0,
         }));
 
         await wrapper.vm.searchCaseNotes();
 
-        expect(wrapper.vm.$storage.caseFile.actions.searchCaseNotes).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.caseNote.actions.search).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('pinCaseNote', () => {
       it('should call storage', async () => {
-        wrapper.vm.$storage.caseFile.actions.pinCaseNote = jest.fn();
+        wrapper.vm.$storage.caseNote.actions.pinCaseNote = jest.fn();
 
         const id = 'case file id';
         wrapper.vm.$route = {
@@ -166,38 +197,19 @@ describe('CaseNote.vue', () => {
 
         await wrapper.vm.pinCaseNote(caseNote);
 
-        expect(wrapper.vm.$storage.caseFile.actions.pinCaseNote).toHaveBeenCalledWith(id, caseNote.id, !isPinned);
+        expect(wrapper.vm.$storage.caseNote.actions.pinCaseNote).toHaveBeenCalledWith(id, caseNote.entity.id, !isPinned);
       });
       it('should update isPinned in case note', async () => {
         const mockCaseNote = {
-          id: 'id',
-          isPinned: false,
+          entity: {
+            id: 'id',
+            isPinned: false,
+          },
         };
 
         await wrapper.vm.pinCaseNote(mockCaseNote);
 
-        expect(mockCaseNote.isPinned).toBe(true);
-      });
-      it('should sort case note by isPinned and created', async () => {
-        await wrapper.setData({ caseNotes });
-
-        expect(wrapper.vm.caseNotes[0].isPinned).toBe(false);
-        expect(wrapper.vm.caseNotes[1].isPinned).toBe(false);
-        expect(wrapper.vm.caseNotes[2].isPinned).toBe(false);
-
-        expect(wrapper.vm.caseNotes[0].created).toBe('2021-05-25T19:53:36.6898336Z');
-        expect(wrapper.vm.caseNotes[1].created).toBe('2021-03-04T16:01:06.5213921Z');
-        expect(wrapper.vm.caseNotes[2].created).toBe('2021-06-04T16:01:06.5213921Z');
-
-        await wrapper.vm.pinCaseNote(wrapper.vm.caseNotes[1]);
-
-        expect(wrapper.vm.caseNotes[0].isPinned).toBe(true);
-        expect(wrapper.vm.caseNotes[1].isPinned).toBe(false);
-        expect(wrapper.vm.caseNotes[2].isPinned).toBe(false);
-
-        expect(wrapper.vm.caseNotes[0].created).toBe('2021-03-04T16:01:06.5213921Z');
-        expect(wrapper.vm.caseNotes[1].created).toBe('2021-06-04T16:01:06.5213921Z');
-        expect(wrapper.vm.caseNotes[2].created).toBe('2021-05-25T19:53:36.6898336Z');
+        expect(mockCaseNote.entity.isPinned).toBe(true);
       });
     });
   });

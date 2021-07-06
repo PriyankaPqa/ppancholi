@@ -4,10 +4,12 @@ import { IHouseholdEntityState } from '@crctech/registration-lib/src/store/modul
 import { IProvider, IProviderMock } from '@/services/provider';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IUserAccountMetadata } from '@/entities/user-account';
+import { ICaseFileMetadata } from '@/entities/case-file';
 import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
+import { ICaseNoteMetadata } from '@/entities/case-note';
 import { IState as IUserState } from './modules/user/user.types';
 import { IUserAccountEntityState } from './modules/user-account/userAccountEntity.types';
-import { IState as ICaseFileState } from './modules/case-file/case-file.types';
+import { ICaseFileEntityState } from './modules/case-file/caseFileEntity.types';
 import { IState as IDashboardState } from './modules/dashboard/dashboard.types';
 import { IState as IEventState } from './modules/event/event.types';
 import { IState as IOptionListState } from './modules/optionList/optionList.types';
@@ -15,10 +17,14 @@ import { IState as ITeamState } from './modules/team/team.types';
 import { IState as IProgramState } from './modules/program/program.types';
 import { IState as IBaseState } from './modules/base/base.types';
 import { IState as IFinancialAssistanceState } from './modules/financial-assistance/financial-assistance.types';
+import { ICaseNoteEntityState } from './modules/case-note/caseNoteEntity.types';
 
 export interface IRootState {
   version: string;
-  [vuexModule.CASE_FILE_MODULE]?: ICaseFileState,
+  [vuexModule.CASE_FILE_ENTITIES]?: ICaseFileEntityState,
+  [vuexModule.CASE_FILE_METADATA]?: IBaseState<ICaseFileMetadata>
+  [vuexModule.CASE_NOTE_ENTITIES]?: ICaseNoteEntityState,
+  [vuexModule.CASE_NOTE_METADATA]?: IBaseState<ICaseNoteMetadata>
   [vuexModule.USER_MODULE]?: IUserState,
   [vuexModule.USER_ACCOUNT_ENTITIES]?: IUserAccountEntityState,
   [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>,

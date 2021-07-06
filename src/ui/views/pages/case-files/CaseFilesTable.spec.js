@@ -3,10 +3,11 @@ import { RcDataTable } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 
-import { mockCaseFilesSearchData, CaseFile } from '@/entities/case-file';
+import { mockCombinedCaseFiles } from '@/entities/case-file';
 import Component from './CaseFilesTable.vue';
 
-const mockCaseFiles = () => mockCaseFilesSearchData().map((ev) => new CaseFile(ev));
+const storage = mockStorage();
+const mockCaseFiles = mockCombinedCaseFiles();
 
 const localVue = createLocalVue();
 
@@ -16,14 +17,16 @@ describe('CaseFilesTable.vue', () => {
     id: 'test-id',
   };
 
+  storage.caseFile.getters.getByIds = jest.fn(() => mockCaseFiles);
+
   describe('Template', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue,
+        mocks: {
+          $storage: storage,
+        },
       });
-
-      wrapper.vm.azureSearchItems = mockCaseFiles();
-      wrapper.vm.azureSearchCount = mockCaseFiles().length;
 
       wrapper.vm.getCaseFileRoute = jest.fn(() => ({
         name: routes.caseFile.activity.name,
@@ -97,10 +100,10 @@ describe('CaseFilesTable.vue', () => {
             searchLoading: false,
           },
         },
+        mocks: {
+          $storage: storage,
+        },
       });
-
-      wrapper.vm.azureSearchItems = mockCaseFiles();
-      wrapper.vm.azureSearchCount = mockCaseFiles().length;
     });
 
     describe('customColumns', () => {
@@ -110,14 +113,17 @@ describe('CaseFilesTable.vue', () => {
           computed: {
             locale() { return 'en'; },
           },
+          mocks: {
+            $storage: storage,
+          },
         });
         const expectedColumns = {
-          caseFileNumber: 'CaseFileNumber',
-          name: 'Household/PrimaryBeneficiary/IdentitySet/FirstName',
-          event: 'Event/Name/Translation/en',
-          triage: 'TriageName/Translation/en',
-          status: 'CaseFileStatusName/Translation/en',
-          created: 'CaseFileCreatedDate',
+          caseFileNumber: 'Entity/CaseFileNumber',
+          name: 'Metadata/PrimaryBeneficiaryFirstName',
+          event: 'Metadata/Event/Name/Translation/en',
+          triage: 'Metadata/TriageName/Translation/en',
+          status: 'Metadata/CaseFileStatusName/Translation/en',
+          created: 'Entity/Created',
         };
 
         expect(wrapper.vm.customColumns).toEqual(expectedColumns);
@@ -128,19 +134,21 @@ describe('CaseFilesTable.vue', () => {
       it('returns the correct headers data', () => {
         wrapper = mount(Component, {
           localVue,
-
           propsData: {
             isDashboard: false,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             customColumns() {
               return {
-                caseFileNumber: 'CaseFileNumber',
-                name: 'Household/PrimaryBeneficiary/IdentitySet/FirstName',
-                event: 'Event/Name/Translation/en',
-                triage: 'TriageName/Translation/en',
-                status: 'CaseFileStatusName/Translation/en',
-                created: 'CaseFileCreatedDate',
+                caseFileNumber: 'Entity/CaseFileNumber',
+                name: 'Metadata/PrimaryBeneficiaryFirstName',
+                event: 'Metadata/Event/Name/Translation/en',
+                triage: 'Metadata/TriageName/Translation/en',
+                status: 'Metadata/CaseFileStatusName/Translation/en',
+                created: 'Entity/Created',
               };
             },
           },
@@ -150,42 +158,43 @@ describe('CaseFilesTable.vue', () => {
           {
             text: 'caseFileTable.tableHeaders.caseFileNumber',
             sortable: true,
-            value: 'CaseFileNumber',
+            value: 'Entity/CaseFileNumber',
           },
           {
             text: 'caseFilesTable.tableHeaders.name',
             sortable: true,
-            value: 'Household/PrimaryBeneficiary/IdentitySet/FirstName',
+            value: 'Metadata/PrimaryBeneficiaryFirstName',
           },
           {
             text: 'caseFilesTable.tableHeaders.event',
             sortable: true,
-            value: 'Event/Name/Translation/en',
+            value: 'Metadata/Event/Name/Translation/en',
           },
           {
             text: 'caseFilesTable.tableHeaders.triage',
             sortable: true,
-            value: 'TriageName/Translation/en',
+            value: 'Metadata/TriageName/Translation/en',
           },
           {
             text: 'caseFilesTable.tableHeaders.status',
             sortable: true,
-            value: 'CaseFileStatusName/Translation/en',
+            value: 'Metadata/CaseFileStatusName/Translation/en',
           },
           {
             text: 'caseFilesTable.tableHeaders.createdDate',
             sortable: true,
-            value: 'CaseFileCreatedDate',
+            value: 'Entity/Created',
           },
         ]);
       });
     });
 
     describe('labels', () => {
-      it('returns the right labels', () => {
+      it('returns the right labels', async () => {
+        await wrapper.setData({ itemsCount: mockCaseFiles.length });
         expect(wrapper.vm.labels).toEqual({
           header: {
-            title: `caseFiles_table.title (${mockCaseFiles().length})`,
+            title: `caseFiles_table.title (${mockCaseFiles.length})`,
             searchPlaceholder: 'common.inputs.quick_search',
           },
         });
@@ -203,12 +212,9 @@ describe('CaseFilesTable.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      const storage = mockStorage();
-
-      storage.caseFile.actions.searchCaseFiles = jest.fn(() => ({
-        value: mockCaseFiles(),
-        odataContext: '',
-        odataCount: mockCaseFiles().length,
+      storage.caseFile.actions.search = jest.fn(() => ({
+        ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
+        count: 2,
       }));
 
       wrapper = mount(Component, {
@@ -217,9 +223,6 @@ describe('CaseFilesTable.vue', () => {
           $storage: storage,
         },
       });
-
-      wrapper.vm.azureSearchItems = mockCaseFiles();
-      wrapper.vm.azureSearchCount = mockCaseFiles().length;
     });
 
     describe('fetchData', () => {
@@ -234,7 +237,7 @@ describe('CaseFilesTable.vue', () => {
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.caseFile.actions.searchCaseFiles).toHaveBeenCalledWith({
+        expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
           search: params.search,
           filter: params.filter,
           top: params.top,
@@ -246,18 +249,34 @@ describe('CaseFilesTable.vue', () => {
         });
       });
 
-      it('returns the search results', async () => {
-        const res = await wrapper.vm.fetchData(params);
-        expect(res.value).toEqual(mockCaseFiles());
+      it('calls setResults with the search results', async () => {
+        jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => {});
+        await wrapper.vm.fetchData(params);
+        expect(wrapper.vm.setResults).toHaveBeenCalledWith({
+          ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
+          count: 2,
+        });
+      });
+    });
+
+    describe('setResults', () => {
+      it('sets the argument data into the write data variables', async () => {
+        const searchResult = {
+          ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
+          count: 2,
+        };
+        await wrapper.vm.setResults(searchResult);
+        expect(wrapper.vm.itemsCount).toEqual(2);
+        expect(wrapper.vm.searchResultIds).toEqual([mockCaseFiles[0].id, mockCaseFiles[1].id]);
       });
     });
 
     describe('getHouseholdProfileRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getHouseholdProfileRoute(mockCaseFiles()[0])).toEqual({
+        expect(wrapper.vm.getHouseholdProfileRoute(mockCaseFiles[0])).toEqual({
           name: routes.caseFile.householdProfile.name,
           params: {
-            id: mockCaseFiles()[0].household.id,
+            id: mockCaseFiles[0].entity.householdId,
           },
         });
       });
@@ -265,10 +284,10 @@ describe('CaseFilesTable.vue', () => {
 
     describe('getCaseFileRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getCaseFileRoute(mockCaseFiles()[0])).toEqual({
+        expect(wrapper.vm.getCaseFileRoute(mockCaseFiles[0])).toEqual({
           name: routes.caseFile.activity.name,
           params: {
-            id: mockCaseFiles()[0].id,
+            id: mockCaseFiles[0].entity.id,
           },
         });
       });

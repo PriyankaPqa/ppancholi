@@ -1,10 +1,12 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCaseNote } from '@/entities/case-file/case-note';
+import { mockCombinedCaseNote, mockCaseNoteCategories, mockCaseNoteEntity } from '@/entities/case-note';
+import { mockStorage } from '@/store/storage';
 
 import Component from './CaseNotesListItem.vue';
 
 const localVue = createLocalVue();
-const caseNote = mockCaseNote();
+const caseNote = mockCombinedCaseNote();
+const storage = mockStorage();
 
 describe('CaseNotesListItem.vue', () => {
   let wrapper;
@@ -12,10 +14,15 @@ describe('CaseNotesListItem.vue', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
+    storage.caseNote.getters.caseNoteCategories = jest.fn(() => mockCaseNoteCategories());
+
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
         item: caseNote,
+      },
+      mocks: {
+        $storage: storage,
       },
     });
   });
@@ -23,19 +30,19 @@ describe('CaseNotesListItem.vue', () => {
   describe('Template', () => {
     describe('subject', () => {
       it('is rendered', async () => {
-        expect(wrapper.findDataTest('caseNotes__subject').text()).toBe(caseNote.subject);
+        expect(wrapper.findDataTest('caseNotes__subject').text()).toBe(caseNote.entity.subject);
       });
     });
 
     describe('categories', () => {
       it('is rendered', async () => {
-        expect(wrapper.findDataTest('caseNotes__category').text()).toBe(caseNote.category.name.translation.en);
+        expect(wrapper.findDataTest('caseNotes__category').text()).toBe(caseNote.metadata.caseNoteCategoryName.translation.en);
       });
     });
 
     describe('description', () => {
       it('is rendered', async () => {
-        expect(wrapper.findDataTest('caseNotes__description').text()).toBe(caseNote.description);
+        expect(wrapper.findDataTest('caseNotes__description').text()).toBe(caseNote.entity.description);
       });
     });
 
@@ -81,6 +88,37 @@ describe('CaseNotesListItem.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('caseNoteCategories', () => {
+      it('returns the categories', () => {
+        expect(wrapper.vm.caseNoteCategories).toEqual(mockCaseNoteCategories());
+      });
+    });
+
+    describe('categoryName', () => {
+      it('returns the categoryName if it is in the metadata', () => {
+        expect(wrapper.vm.categoryName).toEqual(wrapper.vm.item.metadata.caseNoteCategoryName.translation.en);
+      });
+
+      it('returns the category name from the entity if there is no metadata data', () => {
+        const altCaseNote = { entity: mockCaseNoteEntity({ category: { optionItemId: mockCaseNoteCategories()[1].id } }), metadata: {} };
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            item: altCaseNote,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            canEditCaseNote() {
+              return true;
+            },
+          },
+        });
+        expect(wrapper.vm.categoryName).toEqual(mockCaseNoteCategories()[1].name.translation.en);
+      });
+    });
+
     describe('canEditCaseNote', () => {
       it('returns the correct value', async () => {
         wrapper = shallowMount(Component, {
@@ -88,6 +126,7 @@ describe('CaseNotesListItem.vue', () => {
           propsData: {
             item: caseNote,
           },
+
         });
 
         await wrapper.setRole('level4');

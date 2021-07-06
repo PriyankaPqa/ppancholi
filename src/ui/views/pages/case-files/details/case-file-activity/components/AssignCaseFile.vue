@@ -171,7 +171,7 @@ import { DataTableHeader } from 'vuetify';
 import {
   ETeamStatus, ITeam, ITeamMemberData,
 } from '@/entities/team';
-import { CaseFile, ICaseFile } from '@/entities/case-file';
+import { ICaseFileEntity } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
 import { AccountStatus } from '@/entities/user-account';
 
@@ -192,7 +192,7 @@ export default Vue.extend({
       required: true,
     },
     caseFile: {
-      type: Object as () => CaseFile,
+      type: Object as () => ICaseFileEntity,
       required: true,
     },
   },
@@ -253,7 +253,7 @@ export default Vue.extend({
     },
 
     async getTeamsData() {
-      const eventId = this.caseFile.event.id;
+      const { eventId } = this.caseFile;
       const params = { filter: { Events: { any: { Id: eventId } } } };
       const teams: ITeam[] = await this.$storage.team.actions.searchAggregatedTeams(params);
       this.allTeams = teams.filter((t:ITeam) => t.status === ETeamStatus.Active);
@@ -312,11 +312,9 @@ export default Vue.extend({
         const individualsPayload = this.assignedMembers.map((m) => m.id);
         const teamsPayload = this.assignedTeams.map((t) => t.id);
         this.loading = true;
-        const res: ICaseFile = await this.$storage.caseFile.actions.setCaseFileAssign(this.caseFile.id, individualsPayload, teamsPayload);
-        if (res) {
-          this.$emit('update:caseFile', res);
-        }
-
+        await this.$storage.caseFile.actions.setCaseFileAssign(
+          this.caseFile.id, individualsPayload, teamsPayload,
+        );
         const individuals:ITeamMemberData[] = this.assignedMembers.map((m) => {
           // Remove the property translatedRoleName from the members objects
           // eslint-disable-next-line @typescript-eslint/no-unused-vars

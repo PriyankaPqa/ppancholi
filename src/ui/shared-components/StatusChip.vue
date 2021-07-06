@@ -16,7 +16,7 @@ import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
 import { ETeamStatus } from '@/entities/team';
 import { EOptionListItemStatus } from '@/entities/optionItem';
 import colors from '@/ui/plugins/vuetify/colors';
-import { ECaseFileStatus } from '@/entities/case-file';
+import { CaseFileStatus } from '@/entities/case-file';
 import { EProgramStatus } from '@/entities/program';
 import { AccountStatus } from '@/entities/user-account';
 
@@ -38,7 +38,7 @@ export default Vue.extend({
           'EEventCallCentreStatus',
           'EEventLocationStatus',
           'ETeamStatus',
-          'ECaseFileStatus',
+          'CaseFileStatus',
           'EProgramStatus',
           'AccountStatus',
         ].indexOf(value) > -1
@@ -73,7 +73,7 @@ export default Vue.extend({
           return this.getOptionListStatusColor();
         case 'ETeamStatus':
           return this.getTeamStatusColor();
-        case 'ECaseFileStatus':
+        case 'CaseFileStatus':
           return this.getCaseFileStatusColor();
         case 'EProgramStatus':
           return this.getProgramStatusColor();
@@ -109,8 +109,8 @@ export default Vue.extend({
           return `system_management.lists.status.${EOptionListItemStatus[this.status]}`;
         case 'ETeamStatus':
           return `team.status.${ETeamStatus[this.status]}`;
-        case 'ECaseFileStatus':
-          return `caseFile.status.${ECaseFileStatus[this.status]}`;
+        case 'CaseFileStatus':
+          return `caseFile.status.${CaseFileStatus[this.status]}`;
         case 'EProgramStatus':
           return `common.program_status.${EProgramStatus[this.status]}`;
         case 'AccountStatus':
@@ -182,16 +182,16 @@ export default Vue.extend({
 
     getCaseFileStatusColor(): string {
       switch (this.status) {
-        case ECaseFileStatus.Open:
+        case CaseFileStatus.Open:
           return colors.chips.green;
 
-        case ECaseFileStatus.Inactive:
+        case CaseFileStatus.Inactive:
           return colors.chips.light_grey;
 
-        case ECaseFileStatus.Closed:
+        case CaseFileStatus.Closed:
           return colors.chips.red;
 
-        case ECaseFileStatus.Archived:
+        case CaseFileStatus.Archived:
           return colors.chips.grey;
 
         default:

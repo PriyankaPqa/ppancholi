@@ -31,7 +31,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFile } from '@/entities/case-file';
+import { ICaseFileEntity } from '@/entities/case-file';
 
 import { IAzureSearchResult } from '@/types';
 import { ITeam, ITeamMemberData, ITeamSearchData } from '@/entities/team';
@@ -47,7 +47,7 @@ export default Vue.extend({
 
   props: {
     caseFile: {
-      type: Object as () => ICaseFile,
+      type: Object as () => ICaseFileEntity,
       required: true,
     },
   },

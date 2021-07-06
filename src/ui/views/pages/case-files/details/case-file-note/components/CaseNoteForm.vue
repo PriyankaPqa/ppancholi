@@ -21,13 +21,14 @@
           </v-col>
           <v-col cols="12">
             <v-select-with-validation
-              v-model="localCaseNote.category"
+              :value="currentCategory"
               :item-text="(c) => $m(c.name)"
               return-object
               :items="caseNoteCategories"
               :label="$t('caseNote.category')"
               :rules="rules.category"
-              data-test="case-note-form-categories" />
+              data-test="case-note-form-categories"
+              @change="setCategory($event)" />
           </v-col>
           <v-col cols="12">
             <v-text-area-with-validation
@@ -68,8 +69,8 @@ import {
 } from '@crctech/component-library';
 import { IOptionItem } from '@/entities/optionItem';
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';
-import { ICaseFile } from '@/entities/case-file';
-import { ICaseNote } from '@/entities/case-file/case-note';
+import { ICaseFileCombined } from '@/entities/case-file';
+import { CaseNoteEntity, ICaseNoteEntity } from '@/entities/case-note';
 import _cloneDeep from 'lodash/cloneDeep';
 
 export default Vue.extend({
@@ -82,7 +83,7 @@ export default Vue.extend({
   },
   props: {
     caseNote: {
-      type: Object as () => ICaseNote,
+      type: Object as () => ICaseNoteEntity,
       default: null,
     },
     actionTitle: {
@@ -97,12 +98,9 @@ export default Vue.extend({
 
   data() {
     return {
-      localCaseNote: {
-        subject: null,
-        category: null,
-        description: null,
-      } as ICaseNote,
+      localCaseNote: null as ICaseNoteEntity,
       showConfirmationDialog: false,
+      currentCategory: null as IOptionItem,
     };
   },
 
@@ -124,25 +122,41 @@ export default Vue.extend({
     },
 
     isSaving(): boolean {
-      return this.$store.state.caseFile.isSavingCaseNote;
+      return this.$store.state.caseNoteEntities.isSavingCaseNote;
     },
 
     caseNoteCategories(): IOptionItem[] {
-      return this.$storage.caseFile.getters.caseNoteCategories();
+      return this.$storage.caseNote.getters.caseNoteCategories();
     },
 
-    caseFile(): ICaseFile {
-      return this.$storage.caseFile.getters.caseFileById(this.$route.params.id);
+    caseFile(): ICaseFileCombined {
+      return this.$storage.caseFile.getters.get(this.$route.params.id);
     },
   },
 
   created() {
     if (this.caseNote !== null) {
       this.localCaseNote = _cloneDeep(this.caseNote);
+      this.setInitialCategory();
+    } else {
+      this.localCaseNote = new CaseNoteEntity();
     }
   },
 
   methods: {
+    setInitialCategory() {
+      const currentCategoryId = this.localCaseNote.category.optionItemId;
+      if (currentCategoryId) {
+        this.currentCategory = this.caseNoteCategories.find((c) => c.id === currentCategoryId);
+      }
+    },
+
+    setCategory(value: IOptionItem) {
+      this.localCaseNote.category = {
+        optionItemId: value.id, specifiedOther: null,
+      };
+    },
+
     async save() {
       if (this.$hasLevel('level4')) {
         await this.addOrEdit();
@@ -158,14 +172,15 @@ export default Vue.extend({
     async addCaseNote() {
       this.closeConfirmationDialog();
 
-      const result = await this.$storage.caseFile.actions.addCaseNote(this.caseFile.id, this.localCaseNote);
+      const result = await this.$storage.caseNote.actions.addCaseNote(this.caseFile.entity.id, this.localCaseNote);
       if (result) {
+        this.$emit('add-case-note-id', result.id);
         this.closeCaseNoteForm();
       }
     },
 
     async editCaseNote() {
-      const result = await this.$storage.caseFile.actions.editCaseNote(this.caseFile.id, this.localCaseNote.id, this.localCaseNote);
+      const result = await this.$storage.caseNote.actions.editCaseNote(this.caseFile.entity.id, this.caseNote.id, this.localCaseNote);
       if (result) {
         this.closeCaseNoteForm();
       }

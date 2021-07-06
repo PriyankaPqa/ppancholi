@@ -2,21 +2,21 @@
   <div>
     <case-note-form
       v-if="isEdit"
-      :case-note="item"
+      :case-note="item.entity"
       :action-title="$t('caseNote.edit.rowTitle')"
       is-edit
       @close-case-note-form="closeCaseNoteEdit()" />
-    <case-file-list-item-wrapper v-else :item="item" :show-menu="canEditCaseNote">
+    <case-file-list-item-wrapper v-else :item="item" :show-menu="canEditCaseNote" is-case-note>
       <template slot="content">
         <div class="mb-2">
           <div class="rc-body16 fw-bold" data-test="caseNotes__subject">
-            {{ item.subject }}
+            {{ item.entity.subject }}
           </div>
         </div>
 
         <div class="caseNote__categoryRow">
           <span class="category rc-caption12" data-test="caseNotes__category">
-            {{ $m(item.category.name) }}
+            {{ categoryName }}
           </span>
         </div>
 
@@ -24,7 +24,7 @@
           ref="description"
           :class="[{ 'caseNote__description--more': true }, 'caseNote__description', 'rc-body14', 'pr-4']"
           data-test="caseNotes__description">
-            {{ item.description }}
+            {{ item.entity.description }}
           </pre>
       </template>
 
@@ -49,7 +49,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseNote } from '@/entities/case-file/case-note';
+import { ICaseNoteCombined } from '@/entities/case-note';
+import { IOptionItem } from '@/entities/optionItem';
 import CaseFileListItemWrapper from '../../components/CaseFileListItemWrapper.vue';
 import CaseNoteForm from './CaseNoteForm.vue';
 
@@ -64,7 +65,7 @@ export default Vue.extend({
   },
   props: {
     item: {
-      type: Object as () => ICaseNote,
+      type: Object as () => ICaseNoteCombined,
       required: true,
     },
   },
@@ -78,6 +79,21 @@ export default Vue.extend({
   computed: {
     canEditCaseNote(): boolean {
       return this.$hasLevel('level4');
+    },
+
+    caseNoteCategories(): IOptionItem[] {
+      return this.$storage.caseNote.getters.caseNoteCategories();
+    },
+
+    categoryName(): string {
+      if (this.item.metadata.caseNoteCategoryName) {
+        return this.$m(this.item.metadata.caseNoteCategoryName);
+      }
+      const category = this.caseNoteCategories.find((c) => c.id === this.item.entity.category.optionItemId);
+      if (category) {
+        return this.$m(category.name);
+      }
+      return '';
     },
   },
 

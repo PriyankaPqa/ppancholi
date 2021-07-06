@@ -23,7 +23,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity> implements
       return [];
     }
     return entity.map((e) => {
-      const match = metadata.find((m) => m.id === e.id);
+      const match = metadata.find((m) => m && m.id === e.id);
 
       return {
         entity: e,

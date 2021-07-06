@@ -112,6 +112,7 @@ export const mockTeamsData = (): ITeamData[] => [
   },
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const getOriginalData = (team: ITeam, wrapper: any) => ({
   name: team.name,
   status: team.status,

@@ -2,7 +2,7 @@ import { httpClient } from '@/services/httpClient';
 import { PublicService } from '@crctech/registration-lib/src/services/public';
 import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
 import { IProvider } from './provider.types';
-import { CaseFilesService } from '../case-files';
+import { CaseFilesService } from '../case-files/entity';
 import { EventsService } from '../events';
 import { OptionItemsService } from '../optionItems';
 import { TeamsService } from '../teams';

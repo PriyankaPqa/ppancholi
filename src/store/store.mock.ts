@@ -22,13 +22,21 @@ import { UserAccountsService } from '@/services/user-accounts/entity';
 import { httpClient } from '@/services/httpClient';
 import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
 import { UserAccountsMetadataService } from '@/services/user-accounts/metadata';
+import { CaseFilesService } from '@/services/case-files/entity';
+import { OptionItemsService } from '@/services/optionItems';
+import { CaseFilesMetadataService } from '@/services/case-files/metadata';
+import { CaseNotesService } from '@/services/case-notes/entity';
+import { CaseNotesMetadataService } from '@/services/case-notes/metadata';
 import { user } from './modules/user';
-import { caseFile } from './modules/case-file';
 import { dashboard } from './modules/dashboard';
 import { event } from './modules/event';
 import { team } from './modules/team';
 import { optionList } from './modules/optionList';
 import { program } from './modules/program';
+import { CaseFileEntityModule } from './modules/case-file/caseFileEntity';
+import { CaseFileMetadataModule } from './modules/case-file/caseFileMetadata';
+import { CaseNoteEntityModule } from './modules/case-note/caseNoteEntity';
+import { CaseNoteMetadataModule } from './modules/case-note/caseNoteMetadata';
 import { financialAssistance } from './modules/financial-assistance';
 
 const i18n = {
@@ -39,7 +47,10 @@ Vue.use(Vuex);
 
 const mockConfig = {
   modules: {
-    [vuexModule.CASE_FILE_MODULE]: caseFile,
+    [vuexModule.CASE_FILE_ENTITIES]: new CaseFileEntityModule(new CaseFilesService(httpClient), new OptionItemsService(httpClient)).getModule(),
+    [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(new CaseFilesMetadataService(httpClient)).getModule(),
+    [vuexModule.CASE_NOTE_ENTITIES]: new CaseNoteEntityModule(new CaseNotesService(httpClient), new OptionItemsService(httpClient)).getModule(),
+    [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(new CaseNotesMetadataService(httpClient)).getModule(),
     [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.EVENT_MODULE]: event,

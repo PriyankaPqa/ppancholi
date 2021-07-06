@@ -17,7 +17,11 @@
         <v-toolbar elevation="1" color="grey lighten-5" />
       </div>
 
-      <case-note-form v-if="isBeingCreated" :action-title="$t('caseNote.create.rowTitle')" @close-case-note-form="isBeingCreated = false" />
+      <case-note-form
+        v-if="isBeingCreated"
+        :action-title="$t('caseNote.create.rowTitle')"
+        @close-case-note-form="isBeingCreated = false"
+        @add-case-note-id="addNewCaseNoteId($event)" />
 
       <case-file-list-wrapper :loading="loading" :empty="caseNotes.length === 0">
         <case-notes-list-item
@@ -46,11 +50,12 @@
 import Vue from 'vue';
 import { RcPageContent, RcPageLoading, RcConfirmationDialog } from '@crctech/component-library';
 import { FilterKey } from '@/entities/user-account';
-import { ICaseNote } from '@/entities/case-file/case-note';
+import { ICaseNoteCombined } from '@/entities/case-note';
 import _orderBy from 'lodash/orderBy';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import { ConfirmationDialog } from '@/types';
+import * as searchEndpoints from '@/constants/searchEndpoints';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
@@ -79,7 +84,7 @@ export default Vue.extend({
 
   data() {
     return {
-      caseNotes: [] as ICaseNote[],
+      caseNoteIds: [] as string[],
       isBeingCreated: false,
       isBeingEdited: false,
       FilterKey,
@@ -92,15 +97,20 @@ export default Vue.extend({
       showExitConfirmation: false,
       params: {
         filter: {
-          CaseFileId: this.$route.params.id,
+          'Entity/CaseFileId': this.$route.params.id,
         },
         search: '',
-        orderBy: 'IsPinned desc, CaseNoteCreatedDate desc',
+        orderBy: 'Entity/IsPinned desc, Entity/Created desc',
         count: true,
       },
     };
   },
   computed: {
+    caseNotes(): ICaseNoteCombined[] {
+      const caseNotes = this.$storage.caseNote.getters.getByIds(this.caseNoteIds);
+      return _orderBy(caseNotes, ['entity.isPinned', 'entity.created'], ['desc', 'desc']);
+    },
+
     title(): string {
       return `${this.$t('caseNote.caseNotes')} (${this.totalCount})`;
     },
@@ -111,7 +121,7 @@ export default Vue.extend({
       return { };
     },
     loading(): boolean {
-      return this.$store.state.caseFile.isLoadingCaseNotes;
+      return this.$store.state.caseNoteEntities.isLoadingCaseNotes;
     },
     titleLeave(): TranslateResult {
       return this.$t('confirmLeaveDialog.title');
@@ -125,11 +135,15 @@ export default Vue.extend({
   },
 
   async created() {
-    await this.$storage.caseFile.actions.fetchActiveCaseNoteCategories();
+    await this.$storage.caseNote.actions.fetchCaseNoteCategories();
     await this.searchCaseNotes();
   },
 
   methods: {
+    addNewCaseNoteId(id: string) {
+      this.caseNoteIds.unshift(id);
+    },
+
     onSaved() {
       // TODO
     },
@@ -141,17 +155,18 @@ export default Vue.extend({
     },
 
     async searchCaseNotes() {
-      const res = await this.$storage.caseFile.actions.searchCaseNotes(this.params);
-      this.caseNotes = res.value;
-      this.totalCount = res.odataCount;
+      const res = await this.$storage.caseNote.actions.search(this.params, searchEndpoints.CASE_NOTES);
+      if (res) {
+        this.caseNoteIds = res.ids;
+        this.totalCount = res.count;
+      }
     },
 
-    async pinCaseNote(caseNote: ICaseNote) {
+    async pinCaseNote(caseNote: ICaseNoteCombined) {
       try {
-        await this.$storage.caseFile.actions.pinCaseNote(this.$route.params.id, caseNote.id, !caseNote.isPinned);
+        await this.$storage.caseNote.actions.pinCaseNote(this.$route.params.id, caseNote.entity.id, !caseNote.entity.isPinned);
         // Since back end search has a delay, update case note and sort case note list locally
-        caseNote.isPinned = !caseNote.isPinned;
-        this.caseNotes = _orderBy(this.caseNotes, ['isPinned', 'created'], ['desc', 'desc']);
+        caseNote.entity.isPinned = !caseNote.entity.isPinned;
       // eslint-disable-next-line no-empty
       } catch (e) {}
     },

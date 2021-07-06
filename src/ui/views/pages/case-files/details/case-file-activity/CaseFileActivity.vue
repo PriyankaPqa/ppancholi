@@ -9,8 +9,8 @@
     <template v-if="!loading" slot="top">
       <case-file-tags
         data-test="caseFileActivity-tags"
-        :case-file-id="caseFile.id"
-        :tags="caseFile.tags || []"
+        :case-file-id="caseFile.entity.id"
+        :tags="caseFile.metadata.tags || []"
         @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
 
       <v-row class="ma-0 pa-0">
@@ -23,7 +23,7 @@
 
           <span class="pr-2 rc-body12">{{ $t('caseFileActivity.triage') }}:</span>
           <v-select
-            :value="caseFile.triage"
+            :value="caseFile.entity.triage"
             class="triage-select"
             data-test="caseFileActivity-triage-select"
             :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content' }"
@@ -43,14 +43,14 @@
             :loading="duplicateLoading"
             :disabled="!canMarkDuplicate"
             @click="setCaseFileIsDuplicate">
-            <v-icon :color="caseFile && caseFile.isDuplicate ? 'secondary' : ''">
+            <v-icon :color="caseFile && caseFile.entity.isDuplicate ? 'secondary' : ''">
               $rctech-duplicate
             </v-icon>
           </v-btn>
         </v-col>
 
         <case-file-assignments
-          :case-file="caseFile"
+          :case-file="caseFile.entity"
           data-test="case-file-assignments"
           @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
       </v-row>
@@ -99,7 +99,7 @@ import Vue from 'vue';
 import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
-import { ICaseFile, ICaseFileActivity, ECaseFileTriage } from '@/entities/case-file';
+import { ICaseFileCombined, ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers';
 import CaseFileTags from './components/CaseFileTags.vue';
@@ -158,21 +158,21 @@ export default Vue.extend({
       return this.$hasLevel('level1');
     },
 
-    caseFile(): ICaseFile {
-      return this.$storage.caseFile.getters.caseFileById(this.id);
+    caseFile(): ICaseFileCombined {
+      return this.$storage.caseFile.getters.get(this.id);
     },
 
     duplicateLoading(): boolean {
-      return this.$store.state.caseFile.duplicateLoading;
+      return this.$store.state.caseFileEntities.duplicateLoading;
     },
 
     triageLevels(): {value: unknown, text: string}[] {
-      const levels = helpers.enumToTranslatedCollection(ECaseFileTriage, 'enums.Triage');
+      const levels = helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage');
       return _sortBy(levels, 'value');
     },
 
     triageLoading(): boolean {
-      return this.$store.state.caseFile.triageLoading;
+      return this.$store.state.caseFileEntities.triageLoading;
     },
   },
   watch: {
@@ -185,7 +185,7 @@ export default Vue.extend({
     try {
       this.loading = true;
 
-      await this.$storage.caseFile.actions.fetchCaseFile(this.id);
+      await this.$storage.caseFile.actions.fetch(this.id);
 
       this.setLastAction();
       await this.fetchCaseFileActivities();
@@ -218,13 +218,15 @@ export default Vue.extend({
     },
 
     setLastAction() {
-      const date = moment(this.caseFile.lastActionDate).local();
-      this.lastActionDate = date.format('ll');
-      this.daysAgo = date.locale(moment.locale()).fromNow();
+      if (this.caseFile.metadata.lastActionDate) {
+        const date = moment(this.caseFile.metadata.lastActionDate).local();
+        this.lastActionDate = date.format('ll');
+        this.daysAgo = date.locale(moment.locale()).fromNow();
+      }
     },
 
     async setCaseFileIsDuplicate() {
-      const { id, isDuplicate } = this.caseFile;
+      const { id, isDuplicate } = this.caseFile.entity;
       await this.$storage.caseFile.actions.setCaseFileIsDuplicate(id, !isDuplicate);
       this.fetchCaseFileActivities(this.activityFetchDelay);
     },

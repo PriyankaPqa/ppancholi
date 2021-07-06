@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { ECaseFileActivityType, mockCaseFileActivities } from '@/entities/case-file';
+import { CaseFileActivityType, mockCaseFileActivities } from '@/entities/case-file';
 
 import Component from '../case-file-activity/components/CaseFileActivityListItem.vue';
 
@@ -94,9 +94,9 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForTags').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.AddedTag)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.AddedTag)[0],
         });
-        expect(wrapper.vm.makeContentForTags).toHaveBeenCalledWith(ECaseFileActivityType.AddedTag);
+        expect(wrapper.vm.makeContentForTags).toHaveBeenCalledWith(CaseFileActivityType.AddedTag);
         expect(wrapper.vm.content).toEqual(mockContent);
       });
 
@@ -104,9 +104,9 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForTags').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.RemovedTag)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.RemovedTag)[0],
         });
-        expect(wrapper.vm.makeContentForTags).toHaveBeenCalledWith(ECaseFileActivityType.RemovedTag);
+        expect(wrapper.vm.makeContentForTags).toHaveBeenCalledWith(CaseFileActivityType.RemovedTag);
         expect(wrapper.vm.content).toEqual(mockContent);
       });
 
@@ -114,7 +114,7 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForAddedDuplicateFlag').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.AddedDuplicateFlag)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.AddedDuplicateFlag)[0],
         });
         expect(wrapper.vm.makeContentForAddedDuplicateFlag).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.content).toEqual(mockContent);
@@ -124,7 +124,7 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForRemovedDuplicateFlag').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.RemovedDuplicateFlag)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.RemovedDuplicateFlag)[0],
         });
         expect(wrapper.vm.makeContentForRemovedDuplicateFlag).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.content).toEqual(mockContent);
@@ -134,7 +134,7 @@ describe('CaseFileActivityListItem.vue', () => {
         const mockContent = { title: 'mock-title', body: 'mock-body' };
         jest.spyOn(wrapper.vm, 'makeContentForTriageUpdated').mockImplementation(() => (mockContent));
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.TriageUpdated)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.TriageUpdated)[0],
         });
         expect(wrapper.vm.makeContentForTriageUpdated).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.content).toEqual(mockContent);
@@ -153,21 +153,21 @@ describe('CaseFileActivityListItem.vue', () => {
     describe('icon', () => {
       it('returns the correct icon when action type is AddedTag', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.AddedTag)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.AddedTag)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is RemovedTag', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.RemovedTag)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.RemovedTag)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is AddedDuplicateFlag', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.AddedDuplicateFlag)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.AddedDuplicateFlag)[0],
 
         });
         expect(wrapper.vm.icon).toEqual('$rctech-duplicate');
@@ -175,70 +175,70 @@ describe('CaseFileActivityListItem.vue', () => {
 
       it('returns the correct icon when action type is RemovedDuplicateFlag', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.RemovedDuplicateFlag)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.RemovedDuplicateFlag)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-duplicate');
       });
 
       it('returns the correct icon when action type is TriageUpdated', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.TriageUpdated)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.TriageUpdated)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is CaseFileStatusDeactivated', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusDeactivated)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusDeactivated)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is CaseFileStatusClosed', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusClosed)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusClosed)[0],
         });
         expect(wrapper.vm.icon).toEqual('mdi-lock');
       });
 
       it('returns the correct icon when action type is CaseFileStatusReopen', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusReopened)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusReopened)[0],
         });
         expect(wrapper.vm.icon).toEqual('mdi-lock-open');
       });
 
       it('returns the correct icon when action type is CaseFileStatusArchived', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusArchived)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusArchived)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is AssignedToCaseFile', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.AssignedToCaseFile)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is UnassignedFromCaseFile', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.UnassignedFromCaseFile)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.UnassignedFromCaseFile)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
 
       it('returns the correct icon when action type is IdentityAuthenticationUpdated', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.IdentityAuthenticationUpdated)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[0],
         });
         expect(wrapper.vm.icon).toEqual('mdi-shield-check');
       });
 
       it('returns the correct icon when action type is ImpactStatusValidationUpdated', async () => {
         await wrapper.setProps({
-          item: mockCaseFileActivities(ECaseFileActivityType.ImpactStatusValidationUpdated)[0],
+          item: mockCaseFileActivities(CaseFileActivityType.ImpactStatusValidationUpdated)[0],
         });
         expect(wrapper.vm.icon).toEqual('mdi-map-check');
       });
@@ -263,22 +263,22 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForTags', () => {
         it('returns the correct data when action type is AddedTag', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.AddedTag)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.AddedTag)[0],
 
           });
-          expect(wrapper.vm.makeContentForTags(ECaseFileActivityType.AddedTag)).toEqual({
-            title: `caseFileActivity.activityList.title.${ECaseFileActivityType[ECaseFileActivityType.AddedTag]}`,
+          expect(wrapper.vm.makeContentForTags(CaseFileActivityType.AddedTag)).toEqual({
+            title: `caseFileActivity.activityList.title.${CaseFileActivityType[CaseFileActivityType.AddedTag]}`,
             body: 'caseFileActivity.activityList.tags.tag_names: tag 1, Tag 2',
           });
         });
 
         it('returns the correct data when action type is RemovedTag', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.RemovedTag)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.RemovedTag)[0],
           });
 
-          expect(wrapper.vm.makeContentForTags(ECaseFileActivityType.RemovedTag)).toEqual({
-            title: `caseFileActivity.activityList.title.${ECaseFileActivityType[ECaseFileActivityType.RemovedTag]}`,
+          expect(wrapper.vm.makeContentForTags(CaseFileActivityType.RemovedTag)).toEqual({
+            title: `caseFileActivity.activityList.title.${CaseFileActivityType[CaseFileActivityType.RemovedTag]}`,
             body: 'caseFileActivity.activityList.tags.tag_names: tag 4',
           });
         });
@@ -287,7 +287,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForAddedDuplicateFlag', () => {
         it('returns the correct data when action type is AddedDuplicateFlag', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.AddedDuplicateFlag)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.AddedDuplicateFlag)[0],
           });
 
           expect(wrapper.vm.makeContentForAddedDuplicateFlag()).toEqual({
@@ -300,7 +300,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForRemovedDuplicateFlag', () => {
         it('returns the correct data when action type is RemovedDuplicateFlag', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.RemovedDuplicateFlag)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.RemovedDuplicateFlag)[0],
           });
 
           expect(wrapper.vm.makeContentForRemovedDuplicateFlag()).toEqual({
@@ -313,7 +313,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForTriageUpdated', () => {
         it('returns the correct data when action type is TriageUpdated', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.TriageUpdated)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.TriageUpdated)[0],
           });
 
           expect(wrapper.vm.makeContentForTriageUpdated()).toEqual({
@@ -326,7 +326,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForCaseFileStatusDeactivated', () => {
         it('returns the correct data when action type is CaseFileStatusDeactivated', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusDeactivated)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusDeactivated)[0],
           });
 
           expect(wrapper.vm.makeContentForCaseFileStatusDeactivated()).toEqual({
@@ -339,7 +339,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForCaseFileStatusClosed', () => {
         it('returns the correct data when action type is CaseFileStatusClosed', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusClosed)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusClosed)[0],
           });
 
           expect(wrapper.vm.makeContentForCaseFileStatusClosed()).toEqual({
@@ -352,7 +352,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForCaseFileStatusArchived', () => {
         it('returns the correct data when action type is CaseFileStatusArchived', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusArchived)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusArchived)[0],
           });
 
           expect(wrapper.vm.makeContentForCaseFileStatusArchived()).toEqual({
@@ -365,7 +365,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForCaseFileStatusReopened', () => {
         it('returns the correct data when action type is CaseFileStatusReopened', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.CaseFileStatusReopened)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.CaseFileStatusReopened)[0],
           });
 
           expect(wrapper.vm.makeContentForCaseFileStatusReopened()).toEqual({
@@ -378,7 +378,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForAssignedToCaseFile', () => {
         it('returns the correct data when action type is makeContentForAssignedToCaseFile and there is only one name to display', async () => {
           const activity = {
-            ...mockCaseFileActivities(ECaseFileActivityType.AssignedToCaseFile)[0],
+            ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
             details: {
               teams: [],
               individuals: [{ id: '1', name: 'Jack White' }],
@@ -398,7 +398,7 @@ describe('CaseFileActivityListItem.vue', () => {
         it('returns the correct data when action type is makeContentForAssignedToCaseFile and there are several individuals and no team',
           async () => {
             const activity = {
-              ...mockCaseFileActivities(ECaseFileActivityType.AssignedToCaseFile)[0],
+              ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
               details: {
                 teams: [],
                 individuals: [{ id: '1', name: 'Jack White' }, { id: '2', name: 'Joe Black' }],
@@ -418,7 +418,7 @@ describe('CaseFileActivityListItem.vue', () => {
         it('returns the correct data when action type is makeContentForAssignedToCaseFile and there are several teams and no individuals',
           async () => {
             const activity = {
-              ...mockCaseFileActivities(ECaseFileActivityType.AssignedToCaseFile)[0],
+              ...mockCaseFileActivities(CaseFileActivityType.AssignedToCaseFile)[0],
               details: {
                 teams: [{ id: '1', name: 'Team 1' }, { id: '1', name: 'Team 2' }],
                 individuals: [],
@@ -439,7 +439,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForUnassignedFromCaseFile', () => {
         it('returns the correct data when action type is CaseFileStatusReopened', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.UnassignedFromCaseFile)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.UnassignedFromCaseFile)[0],
           });
 
           expect(wrapper.vm.makeContentForUnassignedFromCaseFile()).toEqual({
@@ -452,7 +452,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForIdentityAuthenticationUpdated', () => {
         it('returns the correct data when action type is IdentityAuthenticationUpdated and status is Passed', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.IdentityAuthenticationUpdated)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[0],
           });
 
           expect(wrapper.vm.makeContentForIdentityAuthenticationUpdated()).toEqual({
@@ -463,7 +463,7 @@ describe('CaseFileActivityListItem.vue', () => {
 
         it('returns the correct data when action type is IdentityAuthenticationUpdated and status is Failed', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.IdentityAuthenticationUpdated)[1],
+            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[1],
           });
 
           expect(wrapper.vm.makeContentForIdentityAuthenticationUpdated()).toEqual({
@@ -474,7 +474,7 @@ describe('CaseFileActivityListItem.vue', () => {
 
         it('returns the correct data when action type is IdentityAuthenticationUpdated and status is NotVerified', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.IdentityAuthenticationUpdated)[2],
+            item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[2],
           });
 
           expect(wrapper.vm.makeContentForIdentityAuthenticationUpdated()).toEqual({
@@ -486,7 +486,7 @@ describe('CaseFileActivityListItem.vue', () => {
       describe('makeContentForImpactStatusValidationUpdated', () => {
         it('returns the correct data when action type is ImpactStatusValidationUpdated and status is Impacted', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.ImpactStatusValidationUpdated)[0],
+            item: mockCaseFileActivities(CaseFileActivityType.ImpactStatusValidationUpdated)[0],
           });
 
           expect(wrapper.vm.makeContentForImpactStatusValidationUpdated()).toEqual({
@@ -497,7 +497,7 @@ describe('CaseFileActivityListItem.vue', () => {
 
         it('returns the correct data when action type is ImpactStatusValidationUpdated and status is NotImpacted', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.ImpactStatusValidationUpdated)[1],
+            item: mockCaseFileActivities(CaseFileActivityType.ImpactStatusValidationUpdated)[1],
           });
 
           expect(wrapper.vm.makeContentForImpactStatusValidationUpdated()).toEqual({
@@ -508,7 +508,7 @@ describe('CaseFileActivityListItem.vue', () => {
 
         it('returns the correct data when action type is ImpactStatusValidationUpdated and status is Undetermined', async () => {
           await wrapper.setProps({
-            item: mockCaseFileActivities(ECaseFileActivityType.ImpactStatusValidationUpdated)[2],
+            item: mockCaseFileActivities(CaseFileActivityType.ImpactStatusValidationUpdated)[2],
           });
 
           expect(wrapper.vm.makeContentForImpactStatusValidationUpdated()).toEqual({

@@ -1,26 +1,26 @@
 <template>
   <div class="mt-4">
-    <div :class="{ 'item__header': true, 'item__header--pinned': item.isPinned }">
+    <div :class="{ 'item__header': true, 'item__header--pinned': listItem.isPinned }">
       <div>
         <span class="rc-caption12 fw-bold" data-test="caseFileItem__userName">
-          {{ item.user.name }}
+          {{ listItem.userName }}
         </span>
 
-        <span v-if="item.role && $m(item.role.name)" class="rc-caption12 fw-bold mr-1" data-test="caseFileItem__roleName">
-          ({{ $m(item.role.name) }})
+        <span v-if="listItem.roleName" class="rc-caption12 fw-bold mr-1" data-test="caseFileItem__roleName">
+          ({{ $m(listItem.roleName) }})
         </span>
 
         <span class="rc-caption12" data-test="caseFileItem__created">
-          {{ moment.utc(item.created).local().format('lll') }}
+          {{ moment(listItem.created).local().format('lll') }}
         </span>
       </div>
 
       <div>
-        <v-icon v-if="item.isPinned" size="medium" color="primary" class="ml-1" data-test="caseFileItem__pinIcon">
+        <v-icon v-if="listItem.isPinned" size="medium" color="primary" class="ml-1" data-test="caseFileItem__pinIcon">
           mdi-pin
         </v-icon>
 
-        <v-menu v-if="showMenu" offest-y data-test="caseFileItem__menu">
+        <v-menu v-if="showMenu" offset-y data-test="caseFileItem__menu">
           <template #activator="{ on }">
             <v-btn icon x-small class="ml-1" data-test="items__menuButton" v-on="on">
               <v-icon size="medium">
@@ -46,11 +46,11 @@
       <div class="item__content ">
         <slot name="content" />
 
-        <div v-if="item.lastModifiedByFullName || item.lastModifiedDate" class="item__footer">
+        <div v-if="listItem.lastModifiedByFullName || listItem.lastModifiedDate" class="item__footer">
           <div class="item__editedBy rc-caption10">
             {{ $t('item.lastEditBy') }}
-            <strong class="mr-2" data-test="caseFileItem__lastEditBy">{{ item.lastModifiedByFullName }}</strong>
-            <span data-test="caseFileItem__lastModifiedDate">{{ moment(item.lastModifiedDate).format('ll') }}</span>
+            <strong class="mr-2" data-test="caseFileItem__lastEditBy">{{ listItem.lastModifiedByFullName }}</strong>
+            <span data-test="caseFileItem__lastModifiedDate">{{ moment(listItem.lastModifiedDate).format('ll') }}</span>
           </div>
         </div>
       </div>
@@ -61,6 +61,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from '@/ui/plugins/moment';
+import { ICaseFileActivity } from '@/entities/case-file';
+import { ICaseNoteCombined } from '@/entities/case-note';
 
 /**
  * Template used for case note and case file activity items
@@ -70,7 +72,7 @@ export default Vue.extend({
 
   props: {
     item: {
-      type: Object,
+      type: Object as () => ICaseFileActivity | ICaseNoteCombined,
       required: true,
     },
     /**
@@ -84,14 +86,43 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+    isCaseNote: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
       moment,
+      // listItem: null,
     };
   },
 
+  computed: {
+    listItem() {
+      if (this.isCaseNote) {
+        const item = this.item as ICaseNoteCombined;
+        return {
+          userName: item.entity.userCreatedBy.userName,
+          roleName: item.entity.userCreatedBy.roleName,
+          isPinned: item.entity.isPinned,
+          lastModifiedByFullName: item.entity.userUpdatedBy
+            ? item.entity.userUpdatedBy.userName
+            : item.entity.userCreatedBy.userName,
+          lastModifiedDate: item.entity.userUpdatedBy
+            ? item.entity.updatedDate
+            : item.entity.created,
+          created: item.entity.created,
+        };
+      }
+      return {
+        userName: (this.item as ICaseFileActivity).user.name,
+        roleName: (this.item as ICaseFileActivity).role.name,
+        created: (this.item as ICaseFileActivity).created,
+      };
+    },
+  },
 });
 </script>
 

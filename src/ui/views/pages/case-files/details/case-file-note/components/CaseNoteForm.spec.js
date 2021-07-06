@@ -1,29 +1,36 @@
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockCaseFilesSearchData } from '@/entities/case-file';
-import { mockCaseNote, mockCaseNoteCategories } from '@/entities/case-file/case-note';
+import { mockCombinedCaseFile } from '@/entities/case-file';
+import { mockCaseNoteEntity, mockCaseNoteCategories } from '@/entities/case-note';
 
 import Component from './CaseNoteForm.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFileId = 'id';
+const caseNote = mockCaseNoteEntity();
 
 describe('CaseNote.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    storage.caseNote.actions.addCaseNote = jest.fn(() => caseNote);
 
     wrapper = mount(Component, {
       localVue,
       mocks: {
         $storage: storage,
       },
+      propsData: {
+        caseNote,
+        actionTitle: '',
+        isEdit: false,
+      },
       computed: {
         caseFile() {
-          return { id: mockCaseFileId };
+          return { entity: { id: mockCaseFileId } };
         },
       },
     });
@@ -74,10 +81,10 @@ describe('CaseNote.vue', () => {
 
     describe('isSaving', () => {
       it('should be linked to proper state', () => {
-        wrapper.vm.$store.state.caseFile.isSavingCaseNote = true;
+        wrapper.vm.$store.state.caseNoteEntities.isSavingCaseNote = true;
         expect(wrapper.vm.isSaving).toEqual(true);
 
-        wrapper.vm.$store.state.caseFile.isSavingCaseNote = false;
+        wrapper.vm.$store.state.caseNoteEntities.isSavingCaseNote = false;
         expect(wrapper.vm.isSaving).toEqual(false);
       });
     });
@@ -90,15 +97,14 @@ describe('CaseNote.vue', () => {
 
     describe('caseFile', () => {
       it('return proper data', () => {
+        const caseFile = mockCombinedCaseFile();
+        storage.caseFile.getters.get.mockReturnValueOnce(caseFile);
         wrapper = shallowMount(Component, {
           localVue,
           mocks: {
             $storage: storage,
           },
         });
-
-        const caseFile = mockCaseFilesSearchData()[0];
-        storage.caseFile.getters.caseFileById.mockReturnValueOnce(caseFile);
 
         expect(wrapper.vm.caseFile).toStrictEqual(caseFile);
       });
@@ -131,8 +137,6 @@ describe('CaseNote.vue', () => {
   describe('Lifecycle', () => {
     describe('created', () => {
       it('assigns value from props to component data', () => {
-        const caseNote = mockCaseNote();
-
         wrapper = mount(Component, {
           localVue,
           propsData: {
@@ -146,10 +150,41 @@ describe('CaseNote.vue', () => {
 
         expect(wrapper.vm.localCaseNote).toStrictEqual(caseNote);
       });
+
+      it('calls setInitialCategory if there is a case note passed in props', () => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            caseNote,
+          },
+        });
+        jest.spyOn(wrapper.vm, 'setInitialCategory').mockImplementation(() => {});
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.setInitialCategory).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
   describe('Methods', () => {
+    describe('setInitialCategory', () => {
+      it('sets currentCategory when a case note is passed in props', async () => {
+        await wrapper.vm.setInitialCategory();
+        expect(wrapper.vm.currentCategory).toEqual(mockCaseNoteCategories()[2]);
+      });
+    });
+
+    describe('setCategory', () => {
+      it('sets the right category from the argument into the localCaseNote ', async () => {
+        const newCategory = { id: 'mock-id' };
+        await wrapper.vm.setCategory(newCategory);
+        expect(wrapper.vm.localCaseNote.category).toEqual({ optionItemId: 'mock-id', specifiedOther: null });
+      });
+    });
+
     describe('save', () => {
       describe('user level is level 1 or level 2 or level 3', () => {
         it('shows confirmation dialog', async () => {
@@ -218,32 +253,33 @@ describe('CaseNote.vue', () => {
 
     describe('addCaseNote', () => {
       it('should call storage to add case note', async () => {
-        const caseNote = mockCaseNote();
-
         await wrapper.setData({
           localCaseNote: caseNote,
         });
 
-        wrapper.vm.addCaseNote();
-        expect(wrapper.vm.$storage.caseFile.actions.addCaseNote).toHaveBeenCalledWith(mockCaseFileId, caseNote);
+        await wrapper.vm.addCaseNote();
+        expect(wrapper.vm.$storage.caseNote.actions.addCaseNote).toHaveBeenCalledWith(mockCaseFileId, caseNote);
+      });
+
+      it('should emit add-case-note-id with the new case note id', async () => {
+        await wrapper.vm.addCaseNote();
+        expect(wrapper.emitted('add-case-note-id')[0][0]).toEqual(caseNote.id);
       });
 
       it('should emit event', () => {
-        wrapper.vm.save();
+        wrapper.vm.addCaseNote();
         expect(wrapper.emitted('close-case-note-form'));
       });
     });
 
     describe('editCaseNote', () => {
       it('should call storage to edit case note', async () => {
-        const caseNote = mockCaseNote();
-
         await wrapper.setData({
           localCaseNote: caseNote,
         });
 
-        wrapper.vm.editCaseNote();
-        expect(wrapper.vm.$storage.caseFile.actions.editCaseNote).toHaveBeenCalledWith(mockCaseFileId, caseNote.id, caseNote);
+        await wrapper.vm.editCaseNote();
+        expect(wrapper.vm.$storage.caseNote.actions.editCaseNote).toHaveBeenCalledWith(mockCaseFileId, caseNote.id, caseNote);
       });
 
       it('should emit event', () => {

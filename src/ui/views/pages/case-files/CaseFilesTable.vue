@@ -2,8 +2,8 @@
   <rc-data-table
     ref="caseFilesTable"
     data-test="case-files-table"
-    :items="azureSearchItems"
-    :count="azureSearchCount"
+    :items="tableData"
+    :count="itemsCount"
     :show-help="true"
     :help-link="$t(helpLink)"
     :labels="labels"
@@ -18,12 +18,12 @@
         class="rc-link14 font-weight-bold pr-1"
         data-test="caseFileDetail-link"
         :to="getCaseFileRoute(caseFile)">
-        {{ caseFile.caseFileNumber }}
+        {{ caseFile.entity.caseFileNumber }}
       </router-link>
 
       <v-icon
         v-if="caseFile.isDuplicate"
-        :data-test="`caseFilesTable__duplicateIcon--${caseFile.caseFileNumber}`"
+        :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
         small
         color="secondary">
         $rctech-duplicate
@@ -32,7 +32,7 @@
 
     <template #[`item.${customColumns.name}`]="{ item: caseFile }">
       <router-link
-        v-if="caseFile.household"
+        v-if="caseFile.metadata"
         class="rc-link14"
         data-test="beneficiaryName-link"
         :to="getHouseholdProfileRoute(caseFile)">
@@ -41,19 +41,19 @@
     </template>
 
     <template #[`item.${customColumns.event}`]="{ item: caseFile }">
-      {{ $m(caseFile.event.name) }}
+      {{ caseFile.metadata && caseFile.metadata.event? $m(caseFile.metadata.event.name): "" }}
     </template>
 
     <template #[`item.${customColumns.triage}`]="{ item: caseFile }">
-      {{ $m(caseFile.triageName) }}
+      {{ caseFile.metadata? $m(caseFile.metadata.triageName): "" }}
     </template>
 
     <template #[`item.${customColumns.status}`]="{ item: caseFile }">
-      <status-chip status-name="ECaseFileStatus" :status="caseFile.caseFileStatus" />
+      <status-chip status-name="CaseFileStatus" :status="caseFile.entity.caseFileStatus" />
     </template>
 
     <template #[`item.${customColumns.created}`]="{ item: caseFile }">
-      {{ getStringDate(caseFile.created, 'll') }}
+      {{ getStringDate(caseFile.entity.created, 'll') }}
     </template>
   </rc-data-table>
 </template>
@@ -66,10 +66,11 @@ import {
 } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
-import { ICaseFile, ECaseFileStatus } from '@/entities/case-file';
+import { ICaseFileCombined, CaseFileStatus } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
 export default Vue.extend({
   name: 'CaseFilesTable',
@@ -97,12 +98,15 @@ export default Vue.extend({
 
   data() {
     return {
-      ECaseFileStatus,
+      CaseFileStatus,
+      itemsCount: 0,
       getStringDate: helpers.getStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
+      searchResultIds: [] as string[],
+      searchLoading: false,
       options: {
         page: 1,
-        sortBy: ['CaseFileCreatedDate'],
+        sortBy: ['Entity/Created'],
         sortDesc: [true],
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
@@ -110,15 +114,18 @@ export default Vue.extend({
   },
 
   computed: {
+    tableData(): ICaseFileCombined[] {
+      return this.$storage.caseFile.getters.getByIds(this.searchResultIds);
+    },
 
     customColumns(): Record<string, string> {
       return {
-        caseFileNumber: 'CaseFileNumber',
-        name: 'Household/PrimaryBeneficiary/IdentitySet/FirstName',
-        event: `Event/Name/Translation/${this.$i18n.locale}`,
-        triage: `TriageName/Translation/${this.$i18n.locale}`,
-        status: `CaseFileStatusName/Translation/${this.$i18n.locale}`,
-        created: 'CaseFileCreatedDate',
+        caseFileNumber: 'Entity/CaseFileNumber',
+        name: 'Metadata/PrimaryBeneficiaryFirstName',
+        event: `Metadata/Event/Name/Translation/${this.$i18n.locale}`,
+        triage: `Metadata/TriageName/Translation/${this.$i18n.locale}`,
+        status: `Metadata/CaseFileStatusName/Translation/${this.$i18n.locale}`,
+        created: 'Entity/Created',
       };
     },
 
@@ -160,55 +167,66 @@ export default Vue.extend({
     labels(): Record<string, unknown> {
       return {
         header: {
-          title: `${this.$t('caseFiles_table.title')} (${this.$data.azureSearchCount})`,
+          title: `${this.$t('caseFiles_table.title')} (${this.itemsCount})`,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };
     },
 
-    tableProps(): Record<string, string> {
+    tableProps(): Record<string, unknown> {
       return {
-        loading: this.$store.state.caseFile.searchLoading,
+        loading: this.searchLoading,
       };
     },
   },
 
   methods: {
-
     async fetchData(params: IAzureSearchParams) {
-      const res = await this.$storage.caseFile.actions.searchCaseFiles({
-        search: params.search,
-        filter: params.filter,
-        top: params.top,
-        skip: params.skip,
-        orderBy: params.orderBy,
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      });
-      return res;
+      try {
+        this.searchLoading = false;
+        const res = await this.$storage.caseFile.actions.search({
+          search: params.search,
+          filter: params.filter,
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+          queryType: 'full',
+          searchMode: 'all',
+        });
+        this.setResults(res);
+        return res; // Keep using the mixin in the current form until all entities searches are updated
+      } finally {
+        this.searchLoading = false;
+      }
     },
 
-    getBeneficiaryName(caseFile: ICaseFile): string {
-      if (!caseFile.household) return '';
-      const { firstName, middleName, lastName } = caseFile.household.primaryBeneficiary.identitySet;
-      return `${firstName} ${middleName ? `${middleName} ` : ''}${lastName}`;
+    setResults(res: IAzureTableSearchResults) {
+      this.itemsCount = res.count;
+      this.searchResultIds = res.ids;
     },
 
-    getHouseholdProfileRoute(caseFile: ICaseFile) {
+    getBeneficiaryName(caseFile: ICaseFileCombined): string {
+      if (!caseFile.metadata) return '';
+
+      const { primaryBeneficiaryFirstName, primaryBeneficiaryLastName } = caseFile.metadata;
+      return `${primaryBeneficiaryFirstName} ${primaryBeneficiaryLastName}`;
+    },
+
+    getHouseholdProfileRoute(caseFile: ICaseFileCombined) {
       return {
         name: routes.caseFile.householdProfile.name,
         params: {
-          id: caseFile.household?.id,
+          id: caseFile.entity?.householdId,
         },
       };
     },
 
-    getCaseFileRoute(caseFile: ICaseFile) {
+    getCaseFileRoute(caseFile: ICaseFileCombined) {
       return {
         name: routes.caseFile.activity.name,
         params: {
-          id: caseFile.id,
+          id: caseFile.entity.id,
         },
       };
     },

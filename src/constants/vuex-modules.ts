@@ -1,4 +1,7 @@
-export const CASE_FILE_MODULE = 'caseFile';
+export const CASE_FILE_ENTITIES = 'caseFileEntities';
+export const CASE_FILE_METADATA = 'caseFileMetadata';
+export const CASE_NOTE_ENTITIES = 'caseNoteEntities';
+export const CASE_NOTE_METADATA = 'caseNoteMetadata';
 export const USER_MODULE = 'user';
 export const DASHBOARD_MODULE = 'dashboard';
 export const EVENT_MODULE = 'event';

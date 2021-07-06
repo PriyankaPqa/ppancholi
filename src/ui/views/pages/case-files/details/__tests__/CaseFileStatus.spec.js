@@ -1,11 +1,11 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { CaseFile, mockCaseFilesSearchData, ECaseFileStatus } from '@/entities/case-file';
+import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
 import _cloneDeep from 'lodash/cloneDeep';
 
 import Component from '../case-file-activity/components/CaseFileStatus.vue';
 
 const localVue = createLocalVue();
-const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+const mockCaseFile = mockCombinedCaseFile();
 
 describe('CaseFileStatus.vue', () => {
   let wrapper;
@@ -32,10 +32,10 @@ describe('CaseFileStatus.vue', () => {
         it('returns the proper statuses value', async () => {
           await wrapper.setRole('level3');
           expect(wrapper.vm.statuses).toEqual([
-            ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive, ECaseFileStatus.Open,
+            CaseFileStatus.Archived, CaseFileStatus.Closed, CaseFileStatus.Inactive, CaseFileStatus.Open,
           ]);
           await wrapper.setRole('level2');
-          expect(wrapper.vm.statuses).toEqual([ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive]);
+          expect(wrapper.vm.statuses).toEqual([CaseFileStatus.Archived, CaseFileStatus.Closed, CaseFileStatus.Inactive]);
         });
       });
 
@@ -46,7 +46,7 @@ describe('CaseFileStatus.vue', () => {
         });
         it('returns the proper disable status value for L2+', async () => {
           const altMockCaseFile = _cloneDeep(mockCaseFile);
-          altMockCaseFile.caseFileStatus = ECaseFileStatus.Open;
+          altMockCaseFile.entity.caseFileStatus = CaseFileStatus.Open;
           wrapper = shallowMount(Component, {
             localVue,
             propsData: {
@@ -69,7 +69,7 @@ describe('CaseFileStatus.vue', () => {
 
         it('returns the proper disable status value for L5 and lower when archived', async () => {
           const altMockCaseFile = _cloneDeep(mockCaseFile);
-          altMockCaseFile.caseFileStatus = ECaseFileStatus.Archived;
+          altMockCaseFile.caseFileStatus = CaseFileStatus.Archived;
           wrapper = shallowMount(Component, {
             localVue,
             propsData: {
@@ -84,25 +84,25 @@ describe('CaseFileStatus.vue', () => {
 
       describe('confirmationDialogText', () => {
         it('return inactive confirmation dialog text ', () => {
-          wrapper.vm.newStatus = ECaseFileStatus.Inactive;
+          wrapper.vm.newStatus = CaseFileStatus.Inactive;
           expect(wrapper.vm.confirmationDialogText.title).toEqual('caseFile.changeStatusConfirmTitle.Inactive');
           expect(wrapper.vm.confirmationDialogText.message).toEqual('caseFile.changeStatusConfirmBody.Inactive');
         });
 
         it('return open confirmation dialog text ', () => {
-          wrapper.vm.newStatus = ECaseFileStatus.Open;
+          wrapper.vm.newStatus = CaseFileStatus.Open;
           expect(wrapper.vm.confirmationDialogText.title).toEqual('caseFile.changeStatusConfirmTitle.Open');
           expect(wrapper.vm.confirmationDialogText.message).toEqual('caseFile.changeStatusConfirmBody.Open');
         });
 
         it('return closed confirmation dialog text ', () => {
-          wrapper.vm.newStatus = ECaseFileStatus.Closed;
+          wrapper.vm.newStatus = CaseFileStatus.Closed;
           expect(wrapper.vm.confirmationDialogText.title).toEqual('caseFile.changeStatusConfirmTitle.Close');
           expect(wrapper.vm.confirmationDialogText.message).toEqual('caseFile.changeStatusConfirmBody.Close');
         });
 
         it('return archive confirmation dialog text ', () => {
-          wrapper.vm.newStatus = ECaseFileStatus.Archived;
+          wrapper.vm.newStatus = CaseFileStatus.Archived;
           expect(wrapper.vm.confirmationDialogText.title).toEqual('caseFile.changeStatusConfirmTitle.Archived');
           expect(wrapper.vm.confirmationDialogText.message).toEqual('caseFile.changeStatusConfirmBody.Archived');
         });
@@ -132,7 +132,7 @@ describe('CaseFileStatus.vue', () => {
           },
           store: {
             modules: {
-              caseFile: {
+              caseFileEntities: {
                 actions,
               },
             },
@@ -144,32 +144,32 @@ describe('CaseFileStatus.vue', () => {
         it('sets the newStatus property as the argument and sets showCaseFileStatusDialog to true when the status is Open', () => {
           wrapper.vm.showCaseFileStatusDialog = false;
           wrapper.vm.newStatus = null;
-          wrapper.vm.onStatusChangeInit(ECaseFileStatus.Open);
+          wrapper.vm.onStatusChangeInit(CaseFileStatus.Open);
           expect(wrapper.vm.showCaseFileStatusDialog).toBeTruthy();
-          expect(wrapper.vm.newStatus).toEqual(ECaseFileStatus.Open);
+          expect(wrapper.vm.newStatus).toEqual(CaseFileStatus.Open);
         });
         it('sets the newStatus property as the argument and sets showCaseFileStatusDialog to true when the status is Closed', () => {
           wrapper.vm.showCaseFileStatusDialog = false;
           wrapper.vm.newStatus = null;
-          wrapper.vm.onStatusChangeInit(ECaseFileStatus.Closed);
+          wrapper.vm.onStatusChangeInit(CaseFileStatus.Closed);
           expect(wrapper.vm.showCaseFileStatusDialog).toBeTruthy();
-          expect(wrapper.vm.newStatus).toEqual(ECaseFileStatus.Closed);
+          expect(wrapper.vm.newStatus).toEqual(CaseFileStatus.Closed);
         });
 
         it('sets the newStatus property as the argument and sets showCaseFileStatusDialog to true when the status is Inactive', () => {
           wrapper.vm.showCaseFileStatusDialog = false;
           wrapper.vm.newStatus = null;
-          wrapper.vm.onStatusChangeInit(ECaseFileStatus.Inactive);
+          wrapper.vm.onStatusChangeInit(CaseFileStatus.Inactive);
           expect(wrapper.vm.showCaseFileStatusDialog).toBeTruthy();
-          expect(wrapper.vm.newStatus).toEqual(ECaseFileStatus.Inactive);
+          expect(wrapper.vm.newStatus).toEqual(CaseFileStatus.Inactive);
         });
 
         it('sets the newStatus property as the argument and sets showConfirmationDialog to true when the status is Archived', () => {
           wrapper.vm.showConfirmationDialog = false;
           wrapper.vm.newStatus = null;
-          wrapper.vm.onStatusChangeInit(ECaseFileStatus.Archived);
+          wrapper.vm.onStatusChangeInit(CaseFileStatus.Archived);
           expect(wrapper.vm.showConfirmationDialog).toBeTruthy();
-          expect(wrapper.vm.newStatus).toEqual(ECaseFileStatus.Archived);
+          expect(wrapper.vm.newStatus).toEqual(CaseFileStatus.Archived);
         });
       });
 

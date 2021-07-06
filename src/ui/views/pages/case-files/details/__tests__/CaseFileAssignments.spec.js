@@ -1,28 +1,25 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { CaseFile, mockCaseFilesSearchData } from '@/entities/case-file';
+import { mockCaseFileEntity } from '@/entities/case-file';
 import { mockTeamsData, mockSearchTeams } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
-import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../case-file-activity/components/CaseFileAssignments.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+const mockCaseFile = mockCaseFileEntity();
 
 describe('CaseFileAssignments.vue', () => {
   let wrapper;
   describe('Template', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           caseFile: mockCaseFile,
         },
-        store: {
-          ...mockUserStateLevel(3),
-        },
       });
+      await wrapper.setRole('level3');
       wrapper.vm.loading = false;
     });
 
@@ -104,16 +101,14 @@ describe('CaseFileAssignments.vue', () => {
 
   describe('Life cycle', () => {
     describe('created', () => {
-      it('calls setAssignmentsInfo if user has level 3 or more', () => {
+      it('calls setAssignmentsInfo if user has level 3 or more', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             caseFile: mockCaseFile,
           },
-          store: {
-            ...mockUserStateLevel(3),
-          },
         });
+        await wrapper.setRole('level3');
         jest.spyOn(wrapper.vm, 'setAssignmentsInfo');
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
@@ -121,19 +116,17 @@ describe('CaseFileAssignments.vue', () => {
         expect(wrapper.vm.setAssignmentsInfo).toHaveBeenCalledTimes(1);
       });
 
-      it('does not call setAssignmentsInfo if user has level 2 or less', () => {
+      it('does not call setAssignmentsInfo if user has level 2 or less', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             caseFile: mockCaseFile,
           },
-          store: {
-            ...mockUserStateLevel(2),
-          },
           mocks: {
             $storage: storage,
           },
         });
+        await wrapper.setRole('level2');
         jest.spyOn(wrapper.vm, 'setAssignmentsInfo');
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);

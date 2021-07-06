@@ -1,9 +1,10 @@
 import { mockStorageRegistration } from '@crctech/registration-lib/src/store/storage/registration';
 import { HouseholdStorageMock } from '@crctech/registration-lib/src/store/storage/household';
 import { UserAccountStorageMock } from '@/store/storage/user-account/storage.mock';
+import { CaseFileStorageMock } from '@/store/storage/case-file/storage.mock';
+import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
 import { IStorageMock } from './storage.types';
 import { mockStorageUser } from './user';
-import { mockStorageCaseFile } from './case-file';
 import { mockStorageDashboard } from './dashboard';
 import { mockStorageEvent } from './event';
 import { mockStorageOptionList } from './optionList';
@@ -12,7 +13,8 @@ import { mockStorageProgram } from './program';
 import { mockStorageFinancialAssistance } from './financial-assistance/storage.mock';
 
 export const mockStorage = (): IStorageMock => ({
-  caseFile: mockStorageCaseFile(),
+  caseFile: new CaseFileStorageMock().make(),
+  caseNote: new CaseNoteStorageMock().make(),
   dashboard: mockStorageDashboard(),
   user: mockStorageUser(),
   event: mockStorageEvent(),

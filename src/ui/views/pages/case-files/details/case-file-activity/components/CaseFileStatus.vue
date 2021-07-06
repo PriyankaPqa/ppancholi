@@ -2,10 +2,10 @@
   <div>
     <status-select
       data-test="case-file-detail-status-select"
-      :value="caseFile.caseFileStatus"
+      :value="caseFile.entity.caseFileStatus"
       :statuses="statuses"
       :disabled="disableStatus"
-      status-name="ECaseFileStatus"
+      status-name="CaseFileStatus"
       @input="onStatusChangeInit($event)" />
 
     <case-file-status-dialog
@@ -19,7 +19,7 @@
     <rc-confirmation-dialog
       v-if="showConfirmationDialog"
       :loading="loading"
-      :show-help="newStatus === ECaseFileStatus.Archived "
+      :show-help="newStatus === CaseFileStatus.Archived "
       :help-link="helpLink"
       data-test="case-file-status-confirmation-dialog"
       :show.sync="showConfirmationDialog"
@@ -36,7 +36,7 @@ import Vue from 'vue';
 import {
   RcConfirmationDialog,
 } from '@crctech/component-library';
-import { ICaseFile, ECaseFileStatus } from '@/entities/case-file';
+import { ICaseFileCombined, CaseFileStatus } from '@/entities/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IListOption } from '@/types/interfaces/IListOption';
 import CaseFileStatusDialog from './CaseFileStatusDialog.vue';
@@ -52,14 +52,14 @@ export default Vue.extend({
 
   props: {
     caseFile: {
-      type: Object as () => ICaseFile,
+      type: Object as () => ICaseFileCombined,
       required: true,
     },
   },
 
   data() {
     return {
-      ECaseFileStatus,
+      CaseFileStatus,
       newStatus: null,
       rationale: null,
       loading: false,
@@ -71,16 +71,16 @@ export default Vue.extend({
 
   computed: {
 
-    statuses(): Array<ECaseFileStatus> {
+    statuses(): Array<CaseFileStatus> {
       if (this.$hasLevel('level3')) {
-        return [ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive, ECaseFileStatus.Open];
+        return [CaseFileStatus.Archived, CaseFileStatus.Closed, CaseFileStatus.Inactive, CaseFileStatus.Open];
       }
 
-      return [ECaseFileStatus.Archived, ECaseFileStatus.Closed, ECaseFileStatus.Inactive];
+      return [CaseFileStatus.Archived, CaseFileStatus.Closed, CaseFileStatus.Inactive];
     },
 
     disableStatus() {
-      if (this.caseFile.caseFileStatus === ECaseFileStatus.Archived && !this.$hasLevel('level5')) {
+      if (this.caseFile.entity.caseFileStatus === CaseFileStatus.Archived && !this.$hasLevel('level5')) {
         return true;
       }
       return !this.$hasLevel('level2');
@@ -88,22 +88,22 @@ export default Vue.extend({
 
     confirmationDialogText() : {title:string, message:string} {
       switch (this.newStatus) {
-        case ECaseFileStatus.Inactive:
+        case CaseFileStatus.Inactive:
           return {
             title: this.$t('caseFile.changeStatusConfirmTitle.Inactive') as string,
             message: this.$t('caseFile.changeStatusConfirmBody.Inactive') as string,
           };
-        case ECaseFileStatus.Open:
+        case CaseFileStatus.Open:
           return {
             title: this.$t('caseFile.changeStatusConfirmTitle.Open') as string,
             message: this.$t('caseFile.changeStatusConfirmBody.Open') as string,
           };
-        case ECaseFileStatus.Closed:
+        case CaseFileStatus.Closed:
           return {
             title: this.$t('caseFile.changeStatusConfirmTitle.Close') as string,
             message: this.$t('caseFile.changeStatusConfirmBody.Close') as string,
           };
-        case ECaseFileStatus.Archived:
+        case CaseFileStatus.Archived:
           return {
             title: this.$t('caseFile.changeStatusConfirmTitle.Archived') as string,
             message: this.$t('caseFile.changeStatusConfirmBody.Archived') as string,
@@ -114,16 +114,16 @@ export default Vue.extend({
     },
 
     helpLink() : string {
-      if (this.newStatus === ECaseFileStatus.Archived) {
+      if (this.newStatus === CaseFileStatus.Archived) {
         return this.$t('zendesk.help_link.change_caseFile_status_archived') as string;
       }
       return null;
     },
   },
   methods: {
-    onStatusChangeInit(status: ECaseFileStatus) {
+    onStatusChangeInit(status: CaseFileStatus) {
       this.newStatus = status;
-      if (this.newStatus === ECaseFileStatus.Archived) {
+      if (this.newStatus === CaseFileStatus.Archived) {
         this.showConfirmationDialog = true;
       } else {
         this.showCaseFileStatusDialog = true;
@@ -140,7 +140,7 @@ export default Vue.extend({
     async submitStatusChange() {
       try {
         this.loading = true;
-        await this.$storage.caseFile.actions.setCaseFileStatus(this.caseFile.id, this.newStatus, this.rationale, this.reason);
+        await this.$storage.caseFile.actions.setCaseFileStatus(this.caseFile.entity.id, this.newStatus, this.rationale, this.reason);
         this.$emit('updateActivities');
       } finally {
         this.loading = false;

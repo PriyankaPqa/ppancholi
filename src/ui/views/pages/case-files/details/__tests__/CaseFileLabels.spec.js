@@ -1,12 +1,12 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { CaseFile, mockCaseFilesSearchData } from '@/entities/case-file';
+import { mockCaseFileEntity, mockCombinedCaseFile } from '@/entities/case-file';
 import { mockStorage } from '@/store/storage';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 
 import Component from '../case-file-activity/components/CaseFileLabels.vue';
 
 const localVue = createLocalVue();
-const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+const mockCaseFile = mockCaseFileEntity();
 mockCaseFile.labels = [{
   name: 'Label Two',
   order: 2,
@@ -45,27 +45,21 @@ describe('CaseFileLabels.vue', () => {
   describe('Computed', () => {
     describe('caseFile', () => {
       it('returns the case file from the store', () => {
+        const caseFile = mockCombinedCaseFile();
+        storage.caseFile.getters.get = jest.fn(() => caseFile);
         wrapper = mount(Component, {
           localVue,
-          store: {
-            modules: {
-              caseFile: {
-                state: {
-                  caseFiles: [mockCaseFile],
-                },
-              },
-            },
-          },
           mocks: {
             $route: {
               params: {
                 id: mockCaseFile.id,
               },
             },
+            $storage: storage,
           },
         });
 
-        expect(wrapper.vm.caseFile).toEqual(wrapper.vm.$store.state.caseFile.caseFiles[0]);
+        expect(wrapper.vm.caseFile).toEqual(caseFile.entity);
       });
     });
 
@@ -104,8 +98,6 @@ describe('CaseFileLabels.vue', () => {
           localVue,
           computed: {
             caseFile() {
-              const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
-
               mockCaseFile.labels = [{
                 name: 'Label One',
                 order: 1,
@@ -123,7 +115,7 @@ describe('CaseFileLabels.vue', () => {
           labels: [],
         });
 
-        wrapper.vm.copyLabels();
+        await wrapper.vm.copyLabels();
 
         expect(wrapper.vm.labels).toEqual([{
           name: 'Label One',
@@ -153,6 +145,7 @@ describe('CaseFileLabels.vue', () => {
       });
 
       it('calls the setCaseFileLabels action', async () => {
+        jest.clearAllMocks();
         expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledTimes(0);
 
         jest.spyOn(wrapper.vm.$refs.form, 'validate').mockImplementation(() => true);
@@ -163,19 +156,7 @@ describe('CaseFileLabels.vue', () => {
 
         expect(storage.caseFile.actions.setCaseFileLabels).toHaveBeenCalledWith(
           mockCaseFile.id,
-          [{
-            name: 'Label Two',
-            order: 1,
-          }, {
-            name: 'Label One',
-            order: 2,
-          }, {
-            name: '',
-            order: 3,
-          }, {
-            name: '',
-            order: 4,
-          }],
+          wrapper.vm.labels,
         );
       });
     });

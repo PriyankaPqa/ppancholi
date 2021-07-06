@@ -1,74 +1,95 @@
+import { CASE_FILE_ENTITIES, CASE_FILE_METADATA } from '@/constants/vuex-modules';
 import {
-  CaseFile, ECaseFileTriage, ICaseFileLabel, mockCaseFilesSearchData, ECaseFileStatus,
+  CaseFileTriage, ICaseFileLabel, CaseFileStatus,
 } from '@/entities/case-file';
-import { mockCaseNote } from '@/entities/case-file/case-note';
+import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStore } from '@/store';
-import { mockSearchParams } from '@/test/helpers';
 import { IListOption } from '@/types';
-import { makeStorage } from './storage';
+import { CaseFileStorage } from './storage';
 
-const store = mockStore({}, { commit: true, dispatch: true });
-const storage = makeStorage(store);
+const entityModuleName = CASE_FILE_ENTITIES;
+const metadataModuleName = CASE_FILE_METADATA;
+
+const store = mockStore({
+  modules: {
+    [entityModuleName]: {
+      state: {
+        tagsOptions: mockOptionItemData(),
+        searchLoading: false,
+        getLoading: false,
+        duplicateLoading: false,
+        inactiveReasons: mockOptionItemData(),
+        closeReasons: mockOptionItemData(),
+        triageLoading: false,
+      },
+    },
+  },
+}, { commit: true, dispatch: true });
+
+const storage = new CaseFileStorage(store, entityModuleName, metadataModuleName).make();
 
 describe('>>> Case File Storage', () => {
   describe('>> Getters', () => {
-    it('should proxy caseFileById', () => {
-      expect(storage.getters.caseFileById('TEST_ID')).toEqual(store.getters['caseFile/caseFileById']('TEST_ID'));
+    describe('tagsOptions', () => {
+      it('should proxy tagsOptions', () => {
+        const storageGetter = storage.getters.tagsOptions();
+        const storeGetter = store.getters[`${entityModuleName}/tagsOptions`];
+        expect(storageGetter).toEqual(storeGetter);
+      });
     });
 
-    it('should proxy caseNoteCategories', () => {
-      expect(storage.getters.caseNoteCategories()).toEqual(store.getters['caseFile/caseNoteCategories']);
+    describe('inactiveReasons', () => {
+      it('should proxy inactiveReasons', () => {
+        const storageGetter = storage.getters.inactiveReasons();
+        const storeGetter = store.getters[`${entityModuleName}/inactiveReasons`];
+        expect(storageGetter).toEqual(storeGetter);
+      });
+    });
+
+    describe('closeReasons', () => {
+      it('should proxy closeReasons', () => {
+        const storageGetter = storage.getters.closeReasons();
+        const storeGetter = store.getters[`${entityModuleName}/closeReasons`];
+        expect(storageGetter).toEqual(storeGetter);
+      });
     });
   });
 
   describe('>> Actions', () => {
-    it('should proxy fetchCaseFileActivities', () => {
-      storage.actions.fetchCaseFileActivities('TEST_ID');
-      expect(store.dispatch).toBeCalledWith('caseFile/fetchCaseFileActivities', 'TEST_ID');
+    it('should proxy fetchTagsOptions', () => {
+      storage.actions.fetchTagsOptions();
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchTagsOptions`);
     });
 
-    it('should proxy fetchCaseFile', () => {
-      storage.actions.fetchCaseFile('TEST_ID');
-      expect(store.dispatch).toBeCalledWith('caseFile/fetchCaseFile', 'TEST_ID');
+    it('should proxy fetchCaseFileActivities', () => {
+      storage.actions.fetchCaseFileActivities('TEST_ID');
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCaseFileActivities`, 'TEST_ID');
     });
 
     it('should proxy fetchInactiveReasons', () => {
       storage.actions.fetchInactiveReasons();
-      expect(store.dispatch).toBeCalledWith('caseFile/fetchInactiveReasons');
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchInactiveReasons`);
     });
 
     it('should proxy fetchCloseReasons', () => {
       storage.actions.fetchCloseReasons();
-      expect(store.dispatch).toBeCalledWith('caseFile/fetchCloseReasons');
-    });
-
-    it('should proxy fetchTagsOptions', () => {
-      storage.actions.fetchTagsOptions();
-      expect(store.dispatch).toBeCalledWith('caseFile/fetchTagsOptions');
-    });
-
-    it('should proxy searchCaseFiles', () => {
-      const params = mockSearchParams;
-      storage.actions.searchCaseFiles(params);
-      expect(store.dispatch).toBeCalledWith('caseFile/searchCaseFiles', params);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCloseReasons`);
     });
 
     it('should proxy setCaseFileTags', () => {
-      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
-      const { id } = caseFile;
+      const id = '1';
       const tags: IListOption[] = [{ optionItemId: 'foo', specifiedOther: null }];
       storage.actions.setCaseFileTags(id, tags);
-      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileTags', { id, tags });
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileTags`, { id, tags });
     });
 
     it('should proxy setCaseFileStatus', () => {
-      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
-      const { id } = caseFile;
-      const status: ECaseFileStatus = ECaseFileStatus.Inactive;
+      const id = '2';
+      const status: CaseFileStatus = CaseFileStatus.Inactive;
       const rationale = 'Some rationale';
       const reason: IListOption = { optionItemId: 'foo', specifiedOther: null };
       storage.actions.setCaseFileStatus(id, status, rationale, reason);
-      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileStatus', {
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileStatus`, {
         id,
         status,
         rationale,
@@ -77,8 +98,8 @@ describe('>>> Case File Storage', () => {
     });
 
     it('should proxy setCaseFileLabels', () => {
-      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
-      const { id } = caseFile;
+      const id = '3';
+
       const labels: ICaseFileLabel[] = [
         {
           name: 'Label One',
@@ -90,67 +111,30 @@ describe('>>> Case File Storage', () => {
         },
       ];
       storage.actions.setCaseFileLabels(id, labels);
-      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileLabels', { id, labels });
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileLabels`, { id, labels });
     });
 
     it('should proxy setCaseFileIsDuplicate', () => {
-      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
-      const { id } = caseFile;
+      const id = '4';
       const isDuplicate = true;
       storage.actions.setCaseFileIsDuplicate(id, isDuplicate);
-      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileIsDuplicate', { id, isDuplicate });
-    });
-
-    it('should proxy fetchActiveCaseNoteCategories', () => {
-      storage.actions.fetchActiveCaseNoteCategories();
-      expect(store.dispatch).toBeCalledWith('caseFile/fetchActiveCaseNoteCategories');
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileIsDuplicate`, { id, isDuplicate });
     });
 
     it('should proxy setCaseFileTriage', () => {
-      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
-      const { id } = caseFile;
-      const triage = ECaseFileTriage.Tier1;
+      const id = '5';
+      const triage = CaseFileTriage.Tier1;
       storage.actions.setCaseFileTriage(id, triage);
-      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileTriage', { id, triage });
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileTriage`, { id, triage });
     });
 
     it('should proxy setCaseFileAssign', () => {
-      const caseFile = new CaseFile(mockCaseFilesSearchData()[0]);
-      const { id } = caseFile;
+      const id = '5';
       const individuals = ['mock-individual-id'];
       const teams = ['mock-teams-id'];
 
       storage.actions.setCaseFileAssign(id, individuals, teams);
-      expect(store.dispatch).toBeCalledWith('caseFile/setCaseFileAssign', { id, individuals, teams });
-    });
-
-    it('should proxy addCaseNote', () => {
-      const caseNote = mockCaseNote();
-      const id = 'id';
-      storage.actions.addCaseNote(id, caseNote);
-      expect(store.dispatch).toBeCalledWith('caseFile/addCaseNote', { id, caseNote });
-    });
-
-    it('should proxy pinCaseNote', () => {
-      const caseFileId = 'case file id';
-      const caseNoteId = 'case note id';
-      const isPinned = true;
-      storage.actions.pinCaseNote(caseFileId, caseNoteId, isPinned);
-      expect(store.dispatch).toBeCalledWith('caseFile/pinCaseNote', { caseFileId, caseNoteId, isPinned });
-    });
-
-    it('should proxy editCaseNote', () => {
-      const caseNote = mockCaseNote();
-      const caseFileId = 'case file id';
-      const caseNoteId = 'case note id';
-      storage.actions.editCaseNote(caseFileId, caseNoteId, caseNote);
-      expect(store.dispatch).toBeCalledWith('caseFile/editCaseNote', { caseFileId, caseNoteId, caseNote });
-    });
-
-    it('should proxy searchCaseNotes', () => {
-      const params = mockSearchParams;
-      storage.actions.searchCaseNotes(params);
-      expect(store.dispatch).toBeCalledWith('caseFile/searchCaseNotes', params);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileAssign`, { id, individuals, teams });
     });
   });
 });

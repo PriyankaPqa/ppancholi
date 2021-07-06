@@ -50,7 +50,7 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import { RcDialog, VTextFieldWithValidation } from '@crctech/component-library';
-import { ICaseFile, ICaseFileLabel } from '@/entities/case-file';
+import { ICaseFileEntity, ICaseFileLabel } from '@/entities/case-file';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { VForm } from '@/types';
 
@@ -73,9 +73,9 @@ export default Vue.extend({
   },
 
   computed: {
-    caseFile(): ICaseFile {
+    caseFile(): ICaseFileEntity {
       const { id } = this.$route.params;
-      return this.$storage.caseFile.getters.caseFileById(id);
+      return this.$storage.caseFile.getters.get(id).entity;
     },
 
     labelsSorted(): ICaseFileLabel[] {

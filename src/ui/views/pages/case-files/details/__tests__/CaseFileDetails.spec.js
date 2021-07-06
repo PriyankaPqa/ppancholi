@@ -1,15 +1,17 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { CaseFile, mockCaseFilesSearchData } from '@/entities/case-file';
+import { mockCombinedCaseFile } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
+import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 
+import { ECanadaProvinces } from '@crctech/registration-lib/src/types';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+const mockCaseFile = mockCombinedCaseFile();
 
 describe('CaseFileDetails.vue', () => {
   let wrapper;
@@ -18,13 +20,16 @@ describe('CaseFileDetails.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          id: mockCaseFile.id,
+          id: mockCaseFile.entity.id,
+        },
+        mocks: {
+          $storage: storage,
         },
         computed: {
           caseFile() {
             return mockCaseFile;
           },
-          beneficiaryFullName() {
+          primaryBeneficiaryFullName() {
             return 'mock-full-name';
           },
           hasPhoneNumbers() {
@@ -36,7 +41,7 @@ describe('CaseFileDetails.vue', () => {
           addressSecondLine() {
             return 'Montreal, QC H2H 2H2';
           },
-          contactInfo() {
+          primaryBeneficiary() {
             return {
               email: 'Jane.doe@email.com',
               mobilePhoneNumber: {
@@ -74,7 +79,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(mockCaseFile.caseFileNumber);
+        expect(element.text()).toEqual(mockCaseFile.entity.caseFileNumber);
       });
     });
 
@@ -88,7 +93,7 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(mockCaseFile.event.name.translation.en);
+        expect(element.text()).toEqual(mockCaseFile.metadata.event.name.translation.en);
       });
     });
 
@@ -122,20 +127,23 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.text()).toEqual(wrapper.vm.contactInfo.email);
+        expect(element.text()).toEqual(wrapper.vm.primaryBeneficiary.email);
       });
 
       it('is NOT rendered if the beneficiary does not have an email', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             caseFile() {
               return mockCaseFile;
             },
-            contactInfo() {
+            primaryBeneficiary() {
               return { email: null };
             },
           },
@@ -155,20 +163,23 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.contactInfo.homePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.homePhoneNumber);
       });
 
       it('is NOT rendered if the beneficiary does not have a home phone number', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             caseFile() {
               return mockCaseFile;
             },
-            contactInfo() {
+            primaryBeneficiary() {
               return { homePhoneNumber: null };
             },
           },
@@ -188,20 +199,23 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.contactInfo.mobilePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.mobilePhoneNumber);
       });
 
       it('is NOT rendered if the beneficiary does not have a mobile number', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             caseFile() {
               return mockCaseFile;
             },
-            contactInfo() {
+            primaryBeneficiary() {
               return { mobilePhoneNumber: null };
             },
           },
@@ -221,20 +235,23 @@ describe('CaseFileDetails.vue', () => {
       });
 
       it('displays the correct data', () => {
-        expect(element.props('phoneNumber')).toEqual(wrapper.vm.contactInfo.alternatePhoneNumber);
+        expect(element.props('phoneNumber')).toEqual(wrapper.vm.primaryBeneficiary.alternatePhoneNumber);
       });
 
       it('is NOT rendered if the beneficiary does not have a alternate number', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             caseFile() {
               return mockCaseFile;
             },
-            contactInfo() {
+            primaryBeneficiary() {
               return { alternatePhoneNumber: null };
             },
           },
@@ -289,65 +306,56 @@ describe('CaseFileDetails.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.caseFile.getters.caseFileById.mockReturnValueOnce(mockCaseFile);
+      storage.caseFile.getters.get = jest.fn(() => mockCaseFile);
+      storage.household.actions.fetch.mockReturnValueOnce(mockCombinedHousehold());
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          id: mockCaseFile.entity.id,
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
     });
 
     describe('addressFirstLine', () => {
-      it('return the right address information when there is a suite number', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          computed: {
-            caseFile() {
-              const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.household.address.address.unitSuite = '100';
-              altCaseFile.household.address.address.streetAddress = '200 Left ave';
-              return altCaseFile;
-            },
-          },
+      it('return the right address information when there is a suite number', async () => {
+        const altHousehold = _cloneDeep(mockCombinedHousehold());
+        altHousehold.entity.address.address.unitSuite = '100';
+        altHousehold.entity.address.address.streetAddress = '200 Left ave';
+
+        await wrapper.setData({
+          household: altHousehold,
         });
+
         expect(wrapper.vm.addressFirstLine).toEqual('100-200 Left ave');
       });
 
-      it('return the right address information when there is no suite number', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          computed: {
-            caseFile() {
-              const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.household.address.address.unitSuite = '';
-              altCaseFile.household.address.address.streetAddress = '200 Main ave';
-              return altCaseFile;
-            },
-          },
+      it('return the right address information when there is no suite number', async () => {
+        const altHousehold = _cloneDeep(mockCombinedHousehold());
+        altHousehold.entity.address.address.unitSuite = '';
+        altHousehold.entity.address.address.streetAddress = '200 Main ave';
+
+        await wrapper.setData({
+          household: altHousehold,
         });
         expect(wrapper.vm.addressFirstLine).toEqual('200 Main ave');
       });
     });
 
     describe('addressSecondLine', () => {
-      it('return the right address information', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          computed: {
-            caseFile() {
-              const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.household.address.address.postalCode = 'H2H 2H2';
-              altCaseFile.household.address.address.city = 'Montreal';
-              altCaseFile.household.address.address.provinceCode.translation.en = 'QC';
-              return altCaseFile;
-            },
-          },
+      it('return the right address information', async () => {
+        const altHousehold = _cloneDeep(mockCombinedHousehold());
+        altHousehold.entity.address.address.postalCode = 'H2H 2H2';
+        altHousehold.entity.address.address.city = 'Montreal';
+        altHousehold.entity.address.address.province = ECanadaProvinces.QC;
+
+        await wrapper.setData({
+          household: altHousehold,
         });
-        expect(wrapper.vm.addressSecondLine).toEqual('Montreal, QC H2H 2H2');
+
+        expect(wrapper.vm.addressSecondLine).toEqual('Montreal, common.provinces.code.QC H2H 2H2');
       });
     });
 
@@ -356,7 +364,7 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
           },
           mocks: {
             $storage: storage,
@@ -366,41 +374,39 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
-    describe('beneficiaryFullName', () => {
+    describe('primaryBeneficiary', () => {
+      it('sets the right beneficiary from the household metadata', async () => {
+        const altHousehold = {
+          entity: { primaryBeneficiary: 'mock-beneficiary-id' },
+          metadata: {
+            memberMetadata: [
+              { id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' },
+              { id: 'foo', firstName: 'Joe', lastName: 'Dane' },
+            ],
+          },
+        };
+        await wrapper.setData({ household: altHousehold });
+        expect(wrapper.vm.primaryBeneficiary).toEqual({ id: 'mock-beneficiary-id', firstName: 'Jane', lastName: 'Doe' });
+      });
+    });
+
+    describe('primaryBeneficiaryFullName', () => {
       it('return the beneficiary first and last name', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
-            caseFile() {
-              return mockCaseFile;
+            primaryBeneficiary() {
+              return { firstName: 'Jack', lastName: 'White' };
             },
           },
         });
-        expect(wrapper.vm.beneficiaryFullName).toEqual(
-          `${wrapper.vm.caseFile.household.primaryBeneficiary.identitySet.firstName}`
-          + ` ${wrapper.vm.caseFile.household.primaryBeneficiary.identitySet.middleName}`
-          + ` ${wrapper.vm.caseFile.household.primaryBeneficiary.identitySet.lastName}`,
-        );
-      });
-    });
-
-    describe('contactInfo', () => {
-      it('returns the contact information of the beneficiary', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: mockCaseFile.id,
-          },
-          computed: {
-            caseFile() {
-              return mockCaseFile;
-            },
-          },
-        });
-        expect(wrapper.vm.contactInfo).toEqual(wrapper.vm.caseFile.household.primaryBeneficiary.contactInformation);
+        expect(wrapper.vm.primaryBeneficiaryFullName).toEqual('Jack White');
       });
     });
 
@@ -409,18 +415,21 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
-            caseFile() {
-              const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.household.primaryBeneficiary.contactInformation.homePhoneNumber = {
-                number: '514-555-5555',
-                extension: '',
+            primaryBeneficiary() {
+              return {
+                homePhoneNumber: {
+                  number: '514-555-5555',
+                  extension: '',
+                },
+                mobilePhoneNumber: null,
+                alternatePhoneNumber: null,
               };
-              altCaseFile.household.primaryBeneficiary.contactInformation.mobilePhoneNumber = null;
-              altCaseFile.household.primaryBeneficiary.contactInformation.alternatePhoneNumber = null;
-              return altCaseFile;
             },
           },
         });
@@ -432,18 +441,21 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
-            caseFile() {
-              const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.household.primaryBeneficiary.contactInformation.mobilePhoneNumber = {
-                number: '514-555-5555',
-                extension: '',
+            primaryBeneficiary() {
+              return {
+                mobilePhoneNumber: {
+                  number: '514-555-5555',
+                  extension: '',
+                },
+                homePhoneNumber: null,
+                alternatePhoneNumber: null,
               };
-              altCaseFile.household.primaryBeneficiary.contactInformation.homePhoneNumber = null;
-              altCaseFile.household.primaryBeneficiary.contactInformation.alternatePhoneNumber = null;
-              return altCaseFile;
             },
           },
         });
@@ -455,18 +467,21 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
-            caseFile() {
-              const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.household.primaryBeneficiary.contactInformation.alternatePhoneNumber = {
-                number: '514-555-5555',
-                extension: '',
+            primaryBeneficiary() {
+              return {
+                alternatePhoneNumber: {
+                  number: '514-555-5555',
+                  extension: '',
+                },
+                mobilePhoneNumber: null,
+                homePhoneNumber: null,
               };
-              altCaseFile.household.primaryBeneficiary.contactInformation.homePhoneNumber = null;
-              altCaseFile.household.primaryBeneficiary.contactInformation.mobilePhoneNumber = null;
-              return altCaseFile;
             },
           },
         });
@@ -478,15 +493,18 @@ describe('CaseFileDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
-            caseFile() {
-              const altCaseFile = _cloneDeep(mockCaseFile);
-              altCaseFile.household.primaryBeneficiary.contactInformation.alternatePhoneNumber = null;
-              altCaseFile.household.primaryBeneficiary.contactInformation.homePhoneNumber = null;
-              altCaseFile.household.primaryBeneficiary.contactInformation.mobilePhoneNumber = null;
-              return altCaseFile;
+            primaryBeneficiary() {
+              return {
+                alternatePhoneNumber: null,
+                mobilePhoneNumber: null,
+                homePhoneNumber: null,
+              };
             },
           },
         });
@@ -495,12 +513,35 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
+    describe('provinceCodeName', () => {
+      it('returns the province code if the province is not other', async () => {
+        const altHousehold = _cloneDeep(mockCombinedHousehold());
+        altHousehold.entity.address.address.province = ECanadaProvinces.QC;
+
+        await wrapper.setData({
+          household: altHousehold,
+        });
+        expect(wrapper.vm.provinceCodeName).toEqual('common.provinces.code.QC');
+      });
+
+      it('returns the province other name  if the province is  other', async () => {
+        const altHousehold = _cloneDeep(mockCombinedHousehold());
+        altHousehold.entity.address.address.province = ECanadaProvinces.OT;
+        altHousehold.entity.address.address.specifiedOtherProvince = 'mock-other-province';
+
+        await wrapper.setData({
+          household: altHousehold,
+        });
+        expect(wrapper.vm.provinceCodeName).toEqual('mock-other-province');
+      });
+    });
+
     describe('tabs', () => {
       it('returns the right array', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            id: mockCaseFile.id,
+            id: mockCaseFile.entity.id,
           },
           mocks: {
             $storage: storage,
@@ -544,12 +585,12 @@ describe('CaseFileDetails.vue', () => {
 
   describe('lifecycle', () => {
     beforeEach(() => {
-      storage.caseFile.actions.fetchCaseFile = jest.fn(() => {});
+      storage.caseFile.actions.fetch = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          id: mockCaseFile.id,
+          id: mockCaseFile.entity.id,
         },
         mocks: {
           $storage: storage,
@@ -557,19 +598,26 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
-    it('should call fetchCaseFile', () => {
-      expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFile).toHaveBeenCalledWith(wrapper.vm.id);
+    it('should call fetch', () => {
+      expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(wrapper.vm.id);
+    });
+    it('should call getHouseholdInfo', async () => {
+      jest.spyOn(wrapper.vm, 'getHouseholdInfo').mockImplementation(() => {});
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(wrapper.vm.getHouseholdInfo).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
-      storage.caseFile.actions.fetchCaseFile = jest.fn(() => {});
+      storage.caseFile.actions.fetch = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          id: mockCaseFile.id,
+          id: mockCaseFile.entity.id,
         },
         computed: {
           caseFile() {
@@ -582,6 +630,14 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
+    describe('getHouseholdInfo', () => {
+      it('calls household storage action', () => {
+        jest.clearAllMocks();
+        wrapper.vm.getHouseholdInfo();
+        expect(storage.household.actions.fetch).toBeCalledWith(mockCaseFile.entity.householdId);
+      });
+    });
+
     describe('goToHouseholdProfile', () => {
       it('should redirect to the household profile page', async () => {
         wrapper.vm.goToHouseholdProfile();
@@ -589,7 +645,7 @@ describe('CaseFileDetails.vue', () => {
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.caseFile.householdProfile.name,
           params: {
-            householdId: wrapper.vm.caseFile.household.id,
+            id: wrapper.vm.caseFile.entity.householdId,
           },
         });
       });

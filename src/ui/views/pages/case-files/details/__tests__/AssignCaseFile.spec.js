@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { CaseFile, mockCaseFilesSearchData } from '@/entities/case-file';
+import { mockCaseFileEntity } from '@/entities/case-file';
 import { AccountStatus, mockCombinedUserAccount } from '@/entities/user-account';
 import { mockTeam, mockTeamMembersData } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
@@ -9,7 +9,7 @@ import Component from '../case-file-activity/components/AssignCaseFile.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+const mockCaseFile = mockCaseFileEntity();
 jest.mock('@/store/modules/team/teamUtils');
 
 describe('AssignCaseFile.vue', () => {
@@ -25,7 +25,6 @@ describe('AssignCaseFile.vue', () => {
         mocks: {
           $storage: storage,
         },
-
       });
     });
 
@@ -408,11 +407,6 @@ describe('AssignCaseFile.vue', () => {
         await wrapper.vm.submit();
         expect(storage.caseFile.actions.setCaseFileAssign)
           .toHaveBeenCalledWith(wrapper.vm.caseFile.id, ['guid-1', 'guid-2'], ['team-id-1', 'team-id-2']);
-      });
-
-      it('emits update:caseFile with the response of the action call', async () => {
-        await wrapper.vm.submit();
-        expect(wrapper.emitted('update:caseFile')[0][0]).toEqual(new CaseFile(mockCaseFilesSearchData()[0]));
       });
 
       it('emits updateAssignmentsInfo with the right payload', async () => {

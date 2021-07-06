@@ -1,7 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import {
-  CaseFile, mockCaseFilesSearchData, mockCaseFileActivities, ECaseFileTriage,
-} from '@/entities/case-file';
+import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 
@@ -10,7 +8,7 @@ import Component from '../case-file-activity/CaseFileActivity.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockCaseFile = new CaseFile(mockCaseFilesSearchData()[0]);
+const mockCaseFile = mockCombinedCaseFile();
 const mockActivities = mockCaseFileActivities();
 
 describe('CaseFileActivity.vue', () => {
@@ -29,11 +27,14 @@ describe('CaseFileActivity.vue', () => {
         },
         computed: {
           id() {
-            return mockCaseFile.id;
+            return mockCaseFile.entity.id;
           },
           caseFile() {
             return mockCaseFile;
           },
+        },
+        mocks: {
+          $storage: storage,
         },
       });
 
@@ -50,11 +51,11 @@ describe('CaseFileActivity.vue', () => {
       });
 
       it('passes the tags as props', () => {
-        expect(element.props('tags')).toEqual(mockCaseFile.tags);
+        expect(element.props('tags')).toEqual(mockCaseFile.metadata.tags);
       });
 
       it('passes the case file id as props', () => {
-        expect(element.props('caseFileId')).toEqual(mockCaseFile.id);
+        expect(element.props('caseFileId')).toEqual(mockCaseFile.entity.id);
       });
 
       it('calls fetchCaseFileActivities when updateActivities is emitted', async () => {
@@ -124,33 +125,35 @@ describe('CaseFileActivity.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
+      storage.caseFile.getters.get = jest.fn(() => mockCaseFile);
+      storage.caseFile.actions.fetch = jest.fn(() => mockCaseFile);
+      storage.caseFile.actions.fetchCaseFileActivities.mockReturnValueOnce(mockActivities);
+
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
           $route: {
             name: routes.caseFile.activity.name,
             params: {
-              id: mockCaseFile.id,
+              id: mockCaseFile.entity.id,
             },
           },
           $storage: storage,
         },
         store: {
           modules: {
-            caseFile: {
+            caseFileEntities: {
               triageLoading: false,
               duplicateLoading: false,
             },
           },
         },
       });
-
-      storage.caseFile.getters.caseFileById.mockReturnValueOnce(mockCaseFile);
     });
 
     describe('id', () => {
       it('returns the right value', () => {
-        expect(wrapper.vm.id).toEqual(mockCaseFile.id);
+        expect(wrapper.vm.id).toEqual(mockCaseFile.entity.id);
       });
     });
 
@@ -168,7 +171,7 @@ describe('CaseFileActivity.vue', () => {
             $route: {
               name: routes.caseFile.activity.name,
               params: {
-                id: mockCaseFile.id,
+                id: mockCaseFile.entity.id,
               },
             },
           },
@@ -187,13 +190,13 @@ describe('CaseFileActivity.vue', () => {
 
     describe('duplicateLoading', () => {
       it('returns the right value', (() => {
-        expect(wrapper.vm.duplicateLoading).toEqual(wrapper.vm.$store.state.caseFile.duplicateLoading);
+        expect(wrapper.vm.duplicateLoading).toEqual(wrapper.vm.$store.state.caseFileEntities.duplicateLoading);
       }));
     });
 
     describe('triageLoading', () => {
       it('returns the right value', (() => {
-        expect(wrapper.vm.triageLoading).toEqual(wrapper.vm.$store.state.caseFile.triageLoading);
+        expect(wrapper.vm.triageLoading).toEqual(wrapper.vm.$store.state.caseFileEntities.triageLoading);
       }));
     });
   });
@@ -206,7 +209,7 @@ describe('CaseFileActivity.vue', () => {
           $route: {
             name: routes.caseFile.activity.name,
             params: {
-              id: mockCaseFile.id,
+              id: mockCaseFile.entity.id,
             },
           },
           $storage: storage,
@@ -219,8 +222,8 @@ describe('CaseFileActivity.vue', () => {
       });
     });
 
-    it('should call fetchCaseFile', () => {
-      expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFile).toHaveBeenCalledWith(mockCaseFile.id);
+    it('should call fetch', () => {
+      expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(mockCaseFile.entity.id);
     });
 
     it('should call setLastAction', async () => {
@@ -257,7 +260,7 @@ describe('CaseFileActivity.vue', () => {
         },
         computed: {
           id() {
-            return mockCaseFile.id;
+            return mockCaseFile.entity.id;
           },
           caseFile() {
             return mockCaseFile;
@@ -290,8 +293,8 @@ describe('CaseFileActivity.vue', () => {
 
         expect(storage.caseFile.actions.setCaseFileIsDuplicate).toHaveBeenCalledTimes(1);
         expect(storage.caseFile.actions.setCaseFileIsDuplicate).toHaveBeenCalledWith(
-          mockCaseFile.id,
-          !mockCaseFile.isDuplicate,
+          mockCaseFile.entity.id,
+          !mockCaseFile.entity.isDuplicate,
         );
       });
 
@@ -308,13 +311,13 @@ describe('CaseFileActivity.vue', () => {
       it('calls the setTriage action with the correct params', async () => {
         expect(storage.caseFile.actions.setCaseFileTriage).toHaveBeenCalledTimes(0);
 
-        const triage = ECaseFileTriage.Tier1;
+        const triage = CaseFileTriage.Tier1;
 
         await wrapper.vm.setCaseFileTriage(triage);
 
         expect(storage.caseFile.actions.setCaseFileTriage).toHaveBeenCalledTimes(1);
         expect(storage.caseFile.actions.setCaseFileTriage).toHaveBeenCalledWith(
-          mockCaseFile.id,
+          mockCaseFile.entity.id,
           triage,
         );
       });
@@ -323,7 +326,7 @@ describe('CaseFileActivity.vue', () => {
         jest.spyOn(wrapper.vm, 'fetchCaseFileActivities').mockImplementation(() => mockActivities);
         wrapper.vm.activityFetchDelay = 500;
 
-        const triage = ECaseFileTriage.Tier1;
+        const triage = CaseFileTriage.Tier1;
 
         await wrapper.vm.setCaseFileTriage(triage);
         expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledWith(wrapper.vm.activityFetchDelay);
@@ -339,11 +342,11 @@ describe('CaseFileActivity.vue', () => {
           },
           computed: {
             id() {
-              return mockCaseFile.id;
+              return mockCaseFile.entity.id;
             },
             caseFile() {
               const altCaseFile = { ...mockCaseFile };
-              altCaseFile.lastActionDate = moment().subtract(2, 'days');
+              altCaseFile.metadata.lastActionDate = moment().subtract(2, 'days');
               return altCaseFile;
             },
           },

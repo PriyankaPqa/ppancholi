@@ -30,17 +30,19 @@ export class BaseModule<T extends IEntity> {
 
   protected baseGetters = {
     getAll: (state:IState<T>) => _cloneDeep(state.items),
-    get: (state:IState<T>) => (id: uuid) => _cloneDeep(state.items.find((e) => e.id === id)),
+    get: (state:IState<T>) => (id: uuid) => _cloneDeep(state.items.find((e) => e.id === id) || {}),
     // eslint-disable-next-line
     getByCriteria: (state:IState<T>) => (query: string, searchAll: boolean, searchAmong: string[]) => helpers.filterCollectionByValue(state.items, query, searchAll, searchAmong),
-    getByIds: (state:IState<T>) => (ids: uuid[]) => ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id))),
+    getByIds: (state:IState<T>) => (ids: uuid[]) => ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id)) || {}),
   }
 
   protected baseActions = {
     fetch: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
       try {
         const res = await this.service.get(id);
-        context.commit('set', res);
+        if (res) {
+          context.commit('set', res);
+        }
         return res;
       } catch (e) {
         return null;
@@ -50,7 +52,9 @@ export class BaseModule<T extends IEntity> {
     fetchAll: async (context: ActionContext<IState<T>, IState<T>>): Promise<T[]> => {
       try {
         const res = await this.service.getAll();
-        context.commit('setAll', res);
+        if (res) {
+          context.commit('setAll', res);
+        }
         return res;
       } catch (e) {
         return null;

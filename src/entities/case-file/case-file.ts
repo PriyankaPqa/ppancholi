@@ -1,89 +1,64 @@
-import _cloneDeep from 'lodash/cloneDeep';
-import { IIdMultilingualName, IMultilingual } from '@/types';
-import utils from '../utils';
+import { BaseEntity } from '@/entities/base/base';
+import { IListOption } from '@/types';
 import {
-  ECaseFileStatus, ECaseFileTriage, ICaseFile, ICaseFileHousehold, ICaseFileLabel, ICaseFileSearchData,
+  CaseFileStatus, CaseFileTriage, ICaseFileEntity, ICaseFileLabel,
 } from './case-file.types';
 
-export class CaseFile implements ICaseFile {
-  id: uuid;
+export class CaseFileEntity extends BaseEntity {
+  assignedIndividualIds?: uuid[];
 
-  assignedTeamIds: uuid[];
+  assignedTeamIds?: uuid[];
 
-  assignedIndividualIds: uuid[];
+  caseFileNumber?: string;
 
-  caseFileNumber: string;
+  caseFileStatus?: CaseFileStatus;
 
-  caseFileStatus: ECaseFileStatus;
+  eventId?: uuid;
 
-  caseFileStatusName: IMultilingual;
+  householdId?: uuid;
 
-  created: Date | string;
+  isDuplicate?: boolean;
 
-  event: IIdMultilingualName;
+  labels?: ICaseFileLabel[];
 
-  household: ICaseFileHousehold;
+  tags?: IListOption[];
 
-  lastActionDate: Date | string;
+  triage?: CaseFileTriage;
 
-  isDuplicate: boolean;
+  privacyDateTimeConsent?: Date | string;
 
-  tags: IIdMultilingualName[];
-
-  labels: ICaseFileLabel[];
-
-  timestamp: Date | string;
-
-  triage: ECaseFileTriage;
-
-  triageName: IMultilingual;
-
-  tenantId: uuid;
-
-  constructor(data: ICaseFileSearchData) {
-    this.id = data.caseFileId;
-
-    this.assignedIndividualIds = [...data.assignedIndividualIds];
-
-    this.assignedTeamIds = [...data.assignedTeamIds];
-
-    this.caseFileNumber = data.caseFileNumber;
-
-    this.caseFileStatus = data.caseFileStatus;
-
-    this.caseFileStatusName = utils.initMultilingualAttributes(data.caseFileStatusName);
-
-    this.created = new Date(data.caseFileCreatedDate);
-
-    this.event = {
-      id: data.event?.id,
-      name: utils.initMultilingualAttributes(data.event?.name),
-    };
-
-    this.isDuplicate = data.isDuplicate;
-
-    this.household = data.household ? _cloneDeep(data.household) : null;
-
-    this.lastActionDate = data.lastActionDate ? new Date(data.lastActionDate) : null;
-
-    this.tags = data.tags?.map((tag) => ({
-      id: tag.id,
-      name: utils.initMultilingualAttributes(tag.name),
-    }));
-
-    this.labels = data.labels.map((l) => ({ ...l }));
-
-    this.timestamp = data.timestamp ? new Date(data.timestamp) : null;
-
-    this.triage = data.triage;
-
-    this.triageName = utils.initMultilingualAttributes(data.triageName);
-
-    this.tenantId = data.tenantId;
+  constructor(data?: ICaseFileEntity) {
+    if (data) {
+      super(data);
+      this.assignedIndividualIds = [...data.assignedIndividualIds];
+      this.assignedTeamIds = [...data.assignedTeamIds];
+      this.caseFileNumber = data.caseFileNumber;
+      this.caseFileStatus = data.caseFileStatus;
+      this.eventId = data.eventId;
+      this.householdId = data.householdId;
+      this.isDuplicate = data.isDuplicate;
+      this.tags = data.tags;
+      this.labels = data.labels;
+      this.triage = data.triage;
+      this.privacyDateTimeConsent = new Date(data.privacyDateTimeConsent);
+    } else {
+      super();
+      this.assignedIndividualIds = [];
+      this.assignedTeamIds = [];
+      this.caseFileNumber = null;
+      this.caseFileStatus = null;
+      this.eventId = null;
+      this.householdId = null;
+      this.isDuplicate = false;
+      this.tags = [];
+      this.labels = [];
+      this.triage = null;
+      this.privacyDateTimeConsent = null;
+    }
   }
 
   private validateAttributes(errors: Array<string>) {
-    if (!this.household.id) {
+    if (!this.householdId) {
       errors.push('The household id is required');
     }
 
@@ -95,7 +70,7 @@ export class CaseFile implements ICaseFile {
       errors.push('The case file status is required');
     }
 
-    if (!this.event.id) {
+    if (!this.eventId) {
       errors.push('The event id is required');
     }
 

@@ -1,107 +1,72 @@
 import {
-  ICaseFile, ICaseFileActivity, ICaseFileLabel, ECaseFileTriage, ECaseFileStatus,
-} from '@/entities/case-file';
-import { ICaseNote } from '@/entities/case-file/case-note';
+  CaseFileStatus, ICaseFileEntity, CaseFileTriage, ICaseFileActivity, ICaseFileLabel, ICaseFileMetadata,
+} from '@/entities/case-file/case-file.types';
+import { IStore, IState } from '@/store';
+import { IStorage } from '@/store/storage/case-file/storage.types';
 import { IOptionItem } from '@/entities/optionItem';
-import { IStore, IState } from '@/store/store.types';
-import { IAzureSearchParams, IAzureSearchResult, IListOption } from '@/types';
-import { IStorage } from './storage.types';
+import { IListOption } from '@/types';
 
-export const makeStorage = (store: IStore<IState>): IStorage => ({
-  getters: {
-    caseFileById(id: uuid): ICaseFile {
-      return store.getters['caseFile/caseFileById'](id);
-    },
+import { Base } from '../base';
 
-    tagsOptions(): Array<IOptionItem> {
-      return store.getters['caseFile/tagsOptions'];
-    },
+export class CaseFileStorage
+  extends Base<ICaseFileEntity, ICaseFileMetadata> implements IStorage {
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
+    super(pStore, pEntityModuleName, pMetadataModuleName);
+  }
 
-    caseNoteCategories(): Array<IOptionItem> {
-      return store.getters['caseFile/caseNoteCategories'];
-    },
+  private getters = {
+    ...this.baseGetters,
 
-    inactiveReasons(): Array<IOptionItem> {
-      return store.getters['caseFile/inactiveReasons'];
-    },
+    tagsOptions: (): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/tagsOptions`],
 
-    closeReasons(): Array<IOptionItem> {
-      return store.getters['caseFile/closeReasons'];
-    },
-  },
+    inactiveReasons: (): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/inactiveReasons`],
 
-  actions: {
-    fetchTagsOptions(): Promise<IOptionItem[]> {
-      return store.dispatch('caseFile/fetchTagsOptions');
-    },
+    closeReasons: (): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/closeReasons`],
+  }
 
-    fetchInactiveReasons(): Promise<IOptionItem[]> {
-      return store.dispatch('caseFile/fetchInactiveReasons');
-    },
+  private actions = {
+    ...this.baseActions,
 
-    fetchCloseReasons(): Promise<IOptionItem[]> {
-      return store.dispatch('caseFile/fetchCloseReasons');
-    },
+    fetchTagsOptions: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchTagsOptions`),
 
-    fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]> {
-      return store.dispatch('caseFile/fetchCaseFileActivities', id);
-    },
+    fetchInactiveReasons: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchInactiveReasons`),
 
-    fetchCaseFile(id: uuid): Promise<ICaseFile> {
-      return store.dispatch('caseFile/fetchCaseFile', id);
-    },
+    fetchCloseReasons: () : Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchCloseReasons`),
 
-    searchCaseFiles(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseFile>> {
-      return store.dispatch('caseFile/searchCaseFiles', params);
-    },
+    fetchCaseFileActivities: (id: uuid): Promise<ICaseFileActivity[]> => this.store.dispatch(`${this.entityModuleName}/fetchCaseFileActivities`, id),
 
-    setCaseFileTags(id: uuid, tags: IListOption[]): Promise<ICaseFile> {
-      return store.dispatch('caseFile/setCaseFileTags', { id, tags });
-    },
+    setCaseFileTags: (id: uuid, tags: IListOption[]):
+    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTags`, { id, tags }),
 
-    setCaseFileStatus(id: uuid, status: ECaseFileStatus, rationale?: string, reason?: IListOption): Promise<ICaseFile> {
-      return store.dispatch('caseFile/setCaseFileStatus', {
-        id,
-        status,
-        rationale,
-        reason,
-      });
-    },
+    setCaseFileStatus: (id: uuid, status: CaseFileStatus, rationale?: string, reason?: IListOption):
+    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileStatus`, {
+      id,
+      status,
+      rationale,
+      reason,
+    }),
 
-    setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFile> {
-      return store.dispatch('caseFile/setCaseFileLabels', { id, labels });
-    },
+    setCaseFileLabels: (id: uuid, labels: ICaseFileLabel[]):
+    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileLabels`, { id, labels }),
 
-    setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFile> {
-      return store.dispatch('caseFile/setCaseFileIsDuplicate', { id, isDuplicate });
-    },
+    setCaseFileIsDuplicate: (id: uuid, isDuplicate: boolean):
+    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileIsDuplicate`, { id, isDuplicate }),
 
-    fetchActiveCaseNoteCategories(): Promise<IOptionItem[]> {
-      return store.dispatch('caseFile/fetchActiveCaseNoteCategories');
-    },
+    setCaseFileTriage: (id: uuid, triage: CaseFileTriage):
+    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTriage`, { id, triage }),
 
-    addCaseNote(id: uuid, caseNote: ICaseNote): Promise<ICaseNote> {
-      return store.dispatch('caseFile/addCaseNote', { id, caseNote });
-    },
+    setCaseFileAssign: (id: uuid, individuals: uuid[], teams: uuid[]):
+    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileAssign`, { id, individuals, teams }),
 
-    pinCaseNote(caseFileId: uuid, caseNoteId: uuid, isPinned: boolean): Promise<ICaseNote> {
-      return store.dispatch('caseFile/pinCaseNote', { caseFileId, caseNoteId, isPinned });
-    },
+  }
 
-    editCaseNote(caseFileId: uuid, caseNoteId: uuid, caseNote: ICaseNote): Promise<ICaseNote> {
-      return store.dispatch('caseFile/editCaseNote', { caseFileId, caseNoteId, caseNote });
-    },
+  private mutations = {
+    ...this.baseMutations,
+  }
 
-    searchCaseNotes(params: IAzureSearchParams): Promise<IAzureSearchResult<ICaseNote>> {
-      return store.dispatch('caseFile/searchCaseNotes', params);
-    },
-
-    setCaseFileTriage(id: uuid, triage: ECaseFileTriage): Promise<ICaseFile> {
-      return store.dispatch('caseFile/setCaseFileTriage', { id, triage });
-    },
-
-    setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFile> {
-      return store.dispatch('caseFile/setCaseFileAssign', { id, individuals, teams });
-    },
-  },
-});
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  })
+}

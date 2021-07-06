@@ -1,36 +1,42 @@
 import {
-  CaseFile, mockCaseFileActivities, mockCaseFilesSearchData,
+  ICaseFileCombined, ICaseFileEntity, mockCaseFileEntity, mockCombinedCaseFiles, mockCaseFileActivities,
 } from '@/entities/case-file';
-import { mockCaseNoteCategories } from '@/entities/case-file/case-note';
 import { mockOptionItemData } from '@/entities/optionItem';
-import { IStorageMock } from './storage.types';
+import { BaseMock } from '../base/base.mock';
 
-export const mockStorageCaseFile = (): IStorageMock => ({
-  getters: {
-    caseFileById: jest.fn(),
+export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEntity> {
+  constructor() {
+    super(mockCombinedCaseFiles(), mockCaseFileEntity());
+  }
+
+  protected getters = {
+    ...this.baseGetters,
     tagsOptions: jest.fn(),
-    caseNoteCategories: jest.fn(() => mockCaseNoteCategories()),
     inactiveReasons: jest.fn(),
     closeReasons: jest.fn(),
-  },
+  }
 
-  actions: {
+  protected actions = {
+    ...this.baseActions,
     fetchTagsOptions: jest.fn(),
     fetchInactiveReasons: jest.fn(() => mockOptionItemData()),
-    fetchCloseReasons: jest.fn(),
+    fetchCloseReasons: jest.fn(() => mockOptionItemData()),
     fetchCaseFileActivities: jest.fn(() => mockCaseFileActivities()),
-    searchCaseFiles: jest.fn(),
-    fetchCaseFile: jest.fn(() => new CaseFile(mockCaseFilesSearchData()[0])),
-    setCaseFileTags: jest.fn(),
-    setCaseFileStatus: jest.fn(),
-    setCaseFileLabels: jest.fn(),
-    setCaseFileIsDuplicate: jest.fn(),
-    fetchActiveCaseNoteCategories: jest.fn(),
-    addCaseNote: jest.fn(),
-    pinCaseNote: jest.fn(),
-    editCaseNote: jest.fn(),
-    searchCaseNotes: jest.fn(),
-    setCaseFileTriage: jest.fn(() => new CaseFile(mockCaseFilesSearchData()[0])),
-    setCaseFileAssign: jest.fn(() => new CaseFile(mockCaseFilesSearchData()[0])),
-  },
-});
+    setCaseFileTags: jest.fn(() => this.entity),
+    setCaseFileStatus: jest.fn(() => this.entity),
+    setCaseFileLabels: jest.fn(() => this.entity),
+    setCaseFileIsDuplicate: jest.fn(() => this.entity),
+    setCaseFileTriage: jest.fn(() => this.entity),
+    setCaseFileAssign: jest.fn(() => this.entity),
+  }
+
+  protected mutations = {
+    ...this.baseMutations,
+  }
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  })
+}

@@ -1,0 +1,133 @@
+import {
+  ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus,
+} from '@/entities/case-file';
+import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
+import { IListOption } from '@/types';
+import { CaseFilesService } from './case-files';
+
+describe('>>> Case File Service', () => {
+  let http: IHttpMock;
+  let service: CaseFilesService;
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    http = mockHttp();
+    service = new CaseFilesService(http as never);
+  });
+
+  describe('fetchCaseFileActivities', () => {
+    it('is linked to the correct URL and params', async () => {
+      const id = 'MOCK_ID';
+      await service.fetchCaseFileActivities(id);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/activities`);
+    });
+  });
+
+  describe('setCaseFileTags', () => {
+    it('is linked to the correct URL and params', async () => {
+      const { id } = mockCaseFileEntity();
+      const payload: IListOption[] = [{ optionItemId: 'foo', specifiedOther: null }];
+
+      await service.setCaseFileTags(id, payload);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/tags`, { tags: payload });
+    });
+  });
+
+  describe('setCaseFileStatus', () => {
+    describe('inactive', () => {
+      it('is linked to the correct URL and params', async () => {
+        const { id } = mockCaseFileEntity();
+        const status: CaseFileStatus = CaseFileStatus.Inactive;
+        const rationale = 'Some rationale';
+        const reason: IListOption = { optionItemId: 'foo', specifiedOther: null };
+
+        await service.setCaseFileStatus(id, { status, rationale, reason });
+        expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/deactivate`, { reason, rationale });
+      });
+    });
+
+    describe('archive', () => {
+      it('is linked to the correct URL and params', async () => {
+        const { id } = mockCaseFileEntity();
+        const status: CaseFileStatus = CaseFileStatus.Archived;
+
+        await service.setCaseFileStatus(id, { status, rationale: null, reason: null });
+        expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/archive`, {});
+      });
+    });
+
+    describe('reopen', () => {
+      it('is linked to the correct URL and params', async () => {
+        const { id } = mockCaseFileEntity();
+        const status: CaseFileStatus = CaseFileStatus.Open;
+        const rationale = 'Some rationale';
+
+        await service.setCaseFileStatus(id, { status, rationale, reason: null });
+        expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/reopen`, { rationale });
+      });
+    });
+
+    describe('close', () => {
+      it('is linked to the correct URL and params', async () => {
+        const { id } = mockCaseFileEntity();
+        const status: CaseFileStatus = CaseFileStatus.Closed;
+        const rationale = 'Some rationale';
+        const reason: IListOption = { optionItemId: 'foo', specifiedOther: null };
+
+        await service.setCaseFileStatus(id, { status, rationale, reason });
+        expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/close`, { rationale, reason });
+      });
+    });
+  });
+
+  describe('setCaseFileLabels', () => {
+    it('is linked to the correct URL and params', async () => {
+      const { id } = mockCaseFileEntity();
+      const payload: ICaseFileLabel[] = [
+        {
+          name: 'Label One',
+          order: 1,
+        },
+        {
+          name: 'Label Two',
+          order: 2,
+        },
+      ];
+
+      await service.setCaseFileLabels(id, payload);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/labels`, { labels: payload });
+    });
+  });
+
+  describe('setCaseFileIsDuplicate', () => {
+    it('is linked to the correct URL and params', async () => {
+      const { id } = mockCaseFileEntity();
+      const isDuplicate = true;
+
+      await service.setCaseFileIsDuplicate(id, isDuplicate);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/is-duplicate`, { isDuplicate });
+    });
+  });
+
+  describe('setCaseFileTriage', () => {
+    it('is linked to the correct URL and params', async () => {
+      const { id } = mockCaseFileEntity();
+      const triage = CaseFileTriage.Tier1;
+
+      await service.setCaseFileTriage(id, triage);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/triage`, { triage });
+    });
+  });
+
+  describe('setCaseFileAssign', () => {
+    it('is linked to the correct URL and params', async () => {
+      const { id } = mockCaseFileEntity();
+      const individuals = ['mock-individual-id'];
+      const teams = ['mock-teams-id'];
+      const payload = { individuals, teams };
+
+      await service.setCaseFileAssign(id, payload);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/assign`, payload);
+    });
+  });
+});

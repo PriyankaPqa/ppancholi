@@ -1,14 +1,14 @@
 <template>
   <page-template
     :loading="loading"
-    :left-menu-title="beneficiaryFullName"
+    :left-menu-title="primaryBeneficiaryFullName"
     :navigation-tabs="tabs">
     <template v-if="caseFile" slot="left-menu">
       <div class="rc-body14 pb-2">
         <v-icon size="16" class="pr-2" color="gray darken-2">
           mdi-clipboard-text
         </v-icon>
-        <span data-test="caseFileDetails-caseFileNumber">{{ caseFile.caseFileNumber }}</span>
+        <span data-test="caseFileDetails-caseFileNumber">{{ caseFile.entity.caseFileNumber }}</span>
       </div>
 
       <div class="rc-body14 pb-2">
@@ -16,7 +16,7 @@
           mdi-calendar
         </v-icon>
         <span data-test="caseFileDetails-event">
-          {{ $m(caseFile.event.name) }}
+          {{ caseFile.metadata.event? $m(caseFile.metadata.event.name): 'm' }}
         </span>
       </div>
       <div class="divider" />
@@ -50,12 +50,12 @@
       </div>
 
       <div
-        v-if="contactInfo && contactInfo.email"
+        v-if="primaryBeneficiary && primaryBeneficiary.email"
         class="d-flex flex-row align-start mb-2 rc-body14 break-word">
         <v-icon small class="mr-2 mt-1">
           mdi-email
         </v-icon>
-        <span data-test="caseFileDetails-email">{{ contactInfo.email }}</span>
+        <span data-test="caseFileDetails-email">{{ primaryBeneficiary.email }}</span>
       </div>
 
       <div
@@ -66,27 +66,27 @@
         </v-icon>
         <div class="d-flex flex-column">
           <case-file-details-beneficiary-phone-number
-            v-if="contactInfo.homePhoneNumber"
+            v-if="primaryBeneficiary.homePhoneNumber"
             data-test="caseFileDetails-home-phone-number"
-            :phone-number="contactInfo.homePhoneNumber"
+            :phone-number="primaryBeneficiary.homePhoneNumber"
             :label="'caseFileDetail.beneficiaryPhoneNumber.homeInitial'" />
 
           <case-file-details-beneficiary-phone-number
-            v-if="contactInfo.mobilePhoneNumber"
+            v-if="primaryBeneficiary.mobilePhoneNumber"
             data-test="caseFileDetails-mobile-phone-number"
-            :phone-number="contactInfo.mobilePhoneNumber"
+            :phone-number="primaryBeneficiary.mobilePhoneNumber"
             :label="'caseFileDetail.beneficiaryPhoneNumber.mobileInitial'" />
 
           <case-file-details-beneficiary-phone-number
-            v-if="contactInfo.alternatePhoneNumber"
+            v-if="primaryBeneficiary.alternatePhoneNumber"
             data-test="caseFileDetails-alternate-phone-number"
-            :phone-number="contactInfo.alternatePhoneNumber"
+            :phone-number="primaryBeneficiary.alternatePhoneNumber"
             :label="'caseFileDetail.beneficiaryPhoneNumber.alternateInitial'" />
         </div>
       </div>
 
       <div
-        v-if="caseFile.household && caseFile.household.address"
+        v-if="household"
         class="d-flex flex-row align-start mb-2 rc-body14">
         <v-icon small class="mr-2 mt-1">
           mdi-map-marker
@@ -103,12 +103,14 @@
           mdi-account-multiple
         </v-icon>
         <span data-test="caseFileDetails-household-member-count">
-          {{ $t('caseFileDetail.fullHouseHold', {x: caseFile.household.houseHoldMemberCount}) }}
+          {{ household && household.entity.members
+            ? $t('caseFileDetail.fullHouseHold', {x: household.entity.members.length})
+            : "-" }}
         </span>
       </div>
 
       <v-btn
-        v-if="caseFile.household"
+        v-if="household"
         small
         color="primary"
         class="my-4"
@@ -126,10 +128,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFile, ICaseFileHouseholdMemberContactInfo } from '@/entities/case-file';
+import { ICaseFileCombined } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { INavigationTab } from '@/types';
+import { ECanadaProvinces, INavigationTab } from '@/types';
 import routes from '@/constants/routes';
+import { IHouseholdCombined, IMemberMetadata } from '@crctech/registration-lib/src/entities/household';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 
 export default Vue.extend({
@@ -154,29 +157,26 @@ export default Vue.extend({
     return {
       loading: false,
       error: false,
+      household: null as IHouseholdCombined,
     };
   },
 
   computed: {
     addressFirstLine(): string {
-      const { address } = this.caseFile.household.address;
+      const { address } = this.household?.entity?.address;
+      if (!address) return '';
       const unitSuite = address.unitSuite ? `${address.unitSuite}-` : '';
       return unitSuite + address.streetAddress;
     },
 
     addressSecondLine(): string {
-      const { address } = this.caseFile.household.address;
-      return `${address.city}, ${this.$m(address.provinceCode)} ${address.postalCode}`;
+      const { address } = this.household?.entity?.address;
+      if (!address) return '';
+      return `${address.city}, ${this.provinceCodeName} ${address.postalCode}`;
     },
 
-    caseFile(): ICaseFile {
-      return this.$storage.caseFile.getters.caseFileById(this.id);
-    },
-
-    beneficiaryFullName(): string {
-      if (!this.caseFile || !this.caseFile.household) return '';
-      const { firstName, middleName, lastName } = this.caseFile.household.primaryBeneficiary.identitySet;
-      return `${firstName} ${middleName ? `${middleName} ` : ''}${lastName}`;
+    caseFile(): ICaseFileCombined {
+      return this.$storage.caseFile.getters.get(this.id);
     },
 
     canVerifyIdentity(): boolean {
@@ -195,14 +195,28 @@ export default Vue.extend({
       return 'status_success';
     },
 
-    contactInfo() : ICaseFileHouseholdMemberContactInfo {
-      return this.caseFile.household?.primaryBeneficiary.contactInformation;
+    hasPhoneNumbers(): boolean {
+      if (!this.primaryBeneficiary) return false;
+      return !!(this.primaryBeneficiary.mobilePhoneNumber || this.primaryBeneficiary.homePhoneNumber || this.primaryBeneficiary.alternatePhoneNumber);
     },
 
-    hasPhoneNumbers(): boolean {
-      if (!this.caseFile.household) return false;
-      const { contactInformation } = this.caseFile.household.primaryBeneficiary;
-      return !!(contactInformation.mobilePhoneNumber || contactInformation.homePhoneNumber || contactInformation.alternatePhoneNumber);
+    primaryBeneficiary(): IMemberMetadata {
+      return this.household?.metadata?.memberMetadata.find((m: IMemberMetadata) => m.id === this.household.entity.primaryBeneficiary);
+    },
+
+    primaryBeneficiaryFullName(): string {
+      if (!this.primaryBeneficiary) return '';
+      const { firstName, lastName } = this.primaryBeneficiary;
+      return `${firstName} ${lastName}`;
+    },
+
+    provinceCodeName(): string {
+      const provinceCode = this.household?.entity.address.address.province;
+      if (!provinceCode) return '';
+      if (provinceCode === ECanadaProvinces.OT) {
+        return this.household?.entity.address.address.specifiedOtherProvince;
+      }
+      return this.$t(`common.provinces.code.${ECanadaProvinces[provinceCode]}`) as string;
     },
 
     tabs(): Array<INavigationTab> {
@@ -250,7 +264,8 @@ export default Vue.extend({
   async created() {
     this.loading = true;
     try {
-      await this.$storage.caseFile.actions.fetchCaseFile(this.id);
+      await this.$storage.caseFile.actions.fetch(this.id);
+      await this.getHouseholdInfo();
     } catch {
       this.error = true;
     } finally {
@@ -260,11 +275,16 @@ export default Vue.extend({
 
   methods: {
 
+    async getHouseholdInfo() {
+      const { householdId } = this.caseFile.entity;
+      this.household = await this.$storage.household.actions.fetch(householdId);
+    },
+
     goToHouseholdProfile() {
       this.$router.push({
         name: routes.caseFile.householdProfile.name,
         params: {
-          householdId: this.caseFile.household.id,
+          id: this.caseFile?.entity?.householdId,
         },
       });
     },
