@@ -44,7 +44,7 @@ export class CaseNoteEntity extends BaseEntity {
       this.isPinned = data.isPinned;
       this.updatedDate = new Date(data.updatedDate);
     } else {
-      super(data);
+      super();
       this.caseFileId = null;
       this.subject = null;
       this.description = null;
