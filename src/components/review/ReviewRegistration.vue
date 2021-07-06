@@ -58,6 +58,7 @@
       <additional-member-section
         :key="index"
         :show-edit-button="!householdAlreadyRegistered"
+        :show-delete-button="!householdAlreadyRegistered"
         :data-test="`additionalMember_${index}`"
         :member="member"
         :inline-edit="additionalMembers[index].inlineEdit"
