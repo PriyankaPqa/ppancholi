@@ -1,6 +1,6 @@
 <template>
   <div>
-    <household-search v-if="!showResultPage" @search="search($event)" />
+    <household-search v-if="!showResultPage" :loading="searchLoading" @search="search($event)" />
     <household-results v-if="showResultPage" :items="searchResults" />
   </div>
 </template>
@@ -27,6 +27,7 @@ export default Vue.extend({
     return {
       searchResults: [],
       criteria: {} as ICriteria,
+      searchLoading: false,
     };
   },
   computed: {
@@ -90,9 +91,16 @@ export default Vue.extend({
       };
     },
   },
+  mounted() {
+    // We get back results
+    this.searchResults = this.$storage.household.getters.getAll();
+  },
   methods: {
     async search(criteria: ICriteria) {
       this.criteria = criteria;
+      this.searchLoading = true;
+
+      this.$storage.household.mutations.reset();
 
       const res = await this.$storage.household.actions.search({
         search: this.searchCriteria,
@@ -100,8 +108,10 @@ export default Vue.extend({
         top: 999,
         queryType: 'full',
       });
-
       this.searchResults = this.$storage.household.getters.getByIds(res.ids);
+
+      this.searchLoading = false;
+
       this.$storage.registration.mutations.setHouseholdResultsShown(true);
     },
   },

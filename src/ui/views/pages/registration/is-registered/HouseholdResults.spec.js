@@ -9,11 +9,20 @@ import { mockStorage } from '@/store/storage';
 import Component from '@/ui/views/pages/registration/is-registered/HouseholdResults.vue';
 import { mockCombinedHouseholds } from '@crctech/registration-lib/src/entities/household';
 
+import { tabs } from '@/store/modules/registration/tabs';
+
 const localVue = createLocalVue();
 
 const storage = mockStorage();
 
 const vuetify = new Vuetify();
+
+const parsedHousehold = {
+  primaryBeneficiary: {},
+  additionalMembers: [],
+  id: '1',
+  eventIds: ['222'],
+};
 
 describe('HouseholdResults.vue', () => {
   let wrapper;
@@ -124,6 +133,43 @@ describe('HouseholdResults.vue', () => {
         expect(res).toBe(false);
       });
     });
+
+    describe('viewDetails', () => {
+      it('should set detailsId to current household id for loading button', async () => {
+        expect(wrapper.vm.detailsId).toEqual('');
+        await wrapper.vm.viewDetails(parsedHousehold);
+        expect(wrapper.vm.detailsId).toEqual(parsedHousehold.id);
+      });
+
+      it('should call fetchHousehold method with id as param', async () => {
+        wrapper.vm.fetchHousehold = jest.fn();
+        await wrapper.vm.viewDetails(parsedHousehold);
+        expect(wrapper.vm.fetchHousehold).toHaveBeenLastCalledWith(parsedHousehold.id);
+      });
+
+      it('should save the parsed household in the store', async () => {
+        wrapper.vm.fetchHousehold = jest.fn(() => ({}));
+        await wrapper.vm.viewDetails(parsedHousehold);
+        expect(wrapper.vm.$storage.registration.mutations.setHouseholdCreate).toHaveBeenLastCalledWith({});
+      });
+
+      it('should set association mode to true', async () => {
+        await wrapper.vm.viewDetails(parsedHousehold);
+        expect(wrapper.vm.$storage.registration.mutations.setHouseholdAssociationMode).toHaveBeenLastCalledWith(true);
+      });
+
+      it('should set already registered to correct value', async () => {
+        wrapper.vm.isRegisteredInCurrentEvent = jest.fn(() => true);
+        await wrapper.vm.viewDetails(parsedHousehold);
+        expect(wrapper.vm.$storage.registration.mutations.setHouseholdAlreadyRegistered).toHaveBeenLastCalledWith(true);
+      });
+
+      it('should set currentTab to review ', async () => {
+        wrapper.vm.isRegisteredInCurrentEvent = jest.fn(() => true);
+        await wrapper.vm.viewDetails(parsedHousehold);
+        expect(wrapper.vm.$storage.registration.mutations.setCurrentTabIndex).toHaveBeenLastCalledWith(tabs().findIndex((t) => t.id === 'review'));
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -157,6 +203,7 @@ describe('HouseholdResults.vue', () => {
               });
             }
             final.eventIds = household.metadata.eventIds;
+            final.id = household.entity.id;
           });
           return final;
         });

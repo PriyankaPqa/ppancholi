@@ -94,6 +94,7 @@
           data-test="search"
           :disabled="isEmpty(nonEmptySearchCriteria) || !valid"
           color="primary"
+          :loading="loading"
           @click="search()">
           <v-icon left>
             mdi-magnify
@@ -127,6 +128,12 @@ export default Vue.extend({
     RcPhoneWithValidation,
     VSelectWithValidation,
     VTextFieldWithValidation,
+  },
+  props: {
+    loading: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {

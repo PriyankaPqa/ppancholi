@@ -85,7 +85,7 @@ describe('IsRegistered.vue', () => {
           },
         });
         const component = wrapper.findComponent(HouseholdResults);
-        expect(component.props().items).toEqual(wrapper.vm.searchResults);
+        expect(component.props().items).toEqual([]);
       });
     });
   });
@@ -108,7 +108,9 @@ describe('IsRegistered.vue', () => {
       });
 
       it('should set searchResults', async () => {
-        expect(wrapper.vm.searchResults).toEqual([]);
+        await wrapper.setData({
+          searchResults: [],
+        });
         await wrapper.vm.search({});
         expect(wrapper.vm.searchResults).toEqual(wrapper.vm.$storage.household.getters.getByIds());
       });
@@ -217,6 +219,19 @@ describe('IsRegistered.vue', () => {
             },
           ],
         });
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('mounted', () => {
+      it('sets results so we can come back on page with results', () => {
+        jest.clearAllMocks();
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.$storage.household.getters.getAll).toHaveBeenCalledTimes(1);
       });
     });
   });

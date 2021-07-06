@@ -93,9 +93,14 @@
             mdi-check-circle-outline
           </v-icon>
         </template>
-        <template #item.actions="{item: beneficiary}">
+        <template #item.actions="{item: household}">
           <div>
-            <v-btn small color="primary" data-test="details__button" @click="viewDetails(beneficiary)">
+            <v-btn
+              small
+              color="primary"
+              data-test="details__button"
+              :loading="detailsLoading && detailsId === household.id"
+              @click="viewDetails(household)">
               {{ $t('registration.isRegistered.details') }}
             </v-btn>
           </div>
@@ -126,11 +131,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import moment from 'moment';
 import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
 import { IPhoneNumber } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
 import { RcDataTable } from '@crctech/component-library';
+import { tabs } from '@/store/modules/registration/tabs';
+import mixins from 'vue-typed-mixins';
+import household from '@/ui/mixins/household';
 
 export interface IMember {
   firstName: string;
@@ -145,12 +152,13 @@ export interface IMember {
 }
 
 export interface IFormattedHousehold {
+  id: string;
   primaryBeneficiary: IMember;
   additionalMembers: IMember[];
   eventIds: string[];
 }
 
-export default Vue.extend({
+export default mixins(household).extend({
   name: 'HouseholdResults',
   components: {
     RcDataTable,
@@ -164,6 +172,8 @@ export default Vue.extend({
   data() {
     return {
       moment,
+      detailsLoading: false,
+      detailsId: '',
     };
   },
   computed: {
@@ -216,6 +226,8 @@ export default Vue.extend({
         const final = {
           primaryBeneficiary: {},
           additionalMembers: [],
+          id: household.entity.id,
+          eventIds: household.metadata.eventIds,
         } as IFormattedHousehold;
 
         household.metadata.memberMetadata.forEach((member) => {
@@ -232,7 +244,6 @@ export default Vue.extend({
               registrationNumber: household.entity.registrationNumber,
             });
           }
-          final.eventIds = household.metadata.eventIds;
         });
         return final;
       });
@@ -246,17 +257,25 @@ export default Vue.extend({
       if (household.additionalMembers) return household.additionalMembers.length > 0;
       return false;
     },
-    async viewDetails() {
-      // TODO Need to update with new code but below is an example
-      // await this.$store.dispatch('beneficiary/fetchBeneficiary', { beneficiaryId: household.id });
-      // // if (this.currentCaseFileID) {
-      // //   this.$store.commit('registration/setProperties', { currentCaseFileId: this.currentCaseFileID });
-      // // }
-      // this.$store.commit('registration/setProperties', { existingBeneficiaryMode: true });
-      // this.$store.commit('registration/setProperties', { beneficiaryRegisteredForCurrentEvent: household.isRegisteredToEvent });
-      // this.$store.commit('registration/setProperties', { activeTabIndex: this.registrationTabOrders.indexOf('review') });
+
+    async viewDetails(household: IFormattedHousehold) {
+      try {
+        this.detailsLoading = true;
+        this.detailsId = household.id;
+
+        const householdCreateData = await this.fetchHousehold(household.id);
+        this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
+      } finally {
+        this.detailsLoading = false;
+      }
+
+      this.$storage.registration.mutations.setHouseholdAssociationMode(true);
+      this.$storage.registration.mutations.setHouseholdAlreadyRegistered(this.isRegisteredInCurrentEvent(household));
+      this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'review'));
+
       return true;
     },
+
     getPhone(household: IFormattedHousehold): string {
       const mPhone = household.primaryBeneficiary.mobilePhoneNumber;
       if (mPhone) return mPhone.number;
@@ -266,9 +285,11 @@ export default Vue.extend({
       if (oPhone) return oPhone.number;
       return '';
     },
+
     isRegisteredInCurrentEvent(household: IFormattedHousehold) {
       return household.eventIds.includes(this.currentEventId);
     },
+
   },
 });
 </script>

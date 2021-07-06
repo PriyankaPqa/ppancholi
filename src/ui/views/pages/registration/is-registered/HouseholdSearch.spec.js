@@ -24,6 +24,9 @@ describe('HouseholdSearch.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       vuetify,
+      propsData: {
+        loading: false,
+      },
       mocks: {
         $storage: storage,
       },
@@ -100,6 +103,9 @@ describe('HouseholdSearch.vue', () => {
         wrapper = mount(Component, {
           localVue,
           vuetify,
+          propsData: {
+            loading: false,
+          },
           mocks: {
             $storage: storage,
           },
@@ -138,6 +144,9 @@ describe('HouseholdSearch.vue', () => {
         wrapper = mount(Component, {
           localVue,
           vuetify,
+          propsData: {
+            loading: false,
+          },
           mocks: {
             $storage: storage,
           },

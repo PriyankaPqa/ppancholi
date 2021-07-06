@@ -1239,7 +1239,7 @@
     "registration.associate_button.label": "Associate beneficiary",
     "registration.associate.confirmation.message1": "Please make sure that the beneficiary's information is up to date and verified.",
     "registration.associate.confirmation.message2": "Are you sure you want to associate beneficiary to this event?",
-    "registration.associate.confirmation.next.label": "Go to beneficiary profile",
+    "registration.associate.confirmation.next.label": "Go to household profile",
     "registration.associate.confirmation.title": "Confirm beneficiary association",
     "registration.confirmation.association": "{x} has been successfully associated to this event:",
     "registration.confirmation.email_sent": "A copy of this page has been sent by email to the beneficiary.",

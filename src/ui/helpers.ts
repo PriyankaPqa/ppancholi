@@ -161,4 +161,14 @@ export default {
   capitalize(str: string) {
     return str.charAt(0).toUpperCase() + str.substring(1);
   },
+
+  convertBirthDateStringToObject(birthdate: string) {
+    const bdayMoment = moment(birthdate).utc();
+
+    return {
+      month: bdayMoment.month() + 1,
+      day: `${bdayMoment.date()}`,
+      year: `${bdayMoment.year()}`,
+    };
+  },
 };

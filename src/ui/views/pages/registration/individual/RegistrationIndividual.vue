@@ -1,7 +1,7 @@
 <template>
   <div class="full-height grey lighten-4">
     <page-template
-      :show-left-menu="true"
+      :show-left-menu="!associationMode"
       :loading="false"
       :navigation-tabs="tabs"
       :left-menu-title="eventName"
@@ -12,11 +12,13 @@
 
       <validation-observer ref="form" v-slot="{ failed }" slim>
         <rc-page-content
+          :show-back-button="associationMode"
           :show-help="currentTab.helpLink !== '' "
           :help-link="$t(currentTab.helpLink)"
-          :title="$t(currentTab.titleKey)"
+          :title="getTitle"
           :class="`${xSmallOrSmallMenu ? 'actions' : ''}`"
-          outer-scroll>
+          outer-scroll
+          @back="backToHouseholdResults()">
           <template slot="default">
             <v-row justify="center" class="mt-12" no-gutters>
               <v-col cols="12" xl="10" lg="10" md="11" sm="12" xs="12">
@@ -43,11 +45,11 @@
                 <v-btn
                   color="primary"
                   data-test="nextButton"
-                  :aria-label="$t(currentTab.nextButtonTextKey)"
+                  :aria-label="getNextButtonLabel"
                   :loading="submitLoading"
                   :disabled="failed || inlineEdit"
                   @click="next()">
-                  {{ $t(currentTab.nextButtonTextKey) }}
+                  {{ getNextButtonLabel }}
                 </v-btn>
               </div>
             </div>
@@ -80,7 +82,8 @@ import { tabs } from '@/store/modules/registration/tabs';
 import store from '@/store/store';
 import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
-import { ConfirmationDialog } from '@/types';
+import { ConfirmationDialog, VForm } from '@/types';
+import helpers from '@/ui/helpers';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -99,7 +102,7 @@ export default mixins(individual).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.currentTab.id !== 'confirmation') {
+    if (this.currentTab.id !== 'confirmation' && this.currentTab.id !== 'review') {
       const userChoice = await (this.$refs.confirmLeavePopup as ConfirmationDialog).open();
       next(userChoice);
     } else {
@@ -142,17 +145,51 @@ export default mixins(individual).extend({
     titleLeave(): TranslateResult {
       return this.$t('confirmLeaveDialog.title');
     },
+
     messagesLeave(): Array<TranslateResult> {
       return [
         this.$t('confirmLeaveDialog.message_1'),
         this.$t('confirmLeaveDialog.message_2'),
       ];
     },
+
+    getTitle(): TranslateResult {
+      if (this.currentTab.id === 'review' && this.associationMode) {
+        return this.$t('registration.details.associateBeneficiaryButton.label');
+      }
+      return this.$t(this.currentTab.titleKey);
+    },
+
+    getNextButtonLabel(): TranslateResult {
+      if (this.currentTab.id === 'review') {
+        if (this.householdAlreadyRegistered) {
+          return this.$t('registration.associate.confirmation.next.label');
+        }
+        if (this.associationMode) {
+          return this.$t('registration.details.associateBeneficiaryButton.label');
+        }
+      }
+      return this.$t(this.currentTab.nextButtonTextKey);
+    },
+
+    householdAlreadyRegistered(): boolean {
+      return this.$store.state.registration.householdAlreadyRegistered;
+    },
+
+    associationMode(): boolean {
+      return this.$store.state.registration.householdAssociationMode;
+    },
   },
+
   methods: {
     async back() {
       if (this.currentTab.id === 'isRegistered' && this.$store.state.registration.householdResultsShown) {
         this.$storage.registration.mutations.setHouseholdResultsShown(false);
+        return;
+      }
+
+      if (this.currentTab.id === 'review' && this.associationMode) {
+        this.backToHouseholdResults();
         return;
       }
 
@@ -162,6 +199,47 @@ export default mixins(individual).extend({
       }
 
       await this.jump(this.currentTabIndex - 1);
+    },
+
+    async next() {
+      if (this.currentTab.id === 'confirmation') {
+        await this.closeRegistration();
+        return;
+      }
+
+      if (this.currentTab.id === 'review') {
+        if (this.householdAlreadyRegistered) {
+          this.goToHouseholdProfile(this.household.id);
+          return;
+        }
+        if (this.associationMode) {
+          const isValid = await (this.$refs.form as VForm).validate();
+
+          if (!isValid) {
+            helpers.scrollToFirstError('app');
+            return;
+          }
+          // TODO EMISV2-195 associate the household
+          return;
+        }
+        await this.$storage.registration.actions.submitRegistration();
+      }
+
+      await this.jump(this.currentTabIndex + 1);
+    },
+
+    backToHouseholdResults() {
+      this.$storage.registration.mutations.setHouseholdAssociationMode(false);
+      this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'isRegistered'));
+    },
+
+    goToHouseholdProfile(householdId: string) {
+      this.$router.replace({
+        name: routes.caseFile.householdProfile.name,
+        params: {
+          id: householdId,
+        },
+      });
     },
   },
 });

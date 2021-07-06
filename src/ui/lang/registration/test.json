@@ -102,6 +102,7 @@
     "registration.addresses.temporaryAddressTypes.Unknown": "registration.addresses.temporaryAddressTypes.Unknown",
     "registration.addresses.unit": "registration.addresses.unit",
     "registration.close_registration.label": "registration.close_registration.label",
+    "registration.confirm_registration.label": "registration.confirm_registration.label",
     "registration.confirmation.additional_assistance": "registration.confirmation.additional_assistance",
     "registration.confirmation.email_sent": "registration.confirmation.email_sent",
     "registration.confirmation.error": "registration.confirmation.error",
@@ -156,6 +157,7 @@
     "registration.menu.review": "registration.menu.review",
     "registration.menu.safe_and_well": "registration.menu.safe_and_well",
     "registration.menu.title": "registration.menu.title",
+    "registration.new_registration.label": "registration.new_registration.label",
     "registration.page.confirmation": "registration.page.confirmation",
     "registration.personal_info.alternatePhoneNumber": "registration.personal_info.alternatePhoneNumber",
     "registration.personal_info.alternatePhoneNumberExtension": "registration.personal_info.alternatePhoneNumberExtension",
@@ -242,7 +244,7 @@
     "zendesk.beneficiary_registration.privacy_statement": "zendesk.beneficiary_registration.privacy_statement",
     "zendesk.beneficiary_registration.review_confirm": "zendesk.beneficiary_registration.review_confirm",
     "zendesk.registration.addresses": "zendesk.registration.addresses",
-    "zendesk.registration.isRegistered": "",
+    "zendesk.registration.isRegistered": "zendesk.registration.isRegistered",
     "zendesk.registration.personalInformation": "zendesk.registration.personalInformation",
     "zendesk.registration.review": "zendesk.registration.review"
 }
