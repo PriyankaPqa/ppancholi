@@ -109,6 +109,15 @@ describe('>>> Case File Service', () => {
     });
   });
 
+  describe('setCaseFileIdentityAuthentication', () => {
+    it('is linked to the correct URL and params', async () => {
+      const { id, identityAuthentication } = mockCaseFileEntity();
+
+      await service.setCaseFileIdentityAuthentication(id, identityAuthentication);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/authentication-of-identity`, identityAuthentication);
+    });
+  });
+
   describe('setCaseFileTriage', () => {
     it('is linked to the correct URL and params', async () => {
       const { id } = mockCaseFileEntity();

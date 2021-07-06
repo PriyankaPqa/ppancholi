@@ -1,5 +1,5 @@
 import {
-  ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity,
+  ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
 } from '@/entities/case-file';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@/services/httpClient';
@@ -58,6 +58,10 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity> impleme
 
   async setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileEntity> {
     return this.http.patch(`${this.baseUrl}/${id}/is-duplicate`, { isDuplicate });
+  }
+
+  async setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity> {
+    return this.http.patch(`/case-file/case-files/${id}/authentication-of-identity`, identityAuthentication);
   }
 
   async setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity> {

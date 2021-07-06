@@ -1,5 +1,5 @@
 import {
-  CaseFileStatus, ICaseFileEntity, CaseFileTriage, ICaseFileActivity, ICaseFileLabel, ICaseFileMetadata,
+  CaseFileStatus, ICaseFileEntity, CaseFileTriage, ICaseFileActivity, ICaseFileLabel, ICaseFileMetadata, IIdentityAuthentication,
 } from '@/entities/case-file/case-file.types';
 import { IStore, IState } from '@/store';
 import { IStorage } from '@/store/storage/case-file/storage.types';
@@ -17,11 +17,17 @@ export class CaseFileStorage
   private getters = {
     ...this.baseGetters,
 
-    tagsOptions: (): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/tagsOptions`],
+    // eslint-disable-next-line
+    tagsOptions: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/tagsOptions`](filterOutInactive, actualValue),
 
-    inactiveReasons: (): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/inactiveReasons`],
+    // eslint-disable-next-line
+    inactiveReasons: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/inactiveReasons`](filterOutInactive, actualValue),
 
-    closeReasons: (): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/closeReasons`],
+    // eslint-disable-next-line
+    screeningIds: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/screeningIds`](filterOutInactive, actualValue),
+
+    // eslint-disable-next-line
+    closeReasons: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/closeReasons`](filterOutInactive, actualValue),
   }
 
   private actions = {
@@ -31,32 +37,38 @@ export class CaseFileStorage
 
     fetchInactiveReasons: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchInactiveReasons`),
 
-    fetchCloseReasons: () : Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchCloseReasons`),
+    fetchScreeningIds: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchScreeningIds`),
+
+    fetchCloseReasons: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchCloseReasons`),
 
     fetchCaseFileActivities: (id: uuid): Promise<ICaseFileActivity[]> => this.store.dispatch(`${this.entityModuleName}/fetchCaseFileActivities`, id),
 
     setCaseFileTags: (id: uuid, tags: IListOption[]):
-    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTags`, { id, tags }),
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTags`, { id, tags }),
 
     setCaseFileStatus: (id: uuid, status: CaseFileStatus, rationale?: string, reason?: IListOption):
-    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileStatus`, {
-      id,
-      status,
-      rationale,
-      reason,
-    }),
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileStatus`,
+      {
+        id,
+        status,
+        rationale,
+        reason,
+      }),
 
     setCaseFileLabels: (id: uuid, labels: ICaseFileLabel[]):
-    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileLabels`, { id, labels }),
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileLabels`, { id, labels }),
 
     setCaseFileIsDuplicate: (id: uuid, isDuplicate: boolean):
-    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileIsDuplicate`, { id, isDuplicate }),
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileIsDuplicate`, { id, isDuplicate }),
+
+    setCaseFileIdentityAuthentication: (id: uuid, identityAuthentication: IIdentityAuthentication):
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileIdentityAuthentication`, { id, identityAuthentication }),
 
     setCaseFileTriage: (id: uuid, triage: CaseFileTriage):
-    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTriage`, { id, triage }),
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTriage`, { id, triage }),
 
     setCaseFileAssign: (id: uuid, individuals: uuid[], teams: uuid[]):
-    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileAssign`, { id, individuals, teams }),
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileAssign`, { id, individuals, teams }),
 
   }
 

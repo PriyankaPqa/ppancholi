@@ -6,6 +6,7 @@ import { CaseFilesService } from '@/services/case-files/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import {
   CaseFileStatus, CaseFileTriage, mockCaseFileActivities, mockTagsOptions, mockCaseFileEntity,
+  IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod,
 } from '@/entities/case-file';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
 import { CaseFileEntityModule } from './caseFileEntity';
@@ -19,7 +20,7 @@ const actionContext = {
   commit: jest.fn(),
   dispatch: jest.fn(),
   state: null,
-  getters: {},
+  getters: { tagsOptions: jest.fn(), inactiveReasons: jest.fn(), closeReasons: jest.fn(), screeningIds: jest.fn() },
   rootState: null,
   rootGetters: {},
 } as ActionContext<ICaseFileEntityState, ICaseFileEntityState>;
@@ -29,7 +30,7 @@ describe('Case file entity module', () => {
     describe('tagsOptions', () => {
       it('returns the sorted tagsOptions', () => {
         module.mutations.setTagsOptions(module.state, mockTagsOptions());
-        const res = module.getters.tagsOptions(module.state);
+        const res = module.getters.tagsOptions(module.state)();
         expect(res).toEqual(
           _sortBy(
             mockTagsOptions().map((e) => new OptionItem(e)),
@@ -42,7 +43,7 @@ describe('Case file entity module', () => {
     describe('inactiveReasons', () => {
       test('the getter returns the sorted inactive reasons', () => {
         module.mutations.setInactiveReasons(module.state, mockOptionItemData());
-        const res = module.getters.inactiveReasons(module.state);
+        const res = module.getters.inactiveReasons(module.state)();
         expect(res).toEqual(
           _sortBy(
             [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
@@ -55,7 +56,20 @@ describe('Case file entity module', () => {
     describe('closeReasons', () => {
       test('the getter returns the sorted inactive reasons', () => {
         module.mutations.setCloseReasons(module.state, mockOptionItemData());
-        const res = module.getters.closeReasons(module.state);
+        const res = module.getters.closeReasons(module.state)();
+        expect(res).toEqual(
+          _sortBy(
+            [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
+            'orderRank',
+          ),
+        );
+      });
+    });
+
+    describe('screeningIds', () => {
+      test('the getter returns the sorted screening Ids', () => {
+        module.mutations.setScreeningIds(module.state, mockOptionItemData());
+        const res = module.getters.screeningIds(module.state)();
         expect(res).toEqual(
           _sortBy(
             [mockOptionItemData()[0], mockOptionItemData()[1]].map((e) => new OptionItem(e)),
@@ -88,6 +102,21 @@ describe('Case file entity module', () => {
         const reasons = mockOptionItemData();
         module.mutations.setCloseReasons(module.state, reasons);
         expect(module.state.closeReasons).toEqual(reasons);
+      });
+    });
+
+    describe('setScreeningIds', () => {
+      test('the setScreeningIds mutation sets the screeningIds state', () => {
+        const i = mockOptionItemData();
+        module.mutations.setScreeningIds(module.state, i);
+        expect(module.state.allScreeningIds).toEqual(i);
+      });
+    });
+
+    describe('setScreeningIdsFetched', () => {
+      test('the setScreeningIdsFetched mutation sets the screeningIdsFetched state', () => {
+        module.mutations.setScreeningIdsFetched(module.state, true);
+        expect(module.state.screeningIdsFetched).toEqual(true);
       });
     });
 
@@ -144,6 +173,17 @@ describe('Case file entity module', () => {
 
         expect(module.optionItemService.getOptionList).toBeCalledWith(EOptionLists.CaseFileInactiveReasons);
         expect(actionContext.commit).toBeCalledWith('setInactiveReasons', res);
+      });
+    });
+
+    describe('fetchScreeningIds', () => {
+      it('should call optionItemService getOptionList and commit the result', async () => {
+        const res = mockOptionItemData();
+        module.optionItemService.getOptionList = jest.fn(() => Promise.resolve(res));
+        await module.actions.fetchScreeningIds(actionContext);
+
+        expect(module.optionItemService.getOptionList).toBeCalledWith(EOptionLists.ScreeningId);
+        expect(actionContext.commit).toBeCalledWith('setScreeningIds', res);
       });
     });
 
@@ -237,6 +277,19 @@ describe('Case file entity module', () => {
         await module.actions.setCaseFileLabels(actionContext, { labels, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: labels, element: 'Labels' });
+      });
+    });
+
+    describe('setCaseFileIdentityAuthentication', () => {
+      it('dispatches the right action with the right payload', async () => {
+        const id = 'mock-id';
+        const identityAuthentication: IIdentityAuthentication = {
+          identificationIds: [], status: IdentityAuthenticationStatus.Failed,
+          method: IdentityAuthenticationMethod.System
+        };
+        await module.actions.setCaseFileIdentityAuthentication(actionContext, { identityAuthentication, id });
+
+        expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: identityAuthentication, element: 'IdentityAuthentication' });
       });
     });
 

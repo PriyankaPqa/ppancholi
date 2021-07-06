@@ -3,6 +3,7 @@ import {
   ICaseFileActivity, CaseFileStatus, ICaseFileLabel, CaseFileTriage,
   ICaseFileEntity,
   ICaseFileMetadata,
+  IIdentityAuthentication,
 } from '@/entities/case-file/case-file.types';
 import { IListOption } from '@/types';
 import {
@@ -10,20 +11,23 @@ import {
 } from '../base';
 
 export interface IGetters extends IBaseGetters<ICaseFileEntity, ICaseFileMetadata> {
-  tagsOptions(): Array<IOptionItem>;
-  inactiveReasons(): Array<IOptionItem>;
-  closeReasons(): Array<IOptionItem>;
+  tagsOptions(filterOutInactive?: boolean, actualValue?: string[] | string): Array<IOptionItem>;
+  inactiveReasons(filterOutInactive?: boolean, actualValue?: string[] | string): Array<IOptionItem>;
+  screeningIds(filterOutInactive?: boolean, actualValue?: string[] | string): Array<IOptionItem>;
+  closeReasons(filterOutInactive?: boolean, actualValue?: string[] | string): Array<IOptionItem>;
 }
 
 export interface IGettersMock extends IBaseGettersMock<ICaseFileEntity, ICaseFileMetadata> {
   tagsOptions: jest.Mock<void>;
   inactiveReasons: jest.Mock<void>;
+  screeningIds: jest.Mock<void>;
   closeReasons: jest.Mock<void>;
 }
 
 export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadata> {
   fetchTagsOptions(): Promise<IOptionItem[]>;
   fetchInactiveReasons(): Promise<IOptionItem[]>;
+  fetchScreeningIds(): Promise<IOptionItem[]>;
   fetchCloseReasons(): Promise<IOptionItem[]>;
   fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]>;
   setCaseFileTags(id: uuid, tags: IListOption[]): Promise<ICaseFileEntity>;
@@ -31,6 +35,7 @@ export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadat
   setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFileEntity>;
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileEntity>;
   setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity>;
+  setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFileEntity>;
 
 }
@@ -38,6 +43,7 @@ export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadat
 export interface IActionsMock extends IBaseActionsMock<ICaseFileEntity, ICaseFileMetadata> {
   fetchTagsOptions: jest.Mock<void>;
   fetchInactiveReasons: jest.Mock<IOptionItemData[]>;
+  fetchScreeningIds: jest.Mock<IOptionItemData[]>;
   fetchCloseReasons: jest.Mock<IOptionItemData[]>;
   fetchCaseFileActivities: jest.Mock<ICaseFileActivity[]>;
   setCaseFileTags: jest.Mock<ICaseFileEntity>;

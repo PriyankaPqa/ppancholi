@@ -2,6 +2,7 @@ import { BaseEntity } from '@/entities/base/base';
 import { IListOption } from '@/types';
 import {
   CaseFileStatus, CaseFileTriage, ICaseFileEntity, ICaseFileLabel,
+  IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication,
 } from './case-file.types';
 
 export class CaseFileEntity extends BaseEntity {
@@ -25,6 +26,8 @@ export class CaseFileEntity extends BaseEntity {
 
   triage?: CaseFileTriage;
 
+  identityAuthentication?: IIdentityAuthentication;
+
   privacyDateTimeConsent?: Date | string;
 
   constructor(data?: ICaseFileEntity) {
@@ -41,6 +44,11 @@ export class CaseFileEntity extends BaseEntity {
       this.labels = data.labels;
       this.triage = data.triage;
       this.privacyDateTimeConsent = new Date(data.privacyDateTimeConsent);
+      this.identityAuthentication = data.identityAuthentication || {
+        identificationIds: [],
+        method: IdentityAuthenticationMethod.NotApplicable,
+        status: IdentityAuthenticationStatus.NotVerified,
+      };
     } else {
       super();
       this.assignedIndividualIds = [];
@@ -54,6 +62,11 @@ export class CaseFileEntity extends BaseEntity {
       this.labels = [];
       this.triage = null;
       this.privacyDateTimeConsent = null;
+      this.identityAuthentication = {
+        identificationIds: [],
+        method: IdentityAuthenticationMethod.NotApplicable,
+        status: IdentityAuthenticationStatus.NotVerified,
+      };
     }
   }
 

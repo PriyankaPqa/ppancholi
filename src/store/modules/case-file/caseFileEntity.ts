@@ -1,18 +1,16 @@
-import _sortBy from 'lodash/sortBy';
 import {
-  CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileEntity, ICaseFileLabel,
+  CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
 } from '@/entities/case-file';
 import { CaseFilesService } from '@/services/case-files/entity';
 import { ActionContext, ActionTree } from 'vuex';
 import {
-  EOptionListItemStatus, OptionItem, IOptionItem, EOptionLists,
+  IOptionItem, EOptionLists,
 } from '@/entities/optionItem';
 import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.types';
 import { IOptionItemsService } from '@/services/optionItems';
 import { IListOption } from '@/types';
-import { BaseModule } from '../base';
+import { BaseModule, filterAndSortActiveItems, IState } from '../base';
 import { IRootState } from '../../store.types';
-import { IState } from '../base/base.types';
 
 export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
   constructor(readonly service: CaseFilesService, readonly optionItemService: IOptionItemsService) {
@@ -27,7 +25,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
     actions: this.actions as unknown as ActionTree<IState<ICaseFileEntity>, IRootState>,
   })
 
-  public state = {
+  public state: ICaseFileEntityState = {
     ...this.baseState,
     tagsOptions: [] as IOptionItem[],
     searchLoading: false,
@@ -36,25 +34,24 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
     inactiveReasons: [] as IOptionItem[],
     closeReasons: [] as IOptionItem[],
     triageLoading: false,
+    allScreeningIds: [] as IOptionItem[],
+    screeningIdsFetched: false,
   }
 
   public getters = {
     ...this.baseGetters,
 
-    tagsOptions: (state:ICaseFileEntityState) => _sortBy(
-      state.tagsOptions.map((e) => new OptionItem(e)),
-      'orderRank',
-    ),
+    // eslint-disable-next-line
+    tagsOptions: (state: ICaseFileEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.tagsOptions, filterOutInactive, actualValue),
 
-    inactiveReasons: (state:ICaseFileEntityState) => _sortBy(
-      state.inactiveReasons.map((e) => new OptionItem(e)),
-      'orderRank',
-    ).filter((i) => i.status === EOptionListItemStatus.Active),
+    // eslint-disable-next-line
+    inactiveReasons: (state:ICaseFileEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.inactiveReasons, filterOutInactive, actualValue),
 
-    closeReasons: (state:ICaseFileEntityState) => _sortBy(
-      state.closeReasons.map((e) => new OptionItem(e)),
-      'orderRank',
-    ).filter((i) => i.status === EOptionListItemStatus.Active),
+    // eslint-disable-next-line
+    closeReasons: (state:ICaseFileEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.closeReasons, filterOutInactive, actualValue),
+
+    // eslint-disable-next-line
+    screeningIds: (state:ICaseFileEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.allScreeningIds, filterOutInactive, actualValue),
   }
 
   public mutations = {
@@ -65,6 +62,14 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
 
     setInactiveReasons(state: ICaseFileEntityState, payload: Array<IOptionItem>) {
       state.inactiveReasons = payload;
+    },
+
+    setScreeningIds(state: ICaseFileEntityState, payload: Array<IOptionItem>) {
+      state.allScreeningIds = payload;
+    },
+
+    setScreeningIdsFetched(state: ICaseFileEntityState, payload: boolean) {
+      state.screeningIdsFetched = payload;
     },
 
     setCloseReasons(state: ICaseFileEntityState, payload: Array<IOptionItem>) {
@@ -97,7 +102,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
       context.commit('setTagsOptions', data);
       // context.commit('setTagsOptionsFetched', true);
 
-      return context.getters.tagsOptions;
+      return context.getters.tagsOptions();
     },
 
     fetchInactiveReasons: async (context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>): Promise<IOptionItem[]> => {
@@ -106,7 +111,16 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
       context.commit('setInactiveReasons', data);
       // context.commit('setInactiveReasons', true);
 
-      return context.getters.inactiveReasons;
+      return context.getters.inactiveReasons();
+    },
+
+    fetchScreeningIds: async (context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>): Promise<IOptionItem[]> => {
+      // if (!context.state.setScreeningIdsFetched) { disable caching until signalR events are implemented
+      const data = await this.optionItemService.getOptionList(EOptionLists.ScreeningId);
+      context.commit('setScreeningIds', data);
+      context.commit('setScreeningIdsFetched', true);
+
+      return context.getters.screeningIds();
     },
 
     fetchCloseReasons: async (context:ActionContext<ICaseFileEntityState, ICaseFileEntityState>): Promise<IOptionItem[]> => {
@@ -115,7 +129,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
       context.commit('setCloseReasons', data);
       // context.commit('setCloseReasons', true);
 
-      return context.getters.closeReasons;
+      return context.getters.closeReasons();
     },
 
     fetchCaseFileActivities: async (context:ActionContext<ICaseFileEntityState, ICaseFileEntityState>, id: uuid)
@@ -163,6 +177,13 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
       payload: { id: uuid; labels: ICaseFileLabel[] },
     ): Promise<ICaseFileEntity> {
       return context.dispatch('genericSetAction', { id: payload.id, payload: payload.labels, element: 'Labels' });
+    },
+
+    async setCaseFileIdentityAuthentication(
+      context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>,
+      payload: { id: uuid; identityAuthentication: IIdentityAuthentication },
+    ): Promise<ICaseFileEntity> {
+      return context.dispatch('genericSetAction', { id: payload.id, payload: payload.identityAuthentication, element: 'IdentityAuthentication' });
     },
 
     async setCaseFileTriage(

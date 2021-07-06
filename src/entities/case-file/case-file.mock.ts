@@ -2,7 +2,7 @@
 import { IEntity, mockBaseData } from '@/entities/base';
 import {
   ICaseFileMetadata,
-  CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined,
+  CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 
@@ -26,6 +26,11 @@ export const mockCaseFileEntity = (force? : Partial<IEntity>): ICaseFileEntity =
     },
   ],
   triage: 1,
+  identityAuthentication: {
+    identificationIds: ['1', '2'],
+    method: IdentityAuthenticationMethod.InPerson,
+    status: IdentityAuthenticationStatus.Passed,
+  },
   ...force,
   validate: () => true,
   privacyDateTimeConsent: '2021-02-02',

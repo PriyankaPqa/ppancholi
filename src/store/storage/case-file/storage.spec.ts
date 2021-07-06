@@ -1,6 +1,6 @@
 import { CASE_FILE_ENTITIES, CASE_FILE_METADATA } from '@/constants/vuex-modules';
 import {
-  CaseFileTriage, ICaseFileLabel, CaseFileStatus,
+  CaseFileTriage, ICaseFileLabel, CaseFileStatus, IIdentityAuthentication, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
 } from '@/entities/case-file';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStore } from '@/store';
@@ -33,7 +33,7 @@ describe('>>> Case File Storage', () => {
     describe('tagsOptions', () => {
       it('should proxy tagsOptions', () => {
         const storageGetter = storage.getters.tagsOptions();
-        const storeGetter = store.getters[`${entityModuleName}/tagsOptions`];
+        const storeGetter = store.getters[`${entityModuleName}/tagsOptions`]();
         expect(storageGetter).toEqual(storeGetter);
       });
     });
@@ -41,7 +41,15 @@ describe('>>> Case File Storage', () => {
     describe('inactiveReasons', () => {
       it('should proxy inactiveReasons', () => {
         const storageGetter = storage.getters.inactiveReasons();
-        const storeGetter = store.getters[`${entityModuleName}/inactiveReasons`];
+        const storeGetter = store.getters[`${entityModuleName}/inactiveReasons`]();
+        expect(storageGetter).toEqual(storeGetter);
+      });
+    });
+
+    describe('screeningIds', () => {
+      it('should proxy screeningIds', () => {
+        const storageGetter = storage.getters.screeningIds();
+        const storeGetter = store.getters[`${entityModuleName}/screeningIds`]();
         expect(storageGetter).toEqual(storeGetter);
       });
     });
@@ -49,7 +57,7 @@ describe('>>> Case File Storage', () => {
     describe('closeReasons', () => {
       it('should proxy closeReasons', () => {
         const storageGetter = storage.getters.closeReasons();
-        const storeGetter = store.getters[`${entityModuleName}/closeReasons`];
+        const storeGetter = store.getters[`${entityModuleName}/closeReasons`]();
         expect(storageGetter).toEqual(storeGetter);
       });
     });
@@ -119,6 +127,17 @@ describe('>>> Case File Storage', () => {
       const isDuplicate = true;
       storage.actions.setCaseFileIsDuplicate(id, isDuplicate);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileIsDuplicate`, { id, isDuplicate });
+    });
+
+    it('should proxy setCaseFileIdentityAuthentication', () => {
+      const id = '5';
+      const identityAuthentication = {
+        identificationIds: ['abc'],
+        method: IdentityAuthenticationMethod.InPerson,
+        status: IdentityAuthenticationStatus.Passed
+      } as IIdentityAuthentication;
+      storage.actions.setCaseFileIdentityAuthentication(id, identityAuthentication);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileIdentityAuthentication`, { id, identityAuthentication });
     });
 
     it('should proxy setCaseFileTriage', () => {

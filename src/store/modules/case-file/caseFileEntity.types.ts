@@ -10,4 +10,6 @@ export interface ICaseFileEntityState extends IState<ICaseFileEntity> {
   inactiveReasons: IOptionItem[];
   closeReasons: IOptionItem[];
   triageLoading: boolean;
+  allScreeningIds: IOptionItem[];
+  screeningIdsFetched: boolean;
 }

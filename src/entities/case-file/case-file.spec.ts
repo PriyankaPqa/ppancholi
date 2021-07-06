@@ -1,4 +1,4 @@
-import { mockCaseFileEntity, CaseFileEntity } from './index';
+import { mockCaseFileEntity, CaseFileEntity, IdentityAuthenticationMethod, IdentityAuthenticationStatus } from './index';
 
 const mockCaseFileData = mockCaseFileEntity();
 
@@ -115,6 +115,20 @@ describe('>>> Case File', () => {
       it('should instantiate privacyDateTimeConsent', () => {
         const caseFile = new CaseFileEntity();
         expect(caseFile.privacyDateTimeConsent).toEqual(null);
+      });
+      
+      it('should instantiate identityAuthentication', () => {
+        const caseFile = new CaseFileEntity(mockCaseFileData);
+        expect(caseFile.identityAuthentication).toEqual(mockCaseFileData.identityAuthentication);
+      });
+      
+      it('should default identityAuthentication', () => {
+        const caseFile = new CaseFileEntity();
+        expect(caseFile.identityAuthentication).toEqual({
+          identificationIds: [],
+          method: IdentityAuthenticationMethod.NotApplicable,
+          status: IdentityAuthenticationStatus.NotVerified,
+        });
       });
     });
   });

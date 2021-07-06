@@ -21,6 +21,19 @@ export enum CaseFileTriage {
   Tier5 = 5,
 }
 
+export enum IdentityAuthenticationStatus {
+  NotVerified = 0,
+  Passed = 1,
+  Failed = 2
+}
+
+export enum IdentityAuthenticationMethod {
+  NotApplicable = 0,
+  Exceptional = 1,
+  InPerson = 2,
+  System = 3
+}
+
 export enum CaseFileActivityType {
   AddedTag = 1,
   RemovedTag = 2,
@@ -35,13 +48,6 @@ export enum CaseFileActivityType {
   UnassignedFromCaseFile = 11,
   IdentityAuthenticationUpdated = 12,
   ImpactStatusValidationUpdated = 13,
-}
-
-export enum IdentityAuthenticationStatus
-{
-  NotVerified = 0,
-  Passed = 1,
-  Failed = 2,
 }
 
 export enum ValidationOfImpactStatus
@@ -79,6 +85,12 @@ export interface ICaseFileActivity {
   details: Record<string, unknown>;
 }
 
+export interface IIdentityAuthentication {
+  status: IdentityAuthenticationStatus;
+  method: IdentityAuthenticationMethod;
+  identificationIds: string[];
+}
+
 export interface ICaseFileEntity extends IEntity {
   assignedIndividualIds?: uuid[];
   assignedTeamIds?: uuid[];
@@ -91,6 +103,7 @@ export interface ICaseFileEntity extends IEntity {
   tags?: IListOption[];
   triage?: CaseFileTriage;
   privacyDateTimeConsent: Date | string;
+  identityAuthentication?: IIdentityAuthentication;
 
   validate(): Array<string> | boolean;
 }

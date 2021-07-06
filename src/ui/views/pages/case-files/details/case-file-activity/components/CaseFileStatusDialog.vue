@@ -21,7 +21,7 @@
           class=" mb-8 pa-3 border-radius-all"
           :style="backgroundColor">
           <status-chip status-name="CaseFileStatus" :status="toStatus" data-test="case-file-summary-status-chip" />
-          <span v-if="user" class="pl-1 rc-body14"> by {{ user.metadata.displayName }} ({{ $m(user.metadata.roleName) }})</span>
+          <span v-if="user && user.metadata" class="pl-1 rc-body14"> by {{ user.metadata.displayName }} ({{ $m(user.metadata.roleName) }})</span>
         </v-col>
 
         <v-select-with-validation

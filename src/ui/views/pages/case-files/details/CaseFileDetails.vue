@@ -118,6 +118,11 @@
         @click="goToHouseholdProfile()">
         {{ $t('caseFileDetail.household_profile.button') }}
       </v-btn>
+
+      <case-file-verify-identity-dialog
+        v-if="showVerifyIdentityDialog"
+        :case-file="caseFile.entity"
+        :show.sync="showVerifyIdentityDialog" />
     </template>
 
     <template slot="default">
@@ -128,12 +133,13 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFileCombined } from '@/entities/case-file';
+import { ICaseFileCombined, IdentityAuthenticationStatus } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { ECanadaProvinces, INavigationTab } from '@/types';
 import routes from '@/constants/routes';
 import { IHouseholdCombined, IMemberMetadata } from '@crctech/registration-lib/src/entities/household';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
+import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 
 export default Vue.extend({
   name: 'CaseFileDetails',
@@ -141,6 +147,7 @@ export default Vue.extend({
   components: {
     PageTemplate,
     CaseFileDetailsBeneficiaryPhoneNumber,
+    CaseFileVerifyIdentityDialog,
   },
 
   props: {
@@ -158,6 +165,7 @@ export default Vue.extend({
       loading: false,
       error: false,
       household: null as IHouseholdCombined,
+      showVerifyIdentityDialog: false,
     };
   },
 
@@ -192,7 +200,11 @@ export default Vue.extend({
     },
 
     colorVerifyIdentity() {
-      return 'status_success';
+      switch (this.caseFile?.entity?.identityAuthentication?.status) {
+        case IdentityAuthenticationStatus.Passed: return 'status_success';
+        case IdentityAuthenticationStatus.Failed: return 'status_error';
+        default: return 'status_warning';
+      }
     },
 
     hasPhoneNumbers(): boolean {
@@ -294,7 +306,7 @@ export default Vue.extend({
     },
 
     openVerifyIdentity() {
-      return true;
+      this.showVerifyIdentityDialog = true;
     },
   },
 });

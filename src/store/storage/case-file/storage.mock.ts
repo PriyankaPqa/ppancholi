@@ -14,12 +14,14 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     tagsOptions: jest.fn(),
     inactiveReasons: jest.fn(),
     closeReasons: jest.fn(),
+    screeningIds: jest.fn(),
   }
 
   protected actions = {
     ...this.baseActions,
     fetchTagsOptions: jest.fn(),
     fetchInactiveReasons: jest.fn(() => mockOptionItemData()),
+    fetchScreeningIds: jest.fn(() => mockOptionItemData()),
     fetchCloseReasons: jest.fn(() => mockOptionItemData()),
     fetchCaseFileActivities: jest.fn(() => mockCaseFileActivities()),
     setCaseFileTags: jest.fn(() => this.entity),
@@ -28,6 +30,7 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     setCaseFileIsDuplicate: jest.fn(() => this.entity),
     setCaseFileTriage: jest.fn(() => this.entity),
     setCaseFileAssign: jest.fn(() => this.entity),
+    setCaseFileIdentityAuthentication: jest.fn(() => this.entity),
   }
 
   protected mutations = {

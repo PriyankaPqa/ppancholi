@@ -2,10 +2,9 @@ import {
   ActionContext, ActionTree, Module, Store,
 } from 'vuex';
 import _findIndex from 'lodash/findIndex';
-import _sortBy from 'lodash/sortBy';
 import { IRootState } from '@/store/store.types';
 import {
-  EOptionListItemStatus, EOptionLists, IOptionItem, IOptionItemData, OptionItem,
+  EOptionLists, IOptionItem, IOptionItemData,
 } from '@/entities/optionItem';
 import {
   Event,
@@ -24,6 +23,7 @@ import { IAzureSearchParams, IAzureSearchResult, EEventSummarySections } from '@
 
 import { IState } from './event.types';
 import { mapEventDataToSearchData } from './eventUtils';
+import { filterAndSortActiveItems } from '../base';
 
 const getDefaultState = (): IState => ({
   agreementTypes: [],
@@ -39,15 +39,10 @@ const getDefaultState = (): IState => ({
 const moduleState: IState = getDefaultState();
 
 const getters = {
-  agreementTypes: (state: IState) => (
-    _sortBy(state.agreementTypes.map((e) => new OptionItem(e)), 'orderRank')
-      .filter((i) => i.status === EOptionListItemStatus.Active)
-  ),
+  // TODO: change to function with parameters to filter in or out inactives, actualValue - see caseFile
+  agreementTypes: (state: IState) => filterAndSortActiveItems(state.agreementTypes),
 
-  eventTypes: (state: IState) => (
-    _sortBy(state.eventTypes.map((e) => new OptionItem(e)), 'orderRank')
-      .filter((i) => i.status === EOptionListItemStatus.Active)
-  ),
+  eventTypes: (state: IState) => filterAndSortActiveItems(state.eventTypes),
 
   events: (state: IState) => helpers.sortMultilingualArray(state.events, 'name'),
 

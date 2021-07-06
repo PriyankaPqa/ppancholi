@@ -1,5 +1,5 @@
 import {
-  ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity,
+  ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
 
@@ -12,6 +12,7 @@ export interface ICaseFilesService {
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileEntity>;
   setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, payload: {individuals: uuid[], teams: uuid[]}): Promise<ICaseFileEntity>;
+  setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
 }
 
 export interface ICaseFilesServiceMock {
