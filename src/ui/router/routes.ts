@@ -48,6 +48,7 @@ const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/view
 const RegistrationLayout = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/layout/RegistrationLayout.vue');
 const RegistrationHome = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/home/RegistrationHome.vue');
 const RegistrationIndividual = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/individual/RegistrationIndividual.vue');
+const ConfirmationPrint = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
 
 const ReportsLayout = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/layout/ReportsLayout.vue');
 const ReportsHome = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/home/ReportsHome.vue');
@@ -92,6 +93,11 @@ export const routes: Array<RouteConfig> = [
       Trans.routeMiddleware(to, from, next);
     },
     children: [
+      {
+        path: 'print-confirmation',
+        name: 'print-confirmation',
+        component: ConfirmationPrint,
+      },
       {
         path: '',
         redirect: { name: Routes.home.name },

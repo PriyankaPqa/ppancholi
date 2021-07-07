@@ -1,15 +1,16 @@
 <template>
-  <crc-privacy-statement :i18n="i18n" />
+  <lib-confirm-registration :i18n="i18n" />
 </template>
+
 <script lang="ts">
 import Vue from 'vue';
+import { ConfirmRegistration as LibConfirmRegistration } from '@crctech/registration-lib';
 import { i18n } from '@/ui/plugins';
-import { CrcPrivacyStatement } from '@crctech/registration-lib';
 
 export default Vue.extend({
-  name: 'PrivacyStatement',
+  name: 'ConfirmRegistration',
   components: {
-    CrcPrivacyStatement,
+    LibConfirmRegistration,
   },
   data() {
     return {

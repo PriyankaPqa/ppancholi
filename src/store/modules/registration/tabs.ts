@@ -89,7 +89,7 @@ export const tabs = (): IRegistrationMenuItem[] => [
     isValid: true,
     isTouched: false,
     backButtonTextKey: 'common.button.print',
-    nextButtonTextKey: 'common.button.next',
+    nextButtonTextKey: 'registration.confirm_registration.label',
     componentName: 'ConfirmRegistration',
     helpLink: '',
   },
