@@ -34,10 +34,9 @@
       </div>
     </template>
 
-    <!-- TODO: ConfirmationError
     <div v-else>
       <confirmation-error :errors="errors" :phone="phoneAssistance" />
-    </div> -->
+    </div>
   </div>
 </template>
 
@@ -49,10 +48,13 @@ import { IRegistrationMenuItem } from '../../types';
 import { IHouseholdCreate } from '../../entities/household-create';
 import { IEvent } from '../../entities/event';
 import { IHouseholdEntity } from '../../entities/household';
+import ConfirmationError from './ConfirmationError.vue';
 
 export default Vue.extend({
   name: 'ConfirmRegistration',
-  components: { },
+  components: {
+    ConfirmationError,
+  },
   computed: {
     success(): boolean {
       return this.errors?.length === 0;
