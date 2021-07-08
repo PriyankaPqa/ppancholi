@@ -31,6 +31,7 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     setCaseFileTriage: jest.fn(() => this.entity),
     setCaseFileAssign: jest.fn(() => this.entity),
     setCaseFileIdentityAuthentication: jest.fn(() => this.entity),
+    setCaseFileValidationOfImpact: jest.fn(() => this.entity),
   }
 
   protected mutations = {

@@ -50,12 +50,19 @@ export enum CaseFileActivityType {
   ImpactStatusValidationUpdated = 13,
 }
 
-export enum ValidationOfImpactStatus
-{
-    Undetermined = 0,
-    Impacted = 1,
-    NotImpacted = 2
+export enum ImpactValidationMethod {
+  NotApplicable = 0,
+  Manual = 1,
+  Exception = 2,
+  Batch = 3
 }
+
+export enum ValidationOfImpactStatus {
+  Undetermined = 0,
+  Impacted = 1,
+  NotImpacted = 2
+}
+
 /**
  * Interfaces
  */
@@ -91,6 +98,11 @@ export interface IIdentityAuthentication {
   identificationIds: string[];
 }
 
+export interface IImpactStatusValidation {
+  method: ImpactValidationMethod;
+  status: ValidationOfImpactStatus;
+}
+
 export interface ICaseFileEntity extends IEntity {
   assignedIndividualIds?: uuid[];
   assignedTeamIds?: uuid[];
@@ -98,11 +110,12 @@ export interface ICaseFileEntity extends IEntity {
   caseFileStatus?: CaseFileStatus;
   eventId?: uuid;
   householdId?: uuid;
+  impactStatusValidation?: IImpactStatusValidation;
   isDuplicate?: boolean;
   labels?: ICaseFileLabel[];
   tags?: IListOption[];
   triage?: CaseFileTriage;
-  privacyDateTimeConsent: Date | string;
+  privacyDateTimeConsent?: Date | string;
   identityAuthentication?: IIdentityAuthentication;
 
   validate(): Array<string> | boolean;

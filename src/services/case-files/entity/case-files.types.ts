@@ -1,5 +1,6 @@
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
+  IImpactStatusValidation,
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
 
@@ -13,6 +14,7 @@ export interface ICaseFilesService {
   setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, payload: {individuals: uuid[], teams: uuid[]}): Promise<ICaseFileEntity>;
   setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
+  setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
 }
 
 export interface ICaseFilesServiceMock {
@@ -23,4 +25,5 @@ export interface ICaseFilesServiceMock {
   setCaseFileIsDuplicate: jest.Mock<ICaseFileEntity>;
   setCaseFileTriage: jest.Mock<ICaseFileEntity>;
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
+  setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
 }

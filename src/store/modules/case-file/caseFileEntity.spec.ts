@@ -6,7 +6,8 @@ import { CaseFilesService } from '@/services/case-files/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import {
   CaseFileStatus, CaseFileTriage, mockCaseFileActivities, mockTagsOptions, mockCaseFileEntity,
-  IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod,
+  IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod, IImpactStatusValidation, 
+  ImpactValidationMethod, ValidationOfImpactStatus,
 } from '@/entities/case-file';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
 import { CaseFileEntityModule } from './caseFileEntity';
@@ -290,6 +291,19 @@ describe('Case file entity module', () => {
         await module.actions.setCaseFileIdentityAuthentication(actionContext, { identityAuthentication, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: identityAuthentication, element: 'IdentityAuthentication' });
+      });
+    });
+    
+    describe('setCaseFileValidationOfImpact', () => {
+      it('dispatches the right action with the right payload', async () => {
+        const id = 'mock-id';
+        const impactStatusValidation: IImpactStatusValidation = {
+          method: ImpactValidationMethod.Manual,
+          status: ValidationOfImpactStatus.Impacted
+        };
+        await module.actions.setCaseFileValidationOfImpact(actionContext, { impactStatusValidation, id });
+
+        expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: impactStatusValidation, element: 'ValidationOfImpact' });
       });
     });
 

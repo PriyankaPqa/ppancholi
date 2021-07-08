@@ -118,6 +118,15 @@ describe('>>> Case File Service', () => {
     });
   });
 
+  describe('setCaseFileValidationOfImpact', () => {
+    it('is linked to the correct URL and params', async () => {
+      const { id, impactStatusValidation } = mockCaseFileEntity();
+
+      await service.setCaseFileValidationOfImpact(id, impactStatusValidation);
+      expect(http.patch).toHaveBeenCalledWith(`/case-file/case-files/${id}/validation-of-impact-status`, { ...impactStatusValidation });
+    });
+  });
+
   describe('setCaseFileTriage', () => {
     it('is linked to the correct URL and params', async () => {
       const { id } = mockCaseFileEntity();

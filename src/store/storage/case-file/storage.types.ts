@@ -4,6 +4,7 @@ import {
   ICaseFileEntity,
   ICaseFileMetadata,
   IIdentityAuthentication,
+  IImpactStatusValidation,
 } from '@/entities/case-file/case-file.types';
 import { IListOption } from '@/types';
 import {
@@ -36,6 +37,7 @@ export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadat
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileEntity>;
   setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity>;
   setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
+  setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, individuals: uuid[], teams: uuid[]): Promise<ICaseFileEntity>;
 
 }
@@ -51,6 +53,7 @@ export interface IActionsMock extends IBaseActionsMock<ICaseFileEntity, ICaseFil
   setCaseFileLabels: jest.Mock<ICaseFileEntity>;
   setCaseFileIsDuplicate: jest.Mock<ICaseFileEntity>;
   setCaseFileTriage: jest.Mock<ICaseFileEntity>;
+  setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
 
 }

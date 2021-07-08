@@ -1,5 +1,6 @@
 import {
   CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
+  IImpactStatusValidation,
 } from '@/entities/case-file';
 import { CaseFilesService } from '@/services/case-files/entity';
 import { ActionContext, ActionTree } from 'vuex';
@@ -191,6 +192,13 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
       payload: { id: uuid; triage: CaseFileTriage },
     ): Promise<ICaseFileEntity> {
       return context.dispatch('genericSetAction', { id: payload.id, payload: payload.triage, element: 'Triage' });
+    },
+
+    async setCaseFileValidationOfImpact(
+      context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>,
+      payload: { id: uuid; impactStatusValidation: IImpactStatusValidation },
+    ): Promise<ICaseFileEntity> {
+      return context.dispatch('genericSetAction', { id: payload.id, payload: payload.impactStatusValidation, element: 'ValidationOfImpact' });
     },
 
     async setCaseFileAssign(

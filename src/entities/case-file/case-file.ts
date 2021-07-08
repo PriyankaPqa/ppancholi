@@ -3,9 +3,11 @@ import { IListOption } from '@/types';
 import {
   CaseFileStatus, CaseFileTriage, ICaseFileEntity, ICaseFileLabel,
   IdentityAuthenticationMethod, IdentityAuthenticationStatus, IIdentityAuthentication,
+  IImpactStatusValidation,
+  ImpactValidationMethod, ValidationOfImpactStatus,
 } from './case-file.types';
 
-export class CaseFileEntity extends BaseEntity {
+export class CaseFileEntity extends BaseEntity implements ICaseFileEntity {
   assignedIndividualIds?: uuid[];
 
   assignedTeamIds?: uuid[];
@@ -17,6 +19,8 @@ export class CaseFileEntity extends BaseEntity {
   eventId?: uuid;
 
   householdId?: uuid;
+
+  impactStatusValidation?: IImpactStatusValidation;
 
   isDuplicate?: boolean;
 
@@ -39,6 +43,8 @@ export class CaseFileEntity extends BaseEntity {
       this.caseFileStatus = data.caseFileStatus;
       this.eventId = data.eventId;
       this.householdId = data.householdId;
+      this.impactStatusValidation = data.impactStatusValidation
+        || { method: ImpactValidationMethod.NotApplicable, status: ValidationOfImpactStatus.Undetermined };
       this.isDuplicate = data.isDuplicate;
       this.tags = data.tags;
       this.labels = data.labels;
@@ -57,6 +63,7 @@ export class CaseFileEntity extends BaseEntity {
       this.caseFileStatus = null;
       this.eventId = null;
       this.householdId = null;
+      this.impactStatusValidation = { method: ImpactValidationMethod.NotApplicable, status: ValidationOfImpactStatus.Undetermined };
       this.isDuplicate = false;
       this.tags = [];
       this.labels = [];

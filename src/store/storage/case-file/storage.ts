@@ -1,5 +1,6 @@
 import {
   CaseFileStatus, ICaseFileEntity, CaseFileTriage, ICaseFileActivity, ICaseFileLabel, ICaseFileMetadata, IIdentityAuthentication,
+  IImpactStatusValidation,
 } from '@/entities/case-file/case-file.types';
 import { IStore, IState } from '@/store';
 import { IStorage } from '@/store/storage/case-file/storage.types';
@@ -66,6 +67,9 @@ export class CaseFileStorage
 
     setCaseFileTriage: (id: uuid, triage: CaseFileTriage):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTriage`, { id, triage }),
+
+    setCaseFileValidationOfImpact: (id: uuid, impactStatusValidation: IImpactStatusValidation):
+    Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileValidationOfImpact`, { id, impactStatusValidation }),
 
     setCaseFileAssign: (id: uuid, individuals: uuid[], teams: uuid[]):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileAssign`, { id, individuals, teams }),

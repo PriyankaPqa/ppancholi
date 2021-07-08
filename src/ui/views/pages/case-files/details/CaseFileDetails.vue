@@ -123,6 +123,10 @@
         v-if="showVerifyIdentityDialog"
         :case-file="caseFile.entity"
         :show.sync="showVerifyIdentityDialog" />
+      <impact-validation
+        v-if="showImpact"
+        :case-file="caseFile.entity"
+        :show.sync="showImpact" />
     </template>
 
     <template slot="default">
@@ -133,13 +137,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFileCombined, IdentityAuthenticationStatus } from '@/entities/case-file';
+import { ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { ECanadaProvinces, INavigationTab } from '@/types';
 import routes from '@/constants/routes';
 import { IHouseholdCombined, IMemberMetadata } from '@crctech/registration-lib/src/entities/household';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
+import ImpactValidation from './components/ImpactValidationDialog.vue';
 
 export default Vue.extend({
   name: 'CaseFileDetails',
@@ -148,6 +153,7 @@ export default Vue.extend({
     PageTemplate,
     CaseFileDetailsBeneficiaryPhoneNumber,
     CaseFileVerifyIdentityDialog,
+    ImpactValidation,
   },
 
   props: {
@@ -166,6 +172,7 @@ export default Vue.extend({
       error: false,
       household: null as IHouseholdCombined,
       showVerifyIdentityDialog: false,
+      showImpact: false,
     };
   },
 
@@ -196,7 +203,11 @@ export default Vue.extend({
     },
 
     colorValidationImpact() {
-      return 'status_success';
+      switch (this.caseFile?.entity?.impactStatusValidation?.status) {
+        case ValidationOfImpactStatus.Impacted: return 'status_success';
+        case ValidationOfImpactStatus.NotImpacted: return 'status_error';
+        default: return 'status_warning';
+      }
     },
 
     colorVerifyIdentity() {
@@ -302,7 +313,7 @@ export default Vue.extend({
     },
 
     openImpactValidation() {
-      return true;
+      this.showImpact = true;
     },
 
     openVerifyIdentity() {

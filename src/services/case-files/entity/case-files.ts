@@ -1,5 +1,6 @@
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
+  IImpactStatusValidation,
 } from '@/entities/case-file';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@/services/httpClient';
@@ -66,6 +67,10 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity> impleme
 
   async setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity> {
     return this.http.patch(`${this.baseUrl}/${id}/triage`, { triage });
+  }
+
+  async setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity> {
+    return this.http.patch(`/case-file/case-files/${id}/validation-of-impact-status`, { ...impactStatusValidation });
   }
 
   async setCaseFileAssign(id: uuid, payload: {individuals: uuid[], teams: uuid[]}): Promise<ICaseFileEntity> {

@@ -3,6 +3,7 @@ import { IEntity, mockBaseData } from '@/entities/base';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
+  ValidationOfImpactStatus, ImpactValidationMethod,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 
@@ -14,6 +15,10 @@ export const mockCaseFileEntity = (force? : Partial<IEntity>): ICaseFileEntity =
   caseFileStatus: 4,
   eventId: 'e70da37e-67cd-4afb-9c36-530c7d8b191f',
   householdId: 'mock-household-id-1',
+  impactStatusValidation: {
+    status: ValidationOfImpactStatus.Impacted,
+    method: ImpactValidationMethod.Manual,
+  },
   isDuplicate: false,
   labels: [
     {
