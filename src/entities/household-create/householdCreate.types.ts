@@ -9,6 +9,7 @@ export interface IHouseholdCreateData {
   additionalMembers: IMemberData[];
   consentInformation: IConsentInformation;
   id?: uuid;
+  registrationNumber?: string;
 }
 
 export interface IConsentInformation {

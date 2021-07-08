@@ -19,6 +19,8 @@ export class HouseholdCreate implements IHouseholdCreate {
 
   id: uuid;
 
+  registrationNumber?: string;
+
   constructor(data?: IHouseholdCreateData) {
     if (!data) {
       this.reset();
@@ -29,6 +31,7 @@ export class HouseholdCreate implements IHouseholdCreate {
       this.additionalMembers = data.additionalMembers ? data.additionalMembers.map((h) => new Member(h)) : [];
       this.consentInformation = data.consentInformation;
       this.id = data.id;
+      this.registrationNumber = data.registrationNumber ? data.registrationNumber : '';
     }
   }
 
@@ -64,6 +67,7 @@ export class HouseholdCreate implements IHouseholdCreate {
       privacyDateTimeConsent: null,
     };
     this.id = '';
+    this.registrationNumber = '';
   }
 
   // Validation used for each page of registration

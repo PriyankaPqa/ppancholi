@@ -29,6 +29,7 @@ describe('>>> Household', () => {
         privacyDateTimeConsent: null,
       });
       expect(h.id).toEqual('');
+      expect(h.registrationNumber).toEqual('');
     });
   });
 
