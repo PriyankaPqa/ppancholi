@@ -11,5 +11,6 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   setCaseFileIsDuplicate: jest.fn(() => mockCaseFileEntity()),
   setCaseFileTriage: jest.fn(() => mockCaseFileEntity()),
   setCaseFileAssign: jest.fn(() => mockCaseFileEntity()),
+  createCaseFile: jest.fn(() => mockCaseFileEntity()),
   setCaseFileValidationOfImpact: jest.fn(() => mockCaseFileEntity()),
 });

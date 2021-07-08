@@ -96,6 +96,8 @@ import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import { ConfirmationDialog, VForm } from '@/types';
 import helpers from '@/ui/helpers';
+import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { IEvent } from '@crctech/registration-lib/src/entities/event';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -146,9 +148,8 @@ export default mixins(individual).extend({
   },
 
   computed: {
-    eventName() {
-      const event = this.$storage.registration.getters.event();
-      return this.$m(event.name);
+    eventName(): string {
+      return this.$m(this.event.name);
     },
 
     submitLoading(): boolean {
@@ -156,10 +157,19 @@ export default mixins(individual).extend({
     },
 
     titleLeave(): TranslateResult {
+      if (this.currentTab.id === 'review' && this.associationMode) {
+        return this.$t('registration.associate.confirmation.title');
+      }
       return this.$t('confirmLeaveDialog.title');
     },
 
     messagesLeave(): Array<TranslateResult> {
+      if (this.currentTab.id === 'review' && this.associationMode) {
+        return [
+          this.$t('registration.associate.confirmation.message1'),
+          this.$t('registration.associate.confirmation.message2'),
+        ];
+      }
       return [
         this.$t('confirmLeaveDialog.message_1'),
         this.$t('confirmLeaveDialog.message_2'),
@@ -191,6 +201,10 @@ export default mixins(individual).extend({
 
     associationMode(): boolean {
       return this.$store.state.registration.householdAssociationMode;
+    },
+
+    event(): IEvent {
+      return this.$storage.registration.getters.event();
     },
   },
 
@@ -238,7 +252,13 @@ export default mixins(individual).extend({
             helpers.scrollToFirstError('app');
             return;
           }
-          // TODO EMISV2-195 associate the household
+
+          const associating = await this.associateHousehold(this.household, this.event);
+
+          if (associating) {
+            await this.jump(this.currentTabIndex + 1);
+          }
+
           return;
         }
         await this.$storage.registration.actions.submitRegistration();
@@ -259,6 +279,19 @@ export default mixins(individual).extend({
           id: householdId,
         },
       });
+    },
+
+    async associateHousehold(household: HouseholdCreate, event: IEvent): Promise<boolean> {
+      const userChoice = await (this.$refs.confirmLeavePopup as ConfirmationDialog).open() as boolean;
+      if (userChoice) {
+        await this.$storage.caseFile.actions.createCaseFile({
+          householdId: household.id,
+          eventId: event.id,
+          consentInformation: household.consentInformation,
+        });
+        this.showExitConfirmation = false;
+      }
+      return userChoice;
     },
   },
 });

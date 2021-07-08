@@ -7,6 +7,7 @@ import { IStorage } from '@/store/storage/case-file/storage.types';
 import { IOptionItem } from '@/entities/optionItem';
 import { IListOption } from '@/types';
 
+import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { Base } from '../base';
 
 export class CaseFileStorage
@@ -73,6 +74,9 @@ export class CaseFileStorage
 
     setCaseFileAssign: (id: uuid, individuals: uuid[], teams: uuid[]):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileAssign`, { id, individuals, teams }),
+
+    createCaseFile: (payload: ICreateCaseFileRequest):
+      Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/createCaseFile`, payload),
 
   }
 

@@ -3,6 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
 import { tabs } from '@/store/modules/registration/tabs';
+import { mockHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();
@@ -18,6 +19,9 @@ describe('Individual.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        computed: {
+          currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
+        },
         mocks: {
           $storage: storage,
         },
@@ -113,18 +117,22 @@ describe('Individual.vue', () => {
       });
 
       it('calls closeRegistration if it is confirmation', async () => {
-        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
-          id: 'confirmation',
-        }));
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'confirmation', titleKey: '', nextButtonTextKey: '' }),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
         wrapper.vm.closeRegistration = jest.fn();
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.next();
 
-        expect(wrapper.vm.closeRegistration)
-          .toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.jump)
-          .toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.closeRegistration).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.jump).toHaveBeenCalledTimes(0);
       });
 
       describe('Review', () => {
@@ -134,6 +142,7 @@ describe('Individual.vue', () => {
             computed: {
               householdAlreadyRegistered: () => true,
               associationMode: () => true,
+              currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
             },
             mocks: {
               $storage: storage,
@@ -147,34 +156,88 @@ describe('Individual.vue', () => {
           expect(wrapper.vm.goToHouseholdProfile).toHaveBeenCalledTimes(1);
         });
 
-        it('should validate the form if association mode', async () => {
+        describe('Association mode', () => {
+          it('should validate the form', async () => {
+            wrapper = shallowMount(Component, {
+              localVue,
+              computed: {
+                householdAlreadyRegistered: () => false,
+                associationMode: () => true,
+                currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
+              },
+              mocks: {
+                $storage: storage,
+              },
+            });
+            wrapper.vm.$refs.form.validate = jest.fn(() => true);
+            wrapper.vm.jump = jest.fn();
+            wrapper.vm.associateHousehold = jest.fn();
+
+            await wrapper.vm.next();
+
+            expect(wrapper.vm.$refs.form.validate).toBeCalled();
+          });
+
+          it('should call associateHousehold with proper param', async () => {
+            wrapper = shallowMount(Component, {
+              localVue,
+              computed: {
+                householdAlreadyRegistered: () => false,
+                associationMode: () => true,
+                currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
+              },
+              mocks: {
+                $storage: storage,
+              },
+            });
+            wrapper.vm.$refs.form.validate = jest.fn(() => true);
+            wrapper.vm.jump = jest.fn();
+            wrapper.vm.associateHousehold = jest.fn();
+
+            await wrapper.vm.next();
+
+            expect(wrapper.vm.associateHousehold).toHaveBeenCalledWith(wrapper.vm.household, wrapper.vm.event);
+          });
+
+          it('should call jump if we associated', async () => {
+            wrapper = shallowMount(Component, {
+              localVue,
+              computed: {
+                householdAlreadyRegistered: () => false,
+                associationMode: () => true,
+                currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
+              },
+              mocks: {
+                $storage: storage,
+              },
+            });
+            wrapper.vm.$refs.form.validate = jest.fn(() => true);
+            wrapper.vm.jump = jest.fn();
+            wrapper.vm.associateHousehold = jest.fn(() => true);
+
+            await wrapper.vm.next();
+
+            expect(wrapper.vm.jump).toHaveBeenCalledWith(wrapper.vm.currentTabIndex + 1);
+          });
+        });
+
+        it('should call submit registration otherwise', async () => {
           wrapper = shallowMount(Component, {
             localVue,
             computed: {
               householdAlreadyRegistered: () => false,
-              associationMode: () => true,
+              associationMode: () => false,
+              currentTab: () => ({ id: 'review', titleKey: '', nextButtonTextKey: '' }),
             },
             mocks: {
               $storage: storage,
             },
           });
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({ id: 'review' }));
           wrapper.vm.jump = jest.fn();
 
           await wrapper.vm.next();
 
-          expect(wrapper.vm.$refs.form.validate).toBeCalled();
-        });
-
-        it('should call submit registration otherwise', async () => {
-          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({ id: 'review' }));
-          wrapper.vm.jump = jest.fn();
-
-          await wrapper.vm.next();
-
-          expect(wrapper.vm.$storage.registration.actions.submitRegistration)
-            .toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
         });
       });
     });
@@ -188,6 +251,31 @@ describe('Individual.vue', () => {
           params: {
             id,
           },
+        });
+      });
+    });
+
+    describe('associateHousehold', () => {
+      it('should display confirmation dialog ', async () => {
+        const household = mockHouseholdCreateData();
+        const event = { id: '1' };
+        wrapper.vm.$refs.confirmLeavePopup.open = jest.fn(() => false);
+
+        await wrapper.vm.associateHousehold(household, event);
+
+        expect(wrapper.vm.$refs.confirmLeavePopup.open).toHaveBeenCalledTimes(1);
+      });
+      it('should call create case file action if user confirmed', async () => {
+        const household = mockHouseholdCreateData();
+        const event = { id: '1' };
+        wrapper.vm.$refs.confirmLeavePopup.open = jest.fn(() => true);
+
+        await wrapper.vm.associateHousehold(household, event);
+
+        expect(wrapper.vm.$storage.caseFile.actions.createCaseFile).toHaveBeenCalledWith({
+          householdId: household.id,
+          eventId: event.id,
+          consentInformation: household.consentInformation,
         });
       });
     });
@@ -221,13 +309,63 @@ describe('Individual.vue', () => {
     });
 
     describe('titleLeave', () => {
-      it('should return proper text', () => {
+      it('should return proper text for association household', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => true,
+            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.titleLeave).toEqual('registration.associate.confirmation.title');
+      });
+
+      it('should return proper text otherwise', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => false,
+            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
         expect(wrapper.vm.titleLeave).toEqual('confirmLeaveDialog.title');
       });
     });
 
     describe('messagesLeave', () => {
-      it('should return proper text', () => {
+      it('should return proper text for association household', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => true,
+            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.messagesLeave).toEqual([
+          'registration.associate.confirmation.message1',
+          'registration.associate.confirmation.message2',
+        ]);
+      });
+      it('should return proper text otherwise', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => false,
+            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
         expect(wrapper.vm.messagesLeave).toEqual([
           'confirmLeaveDialog.message_1',
           'confirmLeaveDialog.message_2',

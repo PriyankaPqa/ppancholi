@@ -2,7 +2,7 @@ import {
   CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
   IImpactStatusValidation,
 } from '@/entities/case-file';
-import { CaseFilesService } from '@/services/case-files/entity';
+import { CaseFilesService, ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { ActionContext, ActionTree } from 'vuex';
 import {
   IOptionItem, EOptionLists,
@@ -10,6 +10,7 @@ import {
 import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.types';
 import { IOptionItemsService } from '@/services/optionItems';
 import { IListOption } from '@/types';
+import { IUserAccountEntity } from '@/entities/user-account';
 import { BaseModule, filterAndSortActiveItems, IState } from '../base';
 import { IRootState } from '../../store.types';
 
@@ -208,6 +209,19 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
       const { id, ...payloadData } = payload;
       return context.dispatch('genericSetAction',
         { id, payload: payloadData, element: 'Assign' });
+    },
+
+    createCaseFile: async (
+      context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>,
+      payload: ICreateCaseFileRequest,
+    ): Promise<IUserAccountEntity> => {
+      try {
+        const res = await this.service.createCaseFile(payload);
+        context.commit('set', res);
+        return res;
+      } catch (e) {
+        return null;
+      }
     },
 
   }

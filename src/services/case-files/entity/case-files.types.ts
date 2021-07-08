@@ -4,6 +4,19 @@ import {
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
 
+import { ERegistrationMethod } from '@crctech/registration-lib/src/types';
+
+export interface ICreateCaseFileRequest {
+  householdId: uuid;
+  eventId: uuid;
+  consentInformation: {
+    registrationMethod: ERegistrationMethod;
+    registrationLocationId: uuid;
+    crcUserName: string,
+    privacyDateTimeConsent: string;
+  }
+}
+
 export interface ICaseFilesService {
   fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]>;
   setCaseFileTags(id: uuid, payload: IListOption[]): Promise<ICaseFileEntity>;
@@ -13,6 +26,7 @@ export interface ICaseFilesService {
   setCaseFileIsDuplicate(id: uuid, isDuplicate: boolean): Promise<ICaseFileEntity>;
   setCaseFileTriage(id: uuid, triage: CaseFileTriage): Promise<ICaseFileEntity>;
   setCaseFileAssign(id: uuid, payload: {individuals: uuid[], teams: uuid[]}): Promise<ICaseFileEntity>;
+  createCaseFile(payload: ICreateCaseFileRequest): Promise<ICaseFileEntity>;
   setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
   setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
 }
@@ -25,5 +39,6 @@ export interface ICaseFilesServiceMock {
   setCaseFileIsDuplicate: jest.Mock<ICaseFileEntity>;
   setCaseFileTriage: jest.Mock<ICaseFileEntity>;
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
+  createCaseFile: jest.Mock<ICaseFileEntity>;
   setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
 }

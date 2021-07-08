@@ -328,5 +328,24 @@ describe('Case file entity module', () => {
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: { individuals, teams }, element: 'Assign' });
       });
     });
+
+    describe('createCaseFile', () => {
+      it('should call createCaseFile service with proper params', async () => {
+        const payload = {
+          householdId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          eventId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+          consentInformation: {
+            registrationMethod: 1,
+            registrationLocationId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+            crcUserName: 'string',
+            privacyDateTimeConsent: '2021-07-06T19:37:10.185Z',
+          },
+        };
+        module.service.createCaseFile = jest.fn();
+        await module.actions.createCaseFile(actionContext, payload);
+
+        expect(module.service.createCaseFile).toBeCalledWith(payload);
+      });
+    });
   });
 });

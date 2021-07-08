@@ -6,6 +6,7 @@ import {
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStore } from '@/store';
 import { IListOption } from '@/types';
+import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { CaseFileStorage } from './storage';
 
 const entityModuleName = CASE_FILE_ENTITIES;
@@ -165,6 +166,12 @@ describe('>>> Case File Storage', () => {
 
       storage.actions.setCaseFileAssign(id, individuals, teams);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileAssign`, { id, individuals, teams });
+    });
+
+    it('should proxy createCaseFile', () => {
+      const payload = {} as ICreateCaseFileRequest;
+      storage.actions.createCaseFile(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/createCaseFile`, payload);
     });
   });
 });

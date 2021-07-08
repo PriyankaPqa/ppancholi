@@ -30,6 +30,7 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     setCaseFileIsDuplicate: jest.fn(() => this.entity),
     setCaseFileTriage: jest.fn(() => this.entity),
     setCaseFileAssign: jest.fn(() => this.entity),
+    createCaseFile: jest.fn(() => this.entity),
     setCaseFileIdentityAuthentication: jest.fn(() => this.entity),
     setCaseFileValidationOfImpact: jest.fn(() => this.entity),
   }
