@@ -35,7 +35,11 @@
     </template>
 
     <div v-else>
-      <confirmation-error :errors="errors" :phone="phoneAssistance" />
+      <confirmation-error
+        :is-crc-registration="isCRCRegistration"
+        :errors="errors"
+        :phone="phoneAssistance"
+        @search-household="$emit('search-household')" />
     </div>
   </div>
 </template>

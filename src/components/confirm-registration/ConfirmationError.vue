@@ -1,27 +1,46 @@
 <template>
   <div class="grey-container pa-8">
     <v-row class="flex-row full-width ma-0 pa-0">
-      <v-icon size="48" color="secondary" class="pr-4 align-self-start">
-        mdi-alert-outline
-      </v-icon>
       <v-row class="row full-width rc-body14 pt-2" no-gutters>
-        <v-col v-if="firstError" cols="12" class="rc-body18 fw-bold" data-test="confirmation-errorRegistration-errorTitle">
-          {{ $t(firstError.code) }}
-        </v-col>
-        <v-col class="col" cols="12">
-          <div class="mt-7" data-test="confirmation-errorRegistration-errorMessage">
-            <span style="white-space: pre-line" class="rc-body14">
-              {{ errorMessage }}
-            </span>
+        <v-row>
+          <div>
+            <v-icon size="48" color="secondary" class="pr-4 align-self-start">
+              mdi-alert-outline
+            </v-icon>
           </div>
+          <v-col v-if="firstError" cols="8" class="rc-body18 fw-bold" data-test="confirmation-errorRegistration-errorTitle">
+            {{ $t(firstError.code) }}
+          </v-col>
+        </v-row>
+        <v-col class="col pl-16" cols="12">
+          <div
+            v-if="isDuplicateError && isCrcRegistration"
+            class="rc-body14 pt-6 pb-2">
+            <div class="mt-2 mb-6">
+              {{ $t('registration.confirmation.error.use.search') }}
+            </div>
+            <v-btn
+              color="primary"
+              data-test="confirmation-errorRegistration-beneficiarySearchButton"
+              @click="$emit('search-household')">
+              {{ $t('registration.confirmation.error.search.button') }}
+            </v-btn>
+          </div>
+          <template v-else>
+            <div class="mt-7" data-test="confirmation-errorRegistration-errorMessage">
+              <span style="white-space: pre-line" class="rc-body14">
+                {{ errorMessage }}
+              </span>
+            </div>
 
-          <div class="mt-5">
-            {{ $t('registration.confirmation.error.assistance') }}
-          </div>
+            <div class="mt-5">
+              {{ $t('registration.confirmation.error.assistance') }}
+            </div>
 
-          <div class="fw-bold rc-body18">
-            {{ phone }}
-          </div>
+            <div class="fw-bold rc-body18">
+              {{ phone }}
+            </div>
+          </template>
 
           <div class="rc-body18 mt-6 pb-2">
             {{ `${$t('registration.confirmation.error.thank_you')}!` }}
@@ -50,6 +69,10 @@ export default Vue.extend({
     phone: {
       type: String,
       required: true,
+    },
+    isCrcRegistration: {
+      type: Boolean,
+      required: false,
     },
   },
 
