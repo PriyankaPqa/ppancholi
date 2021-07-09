@@ -15,6 +15,11 @@ describe('>>> Teams Service', () => {
     expect(http.get).toHaveBeenCalledWith('/team/teams/1234');
   });
 
+  test('getTeamsAssignable is linked to the correct URL', async () => {
+    await service.getTeamsAssignable('1234');
+    expect(http.get).toHaveBeenCalledWith('/team/teams/events/1234/assignable');
+  });
+
   test('createTeam is linked to the correct URL and params', async () => {
     const payload = new Team(mockTeamSearchDataAggregate()[0]);
     await service.createTeam(payload);

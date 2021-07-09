@@ -254,8 +254,7 @@ export default Vue.extend({
 
     async getTeamsData() {
       const { eventId } = this.caseFile;
-      const params = { filter: { Events: { any: { Id: eventId } } } };
-      const teams: ITeam[] = await this.$storage.team.actions.searchAggregatedTeams(params);
+      const teams: ITeam[] = await this.$storage.team.actions.getTeamsAssignable(eventId);
       this.allTeams = teams.filter((t:ITeam) => t.status === ETeamStatus.Active);
     },
 

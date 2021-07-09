@@ -13,6 +13,10 @@ export class TeamsService implements ITeamsService {
     return this.http.get(`/team/teams/${id}`);
   }
 
+  async getTeamsAssignable(eventId: uuid): Promise<ITeamData[]> {
+    return this.http.get(`/team/teams/events/${eventId}/assignable`);
+  }
+
   async createTeam(team: ITeam): Promise<ITeamData> {
     const payload = this.teamToCreateTeamRequestPayload(team);
     return this.http.post('/team/teams', payload, { globalHandler: false });

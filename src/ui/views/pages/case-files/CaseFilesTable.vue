@@ -22,7 +22,7 @@
       </router-link>
 
       <v-icon
-        v-if="caseFile.isDuplicate"
+        v-if="caseFile.entity.isDuplicate"
         :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
         small
         color="secondary">

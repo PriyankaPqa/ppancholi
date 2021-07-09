@@ -2,6 +2,9 @@ import { Store } from 'vuex';
 import {
   Team, mockTeamSearchDataAggregate, mockTeamsData, mockTeamMembersData,
 } from '@/entities/team';
+import {
+ mockEventsData
+} from '@/entities/event';
 import { mockStore, IRootState } from '@/store';
 import _cloneDeep from 'lodash/cloneDeep';
 
@@ -50,6 +53,16 @@ describe('>>> Team Module', () => {
         const expected = mockTeamSearchDataAggregate()[0];
 
         expect(mutations.setTeam).toHaveBeenCalledWith(expect.anything(), expected);
+      });
+    });
+
+    describe('getTeamsAssignable', () => {
+      it('calls the service getTeamsAssignable with the right params', async () => {
+        const { id } = mockEventsData()[0];
+
+        await store.dispatch('team/getTeamsAssignable', id);
+
+        expect(store.$services.teams.getTeamsAssignable).toHaveBeenCalledWith(id);
       });
     });
 

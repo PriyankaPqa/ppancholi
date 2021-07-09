@@ -6,6 +6,7 @@ export const mockTeamsService = (): ITeamsServiceMock => ({
   createTeam: jest.fn(() => mockTeamsData()[0]),
   editTeam: jest.fn(() => mockTeamsData()[0]),
   getTeam: jest.fn(() => mockTeamsData()[0]),
+  getTeamsAssignable: jest.fn(() => mockTeamsData()),
   addTeamMembers: jest.fn(() => mockTeamsData()[0]),
   removeTeamMember: jest.fn(() => mockTeamsData()[0]),
 });

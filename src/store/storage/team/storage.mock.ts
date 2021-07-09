@@ -1,7 +1,7 @@
 import { mockSearchTeams, mockTeam } from '@/entities/team';
 import { IStorageMock } from './storage.types';
 
-export const mockStorageTeam = () : IStorageMock => ({
+export const mockStorageTeam = (): IStorageMock => ({
   getters: {
     team: jest.fn(),
   },
@@ -13,6 +13,7 @@ export const mockStorageTeam = () : IStorageMock => ({
   actions: {
     searchTeams: jest.fn(() => mockSearchTeams()),
     getTeam: jest.fn(),
+    getTeamsAssignable: jest.fn(() => [mockTeam()]),
     createTeam: jest.fn(),
     editTeam: jest.fn(),
     addTeamMembers: jest.fn(),

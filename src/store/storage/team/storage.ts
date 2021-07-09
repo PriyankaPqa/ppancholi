@@ -24,7 +24,9 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     getTeam(id: uuid): Promise<ITeam> {
       return store.dispatch('team/getTeam', id);
     },
-
+    getTeamsAssignable(eventId: uuid): Promise<ITeam[]> {
+      return store.dispatch('team/getTeamsAssignable', eventId);
+    },
     createTeam(payload: ITeam): Promise<ITeam> {
       return store.dispatch('team/createTeam', payload);
     },

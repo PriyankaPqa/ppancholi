@@ -64,7 +64,6 @@ const mutations = {
   addTeamMembers(state: IState, teamMembers: ITeamMemberData[]) {
     state.team.addTeamMembers(teamMembers);
   },
-
 };
 
 const actions = {
@@ -95,6 +94,20 @@ const actions = {
     } finally {
       context.commit('setGetLoading', false);
     }
+  },
+
+  async getTeamsAssignable(this: Store<IState>, context: ActionContext<IState, IRootState>, eventId: uuid): Promise<ITeam[]> {
+    const teams = await this.$services.teams.getTeamsAssignable(eventId);
+    if (teams && teams.length) {
+      const aggregatedTeams = await Promise.all(
+        teams.map(async (t) => {
+          const team = await buildTeamSearchDataPayload(t, context);
+          return new Team(team);
+        }),
+      );
+      return aggregatedTeams;
+    }
+    return [];
   },
 
   async createTeam(this: Store<IState>, context: ActionContext<IState, IRootState>, payload: ITeam): Promise<ITeam> {
@@ -141,11 +154,7 @@ const actions = {
    * @param params  Search params
    * @returns An array of teams with aggregated data for the team members
    */
-  async searchAggregatedTeams(
-    this: Store<IState>,
-    context: ActionContext<IState, IRootState>,
-    params: IAzureSearchParams,
-  ): Promise<ITeam[]> {
+  async searchAggregatedTeams(this: Store<IState>, context: ActionContext<IState, IRootState>, params: IAzureSearchParams): Promise<ITeam[]> {
     const res = await this.$services.teams.searchTeams(params);
 
     if (res && res.value && res.value.length) {
@@ -161,11 +170,7 @@ const actions = {
     return [];
   },
 
-  async addTeamMembers(
-    this: Store<IState>,
-    context: ActionContext<IState, IState>,
-    payload: { teamMembers: ITeamMemberData[] },
-  ): Promise<ITeam> {
+  async addTeamMembers(this: Store<IState>, context: ActionContext<IState, IState>, payload: { teamMembers: ITeamMemberData[] }): Promise<ITeam> {
     context.commit('setSubmitLoading', true);
     try {
       await this.$services.teams.addTeamMembers(context.state.team.id, payload.teamMembers);
@@ -176,11 +181,7 @@ const actions = {
     }
   },
 
-  async removeTeamMember(
-    this: Store<IState>,
-    context: ActionContext<IState, IState>,
-    payload: { teamMemberId: uuid },
-  ): Promise<ITeam> {
+  async removeTeamMember(this: Store<IState>, context: ActionContext<IState, IState>, payload: { teamMemberId: uuid }): Promise<ITeam> {
     context.commit('setRemoveLoading', true);
     try {
       await this.$services.teams.removeTeamMember(context.state.team.id, payload.teamMemberId);
@@ -190,13 +191,12 @@ const actions = {
       context.commit('setRemoveLoading', false);
     }
   },
-
 };
 
 export const team: Module<IState, IRootState> = {
   namespaced: true,
   state: moduleState as IState,
-  actions: actions as unknown as ActionTree<IState, IRootState>,
+  actions: (actions as unknown) as ActionTree<IState, IRootState>,
   mutations,
   getters,
 };
