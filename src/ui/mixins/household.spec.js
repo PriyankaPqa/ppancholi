@@ -143,6 +143,7 @@ describe('household', () => {
         wrapper.vm.parseContactInformation = jest.fn(() => ({}));
 
         const expected = {
+          registrationNumber: '12345',
           additionalMembers: [],
           consentInformation: {
             crcUserName: '',
@@ -260,6 +261,7 @@ describe('household', () => {
         };
 
         const household = mockCombinedHousehold();
+        household.entity.registrationNumber = '12345';
 
         const res = await wrapper.vm.buildHouseholdCreateData(household);
 
@@ -360,7 +362,7 @@ describe('household', () => {
             status: 1,
           },
           preferredLanguageOther: '',
-          primarySpokenLanguageOther: ''
+          primarySpokenLanguageOther: '',
         });
       });
     });

@@ -92,6 +92,7 @@ export default Vue.extend({
 
       return {
         id: household.entity.id,
+        registrationNumber: household.entity.registrationNumber,
         consentInformation: {
           crcUserName: '',
           registrationLocationId: '',

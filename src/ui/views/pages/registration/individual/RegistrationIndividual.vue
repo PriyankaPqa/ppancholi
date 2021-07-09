@@ -12,7 +12,7 @@
 
       <validation-observer ref="form" v-slot="{ failed }" slim>
         <rc-page-content
-          :show-back-button="associationMode"
+          :show-back-button="showBackButton"
           :show-help="currentTab.helpLink !== '' "
           :help-link="$t(currentTab.helpLink)"
           :title="getTitle"
@@ -148,6 +148,10 @@ export default mixins(individual).extend({
   },
 
   computed: {
+    showBackButton(): boolean {
+      return this.associationMode && this.currentTab.id !== 'confirmation';
+    },
+
     eventName(): string {
       return this.$m(this.event.name);
     },

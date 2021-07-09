@@ -295,6 +295,25 @@ describe('Individual.vue', () => {
       });
     });
 
+    describe('showBackButton', () => {
+      it('should return the proper value', () => {
+        expect(wrapper.vm.showBackButton).toEqual(true);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'confirmation', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+            associationMode: () => true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.showBackButton).toEqual(false);
+      });
+    });
+
     describe('eventName', () => {
       it('should return the even name', () => {
         const event = wrapper.vm.$storage.registration.getters.event();

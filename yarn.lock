@@ -998,10 +998,10 @@
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
-"@crctech/registration-lib@1.0.309":
-  version "1.0.309"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.309.tgz#9cdb57ee702fc90b954b438d7a0393cfd41bf7db"
-  integrity sha1-nNtX7nAvyQuVS0ONegOTz9Qb99s=
+"@crctech/registration-lib@1.0.326":
+  version "1.0.326"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.326.tgz#19545ec22ebae4d2ce2d8500ee054d7b6a59e950"
+  integrity sha1-GVRewi665NLOLYUA7gVNe2pZ6VA=
   dependencies:
     "@crctech/component-library" "1.0.19"
     axios "^0.21.1"

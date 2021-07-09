@@ -104,6 +104,7 @@
     "registration.close_registration.label": "registration.close_registration.label",
     "registration.confirm_registration.label": "registration.confirm_registration.label",
     "registration.confirmation.additional_assistance": "registration.confirmation.additional_assistance",
+    "registration.confirmation.associate": "registration.confirmation.associate",
     "registration.confirmation.email_sent": "registration.confirmation.email_sent",
     "registration.confirmation.error": "registration.confirmation.error",
     "registration.confirmation.error.assistance": "registration.confirmation.error.assistance",
