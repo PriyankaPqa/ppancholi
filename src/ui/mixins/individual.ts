@@ -3,7 +3,7 @@ import { TranslateResult } from 'vue-i18n';
 import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
 import { IRegistrationMenuItem, VForm } from '../../types';
-import { HouseholdCreate } from '../../entities/household-create';
+import { HouseholdCreate, IHouseholdCreateData } from '../../entities/household-create';
 import helpers from '../helpers';
 
 export default Vue.extend({
@@ -118,11 +118,15 @@ export default Vue.extend({
 
     print() {
       const event = this.$storage.registration.getters.event();
+
+      const registrationNumber = this.$store.state.registration.householdAssociationMode
+        ? (this.household as IHouseholdCreateData).registrationNumber : this.$storage.registration.getters.registrationResponse().registrationNumber;
+
       const routeData = this.$router.resolve({
         name: 'print-confirmation',
         query: {
           eventName: this.$m(event.name),
-          confirmationID: this.$storage.registration.getters.registrationResponse().registrationNumber,
+          confirmationID: registrationNumber,
           phoneAssistance: event.responseDetails.assistanceNumber,
         },
       });
@@ -145,6 +149,8 @@ export default Vue.extend({
       this.disableOtherTabs(confirmationScreenIndex);
 
       this.$storage.registration.mutations.mutateTabAtIndex(confirmationScreenIndex, (tab: IRegistrationMenuItem) => {
+        if (this.$store.state.registration.householdAssociationMode) tab.titleKey = 'registration.page.confirmation.association.title';
+
         tab.isTouched = true;
       });
 

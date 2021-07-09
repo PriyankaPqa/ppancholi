@@ -4,7 +4,11 @@
       <div class="fixed-height mb-n8 flex-container">
         <v-row no-gutters class="flex-body">
           <v-col cols="12" class="rc-body16 mb-3" data-test="confirm-registration-message">
-            {{ confirmationMessage }}
+            <i18n :path="confirmationMessagePath" tag="div">
+              <template #x>
+                <span class="fw-bold" data-test="confirm-registration-full-name">{{ fullName }}</span>
+              </template>
+            </i18n>
           </v-col>
 
           <v-col cols="12" sm="6" class="grey-container pt-6 pl-6">
@@ -49,7 +53,7 @@ import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
 import { IError } from '@/services/httpClient';
 import { IRegistrationMenuItem } from '../../types';
-import { IHouseholdCreate } from '../../entities/household-create';
+import { IHouseholdCreate, IHouseholdCreateData } from '../../entities/household-create';
 import { IEvent } from '../../entities/event';
 import { IHouseholdEntity } from '../../entities/household';
 import ConfirmationError from './ConfirmationError.vue';
@@ -64,8 +68,18 @@ export default Vue.extend({
       return this.errors?.length === 0;
     },
 
+    associationMode(): boolean {
+      return this.$store.state.registration.householdAssociationMode;
+    },
+
     response(): IHouseholdEntity {
       return this.$storage.registration.getters.registrationResponse();
+    },
+
+    fullName(): string {
+      const identity = this.household.primaryBeneficiary.identitySet;
+      const fullName = `${identity.firstName} ${identity.middleName} ${identity.lastName}`;
+      return fullName;
     },
 
     household(): IHouseholdCreate {
@@ -80,17 +94,12 @@ export default Vue.extend({
       return this.$storage.registration.getters.event();
     },
 
-    confirmationMessage(): TranslateResult {
-      if (this.response) {
-        const identity = this.household.primaryBeneficiary.identitySet;
-        const fullName = `${identity.firstName} ${identity.middleName} ${identity.lastName}`;
-        return this.$t('registration.confirmation.thank_you', { x: fullName });
-      }
-      return '';
+    confirmationMessagePath(): TranslateResult {
+      return this.associationMode ? 'registration.confirmation.associate' : 'registration.confirmation.thank_you';
     },
 
     registrationNumber(): string {
-      return this.response?.registrationNumber;
+      return this.associationMode ? (this.household as IHouseholdCreateData).registrationNumber : this.response?.registrationNumber;
     },
 
     phoneAssistance(): string {

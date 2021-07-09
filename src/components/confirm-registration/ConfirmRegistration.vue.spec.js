@@ -1,5 +1,5 @@
 import { mockStorage } from '@/store/storage/storage.mock';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockHouseholdEntity } from '@/entities/household';
 import { mockEvent } from '@/entities/event';
 import { mockHttpError } from '@/services/httpClient.mock';
@@ -18,7 +18,7 @@ const computed = {
       },
     },
   }),
-  confirmationMessage: () => 'confirm message',
+  confirmationMessagePath: () => 'confirm message',
   phoneAssistance: () => 'phone',
 };
 
@@ -33,10 +33,15 @@ describe('ConfirmRegistration.vue', () => {
       });
     });
 
-    describe('confirmationMessage', () => {
+    describe('confirmationMessagePath', () => {
       it('should render it', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed,
+        });
+
         const component = wrapper.findDataTest('confirm-registration-message');
-        expect(component.text()).toBe(computed.confirmationMessage());
+        expect(component.text()).toBe(computed.confirmationMessagePath());
       });
     });
 
@@ -62,6 +67,21 @@ describe('ConfirmRegistration.vue', () => {
         mocks: {
           $storage: storage,
         },
+        store: {
+          modules: {
+            registration: {
+              state: {
+                householdAssociationMode: false,
+              },
+            },
+          },
+        },
+      });
+    });
+
+    describe('associationMode', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.associationMode).toEqual(wrapper.vm.$store.state.registration.householdAssociationMode);
       });
     });
 
@@ -88,15 +108,71 @@ describe('ConfirmRegistration.vue', () => {
       });
     });
 
+    describe('fullName', () => {
+      it('returns the proper data', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            household: () => ({
+              primaryBeneficiary: {
+                identitySet: {
+                  firstName: 'firstName',
+                  middleName: 'middleName',
+                  lastName: 'lastName',
+                },
+              },
+            }),
+          },
+        });
+
+        expect(wrapper.vm.fullName).toEqual('firstName middleName lastName');
+      });
+    });
+
     describe('event', () => {
       it('returns the proper data', async () => {
         expect(wrapper.vm.event).toEqual(mockEvent());
       });
     });
 
-    describe('confirmationMessage', () => {
+    describe('confirmationMessagePath', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.confirmationMessage).toEqual('registration.confirmation.thank_you');
+        expect(wrapper.vm.confirmationMessagePath).toEqual('registration.confirmation.thank_you');
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => true,
+          },
+        });
+
+        expect(wrapper.vm.confirmationMessagePath).toEqual('registration.confirmation.associate');
+      });
+    });
+
+    describe('registrationNumber', () => {
+      it('returns the proper data', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => false,
+            household: () => ({ registrationNumber: 'associate registrationNumber' }),
+            response: () => ({ registrationNumber: 'registrationNumber' }),
+          },
+        });
+
+        expect(wrapper.vm.registrationNumber).toEqual('registrationNumber');
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => true,
+            household: () => ({ registrationNumber: 'associate registrationNumber' }),
+            response: () => ({ registrationNumber: 'registrationNumber' }),
+          },
+        });
+
+        expect(wrapper.vm.registrationNumber).toEqual('associate registrationNumber');
       });
     });
 
