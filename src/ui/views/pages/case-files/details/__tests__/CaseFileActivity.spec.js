@@ -14,31 +14,34 @@ const mockActivities = mockCaseFileActivities();
 describe('CaseFileActivity.vue', () => {
   let wrapper;
 
+  const mountWrapper = async (canEdit) => {
+    wrapper = shallowMount(Component, {
+      localVue,
+      data() {
+        return {
+          caseFileActivities: mockActivities,
+        };
+      },
+      computed: {
+        id() {
+          return mockCaseFile.entity.id;
+        },
+        canEdit() { return canEdit; },
+        caseFile() {
+          return mockCaseFile;
+        },
+      },
+      mocks: {
+        $storage: storage,
+      },
+    });
+    await wrapper.setData({ loading: false });
+  };
+
   describe('Template', () => {
     beforeEach(async () => {
       jest.clearAllMocks();
-
-      wrapper = shallowMount(Component, {
-        localVue,
-        data() {
-          return {
-            caseFileActivities: mockActivities,
-          };
-        },
-        computed: {
-          id() {
-            return mockCaseFile.entity.id;
-          },
-          caseFile() {
-            return mockCaseFile;
-          },
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
-
-      await wrapper.setData({ loading: false });
+      await mountWrapper(true);
     });
 
     describe('tags component', () => {
@@ -52,6 +55,15 @@ describe('CaseFileActivity.vue', () => {
 
       it('passes the tags as props', () => {
         expect(element.props('tags')).toEqual(mockCaseFile.metadata.tags);
+      });
+
+      it('passes readonly as props', async () => {
+        await mountWrapper(false);
+        element = wrapper.findDataTest('caseFileActivity-tags');
+        expect(element.props('readonly')).toBeTruthy();
+        await mountWrapper(true);
+        element = wrapper.findDataTest('caseFileActivity-tags');
+        expect(element.props('readonly')).toBeFalsy();
       });
 
       it('passes the case file id as props', () => {
@@ -71,6 +83,15 @@ describe('CaseFileActivity.vue', () => {
       it('renders', () => {
         const element = wrapper.findDataTest('caseFileActivity-triage-select');
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('passes readonly as props', async () => {
+        await mountWrapper(false);
+        let element = wrapper.findDataTest('caseFileActivity-triage-select');
+        expect(element.props('readonly')).toBeTruthy();
+        await mountWrapper(true);
+        element = wrapper.findDataTest('caseFileActivity-triage-select');
+        expect(element.props('readonly')).toBeFalsy();
       });
 
       it('calls setTriage when the value is changed', async () => {
@@ -109,6 +130,15 @@ describe('CaseFileActivity.vue', () => {
       });
       it('renders', () => {
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('sets disabled according to readonly', async () => {
+        await mountWrapper(false);
+        let element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
+        expect(element.props('disabled')).toBeTruthy();
+        await mountWrapper(true);
+        element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
+        expect(element.props('disabled')).toBeFalsy();
       });
     });
 
@@ -163,7 +193,7 @@ describe('CaseFileActivity.vue', () => {
       });
     });
 
-    describe('canMarkDuplicate', () => {
+    describe('canEdit', () => {
       it('returns the true for level 1+ users', async () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -182,9 +212,9 @@ describe('CaseFileActivity.vue', () => {
           },
         });
 
-        expect(wrapper.vm.canMarkDuplicate).toBe(false);
+        expect(wrapper.vm.canEdit).toBe(false);
         await wrapper.setRole('level1');
-        expect(wrapper.vm.canMarkDuplicate).toBe(true);
+        expect(wrapper.vm.canEdit).toBe(true);
       });
     });
 

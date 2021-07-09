@@ -15,51 +15,60 @@ const mockCaseFile = mockCombinedCaseFile();
 
 describe('CaseFileDetails.vue', () => {
   let wrapper;
+
+  const doMount = async (doMockStorage = true) => {
+    const params = {
+      localVue,
+      propsData: {
+        id: mockCaseFile.entity.id,
+      },
+      computed: {
+        caseFile() {
+          return mockCaseFile;
+        },
+        primaryBeneficiaryFullName() {
+          return 'mock-full-name';
+        },
+        hasPhoneNumbers() {
+          return true;
+        },
+        addressFirstLine() {
+          return '100 Right ave';
+        },
+        addressSecondLine() {
+          return 'Montreal, QC H2H 2H2';
+        },
+        primaryBeneficiary() {
+          return {
+            email: 'Jane.doe@email.com',
+            mobilePhoneNumber: {
+              number: '(514) 123 4444',
+              extension: '',
+            },
+            homePhoneNumber: {
+              number: '(514) 123 2222',
+              extension: '123',
+            },
+            alternatePhoneNumber: {
+              number: '(514) 123 1111',
+              extension: '',
+            },
+          };
+        },
+      },
+    };
+    if (doMockStorage) {
+      params.mocks = {
+        $storage: storage,
+      };
+    }
+    wrapper = shallowMount(Component, params);
+    await wrapper.setRole('level1');
+  };
+
   describe('Template', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          id: mockCaseFile.entity.id,
-        },
-        mocks: {
-          $storage: storage,
-        },
-        computed: {
-          caseFile() {
-            return mockCaseFile;
-          },
-          primaryBeneficiaryFullName() {
-            return 'mock-full-name';
-          },
-          hasPhoneNumbers() {
-            return true;
-          },
-          addressFirstLine() {
-            return '100 Right ave';
-          },
-          addressSecondLine() {
-            return 'Montreal, QC H2H 2H2';
-          },
-          primaryBeneficiary() {
-            return {
-              email: 'Jane.doe@email.com',
-              mobilePhoneNumber: {
-                number: '(514) 123 4444',
-                extension: '',
-              },
-              homePhoneNumber: {
-                number: '(514) 123 2222',
-                extension: '123',
-              },
-              alternatePhoneNumber: {
-                number: '(514) 123 1111',
-                extension: '',
-              },
-            };
-          },
-        },
-      });
+    beforeEach(async () => {
+      await doMount();
     });
 
     describe('page template left menu title', () => {
@@ -99,21 +108,27 @@ describe('CaseFileDetails.vue', () => {
 
     describe('verify-identity', () => {
       let element;
-      beforeEach(() => {
+      it('is rendered when level 1+', async () => {
+        await doMount(false);
+        await wrapper.setRole('level1');
         element = wrapper.findDataTest('caseFileDetails-verify-identity-icon');
-      });
-      it('is rendered', () => {
         expect(element.exists()).toBeTruthy();
+        await wrapper.setRole('contributorIM');
+        element = wrapper.findDataTest('caseFileDetails-verify-identity-icon');
+        expect(element.exists()).toBeFalsy();
       });
     });
 
     describe('verify-impact', () => {
       let element;
-      beforeEach(() => {
+      it('is rendered when level 1+', async () => {
+        await doMount(false);
+        await wrapper.setRole('level1');
         element = wrapper.findDataTest('caseFileDetails-verify-impact-icon');
-      });
-      it('is rendered', () => {
         expect(element.exists()).toBeTruthy();
+        await wrapper.setRole('contributorIM');
+        element = wrapper.findDataTest('caseFileDetails-verify-impact-icon');
+        expect(element.exists()).toBeFalsy();
       });
     });
 

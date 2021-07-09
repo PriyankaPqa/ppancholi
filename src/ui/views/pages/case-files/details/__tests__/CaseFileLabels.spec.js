@@ -1,5 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockCaseFileEntity, mockCombinedCaseFile } from '@/entities/case-file';
+import { mockCaseFileEntity } from '@/entities/case-file';
 import { mockStorage } from '@/store/storage';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 
@@ -31,10 +31,9 @@ describe('CaseFileLabels.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
-      computed: {
-        caseFile() {
-          return mockCaseFile;
-        },
+      propsData: {
+        caseFileLabels: mockCaseFile.labels,
+        caseFileId: mockCaseFile.id,
       },
       mocks: {
         $storage: storage,
@@ -43,29 +42,9 @@ describe('CaseFileLabels.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('caseFile', () => {
-      it('returns the case file from the store', () => {
-        const caseFile = mockCombinedCaseFile();
-        storage.caseFile.getters.get = jest.fn(() => caseFile);
-        wrapper = mount(Component, {
-          localVue,
-          mocks: {
-            $route: {
-              params: {
-                id: mockCaseFile.id,
-              },
-            },
-            $storage: storage,
-          },
-        });
-
-        expect(wrapper.vm.caseFile).toEqual(caseFile.entity);
-      });
-    });
-
     describe('labelsSorted', () => {
       it('returns only labels that have text', () => {
-        expect(wrapper.vm.caseFile.labels.length).toBe(4);
+        expect(wrapper.vm.caseFileLabels.length).toBe(4);
         expect(wrapper.vm.labelsSorted.length).toBe(2);
       });
 
@@ -94,23 +73,12 @@ describe('CaseFileLabels.vue', () => {
   describe('Methods', () => {
     describe('copyLabels', () => {
       it('copies the labels from the case file to data', async () => {
-        wrapper = mount(Component, {
-          localVue,
-          computed: {
-            caseFile() {
-              mockCaseFile.labels = [{
-                name: 'Label One',
-                order: 1,
-              }];
-
-              return mockCaseFile;
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
+        await wrapper.setProps({
+          caseFileLabels: [{
+            name: 'Label One',
+            order: 1,
+          }],
         });
-
         await wrapper.setData({
           labels: [],
         });
@@ -179,11 +147,19 @@ describe('CaseFileLabels.vue', () => {
   });
 
   describe('Template', () => {
-    test('clicking the labels button shows the dialog', async () => {
+    test('clicking the labels button shows the dialog when not readonly', async () => {
       expect(wrapper.findDataTest('case-file-labels-dialog').exists()).toBe(false);
       const button = wrapper.findDataTest('caseFileActivity-add-label-btn');
       await button.trigger('click');
       expect(wrapper.findDataTest('case-file-labels-dialog').exists()).toBe(true);
+    });
+
+    test('clicking the labels button does nothing when readonly', async () => {
+      await wrapper.setProps({ readonly: true });
+      expect(wrapper.findDataTest('case-file-labels-dialog').exists()).toBe(false);
+      const button = wrapper.findDataTest('caseFileActivity-add-label-btn');
+      await button.trigger('click');
+      expect(wrapper.findDataTest('case-file-labels-dialog').exists()).toBe(false);
     });
   });
 

@@ -6,13 +6,13 @@
       :data-test="`caseFileTags-chip-${tag.id}`"
       class="chip mr-3 mb-1"
       color="primary"
-      :close="!disabled"
+      :close="!readonly"
       @click:close="initDeleteTag(tag)">
       {{ $m(tag.name) }}
     </v-chip>
 
     <v-btn
-      v-if="!disabled"
+      v-if="!readonly"
       class="fw-bold"
       text
       small
@@ -119,6 +119,10 @@ export default Vue.extend({
       type: String,
       required: true,
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -130,7 +134,6 @@ export default Vue.extend({
       showDeleteTagDialog: false,
       isSubmitting: false,
       isLoadingTags: false,
-      disabled: false,
       initialInactiveTags: [] as IIdMultilingualName[],
     };
   },

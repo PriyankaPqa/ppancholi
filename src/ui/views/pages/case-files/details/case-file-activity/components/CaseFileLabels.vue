@@ -1,6 +1,7 @@
 <template>
   <div class="flex-row caseFileLabels__row pl-6">
     <v-btn
+      :disabled="readonly"
       class="mr-4"
       small
       data-test="caseFileActivity-add-label-btn"
@@ -50,7 +51,7 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import { RcDialog, VTextFieldWithValidation } from '@crctech/component-library';
-import { ICaseFileEntity, ICaseFileLabel } from '@/entities/case-file';
+import { ICaseFileLabel } from '@/entities/case-file';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { VForm } from '@/types';
 
@@ -64,6 +65,21 @@ export default Vue.extend({
     VTextFieldWithValidation,
   },
 
+  props: {
+    caseFileLabels: {
+      type: Array as ()=> ICaseFileLabel[],
+      required: true,
+    },
+    caseFileId: {
+      type: String,
+      required: true,
+    },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
+  },
+
   data() {
     return {
       showLabelsDialog: false,
@@ -73,13 +89,8 @@ export default Vue.extend({
   },
 
   computed: {
-    caseFile(): ICaseFileEntity {
-      const { id } = this.$route.params;
-      return this.$storage.caseFile.getters.get(id).entity;
-    },
-
     labelsSorted(): ICaseFileLabel[] {
-      const filtered = this.caseFile.labels.filter((l) => !!l.name);
+      const filtered = this.caseFileLabels.filter((l) => !!l.name);
       const sorted = _orderBy(filtered, 'order');
 
       return sorted;
@@ -108,9 +119,9 @@ export default Vue.extend({
       this.labels = [];
 
       for (let x = 0; x < NUM_LABELS; x += 1) {
-        if (this.caseFile?.labels && this.caseFile.labels[x]) {
+        if (this.caseFileLabels && this.caseFileLabels[x]) {
           this.labels.push({
-            name: this.caseFile.labels[x].name,
+            name: this.caseFileLabels[x].name,
             order: x + 1,
           });
         } else {
@@ -126,11 +137,10 @@ export default Vue.extend({
       const isValid = await (this.$refs.form as VForm).validate();
 
       if (isValid) {
-        const { id } = this.caseFile;
         this.loading = true;
 
         try {
-          await this.$storage.caseFile.actions.setCaseFileLabels(id, this.labels);
+          await this.$storage.caseFile.actions.setCaseFileLabels(this.caseFileId, this.labels);
           this.loading = false;
           this.showLabelsDialog = false;
         } catch {

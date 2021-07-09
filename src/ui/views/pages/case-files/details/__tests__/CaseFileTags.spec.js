@@ -53,6 +53,12 @@ describe('CaseFileTags.vue', () => {
         expect(wrapper.vm.initDeleteTag).toHaveBeenCalledTimes(1);
       });
 
+      it('has close attribute when not readonly', async () => {
+        expect(element.props('close')).toBeTruthy();
+        await wrapper.setProps({ readonly: true });
+        expect(element.props('close')).toBeFalsy();
+      });
+
       it('contains the tag name', () => {
         expect(element.text()).toEqual(wrapper.vm.existingTags[0].name.translation.en);
       });
@@ -63,8 +69,11 @@ describe('CaseFileTags.vue', () => {
       beforeEach(() => {
         element = wrapper.findDataTest('caseFile-add-tags-btn');
       });
-      it('is renders', () => {
+      it('is rendered when not readonly only', async () => {
         expect(element.exists()).toBeTruthy();
+        await wrapper.setProps({ readonly: true });
+        element = wrapper.findDataTest('caseFile-add-tags-btn');
+        expect(element.exists()).toBeFalsy();
       });
 
       it('calls the method initAddTag when clicked', async () => {

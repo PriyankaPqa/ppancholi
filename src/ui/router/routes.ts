@@ -171,21 +171,21 @@ export const routes: Array<RouteConfig> = [
               {
                 path: Routes.caseFile.details.path,
                 component: CaseFileDetails,
-                meta: { level: 'level1' },
+                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                 props: true,
                 children: [
                   {
                     path: Routes.caseFile.activity.path,
                     name: Routes.caseFile.activity.name,
                     component: CaseFileActivity,
-                    meta: { level: 'level1' },
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
                   },
                   {
                     path: Routes.caseFile.note.path,
                     name: Routes.caseFile.note.name,
                     component: CaseNote,
-                    meta: { level: 'level1' },
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
                   },
                 ],
@@ -194,7 +194,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.caseFile.householdProfile.path,
                 name: Routes.caseFile.householdProfile.name,
                 component: HouseholdProfile,
-                meta: { level: 'level1' },
+                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                 props: true,
               },
             ],

@@ -23,7 +23,7 @@
 
       <div class="mb-4">
         <v-btn
-          v-if="canVerifyIdentity"
+          v-if="canEdit"
           class="mr-2 status"
           text
           :color="colorVerifyIdentity"
@@ -36,7 +36,7 @@
         </v-icon>
 
         <v-btn
-          v-if="canChangeImpactValidation"
+          v-if="canEdit"
           class="mr-2 status"
           text
           :color="colorValidationImpact"
@@ -103,7 +103,7 @@
           mdi-account-multiple
         </v-icon>
         <span data-test="caseFileDetails-household-member-count">
-          {{ household && household.entity.members
+          {{ household && household.entity && household.entity.members
             ? $t('caseFileDetail.fullHouseHold', {x: household.entity.members.length})
             : "-" }}
         </span>
@@ -194,12 +194,8 @@ export default Vue.extend({
       return this.$storage.caseFile.getters.get(this.id);
     },
 
-    canVerifyIdentity(): boolean {
-      return true;
-    },
-
-    canChangeImpactValidation(): boolean {
-      return true;
+    canEdit(): boolean {
+      return this.$hasLevel('level1');
     },
 
     colorValidationImpact() {

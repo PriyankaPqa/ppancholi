@@ -111,6 +111,7 @@
     "registration.confirmation.error.message.duplicate": "Nous ne sommes pas en mesure de compléter votre inscription pour le moment en raison de l’une des situations suivantes:\n- Vous êtes déjà inscrit à cet événement\n- Vous vous êtes inscrit à un événement précédent",
     "registration.confirmation.error.thank_you": "Merci",
     "registration.confirmation.error.title": "Un problème est survenu lors de votre inscription.",
+    "registration.confirmation.error.use.search": "Veuillez utiliser la page de recherche de bénéficiaire pour associer le bénéficiaire à cet événement",
     "registration.confirmation.event": "Événement",
     "registration.confirmation.registration_id": "Votre numéro d'inscription",
     "registration.confirmation.small_business_button": "Inscrire une petite entreprise",

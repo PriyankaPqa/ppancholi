@@ -111,6 +111,7 @@
     "registration.confirmation.error.message.duplicate": "We are unable to complete your registration at this time due to one of the following reasons:\n- You have already registered with us for this event\n- You are registered with us from a previous event",
     "registration.confirmation.error.thank_you": "Thank you",
     "registration.confirmation.error.title": "There was an issue completing your registration.",
+    "registration.confirmation.error.use.search": "Please use the beneficiary search page to associate the beneficiary with this event",
     "registration.confirmation.event": "Event",
     "registration.confirmation.registration_id": "Your registration ID",
     "registration.confirmation.small_business_button": "Register small business",

@@ -9,6 +9,7 @@
     <template v-if="!loading" slot="top">
       <case-file-tags
         data-test="caseFileActivity-tags"
+        :readonly="!canEdit"
         :case-file-id="caseFile.entity.id"
         :tags="caseFile.metadata.tags || []"
         @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
@@ -26,6 +27,7 @@
             :value="caseFile.entity.triage"
             class="triage-select"
             data-test="caseFileActivity-triage-select"
+            :readonly="!canEdit"
             :menu-props="{ bottom: true, offsetY: true, contentClass: 'case-file-activity-dropdown', maxWidth: 'fit-content' }"
             :items="triageLevels"
             :loading="triageLoading"
@@ -38,10 +40,10 @@
 
           <v-btn
             data-test="caseFileActivity-duplicateBtn"
-            :class="{ 'no-pointer': !canMarkDuplicate }"
+            :class="{ 'no-pointer': !canEdit }"
             icon
             :loading="duplicateLoading"
-            :disabled="!canMarkDuplicate"
+            :disabled="!canEdit"
             @click="setCaseFileIsDuplicate">
             <v-icon :color="caseFile && caseFile.entity.isDuplicate ? 'secondary' : ''">
               $rctech-duplicate
@@ -57,7 +59,10 @@
     </template>
     <template v-if="!loading" slot="default">
       <v-row class="ma-0 pa-0">
-        <case-file-labels />
+        <case-file-labels
+          :case-file-id="caseFile.entity.id"
+          :case-file-labels="caseFile.entity.labels || []"
+          :readonly="!canEdit" />
       </v-row>
 
       <v-row class="ma-0 px-2 pt-0 no-gutters">
@@ -154,7 +159,8 @@ export default Vue.extend({
     locale() {
       return this.$i18n.locale;
     },
-    canMarkDuplicate(): boolean {
+
+    canEdit(): boolean {
       return this.$hasLevel('level1');
     },
 
