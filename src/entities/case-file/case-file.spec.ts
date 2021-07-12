@@ -1,4 +1,6 @@
-import { mockCaseFileEntity, CaseFileEntity, IdentityAuthenticationMethod, IdentityAuthenticationStatus, ImpactValidationMethod, ValidationOfImpactStatus } from './index';
+import {
+  mockCaseFileEntity, CaseFileEntity, IdentityAuthenticationMethod, IdentityAuthenticationStatus, ImpactValidationMethod, ValidationOfImpactStatus,
+} from './index';
 
 const mockCaseFileData = mockCaseFileEntity();
 
@@ -116,12 +118,12 @@ describe('>>> Case File', () => {
         const caseFile = new CaseFileEntity();
         expect(caseFile.privacyDateTimeConsent).toEqual(null);
       });
-      
+
       it('should instantiate identityAuthentication', () => {
         const caseFile = new CaseFileEntity(mockCaseFileData);
         expect(caseFile.identityAuthentication).toEqual(mockCaseFileData.identityAuthentication);
       });
-      
+
       it('should default identityAuthentication', () => {
         const caseFile = new CaseFileEntity();
         expect(caseFile.identityAuthentication).toEqual({
@@ -135,11 +137,11 @@ describe('>>> Case File', () => {
         const caseFile = new CaseFileEntity(mockCaseFileData);
         expect(caseFile.impactStatusValidation).toEqual(mockCaseFileData.impactStatusValidation);
       });
-      
+
       it('should default impactStatusValidation', () => {
         const caseFile = new CaseFileEntity();
         expect(caseFile.impactStatusValidation).toEqual({
-          method: ImpactValidationMethod.NotApplicable, status: ValidationOfImpactStatus.Undetermined
+          method: ImpactValidationMethod.NotApplicable, status: ValidationOfImpactStatus.Undetermined,
         });
       });
     });

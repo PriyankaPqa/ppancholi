@@ -3,7 +3,7 @@
     :title="title"
     outer-scroll
     show-search
-    show-add-button
+    :show-add-button="showAddButton"
     add-button-data-test="caseNote__createBtn"
     show-help
     content-padding="6"
@@ -13,9 +13,20 @@
     @add-button="isBeingCreated = true">
     <rc-page-loading v-if="loading" />
     <template v-else>
-      <div class="caseNote__filter">
-        <v-toolbar elevation="1" color="grey lighten-5" />
-      </div>
+      <filter-toolbar class="caseNote__filter" :filter-options="[]" :count="totalCount" :filter-key="filterKey">
+        <template #toolbarActions>
+          <div class="flex-row">
+            <span
+              class="rc-body14 mr-4 noselect pointer"
+              data-test="caseNote__sortBtn"
+              @keydown="dateSortDesc = !dateSortDesc"
+              @click="dateSortDesc = !dateSortDesc">
+              {{ $t('caseNote.sortByDate') }}
+              <v-icon>{{ dateSortDesc ? 'mdi-menu-down' : ' mdi-menu-up' }}</v-icon>
+            </span>
+          </div>
+        </template>
+      </filter-toolbar>
 
       <case-note-form
         v-if="isBeingCreated"
@@ -50,6 +61,7 @@
 import Vue from 'vue';
 import { RcPageContent, RcPageLoading, RcConfirmationDialog } from '@crctech/component-library';
 import { FilterKey } from '@/entities/user-account';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { ICaseNoteCombined } from '@/entities/case-note';
 import _orderBy from 'lodash/orderBy';
 import { NavigationGuardNext, Route } from 'vue-router';
@@ -68,6 +80,7 @@ export default Vue.extend({
     CaseNoteForm,
     CaseFileListWrapper,
     CaseNotesListItem,
+    FilterToolbar,
     RcConfirmationDialog,
   },
 
@@ -87,8 +100,9 @@ export default Vue.extend({
       caseNoteIds: [] as string[],
       isBeingCreated: false,
       isBeingEdited: false,
-      FilterKey,
+      filterKey: FilterKey.CaseNotes,
       totalCount: 0,
+      dateSortDesc: true,
       options: {
         page: 1,
         itemsPerPage: 10,
@@ -105,10 +119,16 @@ export default Vue.extend({
       },
     };
   },
+
   computed: {
+    showAddButton(): boolean {
+      return this.$hasLevel('level1') || this.$hasRole('contributorFinance') || this.$hasRole('contributor3');
+    },
+
     caseNotes(): ICaseNoteCombined[] {
       const caseNotes = this.$storage.caseNote.getters.getByIds(this.caseNoteIds);
-      return _orderBy(caseNotes, ['entity.isPinned', 'entity.created'], ['desc', 'desc']);
+      const orderbyDate = this.dateSortDesc ? 'desc' : 'asc';
+      return _orderBy(caseNotes, ['entity.isPinned', 'entity.created'], ['desc', orderbyDate]);
     },
 
     title(): string {
@@ -131,6 +151,13 @@ export default Vue.extend({
         this.$t('confirmLeaveDialog.message_1'),
         this.$t('confirmLeaveDialog.message_2'),
       ];
+    },
+  },
+
+  watch: {
+    dateSortDesc(desc: boolean) {
+      this.params.orderBy = `Entity/IsPinned desc, Entity/Created${desc ? ' desc' : ''}`;
+      this.searchCaseNotes();
     },
   },
 

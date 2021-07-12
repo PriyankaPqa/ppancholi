@@ -6,7 +6,7 @@ import { CaseFilesService } from '@/services/case-files/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import {
   CaseFileStatus, CaseFileTriage, mockCaseFileActivities, mockTagsOptions, mockCaseFileEntity,
-  IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod, IImpactStatusValidation, 
+  IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod, IImpactStatusValidation,
   ImpactValidationMethod, ValidationOfImpactStatus,
 } from '@/entities/case-file';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
@@ -21,7 +21,9 @@ const actionContext = {
   commit: jest.fn(),
   dispatch: jest.fn(),
   state: null,
-  getters: { tagsOptions: jest.fn(), inactiveReasons: jest.fn(), closeReasons: jest.fn(), screeningIds: jest.fn() },
+  getters: {
+    tagsOptions: jest.fn(), inactiveReasons: jest.fn(), closeReasons: jest.fn(), screeningIds: jest.fn(),
+  },
   rootState: null,
   rootGetters: {},
 } as ActionContext<ICaseFileEntityState, ICaseFileEntityState>;
@@ -285,21 +287,22 @@ describe('Case file entity module', () => {
       it('dispatches the right action with the right payload', async () => {
         const id = 'mock-id';
         const identityAuthentication: IIdentityAuthentication = {
-          identificationIds: [], status: IdentityAuthenticationStatus.Failed,
-          method: IdentityAuthenticationMethod.System
+          identificationIds: [],
+          status: IdentityAuthenticationStatus.Failed,
+          method: IdentityAuthenticationMethod.System,
         };
         await module.actions.setCaseFileIdentityAuthentication(actionContext, { identityAuthentication, id });
 
         expect(actionContext.dispatch).toBeCalledWith('genericSetAction', { id, payload: identityAuthentication, element: 'IdentityAuthentication' });
       });
     });
-    
+
     describe('setCaseFileValidationOfImpact', () => {
       it('dispatches the right action with the right payload', async () => {
         const id = 'mock-id';
         const impactStatusValidation: IImpactStatusValidation = {
           method: ImpactValidationMethod.Manual,
-          status: ValidationOfImpactStatus.Impacted
+          status: ValidationOfImpactStatus.Impacted,
         };
         await module.actions.setCaseFileValidationOfImpact(actionContext, { impactStatusValidation, id });
 

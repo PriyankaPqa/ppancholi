@@ -1,6 +1,6 @@
 import { CASE_FILE_ENTITIES, CASE_FILE_METADATA } from '@/constants/vuex-modules';
 import {
-  CaseFileTriage, ICaseFileLabel, CaseFileStatus, IIdentityAuthentication, IdentityAuthenticationMethod, 
+  CaseFileTriage, ICaseFileLabel, CaseFileStatus, IIdentityAuthentication, IdentityAuthenticationMethod,
   IdentityAuthenticationStatus, IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus,
 } from '@/entities/case-file';
 import { mockOptionItemData } from '@/entities/optionItem';
@@ -136,7 +136,7 @@ describe('>>> Case File Storage', () => {
       const identityAuthentication = {
         identificationIds: ['abc'],
         method: IdentityAuthenticationMethod.InPerson,
-        status: IdentityAuthenticationStatus.Passed
+        status: IdentityAuthenticationStatus.Passed,
       } as IIdentityAuthentication;
       storage.actions.setCaseFileIdentityAuthentication(id, identityAuthentication);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileIdentityAuthentication`, { id, identityAuthentication });
@@ -146,7 +146,7 @@ describe('>>> Case File Storage', () => {
       const id = '5';
       const impactStatusValidation: IImpactStatusValidation = {
         method: ImpactValidationMethod.Manual,
-        status: ValidationOfImpactStatus.Impacted
+        status: ValidationOfImpactStatus.Impacted,
       };
       storage.actions.setCaseFileValidationOfImpact(id, impactStatusValidation);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCaseFileValidationOfImpact`, { id, impactStatusValidation });

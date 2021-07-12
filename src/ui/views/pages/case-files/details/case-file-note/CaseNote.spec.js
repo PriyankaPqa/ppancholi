@@ -1,3 +1,4 @@
+import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@/entities/case-note';
 import { mockStorage } from '@/store/storage';
@@ -32,6 +33,30 @@ describe('CaseNote.vue', () => {
           isBeingCreated: true,
         });
         expect(wrapper.findComponent(CaseNoteForm)).toBeTruthy();
+      });
+    });
+
+    describe('Watch dateSortDesc', () => {
+      it('sets orderBy in the params', async () => {
+        expect(wrapper.vm.params.orderBy).toBe('Entity/IsPinned desc, Entity/Created desc');
+
+        await wrapper.setData({
+          dateSortDesc: false,
+        });
+
+        expect(wrapper.vm.params.orderBy).toBe('Entity/IsPinned desc, Entity/Created');
+      });
+
+      it('calls searchCaseNotes', async () => {
+        wrapper.vm.searchCaseNotes = jest.fn();
+
+        expect(wrapper.vm.searchCaseNotes).toHaveBeenCalledTimes(0);
+
+        await wrapper.setData({
+          dateSortDesc: false,
+        });
+
+        expect(wrapper.vm.searchCaseNotes).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -76,13 +101,49 @@ describe('CaseNote.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('showAddButton', () => {
+      it('returns correct value', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: {
+              caseNote: new CaseNoteStorageMock().make(),
+            },
+          },
+        });
+
+        await wrapper.setRole('level1');
+        expect(wrapper.vm.showAddButton).toBe(true);
+
+        await wrapper.setRole('level6');
+        expect(wrapper.vm.showAddButton).toBe(true);
+
+        await wrapper.setRole('contributorFinance');
+        expect(wrapper.vm.showAddButton).toBe(true);
+
+        await wrapper.setRole('contributor3');
+        expect(wrapper.vm.showAddButton).toBe(true);
+
+        await wrapper.setRole('contributorIM');
+        expect(wrapper.vm.showAddButton).toBe(false);
+
+        await wrapper.setRole('read only');
+        expect(wrapper.vm.showAddButton).toBe(false);
+      });
+    });
+
     describe('caseNotes', () => {
-      it('calls the getByIds getter and sets the result into caseNotes, ordered by ', () => {
-        const caseFiles = [
+      let caseFiles = [];
+
+      beforeEach(async () => {
+        jest.clearAllMocks();
+
+        caseFiles = [
           mockCombinedCaseNote({ id: '1', isPinned: false, created: '2020-01-02' }),
           mockCombinedCaseNote({ id: '2', isPinned: true, created: '2020-01-01' }),
           mockCombinedCaseNote({ id: '3', isPinned: false, created: '2020-01-03' }),
         ];
+
         storage.caseNote.getters.getByIds = jest.fn(() => caseFiles);
 
         wrapper = shallowMount(Component, {
@@ -91,8 +152,18 @@ describe('CaseNote.vue', () => {
             $storage: storage,
           },
         });
+      });
 
+      it('calls the getByIds getter and sets the result into caseNotes, ordered by ', () => {
         expect(wrapper.vm.caseNotes).toEqual([caseFiles[1], caseFiles[2], caseFiles[0]]);
+      });
+
+      it('sorts caseNotes based on dateSortDesc', async () => {
+        await wrapper.setData({
+          dateSortDesc: false,
+        });
+
+        expect(wrapper.vm.caseNotes).toEqual([caseFiles[1], caseFiles[0], caseFiles[2]]);
       });
     });
 
