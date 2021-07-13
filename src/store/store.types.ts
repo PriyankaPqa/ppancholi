@@ -7,6 +7,7 @@ import { IUserAccountMetadata } from '@/entities/user-account';
 import { ICaseFileMetadata } from '@/entities/case-file';
 import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { ICaseNoteMetadata } from '@/entities/case-note';
+import { ICaseFileReferralMetadata } from '@/entities/case-file-referral';
 import { IState as IUserState } from './modules/user/user.types';
 import { IUserAccountEntityState } from './modules/user-account/userAccountEntity.types';
 import { ICaseFileEntityState } from './modules/case-file/caseFileEntity.types';
@@ -18,6 +19,7 @@ import { IState as IProgramState } from './modules/program/program.types';
 import { IState as IBaseState } from './modules/base/base.types';
 import { IState as IFinancialAssistanceState } from './modules/financial-assistance/financial-assistance.types';
 import { ICaseNoteEntityState } from './modules/case-note/caseNoteEntity.types';
+import { ICaseFileReferralEntityState } from './modules/case-file-referral/caseFileReferralEntity.types';
 
 export interface IRootState {
   version: string;
@@ -25,6 +27,8 @@ export interface IRootState {
   [vuexModule.CASE_FILE_METADATA]?: IBaseState<ICaseFileMetadata>
   [vuexModule.CASE_NOTE_ENTITIES]?: ICaseNoteEntityState,
   [vuexModule.CASE_NOTE_METADATA]?: IBaseState<ICaseNoteMetadata>
+  [vuexModule.CASE_REFERRAL_ENTITIES]?: ICaseFileReferralEntityState,
+  [vuexModule.CASE_REFERRAL_METADATA]?: IBaseState<ICaseFileReferralMetadata>
   [vuexModule.USER_MODULE]?: IUserState,
   [vuexModule.USER_ACCOUNT_ENTITIES]?: IUserAccountEntityState,
   [vuexModule.USER_ACCOUNT_METADATA]?: IBaseState<IUserAccountMetadata>,

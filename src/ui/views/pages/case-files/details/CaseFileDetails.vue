@@ -268,9 +268,7 @@ export default Vue.extend({
       }, {
         text: this.$t('caseFileDetail.menu_referrals') as string,
         test: 'referrals',
-        // to: routes.caseFileReferrals.name,
-        disabled: true,
-        // exact: false,
+        to: routes.caseFile.referrals.home.name,
       }, {
         text: this.$t('caseFileDetail.menu_recoveryPlan') as string,
         test: 'recovery-plan',

@@ -13,11 +13,13 @@ import { makeStorage as makeTeamStorage } from './team';
 import { makeStorage as makeProgramStorage } from './program';
 import { makeStorage as makeFinancialAssistanceStorage } from './financial-assistance';
 import { CaseNoteStorage } from './case-note';
+import { CaseFileReferralStorage } from './case-file-referral';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   user: makeUserStorage(store),
   caseFile: new CaseFileStorage(store, vuexModule.CASE_FILE_ENTITIES, vuexModule.CASE_FILE_METADATA).make(),
   caseNote: new CaseNoteStorage(store, vuexModule.CASE_NOTE_ENTITIES, vuexModule.CASE_NOTE_METADATA).make(),
+  caseFileReferral: new CaseFileReferralStorage(store, vuexModule.CASE_REFERRAL_ENTITIES, vuexModule.CASE_REFERRAL_METADATA).make(),
   dashboard: makeDashboardStorage(store),
   event: makeEventStorage(store),
   optionList: makeOptionListStorage(store),

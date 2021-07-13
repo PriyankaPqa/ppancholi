@@ -27,6 +27,8 @@ import { OptionItemsService } from '@/services/optionItems';
 import { CaseFilesMetadataService } from '@/services/case-files/metadata';
 import { CaseNotesService } from '@/services/case-notes/entity';
 import { CaseNotesMetadataService } from '@/services/case-notes/metadata';
+import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
+import { CaseFileReferralsMetadataService } from '@/services/case-file-referrals/metadata';
 import { user } from './modules/user';
 import { dashboard } from './modules/dashboard';
 import { event } from './modules/event';
@@ -37,6 +39,8 @@ import { CaseFileEntityModule } from './modules/case-file/caseFileEntity';
 import { CaseFileMetadataModule } from './modules/case-file/caseFileMetadata';
 import { CaseNoteEntityModule } from './modules/case-note/caseNoteEntity';
 import { CaseNoteMetadataModule } from './modules/case-note/caseNoteMetadata';
+import { CaseFileReferralEntityModule } from './modules/case-file-referral/caseFileReferralEntity';
+import { CaseFileReferralMetadataModule } from './modules/case-file-referral/caseFileReferralMetadata';
 import { financialAssistance } from './modules/financial-assistance';
 
 const i18n = {
@@ -51,6 +55,10 @@ const mockConfig = {
     [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(new CaseFilesMetadataService(httpClient)).getModule(),
     [vuexModule.CASE_NOTE_ENTITIES]: new CaseNoteEntityModule(new CaseNotesService(httpClient), new OptionItemsService(httpClient)).getModule(),
     [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(new CaseNotesMetadataService(httpClient)).getModule(),
+    [vuexModule.CASE_REFERRAL_ENTITIES]:
+      new CaseFileReferralEntityModule(new CaseFileReferralsService(httpClient), new OptionItemsService(httpClient)).getModule(),
+    [vuexModule.CASE_REFERRAL_METADATA]:
+      new CaseFileReferralMetadataModule(new CaseFileReferralsMetadataService(httpClient)).getModule(),
     [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.EVENT_MODULE]: event,

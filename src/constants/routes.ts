@@ -50,6 +50,16 @@ const routes = {
       path: 'note',
       name: 'casefile.note',
     },
+    referrals: {
+      home: {
+        path: 'referrals',
+        name: 'casefile.referrals',
+      },
+      details: {
+        path: 'referrals/:id',
+        name: 'casefile.referrals.details',
+      },
+    },
     householdProfile: {
       path: 'household/:id',
       name: 'casefile.householdProfile',

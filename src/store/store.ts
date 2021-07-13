@@ -19,6 +19,8 @@ import { HouseholdsService } from '@crctech/registration-lib/src/services/househ
 import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
 import { CaseNotesService } from '@/services/case-notes/entity';
 import { CaseNotesMetadataService } from '@/services/case-notes/metadata';
+import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
+import { CaseFileReferralsMetadataService } from '@/services/case-file-referrals/metadata';
 import { OptionItemsService } from '../services/optionItems/optionItems';
 import { IRootState } from './store.types';
 import { user } from './modules/user';
@@ -32,6 +34,8 @@ import { financialAssistance } from './modules/financial-assistance';
 import { tabs } from './modules/registration/tabs';
 import { CaseNoteEntityModule } from './modules/case-note/caseNoteEntity';
 import { CaseNoteMetadataModule } from './modules/case-note/caseNoteMetadata';
+import { CaseFileReferralEntityModule } from './modules/case-file-referral/caseFileReferralEntity';
+import { CaseFileReferralMetadataModule } from './modules/case-file-referral/caseFileReferralMetadata';
 
 Vue.use(Vuex);
 
@@ -45,6 +49,10 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(new CaseFilesMetadataService(httpClient)).getModule(),
     [vuexModule.CASE_NOTE_ENTITIES]: new CaseNoteEntityModule(new CaseNotesService(httpClient), new OptionItemsService(httpClient)).getModule(),
     [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(new CaseNotesMetadataService(httpClient)).getModule(),
+    [vuexModule.CASE_REFERRAL_ENTITIES]:
+      new CaseFileReferralEntityModule(new CaseFileReferralsService(httpClient), new OptionItemsService(httpClient)).getModule(),
+    [vuexModule.CASE_REFERRAL_METADATA]:
+      new CaseFileReferralMetadataModule(new CaseFileReferralsMetadataService(httpClient)).getModule(),
     [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.EVENT_MODULE]: event,

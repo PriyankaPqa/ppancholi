@@ -550,52 +550,6 @@ describe('CaseFileDetails.vue', () => {
         expect(wrapper.vm.provinceCodeName).toEqual('mock-other-province');
       });
     });
-
-    describe('tabs', () => {
-      it('returns the right array', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: mockCaseFile.entity.id,
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        expect(wrapper.vm.tabs).toEqual(
-          [{
-            text: 'caseFileDetail.menu_activity',
-            test: 'case-file-activity',
-            icon: '',
-            to: routes.caseFile.activity.name,
-          }, {
-            text: 'caseFileDetail.menu_case_note',
-            test: 'case-note',
-            to: 'casefile.note',
-          }, {
-            text: 'caseFileDetail.menu_documents',
-            test: 'attached-documents',
-            disabled: true,
-          }, {
-            text: 'caseFileDetail.menu_financial_assistance',
-            test: 'financial-assistance',
-            disabled: true,
-          }, {
-            text: 'caseFileDetail.menu_assessments',
-            test: 'assessments',
-            disabled: true,
-          }, {
-            text: 'caseFileDetail.menu_referrals',
-            test: 'referrals',
-            disabled: true,
-          }, {
-            text: 'caseFileDetail.menu_recoveryPlan',
-            test: 'recovery-plan',
-            disabled: true,
-          }],
-        );
-      });
-    });
   });
 
   describe('lifecycle', () => {

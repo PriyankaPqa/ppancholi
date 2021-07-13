@@ -14,3 +14,5 @@ export const REGISTRATION_MODULE = 'registration';
 export const FINANCIAL_ASSISTANCE_MODULE = 'financialAssistance';
 export const USER_ACCOUNT_ENTITIES = 'userAccountEntities';
 export const USER_ACCOUNT_METADATA = 'userAccountMetadata';
+export const CASE_REFERRAL_ENTITIES = 'caseReferralEntities';
+export const CASE_REFERRAL_METADATA = 'caseReferralMetadata';

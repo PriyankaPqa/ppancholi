@@ -19,6 +19,7 @@ const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/view
 const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/CaseFileDetails.vue');
 const CaseFileActivity = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
 const CaseNote = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-note/CaseNote.vue');
+const CaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');
 
 const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/layout/EventsLayout.vue');
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
@@ -187,6 +188,22 @@ export const routes: Array<RouteConfig> = [
                     component: CaseNote,
                     meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
+                  },
+                  {
+                    path: Routes.caseFile.referrals.home.path,
+                    name: Routes.caseFile.referrals.home.name,
+                    component: CaseFileReferral,
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
+                    children: [
+                      {
+                        path: Routes.caseFile.referrals.details.path,
+                        name: Routes.caseFile.referrals.details.name,
+                        component: CaseFileReferral,
+                        meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                        props: true,
+                      },
+                    ],
                   },
                 ],
               },
