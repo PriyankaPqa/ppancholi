@@ -70,6 +70,7 @@ export interface IStorage {
     setHouseholdAssociationMode(payload: boolean): void;
     setHouseholdAlreadyRegistered(payload: boolean): void;
     setHouseholdCreate(payload: IHouseholdCreateData): void;
+    setRegistrationErrors(payload: IError[]): void;
   };
 
   actions: {
@@ -136,6 +137,7 @@ export interface IStorageMock {
     setHouseholdAssociationMode: jest.Mock<void>;
     setHouseholdAlreadyRegistered: jest.Mock<void>;
     setHouseholdCreate: jest.Mock<void>;
+    setRegistrationErrors: jest.Mock<void>;
   };
 
   actions: {

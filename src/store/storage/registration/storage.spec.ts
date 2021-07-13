@@ -7,6 +7,7 @@ import { mockIdentitySet } from '@/entities/value-objects/identity-set';
 import { mockAddress } from '@/entities/value-objects/address';
 import { mockCampGround } from '@/entities/value-objects/current-address';
 import { mockHouseholdCreateData } from '@/entities/household-create';
+import { mockHttpError } from '@/services/httpClient.mock';
 import { makeStorage } from './storage';
 import { mockEventData } from '../../../entities/event';
 import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
@@ -250,6 +251,12 @@ describe('>>> Registration Storage', () => {
     it('should proxy setHouseholdCreate', () => {
       storage.mutations.setHouseholdCreate(mockHouseholdCreateData());
       expect(store.commit).toBeCalledWith('registration/setHouseholdCreate', mockHouseholdCreateData());
+    });
+
+    it('should proxy setRegistrationErrors', () => {
+      const errors = [mockHttpError()];
+      storage.mutations.setRegistrationErrors(errors);
+      expect(store.commit).toBeCalledWith('registration/setRegistrationErrors', errors);
     });
   });
 

@@ -67,6 +67,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     setHouseholdAssociationMode: jest.fn(),
     setHouseholdAlreadyRegistered: jest.fn(),
     setHouseholdCreate: jest.fn(),
+    setRegistrationErrors: jest.fn(),
   },
 
   actions: {

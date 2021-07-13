@@ -207,6 +207,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     setHouseholdCreate(payload: IHouseholdCreateData) {
       store.commit('registration/setHouseholdCreate', payload);
     },
+
+    setRegistrationErrors(payload: IError[]) {
+      store.commit('registration/setRegistrationErrors', payload);
+    },
   },
 
   actions: {
