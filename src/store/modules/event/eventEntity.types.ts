@@ -1,13 +1,12 @@
+import { IEventEntity } from '@/entities/event';
 import { IOptionItemData } from '@/entities/optionItem';
-import { IEvent } from '@/entities/event';
+import { IState } from '../base/base.types';
 
-export type IState = {
+export interface IEventEntityState extends IState<IEventEntity> {
   agreementTypes: IOptionItemData[];
-  eventTypes: IOptionItemData[];
-  events: IEvent[];
   agreementTypesFetched: boolean;
+  eventTypes: IOptionItemData[];
   eventTypesFetched: boolean;
-  eventsFetched: boolean;
   getLoading: boolean;
   searchLoading: boolean,
-};
+}

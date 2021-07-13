@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { Event, mockEventsSearchData } from '@/entities/event';
+import { mockEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockUserStateLevel } from '@/test/helpers';
 
@@ -7,7 +7,7 @@ import Component from '../components/EventCallCentreSection.vue';
 
 const localVue = createLocalVue();
 
-const mockEvent = new Event(mockEventsSearchData()[0]);
+const mockEvent = mockEventEntity();
 
 describe('EventCallCentreSection.vue', () => {
   let wrapper;
@@ -175,7 +175,7 @@ describe('EventCallCentreSection.vue', () => {
 
       it('emits edit with the right parameters', async () => {
         await wrapper.vm.editFromInfoDialog();
-        expect(wrapper.emitted('edit')[0][0]).toBe(wrapper.vm.callCentre.name.translation.en);
+        expect(wrapper.emitted('edit')[0][0]).toBe(wrapper.vm.callCentre.id);
       });
     });
   });

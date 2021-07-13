@@ -27,7 +27,7 @@ import { TranslateResult } from 'vue-i18n';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
-import { Event, IEvent } from '@/entities/event';
+import { EventEntity } from '@/entities/event';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
@@ -55,7 +55,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
       eventLoading: false,
       loading: false,
       error: false,
-      event: new Event() as IEvent,
+      event: new EventEntity(),
+      isNameUnique: true,
       isDirty: false, // Need to manually sync dirty state because v-switch doesn't work with vee-validate
     };
   },
@@ -82,14 +83,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.eventLoading = true;
 
       try {
-        this.event = await this.$storage.event.actions.fetchEvent(this.id);
+        const storeEvent = await this.$storage.event.actions.fetch(this.id);
+        this.event = new EventEntity(storeEvent.entity);
       } catch {
         this.error = true;
       } finally {
         this.eventLoading = false;
       }
     } else {
-      this.event = new Event();
+      this.event = new EventEntity();
     }
   },
 
@@ -124,6 +126,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
           } else {
             const newEvent = await this.$storage.event.actions.createEvent(this.event);
             eventId = newEvent.id;
+            this.event = newEvent;
             this.$toasted.global.success(this.$t('event_create.success'));
           }
           this.$router.replace({ name: routes.events.summary.name, params: { id: eventId } });

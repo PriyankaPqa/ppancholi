@@ -102,7 +102,7 @@
                   :error-messages="errors"
                   data-test="event-phone"
                   :disabled="inputDisabled"
-                  @input="setAssistanceNumber" />
+                  @input="setAssistanceNumber($event)" />
               </ValidationProvider>
             </v-col>
           </v-row>
@@ -130,7 +130,8 @@
                 <div :class="['event_status mb-0', statusColor]">
                   <div>
                     <span class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.on_hold') }}</span>
-                    <span v-if="isStatusOpen">{{ $t('event.start_on_a_date',) }} {{ getStringDate(event.schedule.scheduledOpenDate, 'll') }}</span>
+                    <span v-if="isStatusOpen">{{ $t('event.start_on_a_date',) }}
+                      {{ getStringDate(event.schedule.scheduledOpenDate, 'll') }}</span>
                   </div>
 
                   <v-switch
@@ -237,10 +238,10 @@
           <v-row>
             <v-col cols="12">
               <v-autocomplete-with-validation
-                :value="relatedEventIds"
+                :value="localEvent.relatedEventIds"
                 data-test="event-related-events"
-                item-value="id"
-                :item-text="(item) => $m(item.name)"
+                item-value="entity.id"
+                :item-text="(item) => item && item.entity? $m(item.entity.name): ''"
                 :label="$t('event.create.related_events.label')"
                 :items="relatedEventsSorted"
                 :attach="true"
@@ -286,12 +287,17 @@ import {
   ECanadaProvinces,
 } from '@/types';
 import {
-  Event, IEvent, IOtherProvince, IRegion, EResponseLevel, EEventStatus,
+  IOtherProvince,
+  IRegion,
+  EResponseLevel,
+  EEventStatus,
+  IEventCombined,
+  EventEntity,
 } from '@/entities/event';
 import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { TOOLTIP_DELAY } from '@/ui/constants';
-import _cloneDeep from 'lodash/cloneDeep';
+// import _cloneDeep from 'lodash/cloneDeep';
 import { IOptionItem } from '@/entities/optionItem';
 import utils from '@/entities/utils';
 import { localStorageKeys } from '@/constants/localStorage';
@@ -317,7 +323,7 @@ export default Vue.extend({
     },
 
     event: {
-      type: Event,
+      type: Object as () => EventEntity,
       required: true,
     },
 
@@ -334,8 +340,12 @@ export default Vue.extend({
 
   data() {
     const getStringDate = (date: Date| string, format = 'YYYY-MM-DD'): string => moment(date).utc().format(format);
-
-    const localEvent = _cloneDeep(this.event);
+    let localEvent;
+    if (this.isEditMode) {
+      localEvent = new EventEntity(this.event);
+    } else {
+      localEvent = new EventEntity();
+    }
 
     const assistanceNumber = {
       number: '',
@@ -445,6 +455,8 @@ export default Vue.extend({
         return [];
       }
 
+      if (!this.regions) return [];
+
       const sorted = helpers.sortMultilingualArray(this.regions, 'name');
       const filtered = sorted.filter((i) => i.province === this.localEvent.location.province);
 
@@ -468,28 +480,11 @@ export default Vue.extend({
     },
 
     eventTypesSorted(): Array<IOptionItem> {
-      const eventTypes = this.$storage.event.getters.eventTypes();
-
-      if (eventTypes && eventTypes.length && this.initialEventType) {
-        const initialActiveEventType = eventTypes.find((e: IOptionItem) => e.id === this.initialEventType.id);
-
-        if (!initialActiveEventType) {
-          return [
-            ...eventTypes,
-            this.initialEventType,
-          ];
-        }
-      }
-
-      return eventTypes;
+      return this.$storage.event.getters.eventTypes(true, this.localEvent.responseDetails?.eventType?.optionItemId);
     },
 
-    relatedEventIds(): Array<string> {
-      return this.localEvent.relatedEventsInfos.map((el) => el.id);
-    },
-
-    relatedEventsSorted(): Array<IEvent> {
-      return this.$storage.event.getters.events();
+    relatedEventsSorted(): Array<IEventCombined> {
+      return this.$storage.event.getters.getAll();
     },
 
     rules(): Record<string, unknown> {
@@ -610,13 +605,13 @@ export default Vue.extend({
     },
   },
 
-  async mounted() {
+  async created() {
     if (!this.isEditMode) {
       this.localEvent.responseDetails.dateReported = this.today;
     }
 
     await this.$storage.event.actions.fetchEventTypes();
-    await this.$storage.event.actions.fetchEvents();
+    await this.$storage.event.actions.fetchAll();
 
     const provincesRes = await this.$storage.event.actions.fetchOtherProvinces();
     const regionsRes = await this.$storage.event.actions.fetchRegions();
@@ -625,18 +620,7 @@ export default Vue.extend({
     this.regions = regionsRes.value;
 
     if (this.localEvent && this.localEvent.responseDetails.eventType.optionItemId) {
-      const activeEventType = this.eventTypesSorted.find((e) => e.id === this.localEvent.responseDetails.eventType.optionItemId);
-
-      if (activeEventType) {
-        this.eventType = activeEventType;
-      } else {
-        this.eventType = {
-          id: this.localEvent.eventTypeId,
-          name: this.localEvent.eventTypeName,
-        };
-
-        this.initialEventType = { ...this.eventType };
-      }
+      this.eventType = this.eventTypesSorted.find((e) => e.id === this.localEvent.responseDetails.eventType.optionItemId);
     }
 
     // Set the default event type
@@ -667,16 +651,7 @@ export default Vue.extend({
     },
 
     setRelatedEvents(eventsIds: Array<string>) {
-      this.localEvent.relatedEventsInfos = eventsIds.map((id) => {
-        const event = this.relatedEventsSorted.find((ev) => ev.id === id);
-        if (event) {
-          return {
-            id,
-            eventName: event.name,
-          };
-        }
-        return null;
-      });
+      this.localEvent.relatedEventIds = eventsIds;
       this.$emit('update:is-dirty', true);
     },
 

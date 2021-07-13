@@ -1,115 +1,70 @@
-/* eslint-disable complexity */
-import _cloneDeep from 'lodash/cloneDeep';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
+import {
+  MAX_LENGTH_LG,
+  MAX_LENGTH_MD,
+  MAX_LENGTH_SM,
+} from '@/constants/validations';
 import { ECanadaProvinces, IMultilingual } from '@/types';
 import utils from '@/entities/utils';
 
 import {
   EEventStatus,
-  IEvent,
+  IEventEntity,
   IEventCallCentre,
   IEventLocation,
   IEventGenericLocation,
   IEventResponseDetails,
   IEventSchedule,
-  IEventSearchData,
-  IRelatedEventsInfos,
-  IEventAgreementInfos,
+  IEventAgreement,
 } from './event.types';
+import { BaseEntity } from '../base';
 
-export class Event implements IEvent {
-  id: uuid;
-
-  created: Date | string;
+export class EventEntity extends BaseEntity {
+  name: IMultilingual;
 
   description: IMultilingual;
 
-  eventStatus: number;
-
-  eventTypeId: uuid;
-
-  eventTypeName: IMultilingual;
-
-  location: IEventLocation;
-
-  name: IMultilingual;
-
   number: number;
-
-  provinceName: IMultilingual;
-
-  registrationLink: IMultilingual;
-
-  relatedEventsInfos: Array<IRelatedEventsInfos>;
-
-  responseDetails: IEventResponseDetails;
-
-  responseLevelName: IMultilingual;
-
-  schedule: IEventSchedule;
-
-  scheduleHistory: IEventSchedule[];
-
-  scheduleEventStatusName: IMultilingual;
 
   selfRegistrationEnabled: boolean;
 
-  callCentres: Array<IEventCallCentre>;
+  registrationLink: IMultilingual;
 
-  agreements: Array<IEventAgreementInfos>;
+  location: IEventLocation;
+
+  schedule: IEventSchedule;
+
+  responseDetails: IEventResponseDetails;
 
   registrationLocations: Array<IEventGenericLocation>;
 
+  callCentres: Array<IEventCallCentre>;
+
+  scheduleHistory: IEventSchedule[];
+
   shelterLocations: Array<IEventGenericLocation>;
 
-  tenantId: uuid;
+  eventStatus: number;
 
-  constructor(data?: IEventSearchData) {
+  relatedEventIds: Array<string>;
+
+  agreements: Array<IEventAgreement>;
+
+  constructor(data?: IEventEntity) {
     if (data) {
-      this.id = data.eventId;
+      super(data);
 
-      this.created = new Date(data.createdDate);
-
-      this.name = utils.initMultilingualAttributes(data.eventName);
-
-      this.description = utils.initMultilingualAttributes(data.eventDescription);
-
-      this.eventTypeId = data.eventTypeId;
-
-      this.eventTypeName = data.eventTypeName && data.eventTypeName.translation ? {
-        translation: {
-          ...data.eventTypeName.translation,
-        },
-      } : data.eventTypeName;
-
+      this.name = utils.initMultilingualAttributes(data.name);
+      this.description = utils.initMultilingualAttributes(data.description);
       this.location = {
         ...data.location,
       };
-
       this.number = data.number;
-
-      this.provinceName = data.provinceName && data.provinceName.translation ? {
-        translation: {
-          ...data.provinceName.translation,
-        },
-      } : null;
-
       this.registrationLink = utils.initMultilingualAttributes(data.registrationLink);
-
-      this.relatedEventsInfos = data.relatedEventsInfos ? _cloneDeep(data.relatedEventsInfos) : [];
-
       this.responseDetails = {
         ...data.responseDetails,
         eventType: { ...data.responseDetails.eventType },
         dateReported: data.responseDetails.dateReported ? new Date(data.responseDetails.dateReported) : null,
       };
-
-      this.responseLevelName = data.responseLevelName ? {
-        translation: {
-          ...data.responseLevelName.translation,
-        },
-      } : null;
-
       this.schedule = {
         ...data.schedule,
         closeDate: data.schedule.closeDate ? new Date(data.schedule.closeDate) : null,
@@ -127,12 +82,6 @@ export class Event implements IEvent {
         scheduledOpenDate: s.scheduledOpenDate ? new Date(s.scheduledOpenDate) : null,
         timestamp: s.timestamp ? new Date(s.timestamp) : null,
       }));
-
-      this.scheduleEventStatusName = data.scheduleEventStatusName ? {
-        translation: {
-          ...data.scheduleEventStatusName.translation,
-        },
-      } : null;
 
       this.selfRegistrationEnabled = data.selfRegistrationEnabled;
       this.eventStatus = data.eventStatus;
@@ -153,9 +102,10 @@ export class Event implements IEvent {
         endDate: agreement.endDate ? new Date(agreement.endDate) : null,
         details: utils.initMultilingualAttributes(agreement.details),
         agreementType: { ...agreement.agreementType },
-        agreementTypeName: utils.initMultilingualAttributes(agreement.agreementTypeName),
       }));
+      this.relatedEventIds = data.relatedEventIds;
     } else {
+      super();
       this.reset();
     }
   }
@@ -166,16 +116,18 @@ export class Event implements IEvent {
 
   private reset() {
     this.description = utils.initMultilingualAttributes();
-    this.eventTypeName = utils.initMultilingualAttributes();
+
     this.location = {
       province: null,
       provinceOther: utils.initMultilingualAttributes(),
       region: utils.initMultilingualAttributes(),
     };
+
     this.name = utils.initMultilingualAttributes();
-    this.provinceName = utils.initMultilingualAttributes();
     this.registrationLink = utils.initMultilingualAttributes();
-    this.relatedEventsInfos = [];
+
+    this.relatedEventIds = [];
+
     this.responseDetails = {
       responseLevel: null,
       eventType: {
@@ -185,7 +137,7 @@ export class Event implements IEvent {
       dateReported: null,
       assistanceNumber: '',
     };
-    this.responseLevelName = utils.initMultilingualAttributes();
+
     this.schedule = {
       openDate: null,
       closeDate: null,
@@ -195,7 +147,7 @@ export class Event implements IEvent {
       timestamp: null,
       status: EEventStatus.OnHold,
     };
-    this.scheduleEventStatusName = utils.initMultilingualAttributes();
+
     this.callCentres = [];
     this.agreements = [];
     this.registrationLocations = [];
@@ -206,19 +158,15 @@ export class Event implements IEvent {
     if (!utils.validateMultilingualFieldRequired(this.name)) {
       errors.push('The name is required');
     }
-
     if (!utils.validateMultilingualFieldLength(this.name, MAX_LENGTH_MD)) {
       errors.push(`The name field exceeds max length of ${MAX_LENGTH_MD}`);
     }
-
     if (!utils.validateMultilingualFieldLength(this.description, MAX_LENGTH_LG)) {
       errors.push(`The description field exceeds max length of ${MAX_LENGTH_LG}`);
     }
-
     if (!utils.validateMultilingualFieldRequired(this.registrationLink)) {
       errors.push('The registrationLink is required');
     }
-
     if (!utils.validateMultilingualFieldLength(this.registrationLink, MAX_LENGTH_MD)) {
       errors.push(`The registrationLink field exceeds max length of ${MAX_LENGTH_MD}`);
     }
@@ -231,17 +179,14 @@ export class Event implements IEvent {
       if (!this.location.province) {
         errors.push('The location.province field is required');
       }
-
       if (this.location.province === ECanadaProvinces.OT
       && !utils.validateMultilingualFieldRequired(this.location.provinceOther)) {
         errors.push('The location.provinceOther field is required');
       }
-
       if (this.location.province === ECanadaProvinces.OT
       && !utils.validateMultilingualFieldLength(this.location.provinceOther, MAX_LENGTH_MD)) {
         errors.push(`The location.provinceOther field exceeds max length of ${MAX_LENGTH_MD}`);
       }
-
       if (!utils.validateMultilingualFieldLength(this.location.region, MAX_LENGTH_MD)) {
         errors.push(`The location.region field exceeds max length of ${MAX_LENGTH_MD}`);
       }
@@ -263,19 +208,15 @@ export class Event implements IEvent {
       if (!this.responseDetails.responseLevel) {
         errors.push('The responseDetails.responseLevel field is required');
       }
-
       if (!this.responseDetails.eventType) {
         errors.push('The responseDetails.eventType field is required');
       }
-
       if (!this.responseDetails.eventType?.optionItemId) {
         errors.push('The responseDetails.eventType.optionItemId field is required');
       }
-
       if (!this.responseDetails.dateReported) {
         errors.push('The responseDetails.dateReported field is required');
       }
-
       if (!this.responseDetails.assistanceNumber) {
         errors.push('The responseDetails.assistanceNumber field is required');
       } else if (this.responseDetails.assistanceNumber.length > MAX_LENGTH_SM) {
@@ -286,9 +227,13 @@ export class Event implements IEvent {
 
   public fillEmptyMultilingualAttributes() {
     this.name = utils.getFilledMultilingualField(this.name);
+
     this.description = utils.getFilledMultilingualField(this.description);
+
     this.location.provinceOther = utils.getFilledMultilingualField(this.location.provinceOther);
+
     this.location.region = utils.getFilledMultilingualField(this.location.region);
+
     this.registrationLink = utils.getFilledMultilingualField(this.registrationLink);
   }
 
@@ -309,7 +254,6 @@ export class Event implements IEvent {
     if (!errors.length) {
       return true;
     }
-
     return errors;
   }
 }

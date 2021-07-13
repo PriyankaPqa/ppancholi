@@ -3,7 +3,7 @@ import {
   Team, mockTeamSearchDataAggregate, mockTeamsData, mockTeamMembersData,
 } from '@/entities/team';
 import {
- mockEventsData
+  mockEventEntityData,
 } from '@/entities/event';
 import { mockStore, IRootState } from '@/store';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -58,7 +58,7 @@ describe('>>> Team Module', () => {
 
     describe('getTeamsAssignable', () => {
       it('calls the service getTeamsAssignable with the right params', async () => {
-        const { id } = mockEventsData()[0];
+        const { id } = mockEventEntityData()[0];
 
         await store.dispatch('team/getTeamsAssignable', id);
 

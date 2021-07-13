@@ -7,7 +7,7 @@ import {
   mockTeamMembersData,
   mockTeamsData, mockTeamSearchData, mockTeamSearchDataAggregate, Team,
 } from '@/entities/team';
-import { IEvent } from '@/entities/event';
+import { IEventCombined } from '@/entities/event';
 import { mockUserAccountEntity, mockUserAccountMetadata } from '@/entities/user-account';
 import * as utils from './teamUtils';
 
@@ -25,7 +25,7 @@ const mockActionsContext = (): ActionContext<IState, IRootState> => ({
   getters: {},
   rootState: null,
   rootGetters: {
-    'event/eventsByStatus': jest.fn(() => [] as IEvent[]),
+    'eventEntities/eventsByStatus': jest.fn(() => [] as IEventCombined[]),
     'appUser/appUserWhere': jest.fn(() => [] as IAppUserData[]),
   },
 });
@@ -95,7 +95,7 @@ describe('>>> Team utils', () => {
       const eventsIds = ['guid-1', 'guid-2'];
 
       const context = mockActionsContext();
-      const eventsByStatus = context.rootGetters['event/eventsByStatus'];
+      const eventsByStatus = context.rootGetters['eventEntities/eventsByStatus'];
 
       eventsByStatus.mockReturnValueOnce(events);
 

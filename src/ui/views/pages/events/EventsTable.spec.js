@@ -2,13 +2,16 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 import { RcDataTable } from '@crctech/component-library';
-import { mockEventsSearchData, Event } from '@/entities/event';
 import { mockStorage } from '@/store/storage';
 import moment from 'moment';
+import {
+  mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata,
+} from '@/entities/event';
 import Component from './EventsTable.vue';
 
+const storage = mockStorage();
 const localVue = createLocalVue();
-const mockEvents = () => mockEventsSearchData().map((ev) => new Event(ev));
+const mockEvents = () => mockCombinedEvents();
 
 describe('EventsTable.vue', () => {
   let wrapper;
@@ -23,10 +26,29 @@ describe('EventsTable.vue', () => {
         propsData: {
           isDashboard: false,
         },
+        mocks: {
+          $storage: {
+            event: {
+              getters: {
+                getByIds: jest.fn(() => mockCombinedEvents()),
+              },
+              actions: {
+                search: jest.fn(() => ({
+                  ids: [mockEvents()[0].id, mockEvents()[1].id],
+                  count: mockEvents().length,
+                })),
+              },
+            },
+          },
+        },
+
+        computed: {
+          tableData: () => mockEvents(),
+        },
       });
 
-      wrapper.vm.azureSearchItems = mockEvents();
-      wrapper.vm.azureSearchCount = mockEvents().length;
+      wrapper.vm.searchResultIds = mockEvents().map((event) => event.entity.id);
+      wrapper.vm.itemsCount = mockEvents().length;
       wrapper.vm.getEventRoute = jest.fn(() => ({
         name: routes.events.summary.name,
         params: {
@@ -68,10 +90,31 @@ describe('EventsTable.vue', () => {
             store: {
               ...mockUserStateLevel(5),
             },
+            mocks: {
+              $storage: {
+                event: {
+                  getters: {
+                    getByIds: jest.fn(() => mockCombinedEvents()),
+                  },
+                  actions: {
+                    search: jest.fn(() => ({
+                      ids: [mockEvents()[0].id, mockEvents()[1].id],
+                      count: mockEvents().length,
+                    })),
+                  },
+                },
+              },
+            },
             propsData: {
               isDashboard: false,
             },
+            computed: {
+              tableData: () => mockEvents(),
+            },
           });
+
+          wrapper.vm.searchResultIds = mockEvents().map((event) => event.entity.id);
+          wrapper.vm.itemsCount = mockEvents().length;
           dataTable = wrapper.findComponent(RcDataTable);
           expect(dataTable.props('showAddButton')).toBe(false);
         });
@@ -115,9 +158,27 @@ describe('EventsTable.vue', () => {
             propsData: {
               isDashboard: false,
             },
+            mocks: {
+              $storage: {
+                event: {
+                  getters: {
+                    getByIds: jest.fn(() => mockCombinedEvents()),
+                  },
+                  actions: {
+                    search: jest.fn(() => ({
+                      ids: [mockEvents()[0].id, mockEvents()[1].id],
+                      count: mockEvents().length,
+                    })),
+                  },
+                },
+              },
+            },
+            computed: {
+              tableData: () => mockEvents(),
+            },
           });
-          wrapper.vm.azureSearchItems = mockEvents();
-          wrapper.vm.azureSearchCount = mockEvents().length;
+          wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
+          wrapper.vm.itemsCount = mockEvents().length;
           await wrapper.vm.$nextTick();
           const editButton = wrapper.findDataTest('edit_event');
           expect(editButton.exists()).toBeTruthy();
@@ -132,9 +193,27 @@ describe('EventsTable.vue', () => {
             propsData: {
               isDashboard: false,
             },
+            mocks: {
+              $storage: {
+                event: {
+                  getters: {
+                    getByIds: jest.fn(() => mockCombinedEvents()),
+                  },
+                  actions: {
+                    search: jest.fn(() => ({
+                      ids: [mockEvents()[0].id, mockEvents()[1].id],
+                      count: mockEvents().length,
+                    })),
+                  },
+                },
+              },
+            },
+            computed: {
+              tableData: () => mockEvents(),
+            },
           });
-          wrapper.vm.azureSearchItems = mockEvents();
-          wrapper.vm.azureSearchCount = mockEvents().length;
+          wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
+          wrapper.vm.itemsCount = mockEvents().length;
           await wrapper.vm.$nextTick();
           const editButton = wrapper.findDataTest('edit_event');
           expect(editButton.exists()).toBeFalsy();
@@ -144,33 +223,58 @@ describe('EventsTable.vue', () => {
   });
 
   describe('Computed', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        store: {
-          event: {
-            searchLoading: false,
+    describe('tableData', () => {
+      it('should return the correct values', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            event: {
+              searchLoading: false,
+              entities: mockEventEntities(),
+              metadata: mockEventMetadata(),
+            },
           },
-        },
-        propsData: {
-          isDashboard: false,
-        },
-      });
+          mocks: {
+            $storage: storage,
+          },
+          propsData: {
+            isDashboard: false,
+          },
+        });
+        wrapper.vm.$storage.event.getters.getByIds = jest.fn(mockCombinedEvents);
+        wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
+        wrapper.vm.itemsCount = mockEvents().length;
 
-      wrapper.vm.azureSearchItems = mockEvents();
-      wrapper.vm.azureSearchCount = mockEvents().length;
+        expect(JSON.stringify(wrapper.vm.tableData)).toEqual(JSON.stringify(mockEvents()));
+        expect(wrapper.vm.$storage.event.getters.getByIds).toHaveBeenCalledWith(wrapper.vm.searchResultIds);
+      });
     });
 
     describe('customColumns', () => {
       it('should return the correct column names', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            event: {
+              searchLoading: false,
+              entities: mockEvents(),
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+          propsData: {
+            isDashboard: false,
+          },
+        });
         wrapper.$i18n = { locale: 'en' };
 
         const expectedColumns = {
-          name: 'EventName/Translation/en',
-          responseLevel: 'ResponseLevelName/Translation/en',
-          openDate: 'Schedule/OpenDate',
+          name: 'Entity/Name/Translation/en',
+          responseLevel: 'Metadata/ResponseLevelName/Translation/en',
+          openDate: 'Entity/Schedule/OpenDate',
           daysOpen: 'DaysOpen',
-          eventStatus: 'ScheduleEventStatusName/Translation/en',
+          eventStatus: 'Metadata/ScheduleEventStatusName/Translation/en',
         };
 
         expect(wrapper.vm.customColumns).toEqual(expectedColumns);
@@ -179,6 +283,21 @@ describe('EventsTable.vue', () => {
 
     describe('labels', () => {
       it('returns the right labels', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            event: {
+              searchLoading: false,
+              entities: mockEvents(),
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+          propsData: {
+            isDashboard: false,
+          },
+        });
         expect(wrapper.vm.labels).toEqual({
           header: {
             title: 'eventsTable.title',
@@ -196,16 +315,20 @@ describe('EventsTable.vue', () => {
           propsData: {
             isDashboard: false,
           },
+          mocks: {
+            $storage: storage,
+          },
           computed: {
             customColumns() {
               return {
-                name: 'EventName/Translation/En',
-                responseLevel: 'ResponseLevelName/Translation/En',
-                openDate: 'Schedule/OpenDate',
+                name: 'Entity/Name/Translation/En',
+                responseLevel: 'Metadata/ResponseLevelName/Translation/En',
+                openDate: 'Entity/Schedule/OpenDate',
                 daysOpen: 'DaysOpen',
-                eventStatus: 'ScheduleEventStatusName/Translation/En',
+                eventStatus: 'Metadata/ScheduleEventStatusName/Translation/En',
               };
             },
+            tableData: () => mockEvents(),
           },
         });
 
@@ -214,15 +337,15 @@ describe('EventsTable.vue', () => {
             text: 'eventsTable.name',
             align: 'start',
             sortable: true,
-            value: 'EventName/Translation/En',
+            value: 'Entity/Name/Translation/En',
             width: '50%',
           }, {
             text: 'eventsTable.levelInteger',
-            value: 'ResponseLevelName/Translation/En',
+            value: 'Metadata/ResponseLevelName/Translation/En',
             sortable: true,
           }, {
             text: 'eventsTable.startDate',
-            value: 'Schedule/OpenDate',
+            value: 'Entity/Schedule/OpenDate',
             sortable: true,
           }, {
             text: 'eventsTable.eventDuration',
@@ -230,7 +353,7 @@ describe('EventsTable.vue', () => {
             sortable: false,
           }, {
             text: 'eventsTable.eventStatus',
-            value: 'ScheduleEventStatusName/Translation/En',
+            value: 'Metadata/ScheduleEventStatusName/Translation/En',
             sortable: true,
           }, {
             align: 'end',
@@ -244,6 +367,21 @@ describe('EventsTable.vue', () => {
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            event: {
+              searchLoading: false,
+              entities: mockEvents(),
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+          propsData: {
+            isDashboard: false,
+          },
+        });
         expect(wrapper.vm.tableProps).toEqual({
           loading: false,
         });
@@ -253,6 +391,11 @@ describe('EventsTable.vue', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
+      storage.event.actions.search = jest.fn(() => ({
+        ids: [mockEvents()[0].id, mockEvents()[1].id],
+        count: mockEvents().length,
+      }));
+
       wrapper = mount(Component, {
         localVue,
         store: {
@@ -263,10 +406,10 @@ describe('EventsTable.vue', () => {
         propsData: {
           isDashboard: false,
         },
+        mocks: {
+          $storage: storage,
+        },
       });
-
-      wrapper.vm.azureSearchItems = mockEvents();
-      wrapper.vm.azureSearchCount = mockEvents().length;
     });
     describe('addEvent', () => {
       it('redirects to the right page', async () => {
@@ -279,50 +422,20 @@ describe('EventsTable.vue', () => {
 
     describe('fetchData', () => {
       let params;
+
       beforeEach(() => {
-        const storage = mockStorage();
-        storage.event.actions.searchEvents = jest.fn(() => ({
-          value: mockEvents(),
-          odataContext: '',
-          odataCount: mockEvents().length,
-        }));
-
-        wrapper = mount(Component, {
-          localVue,
-          propsData: {
-            isDashboard: false,
-          },
-          store: {
-            event: {
-              searchLoading: false,
-            },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-
-        wrapper.vm.azureSearchItems = mockEvents();
-        wrapper.vm.azureSearchCount = mockEvents().length;
-        wrapper.vm.getEventRoute = jest.fn(() => ({
-          name: routes.events.summary.name,
-          params: {
-            id: 'test-id',
-          },
-        }));
-
         params = {
           search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
         };
       });
 
       it('should call storage actions with proper parameters', async () => {
-        params = {
+        const params = {
           search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
         };
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.event.actions.searchEvents).toHaveBeenCalledWith({
+        expect(wrapper.vm.$storage.event.actions.search).toHaveBeenCalledWith({
           search: params.search,
           filter: params.filter,
           top: params.top,
@@ -334,9 +447,13 @@ describe('EventsTable.vue', () => {
         });
       });
 
-      it('returns the search results', async () => {
-        const res = await wrapper.vm.fetchData(params);
-        expect(res.value).toEqual(mockEvents());
+      it('calls setResults with the search results', async () => {
+        jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => {});
+        await wrapper.vm.fetchData(params);
+        expect(wrapper.vm.setResults).toHaveBeenCalledWith({
+          ids: [mockEvents()[0].id, mockEvents()[1].id],
+          count: 2,
+        });
       });
     });
 
@@ -347,27 +464,45 @@ describe('EventsTable.vue', () => {
           propsData: {
             isDashboard: false,
           },
+          store: {
+            ...mockUserStateLevel(6),
+          },
+          mocks: {
+            $storage: {
+              event: {
+                getters: {
+                  getByIds: jest.fn(() => mockCombinedEvents()),
+                },
+                actions: {
+                  search: jest.fn(() => ({
+                    ids: [mockEvents()[0].id, mockEvents()[1].id],
+                    count: mockEvents().length,
+                  })),
+                },
+              },
+            },
+          },
           computed: {
             customColumns() {
               return {
-                name: 'EventName/Translation/En',
-                responseLevel: 'ResponseLevelName/Translation/En',
-                openDate: 'Schedule/OpenDate',
+                name: 'Entity/Name/Translation/En',
+                responseLevel: 'Metadata/ResponseLevelName/Translation/En',
+                openDate: 'Entity/Schedule/OpenDate',
                 daysOpen: 'DaysOpen',
-                eventStatus: 'ScheduleEventStatusName/Translation/En',
+                eventStatus: 'Metadata/ScheduleEventStatusName/Translation/En',
               };
             },
           },
         });
 
-        wrapper.vm.azureSearchItems = mockEventsSearchData();
-        wrapper.vm.azureSearchCount = mockEventsSearchData().length;
+        wrapper.vm.searchResultIds = mockEvents().map((e) => e.entity.id);
+        wrapper.vm.itemsCount = mockEvents().length;
 
         const params = { search: 'query' };
         const filter = {
           or: [
             {
-              'EventName/Translation/En': { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
+              'Entity/Name/Translation/En': { or: [{ contains_az: params.search }, { startsWith_az: params.search }] },
             },
           ],
         };
@@ -380,7 +515,7 @@ describe('EventsTable.vue', () => {
         expect(wrapper.vm.getEventRoute(mockEvents()[0])).toEqual({
           name: routes.events.summary.name,
           params: {
-            id: mockEvents()[0].id,
+            id: mockEvents()[0].entity.id,
           },
         });
       });
@@ -428,9 +563,9 @@ describe('EventsTable.vue', () => {
     describe('goToEditEvent', () => {
       it('redirects to the right page', async () => {
         jest.spyOn(wrapper.vm.$router, 'push').mockImplementation(() => {});
-        const mockEvent = mockEvents()[0];
+        const mockEvent = mockCombinedEvent();
         await wrapper.vm.goToEditEvent(mockEvent);
-        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.events.edit.name, params: { id: mockEvent.id } });
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.events.edit.name, params: { id: mockEvent.entity.id } });
       });
     });
   });

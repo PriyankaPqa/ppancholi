@@ -1,14 +1,16 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { Event, mockEventsSearchData } from '@/entities/event';
+import { mockCombinedEvent } from '@/entities/event';
 import routes from '@/constants/routes';
+import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStorage } from '@/store/storage';
+import { ECanadaProvinces } from '@/types';
 
 import Component from '../EventDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockEvent = new Event(mockEventsSearchData()[0]);
+const mockEvent = mockCombinedEvent();
 
 describe('EventDetails.vue', () => {
   let wrapper;
@@ -17,7 +19,7 @@ describe('EventDetails.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          id: '7c076603-580a-4400-bef2-5ddececb0931',
+          id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
         },
         computed: {
           event() {
@@ -29,15 +31,18 @@ describe('EventDetails.vue', () => {
           provinceName() {
             return 'Alberta';
           },
+          eventTypeName() {
+            return { translation: { en: 'Flood' } };
+          },
         },
         mocks: {
           $route: {
             name: routes.events.edit.name,
             params: {
-              id: '7c076603-580a-4400-bef2-5ddececb0931',
+              id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
             },
           },
-
+          $storage: storage,
         },
       });
     });
@@ -53,7 +58,7 @@ describe('EventDetails.vue', () => {
         });
 
         it('displays the correct data', () => {
-          expect(element.text()).toEqual(mockEvent.eventTypeName.translation.en);
+          expect(element.text()).toEqual(wrapper.vm.eventTypeName.translation.en);
         });
       });
 
@@ -100,22 +105,32 @@ describe('EventDetails.vue', () => {
             wrapper = shallowMount(Component, {
               localVue,
               propsData: {
-                id: '7c076603-580a-4400-bef2-5ddececb0931',
+                id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
               },
               computed: {
                 event() {
                   const event = _cloneDeep(mockEvent);
-                  event.location.region = { translation: { en: 'mock region' } };
+                  event.entity.location.region = { translation: { en: 'mock region' } };
                   return event;
+                },
+                eventId() {
+                  return '000001';
+                },
+                provinceName() {
+                  return 'Alberta';
+                },
+                eventTypeName() {
+                  return { translation: { en: 'Flood' } };
                 },
               },
               mocks: {
                 $route: {
                   name: routes.events.edit.name,
                   params: {
-                    id: '7c076603-580a-4400-bef2-5ddececb0931',
+                    id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
                   },
                 },
+                $storage: storage,
               },
             });
             element = wrapper.findDataTest('event-location-region');
@@ -158,7 +173,7 @@ describe('EventDetails.vue', () => {
           expect(element.exists()).toBeTruthy();
         });
         it('displays the right number', () => {
-          expect(element.props().value).toEqual(mockEvent.responseDetails.assistanceNumber);
+          expect(element.props().value).toEqual(mockEvent.entity.responseDetails.assistanceNumber);
         });
       });
 
@@ -173,7 +188,7 @@ describe('EventDetails.vue', () => {
           expect(element.exists()).toBeTruthy();
         });
         it('displays the related event name', () => {
-          const relatedEvent = wrapper.vm.event.relatedEventsInfos[0];
+          const relatedEvent = wrapper.vm.event.metadata.relatedEventsInfos[0];
           const element = wrapper.findDataTest('related-event');
           expect(element.text()).toEqual(relatedEvent.eventName.translation.en);
         });
@@ -186,7 +201,7 @@ describe('EventDetails.vue', () => {
         });
         it('contains the correct date', () => {
           const element = wrapper.findDataTest('event-created-date');
-          expect(element.text()).toEqual('2021-01-20');
+          expect(element.text()).toEqual('2021-04-06');
         });
       });
 
@@ -207,12 +222,13 @@ describe('EventDetails.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.event.getters.eventById.mockReturnValueOnce(mockEvent);
+      storage.event.getters.get = jest.fn(() => mockEvent);
+      storage.event.getters.eventTypes = jest.fn(() => mockOptionItemData());
 
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          id: '7c076603-580a-4400-bef2-5ddececb0931',
+          id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
         },
         store: {
           modules: {
@@ -224,12 +240,6 @@ describe('EventDetails.vue', () => {
           },
         },
         mocks: {
-          $route: {
-            name: routes.events.edit.name,
-            params: {
-              id: '7c076603-580a-4400-bef2-5ddececb0931',
-            },
-          },
           $storage: storage,
         },
       });
@@ -242,7 +252,104 @@ describe('EventDetails.vue', () => {
 
     describe('eventId', () => {
       it('return the right format for eventID', () => {
-        expect(wrapper.vm.eventId).toEqual(`00000${wrapper.vm.event.number}`);
+        expect(wrapper.vm.eventId).toEqual(`000${wrapper.vm.event.entity.number}`);
+      });
+    });
+
+    describe('eventTypeName', () => {
+      it('returns the right event type name', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+          },
+          computed: {
+            event() {
+              return { ...mockEvent, entity: { ...mockEvent.entity, responseDetails: { eventType: { optionItemId: mockOptionItemData()[0].id } } } };
+            },
+          },
+          store: {
+            modules: {
+              event: {
+                state: {
+                  getLoading: true,
+                },
+              },
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.eventTypeName).toEqual(mockOptionItemData()[0].name);
+      });
+    });
+
+    describe('provinceName', () => {
+      it('returns the right province name when province is not other', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+          },
+          store: {
+            modules: {
+              event: {
+                state: {
+                  getLoading: true,
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return { ...mockEvent, entity: { ...mockEvent.entity, location: { province: ECanadaProvinces.QC } } };
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.provinceName).toEqual('common.provinces.QC');
+      });
+
+      it('returns the right province name when province is not other', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
+          },
+          store: {
+            modules: {
+              event: {
+                state: {
+                  getLoading: true,
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return {
+                ...mockEvent,
+                entity: {
+                  ...mockEvent.entity,
+                  location: {
+                    province: ECanadaProvinces.OT,
+                    provinceOther: {
+                      translation: { en: 'other-province' },
+                    },
+                  },
+                },
+              };
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.provinceName).toEqual('other-province');
       });
     });
 
@@ -278,19 +385,19 @@ describe('EventDetails.vue', () => {
       it('returns an array of objects representing status change history', () => {
         expect(wrapper.vm.statusHistory).toEqual([{
           title: 'eventDetail.open',
-          date: new Date('2021-03-31T15:23:00.755Z'),
+          date: '2021-03-31T15:23:00.755Z',
           reason: null,
         }, {
           title: 'eventDetail.closed',
-          date: new Date('2021-03-31T15:23:09.367Z'),
+          date: '2021-03-31T15:23:09.367Z',
           reason: 'Close Reason',
         }, {
           title: 'eventDetail.archived',
-          date: new Date('2021-03-31T15:23:13.508Z'),
+          date: '2021-03-31T15:23:13.508Z',
           reason: null,
         }, {
           title: 'event.status.onHold',
-          date: new Date('2021-03-31T15:23:16.069Z'),
+          date: '2021-03-31T15:23:16.069Z',
           reason: null,
         }]);
       });
@@ -299,20 +406,20 @@ describe('EventDetails.vue', () => {
 
   describe('lifecycle', () => {
     beforeEach(() => {
-      storage.event.actions.fetchEvents = jest.fn(() => {});
+      storage.event.actions.fetchAll = jest.fn(() => {});
       storage.event.actions.fetchEventTypes = jest.fn(() => {});
-      storage.event.actions.fetchEvent = jest.fn(() => {});
+      storage.event.actions.fetch = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          id: '7c076603-580a-4400-bef2-5ddececb0931',
+          id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
         },
         mocks: {
           $route: {
             name: routes.events.edit.name,
             params: {
-              id: '7c076603-580a-4400-bef2-5ddececb0931',
+              id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
             },
           },
           $storage: storage,
@@ -321,26 +428,27 @@ describe('EventDetails.vue', () => {
     });
 
     it('should call fetchEvent', () => {
-      expect(wrapper.vm.$storage.event.actions.fetchEvent).toHaveBeenCalledWith(wrapper.vm.id);
+      expect(wrapper.vm.$storage.event.actions.fetch)
+        .toHaveBeenCalledWith(wrapper.vm.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
     });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
       storage.event.actions.fetchEventTypes = jest.fn(() => {});
-      storage.event.actions.fetchEvents = jest.fn(() => {});
-      storage.event.actions.fetchEvent = jest.fn(() => {});
+      storage.event.actions.fetchAll = jest.fn(() => {});
+      storage.event.actions.fetch = jest.fn(() => {});
 
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
-          id: '7c076603-580a-4400-bef2-5ddececb0931',
+          id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
         },
         mocks: {
           $route: {
             name: routes.events.edit.name,
             params: {
-              id: '7c076603-580a-4400-bef2-5ddececb0931',
+              id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
             },
           },
           $storage: storage,

@@ -20,10 +20,15 @@ describe('>>> Domain Base Service', () => {
   });
 
   describe('get', () => {
-    it('should call the proper endpoint', async () => {
+    it('should call the proper endpoint and use global handler ', async () => {
       const id = '123';
-      await service.get(id);
-      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`);
+      await service.get(id, true);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: true });
+    });
+    it('should call the proper endpoint and not use global handler ', async () => {
+      const id = '123';
+      await service.get(id, false);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: false });
     });
   });
 

@@ -118,7 +118,7 @@ export default Vue.extend({
   methods: {
     editFromInfoDialog() {
       this.showInfoDialog = false;
-      this.$emit('edit', this.callCentre.name.translation.en);
+      this.$emit('edit', this.callCentre.id);
     },
   },
 

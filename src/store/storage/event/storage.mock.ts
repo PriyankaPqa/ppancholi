@@ -1,26 +1,43 @@
-import { IStorageMock } from './storage.types';
+import {
+  IEventCombined, IEventEntity, mockCombinedEvents, mockEventEntity,
+} from '@/entities/event';
+import { BaseMock } from '../base/base.mock';
 
-export const mockStorageEvent = () : IStorageMock => ({
-  getters: {
+export class EventStorageMock extends BaseMock<IEventCombined, IEventEntity> {
+  constructor() {
+    super(mockCombinedEvents(), mockEventEntity());
+  }
+
+  protected getters = {
+    ...this.baseGetters,
+
     agreementTypes: jest.fn(),
     eventTypes: jest.fn(),
-    events: jest.fn(),
     eventsByStatus: jest.fn(),
-    eventById: jest.fn(),
-  },
+  }
 
-  actions: {
+  protected actions = {
+    ...this.baseActions,
+
     fetchAgreementTypes: jest.fn(),
     fetchEventTypes: jest.fn(),
-    fetchEvent: jest.fn(),
-    fetchEvents: jest.fn(),
     fetchOtherProvinces: jest.fn(),
     fetchRegions: jest.fn(),
-    createEvent: jest.fn(),
-    updateEvent: jest.fn(),
-    updateEventSection: jest.fn(),
-    deleteAgreement: jest.fn(),
-    toggleSelfRegistration: jest.fn(),
-    setEventStatus: jest.fn(),
-  },
-});
+    updateEventSection: jest.fn(() => this.entity),
+    deleteAgreement: jest.fn(() => this.entity),
+    toggleSelfRegistration: jest.fn(() => this.entity),
+    setEventStatus: jest.fn(() => this.entity),
+    createEvent: jest.fn(() => this.entity),
+    updateEvent: jest.fn(() => this.entity),
+  }
+
+  protected mutations = {
+    ...this.baseMutations,
+  }
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  })
+}

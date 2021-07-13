@@ -15,7 +15,7 @@
 
           <span class="rc-body14 borderLeft pa-0 pr-1 pl-4"> {{ $t('eventSummary.response') }}: </span>
           <span class="rc-body14" data-test="event-summary-response-level">
-            {{ $m(event.responseLevelName) }}
+            {{ responseLevelName }}
           </span>
         </v-col>
 
@@ -104,7 +104,7 @@
       :is="currentDialog.component"
       v-if="currentDialog"
       :id="currentDialog.id"
-      :event.sync="event"
+      :event="event"
       :is-edit-mode="currentDialog.isEditMode"
       :agreement-types="agreementTypes"
       @close="currentDialog = null" />
@@ -118,10 +118,16 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 import {
-  EEventStatus, IEvent, Event, IEventCallCentre, IEventAgreement, IEventGenericLocation,
+  EEventStatus,
+  IEventCallCentre,
+  IEventAgreement,
+  IEventGenericLocation,
+  EResponseLevel,
+  EventEntity,
 } from '@/entities/event';
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@/entities/optionItem';
+import { TranslateResult } from 'vue-i18n';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventSummarySectionBody from './components/EventSummarySectionBody.vue';
@@ -179,12 +185,21 @@ export default Vue.extend({
 
   computed: {
     agreementTypes(): Array<IOptionItem> {
-      return this.$storage.event.getters.agreementTypes();
+      const currentAgreementTypeIds = this.event.agreements?.map((a) => a.agreementType.optionItemId);
+      if (currentAgreementTypeIds) {
+        return this.$storage.event.getters.agreementTypes(true, currentAgreementTypeIds);
+      }
+      return [];
     },
 
-    event(): IEvent {
+    event(): EventEntity {
       const { id } = this.$route.params;
-      return this.$storage.event.getters.eventById(id) || new Event();
+      const storeEvent = this.$storage.event.getters.get(id);
+      return new EventEntity(storeEvent?.entity);
+    },
+
+    responseLevelName():TranslateResult {
+      return this.$t(`event.response_level.${EResponseLevel[this.event.responseDetails.responseLevel]}`);
     },
 
     statuses(): EEventStatus[] {
@@ -203,12 +218,12 @@ export default Vue.extend({
       if (this.event.schedule.status === EEventStatus.Archived) {
         return [EEventStatus.Open, EEventStatus.OnHold];
       }
-
       return [];
     },
 
     showEditButton(): boolean {
-      return this.$hasLevel('level5') && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
+      return this.$hasLevel('level5')
+        && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
     },
 
     sortedAgreements():Array<IEventAgreement> {
@@ -232,7 +247,7 @@ export default Vue.extend({
     try {
       const { id } = this.$route.params;
       if (id) {
-        await this.$storage.event.actions.fetchEvent(id);
+        await this.$storage.event.actions.fetch(id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       }
       await this.$storage.event.actions.fetchAgreementTypes();
     } catch {

@@ -151,7 +151,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import {
   ETeamStatus, ETeamType, ITeamEvent, Team, ITeam, ITeamMemberData,
 } from '@/entities/team';
-import { EEventStatus, IEvent } from '@/entities/event';
+import { EEventStatus, IEventEntity } from '@/entities/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import {
   RcConfirmationDialog,
@@ -310,12 +310,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
       });
     },
     async fetchEvents() {
-      await this.$storage.event.actions.fetchEvents();
+      await this.$storage.event.actions.search();
     },
     getAvailableEvents() {
-      const eventsByStatus = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
+      const eventsByStatus:IEventEntity[] = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
       if (eventsByStatus) {
-        const activeEvents: ITeamEvent[] = eventsByStatus.map((e: IEvent) => ({
+        const activeEvents: ITeamEvent[] = eventsByStatus.map((e: IEventEntity) => ({
           id: e.id,
           name: e.name,
         }));
@@ -397,7 +397,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.currentPrimaryContact = appUser;
     },
 
-    setEvents(events: IEvent | IEvent[]) {
+    setEvents(events: ITeamEvent | ITeamEvent[]) {
       this.team.setEvents(events);
     },
 

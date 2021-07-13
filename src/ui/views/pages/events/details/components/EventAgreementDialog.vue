@@ -25,7 +25,7 @@
                   v-model="agreementType"
                   data-test="agreement-agreementType"
                   :label="`${$t('eventSummary.agreement.agreementType')}*`"
-                  :items="allAgreementTypes"
+                  :items="agreementTypes"
                   :item-text="(item) => $m(item.name)"
                   return-object
                   :rules="rules.agreementType"
@@ -108,8 +108,9 @@ import {
   VSelectWithValidation,
 } from '@crctech/component-library';
 import helpers from '@/ui/helpers';
+
 import { EEventSummarySections, VForm } from '@/types';
-import { Event, IEventAgreementInfos } from '@/entities/event';
+import { IEventAgreement, IEventEntity } from '@/entities/event';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
@@ -131,7 +132,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   props: {
     event: {
-      type: Event,
+      type: Object as () => IEventEntity,
       required: true,
     },
     id: {
@@ -160,8 +161,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         agreementType: { optionItemId: '', specifiedOther: '' },
         agreementTypeName: { translation: {} },
       },
-      agreement: null as IEventAgreementInfos,
-      initialInactiveAgreementType: null,
+      agreement: null as IEventAgreement,
       agreementType: null,
       getStringDate: helpers.getStringDate,
       loading: false,
@@ -169,17 +169,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 
   computed: {
-    allAgreementTypes(): IOptionItem[] {
-      if (this.initialInactiveAgreementType) {
-        return [
-          ...this.agreementTypes,
-          this.initialInactiveAgreementType,
-        ];
-      }
-
-      return this.agreementTypes;
-    },
-
     dayAfterStartDate(): string {
       if (!this.agreement.startDate) return null;
       return (moment(this.agreement.startDate).clone().add(1, 'days').format('YYYY-MM-DD'));
@@ -260,14 +249,14 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     initEditMode() {
-      const agreement = this.event.agreements?.find((agr: IEventAgreementInfos) => agr.id === this.id);
+      const agreement = this.event.agreements?.find((agr: IEventAgreement) => agr.id === this.id);
       if (agreement) {
         this.agreement = _cloneDeep(agreement);
         this.agreement.startDate = agreement.startDate ? this.getStringDate(agreement.startDate) : null;
         this.agreement.endDate = agreement.endDate ? this.getStringDate(agreement.endDate) : null;
 
         if (agreement.agreementType.optionItemId) {
-          this.initAgreementTypes(agreement);
+          this.agreementType = this.agreementTypes.find((type:IOptionItem) => type.id === agreement.agreementType.optionItemId);
         }
       }
     },
@@ -305,20 +294,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     setAgreementType(type: IOptionItem) {
       this.agreement.agreementType.optionItemId = type.id;
-    },
-
-    initAgreementTypes(agreement: IEventAgreementInfos) {
-      const activeAgreementType = this.agreementTypes.find((type:IOptionItem) => type.id === agreement.agreementType.optionItemId);
-
-      if (activeAgreementType) {
-        this.agreementType = activeAgreementType;
-      } else {
-        this.agreementType = {
-          id: this.agreement.agreementType.optionItemId,
-          name: this.agreement.agreementTypeName,
-        };
-        this.initialInactiveAgreementType = { ...this.agreementType };
-      }
     },
 
     setLanguageMode(lang: string) {

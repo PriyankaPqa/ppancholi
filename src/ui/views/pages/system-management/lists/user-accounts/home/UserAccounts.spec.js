@@ -172,10 +172,9 @@ describe('UserAccounts.vue', () => {
 
     describe('tableProps', () => {
       it('is correctly defined', async () => {
-        wrapper.vm.$store.state.event.searchLoading = jest.fn();
         expect(wrapper.vm.tableProps).toEqual(
           {
-            loading: wrapper.vm.$store.state.event.searchLoading,
+            loading: wrapper.vm.loading,
           },
         );
       });

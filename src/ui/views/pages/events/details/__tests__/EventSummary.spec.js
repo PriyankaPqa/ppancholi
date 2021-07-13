@@ -1,5 +1,8 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { Event, EEventStatus, mockEventsSearchData } from '@/entities/event';
+import {
+  EEventStatus, mockEventEntity, mockCombinedEvent, EventEntity,
+} from '@/entities/event';
+
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import _cloneDeep from 'lodash/cloneDeep';
@@ -12,10 +15,15 @@ import Component, { EDialogComponent } from '../EventSummary.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const mockEvent = new Event(mockEventsSearchData()[0]);
+const mockEvent = mockEventEntity();
+
+storage.event.actions.fetch = jest.fn(() => mockCombinedEvent());
+storage.event.actions.fetchAgreementTypes = jest.fn(() => mockOptionItemData());
+storage.event.getters.get = jest.fn(() => mockCombinedEvent());
+storage.event.getters.agreementTypes = jest.fn(() => mockOptionItemData());
 
 const mountWithStatus = (status) => {
-  const event = mockEventsSearchData()[0];
+  const event = mockEventEntity();
 
   return shallowMount(Component, {
     localVue,
@@ -29,10 +37,22 @@ const mountWithStatus = (status) => {
           id: '7c076603-580a-4400-bef2-5ddececb0931',
         },
       },
+      $storage: {
+        event: {
+          actions: {
+            fetch: jest.fn(() => mockCombinedEvent()),
+            fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+          },
+          getters: {
+            get: jest.fn(() => mockCombinedEvent()),
+            agreementTypes: jest.fn(() => mockOptionItemData()),
+          },
+        },
+      },
     },
     computed: {
       event() {
-        return new Event({
+        return new EventEntity({
           ...event,
           schedule: {
             ...event.schedule,
@@ -59,6 +79,9 @@ describe('EventSummary.vue', () => {
           agreementTypes() {
             return [];
           },
+          responseLevelName() {
+            return 'mock-response-level';
+          },
         },
         store: {
           ...mockUserStateLevel(5),
@@ -70,7 +93,18 @@ describe('EventSummary.vue', () => {
               id: '7c076603-580a-4400-bef2-5ddececb0931',
             },
           },
-
+          $storage: {
+            event: {
+              actions: {
+                fetch: jest.fn(() => mockCombinedEvent()),
+                fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+              },
+              getters: {
+                get: jest.fn(() => mockCombinedEvent()),
+                agreementTypes: jest.fn(() => mockOptionItemData()),
+              },
+            },
+          },
         },
         stubs: {
           EventStatusDialog: true,
@@ -109,7 +143,7 @@ describe('EventSummary.vue', () => {
 
       it('contains the right data', () => {
         const element = wrapper.findDataTest('event-summary-response-level');
-        expect(element.text()).toEqual(wrapper.vm.event.responseLevelName.translation.en);
+        expect(element.text()).toEqual(wrapper.vm.responseLevelName);
       });
     });
 
@@ -151,6 +185,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
+            $storage: storage,
           },
           stubs: {
             EventStatusDialog: true,
@@ -203,7 +238,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-
+            $storage: storage,
           },
           stubs: {
             EventStatusDialog: true,
@@ -245,7 +280,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-
+            $storage: storage,
           },
           stubs: {
             EventStatusDialog: true,
@@ -288,7 +323,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-
+            $storage: storage,
           },
           stubs: {
             EventStatusDialog: true,
@@ -331,7 +366,7 @@ describe('EventSummary.vue', () => {
                 id: '7c076603-580a-4400-bef2-5ddececb0931',
               },
             },
-
+            $storage: storage,
           },
           stubs: {
             EventStatusDialog: true,
@@ -384,9 +419,6 @@ describe('EventSummary.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      storage.event.getters.eventById.mockReturnValueOnce(mockEvent);
-      storage.event.getters.agreementTypes.mockReturnValueOnce(mockOptionItemData());
-
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
@@ -406,15 +438,17 @@ describe('EventSummary.vue', () => {
         expect(wrapper.vm.agreementTypes).toEqual(mockOptionItemData());
       });
     });
+
     describe('event', () => {
       it('return the event by id from the storage', () => {
-        expect(wrapper.vm.event).toEqual(mockEvent);
+        expect(wrapper.vm.event).toEqual(new EventEntity(mockEvent));
       });
     });
 
     describe('sortedCallCentres', () => {
       it('return the callCentres sorted by name', () => {
-        expect(wrapper.vm.sortedCallCentres).toEqual(helpers.sortMultilingualArray(mockEvent.callCentres, 'name'));
+        expect(wrapper.vm.sortedCallCentres).toEqual(helpers.sortMultilingualArray(mockEvent.callCentres, 'name')
+          .map((c) => ({ ...c, startDate: new Date(c.startDate) })));
       });
     });
 
@@ -498,16 +532,15 @@ describe('EventSummary.vue', () => {
 
     describe('sortedAgreements', () => {
       it('return the agreements sorted by name', () => {
-        expect(wrapper.vm.sortedAgreements).toEqual(helpers.sortMultilingualArray(mockEvent.agreements, 'name'));
+        expect(wrapper.vm.sortedAgreements).toEqual(helpers.sortMultilingualArray(mockEvent.agreements, 'name')
+          .map((a) => ({ ...a, startDate: new Date(a.startDate) })));
       });
     });
   });
 
   describe('lifecycle', () => {
     beforeEach(() => {
-      storage.event.actions.fetchEvent = jest.fn(() => {});
-      storage.event.actions.fetchAgreementTypes = jest.fn(() => {});
-
+      jest.clearAllMocks();
       wrapper = shallowMount(Component, {
         localVue,
         mocks: {
@@ -522,19 +555,15 @@ describe('EventSummary.vue', () => {
       });
     });
 
-    it('should call fetchEvent', () => {
-      expect(wrapper.vm.$storage.event.actions.fetchEvent).toHaveBeenCalledWith(wrapper.vm.$route.params.id);
-    });
-
-    it('should call fetchAgreementTypes', () => {
+    it('should call fetch and fetchAgreementTypes', () => {
+      expect(wrapper.vm.$storage.event.actions.fetch)
+        .toHaveBeenCalledWith(wrapper.vm.$route.params.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       expect(wrapper.vm.$storage.event.actions.fetchAgreementTypes).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('Methods', () => {
-    const actions = {
-      setEventStatus: jest.fn(),
-    };
+    storage.event.actions.setEventStatus = jest.fn();
 
     beforeEach(() => {
       wrapper = shallowMount(Component, {
@@ -551,13 +580,7 @@ describe('EventSummary.vue', () => {
               id: '7c076603-580a-4400-bef2-5ddececb0931',
             },
           },
-        },
-        store: {
-          modules: {
-            event: {
-              actions,
-            },
-          },
+          $storage: storage,
         },
       });
     });
@@ -573,7 +596,8 @@ describe('EventSummary.vue', () => {
     });
 
     describe('onStatusChangeInit', () => {
-      it('sets the newStatus property as the argument and sets showEventStatusDialog to true when the status is Open', () => {
+      it('sets the newStatus property as the argument and sets showEventStatusDialog to true when the status is Open', async () => {
+        wrapper.vm.event.hasBeenOpen = jest.fn(() => true);
         wrapper.vm.showEventStatusDialog = false;
         wrapper.vm.newStatus = null;
         wrapper.vm.onStatusChangeInit(EEventStatus.Open);
@@ -602,9 +626,9 @@ describe('EventSummary.vue', () => {
           reason: 'Re-open',
         });
 
-        expect(actions.setEventStatus).toHaveBeenCalledTimes(1);
-        expect(actions.setEventStatus).toHaveBeenCalledWith(
-          expect.anything(),
+        expect(wrapper.vm.$storage.event.actions.setEventStatus).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.event.actions.setEventStatus).toHaveBeenCalledWith(
+          // expect.anything(),
           {
             event: wrapper.vm.event,
             status: EEventStatus.Open,

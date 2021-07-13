@@ -1,24 +1,29 @@
-import { Event, EEventStatus, mockEventsSearchData } from '@/entities/event';
-import { mockHttp } from '@/services/httpClient.mock';
+import {
+  EEventStatus,
+  EventEntity,
+  mockEventEntities,
+} from '@/entities/event';
+import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
 import { EventsService } from './events';
 
-const http = mockHttp();
-
 describe('>>> Events Service', () => {
-  const service = new EventsService(http as never);
+  let http: IHttpMock;
+  let service: EventsService;
 
   beforeEach(() => {
+    http = mockHttp();
+    service = new EventsService(http as never);
     jest.clearAllMocks();
   });
 
   test('createEvent is linked to the correct URL', async () => {
-    await service.createEvent(new Event(mockEventsSearchData()[0]));
+    await service.createEvent(new EventEntity(mockEventEntities()[0]));
     expect(http.post).toHaveBeenCalledWith('/event/events', expect.anything(), { globalHandler: false });
   });
 
   test('createEvent converts the event entity to the correct payload', async () => {
-    await service.createEvent(new Event(mockEventsSearchData()[0]));
+    await service.createEvent(new EventEntity(mockEventEntities()[0]));
     expect(http.post).toHaveBeenCalledWith('/event/events', {
       assistanceNumber: '+15144544545',
       dateReported: '2021-01-01T00:00:00.000Z',
@@ -53,20 +58,20 @@ describe('>>> Events Service', () => {
       },
       relatedEventIds: ['87776243-696f-426b-b961-31ee98e3a4cd'],
       responseLevel: 3,
-      scheduledCloseDate: null,
-      scheduledOpenDate: null,
+      scheduledCloseDate: '2021-05-15T15:00:00.000Z',
+      scheduledOpenDate: '2021-03-01T00:00:00.000Z',
       status: EEventStatus.OnHold,
     }, { globalHandler: false });
   });
 
   test('updateEvent is linked to the correct URL', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     await service.updateEvent(event);
     expect(http.patch).toHaveBeenCalledWith(`/event/events/${event.id}`, expect.anything(), { globalHandler: false });
   });
 
   test('updateEvent converts the event entity to the correct payload', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
 
     await service.updateEvent(event);
 
@@ -104,9 +109,9 @@ describe('>>> Events Service', () => {
       },
       relatedEventIds: ['87776243-696f-426b-b961-31ee98e3a4cd'],
       responseLevel: 3,
-      scheduledCloseDate: null,
-      scheduledOpenDate: null,
-      reOpenReason: null,
+      scheduledCloseDate: '2021-05-15T15:00:00.000Z',
+      scheduledOpenDate: '2021-03-01T00:00:00.000Z',
+      reOpenReason: 'For reasons',
       status: EEventStatus.OnHold,
       selfRegistrationEnabled: false,
     }, { globalHandler: false });
@@ -117,16 +122,10 @@ describe('>>> Events Service', () => {
     expect(http.patch).toHaveBeenCalledWith('/event/events/ID/self-registration-enabled', { selfRegistrationEnabled: false });
   });
 
-  test('searchEvents is linked to the correct URL and params', async () => {
-    const params = mockSearchParams;
-    await service.searchEvents(params);
-    expect(http.get).toHaveBeenCalledWith('/search/event-projections', { params, isOData: true });
-  });
-
   test('searchMyEvents is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
     await service.searchMyEvents(params);
-    expect(http.get).toHaveBeenCalledWith('/search/event-projections-main-information', { params, isOData: true });
+    expect(http.get).toHaveBeenCalledWith('/search/events-main-information', { params, isOData: true });
   });
 
   describe('setEventStatus', () => {
@@ -161,7 +160,7 @@ describe('>>> Events Service', () => {
   });
 
   test('addCallCentre is linked to the correct URL', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const callCentre = event.callCentres[0];
     const { id } = event;
     await service.addCallCentre(id, callCentre);
@@ -169,7 +168,7 @@ describe('>>> Events Service', () => {
   });
 
   test('editCallCentre is linked to the correct URL', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const callCentre = event.callCentres[0];
     const { id } = event;
     await service.editCallCentre(id, callCentre);
@@ -177,7 +176,7 @@ describe('>>> Events Service', () => {
   });
 
   test('addAgreement calls the correct URL with the right payload ', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const agreement = event.agreements[0];
     const { id } = event;
     await service.addAgreement(id, agreement);
@@ -194,7 +193,7 @@ describe('>>> Events Service', () => {
   });
 
   test('editAgreement calls the correct URL with the right payload ', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const agreement = event.agreements[0];
     const { id } = event;
     await service.editAgreement(id, agreement);
@@ -212,7 +211,7 @@ describe('>>> Events Service', () => {
   });
 
   test('removeAgreement calls the correct URL with the right payload', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const agreementId = event.agreements[0].id;
     const { id } = event;
     await service.removeAgreement(id, agreementId);
@@ -220,7 +219,7 @@ describe('>>> Events Service', () => {
   });
 
   test('addRegistrationLocation is linked to the correct URL', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const location = event.registrationLocations[0];
     const { id } = event;
     await service.addRegistrationLocation(id, location);
@@ -228,7 +227,7 @@ describe('>>> Events Service', () => {
   });
 
   test('editRegistrationLocation is linked to the correct URL', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const location = event.registrationLocations[0];
     const { id } = event;
     await service.editRegistrationLocation(id, location);
@@ -236,7 +235,7 @@ describe('>>> Events Service', () => {
   });
 
   test('addShelterLocation is linked to the correct URL', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const location = event.shelterLocations[0];
     const { id } = event;
     await service.addShelterLocation(id, location);
@@ -244,7 +243,7 @@ describe('>>> Events Service', () => {
   });
 
   test('editShelterLocation is linked to the correct URL', async () => {
-    const event = new Event(mockEventsSearchData()[0]);
+    const event = new EventEntity(mockEventEntities()[0]);
     const location = event.shelterLocations[0];
     const { id } = event;
     await service.editShelterLocation(id, location);

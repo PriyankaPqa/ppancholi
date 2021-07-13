@@ -56,14 +56,14 @@ import Vue from 'vue';
 import helpers from '@/ui/helpers';
 import { TOOLTIP_DELAY } from '@/ui/constants';
 import { localStorageKeys } from '@/constants/localStorage';
-import { EEventStatus, Event } from '@/entities/event';
+import { EEventStatus, IEventEntity } from '@/entities/event';
 
 export default Vue.extend({
   name: 'EventSummaryLink',
 
   props: {
     event: {
-      type: Event,
+      type: Object as () => IEventEntity,
       required: true,
     },
   },

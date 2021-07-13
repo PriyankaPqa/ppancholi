@@ -2,7 +2,7 @@ import {
   ITeamData, ITeamMemberSearchData, ITeamSearchData, ITeamSearchDataAggregate,
 } from '@/entities/team';
 import { ActionContext } from 'vuex';
-import { EEventStatus, IEvent } from '@/entities/event';
+import { EEventStatus, IEventEntity } from '@/entities/event';
 import utils from '@/entities/utils';
 import { USER_ACCOUNT_ENTITIES, USER_ACCOUNT_METADATA } from '@/constants/vuex-modules';
 import { IUserAccountCombined, IUserAccountEntity, IUserAccountMetadata } from '@/entities/user-account';
@@ -10,9 +10,9 @@ import { IState } from './team.types';
 import { IRootState } from '../../store.types';
 
 // map cached events with team events ids from the payload
-export const retrieveTeamEvents = (eventsIds: Array<uuid>, context: ActionContext<IState, IRootState>): IEvent[] => {
-  const events = context.rootGetters['event/eventsByStatus']([EEventStatus.Open, EEventStatus.OnHold]);
-  return eventsIds.map((id) => events.find((e: IEvent) => e.id === id));
+export const retrieveTeamEvents = (eventsIds: Array<uuid>, context: ActionContext<IState, IRootState>): IEventEntity[] => {
+  const events = context.rootGetters['eventEntities/eventsByStatus']([EEventStatus.Open, EEventStatus.OnHold]);
+  return eventsIds.map((id) => events.find((e: IEventEntity) => e.id === id));
 };
 
 export const aggregateTeamSearchDataWithMembers = async (

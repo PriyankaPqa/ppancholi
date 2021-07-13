@@ -6,7 +6,7 @@ import { OptionItemsService } from './optionItems';
 
 const http = mockHttp();
 
-describe('>>> EventTypes Service', () => {
+describe('>>> OptionItems Service', () => {
   const service = new OptionItemsService(http as never);
 
   beforeEach(() => {

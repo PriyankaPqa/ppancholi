@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { Event, mockEventsSearchData } from '@/entities/event';
+import { mockEventEntity } from '@/entities/event';
 import { ECanadaProvinces } from '@/types';
 import { mockUserStateLevel } from '@/test/helpers';
 
@@ -7,7 +7,7 @@ import Component from '../components/EventLocationSection.vue';
 
 const localVue = createLocalVue();
 
-const mockEvent = new Event(mockEventsSearchData()[0]);
+const mockEvent = mockEventEntity();
 
 describe('EventLocationSection.vue', () => {
   let wrapper;

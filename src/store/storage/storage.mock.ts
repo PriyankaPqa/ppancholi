@@ -6,7 +6,7 @@ import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
 import { IStorageMock } from './storage.types';
 import { mockStorageUser } from './user';
 import { mockStorageDashboard } from './dashboard';
-import { mockStorageEvent } from './event';
+import { EventStorageMock } from './event/storage.mock';
 import { mockStorageOptionList } from './optionList';
 import { mockStorageTeam } from './team';
 import { mockStorageProgram } from './program';
@@ -19,7 +19,7 @@ export const mockStorage = (): IStorageMock => ({
   caseFileReferral: new CaseFileReferralStorageMock().make(),
   dashboard: mockStorageDashboard(),
   user: mockStorageUser(),
-  event: mockStorageEvent(),
+  event: new EventStorageMock().make(),
   optionList: mockStorageOptionList(),
   team: mockStorageTeam(),
   program: mockStorageProgram(),

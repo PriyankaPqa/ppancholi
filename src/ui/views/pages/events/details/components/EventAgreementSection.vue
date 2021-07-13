@@ -85,7 +85,7 @@
 <script lang='ts'>
 import Vue from 'vue';
 import helpers from '@/ui/helpers';
-import { IEventAgreementInfos } from '@/entities/event';
+import { IEventAgreement } from '@/entities/event';
 import { RcConfirmationDialog } from '@crctech/component-library';
 import { IOptionItemData } from '@/entities/optionItem';
 import EventSummarySectionInfoDialog from './EventSummarySectionInfoDialog.vue';
@@ -100,7 +100,7 @@ export default Vue.extend({
 
   props: {
     agreement: {
-      type: Object as () => IEventAgreementInfos,
+      type: Object as () => IEventAgreement,
       required: true,
     },
     agreementTypes: {
@@ -147,7 +147,7 @@ export default Vue.extend({
         },
         type: {
           key: 'eventSummary.agreement.type',
-          value: this.$m(this.agreement.agreementTypeName),
+          value: this.agreementTypeName,
         },
         details: {
           key: 'eventSummary.agreement.details',
@@ -160,7 +160,7 @@ export default Vue.extend({
   methods: {
     editFromInfoDialog() {
       this.showInfoDialog = false;
-      this.$emit('edit', this.agreement.name.translation.en);
+      this.$emit('edit', this.agreement.id);
     },
 
     deleteAgreement() {

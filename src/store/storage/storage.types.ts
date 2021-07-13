@@ -2,7 +2,6 @@ import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } f
 import { IStorageMake, IStorageMakeMock } from '@crctech/registration-lib/src/store/storage/household';
 import { IStorage as IUserStorage, IStorageMock as IUserStorageMock } from './user';
 import { IStorage as IDashboardStorage, IStorageMock as IDashboardStorageMock } from './dashboard';
-import { IStorage as IEventStorage, IStorageMock as IEventStorageMock } from './event';
 import { IStorage as IOptionListStorage, IStorageMock as IOptionListStorageMock } from './optionList';
 import { IStorage as ITeamStorage, IStorageMock as ITeamStorageMock } from './team';
 import { IStorage as IProgramStorage, IStorageMock as IProgramStorageMock } from './program';
@@ -11,6 +10,10 @@ import {
   IStorageMake as IUserAccountMakeStorage,
   IStorageMakeMock as IUserAccountMakeStorageMock,
 } from './user-account/storage.types';
+import {
+  IStorageMake as IEventMakeStorage,
+  IStorageMakeMock as IEventMakeStorageMock,
+} from './event/storage.types';
 
 import {
   IStorageMake as ICaseFileMakeStorage,
@@ -33,7 +36,7 @@ export interface IStorage {
   caseNote: ICaseNoteMakeStorage;
   caseFileReferral: ICaseFileReferralMakeStorage;
   dashboard: IDashboardStorage;
-  event: IEventStorage;
+  event: IEventMakeStorage;
   optionList: IOptionListStorage;
   team: ITeamStorage;
   program: IProgramStorage;
@@ -49,7 +52,7 @@ export interface IStorageMock {
   caseNote: ICaseNoteMakeStorageMock;
   caseFileReferral: ICaseFileReferralMakeStorageMock;
   dashboard: IDashboardStorageMock;
-  event: IEventStorageMock;
+  event: IEventMakeStorageMock;
   optionList: IOptionListStorageMock;
   team: ITeamStorageMock;
   program: IProgramStorageMock;

@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { Event, mockEventsSearchData } from '@/entities/event';
+import { mockEventEntity } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import entityUtils from '@/entities/utils';
@@ -9,7 +9,7 @@ import { EEventSummarySections } from '@/types';
 import Component from '../components/EventAgreementDialog.vue';
 
 const localVue = createLocalVue();
-const mockEvent = new Event(mockEventsSearchData()[0]);
+const mockEvent = mockEventEntity();
 const storage = mockStorage();
 
 describe('EventAgreementDialog.vue', () => {
@@ -208,24 +208,6 @@ describe('EventAgreementDialog.vue', () => {
       });
     });
 
-    describe('allAgreementTypes', () => {
-      it('returns the agreement types received in props if there is no initialInactiveAgreementType', () => {
-        expect(wrapper.vm.allAgreementTypes).toEqual(wrapper.vm.agreementTypes);
-      });
-
-      it('returns the agreement types in props and the initialInactiveAgreementType if there is an initialInactiveAgreementType', () => {
-        wrapper.vm.initialInactiveAgreementType = {
-          id: 'foo',
-          name: {
-            translation: {
-              en: 'bar',
-            },
-          },
-        };
-        expect(wrapper.vm.allAgreementTypes).toEqual([...wrapper.vm.agreementTypes, wrapper.vm.initialInactiveAgreementType]);
-      });
-    });
-
     describe('dayAfterStartDate', () => {
       it('returns the right date', () => {
         wrapper.vm.agreement.startDate = '2020-01-01';
@@ -405,12 +387,6 @@ describe('EventAgreementDialog.vue', () => {
         });
         await wrapper.vm.initEditMode();
         expect(wrapper.vm.agreementType).toEqual(mockOptionItemData()[0]);
-      });
-
-      it('calls initAgreementTypes', async () => {
-        jest.spyOn(wrapper.vm, 'initAgreementTypes').mockImplementation(() => {});
-        await wrapper.vm.initEditMode();
-        expect(wrapper.vm.initAgreementTypes).toHaveBeenCalledTimes(1);
       });
     });
 

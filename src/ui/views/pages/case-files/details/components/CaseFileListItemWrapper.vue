@@ -95,7 +95,6 @@ export default Vue.extend({
   data() {
     return {
       moment,
-      // listItem: null,
     };
   },
 

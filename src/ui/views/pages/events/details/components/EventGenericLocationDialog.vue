@@ -126,10 +126,19 @@ import mixins from 'vue-typed-mixins';
 import _cloneDeep from 'lodash/cloneDeep';
 import { TranslateResult } from 'vue-i18n';
 import {
-  RcDialog, VTextFieldWithValidation, VSelectWithValidation, RcGoogleAutocomplete, RcCountrySelect,
+  RcDialog,
+  VTextFieldWithValidation,
+  VSelectWithValidation,
+  RcGoogleAutocomplete,
+  RcCountrySelect,
 } from '@crctech/component-library';
 import { ECanadaProvinces, EEventSummarySections, VForm } from '@/types';
-import { EEventLocationStatus, Event, IEventGenericLocation } from '@/entities/event';
+import {
+  EEventLocationStatus,
+  IEventEntity,
+  IEventGenericLocation,
+} from '@/entities/event';
+
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
@@ -151,7 +160,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   props: {
     event: {
-      type: Object as () => Event,
+      type: Object as () => IEventEntity,
       required: true,
     },
     id: {

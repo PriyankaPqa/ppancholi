@@ -11,7 +11,7 @@
         outlined
         :items="events"
         :loading="loading"
-        :item-text="(item) => $m(item.eventName)"
+        :item-text="(item) => $m(item.entity.name)"
         item-value="eventId"
         return-object
         :attach="true"
@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IEventSearchData, EEventStatus } from '@/entities/event';
+import { EEventStatus, IEventMainInfo } from '@/entities/event';
 
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
 import routes from '@/constants/routes';
@@ -42,7 +42,7 @@ export default Vue.extend({
 
   data() {
     return {
-      events: [] as Array<IEventSearchData>,
+      events: [] as Array<IEventMainInfo>,
       event: null,
       loading: false,
     };
@@ -55,7 +55,7 @@ export default Vue.extend({
 
     assistanceNumber(): string {
       if (!this.event) return '';
-      return this.event.responseDetails.assistanceNumber;
+      return this.event.entity.responseDetails.assistanceNumber;
     },
   },
 
@@ -71,15 +71,16 @@ export default Vue.extend({
       this.$router.push({ name: routes.registration.individual.name });
     },
 
-    setEvent(event: IEventSearchData) {
+    setEvent(event: IEventMainInfo) {
+      const data = event.entity;
       const registrationEvent = {
-        eventId: event.eventId,
-        eventName: event.eventName,
-        responseDetails: event.responseDetails,
-        registrationLink: event.registrationLink,
-        tenantId: event.tenantId,
-        registrationLocations: event.registrationLocations,
-        shelterLocations: event.shelterLocations as unknown as IShelterLocationData[],
+        eventId: data.id,
+        eventName: data.name,
+        responseDetails: data.responseDetails,
+        registrationLink: data.registrationLink,
+        tenantId: data.tenantId,
+        registrationLocations: data.registrationLocations,
+        shelterLocations: data.shelterLocations as unknown as IShelterLocationData[],
       } as unknown as IRegistrationEventData;
 
       this.$storage.registration.mutations.setEvent(registrationEvent);
@@ -96,8 +97,10 @@ export default Vue.extend({
     async fetchActiveEvents() {
       const res = await this.$services.events.searchMyEvents({
         filter: {
-          Schedule: {
-            Status: EEventStatus.Open,
+          Entity: {
+            Schedule: {
+              Status: EEventStatus.Open,
+            },
           },
         },
         top: 999,

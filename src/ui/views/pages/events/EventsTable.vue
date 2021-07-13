@@ -1,17 +1,23 @@
 <template>
   <rc-data-table
+    ref="eventsTable"
     data-test="events-table"
     :show-help="$hasLevel('level6')"
     :help-link="$t(helpLink)"
-    :items="azureSearchItems"
-    :count="azureSearchCount"
+    :items="tableData"
+    :count="itemsCount"
     :headers="headers"
     :labels="labels"
     :table-props="tableProps"
     :show-add-button="$hasLevel('level6')"
     :options.sync="options"
     :custom-columns="[
-      customColumns.name, customColumns.responseLevel, customColumns.openDate, customColumns.daysOpen, customColumns.eventStatus, 'editButton'
+      customColumns.name,
+      customColumns.responseLevel,
+      customColumns.openDate,
+      customColumns.daysOpen,
+      customColumns.eventStatus,
+      'editButton'
     ]"
     @add-button="addEvent"
     @search="search">
@@ -28,24 +34,24 @@
         class="rc-link14 font-weight-bold"
         data-test="eventDetail-link"
         :to="getEventRoute(event)">
-        {{ $m(event.name) }}
+        {{ $m(event.entity.name) }}
       </router-link>
     </template>
 
     <template #[`item.${customColumns.responseLevel}`]="{ item: event }">
-      {{ $m(event.responseLevelName) }}
+      {{ $m(event.metadata.responseLevelName) }}
     </template>
 
     <template #[`item.${customColumns.openDate}`]="{ item: event }">
-      {{ event.schedule ? getFormattedDate(event.schedule.openDate) : "" }}
+      {{ event.entity.schedule ? getFormattedDate(event.entity.schedule.openDate) : "" }}
     </template>
 
     <template #[`item.${customColumns.daysOpen}`]="{ item: event }">
-      {{ getDaysOpen(event.schedule) }}
+      {{ getDaysOpen(event.entity.schedule) }}
     </template>
 
     <template #[`item.${customColumns.eventStatus}`]="{ item: event }">
-      <status-chip status-name="EEventStatus" :status="event.schedule? event.schedule.status: 0" />
+      <status-chip status-name="EEventStatus" :status="event.entity.schedule? event.entity.schedule.status: 0" />
     </template>
 
     <template #[`item.editButton`]="{ item }">
@@ -67,14 +73,17 @@ import {
 } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import {
-  EResponseLevel, EEventStatus, IEvent, IEventSchedule,
+  EResponseLevel,
+  EEventStatus,
+  IEventCombined,
+  IEventSchedule,
 } from '@/entities/event';
-
 import { IAzureSearchParams } from '@/types';
 import routes from '@/constants/routes';
 import moment from '@/ui/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
 export default Vue.extend({
   name: 'EventsTable',
@@ -103,20 +112,27 @@ export default Vue.extend({
       helpLink: 'zendesk.help_link.eventsTable',
       options: {
         page: 1,
-        sortBy: ['Schedule/OpenDate'],
+        sortBy: ['Entity/Schedule/OpenDate'],
         sortDesc: [true],
       },
+      itemsCount: 0,
+      searchResultIds: [] as string[],
     };
   },
 
   computed: {
+
+    tableData(): IEventCombined[] {
+      return this.$storage.event.getters.getByIds(this.searchResultIds);
+    },
+
     customColumns(): Record<string, string> {
       return {
-        name: `EventName/Translation/${this.$i18n.locale}`,
-        responseLevel: `ResponseLevelName/Translation/${this.$i18n.locale}`,
-        openDate: 'Schedule/OpenDate',
+        name: `Entity/Name/Translation/${this.$i18n.locale}`,
+        responseLevel: `Metadata/ResponseLevelName/Translation/${this.$i18n.locale}`,
+        openDate: 'Entity/Schedule/OpenDate',
         daysOpen: 'DaysOpen',
-        eventStatus: `ScheduleEventStatusName/Translation/${this.$i18n.locale}`,
+        eventStatus: `Metadata/ScheduleEventStatusName/Translation/${this.$i18n.locale}`,
       };
     },
 
@@ -198,7 +214,7 @@ export default Vue.extend({
 
     tableProps(): Record<string, string> {
       return {
-        loading: this.$store.state.event.searchLoading,
+        loading: this.$store.state.eventEntities.searchLoading,
       };
     },
   },
@@ -209,7 +225,7 @@ export default Vue.extend({
     },
 
     async fetchData(params: IAzureSearchParams) {
-      const res = await this.$storage.event.actions.searchEvents({
+      const res = await this.$storage.event.actions.search({
         search: params.search,
         filter: params.filter,
         top: params.top,
@@ -219,7 +235,13 @@ export default Vue.extend({
         queryType: 'full',
         searchMode: 'all',
       });
+      this.setResults(res);
       return res;
+    },
+
+    setResults(res: IAzureTableSearchResults) {
+      this.itemsCount = res.count;
+      this.searchResultIds = res.ids;
     },
 
     getFilterParams(params: ISearchData) {
@@ -238,11 +260,11 @@ export default Vue.extend({
       };
     },
 
-    getEventRoute(event: IEvent) {
+    getEventRoute(event: IEventCombined) {
       return {
         name: routes.events.summary.name,
         params: {
-          id: event.id,
+          id: event.entity.id,
         },
       };
     },
@@ -270,8 +292,8 @@ export default Vue.extend({
       return null;
     },
 
-    goToEditEvent(event: IEvent) {
-      this.$router.push({ name: routes.events.edit.name, params: { id: event.id } });
+    goToEditEvent(event: IEventCombined) {
+      this.$router.push({ name: routes.events.edit.name, params: { id: event.entity.id } });
     },
   },
 });

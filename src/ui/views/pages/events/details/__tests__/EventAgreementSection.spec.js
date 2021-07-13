@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { Event, mockEventsSearchData } from '@/entities/event';
+import { mockEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
@@ -9,7 +9,7 @@ import Component from '../components/EventAgreementSection.vue';
 
 const localVue = createLocalVue();
 
-const mockEvent = new Event(mockEventsSearchData()[0]);
+const mockEvent = mockEventEntity();
 const storage = mockStorage();
 
 describe('EventAgreementSection.vue', () => {
@@ -27,6 +27,9 @@ describe('EventAgreementSection.vue', () => {
         },
         store: {
           ...mockUserStateLevel(5),
+        },
+        computed: {
+          agreementTypeName() { return 'agreement-type-name'; },
         },
       });
     });
@@ -87,7 +90,7 @@ describe('EventAgreementSection.vue', () => {
 
       it('displays the right data', () => {
         const element = wrapper.findDataTest('event-agreement-section-type-0');
-        expect(element.text()).toEqual(wrapper.vm.agreement.agreementTypeName.translation.en);
+        expect(element.text()).toEqual(wrapper.vm.agreementTypeName);
       });
     });
 
@@ -203,6 +206,9 @@ describe('EventAgreementSection.vue', () => {
             agreementTypes: [],
             index: 0,
           },
+          computed: {
+            agreementTypeName() { return 'agreement-type-name'; },
+          },
         });
         expect(wrapper.vm.infoData).toEqual({
           startDate: {
@@ -219,7 +225,7 @@ describe('EventAgreementSection.vue', () => {
           },
           type: {
             key: 'eventSummary.agreement.type',
-            value: wrapper.vm.agreement.agreementTypeName.translation.en,
+            value: wrapper.vm.agreementTypeName,
           },
         });
       });
@@ -252,7 +258,7 @@ describe('EventAgreementSection.vue', () => {
 
       it('emits edit with the right parameters', async () => {
         await wrapper.vm.editFromInfoDialog();
-        expect(wrapper.emitted('edit')[0][0]).toBe(wrapper.vm.agreement.name.translation.en);
+        expect(wrapper.emitted('edit')[0][0]).toBe(wrapper.vm.agreement.id);
       });
     });
 

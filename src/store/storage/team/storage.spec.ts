@@ -1,5 +1,5 @@
 import { Team } from '@/entities/team';
-import { mockEventsData } from '@/entities/event';
+import { mockEventEntityData } from '@/entities/event';
 import { mockStore } from '@/store';
 import { mockTeamMembersData, mockTeamSearchDataAggregate } from '@/entities/team/team.mock';
 import { makeStorage } from './storage';
@@ -16,7 +16,7 @@ describe('>>> Team Storage', () => {
       expect(store.dispatch).toBeCalledWith('team/getTeam', id);
     });
     it('should proxy getTeamsAssignable,', () => {
-      const { id } = mockEventsData()[0];
+      const { id } = mockEventEntityData()[0];
       storage.actions.getTeamsAssignable(id);
       expect(store.dispatch).toBeCalledWith('team/getTeamsAssignable', id);
     });

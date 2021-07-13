@@ -1,6 +1,6 @@
 import { VSwitch } from 'vuetify/lib';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { Event, mockEventsSearchData, EEventCallCentreStatus } from '@/entities/event';
+import { mockEventEntity, EEventCallCentreStatus } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import entityUtils from '@/entities/utils';
@@ -9,7 +9,7 @@ import { EEventSummarySections } from '@/types';
 import Component from '../components/EventCallCentreDialog.vue';
 
 const localVue = createLocalVue();
-const mockEvent = new Event(mockEventsSearchData()[0]);
+const mockEvent = mockEventEntity();
 const storage = mockStorage();
 
 describe('EventCallCentreDialog.vue', () => {

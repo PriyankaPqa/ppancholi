@@ -1,96 +1,77 @@
 import {
-  IEvent,
+  IEventEntity,
+  IEventMetadata,
+  IEventAgreement,
   IEventCallCentre,
   IEventGenericLocation,
   IOtherProvince,
   IRegion,
   EEventStatus,
-  IEventAgreementInfos,
+  EventEntity,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
-import { IAzureSearchParams, IAzureSearchResult, EEventSummarySections } from '@/types';
+import { EEventSummarySections, IAzureSearchResult } from '@/types';
+import { Base } from '../base';
 import { IStorage } from './storage.types';
 
-export const makeStorage = (store: IStore<IState>): IStorage => ({
-  getters: {
-    agreementTypes(): Array<IOptionItem> {
-      return store.getters['event/agreementTypes'];
-    },
+export class EventStorage
+  extends Base<IEventEntity, IEventMetadata> implements IStorage {
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
+    super(pStore, pEntityModuleName, pMetadataModuleName);
+  }
 
-    eventTypes(): Array<IOptionItem> {
-      return store.getters['event/eventTypes'];
-    },
+  private getters = {
+    ...this.baseGetters,
 
-    events(): Array<IEvent> {
-      return store.getters['event/events'];
-    },
+    // eslint-disable-next-line max-len
+    agreementTypes: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/agreementTypes`](filterOutInactive, actualValue),
 
-    eventsByStatus(statuses: Array<EEventStatus>) {
-      return store.getters['event/eventsByStatus'](statuses);
-    },
+    // eslint-disable-next-line max-len
+    eventTypes: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/eventTypes`](filterOutInactive, actualValue),
 
-    eventById(id: uuid): IEvent {
-      return store.getters['event/eventById'](id);
-    },
-  },
+    eventsByStatus: (statuses: Array<EEventStatus>): Array<IEventEntity> => this.store.getters[`${this.entityModuleName}/eventsByStatus`](statuses),
+  }
 
-  actions: {
-    fetchAgreementTypes(): Promise<IOptionItem[]> {
-      return store.dispatch('event/fetchAgreementTypes');
-    },
+  private actions = {
+    ...this.baseActions,
 
-    fetchEventTypes(): Promise<IOptionItem[]> {
-      return store.dispatch('event/fetchEventTypes');
-    },
+    fetchAgreementTypes: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchAgreementTypes`),
 
-    fetchEvent(id: uuid): Promise<IEvent> {
-      return store.dispatch('event/fetchEvent', id);
-    },
+    fetchEventTypes: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchEventTypes`),
 
-    fetchEvents(): Promise<IEvent[]> {
-      return store.dispatch('event/fetchEvents');
-    },
+    fetchOtherProvinces: (): Promise<IAzureSearchResult<IOtherProvince>> => this.store.dispatch(`${this.entityModuleName}/fetchOtherProvinces`),
 
-    fetchOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>> {
-      return store.dispatch('event/fetchOtherProvinces');
-    },
+    fetchRegions: (): Promise<IAzureSearchResult<IRegion>> => this.store.dispatch(`${this.entityModuleName}/fetchRegions`),
 
-    fetchRegions(): Promise<IAzureSearchResult<IRegion>> {
-      return store.dispatch('event/fetchRegions');
-    },
-
-    searchEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEvent>> {
-      return store.dispatch('event/searchEvents', params);
-    },
-
-    createEvent(payload: IEvent): Promise<IEvent> {
-      return store.dispatch('event/createEvent', payload);
-    },
-
-    updateEvent(payload: IEvent): Promise<IEvent> {
-      return store.dispatch('event/updateEvent', payload);
-    },
-
-    updateEventSection({
+    updateEventSection: ({
       eventId, payload, section, action,
-    } : {eventId: uuid, payload: IEventCallCentre | IEventAgreementInfos | IEventGenericLocation, section: EEventSummarySections, action: string})
-      : Promise<IEvent> {
-      return store.dispatch('event/updateEventSection', {
-        eventId, payload, section, action,
-      });
-    },
+    } : {eventId: uuid, payload: IEventCallCentre | IEventAgreement | IEventGenericLocation, section: EEventSummarySections, action: string})
+      : Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/updateEventSection`, {
+      eventId, payload, section, action,
+    }),
 
-    deleteAgreement({ eventId, agreementId }:{eventId: uuid, agreementId: uuid}): Promise<IEvent> {
-      return store.dispatch('event/deleteAgreement', { eventId, agreementId });
-    },
+    deleteAgreement: ({ eventId, agreementId }:{eventId: uuid, agreementId: uuid})
+    : Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/deleteAgreement`, { eventId, agreementId }),
 
-    toggleSelfRegistration(payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEvent> {
-      return store.dispatch('event/toggleSelfRegistration', payload);
-    },
+    // eslint-disable-next-line
+    toggleSelfRegistration: (payload: { id: uuid; selfRegistrationEnabled: boolean }): Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/toggleSelfRegistration`, payload),
 
-    setEventStatus(payload: { event: IEvent, status: EEventStatus, reason: string }): Promise<IEvent> {
-      return store.dispatch('event/setEventStatus', payload);
-    },
-  },
-});
+    // eslint-disable-next-line
+    setEventStatus: (payload: { event: EventEntity, status: EEventStatus, reason: string }): Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/setEventStatus`, payload),
+
+    createEvent: (event: IEventEntity): Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/createEvent`, event),
+
+    updateEvent: (event: IEventEntity): Promise<IEventEntity> => this.store.dispatch(`${this.entityModuleName}/updateEvent`, event),
+  }
+
+  private mutations = {
+    ...this.baseMutations,
+  }
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  })
+}

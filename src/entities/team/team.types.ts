@@ -21,7 +21,7 @@ export enum ETeamStatus {
 
 export interface ITeamEvent {
   id: uuid;
-  name: IMultilingual;
+  name?: IMultilingual;
 }
 
 // Member schema from teams projection

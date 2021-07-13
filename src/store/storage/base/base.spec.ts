@@ -118,9 +118,9 @@ describe('BaseStorage', () => {
   describe('baseActions', () => {
     describe('fetch', () => {
       it('should call action fetch from both module', async () => {
-        await storage.actions.fetch(id);
-        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/fetch`, id);
-        expect(store.dispatch).toBeCalledWith(`${storage.metadataModuleName}/fetch`, id);
+        await storage.actions.fetch(id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/fetch`, { id, useGlobalHandler: true });
+        expect(store.dispatch).toBeCalledWith(`${storage.metadataModuleName}/fetch`, { id, useGlobalHandler: false });
       });
 
       it('should return one entity combined with its metadata', async () => {

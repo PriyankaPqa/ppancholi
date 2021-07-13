@@ -61,7 +61,7 @@ describe('>>> Option List Module', () => {
     });
 
     describe('addOrUpdateItem', () => {
-      test('the addOrUpdateEvent mutation adds a new event to the state', () => {
+      test('the addOrUpdateItem mutation adds a new option item to the state', () => {
         const item = mockOptionItemData()[0];
 
         expect(store.state.optionList.items).toEqual([]);
@@ -71,7 +71,7 @@ describe('>>> Option List Module', () => {
         expect(store.state.optionList.items).toEqual([item]);
       });
 
-      test('the addOrUpdateEvent mutation updates an existing event', () => {
+      test('the addOrUpdateItem mutation updates an existing option item', () => {
         const items = mockOptionItemData();
 
         store.commit('optionList/setItems', items);

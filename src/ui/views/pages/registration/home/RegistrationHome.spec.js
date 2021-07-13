@@ -3,7 +3,7 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { EEventStatus, mockEventsSearchData } from '@/entities/event';
+import { EEventStatus, mockCombinedEvent } from '@/entities/event';
 
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
@@ -11,7 +11,7 @@ import { tabs } from '@/store/modules/registration/tabs';
 import Component from './RegistrationHome.vue';
 
 const localVue = createLocalVue();
-const mockEvent = mockEventsSearchData()[0];
+const mockEvent = mockCombinedEvent();
 
 const storage = mockStorage();
 
@@ -93,13 +93,13 @@ describe('RegistrationHome.vue', () => {
       it('should call setEvent mutations with proper params', () => {
         wrapper.vm.setEvent(mockEvent);
         expect(wrapper.vm.$storage.registration.mutations.setEvent).toHaveBeenCalledWith({
-          eventId: mockEvent.eventId,
-          eventName: mockEvent.eventName,
-          responseDetails: mockEvent.responseDetails,
-          registrationLink: mockEvent.registrationLink,
-          tenantId: mockEvent.tenantId,
-          shelterLocations: mockEvent.shelterLocations,
-          registrationLocations: mockEvent.registrationLocations,
+          eventId: mockEvent.entity.id,
+          eventName: mockEvent.entity.name,
+          responseDetails: mockEvent.entity.responseDetails,
+          registrationLink: mockEvent.entity.registrationLink,
+          tenantId: mockEvent.entity.tenantId,
+          shelterLocations: mockEvent.entity.shelterLocations,
+          registrationLocations: mockEvent.entity.registrationLocations,
         });
       });
     });
@@ -107,7 +107,7 @@ describe('RegistrationHome.vue', () => {
     describe('fetchActiveEvents', () => {
       it('should fetch the proper events', () => {
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
-          filter: { Schedule: { Status: EEventStatus.Open } },
+          filter: { Entity: { Schedule: { Status: EEventStatus.Open } } },
           top: 999,
         });
       });
@@ -152,7 +152,7 @@ describe('RegistrationHome.vue', () => {
 
     describe('assistanceNumber', () => {
       it('should return the phone number of the selected event', async () => {
-        expect(wrapper.vm.assistanceNumber).toBe(mockEvent.responseDetails.assistanceNumber);
+        expect(wrapper.vm.assistanceNumber).toBe(mockEvent.entity.responseDetails.assistanceNumber);
       });
     });
   });

@@ -2,10 +2,16 @@ import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import {
-  mockEventsSearchData, mockOtherProvinceData, mockRegionData, Event, EResponseLevel, EEventStatus,
+  mockOtherProvinceData,
+  mockRegionData,
+  EResponseLevel,
+  EEventStatus,
+  mockEventEntity,
+  mockCombinedEvents,
 } from '@/entities/event';
 import {
   mockOptionItemData,
+  OptionItem,
 } from '@/entities/optionItem';
 import helpers from '@/ui/helpers';
 import {
@@ -14,16 +20,26 @@ import {
 import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
+import { mockStorage } from '@/store/storage';
 import Component from '../EventForm.vue';
 
-const event = new Event(mockEventsSearchData()[0]);
+const event = mockEventEntity();
+const mockEvents = mockCombinedEvents();
 event.schedule.scheduledCloseDate = moment(event.schedule.scheduledCloseDate).toISOString();
 event.schedule.scheduledOpenDate = moment(event.schedule.scheduledOpenDate).toISOString();
 event.responseDetails.dateReported = moment(event.responseDetails.dateReported).toISOString();
 event.fillEmptyMultilingualAttributes = jest.fn();
 
+const storage = mockStorage();
+storage.event.actions.fetchEventTypes = jest.fn(() => mockOptionItemData());
+storage.event.actions.fetchAll = jest.fn(() => mockCombinedEvents());
+storage.event.actions.fetchOtherProvinces = jest.fn(() => mockOtherProvinceData());
+storage.event.actions.fetchRegions = jest.fn(() => mockRegionData());
+storage.event.getters.eventTypes = jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e)));
+
 describe('EventForm.vue', () => {
   let wrapper;
+  const localVue = createLocalVue();
 
   afterEach(() => {
     jest.clearAllMocks();
@@ -43,6 +59,9 @@ describe('EventForm.vue', () => {
           prefixRegistrationLink() {
             return 'https://mytest.test/';
           },
+        },
+        mocks: {
+          $storage: storage,
         },
       });
 
@@ -71,6 +90,9 @@ describe('EventForm.vue', () => {
           isNameUnique: true,
           isDirty: false,
         },
+        mocks: {
+          $storage: storage,
+        },
       });
 
       expect(wrapper.vm.prefixRegistrationLink).toEqual('https://foo.test/en/registration/');
@@ -91,6 +113,13 @@ describe('EventForm.vue', () => {
           prefixRegistrationLink() {
             return 'https://mytest.test/';
           },
+          registrationLink() {
+            return 'gatineau-floods-2021';
+          },
+
+        },
+        mocks: {
+          $storage: storage,
         },
       });
     });
@@ -115,9 +144,10 @@ describe('EventForm.vue', () => {
         expect(wrapper.vm.languageMode).toBe('fr');
       });
 
-      it('calls fillEmptyMultilingualAttributes entity method', () => {
-        wrapper.vm.setLanguageMode('fr');
-        expect(event.fillEmptyMultilingualAttributes).toHaveBeenCalledTimes(1);
+      it('calls fillEmptyMultilingualAttributes entity method', async () => {
+        wrapper.vm.localEvent.fillEmptyMultilingualAttributes = jest.fn();
+        await wrapper.vm.setLanguageMode('fr');
+        expect(wrapper.vm.localEvent.fillEmptyMultilingualAttributes).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -136,7 +166,7 @@ describe('EventForm.vue', () => {
     });
 
     describe('setRelatedEvents', () => {
-      it('sets the correct events in the relatedEventsInfos', async () => {
+      it('sets the correct events in the relatedEventsId', async () => {
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
           propsData: {
@@ -145,21 +175,13 @@ describe('EventForm.vue', () => {
             isNameUnique: true,
             isDirty: false,
           },
-          computed: {
-            prefixRegistrationLink() {
-              return 'https://mytest.test/';
-            },
-            relatedEventsSorted() {
-              return [event];
-            },
+          mocks: {
+            $storage: storage,
           },
         });
 
         await wrapper.vm.setRelatedEvents([event.id]);
-        expect(wrapper.vm.localEvent.relatedEventsInfos).toEqual([{
-          id: event.id,
-          eventName: event.name,
-        }]);
+        expect(wrapper.vm.localEvent.relatedEventIds).toEqual([event.id]);
       });
 
       it('emits isDirty when called', async () => {
@@ -178,6 +200,9 @@ describe('EventForm.vue', () => {
             relatedEventsSorted() {
               return [event];
             },
+          },
+          mocks: {
+            $storage: storage,
           },
         });
         await wrapper.vm.setRelatedEvents([event.id]);
@@ -219,6 +244,8 @@ describe('EventForm.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
+      storage.event.getters.getAll = jest.fn(() => mockEvents);
+      storage.event.getters.eventTypes = jest.fn(() => mockOptionItemData());
       wrapper = shallowMount(Component, {
         localVue: createLocalVue(),
         propsData: {
@@ -226,6 +253,9 @@ describe('EventForm.vue', () => {
           isEditMode: false,
           isNameUnique: true,
           isDirty: false,
+        },
+        mocks: {
+          $storage: storage,
         },
         computed: {
           prefixRegistrationLink() {
@@ -273,8 +303,6 @@ describe('EventForm.vue', () => {
       });
 
       it('sets scheduledOpenData and scheduledCloseDate to initial values if toggling from OnHold => Open => OnHold in edit mode', async () => {
-        const event = new Event(mockEventsSearchData()[1]);
-
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
           propsData: {
@@ -282,6 +310,9 @@ describe('EventForm.vue', () => {
             isEditMode: true,
             isNameUnique: true,
             isDirty: false,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             prefixRegistrationLink() {
@@ -375,21 +406,13 @@ describe('EventForm.vue', () => {
 
     describe('eventTypesSorted', () => {
       it('returns the event types from the store with the initial event appended to the list', async () => {
-        await flushPromises();
-        expect(wrapper.vm.eventTypesSorted).toEqual([
-          ...wrapper.vm.$storage.event.getters.eventTypes(),
-          {
-            id: event.eventTypeId,
-            name: event.eventTypeName,
-          },
-        ]);
+        expect(wrapper.vm.eventTypesSorted).toEqual(mockOptionItemData());
       });
     });
 
     describe('relatedEventsSorted', () => {
       it('returns the events from the store', async () => {
-        await flushPromises();
-        expect(wrapper.vm.relatedEventsSorted).toEqual(wrapper.vm.$storage.event.getters.events());
+        expect(wrapper.vm.relatedEventsSorted).toEqual(mockEvents);
       });
     });
 
@@ -412,7 +435,32 @@ describe('EventForm.vue', () => {
     });
 
     describe('scheduledCloseDateRule', () => {
-      it('returns the rule mustBeAfterOrSame if scheduledOpenDate and scheduledCloseDate are defined', () => {
+      it('returns the rule mustBeAfterOrSame if scheduledOpenDate and scheduledCloseDate are defined', async () => {
+        wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          propsData: {
+            event,
+            isEditMode: false,
+            isNameUnique: true,
+            isDirty: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            eventTypesSorted() {
+              return mockOptionItemData();
+            },
+          },
+        });
+        await wrapper.setData({
+          localEvent: {
+            schedule: {
+              scheduledCloseDate: '2020-01-02',
+              scheduledOpenDate: '2020-01-01',
+            },
+          },
+        });
         const rule = {
           mustBeAfterOrSame: { X: wrapper.vm.localEvent.schedule.scheduledCloseDate, Y: wrapper.vm.localEvent.schedule.scheduledOpenDate },
         };
@@ -430,7 +478,32 @@ describe('EventForm.vue', () => {
     });
 
     describe('scheduledOpenDateRule', () => {
-      it('returns the rule mustBeBeforeOrSame if scheduledOpenDate and scheduledCloseDate are defined', () => {
+      it('returns the rule mustBeBeforeOrSame if scheduledOpenDate and scheduledCloseDate are defined', async () => {
+        wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          propsData: {
+            event,
+            isEditMode: false,
+            isNameUnique: true,
+            isDirty: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            eventTypesSorted() {
+              return mockOptionItemData();
+            },
+          },
+        });
+        await wrapper.setData({
+          localEvent: {
+            schedule: {
+              scheduledCloseDate: '2020-01-02',
+              scheduledOpenDate: '2020-01-01',
+            },
+          },
+        });
         const rule = {
           mustBeBeforeOrSame: { X: wrapper.vm.localEvent.schedule.scheduledOpenDate, Y: wrapper.vm.localEvent.schedule.scheduledCloseDate },
         };
@@ -456,6 +529,9 @@ describe('EventForm.vue', () => {
             isEditMode: true,
             isNameUnique: true,
             isDirty: false,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             prefixRegistrationLink() {
@@ -504,7 +580,6 @@ describe('EventForm.vue', () => {
 
     describe('showReOpenInput', () => {
       it('returns true if the form is in edit mode, the event has previously been opened, and status is OnHold => Open', async () => {
-        const event = new Event(mockEventsSearchData()[0]);
         event.schedule.hasBeenOpen = true;
         event.schedule.status = EEventStatus.OnHold;
 
@@ -515,6 +590,9 @@ describe('EventForm.vue', () => {
             isEditMode: true,
             isNameUnique: true,
             isDirty: false,
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             prefixRegistrationLink() {
@@ -555,9 +633,27 @@ describe('EventForm.vue', () => {
           prefixRegistrationLink() {
             return 'https://mytest.test/';
           },
+          relatedEventsSorted() {
+            return [event];
+          },
         },
         store: {
           ...mockUserStateLevel(6),
+        },
+        mocks: {
+          $storage: {
+            event: {
+              getters: {
+                eventTypes: jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e))),
+              },
+              actions: {
+                fetchEventTypes: jest.fn(() => mockOptionItemData()),
+                fetchAll: jest.fn(() => mockCombinedEvents()),
+                fetchOtherProvinces: jest.fn(() => mockOtherProvinceData()),
+                fetchRegions: jest.fn(() => mockRegionData()),
+              },
+            },
+          },
         },
       });
     });
@@ -583,7 +679,7 @@ describe('EventForm.vue', () => {
       wrapper = mount(Component, {
         localVue: createLocalVue(),
         propsData: {
-          event: new Event(),
+          event,
           isEditMode: false,
           isNameUnique: true,
           isDirty: false,
@@ -596,16 +692,37 @@ describe('EventForm.vue', () => {
         data() {
           return {
             languageMode: 'en',
-            assistanceNumber: {},
+            assistanceNumber: {
+              number: '',
+              countryCode: '',
+              e164Number: '',
+            },
           };
         },
         store: {
           ...mockUserStateLevel(6),
         },
+        mocks: {
+          $storage: {
+            event: {
+              getters: {
+                eventTypes: jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e))),
+              },
+              actions: {
+                fetchEventTypes: jest.fn(() => mockOptionItemData()),
+                fetchAll: jest.fn(() => mockCombinedEvents()),
+                fetchOtherProvinces: jest.fn(() => mockOtherProvinceData()),
+                fetchRegions: jest.fn(() => mockRegionData()),
+              },
+            },
+          },
+        },
       });
     });
 
     test('event name is required', async () => {
+      wrapper.vm.localEvent.name.translation[wrapper.vm.languageMode] = '';
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$refs.form.validate();
       const el = wrapper.findTextFieldWithValidation('event-name');
       expect(el.classes('invalid')).toBe(true);
@@ -613,24 +730,23 @@ describe('EventForm.vue', () => {
 
     test('event name max is MAX_LENGTH_MD', async () => {
       wrapper.vm.localEvent.name.translation[wrapper.vm.languageMode] = 'x'.repeat(MAX_LENGTH_MD + 1);
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$refs.form.validate();
       const el = wrapper.findTextFieldWithValidation('event-name');
       expect(el.classes('invalid')).toBe(true);
     });
 
     test('event response level is required', async () => {
+      wrapper.vm.localEvent.responseDetails.responseLevel = null;
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$refs.form.validate();
       const el = wrapper.findSelectWithValidation('event-level');
       expect(el.classes('invalid')).toBe(true);
     });
 
     test('event province is required', async () => {
-      await wrapper.vm.$refs.form.validate();
-      const el = wrapper.findSelectWithValidation('event-province');
-      expect(el.classes('invalid')).toBe(true);
-    });
-
-    test('event province is required', async () => {
+      wrapper.vm.localEvent.location.province = null;
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$refs.form.validate();
       const el = wrapper.findSelectWithValidation('event-province');
       expect(el.classes('invalid')).toBe(true);
@@ -674,13 +790,39 @@ describe('EventForm.vue', () => {
     });
 
     test('assistanceNumber is required', async () => {
+      wrapper = mount(Component, {
+        localVue: createLocalVue(),
+        propsData: {
+          event,
+          isEditMode: true,
+          isNameUnique: true,
+          isDirty: false,
+        },
+        computed: {
+          prefixRegistrationLink() {
+            return 'https://mytest.test/';
+          },
+        },
+        store: {
+          ...mockUserStateLevel(6),
+        },
+      });
+      wrapper.vm.assistanceNumber = {
+        number: '',
+        countryCode: '',
+        e164Number: '',
+      };
+
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$refs.form.validate();
+      await wrapper.vm.$nextTick();
       const el = wrapper.findDataTest('event-phone');
       expect(el.classes('error--text')).toBe(true);
     });
 
     test('description max is MAX_LENGTH_LG', async () => {
       wrapper.vm.localEvent.description.translation[wrapper.vm.languageMode] = 'x'.repeat(MAX_LENGTH_LG + 1);
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$refs.form.validate();
       const el = wrapper.findTextFieldWithValidation('event-description');
       expect(el.classes('invalid')).toBe(true);
@@ -690,23 +832,20 @@ describe('EventForm.vue', () => {
   describe('Permissions', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
-        localVue: createLocalVue(),
+        localVue,
         propsData: {
           event,
           isEditMode: true,
           isNameUnique: true,
           isDirty: false,
         },
+        mocks: {
+          $storage: storage,
+        },
       });
     });
 
-    test('the inputDisabled prop returns true if the user does not have level 6', async () => {
-      await wrapper.setRole('level6');
-
-      expect(wrapper.vm.inputDisabled).toBe(false);
-
-      await wrapper.setRole('level5');
-
+    test('the inputDisabled prop returns false if the user has level lower than 6', async () => {
       expect(wrapper.vm.inputDisabled).toBe(true);
     });
 
@@ -725,6 +864,38 @@ describe('EventForm.vue', () => {
       // expect(wrapper.findDataTest('event-end-date').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-related-events').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-description').attributes('disabled')).toBeFalsy();
+    });
+
+    test('the inputDisabled prop returns true if the user has level 6', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          event,
+          isEditMode: true,
+          isNameUnique: true,
+          isDirty: false,
+        },
+        store: {
+          ...mockUserStateLevel(6),
+        },
+        mocks: {
+          $storage: {
+            event: {
+              getters: {
+                eventTypes: jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e))),
+              },
+              actions: {
+                fetchEventTypes: jest.fn(() => mockOptionItemData()),
+                fetchAll: jest.fn(() => mockCombinedEvents()),
+                fetchOtherProvinces: jest.fn(() => mockOtherProvinceData()),
+                fetchRegions: jest.fn(() => mockRegionData()),
+              },
+            },
+          },
+        },
+      });
+
+      expect(wrapper.vm.inputDisabled).toBe(false);
     });
   });
 });

@@ -1,240 +1,138 @@
 import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces } from '@/types';
-import { Event } from './event';
-import { mockEventsSearchData } from './event.mock';
-import { EEventCallCentreStatus, EEventStatus } from './event.types';
+import { EventEntity } from './event';
+import { mockEventEntity } from './event.mock';
+import { EEventCallCentreStatus, EEventStatus, IEventEntity } from './event.types';
 
-const mockEventData = mockEventsSearchData()[0];
+const mockEvent:IEventEntity = mockEventEntity();
 
-describe('>>> Event', () => {
+describe('>>> EventEntity', () => {
   describe('>> constructor', () => {
-    it('should instantiate id', () => {
-      const event = new Event(mockEventData);
-      expect(event.id).toBe('7c076603-580a-4400-bef2-5ddececb0123');
-    });
-
     it('should instantiate name', () => {
-      const event = new Event(mockEventData);
-      expect(event.name).toEqual({
-        translation: {
-          en: 'Gatineau Floods 2021',
-          fr: 'Inondations Gatineau 2021',
-        },
-      });
+      const event = new EventEntity(mockEvent);
+      expect(event.name).toEqual(mockEvent.name);
     });
 
     it('should instantiate call centres', () => {
-      const event = new Event(mockEventData);
-      expect(event.callCentres).toEqual([{
-        id: 'call-centre-id-1',
-        name: {
-          translation: {
-            en: 'z call center 1',
-            fr: 'call center 1 fr',
+      const event = new EventEntity(mockEvent);
+      expect(event.callCentres).toEqual([
+        {
+          id: 'call-centre-1',
+          name: {
+            translation: {
+              en: 'z call center 1',
+              fr: 'call center 1 fr',
+            },
+          },
+          startDate: new Date('2021-03-01T00:00:00.000Z'),
+          endDate: null,
+          status: EEventCallCentreStatus.Active,
+          details: {
+            translation: {
+              en: 'call center 1 details',
+              fr: 'call center 1  details fr',
+            },
           },
         },
-        startDate: new Date('2021-03-01T00:00:00Z'),
-        endDate: null,
-        status: EEventCallCentreStatus.Active,
-        details: {
-          translation: {
-            en: 'call center 1 details',
-            fr: 'call center 1  details fr',
+        {
+          id: 'call-centre-2',
+          name: {
+            translation: {
+              en: 'call center 2',
+              fr: 'call center 2 fr',
+            },
+          },
+          startDate: new Date('2021-03-01T00:00:00.000Z'),
+          endDate: null,
+          status: EEventCallCentreStatus.Active,
+          details: {
+            translation: {
+              en: 'call center 1 details',
+              fr: 'call center 1  details fr',
+            },
           },
         },
-      }, {
-        id: 'call-centre-id-2',
-        name: {
-          translation: {
-            en: 'call center 2',
-            fr: 'call center 2 fr',
-          },
-        },
-        startDate: new Date('2021-03-01T00:00:00Z'),
-        endDate: null,
-        status: EEventCallCentreStatus.Active,
-        details: {
-          translation: {
-            en: 'call center 1 details',
-            fr: 'call center 1  details fr',
-          },
-        },
-      }]);
+      ]);
     });
 
     it('should instantiate agreements', () => {
-      const event = new Event(mockEventData);
-      expect(event.agreements).toEqual([{
-        id: 'agreement-id-1',
-        name: {
-          translation: {
-            en: 'agreement 1',
-            fr: 'agreement 1 fr',
+      const event = new EventEntity(mockEvent);
+      expect(event.agreements).toEqual(
+        [{
+          id: 'agreement-id-1',
+          name: {
+            translation: {
+              en: 'agreement 1',
+              fr: 'agreement 1 fr',
+            },
+          },
+          startDate: new Date('2021-03-01T00:00:00Z'),
+          endDate: null,
+          agreementType: {
+            optionItemId: '1',
+            specifiedOther: 'abc',
+          },
+          details: {
+            translation: {
+              en: 'agreement 1 details',
+              fr: 'agreement 1  details fr',
+            },
           },
         },
-        startDate: new Date('2021-03-01T00:00:00Z'),
-        endDate: null,
-        agreementType: {
-          optionItemId: '1',
-          specifiedOther: 'abc',
-        },
-        agreementTypeName: {
-          translation: {
-            en: 'agreement type 1',
-            fr: 'agreement type 1 fr',
-          },
-        },
-        details: {
-          translation: {
-            en: 'agreement 1 details',
-            fr: 'agreement 1  details fr',
-          },
-        },
-      }]);
+        ],
+      );
     });
 
     it('should instantiate registration locations', () => {
-      const event = new Event(mockEventData);
-      expect(event.registrationLocations).toEqual(mockEventData.registrationLocations);
+      const event = new EventEntity(mockEvent);
+      expect(event.registrationLocations).toEqual(mockEvent.registrationLocations);
     });
 
     it('should instantiate shelter locations', () => {
-      const event = new Event(mockEventData);
-      expect(event.shelterLocations).toEqual(mockEventData.shelterLocations);
+      const event = new EventEntity(mockEvent);
+      expect(event.shelterLocations).toEqual(mockEvent.shelterLocations);
     });
 
     it('should instantiate description', () => {
-      const event = new Event(mockEventData);
-      expect(event.description).toEqual({
-        translation: {
-          en: 'Desc EN',
-          fr: 'Desc FR',
-        },
-      });
+      const event = new EventEntity(mockEvent);
+      expect(event.description).toEqual(mockEvent.description);
     });
 
     it('should instantiate eventStatus', () => {
-      const event = new Event(mockEventData);
-      expect(event.eventStatus).toEqual(1);
-    });
-
-    it('should instantiate eventTypeId', () => {
-      const event = new Event(mockEventData);
-      expect(event.eventTypeId).toEqual('41c362cc-3bed-4707-97e3-732ef3a2ebbf');
-    });
-
-    it('should instantiate eventTypeName', () => {
-      const event = new Event(mockEventData);
-      expect(event.eventTypeName).toEqual({
-        translation: {
-          en: 'Flood',
-          fr: 'Inondation',
-        },
-      });
-    });
-
-    it('should instantiate created', () => {
-      const event = new Event(mockEventData);
-      expect(event.created).toEqual(new Date('2021-01-20T15:12:03.4219037Z'));
+      const event = new EventEntity(mockEvent);
+      expect(event.eventStatus).toEqual(mockEvent.eventStatus);
     });
 
     it('should instantiate location', () => {
-      const event = new Event(mockEventData);
-      expect(event.location).toEqual({
-        province: 11,
-        provinceOther: {
-          translation: {
-            en: '',
-            fr: '',
-          },
-        },
-        region: {
-          translation: {
-            en: '',
-            fr: '',
-          },
-        },
-      });
-    });
-
-    it('should instantiate provinceName', () => {
-      const event = new Event(mockEventData);
-      expect(event.provinceName).toEqual({
-        translation: {
-          en: 'Alberta',
-          fr: 'Alberta FR',
-        },
-      });
-    });
-
-    it('should instantiate relatedEventsInfos', () => {
-      const event = new Event(mockEventData);
-      expect(event.relatedEventsInfos).toEqual([{
-        id: '87776243-696f-426b-b961-31ee98e3a4cd',
-        eventName: {
-          translation: {
-            en: 'Vegas Earthquake 2021',
-            fr: 'Vegas Earthquake 2021 FR',
-          },
-        },
-      }]);
+      const event = new EventEntity(mockEvent);
+      expect(event.location).toEqual(mockEvent.location);
     });
 
     it('should instantiate registration link', () => {
-      const event = new Event(mockEventData);
-      expect(event.registrationLink).toEqual({
-        translation: {
-          en: 'https://www.redcross.ca/gatineau-floods-2021',
-          fr: 'https://www.redcross.ca/inondations-gatineau-2021',
-        },
-      });
-    });
-
-    it('should instantiate responseLevelName', () => {
-      const event = new Event(mockEventData);
-      expect(event.responseLevelName).toEqual({
-        translation: {
-          en: 'Level1',
-          fr: 'Niveau1',
-        },
-      });
+      const event = new EventEntity(mockEvent);
+      expect(event.registrationLink).toEqual(mockEvent.registrationLink);
     });
 
     it('should instantiate selfRegistrationEnabled', () => {
-      const event = new Event(mockEventData);
-      expect(event.selfRegistrationEnabled).toEqual(false);
-    });
-
-    it('should instantiate scheduleEventStatusName', () => {
-      const event = new Event(mockEventData);
-      expect(event.scheduleEventStatusName).toEqual({
-        translation: {
-          en: 'On hold',
-          fr: 'En attente',
-        },
-      });
-    });
-
-    it('should instantiate tenantId', () => {
-      const event = new Event(mockEventData);
-      expect(event.tenantId).toEqual('7c076603-580a-4400-bef2-5ddececb0931');
+      const event = new EventEntity(mockEvent);
+      expect(event.selfRegistrationEnabled).toEqual(mockEvent.selfRegistrationEnabled);
     });
 
     it('should instantiate schedule', () => {
-      const event = new Event(mockEventData);
+      const event = new EventEntity(mockEvent);
       expect(event.schedule).toEqual({
         status: EEventStatus.OnHold,
-        scheduledOpenDate: new Date('2021-03-01T00:00:00.000Z'),
-        scheduledCloseDate: new Date('2021-05-15T15:00:00.000Z'),
+        scheduledOpenDate: new Date('2021-03-01T00:00:00Z'),
+        scheduledCloseDate: new Date('2021-05-15T15:00:00Z'),
         openDate: new Date('2021-03-31T15:23:00.755Z'),
         closeDate: new Date('2021-03-31T15:23:09.367Z'),
-        updateReason: null,
+        updateReason: 'For reasons',
         timestamp: new Date('2021-03-31T15:23:16.069Z'),
       });
     });
 
     it('should instantiate scheduleHistory', () => {
-      const event = new Event(mockEventData);
+      const event = new EventEntity(mockEvent);
       expect(event.scheduleHistory).toEqual([
         {
           status: EEventStatus.Open,
@@ -276,7 +174,7 @@ describe('>>> Event', () => {
     });
 
     it('should instantiate responseDetails', () => {
-      const event = new Event(mockEventData);
+      const event = new EventEntity(mockEvent);
       expect(event.responseDetails).toEqual({
         responseLevel: 3,
         eventType: {
@@ -287,12 +185,17 @@ describe('>>> Event', () => {
         assistanceNumber: '+15144544545',
       });
     });
+
+    it('should instantiate relatedEventIds', () => {
+      const event = new EventEntity(mockEvent);
+      expect(event.relatedEventIds).toEqual(mockEvent.relatedEventIds);
+    });
   });
 
   describe('>> computed getters', () => {
     describe('hasBeenOpen', () => {
       it('returns true if at least one item in scheduleHistory has Open status', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.scheduleHistory = [{
           status: EEventStatus.Open,
@@ -316,7 +219,7 @@ describe('>>> Event', () => {
       });
 
       it('returns false if the scheduleHistory does not have any items with Open status', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.scheduleHistory = [{
           status: EEventStatus.Closed,
@@ -343,14 +246,14 @@ describe('>>> Event', () => {
 
   describe('>> validation', () => {
     test('true is returned for a valid entity', () => {
-      const event = new Event(mockEventData);
+      const event = new EventEntity(mockEvent);
 
       expect(event.validate()).toBe(true);
     });
 
     describe('> validation attributes', () => {
       test('name is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.name = null;
 
@@ -366,7 +269,7 @@ describe('>>> Event', () => {
       });
 
       test(`the name field has a max of ${MAX_LENGTH_MD} characters`, () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.name.translation.en = 'x'.repeat(MAX_LENGTH_MD + 1);
 
@@ -374,7 +277,7 @@ describe('>>> Event', () => {
       });
 
       test(`the description field has a max of ${MAX_LENGTH_LG} characters`, () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.description.translation.en = 'x'.repeat(MAX_LENGTH_LG + 1);
 
@@ -382,7 +285,7 @@ describe('>>> Event', () => {
       });
 
       test(`the description field has a max of ${MAX_LENGTH_LG} characters`, () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.description.translation.en = 'x'.repeat(MAX_LENGTH_LG + 1);
 
@@ -390,7 +293,7 @@ describe('>>> Event', () => {
       });
 
       test('registrationLink is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.registrationLink = null;
 
@@ -406,7 +309,7 @@ describe('>>> Event', () => {
       });
 
       test(`the registration link field has a max of ${MAX_LENGTH_MD} characters`, () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.registrationLink.translation.en = 'x'.repeat(MAX_LENGTH_MD + 1);
 
@@ -416,7 +319,7 @@ describe('>>> Event', () => {
 
     describe('> validation location', () => {
       test('location is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.location = null;
 
@@ -424,7 +327,7 @@ describe('>>> Event', () => {
       });
 
       test('location province is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.location.province = null;
 
@@ -432,7 +335,7 @@ describe('>>> Event', () => {
       });
 
       test('location provinceOther is required if province is Other', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.location.province = ECanadaProvinces.OT;
 
@@ -442,7 +345,7 @@ describe('>>> Event', () => {
       });
 
       test(`the provinceOther field has a max length of ${MAX_LENGTH_MD}`, () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.location.province = ECanadaProvinces.OT;
 
@@ -452,7 +355,7 @@ describe('>>> Event', () => {
       });
 
       test(`the region field has a max length of ${MAX_LENGTH_MD}`, () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.location.region.translation.en = 'x'.repeat(MAX_LENGTH_MD + 1);
 
@@ -462,7 +365,7 @@ describe('>>> Event', () => {
 
     describe('> validation schedule', () => {
       test('schedule is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.schedule = null;
 
@@ -470,7 +373,7 @@ describe('>>> Event', () => {
       });
 
       test('event status is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.schedule.status = null;
 
@@ -480,7 +383,7 @@ describe('>>> Event', () => {
 
     describe('> validation responseDetails', () => {
       test('responseDetails is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.responseDetails = null;
 
@@ -488,7 +391,7 @@ describe('>>> Event', () => {
       });
 
       test('responseLevel is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.responseDetails.responseLevel = null;
 
@@ -496,7 +399,7 @@ describe('>>> Event', () => {
       });
 
       test('eventType is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.responseDetails.eventType = null;
 
@@ -504,7 +407,7 @@ describe('>>> Event', () => {
       });
 
       test('dateReported is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.responseDetails.dateReported = null;
 
@@ -512,7 +415,7 @@ describe('>>> Event', () => {
       });
 
       test('assistance number is required', () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.responseDetails.assistanceNumber = null;
 
@@ -520,7 +423,7 @@ describe('>>> Event', () => {
       });
 
       test(`assistance number has max length ${MAX_LENGTH_SM}`, () => {
-        const event = new Event(mockEventData);
+        const event = new EventEntity(mockEvent);
 
         event.responseDetails.assistanceNumber = 'x'.repeat(MAX_LENGTH_SM + 1);
 

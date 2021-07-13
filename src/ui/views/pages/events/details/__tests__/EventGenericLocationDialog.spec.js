@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { Event, mockEventsSearchData, EEventLocationStatus } from '@/entities/event';
+import { mockEventEntity, EEventLocationStatus } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import entityUtils from '@/entities/utils';
@@ -9,7 +9,7 @@ import { ECanadaProvinces, EEventSummarySections } from '@/types';
 import Component from '../components/EventGenericLocationDialog.vue';
 
 const localVue = createLocalVue();
-const mockEvent = new Event(mockEventsSearchData()[0]);
+const mockEvent = mockEventEntity();
 const storage = mockStorage();
 
 describe('EventGenericLocationDialog.vue', () => {

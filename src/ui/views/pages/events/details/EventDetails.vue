@@ -2,7 +2,7 @@
   <page-template
     :loading="loading"
     :show-right-menu="showRightMenu"
-    :left-menu-title="$m(event.name)"
+    :left-menu-title="$m(event.entity.name)"
     :navigation-tabs="tabs">
     <template v-if="event" slot="left-menu">
       <div>
@@ -12,7 +12,7 @@
           </v-icon>
           <span class="fw-bold">{{ $t('eventDetail.type') }}</span>
           <div class="pl-6" data-test="event-typeName">
-            {{ $m(event.eventTypeName) }}
+            {{ eventTypeName? $m(eventTypeName):"" }}
           </div>
         </div>
       </div>
@@ -34,11 +34,11 @@
         <span class="fw-bold">{{ $t('eventDetail.location') }}</span>
 
         <div class="pl-6" data-test="event-location-province">
-          {{ $m(event.provinceName) }}
+          {{ provinceName }}
         </div>
 
-        <div v-if="event.location.region && $m(event.location.region)" class="rc-body14 pl-6" data-test="event-location-region">
-          {{ $m(event.location.region) }}
+        <div v-if="event.entity.location.region && $m(event.entity.location.region)" class="rc-body14 pl-6" data-test="event-location-region">
+          {{ $m(event.entity.location.region) }}
         </div>
       </div>
 
@@ -49,16 +49,16 @@
           </v-icon>
           <span class="fw-bold">{{ $t('eventDetail.phone') }}</span>
           <div>
-            <rc-phone-display class="pl-6" data-test="event-phone" :value="event.responseDetails.assistanceNumber" />
+            <rc-phone-display class="pl-6" data-test="event-phone" :value="event.entity.responseDetails.assistanceNumber" />
           </div>
         </div>
 
-        <div v-if="event.relatedEventsInfos.length" class="rc-body14 pb-2">
+        <div v-if="event.metadata && event.metadata.relatedEventsInfos && event.metadata.relatedEventsInfos.length" class="rc-body14 pb-2">
           <v-icon size="16" class="pr-2" color="gray darken-2">
             mdi-calendar
           </v-icon>
           <span class="fw-bold">{{ $t('eventDetail.relatedEvents') }}</span>
-          <div v-for="relatedEvent in event.relatedEventsInfos" :key="relatedEvent.id" class="pl-6" :data-test="`related-event`">
+          <div v-for="relatedEvent in event.metadata.relatedEventsInfos" :key="relatedEvent.id" class="pl-6" :data-test="`related-event`">
             {{ $m(relatedEvent.eventName) }}
           </div>
         </div>
@@ -87,7 +87,7 @@
             {{ $t('eventDetail.created') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-created-date">
-            {{ getStringDate(event.created) }}
+            {{ getStringDate(event.entity.created) }}
           </div>
         </div>
 
@@ -96,7 +96,7 @@
             {{ $t('eventDetail.reported') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-reported-date">
-            {{ getStringDate(event.responseDetails.dateReported) }}
+            {{ getStringDate(event.entity.responseDetails.dateReported) }}
           </div>
         </div>
 
@@ -127,14 +127,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
 import moment from '@/ui/plugins/moment';
 import _orderBy from 'lodash/orderBy';
 import helpers from '@/ui/helpers';
 
 import { RcPhoneDisplay } from '@crctech/component-library';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { EEventStatus, Event, IEvent } from '@/entities/event';
-import { INavigationTab } from '@/types';
+import {
+  EEventStatus, EventEntity, IEventCombined, IEventMetadata,
+} from '@/entities/event';
+import { ECanadaProvinces, IMultilingual, INavigationTab } from '@/types';
 import routes from '@/constants/routes';
 
 export default Vue.extend({
@@ -168,12 +171,29 @@ export default Vue.extend({
   },
 
   computed: {
-    event(): IEvent {
-      return this.$storage.event.getters.eventById(this.id) || new Event();
+    event(): IEventCombined {
+      return this.$storage.event.getters.get(this.id) || { entity: new EventEntity(), metadata: {} as IEventMetadata };
     },
 
     eventId() : string {
-      return this.event?.number?.toString().padStart(this.idDigitsCount, '0');
+      return this.event?.entity.number?.toString().padStart(this.idDigitsCount, '0');
+    },
+
+    eventTypeName(): IMultilingual {
+      if (this.event.entity.responseDetails?.eventType?.optionItemId == null) return null;
+      const eventTypes = this.$storage.event.getters.eventTypes(false);
+      const currentType = eventTypes?.find((t) => t.id === this.event.entity.responseDetails.eventType.optionItemId);
+      return currentType?.name;
+    },
+
+    provinceName(): TranslateResult {
+      const provinceCode = this.event.entity.location.province;
+      if (!provinceCode) return null;
+      const isOther = provinceCode === ECanadaProvinces.OT;
+      if (isOther) {
+        return this.$m(this.event.entity.location.provinceOther);
+      }
+      return this.$t(`common.provinces.${ECanadaProvinces[provinceCode]}`);
     },
 
     tabs(): Array<INavigationTab> {
@@ -201,7 +221,7 @@ export default Vue.extend({
     },
 
     statusHistory(): Array<Record<string, string>> {
-      const sorted = _orderBy(this.event.scheduleHistory, 'timestamp');
+      const sorted = _orderBy(this.event.entity.scheduleHistory, 'timestamp');
 
       return sorted.map((s) => {
         const item = {
@@ -233,7 +253,7 @@ export default Vue.extend({
     this.loading = true;
 
     try {
-      await this.$storage.event.actions.fetchEvent(this.id);
+      await this.$storage.event.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
     } catch {
       this.error = true;
     } finally {

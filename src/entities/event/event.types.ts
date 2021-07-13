@@ -2,6 +2,8 @@ import {
   ECanadaProvinces, IAddress, IListOption, IMultilingual,
 } from '@/types';
 
+import { IEntity, IEntityCombined } from '@/entities/base/base.types';
+
 /**
  * Enums
  */
@@ -123,6 +125,20 @@ export interface IEventData {
   selfRegistrationEnabled: boolean;
 }
 
+export interface IEventMainInfo {
+  entity: {
+    id: uuid;
+    name: IMultilingual;
+    responseDetails: IEventResponseDetails;
+    registrationLink: IMultilingual;
+    tenantId: uuid;
+    registrationLocations: Array<IEventGenericLocation>;
+    shelterLocations: Array<IEventGenericLocation>;
+    selfRegistrationEnabled: boolean;
+    schedule: IEventSchedule;
+  }
+}
+
 /**
  * Interface that maps to the response structure from the search API
  */
@@ -180,31 +196,36 @@ export interface IEditEventRequest extends ICreateEventRequest {
 /**
  * Interface used for the Event entity class
  */
-export interface IEvent {
-  agreements: Array<IEventAgreementInfos>;
-  callCentres: Array<IEventCallCentre>;
-  registrationLocations: Array<IEventGenericLocation>;
-  shelterLocations: Array<IEventGenericLocation>;
-  created: Date | string;
-  description: IMultilingual;
-  eventTypeId: uuid;
-  eventTypeName: IMultilingual;
-  id: uuid;
-  location: IEventLocation;
-  name: IMultilingual;
-  number: number;
-  provinceName: IMultilingual;
-  registrationLink: IMultilingual;
-  relatedEventsInfos: Array<IRelatedEventsInfos>;
-  responseDetails: IEventResponseDetails;
-  responseLevelName: IMultilingual;
-  schedule: IEventSchedule;
-  scheduleHistory: IEventSchedule[];
-  scheduleEventStatusName: IMultilingual;
-  selfRegistrationEnabled: boolean;
-  eventStatus: number;
-  tenantId: uuid;
-  hasBeenOpen: boolean;
-  validate(): Array<string> | boolean;
-  fillEmptyMultilingualAttributes(): void;
+export interface IEventEntity extends IEntity {
+   name?: IMultilingual;
+   description?: IMultilingual;
+   number?: number;
+   selfRegistrationEnabled?: boolean;
+   registrationLink?: IMultilingual;
+   location?: IEventLocation;
+   schedule?: IEventSchedule;
+   responseDetails?: IEventResponseDetails;
+   registrationLocations?: Array<IEventGenericLocation>;
+   callCentres?: Array<IEventCallCentre>;
+   scheduleHistory?: IEventSchedule[];
+   shelterLocations?: Array<IEventGenericLocation>;
+   eventStatus?: number;
+   relatedEventIds?: Array<string>;
+   agreements?: Array<IEventAgreement>;
+
+   validate(): Array<string> | boolean;
+   fillEmptyMultilingualAttributes(): void;
 }
+
+export interface IEventMetadata extends IEntity {
+  eventTypeId?: uuid;
+  agreements?: Array<IEventAgreementInfos>;
+  eventTypeName?: IMultilingual;
+  scheduleEventStatusName?: IMultilingual;
+  relatedEventsInfos?: Array<IRelatedEventsInfos>;
+  provinceName?: IMultilingual;
+  teamMemberIds?: Array<string>;
+  responseLevelName?: IMultilingual;
+}
+
+export type IEventCombined = IEntityCombined<IEventEntity, IEventMetadata>

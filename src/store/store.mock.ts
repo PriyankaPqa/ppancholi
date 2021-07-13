@@ -27,11 +27,12 @@ import { OptionItemsService } from '@/services/optionItems';
 import { CaseFilesMetadataService } from '@/services/case-files/metadata';
 import { CaseNotesService } from '@/services/case-notes/entity';
 import { CaseNotesMetadataService } from '@/services/case-notes/metadata';
+import { EventsMetadataService } from '@/services/events/metadata';
+import { EventsService } from '@/services/events/entity';
 import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
 import { CaseFileReferralsMetadataService } from '@/services/case-file-referrals/metadata';
 import { user } from './modules/user';
 import { dashboard } from './modules/dashboard';
-import { event } from './modules/event';
 import { team } from './modules/team';
 import { optionList } from './modules/optionList';
 import { program } from './modules/program';
@@ -42,6 +43,8 @@ import { CaseNoteMetadataModule } from './modules/case-note/caseNoteMetadata';
 import { CaseFileReferralEntityModule } from './modules/case-file-referral/caseFileReferralEntity';
 import { CaseFileReferralMetadataModule } from './modules/case-file-referral/caseFileReferralMetadata';
 import { financialAssistance } from './modules/financial-assistance';
+import { EventEntityModule } from './modules/event/eventEntity';
+import { EventMetadataModule } from './modules/event/eventMetadata';
 
 const i18n = {
   t: jest.fn(),
@@ -61,7 +64,8 @@ const mockConfig = {
       new CaseFileReferralMetadataModule(new CaseFileReferralsMetadataService(httpClient)).getModule(),
     [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
-    [vuexModule.EVENT_MODULE]: event,
+    [vuexModule.EVENT_ENTITIES]: new EventEntityModule(new EventsService(httpClient), new OptionItemsService(httpClient)).getModule(),
+    [vuexModule.EVENT_METADATA]: new EventMetadataModule(new EventsMetadataService(httpClient)).getModule(),
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_MODULE]: team,
     [vuexModule.PROGRAM_MODULE]: program,

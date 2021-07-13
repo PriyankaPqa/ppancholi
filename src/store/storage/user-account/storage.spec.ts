@@ -82,7 +82,7 @@ describe('>>> User Account Storage', () => {
       it('should proxy currentUserFiltersByKey', () => {
         store.commit(`${entityModuleName}/setCurrentUserAccount`, mockUserAccountEntity());
         const storageGetter = storage.getters.currentUserFiltersByKey(FilterKey.CaseFiles);
-        const storeGetter = store.getters[`${entityModuleName}/currentUserFiltersByKey`]((FilterKey.CaseFiles));
+        const storeGetter = store.getters[`${entityModuleName}/currentUserFiltersByKey`](FilterKey.CaseFiles);
         expect(storageGetter).toEqual(storeGetter);
       });
     });

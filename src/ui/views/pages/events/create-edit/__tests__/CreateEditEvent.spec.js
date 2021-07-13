@@ -1,34 +1,38 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { Event, mockEventsSearchData } from '@/entities/event';
+import {
+  OptionItem,
+  mockOptionItemData,
+} from '@/entities/optionItem';
+import {
+  mockCombinedEvents, mockEventEntity, mockRegionData, mockOtherProvinceData,
+} from '@/entities/event';
+import { mockStorage } from '@/store/storage';
 import Component from '../CreateEditEvent.vue';
 
 const localVue = createLocalVue();
 
 describe('CreatEditEvent.vue', () => {
   let wrapper;
-  let actions;
-  let mockEvent;
+
+  const mockEvent = mockEventEntity();
+  const storage = mockStorage();
+  storage.event.actions.fetchEventTypes = jest.fn(() => mockOptionItemData());
+  storage.event.actions.fetchAll = jest.fn(() => mockCombinedEvents());
+  storage.event.actions.fetchOtherProvinces = jest.fn(() => mockOtherProvinceData());
+  storage.event.actions.createEvent = jest.fn(() => mockEvent);
+  storage.event.actions.updateEvent = jest.fn(() => mockEvent);
+  storage.event.actions.fetchRegions = jest.fn(() => mockRegionData());
+  storage.event.getters.eventTypes = jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e)));
 
   describe('Methods', () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      mockEvent = new Event(mockEventsSearchData()[0]);
-
-      actions = {
-        createEvent: jest.fn(() => mockEvent),
-        update: jest.fn(() => mockEvent),
-      };
-
       wrapper = mount(Component, {
         localVue: createLocalVue(),
-        store: {
-          modules: {
-            event: {
-              actions,
-            },
-          },
+        mocks: {
+          $storage: storage,
         },
         propsData: {
           id: '',
@@ -84,12 +88,12 @@ describe('CreatEditEvent.vue', () => {
     describe('submit', () => {
       it('does not call createEvent unless form validation succeeds', async () => {
         await wrapper.vm.submit();
-        expect(actions.createEvent).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$storage.event.actions.createEvent).toHaveBeenCalledTimes(0);
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.submit();
-        expect(actions.createEvent).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.event.actions.createEvent).toHaveBeenCalledTimes(1);
       });
 
       test('after submitting, the user is redirected to the event details page', async () => {
@@ -116,25 +120,13 @@ describe('CreatEditEvent.vue', () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      mockEvent = new Event(mockEventsSearchData()[0]);
-
-      actions = {
-        createEvent: jest.fn(() => mockEvent),
-        update: jest.fn(() => mockEvent),
-        fetchEvent: jest.fn(() => mockEvent),
-      };
-
       wrapper = shallowMount(Component, {
         localVue,
-        store: {
-          modules: {
-            event: {
-              actions,
-            },
-          },
-        },
         propsData: {
           id: '',
+        },
+        mocks: {
+          $storage: storage,
         },
       });
     });
@@ -145,17 +137,11 @@ describe('CreatEditEvent.vue', () => {
 
         const wrapper2 = shallowMount(Component, {
           localVue,
-          store: {
-            modules: {
-              event: {
-                actions,
-              },
-            },
-          },
           mocks: {
             $route: {
               name: routes.events.edit.name,
             },
+            $storage: storage,
           },
           propsData: {
             id: '',
@@ -176,13 +162,7 @@ describe('CreatEditEvent.vue', () => {
             $route: {
               name: routes.events.edit.name,
             },
-          },
-          store: {
-            modules: {
-              event: {
-                actions,
-              },
-            },
+            $storage: storage,
           },
         });
 
@@ -199,12 +179,11 @@ describe('CreatEditEvent.vue', () => {
               return false;
             },
           },
-          store: {
-            modules: {
-              event: {
-                actions,
-              },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
             },
+            $storage: storage,
           },
         });
         expect(wrapper.vm.helpLink).toBe('zendesk.help_link.createEvent');
@@ -218,12 +197,11 @@ describe('CreatEditEvent.vue', () => {
               return true;
             },
           },
-          store: {
-            modules: {
-              event: {
-                actions,
-              },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
             },
+            $storage: storage,
           },
         });
         expect(wrapper.vm.helpLink).toBe('zendesk.help_link.editEvent');
@@ -235,6 +213,12 @@ describe('CreatEditEvent.vue', () => {
     beforeEach(() => {
       wrapper = mount(Component, {
         localVue: createLocalVue(),
+        mocks: {
+          $route: {
+            name: routes.events.edit.name,
+          },
+          $storage: storage,
+        },
       });
     });
 
@@ -276,27 +260,19 @@ describe('CreatEditEvent.vue', () => {
     beforeEach(() => {
       jest.clearAllMocks();
 
-      mockEvent = new Event(mockEventsSearchData()[0]);
-
-      actions = {
-        fetchEvent: jest.fn(() => mockEvent),
-        updateEvent: jest.fn(() => mockEvent),
-      };
-
       wrapper = mount(Component, {
         localVue: createLocalVue(),
         propsData: {
           id: mockEvent.id,
         },
-        store: {
-          modules: {
-            event: {
-              actions,
-            },
-          },
-        },
         stubs: {
           EventForm: true,
+        },
+        mocks: {
+          $route: {
+            name: routes.events.edit.name,
+          },
+          $storage: storage,
         },
         computed: {
           isEditMode() {
@@ -306,9 +282,8 @@ describe('CreatEditEvent.vue', () => {
       });
     });
 
-    it('calls the fetchEvent action on created', async () => {
-      expect(actions.fetchEvent).toHaveBeenCalledWith(
-        expect.anything(),
+    it('calls the fetch action on created', async () => {
+      expect(wrapper.vm.$storage.event.actions.fetch).toHaveBeenCalledWith(
         mockEvent.id,
       );
     });
@@ -317,7 +292,7 @@ describe('CreatEditEvent.vue', () => {
       wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
       await wrapper.vm.submit();
-      expect(actions.updateEvent).toHaveBeenCalledTimes(1);
+      expect(wrapper.vm.$storage.event.actions.updateEvent).toHaveBeenCalledTimes(1);
     });
 
     it('shows a toast notification after saving the updated event', async () => {
@@ -329,6 +304,7 @@ describe('CreatEditEvent.vue', () => {
 
     test('after submitting, the user is redirected to the event details page', async () => {
       wrapper.vm.$refs.form.validate = jest.fn(() => true);
+      await wrapper.setData({ event: mockEvent });
       jest.spyOn(wrapper.vm.$router, 'replace').mockImplementation(() => {});
 
       await wrapper.vm.submit();

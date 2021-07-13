@@ -124,8 +124,8 @@ export interface ICaseFileEntity extends IEntity {
 export interface ICaseFileMetadata extends IEntity {
   caseFileStatusName?: IMultilingual;
   event?: IIdMultilingualName;
-  primaryBeneficiaryFirstName: string;
-  primaryBeneficiaryLastName: string;
+  primaryBeneficiaryFirstName?: string;
+  primaryBeneficiaryLastName?: string;
   lastActionDate?: Date | string;
   triageName?: IMultilingual;
   tags: IIdMultilingualName[];

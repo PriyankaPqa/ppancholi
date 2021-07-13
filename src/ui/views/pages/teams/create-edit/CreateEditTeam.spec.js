@@ -1,17 +1,16 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import {
-  mockEventsSearchData, mockEventsData, Event,
   EEventStatus,
 } from '@/entities/event';
 import routes from '@/constants/routes';
 import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
 import {
-  ETeamStatus, ETeamType, mockTeamMembersData, Team, mockTeamSearchDataAggregate, mockTeam, mockTeamTwo, getOriginalData,
+  ETeamStatus, ETeamType, mockTeamMembersData, Team, mockTeamSearchDataAggregate, mockTeam, mockTeamTwo, getOriginalData, mockTeamEvents,
 } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 
-import { mockCombinedUserAccount } from '@/entities/user-account';
+import { mockCombinedUserAccount, mockCombinedUserAccounts } from '@/entities/user-account';
 import Component from './CreateEditTeam.vue';
 
 jest.mock('@/store/modules/team/teamUtils');
@@ -22,20 +21,44 @@ const storage = mockStorage();
 describe('CreateEditTeam.vue', () => {
   let wrapper;
 
+  const teamEventsMock = mockTeamEvents();
+  storage.event.getters.eventsByStatus = jest.fn(() => teamEventsMock);
+  storage.event.actions.search = jest.fn(() => teamEventsMock);
+  storage.team.actions.getTeam = jest.fn(() => mockTeam());
+  storage.team.actions.createTeam = jest.fn(() => mockTeam());
+  storage.team.getters.team = jest.fn(() => mockTeam());
+  storage.userAccount.getters.getByCriteria = jest.fn(() => [mockCombinedUserAccount()]);
+  storage.userAccount.actions.fetchAll = jest.fn(() => mockCombinedUserAccounts());
+
   describe('Template', () => {
     beforeEach(async () => {
       wrapper = mount(Component, {
         store: {
           ...mockUserStateLevel(5),
         },
-        data() {
-          return {
-
-          };
-        },
         localVue,
         propsData: {
           teamType: 'standard',
+        },
+        mocks: {
+          $storage: {
+            event: {
+              getters: {
+                eventsByStatus: jest.fn(() => teamEventsMock),
+              },
+              actions: {
+                search: jest.fn(() => teamEventsMock),
+              },
+            },
+            team: {
+              actions: { getTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[0])) },
+              getters: { team: jest.fn(() => mockTeam()) },
+            },
+            userAccount: {
+              getters: { getByCriteria: jest.fn(() => [mockCombinedUserAccount()]) },
+              actions: { fetchAll: jest.fn(() => mockCombinedUserAccounts()) },
+            },
+          },
         },
       });
       await wrapper.setData({
@@ -76,6 +99,9 @@ describe('CreateEditTeam.vue', () => {
               isEditMode() {
                 return false;
               },
+            },
+            mocks: {
+              $storage: storage,
             },
           });
           await wrapper.setData({
@@ -269,6 +295,9 @@ describe('CreateEditTeam.vue', () => {
                   return 'mockSubmitLabel';
                 },
               },
+              mocks: {
+                $storage: storage,
+              },
             });
             await wrapper.setData({
               team: mockTeam(),
@@ -300,6 +329,9 @@ describe('CreateEditTeam.vue', () => {
                 propsData: {
                   teamType: 'standard',
                 },
+                mocks: {
+                  $storage: storage,
+                },
               });
               wrapper.setData({
                 team: mockTeam(),
@@ -321,6 +353,14 @@ describe('CreateEditTeam.vue', () => {
                 propsData: {
                   teamType: 'standard',
                 },
+                mocks: {
+                  $storage: storage,
+                },
+                computed: {
+                  isEditMode() {
+                    return true;
+                  },
+                },
               });
               const team = mockTeam();
               await wrapper.setData({
@@ -341,7 +381,8 @@ describe('CreateEditTeam.vue', () => {
               element = wrapper.findDataTest('createEditTeam__submit');
               const isEnabledAfterChanged = element.attributes('disabled') === undefined;
               await wrapper.setData({ team: mockTeam() });
-              expect(wrapper.findDataTest('createEditTeam__submit').attributes('disabled') && isEnabledAfterChanged).toBeTruthy();
+              element = wrapper.findDataTest('createEditTeam__submit');
+              expect(element.attributes('disabled') && isEnabledAfterChanged).toBeTruthy();
             });
           });
         });
@@ -353,6 +394,9 @@ describe('CreateEditTeam.vue', () => {
               localVue,
               propsData: {
                 teamType: 'standard',
+              },
+              mocks: {
+                $storage: storage,
               },
               computed: {
                 submitLabel() {
@@ -396,6 +440,9 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
+          mocks: {
+            $storage: storage,
+          },
         });
         await wrapper.setData({
           team: mockTeam(),
@@ -432,6 +479,22 @@ describe('CreateEditTeam.vue', () => {
   });
 
   describe('beforeRouteEnter', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          teamType: 'standard',
+        },
+        mocks: {
+          $storage: storage,
+        },
+        data() {
+          return {
+            team: mockTeam(),
+          };
+        },
+      });
+    });
     test('If "standard" is in the route params we go to next', async () => {
       const mockParam = { params: 'standard' };
       const next = jest.fn(() => {});
@@ -462,6 +525,9 @@ describe('CreateEditTeam.vue', () => {
         propsData: {
           teamType: 'standard',
         },
+        mocks: {
+          $storage: storage,
+        },
         data() {
           return {
             team: mockTeam(),
@@ -477,12 +543,12 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
+          mocks: {
+            $storage: storage,
+          },
           computed: {
             submitLabel() {
               return 'mockSubmitLabel';
-            },
-            teamEventsIds() {
-              return mockEventsData();
             },
           },
         });
@@ -491,7 +557,7 @@ describe('CreateEditTeam.vue', () => {
           isLoading: false,
         });
         // eslint-disable-next-line prefer-destructuring
-        wrapper.vm.eventsAfterRemoval = mockEventsData()[1];
+        wrapper.vm.eventsAfterRemoval = teamEventsMock;
         expect(wrapper.vm.deleteEventConfirmationMessage).toEqual('team.event.confirmDeleteDialog.message');
       });
     });
@@ -524,6 +590,9 @@ describe('CreateEditTeam.vue', () => {
           localVue,
           propsData: {
             teamType: 'standard',
+          },
+          mocks: {
+            $storage: storage,
           },
         });
       });
@@ -579,6 +648,14 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
             id: '123',
+          },
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+          mocks: {
+            $storage: storage,
           },
         });
         await wrapper.setData({
@@ -677,7 +754,7 @@ describe('CreateEditTeam.vue', () => {
       test('Events should be fetched', () => {
         jest.clearAllMocks();
         wrapper.vm.fetchEvents();
-        expect(wrapper.vm.$storage.event.actions.fetchEvents).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.event.actions.search).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -700,7 +777,6 @@ describe('CreateEditTeam.vue', () => {
       };
 
       beforeEach(async () => {
-        storage.event.getters.eventsByStatus = jest.fn(() => [new Event(mockEventsSearchData()[0])]);
         wrapper = shallowMount(Component, options);
         await wrapper.vm.getAvailableEvents();
       });
@@ -710,14 +786,10 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('sets into availableEvents the events returned by the storage in the right form', async () => {
-        expect(wrapper.vm.availableEvents).toEqual([{
-          id: new Event(mockEventsSearchData()[0]).id,
-          name: new Event(mockEventsSearchData()[0]).name,
-        }]);
+        expect(wrapper.vm.availableEvents).toEqual(teamEventsMock);
       });
 
       it('adds into availableEvents the events that are existing in the team but are not currently active/on hold, only for edit mode', async () => {
-        storage.event.getters.eventsByStatus = jest.fn(() => [new Event(mockEventsSearchData()[0])]);
         const myTeam = mockTeam();
         const inactiveEvent = { id: 'foo', name: { translation: { en: 'mock-name' } } };
         myTeam.events = [inactiveEvent];
@@ -731,6 +803,9 @@ describe('CreateEditTeam.vue', () => {
               return true;
             },
           },
+          mocks: {
+            $storage: storage,
+          },
           data() {
             return {
               currentPrimaryContact: {
@@ -739,19 +814,13 @@ describe('CreateEditTeam.vue', () => {
               team: myTeam,
             };
           },
-          mocks: {
-            $storage: storage,
-          },
         });
 
         await wrapper.vm.getAvailableEvents();
 
         expect(wrapper.vm.availableEvents).toEqual([
           inactiveEvent,
-          {
-            id: new Event(mockEventsSearchData()[0]).id,
-            name: new Event(mockEventsSearchData()[0]).name,
-          },
+          ...teamEventsMock,
         ]);
       });
     });
@@ -764,43 +833,46 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
+          mocks: {
+            $storage: storage,
+          },
         });
+      });
+      it('is disabled when data is changed to original', async () => {
         team = mockTeam();
         await wrapper.setData({
           team,
           isLoading: false,
         });
-      });
-      it('is disabled when data is changed to original', async () => {
-        wrapper.vm.setOriginalData();
+        await wrapper.vm.setOriginalData();
         expect(wrapper.vm.$data.original).toEqual(getOriginalData(team, wrapper));
       });
     });
 
     describe('handleRemoveEvent', () => {
       it('sets the eventsIdsAfterRemoval to its argument', () => {
-        wrapper.vm.handleRemoveEvent(mockEventsData());
-        expect(wrapper.vm.eventsAfterRemoval).toEqual(mockEventsData());
+        wrapper.vm.handleRemoveEvent(teamEventsMock[0]);
+        expect(wrapper.vm.eventsAfterRemoval).toEqual(teamEventsMock[0]);
       });
       it('sets showEventDeleteConfirmationDialog  to true', () => {
-        wrapper.vm.handleRemoveEvent(mockEventsData());
+        wrapper.vm.handleRemoveEvent(teamEventsMock[0]);
         expect(wrapper.vm.showEventDeleteConfirmationDialog).toBeTruthy();
       });
     });
 
     describe('handleRemoveEventConfirmation', () => {
       it('sets team events with the eventsAfterRemoval if argument is true', async () => {
-        wrapper.vm.eventsAfterRemoval = mockEventsData();
+        wrapper.vm.eventsAfterRemoval = teamEventsMock;
         wrapper.vm.handleRemoveEventConfirmation(true);
         await wrapper.vm.$nextTick();
-        expect(wrapper.vm.team.events).toEqual(mockEventsData());
+        expect(wrapper.vm.team.events).toEqual(teamEventsMock);
       });
 
       it('set team events with a clone of team.events if argument is false', async () => {
-        wrapper.vm.team.events = [mockEventsData()[0]];
+        wrapper.vm.team.events = teamEventsMock;
         wrapper.vm.handleRemoveEventConfirmation(false);
         await wrapper.vm.$nextTick();
-        expect(wrapper.vm.team.events).toEqual([mockEventsData()[0]]);
+        expect(wrapper.vm.team.events).toEqual(teamEventsMock);
       });
 
       it('sets showEventDeleteConfirmationDialog to false', () => {
@@ -826,6 +898,9 @@ describe('CreateEditTeam.vue', () => {
               return true;
             },
           },
+          mocks: {
+            $storage: storage,
+          },
           data() {
             return {
               team: new Team(mockTeamSearchDataAggregate()[0]),
@@ -842,6 +917,9 @@ describe('CreateEditTeam.vue', () => {
           localVue,
           propsData: {
             teamType: 'standard',
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             isEditMode() {
@@ -871,6 +949,9 @@ describe('CreateEditTeam.vue', () => {
             isEditMode() {
               return true;
             },
+          },
+          mocks: {
+            $storage: storage,
           },
           data() {
             return {
@@ -920,6 +1001,9 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
+          mocks: {
+            $storage: storage,
+          },
           data() {
             return {
               team: mockTeam(),
@@ -937,6 +1021,9 @@ describe('CreateEditTeam.vue', () => {
           localVue,
           propsData: {
             teamType: 'standard',
+          },
+          mocks: {
+            $storage: storage,
           },
           data() {
             return {
@@ -991,7 +1078,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('does not call the searchAppUsers action when the query is not long enough long enough and empties the list of users', async () => {
         jest.clearAllMocks();
-        jest.spyOn(wrapper.vm.$storage.userAccount.getters, 'getByCriteria').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm.$storage.userAccount.getters, 'getByCriteria').mockImplementation(() => []);
         wrapper.vm.primaryContactQuery = 'a';
         wrapper.vm.minimumContactQueryLength = 2;
         await wrapper.vm.searchPrimaryContacts();
@@ -1021,13 +1108,8 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('submit', () => {
-      let actions;
-      beforeEach(async () => {
+      beforeEach(() => {
         jest.clearAllMocks();
-
-        actions = {
-          createTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[0])),
-        };
 
         wrapper = shallowMount(Component, {
           localVue,
@@ -1035,26 +1117,48 @@ describe('CreateEditTeam.vue', () => {
             teamType: 'standard',
             id: '123',
           },
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
           data() {
             return {
               team: mockTeam(),
               isLoading: false,
             };
           },
-          store: {
-            modules: {
-              team: {
-                actions,
-              },
-            },
+          mocks: {
+            $storage: storage,
           },
         });
       });
 
       it('calls the validation method', async () => {
-        wrapper.vm.currentPrimaryContact = {
-          id: 'id',
-        };
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            teamType: 'standard',
+            id: '123',
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+          data() {
+            return {
+              team: mockTeam(),
+              isLoading: false,
+              currentPrimaryContact: { id: 'id' },
+            };
+          },
+
+        });
+
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$refs.form.reset = jest.fn(() => true);
         await wrapper.vm.submit();
@@ -1072,7 +1176,7 @@ describe('CreateEditTeam.vue', () => {
       describe('in create mode', () => {
         jest.clearAllMocks();
 
-        beforeEach(() => {
+        beforeEach(async () => {
           wrapper = shallowMount(Component, {
             localVue,
             propsData: {
@@ -1083,14 +1187,22 @@ describe('CreateEditTeam.vue', () => {
                 return false;
               },
             },
+            mocks: {
+              $storage: storage,
+            },
             data() {
               return {
                 currentPrimaryContact: {
                   id: 'id',
                 },
-                team: mockTeam(),
+                // team: mockTeam(),
               };
             },
+          });
+
+          await wrapper.setData({
+            team: mockTeam(),
+            isLoading: false,
           });
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
           wrapper.vm.$refs.form.reset = jest.fn(() => true);
@@ -1099,8 +1211,6 @@ describe('CreateEditTeam.vue', () => {
         it('does not call submitCreateTeam unless form validation succeeds', async () => {
           jest.spyOn(wrapper.vm, 'submitCreateTeam');
           wrapper.vm.$refs.form.validate = jest.fn(() => false);
-
-          await wrapper.vm.submit();
           expect(wrapper.vm.submitCreateTeam).toHaveBeenCalledTimes(0);
 
           wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -1123,6 +1233,9 @@ describe('CreateEditTeam.vue', () => {
               isEditMode() {
                 return true;
               },
+            },
+            mocks: {
+              $storage: storage,
             },
             data() {
               return {
@@ -1153,13 +1266,8 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('submitCreateTeam', () => {
-      let actions;
       beforeEach(async () => {
         jest.clearAllMocks();
-
-        actions = {
-          createTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[0])),
-        };
 
         wrapper = shallowMount(Component, {
           localVue,
@@ -1167,12 +1275,13 @@ describe('CreateEditTeam.vue', () => {
             teamType: 'standard',
             id: '123',
           },
-          store: {
-            modules: {
-              team: {
-                actions,
-              },
+          computed: {
+            isEditMode() {
+              return false;
             },
+          },
+          mocks: {
+            $storage: storage,
           },
         });
 
@@ -1186,7 +1295,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('calls createTeam action', async () => {
         await wrapper.vm.submitCreateTeam();
-        expect(actions.createTeam).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.team.actions.createTeam).toHaveBeenCalledTimes(1);
       });
 
       it('opens a toast with a success message for standard team', async () => {
@@ -1197,27 +1306,25 @@ describe('CreateEditTeam.vue', () => {
 
       it('sets the value of the team in data', async () => {
         await wrapper.vm.submitCreateTeam();
-        expect(wrapper.vm.team).toEqual(new Team(mockTeamSearchDataAggregate()[0]));
+        expect(wrapper.vm.team).toEqual(mockTeam());
       });
 
       it('opens a toast with a success message for adhoc team', async () => {
-        actions = {
-          createTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[1])),
-        };
-
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             teamType: 'adhoc',
             id: '123',
           },
-          store: {
-            modules: {
-              team: {
-                actions,
-              },
+          computed: {
+            isEditMode() {
+              return false;
             },
           },
+          mocks: {
+            $storage: storage,
+          },
+
         });
 
         await wrapper.setData({
@@ -1232,7 +1339,7 @@ describe('CreateEditTeam.vue', () => {
 
         await wrapper.vm.submitCreateTeam();
 
-        expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.adhoc_team_created');
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.standard_team_created');
       });
 
       it('redirects to the edit page with the id of the newly created team', async () => {
@@ -1251,14 +1358,8 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('submitEditTeam', () => {
-      let actions;
-
       beforeEach(async () => {
         jest.clearAllMocks();
-
-        actions = {
-          editTeam: jest.fn(() => new Team(mockTeamSearchDataAggregate()[0])),
-        };
 
         wrapper = shallowMount(Component, {
           localVue,
@@ -1266,12 +1367,13 @@ describe('CreateEditTeam.vue', () => {
             teamType: 'standard',
             id: '123',
           },
-          store: {
-            modules: {
-              team: {
-                actions,
-              },
+          computed: {
+            isEditMode() {
+              return true;
             },
+          },
+          mocks: {
+            $storage: storage,
           },
         });
 
@@ -1285,7 +1387,7 @@ describe('CreateEditTeam.vue', () => {
 
       it('calls editTeam action', async () => {
         await wrapper.vm.submitEditTeam();
-        expect(actions.editTeam).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.team.actions.editTeam).toHaveBeenCalledTimes(1);
       });
 
       it('opens a toast with a success message', async () => {
@@ -1313,6 +1415,9 @@ describe('CreateEditTeam.vue', () => {
           propsData: {
             teamType: 'standard',
           },
+          mocks: {
+            $storage: storage,
+          },
           computed: {
             isEditMode() { return false; },
           },
@@ -1326,6 +1431,9 @@ describe('CreateEditTeam.vue', () => {
           localVue,
           propsData: {
             teamType: 'adhoc',
+          },
+          mocks: {
+            $storage: storage,
           },
           computed: {
             isEditMode() { return false; },

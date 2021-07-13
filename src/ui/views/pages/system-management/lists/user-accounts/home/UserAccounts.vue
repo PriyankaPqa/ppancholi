@@ -251,9 +251,9 @@ export default Vue.extend({
       return this.$t('system_management.userAccounts.loading_users');
     },
 
-    tableProps(): Record<string, string> {
+    tableProps(): Record<string, boolean> {
       return {
-        loading: this.$store.state.event.searchLoading,
+        loading: this.loading,
       };
     },
 
