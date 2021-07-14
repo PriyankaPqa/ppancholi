@@ -117,6 +117,8 @@ export default Vue.extend({
       handler(success) {
         if (!success) {
           this.setTabWithError();
+        } else {
+          this.clearTabError();
         }
       },
     },
@@ -127,6 +129,14 @@ export default Vue.extend({
         tab.nextButtonTextKey = 'common.cancel';
         tab.titleKey = 'registration.confirmation.error';
         tab.isValid = false;
+      });
+    },
+
+    clearTabError() {
+      this.$storage.registration.mutations.mutateCurrentTab((tab: IRegistrationMenuItem) => {
+        tab.nextButtonTextKey = 'registration.confirm_registration.label';
+        tab.titleKey = 'registration.page.confirmation';
+        tab.isValid = true;
       });
     },
   },
