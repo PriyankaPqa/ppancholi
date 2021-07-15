@@ -15,4 +15,11 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   submitRegistration: jest.fn(() => mockHouseholdEntity()),
   getPerson: jest.fn(() => mockMemberData()),
   submitCRCRegistration: jest.fn(() => mockHouseholdEntity()),
+  updatePersonContactInformation: jest.fn(() => mockHouseholdEntity()),
+  updatePersonIdentity: jest.fn(() => mockHouseholdEntity()),
+  updatePersonAddress: jest.fn(() => mockHouseholdEntity()),
+  updateHomeAddress: jest.fn(() => mockHouseholdEntity()),
+  updateNoFixedHomeAddress: jest.fn(() => mockHouseholdEntity()),
+  deleteAdditionalMember: jest.fn(() => mockHouseholdEntity()),
+  addMember: jest.fn(() => mockHouseholdEntity()),
 });

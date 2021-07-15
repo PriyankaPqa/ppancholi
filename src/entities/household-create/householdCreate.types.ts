@@ -25,6 +25,8 @@ export interface IHouseholdCreate {
   homeAddress: IAddress;
   additionalMembers: IMember[];
   consentInformation: IConsentInformation;
+  id?: uuid;
+  registrationNumber?: string;
 
   addAdditionalMember(newPerson: IMember, sameAddress: boolean): void;
   removeAdditionalMember(index: number): void;

@@ -33,15 +33,17 @@
         @change="setHomeAddress($event)" />
     </template>
 
-    <current-address-form
-      :shelter-locations="shelterLocations"
-      :canadian-provinces-items="canadianProvincesItems"
-      :current-address-type-items="currentAddressTypeItems"
-      :api-key="apiKey"
-      :current-address="currentAddress"
-      :hide-remaining-home="noFixedHome"
-      prefix-data-test="tempAddress"
-      @change="setCurrentAddress($event)" />
+    <validation-observer ref="currentAddress" slim>
+      <current-address-form
+        :shelter-locations="shelterLocations"
+        :canadian-provinces-items="canadianProvincesItems"
+        :current-address-type-items="currentAddressTypeItems"
+        :api-key="apiKey"
+        :current-address="currentAddress"
+        :no-fixed-home="noFixedHome"
+        prefix-data-test="tempAddress"
+        @change="setCurrentAddress($event)" />
+    </validation-observer>
   </v-row>
 </template>
 
@@ -55,8 +57,12 @@ import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { EOptionItemStatus } from '../../types';
 import helpers from '../../ui/helpers';
 import { localStorageKeys } from '../../constants/localStorage';
-import { IAddress } from '../../entities/value-objects/address';
-import { ICurrentAddress, ECurrentAddressTypes, IShelterLocationData } from '../../entities/value-objects/current-address';
+import { Address, IAddress } from '../../entities/value-objects/address';
+import {
+  ICurrentAddress,
+  ECurrentAddressTypes,
+  IShelterLocationData,
+} from '../../entities/value-objects/current-address';
 
 export default Vue.extend({
   name: 'Addresses',
@@ -79,6 +85,17 @@ export default Vue.extend({
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VUE_APP_GOOGLE_API_KEY,
+      emptyAddress: {
+        country: 'CA',
+        streetAddress: '',
+        unitSuite: null,
+        province: null,
+        specifiedOtherProvince: '',
+        city: '',
+        postalCode: '',
+        latitude: 0,
+        longitude: 0,
+      },
     };
   },
 
@@ -95,8 +112,11 @@ export default Vue.extend({
       get(): boolean {
         return this.$storage.registration.getters.householdCreate().noFixedHome;
       },
-      set(checked: boolean) {
+      async set(checked: boolean) {
         this.$storage.registration.mutations.setNoFixedHome(checked);
+        if (checked) {
+          this.setHomeAddress(new Address(this.emptyAddress));
+        }
       },
     },
 

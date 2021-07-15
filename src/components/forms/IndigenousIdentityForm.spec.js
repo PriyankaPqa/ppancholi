@@ -34,13 +34,13 @@ describe('IndigenousIdentityForm.vue', () => {
     describe('rules', () => {
       test('indigenousType', () => {
         expect(wrapper.vm.rules.indigenousType).toEqual({
-          required: wrapper.vm.formCopy.indigenousProvince !== null,
+          required: wrapper.vm.formCopy.indigenousProvince !== null && wrapper.vm.formCopy.indigenousProvince !== undefined,
         });
       });
 
       test('indigenousCommunityId', () => {
         expect(wrapper.vm.rules.indigenousCommunityId).toEqual({
-          required: wrapper.vm.formCopy.indigenousType !== null,
+          required: wrapper.vm.formCopy.indigenousType !== null && wrapper.vm.formCopy.indigenousProvince !== undefined,
         });
       });
 

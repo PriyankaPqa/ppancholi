@@ -14,7 +14,7 @@ import {
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
   mockMember,
-  mockCampGround, mockIdentitySet,
+  mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member,
 } from '../../entities/household-create';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
 import PersonalInformationTemplate from './personal-information/PersonalInformationTemplate.vue';
@@ -166,8 +166,10 @@ describe('ReviewRegistration.vue', () => {
         const membersCount = wrapper.vm.additionalMembers.length;
         const expected = [...new Array(membersCount)].map((_, index) => ({
           inlineEdit: false,
+          loading: false,
           backup: null,
           sameAddress: _isEqual(wrapper.vm.additionalMembersCopy[index].currentAddress, wrapper.vm.householdCreate.primaryBeneficiary.currentAddress),
+          backupSameAddress: _isEqual(wrapper.vm.additionalMembersCopy[index].currentAddress, wrapper.vm.householdCreate.primaryBeneficiary.currentAddress),
         }));
         wrapper.vm.buildAdditionalMembersState();
         expect(wrapper.vm.additionalMembers).toEqual(expected);
@@ -280,7 +282,7 @@ describe('ReviewRegistration.vue', () => {
         wrapper.vm.editAdditionalMember(0);
         wrapper.vm.cancelAdditionalMember(0);
         expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
-          .toHaveBeenCalledWith(wrapper.vm.additionalMembers[0].backup, 0, wrapper.vm.additionalMembers[0].sameAddress);
+          .toHaveBeenCalledWith(wrapper.vm.additionalMembers[0].backup, 0, wrapper.vm.additionalMembers[0].backupSameAddress);
       });
 
       it('should decrease inline edit counter', () => {
@@ -321,19 +323,72 @@ describe('ReviewRegistration.vue', () => {
 
     describe('submitPersonalInformation', () => {
       let spy;
-      beforeEach(() => {
+      beforeEach(async () => {
         // eslint-disable-next-line no-multi-assign
         spy = wrapper.vm.$refs.personalInfo = {
           validate: jest.fn(() => true),
         };
-        wrapper.vm.submitPersonalInformation();
+        await wrapper.vm.submitPersonalInformation();
       });
+
       it('should validate personal information form', () => {
         expect(spy.validate).toHaveBeenCalledTimes(1);
       });
 
       it('should close the inline mode ', () => {
         expect(wrapper.vm.personalInformation.inlineEdit).toBe(false);
+      });
+
+      it('should call updatePersonalInformation in association mode ', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            associationMode: () => true,
+          },
+        });
+        wrapper.vm.$refs.personalInfo = {
+          validate: jest.fn(() => true),
+        };
+        wrapper.vm.updatePersonalInformation = jest.fn();
+        await wrapper.vm.submitPersonalInformation();
+        expect(wrapper.vm.updatePersonalInformation).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('updatePersonalInformation', () => {
+      it('should always call updatePersonIdentity with proper params', async () => {
+        await wrapper.vm.updatePersonalInformation();
+        expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
+          wrapper.vm.householdCreate.primaryBeneficiary.id,
+          wrapper.vm.householdCreate.primaryBeneficiary.identitySet,
+        );
+      });
+
+      it('should setIdentity with backup if updatePersonIdentity failed', async () => {
+        wrapper.vm.$services.households.updatePersonIdentity = jest.fn(() => false);
+        await wrapper.vm.updatePersonalInformation();
+        expect(wrapper.vm.$storage.registration.mutations.setIdentity).toHaveBeenCalledWith(wrapper.vm.personalInformation.backup);
+      });
+
+      it('should always call updatePersonContactInformation with proper params if updatePersonIdentity succeeded ', async () => {
+        await wrapper.vm.updatePersonalInformation();
+        expect(wrapper.vm.$services.households.updatePersonContactInformation).toHaveBeenCalledWith(
+          wrapper.vm.householdCreate.primaryBeneficiary.id,
+          wrapper.vm.householdCreate.primaryBeneficiary.contactInformation,
+        );
+      });
+
+      it('should setContactInformation with backup if updatePersonContactInformation failed', async () => {
+        wrapper.vm.$services.households.updatePersonContactInformation = jest.fn(() => false);
+        await wrapper.vm.updatePersonalInformation();
+        expect(wrapper.vm.$storage.registration.mutations.setContactInformation).toHaveBeenCalledWith(wrapper.vm.personalInformation.backup);
       });
     });
 
@@ -352,6 +407,59 @@ describe('ReviewRegistration.vue', () => {
 
       it('should close the inline mode ', () => {
         expect(wrapper.vm.addresses.inlineEdit).toBe(false);
+      });
+
+      it('should call updateAddresses in association mode ', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            associationMode: () => true,
+          },
+        });
+        wrapper.vm.$refs.addresses = {
+          validate: jest.fn(() => true),
+        };
+        wrapper.vm.updateAddresses = jest.fn();
+        await wrapper.vm.submitAddresses();
+        expect(wrapper.vm.updateAddresses).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('updateAddresses', () => {
+      it('should call updateHomeAddress method with proper params only if isNewHomeAddress is true', async () => {
+        wrapper.vm.updateHomeAddress = jest.fn();
+        await wrapper.vm.updateAddresses();
+        expect(wrapper.vm.updateHomeAddress).toHaveBeenCalledWith(
+          wrapper.vm.householdCreate.id,
+          wrapper.vm.householdCreate,
+        );
+      });
+
+      it('should setHomeAddress with backup if updateHomeAddress failed', async () => {
+        wrapper.vm.$services.households.updateHomeAddress = jest.fn(() => false);
+        await wrapper.vm.updateAddresses();
+        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
+      });
+
+      it('should call updatePersonAddress with proper params if updatePersonIdentity succeeded only if isNewPrimaryCurrentAddress is true', async () => {
+        await wrapper.vm.updateAddresses();
+        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
+          wrapper.vm.householdCreate.primaryBeneficiary.id,
+          wrapper.vm.householdCreate.primaryBeneficiary.currentAddress,
+        );
+      });
+
+      it('should setCurrentAddress with backup if updatePersonAddress failed', async () => {
+        wrapper.vm.$services.households.updatePersonAddress = jest.fn(() => false);
+        await wrapper.vm.updateAddresses();
+        expect(wrapper.vm.$storage.registration.mutations.setCurrentAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
       });
     });
 
@@ -377,6 +485,58 @@ describe('ReviewRegistration.vue', () => {
         expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.additionalMembersCopy[0], 0, wrapper.vm.additionalMembers[0].sameAddress);
       });
+
+      it('should call updateMember in association mode ', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            associationMode: () => true,
+          },
+        });
+        wrapper.vm.$refs.additionalMember_0 = [{
+          validate: jest.fn(() => true),
+        }];
+        wrapper.vm.updateMember = jest.fn();
+        await wrapper.vm.submitAdditionalMember(0);
+        expect(wrapper.vm.updateMember).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('updateMember', () => {
+      it('should call updateHomeAddress with proper params', async () => {
+        await wrapper.vm.updateAddresses();
+        expect(wrapper.vm.$services.households.updateHomeAddress).toHaveBeenCalledWith(
+          wrapper.vm.householdCreate.id,
+          wrapper.vm.householdCreate.homeAddress,
+        );
+      });
+
+      it('should setHomeAddress with backup with updateHomeAddress failed', async () => {
+        wrapper.vm.$services.households.updateHomeAddress = jest.fn(() => false);
+        await wrapper.vm.updateAddresses();
+        expect(wrapper.vm.$storage.registration.mutations.setHomeAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupHomeAddress);
+      });
+
+      it('should call updatePersonContactInformation with proper params if updatePersonIdentity succeeded ', async () => {
+        await wrapper.vm.updateAddresses();
+        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
+          wrapper.vm.householdCreate.primaryBeneficiary.id,
+          wrapper.vm.householdCreate.primaryBeneficiary.currentAddress,
+        );
+      });
+
+      it('should setCurrentAddress with backup with updatePersonAddress failed', async () => {
+        wrapper.vm.$services.households.updatePersonAddress = jest.fn(() => false);
+        await wrapper.vm.updateAddresses();
+        expect(wrapper.vm.$storage.registration.mutations.setCurrentAddress).toHaveBeenCalledWith(wrapper.vm.addresses.backupCurrentAddress);
+      });
     });
 
     describe('showDeleteDialog', () => {
@@ -400,6 +560,29 @@ describe('ReviewRegistration.vue', () => {
       it('should set showDeleteDialog to false', () => {
         wrapper.vm.deleteAdditionalMember();
         expect(wrapper.vm.showAdditionalMemberDelete).toEqual(false);
+      });
+
+      it('should call deleteAdditionalMember in association mode', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            i18n,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            associationMode: () => true,
+          },
+        });
+
+        await wrapper.setData({ indexAdditionalMember: 0 });
+
+        await wrapper.vm.deleteAdditionalMember();
+
+        expect(wrapper.vm.$services.households.deleteAdditionalMember)
+          .toHaveBeenCalledWith(wrapper.vm.householdCreate.id, wrapper.vm.householdCreate.additionalMembers[0].id);
       });
     });
 
@@ -478,6 +661,199 @@ describe('ReviewRegistration.vue', () => {
             0,
             wrapper.vm.additionalMembers[0].sameAddress,
           );
+      });
+    });
+
+    describe('updateHomeAddress', () => {
+      it('should call updateNoFixedHomeAddress if no fixed home', async () => {
+        await wrapper.vm.updateHomeAddress('123', { noFixedHome: true });
+        expect(wrapper.vm.$services.households.updateNoFixedHomeAddress).toHaveBeenCalledWith('123');
+      });
+
+      it('should call updateHomeAddress if fixed home', async () => {
+        await wrapper.vm.updateHomeAddress('123', { noFixedHome: false, homeAddress: mockAddress() });
+        expect(wrapper.vm.$services.households.updateHomeAddress).toHaveBeenCalledWith('123', mockAddress());
+      });
+    });
+
+    describe('updateMember', () => {
+      it('should always call updatePersonIdentity with proper params', async () => {
+        const index = 0;
+        wrapper.vm.isNewMemberCurrentAddress = jest.fn(() => false);
+        const member = wrapper.vm.householdCreate.additionalMembers[index];
+        await wrapper.vm.updateMember(index);
+        expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(member.id, member.identitySet);
+      });
+
+      it('should editAdditionalMember with backup if updateHomeAddress failed', async () => {
+        wrapper.vm.$services.households.updatePersonIdentity = jest.fn(() => false);
+        await wrapper.vm.updateMember(0);
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember).toHaveBeenCalledWith(
+          wrapper.vm.additionalMembers[0].backup,
+          0,
+          !wrapper.vm.additionalMembers[0].sameAddress,
+        );
+      });
+
+      it('should call updatePersonAddress only if isNewMemberCurrentAddress is true', async () => {
+        const index = 0;
+        wrapper.vm.isNewMemberCurrentAddress = jest.fn(() => true);
+        const member = wrapper.vm.householdCreate.additionalMembers[index];
+        await wrapper.vm.updateMember(index);
+        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(member.id, member.currentAddress);
+      });
+
+      it('should editAdditionalMember with backup containing updated identity if updateHomeAddress failed', async () => {
+        wrapper.vm.$services.households.updatePersonAddress = jest.fn(() => false);
+        wrapper.vm.isNewMemberCurrentAddress = jest.fn(() => true);
+        const backUpWithUpdatedIdentity = {
+          ...wrapper.vm.additionalMembers[0].backup,
+          identitySet: wrapper.vm.householdCreate.additionalMembers[0].identitySet,
+        };
+        await wrapper.vm.updateMember(0);
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember).toHaveBeenCalledWith(
+          backUpWithUpdatedIdentity,
+          0,
+          !wrapper.vm.additionalMembers[0].sameAddress,
+        );
+      });
+    });
+
+    describe('isNewMemberCurrentAddress', () => {
+      it('should return false if same address as before', () => {
+        wrapper.vm.householdCreate.additionalMembers[0] = {
+          currentAddress: {},
+        };
+        wrapper.vm.additionalMembers[0].backup = {
+          currentAddress: {},
+        };
+        expect(wrapper.vm.isNewMemberCurrentAddress(0)).toBe(false);
+      });
+
+      it('should return true if different address as before', () => {
+        wrapper.vm.householdCreate.additionalMembers[0] = {
+          currentAddress: {
+            new: '',
+          },
+        };
+        wrapper.vm.additionalMembers[0].backup = {
+          currentAddress: {},
+        };
+        expect(wrapper.vm.isNewMemberCurrentAddress(0)).toBe(true);
+      });
+    });
+
+    describe('isNewHomeAddress', () => {
+      it('should return false if same home address as before', () => {
+        wrapper.vm.householdCreate.homeAddress = {};
+        wrapper.vm.addresses.backupHomeAddress = {};
+        expect(wrapper.vm.isNewHomeAddress()).toBe(false);
+      });
+
+      it('should return true if different home address as before', () => {
+        wrapper.vm.householdCreate.homeAddress = { new: '' };
+        wrapper.vm.addresses.backupHomeAddress = {};
+        expect(wrapper.vm.isNewHomeAddress()).toBe(true);
+      });
+    });
+
+    describe('isNewPrimaryCurrentAddress', () => {
+      it('should return false if same current address for primary as before', () => {
+        wrapper.vm.householdCreate.primaryBeneficiary.currentAddress = {};
+        wrapper.vm.addresses.backupCurrentAddress = {};
+        expect(wrapper.vm.isNewPrimaryCurrentAddress()).toBe(false);
+      });
+
+      it('should return true if different home address as before', () => {
+        wrapper.vm.householdCreate.primaryBeneficiary.currentAddress = { new: '' };
+        wrapper.vm.addresses.backupCurrentAddress = {};
+        expect(wrapper.vm.isNewPrimaryCurrentAddress()).toBe(true);
+      });
+    });
+
+    describe('addAdditionalMember', () => {
+      it('should set newAdditionalMember to new instance of member', () => {
+        wrapper.vm.addAdditionalMember();
+        expect(wrapper.vm.newAdditionalMember).toEqual(new Member());
+      });
+
+      it('should set showAddAdditionalMember to true', () => {
+        wrapper.vm.addAdditionalMember();
+        expect(wrapper.vm.showAddAdditionalMember).toEqual(true);
+      });
+
+      it('should display a warning message if limit is reached', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            i18n,
+          },
+          computed: {
+            householdCreate() {
+              return {
+                primaryBeneficiary: {},
+                additionalMembers: new Array(20).fill(mockAdditionalMember()),
+              };
+            },
+          },
+        });
+        wrapper.vm.addAdditionalMember();
+        expect(wrapper.vm.$toasted.global.warning).toHaveBeenCalledWith('warning.MAX_ADDITIONAL_MEMBERS_reached');
+      });
+
+      it('should disabled the button add if limit is reached', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            i18n,
+          },
+          computed: {
+            householdCreate() {
+              return {
+                primaryBeneficiary: {},
+                additionalMembers: new Array(20).fill(mockAdditionalMember()),
+              };
+            },
+          },
+        });
+        wrapper.vm.addAdditionalMember();
+        expect(wrapper.vm.disabledAddMembers).toBe(true);
+      });
+    });
+
+    describe('onAdditionalMemberAdd', () => {
+      it('should call post add person', async () => {
+        const lastAddedIndex = wrapper.vm.householdCreate.additionalMembers.length -1;
+        const member = wrapper.vm.householdCreate.additionalMembers[lastAddedIndex];
+        await wrapper.vm.onAdditionalMemberAdd();
+        expect(wrapper.vm.$services.households.addMember)
+          .toHaveBeenCalledWith(wrapper.vm.householdCreate.id, member)
+      });
+
+      it('should remove local member if creation failed', async () => {
+        wrapper.vm.$services.households.addMember = jest.fn(() => false);
+        await wrapper.vm.onAdditionalMemberAdd();
+        expect(wrapper.vm.$storage.registration.mutations.removeAdditionalMember)
+          .toHaveBeenCalledWith(wrapper.vm.householdCreate.additionalMembers.length - 1)
+      });
+
+      it('should call buildAdditionalMembersState if success', async () => {
+        wrapper.vm.buildAdditionalMembersState = jest.fn();
+        await wrapper.vm.onAdditionalMemberAdd();
+        expect(wrapper.vm.buildAdditionalMembersState).toHaveBeenCalledTimes(1)
+      });
+
+      it('should add id to member object', async () => {
+        const lastAddedIndex = wrapper.vm.householdCreate.additionalMembers.length -1;
+        const member = wrapper.vm.householdCreate.additionalMembers[lastAddedIndex];
+        wrapper.vm.$services.households.addMember = jest.fn(() => ({'id': '123'}));
+        wrapper.vm.buildAdditionalMembersState = jest.fn();
+
+        await wrapper.vm.onAdditionalMemberAdd();
+
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember).toHaveBeenCalledWith(
+          {...member, id: '123',}, lastAddedIndex, wrapper.vm.additionalMembers[lastAddedIndex].sameAddress
+        )
       });
     });
   });

@@ -5,7 +5,9 @@ import _cloneDeep from 'lodash/cloneDeep';
 import helpers from '../../../ui/helpers';
 import { ECanadaProvinces, IOptionItemData, EOptionItemStatus } from '../../../types';
 import { localStorageKeys } from '../../../constants/localStorage';
-import { IShelterLocationData, IHouseholdCreate, IIdentitySet } from '../../../entities/household-create';
+import {
+  IShelterLocationData, IHouseholdCreate, IIdentitySet,
+} from '../../../entities/household-create';
 
 import { IMember } from '../../../entities/value-objects/member/index';
 import { ECurrentAddressTypes, ICurrentAddress } from '../../../entities/value-objects/current-address/index';
@@ -86,6 +88,11 @@ export default Vue.extend({
       const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', (this as any).i18n);
       return list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
     },
+
+    associationMode(): boolean {
+      return this.$store.state.registration.householdAssociationMode;
+    },
+
   },
 
   created() {
@@ -104,7 +111,9 @@ export default Vue.extend({
       this.additionalMembers = [...new Array(membersCount)].map((_, index) => ({
         inlineEdit: false,
         backup: null,
+        loading: false,
         sameAddress: _isEqual(this.additionalMembersCopy[index].currentAddress, this.householdCreate.primaryBeneficiary.currentAddress),
+        backupSameAddress: _isEqual(this.additionalMembersCopy[index].currentAddress, this.householdCreate.primaryBeneficiary.currentAddress),
       }));
     },
 
@@ -112,15 +121,17 @@ export default Vue.extend({
       this.indexAdditionalMember = index;
       this.additionalMembers[index].backup = _cloneDeep(this.householdCreate.additionalMembers[index]);
       this.additionalMembers[index].inlineEdit = true;
+      this.additionalMembers[index].backupSameAddress = this.additionalMembers[index].sameAddress;
       this.$storage.registration.mutations.increaseInlineEditCounter();
     },
 
     cancelAdditionalMember(index: number) {
       if (this.additionalMembers[index].inlineEdit) {
         this.additionalMembers[index].inlineEdit = false;
+        this.additionalMembers[index].sameAddress = this.additionalMembers[index].backupSameAddress;
         this.$storage.registration.mutations.decreaseInlineEditCounter();
         this.$storage.registration.mutations.editAdditionalMember(
-          this.additionalMembers[index].backup, index, this.additionalMembers[index].sameAddress,
+          this.additionalMembers[index].backup, index, this.additionalMembers[index].backupSameAddress,
         );
       }
     },
@@ -129,14 +140,51 @@ export default Vue.extend({
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const isValid = await ((this.$refs[`additionalMember_${index}`] as any)[0]).validate();
       if (isValid) {
-        this.additionalMembers[index].inlineEdit = false;
-        this.$storage.registration.mutations.decreaseInlineEditCounter();
-
         // Not watcher on this form to mutate so we need to do it here
         this.$storage.registration.mutations.editAdditionalMember(
           this.additionalMembersCopy[index], index, this.additionalMembers[index].sameAddress,
         );
+
+        if (this.associationMode) {
+          await this.updateMember(index);
+        }
+        this.additionalMembers[index].inlineEdit = false;
+        this.$storage.registration.mutations.decreaseInlineEditCounter();
+      } else {
+        helpers.scrollToFirstError('app');
       }
+    },
+
+    async updateMember(index: number): Promise<boolean> {
+      this.additionalMembers[index].loading = true;
+      const member = this.householdCreate.additionalMembers[index];
+
+      const resIdentity = await this.$services.households.updatePersonIdentity(member.id, member.identitySet);
+      if (!resIdentity) {
+        this.$storage.registration.mutations.editAdditionalMember(this.additionalMembers[index].backup, index, !this.additionalMembers[index].sameAddress);
+        this.additionalMembers[index].loading = false;
+        return;
+      }
+      this.$toasted.global.success(this.$t('registration.identity.updated'));
+
+      if (this.isNewMemberCurrentAddress(index)) {
+        const resAddress = await this.$services.households.updatePersonAddress(member.id, member.currentAddress);
+
+        if (!resAddress) {
+          const backUpWithUpdatedIdentity = {
+            ...this.additionalMembers[index].backup,
+            identitySet: member.identitySet,
+          };
+          this.additionalMembers[index].sameAddress = !this.additionalMembers[index].sameAddress;
+          this.$storage.registration.mutations.editAdditionalMember(backUpWithUpdatedIdentity, index, !this.additionalMembers[index].sameAddress);
+          this.additionalMembers[index].loading = false;
+          return;
+        }
+
+        this.$toasted.global.success(this.$t('registration.currentAddress.updated'));
+      }
+
+      this.additionalMembers[index].loading = false;
     },
 
     showDeleteDialog(index: number) {
@@ -145,6 +193,14 @@ export default Vue.extend({
     },
 
     deleteAdditionalMember() {
+      if (this.associationMode) {
+        const member = this.householdCreate.additionalMembers[this.indexAdditionalMember];
+        const res = this.$services.households.deleteAdditionalMember(this.householdCreate.id, member.id);
+        if (!res) {
+          return;
+        }
+      }
+      this.$toasted.global.success(this.$t('registration.member.removed'));
       this.$storage.registration.mutations.removeAdditionalMember(this.indexAdditionalMember);
       this.showAdditionalMemberDelete = false;
     },
@@ -184,6 +240,10 @@ export default Vue.extend({
 
     async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
       await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
+    },
+
+    isNewMemberCurrentAddress(index: number): boolean {
+      return !_isEqual(this.householdCreate.additionalMembers[index].currentAddress, this.additionalMembers[index].backup.currentAddress);
     },
   },
 });

@@ -1,4 +1,4 @@
 export enum ERegistrationMode {
-  Self = 'Self',
-  CRC = 'CRC',
+  CRC = 1,
+  Self = 2,
 }

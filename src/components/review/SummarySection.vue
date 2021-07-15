@@ -23,7 +23,7 @@
       <v-btn class="mr-2" data-test="inlineEdit__cancel" @click.native="cancel()">
         {{ $t('common.cancel') }}
       </v-btn>
-      <v-btn class="ml-2" color="primary" data-test="inlineEdit__save" @click.native="onSubmit()">
+      <v-btn class="ml-2" color="primary" data-test="inlineEdit__save" :loading="loading" @click.native="onSubmit()">
         {{ $t('common.save') }}
       </v-btn>
     </div>
@@ -51,6 +51,11 @@ export default Vue.extend({
     showEditButton: {
       type: Boolean,
       default: true,
+    },
+
+    loading: {
+      type: Boolean,
+      default: false,
     },
   },
 

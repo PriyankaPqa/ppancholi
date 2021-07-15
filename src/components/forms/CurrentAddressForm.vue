@@ -137,7 +137,12 @@ import {
 import { TranslateResult } from 'vue-i18n';
 import { VForm } from '../../types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import { ECurrentAddressTypes, IShelterLocationData, ICurrentAddress } from '../../entities/household-create';
+import {
+  ECurrentAddressTypes,
+  IShelterLocationData,
+  ICurrentAddress,
+  CurrentAddress,
+} from '../../entities/household-create';
 
 import googleAutoCompleteMixin from './mixins/address';
 
@@ -181,6 +186,11 @@ export default Vue.extend({
 
     shelterLocations: {
       type: Array as () => IShelterLocationData[],
+      required: true,
+    },
+
+    noFixedHome: {
+      type: Boolean,
       required: true,
     },
   },
@@ -277,6 +287,11 @@ export default Vue.extend({
       handler(newForm: ICurrentAddress) {
         this.$emit('change', newForm);
       },
+    },
+    noFixedHome(noFixedHome) {
+      if (noFixedHome && this.form.addressType === ECurrentAddressTypes.RemainingInHome) {
+        this.form = new CurrentAddress();
+      }
     },
   },
 

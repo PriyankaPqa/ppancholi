@@ -1,11 +1,12 @@
-import { ECanadaProvinces, IAzureSearchParams } from '@/types';
+import {ECanadaProvinces, ERegistrationMode, IAzureSearchParams} from '@/types';
+import moment from 'moment';
 import { mockHttp } from '../../httpClient.mock';
 import {
   mockAddressData,
   mockHouseholdCreate,
   mockContactInformation,
   mockCreateHouseholdRequest,
-  mockMember, ECurrentAddressTypes, mockIdentitySet, mockHotelMotel,
+  mockMember, ECurrentAddressTypes, mockIdentitySet, mockHotelMotel, mockCampGround, mockAddress,
 } from '../../../entities/household-create';
 import { HouseholdsService } from './households';
 
@@ -64,6 +65,61 @@ describe('>>> Beneficiaries Service', () => {
   test('getPerson is linked to the correct URL', async () => {
     await service.getPerson('123');
     expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}`);
+  });
+
+  test('updatePersonContactInformation is linked to the correct URL', async () => {
+    const contactInformation = mockContactInformation();
+    await service.updatePersonContactInformation('123', contactInformation);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/contact-information`, {
+      contactInformation: service.parseContactInformation(contactInformation),
+    });
+  });
+
+  test('updatePersonIdentity is linked to the correct URL', async () => {
+    const identitySet = mockIdentitySet();
+    await service.updatePersonIdentity('123', identitySet);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/identity-set`, {
+      identitySet: service.parseIdentitySet(identitySet),
+    });
+  });
+
+  test('updatePersonAddress is linked to the correct URL', async () => {
+    const currentAddress = mockCampGround();
+    await service.updatePersonAddress('123', currentAddress);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/current-address`, {
+      currentAddress: service.parseCurrentAddress(currentAddress),
+    });
+  });
+
+  test('updateHomeAddress is linked to the correct URL', async () => {
+    const address = mockAddress();
+    await service.updateHomeAddress('123', address);
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/address`, {
+      address: {
+        address: service.parseAddress(address),
+        from: moment.utc(moment()).format(),
+      },
+    });
+  });
+
+  test('updateNoFixedHomeAddress is linked to the correct URL', async () => {
+    await service.updateNoFixedHomeAddress('123');
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/no-fixed-address`, {
+      from: moment.utc(moment()).format(),
+    });
+  });
+
+  test('deleteAdditionalMember is linked to the correct URL', async () => {
+    await service.deleteAdditionalMember('123', '345');
+    expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/members/${'345'}`);
+  });
+
+  test('addMember is linked to the correct URL', async () => {
+    await service.addMember('123', mockMember());
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/members`, {
+      ...service.parseMember(mockMember()),
+      registrationType: ERegistrationMode.CRC,
+    });
   });
 
   describe('parseMember', () => {

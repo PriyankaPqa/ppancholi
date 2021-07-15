@@ -10,7 +10,7 @@ import Component from './CurrentAddressForm.vue';
 
 const localVue = createLocalVue();
 
-describe('TempAddress.vue', () => {
+describe('CurrentAddressForm.vue', () => {
   let wrapper;
 
   beforeEach(() => {
@@ -22,6 +22,7 @@ describe('TempAddress.vue', () => {
         currentAddressTypeItems: helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes'),
         canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
         shelterLocations: mockShelterLocations(),
+        noFixedHome: false,
       },
     });
   });

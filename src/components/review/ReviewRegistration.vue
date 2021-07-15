@@ -17,57 +17,70 @@
         </validation-observer>
       </template>
     </template>
-
-    <summary-section
-      :show-edit-button="!householdAlreadyRegistered"
-      data-test="personalInformation"
-      :title="$t('registration.menu.personal_info')"
-      :inline-edit="personalInformation.inlineEdit"
-      @edit="editPersonalInformation()"
-      @cancel="cancelPersonalInformation()"
-      @submit="submitPersonalInformation()">
-      <template #inline>
-        <validation-observer ref="personalInfo">
+    <validation-observer ref="personalInfo">
+      <summary-section
+        :show-edit-button="!householdAlreadyRegistered"
+        data-test="personalInformation"
+        :title="$t('registration.menu.personal_info')"
+        :inline-edit="personalInformation.inlineEdit"
+        :loading="personalInformation.loading"
+        @edit="editPersonalInformation()"
+        @cancel="cancelPersonalInformation()"
+        @submit="submitPersonalInformation()">
+        <template #inline>
           <personal-information :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" />
-        </validation-observer>
-      </template>
-      <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
-    </summary-section>
+        </template>
+        <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
+      </summary-section>
+    </validation-observer>
 
-    <summary-section
-      :show-edit-button="!householdAlreadyRegistered"
-      data-test="addresses"
-      :title="$t('registration.menu.addresses')"
-      :inline-edit="addresses.inlineEdit"
-      @edit="editAddresses()"
-      @cancel="cancelAddresses()"
-      @submit="submitAddresses()">
-      <template #inline>
-        <validation-observer ref="addresses">
+    <validation-observer ref="addresses">
+      <summary-section
+        :show-edit-button="!householdAlreadyRegistered"
+        data-test="addresses"
+        :title="$t('registration.menu.addresses')"
+        :inline-edit="addresses.inlineEdit"
+        :loading="addresses.loading"
+        @edit="editAddresses()"
+        @cancel="cancelAddresses()"
+        @submit="submitAddresses()">
+        <template #inline>
           <addresses :i18n="i18n" />
-        </validation-observer>
-      </template>
-      <addresses-template :household="householdCreate" />
-    </summary-section>
+        </template>
+        <addresses-template :household="householdCreate" />
+      </summary-section>
+    </validation-observer>
 
     <div data-test="title" class="rc-heading-5  mb-2 mt-8 fw-bold">
       {{ `${$t('registration.household_members.title')} (${householdCreate.additionalMembers.length})` }}
+      <v-btn
+        v-if="associationMode"
+        class="ml-2"
+        color="primary"
+        :disabled="disabledAddMembers"
+        data-test="add-additionalMember"
+        @click.native="addAdditionalMember()">
+        <v-icon left>
+          mdi-plus
+        </v-icon> {{ $t('registration.household_members.add.label') }}
+      </v-btn>
     </div>
 
-    <template v-for="(member, index) in additionalMembersCopy" data-test="leo">
-      <additional-member-section
-        :key="index"
-        :show-edit-button="!householdAlreadyRegistered"
-        :show-delete-button="!householdAlreadyRegistered"
-        :data-test="`additionalMember_${index}`"
-        :member="member"
-        :inline-edit="additionalMembers[index].inlineEdit"
-        @edit="editAdditionalMember(index)"
-        @cancel="cancelAdditionalMember(index)"
-        @submit="submitAdditionalMember(index)"
-        @delete="showDeleteDialog(index)">
-        <template #inline>
-          <validation-observer :ref="`additionalMember_${index}`">
+    <template v-for="(member, index) in additionalMembersCopy">
+      <validation-observer :ref="`additionalMember_${index}`" :key="index" slim>
+        <additional-member-section
+          :key="index"
+          :show-edit-button="!householdAlreadyRegistered"
+          :show-delete-button="!householdAlreadyRegistered"
+          :data-test="`additionalMember_${index}`"
+          :member="member"
+          :inline-edit="additionalMembers[index].inlineEdit"
+          :loading="additionalMembers[index].loading"
+          @edit="editAdditionalMember(index)"
+          @cancel="cancelAdditionalMember(index)"
+          @submit="submitAdditionalMember(index)"
+          @delete="showDeleteDialog(index)">
+          <template #inline>
             <additional-member-form
               :api-key="apiKey"
               :i18n="i18n"
@@ -84,10 +97,10 @@
               @indigenous-identity-change="setIndigenousIdentity($event)"
               @province-change="onIndigenousProvinceChange($event)"
               @temporary-address-change="setCurrentAddress($event)" />
-          </validation-observer>
-        </template>
-        <additional-member-template :member="member" />
-      </additional-member-section>
+          </template>
+          <additional-member-template :member="member" />
+        </additional-member-section>
+      </validation-observer>
     </template>
 
     <rc-confirmation-dialog
@@ -100,6 +113,14 @@
       @close="showAdditionalMemberDelete = false"
       @cancel="showAdditionalMemberDelete = false"
       @submit="deleteAdditionalMember()" />
+
+    <add-edit-additional-members
+      v-if="showAddAdditionalMember"
+      :i18n="i18n"
+      :show.sync="showAddAdditionalMember"
+      :index="-1"
+      :member="newAdditionalMember"
+      @add="onAdditionalMemberAdd()" />
   </div>
 </template>
 
@@ -111,6 +132,12 @@ import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
 import CrcPrivacyStatement from '@/components/privacy-statement/CrcPrivacyStatement.vue';
 import moment from 'moment';
+import { IHouseholdCreate, Member } from '@/entities/household-create';
+import _isEqual from 'lodash/isEqual';
+
+import helpers from '@/ui/helpers';
+import { MAX_ADDITIONAL_MEMBERS } from '@/constants/validations';
+import AddEditAdditionalMembers from '@/components/additional-members/AddEditAdditionalMembers.vue';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
 import { IMember } from '../../entities/value-objects/member';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
@@ -137,6 +164,7 @@ export default mixins(additionalMemberForm).extend({
     Addresses,
     RcConfirmationDialog,
     CrcPrivacyStatement,
+    AddEditAdditionalMembers,
   },
 
   props: {
@@ -160,12 +188,18 @@ export default mixins(additionalMemberForm).extend({
       personalInformation: {
         inlineEdit: false,
         backup: null,
+        loading: false,
       },
       addresses: {
         inlineEdit: false,
         backupCurrentAddress: null,
         backupHomeAddress: null,
+        backupNoFixedHome: null,
+        loading: false,
       },
+      showAddAdditionalMember: false,
+      disabledAddMembers: false,
+      newAdditionalMember: null,
     };
   },
 
@@ -197,9 +231,11 @@ export default mixins(additionalMemberForm).extend({
     },
 
     editAddresses() {
-      this.addresses.backupCurrentAddress = _cloneDeep(this.householdCreate.primaryBeneficiary.currentAddress);
-      this.addresses.backupHomeAddress = _cloneDeep(this.householdCreate.homeAddress);
+      const householdCopy = _cloneDeep(this.householdCreate);
+      this.addresses.backupCurrentAddress = householdCopy.primaryBeneficiary.currentAddress;
+      this.addresses.backupHomeAddress = householdCopy.homeAddress;
       this.addresses.inlineEdit = true;
+      this.addresses.backupNoFixedHome = householdCopy.noFixedHome;
       this.$storage.registration.mutations.increaseInlineEditCounter();
     },
 
@@ -212,10 +248,11 @@ export default mixins(additionalMemberForm).extend({
     },
 
     cancelAddresses() {
-      if (this.addresses.inlineEdit) {
+      if (this.addresses?.inlineEdit) {
         this.addresses.inlineEdit = false;
         this.$storage.registration.mutations.decreaseInlineEditCounter();
         this.$storage.registration.mutations.setHomeAddress(this.addresses.backupHomeAddress);
+        this.$storage.registration.mutations.setNoFixedHome(this.addresses.backupNoFixedHome);
         this.$storage.registration.mutations.setCurrentAddress(this.addresses.backupCurrentAddress);
       }
     },
@@ -223,17 +260,132 @@ export default mixins(additionalMemberForm).extend({
     async submitPersonalInformation() {
       const isValid = await (this.$refs.personalInfo as VForm).validate();
       if (isValid) {
+        if (this.associationMode) {
+          await this.updatePersonalInformation();
+        }
         this.personalInformation.inlineEdit = false;
         this.$storage.registration.mutations.decreaseInlineEditCounter();
+      } else {
+        helpers.scrollToFirstError('app');
       }
+    },
+
+    async updatePersonalInformation() {
+      this.personalInformation.loading = true;
+
+      const resIdentity = await this.$services.households.updatePersonIdentity(
+        this.householdCreate.primaryBeneficiary.id,
+        this.householdCreate.primaryBeneficiary.identitySet,
+      );
+
+      if (!resIdentity) {
+        this.$storage.registration.mutations.setIdentity(this.personalInformation.backup);
+        this.personalInformation.loading = false;
+        return;
+      }
+
+      this.$toasted.global.success(this.$t('registration.identity.updated'));
+
+      const resContactInfo = await this.$services.households.updatePersonContactInformation(
+        this.householdCreate.primaryBeneficiary.id,
+        this.householdCreate.primaryBeneficiary.contactInformation,
+      );
+
+      if (!resContactInfo) {
+        this.$storage.registration.mutations.setContactInformation(this.personalInformation.backup);
+        this.personalInformation.loading = false;
+        return;
+      }
+      this.personalInformation.loading = false;
+      this.$toasted.global.success(this.$t('registration.contactInformation.updated'));
     },
 
     async submitAddresses() {
       const isValid = await (this.$refs.addresses as VForm).validate();
       if (isValid) {
+        if (this.associationMode) {
+          await this.updateAddresses();
+        }
         this.addresses.inlineEdit = false;
         this.$storage.registration.mutations.decreaseInlineEditCounter();
+      } else {
+        helpers.scrollToFirstError('app');
       }
+    },
+
+    async updateAddresses() {
+      this.addresses.loading = true;
+      const primaryBeneficiaryId = this.householdCreate.primaryBeneficiary.id;
+      const householdId = this.householdCreate.id;
+
+      if (this.isNewHomeAddress()) {
+        const resHomeAddress = await this.updateHomeAddress(householdId, this.householdCreate);
+
+        if (!resHomeAddress) {
+          this.$storage.registration.mutations.setHomeAddress(this.addresses.backupHomeAddress);
+          this.addresses.loading = false;
+          return;
+        }
+        this.$toasted.global.success(this.$t('registration.homeAddress.updated'));
+      }
+
+      if (this.isNewPrimaryCurrentAddress()) {
+        const resCurrentAddress = await this.$services.households.updatePersonAddress(primaryBeneficiaryId, this.householdCreate.primaryBeneficiary.currentAddress);
+
+        if (!resCurrentAddress) {
+          this.$storage.registration.mutations.setCurrentAddress(this.addresses.backupCurrentAddress);
+          this.addresses.loading = false;
+          return;
+        }
+        this.addresses.loading = false;
+        this.$toasted.global.success(this.$t('registration.currentAddress.updated'));
+      }
+      this.addresses.loading = false;
+    },
+
+    async updateHomeAddress(householdId: uuid, household: IHouseholdCreate) {
+      let res;
+      if (household.noFixedHome) {
+        res = await this.$services.households.updateNoFixedHomeAddress(householdId);
+      } else {
+        res = await this.$services.households.updateHomeAddress(householdId, household.homeAddress);
+      }
+      return res;
+    },
+
+    isNewHomeAddress(): boolean {
+      return !_isEqual(this.householdCreate.homeAddress, this.addresses.backupHomeAddress);
+    },
+
+    isNewPrimaryCurrentAddress(): boolean {
+      return !_isEqual(this.householdCreate.primaryBeneficiary.currentAddress, this.addresses.backupCurrentAddress);
+    },
+
+    addAdditionalMember() {
+      if (this.householdCreate.additionalMembers.length < MAX_ADDITIONAL_MEMBERS) {
+        this.newAdditionalMember = new Member();
+        this.showAddAdditionalMember = true;
+      } else {
+        this.$toasted.global.warning(this.$t('warning.MAX_ADDITIONAL_MEMBERS_reached', { x: MAX_ADDITIONAL_MEMBERS }));
+        this.disabledAddMembers = true;
+      }
+    },
+
+    async onAdditionalMemberAdd() {
+      const lastAddedIndex = this.householdCreate.additionalMembers.length -1;
+      const member = this.householdCreate.additionalMembers[lastAddedIndex];
+      const res = await this.$services.households.addMember(this.householdCreate.id, member);
+
+      if (!res) {
+        this.$storage.registration.mutations.removeAdditionalMember(this.householdCreate.additionalMembers.length - 1);
+        return;
+      }
+      this.$toasted.global.success(this.$t('registration.member.added'));
+
+      this.buildAdditionalMembersState();
+
+      // We add the id on the object
+      this.$storage.registration.mutations.editAdditionalMember({...member, id: res.id,}, lastAddedIndex, this.additionalMembers[lastAddedIndex].sameAddress);
     },
   },
 });

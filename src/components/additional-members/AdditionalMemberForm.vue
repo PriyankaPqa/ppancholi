@@ -43,6 +43,7 @@
             :shelter-locations="shelterLocations"
             :canadian-provinces-items="canadianProvincesItems"
             :current-address-type-items="currentAddressTypeItems"
+            :no-fixed-home="false"
             :api-key="apiKey"
             :current-address="member.currentAddress"
             @change="$emit('temporary-address-change', $event)" />

@@ -178,6 +178,7 @@ export default Vue.extend({
         this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
       } else {
         this.$storage.registration.mutations.addAdditionalMember(this.member, this.sameAddress);
+        this.$emit('add');
       }
       this.close();
     },

@@ -22,9 +22,10 @@ module.exports = {
     'max-nested-callbacks': ['error', 4],
     'max-statements': ['error', 31, { ignoreTopLevelFunctions: true }],
     'max-lines': ['error', { max: 1000, skipBlankLines: true, skipComments: true }],
-    'max-len': ['error', {
-      code: 150, tabWidth: 4, ignoreUrls: true, ignoreComments: true,
-    }],
+    'max-len':
+      ['error', {
+        code: 170, tabWidth: 4, ignoreUrls: true, ignoreComments: true,
+      }],
     'max-lines-per-function': ['error', { max: 155, skipBlankLines: true, skipComments: true }],
     'vue/max-attributes-per-line': ['error', {
       singleline: 8,

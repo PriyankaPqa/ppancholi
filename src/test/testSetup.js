@@ -16,6 +16,7 @@ import VueI18n from 'vue-i18n';
 
 import { mockStore } from '../store';
 import { mockStorage } from '../store/storage/storage.mock';
+import { mockProvider } from '../services/provider';
 
 jest.setTimeout(10000);
 
@@ -60,6 +61,7 @@ const mocks = {
     },
     show: jest.fn(),
   },
+  $services: mockProvider(),
 };
 
 const stubs = {
