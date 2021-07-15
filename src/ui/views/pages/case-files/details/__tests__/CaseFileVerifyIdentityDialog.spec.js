@@ -151,6 +151,19 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       });
     });
 
+    describe('canSelectIds', () => {
+      it('returns true when status === IdentityAuthenticationStatus.Passed and not System', async () => {
+        await wrapper.setData({ form: { status: IdentityAuthenticationStatus.Passed, method: IdentityAuthenticationMethod.InPerson } });
+        expect(wrapper.vm.canSelectIds).toBeTruthy();
+        await wrapper.setData({ form: { status: IdentityAuthenticationStatus.Passed, method: IdentityAuthenticationMethod.System } });
+        expect(wrapper.vm.canSelectIds).toBeFalsy();
+        await wrapper.setData({ form: { status: IdentityAuthenticationStatus.Failed, method: IdentityAuthenticationMethod.InPerson } });
+        expect(wrapper.vm.canSelectIds).toBeFalsy();
+        await wrapper.setData({ form: { status: IdentityAuthenticationStatus.NotVerified, method: IdentityAuthenticationMethod.InPerson } });
+        expect(wrapper.vm.canSelectIds).toBeFalsy();
+      });
+    });
+
     describe('watcher isValidAuthStatus', () => {
       it('empties form when validation of identity isnt ok', async () => {
         await wrapper.setData({

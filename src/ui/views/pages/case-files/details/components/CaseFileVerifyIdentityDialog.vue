@@ -82,11 +82,11 @@
                 v-model="form.identificationIds"
                 data-test="verifyIdentity_options"
                 multiple
-                :disabled="!isValidAuthStatus"
+                :disabled="!canSelectIds"
                 :items="verificationOptions"
                 :item-text="(item) => $m(item.name)"
                 :item-value="(item) => item.id"
-                :label="isValidAuthStatus ? $t('caseFileDetail.verifyIdentityDialog.options.label') : $t('common.notApplicable')"
+                :label="canSelectIds ? $t('caseFileDetail.verifyIdentityDialog.options.label') : $t('common.notApplicable')"
                 :rules="rules.identificationIds" />
             </v-col>
           </v-row>
@@ -161,6 +161,10 @@ export default Vue.extend({
       return this.form.status === IdentityAuthenticationStatus.Passed;
     },
 
+    canSelectIds(): boolean {
+      return this.isValidAuthStatus && this.form.method !== IdentityAuthenticationMethod.System;
+    },
+
     rules(): Record<string, unknown> {
       return {
         method: {
@@ -168,7 +172,7 @@ export default Vue.extend({
           oneOf: this.isValidAuthStatus
             ? [IdentityAuthenticationMethod.Exceptional, IdentityAuthenticationMethod.InPerson] : [IdentityAuthenticationMethod.NotApplicable],
         },
-        identificationIds: { required: this.isValidAuthStatus },
+        identificationIds: { required: this.canSelectIds },
         status: { oneOf: Object.values(IdentityAuthenticationStatus) },
       };
     },
