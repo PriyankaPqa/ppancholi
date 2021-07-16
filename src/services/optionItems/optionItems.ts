@@ -44,7 +44,7 @@ export class OptionItemsService implements IOptionItemsService {
   }
 
   async getOptionList(list: EOptionLists): Promise<IOptionItemData[]> {
-    return this.http.get(`${this.getPrefix(list)}/all`);
+    return this.http.get(`${this.getPrefix(list)}/all-allow-no-access`);
   }
 
   async createOptionItem(list: EOptionLists, optionItem: IOptionItemData): Promise<IOptionItemData> {

@@ -86,7 +86,7 @@ describe('>>> OptionItems Service', () => {
   test('getOptionList is linked to the correct URL', async () => {
     const list = EOptionLists.EventTypes;
     await service.getOptionList(list);
-    expect(http.get).toHaveBeenCalledWith(`${service.getPrefix(list)}/all`);
+    expect(http.get).toHaveBeenCalledWith(`${service.getPrefix(list)}/all-allow-no-access`);
   });
 
   test('updateOptionItem is linked to the correct URL', async () => {
