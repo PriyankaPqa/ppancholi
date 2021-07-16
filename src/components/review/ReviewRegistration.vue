@@ -51,8 +51,10 @@
       </summary-section>
     </validation-observer>
 
-    <div data-test="title" class="rc-heading-5  mb-2 mt-8 fw-bold">
-      {{ `${$t('registration.household_members.title')} (${householdCreate.additionalMembers.length})` }}
+    <div data-test="title" class="rc-heading-5 mb-2 mt-8 fw-bold d-flex justify-space-between align-center">
+      <div>
+        {{ `${$t('registration.household_members.title')} (${householdCreate.additionalMembers.length})` }}
+      </div>
       <v-btn
         v-if="associationMode"
         class="ml-2"
