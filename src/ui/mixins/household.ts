@@ -6,7 +6,7 @@ import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/house
 import { IMemberData } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { IAzureSearchResult } from '@/types';
 import { IIndigenousIdentityData } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
-import { IHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
+import { IAddressData, IHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import deepmerge from 'deepmerge';
 import helpers from '@/ui/helpers';
 import { IOptionItemData } from '@/entities/optionItem';
@@ -77,15 +77,34 @@ export default Vue.extend({
 
       const communitiesItems = await this.fetchIndigenousInformation(members);
 
+      const emptyCurrentAddress = {
+        country: 'CA',
+        streetAddress: null,
+        unitSuite: null,
+        province: null,
+        specifiedOtherProvince: null,
+        city: null,
+        postalCode: null,
+        latitude: 0,
+        longitude: 0,
+      } as IAddressData;
+
       members.forEach((m, index) => {
+        const currentAddress = {
+          ...m.currentAddress,
+          address: m.currentAddress.address === null ? emptyCurrentAddress : m.currentAddress.address,
+        };
+
         if (index === 0) {
           primaryBeneficiary = deepmerge(m, {
             identitySet: this.parseIdentitySet(m, communitiesItems, genderItems),
             contactInformation: this.parseContactInformation(m, preferredLanguagesItems, primarySpokenLanguagesItems),
+            currentAddress,
           });
         } else {
           additionalMembers.push(deepmerge(m, {
             identitySet: this.parseIdentitySet(m, communitiesItems, genderItems),
+            currentAddress,
           }));
         }
       });
@@ -109,6 +128,7 @@ export default Vue.extend({
     parseIdentitySet(member: IMemberData, indigenousCommunities: IIndigenousIdentityData[], genderItems: IOptionItemData[]) {
       const indigenous = member.identitySet?.indigenousIdentity?.indigenousCommunityId
         ? indigenousCommunities.find((c) => c.id === member.identitySet.indigenousIdentity.indigenousCommunityId) : null;
+
       return {
         birthDate: helpers.convertBirthDateStringToObject(member.identitySet.dateOfBirth),
         genderOther: member.identitySet.gender.specifiedOther,

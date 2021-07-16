@@ -11,7 +11,7 @@ Vue.use(Toasted, {
   className: 'emis-toast',
   iconPack: 'mdi',
   closeOnSwipe: true,
-  singleton: true,
+  singleton: false,
 });
 
 // Declaration of global toaster used in whole application. We can then customize them with their respective class name

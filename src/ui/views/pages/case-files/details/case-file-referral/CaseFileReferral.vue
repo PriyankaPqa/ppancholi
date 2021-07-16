@@ -31,7 +31,7 @@
         {{ outcomeStatus(item) }}
       </template>
 
-      <template #[`item.${customColumns.edit}`]="{ item }" v-if="canEdit">
+      <template v-if="canEdit" #[`item.${customColumns.edit}`]="{ item }">
         <v-btn icon :to="getReferralEditRoute(item)" data-test="editReferral-link">
           <v-icon>
             mdi-pencil

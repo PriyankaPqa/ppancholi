@@ -125,7 +125,7 @@ describe('household', () => {
       });
 
       it('should call fetchIndigenousInformation', async () => {
-        const members = [{}, {}];
+        const members = [];
         wrapper.vm.fetchMembersInformation = jest.fn(() => members);
         wrapper.vm.fetchIndigenousInformation = jest.fn();
         wrapper.vm.parseIdentitySet = jest.fn();

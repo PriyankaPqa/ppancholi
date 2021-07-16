@@ -101,6 +101,11 @@ describe('Individual.vue', () => {
         wrapper.vm.backToHouseholdResults();
         expect(wrapper.vm.$storage.registration.mutations.setCurrentTabIndex).toHaveBeenCalledWith(tabs().findIndex((t) => t.id === 'isRegistered'));
       });
+
+      it('should call resetHouseholdCreate', () => {
+        wrapper.vm.backToHouseholdResults();
+        expect(wrapper.vm.$storage.registration.mutations.resetHouseholdCreate).toHaveBeenCalledTimes(1);
+      });
     });
 
     describe('next', () => {
