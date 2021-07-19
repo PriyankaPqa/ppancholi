@@ -76,7 +76,7 @@
           icon
           x-small
           :data-test="`remove_team_member_${item.id}`"
-          @click="item.isPrimaryContact ? showPrimaryContactMessage() : showRemoveConfirmationDialog(item.id)">
+          @click="handleRemoveTeamMember(item)">
           <v-icon color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -102,6 +102,22 @@
       @submit="removeTeamMember()"
       @cancel="showRemoveMemberConfirmationDialog = false"
       @close="showRemoveMemberConfirmationDialog = false" />
+
+    <rc-dialog
+      v-if="showRemoveMemberConfirmationDialog && hasCaseFiles"
+      :title="$t('teams.remove_team_members_case_files')"
+      :show-cancel="false"
+      :submit-action-label="$t('common.buttons.ok')"
+      :show="showRemoveMemberConfirmationDialog && hasCaseFiles"
+      :persistent="true"
+      :tooltip-label="$t('common.tooltip_label')"
+      :max-width="750"
+      @submit="hideConfirmationDialog()"
+      @close="showRemoveMemberConfirmationDialog = false">
+      <div class="rc-body14 pre-formatted" data-test="message__line_0">
+        <span>{{ $t('teams.remove_team_member_with_case_files_confirm') }}</span>
+      </div>
+    </rc-dialog>
   </div>
 </template>
 
@@ -112,7 +128,7 @@ import _orderBy from 'lodash/orderBy';
 import { ITeamMemberData, Team } from '@/entities/team';
 import helpers from '@/ui/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
-import { RcConfirmationDialog, RcPhoneDisplay } from '@crctech/component-library';
+import { RcConfirmationDialog, RcPhoneDisplay, RcDialog } from '@crctech/component-library';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
 
 export default Vue.extend({
@@ -123,6 +139,7 @@ export default Vue.extend({
     RcConfirmationDialog,
     RcPhoneDisplay,
     TeamMemberTeams,
+    RcDialog,
   },
 
   props: {
@@ -159,6 +176,7 @@ export default Vue.extend({
       search: '',
       showAddTeamMemberDialog: false,
       showRemoveMemberConfirmationDialog: false,
+      hasCaseFiles: false,
       removeMemberId: '',
       searchAmong: [
         'displayName',
@@ -274,10 +292,18 @@ export default Vue.extend({
     showRemoveConfirmationDialog(id: string) {
       this.removeMemberId = id;
       this.showRemoveMemberConfirmationDialog = true;
+      this.hasCaseFiles = false;
     },
-
+    showRemoveConfirmationDialogWithCaseFiles(id: string) {
+      this.removeMemberId = id;
+      this.showRemoveMemberConfirmationDialog = true;
+      this.hasCaseFiles = true;
+    },
     showPrimaryContactMessage() {
       this.$toasted.global.warning(this.$t('teams.remove_team_members_change_contact'));
+    },
+    hideConfirmationDialog() {
+      this.showRemoveMemberConfirmationDialog = false;
     },
 
     async removeTeamMember() {
@@ -305,6 +331,19 @@ export default Vue.extend({
       this.showMemberDialog = true;
       this.clickedMember = member;
     },
+
+    handleRemoveTeamMember(item: ITeamMemberData) {
+      if (item.isPrimaryContact) {
+        this.showPrimaryContactMessage();
+      } else if (item.openCaseFilesCount === 0) {
+        this.showRemoveConfirmationDialog(item.id);
+      } else if (item.caseFilesCount) {
+        this.showRemoveConfirmationDialogWithCaseFiles(item.id);
+      } else {
+        this.showRemoveConfirmationDialog(item.id);
+      }
+    },
+
   },
 });
 

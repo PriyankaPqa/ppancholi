@@ -60,7 +60,7 @@ export class EventEntityModule extends BaseModule <IEventEntity> {
     eventTypes: (state: IEventEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.eventTypes, filterOutInactive, actualValue),
 
     eventsByStatus: (state:IState<IEventEntity>) => (statuses: Array<EEventStatus>) => {
-      const events = state.items.filter((e: IEventEntity) => statuses.includes(e.schedule.status));
+      const events = state.items.filter((e: IEventEntity) => e?.schedule?.status && statuses.includes(e.schedule.status));
       return helpers.sortMultilingualArray(events, 'name');
     },
   };

@@ -1498,6 +1498,7 @@
     "teams.remove_team_members_cases_reassigned": "All the case files have been successfully reassigned.",
     "teams.remove_team_members_change_contact": "Please choose another member as a primary contact first.",
     "teams.remove_team_members_confirm": "Are you sure you want to delete this member?",
+    "teams.remove_team_member_with_case_files_confirm": "There are open case files assigned to this individual. Please reassign the case files.",
     "teams.remove_team_members_open_case_files": "This member has open case files.\nPlease reassign the case files to another member before proceeding.",
     "teams.remove_team_members_success": "Member deleted!",
     "teams.role": "Role",
