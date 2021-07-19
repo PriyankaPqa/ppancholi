@@ -39,7 +39,7 @@ describe('>>> OptionItems Service', () => {
     });
 
     it('returns correct prefix for EOptionLists.Roles', () => {
-      expect(service.getPrefix(EOptionLists.Roles)).toBe('/user-account/roles/all-allow-no-access');
+      expect(service.getPrefix(EOptionLists.Roles)).toBe('/user-account/roles');
     });
 
     it('returns correct prefix for EOptionLists.CaseFileInactiveReasons', () => {
@@ -86,18 +86,7 @@ describe('>>> OptionItems Service', () => {
   test('getOptionList is linked to the correct URL', async () => {
     const list = EOptionLists.EventTypes;
     await service.getOptionList(list);
-    let url = service.getPrefix(list);
-    if (list === EOptionLists.EventTypes) {
-      url += '/all';
-    }
-    expect(http.get).toHaveBeenCalledWith(url);
-  });
-
-  test('getOptionList is linked to the correct URL for roles list', async () => {
-    const list = EOptionLists.Roles;
-    await service.getOptionList(list);
-    const url = service.getPrefix(list);
-    expect(http.get).toHaveBeenCalledWith(url);
+    expect(http.get).toHaveBeenCalledWith(`${service.getPrefix(list)}/all`);
   });
 
   test('updateOptionItem is linked to the correct URL', async () => {

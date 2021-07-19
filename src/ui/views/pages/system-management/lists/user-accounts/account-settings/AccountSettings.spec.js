@@ -14,30 +14,30 @@ describe('AccountSettings.vue', () => {
   let roleHasChanged = false;
   let isLevel6 = false;
 
-  const doMount = function doMount() {
+  const doMount = async () => {
     wrapper = mount(Component, {
       localVue,
       computed: {
-        user() {
-          return mockUser;
-        },
-        roleHasChanged() {
-          return roleHasChanged;
-        },
+        user: () => mockUser,
+        roleHasChanged: () => roleHasChanged,
       },
       mocks: {
         $hasLevel: jest.fn((lv) => lv !== 'level6' || isLevel6),
       },
     });
+    await wrapper.setData({
+      loading: false,
+    });
   };
 
   describe('Template', () => {
-    beforeEach(() => {
-      doMount();
+    beforeEach(async () => {
+      await doMount();
     });
 
     describe('status', () => {
       let element;
+
       beforeEach(() => {
         element = wrapper.findDataTest('userAccount-status-chip');
       });
@@ -140,17 +140,17 @@ describe('AccountSettings.vue', () => {
     describe('role dropdown', () => {
       let element;
 
-      it('does not render when not level 6', () => {
+      it('does not render when not level 6', async () => {
         isLevel6 = false;
-        doMount();
+        await doMount();
 
         element = wrapper.findDataTest('user_roleId');
         expect(element.exists()).toBeFalsy();
       });
 
-      it('renders when level 6', () => {
+      it('renders when level 6', async () => {
         isLevel6 = true;
-        doMount();
+        await doMount();
 
         element = wrapper.findDataTest('user_roleId');
         expect(element.exists()).toBeTruthy();
@@ -160,10 +160,9 @@ describe('AccountSettings.vue', () => {
     describe('role action buttons', () => {
       let element;
 
-      it('renders when roleHasChanged = true', () => {
+      it('renders when roleHasChanged = true', async () => {
         roleHasChanged = true;
-
-        doMount();
+        await doMount();
 
         element = wrapper.findDataTest('apply-role-button');
         expect(element.exists()).toBeTruthy();
@@ -171,10 +170,10 @@ describe('AccountSettings.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render when roleHasChanged = false', () => {
+      it('does not render when roleHasChanged = false', async () => {
         roleHasChanged = false;
 
-        doMount();
+        await doMount();
 
         element = wrapper.findDataTest('apply-role-button');
         expect(element.exists()).toBeFalsy();
@@ -185,37 +184,12 @@ describe('AccountSettings.vue', () => {
   });
 
   describe('life cycle', () => {
-    beforeEach(() => {
-      storage.user.getters.userId = jest.fn(() => 'mock-id');
-      storage.userAccount.actions.fetch = jest.fn(() => {});
-
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-        },
+    it('should call fetchUserAccount with id', async () => {
+      wrapper.vm.fetchUserAccount = jest.fn();
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
       });
-    });
-
-    it('should get the id from the user storage if none in route param', () => {
-      expect(wrapper.vm.$storage.user.getters.userId).toHaveBeenCalledTimes(1);
-    });
-    it('should call fetchUserAccount with the response of the user storage getter if none in route params', () => {
-      expect(wrapper.vm.$storage.userAccount.actions.fetch).toHaveBeenCalledWith('mock-id');
-      expect(wrapper.vm.id).toEqual('mock-id');
-    });
-    it('should call fetchUserAccount with the route params', () => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-          $route: {
-            params: { id: 'abcd' },
-          },
-        },
-      });
-      expect(wrapper.vm.$storage.userAccount.actions.fetch).toHaveBeenCalledWith('abcd');
-      expect(wrapper.vm.id).toEqual('abcd');
+      expect(wrapper.vm.fetchUserAccount).toHaveBeenCalledWith(wrapper.vm.id);
     });
   });
 
@@ -274,12 +248,14 @@ describe('AccountSettings.vue', () => {
           roleHasChanged() {
             return true;
           },
+          id: () => 'myId',
         },
         mocks: {
           $storage: storage,
         },
       });
     });
+
     describe('setPreferredLanguage', () => {
       it('should be called when changing language', () => {
         const element = wrapper.findDataTest('userAccount-language-preferences');
@@ -288,9 +264,6 @@ describe('AccountSettings.vue', () => {
         expect(wrapper.vm.setPreferredLanguage).toHaveBeenCalledWith('bar');
       });
       it('should call setUserPreferredLanguage with correct param ', async () => {
-        await wrapper.setData({
-          id: 'myId',
-        });
         wrapper.vm.setPreferredLanguage({ key: 'fr' });
         expect(wrapper.vm.$storage.userAccount.actions.setUserPreferredLanguage).toHaveBeenCalledWith('myId', 'fr');
       });
@@ -382,6 +355,35 @@ describe('AccountSettings.vue', () => {
           expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[1]);
           expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[0]);
         });
+      });
+    });
+
+    describe('fetchUserAccount', () => {
+      storage.user.getters.userId = jest.fn(() => 'mock-id');
+      storage.userAccount.actions.fetch = jest.fn(() => {});
+
+      wrapper = shallowMount(Component, {
+        localVue,
+        mocks: {
+          $storage: storage,
+        },
+      });
+      it('should call fetchUserAccount with the response of the user storage getter if none in route params', () => {
+        expect(wrapper.vm.$storage.userAccount.actions.fetch).toHaveBeenCalledWith('mock-id');
+      });
+
+      it('should call fetchUserAccount with the route params', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+            $route: {
+              params: { id: 'abcd' },
+            },
+          },
+        });
+        expect(wrapper.vm.$storage.userAccount.actions.fetch).toHaveBeenCalledWith('abcd');
+        expect(wrapper.vm.id).toEqual('abcd');
       });
     });
   });

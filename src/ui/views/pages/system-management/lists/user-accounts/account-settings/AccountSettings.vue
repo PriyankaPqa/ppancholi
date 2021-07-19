@@ -187,7 +187,6 @@ export default Vue.extend({
 
   data() {
     return {
-      id: null,
       AccountStatus,
       preferredLanguage: null,
       loading: false,
@@ -207,24 +206,26 @@ export default Vue.extend({
     },
 
     roleHasChanged() : boolean {
-      return this.user?.entity?.roles && this.user.entity.roles[0]?.optionItemId !== this.currentRole?.id;
+      if (this.currentRole) {
+        return this.user?.entity?.roles && this.user.entity.roles[0]?.optionItemId !== this.currentRole?.id;
+      }
+      return false;
+    },
+
+    id(): string {
+      return this.$route.params.id || this.$storage.user.getters.userId();
     },
   },
 
   async created() {
-    try {
-      this.loading = true;
-      const id = this.$route.params.id || this.$storage.user.getters.userId();
-      this.id = id;
-      if (id) {
-        await this.$storage.userAccount.actions.fetch(id);
-      }
-    } finally {
-      this.loading = false;
+    await this.fetchUserAccount(this.id);
+
+    if (!this.$hasRole('noAccess')) {
+      await this.setRoles();
     }
 
-    await this.setRoles();
     this.resetCurrentRole();
+
     this.preferredLanguage = this.languages.find((l) => l.key === this.user.metadata.preferredLanguage);
   },
 
@@ -283,6 +284,14 @@ export default Vue.extend({
       }
     },
 
+    async fetchUserAccount(id: string) {
+      this.loading = true;
+      try {
+        await this.$storage.userAccount.actions.fetch(id);
+      } finally {
+        this.loading = false;
+      }
+    },
   },
 
 });
