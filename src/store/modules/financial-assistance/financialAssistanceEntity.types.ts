@@ -1,13 +1,15 @@
+import { Status } from '@/entities/base';
 import {
-  EFinancialAssistanceStatus, IFinancialAssistanceTableRow, IFinancialAssistanceTableSubRow,
+  IFinancialAssistanceTableEntity, IFinancialAssistanceTableRow, IFinancialAssistanceTableSubRow,
 } from '@/entities/financial-assistance';
 import { IProgram } from '@/entities/program';
 import { IMultilingual } from '@/types';
+import { IState } from '../base/base.types';
 
-export type IState = {
+export interface IFinancialAssistanceEntityState extends IState<IFinancialAssistanceTableEntity> {
   id: uuid;
   name: IMultilingual;
-  status: EFinancialAssistanceStatus;
+  status: Status;
   program: IProgram;
   mainItems: IFinancialAssistanceTableRow[];
   dirty: boolean;
@@ -19,4 +21,4 @@ export type IState = {
   editedSubItemIndex: number;
   newItem: IFinancialAssistanceTableRow;
   newSubItem: IFinancialAssistanceTableSubRow;
-};
+}

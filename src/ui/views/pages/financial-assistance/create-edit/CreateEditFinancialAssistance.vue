@@ -160,9 +160,10 @@ import {
 } from '@crctech/component-library';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { MAX_LENGTH_SM } from '@/constants/validations';
-import { EFinancialAssistanceStatus, IFinancialAssistanceTable, IFinancialAssistanceTableRow } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableRow } from '@/entities/financial-assistance';
 import { EProgramStatus, IProgram } from '@/entities/program';
 import { VForm } from '@/types';
+import { Status } from '@/entities/base';
 import ConfirmBeforeAction, { ConfirmationDialog } from './ConfirmBeforeAction.vue';
 import ErrorPanel from './ErrorPanel.vue';
 import FinancialAssistanceItems from './FinancialAssistanceItems.vue';
@@ -254,7 +255,7 @@ export default Vue.extend({
       return SUPPORTED_LANGUAGES_INFO;
     },
 
-    existingTemplatesSorted(): Array<IFinancialAssistanceTable> {
+    existingTemplatesSorted(): Array<IFinancialAssistanceTableEntity> {
       return _sortBy(this.existingTemplates, (item) => this.$m(item.name));
     },
 
@@ -304,11 +305,11 @@ export default Vue.extend({
       get(): boolean {
         const status = this.$storage.financialAssistance.getters.status();
 
-        return status === EFinancialAssistanceStatus.Active;
+        return status === Status.Active;
       },
 
       set(value: boolean) {
-        const status = value ? EFinancialAssistanceStatus.Active : EFinancialAssistanceStatus.Inactive;
+        const status = value ? Status.Active : Status.Inactive;
 
         this.$storage.financialAssistance.mutations.setStatus(status);
       },

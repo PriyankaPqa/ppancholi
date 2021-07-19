@@ -1,20 +1,13 @@
 import { IMultilingual } from '@/types';
+import { BaseEntity, Status } from '@crctech/registration-lib/src/entities/base';
+import utils from '@/entities/utils';
 import { EProgramStatus } from '../program';
-import {
-  EFinancialAssistanceStatus,
-  IFinancialAssistanceTable,
-  IFinancialAssistanceTableRowData,
-  IFinancialAssistanceTableData,
-} from './financial-assistance.types';
+import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableRowData } from './financial-assistance.types';
 
-export class FinancialAssistanceTable implements IFinancialAssistanceTable {
-  id?: uuid;
-
+export class FinancialAssistanceTableEntity extends BaseEntity implements IFinancialAssistanceTableEntity {
   name: IMultilingual;
 
   eventId: uuid;
-
-  status?: EFinancialAssistanceStatus;
 
   programId: uuid;
 
@@ -26,8 +19,9 @@ export class FinancialAssistanceTable implements IFinancialAssistanceTable {
 
   rows: Array<IFinancialAssistanceTableRowData>;
 
-  constructor(data?: IFinancialAssistanceTableData) {
+  constructor(data?: IFinancialAssistanceTableEntity) {
     if (data) {
+      super(data);
       this.id = data.id;
       this.name = data.name;
       this.eventId = data.eventId;
@@ -35,11 +29,17 @@ export class FinancialAssistanceTable implements IFinancialAssistanceTable {
       this.programId = data.programId;
       this.rows = data.rows;
     } else {
+      super();
       this.reset();
     }
   }
 
   private reset() {
-    // todo
+    this.id = '';
+    this.name = utils.initMultilingualAttributes();
+    this.eventId = '';
+    this.status = Status.Active;
+    this.programId = '';
+    this.rows = [];
   }
 }

@@ -4,6 +4,7 @@ import { HouseholdStorage } from '@crctech/registration-lib/src/store/storage/ho
 import { UserAccountStorage } from '@/store/storage/user-account/storage';
 import { CaseFileStorage } from '@/store/storage/case-file/storage';
 import { EventStorage } from '@/store/storage/event/storage';
+import { FinancialAssistanceStorage } from '@/store/storage/financial-assistance/storage';
 import { IStore, IState } from '../store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeUserStorage } from './user';
@@ -11,7 +12,6 @@ import { makeStorage as makeDashboardStorage } from './dashboard';
 import { makeStorage as makeOptionListStorage } from './optionList';
 import { makeStorage as makeTeamStorage } from './team';
 import { makeStorage as makeProgramStorage } from './program';
-import { makeStorage as makeFinancialAssistanceStorage } from './financial-assistance';
 import { CaseNoteStorage } from './case-note';
 import { CaseFileReferralStorage } from './case-file-referral';
 
@@ -25,7 +25,11 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   team: makeTeamStorage(store),
   program: makeProgramStorage(store),
   registration: makeRegistrationStorage(store),
-  financialAssistance: makeFinancialAssistanceStorage(store),
+  financialAssistance: new FinancialAssistanceStorage(
+    store,
+    vuexModule.FINANCIAL_ASSISTANCE_ENTITIES,
+    vuexModule.FINANCIAL_ASSISTANCE_METADATA,
+  ).make(),
   household: new HouseholdStorage(store, vuexModule.HOUSEHOLD_ENTITIES, vuexModule.HOUSEHOLD_METADATA).make(),
   userAccount: new UserAccountStorage(store, vuexModule.USER_ACCOUNT_ENTITIES, vuexModule.USER_ACCOUNT_METADATA).make(),
   event: new EventStorage(store, vuexModule.EVENT_ENTITIES, vuexModule.EVENT_METADATA).make(),

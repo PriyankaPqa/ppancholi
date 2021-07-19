@@ -1,10 +1,12 @@
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
+import { mockStorage } from '@/store/storage';
 import Component from '../FinancialAssistanceItems.vue';
 
 const localVue = createLocalVue();
 describe('FinancialAssistanceItems.vue', () => {
   let wrapper;
+  const storage = mockStorage();
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -14,6 +16,9 @@ describe('FinancialAssistanceItems.vue', () => {
       propsData: {
         isEdit: false,
         isTableMode: false,
+      },
+      mocks: {
+        $storage: storage,
       },
     });
   });
@@ -38,7 +43,7 @@ describe('FinancialAssistanceItems.vue', () => {
 
     describe('items', () => {
       it('returns the right value', () => {
-        wrapper.vm.$store.state.financialAssistance.mainItems = mockItems();
+        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => mockItems());
 
         expect(wrapper.vm.items).toEqual(mockItems());
       });
@@ -46,7 +51,7 @@ describe('FinancialAssistanceItems.vue', () => {
 
     describe('addingItem', () => {
       it('returns the right value', () => {
-        wrapper.vm.$store.state.financialAssistance.addingItem = true;
+        wrapper.vm.$storage.financialAssistance.getters.addingItem = jest.fn(() => true);
 
         expect(wrapper.vm.addingItem).toEqual(true);
       });
@@ -56,7 +61,7 @@ describe('FinancialAssistanceItems.vue', () => {
       it('returns the right value', () => {
         const editedItem = mockItems()[0];
 
-        wrapper.vm.$store.state.financialAssistance.editedItem = editedItem;
+        wrapper.vm.$storage.financialAssistance.getters.editedItem = jest.fn(() => editedItem);
 
         expect(wrapper.vm.editedItem).toEqual(editedItem);
       });
@@ -153,19 +158,41 @@ describe('FinancialAssistanceItems.vue', () => {
 
     describe('getIsFormActive', () => {
       it('returns true if has editedItem or addingItem is true', async () => {
-        await wrapper.setProps({
-          editedItem: mockItems(),
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            isEdit: false,
+            isTableMode: false,
+          },
+          computed: {
+            editedItem() {
+              return mockItems()[0];
+            },
+            addItem() {
+              return true;
+            },
+          },
         });
-        wrapper.vm.addingItem = true;
 
         expect(wrapper.vm.getIsFormActive()).toBe(true);
       });
 
       it('returns true if has editedItem or addingItem has index', async () => {
-        await wrapper.setProps({
-          editedItem: mockItems(),
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            isEdit: false,
+            isTableMode: false,
+          },
+          computed: {
+            editedItem() {
+              return mockItems()[0];
+            },
+            addItem() {
+              return -1;
+            },
+          },
         });
-        wrapper.vm.addingItem = 1;
 
         expect(wrapper.vm.getIsFormActive()).toBe(true);
       });

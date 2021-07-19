@@ -1,18 +1,14 @@
+import { mockBaseData } from '../base';
 import { IOptionItem } from '../optionItem';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
   IFinancialAssistanceTableRow,
   IFinancialAssistanceTableSubRow,
-  IFinancialAssistanceTableData,
+  IFinancialAssistanceTableMetadata,
+  IFinancialAssistanceTableEntity,
+  IFinancialAssistanceTableCombined,
 } from './financial-assistance.types';
-
-export const mockFinancialAssistanceTableData = (): IFinancialAssistanceTableData => ({
-  eventId: '8d88bc46-22c2-412d-814d-ff898357b745',
-  programId: '657ae9a1-bfcc-4292-b871-8113b984e9cb',
-  name: { translation: { en: 'new table name en', fr: 'new table name fr' } },
-  rows: [],
-});
 
 export const mockSubItems = (): IFinancialAssistanceTableSubRow[] => [
   {
@@ -188,7 +184,9 @@ export const mockItems = (): IFinancialAssistanceTableRow[] => [
   },
 ];
 
-export const mockFinancialAssistanceTable = (): IFinancialAssistanceTableData => ({
+export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableEntity => ({
+  ...mockBaseData(),
+
   eventId: '8d88bc46-22c2-412d-814d-ff898357b745',
   programId: '657ae9a1-bfcc-4292-b871-8113b984e9cb',
   name: { translation: { en: 'abcd', fr: 'dcba' } },
@@ -226,6 +224,21 @@ export const mockFinancialAssistanceTable = (): IFinancialAssistanceTableData =>
     },
   ],
 });
+
+export const mockFinancialAssistanceMetadata = (): IFinancialAssistanceTableMetadata => ({
+  ...mockBaseData(),
+
+  programId: '657ae9a1-bfcc-4292-b871-8113b984e9cb',
+  programName: { translation: { en: 'abcd', fr: 'dcba' } },
+  financialAssistanceTableStatusName: { translation: { en: 'status en', fr: 'status fr' } },
+});
+
+export const mockCombinedFinancialAssistance = (): IFinancialAssistanceTableCombined => ({
+  entity: mockFinancialAssistanceTableEntity(),
+  metadata: mockFinancialAssistanceMetadata(),
+});
+
+export const mockCombinedFinancialAssistances = (): IFinancialAssistanceTableCombined[] => ([mockCombinedFinancialAssistance()]);
 
 const categories: IOptionItem[] = [
   {

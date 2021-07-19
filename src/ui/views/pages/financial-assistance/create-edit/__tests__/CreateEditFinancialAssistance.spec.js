@@ -1,8 +1,9 @@
 import routes from '@/constants/routes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { MAX_LENGTH_SM } from '@/constants/validations';
+import { Status } from '@/entities/base';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { EFinancialAssistanceStatus, mockItems } from '@/entities/financial-assistance';
+import { mockItems } from '@/entities/financial-assistance';
 import { EProgramStatus, mockProgramsSearchData, Program } from '@/entities/program';
 import _sortBy from 'lodash/sortBy';
 
@@ -51,8 +52,6 @@ describe('CreateEditFinancialAssistance.vue', () => {
       await enTab.trigger('click');
 
       expect(wrapper.vm.name).toBe('TEST');
-
-      expect(wrapper.vm.$store.state.financialAssistance.name).toEqual({ translation: { en: 'TEST', fr: 'TEST' } });
     });
 
     test('the status box has the correct css classes depending on status', async () => {
@@ -120,16 +119,17 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('name', () => {
       it('returns the right value', async () => {
-        const { programName } = mockProgramsSearchData()[0];
-        wrapper.vm.$store.state.financialAssistance.name = programName;
+        const programName = mockProgramsSearchData()[0].programName.translation.en;
 
-        expect(wrapper.vm.name).toEqual(programName.translation.en);
+        wrapper.vm.$storage.financialAssistance.getters.name = jest.fn(() => programName);
+
+        expect(wrapper.vm.name).toEqual(programName);
       });
     });
 
     describe('status', () => {
       it('returns the right value', async () => {
-        wrapper.vm.$store.state.financialAssistance.status = EFinancialAssistanceStatus.Active;
+        wrapper.vm.$storage.financialAssistance.getters.status = jest.fn(() => Status.Active);
 
         expect(wrapper.vm.status).toEqual(true);
       });
@@ -138,7 +138,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
     describe('program', () => {
       it('returns the right value', async () => {
         const program = new Program(mockProgramsSearchData()[0]);
-        wrapper.vm.$store.state.financialAssistance.program = program;
+
+        wrapper.vm.$storage.financialAssistance.getters.program = jest.fn(() => program);
 
         expect(wrapper.vm.program).toEqual(program);
       });
@@ -146,7 +147,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('dirty', () => {
       it('returns the right value', async () => {
-        wrapper.vm.$store.state.financialAssistance.dirty = true;
+        wrapper.vm.$storage.financialAssistance.getters.dirty = jest.fn(() => true);
 
         expect(wrapper.vm.dirty).toEqual(true);
       });
@@ -154,7 +155,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('formDirty', () => {
       it('returns the right value', async () => {
-        wrapper.vm.$store.state.financialAssistance.formDirty = true;
+        wrapper.vm.$storage.financialAssistance.getters.formDirty = jest.fn(() => true);
 
         expect(wrapper.vm.formDirty).toEqual(true);
       });
@@ -247,16 +248,13 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('setLanguageMode', () => {
       it('sets name for other language', async () => {
-        wrapper.vm.$store.state.financialAssistance.name = {
-          translation: {
-            en: 'name',
-            fr: null,
-          },
-        };
+        wrapper.vm.$storage.financialAssistance.mutations.setName('name en', 'en');
+        wrapper.vm.$storage.financialAssistance.mutations.setName(null, 'fr');
 
+        wrapper.vm.$storage.financialAssistance.mutations.setName = jest.fn();
         wrapper.vm.setLanguageMode('fr');
 
-        expect(wrapper.vm.$store.state.financialAssistance.name.translation.fr).toBe('name');
+        expect(wrapper.vm.$storage.financialAssistance.mutations.setName).toHaveBeenLastCalledWith('name en', 'fr');
       });
     });
   });

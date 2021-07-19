@@ -8,7 +8,7 @@ import { CaseFilesService } from '../case-files/entity';
 import { OptionItemsService } from '../optionItems';
 import { TeamsService } from '../teams';
 import { ProgramsService } from '../programs';
-import { FinancialAssistanceTablesService } from '../financial-assistance-tables';
+import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 
 jest.mock('../user-accounts/entity');
 jest.mock('../events/entity');
@@ -21,7 +21,7 @@ jest.mock('../programs');
 jest.mock('@crctech/registration-lib/src/services/public');
 jest.mock('@crctech/registration-lib/src/services/households/entity');
 jest.mock('../user-accounts/entity');
-jest.mock('../financial-assistance-tables');
+jest.mock('../financial-assistance-tables/entity');
 
 describe('Provider', () => {
   it('should instantiate AppUsersService', () => {

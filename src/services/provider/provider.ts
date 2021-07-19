@@ -7,7 +7,7 @@ import { AppUsersService } from '../app-users';
 import { OptionItemsService } from '../optionItems';
 import { TeamsService } from '../teams';
 import { ProgramsService } from '../programs';
-import { FinancialAssistanceTablesService } from '../financial-assistance-tables';
+import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { UserAccountsService } from '../user-accounts/entity';
 import { EventsService } from '../events/entity';
 

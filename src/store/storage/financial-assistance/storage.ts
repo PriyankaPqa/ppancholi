@@ -1,8 +1,9 @@
+import { Status } from '@/entities/base';
 import {
   EFinancialAmountModes,
-  EFinancialAssistanceStatus,
   EFinancialFrequency,
-  IFinancialAssistanceTableData,
+  IFinancialAssistanceTableEntity,
+  IFinancialAssistanceTableMetadata,
   IFinancialAssistanceTableRow,
   IFinancialAssistanceTableSubRow,
 } from '@/entities/financial-assistance';
@@ -10,234 +11,168 @@ import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { IProgram } from '@/entities/program';
 import { IStore, IState } from '@/store/store.types';
 import { IMultilingual } from '@/types';
+import { Base } from '../base';
 import { IStorage } from './storage.types';
 
-const getGetters = (store: IStore<IState>) => ({
-  name(language: string): string {
-    return store.getters['financialAssistance/name'](language);
-  },
+export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> implements IStorage {
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
+    super(pStore, pEntityModuleName, pMetadataModuleName);
+  }
 
-  status(): EFinancialAssistanceStatus {
-    return store.getters['financialAssistance/status'];
-  },
+  private getters = {
+    ...this.baseGetters,
 
-  addingItem(): boolean | number {
-    return store.getters['financialAssistance/addingItem'];
-  },
+    name: (language: string): string => this.store.getters[`${this.entityModuleName}/name`](language),
 
-  program(): IProgram {
-    return store.getters['financialAssistance/program'];
-  },
+    status: (): Status => this.store.getters[`${this.entityModuleName}/status`],
 
-  items(): IFinancialAssistanceTableRow[] {
-    return store.getters['financialAssistance/items'];
-  },
+    addingItem: (): boolean | number => this.store.getters[`${this.entityModuleName}/addingItem`],
 
-  subItems(): IFinancialAssistanceTableSubRow[] {
-    return store.getters['financialAssistance/subItems'];
-  },
+    program: (): IProgram => this.store.getters[`${this.entityModuleName}/program`],
 
-  newItem(): IFinancialAssistanceTableRow {
-    return store.getters['financialAssistance/newItem'];
-  },
+    items: (): IFinancialAssistanceTableRow[] => this.store.getters[`${this.entityModuleName}/items`],
 
-  editedItem(): IFinancialAssistanceTableRow {
-    return store.getters['financialAssistance/editedItem'];
-  },
+    subItems: (): IFinancialAssistanceTableSubRow[] => this.store.getters[`${this.entityModuleName}/subItems`],
 
-  editedItemIndex(): number {
-    return store.getters['financialAssistance/editedItemIndex'];
-  },
+    newItem: (): IFinancialAssistanceTableRow => this.store.getters[`${this.entityModuleName}/newItem`],
 
-  editedSubItemIndex(): number {
-    return store.getters['financialAssistance/editedSubItemIndex'];
-  },
+    editedItem: (): IFinancialAssistanceTableRow => this.store.getters[`${this.entityModuleName}/editedItem`],
 
-  newSubItem(): IFinancialAssistanceTableSubRow {
-    return store.getters['financialAssistance/newSubItem'];
-  },
+    editedItemIndex: (): number => this.store.getters[`${this.entityModuleName}/editedItemIndex`],
 
-  dirty(): boolean {
-    return store.getters['financialAssistance/dirty'];
-  },
+    editedSubItemIndex: (): number => this.store.getters[`${this.entityModuleName}/editedSubItemIndex`],
 
-  formDirty(): boolean {
-    return store.getters['financialAssistance/formDirty'];
-  },
+    newSubItem: (): IFinancialAssistanceTableSubRow => this.store.getters[`${this.entityModuleName}/newSubItem`],
 
-  loading(): boolean {
-    return store.getters['financialAssistance/loading'];
-  },
+    dirty: (): boolean => this.store.getters[`${this.entityModuleName}/dirty`],
 
-  isOperating(): boolean {
-    return store.getters['financialAssistance/isOperating'];
-  },
-});
+    formDirty: (): boolean => this.store.getters[`${this.entityModuleName}/formDirty`],
 
-const getMutations = (store: IStore<IState>) => ({
-  setId(id: uuid) {
-    store.commit('financialAssistance/setId', { id });
-  },
+    loading: (): boolean => this.store.getters[`${this.entityModuleName}/loading`],
 
-  setName(name: string, language: string) {
-    store.commit('financialAssistance/setName', { name, language });
-  },
+    isOperating: (): boolean => this.store.getters[`${this.entityModuleName}/isOperating`],
+  };
 
-  setNameInAllLanguages(name: IMultilingual) {
-    store.commit('financialAssistance/setNameInAllLanguages', { name });
-  },
+  private mutations = {
+    ...this.baseMutations,
 
-  setStatus(status: EFinancialAssistanceStatus) {
-    store.commit('financialAssistance/setStatus', { status });
-  },
+    setId: (id: uuid) => this.store.commit(`${this.entityModuleName}/setId`, { id }),
 
-  setAddingItem(addingItem: boolean) {
-    store.commit('financialAssistance/setAddingItem', { addingItem });
-  },
+    setName: (name: string, language: string) => this.store.commit(`${this.entityModuleName}/setName`, { name, language }),
 
-  setProgram(program: IProgram) {
-    store.commit('financialAssistance/setProgram', { program });
-  },
+    setNameInAllLanguages: (name: IMultilingual) => this.store.commit(`${this.entityModuleName}/setNameInAllLanguages`, { name }),
 
-  setItems(items: Array<IFinancialAssistanceTableRow>) {
-    store.commit('financialAssistance/setItems', { items });
-  },
+    setStatus: (status: Status) => this.store.commit(`${this.entityModuleName}/setStatus`, { status }),
 
-  setItem(item: IFinancialAssistanceTableRow, index: number) {
-    store.commit('financialAssistance/setItem', { item, index });
-  },
+    setAddingItem: (addingItem: boolean) => this.store.commit(`${this.entityModuleName}/setAddingItem`, { addingItem }),
 
-  setItemItem(item: IOptionItem, index: number) {
-    store.commit('financialAssistance/setItemItem', { item, index });
-  },
+    setProgram: (program: IProgram) => this.store.commit(`${this.entityModuleName}/setProgram`, { program }),
 
-  setSubItem(subItem: IFinancialAssistanceTableSubRow, index: number, parentIndex: number) {
-    store.commit('financialAssistance/setSubItem', { subItem, index, parentIndex });
-  },
+    setItems: (items: Array<IFinancialAssistanceTableRow>) => this.store.commit(`${this.entityModuleName}/setItems`, { items }),
 
-  setSubItemSubItem(subItem: IOptionSubItem, index: number, parentIndex: number) {
-    store.commit('financialAssistance/setSubItemSubItem', { subItem, index, parentIndex });
-  },
+    setItem: (item: IFinancialAssistanceTableRow, index: number) => this.store.commit(`${this.entityModuleName}/setItem`, { item, index }),
 
-  setSubItemMaximum(maximum: number, index: number, parentIndex: number) {
-    store.commit('financialAssistance/setSubItemMaximum', { maximum, index, parentIndex });
-  },
+    setItemItem: (item: IOptionItem, index: number) => this.store.commit(`${this.entityModuleName}/setItemItem`, { item, index }),
 
-  setSubItemAmountType(amountType: EFinancialAmountModes, index: number, parentIndex: number) {
-    store.commit('financialAssistance/setSubItemAmountType', { amountType, index, parentIndex });
-  },
+    setSubItem: (
+      subItem: IFinancialAssistanceTableSubRow,
+      index: number, parentIndex: number,
+    ) => this.store.commit(`${this.entityModuleName}/setSubItem`, { subItem, index, parentIndex }),
 
-  setSubItemDocumentationRequired(documentationRequired: boolean, index: number, parentIndex: number) {
-    store.commit('financialAssistance/setSubItemDocumentationRequired', { documentationRequired, index, parentIndex });
-  },
+    setSubItemSubItem: (
+      subItem: IOptionSubItem,
+      index: number, parentIndex: number,
+    ) => this.store.commit(`${this.entityModuleName}/setSubItemSubItem`, { subItem, index, parentIndex }),
 
-  setSubItemFrequency(frequency: EFinancialFrequency, index: number, parentIndex: number) {
-    store.commit('financialAssistance/setSubItemFrequency', { frequency, index, parentIndex });
-  },
+    setSubItemMaximum: (
+      maximum: number,
+      index: number, parentIndex: number,
+    ) => this.store.commit(`${this.entityModuleName}/setSubItemMaximum`, { maximum, index, parentIndex }),
 
-  setNewItemItem(item: IOptionItem) {
-    store.commit('financialAssistance/setNewItemItem', { item });
-  },
+    setSubItemAmountType: (
+      amountType: EFinancialAmountModes,
+      index: number, parentIndex: number,
+    ) => this.store.commit(`${this.entityModuleName}/setSubItemAmountType`, { amountType, index, parentIndex }),
 
-  setNewSubItem(newSubItem: IFinancialAssistanceTableSubRow) {
-    store.commit('financialAssistance/setNewSubItem', { newSubItem });
-  },
+    setSubItemDocumentationRequired: (
+      documentationRequired: boolean,
+      index: number, parentIndex: number,
+    ) => this.store.commit(`${this.entityModuleName}/setSubItemDocumentationRequired`, { documentationRequired, index, parentIndex }),
 
-  setNewSubItemSubItem(subItem: IOptionSubItem) {
-    store.commit('financialAssistance/setNewSubItemSubItem', { subItem });
-  },
+    setSubItemFrequency: (
+      frequency: EFinancialFrequency,
+      index: number, parentIndex: number,
+    ) => this.store.commit(`${this.entityModuleName}/setSubItemFrequency`, { frequency, index, parentIndex }),
 
-  setNewSubItemMaximum(maximum: number) {
-    store.commit('financialAssistance/setNewSubItemMaximum', { maximum });
-  },
+    setNewItemItem: (item: IOptionItem) => this.store.commit(`${this.entityModuleName}/setNewItemItem`, { item }),
 
-  setNewSubItemAmountType(amountType: EFinancialAmountModes) {
-    store.commit('financialAssistance/setNewSubItemAmountType', { amountType });
-  },
+    setNewSubItem: (newSubItem: IFinancialAssistanceTableSubRow) => this.store.commit(`${this.entityModuleName}/setNewSubItem`, { newSubItem }),
 
-  setNewSubItemDocumentationRequired(documentationRequired: boolean) {
-    store.commit('financialAssistance/setNewSubItemDocumentationRequired', { documentationRequired });
-  },
+    setNewSubItemSubItem: (subItem: IOptionSubItem) => this.store.commit(`${this.entityModuleName}/setNewSubItemSubItem`, { subItem }),
 
-  setNewSubItemFrequency(frequency: EFinancialFrequency) {
-    store.commit('financialAssistance/setNewSubItemFrequency', { frequency });
-  },
+    setNewSubItemMaximum: (maximum: number) => this.store.commit(`${this.entityModuleName}/setNewSubItemMaximum`, { maximum }),
 
-  addItem(item: IFinancialAssistanceTableRow) {
-    store.commit('financialAssistance/addItem', { item });
-  },
+    setNewSubItemAmountType: (
+      amountType: EFinancialAmountModes,
+    ) => this.store.commit(`${this.entityModuleName}/setNewSubItemAmountType`, { amountType }),
 
-  addSubItem(subItem: IFinancialAssistanceTableSubRow, index: number) {
-    store.commit('financialAssistance/addSubItem', { subItem, index });
-  },
+    setNewSubItemDocumentationRequired: (
+      documentationRequired: boolean,
+    ) => this.store.commit(`${this.entityModuleName}/setNewSubItemDocumentationRequired`, { documentationRequired }),
 
-  setItemSubItems(index: number, subItems: Array<IFinancialAssistanceTableSubRow>) {
-    store.commit('financialAssistance/setItemSubItems', { index, subItems });
-  },
+    setNewSubItemFrequency: (frequency: EFinancialFrequency) => this.store.commit(`${this.entityModuleName}/setNewSubItemFrequency`, { frequency }),
 
-  setEditedItem(editedItem: IFinancialAssistanceTableRow) {
-    store.commit('financialAssistance/setEditedItem', { editedItem });
-  },
+    addItem: (item: IFinancialAssistanceTableRow) => this.store.commit(`${this.entityModuleName}/addItem`, { item }),
 
-  setEditedItemIndex(editedItemIndex: number) {
-    store.commit('financialAssistance/setEditedItemIndex', { editedItemIndex });
-  },
+    addSubItem: (
+      subItem: IFinancialAssistanceTableSubRow, index: number,
+    ) => this.store.commit(`${this.entityModuleName}/addSubItem`, { subItem, index }),
 
-  setEditedSubItemIndex(editedSubItemIndex: number) {
-    store.commit('financialAssistance/setEditedSubItemIndex', { editedSubItemIndex });
-  },
+    setItemSubItems: (
+      index: number,
+      subItems: Array<IFinancialAssistanceTableSubRow>,
+    ) => this.store.commit(`${this.entityModuleName}/setItemSubItems`, { index, subItems }),
 
-  deleteItem(index: number) {
-    store.commit('financialAssistance/deleteItem', { index });
-  },
+    setEditedItem: (editedItem: IFinancialAssistanceTableRow) => this.store.commit(`${this.entityModuleName}/setEditedItem`, { editedItem }),
 
-  deleteSubItem(index: number, parentIndex: number) {
-    store.commit('financialAssistance/deleteSubItem', { index, parentIndex });
-  },
+    setEditedItemIndex: (editedItemIndex: number) => this.store.commit(`${this.entityModuleName}/setEditedItemIndex`, { editedItemIndex }),
 
-  setDirty(dirty: boolean) {
-    store.commit('financialAssistance/setDirty', { dirty });
-  },
+    setEditedSubItemIndex: (
+      editedSubItemIndex: number,
+    ) => this.store.commit(`${this.entityModuleName}/setEditedSubItemIndex`, { editedSubItemIndex }),
 
-  setFormDirty(formDirty: boolean) {
-    store.commit('financialAssistance/setFormDirty', { formDirty });
-  },
+    deleteItem: (index: number) => this.store.commit(`${this.entityModuleName}/deleteItem`, { index }),
 
-  setLoading(loading: boolean) {
-    store.commit('financialAssistance/setLoading', { loading });
-  },
+    deleteSubItem: (index: number, parentIndex: number) => this.store.commit(`${this.entityModuleName}/deleteSubItem`, { index, parentIndex }),
 
-  resetNewItem() {
-    store.commit('financialAssistance/resetNewItem');
-  },
+    setDirty: (dirty: boolean) => this.store.commit(`${this.entityModuleName}/setDirty`, { dirty }),
 
-  resetNewSubItem() {
-    store.commit('financialAssistance/resetNewSubItem');
-  },
+    setFormDirty: (formDirty: boolean) => this.store.commit(`${this.entityModuleName}/setFormDirty`, { formDirty }),
 
-  resetState() {
-    store.commit('financialAssistance/resetState');
-  },
+    setLoading: (loading: boolean) => this.store.commit(`${this.entityModuleName}/setLoading`, { loading }),
 
-  cancelOperation() {
-    store.commit('financialAssistance/cancelOperation');
-  },
-});
+    resetNewItem: () => this.store.commit(`${this.entityModuleName}/resetNewItem`),
 
-const getActions = (store: IStore<IState>) => ({
-  createFinancialAssistance(table: boolean): Promise<IFinancialAssistanceTableData> {
-    return store.dispatch('financialAssistance/createFinancialAssistance', { table });
-  },
+    resetNewSubItem: () => this.store.commit(`${this.entityModuleName}/resetNewSubItem`),
 
-  fetchActiveCategories() {
-    return store.dispatch('financialAssistance/fetchActiveCategories');
-  },
-});
+    resetState: () => this.store.commit(`${this.entityModuleName}/resetState`),
 
-export const makeStorage = (store: IStore<IState>): IStorage => ({
-  getters: getGetters(store),
+    cancelOperation: () => this.store.commit(`${this.entityModuleName}/cancelOperation`),
+  };
 
-  mutations: getMutations(store),
+  private actions = {
+    ...this.baseActions,
 
-  actions: getActions(store),
-});
+    createFinancialAssistance: (
+      table: boolean,
+    ): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/createFinancialAssistance`, { table }),
+
+    fetchActiveCategories: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchActiveCategories`),
+  };
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  });
+}

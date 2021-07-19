@@ -1,14 +1,29 @@
-import { IStorageMock } from './storage.types';
+import {
+  IFinancialAssistanceTableCombined,
+  IFinancialAssistanceTableEntity,
+  mockCategories,
+  mockCombinedFinancialAssistances,
+  mockFinancialAssistanceTableEntity,
+  mockItems,
+} from '@/entities/financial-assistance';
+import { BaseMock } from '../base/base.mock';
+import { IActionsMock, IGettersMock, IMutationsMock } from './storage.types';
 
-export const mockStorageFinancialAssistance = () : IStorageMock => ({
-  getters: {
+export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanceTableCombined, IFinancialAssistanceTableEntity> {
+  constructor() {
+    super(mockCombinedFinancialAssistances(), mockFinancialAssistanceTableEntity());
+  }
+
+  protected getters: IGettersMock = {
+    ...this.baseGetters,
+
     name: jest.fn(),
     program: jest.fn(),
     status: jest.fn(),
     addingItem: jest.fn(),
-    items: jest.fn(),
+    items: jest.fn(() => mockItems()),
     subItems: jest.fn(),
-    newItem: jest.fn(),
+    newItem: jest.fn(() => mockItems()[0]),
     editedItem: jest.fn(),
     editedItemIndex: jest.fn(),
     editedSubItemIndex: jest.fn(),
@@ -17,9 +32,11 @@ export const mockStorageFinancialAssistance = () : IStorageMock => ({
     formDirty: jest.fn(),
     loading: jest.fn(),
     isOperating: jest.fn(),
-  },
+  };
 
-  mutations: {
+  protected mutations: IMutationsMock = {
+    ...this.baseMutations,
+
     setId: jest.fn(),
     setName: jest.fn(),
     setNameInAllLanguages: jest.fn(),
@@ -57,10 +74,17 @@ export const mockStorageFinancialAssistance = () : IStorageMock => ({
     resetNewSubItem: jest.fn(),
     resetState: jest.fn(),
     cancelOperation: jest.fn(),
-  },
+  };
 
-  actions: {
+  protected actions: IActionsMock = {
+    ...this.baseActions,
     createFinancialAssistance: jest.fn(),
-    fetchActiveCategories: jest.fn(),
-  },
-});
+    fetchActiveCategories: jest.fn(() => mockCategories()),
+  };
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  });
+}

@@ -31,6 +31,8 @@ import { EventsMetadataService } from '@/services/events/metadata';
 import { EventsService } from '@/services/events/entity';
 import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
 import { CaseFileReferralsMetadataService } from '@/services/case-file-referrals/metadata';
+import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
+import { FinancialAssistanceTablesMetadataService } from '@/services/financial-assistance-tables/metadata';
 import { user } from './modules/user';
 import { dashboard } from './modules/dashboard';
 import { team } from './modules/team';
@@ -42,9 +44,10 @@ import { CaseNoteEntityModule } from './modules/case-note/caseNoteEntity';
 import { CaseNoteMetadataModule } from './modules/case-note/caseNoteMetadata';
 import { CaseFileReferralEntityModule } from './modules/case-file-referral/caseFileReferralEntity';
 import { CaseFileReferralMetadataModule } from './modules/case-file-referral/caseFileReferralMetadata';
-import { financialAssistance } from './modules/financial-assistance';
 import { EventEntityModule } from './modules/event/eventEntity';
 import { EventMetadataModule } from './modules/event/eventMetadata';
+import { FinancialAssistanceEntityModule } from './modules/financial-assistance/financialAssistanceEntity';
+import { FinancialAssistanceMetadataModule } from './modules/financial-assistance/financialAssistanceMetadata';
 
 const i18n = {
   t: jest.fn(),
@@ -69,7 +72,10 @@ const mockConfig = {
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_MODULE]: team,
     [vuexModule.PROGRAM_MODULE]: program,
-    [vuexModule.FINANCIAL_ASSISTANCE_MODULE]: financialAssistance,
+    [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]: new FinancialAssistanceEntityModule(new FinancialAssistanceTablesService(httpClient)).getModule(),
+    [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
+      new FinancialAssistanceTablesMetadataService(httpClient),
+    ).getModule(),
     [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
     [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({

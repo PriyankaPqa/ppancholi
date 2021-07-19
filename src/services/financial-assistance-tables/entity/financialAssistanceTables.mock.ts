@@ -1,7 +1,7 @@
-import { mockFinancialAssistanceTableData, mockCategories } from '@/entities/financial-assistance';
+import { mockFinancialAssistanceTableEntity, mockCategories } from '@/entities/financial-assistance';
 import { IFinancialAssistanceTablesServiceMock } from './financialAssistanceTables.types';
 
 export const mockFinancialAssistanceTablesService = (): IFinancialAssistanceTablesServiceMock => ({
-  createFinancialAssistanceTable: jest.fn(() => mockFinancialAssistanceTableData()),
+  createFinancialAssistanceTable: jest.fn(() => mockFinancialAssistanceTableEntity()),
   fetchActiveCategories: jest.fn(() => mockCategories()),
 });

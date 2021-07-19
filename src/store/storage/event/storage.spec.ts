@@ -6,7 +6,6 @@ import {
   mockEventEntity,
 } from '@/entities/event';
 import { mockStore } from '@/store';
-import { mockSearchParams } from '@/test/helpers';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { EEventSummarySections } from '@/types';
 import { EventStorage } from './storage';

@@ -5,7 +5,7 @@ import { IStorage as IDashboardStorage, IStorageMock as IDashboardStorageMock } 
 import { IStorage as IOptionListStorage, IStorageMock as IOptionListStorageMock } from './optionList';
 import { IStorage as ITeamStorage, IStorageMock as ITeamStorageMock } from './team';
 import { IStorage as IProgramStorage, IStorageMock as IProgramStorageMock } from './program';
-import { IStorage as IFinancialAssistanceStorage, IStorageMock as IFinancialAssistanceStorageMock } from './financial-assistance';
+import { IStorageMake as IFinancialAssistanceMakeStorage, IStorageMakeMock as IFinancialAssistanceMakeStorageMock } from './financial-assistance';
 import {
   IStorageMake as IUserAccountMakeStorage,
   IStorageMakeMock as IUserAccountMakeStorageMock,
@@ -41,7 +41,7 @@ export interface IStorage {
   team: ITeamStorage;
   program: IProgramStorage;
   registration: IRegistrationStorage;
-  financialAssistance: IFinancialAssistanceStorage;
+  financialAssistance: IFinancialAssistanceMakeStorage;
   household: IStorageMake;
   userAccount: IUserAccountMakeStorage;
 }
@@ -57,7 +57,7 @@ export interface IStorageMock {
   team: ITeamStorageMock;
   program: IProgramStorageMock;
   registration: IRegistrationMock;
-  financialAssistance: IFinancialAssistanceStorageMock;
+  financialAssistance: IFinancialAssistanceMakeStorageMock;
   household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
 }

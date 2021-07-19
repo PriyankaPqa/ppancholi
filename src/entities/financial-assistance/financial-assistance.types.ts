@@ -1,10 +1,6 @@
 import { IMultilingual } from '@/types';
+import { IEntity, IEntityCombined } from '@/entities/base/base.types';
 import { IOptionItem, IOptionSubItem } from '../optionItem';
-
-export enum EFinancialAssistanceStatus {
-  Active = 'Active',
-  Inactive = 'Inactive',
-}
 
 export enum EFinancialAmountModes {
   Fixed = 'Fixed',
@@ -29,31 +25,35 @@ export interface IFinancialAssistanceTableRow {
 }
 
 export interface IFinancialAssistanceOptionItemData {
-  optionItemId: string,
-  specifiedOther: string,
+  optionItemId: string;
+  specifiedOther: string;
 }
 
 export interface IFinancialAssistanceTableSubRowData {
-  subCategory: IFinancialAssistanceOptionItemData,
-  maximumAmount: number,
-  amountType: EFinancialAmountModes,
-  documentationRequired: boolean,
-  frequency: EFinancialFrequency,
+  subCategory: IFinancialAssistanceOptionItemData;
+  maximumAmount: number;
+  amountType: EFinancialAmountModes;
+  documentationRequired: boolean;
+  frequency: EFinancialFrequency;
 }
 export interface IFinancialAssistanceTableRowData {
-  mainCategory: IFinancialAssistanceOptionItemData,
+  mainCategory: IFinancialAssistanceOptionItemData;
   subRows: IFinancialAssistanceTableSubRowData[];
 }
 
-export interface IFinancialAssistanceTable {
-  id?: uuid;
-  status?: EFinancialAssistanceStatus;
+export interface IFinancialAssistanceTableEntity extends IEntity {
   eventId: uuid;
   programId: uuid;
   name: IMultilingual;
   rows: IFinancialAssistanceTableRowData[];
 }
 
-export interface IFinancialAssistanceTableData extends IFinancialAssistanceTable {}
+export interface IFinancialAssistanceTableMetadata extends IEntity {
+  programId: uuid;
+  programName: IMultilingual;
+  financialAssistanceTableStatusName: IMultilingual;
+}
 
-export interface ICreateFinancialAssistanceTableRequest extends IFinancialAssistanceTable {}
+export interface ICreateFinancialAssistanceTableRequest extends IFinancialAssistanceTableEntity {}
+
+export type IFinancialAssistanceTableCombined = IEntityCombined<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata>;

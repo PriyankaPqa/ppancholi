@@ -8,6 +8,7 @@ import { ICaseFileMetadata } from '@/entities/case-file';
 import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { ICaseNoteMetadata } from '@/entities/case-note';
 import { IEventMetadata } from '@/entities/event';
+import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistance';
 import { ICaseFileReferralMetadata } from '@/entities/case-file-referral';
 import { IState as IUserState } from './modules/user/user.types';
 import { IUserAccountEntityState } from './modules/user-account/userAccountEntity.types';
@@ -17,9 +18,9 @@ import { IState as IOptionListState } from './modules/optionList/optionList.type
 import { IState as ITeamState } from './modules/team/team.types';
 import { IState as IProgramState } from './modules/program/program.types';
 import { IState as IBaseState } from './modules/base/base.types';
-import { IState as IFinancialAssistanceState } from './modules/financial-assistance/financial-assistance.types';
 import { ICaseNoteEntityState } from './modules/case-note/caseNoteEntity.types';
 import { IEventEntityState } from './modules/event/eventEntity.types';
+import { IFinancialAssistanceEntityState } from './modules/financial-assistance/financialAssistanceEntity.types';
 import { ICaseFileReferralEntityState } from './modules/case-file-referral/caseFileReferralEntity.types';
 
 export interface IRootState {
@@ -39,7 +40,8 @@ export interface IRootState {
   [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
   [vuexModule.TEAM_MODULE]?: ITeamState,
   [vuexModule.PROGRAM_MODULE]?: IProgramState,
-  [vuexModule.FINANCIAL_ASSISTANCE_MODULE]?: IFinancialAssistanceState,
+  [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]?: IFinancialAssistanceEntityState,
+  [vuexModule.FINANCIAL_ASSISTANCE_METADATA]?: IBaseState<IFinancialAssistanceTableMetadata>,
   [vuexModule.HOUSEHOLD_ENTITIES]?: IHouseholdEntityState
   [vuexModule.HOUSEHOLD_METADATA]?: IBaseState<IHouseholdMetadata>
   [vuexModule.REGISTRATION_MODULE]?: IRegistrationState

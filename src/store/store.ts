@@ -23,6 +23,8 @@ import { EventsService } from '@/services/events/entity';
 import { EventsMetadataService } from '@/services/events/metadata';
 import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
 import { CaseFileReferralsMetadataService } from '@/services/case-file-referrals/metadata';
+import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
+import { FinancialAssistanceTablesMetadataService } from '@/services/financial-assistance-tables/metadata';
 import { OptionItemsService } from '../services/optionItems/optionItems';
 import { IRootState } from './store.types';
 import { user } from './modules/user';
@@ -30,7 +32,6 @@ import { dashboard } from './modules/dashboard';
 import { optionList } from './modules/optionList';
 import { team } from './modules/team';
 import { program } from './modules/program';
-import { financialAssistance } from './modules/financial-assistance';
 
 import { tabs } from './modules/registration/tabs';
 import { CaseNoteEntityModule } from './modules/case-note/caseNoteEntity';
@@ -39,6 +40,8 @@ import { EventEntityModule } from './modules/event/eventEntity';
 import { EventMetadataModule } from './modules/event/eventMetadata';
 import { CaseFileReferralEntityModule } from './modules/case-file-referral/caseFileReferralEntity';
 import { CaseFileReferralMetadataModule } from './modules/case-file-referral/caseFileReferralMetadata';
+import { FinancialAssistanceEntityModule } from './modules/financial-assistance/financialAssistanceEntity';
+import { FinancialAssistanceMetadataModule } from './modules/financial-assistance/financialAssistanceMetadata';
 
 Vue.use(Vuex);
 
@@ -52,10 +55,11 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(new CaseFilesMetadataService(httpClient)).getModule(),
     [vuexModule.CASE_NOTE_ENTITIES]: new CaseNoteEntityModule(new CaseNotesService(httpClient), new OptionItemsService(httpClient)).getModule(),
     [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(new CaseNotesMetadataService(httpClient)).getModule(),
-    [vuexModule.CASE_REFERRAL_ENTITIES]:
-      new CaseFileReferralEntityModule(new CaseFileReferralsService(httpClient), new OptionItemsService(httpClient)).getModule(),
-    [vuexModule.CASE_REFERRAL_METADATA]:
-      new CaseFileReferralMetadataModule(new CaseFileReferralsMetadataService(httpClient)).getModule(),
+    [vuexModule.CASE_REFERRAL_ENTITIES]: new CaseFileReferralEntityModule(
+      new CaseFileReferralsService(httpClient),
+      new OptionItemsService(httpClient),
+    ).getModule(),
+    [vuexModule.CASE_REFERRAL_METADATA]: new CaseFileReferralMetadataModule(new CaseFileReferralsMetadataService(httpClient)).getModule(),
     [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.EVENT_ENTITIES]: new EventEntityModule(new EventsService(httpClient), new OptionItemsService(httpClient)).getModule(),
@@ -63,11 +67,20 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_MODULE]: team,
     [vuexModule.PROGRAM_MODULE]: program,
-    [vuexModule.FINANCIAL_ASSISTANCE_MODULE]: financialAssistance,
+
+    [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]: new FinancialAssistanceEntityModule(new FinancialAssistanceTablesService(httpClient)).getModule(),
+    [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
+      new FinancialAssistanceTablesMetadataService(httpClient),
+    ).getModule(),
+
     [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
     [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
-      i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
+      i18n,
+      tabs: tabs(),
+      skipAgeRestriction: true,
+      skipEmailPhoneRules: true,
+      mode: ERegistrationMode.CRC,
     }),
     [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(new UserAccountsService(httpClient)).getModule(),
     [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(new UserAccountsMetadataService(httpClient)).getModule(),
