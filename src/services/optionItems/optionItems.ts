@@ -23,7 +23,7 @@ export class OptionItemsService implements IOptionItemsService {
       case EOptionLists.AgreementTypes:
         return '/event/agreement-types';
       case EOptionLists.Roles:
-        return '/user-account/roles';
+        return '/user-account/roles/all-allow-no-access';
       case EOptionLists.CaseFileInactiveReasons:
         return '/case-file/inactive-reasons';
       case EOptionLists.CaseNoteCategories:
@@ -44,7 +44,11 @@ export class OptionItemsService implements IOptionItemsService {
   }
 
   async getOptionList(list: EOptionLists): Promise<IOptionItemData[]> {
-    return this.http.get(`${this.getPrefix(list)}/all-allow-no-access`);
+    let url = this.getPrefix(list);
+    if (list !== EOptionLists.Roles) {
+      url += '/all';
+    }
+    return this.http.get(url);
   }
 
   async createOptionItem(list: EOptionLists, optionItem: IOptionItemData): Promise<IOptionItemData> {
