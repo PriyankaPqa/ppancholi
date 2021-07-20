@@ -14,7 +14,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { ECanadaProvinces } from '@/types';
 import helpers from '../../../ui/helpers';
 import {
   EIndigenousTypes, IContactInformation, IIdentitySet, IIndigenousIdentityData,
@@ -165,18 +164,16 @@ export default Vue.extend({
     getIndigenousIdentity(): string {
       const p = this.personalInformation;
 
-      const province = p.indigenousProvince ? this.$t(`common.provinces.${ECanadaProvinces[p.indigenousProvince]}`) : '';
-
       const type = p.indigenousType ? this.$t(`common.indigenous.types.${EIndigenousTypes[p.indigenousType]}`) : '';
-      const community = p.indigenousProvince ? this.$store.state.registration.indigenousIdentities[p.indigenousProvince]
-        .find((i: IIndigenousIdentityData) => i.id === p.indigenousCommunityId) : null;
+      const community = this.$store.state.registration.indigenousIdentities
+        .find((i: IIndigenousIdentityData) => i.id === p.indigenousCommunityId);
 
       if (this.otherIndigenousType) {
-        return `${province}, ${type}, ${p.indigenousCommunityOther}`;
+        return `${type}, ${p.indigenousCommunityOther}`;
       }
 
-      if (p.indigenousProvince && p.indigenousType && community) {
-        return `${province}, ${type}, ${community?.communityName}`;
+      if (p.indigenousType && community) {
+        return `${type}, ${community?.communityName}`;
       }
       return '';
     },

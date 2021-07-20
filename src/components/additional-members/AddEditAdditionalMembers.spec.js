@@ -4,7 +4,7 @@ import { mockStorage } from '../../store/storage/storage.mock';
 import helpers from '../../ui/helpers';
 import { mockEvent } from '../../entities/event';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
-import { ECanadaProvinces, EOptionItemStatus } from '../../types';
+import { EOptionItemStatus } from '../../types';
 import {
   ECurrentAddressTypes,
   mockCampGround,
@@ -118,20 +118,6 @@ describe('AddEditAdditionalMembers.vue', () => {
           expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
             .toHaveBeenCalledWith(wrapper.vm.backupPerson, 0, wrapper.vm.backupSameAddress);
         });
-      });
-    });
-
-    describe('onIndigenousProvinceChange', () => {
-      it('should be called when province is changing', () => {
-        jest.spyOn(wrapper.vm, 'onIndigenousProvinceChange');
-        const component = wrapper.findComponent(AdditionalMemberForm);
-        component.vm.$emit('province-change', ECanadaProvinces.ON);
-        expect(wrapper.vm.onIndigenousProvinceChange).toHaveBeenCalledWith(ECanadaProvinces.ON);
-      });
-
-      it('dispatches the action to fetch indigenous identities by province', async () => {
-        await wrapper.vm.onIndigenousProvinceChange(ECanadaProvinces.ON);
-        expect(storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledWith(ECanadaProvinces.ON);
       });
     });
 

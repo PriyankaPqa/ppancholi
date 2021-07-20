@@ -4,7 +4,6 @@ import _merge from 'lodash/merge';
 import {
   EIndigenousTypes, mockGenderOther, mockIdentitySet,
 } from '../../../entities/household-create';
-import { ECanadaProvinces } from '../../../types';
 import {
   mockContactInformation,
   mockPreferredLanguageOther,
@@ -31,12 +30,10 @@ describe('PersonalInformationTemplate.vue', () => {
         modules: {
           registration: {
             state: {
-              indigenousIdentities: {
-                [ECanadaProvinces.AB]: [{
-                  id: 'guid-community',
-                  communityName: 'communityName',
-                }],
-              },
+              indigenousIdentities: [{
+                id: 'guid-community',
+                communityName: 'communityName',
+              }],
             },
           },
         },
@@ -296,11 +293,11 @@ describe('PersonalInformationTemplate.vue', () => {
             mockIdentitySet({ indigenousCommunityOther: 'other', indigenousType: EIndigenousTypes.Other }),
           ),
         });
-        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.provinces.AB, common.indigenous.types.Other, other');
+        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.Other, other');
       });
 
       it('return the correct string', () => {
-        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.provinces.AB, common.indigenous.types.FirstNations, communityName');
+        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.FirstNations, communityName');
       });
     });
   });

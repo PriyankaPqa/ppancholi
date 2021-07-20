@@ -27,8 +27,7 @@
             :loading="loadingIndigenousIdentities"
             :member="member"
             @identity-change="setIdentity($event)"
-            @indigenous-identity-change="setIndigenousIdentity($event)"
-            @province-change="onIndigenousProvinceChange($event)" />
+            @indigenous-identity-change="setIndigenousIdentity($event)" />
         </v-col>
       </v-row>
     </rc-dialog>
@@ -44,7 +43,6 @@ import _cloneDeep from 'lodash/cloneDeep';
 
 import { IIdentitySet } from '@/entities/value-objects/identity-set';
 import {
-  ECanadaProvinces,
   EOptionItemStatus,
   IOptionItemData,
   VForm,
@@ -118,12 +116,11 @@ export default Vue.extend({
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return this.$storage.registration.getters.indigenousTypesItems(this.member.identitySet.indigenousProvince);
+      return this.$storage.registration.getters.indigenousTypesItems();
     },
 
     indigenousCommunitiesItems(): Record<string, string>[] {
       return this.$storage.registration.getters.indigenousCommunitiesItems(
-        this.member.identitySet.indigenousProvince,
         this.member.identitySet.indigenousType,
       );
     },
@@ -181,10 +178,6 @@ export default Vue.extend({
         this.$emit('add');
       }
       this.close();
-    },
-
-    async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
-      await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
     },
 
     setIdentity(form: IIdentitySet) {

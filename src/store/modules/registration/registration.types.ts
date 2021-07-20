@@ -1,4 +1,4 @@
-import { ECanadaProvinces, IOptionItemData } from '../../../types';
+import { IOptionItemData } from '../../../types';
 import { IError } from '../../../services/httpClient';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 import {
@@ -17,7 +17,7 @@ export type IState = {
   genders: IOptionItemData[];
   preferredLanguages: IOptionItemData[];
   primarySpokenLanguages: IOptionItemData[];
-  indigenousIdentities: Record<ECanadaProvinces, IIndigenousIdentityData[]>;
+  indigenousIdentities: IIndigenousIdentityData[];
   loadingIndigenousIdentities: boolean;
   isPrivacyAgreed: boolean;
   registrationResponse: IHouseholdEntity;

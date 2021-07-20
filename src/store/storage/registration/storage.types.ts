@@ -1,6 +1,6 @@
 import { TranslateResult } from 'vue-i18n';
 import {
-  ECanadaProvinces, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
+  ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
 import { IError } from '../../../services/httpClient';
 
@@ -31,8 +31,8 @@ export interface IStorage {
     preferredLanguages(): IOptionItemData[];
     primarySpokenLanguages(): IOptionItemData[];
     findEffectiveJumpIndex(targetIndex: number): number;
-    indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[];
-    indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[];
+    indigenousTypesItems(): Record<string, TranslateResult>[];
+    indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[];
     registrationResponse(): IHouseholdEntity;
     registrationErrors(): IError[];
     householdCreate(): HouseholdCreate;
@@ -78,7 +78,7 @@ export interface IStorage {
     fetchGenders(): Promise<IOptionItemData[]>;
     fetchPreferredLanguages(): Promise<IOptionItemData[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
-    fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]>;
+    fetchIndigenousIdentities(): Promise<IIndigenousIdentityData[]>;
     submitRegistration(): Promise<IHouseholdEntity>;
   };
 }
@@ -145,7 +145,7 @@ export interface IStorageMock {
     fetchGenders: jest.Mock<IOptionItemData[]>;
     fetchPreferredLanguages: jest.Mock<IOptionItemData[]>;
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
-    fetchIndigenousIdentitiesByProvince: jest.Mock<IIndigenousIdentityData[]>;
+    fetchIndigenousIdentities: jest.Mock<IIndigenousIdentityData[]>;
     submitRegistration: jest.Mock<IHouseholdEntity>;
   };
 }

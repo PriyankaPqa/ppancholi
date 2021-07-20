@@ -97,7 +97,6 @@
               :shelter-locations="shelterLocations"
               @identity-change="setIdentity($event)"
               @indigenous-identity-change="setIndigenousIdentity($event)"
-              @province-change="onIndigenousProvinceChange($event)"
               @temporary-address-change="setCurrentAddress($event)" />
           </template>
           <additional-member-template :member="member" />
@@ -374,7 +373,7 @@ export default mixins(additionalMemberForm).extend({
     },
 
     async onAdditionalMemberAdd() {
-      const lastAddedIndex = this.householdCreate.additionalMembers.length -1;
+      const lastAddedIndex = this.householdCreate.additionalMembers.length - 1;
       const member = this.householdCreate.additionalMembers[lastAddedIndex];
       const res = await this.$services.households.addMember(this.householdCreate.id, member);
 
@@ -387,7 +386,7 @@ export default mixins(additionalMemberForm).extend({
       this.buildAdditionalMembersState();
 
       // We add the id on the object
-      this.$storage.registration.mutations.editAdditionalMember({...member, id: res.id,}, lastAddedIndex, this.additionalMembers[lastAddedIndex].sameAddress);
+      this.$storage.registration.mutations.editAdditionalMember({ ...member, id: res.id }, lastAddedIndex, this.additionalMembers[lastAddedIndex].sameAddress);
     },
   },
 });

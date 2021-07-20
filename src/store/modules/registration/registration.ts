@@ -10,7 +10,7 @@ import { IHouseholdEntity } from '../../../entities/household';
 import { ERegistrationMode } from '../../../types/enums/ERegistrationMode';
 import { IError } from '../../../services/httpClient';
 import {
-  ECanadaProvinces, EOptionItemStatus, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
+  EOptionItemStatus, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
 import { IRootState, IStore } from '../../store.types';
 import {
@@ -35,8 +35,6 @@ import {
 
 import { IState } from './registration.types';
 
-const INDIGENOUS_LIMIT_RESULTS = 1000;
-
 export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   isPrivacyAgreed: false,
   event: null,
@@ -46,22 +44,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   genders: [],
   preferredLanguages: [],
   primarySpokenLanguages: [],
-  indigenousIdentities: {
-    [ECanadaProvinces.AB]: [],
-    [ECanadaProvinces.BC]: [],
-    [ECanadaProvinces.MB]: [],
-    [ECanadaProvinces.NB]: [],
-    [ECanadaProvinces.NL]: [],
-    [ECanadaProvinces.NT]: [],
-    [ECanadaProvinces.NS]: [],
-    [ECanadaProvinces.NU]: [],
-    [ECanadaProvinces.ON]: [],
-    [ECanadaProvinces.PE]: [],
-    [ECanadaProvinces.QC]: [],
-    [ECanadaProvinces.SK]: [],
-    [ECanadaProvinces.YT]: [],
-    [ECanadaProvinces.OT]: [],
-  },
+  indigenousIdentities: [],
   loadingIndigenousIdentities: false,
   registrationResponse: null,
   registrationErrors: [],
@@ -107,10 +90,10 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
 
   primarySpokenLanguages: (state: IState) => _sortBy(state.primarySpokenLanguages, 'orderRank'),
 
-  indigenousTypesItems: (state: IState) => (provinceCode: ECanadaProvinces) => {
-    const identities = state.indigenousIdentities[provinceCode];
+  indigenousTypesItems: (state: IState) => {
+    const identities = state.indigenousIdentities;
     if (identities) {
-      return [...new Set(identities.map((identity) => identity.communityType))]
+      const a = [...new Set(identities.map((identity) => identity.communityType))]
         .map((typeNumber: number) => {
           const indigenousType: string = EIndigenousTypes[typeNumber];
           return {
@@ -118,18 +101,15 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
             text: i18n.t(`common.indigenous.types.${indigenousType}`),
           };
         })
-        .concat([
-          {
-            value: EIndigenousTypes.Other,
-            text: i18n.t('common.indigenous.types.Other'),
-          },
-        ]);
+        .sort(((a, b) => (a.text < b.text && a.text !== 'Autre' ? -1 : 1)));
+
+      return a;
     }
     return [];
   },
 
-  indigenousCommunitiesItems: (state: IState) => (provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes) => {
-    const identities = state.indigenousIdentities[provinceCode];
+  indigenousCommunitiesItems: (state: IState) => (indigenousType: EIndigenousTypes) => {
+    const identities = state.indigenousIdentities;
     if (identities) {
       const items = identities
         .filter((i: IIndigenousIdentityData) => i.communityType === indigenousType)
@@ -257,8 +237,8 @@ const mutations = (): MutationTree<IState> => ({
     state.primarySpokenLanguages = payload;
   },
 
-  setIndigenousIdentities(state: IState, { provinceCode, identities }: {provinceCode: ECanadaProvinces; identities: IIndigenousIdentityData[]}) {
-    state.indigenousIdentities[provinceCode] = identities;
+  setIndigenousIdentities(state: IState, { identities }: {identities: IIndigenousIdentityData[]}) {
+    state.indigenousIdentities = identities;
   },
 
   setLoadingIndigenousIdentities(state: IState, payload: boolean) {
@@ -420,30 +400,23 @@ const actions = (mode: ERegistrationMode) => ({
     return data;
   },
 
-  async fetchIndigenousIdentitiesByProvince(
+  async fetchIndigenousIdentities(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
-    provinceCode: ECanadaProvinces,
   ): Promise<IIndigenousIdentityData[]> {
-    let identities: IIndigenousIdentityData[] = context.state.indigenousIdentities[provinceCode];
+    let identities: IIndigenousIdentityData[] = context.state.indigenousIdentities;
 
     if (identities.length === 0) {
       context.commit('setLoadingIndigenousIdentities', true);
 
       try {
-        const result = await this.$services.households.searchIndigenousIdentities({
-          filter: {
-            Province: provinceCode,
-            TenantId: context.state.event.tenantId,
-          },
-          top: INDIGENOUS_LIMIT_RESULTS,
-        });
+        const result = await this.$services.households.getIndigenousIdentities();
 
-        if (result?.value?.length > 0) {
-          identities = result.value.filter((entry: IIndigenousIdentityData) => entry.status === EOptionItemStatus.Active);
+        if (result?.length > 0) {
+          identities = result.filter((entry: IIndigenousIdentityData) => entry.status === EOptionItemStatus.Active);
         }
       } finally {
-        context.commit('setIndigenousIdentities', { provinceCode, identities });
+        context.commit('setIndigenousIdentities', { identities });
         context.commit('setLoadingIndigenousIdentities', false);
       }
     }

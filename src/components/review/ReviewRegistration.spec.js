@@ -7,7 +7,6 @@ import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
 import { i18n } from '../../ui/plugins/i18n';
 import helpers from '../../ui/helpers';
-import { ECanadaProvinces } from '../../types';
 import {
   mockHouseholdCreate,
   mockContactInformation,
@@ -586,13 +585,6 @@ describe('ReviewRegistration.vue', () => {
       });
     });
 
-    describe('onIndigenousProvinceChange', () => {
-      it('dispatches the action to fetch indigenous identities by province', async () => {
-        await wrapper.vm.onIndigenousProvinceChange(ECanadaProvinces.ON);
-        expect(storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledWith(ECanadaProvinces.ON);
-      });
-    });
-
     describe('setIdentity', () => {
       it('calls setIdentity of the class IdentitySet ', async () => {
         wrapper.setData({
@@ -823,37 +815,37 @@ describe('ReviewRegistration.vue', () => {
 
     describe('onAdditionalMemberAdd', () => {
       it('should call post add person', async () => {
-        const lastAddedIndex = wrapper.vm.householdCreate.additionalMembers.length -1;
+        const lastAddedIndex = wrapper.vm.householdCreate.additionalMembers.length - 1;
         const member = wrapper.vm.householdCreate.additionalMembers[lastAddedIndex];
         await wrapper.vm.onAdditionalMemberAdd();
         expect(wrapper.vm.$services.households.addMember)
-          .toHaveBeenCalledWith(wrapper.vm.householdCreate.id, member)
+          .toHaveBeenCalledWith(wrapper.vm.householdCreate.id, member);
       });
 
       it('should remove local member if creation failed', async () => {
         wrapper.vm.$services.households.addMember = jest.fn(() => false);
         await wrapper.vm.onAdditionalMemberAdd();
         expect(wrapper.vm.$storage.registration.mutations.removeAdditionalMember)
-          .toHaveBeenCalledWith(wrapper.vm.householdCreate.additionalMembers.length - 1)
+          .toHaveBeenCalledWith(wrapper.vm.householdCreate.additionalMembers.length - 1);
       });
 
       it('should call buildAdditionalMembersState if success', async () => {
         wrapper.vm.buildAdditionalMembersState = jest.fn();
         await wrapper.vm.onAdditionalMemberAdd();
-        expect(wrapper.vm.buildAdditionalMembersState).toHaveBeenCalledTimes(1)
+        expect(wrapper.vm.buildAdditionalMembersState).toHaveBeenCalledTimes(1);
       });
 
       it('should add id to member object', async () => {
-        const lastAddedIndex = wrapper.vm.householdCreate.additionalMembers.length -1;
+        const lastAddedIndex = wrapper.vm.householdCreate.additionalMembers.length - 1;
         const member = wrapper.vm.householdCreate.additionalMembers[lastAddedIndex];
-        wrapper.vm.$services.households.addMember = jest.fn(() => ({'id': '123'}));
+        wrapper.vm.$services.households.addMember = jest.fn(() => ({ id: '123' }));
         wrapper.vm.buildAdditionalMembersState = jest.fn();
 
         await wrapper.vm.onAdditionalMemberAdd();
 
         expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember).toHaveBeenCalledWith(
-          {...member, id: '123',}, lastAddedIndex, wrapper.vm.additionalMembers[lastAddedIndex].sameAddress
-        )
+          { ...member, id: '123' }, lastAddedIndex, wrapper.vm.additionalMembers[lastAddedIndex].sameAddress,
+        );
       });
     });
   });

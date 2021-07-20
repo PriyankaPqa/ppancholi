@@ -40,7 +40,7 @@ export const mockGenders = (): IOptionItemData[] => [
   mockGenderMale(),
 ];
 
-export const mockIndigenousIdentitiesSearchData = (): IAzureSearchResult<IIndigenousIdentityData> => ({
+export const mockIndigenousIdentitiesGetData = (): IAzureSearchResult<IIndigenousIdentityData> => ({
   odataContext: 'test',
   odataCount: 1,
   value: [
@@ -58,20 +58,6 @@ export const mockIndigenousIdentitiesSearchData = (): IAzureSearchResult<IIndige
       id: 'c68b30e0-e348-544d-ba7e-7e8486972774',
       status: 1,
     },
-    {
-      province: 4,
-      communityType: 2,
-      communityName: 'Oromocto First Nations',
-      id: '11478c60-8e55-3a4a-9143-bf0719c86d8e',
-      status: 1,
-    },
-    {
-      province: 4,
-      communityType: 2,
-      communityName: 'Madawaska Maliseet First Nation',
-      id: '1fa967d0-6d92-5f47-bd1a-ba7c2b05e76a',
-      status: 1,
-    },
   ],
 });
 
@@ -79,14 +65,6 @@ export const mockIndigenousTypesItems = (): Record<string, unknown>[] => [
   {
     value: EIndigenousTypes.FirstNations,
     text: 'common.indigenous.types.FirstNations',
-  },
-  {
-    value: EIndigenousTypes.InuitCommunity,
-    text: 'common.indigenous.types.InuitCommunity',
-  },
-  {
-    value: EIndigenousTypes.Other,
-    text: 'common.indigenous.types.Other',
   },
 ];
 

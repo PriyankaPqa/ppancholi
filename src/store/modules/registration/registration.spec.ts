@@ -4,7 +4,7 @@ import { mockHttpError } from '@/services/httpClient.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import {
-  ECanadaProvinces, ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
+  ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
 } from '../../../types';
 import { Event, mockEventData, mockEvent } from '../../../entities/event';
 import { getDefaultState, makeRegistrationModule } from './registration';
@@ -12,7 +12,7 @@ import {
   EIndigenousTypes,
   mockGenders,
   mockIndigenousCommunitiesItems,
-  mockIndigenousIdentitiesSearchData,
+  mockIndigenousIdentitiesGetData,
   mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
@@ -43,22 +43,7 @@ describe('>>> Registration Module', () => {
           genders: [],
           preferredLanguages: [],
           primarySpokenLanguages: [],
-          indigenousIdentities: {
-            [ECanadaProvinces.AB]: [],
-            [ECanadaProvinces.BC]: [],
-            [ECanadaProvinces.MB]: [],
-            [ECanadaProvinces.NB]: [],
-            [ECanadaProvinces.NL]: [],
-            [ECanadaProvinces.NT]: [],
-            [ECanadaProvinces.NS]: [],
-            [ECanadaProvinces.NU]: [],
-            [ECanadaProvinces.ON]: [],
-            [ECanadaProvinces.PE]: [],
-            [ECanadaProvinces.QC]: [],
-            [ECanadaProvinces.SK]: [],
-            [ECanadaProvinces.YT]: [],
-            [ECanadaProvinces.OT]: [],
-          },
+          indigenousIdentities: [],
           loadingIndigenousIdentities: false,
           registrationResponse: null,
           registrationErrors: [],
@@ -159,16 +144,16 @@ describe('>>> Registration Module', () => {
 
     describe('indigenousTypesItems', () => {
       it('returns indigenousTypesItems', () => {
-        store.state.registration.indigenousIdentities[ECanadaProvinces.AB] = mockIndigenousIdentitiesSearchData().value;
-        expect(store.getters['registration/indigenousTypesItems'](ECanadaProvinces.AB))
+        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesGetData().value;
+        expect(store.getters['registration/indigenousTypesItems'])
           .toEqual(mockIndigenousTypesItems());
       });
     });
 
     describe('indigenousCommunitiesItems', () => {
       it('returns indigenousCommunitiesItems', () => {
-        store.state.registration.indigenousIdentities[ECanadaProvinces.AB] = mockIndigenousIdentitiesSearchData().value;
-        expect(store.getters['registration/indigenousCommunitiesItems'](ECanadaProvinces.AB, EIndigenousTypes.FirstNations))
+        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesGetData().value;
+        expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.FirstNations))
           .toEqual(mockIndigenousCommunitiesItems());
       });
     });
@@ -388,9 +373,9 @@ describe('>>> Registration Module', () => {
 
     describe('setIndigenousIdentities', () => {
       it('should set indigenousIdentities', () => {
-        const payload = mockIndigenousIdentitiesSearchData().value[0];
-        store.commit('registration/setIndigenousIdentities', { provinceCode: ECanadaProvinces.AB, identities: payload });
-        expect(store.state.registration.indigenousIdentities[ECanadaProvinces.AB]).toEqual(payload);
+        const payload = mockIndigenousIdentitiesGetData().value[0];
+        store.commit('registration/setIndigenousIdentities', { identities: payload });
+        expect(store.state.registration.indigenousIdentities).toEqual(payload);
       });
     });
 
@@ -690,28 +675,12 @@ describe('>>> Registration Module', () => {
       });
     });
 
-    describe('fetchIndigenousIdentitiesByProvince', () => {
-      it('call the searchIndigenousIdentities service with proper params', async () => {
-        const provinceCode = ECanadaProvinces.BC;
+    describe('fetchIndigenousIdentities', () => {
+      it('call the getIndigenousIdentities service with proper params', async () => {
         await store.commit('registration/setEvent', mockEventData());
-        await store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
+        await store.dispatch('registration/fetchIndigenousIdentities');
 
-        expect(store.$services.households.searchIndigenousIdentities).toHaveBeenCalledWith({
-          filter: {
-            Province: provinceCode,
-            TenantId: 'tenant-guid',
-          },
-          top: 1000,
-        });
-      });
-
-      it('sets the indigenousIdentities', async () => {
-        await store.commit('registration/setEvent', mockEventData());
-
-        await store.dispatch('registration/fetchIndigenousIdentitiesByProvince', ECanadaProvinces.AB);
-
-        expect(store.state.registration.indigenousIdentities[ECanadaProvinces.AB])
-          .toEqual(mockIndigenousIdentitiesSearchData().value);
+        expect(store.$services.households.getIndigenousIdentities).toHaveBeenCalledTimes(1);
       });
     });
 

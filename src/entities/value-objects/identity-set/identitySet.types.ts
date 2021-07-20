@@ -20,6 +20,7 @@ export enum EIndigenousTypes {
   InuitHamlet,
   Metis,
   Other,
+  Inuit
 }
 
 export interface IIndigenousIdentityOption {

@@ -1,5 +1,4 @@
 import { i18n } from '@/ui/plugins/i18n';
-import { ECanadaProvinces } from '@/types';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
@@ -50,12 +49,6 @@ describe('AdditionalMemberForm.vue', () => {
     describe('Indigenous identity form', () => {
       it('should be rendered', () => {
         expect(wrapper.findComponent(IndigenousIdentityForm).exists()).toBeTruthy();
-      });
-
-      it('should relay province-change event', () => {
-        const component = wrapper.findComponent(IndigenousIdentityForm);
-        component.vm.$emit('province-change', ECanadaProvinces.ON);
-        expect(wrapper.emitted('province-change')[0]).toEqual([ECanadaProvinces.ON]);
       });
 
       it('should relay change event', () => {

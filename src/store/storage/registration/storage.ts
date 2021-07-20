@@ -2,7 +2,7 @@ import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
 import { IHouseholdEntity } from '../../../entities/household';
 import {
-  ECanadaProvinces, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
+  ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
 import { IError } from '../../../services/httpClient';
 import {
@@ -58,12 +58,12 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['registration/primarySpokenLanguages'];
     },
 
-    indigenousTypesItems(provinceCode: ECanadaProvinces): Record<string, TranslateResult>[] {
-      return store.getters['registration/indigenousTypesItems'](provinceCode);
+    indigenousTypesItems(): Record<string, TranslateResult>[] {
+      return store.getters['registration/indigenousTypesItems'];
     },
 
-    indigenousCommunitiesItems(provinceCode: ECanadaProvinces, indigenousType: EIndigenousTypes): Record<string, string>[] {
-      return store.getters['registration/indigenousCommunitiesItems'](provinceCode, indigenousType);
+    indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[] {
+      return store.getters['registration/indigenousCommunitiesItems'](indigenousType);
     },
 
     findEffectiveJumpIndex(targetIndex: number): number {
@@ -230,8 +230,8 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/fetchPrimarySpokenLanguages');
     },
 
-    fetchIndigenousIdentitiesByProvince(provinceCode: number): Promise<IIndigenousIdentityData[]> {
-      return store.dispatch('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
+    fetchIndigenousIdentities(): Promise<IIndigenousIdentityData[]> {
+      return store.dispatch('registration/fetchIndigenousIdentities');
     },
 
     submitRegistration(): Promise<IHouseholdEntity> {

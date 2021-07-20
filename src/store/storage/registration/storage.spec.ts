@@ -10,7 +10,7 @@ import { mockHouseholdCreateData } from '@/entities/household-create';
 import { mockHttpError } from '@/services/httpClient.mock';
 import { makeStorage } from './storage';
 import { mockEventData } from '../../../entities/event';
-import { ECanadaProvinces, ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
+import { ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
 
 const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);
@@ -65,13 +65,13 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy current indigenousTypesItems', () => {
-      expect(storage.getters.indigenousTypesItems(ECanadaProvinces.AB))
-        .toEqual(store.getters['registration/indigenousTypesItems'](ECanadaProvinces.AB));
+      expect(storage.getters.indigenousTypesItems())
+        .toEqual(store.getters['registration/indigenousTypesItems']);
     });
 
     it('should proxy current indigenousCommunitiesItems', () => {
-      expect(storage.getters.indigenousCommunitiesItems(ECanadaProvinces.AB, 1))
-        .toEqual(store.getters['registration/indigenousCommunitiesItems'](ECanadaProvinces.AB, 1));
+      expect(storage.getters.indigenousCommunitiesItems(1))
+        .toEqual(store.getters['registration/indigenousCommunitiesItems'](1));
     });
 
     it('should proxy registrationResponse', () => {
@@ -282,11 +282,9 @@ describe('>>> Registration Storage', () => {
       storage.actions.fetchPrimarySpokenLanguages();
       expect(store.dispatch).toBeCalledWith('registration/fetchPrimarySpokenLanguages');
     });
-
-    it('should proxy fetchIndigenousIdentitiesByProvince', () => {
-      const provinceCode = ECanadaProvinces.AB;
-      storage.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
-      expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousIdentitiesByProvince', provinceCode);
+    it('should proxy fetchIndigenousIdentities', () => {
+      storage.actions.fetchIndigenousIdentities();
+      expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousIdentities');
     });
 
     it('should proxy submitRegistration', () => {

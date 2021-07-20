@@ -12,8 +12,7 @@
       :loading="loading"
       :form="member.identitySet"
       prefix-data-test="additionalMember"
-      @change="$emit('indigenous-identity-change', $event)"
-      @province-change="$emit('province-change', $event)" />
+      @change="$emit('indigenous-identity-change', $event)" />
     <v-row class="grey-container pa-2 pb-0">
       <v-col class="pt-4 px-4">
         <div class="rc-body16 fw-bold">

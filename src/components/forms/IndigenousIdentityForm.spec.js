@@ -2,7 +2,6 @@ import { i18n } from '@/ui/plugins/i18n';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import _merge from 'lodash/merge';
 import helpers from '../../ui/helpers';
-import { ECanadaProvinces } from '../../types';
 import {
   mockContactInformation,
   mockMember,
@@ -88,13 +87,6 @@ describe('IndigenousIdentityForm.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('onIndigenousProvinceChange', () => {
-      it('emits province-change event with provinceCode', async () => {
-        await wrapper.vm.onIndigenousProvinceChange(ECanadaProvinces.ON);
-        expect(wrapper.emitted('province-change')[0]).toEqual([ECanadaProvinces.ON]);
-      });
-    });
-
     describe('onIndigenousTypeChange', () => {
       it('clears the community id and other field', async () => {
         wrapper.vm.formCopy.indigenousCommunityId = 'test';

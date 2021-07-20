@@ -1,6 +1,5 @@
 import { i18n } from '@/ui/plugins/i18n';
 import { mockStorage } from '../../store/storage/storage.mock';
-import { ECanadaProvinces } from '../../types';
 import IdentityForm from '../forms/IdentityForm.vue';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
@@ -71,21 +70,6 @@ describe('PersonalInformation.vue', () => {
       it('should render it', () => {
         const component = wrapper.findComponent(IndigenousIdentityForm);
         expect(component.exists()).toBeTruthy();
-      });
-    });
-  });
-
-  describe('Methods', () => {
-    describe('onIndigenousProvinceChange', () => {
-      it('dispatches the action to fetch indigenous identities by province', async () => {
-        await wrapper.vm.onIndigenousProvinceChange(ECanadaProvinces.ON);
-        expect(storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledWith(ECanadaProvinces.ON);
-      });
-      it('should be called when province is changing', () => {
-        jest.spyOn(wrapper.vm, 'onIndigenousProvinceChange');
-        const component = wrapper.findComponent(IndigenousIdentityForm);
-        component.vm.$emit('province-change', ECanadaProvinces.ON);
-        expect(wrapper.vm.onIndigenousProvinceChange).toHaveBeenCalledWith(ECanadaProvinces.ON);
       });
     });
 

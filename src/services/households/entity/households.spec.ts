@@ -1,4 +1,4 @@
-import {ECanadaProvinces, ERegistrationMode, IAzureSearchParams} from '@/types';
+import { ECanadaProvinces, ERegistrationMode } from '@/types';
 import moment from 'moment';
 import { mockHttp } from '../../httpClient.mock';
 import {
@@ -10,6 +10,7 @@ import {
 } from '../../../entities/household-create';
 import { HouseholdsService } from './households';
 
+const API_URL_SUFFIX = 'household';
 const http = mockHttp();
 const createBeneficiaryRequest = mockCreateHouseholdRequest();
 let service: HouseholdsService = null;
@@ -35,15 +36,9 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/primary-spoken-languages`);
   });
 
-  test('searchIndigenousIdentities is linked to the correct URL', async () => {
-    const params: IAzureSearchParams = {
-      filter: {
-        Province: 13,
-      },
-    };
-
-    await service.searchIndigenousIdentities(params);
-    expect(http.get).toHaveBeenCalledWith('/public-search/indigenous-identities', { params, isOData: true });
+  test('getIndigenousIdentities is linked to the correct URL', async () => {
+    await service.getIndigenousIdentities();
+    expect(http.get).toHaveBeenCalledWith(`${API_URL_SUFFIX}/indigenous-communities`);
   });
 
   test('submitRegistration is linked to the correct URL', async () => {

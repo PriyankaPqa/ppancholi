@@ -20,8 +20,7 @@
       :indigenous-communities-items="indigenousCommunitiesItems"
       :indigenous-types-items="indigenousTypesItems"
       :loading="loadingIndigenousIdentities"
-      @change="setIndigenousIdentity($event)"
-      @province-change="onIndigenousProvinceChange($event)" />
+      @change="setIndigenousIdentity($event)" />
   </v-row>
 </template>
 
@@ -29,7 +28,7 @@
 import Vue from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
 import helpers from '../../ui/helpers';
-import { ECanadaProvinces, IOptionItemData } from '../../types';
+import { IOptionItemData } from '../../types';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
 import { IHouseholdCreate, IIdentitySet } from '../../entities/household-create';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
@@ -86,11 +85,11 @@ export default Vue.extend({
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
-      return this.$storage.registration.getters.indigenousTypesItems(this.identitySet.indigenousProvince);
+      return this.$storage.registration.getters.indigenousTypesItems();
     },
 
     indigenousCommunitiesItems(): Record<string, string>[] {
-      return this.$storage.registration.getters.indigenousCommunitiesItems(this.identitySet.indigenousProvince, this.identitySet.indigenousType);
+      return this.$storage.registration.getters.indigenousCommunitiesItems(this.identitySet.indigenousType);
     },
 
     loadingIndigenousIdentities(): boolean {
@@ -100,14 +99,12 @@ export default Vue.extend({
     canadianProvincesItems(): Record<string, unknown>[] {
       return helpers.getCanadianProvincesWithoutOther(this.i18n);
     },
-
   },
-
+  async created() {
+    // Load IngigenousIdentities as soon as the page loads
+    await this.$storage.registration.actions.fetchIndigenousIdentities();
+  },
   methods: {
-    async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
-      await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
-    },
-
     setIdentity(form: IIdentitySet) {
       this.$storage.registration.mutations.setIdentity(form);
     },

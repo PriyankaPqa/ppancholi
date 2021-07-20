@@ -5,21 +5,12 @@
         {{ $t('registration.personal_info.indigenous_identity') }}
       </div>
     </v-col>
-    <v-col cols="12" sm="6">
-      <v-autocomplete-with-validation
-        v-model="formCopy.indigenousProvince"
-        clearable
-        :data-test="`${prefixDataTest}__indigenousProvince`"
-        :label="$t('registration.personal_info.indigenousProvince.label')"
-        :items="canadianProvincesItems"
-        @change="onIndigenousProvinceChange($event)" />
-    </v-col>
-    <v-col cols="12" sm="6">
+    <v-col cols="12">
       <v-autocomplete-with-validation
         v-model="formCopy.indigenousType"
         :loading="loading"
         clearable
-        :disabled="loading || !form.indigenousProvince"
+        :disabled="loading"
         :label="`${$t('registration.personal_info.indigenousType.select.label')}*`"
         :items="indigenousTypesItems"
         :rules="rules.indigenousType"
@@ -139,15 +130,6 @@ export default Vue.extend({
   },
 
   methods: {
-    async onIndigenousProvinceChange(provinceCode: number) {
-      this.formCopy.indigenousType = null;
-      this.formCopy.indigenousCommunityId = null;
-      this.formCopy.indigenousCommunityOther = null;
-      if (provinceCode) {
-        this.$emit('province-change', provinceCode);
-      }
-    },
-
     async onIndigenousTypeChange(indigenousType: EIndigenousTypes) {
       this.formCopy.indigenousCommunityId = null;
       this.formCopy.indigenousCommunityOther = null;

@@ -1,6 +1,5 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { ECanadaProvinces } from '@/types';
 import CurrentAddressTemplate from '../addresses/CurrentAddressTemplate.vue';
 import { mockMember } from '../../../entities/value-objects/member';
 import { EIndigenousTypes, mockGenderOther } from '../../../entities/value-objects/identity-set';
@@ -24,12 +23,10 @@ describe('AdditionalMemberTemplate.vue', () => {
         modules: {
           registration: {
             state: {
-              indigenousIdentities: {
-                [ECanadaProvinces.AB]: [{
-                  id: 'guid-community',
-                  communityName: 'communityName',
-                }],
-              },
+              indigenousIdentities: [{
+                id: 'guid-community',
+                communityName: 'communityName',
+              }],
             },
           },
         },
@@ -90,11 +87,11 @@ describe('AdditionalMemberTemplate.vue', () => {
           },
         });
 
-        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.provinces.AB, common.indigenous.types.Other, other');
+        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.Other, other');
       });
 
       it('return the correct string', () => {
-        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.provinces.AB, common.indigenous.types.FirstNations, communityName');
+        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.FirstNations, communityName');
       });
     });
 

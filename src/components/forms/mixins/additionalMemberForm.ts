@@ -3,7 +3,7 @@ import { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import helpers from '../../../ui/helpers';
-import { ECanadaProvinces, IOptionItemData, EOptionItemStatus } from '../../../types';
+import { IOptionItemData, EOptionItemStatus } from '../../../types';
 import { localStorageKeys } from '../../../constants/localStorage';
 import {
   IShelterLocationData, IHouseholdCreate, IIdentitySet,
@@ -58,9 +58,7 @@ export default Vue.extend({
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {
       if (this.indexAdditionalMember !== -1) {
-        return this.$storage.registration.getters.indigenousTypesItems(
-          this.currentAdditionalMember.identitySet.indigenousProvince,
-        );
+        return this.$storage.registration.getters.indigenousTypesItems();
       }
       return [];
     },
@@ -68,7 +66,6 @@ export default Vue.extend({
     indigenousCommunitiesItems(): Record<string, string>[] {
       if (this.indexAdditionalMember !== -1) {
         return this.$storage.registration.getters.indigenousCommunitiesItems(
-          this.currentAdditionalMember.identitySet.indigenousProvince,
           this.currentAdditionalMember.identitySet.indigenousType,
         );
       }
@@ -236,10 +233,6 @@ export default Vue.extend({
           this.additionalMembers[this.indexAdditionalMember].sameAddress,
         );
       }
-    },
-
-    async onIndigenousProvinceChange(provinceCode: ECanadaProvinces) {
-      await this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(provinceCode);
     },
 
     isNewMemberCurrentAddress(index: number): boolean {

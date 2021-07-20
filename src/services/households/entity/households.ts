@@ -2,7 +2,7 @@ import moment from 'moment';
 import { IHttpClient } from '../../httpClient';
 import { IHouseholdEntity } from '../../../entities/household';
 import {
-  ECanadaProvinces, ERegistrationMode, IAzureSearchParams, IAzureSearchResult, IOptionItemData,
+  ECanadaProvinces, ERegistrationMode, IAzureSearchResult, IOptionItemData,
 } from '../../../types';
 import {
   IAddressData,
@@ -43,11 +43,8 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.get<IOptionItemData[]>(`${this.baseApi}/primary-spoken-languages`);
   }
 
-  async searchIndigenousIdentities(params: IAzureSearchParams): Promise<IAzureSearchResult<IIndigenousIdentityData>> {
-    return this.http.get('/public-search/indigenous-identities', {
-      params,
-      isOData: true,
-    });
+  async getIndigenousIdentities(): Promise<IAzureSearchResult<IIndigenousIdentityData>> {
+    return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 
   async submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {
@@ -105,8 +102,8 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     const parsePayload = this.parseMember(payload);
     return this.http.post(`${this.baseUrl}/${householdId}/members`, {
       ...parsePayload,
-      registrationType: ERegistrationMode.CRC
-    })
+      registrationType: ERegistrationMode.CRC,
+    });
   }
 
   parseHouseholdPayload(household: IHouseholdCreate, eventId: string): ICreateHouseholdRequest {

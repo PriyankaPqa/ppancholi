@@ -23,7 +23,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ECanadaProvinces } from '@/types';
 import { TranslateResult } from 'vue-i18n';
 import CurrentAddressTemplate from '../addresses/CurrentAddressTemplate.vue';
 import helpers from '../../../ui/helpers';
@@ -44,19 +43,17 @@ export default Vue.extend({
     getIndigenousIdentity(): string {
       const m = this.member;
 
-      const province = m.identitySet.indigenousProvince ? this.$t(`common.provinces.${ECanadaProvinces[m.identitySet.indigenousProvince]}`) : '';
-
       const type = m.identitySet.indigenousType ? this.$t(`common.indigenous.types.${EIndigenousTypes[m.identitySet.indigenousType]}`) : '';
 
-      const community = m.identitySet.indigenousProvince ? this.$store.state.registration.indigenousIdentities[m.identitySet.indigenousProvince]
-        .find((i: IIndigenousIdentityData) => i.id === m.identitySet.indigenousCommunityId) : null;
+      const community = this.$store.state.registration.indigenousIdentities
+        .find((i: IIndigenousIdentityData) => i.id === m.identitySet.indigenousCommunityId);
 
       if (m.identitySet.indigenousType === EIndigenousTypes.Other) {
-        return `${province}, ${type}, ${m.identitySet.indigenousCommunityOther}`;
+        return `${type}, ${m.identitySet.indigenousCommunityOther}`;
       }
 
-      if (m.identitySet.indigenousProvince && m.identitySet.indigenousType && community) {
-        return `${province}, ${type}, ${community?.communityName}`;
+      if (m.identitySet.indigenousType && community) {
+        return `${type}, ${community?.communityName}`;
       }
       return '';
     },
