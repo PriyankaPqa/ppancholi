@@ -11,6 +11,7 @@
         :tabs="navigationTabsFilteredForPermissions"
         :hide-dividers="hideDividers"
         :hide-back-button="hideBackButton"
+        :group-mode="groupMode"
         @update-tab="$emit('update-tab', $event)"
         @click:tab="$emit('click:tab', $event)"
         @backButtonClicked="back()">
@@ -121,6 +122,13 @@ export default Vue.extend({
      * Hide the back button
      */
     hideBackButton: {
+      type: Boolean,
+      default: false,
+    },
+    /**
+     * Display tabs by group
+     */
+    groupMode: {
       type: Boolean,
       default: false,
     },

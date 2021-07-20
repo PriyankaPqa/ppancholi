@@ -25,8 +25,44 @@
         permanent>
         <v-divider v-if="!hideDividers" />
         <v-list class="full-width">
+          <template v-if="groupMode">
+            <template v-for="(group, groupIndex) in tabs">
+              <div :key="groupIndex" class="rc-body12 grey--text ml-5 my-1">
+                {{ group.name }}
+              </div>
+              <v-list-item
+                v-for="(tab, index) in group.items"
+                :key="`${group.name}_${index}`"
+                :class="{
+                  'secondaryLeftMenuTab': true,
+                  'secondaryLeftMenuTab__active--manual': tab.active,
+                  'v-list-item--active': tab.active,
+                }"
+                dense
+                :data-test="tab.test"
+                :disabled="tab.disabled"
+                link
+                :exact="typeof tab.exact === 'undefined' ? true : tab.exact"
+                :to="tab.to ? { name: tab.to } : null"
+                replace
+                active-class="secondaryLeftMenuTab__active"
+                @click="$emit('click:tab', tab.onClick)">
+                <v-list-item-icon v-if="tab.icon" class="mr-2">
+                  <v-icon data-test="item-icon" color="primary darken-1">
+                    {{ tab.icon }}
+                  </v-icon>
+                </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title :data-test="`item-text-${index}`">
+                    {{ tab.text }}
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </template>
           <v-list-item
             v-for="(tab, index) in tabs"
+            v-else
             :key="index"
             :class="{
               'secondaryLeftMenuTab': true,
@@ -106,6 +142,10 @@ export default Vue.extend({
     },
 
     hideDividers: {
+      type: Boolean,
+      default: false,
+    },
+    groupMode: {
       type: Boolean,
       default: false,
     },

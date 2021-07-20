@@ -121,7 +121,8 @@ export default Vue.extend({
           text: 'leftMenu.mass_actions_title',
           test: 'mass_actions',
           exact: false,
-          level: 'level5',
+          level: 'level6',
+          roles: ['contributorIM', 'contributorFinance'],
         },
         {
           to: routes.assessments.home.name,
@@ -137,14 +138,6 @@ export default Vue.extend({
           test: 'system_management',
           exact: false,
           level: 'level6',
-        },
-        {
-          to: routes.reports.home.name,
-          icon: 'mdi-alert-octagon',
-          text: 'leftMenu.reports_title',
-          test: 'reports',
-          level: 'level5',
-          roles: ['contributorIM', 'contributorFinance'],
         },
       ];
     },

@@ -43,6 +43,7 @@ const CreateEditFinancialAssistance = () => import(/* webpackChunkName: "financi
 
 const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
 const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
+const MassActionsFinancialAssistance = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistance.vue');
 
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
@@ -51,9 +52,6 @@ const RegistrationLayout = () => import(/* webpackChunkName: "registration" */ '
 const RegistrationHome = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/home/RegistrationHome.vue');
 const RegistrationIndividual = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/individual/RegistrationIndividual.vue');
 const ConfirmationPrint = () => import(/* webpackChunkName: "registration" */ '@/ui/views/pages/registration/confirmation/ConfirmationPrint.vue');
-
-const ReportsLayout = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/layout/ReportsLayout.vue');
-const ReportsHome = () => import(/* webpackChunkName: "reports" */ '@/ui/views/pages/reports/home/ReportsHome.vue');
 
 const SystemManagementLayout = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/layout/SystemManagementLayout.vue');
 const SystemManagementHome = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/home/SystemManagementHome.vue');
@@ -354,22 +352,13 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.massActions.home.path,
                 name: Routes.massActions.home.name,
                 component: MassActionsHome,
-                meta: { level: 'level5' },
+                meta: { level: 'level6', roles: ['contributorIM', 'contributorFinance'] },
               },
-            ],
-          },
-          {
-            path: Routes.reports.layout.path, // reports
-            component: ReportsLayout,
-            meta: {
-              requiresAuthorization: true,
-            },
-            children: [
               {
-                path: Routes.reports.home.path,
-                name: Routes.reports.home.name,
-                component: ReportsHome,
-                meta: { level: 'level5', roles: ['contributorIM', 'contributorFinance'] },
+                path: Routes.massActions.financialAssistance.path,
+                name: Routes.massActions.financialAssistance.name,
+                component: MassActionsFinancialAssistance,
+                meta: { level: 'level6', roles: ['contributorFinance'] },
               },
             ],
           },

@@ -67,6 +67,8 @@
         {text: 'level4', value: 'level4'},
         {text: 'level5', value: 'level5'},
         {text: 'level6', value: 'level6'},
+        {text: 'contributorIM', value: 'contributorIM'},
+        {text: 'contributorFinance', value: 'contributorFinance'},
       ]"
       @change="$store.commit('user/setRole', $event);" />
 

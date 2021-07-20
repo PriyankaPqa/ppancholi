@@ -228,7 +228,8 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('mdi-file-document');
         expect(item.text).toBe('leftMenu.mass_actions_title');
         expect(item.test).toBe('mass_actions');
-        expect(item.level).toBe('level5');
+        expect(item.level).toBe('level6');
+        expect(item.roles).toEqual(['contributorIM', 'contributorFinance']);
       });
 
       test('Item[7]', () => {
@@ -247,16 +248,6 @@ describe('LeftMenu.vue', () => {
         expect(item.text).toBe('system_management.leftMenu.title');
         expect(item.test).toBe('system_management');
         expect(item.level).toBe('level6');
-      });
-
-      test('Item[9]', () => {
-        const item = wrapper.vm.items[9];
-        expect(item.to).toBe(routes.reports.home.name);
-        expect(item.icon).toBe('mdi-alert-octagon');
-        expect(item.text).toBe('leftMenu.reports_title');
-        expect(item.test).toBe('reports');
-        expect(item.level).toBe('level5');
-        expect(item.roles).toEqual(['contributorIM', 'contributorFinance']);
       });
     });
   });

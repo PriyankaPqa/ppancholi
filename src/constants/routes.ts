@@ -136,6 +136,10 @@ const routes = {
       path: '',
       name: 'massActions.home',
     },
+    financialAssistance: {
+      path: 'financial-assistance',
+      name: 'massActions.financialAssistance',
+    },
   },
   programs: {
     home: {
@@ -167,16 +171,6 @@ const routes = {
     individual: {
       path: 'individual',
       name: 'registration.individual',
-    },
-  },
-  reports: {
-    layout: {
-      path: 'reports',
-      name: 'reports.layout',
-    },
-    home: {
-      path: '',
-      name: 'reports.home',
     },
   },
   systemManagement: {

@@ -10,4 +10,10 @@ export interface INavigationTab {
   level?: string;
   roles?: string[];
   active?: boolean;
+  onClick?: string;
+}
+
+export interface INavigationTabGroup {
+  name: string | TranslateResult;
+  items: Array<INavigationTab>
 }
