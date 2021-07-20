@@ -303,6 +303,28 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         status: 0,
       },
     },
+    {
+      id: 'mock-activity-id-18',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.ReferralAdded,
+      details: {
+        name: 'Mental Health',
+      },
+    },
+    {
+      id: 'mock-activity-id-19',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.ReferralUpdated,
+      details: {
+        name: 'Mental Health',
+      },
+    },
   ];
 
   if (type) {

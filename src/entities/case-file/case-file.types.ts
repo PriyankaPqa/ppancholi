@@ -48,6 +48,8 @@ export enum CaseFileActivityType {
   UnassignedFromCaseFile = 11,
   IdentityAuthenticationUpdated = 12,
   ImpactStatusValidationUpdated = 13,
+  ReferralAdded = 14,
+  ReferralUpdated = 15
 }
 
 export enum ImpactValidationMethod {

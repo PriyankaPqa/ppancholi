@@ -257,6 +257,27 @@ describe('CaseFileActivityListItem.vue', () => {
 
         expect(wrapper.vm.icon).toEqual('mdi-message-text');
       });
+
+      it('returns the correct icon when action type is IdentityAuthenticationUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.IdentityAuthenticationUpdated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-shield-check');
+      });
+
+      it('returns the correct icon when action type is ReferralAdded', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.ReferralAdded)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when action type is ReferralUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.ReferralUpdated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
     });
 
     describe('Methods', () => {
@@ -514,6 +535,32 @@ describe('CaseFileActivityListItem.vue', () => {
           expect(wrapper.vm.makeContentForImpactStatusValidationUpdated()).toEqual({
             title: 'caseFileActivity.activityList.title.ImpactStatusValidationUpdated',
             body: 'caseFileActivity.activityList.impact_status_validation_updated: caseFile.beneficiaryImpactValidationStatus.Undetermined',
+          });
+        });
+      });
+
+      describe('makeContentForReferralAdded', () => {
+        it('returns the correct data when action type is ReferralAdded', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.ReferralAdded)[0],
+          });
+
+          expect(wrapper.vm.makeContentForReferralAdded()).toEqual({
+            title: 'caseFileActivity.activityList.title.ReferralAdded',
+            body: 'caseFileActivity.activityList.referral.referral_name: Mental Health',
+          });
+        });
+      });
+
+      describe('makeContentForReferralUpdated', () => {
+        it('returns the correct data when action type is ReferralUpdated', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.ReferralUpdated)[0],
+          });
+
+          expect(wrapper.vm.makeContentForReferralUpdated()).toEqual({
+            title: 'caseFileActivity.activityList.title.ReferralUpdated',
+            body: 'caseFileActivity.activityList.referral.referral_name: Mental Health',
           });
         });
       });

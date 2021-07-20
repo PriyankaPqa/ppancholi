@@ -75,6 +75,12 @@ export default Vue.extend({
         case CaseFileActivityType.ImpactStatusValidationUpdated:
           return this.makeContentForImpactStatusValidationUpdated();
 
+        case CaseFileActivityType.ReferralAdded:
+          return this.makeContentForReferralAdded();
+
+        case CaseFileActivityType.ReferralUpdated:
+          return this.makeContentForReferralUpdated();
+
         default:
           return null;
       }
@@ -89,6 +95,8 @@ export default Vue.extend({
         case CaseFileActivityType.CaseFileStatusArchived:
         case CaseFileActivityType.AssignedToCaseFile:
         case CaseFileActivityType.UnassignedFromCaseFile:
+        case CaseFileActivityType.ReferralAdded:
+        case CaseFileActivityType.ReferralUpdated:
           return '$rctech-actions';
 
         case CaseFileActivityType.AddedDuplicateFlag:
@@ -243,6 +251,20 @@ export default Vue.extend({
       }
 
       return { title, body };
+    },
+
+    makeContentForReferralAdded(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.ReferralAdded'),
+        body: `${this.$t('caseFileActivity.activityList.referral.referral_name')}: ${this.item.details.name}`,
+      };
+    },
+
+    makeContentForReferralUpdated(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.ReferralUpdated'),
+        body: `${this.$t('caseFileActivity.activityList.referral.referral_name')}: ${this.item.details.name}`,
+      };
     },
 
   },
