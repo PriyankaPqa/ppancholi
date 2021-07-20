@@ -5,7 +5,7 @@ import { IStorage } from './storage.types';
 import { Base } from '../base';
 
 export class CaseFileReferralStorage
-  extends Base<ICaseFileReferralEntity, ICaseFileReferralMetadata> implements IStorage {
+  extends Base<ICaseFileReferralEntity, ICaseFileReferralMetadata, { id: uuid, caseFileId: uuid }> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }
@@ -26,6 +26,12 @@ export class CaseFileReferralStorage
     fetchTypes: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchTypes`),
 
     fetchOutcomeStatuses: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchOutcomeStatuses`),
+
+    // eslint-disable-next-line
+    createReferral: (payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity> => this.store.dispatch(`${this.entityModuleName}/createReferral`, payload),
+
+    // eslint-disable-next-line
+    updateReferral: (payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity> => this.store.dispatch(`${this.entityModuleName}/updateReferral`, payload),
   }
 
   private mutations = {

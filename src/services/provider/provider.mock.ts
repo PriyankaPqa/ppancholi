@@ -9,10 +9,14 @@ import { mockProgramsService } from '../programs';
 import { mockFinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { mockUserAccountsService } from '../user-accounts/entity';
 import { mockEventsService } from '../events/entity';
+import { mockCaseNotesService } from '../case-notes/entity';
+import { mockCaseFileReferralsService } from '../case-file-referrals/entity';
 
 export const mockProvider = (): IProviderMock => ({
   appUsers: mockAppUsersService(),
   caseFiles: mockCaseFilesService(),
+  caseFileNotes: mockCaseNotesService(),
+  caseFileReferrals: mockCaseFileReferralsService(),
   optionItems: mockOptionItemsServiceService(),
   teams: mockTeamsService(),
   programs: mockProgramsService(),

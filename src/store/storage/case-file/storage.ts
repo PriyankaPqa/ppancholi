@@ -11,7 +11,7 @@ import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { Base } from '../base';
 
 export class CaseFileStorage
-  extends Base<ICaseFileEntity, ICaseFileMetadata> implements IStorage {
+  extends Base<ICaseFileEntity, ICaseFileMetadata, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }

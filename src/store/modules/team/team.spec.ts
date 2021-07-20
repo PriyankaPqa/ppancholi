@@ -180,7 +180,7 @@ describe('>>> Team Module', () => {
     });
 
     describe('setSearchLoading', () => {
-      it('sets submitLoading', () => {
+      it('sets searchLoading', () => {
         expect(store.state.team.searchLoading).toEqual(false);
 
         store.commit('team/setSearchLoading', true);

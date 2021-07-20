@@ -20,7 +20,7 @@ import {
   IBaseMutationsMock,
 } from '../base';
 
-export interface IActions extends IBaseActions<IEventEntity, IEventMetadata> {
+export interface IActions extends IBaseActions<IEventEntity, IEventMetadata, uuid> {
   fetchAgreementTypes(): Promise<IOptionItem[]>,
   fetchEventTypes(): Promise<IOptionItem[]>,
   fetchOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>,

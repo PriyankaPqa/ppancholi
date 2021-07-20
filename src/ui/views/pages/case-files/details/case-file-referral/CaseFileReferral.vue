@@ -164,30 +164,27 @@ export default Vue.extend({
     },
 
     addCaseReferral() {
-      return '#';
-      // this.$router.push({
-      //   name: routes.caseFile.referrals.create.name,
-      // });
+      this.$router.push({
+        name: routes.caseFile.referrals.add.name,
+      });
     },
 
     getReferralDetailsRoute(item: ICaseFileReferralEntity) {
-      return '#';
-      // return {
-      //   name: routes.caseFile.referrals.details.name,
-      //   params: {
-      //     id: item.id,
-      //   },
-      // };
+      return {
+        name: routes.caseFile.referrals.details.name,
+        params: {
+          referralId: item.id,
+        },
+      };
     },
 
     getReferralEditRoute(item: ICaseFileReferralEntity) {
-      return '#';
-      // return {
-      //   name: routes.caseFile.referrals.details.name,
-      //   params: {
-      //     id: item.id,
-      //   },
-      // };
+      return {
+        name: routes.caseFile.referrals.edit.name,
+        params: {
+          referralId: item.id,
+        },
+      };
     },
   },
 });

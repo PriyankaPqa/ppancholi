@@ -12,7 +12,7 @@ import {
 const API_URL_SUFFIX = 'user-account';
 const CONTROLLER = 'user-accounts';
 
-export class UserAccountsService extends DomainBaseService<IUserAccountEntity> implements IUserAccountsService {
+export class UserAccountsService extends DomainBaseService<IUserAccountEntity, uuid> implements IUserAccountsService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);
   }

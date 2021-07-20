@@ -5,7 +5,7 @@ import { IAzureTableSearchResults, ICombinedIndex } from '@/types/interfaces/IAz
 import _cloneDeep from 'lodash/cloneDeep';
 import { IBaseStorage } from './base.types';
 
-export class Base<TEntity extends IEntity, TMetadata extends IEntity> implements IBaseStorage<TEntity, TMetadata> {
+export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> implements IBaseStorage<TEntity, TMetadata, IdParams> {
   protected readonly entityModuleName;
 
   protected readonly metadataModuleName;
@@ -75,7 +75,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity> implements
   }
 
   protected baseActions = {
-    fetch: async (id: uuid,
+    fetch: async (id: IdParams,
       { useEntityGlobalHandler, useMetadataGlobalHandler } = { useEntityGlobalHandler: true, useMetadataGlobalHandler: true })
       : Promise<IEntityCombined<TEntity, TMetadata>> => {
       const entity = await this.store.dispatch(`${this.entityModuleName}/fetch`, { id, useGlobalHandler: useEntityGlobalHandler });

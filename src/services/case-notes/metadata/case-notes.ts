@@ -6,7 +6,7 @@ import { ICaseNotesMetadataService } from './case-notes.types';
 const apiUrlSuffix = 'case-file';
 const controller = 'case-files/metadata';
 
-export class CaseNotesMetadataService extends DomainBaseService<ICaseNoteMetadata> implements ICaseNotesMetadataService {
+export class CaseNotesMetadataService extends DomainBaseService<ICaseNoteMetadata, uuid> implements ICaseNotesMetadataService {
   constructor(http: IHttpClient) {
     super(http, apiUrlSuffix, controller);
   }

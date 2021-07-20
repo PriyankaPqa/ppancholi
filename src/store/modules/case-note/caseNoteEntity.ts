@@ -12,7 +12,7 @@ import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 
-export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity> {
+export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
   constructor(readonly service: CaseNotesService, readonly optionItemService: IOptionItemsService) {
     super(service);
   }

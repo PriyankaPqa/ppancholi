@@ -9,7 +9,7 @@ import { ICombinedIndex, IAzureCombinedSearchResult } from '@/types/interfaces/I
 import { Base } from '../base';
 
 export class CaseNoteStorage
-  extends Base<ICaseNoteEntity, ICaseNoteMetadata> implements IStorage {
+  extends Base<ICaseNoteEntity, ICaseNoteMetadata, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }

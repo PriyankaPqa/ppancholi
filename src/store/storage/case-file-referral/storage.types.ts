@@ -1,3 +1,4 @@
+import { IEntityCombined } from '@/entities/base';
 import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@/entities/case-file-referral';
 import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
 import {
@@ -14,14 +15,19 @@ export interface IGettersMock extends IBaseGettersMock<ICaseFileReferralEntity, 
   outcomeStatuses: jest.Mock<void>;
 }
 
-export interface IActions extends IBaseActions<ICaseFileReferralEntity, ICaseFileReferralMetadata> {
+export interface IActions extends IBaseActions<ICaseFileReferralEntity, ICaseFileReferralMetadata, {id: uuid, caseFileId: uuid}> {
+  fetch(params: {id: uuid, caseFileId: uuid}): Promise<IEntityCombined<ICaseFileReferralEntity, ICaseFileReferralMetadata>>;
   fetchTypes(): Promise<IOptionItem[]>;
   fetchOutcomeStatuses(): Promise<IOptionItem[]>;
+  createReferral(payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity>;
+  updateReferral(payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<ICaseFileReferralEntity, ICaseFileReferralMetadata> {
   fetchTypes: jest.Mock<IOptionItemData[]>;
   fetchOutcomeStatuses: jest.Mock<IOptionItemData[]>;
+  createReferral: jest.Mock<ICaseFileReferralEntity>;
+  updateReferral: jest.Mock<ICaseFileReferralEntity>;
 }
 
 export interface IMutations extends IBaseMutations<ICaseFileReferralEntity, ICaseFileReferralMetadata> {

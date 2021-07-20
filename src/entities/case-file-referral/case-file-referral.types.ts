@@ -6,6 +6,12 @@ export enum ReferralMethod {
   Warm = 2
 }
 
+export interface IReferralConsentInformation {
+  crcUserId: string;
+  crcUserName: string;
+  dateTimeConsent: Date;
+}
+
 export interface ICaseFileReferralEntity extends IEntity {
   caseFileId: uuid;
   name: string;
@@ -13,6 +19,7 @@ export interface ICaseFileReferralEntity extends IEntity {
   method: ReferralMethod;
   type: IListOption;
   outcomeStatus: IListOption;
+  referralConsentInformation: IReferralConsentInformation;
 
   validate(): Array<string> | boolean;
 }

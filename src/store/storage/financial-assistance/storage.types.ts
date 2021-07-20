@@ -130,7 +130,7 @@ export interface IMutationsMock extends IBaseMutationsMock<IFinancialAssistanceT
   cancelOperation: jest.Mock<void>;
 }
 
-export interface IActions extends IBaseActions<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {
+export interface IActions extends IBaseActions<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, uuid> {
   createFinancialAssistance(table: boolean): Promise<IFinancialAssistanceTableEntity>;
   fetchActiveCategories(): Promise<IOptionItem[]>;
 }

@@ -4,6 +4,7 @@ import { mockStore } from '@/store';
 import { mockSearchParams } from '@/test/helpers';
 import { CaseFileReferralStorage } from './storage';
 import { mockOptionItemData } from '@/entities/optionItem';
+import { mockCaseFileReferralEntity } from '@/entities/case-file-referral';
 
 const entityModuleName = CASE_REFERRAL_ENTITIES;
 const metadataModuleName = CASE_REFERRAL_METADATA;
@@ -49,6 +50,18 @@ describe('>>> Case File Storage', () => {
     it('should proxy fetchOutcomeStatuses', () => {
       storage.actions.fetchOutcomeStatuses();
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchOutcomeStatuses`);
+    });
+
+    it('should proxy createReferral', () => {
+      const payload = mockCaseFileReferralEntity();
+      storage.actions.createReferral(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/createReferral`, payload);
+    });
+
+    it('should proxy updateReferral', () => {
+      const payload = mockCaseFileReferralEntity();
+      storage.actions.updateReferral(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateReferral`, payload);
     });
   });
 });

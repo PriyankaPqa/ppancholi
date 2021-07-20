@@ -19,7 +19,7 @@ import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.typ
 import { BaseModule } from '../base';
 import { IState } from '../base/base.types';
 
-export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssistanceTableEntity> {
+export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssistanceTableEntity, uuid> {
   constructor(readonly service: FinancialAssistanceTablesService) {
     super(service);
   }

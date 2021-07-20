@@ -7,7 +7,7 @@ export type CombinedTest = any;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Entity = any;
 
-export class BaseStorageTest extends Base<CombinedTest, Entity> {
+export class BaseStorageTest extends Base<CombinedTest, Entity, uuid> {
   public readonly store: IStore<IState>;
 
   public readonly entityModuleName: string;

@@ -9,7 +9,7 @@ import { IRootState } from '../../store.types';
 
 import { IState } from '../base/base.types';
 
-export class UserAccountEntityModule extends BaseModule <IUserAccountEntity> {
+export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uuid> {
   constructor(readonly service: UserAccountsService) {
     super(service);
   }

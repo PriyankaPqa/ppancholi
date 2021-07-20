@@ -14,7 +14,7 @@ import { IMultilingual } from '@/types';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
 
-export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> implements IStorage {
+export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }

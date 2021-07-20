@@ -1,10 +1,11 @@
-/* eslint-disable */
 import { ICaseFileReferralEntity } from '@/entities/case-file-referral';
 
 export interface ICaseFileReferralsService {
-  // addCaseFileReferral(id: uuid, caseFileReferral: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity>;
+  createReferral(item: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity>;
+  updateReferral(item: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity>;
 }
 
 export interface ICaseFileReferralsServiceMock {
-  // addCaseFileReferral: jest.Mock<ICaseFileReferralEntity>;
+  createReferral: jest.Mock<ICaseFileReferralEntity>;
+  updateReferral: jest.Mock<ICaseFileReferralEntity>;
 }

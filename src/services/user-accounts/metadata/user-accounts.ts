@@ -8,7 +8,7 @@ import { IUserAccountsMetadataService } from './user-accounts.types';
 const apiUrlSuffix = 'user-account';
 const controller = 'user-accounts/metadata';
 
-export class UserAccountsMetadataService extends DomainBaseService<IUserAccountMetadata> implements IUserAccountsMetadataService {
+export class UserAccountsMetadataService extends DomainBaseService<IUserAccountMetadata, uuid> implements IUserAccountsMetadataService {
   constructor(http: IHttpClient) {
     super(http, apiUrlSuffix, controller);
   }

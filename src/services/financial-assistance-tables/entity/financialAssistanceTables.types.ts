@@ -2,7 +2,7 @@ import { ICreateFinancialAssistanceTableRequest, IFinancialAssistanceTableEntity
 import { IOptionItem } from '@/entities/optionItem';
 import { IDomainBaseService } from '@/services/base';
 
-export interface IFinancialAssistanceTablesService extends IDomainBaseService<IFinancialAssistanceTableEntity> {
+export interface IFinancialAssistanceTablesService extends IDomainBaseService<IFinancialAssistanceTableEntity, uuid> {
   createFinancialAssistanceTable(financialAssistance: ICreateFinancialAssistanceTableRequest): Promise<IFinancialAssistanceTableEntity>;
   fetchActiveCategories(): Promise<IOptionItem[]>;
 }

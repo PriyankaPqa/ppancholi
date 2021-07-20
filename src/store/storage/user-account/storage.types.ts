@@ -11,7 +11,7 @@ import {
 } from '@/store/storage/base/base.types';
 import { IAddRoleToUserRequest } from '@/services/user-accounts/entity';
 
-export interface IActions extends IBaseActions<IUserAccountEntity, IUserAccountMetadata> {
+export interface IActions extends IBaseActions<IUserAccountEntity, IUserAccountMetadata, uuid> {
   addFilter(filter: IFilter): Promise<IUserAccountEntity>;
   editFilter(oldFilter: IFilter, newFilter: IFilter): Promise<IUserAccountEntity>;
   deleteFilter(filter: IFilter): Promise<IUserAccountEntity>;

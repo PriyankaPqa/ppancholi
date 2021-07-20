@@ -11,7 +11,7 @@ import {
 import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 
-export interface IEventsService extends IDomainBaseService<IEventEntity>{
+export interface IEventsService extends IDomainBaseService<IEventEntity, uuid>{
   createEvent(payload: IEventEntity): Promise<IEventEntity>;
 
   updateEvent(payload: IEventEntity): Promise<IEventEntity>;

@@ -3,6 +3,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseFileReferral, mockCombinedCaseFileReferrals } from '@/entities/case-file-referral';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
+import routes from '@/constants/routes';
 import Component from './CaseFileReferral.vue';
 
 const localVue = createLocalVue();
@@ -155,6 +156,43 @@ describe('CaseFileReferral.vue', () => {
           },
         }, searchEndpoints.CASE_REFERRALS);
         expect(wrapper.vm.caseFileReferralIds).toEqual(['zzz']);
+      });
+    });
+
+    describe('addCaseReferral', () => {
+      it('should redirect to the case referral add page', async () => {
+        mountWrapper();
+        wrapper.vm.addCaseReferral();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.referrals.add.name,
+        });
+      });
+    });
+
+    describe('getReferralDetailsRoute', () => {
+      it('should redirect to the case referral details page', () => {
+        mountWrapper();
+        const result = wrapper.vm.getReferralDetailsRoute({ id: 'abc' });
+        expect(result).toEqual({
+          name: routes.caseFile.referrals.details.name,
+          params: {
+            referralId: 'abc',
+          },
+        });
+      });
+    });
+
+    describe('getReferralEditRoute', () => {
+      it('should redirect to the case referral edit page', () => {
+        mountWrapper();
+        const result = wrapper.vm.getReferralEditRoute({ id: 'abc' });
+        expect(result).toEqual({
+          name: routes.caseFile.referrals.edit.name,
+          params: {
+            referralId: 'abc',
+          },
+        });
       });
     });
   });

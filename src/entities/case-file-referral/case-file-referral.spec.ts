@@ -1,3 +1,4 @@
+import { ReferralMethod } from './case-file-referral.types';
 import {
   mockCaseFileReferralEntity, CaseFileReferralEntity,
 } from './index';
@@ -40,6 +41,27 @@ describe('>>> Case File', () => {
       it('should instantiate name', () => {
         const item = new CaseFileReferralEntity(mockData);
         expect(item.name).toEqual(mockData.name);
+      });
+
+      it('should instantiate referralConsentInformation', () => {
+        const mockData = mockCaseFileReferralEntity();
+        mockData.referralConsentInformation = null;
+        let item = new CaseFileReferralEntity(mockData);
+        expect(item.referralConsentInformation).toEqual(null);
+        // eslint-disable-next-line
+        mockData.referralConsentInformation = { crcUserId: 'crcUserId', crcUserName: 'uName', dateTimeConsent: '2020/01/10' as any };
+        item = new CaseFileReferralEntity(mockData);
+        expect(item.referralConsentInformation).toEqual({ crcUserId: 'crcUserId', crcUserName: 'uName', dateTimeConsent: new Date('2020/01/10') });
+      });
+
+      it('should default method to Referral', () => {
+        const item = new CaseFileReferralEntity();
+        expect(item.method).toEqual(ReferralMethod.Referral);
+      });
+
+      it('should default type to an object', () => {
+        const item = new CaseFileReferralEntity();
+        expect(item.type).not.toBeNull();
       });
     });
   });

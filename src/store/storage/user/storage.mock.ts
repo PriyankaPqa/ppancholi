@@ -1,9 +1,12 @@
+import {
+  mockUserL1,
+} from '@/entities/user';
 import { IStorageMock } from './storage.types';
 
 export const mockStorageUser = () : IStorageMock => ({
 
   getters: {
-    user: jest.fn(),
+    user: jest.fn(() => mockUserL1()),
     userId: jest.fn(),
     landingPage: jest.fn(),
   },

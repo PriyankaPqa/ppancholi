@@ -35,6 +35,7 @@ const mockState: IFinancialAssistanceEntityState = {
   editedSubItemIndex: -1,
   newItem: mockItems()[1],
   newSubItem: mockSubItems()[1],
+  searchLoading: false,
 };
 
 const actionContext = {

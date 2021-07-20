@@ -19,7 +19,7 @@ import { IEventsService } from './events.types';
 const API_URL_SUFFIX = 'event';
 const CONTROLLER = 'events';
 
-export class EventsService extends DomainBaseService<IEventEntity> implements IEventsService {
+export class EventsService extends DomainBaseService<IEventEntity, uuid> implements IEventsService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);
   }

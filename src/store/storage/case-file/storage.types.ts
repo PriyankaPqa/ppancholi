@@ -26,7 +26,7 @@ export interface IGettersMock extends IBaseGettersMock<ICaseFileEntity, ICaseFil
   closeReasons: jest.Mock<void>;
 }
 
-export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadata> {
+export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadata, uuid> {
   fetchTagsOptions(): Promise<IOptionItem[]>;
   fetchInactiveReasons(): Promise<IOptionItem[]>;
   fetchScreeningIds(): Promise<IOptionItem[]>;

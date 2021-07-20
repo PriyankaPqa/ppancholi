@@ -7,10 +7,10 @@ import helpers from '@/ui/helpers';
 import { BaseModule } from './index';
 import { IState } from './base.types';
 
-export class BaseModuleTest extends BaseModule<any> {
-  public service: DomainBaseService<any>
+export class BaseModuleTest extends BaseModule<any, uuid> {
+  public service: DomainBaseService<any, uuid>
 
-  constructor(protected pService: DomainBaseService<any>) {
+  constructor(protected pService: DomainBaseService<any, uuid>) {
     super(pService);
   }
 
@@ -285,6 +285,17 @@ describe('Base Module', () => {
         baseModule.mutations.setAll(baseModule.state, payload);
 
         expect(baseModule.state.items).toEqual(items);
+      });
+    });
+
+    describe('setSearchLoading', () => {
+      it('should mutate the state', () => {
+        const baseModule = new BaseModuleTest(service);
+        mockUserAccountEntities();
+        baseModule.mutations.setSearchLoading(baseModule.state, true);
+        expect(baseModule.state.searchLoading).toEqual(true);
+        baseModule.mutations.setSearchLoading(baseModule.state, false);
+        expect(baseModule.state.searchLoading).toEqual(false);
       });
     });
   });

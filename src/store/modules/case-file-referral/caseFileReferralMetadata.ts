@@ -1,4 +1,4 @@
 import { BaseModule } from '@/store/modules/base';
 import { ICaseFileReferralMetadata } from '@/entities/case-file-referral';
 
-export class CaseFileReferralMetadataModule extends BaseModule<ICaseFileReferralMetadata> {}
+export class CaseFileReferralMetadataModule extends BaseModule<ICaseFileReferralMetadata, { id: uuid, caseFileId: uuid }> {}

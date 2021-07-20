@@ -10,7 +10,7 @@ import { IFinancialAssistanceTablesService } from './financialAssistanceTables.t
 const API_URL_SUFFIX = 'financial-assistance';
 const CONTROLLER = 'financial-assistance-tables';
 
-export class FinancialAssistanceTablesService extends DomainBaseService<IFinancialAssistanceTableEntity>
+export class FinancialAssistanceTablesService extends DomainBaseService<IFinancialAssistanceTableEntity, uuid>
   implements IFinancialAssistanceTablesService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);

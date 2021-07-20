@@ -10,10 +10,14 @@ import { ProgramsService } from '../programs';
 import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { UserAccountsService } from '../user-accounts/entity';
 import { EventsService } from '../events/entity';
+import { CaseFileReferralsService } from '../case-file-referrals/entity';
+import { CaseNotesService } from '../case-notes/entity';
 
 export const provider = (): IProvider => ({
   appUsers: new AppUsersService(httpClient),
   caseFiles: new CaseFilesService(httpClient),
+  caseFileNotes: new CaseNotesService(httpClient),
+  caseFileReferrals: new CaseFileReferralsService(httpClient),
   events: new EventsService(httpClient),
   optionItems: new OptionItemsService(httpClient),
   teams: new TeamsService(httpClient),

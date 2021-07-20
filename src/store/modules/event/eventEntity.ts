@@ -26,7 +26,7 @@ import { filterAndSortActiveItems, BaseModule } from '../base';
 
 import { IState } from '../base/base.types';
 
-export class EventEntityModule extends BaseModule <IEventEntity> {
+export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
   constructor(readonly service: EventsService, readonly optionsService:OptionItemsService) {
     super(service);
   }
@@ -47,7 +47,6 @@ export class EventEntityModule extends BaseModule <IEventEntity> {
     agreementTypesFetched: false,
     eventTypesFetched: false,
     getLoading: false,
-    searchLoading: false,
   }
 
   public getters = {
@@ -86,10 +85,6 @@ export class EventEntityModule extends BaseModule <IEventEntity> {
 
     setGetLoading(state: IEventEntityState, payload: boolean) {
       state.getLoading = payload;
-    },
-
-    setSearchLoading(state: IEventEntityState, payload: boolean) {
-      state.searchLoading = payload;
     },
   };
 

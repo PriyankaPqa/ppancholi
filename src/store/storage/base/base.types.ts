@@ -2,8 +2,8 @@ import { IEntity, IEntityCombined } from '@/entities/base';
 import { IAzureSearchParams } from '@/types';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
-export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity> {
-  fetch(id: uuid, { useEntityGlobalHandler, useMetadataGlobalHandler }?: {useEntityGlobalHandler:boolean, useMetadataGlobalHandler: boolean})
+export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
+  fetch(id: IdParams, { useEntityGlobalHandler, useMetadataGlobalHandler }?: {useEntityGlobalHandler:boolean, useMetadataGlobalHandler: boolean})
   : Promise<IEntityCombined<TEntity, TMetadata>>;
   fetchAll(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   fetchAllIncludingInactive(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
@@ -27,14 +27,14 @@ export interface IBaseMutations<TEntity, TMetadata> {
   setAllMetadata(payload: TMetadata[]): void;
 }
 
-export interface IStorageMake<TEntity extends IEntity, TMetadata extends IEntity> {
+export interface IStorageMake<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
   getters: IBaseGetters<TEntity, TMetadata>;
-  actions: IBaseActions<TEntity, TMetadata>;
+  actions: IBaseActions<TEntity, TMetadata, IdParams>;
   mutations: IBaseMutations<TEntity, TMetadata>;
 }
 
-export interface IBaseStorage <TEntity extends IEntity, TMetadata extends IEntity> {
-  make(): IStorageMake<TEntity, TMetadata>
+export interface IBaseStorage <TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
+  make(): IStorageMake<TEntity, TMetadata, IdParams>
 }
 
 /* ******* Mock ******** */

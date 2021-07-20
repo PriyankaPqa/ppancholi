@@ -16,6 +16,7 @@ export const mockCaseFileReferralEntity = (force? : Partial<ICaseFileReferralEnt
     optionItemId: '09bda590-ad8b-4f29-af4e-c63eedd337a0',
     specifiedOther: null,
   },
+  referralConsentInformation: null,
   ...force,
   validate: () => true,
 });

@@ -16,7 +16,7 @@ import { Base } from '../base';
 import { IStorage } from './storage.types';
 
 export class EventStorage
-  extends Base<IEventEntity, IEventMetadata> implements IStorage {
+  extends Base<IEventEntity, IEventMetadata, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }

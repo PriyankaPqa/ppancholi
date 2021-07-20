@@ -14,7 +14,7 @@ import { IUserAccountEntity } from '@/entities/user-account';
 import { BaseModule, filterAndSortActiveItems, IState } from '../base';
 import { IRootState } from '../../store.types';
 
-export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
+export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
   constructor(readonly service: CaseFilesService, readonly optionItemService: IOptionItemsService) {
     super(service);
   }
@@ -30,7 +30,6 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
   public state: ICaseFileEntityState = {
     ...this.baseState,
     tagsOptions: [] as IOptionItem[],
-    searchLoading: false,
     getLoading: false,
     duplicateLoading: false,
     inactiveReasons: [] as IOptionItem[],
@@ -80,10 +79,6 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity> {
 
     setGetLoading(state: ICaseFileEntityState, payload: boolean) {
       state.getLoading = payload;
-    },
-
-    setSearchLoading(state: ICaseFileEntityState, payload: boolean) {
-      state.searchLoading = payload;
     },
 
     setDuplicateLoading(state: ICaseFileEntityState, payload: boolean) {

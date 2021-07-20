@@ -7,7 +7,7 @@ import { ICaseNotesService } from './case-notes.types';
 const API_URL_SUFFIX = 'case-file';
 const CONTROLLER = 'case-files';
 
-export class CaseNotesService extends DomainBaseService<ICaseNoteEntity> implements ICaseNotesService {
+export class CaseNotesService extends DomainBaseService<ICaseNoteEntity, uuid> implements ICaseNotesService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);
   }

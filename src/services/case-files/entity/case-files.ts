@@ -10,7 +10,7 @@ import { ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
 const API_URL_SUFFIX = 'case-file';
 const CONTROLLER = 'case-files';
 
-export class CaseFilesService extends DomainBaseService<ICaseFileEntity> implements ICaseFilesService {
+export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> implements ICaseFilesService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);
   }

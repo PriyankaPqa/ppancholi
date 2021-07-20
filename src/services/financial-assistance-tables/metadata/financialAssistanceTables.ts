@@ -8,7 +8,7 @@ import { IFinancialAssistanceTablesMetadataService } from './financialAssistance
 const apiUrlSuffix = 'event';
 const controller = 'events/metadata';
 
-export class FinancialAssistanceTablesMetadataService extends DomainBaseService<IFinancialAssistanceTableMetadata>
+export class FinancialAssistanceTablesMetadataService extends DomainBaseService<IFinancialAssistanceTableMetadata, uuid>
   implements IFinancialAssistanceTablesMetadataService {
   constructor(http: IHttpClient) {
     super(http, apiUrlSuffix, controller);

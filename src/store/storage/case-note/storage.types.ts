@@ -16,7 +16,7 @@ export interface IGettersMock extends IBaseGettersMock<ICaseNoteEntity, ICaseNot
   caseNoteCategories: jest.Mock<IOptionItemData[]>;
 }
 
-export interface IActions extends IBaseActions<ICaseNoteEntity, ICaseNoteMetadata> {
+export interface IActions extends IBaseActions<ICaseNoteEntity, ICaseNoteMetadata, uuid> {
   fetchCaseNoteCategories(): Promise<IOptionItem[]>;
   addCaseNote(id: uuid, caseNote: ICaseNoteEntity): Promise<ICaseNoteEntity>;
   pinCaseNote(caseFileId: uuid, caseNoteId: uuid, isPinned: boolean): Promise<ICaseNoteEntity>;

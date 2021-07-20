@@ -9,7 +9,7 @@ import { Base } from '@/store/storage/base/base';
 import { IAddRoleToUserRequest } from '@/services/user-accounts/entity';
 
 export class UserAccountStorage
-  extends Base<IUserAccountEntity, IUserAccountMetadata> implements IStorage {
+  extends Base<IUserAccountEntity, IUserAccountMetadata, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }

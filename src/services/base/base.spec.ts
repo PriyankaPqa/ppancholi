@@ -32,6 +32,25 @@ describe('>>> Domain Base Service', () => {
     });
   });
 
+  describe('hierarchical urls', () => {
+    it('will replace parameters in endpoint according to idParam when object', async () => {
+      const id = { parentId: '123', id: 'abc' };
+      // eslint-disable-next-line
+      const service = new DomainBaseService<any, {parentId: string, id: string}>(http as never, API_URL_SUFFIX, CONTROLLER);
+      service.baseUrl = 'http://MyAPI/parent/{parentId}/child';
+      await service.get(id);
+      expect(http.get).toHaveBeenCalledWith('http://MyAPI/parent/123/child/abc', { globalHandler: true });
+    });
+    it('will replace parameters in endpoint according to idParam when simple string', async () => {
+      const id = 'abc';
+      // eslint-disable-next-line
+      const service = new DomainBaseService<any, uuid>(http as never, API_URL_SUFFIX, CONTROLLER);
+      service.baseUrl = 'http://MyAPI/entity';
+      await service.get(id);
+      expect(http.get).toHaveBeenCalledWith('http://MyAPI/entity/abc', { globalHandler: true });
+    });
+  });
+
   describe('getAll', () => {
     it('should call the proper endpoint', async () => {
       await service.getAll();

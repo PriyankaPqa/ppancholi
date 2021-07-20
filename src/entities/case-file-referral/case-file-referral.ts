@@ -1,6 +1,6 @@
 import { BaseEntity } from '@/entities/base/base';
 import { IListOption } from '@/types';
-import { ICaseFileReferralEntity, ReferralMethod } from './case-file-referral.types';
+import { ICaseFileReferralEntity, IReferralConsentInformation, ReferralMethod } from './case-file-referral.types';
 
 export class CaseFileReferralEntity extends BaseEntity implements ICaseFileReferralEntity {
   caseFileId: uuid;
@@ -15,7 +15,9 @@ export class CaseFileReferralEntity extends BaseEntity implements ICaseFileRefer
 
   outcomeStatus: IListOption;
 
-  constructor(data: ICaseFileReferralEntity) {
+  referralConsentInformation: IReferralConsentInformation;
+
+  constructor(data?: ICaseFileReferralEntity) {
     if (data) {
       super(data);
       this.caseFileId = data.caseFileId;
@@ -24,14 +26,19 @@ export class CaseFileReferralEntity extends BaseEntity implements ICaseFileRefer
       this.method = data.method;
       this.type = data.type;
       this.outcomeStatus = data.outcomeStatus;
+      this.referralConsentInformation = data.referralConsentInformation;
+      if (this.referralConsentInformation?.dateTimeConsent) {
+        this.referralConsentInformation.dateTimeConsent = new Date(this.referralConsentInformation.dateTimeConsent);
+      }
     } else {
       super();
       this.caseFileId = null;
       this.name = null;
       this.note = null;
-      this.method = null;
-      this.type = null;
+      this.method = ReferralMethod.Referral;
+      this.type = { optionItemId: null, specifiedOther: null };
       this.outcomeStatus = null;
+      this.referralConsentInformation = null;
     }
   }
 

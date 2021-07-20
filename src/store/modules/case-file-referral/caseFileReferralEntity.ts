@@ -11,7 +11,7 @@ import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
 
-export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralEntity> {
+export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralEntity, { id: uuid, caseFileId: uuid }> {
   constructor(readonly service: CaseFileReferralsService, readonly optionItemService: IOptionItemsService) {
     super(service);
   }
@@ -81,6 +81,24 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
         context.commit('setOutcomeStatusesFetched', true);
       }
       return context.getters.outcomeStatuses();
+    },
+
+    createReferral: async (context: ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>,
+      payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity> => {
+      const result = await this.service.createReferral(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
+
+    updateReferral: async (context: ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>,
+      payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity> => {
+      const result = await this.service.updateReferral(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
     },
   }
 }

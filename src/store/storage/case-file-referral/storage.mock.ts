@@ -20,6 +20,8 @@ export class CaseFileReferralStorageMock extends BaseMock<ICaseFileReferralCombi
     ...this.baseActions,
     fetchTypes: jest.fn(() => mockOptionItemData()),
     fetchOutcomeStatuses: jest.fn(() => mockOptionItemData()),
+    createReferral: jest.fn((payload: ICaseFileReferralEntity) => payload),
+    updateReferral: jest.fn((payload: ICaseFileReferralEntity) => payload),
   }
 
   protected mutations = {

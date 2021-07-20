@@ -21,9 +21,9 @@ export interface IStorage {
 
 export interface IStorageMock {
   getters: {
-    user: jest.Mock<void>
-    userId: jest.Mock<void>
-    landingPage: jest.Mock<void>
+    user: jest.Mock<IUser>
+    userId: jest.Mock<uuid>
+    landingPage: jest.Mock<string>
   }
 
   mutations: {

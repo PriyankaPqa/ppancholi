@@ -10,11 +10,15 @@ import { IAppUsersService, IAppUsersServiceMock } from '../app-users';
 import { IProgramsService, IProgramsServiceMock } from '../programs';
 import { IUserAccountsServiceMock, UserAccountsService } from '../user-accounts/entity';
 import { IEventsService, IEventsServiceMock } from '../events/entity';
+import { ICaseNotesService, ICaseNotesServiceMock } from '../case-notes/entity';
+import { ICaseFileReferralsService, ICaseFileReferralsServiceMock } from '../case-file-referrals/entity';
 import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '../financial-assistance-tables/entity';
 
 export interface IProvider {
   appUsers: IAppUsersService,
   caseFiles: ICaseFilesService,
+  caseFileNotes: ICaseNotesService,
+  caseFileReferrals: ICaseFileReferralsService
   events: IEventsService;
   optionItems: IOptionItemsService;
   teams: ITeamsService,
@@ -28,6 +32,8 @@ export interface IProvider {
 export interface IProviderMock {
   appUsers: IAppUsersServiceMock,
   caseFiles: ICaseFilesServiceMock,
+  caseFileNotes: ICaseNotesServiceMock,
+  caseFileReferrals: ICaseFileReferralsServiceMock,
   events: IEventsServiceMock;
   optionItems: IOptionItemsServiceMock;
   teams: ITeamsServiceMock,

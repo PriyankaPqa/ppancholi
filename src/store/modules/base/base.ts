@@ -9,8 +9,8 @@ import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResul
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 
-export class BaseModule<T extends IEntity> {
-  constructor(protected service: DomainBaseService<T>) {}
+export class BaseModule<T extends IEntity, IdParams> {
+  constructor(protected service: DomainBaseService<T, IdParams>) {}
 
   // Add or edit an item if the one pass as parameter is newer than existing one
   private upsert(state: IState<T>, item: T) {
@@ -26,6 +26,7 @@ export class BaseModule<T extends IEntity> {
 
   protected baseState = {
     items: [] as Array<T>,
+    searchLoading: false,
   }
 
   protected baseGetters = {
@@ -37,7 +38,7 @@ export class BaseModule<T extends IEntity> {
   }
 
   protected baseActions = {
-    fetch: async (context: ActionContext<IState<T>, IState<T>>, { id, useGlobalHandler }: {id: uuid, useGlobalHandler: boolean}): Promise<T> => {
+    fetch: async (context: ActionContext<IState<T>, IState<T>>, { id, useGlobalHandler }: {id: IdParams, useGlobalHandler: boolean}): Promise<T> => {
       try {
         const res = await this.service.get(id, useGlobalHandler);
         if (res) {
@@ -71,7 +72,7 @@ export class BaseModule<T extends IEntity> {
       }
     },
 
-    deactivate: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
+    deactivate: async (context: ActionContext<IState<T>, IState<T>>, id: IdParams): Promise<T> => {
       try {
         const res = await this.service.deactivate(id);
         context.commit('set', res);
@@ -81,7 +82,7 @@ export class BaseModule<T extends IEntity> {
       }
     },
 
-    activate: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
+    activate: async (context: ActionContext<IState<T>, IState<T>>, id: IdParams): Promise<T> => {
       try {
         const res = await this.service.activate(id);
         context.commit('set', res);
@@ -110,6 +111,10 @@ export class BaseModule<T extends IEntity> {
 
     upsert: (state: IState<T>, item: T) => {
       this.upsert(state, item);
+    },
+
+    setSearchLoading(state: IState<T>, payload: boolean) {
+      state.searchLoading = payload;
     },
 
   }

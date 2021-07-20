@@ -20,6 +20,7 @@ const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/v
 const CaseFileActivity = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
 const CaseNote = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-note/CaseNote.vue');
 const CaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');
+const CreateEditCaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/components/CreateEditReferral.vue');
 
 const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/layout/EventsLayout.vue');
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
@@ -195,15 +196,27 @@ export const routes: Array<RouteConfig> = [
                     component: CaseFileReferral,
                     meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
-                    children: [
-                      {
-                        path: Routes.caseFile.referrals.details.path,
-                        name: Routes.caseFile.referrals.details.name,
-                        component: CaseFileReferral,
-                        meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-                        props: true,
-                      },
-                    ],
+                  },
+                  {
+                    path: Routes.caseFile.referrals.details.path,
+                    name: Routes.caseFile.referrals.details.name,
+                    component: CaseFileReferral,
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.referrals.edit.path,
+                    name: Routes.caseFile.referrals.edit.name,
+                    component: CreateEditCaseFileReferral,
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.referrals.add.path,
+                    name: Routes.caseFile.referrals.add.name,
+                    component: CreateEditCaseFileReferral,
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
                   },
                 ],
               },
