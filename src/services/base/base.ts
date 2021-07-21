@@ -17,35 +17,51 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
     this.controller = controller;
   }
 
-  async get(id: IdParams, useGlobalHandler = true): Promise<T> {
-    return this.http.get<T>(this.getItemUrl(`${this.baseUrl}/{id}`, id), { globalHandler: useGlobalHandler });
+  /**
+   *
+   * @param idParams can be a string (the id) or an object (ex: {caseFileId: string, id: string}; used for sub-entities such as case notes or case filer referrals)
+   * @param useGlobalHandler parameter for using the global handler. Can be false for cases where no notification should be displayed even if
+   * no entity is returned, such as case file metadata for a newly created case file
+   * @returns call response
+   */
+  async get(idParams: IdParams, useGlobalHandler = true): Promise<T> {
+    return this.http.get<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams), { globalHandler: useGlobalHandler });
   }
 
-  async getAll(): Promise<T[]> {
-    return this.http.get<T[]>(`${this.baseUrl}`);
+  /**
+   *
+   * @param parentId is not passed for entities. It is the parent id for sub-entities (ex. case notes, case file referrals), and the call fetches all sub-entities
+   * of the parent entity (ex. case file) with the passed parentId
+   * @returns call response
+   */
+  async getAll(parentId?: Omit<IdParams, 'id'>): Promise<T[]> {
+    return this.http.get<T[]>(this.getItemUrl(`${this.baseUrl}`, parentId));
   }
 
   async getAllIncludingInactive(): Promise<T[]> {
     return this.http.get<T[]>(`${this.baseUrl}/all`);
   }
 
-  async activate(id: IdParams): Promise<T> {
-    return this.http.patch<T>(`${this.getItemUrl(`${this.baseUrl}/{id}`, id)}/active`);
+  async activate(idParams: IdParams): Promise<T> {
+    return this.http.patch<T>(`${this.getItemUrl(`${this.baseUrl}/{id}`, idParams)}/active`);
   }
 
-  async deactivate(id: IdParams): Promise<T> {
-    return this.http.delete<T>(this.getItemUrl(`${this.baseUrl}/{id}`, id));
+  async deactivate(idParams: IdParams): Promise<T> {
+    return this.http.delete<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams));
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<T, unknown>> {
     return this.http.get(`search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
   }
 
-  // if necessary overwrite this for your url
-  // in the case of a url like /case-files/{caseFileId}/referrals/{id}
-  // idParams would be { caseFileId: 'xxx', id: 'yyy' }
-  // for simple {id} in the url (no hierarchy) you can simply use a string
-  protected getItemUrl(url: string, idParams: IdParams) : string {
+  /**
+ * @param url
+ * @param idParams (string or object} Ex: { caseFileId: 'xxx', id: 'yyy' }
+ * If an object is passed, will replaced all {caseFileId}/{id} in the URL
+ * If a string is passed, will replaced only the {id}
+ */
+  protected getItemUrl(url: string, idParams: IdParams | Omit<IdParams, 'id'>) : string {
+    if (!idParams) return url;
     if (typeof idParams === 'object') {
       let url2 = url;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -7,7 +7,7 @@ import { CaseFileReferralsService } from '@/services/case-file-referrals/entity'
 import { OptionItemsService } from '@/services/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
-import { mockCaseFileReferralEntity } from '@/entities/case-file-referral';
+import { mockCaseFileReferralEntity, mockCaseFileReferralEntities } from '@/entities/case-file-referral';
 import { CaseFileReferralEntityModule } from './caseFileReferralEntity';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
 
@@ -51,6 +51,16 @@ describe('Case file entity module', () => {
         );
       });
     });
+
+    describe('getByCaseFile', () => {
+      test('the getter returns the referrals that have the id passed in the argument', () => {
+        const referral1 = mockCaseFileReferralEntity({id: '1', caseFileId: 'case-file-1'});
+        const referral2 = mockCaseFileReferralEntity({id: '2', caseFileId: 'case-file-2'});
+        module.mutations.setAll(module.state, [referral1, referral2]);
+        const res = module.getters.getByCaseFile(module.state)('case-file-1');
+        expect(res).toEqual([referral1]);
+      });
+    });
   });
 
   describe('mutations', () => {
@@ -72,7 +82,7 @@ describe('Case file entity module', () => {
       module.mutations.setOutcomeStatuses(module.state, items);
       expect(module.state.outcomeStatuses).toEqual(items);
     });
-    
+
     test('the setOutcomeStatusesFetched mutation sets the state', () => {
       module.mutations.setOutcomeStatusesFetched(module.state, true);
       expect(module.state.outcomeStatusesFetched).toEqual(true);

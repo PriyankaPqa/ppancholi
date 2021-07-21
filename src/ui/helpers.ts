@@ -55,7 +55,7 @@ export default {
 
   enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string) {
     const enumKeys = this.getEnumKeys(myEnum);
-    const data = [] as Array<{value: unknown, text: string}>;
+    const data = [] as Array<{ value: unknown, text: string }>;
     enumKeys.forEach((val) => {
       const value = myEnum[val];
       data.push({ value, text: i18n.t(`${translationPath}.${val}`).toString() });
@@ -122,18 +122,34 @@ export default {
    * @param searchAmong
    */
   // eslint-disable-next-line
-  filterCollectionByValue(collection: any, query: string, searchAll = true, searchAmong: Array<string> = null) {
-    return collection.filter((o: Record<string, unknown>) => Object.keys(o).some((k) => {
-      if (!searchAll && searchAmong.indexOf(k) === -1) return false;
+  filterCollectionByValue(collection: Array<any>, query: string, searchAll = true, searchAmong: Array<string> = null, deepSearch = false) {
+    return collection.filter((o: Record<string, unknown>) => {
+      const flat = deepSearch ? this.flattenObj(o) : o;
+      return Object.keys(flat).some((k) => {
+        if (!searchAll && searchAmong.indexOf(k) === -1) return false;
 
-      if (typeof o[k] === 'string') {
-        return (o[k] as string).toLowerCase().includes(query.toLowerCase());
-      }
-      return false;
-    }));
+        if (typeof flat[k] === 'string') {
+          return (flat[k] as string).toLowerCase().includes(query.toLowerCase());
+        }
+        return false;
+      });
+    });
   },
 
-  getStringDate(date: Date| string, format = 'YYYY-MM-DD'): string {
+  flattenObj(obj: Record<string, unknown>, parent?: string, res: Record<string, unknown> = {}): Record<string, unknown> {
+    Object.keys(obj).forEach((key) => {
+      // eslint-disable-next-line
+      const propName = parent ? parent + '.' + key : key;
+      if (obj[key] !== null && typeof obj[key] === 'object') {
+        this.flattenObj(obj[key] as Record<string, unknown>, propName, res);
+      } else {
+        res[propName] = obj[key];
+      }
+    });
+    return res;
+  },
+
+  getStringDate(date: Date | string, format = 'YYYY-MM-DD'): string {
     if (!date) return '';
     return moment(date).utc().format(format);
   },

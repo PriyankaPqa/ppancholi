@@ -38,9 +38,10 @@ export class BaseModule<T extends IEntity, IdParams> {
   }
 
   protected baseActions = {
-    fetch: async (context: ActionContext<IState<T>, IState<T>>, { id, useGlobalHandler }: {id: IdParams, useGlobalHandler: boolean}): Promise<T> => {
+    fetch: async (context: ActionContext<IState<T>, IState<T>>, { idParams, useGlobalHandler }: {idParams: IdParams, useGlobalHandler: boolean})
+    : Promise<T> => {
       try {
-        const res = await this.service.get(id, useGlobalHandler);
+        const res = await this.service.get(idParams, useGlobalHandler);
         if (res) {
           context.commit('set', res);
         }
@@ -50,9 +51,9 @@ export class BaseModule<T extends IEntity, IdParams> {
       }
     },
 
-    fetchAll: async (context: ActionContext<IState<T>, IState<T>>): Promise<T[]> => {
+    fetchAll: async (context: ActionContext<IState<T>, IState<T>>, parentId?: Omit<IdParams, 'id'>): Promise<T[]> => {
       try {
-        const res = await this.service.getAll();
+        const res = await this.service.getAll(parentId);
         if (res) {
           context.commit('setAll', res);
         }
@@ -72,9 +73,9 @@ export class BaseModule<T extends IEntity, IdParams> {
       }
     },
 
-    deactivate: async (context: ActionContext<IState<T>, IState<T>>, id: IdParams): Promise<T> => {
+    deactivate: async (context: ActionContext<IState<T>, IState<T>>, idParams: IdParams): Promise<T> => {
       try {
-        const res = await this.service.deactivate(id);
+        const res = await this.service.deactivate(idParams);
         context.commit('set', res);
         return res;
       } catch (e) {
@@ -82,9 +83,9 @@ export class BaseModule<T extends IEntity, IdParams> {
       }
     },
 
-    activate: async (context: ActionContext<IState<T>, IState<T>>, id: IdParams): Promise<T> => {
+    activate: async (context: ActionContext<IState<T>, IState<T>>, idParams: IdParams): Promise<T> => {
       try {
-        const res = await this.service.activate(id);
+        const res = await this.service.activate(idParams);
         context.commit('set', res);
         return res;
       } catch (e) {

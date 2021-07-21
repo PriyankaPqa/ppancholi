@@ -3,9 +3,9 @@ import { IAzureSearchParams } from '@/types';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
 export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
-  fetch(id: IdParams, { useEntityGlobalHandler, useMetadataGlobalHandler }?: {useEntityGlobalHandler:boolean, useMetadataGlobalHandler: boolean})
-  : Promise<IEntityCombined<TEntity, TMetadata>>;
-  fetchAll(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
+  fetch(idParams: IdParams, { useEntityGlobalHandler, useMetadataGlobalHandler }?
+    : {useEntityGlobalHandler:boolean, useMetadataGlobalHandler: boolean}) : Promise<IEntityCombined<TEntity, TMetadata>>;
+  fetchAll(id?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   fetchAllIncludingInactive(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   deactivate(id: uuid): Promise<TEntity>;
   activate(id: uuid): Promise<TEntity>;

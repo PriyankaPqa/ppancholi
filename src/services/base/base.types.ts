@@ -3,11 +3,11 @@ import { IAzureSearchParams } from '@/types';
 import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
 
 export interface IDomainBaseService<T extends IEntity, IdParams> {
-  get(id: IdParams, useGlobalHandler?: boolean): Promise<T>;
-  getAll(): Promise<T[]>;
+  get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T>;
+  getAll(parentId?: Omit<IdParams, 'id'>): Promise<T[]>;
   getAllIncludingInactive(): Promise<T[]>;
-  activate(id: IdParams): Promise<T>;
-  deactivate(id: IdParams): Promise<T>;
+  activate(idParams: IdParams): Promise<T>;
+  deactivate(idParams: IdParams): Promise<T>;
   search(params: IAzureSearchParams, searchEndpoint?: string): Promise<IAzureCombinedSearchResult<T, unknown>>;
 }
 

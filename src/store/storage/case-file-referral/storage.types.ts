@@ -8,6 +8,7 @@ import {
 export interface IGetters extends IBaseGetters<ICaseFileReferralEntity, ICaseFileReferralMetadata> {
   types(filterOutInactive?: boolean, actualValue?: string[] | string): Array<IOptionItem>;
   outcomeStatuses(filterOutInactive?: boolean, actualValue?: string[] | string): Array<IOptionItem>;
+  getByCaseFile(id: uuid): Array<IEntityCombined<ICaseFileReferralEntity, ICaseFileReferralMetadata>>;
 }
 
 export interface IGettersMock extends IBaseGettersMock<ICaseFileReferralEntity, ICaseFileReferralMetadata> {

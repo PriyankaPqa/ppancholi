@@ -18,6 +18,14 @@ export class CaseFileReferralStorage
 
     // eslint-disable-next-line
     outcomeStatuses: (filterOutInactive = true, actualValue?: string[] | string): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/outcomeStatuses`](filterOutInactive, actualValue),
+
+    getByCaseFile: (caseFileId: uuid) => {
+      const entities = this.store.getters[`${this.entityModuleName}/getByCaseFile`](caseFileId) as Array<ICaseFileReferralEntity>;
+      const ids = entities.map((e) => e.id);
+      const metadata = this.store.getters[`${this.metadataModuleName}/getByIds`](ids);
+
+      return this.combinedCollections(entities, metadata);
+    },
   }
 
   private actions = {

@@ -18,7 +18,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     this.entityModuleName = pEntityModuleName;
   }
 
-  private combinedCollections(entity: Array<TEntity>, metadata: Array<TMetadata>): Array<IEntityCombined<TEntity, TMetadata>> {
+  protected combinedCollections(entity: Array<TEntity>, metadata: Array<TMetadata>): Array<IEntityCombined<TEntity, TMetadata>> {
     if (!Array.isArray(entity)) {
       return [];
     }
@@ -75,20 +75,20 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
   }
 
   protected baseActions = {
-    fetch: async (id: IdParams,
+    fetch: async (idParams: IdParams,
       { useEntityGlobalHandler, useMetadataGlobalHandler } = { useEntityGlobalHandler: true, useMetadataGlobalHandler: true })
       : Promise<IEntityCombined<TEntity, TMetadata>> => {
-      const entity = await this.store.dispatch(`${this.entityModuleName}/fetch`, { id, useGlobalHandler: useEntityGlobalHandler });
-      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetch`, { id, useGlobalHandler: useMetadataGlobalHandler });
+      const entity = await this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler });
+      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler });
       return {
         entity,
         metadata,
       };
     },
 
-    fetchAll: async (): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
-      const entities = await this.store.dispatch(`${this.entityModuleName}/fetchAll`);
-      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetchAll`);
+    fetchAll: async (parentId?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
+      const entities = await this.store.dispatch(`${this.entityModuleName}/fetchAll`, parentId);
+      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetchAll`, parentId);
       return this.combinedCollections(entities, metadata);
     },
 

@@ -1,5 +1,6 @@
 import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
 import { ActionContext, ActionTree } from 'vuex';
+import _cloneDeep from 'lodash/cloneDeep';
 import {
   EOptionLists,
   IOptionItem,
@@ -40,6 +41,8 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
 
     // eslint-disable-next-line
     outcomeStatuses: (state:ICaseFileReferralEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.outcomeStatuses, filterOutInactive, actualValue),
+
+    getByCaseFile: (state: ICaseFileReferralEntityState) => (caseFileId: uuid) => _cloneDeep(state.items.filter((x) => x.caseFileId === caseFileId)),
   }
 
   public mutations = {

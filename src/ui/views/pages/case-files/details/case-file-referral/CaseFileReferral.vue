@@ -18,21 +18,21 @@
         <router-link
           class="rc-link14 font-weight-bold pr-1"
           data-test="referralDetail-link"
-          :to="getReferralDetailsRoute(item)">
+          :to="getReferralDetailsRoute(item.id)">
           {{ item.name }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.refType}`]="{ item }">
-        {{ refType(item) }}
+        {{ item.refType }}
       </template>
 
       <template #[`item.${customColumns.outcomeStatus}`]="{ item }">
-        {{ outcomeStatus(item) }}
+        {{ item.outcomeStatus }}
       </template>
 
       <template v-if="canEdit" #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn icon :to="getReferralEditRoute(item)" data-test="editReferral-link">
+        <v-btn icon :to="getReferralEditRoute(item.id)" data-test="editReferral-link">
           <v-icon>
             mdi-pencil
           </v-icon>
@@ -45,14 +45,22 @@
 <script lang="ts">
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
+import _orderBy from 'lodash/orderBy';
 import {
   RcDataTable,
 } from '@crctech/component-library';
-import * as searchEndpoints from '@/constants/searchEndpoints';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { ICaseFileReferralEntity } from '@/entities/case-file-referral';
 import { IAzureSearchParams } from '@/types';
 import routes from '@/constants/routes';
+import helpers from '@/ui/helpers';
+
+interface caseFileReferralsMapped {
+  name: string;
+  id: string;
+  refType: string;
+  outcomeStatus: string;
+}
 
 export default Vue.extend({
   name: 'CaseFileReferral',
@@ -65,14 +73,12 @@ export default Vue.extend({
 
   data() {
     return {
-      caseFileReferralIds: [] as string[],
+      caseFileId: this.$route.params.id,
       options: {
-        sortBy: ['Entity/Name'],
+        sortBy: ['name'],
         sortDesc: [false],
       },
-      filter: {
-        'Entity/CaseFileId': this.$route.params.id,
-      },
+      filter: '',
     };
   },
 
@@ -81,32 +87,31 @@ export default Vue.extend({
       return this.$hasLevel('level1');
     },
 
-    caseFileReferrals(): ICaseFileReferralEntity[] {
-      const referrals = this.$storage.caseFileReferral.getters.getByIds(this.caseFileReferralIds);
-      return referrals.map((x) => x.entity);
+    caseFileReferralsMapped():caseFileReferralsMapped[] {
+      const referralsByCaseFile = this.$storage.caseFileReferral.getters.getByCaseFile(this.caseFileId) || [];
+      return referralsByCaseFile.map((x) => ({
+        name: x.entity.name,
+        id: x.entity.id,
+        refType: this.getRefType(x.entity),
+        outcomeStatus: this.getOutcomeStatus(x.entity),
+      }));
     },
 
-    refType() {
-      return (item: ICaseFileReferralEntity) => {
-        if (!item?.type?.optionItemId) return '';
-        const opt = this.$storage.caseFileReferral.getters.types(false).find((x) => x.id === item.type.optionItemId);
-        return opt ? this.$m(opt.name) : '';
-      };
-    },
-
-    outcomeStatus() {
-      return (item: ICaseFileReferralEntity) => {
-        if (!item?.outcomeStatus?.optionItemId) return '';
-        const opt = this.$storage.caseFileReferral.getters.outcomeStatuses(false).find((x) => x.id === item.outcomeStatus.optionItemId);
-        return opt ? this.$m(opt.name) : '';
-      };
+    // computeds are split here in 3 to get caseFileReferrals (caseFileReferralsByCaseFile, caseFileReferralsMapped, caseFileReferrals)
+    // so that only what changed gets reevaluated (reordering doesnt go to store for example)
+    caseFileReferrals(): caseFileReferralsMapped[] {
+      let referrals = this.caseFileReferralsMapped;
+      if (this.filter) {
+        referrals = helpers.filterCollectionByValue(referrals, this.filter, false, Object.values(this.customColumns));
+      }
+      return _orderBy(referrals, this.options.sortBy[0], this.options.sortDesc[0] ? 'desc' : 'asc');
     },
 
     customColumns(): Record<string, string> {
       return {
-        name: 'Entity/Name',
-        refType: `Metadata/ReferralTypeName/Translation/${this.$i18n.locale}`,
-        outcomeStatus: `Metadata/ReferralOutcomeStatusName/Translation/${this.$i18n.locale}`,
+        name: 'name',
+        refType: 'refType',
+        outcomeStatus: 'outcomeStatus',
         edit: 'edit',
       };
     },
@@ -149,18 +154,24 @@ export default Vue.extend({
   async created() {
     await this.$storage.caseFileReferral.actions.fetchTypes();
     await this.$storage.caseFileReferral.actions.fetchOutcomeStatuses();
+    await this.$storage.caseFileReferral.actions.fetchAll({ caseFileId: this.caseFileId });
   },
 
   methods: {
-    async fetchData(searchParams?: IAzureSearchParams) {
-      searchParams.top = null;
-      searchParams.skip = null;
-      searchParams.filter = this.filter;
-      const res = await this.$storage.caseFileReferral.actions.search(searchParams, searchEndpoints.CASE_REFERRALS);
-      if (res) {
-        this.caseFileReferralIds = res.ids;
-      }
-      return res;
+    search(searchParams?: IAzureSearchParams) {
+      this.filter = searchParams?.search;
+    },
+
+    getRefType(item: ICaseFileReferralEntity) {
+      if (!item?.type?.optionItemId) return '';
+      const opt = this.$storage.caseFileReferral.getters.types(false).find((x) => x.id === item.type.optionItemId);
+      return opt ? this.$m(opt.name) : '';
+    },
+
+    getOutcomeStatus(item: ICaseFileReferralEntity) {
+      if (!item?.outcomeStatus?.optionItemId) return '';
+      const opt = this.$storage.caseFileReferral.getters.outcomeStatuses(false).find((x) => x.id === item.outcomeStatus.optionItemId);
+      return opt ? this.$m(opt.name) : '';
     },
 
     addCaseReferral() {
@@ -169,20 +180,20 @@ export default Vue.extend({
       });
     },
 
-    getReferralDetailsRoute(item: ICaseFileReferralEntity) {
+    getReferralDetailsRoute(id: string) {
       return {
         name: routes.caseFile.referrals.details.name,
         params: {
-          referralId: item.id,
+          referralId: id,
         },
       };
     },
 
-    getReferralEditRoute(item: ICaseFileReferralEntity) {
+    getReferralEditRoute(id: string) {
       return {
         name: routes.caseFile.referrals.edit.name,
         params: {
-          referralId: item.id,
+          referralId: id,
         },
       };
     },
