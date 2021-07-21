@@ -45,14 +45,12 @@ export const mockIndigenousIdentitiesGetData = (): IAzureSearchResult<IIndigenou
   odataCount: 1,
   value: [
     {
-      province: 4,
       communityType: 1,
       communityName: 'Eel River Bar First Nations',
       id: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
       status: 1,
     },
     {
-      province: 4,
       communityType: 1,
       communityName: "Metepenagiag Mi'kmaq Nation",
       id: 'c68b30e0-e348-544d-ba7e-7e8486972774',

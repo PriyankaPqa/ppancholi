@@ -7,7 +7,6 @@ export interface IBirthDate {
 }
 
 export interface IIndigenousIdentityData {
-  province: number;
   communityType: number;
   communityName: string;
   id: string;
