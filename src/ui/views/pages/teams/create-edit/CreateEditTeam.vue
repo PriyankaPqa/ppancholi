@@ -54,10 +54,9 @@
                       :label="`${$t('teams.form.primary_contact')}*`"
                       :items="primaryContactUsers"
                       item-text="displayName"
-                      item-value="emailAddress"
                       :search-input.sync="primaryContactQuery"
                       :rules="rules.primaryContact"
-                      :value="(currentPrimaryContact || {}).emailAddress"
+                      :value="currentPrimaryContact"
                       hide-no-data
                       hide-selected
                       return-object
