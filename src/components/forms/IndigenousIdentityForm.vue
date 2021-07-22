@@ -11,7 +11,7 @@
         :loading="loading"
         clearable
         :disabled="loading"
-        :label="`${$t('registration.personal_info.indigenousType.select.label')}*`"
+        :label="`${$t('registration.personal_info.indigenousType.select.label')}`"
         :items="indigenousTypesItems"
         :rules="rules.indigenousType"
         :data-test="`${prefixDataTest}__indigenousType`"
