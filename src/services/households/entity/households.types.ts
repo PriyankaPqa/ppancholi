@@ -3,7 +3,7 @@ import {
   IContactInformation, ICurrentAddress,
   IHouseholdCreate, IIdentitySet, IIndigenousIdentityData, IMember, IMemberData,
 } from '../../../entities/household-create';
-import { IAzureSearchResult, IOptionItemData } from '../../../types';
+import { IOptionItemData } from '../../../types';
 import {
   IHouseholdEntity,
 } from '../../../entities/household';
@@ -12,7 +12,7 @@ export interface IHouseholdsService {
   getGenders(): Promise<IOptionItemData[]>;
   getPreferredLanguages(): Promise<IOptionItemData[]>;
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
-  getIndigenousIdentities(): Promise<IAzureSearchResult<IIndigenousIdentityData>>;
+  getIndigenousIdentities(): Promise<IIndigenousIdentityData[]>;
   getPerson(id: uuid): Promise<IMemberData>;
   submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
@@ -29,7 +29,7 @@ export interface IHouseholdsServiceMock {
   getGenders: jest.Mock<IOptionItemData[]>;
   getPreferredLanguages: jest.Mock<IOptionItemData[]>;
   getPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
-  getIndigenousIdentities: jest.Mock<IAzureSearchResult<IIndigenousIdentityData>>;
+  getIndigenousIdentities: jest.Mock<IIndigenousIdentityData[]>;
   submitRegistration: jest.Mock<IHouseholdEntity>;
   getPerson: jest.Mock<IMemberData>;
   submitCRCRegistration: jest.Mock<IHouseholdEntity>;

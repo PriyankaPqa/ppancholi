@@ -144,7 +144,7 @@ describe('>>> Registration Module', () => {
 
     describe('indigenousTypesItems', () => {
       it('returns indigenousTypesItems', () => {
-        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesGetData().value;
+        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesGetData();
         expect(store.getters['registration/indigenousTypesItems'])
           .toEqual(mockIndigenousTypesItems());
       });
@@ -152,7 +152,7 @@ describe('>>> Registration Module', () => {
 
     describe('indigenousCommunitiesItems', () => {
       it('returns indigenousCommunitiesItems', () => {
-        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesGetData().value;
+        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesGetData();
         expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.FirstNations))
           .toEqual(mockIndigenousCommunitiesItems());
       });
@@ -373,7 +373,7 @@ describe('>>> Registration Module', () => {
 
     describe('setIndigenousIdentities', () => {
       it('should set indigenousIdentities', () => {
-        const payload = mockIndigenousIdentitiesGetData().value[0];
+        const payload = mockIndigenousIdentitiesGetData()[0];
         store.commit('registration/setIndigenousIdentities', { identities: payload });
         expect(store.state.registration.indigenousIdentities).toEqual(payload);
       });

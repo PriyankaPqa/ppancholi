@@ -2,7 +2,7 @@ import moment from 'moment';
 import { IHttpClient } from '../../httpClient';
 import { IHouseholdEntity } from '../../../entities/household';
 import {
-  ECanadaProvinces, ERegistrationMode, IAzureSearchResult, IOptionItemData,
+  ECanadaProvinces, ERegistrationMode, IOptionItemData,
 } from '../../../types';
 import {
   IAddressData,
@@ -43,7 +43,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.get<IOptionItemData[]>(`${this.baseApi}/primary-spoken-languages`);
   }
 
-  async getIndigenousIdentities(): Promise<IAzureSearchResult<IIndigenousIdentityData>> {
+  async getIndigenousIdentities(): Promise<IIndigenousIdentityData[]> {
     return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 

@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge';
 import {
-  ECanadaProvinces, IAzureSearchResult, IOptionItemData,
+  ECanadaProvinces, IOptionItemData,
 } from '../../../types';
 import {
   EIndigenousTypes, IIndigenousIdentityData, IIdentitySetData, IIdentitySet, IIdentitySetCreateRequest,
@@ -40,24 +40,20 @@ export const mockGenders = (): IOptionItemData[] => [
   mockGenderMale(),
 ];
 
-export const mockIndigenousIdentitiesGetData = (): IAzureSearchResult<IIndigenousIdentityData> => ({
-  odataContext: 'test',
-  odataCount: 1,
-  value: [
-    {
-      communityType: 1,
-      communityName: 'Eel River Bar First Nations',
-      id: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
-      status: 1,
-    },
-    {
-      communityType: 1,
-      communityName: "Metepenagiag Mi'kmaq Nation",
-      id: 'c68b30e0-e348-544d-ba7e-7e8486972774',
-      status: 1,
-    },
-  ],
-});
+export const mockIndigenousIdentitiesGetData = (): IIndigenousIdentityData[] => [
+  {
+    communityType: 1,
+    communityName: 'Eel River Bar First Nations',
+    id: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
+    status: 1,
+  },
+  {
+    communityType: 1,
+    communityName: "Metepenagiag Mi'kmaq Nation",
+    id: 'c68b30e0-e348-544d-ba7e-7e8486972774',
+    status: 1,
+  },
+];
 
 export const mockIndigenousTypesItems = (): Record<string, unknown>[] => [
   {
