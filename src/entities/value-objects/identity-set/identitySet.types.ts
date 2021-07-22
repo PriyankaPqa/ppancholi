@@ -6,7 +6,7 @@ export interface IBirthDate {
   year?: number | string;
 }
 
-export interface IIndigenousIdentityData {
+export interface IIndigenousCommunityData {
   communityType: number;
   communityName: string;
   id: string;

@@ -19,7 +19,7 @@
       :i18n="i18n"
       :indigenous-communities-items="indigenousCommunitiesItems"
       :indigenous-types-items="indigenousTypesItems"
-      :loading="loadingIndigenousIdentities"
+      :loading="loadingIndigenousCommunities"
       @change="setIndigenousIdentity($event)" />
   </v-row>
 </template>
@@ -92,8 +92,8 @@ export default Vue.extend({
       return this.$storage.registration.getters.indigenousCommunitiesItems(this.identitySet.indigenousType);
     },
 
-    loadingIndigenousIdentities(): boolean {
-      return this.$store.state.registration.loadingIndigenousIdentities;
+    loadingIndigenousCommunities(): boolean {
+      return this.$store.state.registration.loadingIndigenousCommunities;
     },
 
     canadianProvincesItems(): Record<string, unknown>[] {
@@ -101,8 +101,8 @@ export default Vue.extend({
     },
   },
   async created() {
-    // Load IngigenousIdentities as soon as the page loads
-    await this.$storage.registration.actions.fetchIndigenousIdentities();
+    // Load IngigenousCommunities as soon as the page loads
+    await this.$storage.registration.actions.fetchIndigenousCommunities();
   },
   methods: {
     setIdentity(form: IIdentitySet) {

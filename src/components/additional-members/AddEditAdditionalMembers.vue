@@ -24,7 +24,7 @@
             :indigenous-communities-items="indigenousCommunitiesItems"
             :indigenous-types-items="indigenousTypesItems"
             :current-address-type-items="currentAddressTypeItems"
-            :loading="loadingIndigenousIdentities"
+            :loading="loadingIndigenousCommunities"
             :member="member"
             @identity-change="setIdentity($event)"
             @indigenous-identity-change="setIndigenousIdentity($event)" />
@@ -125,8 +125,8 @@ export default Vue.extend({
       );
     },
 
-    loadingIndigenousIdentities(): boolean {
-      return this.$store.state.registration.loadingIndigenousIdentities;
+    loadingIndigenousCommunities(): boolean {
+      return this.$store.state.registration.loadingIndigenousCommunities;
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {

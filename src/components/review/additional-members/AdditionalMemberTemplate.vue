@@ -26,7 +26,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CurrentAddressTemplate from '../addresses/CurrentAddressTemplate.vue';
 import helpers from '../../../ui/helpers';
-import { EIndigenousTypes, IIndigenousIdentityData, IMember } from '../../../entities/household-create';
+import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '../../../entities/household-create';
 
 export default Vue.extend({
   name: 'AdditionalMemberTemplate',
@@ -45,8 +45,8 @@ export default Vue.extend({
 
       const type = m.identitySet.indigenousType ? this.$t(`common.indigenous.types.${EIndigenousTypes[m.identitySet.indigenousType]}`) : '';
 
-      const community = this.$store.state.registration.indigenousIdentities
-        .find((i: IIndigenousIdentityData) => i.id === m.identitySet.indigenousCommunityId);
+      const community = this.$store.state.registration.indigenousCommunities
+        .find((i: IIndigenousCommunityData) => i.id === m.identitySet.indigenousCommunityId);
 
       if (m.identitySet.indigenousType === EIndigenousTypes.Other) {
         return `${type}, ${m.identitySet.indigenousCommunityOther}`;

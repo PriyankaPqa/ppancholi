@@ -3,7 +3,7 @@ import {
   ECanadaProvinces, IOptionItemData,
 } from '../../../types';
 import {
-  EIndigenousTypes, IIndigenousIdentityData, IIdentitySetData, IIdentitySet, IIdentitySetCreateRequest,
+  EIndigenousTypes, IIndigenousCommunityData, IIdentitySetData, IIdentitySet, IIdentitySetCreateRequest,
 } from './identitySet.types';
 import { IdentitySet } from './identitySet';
 
@@ -40,7 +40,7 @@ export const mockGenders = (): IOptionItemData[] => [
   mockGenderMale(),
 ];
 
-export const mockIndigenousIdentitiesGetData = (): IIndigenousIdentityData[] => [
+export const mockIndigenousCommunitiesGetData = (): IIndigenousCommunityData[] => [
   {
     communityType: 1,
     communityName: 'Eel River Bar First Nations',

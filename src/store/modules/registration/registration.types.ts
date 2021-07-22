@@ -3,7 +3,7 @@ import { IError } from '../../../services/httpClient';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 import {
   HouseholdCreate,
-  IIndigenousIdentityData,
+  IIndigenousCommunityData,
 } from '../../../entities/household-create';
 
 import { IHouseholdEntity } from '../../../entities/household';
@@ -17,8 +17,8 @@ export type IState = {
   genders: IOptionItemData[];
   preferredLanguages: IOptionItemData[];
   primarySpokenLanguages: IOptionItemData[];
-  indigenousIdentities: IIndigenousIdentityData[];
-  loadingIndigenousIdentities: boolean;
+  indigenousCommunities: IIndigenousCommunityData[];
+  loadingIndigenousCommunities: boolean;
   isPrivacyAgreed: boolean;
   registrationResponse: IHouseholdEntity;
   registrationErrors: IError[];

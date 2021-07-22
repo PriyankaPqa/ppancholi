@@ -10,7 +10,7 @@ import {
   IContactInformation,
   IContactInformationCreateRequest,
   ICreateHouseholdRequest,
-  IIndigenousIdentityData,
+  IIndigenousCommunityData,
   IMember,
   ICurrentAddress,
   ICurrentAddressCreateRequest,
@@ -43,7 +43,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.get<IOptionItemData[]>(`${this.baseApi}/primary-spoken-languages`);
   }
 
-  async getIndigenousIdentities(): Promise<IIndigenousIdentityData[]> {
+  async getIndigenousCommunities(): Promise<IIndigenousCommunityData[]> {
     return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 

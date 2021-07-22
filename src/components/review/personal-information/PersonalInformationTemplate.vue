@@ -16,7 +16,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import helpers from '../../../ui/helpers';
 import {
-  EIndigenousTypes, IContactInformation, IIdentitySet, IIndigenousIdentityData,
+  EIndigenousTypes, IContactInformation, IIdentitySet, IIndigenousCommunityData,
 } from '../../../entities/household-create';
 
 export default Vue.extend({
@@ -165,8 +165,8 @@ export default Vue.extend({
       const p = this.personalInformation;
 
       const type = p.indigenousType ? this.$t(`common.indigenous.types.${EIndigenousTypes[p.indigenousType]}`) : '';
-      const community = this.$store.state.registration.indigenousIdentities
-        .find((i: IIndigenousIdentityData) => i.id === p.indigenousCommunityId);
+      const community = this.$store.state.registration.indigenousCommunities
+        .find((i: IIndigenousCommunityData) => i.id === p.indigenousCommunityId);
 
       if (this.otherIndigenousType) {
         return `${type}, ${p.indigenousCommunityOther}`;

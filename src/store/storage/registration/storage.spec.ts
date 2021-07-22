@@ -282,9 +282,9 @@ describe('>>> Registration Storage', () => {
       storage.actions.fetchPrimarySpokenLanguages();
       expect(store.dispatch).toBeCalledWith('registration/fetchPrimarySpokenLanguages');
     });
-    it('should proxy fetchIndigenousIdentities', () => {
-      storage.actions.fetchIndigenousIdentities();
-      expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousIdentities');
+    it('should proxy fetchIndigenousCommunities', () => {
+      storage.actions.fetchIndigenousCommunities();
+      expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousCommunities');
     });
 
     it('should proxy submitRegistration', () => {

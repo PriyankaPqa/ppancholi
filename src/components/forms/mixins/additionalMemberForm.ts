@@ -72,8 +72,8 @@ export default Vue.extend({
       return [];
     },
 
-    loadingIndigenousIdentities(): boolean {
-      return this.$store.state.registration.loadingIndigenousIdentities;
+    loadingIndigenousCommunities(): boolean {
+      return this.$store.state.registration.loadingIndigenousCommunities;
     },
 
     currentAdditionalMember(): IMember {

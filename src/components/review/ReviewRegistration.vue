@@ -91,7 +91,7 @@
               :canadian-provinces-items="canadianProvincesItems"
               :indigenous-communities-items="indigenousCommunitiesItems"
               :indigenous-types-items="indigenousTypesItems"
-              :loading="loadingIndigenousIdentities"
+              :loading="loadingIndigenousCommunities"
               :member="member"
               :same-address.sync="additionalMembers[index].sameAddress"
               :shelter-locations="shelterLocations"

@@ -23,7 +23,7 @@ describe('AdditionalMemberTemplate.vue', () => {
         modules: {
           registration: {
             state: {
-              indigenousIdentities: [{
+              indigenousCommunities: [{
                 id: 'guid-community',
                 communityName: 'communityName',
               }],

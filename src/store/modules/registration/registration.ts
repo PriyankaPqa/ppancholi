@@ -17,7 +17,7 @@ import {
   HouseholdCreate,
   EIndigenousTypes,
   IHouseholdCreate,
-  IIndigenousIdentityData,
+  IIndigenousCommunityData,
   IContactInformation,
   IdentitySet,
   ContactInformation,
@@ -44,8 +44,8 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   genders: [],
   preferredLanguages: [],
   primarySpokenLanguages: [],
-  indigenousIdentities: [],
-  loadingIndigenousIdentities: false,
+  indigenousCommunities: [],
+  loadingIndigenousCommunities: false,
   registrationResponse: null,
   registrationErrors: [],
   submitLoading: false,
@@ -91,9 +91,9 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   primarySpokenLanguages: (state: IState) => _sortBy(state.primarySpokenLanguages, 'orderRank'),
 
   indigenousTypesItems: (state: IState) => {
-    const identities = state.indigenousIdentities;
-    if (identities) {
-      const a = [...new Set(identities.map((identity) => identity.communityType))]
+    const communities = state.indigenousCommunities;
+    if (communities) {
+      const a = [...new Set(communities.map((community) => community.communityType))]
         .map((typeNumber: number) => {
           const indigenousType: string = EIndigenousTypes[typeNumber];
           return {
@@ -109,11 +109,11 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   },
 
   indigenousCommunitiesItems: (state: IState) => (indigenousType: EIndigenousTypes) => {
-    const identities = state.indigenousIdentities;
-    if (identities) {
-      const items = identities
-        .filter((i: IIndigenousIdentityData) => i.communityType === indigenousType)
-        .map((i: IIndigenousIdentityData) => ({
+    const commmunities = state.indigenousCommunities;
+    if (commmunities) {
+      const items = commmunities
+        .filter((i: IIndigenousCommunityData) => i.communityType === indigenousType)
+        .map((i: IIndigenousCommunityData) => ({
           value: i.id,
           text: i.communityName,
         }));
@@ -237,12 +237,12 @@ const mutations = (): MutationTree<IState> => ({
     state.primarySpokenLanguages = payload;
   },
 
-  setIndigenousIdentities(state: IState, { identities }: {identities: IIndigenousIdentityData[]}) {
-    state.indigenousIdentities = identities;
+  setIndigenousCommunities(state: IState, { communities }: {communities: IIndigenousCommunityData[]}) {
+    state.indigenousCommunities = communities;
   },
 
-  setLoadingIndigenousIdentities(state: IState, payload: boolean) {
-    state.loadingIndigenousIdentities = payload;
+  setLoadingIndigenousCommunities(state: IState, payload: boolean) {
+    state.loadingIndigenousCommunities = payload;
   },
 
   setPrivacyCRCUsername(state: IState, payload: string) {
@@ -400,28 +400,28 @@ const actions = (mode: ERegistrationMode) => ({
     return data;
   },
 
-  async fetchIndigenousIdentities(
+  async fetchIndigenousCommunities(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
-  ): Promise<IIndigenousIdentityData[]> {
-    let identities: IIndigenousIdentityData[] = context.state.indigenousIdentities;
+  ): Promise<IIndigenousCommunityData[]> {
+    let communities: IIndigenousCommunityData[] = context.state.indigenousCommunities;
 
-    if (identities.length === 0) {
-      context.commit('setLoadingIndigenousIdentities', true);
+    if (communities.length === 0) {
+      context.commit('setLoadingIndigenousCommunities', true);
 
       try {
-        const result = await this.$services.households.getIndigenousIdentities();
+        const result = await this.$services.households.getIndigenousCommunities();
 
         if (result?.length > 0) {
-          identities = result.filter((entry: IIndigenousIdentityData) => entry.status === EOptionItemStatus.Active);
+          communities = result.filter((entry: IIndigenousCommunityData) => entry.status === EOptionItemStatus.Active);
         }
       } finally {
-        context.commit('setIndigenousIdentities', { identities });
-        context.commit('setLoadingIndigenousIdentities', false);
+        context.commit('setIndigenousCommunities', { communities });
+        context.commit('setLoadingIndigenousCommunities', false);
       }
     }
 
-    return identities;
+    return communities;
   },
 
   async submitRegistration(

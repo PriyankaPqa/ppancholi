@@ -36,8 +36,8 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/primary-spoken-languages`);
   });
 
-  test('getIndigenousIdentities is linked to the correct URL', async () => {
-    await service.getIndigenousIdentities();
+  test('getIndigenousCommunities is linked to the correct URL', async () => {
+    await service.getIndigenousCommunities();
     expect(http.get).toHaveBeenCalledWith(`${API_URL_SUFFIX}/indigenous-communities`);
   });
 

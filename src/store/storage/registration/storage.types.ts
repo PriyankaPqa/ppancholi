@@ -6,7 +6,7 @@ import { IError } from '../../../services/httpClient';
 
 import { IEvent, IEventData } from '../../../entities/event';
 import {
-  IIndigenousIdentityData,
+  IIndigenousCommunityData,
   EIndigenousTypes,
   IContactInformation,
   IMember,
@@ -78,7 +78,7 @@ export interface IStorage {
     fetchGenders(): Promise<IOptionItemData[]>;
     fetchPreferredLanguages(): Promise<IOptionItemData[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
-    fetchIndigenousIdentities(): Promise<IIndigenousIdentityData[]>;
+    fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
     submitRegistration(): Promise<IHouseholdEntity>;
   };
 }
@@ -145,7 +145,7 @@ export interface IStorageMock {
     fetchGenders: jest.Mock<IOptionItemData[]>;
     fetchPreferredLanguages: jest.Mock<IOptionItemData[]>;
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
-    fetchIndigenousIdentities: jest.Mock<IIndigenousIdentityData[]>;
+    fetchIndigenousCommunities: jest.Mock<IIndigenousCommunityData[]>;
     submitRegistration: jest.Mock<IHouseholdEntity>;
   };
 }

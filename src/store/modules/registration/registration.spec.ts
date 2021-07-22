@@ -12,7 +12,7 @@ import {
   EIndigenousTypes,
   mockGenders,
   mockIndigenousCommunitiesItems,
-  mockIndigenousIdentitiesGetData,
+  mockIndigenousCommunitiesGetData,
   mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
@@ -43,8 +43,8 @@ describe('>>> Registration Module', () => {
           genders: [],
           preferredLanguages: [],
           primarySpokenLanguages: [],
-          indigenousIdentities: [],
-          loadingIndigenousIdentities: false,
+          indigenousCommunities: [],
+          loadingIndigenousCommunities: false,
           registrationResponse: null,
           registrationErrors: [],
           submitLoading: false,
@@ -144,7 +144,7 @@ describe('>>> Registration Module', () => {
 
     describe('indigenousTypesItems', () => {
       it('returns indigenousTypesItems', () => {
-        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesGetData();
+        store.state.registration.indigenousCommunities = mockIndigenousCommunitiesGetData();
         expect(store.getters['registration/indigenousTypesItems'])
           .toEqual(mockIndigenousTypesItems());
       });
@@ -152,7 +152,7 @@ describe('>>> Registration Module', () => {
 
     describe('indigenousCommunitiesItems', () => {
       it('returns indigenousCommunitiesItems', () => {
-        store.state.registration.indigenousIdentities = mockIndigenousIdentitiesGetData();
+        store.state.registration.indigenousCommunities = mockIndigenousCommunitiesGetData();
         expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.FirstNations))
           .toEqual(mockIndigenousCommunitiesItems());
       });
@@ -371,19 +371,19 @@ describe('>>> Registration Module', () => {
       });
     });
 
-    describe('setIndigenousIdentities', () => {
-      it('should set indigenousIdentities', () => {
-        const payload = mockIndigenousIdentitiesGetData()[0];
-        store.commit('registration/setIndigenousIdentities', { identities: payload });
-        expect(store.state.registration.indigenousIdentities).toEqual(payload);
+    describe('setIndigenousCommunities', () => {
+      it('should set indigenousCommunities', () => {
+        const payload = mockIndigenousCommunitiesGetData()[0];
+        store.commit('registration/setIndigenousCommunities', { communities: payload });
+        expect(store.state.registration.indigenousCommunities).toEqual(payload);
       });
     });
 
-    describe('setLoadingIndigenousIdentities', () => {
-      it('should set loadingIndigenousIdentities', () => {
-        expect(store.state.registration.loadingIndigenousIdentities).toEqual(false);
-        store.commit('registration/setLoadingIndigenousIdentities', true);
-        expect(store.state.registration.loadingIndigenousIdentities).toEqual(true);
+    describe('setLoadingIndigenousCommunities', () => {
+      it('should set loadingIndigenousCommunities', () => {
+        expect(store.state.registration.loadingIndigenousCommunities).toEqual(false);
+        store.commit('registration/setLoadingIndigenousCommunities', true);
+        expect(store.state.registration.loadingIndigenousCommunities).toEqual(true);
       });
     });
 
@@ -675,12 +675,12 @@ describe('>>> Registration Module', () => {
       });
     });
 
-    describe('fetchIndigenousIdentities', () => {
-      it('call the getIndigenousIdentities service with proper params', async () => {
+    describe('fetchIndigenousCommunities', () => {
+      it('call the getIndigenousCommunities service with proper params', async () => {
         await store.commit('registration/setEvent', mockEventData());
-        await store.dispatch('registration/fetchIndigenousIdentities');
+        await store.dispatch('registration/fetchIndigenousCommunities');
 
-        expect(store.$services.households.getIndigenousIdentities).toHaveBeenCalledTimes(1);
+        expect(store.$services.households.getIndigenousCommunities).toHaveBeenCalledTimes(1);
       });
     });
 

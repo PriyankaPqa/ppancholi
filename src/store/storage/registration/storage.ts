@@ -6,7 +6,7 @@ import {
 } from '../../../types';
 import { IError } from '../../../services/httpClient';
 import {
-  IIndigenousIdentityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress, IHouseholdCreateData,
+  IIndigenousCommunityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress, IHouseholdCreateData,
 } from '../../../entities/household-create';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
@@ -230,8 +230,8 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/fetchPrimarySpokenLanguages');
     },
 
-    fetchIndigenousIdentities(): Promise<IIndigenousIdentityData[]> {
-      return store.dispatch('registration/fetchIndigenousIdentities');
+    fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]> {
+      return store.dispatch('registration/fetchIndigenousCommunities');
     },
 
     submitRegistration(): Promise<IHouseholdEntity> {
