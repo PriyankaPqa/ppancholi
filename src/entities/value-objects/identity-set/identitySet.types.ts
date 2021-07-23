@@ -14,7 +14,7 @@ export interface IIndigenousCommunityData {
 }
 
 export enum EIndigenousTypes {
-  FirstNations = 1,
+  FirstNation = 1,
   InuitCommunity,
   InuitHamlet,
   Metis,

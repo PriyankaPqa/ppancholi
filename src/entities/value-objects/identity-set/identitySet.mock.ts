@@ -43,7 +43,7 @@ export const mockGenders = (): IOptionItemData[] => [
 export const mockIndigenousCommunitiesGetData = (): IIndigenousCommunityData[] => [
   {
     communityType: 1,
-    communityName: 'Eel River Bar First Nations',
+    communityName: 'Eel River Bar First Nation',
     id: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
     status: 1,
   },
@@ -57,15 +57,15 @@ export const mockIndigenousCommunitiesGetData = (): IIndigenousCommunityData[] =
 
 export const mockIndigenousTypesItems = (): Record<string, unknown>[] => [
   {
-    value: EIndigenousTypes.FirstNations,
-    text: 'common.indigenous.types.FirstNations',
+    value: EIndigenousTypes.FirstNation,
+    text: 'common.indigenous.types.FirstNation',
   },
 ];
 
 export const mockIndigenousCommunitiesItems = (): Record<string, string>[] => [
   {
     value: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
-    text: 'Eel River Bar First Nations',
+    text: 'Eel River Bar First Nation',
   },
   {
     value: 'c68b30e0-e348-544d-ba7e-7e8486972774',
@@ -87,7 +87,7 @@ export const mockIdentitySetData = (): IIdentitySetData => ({
   genderOther: null,
   preferredName: 'preferredName',
   indigenousProvince: ECanadaProvinces.AB,
-  indigenousType: EIndigenousTypes.FirstNations,
+  indigenousType: EIndigenousTypes.FirstNation,
   indigenousCommunityId: 'guid-community',
   indigenousCommunityOther: '',
   indigenousIdentity: null,

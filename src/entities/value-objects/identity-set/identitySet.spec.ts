@@ -263,7 +263,7 @@ describe('Identity Set', () => {
           let results = p.validate();
           expect(results).not.toContain('indigenousCommunityId is required');
 
-          p.indigenousType = EIndigenousTypes.FirstNations;
+          p.indigenousType = EIndigenousTypes.FirstNation;
           results = p.validate();
           expect(results).toContain('indigenousCommunityId is required');
         });

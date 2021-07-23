@@ -153,7 +153,7 @@ describe('>>> Registration Module', () => {
     describe('indigenousCommunitiesItems', () => {
       it('returns indigenousCommunitiesItems', () => {
         store.state.registration.indigenousCommunities = mockIndigenousCommunitiesGetData();
-        expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.FirstNations))
+        expect(store.getters['registration/indigenousCommunitiesItems'](EIndigenousTypes.FirstNation))
           .toEqual(mockIndigenousCommunitiesItems());
       });
     });

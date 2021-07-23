@@ -91,7 +91,7 @@ describe('IndigenousIdentityForm.vue', () => {
       it('clears the community id and other field', async () => {
         wrapper.vm.formCopy.indigenousCommunityId = 'test';
         wrapper.vm.formCopy.indigenousCommunityOther = 'test';
-        await wrapper.vm.onIndigenousTypeChange(EIndigenousTypes.FirstNations);
+        await wrapper.vm.onIndigenousTypeChange(EIndigenousTypes.FirstNation);
         expect(wrapper.vm.formCopy.indigenousCommunityId).toBeNull();
         expect(wrapper.vm.formCopy.indigenousCommunityOther).toBeNull();
       });

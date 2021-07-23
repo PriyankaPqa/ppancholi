@@ -91,7 +91,7 @@ describe('AdditionalMemberTemplate.vue', () => {
       });
 
       it('return the correct string', () => {
-        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.FirstNations, communityName');
+        expect(wrapper.vm.getIndigenousIdentity).toEqual('common.indigenous.types.FirstNation, communityName');
       });
     });
 
