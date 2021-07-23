@@ -107,6 +107,7 @@ export default Vue.extend({
     // if (res.success) {
     //   this.events = res.data;
     // }
+    this.events = this.$storage.event.getters.getAll();
   },
   methods: {
     async selectEvent() {

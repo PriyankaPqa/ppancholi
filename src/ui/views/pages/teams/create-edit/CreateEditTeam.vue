@@ -119,6 +119,21 @@
       </v-container>
     </rc-page-content>
 
+    <rc-dialog
+      v-if="showErrorDialog"
+      max-width="750"
+      :show-submit="false"
+      :cancel-action-label="$t('common.buttons.ok')"
+      data-test="createEditTeam__ErrorDialog"
+      :show.sync="showErrorDialog"
+      :title="$t('errors.team.has-activefile')"
+      @cancel="showErrorDialog = false"
+      @close="showErrorDialog = false">
+      <div class="rc-body14">
+        {{ $t('errors.team.has-activefile-message') }}
+      </div>
+    </rc-dialog>
+
     <rc-confirmation-dialog
       v-if="showCancelConfirmationDialog"
       data-test="createEditTeam__confirmCancelDialog"
@@ -154,6 +169,7 @@ import { EEventStatus, IEventEntity } from '@/entities/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import {
   RcConfirmationDialog,
+  RcDialog,
   RcPageContent,
   VAutocompleteWithValidation,
   VTextFieldWithValidation,
@@ -177,6 +193,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     VAutocompleteWithValidation,
     TeamMembersTable,
     StatusSelect,
+    RcDialog,
     RcConfirmationDialog,
   },
 
@@ -215,6 +232,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         events: null as ITeamEvent[],
         primaryContact: null as ITeamMemberData,
       },
+      showErrorDialog: false,
     };
   },
 
@@ -301,7 +319,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   methods: {
     setOriginalData() {
-      this.$data.original = _cloneDeep({
+      this.original = _cloneDeep({
         name: this.team.name,
         status: this.team.status,
         events: this.teamType === 'standard' ? _sortBy(this.team.events, ['id']) : this.team.events[0],
@@ -346,11 +364,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
       const teamId = this.id;
       if (teamId) {
         await this.$storage.team.actions.getTeam(teamId);
-        this.team = _cloneDeep(this.$storage.team.getters.team());
-        this.currentPrimaryContact = this.team.getPrimaryContact();
-        if (this.currentPrimaryContact) {
-          this.primaryContactQuery = this.currentPrimaryContact.displayName;
-        }
+        this.loadTeamFromState();
+      }
+    },
+
+    loadTeamFromState() {
+      this.team = _cloneDeep(this.$storage.team.getters.team());
+      this.currentPrimaryContact = this.team.getPrimaryContact();
+      if (this.currentPrimaryContact) {
+        this.primaryContactQuery = this.currentPrimaryContact.displayName;
       }
     },
 
@@ -405,14 +427,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
       if (!isValid) return;
 
       this.setPrimaryContactTeam();
-
       if (!this.isEditMode) {
         await this.submitCreateTeam();
       } else {
         await this.submitEditTeam();
         this.getAvailableEvents();
       }
-      this.setOriginalData();
     },
 
     setPrimaryContactTeam() {
@@ -439,6 +459,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         await this.$router.replace({ name: routes.teams.edit.name, params: { id: this.team.id, teamType: this.teamType } });
 
         this.resetFormValidation();
+        this.setOriginalData();
       } catch (e) {
         this.handleSubmitError(e);
       }
@@ -449,8 +470,14 @@ export default mixins(handleUniqueNameSubmitError).extend({
         await this.$storage.team.actions.editTeam(this.team);
         this.$toasted.global.success(this.$t('teams.team_updated'));
         this.resetFormValidation();
+        this.setOriginalData();
       } catch (errors) {
-        this.handleSubmitError(errors);
+        if (errors.length > 0 && errors[0].code === 'errors.team-has-active-case-file') {
+          this.showErrorDialog = true;
+        } else {
+          this.handleSubmitError(errors);
+        }
+        this.loadTeamFromState();
       }
     },
 

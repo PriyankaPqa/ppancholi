@@ -760,6 +760,8 @@
     "errors.status-should-have-a-valid-value": "Status should have a valid value",
     "errors.subitem-not-found": "Subitem not found",
     "errors.team-already-has-a-primary-contact": "Team already has a primary contact",
+    "errors.team.has-activefile": "Inactive Case File",
+    "errors.team.has-activefile-message": "There are active assigned case files for this event.  Please re-assign before removing the event",
     "errors.teams-must-have-a-primary-contact": "Teams must have a primary contact",
     "errors.the-country-iso-2-code-of-the-phone-number-must-have-a-value": "The country iso 2 code of the phone number must have a value",
     "errors.the-e-164-number-part-of-the-phone-number-must-have-a-value": "The e 164 number part of the phone number must have a value",

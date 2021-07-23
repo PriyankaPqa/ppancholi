@@ -760,6 +760,8 @@
     "errors.status-should-have-a-valid-value": "Le statut doit avoir une valeur valide",
     "errors.subitem-not-found": "Sous-élément introuvable",
     "errors.team-already-has-a-primary-contact": "L'équipe a déjà un contact principal",
+    "errors.team.has-activefile": "Dossier inactif",
+    "errors.team.has-activefile-message": "Il existe des dossiers actifs affectés à cet événement. Veuillez réaffecter avant de supprimer l'événement",
     "errors.teams-must-have-a-primary-contact": "Les équipes doivent avoir un contact principal",
     "errors.the-country-iso-2-code-of-the-phone-number-must-have-a-value": "Le code pays iso 2 du numéro de téléphone doit avoir une valeur",
     "errors.the-e-164-number-part-of-the-phone-number-must-have-a-value": "La partie numérique e 164 du numéro de téléphone doit avoir une valeur",

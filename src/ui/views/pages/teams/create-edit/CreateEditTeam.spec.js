@@ -992,6 +992,31 @@ describe('CreateEditTeam.vue', () => {
         await wrapper.vm.loadTeam();
         expect(wrapper.vm.team).toEqual(new Team(mockTeamSearchDataAggregate()[0]));
       });
+
+      it('should call loadTeamFromState', async () => {
+        jest.spyOn(wrapper.vm, 'loadTeamFromState');
+        await wrapper.vm.loadTeam();
+        expect(wrapper.vm.loadTeamFromState).toBeCalled();
+      });
+    }));
+
+    describe('loadTeamFromState', (() => {
+      beforeEach(async () => {
+        wrapper.vm.$store.commit('team/resetTeam');
+        wrapper.vm.$route.params = { id: 'foo' };
+        jest.spyOn(wrapper.vm.$storage.team.actions, 'getTeam').mockImplementation(() => new Team(mockTeamSearchDataAggregate()[0]));
+        jest.spyOn(wrapper.vm.$storage.team.getters, 'team').mockImplementation(() => new Team(mockTeamSearchDataAggregate()[0]));
+      });
+
+      it('sets the right primaryContactQuery', async () => {
+          await wrapper.vm.loadTeam();
+          expect(wrapper.vm.primaryContactQuery).toEqual(mockTeamMembersData()[0].displayName);
+      });
+
+      it('should set the team with a cloneDeep of team from storage', async () => {
+        await wrapper.vm.loadTeam();
+        expect(wrapper.vm.team).toEqual(new Team(mockTeamSearchDataAggregate()[0]));
+      });
     }));
 
     describe('goBack', () => {
@@ -1298,6 +1323,12 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.$storage.team.actions.createTeam).toHaveBeenCalledTimes(1);
       });
 
+      it('calls setOriginalData action', async () => {
+        jest.spyOn(wrapper.vm, 'setOriginalData');
+        await wrapper.vm.submitCreateTeam();
+        expect(wrapper.vm.setOriginalData).toHaveBeenCalledTimes(1);
+      });
+
       it('opens a toast with a success message for standard team', async () => {
         await wrapper.vm.submitCreateTeam();
 
@@ -1390,6 +1421,12 @@ describe('CreateEditTeam.vue', () => {
         expect(wrapper.vm.$storage.team.actions.editTeam).toHaveBeenCalledTimes(1);
       });
 
+      it('calls setOriginalData action', async () => {
+        jest.spyOn(wrapper.vm, 'setOriginalData');
+        await wrapper.vm.submitEditTeam();
+        expect(wrapper.vm.setOriginalData).toHaveBeenCalledTimes(1);
+      });
+
       it('opens a toast with a success message', async () => {
         await wrapper.vm.submitEditTeam();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('teams.team_updated');
@@ -1398,6 +1435,34 @@ describe('CreateEditTeam.vue', () => {
       it('resets the form validation', async () => {
         await wrapper.vm.submitCreateTeam();
         expect(wrapper.vm.resetFormValidation).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls loadTeamFromState on error', async () => {
+        jest.spyOn(wrapper.vm, 'loadTeamFromState');
+        jest.spyOn(wrapper.vm.$storage.team.actions, 'editTeam').mockImplementation(() => {
+          throw new Error([]);
+        });
+        await wrapper.vm.submitEditTeam();
+        expect(wrapper.vm.loadTeamFromState).toBeCalled();
+      });
+    });
+
+    describe('Error Dialog', () => {
+      let element;
+      beforeEach(async () => {
+        wrapper.vm.showErrorDialog = true;
+        await wrapper.vm.$nextTick();
+        element = wrapper.find('[data-test="createEditTeam__ErrorDialog"]');
+      });
+
+      it('displays the dialog when showErrorDialog is true', async () => {
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('should not display the dialog when showErrorDialog is false', async () => {
+        wrapper.vm.showErrorDialog = false;
+        await wrapper.vm.$nextTick();
+        expect(element.exists()).toBeFalsy();
       });
     });
 
