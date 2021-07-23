@@ -4,8 +4,7 @@
 import Vue from 'vue';
 import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
 import { IMemberData } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { IAzureSearchResult } from '@/types';
-import { IIndigenousIdentityData } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
+import { IIndigenousCommunityData } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
 import { IAddressData, IHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import deepmerge from 'deepmerge';
 import helpers from '@/ui/helpers';
@@ -37,34 +36,6 @@ export default Vue.extend({
       return members;
     },
 
-    async fetchIndigenousInformation(members: Array<IMemberData>) {
-      const indigenousPromises = [] as Array<Promise<IAzureSearchResult<IIndigenousIdentityData>>>;
-      const identitiesPromises = [] as Array<Promise<IIndigenousIdentityData[]>>;
-
-      // We get information from indigenous identities
-      members.forEach((m) => {
-        if (m?.identitySet?.indigenousIdentity?.indigenousCommunityId) {
-          const req = this.$services.households.searchIndigenousIdentities({
-            filter: { id: m.identitySet.indigenousIdentity.indigenousCommunityId },
-          }) as Promise<IAzureSearchResult<IIndigenousIdentityData>>;
-
-          indigenousPromises.push(req);
-        }
-      });
-
-      const res = await Promise.all([...indigenousPromises]);
-      const indigenousInfo = res.map((r) => r.value[0]);
-
-      // We fetch identities so they are available in the app
-      indigenousInfo.forEach((i) => {
-        identitiesPromises.push(this.$storage.registration.actions.fetchIndigenousIdentitiesByProvince(i.province));
-      });
-
-      await Promise.all([...identitiesPromises]);
-
-      return indigenousInfo;
-    },
-
     async buildHouseholdCreateData(household: IHouseholdCombined): Promise<IHouseholdCreateData> {
       let primaryBeneficiary;
       const additionalMembers = [] as Array<IMemberData>;
@@ -75,7 +46,7 @@ export default Vue.extend({
 
       const members = await this.fetchMembersInformation(household);
 
-      const communitiesItems = await this.fetchIndigenousInformation(members);
+      const communitiesItems = await this.$storage.registration.actions.fetchIndigenousCommunities();
 
       const emptyCurrentAddress = {
         country: 'CA',
@@ -125,7 +96,7 @@ export default Vue.extend({
       };
     },
 
-    parseIdentitySet(member: IMemberData, indigenousCommunities: IIndigenousIdentityData[], genderItems: IOptionItemData[]) {
+    parseIdentitySet(member: IMemberData, indigenousCommunities: IIndigenousCommunityData[], genderItems: IOptionItemData[]) {
       const indigenous = member.identitySet?.indigenousIdentity?.indigenousCommunityId
         ? indigenousCommunities.find((c) => c.id === member.identitySet.indigenousIdentity.indigenousCommunityId) : null;
 
@@ -135,7 +106,6 @@ export default Vue.extend({
         gender: genderItems.find((i) => i.id === member.identitySet.gender.optionItemId),
         indigenousCommunityId: indigenous?.id,
         indigenousCommunityOther: member.identitySet?.indigenousIdentity?.specifiedOther,
-        indigenousProvince: indigenous?.province,
         indigenousType: indigenous?.communityType,
       };
     },

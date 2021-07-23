@@ -255,12 +255,6 @@ export default Vue.extend({
         disabled: true,
         // to: routes.caseFileDocuments.name,
       }, {
-        text: this.$t('caseFileDetail.menu_financial_assistance') as string,
-        test: 'financial-assistance',
-        disabled: true,
-        // to: routes.caseFileFinancialAssistance.name,
-        // exact: false,
-      }, {
         text: this.$t('caseFileDetail.menu_assessments') as string,
         test: 'assessments',
         // to: routes.caseFileAssessments.name,

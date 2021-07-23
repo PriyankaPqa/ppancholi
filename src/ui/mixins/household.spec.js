@@ -3,7 +3,7 @@ import household from '@/ui/mixins/household';
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household/household.mocks';
 import { mockMemberData } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { mockIndigenousIdentitiesSearchData, mockGenders } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
+import { mockIndigenousCommunitiesGetData, mockGenders } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
 import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
 
 const Component = {
@@ -56,44 +56,6 @@ describe('household', () => {
       });
     });
 
-    describe('fetchIndigenousInformation', () => {
-      it('should fetch indigenous information if needed for each member', async () => {
-        const members = [
-          {
-            identitySet: {
-              indigenousIdentity: {
-                indigenousCommunityId: '1',
-              },
-            },
-          },
-          {
-            identitySet: null,
-          },
-        ];
-        await wrapper.vm.fetchIndigenousInformation(members);
-        expect(wrapper.vm.$services.households.searchIndigenousIdentities).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.$services.households.searchIndigenousIdentities).toHaveBeenCalledWith({
-          filter: { id: '1' },
-        });
-      });
-      it('should fetch indigenous identities corresponding to province of indigenous identities of members', async () => {
-        const members = [
-          {
-            identitySet: {
-              indigenousIdentity: {
-                indigenousCommunityId: '1',
-              },
-            },
-          },
-          {
-            identitySet: null,
-          },
-        ];
-        await wrapper.vm.fetchIndigenousInformation(members);
-        expect(wrapper.vm.$storage.registration.actions.fetchIndigenousIdentitiesByProvince).toHaveBeenCalledWith(4);
-      });
-    });
-
     describe('buildHouseholdCreateData', () => {
       it('should get genders', async () => {
         const household = mockCombinedHousehold();
@@ -115,7 +77,6 @@ describe('household', () => {
 
       it('should call fetchMembersInformation', async () => {
         wrapper.vm.fetchMembersInformation = jest.fn(() => []);
-        wrapper.vm.fetchIndigenousInformation = jest.fn();
         wrapper.vm.parseIdentitySet = jest.fn();
         wrapper.vm.parseContactInformation = jest.fn();
         const household = mockCombinedHousehold();
@@ -124,21 +85,7 @@ describe('household', () => {
         expect(wrapper.vm.fetchMembersInformation).toHaveBeenCalledWith(household);
       });
 
-      it('should call fetchIndigenousInformation', async () => {
-        const members = [];
-        wrapper.vm.fetchMembersInformation = jest.fn(() => members);
-        wrapper.vm.fetchIndigenousInformation = jest.fn();
-        wrapper.vm.parseIdentitySet = jest.fn();
-        wrapper.vm.parseContactInformation = jest.fn();
-        const household = mockCombinedHousehold();
-
-        await wrapper.vm.buildHouseholdCreateData(household);
-
-        expect(wrapper.vm.fetchIndigenousInformation).toHaveBeenCalledWith(members);
-      });
-
       it('should return the final object of household to be used in the UI', async () => {
-        wrapper.vm.fetchIndigenousInformation = jest.fn();
         wrapper.vm.parseIdentitySet = jest.fn(() => ({}));
         wrapper.vm.parseContactInformation = jest.fn(() => ({}));
 
@@ -272,7 +219,7 @@ describe('household', () => {
     describe('parseIdentitySet', () => {
       it('should rebuild identity of member', () => {
         const member = mockMemberData();
-        const communities = mockIndigenousIdentitiesSearchData().value;
+        const communities = mockIndigenousCommunitiesGetData();
         const genderItems = mockGenders();
 
         member.identitySet.indigenousIdentity = {
@@ -302,7 +249,6 @@ describe('household', () => {
             status: 1,
           },
           indigenousCommunityId: '434be79f-6713-0847-a0d9-c6bd7f9f12f5',
-          indigenousProvince: 4,
           indigenousType: 1,
         });
       });
