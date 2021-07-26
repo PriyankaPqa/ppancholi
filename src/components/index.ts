@@ -3,6 +3,7 @@ export { default as IdentityForm } from './forms/IdentityForm.vue';
 export { default as IndigenousIdentityForm } from './forms/IndigenousIdentityForm.vue';
 export { default as AddressForm } from './forms/AddressForm.vue';
 export { default as CurrentAddressForm } from './forms/CurrentAddressForm.vue';
+export { default as CurrentAddressTemplate } from './review/addresses/CurrentAddressTemplate.vue';
 export { default as Addresses } from './addresses/Addresses.vue';
 export { default as AdditionalMembers } from './additional-members/AdditionalMembers.vue';
 export { default as AdditionalMemberForm } from './additional-members/AdditionalMemberForm.vue';

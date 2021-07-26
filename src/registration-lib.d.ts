@@ -15,6 +15,7 @@ export const ContactInformationForm: VueConstructor<Vue>;
 export const IdentityForm: VueConstructor<Vue>;
 export const IndigenousIdentityForm: VueConstructor<Vue>;
 export const CurrentAddressForm: VueConstructor<Vue>;
+export const CurrentAddressTemplate: VueConstructor<Vue>;
 export const AddressForm: VueConstructor<Vue>;
 export const Addresses: VueConstructor<Vue>;
 export const AdditionalMembers: VueConstructor<Vue>;
