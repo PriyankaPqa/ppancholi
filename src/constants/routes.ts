@@ -252,6 +252,10 @@ const routes = {
       path: 'lists/screening-id',
       name: 'systemManagement.lists.screeningId',
     },
+    documentCategories: {
+      path: 'lists/document-categories',
+      name: 'systemManagement.lists.documentCategories',
+    },
   },
   teams: {
     layout: {

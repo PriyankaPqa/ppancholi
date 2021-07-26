@@ -38,6 +38,8 @@ export class OptionItemsService implements IOptionItemsService {
         return '/case-file/referral-outcome-statuses';
       case EOptionLists.ReferralTypes:
         return '/case-file/referral-types';
+      case EOptionLists.DocumentCategories:
+        return '/case-file/document-categories';
       default:
         return '';
     }

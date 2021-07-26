@@ -65,6 +65,9 @@ describe('>>> OptionItems Service', () => {
     it('returns correct prefix for EOptionLists.ScreeningId', () => {
       expect(service.getPrefix(EOptionLists.ScreeningId)).toBe('/household/screening-ids');
     });
+    it('returns correct prefix for EOptionLists.DocumentCategories', () => {
+      expect(service.getPrefix(EOptionLists.DocumentCategories)).toBe('/case-file/document-categories');
+    });
   });
 
   test('createOptionItem is linked to the correct URL', async () => {

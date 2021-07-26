@@ -72,6 +72,7 @@ const ReferralOutcomeStatuses = () => import(/* webpackChunkName: "system" */ '@
 const ReferralTypes = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ReferralTypes.vue');
 const FinancialAssistanceItems = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/FinancialAssistance.vue');
 const ScreeningId = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ScreeningId.vue');
+const DocumentCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/DocumentCategories.vue');
 
 const TeamsLayout = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/layout/TeamsLayout.vue');
 const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/home/TeamsHome.vue');
@@ -475,6 +476,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.screeningId.path,
                 name: Routes.systemManagement.screeningId.name,
                 component: ScreeningId,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.documentCategories.path,
+                name: Routes.systemManagement.documentCategories.name,
+                component: DocumentCategories,
                 meta: { level: 'level6' },
               },
             ],

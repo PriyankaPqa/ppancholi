@@ -20,6 +20,7 @@ export enum EOptionLists {
   ScreeningId = 12,
   ReferralOutcomeStatus = 13,
   ReferralTypes = 14,
+  DocumentCategories= 15
 }
 
 export interface IOptionSubItem {

@@ -1412,6 +1412,7 @@
     "system_management.lists.caseNoteCategories": "Case note categories",
     "system_management.lists.defaultOptionRemoved": "The \"Default\" item has been successfully removed.",
     "system_management.lists.defaultOptionSet": "The \"Default\" item has been successfully assigned.",
+    "system_management.lists.documentCategories": "Document categories",
     "system_management.lists.eventTypes": "Event types",
     "system_management.lists.financialAssistance": "Financial assistance categories",
     "system_management.lists.genders": "Genders",

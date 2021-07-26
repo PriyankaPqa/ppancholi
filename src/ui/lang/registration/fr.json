@@ -216,7 +216,7 @@
     "registration.personal_info.validations.notInFuture": "La date de naissance ne peut se situer dans le futur.",
     "registration.personal_info.year": "Année",
     "registration.personalInformation.updated": "Les informations personnelles ont été mises à jour",
-    "registration.privacy_statement.agreeCRC": "Le bénéficiaire a déclaré «j'accepte» aux déclarations ci-dessus.",
+    "registration.privacy_statement.agreeCRC": "Le bénéficiaire a déclaré «J'accepte» aux énoncés ci-dessus.",
     "registration.privacy_statement.agreeSelf": "J'accepte les énoncés ci-dessus.",
     "registration.privacy_statement.crc_username": "Nom d'utilisateur CRC",
     "registration.privacy_statement.email": "privacy@croixrouge.ca",

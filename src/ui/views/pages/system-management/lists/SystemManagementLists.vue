@@ -127,6 +127,11 @@ export default Vue.extend({
         route: routes.systemManagement.screeningId.name,
         dataTest: 'screeningId',
       },
+      {
+        name: 'system_management.lists.documentCategories',
+        route: routes.systemManagement.documentCategories.name,
+        dataTest: 'documentCategories',
+      },
     ];
 
     return {
