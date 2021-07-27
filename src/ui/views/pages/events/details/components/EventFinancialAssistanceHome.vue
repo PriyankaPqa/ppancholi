@@ -1,16 +1,16 @@
 <template>
   <div class="pa-4">
-    <financial-assistance-templates-table />
+    <financial-assistance-tables-table />
   </div>
 </template>
 
 <script>
-import FinancialAssistanceTemplatesTable from '@/ui/views/pages/financial-assistance/FinancialAssistanceTemplatesTable.vue';
+import FinancialAssistanceTablesTable from '@/ui/views/pages/financial-assistance/FinancialAssistanceTablesTable.vue';
 
 export default {
   name: 'EventFinancialAssistanceHome',
   components: {
-    FinancialAssistanceTemplatesTable,
+    FinancialAssistanceTablesTable,
   },
 };
 </script>

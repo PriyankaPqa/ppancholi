@@ -19,6 +19,7 @@ import colors from '@/ui/plugins/vuetify/colors';
 import { CaseFileStatus } from '@/entities/case-file';
 import { EProgramStatus } from '@/entities/program';
 import { AccountStatus } from '@/entities/user-account';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'StatusChip',
@@ -41,6 +42,7 @@ export default Vue.extend({
           'CaseFileStatus',
           'EProgramStatus',
           'AccountStatus',
+          'Status',
         ].indexOf(value) > -1
       ),
     },
@@ -79,6 +81,8 @@ export default Vue.extend({
           return this.getProgramStatusColor();
         case 'AccountStatus':
           return this.getAccountStatusColor();
+        case 'Status':
+          return this.getStatusColor();
 
         default:
           return colors.chips.green;
@@ -115,6 +119,9 @@ export default Vue.extend({
           return `common.program_status.${EProgramStatus[this.status]}`;
         case 'AccountStatus':
           return `common.account_status.${AccountStatus[this.status]}`;
+        case 'Status':
+          return `enums.Status.${Status[this.status]}`;
+
         default:
           return '';
       }
@@ -218,6 +225,19 @@ export default Vue.extend({
           return colors.chips.green;
 
         case AccountStatus.Inactive:
+          return colors.chips.light_grey;
+
+        default:
+          return colors.chips.green;
+      }
+    },
+
+    getStatusColor(): string {
+      switch (this.status) {
+        case Status.Active:
+          return colors.chips.green;
+
+        case Status.Inactive:
           return colors.chips.light_grey;
 
         default:

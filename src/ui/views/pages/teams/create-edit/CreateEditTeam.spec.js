@@ -1009,8 +1009,8 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('sets the right primaryContactQuery', async () => {
-          await wrapper.vm.loadTeam();
-          expect(wrapper.vm.primaryContactQuery).toEqual(mockTeamMembersData()[0].displayName);
+        await wrapper.vm.loadTeam();
+        expect(wrapper.vm.primaryContactQuery).toEqual(mockTeamMembersData()[0].displayName);
       });
 
       it('should set the team with a cloneDeep of team from storage', async () => {

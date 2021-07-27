@@ -1,6 +1,6 @@
 import { IMultilingual } from '@/types';
-import { BaseEntity, Status } from '@crctech/registration-lib/src/entities/base';
 import utils from '@/entities/utils';
+import { BaseEntity, Status } from '../base';
 import { EProgramStatus } from '../program';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableRowData } from './financial-assistance.types';
 
