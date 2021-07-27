@@ -32,8 +32,9 @@
 
     <template #[`item.${customColumns.name}`]="{ item: caseFile }">
       <router-link
+        :is="canViewHousehold ? 'router-link' : 'span'"
         v-if="caseFile.metadata"
-        class="rc-link14"
+        :class="[canViewHousehold ? 'rc-link14': 'rc-body14']"
         data-test="beneficiaryName-link"
         :to="getHouseholdProfileRoute(caseFile)">
         {{ getBeneficiaryName(caseFile) }}
@@ -114,6 +115,11 @@ export default Vue.extend({
   },
 
   computed: {
+
+    canViewHousehold():boolean {
+      return this.$hasLevel('level1');
+    },
+
     tableData(): ICaseFileCombined[] {
       return this.$storage.caseFile.getters.getByIds(this.searchResultIds);
     },
@@ -215,7 +221,7 @@ export default Vue.extend({
 
     getHouseholdProfileRoute(caseFile: ICaseFileCombined) {
       return {
-        name: routes.caseFile.householdProfile.name,
+        name: routes.household.householdProfile.name,
         params: {
           id: caseFile.entity?.householdId,
         },

@@ -279,7 +279,7 @@ export default mixins(individual).extend({
 
     goToHouseholdProfile(householdId: string) {
       this.$router.replace({
-        name: routes.caseFile.householdProfile.name,
+        name: routes.household.householdProfile.name,
         params: {
           id: householdId,
         },

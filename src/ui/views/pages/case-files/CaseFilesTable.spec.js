@@ -2,6 +2,7 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import { RcDataTable } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
+import { mockUserStateLevel } from '@/test/helpers';
 
 import { mockCombinedCaseFiles } from '@/entities/case-file';
 import Component from './CaseFilesTable.vue';
@@ -34,7 +35,7 @@ describe('CaseFilesTable.vue', () => {
       }));
 
       wrapper.vm.getHouseholdProfileRoute = jest.fn(() => ({
-        name: routes.caseFile.householdProfile.name,
+        name: routes.household.householdProfile.name,
         params: mockParams,
       }));
     });
@@ -84,7 +85,7 @@ describe('CaseFilesTable.vue', () => {
       test('name redirects to getHouseholdProfileRoute', () => {
         const link = wrapper.findDataTest('beneficiaryName-link');
         expect(link.props('to')).toEqual({
-          name: routes.caseFile.householdProfile.name,
+          name: routes.household.householdProfile.name,
           params: mockParams,
         });
       });
@@ -103,6 +104,74 @@ describe('CaseFilesTable.vue', () => {
         mocks: {
           $storage: storage,
         },
+      });
+    });
+
+    describe('canViewHousehold', () => {
+      it('returns true if user has level 1', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(1),
+            caseFile: {
+              searchLoading: false,
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFile: {
+                getters: { getByIds: jest.fn(() => mockCaseFiles) },
+                actions: {
+                  search: jest.fn(() => ({
+                    ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
+                    count: 2,
+                  })),
+                },
+              },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canViewHousehold).toBeTruthy();
+      });
+
+      it('returns false if user does not have level 1', () => {
+        jest.clearAllMocks();
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            modules: {
+              caseFile: {
+                searchLoading: false,
+              },
+              user: {
+                state:
+                  {
+                    oid: '7',
+                    email: 'test@test.ca',
+                    family_name: 'Joe',
+                    given_name: 'Pink',
+                    roles: ['contributorIM'],
+                  },
+              },
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFile: {
+                getters: { getByIds: jest.fn(() => mockCaseFiles) },
+                actions: {
+                  search: jest.fn(() => ({
+                    ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
+                    count: 2,
+                  })),
+                },
+              },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canViewHousehold).toBeFalsy();
       });
     });
 
@@ -274,7 +343,7 @@ describe('CaseFilesTable.vue', () => {
     describe('getHouseholdProfileRoute', () => {
       it('returns the right route object', () => {
         expect(wrapper.vm.getHouseholdProfileRoute(mockCaseFiles[0])).toEqual({
-          name: routes.caseFile.householdProfile.name,
+          name: routes.household.householdProfile.name,
           params: {
             id: mockCaseFiles[0].entity.householdId,
           },

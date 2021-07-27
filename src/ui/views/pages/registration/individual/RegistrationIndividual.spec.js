@@ -252,7 +252,7 @@ describe('Individual.vue', () => {
         const id = '1';
         await wrapper.vm.goToHouseholdProfile(id);
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-          name: routes.caseFile.householdProfile.name,
+          name: routes.household.householdProfile.name,
           params: {
             id,
           },

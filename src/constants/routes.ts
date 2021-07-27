@@ -68,10 +68,7 @@ const routes = {
         name: 'casefile.referrals.add',
       },
     },
-    householdProfile: {
-      path: 'household/:id',
-      name: 'casefile.householdProfile',
-    },
+
   },
   events: {
     layout: {
@@ -107,6 +104,12 @@ const routes = {
         path: 'financial-assistance/create',
         name: 'events.financialAssistance.create',
       },
+    },
+  },
+  household: {
+    householdProfile: {
+      path: 'household/:id',
+      name: 'casefile.householdProfile',
     },
   },
   loginError: {

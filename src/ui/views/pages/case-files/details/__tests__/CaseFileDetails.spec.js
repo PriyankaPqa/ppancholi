@@ -5,6 +5,7 @@ import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
+import { mockUserStateLevel } from '@/test/helpers';
 
 import { ECanadaProvinces } from '@crctech/registration-lib/src/types';
 import Component from '../CaseFileDetails.vue';
@@ -16,7 +17,11 @@ const mockCaseFile = mockCombinedCaseFile();
 describe('CaseFileDetails.vue', () => {
   let wrapper;
 
-  const doMount = async (doMockStorage = true) => {
+  storage.caseFile.getters.get = jest.fn(() => mockCaseFile);
+  storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
+  storage.caseFile.actions.fetch = jest.fn(() => [mockCaseFile]);
+
+  const doMount = async () => {
     const params = {
       localVue,
       propsData: {
@@ -56,12 +61,11 @@ describe('CaseFileDetails.vue', () => {
           };
         },
       },
-    };
-    if (doMockStorage) {
-      params.mocks = {
+      mocks: {
         $storage: storage,
-      };
-    }
+      },
+    };
+
     wrapper = shallowMount(Component, params);
     await wrapper.setRole('level1');
   };
@@ -109,11 +113,45 @@ describe('CaseFileDetails.vue', () => {
     describe('verify-identity', () => {
       let element;
       it('is rendered when level 1+', async () => {
-        await doMount(false);
         await wrapper.setRole('level1');
         element = wrapper.findDataTest('caseFileDetails-verify-identity-icon');
         expect(element.exists()).toBeTruthy();
-        await wrapper.setRole('contributorIM');
+      });
+
+      it('is not rendered when level is not 1', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: mockCaseFile.entity.id,
+          },
+          store: {
+            modules: {
+              caseFile: {
+                searchLoading: false,
+              },
+              user: {
+                state:
+                  {
+                    oid: '7',
+                    email: 'test@test.ca',
+                    family_name: 'Joe',
+                    given_name: 'Pink',
+                    roles: ['contributorIM'],
+                  },
+              },
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFile: {
+                getters: { get: jest.fn(() => mockCaseFile) },
+                actions: { fetch: jest.fn(() => [mockCaseFile]) },
+              },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
+          },
+        });
+
         element = wrapper.findDataTest('caseFileDetails-verify-identity-icon');
         expect(element.exists()).toBeFalsy();
       });
@@ -122,11 +160,45 @@ describe('CaseFileDetails.vue', () => {
     describe('verify-impact', () => {
       let element;
       it('is rendered when level 1+', async () => {
-        await doMount(false);
         await wrapper.setRole('level1');
         element = wrapper.findDataTest('caseFileDetails-verify-impact-icon');
         expect(element.exists()).toBeTruthy();
-        await wrapper.setRole('contributorIM');
+      });
+
+      it('is not rendered when level is not 1', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: mockCaseFile.entity.id,
+          },
+          store: {
+            modules: {
+              caseFile: {
+                searchLoading: false,
+              },
+              user: {
+                state:
+                  {
+                    oid: '7',
+                    email: 'test@test.ca',
+                    family_name: 'Joe',
+                    given_name: 'Pink',
+                    roles: ['contributorIM'],
+                  },
+              },
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFile: {
+                getters: { get: jest.fn(() => mockCaseFile) },
+                actions: { fetch: jest.fn(() => [mockCaseFile]) },
+              },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
+          },
+        });
+
         element = wrapper.findDataTest('caseFileDetails-verify-impact-icon');
         expect(element.exists()).toBeFalsy();
       });
@@ -550,6 +622,144 @@ describe('CaseFileDetails.vue', () => {
         expect(wrapper.vm.provinceCodeName).toEqual('mock-other-province');
       });
     });
+
+    describe('canViewHousehold', () => {
+      it('returns true if user has level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: mockCaseFile.entity.id,
+          },
+          store: {
+            ...mockUserStateLevel(1),
+            caseFile: {
+              searchLoading: false,
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFile: {
+                getters: { get: jest.fn(() => mockCaseFile) },
+                actions: {
+                  fetch: jest.fn(() => [mockCaseFile]),
+                },
+              },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canViewHousehold).toBeTruthy();
+      });
+
+      it('returns false if user does not have level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: mockCaseFile.entity.id,
+          },
+          store: {
+            modules: {
+              caseFile: {
+                searchLoading: false,
+              },
+              user: {
+                state:
+                  {
+                    oid: '7',
+                    email: 'test@test.ca',
+                    family_name: 'Joe',
+                    given_name: 'Pink',
+                    roles: ['contributorIM'],
+                  },
+              },
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFile: {
+                getters: { get: jest.fn(() => mockCaseFile) },
+                actions: {
+                  fetch: jest.fn(() => [mockCaseFile]),
+                },
+              },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canViewHousehold).toBeFalsy();
+      });
+    });
+
+    describe('canEdit', () => {
+      it('returns true if user has level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: mockCaseFile.entity.id,
+          },
+          store: {
+            ...mockUserStateLevel(1),
+            caseFile: {
+              searchLoading: false,
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFile: {
+                getters: { get: jest.fn(() => mockCaseFile) },
+                actions: {
+                  fetch: jest.fn(() => [mockCaseFile]),
+                },
+              },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeTruthy();
+      });
+
+      it('returns false if user does not have level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: mockCaseFile.entity.id,
+          },
+          store: {
+            modules: {
+              caseFile: {
+                searchLoading: false,
+              },
+              user: {
+                state:
+                  {
+                    oid: '7',
+                    email: 'test@test.ca',
+                    family_name: 'Joe',
+                    given_name: 'Pink',
+                    roles: ['contributorIM'],
+                  },
+              },
+            },
+          },
+          mocks: {
+            $storage: {
+              caseFile: {
+                getters: { get: jest.fn(() => mockCaseFile) },
+                actions: {
+                  fetch: jest.fn(() => [mockCaseFile]),
+                },
+              },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeFalsy();
+      });
+    });
   });
 
   describe('lifecycle', () => {
@@ -612,7 +822,7 @@ describe('CaseFileDetails.vue', () => {
         wrapper.vm.goToHouseholdProfile();
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-          name: routes.caseFile.householdProfile.name,
+          name: routes.household.householdProfile.name,
           params: {
             id: wrapper.vm.caseFile.entity.householdId,
           },

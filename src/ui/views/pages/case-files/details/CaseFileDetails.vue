@@ -98,7 +98,7 @@
       </div>
 
       <div
-        class="d-flex flex-row rc-body14">
+        class="d-flex flex-row rc-body14 mb-4">
         <v-icon small class="mr-2">
           mdi-account-multiple
         </v-icon>
@@ -110,10 +110,10 @@
       </div>
 
       <v-btn
-        v-if="household"
+        v-if="canViewHousehold && household"
         small
         color="primary"
-        class="my-4"
+        class="mb-4"
         data-test="household-profile-btn"
         @click="goToHouseholdProfile()">
         {{ $t('caseFileDetail.household_profile.button') }}
@@ -195,6 +195,10 @@ export default Vue.extend({
     },
 
     canEdit(): boolean {
+      return this.$hasLevel('level1');
+    },
+
+    canViewHousehold():boolean {
       return this.$hasLevel('level1');
     },
 
@@ -293,7 +297,7 @@ export default Vue.extend({
 
     goToHouseholdProfile() {
       this.$router.push({
-        name: routes.caseFile.householdProfile.name,
+        name: routes.household.householdProfile.name,
         params: {
           id: this.caseFile?.entity?.householdId,
         },
