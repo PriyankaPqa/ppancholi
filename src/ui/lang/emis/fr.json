@@ -1295,6 +1295,7 @@
     "referral.outcomeStatus": "Résultat",
     "referral.type": "Type de référence",
     "Referral.Updated": "La référence {x} a été modifiée",
+    "referralDetails.back_to_referrals": "Retour aux références",
     "referralDetails.title": "Aperçu de la référence",
     "referralsTable.editLinkTooltip": "Modifier: référence",
     "referralsTable.name": "Nom",

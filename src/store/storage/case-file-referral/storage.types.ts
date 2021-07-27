@@ -17,7 +17,6 @@ export interface IGettersMock extends IBaseGettersMock<ICaseFileReferralEntity, 
 }
 
 export interface IActions extends IBaseActions<ICaseFileReferralEntity, ICaseFileReferralMetadata, {id: uuid, caseFileId: uuid}> {
-  fetch(params: {id: uuid, caseFileId: uuid}): Promise<IEntityCombined<ICaseFileReferralEntity, ICaseFileReferralMetadata>>;
   fetchTypes(): Promise<IOptionItem[]>;
   fetchOutcomeStatuses(): Promise<IOptionItem[]>;
   createReferral(payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity>;

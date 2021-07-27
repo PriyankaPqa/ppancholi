@@ -1295,6 +1295,7 @@
     "referral.outcomeStatus": "Outcome status",
     "referral.type": "Referral type",
     "Referral.Updated": "Referral {x} was edited",
+    "referralDetails.back_to_referrals": "Back to referrals",
     "referralDetails.title": "Referral details",
     "referralsTable.editLinkTooltip": "Edit: referral",
     "referralsTable.name": "Name",

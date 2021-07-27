@@ -37,7 +37,10 @@
           {{ provinceName }}
         </div>
 
-        <div v-if="event.entity.location.region && $m(event.entity.location.region)" class="rc-body14 pl-6" data-test="event-location-region">
+        <div
+          v-if="event.entity.location && event.entity.location.region && $m(event.entity.location.region)"
+          class="rc-body14 pl-6"
+          data-test="event-location-region">
           {{ $m(event.entity.location.region) }}
         </div>
       </div>
@@ -96,7 +99,7 @@
             {{ $t('eventDetail.reported') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-reported-date">
-            {{ getStringDate(event.entity.responseDetails.dateReported) }}
+            {{ event.entity.responseDetails? getStringDate(event.entity.responseDetails.dateReported): "-" }}
           </div>
         </div>
 
@@ -187,7 +190,7 @@ export default Vue.extend({
     },
 
     provinceName(): TranslateResult {
-      const provinceCode = this.event.entity.location.province;
+      const provinceCode = this.event?.entity?.location?.province;
       if (!provinceCode) return null;
       const isOther = provinceCode === ECanadaProvinces.OT;
       if (isOther) {
