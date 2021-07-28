@@ -188,4 +188,43 @@ describe('ConfirmRegistration.vue', () => {
       });
     });
   });
+
+  describe('Methods', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        computed,
+      });
+    });
+
+    describe('clearTabErrorFunc', () => {
+      it('clears error in current tab', () => {
+        const tab = {
+          nextButtonTextKey: 'button label',
+          titleKey: 'title',
+          isValid: false,
+        };
+
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+
+        wrapper.vm.clearTabErrorFunc(tab);
+
+        expect(tab).toEqual({
+          nextButtonTextKey: 'registration.confirm_registration.label',
+          titleKey: 'registration.page.confirmation',
+          isValid: true,
+        });
+
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+
+        wrapper.vm.clearTabErrorFunc(tab);
+
+        expect(tab).toEqual({
+          nextButtonTextKey: 'registration.close_registration.label',
+          titleKey: 'registration.page.confirmation',
+          isValid: true,
+        });
+      });
+    });
+  });
 });

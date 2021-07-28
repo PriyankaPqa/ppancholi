@@ -225,6 +225,38 @@ describe('Individual.vue', () => {
       });
     });
 
+    describe('closeRegistration', () => {
+      it('redirects to case file if it is CRC regitration', async () => {
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+        wrapper.vm.$router = {
+          replace: jest.fn(),
+        };
+
+        await wrapper.vm.closeRegistration();
+
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: 'casefile.home' });
+      });
+
+      it('redirects to red cross if it is not CRC regitration', async () => {
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+        wrapper.vm.$router = {
+          replace: jest.fn(),
+        };
+
+        global.window = Object.create(window);
+        Object.defineProperty(window, 'location', {
+          value: {
+            assign: jest.fn(),
+          },
+        });
+
+        await wrapper.vm.closeRegistration();
+
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledTimes(0);
+        expect(window.location.assign).toHaveBeenCalledWith('registration.redirection_link');
+      });
+    });
+
     describe('mutateStateTab', () => {
       it('calls mutation', async () => {
         storage.registration.getters.tabs.mockReturnValueOnce(tabs);

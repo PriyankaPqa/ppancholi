@@ -133,11 +133,15 @@ export default Vue.extend({
     },
 
     clearTabError() {
-      this.$storage.registration.mutations.mutateCurrentTab((tab: IRegistrationMenuItem) => {
-        tab.nextButtonTextKey = 'registration.confirm_registration.label';
-        tab.titleKey = 'registration.page.confirmation';
-        tab.isValid = true;
-      });
+      this.$storage.registration.mutations.mutateCurrentTab(this.clearTabErrorFunc);
+    },
+
+    clearTabErrorFunc(tab: IRegistrationMenuItem) {
+      tab.nextButtonTextKey = this.$storage.registration.getters.isCRCRegistration()
+        ? 'registration.confirm_registration.label'
+        : 'registration.close_registration.label';
+      tab.titleKey = 'registration.page.confirmation';
+      tab.isValid = true;
     },
   },
 });

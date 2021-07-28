@@ -138,7 +138,7 @@ export default Vue.extend({
     },
 
     async closeRegistration() {
-      if (this.$storage.registration.getters.isCRCRegistration) {
+      if (this.$storage.registration.getters.isCRCRegistration()) {
         this.$router.replace({ name: 'casefile.home' });
         return;
       }
