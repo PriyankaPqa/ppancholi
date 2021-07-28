@@ -1295,7 +1295,7 @@
     "referral.outcomeStatus": "referral.outcomeStatus",
     "referral.type": "referral.type",
     "Referral.Updated": "Referral.Updated",
-    "referralDetails.back_to_referrals": "",
+    "referralDetails.back_to_referrals": "referralDetails.back_to_referrals",
     "referralDetails.title": "referralDetails.title",
     "referralsTable.editLinkTooltip": "referralsTable.editLinkTooltip",
     "referralsTable.name": "referralsTable.name",
