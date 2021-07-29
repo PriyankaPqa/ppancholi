@@ -3,8 +3,8 @@ import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@/services/httpClient';
 import { ICaseFileReferralsMetadataService } from './case-file-referrals.types';
 
-const API_URL_SUFFIX = 'case-file/referrals/{caseFileId}';
-const ENTITY = 'metadata';
+const API_URL_SUFFIX = 'case-file/case-files/{caseFileId}';
+const ENTITY = 'referrals/metadata';
 interface UrlParams { id: uuid, caseFileId: uuid }
 
 export class CaseFileReferralsMetadataService extends DomainBaseService<ICaseFileReferralMetadata, UrlParams>
