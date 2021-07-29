@@ -55,6 +55,10 @@ export class SignalRConnection {
     this.listenForMetadataChanges('caseFile', 'CaseNoteMetadata');
     this.listenForEntityChanges('caseFile', 'Referral');
     this.listenForMetadataChanges('caseFile', 'ReferralMetadata');
+
+    //Household
+    this.listenForEntityChanges('household', 'Household');
+    this.listenForMetadataChanges('household', 'HouseholdMetadata');
   }
 
   private listenForEntityChanges(domain: string, entityName: string) {
