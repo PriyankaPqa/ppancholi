@@ -15,12 +15,12 @@ describe('>>> Programs service', () => {
   describe('createProgram', () => {
     it('is linked to the correct url', async () => {
       await service.createProgram(new Program(mockProgram));
-      expect(http.post).toHaveBeenCalledWith('/event/programs', expect.anything(), { globalHandler: false });
+      expect(http.post).toHaveBeenCalledWith(`/event/events/${mockProgram.eventId}/programs`, expect.anything(), { globalHandler: false });
     });
 
     it('converts program entity to the correct payload', async () => {
       await service.createProgram(new Program(mockProgram));
-      expect(http.post).toHaveBeenCalledWith('/event/programs', {
+      expect(http.post).toHaveBeenCalledWith(`/event/events/${mockProgram.eventId}/programs`, {
         name: mockProgram.programName,
         description: mockProgram.programDescription,
         eventId: mockProgram.eventId,
@@ -34,13 +34,16 @@ describe('>>> Programs service', () => {
 
   describe('updateProgram', () => {
     it('is linked to the correct url', async () => {
-      await service.updateProgram(new Program(mockProgram));
-      expect(http.patch).toHaveBeenCalledWith(`/event/programs/${mockProgram.programId}`, expect.anything(), { globalHandler: false });
+      const program = new Program(mockProgram);
+      await service.updateProgram(program);
+      expect(http.patch)
+        .toHaveBeenCalledWith(`/event/events/${program.eventId}/programs/${program.id}`, expect.anything(), { globalHandler: false });
     });
 
     it('converts program entity to the correct payload', async () => {
-      await service.updateProgram(new Program(mockProgram));
-      expect(http.patch).toHaveBeenCalledWith(`/event/programs/${mockProgram.programId}`, {
+      const program = new Program(mockProgram);
+      await service.updateProgram(program);
+      expect(http.patch).toHaveBeenCalledWith(`/event/events/${program.eventId}/programs/${program.id}`, {
         name: mockProgram.programName,
         description: mockProgram.programDescription,
         paymentModalities: mockProgram.paymentModalities,

@@ -11,13 +11,14 @@ export class ProgramsService implements IProgramsService {
   async createProgram(program: IProgram): Promise<IProgramData> {
     program.fillEmptyMultilingualAttributes();
     const payload = this.programToCreateProgramRequestPayload(program);
-    return this.http.post('/event/programs', payload, { globalHandler: false });
+    return this.http.post(`/event/events/${program.eventId}/programs`, payload, { globalHandler: false });
   }
 
   async updateProgram(program: IProgram): Promise<IProgramData> {
     program.fillEmptyMultilingualAttributes();
     const payload = this.programToUpdateProgramRequestPayload(program);
-    return this.http.patch(`/event/programs/${program.id}`, payload, { globalHandler: false });
+
+    return this.http.patch(`/event/events/${program.eventId}/programs/${program.id}`, payload, { globalHandler: false });
   }
 
   async searchPrograms(params: IAzureSearchParams): Promise<IAzureSearchResult<IProgramSearchData>> {
