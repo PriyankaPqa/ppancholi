@@ -1,53 +1,62 @@
-import Vuex from 'vuex';
 import _cloneDeep from 'lodash/cloneDeep';
 import deepmerge from 'deepmerge';
 import Vue from 'vue';
-
-import { mockProvider } from '@/services/provider';
-
-import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
-import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
-import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
-import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata/index';
-import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration/';
-import { ERegistrationMode } from '@crctech/registration-lib/src/types';
-
-import { tabs } from '@/store/modules/registration/tabs';
-
+import Vuex from 'vuex';
 import VueI18n from 'vue-i18n';
 import { IRootState, IStore } from '@/store/store.types';
+import { mockProvider } from '@/services/provider';
+
+import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
+import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 import * as vuexModule from '@/constants/vuex-modules';
-import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
-import { UserAccountsService } from '@/services/user-accounts/entity';
 import { httpClient } from '@/services/httpClient';
+import { OptionItemsService } from '@/services/optionItems/optionItems';
+import { tabs } from '@/store/modules/registration/tabs';
+import { program } from '@/store/modules/program';
+import { team } from '@/store/modules/team';
+import { optionList } from '@/store/modules/optionList';
+import { dashboard } from '@/store/modules/dashboard';
+import { user } from '@/store/modules/user';
+
+import { UserAccountEntityModule } from '@/store/modules/user-account/userAccountEntity';
 import { UserAccountMetadataModule } from '@/store/modules/user-account/userAccountMetadata';
+import { UserAccountsService } from '@/services/user-accounts/entity';
 import { UserAccountsMetadataService } from '@/services/user-accounts/metadata';
+
+import { CaseFileEntityModule } from '@/store/modules/case-file/caseFileEntity';
+import { CaseFileMetadataModule } from '@/store/modules/case-file/caseFileMetadata';
 import { CaseFilesService } from '@/services/case-files/entity';
-import { OptionItemsService } from '@/services/optionItems';
 import { CaseFilesMetadataService } from '@/services/case-files/metadata';
+
+import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
+import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
+import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
+import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
+
+import { CaseNoteEntityModule } from '@/store/modules/case-note/caseNoteEntity';
+import { CaseNoteMetadataModule } from '@/store/modules/case-note/caseNoteMetadata';
 import { CaseNotesService } from '@/services/case-notes/entity';
 import { CaseNotesMetadataService } from '@/services/case-notes/metadata';
-import { EventsMetadataService } from '@/services/events/metadata';
+
+import { EventEntityModule } from '@/store/modules/event/eventEntity';
+import { EventMetadataModule } from '@/store/modules/event/eventMetadata';
 import { EventsService } from '@/services/events/entity';
+import { EventsMetadataService } from '@/services/events/metadata';
+
+import { CaseFileReferralEntityModule } from '@/store/modules/case-file-referral/caseFileReferralEntity';
+import { CaseFileReferralMetadataModule } from '@/store/modules/case-file-referral/caseFileReferralMetadata';
 import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
 import { CaseFileReferralsMetadataService } from '@/services/case-file-referrals/metadata';
+
+import { CaseFileDocumentEntityModule } from '@/store/modules/case-file-document/caseFileDocumentEntity';
+import { CaseFileDocumentMetadataModule } from '@/store/modules/case-file-document/caseFileDocumentMetadata';
+import { CaseFileDocumentsService } from '@/services/case-file-documents/entity';
+import { CaseFileDocumentsMetadataService } from '@/services/case-file-documents/metadata';
+
+import { FinancialAssistanceEntityModule } from '@/store/modules/financial-assistance/financialAssistanceEntity';
+import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-assistance/financialAssistanceMetadata';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { FinancialAssistanceTablesMetadataService } from '@/services/financial-assistance-tables/metadata';
-import { user } from './modules/user';
-import { dashboard } from './modules/dashboard';
-import { team } from './modules/team';
-import { optionList } from './modules/optionList';
-import { program } from './modules/program';
-import { CaseFileEntityModule } from './modules/case-file/caseFileEntity';
-import { CaseFileMetadataModule } from './modules/case-file/caseFileMetadata';
-import { CaseNoteEntityModule } from './modules/case-note/caseNoteEntity';
-import { CaseNoteMetadataModule } from './modules/case-note/caseNoteMetadata';
-import { CaseFileReferralEntityModule } from './modules/case-file-referral/caseFileReferralEntity';
-import { CaseFileReferralMetadataModule } from './modules/case-file-referral/caseFileReferralMetadata';
-import { EventEntityModule } from './modules/event/eventEntity';
-import { EventMetadataModule } from './modules/event/eventMetadata';
-import { FinancialAssistanceEntityModule } from './modules/financial-assistance/financialAssistanceEntity';
-import { FinancialAssistanceMetadataModule } from './modules/financial-assistance/financialAssistanceMetadata';
 
 const i18n = {
   t: jest.fn(),
@@ -65,24 +74,29 @@ const mockConfig = {
       new CaseFileReferralEntityModule(new CaseFileReferralsService(httpClient), new OptionItemsService(httpClient)).getModule(),
     [vuexModule.CASE_REFERRAL_METADATA]:
       new CaseFileReferralMetadataModule(new CaseFileReferralsMetadataService(httpClient)).getModule(),
-    [vuexModule.USER_MODULE]: user,
-    [vuexModule.DASHBOARD_MODULE]: dashboard,
+    [vuexModule.CASE_DOCUMENT_ENTITIES]:
+      new CaseFileDocumentEntityModule(new CaseFileDocumentsService(httpClient), new OptionItemsService(httpClient)).getModule(),
+    [vuexModule.CASE_DOCUMENT_METADATA]:
+      new CaseFileDocumentMetadataModule(new CaseFileDocumentsMetadataService(httpClient)).getModule(),
     [vuexModule.EVENT_ENTITIES]: new EventEntityModule(new EventsService(httpClient), new OptionItemsService(httpClient)).getModule(),
     [vuexModule.EVENT_METADATA]: new EventMetadataModule(new EventsMetadataService(httpClient)).getModule(),
-    [vuexModule.OPTION_LIST_MODULE]: optionList,
-    [vuexModule.TEAM_MODULE]: team,
-    [vuexModule.PROGRAM_MODULE]: program,
     [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]: new FinancialAssistanceEntityModule(new FinancialAssistanceTablesService(httpClient)).getModule(),
     [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
       new FinancialAssistanceTablesMetadataService(httpClient),
     ).getModule(),
     [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
     [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
+    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(new UserAccountsService(httpClient)).getModule(),
+    [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(new UserAccountsMetadataService(httpClient)).getModule(),
+
+    [vuexModule.USER_MODULE]: user,
+    [vuexModule.DASHBOARD_MODULE]: dashboard,
+    [vuexModule.OPTION_LIST_MODULE]: optionList,
+    [vuexModule.TEAM_MODULE]: team,
+    [vuexModule.PROGRAM_MODULE]: program,
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),
-    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(new UserAccountsService(httpClient)).getModule(),
-    [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(new UserAccountsMetadataService(httpClient)).getModule(),
   },
 };
 

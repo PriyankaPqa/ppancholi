@@ -11,6 +11,7 @@ import { FinancialAssistanceTablesService } from '../financial-assistance-tables
 import { UserAccountsService } from '../user-accounts/entity';
 import { EventsService } from '../events/entity';
 import { CaseFileReferralsService } from '../case-file-referrals/entity';
+import { CaseFileDocumentsService } from '../case-file-documents/entity';
 import { CaseNotesService } from '../case-notes/entity';
 
 export const provider = (): IProvider => ({
@@ -18,6 +19,7 @@ export const provider = (): IProvider => ({
   caseFiles: new CaseFilesService(httpClient),
   caseFileNotes: new CaseNotesService(httpClient),
   caseFileReferrals: new CaseFileReferralsService(httpClient),
+  caseFileDocuments: new CaseFileDocumentsService(httpClient),
   events: new EventsService(httpClient),
   optionItems: new OptionItemsService(httpClient),
   teams: new TeamsService(httpClient),

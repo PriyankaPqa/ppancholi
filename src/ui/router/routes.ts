@@ -22,6 +22,7 @@ const CaseNote = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pa
 const CaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');
 const CaseFileReferralDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/components/CaseFileReferralDetails.vue');
 const CreateEditCaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/components/CreateEditReferral.vue');
+const CaseFileDocument = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-document/CaseFileDocument.vue');
 
 const EventsLayout = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/layout/EventsLayout.vue');
 const HomeEvents = () => import(/* webpackChunkName: "event" */ '@/ui/views/pages/events/home/EventsHome.vue');
@@ -215,6 +216,13 @@ export const routes: Array<RouteConfig> = [
                     path: Routes.caseFile.referrals.add.path,
                     name: Routes.caseFile.referrals.add.name,
                     component: CreateEditCaseFileReferral,
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.documents.home.path,
+                    name: Routes.caseFile.documents.home.name,
+                    component: CaseFileDocument,
                     meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
                   },

@@ -30,11 +30,17 @@ import {
   IStorageMakeMock as ICaseFileReferralMakeStorageMock,
 } from './case-file-referral';
 
+import {
+  IStorageMake as ICaseFileDocumentMakeStorage,
+  IStorageMakeMock as ICaseFileDocumentMakeStorageMock,
+} from './case-file-document';
+
 export interface IStorage {
   user: IUserStorage;
   caseFile: ICaseFileMakeStorage;
   caseNote: ICaseNoteMakeStorage;
   caseFileReferral: ICaseFileReferralMakeStorage;
+  caseFileDocument: ICaseFileDocumentMakeStorage;
   dashboard: IDashboardStorage;
   event: IEventMakeStorage;
   optionList: IOptionListStorage;
@@ -51,6 +57,7 @@ export interface IStorageMock {
   caseFile: ICaseFileMakeStorageMock;
   caseNote: ICaseNoteMakeStorageMock;
   caseFileReferral: ICaseFileReferralMakeStorageMock;
+  caseFileDocument: ICaseFileDocumentMakeStorageMock;
   dashboard: IDashboardStorageMock;
   event: IEventMakeStorageMock;
   optionList: IOptionListStorageMock;

@@ -12,11 +12,13 @@ import { mockStorageTeam } from './team';
 import { mockStorageProgram } from './program';
 import { FinancialAssistanceStorageMock } from './financial-assistance/storage.mock';
 import { CaseFileReferralStorageMock } from './case-file-referral';
+import { CaseFileDocumentStorageMock } from './case-file-document';
 
 export const mockStorage = (): IStorageMock => ({
   caseFile: new CaseFileStorageMock().make(),
   caseNote: new CaseNoteStorageMock().make(),
   caseFileReferral: new CaseFileReferralStorageMock().make(),
+  caseFileDocument: new CaseFileDocumentStorageMock().make(),
   dashboard: mockStorageDashboard(),
   user: mockStorageUser(),
   event: new EventStorageMock().make(),

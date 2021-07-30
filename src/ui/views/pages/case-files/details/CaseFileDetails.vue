@@ -255,9 +255,9 @@ export default Vue.extend({
 
       }, {
         text: this.$t('caseFileDetail.menu_documents') as string,
-        test: 'attached-documents',
-        disabled: true,
-        // to: routes.caseFileDocuments.name,
+        test: 'documents',
+        to: routes.caseFile.documents.home.name,
+        exact: false,
       }, {
         text: this.$t('caseFileDetail.menu_assessments') as string,
         test: 'assessments',

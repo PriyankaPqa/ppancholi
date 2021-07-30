@@ -1,0 +1,49 @@
+import { IEntityCombined } from '@/entities/base';
+import { ICaseFileDocumentEntity, ICaseFileDocumentMetadata } from '@/entities/case-file-document';
+import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
+import {
+  IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
+} from '../base';
+
+export interface IGetters extends IBaseGetters<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
+  categories(filterOutInactive?: boolean, actualValue?: string[] | string): Array<IOptionItem>;
+  getByCaseFile(id: uuid): Array<IEntityCombined<ICaseFileDocumentEntity, ICaseFileDocumentMetadata>>;
+}
+
+export interface IGettersMock extends IBaseGettersMock<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
+  categories: jest.Mock<void>;
+}
+
+export interface IActions extends IBaseActions<ICaseFileDocumentEntity, ICaseFileDocumentMetadata, {id: uuid, caseFileId: uuid}> {
+  fetchCategories(): Promise<IOptionItem[]>;
+}
+
+export interface IActionsMock extends IBaseActionsMock<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
+  fetchCategories: jest.Mock<IOptionItemData[]>;
+}
+
+export interface IMutations extends IBaseMutations<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
+ }
+
+export interface IMutationsMock extends IBaseMutationsMock<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
+}
+
+export interface IStorageMake {
+  getters: IGetters;
+  actions: IActions;
+  mutations: IMutations;
+}
+
+export interface IStorageMakeMock {
+  getters: IGettersMock;
+  actions: IActionsMock;
+  mutations: IMutationsMock;
+}
+
+export interface IStorage {
+  make(): IStorageMake
+}
+
+export interface IStorageMock {
+  make(): IStorageMake
+}

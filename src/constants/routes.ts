@@ -68,7 +68,12 @@ const routes = {
         name: 'casefile.referrals.add',
       },
     },
-
+    documents: {
+      home: {
+        path: 'documents',
+        name: 'casefile.documents',
+      },
+    },
   },
   events: {
     layout: {

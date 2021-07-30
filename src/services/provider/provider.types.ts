@@ -12,6 +12,7 @@ import { IUserAccountsServiceMock, UserAccountsService } from '../user-accounts/
 import { IEventsService, IEventsServiceMock } from '../events/entity';
 import { ICaseNotesService, ICaseNotesServiceMock } from '../case-notes/entity';
 import { ICaseFileReferralsService, ICaseFileReferralsServiceMock } from '../case-file-referrals/entity';
+import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '../case-file-documents/entity';
 import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '../financial-assistance-tables/entity';
 
 export interface IProvider {
@@ -19,6 +20,7 @@ export interface IProvider {
   caseFiles: ICaseFilesService,
   caseFileNotes: ICaseNotesService,
   caseFileReferrals: ICaseFileReferralsService
+  caseFileDocuments: ICaseFileDocumentsService
   events: IEventsService;
   optionItems: IOptionItemsService;
   teams: ITeamsService,
@@ -34,6 +36,7 @@ export interface IProviderMock {
   caseFiles: ICaseFilesServiceMock,
   caseFileNotes: ICaseNotesServiceMock,
   caseFileReferrals: ICaseFileReferralsServiceMock,
+  caseFileDocuments: ICaseFileDocumentsServiceMock,
   events: IEventsServiceMock;
   optionItems: IOptionItemsServiceMock;
   teams: ITeamsServiceMock,

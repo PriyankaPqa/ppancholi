@@ -18,3 +18,5 @@ export const USER_ACCOUNT_ENTITIES = 'userAccountEntities';
 export const USER_ACCOUNT_METADATA = 'userAccountMetadata';
 export const CASE_REFERRAL_ENTITIES = 'caseReferralEntities';
 export const CASE_REFERRAL_METADATA = 'caseReferralMetadata';
+export const CASE_DOCUMENT_ENTITIES = 'caseDocumentEntities';
+export const CASE_DOCUMENT_METADATA = 'caseDocumentMetadata';

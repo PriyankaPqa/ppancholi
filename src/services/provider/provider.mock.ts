@@ -11,12 +11,14 @@ import { mockUserAccountsService } from '../user-accounts/entity';
 import { mockEventsService } from '../events/entity';
 import { mockCaseNotesService } from '../case-notes/entity';
 import { mockCaseFileReferralsService } from '../case-file-referrals/entity';
+import { mockCaseFileDocumentsService } from '../case-file-documents/entity';
 
 export const mockProvider = (): IProviderMock => ({
   appUsers: mockAppUsersService(),
   caseFiles: mockCaseFilesService(),
   caseFileNotes: mockCaseNotesService(),
   caseFileReferrals: mockCaseFileReferralsService(),
+  caseFileDocuments: mockCaseFileDocumentsService(),
   optionItems: mockOptionItemsServiceService(),
   teams: mockTeamsService(),
   programs: mockProgramsService(),
