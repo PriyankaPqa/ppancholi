@@ -22,10 +22,18 @@
             <span class="registration-result" data-test="confirm-registration-event-name">{{ $m(event.name) }}</span>
           </v-col>
 
-          <v-col cols="12" class="rc-body14 mt-3">
+          <v-col v-if="!isCRCRegistration" cols="12" class="rc-body14 mt-3">
             <i18n path="registration.confirmation.additional_assistance" tag="div">
               <template #phone>
                 <span class="fw-bold" data-test="confirm-registration-phoneAssistance">{{ phoneAssistance }}</span>
+              </template>
+            </i18n>
+          </v-col>
+
+          <v-col v-if="isCRCRegistration" cols="12" class="rc-body14 mt-3" data-test="confirm-registration-additional_assistance-fullname">
+            <i18n path="registration.crc_confirmation.additional_assistance" tag="div">
+              <template #x>
+                <span class="fw-bold" data-test="confirm-registration-additional_assistance">{{ fullName }}</span>
               </template>
             </i18n>
           </v-col>
@@ -33,7 +41,7 @@
 
         <div v-if="isCRCRegistration">
           <v-icon>mdi-information</v-icon>
-          <span class="rc-body14 ml-2">{{ $t('registration.confirmation.email_sent') }}</span>
+          <span class="rc-body14 ml-2">{{ $t('registration.crc_confirmation.email_sent') }}</span>
         </div>
       </div>
     </template>
@@ -95,7 +103,13 @@ export default Vue.extend({
     },
 
     confirmationMessagePath(): TranslateResult {
-      return this.associationMode ? 'registration.confirmation.associate' : 'registration.confirmation.thank_you';
+      if (this.associationMode) {
+        return 'registration.confirmation.associate';
+      }
+      if (this.isCRCRegistration) {
+        return 'registration.crc_confirmation.thank_you';
+      }
+      return 'registration.confirmation.thank_you';
     },
 
     registrationNumber(): string {

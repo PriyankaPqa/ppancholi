@@ -37,11 +37,40 @@ describe('ConfirmRegistration.vue', () => {
       it('should render it', () => {
         wrapper = mount(Component, {
           localVue,
-          computed,
+          computed: {
+            associationMode: () => false,
+            isCRCRegistration: () => false,
+          },
         });
 
         const component = wrapper.findDataTest('confirm-registration-message');
-        expect(component.text()).toBe(computed.confirmationMessagePath());
+        expect(component.text()).toBe('registration.confirmation.thank_you');
+      });
+
+      it('should render it', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => true,
+            isCRCRegistration: () => false,
+          },
+        });
+
+        const component = wrapper.findDataTest('confirm-registration-message');
+        expect(component.text()).toBe('registration.confirmation.associate');
+      });
+
+      it('should render it', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => false,
+            isCRCRegistration: () => true,
+          },
+        });
+
+        const component = wrapper.findDataTest('confirm-registration-message');
+        expect(component.text()).toBe('registration.crc_confirmation.thank_you');
       });
     });
 
@@ -56,6 +85,18 @@ describe('ConfirmRegistration.vue', () => {
       it('should render it', () => {
         const component = wrapper.findDataTest('confirm-registration-event-name');
         expect(component.text()).toBe(computed.event().name.translation.en);
+      });
+    });
+
+    describe('additional_assistance name message path', () => {
+      it('should render it', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed,
+        });
+
+        const component = wrapper.findDataTest('confirm-registration-additional_assistance-fullname');
+        expect(component.text()).toBe('registration.crc_confirmation.additional_assistance');
       });
     });
   });
@@ -137,12 +178,20 @@ describe('ConfirmRegistration.vue', () => {
 
     describe('confirmationMessagePath', () => {
       it('returns the proper data', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            associationMode: () => false,
+            isCRCRegistration: () => false,
+          },
+        });
         expect(wrapper.vm.confirmationMessagePath).toEqual('registration.confirmation.thank_you');
 
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
             associationMode: () => true,
+            isCRCRegistration: () => false,
           },
         });
 
