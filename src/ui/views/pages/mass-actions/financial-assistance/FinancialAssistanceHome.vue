@@ -6,10 +6,10 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-  name: 'FinancialAssistance',
+  name: 'FinancialAssistanceHome',
 });
 </script>
 
-<style lang="sccs" scoped>
+<style lang="scss" scoped>
 
 </style>

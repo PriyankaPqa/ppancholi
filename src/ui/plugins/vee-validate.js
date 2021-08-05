@@ -185,5 +185,12 @@ extend('requiredPhone', {
   message: (_, values) => i18n.t('validations.anyPhone', values),
 });
 
+extend('requiredFile', {
+  computesRequired: true,
+  message: () => i18n.t('validations.required.file'),
+  params: ['size'],
+  validate: (value, { size }) => size > 0,
+});
+
 Vue.component('ValidationProvider', ValidationProvider);
 Vue.component('ValidationObserver', ValidationObserver);

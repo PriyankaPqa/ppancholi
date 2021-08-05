@@ -62,7 +62,7 @@ export default mixins(massActions).extend({
         {
           title: 'mass_action.card.import_validation_impact',
           description: 'mass_action.card.group4',
-          button: 'mass_action.card.action.import',
+          button: 'mass_action.card.action.view',
           route: null,
           dataTest: 'massAction_import_validation_impact',
           level: 'level6',

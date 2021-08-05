@@ -3,6 +3,7 @@ import { HouseholdStorageMock } from '@crctech/registration-lib/src/store/storag
 import { UserAccountStorageMock } from '@/store/storage/user-account/storage.mock';
 import { CaseFileStorageMock } from '@/store/storage/case-file/storage.mock';
 import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
+import { MassActionStorageMock } from '@/store/storage/mass-action';
 import { IStorageMock } from './storage.types';
 import { mockStorageUser } from './user';
 import { mockStorageDashboard } from './dashboard';
@@ -29,4 +30,5 @@ export const mockStorage = (): IStorageMock => ({
   financialAssistance: new FinancialAssistanceStorageMock().make(),
   household: new HouseholdStorageMock().make(),
   userAccount: new UserAccountStorageMock().make(),
+  massAction: new MassActionStorageMock().make(),
 });

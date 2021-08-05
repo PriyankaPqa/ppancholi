@@ -5,6 +5,7 @@ import { UserAccountStorage } from '@/store/storage/user-account/storage';
 import { CaseFileStorage } from '@/store/storage/case-file/storage';
 import { EventStorage } from '@/store/storage/event/storage';
 import { FinancialAssistanceStorage } from '@/store/storage/financial-assistance/storage';
+import { MassActionStorage } from '@/store/storage/mass-action';
 import { IStore, IState } from '../store.types';
 import { IStorage } from './storage.types';
 import { makeStorage as makeUserStorage } from './user';
@@ -35,4 +36,5 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   household: new HouseholdStorage(store, vuexModule.HOUSEHOLD_ENTITIES, vuexModule.HOUSEHOLD_METADATA).make(),
   userAccount: new UserAccountStorage(store, vuexModule.USER_ACCOUNT_ENTITIES, vuexModule.USER_ACCOUNT_METADATA).make(),
   event: new EventStorage(store, vuexModule.EVENT_ENTITIES, vuexModule.EVENT_METADATA).make(),
+  massAction: new MassActionStorage(store, vuexModule.MASS_ACTION_ENTITIES, vuexModule.MASS_ACTION_METADATA).make(),
 });

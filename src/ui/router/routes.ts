@@ -45,7 +45,11 @@ const CreateEditFinancialAssistance = () => import(/* webpackChunkName: "financi
 
 const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
 const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
-const MassActionsFinancialAssistance = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistance.vue');
+const MassActionsFinancialAssistanceHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceHome.vue');
+
+const MassActionsImportValidationStatusHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
+const MassActionsImportValidationStatusCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
+const MassActionsImportValidationStatusDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusDetails.vue');
 
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
@@ -425,8 +429,27 @@ export const routes: Array<RouteConfig> = [
               {
                 path: Routes.massActions.financialAssistance.path,
                 name: Routes.massActions.financialAssistance.name,
-                component: MassActionsFinancialAssistance,
+                component: MassActionsFinancialAssistanceHome,
                 meta: { level: 'level6', roles: ['contributorFinance'] },
+              },
+              {
+                path: Routes.massActions.importValidationStatus.home.path,
+                name: Routes.massActions.importValidationStatus.home.name,
+                component: MassActionsImportValidationStatusHome,
+                meta: { level: 'level6', roles: ['contributorIM'] },
+              },
+              {
+                path: Routes.massActions.importValidationStatus.create.path,
+                name: Routes.massActions.importValidationStatus.create.name,
+                component: MassActionsImportValidationStatusCreate,
+                meta: { level: 'level6', roles: ['contributorIM'] },
+              },
+              {
+                path: Routes.massActions.importValidationStatus.details.path,
+                name: Routes.massActions.importValidationStatus.details.name,
+                component: MassActionsImportValidationStatusDetails,
+                meta: { level: 'level6', roles: ['contributorIM'] },
+                props: true,
               },
             ],
           },

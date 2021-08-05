@@ -57,6 +57,9 @@ import { FinancialAssistanceEntityModule } from '@/store/modules/financial-assis
 import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-assistance/financialAssistanceMetadata';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { FinancialAssistanceTablesMetadataService } from '@/services/financial-assistance-tables/metadata';
+import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEntity';
+import { MassActionService } from '@/services/mass-actions/entity';
+import { MassActionMetadataModule } from '@/store/modules/mass-action/massActionMetadata';
 
 const i18n = {
   t: jest.fn(),
@@ -97,6 +100,8 @@ const mockConfig = {
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),
+    [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(new MassActionService(httpClient)).getModule(),
+    [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(null).getModule(),
   },
 };
 

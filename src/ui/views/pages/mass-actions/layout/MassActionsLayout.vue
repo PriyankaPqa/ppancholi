@@ -68,12 +68,10 @@ export default mixins(massActions).extend({
             {
               text: this.$t('mass_action.card.import_validation_impact'),
               test: 'mass_action.card.import_validation_impact',
-              to: null,
+              to: routes.massActions.importValidationStatus.home.name,
               exact: false,
               level: 'level6',
               roles: ['contributorIM'],
-              onClick: 'importValidationImpact',
-
             },
             {
               text: this.$t('mass_action.card.generate_funding'),

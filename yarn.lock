@@ -998,10 +998,10 @@
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
-"@crctech/registration-lib@1.0.383":
-  version "1.0.383"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.383.tgz#4e0d3cd1a53d905c616e249c8fd974eb2aa316f3"
-  integrity sha1-Tg080aU9kFxhbiScj9l06yqjFvM=
+"@crctech/registration-lib@1.0.376":
+  version "1.0.376"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.376.tgz#2b3b4a0ca8449466f27cae32c1684e244186c915"
+  integrity sha1-KztKDKhElGbyfK4ywWhOJEGGyRU=
   dependencies:
     "@crctech/component-library" "1.0.19"
     axios "^0.21.1"
@@ -3615,9 +3615,9 @@ caniuse-api@^3.0.0:
     lodash.uniq "^4.5.0"
 
 caniuse-lite@^1.0.0, caniuse-lite@^1.0.30001109, caniuse-lite@^1.0.30001181:
-  version "1.0.30001187"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001187.tgz#5706942631f83baa5a0218b7dfa6ced29f845438"
-  integrity sha512-w7/EP1JRZ9552CyrThUnay2RkZ1DXxKe/Q2swTC4+LElLh9RRYrL1Z+27LlakB8kzY0fSmHw9mc7XYDUKAKWMA==
+  version "1.0.30001248"
+  resolved "https://registry.npmjs.org/caniuse-lite/-/caniuse-lite-1.0.30001248.tgz"
+  integrity sha512-NwlQbJkxUFJ8nMErnGtT0QTM2TJ33xgz4KXJSMIrjXIbDVdaYueGyjOrLKRtJC+rTiWfi6j5cnZN1NBiSBJGNw==
 
 capture-exit@^2.0.0:
   version "2.0.0"

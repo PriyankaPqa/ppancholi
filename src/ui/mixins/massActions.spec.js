@@ -1,6 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import massActions from '@/ui/mixins/massActions';
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
+import routes from '@/constants/routes';
 
 const Component = {
   render() {},
@@ -105,8 +106,9 @@ describe('massActions', () => {
     });
 
     describe('importValidationImpact', () => {
-      it('should do nothing', () => {
-        expect(wrapper.vm.importValidationImpact()).toBe(false);
+      it('should redirect to home page', async () => {
+        await wrapper.vm.importValidationImpact();
+        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.massActions.importValidationStatus.home.name });
       });
     });
 

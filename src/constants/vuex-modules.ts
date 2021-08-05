@@ -20,3 +20,5 @@ export const CASE_REFERRAL_ENTITIES = 'caseReferralEntities';
 export const CASE_REFERRAL_METADATA = 'caseReferralMetadata';
 export const CASE_DOCUMENT_ENTITIES = 'caseDocumentEntities';
 export const CASE_DOCUMENT_METADATA = 'caseDocumentMetadata';
+export const MASS_ACTION_ENTITIES = 'massActionEntities';
+export const MASS_ACTION_METADATA = 'massActionMetadata';

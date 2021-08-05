@@ -148,6 +148,20 @@ const routes = {
       path: 'financial-assistance',
       name: 'massActions.financialAssistance',
     },
+    importValidationStatus: {
+      home: {
+        path: 'import-validation-status',
+        name: 'massActions.importValidationStatus.home',
+      },
+      create: {
+        path: 'import-validation-status/create',
+        name: 'massActions.importValidationStatus.create',
+      },
+      details: {
+        path: 'import-validation-status/details/:id',
+        name: 'massActions.importValidationStatus.details',
+      },
+    },
   },
   programs: {
     home: {
