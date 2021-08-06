@@ -1,39 +1,54 @@
+/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
-  mockTeamSearchDataAggregate, Team,
+  mockCombinedTeams,
 } from '@/entities/team';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/store/storage';
-import { mockUserStateLevel } from '@/test/helpers';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 import Component from './TeamMembersTable.vue';
+import _orderBy from 'lodash/orderBy';
 
 const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-const searchData = mockTeamSearchDataAggregate()[0];
-searchData.teamMembers[0].caseFilesCount = 0;
-searchData.teamMembers[1].caseFilesCount = 0;
-searchData.teamMembers.push({
-  ...mockCombinedUserAccount({ id: 'guid-member-3' }).entity,
-  ...mockCombinedUserAccount({ id: 'guid-member-3' }).metadata,
-  isPrimaryContact: false,
-  caseFilesCount: 1,
-  id: 'guid-member-3',
-});
-const mockTeam = new Team(searchData);
+const mockTeam = mockCombinedTeams()[0];
+
+const userAccounts = [
+  mockCombinedUserAccount({ id: 'guid-member-1' }),
+  mockCombinedUserAccount({ id: 'guid-member-2' }),
+  mockCombinedUserAccount({ id: 'guid-member-3' })];
+userAccounts[0].metadata.caseFilesCount = 0;
+userAccounts[1].metadata.caseFilesCount = 0;
+userAccounts[2].metadata.caseFilesCount = 10;
+
+const mockTeamMembers = [{...userAccounts[0], isPrimaryContact: true}, {...userAccounts[1], isPrimaryContact: false}, {...userAccounts[2], isPrimaryContact: false}];
 
 describe('TeamMembersTable.vue', () => {
+  
   let wrapper;
 
-  describe('Template', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        store: {
-          ...mockUserStateLevel(5),
+  const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
+      localVue,
+      propsData: {
+        teamId: 'abc',
+      },
+      mocks: {
+        $hasLevel: (lvl) => {
+          return lvl <= 'level' + level;
         },
+        $storage: storage,
+      },
+      ...additionalOverwrites,
+    });
+    await wrapper.vm.$nextTick();
+  };
+
+  describe('Template', () => {
+    beforeEach(async () => {
+      await mountWrapper(true, 5, {
         computed: {
           team() {
             return mockTeam;
@@ -107,6 +122,16 @@ describe('TeamMembersTable.vue', () => {
         });
 
         describe('Delete member', () => {
+          beforeEach(async () => {
+            await mountWrapper(true, 5, {
+              computed: {
+                computedTeamMembers() {
+                  return mockTeamMembers;
+                },
+              },
+            });
+          });
+
           test('clicking the bin will show remove confirmation dialog if not a primary contact', async () => {
             jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
             const button = wrapper.findDataTest('remove_team_member_guid-member-2');
@@ -143,7 +168,8 @@ describe('TeamMembersTable.vue', () => {
         test('props teamMembers is correctly linked', async () => {
           await wrapper.setData({ showAddTeamMemberDialog: true });
           const element = wrapper.findDataTest('add-team-members');
-          expect(element.props().teamMembers).toEqual(wrapper.vm.team.teamMembers);
+          expect(element.props().teamMembers).toEqual(wrapper.vm.team.entity.teamMembers);
+          expect(element.props().teamId).toEqual(wrapper.vm.team.entity.id);
         });
       });
 
@@ -183,50 +209,48 @@ describe('TeamMembersTable.vue', () => {
   });
 
   describe('Computed', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        data() {
-          return {
-            search: 'Jane',
-            sortBy: 'displayName',
-          };
-        },
-        computed: {
-          team() {
-            return mockTeam;
-          },
-        },
-      });
-    });
-
     describe('computedTeamMembers', () => {
-      it('returns filtered list', () => {
-        expect(wrapper.vm.computedTeamMembers).toEqual(wrapper.vm.team.teamMembers);
-      });
-    });
+      it('returns sorted filtered list from getById', async () => {
+        await mountWrapper(false, 5);
+        await wrapper.setData({
+          search: 'Jane',
+          sortBy: 'id',
+          sortDesc: false,
+        });
 
-    describe('teamMembersId', () => {
-      it('returns the list of team members id', () => {
-        expect(wrapper.vm.teamMembersId).toEqual(wrapper.vm.team.teamMembers.map((m) => m.id));
+        expect(storage.userAccount.getters.getByIds).toHaveBeenCalledWith(wrapper.vm.team.entity.teamMembers.map((x) => x.id));
+        expect(wrapper.vm.computedTeamMembers.map((x) => x.entity.id)).toEqual(storage.userAccount.getters.getByIds().map((x) => x.entity.id));
+
+        await wrapper.setData({
+          search: 'Jane',
+          sortBy: 'id',
+          sortDesc: true,
+        });
+        expect(wrapper.vm.computedTeamMembers.map((x) => x.entity.id)).toEqual(_orderBy(storage.userAccount.getters.getByIds().map((x) => x.entity.id), 'id', 'desc'));
+
+        
+        await wrapper.setData({
+          search: '[nope]',
+          sortBy: 'displayName',
+        });
+
+        expect(wrapper.vm.computedTeamMembers.map((x) => x.entity.id)).toEqual([]);
+
       });
     });
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
+    beforeEach(async () => {
+      await mountWrapper(false, 5, {
         computed: {
-          team() {
-            return mockTeam;
+          computedTeamMembers() {
+            return mockTeamMembers;
           },
-        },
-        mocks: {
-          $storage: storage,
         },
       });
     });
+
     describe('showRemoveConfirmationDialog', () => {
       it('assigns removeMemberId', () => {
         wrapper.vm.showRemoveConfirmationDialog('123');
@@ -264,45 +288,41 @@ describe('TeamMembersTable.vue', () => {
         expect(wrapper.vm.hasCaseFiles).toBeTruthy();
       });
     });
+
     describe('hideConfirmationDialog', () => {
       it('remove member confirmation dialog', () => {
         jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
-        wrapper.vm.handleRemoveTeamMember(mockTeam.teamMembers[1]);
-        expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledWith(mockTeam.teamMembers[1].id);
+        wrapper.vm.handleRemoveTeamMember(wrapper.vm.computedTeamMembers[1]);
+        expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledWith(wrapper.vm.computedTeamMembers[1].entity.id);
       });
     });
+
     describe('removeTeamMember', () => {
       it('calls removeTeamMember action with correct params', async () => {
         await wrapper.setData({
           removeMemberId: 'guid-member-1',
         });
         wrapper.vm.removeTeamMember();
-        expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith('guid-member-1');
+        expect(storage.team.actions.removeTeamMember).toHaveBeenCalledWith('abc', 'guid-member-1');
       });
 
       describe('handleRemoveTeamMember', () => {
         it('called showPrimaryContactMessage if user is a primary contact', () => {
           jest.spyOn(wrapper.vm, 'showPrimaryContactMessage').mockImplementation(() => null);
-          wrapper.vm.handleRemoveTeamMember(mockTeam.teamMembers[0]);
+          wrapper.vm.handleRemoveTeamMember(wrapper.vm.computedTeamMembers[0]);
           expect(wrapper.vm.showPrimaryContactMessage).toHaveBeenCalledTimes(1);
         });
 
         it('called showRemoveConfirmationDialog if open case files count is zero', () => {
           jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
-          wrapper.vm.handleRemoveTeamMember(mockTeam.teamMembers[1]);
-          expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledWith(mockTeam.teamMembers[1].id);
+          wrapper.vm.handleRemoveTeamMember(wrapper.vm.computedTeamMembers[1]);
+          expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledWith(wrapper.vm.computedTeamMembers[1].entity.id);
         });
 
         it('called showRemoveConfirmationDialogWithCaseFiles if user has case file linked', () => {
           jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialogWithCaseFiles').mockImplementation(() => null);
-          wrapper.vm.handleRemoveTeamMember(mockTeam.teamMembers[2]);
-          expect(wrapper.vm.showRemoveConfirmationDialogWithCaseFiles).toHaveBeenCalledWith(mockTeam.teamMembers[2].id);
-        });
-
-        it('called showRemoveConfirmationDialog', () => {
-          jest.spyOn(wrapper.vm, 'showRemoveConfirmationDialog').mockImplementation(() => null);
-          wrapper.vm.handleRemoveTeamMember(mockTeam.teamMembers[1]);
-          expect(wrapper.vm.showRemoveConfirmationDialog).toHaveBeenCalledWith(mockTeam.teamMembers[1].id);
+          wrapper.vm.handleRemoveTeamMember(wrapper.vm.computedTeamMembers[2]);
+          expect(wrapper.vm.showRemoveConfirmationDialogWithCaseFiles).toHaveBeenCalledWith(wrapper.vm.computedTeamMembers[2].entity.id);
         });
       });
     });
@@ -316,36 +336,19 @@ describe('TeamMembersTable.vue', () => {
 
     describe('showDeleteIcon', () => {
       test('only l5+ user can see the delete icon for a primary contact', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            team() {
-              return mockTeam;
-            },
-          },
-        });
-
-        await wrapper.setRole('level4');
+        await mountWrapper(false, 4);
         expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: true })).toBeFalsy();
 
-        await wrapper.setRole('level5');
+        await mountWrapper(false, 5);
         expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: true })).toBeTruthy();
       });
 
       test('only l4+ can see the delete icon for other members', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            team() {
-              return mockTeam;
-            },
-          },
-        });
-
-        await wrapper.setRole('level3');
+        
+        await mountWrapper(false, 3);
         expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: false })).toBeFalsy();
 
-        await wrapper.setRole('level4');
+        await mountWrapper(false, 4);
         expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: false })).toBeTruthy();
       });
     });

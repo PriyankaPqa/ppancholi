@@ -1,7 +1,7 @@
 <template>
   <rc-dialog
     v-if="show"
-    :title="member.displayName"
+    :title="member.metadata.displayName"
     :show="show"
     content-only-scrolling
     content-padding="0"
@@ -11,9 +11,7 @@
     :show-cancel="false"
     :show-submit="false"
     @close="$emit('update:show', false)">
-    <v-progress-circular v-if="isLoading" style="margin: auto" indeterminate color="primary" />
-
-    <v-simple-table v-else class="member_teams_table">
+    <v-simple-table class="member_teams_table">
       <thead>
         <tr>
           <th class="text-left" style="min-width: 100px">
@@ -49,8 +47,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog } from '@crctech/component-library';
-import { ITeamMemberData } from '@/entities/team';
-import { IUserAccountTeamEvent, IUserAccountTeam } from '@/entities/user-account';
+import { IUserAccountTeamEvent, IUserAccountTeam, IUserAccountCombined } from '@/entities/user-account';
 
 export default Vue.extend({
   name: 'TeamMemberTeams',
@@ -61,7 +58,7 @@ export default Vue.extend({
 
   props: {
     member: {
-      type: Object as () => ITeamMemberData,
+      type: Object as () => IUserAccountCombined,
       required: true,
     },
     show: {
@@ -70,31 +67,13 @@ export default Vue.extend({
     },
   },
 
-  data() {
-    return {
-      teams: null as Array<IUserAccountTeam>,
-    };
-  },
-
   computed: {
-    isLoading(): boolean {
-      return this.$store.state.team.searchLoading;
+    teams(): Array<IUserAccountTeam> {
+      return this.member?.metadata?.teams || [];
     },
-  },
-
-  mounted() {
-    this.fetchMemberTeams();
   },
 
   methods: {
-    async fetchMemberTeams() {
-      const res = await this.$storage.userAccount.actions.fetch(this.member.id);
-
-      if (res && res.metadata && res.metadata.teams) {
-        this.teams = res.metadata.teams;
-      }
-    },
-
     buildEventsString(events: IUserAccountTeamEvent[]): string {
       if (events.length === 0) return '';
       return events.map((e: IUserAccountTeamEvent) => this.$m(e.name)).join(', ');

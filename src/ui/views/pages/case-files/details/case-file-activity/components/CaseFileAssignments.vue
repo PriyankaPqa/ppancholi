@@ -32,9 +32,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ICaseFileEntity } from '@/entities/case-file';
-
-import { IAzureSearchResult } from '@/types';
-import { ITeam, ITeamMemberData, ITeamSearchData } from '@/entities/team';
+import { ITeamEntity } from '@/entities/team';
 import { IUserAccountCombined } from '@/entities/user-account';
 import AssignCaseFile from './AssignCaseFile.vue';
 
@@ -83,7 +81,7 @@ export default Vue.extend({
     /**
      * Set the assignment info by using the data sent back from the assign-case-file dialog after an assignment was done
      */
-    setAssignmentsInfoFromData({ individuals, teams }: {individuals: ITeamMemberData[], teams: ITeam[]}) {
+    setAssignmentsInfoFromData({ individuals, teams }: {individuals: {displayName: string}[], teams: ITeamEntity[]}) {
       this.assignedTeamInfo = teams[0] ? teams[0].name : '';
       const individualsNames = individuals.map((i) => (i.displayName));
       this.assignedIndividualsInfo = this.createAssignedIndividualsInfo([individualsNames[0], individualsNames[1]]);
@@ -101,9 +99,8 @@ export default Vue.extend({
       if (!this.caseFile.assignedTeamIds.length) { return null; }
 
       const id = this.caseFile.assignedTeamIds[0];
-      const teamResponse:IAzureSearchResult<ITeamSearchData> = await this.$storage.team.actions.searchTeams({ filter: { TeamId: id } });
-      const team: ITeamSearchData = teamResponse?.value?.[0];
-      return team?.teamName;
+      const teamResponse = await this.$storage.team.actions.fetch(id);
+      return teamResponse?.entity?.name;
     },
 
     async getAssignedIndividualsInfo() {

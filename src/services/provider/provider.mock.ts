@@ -4,7 +4,7 @@ import { IProviderMock } from './provider.types';
 import { mockAppUsersService } from '../app-users';
 import { mockCaseFilesService } from '../case-files/entity';
 import { mockOptionItemsServiceService } from '../optionItems';
-import { mockTeamsService } from '../teams';
+import { mockTeamsService } from '../teams/entity';
 import { mockProgramsService } from '../programs';
 import { mockFinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { mockUserAccountsService } from '../user-accounts/entity';

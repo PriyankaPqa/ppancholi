@@ -51,7 +51,7 @@
                   @input="updateSelection(item)" />
               </template>
               <template #item.role="{ item }">
-                {{ getRole(item) }}
+                {{ $m(item.roleName) }}
               </template>
             </v-data-table>
           </div>
@@ -95,9 +95,18 @@ import Vue from 'vue';
 import { RcDialog } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import _difference from 'lodash/difference';
-import { ITeamMemberData } from '@/entities/team';
+import { ITeamMember } from '@/entities/team';
 import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
 import { Status } from '@/entities/base';
+import { IMultilingual } from '@/types';
+
+interface UserTeamMember {
+  roleName: IMultilingual,
+  displayName: string,
+  id: string,
+  emailAddress: string,
+  isPrimaryContact: boolean,
+}
 
 export default Vue.extend({
   name: 'AddTeamMembers',
@@ -112,7 +121,11 @@ export default Vue.extend({
       required: true,
     },
     teamMembers: {
-      type: Array as () => ITeamMemberData[],
+      type: Array as () => ITeamMember[],
+      required: true,
+    },
+    teamId: {
+      type: String,
       required: true,
     },
   },
@@ -120,8 +133,9 @@ export default Vue.extend({
   data() {
     return {
       search: '',
-      selectedUsers: [],
+      selectedUsers: [] as UserTeamMember[],
       users: [] as Array<IUserAccountCombined>,
+      loading: false,
     };
   },
 
@@ -159,25 +173,21 @@ export default Vue.extend({
       ];
     },
 
-    availableMembers(): ITeamMemberData[] {
+    availableMembers(): UserTeamMember[] {
       const result:IUserAccountCombined[] = this.$storage.userAccount.getters.getByCriteria(
         this.search, false, ['displayName', 'emailAddress'],
       ) || [];
       return result.filter(
         (u) => u.entity.status === Status.Active && u.entity.accountStatus === AccountStatus.Active,
       ).map(
-        // eslint-disable-next-line
-        (tm) => {
-          return {
-            ...tm.entity,
-            ...tm.metadata,
-          } as ITeamMemberData;
-        },
+        (tm) => ({
+          isPrimaryContact: false,
+          roleName: tm.metadata.roleName,
+          displayName: tm.metadata.displayName,
+          id: tm.entity.id,
+          emailAddress: tm.metadata.emailAddress,
+        }),
       );
-    },
-
-    loading(): boolean {
-      return this.$store.state.team.submitLoading;
     },
   },
 
@@ -186,7 +196,7 @@ export default Vue.extend({
       this.$emit('update:show', false);
     },
 
-    getClassRow(user: ITeamMemberData): string {
+    getClassRow(user: UserTeamMember): string {
       if (this.isAlreadyInTeam(user)) {
         return 'row_disabled';
       }
@@ -196,19 +206,15 @@ export default Vue.extend({
       return '';
     },
 
-    getRole(user: ITeamMemberData): string {
-      return this.$m(user.roleName);
-    },
-
-    isAlreadyInTeam(user: ITeamMemberData): boolean {
+    isAlreadyInTeam(user: UserTeamMember): boolean {
       return this.teamMembers.findIndex((u) => user.id === u.id) !== -1;
     },
 
-    isSelected(user: ITeamMemberData): boolean {
+    isSelected(user: UserTeamMember): boolean {
       return this.selectedUsers.findIndex((u) => user.id === u.id) !== -1;
     },
 
-    onSelectAll({ items, value }: {items: Array<ITeamMemberData>; value: boolean}) {
+    onSelectAll({ items, value }: {items: Array<UserTeamMember>; value: boolean}) {
       if (value) { // select all, get the new ones + old ones
         this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInTeam(i))];
       } else { // deselect, only remove what is currently removed
@@ -217,12 +223,17 @@ export default Vue.extend({
     },
 
     async submit() {
-      await this.$storage.team.actions.addTeamMembers(this.selectedUsers);
-      this.$toasted.global.success(this.$t('team.add_members.success'));
-      this.close();
+      try {
+        this.loading = true;
+        await this.$storage.team.actions.addTeamMembers(this.teamId, this.selectedUsers);
+        this.$toasted.global.success(this.$t('team.add_members.success'));
+        this.close();
+      } finally {
+        this.loading = false;
+      }
     },
 
-    updateSelection(user: ITeamMemberData) {
+    updateSelection(user: UserTeamMember) {
       if (this.isSelected(user)) { // remove
         this.selectedUsers = this.selectedUsers.filter((u) => u.id !== user.id);
       } else { // add

@@ -1,18 +1,13 @@
+import { IMultilingual } from '@/types';
+import { IEntity, IEntityCombined } from '../base';
+
 /**
  * Enums
  */
 
-import { IMultilingual } from '@/types';
-import { IUserAccountEntity, IUserAccountMetadata } from '@/entities/user-account';
-
-export enum ETeamType {
+export enum TeamType {
   Standard = 1,
   AdHoc = 2,
-}
-
-export enum ETeamStatus {
-  Active = 1,
-  Inactive = 2,
 }
 
 /**
@@ -24,108 +19,32 @@ export interface ITeamEvent {
   name?: IMultilingual;
 }
 
-// Member schema from teams projection
-export interface ITeamMemberSearchData {
+export interface ITeamMember {
   id: uuid;
   isPrimaryContact: boolean,
-}
-
-// Member schema from user-accounts projection, plus isPrimaryContact
-export interface ITeamMemberData extends IUserAccountEntity, IUserAccountMetadata {
-  isPrimaryContact: boolean;
-}
-
-/**
-* Interface that maps to the response structure from the API
-*/
-export interface ITeamData {
-   id: uuid;
-   name: string;
-   status: ETeamStatus;
-   teamType: ETeamType;
-   teamMembers: Array<ITeamMemberSearchData>;
-   eventIds: Array<uuid>,
-}
-
-/**
- * Team schema from teams projection
- */
-export interface ITeamSearchData {
-  '@searchScore'?: number;
-  teamId: uuid;
-  tenantId: string;
-  teamName: string;
-  teamType: ETeamType;
-  teamTypeName: IMultilingual;
-  eventCount: number;
-  primaryContactDisplayName: string;
-  teamMemberCount: number;
-  events: Array<ITeamEvent>,
-  teamStatus: ETeamStatus;
-  teamStatusName: IMultilingual;
-  teamMembers: Array<ITeamMemberSearchData>,
-}
-
-/**
- * Team schema from teams projection aggregated with users from user-accounts projection
- */
-export interface ITeamSearchDataAggregate {
-  '@searchScore'?: number;
-  teamId: uuid;
-  tenantId: string;
-  teamName: string;
-  teamType: ETeamType;
-  teamTypeName: IMultilingual;
-  eventCount: number;
-  primaryContactDisplayName: string;
-  teamMemberCount: number;
-  events: Array<ITeamEvent>,
-  teamStatus: ETeamStatus;
-  teamStatusName: IMultilingual;
-  teamMembers: Array<ITeamMemberData>,
 }
 
 /**
  * Interface used for the Team entity class
  */
-export interface ITeam {
-  id: uuid;
-  tenantId: string;
+export interface ITeamEntity extends IEntity {
   name: string;
-  status: ETeamStatus;
-  statusName: IMultilingual;
-  teamType: ETeamType;
-  teamTypeName: IMultilingual;
+  teamType: TeamType;
+  teamMembers: Array<ITeamMember>;
+  eventIds: Array<uuid>;
+  setPrimaryContact?(member: ITeamMember): void;
+  getPrimaryContact?(): ITeamMember;
+  validate?(): Array<string> | boolean;
+  setEventIds?(eventIds: uuid | uuid[]): void;
+}
+
+export interface ITeamMetadata extends IEntity {
   primaryContactDisplayName: string;
-  teamMembers: Array<ITeamMemberData>;
-  teamMemberCount: number;
-  events?: Array<ITeamEvent>,
   eventCount: number;
-  addTeamMembers(members: ITeamMemberData | ITeamMemberData[]): void;
-  setPrimaryContact(member: ITeamMemberData): void;
-  getPrimaryContact(): ITeamMemberData;
-  getActiveMemberCount(): number;
-  validate(): Array<string> | boolean;
-  setEvents(events: ITeamEvent | ITeamEvent[]): void;
+  teamMemberCount: number;
+  events?: Array<ITeamEvent>;
+  teamTypeName: IMultilingual;
+  teamStatusName: IMultilingual;
 }
 
-/**
- * Interface for the Team edit payload
- */
-export interface IEditTeamRequest {
-  name: string;
-  eventIds: Array<uuid>;
-  primaryContact: ITeamMemberSearchData;
-  status: ETeamStatus;
- }
-
-export interface ICreateTeamRequest {
-  name: string;
-  eventIds: Array<uuid>;
-  teamMembers: ITeamMemberSearchData[];
-  teamType: ETeamType;
-}
-
-export interface IAddTeamMembersRequest {
-  teamMemberIds: Array<uuid>;
-}
+export type ITeamCombined = IEntityCombined<ITeamEntity, ITeamMetadata>

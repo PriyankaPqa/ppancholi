@@ -5,7 +5,7 @@ import {
 } from '@crctech/registration-lib/src/services/public';
 import { ICaseFilesService, ICaseFilesServiceMock } from '../case-files/entity';
 import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
-import { ITeamsService, ITeamsServiceMock } from '../teams';
+import { ITeamsService, ITeamsServiceMock } from '../teams/entity';
 import { IAppUsersService, IAppUsersServiceMock } from '../app-users';
 import { IProgramsService, IProgramsServiceMock } from '../programs';
 import { IUserAccountsServiceMock, UserAccountsService } from '../user-accounts/entity';

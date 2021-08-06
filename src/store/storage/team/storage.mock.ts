@@ -1,23 +1,34 @@
-import { mockSearchTeams, mockTeam } from '@/entities/team';
-import { IStorageMock } from './storage.types';
+import {
+  ITeamCombined, ITeamEntity, mockCombinedTeams, mockTeamsDataStandard,
+} from '@/entities/team';
 
-export const mockStorageTeam = (): IStorageMock => ({
-  getters: {
-    team: jest.fn(),
-  },
+import { BaseMock } from '../base/base.mock';
 
-  mutations: {
-    resetTeam: jest.fn(),
-  },
+export class TeamStorageMock extends BaseMock<ITeamCombined, ITeamEntity> {
+  constructor() {
+    super(mockCombinedTeams(), mockTeamsDataStandard());
+  }
 
-  actions: {
-    searchTeams: jest.fn(() => mockSearchTeams()),
-    getTeam: jest.fn(),
-    getTeamsAssignable: jest.fn(() => [mockTeam()]),
-    createTeam: jest.fn(),
-    editTeam: jest.fn(),
-    addTeamMembers: jest.fn(),
-    removeTeamMember: jest.fn(),
-    searchAggregatedTeams: jest.fn(() => [mockTeam()]),
-  },
-});
+  protected getters = {
+    ...this.baseGetters,
+  }
+
+  protected actions = {
+    ...this.baseActions,
+    getTeamsAssignable: jest.fn(() => [this.entity]),
+    createTeam: jest.fn(() => this.entity),
+    editTeam: jest.fn(() => this.entity),
+    addTeamMembers: jest.fn(() => this.entity),
+    removeTeamMember: jest.fn(() => this.entity),
+  }
+
+  protected mutations = {
+    ...this.baseMutations,
+  }
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  })
+}

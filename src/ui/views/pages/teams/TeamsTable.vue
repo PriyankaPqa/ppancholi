@@ -2,9 +2,9 @@
   <div>
     <rc-data-table
       data-test="teams-table"
-      :items="azureSearchItems"
+      :items="tableData"
+      :count="itemsCount"
       :table-props="tableProps"
-      :count="azureSearchCount"
       :labels="labels"
       :headers="headers"
       :custom-columns="Object.values(customColumns)"
@@ -13,7 +13,7 @@
       <template #filter>
         <filter-toolbar
           :filter-key="FilterKey.Teams"
-          :count="azureSearchCount"
+          :count="itemsCount"
           :filter-options="filters"
           @update:appliedFilter="onApplyFilter" />
       </template>
@@ -24,39 +24,39 @@
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold"
-          :data-test="`team_link_${item.teamId}`"
-          :to="getTeamDetailsRoute(item.teamId)">
-          {{ item.teamName }}
+          :data-test="`team_link_${item.entity.id}`"
+          :to="getTeamDetailsRoute(item.entity.id)">
+          {{ item.entity.name }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.type}`]="{ item }">
-        <span data-test="team_type"> {{ $m(item.teamTypeName) }}</span>
+        <span data-test="team_type"> {{ $m(item.metadata.teamTypeName) }}</span>
       </template>
 
       <template #[`item.${customColumns.teamMemberCount}`]="{ item }">
-        <span data-test="team_members">{{ item.teamMemberCount }}</span>
+        <span data-test="team_members">{{ item.entity.teamMembers.length }}</span>
       </template>
 
       <template #[`item.${customColumns.eventCount}`]="{ item }">
-        <span data-test="team_events">{{ item.eventCount }}</span>
+        <span data-test="team_events">{{ item.metadata.eventCount }}</span>
       </template>
 
       <template #[`item.${customColumns.primaryContact}`]="{ item }">
-        <span data-test="team_primary_contact">{{ item.primaryContactDisplayName }}</span>
+        <span data-test="team_primary_contact">{{ item.metadata.primaryContactDisplayName }}</span>
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
         <status-chip
-          v-if="item.teamStatus"
+          v-if="item.entity.status"
           data-test="team_status"
-          :text="$m(item.teamStatusName)"
-          :status="item.teamStatus"
-          status-name="ETeamStatus" />
+          :text="$m(item.metadata.teamStatusName)"
+          :status="item.entity.status"
+          status-name="Status" />
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn v-if="$hasLevel('level4')" icon class="mr-2" :data-test="`edit_team_${item.teamId}`" @click="goToEditTeam(item)">
+        <v-btn v-if="$hasLevel('level4')" icon class="mr-2" :data-test="`edit_team_${item.entity.id}`" @click="goToEditTeam(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -75,7 +75,7 @@ import {
 import routes from '@/constants/routes';
 import { DataTableHeader } from 'vuetify';
 import {
-  ETeamType, ETeamStatus, ITeamSearchData,
+  TeamType, ITeamCombined,
 } from '@/entities/team';
 import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -84,6 +84,8 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import helpers from '@/ui/helpers';
+import { Status } from '@/entities/base';
+import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
 export default Vue.extend({
   name: 'TeamsTable',
@@ -107,17 +109,25 @@ export default Vue.extend({
   data() {
     return {
       FilterKey,
-      ETeamType,
-      ETeamStatus,
+      TeamType,
+      Status,
+      searchLoading: false,
       options: {
         page: 1,
-        sortBy: ['TeamName'],
+        sortBy: ['Entity/Name'],
         sortDesc: [false],
       },
+      searchResultIds: [] as string[],
+      itemsCount: 0,
     };
   },
 
   computed: {
+
+    tableData(): ITeamCombined[] {
+      return this.$storage.team.getters.getByIds(this.searchResultIds);
+    },
+
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
       return {
         header: {
@@ -129,12 +139,12 @@ export default Vue.extend({
 
     customColumns(): Record<string, string> {
       return {
-        name: 'TeamName',
-        type: `TeamTypeName/Translation/${this.$i18n.locale}`,
-        eventCount: 'EventCount',
-        primaryContact: 'PrimaryContactDisplayName',
-        teamMemberCount: 'TeamMemberCount',
-        status: `TeamStatusName/Translation/${this.$i18n.locale}`,
+        name: 'Entity/Name',
+        type: `Metadata/TeamTypeName/Translation/${this.$i18n.locale}`,
+        eventCount: 'Metadata/EventCount',
+        primaryContact: 'Metadata/PrimaryContactDisplayName',
+        teamMemberCount: 'Metadata/TeamMemberCount',
+        status: `Metadata/TeamStatusName/Translation/${this.$i18n.locale}`,
         edit: 'edit',
       };
     },
@@ -202,28 +212,28 @@ export default Vue.extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.$store.state.team.searchLoading,
+        loading: this.searchLoading,
       };
     },
 
     filters(): Array<IFilterSettings> {
       return [
         {
-          key: 'TeamName',
+          key: 'Entity/Name',
           type: EFilterType.Text,
           label: this.$t('teams.form.team_name') as string,
         },
         {
-          key: 'TeamType',
+          key: 'Entity/TeamType',
           type: EFilterType.Select,
           label: this.$t('teams.team_type') as string,
-          items: helpers.enumToTranslatedCollection(ETeamType, 'enums.teamType'),
+          items: helpers.enumToTranslatedCollection(TeamType, 'enums.teamType'),
         },
         {
-          key: 'TeamStatus',
+          key: 'Entity/Status',
           type: EFilterType.Select,
           label: this.$t('teams.status') as string,
-          items: helpers.enumToTranslatedCollection(ETeamStatus, 'enums.teamStatus'),
+          items: helpers.enumToTranslatedCollection(Status, 'enums.teamStatus'),
         },
       ];
     },
@@ -235,24 +245,34 @@ export default Vue.extend({
       this.$router.push({ name: routes.teams.create.name, params: { teamType } });
     },
 
-    goToEditTeam(team: ITeamSearchData) {
-      const teamType = team.teamType === ETeamType.Standard ? 'standard' : 'adhoc';
-      const id = team.teamId;
-      this.$router.push({ name: routes.teams.edit.name, params: { teamType, id, from: this.$route.name } });
+    goToEditTeam(team: ITeamCombined) {
+      const teamType = team.entity.teamType === TeamType.Standard ? 'standard' : 'adhoc';
+      this.$router.push({ name: routes.teams.edit.name, params: { teamType, id: team.entity.id, from: this.$route.name } });
     },
 
     async fetchData(params: IAzureSearchParams) {
-      const res = await this.$storage.team.actions.searchTeams({
-        search: params.search,
-        filter: params.filter,
-        top: params.top,
-        skip: params.skip,
-        orderBy: params.orderBy,
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      });
-      return res;
+      try {
+        this.searchLoading = false;
+        const res = await this.$storage.team.actions.search({
+          search: params.search,
+          filter: params.filter,
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+          queryType: 'full',
+          searchMode: 'all',
+        });
+        this.setResults(res);
+        return res;
+      } finally {
+        this.searchLoading = false;
+      }
+    },
+
+    setResults(res: IAzureTableSearchResults) {
+      this.itemsCount = res.count;
+      this.searchResultIds = res.ids;
     },
 
     getTeamDetailsRoute(id: string) {

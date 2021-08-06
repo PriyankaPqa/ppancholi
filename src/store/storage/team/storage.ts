@@ -1,55 +1,43 @@
-import {
-  ITeam,
-  ITeamMemberData,
-  ITeamSearchData,
-} from '@/entities/team';
-import { IStore, IState } from '@/store/store.types';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
-import { IStorage } from './storage.types';
+import { ITeamEntity, ITeamMember, ITeamMetadata } from '@/entities/team';
+import { IStore, IState } from '@/store';
+import { IStorage } from '@/store/storage/team/storage.types';
+import { Base } from '../base';
 
-export const makeStorage = (store: IStore<IState>): IStorage => ({
-  getters: {
-    team() {
-      return store.getters['team/team'];
-    },
-  },
+export class TeamStorage
+  extends Base<ITeamEntity, ITeamMetadata, uuid> implements IStorage {
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
+    super(pStore, pEntityModuleName, pMetadataModuleName);
+  }
 
-  mutations: {
-    resetTeam() {
-      return store.commit('team/resetTeam');
-    },
-  },
+  private getters = {
+    ...this.baseGetters,
+  }
 
-  actions: {
-    getTeam(id: uuid): Promise<ITeam> {
-      return store.dispatch('team/getTeam', id);
-    },
-    getTeamsAssignable(eventId: uuid): Promise<ITeam[]> {
-      return store.dispatch('team/getTeamsAssignable', eventId);
-    },
-    createTeam(payload: ITeam): Promise<ITeam> {
-      return store.dispatch('team/createTeam', payload);
-    },
+  private actions = {
+    ...this.baseActions,
 
-    editTeam(payload: ITeam): Promise<ITeam> {
-      return store.dispatch('team/editTeam', payload);
-    },
+    getTeamsAssignable: (eventId: uuid): Promise<ITeamEntity[]> => this.store.dispatch(`${this.entityModuleName}/getTeamsAssignable`, eventId),
 
-    searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>> {
-      return store.dispatch('team/searchTeams', params);
-    },
+    createTeam: (payload: ITeamEntity):
+      Promise<ITeamEntity> => this.store.dispatch(`${this.entityModuleName}/createTeam`, payload),
 
-    addTeamMembers(teamMembers: ITeamMemberData[]): Promise<ITeam> {
-      return store.dispatch('team/addTeamMembers', { teamMembers });
-    },
+    editTeam: (payload: ITeamEntity):
+      Promise<ITeamEntity> => this.store.dispatch(`${this.entityModuleName}/editTeam`, payload),
 
-    removeTeamMember(teamMemberId: uuid): Promise<ITeam> {
-      return store.dispatch('team/removeTeamMember', { teamMemberId });
-    },
+    addTeamMembers: (teamId: uuid, teamMembers: ITeamMember[]):
+      Promise<ITeamEntity> => this.store.dispatch(`${this.entityModuleName}/addTeamMembers`, { teamId, teamMembers }),
 
-    searchAggregatedTeams(params: IAzureSearchParams): Promise<ITeam[]> {
-      return store.dispatch('team/searchAggregatedTeams', params);
-    },
+    removeTeamMember: (teamId: uuid, teamMemberId: uuid):
+      Promise<ITeamEntity> => this.store.dispatch(`${this.entityModuleName}/removeTeamMember`, { teamId, teamMemberId }),
+  }
 
-  },
-});
+  private mutations = {
+    ...this.baseMutations,
+  }
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  })
+}

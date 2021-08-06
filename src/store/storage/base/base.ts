@@ -78,8 +78,9 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     fetch: async (idParams: IdParams,
       { useEntityGlobalHandler, useMetadataGlobalHandler } = { useEntityGlobalHandler: true, useMetadataGlobalHandler: true })
       : Promise<IEntityCombined<TEntity, TMetadata>> => {
-      const entity = await this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler });
-      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler });
+      const [entity, metadata] = await Promise.all([
+        this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler }),
+        this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler })]);
       return {
         entity,
         metadata,
@@ -87,14 +88,16 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     },
 
     fetchAll: async (parentId?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
-      const entities = await this.store.dispatch(`${this.entityModuleName}/fetchAll`, parentId);
-      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetchAll`, parentId);
+      const [entities, metadata] = await Promise.all([
+        this.store.dispatch(`${this.entityModuleName}/fetchAll`, parentId),
+        this.store.dispatch(`${this.metadataModuleName}/fetchAll`, parentId)]);
       return this.combinedCollections(entities, metadata);
     },
 
     fetchAllIncludingInactive: async (): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
-      const entities = await this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`);
-      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`);
+      const [entities, metadata] = await Promise.all([
+        this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`),
+        this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`)]);
       return this.combinedCollections(entities, metadata);
     },
 
@@ -118,13 +121,14 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
 
       const data = res?.value;
       if (data) {
-        const ids = data.map((res: ICombinedIndex<TEntity, TMetadata>) => {
-          const entity = { ...res.entity, eTag: res.entityETag };
-          const metadata = { ...res.metadata, eTag: res.metadataETag };
-          this.store.commit(`${this.entityModuleName}/set`, entity);
-          this.store.commit(`${this.metadataModuleName}/set`, metadata);
-          return entity.id;
-        });
+        const ids = data.filter((e: ICombinedIndex<TEntity, TMetadata>) => e.entity?.id)
+          .map((res: ICombinedIndex<TEntity, TMetadata>) => {
+            const entity = { ...res.entity, eTag: res.entityETag };
+            const metadata = { ...res.metadata, eTag: res.metadataETag };
+            this.store.commit(`${this.entityModuleName}/set`, entity);
+            this.store.commit(`${this.metadataModuleName}/set`, metadata);
+            return entity.id;
+          });
 
         this.store.commit(`${this.entityModuleName}/setSearchLoading`, false);
         return { ids, count: res.odataCount };

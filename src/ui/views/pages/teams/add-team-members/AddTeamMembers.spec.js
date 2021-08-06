@@ -16,6 +16,7 @@ describe('AddTeamMembers.vue', () => {
       propsData: {
         show: true,
         teamMembers: mockTeamMembersData(),
+        teamId: 'abc',
       },
       store: {
         modules: {
@@ -96,12 +97,6 @@ describe('AddTeamMembers.vue', () => {
         expect(storage.userAccount.getters.getByCriteria).toHaveBeenCalledWith('test', false, ['displayName', 'emailAddress']);
       });
     });
-
-    describe('loading', () => {
-      it('is linked to submitLoading', async () => {
-        expect(wrapper.vm.loading).toEqual(true);
-      });
-    });
   });
 
   describe('Methods', () => {
@@ -131,13 +126,6 @@ describe('AddTeamMembers.vue', () => {
         jest.spyOn(wrapper.vm, 'isSelected').mockImplementation(() => false);
         const user = mockTeamMembersData()[0];
         expect(wrapper.vm.getClassRow(user)).toEqual('');
-      });
-    });
-
-    describe('getRole', () => {
-      it('returns the displayName property of the role from Azure AD', () => {
-        const user = mockTeamMembersData()[0];
-        expect(wrapper.vm.getRole(user)).toEqual(user.roleName.translation.en);
       });
     });
 
@@ -214,7 +202,7 @@ describe('AddTeamMembers.vue', () => {
     describe('submit', () => {
       it('calls addTeamMembers actions with correct parameters (selectedUsers)', async () => {
         await wrapper.vm.submit();
-        expect(storage.team.actions.addTeamMembers).toHaveBeenCalledWith(wrapper.vm.selectedUsers);
+        expect(storage.team.actions.addTeamMembers).toHaveBeenCalledWith('abc', wrapper.vm.selectedUsers);
       });
 
       it('calls close method', async () => {

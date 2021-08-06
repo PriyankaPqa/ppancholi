@@ -13,7 +13,6 @@ import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@/services/optionItems/optionItems';
 import { tabs } from '@/store/modules/registration/tabs';
 import { program } from '@/store/modules/program';
-import { team } from '@/store/modules/team';
 import { optionList } from '@/store/modules/optionList';
 import { dashboard } from '@/store/modules/dashboard';
 import { user } from '@/store/modules/user';
@@ -61,6 +60,11 @@ import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEn
 import { MassActionService } from '@/services/mass-actions/entity';
 import { MassActionMetadataModule } from '@/store/modules/mass-action/massActionMetadata';
 
+import { TeamEntityModule } from '@/store/modules/team/teamEntity';
+import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
+import { TeamsService } from '@/services/teams/entity';
+import { TeamsMetadataService } from '@/services/teams/metadata';
+
 const i18n = {
   t: jest.fn(),
 } as unknown as VueI18n;
@@ -95,7 +99,8 @@ const mockConfig = {
     [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.OPTION_LIST_MODULE]: optionList,
-    [vuexModule.TEAM_MODULE]: team,
+    [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(new TeamsService(httpClient)).getModule(),
+    [vuexModule.TEAM_METADATA]: new TeamMetadataModule(new TeamsMetadataService(httpClient)).getModule(),
     [vuexModule.PROGRAM_MODULE]: program,
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,

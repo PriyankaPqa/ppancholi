@@ -1,46 +1,52 @@
+import { ITeamEntity, ITeamMember, ITeamMetadata } from '@/entities/team';
 import {
-  ITeam, ITeamMemberData, ITeamSearchData, Team,
-} from '@/entities/team';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+  IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
+} from '../base';
+
+export interface IGetters extends IBaseGetters<ITeamEntity, ITeamMetadata> {
+}
+
+export interface IGettersMock extends IBaseGettersMock<ITeamEntity, ITeamMetadata> {
+}
+
+export interface IActions extends IBaseActions<ITeamEntity, ITeamMetadata, uuid> {
+  getTeamsAssignable(eventId: uuid): Promise<ITeamEntity[]>;
+  createTeam(payload: ITeamEntity): Promise<ITeamEntity>;
+  editTeam(payload: ITeamEntity): Promise<ITeamEntity>;
+  addTeamMembers(teamId: uuid, teamMembers: ITeamMember[]): Promise<ITeamEntity>;
+  removeTeamMember(teamId: uuid, teamMemberId: uuid): Promise<ITeamEntity>;
+}
+
+export interface IActionsMock extends IBaseActionsMock<ITeamEntity, ITeamMetadata> {
+  getTeamsAssignable: jest.Mock<ITeamEntity[]>;
+  createTeam: jest.Mock<ITeamEntity>;
+  editTeam: jest.Mock<ITeamEntity>;
+  addTeamMembers: jest.Mock<ITeamEntity>;
+  removeTeamMember: jest.Mock<ITeamEntity>;
+}
+
+export interface IMutations extends IBaseMutations<ITeamEntity, ITeamMetadata> {
+ }
+
+export interface IMutationsMock extends IBaseMutationsMock<ITeamEntity, ITeamMetadata> {
+}
+
+export interface IStorageMake {
+  getters: IGetters;
+  actions: IActions;
+  mutations: IMutations;
+}
+
+export interface IStorageMakeMock {
+  getters: IGettersMock;
+  actions: IActionsMock;
+  mutations: IMutationsMock;
+}
 
 export interface IStorage {
-  getters: {
-    team(): Team;
-  };
-
-  mutations: {
-    resetTeam(): void;
-  };
-
-  actions: {
-    getTeam(id: uuid): Promise<ITeam>;
-    getTeamsAssignable(id: uuid): Promise<ITeam[]>;
-    createTeam(payload: ITeam): Promise<ITeam>;
-    editTeam(payload: ITeam): Promise<ITeam>;
-    searchTeams(params: IAzureSearchParams): Promise<IAzureSearchResult<ITeamSearchData>>;
-    addTeamMembers(teamMembers: ITeamMemberData[]): Promise<ITeam>;
-    removeTeamMember(teamMemberId: uuid): Promise<ITeam>;
-    searchAggregatedTeams(params: IAzureSearchParams): Promise<ITeam[]>;
-  };
+  make(): IStorageMake
 }
 
 export interface IStorageMock {
-  getters: {
-    team: jest.Mock<void> | jest.Mock<ITeam>;
-  };
-
-  mutations: {
-    resetTeam: jest.Mock<void>;
-  };
-
-  actions: {
-    getTeam: jest.Mock<void>;
-    getTeamsAssignable: jest.Mock<ITeam[]>;
-    createTeam: jest.Mock<void>;
-    editTeam: jest.Mock<void>;
-    searchTeams: jest.Mock<IAzureSearchResult<ITeamSearchData>>;
-    addTeamMembers: jest.Mock<void>;
-    removeTeamMember: jest.Mock<void>;
-    searchAggregatedTeams: jest.Mock<ITeam[]>;
-  };
+  make(): IStorageMake
 }

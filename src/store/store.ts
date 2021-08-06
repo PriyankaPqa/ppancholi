@@ -8,7 +8,6 @@ import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@/services/optionItems/optionItems';
 import { tabs } from '@/store/modules/registration/tabs';
 import { program } from '@/store/modules/program';
-import { team } from '@/store/modules/team';
 import { optionList } from '@/store/modules/optionList';
 import { dashboard } from '@/store/modules/dashboard';
 import { user } from '@/store/modules/user';
@@ -52,6 +51,11 @@ import { FinancialAssistanceEntityModule } from '@/store/modules/financial-assis
 import { FinancialAssistanceMetadataModule } from '@/store/modules/financial-assistance/financialAssistanceMetadata';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { FinancialAssistanceTablesMetadataService } from '@/services/financial-assistance-tables/metadata';
+
+import { TeamEntityModule } from '@/store/modules/team/teamEntity';
+import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
+import { TeamsService } from '@/services/teams/entity';
+import { TeamsMetadataService } from '@/services/teams/metadata';
 
 import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEntity';
 import { MassActionService } from '@/services/mass-actions/entity';
@@ -99,8 +103,9 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.OPTION_LIST_MODULE]: optionList,
-    [vuexModule.TEAM_MODULE]: team,
     [vuexModule.PROGRAM_MODULE]: program,
+    [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(new TeamsService(httpClient)).getModule(),
+    [vuexModule.TEAM_METADATA]: new TeamMetadataModule(new TeamsMetadataService(httpClient)).getModule(),
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n,
       tabs: tabs(),

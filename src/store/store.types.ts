@@ -4,7 +4,6 @@ import { IProvider, IProviderMock } from '@/services/provider';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IState as IDashboardState } from '@/store/modules/dashboard/dashboard.types';
 import { IState as IOptionListState } from '@/store/modules/optionList/optionList.types';
-import { IState as ITeamState } from '@/store/modules/team/team.types';
 import { IState as IProgramState } from '@/store/modules/program/program.types';
 import { IState as IBaseState } from '@/store/modules/base/base.types';
 import { IState as IUserState } from '@/store/modules/user/user.types';
@@ -33,6 +32,9 @@ import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/house
 import { IFinancialAssistanceEntityState } from '@/store/modules/financial-assistance/financialAssistanceEntity.types';
 import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistance';
 
+import { ITeamEntityState } from '@/store/modules/team/teamEntity.types';
+import { ITeamMetadata } from '@/entities/team';
+
 export interface IRootState {
   version: string;
   [vuexModule.CASE_FILE_ENTITIES]?: ICaseFileEntityState,
@@ -55,7 +57,8 @@ export interface IRootState {
   [vuexModule.USER_MODULE]?: IUserState,
   [vuexModule.DASHBOARD_MODULE]?: IDashboardState,
   [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
-  [vuexModule.TEAM_MODULE]?: ITeamState,
+  [vuexModule.TEAM_ENTITIES]?: ITeamEntityState,
+  [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>
   [vuexModule.PROGRAM_MODULE]?: IProgramState,
   [vuexModule.REGISTRATION_MODULE]?: IRegistrationState
 }

@@ -6,7 +6,7 @@
     :show-edit-button="$hasLevel('level4')"
     @edit="navigateToEdit"
     @back="navigateToHome">
-    <v-container v-if="isLoading">
+    <v-container v-if="!team">
       <v-row justify="center">
         <v-col cols="12" lg="10" class="mt-10">
           <v-skeleton-loader class="my-6" type="article" />
@@ -22,20 +22,20 @@
             <v-col md="11" sm="12">
               <div class="flex flex-row mb-4">
                 <h5 data-test="team-title" class="rc-heading-5 mr-3">
-                  {{ team.name }}
+                  {{ team.entity.name }}
                 </h5>
-                <status-chip :status="team.status" data-test="team_status" status-name="ETeamStatus" />
+                <status-chip :status="team.entity.status" data-test="team_status" status-name="Status" />
               </div>
 
               <v-row no-gutters class="flex justify-space-between mt-6">
                 <div class="team_data">
                   <span class="rc-body14 fw-bold">{{ $t('teams.teamtype') }}</span>
-                  <span class="rc-body14" data-test="team_type">{{ $m(team.teamTypeName) }}</span>
+                  <span class="rc-body14" data-test="team_type">{{ $m(team.metadata.teamTypeName) }}</span>
                 </div>
 
                 <div class="team_data">
                   <span class="rc-body14 fw-bold">{{ $t('teams.team_members') }}</span>
-                  <span class="rc-body14" data-test="team_members_count">{{ team.teamMemberCount }}</span>
+                  <span class="rc-body14" data-test="team_members_count">{{ team.entity.teamMembers.length }}</span>
                 </div>
 
                 <div class="team_data">
@@ -44,17 +44,17 @@
                     {{ $t('teams.primary_contact') }}
                   </span>
                   <span
-                    v-if="team.getPrimaryContact()"
+                    v-if="primaryContact"
                     class="rc-body14"
                     style="padding-left: 28px"
-                    data-test="team_primary_contact">{{ team.getPrimaryContact().displayName }}</span>
+                    data-test="team_primary_contact">{{ primaryContact }}</span>
                 </div>
               </v-row>
 
               <v-row no-gutters class="mt-6">
                 <div class="team_data">
-                  <span class="rc-body14 fw-bold">{{ $tc('teams.related_events', team.events.length) }}</span>
-                  <span class="rc-body14" data-test="team_events">{{ buildEventsString(team.events) }}</span>
+                  <span class="rc-body14 fw-bold">{{ $tc('teams.related_events', team.metadata.events.length) }}</span>
+                  <span class="rc-body14" data-test="team_events">{{ buildEventsString(team.metadata.events) }}</span>
                 </div>
               </v-row>
             </v-col>
@@ -63,7 +63,7 @@
             <v-col class="pa-0">
               <team-members-table
                 data-test="team-members-table"
-                :team="team"
+                :team-id="team.entity.id"
                 disabled-delete-member
                 :show-add-member="false"
                 :is-edit-mode="false" />
@@ -78,7 +78,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
-import { ETeamType, ITeamEvent, Team } from '@/entities/team';
+import { TeamType, ITeamCombined, ITeamEvent } from '@/entities/team';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
@@ -99,21 +99,29 @@ export default Vue.extend({
   },
 
   computed: {
-    isLoading(): boolean {
-      return this.$store.state.team.getLoading;
+    team(): ITeamCombined {
+      const t = this.$storage.team.getters.get(this.id);
+      if (!t?.entity?.id || !t?.metadata?.id) return null;
+      return t;
     },
-    team(): Team {
-      return this.$storage.team.getters.team();
+
+    primaryContactId() : string {
+      return (this.team?.entity?.teamMembers || []).find((x) => x.isPrimaryContact)?.id;
+    },
+
+    primaryContact(): string {
+      return this.$storage.userAccount.getters.get(this.primaryContactId)?.metadata?.displayName || null;
     },
   },
 
-  mounted() {
-    this.loadTeam();
+  async mounted() {
+    await this.loadTeam();
   },
 
   methods: {
     async loadTeam() {
-      await this.$storage.team.actions.getTeam(this.id);
+      await this.$storage.team.actions.fetch(this.id);
+      if (this.primaryContactId) await this.$storage.userAccount.actions.fetch(this.primaryContactId);
     },
 
     navigateToHome() {
@@ -121,7 +129,7 @@ export default Vue.extend({
     },
 
     navigateToEdit() {
-      const teamType = this.team.teamType === ETeamType.Standard ? 'standard' : 'adhoc';
+      const teamType = this.team.entity.teamType === TeamType.Standard ? 'standard' : 'adhoc';
       this.$router.push({ name: routes.teams.edit.name, params: { teamType, id: this.id, from: this.$route.name } });
     },
 

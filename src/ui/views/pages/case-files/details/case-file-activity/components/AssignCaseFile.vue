@@ -42,9 +42,9 @@
 
                   <v-list-item-content>
                     <v-list-item-title>
-                      <span class="rc-body14 fw-bold">{{ team.name }} ({{ team.getActiveMemberCount() }})</span>
+                      <span class="rc-body14 fw-bold">{{ team.name }} ({{ team.activeMemberCount }})</span>
                     </v-list-item-title>
-                    <v-list-item-subtitle>{{ $m(team.teamTypeName) }}</v-list-item-subtitle>
+                    <v-list-item-subtitle>{{ team.teamTypeName }}</v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </v-list-item>
@@ -166,17 +166,26 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import {
-  ETeamStatus, ITeam, ITeamMemberData,
+  TeamType,
+  ITeamEntity, ITeamMember,
 } from '@/entities/team';
 import { ICaseFileEntity } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
-import { AccountStatus } from '@/entities/user-account';
+import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
+import { Status } from '@/entities/base';
 
-interface IIndividual extends ITeamMemberData{
+interface TeamWithCount extends ITeamEntity {
+  activeMemberCount: number;
+  teamTypeName: string;
+}
+
+interface IIndividual extends ITeamMember, IUserAccountCombined{
   translatedRoleName: string;
+  displayName: string;
 }
 
 export default Vue.extend({
@@ -199,10 +208,10 @@ export default Vue.extend({
 
   data() {
     return {
-      assignedTeams: [],
+      assignedTeams: [] as ITeamEntity[],
       assignedMembers: [] as IIndividual[],
       searchTerm: '',
-      allTeams: [] as ITeam[],
+      allTeams: [] as TeamWithCount[],
       allMembers: [] as IIndividual[],
       loading: false,
     };
@@ -254,21 +263,32 @@ export default Vue.extend({
 
     async getTeamsData() {
       const { eventId } = this.caseFile;
-      const teams: ITeam[] = await this.$storage.team.actions.getTeamsAssignable(eventId);
-      this.allTeams = teams.filter((t:ITeam) => t.status === ETeamStatus.Active);
+      const teams: ITeamEntity[] = await this.$storage.team.actions.getTeamsAssignable(eventId);
+      const typeNames = helpers.enumToTranslatedCollection(TeamType, 'enums.teamType');
+      this.allTeams = (_cloneDeep(teams.filter((t:ITeamEntity) => t.status === Status.Active)))
+        .map((x) => ({ ...x, activeMemberCount: 0, teamTypeName: typeNames.find((t) => t.value === x.teamType).text }));
+      await this.$storage.userAccount.actions.fetchAllIncludingInactive();
     },
 
     setAllMembers() {
       const allMembers = [] as IIndividual[];
 
+      const users = this.$storage.userAccount.getters.getAll();
+
       this.allTeams.forEach((t) => {
-        t.teamMembers.forEach((member :ITeamMemberData) => {
-          // If team member is active and has not already been added, he is added to the allMembers list
-          if (!allMembers.find((m) => m.id === member.id) && member.accountStatus === AccountStatus.Active) {
-            allMembers.push({
-              ...member,
-              translatedRoleName: member.roleName.translation[this.$i18n.locale],
-            });
+        t.teamMembers.forEach((member :ITeamMember) => {
+          const userMember = users.find((u) => u.entity.id === member.id);
+          if (userMember?.entity?.accountStatus === AccountStatus.Active) {
+            t.activeMemberCount += 1;
+            // If team member is active and has not already been added, he is added to the allMembers list
+            if (!allMembers.find((m) => m.id === member.id)) {
+              allMembers.push({
+                ...member,
+                ...userMember,
+                displayName: userMember.metadata.displayName,
+                translatedRoleName: userMember.metadata.roleName.translation[this.$i18n.locale],
+              });
+            }
           }
         });
       });
@@ -279,7 +299,7 @@ export default Vue.extend({
     setAssignedMembers() {
       this.caseFile.assignedIndividualIds.forEach((id) => {
         const assignedMember = this.allMembers.find((m:IIndividual) => m.id === id);
-        if (assignedMember && assignedMember.accountStatus === AccountStatus.Active) {
+        if (assignedMember && assignedMember.entity.accountStatus === AccountStatus.Active) {
           this.assignedMembers.push(assignedMember);
         }
       });
@@ -287,7 +307,7 @@ export default Vue.extend({
 
     setAssignedTeams() {
       this.caseFile.assignedTeamIds.forEach((id) => {
-        const assignedTeam = this.allTeams.find((t:ITeam) => t.id === id);
+        const assignedTeam = this.allTeams.find((t:ITeamEntity) => t.id === id);
         if (assignedTeam) {
           this.assignedTeams.push(assignedTeam);
         }
@@ -314,7 +334,7 @@ export default Vue.extend({
         await this.$storage.caseFile.actions.setCaseFileAssign(
           this.caseFile.id, individualsPayload, teamsPayload,
         );
-        const individuals:ITeamMemberData[] = this.assignedMembers.map((m) => {
+        const individuals:ITeamMember[] = this.assignedMembers.map((m) => {
           // Remove the property translatedRoleName from the members objects
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
           const { translatedRoleName, ...member } = m;

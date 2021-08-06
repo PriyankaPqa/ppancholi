@@ -13,7 +13,6 @@
 import Vue from 'vue';
 import { RcStatusChip } from '@crctech/component-library';
 import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
-import { ETeamStatus } from '@/entities/team';
 import { EOptionListItemStatus } from '@/entities/optionItem';
 import colors from '@/ui/plugins/vuetify/colors';
 import { CaseFileStatus } from '@/entities/case-file';
@@ -39,7 +38,6 @@ export default Vue.extend({
           'EOptionListItemStatus',
           'EEventCallCentreStatus',
           'EEventLocationStatus',
-          'ETeamStatus',
           'CaseFileStatus',
           'EProgramStatus',
           'AccountStatus',
@@ -75,8 +73,6 @@ export default Vue.extend({
           return this.getEventCallCentreColor();
         case 'EOptionListItemStatus':
           return this.getOptionListStatusColor();
-        case 'ETeamStatus':
-          return this.getTeamStatusColor();
         case 'CaseFileStatus':
           return this.getCaseFileStatusColor();
         case 'EProgramStatus':
@@ -115,8 +111,6 @@ export default Vue.extend({
           return `eventSummary.status.${EEventCallCentreStatus[this.status]}`;
         case 'EOptionListItemStatus':
           return `system_management.lists.status.${EOptionListItemStatus[this.status]}`;
-        case 'ETeamStatus':
-          return `team.status.${ETeamStatus[this.status]}`;
         case 'CaseFileStatus':
           return `caseFile.status.${CaseFileStatus[this.status]}`;
         case 'EProgramStatus':
@@ -174,19 +168,6 @@ export default Vue.extend({
 
         case EOptionListItemStatus.Inactive:
           return colors.chips.grey;
-
-        default:
-          return colors.chips.green;
-      }
-    },
-
-    getTeamStatusColor(): string {
-      switch (this.status) {
-        case ETeamStatus.Active:
-          return colors.chips.green;
-
-        case ETeamStatus.Inactive:
-          return colors.chips.light_grey;
 
         default:
           return colors.chips.green;

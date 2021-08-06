@@ -5,7 +5,7 @@ import { IProvider } from './provider.types';
 import { CaseFilesService } from '../case-files/entity';
 import { AppUsersService } from '../app-users';
 import { OptionItemsService } from '../optionItems';
-import { TeamsService } from '../teams';
+import { TeamsService } from '../teams/entity';
 import { ProgramsService } from '../programs';
 import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { UserAccountsService } from '../user-accounts/entity';

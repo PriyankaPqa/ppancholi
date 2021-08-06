@@ -33,7 +33,7 @@
       :items-per-page="Math.max(computedTeamMembers.length, 1)"
       @update:sort-by="sortBy = $event"
       @update:sort-desc="sortDesc = $event">
-      <template #item.displayName="{ item }">
+      <template #item.metadata.displayName="{ item }">
         <v-icon v-if="item.isPrimaryContact" data-test="primary_icon" size="18" color="red">
           mdi-account
         </v-icon>
@@ -42,7 +42,7 @@
           data-test="member_name"
           @keydown.enter="viewMemberDetails(item)"
           @click="viewMemberDetails(item)">
-          {{ item.displayName }}
+          {{ item.metadata.displayName }}
         </span>
       </template>
 
@@ -50,24 +50,24 @@
         {{ getRole(item) }}
       </template>
 
-      <template #item.phoneNumber="{ item }">
-        <rc-phone-display :value="item.phoneNumber" />
+      <template #item.metadata.phoneNumber="{ item }">
+        <rc-phone-display :value="item.metadata.phoneNumber" />
       </template>
 
-      <template #item.teamCount="{ item }">
-        {{ item.teamCount || '0' }}
+      <template #item.metadata.teamCount="{ item }">
+        {{ item.metadata.teamCount || '0' }}
       </template>
 
-      <template #item.caseFilesCount="{ item }">
-        {{ item.caseFilesCount || '0' }}
+      <template #item.metadata.caseFilesCount="{ item }">
+        {{ item.metadata.caseFilesCount || '0' }}
       </template>
 
-      <template #item.openCaseFilesCount="{ item }">
-        {{ item.openCaseFilesCount || '0' }}
+      <template #item.metadata.openCaseFilesCount="{ item }">
+        {{ item.metadata.openCaseFilesCount || '0' }}
       </template>
 
-      <template #item.inactiveCaseFilesCount="{ item }">
-        {{ item.inactiveCaseFilesCount || '0' }}
+      <template #item.metadata.inactiveCaseFilesCount="{ item }">
+        {{ item.metadata.inactiveCaseFilesCount || '0' }}
       </template>
 
       <template #item.delete="{ item }">
@@ -75,7 +75,7 @@
           v-if="showDeleteIcon(item)"
           icon
           x-small
-          :data-test="`remove_team_member_${item.id}`"
+          :data-test="`remove_team_member_${item.entity.id}`"
           @click="handleRemoveTeamMember(item)">
           <v-icon color="grey darken-2">
             mdi-delete
@@ -87,7 +87,8 @@
     <add-team-members
       v-if="showAddTeamMemberDialog"
       data-test="add-team-members"
-      :team-members="team.teamMembers"
+      :team-members="team.entity.teamMembers"
+      :team-id="team.entity.id"
       :show.sync="showAddTeamMemberDialog" />
 
     <team-member-teams v-if="showMemberDialog" :show.sync="showMemberDialog" :member="clickedMember" />
@@ -125,11 +126,16 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
-import { ITeamMemberData, Team } from '@/entities/team';
+import { ITeamCombined } from '@/entities/team';
 import helpers from '@/ui/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { RcConfirmationDialog, RcPhoneDisplay, RcDialog } from '@crctech/component-library';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
+import { IUserAccountCombined } from '@/entities/user-account';
+
+interface UserTeamMember extends IUserAccountCombined {
+  isPrimaryContact: boolean,
+}
 
 export default Vue.extend({
   name: 'TeamMembersTable',
@@ -167,29 +173,35 @@ export default Vue.extend({
       type: Boolean,
       default: false,
     },
+
+    teamId: {
+      type: String,
+      required: true,
+    },
   },
 
   data() {
     return {
       sortDesc: false,
-      sortBy: 'displayName',
+      sortBy: 'metadata.displayName',
       search: '',
       showAddTeamMemberDialog: false,
       showRemoveMemberConfirmationDialog: false,
       hasCaseFiles: false,
       removeMemberId: '',
       searchAmong: [
-        'displayName',
-        'emailAddress',
-        'phoneNumber',
-        'teamCount',
-        'caseFilesCount',
-        'openCaseFilesCount',
-        'inactiveCaseFilesCount',
-        'role',
+        'metadata.displayName',
+        'metadata.emailAddress',
+        'metadata.phoneNumber',
+        'metadata.teamCount',
+        'metadata.caseFilesCount',
+        'metadata.openCaseFilesCount',
+        'metadata.inactiveCaseFilesCount',
+        'metadata.roleName',
       ],
       showMemberDialog: false,
-      clickedMember: null,
+      clickedMember: null as UserTeamMember,
+      removeLoading: false,
     };
   },
 
@@ -201,21 +213,21 @@ export default Vue.extend({
           class: 'team_member_header',
           filterable: false,
           sortable: true,
-          value: 'displayName',
+          value: 'metadata.displayName',
         },
         {
           text: this.$t('teams.member_email') as string,
           class: 'team_member_header',
           filterable: false,
           sortable: false,
-          value: 'emailAddress',
+          value: 'metadata.emailAddress',
         },
         {
           text: this.$t('teams.phone_number') as string,
           class: 'team_member_header',
           filterable: false,
           sortable: false,
-          value: 'phoneNumber',
+          value: 'metadata.phoneNumber',
         },
         {
           text: this.$t('teams.member_role') as string,
@@ -230,7 +242,7 @@ export default Vue.extend({
           class: 'team_member_header',
           filterable: false,
           sortable: false,
-          value: 'teamCount',
+          value: 'metadata.teamCount',
           width: '20px',
         },
         {
@@ -238,21 +250,21 @@ export default Vue.extend({
           class: 'team_member_header',
           filterable: false,
           sortable: true,
-          value: 'caseFilesCount',
+          value: 'metadata.caseFilesCount',
         },
         {
           text: this.$t('teams.count_file.open') as string,
           class: 'team_member_header',
           filterable: false,
           sortable: true,
-          value: 'openCaseFilesCount',
+          value: 'metadata.openCaseFilesCount',
         },
         {
           text: this.$t('teams.count_file.inactive') as string,
           class: 'team_member_header',
           filterable: false,
           sortable: true,
-          value: 'inactiveCaseFilesCount',
+          value: 'metadata.inactiveCaseFilesCount',
         },
         {
           text: '',
@@ -268,27 +280,31 @@ export default Vue.extend({
       return headers;
     },
 
-    computedTeamMembers(): Array<ITeamMemberData> {
+    computedTeamMembers(): Array<UserTeamMember> {
+      const users = this.$storage.userAccount.getters.getByIds(this.team.entity.teamMembers.map((m) => m.id)).map((x) => ({
+        entity: x.entity,
+        metadata: x.metadata,
+        isPrimaryContact: this.team.entity.teamMembers.find((tm) => tm.id === x.entity?.id)?.isPrimaryContact,
+      }));
       const direction = this.sortDesc ? 'desc' : 'asc';
-      const filtered = helpers.filterCollectionByValue(this.team.teamMembers, this.search, false, this.searchAmong);
-      return _orderBy(filtered, this.sortBy, direction) as ITeamMemberData[];
+      const filtered = helpers.filterCollectionByValue(users, this.search, false, this.searchAmong, true);
+      return _orderBy(filtered, this.sortBy, direction);
     },
 
-    teamMembersId(): Array<string> {
-      return this.team.teamMembers.map((m: ITeamMemberData) => m.id);
-    },
-
-    removeLoading(): boolean {
-      return this.$store.state.team.removeLoading;
-    },
-
-    team(): Team {
-      return this.$storage.team.getters.team();
+    team(): ITeamCombined {
+      return this.$storage.team.getters.get(this.teamId);
     },
 
   },
+  async mounted() {
+    await this.loadUsers();
+  },
 
   methods: {
+    async loadUsers() {
+      await this.$storage.userAccount.actions.fetchAll();
+    },
+
     showRemoveConfirmationDialog(id: string) {
       this.removeMemberId = id;
       this.showRemoveMemberConfirmationDialog = true;
@@ -308,39 +324,41 @@ export default Vue.extend({
 
     async removeTeamMember() {
       try {
-        await this.$storage.team.actions.removeTeamMember(this.removeMemberId);
+        this.removeLoading = true;
+        await this.$storage.team.actions.removeTeamMember(this.teamId, this.removeMemberId);
         this.$toasted.global.success(this.$t('teams.remove_team_members_success'));
       } finally {
         this.showRemoveMemberConfirmationDialog = false;
+        this.removeLoading = false;
       }
     },
 
-    getRole(user: ITeamMemberData): string {
-      if (user.roleName) return this.$m(user.roleName);
+    getRole(user: UserTeamMember): string {
+      if (user.metadata.roleName) return this.$m(user.metadata.roleName);
       return '';
     },
 
-    showDeleteIcon(member: ITeamMemberData): boolean {
+    showDeleteIcon(member: UserTeamMember): boolean {
       if (member.isPrimaryContact) {
         return this.$hasLevel('level5');
       }
       return this.$hasLevel('level4');
     },
 
-    async viewMemberDetails(member: ITeamMemberData) {
+    async viewMemberDetails(member: UserTeamMember) {
       this.showMemberDialog = true;
       this.clickedMember = member;
     },
 
-    handleRemoveTeamMember(item: ITeamMemberData) {
+    handleRemoveTeamMember(item: UserTeamMember) {
       if (item.isPrimaryContact) {
         this.showPrimaryContactMessage();
-      } else if (item.openCaseFilesCount === 0) {
-        this.showRemoveConfirmationDialog(item.id);
-      } else if (item.caseFilesCount) {
-        this.showRemoveConfirmationDialogWithCaseFiles(item.id);
+      } else if (item.metadata.openCaseFilesCount === 0) {
+        this.showRemoveConfirmationDialog(item.entity.id);
+      } else if (item.metadata.caseFilesCount) {
+        this.showRemoveConfirmationDialogWithCaseFiles(item.entity.id);
       } else {
-        this.showRemoveConfirmationDialog(item.id);
+        this.showRemoveConfirmationDialog(item.entity.id);
       }
     },
 

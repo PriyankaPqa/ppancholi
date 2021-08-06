@@ -1,97 +1,78 @@
+/* eslint-disable */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
-import { mockSearchTeams, mockTeamSearchData } from '@/entities/team';
+import { mockCombinedTeams, mockTeamSearchData } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 import Component from './TeamsTable.vue';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
+const team = mockCombinedTeams()[0];
+const teamId = team.entity.id;
 
 describe('TeamsTable.vue', () => {
   let wrapper;
 
-  beforeEach(() => {
-    wrapper = mount(Component, {
+  const mountWrapper = async (fullMount = true, level = 5) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
-      store: {
-        ...mockUserStateLevel(5),
+      mocks: {
+        $hasLevel: (lvl) => {
+          return lvl <= 'level' + level;
+        },
+        $storage: storage,
       },
     });
-  });
+    await wrapper.vm.$nextTick();
+  };
 
   describe('Template', () => {
     describe('showAddButton props', () => {
-      it('is true for level 5 users', () => {
+      it('is true for level 5 users', async () => {
+        await mountWrapper(true, 5);
         const button = wrapper.find('[data-test="create-team-button"]');
         expect(button.exists()).toBe(true);
       });
 
-      it('is false for level 4 users and lower', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          store: {
-            ...mockUserStateLevel(4),
-          },
-        });
+      it('is false for level 4 users and lower', async () => {
+        await mountWrapper(true, 4);
         const button = wrapper.find('[data-test="create-team-button"]');
         expect(button.exists()).toBeFalsy();
       });
     });
 
     describe('edit-button', () => {
-      it('should be visible for level 4 and above', () => {
-        wrapper = mount(Component, {
-          localVue,
-          store: {
-            ...mockUserStateLevel(4),
-          },
-          data() {
-            return {
-              azureSearchItems: mockTeamSearchData(),
-              azureSearchCount: 10,
-            };
-          },
-        });
-        const button = wrapper.find('[data-test="edit_team_6e2d49af-2f9a-4333-9bdb-cd37270e6591"]');
+      it('should be visible for level 4 and above', async () => {
+        await mountWrapper(true, 4);
+        const button = wrapper.findDataTest(`edit_team_${teamId}`);
         expect(button.exists()).toBe(true);
       });
 
-      it('should be hidden for level 3 and below', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          store: {
-            ...mockUserStateLevel(3),
-          },
-        });
-        const button = wrapper.find('[data-test="edit_team_6e2d49af-2f9a-4333-9bdb-cd37270e6591"]');
+      it('should be hidden for level 3 and below', async () => {
+        await mountWrapper(true, 3);
+        const button = wrapper.findDataTest(`edit_team_${teamId}`);
         expect(button.exists()).toBeFalsy();
       });
     });
 
     describe('actions', () => {
       test('clicking on team name redirects to team details page ', async () => {
-        await wrapper.setData({
-          azureSearchItems: mockTeamSearchData(),
-        });
-        const id = mockTeamSearchData()[0].teamId;
-        const link = wrapper.findDataTest(`team_link_${id}`);
+        await mountWrapper();
+        const link = wrapper.findDataTest(`team_link_${teamId}`);
 
         expect(link.props('to')).toEqual({
           name: routes.teams.details.name,
           params: {
-            id,
+            id: teamId,
           },
         });
       });
 
       test('edit button calls goToEditTeam', async () => {
-        await wrapper.setData({
-          azureSearchItems: mockTeamSearchData(),
-        });
-        const id = mockTeamSearchData()[0].teamId;
-        jest.spyOn(wrapper.vm, 'goToEditTeam').mockImplementation(() => {});
+        await mountWrapper();
+        jest.spyOn(wrapper.vm, 'goToEditTeam').mockImplementation(() => { });
 
-        const editButton = wrapper.findDataTest(`edit_team_${id}`);
+        const editButton = wrapper.findDataTest(`edit_team_${teamId}`);
 
         await editButton.trigger('click');
 
@@ -103,6 +84,7 @@ describe('TeamsTable.vue', () => {
   describe('Event Handlers', () => {
     describe('createTeam button', () => {
       it('should call goToCreateTeam', async () => {
+        await mountWrapper();
         const button = wrapper.find('[data-test="create-team-button"]');
 
         jest.spyOn(wrapper.vm, 'goToCreateTeam');
@@ -118,6 +100,11 @@ describe('TeamsTable.vue', () => {
   });
 
   describe('Computed', () => {
+
+    beforeEach(async () => {
+      await mountWrapper(false);
+    });
+
     describe('labels', () => {
       it('should return the header object with the title received from props', async () => {
         wrapper.setProps({ title: 'foo' });
@@ -218,18 +205,23 @@ describe('TeamsTable.vue', () => {
 
     test('customColumns', () => {
       expect(wrapper.vm.customColumns).toEqual({
-        name: 'TeamName',
-        type: 'TeamTypeName/Translation/en',
-        eventCount: 'EventCount',
-        primaryContact: 'PrimaryContactDisplayName',
-        teamMemberCount: 'TeamMemberCount',
-        status: 'TeamStatusName/Translation/en',
+        name: 'Entity/Name',
+        type: 'Metadata/TeamTypeName/Translation/en',
+        eventCount: 'Metadata/EventCount',
+        primaryContact: 'Metadata/PrimaryContactDisplayName',
+        teamMemberCount: 'Metadata/TeamMemberCount',
+        status: 'Metadata/TeamStatusName/Translation/en',
         edit: 'edit',
       });
     });
   });
 
   describe('Methods', () => {
+
+    beforeEach(async () => {
+      await mountWrapper(false);
+    });
+
     describe('goToCreateTeam', () => {
       it('should redirect to the page with the passed argument as param', async () => {
         const mockArg = { value: 'foo' };
@@ -240,25 +232,13 @@ describe('TeamsTable.vue', () => {
     });
 
     describe('fetchData', () => {
-      beforeEach(() => {
-        const storage = mockStorage();
-        storage.team.actions.searchTeams = jest.fn().mockImplementation(() => mockSearchTeams());
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
-        });
-      });
-
       const params = {
         search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
       };
 
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.$storage.team.actions.searchTeams).toHaveBeenCalledWith({
+        expect(wrapper.vm.$storage.team.actions.search).toHaveBeenCalledWith({
           search: 'query',
           searchMode: 'all',
           queryType: 'full',
@@ -272,27 +252,27 @@ describe('TeamsTable.vue', () => {
 
       it('returns the search results set the azureSearchItems', async () => {
         const res = await wrapper.vm.fetchData(params);
-        expect(res).toEqual(mockSearchTeams());
+        expect(res).toEqual({ ids: ['1'], count: 1 });
       });
     });
 
     describe('goToEditTeam', () => {
-      it('should redirect to the edit page with proper teamType and id for Adhoc', async () => {
-        const mockTeam = mockTeamSearchData()[0];
+      it('should redirect to the edit page with proper teamType and id for Standard', async () => {
+        const mockTeam = mockCombinedTeams()[0];
         wrapper.vm.goToEditTeam(mockTeam);
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-          name: routes.teams.edit.name, params: { teamType: 'standard', id: 'e64a9cd4-4e6b-46a7-b022-e93e0bdc24df', from: wrapper.vm.$route.name },
+          name: routes.teams.edit.name, params: { teamType: 'standard', id: mockCombinedTeams()[0].entity.id, from: wrapper.vm.$route.name },
         });
       });
 
-      it('should redirect to the edit page with proper teamType and id for Standard', async () => {
-        const mockTeam = mockTeamSearchData()[1];
+      it('should redirect to the edit page with proper teamType and id for Adhoc', async () => {
+        const mockTeam = mockCombinedTeams()[1];
         wrapper.vm.goToEditTeam(mockTeam);
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
           name: routes.teams.edit.name,
-          params: { teamType: 'adhoc', id: '6e2d49af-2f9a-4333-9bdb-cd37270e6591', from: wrapper.vm.$route.name },
+          params: { teamType: 'adhoc', id: mockCombinedTeams()[1].entity.id, from: wrapper.vm.$route.name },
         });
       });
     });

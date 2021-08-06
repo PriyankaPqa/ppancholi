@@ -32,7 +32,7 @@
                       data-test="team-status"
                       :value="team.status"
                       :statuses="statuses"
-                      status-name="ETeamStatus"
+                      status-name="Status"
                       :disabled="!isEditMode || !$hasLevel('level5')"
                       @input="onStatusChange($event)" />
                   </validation-provider>
@@ -74,9 +74,10 @@
                       return-object
                       data-test="events"
                       :item-text="(item) => $m(item.name)"
+                      :item-value="(item) => item.id"
                       :label="`${$t('teams.form.event')}${teamType === 'standard' ? '': '*'}`"
                       :items="availableEvents"
-                      :value="teamType === 'standard'? team.events: team.events[0]"
+                      :value="teamType === 'standard'? team.eventIds: team.eventIds[0]"
                       :multiple="teamType === 'standard'"
                       :rules="rules.event"
                       :disabled="!$hasLevel('level5')"
@@ -109,6 +110,7 @@
               <v-col class="pa-0">
                 <team-members-table
                   data-test="team-members-table"
+                  :team-id="team.id"
                   :show-members="isEditMode"
                   :show-search="isEditMode"
                   :disable-add-members="!isEditMode" />
@@ -163,9 +165,9 @@ import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
-  ETeamStatus, ETeamType, ITeamEvent, Team, ITeam, ITeamMemberData,
+  TeamType, ITeamEvent, TeamEntity, ITeamEntity,
 } from '@/entities/team';
-import { EEventStatus, IEventEntity } from '@/entities/event';
+import { EEventStatus, IEventCombined, IEventEntity } from '@/entities/event';
 import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import {
   RcConfirmationDialog,
@@ -182,6 +184,14 @@ import { IUserAccountCombined } from '@/entities/user-account';
 import _isEqual from 'lodash/isEqual';
 import _sortBy from 'lodash/sortBy';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { Status } from '@/entities/base';
+
+interface UserTeamMember {
+  isPrimaryContact: boolean,
+  displayName: string,
+  id: string,
+  email: string,
+}
 
 export default mixins(handleUniqueNameSubmitError).extend({
 
@@ -216,31 +226,33 @@ export default mixins(handleUniqueNameSubmitError).extend({
     return {
       primaryContactQuery: '',
       userAccounts: [] as IUserAccountCombined[],
-      primaryContactUsers: [] as ITeamMemberData[],
-      currentPrimaryContact: null as ITeamMemberData,
+      primaryContactUsers: [] as UserTeamMember[],
+      currentPrimaryContact: null as UserTeamMember,
       map: [null, 'standard', 'adhoc'],
-      statuses: [ETeamStatus.Active, ETeamStatus.Inactive],
+      statuses: [Status.Active, Status.Inactive],
       showCancelConfirmationDialog: false,
       showEventDeleteConfirmationDialog: false,
       minimumContactQueryLength: 1,
-      eventsAfterRemoval: null as ITeamEvent[],
-      team: null as ITeam,
+      eventsAfterRemoval: null as string[],
+      team: null as ITeamEntity,
       isLoading: true,
       availableEvents: [] as ITeamEvent[],
       original: {
-        name: null,
-        events: null as ITeamEvent[],
-        primaryContact: null as ITeamMemberData,
+        name: null as string,
+        status: null as Status,
+        events: null as string | string[],
+        primaryContact: null as string,
       },
       showErrorDialog: false,
+      isSubmitting: false,
     };
   },
 
   computed: {
     deleteEventConfirmationMessage(): TranslateResult {
       if (this.eventsAfterRemoval) {
-        const removedEvent = _difference(this.team.events, this.eventsAfterRemoval);
-        const name = this.$m((removedEvent[0] as ITeamEvent)?.name);
+        const removedEvent = _difference(this.team.eventIds, this.eventsAfterRemoval);
+        const name = this.$m((this.availableEvents.find((e: ITeamEvent) => e.id === removedEvent[0]))?.name);
         return this.$t('team.event.confirmDeleteDialog.message', { name });
       }
       return '';
@@ -255,10 +267,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     isEditMode(): boolean {
       return this.$route.name === routes.teams.edit.name;
-    },
-
-    isSubmitting(): boolean {
-      return this.$store.state.team.submitLoading;
     },
 
     rules(): Record<string, unknown> {
@@ -282,17 +290,18 @@ export default mixins(handleUniqueNameSubmitError).extend({
     },
 
     teamTitle(): TranslateResult {
-      if (this.map.indexOf(this.teamType) === ETeamType.Standard) {
+      if (this.map.indexOf(this.teamType) === TeamType.Standard) {
         return this.$t('teams.types.standard');
       }
       return this.$t('teams.types.adhoc');
     },
+
     changed(): boolean {
       return !_isEqual(this.original, {
         name: this.team.name,
         status: this.team.status,
-        events: this.teamType === 'standard' ? _sortBy(this.team.events, ['id']) : this.team.events[0],
-        primaryContact: (this.currentPrimaryContact || {}).emailAddress,
+        events: this.teamType === 'standard' ? _sortBy(this.team.eventIds) : this.team.eventIds[0],
+        primaryContact: (this.currentPrimaryContact || {}).email,
       });
     },
   },
@@ -305,8 +314,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   async mounted() {
     this.isLoading = true;
-    await this.fetchEvents();
-    await this.fetchUserAccounts();
+    await Promise.all([this.fetchEvents(), this.fetchUserAccounts()]);
     if (!this.isEditMode) {
       this.prepareCreateTeam();
     } else {
@@ -322,14 +330,17 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.original = _cloneDeep({
         name: this.team.name,
         status: this.team.status,
-        events: this.teamType === 'standard' ? _sortBy(this.team.events, ['id']) : this.team.events[0],
-        primaryContact: (this.currentPrimaryContact || {}).emailAddress,
+        events: this.teamType === 'standard' ? _sortBy(this.team.eventIds) : this.team.eventIds[0],
+        primaryContact: (this.currentPrimaryContact || {}).email,
       });
     },
+
     async fetchEvents() {
-      await this.$storage.event.actions.search();
+      await this.$storage.event.actions.fetchAllIncludingInactive();
     },
+
     getAvailableEvents() {
+      const allEvents:IEventEntity[] = this.$storage.event.getters.getAll().map((e: IEventCombined) => e.entity);
       const eventsByStatus:IEventEntity[] = this.$storage.event.getters.eventsByStatus([EEventStatus.Open, EEventStatus.OnHold]);
       if (eventsByStatus) {
         const activeEvents: ITeamEvent[] = eventsByStatus.map((e: IEventEntity) => ({
@@ -339,20 +350,21 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
         let existingInactiveEvents = [] as ITeamEvent[];
         if (this.isEditMode) {
-          existingInactiveEvents = this.team.events.filter((ev: ITeamEvent) => !activeEvents.find((e) => e.id === ev.id));
+          const selectedEvents = allEvents.filter((e) => this.team.eventIds.indexOf(e.id) > -1);
+          existingInactiveEvents = selectedEvents.filter((ev: ITeamEvent) => !activeEvents.find((e) => e.id === ev.id));
         }
         this.availableEvents = [...existingInactiveEvents, ...activeEvents];
       }
     },
 
-    handleRemoveEvent(leftEvents: ITeamEvent[]) {
-      this.eventsAfterRemoval = leftEvents;
+    handleRemoveEvent(leftEvents: (ITeamEvent | string)[]) {
+      this.eventsAfterRemoval = leftEvents.map((x) => (typeof x === 'string' ? x : x.id));
       this.showEventDeleteConfirmationDialog = true;
     },
 
     handleRemoveEventConfirmation(confirm: boolean) {
-      const newEvents = confirm ? this.eventsAfterRemoval : [...this.team.events];
-      this.team.setEvents(newEvents);
+      const newEvents = confirm ? this.eventsAfterRemoval : [...this.team.eventIds];
+      this.team.setEventIds(newEvents);
       this.showEventDeleteConfirmationDialog = false;
     },
 
@@ -363,14 +375,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
     async loadTeam() {
       const teamId = this.id;
       if (teamId) {
-        await this.$storage.team.actions.getTeam(teamId);
+        await this.$storage.team.actions.fetch(teamId);
         this.loadTeamFromState();
       }
     },
 
     loadTeamFromState() {
-      this.team = _cloneDeep(this.$storage.team.getters.team());
-      this.currentPrimaryContact = this.team.getPrimaryContact();
+      this.team = new TeamEntity(_cloneDeep(this.$storage.team.getters.get(this.id).entity));
+      this.currentPrimaryContact = !this.team.getPrimaryContact() ? null
+        : this.mapToTeamMember(this.$storage.userAccount.getters.get(this.team.getPrimaryContact().id), true);
       if (this.currentPrimaryContact) {
         this.primaryContactQuery = this.currentPrimaryContact.displayName;
       }
@@ -389,7 +402,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       }
     },
 
-    onStatusChange(status: ETeamStatus) {
+    onStatusChange(status: Status) {
       this.team.status = status;
     },
 
@@ -398,12 +411,21 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
       if (query && query.length >= this.minimumContactQueryLength) {
         const userMatches:IUserAccountCombined[] = this.$storage.userAccount.getters.getByCriteria(query, false, ['displayName']);
-        this.primaryContactUsers = userMatches.map(
-          (u) => ({ ...u.entity, ...u.metadata, isPrimaryContact: u.entity.id === this.currentPrimaryContact?.id }),
-        );
+        this.primaryContactUsers = _sortBy(userMatches.map(
+          (u) => this.mapToTeamMember(u, u.entity.id === this.currentPrimaryContact?.id),
+        ), 'displayName');
       } else {
         this.primaryContactUsers = [];
       }
+    },
+
+    mapToTeamMember(u: IUserAccountCombined, isPrimaryContact: boolean): UserTeamMember {
+      return {
+        id: u.entity.id,
+        email: u.metadata.emailAddress,
+        displayName: u.metadata.displayName,
+        isPrimaryContact,
+      };
     },
 
     resetPrimaryContact() {
@@ -414,12 +436,13 @@ export default mixins(handleUniqueNameSubmitError).extend({
       (this.$refs.form as VForm).reset();
     },
 
-    setPrimaryContact(appUser: ITeamMemberData) {
+    setPrimaryContact(appUser: UserTeamMember) {
       this.currentPrimaryContact = appUser;
     },
 
-    setEvents(events: ITeamEvent | ITeamEvent[]) {
-      this.team.setEvents(events);
+    setEvents(events: (ITeamEvent | string) | (ITeamEvent | string)[]) {
+      const ids = (Array.isArray(events) ? events : [events]).map((x) => (typeof x === 'string' ? x : x.id));
+      this.team.setEventIds(ids);
     },
 
     async submit() {
@@ -438,7 +461,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     setPrimaryContactTeam() {
       this.team.setPrimaryContact(
         {
-          ...this.currentPrimaryContact,
+          id: this.currentPrimaryContact.id,
           isPrimaryContact: true,
         },
       );
@@ -446,11 +469,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async submitCreateTeam() {
       try {
+        this.isSubmitting = true;
         const res = await this.$storage.team.actions.createTeam(this.team);
 
-        this.team = _cloneDeep(res);
+        this.team = new TeamEntity(_cloneDeep(res));
 
-        const message: TranslateResult = this.team.teamType === ETeamType.Standard
+        const message: TranslateResult = this.team.teamType === TeamType.Standard
           ? this.$t('teams.standard_team_created')
           : this.$t('teams.adhoc_team_created');
 
@@ -462,11 +486,14 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.setOriginalData();
       } catch (e) {
         this.handleSubmitError(e);
+      } finally {
+        this.isSubmitting = false;
       }
     },
 
     async submitEditTeam() {
       try {
+        this.isSubmitting = true;
         await this.$storage.team.actions.editTeam(this.team);
         this.$toasted.global.success(this.$t('teams.team_updated'));
         this.resetFormValidation();
@@ -478,12 +505,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
           this.handleSubmitError(errors);
         }
         this.loadTeamFromState();
+      } finally {
+        this.isSubmitting = false;
       }
     },
 
     prepareCreateTeam() {
-      this.team = new Team();
-      this.team.teamType = this.teamType === 'standard' ? ETeamType.Standard : ETeamType.AdHoc;
+      this.team = new TeamEntity();
+      this.team.status = Status.Active;
+      this.team.teamType = this.teamType === 'standard' ? TeamType.Standard : TeamType.AdHoc;
     },
 
     async fetchUserAccounts() {

@@ -1,78 +1,58 @@
+/* eslint-disable */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { mockTeam, mockTeamSearchDataAggregate, Team } from '@/entities/team';
+import { mockTeamEvents } from '@/entities/team';
 
 import { RcPageContent } from '@crctech/component-library';
-import { mockUserStateLevel } from '@/test/helpers';
 import Component from './TeamDetails.vue';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
 
-jest.mock('@/store/modules/team/teamUtils');
-
 describe('TeamDetails.vue', () => {
   let wrapper;
-
-  beforeEach(() => {
-    wrapper = shallowMount(Component, {
+  
+  const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       propsData: {
         id: 'id',
       },
-      computed: {
-        team() {
-          return mockTeam();
-        },
-      },
       mocks: {
+        $hasLevel: (lvl) => {
+          return lvl <= 'level' + level;
+        },
         $storage: storage,
       },
+      ...additionalOverwrites,
     });
-  });
+    await wrapper.vm.$nextTick();
+  };
 
   describe('Template', () => {
     describe('Edit button', () => {
-      it('should be enabled for L4+', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          store: {
-            ...mockUserStateLevel(4),
-          },
-          propsData: {
-            id: 'id',
-          },
-          computed: {
-            team() {
-              return mockTeam();
-            },
-          },
-        });
+      it('should be enabled for L4+', async () => {
+        
+        await mountWrapper(false, 4);
+
         const props = wrapper.findComponent(RcPageContent).props('showEditButton');
         expect(props).toBeTruthy();
       });
-      it('should be hidden for L3', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          store: {
-            ...mockUserStateLevel(3),
-          },
-          propsData: {
-            id: 'id',
-          },
-          computed: {
-            team() {
-              return mockTeam();
-            },
-          },
-        });
+      it('should be hidden for L3', async () => {
+        
+        await mountWrapper(false, 3);
         const props = wrapper.findComponent(RcPageContent).props('showEditButton');
         expect(props).toBeFalsy();
       });
     });
 
     describe('Elements', () => {
+      
+      beforeEach(async () => {
+        await mountWrapper(false);
+      });
+
       test('Team type', () => {
         expect(wrapper.findDataTest('team_type').text()).toBe('Standard');
       });
@@ -92,10 +72,14 @@ describe('TeamDetails.vue', () => {
   });
 
   describe('Methods', () => {
+    beforeEach(async () => {
+      await mountWrapper(false);
+    });
+
     describe('loadTeam', () => {
       it('should calls getTeam actions', async () => {
         await wrapper.vm.loadTeam();
-        expect(wrapper.vm.$storage.team.actions.getTeam).toHaveBeenLastCalledWith('id');
+        expect(wrapper.vm.$storage.team.actions.fetch).toHaveBeenLastCalledWith('id');
       });
     });
 
@@ -125,7 +109,7 @@ describe('TeamDetails.vue', () => {
       });
 
       it('should generate the correct string', () => {
-        const { events } = mockTeam();
+        const events = mockTeamEvents();
         const res = wrapper.vm.buildEventsString(events);
         expect(res).toBe('Event 1, Event 2');
       });
@@ -133,33 +117,10 @@ describe('TeamDetails.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('isLoading', () => {
-      it('should be linked to getLoading state', () => {
-        wrapper.vm.$store.state.team.getLoading = true;
-        expect(wrapper.vm.isLoading).toEqual(true);
-      });
-    });
-
     describe('team', () => {
-      it('should be linked to team getters team', () => {
-        const mockTeam = mockTeamSearchDataAggregate()[1];
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: 'id',
-          },
-          mocks: {
-            $storage: {
-              team: {
-                getters: {
-                  team: () => new Team(mockTeam),
-                },
-              },
-            },
-          },
-        });
-
-        expect(wrapper.vm.team).toEqual(new Team(mockTeam));
+      it('should be linked to team getters team', async () => {
+        await mountWrapper(false);
+        expect(wrapper.vm.team).toEqual(storage.team.getters.get());
       });
     });
   });
