@@ -29,7 +29,7 @@ export const mockMassActionEntityData = (force? : Partial<IMassActionEntityData>
   group: MassActionGroup.Group1,
   runs: [
     massActionRun(),
-    massActionRun({ runType: MassActionRunType.PreProcess, runStatus: MassActionRunStatus.Processing }),
+    massActionRun({ timestamp: '2021-08-06 06:39:04' }),
   ],
   ...force,
 });
