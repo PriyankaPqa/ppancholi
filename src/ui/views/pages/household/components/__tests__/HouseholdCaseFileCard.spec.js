@@ -9,7 +9,7 @@ import Component from '../HouseholdCaseFileCard.vue';
 const localVue = createLocalVue();
 const caseFile = mockCombinedCaseFile();
 
-describe('HouseholdCaseFileCard.spec.vue', () => {
+describe('HouseholdCaseFileCard.vue', () => {
   let wrapper;
 
   const doMount = (isActive = false) => {

@@ -8,7 +8,7 @@ import Component from '../HouseholdMemberCard.vue';
 const localVue = createLocalVue();
 const member = mockMemberData();
 
-describe('HouseholdMemberCard.spec.vue', () => {
+describe('HouseholdMemberCard.vue', () => {
   let wrapper;
 
   const doMount = (isPrimaryMember = false, isShallow = true, customOptions = null) => {
@@ -385,6 +385,24 @@ describe('HouseholdMemberCard.spec.vue', () => {
         const altMember = { ...member, contactInformation: { ...member.contactInformation, alternatePhoneNumber: { extension: null } } };
         doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
         expect(wrapper.vm.alternatePhoneExtension).toEqual('-');
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('openEditDialog', () => {
+      it('sets showPrimaryMemberDialog if isPrimaryMember', async () => {
+        doMount(true);
+        expect(wrapper.vm.showPrimaryMemberDialog).toBeFalsy();
+        await wrapper.vm.openEditDialog();
+        expect(wrapper.vm.showPrimaryMemberDialog).toBeTruthy();
+      });
+
+      it('sets showAdditionalMemberDialog if isPrimaryMember is false', async () => {
+        doMount(false);
+        expect(wrapper.vm.showAdditionalMemberDialog).toBeFalsy();
+        await wrapper.vm.openEditDialog();
+        expect(wrapper.vm.showAdditionalMemberDialog).toBeTruthy();
       });
     });
   });

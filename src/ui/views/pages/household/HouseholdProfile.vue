@@ -112,7 +112,7 @@
 
           <household-member-card :member="household.primaryBeneficiary" is-primary-member />
 
-          <household-member-card v-for="member in household.additionalMembers" :key="member.id" :member="member" />
+          <household-member-card v-for="(member, index) in household.additionalMembers" :key="member.id" :member="member" :index="index" />
 
           <h5 v-if="closedCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
             {{ $t('household.profile.registered_previous_events') }} ({{ closedCaseFiles.length }})
@@ -137,7 +137,7 @@ import mixins from 'vue-typed-mixins';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import { ECanadaProvinces } from '@/types';
 
-import { HouseholdCreate, IHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { IHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
 import { CaseFileStatus, ICaseFileCombined } from '@/entities/case-file';
 import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
 import helpers from '@/ui/helpers';
@@ -168,7 +168,6 @@ export default mixins(household).extend({
     return {
       moment,
       loading: false,
-      household: null as IHouseholdCreate,
       householdData: null as IHouseholdCombined,
       caseFileIds: [] as string[],
 
@@ -176,6 +175,10 @@ export default mixins(household).extend({
   },
 
   computed: {
+    household() : IHouseholdCreate {
+      return this.$storage.registration.getters.householdCreate();
+    },
+
     openCaseFiles():ICaseFileCombined[] {
       return this.caseFiles.filter((c) => c.entity.caseFileStatus === CaseFileStatus.Open);
     },
@@ -241,6 +244,7 @@ export default mixins(household).extend({
       this.$storage.registration.actions.fetchGenders(),
       this.$storage.registration.actions.fetchPreferredLanguages(),
       this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
+      this.$storage.registration.actions.fetchIndigenousCommunities(),
       this.fetchHouseholdData(),
       this.fetchCaseFilesInformation(),
     ]);
@@ -253,7 +257,7 @@ export default mixins(household).extend({
         this.householdData = await this.$storage.household.actions.fetch(this.id);
         if (this.householdData) {
           const householdCreateData = await this.buildHouseholdCreateData(this.householdData);
-          this.household = new HouseholdCreate(householdCreateData);
+          this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
         }
       } finally {
         this.loading = false;

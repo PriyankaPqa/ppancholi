@@ -96,19 +96,36 @@
         </tr>
       </tbody>
     </v-simple-table>
+    <primary-member-dialog
+      v-if="showPrimaryMemberDialog"
+      :show.sync="showPrimaryMemberDialog"
+      @cancel="showPrimaryMemberDialog = false"
+      @close="showPrimaryMemberDialog = false" />
+
+    <add-edit-additional-members
+      v-if="showAdditionalMemberDialog"
+      :i18n="i18n"
+      :show.sync="showAdditionalMemberDialog"
+      :index="index"
+      :member="member"
+      in-household-profile />
   </v-sheet>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-
 import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@crctech/registration-lib/src/entities/household-create';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { CurrentAddressTemplate } from '@crctech/registration-lib';
+import { CurrentAddressTemplate, AddEditAdditionalMembers } from '@crctech/registration-lib';
+import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
 
 export default Vue.extend({
   name: 'HouseholdMemberCard',
-  components: { CurrentAddressTemplate },
+  components: {
+    CurrentAddressTemplate,
+    PrimaryMemberDialog,
+    AddEditAdditionalMembers,
+  },
 
   props: {
     /**
@@ -118,26 +135,38 @@ export default Vue.extend({
       type: Object as ()=> IMember,
       required: true,
     },
+    /**
+     * Whether the member is primary
+     */
     isPrimaryMember: {
       type: Boolean,
       default: false,
+    },
+    /**
+     * The index of the additional member
+     */
+    index: {
+      type: Number,
+      default: -1,
     },
   },
 
   data() {
     return {
+      showPrimaryMemberDialog: false,
+      showAdditionalMemberDialog: false,
+      i18n: this.$i18n,
     };
   },
 
   computed: {
-
     buttons() : Array<Record<string, unknown>> {
       return [
         {
           test: 'edit',
           icon: 'mdi-pencil',
           additionalMemberOnly: false,
-          event: () => false,
+          event: this.openEditDialog,
         },
         {
           test: 'transfer',
@@ -157,7 +186,7 @@ export default Vue.extend({
     memberInfo(): Array<Record<string, unknown>> {
       return [
         {
-          primaryMemberOnly: true,
+          primaryMemberOnly: false,
           test: 'name',
           label: 'household.profile.member.full_name',
           customContent: 'name',
@@ -176,7 +205,7 @@ export default Vue.extend({
         },
         {
           test: 'date_of_birth',
-          primaryMemberOnly: true,
+          primaryMemberOnly: false,
           label: 'household.profile.member.date_of_birth',
           data: this.birthDate || '-',
         },
@@ -288,6 +317,16 @@ export default Vue.extend({
       return '-';
     },
 
+  },
+
+  methods: {
+    openEditDialog() {
+      if (this.isPrimaryMember) {
+        this.showPrimaryMemberDialog = true;
+      } else {
+        this.showAdditionalMemberDialog = true;
+      }
+    },
   },
 });
 </script>

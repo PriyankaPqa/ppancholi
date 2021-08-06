@@ -242,64 +242,6 @@ export const routes: Array<RouteConfig> = [
             ],
           },
           {
-            path: Routes.caseFile.layout.path, // case files
-            component: CaseFileLayout,
-            meta: {
-              requiresAuthorization: true,
-            },
-            children: [
-              {
-                path: Routes.caseFile.home.path,
-                name: Routes.caseFile.home.name,
-                component: HomeCaseFile,
-                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-              },
-              {
-                path: Routes.caseFile.details.path,
-                component: CaseFileDetails,
-                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-                props: true,
-                children: [
-                  {
-                    path: Routes.caseFile.activity.path,
-                    name: Routes.caseFile.activity.name,
-                    component: CaseFileActivity,
-                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-                    props: true,
-                  },
-                  {
-                    path: Routes.caseFile.note.path,
-                    name: Routes.caseFile.note.name,
-                    component: CaseNote,
-                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-                    props: true,
-                  },
-                  {
-                    path: Routes.caseFile.referrals.home.path,
-                    name: Routes.caseFile.referrals.home.name,
-                    component: CaseFileReferral,
-                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-                    props: true,
-                  },
-                  {
-                    path: Routes.caseFile.referrals.details.path,
-                    name: Routes.caseFile.referrals.details.name,
-                    component: CaseFileReferralDetails,
-                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-                    props: true,
-                  },
-                ],
-              },
-              {
-                path: Routes.household.householdProfile.path,
-                name: Routes.household.householdProfile.name,
-                component: HouseholdProfile,
-                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-                props: true,
-              },
-            ],
-          },
-          {
             path: Routes.registration.layout.path, // registration
             component: RegistrationLayout,
             meta: {
