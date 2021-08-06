@@ -27,7 +27,8 @@
             :loading="loadingIndigenousCommunities"
             :member="member"
             @identity-change="setIdentity($event)"
-            @indigenous-identity-change="setIndigenousIdentity($event)" />
+            @indigenous-identity-change="setIndigenousIdentity($event)"
+            @temporary-address-change="setCurrentAddress($event)" />
         </v-col>
       </v-row>
     </rc-dialog>
@@ -50,7 +51,9 @@ import {
 import helpers from '../../ui/helpers';
 
 import { localStorageKeys } from '../../constants/localStorage';
-import { ECurrentAddressTypes, IShelterLocationData } from '../../entities/value-objects/current-address/index';
+import {
+  ECurrentAddressTypes, ICurrentAddress, IShelterLocationData,
+} from '../../entities/value-objects/current-address/index';
 import { IMember } from '../../entities/value-objects/member';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 
@@ -82,6 +85,11 @@ export default Vue.extend({
       type: Object as () => VueI18n,
       required: true,
     },
+
+    inHouseholdProfile: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -102,6 +110,10 @@ export default Vue.extend({
 
     getTitle(): TranslateResult {
       if (this.editMode) {
+        if (this.inHouseholdProfile) {
+          const fullName = `${this.member.identitySet.firstName} ${this.member.identitySet.lastName}`;
+          return this.$t('household.details.edit.title', { x: fullName });
+        }
         return this.$t('registration.household_member.edit.title');
       }
       return this.$t('registration.household_member.add.title');
@@ -136,7 +148,7 @@ export default Vue.extend({
 
     shelterLocations(): IShelterLocationData[] {
       const event = this.$storage.registration.getters.event();
-      if (event) {
+      if (event && event.shelterLocations) {
         return event.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active);
       }
       return [];
@@ -173,6 +185,13 @@ export default Vue.extend({
 
       if (this.editMode) {
         this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
+        if (this.inHouseholdProfile) {
+          await this.$services.households.updatePersonIdentity(
+            this.member.id,
+            this.member.identitySet,
+          );
+          await this.$services.households.updatePersonAddress(this.member.id, this.member.currentAddress);
+        }
       } else {
         this.$storage.registration.mutations.addAdditionalMember(this.member, this.sameAddress);
         this.$emit('add');
@@ -186,6 +205,12 @@ export default Vue.extend({
 
     setIndigenousIdentity(form: IIdentitySet) {
       this.member.identitySet.setIndigenousIdentity(form);
+      // Update the member data, so the indigenous communities list get recalculated
+      this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
+    },
+
+    setCurrentAddress(form: ICurrentAddress) {
+      this.member.setCurrentAddress(form);
     },
   },
 });

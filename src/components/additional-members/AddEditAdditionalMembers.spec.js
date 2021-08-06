@@ -13,6 +13,7 @@ import { mockAdditionalMember } from '../../entities/value-objects/member';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddEditAdditionalMembers.vue';
 import { mockIdentitySet } from '../../entities/value-objects/identity-set';
+import { mockAddress } from '../../entities/household-create';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -60,6 +61,11 @@ describe('AddEditAdditionalMembers.vue', () => {
         await wrapper.setProps({ index: 0 - 1 });
         expect(wrapper.vm.getTitle).toBe('registration.household_member.add.title');
       });
+
+      it('returns the right value when in Household profile', async () => {
+        await wrapper.setProps({ inHouseholdProfile: true, index: 0 });
+        expect(wrapper.vm.getTitle).toEqual('household.details.edit.title');
+      });
     });
 
     describe('currentAddressTypeItems', () => {
@@ -102,6 +108,31 @@ describe('AddEditAdditionalMembers.vue', () => {
         await wrapper.vm.validate();
         expect(wrapper.vm.$storage.registration.mutations.addAdditionalMember)
           .toHaveBeenCalledWith(wrapper.vm.member, wrapper.vm.sameAddress);
+      });
+
+      it('should call addAdditionalMember with proper params', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.validate();
+        expect(wrapper.vm.$storage.registration.mutations.addAdditionalMember)
+          .toHaveBeenCalledWith(wrapper.vm.member, wrapper.vm.sameAddress);
+      });
+
+      it('should call the updatePersonIdentity service if in edit mode and inHouseholdProfile is true', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.setProps({ inHouseholdProfile: true, index: 0 });
+        await wrapper.vm.validate();
+        expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
+          wrapper.vm.member.id, wrapper.vm.member.identitySet,
+        );
+      });
+
+      it('should call the updatePersonAddress service if inHouseholdProfile is true', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.setProps({ inHouseholdProfile: true, index: 0 });
+        await wrapper.vm.validate();
+        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
+          wrapper.vm.member.id, wrapper.vm.member.currentAddress,
+        );
       });
 
       it('should close the dialog', async () => {
@@ -148,6 +179,29 @@ describe('AddEditAdditionalMembers.vue', () => {
         jest.spyOn(wrapper.vm.member.identitySet, 'setIndigenousIdentity');
         await wrapper.vm.setIndigenousIdentity(mockIdentitySet());
         expect(wrapper.vm.member.identitySet.setIndigenousIdentity).toHaveBeenCalledWith(mockIdentitySet());
+      });
+
+      it('should call editAdditionalMember with proper params', async () => {
+        await wrapper.setProps({ index: 0 });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.setIndigenousIdentity(mockIdentitySet());
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
+          .toHaveBeenCalledWith(wrapper.vm.member, 0, wrapper.vm.sameAddress);
+      });
+    });
+
+    describe('setCurrentAddress', () => {
+      it('should be called when address is changing', () => {
+        jest.spyOn(wrapper.vm, 'setCurrentAddress');
+        const component = wrapper.findComponent(AdditionalMemberForm);
+        component.vm.$emit('temporary-address-change', mockAddress());
+        expect(wrapper.vm.setCurrentAddress).toHaveBeenCalledWith(mockAddress());
+      });
+
+      it('calls setCurrentAddress of the class IdentitySet ', async () => {
+        jest.spyOn(wrapper.vm.member, 'setCurrentAddress');
+        await wrapper.vm.setCurrentAddress(mockAddress());
+        expect(wrapper.vm.member.setCurrentAddress).toHaveBeenCalledWith(mockAddress());
       });
     });
   });

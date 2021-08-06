@@ -98,10 +98,10 @@ export default Vue.extend({
     rules(): Record<string, unknown> {
       return {
         indigenousType: {
-          required: this.formCopy.indigenousProvince !== null && this.formCopy.indigenousProvince !== undefined,
+          required: false,
         },
         indigenousCommunityId: {
-          required: this.formCopy.indigenousType !== null && this.formCopy.indigenousProvince !== undefined,
+          required: this.formCopy.indigenousType !== null,
         },
         indigenousCommunityOther: {
           required: true,

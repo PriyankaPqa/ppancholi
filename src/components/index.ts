@@ -13,3 +13,4 @@ export { default as PrivacyStatement } from './privacy-statement/PrivacyStatemen
 export { default as ConfirmRegistration } from './confirm-registration/ConfirmRegistration.vue';
 export { default as ConfirmationPrint } from './confirm-registration/ConfirmationPrint.vue';
 export { default as CrcPrivacyStatement } from './privacy-statement/CrcPrivacyStatement.vue';
+export { default as AddEditAdditionalMembers } from './additional-members/AddEditAdditionalMembers.vue';

@@ -26,3 +26,4 @@ export const ReviewRegistration: VueConstructor<Vue>;
 export const ConfirmRegistration: VueConstructor<Vue>;
 export const ConfirmationPrint: VueConstructor<Vue>;
 export const CrcPrivacyStatement: VueConstructor<Vue>;
+export const AddEditAdditionalMembers: VueConstructor<Vue>;
