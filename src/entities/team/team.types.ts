@@ -1,5 +1,6 @@
 import { IMultilingual } from '@/types';
 import { IEntity, IEntityCombined } from '../base';
+import { IUserAccountCombined } from '../user-account';
 
 /**
  * Enums
@@ -21,6 +22,10 @@ export interface ITeamEvent {
 
 export interface ITeamMember {
   id: uuid;
+  isPrimaryContact: boolean,
+}
+
+export interface ITeamMemberAsUser extends IUserAccountCombined {
   isPrimaryContact: boolean,
 }
 

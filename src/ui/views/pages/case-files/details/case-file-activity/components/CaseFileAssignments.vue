@@ -1,6 +1,6 @@
 <template>
   <v-col cols="12" md="6" class="flex-row justify-end">
-    <div v-if="!loading && $hasLevel('level3')" class=" rc-body12 mr-4" data-test="case-file-assigned-info">
+    <div v-if="!loading" class="rc-body12 mr-4" data-test="case-file-assigned-info">
       <span v-if="assignedIndividualsInfo" class="fw-bold">{{ assignedIndividualsInfo }}</span>
       <span v-if="assignedTeamInfo && assignedIndividualsInfo" class="px-1">{{ $t('common.and') }}</span>
       <span v-if="assignedTeamInfo" class="fw-bold">{{ assignedTeamInfo }}</span>
@@ -8,7 +8,7 @@
     </div>
 
     <v-btn
-      v-if="$hasLevel('level3')"
+      v-if="canAssign"
       color="primary"
       small
       data-test="case-file-assign-btn"
@@ -19,6 +19,15 @@
       {{ $t("caseFileDetail.assignTo") }}
     </v-btn>
 
+    <v-btn
+      v-else
+      color="primary"
+      small
+      data-test="case-file-view-assign-btn"
+      @click="showViewAssignmentsDialog = true">
+      {{ $t("caseFileDetail.viewAssigned") }}
+    </v-btn>
+
     <assign-case-file
       v-if="showAssignmentsDialog"
       data-test="assignments-dialog"
@@ -26,21 +35,31 @@
       :show.sync="showAssignmentsDialog"
       @updateAssignmentsInfo="setAssignmentsInfoFromData"
       @updateActivities="$emit('updateActivities')" />
+
+    <view-assigned
+      v-if="showViewAssignmentsDialog"
+      data-test="view-assignments-dialog"
+      :case-file-id="caseFile.id"
+      :assigned-teams="assignedTeams"
+      :assigned-individual-ids="caseFile.assignedIndividualIds"
+      :show.sync="showViewAssignmentsDialog" />
   </v-col>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { ICaseFileEntity } from '@/entities/case-file';
+import { CaseFileStatus, ICaseFileEntity } from '@/entities/case-file';
 import { ITeamEntity } from '@/entities/team';
-import { IUserAccountCombined } from '@/entities/user-account';
+import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 import AssignCaseFile from './AssignCaseFile.vue';
+import ViewAssigned from './ViewAssigned.vue';
 
 export default Vue.extend({
   name: 'CaseFileAssignments',
 
   components: {
     AssignCaseFile,
+    ViewAssigned,
   },
 
   props: {
@@ -52,11 +71,19 @@ export default Vue.extend({
 
   data() {
     return {
-      assignedTeamInfo: null,
-      assignedIndividualsInfo: null,
+      assignedTeamInfo: '',
+      assignedIndividualsInfo: '',
       showAssignmentsDialog: false,
+      showViewAssignmentsDialog: false,
       loading: false,
+      assignedTeams: [] as ITeamEntity[],
     };
+  },
+
+  computed: {
+    canAssign() {
+      return this.$hasLevel('level6') || (this.$hasLevel('level3') && (this.caseFile.caseFileStatus === CaseFileStatus.Open));
+    },
   },
 
   watch: {
@@ -69,9 +96,7 @@ export default Vue.extend({
   async created() {
     try {
       this.loading = true;
-      if (this.$hasLevel('level3')) {
-        await this.setAssignmentsInfo();
-      }
+      await this.setAssignmentsInfo();
     } finally {
       this.loading = false;
     }
@@ -82,9 +107,12 @@ export default Vue.extend({
      * Set the assignment info by using the data sent back from the assign-case-file dialog after an assignment was done
      */
     setAssignmentsInfoFromData({ individuals, teams }: {individuals: {displayName: string}[], teams: ITeamEntity[]}) {
+      this.assignedTeams = teams || [];
       this.assignedTeamInfo = teams[0] ? teams[0].name : '';
-      const individualsNames = individuals.map((i) => (i.displayName));
-      this.assignedIndividualsInfo = this.createAssignedIndividualsInfo([individualsNames[0], individualsNames[1]]);
+      const individualsNames = individuals?.map((i) => (i.displayName));
+      if (individualsNames) {
+        this.assignedIndividualsInfo = this.createAssignedIndividualsInfo([individualsNames[0], individualsNames[1]]);
+      }
     },
 
     /**
@@ -97,19 +125,21 @@ export default Vue.extend({
 
     async getAssignedTeamInfo() {
       if (!this.caseFile.assignedTeamIds.length) { return null; }
-
-      const id = this.caseFile.assignedTeamIds[0];
-      const teamResponse = await this.$storage.team.actions.fetch(id);
-      return teamResponse?.entity?.name;
+      this.assignedTeams = await this.$storage.team.actions.getTeamsAssigned(this.caseFile.id);
+      return this.assignedTeams?.[0]?.name;
     },
 
     async getAssignedIndividualsInfo() {
       if (!this.caseFile.assignedIndividualIds.length) { return null; }
 
-      let userAccounts = await this.$storage.userAccount.actions.fetchAll() as IUserAccountCombined[];
+      const filter = `search.in(Entity/Id, '${this.caseFile.assignedIndividualIds.slice(0, 2).join('|')}', '|')`;
+
+      const individualsData: IAzureTableSearchResults = await this.$storage.userAccount.actions.search({ filter });
+      const { ids } = individualsData;
+
+      const userAccounts = this.$storage.userAccount.getters.getByIds(ids);
 
       if (userAccounts && userAccounts.length > 0) {
-        userAccounts = userAccounts.filter((u) => this.caseFile.assignedIndividualIds.includes(u.entity.id));
         const userNames = userAccounts.map((u) => u.metadata.displayName);
         return this.createAssignedIndividualsInfo(userNames);
       }
@@ -118,7 +148,7 @@ export default Vue.extend({
     },
 
     createAssignedIndividualsInfo(userNames:string[]): string {
-      if (!userNames.length) return '';
+      if (!userNames || !userNames.length) return '';
       const and = userNames[0] && userNames[1] ? ` ${this.$t('common.and')} ` : '';
       return (userNames[0] || '') + and + (userNames[1] || '');
     },

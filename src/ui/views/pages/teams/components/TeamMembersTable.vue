@@ -126,7 +126,7 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
-import { ITeamCombined } from '@/entities/team';
+import { ITeamCombined, ITeamMemberAsUser } from '@/entities/team';
 import helpers from '@/ui/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { RcConfirmationDialog, RcPhoneDisplay, RcDialog } from '@crctech/component-library';
@@ -200,7 +200,7 @@ export default Vue.extend({
         'metadata.roleName',
       ],
       showMemberDialog: false,
-      clickedMember: null as UserTeamMember,
+      clickedMember: null as ITeamMemberAsUser,
       removeLoading: false,
     };
   },
@@ -280,7 +280,7 @@ export default Vue.extend({
       return headers;
     },
 
-    computedTeamMembers(): Array<UserTeamMember> {
+    computedTeamMembers(): Array<ITeamMemberAsUser> {
       const users = this.$storage.userAccount.getters.getByIds(this.team.entity.teamMembers.map((m) => m.id)).map((x) => ({
         entity: x.entity,
         metadata: x.metadata,
@@ -333,24 +333,24 @@ export default Vue.extend({
       }
     },
 
-    getRole(user: UserTeamMember): string {
+    getRole(user: ITeamMemberAsUser): string {
       if (user.metadata.roleName) return this.$m(user.metadata.roleName);
       return '';
     },
 
-    showDeleteIcon(member: UserTeamMember): boolean {
+    showDeleteIcon(member: ITeamMemberAsUser): boolean {
       if (member.isPrimaryContact) {
         return this.$hasLevel('level5');
       }
       return this.$hasLevel('level4');
     },
 
-    async viewMemberDetails(member: UserTeamMember) {
+    async viewMemberDetails(member: ITeamMemberAsUser) {
       this.showMemberDialog = true;
       this.clickedMember = member;
     },
 
-    handleRemoveTeamMember(item: UserTeamMember) {
+    handleRemoveTeamMember(item: ITeamMemberAsUser) {
       if (item.isPrimaryContact) {
         this.showPrimaryContactMessage();
       } else if (item.metadata.openCaseFilesCount === 0) {

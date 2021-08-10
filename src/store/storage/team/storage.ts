@@ -18,6 +18,8 @@ export class TeamStorage
 
     getTeamsAssignable: (eventId: uuid): Promise<ITeamEntity[]> => this.store.dispatch(`${this.entityModuleName}/getTeamsAssignable`, eventId),
 
+    getTeamsAssigned: (eventId: uuid): Promise<ITeamEntity[]> => this.store.dispatch(`${this.entityModuleName}/getTeamsAssigned`, eventId),
+
     createTeam: (payload: ITeamEntity):
       Promise<ITeamEntity> => this.store.dispatch(`${this.entityModuleName}/createTeam`, payload),
 

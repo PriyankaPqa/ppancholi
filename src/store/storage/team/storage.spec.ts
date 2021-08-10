@@ -18,6 +18,12 @@ describe('>>> Team Storage', () => {
       storage.actions.getTeamsAssignable(id);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/getTeamsAssignable`, id);
     });
+
+    it('should proxy getTeamsAssigned', () => {
+      storage.actions.getTeamsAssigned('test-id');
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/getTeamsAssigned`, 'test-id');
+    });
+
     it('should proxy createTeam,', () => {
       const payload = mockTeamEntity();
       storage.actions.createTeam(payload);

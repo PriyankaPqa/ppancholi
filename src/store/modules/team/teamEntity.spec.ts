@@ -29,7 +29,16 @@ describe('Team entity module', () => {
         expect(module.service.getTeamsAssignable).toBeCalledWith('abc');
       });
     });
-    
+
+    describe('getTeamsAssigned', () => {
+      it('calls the service getTeamsAssigned with the right params', async () => {
+        module.service.getTeamsAssigned = jest.fn();
+        const eventId = '1234';
+        await module.actions.getTeamsAssigned(actionContext, eventId);
+        expect(module.service.getTeamsAssigned).toHaveBeenCalledWith(eventId);
+      });
+    });
+
     describe('createTeam', () => {
       it('should call createTeam service with proper params and commit results', async () => {
         module.service.createTeam = jest.fn(() => Promise.resolve(mockTeamsDataAddHoc()));
@@ -39,7 +48,7 @@ describe('Team entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', mockTeamsDataAddHoc());
       });
     });
-    
+
     describe('editTeam', () => {
       it('should call editTeam service with proper params and commit results', async () => {
         module.service.editTeam = jest.fn(() => Promise.resolve(mockTeamsDataAddHoc()));
@@ -49,7 +58,7 @@ describe('Team entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', mockTeamsDataAddHoc());
       });
     });
-    
+
     describe('addTeamMembers', () => {
       it('should call addTeamMembers service with proper params and commit results', async () => {
         module.service.addTeamMembers = jest.fn(() => Promise.resolve(mockTeamsDataAddHoc()));
@@ -59,7 +68,7 @@ describe('Team entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', mockTeamsDataAddHoc());
       });
     });
-    
+
     describe('removeTeamMember', () => {
       it('should call editTeam service with proper params and commit results', async () => {
         module.service.removeTeamMember = jest.fn(() => Promise.resolve(mockTeamsDataAddHoc()));

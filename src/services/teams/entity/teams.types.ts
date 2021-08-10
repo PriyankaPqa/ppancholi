@@ -8,6 +8,7 @@ export interface ITeamsService {
   getTeamsAssignable(eventId: uuid): Promise<ITeamEntity[]>;
   addTeamMembers(teamId: uuid, teamMembers: ITeamMember[]): Promise<ITeamEntity>;
   removeTeamMember(teamId: uuid, teamMemberId: uuid) : Promise<ITeamEntity>;
+  getTeamsAssigned(eventId: uuid): Promise<ITeamEntity[]>;
 }
 
 export interface ITeamsServiceMock {
@@ -16,4 +17,5 @@ export interface ITeamsServiceMock {
   getTeamsAssignable: jest.Mock <ITeamEntity[]>;
   addTeamMembers: jest.Mock <ITeamEntity>;
   removeTeamMember: jest.Mock <ITeamEntity>;
+  getTeamsAssigned: jest.Mock <ITeamEntity[]>;
 }

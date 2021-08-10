@@ -21,7 +21,7 @@ const storage = mockStorage();
 
 describe('CreateEditTeam.vue', () => {
   let wrapper;
-  
+
   const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
@@ -259,7 +259,7 @@ describe('CreateEditTeam.vue', () => {
   });
 
   describe('Template continued... shallowMount', () => {
-    
+
     describe('Action buttons', () => {
       describe('submit button', () => {
         let element;
@@ -293,7 +293,7 @@ describe('CreateEditTeam.vue', () => {
           beforeEach(async () => {
             await mountWrapper(false);
             mockFn = jest.spyOn(wrapper.vm, 'isSubmitDisabled');
-            mockFn.mockImplementation(() => { 
+            mockFn.mockImplementation(() => {
               return true;
             });
             // trigger a rebinding
@@ -375,7 +375,7 @@ describe('CreateEditTeam.vue', () => {
     test('Status selection is disabled for L4 or less', async () => {
       let element = wrapper.findDataTest('team-status');
       expect(element.props('disabled')).toBeTruthy();
-      
+
       await mountWrapper(true, 5, {
         computed: {
           isEditMode() {
@@ -390,7 +390,7 @@ describe('CreateEditTeam.vue', () => {
     test('Team name input is disabled for L4 or less', async () => {
       let element = wrapper.findSelectWithValidation('team-name');
       expect(element.props('disabled')).toBeTruthy();
-      
+
       await mountWrapper(true, 5, {
         computed: {
           isEditMode() {
@@ -405,7 +405,7 @@ describe('CreateEditTeam.vue', () => {
     test('Primary contact input is disabled for L4 or less', async () => {
       let element = wrapper.findSelectWithValidation('team-contact');
       expect(element.props('disabled')).toBeTruthy();
-      
+
       await mountWrapper(true, 5, {
         computed: {
           isEditMode() {
@@ -420,7 +420,7 @@ describe('CreateEditTeam.vue', () => {
     test('Event selection is disabled for L4 or less', async () => {
       let element = wrapper.findSelectWithValidation('events');
       expect(element.props('disabled')).toBeTruthy();
-      
+
       await mountWrapper(true, 5, {
         computed: {
           isEditMode() {
@@ -988,7 +988,7 @@ describe('CreateEditTeam.vue', () => {
             $storage: storage,
           },
         });
-        
+
         wrapper.vm.setPrimaryContactTeam = jest.fn();
       });
 
@@ -1016,7 +1016,7 @@ describe('CreateEditTeam.vue', () => {
           },
 
         });
-        
+
         wrapper.vm.setPrimaryContactTeam = jest.fn();
 
         wrapper.vm.$refs.form.validate = jest.fn(() => true);

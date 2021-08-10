@@ -9,9 +9,14 @@ const http = mockHttp();
 describe('>>> Teams Service', () => {
   const service = new TeamsService(http as never);
 
-  test('getTeamsAssignable is linked to the correct URL and params', async () => {
-    await service.getTeamsAssignable('myId');
-    expect(http.get).toHaveBeenCalledWith('/team/teams/events/myId/assignable');
+  test('getTeamsAssignable is linked to the correct URL', async () => {
+    await service.getTeamsAssignable('1234');
+    expect(http.get).toHaveBeenCalledWith('/team/teams/events/1234/assignable');
+  });
+
+  test('getTeamsAssigned is linked to the correct URL', async () => {
+    await service.getTeamsAssigned('1234');
+    expect(http.get).toHaveBeenCalledWith('/team/teams/case-files/1234/assigned');
   });
 
   test('createTeam is linked to the correct URL and params', async () => {

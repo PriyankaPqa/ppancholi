@@ -1,22 +1,37 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCaseFileEntity } from '@/entities/case-file';
+import { mockCaseFileEntity, CaseFileStatus } from '@/entities/case-file';
 // import { mockTeamsData, mockSearchTeams } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
+import { mockUserStateLevel } from '@/test/helpers';
+import { mockCombinedUserAccount } from '@/entities/user-account';
+import { mockTeamEntity } from '@/entities/team';
 
 import Component from '../case-file-activity/components/CaseFileAssignments.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const mockCaseFile = mockCaseFileEntity();
+const mockTeam = mockTeamEntity();
 
 describe('CaseFileAssignments.vue', () => {
   let wrapper;
+  storage.userAccount.actions.search = jest.fn(() => ({ ids: [mockCombinedUserAccount().entity.id] }));
+  storage.userAccount.getters.getByIds = jest.fn(() => [mockCombinedUserAccount()]);
+  storage.team.actions.getTeamsAssigned = jest.fn(() => [mockTeamEntity()]);
   describe('Template', () => {
     beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           caseFile: mockCaseFile,
+        },
+        computed: {
+          canAssign() {
+            return true;
+          },
+        },
+        mocks: {
+          $storage: storage,
         },
       });
       await wrapper.setRole('level3');
@@ -63,9 +78,22 @@ describe('CaseFileAssignments.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render if user level is below 3', async () => {
-        await wrapper.setRole('level2');
-        expect(element.exists()).toBeFalsy();
+      it('does not render if canAssign is set to false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            caseFile: mockCaseFile,
+          },
+          computed: {
+            canAssign() {
+              return false;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        element = wrapper.findDataTest('case-file-assign-btn');
       });
 
       it('sets showAssignmentsDialog when clicked', async () => {
@@ -97,26 +125,59 @@ describe('CaseFileAssignments.vue', () => {
         expect(wrapper.emitted('updateActivities')).toBeTruthy();
       });
     });
-  });
 
-  describe('Life cycle', () => {
-    describe('created', () => {
-      it('calls setAssignmentsInfo if user has level 3 or more', async () => {
+    describe('view assigned button', () => {
+      let element;
+      it('is does not render if canAssign is true', () => {
+        element = wrapper.findDataTest('case-file-view-assign-btn');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('renders if canAssign is set to false', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             caseFile: mockCaseFile,
           },
+          computed: {
+            canAssign() {
+              return false;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
         });
-        await wrapper.setRole('level3');
-        jest.spyOn(wrapper.vm, 'setAssignmentsInfo');
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.setAssignmentsInfo).toHaveBeenCalledTimes(1);
+        element = wrapper.findDataTest('case-file-view-assign-btn');
+        expect(element.exists()).toBeTruthy();
       });
 
-      it('does not call setAssignmentsInfo if user has level 2 or less', async () => {
+      it('sets showAssignmentsDialog when clicked', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            caseFile: mockCaseFile,
+          },
+          computed: {
+            canAssign() {
+              return false;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        element = wrapper.findDataTest('case-file-view-assign-btn');
+        wrapper.vm.showViewAssignmentsDialog = false;
+        await element.vm.$emit('click');
+        expect(wrapper.vm.showViewAssignmentsDialog).toBeTruthy();
+      });
+    });
+  });
+
+  describe('Life cycle', () => {
+    describe('created', () => {
+      it('calls setAssignmentsInfo', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -126,12 +187,123 @@ describe('CaseFileAssignments.vue', () => {
             $storage: storage,
           },
         });
-        await wrapper.setRole('level2');
         jest.spyOn(wrapper.vm, 'setAssignmentsInfo');
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.setAssignmentsInfo).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.setAssignmentsInfo).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
+  describe('computed', () => {
+    describe('canAssign', () => {
+      it('returns true if the user has level 6 ', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            caseFile: mockCaseFile,
+          },
+          store: {
+            ...mockUserStateLevel(6),
+          },
+          mocks: {
+            $storage: {
+              userAccount: {
+                actions: {
+                  search: jest.fn(() => ({ ids: [] })),
+                },
+              },
+              team: {
+                actions: {
+                  getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
+                },
+              },
+            },
+          },
+        });
+        expect(wrapper.vm.canAssign).toBeTruthy();
+      });
+
+      it('returns true if the user has level between 3 and 5 and case file status is open', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            caseFile: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open }),
+          },
+          store: {
+            ...mockUserStateLevel(4),
+          },
+          mocks: {
+            $storage: {
+              userAccount: {
+                actions: {
+                  search: jest.fn(() => ({ ids: [] })),
+                },
+              },
+              team: {
+                actions: {
+                  getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
+                },
+              },
+            },
+          },
+        });
+        expect(wrapper.vm.canAssign).toBeTruthy();
+      });
+
+      it('returns false if the user has level between 3 and 5 and case file status is not open', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            caseFile: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Archived }),
+          },
+          store: {
+            ...mockUserStateLevel(4),
+          },
+          mocks: {
+            $storage: {
+              userAccount: {
+                actions: {
+                  search: jest.fn(() => ({ ids: [] })),
+                },
+              },
+              team: {
+                actions: {
+                  getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
+                },
+              },
+            },
+          },
+        });
+        expect(wrapper.vm.canAssign).toBeFalsy();
+      });
+
+      it('returns false if the user has level below 3', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            caseFile: mockCaseFile,
+          },
+          mocks: {
+            $storage: {
+              userAccount: {
+                actions: {
+                  search: jest.fn(() => ({ ids: [] })),
+                },
+              },
+              team: {
+                actions: {
+                  getTeamsAssigned: jest.fn(() => [mockTeamEntity()]),
+                },
+              },
+            },
+          },
+          store: {
+            ...mockUserStateLevel(2),
+          },
+        });
+        expect(wrapper.vm.canAssign).toBeFalsy();
       });
     });
   });
@@ -150,73 +322,66 @@ describe('CaseFileAssignments.vue', () => {
       wrapper.vm.loading = false;
     });
 
-    // describe('setAssignmentsInfoFromData', () => {
-    //   it('sets the right team info', async () => {
-    //     const individuals = [];
-    //     const teams = [mockTeamsData()[0]];
-    //     await wrapper.vm.setAssignmentsInfoFromData({ individuals, teams });
-    //     expect(wrapper.vm.assignedTeamInfo).toEqual(mockTeamsData()[0].name);
-    //   });
-
-    //   it('sets the right individuals info', async () => {
-    //     jest.spyOn(wrapper.vm, 'createAssignedIndividualsInfo').mockImplementation(() => 'mock-member-name');
-    //     const individuals = [];
-    //     const teams = [];
-    //     await wrapper.vm.setAssignmentsInfoFromData({ individuals, teams });
-    //     expect(wrapper.vm.assignedIndividualsInfo).toEqual('mock-member-name');
-    //   });
-    // });
-
-    // describe('setAssignmentsInfo', () => {
-    //   it('sets the right team info', async () => {
-    //     jest.spyOn(wrapper.vm, 'getAssignedTeamInfo').mockImplementation(() => 'mock-team-name');
-
-    //     await wrapper.vm.setAssignmentsInfo();
-    //     expect(wrapper.vm.assignedTeamInfo).toEqual('mock-team-name');
-    //   });
-
-    //   it('sets the right individuals info', async () => {
-    //     jest.spyOn(wrapper.vm, 'getAssignedIndividualsInfo').mockImplementation(() => 'mock-member-name-2');
-
-    //     await wrapper.vm.setAssignmentsInfo();
-    //     expect(wrapper.vm.assignedIndividualsInfo).toEqual('mock-member-name-2');
-    //   });
-    // });
-
-    // describe('getAssignedTeamInfo', () => {
-    //   it('calls storage action searchTeams with the right id', async () => {
-    //     const id = wrapper.vm.caseFile.assignedTeamIds[0];
-    //     await wrapper.vm.getAssignedTeamInfo();
-    //     expect(storage.team.actions.searchTeams).toHaveBeenCalledWith({ filter: { TeamId: id } });
-    //   });
-
-    //   it('returns the right value', async () => {
-    //     const name = await wrapper.vm.getAssignedTeamInfo();
-    //     expect(name).toEqual(mockSearchTeams().value[0].teamName);
-    //   });
-    // });
-
-    describe('getAssignedIndividualsInfo', () => {
-      it('calls storage action fetchAll', async () => {
-        jest.clearAllMocks();
-        await wrapper.vm.getAssignedIndividualsInfo();
-        expect(wrapper.vm.$storage.userAccount.actions.fetchAll).toHaveBeenCalledTimes(1);
+    describe('setAssignmentsInfoFromData', () => {
+      it('sets the right team info', async () => {
+        const individuals = [];
+        const teams = [mockTeam];
+        await wrapper.vm.setAssignmentsInfoFromData({ individuals, teams });
+        expect(wrapper.vm.assignedTeamInfo).toEqual(mockTeam.name);
       });
 
-      it('calls createAssignedIndividualsInfo with the storage call results', async () => {
-        const userAccounts = wrapper.vm.$storage.userAccount.actions.fetchAll();
-        jest.spyOn(wrapper.vm, 'createAssignedIndividualsInfo');
-        const assignedIds = [userAccounts[0].entity.id];
-        await wrapper.setData({
-          caseFile: {
-            assignedIndividualIds: assignedIds,
-          },
-        });
-        const expected = userAccounts.filter((u) => assignedIds.includes(u.entity.id)).map((u) => u.metadata.displayName);
+      it('sets the right individuals info', async () => {
+        jest.clearAllMocks();
+        jest.spyOn(wrapper.vm, 'createAssignedIndividualsInfo').mockImplementation(() => 'mock-member-name');
+        const individuals = [];
+        const teams = [];
+        await wrapper.vm.setAssignmentsInfoFromData({ individuals, teams });
+        expect(wrapper.vm.assignedIndividualsInfo).toEqual('mock-member-name');
+      });
+    });
 
+    describe('setAssignmentsInfo', () => {
+      it('sets the right team info', async () => {
+        jest.spyOn(wrapper.vm, 'getAssignedTeamInfo').mockImplementation(() => 'mock-team-name');
+
+        await wrapper.vm.setAssignmentsInfo();
+        expect(wrapper.vm.assignedTeamInfo).toEqual('mock-team-name');
+      });
+
+      it('sets the right individuals info', async () => {
+        jest.spyOn(wrapper.vm, 'getAssignedIndividualsInfo').mockImplementation(() => 'mock-member-name-2');
+
+        await wrapper.vm.setAssignmentsInfo();
+        expect(wrapper.vm.assignedIndividualsInfo).toEqual('mock-member-name-2');
+      });
+    });
+
+    describe('getAssignedTeamInfo', () => {
+      it('calls storage action getTeamsAssigned with the right id', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.getAssignedTeamInfo();
+        expect(storage.team.actions.getTeamsAssigned).toHaveBeenCalledWith(mockCaseFile.id);
+      });
+
+      it('returns the right value', async () => {
+        wrapper.vm.$storage.team.actions.getTeamsAssigned = jest.fn(() => [mockTeam]);
+        const name = await wrapper.vm.getAssignedTeamInfo();
+        expect(name).toEqual(mockTeam.name);
+      });
+    });
+
+    describe('getAssignedIndividualsInfo', () => {
+      it('calls storage action searchUsers', async () => {
+        jest.clearAllMocks();
         await wrapper.vm.getAssignedIndividualsInfo();
+        expect(wrapper.vm.$storage.userAccount.actions.search).toHaveBeenCalledTimes(1);
+      });
 
-        expect(wrapper.vm.createAssignedIndividualsInfo).toHaveBeenCalledWith(expected);
+      it('calls createAssignedIndividualsInfo with the storage getter results', async () => {
+        jest.spyOn(wrapper.vm, 'createAssignedIndividualsInfo');
+        await wrapper.vm.getAssignedIndividualsInfo();
+        expect(wrapper.vm.createAssignedIndividualsInfo)
+          .toHaveBeenCalledWith([mockCombinedUserAccount().metadata.displayName]);
       });
 
       it('returns the response of createAssignedIndividualsInfo ', async () => {

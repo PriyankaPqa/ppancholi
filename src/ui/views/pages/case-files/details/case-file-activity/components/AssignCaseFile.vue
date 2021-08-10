@@ -44,7 +44,7 @@
                     <v-list-item-title>
                       <span class="rc-body14 fw-bold">{{ team.name }} ({{ team.activeMemberCount }})</span>
                     </v-list-item-title>
-                    <v-list-item-subtitle>{{ team.teamTypeName }}</v-list-item-subtitle>
+                    <v-list-item-subtitle>{{ $t(`enums.TeamType.${TeamType[team.teamType]}`) }}</v-list-item-subtitle>
                   </v-list-item-content>
                 </template>
               </v-list-item>
@@ -66,7 +66,7 @@
           :placeholder="$t('caseFile.quickUserSearch')" />
 
         <v-data-table
-          v-model="assignedMembers"
+          v-model="assignedIndividuals"
           data-test="individuals-table"
           class="flex-grow-1 scrollable"
           :headers="headers"
@@ -76,8 +76,8 @@
           item-key="id"
           :options="{sortBy: ['displayName'], sortDesc: [false]}"
           :item-class="(item)=> isSelected(item)? 'row_active': ''"
-          :items="displayedMembers"
-          :items-per-page="Math.max(allMembers.length, 1)"
+          :items="displayedIndividuals"
+          :items-per-page="Math.max(allIndividuals.length, 1)"
           @update:sort-by="sortBy = $event"
           @update:sort-desc="sortDesc = $event">
           <template #[`header.data-table-select`]="{ props, on }">
@@ -92,73 +92,11 @@
       </v-col>
 
       <v-col cols="12" md="4" class="px-6 d-flex flex-column">
-        <span class="rc-body16 fw-bold pb-4">{{ $t('caseFile.assign.assigned_to') }}</span>
-
-        <v-sheet rounded outlined height="100%" class="pa-4">
-          <v-list v-if="assignedTeams.length" data-test="assigned-teams-list">
-            <span class="rc-body14 pb-4">
-              {{ $t('caseFile.assign.assigned_team') }}
-            </span>
-            <v-list-item-group>
-              <v-list-item
-                v-for="team in assignedTeams"
-                :key="team.id"
-                class="pl-3 assigned-list-item"
-                :data-test="`assigned-teams-list-item-${team.id}`">
-                <v-list-item-content class="py-1">
-                  <span class="rc-body14 fw-bold">{{ team.name }}</span>
-                </v-list-item-content>
-                <v-list-item-action class="my-1">
-                  <v-tooltip bottom>
-                    <template #activator="{ on }">
-                      <v-btn
-                        icon
-                        x-small
-                        :data-test="`unassign_${team.id}`"
-                        @click="removeTeam(team)"
-                        v-on="on">
-                        <v-icon>mdi-close</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>{{ $t('caseFile.assign.tooltip.unassign') }}</span>
-                  </v-tooltip>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-
-          <v-list v-if="assignedMembers.length" data-test="assigned-individuals-list">
-            <span class="rc-body14 pt-6 pb-3">
-              {{ $t('caseFile.assign.assigned_individual') }}
-            </span>
-            <v-list-item-group>
-              <v-list-item
-                v-for="member in assignedMembers"
-                :key="member.id"
-                class="pl-3 assigned-list-item"
-                :data-test="`assigned-individuals-list-item-${member.id}`">
-                <v-list-item-content class="py-1">
-                  <span class="rc-body14 fw-bold">{{ member.displayName }}</span>
-                </v-list-item-content>
-                <v-list-item-action class="my-1">
-                  <v-tooltip bottom>
-                    <template #activator="{ on }">
-                      <v-btn
-                        icon
-                        x-small
-                        :data-test="`unassign_${member.id}`"
-                        @click="removeMember(member)"
-                        v-on="on">
-                        <v-icon>mdi-close</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>{{ $t('caseFile.assign.tooltip.unassign') }}</span>
-                  </v-tooltip>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-        </v-sheet>
+        <assigned-list
+          :assigned-individuals="assignedIndividuals"
+          :assigned-teams="assignedTeams"
+          @removeTeam="removeTeam"
+          @removeIndividual="removeIndividual" />
       </v-col>
     </v-row>
   </rc-dialog>
@@ -169,22 +107,19 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { RcDialog } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
-import {
-  TeamType,
-  ITeamEntity, ITeamMember,
-} from '@/entities/team';
+import { TeamType, ITeamEntity, ITeamMember } from '@/entities/team';
 import { ICaseFileEntity } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
 import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
 import { Status } from '@/entities/base';
+import AssignedList from './AssignedList.vue';
 
 interface TeamWithCount extends ITeamEntity {
   activeMemberCount: number;
-  teamTypeName: string;
 }
 
 interface IIndividual extends ITeamMember, IUserAccountCombined{
-  translatedRoleName: string;
+  translatedRoleName?: string;
   displayName: string;
 }
 
@@ -193,6 +128,7 @@ export default Vue.extend({
 
   components: {
     RcDialog,
+    AssignedList,
   },
 
   props: {
@@ -208,11 +144,12 @@ export default Vue.extend({
 
   data() {
     return {
-      assignedTeams: [] as ITeamEntity[],
-      assignedMembers: [] as IIndividual[],
+      TeamType,
+      assignedTeams: [] as TeamWithCount[],
+      assignedIndividuals: [] as IIndividual[],
       searchTerm: '',
       allTeams: [] as TeamWithCount[],
-      allMembers: [] as IIndividual[],
+      allIndividuals: [] as IIndividual[],
       loading: false,
     };
   },
@@ -237,8 +174,8 @@ export default Vue.extend({
       ];
     },
 
-    displayedMembers():IIndividual[] {
-      return helpers.filterCollectionByValue(this.allMembers, this.searchTerm || '', true);
+    displayedIndividuals():IIndividual[] {
+      return helpers.filterCollectionByValue(this.allIndividuals, this.searchTerm || '', true);
     },
 
   },
@@ -248,9 +185,9 @@ export default Vue.extend({
       this.loading = true;
 
       await this.getTeamsData();
-      this.setAllMembers();
+      this.setAllIndividuals();
       this.setAssignedTeams();
-      this.setAssignedMembers();
+      this.setAssignedIndividuals();
     } finally {
       this.loading = false;
     }
@@ -264,14 +201,14 @@ export default Vue.extend({
     async getTeamsData() {
       const { eventId } = this.caseFile;
       const teams: ITeamEntity[] = await this.$storage.team.actions.getTeamsAssignable(eventId);
-      const typeNames = helpers.enumToTranslatedCollection(TeamType, 'enums.teamType');
+
       this.allTeams = (_cloneDeep(teams.filter((t:ITeamEntity) => t.status === Status.Active)))
-        .map((x) => ({ ...x, activeMemberCount: 0, teamTypeName: typeNames.find((t) => t.value === x.teamType).text }));
+        .map((x) => ({ ...x, activeMemberCount: 0 }));
       await this.$storage.userAccount.actions.fetchAllIncludingInactive();
     },
 
-    setAllMembers() {
-      const allMembers = [] as IIndividual[];
+    setAllIndividuals() {
+      const allIndividuals = [] as IIndividual[];
 
       const users = this.$storage.userAccount.getters.getAll();
 
@@ -280,9 +217,9 @@ export default Vue.extend({
           const userMember = users.find((u) => u.entity.id === member.id);
           if (userMember?.entity?.accountStatus === AccountStatus.Active) {
             t.activeMemberCount += 1;
-            // If team member is active and has not already been added, he is added to the allMembers list
-            if (!allMembers.find((m) => m.id === member.id)) {
-              allMembers.push({
+            // If team member is active and has not already been added, he is added to the allIndividuals list
+            if (!allIndividuals.find((i) => i.id === member.id)) {
+              allIndividuals.push({
                 ...member,
                 ...userMember,
                 displayName: userMember.metadata.displayName,
@@ -293,21 +230,21 @@ export default Vue.extend({
         });
       });
 
-      this.allMembers = allMembers;
+      this.allIndividuals = allIndividuals;
     },
 
-    setAssignedMembers() {
+    setAssignedIndividuals() {
       this.caseFile.assignedIndividualIds.forEach((id) => {
-        const assignedMember = this.allMembers.find((m:IIndividual) => m.id === id);
-        if (assignedMember && assignedMember.entity.accountStatus === AccountStatus.Active) {
-          this.assignedMembers.push(assignedMember);
+        const assignedIndividual = this.allIndividuals.find((m:IIndividual) => m.id === id);
+        if (assignedIndividual && assignedIndividual.entity.accountStatus === AccountStatus.Active) {
+          this.assignedIndividuals.push(assignedIndividual);
         }
       });
     },
 
     setAssignedTeams() {
       this.caseFile.assignedTeamIds.forEach((id) => {
-        const assignedTeam = this.allTeams.find((t:ITeamEntity) => t.id === id);
+        const assignedTeam = this.allTeams.find((t:TeamWithCount) => t.id === id);
         if (assignedTeam) {
           this.assignedTeams.push(assignedTeam);
         }
@@ -315,11 +252,11 @@ export default Vue.extend({
     },
 
     isSelected(user: IIndividual): boolean {
-      return this.assignedMembers.findIndex((u) => user.id === u.id) !== -1;
+      return this.assignedIndividuals.findIndex((u) => user.id === u.id) !== -1;
     },
 
-    removeMember(member: IIndividual) {
-      this.assignedMembers = this.assignedMembers.filter((m) => m.id !== member.id);
+    removeIndividual(individual: IIndividual) {
+      this.assignedIndividuals = this.assignedIndividuals.filter((i) => i.id !== individual.id);
     },
 
     removeTeam(team: {name: string, id: string, type: string}) {
@@ -328,19 +265,13 @@ export default Vue.extend({
 
     async submit() {
       try {
-        const individualsPayload = this.assignedMembers.map((m) => m.id);
+        const individualsPayload = this.assignedIndividuals.map((i) => i.id);
         const teamsPayload = this.assignedTeams.map((t) => t.id);
         this.loading = true;
         await this.$storage.caseFile.actions.setCaseFileAssign(
           this.caseFile.id, individualsPayload, teamsPayload,
         );
-        const individuals:ITeamMember[] = this.assignedMembers.map((m) => {
-          // Remove the property translatedRoleName from the members objects
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { translatedRoleName, ...member } = m;
-          return member;
-        });
-        this.$emit('updateAssignmentsInfo', { teams: this.assignedTeams, individuals });
+        this.$emit('updateAssignmentsInfo', { teams: this.assignedTeams, individuals: this.assignedIndividuals });
         this.$emit('updateActivities');
       } finally {
         this.loading = false;

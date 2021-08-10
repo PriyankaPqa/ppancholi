@@ -17,6 +17,10 @@ export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implement
     return this.http.get(`/team/teams/events/${eventId}/assignable`);
   }
 
+  async getTeamsAssigned(caseFileId: uuid): Promise<ITeamEntity[]> {
+    return this.http.get(`/team/teams/case-files/${caseFileId}/assigned`);
+  }
+
   async createTeam(team: ITeamEntity): Promise<ITeamEntity> {
     return this.http.post('/team/teams', team, { globalHandler: false });
   }

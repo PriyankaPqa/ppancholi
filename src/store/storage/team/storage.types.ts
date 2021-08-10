@@ -11,6 +11,7 @@ export interface IGettersMock extends IBaseGettersMock<ITeamEntity, ITeamMetadat
 
 export interface IActions extends IBaseActions<ITeamEntity, ITeamMetadata, uuid> {
   getTeamsAssignable(eventId: uuid): Promise<ITeamEntity[]>;
+  getTeamsAssigned(eventId: uuid): Promise<ITeamEntity[]>;
   createTeam(payload: ITeamEntity): Promise<ITeamEntity>;
   editTeam(payload: ITeamEntity): Promise<ITeamEntity>;
   addTeamMembers(teamId: uuid, teamMembers: ITeamMember[]): Promise<ITeamEntity>;
@@ -19,6 +20,7 @@ export interface IActions extends IBaseActions<ITeamEntity, ITeamMetadata, uuid>
 
 export interface IActionsMock extends IBaseActionsMock<ITeamEntity, ITeamMetadata> {
   getTeamsAssignable: jest.Mock<ITeamEntity[]>;
+  getTeamsAssigned: jest.Mock<ITeamEntity[]>;
   createTeam: jest.Mock<ITeamEntity>;
   editTeam: jest.Mock<ITeamEntity>;
   addTeamMembers: jest.Mock<ITeamEntity>;

@@ -16,6 +16,7 @@ export class TeamStorageMock extends BaseMock<ITeamCombined, ITeamEntity> {
   protected actions = {
     ...this.baseActions,
     getTeamsAssignable: jest.fn(() => [this.entity]),
+    getTeamsAssigned: jest.fn(() => [this.entity]),
     createTeam: jest.fn(() => this.entity),
     editTeam: jest.fn(() => this.entity),
     addTeamMembers: jest.fn(() => this.entity),

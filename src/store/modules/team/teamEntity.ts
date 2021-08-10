@@ -44,6 +44,15 @@ export class TeamEntityModule extends BaseModule <ITeamEntity, uuid> {
       return [];
     },
 
+    getTeamsAssigned: async (
+      context: ActionContext<ITeamEntityState, ITeamEntityState>,
+      eventId: uuid,
+    ): Promise<ITeamEntity[]> => {
+      const teams = await this.service.getTeamsAssigned(eventId);
+      if (teams && teams.length) return teams;
+      return [];
+    },
+
     createTeam: async (
       context: ActionContext<ITeamEntityState, ITeamEntityState>,
       payload: ITeamEntity,
