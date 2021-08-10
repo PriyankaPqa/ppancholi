@@ -3,18 +3,14 @@
     <v-btn
       small
       color="primary"
-      :disabled="failed"
+      :disabled="failed || (mode === 'edit' && pristine)"
       :loading="loading"
       :data-test="saveButtonDataTest"
       @click="onClickSave">
       {{ saveButtonLabel }}
     </v-btn>
 
-    <v-btn
-      icon
-      :data-test="cancelButtonDataTest"
-      :disabled="loading"
-      @click="onCancel">
+    <v-btn icon :data-test="cancelButtonDataTest" :disabled="loading" @click="onCancel">
       <v-icon>
         mdi-close
       </v-icon>
@@ -26,6 +22,8 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { VForm } from '@/types';
+import { IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
+import { cloneDeep } from 'lodash';
 
 export default Vue.extend({
   name: 'AddEditSubItemButtons',
@@ -45,6 +43,11 @@ export default Vue.extend({
     failed: {
       type: Boolean,
       required: true,
+    },
+
+    pristine: {
+      type: Boolean,
+      default: true,
     },
 
     isEdit: {
@@ -87,37 +90,35 @@ export default Vue.extend({
   },
 
   methods: {
-    onClickSave() {
+    async onClickSave() {
       if (this.mode === 'add') {
-        this.onAddSubItem();
+        await this.addSubItem();
       } else {
-        this.onSaveEditSubItem();
+        await this.saveSubItem();
       }
     },
 
     /**
      * Handles adding a new sub-item
      */
-    async onAddSubItem() {
+    async addSubItem() {
       const isValid = await (this.$parent.$parent.$parent.$parent.$refs.form as VForm).validate();
 
       if (isValid) {
         const newSubItem = this.$storage.financialAssistance.getters.newSubItem();
 
         if (this.isEdit) {
-          // todo
+          await this.addRemotely(newSubItem);
         } else {
-          this.$storage.financialAssistance.mutations.addSubItem(newSubItem, this.index);
+          this.addLocally(newSubItem);
         }
-
-        this.onCancel();
       }
     },
 
     /**
      * When the user clicks save, validate the form and commit the setSubItem mutation to update the sub-item
      */
-    async onSaveEditSubItem() {
+    async saveSubItem() {
       const isValid = await (this.$parent.$parent.$parent.$parent.$parent.$refs.form as VForm).validate();
 
       if (isValid) {
@@ -126,13 +127,63 @@ export default Vue.extend({
         const editedItemIndex = this.$storage.financialAssistance.getters.editedItemIndex();
 
         if (this.isEdit) {
-          // todo
+          await this.saveRemotely(newSubItem, editedSubItemIndex, editedItemIndex);
         } else {
-          this.$storage.financialAssistance.mutations.setSubItem(newSubItem, editedSubItemIndex, editedItemIndex);
+          this.saveLocally(newSubItem, editedSubItemIndex, editedItemIndex);
+        }
+      }
+    },
+
+    async addRemotely(newSubItem: IFinancialAssistanceTableSubItem) {
+      this.loading = true;
+
+      const parentItem = this.$storage.financialAssistance.getters.items()[this.index];
+
+      let res;
+
+      try {
+        if (parentItem.subItems?.length > 0) {
+          res = await this.$storage.financialAssistance.actions.createSubItem(this.index, newSubItem);
+        } else {
+          const item = cloneDeep(parentItem);
+          item.subItems = [newSubItem];
+          res = await this.$storage.financialAssistance.actions.createItem(item);
         }
 
+        if (res) {
+          await this.$storage.financialAssistance.actions.reloadItems();
+          this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
+          this.onCancel();
+        }
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    addLocally(newSubItem: IFinancialAssistanceTableSubItem) {
+      this.$storage.financialAssistance.mutations.addSubItem(newSubItem, this.index);
+
+      this.onCancel();
+    },
+
+    async saveRemotely(newSubItem: IFinancialAssistanceTableSubItem, editedSubItemIndex: number, editedItemIndex: number) {
+      this.loading = true;
+
+      const res = await this.$storage.financialAssistance.actions.editSubItem(editedItemIndex, editedSubItemIndex, newSubItem);
+
+      if (res) {
+        await this.$storage.financialAssistance.actions.reloadItems();
+        this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
         this.onCancel();
       }
+
+      this.loading = false;
+    },
+
+    saveLocally(newSubItem: IFinancialAssistanceTableSubItem, editedSubItemIndex: number, editedItemIndex: number) {
+      this.$storage.financialAssistance.mutations.setSubItem(newSubItem, editedSubItemIndex, editedItemIndex);
+
+      this.onCancel();
     },
 
     /**

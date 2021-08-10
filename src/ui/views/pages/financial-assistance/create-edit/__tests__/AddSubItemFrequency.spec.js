@@ -42,11 +42,11 @@ describe('AddSubItemFrequency.vue', () => {
         expect(wrapper.vm.frequencies).toEqual([
           {
             text: 'Multiple',
-            value: 'Multiple',
+            value: 2,
           },
           {
             text: 'One time',
-            value: 'OneTime',
+            value: 1,
           },
         ]);
       });

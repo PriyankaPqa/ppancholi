@@ -3,14 +3,16 @@ import { IOptionItem } from '../optionItem';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
-  IFinancialAssistanceTableRow,
-  IFinancialAssistanceTableSubRow,
+  IFinancialAssistanceTableItem,
+  IFinancialAssistanceTableSubItem,
   IFinancialAssistanceTableMetadata,
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableCombined,
+  IFinancialAssistanceTableSubItemData,
+  IFinancialAssistanceTableItemData,
 } from './financial-assistance.types';
 
-export const mockSubItems = (): IFinancialAssistanceTableSubRow[] => [
+export const mockSubItems = (): IFinancialAssistanceTableSubItem[] => [
   {
     subCategory: {
       name: { translation: { en: "Children's Supplies", fr: 'Articles pour enfants' } },
@@ -43,7 +45,18 @@ export const mockSubItems = (): IFinancialAssistanceTableSubRow[] => [
   },
 ];
 
-export const mockItems = (): IFinancialAssistanceTableRow[] => [
+export const mockSubItemData = (): IFinancialAssistanceTableSubItemData => ({
+  subCategory: {
+    optionItemId: 'optionItemId',
+    specifiedOther: null,
+  },
+  maximumAmount: 1,
+  amountType: EFinancialAmountModes.Fixed,
+  documentationRequired: false,
+  frequency: EFinancialFrequency.OneTime,
+});
+
+export const mockItems = (): IFinancialAssistanceTableItem[] => [
   {
     mainCategory: {
       name: { translation: { en: "Children's Needs", fr: "Besoins d'enfants" } },
@@ -83,7 +96,7 @@ export const mockItems = (): IFinancialAssistanceTableRow[] => [
       id: 'fab85d64-c242-48af-a893-46f91f6092b2',
       status: 1,
     },
-    subRows: [
+    subItems: [
       {
         subCategory: {
           name: { translation: { en: "Children's Supplies", fr: 'Articles pour enfants' } },
@@ -164,7 +177,7 @@ export const mockItems = (): IFinancialAssistanceTableRow[] => [
       id: 'cc8b8408-0d32-4535-80e4-ea5849fbe9e8',
       status: 1,
     },
-    subRows: [
+    subItems: [
       {
         subCategory: {
           name: { translation: { en: 'Storage/Moving', fr: 'Entreposage ou déménagement' } },
@@ -184,16 +197,24 @@ export const mockItems = (): IFinancialAssistanceTableRow[] => [
   },
 ];
 
+export const mockItemData = (): IFinancialAssistanceTableItemData => ({
+  mainCategory: {
+    optionItemId: 'optionItemId',
+    specifiedOther: null,
+  },
+  subItems: [mockSubItemData()],
+});
+
 export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableEntity => ({
   ...mockBaseData(),
 
   eventId: '8d88bc46-22c2-412d-814d-ff898357b745',
   programId: '657ae9a1-bfcc-4292-b871-8113b984e9cb',
   name: { translation: { en: 'abcd', fr: 'dcba' } },
-  rows: [
+  items: [
     {
       mainCategory: { optionItemId: '9b275d2f-00a1-4345-94fe-c37b84beb400', specifiedOther: null },
-      subRows: [
+      subItems: [
         {
           subCategory: { optionItemId: '7eb37c59-4947-4edf-8146-c2458bd2b6f6', specifiedOther: null },
           maximumAmount: 1,
@@ -205,7 +226,7 @@ export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableE
     },
     {
       mainCategory: { optionItemId: '62421874-aed8-43bb-a668-bff1f45f08df', specifiedOther: null },
-      subRows: [
+      subItems: [
         {
           subCategory: { optionItemId: '1d37919e-044e-44b9-99a4-d9a5f4fd5b13', specifiedOther: null },
           maximumAmount: 2,

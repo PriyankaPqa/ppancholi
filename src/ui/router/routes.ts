@@ -336,6 +336,12 @@ export const routes: Array<RouteConfig> = [
                   component: CreateEditFinancialAssistance,
                   meta: { level: 'level6' },
                   props: true,
+                }, {
+                  path: Routes.events.financialAssistance.edit.path,
+                  name: Routes.events.financialAssistance.edit.name,
+                  component: CreateEditFinancialAssistance,
+                  meta: { level: 'level6' },
+                  props: true,
                 }],
               },
             ],

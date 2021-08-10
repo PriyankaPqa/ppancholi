@@ -23,7 +23,7 @@
 import Vue from 'vue';
 import { VSelectWithValidation } from '@crctech/component-library';
 import { EOptionListItemStatus, IOptionSubItem } from '@/entities/optionItem';
-import { IFinancialAssistanceTableRow, IFinancialAssistanceTableSubRow } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
 
 export default Vue.extend({
@@ -36,12 +36,12 @@ export default Vue.extend({
 
   props: {
     item: {
-      type: Object as () => IFinancialAssistanceTableSubRow,
+      type: Object as () => IFinancialAssistanceTableSubItem,
       default: null,
     },
 
     parent: {
-      type: Object as () => IFinancialAssistanceTableRow,
+      type: Object as () => IFinancialAssistanceTableItem,
       required: true,
     },
 
@@ -88,7 +88,7 @@ export default Vue.extend({
         ];
       }
 
-      const existingSubItems = this.parent.subRows;
+      const existingSubItems = this.parent.subItems;
 
       const unSelected = subitemsFromBE.filter(
         (si) => !existingSubItems.some((sI) => sI.subCategory.id === si.id) && si.status === EOptionListItemStatus.Active,

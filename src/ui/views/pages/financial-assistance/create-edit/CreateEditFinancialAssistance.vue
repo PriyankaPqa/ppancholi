@@ -1,6 +1,6 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed }" slim>
-    <div v-if="loading" class="pa-4">
+  <div class="full-height">
+    <div v-if="loading" class="pa-4 full-width">
       <v-skeleton-loader class="mb-4" tile type="table-heading" />
       <v-skeleton-loader tile type="list-item-avatar" />
       <v-skeleton-loader tile type="list-item" />
@@ -18,82 +18,114 @@
 
     <rc-page-content v-else :title="title" show-help :help-link="$t('zendesk.help_link.create_financial_assistance_table')" :show-add-button="false">
       <v-container>
-        <v-row class="justify-center">
-          <v-col cols="12" xl="7" lg="9" md="11" sm="12">
-            <rc-tabs>
-              <rc-tab
-                v-for="lang in supportedLanguages"
-                :key="lang.key"
-                :label="$t(`tab.${lang.key}`)"
-                :data-test="`financialCreate__lang--${lang.key}`"
-                :active="languageMode === lang.key"
-                @click="setLanguageMode(lang.key)" />
-            </rc-tabs>
+        <validation-observer ref="form" v-slot="{ pristine, invalid }" slim>
+          {{ watchPristine(pristine) }}
+          <v-row class="justify-center">
+            <v-col :class="{ 'table-wrapper': isEdit }" cols="12" xl="7" lg="9" md="11" sm="12">
+              <rc-tabs>
+                <rc-tab
+                  v-for="lang in supportedLanguages"
+                  :key="lang.key"
+                  :label="$t(`tab.${lang.key}`)"
+                  :data-test="`financialCreate__lang--${lang.key}`"
+                  :active="languageMode === lang.key"
+                  :disabled="isEdit && isOperating"
+                  @click="setLanguageMode(lang.key)" />
+              </rc-tabs>
 
-            <v-row>
-              <v-col v-if="isTableMode" cols="12" md="6" lg="5">
-                <v-autocomplete-with-validation
-                  v-model="program"
-                  :items="programsSorted"
-                  :label="$t('financial.associate_program')"
-                  :item-text="(item) => $m(item.name)"
-                  return-object
-                  :loading="loadingPrograms"
-                  :disabled="loadingPrograms || isEdit"
-                  :rules="rules.required"
-                  data-test="financialCreate__programSelect" />
-              </v-col>
-            </v-row>
+              <v-row>
+                <v-col v-if="isTableMode" cols="12" md="6" lg="5">
+                  <v-autocomplete-with-validation
+                    v-model="program"
+                    :items="programsSorted"
+                    :label="$t('financial.associate_program')"
+                    :item-text="(item) => $m(item.name)"
+                    return-object
+                    :disabled="isEdit"
+                    :rules="rules.required"
+                    data-test="financialCreate__programSelect" />
+                </v-col>
+              </v-row>
 
-            <v-row>
-              <v-col v-if="isCopy" cols="12">
-                <div class="rc-body14 mb-4">
-                  {{ $t('financialAssistance.copyMessage') }}
+              <v-row>
+                <v-col v-if="isCopy" cols="12">
+                  <div class="rc-body14 mb-4">
+                    {{ $t('financialAssistance.copyMessage') }}
+                  </div>
+
+                  <v-autocomplete-with-validation
+                    v-model="copyTemplate"
+                    :items="existingTemplatesSorted"
+                    :label="$t('financialAssistance.copyLabel')"
+                    :item-text="(item) => $m(item.name)"
+                    return-object
+                    :loading="loadingTemplate"
+                    :disabled="loadingTemplate"
+                    :rules="rules.required"
+                    data-test="financialCreate__copySelect" />
+                </v-col>
+
+                <v-col cols="9" md="8" sm="7">
+                  <v-text-field-with-validation
+                    v-model="name"
+                    data-test="financial-assistance-name"
+                    :disabled="isEdit && isOperating"
+                    :label="`${isTableMode ? $t('financial.table_name') : $t('financial.template_name')} *`"
+                    :rules="rules.name" />
+                </v-col>
+
+                <v-col cols="3" md="4" sm="5">
+                  <div v-if="!programInactive" :class="`flex-row financial-status py-2 pl-5 ${getStatusClasses()}`">
+                    <span :class="`rc-body14 ${status ? 'white--text' : 'black--text'}`">
+                      {{ $t('common.status') }}
+                    </span>
+
+                    <span :class="`rc-body14 ${status ? 'white--text' : 'black--text'} ml-4`">
+                      {{ status ? $t('enums.financialStatus.Active').toUpperCase() : $t('enums.financialStatus.Inactive').toUpperCase() }}
+                    </span>
+
+                    <ValidationProvider slim>
+                      <v-switch
+                        v-model="status"
+                        class="mt-0 ml-auto mr-3 pt-0"
+                        flat
+                        :disabled="isEdit && isOperating"
+                        data-test="financial-assistance-status"
+                        hide-details
+                        color="white" />
+                    </ValidationProvider>
+                  </div>
+
+                  <div v-else class="flex-row financial-status py-2 pl-5 grey lighten-3 black--text">
+                    <span class="rc-body14">
+                      {{ $t('financialAssistance.programIsInactive') }}
+                    </span>
+                  </div>
+                </v-col>
+              </v-row>
+
+              <v-row v-if="isEdit">
+                <v-spacer />
+
+                <div class="mr-3 mb-3">
+                  <v-btn :disabled="isSaving || isOperating" data-test="financial-assistance-cancel-edit-btn" @click="cancelChanges()">
+                    {{ $t('common.buttons.cancel') }}
+                  </v-btn>
+
+                  <v-btn
+                    class="ml-6"
+                    color="primary"
+                    data-test="financial-assistance-save-edit-btn"
+                    :loading="isSaving"
+                    :disabled="pristine || invalid || isOperating"
+                    @click="saveEdit">
+                    {{ $t('common.buttons.save') }}
+                  </v-btn>
                 </div>
-
-                <v-autocomplete-with-validation
-                  v-model="copyTemplate"
-                  :items="existingTemplatesSorted"
-                  :label="$t('financialAssistance.copyLabel')"
-                  :item-text="(item) => $m(item.name)"
-                  return-object
-                  :loading="loadingTemplate"
-                  :disabled="loadingTemplate"
-                  :rules="rules.required"
-                  data-test="financialCreate__copySelect" />
-              </v-col>
-
-              <v-col cols="9" md="8" sm="7">
-                <v-text-field-with-validation
-                  v-model="name"
-                  data-test="financial-assistance-name"
-                  :label="`${isTableMode ? $t('financial.table_name') : $t('financial.template_name')} *`"
-                  :rules="rules.name"
-                  :disabled="isEdit && isTableMode" />
-              </v-col>
-
-              <v-col cols="3" md="4" sm="5">
-                <div v-if="!programInactive" :class="`flex-row financial-status py-2 pl-5 ${getStatusClasses()}`">
-                  <span :class="`rc-body14 ${status ? 'white--text' : 'black--text'}`">
-                    {{ $t('common.status') }}
-                  </span>
-
-                  <span :class="`rc-body14 ${status ? 'white--text' : 'black--text'} ml-4`">
-                    {{ status ? $t('enums.financialStatus.Active').toUpperCase() : $t('enums.financialStatus.Inactive').toUpperCase() }}
-                  </span>
-
-                  <v-switch v-model="status" class="mt-0 ml-auto mr-3 pt-0" flat data-test="financial-assistance-status" hide-details color="white" />
-                </div>
-
-                <div v-else class="flex-row financial-status py-2 pl-5 grey lighten-3 black--text">
-                  <span class="rc-body14">
-                    {{ $t('financialAssistance.programIsInactive') }}
-                  </span>
-                </div>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
+              </v-row>
+            </v-col>
+          </v-row>
+        </validation-observer>
       </v-container>
 
       <div class="tableContainer">
@@ -101,17 +133,22 @@
       </div>
 
       <template #actions>
-        <v-btn :disabled="isSaving" data-test="financial-assistance-cancelBtn" @click="cancelChanges">
+        <v-btn v-if="!isEdit" :disabled="isSaving" data-test="financial-assistance-cancelBtn" @click="cancelChanges()">
           {{ $t('common.buttons.cancel') }}
         </v-btn>
 
         <v-btn
+          v-if="!isEdit"
           color="primary"
           data-test="financial-assistance-saveBtn"
           :loading="isSaving"
-          :disabled="(isEdit && !formDirty) || failed || tableEditActive || !isValidItemsSubItems"
+          :disabled="tableEditActive || !isValidItemsSubItems"
           @click="save">
-          {{ isEdit ? $t('common.buttons.save') : $t('common.buttons.create') }}
+          {{ $t('common.buttons.create') }}
+        </v-btn>
+
+        <v-btn v-if="isEdit" color="primary" :disabled="isOperating" data-test="back-to-financial-assistance-btn" @click="cancelChanges()">
+          {{ $t('financialAssistance.back') }}
         </v-btn>
       </template>
     </rc-page-content>
@@ -145,7 +182,7 @@
       :title="$t('confirmLeaveDialog.title')"
       :messages="[$t('confirmLeaveDialog.message_1'), $t('confirmLeaveDialog.message_2')]"
       :show.sync="showConfirm" />
-  </validation-observer>
+  </div>
 </template>
 
 <script lang="ts">
@@ -160,7 +197,7 @@ import {
 } from '@crctech/component-library';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { MAX_LENGTH_SM } from '@/constants/validations';
-import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableRow } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import { EProgramStatus, IProgram } from '@/entities/program';
 import { VForm } from '@/types';
 import { Status } from '@/entities/base';
@@ -187,9 +224,9 @@ export default Vue.extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    const isDirty = this.isEdit ? this.formDirty : this.dirty || this.formDirty;
+    const isDirty = this.isEdit ? this.formDirty : this.itemsDirty || this.formDirty;
 
-    if (!isDirty || (isDirty && await (this.$refs.confirmLeavePopup as ConfirmationDialog).open())) {
+    if (!isDirty || (isDirty && (await (this.$refs.confirmLeavePopup as ConfirmationDialog).open()))) {
       next();
     }
   },
@@ -208,10 +245,10 @@ export default Vue.extend({
       confirmChangeTemplateDialogVisible: false,
       loadingTemplate: false,
       loading: true,
-      loadingPrograms: false,
       error: false,
       showConfirm: false,
       attemptedSave: false,
+      formDirty: false,
     };
   },
 
@@ -274,7 +311,7 @@ export default Vue.extend({
      * Return true if the current route is the edit page
      */
     isEdit(): boolean {
-      return false;
+      return this.$route.name === routes.events.financialAssistance.edit.name;
     },
 
     /**
@@ -328,23 +365,13 @@ export default Vue.extend({
       },
     },
 
-    dirty: {
+    itemsDirty: {
       get(): boolean {
         return this.$storage.financialAssistance.getters.dirty();
       },
 
       set(value: boolean) {
         this.$storage.financialAssistance.mutations.setDirty(value);
-      },
-    },
-
-    formDirty: {
-      get(): boolean {
-        return this.$storage.financialAssistance.getters.formDirty();
-      },
-
-      set(value: boolean) {
-        this.$storage.financialAssistance.mutations.setFormDirty(value);
       },
     },
 
@@ -365,6 +392,10 @@ export default Vue.extend({
 
       return this.validateItemsAndSubItems();
     },
+
+    isOperating(): boolean {
+      return this.$storage.financialAssistance.getters.isOperating();
+    },
   },
 
   watch: {
@@ -380,7 +411,19 @@ export default Vue.extend({
   async created() {
     this.$storage.financialAssistance.mutations.resetState();
 
-    if (this.isTableMode) {
+    await this.loadActivePrograms();
+    await this.$storage.financialAssistance.actions.fetchActiveCategories();
+
+    if (this.isEdit) {
+      const fa = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
+      this.$storage.financialAssistance.mutations.setFinancialAssistance(fa);
+    }
+
+    this.loading = false;
+  },
+
+  methods: {
+    async loadActivePrograms(): Promise<void> {
       const { id } = this.$route.params;
 
       const res = await this.$storage.program.actions.searchPrograms({
@@ -394,19 +437,8 @@ export default Vue.extend({
       });
 
       this.programs = res.value;
+    },
 
-      this.loadingPrograms = false;
-    }
-
-    this.$nextTick(() => {
-      this.formDirty = false;
-      this.dirty = false;
-    });
-
-    this.loading = false;
-  },
-
-  methods: {
     /**
      * Dispatches the action to the Vuex module to save the template/table
      * Redirects to the view list page when complete
@@ -428,6 +460,24 @@ export default Vue.extend({
       }
     },
 
+    async saveEdit(): Promise<void> {
+      const isValid = await (this.$refs.form as VForm).validate();
+
+      if (isValid) {
+        this.isSaving = true;
+
+        const res = await this.$storage.financialAssistance.actions.editFinancialAssistance();
+
+        this.isSaving = false;
+
+        if (res) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          this.$nextTick(() => (this.$refs.form as any).reset());
+          this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
+        }
+      }
+    },
+
     async dispatchSaveAction(): Promise<void> {
       this.isSaving = true;
 
@@ -436,8 +486,10 @@ export default Vue.extend({
       this.isSaving = false;
 
       if (res) {
+        this.formDirty = false;
+
         if (this.isTableMode) {
-          this.$toasted.global.success(this.$t(`financialAssistance.toast.table.${this.isEdit ? 'editTable' : 'createTable'}`));
+          this.$toasted.global.success(this.$t('financialAssistance.toast.table.createTable'));
           this.$router.replace({ name: routes.events.financialAssistance.home.name });
         } else {
           // todo
@@ -458,8 +510,8 @@ export default Vue.extend({
 
       let isValid = true;
 
-      items.forEach((item: IFinancialAssistanceTableRow) => {
-        if (!item.mainCategory || !item.subRows.length) {
+      items.forEach((item: IFinancialAssistanceTableItem) => {
+        if (!item.mainCategory || !item.subItems.length) {
           isValid = false;
         }
       });
@@ -501,6 +553,10 @@ export default Vue.extend({
       return 'grey lighten-3 black--text';
     },
 
+    watchPristine(pristine: boolean) {
+      this.formDirty = !pristine;
+    },
+
     /**
      * Event handler for the cancel button, routes back to the page for viewing the list of templates
      */
@@ -538,6 +594,14 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+.table-wrapper {
+  border: 1px solid var(--v-grey-lighten2);
+  margin-top: 32px;
+  margin-bottom: 32px;
+  padding: 30px;
+  border-radius: 4px;
+}
+
 .financial-status {
   border-radius: 4px;
   padding: 8px;

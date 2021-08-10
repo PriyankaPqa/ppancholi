@@ -11,7 +11,6 @@
     </v-btn>
 
     <v-btn
-      v-if="!isEdit || items.length > 1 || parent.subItems.length > 1"
       icon
       :disabled="isOperating"
       :data-test="`financialAssistanceItems__deleteSubItemBtn--${parentIndex}--${index}`"
@@ -33,6 +32,7 @@
 </template>
 
 <script lang="ts">
+import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import Vue from 'vue';
 import ConfirmBeforeAction from '../ConfirmBeforeAction.vue';
 
@@ -55,7 +55,7 @@ export default Vue.extend({
     },
 
     parent: {
-      type: Object,
+      type: Object as () => IFinancialAssistanceTableItem,
       required: true,
     },
 
@@ -88,8 +88,8 @@ export default Vue.extend({
     /**
      * Get the list of items from Vuex
      */
-    items(): [] {
-      return [];
+    items(): IFinancialAssistanceTableItem[] {
+      return this.$storage.financialAssistance.getters.items();
     },
 
     /**
@@ -97,13 +97,6 @@ export default Vue.extend({
      */
     addingItem(): boolean | number {
       return this.$storage.financialAssistance.getters.addingItem();
-    },
-
-    /**
-     * The item currently being edited
-     */
-    editedItem(): unknown {
-      return null;
     },
 
     isOperating(): boolean {
@@ -121,6 +114,14 @@ export default Vue.extend({
       set(value: boolean) {
         this.$storage.financialAssistance.mutations.setLoading(value);
       },
+    },
+
+    canDelete(): boolean {
+      if (!this.isEdit) return true;
+
+      const validItems = this.items.filter((i) => i.subItems?.length > 0);
+
+      return validItems.length > 1 || this.parent.subItems?.length > 1;
     },
   },
 
@@ -144,6 +145,11 @@ export default Vue.extend({
      * When the user clicks the delete button for a sub-item, show the dialog and track the indices of the item/sub-item
      */
     onDeleteSubItem() {
+      if (!this.canDelete) {
+        this.$toasted.global.error(this.$t('financialAssistance.errors.needItemSubItem'));
+        return;
+      }
+
       this.itemBeingDeletedName = this.$m(this.item.subCategory.name);
       this.itemBeingDeletedIndex = this.parentIndex;
       this.subItemBeingDeletedIndex = this.index;
@@ -155,15 +161,36 @@ export default Vue.extend({
      */
     async onConfirmDeleteSubItem() {
       if (this.isEdit) {
-        // todo
+        await this.deleteRemotely();
       } else {
-        this.$storage.financialAssistance.mutations.deleteSubItem(this.subItemBeingDeletedIndex, this.itemBeingDeletedIndex);
+        this.deleteLocally();
       }
 
       this.itemBeingDeletedName = '';
       this.itemBeingDeletedIndex = -1;
       this.subItemBeingDeletedIndex = -1;
       this.showDeleteSubItemDialog = false;
+    },
+
+    async deleteRemotely() {
+      this.loading = true;
+
+      const res = await this.$storage.financialAssistance.actions.deleteSubItem(this.itemBeingDeletedIndex, this.subItemBeingDeletedIndex);
+
+      this.loading = false;
+
+      if (res) {
+        await this.$storage.financialAssistance.actions.reloadItems();
+        this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
+      }
+    },
+
+    deleteLocally() {
+      if (this.parent.subItems.length === 1) {
+        this.$storage.financialAssistance.mutations.deleteItem(this.itemBeingDeletedIndex);
+      } else {
+        this.$storage.financialAssistance.mutations.deleteSubItem(this.subItemBeingDeletedIndex, this.itemBeingDeletedIndex);
+      }
     },
   },
 });

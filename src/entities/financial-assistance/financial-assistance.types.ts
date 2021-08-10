@@ -1,27 +1,31 @@
 import { IMultilingual } from '@/types';
-import { IEntity, IEntityCombined } from '@/entities/base/base.types';
+import { IEntity, IEntityCombined, Status } from '@/entities/base/base.types';
 import { IOptionItem, IOptionSubItem } from '../optionItem';
 
 export enum EFinancialAmountModes {
-  Fixed = 'Fixed',
-  Variable = 'Variable',
+  Fixed = 1,
+  Variable = 2,
 }
 
 export enum EFinancialFrequency {
-  OneTime = 'OneTime',
-  Multiple = 'Multiple',
+  OneTime = 1,
+  Multiple = 2,
 }
 
-export interface IFinancialAssistanceTableSubRow {
+export interface IFinancialAssistanceTableSubItem {
+  id?: uuid;
   subCategory?: IOptionSubItem;
   maximumAmount: number;
   amountType: EFinancialAmountModes;
   documentationRequired: boolean;
   frequency: EFinancialFrequency;
+  status?: Status;
 }
-export interface IFinancialAssistanceTableRow {
+export interface IFinancialAssistanceTableItem {
+  id?: uuid;
   mainCategory: IOptionItem;
-  subRows?: Array<IFinancialAssistanceTableSubRow>;
+  subItems?: Array<IFinancialAssistanceTableSubItem>;
+  status?: Status;
 }
 
 export interface IFinancialAssistanceOptionItemData {
@@ -29,23 +33,28 @@ export interface IFinancialAssistanceOptionItemData {
   specifiedOther: string;
 }
 
-export interface IFinancialAssistanceTableSubRowData {
+export interface IFinancialAssistanceTableSubItemData {
+  id?: uuid;
   subCategory: IFinancialAssistanceOptionItemData;
   maximumAmount: number;
   amountType: EFinancialAmountModes;
   documentationRequired: boolean;
   frequency: EFinancialFrequency;
+  status?: Status;
 }
-export interface IFinancialAssistanceTableRowData {
+export interface IFinancialAssistanceTableItemData {
+  id?: uuid;
   mainCategory: IFinancialAssistanceOptionItemData;
-  subRows: IFinancialAssistanceTableSubRowData[];
+  subItems: IFinancialAssistanceTableSubItemData[];
+  status?: Status;
 }
 
 export interface IFinancialAssistanceTableEntity extends IEntity {
   eventId: uuid;
   programId: uuid;
   name: IMultilingual;
-  rows: IFinancialAssistanceTableRowData[];
+  status: Status;
+  items: IFinancialAssistanceTableItemData[];
 }
 
 export interface IFinancialAssistanceTableMetadata extends IEntity {
@@ -55,5 +64,10 @@ export interface IFinancialAssistanceTableMetadata extends IEntity {
 }
 
 export interface ICreateFinancialAssistanceTableRequest extends IFinancialAssistanceTableEntity {}
+
+export interface IEditFinancialAssistanceTableRequest extends IEntity {
+  name: IMultilingual;
+  status: Status;
+}
 
 export type IFinancialAssistanceTableCombined = IEntityCombined<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata>;

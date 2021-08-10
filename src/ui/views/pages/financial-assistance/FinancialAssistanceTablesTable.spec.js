@@ -277,5 +277,26 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.events.financialAssistance.create.name });
       });
     });
+
+    describe('goToEdit', () => {
+      it('redirects properly', () => {
+        const item = {
+          entity: {
+            id: 'fa id',
+          },
+        };
+
+        jest.spyOn(wrapper.vm.$router, 'push').mockImplementation(() => {});
+
+        wrapper.vm.goToEdit(item);
+
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.events.financialAssistance.edit.name,
+          params: {
+            faId: 'fa id',
+          },
+        });
+      });
+    });
   });
 });

@@ -1,5 +1,6 @@
 import routes from '@/constants/routes';
 import { createLocalVue, mount } from '@/test/testSetup';
+import { mockStorage } from '@/store/storage';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { Status } from '@/entities/base';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
@@ -10,6 +11,7 @@ import _sortBy from 'lodash/sortBy';
 import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
 
 describe('CreateEditFinancialAssistance.vue', () => {
   let wrapper;
@@ -19,6 +21,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     wrapper = mount(Component, {
       localVue,
+      mocks: {
+        $storage: storage,
+      },
       stubs: ['financial-assistance-items'],
     });
   });
@@ -32,29 +37,31 @@ describe('CreateEditFinancialAssistance.vue', () => {
       expect(wrapper.find('[data-test="financialCreate__copySelect"]').exists()).toBe(false);
     });
 
-    test('clicking the language tab changes the language and copies the name to the fr field', async () => {
-      const name = wrapper.find('[data-test="financial-assistance-name"]').find('input');
-      const enTab = wrapper.find('[data-test="financialCreate__lang--en"]');
-      const frTab = wrapper.find('[data-test="financialCreate__lang--fr"]');
-
-      expect(wrapper.vm.languageMode).toBe('en');
-
-      expect(wrapper.vm.name).toBe('');
-
-      await frTab.trigger('click');
-
-      expect(wrapper.vm.name).toBe('');
-
-      await name.setValue('TEST');
-
-      expect(wrapper.vm.name).toBe('TEST');
-
-      await enTab.trigger('click');
-
-      expect(wrapper.vm.name).toBe('TEST');
-    });
-
     test('the status box has the correct css classes depending on status', async () => {
+      jest.clearAllMocks();
+
+      wrapper = mount(Component, {
+        localVue,
+        computed: {
+          isEdit() {
+            return true;
+          },
+          isTableMode() {
+            return true;
+          },
+          isCopy() {
+            return false;
+          },
+        },
+        data() {
+          return {
+            loading: false,
+            error: false,
+          };
+        },
+        stubs: ['financial-assistance-items'],
+      });
+
       const statusSwitch = wrapper.find('[data-test="financial-assistance-status"]');
       const statusContainer = wrapper.find('.financial-status');
 
@@ -74,6 +81,43 @@ describe('CreateEditFinancialAssistance.vue', () => {
       await cancelButton.trigger('click');
 
       expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({ name: routes.events.financialAssistance.home.name });
+    });
+
+    describe('the cancel edit button and save edit button only visible in edit mode', () => {
+      it('is not visible if is not edit', () => {
+        expect(wrapper.findDataTest('financial-assistance-cancel-edit-btn').exists()).toBe(false);
+        expect(wrapper.findDataTest('financial-assistance-save-edit-btn').exists()).toBe(false);
+      });
+
+      it('is visible if is edit', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            isEdit() {
+              return true;
+            },
+            isTableMode() {
+              return true;
+            },
+            isCopy() {
+              return false;
+            },
+          },
+          data() {
+            return {
+              loading: false,
+              error: false,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+          stubs: ['financial-assistance-items'],
+        });
+
+        expect(wrapper.findDataTest('financial-assistance-cancel-edit-btn').exists()).toBe(true);
+        expect(wrapper.findDataTest('financial-assistance-save-edit-btn').exists()).toBe(true);
+      });
     });
   });
 
@@ -111,9 +155,28 @@ describe('CreateEditFinancialAssistance.vue', () => {
     describe('programsSorted', () => {
       it('returns the right value', async () => {
         const programs = mockProgramsSearchData().map((p) => new Program(p));
-        await wrapper.setProps({ programs });
+        await wrapper.setData({ programs });
 
         expect(wrapper.vm.programsSorted).toEqual(_sortBy(programs, (program) => program.name.translation.en));
+      });
+    });
+
+    describe('isEdit', () => {
+      it('returns the right value', async () => {
+        expect(wrapper.vm.isEdit).toEqual(false);
+
+        wrapper = mount(Component, {
+          localVue,
+          mocks: {
+            $route: {
+              name: routes.events.financialAssistance.edit.name,
+            },
+            $storage: storage,
+          },
+          stubs: ['financial-assistance-items'],
+        });
+
+        expect(wrapper.vm.isEdit).toEqual(true);
       });
     });
 
@@ -145,29 +208,49 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
     });
 
-    describe('dirty', () => {
+    describe('itemsDirty', () => {
       it('returns the right value', async () => {
         wrapper.vm.$storage.financialAssistance.getters.dirty = jest.fn(() => true);
 
-        expect(wrapper.vm.dirty).toEqual(true);
-      });
-    });
-
-    describe('formDirty', () => {
-      it('returns the right value', async () => {
-        wrapper.vm.$storage.financialAssistance.getters.formDirty = jest.fn(() => true);
-
-        expect(wrapper.vm.formDirty).toEqual(true);
+        expect(wrapper.vm.itemsDirty).toEqual(true);
       });
     });
 
     describe('programInactive', () => {
       it('returns the right value', async () => {
-        wrapper.vm.program = {
-          programStatus: EProgramStatus.Inactive,
-        };
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            program() {
+              return {
+                programStatus: EProgramStatus.Active,
+              };
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+          stubs: ['financial-assistance-items'],
+        });
 
-        expect(wrapper.vm.formDirty).toEqual(true);
+        expect(wrapper.vm.programInactive).toEqual(false);
+
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            program() {
+              return {
+                programStatus: EProgramStatus.Inactive,
+              };
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+          stubs: ['financial-assistance-items'],
+        });
+
+        expect(wrapper.vm.programInactive).toEqual(true);
       });
     });
 
@@ -178,17 +261,33 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.isValidItemsSubItems).toEqual(true);
       });
     });
+
+    describe('isOperating', () => {
+      it('returns the right value', async () => {
+        wrapper.vm.$storage.financialAssistance.getters.isOperating = jest.fn(() => true);
+
+        expect(wrapper.vm.isOperating).toEqual(true);
+      });
+    });
   });
 
   describe('Life cycle', () => {
-    it('fetches programs list', async () => {
-      wrapper.vm.$storage.program.actions.searchPrograms = jest.fn(() => ({ value: [] }));
+    it('calls loadActivePrograms', async () => {
+      wrapper.vm.loadActivePrograms = jest.fn();
 
       await wrapper.vm.$options.created.forEach((hook) => {
         hook.call(wrapper.vm);
       });
 
-      expect(wrapper.vm.$storage.program.actions.searchPrograms).toHaveBeenCalled();
+      expect(wrapper.vm.loadActivePrograms).toHaveBeenCalled();
+    });
+
+    it('calls fetchActiveCategories', async () => {
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+
+      expect(storage.financialAssistance.actions.fetchActiveCategories).toHaveBeenCalled();
     });
   });
 
@@ -203,6 +302,32 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await wrapper.vm.save();
 
         expect(wrapper.vm.$toasted.global.error).toHaveBeenLastCalledWith('financialAssistance.errors.needItemSubItem');
+      });
+    });
+
+    describe('saveEdit', () => {
+      beforeEach(() => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        wrapper.vm.$route = {
+          params: {
+            id: 'event id',
+          },
+        };
+      });
+
+      it('calls editFinancialAssistance', async () => {
+        await wrapper.vm.saveEdit();
+
+        expect(storage.financialAssistance.actions.editFinancialAssistance).toHaveBeenCalledTimes(1);
+      });
+
+      it('toasts success if validate table succeeds', async () => {
+        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
+
+        await wrapper.vm.saveEdit();
+
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenLastCalledWith('financialAssistance.toast.table.editTable');
       });
     });
 
@@ -240,7 +365,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
         expect(wrapper.vm.validateItemsAndSubItems()).toBe(true);
 
-        items[0].subRows = [];
+        items[0].subItems = [];
 
         expect(wrapper.vm.validateItemsAndSubItems()).toBe(false);
       });
@@ -248,10 +373,16 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('setLanguageMode', () => {
       it('sets name for other language', async () => {
-        wrapper.vm.$storage.financialAssistance.mutations.setName('name en', 'en');
-        wrapper.vm.$storage.financialAssistance.mutations.setName(null, 'fr');
+        wrapper = mount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+          },
+          stubs: ['financial-assistance-items'],
+        });
 
-        wrapper.vm.$storage.financialAssistance.mutations.setName = jest.fn();
+        wrapper.vm.$storage.financialAssistance.getters.name = jest.fn((language) => (language === 'fr' ? null : 'name en'));
+
         wrapper.vm.setLanguageMode('fr');
 
         expect(wrapper.vm.$storage.financialAssistance.mutations.setName).toHaveBeenLastCalledWith('name en', 'fr');

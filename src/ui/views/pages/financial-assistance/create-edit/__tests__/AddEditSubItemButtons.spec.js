@@ -1,5 +1,6 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
+import { mockItems } from '@/entities/financial-assistance';
 import Component from '../Templates/AddEditSubItemButtons.vue';
 
 const localVue = createLocalVue();
@@ -70,25 +71,25 @@ describe('AddEditSubItemButtons.vue', () => {
   describe('Methods', () => {
     describe('onClickSave', () => {
       it('calls onAddItem if is add', async () => {
-        wrapper.vm.onAddSubItem = jest.fn();
+        wrapper.vm.addSubItem = jest.fn();
 
         wrapper.vm.onClickSave();
 
-        expect(wrapper.vm.onAddSubItem).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.addSubItem).toHaveBeenCalledTimes(1);
       });
 
-      it('calls onSaveEditSubItem if is edit', async () => {
+      it('calls saveSubItem if is edit', async () => {
         await wrapper.setProps({ mode: 'edit' });
-        wrapper.vm.onSaveEditSubItem = jest.fn();
+        wrapper.vm.saveSubItem = jest.fn();
 
         wrapper.vm.onClickSave();
 
-        expect(wrapper.vm.onSaveEditSubItem).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.saveSubItem).toHaveBeenCalledTimes(1);
       });
     });
 
-    describe('onAddSubItem', () => {
-      it('mutates storage', async () => {
+    describe('addSubItem', () => {
+      it('call addLocally if is not edit', async () => {
         wrapper.vm.$parent = {
           $parent: {
             $parent: {
@@ -102,15 +103,51 @@ describe('AddEditSubItemButtons.vue', () => {
             },
           },
         };
+        wrapper.vm.addLocally = jest.fn();
+        wrapper.vm.addRemotely = jest.fn();
 
-        await wrapper.vm.onAddSubItem();
+        await wrapper.vm.addSubItem();
 
-        expect(wrapper.vm.$storage.financialAssistance.mutations.addSubItem).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.addLocally).toHaveBeenCalledTimes(1);
+      });
+
+      it('call addRemotely if is edit', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            mode: 'add',
+            isEdit: true,
+            failed: false,
+            isTableMode: true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$parent = {
+          $parent: {
+            $parent: {
+              $parent: {
+                $refs: {
+                  form: {
+                    validate: jest.fn(() => true),
+                  },
+                },
+              },
+            },
+          },
+        };
+        wrapper.vm.addRemotely = jest.fn();
+
+        await wrapper.vm.addSubItem();
+
+        expect(wrapper.vm.addRemotely).toHaveBeenCalledTimes(1);
       });
     });
 
-    describe('onSaveEditItem', () => {
-      it('mutates storage', async () => {
+    describe('saveSubItem', () => {
+      it('call saveLocally if is not edit', async () => {
         wrapper.vm.$parent = {
           $parent: {
             $parent: {
@@ -127,7 +164,102 @@ describe('AddEditSubItemButtons.vue', () => {
           },
         };
 
-        await wrapper.vm.onSaveEditSubItem();
+        wrapper.vm.saveLocally = jest.fn();
+
+        await wrapper.vm.saveSubItem();
+
+        expect(wrapper.vm.saveLocally).toHaveBeenCalledTimes(1);
+      });
+
+      it('call saveRemotely if is edit', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            mode: 'add',
+            isEdit: true,
+            failed: false,
+            isTableMode: true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$parent = {
+          $parent: {
+            $parent: {
+              $parent: {
+                $parent: {
+                  $refs: {
+                    form: {
+                      validate: jest.fn(() => true),
+                    },
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        wrapper.vm.saveRemotely = jest.fn();
+
+        await wrapper.vm.saveSubItem();
+
+        expect(wrapper.vm.saveRemotely).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('addRemotely', () => {
+      it('add remotely', async () => {
+        await wrapper.setProps({
+          index: 0,
+        });
+        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => mockItems());
+
+        await wrapper.vm.addRemotely();
+        expect(wrapper.vm.$storage.financialAssistance.actions.createSubItem).toHaveBeenCalledTimes(1);
+
+        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => [{
+          subItems: [],
+        }]);
+
+        await wrapper.vm.addRemotely();
+        expect(wrapper.vm.$storage.financialAssistance.actions.createItem).toHaveBeenCalledTimes(1);
+      });
+
+      it('reload items and toast success message', async () => {
+        await wrapper.setProps({
+          index: 0,
+        });
+        wrapper.vm.$storage.financialAssistance.getters.items = jest.fn(() => mockItems());
+        jest.spyOn(wrapper.vm.$toasted.global, 'success').mockImplementation(() => {});
+
+        await wrapper.vm.addRemotely();
+
+        expect(wrapper.vm.$storage.financialAssistance.actions.reloadItems).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('financialAssistance.toast.table.editTable');
+      });
+    });
+
+    describe('addLocally', () => {
+      it('add locally', () => {
+        wrapper.vm.addLocally();
+
+        expect(wrapper.vm.$storage.financialAssistance.mutations.addSubItem).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('saveRemotely', () => {
+      it('save remotely', () => {
+        wrapper.vm.saveRemotely();
+
+        expect(wrapper.vm.$storage.financialAssistance.actions.editSubItem).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('saveLocally', () => {
+      it('save locally', () => {
+        wrapper.vm.saveLocally();
 
         expect(wrapper.vm.$storage.financialAssistance.mutations.setSubItem).toHaveBeenCalledTimes(1);
       });

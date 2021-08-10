@@ -22,7 +22,7 @@ export interface IStorageMock {
   actions: {
     createProgram: jest.Mock<void>;
     updateProgram: jest.Mock<void>;
-    searchPrograms: jest.Mock<void>;
+    searchPrograms: jest.Mock<IAzureSearchResult<IProgram>>;
     fetchProgram: jest.Mock<void>;
   },
 }

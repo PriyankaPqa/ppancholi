@@ -3,6 +3,7 @@ import {
   EFinancialAmountModes,
   EFinancialFrequency,
   mockFinancialAssistanceTableEntity,
+  mockItemData,
   mockItems,
   mockSubItems,
 } from '@/entities/financial-assistance';
@@ -36,6 +37,7 @@ const mockState: IFinancialAssistanceEntityState = {
   newItem: mockItems()[1],
   newSubItem: mockSubItems()[1],
   searchLoading: false,
+  faCategories: [],
 };
 
 const actionContext = {
@@ -97,7 +99,7 @@ describe('>>> Financial Assistance Module', () => {
       it('returns the newItem', () => {
         expect(module.getters.newItem(module.state)).toEqual({
           mainCategory: null,
-          subRows: [],
+          subItems: [],
         });
       });
     });
@@ -134,7 +136,7 @@ describe('>>> Financial Assistance Module', () => {
       it('returns the subItems', () => {
         module.mutations.setItems(module.state, { items: mockItems() });
 
-        expect(module.getters.subItems(module.state)(0)).toEqual(mockItems()[0].subRows);
+        expect(module.getters.subItems(module.state)(0)).toEqual(mockItems()[0].subItems);
       });
     });
 
@@ -322,7 +324,7 @@ describe('>>> Financial Assistance Module', () => {
 
         module.mutations.setSubItem(module.state, { subItem, index: 1, parentIndex: 1 });
 
-        expect(module.state.mainItems[1].subRows[1]).toEqual(subItem);
+        expect(module.state.mainItems[1].subItems[1]).toEqual(subItem);
       });
     });
 
@@ -334,7 +336,7 @@ describe('>>> Financial Assistance Module', () => {
 
         module.mutations.setSubItemSubItem(module.state, { subItem: subCategory, index: 1, parentIndex: 0 });
 
-        expect(module.state.mainItems[0].subRows[1].subCategory).toEqual(subCategory);
+        expect(module.state.mainItems[0].subItems[1].subCategory).toEqual(subCategory);
       });
     });
 
@@ -344,7 +346,7 @@ describe('>>> Financial Assistance Module', () => {
 
         module.mutations.setSubItemMaximum(module.state, { maximum: 8, index: 1, parentIndex: 0 });
 
-        expect(module.state.mainItems[0].subRows[1].maximumAmount).toEqual(8);
+        expect(module.state.mainItems[0].subItems[1].maximumAmount).toEqual(8);
       });
     });
 
@@ -354,7 +356,7 @@ describe('>>> Financial Assistance Module', () => {
 
         module.mutations.setSubItemAmountType(module.state, { amountType: EFinancialAmountModes.Fixed, index: 1, parentIndex: 0 });
 
-        expect(module.state.mainItems[0].subRows[1].amountType).toEqual(EFinancialAmountModes.Fixed);
+        expect(module.state.mainItems[0].subItems[1].amountType).toEqual(EFinancialAmountModes.Fixed);
       });
     });
 
@@ -364,7 +366,7 @@ describe('>>> Financial Assistance Module', () => {
 
         module.mutations.setSubItemDocumentationRequired(module.state, { documentationRequired: true, index: 1, parentIndex: 0 });
 
-        expect(module.state.mainItems[0].subRows[1].documentationRequired).toEqual(true);
+        expect(module.state.mainItems[0].subItems[1].documentationRequired).toEqual(true);
       });
     });
 
@@ -374,7 +376,7 @@ describe('>>> Financial Assistance Module', () => {
 
         module.mutations.setSubItemFrequency(module.state, { frequency: EFinancialFrequency.Multiple, index: 1, parentIndex: 0 });
 
-        expect(module.state.mainItems[0].subRows[1].frequency).toEqual(EFinancialFrequency.Multiple);
+        expect(module.state.mainItems[0].subItems[1].frequency).toEqual(EFinancialFrequency.Multiple);
       });
     });
 
@@ -396,13 +398,13 @@ describe('>>> Financial Assistance Module', () => {
       it('sets the addSubItem', () => {
         module.state.mainItems = mockItems();
 
-        expect(module.state.mainItems[1].subRows.length).toEqual(1);
+        expect(module.state.mainItems[1].subItems.length).toEqual(1);
 
         const subItem = mockSubItems()[1];
 
         module.mutations.addSubItem(module.state, { subItem, index: 1 });
 
-        expect(module.state.mainItems[1].subRows.length).toEqual(2);
+        expect(module.state.mainItems[1].subItems.length).toEqual(2);
       });
     });
 
@@ -414,7 +416,7 @@ describe('>>> Financial Assistance Module', () => {
 
         module.mutations.setItemSubItems(module.state, { index: 1, subItems });
 
-        expect(module.state.mainItems[1].subRows).toStrictEqual(subItems);
+        expect(module.state.mainItems[1].subItems).toStrictEqual(subItems);
       });
     });
 
@@ -460,11 +462,11 @@ describe('>>> Financial Assistance Module', () => {
       it('deletes the subItem', () => {
         module.state.mainItems = mockItems();
 
-        expect(module.state.mainItems[0].subRows.length).toEqual(2);
+        expect(module.state.mainItems[0].subItems.length).toEqual(2);
 
         module.mutations.deleteSubItem(module.state, { index: 0, parentIndex: 0 });
 
-        expect(module.state.mainItems[0].subRows.length).toEqual(1);
+        expect(module.state.mainItems[0].subItems.length).toEqual(1);
       });
     });
 
@@ -503,7 +505,7 @@ describe('>>> Financial Assistance Module', () => {
         module.mutations.resetNewItem(module.state);
 
         expect(module.state.newItem.mainCategory).toEqual(null);
-        expect(module.state.newItem.subRows).toEqual([]);
+        expect(module.state.newItem.subItems).toEqual([]);
       });
     });
 
@@ -552,7 +554,7 @@ describe('>>> Financial Assistance Module', () => {
         expect(module.state.editedSubItemIndex).toEqual(-1);
         expect(module.state.newItem).toEqual({
           mainCategory: null,
-          subRows: [],
+          subItems: [],
         });
         expect(module.state.newSubItem).toEqual({
           subCategory: null,
@@ -580,12 +582,12 @@ describe('>>> Financial Assistance Module', () => {
           eventId: mockProgram.eventId,
           programId: mockProgram.id,
           name: mockFinancialAssistanceTableEntity().name,
-          rows: mockItems().map((item) => ({
+          items: mockItems().map((item) => ({
             mainCategory: {
               optionItemId: item.mainCategory.id,
               specifiedOther: null,
             },
-            subRows: item.subRows.map((sub) => ({
+            subItems: item.subItems.map((sub) => ({
               subCategory:
                 sub.subCategory.id === '-1'
                   ? null
@@ -603,13 +605,169 @@ describe('>>> Financial Assistance Module', () => {
       });
     });
 
+    describe('editFinancialAssistance', () => {
+      it('calls the service', async () => {
+        module.service.editFinancialAssistanceTable = jest.fn();
+
+        expect(module.service.editFinancialAssistanceTable).toHaveBeenCalledTimes(0);
+
+        actionContext.state.id = 'id';
+
+        await module.actions.editFinancialAssistance(actionContext);
+
+        expect(module.service.editFinancialAssistanceTable).toHaveBeenCalledTimes(1);
+        expect(module.service.editFinancialAssistanceTable).toHaveBeenCalledWith('id', {
+          status: Status.Inactive,
+          name: mockFinancialAssistanceTableEntity().name,
+        });
+      });
+    });
+
     describe('fetchActiveCategories', () => {
       it('calls the service', async () => {
         module.service.fetchActiveCategories = jest.fn();
 
-        await module.actions.fetchActiveCategories();
+        await module.actions.fetchActiveCategories(actionContext);
 
         expect(module.service.fetchActiveCategories).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('createSubItem', () => {
+      it('calls the service', async () => {
+        module.service.createSubItem = jest.fn();
+
+        expect(module.service.createSubItem).toHaveBeenCalledTimes(0);
+
+        const mainItems = mockItems();
+        const faId = 'faId';
+
+        const itemIndex = 0;
+        const subItem = mockSubItems()[0];
+
+        actionContext.state.id = faId;
+        actionContext.state.mainItems = mainItems;
+
+        await module.actions.createSubItem(actionContext, { itemIndex, subItem });
+
+        expect(module.service.createSubItem).toHaveBeenCalledTimes(1);
+        expect(module.service.createSubItem).toHaveBeenCalledWith(
+          faId,
+          mainItems[itemIndex].id,
+          {
+            subCategory: {
+              optionItemId: '49860937-1bfd-4a1f-97ba-b7918afa4044',
+              specifiedOther: null,
+            },
+            maximumAmount: 1,
+            amountType: EFinancialAmountModes.Fixed,
+            documentationRequired: false,
+            frequency: EFinancialFrequency.OneTime,
+          },
+        );
+      });
+    });
+
+    describe('editSubItem', () => {
+      it('calls the service', async () => {
+        module.service.editSubItem = jest.fn();
+
+        expect(module.service.editSubItem).toHaveBeenCalledTimes(0);
+
+        const mainItems = mockItems();
+        const faId = 'faId';
+
+        const itemIndex = 0;
+        const subItemIndex = 0;
+        const subItem = mockSubItems()[0];
+
+        actionContext.state.id = faId;
+        actionContext.state.mainItems = mainItems;
+
+        await module.actions.editSubItem(actionContext, { itemIndex, subItemIndex, subItem });
+
+        expect(module.service.editSubItem).toHaveBeenCalledTimes(1);
+        expect(module.service.editSubItem).toHaveBeenCalledWith(
+          faId,
+          mainItems[itemIndex].id,
+          mainItems[itemIndex].subItems[subItemIndex].id,
+          {
+            subCategory: {
+              optionItemId: '49860937-1bfd-4a1f-97ba-b7918afa4044',
+              specifiedOther: null,
+            },
+            maximumAmount: 1,
+            amountType: EFinancialAmountModes.Fixed,
+            documentationRequired: false,
+            frequency: EFinancialFrequency.OneTime,
+          },
+        );
+      });
+    });
+
+    describe('deleteSubItem', () => {
+      it('calls the service', async () => {
+        module.service.deleteSubItem = jest.fn();
+
+        expect(module.service.deleteSubItem).toHaveBeenCalledTimes(0);
+
+        const mainItems = mockItems();
+        const faId = 'faId';
+
+        const itemIndex = 0;
+        const subItemIndex = 0;
+
+        actionContext.state.id = faId;
+        actionContext.state.mainItems = mainItems;
+
+        await module.actions.deleteSubItem(actionContext, { itemIndex, subItemIndex });
+
+        expect(module.service.deleteSubItem).toHaveBeenCalledTimes(1);
+        expect(module.service.deleteSubItem).toHaveBeenCalledWith(
+          faId,
+          mainItems[itemIndex].id,
+          mainItems[itemIndex].subItems[subItemIndex].id,
+        );
+      });
+    });
+
+    describe('deleteItem', () => {
+      it('calls the service', async () => {
+        module.service.deleteItem = jest.fn();
+
+        expect(module.service.deleteItem).toHaveBeenCalledTimes(0);
+
+        const mainItems = mockItems();
+        const faId = 'faId';
+
+        const itemIndex = 0;
+
+        actionContext.state.id = faId;
+        actionContext.state.mainItems = mainItems;
+
+        await module.actions.deleteItem(actionContext, { itemIndex });
+
+        expect(module.service.deleteItem).toHaveBeenCalledTimes(1);
+        expect(module.service.deleteItem).toHaveBeenCalledWith(
+          faId,
+          mainItems[itemIndex].id,
+        );
+      });
+    });
+
+    describe('reloadItems', () => {
+      it('dispatches the action', async () => {
+        actionContext.state.id = 'faId';
+        // eslint-disable-next-line
+        (actionContext.dispatch as any) = jest.fn(() => ({
+          items: [mockItemData()],
+        }));
+
+        await module.actions.reloadItems(actionContext);
+
+        expect(actionContext.dispatch).toHaveBeenCalledWith('fetch', {
+          idParams: 'faId',
+        });
       });
     });
   });

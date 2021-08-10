@@ -23,7 +23,7 @@
 import Vue from 'vue';
 import { VSelectWithValidation } from '@crctech/component-library';
 import { IOptionItem } from '@/entities/optionItem';
-import { IFinancialAssistanceTableRow } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
 
 export default Vue.extend({
@@ -41,12 +41,12 @@ export default Vue.extend({
     },
 
     item: {
-      type: Object as () => IFinancialAssistanceTableRow,
+      type: Object as () => IFinancialAssistanceTableItem,
       default: null,
     },
 
     items: {
-      type: Array as () => IFinancialAssistanceTableRow[],
+      type: Array as () => IFinancialAssistanceTableItem[],
       required: true,
     },
   },

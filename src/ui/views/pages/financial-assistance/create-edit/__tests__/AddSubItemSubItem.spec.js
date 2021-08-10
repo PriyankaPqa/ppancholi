@@ -53,7 +53,7 @@ describe('AddSubItemSubItem.vue', () => {
     describe('getSubItems', () => {
       it('returns all subitems minus existing subItems', async () => {
         expect(wrapper.vm.parent.mainCategory.subitems.length).toEqual(3);
-        expect(wrapper.vm.parent.subRows.length).toEqual(2);
+        expect(wrapper.vm.parent.subItems.length).toEqual(2);
 
         expect(wrapper.vm.getSubItems().length).toEqual(1);
       });

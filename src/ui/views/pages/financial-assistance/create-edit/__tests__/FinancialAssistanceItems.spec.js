@@ -1,5 +1,7 @@
-import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockItems } from '@/entities/financial-assistance';
+import { createLocalVue, mount } from '@/test/testSetup';
+import {
+  mockItems, mockCategories, EFinancialAmountModes, EFinancialFrequency,
+} from '@/entities/financial-assistance';
 import { mockStorage } from '@/store/storage';
 import Component from '../FinancialAssistanceItems.vue';
 
@@ -32,6 +34,14 @@ describe('FinancialAssistanceItems.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('faCategories', () => {
+      it('returns the right value', () => {
+        wrapper.vm.$storage.financialAssistance.getters.faCategories = jest.fn(() => mockCategories());
+
+        expect(wrapper.vm.faCategories).toEqual(mockCategories());
+      });
+    });
+
     describe('labels', () => {
       it('returns the right value', () => {
         expect(wrapper.vm.labels).toEqual({
@@ -134,18 +144,6 @@ describe('FinancialAssistanceItems.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('fetchFinancialAssistanceCategories', () => {
-      it('fetches active financial assistance categories', async () => {
-        wrapper.vm.$storage.financialAssistance.actions.fetchActiveCategories = jest.fn();
-
-        expect(wrapper.vm.$storage.financialAssistance.actions.fetchActiveCategories).toHaveBeenCalledTimes(0);
-
-        await wrapper.vm.fetchFinancialAssistanceCategories();
-
-        expect(wrapper.vm.$storage.financialAssistance.actions.fetchActiveCategories).toHaveBeenCalledTimes(1);
-      });
-    });
-
     describe('showManageLists', () => {
       it('assign the true value showManageListsDialog', async () => {
         expect(wrapper.vm.showManageListsDialog).toBe(false);
@@ -158,7 +156,7 @@ describe('FinancialAssistanceItems.vue', () => {
 
     describe('getIsFormActive', () => {
       it('returns true if has editedItem or addingItem is true', async () => {
-        wrapper = shallowMount(Component, {
+        wrapper = mount(Component, {
           localVue,
           propsData: {
             isEdit: false,
@@ -178,7 +176,7 @@ describe('FinancialAssistanceItems.vue', () => {
       });
 
       it('returns true if has editedItem or addingItem has index', async () => {
-        wrapper = shallowMount(Component, {
+        wrapper = mount(Component, {
           localVue,
           propsData: {
             isEdit: false,
@@ -195,6 +193,26 @@ describe('FinancialAssistanceItems.vue', () => {
         });
 
         expect(wrapper.vm.getIsFormActive()).toBe(true);
+      });
+    });
+
+    describe('getAmountType', () => {
+      it('returns amount type list', async () => {
+        const amountType = wrapper.vm.getAmountType({
+          amountType: EFinancialAmountModes.Variable,
+        });
+
+        expect(amountType).toBe('enums.financialAmountModes.Variable');
+      });
+    });
+
+    describe('getFrequency', () => {
+      it('returns fre type list', async () => {
+        const amountType = wrapper.vm.getFrequency({
+          frequency: EFinancialFrequency.Multiple,
+        });
+
+        expect(amountType).toBe('enums.financialFrequency.Multiple');
       });
     });
   });

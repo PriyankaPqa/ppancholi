@@ -2,7 +2,7 @@ import { IMultilingual } from '@/types';
 import utils from '@/entities/utils';
 import { BaseEntity, Status } from '../base';
 import { EProgramStatus } from '../program';
-import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableRowData } from './financial-assistance.types';
+import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData } from './financial-assistance.types';
 
 export class FinancialAssistanceTableEntity extends BaseEntity implements IFinancialAssistanceTableEntity {
   name: IMultilingual;
@@ -17,7 +17,7 @@ export class FinancialAssistanceTableEntity extends BaseEntity implements IFinan
 
   programEventId?: uuid;
 
-  rows: Array<IFinancialAssistanceTableRowData>;
+  items: Array<IFinancialAssistanceTableItemData>;
 
   constructor(data?: IFinancialAssistanceTableEntity) {
     if (data) {
@@ -27,7 +27,7 @@ export class FinancialAssistanceTableEntity extends BaseEntity implements IFinan
       this.eventId = data.eventId;
       this.status = data.status;
       this.programId = data.programId;
-      this.rows = data.rows;
+      this.items = data.items;
     } else {
       super();
       this.reset();
@@ -40,6 +40,6 @@ export class FinancialAssistanceTableEntity extends BaseEntity implements IFinan
     this.eventId = '';
     this.status = Status.Active;
     this.programId = '';
-    this.rows = [];
+    this.items = [];
   }
 }

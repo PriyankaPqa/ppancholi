@@ -1,7 +1,7 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed }" slim>
+  <validation-observer ref="form" v-slot="{ failed, pristine }" slim>
     <div class="manageLists">
-      <v-btn width="200" data-test="manage-list" color="primary">
+      <v-btn width="200" data-test="manage-list" color="primary" @click="showManageLists">
         {{ $t('financialAssistance.manageList') }}
       </v-btn>
     </div>
@@ -10,7 +10,7 @@
       :headers="headers"
       :items="items"
       :labels="labels"
-      item-sub-item="subRows"
+      item-sub-item="subItems"
       show-add-item
       show-add-sub-item
       :sortable="false"
@@ -46,7 +46,7 @@
 
       <!-- EDIT ITEM -->
       <template #[`edit-item.buttons`]>
-        <add-edit-item-buttons mode="edit" :failed="failed" />
+        <add-edit-item-buttons mode="edit" :failed="failed" :pristine="pristine" />
       </template>
 
       <!-- SUB ITEM -->
@@ -68,7 +68,7 @@
 
       <template #[`sub-item.amountType`]="{ item }">
         <span class="rc-body14">
-          {{ $t(`enums.financialAmountModes.${item.amountType}`) }}
+          {{ getAmountType(item) }}
         </span>
       </template>
 
@@ -80,7 +80,7 @@
 
       <template #[`sub-item.frequency`]="{ item }">
         <span class="rc-body14">
-          {{ $t(`enums.financialFrequency.${item.frequency}`) }}
+          {{ getFrequency(item) }}
         </span>
       </template>
 
@@ -131,21 +131,31 @@
         <add-edit-sub-item-buttons
           mode="edit"
           :failed="failed"
+          :pristine="pristine"
           :is-edit="isEdit"
           :is-table-mode="isTableMode"
           @fetch-template="fetchTemplate($event)" />
       </template>
     </rc-nested-table>
+
+    <manage-list :show.sync="showManageListsDialog" />
   </validation-observer>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { VForm } from '@/types';
-import { IFinancialAssistanceTableRow } from '@/entities/financial-assistance';
+import {
+  EFinancialAmountModes,
+  EFinancialFrequency,
+  IFinancialAssistanceTableItem,
+  IFinancialAssistanceTableSubItem,
+} from '@/entities/financial-assistance';
 import { IOptionItem } from '@/entities/optionItem';
+import { TranslateResult } from 'vue-i18n';
 import { RcNestedTable } from '@crctech/component-library';
 import { INestedTableHeader } from './INestedTableHeader';
+import ManageList from './ManageList.vue';
 import TooltipFinancialAssistanceCategory from './TooltipFinancialAssistanceCategory.vue';
 import ItemButtons from './Templates/ItemButtons.vue';
 import AddItemItem from './Templates/AddItemItem.vue';
@@ -168,6 +178,7 @@ export default Vue.extend({
 
   components: {
     RcNestedTable,
+    ManageList,
     TooltipFinancialAssistanceCategory,
     ItemButtons,
     AddItemItem,
@@ -195,13 +206,15 @@ export default Vue.extend({
 
   data() {
     return {
-      faCategories: [] as IOptionItem[],
-
       showManageListsDialog: false,
     };
   },
 
   computed: {
+    faCategories(): IOptionItem[] {
+      return this.$storage.financialAssistance.getters.faCategories();
+    },
+
     /**
      * Translated values for the RcNestedTable component
      */
@@ -215,7 +228,7 @@ export default Vue.extend({
     /**
      * Get the list of items from Vuex
      */
-    items(): Array<IFinancialAssistanceTableRow> {
+    items(): Array<IFinancialAssistanceTableItem> {
       return this.$storage.financialAssistance.getters.items();
     },
 
@@ -236,7 +249,7 @@ export default Vue.extend({
     /**
      * Get the item currently being edited from the store
      */
-    editedItem(): IFinancialAssistanceTableRow {
+    editedItem(): IFinancialAssistanceTableItem {
       return this.$storage.financialAssistance.getters.editedItem();
     },
 
@@ -249,7 +262,7 @@ export default Vue.extend({
      */
     disableAddSubItem(): Array<boolean> | boolean {
       if (this.isOperating) return true;
-      return this.items.map((item) => item.subRows && item.subRows.length && item.subRows[0].subCategory.id === '-1');
+      return this.items.map((item) => item.subItems && item.subItems.length && item.subItems[0].subCategory.id === '-1');
     },
 
     /**
@@ -323,29 +336,17 @@ export default Vue.extend({
     /**
      * When the user closes the manage lists dialog, we need to re-fetch the financial assistance categories
      */
-    showManageListsDialog(newValue: boolean) {
+    async showManageListsDialog(newValue: boolean) {
       if (newValue === false) {
-        this.fetchFinancialAssistanceCategories();
+        await this.$storage.financialAssistance.actions.fetchActiveCategories();
         (this.$refs.form as VForm).reset();
       }
     },
   },
 
-  async mounted() {
-    await this.fetchFinancialAssistanceCategories();
-  },
-
   methods: {
     async fetchTemplate() {
       // todo
-    },
-
-    /**
-     * Fetch the financial assistance categories from the API. These are used for the parent item rows
-     */
-    async fetchFinancialAssistanceCategories() {
-      const res: IOptionItem[] = await this.$storage.financialAssistance.actions.fetchActiveCategories();
-      this.faCategories = res;
     },
 
     /**
@@ -364,6 +365,14 @@ export default Vue.extend({
       }
 
       return !!this.editedItem || this.addingItem > -1;
+    },
+
+    getAmountType(subItem: IFinancialAssistanceTableSubItem): TranslateResult {
+      return this.$t(`enums.financialAmountModes.${EFinancialAmountModes[subItem.amountType]}`);
+    },
+
+    getFrequency(subItem: IFinancialAssistanceTableSubItem): TranslateResult {
+      return this.$t(`enums.financialFrequency.${EFinancialFrequency[subItem.frequency]}`);
     },
   },
 });

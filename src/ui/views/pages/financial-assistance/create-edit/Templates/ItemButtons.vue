@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-btn
-      v-if="!item.subRows.length"
+      v-if="!item.subItems.length"
       icon
       :disabled="isOperating"
       :data-test="`financialAssistanceItems__editItemBtn--${index}`"
@@ -12,7 +12,6 @@
     </v-btn>
 
     <v-btn
-      v-if="!isEdit || items.length > 1"
       icon
       :disabled="isOperating"
       :data-test="`financialAssistanceItems__deleteItemBtn--${index}`"
@@ -34,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { IFinancialAssistanceTableRow } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import Vue from 'vue';
 import ConfirmBeforeAction from '../ConfirmBeforeAction.vue';
 
@@ -47,7 +46,7 @@ export default Vue.extend({
 
   props: {
     item: {
-      type: Object as () => IFinancialAssistanceTableRow,
+      type: Object as () => IFinancialAssistanceTableItem,
       required: true,
     },
 
@@ -79,7 +78,7 @@ export default Vue.extend({
     /**
      * Get the list of items from Vuex
      */
-    items(): IFinancialAssistanceTableRow[] {
+    items(): IFinancialAssistanceTableItem[] {
       return this.$storage.financialAssistance.getters.items();
     },
 
@@ -106,6 +105,14 @@ export default Vue.extend({
         this.$storage.financialAssistance.mutations.setLoading(value);
       },
     },
+
+    canDelete(): boolean {
+      if (!this.isEdit) return true;
+
+      const validItems = this.items.filter((i) => i.subItems?.length > 0);
+
+      return validItems.length > 1 || !this.item.subItems?.length;
+    },
   },
 
   methods: {
@@ -122,6 +129,11 @@ export default Vue.extend({
      * When the user clicks the delete button for an item, show the dialog and track the index of the item
      */
     onDeleteItem() {
+      if (!this.canDelete) {
+        this.$toasted.global.error(this.$t('financialAssistance.errors.needItemSubItem'));
+        return;
+      }
+
       this.itemBeingDeletedName = this.$m(this.item.mainCategory.name);
       this.itemBeingDeletedIndex = this.index;
       this.showDeleteItemDialog = true;
@@ -133,15 +145,32 @@ export default Vue.extend({
     async onConfirmDeleteItem() {
       const item = this.items[this.itemBeingDeletedIndex];
 
-      if (this.isEdit && item.subRows && item.subRows.length) {
-        // todo
+      if (this.isEdit && item.subItems && item.subItems.length) {
+        await this.deleteRemotely();
       } else {
-        this.$storage.financialAssistance.mutations.deleteItem(this.itemBeingDeletedIndex);
+        this.deleteLocally();
       }
 
       this.itemBeingDeletedName = '';
       this.itemBeingDeletedIndex = -1;
       this.showDeleteItemDialog = false;
+    },
+
+    async deleteRemotely() {
+      this.loading = true;
+
+      const res = await this.$storage.financialAssistance.actions.deleteItem(this.itemBeingDeletedIndex);
+
+      this.loading = false;
+
+      if (res) {
+        await this.$storage.financialAssistance.actions.reloadItems();
+        this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
+      }
+    },
+
+    deleteLocally() {
+      this.$storage.financialAssistance.mutations.deleteItem(this.itemBeingDeletedIndex);
     },
   },
 });

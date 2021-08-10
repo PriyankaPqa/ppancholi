@@ -35,11 +35,11 @@ describe('AddSubItemAmountType.vue', () => {
         expect(wrapper.vm.amountModes).toEqual([
           {
             text: 'Fixed',
-            value: 'Fixed',
+            value: 1,
           },
           {
             text: 'Variable',
-            value: 'Variable',
+            value: 2,
           },
         ]);
       });

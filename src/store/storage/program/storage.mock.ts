@@ -8,7 +8,11 @@ export const mockStorageProgram = (): IStorageMock => ({
   actions: {
     createProgram: jest.fn(),
     updateProgram: jest.fn(),
-    searchPrograms: jest.fn(),
+    searchPrograms: jest.fn(() => ({
+      odataCount: 1,
+      odataContext: 'context',
+      value: [],
+    })),
     fetchProgram: jest.fn(),
   },
 });

@@ -39,7 +39,7 @@
               @click="setLanguageMode(lang.key)" />
           </rc-tabs>
 
-          <v-container class="scroller" fluid>
+          <v-container :class="{ scroller: !embedded }" fluid>
             <v-row class="optionsList__header">
               <template v-if="isCascading">
                 <v-col cols="3">
@@ -259,14 +259,16 @@ export default Vue.extend({
       loadingTimeout: null,
       search: '',
       error: false,
-      loading: false,
+      loading: true,
       editedItem: null,
     };
   },
 
   computed: {
     formattedTitle(): string {
-      return `${this.$t(this.title)} (${this.items.length})`;
+      const title = this.$t(this.title);
+      const count = this.embedded ? '' : ` (${this.items.length})`;
+      return `${title}${count}`;
     },
 
     helpLink(): string {

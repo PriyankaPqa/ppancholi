@@ -189,8 +189,11 @@ export default Vue.extend({
       }
     },
 
-    goToEdit() {
-      // TODO
+    goToEdit(item: IFinancialAssistanceTableCombined) {
+      this.$router.push({
+        name: routes.events.financialAssistance.edit.name,
+        params: { faId: item.entity.id },
+      });
     },
   },
 });

@@ -3,7 +3,7 @@
     <v-btn
       small
       color="primary"
-      :disabled="failed"
+      :disabled="failed || (mode === 'edit' && pristine)"
       :data-test="saveButtonDataTest"
       @click="onSave">
       {{ mode === 'add' ? $t('common.buttons.add') : $t('common.buttons.save') }}
@@ -23,7 +23,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VForm } from '@/types';
-import { IFinancialAssistanceTableRow } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 
 export default Vue.extend({
   name: 'AddEditItemButtons',
@@ -38,6 +38,11 @@ export default Vue.extend({
     failed: {
       type: Boolean,
       required: true,
+    },
+
+    pristine: {
+      type: Boolean,
+      default: true,
     },
   },
 
@@ -80,7 +85,7 @@ export default Vue.extend({
      * When the user clicks the save button after editing an item
      */
     onSaveEditItem() {
-      const newItem: IFinancialAssistanceTableRow = this.$storage.financialAssistance.getters.newItem();
+      const newItem: IFinancialAssistanceTableItem = this.$storage.financialAssistance.getters.newItem();
       const editedItemIndex = this.$storage.financialAssistance.getters.editedItemIndex();
 
       this.$storage.financialAssistance.mutations.setItemItem(newItem.mainCategory, editedItemIndex);

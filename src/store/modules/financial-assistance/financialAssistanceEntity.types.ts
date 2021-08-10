@@ -1,7 +1,8 @@
 import { Status } from '@/entities/base';
 import {
-  IFinancialAssistanceTableEntity, IFinancialAssistanceTableRow, IFinancialAssistanceTableSubRow,
+  IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
+import { IOptionItem } from '@/entities/optionItem';
 import { IProgram } from '@/entities/program';
 import { IMultilingual } from '@/types';
 import { IState } from '../base/base.types';
@@ -11,14 +12,15 @@ export interface IFinancialAssistanceEntityState extends IState<IFinancialAssist
   name: IMultilingual;
   status: Status;
   program: IProgram;
-  mainItems: IFinancialAssistanceTableRow[];
+  mainItems: IFinancialAssistanceTableItem[];
   dirty: boolean;
   formDirty: boolean;
   loading: boolean;
   addingItem: boolean | number;
-  editedItem: IFinancialAssistanceTableRow;
+  editedItem: IFinancialAssistanceTableItem;
   editedItemIndex: number;
   editedSubItemIndex: number;
-  newItem: IFinancialAssistanceTableRow;
-  newSubItem: IFinancialAssistanceTableSubRow;
+  newItem: IFinancialAssistanceTableItem;
+  newSubItem: IFinancialAssistanceTableSubItem;
+  faCategories: IOptionItem[];
 }

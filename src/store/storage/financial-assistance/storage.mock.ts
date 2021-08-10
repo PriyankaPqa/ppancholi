@@ -17,7 +17,7 @@ export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanc
   protected getters: IGettersMock = {
     ...this.baseGetters,
 
-    name: jest.fn(),
+    name: jest.fn(() => ''),
     program: jest.fn(),
     status: jest.fn(),
     addingItem: jest.fn(),
@@ -32,6 +32,7 @@ export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanc
     formDirty: jest.fn(),
     loading: jest.fn(),
     isOperating: jest.fn(),
+    faCategories: jest.fn(() => mockCategories()),
   };
 
   protected mutations: IMutationsMock = {
@@ -74,12 +75,20 @@ export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanc
     resetNewSubItem: jest.fn(),
     resetState: jest.fn(),
     cancelOperation: jest.fn(),
+    setFinancialAssistance: jest.fn(),
   };
 
   protected actions: IActionsMock = {
     ...this.baseActions,
     createFinancialAssistance: jest.fn(),
+    editFinancialAssistance: jest.fn(() => mockFinancialAssistanceTableEntity()),
     fetchActiveCategories: jest.fn(() => mockCategories()),
+    createItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
+    createSubItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
+    editSubItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
+    deleteItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
+    deleteSubItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
+    reloadItems: jest.fn(),
   };
 
   public make = () => ({

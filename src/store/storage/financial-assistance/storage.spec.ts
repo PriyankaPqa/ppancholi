@@ -360,9 +360,64 @@ describe('>>> Financial Assistance Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/createFinancialAssistance`, { table: true });
     });
 
+    it('should proxy editFinancialAssistance', () => {
+      storage.actions.editFinancialAssistance();
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/editFinancialAssistance`);
+    });
+
     it('should proxy fetchActiveCategories', () => {
       storage.actions.fetchActiveCategories();
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchActiveCategories`);
+    });
+
+    it('should proxy createItem', () => {
+      const item = mockItems()[0];
+
+      storage.actions.createItem(item);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/createItem`, { item });
+    });
+
+    it('should proxy createSubItem', () => {
+      const itemIndex = 0;
+      const subItem = mockSubItems()[0];
+
+      storage.actions.createSubItem(itemIndex, subItem);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/createSubItem`, { itemIndex, subItem });
+    });
+
+    it('should proxy editSubItem', () => {
+      const itemIndex = 0;
+      const subItemIndex = 1;
+      const subItem = mockSubItems()[0];
+
+      storage.actions.editSubItem(itemIndex, subItemIndex, subItem);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/editSubItem`, { itemIndex, subItemIndex, subItem });
+    });
+
+    it('should proxy deleteSubItem', () => {
+      const itemIndex = 0;
+      const subItemIndex = 1;
+
+      storage.actions.deleteSubItem(itemIndex, subItemIndex);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/deleteSubItem`, { itemIndex, subItemIndex });
+    });
+
+    it('should proxy deleteItem', () => {
+      const itemIndex = 0;
+
+      storage.actions.deleteItem(itemIndex);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/deleteItem`, { itemIndex });
+    });
+
+    it('should proxy reloadItems', () => {
+      storage.actions.reloadItems();
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/reloadItems`);
     });
   });
 });

@@ -30,9 +30,9 @@ describe('>>> Financial assistance', () => {
       expect(financialAssistance.programId).toBe(mockFinancialAssistanceTable.programId);
     });
 
-    it('should instantiate rows', () => {
+    it('should instantiate items', () => {
       const financialAssistance = new FinancialAssistanceTableEntity(mockFinancialAssistanceTable);
-      expect(financialAssistance.rows).toBe(mockFinancialAssistanceTable.rows);
+      expect(financialAssistance.items).toBe(mockFinancialAssistanceTable.items);
     });
   });
 });

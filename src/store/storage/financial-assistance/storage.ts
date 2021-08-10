@@ -2,10 +2,11 @@ import { Status } from '@/entities/base';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
+  IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableMetadata,
-  IFinancialAssistanceTableRow,
-  IFinancialAssistanceTableSubRow,
+  IFinancialAssistanceTableItem,
+  IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { IProgram } from '@/entities/program';
@@ -30,19 +31,19 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     program: (): IProgram => this.store.getters[`${this.entityModuleName}/program`],
 
-    items: (): IFinancialAssistanceTableRow[] => this.store.getters[`${this.entityModuleName}/items`],
+    items: (): IFinancialAssistanceTableItem[] => this.store.getters[`${this.entityModuleName}/items`],
 
-    subItems: (): IFinancialAssistanceTableSubRow[] => this.store.getters[`${this.entityModuleName}/subItems`],
+    subItems: (): IFinancialAssistanceTableSubItem[] => this.store.getters[`${this.entityModuleName}/subItems`],
 
-    newItem: (): IFinancialAssistanceTableRow => this.store.getters[`${this.entityModuleName}/newItem`],
+    newItem: (): IFinancialAssistanceTableItem => this.store.getters[`${this.entityModuleName}/newItem`],
 
-    editedItem: (): IFinancialAssistanceTableRow => this.store.getters[`${this.entityModuleName}/editedItem`],
+    editedItem: (): IFinancialAssistanceTableItem => this.store.getters[`${this.entityModuleName}/editedItem`],
 
     editedItemIndex: (): number => this.store.getters[`${this.entityModuleName}/editedItemIndex`],
 
     editedSubItemIndex: (): number => this.store.getters[`${this.entityModuleName}/editedSubItemIndex`],
 
-    newSubItem: (): IFinancialAssistanceTableSubRow => this.store.getters[`${this.entityModuleName}/newSubItem`],
+    newSubItem: (): IFinancialAssistanceTableSubItem => this.store.getters[`${this.entityModuleName}/newSubItem`],
 
     dirty: (): boolean => this.store.getters[`${this.entityModuleName}/dirty`],
 
@@ -51,6 +52,8 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
     loading: (): boolean => this.store.getters[`${this.entityModuleName}/loading`],
 
     isOperating: (): boolean => this.store.getters[`${this.entityModuleName}/isOperating`],
+
+    faCategories: (): IOptionItem[] => this.store.getters[`${this.entityModuleName}/faCategories`],
   };
 
   private mutations = {
@@ -68,14 +71,14 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     setProgram: (program: IProgram) => this.store.commit(`${this.entityModuleName}/setProgram`, { program }),
 
-    setItems: (items: Array<IFinancialAssistanceTableRow>) => this.store.commit(`${this.entityModuleName}/setItems`, { items }),
+    setItems: (items: Array<IFinancialAssistanceTableItem>) => this.store.commit(`${this.entityModuleName}/setItems`, { items }),
 
-    setItem: (item: IFinancialAssistanceTableRow, index: number) => this.store.commit(`${this.entityModuleName}/setItem`, { item, index }),
+    setItem: (item: IFinancialAssistanceTableItem, index: number) => this.store.commit(`${this.entityModuleName}/setItem`, { item, index }),
 
     setItemItem: (item: IOptionItem, index: number) => this.store.commit(`${this.entityModuleName}/setItemItem`, { item, index }),
 
     setSubItem: (
-      subItem: IFinancialAssistanceTableSubRow,
+      subItem: IFinancialAssistanceTableSubItem,
       index: number, parentIndex: number,
     ) => this.store.commit(`${this.entityModuleName}/setSubItem`, { subItem, index, parentIndex }),
 
@@ -106,7 +109,7 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     setNewItemItem: (item: IOptionItem) => this.store.commit(`${this.entityModuleName}/setNewItemItem`, { item }),
 
-    setNewSubItem: (newSubItem: IFinancialAssistanceTableSubRow) => this.store.commit(`${this.entityModuleName}/setNewSubItem`, { newSubItem }),
+    setNewSubItem: (newSubItem: IFinancialAssistanceTableSubItem) => this.store.commit(`${this.entityModuleName}/setNewSubItem`, { newSubItem }),
 
     setNewSubItemSubItem: (subItem: IOptionSubItem) => this.store.commit(`${this.entityModuleName}/setNewSubItemSubItem`, { subItem }),
 
@@ -122,18 +125,18 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     setNewSubItemFrequency: (frequency: EFinancialFrequency) => this.store.commit(`${this.entityModuleName}/setNewSubItemFrequency`, { frequency }),
 
-    addItem: (item: IFinancialAssistanceTableRow) => this.store.commit(`${this.entityModuleName}/addItem`, { item }),
+    addItem: (item: IFinancialAssistanceTableItem) => this.store.commit(`${this.entityModuleName}/addItem`, { item }),
 
     addSubItem: (
-      subItem: IFinancialAssistanceTableSubRow, index: number,
+      subItem: IFinancialAssistanceTableSubItem, index: number,
     ) => this.store.commit(`${this.entityModuleName}/addSubItem`, { subItem, index }),
 
     setItemSubItems: (
       index: number,
-      subItems: Array<IFinancialAssistanceTableSubRow>,
+      subItems: Array<IFinancialAssistanceTableSubItem>,
     ) => this.store.commit(`${this.entityModuleName}/setItemSubItems`, { index, subItems }),
 
-    setEditedItem: (editedItem: IFinancialAssistanceTableRow) => this.store.commit(`${this.entityModuleName}/setEditedItem`, { editedItem }),
+    setEditedItem: (editedItem: IFinancialAssistanceTableItem) => this.store.commit(`${this.entityModuleName}/setEditedItem`, { editedItem }),
 
     setEditedItemIndex: (editedItemIndex: number) => this.store.commit(`${this.entityModuleName}/setEditedItemIndex`, { editedItemIndex }),
 
@@ -158,6 +161,8 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
     resetState: () => this.store.commit(`${this.entityModuleName}/resetState`),
 
     cancelOperation: () => this.store.commit(`${this.entityModuleName}/cancelOperation`),
+
+    setFinancialAssistance: (fa: IFinancialAssistanceTableCombined) => this.store.commit(`${this.entityModuleName}/setFinancialAssistance`, { fa }),
   };
 
   private actions = {
@@ -166,6 +171,34 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
     createFinancialAssistance: (
       table: boolean,
     ): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/createFinancialAssistance`, { table }),
+
+    createItem: (
+      item: IFinancialAssistanceTableItem,
+    ): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/createItem`, { item }),
+
+    createSubItem: (
+      itemIndex: number,
+      subItem: IFinancialAssistanceTableSubItem,
+    ): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/createSubItem`, { itemIndex, subItem }),
+
+    editSubItem: (
+      itemIndex: number,
+      subItemIndex: number,
+      subItem: IFinancialAssistanceTableSubItem,
+    ): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/editSubItem`, { itemIndex, subItemIndex, subItem }),
+
+    deleteSubItem: (
+      itemIndex: number,
+      subItemIndex: number,
+    ): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/deleteSubItem`, { itemIndex, subItemIndex }),
+
+    deleteItem: (
+      itemIndex: number,
+    ): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/deleteItem`, { itemIndex }),
+
+    editFinancialAssistance: (): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistance`),
+
+    reloadItems: (): Promise<void> => this.store.dispatch(`${this.entityModuleName}/reloadItems`),
 
     fetchActiveCategories: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchActiveCategories`),
   };

@@ -74,6 +74,18 @@ describe('OptionList.vue', () => {
   });
 
   describe('> Computed', () => {
+    describe('formattedTitle', () => {
+      it('returns correct value', async () => {
+        expect(wrapper.vm.formattedTitle).toBe('TITLE (3)');
+
+        await wrapper.setProps({
+          embedded: true,
+        });
+
+        expect(wrapper.vm.formattedTitle).toBe('TITLE');
+      });
+    });
+
     describe('>> items', () => {
       it('returns the items from the store', () => {
         expect(wrapper.vm.items).toEqual(mockOptionItemData());
