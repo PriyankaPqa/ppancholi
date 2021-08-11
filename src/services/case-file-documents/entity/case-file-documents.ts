@@ -12,4 +12,8 @@ export class CaseFileDocumentsService extends DomainBaseService<ICaseFileDocumen
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, ENTITY);
   }
+
+  async updateDocument(item: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity> {
+    return this.http.patch<ICaseFileDocumentEntity>(this.getItemUrl(`${this.baseUrl}/{id}/edit`, item), item);
+  }
 }

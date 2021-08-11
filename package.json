@@ -16,7 +16,7 @@
     "lint:fix": "vue-cli-service lint --fix",
     "lokalise:down": "node lokalise.js down",
     "lokalise:up": "node lokalise.js up",
-    "lokalise": "yarn lokalise:up && yarn lokalise:down",
+    "lokalise": "yarn lokalise:up && yarn lokalise:upErrors && yarn lokalise:down",
     "lokalise:upErrors": "node lokalise.js upErrors",
     "report": "vue-cli-service build --report",
     "report-json": "vue-cli-service build --report-json",

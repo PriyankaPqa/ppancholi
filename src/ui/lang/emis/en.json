@@ -121,6 +121,8 @@
     "caseFile.changeStatusConfirmTitle.Inactive": "Set case file inactive",
     "caseFile.changeStatusConfirmTitle.Open": "Open case file",
     "caseFile.document.category": "Category",
+    "caseFile.document.confirm.preprocessing.message": "Once added a document cannot be deleted,\nAre you sure you want to add this document?",
+    "caseFile.document.confirm.preprocessing.title": "Confirm adding document",
     "caseFile.document.dateAdded": "Date added",
     "caseFile.document.name": "Document name",
     "caseFile.document.notes": "Notes",

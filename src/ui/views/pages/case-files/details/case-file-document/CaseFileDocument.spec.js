@@ -1,9 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCombinedCaseFileDocument } from '@/entities/case-file-document';
+import { mockCombinedCaseFileDocument, DocumentStatus } from '@/entities/case-file-document';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockUserStateLevel } from '@/test/helpers';
 
 import helpers from '@/ui/helpers';
+import moment from '@/ui/plugins/moment';
 import Component from './CaseFileDocument.vue';
 
 const localVue = createLocalVue();
@@ -384,9 +385,9 @@ describe('CaseFileDocument.vue', () => {
             name: document.entity.name,
             id: document.entity.id,
             category: '',
-            created: 'Apr 6, 2021',
+            created: moment(document.entity.created),
             documentStatus: document.entity.documentStatus,
-            documentStatusName: document.metadata.documentStatusName.translation.en,
+            documentStatusName: `caseFile.document.status.${document.entity.documentStatus === DocumentStatus.Past ? 'Past' : 'Current'}`,
           },
         ]);
       });

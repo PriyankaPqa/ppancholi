@@ -131,11 +131,6 @@ import { ITeamCombined, ITeamMemberAsUser } from '@/entities/team';
 import helpers from '@/ui/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
-import { IUserAccountCombined } from '@/entities/user-account';
-
-interface UserTeamMember extends IUserAccountCombined {
-  isPrimaryContact: boolean,
-}
 
 export default Vue.extend({
   name: 'TeamMembersTable',

@@ -143,9 +143,9 @@ export default Vue.extend({
     },
   },
   methods: {
-    checkRules(files: File[]) {
-      const file = files[0];
-      if (!file) {
+    checkRules(files: File[] | File) {
+      const file = Array.isArray(files) ? files[0] : files;
+      if (!file?.size) {
         this.errorMessages = [];
       } else {
         // We check if the size of the file does not exceed the limit
@@ -155,7 +155,7 @@ export default Vue.extend({
           this.errorMessages.push(`${this.allowedExtensions.join(', ')} ${this.errorExtensions}`);
         }
         // We check if the MIME type of the file is authorized
-        if (!this.isFileTypeAuthorized(file.type)) this.errorMessages.push(this.errorMimeType);
+        if (!this.isFileTypeAuthorized(file.type)) this.errorMessages.push(`${this.errorMimeType} - ${file.type}`);
       }
     },
     /**
@@ -163,7 +163,7 @@ export default Vue.extend({
      */
     getFileExtension(file: File): string {
       if (file.name && file.name.split('.').length > 0) {
-        return file.name.split('.').pop() as string;
+        return file.name.toLowerCase().split('.').pop() as string;
       } return '';
     },
     /**
@@ -187,8 +187,8 @@ export default Vue.extend({
 
     onChange(files: File[]) {
       this.checkRules(files);
-      const file = files.length > 0 ? files[0] : {};
-      this.$emit('update:file', file);
+      const file = Array.isArray(files) ? files[0] : files;
+      this.$emit('update:file', file || {});
     },
 
     openSelection() {

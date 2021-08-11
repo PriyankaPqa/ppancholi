@@ -7,7 +7,7 @@ import { CaseFileDocumentsService } from '@/services/case-file-documents/entity'
 import { OptionItemsService } from '@/services/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
-import { mockCaseFileDocumentEntity, mockCaseFileDocumentEntities } from '@/entities/case-file-document';
+import { mockCaseFileDocumentEntity, mockCaseFileDocumentEntities, ICaseFileDocumentEntity } from '@/entities/case-file-document';
 import { CaseFileDocumentEntityModule } from './caseFileDocumentEntity';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
 
@@ -78,6 +78,15 @@ describe('Case file document entity module', () => {
         expect(module.optionItemService.getOptionList).toBeCalledWith(EOptionLists.DocumentCategories);
         expect(actionContext.commit).toBeCalledWith('setCategories', res);
         expect(actionContext.commit).toBeCalledWith('setCategoriesFetched', true);
+      });
+    });
+    describe('updateDocument', () => {
+      it('should call service updateDocument and commit the result', async () => {
+        module.service.updateDocument = jest.fn(() => Promise.resolve({ name: 'name2' } as ICaseFileDocumentEntity));
+        await module.actions.updateDocument(actionContext, { name: 'name' } as ICaseFileDocumentEntity);
+
+        expect(module.service.updateDocument).toBeCalledWith({ name: 'name' });
+        expect(actionContext.commit).toBeCalledWith('set', { name: 'name2' });
       });
     });
   });

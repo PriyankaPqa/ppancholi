@@ -17,6 +17,11 @@ describe('>>> Case File Document', () => {
         expect(item.name).toEqual(mockData.name);
       });
 
+      it('should instantiate file name', () => {
+        const item = new CaseFileDocumentEntity(mockData);
+        expect(item.originalFilename).toEqual(mockData.originalFilename);
+      });
+
       it('should instantiate note', () => {
         const item = new CaseFileDocumentEntity(mockData);
         expect(item.note).toEqual(mockData.note);

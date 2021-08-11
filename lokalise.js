@@ -93,7 +93,9 @@ async function uploadErrors() {
 
   const encoded = Buffer.from(JSON.stringify(finalObject)).toString('base64');
 
-  await uploadToLokalise(encoded, 'en.json', 'en', ['ERRORS']);
+  await uploadToLokalise({
+    base64File: encoded, fileName: 'en.json', langISO: 'en', tags: ['ERRORS'], projectId: EMIS_PROJECT_ID,
+  });
 }
 
 async function up(projectId, folderPath) {

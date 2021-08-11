@@ -1,0 +1,159 @@
+<template>
+  <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
+    <page-template :loading="documentLoading" :show-left-menu="false">
+      <rc-page-content
+        :title="isEditMode ? $t('document.edit.title') : $t('document.add.title')">
+        <document-form ref="documentForm" :document.sync="document" :file.sync="file" :is-edit-mode="isEditMode" />
+
+        <rc-confirmation-dialog
+          ref="confirmUpload"
+          :show.sync="showConfirmation"
+          :title="$t('caseFile.document.confirm.preprocessing.title')"
+          :messages="$t('caseFile.document.confirm.preprocessing.message')" />
+
+        <template slot="actions">
+          <v-btn data-test="cancel" @click.stop="back()">
+            {{ $t('common.cancel') }}
+          </v-btn>
+
+          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || !dirty" @click.stop="submit">
+            {{ submitLabel }}
+          </v-btn>
+        </template>
+      </rc-page-content>
+    </page-template>
+  </ValidationObserver>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
+import { RcPageContent, RcConfirmationDialog } from '@crctech/component-library';
+import { ConfirmationDialog, VForm } from '@/types';
+import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import routes from '@/constants/routes';
+import helpers from '@/ui/helpers';
+import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
+import DocumentForm from './CaseFileDocumentForm.vue';
+
+export default Vue.extend({
+  name: 'CreateEditDocument',
+
+  components: {
+    PageTemplate,
+    RcPageContent,
+    RcConfirmationDialog,
+    DocumentForm,
+  },
+
+  props: {
+    documentId: {
+      type: String,
+      default: '',
+    },
+    id: {
+      type: String,
+      default: '',
+    },
+  },
+
+  data() {
+    return {
+      documentLoading: true,
+      loading: false,
+      error: false,
+      document: new CaseFileDocumentEntity(null),
+      file: null as File,
+      showConfirmation: false,
+    };
+  },
+
+  computed: {
+    isEditMode(): boolean {
+      return this.$route.name === routes.caseFile.documents.edit.name;
+    },
+
+    submitLabel(): TranslateResult {
+      return this.isEditMode
+        ? this.$t('common.save')
+        : this.$t('common.buttons.add');
+    },
+  },
+
+  async created() {
+    this.documentLoading = true;
+
+    if (this.isEditMode) {
+      try {
+        const res = await this.$storage.caseFileDocument.actions.fetch(
+          { id: this.documentId, caseFileId: this.id }, { useMetadataGlobalHandler: false, useEntityGlobalHandler: true },
+        );
+        this.document = new CaseFileDocumentEntity(res.entity);
+      } finally {
+        this.documentLoading = false;
+      }
+    } else {
+      this.document = new CaseFileDocumentEntity(null);
+      this.document.caseFileId = this.id;
+      this.documentLoading = false;
+    }
+  },
+
+  methods: {
+    back(): void {
+      this.$router.replace({
+        name: routes.caseFile.documents.home.name,
+      });
+    },
+
+    async submit() {
+      const isValid = await (this.$refs.form as VForm).validate();
+
+      if (isValid && (this.isEditMode || this.file)) {
+        try {
+          this.loading = true;
+          let document: ICaseFileDocumentEntity;
+
+          if (this.isEditMode) {
+            document = await this.$storage.caseFileDocument.actions.updateDocument(this.document);
+          } else {
+            document = await this.tryUpload();
+          }
+          if (document) {
+            this.$storage.caseFileDocument.mutations.setEntity(document);
+            this.$toasted.global.success(this.$t(this.isEditMode ? 'document.edit.success' : 'document.create.success'));
+            this.$router.replace({ name: routes.caseFile.documents.home.name });
+          }
+        } catch (e) {
+          this.$toasted.global.error(this.$t(e.code));
+        } finally {
+          this.loading = false;
+        }
+      } else {
+        helpers.scrollToFirstError('scrollAnchor');
+      }
+    },
+
+    async tryUpload(): Promise<ICaseFileDocumentEntity> {
+      this.showConfirmation = true;
+      const userChoice = await (this.$refs.confirmUpload as ConfirmationDialog).open() as boolean;
+      this.showConfirmation = false;
+      if (userChoice) {
+        return this.uploadNewDocument();
+      }
+      return null;
+    },
+
+    async uploadNewDocument(): Promise<ICaseFileDocumentEntity> {
+      const formData = new FormData();
+      formData.append('name', this.document.name);
+      formData.append('note', this.document.note || '');
+      formData.append('categoryId', this.document.category.optionItemId.toString());
+      formData.append('documentStatus', this.document.documentStatus.toString());
+      formData.append('file', this.file);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      return (this.$refs.documentForm as any).upload(formData, `case-file/case-files/${this.id}/documents`);
+    },
+  },
+});
+</script>

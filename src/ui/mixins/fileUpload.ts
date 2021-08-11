@@ -3,7 +3,7 @@ import axios, { CancelTokenStatic, CancelTokenSource } from 'axios';
 import { VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IRestResponse } from '@/services/httpClient';
-import { IMassActionEntityData } from '@/entities/mass-action';
+import { IEntity } from '@/entities/base';
 
 const httpClient = axios.create({
   baseURL: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/`,
@@ -16,7 +16,7 @@ export default Vue.extend({
       file: {} as File,
       source: {} as CancelTokenSource,
       percentCompleted: 0,
-      response: {} as IRestResponse<IMassActionEntityData>,
+      response: {} as IRestResponse<IEntity>,
       uploadSuccess: false,
       errors: [],
       showUploadDialog: false,
@@ -52,7 +52,7 @@ export default Vue.extend({
       this.$toasted.global.info(this.$t('common.file.cancel_upload'));
     },
 
-    async uploadForm(formData: FormData, url: string) {
+    async uploadForm(formData: FormData, url: string): Promise<IEntity> {
       this.uploadSuccess = false;
       this.errors = [];
       const cancelToken = axios.CancelToken as CancelTokenStatic;
@@ -81,6 +81,7 @@ export default Vue.extend({
           }
         }
       }
+      return this.response?.data;
     },
   },
 });

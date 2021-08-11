@@ -34,6 +34,7 @@
     <rc-dialog
       :title="$t(uploadDialogTitle)"
       :submit-action-label="$t('common.button.next')"
+      :cancel-action-label="$t('common.buttons.cancel')"
       :show.sync="showUploadDialog"
       :show-close="false"
       :show-submit="false"
@@ -65,7 +66,7 @@ import mixins from 'vue-typed-mixins';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { ConfirmationDialog, VForm } from '@/types';
 import fileUpload from '@/ui/mixins/fileUpload';
-import { MassActionEntity } from '@/entities/mass-action';
+import { IMassActionEntity, MassActionEntity } from '@/entities/mass-action';
 
 export default mixins(fileUpload).extend({
   name: 'MassActionBaseCreate',
@@ -154,7 +155,7 @@ export default mixins(fileUpload).extend({
 
       if (this.uploadSuccess) {
         // So the parent can redirect where needed
-        this.$emit('upload:success', new MassActionEntity(this.response.data));
+        this.$emit('upload:success', new MassActionEntity(this.response.data as IMassActionEntity));
       }
     },
   },

@@ -8,6 +8,7 @@ export const mockCaseFileDocumentEntity = (force? : Partial<ICaseFileDocumentEnt
   ...mockBaseData(),
   caseFileId: '38106287-9046-47b9-8981-76ede656d305',
   name: 'test referral',
+  originalFilename: 'test_referral.pdf',
   note: 'notes...',
   category: {
     optionItemId: '09bda590-ad8b-4f29-af4e-c63eedd337a0',

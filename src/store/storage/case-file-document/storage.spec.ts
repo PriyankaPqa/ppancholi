@@ -58,6 +58,10 @@ describe('>>> Case File Document Storage', () => {
       storage.actions.fetchCategories();
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCategories`);
     });
+    it('should proxy updateDocument', () => {
+      storage.actions.updateDocument({ mydoc: 'mm' } as any);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateDocument`, { mydoc: 'mm' });
+    });
 
   });
 });

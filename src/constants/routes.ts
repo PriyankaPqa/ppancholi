@@ -73,6 +73,18 @@ const routes = {
         path: 'documents',
         name: 'casefile.documents',
       },
+      details: {
+        path: 'documents/:documentId',
+        name: 'casefile.documents.details',
+      },
+      edit: {
+        path: 'documents/:documentId/edit',
+        name: 'casefile.documents.edit',
+      },
+      add: {
+        path: 'documents/add',
+        name: 'casefile.documents.add',
+      },
     },
   },
   events: {

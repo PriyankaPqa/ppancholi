@@ -30,6 +30,9 @@ export class CaseFileDocumentStorage
 
     fetchCategories: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchCategories`),
 
+    // eslint-disable-next-line
+    updateDocument: (payload: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity> => this.store.dispatch(`${this.entityModuleName}/updateDocument`, payload),
+
   }
 
   private mutations = {

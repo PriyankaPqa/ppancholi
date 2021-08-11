@@ -18,6 +18,7 @@ export class CaseFileDocumentStorageMock extends BaseMock<ICaseFileDocumentCombi
   protected actions = {
     ...this.baseActions,
     fetchCategories: jest.fn(() => mockOptionItemData()),
+    updateDocument: jest.fn((payload: ICaseFileDocumentEntity) => payload),
   }
 
   protected mutations = {

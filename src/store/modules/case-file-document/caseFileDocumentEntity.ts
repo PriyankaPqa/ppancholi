@@ -64,5 +64,14 @@ export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentE
       return context.getters.categories();
     },
 
+    updateDocument: async (context: ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>,
+      payload: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity> => {
+      const result = await this.service.updateDocument(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
+
   }
 }

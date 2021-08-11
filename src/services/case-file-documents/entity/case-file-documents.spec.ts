@@ -1,5 +1,5 @@
 /* eslint-disable */
-// import { mockCaseFileDocumentEntity } from '@/entities/case-file-referral';
+import { mockCaseFileDocumentEntity } from '@/entities/case-file-document';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { CaseFileDocumentsService } from './case-file-documents';
 
@@ -13,9 +13,16 @@ describe('>>> Case File Document Service', () => {
     http = mockHttp();
     service = new CaseFileDocumentsService(http as never);
   });
-
-  it('passes', ()=> {
-    expect(true).toBeTruthy()
-  })
+  
+  describe('updateDocument', () => {
+    it('is linked to the correct URL and params', async () => {
+      const entity = mockCaseFileDocumentEntity();
+      entity.id = 'myId';
+      entity.caseFileId = 'myParent';
+      await service.updateDocument(entity);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/documents/myId/edit',
+        entity);
+    });
+  });
 
 });

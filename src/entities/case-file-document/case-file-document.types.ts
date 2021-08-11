@@ -9,6 +9,7 @@ export enum DocumentStatus {
 export interface ICaseFileDocumentEntity extends IEntity {
   caseFileId: uuid;
   name: string;
+  originalFilename: string;
   note: string;
   category: IListOption;
   documentStatus: DocumentStatus;

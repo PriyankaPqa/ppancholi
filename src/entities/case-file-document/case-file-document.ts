@@ -7,6 +7,8 @@ export class CaseFileDocumentEntity extends BaseEntity implements ICaseFileDocum
 
   name: string;
 
+  originalFilename: string;
+
   note: string;
 
   category: IListOption;
@@ -18,6 +20,7 @@ export class CaseFileDocumentEntity extends BaseEntity implements ICaseFileDocum
       super(data);
       this.caseFileId = data.caseFileId;
       this.name = data.name;
+      this.originalFilename = data.originalFilename;
       this.note = data.note;
       this.category = data.category;
       this.documentStatus = data.documentStatus;
@@ -25,6 +28,7 @@ export class CaseFileDocumentEntity extends BaseEntity implements ICaseFileDocum
       super();
       this.caseFileId = null;
       this.name = null;
+      this.originalFilename = null;
       this.note = null;
       this.category = { optionItemId: null, specifiedOther: null };
       this.documentStatus = null;

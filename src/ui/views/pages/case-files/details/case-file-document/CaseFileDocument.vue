@@ -28,7 +28,7 @@
       </template>
 
       <template #[`item.${customColumns.created}`]="{ item }">
-        {{ item.created }}
+        {{ item.created.format('ll') }}
       </template>
 
       <template #[`item.${customColumns.documentStatus}`]="{ item }">
@@ -52,7 +52,7 @@
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item }">
-        <v-btn icon data-test="editDocument-link" @click="getDocumentEditRoute(item.id)">
+        <v-btn icon data-test="editDocument-link" :to="getDocumentEditRoute(item.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -79,11 +79,11 @@ import {
 } from '@crctech/component-library';
 import moment from '@/ui/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import { DocumentStatus, ICaseFileDocumentEntity } from '@/entities/case-file-document';
 import { IAzureSearchParams } from '@/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
-// import routes from '@/constants/routes';
+import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 
 interface caseFileDocumentsMapped {
@@ -118,7 +118,7 @@ export default Vue.extend({
     },
 
     canAdd(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') || this.$hasRole('contributor3');
     },
 
     canEdit(): boolean {
@@ -136,8 +136,8 @@ export default Vue.extend({
         id: d.entity.id,
         category: this.getCategory(d.entity),
         documentStatus: d.entity.documentStatus,
-        documentStatusName: this.$m(d.metadata.documentStatusName),
-        created: moment(d.entity.created).format('ll'),
+        documentStatusName: this.$t(`caseFile.document.status.${DocumentStatus[d.entity.documentStatus]}`),
+        created: moment(d.entity.created),
       }));
     },
 
@@ -249,25 +249,27 @@ export default Vue.extend({
 
     addCaseDocument() {
       this.$router.push({
-        // name: routes.caseFile.documents.add.name,
+        name: routes.caseFile.documents.add.name,
       });
     },
 
     getDocumentDetailsRoute(id: string) {
       return {
+        // until implemented
+        name: routes.caseFile.documents.edit.name,
         // name: routes.caseFile.documents.details.name,
-        // params: {
-        //   documentId: id,
-        // },
+        params: {
+          documentId: id,
+        },
       };
     },
 
     getDocumentEditRoute(id: string) {
       return {
-        // name: routes.caseFile.documents.edit.name,
-        // params: {
-        //   documentId: id,
-        // },
+        name: routes.caseFile.documents.edit.name,
+        params: {
+          documentId: id,
+        },
       };
     },
   },

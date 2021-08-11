@@ -121,6 +121,8 @@
     "caseFile.changeStatusConfirmTitle.Inactive": "caseFile.changeStatusConfirmTitle.Inactive",
     "caseFile.changeStatusConfirmTitle.Open": "caseFile.changeStatusConfirmTitle.Open",
     "caseFile.document.category": "caseFile.document.category",
+    "caseFile.document.confirm.preprocessing.message": "caseFile.document.confirm.preprocessing.message",
+    "caseFile.document.confirm.preprocessing.title": "caseFile.document.confirm.preprocessing.title",
     "caseFile.document.dateAdded": "caseFile.document.dateAdded",
     "caseFile.document.name": "caseFile.document.name",
     "caseFile.document.notes": "caseFile.document.notes",
