@@ -44,8 +44,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined } from '@/entities/mass-action';
 import { RcStatusChip } from '@crctech/component-library';
+import { IMassActionCombined } from '@/entities/mass-action';
 import colors from '@/ui/plugins/vuetify/colors';
 
 export default Vue.extend({

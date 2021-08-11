@@ -117,17 +117,17 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog, VSelectWithValidation } from '@crctech/component-library';
-import { IAppUserData } from '@/entities/app-user';
 import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import _debounce from 'lodash/debounce';
 import { DataTableHeader } from 'vuetify';
+import _cloneDeep from 'lodash/cloneDeep';
 import {
   IOptionSubItem,
 } from '@/entities/optionItem';
 import { i18n } from '@/ui/plugins';
 import { IUserAccountCombined } from '@/entities/user-account';
-import _cloneDeep from 'lodash/cloneDeep';
+import { IAppUserData } from '@/entities/app-user';
 import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
 

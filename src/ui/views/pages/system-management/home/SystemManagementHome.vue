@@ -15,8 +15,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import routes from '@/constants/routes';
 import { RcMenuCard } from '@crctech/component-library';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'SystemManagementHome',

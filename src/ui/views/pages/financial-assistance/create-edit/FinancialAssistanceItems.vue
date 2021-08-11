@@ -144,6 +144,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
+import { RcNestedTable } from '@crctech/component-library';
 import { VForm } from '@/types';
 import {
   EFinancialAmountModes,
@@ -152,8 +154,6 @@ import {
   IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
 import { IOptionItem } from '@/entities/optionItem';
-import { TranslateResult } from 'vue-i18n';
-import { RcNestedTable } from '@crctech/component-library';
 import { INestedTableHeader } from './INestedTableHeader';
 import ManageList from './ManageList.vue';
 import TooltipFinancialAssistanceCategory from './TooltipFinancialAssistanceCategory.vue';

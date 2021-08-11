@@ -118,9 +118,9 @@ import Vue from 'vue';
 import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
 import isEmpty from 'lodash/isEmpty';
 import months from '@crctech/registration-lib/src/constants/months';
+import moment from 'moment';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { VForm } from '@/types';
-import moment from 'moment';
 
 export default Vue.extend({
   name: 'SearchBeneficiary',

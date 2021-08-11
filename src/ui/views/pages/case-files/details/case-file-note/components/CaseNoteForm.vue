@@ -67,11 +67,11 @@ import Vue from 'vue';
 import {
   VTextFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation, RcConfirmationDialog,
 } from '@crctech/component-library';
+import _cloneDeep from 'lodash/cloneDeep';
 import { IOptionItem } from '@/entities/optionItem';
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';
 import { ICaseFileCombined } from '@/entities/case-file';
 import { CaseNoteEntity, ICaseNoteEntity } from '@/entities/case-note';
-import _cloneDeep from 'lodash/cloneDeep';
 
 export default Vue.extend({
   name: 'CaseNoteForm',

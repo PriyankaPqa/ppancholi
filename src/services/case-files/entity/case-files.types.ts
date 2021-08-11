@@ -1,10 +1,9 @@
+import { ERegistrationMethod } from '@crctech/registration-lib/src/types';
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
-
-import { ERegistrationMethod } from '@crctech/registration-lib/src/types';
 
 export interface ICreateCaseFileRequest {
   householdId: uuid;

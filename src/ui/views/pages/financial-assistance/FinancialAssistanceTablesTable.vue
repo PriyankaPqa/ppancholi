@@ -52,14 +52,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDataTable, RcAddButtonWithMenu } from '@crctech/component-library';
-import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { TranslateResult } from 'vue-i18n';
+import { DataTableHeader } from 'vuetify';
+import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { DataTableHeader } from 'vuetify';
 
 export default Vue.extend({
   name: 'FinancialAssistanceTablesTable',

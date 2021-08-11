@@ -24,11 +24,11 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import { VForm } from '@/types';
 import { PersonalInformation as LibPersonalInformation } from '@crctech/registration-lib';
 import { RcDialog } from '@crctech/component-library';
 import { IContactInformation, IMember } from '@crctech/registration-lib/src/entities/household-create';
 import { TranslateResult } from 'vue-i18n';
+import { VForm } from '@/types';
 
 export default Vue.extend({
   name: 'PrimaryMemberDialog',

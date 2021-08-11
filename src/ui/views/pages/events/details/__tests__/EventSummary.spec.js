@@ -1,3 +1,4 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import {
   EEventStatus, mockEventEntity, mockCombinedEvent, EventEntity,
@@ -5,7 +6,6 @@ import {
 
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import _cloneDeep from 'lodash/cloneDeep';
 import { EEventSummarySections } from '@/types';
 import helpers from '@/ui/helpers';
 import { mockUserStateLevel } from '@/test/helpers';

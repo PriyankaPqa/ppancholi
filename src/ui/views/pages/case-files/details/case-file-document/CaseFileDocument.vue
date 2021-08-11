@@ -74,10 +74,10 @@
 import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
-import moment from '@/ui/plugins/moment';
 import {
   RcDataTable,
 } from '@crctech/component-library';
+import moment from '@/ui/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
 import { IAzureSearchParams } from '@/types';

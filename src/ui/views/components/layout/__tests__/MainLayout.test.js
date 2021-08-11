@@ -1,5 +1,5 @@
-import { createLocalVue, mount } from '@/test/testSetup';
 import { RcRouterViewTransition } from '@crctech/component-library';
+import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '../MainLayout.vue';
 import AppHeader from '../AppHeader.vue';
 import LeftMenu from '../LeftMenu.vue';

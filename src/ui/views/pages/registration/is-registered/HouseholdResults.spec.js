@@ -1,4 +1,5 @@
 import Vuetify from 'vuetify';
+import { mockCombinedHouseholds } from '@crctech/registration-lib/src/entities/household';
 import {
   createLocalVue,
   shallowMount,
@@ -7,7 +8,6 @@ import {
 import { mockStorage } from '@/store/storage';
 
 import Component from '@/ui/views/pages/registration/is-registered/HouseholdResults.vue';
-import { mockCombinedHouseholds } from '@crctech/registration-lib/src/entities/household';
 
 import { tabs } from '@/store/modules/registration/tabs';
 

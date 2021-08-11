@@ -1,8 +1,8 @@
+import { en, fr } from '@crctech/component-library/src/components/atoms/RcCountrySelect/countries';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 import moment from '@/ui/plugins/moment';
-import { en, fr } from '@crctech/component-library/src/components/atoms/RcCountrySelect/countries';
 
 export default {
   // Method to format the backend error messages and display in a toast.

@@ -1,13 +1,13 @@
 import _cloneDeep from 'lodash/cloneDeep';
+import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
+import { ECanadaProvinces } from '@crctech/registration-lib/src/types';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseFile } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import { mockUserStateLevel } from '@/test/helpers';
 
-import { ECanadaProvinces } from '@crctech/registration-lib/src/types';
 import Component from '../CaseFileDetails.vue';
 
 const localVue = createLocalVue();

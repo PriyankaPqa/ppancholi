@@ -60,12 +60,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent, RcPageLoading, RcConfirmationDialog } from '@crctech/component-library';
-import { FilterKey } from '@/entities/user-account';
-import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { ICaseNoteCombined } from '@/entities/case-note';
 import _orderBy from 'lodash/orderBy';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
+import { FilterKey } from '@/entities/user-account';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { ICaseNoteCombined } from '@/entities/case-note';
 import { ConfirmationDialog } from '@/types';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import CaseNoteForm from './components/CaseNoteForm.vue';

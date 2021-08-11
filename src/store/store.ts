@@ -1,8 +1,12 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import { i18n } from '@/ui/plugins';
 import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
 import { ERegistrationMode } from '@crctech/registration-lib/src/types';
+import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
+import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
+import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
+import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
+import { i18n } from '@/ui/plugins';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@/services/optionItems/optionItems';
@@ -21,11 +25,6 @@ import { CaseFileEntityModule } from '@/store/modules/case-file/caseFileEntity';
 import { CaseFileMetadataModule } from '@/store/modules/case-file/caseFileMetadata';
 import { CaseFilesService } from '@/services/case-files/entity';
 import { CaseFilesMetadataService } from '@/services/case-files/metadata';
-
-import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
-import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
-import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
-import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
 
 import { CaseNoteEntityModule } from '@/store/modules/case-note/caseNoteEntity';
 import { CaseNoteMetadataModule } from '@/store/modules/case-note/caseNoteMetadata';

@@ -1,10 +1,10 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
-import household from '@/ui/mixins/household';
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household/household.mocks';
 import { mockMemberData } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { mockIndigenousCommunitiesGetData, mockGenders } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
 import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
+import household from '@/ui/mixins/household';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 const Component = {
   render() {},

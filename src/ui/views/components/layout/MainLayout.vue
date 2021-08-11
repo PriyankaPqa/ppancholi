@@ -12,8 +12,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { INavigationTab } from '@/types';
 import { RcRouterViewTransition } from '@crctech/component-library';
+import { INavigationTab } from '@/types';
 
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import LeftMenu from '@/ui/views/components/layout/LeftMenu.vue';

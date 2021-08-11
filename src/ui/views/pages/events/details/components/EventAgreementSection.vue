@@ -84,9 +84,9 @@
 
 <script lang='ts'>
 import Vue from 'vue';
+import { RcConfirmationDialog } from '@crctech/component-library';
 import helpers from '@/ui/helpers';
 import { IEventAgreement } from '@/entities/event';
-import { RcConfirmationDialog } from '@crctech/component-library';
 import { IOptionItemData } from '@/entities/optionItem';
 import EventSummarySectionInfoDialog from './EventSummarySectionInfoDialog.vue';
 

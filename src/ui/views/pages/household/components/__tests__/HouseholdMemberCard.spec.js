@@ -1,7 +1,7 @@
-import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockMemberData } from '@crctech/registration-lib/src/entities/value-objects/member';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@crctech/registration-lib/src/entities/household-create';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import Component from '../HouseholdMemberCard.vue';
 

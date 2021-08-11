@@ -1,5 +1,5 @@
-import { ITeamEntity, ITeamMember } from '@/entities/team';
 import { ActionTree, ActionContext } from 'vuex';
+import { ITeamEntity, ITeamMember } from '@/entities/team';
 import { TeamsService } from '@/services/teams/entity';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';

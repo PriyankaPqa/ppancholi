@@ -131,11 +131,11 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import moment from '@/ui/plugins/moment';
 import _orderBy from 'lodash/orderBy';
+import { RcPhoneDisplay } from '@crctech/component-library';
+import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers';
 
-import { RcPhoneDisplay } from '@crctech/component-library';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import {
   EEventStatus, EventEntity, IEventCombined, IEventMetadata,

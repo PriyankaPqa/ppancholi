@@ -1,10 +1,10 @@
+import { RcPageContent, RcConfirmationDialog } from '@crctech/component-library';
 import {
   createLocalVue,
   mount,
   shallowMount,
 } from '@/test/testSetup';
 
-import { RcPageContent, RcConfirmationDialog } from '@crctech/component-library';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { MassActionEntity } from '@/entities/mass-action';
 import Component from './MassActionBaseCreate.vue';

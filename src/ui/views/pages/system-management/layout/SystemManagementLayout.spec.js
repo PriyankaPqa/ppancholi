@@ -1,5 +1,5 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { RcRouterViewTransition } from '@crctech/component-library';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import routes from '@/constants/routes';
 import Component from './SystemManagementLayout.vue';

@@ -1,5 +1,7 @@
 import { Store } from 'vuex';
 import { IState as IRegistrationState } from '@crctech/registration-lib/src/store/modules/registration/registration.types';
+import { IHouseholdEntityState } from '@crctech/registration-lib/src/store/modules/household/householdEntity.types';
+import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { IProvider, IProviderMock } from '@/services/provider';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IState as IDashboardState } from '@/store/modules/dashboard/dashboard.types';
@@ -25,9 +27,6 @@ import { ICaseFileReferralMetadata } from '@/entities/case-file-referral';
 
 import { ICaseFileDocumentEntityState } from '@/store/modules/case-file-document/caseFileDocumentEntity.types';
 import { ICaseFileDocumentMetadata } from '@/entities/case-file-document';
-
-import { IHouseholdEntityState } from '@crctech/registration-lib/src/store/modules/household/householdEntity.types';
-import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 
 import { IFinancialAssistanceEntityState } from '@/store/modules/financial-assistance/financialAssistanceEntity.types';
 import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistance';

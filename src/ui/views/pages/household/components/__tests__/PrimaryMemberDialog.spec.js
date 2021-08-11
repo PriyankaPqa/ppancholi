@@ -1,6 +1,6 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { mockHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
 

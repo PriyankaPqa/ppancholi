@@ -105,8 +105,8 @@
 </template>
 
 <script lang="ts">
-import { IUser, NO_ROLE } from '@/entities/user';
 import Vue from 'vue';
+import { IUser, NO_ROLE } from '@/entities/user';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

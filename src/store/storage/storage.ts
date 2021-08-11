@@ -1,6 +1,6 @@
-import * as vuexModule from '@/constants/vuex-modules';
 import { makeStorage as makeRegistrationStorage } from '@crctech/registration-lib/src/store/storage/registration';
 import { HouseholdStorage } from '@crctech/registration-lib/src/store/storage/household';
+import * as vuexModule from '@/constants/vuex-modules';
 import { UserAccountStorage } from '@/store/storage/user-account/storage';
 import { CaseFileStorage } from '@/store/storage/case-file/storage';
 import { EventStorage } from '@/store/storage/event/storage';

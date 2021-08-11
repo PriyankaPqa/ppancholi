@@ -1,9 +1,9 @@
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
-import helpers from '@/ui/helpers';
 import _sortBy from 'lodash/sortBy';
 import _findIndex from 'lodash/findIndex';
+import helpers from '@/ui/helpers';
 import { IRootState } from '@/store/store.types';
 import { IMultilingual } from '@/types';
 import {

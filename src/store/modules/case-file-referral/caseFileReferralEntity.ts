@@ -1,6 +1,6 @@
-import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
 import { ActionContext, ActionTree } from 'vuex';
 import _cloneDeep from 'lodash/cloneDeep';
+import { CaseFileReferralsService } from '@/services/case-file-referrals/entity';
 import {
   EOptionLists,
   IOptionItem,

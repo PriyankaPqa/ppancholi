@@ -1,6 +1,6 @@
+import { RcDataTable } from '@crctech/component-library';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
-import { RcDataTable } from '@crctech/component-library';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedFinancialAssistances } from '@/entities/financial-assistance';
 import routes from '@/constants/routes';

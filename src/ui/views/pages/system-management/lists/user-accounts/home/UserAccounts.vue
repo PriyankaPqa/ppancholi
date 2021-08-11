@@ -128,15 +128,15 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import routes from '@/constants/routes';
 import {
   RcPageContent,
   VSelectWithValidation,
   RcConfirmationDialog,
 } from '@crctech/component-library';
-import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/AddEmisUser.vue';
 import { DataTableHeader } from 'vuetify';
 import { TranslateResult } from 'vue-i18n';
+import { isEmpty } from 'lodash';
+import _cloneDeep from 'lodash/cloneDeep';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
   EOptionListItemStatus,
@@ -145,8 +145,8 @@ import {
   IOptionSubItem,
 } from '@/entities/optionItem';
 
-import { isEmpty } from 'lodash';
-import _cloneDeep from 'lodash/cloneDeep';
+import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/AddEmisUser.vue';
+import routes from '@/constants/routes';
 import { IUserAccountCombined, IUserAccountEntity } from '@/entities/user-account';
 import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';

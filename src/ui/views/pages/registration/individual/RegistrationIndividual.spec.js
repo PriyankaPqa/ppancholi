@@ -1,9 +1,9 @@
+import { mockHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
 import { tabs } from '@/store/modules/registration/tabs';
-import { mockHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import Component from './RegistrationIndividual.vue';
 
 const localVue = createLocalVue();

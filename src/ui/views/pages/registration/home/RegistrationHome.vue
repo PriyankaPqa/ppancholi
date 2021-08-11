@@ -24,12 +24,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { EEventStatus, IEventMainInfo } from '@/entities/event';
 
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
-import routes from '@/constants/routes';
 import { IShelterLocationData } from '@crctech/registration-lib/src/entities/household-create';
 import { IEventData as IRegistrationEventData } from '@crctech/registration-lib/src/entities/event';
+import routes from '@/constants/routes';
+import { EEventStatus, IEventMainInfo } from '@/entities/event';
 import { tabs } from '@/store/modules/registration/tabs';
 
 export default Vue.extend({

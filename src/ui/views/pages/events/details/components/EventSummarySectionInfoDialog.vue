@@ -60,8 +60,8 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { RcDialog } from '@crctech/component-library';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 export default Vue.extend({
   name: 'EventSummarySectionInfoDialog',

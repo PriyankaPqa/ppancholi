@@ -1,8 +1,8 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { IEntity, IEntityCombined, Status } from '@/entities/base';
 import { IStore, IState } from '@/store';
 import { IAzureSearchParams } from '@/types';
 import { IAzureTableSearchResults, ICombinedIndex } from '@/types/interfaces/IAzureSearchResult';
-import _cloneDeep from 'lodash/cloneDeep';
 import { IBaseStorage } from './base.types';
 
 export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> implements IBaseStorage<TEntity, TMetadata, IdParams> {

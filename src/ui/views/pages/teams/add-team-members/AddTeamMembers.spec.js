@@ -1,7 +1,7 @@
+import { RcDialog } from '@crctech/component-library';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockTeamMembersData } from '@/entities/team';
-import { RcDialog } from '@crctech/component-library';
 import Component from './AddTeamMembers.vue';
 
 const localVue = createLocalVue();

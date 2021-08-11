@@ -24,14 +24,14 @@
 
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
-import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { RcPageContent } from '@crctech/component-library';
+import mixins from 'vue-typed-mixins';
+import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import routes from '@/constants/routes';
 import { EventEntity } from '@/entities/event';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import mixins from 'vue-typed-mixins';
 import EventForm from './EventForm.vue';
 
 export default mixins(handleUniqueNameSubmitError).extend({

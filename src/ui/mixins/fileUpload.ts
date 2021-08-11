@@ -1,6 +1,6 @@
 import Vue from 'vue';
-import { VForm } from '@/types';
 import axios, { CancelTokenStatic, CancelTokenSource } from 'axios';
+import { VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IRestResponse } from '@/services/httpClient';
 import { IMassActionEntityData } from '@/entities/mass-action';

@@ -3,11 +3,15 @@ import deepmerge from 'deepmerge';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import VueI18n from 'vue-i18n';
+import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
+import { ERegistrationMode } from '@crctech/registration-lib/src/types';
+import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
+import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
+import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
+import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
 import { IRootState, IStore } from '@/store/store.types';
 import { mockProvider } from '@/services/provider';
 
-import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
-import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@/services/optionItems/optionItems';
@@ -26,11 +30,6 @@ import { CaseFileEntityModule } from '@/store/modules/case-file/caseFileEntity';
 import { CaseFileMetadataModule } from '@/store/modules/case-file/caseFileMetadata';
 import { CaseFilesService } from '@/services/case-files/entity';
 import { CaseFilesMetadataService } from '@/services/case-files/metadata';
-
-import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
-import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
-import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
-import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
 
 import { CaseNoteEntityModule } from '@/store/modules/case-note/caseNoteEntity';
 import { CaseNoteMetadataModule } from '@/store/modules/case-note/caseNoteMetadata';

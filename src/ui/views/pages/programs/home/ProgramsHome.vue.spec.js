@@ -1,5 +1,5 @@
-import { createLocalVue, mount } from '@/test/testSetup';
 import { RcDataTable } from '@crctech/component-library';
+import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { mockProgramsSearchData, Program } from '@/entities/program';

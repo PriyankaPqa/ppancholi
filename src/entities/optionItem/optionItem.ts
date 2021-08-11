@@ -1,5 +1,5 @@
-import { IMultilingual } from '@/types';
 import _sortBy from 'lodash/sortBy';
+import { IMultilingual } from '@/types';
 import {
   IOptionItem, IOptionItemData, EOptionListItemStatus, IOptionSubItem,
 } from './optionItem.types';

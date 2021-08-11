@@ -9,9 +9,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ReviewRegistration as LibReviewRegistration } from '@crctech/registration-lib';
+import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
 import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
-import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
 
 export default Vue.extend({
   name: 'ReviewRegistration',

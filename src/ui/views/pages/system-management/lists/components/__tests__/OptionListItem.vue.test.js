@@ -243,8 +243,6 @@ describe('OptionListItem.vue', () => {
 
     expect(dialog.exists()).toBe(true);
 
-    expect(dialog.element).toBeVisible();
-
     await dialog.find('[data-test="dialog-submit-action"]').trigger('click');
 
     expect(wrapper.vm.confirmChangeStatus).toHaveBeenCalledTimes(1);

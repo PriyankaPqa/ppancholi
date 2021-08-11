@@ -1,7 +1,7 @@
+import { ActionContext, ActionTree } from 'vuex';
 import {
   IFilter, IUserAccountEntity, FilterKey, UserAccountEntity,
 } from '@/entities/user-account';
-import { ActionContext, ActionTree } from 'vuex';
 import { IAddRoleToUserRequest, IEditFilterRequest, UserAccountsService } from '@/services/user-accounts/entity';
 import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
 import { BaseModule } from '../base';

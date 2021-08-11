@@ -8,6 +8,7 @@ import '@/ui/styles/main.scss';
 
 // Import i18n related files
 
+import VueAxe from 'vue-axe';
 import {
   i18n, Trans,
 } from '@/ui/plugins';
@@ -25,8 +26,6 @@ import prepareSignalR from '@/ui/plugins/signalR';
 
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
-
-import VueAxe from 'vue-axe';
 
 import store from './store/store';
 

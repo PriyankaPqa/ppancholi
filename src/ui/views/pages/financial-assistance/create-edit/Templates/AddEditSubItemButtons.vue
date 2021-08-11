@@ -21,9 +21,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
+import { cloneDeep } from 'lodash';
 import { VForm } from '@/types';
 import { IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
-import { cloneDeep } from 'lodash';
 
 export default Vue.extend({
   name: 'AddEditSubItemButtons',

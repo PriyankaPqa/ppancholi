@@ -1,4 +1,5 @@
 import { ActionContext, ActionTree } from 'vuex';
+import { cloneDeep } from 'lodash';
 import { IRootState } from '@/store/store.types';
 import utils from '@/entities/utils';
 import { Status } from '@/entities/base';
@@ -18,7 +19,6 @@ import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
 import { IProgram } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
-import { cloneDeep } from 'lodash';
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
 import { BaseModule } from '../base';
 import { IState } from '../base/base.types';

@@ -5,8 +5,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import metadata from '@/ui/mixins/metadata';
 import { RcRouterViewTransition } from '@crctech/component-library';
+import metadata from '@/ui/mixins/metadata';
 
 export default Vue.extend({
   name: 'ApprovalLayout',

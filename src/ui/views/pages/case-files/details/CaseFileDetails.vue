@@ -137,11 +137,11 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { IHouseholdCombined, IMemberMetadata } from '@crctech/registration-lib/src/entities/household';
 import { ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { ECanadaProvinces, INavigationTab } from '@/types';
 import routes from '@/constants/routes';
-import { IHouseholdCombined, IMemberMetadata } from '@crctech/registration-lib/src/entities/household';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';

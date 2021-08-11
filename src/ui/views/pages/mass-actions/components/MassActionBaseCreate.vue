@@ -61,9 +61,9 @@
 import {
   VTextFieldWithValidation, VTextAreaWithValidation, RcPageContent, RcConfirmationDialog, RcDialog,
 } from '@crctech/component-library';
+import mixins from 'vue-typed-mixins';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { ConfirmationDialog, VForm } from '@/types';
-import mixins from 'vue-typed-mixins';
 import fileUpload from '@/ui/mixins/fileUpload';
 import { MassActionEntity } from '@/entities/mass-action';
 

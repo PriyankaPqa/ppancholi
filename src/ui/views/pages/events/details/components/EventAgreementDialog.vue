@@ -99,7 +99,6 @@
 import mixins from 'vue-typed-mixins';
 import _cloneDeep from 'lodash/cloneDeep';
 import { TranslateResult } from 'vue-i18n';
-import moment from '@/ui/plugins/moment';
 import {
   RcDialog,
   VTextFieldWithValidation,
@@ -107,6 +106,7 @@ import {
   VTextAreaWithValidation,
   VSelectWithValidation,
 } from '@crctech/component-library';
+import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers';
 
 import { EEventSummarySections, VForm } from '@/types';

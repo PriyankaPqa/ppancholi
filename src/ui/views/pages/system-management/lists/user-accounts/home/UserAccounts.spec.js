@@ -1,9 +1,9 @@
+import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { AccountStatus, mockCombinedUserAccounts } from '@/entities/user-account';
-import _cloneDeep from 'lodash/cloneDeep';
 import { Status } from '@/entities/base';
 import Component from './UserAccounts.vue';
 

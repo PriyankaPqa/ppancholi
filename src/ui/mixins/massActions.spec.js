@@ -1,6 +1,6 @@
+import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import massActions from '@/ui/mixins/massActions';
-import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import routes from '@/constants/routes';
 
 const Component = {

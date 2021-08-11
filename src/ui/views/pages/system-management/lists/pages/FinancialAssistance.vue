@@ -11,8 +11,8 @@
 </template>
 
 <script lang="ts">
-import { EOptionLists } from '@/entities/optionItem';
 import Vue from 'vue';
+import { EOptionLists } from '@/entities/optionItem';
 import OptionList from '../components/OptionList.vue';
 
 export default Vue.extend({

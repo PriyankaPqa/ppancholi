@@ -4,8 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import axios, {
   AxiosError, AxiosInstance, AxiosRequestConfig, AxiosResponse,
 } from 'axios';
-import buildQuery from '@/services/odata-query';
 import { camelKeys } from 'js-convert-case';
+import buildQuery from '@/services/odata-query';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IAzureSearchParams } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';

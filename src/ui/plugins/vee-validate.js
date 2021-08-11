@@ -3,7 +3,6 @@
 import {
   ValidationProvider, extend, ValidationObserver, configure,
 } from 'vee-validate';
-import moment from '@/ui/plugins/moment';
 import PhoneNumber from 'awesome-phonenumber';
 import {
   // eslint-disable-next-line camelcase
@@ -12,6 +11,7 @@ import {
 
 import helpers from '@crctech/registration-lib/src/ui/helpers';
 import Vue from 'vue';
+import moment from '@/ui/plugins/moment';
 
 import { i18n } from './i18n';
 

@@ -1,6 +1,6 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import _set from 'lodash/set';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockUserAccountEntity, mockUserFilters, FilterKey } from '@/entities/user-account';
 import { mockStorage } from '@/store/storage';
 import Component from './FilterToolbar.vue';

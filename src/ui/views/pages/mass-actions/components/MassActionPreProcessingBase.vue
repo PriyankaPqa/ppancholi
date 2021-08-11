@@ -30,8 +30,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined } from '@/entities/mass-action';
 import moment from 'moment';
+import { IMassActionCombined } from '@/entities/mass-action';
 
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 

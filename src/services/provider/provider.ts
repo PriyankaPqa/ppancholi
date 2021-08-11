@@ -1,6 +1,6 @@
-import { httpClient } from '@/services/httpClient';
 import { PublicService } from '@crctech/registration-lib/src/services/public';
 import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
+import { httpClient } from '@/services/httpClient';
 import { IProvider } from './provider.types';
 import { CaseFilesService } from '../case-files/entity';
 import { AppUsersService } from '../app-users';

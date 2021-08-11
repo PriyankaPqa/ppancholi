@@ -1,8 +1,8 @@
+import { RcDialog, RcConfirmationDialog } from '@crctech/component-library';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFile, mockCaseFileEntity } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { RcDialog, RcConfirmationDialog } from '@crctech/component-library';
 import {
   mockOptionItemData,
   EOptionListItemStatus,

@@ -26,12 +26,12 @@
 </template>
 
 <script lang="ts">
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { VTextFieldWithValidation, VTextAreaWithValidation } from '@crctech/component-library';
+import Vue from 'vue';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 
 import routes from '@/constants/routes';
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
-import Vue from 'vue';
 import { IMassActionEntity } from '@/entities/mass-action';
 
 export default Vue.extend({

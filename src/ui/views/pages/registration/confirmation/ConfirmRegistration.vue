@@ -5,9 +5,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { ConfirmRegistration as LibConfirmRegistration } from '@crctech/registration-lib';
+import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types';
 import { i18n } from '@/ui/plugins';
 import { tabs } from '@/store/modules/registration/tabs';
-import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types';
 
 export default Vue.extend({
   name: 'ConfirmRegistration',

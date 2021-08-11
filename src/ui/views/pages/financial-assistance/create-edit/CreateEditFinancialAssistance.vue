@@ -190,11 +190,11 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { NavigationGuardNext, Route } from 'vue-router';
 import _sortBy from 'lodash/sortBy';
-import helpers from '@/ui/helpers';
-import routes from '@/constants/routes';
 import {
   RcPageContent, RcTabs, RcTab, RcDialog, VTextFieldWithValidation, VAutocompleteWithValidation,
 } from '@crctech/component-library';
+import helpers from '@/ui/helpers';
+import routes from '@/constants/routes';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem } from '@/entities/financial-assistance';

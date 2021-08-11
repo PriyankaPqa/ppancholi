@@ -78,6 +78,12 @@
 
 <script lang="ts">
 import { RcPageContent, RcConfirmationDialog } from '@crctech/component-library';
+import mixins from 'vue-typed-mixins';
+import individual from '@crctech/registration-lib/src/ui/mixins/individual';
+import { Route, NavigationGuardNext } from 'vue-router';
+import { TranslateResult } from 'vue-i18n';
+import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { IEvent } from '@crctech/registration-lib/src/entities/event';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';
@@ -88,16 +94,10 @@ import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import AdditionalMembers from '@/ui/views/pages/registration/additional-members/AdditionalMembers.vue';
 import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegistration.vue';
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
-import mixins from 'vue-typed-mixins';
-import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { tabs } from '@/store/modules/registration/tabs';
 import store from '@/store/store';
-import { Route, NavigationGuardNext } from 'vue-router';
-import { TranslateResult } from 'vue-i18n';
 import { ConfirmationDialog, VForm } from '@/types';
 import helpers from '@/ui/helpers';
-import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
-import { IEvent } from '@crctech/registration-lib/src/entities/event';
 
 export default mixins(individual).extend({
   name: 'Individual',

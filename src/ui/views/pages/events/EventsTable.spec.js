@@ -1,9 +1,9 @@
+import { RcDataTable } from '@crctech/component-library';
+import moment from 'moment';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
-import { RcDataTable } from '@crctech/component-library';
 import { mockStorage } from '@/store/storage';
-import moment from 'moment';
 import {
   mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata,
 } from '@/entities/event';

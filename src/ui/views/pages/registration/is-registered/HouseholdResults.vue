@@ -135,8 +135,8 @@ import moment from 'moment';
 import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
 import { IPhoneNumber } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
 import { RcDataTable } from '@crctech/component-library';
-import { tabs } from '@/store/modules/registration/tabs';
 import mixins from 'vue-typed-mixins';
+import { tabs } from '@/store/modules/registration/tabs';
 import household from '@/ui/mixins/household';
 
 export interface IMember {

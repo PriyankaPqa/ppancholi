@@ -72,8 +72,9 @@ import { TranslateResult } from 'vue-i18n';
 import {
   RcDataTable, RcAddButtonWithMenu, IFilterSettings,
 } from '@crctech/component-library';
-import routes from '@/constants/routes';
 import { DataTableHeader } from 'vuetify';
+import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import routes from '@/constants/routes';
 import {
   TeamType, ITeamCombined,
 } from '@/entities/team';
@@ -82,7 +83,6 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import helpers from '@/ui/helpers';
 import { Status } from '@/entities/base';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';

@@ -13,11 +13,11 @@
 
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
-import metadata from '@/ui/mixins/metadata';
 import { RcRouterViewTransition } from '@crctech/component-library';
+import mixins from 'vue-typed-mixins';
+import metadata from '@/ui/mixins/metadata';
 import routes from '@/constants/routes';
 import { PageTemplate } from '@/ui/views/components/layout';
-import mixins from 'vue-typed-mixins';
 import massActions from '@/ui/mixins/massActions';
 import { INavigationTabGroup } from '@/types/interfaces/ui/INavigationTab';
 

@@ -165,24 +165,24 @@ import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
-  TeamType, ITeamEvent, TeamEntity, ITeamEntity,
-} from '@/entities/team';
-import { EEventStatus, IEventCombined, IEventEntity } from '@/entities/event';
-import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
-import {
   RcConfirmationDialog,
   RcDialog,
   RcPageContent,
   VAutocompleteWithValidation,
   VTextFieldWithValidation,
 } from '@crctech/component-library';
+import _isEqual from 'lodash/isEqual';
+import _sortBy from 'lodash/sortBy';
+import {
+  TeamType, ITeamEvent, TeamEntity, ITeamEntity,
+} from '@/entities/team';
+import { EEventStatus, IEventCombined, IEventEntity } from '@/entities/event';
+import TeamMembersTable from '@/ui/views/pages/teams/components/TeamMembersTable.vue';
 import routes from '@/constants/routes';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm } from '@/types';
 import { IUserAccountCombined } from '@/entities/user-account';
-import _isEqual from 'lodash/isEqual';
-import _sortBy from 'lodash/sortBy';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { Status } from '@/entities/base';
 

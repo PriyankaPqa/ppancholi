@@ -1,7 +1,7 @@
 import _sortBy from 'lodash/sortBy';
 
-import { CaseNotesService } from '@/services/case-notes/entity';
 import { ActionContext, ActionTree } from 'vuex';
+import { CaseNotesService } from '@/services/case-notes/entity';
 import {
   EOptionListItemStatus, OptionItem, IOptionItem, EOptionLists,
 } from '@/entities/optionItem';

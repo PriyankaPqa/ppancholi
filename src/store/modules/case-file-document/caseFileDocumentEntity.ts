@@ -1,6 +1,6 @@
-import { CaseFileDocumentsService } from '@/services/case-file-documents/entity';
 import { ActionContext, ActionTree } from 'vuex';
 import _cloneDeep from 'lodash/cloneDeep';
+import { CaseFileDocumentsService } from '@/services/case-file-documents/entity';
 import {
   EOptionLists,
   IOptionItem,

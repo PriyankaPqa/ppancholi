@@ -114,6 +114,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
+import { TranslateResult } from 'vue-i18n';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
@@ -127,7 +128,6 @@ import {
 } from '@/entities/event';
 import { EEventSummarySections } from '@/types';
 import { IOptionItem } from '@/entities/optionItem';
-import { TranslateResult } from 'vue-i18n';
 import EventSummaryLink from './components/EventSummaryLink.vue';
 import EventSummarySectionTitle from './components/EventSummarySectionTitle.vue';
 import EventSummarySectionBody from './components/EventSummarySectionBody.vue';

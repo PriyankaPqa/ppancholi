@@ -1,9 +1,9 @@
-import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   mockGenders, mockHouseholdCreate, mockPreferredLanguages, mockPrimarySpokenLanguages,
 } from '@crctech/registration-lib/src/entities/household-create';
 import { mockCombinedHousehold, mockHouseholdEntity, mockHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { ECanadaProvinces } from '@/types';
 

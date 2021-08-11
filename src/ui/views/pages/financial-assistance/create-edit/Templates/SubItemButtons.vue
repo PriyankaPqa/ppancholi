@@ -32,8 +32,8 @@
 </template>
 
 <script lang="ts">
-import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import Vue from 'vue';
+import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import ConfirmBeforeAction from '../ConfirmBeforeAction.vue';
 
 export default Vue.extend({

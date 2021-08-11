@@ -1,3 +1,4 @@
+import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
@@ -6,7 +7,6 @@ import { Status } from '@/entities/base';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { mockItems } from '@/entities/financial-assistance';
 import { EProgramStatus, mockProgramsSearchData, Program } from '@/entities/program';
-import _sortBy from 'lodash/sortBy';
 
 import Component from '../CreateEditFinancialAssistance.vue';
 

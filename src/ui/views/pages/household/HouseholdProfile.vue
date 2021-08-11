@@ -131,15 +131,15 @@
 <script lang="ts">
 
 import moment, { Moment } from 'moment';
-import household from '@/ui/mixins/household';
 import mixins from 'vue-typed-mixins';
 
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
+import { IHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
 import { ECanadaProvinces } from '@/types';
 
-import { IHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
 import { CaseFileStatus, ICaseFileCombined } from '@/entities/case-file';
-import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
+import household from '@/ui/mixins/household';
 import helpers from '@/ui/helpers';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';

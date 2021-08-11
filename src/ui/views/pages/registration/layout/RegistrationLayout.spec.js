@@ -1,5 +1,5 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { RcRouterViewTransition } from '@crctech/component-library';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import Component from './RegistrationLayout.vue';
 
 const localVue = createLocalVue();

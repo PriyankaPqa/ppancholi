@@ -1,5 +1,5 @@
-import { createLocalVue, mount } from '@/test/testSetup';
 import Vuetify from 'vuetify';
+import { createLocalVue, mount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins/i18n';
 import { mockStorage } from '@/store/storage';
 import Component from '../GeneralHelpMenu.vue';

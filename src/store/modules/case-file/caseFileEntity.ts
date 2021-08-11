@@ -1,9 +1,9 @@
+import { ActionContext, ActionTree } from 'vuex';
 import {
   CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
   IImpactStatusValidation,
 } from '@/entities/case-file';
 import { CaseFilesService, ICreateCaseFileRequest } from '@/services/case-files/entity';
-import { ActionContext, ActionTree } from 'vuex';
 import {
   IOptionItem, EOptionLists,
 } from '@/entities/optionItem';
