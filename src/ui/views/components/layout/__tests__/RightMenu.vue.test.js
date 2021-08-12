@@ -30,6 +30,18 @@ describe('RightMenu.vue', () => {
         },
       },
     });
+
+    wrapper.setData({
+      userAccount: {
+        metadata: {
+          roleName: {
+            translation: {
+              en: 'RoleName',
+            },
+          },
+        },
+      },
+    });
   });
 
   afterEach(() => {
@@ -57,9 +69,10 @@ describe('RightMenu.vue', () => {
       });
 
       test('the role is displayed correctly', async () => {
-        const role = wrapper.find('[data-test="rightMenu__role"]');
+        const element = wrapper.find('[data-test="rightMenu__role"]');
 
-        expect(role.text()).toBe('user.role.level1');
+        expect(element.exists()).toBeTruthy();
+        expect(element.text()).toEqual('RoleName');
       });
 
       test('no role is displayed correctly ', async () => {

@@ -50,7 +50,7 @@
           {{ $t('rightmenu.noRoleAssigned') }}
         </template>
         <template v-else>
-          {{ $t(`user.role.${user.currentRole()}`) }}
+          {{ userAccount ? $m(userAccount.metadata.roleName) : '' }}
         </template>
       </div>
     </div>
@@ -115,7 +115,7 @@ export default Vue.extend({
   data() {
     return {
       NO_ROLE,
-
+      userAccount: null,
     };
   },
 
@@ -129,6 +129,10 @@ export default Vue.extend({
     isDev() {
       return process.env.NODE_ENV === 'development';
     },
+  },
+
+  async mounted() {
+    this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId());
   },
 
   methods: {
