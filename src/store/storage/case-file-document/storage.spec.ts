@@ -63,5 +63,9 @@ describe('>>> Case File Document Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateDocument`, { mydoc: 'mm' });
     });
 
+    it('should proxy downloadDocumentAsUrl', () => {
+      storage.actions.downloadDocumentAsUrl({ mydoc: 'mm' } as any, true);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/downloadDocumentAsUrl`, { item: { mydoc: 'mm' }, saveDownloadedFile: true });
+    });
   });
 });

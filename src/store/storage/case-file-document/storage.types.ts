@@ -17,11 +17,13 @@ export interface IGettersMock extends IBaseGettersMock<ICaseFileDocumentEntity, 
 export interface IActions extends IBaseActions<ICaseFileDocumentEntity, ICaseFileDocumentMetadata, {id: uuid, caseFileId: uuid}> {
   fetchCategories(): Promise<IOptionItem[]>;
   updateDocument(payload: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity>;
+  downloadDocumentAsUrl(item: ICaseFileDocumentEntity, saveDownloadedFile: boolean): Promise<string>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
   fetchCategories: jest.Mock<IOptionItemData[]>;
   updateDocument: jest.Mock<ICaseFileDocumentEntity>;
+  downloadDocumentAsUrl: jest.Mock<string>;
 }
 
 export interface IMutations extends IBaseMutations<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {

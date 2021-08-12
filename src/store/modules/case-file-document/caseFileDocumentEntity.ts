@@ -73,5 +73,11 @@ export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentE
       return result;
     },
 
+    downloadDocumentAsUrl: async (context: ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>,
+      payload: { item: ICaseFileDocumentEntity, saveDownloadedFile: boolean }): Promise<string> => {
+      const result = await this.service.downloadDocumentAsUrl(payload.item, payload.saveDownloadedFile);
+      return result;
+    },
+
   }
 }

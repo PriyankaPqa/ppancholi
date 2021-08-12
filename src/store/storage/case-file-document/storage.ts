@@ -33,6 +33,9 @@ export class CaseFileDocumentStorage
     // eslint-disable-next-line
     updateDocument: (payload: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity> => this.store.dispatch(`${this.entityModuleName}/updateDocument`, payload),
 
+    // eslint-disable-next-line
+    downloadDocumentAsUrl: (item: ICaseFileDocumentEntity, saveDownloadedFile: boolean): Promise<string> => this.store.dispatch(`${this.entityModuleName}/downloadDocumentAsUrl`, { item, saveDownloadedFile }),
+
   }
 
   private mutations = {

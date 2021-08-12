@@ -24,11 +24,12 @@ describe('CaseFileDocument.vue', () => {
       actions: {
         fetchCategories: jest.fn(() => options),
         fetchAll: jest.fn(() => [document]),
+        downloadDocumentAsUrl: jest.fn(() => 'url'),
       },
     },
   };
 
-  const mountWrapper = (canEdit = true, canAdd = true, canDelete = true) => {
+  const mountWrapper = (canEdit = true, canAdd = true, canDelete = true, canDownload = true) => {
     const mockDocumentMapped = {
       name: document.entity.name,
       id: document.entity.id,
@@ -44,6 +45,7 @@ describe('CaseFileDocument.vue', () => {
         canEdit() { return canEdit; },
         canAdd() { return canAdd; },
         canDelete() { return canDelete; },
+        canDownload() { return canDownload; },
         caseFileDocuments() {
           return [mockDocumentMapped];
         },
@@ -116,6 +118,37 @@ describe('CaseFileDocument.vue', () => {
         });
 
         expect(wrapper.vm.canAdd).toBeTruthy();
+      });
+
+      it('returns true if user does not have level but hasRole is called with contributor3', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => false,
+            $hasRole: (r) => r === 'contributor3',
+          },
+        });
+
+        expect(wrapper.vm.canAdd).toBeTruthy();
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => false,
+            $hasRole: (r) => r !== 'contributor3',
+          },
+        });
+
+        expect(wrapper.vm.canAdd).toBeFalsy();
       });
 
       it('returns false if user does not have level 1', () => {
@@ -197,6 +230,86 @@ describe('CaseFileDocument.vue', () => {
       });
     });
 
+    describe('canDownload', () => {
+      it('returns true if user has level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          store: {
+            ...mockUserStateLevel(1),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.canDownload).toBeTruthy();
+      });
+
+      it('returns true if user does not have level but hasRole is called with contributor3', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => false,
+            $hasRole: (r) => r === 'contributor3',
+          },
+        });
+
+        expect(wrapper.vm.canDownload).toBeTruthy();
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => false,
+            $hasRole: (r) => r !== 'contributor3',
+          },
+        });
+
+        expect(wrapper.vm.canDownload).toBeFalsy();
+      });
+
+      it('returns false if user does not have level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          store: {
+            modules: {
+              user: {
+                state:
+                  {
+                    oid: '7',
+                    email: 'test@test.ca',
+                    family_name: 'Joe',
+                    given_name: 'Pink',
+                    roles: ['contributorIM'],
+                  },
+              },
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.canDownload).toBeFalsy();
+      });
+    });
+
     describe('canDelete', () => {
       it('returns true if user has level 6', () => {
         wrapper = shallowMount(Component, {
@@ -264,6 +377,12 @@ describe('CaseFileDocument.vue', () => {
             text: '',
             sortable: false,
             value: wrapper.vm.customColumns.preview,
+            width: '5%',
+          },
+          {
+            text: '',
+            sortable: false,
+            value: wrapper.vm.customColumns.download,
             width: '5%',
           },
         ]);
@@ -360,6 +479,13 @@ describe('CaseFileDocument.vue', () => {
           },
         ]);
       });
+
+      it('does not include download if the user cannot download', () => {
+        mountWrapper(true, true, true, true);
+        expect(wrapper.vm.headers.map((x) => x.value)).toContain(wrapper.vm.customColumns.download);
+        mountWrapper(true, true, true, false);
+        expect(wrapper.vm.headers.map((x) => x.value)).not.toContain(wrapper.vm.customColumns.download);
+      });
     });
 
     describe('caseFileDocumentsMapped', () => {
@@ -388,6 +514,7 @@ describe('CaseFileDocument.vue', () => {
             created: moment(document.entity.created),
             documentStatus: document.entity.documentStatus,
             documentStatusName: `caseFile.document.status.${document.entity.documentStatus === DocumentStatus.Past ? 'Past' : 'Current'}`,
+            entity: document.entity,
           },
         ]);
       });
@@ -464,6 +591,14 @@ describe('CaseFileDocument.vue', () => {
         wrapper.vm.search(searchParams);
 
         expect(wrapper.vm.filter).toEqual('abcd');
+      });
+    });
+
+    describe('download', () => {
+      it('calls storage on download', () => {
+        mountWrapper(false);
+        wrapper.vm.download(document);
+        expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(document.entity, true);
       });
     });
 

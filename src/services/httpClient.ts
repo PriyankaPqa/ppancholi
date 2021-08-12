@@ -82,6 +82,8 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(response.config)) {
       // Add what you want when request is successful. It is applied globally except when { globalHandler: false }
     }
+    if (response?.headers && response.headers['content-disposition']
+      && response.headers['content-disposition'].toLowerCase().indexOf('attachment') > -1) return response;
     return camelKeys(response, { recursive: true, recursiveInArray: true }) as AxiosResponse<Record<string, unknown>>;
   }
 

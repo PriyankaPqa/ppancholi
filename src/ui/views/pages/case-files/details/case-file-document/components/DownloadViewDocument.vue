@@ -14,9 +14,9 @@
         </template>
         <span>{{ $t('caseFile.document.openDocument') }}</span>
       </v-tooltip>
-      <v-tooltip bottom>
+      <v-tooltip v-if="canDownload" bottom>
         <template #activator="{ on }">
-          <v-btn icon data-test="download-link" v-on="on">
+          <v-btn icon data-test="download-link" v-on="on" @click="download()">
             <v-icon size="24" color="grey darken-2">
               mdi-download
             </v-icon>
@@ -45,7 +45,16 @@ export default Vue.extend({
     },
   },
 
+  computed: {
+    canDownload(): boolean {
+      return this.$hasLevel('level1') || this.$hasRole('contributor3');
+    },
+  },
+
   methods: {
+    download() {
+      this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(this.document, true);
+    },
   },
 });
 </script>

@@ -89,5 +89,14 @@ describe('Case file document entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', { name: 'name2' });
       });
     });
+    
+    describe('downloadDocumentAsUrl', () => {
+      it('should call service downloadDocumentAsUrl', async () => {
+        module.service.downloadDocumentAsUrl = jest.fn();
+        await module.actions.downloadDocumentAsUrl(actionContext, {item: { name: 'name' } as ICaseFileDocumentEntity, saveDownloadedFile: true});
+
+        expect(module.service.downloadDocumentAsUrl).toBeCalledWith({ name: 'name' }, true);
+      });
+    });
   });
 });

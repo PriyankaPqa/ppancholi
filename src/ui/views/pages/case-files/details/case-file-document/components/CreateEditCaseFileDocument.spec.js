@@ -54,7 +54,8 @@ describe('CreateEditDocument', () => {
     mockDocument = new CaseFileDocumentEntity(mockCombinedCaseFileDocument().entity);
   });
 
-  describe('Methods', () => {
+  describe('LifeCycle', () => {
+
     describe('created', () => {
       it('calls and loads from the storage on edit and allows for no metadata', async () => {
         await mountWrapper(true);
@@ -70,6 +71,9 @@ describe('CreateEditDocument', () => {
       });
     });
 
+  });
+
+  describe('Methods', () => {
     describe('back', () => {
       it('returns to the documents home page', async () => {
         await mountWrapper(false);
@@ -236,7 +240,6 @@ describe('CreateEditDocument', () => {
   });
 
   describe('Template', () => {
-    
     describe('Confirmation dialog', () => {
       beforeEach(async () => {
         await mountWrapper(false, false);
@@ -257,7 +260,7 @@ describe('CreateEditDocument', () => {
         expect(wrapper.findComponent(RcConfirmationDialog).props('messages')).toBe('caseFile.document.confirm.preprocessing.message');
       });
     });
-
+    
     describe('Event handlers', () => {
       beforeEach(async () => {
         await mountWrapper(false, true);

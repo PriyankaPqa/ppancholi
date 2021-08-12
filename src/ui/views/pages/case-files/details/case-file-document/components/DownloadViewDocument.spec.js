@@ -3,14 +3,16 @@ import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument } from '@/entities/case-file-document';
 import Component from './DownloadViewDocument.vue';
+import { mockStorage } from '@/store/storage';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
 
 describe('DownloadViewDocument', () => {
   let wrapper;
   let mockDocument;
 
-  const mountWrapper = async (fullMount = false, level = 5, additionalOverwrites = {}) => {
+  const mountWrapper = async (fullMount = false, level = 5, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       propsData: {
@@ -18,8 +20,12 @@ describe('DownloadViewDocument', () => {
       },
       mocks: {
         $hasLevel: (lvl) => {
-          return lvl <= 'level' + level;
+          return lvl <= 'level' + level && level;
         },
+        $hasRole: (r) => {
+          return r === hasRole;
+        },
+        $storage: storage,
       },
       ...additionalOverwrites,
     });
@@ -43,6 +49,36 @@ describe('DownloadViewDocument', () => {
       await mountWrapper(true);
       expect(wrapper.html()).toContain('mdi-file-find');
       expect(wrapper.html()).toContain('mdi-download');
+    });
+    
+    it('calls download when the download button is clicked', async () => {
+      await mountWrapper(true);
+      jest.spyOn(wrapper.vm, 'download').mockImplementation(() => {});
+      const element = wrapper.findDataTest('download-link');
+      await element.trigger('click');
+      expect(wrapper.vm.download).toHaveBeenCalledTimes(1);
+    });
+    
+    it('can download only if level1+ or contributor3', async () => {
+      await mountWrapper(true, 1);
+      let element = wrapper.findDataTest('download-link');
+      expect(element.exists()).toBeTruthy();
+      await mountWrapper(true, null, 'contributorIM');
+      element = wrapper.findDataTest('download-link');
+      expect(element.exists()).toBeFalsy();
+      await mountWrapper(true, null, 'contributor3');
+      element = wrapper.findDataTest('download-link');
+      expect(element.exists()).toBeTruthy();
+    });
+  });
+
+  describe('Methods', () => {
+    describe('download', () => {
+      it('calls storage on download', async () => {
+        await mountWrapper(false);
+        wrapper.vm.download();
+        expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(mockDocument, true);
+      });
     });
   });
 });

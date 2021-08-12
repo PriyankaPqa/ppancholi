@@ -43,8 +43,8 @@
         </v-btn>
       </template>
 
-      <template #[`item.${customColumns.download}`]="{ }">
-        <v-btn icon data-test="editDocument-link">
+      <template #[`item.${customColumns.download}`]="{ item }">
+        <v-btn icon data-test="editDocument-link" @click="download(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-download
           </v-icon>
@@ -90,6 +90,7 @@ interface caseFileDocumentsMapped {
   name: string;
   id: string;
   category: string;
+  entity: ICaseFileDocumentEntity;
 }
 
 export default Vue.extend({
@@ -125,6 +126,10 @@ export default Vue.extend({
       return this.$hasLevel('level1');
     },
 
+    canDownload(): boolean {
+      return this.$hasLevel('level1') || this.$hasRole('contributor3');
+    },
+
     canDelete(): boolean {
       return this.$hasLevel('level6');
     },
@@ -138,6 +143,7 @@ export default Vue.extend({
         documentStatus: d.entity.documentStatus,
         documentStatusName: this.$t(`caseFile.document.status.${DocumentStatus[d.entity.documentStatus]}`),
         created: moment(d.entity.created),
+        entity: d.entity,
       }));
     },
 
@@ -194,14 +200,17 @@ export default Vue.extend({
         },
       ];
 
-      if (this.canEdit) {
+      if (this.canDownload) {
         headers.push({
           text: '',
           sortable: false,
           value: this.customColumns.download,
           width: '5%',
-        },
-        {
+        });
+      }
+
+      if (this.canEdit) {
+        headers.push({
           text: '',
           sortable: false,
           value: this.customColumns.edit,
@@ -271,6 +280,10 @@ export default Vue.extend({
           documentId: id,
         },
       };
+    },
+
+    download(item: caseFileDocumentsMapped) {
+      this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(item.entity, true);
     },
   },
 });
