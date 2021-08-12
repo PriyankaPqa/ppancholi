@@ -134,3 +134,6 @@ export interface ICaseFileMetadata extends IEntity {
 }
 
 export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata>
+
+export interface ITransaction extends IEntity {
+}

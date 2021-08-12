@@ -11,7 +11,7 @@ const storage = mockStorage();
 const mockCaseFileId = 'id';
 const caseNote = mockCaseNoteEntity();
 
-describe('CaseNote.vue', () => {
+describe('CaseNoteFor.vue', () => {
   let wrapper;
 
   beforeEach(async () => {

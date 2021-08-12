@@ -259,6 +259,10 @@ export default Vue.extend({
         to: routes.caseFile.documents.home.name,
         exact: false,
       }, {
+        text: this.$t('caseFileDetail.menu_financial_assistance') as string,
+        test: 'case-financial-assistance',
+        to: routes.caseFile.financialAssistance.home.name,
+      }, {
         text: this.$t('caseFileDetail.menu_assessments') as string,
         test: 'assessments',
         // to: routes.caseFileAssessments.name,

@@ -16,6 +16,7 @@ import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
 import { EOptionListItemStatus } from '@/entities/optionItem';
 import colors from '@/ui/plugins/vuetify/colors';
 import { CaseFileStatus } from '@/entities/case-file';
+import { FPaymentStatus } from '@/entities/case-file-financial-assistance';
 import { EProgramStatus } from '@/entities/program';
 import { AccountStatus } from '@/entities/user-account';
 import { Status } from '@/entities/base';
@@ -42,6 +43,7 @@ export default Vue.extend({
           'EProgramStatus',
           'AccountStatus',
           'DocumentStatus',
+          'CaseFileFinancialAssistanceStatus',
           'Status',
         ].indexOf(value) > -1
       ),
@@ -75,6 +77,8 @@ export default Vue.extend({
           return this.getOptionListStatusColor();
         case 'CaseFileStatus':
           return this.getCaseFileStatusColor();
+        case 'CaseFileFinancialAssistanceStatus':
+          return this.getCaseFileFinancialAssistanceStatusColor();
         case 'EProgramStatus':
           return this.getProgramStatusColor();
         case 'AccountStatus':
@@ -113,6 +117,8 @@ export default Vue.extend({
           return `system_management.lists.status.${EOptionListItemStatus[this.status]}`;
         case 'CaseFileStatus':
           return `caseFile.status.${CaseFileStatus[this.status]}`;
+        case 'CaseFileFinancialAssistanceStatus':
+          return `caseFile.financialAssistance.paymentStatus.${FPaymentStatus[this.status]}`;
         case 'EProgramStatus':
           return `common.program_status.${EProgramStatus[this.status]}`;
         case 'AccountStatus':
@@ -190,6 +196,15 @@ export default Vue.extend({
 
         default:
           return colors.chips.green;
+      }
+    },
+
+    getCaseFileFinancialAssistanceStatusColor(): string {
+      switch (this.status) {
+        case FPaymentStatus.New:
+          return colors.chips.green_pale;
+        default:
+          return colors.chips.green_pale;
       }
     },
 

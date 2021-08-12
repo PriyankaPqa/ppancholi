@@ -167,7 +167,6 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
   private actions = {
     ...this.baseActions,
-
     createFinancialAssistance: (
       table: boolean,
     ): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/createFinancialAssistance`, { table }),

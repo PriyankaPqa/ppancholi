@@ -246,6 +246,11 @@ export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableE
   ],
 });
 
+export const mockCaseFinancialAssistanceEntities = () : IFinancialAssistanceTableEntity[] => ([
+  mockFinancialAssistanceTableEntity(),
+  mockFinancialAssistanceTableEntity(),
+]);
+
 export const mockFinancialAssistanceMetadata = (): IFinancialAssistanceTableMetadata => ({
   ...mockBaseData(),
 

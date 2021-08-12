@@ -46,6 +46,16 @@ const routes = {
       path: '',
       name: 'casefile.activity',
     },
+    financialAssistance: {
+      home: {
+        path: 'financialAssistance',
+        name: 'casefile.financialAssistance',
+      },
+      create: {
+        path: 'financialAssistance/create',
+        name: 'casefile.financialAssistance.create',
+      },
+    },
     note: {
       path: 'note',
       name: 'casefile.note',
