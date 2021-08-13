@@ -11,6 +11,7 @@ export const mockCampgroundData = (): ICurrentAddressData => ({
   address: mockAddress(),
   placeName: 'test',
   placeNumber: '',
+  from: '2021-01-01',
 });
 
 export const mockHotelMotelData = (): ICurrentAddressData => ({

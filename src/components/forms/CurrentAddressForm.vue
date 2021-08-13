@@ -204,7 +204,7 @@ export default Vue.extend({
 
   computed: {
     addressType(): ECurrentAddressTypes {
-      return this.currentAddress.addressType;
+      return this.form.addressType;
     },
 
     rules(): Record<string, unknown> {

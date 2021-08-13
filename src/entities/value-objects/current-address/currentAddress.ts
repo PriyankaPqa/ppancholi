@@ -16,6 +16,8 @@ export class CurrentAddress implements ICurrentAddress {
 
   shelterLocation?: IShelterLocationData;
 
+  from?: string | Date;
+
   constructor(data?: ICurrentAddressData) {
     if (!data) {
       this.reset();
@@ -25,6 +27,7 @@ export class CurrentAddress implements ICurrentAddress {
       this.placeNumber = data.placeNumber;
       this.address = data.address;
       this.shelterLocation = data.shelterLocation;
+      this.from = data.from ? new Date(data.from) : null;
     }
   }
 
@@ -124,5 +127,11 @@ export class CurrentAddress implements ICurrentAddress {
 
   requiresShelterLocation(): boolean {
     return this.addressType === ECurrentAddressTypes.Shelter;
+  }
+
+  withoutMovedDate(): ICurrentAddress {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { from, ...addressWithoutMovedDate } = this;
+    return addressWithoutMovedDate;
   }
 }

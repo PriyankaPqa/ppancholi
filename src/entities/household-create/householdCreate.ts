@@ -1,3 +1,4 @@
+import { CurrentAddress } from '../value-objects/current-address/currentAddress';
 import { IConsentInformation, IHouseholdCreate, IHouseholdCreateData } from './householdCreate.types';
 import { IAddress, Address } from '../value-objects/address';
 import { IMember, Member } from '../value-objects/member';
@@ -48,7 +49,7 @@ export class HouseholdCreate implements IHouseholdCreate {
 
   editAdditionalMember(newPerson: IMember, index: number, sameAddress: boolean) {
     if (sameAddress) {
-      newPerson.currentAddress = this.primaryBeneficiary.currentAddress;
+      newPerson.currentAddress = new CurrentAddress({ ...this.primaryBeneficiary.currentAddress.withoutMovedDate(), from: newPerson.currentAddress.from });
     }
     const newAdditionalMembers = [...this.additionalMembers];
     newAdditionalMembers[index] = newPerson;

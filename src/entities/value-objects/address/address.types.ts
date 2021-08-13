@@ -1,17 +1,17 @@
 import { ECanadaProvinces, IEntity } from '../../../types';
 
 export interface IAddressData {
-  country: string;
+  country?: string;
 
   streetAddress?: string;
 
   unitSuite?: string;
 
-  province: ECanadaProvinces;
+  province?: ECanadaProvinces;
 
   specifiedOtherProvince?: string;
 
-  city: string;
+  city?: string;
 
   postalCode?: string;
 

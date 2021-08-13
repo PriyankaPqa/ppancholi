@@ -18,10 +18,12 @@ import { mockAddress } from '../../entities/household-create';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
+storage.registration.getters.householdCreate = jest.fn(() => (
+  { primaryBeneficiary: { withoutMovedDate: jest.fn(() => mockCampGround()), currentAddress: mockCampGround() } }));
+
 describe('AddEditAdditionalMembers.vue', () => {
   let wrapper;
-
-  beforeEach(() => {
+  storage.registration.editAdditionalMember = beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
@@ -42,6 +44,12 @@ describe('AddEditAdditionalMembers.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('primaryBeneficiaryAddress', () => {
+      it('returns the right value', () => {
+        expect(wrapper.vm.primaryBeneficiaryAddress).toEqual(mockCampGround());
+      });
+    });
+
     describe('editMode', () => {
       it('return true if index is different than -1', async () => {
         await wrapper.setProps({ index: 0 });
@@ -117,22 +125,12 @@ describe('AddEditAdditionalMembers.vue', () => {
           .toHaveBeenCalledWith(wrapper.vm.member, wrapper.vm.sameAddress);
       });
 
-      it('should call the updatePersonIdentity service if in edit mode and inHouseholdProfile is true', async () => {
+      it('should call submitChanges  if inHouseholdProfile is true', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        await wrapper.setProps({ inHouseholdProfile: true, index: 0 });
-        await wrapper.vm.validate();
-        expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
-          wrapper.vm.member.id, wrapper.vm.member.identitySet,
-        );
-      });
-
-      it('should call the updatePersonAddress service if inHouseholdProfile is true', async () => {
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        jest.spyOn(wrapper.vm, 'submitChanges').mockImplementation(() => {});
         wrapper.setProps({ inHouseholdProfile: true, index: 0 });
         await wrapper.vm.validate();
-        expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
-          wrapper.vm.member.id, wrapper.vm.member.currentAddress,
-        );
+        expect(wrapper.vm.submitChanges).toHaveBeenCalledTimes(1);
       });
 
       it('should close the dialog', async () => {
@@ -140,6 +138,36 @@ describe('AddEditAdditionalMembers.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.validate();
         expect(wrapper.vm.close).toHaveBeenCalledTimes(1);
+      });
+
+      describe('submitChanges', () => {
+        it('should call the updatePersonIdentity service', async () => {
+          await wrapper.vm.submitChanges();
+          expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
+            wrapper.vm.member.id, wrapper.vm.member.identitySet,
+          );
+        });
+
+        it('should call the updatePersonAddress service', async () => {
+          await wrapper.vm.submitChanges();
+          expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
+            wrapper.vm.member.id, wrapper.vm.member.currentAddress,
+          );
+        });
+
+        it('should call the store mutation editAdditionalMember', async () => {
+          await wrapper.vm.submitChanges();
+          expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember).toHaveBeenCalledWith(
+            wrapper.vm.member, wrapper.vm.index, wrapper.vm.sameAddress,
+          );
+        });
+
+        it('should call cancel if the calls fail', async () => {
+          jest.spyOn(wrapper.vm, 'cancel').mockImplementation(() => {});
+          wrapper.vm.$services.households.updatePersonAddress = jest.fn(() => null);
+          await wrapper.vm.submitChanges();
+          expect(wrapper.vm.cancel).toHaveBeenCalledTimes(1);
+        });
       });
 
       describe('cancel', () => {
@@ -221,7 +249,8 @@ describe('AddEditAdditionalMembers.vue', () => {
       describe('Edit mode', () => {
         it('should set sameAddress to true if household member and household has the same temporary address', () => {
           const member = mockAdditionalMember();
-          member.currentAddress = mockCampGround();
+          member.currentAddress = {};
+          member.currentAddress.withoutMovedDate = jest.fn(() => mockCampGround());
           wrapper = shallowMount(Component, {
             localVue,
             propsData: {
@@ -234,6 +263,9 @@ describe('AddEditAdditionalMembers.vue', () => {
               return {
                 apiKey: 'google-key',
               };
+            },
+            computed: {
+              primaryBeneficiaryAddress() { return { withoutMovedDate: jest.fn(() => mockCampGround()) }; },
             },
             mocks: {
               $storage: storage,
@@ -247,7 +279,8 @@ describe('AddEditAdditionalMembers.vue', () => {
 
         it('should set sameAddress to false if household member and primary beneficiary does not have the same temporary address', () => {
           const member = mockAdditionalMember();
-          member.currentAddress = mockCampGround({ placeNumber: '888' });
+          member.currentAddress = {};
+          member.currentAddress.withoutMovedDate = jest.fn(() => mockCampGround({ placeNumber: '888' }));
           wrapper = shallowMount(Component, {
             localVue,
             propsData: {
@@ -260,6 +293,9 @@ describe('AddEditAdditionalMembers.vue', () => {
               return {
                 apiKey: 'google-key',
               };
+            },
+            computed: {
+              primaryBeneficiaryAddress() { return { withoutMovedDate: jest.fn(() => mockCampGround()) }; },
             },
             mocks: {
               $storage: storage,

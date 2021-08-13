@@ -45,7 +45,19 @@
             :no-fixed-home="false"
             :api-key="apiKey"
             :current-address="member.currentAddress"
+            in-household-profile
             @change="$emit('temporary-address-change', $event)" />
+        </v-col>
+
+        <v-col v-if="inHouseholdProfile" cols="12" sm="6" md="4" class="px-6">
+          <v-date-field-with-validation
+            :value="movedDate"
+            data-test="household_address_from"
+            prepend-inner-icon="mdi-calendar"
+            :label="`${$t('household.addresses.from')}`"
+            :placeholder="$t('event.select_date')"
+            :min="today"
+            @change="changeMovedDate()" />
         </v-col>
       </v-col>
     </v-row>
@@ -55,7 +67,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import { IShelterLocationData } from '../../entities/household-create';
+import moment from 'moment';
+import { VDateFieldWithValidation } from '@crctech/component-library';
+import { CurrentAddress, IShelterLocationData } from '../../entities/household-create';
 import { IOptionItemData } from '../../types';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
@@ -70,6 +84,7 @@ export default Vue.extend({
     CurrentAddressForm,
     IdentityForm,
     IndigenousIdentityForm,
+    VDateFieldWithValidation,
   },
 
   props: {
@@ -127,12 +142,32 @@ export default Vue.extend({
       type: Object as () => VueI18n,
       required: true,
     },
+
+    inHouseholdProfile: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
     return {
       months,
     };
+  },
+
+  computed: {
+    movedDate() {
+      return moment(this.member.currentAddress.from).utc().format('YYYY-MM-DD');
+    },
+
+    today(): string { return moment(new Date()).utc().format('YYYY-MM-DD'); },
+  },
+
+  methods: {
+    changeMovedDate(movedDate: string) {
+      const address = new CurrentAddress({ ...this.member.currentAddress, from: movedDate });
+      this.$emit('temporary-address-change', address);
+    },
   },
 });
 </script>

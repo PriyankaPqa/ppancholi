@@ -11,6 +11,7 @@ import {
   mockShelter,
 } from './currentAddress.mock';
 import { CurrentAddress } from './currentAddress';
+import { mockAddress } from '../address';
 
 const longText = 'x'.repeat(MAX_LENGTH_MD + 1);
 const longSmallText = 'y'.repeat(MAX_LENGTH_SM + 1);
@@ -38,6 +39,7 @@ describe('>>> CurrentAddress', () => {
       expect(t.placeName).toEqual('');
       expect(t.placeNumber).toEqual('');
       expect(t.shelterLocation).toEqual(null);
+      expect(t.from).toEqual(undefined);
     });
   });
 
@@ -327,6 +329,24 @@ describe('>>> CurrentAddress', () => {
       it('should return true for Shelter', () => {
         const p = mockShelter();
         expect(p.requiresShelterLocation()).toBeTruthy();
+      });
+    });
+
+    describe('withoutMovedDate', () => {
+      it('should return the current address without the from property', () => {
+        const currentAddress = new CurrentAddress({
+          addressType: ECurrentAddressTypes.Campground,
+          address: mockAddress(),
+          placeName: 'test',
+          placeNumber: '',
+          from: '',
+        });
+        expect(currentAddress.withoutMovedDate()).toEqual({
+          addressType: ECurrentAddressTypes.Campground,
+          address: mockAddress(),
+          placeName: 'test',
+          placeNumber: '',
+        });
       });
     });
 

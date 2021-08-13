@@ -17,7 +17,7 @@
           <additional-member-form
             :api-key="apiKey"
             :i18n="i18n"
-            :shelter-locations="shelterLocations"
+            :shelter-locations="shelterLocationsList || shelterLocations"
             :same-address.sync="sameAddress"
             :gender-items="genderItems"
             :canadian-provinces-items="canadianProvincesItems"
@@ -26,6 +26,7 @@
             :current-address-type-items="currentAddressTypeItems"
             :loading="loadingIndigenousCommunities"
             :member="member"
+            in-household-profile
             @identity-change="setIdentity($event)"
             @indigenous-identity-change="setIndigenousIdentity($event)"
             @temporary-address-change="setCurrentAddress($event)" />
@@ -81,6 +82,11 @@ export default Vue.extend({
       required: true,
     },
 
+    shelterLocationsList: {
+      type: Array as () => IShelterLocationData[],
+      default: null,
+    },
+
     i18n: {
       type: Object as () => VueI18n,
       required: true,
@@ -104,6 +110,10 @@ export default Vue.extend({
   },
 
   computed: {
+    primaryBeneficiaryAddress(): ICurrentAddress {
+      return this.$storage.registration.getters.householdCreate().primaryBeneficiary.currentAddress;
+    },
+
     editMode(): boolean {
       return this.index !== -1;
     },
@@ -157,7 +167,7 @@ export default Vue.extend({
 
   mounted() {
     if (this.editMode) {
-      this.sameAddress = _isEqual(this.member.currentAddress, this.$storage.registration.getters.householdCreate().primaryBeneficiary.currentAddress);
+      this.sameAddress = _isEqual(this.member.currentAddress.withoutMovedDate(), this.primaryBeneficiaryAddress.withoutMovedDate());
       this.backupSameAddress = this.sameAddress;
       this.backupPerson = _cloneDeep(this.member);
     }
@@ -184,19 +194,37 @@ export default Vue.extend({
       }
 
       if (this.editMode) {
-        this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
         if (this.inHouseholdProfile) {
-          await this.$services.households.updatePersonIdentity(
-            this.member.id,
-            this.member.identitySet,
-          );
-          await this.$services.households.updatePersonAddress(this.member.id, this.member.currentAddress);
+          await this.submitChanges();
+        } else {
+          this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
         }
       } else {
         this.$storage.registration.mutations.addAdditionalMember(this.member, this.sameAddress);
         this.$emit('add');
       }
       this.close();
+    },
+
+    async submitChanges() {
+      let address = this.member.currentAddress;
+      if (this.sameAddress) {
+        address = { ...this.primaryBeneficiaryAddress.withoutMovedDate(), from: address.from };
+      }
+
+      const res = await Promise.all([
+        this.$services.households.updatePersonIdentity(
+          this.member.id,
+          this.member.identitySet,
+        ),
+        this.$services.households.updatePersonAddress(this.member.id, address),
+      ]);
+
+      if (!res.some((i) => i == null)) {
+        this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
+      } else {
+        this.cancel();
+      }
     },
 
     setIdentity(form: IIdentitySet) {

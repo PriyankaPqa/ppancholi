@@ -1,6 +1,6 @@
 <template>
   <div class="rc-body14">
-    <div class="fw-bold">
+    <div v-if="inHouseholdProfile" class="fw-bold">
       {{ $t('registration.addresses.currentAddress') }}
     </div>
 
@@ -43,11 +43,15 @@
         {{ currentAddress.address.country }}
       </div>
     </template>
+    <div v-if="inHouseholdProfile && currentAddress.from" data-test="currentAddress__moved_date">
+      {{ `${$t('household.addresses.from')}: ${moment(currentAddress.from).utc().format('ll')}` }}
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import moment from 'moment';
 import { ECanadaProvinces } from '@/types';
 import { ECurrentAddressTypes, ICurrentAddress } from '../../../entities/value-objects/current-address';
 
@@ -58,14 +62,21 @@ export default Vue.extend({
       type: Object as () => ICurrentAddress,
       required: true,
     },
+
+    inHouseholdProfile: {
+      type: Boolean,
+      default: false,
+    },
   },
   data() {
     return {
       ECurrentAddressTypes,
+      moment,
     };
   },
   computed: {
     shelterLocationName(): string {
+      if (!this.currentAddress?.shelterLocation) return '';
       return this.$m(this.currentAddress.shelterLocation.name);
     },
 

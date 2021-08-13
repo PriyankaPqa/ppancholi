@@ -4,17 +4,17 @@ import { IAddress, IAddressData } from './address.types';
 import { required, maxLengthCheck, isValidCanadianPostalCode } from '../../classValidation';
 
 export class Address implements IAddress {
-  country: string;
+  country?: string;
 
   streetAddress?: string;
 
   unitSuite?: string;
 
-  province: ECanadaProvinces;
+  province?: ECanadaProvinces;
 
   specifiedOtherProvince?: string;
 
-  city: string;
+  city?: string;
 
   postalCode?: string;
 
