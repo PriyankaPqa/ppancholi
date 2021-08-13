@@ -1,5 +1,6 @@
 /* eslint-disable */
 export interface IHttpMock {
+  getFullResponse: jest.Mock<Promise<any>>;
   get: jest.Mock<Promise<any>>
   post: jest.Mock<Promise<any>>
   patch: jest.Mock<Promise<any>>
@@ -8,6 +9,7 @@ export interface IHttpMock {
 }
 
 export const mockHttp = (): IHttpMock => ({
+  getFullResponse: jest.fn(() => Promise.resolve({ data: 'resolved' })),
   get: jest.fn(() => Promise.resolve('resolved')),
   post: jest.fn(() => Promise.resolve('resolved')),
   patch: jest.fn(() => Promise.resolve('resolved')),

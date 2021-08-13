@@ -6,7 +6,7 @@
     <div>
       <v-tooltip bottom>
         <template #activator="{ on }">
-          <v-btn icon data-test="open-link" v-on="on">
+          <v-btn icon data-test="open-link" v-on="on" @click="preview()">
             <v-icon size="24" color="grey darken-2">
               mdi-file-find
             </v-icon>
@@ -54,6 +54,11 @@ export default Vue.extend({
   methods: {
     download() {
       this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(this.document, true);
+    },
+
+    async preview() {
+      const documentUrl = await this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(this.document, false);
+      window.open(documentUrl);
     },
   },
 });

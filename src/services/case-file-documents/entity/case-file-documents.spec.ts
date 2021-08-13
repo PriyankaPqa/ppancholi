@@ -30,7 +30,7 @@ describe('>>> Case File Document Service', () => {
     it('is linked to the correct URL and params and returns the url', async () => {
       window.URL.createObjectURL = jest.fn(() => 'myUrl');
       const ret = await service.downloadDocumentAsUrl(entity, false);
-      expect(http.get).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/documents/myId/file', { responseType: 'blob' });
+      expect(http.getFullResponse).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/documents/myId/file', { responseType: 'blob' });
       expect(ret).toEqual('myUrl');
     });
   });

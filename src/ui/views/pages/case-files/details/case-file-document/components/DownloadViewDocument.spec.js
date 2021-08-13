@@ -59,6 +59,14 @@ describe('DownloadViewDocument', () => {
       expect(wrapper.vm.download).toHaveBeenCalledTimes(1);
     });
     
+    it('calls preview when the open button is clicked', async () => {
+      await mountWrapper(true);
+      jest.spyOn(wrapper.vm, 'preview').mockImplementation(() => {});
+      const element = wrapper.findDataTest('open-link');
+      await element.trigger('click');
+      expect(wrapper.vm.preview).toHaveBeenCalledTimes(1);
+    });
+    
     it('can download only if level1+ or contributor3', async () => {
       await mountWrapper(true, 1);
       let element = wrapper.findDataTest('download-link');
@@ -78,6 +86,15 @@ describe('DownloadViewDocument', () => {
         await mountWrapper(false);
         wrapper.vm.download();
         expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(mockDocument, true);
+      });
+    });
+
+    describe('preview', () => {
+      it('calls storage on preview', async () => {
+        await mountWrapper();
+        window.open = jest.fn();
+        wrapper.vm.preview();
+        expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(mockDocument, false);
       });
     });
   });

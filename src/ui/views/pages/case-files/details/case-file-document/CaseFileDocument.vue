@@ -35,8 +35,8 @@
         <status-chip status-name="DocumentStatus" :status="item.documentStatus" />
       </template>
 
-      <template #[`item.${customColumns.preview}`]="{ }">
-        <v-btn icon data-test="editDocument-link">
+      <template #[`item.${customColumns.preview}`]="{ item }">
+        <v-btn icon data-test="editDocument-link" @click="preview(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-file-find
           </v-icon>
@@ -288,6 +288,11 @@ export default Vue.extend({
 
     download(item: caseFileDocumentsMapped) {
       this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(item.entity, true);
+    },
+
+    async preview(item: caseFileDocumentsMapped) {
+      const documentUrl = await this.$storage.caseFileDocument.actions.downloadDocumentAsUrl(item.entity, false);
+      window.open(documentUrl);
     },
   },
 });

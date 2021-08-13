@@ -11,6 +11,7 @@ import { IAzureSearchParams } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 
 export interface IRestResponse<T> {
+  headers?: any;
   success: boolean;
   status: number;
   statusText: string;
@@ -20,10 +21,11 @@ export interface IRestResponse<T> {
 export interface RequestConfig extends AxiosRequestConfig {
   globalHandler?: boolean;
   isOData?: boolean;
-  containsEncodedURL? : boolean;
+  containsEncodedURL?: boolean;
 }
 
 export interface IHttpClient {
+  getFullResponse: <T>(url: string, config?: RequestConfig) => Promise<IRestResponse<T>>;
   get: <T>(url: string, config?: RequestConfig) => Promise<T>;
   post: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
   patch: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
@@ -148,9 +150,13 @@ class HttpClient implements IHttpClient {
   }
 
   public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    return (await this.getFullResponse<T>(url, config))?.data;
+  }
+
+  public async getFullResponse<T>(url: string, config?: AxiosRequestConfig): Promise<IRestResponse<T>> {
     try {
       const response: IRestResponse<T> = await this.axios.get(url, config);
-      return response.data;
+      return response;
     } catch (e) {
       throw this.createErrorObject(e);
     }

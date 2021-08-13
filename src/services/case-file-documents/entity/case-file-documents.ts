@@ -18,9 +18,11 @@ export class CaseFileDocumentsService extends DomainBaseService<ICaseFileDocumen
   }
 
   async downloadDocumentAsUrl(item: ICaseFileDocumentEntity, saveDownloadedFile: boolean) {
-    return this.http.get<BlobPart>(this.getItemUrl(`${this.baseUrl}/{id}/file`, item), { responseType: 'blob' }).then(
-      (data) => {
-        const url = window.URL.createObjectURL(new Blob([data]));
+    return this.http.getFullResponse<BlobPart>(this.getItemUrl(`${this.baseUrl}/{id}/file`, item), { responseType: 'blob' }).then(
+      (response) => {
+        const blob = response.headers && response.headers['content-type']
+          ? new Blob([response.data], { type: response.headers['content-type'] }) : new Blob([response.data]);
+        const url = window.URL.createObjectURL(blob);
         if (saveDownloadedFile) {
           const link = document.createElement('a');
           link.href = url;

@@ -626,6 +626,15 @@ describe('CaseFileDocument.vue', () => {
       });
     });
 
+    describe('preview', () => {
+      it('calls storage on preview', () => {
+        mountWrapper(false);
+        window.open = jest.fn();
+        wrapper.vm.preview(document);
+        expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(document.entity, false);
+      });
+    });
+
     describe('getCategory', () => {
       it('returns optionitem from storage by id', async () => {
         document.entity.category = { optionItemId: 'myFakeId' };
