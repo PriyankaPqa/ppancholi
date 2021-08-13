@@ -210,7 +210,7 @@ export const routes: Array<RouteConfig> = [
                     path: Routes.caseFile.financialAssistance.create.path,
                     name: Routes.caseFile.financialAssistance.create.name,
                     component: CreateCaseFileFinancialAssistance,
-                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    meta: { level: 'level1' },
                     props: true,
                   },
                   {

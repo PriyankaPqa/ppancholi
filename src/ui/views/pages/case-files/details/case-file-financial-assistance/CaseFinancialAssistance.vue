@@ -10,7 +10,7 @@
       sort-by="approvalStatus"
       :sort-desc="true"
       show-help
-      :show-add-button="true"
+      :show-add-button="canAdd"
       :custom-columns="['name', 'totals', 'groupStatus', 'statusHistory', 'approvalStatus']"
       @search="search"
       @add-button="routeToCreate">
@@ -125,6 +125,10 @@ export default Vue.extend({
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };
+    },
+
+    canAdd(): boolean {
+      return this.$hasLevel('level1');
     },
 
     // caseFileIsOpen(): boolean {
