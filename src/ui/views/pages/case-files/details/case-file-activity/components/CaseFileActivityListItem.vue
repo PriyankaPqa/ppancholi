@@ -34,9 +34,9 @@ export default Vue.extend({
   },
 
   computed: {
+    // eslint-disable-next-line
     content(): {title: TranslateResult, body: TranslateResult} {
       const { activityType } = this.item;
-
       switch (activityType) {
         case CaseFileActivityType.AddedTag:
         case CaseFileActivityType.RemovedTag:
@@ -81,11 +81,21 @@ export default Vue.extend({
         case CaseFileActivityType.ReferralUpdated:
           return this.makeContentForReferralUpdated();
 
+        case CaseFileActivityType.DocumentDeactivated:
+          return this.makeContentForDocumentDeactivated();
+
+        case CaseFileActivityType.DocumentUpdated:
+          return this.makeContentForDocumentUpdated();
+
+        case CaseFileActivityType.DocumentAdded:
+          return this.makeContentForDocumentAdded();
+
         default:
           return null;
       }
     },
 
+    // eslint-disable-next-line
     icon(): string {
       switch (this.item.activityType) {
         case CaseFileActivityType.AddedTag:
@@ -97,6 +107,9 @@ export default Vue.extend({
         case CaseFileActivityType.UnassignedFromCaseFile:
         case CaseFileActivityType.ReferralAdded:
         case CaseFileActivityType.ReferralUpdated:
+        case CaseFileActivityType.DocumentDeactivated:
+        case CaseFileActivityType.DocumentAdded:
+        case CaseFileActivityType.DocumentUpdated:
           return '$rctech-actions';
 
         case CaseFileActivityType.AddedDuplicateFlag:
@@ -264,6 +277,27 @@ export default Vue.extend({
       return {
         title: this.$t('caseFileActivity.activityList.title.ReferralUpdated'),
         body: `${this.$t('caseFileActivity.activityList.referral.referral_name')}: ${this.item.details.name}`,
+      };
+    },
+
+    makeContentForDocumentDeactivated(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.DocumentDeactivated'),
+        body: `${this.$t('caseFileActivity.activityList.document.document_name')}: ${this.item.details.name}`,
+      };
+    },
+
+    makeContentForDocumentUpdated(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.DocumentUpdated'),
+        body: `${this.$t('caseFileActivity.activityList.document.document_name')}: ${this.item.details.name}`,
+      };
+    },
+
+    makeContentForDocumentAdded(): {title: TranslateResult, body: TranslateResult} {
+      return {
+        title: this.$t('caseFileActivity.activityList.title.DocumentAdded'),
+        body: `${this.$t('caseFileActivity.activityList.document.document_name')}: ${this.item.details.name}`,
       };
     },
 

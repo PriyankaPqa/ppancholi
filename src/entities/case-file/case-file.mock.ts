@@ -325,6 +325,39 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         name: 'Mental Health',
       },
     },
+    {
+      id: 'mock-activity-id-20',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.DocumentDeactivated,
+      details: {
+        name: 'void_cheque_rbc.pdf',
+      },
+    },
+    {
+      id: 'mock-activity-id-21',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.DocumentUpdated,
+      details: {
+        name: 'void_cheque_rbc.pdf',
+      },
+    },
+    {
+      id: 'mock-activity-id-22',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.DocumentAdded,
+      details: {
+        name: 'void_cheque_rbc.pdf',
+      },
+    },
   ];
 
   if (type) {

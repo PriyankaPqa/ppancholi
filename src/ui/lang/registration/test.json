@@ -65,6 +65,7 @@
     "errors.the-household-have-duplicate-first-name-last-name-birthdate": "errors.the-household-have-duplicate-first-name-last-name-birthdate",
     "event.beneficiaries.registration_number": "event.beneficiaries.registration_number",
     "event.registration_link": "event.registration_link",
+    "household.addresses.from": "",
     "metaInfo.crc_registration.description": "metaInfo.crc_registration.description",
     "metaInfo.crc_registration.title": "metaInfo.crc_registration.title",
     "metaInfo.registration.description": "metaInfo.registration.description",

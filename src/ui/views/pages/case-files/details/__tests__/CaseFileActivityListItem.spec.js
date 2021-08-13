@@ -278,6 +278,27 @@ describe('CaseFileActivityListItem.vue', () => {
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
       });
+
+      it('returns the correct icon when action type is DocumentDeactivated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.DocumentDeactivated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when action type is DocumentUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.DocumentUpdated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when action type is DocumentAdded', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.DocumentAdded)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
     });
 
     describe('Methods', () => {
@@ -561,6 +582,45 @@ describe('CaseFileActivityListItem.vue', () => {
           expect(wrapper.vm.makeContentForReferralUpdated()).toEqual({
             title: 'caseFileActivity.activityList.title.ReferralUpdated',
             body: 'caseFileActivity.activityList.referral.referral_name: Mental Health',
+          });
+        });
+      });
+
+      describe('makeContentForDocumentDeactivated', () => {
+        it('returns the correct data when action type is DocumentDeactivated', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.DocumentDeactivated)[0],
+          });
+
+          expect(wrapper.vm.makeContentForDocumentDeactivated()).toEqual({
+            title: 'caseFileActivity.activityList.title.DocumentDeactivated',
+            body: 'caseFileActivity.activityList.document.document_name: void_cheque_rbc.pdf',
+          });
+        });
+      });
+
+      describe('makeContentForDocumentUpdated', () => {
+        it('returns the correct data when action type is DocumentUpdated', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.DocumentUpdated)[0],
+          });
+
+          expect(wrapper.vm.makeContentForDocumentUpdated()).toEqual({
+            title: 'caseFileActivity.activityList.title.DocumentUpdated',
+            body: 'caseFileActivity.activityList.document.document_name: void_cheque_rbc.pdf',
+          });
+        });
+      });
+
+      describe('makeContentForDocumentAdded', () => {
+        it('returns the correct data when action type is DocumentAdded', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.DocumentAdded)[0],
+          });
+
+          expect(wrapper.vm.makeContentForDocumentAdded()).toEqual({
+            title: 'caseFileActivity.activityList.title.DocumentAdded',
+            body: 'caseFileActivity.activityList.document.document_name: void_cheque_rbc.pdf',
           });
         });
       });
