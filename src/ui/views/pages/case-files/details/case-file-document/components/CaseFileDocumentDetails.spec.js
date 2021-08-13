@@ -1,0 +1,273 @@
+/* eslint-disable */
+import flushPromises from 'flush-promises';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import { mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
+import { mockStorage } from '@/store/storage';
+import { mockOptionItemData } from '@/entities/optionItem';
+import routes from '@/constants/routes';
+
+import Component from './CaseFileDocumentDetails.vue';
+
+const storage = mockStorage();
+const localVue = createLocalVue();
+
+describe('CaseFileDocumentDetails', () => {
+  let wrapper;
+  let mockDocument;
+
+  const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
+      localVue,
+      propsData: {
+        id: 'mock-caseFile-id',
+        documentId: 'mock-document-id',
+      },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}` && level,
+        $hasRole: (r) => r === hasRole,
+        $storage: storage,
+      },
+      ...additionalOverwrites,
+    });
+
+    await wrapper.vm.$nextTick();
+    await flushPromises();
+  };
+
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    mockDocument = mockCombinedCaseFileDocuments()[0].entity;
+  });
+
+  describe('Computed', () => {
+    describe('canEdit', () => {
+      it('returns true if only if level1+', async () => {
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.canEdit).toBeTruthy();
+        await mountWrapper(false, null, 'readonly');
+        expect(wrapper.vm.canEdit).toBeFalsy();
+        await mountWrapper(false, null, 'contributor3');
+        expect(wrapper.vm.canEdit).toBeFalsy();
+      });
+    });
+
+    describe('canDelete', () => {
+      it('returns true if only if level6', async () => {
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.canDelete).toBeFalsy();
+        await mountWrapper(false, 6);
+        expect(wrapper.vm.canDelete).toBeTruthy();
+        await mountWrapper(false, null, 'readonly');
+        expect(wrapper.vm.canDelete).toBeFalsy();
+        await mountWrapper(false, null, 'contributor3');
+        expect(wrapper.vm.canDelete).toBeFalsy();
+      });
+    });
+    
+    describe('document', () => {
+      it('calls the document getter', async () => {
+        await mountWrapper();
+        expect(storage.caseFileDocument.getters.get).toHaveBeenCalledTimes(1);
+      });
+      it('sets the right data', async () => {
+        await mountWrapper();
+        expect(JSON.stringify(wrapper.vm.document)).toEqual(JSON.stringify(mockDocument));
+      });
+    });
+
+    describe('category', () => {
+      it('calls the getter categories', async () => {
+        await mountWrapper();
+        expect(storage.caseFileDocument.getters.categories).toHaveBeenCalledWith(false);
+      });
+
+      it('returns the right category', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.category).toEqual(mockOptionItemData()[0].name.translation.en);
+      });
+    });
+    
+    describe('documentData', () => {
+      it('returns the right data', async () => {
+        await mountWrapper();
+
+        expect(wrapper.vm.documentData).toEqual([
+          {
+            label: 'caseFile.document.category',
+            data: 'Flood',
+            test: 'category',
+          },
+          {
+            label: 'caseFile.document.dateAdded',
+            data: 'Apr 6, 2021',
+            test: 'method',
+          },
+          {
+            label: 'caseFile.document.notes',
+            data: 'notes...',
+            test: 'notes',
+          },
+        ]);
+      });
+    });
+
+    describe('documentEditRoute', () => {
+      it('should redirect to the case document edit page', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.documentEditRoute).toEqual({
+          name: routes.caseFile.documents.edit.name,
+          params: {
+            documentId: 'mock-document-id',
+          },
+        });
+      });
+    });
+  });
+
+  describe('lifecycle - create', () => {
+    it('should call fetchCategories', async () => {
+      await mountWrapper();
+      expect(wrapper.vm.$storage.caseFileDocument.actions.fetchCategories).toHaveBeenCalledTimes(1);
+    });
+  
+    it('should call fetch', async () => {
+      await mountWrapper();
+      expect(wrapper.vm.$storage.caseFileDocument.actions.fetch).toHaveBeenCalledWith(
+        { caseFileId: 'mock-caseFile-id', id: 'mock-document-id' },
+        { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
+      );
+    });
+  });
+  
+  describe('Template', () => {
+    describe('document data',  () => {
+      let element;
+      beforeEach(async () => {
+        await mountWrapper(false, 5, null, {
+              computed: {
+                documentData() {
+                  return [{
+                    label: 'mock-label',
+                    data: 'mock-data',
+                    test: 'mock-test',
+                  }];
+                },
+              }
+            });
+        element = wrapper.findDataTest('document_details_mock-test');
+      });
+      it('displays the right label', () => {
+        expect(element.text()).toContain('mock-label');
+      });
+      it('contains the right data', () => {
+        expect(element.text()).toContain('mock-data');
+      });
+    });
+
+    describe('back button', () => {
+      let element;
+      beforeEach(async () => {
+        await mountWrapper();
+        element = wrapper.findDataTest('document_details_back_btn');
+      });
+      it('renders', () => {
+        expect(element.exists()).toBeTruthy();
+      });
+
+      it('calls goToDocuments when clicked', async () => {
+        jest.spyOn(wrapper.vm, 'goToDocuments').mockImplementation(() => {});
+        await element.vm.$emit('click');
+        expect(wrapper.vm.goToDocuments).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('edit button', () => {
+      let element;
+      it('renders when canEdit', async () => {
+        await mountWrapper(false, 6, null, {
+          computed: {
+            canEdit: () => true,
+          }
+        });
+        element = wrapper.findDataTest('editDocument-link');
+        expect(element.exists()).toBeTruthy();
+        await mountWrapper(false, 6, null, {
+          computed: {
+            canEdit: () => false,
+          }
+        });
+        element = wrapper.findDataTest('editDocument-link');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('is linked to edit route', async () => {
+        await mountWrapper();
+        element = wrapper.findDataTest('editDocument-link');
+        expect(element.props('to')).toEqual(wrapper.vm.documentEditRoute);
+      });
+    });
+    
+    describe('delete button', () => {
+      let element;
+      it('renders when canDelete', async () => {
+        await mountWrapper(false, 6, null, {
+          computed: {
+            canDelete: () => true,
+          }
+        });
+        element = wrapper.findDataTest('deleteDocument-link');
+        expect(element.exists()).toBeTruthy();
+        await mountWrapper(false, 6, null, {
+          computed: {
+            canDelete: () => false,
+          }
+        });
+        element = wrapper.findDataTest('deleteDocument-link');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('calls deleteDocument when clicked', async () => {
+        await mountWrapper();
+        wrapper.vm.deleteDocument = jest.fn();
+        element = wrapper.findDataTest('deleteDocument-link');
+        await element.vm.$emit('click');
+        expect(wrapper.vm.deleteDocument).toHaveBeenCalled();
+      });
+    });
+  });
+  
+  describe('Methods', () => {
+    describe('goToDocuments',  () => {
+      it('should redirect to the case document home page', async () => {
+        mountWrapper();
+        wrapper.vm.goToDocuments();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.documents.home.name,
+        });
+      });
+    });
+
+    describe('deleteDocument', () => {
+      it('calls deactivate after confirmation and then goes to documents', async () => {
+        mountWrapper();
+        await wrapper.vm.deleteDocument();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
+        expect(storage.caseFileDocument.actions.deactivate)
+          .toHaveBeenCalledWith({ caseFileId: 'mock-caseFile-id', id: 'mock-document-id' });
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.documents.home.name,
+        });
+      });
+      it('doesnt call deactivate if no confirmation', async () => {
+        mountWrapper();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.deleteDocument();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
+        expect(storage.caseFileDocument.actions.deactivate)
+          .toHaveBeenCalledTimes(0);
+      });
+    });
+  });
+});
+

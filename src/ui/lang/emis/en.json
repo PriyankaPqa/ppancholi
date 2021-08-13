@@ -614,6 +614,8 @@
     "document.create.success": "The document has been successfully created.",
     "document.edit.success": "The document has been successfully edited.",
     "document.edit.title": "Edit document details",
+    "documentDetails.back_to_documents": "Back to documents",
+    "documentDetails.title": "Document details",
     "enums.CaseFileStatus.Archived": "Archived",
     "enums.CaseFileStatus.Closed": "Closed",
     "enums.CaseFileStatus.Inactive": "Inactive",

@@ -3,6 +3,7 @@ import {
   DocumentStatus, ICaseFileDocumentCombined, ICaseFileDocumentEntity, ICaseFileDocumentMetadata,
 } from './case-file-document.types';
 import { IEntity } from '../base/base.types';
+import { mockOptionItemData } from '@/entities/optionItem';
 
 export const mockCaseFileDocumentEntity = (force? : Partial<ICaseFileDocumentEntity>) : ICaseFileDocumentEntity => ({
   ...mockBaseData(),
@@ -11,7 +12,7 @@ export const mockCaseFileDocumentEntity = (force? : Partial<ICaseFileDocumentEnt
   originalFilename: 'test_referral.pdf',
   note: 'notes...',
   category: {
-    optionItemId: '09bda590-ad8b-4f29-af4e-c63eedd337a0',
+    optionItemId: mockOptionItemData()[0].id,
     specifiedOther: null,
   },
   documentStatus: DocumentStatus.Past,

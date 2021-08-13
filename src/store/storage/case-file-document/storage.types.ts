@@ -11,7 +11,7 @@ export interface IGetters extends IBaseGetters<ICaseFileDocumentEntity, ICaseFil
 }
 
 export interface IGettersMock extends IBaseGettersMock<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
-  categories: jest.Mock<void>;
+  categories: jest.Mock<Array<IOptionItem>>;
 }
 
 export interface IActions extends IBaseActions<ICaseFileDocumentEntity, ICaseFileDocumentMetadata, {id: uuid, caseFileId: uuid}> {

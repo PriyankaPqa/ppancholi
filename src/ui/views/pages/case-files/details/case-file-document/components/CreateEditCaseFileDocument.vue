@@ -93,9 +93,7 @@ export default Vue.extend({
 
   methods: {
     back(): void {
-      this.$router.replace({
-        name: routes.caseFile.documents.home.name,
-      });
+      this.$router.back();
     },
 
     async submit() {
@@ -114,7 +112,8 @@ export default Vue.extend({
           if (document) {
             this.$storage.caseFileDocument.mutations.setEntity(document);
             this.$toasted.global.success(this.$t(this.isEditMode ? 'document.edit.success' : 'document.create.success'));
-            this.$router.replace({ name: routes.caseFile.documents.home.name });
+            this.isEditMode ? this.back()
+              : this.$router.replace({ name: routes.caseFile.documents.details.name, params: { documentId: document.id } });
           }
         } catch (e) {
           this.$toasted.global.error(this.$t(e.code));

@@ -270,9 +270,7 @@ export default Vue.extend({
 
     getDocumentDetailsRoute(id: string) {
       return {
-        // until implemented
-        name: routes.caseFile.documents.edit.name,
-        // name: routes.caseFile.documents.details.name,
+        name: routes.caseFile.documents.details.name,
         params: {
           documentId: id,
         },

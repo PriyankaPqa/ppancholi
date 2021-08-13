@@ -614,6 +614,8 @@
     "document.create.success": "document.create.success",
     "document.edit.success": "document.edit.success",
     "document.edit.title": "document.edit.title",
+    "documentDetails.back_to_documents": "documentDetails.back_to_documents",
+    "documentDetails.title": "documentDetails.title",
     "enums.CaseFileStatus.Archived": "enums.CaseFileStatus.Archived",
     "enums.CaseFileStatus.Closed": "enums.CaseFileStatus.Closed",
     "enums.CaseFileStatus.Inactive": "enums.CaseFileStatus.Inactive",

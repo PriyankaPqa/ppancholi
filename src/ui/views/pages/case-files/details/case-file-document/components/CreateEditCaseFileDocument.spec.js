@@ -74,12 +74,11 @@ describe('CreateEditDocument', () => {
 
   describe('Methods', () => {
     describe('back', () => {
-      it('returns to the documents home page', async () => {
+      it('calls router back', async () => {
         await mountWrapper(false);
+        wrapper.vm.$router.back = jest.fn();
         wrapper.vm.back();
-        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-          name: routes.caseFile.documents.home.name,
-        });
+        expect(wrapper.vm.$router.back).toHaveBeenCalled();
       });
     });
 
@@ -113,15 +112,28 @@ describe('CreateEditDocument', () => {
         expect(actions.updateDocument).toHaveBeenCalledTimes(1);
       });
 
-      test('after submitting, the user is redirected to the documents list page', async () => {
-        await mountWrapper(true);
+      test('after submitting, the user is redirected to the details page when adding', async () => {
+        await mountWrapper(false);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.tryUpload = jest.fn(() => ({id: 'myNewId'}));
+        await wrapper.setData({file: {}});
+        await wrapper.setData({ document: mockDocument });
 
         await wrapper.vm.submit();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-          name: routes.caseFile.documents.home.name,
+          name: routes.caseFile.documents.details.name, params: { documentId: 'myNewId' },
         });
+      });
+      
+      test('after submitting, the user is redirected to back() when editing', async () => {
+        await mountWrapper(true);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$router.back = jest.fn();
+
+        await wrapper.vm.submit();
+
+        expect(wrapper.vm.$router.back).toHaveBeenCalled();
       });
 
       test('after creating an event a toast notification is shown', async () => {

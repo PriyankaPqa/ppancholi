@@ -12,7 +12,7 @@ export class CaseFileDocumentStorageMock extends BaseMock<ICaseFileDocumentCombi
 
   protected getters = {
     ...this.baseGetters,
-    categories: jest.fn(),
+    categories: jest.fn(() => mockOptionItemData()),
   }
 
   protected actions = {

@@ -38,7 +38,7 @@ describe('CaseFileDocument.vue', () => {
     mockDocumentMapped = {
       name: document.entity.name,
       id: document.entity.id,
-      category: options[0],
+      category: options[0].name.translation.en,
       documentStatus: document.entity.documentStatus,
       documentStatusName: document.metadata.documentStatusName.translation.en,
       created: 'Jul 20, 2021',
@@ -516,7 +516,7 @@ describe('CaseFileDocument.vue', () => {
           {
             name: document.entity.name,
             id: document.entity.id,
-            category: '',
+            category: options[0].name.translation.en,
             created: moment(document.entity.created),
             documentStatus: document.entity.documentStatus,
             documentStatusName: `caseFile.document.status.${document.entity.documentStatus === DocumentStatus.Past ? 'Past' : 'Current'}`,
@@ -653,19 +653,19 @@ describe('CaseFileDocument.vue', () => {
       });
     });
 
-    // describe('getDocumentDetailsRoute', () => {
-    //   it('should redirect to the case document details page', () => {
-    //     mountWrapper();
-    //     jest.clearAllMocks();
-    //     const result = wrapper.vm.getDocumentDetailsRoute('abc');
-    //     expect(result).toEqual({
-    //       name: routes.caseFile.documents.details.name,
-    //       params: {
-    //         documentId: 'abc',
-    //       },
-    //     });
-    //   });
-    // });
+    describe('getDocumentDetailsRoute', () => {
+      it('should redirect to the case document details page', () => {
+        mountWrapper();
+        jest.clearAllMocks();
+        const result = wrapper.vm.getDocumentDetailsRoute('abc');
+        expect(result).toEqual({
+          name: routes.caseFile.documents.details.name,
+          params: {
+            documentId: 'abc',
+          },
+        });
+      });
+    });
 
     describe('getDocumentEditRoute', () => {
       it('should redirect to the case document edit page', () => {
