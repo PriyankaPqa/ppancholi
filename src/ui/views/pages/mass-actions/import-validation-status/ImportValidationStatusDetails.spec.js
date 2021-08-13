@@ -6,7 +6,7 @@ import {
 
 import routes from '@/constants/routes';
 import {
-  massActionRun, MassActionRunStatus, mockCombinedMassAction,
+  mockMassActionRun, MassActionRunStatus, mockCombinedMassAction,
 } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
 import ImportValidationStatusPreProcessing
@@ -89,11 +89,19 @@ describe('ImportValidationStatusDetails.vue', () => {
       });
     });
 
-    describe('lastRun', () => {
-      it('should return the most recent run', () => {
+    describe('lastRunEntity', () => {
+      it('should return the most recent run of the entity', () => {
         wrapper.vm.$storage.massAction.getters.get = jest.fn(() => mockCombinedMassAction());
         const lastRun = mockCombinedMassAction().entity.runs[1];
-        expect(wrapper.vm.lastRun).toEqual(lastRun);
+        expect(wrapper.vm.lastRunEntity).toEqual(lastRun);
+      });
+    });
+
+    describe('lastRunMetadata', () => {
+      it('should return the metadata run corresponding to the entity one', () => {
+        wrapper.vm.$storage.massAction.getters.get = jest.fn(() => mockCombinedMassAction());
+        const lastRun = mockCombinedMassAction().metadata.runs[0];
+        expect(wrapper.vm.lastRunMetadata).toEqual(lastRun);
       });
     });
 
@@ -102,7 +110,7 @@ describe('ImportValidationStatusDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            lastRun: () => massActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
           },
         });
         expect(wrapper.vm.preProcessing).toBe(true);
@@ -112,7 +120,7 @@ describe('ImportValidationStatusDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            lastRun: () => massActionRun({ runStatus: MassActionRunStatus.Processed }),
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processed }),
           },
         });
         expect(wrapper.vm.preProcessing).toBe(false);
@@ -124,7 +132,7 @@ describe('ImportValidationStatusDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            lastRun: () => massActionRun({ runStatus: MassActionRunStatus.Processing }),
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processing }),
           },
         });
         expect(wrapper.vm.processing).toBe(true);
@@ -134,7 +142,7 @@ describe('ImportValidationStatusDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            lastRun: () => massActionRun({ runStatus: MassActionRunStatus.Processed }),
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processed }),
           },
         });
         expect(wrapper.vm.processing).toBe(false);
@@ -146,7 +154,7 @@ describe('ImportValidationStatusDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            lastRun: () => massActionRun({ runStatus: MassActionRunStatus.Processing }),
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processing }),
           },
         });
         expect(wrapper.vm.title).toBe('massActions.impactValidation.status.processing.title');
@@ -156,7 +164,7 @@ describe('ImportValidationStatusDetails.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            lastRun: () => massActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
           },
         });
         expect(wrapper.vm.title).toBe('massActions.impactValidation.status.preprocessing.title');

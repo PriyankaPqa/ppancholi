@@ -3,6 +3,7 @@
     <rc-page-content :title="title">
       <v-container>
         <v-row justify="center">
+          <!-- Use this slot to add the needed form -->
           <slot name="form" />
           <v-col cols="12" xl="8" lg="9" md="11" sm="12">
             <validation-provider v-slot="{ errors }" ref="file" :rules="rules.file" mode="aggressive">

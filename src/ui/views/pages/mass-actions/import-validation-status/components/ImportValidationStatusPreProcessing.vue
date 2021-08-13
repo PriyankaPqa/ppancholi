@@ -1,5 +1,7 @@
 <template>
-  <mass-action-pre-processing-base :mass-action="massAction" mass-action-type="massActions.type.importValidationImpactStatus" />
+  <mass-action-pre-processing-base
+    :mass-action="massAction"
+    mass-action-type="massActions.type.importValidationImpactStatus" />
 </template>
 
 <script lang="ts">

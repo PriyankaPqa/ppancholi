@@ -3,10 +3,7 @@
     <v-col cols="12" md="8" xl="7" sm="12">
       <div class="title">
         <span class="rc-heading-5 fw-bold"> {{ massAction.entity.name }}</span>
-        <rc-status-chip :color="colors.chips.orange" text-color="">
-          <v-progress-circular indeterminate :size="14" :width="2" />
-          <span class="ml-2" data-test="chipTitle">{{ $t(chipTitle) }}</span>
-        </rc-status-chip>
+        <status-chip show-loading status-name="MassActionRunStatus" :status="massActionStatus" />
       </div>
 
       <div v-if="massAction.entity.description" class="rc-body14 mt-4" data-test="description">
@@ -22,7 +19,7 @@
               </div>
 
               <div v-if="processTitle" class="rc-body14 fw-bold" data-test="processTitle">
-                {{ $t(processTitle, { x: numberItem }) }}
+                {{ $t(processTitle, { x: massAction.metadata.lastRun.results.total }) }}
               </div>
 
               <div class="rc-body12" data-test="processLabelOne">
@@ -44,14 +41,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcStatusChip } from '@crctech/component-library';
 import { IMassActionCombined } from '@/entities/mass-action';
 import colors from '@/ui/plugins/vuetify/colors';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 export default Vue.extend({
   name: 'MassActionProcessingBase',
   components: {
-    RcStatusChip,
+    StatusChip,
   },
 
   props: {
@@ -75,14 +72,9 @@ export default Vue.extend({
       default: 'massActions.processing.info2',
     },
 
-    chipTitle: {
-      type: String,
-      default: 'common.processing',
-    },
-
-    numberItem: {
+    massActionStatus: {
       type: Number,
-      default: 0,
+      required: true,
     },
   },
 

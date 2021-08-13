@@ -2,7 +2,11 @@
   <rc-page-content :title="title">
     <import-validation-status-pre-processing v-if="preProcessing" :mass-action="massAction" />
 
-    <import-validation-status-processing v-if="processing" :number-item="900" :mass-action="massAction" />
+    <import-validation-status-processing v-else-if="processing && lastRunMetadata" :mass-action="massAction" />
+
+    <template v-else>
+      This mass action status page is not yet implemented
+    </template>
 
     <template slot="actions">
       <v-btn color="primary" @click="back()">
@@ -19,7 +23,9 @@ import { TranslateResult } from 'vue-i18n';
 import _isEmpty from 'lodash/isEmpty';
 import _orderBy from 'lodash/orderBy';
 import routes from '@/constants/routes';
-import { IMassActionCombined, IMassActionRun, MassActionRunStatus } from '@/entities/mass-action';
+import {
+  IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
+} from '@/entities/mass-action';
 import ImportValidationStatusProcessing from './components/ImportValidationStatusProcessing.vue';
 import ImportValidationStatusPreProcessing from './components/ImportValidationStatusPreProcessing.vue';
 
@@ -41,16 +47,23 @@ export default Vue.extend({
       return this.$storage.massAction.getters.get(this.massActionId);
     },
 
-    lastRun(): IMassActionRun {
+    lastRunEntity(): IMassActionRun {
       return _orderBy(this.massAction.entity.runs, 'timestamp', 'desc')[0];
     },
 
+    lastRunMetadata(): IMassActionRunMetadataModel {
+      if (this.massAction.metadata) {
+        return this.massAction.metadata.lastRun;
+      }
+      return null;
+    },
+
     preProcessing(): boolean {
-      return this.lastRun?.runStatus === MassActionRunStatus.PreProcessing;
+      return this.lastRunEntity?.runStatus === MassActionRunStatus.PreProcessing;
     },
 
     processing(): boolean {
-      return this.lastRun?.runStatus === MassActionRunStatus.Processing;
+      return this.lastRunEntity?.runStatus === MassActionRunStatus.Processing;
     },
 
     title(): TranslateResult {

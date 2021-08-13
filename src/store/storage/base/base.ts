@@ -23,7 +23,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return [];
     }
     return entity.map((e) => {
-      const match = metadata.find((m) => m && m.id === e.id);
+      const match = metadata && metadata.find((m) => m && m.id === e.id);
 
       return {
         entity: e,
@@ -116,8 +116,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
 
     search: async (params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureTableSearchResults> => {
       this.store.commit(`${this.entityModuleName}/setSearchLoading`, true);
-      const res = await this.store.dispatch(`${this.entityModuleName}/search`,
-        { params, searchEndpoint });
+      const res = await this.store.dispatch(`${this.entityModuleName}/search`, { params, searchEndpoint });
 
       const data = res?.value;
       if (data) {

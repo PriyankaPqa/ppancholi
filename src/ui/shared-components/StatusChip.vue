@@ -1,6 +1,7 @@
 <template>
   <rc-status-chip :color="color" :text-color="textColor">
     <slot name="default">
+      <v-progress-circular v-if="showLoading" indeterminate :size="14" :width="2" class="mr-2" />
       {{ text ? text : $t(textFromEnum) }}
       <v-icon v-if="showChevron" right>
         mdi-chevron-down
@@ -21,6 +22,7 @@ import { EProgramStatus } from '@/entities/program';
 import { AccountStatus } from '@/entities/user-account';
 import { Status } from '@/entities/base';
 import { DocumentStatus } from '@/entities/case-file-document';
+import { MassActionRunStatus } from '@/entities/mass-action';
 
 export default Vue.extend({
   name: 'StatusChip',
@@ -45,6 +47,7 @@ export default Vue.extend({
           'DocumentStatus',
           'CaseFileFinancialAssistanceStatus',
           'Status',
+          'MassActionRunStatus',
         ].indexOf(value) > -1
       ),
     },
@@ -60,6 +63,11 @@ export default Vue.extend({
     },
 
     showChevron: {
+      type: Boolean,
+      default: false,
+    },
+
+    showLoading: {
       type: Boolean,
       default: false,
     },
@@ -87,6 +95,8 @@ export default Vue.extend({
           return this.getDocumentStatusColor();
         case 'Status':
           return this.getStatusColor();
+        case 'MassActionRunStatus':
+          return this.getMassActionRunStatusColor();
 
         default:
           return colors.chips.green;
@@ -127,6 +137,8 @@ export default Vue.extend({
           return `caseFile.document.status.${DocumentStatus[this.status]}`;
         case 'Status':
           return `enums.Status.${Status[this.status]}`;
+        case 'MassActionRunStatus':
+          return `enums.MassActionRunStatus.${MassActionRunStatus[this.status]}`;
 
         default:
           return '';
@@ -254,6 +266,25 @@ export default Vue.extend({
 
         case Status.Inactive:
           return colors.chips.light_grey;
+
+        default:
+          return colors.chips.green;
+      }
+    },
+
+    getMassActionRunStatusColor(): string {
+      switch (this.status) {
+        case MassActionRunStatus.Processed:
+          return colors.chips.green;
+
+        case MassActionRunStatus.PreProcessing:
+          return colors.chips.orange;
+
+        case MassActionRunStatus.Processing:
+          return colors.chips.orange;
+
+        case MassActionRunStatus.PreProcessed:
+          return colors.chips.green_pale;
 
         default:
           return colors.chips.green;

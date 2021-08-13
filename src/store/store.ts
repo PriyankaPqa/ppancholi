@@ -59,6 +59,7 @@ import { TeamsMetadataService } from '@/services/teams/metadata';
 import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEntity';
 import { MassActionService } from '@/services/mass-actions/entity';
 import { MassActionMetadataModule } from '@/store/modules/mass-action/massActionMetadata';
+import { MassActionMetadataService } from '@/services/mass-actions/metadata';
 import { IRootState } from './store.types';
 
 Vue.use(Vuex);
@@ -114,7 +115,7 @@ const store: StoreOptions<IRootState> = {
     }),
 
     [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(new MassActionService(httpClient)).getModule(),
-    [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(null).getModule(),
+    [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(new MassActionMetadataService(httpClient)).getModule(),
   },
 };
 

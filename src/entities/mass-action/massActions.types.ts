@@ -41,6 +41,27 @@ export interface IMassActionRun extends IEntity {
   runStatus: MassActionRunStatus;
 }
 
+export interface IMassActionRunResultMetadataModel {
+  total: number;
+  successes: number;
+  failures: number;
+}
+
+export interface IMassActionErrorResultMetadataModel{
+  error: string;
+  total: number;
+}
+
+export interface IMassActionRunMetadataModel {
+  runId: uuid;
+  results: IMassActionRunResultMetadataModel;
+  errors: Array<IMassActionErrorResultMetadataModel>
+  started: Date | string;
+  completed: Date | string;
+  runType: MassActionRunType;
+  runStatus: MassActionRunStatus;
+}
+
 export interface IMassActionEntityData extends IEntity {
   name: string;
 
@@ -59,6 +80,9 @@ export interface IMassActionEntity extends IMassActionEntityData {
   validate(): Array<string> | boolean;
 }
 
-export interface IMassActionMetadata extends IEntity {}
+export interface IMassActionMetadata extends IEntity {
+  runs: Array<IMassActionRunMetadataModel>
+  lastRun: IMassActionRunMetadataModel
+}
 
 export type IMassActionCombined = IEntityCombined<IMassActionEntity, IMassActionMetadata>

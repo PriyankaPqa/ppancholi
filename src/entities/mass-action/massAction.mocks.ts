@@ -2,8 +2,8 @@ import { mockBaseData } from '@/entities/base';
 import {
   IMassActionCombined,
   IMassActionEntity,
-  IMassActionEntityData,
-  IMassActionRun,
+  IMassActionEntityData, IMassActionMetadata,
+  IMassActionRun, IMassActionRunMetadataModel,
   MassActionGroup,
   MassActionRunStatus,
   MassActionRunType,
@@ -11,7 +11,7 @@ import {
 } from '@/entities/mass-action/massActions.types';
 import { MassActionEntity } from '@/entities/mass-action/massAction';
 
-export const massActionRun = (force? : Partial<IMassActionRun>): IMassActionRun => ({
+export const mockMassActionRun = (force? : Partial<IMassActionRun>): IMassActionRun => ({
   ...mockBaseData(),
   started: '2021-08-05T14:37:53.425Z',
   completed: '2021-08-05T14:37:53.425Z',
@@ -28,9 +28,36 @@ export const mockMassActionEntityData = (force? : Partial<IMassActionEntityData>
   type: MassActionType.FinancialAssistance,
   group: MassActionGroup.Group1,
   runs: [
-    massActionRun(),
-    massActionRun({ timestamp: '2021-08-06 06:39:04' }),
+    mockMassActionRun(),
+    mockMassActionRun({ timestamp: '2021-08-06 06:39:04' }),
   ],
+  ...force,
+});
+
+export const mockMassActionRunMetadata = (force? : Partial<IMassActionRunMetadataModel>): IMassActionRunMetadataModel => ({
+  runId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+  results: {
+    total: 100,
+    successes: 50,
+    failures: 50,
+  },
+  errors: [{
+    error: 'error.x',
+    total: 50,
+  }],
+  started: '2021-08-05T14:37:53.425Z',
+  completed: '2021-08-05T14:37:53.425Z',
+  runType: MassActionRunType.Process,
+  runStatus: MassActionRunStatus.Processed,
+  ...force,
+});
+
+export const mockMassActionMetadata = (force? : Partial<IMassActionMetadata>): IMassActionMetadata => ({
+  ...mockBaseData(),
+  runs: [
+    mockMassActionRunMetadata(),
+  ],
+  lastRun: mockMassActionRunMetadata(),
   ...force,
 });
 
@@ -38,7 +65,7 @@ export const mockMassActionEntity = (force? : Partial<IMassActionEntity>): IMass
 
 export const mockCombinedMassAction = (force?: Partial<IMassActionEntity>): IMassActionCombined => ({
   entity: mockMassActionEntity(force),
-  metadata: null,
+  metadata: mockMassActionMetadata(),
 });
 
 export const mockMassActionEntities = (): IMassActionEntity[] => [

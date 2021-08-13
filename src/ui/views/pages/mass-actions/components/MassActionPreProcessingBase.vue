@@ -2,7 +2,7 @@
   <div>
     <mass-action-processing-base
       :mass-action="massAction"
-      chip-title="common.preProcessing"
+      :mass-action-status="MassActionRunStatus.PreProcessing"
       :process-title="processTitle"
       :process-label-one="processLabelOne"
       :process-label-two="processLabelTwo">
@@ -16,27 +16,26 @@
             <span class="rc-body14 fw-bold">{{ $t('massActions.date_created') }}</span>
             <span class="rc-body14" data-test="dateCreated">{{ moment(massAction.entity.created).local().format('ll') }}</span>
           </div>
-          <div class="row-data">
+          <div v-if="userAccount && userAccount.metadata" class="row-data">
             <span class="rc-body14 fw-bold">{{ $t('massActions.created_by') }}</span>
-            <span v-if="userAccount" class="rc-body14" data-test="createdBy">{{ userAccount.metadata.displayName }}</span>
+            <span class="rc-body14" data-test="createdBy">{{ userAccount.metadata.displayName }}</span>
           </div>
         </div>
       </template>
     </mass-action-processing-base>
-
-    <slot name="secondaryTable" />
+    <!--    Use this slot to add more -->
+    <slot />
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import { IMassActionCombined } from '@/entities/mass-action';
-
+import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 
 export default Vue.extend({
-  name: 'ImportValidationStatusPreProcessing',
+  name: 'MassActionPreProcessingBase',
   components: {
     MassActionProcessingBase,
   },
@@ -72,6 +71,7 @@ export default Vue.extend({
     return {
       moment,
       userAccount: null,
+      MassActionRunStatus,
     };
   },
 
