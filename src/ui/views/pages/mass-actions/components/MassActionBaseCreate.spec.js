@@ -1,4 +1,4 @@
-import { RcPageContent, RcConfirmationDialog } from '@crctech/component-library';
+import { RcPageContent } from '@crctech/component-library';
 import {
   createLocalVue,
   mount,
@@ -68,23 +68,6 @@ describe('MassActionBaseCreate.vue', () => {
         });
       });
     });
-
-    describe('Confirmation dialog', () => {
-      it('should be rendered', async () => {
-        await wrapper.setData({ showConfirmation: true });
-        expect(wrapper.findComponent(RcConfirmationDialog).exists()).toBe(true);
-      });
-
-      it('should have proper title', async () => {
-        await wrapper.setData({ showConfirmation: true });
-        expect(wrapper.findComponent(RcConfirmationDialog).props('title')).toBe('massAction.confirm.preprocessing.title');
-      });
-
-      it('should have proper message', async () => {
-        await wrapper.setData({ showConfirmation: true });
-        expect(wrapper.findComponent(RcConfirmationDialog).props('messages')).toBe('massAction.confirm.preprocessing.message');
-      });
-    });
   });
 
   describe('Methods', () => {
@@ -98,7 +81,6 @@ describe('MassActionBaseCreate.vue', () => {
         },
       });
       wrapper.vm.$refs.form.validate = jest.fn(() => true);
-      wrapper.vm.$refs.confirmUpload.open = jest.fn(() => true);
     });
 
     describe('next', () => {
@@ -119,6 +101,14 @@ describe('MassActionBaseCreate.vue', () => {
       it('should call upload method', async () => {
         await wrapper.vm.next();
         expect(wrapper.vm.upload).toBeCalled();
+      });
+
+      it('should confirm before emitting or uploading', async () => {
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.next();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('massAction.confirm.preprocessing.title', 'massAction.confirm.preprocessing.message');
+        expect(wrapper.emitted('upload:start')).toBeFalsy();
+        expect(wrapper.vm.upload).not.toBeCalled();
       });
     });
 

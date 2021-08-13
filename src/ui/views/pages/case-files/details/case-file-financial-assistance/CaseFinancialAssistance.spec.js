@@ -1,5 +1,5 @@
-import { createLocalVue, mount } from '@/test/testSetup';
 import { RcDataTable } from '@crctech/component-library';
+import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 import Component from './CaseFinancialAssistance.vue';

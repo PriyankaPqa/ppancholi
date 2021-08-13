@@ -56,8 +56,8 @@ import {
   VTextAreaWithValidation,
   VAutocompleteWithValidation,
 } from '@crctech/component-library';
-import { IProgramData } from '@/entities/program';
 import _sortBy from 'lodash/sortBy';
+import { IProgramData } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { CaseFinancialAssistanceEntity, ICaseFinancialAssistanceEntity } from '@/entities/case-file-financial-assistance';

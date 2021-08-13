@@ -25,7 +25,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import helpers from '@/ui/helpers';
-import mimeTypes from '@/constants/mimeTypes';
 
 export default Vue.extend({
   name: 'RcFileUpload',
@@ -81,13 +80,6 @@ export default Vue.extend({
       default: 'files only are authorized',
     },
     /**
-     * Error message regarding mime type
-     */
-    errorMimeType: {
-      type: String,
-      default: 'The MIME type is not authorized',
-    },
-    /**
      * Request headers
      */
     headers: {
@@ -113,23 +105,12 @@ export default Vue.extend({
   data() {
     return {
       errorMessages: [] as Array<string>,
-      mimeTypes: mimeTypes as { [key: string]: Array<string> },
       localFiles: [],
     };
   },
   computed: {
     currentFile(): File {
       return this.localFiles[0];
-    },
-    /**
-     * Computes an array containing all authorized extensions based on props
-     */
-    mergedAuthorizedTypes(): Array<string> {
-      let mergedAuthorizedTypes = [] as Array<string>;
-      (this.allowedExtensions as Array<string>).forEach((ext: string) => {
-        mergedAuthorizedTypes = [...this.mimeTypes[ext], ...mergedAuthorizedTypes];
-      });
-      return mergedAuthorizedTypes;
     },
     /**
      * Filter the selection of files based on extensions
@@ -154,8 +135,6 @@ export default Vue.extend({
         if (!this.isFileExtensionAuthorized(this.getFileExtension(file))) {
           this.errorMessages.push(`${this.allowedExtensions.join(', ')} ${this.errorExtensions}`);
         }
-        // We check if the MIME type of the file is authorized
-        if (!this.isFileTypeAuthorized(file.type)) this.errorMessages.push(`${this.errorMimeType} - ${file.type}`);
       }
     },
     /**
@@ -171,12 +150,6 @@ export default Vue.extend({
      */
     isFileSizeOK(size: number) {
       return size <= this.maxSize;
-    },
-    /**
-     * Check if the file type is authorized
-     */
-    isFileTypeAuthorized(type: string) {
-      return this.mergedAuthorizedTypes.includes(type);
     },
     /**
      * Check if the file extension is authorized

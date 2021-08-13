@@ -65,19 +65,18 @@ describe('CaseNote.vue', () => {
     let next;
     beforeEach(() => {
       next = jest.fn(() => {});
-      wrapper.vm.$refs.confirmLeavePopup.open = jest.fn(() => true);
     });
 
     it('opens the dialog if isBeingCreated is true', async () => {
       await wrapper.setData({ isBeingCreated: true });
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
-      expect(wrapper.vm.$refs.confirmLeavePopup.open).toHaveBeenCalled();
+      expect(wrapper.vm.$confirm).toHaveBeenCalled();
     });
 
     it('opens the dialog if isBeingEdited is true', async () => {
       await wrapper.setData({ isBeingEdited: true });
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
-      expect(wrapper.vm.$refs.confirmLeavePopup.open).toHaveBeenCalled();
+      expect(wrapper.vm.$confirm).toHaveBeenCalled();
     });
 
     it('calls next if the confirmation dialog returns true', async () => {
@@ -87,7 +86,7 @@ describe('CaseNote.vue', () => {
     });
 
     it('does not call next if the confirmation dialog returns false', async () => {
-      wrapper.vm.$refs.confirmLeavePopup.open = jest.fn(() => false);
+      wrapper.vm.$confirm = jest.fn(() => false);
       await wrapper.setData({ isBeingCreated: true });
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
       expect(next).not.toBeCalled();

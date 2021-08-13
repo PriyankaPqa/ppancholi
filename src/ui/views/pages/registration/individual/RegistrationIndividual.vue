@@ -68,16 +68,11 @@
         </rc-page-content>
       </validation-observer>
     </page-template>
-    <rc-confirmation-dialog
-      ref="confirmLeavePopup"
-      :show.sync="showExitConfirmation"
-      :title="titleLeave"
-      :messages="messagesLeave" />
   </div>
 </template>
 
 <script lang="ts">
-import { RcPageContent, RcConfirmationDialog } from '@crctech/component-library';
+import { RcPageContent } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { Route, NavigationGuardNext } from 'vue-router';
@@ -96,7 +91,7 @@ import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegis
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
 import { tabs } from '@/store/modules/registration/tabs';
 import store from '@/store/store';
-import { ConfirmationDialog, VForm } from '@/types';
+import { VForm } from '@/types';
 import helpers from '@/ui/helpers';
 
 export default mixins(individual).extend({
@@ -117,7 +112,7 @@ export default mixins(individual).extend({
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
     if (this.currentTab.id !== 'confirmation' && this.currentTab.id !== 'review') {
-      const userChoice = await (this.$refs.confirmLeavePopup as ConfirmationDialog).open();
+      const userChoice = await (this.$confirm(this.titleLeave, this.messagesLeave) as Promise<unknown>);
       next(userChoice);
     } else {
       next();
@@ -135,7 +130,6 @@ export default mixins(individual).extend({
     AdditionalMembers,
     ReviewRegistration,
     ConfirmRegistration,
-    RcConfirmationDialog,
   },
 
   mixins: [individual],
@@ -287,7 +281,7 @@ export default mixins(individual).extend({
     },
 
     async associateHousehold(household: HouseholdCreate, event: IEvent): Promise<boolean> {
-      const userChoice = await (this.$refs.confirmLeavePopup as ConfirmationDialog).open() as boolean;
+      const userChoice = await (this.$confirm(this.titleLeave, this.messagesLeave));
       if (userChoice) {
         await this.$storage.caseFile.actions.createCaseFile({
           householdId: household.id,

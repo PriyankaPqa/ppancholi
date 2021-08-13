@@ -12,11 +12,18 @@
       </div>
     </div>
     <rc-router-view-transition v-else />
+
+    <rc-confirmation-dialog
+      ref="defaultConfirm"
+      :show.sync="showConfirm"
+      :title="confirmationTitle"
+      :messages="confirmationMessages" />
   </v-app>
 </template>
 
 <script>
-import { RcRouterViewTransition } from '@crctech/component-library';
+import Vue from 'vue';
+import { RcRouterViewTransition, RcConfirmationDialog } from '@crctech/component-library';
 import { localStorageKeys } from '@/constants/localStorage';
 
 export default {
@@ -24,6 +31,7 @@ export default {
 
   components: {
     RcRouterViewTransition,
+    RcConfirmationDialog,
   },
 
   metaInfo() {
@@ -40,6 +48,9 @@ export default {
 
   data() {
     return {
+      showConfirm: false,
+      confirmationTitle: '',
+      confirmationMessages: '',
       cspContent: '',
       cspContentProd: '',
       cspContentDev: `
@@ -96,6 +107,17 @@ export default {
     if (process.env.NODE_ENV === 'production') {
       this.cspContent = this.cspContentProd;
     }
+
+    Vue.prototype.$confirm = async (title, messages) => {
+      this.confirmationTitle = title;
+      this.confirmationMessages = messages;
+      this.showConfirm = true;
+
+      const userChoice = await this.$refs.defaultConfirm.open();
+
+      this.showConfirm = false;
+      return userChoice;
+    };
 
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
     localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, process.env.VUE_APP_EVENT_LINK_PREFIX);

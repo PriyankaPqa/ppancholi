@@ -2,6 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseFileDocument, DocumentStatus } from '@/entities/case-file-document';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockUserStateLevel } from '@/test/helpers';
+import routes from '@/constants/routes';
 
 import helpers from '@/ui/helpers';
 import moment from '@/ui/plugins/moment';
@@ -10,6 +11,7 @@ import Component from './CaseFileDocument.vue';
 const localVue = createLocalVue();
 let storage;
 const document = mockCombinedCaseFileDocument();
+let mockDocumentMapped;
 
 describe('CaseFileDocument.vue', () => {
   let wrapper;
@@ -24,19 +26,23 @@ describe('CaseFileDocument.vue', () => {
       actions: {
         fetchCategories: jest.fn(() => options),
         fetchAll: jest.fn(() => [document]),
+        deactivate: jest.fn(() => document),
         downloadDocumentAsUrl: jest.fn(() => 'url'),
       },
     },
   };
 
   const mountWrapper = (canEdit = true, canAdd = true, canDelete = true, canDownload = true) => {
-    const mockDocumentMapped = {
+    jest.clearAllMocks();
+
+    mockDocumentMapped = {
       name: document.entity.name,
       id: document.entity.id,
       category: options[0],
       documentStatus: document.entity.documentStatus,
       documentStatusName: document.metadata.documentStatusName.translation.en,
       created: 'Jul 20, 2021',
+      entity: document.entity,
     };
 
     wrapper = shallowMount(Component, {
@@ -594,6 +600,24 @@ describe('CaseFileDocument.vue', () => {
       });
     });
 
+    describe('deleteDocument', () => {
+      it('calls deactivate after confirmation', async () => {
+        mountWrapper();
+        await wrapper.vm.deleteDocument(mockDocumentMapped);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
+        expect(storage.caseFileDocument.actions.deactivate)
+          .toHaveBeenCalledWith({ id: mockDocumentMapped.id, caseFileId: wrapper.vm.caseFileId });
+      });
+      it('doesnt call deactivate if no confirmation', async () => {
+        mountWrapper();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.deleteDocument(mockDocumentMapped);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
+        expect(storage.caseFileDocument.actions.deactivate)
+          .toHaveBeenCalledTimes(0);
+      });
+    });
+
     describe('download', () => {
       it('calls storage on download', () => {
         mountWrapper(false);
@@ -618,16 +642,16 @@ describe('CaseFileDocument.vue', () => {
       });
     });
 
-    // describe('addCaseDocument', () => {
-    //   it('should redirect to the case document add page', async () => {
-    //     mountWrapper();
-    //     wrapper.vm.addCaseDocument();
-    //     await wrapper.vm.$nextTick();
-    //     expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
-    //       name: routes.caseFile.documents.add.name,
-    //     });
-    //   });
-    // });
+    describe('addCaseDocument', () => {
+      it('should redirect to the case document add page', async () => {
+        mountWrapper();
+        wrapper.vm.addCaseDocument();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.documents.add.name,
+        });
+      });
+    });
 
     // describe('getDocumentDetailsRoute', () => {
     //   it('should redirect to the case document details page', () => {
@@ -643,17 +667,17 @@ describe('CaseFileDocument.vue', () => {
     //   });
     // });
 
-    // describe('getDocumentEditRoute', () => {
-    //   it('should redirect to the case document edit page', () => {
-    //     mountWrapper();
-    //     const result = wrapper.vm.getDocumentEditRoute('abc');
-    //     expect(result).toEqual({
-    //       name: routes.caseFile.documents.edit.name,
-    //       params: {
-    //         documentId: 'abc',
-    //       },
-    //     });
-    //   });
-    // });
+    describe('getDocumentEditRoute', () => {
+      it('should redirect to the case document edit page', () => {
+        mountWrapper();
+        const result = wrapper.vm.getDocumentEditRoute('abc');
+        expect(result).toEqual({
+          name: routes.caseFile.documents.edit.name,
+          params: {
+            documentId: 'abc',
+          },
+        });
+      });
+    });
   });
 });

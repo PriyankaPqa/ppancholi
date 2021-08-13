@@ -25,12 +25,6 @@
       </template>
     </rc-page-content>
 
-    <rc-confirmation-dialog
-      ref="confirmUpload"
-      :show.sync="showConfirmation"
-      :title="$t('massAction.confirm.preprocessing.title')"
-      :messages="$t('massAction.confirm.preprocessing.message')" />
-
     <rc-dialog
       :title="$t(uploadDialogTitle)"
       :submit-action-label="$t('common.button.next')"
@@ -60,11 +54,11 @@
 
 <script lang="ts">
 import {
-  VTextFieldWithValidation, VTextAreaWithValidation, RcPageContent, RcConfirmationDialog, RcDialog,
+  VTextFieldWithValidation, VTextAreaWithValidation, RcPageContent, RcDialog,
 } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
-import { ConfirmationDialog, VForm } from '@/types';
+import { VForm } from '@/types';
 import fileUpload from '@/ui/mixins/fileUpload';
 import { IMassActionEntity, MassActionEntity } from '@/entities/mass-action';
 
@@ -76,7 +70,6 @@ export default mixins(fileUpload).extend({
     VTextAreaWithValidation,
     RcPageContent,
     RcFileUpload,
-    RcConfirmationDialog,
     RcDialog,
   },
 
@@ -108,7 +101,6 @@ export default mixins(fileUpload).extend({
     return {
       name: '',
       description: '',
-      showConfirmation: false,
     };
   },
 
@@ -132,10 +124,9 @@ export default mixins(fileUpload).extend({
     async next() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        this.showConfirmation = true;
-        const userChoice = await (this.$refs.confirmUpload as ConfirmationDialog).open() as boolean;
+        const userChoice = await this.$confirm(this.$t('massAction.confirm.preprocessing.title'),
+          this.$t('massAction.confirm.preprocessing.message'));
         if (userChoice) {
-          this.showConfirmation = false;
           this.showUploadDialog = true;
           // So the parent update the formData props
           this.$emit('upload:start');

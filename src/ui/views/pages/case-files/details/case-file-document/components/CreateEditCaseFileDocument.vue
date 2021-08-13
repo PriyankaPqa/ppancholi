@@ -5,12 +5,6 @@
         :title="isEditMode ? $t('document.edit.title') : $t('document.add.title')">
         <document-form ref="documentForm" :document.sync="document" :file.sync="file" :is-edit-mode="isEditMode" />
 
-        <rc-confirmation-dialog
-          ref="confirmUpload"
-          :show.sync="showConfirmation"
-          :title="$t('caseFile.document.confirm.preprocessing.title')"
-          :messages="$t('caseFile.document.confirm.preprocessing.message')" />
-
         <template slot="actions">
           <v-btn data-test="cancel" @click.stop="back()">
             {{ $t('common.cancel') }}
@@ -28,8 +22,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcPageContent, RcConfirmationDialog } from '@crctech/component-library';
-import { ConfirmationDialog, VForm } from '@/types';
+import { RcPageContent } from '@crctech/component-library';
+import { VForm } from '@/types';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
@@ -42,7 +36,6 @@ export default Vue.extend({
   components: {
     PageTemplate,
     RcPageContent,
-    RcConfirmationDialog,
     DocumentForm,
   },
 
@@ -64,7 +57,6 @@ export default Vue.extend({
       error: false,
       document: new CaseFileDocumentEntity(null),
       file: null as File,
-      showConfirmation: false,
     };
   },
 
@@ -135,10 +127,8 @@ export default Vue.extend({
     },
 
     async tryUpload(): Promise<ICaseFileDocumentEntity> {
-      this.showConfirmation = true;
-      const userChoice = await (this.$refs.confirmUpload as ConfirmationDialog).open() as boolean;
-      this.showConfirmation = false;
-      if (userChoice) {
+      if (await this.$confirm(this.$t('caseFile.document.confirm.preprocessing.title'),
+        this.$t('caseFile.document.confirm.preprocessing.message'))) {
         return this.uploadNewDocument();
       }
       return null;

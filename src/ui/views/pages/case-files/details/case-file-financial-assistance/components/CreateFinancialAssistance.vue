@@ -55,6 +55,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { RcPageContent } from '@crctech/component-library';
+import { TranslateResult } from 'vue-i18n';
 import { CaseFinancialAssistanceEntity } from '@/entities/case-file-financial-assistance';
 import
 {
@@ -65,8 +67,6 @@ import { Status } from '@/entities/base/index';
 import { ICaseFileEntity, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { IProgram, IProgramData } from '@/entities/program';
-import { RcPageContent } from '@crctech/component-library';
-import { TranslateResult } from 'vue-i18n';
 import routes from '@/constants/routes';
 import CreateFinancialAssistanceForm from './CreateFinancialAssistanceForm.vue';
 

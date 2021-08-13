@@ -7,8 +7,8 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
     : {useEntityGlobalHandler:boolean, useMetadataGlobalHandler: boolean}) : Promise<IEntityCombined<TEntity, TMetadata>>;
   fetchAll(id?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   fetchAllIncludingInactive(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
-  deactivate(id: uuid): Promise<TEntity>;
-  activate(id: uuid): Promise<TEntity>;
+  deactivate(idParams: IdParams): Promise<TEntity>;
+  activate(idParams: IdParams): Promise<TEntity>;
   search(params: IAzureSearchParams, searchEndpoint?: string): Promise<IAzureTableSearchResults>
 }
 

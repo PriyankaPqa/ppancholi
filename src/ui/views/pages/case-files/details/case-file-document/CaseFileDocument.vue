@@ -59,8 +59,8 @@
         </v-btn>
       </template>
 
-      <template #[`item.${customColumns.delete}`]="{ }">
-        <v-btn icon data-test="editDocument-link">
+      <template #[`item.${customColumns.delete}`]="{ item }">
+        <v-btn icon data-test="editDocument-link" @click="deleteDocument(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -260,6 +260,12 @@ export default Vue.extend({
       this.$router.push({
         name: routes.caseFile.documents.add.name,
       });
+    },
+
+    async deleteDocument(item: caseFileDocumentsMapped) {
+      if (await this.$confirm(this.$t('caseFile.document.confirm.delete.title'), this.$t('caseFile.document.confirm.delete.message'))) {
+        await this.$storage.caseFileDocument.actions.deactivate({ id: item.id, caseFileId: this.caseFileId });
+      }
     },
 
     getDocumentDetailsRoute(id: string) {

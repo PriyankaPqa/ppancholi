@@ -10,10 +10,11 @@ import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionI
 import { mockCaseFileReferralEntity, mockCaseFileReferralEntities } from '@/entities/case-file-referral';
 import { CaseFileReferralEntityModule } from './caseFileReferralEntity';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
+import { Status } from '@/entities/base';
 
 const service = new CaseFileReferralsService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
-const module = new CaseFileReferralEntityModule(service, optionItemService);
+let module: CaseFileReferralEntityModule;
 
 const actionContext = {
   commit: jest.fn(),
@@ -25,6 +26,11 @@ const actionContext = {
 } as ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>;
 
 describe('Case file entity module', () => {
+  
+  beforeEach(() => {
+    module = new CaseFileReferralEntityModule(service, optionItemService);
+  });
+
   describe('getters', () => {
     describe('types', () => {
       test('the getter returns the sorted types', () => {
@@ -59,6 +65,13 @@ describe('Case file entity module', () => {
         module.mutations.setAll(module.state, [referral1, referral2]);
         const res = module.getters.getByCaseFile(module.state)('case-file-1');
         expect(res).toEqual([referral1]);
+      });
+      test('the getter ignores inactive items', () => {
+        const item1 = mockCaseFileReferralEntity({id: '1', caseFileId: 'case-file-1', status: Status.Inactive});
+        const item2 = mockCaseFileReferralEntity({id: '2', caseFileId: 'case-file-1', status: Status.Active});
+        module.mutations.setAll(module.state, [item1, item2]);
+        const res = module.getters.getByCaseFile(module.state)('case-file-1');
+        expect(res).toEqual([item2]);
       });
     });
   });

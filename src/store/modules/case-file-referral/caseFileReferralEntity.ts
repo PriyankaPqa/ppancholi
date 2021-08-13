@@ -11,6 +11,7 @@ import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
+import { Status } from '@/entities/base';
 
 export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralEntity, { id: uuid, caseFileId: uuid }> {
   constructor(readonly service: CaseFileReferralsService, readonly optionItemService: IOptionItemsService) {
@@ -42,7 +43,8 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
     // eslint-disable-next-line
     outcomeStatuses: (state:ICaseFileReferralEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.outcomeStatuses, filterOutInactive, actualValue),
 
-    getByCaseFile: (state: ICaseFileReferralEntityState) => (caseFileId: uuid) => _cloneDeep(state.items.filter((x) => x.caseFileId === caseFileId)),
+    // eslint-disable-next-line
+    getByCaseFile: (state: ICaseFileReferralEntityState) => (caseFileId: uuid) => _cloneDeep(state.items.filter((x) => x.caseFileId === caseFileId && x.status === Status.Active)),
   }
 
   public mutations = {

@@ -48,25 +48,18 @@
     <template v-if="!loading" #actions>
       <v-data-footer v-if="false" :options.sync="options" :pagination.sync="pagination" :items-per-page-options="[5, 10, 15, 20]" />
     </template>
-
-    <rc-confirmation-dialog
-      ref="confirmLeavePopup"
-      :show.sync="showExitConfirmation"
-      :title="titleLeave"
-      :messages="messagesLeave" />
   </rc-page-content>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageContent, RcPageLoading, RcConfirmationDialog } from '@crctech/component-library';
+import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import _orderBy from 'lodash/orderBy';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import { FilterKey } from '@/entities/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { ICaseNoteCombined } from '@/entities/case-note';
-import { ConfirmationDialog } from '@/types';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';
@@ -81,12 +74,11 @@ export default Vue.extend({
     CaseFileListWrapper,
     CaseNotesListItem,
     FilterToolbar,
-    RcConfirmationDialog,
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
     if (this.isBeingCreated || this.isBeingEdited) {
-      const leavingConfirmed = await (this.$refs.confirmLeavePopup as ConfirmationDialog).open();
+      const leavingConfirmed = await this.$confirm(this.titleLeave, this.messagesLeave);
       if (leavingConfirmed) {
         next();
       }
@@ -108,7 +100,6 @@ export default Vue.extend({
         itemsPerPage: 10,
       },
       searchTimeout: null,
-      showExitConfirmation: false,
       params: {
         filter: {
           'Entity/CaseFileId': this.$route.params.id,

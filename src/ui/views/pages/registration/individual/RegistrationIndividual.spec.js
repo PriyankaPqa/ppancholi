@@ -264,16 +264,15 @@ describe('Individual.vue', () => {
       it('should display confirmation dialog ', async () => {
         const household = mockHouseholdCreateData();
         const event = { id: '1' };
-        wrapper.vm.$refs.confirmLeavePopup.open = jest.fn(() => false);
+        wrapper.vm.$confirm = jest.fn(() => false);
 
         await wrapper.vm.associateHousehold(household, event);
 
-        expect(wrapper.vm.$refs.confirmLeavePopup.open).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith(wrapper.vm.titleLeave, wrapper.vm.messagesLeave);
       });
       it('should call create case file action if user confirmed', async () => {
         const household = mockHouseholdCreateData();
         const event = { id: '1' };
-        wrapper.vm.$refs.confirmLeavePopup.open = jest.fn(() => true);
 
         await wrapper.vm.associateHousehold(household, event);
 

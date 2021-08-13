@@ -48,9 +48,9 @@ import {
   RcDataTable,
   ISearchData,
 } from '@crctech/component-library';
+import { TranslateResult } from 'vue-i18n';
 import { ITransaction } from '@/entities/case-file';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { TranslateResult } from 'vue-i18n';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

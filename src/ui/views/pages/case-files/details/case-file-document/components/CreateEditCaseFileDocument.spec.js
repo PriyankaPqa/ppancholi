@@ -5,7 +5,6 @@ import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument, mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
 import Component from './CreateEditCaseFileDocument.vue';
 import { mockStorage } from '@/store/storage';
-import { RcConfirmationDialog } from '@crctech/component-library';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -148,12 +147,13 @@ describe('CreateEditDocument', () => {
       it('should call uploadNewDocument depending on confirmation', async () => {
         await mountWrapper(false);
         wrapper.vm.uploadNewDocument = jest.fn(() => mockDocument);
-        wrapper.vm.$refs.confirmUpload.open = jest.fn(() => false);
+        wrapper.vm.$confirm = jest.fn(() => false);
         let res = await wrapper.vm.tryUpload();
         expect(res).toBeNull();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.preprocessing.title', 'caseFile.document.confirm.preprocessing.message');
         expect(wrapper.vm.uploadNewDocument).toHaveBeenCalledTimes(0);
         
-        wrapper.vm.$refs.confirmUpload.open = jest.fn(() => true);
+        wrapper.vm.$confirm = jest.fn(() => true);
         res = await wrapper.vm.tryUpload();
         expect(res).toEqual(mockDocument);
         expect(wrapper.vm.uploadNewDocument).toHaveBeenCalledTimes(1);
@@ -240,27 +240,6 @@ describe('CreateEditDocument', () => {
   });
 
   describe('Template', () => {
-    describe('Confirmation dialog', () => {
-      beforeEach(async () => {
-        await mountWrapper(false, false);
-      });
-
-      it('should be rendered', async () => {
-        await wrapper.setData({ showConfirmation: true });
-        expect(wrapper.findComponent(RcConfirmationDialog).exists()).toBe(true);
-      });
-
-      it('should have proper title', async () => {
-        await wrapper.setData({ showConfirmation: true });
-        expect(wrapper.findComponent(RcConfirmationDialog).props('title')).toBe('caseFile.document.confirm.preprocessing.title');
-      });
-
-      it('should have proper message', async () => {
-        await wrapper.setData({ showConfirmation: true });
-        expect(wrapper.findComponent(RcConfirmationDialog).props('messages')).toBe('caseFile.document.confirm.preprocessing.message');
-      });
-    });
-    
     describe('Event handlers', () => {
       beforeEach(async () => {
         await mountWrapper(false, true);

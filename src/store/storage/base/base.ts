@@ -101,18 +101,18 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return this.combinedCollections(entities, metadata);
     },
 
-    deactivate: async (id: uuid): Promise<TEntity> => {
-      const returned = await this.store.dispatch(`${this.entityModuleName}/deactivate`, id);
+    deactivate: async (idParams: IdParams): Promise<TEntity> => {
+      const returned = await this.store.dispatch(`${this.entityModuleName}/deactivate`, idParams) as TEntity;
       // If entity is inactive, deactivate Metadata
       if (returned && returned.status === Status.Inactive) {
-        const metadata = _cloneDeep(await this.store.getters[`${this.metadataModuleName}/get`](id));
+        const metadata = _cloneDeep(await this.store.getters[`${this.metadataModuleName}/get`](returned.id));
         metadata.status = Status.Inactive;
         this.store.commit(`${this.metadataModuleName}/set`, metadata);
       }
       return returned;
     },
 
-    activate: (id: uuid): Promise<TEntity> => this.store.dispatch(`${this.entityModuleName}/activate`, id),
+    activate: (idParams: IdParams): Promise<TEntity> => this.store.dispatch(`${this.entityModuleName}/activate`, idParams),
 
     search: async (params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureTableSearchResults> => {
       this.store.commit(`${this.entityModuleName}/setSearchLoading`, true);

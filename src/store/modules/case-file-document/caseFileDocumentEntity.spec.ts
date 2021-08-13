@@ -10,10 +10,11 @@ import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionI
 import { mockCaseFileDocumentEntity, mockCaseFileDocumentEntities, ICaseFileDocumentEntity } from '@/entities/case-file-document';
 import { CaseFileDocumentEntityModule } from './caseFileDocumentEntity';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
+import { Status } from '@/entities/base';
 
 const service = new CaseFileDocumentsService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
-const module = new CaseFileDocumentEntityModule(service, optionItemService);
+let module: CaseFileDocumentEntityModule;
 
 const actionContext = {
   commit: jest.fn(),
@@ -25,6 +26,11 @@ const actionContext = {
 } as ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>;
 
 describe('Case file document entity module', () => {
+  
+  beforeEach(() => {
+    module = new CaseFileDocumentEntityModule(service, optionItemService);
+  });
+  
   describe('getters', () => {
     describe('categories', () => {
       test('the getter returns the sorted types', () => {
@@ -48,6 +54,13 @@ describe('Case file document entity module', () => {
         module.mutations.setAll(module.state, [document1, document2]);
         const res = module.getters.getByCaseFile(module.state)('case-file-1');
         expect(res).toEqual([document1]);
+      });
+      test('the getter ignores inactive documents', () => {
+        const item1 = mockCaseFileDocumentEntity({id: '1', caseFileId: 'case-file-1', status: Status.Inactive});
+        const item2 = mockCaseFileDocumentEntity({id: '2', caseFileId: 'case-file-1', status: Status.Active});
+        module.mutations.setAll(module.state, [item1, item2]);
+        const res = module.getters.getByCaseFile(module.state)('case-file-1');
+        expect(res).toEqual([item2]);
       });
     });
   });

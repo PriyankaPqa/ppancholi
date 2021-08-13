@@ -11,6 +11,7 @@ import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
+import { Status } from '@/entities/base';
 
 export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }> {
   constructor(readonly service: CaseFileDocumentsService, readonly optionItemService: IOptionItemsService) {
@@ -37,7 +38,8 @@ export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentE
     // eslint-disable-next-line
     categories: (state:ICaseFileDocumentEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(state.categories, filterOutInactive, actualValue),
 
-    getByCaseFile: (state: ICaseFileDocumentEntityState) => (caseFileId: uuid) => _cloneDeep(state.items.filter((x) => x.caseFileId === caseFileId)),
+    // eslint-disable-next-line
+    getByCaseFile: (state: ICaseFileDocumentEntityState) => (caseFileId: uuid) => _cloneDeep(state.items.filter((x) => x.caseFileId === caseFileId && x.status === Status.Active)),
   }
 
   public mutations = {

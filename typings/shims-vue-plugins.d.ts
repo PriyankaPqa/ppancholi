@@ -2,6 +2,7 @@ import VueRouter, { Route } from 'vue-router';
 import { Store } from 'vuex';
 import { Toasted } from 'vue-toasted';
 import { IMultilingual } from '@/types';
+import { TranslateResult } from 'vue-i18n';
 
 interface IFormatCurrency {
   (value: number): string;
@@ -22,5 +23,6 @@ declare module 'vue/types/vue' {
     $m: IMFunction;
     $hasLevel: (p: string) => boolean;
     $hasRole: (p: string) => boolean;
+    $confirm: (title: TranslateResult, messages: TranslateResult | TranslateResult[]) => Promise<boolean>;
   }
 }

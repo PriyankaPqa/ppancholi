@@ -1,4 +1,4 @@
-import { IAzureSearchParams, IMultilingual } from '@/types';
+import { IMultilingual } from '@/types';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
