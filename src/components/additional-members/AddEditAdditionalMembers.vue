@@ -26,7 +26,7 @@
             :current-address-type-items="currentAddressTypeItems"
             :loading="loadingIndigenousCommunities"
             :member="member"
-            in-household-profile
+            :in-household-profile="inHouseholdProfile"
             @identity-change="setIdentity($event)"
             @indigenous-identity-change="setIndigenousIdentity($event)"
             @temporary-address-change="setCurrentAddress($event)" />
