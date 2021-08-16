@@ -57,7 +57,7 @@
             :label="`${$t('household.addresses.from')}`"
             :placeholder="$t('event.select_date')"
             :min="today"
-            @change="changeMovedDate()" />
+            @change="changeMovedDate($event)" />
         </v-col>
       </v-col>
     </v-row>
