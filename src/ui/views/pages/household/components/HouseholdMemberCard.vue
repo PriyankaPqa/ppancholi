@@ -91,7 +91,7 @@
             </div>
           </td>
           <td v-if="item.customContent === 'address'" class="py-4" :data-test="`household_profile_member_info_data_${item.test}`">
-            <current-address-template :current-address="member.currentAddress" />
+            <current-address-template :current-address="member.currentAddress" in-household-profile />
           </td>
         </tr>
       </tbody>
@@ -108,15 +108,20 @@
       :show.sync="showAdditionalMemberDialog"
       :index="index"
       :member="member"
+      :shelter-locations-list="shelterLocations"
       in-household-profile />
   </v-sheet>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@crctech/registration-lib/src/entities/household-create';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import {
+  EIndigenousTypes, IIndigenousCommunityData, IMember,
+} from '@crctech/registration-lib/src/entities/household-create';
 import { CurrentAddressTemplate, AddEditAdditionalMembers } from '@crctech/registration-lib';
+import { IEventGenericLocation } from '@/entities/event';
+
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
 
 export default Vue.extend({
@@ -148,6 +153,13 @@ export default Vue.extend({
     index: {
       type: Number,
       default: -1,
+    },
+    /**
+     * The shelter locations of active events in which the member has an active case file
+     */
+    shelterLocations: {
+      type: Array as ()=> IEventGenericLocation[],
+      default: null,
     },
   },
 

@@ -6,7 +6,7 @@ export interface IAddress {
   unitSuite?: string;
   province?: ECanadaProvinces;
   specifiedOtherProvince?: string;
-  city: string;
+  city?: string;
   postalCode?: string;
   latitude?: number;
   longitude?: number;

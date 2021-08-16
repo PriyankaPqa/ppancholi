@@ -6,6 +6,7 @@ import { mockMember } from '@crctech/registration-lib/src/entities/value-objects
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { ECanadaProvinces } from '@/types';
+import { mockEventMainInfo, EEventLocationStatus, EEventStatus } from '@/entities/event';
 
 import {
   mockCombinedCaseFile, mockCaseFileEntity, mockCaseFileMetadata, CaseFileStatus,
@@ -19,6 +20,19 @@ const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMemb
 const household = mockCombinedHousehold();
 const storage = mockStorage();
 const caseFile = mockCombinedCaseFile();
+const member = mockMember();
+
+const events = [
+  mockEventMainInfo({
+    id: '1',
+    shelterLocations: [{ id: 'loc-1', status: EEventLocationStatus.Active }],
+  }),
+  mockEventMainInfo(
+    {
+      id: '2',
+      shelterLocations: [{ id: 'loc-2', status: EEventLocationStatus.Inactive }, { id: 'loc-3', status: EEventLocationStatus.Active }],
+    },
+  )];
 
 describe('HouseholdProfile.spec.vue', () => {
   let wrapper;
@@ -26,6 +40,7 @@ describe('HouseholdProfile.spec.vue', () => {
   storage.registration.actions.fetchPreferredLanguages = jest.fn(() => mockPreferredLanguages());
   storage.registration.actions.fetchPrimarySpokenLanguages = jest.fn(() => mockPrimarySpokenLanguages());
   storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
+  storage.registration.mutations.setHouseholdCreate = jest.fn();
   storage.household.actions.fetch = jest.fn(() => household);
   storage.caseFile.actions.search = jest.fn(() => ({ ids: ['1'] }));
   storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
@@ -36,6 +51,12 @@ describe('HouseholdProfile.spec.vue', () => {
         localVue,
         propsData: {
           id: household.entity.id,
+        },
+        data() {
+          return {
+            events,
+            householdData: household,
+          };
         },
         computed: {
           addressLine1() { return 'address-line-1'; },
@@ -100,6 +121,35 @@ describe('HouseholdProfile.spec.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('shelterLocations', () => {
+      it('returns the correct list of shelter locations', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            addressLine1() { return 'address-line-1'; },
+            addressLine2() { return 'address-line-2'; },
+            country() { return 'mock-country'; },
+            household() { return householdCreate; },
+          },
+          data() {
+            return {
+              events,
+              householdData: household,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.shelterLocations).toEqual([
+          { id: 'loc-1', status: EEventLocationStatus.Active }, { id: 'loc-3', status: EEventLocationStatus.Active }]);
+      });
+    });
+
     describe('household', () => {
       it('returns the right data', () => {
         wrapper = shallowMount(Component, {
@@ -118,7 +168,7 @@ describe('HouseholdProfile.spec.vue', () => {
       });
     });
 
-    describe('openCaseFiles', () => {
+    describe('activeCaseFiles', () => {
       it('returns the open case files', () => {
         const cfOpen = { entity: mockCaseFileEntity({ id: '1', caseFileStatus: CaseFileStatus.Open }), metadata: mockCaseFileMetadata() };
         const cfClosed = { entity: mockCaseFileEntity({ id: '1', caseFileStatus: CaseFileStatus.Closed }), metadata: mockCaseFileMetadata() };
@@ -141,11 +191,11 @@ describe('HouseholdProfile.spec.vue', () => {
           },
         });
 
-        expect(wrapper.vm.openCaseFiles).toEqual([cfOpen]);
+        expect(wrapper.vm.activeCaseFiles).toEqual([cfOpen]);
       });
     });
 
-    describe('closedCaseFiles', () => {
+    describe('inactiveCaseFiles', () => {
       it('returns the open case files', () => {
         const cfOpen = { entity: mockCaseFileEntity({ id: '1', caseFileStatus: CaseFileStatus.Open }), metadata: mockCaseFileMetadata() };
         const cfClosed = { entity: mockCaseFileEntity({ id: '1', caseFileStatus: CaseFileStatus.Closed }), metadata: mockCaseFileMetadata() };
@@ -166,7 +216,7 @@ describe('HouseholdProfile.spec.vue', () => {
           },
         });
 
-        expect(wrapper.vm.closedCaseFiles).toEqual([cfClosed]);
+        expect(wrapper.vm.inactiveCaseFiles).toEqual([cfClosed]);
       });
     });
 
@@ -381,13 +431,14 @@ describe('HouseholdProfile.spec.vue', () => {
         expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(1);
       });
 
-      it('calls fetchHouseholdData', () => {
+      it('calls fetchHouseholdData', async () => {
         jest.spyOn(wrapper.vm, 'fetchHouseholdData').mockImplementation(() => {});
-        wrapper.vm.$options.created.forEach((hook) => {
+        await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.fetchHouseholdData).toHaveBeenCalledTimes(1);
       });
+
       it('calls fetchCaseFilesInformation', () => {
         jest.spyOn(wrapper.vm, 'fetchCaseFilesInformation').mockImplementation(() => {});
         wrapper.vm.$options.created.forEach((hook) => {
@@ -410,22 +461,38 @@ describe('HouseholdProfile.spec.vue', () => {
         },
       });
     });
+
+    describe('fetchActiveEvents', () => {
+      it('calls searchMyEvents service with the right filter', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            activeCaseFiles() { return [{ entity: { eventId: 'id-1' } }, { entity: { eventId: 'id-2' } }]; },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        const expectedFilter = `search.in(Entity/Id, 'id-1|id-2', '|') and Entity/Schedule/Status eq ${EEventStatus.Open}`;
+        await wrapper.vm.fetchActiveEvents();
+        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({ filter: expectedFilter, top: 999 });
+      });
+    });
     describe('fetchHouseholdData', () => {
       it('calls household storage action fetch with the id', async () => {
         await wrapper.vm.fetchHouseholdData();
         expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(household.entity.id);
       });
 
-      it('calls buildHouseholdCreateData  with the result of the storage call', async () => {
-        jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => {});
-        await wrapper.vm.fetchHouseholdData();
-        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(household);
-      });
-
-      it('saves into household the data received from buildHouseholdCreateData', async () => {
+      it('calls the registration mutation with the data received from buildHouseholdCreateData', async () => {
         jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => householdCreate);
+        jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
         await wrapper.vm.fetchHouseholdData();
-        expect(wrapper.vm.household).toEqual(householdCreate);
+        expect(storage.registration.mutations.setHouseholdCreate).toHaveBeenCalledWith(householdCreate);
       });
     });
 

@@ -1,10 +1,11 @@
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household/household.mocks';
-import { mockMemberData } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { mockMemberData, mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { mockIndigenousCommunitiesGetData, mockGenders } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
 import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
 import household from '@/ui/mixins/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { EEventLocationStatus } from '@/entities/event';
 
 const Component = {
   render() {},
@@ -13,6 +14,8 @@ const Component = {
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const member = mockMember();
+
 let wrapper;
 
 describe('household', () => {
@@ -54,6 +57,21 @@ describe('household', () => {
         expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith('1');
         expect(wrapper.vm.$services.households.getPerson).toHaveBeenCalledWith('2');
       });
+
+      it('calls addShelterLocationData  with the member result of the storage call', async () => {
+        const household = {
+          entity: {
+            primaryBeneficiary: '1',
+            members: ['1'],
+          },
+        };
+        jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
+        wrapper.vm.$services.households.getPerson = jest.fn(() => member);
+        const shelterLocations = [{ id: 'loc-1' }];
+
+        await wrapper.vm.fetchMembersInformation(household, shelterLocations);
+        expect(wrapper.vm.addShelterLocationData).toHaveBeenCalledWith([member], shelterLocations);
+      });
     });
 
     describe('buildHouseholdCreateData', () => {
@@ -79,10 +97,11 @@ describe('household', () => {
         wrapper.vm.fetchMembersInformation = jest.fn(() => []);
         wrapper.vm.parseIdentitySet = jest.fn();
         wrapper.vm.parseContactInformation = jest.fn();
+        const shelterLocations = [{ id: 'loc-1', status: EEventLocationStatus.Active }, { id: 'loc-2', status: EEventLocationStatus.Active }];
         const household = mockCombinedHousehold();
-        await wrapper.vm.buildHouseholdCreateData(household);
+        await wrapper.vm.buildHouseholdCreateData(household, shelterLocations);
 
-        expect(wrapper.vm.fetchMembersInformation).toHaveBeenCalledWith(household);
+        expect(wrapper.vm.fetchMembersInformation).toHaveBeenCalledWith(household, shelterLocations);
       });
 
       it('should return the final object of household to be used in the UI', async () => {
@@ -310,6 +329,18 @@ describe('household', () => {
           preferredLanguageOther: '',
           primarySpokenLanguageOther: '',
         });
+      });
+    });
+
+    describe('addShelterLocationData', () => {
+      it('returns the right member data', () => {
+        const shelterLocations = [{ id: 'loc-1', status: EEventLocationStatus.Active }, { id: 'loc-2', status: EEventLocationStatus.Active }];
+        const altMember = { ...member, currentAddress: { shelterLocationId: 'loc-1' } };
+
+        expect(wrapper.vm.addShelterLocationData([altMember], shelterLocations)).toEqual([{
+          ...member,
+          currentAddress: { shelterLocation: { id: 'loc-1', status: EEventLocationStatus.Active }, shelterLocationId: 'loc-1' },
+        }]);
       });
     });
   });

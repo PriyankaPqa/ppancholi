@@ -7,18 +7,20 @@ import { IMemberData } from '@crctech/registration-lib/src/entities/value-object
 import { IIndigenousCommunityData } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
 import { IAddressData, IHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import deepmerge from 'deepmerge';
+import { ICurrentAddressCreateRequest } from '@crctech/registration-lib/src/entities/value-objects/current-address';
 import helpers from '@/ui/helpers';
 import { IOptionItemData } from '@/entities/optionItem';
+import { IEventGenericLocation } from '@/entities/event';
 
 export default Vue.extend({
   methods: {
-    async fetchHousehold(id: string) {
+    async fetchHousehold(id: string, shelterLocations: IEventGenericLocation[] = null) {
       const householdRes = await this.$storage.household.actions.fetch(id);
-      const householdCreateData = await this.buildHouseholdCreateData(householdRes);
+      const householdCreateData = await this.buildHouseholdCreateData(householdRes, shelterLocations);
       return householdCreateData;
     },
 
-    async fetchMembersInformation(household: IHouseholdCombined): Promise<IMemberData[]> {
+    async fetchMembersInformation(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[]): Promise<IMemberData[]> {
       let primaryBeneficiaryPromise;
       const additionalMembersPromises = [] as Array<Promise<IMemberData>>;
 
@@ -32,11 +34,16 @@ export default Vue.extend({
         }
       });
 
-      const members = await Promise.all([primaryBeneficiaryPromise, ...additionalMembersPromises]);
+      let members = await Promise.all([primaryBeneficiaryPromise, ...additionalMembersPromises]);
+
+      if (shelterLocations) {
+        members = this.addShelterLocationData(members, shelterLocations);
+      }
+
       return members;
     },
 
-    async buildHouseholdCreateData(household: IHouseholdCombined): Promise<IHouseholdCreateData> {
+    async buildHouseholdCreateData(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[] = null): Promise<IHouseholdCreateData> {
       let primaryBeneficiary;
       const additionalMembers = [] as Array<IMemberData>;
 
@@ -44,7 +51,7 @@ export default Vue.extend({
       const preferredLanguagesItems = this.$storage.registration.getters.preferredLanguages() as IOptionItemData[];
       const primarySpokenLanguagesItems = this.$storage.registration.getters.primarySpokenLanguages() as IOptionItemData[];
 
-      const members = await this.fetchMembersInformation(household);
+      const members = await this.fetchMembersInformation(household, shelterLocations);
 
       const communitiesItems = await this.$storage.registration.actions.fetchIndigenousCommunities();
 
@@ -139,6 +146,17 @@ export default Vue.extend({
         primarySpokenLanguageOther,
         preferredLanguageOther,
       };
+    },
+
+    addShelterLocationData(members: IMemberData[], shelterLocations: IEventGenericLocation[]): IMemberData[] {
+      return members.map((m) => ({
+        ...m,
+        currentAddress: {
+          ...m.currentAddress,
+          shelterLocation: shelterLocations
+            .find((s: IEventGenericLocation) => s.id === (m.currentAddress as unknown as ICurrentAddressCreateRequest).shelterLocationId),
+        },
+      }));
     },
   },
 });

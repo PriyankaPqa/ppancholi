@@ -1,7 +1,6 @@
-/* eslint-disable max-lines-per-function */
 import { ECanadaProvinces, IAzureSearchResult, IMultilingual } from '@/types';
-import { IEntity, mockBaseData, Status } from '../base';
 import {
+  IEventMainInfo,
   EEventCallCentreStatus,
   EEventStatus,
   IEventCombined,
@@ -11,6 +10,49 @@ import {
   IRegion,
   IRelatedEventsInfos,
 } from './event.types';
+/* eslint-disable max-lines-per-function */
+import { IEntity, mockBaseData, Status } from '../base';
+
+export const mockEventMainInfo = (force?: Partial<IEventMainInfo>): IEventMainInfo => ({
+  entity: {
+    id: '1dea3c36-d6a5-4e6c-ac36-078677b7d111',
+    name: {
+      translation: {
+        en: 'Gatineau Floods 2021',
+        fr: 'Inondations Gatineau 2021',
+      },
+    },
+    responseDetails: {
+      responseLevel: 3,
+      eventType: {
+        optionItemId: '41c362cc-3bed-4707-97e3-732ef3a2ebbf',
+        specifiedOther: '',
+      },
+      dateReported: '2021-01-01T00:00:00Z',
+      assistanceNumber: '+15144544545',
+    },
+    registrationLink: {
+      translation: {
+        en: 'https://www.redcross.ca/gatineau-floods-2021',
+        fr: 'https://www.redcross.ca/inondations-gatineau-2021',
+      },
+    },
+    tenantId: '1dea3c36-d6a5-4e6c-ac36-078677b7d112',
+    registrationLocations: [],
+    shelterLocations: [],
+    selfRegistrationEnabled: true,
+    schedule: {
+      status: EEventStatus.Open,
+      scheduledOpenDate: '2021-03-31T00:00:00Z',
+      scheduledCloseDate: '2021-05-31T00:00:00Z',
+      openDate: '2021-03-31T15:23:00.755Z',
+      closeDate: null,
+      updateReason: null,
+      timestamp: '2021-03-31T15:23:00.755Z',
+    },
+    ...force,
+  },
+});
 
 // eslint-disable-next-line max-lines-per-function
 export const mockEventEntityData = (): IEventEntity[] => [

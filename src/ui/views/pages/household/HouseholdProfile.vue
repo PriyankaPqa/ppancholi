@@ -81,11 +81,11 @@
         </v-col>
         <v-col cols="10" class="pa-6">
           <h5 class="rc-heading-5">
-            {{ $t('household.profile.active_in_events', {x : openCaseFiles.length}) }}
+            {{ $t('household.profile.active_in_events', {x : activeCaseFiles.length}) }}
           </h5>
 
           <v-row class="pt-4">
-            <v-col v-for="caseFile in openCaseFiles" :key="caseFile.entity.id" cols="12" md="6">
+            <v-col v-for="caseFile in activeCaseFiles" :key="caseFile.entity.id" cols="12" md="6">
               <household-case-file-card :case-file="caseFile" />
             </v-col>
           </v-row>
@@ -112,13 +112,18 @@
 
           <household-member-card :member="household.primaryBeneficiary" is-primary-member />
 
-          <household-member-card v-for="(member, index) in household.additionalMembers" :key="member.id" :member="member" :index="index" />
+          <household-member-card
+            v-for="(member, index) in household.additionalMembers"
+            :key="member.id"
+            :member="member"
+            :index="index"
+            :shelter-locations="shelterLocations" />
 
-          <h5 v-if="closedCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
-            {{ $t('household.profile.registered_previous_events') }} ({{ closedCaseFiles.length }})
+          <h5 v-if="inactiveCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
+            {{ $t('household.profile.registered_previous_events') }} ({{ inactiveCaseFiles.length }})
           </h5>
           <v-row>
-            <v-col v-for="caseFile in closedCaseFiles" :key="caseFile.entity.id" cols="12" md="6">
+            <v-col v-for="caseFile in inactiveCaseFiles" :key="caseFile.entity.id" cols="12" md="6">
               <household-case-file-card :case-file="caseFile" />
             </v-col>
           </v-row>
@@ -141,6 +146,9 @@ import { ECanadaProvinces } from '@/types';
 import { CaseFileStatus, ICaseFileCombined } from '@/entities/case-file';
 import household from '@/ui/mixins/household';
 import helpers from '@/ui/helpers';
+import {
+  EEventLocationStatus, EEventStatus, IEventGenericLocation, IEventMainInfo,
+} from '@/entities/event';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 
@@ -170,21 +178,35 @@ export default mixins(household).extend({
       loading: false,
       householdData: null as IHouseholdCombined,
       caseFileIds: [] as string[],
-
+      events: [] as IEventMainInfo[],
     };
   },
 
   computed: {
+    shelterLocations() {
+      const locations:IEventGenericLocation[] = [];
+      if (this.events) {
+        this.events.forEach((e) => {
+          if (e.entity.shelterLocations) {
+            const activeLocations = e.entity.shelterLocations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
+            locations.push(...activeLocations);
+          }
+        });
+      }
+
+      return locations;
+    },
+
     household() : IHouseholdCreate {
       return this.$storage.registration.getters.householdCreate();
     },
 
-    openCaseFiles():ICaseFileCombined[] {
-      return this.caseFiles.filter((c) => c.entity.caseFileStatus === CaseFileStatus.Open);
+    activeCaseFiles():ICaseFileCombined[] {
+      return this.caseFiles.filter((c) => c.entity.caseFileStatus === CaseFileStatus.Open || c.entity.caseFileStatus === CaseFileStatus.Inactive);
     },
 
-    closedCaseFiles():ICaseFileCombined[] {
-      return this.caseFiles.filter((c) => c.entity.caseFileStatus !== CaseFileStatus.Open);
+    inactiveCaseFiles():ICaseFileCombined[] {
+      return this.caseFiles.filter((c) => c.entity.caseFileStatus === CaseFileStatus.Archived || c.entity.caseFileStatus === CaseFileStatus.Closed);
     },
 
     addressLine1(): string {
@@ -245,18 +267,31 @@ export default mixins(household).extend({
       this.$storage.registration.actions.fetchPreferredLanguages(),
       this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
       this.$storage.registration.actions.fetchIndigenousCommunities(),
-      this.fetchHouseholdData(),
       this.fetchCaseFilesInformation(),
     ]);
+    await this.fetchActiveEvents();
+    this.fetchHouseholdData();
   },
 
   methods: {
+    async fetchActiveEvents() {
+      const eventIds = this.activeCaseFiles.map((cf) => cf.entity.eventId);
+      const filter = `search.in(Entity/Id, '${eventIds.join('|')}', '|') and Entity/Schedule/Status eq ${EEventStatus.Open}`;
+      const eventsData = await this.$services.events.searchMyEvents({
+        filter,
+        top: 999,
+      });
+
+      this.events = eventsData?.value;
+    },
+
     async fetchHouseholdData() {
       this.loading = true;
       try {
         this.householdData = await this.$storage.household.actions.fetch(this.id);
         if (this.householdData) {
-          const householdCreateData = await this.buildHouseholdCreateData(this.householdData);
+          const householdCreateData = await this.buildHouseholdCreateData(this.householdData, this.shelterLocations);
+
           this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
         }
       } finally {
