@@ -1,5 +1,5 @@
 <template>
-  <v-row no-gutters>
+  <v-row no-gutters class="d-flex flex-column">
     <identity-form
       :form="member.identitySet"
       prefix-data-test="additionalMember"

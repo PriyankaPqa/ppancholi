@@ -309,3 +309,8 @@ export default Vue.extend({
 });
 
 </script>
+<style scoped  lang="scss">
+  ::v-deep fieldset {
+    background-color: white;
+  }
+</style>
