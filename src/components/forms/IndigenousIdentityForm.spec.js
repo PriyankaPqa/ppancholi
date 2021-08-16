@@ -39,7 +39,7 @@ describe('IndigenousIdentityForm.vue', () => {
 
       test('indigenousCommunityId', () => {
         expect(wrapper.vm.rules.indigenousCommunityId).toEqual({
-          required: wrapper.vm.formCopy.indigenousType !== null,
+          required: wrapper.vm.formCopy.indigenousType != null,
         });
       });
 

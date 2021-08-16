@@ -101,7 +101,7 @@ export default Vue.extend({
           required: false,
         },
         indigenousCommunityId: {
-          required: this.formCopy.indigenousType !== null,
+          required: this.formCopy.indigenousType != null,
         },
         indigenousCommunityOther: {
           required: true,
