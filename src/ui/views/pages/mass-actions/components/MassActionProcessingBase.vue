@@ -1,14 +1,7 @@
 <template>
   <v-row justify="center" class="pt-12">
     <v-col cols="12" md="8" xl="7" sm="12">
-      <div class="title">
-        <span class="rc-heading-5 fw-bold"> {{ massAction.entity.name }}</span>
-        <status-chip show-loading status-name="MassActionRunStatus" :status="massActionStatus" />
-      </div>
-
-      <div v-if="massAction.entity.description" class="rc-body14 mt-4" data-test="description">
-        {{ massAction.entity.description }}
-      </div>
+      <mass-action-title-description :mass-action="massAction" :mass-action-status="massActionStatus" />
 
       <div class="border my-7">
         <v-row justify="center" class="py-16">
@@ -19,7 +12,7 @@
               </div>
 
               <div v-if="processTitle" class="rc-body14 fw-bold" data-test="processTitle">
-                {{ $t(processTitle, { x: massAction.metadata.lastRun.results.total }) }}
+                {{ $t(processTitle, { x: massAction.metadata.lastRun.results.successes }) }}
               </div>
 
               <div class="rc-body12" data-test="processLabelOne">
@@ -42,13 +35,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import { IMassActionCombined } from '@/entities/mass-action';
-import colors from '@/ui/plugins/vuetify/colors';
-import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 
 export default Vue.extend({
   name: 'MassActionProcessingBase',
   components: {
-    StatusChip,
+    MassActionTitleDescription,
   },
 
   props: {
@@ -77,21 +69,10 @@ export default Vue.extend({
       required: true,
     },
   },
-
-  data() {
-    return {
-      colors,
-    };
-  },
 });
 </script>
 
 <style lang="scss" scoped>
-
-.title {
-  display: flex;
-  justify-content: space-between;
-}
 
 .border {
   border-radius: 4px;

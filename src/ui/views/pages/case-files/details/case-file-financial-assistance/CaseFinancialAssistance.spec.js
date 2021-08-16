@@ -1,5 +1,4 @@
 import { RcDataTable } from '@crctech/component-library';
-import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import Component from './CaseFinancialAssistance.vue';
@@ -20,9 +19,6 @@ describe('CaseFinancialAssistance.vue', () => {
       },
       ...additionalOverwrites,
     });
-
-    await wrapper.vm.$nextTick();
-    await flushPromises();
   };
 
   beforeEach(async () => {
@@ -73,7 +69,7 @@ describe('CaseFinancialAssistance.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('canAdd', async () => {
+    describe('canAdd', () => {
       it('returns true for level1+', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canAdd).toBeTruthy();

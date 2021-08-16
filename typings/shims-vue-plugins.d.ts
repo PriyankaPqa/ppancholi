@@ -1,8 +1,8 @@
 import VueRouter, { Route } from 'vue-router';
 import { Store } from 'vuex';
 import { Toasted } from 'vue-toasted';
-import { IMultilingual } from '@/types';
 import { TranslateResult } from 'vue-i18n';
+import { IMultilingual } from '@/types';
 
 interface IFormatCurrency {
   (value: number): string;

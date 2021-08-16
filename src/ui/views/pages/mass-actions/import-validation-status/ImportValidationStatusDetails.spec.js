@@ -6,13 +6,14 @@ import {
 
 import routes from '@/constants/routes';
 import {
-  mockMassActionRun, MassActionRunStatus, mockCombinedMassAction,
+  mockMassActionRun, MassActionRunStatus, mockCombinedMassAction, mockMassActionRunMetadata,
 } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
 import ImportValidationStatusPreProcessing
   from '@/ui/views/pages/mass-actions/import-validation-status/components/ImportValidationStatusPreProcessing.vue';
 import ImportValidationStatusProcessing from '@/ui/views/pages/mass-actions/import-validation-status/components/ImportValidationStatusProcessing.vue';
 import Component from './ImportValidationStatusDetails.vue';
+import ImportValidationStatusPreProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusPreProcessed.vue';
 
 const localVue = createLocalVue();
 
@@ -42,6 +43,17 @@ describe('ImportValidationStatusDetails.vue', () => {
         },
       });
       expect(wrapper.findComponent(ImportValidationStatusPreProcessing).exists()).toBe(true);
+    });
+
+    it('should render pre-processed component if pre-processed', () => {
+      wrapper = mount(Component, {
+        localVue,
+        computed: {
+          preProcessed: () => true,
+          massAction: () => mockCombinedMassAction(),
+        },
+      });
+      expect(wrapper.findComponent(ImportValidationStatusPreProcessed).exists()).toBe(true);
     });
   });
 
@@ -146,6 +158,54 @@ describe('ImportValidationStatusDetails.vue', () => {
           },
         });
         expect(wrapper.vm.processing).toBe(false);
+      });
+    });
+
+    describe('preProcessed', () => {
+      it('should return true if lastRun is pre-processed', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessed }),
+            lastRunMetadata: () => mockMassActionRunMetadata(),
+          },
+        });
+        expect(wrapper.vm.preProcessed).toBe(true);
+      });
+
+      it('should return false otherwise', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processed }),
+            lastRunMetadata: () => mockMassActionRunMetadata(),
+          },
+        });
+        expect(wrapper.vm.preProcessed).toBe(false);
+      });
+    });
+
+    describe('processed', () => {
+      it('should return true if lastRun is processed', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processed }),
+            lastRunMetadata: () => mockMassActionRunMetadata(),
+          },
+        });
+        expect(wrapper.vm.processed).toBe(true);
+      });
+
+      it('should return false otherwise', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
+            lastRunMetadata: () => mockMassActionRunMetadata(),
+          },
+        });
+        expect(wrapper.vm.processed).toBe(false);
       });
     });
 

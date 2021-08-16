@@ -1929,5 +1929,6 @@
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
     "zendesk.question.select_language_preferences": "How do I select my language preferences?",
     "zendesk.referral": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360056417493",
-    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242353"
+    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242353",
+    "massAction.update.success": "The mass action was successfully updated"
 }

@@ -1,5 +1,4 @@
 /* eslint-disable */
-import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument, CaseFileDocumentMethod, DocumentStatus } from '@/entities/case-file-document';
 import { MAX_LENGTH_MD } from '@/constants/validations';
@@ -16,7 +15,7 @@ describe('CaseFileDocumentForm.vue', () => {
   let document;
 
   const mountWrapper = async (isEditMode = true, fullMount = false, level = 5, additionalOverwrites = {}) => {
-    
+
     document = document || (isEditMode ? mockCombinedCaseFileDocument().entity : new CaseFileDocumentEntity());
 
     wrapper = (fullMount ? mount : shallowMount)(Component, {
@@ -34,10 +33,8 @@ describe('CaseFileDocumentForm.vue', () => {
       },
       ...additionalOverwrites,
     });
-    
-    await wrapper.vm.$nextTick();
+
     wrapper.vm.uploadForm = jest.fn(() => document)
-    await flushPromises();
   };
 
   beforeEach(() => {
@@ -56,7 +53,7 @@ describe('CaseFileDocumentForm.vue', () => {
         document.documentStatus = DocumentStatus.Current;
         await mountWrapper();
         expect(wrapper.vm.localDocument).toEqual(document);
-        
+
         document.documentStatus = null;
         await mountWrapper();
         expect(wrapper.vm.localDocument.documentStatus).toEqual(DocumentStatus.Current);
@@ -123,7 +120,7 @@ describe('CaseFileDocumentForm.vue', () => {
     describe('update:document', () => {
       it('emits when document is changed', async () => {
         await mountWrapper();
-        
+
         expect(wrapper.emitted('update:document')).toBeUndefined();
 
         await wrapper.setData({
@@ -135,7 +132,7 @@ describe('CaseFileDocumentForm.vue', () => {
     describe('update:file', () => {
       it('emits when file is changed', async () => {
         await mountWrapper();
-        
+
         expect(wrapper.emitted('update:file')).toBeUndefined();
 
         await wrapper.setData({
@@ -159,7 +156,7 @@ describe('CaseFileDocumentForm.vue', () => {
   });
 
   describe('Template', () => {
-    
+
     describe('Upload dialog', () => {
       it('should be rendered', async () => {
         await(mountWrapper(false));
@@ -177,7 +174,7 @@ describe('CaseFileDocumentForm.vue', () => {
         await(mountWrapper(true, true));
         expect(wrapper.findComponent(RcFileUpload).exists()).toBe(false);
       });
-      
+
       it('should be passed the file in props', async () => {
         await(mountWrapper(false, true));
         await wrapper.setData({ file: { name: 'myFile'} });
@@ -197,7 +194,7 @@ describe('CaseFileDocumentForm.vue', () => {
         await(mountWrapper(true, true));
         expect(wrapper.findComponent(DownloadComponent).exists()).toBe(true);
       });
-      
+
       it('should be passed the document entity in props', async () => {
         await(mountWrapper(true, true));
         expect(wrapper.findComponent(DownloadComponent).props('document')).toEqual(wrapper.vm.localDocument);

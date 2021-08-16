@@ -7,20 +7,7 @@
       :process-label-one="processLabelOne"
       :process-label-two="processLabelTwo">
       <template #preprocessing>
-        <div>
-          <div class="row-data">
-            <span class="rc-body14 fw-bold">{{ $t('massActions.type') }}</span>
-            <span class="rc-body14" data-test="massActionType">{{ $t(massActionType) }}</span>
-          </div>
-          <div class="row-data">
-            <span class="rc-body14 fw-bold">{{ $t('massActions.date_created') }}</span>
-            <span class="rc-body14" data-test="dateCreated">{{ moment(massAction.entity.created).local().format('ll') }}</span>
-          </div>
-          <div v-if="userAccount && userAccount.metadata" class="row-data">
-            <span class="rc-body14 fw-bold">{{ $t('massActions.created_by') }}</span>
-            <span class="rc-body14" data-test="createdBy">{{ userAccount.metadata.displayName }}</span>
-          </div>
-        </div>
+        <mass-action-details-table :mass-action="massAction" :mass-action-type="massActionType" />
       </template>
     </mass-action-processing-base>
     <!--    Use this slot to add more -->
@@ -30,13 +17,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from 'moment';
 import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
+import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 
 export default Vue.extend({
   name: 'MassActionPreProcessingBase',
   components: {
+    MassActionDetailsTable,
     MassActionProcessingBase,
   },
 
@@ -69,50 +57,9 @@ export default Vue.extend({
 
   data() {
     return {
-      moment,
-      userAccount: null,
       MassActionRunStatus,
     };
   },
 
-  async mounted() {
-    this.userAccount = await this.$storage.userAccount.actions.fetch(this.massAction.entity.createdBy);
-  },
-
 });
 </script>
-
-<style lang="scss" scoped>
-
-.row-data {
-  min-height: 60px;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  padding: 0 16px;
-  border: solid var(--v-grey-lighten2);
-  border-width: 1px 1px 0px 1px;
-
-  & span:first-child {
-    flex-grow: 1;
-  }
-
-  & span:last-child {
-    flex-grow: 0;
-  }
-}
-.row-data:last-child {
-  border-bottom-right-radius: 4px;
-  border-bottom-left-radius: 4px;
-  border-width: 1px 1px 1px 1px;
-}
-.row-data:first-child {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-  border-width: 1px 1px 0px 1px;
-}
-.row-data:only-child {
-  border-width: 1px 1px 1px 1px;
-}
-
-</style>

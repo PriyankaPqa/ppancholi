@@ -1,5 +1,4 @@
 /* eslint-disable */
-import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument, mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
@@ -42,10 +41,8 @@ describe('CreateEditDocument', () => {
     });
 
     actions = storage.caseFileDocument.actions;
-    
-    await wrapper.vm.$nextTick();
+
     wrapper.vm.$refs.documentForm.upload = jest.fn(() => mockDocument)
-    await flushPromises();
   };
 
   beforeEach(async () => {
@@ -99,7 +96,7 @@ describe('CreateEditDocument', () => {
         wrapper.vm.tryUpload = jest.fn(() => mockDocument);
         await wrapper.setData({file: {}});
         await wrapper.setData({ document: mockDocument });
-        
+
         await wrapper.vm.submit();
         expect(wrapper.vm.tryUpload).toHaveBeenCalledTimes(1);
       });
@@ -125,7 +122,7 @@ describe('CreateEditDocument', () => {
           name: routes.caseFile.documents.details.name, params: { documentId: 'myNewId' },
         });
       });
-      
+
       test('after submitting, the user is redirected to back() when editing', async () => {
         await mountWrapper(true);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -164,7 +161,7 @@ describe('CreateEditDocument', () => {
         expect(res).toBeNull();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.preprocessing.title', 'caseFile.document.confirm.preprocessing.message');
         expect(wrapper.vm.uploadNewDocument).toHaveBeenCalledTimes(0);
-        
+
         wrapper.vm.$confirm = jest.fn(() => true);
         res = await wrapper.vm.tryUpload();
         expect(res).toEqual(mockDocument);
@@ -177,7 +174,7 @@ describe('CreateEditDocument', () => {
         await mountWrapper(false);
         await wrapper.setData({file: {}});
         await wrapper.setData({ document: mockDocument });
-        
+
         const formData = new FormData();
         formData.append('name', mockDocument.name);
         formData.append('note', mockDocument.note || '');

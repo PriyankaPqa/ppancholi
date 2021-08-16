@@ -4,7 +4,23 @@
       <v-container>
         <v-row justify="center">
           <!-- Use this slot to add the needed form -->
+          <v-col cols="12" xl="8" lg="9" md="11" sm="12">
+            <v-text-field-with-validation
+              v-model="name"
+              data-test="name"
+              :label="`${$t('massActions.importValidationStatus.create.name.label')} *`"
+              persistent-hint
+              :rules="rules.name" />
+            <v-text-area-with-validation
+              v-model="description"
+              data-test="description"
+              :label="`${$t('massActions.importValidationStatus.create.description.label')}`"
+              persistent-hint
+              :rules="rules.description" />
+          </v-col>
+
           <slot name="form" />
+
           <v-col cols="12" xl="8" lg="9" md="11" sm="12">
             <validation-provider v-slot="{ errors }" ref="file" :rules="rules.file" mode="aggressive">
               <rc-file-upload :allowed-extensions="['csv']" :file="file" :errors="errors" @update:file="onUpdateFile($event)" />
@@ -62,6 +78,7 @@ import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { VForm } from '@/types';
 import fileUpload from '@/ui/mixins/fileUpload';
 import { IMassActionEntity, MassActionEntity } from '@/entities/mass-action';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 
 export default mixins(fileUpload).extend({
   name: 'MassActionBaseCreate',
@@ -111,6 +128,13 @@ export default mixins(fileUpload).extend({
         file: {
           requiredFile: this.file.size,
         },
+        name: {
+          required: true,
+          max: MAX_LENGTH_MD,
+        },
+        description: {
+          max: MAX_LENGTH_LG,
+        },
       };
     },
     uploadDialogTitle(): string {
@@ -129,7 +153,7 @@ export default mixins(fileUpload).extend({
           this.$t('massAction.confirm.preprocessing.message'));
         if (userChoice) {
           this.showUploadDialog = true;
-          // So the parent update the formData props
+          // So the parent update the formData props ex:  this.formData.append('extra', this.extra);
           this.$emit('upload:start');
           await this.upload();
         }
@@ -141,6 +165,9 @@ export default mixins(fileUpload).extend({
     },
 
     async upload() {
+      // A mass action always has a name, description and a file
+      this.formData.append('name', this.name);
+      this.formData.append('description', this.description);
       this.formData.append('file', this.file);
 
       await this.uploadForm(this.formData, this.url);

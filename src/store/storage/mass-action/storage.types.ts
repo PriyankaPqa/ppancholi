@@ -1,4 +1,4 @@
-import { IMassActionEntity, IMassActionMetadata } from '@/entities/mass-action';
+import { IMassActionEntity, IMassActionMetadata, MassActionRunType } from '@/entities/mass-action';
 import {
   IBaseActions,
   IBaseActionsMock,
@@ -9,10 +9,13 @@ import {
 } from '../base';
 
 export interface IActions extends IBaseActions<IMassActionEntity, IMassActionMetadata, uuid> {
+  process(id: string, runType: MassActionRunType): Promise<IMassActionEntity>,
+  update(id: string, payload: { name: string; description: string }) : Promise<IMassActionEntity>,
 }
 
 export interface IActionsMock extends IBaseActionsMock<IMassActionEntity, IMassActionMetadata> {
-
+  process: jest.Mock<IMassActionEntity>,
+  update: jest.Mock<IMassActionEntity>,
 }
 
 export interface IGetters extends IBaseGetters<IMassActionEntity, IMassActionMetadata> {

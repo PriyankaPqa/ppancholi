@@ -1,5 +1,4 @@
 /* eslint-disable */
-import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
 import { mockStorage } from '@/store/storage';
@@ -29,9 +28,6 @@ describe('CaseFileDocumentDetails', () => {
       },
       ...additionalOverwrites,
     });
-
-    await wrapper.vm.$nextTick();
-    await flushPromises();
   };
 
   beforeEach(async () => {
@@ -63,7 +59,7 @@ describe('CaseFileDocumentDetails', () => {
         expect(wrapper.vm.canDelete).toBeFalsy();
       });
     });
-    
+
     describe('document', () => {
       it('calls the document getter', async () => {
         await mountWrapper();
@@ -86,7 +82,7 @@ describe('CaseFileDocumentDetails', () => {
         expect(wrapper.vm.category).toEqual(mockOptionItemData()[0].name.translation.en);
       });
     });
-    
+
     describe('documentData', () => {
       it('returns the right data', async () => {
         await mountWrapper();
@@ -129,7 +125,7 @@ describe('CaseFileDocumentDetails', () => {
       await mountWrapper();
       expect(wrapper.vm.$storage.caseFileDocument.actions.fetchCategories).toHaveBeenCalledTimes(1);
     });
-  
+
     it('should call fetch', async () => {
       await mountWrapper();
       expect(wrapper.vm.$storage.caseFileDocument.actions.fetch).toHaveBeenCalledWith(
@@ -138,7 +134,7 @@ describe('CaseFileDocumentDetails', () => {
       );
     });
   });
-  
+
   describe('Template', () => {
     describe('document data',  () => {
       let element;
@@ -206,7 +202,7 @@ describe('CaseFileDocumentDetails', () => {
         expect(element.props('to')).toEqual(wrapper.vm.documentEditRoute);
       });
     });
-    
+
     describe('delete button', () => {
       let element;
       it('renders when canDelete', async () => {
@@ -235,7 +231,7 @@ describe('CaseFileDocumentDetails', () => {
       });
     });
   });
-  
+
   describe('Methods', () => {
     describe('goToDocuments',  () => {
       it('should redirect to the case document home page', async () => {

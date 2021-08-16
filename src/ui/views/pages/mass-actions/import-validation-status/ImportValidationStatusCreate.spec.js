@@ -5,7 +5,6 @@ import {
 } from '@/test/testSetup';
 
 import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassActionBaseCreate.vue';
-import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import routes from '@/constants/routes';
 import { mockMassActionEntity } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
@@ -36,13 +35,6 @@ describe('ImportValidationStatusCreate.vue', () => {
 
       it('should be linked the correct props formData', () => {
         expect(wrapper.findComponent(MassActionBaseCreate).props('formData')).toBe(wrapper.vm.formData);
-      });
-
-      it('should call prepareFormData when upload start', () => {
-        const component = wrapper.findComponent(MassActionBaseCreate);
-        wrapper.vm.prepareFormData = jest.fn();
-        component.vm.$emit('upload:start');
-        expect(wrapper.vm.prepareFormData).toBeCalled();
       });
 
       it('should call onSuccess when upload is successful', () => {
@@ -80,20 +72,6 @@ describe('ImportValidationStatusCreate.vue', () => {
       });
     });
 
-    describe('prepareFormData', () => {
-      it('should append the name to the formData', () => {
-        wrapper.vm.formData.append = jest.fn();
-        wrapper.vm.prepareFormData();
-        expect(wrapper.vm.formData.append).toHaveBeenCalledWith('name', wrapper.vm.name);
-      });
-
-      it('should append the description to the formData', () => {
-        wrapper.vm.formData.append = jest.fn();
-        wrapper.vm.prepareFormData();
-        expect(wrapper.vm.formData.append).toHaveBeenLastCalledWith('description', wrapper.vm.description);
-      });
-    });
-
     describe('onSuccess', () => {
       it('should add the new mass action to the store', () => {
         wrapper.vm.onSuccess(mockMassActionEntity());
@@ -104,28 +82,6 @@ describe('ImportValidationStatusCreate.vue', () => {
         wrapper.vm.goToDetail = jest.fn();
         wrapper.vm.onSuccess(mockMassActionEntity());
         expect(wrapper.vm.goToDetail).toBeCalled();
-      });
-    });
-  });
-
-  describe('Computed', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-      });
-    });
-    describe('rules', () => {
-      it('should have proper rules for name', () => {
-        expect(wrapper.vm.rules.name).toEqual({
-          required: true,
-          max: MAX_LENGTH_MD,
-        });
-      });
-
-      it('should have proper rules for description', () => {
-        expect(wrapper.vm.rules.description).toEqual({
-          max: MAX_LENGTH_LG,
-        });
       });
     });
   });

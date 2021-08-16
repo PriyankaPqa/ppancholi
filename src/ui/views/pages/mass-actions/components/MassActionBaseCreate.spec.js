@@ -8,6 +8,7 @@ import {
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { MassActionEntity } from '@/entities/mass-action';
 import Component from './MassActionBaseCreate.vue';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 
 const localVue = createLocalVue();
 
@@ -120,6 +121,20 @@ describe('MassActionBaseCreate.vue', () => {
     });
 
     describe('upload', () => {
+      it('should add the name to the formData', async () => {
+        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.uploadForm = jest.fn();
+        await wrapper.vm.upload();
+        expect(wrapper.vm.formData.append).toHaveBeenCalledWith('name', wrapper.vm.name);
+      });
+
+      it('should add the description to the formData', async () => {
+        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.uploadForm = jest.fn();
+        await wrapper.vm.upload();
+        expect(wrapper.vm.formData.append).toHaveBeenCalledWith('description', wrapper.vm.description);
+      });
+
       it('should add the file to the formData', async () => {
         wrapper.vm.formData.append = jest.fn();
         wrapper.vm.uploadForm = jest.fn();
@@ -156,10 +171,24 @@ describe('MassActionBaseCreate.vue', () => {
         },
       });
     });
+
     describe('Rules', () => {
       it('should use requiredFile custom rule', () => {
         expect(wrapper.vm.rules.file).toEqual({
           requiredFile: wrapper.vm.file.size,
+        });
+      });
+
+      it('should have name rule', () => {
+        expect(wrapper.vm.rules.name).toEqual({
+          required: true,
+          max: MAX_LENGTH_MD,
+        });
+      });
+
+      it('should have description rule', () => {
+        expect(wrapper.vm.rules.description).toEqual({
+          max: MAX_LENGTH_LG,
         });
       });
     });
