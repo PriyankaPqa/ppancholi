@@ -1,5 +1,10 @@
 import { BaseEntity } from '@/entities/base/base';
-import { ICaseFinancialAssistanceEntity, ICaseFinancialAssistancePaymentGroups, FPaymentStatus } from './case-file-financial-assistance.types';
+import
+{
+  ICaseFinancialAssistanceEntity,
+  ICaseFinancialAssistancePaymentGroups,
+  FPaymentStatus,
+} from './case-file-financial-assistance.types';
 
 export class CaseFinancialAssistanceEntity extends BaseEntity {
   caseFileId: uuid;

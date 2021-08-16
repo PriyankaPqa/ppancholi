@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import
 {
@@ -42,6 +42,50 @@ describe('CreateFinancialAssistance.vue', () => {
           return caseFileCombined.entity;
         },
       },
+    });
+  });
+
+  describe('Template', () => {
+    beforeEach(async () => {
+      jest.clearAllMocks();
+
+      wrapper = mount(Component, {
+        localVue,
+        mocks: {
+          $storage: storage,
+        },
+        computed: {
+          caseFile() {
+            return caseFileCombined.entity;
+          },
+        },
+      });
+    });
+
+    describe('page-title', () => {
+      it('is rendered', async () => {
+        expect(wrapper.findDataTest('page-title').exists()).toBeTruthy();
+      });
+    });
+
+    describe('Add new payment line btn', () => {
+      let element;
+      beforeEach(() => {
+        element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
+      });
+      it('renders', async () => {
+        expect(element.exists()).toBeTruthy();
+      });
+      it('is disabled', async () => {
+        wrapper.vm.selectedProgram = null;
+        await wrapper.vm.$nextTick();
+        expect(element.element.disabled).toBe(true);
+      });
+      it('is enabled', async () => {
+        wrapper.vm.selectedProgram = program;
+        await wrapper.vm.$nextTick();
+        expect(element.element.disabled).toBe(false);
+      });
     });
   });
 

@@ -11,7 +11,6 @@
       :show-help="true"
       :help-link="helpLink"
       :tooltip-label="$t('common.tooltip_label')"
-      :max-width="750"
       @cancel="$emit('cancelChange')"
       @close="$emit('cancelChange')"
       @submit="onSubmit">
