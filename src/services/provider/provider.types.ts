@@ -14,6 +14,7 @@ import { ICaseNotesService, ICaseNotesServiceMock } from '../case-notes/entity';
 import { ICaseFileReferralsService, ICaseFileReferralsServiceMock } from '../case-file-referrals/entity';
 import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '../case-file-documents/entity';
 import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '../financial-assistance-tables/entity';
+import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '../financial-assistance-categories/entity';
 
 export interface IProvider {
   appUsers: IAppUsersService,
@@ -29,6 +30,7 @@ export interface IProvider {
   households: IHouseholdsService,
   financialAssistanceTables: IFinancialAssistanceTablesService,
   userAccounts: UserAccountsService,
+  financialAssistanceCategories: IFinancialAssistanceCategoriesService,
 }
 
 export interface IProviderMock {
@@ -45,4 +47,5 @@ export interface IProviderMock {
   households: IHouseholdsServiceMock,
   financialAssistanceTables: IFinancialAssistanceTablesServiceMock,
   userAccounts: IUserAccountsServiceMock,
+  financialAssistanceCategories: IFinancialAssistanceCategoriesServiceMock,
 }

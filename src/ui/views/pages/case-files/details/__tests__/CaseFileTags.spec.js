@@ -5,8 +5,9 @@ import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import {
   mockOptionItemData,
-  EOptionListItemStatus,
 } from '@/entities/optionItem';
+
+import { Status } from '@/entities/base';
 
 import Component from '../case-file-activity/components/CaseFileTags.vue';
 
@@ -317,7 +318,7 @@ describe('CaseFileTags.vue', () => {
         async () => {
           const optionsTag = {
             id: 'mock-id',
-            status: EOptionListItemStatus.Active,
+            status: Status.Active,
             name: { translation: { en: 'mock-name-en', fr: 'mock-name-fr' } },
           };
 
@@ -338,7 +339,7 @@ describe('CaseFileTags.vue', () => {
         async () => {
           const optionsTag = {
             id: 'mock-id',
-            status: EOptionListItemStatus.Active,
+            status: Status.Active,
             name: { translation: { en: 'mock-name-en', fr: 'mock-name-fr' } },
           };
 
@@ -359,7 +360,7 @@ describe('CaseFileTags.vue', () => {
         async () => {
           const optionsTag = {
             id: 'mock-id',
-            status: EOptionListItemStatus.Inactive,
+            status: Status.Inactive,
             name: { translation: { en: 'mock-name-en', fr: 'mock-name-fr' } },
           };
 

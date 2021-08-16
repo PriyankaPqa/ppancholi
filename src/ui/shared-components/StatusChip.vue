@@ -14,7 +14,6 @@
 import Vue from 'vue';
 import { RcStatusChip } from '@crctech/component-library';
 import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
-import { EOptionListItemStatus } from '@/entities/optionItem';
 import colors from '@/ui/plugins/vuetify/colors';
 import { CaseFileStatus } from '@/entities/case-file';
 import { FPaymentStatus } from '@/entities/case-file-financial-assistance';
@@ -38,7 +37,7 @@ export default Vue.extend({
       validator: (value: string) => (
         [
           'EEventStatus',
-          'EOptionListItemStatus',
+          'Status',
           'EEventCallCentreStatus',
           'EEventLocationStatus',
           'CaseFileStatus',
@@ -81,8 +80,6 @@ export default Vue.extend({
         case 'EEventCallCentreStatus':
         case 'EEventLocationStatus':
           return this.getEventCallCentreColor();
-        case 'EOptionListItemStatus':
-          return this.getOptionListStatusColor();
         case 'CaseFileStatus':
           return this.getCaseFileStatusColor();
         case 'CaseFileFinancialAssistanceStatus':
@@ -123,8 +120,6 @@ export default Vue.extend({
         case 'EEventCallCentreStatus':
         case 'EEventLocationStatus':
           return `eventSummary.status.${EEventCallCentreStatus[this.status]}`;
-        case 'EOptionListItemStatus':
-          return `system_management.lists.status.${EOptionListItemStatus[this.status]}`;
         case 'CaseFileStatus':
           return `caseFile.status.${CaseFileStatus[this.status]}`;
         case 'CaseFileFinancialAssistanceStatus':
@@ -173,19 +168,6 @@ export default Vue.extend({
 
         case EEventCallCentreStatus.Inactive:
           return colors.chips.light_grey;
-
-        default:
-          return colors.chips.green;
-      }
-    },
-
-    getOptionListStatusColor(): string {
-      switch (this.status) {
-        case EOptionListItemStatus.Active:
-          return colors.chips.green;
-
-        case EOptionListItemStatus.Inactive:
-          return colors.chips.grey;
 
         default:
           return colors.chips.green;

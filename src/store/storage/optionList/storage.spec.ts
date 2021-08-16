@@ -1,8 +1,10 @@
 import {
-  mockOptionItemData, mockSubItem, EOptionListItemStatus, EOptionLists,
+  mockOptionItemData, mockSubItem, EOptionLists,
 } from '@/entities/optionItem';
 import { mockStore } from '@/store';
 import { makeStorage } from './storage';
+
+import { Status } from '@/entities/base';
 
 const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);
@@ -46,7 +48,7 @@ describe('>>> OptionList Storage', () => {
           },
         },
         orderRank: 1,
-        status: EOptionListItemStatus.Active,
+        status: Status.Active,
       };
       storage.actions.createOption(optionListItem);
       expect(store.dispatch).toHaveBeenCalledWith('optionList/createOption', optionListItem);
@@ -79,14 +81,14 @@ describe('>>> OptionList Storage', () => {
     });
 
     it('should proxy updateStatus', () => {
-      storage.actions.updateStatus('ID', EOptionListItemStatus.Inactive);
-      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateStatus', { id: 'ID', status: EOptionListItemStatus.Inactive });
+      storage.actions.updateStatus('ID', Status.Inactive);
+      expect(store.dispatch).toHaveBeenCalledWith('optionList/updateStatus', { id: 'ID', status: Status.Inactive });
     });
 
     it('should proxy updateSubItemStatus', () => {
       const itemId = 'itemId';
       const subItemId = 'subItemId';
-      const status = EOptionListItemStatus.Inactive;
+      const status = Status.Inactive;
       storage.actions.updateSubItemStatus(itemId, subItemId, status);
       expect(store.dispatch).toHaveBeenCalledWith('optionList/updateSubItemStatus', { itemId, subItemId, status });
     });

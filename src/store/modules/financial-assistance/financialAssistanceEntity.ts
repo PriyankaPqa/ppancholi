@@ -67,13 +67,16 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       documentationRequired: false,
       frequency: EFinancialFrequency.OneTime,
     },
-    faCategories: [],
   };
 
   public getters = {
     ...this.baseGetters,
 
-    faCategories: (state: IFinancialAssistanceEntityState) => state.faCategories,
+    // eslint-disable-next-line
+    faCategories: (_state: any, _getters: any, _rootState: any, rootGetters: any) => {
+      const allCategories = rootGetters['financialAssistanceCategoryEntities/getAll'];
+      return allCategories;
+    },
 
     name: (state: IFinancialAssistanceEntityState) => (language: string) => state.name.translation[language],
 
@@ -341,7 +344,10 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       };
     },
 
-    setFinancialAssistance: (state: IFinancialAssistanceEntityState, { fa }: { fa: IFinancialAssistanceTableCombined }) => {
+    setFinancialAssistance: (
+      state: IFinancialAssistanceEntityState,
+      { fa, categories }: { fa: IFinancialAssistanceTableCombined, categories: IOptionItem[] },
+    ) => {
       state.id = fa.entity.id;
       state.program = {
         id: fa.metadata.programId,
@@ -351,27 +357,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       state.status = fa.entity.status;
 
       const items = this.excludeDeleted(fa.entity.items);
-
-      state.mainItems = items.map((row) => {
-        const mainCategory = state.faCategories.find((category) => category.id === row.mainCategory.optionItemId);
-
-        return {
-          id: row.id,
-          mainCategory,
-          subItems: row.subItems.map((subRow) => ({
-            id: subRow.id,
-            subCategory: mainCategory.subitems.find((subitem) => subitem.id === subRow.subCategory.optionItemId),
-            maximumAmount: subRow.maximumAmount,
-            amountType: subRow.amountType,
-            documentationRequired: subRow.documentationRequired,
-            frequency: subRow.frequency,
-          })),
-        };
-      });
-    },
-
-    setFaCategories(state: IFinancialAssistanceEntityState, { faCategories }: { faCategories: IOptionItem[] }) {
-      state.faCategories = faCategories;
+      state.mainItems = items.map((item) => this.mapItem(item, categories));
     },
   };
 
@@ -380,7 +366,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     createFinancialAssistance: async (
       context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
-      { table }: { table: boolean },
+      { table }: { table: boolean},
     ): Promise<IFinancialAssistanceTableEntity> => {
       const items: IFinancialAssistanceTableItemData[] = context.state.mainItems.map(this.itemToItemData);
 
@@ -415,16 +401,6 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       return res;
     },
 
-    fetchActiveCategories: async (
-      context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
-    ): Promise<IOptionItem[]> => {
-      const faCategories = await this.service.fetchActiveCategories();
-
-      context.commit('setFaCategories', { faCategories });
-
-      return faCategories;
-    },
-
     createItem: async (
       context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
       { item }: { item: IFinancialAssistanceTableItem },
@@ -437,7 +413,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     createSubItem: async (
       context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
-      { itemIndex, subItem }: { itemIndex: number, subItem: IFinancialAssistanceTableSubItem },
+      { itemIndex, subItem }: { itemIndex: number; subItem: IFinancialAssistanceTableSubItem },
     ): Promise<IFinancialAssistanceTableEntity> => {
       const payload = this.subItemToSubItemData(subItem);
       const itemId = context.state.mainItems[itemIndex].id;
@@ -448,7 +424,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     editSubItem: async (
       context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
-      { itemIndex, subItemIndex, subItem }: { itemIndex: number, subItemIndex: number, subItem: IFinancialAssistanceTableSubItem },
+      { itemIndex, subItemIndex, subItem }: { itemIndex: number; subItemIndex: number; subItem: IFinancialAssistanceTableSubItem },
     ): Promise<IFinancialAssistanceTableEntity> => {
       const payload = this.subItemToSubItemData(subItem);
       const itemId = context.state.mainItems[itemIndex].id;
@@ -460,7 +436,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     deleteSubItem: async (
       context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
-      { itemIndex, subItemIndex }: { itemIndex: number, subItemIndex: number },
+      { itemIndex, subItemIndex }: { itemIndex: number; subItemIndex: number },
     ): Promise<IFinancialAssistanceTableEntity> => {
       const itemId = context.state.mainItems[itemIndex].id;
       const subItemId = context.state.mainItems[itemIndex].subItems[subItemIndex].id;
@@ -481,30 +457,43 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     reloadItems: async (
       context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
+      { categories }: { categories: IOptionItem[] },
     ): Promise<void> => {
       const res: IFinancialAssistanceTableEntity = await context.dispatch('fetch', { idParams: context.state.id });
 
       const items = this.excludeDeleted(res.items);
 
-      const itemEntities: IFinancialAssistanceTableItem[] = items.map((row) => {
-        const mainCategory = context.state.faCategories.find((category) => category.id === row.mainCategory.optionItemId);
-
-        return {
-          id: row.id,
-          mainCategory,
-          subItems: row.subItems.map((subRow) => ({
-            id: subRow.id,
-            subCategory: mainCategory.subitems.find((subitem) => subitem.id === subRow.subCategory.optionItemId),
-            maximumAmount: subRow.maximumAmount,
-            amountType: subRow.amountType,
-            documentationRequired: subRow.documentationRequired,
-            frequency: subRow.frequency,
-          })),
-        };
-      });
+      const itemEntities: IFinancialAssistanceTableItem[] = items.map((item) => this.mapItem(item, categories));
 
       context.commit('setItems', { items: itemEntities });
     },
+  };
+
+  protected mapItem = (item: IFinancialAssistanceTableItemData, categories: IOptionItem[]): IFinancialAssistanceTableItem => {
+    const mainCategory = categories.find((category) => category.id === item.mainCategory.optionItemId);
+
+    return {
+      id: item.id,
+      mainCategory,
+      subItems: item.subItems.map((subItem) => ({
+        id: subItem.id,
+        subCategory: subItem.subCategory
+          ? mainCategory.subitems.find((subitem) => subitem.id === subItem.subCategory.optionItemId)
+          : (({
+            id: '-1',
+            name: {
+              translation: {
+                en: 'Default',
+                fr: 'Défaut',
+              },
+            },
+          } as unknown) as IOptionSubItem),
+        maximumAmount: subItem.maximumAmount,
+        amountType: subItem.amountType,
+        documentationRequired: subItem.documentationRequired,
+        frequency: subItem.frequency,
+      })),
+    };
   };
 
   protected itemToItemData = (item: IFinancialAssistanceTableItem): IFinancialAssistanceTableItemData => ({
@@ -514,7 +503,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       specifiedOther: null,
     },
     subItems: item.subItems.map(this.subItemToSubItemData),
-  })
+  });
 
   protected subItemToSubItemData = (sub: IFinancialAssistanceTableSubItem): IFinancialAssistanceTableSubItemData => ({
     id: sub.id,
@@ -529,7 +518,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
     amountType: sub.amountType,
     documentationRequired: sub.documentationRequired,
     frequency: sub.frequency,
-  })
+  });
 
   protected excludeDeleted(items: IFinancialAssistanceTableItemData[]): IFinancialAssistanceTableItemData[] {
     const itemsCopy = cloneDeep(items);

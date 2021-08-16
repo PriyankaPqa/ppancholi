@@ -12,6 +12,7 @@ import { mockEventsService } from '../events/entity';
 import { mockCaseNotesService } from '../case-notes/entity';
 import { mockCaseFileReferralsService } from '../case-file-referrals/entity';
 import { mockCaseFileDocumentsService } from '../case-file-documents/entity';
+import { mockFinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
 
 export const mockProvider = (): IProviderMock => ({
   appUsers: mockAppUsersService(),
@@ -27,4 +28,5 @@ export const mockProvider = (): IProviderMock => ({
   financialAssistanceTables: mockFinancialAssistanceTablesService(),
   userAccounts: mockUserAccountsService(),
   events: mockEventsService(),
+  financialAssistanceCategories: mockFinancialAssistanceCategoriesService(),
 });

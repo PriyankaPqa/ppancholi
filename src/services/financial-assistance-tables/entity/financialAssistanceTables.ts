@@ -5,7 +5,6 @@ import {
   IFinancialAssistanceTableItemData,
   IFinancialAssistanceTableSubItemData,
 } from '@/entities/financial-assistance';
-import { IOptionItem } from '@/entities/optionItem';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@/services/httpClient';
 import { IFinancialAssistanceTablesService } from './financialAssistanceTables.types';
@@ -28,10 +27,6 @@ export class FinancialAssistanceTablesService extends DomainBaseService<IFinanci
     financialAssistance: IEditFinancialAssistanceTableRequest,
   ): Promise<IFinancialAssistanceTableEntity> {
     return this.http.patch(`${this.baseUrl}/${faId}`, financialAssistance);
-  }
-
-  async fetchActiveCategories(): Promise<IOptionItem[]> {
-    return this.http.get(`/${API_URL_SUFFIX}/financial-assistance-categories`);
   }
 
   async createItem(

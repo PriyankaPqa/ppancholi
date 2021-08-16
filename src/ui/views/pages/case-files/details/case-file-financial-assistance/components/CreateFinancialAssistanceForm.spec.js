@@ -1,6 +1,5 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockCaseFinancialAssistanceEntity } from '@/entities/case-file-financial-assistance';
-import { mockCaseFinancialAssistanceEntities } from '@/entities/financial-assistance';
+import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistanceEntities } from '@/entities/case-file-financial-assistance';
 import { mockProgramCaseFinancialAssistance } from '@/entities/program';
 import Component from './CreateFinancialAssistanceForm.vue';
 

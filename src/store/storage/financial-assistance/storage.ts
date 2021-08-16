@@ -162,7 +162,10 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     cancelOperation: () => this.store.commit(`${this.entityModuleName}/cancelOperation`),
 
-    setFinancialAssistance: (fa: IFinancialAssistanceTableCombined) => this.store.commit(`${this.entityModuleName}/setFinancialAssistance`, { fa }),
+    setFinancialAssistance: (
+      fa: IFinancialAssistanceTableCombined,
+      categories: IOptionItem[],
+    ) => this.store.commit(`${this.entityModuleName}/setFinancialAssistance`, { fa, categories }),
   };
 
   private actions = {
@@ -197,9 +200,7 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     editFinancialAssistance: (): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistance`),
 
-    reloadItems: (): Promise<void> => this.store.dispatch(`${this.entityModuleName}/reloadItems`),
-
-    fetchActiveCategories: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchActiveCategories`),
+    reloadItems: (categories: IOptionItem[]): Promise<void> => this.store.dispatch(`${this.entityModuleName}/reloadItems`, { categories }),
   };
 
   public make = () => ({

@@ -10,8 +10,7 @@ export const mockCaseNoteCategories = (): IOptionItem[] => [
     isOther: false,
     isDefault: false,
     subitems: [],
-    id: '0a137a3f-ae72-4fab-b521-7f96da9ece12',
-    status: 1,
+    ...mockBaseData({ id: '0a137a3f-ae72-4fab-b521-7f96da9ece12' }),
   },
   {
     name: { translation: { en: 'Assistance', fr: 'Assistance' } },
@@ -20,9 +19,7 @@ export const mockCaseNoteCategories = (): IOptionItem[] => [
     isOther: false,
     isDefault: false,
     subitems: [],
-    id: '39e3042d-0884-4505-9b18-2cf969706dfc',
-    status: 1,
-    eTag: '"0900cd2f-0000-0a00-0000-609ed58b0000"',
+    ...mockBaseData({ id: '39e3042d-0884-4505-9b18-2cf969706dfc' }),
   },
   {
     name: { translation: { en: 'Action logrterte', fr: 'Registre d’action au dossier' } },
@@ -31,9 +28,7 @@ export const mockCaseNoteCategories = (): IOptionItem[] => [
     isOther: false,
     isDefault: false,
     subitems: [],
-    id: '09bda590-ad8b-4f29-af4e-c63eedd337a0',
-    status: 1,
-    eTag: '"0b002262-0000-0a00-0000-60a268d40000"',
+    ...mockBaseData({ id: '09bda590-ad8b-4f29-af4e-c63eedd337a0' }),
   },
   {
     name: { translation: { en: 'Other', fr: 'Autre' } },
@@ -42,9 +37,7 @@ export const mockCaseNoteCategories = (): IOptionItem[] => [
     isOther: false,
     isDefault: false,
     subitems: [],
-    id: '69a5d7c2-37ac-4326-ac42-2a661ffd9ab9',
-    status: 1,
-    eTag: '"0900cf2f-0000-0a00-0000-609ed58b0000"',
+    ...mockBaseData({ id: '69a5d7c2-37ac-4326-ac42-2a661ffd9ab9' }),
   },
   {
     name: { translation: { en: 'Escalation', fr: 'Processus d’escalade' } },
@@ -54,8 +47,7 @@ export const mockCaseNoteCategories = (): IOptionItem[] => [
     isDefault: false,
     subitems: [],
     id: '71d90801-9a9d-45fe-ae54-cb50a82afb7b',
-    status: 1,
-    eTag: '"0900d02f-0000-0a00-0000-609ed58b0000"',
+    ...mockBaseData({ id: '71d90801-9a9d-45fe-ae54-cb50a82afb7b' }),
   },
   {
     name: { translation: { en: 'test thl en1', fr: 'test thl fr1' } },
@@ -64,9 +56,7 @@ export const mockCaseNoteCategories = (): IOptionItem[] => [
     isOther: false,
     isDefault: false,
     subitems: [],
-    id: '47fb3c8a-02a8-4b39-b23f-bc4c0167e901',
-    status: 1,
-    eTag: '"0b001262-0000-0a00-0000-60a268d00000"',
+    ...mockBaseData({ id: '47fb3c8a-02a8-4b39-b23f-bc4c0167e901' }),
   },
   {
     name: { translation: { en: "New Category for English é l'ê", fr: "New Category for English é l'ê FR" } },
@@ -75,9 +65,7 @@ export const mockCaseNoteCategories = (): IOptionItem[] => [
     isOther: false,
     isDefault: false,
     subitems: [],
-    id: '067df21e-e9f8-4d49-9778-91a7b1ba74b9',
-    status: 1,
-    eTag: '"09009c33-0000-0a00-0000-609ed8b40000"',
+    ...mockBaseData({ id: '067df21e-e9f8-4d49-9778-91a7b1ba74b9' }),
   },
 ];
 

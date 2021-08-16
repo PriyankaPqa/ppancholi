@@ -1,25 +1,18 @@
 import _sortBy from 'lodash/sortBy';
 import { IMultilingual } from '@/types';
+import { BaseEntity, Status } from '@/entities/base';
 import {
-  IOptionItem, IOptionItemData, EOptionListItemStatus, IOptionSubItem,
+  IOptionItem, IOptionItemData, IOptionSubItem,
 } from './optionItem.types';
 
-export class OptionItem implements IOptionItem {
-  readonly id?: string;
-
-  readonly created?: Date;
-
-  readonly timestamp?: Date;
-
-  readonly eTag?: string;
-
+export class OptionItem extends BaseEntity implements IOptionItem {
   readonly name: IMultilingual;
 
   readonly description: IMultilingual;
 
   readonly orderRank: number;
 
-  readonly status: EOptionListItemStatus;
+  readonly status: Status;
 
   readonly isOther: boolean;
 
@@ -28,10 +21,7 @@ export class OptionItem implements IOptionItem {
   readonly subitems: IOptionSubItem[];
 
   constructor(data: IOptionItemData) {
-    this.id = data.id;
-    this.created = data.created;
-    this.timestamp = data.timestamp;
-    this.eTag = data.eTag;
+    super(data);
     this.name = data.name;
     this.description = data.description;
     this.orderRank = data.orderRank;

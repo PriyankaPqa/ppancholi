@@ -26,6 +26,8 @@ import { IOptionItem } from '@/entities/optionItem';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
 
+import { Status } from '@/entities/base';
+
 export default Vue.extend({
   name: 'AddItemItem',
 
@@ -66,13 +68,14 @@ export default Vue.extend({
     },
 
     filteredCategories(): IOptionItem[] {
-      const unSelected = this.financialAssistanceCategories.filter((fac) => !this.items.some((i) => i.mainCategory.id === fac.id));
+      const filtered = this.financialAssistanceCategories.filter((c) => {
+        if (this.item?.mainCategory?.id === c.id) return true;
 
-      if (this.item) {
-        return [this.item.mainCategory, ...unSelected];
-      }
+        const isSelected = this.items.some((i) => i.mainCategory.id === c.id);
+        return !isSelected && c.status === Status.Active;
+      });
 
-      return unSelected;
+      return filtered;
     },
   },
 });

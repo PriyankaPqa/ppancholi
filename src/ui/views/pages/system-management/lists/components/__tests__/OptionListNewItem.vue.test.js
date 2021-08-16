@@ -4,7 +4,7 @@ import {
   shallowMount,
   mount,
 } from '@/test/testSetup';
-import { EOptionListItemStatus } from '@/entities/optionItem';
+import { Status } from '@/entities/base';
 import Component from '../OptionListNewItem.vue';
 
 const localVue = createLocalVue();
@@ -28,8 +28,8 @@ describe('OptionListNewItem.vue', () => {
     describe('itemStatuses', () => {
       it('returns the correct value', async () => {
         expect(wrapper.vm.itemStatuses).toEqual([
-          EOptionListItemStatus.Active,
-          EOptionListItemStatus.Inactive,
+          Status.Active,
+          Status.Inactive,
         ]);
       });
     });
@@ -218,13 +218,13 @@ describe('OptionListNewItem.vue', () => {
       },
     });
 
-    expect(wrapper.vm.$data.currentStatus).toEqual(EOptionListItemStatus.Active);
+    expect(wrapper.vm.$data.currentStatus).toEqual(Status.Active);
 
     await wrapper.find('[data-test="statusSelect__chip"]').trigger('click');
 
     await wrapper.find('[data-test="statusSelect__2"]').trigger('click');
 
-    expect(wrapper.vm.$data.currentStatus).toEqual(EOptionListItemStatus.Inactive);
+    expect(wrapper.vm.$data.currentStatus).toEqual(Status.Inactive);
   });
 
   test('the save button emits the save event if the name exists', async () => {
@@ -272,7 +272,7 @@ describe('OptionListNewItem.vue', () => {
           fr: '',
         },
       },
-      EOptionListItemStatus.Active,
+      Status.Active,
       'parentid']);
   });
 
@@ -328,7 +328,7 @@ describe('OptionListNewItem.vue', () => {
           fr: 'Description',
         },
       },
-      EOptionListItemStatus.Active,
+      Status.Active,
       'parentid',
     ]);
   });
@@ -363,19 +363,19 @@ describe('OptionListNewItem.vue', () => {
       },
     });
 
-    expect(wrapper.vm.currentStatus).toEqual(EOptionListItemStatus.Active);
+    expect(wrapper.vm.currentStatus).toEqual(Status.Active);
 
     await wrapper.find('[data-test="statusSelect__chip"]').trigger('click');
 
     await wrapper.find('[data-test="statusSelect__2"]').trigger('click');
 
-    expect(wrapper.vm.$data.currentStatus).toEqual(EOptionListItemStatus.Inactive);
+    expect(wrapper.vm.$data.currentStatus).toEqual(Status.Inactive);
 
     await saveButton.trigger('click');
 
     await flushPromises();
 
-    expect(wrapper.vm.$data.currentStatus).toEqual(EOptionListItemStatus.Active);
+    expect(wrapper.vm.$data.currentStatus).toEqual(Status.Active);
   });
 
   test('the keyboard events for enter and esc emit the proper events in name field', async () => {

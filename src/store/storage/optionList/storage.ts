@@ -1,9 +1,11 @@
 import {
-  OptionItem, IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
+  OptionItem, IOptionItem, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
 } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
 import { IMultilingual } from '@/types';
 import { IStorage } from './storage.types';
+
+import { Status } from '@/entities/base';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {
@@ -59,14 +61,14 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       });
     },
 
-    updateStatus(id: string, status: EOptionListItemStatus) {
+    updateStatus(id: string, status: Status) {
       return store.dispatch('optionList/updateStatus', {
         id,
         status,
       });
     },
 
-    updateSubItemStatus(itemId: string, subItemId: string, status: EOptionListItemStatus) {
+    updateSubItemStatus(itemId: string, subItemId: string, status: Status) {
       return store.dispatch('optionList/updateSubItemStatus', {
         itemId,
         subItemId,

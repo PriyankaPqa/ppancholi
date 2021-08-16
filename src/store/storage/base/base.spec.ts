@@ -53,6 +53,9 @@ const store = mockStore({
         'metadataModule/get': () => () => mockMetadatum[0],
         'metadataModule/getByIds': () => () => [mockMetadatum[0]],
       },
+      actions: {
+        'metadataModule/fetchAllIncludingInactive': () => () => [mockMetadatum[0]],
+      },
     },
   },
 }, { commit: true, dispatch: true });

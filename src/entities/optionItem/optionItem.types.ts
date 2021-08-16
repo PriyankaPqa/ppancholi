@@ -1,9 +1,5 @@
 import { IMultilingual } from '@/types';
-
-export enum EOptionListItemStatus {
-  Active = 1,
-  Inactive = 2,
-}
+import { IEntity, IEntityCombined, Status } from '@/entities/base';
 
 export enum EOptionLists {
   EventTypes = 1,
@@ -23,46 +19,24 @@ export enum EOptionLists {
   DocumentCategories= 15
 }
 
-export interface IOptionSubItem {
-  id?: string;
-  created?: Date;
-  timestamp?: Date;
-  eTag?: string;
+export interface IOptionSubItem extends IEntity {
   name: IMultilingual;
   orderRank: number;
-  status: EOptionListItemStatus;
   isOther: boolean;
   isDefault: boolean;
   description?: IMultilingual;
 }
 
-export interface IOptionItemData {
-  id?: string;
-  created?: Date;
-  timestamp?: Date;
-  eTag?: string;
+export interface IOptionItemData extends IEntity {
   name: IMultilingual;
   description?: IMultilingual;
   orderRank: number;
-  status: EOptionListItemStatus;
   isOther: boolean;
   isDefault: boolean;
   subitems: IOptionSubItem[];
 }
 
-export interface IOptionItem {
-  id?: string;
-  created?: Date;
-  timestamp?: Date;
-  eTag?: string;
-  name: IMultilingual;
-  orderRank: number;
-  status: EOptionListItemStatus;
-  isOther: boolean;
-  isDefault: boolean;
-  description?: IMultilingual;
-  subitems: IOptionSubItem[];
-}
+export interface IOptionItem extends IOptionItemData {}
 
 /**
  * Create event payload interface
@@ -70,6 +44,10 @@ export interface IOptionItem {
 export interface ICreateOptionItemRequest {
   name: IMultilingual;
   orderRank: number;
-  status: EOptionListItemStatus;
+  status: Status;
   description?: IMultilingual;
 }
+
+export interface IOptionItemMetadata extends IEntity {}
+
+export type IOptionItemCombined = IEntityCombined<IOptionItem, IOptionItemMetadata>

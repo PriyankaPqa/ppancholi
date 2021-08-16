@@ -2,8 +2,10 @@ import { Store } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
 import {
-  mockOptionItemData, mockSubItem, EOptionListItemStatus, EOptionLists,
+  mockOptionItemData, mockSubItem, EOptionLists,
 } from '@/entities/optionItem';
+
+import { Status } from '@/entities/base';
 
 describe('>>> Option List Module', () => {
   let store: Store<IRootState>;
@@ -225,13 +227,13 @@ describe('>>> Option List Module', () => {
         await store.dispatch('optionList/updateStatus', {
           list,
           id: 'ID',
-          status: EOptionListItemStatus.Inactive,
+          status: Status.Inactive,
         });
 
         expect(store.$services.optionItems.updateOptionItemStatus).toHaveBeenCalledWith(
           list,
           'ID',
-          EOptionListItemStatus.Inactive,
+          Status.Inactive,
         );
       });
     });
@@ -246,7 +248,7 @@ describe('>>> Option List Module', () => {
 
         const itemId = 'itemId';
         const subItemId = 'subItemId';
-        const status = EOptionListItemStatus.Inactive;
+        const status = Status.Inactive;
 
         await store.dispatch('optionList/updateSubItemStatus', { itemId, subItemId, status });
 

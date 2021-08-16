@@ -32,6 +32,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     });
   }
 
+  protected metadataActionExists(actionName: string): boolean {
+    // eslint-disable-next-line
+    return Object.keys(this.store._actions).includes(`${this.metadataModuleName}/${actionName}`);
+  }
+
   protected baseGetters = {
     getAll: (): Array<IEntityCombined<TEntity, TMetadata>> => {
       const entities = this.store.getters[`${this.entityModuleName}/getAll`];
@@ -95,9 +100,14 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     },
 
     fetchAllIncludingInactive: async (): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
-      const [entities, metadata] = await Promise.all([
-        this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`),
-        this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`)]);
+      const entities = await this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`);
+      let metadata = [];
+      // Metadata do not exist for option items (financial categories, document categoris etc.)
+
+      if (this.metadataActionExists('fetchAllIncludingInactive')) {
+        metadata = await this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`);
+      }
+
       return this.combinedCollections(entities, metadata);
     },
 

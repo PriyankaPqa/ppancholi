@@ -1,9 +1,11 @@
 import { IHttpClient } from '@/services/httpClient';
 import {
-  IOptionItemData, EOptionListItemStatus, EOptionLists, IOptionSubItem,
+  IOptionItemData, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
 import { IOptionItemsService } from './optionItems.types';
+
+import { Status } from '@/entities/base';
 
 export class OptionItemsService implements IOptionItemsService {
   constructor(private readonly http: IHttpClient) {}
@@ -75,13 +77,13 @@ export class OptionItemsService implements IOptionItemsService {
     });
   }
 
-  async updateOptionItemStatus(list: EOptionLists, id: string, status: EOptionListItemStatus): Promise<IOptionItemData> {
+  async updateOptionItemStatus(list: EOptionLists, id: string, status: Status): Promise<IOptionItemData> {
     return this.http.patch(`${this.getPrefix(list)}/${id}/status`, {
       status,
     });
   }
 
-  async updateOptionSubItemStatus(list: EOptionLists, itemId: string, subItemId: string, status: EOptionListItemStatus): Promise<IOptionItemData> {
+  async updateOptionSubItemStatus(list: EOptionLists, itemId: string, subItemId: string, status: Status): Promise<IOptionItemData> {
     return this.http.patch(`${this.getPrefix(list)}/${itemId}/subitem/${subItemId}/status`, {
       status,
     });

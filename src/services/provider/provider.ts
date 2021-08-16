@@ -13,6 +13,7 @@ import { EventsService } from '../events/entity';
 import { CaseFileReferralsService } from '../case-file-referrals/entity';
 import { CaseFileDocumentsService } from '../case-file-documents/entity';
 import { CaseNotesService } from '../case-notes/entity';
+import { FinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
 
 export const provider = (): IProvider => ({
   appUsers: new AppUsersService(httpClient),
@@ -28,4 +29,5 @@ export const provider = (): IProvider => ({
   households: new HouseholdsService(httpClient),
   financialAssistanceTables: new FinancialAssistanceTablesService(httpClient),
   userAccounts: new UserAccountsService(httpClient),
+  financialAssistanceCategories: new FinancialAssistanceCategoriesService(httpClient),
 });

@@ -1,6 +1,6 @@
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { Status } from '@/entities/base';
@@ -90,6 +90,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
 
       it('is visible if is edit', async () => {
+        jest.clearAllMocks();
+
         wrapper = mount(Component, {
           localVue,
           computed: {
@@ -165,7 +167,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('returns the right value', async () => {
         expect(wrapper.vm.isEdit).toEqual(false);
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           mocks: {
             $route: {
@@ -218,7 +220,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('programInactive', () => {
       it('returns the right value', async () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           computed: {
             program() {
@@ -235,7 +237,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
         expect(wrapper.vm.programInactive).toEqual(false);
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           computed: {
             program() {
@@ -272,7 +274,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
   });
 
   describe('Life cycle', () => {
-    it('calls loadActivePrograms', async () => {
+    it('calls loadActivePrograms in create mode', async () => {
       wrapper.vm.loadActivePrograms = jest.fn();
 
       await wrapper.vm.$options.created.forEach((hook) => {
@@ -282,12 +284,53 @@ describe('CreateEditFinancialAssistance.vue', () => {
       expect(wrapper.vm.loadActivePrograms).toHaveBeenCalled();
     });
 
-    it('calls fetchActiveCategories', async () => {
+    it('calls fetchAllIncludingInactive in create mode', async () => {
       await wrapper.vm.$options.created.forEach((hook) => {
         hook.call(wrapper.vm);
       });
 
-      expect(storage.financialAssistance.actions.fetchActiveCategories).toHaveBeenCalled();
+      expect(storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalled();
+    });
+
+    it('calls fetchAllIncludingInactive in edit mode', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        computed: {
+          isEdit() {
+            return true;
+          },
+        },
+        mocks: {
+          $storage: storage,
+        },
+        stubs: ['financial-assistance-items'],
+      });
+
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+
+      expect(storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalled();
+    });
+
+    it('fetches financial assistance in edit mode', async () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        computed: {
+          isEdit() {
+            return true;
+          },
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+
+      await wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+
+      expect(storage.financialAssistance.actions.fetch).toHaveBeenCalled();
     });
   });
 

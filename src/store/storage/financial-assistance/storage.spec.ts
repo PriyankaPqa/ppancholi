@@ -365,11 +365,6 @@ describe('>>> Financial Assistance Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/editFinancialAssistance`);
     });
 
-    it('should proxy fetchActiveCategories', () => {
-      storage.actions.fetchActiveCategories();
-      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchActiveCategories`);
-    });
-
     it('should proxy createItem', () => {
       const item = mockItems()[0];
 
@@ -415,9 +410,11 @@ describe('>>> Financial Assistance Storage', () => {
     });
 
     it('should proxy reloadItems', () => {
-      storage.actions.reloadItems();
+      jest.clearAllMocks();
 
-      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/reloadItems`);
+      storage.actions.reloadItems([]);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/reloadItems`, { categories: [] });
     });
   });
 });

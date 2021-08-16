@@ -30,7 +30,7 @@
       <router-link
         class="rc-link14 font-weight-bold"
         data-test="eventDetail-link"
-        to="">
+        :to="getDetailsRoute(item)">
         {{ $m(item.entity.name) }}
       </router-link>
     </template>
@@ -194,6 +194,15 @@ export default Vue.extend({
         name: routes.events.financialAssistance.edit.name,
         params: { faId: item.entity.id },
       });
+    },
+
+    getDetailsRoute(item: IFinancialAssistanceTableCombined) {
+      return {
+        name: routes.events.financialAssistance.details.name,
+        params: {
+          faId: item.entity.id,
+        },
+      };
     },
   },
 });

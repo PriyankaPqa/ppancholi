@@ -1,8 +1,10 @@
 import {
-  mockOptionItemData, mockSubItem, EOptionListItemStatus, EOptionLists,
+  mockOptionItemData, mockSubItem, EOptionLists,
 } from '@/entities/optionItem';
 import { mockHttp } from '@/services/httpClient.mock';
 import { OptionItemsService } from './optionItems';
+
+import { Status } from '@/entities/base';
 
 const http = mockHttp();
 
@@ -114,7 +116,7 @@ describe('>>> OptionItems Service', () => {
   });
 
   test('updateOptionItemStatus is linked to the correct URL', async () => {
-    const status = EOptionListItemStatus.Inactive;
+    const status = Status.Inactive;
     const list = EOptionLists.EventTypes;
     await service.updateOptionItemStatus(list, 'ID', status);
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/ID/status`, { status });
@@ -123,7 +125,7 @@ describe('>>> OptionItems Service', () => {
   test('updateOptionSubItemStatus is linked to the correct URL', async () => {
     const itemId = 'itemId';
     const subItemId = 'subItemId';
-    const status = EOptionListItemStatus.Inactive;
+    const status = Status.Inactive;
     const list = EOptionLists.EventTypes;
     await service.updateOptionSubItemStatus(list, itemId, subItemId, status);
     expect(http.patch).toHaveBeenCalledWith(`${service.getPrefix(list)}/${itemId}/subitem/${subItemId}/status`, { status });

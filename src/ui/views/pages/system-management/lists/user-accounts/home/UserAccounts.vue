@@ -139,7 +139,6 @@ import { isEmpty } from 'lodash';
 import _cloneDeep from 'lodash/cloneDeep';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
-  EOptionListItemStatus,
   EOptionLists,
   IOptionItem,
   IOptionSubItem,
@@ -323,7 +322,7 @@ export default Vue.extend({
         return {
           text: role.name,
           value: role.id,
-          isInactive: role.status === EOptionListItemStatus.Inactive,
+          isInactive: role.status === Status.Inactive,
         };
       }
       return null;
@@ -427,7 +426,7 @@ export default Vue.extend({
         acc.push(...curr.subitems);
         return acc;
       }, []);
-      this.allActiveSubRoles = this.allSubRoles?.filter((role: IOptionSubItem) => role.status === EOptionListItemStatus.Active) || [];
+      this.allActiveSubRoles = this.allSubRoles?.filter((role: IOptionSubItem) => role.status === Status.Active) || [];
     },
 
     // set the hierarchical list of roles and subroles in the format needed for the dropdown of the select component
@@ -435,7 +434,7 @@ export default Vue.extend({
       roles.forEach((accessLevel : IOptionItem) => {
         const activeSubRoles: {text: IMultilingual, value: string}[] = [];
         accessLevel.subitems.forEach((role: IOptionSubItem) => {
-          if (role.status === EOptionListItemStatus.Active) {
+          if (role.status === Status.Active) {
             activeSubRoles.push({
               text: role.name,
               value: role.id,

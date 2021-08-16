@@ -62,6 +62,9 @@ import { MassActionMetadataModule } from '@/store/modules/mass-action/massAction
 import { MassActionMetadataService } from '@/services/mass-actions/metadata';
 import { IRootState } from './store.types';
 
+import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
+import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
+
 Vue.use(Vuex);
 
 const store: StoreOptions<IRootState> = {
@@ -116,6 +119,10 @@ const store: StoreOptions<IRootState> = {
 
     [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(new MassActionService(httpClient)).getModule(),
     [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(new MassActionMetadataService(httpClient)).getModule(),
+
+    [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
+      new FinancialAssistanceCategoriesService(httpClient),
+    ).getModule(),
   },
 };
 

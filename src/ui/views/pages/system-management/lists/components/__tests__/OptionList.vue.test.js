@@ -2,8 +2,9 @@ import {
   createLocalVue,
   mount,
 } from '@/test/testSetup';
-import { mockOptionItemData, EOptionLists, EOptionListItemStatus } from '@/entities/optionItem';
+import { mockOptionItemData, EOptionLists } from '@/entities/optionItem';
 import Component from '../OptionList.vue';
+import { Status } from '@/entities/base';
 
 const localVue = createLocalVue();
 
@@ -163,7 +164,7 @@ describe('OptionList.vue', () => {
       it('dispatches the createOption action', async () => {
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = null;
-        const status = EOptionListItemStatus.Active;
+        const status = Status.Active;
 
         await wrapper.vm.saveNewItem(
           name,
@@ -176,7 +177,7 @@ describe('OptionList.vue', () => {
       it('dispatches the createOption action with correct parameters', async () => {
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = null;
-        const status = EOptionListItemStatus.Active;
+        const status = Status.Active;
 
         await wrapper.vm.saveNewItem(
           name,
@@ -207,7 +208,7 @@ describe('OptionList.vue', () => {
       it('copies the translation values over to empty languages', async () => {
         const name = { translation: { en: 'English Test', fr: '' } };
         const description = null;
-        const status = EOptionListItemStatus.Active;
+        const status = Status.Active;
 
         await wrapper.vm.saveNewItem(
           name,
@@ -244,7 +245,7 @@ describe('OptionList.vue', () => {
 
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = { translation: { en: 'English description', fr: 'French description' } };
-        const status = EOptionListItemStatus.Active;
+        const status = Status.Active;
         const itemId = mockOptionItemData()[0].id;
 
         await wrapper.vm.saveNewSubItem(
@@ -262,10 +263,17 @@ describe('OptionList.vue', () => {
 
         const name = { translation: { en: 'English Test', fr: 'French Test' } };
         const description = { translation: { en: 'English description', fr: 'French description' } };
-        const status = EOptionListItemStatus.Active;
+        const status = Status.Active;
 
         const item = mockOptionItemData()[0];
         const itemId = item.id;
+
+        let highestRank = 0;
+
+        if (item.subitems.length > 0) {
+          highestRank = item.subitems
+            .reduce((prev, current) => ((prev.orderRank > current.orderRank) ? prev : current)).orderRank;
+        }
 
         await wrapper.vm.saveNewSubItem(
           name,
@@ -279,7 +287,7 @@ describe('OptionList.vue', () => {
           {
             name,
             status,
-            orderRank: item.subitems.length + 1,
+            orderRank: highestRank + 1,
             description,
           },
         );
@@ -290,10 +298,17 @@ describe('OptionList.vue', () => {
 
         const name = { translation: { en: 'English Test', fr: '' } };
         const description = { translation: { en: 'English description', fr: '' } };
-        const status = EOptionListItemStatus.Active;
+        const status = Status.Active;
 
         const item = mockOptionItemData()[0];
         const itemId = item.id;
+
+        let highestRank = 0;
+
+        if (item.subitems.length > 0) {
+          highestRank = item.subitems
+            .reduce((prev, current) => ((prev.orderRank > current.orderRank) ? prev : current)).orderRank;
+        }
 
         await wrapper.vm.saveNewSubItem(
           name,
@@ -307,7 +322,7 @@ describe('OptionList.vue', () => {
           {
             name: { translation: { en: 'English Test', fr: 'English Test' } },
             status,
-            orderRank: item.subitems.length + 1,
+            orderRank: highestRank + 1,
             description: { translation: { en: 'English description', fr: 'English description' } },
           },
         );

@@ -5,9 +5,10 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockOptionItemData, EOptionListItemStatus } from '@/entities/optionItem';
+import { mockOptionItemData } from '@/entities/optionItem';
 import entityUtils from '@/entities/utils';
 import Component from '../OptionListItem.vue';
+import { Status } from '@/entities/base';
 
 const localVue = createLocalVue();
 
@@ -49,8 +50,8 @@ describe('OptionListItem.vue', () => {
     describe('itemStatuses', () => {
       it('returns the correct value', async () => {
         expect(wrapper.vm.itemStatuses).toEqual([
-          EOptionListItemStatus.Active,
-          EOptionListItemStatus.Inactive,
+          Status.Active,
+          Status.Inactive,
         ]);
       });
     });
@@ -169,7 +170,7 @@ describe('OptionListItem.vue', () => {
           item: mockOptionItemData()[0].subitems[0],
         });
 
-        const status = EOptionListItemStatus.Inactive;
+        const status = Status.Inactive;
         wrapper.vm.changeToStatus = status;
         wrapper.vm.$storage.optionList.actions.updateSubItemStatus = jest.fn();
 
@@ -183,7 +184,7 @@ describe('OptionListItem.vue', () => {
           isSubItem: false,
         });
 
-        const status = EOptionListItemStatus.Inactive;
+        const status = Status.Inactive;
         wrapper.vm.changeToStatus = status;
         wrapper.vm.$storage.optionList.actions.updateStatus = jest.fn();
 

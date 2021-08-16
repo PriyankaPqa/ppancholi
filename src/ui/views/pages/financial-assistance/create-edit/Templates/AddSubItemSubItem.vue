@@ -22,9 +22,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VSelectWithValidation } from '@crctech/component-library';
-import { EOptionListItemStatus, IOptionSubItem } from '@/entities/optionItem';
+import { IOptionSubItem } from '@/entities/optionItem';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'AddSubItemSubItem',
@@ -73,6 +74,12 @@ export default Vue.extend({
       if (!subitemsFromBE?.length) {
         return [
           {
+            tenantId: '',
+            created: '',
+            timestamp: '',
+            eTag: '',
+            createdBy: '',
+            lastUpdatedBy: '',
             name: {
               translation: {
                 en: 'Default',
@@ -80,7 +87,7 @@ export default Vue.extend({
               },
             },
             orderRank: 0,
-            status: EOptionListItemStatus.Active,
+            status: Status.Active,
             isOther: false,
             isDefault: true,
             id: '-1',
@@ -91,7 +98,7 @@ export default Vue.extend({
       const existingSubItems = this.parent.subItems;
 
       const unSelected = subitemsFromBE.filter(
-        (si) => !existingSubItems.some((sI) => sI.subCategory.id === si.id) && si.status === EOptionListItemStatus.Active,
+        (si) => !existingSubItems.some((sI) => sI.subCategory.id === si.id) && si.status === Status.Active,
       );
 
       if (this.item) {

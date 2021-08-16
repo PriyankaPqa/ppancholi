@@ -164,7 +164,8 @@ export default Vue.extend({
       this.loading = false;
 
       if (res) {
-        await this.$storage.financialAssistance.actions.reloadItems();
+        const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+        await this.$storage.financialAssistance.actions.reloadItems(categories);
         this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
       }
     },

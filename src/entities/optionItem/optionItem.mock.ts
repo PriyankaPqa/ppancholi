@@ -1,10 +1,94 @@
-import { EOptionListItemStatus, IOptionItemData, IOptionSubItem } from './optionItem.types';
+import {
+  IOptionItem, IOptionItemCombined, IOptionItemData, IOptionSubItem,
+} from './optionItem.types';
+import { mockBaseData, Status } from '@/entities/base';
 
-export const mockOptionItemData = (): IOptionItemData[] => [{
-  id: '1',
-  created: new Date('2021-01-14T00:00:00.000Z'),
-  timestamp: new Date('2021-01-14T00:00:00.000Z'),
-  eTag: '',
+export const mockOptionSubItem = (force?: Partial<IOptionSubItem>): IOptionSubItem => ({
+  ...mockBaseData(),
+  name: {
+    translation: {
+      en: 'case worker 2',
+      fr: 'case worker 2 fr',
+    },
+  },
+  orderRank: 1,
+  isOther: false,
+  isDefault: false,
+  description: {
+    translation: {
+      en: 'case worker 2 description',
+      fr: 'case worker 2 description fr',
+    },
+  },
+  ...force,
+});
+
+export const mockOptionItemData = (): IOptionItemData[] => [
+  {
+    ...mockBaseData({ id: '1' }),
+    name: {
+      translation: {
+        en: 'Flood',
+        fr: 'Inundation',
+      },
+    },
+    description: {
+      translation: {
+        en: 'This is item 1 description',
+        fr: 'This is item 1 description FR',
+      },
+    },
+    orderRank: 2,
+    status: 1,
+    isOther: true,
+    isDefault: false,
+    subitems: [mockOptionSubItem({ id: '1' }), mockOptionSubItem({ id: '2' })],
+  },
+  {
+    ...mockBaseData({ id: '2' }),
+    name: {
+      translation: {
+        en: 'Wildfire',
+        fr: 'Incendies',
+      },
+    },
+    description: {
+      translation: {
+        en: 'This is item 1 description',
+        fr: 'This is item 1 description FR',
+      },
+    },
+    orderRank: 3,
+    status: 1,
+    isOther: false,
+    isDefault: true,
+    subitems: [],
+  },
+
+  {
+    ...mockBaseData(),
+    name: {
+      translation: {
+        en: 'Earthquake',
+        fr: 'Tremblement de terre',
+      },
+    },
+    description: {
+      translation: {
+        en: 'This is item 1 description',
+        fr: 'This is item 1 description FR',
+      },
+    },
+    orderRank: 4,
+    status: 2,
+    isOther: false,
+    isDefault: false,
+    subitems: [],
+  },
+];
+
+export const mockOptionItem = (): IOptionItem => ({
+  ...mockBaseData({ id: '1' }),
   name: {
     translation: {
       en: 'Flood',
@@ -21,79 +105,26 @@ export const mockOptionItemData = (): IOptionItemData[] => [{
   status: 1,
   isOther: true,
   isDefault: false,
-  subitems: [
-    {
-      name: {
-        translation: {
-          en: 'case worker 2',
-          fr: 'case worker 2 fr',
-        },
-      },
-      description: {
-        translation: {
-          en: 'case worker 2 description',
-          fr: 'case worker 2 description fr',
-        },
-      },
-      orderRank: 1,
-      isOther: false,
-      isDefault: false,
-      id: '66e2fd56-3e16-4158-a1f3-922126ef8a96',
-      status: 2,
-      eTag: '*',
-    },
-    {
-      name: {
-        translation: {
-          en: 'Case Worker',
-          fr: 'Analyse de dossiers',
-        },
-      },
-      description: null,
-      orderRank: 2,
-      isOther: false,
-      isDefault: false,
-      id: 'c4ca956f-162c-49b6-b371-69ef38eab4aa',
-      status: 1,
-      eTag: '*',
-    },
-  ],
-}, {
-  id: '2',
-  created: new Date('2021-01-14T00:00:00.000Z'),
-  timestamp: new Date('2021-01-14T00:00:00.000Z'),
-  eTag: '',
-  name: {
-    translation: {
-      en: 'Wildfire',
-      fr: 'Incendies',
-    },
-  },
-  orderRank: 3,
-  status: 1,
-  isOther: false,
-  isDefault: true,
-  subitems: [],
-}, {
-  id: '3',
-  created: new Date('2021-01-14T00:00:00.000Z'),
-  timestamp: new Date('2021-01-14T00:00:00.000Z'),
-  eTag: '',
-  name: {
-    translation: {
-      en: 'Earthquake',
-      fr: 'Tremblement de terre',
-    },
-  },
-  orderRank: 4,
-  status: 2,
-  isOther: false,
-  isDefault: false,
-  subitems: [],
-}];
+  subitems: [mockOptionSubItem({ id: '1' }), mockOptionSubItem({ id: '2' })],
+});
+
+export const mockCombineOptionItem = (): IOptionItemCombined => ({
+  entity: mockOptionItem(),
+  metadata: null,
+});
+
+export const mockOptionItems = (): IOptionItem[] => [mockOptionItem()];
+
+export const mockCombinedOptionItems = (): IOptionItemCombined[] => [mockCombineOptionItem()];
 
 export const mockSubItem = (): IOptionSubItem => ({
   id: 'ID',
+  eTag: '',
+  tenantId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  created: '2021-08-12T19:58:28.654Z',
+  timestamp: '2021-08-12T19:58:28.654Z',
+  createdBy: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  lastUpdatedBy: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
   name: {
     translation: {
       en: 'EN',
@@ -101,7 +132,7 @@ export const mockSubItem = (): IOptionSubItem => ({
     },
   },
   orderRank: 1,
-  status: EOptionListItemStatus.Active,
+  status: Status.Active,
   description: {
     translation: {
       en: 'subItem description EN',

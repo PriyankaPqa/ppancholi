@@ -551,18 +551,12 @@ describe('UserAccounts.vue', () => {
     describe('setAllActiveSubRoles', () => {
       it('sets the right data into allActiveSubRoles', async () => {
         await wrapper.vm.setAllActiveSubRoles(mockOptionItemData());
-        expect(wrapper.vm.allActiveSubRoles).toEqual([mockOptionItemData()[0].subitems[1]]);
-      });
-    });
+        const expected = mockOptionItemData().reduce((acc, curr) => {
+          acc.push(...curr.subitems);
+          return acc;
+        }, []).filter((role) => role.status === Status.Active) || [];
 
-    describe('setAllAccessLevelRoles', () => {
-      it('sets the right data into allAccessLevelRoles', async () => {
-        wrapper.vm.allAccessLevelRoles = [];
-        await wrapper.vm.setAllAccessLevelRoles(mockOptionItemData());
-        expect(wrapper.vm.allAccessLevelRoles).toEqual([
-          { header: mockOptionItemData()[0].name.translation.en },
-          { text: mockOptionItemData()[0].subitems[1].name, value: mockOptionItemData()[0].subitems[1].id },
-        ]);
+        expect(wrapper.vm.allActiveSubRoles).toEqual(expected);
       });
     });
 

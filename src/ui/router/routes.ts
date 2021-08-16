@@ -46,6 +46,7 @@ const FinancialAssistanceLayout = () => import(/* webpackChunkName: "financial-a
 const FinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/home/FinancialAssistanceHome.vue');
 const EventFinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/events/details/components/EventFinancialAssistanceHome.vue');
 const CreateEditFinancialAssistance = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/create-edit/CreateEditFinancialAssistance.vue');
+const FinancialAssistanceDetails = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/FinancialAssistanceDetails.vue');
 
 const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
 const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
@@ -379,6 +380,12 @@ export const routes: Array<RouteConfig> = [
                   path: Routes.events.financialAssistance.edit.path,
                   name: Routes.events.financialAssistance.edit.name,
                   component: CreateEditFinancialAssistance,
+                  meta: { level: 'level6' },
+                  props: true,
+                }, {
+                  path: Routes.events.financialAssistance.details.path,
+                  name: Routes.events.financialAssistance.details.name,
+                  component: FinancialAssistanceDetails,
                   meta: { level: 'level6' },
                   props: true,
                 }],

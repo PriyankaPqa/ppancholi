@@ -45,7 +45,7 @@
             v-model="currentStatus"
             data-test="optionListNewItem__statusSelect"
             :statuses="itemStatuses"
-            status-name="EOptionListItemStatus" />
+            status-name="Status" />
         </v-col>
 
         <v-col class="alignRight" cols="2">
@@ -90,7 +90,8 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import entityUtils from '@/entities/utils';
-import { EOptionListItemStatus, IOptionItem } from '@/entities/optionItem';
+import { IOptionItem } from '@/entities/optionItem';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'OptionListNewItem',
@@ -167,17 +168,17 @@ export default Vue.extend({
 
       description: entityUtils.initMultilingualAttributes(),
 
-      currentStatus: EOptionListItemStatus.Active,
+      currentStatus: Status.Active,
 
       isNameUnique: true,
     };
   },
 
   computed: {
-    itemStatuses(): Array<EOptionListItemStatus> {
+    itemStatuses(): Array<Status> {
       return [
-        EOptionListItemStatus.Active,
-        EOptionListItemStatus.Inactive,
+        Status.Active,
+        Status.Inactive,
       ];
     },
 
@@ -271,7 +272,7 @@ export default Vue.extend({
 
         this.description = entityUtils.initMultilingualAttributes();
 
-        this.currentStatus = EOptionListItemStatus.Active;
+        this.currentStatus = Status.Active;
 
         (this.$refs.form as VForm).reset();
       }

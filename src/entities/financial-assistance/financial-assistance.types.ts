@@ -70,4 +70,6 @@ export interface IEditFinancialAssistanceTableRequest extends IEntity {
   status: Status;
 }
 
+export type IFinancialAssistanceCategoryEntity = IOptionItem;
+
 export type IFinancialAssistanceTableCombined = IEntityCombined<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata>;

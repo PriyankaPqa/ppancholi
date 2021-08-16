@@ -1,8 +1,9 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { EOptionListItemStatus } from '@/entities/optionItem';
+
 import { mockStorage } from '@/store/storage';
 import { mockItems, mockSubItems, mockCategories } from '@/entities/financial-assistance';
 import Component from '../Templates/AddSubItemSubItem.vue';
+import { Status } from '@/entities/base';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -55,7 +56,7 @@ describe('AddSubItemSubItem.vue', () => {
         expect(wrapper.vm.parent.mainCategory.subitems.length).toEqual(3);
         expect(wrapper.vm.parent.subItems.length).toEqual(2);
 
-        expect(wrapper.vm.getSubItems().length).toEqual(1);
+        expect(wrapper.vm.getSubItems().length).toEqual(0);
       });
 
       it('returns default subItem if no subItems', async () => {
@@ -63,6 +64,12 @@ describe('AddSubItemSubItem.vue', () => {
 
         expect(wrapper.vm.getSubItems()).toEqual([
           {
+            tenantId: '',
+            created: '',
+            timestamp: '',
+            eTag: '',
+            createdBy: '',
+            lastUpdatedBy: '',
             name: {
               translation: {
                 en: 'Default',
@@ -70,7 +77,7 @@ describe('AddSubItemSubItem.vue', () => {
               },
             },
             orderRank: 0,
-            status: EOptionListItemStatus.Active,
+            status: Status.Active,
             isOther: false,
             isDefault: true,
             id: '-1',

@@ -14,6 +14,7 @@ import { mockStorageProgram } from './program';
 import { FinancialAssistanceStorageMock } from './financial-assistance/storage.mock';
 import { CaseFileReferralStorageMock } from './case-file-referral';
 import { CaseFileDocumentStorageMock } from './case-file-document';
+import { FinancialAssistanceCategoryStorageMock } from './financial-assistance-category/storage.mock';
 
 export const mockStorage = (): IStorageMock => ({
   caseFile: new CaseFileStorageMock().make(),
@@ -28,6 +29,7 @@ export const mockStorage = (): IStorageMock => ({
   program: mockStorageProgram(),
   registration: mockStorageRegistration(),
   financialAssistance: new FinancialAssistanceStorageMock().make(),
+  financialAssistanceCategory: new FinancialAssistanceCategoryStorageMock().make(),
   household: new HouseholdStorageMock().make(),
   userAccount: new UserAccountStorageMock().make(),
   massAction: new MassActionStorageMock().make(),

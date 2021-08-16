@@ -7,11 +7,13 @@ import helpers from '@/ui/helpers';
 import { IRootState } from '@/store/store.types';
 import { IMultilingual } from '@/types';
 import {
-  IOptionItemData, IOptionItem, OptionItem, EOptionListItemStatus, EOptionLists, IOptionSubItem,
+  IOptionItemData, IOptionItem, OptionItem, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';
 import {
   IState,
 } from './optionList.types';
+
+import { Status } from '@/entities/base';
 
 const getDefaultState = (): IState => ({
   items: [],
@@ -142,7 +144,7 @@ const actions = {
   async updateStatus(
     this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: { id: string, status: EOptionListItemStatus },
+    payload: { id: string, status: Status },
   ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');
@@ -159,7 +161,7 @@ const actions = {
   async updateSubItemStatus(
     this: Store<IState>,
     context: ActionContext<IState, IState>,
-    payload: { itemId: string, subItemId: string, status: EOptionListItemStatus },
+    payload: { itemId: string, subItemId: string, status: Status },
   ): Promise<IOptionItem> {
     if (!context.state.list) {
       throw new Error('You must set a value for list');

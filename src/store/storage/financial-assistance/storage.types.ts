@@ -36,9 +36,9 @@ export interface IGetters extends IBaseGetters<IFinancialAssistanceTableEntity, 
 
 export interface IGettersMock extends IBaseGettersMock<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {
   name: jest.Mock<string>;
-  status: jest.Mock<void>;
+  status: jest.Mock<Status>;
   addingItem: jest.Mock<void>;
-  program: jest.Mock<void>;
+  program: jest.Mock<IProgram>;
   items: jest.Mock<IFinancialAssistanceTableItem[]>;
   subItems: jest.Mock<void>;
   newItem: jest.Mock<IFinancialAssistanceTableItem>;
@@ -91,7 +91,7 @@ export interface IMutations extends IBaseMutations<IFinancialAssistanceTableEnti
   resetNewSubItem(): void;
   resetState(): void;
   cancelOperation(): void;
-  setFinancialAssistance(fa: IFinancialAssistanceTableCombined): void;
+  setFinancialAssistance(fa: IFinancialAssistanceTableCombined, categories: IOptionItem[]): void;
 }
 
 export interface IMutationsMock extends IBaseMutationsMock<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {
@@ -138,19 +138,17 @@ export interface IMutationsMock extends IBaseMutationsMock<IFinancialAssistanceT
 export interface IActions extends IBaseActions<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata, uuid> {
   createFinancialAssistance(table: boolean): Promise<IFinancialAssistanceTableEntity>;
   editFinancialAssistance(): Promise<IFinancialAssistanceTableEntity>;
-  fetchActiveCategories(): Promise<IOptionItem[]>;
   createItem(item: IFinancialAssistanceTableItem): Promise<IFinancialAssistanceTableEntity>;
   createSubItem(itemIndex: number, subItem: IFinancialAssistanceTableSubItem): Promise<IFinancialAssistanceTableEntity>;
   editSubItem(itemIndex: number, subItemIndex: number, subItem: IFinancialAssistanceTableSubItem): Promise<IFinancialAssistanceTableEntity>;
   deleteItem(itemIndex: number): Promise<IFinancialAssistanceTableEntity>;
   deleteSubItem(itemIndex: number, subItemIndex: number): Promise<IFinancialAssistanceTableEntity>;
-  reloadItems(): Promise<void>;
+  reloadItems(categories: IOptionItem[]): Promise<void>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {
   createFinancialAssistance: jest.Mock<IFinancialAssistanceTableEntity>;
   editFinancialAssistance: jest.Mock<IFinancialAssistanceTableEntity>;
-  fetchActiveCategories: jest.Mock<IOptionItem[]>;
   createItem: jest.Mock<IFinancialAssistanceTableEntity>;
   createSubItem: jest.Mock<IFinancialAssistanceTableEntity>;
   editSubItem: jest.Mock<IFinancialAssistanceTableEntity>;

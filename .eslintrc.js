@@ -48,6 +48,7 @@ module.exports = {
     'vue/valid-v-slot': ['error', {
       allowModifiers: true,
     }],
+    'no-underscore-dangle': 'off',
   },
 
   parserOptions: {

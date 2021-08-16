@@ -64,6 +64,9 @@ import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
 import { TeamsService } from '@/services/teams/entity';
 import { TeamsMetadataService } from '@/services/teams/metadata';
 
+import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
+import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
+
 const i18n = {
   t: jest.fn(),
 } as unknown as VueI18n;
@@ -106,6 +109,10 @@ const mockConfig = {
     }),
     [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(new MassActionService(httpClient)).getModule(),
     [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(null).getModule(),
+
+    [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
+      new FinancialAssistanceCategoriesService(httpClient),
+    ).getModule(),
   },
 };
 

@@ -81,7 +81,7 @@
           v-if="!hideItemStatus && !editMode"
           :value="item.status"
           :statuses="itemStatuses"
-          status-name="EOptionListItemStatus"
+          status-name="Status"
           data-test="optionsListItem__statusSelect"
           @input="onChangeStatus" />
       </v-col>
@@ -212,7 +212,8 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IMultilingual, VForm } from '@/types';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import entityUtils from '@/entities/utils';
-import { IOptionItem, EOptionListItemStatus } from '@/entities/optionItem';
+import { IOptionItem } from '@/entities/optionItem';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'OptionListItem',
@@ -361,10 +362,10 @@ export default Vue.extend({
   },
 
   computed: {
-    itemStatuses(): Array<EOptionListItemStatus> {
+    itemStatuses(): Array<Status> {
       return [
-        EOptionListItemStatus.Active,
-        EOptionListItemStatus.Inactive,
+        Status.Active,
+        Status.Inactive,
       ];
     },
 
@@ -457,7 +458,7 @@ export default Vue.extend({
     /**
      * Shows the status change dialog when the status selector is used
      */
-    onChangeStatus(status: EOptionListItemStatus) {
+    onChangeStatus(status: Status) {
       this.changeToStatus = status;
       this.showStatusDialog = true;
     },
@@ -481,8 +482,8 @@ export default Vue.extend({
       }
     },
 
-    getStatusKey(status: EOptionListItemStatus) {
-      return EOptionListItemStatus[status];
+    getStatusKey(status: Status) {
+      return Status[status];
     },
 
     async setIsDefault() {

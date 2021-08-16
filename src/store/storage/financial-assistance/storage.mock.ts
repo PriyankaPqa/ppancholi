@@ -1,3 +1,4 @@
+import { Status } from '@/entities/base';
 import {
   IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableEntity,
@@ -6,6 +7,7 @@ import {
   mockFinancialAssistanceTableEntity,
   mockItems,
 } from '@/entities/financial-assistance';
+import { mockProgramsSearchData, Program } from '@/entities/program';
 import { BaseMock } from '../base/base.mock';
 import { IActionsMock, IGettersMock, IMutationsMock } from './storage.types';
 
@@ -18,8 +20,8 @@ export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanc
     ...this.baseGetters,
 
     name: jest.fn(() => ''),
-    program: jest.fn(),
-    status: jest.fn(),
+    program: jest.fn(() => new Program(mockProgramsSearchData()[0])),
+    status: jest.fn(() => Status.Active),
     addingItem: jest.fn(),
     items: jest.fn(() => mockItems()),
     subItems: jest.fn(),
@@ -82,7 +84,6 @@ export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanc
     ...this.baseActions,
     createFinancialAssistance: jest.fn(),
     editFinancialAssistance: jest.fn(() => mockFinancialAssistanceTableEntity()),
-    fetchActiveCategories: jest.fn(() => mockCategories()),
     createItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
     createSubItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
     editSubItem: jest.fn(() => mockFinancialAssistanceTableEntity()),

@@ -29,13 +29,6 @@ describe('>>> Financial assistance table Service', () => {
     });
   });
 
-  describe('fetch financial assistance categories', () => {
-    it('is linked to the correct URL and params', async () => {
-      await service.fetchActiveCategories();
-      expect(http.get).toHaveBeenCalledWith('/financial-assistance/financial-assistance-categories');
-    });
-  });
-
   describe('create item', () => {
     it('is linked to the correct URL and params', async () => {
       const payload = mockItemData();

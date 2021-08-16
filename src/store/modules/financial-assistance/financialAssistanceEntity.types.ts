@@ -2,7 +2,6 @@ import { Status } from '@/entities/base';
 import {
   IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
-import { IOptionItem } from '@/entities/optionItem';
 import { IProgram } from '@/entities/program';
 import { IMultilingual } from '@/types';
 import { IState } from '../base/base.types';
@@ -22,5 +21,4 @@ export interface IFinancialAssistanceEntityState extends IState<IFinancialAssist
   editedSubItemIndex: number;
   newItem: IFinancialAssistanceTableItem;
   newSubItem: IFinancialAssistanceTableSubItem;
-  faCategories: IOptionItem[];
 }

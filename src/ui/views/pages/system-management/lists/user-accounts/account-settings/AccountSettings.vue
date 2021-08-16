@@ -173,8 +173,10 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
-  EOptionListItemStatus, EOptionLists, IOptionItem, IOptionSubItem,
+  EOptionLists, IOptionItem, IOptionSubItem,
 } from '@/entities/optionItem';
+
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'AccountSettings',
@@ -192,7 +194,7 @@ export default Vue.extend({
       loading: false,
       currentRole: null as IOptionSubItem,
       allAccessLevelRoles: [] as Array<IOptionSubItem|{header: string, id?: string}>,
-      activeStatus: EOptionListItemStatus.Active,
+      activeStatus: Status.Active,
     };
   },
 
@@ -246,7 +248,7 @@ export default Vue.extend({
         roles.forEach((accessLevel : IOptionItem) => {
           const activeSubRoles : IOptionSubItem[] = [];
           accessLevel.subitems.forEach((role: IOptionSubItem) => {
-            if (role.status === EOptionListItemStatus.Active || (this.user.entity.roles && this.user.entity.roles[0]?.optionItemId === role.id)) {
+            if (role.status === Status.Active || (this.user.entity.roles && this.user.entity.roles[0]?.optionItemId === role.id)) {
               activeSubRoles.push(role);
             }
           });

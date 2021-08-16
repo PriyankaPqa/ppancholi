@@ -1,0 +1,295 @@
+<template>
+  <div>
+    <div v-if="loading" class="pa-4">
+      <v-skeleton-loader class="mb-4" tile type="table-heading" />
+      <v-skeleton-loader tile type="list-item-avatar" />
+      <v-skeleton-loader tile type="list-item" />
+      <v-skeleton-loader tile type="list-item" />
+      <v-skeleton-loader tile type="list-item" />
+      <v-skeleton-loader tile type="list-item" />
+      <v-skeleton-loader tile type="list-item" />
+    </div>
+
+    <div v-else-if="error">
+      <error-panel>
+        {{ $t('financialAssistance.errors.notFound') }}
+      </error-panel>
+    </div>
+
+    <template v-else>
+      <div class="flex-row justify-space-between pa-4 pb-0">
+        <status-chip status-name="Status" :status="status" />
+
+        <v-btn icon data-test="financialDetails__editBtn" @click="goToEdit()">
+          <v-icon>
+            mdi-pencil
+          </v-icon>
+        </v-btn>
+      </div>
+
+      <rc-page-content :title="title" content-padding="0" show-search @search="search = $event">
+        <div class="mx-8 mt-12">
+          <span class="rc-body14"> {{ $t('financialAssistance.program') }}: {{ programName }} </span>
+        </div>
+
+        <div class="rc-heading-5 mx-8 mb-4">
+          {{ name }}
+        </div>
+
+        <rc-nested-table :headers="headers" :items="filteredItems" collapsible item-sub-item="subItems" data-test="financialDetails__table">
+          <template #[`item.item`]="{ item }">
+            <span class="rc-body14 fw-bold">
+              {{ $m(item.mainCategory.name) }}
+            </span>
+
+            <tooltip-financial-assistance-category
+              v-if="item.mainCategory && $m(item.mainCategory.description)"
+              :label="$m(item.mainCategory.description)" />
+          </template>
+
+          <template #[`sub-item.subItem`]="{ item }">
+            <span class="rc-body14">
+              {{ item.subCategory ? $m(item.subCategory.name) : $t('common.default') }}
+            </span>
+
+            <tooltip-financial-assistance-category
+              v-if="item.subCategory && $m(item.subCategory.description)"
+              :label="$m(item.subCategory.description)" />
+          </template>
+
+          <template #[`sub-item.maximum`]="{ item }">
+            <span class="rc-body14">
+              {{ $formatCurrency(item.maximumAmount, true) }}
+            </span>
+          </template>
+
+          <template #[`sub-item.amountType`]="{ item }">
+            <span class="rc-body14">
+              {{ getAmountType(item) }}
+            </span>
+          </template>
+
+          <template #[`sub-item.documentationRequired`]="{ item }">
+            <span class="rc-body14">
+              {{ item.documentationRequired ? $t('common.yes') : $t('common.no') }}
+            </span>
+          </template>
+
+          <template #[`sub-item.frequency`]="{ item }">
+            <span class="rc-body14">
+              {{ getFrequency(item) }}
+            </span>
+          </template>
+        </rc-nested-table>
+
+        <div class="pa-8" />
+
+        <template #actions>
+          <v-btn color="primary" data-test="back-to-financial-assistance-btn" @click="back()">
+            {{ $t('financialAssistance.back') }}
+          </v-btn>
+        </template>
+      </rc-page-content>
+    </template>
+  </div>
+</template>
+
+<script lang="ts">
+import Vue from 'vue';
+import { TranslateResult } from 'vue-i18n';
+import { RcNestedTable, RcPageContent } from '@crctech/component-library';
+import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import {
+  EFinancialAmountModes,
+  EFinancialFrequency,
+  IFinancialAssistanceTableItem,
+  IFinancialAssistanceTableSubItem,
+} from '@/entities/financial-assistance';
+import { Status } from '@/entities/base';
+import routes from '@/constants/routes';
+import { INestedTableHeader } from './create-edit/INestedTableHeader';
+import TooltipFinancialAssistanceCategory from './create-edit/TooltipFinancialAssistanceCategory.vue';
+import ErrorPanel from './create-edit/ErrorPanel.vue';
+
+export default Vue.extend({
+  name: 'FinancialAssistanceDetails',
+
+  components: {
+    RcPageContent,
+    ErrorPanel,
+    StatusChip,
+    RcNestedTable,
+    TooltipFinancialAssistanceCategory,
+  },
+
+  data() {
+    return {
+      search: '',
+      loading: false,
+      error: false,
+    };
+  },
+
+  computed: {
+    title(): TranslateResult {
+      return this.$t('financialAssistance.tableDetails');
+    },
+
+    status(): Status {
+      return this.$storage.financialAssistance.getters.status();
+    },
+
+    name(): string {
+      return this.$storage.financialAssistance.getters.name(this.$i18n.locale);
+    },
+
+    programName(): string {
+      const program = this.$storage.financialAssistance.getters.program();
+
+      return this.$m(program?.name);
+    },
+
+    items(): IFinancialAssistanceTableItem[] {
+      return this.$storage.financialAssistance.getters.items();
+    },
+
+    /**
+     * Filter the list of sub-items based on the search parameter
+     */
+    filteredItems(): Array<IFinancialAssistanceTableItem> {
+      if (this.search) {
+        const items = this.items.map((item: IFinancialAssistanceTableItem) => ({
+          ...item,
+          subItems: item.subItems.filter((subItem: IFinancialAssistanceTableSubItem) => {
+            // If the subItem is a 'default' type the name field is blank so we need to inject 'Default'
+            const name = subItem.subCategory?.name ? this.$m(subItem.subCategory.name) : this.$m({ translation: { en: 'Default', fr: 'Défaut' } });
+
+            return name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+          }),
+        }));
+
+        return items.filter((item: IFinancialAssistanceTableItem) => {
+          if (item.subItems.length) {
+            return true;
+          }
+
+          const name = this.$m(item.mainCategory.name);
+
+          return name.toLowerCase().indexOf(this.search.toLowerCase()) > -1;
+        });
+      }
+
+      return this.items;
+    },
+
+    /**
+     * Table header config for the RcNestedTable
+     */
+    headers(): Array<INestedTableHeader> {
+      return [
+        {
+          text: this.$t('financialAssistance.nestedTable.headers.item') as string,
+          value: 'item',
+          cols: 2,
+          align: 'left',
+        },
+        {
+          text: this.$t('financialAssistance.nestedTable.headers.subItem') as string,
+          value: 'subItem',
+          cols: 2,
+          align: 'left',
+        },
+        {
+          text: this.$t('financialAssistance.nestedTable.headers.maximum') as string,
+          value: 'maximum',
+          cols: 2,
+          align: 'left',
+        },
+        {
+          text: this.$t('financialAssistance.nestedTable.headers.amountType') as string,
+          value: 'amountType',
+          cols: 2,
+          align: 'left',
+        },
+        {
+          text: this.$t('financialAssistance.nestedTable.headers.documentationRequired') as string,
+          value: 'documentationRequired',
+          cols: 2,
+          align: 'left',
+        },
+        {
+          text: this.$t('financialAssistance.nestedTable.headers.frequency') as string,
+          value: 'frequency',
+          cols: 2,
+          align: 'left',
+        },
+      ];
+    },
+  },
+
+  async created() {
+    this.$storage.financialAssistance.mutations.resetState();
+
+    const id = this.$route.params.faId;
+
+    if (!id) {
+      this.error = true;
+      this.loading = false;
+      return;
+    }
+
+    const timeout = setTimeout(() => {
+      this.loading = true;
+    }, 300);
+
+    await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
+    const res = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
+    const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+
+    this.$storage.financialAssistance.mutations.setFinancialAssistance(res, categories);
+
+    if (!res) {
+      this.error = true;
+      return;
+    }
+
+    clearTimeout(timeout);
+    this.loading = false;
+  },
+
+  methods: {
+    getAmountType(subItem: IFinancialAssistanceTableSubItem): TranslateResult {
+      return this.$t(`enums.financialAmountModes.${EFinancialAmountModes[subItem.amountType]}`);
+    },
+
+    getFrequency(subItem: IFinancialAssistanceTableSubItem): TranslateResult {
+      return this.$t(`enums.financialFrequency.${EFinancialFrequency[subItem.frequency]}`);
+    },
+
+    /**
+     * Redirect to the edit page when the edit button is clicked
+     */
+    goToEdit() {
+      this.$router.push({
+        name: routes.events.financialAssistance.edit.name,
+        params: {
+          faId: this.$route.params.faId,
+        },
+      });
+    },
+
+    back(): void {
+      this.$router.replace({ name: routes.events.financialAssistance.home.name });
+    },
+  },
+});
+</script>
+
+<style scoped lang="scss">
+::v-deep .rcnestedtable__parentRow {
+  .rcnestedtable__row:last-child {
+    border-bottom: none;
+    margin-bottom: 0px;
+  }
+}
+</style>

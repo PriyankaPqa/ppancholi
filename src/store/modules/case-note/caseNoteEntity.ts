@@ -3,7 +3,7 @@ import _sortBy from 'lodash/sortBy';
 import { ActionContext, ActionTree } from 'vuex';
 import { CaseNotesService } from '@/services/case-notes/entity';
 import {
-  EOptionListItemStatus, OptionItem, IOptionItem, EOptionLists,
+  OptionItem, IOptionItem, EOptionLists,
 } from '@/entities/optionItem';
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
 import { IOptionItemsService } from '@/services/optionItems';
@@ -11,6 +11,8 @@ import { ICaseNoteEntity } from '@/entities/case-note';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
+
+import { Status } from '@/entities/base';
 
 export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
   constructor(readonly service: CaseNotesService, readonly optionItemService: IOptionItemsService) {
@@ -37,7 +39,7 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
     caseNoteCategories: (state:ICaseNoteEntityState) => _sortBy(
       state.caseNoteCategories.map((e) => new OptionItem(e)),
       'orderRank',
-    ).filter((i) => i.status === EOptionListItemStatus.Active),
+    ).filter((i) => i.status === Status.Active),
   }
 
   public mutations = {

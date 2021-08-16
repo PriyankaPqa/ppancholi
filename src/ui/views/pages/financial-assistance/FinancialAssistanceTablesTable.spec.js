@@ -298,5 +298,24 @@ describe('FinancialAssistanceTablesTable.vue', () => {
         });
       });
     });
+
+    describe('getDetailsRoute', () => {
+      it('returns correct route', () => {
+        const item = {
+          entity: {
+            id: 'fa id',
+          },
+        };
+
+        const result = wrapper.vm.getDetailsRoute(item);
+
+        expect(result).toEqual({
+          name: routes.events.financialAssistance.details.name,
+          params: {
+            faId: 'fa id',
+          },
+        });
+      });
+    });
   });
 });

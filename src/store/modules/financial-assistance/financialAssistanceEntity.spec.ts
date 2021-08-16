@@ -37,7 +37,6 @@ const mockState: IFinancialAssistanceEntityState = {
   newItem: mockItems()[1],
   newSubItem: mockSubItems()[1],
   searchLoading: false,
-  faCategories: [],
 };
 
 const actionContext = {
@@ -623,16 +622,6 @@ describe('>>> Financial Assistance Module', () => {
       });
     });
 
-    describe('fetchActiveCategories', () => {
-      it('calls the service', async () => {
-        module.service.fetchActiveCategories = jest.fn();
-
-        await module.actions.fetchActiveCategories(actionContext);
-
-        expect(module.service.fetchActiveCategories).toHaveBeenCalledTimes(1);
-      });
-    });
-
     describe('createSubItem', () => {
       it('calls the service', async () => {
         module.service.createSubItem = jest.fn();
@@ -656,13 +645,14 @@ describe('>>> Financial Assistance Module', () => {
           mainItems[itemIndex].id,
           {
             subCategory: {
-              optionItemId: '49860937-1bfd-4a1f-97ba-b7918afa4044',
+              optionItemId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
               specifiedOther: null,
             },
             maximumAmount: 1,
             amountType: EFinancialAmountModes.Fixed,
             documentationRequired: false,
             frequency: EFinancialFrequency.OneTime,
+            id: undefined,
           },
         );
       });
@@ -693,13 +683,14 @@ describe('>>> Financial Assistance Module', () => {
           mainItems[itemIndex].subItems[subItemIndex].id,
           {
             subCategory: {
-              optionItemId: '49860937-1bfd-4a1f-97ba-b7918afa4044',
+              optionItemId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
               specifiedOther: null,
             },
             maximumAmount: 1,
             amountType: EFinancialAmountModes.Fixed,
             documentationRequired: false,
             frequency: EFinancialFrequency.OneTime,
+            id: undefined,
           },
         );
       });
@@ -763,7 +754,7 @@ describe('>>> Financial Assistance Module', () => {
           items: [mockItemData()],
         }));
 
-        await module.actions.reloadItems(actionContext);
+        await module.actions.reloadItems(actionContext, { categories: [] });
 
         expect(actionContext.dispatch).toHaveBeenCalledWith('fetch', {
           idParams: 'faId',

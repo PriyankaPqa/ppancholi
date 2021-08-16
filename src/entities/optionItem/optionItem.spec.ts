@@ -1,5 +1,6 @@
 import { OptionItem } from './optionItem';
 import { mockOptionItemData } from './optionItem.mock';
+import { mockBaseData } from '@/entities/base';
 
 const mockData = mockOptionItemData()[0];
 
@@ -12,17 +13,17 @@ describe('>>> Option Item', () => {
 
     it('should instantiate created', () => {
       const optionItem = new OptionItem(mockData);
-      expect(optionItem.created).toEqual(new Date('2021-01-14T00:00:00.000Z'));
+      expect(optionItem.created).toEqual(mockBaseData().created);
     });
 
     it('should instantiate timestamp', () => {
       const optionItem = new OptionItem(mockData);
-      expect(optionItem.timestamp).toEqual(new Date('2021-01-14T00:00:00.000Z'));
+      expect(optionItem.timestamp).toEqual(mockBaseData().timestamp);
     });
 
     it('should instantiate eTag', () => {
       const optionItem = new OptionItem(mockData);
-      expect(optionItem.eTag).toBe('');
+      expect(optionItem.eTag).toBe(mockBaseData().eTag);
     });
 
     it('should instantiate name', () => {

@@ -151,7 +151,8 @@ export default Vue.extend({
         }
 
         if (res) {
-          await this.$storage.financialAssistance.actions.reloadItems();
+          const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+          await this.$storage.financialAssistance.actions.reloadItems(categories);
           this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
           this.onCancel();
         }
@@ -172,7 +173,8 @@ export default Vue.extend({
       const res = await this.$storage.financialAssistance.actions.editSubItem(editedItemIndex, editedSubItemIndex, newSubItem);
 
       if (res) {
-        await this.$storage.financialAssistance.actions.reloadItems();
+        const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+        await this.$storage.financialAssistance.actions.reloadItems(categories);
         this.$toasted.global.success(this.$t('financialAssistance.toast.table.editTable'));
         this.onCancel();
       }

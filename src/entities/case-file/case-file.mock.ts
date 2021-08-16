@@ -369,12 +369,11 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
 
 export const mockTagsOptions = (): IOptionItem[] => [
   {
+    ...mockBaseData(),
     name: { translation: { en: 'tag option en', fr: 'tag option fr' } },
     orderRank: 3,
     isOther: false,
     isDefault: false,
     subitems: [],
-    id: '0a137a3f-ae72-4fab-b521-7f96da9ece12',
-    status: 1,
   },
 ];

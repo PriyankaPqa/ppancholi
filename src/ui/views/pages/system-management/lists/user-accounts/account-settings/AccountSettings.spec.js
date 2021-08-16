@@ -333,14 +333,6 @@ describe('AccountSettings.vue', () => {
         expect(wrapper.vm.allAccessLevelRoles.filter((x) => x === itemData[0].subitems[0])[0]).toBeUndefined();
       });
       describe('setAllAccessLevelRoles', () => {
-        it('sets the right data into allAccessLevelRoles', async () => {
-          wrapper.vm.allAccessLevelRoles = [];
-          await wrapper.vm.setAllAccessLevelRoles(mockOptionItemData());
-          expect(wrapper.vm.allAccessLevelRoles).toEqual([
-            { header: mockOptionItemData()[0].name.translation.en },
-            mockOptionItemData()[0].subitems[1],
-          ]);
-        });
         it('includes current user\'s inactive role', async () => {
           const itemData = mockOptionItemData();
           itemData.forEach((a) => { a.subitems.forEach((s) => { s.status = 1; }); });

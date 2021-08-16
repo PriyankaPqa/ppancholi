@@ -411,12 +411,16 @@ export default Vue.extend({
   async created() {
     this.$storage.financialAssistance.mutations.resetState();
 
-    await this.loadActivePrograms();
-    await this.$storage.financialAssistance.actions.fetchActiveCategories();
+    await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
 
     if (this.isEdit) {
       const fa = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
-      this.$storage.financialAssistance.mutations.setFinancialAssistance(fa);
+      const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+      this.$storage.financialAssistance.mutations.setFinancialAssistance(fa, categories);
+
+      this.programs = [this.$storage.financialAssistance.getters.program()];
+    } else {
+      await this.loadActivePrograms();
     }
 
     this.loading = false;

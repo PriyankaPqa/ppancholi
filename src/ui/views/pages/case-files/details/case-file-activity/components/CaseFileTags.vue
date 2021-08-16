@@ -92,10 +92,11 @@ import Vue from 'vue';
 import { RcDialog, RcConfirmationDialog } from '@crctech/component-library';
 
 import {
-  EOptionListItemStatus,
   IOptionItem,
 } from '@/entities/optionItem';
 import { IListOption, IIdMultilingualName } from '@/types';
+
+import { Status } from '@/entities/base';
 
 interface IListTag extends IIdMultilingualName {
   existing: boolean;
@@ -189,7 +190,7 @@ export default Vue.extend({
         name: tag.name,
         existing: !!this.existingTags.find((t) => t.id === tag.id),
         selected: false,
-        active: tag.status === EOptionListItemStatus.Active,
+        active: tag.status === Status.Active,
       }));
     },
 

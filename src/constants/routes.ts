@@ -135,6 +135,10 @@ const routes = {
         path: 'financial-assistance/:faId/edit',
         name: 'events.financialAssistance.edit',
       },
+      details: {
+        path: 'financial-assistance/:faId',
+        name: 'events.financialAssistance.details',
+      },
     },
   },
   household: {

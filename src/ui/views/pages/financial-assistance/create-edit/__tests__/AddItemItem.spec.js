@@ -42,11 +42,21 @@ describe('AddItemItem.vue', () => {
 
     describe('filteredCategories', () => {
       it('returns the right value', async () => {
-        expect(wrapper.vm.financialAssistanceCategories.length).toBe(16);
+        expect(wrapper.vm.financialAssistanceCategories.length).toBe(2);
 
         expect(wrapper.vm.items.length).toBe(2);
 
-        expect(wrapper.vm.filteredCategories.length).toBe(14);
+        expect(wrapper.vm.filteredCategories.length).toBe(2);
+      });
+
+      it('excludes inactive items', async () => {
+        categories[0].status = 2;
+
+        expect(wrapper.vm.financialAssistanceCategories.length).toBe(2);
+
+        expect(wrapper.vm.items.length).toBe(2);
+
+        expect(wrapper.vm.filteredCategories.length).toBe(1);
       });
     });
   });

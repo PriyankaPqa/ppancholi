@@ -2,8 +2,10 @@ import { Store, ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';
 import {
-  OptionItem, mockOptionItemData, EOptionListItemStatus, EOptionLists,
+  OptionItem, mockOptionItemData, EOptionLists,
 } from '@/entities/optionItem';
+
+import { Status } from '@/entities/base';
 import {
   EEventStatus,
   EventEntity,
@@ -60,7 +62,7 @@ describe('>>> Event Module', () => {
         const res = module.getters.agreementTypes(module.state)();
 
         expect(res).toEqual(
-          _sortBy(mockAgreementTypes, 'orderRank').filter((i) => i.status === EOptionListItemStatus.Active),
+          _sortBy(mockAgreementTypes, 'orderRank').filter((i) => i.status === Status.Active),
         );
       });
     });
@@ -72,7 +74,7 @@ describe('>>> Event Module', () => {
         const res = module.getters.eventTypes(module.state)();
 
         expect(res).toEqual(
-          _sortBy(mockEventTypes, 'orderRank').filter((i) => i.status === EOptionListItemStatus.Active),
+          _sortBy(mockEventTypes, 'orderRank').filter((i) => i.status === Status.Active),
         );
       });
     });

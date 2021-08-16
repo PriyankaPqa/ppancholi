@@ -1,7 +1,9 @@
 import {
-  IOptionItemData, EOptionListItemStatus, EOptionLists, IOptionSubItem,
+  IOptionItemData, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
+
+import { Status } from '@/entities/base';
 
 export interface IOptionItemsService {
   getOptionList(target: EOptionLists): Promise<IOptionItemData[]>;
@@ -20,9 +22,9 @@ export interface IOptionItemsService {
     description: IMultilingual,
   ): Promise<IOptionItemData>;
 
-  updateOptionItemStatus(target: EOptionLists, id: string, status: EOptionListItemStatus): Promise<IOptionItemData>;
+  updateOptionItemStatus(target: EOptionLists, id: string, status: Status): Promise<IOptionItemData>;
 
-  updateOptionSubItemStatus(target: EOptionLists, itemId: string, subItemId: string, status: EOptionListItemStatus): Promise<IOptionItemData>;
+  updateOptionSubItemStatus(target: EOptionLists, itemId: string, subItemId: string, status: Status): Promise<IOptionItemData>;
 
   updateOptionItemOrderRanks(target: EOptionLists, orders: Record<string, number>): Promise<IOptionItemData[]>;
 

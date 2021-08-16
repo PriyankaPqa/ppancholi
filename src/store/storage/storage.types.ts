@@ -45,6 +45,11 @@ import {
   IStorageMakeMock as IMassActionMakeStorageMock,
 } from './mass-action';
 
+import {
+  IStorageMake as IFinancialAssistanceCategoryMakeStorage,
+  IStorageMakeMock as IFinancialAssistanceCategoryMakeStorageMock,
+} from './financial-assistance-category';
+
 export interface IStorage {
   user: IUserStorage;
   caseFile: ICaseFileMakeStorage;
@@ -58,6 +63,7 @@ export interface IStorage {
   program: IProgramStorage;
   registration: IRegistrationStorage;
   financialAssistance: IFinancialAssistanceMakeStorage;
+  financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorage;
   household: IStorageMake;
   userAccount: IUserAccountMakeStorage;
   massAction: IMassActionMakeStorage;
@@ -76,6 +82,7 @@ export interface IStorageMock {
   program: IProgramStorageMock;
   registration: IRegistrationMock;
   financialAssistance: IFinancialAssistanceMakeStorageMock;
+  financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorageMock;
   household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
   massAction: IMassActionMakeStorageMock;

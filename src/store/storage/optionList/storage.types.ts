@@ -1,8 +1,10 @@
 import { IMultilingual } from '@/types';
 
 import {
-  OptionItem, IOptionItem, EOptionListItemStatus, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
+  OptionItem, IOptionItem, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
 } from '@/entities/optionItem';
+
+import { Status } from '@/entities/base';
 
 export interface IStorage {
   getters: {
@@ -28,9 +30,9 @@ export interface IStorage {
 
     updateSubItem(itemId: string, subItemId: string, name: IMultilingual, description: IMultilingual): Promise<IOptionItem>;
 
-    updateStatus(id: string, status: EOptionListItemStatus): Promise<IOptionItem>;
+    updateStatus(id: string, status: Status): Promise<IOptionItem>;
 
-    updateSubItemStatus(itemId: string, subItemId: string, status: EOptionListItemStatus): Promise<IOptionItem>;
+    updateSubItemStatus(itemId: string, subItemId: string, status: Status): Promise<IOptionItem>;
 
     updateOrderRanks(payload: Array<IOptionItem>): Promise<IOptionItem[]>;
 

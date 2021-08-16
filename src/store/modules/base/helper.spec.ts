@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { EOptionListItemStatus, IOptionItemData, IOptionSubItem } from '@/entities/optionItem';
+import { IOptionItemData, IOptionSubItem } from '@/entities/optionItem';
 import { filterAndSortActiveItems, filterAndSortActiveSubItems } from './index';
+import { Status } from '@/entities/base';
 
 describe('Base Helper', () => {
   const itemData = [
-    { orderRank: 99, status: EOptionListItemStatus.Active, id: 'item1' },
-    { orderRank: 1, status: EOptionListItemStatus.Inactive, id: 'inactive' },
-    { orderRank: 5, status: EOptionListItemStatus.Active, id: 'item3' },
-    { orderRank: 2, status: EOptionListItemStatus.Active, id: 'item4' },
-    { orderRank: 3, status: EOptionListItemStatus.Active, id: 'item5' },
+    { orderRank: 99, status: Status.Active, id: 'item1' },
+    { orderRank: 1, status: Status.Inactive, id: 'inactive' },
+    { orderRank: 5, status: Status.Active, id: 'item3' },
+    { orderRank: 2, status: Status.Active, id: 'item4' },
+    { orderRank: 3, status: Status.Active, id: 'item5' },
   ] as IOptionItemData[];
 
   const subitemData = [
-    { orderRank: 99, status: EOptionListItemStatus.Active, id: 'item1' },
-    { orderRank: 1, status: EOptionListItemStatus.Inactive, id: 'inactive' },
-    { orderRank: 5, status: EOptionListItemStatus.Active, id: 'item3' },
-    { orderRank: 2, status: EOptionListItemStatus.Active, id: 'item4' },
-    { orderRank: 3, status: EOptionListItemStatus.Active, id: 'item5' },
+    { orderRank: 99, status: Status.Active, id: 'item1' },
+    { orderRank: 1, status: Status.Inactive, id: 'inactive' },
+    { orderRank: 5, status: Status.Active, id: 'item3' },
+    { orderRank: 2, status: Status.Active, id: 'item4' },
+    { orderRank: 3, status: Status.Active, id: 'item5' },
   ] as IOptionSubItem[];
 
   describe('filterAndSortActiveItems', () => {

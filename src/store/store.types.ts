@@ -34,6 +34,8 @@ import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistan
 import { ITeamEntityState } from '@/store/modules/team/teamEntity.types';
 import { ITeamMetadata } from '@/entities/team';
 
+import { IFinancialAssistanceCategoryEntityState } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity.types';
+
 export interface IRootState {
   version: string;
   [vuexModule.CASE_FILE_ENTITIES]?: ICaseFileEntityState,
@@ -59,11 +61,13 @@ export interface IRootState {
   [vuexModule.TEAM_ENTITIES]?: ITeamEntityState,
   [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>
   [vuexModule.PROGRAM_MODULE]?: IProgramState,
-  [vuexModule.REGISTRATION_MODULE]?: IRegistrationState
+  [vuexModule.REGISTRATION_MODULE]?: IRegistrationState,
+  [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]?: IFinancialAssistanceCategoryEntityState,
 }
 
 export type IState = IRootState;
 
 export interface IStore<S> extends Store<S> {
   $services: IProvider | IProviderMock;
+  _actions?: Record<string, Array<unknown>>
 }

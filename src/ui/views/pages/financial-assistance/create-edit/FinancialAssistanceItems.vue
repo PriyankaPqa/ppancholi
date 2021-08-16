@@ -338,7 +338,7 @@ export default Vue.extend({
      */
     async showManageListsDialog(newValue: boolean) {
       if (newValue === false) {
-        await this.$storage.financialAssistance.actions.fetchActiveCategories();
+        await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
         (this.$refs.form as VForm).reset();
       }
     },

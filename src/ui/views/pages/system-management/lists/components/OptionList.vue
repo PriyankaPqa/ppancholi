@@ -166,10 +166,12 @@ import routes from '@/constants/routes';
 import entityUtils from '@/entities/utils';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
-  IOptionItem, OptionItem, EOptionListItemStatus, ICreateOptionItemRequest, IOptionSubItem,
+  IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem,
 } from '@/entities/optionItem';
 import OptionListItem from './OptionListItem.vue';
 import OptionListNewItem from './OptionListNewItem.vue';
+
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'OptionList',
@@ -352,7 +354,7 @@ export default Vue.extend({
      * @param description The description of the new item. This value is put in both en and fr slots
      * @param status The status of the item
      */
-    async saveNewItem(name: IMultilingual, description: IMultilingual, status: EOptionListItemStatus) {
+    async saveNewItem(name: IMultilingual, description: IMultilingual, status: Status) {
       if (!name || !status) {
         return;
       }
@@ -384,7 +386,7 @@ export default Vue.extend({
       this.scrollToInput();
     },
 
-    async saveNewSubItem(name: IMultilingual, description: IMultilingual, status: EOptionListItemStatus, itemId: string) {
+    async saveNewSubItem(name: IMultilingual, description: IMultilingual, status: Status, itemId: string) {
       const subItems = this.items.find((i) => i.id === itemId).subitems;
       let highestRank = 0;
 
