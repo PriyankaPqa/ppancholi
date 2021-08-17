@@ -2,6 +2,7 @@ import { ERegistrationMethod } from '@crctech/registration-lib/src/types';
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
+  ICaseFileCount,
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
 
@@ -28,6 +29,7 @@ export interface ICaseFilesService {
   createCaseFile(payload: ICreateCaseFileRequest): Promise<ICaseFileEntity>;
   setCaseFileIdentityAuthentication(id: uuid, identityAuthentication: IIdentityAuthentication): Promise<ICaseFileEntity>;
   setCaseFileValidationOfImpact(id: uuid, impactStatusValidation: IImpactStatusValidation): Promise<ICaseFileEntity>;
+  getCaseFileAssignedCounts(params: {eventId: uuid, teamId: uuid}): Promise<ICaseFileCount>;
 }
 
 export interface ICaseFilesServiceMock {
@@ -40,4 +42,6 @@ export interface ICaseFilesServiceMock {
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
   createCaseFile: jest.Mock<ICaseFileEntity>;
   setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
+  getCaseFileAssignedCounts: jest.Mock<any>;
+  // todo add mock from api response here for getCaseFileAssignedCounts
 }

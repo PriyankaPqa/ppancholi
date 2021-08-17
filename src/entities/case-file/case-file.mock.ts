@@ -3,9 +3,13 @@ import { IEntity, mockBaseData } from '@/entities/base';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
-  ValidationOfImpactStatus, ImpactValidationMethod,
+  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
+
+export const mockCaseFileCount = (): ICaseFileCount => ({
+  inactiveCount: 0, openCount: 1, closedCount: 1, archivedCount: 0,
+});
 
 export const mockCaseFileEntity = (force? : Partial<IEntity>): ICaseFileEntity => ({
   ...mockBaseData(),

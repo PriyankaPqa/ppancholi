@@ -218,6 +218,5 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
         return null;
       }
     },
-
   }
 }

@@ -77,7 +77,6 @@ export class CaseFileStorage
 
     createCaseFile: (payload: ICreateCaseFileRequest):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/createCaseFile`, payload),
-
   }
 
   private mutations = {

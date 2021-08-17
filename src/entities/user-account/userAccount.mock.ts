@@ -61,6 +61,7 @@ export const mockUserAccountMetadata = (force?: Partial<IUserAccountMetadata>): 
   }],
   caseFilesCount: 10,
   openCaseFilesCount: 10,
+  closeCaseFilesCount: 2,
   inactiveCaseFilesCount: 0,
   preferredLanguage: 'fr',
   givenName: 'Ja',

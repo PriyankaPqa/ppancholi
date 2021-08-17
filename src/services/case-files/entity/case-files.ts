@@ -1,6 +1,7 @@
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
+  ICaseFileCount,
 } from '@/entities/case-file';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@/services/httpClient';
@@ -78,5 +79,9 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
 
   async createCaseFile(payload: ICreateCaseFileRequest): Promise<ICaseFileEntity> {
     return this.http.post<ICaseFileEntity>(`${this.baseUrl}`, payload);
+  }
+
+  async getCaseFileAssignedCounts(params: {eventId: uuid, teamId: uuid}): Promise<ICaseFileCount> {
+    return this.http.get('case-file/case-files/assigned-counts', { params });
   }
 }

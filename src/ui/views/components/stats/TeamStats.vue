@@ -1,5 +1,5 @@
 <template>
-  <rc-stats-template data-test-prefix="team" :title="title" :loading="loadingEvents">
+  <rc-stats-template data-test-prefix="team" :title="$t('team_stats.title')">
     <template slot="top">
       <v-select-with-validation
         v-model="selectedEventId"
@@ -7,33 +7,39 @@
         class="pb-4"
         hide-details
         :label="$t('team_stats.event.select.label')"
-        :item-text="(e) => $m(e.name)"
-        item-value="id"
-        outlined
-        :placeholder="eventPlaceholder"
         :items="events"
+        :loading="loadingEvents"
+        :item-text="(item) => $m(item.entity.name)"
+        item-value="entity.id"
+        outlined
+        :placeholder="$t('team_stats.event.placeholder')"
         @change="selectEvent" />
       <v-select-with-validation
         v-model="selectedTeam"
+        data-test="team_stats_select_team"
         class="pb-4"
         hide-details
         :label="$t('team_stats.team.select.label')"
         :loading="loadingTeams"
         outlined
         :disabled="!eventHasBeenSelected"
-        :placeholder="teamPlaceholder"
-        item-text="name"
+        :placeholder="$t('team_stats.team.placeholder')"
         return-object
-        :items="teams"
+        :items="statTeam"
+        :item-text="(item) => item.entity.name"
+        :item-value="(item) => item.entity.id"
         @change="selectTeam" />
     </template>
 
     <template slot="stats">
       <v-skeleton-loader v-if="loadingStats" type="list-item-two-line" />
-      <div v-if="teamStats">
+      <div v-if="!loadingStats && statsLoaded && teamStats" data-test="team_stats_count">
         <div class="line rc-body14">
           <div>
-            {{ $t('team_stats.team_members.label') }} <span class="fw-bold" data-test="team_stats_count_team_member">({{ countTeamMembers }})</span>
+            {{ $t('team_stats.team_members.label') }}
+            <span class="fw-bold" data-test="team_stats_count_team_member">
+              ({{ teamStats.countTeamMembers }})
+            </span>
           </div>
           <div>
             {{ $t('team_stats.open.label') }} <span class="fw-bold" data-test="team_stats_open_case_files">({{ teamStats.countOpen }})</span>
@@ -54,8 +60,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { TranslateResult } from 'vue-i18n';
 import { RcStatsTemplate, VSelectWithValidation } from '@crctech/component-library';
+import { IEntityCombined } from '@crctech/registration-lib/src/entities/base';
+import { EEventStatus, IEventMainInfo } from '@/entities/event';
+import { ITeamEntity, ITeamMetadata } from '../../../../entities/team';
+
+const defaultTeamStats = {
+  countTeamMembers: 0,
+  countClose: 0,
+  countOpen: 0,
+  countTotal: 0,
+};
 
 export default Vue.extend({
   name: 'TeamStats',
@@ -67,74 +82,71 @@ export default Vue.extend({
 
   data() {
     return {
-      events: [],
-      teams: [],
+      events: [] as Array<IEventMainInfo>,
       selectedEventId: null,
       selectedTeam: null,
-      teamStats: null,
-
+      teamStats: defaultTeamStats,
       loadingEvents: false,
       loadingTeams: false,
+      statsLoaded: false,
       loadingStats: false,
+      statTeam: [],
     };
   },
   computed: {
     eventHasBeenSelected(): boolean {
       return this.selectedEventId !== null;
     },
-
-    title(): TranslateResult {
-      return this.$t('team_stats.title');
-    },
-
-    eventPlaceholder(): TranslateResult {
-      return this.$t('team_stats.event.placeholder');
-    },
-
-    teamPlaceholder(): TranslateResult {
-      return this.$t('team_stats.team.placeholder');
-    },
-
-    countTeamMembers(): number {
-      return this.selectedTeam?.users.length ?? 0;
-    },
   },
-  async created() {
-    // Fetch active events user has access to
-    this.loadingEvents = false;
-    // const res = await this.$services.events.selectEventNameForEventStatus();
-    // this.loadingEvents = false;
-    // if (res.success) {
-    //   this.events = res.data;
-    // }
-    this.events = this.$storage.event.getters.getAll();
+  async mounted() {
+    await this.fetchActiveEvents();
   },
   methods: {
-    async selectEvent() {
-      // this.loadingTeams = true;
-      // this.teamStats = null;
-      // this.selectedTeam = null;
-      // this.teams = [];
-      //
-      // const res = await this.$services.events.getEventTeams(eventId);
-      // this.loadingTeams = false;
-      //
-      // if (res.success) this.teams = res.data;
+    async fetchActiveEvents() {
+      const res = await this.$services.events.searchMyEvents({
+        filter: {
+          Entity: {
+            Schedule: {
+              Status: EEventStatus.Open,
+            },
+          },
+        },
+        top: 999,
+      });
+      this.events = res?.value;
     },
 
-    async selectTeam() {
-      // this.loadingStats = true;
-      // this.teamStats = null;
-      //
-      // const res = await this.$services.caseFiles.countCaseFileByTeam(team.id, this.selectedEventId);
-      // this.loadingStats = false;
-      //
-      // if (res.success) {
-      //   this.teamStats = {
-      //     ...res.data,
-      //     countTotal: res.data.countOpen + res.data.countClose + res.data.countInactive,
-      //   };
-      // }
+    async selectEvent() {
+      this.loadingTeams = true;
+      this.statsLoaded = false;
+      this.teamStats = defaultTeamStats;
+      const eventTeams = await this.$storage.team.actions
+        .search({ filter: { Metadata: { Events: { any: { Id: this.selectedEventId } } } } });
+      this.statTeam = this.$storage.team.getters.getByIds(eventTeams.ids);
+      this.loadingTeams = false;
+    },
+
+    async selectTeam(selectedTeam: IEntityCombined<ITeamEntity, ITeamMetadata>) {
+      this.statsLoaded = false;
+      this.loadingStats = true;
+      this.teamStats = defaultTeamStats;
+      const team: IEntityCombined<ITeamEntity, ITeamMetadata> = this.statTeam.find((team) => team.entity.id === selectedTeam.entity.id);
+      const countTeamMembers = team.entity.teamMembers.length;
+      if (countTeamMembers !== 0) {
+        const assignedCount = await this.$services.caseFiles.getCaseFileAssignedCounts({
+          eventId: this.selectedEventId,
+          teamId: selectedTeam.entity.id,
+        });
+        const countTotal = Object.keys(assignedCount).reduce((acc, key) => acc + assignedCount[key], 0);
+        this.teamStats = {
+          countTotal,
+          countOpen: assignedCount.openCount,
+          countClose: assignedCount.closedCount,
+          countTeamMembers,
+        };
+      }
+      this.statsLoaded = true;
+      this.loadingStats = false;
     },
   },
 });

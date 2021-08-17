@@ -140,3 +140,10 @@ export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetada
 
 export interface ITransaction extends IEntity {
 }
+
+export interface ICaseFileCount {
+  inactiveCount: number;
+  openCount: number;
+  closedCount: number;
+  archivedCount: number;
+}
