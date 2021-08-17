@@ -1,7 +1,7 @@
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
-  mockRemainingHome, mockCampGround, mockUnknown, mockOther, mockFriendsFamily, mockShelter, CurrentAddress,
+  mockRemainingHome, mockCampGround, mockUnknown, mockOther, mockFriendsFamily, mockShelter,
 } from '../../../entities/household-create';
 import Component from './CurrentAddressTemplate.vue';
 
@@ -100,25 +100,6 @@ describe('CurrentAddressTemplate.vue', () => {
       const el = wrapper.findDataTest('currentAddress__shelterLocationName');
       expect(el.text()).toBe(wrapper.vm.shelterLocationName);
     });
-
-    describe('Moved at', () => {
-      it('should render, if inHouseholdProfile is true', async () => {
-        await wrapper.setProps({
-          inHouseholdProfile: true,
-        });
-        const el = wrapper.findDataTest('currentAddress__moved_date');
-        expect(el.exists()).toBeTruthy();
-      });
-
-      it('should display the moved date, if inHouseholdProfile is true', async () => {
-        await wrapper.setProps({
-          inHouseholdProfile: true,
-          currentAddress: new CurrentAddress({ ...mockCampGround(), from: '2021-01-01' }),
-        });
-        const el = wrapper.findDataTest('currentAddress__moved_date');
-        expect(el.text()).toBe('household.addresses.from: Jan 1, 2021');
-      });
-    });
   });
 
   describe('Computed', () => {
@@ -180,6 +161,12 @@ describe('CurrentAddressTemplate.vue', () => {
 
       it('should return false if not shelter', () => {
         expect(wrapper.vm.hasShelterCurrentAddress).toBe(false);
+      });
+    });
+
+    describe('currentAddressLine', () => {
+      it('should show city, province and postal code', () => {
+        expect(wrapper.vm.currentAddressLine).toBe('Ottawa, ON, K1W 1G7');
       });
     });
   });

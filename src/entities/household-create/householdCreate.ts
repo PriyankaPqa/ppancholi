@@ -49,7 +49,7 @@ export class HouseholdCreate implements IHouseholdCreate {
 
   editAdditionalMember(newPerson: IMember, index: number, sameAddress: boolean) {
     if (sameAddress) {
-      newPerson.currentAddress = new CurrentAddress({ ...this.primaryBeneficiary.currentAddress.withoutMovedDate(), from: newPerson.currentAddress.from });
+      newPerson.currentAddress = this.primaryBeneficiary.currentAddress;
     }
     const newAdditionalMembers = [...this.additionalMembers];
     newAdditionalMembers[index] = newPerson;

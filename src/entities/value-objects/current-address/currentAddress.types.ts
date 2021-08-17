@@ -23,8 +23,6 @@ export interface ICurrentAddressData {
     address?: IAddress;
 
     shelterLocation?: IShelterLocationData;
-
-    from?: string | Date;
 }
 
 export interface IShelterLocationData {
@@ -45,7 +43,7 @@ export interface ICurrentAddressCreateRequest {
 
     address?: IAddressData;
 
-    from: string | Date;
+    from: string;
 }
 
 export interface ICurrentAddress extends ICurrentAddressData, IEntity {
@@ -59,5 +57,4 @@ export interface ICurrentAddress extends ICurrentAddressData, IEntity {
     requiresCity(): boolean;
     requiresShelterLocation(): boolean;
     reset(type?: ECurrentAddressTypes): void;
-    withoutMovedDate(): ICurrentAddress;
 }

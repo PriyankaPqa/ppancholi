@@ -167,7 +167,7 @@ export default Vue.extend({
 
   mounted() {
     if (this.editMode) {
-      this.sameAddress = _isEqual(this.member.currentAddress.withoutMovedDate(), this.primaryBeneficiaryAddress.withoutMovedDate());
+      this.sameAddress = _isEqual(this.member.currentAddress, this.primaryBeneficiaryAddress);
       this.backupSameAddress = this.sameAddress;
       this.backupPerson = _cloneDeep(this.member);
     }
@@ -214,7 +214,7 @@ export default Vue.extend({
 
       let address = this.member.currentAddress;
       if (this.sameAddress) {
-        address = { ...this.primaryBeneficiaryAddress.withoutMovedDate(), from: address.from };
+        address = this.primaryBeneficiaryAddress;
       }
       const updatedAddress = await this.$services.households.updatePersonAddress(this.member.id, address);
 

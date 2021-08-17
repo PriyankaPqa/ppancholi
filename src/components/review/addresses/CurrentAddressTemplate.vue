@@ -43,15 +43,11 @@
         {{ currentAddress.address.country }}
       </div>
     </template>
-    <div v-if="inHouseholdProfile && currentAddress.from" data-test="currentAddress__moved_date">
-      {{ `${$t('household.addresses.from')}: ${moment(currentAddress.from).utc().format('ll')}` }}
-    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import moment from 'moment';
 import { ECanadaProvinces } from '@/types';
 import { ECurrentAddressTypes, ICurrentAddress } from '../../../entities/value-objects/current-address';
 
@@ -71,7 +67,6 @@ export default Vue.extend({
   data() {
     return {
       ECurrentAddressTypes,
-      moment,
     };
   },
   computed: {

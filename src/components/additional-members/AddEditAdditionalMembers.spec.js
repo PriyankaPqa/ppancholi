@@ -18,12 +18,12 @@ import { mockAddress } from '../../entities/household-create';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-storage.registration.getters.householdCreate = jest.fn(() => (
-  { primaryBeneficiary: { withoutMovedDate: jest.fn(() => mockCampGround()), currentAddress: mockCampGround() } }));
+storage.registration.getters.householdCreate = jest.fn(() => ({ primaryBeneficiary: { currentAddress: mockCampGround() } }));
 
 describe('AddEditAdditionalMembers.vue', () => {
   let wrapper;
-  storage.registration.editAdditionalMember = beforeEach(() => {
+
+  beforeEach(() => {
     wrapper = shallowMount(Component, {
       localVue,
       propsData: {
@@ -249,8 +249,7 @@ describe('AddEditAdditionalMembers.vue', () => {
       describe('Edit mode', () => {
         it('should set sameAddress to true if household member and household has the same temporary address', () => {
           const member = mockAdditionalMember();
-          member.currentAddress = {};
-          member.currentAddress.withoutMovedDate = jest.fn(() => mockCampGround());
+          member.currentAddress = mockCampGround();
           wrapper = shallowMount(Component, {
             localVue,
             propsData: {
@@ -265,7 +264,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               };
             },
             computed: {
-              primaryBeneficiaryAddress() { return { withoutMovedDate: jest.fn(() => mockCampGround()) }; },
+              primaryBeneficiaryAddress() { return mockCampGround(); },
             },
             mocks: {
               $storage: storage,
@@ -279,8 +278,7 @@ describe('AddEditAdditionalMembers.vue', () => {
 
         it('should set sameAddress to false if household member and primary beneficiary does not have the same temporary address', () => {
           const member = mockAdditionalMember();
-          member.currentAddress = {};
-          member.currentAddress.withoutMovedDate = jest.fn(() => mockCampGround({ placeNumber: '888' }));
+          member.currentAddress = mockCampGround({ placeNumber: '888' });
           wrapper = shallowMount(Component, {
             localVue,
             propsData: {
@@ -295,7 +293,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               };
             },
             computed: {
-              primaryBeneficiaryAddress() { return { withoutMovedDate: jest.fn(() => mockCampGround()) }; },
+              primaryBeneficiaryAddress() { return mockCampGround(); },
             },
             mocks: {
               $storage: storage,

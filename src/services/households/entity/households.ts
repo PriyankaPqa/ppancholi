@@ -145,7 +145,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
       placeName: currentAddress.placeName,
       shelterLocationId: currentAddress.shelterLocation ? currentAddress.shelterLocation.id : null,
       address: noPlaceAddress ? null : this.parseAddress(currentAddress.address),
-      from: currentAddress.from ? new Date(currentAddress.from).toISOString() : moment.utc(moment()).format(),
+      from: moment.utc(moment()).format(),
     };
   }
 
