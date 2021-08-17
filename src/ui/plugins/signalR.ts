@@ -48,7 +48,7 @@ export class SignalRConnection {
     this.listenForEntityChanges('event', 'Program');
     this.listenForMetadataChanges('event', 'ProgramMetadata');
 
-    //CaseFile
+    // CaseFile
     this.listenForEntityChanges('caseFile', 'CaseFile');
     this.listenForMetadataChanges('caseFile', 'CaseFileMetadata');
     this.listenForEntityChanges('caseFile', 'CaseNote');
@@ -56,9 +56,17 @@ export class SignalRConnection {
     this.listenForEntityChanges('caseFile', 'Referral');
     this.listenForMetadataChanges('caseFile', 'ReferralMetadata');
 
-    //Household
+    // Household
     this.listenForEntityChanges('household', 'Household');
     this.listenForMetadataChanges('household', 'HouseholdMetadata');
+
+    // Team
+    this.listenForEntityChanges('team', 'Team');
+    this.listenForMetadataChanges('team', 'TeamMetadata');
+
+    // UserAccount
+    this.listenForEntityChanges('userAccount', 'UserAccount');
+    this.listenForMetadataChanges('userAccount', 'UserAccountMetadata');
   }
 
   private listenForEntityChanges(domain: string, entityName: string) {
