@@ -230,7 +230,7 @@ export default Vue.extend({
           _set(newFilter, key, { le: value });
           break;
         case EFilterOperator.In:
-          _set(newFilter, key, { in: value });
+          _set(newFilter, key, { searchIn_az: value });
           break;
         case EFilterOperator.BeginsWith:
           _set(newFilter, key, { startsWith_az: value });

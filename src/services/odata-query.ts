@@ -107,6 +107,12 @@ export function renderPrimitiveValue(key: string, val: any, aliases: Alias[] = [
     return `search.ismatch(${value}, '${newKey}')`
   }
 
+  if(key.includes('/searchIn_az')) {
+    const newKey = key.replace("/searchIn_az", "");
+    const value = handleValue(`${val}`, aliases);
+    return `search.in(${newKey}, ${value})`
+  }
+
   return `${key} eq ${handleValue(val, aliases)}`;
 }
 
@@ -161,22 +167,26 @@ function buildFilter(filters: Filter = {}, aliases: Alias[] = [], propPrefix = '
             result.push(renderPrimitiveValue(propName, value, aliases));
           }
           else if (Array.isArray(value)) {
-            const op = filterKey;
-            const builtFilters = value
-              .map((v) => buildFilter(v, aliases, propPrefix))
-              .filter((f) => f)
-              .map((f) => (LOGICAL_OPERATORS.indexOf(op) !== -1 ? `(${f})` : f));
-            if (builtFilters.length) {
-              if (LOGICAL_OPERATORS.indexOf(op) !== -1) {
-                if (builtFilters.length) {
-                  if (op === 'not') {
-                    result.push(parseNot(builtFilters as string[]));
-                  } else {
-                    result.push(`(${builtFilters.join(` ${op} `)})`);
+            if (propName.includes('/searchIn_az')) {
+              result.push(renderPrimitiveValue(propName, value, aliases));
+            } else {
+              const op = filterKey;
+              const builtFilters = value
+                .map((v) => buildFilter(v, aliases, propPrefix))
+                .filter((f) => f)
+                .map((f) => (LOGICAL_OPERATORS.indexOf(op) !== -1 ? `(${f})` : f));
+              if (builtFilters.length) {
+                if (LOGICAL_OPERATORS.indexOf(op) !== -1) {
+                  if (builtFilters.length) {
+                    if (op === 'not') {
+                      result.push(parseNot(builtFilters as string[]));
+                    } else {
+                      result.push(`(${builtFilters.join(` ${op} `)})`);
+                    }
                   }
+                } else {
+                  result.push(builtFilters.join(` ${op} `));
                 }
-              } else {
-                result.push(builtFilters.join(` ${op} `));
               }
             }
           }

@@ -1,37 +1,30 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockCombinedCaseFileReferral, mockCombinedCaseFileReferrals } from '@/entities/case-file-referral';
+import { mockSearchData } from '@/entities/case-file-referral';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
 import routes from '@/constants/routes';
-import helpers from '@/ui/helpers';
 import Component from './CaseFileReferral.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
-const referrals = mockCombinedCaseFileReferrals();
 
 describe('CaseFileReferral.vue', () => {
   let wrapper;
   const options = mockOptionItemData();
   storage.caseFileReferral.getters.types = jest.fn(() => options);
   storage.caseFileReferral.getters.outcomeStatuses = jest.fn(() => options);
-  storage.caseFileReferral.getters.getByCaseFile = jest.fn(() => [referrals[0]]);
 
   const mountWrapper = (canEdit = true) => {
-    const mockReferralMapped = {
-      name: referrals[0].entity.name,
-      id: referrals[0].entity.id,
-      refType: options[0],
-      outcomeStatus: options[1],
-    };
-
     wrapper = shallowMount(Component, {
       localVue,
       computed: {
         canEdit() { return canEdit; },
-        caseFileReferrals() {
-          return [mockReferralMapped];
-        },
+      },
+      data() {
+        return {
+          azureSearchItems: mockSearchData.value,
+          azureSearchCount: mockSearchData['@odata.count'],
+        };
       },
       mocks: {
         $storage: storage,
@@ -53,9 +46,7 @@ describe('CaseFileReferral.vue', () => {
 
       it('should be bound to the items', async () => {
         mountWrapper();
-        const test = wrapper.vm.caseFileReferrals[0];
-        expect(wrapper.findDataTest('case-file-referrals-table').props('items').length).toEqual(wrapper.vm.caseFileReferrals.length);
-        Object.keys(wrapper.vm.customColumns).filter((c) => c !== 'edit').forEach((c) => expect(Object.keys(test)).toContain(c));
+        expect(wrapper.findDataTest('case-file-referrals-table').props('items').length).toEqual(wrapper.vm.azureSearchCount);
       });
     });
 
@@ -72,86 +63,85 @@ describe('CaseFileReferral.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('caseFileReferralsMapped', () => {
-      beforeEach(() => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            canEdit() { return true; },
-          },
-          mocks: {
-            $storage: storage,
-            $route: {
-              params: {
-                id: 'foo',
-              },
-            },
-          },
-        });
+    mountWrapper();
+    test('customColumns', () => {
+      expect(wrapper.vm.customColumns).toEqual({
+        name: 'Entity/Name',
+        refType: 'Metadata/ReferralTypeName/Translation/en',
+        outcomeStatus: 'Metadata/ReferralOutcomeStatusName/Translation/en',
+        edit: 'edit',
       });
-      it('calls the getByCaseFile getter and sets the result into caseFileReferrals, extracting the properties', async () => {
-        expect(storage.caseFileReferral.getters.getByCaseFile).toHaveBeenCalledWith('foo');
-      });
-      it('return the mapped referrals', () => {
-        expect(wrapper.vm.caseFileReferralsMapped).toEqual([
+    });
+
+    describe('headers', () => {
+      test('they are defined correctly', async () => {
+        expect(wrapper.vm.headers).toEqual([
           {
-            name: referrals[0].entity.name,
-            id: referrals[0].entity.id,
-            refType: '',
-            outcomeStatus: '',
+            text: 'common.name',
+            sortable: true,
+            value: wrapper.vm.customColumns.name,
+          },
+          {
+            text: 'caseFile.referral.referralType',
+            value: wrapper.vm.customColumns.refType,
+            sortable: true,
+          },
+          {
+            text: 'caseFile.referral.outcomeStatus',
+            value: wrapper.vm.customColumns.outcomeStatus,
+            sortable: true,
+          },
+          {
+            text: '',
+            value: wrapper.vm.customColumns.edit,
+            sortable: false,
           },
         ]);
       });
     });
 
-    describe('caseFileReferrals', () => {
-      it('returns the sorted and filtered referrals', () => {
-        const ref1 = { name: 'z' };
-        const ref2 = { name: 'a' };
-        const unorderedReferrals = [ref1, ref2];
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            caseFileReferralsMapped() { return unorderedReferrals; },
-          },
-          mocks: {
-            $storage: storage,
-            $route: {
-              params: {
-                id: 'foo',
-              },
-            },
+    describe('labels', () => {
+      it('should return the header object with the title received from props', async () => {
+        wrapper.setProps({ title: 'caseFile.referral.title' });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.labels).toEqual({
+          header: {
+            title: 'caseFile.referral.title',
+            searchPlaceholder: 'common.inputs.quick_search',
           },
         });
-        wrapper.vm.options = { sortBy: ['name'], sortDesc: [false] };
-        expect(wrapper.vm.caseFileReferrals).toEqual([ref2, ref1]);
       });
+    });
 
-      it('calls filterCollectionByValue if there is a filter ', () => {
-        const ref1 = { name: 'z' };
-        const ref2 = { name: 'a' };
-        const unorderedReferrals = [ref1, ref2];
-        jest.spyOn(helpers, 'filterCollectionByValue').mockImplementation(() => unorderedReferrals);
+    describe('filters', () => {
+      test('they are defined correctly', async () => {
+        expect(wrapper.vm.filters).toEqual([
+          {
+            key: 'Entity/Name',
+            type: 'text',
+            label: 'common.name',
+          },
+          {
+            key: 'Entity/Type/OptionItemId',
+            type: 'multiselect',
+            label: 'caseFile.referral.referralType',
+            items: (wrapper.vm.referralTypes || []).map(({ id, name }) => ({ value: id, text: wrapper.vm.$m(name) })),
+          },
+          {
+            key: 'Entity/OutcomeStatus/OptionItemId',
+            type: 'multiselect',
+            label: 'caseFile.referral.outcomeStatus',
+            items: (wrapper.vm.outcomeStatuses || []).map(({ id, name }) => ({ value: id, text: wrapper.vm.$m(name) })),
+          },
+        ]);
+      });
+    });
 
-        wrapper = shallowMount(Component, {
-          localVue,
-          data() {
-            return {
-              filter: 'foo',
-            };
-          },
-          mocks: {
-            $storage: storage,
-            $route: {
-              params: {
-                id: 'foo',
-              },
-            },
-          },
+    describe('tableProps', () => {
+      it('returns the correct object', () => {
+        expect(wrapper.vm.tableProps).toEqual({
+          loading: false,
         });
-        wrapper.vm.options = { sortBy: ['name'], sortDesc: [false] };
-        expect(wrapper.vm.caseFileReferrals).toEqual([ref2, ref1]);
       });
     });
   });
@@ -174,60 +164,6 @@ describe('CaseFileReferral.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('search', () => {
-      it('sets the filter', () => {
-        const searchParams = {
-          search: 'abcd', orderBy: 'my order by', top: 10, skip: 10,
-        };
-
-        mountWrapper();
-        wrapper.vm.search(searchParams);
-
-        expect(wrapper.vm.filter).toEqual('abcd');
-      });
-    });
-
-    describe('getRefType', () => {
-      it('returns optionitem from storage by id', async () => {
-        const referral = mockCombinedCaseFileReferral();
-        referral.entity.type = { optionItemId: 'myFakeId' };
-        mountWrapper();
-
-        options[1].id = 'myFakeId';
-        expect(wrapper.vm.getRefType(referral.entity)).toEqual(options[1].name.translation.en);
-      });
-
-      it('returns empty when null', async () => {
-        const referral = mockCombinedCaseFileReferral();
-        referral.entity.type = null;
-
-        mountWrapper();
-        options[1].id = 'myFakeId';
-        expect(wrapper.vm.getRefType(referral.entity)).toEqual('');
-      });
-    });
-
-    describe('getOutcomeStatus', () => {
-      it('returns optionitem from storage by id', async () => {
-        const referral = mockCombinedCaseFileReferral();
-        referral.entity.outcomeStatus = { optionItemId: 'myFakeId' };
-
-        mountWrapper();
-        options[1].id = 'myFakeId';
-        expect(wrapper.vm.getOutcomeStatus(referral.entity)).toEqual(options[1].name.translation.en);
-      });
-
-      it('returns empty when null', async () => {
-        const referral = mockCombinedCaseFileReferral();
-        referral.entity.outcomeStatus = null;
-        storage.caseFileReferral.getters.outcomeStatuses = jest.fn(() => options);
-
-        mountWrapper();
-        options[1].id = 'myFakeId';
-        expect(wrapper.vm.getOutcomeStatus(referral.entity)).toEqual('');
-      });
-    });
-
     describe('addCaseReferral', () => {
       it('should redirect to the case referral add page', async () => {
         mountWrapper();
@@ -263,6 +199,43 @@ describe('CaseFileReferral.vue', () => {
             referralId: 'abc',
           },
         });
+      });
+    });
+
+    describe('fetchData', () => {
+      beforeEach(() => {
+        const storage = mockStorage();
+        storage.caseFileReferral.actions.search = jest.fn().mockImplementation(() => mockSearchData);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+          },
+        });
+      });
+
+      const params = {
+        search: 'query', filter: { 'Entity/CaseFileId': '1' }, top: 1000, skip: 10, orderBy: 'name asc',
+      };
+
+      it('should call storage actions with proper parameters', async () => {
+        await wrapper.vm.fetchData(params);
+        expect(wrapper.vm.$storage.caseFileReferral.actions.search).toHaveBeenCalledWith({
+          search: 'query',
+          searchMode: 'all',
+          queryType: 'full',
+          filter: params.filter,
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+        });
+      });
+
+      it('returns the search results set the azureSearchItems', async () => {
+        const res = await wrapper.vm.fetchData(params);
+        expect(res).toBeDefined();
       });
     });
   });

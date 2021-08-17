@@ -280,7 +280,7 @@ describe('Filter Toolbar', () => {
           value: ['1', '2'],
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { in: filter.value }));
+        expect(newFilter).toEqual(_set({}, filter.key, { searchIn_az: filter.value }));
       });
 
       it('builds the proper structure for BeginsWith operator', () => {
