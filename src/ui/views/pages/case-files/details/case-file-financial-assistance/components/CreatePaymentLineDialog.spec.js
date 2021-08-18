@@ -1,9 +1,13 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockProgramCaseFinancialAssistance } from '@/entities/program';
+import { mockItems } from '@/entities/financial-assistance';
+import { mockCaseFinancialAssistancePaymentGroups } from '@/entities/case-file-financial-assistance';
 import Component from './CreatePaymentLineDialog.vue';
 
 const localVue = createLocalVue();
 const program = mockProgramCaseFinancialAssistance();
+const items = mockItems();
+const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGroups();
 
 describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
   let wrapper;
@@ -16,6 +20,7 @@ describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
       propsData: {
         show: true,
         program,
+        items,
       },
     });
   });
@@ -97,6 +102,7 @@ describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
         propsData: {
           show: true,
           program,
+          items,
         },
       });
     });
@@ -113,6 +119,13 @@ describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
         ]);
       });
     });
+
+    describe('subItems', () => {
+      it('should return the list of subItem matching the selected item', () => {
+        wrapper.vm.paymentLine.mainCategoryId = items[0].mainCategory.id;
+        expect(wrapper.vm.subItems).toEqual(items[0].subItem);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -126,6 +139,44 @@ describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
           payeeName: null,
           lines: null,
         });
+      });
+    });
+
+    describe('onSubmit', () => {
+      it('doesnt proceed unless form validation succeeds', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.emitted('submit')).toBeFalsy();
+      });
+
+      it('emit submit if validation succeeds', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.paymentLine = caseFileFinancialAssistanceGroups;
+        await wrapper.vm.onSubmit();
+        expect(wrapper.emitted('submit')[0][0]).toEqual(caseFileFinancialAssistanceGroups);
+      });
+    });
+
+    describe('resetSubCategory', () => {
+      it('should reset the subCategoryId', async () => {
+        wrapper.vm.paymentLine = caseFileFinancialAssistanceGroups;
+        await wrapper.vm.resetSubCategory();
+        expect(wrapper.vm.paymentLine.subCategoryId).toEqual(null);
+      });
+
+      it('should call resetDocuments', async () => {
+        jest.spyOn(wrapper.vm, 'resetDocuments').mockImplementation(() => {});
+        wrapper.vm.paymentLine = caseFileFinancialAssistanceGroups;
+        await wrapper.vm.resetSubCategory();
+        expect(wrapper.vm.resetDocuments).toHaveBeenCalled();
+      });
+    });
+
+    describe('resetDocuments', () => {
+      it('should reset documentReceived', async () => {
+        wrapper.vm.paymentLine = caseFileFinancialAssistanceGroups;
+        await wrapper.vm.resetDocuments();
+        expect(wrapper.vm.paymentLine.documentReceived).toBeFalsy();
       });
     });
   });

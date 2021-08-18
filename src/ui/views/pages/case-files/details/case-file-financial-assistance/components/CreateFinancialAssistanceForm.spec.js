@@ -48,18 +48,18 @@ describe('CreateFinancialAssistanceForm.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('triggerUpdateProgram', () => {
-      it('emits updateProgram ', async () => {
+    describe('triggerUpdateSelectedData', () => {
+      it('emits updateSelectedData ', async () => {
         wrapper.vm.localFinancialAssistance = financialAssistance;
         await wrapper.vm.$nextTick();
-        await wrapper.vm.triggerUpdateProgram(financialAssistanceTables[0]);
+        await wrapper.vm.triggerUpdateSelectedData(financialAssistanceTables[0]);
         expect(wrapper.emitted('update:financialAssistance')[0][0]).toEqual(financialAssistance);
       });
 
       it('calls updateBasicData', async () => {
         jest.spyOn(wrapper.vm, 'updateBasicData').mockImplementation(() => {});
 
-        await wrapper.vm.triggerUpdateProgram(financialAssistanceTables[0]);
+        await wrapper.vm.triggerUpdateSelectedData(financialAssistanceTables[0]);
         expect(wrapper.vm.updateBasicData).toHaveBeenCalled();
       });
     });

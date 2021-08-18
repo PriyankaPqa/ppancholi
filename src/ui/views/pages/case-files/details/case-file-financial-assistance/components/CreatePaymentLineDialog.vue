@@ -24,17 +24,26 @@
           <v-row>
             <v-col cols="6">
               <v-autocomplete-with-validation
+                v-model="paymentLine.mainCategoryId"
                 :label="`${$t('financialAssistance.nestedTable.headers.item')} *`"
-                :items="fakeItem"
+                :item-text="(item) => item.mainCategory ? $m(item.mainCategory.name) : ''"
+                :item-value="(item) => item.mainCategory ? item.mainCategory.id : null"
+                :items="items"
                 :rules="rules.item"
-                data-test="payement_item" />
+                data-test="payement_item"
+                @change="resetSubCategory" />
             </v-col>
             <v-col cols="6">
               <v-autocomplete-with-validation
+                v-model="paymentLine.subCategoryId"
                 :label="`${$t('financialAssistance.nestedTable.headers.subItem')} *`"
-                :items="fakeItem"
+                :item-text="(item) => item.subCategory ? $m(item.subCategory.name) : ''"
+                :item-value="(item) => item.subCategory ? item.subCategory.id : null"
+                :items="subItems"
+                :disabled="!paymentLine.mainCategoryId"
                 :rules="rules.subitem"
-                data-test="payment_subItem" />
+                data-test="payment_subItem"
+                @change="resetDocuments" />
             </v-col>
           </v-row>
           <v-row>
@@ -48,19 +57,28 @@
                 @change="updateForm" />
             </v-col>
             <v-col cols="6">
+              <!-- ToDo : Document requirement validation -->
               <v-checkbox-with-validation
+                v-model="paymentLine.documentReceived"
+                :disabled="!paymentLine.subCategoryId"
                 data-test="checkbox_consent"
                 class="rc-body12"
-                label="Supporting documents received" />
+                :label="`${$t('caseFile.financialAssistance.supportingDocuments')} *`" />
             </v-col>
           </v-row>
           <v-row>
             <v-col cols="3">
               <v-text-field-with-validation
+                v-model="paymentLine.amount"
                 data-test="reason_specified_other"
                 autocomplete="nope"
                 :rules="rules.amount"
-                label="Amount *" />
+                :label="`${$t('caseFile.financialAssistance.amount')} *`" />
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col v-if="paymentLine.modality" cols="12">
+              <!-- <payment-type-handler :payment-type="paymentLine.modality" /> -->
             </v-col>
           </v-row>
         </v-col>
@@ -80,9 +98,11 @@ import {
   // VTextAreaWithValidation,
   VSelectWithValidation,
 } from '@crctech/component-library';
+import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import { EPaymentModalities, IProgram } from '@/entities/program';
 import helpers from '@/ui/helpers';
 import { VForm } from '@/types';
+// import PaymentTypeHandler from './PaymentTypes/PaymentTypeHandler.vue';
 // import { VForm } from '@/types';
 
 export default Vue.extend({
@@ -94,6 +114,7 @@ export default Vue.extend({
     VCheckboxWithValidation,
     VTextFieldWithValidation,
     VSelectWithValidation,
+    // PaymentTypeHandler,
   },
 
   props: {
@@ -104,6 +125,11 @@ export default Vue.extend({
 
     program: {
       type: Object as () => IProgram,
+      required: true,
+    },
+
+    items: {
+      type: Array as () => IFinancialAssistanceTableItem[],
       required: true,
     },
   },
@@ -139,18 +165,16 @@ export default Vue.extend({
   computed: {
     paymentModalities(): Array<{ text: string, value: unknown }> {
       const paymentModalities = helpers.enumToTranslatedCollection(EPaymentModalities, 'event.programManagement.paymentModalities')
-        .filter((p) => this.program.paymentModalities.find((payment : EPaymentModalities) => payment === p.value));
+        .filter((p) => this.program?.paymentModalities.find((payment : EPaymentModalities) => payment === p.value));
       return _orderBy(paymentModalities, 'text');
+    },
+
+    subItems() : Array<IFinancialAssistanceTableSubItem> {
+      return this.items.find((i) => i.mainCategory?.id === this.paymentLine.mainCategoryId)?.subItems;
     },
   },
 
-  created() {
-    // This will be implemented on story 597, for now we only create
-    // if (this.isEditMode) {
-    //   this.initEditMode();
-    // } else {
-    //   this.initCreateMode();
-    // }
+  async created() {
     this.initCreateMode();
   },
 
@@ -162,8 +186,17 @@ export default Vue.extend({
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        this.$emit('submit');
+        this.$emit('submit', this.paymentLine);
       }
+    },
+
+    resetSubCategory() {
+      this.paymentLine.subCategoryId = null;
+      this.resetDocuments();
+    },
+
+    resetDocuments() {
+      this.paymentLine.documentReceived = false;
     },
 
     updateForm() {

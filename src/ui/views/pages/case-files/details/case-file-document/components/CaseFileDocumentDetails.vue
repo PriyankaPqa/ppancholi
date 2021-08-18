@@ -57,8 +57,8 @@ import { RcPageContent } from '@crctech/component-library';
 import moment from '@/ui/plugins/moment';
 import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
-import DownloadViewDocument from './DownloadViewDocument.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import DownloadViewDocument from './DownloadViewDocument.vue';
 
 export default Vue.extend({
   name: 'CreateEditDocumentDetails',

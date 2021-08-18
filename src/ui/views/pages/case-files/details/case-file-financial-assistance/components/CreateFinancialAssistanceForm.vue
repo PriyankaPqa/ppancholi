@@ -29,7 +29,7 @@
             :loading="loadingTables"
             :rules="rules.table"
             data-test="financialCreate_tableSelect"
-            @change="triggerUpdateProgram" />
+            @change="triggerUpdateSelectedData" />
         </v-col>
         <v-col class="mt-4">
           {{ $t('financialAssistance.program') }}: {{ program? $m(program.name) : '' }}
@@ -130,9 +130,9 @@ export default Vue.extend({
   },
 
   methods: {
-    triggerUpdateProgram(table: IFinancialAssistanceTableEntity): void {
+    triggerUpdateSelectedData(table: IFinancialAssistanceTableEntity): void {
       this.updateBasicData();
-      this.$emit('updateProgram', table);
+      this.$emit('updateSelectedData', table);
     },
 
     updateBasicData(): void {

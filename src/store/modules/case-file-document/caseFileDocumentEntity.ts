@@ -7,11 +7,11 @@ import {
 } from '@/entities/optionItem';
 import { IOptionItemsService } from '@/services/optionItems';
 import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import { Status } from '@/entities/base';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
-import { Status } from '@/entities/base';
 
 export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }> {
   constructor(readonly service: CaseFileDocumentsService, readonly optionItemService: IOptionItemsService) {

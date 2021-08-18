@@ -1,9 +1,9 @@
 import { mockBaseData } from '@/entities/base';
+import { mockOptionItemData } from '@/entities/optionItem';
 import {
   DocumentStatus, ICaseFileDocumentCombined, ICaseFileDocumentEntity, ICaseFileDocumentMetadata,
 } from './case-file-document.types';
 import { IEntity } from '../base/base.types';
-import { mockOptionItemData } from '@/entities/optionItem';
 
 export const mockCaseFileDocumentEntity = (force? : Partial<ICaseFileDocumentEntity>) : ICaseFileDocumentEntity => ({
   ...mockBaseData(),

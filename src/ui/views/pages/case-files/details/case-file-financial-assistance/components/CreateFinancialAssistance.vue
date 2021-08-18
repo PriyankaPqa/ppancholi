@@ -13,7 +13,7 @@
               :financial-assistance.sync="financialAssistance"
               :financial-assistance-tables="financialTables"
               :program="selectedProgram"
-              @updateProgram="updateSelectedProgram" />
+              @updateSelectedData="updateSelectedData" />
             <!-- Add payment line -->
             <v-row justify="center">
               <v-col cols="12">
@@ -56,6 +56,7 @@
       v-if="showAddPaymentLineForm"
       :show.sync="showAddPaymentLineForm"
       :program="selectedProgram"
+      :items="items"
       data-test="case-file-financial-assistance-payment-line-dialog"
       @submit="onSubmitPaymentLine($event)"
       @cancelChange="showAddPaymentLineForm = false" />
@@ -71,6 +72,7 @@ import
 {
   IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableCombined,
+  IFinancialAssistanceTableItem,
 } from '@/entities/financial-assistance';
 import { Status } from '@/entities/base/index';
 import { ICaseFileEntity, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
@@ -93,8 +95,9 @@ export default Vue.extend({
     return {
       financialAssistanceLoading: false,
       financialAssistance: null as CaseFinancialAssistanceEntity,
-      financialTables: [] as Array<IFinancialAssistanceTableEntity>,
+      financialTables: [] as IFinancialAssistanceTableEntity[],
       selectedProgram: null as IProgram,
+      selectedTable: null as IFinancialAssistanceTableEntity,
       programs: null as IProgramData[],
       editPaymentLine: null,
       showAddPaymentLineForm: false,
@@ -138,13 +141,18 @@ export default Vue.extend({
     caseFile(): ICaseFileEntity {
       return this.$storage.caseFile.getters.get(this.$route.params.id).entity;
     },
+
+    items(): Array<IFinancialAssistanceTableItem> {
+      return this.$storage.financialAssistance.getters.items();
+    },
   },
 
   async created() {
     this.financialAssistance = new CaseFinancialAssistanceEntity();
     this.financialAssistance.caseFileId = this.$route.params.id;
 
-    this.searchTables();
+    await this.searchTables();
+    await this.$storage.financialAssistanceCategory.actions.fetchAll();
   },
 
   methods: {
@@ -163,11 +171,24 @@ export default Vue.extend({
       }
     },
 
+    updateSelectedData(table: IFinancialAssistanceTableEntity) {
+      this.updateSelectedProgram(table);
+      this.updateSelectedTable(table);
+    },
+
     async updateSelectedProgram(table: IFinancialAssistanceTableEntity) {
       const selectedProgramId = table?.programId;
       if (selectedProgramId) {
         this.selectedProgram = await this.$storage.program.actions.fetchProgram(selectedProgramId);
       }
+    },
+
+    async updateSelectedTable(table: IFinancialAssistanceTableEntity) {
+      this.selectedTable = table;
+      const tableWithMetadata = this.$storage.financialAssistance.getters.get(table.id);
+      const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+
+      this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories);
     },
 
     back(): void {
@@ -177,8 +198,13 @@ export default Vue.extend({
     },
 
     onSubmitPaymentLine(payload: unknown) {
-      // ToDo : Story 617
-      // console.log('Payment', payload);
+      // ToDo : Story 617 => Show the new payment lines added
+      this.showAddPaymentLineForm = false;
+      if (this.financialAssistance.groups == null) {
+        this.financialAssistance.groups = [];
+      }
+
+      this.financialAssistance.groups.push(payload);
     },
   },
 });

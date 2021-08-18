@@ -54,6 +54,7 @@ const store = mockStore({
         'metadataModule/getByIds': () => () => [mockMetadatum[0]],
       },
       actions: {
+        'metadataModule/fetchAll': () => () => [mockMetadatum[0]],
         'metadataModule/fetchAllIncludingInactive': () => () => [mockMetadatum[0]],
       },
     },
@@ -154,8 +155,8 @@ describe('BaseStorage', () => {
         const expected = mockEntities.map((e) => {
           const match = mockMetadatum.find((m) => m.id === e.id);
           return {
-            entity: { ...e },
-            metadata: { ...match },
+            entity: e,
+            metadata: match,
           };
         });
         expect(res).toEqual(expected);

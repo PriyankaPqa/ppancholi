@@ -4,14 +4,17 @@ import
 {
   mockFinancialAssistanceTableEntity,
   mockCombinedFinancialAssistance,
+  mockItems,
 } from '@/entities/financial-assistance';
 import
 {
   CaseFinancialAssistanceEntity,
   mockCaseFinancialAssistanceEntity,
+  mockCaseFinancialAssistancePaymentGroups,
 } from '@/entities/case-file-financial-assistance';
 import { mockCombinedCaseFile, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import { mockProgramCaseFinancialAssistance } from '@/entities/program';
+import { mockOptionItemData } from '@/entities/optionItem';
 import Component from './CreateFinancialAssistance.vue';
 
 const localVue = createLocalVue();
@@ -21,6 +24,9 @@ const combinedFinancialAssistance = mockCombinedFinancialAssistance();
 const caseFileFinancialAssistance = mockCaseFinancialAssistanceEntity();
 const program = mockProgramCaseFinancialAssistance();
 const caseFileCombined = mockCombinedCaseFile();
+const items = mockItems();
+const optionItems = mockOptionItemData();
+const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGroups();
 
 describe('CreateFinancialAssistance.vue', () => {
   let wrapper;
@@ -31,6 +37,8 @@ describe('CreateFinancialAssistance.vue', () => {
     storage.program.actions.fetchProgram = jest.fn(() => program);
     storage.caseFile.getters.get = jest.fn(() => caseFileCombined);
     storage.caseFile.actions.fetch = jest.fn(() => caseFileCombined);
+    storage.financialAssistance.getters.items = jest.fn(() => items);
+    storage.financialAssistanceCategory.getters.getAll = jest.fn(() => optionItems);
 
     wrapper = shallowMount(Component, {
       localVue,
@@ -91,6 +99,20 @@ describe('CreateFinancialAssistance.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
+      it('should call storage to fetch categories', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {},
+        });
+        jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(storage.financialAssistanceCategory.actions.fetchAll).toHaveBeenCalled();
+      });
+
       it('call searchTables', () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -332,8 +354,8 @@ describe('CreateFinancialAssistance.vue', () => {
     describe('isDisabled', () => {
       it('returns true or false if the create should be disabled', () => {
         wrapper.vm.financialAssistance = new CaseFinancialAssistanceEntity(caseFileFinancialAssistance);
-
         wrapper.vm.financialAssistance.validate = jest.fn(() => false);
+
         expect(wrapper.vm.isDisabled).toBe(true);
       });
 
@@ -344,6 +366,18 @@ describe('CreateFinancialAssistance.vue', () => {
         expect(wrapper.vm.isDisabled).toBe(false);
       });
     });
+
+    describe('caseFile', () => {
+      it('should return the associated caseFile', () => {
+        expect(wrapper.vm.caseFile).toEqual(caseFileCombined.entity);
+      });
+    });
+
+    describe('items', () => {
+      it('should return the list of items', () => {
+        expect(wrapper.vm.items).toEqual(items);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -351,6 +385,26 @@ describe('CreateFinancialAssistance.vue', () => {
       it('sets financial tables', async () => {
         await wrapper.vm.searchTables();
         expect(wrapper.vm.financialTables).toEqual([financialAssistance]);
+      });
+    });
+
+    describe('updateSelectedData', () => {
+      it('should call updateSelectedProgram', async () => {
+        jest.spyOn(wrapper.vm, 'updateSelectedProgram').mockImplementation();
+        jest.spyOn(wrapper.vm, 'updateSelectedTable').mockImplementation();
+
+        await wrapper.vm.updateSelectedData(financialAssistance);
+
+        expect(wrapper.vm.updateSelectedProgram).toHaveBeenCalled();
+      });
+
+      it('should call updateSelectedTable', async () => {
+        jest.spyOn(wrapper.vm, 'updateSelectedProgram').mockImplementation();
+        jest.spyOn(wrapper.vm, 'updateSelectedTable').mockImplementation();
+
+        await wrapper.vm.updateSelectedData(financialAssistance);
+
+        expect(wrapper.vm.updateSelectedTable).toHaveBeenCalled();
       });
     });
 
@@ -367,9 +421,24 @@ describe('CreateFinancialAssistance.vue', () => {
       });
     });
 
-    describe('verifyAuthenticated', () => {
-      it('verify if the caseFile identityAuthentication matches with the program requirement', async () => {
+    describe('updateSelectedTable', () => {
+      it('should call storage to get table', async () => {
+        await wrapper.vm.updateSelectedTable(financialAssistance);
+        expect(storage.financialAssistance.getters.get).toHaveBeenCalledWith(financialAssistance.id);
+      });
 
+      it('should call storage to get categories', async () => {
+        await wrapper.vm.updateSelectedTable(financialAssistance);
+        expect(storage.financialAssistanceCategory.getters.getAll).toHaveBeenCalled();
+      });
+    });
+
+    describe('onSubmitPaymentLine', () => {
+      it('should add the new PaymentLine', async () => {
+        wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.financialAssistance.groups = null;
+        await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups);
+        expect(wrapper.vm.financialAssistance.groups).toContain(caseFileFinancialAssistanceGroups);
       });
     });
   });

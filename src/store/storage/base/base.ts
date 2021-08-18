@@ -93,9 +93,14 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     },
 
     fetchAll: async (parentId?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
-      const [entities, metadata] = await Promise.all([
-        this.store.dispatch(`${this.entityModuleName}/fetchAll`, parentId),
-        this.store.dispatch(`${this.metadataModuleName}/fetchAll`, parentId)]);
+      const entities = await this.store.dispatch(`${this.entityModuleName}/fetchAll`, parentId);
+      let metadata = [];
+      // Metadata do not exist for option items (financial categories, document categoris etc.)
+
+      if (this.metadataActionExists('fetchAll')) {
+        metadata = await this.store.dispatch(`${this.metadataModuleName}/fetchAll`, parentId);
+      }
+
       return this.combinedCollections(entities, metadata);
     },
 
