@@ -237,5 +237,21 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     submitRegistration(): Promise<IHouseholdEntity> {
       return store.dispatch('registration/submitRegistration');
     },
+
+    updatePersonContactInformation({ member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number}): Promise<IHouseholdEntity> {
+      return store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember, index });
+    },
+
+    updatePersonIdentity({ member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number}): Promise<IHouseholdEntity> {
+      return store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember, index });
+    },
+
+    updatePersonAddress({
+      member, isPrimaryMember, index = -1, sameAddress = false,
+    }: { member: IMember; isPrimaryMember: boolean; index: number; sameAddress: boolean}): Promise<IHouseholdEntity> {
+      return store.dispatch('registration/updatePersonAddress', {
+        member, isPrimaryMember, index, sameAddress,
+      });
+    },
   },
 });

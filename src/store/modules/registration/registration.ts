@@ -446,6 +446,70 @@ const actions = (mode: ERegistrationMode) => ({
 
     return result;
   },
+
+  async updatePersonContactInformation(
+    this: IStore<IState>,
+    context: ActionContext<IState, IState>,
+    { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number},
+  ): Promise<IHouseholdEntity> {
+    const result = await this.$services.households.updatePersonContactInformation(member.id, member.contactInformation);
+
+    if (result) {
+      if (isPrimaryMember) {
+        context.commit('setPersonalInformation', { ...member.contactInformation, ...member.identitySet });
+      } else if (index >= 0) {
+        context.commit('editAdditionalMember', { payload: member, index, sameAddress: false });
+      }
+    }
+
+    return result;
+  },
+
+  async updatePersonIdentity(
+    this: IStore<IState>,
+    context: ActionContext<IState, IState>,
+    { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number},
+  ): Promise<IHouseholdEntity> {
+    const result = await this.$services.households.updatePersonIdentity(member.id, member.identitySet);
+
+    if (result) {
+      if (isPrimaryMember) {
+        context.commit('setPersonalInformation', { ...member.contactInformation, ...member.identitySet });
+      } else if (index >= 0) {
+        context.commit('editAdditionalMember', { payload: member, index, sameAddress: false });
+      }
+    }
+
+    return result;
+  },
+
+  async updatePersonAddress(
+    this: IStore<IState>,
+    context: ActionContext<IState, IState>,
+    {
+      member, isPrimaryMember, index = -1, sameAddress = false,
+    }: { member: IMember; isPrimaryMember: boolean; index: number; sameAddress: boolean},
+  ): Promise<IHouseholdEntity> {
+    let result;
+    if (isPrimaryMember) {
+      result = await this.$services.households.updatePersonAddress(member.id, member.currentAddress);
+      if (result) {
+        context.commit('setCurrentAddress', member.currentAddress);
+      }
+    } else if (index >= 0) {
+      let address = { ...member.currentAddress };
+      if (sameAddress) {
+        address = context.state.householdCreate.primaryBeneficiary.currentAddress;
+      }
+
+      result = await this.$services.households.updatePersonAddress(member.id, address);
+      if (result) {
+        context.commit('editAdditionalMember', { payload: member, index, sameAddress });
+      }
+    }
+
+    return result;
+  },
 });
 
 export const makeRegistrationModule = (

@@ -291,5 +291,28 @@ describe('>>> Registration Storage', () => {
       storage.actions.submitRegistration();
       expect(store.dispatch).toBeCalledWith('registration/submitRegistration');
     });
+
+    it('should proxy updatePersonContactInformation', () => {
+      const member = mockMember();
+      const isPrimaryMember = true;
+      storage.actions.updatePersonContactInformation({ member, isPrimaryMember });
+      expect(store.dispatch).toBeCalledWith('registration/updatePersonContactInformation', { member, isPrimaryMember, index: -1 });
+    });
+
+    it('should proxy updatePersonIdentity', () => {
+      const member = mockMember();
+      const isPrimaryMember = true;
+      storage.actions.updatePersonIdentity({ member, isPrimaryMember });
+      expect(store.dispatch).toBeCalledWith('registration/updatePersonIdentity', { member, isPrimaryMember, index: -1 });
+    });
+
+    it('should proxy updatePersonAddress', () => {
+      const member = mockMember();
+      const isPrimaryMember = true;
+      storage.actions.updatePersonAddress({ member, isPrimaryMember });
+      expect(store.dispatch).toBeCalledWith('registration/updatePersonAddress', {
+        member, isPrimaryMember, index: -1, sameAddress: false,
+      });
+    });
   });
 });

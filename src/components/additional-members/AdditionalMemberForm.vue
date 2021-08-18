@@ -56,7 +56,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
-import { CurrentAddress, IShelterLocationData } from '../../entities/household-create';
+import { IShelterLocationData } from '../../entities/household-create';
 import { IOptionItemData } from '../../types';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';

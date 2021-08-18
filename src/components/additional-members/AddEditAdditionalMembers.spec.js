@@ -18,8 +18,6 @@ import { mockAddress } from '../../entities/household-create';
 const localVue = createLocalVue();
 const storage = mockStorage();
 
-storage.registration.getters.householdCreate = jest.fn(() => ({ primaryBeneficiary: { currentAddress: mockCampGround() } }));
-
 describe('AddEditAdditionalMembers.vue', () => {
   let wrapper;
 
@@ -141,30 +139,25 @@ describe('AddEditAdditionalMembers.vue', () => {
       });
 
       describe('submitChanges', () => {
-        it('should call the updatePersonIdentity service', async () => {
+        it('should call the updatePersonIdentity action', async () => {
           await wrapper.vm.submitChanges();
-          expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
-            wrapper.vm.member.id, wrapper.vm.member.identitySet,
+          expect(wrapper.vm.$storage.registration.actions.updatePersonIdentity).toHaveBeenCalledWith(
+            { member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index },
           );
         });
 
-        it('should call the updatePersonAddress service', async () => {
+        it('should call the updatePersonAddress action', async () => {
           await wrapper.vm.submitChanges();
-          expect(wrapper.vm.$services.households.updatePersonAddress).toHaveBeenCalledWith(
-            wrapper.vm.member.id, wrapper.vm.member.currentAddress,
-          );
-        });
-
-        it('should call the store mutation editAdditionalMember', async () => {
-          await wrapper.vm.submitChanges();
-          expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember).toHaveBeenCalledWith(
-            wrapper.vm.member, wrapper.vm.index, wrapper.vm.sameAddress,
+          expect(wrapper.vm.$storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith(
+            {
+              member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index, sameAddress: wrapper.vm.sameAddress,
+            },
           );
         });
 
         it('should call cancel if the calls fail', async () => {
           jest.spyOn(wrapper.vm, 'cancel').mockImplementation(() => {});
-          wrapper.vm.$services.households.updatePersonAddress = jest.fn(() => null);
+          wrapper.vm.$storage.registration.actions.updatePersonAddress = jest.fn(() => null);
           await wrapper.vm.submitChanges();
           expect(wrapper.vm.cancel).toHaveBeenCalledTimes(1);
         });

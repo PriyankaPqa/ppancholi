@@ -77,5 +77,8 @@ export const mockStorageRegistration = (): IStorageMock => ({
     fetchPrimarySpokenLanguages: jest.fn(),
     fetchIndigenousCommunities: jest.fn(),
     submitRegistration: jest.fn(),
+    updatePersonAddress: jest.fn(() => mockHouseholdEntity()),
+    updatePersonIdentity: jest.fn(() => mockHouseholdEntity()),
+    updatePersonContactInformation: jest.fn(() => mockHouseholdEntity()),
   },
 });

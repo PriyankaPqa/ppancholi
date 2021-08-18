@@ -3,6 +3,7 @@ import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import { mockHttpError } from '@/services/httpClient.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
+import { HouseholdCreate } from '../../../entities/household-create/householdCreate';
 import {
   ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
 } from '../../../types';
@@ -16,8 +17,7 @@ import {
   mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-  HouseholdCreate,
-  mockHouseholdCreate, mockContactInformation, mockIdentitySet, mockMember, mockAddress, mockAdditionalMember, mockHouseholdCreateData,
+  mockHouseholdCreate, mockContactInformation, mockIdentitySet, mockMember, mockAddress, mockAdditionalMember, mockHouseholdCreateData, ECurrentAddressTypes,
 } from '../../../entities/household-create';
 
 import { mockHouseholdEntity } from '../../../entities/household';
@@ -732,6 +732,142 @@ describe('>>> Registration Module', () => {
         store.$services.households.submitRegistration = jest.fn(() => { throw new Error(); });
         await store.dispatch('registration/submitRegistration');
         expect(store.getters['registration/registrationErrors']).toStrictEqual(new Error());
+      });
+    });
+
+    describe('updatePersonIdentity', () => {
+      it('call the updatePersonIdentity service with proper params', async () => {
+        const member = mockMember();
+        const isPrimaryMember = false;
+        const index = 1;
+
+        store.state.registration.householdCreate.editAdditionalMember = jest.fn();
+        await store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember, index });
+
+        expect(store.$services.households.updatePersonIdentity).toHaveBeenCalledWith(member.id, member.identitySet);
+      });
+
+      it('calls the right mutation when member is primary', async () => {
+        const member = mockMember();
+        const isPrimaryMember = true;
+        store.commit = jest.fn();
+        store.$services.households.updatePersonIdentity = jest.fn(() => ({ id: 'foo' }));
+
+        await store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember });
+
+        expect(store.commit).toHaveBeenCalledWith('registration/setPersonalInformation', { ...member.contactInformation, ...member.identitySet }, undefined);
+      });
+
+      it('calls the right mutation when member is not primary', async () => {
+        const member = mockMember();
+        const isPrimaryMember = false;
+        const index = 0;
+        store.commit = jest.fn();
+        store.$services.households.updatePersonIdentity = jest.fn(() => ({ id: 'foo' }));
+
+        await store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember, index });
+
+        expect(store.commit).toHaveBeenCalledWith('registration/editAdditionalMember', { payload: member, index, sameAddress: false }, undefined);
+      });
+    });
+
+    describe('updatePersonContactInformation', () => {
+      it('call the updatePersonContactInformation service with proper params', async () => {
+        const member = mockMember();
+        const isPrimaryMember = false;
+        const index = 1;
+
+        store.state.registration.householdCreate.editAdditionalMember = jest.fn();
+        await store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember, index });
+
+        expect(store.$services.households.updatePersonContactInformation).toHaveBeenCalledWith(member.id, member.contactInformation);
+      });
+
+      it('calls the right mutation when member is primary', async () => {
+        const member = mockMember();
+        const isPrimaryMember = true;
+        store.commit = jest.fn();
+        store.$services.households.updatePersonContactInformation = jest.fn(() => ({ id: 'foo' }));
+
+        await store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember });
+
+        expect(store.commit).toHaveBeenCalledWith('registration/setPersonalInformation', { ...member.contactInformation, ...member.identitySet }, undefined);
+      });
+
+      it('calls the right mutation when member is not primary', async () => {
+        const member = mockMember();
+        const isPrimaryMember = false;
+        const index = 0;
+        store.commit = jest.fn();
+        store.$services.households.updatePersonContactInformation = jest.fn(() => ({ id: 'foo' }));
+
+        await store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember, index });
+
+        expect(store.commit).toHaveBeenCalledWith('registration/editAdditionalMember', { payload: member, index, sameAddress: false }, undefined);
+      });
+    });
+    describe('updatePersonAddress', () => {
+      it('call the updatePersonAddress service with proper params if the member is primary', async () => {
+        const member = mockMember();
+        const isPrimaryMember = true;
+
+        // store.state.registration.householdCreate.editAdditionalMember = jest.fn();
+        await store.dispatch('registration/updatePersonAddress', { member, isPrimaryMember });
+
+        expect(store.$services.households.updatePersonAddress).toHaveBeenCalledWith(member.id, member.currentAddress);
+      });
+
+      it('calls the right mutation when member is primary', async () => {
+        const member = mockMember();
+        const isPrimaryMember = true;
+        store.commit = jest.fn();
+        store.$services.households.updatePersonAddress = jest.fn(() => ({ id: 'foo' }));
+
+        await store.dispatch('registration/updatePersonAddress', { member, isPrimaryMember });
+
+        expect(store.commit).toHaveBeenCalledWith('registration/setCurrentAddress', member.currentAddress, undefined);
+      });
+
+      it('call the updatePersonAddress service and mutation with proper params when member is not primary and sameAddress is false', async () => {
+        const member = mockMember();
+        const isPrimaryMember = false;
+        const index = 1;
+        const sameAddress = false;
+        store.state.registration.householdCreate.editAdditionalMember = jest.fn();
+        store.commit = jest.fn();
+
+        await store.dispatch('registration/updatePersonAddress', {
+          member, isPrimaryMember, index, sameAddress,
+        });
+
+        expect(store.$services.households.updatePersonAddress).toHaveBeenCalledWith(member.id, member.currentAddress);
+        expect(store.commit).toHaveBeenCalledWith('registration/editAdditionalMember', { payload: member, index, sameAddress: false }, undefined);
+      });
+
+      it('call the updatePersonAddress service and mutation with proper params when member is not primary and sameAddress is true', async () => {
+        await store.commit('registration/setPrimaryBeneficiary', mockMember({
+          currentAddress: {
+            ...mockMember().currentAddress,
+            addressType: ECurrentAddressTypes.Other,
+          },
+        }));
+        const member = mockMember();
+        const isPrimaryMember = false;
+        const index = 1;
+        const sameAddress = true;
+        store.state.registration.householdCreate.editAdditionalMember = jest.fn();
+        store.commit = jest.fn();
+
+        await store.dispatch('registration/updatePersonAddress', {
+          member, isPrimaryMember, index, sameAddress,
+        });
+
+        expect(store.$services.households.updatePersonAddress).toHaveBeenCalledWith(member.id, {
+          ...mockMember().currentAddress,
+          addressType: ECurrentAddressTypes.Other,
+        });
+
+        expect(store.commit).toHaveBeenCalledWith('registration/editAdditionalMember', { payload: member, index, sameAddress: true }, undefined);
       });
     });
   });

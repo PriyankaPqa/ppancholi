@@ -80,6 +80,11 @@ export interface IStorage {
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
     submitRegistration(): Promise<IHouseholdEntity>;
+    updatePersonContactInformation({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number}): Promise<IHouseholdEntity>;
+    updatePersonIdentity({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number}): Promise<IHouseholdEntity>;
+    updatePersonAddress({
+      member, isPrimaryMember, index, sameAddress,
+    }: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean}): Promise<IHouseholdEntity>;
   };
 }
 
@@ -147,5 +152,8 @@ export interface IStorageMock {
     fetchPrimarySpokenLanguages: jest.Mock<IOptionItemData[]>;
     fetchIndigenousCommunities: jest.Mock<IIndigenousCommunityData[]>;
     submitRegistration: jest.Mock<IHouseholdEntity>;
+    updatePersonIdentity: jest.Mock<IHouseholdEntity>;
+    updatePersonContactInformation: jest.Mock<IHouseholdEntity>;
+    updatePersonAddress: jest.Mock<IHouseholdEntity>;
   };
 }

@@ -207,20 +207,12 @@ export default Vue.extend({
     },
 
     async submitChanges() {
-      const updatedIdentity = await this.$services.households.updatePersonIdentity(
-        this.member.id,
-        this.member.identitySet,
-      );
+      const updatedIdentity = await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: false, index: this.index });
+      const updatedAddress = await this.$storage.registration.actions.updatePersonAddress({
+        member: this.member, isPrimaryMember: false, index: this.index, sameAddress: this.sameAddress,
+      });
 
-      let address = this.member.currentAddress;
-      if (this.sameAddress) {
-        address = this.primaryBeneficiaryAddress;
-      }
-      const updatedAddress = await this.$services.households.updatePersonAddress(this.member.id, address);
-
-      if (updatedIdentity && updatedAddress) {
-        this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
-      } else {
+      if (!updatedIdentity || !updatedAddress) {
         this.cancel();
       }
     },
