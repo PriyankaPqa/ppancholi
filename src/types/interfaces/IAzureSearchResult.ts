@@ -17,8 +17,8 @@ export interface ICombinedIndex <TEntity, TMetadata> {
 }
 
 export interface IAzureCombinedSearchResult <TEntity, TMetadata> {
-  odataContext: string;
-  odataCount: number;
+  odataContext?: string;
+  odataCount?: number;
   value: Array<ICombinedIndex<TEntity, TMetadata>>;
 }
 

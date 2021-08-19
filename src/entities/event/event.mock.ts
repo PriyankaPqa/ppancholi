@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
 import { IAzureSearchResult, ECanadaProvinces } from '../../types';
 import {
-  IEventData, IEvent, IEventGenericLocation, EEventStatus,
+  IEventData, IEvent, IEventGenericLocation, EEventStatus, EResponseLevel,
 } from './event.types';
 
 import { Event } from './event';
@@ -50,12 +50,15 @@ export const mockRegistrationLocations = (): IEventGenericLocation[] => ([
 ]);
 
 export const mockEventData = (): IEventData => ({
-  eventId: '7c076603-580a-4400-bef2-5ddececb0931',
+  id: '7c076603-580a-4400-bef2-5ddececb0931',
   responseDetails: {
     assistanceNumber: '+15144544545',
+    responseLevel: EResponseLevel.Level1,
+    eventType: null,
+    dateReported: '',
   },
   tenantId: 'tenant-guid',
-  eventName: {
+  name: {
     translation: {
       en: 'Gatineau Floods 2021',
       fr: 'Inondations Gatineau 2021',
@@ -75,11 +78,13 @@ export const mockEventData = (): IEventData => ({
   selfRegistrationEnabled: true,
 });
 
-export const mockSearchEventsData = (): IAzureSearchResult<IEventData> => ({
+export const mockSearchEventsData = (): IAzureSearchResult<unknown> => ({
   odataContext: 'test',
   odataCount: 1,
   value: [
-    mockEventData(),
+    {
+      entity: mockEventData(),
+    },
   ],
 });
 

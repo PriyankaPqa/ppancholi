@@ -1,4 +1,3 @@
-import { CurrentAddress } from '../value-objects/current-address/currentAddress';
 import { IConsentInformation, IHouseholdCreate, IHouseholdCreateData } from './householdCreate.types';
 import { IAddress, Address } from '../value-objects/address';
 import { IMember, Member } from '../value-objects/member';

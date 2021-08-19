@@ -11,7 +11,6 @@ import {
   mockShelter,
 } from './currentAddress.mock';
 import { CurrentAddress } from './currentAddress';
-import { mockAddress } from '../address';
 
 const longText = 'x'.repeat(MAX_LENGTH_MD + 1);
 const longSmallText = 'y'.repeat(MAX_LENGTH_SM + 1);

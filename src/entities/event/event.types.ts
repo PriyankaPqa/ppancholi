@@ -1,4 +1,4 @@
-import { ECanadaProvinces, IMultilingual } from '../../types';
+import { ECanadaProvinces, IMultilingual, IListOption } from '../../types';
 import { IShelterLocationData } from '../household-create';
 
 /**
@@ -32,6 +32,9 @@ export interface IOtherProvince {
 }
 
 export interface IResponseDetails {
+  responseLevel: EResponseLevel;
+  eventType: IListOption;
+  dateReported: string;
   assistanceNumber: string;
 }
 
@@ -66,8 +69,8 @@ export interface IEventGenericLocation {
  * Interface that maps to the response structure from the API
  */
 export interface IEventData {
-  eventId: uuid;
-  eventName: IMultilingual;
+  id: uuid;
+  name: IMultilingual;
   responseDetails: IResponseDetails;
   registrationLink: IMultilingual;
   tenantId: uuid;

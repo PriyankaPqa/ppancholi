@@ -101,13 +101,13 @@ describe('CurrentAddressForm.vue', () => {
       });
 
       describe('Changing country', () => {
-        it('should trigger $onChangeCountry', async () => {
+        it('should trigger onCountryChange', async () => {
           const element = wrapper.findDataTest('tempAddress__country');
           wrapper.vm.$refs.form = {};
           wrapper.vm.$refs.form.reset = jest.fn();
-          jest.spyOn(wrapper.vm, '$onChangeCountry');
+          jest.spyOn(wrapper.vm, 'onCountryChange');
           await element.vm.$emit('change');
-          expect(wrapper.vm.$onChangeCountry).toHaveBeenCalledTimes(1);
+          expect(wrapper.vm.onCountryChange).toHaveBeenCalledTimes(1);
         });
       });
 
@@ -206,6 +206,22 @@ describe('CurrentAddressForm.vue', () => {
 
       it('calls reset from entity with proper param', () => {
         expect(wrapper.vm.form.reset).toHaveBeenLastCalledWith(type);
+      });
+
+      it('resets the form', () => {
+        expect(wrapper.vm.$refs.form.reset).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('onCountryChange', () => {
+      beforeEach(() => {
+        wrapper.vm.form.reset = jest.fn();
+        wrapper.vm.$refs.form.reset = jest.fn();
+        wrapper.vm.onCountryChange();
+      });
+
+      it('reset the address but preserve place name', () => {
+        expect(wrapper.vm.form.reset).toHaveBeenLastCalledWith(wrapper.vm.form.addressType, true);
       });
 
       it('resets the form', () => {

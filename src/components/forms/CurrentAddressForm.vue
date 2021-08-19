@@ -52,7 +52,7 @@
             :rules="rules.country"
             :data-test="`${prefixDataTest}__country`"
             :label="`${$t('registration.addresses.country')} *`"
-            @change="$onChangeCountry($event)" />
+            @change="onCountryChange()" />
         </v-col>
 
         <v-col v-if="form.hasStreet()" cols="12" sm="9" md="8">
@@ -302,6 +302,11 @@ export default Vue.extend({
   methods: {
     changeType(type: ECurrentAddressTypes) {
       this.form.reset(type);
+      (this.$refs.form as VForm).reset();
+    },
+
+    onCountryChange() {
+      this.form.reset(this.form.addressType, true);
       (this.$refs.form as VForm).reset();
     },
   },

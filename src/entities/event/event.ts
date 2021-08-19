@@ -25,18 +25,10 @@ export class Event implements IEvent {
 
   constructor(data?: IEventData) {
     if (data) {
-      this.id = data.eventId;
+      this.id = data.id;
       this.responseDetails = data.responseDetails;
-      this.name = {
-        translation: {
-          ...data.eventName.translation,
-        },
-      };
-      this.registrationLink = {
-        translation: {
-          ...data.registrationLink.translation,
-        },
-      };
+      this.name = data.name;
+      this.registrationLink = data.registrationLink;
       this.tenantId = data.tenantId;
       this.shelterLocations = data.shelterLocations;
       this.registrationLocations = data.registrationLocations;

@@ -364,7 +364,7 @@ const actions = (mode: ERegistrationMode) => ({
     { lang, registrationLink }: { lang: string; registrationLink: string },
   ): Promise<IEvent> {
     const result = await this.$services.publicApi.searchEvents(lang, registrationLink);
-    const eventData = result?.value?.length > 0 ? result.value[0] : null;
+    const eventData = result?.value?.length > 0 ? result.value[0].entity : null;
     context.commit('setEvent', eventData);
 
     return context.getters.event;
@@ -433,9 +433,9 @@ const actions = (mode: ERegistrationMode) => ({
     try {
       let result;
       if (mode === ERegistrationMode.Self) {
-        result = await this.$services.households.submitRegistration(context.state.householdCreate, context.state.event.eventId);
+        result = await this.$services.households.submitRegistration(context.state.householdCreate, context.state.event.id);
       } else {
-        result = await this.$services.households.submitCRCRegistration(context.state.householdCreate, context.state.event.eventId);
+        result = await this.$services.households.submitCRCRegistration(context.state.householdCreate, context.state.event.id);
       }
       context.commit('setRegistrationResponse', result);
     } catch (e) {

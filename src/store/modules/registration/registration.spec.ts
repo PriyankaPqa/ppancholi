@@ -713,7 +713,7 @@ describe('>>> Registration Module', () => {
 
         expect(store.$services.households.submitRegistration).toHaveBeenCalledWith(
           store.state.registration.householdCreate,
-          mockEventData().eventId,
+          mockEventData().id,
         );
       });
 

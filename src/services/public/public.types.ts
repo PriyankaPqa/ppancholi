@@ -1,10 +1,9 @@
 import { IAzureSearchResult } from '../../types';
-import { IEventData } from '../../entities/event';
 
 export interface IPublicService {
-  searchEvents(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventData>>;
+  searchEvents(lang: string, registrationLink: string): Promise<IAzureSearchResult<unknown>>;
 }
 
 export interface IPublicServiceMock {
-  searchEvents: jest.Mock<IAzureSearchResult<IEventData>>;
+  searchEvents: jest.Mock<IAzureSearchResult<unknown>>;
 }

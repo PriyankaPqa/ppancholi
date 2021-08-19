@@ -74,10 +74,14 @@ export class CurrentAddress implements ICurrentAddress {
     return errors;
   }
 
-  reset(type?: ECurrentAddressTypes): void {
+  reset(type?: ECurrentAddressTypes, preservePlace = false): void {
     this.addressType = type ?? null;
-    this.placeName = '';
-    this.placeNumber = '';
+
+    if (!preservePlace) {
+      this.placeName = '';
+      this.placeNumber = '';
+    }
+
     this.address = new Address();
     this.shelterLocation = null;
   }

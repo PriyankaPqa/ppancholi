@@ -10,11 +10,11 @@ describe('>>> Event', () => {
     });
 
     it('should instantiate id', () => {
-      expect(event.id).toBe(mockEventData().eventId);
+      expect(event.id).toBe(mockEventData().id);
     });
 
     it('should instantiate name', () => {
-      expect(event.name).toEqual(mockEventData().eventName);
+      expect(event.name).toEqual(mockEventData().name);
     });
 
     it('should instantiate registration link', () => {
