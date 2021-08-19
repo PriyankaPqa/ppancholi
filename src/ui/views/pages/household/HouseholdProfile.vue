@@ -5,8 +5,6 @@
     show-back-button
     :show-edit-button="false"
     content-padding="0"
-    :show-help="true"
-    :help-link="$t('zendesk.help_link.household_profile')"
     @back="navigateBack">
     <rc-page-loading v-if="loading" />
     <template v-else slot="default">
@@ -110,7 +108,10 @@
             </div>
           </v-row>
 
-          <household-member-card :member="household.primaryBeneficiary" is-primary-member />
+          <household-member-card
+            :member="household.primaryBeneficiary"
+            is-primary-member
+            :shelter-locations="shelterLocations" />
 
           <household-member-card
             v-for="(member, index) in household.additionalMembers"

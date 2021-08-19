@@ -6,11 +6,11 @@
       :cancel-action-label="$t('common.buttons.cancel')"
       :submit-action-label="$t('common.apply')"
       :submit-button-disabled="failed"
-
       :persistent="true"
       :show-help="true"
       :help-link="helpLink"
       :tooltip-label="$t('common.tooltip_label')"
+      :max-width="750"
       @cancel="$emit('cancelChange')"
       @close="$emit('cancelChange')"
       @submit="onSubmit">

@@ -99,6 +99,7 @@
     <primary-member-dialog
       v-if="showPrimaryMemberDialog"
       :show.sync="showPrimaryMemberDialog"
+      :shelter-locations="shelterLocations"
       @cancel="showPrimaryMemberDialog = false"
       @close="showPrimaryMemberDialog = false" />
 
