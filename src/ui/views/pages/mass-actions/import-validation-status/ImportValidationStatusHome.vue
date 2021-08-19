@@ -41,7 +41,7 @@
       </template>
 
       <template #[`item.deleteButton`]="{ item }">
-        <v-btn v-if="showDeleteIcon(item)" icon class="mr-2" data-test="delete" @click="deleteItem(item)">
+        <v-btn v-if="showDeleteIcon(item)" icon class="mr-2" data-test="delete" @click="onDelete(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -66,6 +66,7 @@ import { IAzureSearchParams } from '@/types';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import { Status } from '@/entities/base';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ImportValidationStatusHome',
@@ -80,6 +81,11 @@ export default mixins(TablePaginationSearchMixin).extend({
       itemsCount: 0,
       searchResultIds: [] as string[],
       moment,
+      options: {
+        page: 1,
+        sortBy: ['Entity/Created'],
+        sortDesc: [true],
+      },
     };
   },
 
@@ -135,7 +141,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): IMassActionCombined[] {
-      return this.$storage.massAction.getters.getByIds(this.searchResultIds);
+      return this.$storage.massAction.getters.getByIds(this.searchResultIds, true);
     },
 
     tableProps(): Record<string, string> {
@@ -143,7 +149,6 @@ export default mixins(TablePaginationSearchMixin).extend({
         loading: this.$store.state.massActionEntities.searchLoading,
       };
     },
-
   },
 
   methods: {
@@ -160,8 +165,15 @@ export default mixins(TablePaginationSearchMixin).extend({
       };
     },
 
-    deleteItem() {
-      return false;
+    async onDelete(massAction: IMassActionCombined) {
+      const userChoice = await this.$confirm(this.$t('massAction.confirm.delete.title'), this.$t('massAction.confirm.delete.message'));
+      if (userChoice) {
+        const res = await this.$storage.massAction.actions.deactivate(massAction.entity.id);
+        if (res) {
+          this.$toasted.global.success(this.$t('massAction.delete.success'));
+          this.itemsCount -= 1;
+        }
+      }
     },
 
     getLastRunEntity(massAction: IMassActionCombined): IMassActionRun {
@@ -187,7 +199,12 @@ export default mixins(TablePaginationSearchMixin).extend({
     async fetchData(params: IAzureSearchParams) {
       const res = await this.$storage.massAction.actions.search({
         search: params.search,
-        filter: params.filter,
+        filter: {
+          ...params.filter as Record<string, unknown>,
+          Entity: {
+            Status: Status.Active,
+          },
+        },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,

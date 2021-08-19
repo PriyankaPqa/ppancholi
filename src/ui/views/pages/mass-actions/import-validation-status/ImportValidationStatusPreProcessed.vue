@@ -15,8 +15,7 @@
       show-delete-icon
       show-edit-icon
       @download="download()"
-      @process="onProcess()"
-      @update="update($event)" />
+      @delete:success="goToHome()" />
   </div>
 </template>
 
@@ -24,7 +23,8 @@
 import Vue from 'vue';
 
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
-import { IMassActionCombined, MassActionRunStatus, MassActionRunType } from '@/entities/mass-action';
+import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'ImportValidationStatusPreProcessed',
@@ -61,27 +61,12 @@ export default Vue.extend({
   },
 
   methods: {
-
-    async startProcess(id: string, runType: MassActionRunType) {
-      await this.$storage.massAction.actions.process(id, runType);
-    },
-
-    async onProcess() {
-      const userChoice = await this.$confirm(this.$t('massAction.confirm.processing.title'), this.$t('massAction.confirm.processing.message'));
-      if (userChoice) {
-        await this.startProcess(this.massAction.entity.id, MassActionRunType.Process);
-      }
-    },
-
     download() {
       return false;
     },
 
-    async update(payload: {name: string; description: string}) {
-      const res = await this.$storage.massAction.actions.update(this.massAction.entity.id, payload);
-      if (res) {
-        this.$toasted.global.success(this.$t('massAction.update.success'));
-      }
+    goToHome() {
+      this.$router.replace({ name: routes.massActions.importValidationStatus.home.name });
     },
   },
 });

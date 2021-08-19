@@ -1394,12 +1394,17 @@
     "massAction.common.projected": "Projected",
     "massAction.common.status": "Status",
     "massAction.common.successful": "Successful",
+    "massAction.confirm.delete.message": "Are you sure you want to delete this mass action?",
+    "massAction.confirm.delete.title": "Delete mass action",
     "massAction.confirm.preprocessing.message": "Are you sure you want to start pre-processing this mass action?",
     "massAction.confirm.preprocessing.title": "Confirm pre-processing",
     "massAction.confirm.processing.message": "Are you sure you want to start processing this mass action?",
     "massAction.confirm.processing.title": "Confirm processing",
+    "massAction.delete.success": "The mass action was successfully deleted",
     "massAction.download.button.label": "Download",
     "massAction.impactValidationStatusTable.title": "Import validation of impact statuses",
+    "massAction.notification.preprocessed": "The mass action {x} has been preprocessed",
+    "massAction.notification.processed": "The mass action {x} has been processed",
     "massAction.pre_processed.title.1": "Projected case files",
     "massAction.pre_processed.title.2": "Valid for processing",
     "massAction.pre_processed.title.3": "Cannot be processed",
@@ -1407,6 +1412,7 @@
     "massAction.processed.title.1": "Projected case files",
     "massAction.processed.title.2": "Processed",
     "massAction.processed.title.3": "Cannot be processed",
+    "massAction.update.success": "The mass action was successfully updated",
     "massActions.backToList.label": "Back to mass actions list",
     "massActions.created_by": "Created by",
     "massActions.date_created": "Date created",
@@ -1929,6 +1935,5 @@
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
     "zendesk.question.select_language_preferences": "How do I select my language preferences?",
     "zendesk.referral": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360056417493",
-    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242353",
-    "massAction.update.success": "The mass action was successfully updated"
+    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242353"
 }

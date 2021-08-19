@@ -4,15 +4,16 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { MassActionRunStatus, mockCombinedMassAction } from '@/entities/mass-action';
+import { MassActionRunStatus, MassActionRunType, mockCombinedMassAction } from '@/entities/mass-action';
 import Component from './MassActionPreProcessedProcessedBase.vue';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
+import { mockStorage } from '@/store/storage';
 
 const localVue = createLocalVue();
-
+const storage = mockStorage();
 describe('MassActionPreProcessedProcessedBase.vue', () => {
   let wrapper;
 
@@ -110,8 +111,12 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
             userAccount: mockCombinedUserAccount(),
           };
         },
+        mocks: {
+          $storage: storage,
+        },
       });
     });
+
     describe('update', () => {
       it('should set editMode to false', async () => {
         await wrapper.setData({
@@ -121,9 +126,47 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         expect(wrapper.vm.editMode).toBe(false);
       });
 
-      it('should emit update', () => {
-        wrapper.vm.update();
-        expect(wrapper.emitted('update')).toBeTruthy();
+      it('should trigger update action update', async () => {
+        const payload = { name: 'test', description: 'test' };
+        await wrapper.vm.update(payload);
+        expect(wrapper.vm.$storage.massAction.actions.update).toHaveBeenLastCalledWith(wrapper.vm.massAction.entity.id, payload);
+      });
+    });
+
+    describe('onProcess', () => {
+      it('should display confirmation dialog', async () => {
+        await wrapper.vm.onProcess();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('massAction.confirm.processing.title', 'massAction.confirm.processing.message');
+      });
+
+      it('should call process actions with proper params', async () => {
+        await wrapper.vm.onProcess();
+        expect(wrapper.vm.$storage.massAction.actions.process).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, MassActionRunType.Process);
+      });
+    });
+
+    describe('onDelete', () => {
+      it('should display confirmation dialog', async () => {
+        await wrapper.vm.onDelete();
+        expect(wrapper.vm.$confirm).toBeCalled();
+      });
+
+      it('should trigger deactivate action with correct params', async () => {
+        await wrapper.vm.onDelete();
+        expect(wrapper.vm.$storage.massAction.actions.deactivate).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id);
+      });
+
+      it('should emit delete:success to home page', async () => {
+        await wrapper.vm.onDelete();
+        expect(wrapper.emitted('delete:success')).toBeTruthy();
+      });
+    });
+
+    describe('update', () => {
+      it('should trigger update action with correct params', async () => {
+        const payload = { name: 'test', description: 'description' };
+        await wrapper.vm.update(payload);
+        expect(wrapper.vm.$storage.massAction.actions.update).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, payload);
       });
     });
   });

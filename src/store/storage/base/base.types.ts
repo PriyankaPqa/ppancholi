@@ -16,7 +16,7 @@ export interface IBaseGetters<TEntity extends IEntity, TMetadata extends IEntity
   get(id: uuid): IEntityCombined<TEntity, TMetadata>;
   getAll(): Array<IEntityCombined<TEntity, TMetadata>>;
   getByCriteria (query: string, searchAll: boolean, searchAmong: string[]): Array<IEntityCombined<TEntity, TMetadata>>;
-  getByIds (ids: uuid[]): Array<IEntityCombined<TEntity, TMetadata>>;
+  getByIds (ids: uuid[], onlyActive?: boolean): Array<IEntityCombined<TEntity, TMetadata>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -198,7 +198,7 @@ export default Vue.extend({
     },
 
     onSubmitPaymentLine(payload: unknown) {
-      // ToDo : Story 617 => Show the new payment lines added
+      // TODO : Story 617 => Show the new payment lines added
       this.showAddPaymentLineForm = false;
       if (this.financialAssistance.groups == null) {
         this.financialAssistance.groups = [];

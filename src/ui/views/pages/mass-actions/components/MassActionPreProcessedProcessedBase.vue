@@ -8,7 +8,8 @@
         :loading-chip="false"
         :mass-action="massAction"
         :mass-action-status="massActionStatus"
-        @edit="editMode = true" />
+        @edit="editMode = true"
+        @delete="onDelete()" />
 
       <mass-action-edit-title-description
         v-else
@@ -38,7 +39,7 @@
             <span class="rc-body14" data-test="successes">{{ successes }}</span>
           </v-col>
           <v-col md="2" class="d-flex justify-end">
-            <v-btn v-if="showProcessButton" data-test="processButton" small color="primary" @click="$emit('process')">
+            <v-btn v-if="showProcessButton" data-test="processButton" small color="primary" @click="onProcess()">
               {{ $t('massAction.process.button.label') }}
             </v-btn>
           </v-col>
@@ -94,7 +95,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
+import { IMassActionCombined, MassActionRunStatus, MassActionRunType } from '@/entities/mass-action';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 import colors from '@/ui/plugins/vuetify/colors';
@@ -203,9 +204,32 @@ export default Vue.extend({
   },
 
   methods: {
-    update(payload: {name: string; description: string}) {
+    async update(payload: {name: string; description: string}) {
       this.editMode = false;
-      this.$emit('update', payload);
+
+      const res = await this.$storage.massAction.actions.update(this.massAction.entity.id, payload);
+
+      if (res) {
+        this.$toasted.global.success(this.$t('massAction.update.success'));
+      }
+    },
+
+    async onProcess() {
+      const userChoice = await this.$confirm(this.$t('massAction.confirm.processing.title'), this.$t('massAction.confirm.processing.message'));
+      if (userChoice) {
+        await this.$storage.massAction.actions.process(this.massAction.entity.id, MassActionRunType.Process);
+      }
+    },
+
+    async onDelete() {
+      const userChoice = await this.$confirm(this.$t('massAction.confirm.delete.title'), this.$t('massAction.confirm.delete.message'));
+      if (userChoice) {
+        const res = await this.$storage.massAction.actions.deactivate(this.massAction.entity.id);
+        if (res) {
+          this.$emit('delete:success');
+          this.$toasted.global.success(this.$t('massAction.delete.success'));
+        }
+      }
     },
   },
 });

@@ -6,6 +6,7 @@ import {
 } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
 import Component from './ImportValidationStatusHome.vue';
+import { Status } from '@/entities/base';
 
 const localVue = createLocalVue();
 
@@ -39,12 +40,6 @@ describe('ImportValidationStatusHome.vue', () => {
             id: '1',
           },
         });
-      });
-    });
-
-    describe('deleteItem', () => {
-      it('should return false', () => {
-        expect(wrapper.vm.deleteItem()).toEqual(false);
       });
     });
 
@@ -105,7 +100,12 @@ describe('ImportValidationStatusHome.vue', () => {
 
         expect(wrapper.vm.$storage.massAction.actions.search).toHaveBeenCalledWith({
           search: params.search,
-          filter: params.filter,
+          filter: {
+            ...params.filter,
+            Entity: {
+              Status: Status.Active,
+            },
+          },
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
@@ -119,6 +119,24 @@ describe('ImportValidationStatusHome.vue', () => {
         jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => {});
         const res = await wrapper.vm.fetchData({ });
         expect(wrapper.vm.setResults).toHaveBeenCalledWith(res);
+      });
+    });
+
+    describe('onDelete', () => {
+      it('should display confirmation dialog', async () => {
+        await wrapper.vm.onDelete(mockCombinedMassAction());
+        expect(wrapper.vm.$confirm).toBeCalled();
+      });
+
+      it('should trigger deactivate action with correct params', async () => {
+        await wrapper.vm.onDelete(mockCombinedMassAction());
+        expect(wrapper.vm.$storage.massAction.actions.deactivate).toHaveBeenCalledWith(mockCombinedMassAction().entity.id);
+      });
+
+      it('should reduce the itemCount by 1', async () => {
+        wrapper.vm.itemsCount = 1;
+        await wrapper.vm.onDelete(mockCombinedMassAction());
+        expect(wrapper.vm.itemsCount).toEqual(0);
       });
     });
   });

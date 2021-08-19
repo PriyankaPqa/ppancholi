@@ -3,7 +3,8 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import Component from './ImportValidationStatusPreProcessed.vue';
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
-import { MassActionRunType, mockCombinedMassAction } from '@/entities/mass-action';
+import { mockCombinedMassAction } from '@/entities/mass-action';
+import routes from '@/constants/routes';
 
 const localVue = createLocalVue();
 
@@ -32,7 +33,7 @@ describe('ImportValidationStatusPreProcessed.vue', () => {
           .toBe(true);
       });
 
-      it('should call download', async () => {
+      it('should call download on download', async () => {
         const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
         wrapper.vm.download = jest.fn();
 
@@ -41,13 +42,13 @@ describe('ImportValidationStatusPreProcessed.vue', () => {
         expect(wrapper.vm.download).toBeCalled();
       });
 
-      it('should call onProcess', async () => {
+      it('should call goToHome on delete:success', async () => {
         const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
-        wrapper.vm.onProcess = jest.fn();
+        wrapper.vm.goToHome = jest.fn();
 
-        await component.vm.$emit('process');
+        await component.vm.$emit('delete:success');
 
-        expect(wrapper.vm.onProcess).toBeCalled();
+        expect(wrapper.vm.goToHome).toBeCalled();
       });
     });
   });
@@ -68,41 +69,16 @@ describe('ImportValidationStatusPreProcessed.vue', () => {
       });
     });
 
-    describe('startProcess', () => {
-      it('should call mass action process with correct params', async () => {
-        const id = '1';
-        const runType = MassActionRunType.Process;
-
-        await wrapper.vm.startProcess(id, runType);
-
-        expect(wrapper.vm.$storage.massAction.actions.process).toHaveBeenCalledWith(id, runType);
-      });
-    });
-
-    describe('onProcess', () => {
-      it('should display confirmation dialog', async () => {
-        await wrapper.vm.onProcess();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('massAction.confirm.processing.title', 'massAction.confirm.processing.message');
-      });
-
-      it('should call startProcess method with proper params', async () => {
-        wrapper.vm.startProcess = jest.fn();
-        await wrapper.vm.onProcess();
-        expect(wrapper.vm.startProcess).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, MassActionRunType.Process);
-      });
-    });
-
     describe('download', () => {
       it('should do nothing', async () => {
         expect(wrapper.vm.download()).toEqual(false);
       });
     });
 
-    describe('update', () => {
-      it('should trigger update action with correct params', async () => {
-        const payload = { name: 'test', description: 'description' };
-        await wrapper.vm.update(payload);
-        expect(wrapper.vm.$storage.massAction.actions.update).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, payload);
+    describe('goToHome', () => {
+      it('should redirect to home page', () => {
+        wrapper.vm.goToHome();
+        expect(wrapper.vm.$router.replace).toHaveBeenLastCalledWith({ name: routes.massActions.importValidationStatus.home.name });
       });
     });
   });

@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { IEntity } from '@/entities/base/base.types';
+import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
 import helpers from '@/ui/helpers';
 import { IAzureSearchParams } from '@/types';
@@ -34,7 +34,12 @@ export class BaseModule<T extends IEntity, IdParams> {
     get: (state:IState<T>) => (id: uuid) => _cloneDeep(state.items.find((e) => e.id === id) || {}),
     // eslint-disable-next-line
     getByCriteria: (state:IState<T>) => (query: string, searchAll: boolean, searchAmong: string[]) => helpers.filterCollectionByValue(state.items, query, searchAll, searchAmong),
-    getByIds: (state:IState<T>) => (ids: uuid[]) => ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id)) || {}),
+    getByIds: (state:IState<T>) => (ids: uuid[], onlyActive?: boolean) => {
+      if (onlyActive) {
+        return ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id && e.status === Status.Active)) || {});
+      }
+      return ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id)) || {});
+    },
   }
 
   protected baseActions = {

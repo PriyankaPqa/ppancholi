@@ -1,4 +1,5 @@
 import _cloneDeep from 'lodash/cloneDeep';
+import _isEmpty from 'lodash/isEmpty';
 import { IEntity, IEntityCombined, Status } from '@/entities/base';
 import { IStore, IState } from '@/store';
 import { IAzureSearchParams } from '@/types';
@@ -18,13 +19,12 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     this.entityModuleName = pEntityModuleName;
   }
 
-  protected combinedCollections(entity: Array<TEntity>, metadata: Array<TMetadata>): Array<IEntityCombined<TEntity, TMetadata>> {
-    if (!Array.isArray(entity)) {
+  protected combinedCollections(entities: Array<TEntity>, metadata: Array<TMetadata>): Array<IEntityCombined<TEntity, TMetadata>> {
+    if (!Array.isArray(entities)) {
       return [];
     }
-    return entity.map((e) => {
+    return entities.filter((e) => !_isEmpty(e)).map((e) => {
       const match = metadata && metadata.find((m) => m && m.id === e.id);
-
       return {
         entity: e,
         metadata: match || {},
@@ -71,9 +71,9 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return this.combinedCollections(foundEntities, foundMetadata);
     },
 
-    getByIds: (ids: uuid[]) => {
-      const entities = this.store.getters[`${this.entityModuleName}/getByIds`](ids);
-      const metadata = this.store.getters[`${this.metadataModuleName}/getByIds`](ids);
+    getByIds: (ids: uuid[], onlyActive = false) => {
+      const entities = this.store.getters[`${this.entityModuleName}/getByIds`](ids, onlyActive);
+      const metadata = this.store.getters[`${this.metadataModuleName}/getByIds`](ids, onlyActive);
 
       return this.combinedCollections(entities, metadata);
     },
