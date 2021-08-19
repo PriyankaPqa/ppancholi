@@ -10,8 +10,8 @@ import {
 } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
 import ImportValidationStatusPreProcessing
-  from '@/ui/views/pages/mass-actions/import-validation-status/components/ImportValidationStatusPreProcessing.vue';
-import ImportValidationStatusProcessing from '@/ui/views/pages/mass-actions/import-validation-status/components/ImportValidationStatusProcessing.vue';
+  from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusPreProcessing.vue';
+import ImportValidationStatusProcessing from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusProcessing.vue';
 import Component from './ImportValidationStatusDetails.vue';
 import ImportValidationStatusPreProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusPreProcessed.vue';
 

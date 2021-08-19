@@ -40,8 +40,8 @@ import routes from '@/constants/routes';
 import {
   IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
 } from '@/entities/mass-action';
-import ImportValidationStatusProcessing from './components/ImportValidationStatusProcessing.vue';
-import ImportValidationStatusPreProcessing from './components/ImportValidationStatusPreProcessing.vue';
+import ImportValidationStatusProcessing from './ImportValidationStatusProcessing.vue';
+import ImportValidationStatusPreProcessing from './ImportValidationStatusPreProcessing.vue';
 import ImportValidationStatusPreProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusPreProcessed.vue';
 import ImportValidationStatusProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusProcessed.vue';
 

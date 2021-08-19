@@ -6,7 +6,7 @@
       :headers="headers"
       :labels="labels"
       :table-props="tableProps"
-      :show-add-button="$hasLevel('level6')"
+      :show-add-button="$hasLevel('level6') || $hasRole('contributorIM')"
       :options.sync="options"
       :custom-columns="[
         customColumns.name,
