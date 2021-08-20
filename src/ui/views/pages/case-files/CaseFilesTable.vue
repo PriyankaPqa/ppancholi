@@ -13,21 +13,51 @@
     :options.sync="options"
     :custom-columns="Object.values(customColumns)"
     @search="search">
-    <template #[`item.${customColumns.caseFileNumber}`]="{ item: caseFile }">
-      <router-link
-        class="rc-link14 font-weight-bold pr-1"
-        data-test="caseFileDetail-link"
-        :to="getCaseFileRoute(caseFile)">
-        {{ caseFile.entity.caseFileNumber }}
-      </router-link>
+    <template #filter>
+      <filter-toolbar
+        :filter-key="FilterKey.CaseFiles"
+        :count="itemsCount"
+        :filter-options="filters"
+        @update:appliedFilter="onApplyFilter">
+        <template #toolbarActions>
+          <div class="flex-row">
+            <v-switch
+              v-model="myCaseFiles"
+              data-test="caseFilesTable__myCaseFilesSwitch"
+              hide-details />
+            <v-icon class="mr-2">
+              mdi-account-check
+            </v-icon>
+            <span class="rc-body14">
+              {{ $t('caseFilesTable.myCaseFiles') }}
+            </span>
+          </div>
+        </template>
+      </filter-toolbar>
+    </template>
 
-      <v-icon
-        v-if="caseFile.entity.isDuplicate"
-        :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
-        small
-        color="secondary">
-        $rctech-duplicate
-      </v-icon>
+    <template #[`item.${customColumns.caseFileNumber}`]="{ item: caseFile }">
+      <div class="d-flex align-center ">
+        <v-icon
+          v-visible="caseFile.entity.assignedIndividualIds.includes(userId)"
+          :data-test="`caseFilesTable__assignedIcon--${caseFile.caseFileNumber}`"
+          small>
+          mdi-account-check
+        </v-icon>
+        <router-link
+          class="rc-link14 font-weight-bold px-1"
+          data-test="caseFileDetail-link"
+          :to="getCaseFileRoute(caseFile)">
+          {{ caseFile.entity.caseFileNumber }}
+        </router-link>
+        <v-icon
+          v-if="caseFile.entity.isDuplicate"
+          :data-test="`caseFilesTable__duplicateIcon--${caseFile.entity.caseFileNumber}`"
+          small
+          color="secondary">
+          $rctech-duplicate
+        </v-icon>
+      </div>
     </template>
 
     <template #[`item.${customColumns.name}`]="{ item: caseFile }">
@@ -61,32 +91,31 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable,
+  IFilterSettings,
 } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { ICaseFileCombined, CaseFileStatus } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
+import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseFilesTable',
   components: {
     RcDataTable,
     StatusChip,
+    FilterToolbar,
   },
 
-  mixins: [TablePaginationSearchMixin],
-
   props: {
-    // showFiltersBar: {
-    //   type: Boolean,
-    //   default: false,
-    // },
     limitResults: {
       type: Number,
       default: 0,
@@ -101,6 +130,8 @@ export default Vue.extend({
     return {
       CaseFileStatus,
       itemsCount: 0,
+      FilterKey,
+      myCaseFiles: false,
       getStringDate: helpers.getStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
       searchResultIds: [] as string[],
@@ -115,7 +146,18 @@ export default Vue.extend({
   },
 
   computed: {
-
+    userId():string {
+      return this.$storage.user.getters.userId();
+    },
+    myCaseFilesFilter(): Record<string, unknown> {
+      return {
+        Entity: {
+          AssignedIndividualIds: {
+            any: this.userId,
+          },
+        },
+      };
+    },
     canViewHousehold():boolean {
       return this.$hasLevel('level1');
     },
@@ -170,6 +212,11 @@ export default Vue.extend({
       ];
     },
 
+    // TODO add filters
+    filters(): Array<IFilterSettings> {
+      return [];
+    },
+
     labels(): Record<string, unknown> {
       return {
         header: {
@@ -186,13 +233,28 @@ export default Vue.extend({
     },
   },
 
+  watch: {
+    myCaseFiles(newValue) {
+      if (newValue) {
+        this.onApplyFilter({ preparedFilters: this.myCaseFilesFilter });
+      } else {
+        this.onApplyFilter({ preparedFilters: null });
+      }
+    },
+  },
+
   methods: {
     async fetchData(params: IAzureSearchParams) {
+      let { filter } = params;
+      if (this.myCaseFiles) {
+        filter = this.myCaseFilesFilter;
+      }
+
       try {
         this.searchLoading = false;
         const res = await this.$storage.caseFile.actions.search({
           search: params.search,
-          filter: params.filter,
+          filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,

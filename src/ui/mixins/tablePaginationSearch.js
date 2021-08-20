@@ -1,6 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
+import Vue from 'vue';
 
-export default {
+export default Vue.extend({
   data() {
     return {
       azureSearchItems: [],
@@ -155,4 +156,4 @@ export default {
       this.forceSkip = false;
     },
   },
-};
+});

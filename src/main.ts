@@ -58,3 +58,8 @@ new Vue({
   vuetify,
   store,
 }).$mount('#app');
+
+// Directive fo v-visible so component is hidden but still take its place
+Vue.directive('visible', (el, binding) => {
+  el.style.visibility = binding.value ? 'visible' : 'hidden';
+});

@@ -63,6 +63,25 @@ describe('CaseFilesTable.vue', () => {
         expect(headers.wrappers[5].find('span').text()).toBe('caseFilesTable.tableHeaders.createdDate');
       });
 
+      test('the my case files toggle switch apply the filter myCaseFilesFilter', async () => {
+        const params = wrapper.vm.azureSearchParams;
+        const { myCaseFilesFilter } = wrapper.vm;
+        const myCaseFilesSwitch = wrapper.find('[data-test="caseFilesTable__myCaseFilesSwitch"]');
+
+        await myCaseFilesSwitch.trigger('click');
+
+        expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
+          search: params.search,
+          filter: myCaseFilesFilter,
+          top: params.top,
+          skip: params.skip,
+          orderBy: params.orderBy,
+          count: true,
+          queryType: 'full',
+          searchMode: 'all',
+        });
+      });
+
       describe('help button', () => {
         it('displays the help button ', async () => {
           wrapper.vm.helpLink = 'mock-help-data-url';
@@ -91,9 +110,46 @@ describe('CaseFilesTable.vue', () => {
       });
     });
   });
+  describe('Watch myCaseFiles', () => {
+    it('sets filter to myCaseFilesFilter when true', async () => {
+      const params = wrapper.vm.azureSearchParams;
+      await wrapper.setData({
+        myCaseFiles: true,
+      });
 
+      expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
+        search: params.search,
+        filter: wrapper.vm.myCaseFilesFilter,
+        top: params.top,
+        skip: params.skip,
+        orderBy: params.orderBy,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+      });
+    });
+
+    it('sets filter to myCaseFilesFilter when false', async () => {
+      const params = wrapper.vm.azureSearchParams;
+      await wrapper.setData({
+        myCaseFiles: false,
+      });
+
+      expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
+        search: params.search,
+        filter: '',
+        top: params.top,
+        skip: params.skip,
+        orderBy: params.orderBy,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+      });
+    });
+  });
   describe('Computed', () => {
     beforeEach(() => {
+      storage.user.getters.userId = jest.fn(() => 'mock-id');
       wrapper = mount(Component, {
         localVue,
         store: {
@@ -196,6 +252,24 @@ describe('CaseFilesTable.vue', () => {
         };
 
         expect(wrapper.vm.customColumns).toEqual(expectedColumns);
+      });
+    });
+
+    describe('userId', () => {
+      it('returns the correct object', () => {
+        expect(wrapper.vm.userId).toEqual('mock-id');
+      });
+    });
+
+    describe('myCaseFilesFilter', () => {
+      it('returns the correct object', () => {
+        expect(wrapper.vm.myCaseFilesFilter).toEqual({
+          Entity: {
+            AssignedIndividualIds: {
+              any: 'mock-id',
+            },
+          },
+        });
       });
     });
 
