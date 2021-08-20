@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import {
-  mockCombinedTeams, mockTeamEvents, mockTeamsDataStandard, mockTeamsMetadataStandard
+  mockCombinedTeams, mockTeamEvents, mockTeamsDataStandard, mockTeamsMetadataStandard,
 } from '@/entities/team';
 import { EEventStatus, mockCombinedEvent } from '@/entities/event';
 import Component from './TeamStats.vue';
@@ -150,17 +150,17 @@ describe('TeamStats.vue', () => {
       it('Should set stats as per users found', async () => {
         await wrapper.vm.selectTeam(selectedTeam);
         expect(wrapper.vm.teamStats).toEqual({
-          countTotal:2,
-          countOpen:1,
-          countClose:1,
-          countTeamMembers:1
+          countTotal: 2,
+          countOpen: 1,
+          countClose: 1,
+          countTeamMembers: 1,
         });
       });
       it('Should set stats to default 0s if no users found', async () => {
-        const statTeam = [ {
-          entity: mockTeamsDataStandard({ teamMembers: []}),
+        const statTeam = [{
+          entity: mockTeamsDataStandard({ teamMembers: [] }),
           metadata: mockTeamsMetadataStandard(),
-        }]
+        }];
         wrapper.setData({ statTeam });
         await wrapper.vm.selectTeam(selectedTeam);
         expect(wrapper.vm.teamStats).toEqual({

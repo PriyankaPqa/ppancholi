@@ -7,7 +7,7 @@ import {
   mockFinancialAssistanceTableEntity,
   mockItems,
 } from '@/entities/financial-assistance';
-import { mockProgramsSearchData, Program } from '@/entities/program';
+import { mockProgramEntity } from '@/entities/program';
 import { BaseMock } from '../base/base.mock';
 import { IActionsMock, IGettersMock, IMutationsMock } from './storage.types';
 
@@ -20,7 +20,7 @@ export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanc
     ...this.baseGetters,
 
     name: jest.fn(() => ''),
-    program: jest.fn(() => new Program(mockProgramsSearchData()[0])),
+    program: jest.fn(() => mockProgramEntity()),
     status: jest.fn(() => Status.Active),
     addingItem: jest.fn(),
     items: jest.fn(() => mockItems()),

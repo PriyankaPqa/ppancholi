@@ -6,7 +6,10 @@ import { IProvider, IProviderMock } from '@/services/provider';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IState as IDashboardState } from '@/store/modules/dashboard/dashboard.types';
 import { IState as IOptionListState } from '@/store/modules/optionList/optionList.types';
-import { IState as IProgramState } from '@/store/modules/program/program.types';
+
+import { IProgramEntityState } from '@/store/modules/program/programEntity.types';
+import { IProgramMetadata } from '@/entities/program';
+
 import { IState as IBaseState } from '@/store/modules/base/base.types';
 import { IState as IUserState } from '@/store/modules/user/user.types';
 
@@ -59,8 +62,9 @@ export interface IRootState {
   [vuexModule.DASHBOARD_MODULE]?: IDashboardState,
   [vuexModule.OPTION_LIST_MODULE]?: IOptionListState,
   [vuexModule.TEAM_ENTITIES]?: ITeamEntityState,
-  [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>
-  [vuexModule.PROGRAM_MODULE]?: IProgramState,
+  [vuexModule.TEAM_METADATA]?: IBaseState<ITeamMetadata>,
+  [vuexModule.PROGRAM_ENTITIES]?: IProgramEntityState,
+  [vuexModule.PROGRAM_METADATA]?: IBaseState<IProgramMetadata>,
   [vuexModule.REGISTRATION_MODULE]?: IRegistrationState,
   [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]?: IFinancialAssistanceCategoryEntityState,
 }

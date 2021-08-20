@@ -1,18 +1,30 @@
-import { IStorageMock } from './storage.types';
+import {
+  IProgramCombined, IProgramEntity, mockCombinedPrograms, mockProgramEntity,
+} from '@/entities/program';
+import { BaseMock } from '../base/base.mock';
 
-export const mockStorageProgram = (): IStorageMock => ({
-  getters: {
-    getProgramById: jest.fn(),
-  },
+export class ProgramStorageMock extends BaseMock<IProgramCombined, IProgramEntity> {
+  constructor() {
+    super(mockCombinedPrograms(), mockProgramEntity());
+  }
 
-  actions: {
-    createProgram: jest.fn(),
-    updateProgram: jest.fn(),
-    searchPrograms: jest.fn(() => ({
-      odataCount: 1,
-      odataContext: 'context',
-      value: [],
-    })),
-    fetchProgram: jest.fn(),
-  },
-});
+  protected getters = {
+    ...this.baseGetters,
+  };
+
+  protected actions = {
+    ...this.baseActions,
+    createProgram: jest.fn((payload: IProgramEntity) => payload),
+    updateProgram: jest.fn((payload: IProgramEntity) => payload),
+  };
+
+  protected mutations = {
+    ...this.baseMutations,
+  };
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  });
+}

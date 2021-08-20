@@ -17,7 +17,6 @@ import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
 import colors from '@/ui/plugins/vuetify/colors';
 import { CaseFileStatus } from '@/entities/case-file';
 import { FPaymentStatus } from '@/entities/case-file-financial-assistance';
-import { EProgramStatus } from '@/entities/program';
 import { AccountStatus } from '@/entities/user-account';
 import { Status } from '@/entities/base';
 import { DocumentStatus } from '@/entities/case-file-document';
@@ -41,7 +40,7 @@ export default Vue.extend({
           'EEventCallCentreStatus',
           'EEventLocationStatus',
           'CaseFileStatus',
-          'EProgramStatus',
+          'Status',
           'AccountStatus',
           'DocumentStatus',
           'CaseFileFinancialAssistanceStatus',
@@ -84,8 +83,6 @@ export default Vue.extend({
           return this.getCaseFileStatusColor();
         case 'CaseFileFinancialAssistanceStatus':
           return this.getCaseFileFinancialAssistanceStatusColor();
-        case 'EProgramStatus':
-          return this.getProgramStatusColor();
         case 'AccountStatus':
           return this.getAccountStatusColor();
         case 'DocumentStatus':
@@ -124,8 +121,6 @@ export default Vue.extend({
           return `caseFile.status.${CaseFileStatus[this.status]}`;
         case 'CaseFileFinancialAssistanceStatus':
           return `caseFile.financialAssistance.paymentStatus.${FPaymentStatus[this.status]}`;
-        case 'EProgramStatus':
-          return `common.program_status.${EProgramStatus[this.status]}`;
         case 'AccountStatus':
           return `common.account_status.${AccountStatus[this.status]}`;
         case 'DocumentStatus':
@@ -199,19 +194,6 @@ export default Vue.extend({
           return colors.chips.green_pale;
         default:
           return colors.chips.green_pale;
-      }
-    },
-
-    getProgramStatusColor(): string {
-      switch (this.status) {
-        case EProgramStatus.Active:
-          return colors.chips.green;
-
-        case EProgramStatus.Inactive:
-          return colors.chips.light_grey;
-
-        default:
-          return colors.chips.green;
       }
     },
 

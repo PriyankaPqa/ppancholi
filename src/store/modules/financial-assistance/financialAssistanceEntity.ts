@@ -17,7 +17,7 @@ import {
 } from '@/entities/financial-assistance';
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
-import { IProgram } from '@/entities/program';
+import { IProgramEntity } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
 import { BaseModule } from '../base';
@@ -47,7 +47,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       },
     },
     status: Status.Inactive,
-    program: null as IProgram,
+    program: null as IProgramEntity,
     mainItems: [] as IFinancialAssistanceTableItem[],
     dirty: false,
     formDirty: false,
@@ -140,7 +140,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       state.addingItem = addingItem;
     },
 
-    setProgram: (state: IFinancialAssistanceEntityState, { program }: { program: IProgram }) => {
+    setProgram: (state: IFinancialAssistanceEntityState, { program }: { program: IProgramEntity }) => {
       state.program = program;
       state.formDirty = true;
     },
@@ -352,7 +352,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       state.program = {
         id: fa.metadata.programId,
         name: fa.metadata.programName,
-      } as IProgram;
+      } as IProgramEntity;
       state.name = fa.entity.name;
       state.status = fa.entity.status;
 

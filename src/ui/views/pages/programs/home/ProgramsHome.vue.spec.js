@@ -2,10 +2,8 @@ import { RcDataTable } from '@crctech/component-library';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { mockProgramsSearchData, Program } from '@/entities/program';
+import { mockProgramEntities } from '@/entities/program';
 import Component from './ProgramsHome.vue';
-
-const mockPrograms = () => mockProgramsSearchData().map((ev) => new Program(ev));
 
 const localVue = createLocalVue();
 
@@ -26,10 +24,13 @@ describe('ProgramsHome.vue', () => {
         propsData: {
           id: 'event-id',
         },
+        mocks: {
+          $storage: mockStorage(),
+        },
       });
 
-      wrapper.vm.azureSearchItems = mockPrograms();
-      wrapper.vm.azureSearchCount = mockPrograms().length;
+      wrapper.vm.azureSearchItems = mockProgramEntities();
+      wrapper.vm.azureSearchCount = mockProgramEntities().length;
 
       wrapper.vm.getProgramDetailsRoute = jest.fn(() => ({
         name: routes.programs.details.name,
@@ -98,8 +99,8 @@ describe('ProgramsHome.vue', () => {
         },
       });
 
-      wrapper.vm.azureSearchItems = mockPrograms();
-      wrapper.vm.azureSearchCount = mockPrograms().length;
+      wrapper.vm.azureSearchItems = mockProgramEntities();
+      wrapper.vm.azureSearchCount = mockProgramEntities().length;
     });
 
     describe('customColumns', () => {
@@ -115,8 +116,8 @@ describe('ProgramsHome.vue', () => {
         });
 
         const expectedColumns = {
-          name: 'ProgramName/Translation/en',
-          status: 'ProgramStatusName/Translation/en',
+          name: 'Entity/Name/Translation/en',
+          status: 'Entity/Status',
           edit: 'edit',
         };
 
@@ -135,8 +136,8 @@ describe('ProgramsHome.vue', () => {
           computed: {
             customColumns() {
               return {
-                name: 'ProgramName/Translation/en',
-                status: 'ProgramStatusName/Translation/en',
+                name: 'Entity/Name/Translation/en',
+                status: 'Entity/Status',
                 edit: 'edit',
               };
             },
@@ -147,13 +148,13 @@ describe('ProgramsHome.vue', () => {
           {
             text: 'common.name',
             sortable: true,
-            value: 'ProgramName/Translation/en',
+            value: 'Entity/Name/Translation/en',
             width: '100%',
           },
           {
             text: 'common.status',
             sortable: true,
-            value: 'ProgramStatusName/Translation/en',
+            value: 'Entity/Status',
             width: '100px',
           },
           {
@@ -179,7 +180,7 @@ describe('ProgramsHome.vue', () => {
     describe('tableProps', () => {
       it('returns the correct object', () => {
         expect(wrapper.vm.tableProps).toEqual({
-          loading: false,
+          loading: wrapper.vm.$store.state.programEntities.searchLoading,
         });
       });
     });
@@ -190,9 +191,9 @@ describe('ProgramsHome.vue', () => {
       const storage = mockStorage();
 
       storage.caseFile.actions.searchCaseFiles = jest.fn(() => ({
-        value: mockPrograms(),
+        value: mockProgramEntities(),
         odataContext: '',
-        odataCount: mockPrograms().length,
+        odataCount: mockProgramEntities().length,
       }));
 
       wrapper = mount(Component, {
@@ -205,8 +206,8 @@ describe('ProgramsHome.vue', () => {
         },
       });
 
-      wrapper.vm.azureSearchItems = mockPrograms();
-      wrapper.vm.azureSearchCount = mockPrograms().length;
+      wrapper.vm.azureSearchItems = mockProgramEntities();
+      wrapper.vm.azureSearchCount = mockProgramEntities().length;
     });
 
     describe('fetchData', () => {
@@ -221,7 +222,7 @@ describe('ProgramsHome.vue', () => {
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.program.actions.searchPrograms).toHaveBeenCalledWith({
+        expect(wrapper.vm.$storage.program.actions.search).toHaveBeenCalledWith({
           search: params.search,
           filter: params.filter,
           top: params.top,
@@ -236,10 +237,10 @@ describe('ProgramsHome.vue', () => {
 
     describe('getProgramDetailsRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getProgramDetailsRoute(mockPrograms()[0])).toEqual({
+        expect(wrapper.vm.getProgramDetailsRoute(mockProgramEntities()[0])).toEqual({
           name: routes.programs.details.name,
           params: {
-            programId: mockPrograms()[0].id,
+            programId: mockProgramEntities()[0].id,
           },
         });
       });
@@ -247,10 +248,10 @@ describe('ProgramsHome.vue', () => {
 
     describe('getProgramEditRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getProgramEditRoute(mockPrograms()[0])).toEqual({
+        expect(wrapper.vm.getProgramEditRoute(mockProgramEntities()[0])).toEqual({
           name: routes.programs.edit.name,
           params: {
-            programId: mockPrograms()[0].id,
+            programId: mockProgramEntities()[0].id,
           },
         });
       });

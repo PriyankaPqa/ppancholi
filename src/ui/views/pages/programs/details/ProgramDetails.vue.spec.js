@@ -1,6 +1,7 @@
-import { createLocalVue, mount } from '@/test/testSetup';
+import { mockStorage } from '@/store/storage';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockProgramsSearchData, Program, EPaymentModalities } from '@/entities/program';
+import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
 import Component from './ProgramDetails.vue';
 
 const localVue = createLocalVue();
@@ -8,13 +9,15 @@ const localVue = createLocalVue();
 describe('ProgramDetails.vue', () => {
   let wrapper;
 
-  beforeEach(() => {
-    const program = new Program(mockProgramsSearchData()[0]);
+  const storage = mockStorage();
+  const program = mockProgramEntity();
 
+  beforeEach(() => {
     wrapper = mount(Component, {
       localVue,
       propsData: {
         programId: 'PROGRAM_ID',
+        id: 'EVENT_ID',
       },
       computed: {
         program() {
@@ -25,7 +28,23 @@ describe('ProgramDetails.vue', () => {
   });
 
   describe('Template', () => {
-    test('the edit button is associated to the correct route', () => {
+    test('the edit button is associated to the correct route', async () => {
+      wrapper = await mount(Component, {
+        localVue,
+        propsData: {
+          programId: 'PROGRAM_ID',
+          id: 'EVENT_ID',
+        },
+        computed: {
+          program() {
+            return program;
+          },
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+
       const button = wrapper.findDataTest('edit-button');
 
       expect(button.props('to')).toEqual({
@@ -44,6 +63,60 @@ describe('ProgramDetails.vue', () => {
       await button.trigger('click');
 
       expect(wrapper.vm.back).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('Life cycle', () => {
+    describe('created', () => {
+      it('tries to get program from local', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            programId: 'PROGRAM_ID',
+            id: 'EVENT_ID',
+          },
+          computed: {
+            program() {
+              return program;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.$storage.program.actions.fetch).toHaveBeenCalledTimes(0);
+      });
+
+      it('fetches program if not found locally', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            programId: 'PROGRAM_ID',
+            id: 'EVENT_ID',
+          },
+          computed: {
+            program() {
+              return program;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.$storage.program.getters.get = jest.fn(() => null);
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.$storage.program.actions.fetch).toHaveBeenCalledTimes(1);
+      });
     });
   });
 

@@ -1,41 +1,31 @@
-import { Program } from './program';
-import { mockProgramsSearchData } from './program.mock';
-import { EPaymentModalities, EProgramStatus, IProgram } from './program.types';
+import { mockProgramEntityData } from '.';
+import { ProgramEntity } from './program';
+import { IProgramEntity } from './program.types';
 
-const mockProgramData = mockProgramsSearchData()[0];
+const mockProgramData = mockProgramEntityData();
 
 describe('>>> Program', () => {
   describe('>> constructor', () => {
-    let program: IProgram;
+    let program: IProgramEntity;
 
     beforeEach(() => {
-      program = new Program(mockProgramData);
+      program = new ProgramEntity(mockProgramData);
     });
 
     it('should instantiate id', () => {
-      expect(program.id).toBe('50448672-17db-4640-9cdf-83a310821245');
+      expect(program.id).toBe(mockProgramData.id);
     });
 
     it('should instantiate created', () => {
-      expect(program.created).toBe('2021-03-31T15:23:00.755Z');
+      expect(program.created).toBe(mockProgramData.created);
     });
 
     it('should instantiate name', () => {
-      expect(program.name).toEqual({
-        translation: {
-          en: 'Program A',
-          fr: 'Program A FR',
-        },
-      });
+      expect(program.name).toEqual(mockProgramData.name);
     });
 
     it('should instantiate description', () => {
-      expect(program.description).toEqual({
-        translation: {
-          en: 'Description EN',
-          fr: 'Description FR',
-        },
-      });
+      expect(program.description).toEqual(mockProgramData.description);
     });
 
     it('should instantiate approvalRequired', () => {
@@ -43,30 +33,19 @@ describe('>>> Program', () => {
     });
 
     it('should instantiate eligibilityCriteria', () => {
-      expect(program.eligibilityCriteria).toEqual({
-        authenticated: true,
-        completedAssessments: false,
-        impacted: false,
-      });
+      expect(program.eligibilityCriteria).toEqual(mockProgramData.eligibilityCriteria);
     });
 
     it('should instantiate eventId', () => {
-      expect(program.eventId).toBe('d3becde1-6ec7-4b59-85c0-6e7fa3511e2e');
+      expect(program.eventId).toBe(mockProgramData.eventId);
     });
 
     it('should instantiate programStatus', () => {
-      expect(program.programStatus).toBe(EProgramStatus.Active);
+      expect(program.status).toBe(mockProgramData.status);
     });
 
     it('should instantiate paymentModalities', () => {
-      expect(program.paymentModalities).toEqual([
-        EPaymentModalities.Cheque,
-        EPaymentModalities.DirectDeposit,
-        EPaymentModalities.GiftCard,
-        EPaymentModalities.Invoice,
-        EPaymentModalities.PrepaidCard,
-        EPaymentModalities.Voucher,
-      ]);
+      expect(program.paymentModalities).toEqual(mockProgramData.paymentModalities);
     });
   });
 });

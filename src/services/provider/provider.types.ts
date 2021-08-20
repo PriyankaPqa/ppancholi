@@ -7,7 +7,7 @@ import { ICaseFilesService, ICaseFilesServiceMock } from '../case-files/entity';
 import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
 import { ITeamsService, ITeamsServiceMock } from '../teams/entity';
 import { IAppUsersService, IAppUsersServiceMock } from '../app-users';
-import { IProgramsService, IProgramsServiceMock } from '../programs';
+import { IProgramsService, IProgramsServiceMock } from '../programs/entity';
 import { IUserAccountsServiceMock, UserAccountsService } from '../user-accounts/entity';
 import { IEventsService, IEventsServiceMock } from '../events/entity';
 import { ICaseNotesService, ICaseNotesServiceMock } from '../case-notes/entity';

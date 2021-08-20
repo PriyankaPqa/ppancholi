@@ -1,18 +1,14 @@
 import { IMultilingual } from '@/types';
+import { BaseEntity } from '../base';
 import utils from '../utils';
 import {
   EPaymentModalities,
-  EProgramStatus,
   IEligibilityCriteria,
-  IProgram,
-  IProgramSearchData,
+  IProgramEntity,
+  IProgramEntityData,
 } from './program.types';
 
-export class Program implements IProgram {
-  id: uuid;
-
-  created: Date | string;
-
+export class ProgramEntity extends BaseEntity implements IProgramEntity {
   eventId: uuid;
 
   name: IMultilingual;
@@ -23,26 +19,23 @@ export class Program implements IProgram {
 
   eligibilityCriteria: IEligibilityCriteria;
 
-  programStatus: EProgramStatus;
-
   paymentModalities: EPaymentModalities[];
 
-  constructor(data?: IProgramSearchData) {
+  constructor(data?: IProgramEntityData) {
     if (data) {
-      this.id = data.programId;
-      this.created = data.createdDate;
+      super(data);
       this.eventId = data.eventId;
-      this.name = utils.initMultilingualAttributes(data.programName);
-      this.description = utils.initMultilingualAttributes(data.programDescription);
+      this.name = utils.initMultilingualAttributes(data.name);
+      this.description = utils.initMultilingualAttributes(data.description);
       this.approvalRequired = data.approvalRequired;
       this.eligibilityCriteria = {
         authenticated: data.eligibilityCriteria.authenticated,
         impacted: data.eligibilityCriteria.impacted,
         completedAssessments: data.eligibilityCriteria.completedAssessments,
       };
-      this.programStatus = data.programStatus;
       this.paymentModalities = [...data.paymentModalities];
     } else {
+      super();
       this.reset();
     }
   }
@@ -59,7 +52,6 @@ export class Program implements IProgram {
       completedAssessments: false,
       impacted: false,
     };
-    this.programStatus = EProgramStatus.Inactive;
   }
 
   public fillEmptyMultilingualAttributes() {

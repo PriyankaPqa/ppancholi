@@ -1,12 +1,5 @@
 import { IMultilingual } from '@/types';
-
-/**
- * Enums
- */
-export enum EProgramStatus {
-  Active = 1,
-  Inactive = 2,
-}
+import { IEntity, IEntityCombined } from '../base';
 
 export enum EPaymentModalities {
   ETransfer = 1,
@@ -18,74 +11,29 @@ export enum EPaymentModalities {
   Voucher = 7,
 }
 
-/**
- * Value objects
- */
 export interface IEligibilityCriteria {
   authenticated: boolean;
   impacted: boolean;
   completedAssessments: boolean;
 }
 
-/**
- * Interfaces
- */
-
-export interface ICreateProgramRequest {
-  name: IMultilingual;
-  description: IMultilingual;
-  eventId: uuid;
-  paymentModalities: EPaymentModalities[];
-  eligibilityCriteria: IEligibilityCriteria;
-  approvalRequired: boolean;
-  programStatus: EProgramStatus;
-}
-
-export interface IUpdateProgramRequest {
-  name: IMultilingual;
-  description: IMultilingual;
-  paymentModalities: EPaymentModalities[];
-  eligibilityCriteria: IEligibilityCriteria;
-  approvalRequired: boolean;
-  programStatus: EProgramStatus;
-}
-
-export interface IProgramData {
-  id: uuid;
-  created: Date | string;
-  timestamp: Date | string;
-  eTag: string;
+export interface IProgramEntityData extends IEntity {
   eventId: uuid;
   name: IMultilingual;
   description: IMultilingual;
   approvalRequired: boolean;
   eligibilityCriteria: IEligibilityCriteria;
-  programStatus: EProgramStatus;
   paymentModalities: EPaymentModalities[];
+
 }
 
-export interface IProgramSearchData {
-  programId: uuid;
-  createdDate: Date | string;
-  eventId: uuid;
-  programName: IMultilingual;
-  programDescription: IMultilingual;
-  approvalRequired: boolean;
-  eligibilityCriteria: IEligibilityCriteria;
-  programStatus: EProgramStatus;
-  programStatusName: IMultilingual;
-  paymentModalities: EPaymentModalities[];
-}
-
-export interface IProgram {
-  id: uuid;
-  created: Date | string;
-  eventId: uuid;
-  name: IMultilingual;
-  description: IMultilingual;
-  approvalRequired: boolean;
-  eligibilityCriteria: IEligibilityCriteria;
-  programStatus: EProgramStatus;
-  paymentModalities: EPaymentModalities[];
+export interface IProgramEntity extends IProgramEntityData {
   fillEmptyMultilingualAttributes(): void;
 }
+
+export interface IProgramMetadata extends IEntity {
+  eventId: uuid;
+  programStatusName: IMultilingual;
+}
+
+export type IProgramCombined = IEntityCombined<IProgramEntity, IProgramMetadata>;

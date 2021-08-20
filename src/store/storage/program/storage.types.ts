@@ -1,28 +1,43 @@
-import { IProgram } from '@/entities/program';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IProgramEntity, IProgramMetadata } from '@/entities/program';
+import {
+  IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
+} from '../base';
+
+export interface IGetters extends IBaseGetters<IProgramEntity, IProgramMetadata> {}
+
+export interface IGettersMock extends IBaseGettersMock<IProgramEntity, IProgramMetadata> {
+}
+
+export interface IActions extends IBaseActions<IProgramEntity, IProgramMetadata, { id: uuid; eventId: uuid }> {
+  createProgram(payload: IProgramEntity): Promise<IProgramEntity>;
+  updateProgram(payload: IProgramEntity): Promise<IProgramEntity>;
+}
+
+export interface IActionsMock extends IBaseActionsMock<IProgramEntity, IProgramMetadata> {
+  createProgram: jest.Mock<IProgramEntity>;
+  updateProgram: jest.Mock<IProgramEntity>;
+}
+
+export interface IMutations extends IBaseMutations<IProgramEntity, IProgramMetadata> {}
+
+export interface IMutationsMock extends IBaseMutationsMock<IProgramEntity, IProgramMetadata> {}
+
+export interface IStorageMake {
+  getters: IGetters;
+  actions: IActions;
+  mutations: IMutations;
+}
+
+export interface IStorageMakeMock {
+  getters: IGettersMock;
+  actions: IActionsMock;
+  mutations: IMutationsMock;
+}
 
 export interface IStorage {
-  getters: {
-    getProgramById(id: uuid): IProgram;
-  },
-
-  actions: {
-    createProgram(program: IProgram): Promise<IProgram>;
-    updateProgram(program: IProgram): Promise<IProgram>;
-    searchPrograms(params: IAzureSearchParams): Promise<IAzureSearchResult<IProgram>>;
-    fetchProgram(id: uuid): Promise<IProgram>;
-  }
+  make(): IStorageMake;
 }
 
 export interface IStorageMock {
-  getters: {
-    getProgramById: jest.Mock<void>;
-  },
-
-  actions: {
-    createProgram: jest.Mock<void>;
-    updateProgram: jest.Mock<void>;
-    searchPrograms: jest.Mock<IAzureSearchResult<IProgram>>;
-    fetchProgram: jest.Mock<void>;
-  },
+  make(): IStorageMake;
 }

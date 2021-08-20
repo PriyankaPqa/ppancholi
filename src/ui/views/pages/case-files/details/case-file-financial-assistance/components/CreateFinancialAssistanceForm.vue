@@ -57,7 +57,7 @@ import {
   VAutocompleteWithValidation,
 } from '@crctech/component-library';
 import _sortBy from 'lodash/sortBy';
-import { IProgramData } from '@/entities/program';
+import { IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { CaseFinancialAssistanceEntity, ICaseFinancialAssistanceEntity } from '@/entities/case-file-financial-assistance';
@@ -85,7 +85,7 @@ export default Vue.extend({
     },
 
     program: {
-      type: Object as () => IProgramData,
+      type: Object as () => IProgramEntity,
       default: null,
       required: false,
     },

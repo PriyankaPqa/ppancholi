@@ -3,7 +3,6 @@ import { IStorageMake, IStorageMakeMock } from '@crctech/registration-lib/src/st
 import { IStorage as IUserStorage, IStorageMock as IUserStorageMock } from './user';
 import { IStorage as IDashboardStorage, IStorageMock as IDashboardStorageMock } from './dashboard';
 import { IStorage as IOptionListStorage, IStorageMock as IOptionListStorageMock } from './optionList';
-import { IStorage as IProgramStorage, IStorageMock as IProgramStorageMock } from './program';
 import { IStorageMake as IFinancialAssistanceMakeStorage, IStorageMakeMock as IFinancialAssistanceMakeStorageMock } from './financial-assistance';
 import {
   IStorageMake as IUserAccountMakeStorage,
@@ -46,6 +45,11 @@ import {
 } from './mass-action';
 
 import {
+  IStorageMake as IProgramMakeStorage,
+  IStorageMakeMock as IProgramMakeStorageMock,
+} from './program';
+
+import {
   IStorageMake as IFinancialAssistanceCategoryMakeStorage,
   IStorageMakeMock as IFinancialAssistanceCategoryMakeStorageMock,
 } from './financial-assistance-category';
@@ -60,7 +64,7 @@ export interface IStorage {
   event: IEventMakeStorage;
   optionList: IOptionListStorage;
   team: ITeamMakeStorage;
-  program: IProgramStorage;
+  program: IProgramMakeStorage;
   registration: IRegistrationStorage;
   financialAssistance: IFinancialAssistanceMakeStorage;
   financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorage;
@@ -79,7 +83,7 @@ export interface IStorageMock {
   event: IEventMakeStorageMock;
   optionList: IOptionListStorageMock;
   team: ITeamMakeStorageMock;
-  program: IProgramStorageMock;
+  program: IProgramMakeStorageMock;
   registration: IRegistrationMock;
   financialAssistance: IFinancialAssistanceMakeStorageMock;
   financialAssistanceCategory: IFinancialAssistanceCategoryMakeStorageMock;

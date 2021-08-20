@@ -9,7 +9,7 @@ import {
   IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
-import { IProgram } from '@/entities/program';
+import { IProgramEntity } from '@/entities/program';
 import { IStore, IState } from '@/store/store.types';
 import { IMultilingual } from '@/types';
 import { Base } from '../base';
@@ -29,7 +29,7 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     addingItem: (): boolean | number => this.store.getters[`${this.entityModuleName}/addingItem`],
 
-    program: (): IProgram => this.store.getters[`${this.entityModuleName}/program`],
+    program: (): IProgramEntity => this.store.getters[`${this.entityModuleName}/program`],
 
     items: (): IFinancialAssistanceTableItem[] => this.store.getters[`${this.entityModuleName}/items`],
 
@@ -69,7 +69,7 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
 
     setAddingItem: (addingItem: boolean) => this.store.commit(`${this.entityModuleName}/setAddingItem`, { addingItem }),
 
-    setProgram: (program: IProgram) => this.store.commit(`${this.entityModuleName}/setProgram`, { program }),
+    setProgram: (program: IProgramEntity) => this.store.commit(`${this.entityModuleName}/setProgram`, { program }),
 
     setItems: (items: Array<IFinancialAssistanceTableItem>) => this.store.commit(`${this.entityModuleName}/setItems`, { items }),
 

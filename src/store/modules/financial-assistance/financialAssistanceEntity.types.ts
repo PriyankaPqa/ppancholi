@@ -2,7 +2,7 @@ import { Status } from '@/entities/base';
 import {
   IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
-import { IProgram } from '@/entities/program';
+import { IProgramEntity } from '@/entities/program';
 import { IMultilingual } from '@/types';
 import { IState } from '../base/base.types';
 
@@ -10,7 +10,7 @@ export interface IFinancialAssistanceEntityState extends IState<IFinancialAssist
   id: uuid;
   name: IMultilingual;
   status: Status;
-  program: IProgram;
+  program: IProgramEntity;
   mainItems: IFinancialAssistanceTableItem[];
   dirty: boolean;
   formDirty: boolean;

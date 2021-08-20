@@ -22,7 +22,7 @@ export class BaseEntity implements IEntity {
     this.tenantId = data?.tenantId ?? '';
     this.created = data?.created ?? '';
     this.timestamp = data?.timestamp ?? '';
-    this.status = data?.status ?? null;
+    this.status = data?.status ?? Status.Inactive;
     this.eTag = data?.eTag ?? '';
     this.createdBy = data?.createdBy ?? '';
     this.lastUpdatedBy = data?.lastUpdatedBy ?? '';

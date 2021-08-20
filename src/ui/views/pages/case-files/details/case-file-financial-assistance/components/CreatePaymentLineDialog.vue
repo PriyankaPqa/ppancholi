@@ -99,7 +99,7 @@ import {
   VSelectWithValidation,
 } from '@crctech/component-library';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
-import { EPaymentModalities, IProgram } from '@/entities/program';
+import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import helpers from '@/ui/helpers';
 import { VForm } from '@/types';
 // import PaymentTypeHandler from './PaymentTypes/PaymentTypeHandler.vue';
@@ -124,7 +124,7 @@ export default Vue.extend({
     },
 
     program: {
-      type: Object as () => IProgram,
+      type: Object as () => IProgramEntity,
       required: true,
     },
 

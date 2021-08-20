@@ -1,4 +1,5 @@
 import { BaseEntity, mockBaseData } from './index';
+import { Status } from './base.types';
 
 const mock = mockBaseData();
 
@@ -68,7 +69,7 @@ describe('>>> Base Entity', () => {
 
       it('should instantiate status', () => {
         const entity = new BaseEntity();
-        expect(entity.status).toBe(null);
+        expect(entity.status).toBe(Status.Inactive);
       });
 
       it('should instantiate eTag', () => {

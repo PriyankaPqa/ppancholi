@@ -6,7 +6,7 @@ import { MAX_LENGTH_SM } from '@/constants/validations';
 import { Status } from '@/entities/base';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { mockItems } from '@/entities/financial-assistance';
-import { EProgramStatus, mockProgramsSearchData, Program } from '@/entities/program';
+import { ProgramEntity, mockProgramEntity, mockProgramEntities } from '@/entities/program';
 
 import Component from '../CreateEditFinancialAssistance.vue';
 
@@ -156,7 +156,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('programsSorted', () => {
       it('returns the right value', async () => {
-        const programs = mockProgramsSearchData().map((p) => new Program(p));
+        const programs = mockProgramEntities();
         await wrapper.setData({ programs });
 
         expect(wrapper.vm.programsSorted).toEqual(_sortBy(programs, (program) => program.name.translation.en));
@@ -184,7 +184,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('name', () => {
       it('returns the right value', async () => {
-        const programName = mockProgramsSearchData()[0].programName.translation.en;
+        const programName = mockProgramEntity().name.translation.en;
 
         wrapper.vm.$storage.financialAssistance.getters.name = jest.fn(() => programName);
 
@@ -202,7 +202,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('program', () => {
       it('returns the right value', async () => {
-        const program = new Program(mockProgramsSearchData()[0]);
+        const program = new ProgramEntity(mockProgramEntity());
 
         wrapper.vm.$storage.financialAssistance.getters.program = jest.fn(() => program);
 
@@ -225,7 +225,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
           computed: {
             program() {
               return {
-                programStatus: EProgramStatus.Active,
+                status: Status.Active,
               };
             },
           },
@@ -242,7 +242,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
           computed: {
             program() {
               return {
-                programStatus: EProgramStatus.Inactive,
+                status: Status.Inactive,
               };
             },
           },

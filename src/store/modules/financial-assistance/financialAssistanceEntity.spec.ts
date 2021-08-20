@@ -7,7 +7,7 @@ import {
   mockItems,
   mockSubItems,
 } from '@/entities/financial-assistance';
-import { mockProgramsSearchData, Program } from '@/entities/program';
+import { mockProgramEntity } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { httpClient } from '@/services/httpClient';
 import { IMultilingual } from '@/types';
@@ -19,7 +19,7 @@ import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.typ
 const service = new FinancialAssistanceTablesService(httpClient);
 let module: FinancialAssistanceEntityModule;
 
-const mockProgram = new Program(mockProgramsSearchData()[0]);
+const mockProgram = mockProgramEntity();
 const mockState: IFinancialAssistanceEntityState = {
   id: '',
   items: [],
@@ -225,7 +225,7 @@ describe('>>> Financial Assistance Module', () => {
 
     describe('setProgram', () => {
       it('sets the setProgram', () => {
-        const program = new Program(mockProgramsSearchData()[1]);
+        const program = mockProgram;
 
         module.mutations.setProgram(module.state, { program });
 
@@ -640,21 +640,17 @@ describe('>>> Financial Assistance Module', () => {
         await module.actions.createSubItem(actionContext, { itemIndex, subItem });
 
         expect(module.service.createSubItem).toHaveBeenCalledTimes(1);
-        expect(module.service.createSubItem).toHaveBeenCalledWith(
-          faId,
-          mainItems[itemIndex].id,
-          {
-            subCategory: {
-              optionItemId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
-              specifiedOther: null,
-            },
-            maximumAmount: 1,
-            amountType: EFinancialAmountModes.Fixed,
-            documentationRequired: false,
-            frequency: EFinancialFrequency.OneTime,
-            id: undefined,
+        expect(module.service.createSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, {
+          subCategory: {
+            optionItemId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+            specifiedOther: null,
           },
-        );
+          maximumAmount: 1,
+          amountType: EFinancialAmountModes.Fixed,
+          documentationRequired: false,
+          frequency: EFinancialFrequency.OneTime,
+          id: undefined,
+        });
       });
     });
 
@@ -677,22 +673,17 @@ describe('>>> Financial Assistance Module', () => {
         await module.actions.editSubItem(actionContext, { itemIndex, subItemIndex, subItem });
 
         expect(module.service.editSubItem).toHaveBeenCalledTimes(1);
-        expect(module.service.editSubItem).toHaveBeenCalledWith(
-          faId,
-          mainItems[itemIndex].id,
-          mainItems[itemIndex].subItems[subItemIndex].id,
-          {
-            subCategory: {
-              optionItemId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
-              specifiedOther: null,
-            },
-            maximumAmount: 1,
-            amountType: EFinancialAmountModes.Fixed,
-            documentationRequired: false,
-            frequency: EFinancialFrequency.OneTime,
-            id: undefined,
+        expect(module.service.editSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, mainItems[itemIndex].subItems[subItemIndex].id, {
+          subCategory: {
+            optionItemId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+            specifiedOther: null,
           },
-        );
+          maximumAmount: 1,
+          amountType: EFinancialAmountModes.Fixed,
+          documentationRequired: false,
+          frequency: EFinancialFrequency.OneTime,
+          id: undefined,
+        });
       });
     });
 
@@ -714,11 +705,7 @@ describe('>>> Financial Assistance Module', () => {
         await module.actions.deleteSubItem(actionContext, { itemIndex, subItemIndex });
 
         expect(module.service.deleteSubItem).toHaveBeenCalledTimes(1);
-        expect(module.service.deleteSubItem).toHaveBeenCalledWith(
-          faId,
-          mainItems[itemIndex].id,
-          mainItems[itemIndex].subItems[subItemIndex].id,
-        );
+        expect(module.service.deleteSubItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id, mainItems[itemIndex].subItems[subItemIndex].id);
       });
     });
 
@@ -739,10 +726,7 @@ describe('>>> Financial Assistance Module', () => {
         await module.actions.deleteItem(actionContext, { itemIndex });
 
         expect(module.service.deleteItem).toHaveBeenCalledTimes(1);
-        expect(module.service.deleteItem).toHaveBeenCalledWith(
-          faId,
-          mainItems[itemIndex].id,
-        );
+        expect(module.service.deleteItem).toHaveBeenCalledWith(faId, mainItems[itemIndex].id);
       });
     });
 

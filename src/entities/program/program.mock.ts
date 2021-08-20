@@ -1,13 +1,11 @@
-import { IAzureSearchResult } from '@/types';
+import { IEntity, mockBaseData } from '../base';
+import { ProgramEntity } from './program';
 import {
-  EPaymentModalities, EProgramStatus, IProgramData, IProgramSearchData,
+  EPaymentModalities, IProgramCombined, IProgramEntity, IProgramEntityData, IProgramMetadata,
 } from './program.types';
 
-export const mockProgramsData = (): IProgramData[] => [{
-  id: '50448672-17db-4640-9cdf-83a310821245',
-  created: '2021-03-31T15:23:00.755Z',
-  timestamp: '2021-03-31T15:23:00.755Z',
-  eTag: '',
+export const mockProgramEntityData = (force?: Partial<IProgramEntityData>): IProgramEntityData => ({
+  ...mockBaseData(),
   name: {
     translation: {
       en: 'Program A',
@@ -27,7 +25,6 @@ export const mockProgramsData = (): IProgramData[] => [{
     impacted: false,
   },
   eventId: 'd3becde1-6ec7-4b59-85c0-6e7fa3511e2e',
-  programStatus: EProgramStatus.Active,
   paymentModalities: [
     EPaymentModalities.Cheque,
     EPaymentModalities.DirectDeposit,
@@ -36,90 +33,37 @@ export const mockProgramsData = (): IProgramData[] => [{
     EPaymentModalities.PrepaidCard,
     EPaymentModalities.Voucher,
   ],
-}];
-
-export const mockProgramCaseFinancialAssistance = (): IProgramData => ({
-  id: '657ae9a1-bfcc-4292-b871-8113b984e9cb',
-  created: '2021-03-31T15:23:00.755Z',
-  timestamp: '2021-03-31T15:23:00.755Z',
-  eTag: '',
-  name: {
-    translation: {
-      en: 'Program A',
-      fr: 'Program A FR',
-    },
-  },
-  description: {
-    translation: {
-      en: 'Description EN',
-      fr: 'Description FR',
-    },
-  },
-  approvalRequired: true,
-  eligibilityCriteria: {
-    authenticated: true,
-    completedAssessments: false,
-    impacted: false,
-  },
-  eventId: 'd3becde1-6ec7-4b59-85c0-6e7fa3511e2e',
-  programStatus: EProgramStatus.Active,
-  paymentModalities: [
-    EPaymentModalities.Cheque,
-    EPaymentModalities.DirectDeposit,
-    EPaymentModalities.GiftCard,
-    EPaymentModalities.Invoice,
-    EPaymentModalities.PrepaidCard,
-    EPaymentModalities.Voucher,
-  ],
+  ...force,
 });
 
-export const mockProgramsSearchData = (): IProgramSearchData[] => [{
-  programId: '50448672-17db-4640-9cdf-83a310821245',
-  createdDate: '2021-03-31T15:23:00.755Z',
-  programName: {
-    translation: {
-      en: 'Program A',
-      fr: 'Program A FR',
-    },
-  },
-  programDescription: {
-    translation: {
-      en: 'Description EN',
-      fr: 'Description FR',
-    },
-  },
-  approvalRequired: true,
-  eligibilityCriteria: {
-    authenticated: true,
-    completedAssessments: false,
-    impacted: false,
-  },
+export const mockProgramEntity = (force?: Partial<IProgramEntityData>): IProgramEntity => new ProgramEntity(mockProgramEntityData(force));
+
+export const mockProgramEntities = (): IProgramEntity[] => [
+  mockProgramEntity({ id: '1' }),
+  mockProgramEntity({ id: '2' }),
+];
+
+export const mockProgramMetadata = (force?: Partial<IProgramMetadata>): IProgramMetadata => ({
+  ...mockBaseData(),
   eventId: 'd3becde1-6ec7-4b59-85c0-6e7fa3511e2e',
-  programStatus: EProgramStatus.Active,
   programStatusName: {
     translation: {
-      en: 'Active',
-      fr: 'Actif',
+      en: 'Program status EN',
+      fr: 'Program status FR',
     },
   },
-  paymentModalities: [
-    EPaymentModalities.Cheque,
-    EPaymentModalities.DirectDeposit,
-    EPaymentModalities.GiftCard,
-    EPaymentModalities.Invoice,
-    EPaymentModalities.PrepaidCard,
-    EPaymentModalities.Voucher,
-  ],
-}];
+  ...force,
+});
 
-export const mockSearchPrograms = (index = -1): IAzureSearchResult<IProgramSearchData> => {
-  let value = mockProgramsSearchData();
-  if (index !== -1) {
-    value = [mockProgramsSearchData()[index]];
-  }
-  return {
-    odataCount: 1,
-    odataContext: 'context',
-    value,
-  };
-};
+export const mockProgramMetadataArray = (): IProgramMetadata[] => [mockProgramMetadata({ id: '1' }), mockProgramMetadata({ id: '2' })];
+
+export const mockCombinedProgram = (force?: Partial<IEntity>): IProgramCombined => ({
+  metadata: mockProgramMetadata(force),
+  entity: mockProgramEntity(force),
+});
+
+export const mockCombinedPrograms = (): IProgramCombined[] => [
+  mockCombinedProgram({ id: '1' }),
+  mockCombinedProgram({ id: '2' }),
+  mockCombinedProgram({ id: '3' }),
+];

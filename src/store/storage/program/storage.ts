@@ -1,30 +1,32 @@
-import { IProgram } from '@/entities/program';
-import { IStore, IState } from '@/store/store.types';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IStore, IState } from '@/store';
+import { IProgramEntity, IProgramMetadata } from '@/entities/program';
 import { IStorage } from './storage.types';
+import { Base } from '../base';
 
-export const makeStorage = (store: IStore<IState>): IStorage => ({
-  getters: {
-    getProgramById(id: uuid): IProgram {
-      return store.getters['program/getProgramById'](id);
-    },
-  },
+export class ProgramStorage extends Base<IProgramEntity, IProgramMetadata, { id: uuid; eventId: uuid }> implements IStorage {
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
+    super(pStore, pEntityModuleName, pMetadataModuleName);
+  }
 
-  actions: {
-    createProgram(program: IProgram): Promise<IProgram> {
-      return store.dispatch('program/createProgram', program);
-    },
+  private getters = {
+    ...this.baseGetters,
+  };
 
-    updateProgram(program: IProgram): Promise<IProgram> {
-      return store.dispatch('program/updateProgram', program);
-    },
+  private actions = {
+    ...this.baseActions,
 
-    searchPrograms(params: IAzureSearchParams): Promise<IAzureSearchResult<IProgram>> {
-      return store.dispatch('program/searchPrograms', params);
-    },
+    createProgram: (payload: IProgramEntity): Promise<IProgramEntity> => this.store.dispatch(`${this.entityModuleName}/createProgram`, payload),
 
-    fetchProgram(id: uuid): Promise<IProgram> {
-      return store.dispatch('program/fetchProgram', id);
-    },
-  },
-});
+    updateProgram: (payload: IProgramEntity): Promise<IProgramEntity> => this.store.dispatch(`${this.entityModuleName}/updateProgram`, payload),
+  };
+
+  private mutations = {
+    ...this.baseMutations,
+  };
+
+  public make = () => ({
+    getters: this.getters,
+    actions: this.actions,
+    mutations: this.mutations,
+  });
+}

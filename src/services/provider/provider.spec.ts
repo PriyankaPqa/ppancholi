@@ -7,7 +7,7 @@ import { AppUsersService } from '../app-users';
 import { CaseFilesService } from '../case-files/entity';
 import { OptionItemsService } from '../optionItems';
 import { TeamsService } from '../teams/entity';
-import { ProgramsService } from '../programs';
+import { ProgramsService } from '../programs/entity';
 import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { FinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
 
@@ -18,7 +18,7 @@ jest.mock('../case-files/entity');
 jest.mock('../events/entity');
 jest.mock('../optionItems');
 jest.mock('../teams/entity');
-jest.mock('../programs');
+jest.mock('../programs/entity');
 jest.mock('@crctech/registration-lib/src/services/public');
 jest.mock('@crctech/registration-lib/src/services/households/entity');
 jest.mock('../user-accounts/entity');

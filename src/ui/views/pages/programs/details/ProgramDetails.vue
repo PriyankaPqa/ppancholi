@@ -14,7 +14,7 @@
             </h5>
 
             <div>
-              <status-chip status-name="EProgramStatus" :status="program.programStatus" />
+              <status-chip status-name="Status" :status="program.status" />
               <v-btn class="ml-4" icon data-test="edit-button" :to="getEditRoute()">
                 <v-icon>
                   mdi-pencil
@@ -161,7 +161,7 @@ import {
   RcPageContent,
   RcPageLoading,
 } from '@crctech/component-library';
-import { EPaymentModalities, IProgram } from '@/entities/program';
+import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
 
@@ -175,6 +175,11 @@ export default Vue.extend({
   },
 
   props: {
+    id: {
+      type: String,
+      required: true,
+    },
+
     programId: {
       type: String,
       required: true,
@@ -188,8 +193,8 @@ export default Vue.extend({
   },
 
   computed: {
-    program(): IProgram {
-      return this.$storage.program.getters.getProgramById(this.programId);
+    program(): IProgramEntity {
+      return this.$storage.program.getters.get(this.programId).entity;
     },
   },
 
@@ -197,7 +202,10 @@ export default Vue.extend({
     this.loading = true;
 
     try {
-      await this.$storage.program.actions.fetchProgram(this.programId);
+      const program = this.$storage.program.getters.get(this.programId);
+      if (!program?.entity?.id) {
+        await this.$storage.program.actions.fetch({ id: this.programId, eventId: this.id });
+      }
     } finally {
       this.loading = false;
     }

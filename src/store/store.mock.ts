@@ -16,7 +16,6 @@ import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
 import { OptionItemsService } from '@/services/optionItems/optionItems';
 import { tabs } from '@/store/modules/registration/tabs';
-import { program } from '@/store/modules/program';
 import { optionList } from '@/store/modules/optionList';
 import { dashboard } from '@/store/modules/dashboard';
 import { user } from '@/store/modules/user';
@@ -64,6 +63,11 @@ import { TeamMetadataModule } from '@/store/modules/team/teamMetadata';
 import { TeamsService } from '@/services/teams/entity';
 import { TeamsMetadataService } from '@/services/teams/metadata';
 
+import { ProgramEntityModule } from '@/store/modules/program/programEntity';
+import { ProgramMetadataModule } from '@/store/modules/program/programMetadata';
+import { ProgramsService } from '@/services/programs/entity';
+import { ProgramsMetadataService } from '@/services/programs/metadata';
+
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
 
@@ -103,12 +107,14 @@ const mockConfig = {
     [vuexModule.OPTION_LIST_MODULE]: optionList,
     [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(new TeamsService(httpClient)).getModule(),
     [vuexModule.TEAM_METADATA]: new TeamMetadataModule(new TeamsMetadataService(httpClient)).getModule(),
-    [vuexModule.PROGRAM_MODULE]: program,
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: true, skipEmailPhoneRules: true, mode: ERegistrationMode.CRC,
     }),
     [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(new MassActionService(httpClient)).getModule(),
     [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(null).getModule(),
+
+    [vuexModule.PROGRAM_ENTITIES]: new ProgramEntityModule(new ProgramsService(httpClient)).getModule(),
+    [vuexModule.PROGRAM_METADATA]: new ProgramMetadataModule(new ProgramsMetadataService(httpClient)).getModule(),
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
       new FinancialAssistanceCategoriesService(httpClient),

@@ -1,5 +1,6 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { Program, EProgramStatus } from '@/entities/program';
+import { Status } from '@/entities/base';
+import { ProgramEntity } from '@/entities/program';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import Component from '../ProgramForm.vue';
 
@@ -18,7 +19,7 @@ describe('ProgramForm.vue', () => {
         localVue,
         propsData: {
           isEditMode: false,
-          program: new Program(),
+          program: new ProgramEntity(),
           isNameUnique: true,
           isDirty: false,
         },
@@ -30,7 +31,7 @@ describe('ProgramForm.vue', () => {
         await wrapper.setData({
           localProgram: {
             ...wrapper.vm.localProgram,
-            programStatus: EProgramStatus.Active,
+            status: Status.Active,
           },
         });
 
@@ -41,7 +42,7 @@ describe('ProgramForm.vue', () => {
         await wrapper.setData({
           localProgram: {
             ...wrapper.vm.localProgram,
-            programStatus: EProgramStatus.Inactive,
+            status: Status.Inactive,
           },
         });
 
@@ -51,13 +52,13 @@ describe('ProgramForm.vue', () => {
       it('sets the program to Active when passed true', () => {
         wrapper.vm.isStatusActive = true;
 
-        expect(wrapper.vm.localProgram.programStatus).toBe(EProgramStatus.Active);
+        expect(wrapper.vm.localProgram.status).toBe(Status.Active);
       });
 
       it('sets the program to Inactive when passed false', () => {
         wrapper.vm.isStatusActive = false;
 
-        expect(wrapper.vm.localProgram.programStatus).toBe(EProgramStatus.Inactive);
+        expect(wrapper.vm.localProgram.status).toBe(Status.Inactive);
       });
     });
 
@@ -66,7 +67,7 @@ describe('ProgramForm.vue', () => {
         await wrapper.setData({
           localProgram: {
             ...wrapper.vm.localProgram,
-            programStatus: EProgramStatus.Active,
+            status: Status.Active,
           },
         });
 
@@ -77,7 +78,7 @@ describe('ProgramForm.vue', () => {
         await wrapper.setData({
           localProgram: {
             ...wrapper.vm.localProgram,
-            programStatus: EProgramStatus.Inactive,
+            status: Status.Inactive,
           },
         });
 
@@ -92,7 +93,7 @@ describe('ProgramForm.vue', () => {
         localVue,
         propsData: {
           isEditMode: false,
-          program: new Program(),
+          program: new ProgramEntity(),
           isNameUnique: false,
           isDirty: false,
         },
@@ -128,7 +129,7 @@ describe('ProgramForm.vue', () => {
         localVue,
         propsData: {
           isEditMode: false,
-          program: new Program(),
+          program: new ProgramEntity(),
           isNameUnique: true,
           isDirty: false,
         },

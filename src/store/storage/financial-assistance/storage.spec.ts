@@ -7,7 +7,7 @@ import {
   mockItems,
   mockSubItems,
 } from '@/entities/financial-assistance';
-import { mockProgramsSearchData, Program } from '@/entities/program';
+import { mockProgramEntity } from '@/entities/program';
 import { mockStore } from '@/store';
 import { FinancialAssistanceStorage } from './storage';
 
@@ -117,7 +117,7 @@ describe('>>> Financial Assistance Storage', () => {
     });
 
     it('should proxy setProgram', () => {
-      const program = new Program(mockProgramsSearchData()[0]);
+      const program = mockProgramEntity();
 
       storage.mutations.setProgram(program);
       expect(store.commit).toBeCalledWith(`${entityModuleName}/setProgram`, { program });

@@ -6,7 +6,7 @@ import { CaseFilesService } from '../case-files/entity';
 import { AppUsersService } from '../app-users';
 import { OptionItemsService } from '../optionItems';
 import { TeamsService } from '../teams/entity';
-import { ProgramsService } from '../programs';
+import { ProgramsService } from '../programs/entity';
 import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { UserAccountsService } from '../user-accounts/entity';
 import { EventsService } from '../events/entity';

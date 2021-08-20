@@ -5,7 +5,7 @@ import { mockAppUsersService } from '../app-users';
 import { mockCaseFilesService } from '../case-files/entity';
 import { mockOptionItemsServiceService } from '../optionItems';
 import { mockTeamsService } from '../teams/entity';
-import { mockProgramsService } from '../programs';
+import { mockProgramsService } from '../programs/entity';
 import { mockFinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { mockUserAccountsService } from '../user-accounts/entity';
 import { mockEventsService } from '../events/entity';

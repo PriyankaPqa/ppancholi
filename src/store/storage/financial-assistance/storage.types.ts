@@ -8,7 +8,7 @@ import {
   IFinancialAssistanceTableItem,
   IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
-import { IProgram } from '@/entities/program';
+import { IProgramEntity } from '@/entities/program';
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { Status } from '@/entities/base';
 import {
@@ -19,7 +19,7 @@ export interface IGetters extends IBaseGetters<IFinancialAssistanceTableEntity, 
   name(language: string): string;
   status(): Status;
   addingItem(): boolean | number;
-  program(): IProgram;
+  program(): IProgramEntity;
   items(): IFinancialAssistanceTableItem[];
   subItems(): IFinancialAssistanceTableSubItem[];
   newItem(): IFinancialAssistanceTableItem;
@@ -38,7 +38,7 @@ export interface IGettersMock extends IBaseGettersMock<IFinancialAssistanceTable
   name: jest.Mock<string>;
   status: jest.Mock<Status>;
   addingItem: jest.Mock<void>;
-  program: jest.Mock<IProgram>;
+  program: jest.Mock<IProgramEntity>;
   items: jest.Mock<IFinancialAssistanceTableItem[]>;
   subItems: jest.Mock<void>;
   newItem: jest.Mock<IFinancialAssistanceTableItem>;
@@ -59,7 +59,7 @@ export interface IMutations extends IBaseMutations<IFinancialAssistanceTableEnti
   setNameInAllLanguages(name: IMultilingual): void;
   setStatus(status: Status): void;
   setAddingItem(addingItem: boolean): void;
-  setProgram(program: IProgram): void;
+  setProgram(program: IProgramEntity): void;
   setItems(items: Array<IFinancialAssistanceTableItem>): void;
   setItem(item: IFinancialAssistanceTableItem, index: number): void;
   setItemItem(item: IOptionItem, index: number): void;

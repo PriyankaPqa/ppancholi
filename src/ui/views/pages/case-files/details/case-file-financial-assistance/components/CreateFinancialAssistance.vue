@@ -77,7 +77,7 @@ import
 import { Status } from '@/entities/base/index';
 import { ICaseFileEntity, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
-import { IProgram, IProgramData } from '@/entities/program';
+import { IProgramEntity } from '@/entities/program';
 import routes from '@/constants/routes';
 import CreateFinancialAssistanceForm from './CreateFinancialAssistanceForm.vue';
 import CaseFileFinancialAssistancePaymentLineDialog from './CreatePaymentLineDialog.vue';
@@ -96,9 +96,9 @@ export default Vue.extend({
       financialAssistanceLoading: false,
       financialAssistance: null as CaseFinancialAssistanceEntity,
       financialTables: [] as IFinancialAssistanceTableEntity[],
-      selectedProgram: null as IProgram,
+      selectedProgram: null as IProgramEntity,
       selectedTable: null as IFinancialAssistanceTableEntity,
-      programs: null as IProgramData[],
+      programs: null as IProgramEntity[],
       editPaymentLine: null,
       showAddPaymentLineForm: false,
       showEditPaymentLineForm: false,
@@ -179,7 +179,8 @@ export default Vue.extend({
     async updateSelectedProgram(table: IFinancialAssistanceTableEntity) {
       const selectedProgramId = table?.programId;
       if (selectedProgramId) {
-        this.selectedProgram = await this.$storage.program.actions.fetchProgram(selectedProgramId);
+        const combinedProgram = await this.$storage.program.actions.fetch({ id: selectedProgramId, eventId: this.caseFile.eventId });
+        this.selectedProgram = combinedProgram.entity;
       }
     },
 

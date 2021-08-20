@@ -1,7 +1,6 @@
 import { IMultilingual } from '@/types';
 import utils from '@/entities/utils';
 import { BaseEntity, Status } from '../base';
-import { EProgramStatus } from '../program';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData } from './financial-assistance.types';
 
 export class FinancialAssistanceTableEntity extends BaseEntity implements IFinancialAssistanceTableEntity {
@@ -13,7 +12,7 @@ export class FinancialAssistanceTableEntity extends BaseEntity implements IFinan
 
   programName?: IMultilingual;
 
-  programStatus?: EProgramStatus;
+  programStatus?: Status;
 
   programEventId?: uuid;
 

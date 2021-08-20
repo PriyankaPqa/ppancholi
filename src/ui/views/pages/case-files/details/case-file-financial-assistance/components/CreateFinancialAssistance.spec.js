@@ -12,8 +12,13 @@ import
   mockCaseFinancialAssistanceEntity,
   mockCaseFinancialAssistancePaymentGroups,
 } from '@/entities/case-file-financial-assistance';
-import { mockCombinedCaseFile, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
-import { mockProgramCaseFinancialAssistance } from '@/entities/program';
+import {
+  mockCombinedCaseFile,
+  IdentityAuthenticationStatus,
+  ValidationOfImpactStatus,
+  mockCombinedCaseFiles,
+} from '@/entities/case-file';
+import { mockProgramEntity, mockCombinedPrograms } from '@/entities/program';
 import { mockOptionItemData } from '@/entities/optionItem';
 import Component from './CreateFinancialAssistance.vue';
 
@@ -22,7 +27,7 @@ const storage = mockStorage();
 const financialAssistance = mockFinancialAssistanceTableEntity();
 const combinedFinancialAssistance = mockCombinedFinancialAssistance();
 const caseFileFinancialAssistance = mockCaseFinancialAssistanceEntity();
-const program = mockProgramCaseFinancialAssistance();
+const program = mockProgramEntity();
 const caseFileCombined = mockCombinedCaseFile();
 const items = mockItems();
 const optionItems = mockOptionItemData();
@@ -411,13 +416,16 @@ describe('CreateFinancialAssistance.vue', () => {
     describe('updateSelectedProgram', () => {
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.updateSelectedProgram(financialAssistance);
-        expect(storage.program.actions.fetchProgram).toHaveBeenCalledWith(financialAssistance.programId);
+        expect(storage.program.actions.fetch).toHaveBeenCalledWith({
+          id: financialAssistance.programId,
+          eventId: mockCombinedCaseFiles()[0].entity.eventId,
+        });
       });
 
       it('should set selected program', async () => {
         await wrapper.vm.updateSelectedProgram(financialAssistance);
 
-        expect(wrapper.vm.selectedProgram?.id).toEqual(financialAssistance.programId);
+        expect(wrapper.vm.selectedProgram?.id).toEqual(mockCombinedPrograms()[0].entity.id);
       });
     });
 

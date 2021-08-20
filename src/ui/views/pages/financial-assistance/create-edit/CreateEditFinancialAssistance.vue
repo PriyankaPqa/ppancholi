@@ -198,7 +198,7 @@ import routes from '@/constants/routes';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
-import { EProgramStatus, IProgram } from '@/entities/program';
+import { IProgramEntity } from '@/entities/program';
 import { VForm } from '@/types';
 import { Status } from '@/entities/base';
 import ConfirmBeforeAction, { ConfirmationDialog } from './ConfirmBeforeAction.vue';
@@ -237,7 +237,7 @@ export default Vue.extend({
       copyTemplate: null,
       previousCopyTemplate: null,
       existingTemplates: [],
-      programs: [] as IProgram[],
+      programs: [] as IProgramEntity[],
       isSaving: false,
       tableEditActive: false,
       errorMessage: '',
@@ -296,7 +296,7 @@ export default Vue.extend({
       return _sortBy(this.existingTemplates, (item) => this.$m(item.name));
     },
 
-    programsSorted(): Array<IProgram> {
+    programsSorted(): Array<IProgramEntity> {
       return _sortBy(this.programs, (program) => this.$m(program.name));
     },
 
@@ -356,11 +356,11 @@ export default Vue.extend({
      * Gets or sets the Financial Table Program
      */
     program: {
-      get(): IProgram {
+      get(): IProgramEntity {
         return this.$storage.financialAssistance.getters.program();
       },
 
-      set(value: IProgram) {
+      set(value: IProgramEntity) {
         this.$storage.financialAssistance.mutations.setProgram(value);
       },
     },
@@ -379,7 +379,7 @@ export default Vue.extend({
      * Returns true if the program status in Inactive
      */
     programInactive(): boolean {
-      return this.program && this.program.programStatus === EProgramStatus.Inactive;
+      return this.program && this.program.status === Status.Inactive;
     },
 
     /**
@@ -430,17 +430,17 @@ export default Vue.extend({
     async loadActivePrograms(): Promise<void> {
       const { id } = this.$route.params;
 
-      const res = await this.$storage.program.actions.searchPrograms({
+      const res = await this.$storage.program.actions.search({
         filter: {
-          EventId: id,
-          ProgramStatus: EProgramStatus.Active,
+          'Entity/EventId': id,
+          'Entity/Status': Status.Active,
         },
         count: true,
         queryType: 'full',
         searchMode: 'all',
       });
 
-      this.programs = res.value;
+      this.programs = this.$storage.program.getters.getByIds(res.ids).map((combined) => combined.entity);
     },
 
     /**

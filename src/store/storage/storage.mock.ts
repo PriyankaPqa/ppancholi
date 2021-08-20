@@ -10,7 +10,7 @@ import { mockStorageUser } from './user';
 import { mockStorageDashboard } from './dashboard';
 import { EventStorageMock } from './event/storage.mock';
 import { mockStorageOptionList } from './optionList';
-import { mockStorageProgram } from './program';
+import { ProgramStorageMock } from './program';
 import { FinancialAssistanceStorageMock } from './financial-assistance/storage.mock';
 import { CaseFileReferralStorageMock } from './case-file-referral';
 import { CaseFileDocumentStorageMock } from './case-file-document';
@@ -26,7 +26,7 @@ export const mockStorage = (): IStorageMock => ({
   event: new EventStorageMock().make(),
   optionList: mockStorageOptionList(),
   team: new TeamStorageMock().make(),
-  program: mockStorageProgram(),
+  program: new ProgramStorageMock().make(),
   registration: mockStorageRegistration(),
   financialAssistance: new FinancialAssistanceStorageMock().make(),
   financialAssistanceCategory: new FinancialAssistanceCategoryStorageMock().make(),

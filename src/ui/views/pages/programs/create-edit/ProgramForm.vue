@@ -112,9 +112,10 @@ import {
   VTextAreaWithValidation,
 } from '@crctech/component-library';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import { EPaymentModalities, EProgramStatus, Program } from '@/entities/program';
+import { EPaymentModalities, ProgramEntity } from '@/entities/program';
 import helpers from '@/ui/helpers';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'ProgramForm',
@@ -133,7 +134,7 @@ export default Vue.extend({
     },
 
     program: {
-      type: Program,
+      type: Object as () => ProgramEntity,
       required: true,
     },
 
@@ -177,11 +178,11 @@ export default Vue.extend({
 
     isStatusActive: {
       get(): boolean {
-        return this.localProgram.programStatus === EProgramStatus.Active;
+        return this.localProgram.status === Status.Active;
       },
 
       set(value: boolean) {
-        this.localProgram.programStatus = value ? EProgramStatus.Active : EProgramStatus.Inactive;
+        this.localProgram.status = value ? Status.Active : Status.Inactive;
       },
     },
 

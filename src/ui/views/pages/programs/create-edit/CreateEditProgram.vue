@@ -27,7 +27,7 @@ import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@crctech/component-library';
 import { IError } from '@/services/httpClient';
 import { VForm } from '@/types';
-import { IProgram, Program } from '@/entities/program';
+import { ProgramEntity } from '@/entities/program';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -59,7 +59,7 @@ export default Vue.extend({
       programLoading: true,
       loading: false,
       error: false,
-      program: new Program() as IProgram,
+      program: new ProgramEntity(),
       isNameUnique: true,
       isDirty: false,
     };
@@ -88,13 +88,13 @@ export default Vue.extend({
 
     if (this.isEditMode) {
       try {
-        const res = await this.$storage.program.actions.fetchProgram(this.programId);
-        this.program = res;
+        const res = await this.$storage.program.actions.fetch({ id: this.programId, eventId: this.id });
+        this.program = new ProgramEntity(res.entity);
       } finally {
         this.programLoading = false;
       }
     } else {
-      this.program = new Program();
+      this.program = new ProgramEntity();
       this.program.eventId = this.id;
       this.programLoading = false;
     }

@@ -1,11 +1,11 @@
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockProgramCaseFinancialAssistance } from '@/entities/program';
+import { mockProgramEntity } from '@/entities/program';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockCaseFinancialAssistancePaymentGroups } from '@/entities/case-file-financial-assistance';
 import Component from './CreatePaymentLineDialog.vue';
 
 const localVue = createLocalVue();
-const program = mockProgramCaseFinancialAssistance();
+const program = mockProgramEntity();
 const items = mockItems();
 const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGroups();
 

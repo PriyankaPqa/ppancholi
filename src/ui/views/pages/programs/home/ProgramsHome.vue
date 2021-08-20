@@ -2,8 +2,8 @@
   <div class="pa-4">
     <rc-data-table
       data-test="programs-table"
-      :items="azureSearchItems"
-      :count="azureSearchCount"
+      :items="programs"
+      :count="count"
       :show-help="true"
       :help-link="$t('zendesk.help_link.view_programs_list')"
       :labels="labels"
@@ -24,7 +24,7 @@
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item: program }">
-        <status-chip status-name="EProgramStatus" :status="program.programStatus" />
+        <status-chip status-name="Status" :status="program.status" />
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item: program }">
@@ -48,7 +48,7 @@ import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IProgram } from '@/entities/program';
+import { IProgramEntity } from '@/entities/program';
 
 export default Vue.extend({
   name: 'ProgramsHome',
@@ -75,17 +75,19 @@ export default Vue.extend({
     return {
       options: {
         page: 1,
-        sortBy: [`ProgramName/Translation/${this.$i18n.locale}`],
+        sortBy: [`Entity/Name/Translation/${this.$i18n.locale}`],
         sortDesc: [true],
       },
+      count: 0,
+      programs: [] as IProgramEntity[],
     };
   },
 
   computed: {
     customColumns(): Record<string, string> {
       return {
-        name: `ProgramName/Translation/${this.$i18n.locale}`,
-        status: `ProgramStatusName/Translation/${this.$i18n.locale}`,
+        name: `Entity/Name/Translation/${this.$i18n.locale}`,
+        status: 'Entity/Status',
         edit: 'edit',
       };
     },
@@ -123,15 +125,17 @@ export default Vue.extend({
 
     tableProps(): Record<string, boolean> {
       return {
-        loading: this.$store.state.program.programLoading,
+        loading: this.$store.state.programEntities.searchLoading,
       };
     },
   },
 
   methods: {
     async fetchData(params: IAzureSearchParams) {
-      params.filter = `EventId eq '${this.id}'`;
-      const res = await this.$storage.program.actions.searchPrograms({
+      params.filter = {
+        'Entity/EventId': this.id,
+      };
+      const res = await this.$storage.program.actions.search({
         search: params.search,
         filter: params.filter,
         top: params.top,
@@ -142,6 +146,9 @@ export default Vue.extend({
         searchMode: 'all',
       });
 
+      this.count = res.count;
+      this.programs = this.$storage.program.getters.getByIds(res.ids).map((combined) => combined.entity);
+
       return res;
     },
 
@@ -151,7 +158,7 @@ export default Vue.extend({
       });
     },
 
-    getProgramDetailsRoute(program: IProgram) {
+    getProgramDetailsRoute(program: IProgramEntity) {
       return {
         name: routes.programs.details.name,
         params: {
@@ -160,7 +167,7 @@ export default Vue.extend({
       };
     },
 
-    getProgramEditRoute(program: IProgram) {
+    getProgramEditRoute(program: IProgramEntity) {
       return {
         name: routes.programs.edit.name,
         params: {
