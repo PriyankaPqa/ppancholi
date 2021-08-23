@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import {
   EFinancialAmountModes,
-  EFinancialFrequency,
+  EFinancialFrequency, mockCombinedFinancialAssistance,
   mockFinancialAssistanceTableEntity,
   mockItemData,
   mockItems,
@@ -15,6 +15,7 @@ import { Status } from '@/entities/base';
 import { FinancialAssistanceEntityModule } from './financialAssistanceEntity';
 
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
+import { mockOptionItems } from '@/entities/optionItem';
 
 const service = new FinancialAssistanceTablesService(httpClient);
 let module: FinancialAssistanceEntityModule;
@@ -562,6 +563,61 @@ describe('>>> Financial Assistance Module', () => {
           documentationRequired: false,
           frequency: EFinancialFrequency.OneTime,
         });
+      });
+    });
+
+    describe('setFinancialAssistance', () => {
+      it('should set the id', () => {
+        expect(module.state.id).toEqual('');
+
+        module.mutations.setFinancialAssistance(module.state, {
+          fa: mockCombinedFinancialAssistance(),
+          categories: mockOptionItems(),
+          program: mockProgram,
+        });
+
+        expect(module.state.id).toEqual(mockCombinedFinancialAssistance().entity.id);
+      });
+
+      it('should set the program', () => {
+        expect(module.state.program).toEqual(null);
+
+        module.mutations.setFinancialAssistance(module.state, {
+          fa: mockCombinedFinancialAssistance(),
+          categories: mockOptionItems(),
+          program: mockProgram,
+        });
+
+        expect(module.state.program).toEqual(mockProgram);
+      });
+
+      it('should set the name', () => {
+        expect(module.state.name).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
+
+        module.mutations.setFinancialAssistance(module.state, {
+          fa: mockCombinedFinancialAssistance(),
+          categories: mockOptionItems(),
+          program: mockProgram,
+        });
+
+        expect(module.state.name).toEqual(mockCombinedFinancialAssistance().entity.name);
+      });
+
+      it('should set the status', () => {
+        expect(module.state.status).toEqual(Status.Inactive);
+
+        module.mutations.setFinancialAssistance(module.state, {
+          fa: mockCombinedFinancialAssistance(),
+          categories: mockOptionItems(),
+          program: mockProgram,
+        });
+
+        expect(module.state.status).toEqual(mockCombinedFinancialAssistance().entity.status);
       });
     });
   });

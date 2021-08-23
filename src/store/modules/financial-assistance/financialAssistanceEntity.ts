@@ -346,13 +346,10 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     setFinancialAssistance: (
       state: IFinancialAssistanceEntityState,
-      { fa, categories }: { fa: IFinancialAssistanceTableCombined, categories: IOptionItem[] },
+      { fa, categories, program }: { fa: IFinancialAssistanceTableCombined, categories: IOptionItem[], program: IProgramEntity },
     ) => {
       state.id = fa.entity.id;
-      state.program = {
-        id: fa.metadata.programId,
-        name: fa.metadata.programName,
-      } as IProgramEntity;
+      state.program = program;
       state.name = fa.entity.name;
       state.status = fa.entity.status;
 

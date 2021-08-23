@@ -245,8 +245,8 @@ export default Vue.extend({
     await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
     const res = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
     const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-
-    this.$storage.financialAssistance.mutations.setFinancialAssistance(res, categories);
+    const program = await this.$storage.program.actions.fetch({ id: res.entity.programId, eventId: res.entity.eventId });
+    this.$storage.financialAssistance.mutations.setFinancialAssistance(res, categories, program.entity);
 
     if (!res) {
       this.error = true;

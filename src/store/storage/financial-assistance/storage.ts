@@ -165,7 +165,8 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
     setFinancialAssistance: (
       fa: IFinancialAssistanceTableCombined,
       categories: IOptionItem[],
-    ) => this.store.commit(`${this.entityModuleName}/setFinancialAssistance`, { fa, categories }),
+      program: IProgramEntity,
+    ) => this.store.commit(`${this.entityModuleName}/setFinancialAssistance`, { fa, categories, program }),
   };
 
   private actions = {

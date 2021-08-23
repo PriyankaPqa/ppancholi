@@ -84,16 +84,16 @@
                       {{ status ? $t('enums.financialStatus.Active').toUpperCase() : $t('enums.financialStatus.Inactive').toUpperCase() }}
                     </span>
 
-                    <ValidationProvider slim>
+                    <validation-provider slim>
                       <v-switch
                         v-model="status"
                         class="mt-0 ml-auto mr-3 pt-0"
                         flat
-                        :disabled="isEdit && isOperating"
+                        :disabled="(isEdit && isOperating)"
                         data-test="financial-assistance-status"
                         hide-details
                         color="white" />
-                    </ValidationProvider>
+                    </validation-provider>
                   </div>
 
                   <div v-else class="flex-row financial-status py-2 pl-5 grey lighten-3 black--text">
@@ -416,13 +416,13 @@ export default Vue.extend({
     if (this.isEdit) {
       const fa = await this.$storage.financialAssistance.actions.fetch(this.$route.params.faId);
       const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-      this.$storage.financialAssistance.mutations.setFinancialAssistance(fa, categories);
+      const program = await this.$storage.program.actions.fetch({ id: fa.entity.programId, eventId: fa.entity.eventId });
+      this.$storage.financialAssistance.mutations.setFinancialAssistance(fa, categories, program.entity);
 
       this.programs = [this.$storage.financialAssistance.getters.program()];
     } else {
       await this.loadActivePrograms();
     }
-
     this.loading = false;
   },
 

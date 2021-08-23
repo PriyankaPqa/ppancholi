@@ -91,7 +91,7 @@ export interface IMutations extends IBaseMutations<IFinancialAssistanceTableEnti
   resetNewSubItem(): void;
   resetState(): void;
   cancelOperation(): void;
-  setFinancialAssistance(fa: IFinancialAssistanceTableCombined, categories: IOptionItem[]): void;
+  setFinancialAssistance(fa: IFinancialAssistanceTableCombined, categories: IOptionItem[], program: IProgramEntity): void;
 }
 
 export interface IMutationsMock extends IBaseMutationsMock<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {

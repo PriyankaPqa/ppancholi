@@ -2,7 +2,7 @@ import { FINANCIAL_ASSISTANCE_ENTITIES, FINANCIAL_ASSISTANCE_METADATA } from '@/
 import { Status } from '@/entities/base';
 import {
   EFinancialAmountModes,
-  EFinancialFrequency,
+  EFinancialFrequency, mockCombinedFinancialAssistance,
   mockFinancialAssistanceTableEntity,
   mockItems,
   mockSubItems,
@@ -10,6 +10,7 @@ import {
 import { mockProgramEntity } from '@/entities/program';
 import { mockStore } from '@/store';
 import { FinancialAssistanceStorage } from './storage';
+import { mockOptionItems } from '@/entities/optionItem';
 
 const entityModuleName = FINANCIAL_ASSISTANCE_ENTITIES;
 const metadataModuleName = FINANCIAL_ASSISTANCE_METADATA;
@@ -351,6 +352,15 @@ describe('>>> Financial Assistance Storage', () => {
     it('should proxy cancelOperation', () => {
       storage.mutations.cancelOperation();
       expect(store.commit).toBeCalledWith(`${entityModuleName}/cancelOperation`);
+    });
+
+    it('should proxy setFinancialAssistance', () => {
+      const fa = mockCombinedFinancialAssistance();
+      const categories = mockOptionItems();
+      const program = mockProgramEntity();
+
+      storage.mutations.setFinancialAssistance(fa, categories, program);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setFinancialAssistance`, { fa, categories, program });
     });
   });
 
