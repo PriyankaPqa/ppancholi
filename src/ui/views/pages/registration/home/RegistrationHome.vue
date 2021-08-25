@@ -74,8 +74,8 @@ export default Vue.extend({
     setEvent(event: IEventMainInfo) {
       const data = event.entity;
       const registrationEvent = {
-        eventId: data.id,
-        eventName: data.name,
+        id: data.id,
+        name: data.name,
         responseDetails: data.responseDetails,
         registrationLink: data.registrationLink,
         tenantId: data.tenantId,

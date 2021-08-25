@@ -93,8 +93,8 @@ describe('RegistrationHome.vue', () => {
       it('should call setEvent mutations with proper params', () => {
         wrapper.vm.setEvent(mockEvent);
         expect(wrapper.vm.$storage.registration.mutations.setEvent).toHaveBeenCalledWith({
-          eventId: mockEvent.entity.id,
-          eventName: mockEvent.entity.name,
+          id: mockEvent.entity.id,
+          name: mockEvent.entity.name,
           responseDetails: mockEvent.entity.responseDetails,
           registrationLink: mockEvent.entity.registrationLink,
           tenantId: mockEvent.entity.tenantId,
