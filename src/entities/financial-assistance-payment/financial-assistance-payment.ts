@@ -1,12 +1,11 @@
 import { BaseEntity } from '@/entities/base/base';
-import
-{
-  ICaseFinancialAssistanceEntity,
-  ICaseFinancialAssistancePaymentGroups,
-  FPaymentStatus,
-} from './case-file-financial-assistance.types';
+import {
+  ApprovalStatus,
+  IFinancialAssistancePaymentEntity,
+  IFinancialAssistancePaymentGroup,
+} from './financial-assistance-payment.types';
 
-export class CaseFinancialAssistanceEntity extends BaseEntity {
+export class FinancialAssistancePaymentEntity extends BaseEntity implements IFinancialAssistancePaymentEntity {
   caseFileId: uuid;
 
   financialAssistanceTableId: uuid;
@@ -15,18 +14,18 @@ export class CaseFinancialAssistanceEntity extends BaseEntity {
 
   description: string;
 
-  groups: Array<ICaseFinancialAssistancePaymentGroups>;
+  groups: Array<IFinancialAssistancePaymentGroup>;
 
-  paymentStatus: FPaymentStatus;
+  approvalStatus: ApprovalStatus;
 
-  constructor(data?: ICaseFinancialAssistanceEntity) {
+  constructor(data?: IFinancialAssistancePaymentEntity) {
     if (data) {
       super(data);
       this.caseFileId = data.caseFileId;
       this.financialAssistanceTableId = data.financialAssistanceTableId;
       this.name = data.name;
       this.description = data.description;
-      this.paymentStatus = data.paymentStatus;
+      this.approvalStatus = data.approvalStatus;
       this.groups = data.groups;
     } else {
       super();
@@ -34,8 +33,8 @@ export class CaseFinancialAssistanceEntity extends BaseEntity {
       this.financialAssistanceTableId = null;
       this.name = null;
       this.description = null;
-      this.paymentStatus = FPaymentStatus.New;
-      this.groups = null;
+      this.approvalStatus = ApprovalStatus.New;
+      this.groups = [];
     }
   }
 

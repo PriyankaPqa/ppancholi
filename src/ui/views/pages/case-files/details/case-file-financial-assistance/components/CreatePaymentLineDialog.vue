@@ -24,23 +24,23 @@
           <v-row>
             <v-col cols="6">
               <v-autocomplete-with-validation
-                v-model="paymentLine.mainCategoryId"
+                v-model="currentPaymentLine.mainCategoryId"
                 :label="`${$t('financialAssistance.nestedTable.headers.item')} *`"
                 :item-text="(item) => item.mainCategory ? $m(item.mainCategory.name) : ''"
                 :item-value="(item) => item.mainCategory ? item.mainCategory.id : null"
                 :items="items"
                 :rules="rules.item"
-                data-test="payement_item"
+                data-test="payment_item"
                 @change="resetSubCategory" />
             </v-col>
             <v-col cols="6">
               <v-autocomplete-with-validation
-                v-model="paymentLine.subCategoryId"
+                v-model="currentPaymentLine.subCategoryId"
                 :label="`${$t('financialAssistance.nestedTable.headers.subItem')} *`"
                 :item-text="(item) => item.subCategory ? $m(item.subCategory.name) : ''"
                 :item-value="(item) => item.subCategory ? item.subCategory.id : null"
                 :items="subItems"
-                :disabled="!paymentLine.mainCategoryId"
+                :disabled="!currentPaymentLine.mainCategoryId"
                 :rules="rules.subitem"
                 data-test="payment_subItem"
                 @change="resetDocuments" />
@@ -49,7 +49,7 @@
           <v-row>
             <v-col cols="6">
               <v-select-with-validation
-                v-model="paymentLine.modality"
+                v-model="paymentGroup.groupingInformation.modality"
                 :items="paymentModalities"
                 :rules="rules.modalities"
                 :label="`${$t('caseFile.financialAssistance.paymentModality')} *`"
@@ -59,8 +59,8 @@
             <v-col cols="6">
               <!-- ToDo : Document requirement validation -->
               <v-checkbox-with-validation
-                v-model="paymentLine.documentReceived"
-                :disabled="!paymentLine.subCategoryId"
+                v-model="currentPaymentLine.documentReceived"
+                :disabled="!currentPaymentLine.subCategoryId"
                 data-test="checkbox_consent"
                 class="rc-body12"
                 :label="`${$t('caseFile.financialAssistance.supportingDocuments')} *`" />
@@ -69,7 +69,7 @@
           <v-row>
             <v-col cols="3">
               <v-text-field-with-validation
-                v-model="paymentLine.amount"
+                v-model="currentPaymentLine.amount"
                 data-test="reason_specified_other"
                 autocomplete="nope"
                 :rules="rules.amount"
@@ -77,7 +77,7 @@
             </v-col>
           </v-row>
           <v-row>
-            <v-col v-if="paymentLine.modality" cols="12">
+            <v-col v-if="paymentGroup.modality" cols="12">
               <!-- <payment-type-handler :payment-type="paymentLine.modality" /> -->
             </v-col>
           </v-row>
@@ -99,6 +99,12 @@ import {
   VSelectWithValidation,
 } from '@crctech/component-library';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
+import {
+  PayeeType,
+  FinancialAssistancePaymentGroup,
+  IFinancialAssistancePaymentGroup,
+  IFinancialAssistancePaymentLine,
+} from '@/entities/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import helpers from '@/ui/helpers';
 import { VForm } from '@/types';
@@ -136,15 +142,7 @@ export default Vue.extend({
 
   data() {
     return {
-      paymentLine: null,
-      emptyPaymentLine: {
-        modality: null,
-        payeeType: null,
-        payeeName: null,
-        lines: null,
-      },
-      fakeItem: [],
-      modality: null,
+      paymentGroup: null as IFinancialAssistancePaymentGroup,
       rules: {
         item: {
           required: true,
@@ -165,12 +163,16 @@ export default Vue.extend({
   computed: {
     paymentModalities(): Array<{ text: string, value: unknown }> {
       const paymentModalities = helpers.enumToTranslatedCollection(EPaymentModalities, 'event.programManagement.paymentModalities')
-        .filter((p) => this.program?.paymentModalities.find((payment : EPaymentModalities) => payment === p.value));
+        .filter((p) => this.program.paymentModalities.find((payment : EPaymentModalities) => payment === p.value));
       return _orderBy(paymentModalities, 'text');
     },
 
     subItems() : Array<IFinancialAssistanceTableSubItem> {
-      return this.items.find((i) => i.mainCategory?.id === this.paymentLine.mainCategoryId)?.subItems;
+      return this.items.find((i) => i.mainCategory?.id === this.currentPaymentLine.mainCategoryId)?.subItems;
+    },
+
+    currentPaymentLine(): IFinancialAssistancePaymentLine {
+      return this.paymentGroup.lines[0];
     },
   },
 
@@ -179,24 +181,42 @@ export default Vue.extend({
   },
 
   methods: {
-    initCreateMode() {
-      this.paymentLine = this.emptyPaymentLine;
+    async initCreateMode() {
+      const cf = this.$storage.caseFile.getters.get(this.$route.params.id).metadata;
+      this.paymentGroup = new FinancialAssistancePaymentGroup();
+
+      this.paymentGroup.lines.push({
+        mainCategoryId: null,
+        subCategoryId: null,
+        documentReceived: null,
+        amount: null,
+        actualAmount: null,
+        relatedNumber: null,
+        careOf: null,
+        address: null,
+      });
+
+      this.paymentGroup.groupingInformation = {
+        modality: null,
+        payeeType: PayeeType.Beneficiary,
+        payeeName: `${cf.primaryBeneficiaryFirstName} ${cf.primaryBeneficiaryLastName}`,
+      };
     },
 
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        this.$emit('submit', this.paymentLine);
+        this.$emit('submit', this.paymentGroup);
       }
     },
 
     resetSubCategory() {
-      this.paymentLine.subCategoryId = null;
+      this.currentPaymentLine.subCategoryId = null;
       this.resetDocuments();
     },
 
     resetDocuments() {
-      this.paymentLine.documentReceived = false;
+      this.currentPaymentLine.documentReceived = false;
     },
 
     updateForm() {

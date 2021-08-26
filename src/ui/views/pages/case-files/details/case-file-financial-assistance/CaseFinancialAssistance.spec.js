@@ -13,7 +13,7 @@ describe('CaseFinancialAssistance.vue', () => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       mocks: {
-        $hasLevel: (lvl) => (lvl <= `level${level}`) && level,
+        $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
         $storage: storage,
       },

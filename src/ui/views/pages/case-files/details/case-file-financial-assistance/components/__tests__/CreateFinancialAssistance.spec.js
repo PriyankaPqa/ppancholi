@@ -8,10 +8,10 @@ import
 } from '@/entities/financial-assistance';
 import
 {
-  CaseFinancialAssistanceEntity,
+  FinancialAssistancePaymentEntity,
   mockCaseFinancialAssistanceEntity,
   mockCaseFinancialAssistancePaymentGroups,
-} from '@/entities/case-file-financial-assistance';
+} from '@/entities/financial-assistance-payment';
 import {
   mockCombinedCaseFile,
   IdentityAuthenticationStatus,
@@ -20,7 +20,7 @@ import {
 } from '@/entities/case-file';
 import { mockProgramEntity, mockCombinedPrograms } from '@/entities/program';
 import { mockOptionItemData } from '@/entities/optionItem';
-import Component from './CreateFinancialAssistance.vue';
+import Component from '../CreateFinancialAssistance.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -358,14 +358,14 @@ describe('CreateFinancialAssistance.vue', () => {
 
     describe('isDisabled', () => {
       it('returns true or false if the create should be disabled', () => {
-        wrapper.vm.financialAssistance = new CaseFinancialAssistanceEntity(caseFileFinancialAssistance);
+        wrapper.vm.financialAssistance = new FinancialAssistancePaymentEntity(caseFileFinancialAssistance);
         wrapper.vm.financialAssistance.validate = jest.fn(() => false);
 
         expect(wrapper.vm.isDisabled).toBe(true);
       });
 
       it('returns true or false if the create should be disabled', () => {
-        wrapper.vm.financialAssistance = new CaseFinancialAssistanceEntity(caseFileFinancialAssistance);
+        wrapper.vm.financialAssistance = new FinancialAssistancePaymentEntity(caseFileFinancialAssistance);
         wrapper.vm.financialAssistance.validate = jest.fn(() => true);
 
         expect(wrapper.vm.isDisabled).toBe(false);
@@ -444,9 +444,11 @@ describe('CreateFinancialAssistance.vue', () => {
     describe('onSubmitPaymentLine', () => {
       it('should add the new PaymentLine', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
-        wrapper.vm.financialAssistance.groups = null;
-        await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups);
-        expect(wrapper.vm.financialAssistance.groups).toContain(caseFileFinancialAssistanceGroups);
+        wrapper.vm.financialAssistance.groups = [];
+        await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
+        expect(wrapper.vm.financialAssistance.groups[0].groupingInformation).toBe(caseFileFinancialAssistanceGroups[0].groupingInformation);
+        expect(wrapper.vm.financialAssistance.groups[0].lines).toBe(caseFileFinancialAssistanceGroups[0].lines);
+        expect(wrapper.vm.financialAssistance.groups[0].paymentStatus).toBe(caseFileFinancialAssistanceGroups[0].paymentStatus);
       });
     });
   });

@@ -137,7 +137,7 @@ export default Vue.extend({
           eventId: this.selectedEventId,
           teamId: selectedTeam.entity.id,
         });
-        const countTotal = Object.keys(assignedCount).reduce((acc, key) => acc + assignedCount[key], 0);
+        const countTotal = Object.values(assignedCount).reduce((acc, val) => acc + val, 0);
         this.teamStats = {
           countTotal,
           countOpen: assignedCount.openCount,

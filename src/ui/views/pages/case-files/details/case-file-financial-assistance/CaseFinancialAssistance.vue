@@ -14,13 +14,13 @@
       :custom-columns="['name', 'totals', 'groupStatus', 'statusHistory', 'approvalStatus']"
       @search="search"
       @add-button="routeToCreate">
+      <!-- :response="response" -->
       <template #filter>
         <filter-toolbar
-          filter-key="caseFileFinancialAssistanceOverview"
+          :filter-key="FilterKey.CaseFileFinancialAssistanceOverview"
           :filter-options="filters"
-          :response="response"
           :count="count"
-          @update:appliedFilter="filter">
+          @update:appliedFilter="onApplyFilter">
           <template slot="toolbarActions">
             <v-btn
               v-if="canSubmitPaymentRequest"
@@ -47,11 +47,15 @@ import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable,
   ISearchData,
+  IFilterSettings,
 } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
+import { EFilterType } from '@crctech/component-library/src/types';
 import { ITransaction } from '@/entities/case-file';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
+import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import { FilterKey } from '@/entities/user-account';
 
 export default Vue.extend({
   name: 'TransactionsList',
@@ -61,8 +65,11 @@ export default Vue.extend({
     FilterToolbar,
   },
 
+  mixins: [TablePaginationSearchMixin],
+
   data() {
     return {
+      FilterKey,
       searchParams: {} as ISearchData,
 
       filterParams: [] as Array<string>,
@@ -105,18 +112,20 @@ export default Vue.extend({
       }];
     },
 
-    // filters(): Array<IFilterSettings> {
-    //   return [{
-    //     key: 'name',
-    //     type: EFilterType.Text,
-    //     label: this.$t('common.name') as string,
-    //   }, {
-    //     key: 'approvalStatus',
-    //     type: EFilterType.Select,
-    //     label: this.$t('caseFile.financialAssistance.approvalStatus') as string,
-    //     items: helpers.enumToTranslatedCollection(ETransactionApprovalStatus, 'enums.transactionApprovalStatus'),
-    //   }];
-    // },
+    filters(): Array<IFilterSettings> {
+      return [{
+        key: 'name',
+        type: EFilterType.Text,
+        label: this.$t('common.name') as string,
+      },
+      // {
+      //   key: 'approvalStatus',
+      //   type: EFilterType.Select,
+      //   label: this.$t('caseFile.financialAssistance.approvalStatus') as string,
+      //   items: helpers.enumToTranslatedCollection(TransactionApprovalStatus, 'enums.transactionApprovalStatus'),
+      // }
+      ];
+    },
 
     labels(): Record<string, Record<string, TranslateResult>> {
       return {
@@ -131,17 +140,17 @@ export default Vue.extend({
       return this.$hasLevel('level1');
     },
 
-    // caseFileIsOpen(): boolean {
-    //   return this.$store.getters['caseFileModule/caseFileIsOpen'];
-    // },
+    caseFileIsOpen(): boolean {
+      return this.$store.getters['caseFileModule/caseFileIsOpen'];
+    },
 
     // canCreateTransaction(): boolean {
     //   return this.$can('CreateTransaction') && this.caseFileIsOpen;
     // },
 
-    // canSubmitPaymentRequest():boolean {
-    //   return this.$can('SubmitPaymentRequest') && this.caseFileIsOpen;
-    // },
+    canSubmitPaymentRequest():boolean {
+      return false && this.caseFileIsOpen;
+    },
   },
 
   methods: {

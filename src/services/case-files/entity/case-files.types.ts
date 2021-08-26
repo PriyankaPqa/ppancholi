@@ -42,6 +42,6 @@ export interface ICaseFilesServiceMock {
   setCaseFileAssign: jest.Mock<ICaseFileEntity>;
   createCaseFile: jest.Mock<ICaseFileEntity>;
   setCaseFileValidationOfImpact: jest.Mock<ICaseFileEntity>;
-  getCaseFileAssignedCounts: jest.Mock<any>;
+  getCaseFileAssignedCounts: jest.Mock<ICaseFileCount>;
   // todo add mock from api response here for getCaseFileAssignedCounts
 }

@@ -3,7 +3,7 @@
     <v-sheet rounded outlined class="pa-8 mb-8">
       <v-row class="mt-0">
         <v-col cols="12">
-          <status-chip status-name="CaseFileFinancialAssistanceStatus" :status="localFinancialAssistance.paymentStatus" />
+          <status-chip status-name="ApprovalStatus" :status="localFinancialAssistance.approvalStatus" />
         </v-col>
       </v-row>
 
@@ -60,7 +60,7 @@ import _sortBy from 'lodash/sortBy';
 import { IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
-import { CaseFinancialAssistanceEntity, ICaseFinancialAssistanceEntity } from '@/entities/case-file-financial-assistance';
+import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 
 export default Vue.extend({
@@ -75,7 +75,7 @@ export default Vue.extend({
 
   props: {
     financialAssistance: {
-      type: Object as () => ICaseFinancialAssistanceEntity,
+      type: Object as () => IFinancialAssistancePaymentEntity,
       required: true,
     },
 
@@ -93,7 +93,7 @@ export default Vue.extend({
 
   data() {
     return {
-      localFinancialAssistance: new CaseFinancialAssistanceEntity(),
+      localFinancialAssistance: new FinancialAssistancePaymentEntity(),
       financialTables: [] as Array<IFinancialAssistanceTableEntity>,
       rules: {
         name: {

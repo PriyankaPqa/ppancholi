@@ -16,7 +16,7 @@ import { RcStatusChip } from '@crctech/component-library';
 import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
 import colors from '@/ui/plugins/vuetify/colors';
 import { CaseFileStatus } from '@/entities/case-file';
-import { FPaymentStatus } from '@/entities/case-file-financial-assistance';
+import { ApprovalStatus, PaymentStatus } from '@/entities/financial-assistance-payment';
 import { AccountStatus } from '@/entities/user-account';
 import { Status } from '@/entities/base';
 import { DocumentStatus } from '@/entities/case-file-document';
@@ -41,9 +41,10 @@ export default Vue.extend({
           'EEventLocationStatus',
           'CaseFileStatus',
           'Status',
+          'ApprovalStatus',
           'AccountStatus',
           'DocumentStatus',
-          'CaseFileFinancialAssistanceStatus',
+          'FinancialAssistancePaymentStatus',
           'Status',
           'MassActionRunStatus',
         ].indexOf(value) > -1
@@ -81,7 +82,9 @@ export default Vue.extend({
           return this.getEventCallCentreColor();
         case 'CaseFileStatus':
           return this.getCaseFileStatusColor();
-        case 'CaseFileFinancialAssistanceStatus':
+        case 'ApprovalStatus':
+          return this.getApprovalStatusColor();
+        case 'FinancialAssistancePaymentStatus':
           return this.getCaseFileFinancialAssistanceStatusColor();
         case 'AccountStatus':
           return this.getAccountStatusColor();
@@ -119,8 +122,10 @@ export default Vue.extend({
           return `eventSummary.status.${EEventCallCentreStatus[this.status]}`;
         case 'CaseFileStatus':
           return `caseFile.status.${CaseFileStatus[this.status]}`;
-        case 'CaseFileFinancialAssistanceStatus':
-          return `caseFile.financialAssistance.paymentStatus.${FPaymentStatus[this.status]}`;
+        case 'ApprovalStatus':
+          return `enums.ApprovalStatus.${ApprovalStatus[this.status]}`;
+        case 'FinancialAssistancePaymentStatus':
+          return `caseFile.financialAssistance.paymentStatus.${PaymentStatus[this.status]}`;
         case 'AccountStatus':
           return `common.account_status.${AccountStatus[this.status]}`;
         case 'DocumentStatus':
@@ -188,9 +193,18 @@ export default Vue.extend({
       }
     },
 
+    getApprovalStatusColor(): string {
+      switch (this.status) {
+        case ApprovalStatus.New:
+          return colors.chips.green_pale;
+        default:
+          return colors.chips.green_pale;
+      }
+    },
+
     getCaseFileFinancialAssistanceStatusColor(): string {
       switch (this.status) {
-        case FPaymentStatus.New:
+        case PaymentStatus.New:
           return colors.chips.green_pale;
         default:
           return colors.chips.green_pale;

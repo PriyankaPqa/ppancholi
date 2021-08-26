@@ -90,7 +90,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import mixins from 'vue-typed-mixins';
 import { DataTableHeader } from 'vuetify';
 import {
