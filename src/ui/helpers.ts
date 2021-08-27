@@ -3,6 +3,7 @@ import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 import moment from '@/ui/plugins/moment';
+import { IRestResponse } from '@/services/httpClient';
 
 export default {
   // Method to format the backend error messages and display in a toast.
@@ -206,4 +207,46 @@ export default {
     const countries = countriesData[i18n.locale];
     return countries[countryCode];
   },
+
+  downloadFile(response: IRestResponse<string | BlobPart>, forceFileName?: string) {
+    const fileName = this.getFileNameStringFromContentDisposition(response.headers['content-disposition']);
+
+    // Creating a blob object from non-blob data using the Blob constructor
+    const blob = new Blob([response.data], { type: response.headers['content-type'] });
+    const url = URL.createObjectURL(blob);
+    // Create a new anchor element
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${fileName}` || `${forceFileName}`;
+    a.click();
+    a.remove();
+  },
+
+  getFileName(disposition: string) {
+    const name = this.getFileNameStringFromContentDisposition(disposition).split('.');
+    return name.slice(0, name.length - 1).join('.');
+  },
+
+  getExtension(disposition: string) {
+    const name = this.getFileNameStringFromContentDisposition(disposition).split('.');
+    return name[name.length - 1];
+  },
+
+  getFileNameStringFromContentDisposition(disposition: string): string {
+    const utf8FilenameRegex = /filename\*=UTF-8''([\w%\-.]+)(?:; ?|$)/;
+    const asciiFilenameRegex = /filename=(["']?)(.*?[^\\])\1(?:; ?|$)/;
+
+    let fileName: string = null;
+    if (utf8FilenameRegex.test(disposition)) {
+      fileName = decodeURIComponent(utf8FilenameRegex.exec(disposition)[1]);
+    } else {
+      const matches = asciiFilenameRegex.exec(disposition);
+      if (matches != null && matches[2]) {
+        // eslint-disable-next-line prefer-destructuring
+        fileName = matches[2];
+      }
+    }
+    return fileName;
+  },
+
 };

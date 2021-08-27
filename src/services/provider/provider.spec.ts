@@ -10,6 +10,7 @@ import { TeamsService } from '../teams/entity';
 import { ProgramsService } from '../programs/entity';
 import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { FinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
+import { MassActionService } from '@/services/mass-actions/entity';
 
 jest.mock('../user-accounts/entity');
 jest.mock('../events/entity');
@@ -24,6 +25,7 @@ jest.mock('@crctech/registration-lib/src/services/households/entity');
 jest.mock('../user-accounts/entity');
 jest.mock('../financial-assistance-tables/entity');
 jest.mock('../financial-assistance-categories/entity');
+jest.mock('../mass-actions/entity');
 
 describe('Provider', () => {
   it('should instantiate AppUsersService', () => {
@@ -84,5 +86,10 @@ describe('Provider', () => {
   it('should instantiate FinancialAssistanceCategoriesService', () => {
     provider();
     expect(FinancialAssistanceCategoriesService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate MassActionService', () => {
+    provider();
+    expect(MassActionService.prototype.constructor).toBeCalled();
   });
 });

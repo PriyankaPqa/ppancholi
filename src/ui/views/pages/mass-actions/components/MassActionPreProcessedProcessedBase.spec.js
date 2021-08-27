@@ -11,6 +11,7 @@ import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import { mockStorage } from '@/store/storage';
+import helpers from '@/ui/helpers';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -167,6 +168,23 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         const payload = { name: 'test', description: 'description' };
         await wrapper.vm.update(payload);
         expect(wrapper.vm.$storage.massAction.actions.update).toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, payload);
+      });
+    });
+
+    describe('download', () => {
+      it('should call service getInvalidFile with proper params', async () => {
+        await wrapper.vm.download();
+        expect(wrapper.vm.$services.massActions.getInvalidFile)
+          .toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, wrapper.vm.massAction.metadata.lastRun.runId);
+      });
+
+      it('should call helpers downloadFile', async () => {
+        wrapper.vm.$services.massActions.getInvalidFile = jest.fn(() => true);
+        helpers.downloadFile = jest.fn();
+
+        await wrapper.vm.download();
+
+        expect(helpers.downloadFile).toBeCalled();
       });
     });
   });

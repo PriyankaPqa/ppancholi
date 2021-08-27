@@ -6,4 +6,5 @@ export const mockMassActionService = (): IMassActionServiceMock => ({
   ...mockDomainBaseService(mockMassActionEntities()),
   process: jest.fn(() => mockMassActionEntity()),
   update: jest.fn(() => mockMassActionEntity()),
+  getInvalidFile: jest.fn(() => null),
 });

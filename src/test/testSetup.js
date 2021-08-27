@@ -22,6 +22,10 @@ import { makeStorage } from '@/store/storage';
 
 jest.setTimeout(10000);
 
+Vue.directive('visible', (el, binding) => {
+  el.style.visibility = binding.value ? 'visible' : 'hidden';
+});
+
 const vuetify = new Vuetify({
   mocks: {
     $vuetify: {

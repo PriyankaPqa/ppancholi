@@ -1,5 +1,5 @@
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient, IRestResponse } from '@/services/httpClient';
 import { IMassActionService } from '@/services/mass-actions/entity/massAction.types';
 import { IMassActionEntity, MassActionRunType } from '@/entities/mass-action/massActions.types';
 
@@ -17,5 +17,13 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
 
   async update(id: uuid, payload: {name: string; description: string}): Promise<IMassActionEntity> {
     return this.http.patch(`${this.baseUrl}/${id}`, payload);
+  }
+
+  async getInvalidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>> {
+    return this.http.getFullResponse(`${this.baseUrl}/${massActionId}/invalid-file`, {
+      params: {
+        runId,
+      },
+    });
   }
 }

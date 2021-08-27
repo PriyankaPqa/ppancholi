@@ -33,15 +33,6 @@ describe('ImportValidationStatusPreProcessed.vue', () => {
           .toBe(true);
       });
 
-      it('should call download on download', async () => {
-        const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
-        wrapper.vm.download = jest.fn();
-
-        await component.vm.$emit('download');
-
-        expect(wrapper.vm.download).toBeCalled();
-      });
-
       it('should call goToHome on delete:success', async () => {
         const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
         wrapper.vm.goToHome = jest.fn();
@@ -66,12 +57,6 @@ describe('ImportValidationStatusPreProcessed.vue', () => {
         mocks: {
           $storage: storage,
         },
-      });
-    });
-
-    describe('download', () => {
-      it('should do nothing', async () => {
-        expect(wrapper.vm.download()).toEqual(false);
       });
     });
 

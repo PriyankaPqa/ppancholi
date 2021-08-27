@@ -67,7 +67,7 @@
                 <v-divider vertical class="mr-5" />
               </template>
 
-              <v-btn v-if="showDownloadButton" data-test="downloadButton" :disabled="!hasFailures" small color="primary" @click="$emit('download')">
+              <v-btn v-if="showDownloadButton" data-test="downloadButton" :disabled="!hasFailures" small color="primary" @click="download()">
                 {{ $t('massAction.download.button.label') }}
               </v-btn>
             </v-col>
@@ -75,10 +75,10 @@
 
           <div v-if="showErrors" class="full-width">
             <v-row v-for="(item, index) in massAction.metadata.lastRun.errors" :key="index" no-gutters>
-              <v-col cols="12" md="5" class="ml-7 mb-2">
+              <v-col cols="12" md="5" class="pl-7 mb-2">
                 <span class="rc-body14">{{ $t(`errors.${item.error}`) }}</span>
               </v-col>
-              <v-col class="ml-n7">
+              <v-col class="pl-n7">
                 <span class="rc-body14">{{ $t(item.total) }}</span>
               </v-col>
             </v-row>
@@ -101,6 +101,7 @@ import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components
 import colors from '@/ui/plugins/vuetify/colors';
 
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'MassActionPreProcessedProcessedBase',
@@ -231,6 +232,13 @@ export default Vue.extend({
         }
       }
     },
+
+    async download() {
+      const res = await this.$services.massActions.getInvalidFile(this.massAction.entity.id, this.massAction.metadata.lastRun.runId);
+      if (res) {
+        helpers.downloadFile(res, `${this.massAction.entity.name}.invalid`);
+      }
+    },
   },
 });
 </script>
@@ -262,11 +270,13 @@ export default Vue.extend({
   border-width: 1px 1px 0px 1px;
 
 }
+
 .row-data:last-child {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
   border-width: 1px 1px 1px 1px;
 }
+
 .row-data:first-child {
   border-top-left-radius: 4px;
   border-top-right-radius: 4px;

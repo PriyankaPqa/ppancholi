@@ -28,4 +28,16 @@ describe('>>> Mass Action Service', () => {
     await service.update(id, payload);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, payload);
   });
+
+  test('getInvalidFile is linked to the correct URL', async () => {
+    const massActionId = '1';
+    const runId = '1';
+
+    await service.getInvalidFile(massActionId, runId);
+    expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${massActionId}/invalid-file`, {
+      params: {
+        runId,
+      },
+    });
+  });
 });

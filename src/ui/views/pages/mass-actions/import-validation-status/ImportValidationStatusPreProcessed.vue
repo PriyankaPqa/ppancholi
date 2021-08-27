@@ -14,7 +14,6 @@
       show-process-button
       show-delete-icon
       show-edit-icon
-      @download="download()"
       @delete:success="goToHome()" />
   </div>
 </template>
@@ -61,10 +60,6 @@ export default Vue.extend({
   },
 
   methods: {
-    download() {
-      return false;
-    },
-
     goToHome() {
       this.$router.replace({ name: routes.massActions.importValidationStatus.home.name });
     },
