@@ -1,6 +1,8 @@
 import {
   CaseFileStatus, ICaseFileEntity, CaseFileTriage, ICaseFileActivity, ICaseFileLabel, ICaseFileMetadata, IIdentityAuthentication,
   IImpactStatusValidation,
+  ICaseFileDetailedCount,
+  ICaseFileCount,
 } from '@/entities/case-file/case-file.types';
 import { IStore, IState } from '@/store';
 import { IStorage } from '@/store/storage/case-file/storage.types';
@@ -44,6 +46,12 @@ export class CaseFileStorage
     fetchCloseReasons: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchCloseReasons`),
 
     fetchCaseFileActivities: (id: uuid): Promise<ICaseFileActivity[]> => this.store.dispatch(`${this.entityModuleName}/fetchCaseFileActivities`, id),
+
+    fetchCaseFileAssignedCounts: (eventId: uuid, teamId: uuid):
+      Promise<ICaseFileCount> => this.store.dispatch(`${this.entityModuleName}/fetchCaseFileAssignedCounts`, { eventId, teamId }),
+
+    fetchCaseFileDetailedCounts: (eventId: uuid):
+      Promise<ICaseFileDetailedCount> => this.store.dispatch(`${this.entityModuleName}/fetchCaseFileDetailedCounts`, eventId),
 
     setCaseFileTags: (id: uuid, tags: IListOption[]):
       Promise<ICaseFileEntity> => this.store.dispatch(`${this.entityModuleName}/setCaseFileTags`, { id, tags }),

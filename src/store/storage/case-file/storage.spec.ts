@@ -86,6 +86,19 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCloseReasons`);
     });
 
+    it('should proxy fetchCaseFileAssignedCounts', () => {
+      const eventId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      const teamId = '76ca164f-a181-4a0c-8cf1-5967841b3981';
+      storage.actions.fetchCaseFileAssignedCounts(eventId, teamId);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCaseFileAssignedCounts`, { eventId, teamId });
+    });
+
+    it('should proxy fetchCaseFileDetailedCounts', () => {
+      const eventId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+      storage.actions.fetchCaseFileDetailedCounts(eventId);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCaseFileDetailedCounts`, eventId);
+    });
+
     it('should proxy setCaseFileTags', () => {
       const id = '1';
       const tags: IListOption[] = [{ optionItemId: 'foo', specifiedOther: null }];

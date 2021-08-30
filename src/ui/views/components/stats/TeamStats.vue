@@ -1,5 +1,5 @@
 <template>
-  <rc-stats-template data-test-prefix="team" :title="$t('team_stats.title')">
+  <rc-stats-template :loading="loadingEvents" data-test-prefix="team" :title="$t('team_stats.title')">
     <template slot="top">
       <v-select-with-validation
         v-model="selectedEventId"
@@ -8,7 +8,6 @@
         hide-details
         :label="$t('team_stats.event.select.label')"
         :items="events"
-        :loading="loadingEvents"
         :item-text="(item) => $m(item.entity.name)"
         item-value="entity.id"
         outlined
@@ -99,7 +98,9 @@ export default Vue.extend({
     },
   },
   async mounted() {
+    this.loadingEvents = true;
     await this.fetchActiveEvents();
+    this.loadingEvents = false;
   },
   methods: {
     async fetchActiveEvents() {

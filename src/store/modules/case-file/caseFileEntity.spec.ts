@@ -350,5 +350,32 @@ describe('Case file entity module', () => {
         expect(module.service.createCaseFile).toBeCalledWith(payload);
       });
     });
+
+    describe('fetchCaseFileAssignedCounts', () => {
+      it('should call getCaseFileAssignedCounts service with proper params', async () => {
+        const params = {
+          eventId: '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3',
+          teamId: '76ca164f-a181-4a0c-8cf1-5967841b3981',
+        };
+
+        module.service.getCaseFileAssignedCounts = jest.fn();
+
+        await module.actions.fetchCaseFileAssignedCounts(actionContext, params);
+
+        expect(module.service.getCaseFileAssignedCounts).toBeCalledWith(params);
+      });
+    });
+
+    describe('fetchCaseFileDetailedCounts', () => {
+      it('should call fetchCaseFileDetailedCounts service with proper params', async () => {
+        const eventId = '0ea8ebda-d0c8-4482-85cb-6f5f4447d3c3';
+
+        module.service.fetchCaseFileDetailedCounts = jest.fn();
+
+        await module.actions.fetchCaseFileDetailedCounts(actionContext, eventId);
+
+        expect(module.service.fetchCaseFileDetailedCounts).toBeCalledWith(eventId);
+      });
+    });
   });
 });

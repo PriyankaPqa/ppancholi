@@ -5,6 +5,8 @@ import {
   ICaseFileMetadata,
   IIdentityAuthentication,
   IImpactStatusValidation,
+  ICaseFileDetailedCount,
+  ICaseFileCount,
 } from '@/entities/case-file/case-file.types';
 import { IListOption } from '@/types';
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
@@ -32,6 +34,8 @@ export interface IActions extends IBaseActions<ICaseFileEntity, ICaseFileMetadat
   fetchScreeningIds(): Promise<IOptionItem[]>;
   fetchCloseReasons(): Promise<IOptionItem[]>;
   fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]>;
+  fetchCaseFileAssignedCounts(eventId: uuid, teamId: uuid): Promise<ICaseFileCount>;
+  fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount>;
   setCaseFileTags(id: uuid, tags: IListOption[]): Promise<ICaseFileEntity>;
   setCaseFileStatus(id: uuid, status: CaseFileStatus, rationale?: string, reason?: IListOption): Promise<ICaseFileEntity>;
   setCaseFileLabels(id: uuid, labels: ICaseFileLabel[]): Promise<ICaseFileEntity>;
@@ -49,6 +53,8 @@ export interface IActionsMock extends IBaseActionsMock<ICaseFileEntity, ICaseFil
   fetchScreeningIds: jest.Mock<IOptionItemData[]>;
   fetchCloseReasons: jest.Mock<IOptionItemData[]>;
   fetchCaseFileActivities: jest.Mock<ICaseFileActivity[]>;
+  fetchCaseFileAssignedCounts:jest.Mock<ICaseFileCount>;
+  fetchCaseFileDetailedCounts:jest.Mock<ICaseFileDetailedCount>;
   setCaseFileTags: jest.Mock<ICaseFileEntity>;
   setCaseFileStatus: jest.Mock<ICaseFileEntity>;
   setCaseFileLabels: jest.Mock<ICaseFileEntity>;

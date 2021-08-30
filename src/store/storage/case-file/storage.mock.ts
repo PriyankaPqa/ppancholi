@@ -1,5 +1,5 @@
 import {
-  ICaseFileCombined, ICaseFileEntity, mockCaseFileEntity, mockCombinedCaseFiles, mockCaseFileActivities,
+  ICaseFileCombined, ICaseFileEntity, mockCaseFileEntity, mockCombinedCaseFiles, mockCaseFileActivities, mockCaseFileDetailedCount, mockCaseFileCount,
 } from '@/entities/case-file';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { BaseMock } from '../base/base.mock';
@@ -24,6 +24,8 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
     fetchScreeningIds: jest.fn(() => mockOptionItemData()),
     fetchCloseReasons: jest.fn(() => mockOptionItemData()),
     fetchCaseFileActivities: jest.fn(() => mockCaseFileActivities()),
+    fetchCaseFileAssignedCounts: jest.fn(() => mockCaseFileCount()),
+    fetchCaseFileDetailedCounts: jest.fn(() => mockCaseFileDetailedCount()),
     setCaseFileTags: jest.fn(() => this.entity),
     setCaseFileStatus: jest.fn(() => this.entity),
     setCaseFileLabels: jest.fn(() => this.entity),

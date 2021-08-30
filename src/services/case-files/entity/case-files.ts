@@ -2,6 +2,7 @@ import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
+  ICaseFileDetailedCount,
 } from '@/entities/case-file';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@/services/httpClient';
@@ -83,5 +84,9 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
 
   async getCaseFileAssignedCounts(params: {eventId: uuid, teamId: uuid}): Promise<ICaseFileCount> {
     return this.http.get('case-file/case-files/assigned-counts', { params });
+  }
+
+  async fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount> {
+    return this.http.get(`${this.baseUrl}/detailed-assigned-counts`, { params: { eventId } });
   }
 }

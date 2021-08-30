@@ -1,6 +1,6 @@
 import { ActionContext, ActionTree } from 'vuex';
 import {
-  CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
+  CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileCount, ICaseFileDetailedCount, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
   IImpactStatusValidation,
 } from '@/entities/case-file';
 import { CaseFilesService, ICreateCaseFileRequest } from '@/services/case-files/entity';
@@ -213,6 +213,33 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
       try {
         const res = await this.service.createCaseFile(payload);
         context.commit('set', res);
+        return res;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    fetchCaseFileAssignedCounts: async (
+      context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>,
+      { eventId, teamId }: { eventId: uuid; teamId: uuid },
+    ): Promise<ICaseFileCount> => {
+      try {
+        const res = await this.service.getCaseFileAssignedCounts({
+          eventId,
+          teamId,
+        });
+        return res;
+      } catch (e) {
+        return null;
+      }
+    },
+
+    fetchCaseFileDetailedCounts: async (
+      context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>,
+      eventId: uuid,
+    ): Promise<ICaseFileDetailedCount> => {
+      try {
+        const res = await this.service.fetchCaseFileDetailedCounts(eventId);
         return res;
       } catch (e) {
         return null;

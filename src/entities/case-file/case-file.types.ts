@@ -147,3 +147,21 @@ export interface ICaseFileCount {
   closedCount: number;
   archivedCount: number;
 }
+
+export interface ICaseFileDetailedCount {
+  inactiveCount: number;
+  closedCount: number;
+  openCount: {
+    assigned: number,
+    unAssigned: number,
+    duplicate: number,
+  };
+  caseFileTriageCounts: {
+    tier1: number,
+    tier2: number,
+    tier3: number,
+    tier4: number,
+    tier5: number,
+    tierNone: number,
+  },
+}

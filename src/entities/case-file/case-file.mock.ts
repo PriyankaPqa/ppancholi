@@ -3,12 +3,30 @@ import { IEntity, mockBaseData } from '@/entities/base';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
-  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount,
+  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 
 export const mockCaseFileCount = (): ICaseFileCount => ({
   inactiveCount: 0, openCount: 1, closedCount: 1, archivedCount: 0,
+});
+
+export const mockCaseFileDetailedCount = (): ICaseFileDetailedCount => ({
+  inactiveCount: 0,
+  closedCount: 1,
+  openCount: {
+    assigned: 1,
+    unAssigned: 2,
+    duplicate: 3,
+  },
+  caseFileTriageCounts: {
+    tier1: 1,
+    tier2: 2,
+    tier3: 3,
+    tier4: 4,
+    tier5: 5,
+    tierNone: 8,
+  },
 });
 
 export const mockCaseFileEntity = (force? : Partial<IEntity>): ICaseFileEntity => ({

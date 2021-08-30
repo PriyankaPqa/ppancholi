@@ -1,5 +1,5 @@
 import {
-  mockCaseFileActivities, mockCaseFileEntity, mockCaseFileCount,
+  mockCaseFileActivities, mockCaseFileEntity, mockCaseFileCount, mockCaseFileDetailedCount,
 } from '@/entities/case-file';
 import { ICaseFilesServiceMock } from './case-files.types';
 
@@ -14,4 +14,5 @@ export const mockCaseFilesService = (): ICaseFilesServiceMock => ({
   createCaseFile: jest.fn(() => mockCaseFileEntity()),
   setCaseFileValidationOfImpact: jest.fn(() => mockCaseFileEntity()),
   getCaseFileAssignedCounts: jest.fn(() => mockCaseFileCount()),
+  fetchCaseFileDetailedCounts: jest.fn(() => mockCaseFileDetailedCount()),
 });
