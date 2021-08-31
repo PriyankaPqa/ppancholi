@@ -359,15 +359,13 @@ describe('CreateFinancialAssistance.vue', () => {
     describe('isDisabled', () => {
       it('returns true or false if the create should be disabled', () => {
         wrapper.vm.financialAssistance = new FinancialAssistancePaymentEntity(caseFileFinancialAssistance);
-        wrapper.vm.financialAssistance.validate = jest.fn(() => false);
+        wrapper.vm.financialAssistance.name = null;
 
         expect(wrapper.vm.isDisabled).toBe(true);
       });
 
       it('returns true or false if the create should be disabled', () => {
         wrapper.vm.financialAssistance = new FinancialAssistancePaymentEntity(caseFileFinancialAssistance);
-        wrapper.vm.financialAssistance.validate = jest.fn(() => true);
-
         expect(wrapper.vm.isDisabled).toBe(false);
       });
     });
@@ -438,6 +436,14 @@ describe('CreateFinancialAssistance.vue', () => {
       it('should call storage to get categories', async () => {
         await wrapper.vm.updateSelectedTable(financialAssistance);
         expect(storage.financialAssistanceCategory.getters.getAll).toHaveBeenCalled();
+      });
+    });
+
+    describe('saveFinancialAssistance', () => {
+      it('should call the storage', async () => {
+        wrapper.vm.financialAssistance = financialAssistance;
+        await wrapper.vm.saveFinancialAssistance();
+        expect(storage.financialAssistancePayment.actions.addFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance);
       });
     });
 

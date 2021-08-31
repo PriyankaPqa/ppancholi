@@ -99,7 +99,7 @@ export default Vue.extend({
 
     document(): ICaseFileDocumentEntity {
       const combinedDocument = this.$storage.caseFileDocument.getters.get(this.documentId);
-      return combinedDocument?.entity || new CaseFileDocumentEntity();
+      return combinedDocument?.entity?.id ? combinedDocument?.entity : new CaseFileDocumentEntity();
     },
 
     category(): string {

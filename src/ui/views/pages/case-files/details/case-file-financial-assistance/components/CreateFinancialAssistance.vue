@@ -52,7 +52,7 @@
           data-test="save"
           :loading="loading"
           :disabled="failed || !dirty || isDisabled || showWarning"
-          @click.stop="submit">
+          @click.stop="saveFinancialAssistance">
           {{ submitLabel }}
         </v-btn>
       </template>
@@ -149,7 +149,7 @@ export default Vue.extend({
     },
 
     isDisabled() : boolean {
-      return !(this.financialAssistance.validate() && this.financialAssistance.groups?.length > 0);
+      return !(this.financialAssistance.validate() === true && this.financialAssistance.groups?.length > 0);
     },
 
     caseFile(): ICaseFileEntity {
@@ -186,6 +186,15 @@ export default Vue.extend({
 
         this.financialTables = this.$storage.financialAssistance.getters.getByIds(ids).map((t : IFinancialAssistanceTableCombined) => t.entity)
           .filter((t: IFinancialAssistanceTableEntity) => t.status === Status.Active);
+      }
+    },
+
+    async saveFinancialAssistance() {
+      const result = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePayment(this.financialAssistance);
+      if (result) {
+        this.financialAssistance = new FinancialAssistancePaymentEntity(result);
+        this.$toasted.global.success(this.$t('financialAssistancePayment_create.success'));
+        this.$router.replace({ name: routes.caseFile.financialAssistance.home.name });
       }
     },
 

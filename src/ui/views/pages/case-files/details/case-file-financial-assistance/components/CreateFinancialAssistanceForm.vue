@@ -20,12 +20,11 @@
       <v-row class="mt-0">
         <v-col cols="12" md="6">
           <v-autocomplete-with-validation
-            v-model="localFinancialAssistance.financialAssistanceTableId"
+            v-model="financialAssistanceTable"
             :items="tablesSorted"
             return-object
             :label="`${$t('financial.table_name')} *`"
             :item-text="(item) => $m(item.name)"
-            :item-value="(item) => item.id"
             :loading="loadingTables"
             :rules="rules.table"
             data-test="financialCreate_tableSelect"
@@ -93,7 +92,8 @@ export default Vue.extend({
 
   data() {
     return {
-      localFinancialAssistance: new FinancialAssistancePaymentEntity(),
+      localFinancialAssistance: null as FinancialAssistancePaymentEntity,
+      financialAssistanceTable: null as IFinancialAssistanceTableEntity,
       financialTables: [] as Array<IFinancialAssistanceTableEntity>,
       rules: {
         name: {
@@ -129,10 +129,28 @@ export default Vue.extend({
     },
   },
 
+  created() {
+    this.localFinancialAssistance = new FinancialAssistancePaymentEntity(this.financialAssistance);
+    this.financialAssistanceTable = this.financialAssistanceTables
+      .find((x) => x.id === this.localFinancialAssistance.financialAssistanceTableId);
+  },
+
   methods: {
-    triggerUpdateSelectedData(table: IFinancialAssistanceTableEntity): void {
-      this.updateBasicData();
-      this.$emit('updateSelectedData', table);
+    async triggerUpdateSelectedData(table: IFinancialAssistanceTableEntity) {
+      let doChange = true;
+      if (this.localFinancialAssistance.groups?.length) {
+        doChange = await this.$confirm(this.$t('financialAssistancePayment.confirm.changeTable.title'),
+          this.$t('financialAssistancePayment.confirm.changeTable.message'));
+      }
+      if (doChange) {
+        this.localFinancialAssistance.groups = [];
+        this.localFinancialAssistance.financialAssistanceTableId = table.id;
+        this.updateBasicData();
+        this.$emit('updateSelectedData', table);
+      } else {
+        this.financialAssistanceTable = this.financialAssistanceTables
+          .find((x) => x.id === this.localFinancialAssistance.financialAssistanceTableId);
+      }
     },
 
     updateBasicData(): void {

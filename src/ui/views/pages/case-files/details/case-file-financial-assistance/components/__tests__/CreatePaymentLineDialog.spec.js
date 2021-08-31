@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockProgramEntity } from '@/entities/program';
 import { mockItems } from '@/entities/financial-assistance';
@@ -7,12 +8,13 @@ import Component from '../CreatePaymentLineDialog.vue';
 const localVue = createLocalVue();
 const program = mockProgramEntity();
 const items = mockItems();
-const caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
+let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 
 describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
+    caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
     jest.clearAllMocks();
 
     wrapper = mount(Component, {
@@ -151,7 +153,7 @@ describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
           lastUpdatedBy: '',
           lines: [
             {
-              actualAmount: null,
+              actualAmount: 0,
               address: null,
               amount: null,
               careOf: null,
@@ -169,7 +171,23 @@ describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
       });
     });
 
+    describe('resetDocuments', () => {
+      it('should reset documentReceived', async () => {
+        await wrapper.setData({ paymentGroup: caseFileFinancialAssistanceGroup });
+        expect(wrapper.vm.currentPaymentLine.documentReceived).toBeTruthy();
+        await wrapper.vm.resetDocuments();
+        expect(wrapper.vm.currentPaymentLine.documentReceived).toBeFalsy();
+      });
+    });
+
     describe('onSubmit', () => {
+      it('sets amount as a number (as text field will return text)', async () => {
+        caseFileFinancialAssistanceGroup.lines[0].amount = '100';
+        await wrapper.setData({ paymentGroup: caseFileFinancialAssistanceGroup });
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.paymentGroup.lines[0].amount).toBe(100);
+      });
+
       it('doesnt proceed unless form validation succeeds', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         await wrapper.vm.onSubmit();

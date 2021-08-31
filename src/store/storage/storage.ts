@@ -17,6 +17,7 @@ import { CaseNoteStorage } from './case-note';
 import { CaseFileReferralStorage } from './case-file-referral';
 import { CaseFileDocumentStorage } from './case-file-document';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
+import { FinancialAssistancePaymentStorage } from './financial-assistance-payment';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   user: makeUserStorage(store),
@@ -39,4 +40,9 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   event: new EventStorage(store, vuexModule.EVENT_ENTITIES, vuexModule.EVENT_METADATA).make(),
   massAction: new MassActionStorage(store, vuexModule.MASS_ACTION_ENTITIES, vuexModule.MASS_ACTION_METADATA).make(),
   financialAssistanceCategory: new FinancialAssistanceCategoryStorage(store, vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES, null).make(),
+  financialAssistancePayment: new FinancialAssistancePaymentStorage(
+    store,
+    vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES,
+    vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA,
+  ).make(),
 });

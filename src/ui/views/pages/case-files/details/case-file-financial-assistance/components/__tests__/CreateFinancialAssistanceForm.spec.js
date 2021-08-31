@@ -1,10 +1,11 @@
+/* eslint-disable max-len */
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistanceEntities } from '@/entities/financial-assistance-payment';
 import { mockProgramEntity } from '@/entities/program';
 import Component from '../CreateFinancialAssistanceForm.vue';
 
 const localVue = createLocalVue();
-const financialAssistance = mockCaseFinancialAssistanceEntity();
+let financialAssistance = mockCaseFinancialAssistanceEntity();
 const financialAssistanceTables = mockCaseFinancialAssistanceEntities();
 const program = mockProgramEntity();
 
@@ -12,6 +13,7 @@ describe('CreateFinancialAssistanceForm.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
+    financialAssistance = mockCaseFinancialAssistanceEntity();
     jest.clearAllMocks();
 
     wrapper = mount(Component, {
@@ -50,10 +52,12 @@ describe('CreateFinancialAssistanceForm.vue', () => {
   describe('Methods', () => {
     describe('triggerUpdateSelectedData', () => {
       it('emits updateSelectedData ', async () => {
+        financialAssistanceTables[0].id = 'abc';
         wrapper.vm.localFinancialAssistance = financialAssistance;
         await wrapper.vm.$nextTick();
         await wrapper.vm.triggerUpdateSelectedData(financialAssistanceTables[0]);
-        expect(wrapper.emitted('update:financialAssistance')[0][0]).toEqual(financialAssistance);
+        expect(wrapper.emitted('update:financialAssistance')[wrapper.emitted('update:financialAssistance').length - 1][0]).toEqual(financialAssistance);
+        expect(wrapper.vm.localFinancialAssistance.financialAssistanceTableId).toBe('abc');
       });
 
       it('calls updateBasicData', async () => {
@@ -61,6 +65,27 @@ describe('CreateFinancialAssistanceForm.vue', () => {
 
         await wrapper.vm.triggerUpdateSelectedData(financialAssistanceTables[0]);
         expect(wrapper.vm.updateBasicData).toHaveBeenCalled();
+      });
+
+      it('cancels if the user cancels when there is already group information', async () => {
+        wrapper.vm.$confirm = jest.fn(() => false);
+        financialAssistanceTables[0].id = 'abc';
+        wrapper.vm.localFinancialAssistance = financialAssistance;
+        expect(wrapper.vm.localFinancialAssistance.groups.length).toBeGreaterThan(0);
+        await wrapper.vm.$nextTick();
+        await wrapper.vm.triggerUpdateSelectedData(financialAssistanceTables[0]);
+        expect(wrapper.vm.localFinancialAssistance.groups.length).toBeGreaterThan(0);
+        expect(wrapper.vm.localFinancialAssistance.financialAssistanceTableId).not.toBe('abc');
+      });
+
+      it('clears groups if the user agrees when there is already group information', async () => {
+        financialAssistanceTables[0].id = 'abc';
+        wrapper.vm.localFinancialAssistance = financialAssistance;
+        expect(wrapper.vm.localFinancialAssistance.groups.length).toBeGreaterThan(0);
+        await wrapper.vm.$nextTick();
+        await wrapper.vm.triggerUpdateSelectedData(financialAssistanceTables[0]);
+        expect(wrapper.vm.localFinancialAssistance.groups.length).toBe(0);
+        expect(wrapper.vm.localFinancialAssistance.financialAssistanceTableId).toBe('abc');
       });
     });
 

@@ -1,0 +1,6 @@
+import { mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
+import { IFinancialAssistancePaymentsServiceMock } from './financial-assistance-payments.types';
+
+export const mockFinancialAssistanceService = (): IFinancialAssistancePaymentsServiceMock => ({
+  addFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
+});

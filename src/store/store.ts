@@ -68,6 +68,10 @@ import { ProgramsMetadataService } from '@/services/programs/metadata';
 
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
+import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
+import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
+import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
+import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 
 Vue.use(Vuex);
 
@@ -128,6 +132,13 @@ const store: StoreOptions<IRootState> = {
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
       new FinancialAssistanceCategoriesService(httpClient),
+    ).getModule(),
+
+    [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES]: new FinancialAssistancePaymentEntityModule(
+      new FinancialAssistancePaymentsService(httpClient),
+    ).getModule(),
+    [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]: new FinancialAssistancePaymentMetadataModule(
+      new FinancialAssistancePaymentsMetadataService(httpClient),
     ).getModule(),
   },
 };

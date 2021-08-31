@@ -73,7 +73,22 @@ export interface IFinancialAssistancePaymentEntity extends IEntity {
 
 export interface IFinancialAssistancePaymentMetadata extends IEntity {
   total: number;
-  ApprovalStatusName: IMultilingual;
+  approvalStatusName: IMultilingual;
 }
 
 export type IFinancialAssistancePaymentCombined = IEntityCombined<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata>
+
+export interface CreatePaymentGroupServiceRequest {
+  modality: EPaymentModalities;
+  payeeType: PayeeType;
+  payeeName: string;
+  lines: IFinancialAssistancePaymentLine[];
+}
+
+export interface CreateFinancialAssistancePaymentServiceRequest {
+  caseFileId: string;
+  financialAssistanceTableId: string;
+  name: string;
+  description: string;
+  groups: CreatePaymentGroupServiceRequest[];
+}

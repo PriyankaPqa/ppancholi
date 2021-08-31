@@ -25,3 +25,5 @@ export const TEAM_METADATA = 'teamMetadata';
 export const MASS_ACTION_ENTITIES = 'massActionEntities';
 export const MASS_ACTION_METADATA = 'massActionMetadata';
 export const FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES = 'financialAssistanceCategoryEntities';
+export const FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES = 'financialAssistancePaymentEntities';
+export const FINANCIAL_ASSISTANCE_PAYMENT_METADATA = 'financialAssistancePaymentMetadata';

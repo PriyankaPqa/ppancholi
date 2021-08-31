@@ -5,6 +5,7 @@ import {
   IFinancialAssistancePaymentGroup,
   ApprovalStatus,
   IFinancialAssistancePaymentCombined,
+  IFinancialAssistancePaymentMetadata,
 } from './financial-assistance-payment.types';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockBaseData } from '../base';
@@ -46,6 +47,18 @@ export const mockCaseFinancialAssistanceEntity = (force?: Partial<IFinancialAssi
   ...force,
 });
 
+export const mockCaseFinancialAssistanceMetadata = (force? : Partial<IFinancialAssistancePaymentMetadata>) : IFinancialAssistancePaymentMetadata => ({
+  ...mockBaseData(),
+  total: 123,
+  approvalStatusName: {
+    translation: {
+      en: 'approvalStatusNameEn',
+      fr: 'approvalStatusNameFr',
+    },
+  },
+  ...force,
+});
+
 export const mockCaseFinancialAssistanceEntities = (): IFinancialAssistancePaymentEntity[] => ([
   mockCaseFinancialAssistanceEntity({ id: '1' }),
   mockCaseFinancialAssistanceEntity({ id: '2', approvalStatus: ApprovalStatus.Approved }, 1),
@@ -53,5 +66,5 @@ export const mockCaseFinancialAssistanceEntities = (): IFinancialAssistancePayme
 
 export const mockCombinedCaseFinancialAssistance = (force?: Partial<IFinancialAssistancePaymentEntity>): IFinancialAssistancePaymentCombined => ({
   entity: mockCaseFinancialAssistanceEntity(force),
-  metadata: null,
+  metadata: mockCaseFinancialAssistanceMetadata(force),
 });

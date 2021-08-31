@@ -72,6 +72,8 @@
                 v-model="currentPaymentLine.amount"
                 data-test="reason_specified_other"
                 autocomplete="nope"
+                type="number"
+                prefix="$"
                 :rules="rules.amount"
                 :label="`${$t('caseFile.financialAssistance.amount')} *`" />
             </v-col>
@@ -155,6 +157,8 @@ export default Vue.extend({
         },
         amount: {
           required: true,
+          min_value: 0.01,
+          max_value: 99999999,
         },
       },
     };
@@ -190,7 +194,7 @@ export default Vue.extend({
         subCategoryId: null,
         documentReceived: null,
         amount: null,
-        actualAmount: null,
+        actualAmount: 0,
         relatedNumber: null,
         careOf: null,
         address: null,
@@ -204,6 +208,10 @@ export default Vue.extend({
     },
 
     async onSubmit() {
+      if (this.currentPaymentLine.amount) {
+        this.currentPaymentLine.amount = Number(this.currentPaymentLine.amount);
+      }
+
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
         this.$emit('submit', this.paymentGroup);

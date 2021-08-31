@@ -19,7 +19,7 @@
         </template>
 
         <span>
-          {{ $t('caseFile.financialAssistance.amountExceeded') }}
+          {{ $t('caseFile.financialAssistance.amountExceeded', { maximumAmount: subItem.maximumAmount }) }}
         </span>
       </v-tooltip>
 
@@ -48,7 +48,7 @@ import { EPaymentModalities } from '@/entities/program/program.types';
 import {
   ApprovalStatus, IFinancialAssistancePaymentLine,
 } from '@/entities/financial-assistance-payment';
-import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
+import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 
 export default Vue.extend({
   name: 'PaymentLineItem',
@@ -109,20 +109,23 @@ export default Vue.extend({
   },
 
   computed: {
+    mainItem(): IFinancialAssistanceTableItem {
+      return this.items.find((i) => i.mainCategory.id === this.paymentLine.mainCategoryId);
+    },
+
+    subItem(): IFinancialAssistanceTableSubItem {
+      if (!this.mainItem) return null;
+      return this.mainItem.subItems.find((s) => s.subCategory.id === this.paymentLine.subCategoryId);
+    },
+
     title(): string {
-      const mainItem = this.items.find((i) => i.mainCategory.id === this.paymentLine.mainCategoryId);
-      const subItem = mainItem.subItems.find((s) => s.subCategory.id === this.paymentLine.subCategoryId);
-      return `${this.$m(mainItem.mainCategory.name)} > ${this.$m(subItem.subCategory.name)}`;
+      if (!this.subItem) return null;
+      return `${this.$m(this.mainItem.mainCategory.name)} > ${this.$m(this.subItem.subCategory.name)}`;
     },
 
     showTooltip(): boolean {
-      // ToDo : There's a story solely for payment over the limit
-      // ToDo : Validate if we're over limit
-      // if (this.paymentLine.subItem.amountType === EFinancialAmountModes.Variable) {
-      //   return this.paymentLine.amount > this.paymentLine.subItem.maximum;
-      // }
-
-      return false;
+      // Validate if we're over limit
+      return this.subItem?.maximumAmount && Number(this.paymentLine.amount) > this.subItem?.maximumAmount;
     },
 
     // showProxyNumber(): boolean {
