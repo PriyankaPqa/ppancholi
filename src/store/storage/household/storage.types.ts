@@ -1,4 +1,4 @@
-import { IAddress } from '@/entities/value-objects/address';
+import { IAddress } from '../../../entities/value-objects/address';
 import { IHouseholdEntity, IHouseholdMetadata } from '../../../entities/household';
 import {
   IBaseActions,
