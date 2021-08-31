@@ -1,5 +1,5 @@
 import { ActionContext, ActionTree } from 'vuex';
-import { IAddress } from '@/entities/value-objects/address';
+import { IAddress } from '../../../entities/value-objects/address';
 import { IHouseholdEntity } from '../../../entities/household';
 import { BaseModule, IState } from '../base';
 import { HouseholdsService } from '../../../services/households/entity';
