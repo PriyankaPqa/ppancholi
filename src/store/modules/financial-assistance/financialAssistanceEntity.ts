@@ -475,7 +475,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       subItems: item.subItems.map((subItem) => ({
         id: subItem.id,
         subCategory: subItem.subCategory
-          ? mainCategory.subitems.find((subitem) => subitem.id === subItem.subCategory.optionItemId)
+          ? mainCategory?.subitems.find((subitem) => subitem.id === subItem.subCategory.optionItemId)
           : (({
             id: '-1',
             name: {

@@ -175,8 +175,18 @@ const routes = {
       name: 'massActions.home',
     },
     financialAssistance: {
-      path: 'financial-assistance',
-      name: 'massActions.financialAssistance',
+      home: {
+        path: 'financial-assistance',
+        name: 'massActions.financialAssistance.home',
+      },
+      create: {
+        path: 'financial-assistance/create',
+        name: 'massActions.financialAssistance.create',
+      },
+      details: {
+        path: 'financial-assistance/details/:id',
+        name: 'massActions.financialAssistance.details',
+      },
     },
     importValidationStatus: {
       home: {

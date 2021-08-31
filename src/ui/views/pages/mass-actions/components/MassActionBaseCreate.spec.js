@@ -23,6 +23,7 @@ describe('MassActionBaseCreate.vue', () => {
           title: 'title',
           formData: new FormData(),
           url: 'url',
+          applyToLabel: 'applyToLabel',
         },
       });
     });
@@ -79,6 +80,7 @@ describe('MassActionBaseCreate.vue', () => {
           title: 'title',
           formData: new FormData(),
           url: 'url',
+          applyToLabel: 'applyToLabel',
         },
       });
       wrapper.vm.$refs.form.validate = jest.fn(() => true);
@@ -168,6 +170,7 @@ describe('MassActionBaseCreate.vue', () => {
           title: 'title',
           formData: new FormData(),
           url: 'url',
+          applyToLabel: 'applyToLabel',
         },
       });
     });

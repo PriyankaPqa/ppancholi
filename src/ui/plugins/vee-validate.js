@@ -51,7 +51,7 @@ extend('required', {
 
 extend('min', {
   ...min,
-  message: (_, values) => i18n.t('validations.min', values),
+  message: (_, values) => i18n.t('validations.min', { value: values.length }),
 });
 
 extend('min_value', {
@@ -68,7 +68,7 @@ extend('max_value', {
 
 extend('max', {
   ...max,
-  message: (_, values) => i18n.t('validations.max', values),
+  message: (_, values) => i18n.t('validations.max', { value: values.length }),
 });
 
 extend('email', {

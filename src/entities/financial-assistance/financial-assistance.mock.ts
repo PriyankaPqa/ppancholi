@@ -1,15 +1,15 @@
-import { mockBaseData } from '../base';
+import { mockBaseData, Status } from '../base';
 import { IOptionItem } from '../optionItem';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
-  IFinancialAssistanceTableItem,
-  IFinancialAssistanceTableSubItem,
-  IFinancialAssistanceTableMetadata,
-  IFinancialAssistanceTableEntity,
   IFinancialAssistanceTableCombined,
-  IFinancialAssistanceTableSubItemData,
+  IFinancialAssistanceTableEntity,
+  IFinancialAssistanceTableItem,
   IFinancialAssistanceTableItemData,
+  IFinancialAssistanceTableMetadata,
+  IFinancialAssistanceTableSubItem,
+  IFinancialAssistanceTableSubItemData,
 } from './financial-assistance.types';
 
 export const mockSubItems = (): IFinancialAssistanceTableSubItem[] => [
@@ -207,6 +207,7 @@ export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableE
           amountType: EFinancialAmountModes.Fixed,
           documentationRequired: false,
           frequency: EFinancialFrequency.OneTime,
+          status: Status.Active,
         },
       ],
     },
@@ -219,6 +220,7 @@ export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableE
           amountType: EFinancialAmountModes.Variable,
           documentationRequired: true,
           frequency: EFinancialFrequency.Multiple,
+          status: Status.Active,
         },
         {
           subCategory: { optionItemId: '93897f29-c48d-414c-9dd7-d533759b32e6', specifiedOther: null },
@@ -226,6 +228,7 @@ export const mockFinancialAssistanceTableEntity = (): IFinancialAssistanceTableE
           amountType: EFinancialAmountModes.Fixed,
           documentationRequired: false,
           frequency: EFinancialFrequency.OneTime,
+          status: Status.Active,
         },
       ],
     },

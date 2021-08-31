@@ -18,11 +18,20 @@
               :rules="rules.description" />
           </v-col>
           <!-- Use this slot to add the needed form -->
-          <slot name="form" />
+          <v-col cols="12" xl="8" lg="9" md="11" sm="12">
+            <slot name="form" />
+          </v-col>
 
           <v-col cols="12" xl="8" lg="9" md="11" sm="12">
+            <div class="rc-body-16 fw-bold mb-4">
+              {{ applyToLabel }}
+            </div>
             <validation-provider v-slot="{ errors }" ref="file" :rules="rules.file" mode="aggressive">
-              <rc-file-upload :allowed-extensions="['csv']" :file="file" :errors="errors" @update:file="onUpdateFile($event)" />
+              <rc-file-upload
+                :allowed-extensions="['csv']"
+                :file="file"
+                :errors="errors"
+                @update:file="onUpdateFile($event)" />
             </validation-provider>
           </v-col>
         </v-row>
@@ -95,6 +104,14 @@ export default mixins(fileUpload).extend({
      * The title of the page content
      */
     title: {
+      type: String,
+      required: true,
+    },
+
+    /**
+     * The title of the page content
+     */
+    applyToLabel: {
       type: String,
       required: true,
     },

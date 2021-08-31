@@ -50,7 +50,10 @@ const FinancialAssistanceDetails = () => import(/* webpackChunkName: "financial-
 
 const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/layout/MassActionsLayout.vue');
 const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
+
 const MassActionsFinancialAssistanceHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceHome.vue');
+const MassActionsFinancialAssistanceCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreateFile.vue');
+const MassActionsFinancialAssistanceDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetails.vue');
 
 const MassActionsImportValidationStatusHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
 const MassActionsImportValidationStatusCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
@@ -421,10 +424,22 @@ export const routes: Array<RouteConfig> = [
                 meta: { level: 'level6', roles: ['contributorIM', 'contributorFinance'] },
               },
               {
-                path: Routes.massActions.financialAssistance.path,
-                name: Routes.massActions.financialAssistance.name,
+                path: Routes.massActions.financialAssistance.home.path,
+                name: Routes.massActions.financialAssistance.home.name,
                 component: MassActionsFinancialAssistanceHome,
-                meta: { level: 'level6', roles: ['contributorFinance'] },
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.massActions.financialAssistance.create.path,
+                name: Routes.massActions.financialAssistance.create.name,
+                component: MassActionsFinancialAssistanceCreate,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.massActions.financialAssistance.details.path,
+                name: Routes.massActions.financialAssistance.details.name,
+                component: MassActionsFinancialAssistanceDetails,
+                meta: { level: 'level6' },
               },
               {
                 path: Routes.massActions.importValidationStatus.home.path,

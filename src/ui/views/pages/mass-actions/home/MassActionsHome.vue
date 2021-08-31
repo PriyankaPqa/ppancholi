@@ -42,7 +42,7 @@ export default mixins(massActions).extend({
           title: 'mass_action.card.financial_assistance',
           description: 'mass_action.card.group1',
           button: 'mass_action.card.action.view',
-          route: routes.massActions.financialAssistance.name,
+          route: routes.massActions.financialAssistance.home.name,
           dataTest: 'massAction_financial',
           level: 'level6',
           roles: null,

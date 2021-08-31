@@ -47,7 +47,7 @@ export default mixins(massActions).extend({
             {
               text: this.$t('mass_action.card.financial_assistance'),
               test: 'mass_action.card.financial_assistance',
-              to: routes.massActions.financialAssistance.name,
+              to: routes.massActions.financialAssistance.home.name,
               exact: false,
               level: 'level6',
             },

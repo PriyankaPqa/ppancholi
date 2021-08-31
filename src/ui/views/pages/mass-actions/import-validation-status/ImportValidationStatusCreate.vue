@@ -1,6 +1,7 @@
 <template>
   <mass-action-base-create
     :title="$t('massActions.importValidationStatus.create.title')"
+    :apply-to-label="$t('massActions.importValidationStatus.upload.title')"
     :url="url"
     :form-data="formData"
     @back="back()"

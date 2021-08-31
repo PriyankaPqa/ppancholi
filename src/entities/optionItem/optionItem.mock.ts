@@ -87,7 +87,7 @@ export const mockOptionItemData = (): IOptionItemData[] => [
   },
 ];
 
-export const mockOptionItem = (): IOptionItem => ({
+export const mockOptionItem = (force?: Partial<IOptionItem>): IOptionItem => ({
   ...mockBaseData({ id: '1' }),
   name: {
     translation: {
@@ -105,7 +105,8 @@ export const mockOptionItem = (): IOptionItem => ({
   status: 1,
   isOther: true,
   isDefault: false,
-  subitems: [mockOptionSubItem({ id: '1' }), mockOptionSubItem({ id: '2' })],
+  subitems: [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' }), mockOptionSubItem({ id: '2' })],
+  ...force,
 });
 
 export const mockCombineOptionItem = (): IOptionItemCombined => ({

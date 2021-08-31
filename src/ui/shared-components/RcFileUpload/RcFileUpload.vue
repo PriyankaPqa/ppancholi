@@ -1,25 +1,30 @@
 <template>
-  <v-file-input
-    id="inputUpload"
-    v-model="localFiles"
-    counter
-    :multiple="multiple"
-    show-size
-    :accept="acceptedTypes"
-    :error-messages="[...errors, ...errorMessages]"
-    :error-count="2"
-    :label="$t(labelFileInput)"
-    :placeholder="$t(placeHolderFileInput)"
-    prepend-icon=""
-    outlined
-    @change="onChange($event)"
-    @focus="checkRules($event)">
-    <template #append class="pa-0">
-      <v-btn color="primary" class="uploadButton" @click="openSelection()">
-        {{ $t('common.button.browse') }}
-      </v-btn>
-    </template>
-  </v-file-input>
+  <div>
+    <v-file-input
+      id="inputUpload"
+      v-model="localFiles"
+      counter
+      :multiple="multiple"
+      show-size
+      :accept="acceptedTypes"
+      :error-messages="[...errors, ...errorMessages]"
+      :error-count="2"
+      :label="$t(labelFileInput)"
+      :placeholder="$t(placeHolderFileInput)"
+      prepend-icon=""
+      outlined
+      @change="onChange($event)"
+      @focus="checkRules($event)">
+      <template #append class="pa-0">
+        <v-btn color="primary" class="uploadButton" @click="openSelection()">
+          {{ $t('common.button.browse') }}
+        </v-btn>
+      </template>
+    </v-file-input>
+    <div v-if="errors.length === 0 && errorMessages.length === 0" class="rc-caption12 mt-n6">
+      {{ $t('common.upload.max_file.size', {x: helpers.formatBytes(maxSize)}) }}
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -106,6 +111,7 @@ export default Vue.extend({
     return {
       errorMessages: [] as Array<string>,
       localFiles: [],
+      helpers,
     };
   },
   computed: {
