@@ -26,6 +26,7 @@ export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseho
     },
     from: '2021-05-26T19:52:44.379Z',
     to: '2021-05-26T19:52:44.379Z',
+    observation: 'observation'
   },
   addressHistory: [
     {
