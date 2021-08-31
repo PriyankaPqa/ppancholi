@@ -20,7 +20,7 @@ export interface IHouseholdsService {
   updatePersonIdentity(id: string, payload: IIdentitySet): Promise<IHouseholdEntity> | false;
   updatePersonAddress(id: string, payload: ICurrentAddress): Promise<IHouseholdEntity> | false;
   updateHomeAddress(id: string, payload: IAddress): Promise<IHouseholdEntity> | false;
-  updateNoFixedHomeAddress(id: string): Promise<IHouseholdEntity> | false;
+  updateNoFixedHomeAddress(id: string, observation?: string): Promise<IHouseholdEntity> | false;
   deleteAdditionalMember(householdId: string, memberId: string): Promise<IHouseholdEntity>;
   addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity>;
 }

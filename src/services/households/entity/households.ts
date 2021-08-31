@@ -88,9 +88,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     });
   }
 
-  async updateNoFixedHomeAddress(id: string): Promise<IHouseholdEntity> {
+  async updateNoFixedHomeAddress(id: string, observation?: string): Promise<IHouseholdEntity> {
     return this.http.patch(`${this.baseUrl}/${id}/no-fixed-address`, {
       from: moment.utc(moment()).format(),
+      observation: observation || null,
     });
   }
 
