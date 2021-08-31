@@ -15,6 +15,9 @@ export class HouseholdStorageMock extends BaseMock<IHouseholdCombined, IHousehol
 
   protected actions = {
     ...this.baseActions,
+
+    updateNoFixedHomeAddress: jest.fn(() => this.entity),
+    updateHomeAddress: jest.fn(() => this.entity),
   }
 
   protected mutations = {

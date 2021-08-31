@@ -1,4 +1,5 @@
-import { ActionTree } from 'vuex';
+import { ActionContext, ActionTree } from 'vuex';
+import { IAddress } from '@/entities/value-objects/address';
 import { IHouseholdEntity } from '../../../entities/household';
 import { BaseModule, IState } from '../base';
 import { HouseholdsService } from '../../../services/households/entity';
@@ -32,5 +33,27 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity> {
 
   public actions = {
     ...this.baseActions,
+
+    updateNoFixedHomeAddress: async (
+      context: ActionContext<IState<IHouseholdEntity>, IState<IHouseholdEntity>>,
+      { householdId, observation }: { householdId: string; observation: string },
+    ): Promise<IHouseholdEntity> => {
+      const res = await this.service.updateNoFixedHomeAddress(householdId, observation);
+      if (res) {
+        context.commit('set', res);
+      }
+      return res;
+    },
+
+    updateHomeAddress: async (
+      context: ActionContext<IState<IHouseholdEntity>, IState<IHouseholdEntity>>,
+      { householdId, address }: { householdId: string; address: IAddress },
+    ): Promise<IHouseholdEntity> => {
+      const res = await this.service.updateHomeAddress(householdId, address);
+      if (res) {
+        context.commit('set', res);
+      }
+      return res;
+    },
   }
 }

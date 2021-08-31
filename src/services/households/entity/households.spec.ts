@@ -101,7 +101,7 @@ describe('>>> Beneficiaries Service', () => {
     await service.updateNoFixedHomeAddress('123', 'test');
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/no-fixed-address`, {
       from: moment.utc(moment()).format(),
-      observation: 'test'
+      observation: 'test',
     });
   });
 

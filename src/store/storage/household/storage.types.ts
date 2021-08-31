@@ -1,3 +1,4 @@
+import { IAddress } from '@/entities/value-objects/address';
 import { IHouseholdEntity, IHouseholdMetadata } from '../../../entities/household';
 import {
   IBaseActions,
@@ -8,9 +9,15 @@ import {
   IBaseMutationsMock,
 } from '../base/base.types';
 
-export interface IActions extends IBaseActions<IHouseholdEntity, IHouseholdMetadata> {}
+export interface IActions extends IBaseActions<IHouseholdEntity, IHouseholdMetadata> {
+  updateNoFixedHomeAddress (householdId: string, observation: string): Promise<IHouseholdEntity>;
+  updateHomeAddress (householdId: string, address: IAddress): Promise<IHouseholdEntity>;
+}
 
-export interface IActionsMock extends IBaseActionsMock<IHouseholdEntity, IHouseholdMetadata> {}
+export interface IActionsMock extends IBaseActionsMock<IHouseholdEntity, IHouseholdMetadata> {
+  updateNoFixedHomeAddress: jest.Mock<IHouseholdEntity>;
+  updateHomeAddress: jest.Mock<IHouseholdEntity>;
+}
 
 export interface IGetters extends IBaseGetters<IHouseholdEntity, IHouseholdMetadata> {}
 
