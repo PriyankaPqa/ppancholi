@@ -6,9 +6,8 @@ export interface IHouseholdAddress {
   address?: IAddressData;
   from?: string;
   to?: string;
+  observation?: string;
 }
-
-export type Status = 1 | 2;
 
 export interface IHouseholdEntity extends IEntity {
   address?: IHouseholdAddress;
