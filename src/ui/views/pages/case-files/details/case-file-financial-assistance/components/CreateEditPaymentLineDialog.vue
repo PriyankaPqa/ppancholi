@@ -53,8 +53,7 @@
                 :items="paymentModalities"
                 :rules="rules.modalities"
                 :label="`${$t('caseFile.financialAssistance.paymentModality')} *`"
-                data-test="payment_modalities"
-                @change="updateForm" />
+                data-test="payment_modalities" />
             </v-col>
             <v-col cols="6">
               <!-- ToDo : Document requirement validation -->
@@ -70,17 +69,35 @@
             <v-col cols="3">
               <v-text-field-with-validation
                 v-model="currentPaymentLine.amount"
-                data-test="reason_specified_other"
+                data-test="txt_amount"
                 autocomplete="nope"
                 type="number"
                 prefix="$"
                 :rules="rules.amount"
-                :label="`${$t('caseFile.financialAssistance.amount')} *`" />
+                :label="`${$t(showIssuedActualAmounts ? 'caseFile.financialAssistance.issuedAmount': 'caseFile.financialAssistance.amount')} *`" />
             </v-col>
           </v-row>
-          <v-row>
-            <v-col v-if="paymentGroup.modality" cols="12">
-              <!-- <payment-type-handler :payment-type="paymentLine.modality" /> -->
+          <v-row v-if="showIssuedActualAmounts">
+            <v-col cols="3">
+              <v-text-field-with-validation
+                v-model="currentPaymentLine.actualAmount"
+                data-test="txt_actualamount"
+                autocomplete="nope"
+                type="number"
+                prefix="$"
+                :disabled="!canSetActualAmount"
+                :rules="rules.actualAmount"
+                :label="`${$t('caseFile.financialAssistance.actualAmount')}`" />
+            </v-col>
+          </v-row>
+          <v-row v-if="showRelatedNumber">
+            <v-col cols="6">
+              <v-text-field-with-validation
+                v-model="currentPaymentLine.relatedNumber"
+                data-test="txt_related_number"
+                autocomplete="nope"
+                :rules="rules.relatedNumber"
+                :label="`${$t('caseFile.financialAssistance.relatedNumber')}`" />
             </v-col>
           </v-row>
         </v-col>
@@ -106,6 +123,7 @@ import {
   FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
+  PaymentStatus,
 } from '@/entities/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import helpers from '@/ui/helpers';
@@ -170,6 +188,10 @@ export default Vue.extend({
           min_value: 0.01,
           max_value: 99999999,
         },
+        actualAmount: {
+          min_value: 0,
+          max_value: 99999999,
+        },
       },
     };
   },
@@ -187,6 +209,22 @@ export default Vue.extend({
 
     currentPaymentLine(): IFinancialAssistancePaymentLine {
       return this.paymentGroup.lines[0];
+    },
+
+    showRelatedNumber(): boolean {
+      return this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.PrepaidCard
+        || this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.GiftCard
+        || this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.Voucher
+        || this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.Invoice;
+    },
+
+    showIssuedActualAmounts(): boolean {
+      return this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.Voucher
+        || this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.Invoice;
+    },
+
+    canSetActualAmount(): boolean {
+      return this.paymentGroup?.paymentStatus === PaymentStatus.Completed;
     },
   },
 
@@ -236,10 +274,6 @@ export default Vue.extend({
 
     resetDocuments() {
       this.currentPaymentLine.documentReceived = false;
-    },
-
-    updateForm() {
-      // ToDO : Adapt form depending on the payment modalities
     },
   },
 });

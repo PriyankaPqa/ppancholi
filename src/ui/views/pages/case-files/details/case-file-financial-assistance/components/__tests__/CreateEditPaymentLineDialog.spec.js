@@ -1,8 +1,8 @@
 /* eslint-disable */
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockProgramEntity } from '@/entities/program';
+import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
 import { mockItems } from '@/entities/financial-assistance';
-import { mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
+import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus } from '@/entities/financial-assistance-payment';
 import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();
@@ -60,9 +60,59 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       });
     });
 
-    describe('reason_specified_other', () => {
+    describe('txt_amount', () => {
       it('is rendered', () => {
-        expect(wrapper.findDataTest('reason_specified_other').exists()).toBeTruthy();
+        expect(wrapper.findDataTest('txt_amount').exists()).toBeTruthy();
+      });
+    });
+
+    describe('txt_actualamount', () => {
+      it(' is shown for Voucher and invoice', async () => {
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();        
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.DirectDeposit } } });
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();        
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.GiftCard } } });
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice } } });
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeTruthy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.PrepaidCard } } });
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeTruthy();
+      });
+
+      it('is disabled until payment is completed', async () => {
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher }, paymentStatus: PaymentStatus.New } });
+        expect(wrapper.findDataTest('txt_actualamount').vm.$attrs.disabled).toBeTruthy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher }, paymentStatus: PaymentStatus.Issued } });
+        expect(wrapper.findDataTest('txt_actualamount').vm.$attrs.disabled).toBeTruthy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher }, paymentStatus: PaymentStatus.Completed } });
+        expect(wrapper.findDataTest('txt_actualamount').vm.$attrs.disabled).toBeFalsy();
+
+      });
+    });
+
+    describe('txt_related_number', () => {
+      it(' is shown for Voucher, invoice, gift card, prepaid', async () => {
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();        
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.DirectDeposit } } });
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();        
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.GiftCard } } });
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeTruthy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice } } });
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeTruthy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.PrepaidCard } } });
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeTruthy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeTruthy();
       });
     });
   });
@@ -89,9 +139,9 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       });
     });
 
-    describe('reason_specified_other', () => {
+    describe('txt_amount', () => {
       it('is rendered', () => {
-        const element = wrapper.findDataTest('reason_specified_other');
+        const element = wrapper.findDataTest('txt_amount');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.amount);
       });
     });
