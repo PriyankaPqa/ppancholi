@@ -5,6 +5,7 @@
       :items="tableData"
       :count="itemsCount"
       :table-props="tableProps"
+      :hide-footer="hideFooter"
       :labels="labels"
       :headers="headers"
       :custom-columns="Object.values(customColumns)"
@@ -104,6 +105,14 @@ export default Vue.extend({
       type: String,
       default: 'teams.teams',
     },
+    limitResults: {
+      type: Number,
+      default: 0,
+    },
+    hideFooter: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -116,6 +125,7 @@ export default Vue.extend({
         page: 1,
         sortBy: ['Entity/Name'],
         sortDesc: [false],
+        ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
       searchResultIds: [] as string[],
       itemsCount: 0,
