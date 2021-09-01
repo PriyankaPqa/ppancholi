@@ -53,6 +53,8 @@ export enum CaseFileActivityType {
   DocumentDeactivated = 16,
   DocumentUpdated = 17,
   DocumentAdded = 18,
+  CaseNoteAdded = 19,
+  CaseNoteUpdated = 20,
 }
 
 export enum ImpactValidationMethod {

@@ -148,6 +148,26 @@ describe('CaseFileActivityListItem.vue', () => {
         });
         expect(wrapper.vm.content).toEqual(null);
       });
+
+      it('calls the right method when action type is CaseNoteAdded', async () => {
+        const mockContent = { title: 'mock-title', body: 'mock-body' };
+        jest.spyOn(wrapper.vm, 'makeContentForCaseNote').mockImplementation(() => (mockContent));
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.CaseNoteAdded)[0],
+        });
+        expect(wrapper.vm.makeContentForCaseNote).toHaveBeenCalledWith(CaseFileActivityType.CaseNoteAdded);
+        expect(wrapper.vm.content).toEqual(mockContent);
+      });
+
+      it('returns the correct data when action type is CaseNoteUpdated', async () => {
+        const mockContent = { title: 'mock-title', body: 'mock-body' };
+        jest.spyOn(wrapper.vm, 'makeContentForCaseNote').mockImplementation(() => (mockContent));
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.CaseNoteUpdated)[0],
+        });
+        expect(wrapper.vm.makeContentForCaseNote).toHaveBeenCalledWith(CaseFileActivityType.CaseNoteUpdated);
+        expect(wrapper.vm.content).toEqual(mockContent);
+      });
     });
 
     describe('icon', () => {
@@ -298,6 +318,20 @@ describe('CaseFileActivityListItem.vue', () => {
           item: mockCaseFileActivities(CaseFileActivityType.DocumentAdded)[0],
         });
         expect(wrapper.vm.icon).toEqual('$rctech-actions');
+      });
+
+      it('returns the correct icon when action type is CaseNoteAdded', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.CaseNoteAdded)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-message-text');
+      });
+
+      it('returns the correct icon when action type is CaseNoteUpdated', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.CaseNoteUpdated)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-message-text');
       });
     });
 
@@ -621,6 +655,42 @@ describe('CaseFileActivityListItem.vue', () => {
           expect(wrapper.vm.makeContentForDocumentAdded()).toEqual({
             title: 'caseFileActivity.activityList.title.DocumentAdded',
             body: 'caseFileActivity.activityList.document.document_name: void_cheque_rbc.pdf',
+          });
+        });
+      });
+
+      describe('makeContentForCaseNote', () => {
+        it('returns the correct data when action type is CaseNoteAdded', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.CaseNoteAdded)[0];
+
+          await wrapper.setProps({
+            item,
+          });
+
+          const category = item.details.caseNoteCategory.name.translation.en;
+          let body = `caseFileActivity.activityList.caseNote.subject: ${item.details.subject}`;
+          body += `\ncaseFileActivity.activityList.caseNote.category: ${category}`;
+
+          expect(wrapper.vm.makeContentForCaseNote(CaseFileActivityType.CaseNoteAdded)).toEqual({
+            title: 'caseFileActivity.activityList.title.CaseNoteAdded',
+            body,
+          });
+        });
+
+        it('returns the correct data when action type is CaseNoteUpdated', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.CaseNoteUpdated)[0];
+
+          await wrapper.setProps({
+            item,
+          });
+
+          const category = item.details.caseNoteCategory.name.translation.en;
+          let body = `caseFileActivity.activityList.caseNote.subject: ${item.details.subject}`;
+          body += `\ncaseFileActivity.activityList.caseNote.category: ${category}`;
+
+          expect(wrapper.vm.makeContentForCaseNote(CaseFileActivityType.CaseNoteUpdated)).toEqual({
+            title: 'caseFileActivity.activityList.title.CaseNoteUpdated',
+            body,
           });
         });
       });

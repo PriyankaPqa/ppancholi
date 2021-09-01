@@ -90,6 +90,10 @@ export default Vue.extend({
         case CaseFileActivityType.DocumentAdded:
           return this.makeContentForDocumentAdded();
 
+        case CaseFileActivityType.CaseNoteAdded:
+        case CaseFileActivityType.CaseNoteUpdated:
+          return this.makeContentForCaseNote(activityType);
+
         default:
           return null;
       }
@@ -301,6 +305,16 @@ export default Vue.extend({
       };
     },
 
+    makeContentForCaseNote(activityType:CaseFileActivityType): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t(`caseFileActivity.activityList.title.${CaseFileActivityType[activityType]}`);
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const category = (this.item.details.caseNoteCategory as any).name.translation[this.$i18n.locale];
+      let body = `${this.$t('caseFileActivity.activityList.caseNote.subject')}: ${this.item.details.subject}`;
+      body += `\n${this.$t('caseFileActivity.activityList.caseNote.category')}: ${category}`;
+
+      return { title, body };
+    },
   },
 });
 </script>

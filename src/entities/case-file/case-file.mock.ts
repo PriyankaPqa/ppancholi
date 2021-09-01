@@ -380,6 +380,46 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         name: 'void_cheque_rbc.pdf',
       },
     },
+    {
+      id: 'mock-activity-id-23',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.CaseNoteAdded,
+      details: {
+        subject: 'abcd',
+        caseNoteCategory: {
+          id: '09bda590-ad8b-4f29-af4e-c63eedd337a0',
+          name: {
+            translation: {
+              en: 'Action log',
+              fr: 'Registre d’action au dossier',
+            },
+          },
+        },
+      },
+    },
+    {
+      id: 'mock-activity-id-23',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.CaseNoteUpdated,
+      details: {
+        subject: 'abc',
+        caseNoteCategory: {
+          id: '09bda590-ad8b-4f29-af4e-c63eedd337a0',
+          name: {
+            translation: {
+              en: 'Escalation',
+              fr: 'Processus d’escalade',
+            },
+          },
+        },
+      },
+    },
   ];
 
   if (type) {
