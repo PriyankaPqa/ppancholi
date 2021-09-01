@@ -3,6 +3,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedCaseFinancialAssistance } from '@/entities/financial-assistance-payment';
 import Component from './FinancialAssistancePaymentsList.vue';
+import routes from '@/constants/routes';
 
 const storage = mockStorage();
 const localVue = createLocalVue();
@@ -258,6 +259,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         expect(wrapper.vm.isModifiable(mock)).toBeFalsy();
         mock.entity.approvalStatus = 1;
         expect(wrapper.vm.isModifiable(mock)).toBeTruthy();
+      });
+    });
+
+    describe('getFapEditRoute', () => {
+      it('returns the edit route', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.getFapEditRoute('abc')).toEqual({
+          name: routes.caseFile.financialAssistance.edit.name,
+          params: {
+            financialAssistancePaymentId: 'abc',
+          },
+        });
       });
     });
   });

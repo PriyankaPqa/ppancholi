@@ -1,19 +1,23 @@
 /* eslint-disable max-len */
 import { createLocalVue, mount } from '@/test/testSetup';
-import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistanceEntities } from '@/entities/financial-assistance-payment';
+import { mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
 import { mockProgramEntity } from '@/entities/program';
-import Component from '../CreateFinancialAssistanceForm.vue';
+import Component from '../CreateEditFinancialAssistanceForm.vue';
+import { mockCombinedFinancialAssistance } from '@/entities/financial-assistance';
 
 const localVue = createLocalVue();
 let financialAssistance = mockCaseFinancialAssistanceEntity();
-const financialAssistanceTables = mockCaseFinancialAssistanceEntities();
+const financialAssistanceTables = [mockCombinedFinancialAssistance(), mockCombinedFinancialAssistance()];
 const program = mockProgramEntity();
 
-describe('CreateFinancialAssistanceForm.vue', () => {
+describe('CreateEditFinancialAssistanceForm.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
     financialAssistance = mockCaseFinancialAssistanceEntity();
+    financialAssistanceTables[0].id = 'abc';
+    financialAssistanceTables[1].id = 'zzz';
+    financialAssistance.financialAssistanceTableId = 'zzz';
     jest.clearAllMocks();
 
     wrapper = mount(Component, {
@@ -49,6 +53,19 @@ describe('CreateFinancialAssistanceForm.vue', () => {
     });
   });
 
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('sets localFinancialAssistance', () => {
+        expect(wrapper.vm.localFinancialAssistance.id).toEqual(financialAssistance.id);
+      });
+
+      it('sets financialAssistanceTable to the right table and emits it', () => {
+        expect(wrapper.vm.financialAssistanceTable.id).toEqual(financialAssistance.financialAssistanceTableId);
+        expect(wrapper.emitted('updateSelectedData')[wrapper.emitted('updateSelectedData').length - 1][0]).toEqual(wrapper.vm.financialAssistanceTable);
+      });
+    });
+  });
+
   describe('Methods', () => {
     describe('triggerUpdateSelectedData', () => {
       it('emits updateSelectedData ', async () => {
@@ -79,7 +96,6 @@ describe('CreateFinancialAssistanceForm.vue', () => {
       });
 
       it('clears groups if the user agrees when there is already group information', async () => {
-        financialAssistanceTables[0].id = 'abc';
         wrapper.vm.localFinancialAssistance = financialAssistance;
         expect(wrapper.vm.localFinancialAssistance.groups.length).toBeGreaterThan(0);
         await wrapper.vm.$nextTick();

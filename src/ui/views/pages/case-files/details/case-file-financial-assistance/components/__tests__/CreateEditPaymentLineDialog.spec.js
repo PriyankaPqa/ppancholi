@@ -3,14 +3,14 @@ import { createLocalVue, mount } from '@/test/testSetup';
 import { mockProgramEntity } from '@/entities/program';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
-import Component from '../CreatePaymentLineDialog.vue';
+import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();
 const program = mockProgramEntity();
 const items = mockItems();
 let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 
-describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
+describe('CreateEditPaymentLineDialog.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
@@ -136,7 +136,7 @@ describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
 
   describe('Methods', () => {
     describe('initCreateMode', () => {
-      it('sets the right call centre data', async () => {
+      it('sets the right initial data when adding', async () => {
         jest.clearAllMocks();
         await wrapper.vm.initCreateMode();
         expect(wrapper.vm.paymentGroup).toEqual({
@@ -161,6 +161,42 @@ describe('CaseFileFinancialAssistancePaymentLineDialog.vue', () => {
               mainCategoryId: null,
               relatedNumber: null,
               subCategoryId: null,
+            },
+          ],
+          paymentStatus: 1,
+          status: 2,
+          tenantId: '',
+          timestamp: '',
+        });
+      });
+
+      it('sets the right initial data when updating', async () => {
+        await wrapper.setProps({currentLine: caseFileFinancialAssistanceGroup.lines[0], currentGroup: caseFileFinancialAssistanceGroup});
+        jest.clearAllMocks();
+        await wrapper.vm.initCreateMode();
+        expect(wrapper.vm.paymentGroup).toEqual({
+          created: '',
+          createdBy: '',
+          eTag: '',
+          groupingInformation:
+          {
+            modality: 2,
+            payeeName: 'undefined undefined',
+            payeeType: 1,
+          },
+          id: '',
+          lastUpdatedBy: '',
+          lines: [
+            {
+              id: 'line-id',
+              actualAmount: 0,
+              address: null,
+              amount: 88,
+              careOf: null,
+              documentReceived: true,
+              mainCategoryId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
+              relatedNumber: null,
+              subCategoryId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
             },
           ],
           paymentStatus: 1,

@@ -18,6 +18,8 @@ export class FinancialAssistancePaymentStorage
 
     addFinancialAssistancePayment: (entity: IFinancialAssistancePaymentEntity):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePayment`, entity),
+    editFinancialAssistancePayment: (entity: IFinancialAssistancePaymentEntity):
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistancePayment`, entity),
   }
 
   private mutations = {

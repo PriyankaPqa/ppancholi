@@ -1,50 +1,49 @@
 <template>
   <v-container>
-    <v-sheet rounded outlined class="pa-8 mb-8">
-      <v-row class="mt-0">
-        <v-col cols="12">
-          <status-chip status-name="ApprovalStatus" :status="localFinancialAssistance.approvalStatus" />
-        </v-col>
-      </v-row>
+    <v-row class="mt-0">
+      <v-col cols="12">
+        <status-chip status-name="ApprovalStatus" :status="localFinancialAssistance.approvalStatus" />
+      </v-col>
+    </v-row>
 
-      <v-row class="mt-0">
-        <v-col cols="12">
-          <v-text-field-with-validation
-            v-model="localFinancialAssistance.name"
-            data-test="financial_name"
-            :rules="rules.name"
-            :label="`${$t('common.name')} *`" />
-        </v-col>
-      </v-row>
+    <v-row class="mt-0">
+      <v-col cols="12">
+        <v-text-field-with-validation
+          v-model="localFinancialAssistance.name"
+          data-test="financial_name"
+          :rules="rules.name"
+          :label="`${$t('common.name')} *`" />
+      </v-col>
+    </v-row>
 
-      <v-row class="mt-0">
-        <v-col cols="12" md="6">
-          <v-autocomplete-with-validation
-            v-model="financialAssistanceTable"
-            :items="tablesSorted"
-            return-object
-            :label="`${$t('financial.table_name')} *`"
-            :item-text="(item) => $m(item.name)"
-            :loading="loadingTables"
-            :rules="rules.table"
-            data-test="financialCreate_tableSelect"
-            @change="triggerUpdateSelectedData" />
-        </v-col>
-        <v-col class="mt-4">
-          {{ $t('financialAssistance.program') }}: {{ program? $m(program.name) : '' }}
-        </v-col>
-      </v-row>
+    <v-row class="mt-0">
+      <v-col cols="12" md="6">
+        <v-autocomplete-with-validation
+          v-model="financialAssistanceTable"
+          :items="tablesSorted"
+          return-object
+          :label="`${$t('financial.table_name')} *`"
+          :item-text="(item) => $m(item.name)"
+          :loading="loadingTables"
+          :rules="rules.table"
+          :disabled="isEditMode"
+          data-test="financialCreate_tableSelect"
+          @change="triggerUpdateSelectedData" />
+      </v-col>
+      <v-col class="mt-4">
+        {{ $t('financialAssistance.program') }}: {{ program? $m(program.name) : '' }}
+      </v-col>
+    </v-row>
 
-      <v-row class="mt-0">
-        <v-col cols="12">
-          <v-text-area-with-validation
-            v-model="localFinancialAssistance.description"
-            data-test="financial_description"
-            :rules="rules.description"
-            :label="`${$t('common.description')}`" />
-        </v-col>
-      </v-row>
-    </v-sheet>
+    <v-row class="mt-0">
+      <v-col cols="12">
+        <v-text-area-with-validation
+          v-model="localFinancialAssistance.description"
+          data-test="financial_description"
+          :rules="rules.description"
+          :label="`${$t('common.description')}`" />
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -63,7 +62,7 @@ import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity } f
 import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 
 export default Vue.extend({
-  name: 'CreateTransaction',
+  name: 'CreateEditFinancialAssistanceForm',
 
   components: {
     VTextFieldWithValidation,
@@ -87,6 +86,11 @@ export default Vue.extend({
       type: Object as () => IProgramEntity,
       default: null,
       required: false,
+    },
+
+    isEditMode: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -133,6 +137,7 @@ export default Vue.extend({
     this.localFinancialAssistance = new FinancialAssistancePaymentEntity(this.financialAssistance);
     this.financialAssistanceTable = this.financialAssistanceTables
       .find((x) => x.id === this.localFinancialAssistance.financialAssistanceTableId);
+    this.$emit('updateSelectedData', this.financialAssistanceTable);
   },
 
   methods: {

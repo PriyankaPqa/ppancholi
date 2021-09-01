@@ -40,6 +40,7 @@ export enum EPaymentCancellationReason {
  * Value objects
  */
 export interface IFinancialAssistancePaymentLine {
+  id: string;
   mainCategoryId: string;
   subCategoryId: string | null;
   documentReceived: boolean;

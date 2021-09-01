@@ -43,5 +43,15 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule <IFinanci
       }
       return result;
     },
+
+    editFinancialAssistancePayment: async (context:ActionContext<IFinancialAssistancePaymentEntityState,
+      IFinancialAssistancePaymentEntityState>, payload: IFinancialAssistancePaymentEntity)
+    : Promise<IFinancialAssistancePaymentEntity> => {
+      const result = await this.service.editFinancialAssistancePayment(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
   }
 }

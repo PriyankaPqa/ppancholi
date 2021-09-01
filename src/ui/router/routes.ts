@@ -19,7 +19,7 @@ const HomeCaseFile = () => import(/* webpackChunkName: "case-file" */ '@/ui/view
 const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/CaseFileDetails.vue');
 const CaseFileActivity = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
 const FinancialAssistancePaymentsList = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/FinancialAssistancePaymentsList.vue');
-const CreateCaseFileFinancialAssistance = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateFinancialAssistance.vue');
+const CreateEditCaseFileFinancialAssistance = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistance.vue');
 const CaseNote = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-note/CaseNote.vue');
 const CaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');
 const CaseFileReferralDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/components/CaseFileReferralDetails.vue');
@@ -213,7 +213,14 @@ export const routes: Array<RouteConfig> = [
                   {
                     path: Routes.caseFile.financialAssistance.create.path,
                     name: Routes.caseFile.financialAssistance.create.name,
-                    component: CreateCaseFileFinancialAssistance,
+                    component: CreateEditCaseFileFinancialAssistance,
+                    meta: { level: 'level1' },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.financialAssistance.edit.path,
+                    name: Routes.caseFile.financialAssistance.edit.name,
+                    component: CreateEditCaseFileFinancialAssistance,
                     meta: { level: 'level1' },
                     props: true,
                   },

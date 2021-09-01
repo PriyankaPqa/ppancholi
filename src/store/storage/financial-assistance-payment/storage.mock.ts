@@ -16,6 +16,7 @@ export class FinancialAssistancePaymentStorageMock extends BaseMock<IFinancialAs
   protected actions = {
     ...this.baseActions,
     addFinancialAssistancePayment: jest.fn((payload: IFinancialAssistancePaymentEntity) => payload),
+    editFinancialAssistancePayment: jest.fn((payload: IFinancialAssistancePaymentEntity) => payload),
   }
 
   protected mutations = {

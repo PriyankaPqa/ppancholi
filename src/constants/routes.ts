@@ -55,6 +55,10 @@ const routes = {
         path: 'financialAssistance/create',
         name: 'casefile.financialAssistance.create',
       },
+      edit: {
+        path: 'financialAssistance/:financialAssistancePaymentId/edit',
+        name: 'casefile.financialAssistance.edit',
+      },
     },
     note: {
       path: 'note',

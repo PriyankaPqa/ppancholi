@@ -114,7 +114,7 @@ import { VForm } from '@/types';
 // import { VForm } from '@/types';
 
 export default Vue.extend({
-  name: 'CaseFileFinancialAssistancePaymentLineDialog',
+  name: 'CreateEditPaymentLineDialog',
 
   components: {
     RcDialog,
@@ -139,6 +139,16 @@ export default Vue.extend({
     items: {
       type: Array as () => IFinancialAssistanceTableItem[],
       required: true,
+    },
+
+    currentLine: {
+      type: Object as () => IFinancialAssistancePaymentLine,
+      default: null,
+    },
+
+    currentGroup: {
+      type: Object as () => IFinancialAssistancePaymentGroup,
+      default: null,
     },
   },
 
@@ -190,19 +200,20 @@ export default Vue.extend({
       this.paymentGroup = new FinancialAssistancePaymentGroup();
 
       this.paymentGroup.lines.push({
-        mainCategoryId: null,
-        subCategoryId: null,
-        documentReceived: null,
-        amount: null,
-        actualAmount: 0,
-        relatedNumber: null,
-        careOf: null,
-        address: null,
+        id: this.currentLine?.id,
+        mainCategoryId: this.currentLine?.mainCategoryId || null,
+        subCategoryId: this.currentLine?.subCategoryId || null,
+        documentReceived: this.currentLine?.documentReceived || null,
+        amount: this.currentLine?.amount || null,
+        actualAmount: this.currentLine?.actualAmount || 0,
+        relatedNumber: this.currentLine?.relatedNumber || null,
+        careOf: this.currentLine?.careOf || null,
+        address: this.currentLine?.address || null,
       });
 
       this.paymentGroup.groupingInformation = {
-        modality: null,
-        payeeType: PayeeType.Beneficiary,
+        modality: this.currentGroup?.groupingInformation?.modality || null,
+        payeeType: this.currentGroup?.groupingInformation?.payeeType || PayeeType.Beneficiary,
         payeeName: `${cf.primaryBeneficiaryFirstName} ${cf.primaryBeneficiaryLastName}`,
       };
     },

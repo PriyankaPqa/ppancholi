@@ -20,7 +20,8 @@ import {
 } from '@/entities/case-file';
 import { mockProgramEntity, mockCombinedPrograms } from '@/entities/program';
 import { mockOptionItemData } from '@/entities/optionItem';
-import Component from '../CreateFinancialAssistance.vue';
+import Component from '../CreateEditFinancialAssistance.vue';
+import routes from '@/constants/routes';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -33,7 +34,7 @@ const items = mockItems();
 const optionItems = mockOptionItemData();
 const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGroups();
 
-describe('CreateFinancialAssistance.vue', () => {
+describe('CreateEditFinancialAssistance.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
@@ -56,6 +57,7 @@ describe('CreateFinancialAssistance.vue', () => {
         },
       },
     });
+    await wrapper.vm.$nextTick();
   });
 
   describe('Template', () => {
@@ -104,9 +106,12 @@ describe('CreateFinancialAssistance.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call storage to fetch categories', async () => {
+      it('should call storage to fetch categories', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          mocks: {
+            $storage: storage,
+          },
           propsData: {},
         });
         jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
@@ -121,6 +126,9 @@ describe('CreateFinancialAssistance.vue', () => {
       it('call searchTables', () => {
         wrapper = shallowMount(Component, {
           localVue,
+          mocks: {
+            $storage: storage,
+          },
           propsData: {},
         });
         jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
@@ -130,6 +138,28 @@ describe('CreateFinancialAssistance.vue', () => {
         });
 
         expect(wrapper.vm.searchTables).toHaveBeenCalledTimes(1);
+      });
+
+      it('inits financialAssistance from storage when id is passed', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+            $route: {
+              name: routes.caseFile.activity.name,
+              params: {
+                financialAssistancePaymentId: caseFileFinancialAssistance.id,
+              },
+            },
+          },
+          propsData: {},
+        });
+
+        await wrapper.vm.$nextTick();
+
+        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(caseFileFinancialAssistance.id);
+        expect(wrapper.vm.financialAssistance.id).toBe(caseFileFinancialAssistance.id);
+        expect(wrapper.vm.financialAssistance.name).toBe(caseFileFinancialAssistance.name);
       });
     });
   });
@@ -147,8 +177,10 @@ describe('CreateFinancialAssistance.vue', () => {
     });
 
     describe('submitLabel', () => {
-      it('returns the key for submitLabel', () => {
+      it('returns the key for submitLabel depending on isEditMode', async () => {
         expect(wrapper.vm.submitLabel).toBe('common.buttons.create');
+        await wrapper.setData({ isEditMode: true });
+        expect(wrapper.vm.submitLabel).toBe('common.buttons.save');
       });
     });
 
@@ -391,6 +423,28 @@ describe('CreateFinancialAssistance.vue', () => {
       });
     });
 
+    describe('editPaymentLine', () => {
+      it('sets variables and shows popup when editing', async () => {
+        // to remove props warnings
+        await wrapper.setData({ loading: true });
+        expect(wrapper.vm.showAddPaymentLineForm).toBeFalsy();
+        wrapper.vm.editPaymentLine({ line: 'myLine', group: 'myGroup' });
+        expect(wrapper.vm.lineToEdit).toBe('myLine');
+        expect(wrapper.vm.groupToEdit).toBe('myGroup');
+        expect(wrapper.vm.showAddPaymentLineForm).toBeTruthy();
+      });
+
+      it('sets variables and shows popup when adding', async () => {
+        // to remove props warnings
+        await wrapper.setData({ loading: true });
+        expect(wrapper.vm.showAddPaymentLineForm).toBeFalsy();
+        wrapper.vm.editPaymentLine(null);
+        expect(wrapper.vm.lineToEdit).toBeUndefined();
+        expect(wrapper.vm.groupToEdit).toBeUndefined();
+        expect(wrapper.vm.showAddPaymentLineForm).toBeTruthy();
+      });
+    });
+
     describe('updateSelectedData', () => {
       it('should call updateSelectedProgram', async () => {
         jest.spyOn(wrapper.vm, 'updateSelectedProgram').mockImplementation();
@@ -440,10 +494,17 @@ describe('CreateFinancialAssistance.vue', () => {
     });
 
     describe('saveFinancialAssistance', () => {
-      it('should call the storage', async () => {
+      it('should call the storage depending when adding', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
         await wrapper.vm.saveFinancialAssistance();
         expect(storage.financialAssistancePayment.actions.addFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance);
+      });
+
+      it('should call the storage depending when editing', async () => {
+        wrapper.vm.financialAssistance = financialAssistance;
+        await wrapper.setData({ isEditMode: true });
+        await wrapper.vm.saveFinancialAssistance();
+        expect(storage.financialAssistancePayment.actions.editFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance);
       });
     });
 
@@ -451,6 +512,9 @@ describe('CreateFinancialAssistance.vue', () => {
       it('should add the new PaymentLine', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
         wrapper.vm.financialAssistance.groups = [];
+        // mock data already has id - here we are creating
+        caseFileFinancialAssistanceGroups[0].lines.forEach((l) => { l.id = null; });
+
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
         expect(wrapper.vm.financialAssistance.groups[0].groupingInformation).toBe(caseFileFinancialAssistanceGroups[0].groupingInformation);
         expect(wrapper.vm.financialAssistance.groups[0].lines).toBe(caseFileFinancialAssistanceGroups[0].lines);

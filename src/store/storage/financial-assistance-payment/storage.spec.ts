@@ -1,7 +1,6 @@
 /* eslint-disable */
 import { FINANCIAL_ASSISTANCE_PAYMENT_METADATA, FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { mockSearchParams } from '@/test/helpers';
 import { FinancialAssistancePaymentStorage } from './storage';
 import { mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
 
@@ -24,15 +23,17 @@ const store = mockStore({
 const storage = new FinancialAssistancePaymentStorage(store, entityModuleName, metadataModuleName).make();
 
 describe('>>> Financial Assistance Payment Storage', () => {
-  describe('>> Getters', () => {
-    it('todo once we have stuff...', () => {
-    });
-  });
-
   describe('>> Actions', () => {
-    it('todo once we have stuff...', () => {
-      // storage.actions.fetchCategories();
-      // expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCategories`);
+    it('should proxy addFinancialAssistancePayment', () => {
+      const payload = mockCaseFinancialAssistanceEntity();
+      storage.actions.addFinancialAssistancePayment(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/addFinancialAssistancePayment`, payload);
+    });
+
+    it('should proxy updateReferral', () => {
+      const payload = mockCaseFinancialAssistanceEntity();
+      storage.actions.editFinancialAssistancePayment(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/editFinancialAssistancePayment`, payload);
     });
   });
 });

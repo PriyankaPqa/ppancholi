@@ -5,7 +5,7 @@ import _sortBy from 'lodash/sortBy';
 import { httpClient } from '@/services/httpClient';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
 
-import { IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
+import { mockCaseFinancialAssistanceEntity, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
 import { FinancialAssistancePaymentEntityModule } from './financialAssistancePaymentEntity';
 import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
 
@@ -27,17 +27,31 @@ describe('Financial assistance payment entity module', () => {
     module = new FinancialAssistancePaymentEntityModule(service);
   });
   
-  describe('getters', () => {
-    describe('to do once we have specific stuff...', () => {
-      test('to do', () => {
-        // module.mutations.setCategories(module.state, mockOptionItemData());
-        // const res = module.getters.categories(module.state)(false);
-        // expect(res).toEqual(
-        //   _sortBy(
-        //     mockOptionItemData().map((e) => new OptionItem(e)),
-        //     'orderRank',
-        //   ),
-        // );
+  describe('actions', () => {
+
+    describe('addFinancialAssistancePayment', () => {
+      it('calls the right service and returns the result', async () => {
+        const serviceRes = mockCaseFinancialAssistanceEntity();
+        const id = 'mock-id';
+        const entity = mockCaseFinancialAssistanceEntity();
+        module.service.addFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await module.actions.addFinancialAssistancePayment(actionContext, entity);
+
+        expect(module.service.addFinancialAssistancePayment).toBeCalledWith(entity);
+        expect(res).toEqual(serviceRes);
+      });
+    });
+
+    describe('editCaseNote', () => {
+      it('calls the right service and returns the result', async () => {
+        const serviceRes = mockCaseFinancialAssistanceEntity();
+        const entity = mockCaseFinancialAssistanceEntity();
+
+        module.service.editFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await module.actions.editFinancialAssistancePayment(actionContext, entity);
+
+        expect(module.service.editFinancialAssistancePayment).toBeCalledWith(entity);
+        expect(res).toEqual(serviceRes);
       });
     });
   });

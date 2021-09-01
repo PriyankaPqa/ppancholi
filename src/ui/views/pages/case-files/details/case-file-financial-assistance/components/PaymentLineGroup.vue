@@ -26,7 +26,7 @@
       :link="link"
       :disable-delete-button="disableDeleteButton"
       :items="items"
-      @edit-payment-line="$emit('edit-payment-line', $event)"
+      @edit-payment-line="$emit('edit-payment-line', { line: $event, group: paymentGroup })"
       @delete-payment-line="$emit('delete-payment-line', $event)" />
 
     <div v-if="!isCancelled" class="paymentGroup__total rc-body14 fw-bold" data-test="paymentLineGroup__total">

@@ -1,18 +1,36 @@
 <template>
   <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
     <rc-page-content
-      :title="$t('caseFile.financialAssistance.create.title')"
+      v-if="!loading"
+      :title="isEditMode ? $t('caseFile.financialAssistance.details.title') : $t('caseFile.financialAssistance.create.title')"
       data-test="page-title">
       <v-row justify="center">
         <v-col cols="8">
           <!-- Warning -->
           <message-box v-if="showWarning" icon="mdi-alert" :message="$t('caseFile.financialAssistance.warning.program.eligibility')" />
           <!-- Form -->
-          <create-financial-assistance-form
-            :financial-assistance.sync="financialAssistance"
-            :financial-assistance-tables="financialTables"
-            :program="selectedProgram"
-            @updateSelectedData="updateSelectedData" />
+          <v-sheet rounded outlined class="pa-8 mb-8">
+            <create-edit-financial-assistance-form
+              :financial-assistance.sync="financialAssistance"
+              :financial-assistance-tables="financialTables"
+              :program="selectedProgram"
+              :is-edit-mode="isEditMode"
+              @updateSelectedData="updateSelectedData" />
+            <v-row v-if="isEditMode" justify="end">
+              <v-btn data-test="cancel" class="mr-4" @click.stop="back()">
+                {{ $t('common.cancel') }}
+              </v-btn>
+              <v-btn
+                color="primary"
+                data-test="save"
+                class="mr-4"
+                :loading="loading"
+                :disabled="failed || !dirty || isDisabled || showWarning"
+                @click.stop="saveFinancialAssistance">
+                {{ submitLabel }}
+              </v-btn>
+            </v-row>
+          </v-sheet>
           <!-- Add payment line -->
           <v-container>
             <v-row justify="center">
@@ -22,7 +40,7 @@
                     {{ $t('caseFile.financialAssistance.paymentLines') }}
                   </span>
 
-                  <v-btn color="primary" data-test="financial-addPaymentLineBtn" :disabled="!selectedProgram" @click="showAddPaymentLineForm = true">
+                  <v-btn color="primary" data-test="financial-addPaymentLineBtn" :disabled="!selectedProgram" @click="editPaymentLine(null)">
                     {{ $t('caseFile.financialAssistance.addNewPaymentLines') }}
                   </v-btn>
                 </div>
@@ -33,7 +51,8 @@
                   :payment-groups="financialAssistance.groups"
                   :transaction-approval-status="financialAssistance.approvalStatus"
                   :items="items"
-                  data-test="paymentGroupList" />
+                  data-test="paymentGroupList"
+                  @edit-payment-line="editPaymentLine" />
                 <div v-else class="rc-body14">
                   {{ $t('caseFile.financialAssistance.noPaymentLines') }}
                 </div>
@@ -45,9 +64,10 @@
       <!-- Actions -->
       <template slot="actions">
         <v-btn data-test="cancel" @click.stop="back()">
-          {{ $t('common.cancel') }}
+          {{ isEditMode ? $t('financialAssistance.back') : $t('common.cancel') }}
         </v-btn>
         <v-btn
+          v-if="!isEditMode"
           color="primary"
           data-test="save"
           :loading="loading"
@@ -57,11 +77,13 @@
         </v-btn>
       </template>
 
-      <case-file-financial-assistance-payment-line-dialog
+      <create-edit-payment-line-dialog
         v-if="showAddPaymentLineForm"
         :show.sync="showAddPaymentLineForm"
         :program="selectedProgram"
         :items="items"
+        :current-line="lineToEdit"
+        :current-group="groupToEdit"
         data-test="case-file-financial-assistance-payment-line-dialog"
         @submit="onSubmitPaymentLine($event)"
         @cancelChange="showAddPaymentLineForm = false" />
@@ -79,6 +101,7 @@ import {
   FinancialAssistancePaymentEntity,
   FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentGroup,
+  IFinancialAssistancePaymentLine,
 } from '@/entities/financial-assistance-payment';
 import
 {
@@ -92,17 +115,17 @@ import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import { IProgramEntity } from '@/entities/program';
 import routes from '@/constants/routes';
-import CreateFinancialAssistanceForm from './CreateFinancialAssistanceForm.vue';
-import CaseFileFinancialAssistancePaymentLineDialog from './CreatePaymentLineDialog.vue';
+import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
+import CreateEditPaymentLineDialog from './CreateEditPaymentLineDialog.vue';
 
 export default Vue.extend({
-  name: 'CreateFinancialAssistance',
+  name: 'CreateEditFinancialAssistance',
 
   components: {
     RcPageContent,
-    CreateFinancialAssistanceForm,
+    CreateEditFinancialAssistanceForm,
     MessageBox,
-    CaseFileFinancialAssistancePaymentLineDialog,
+    CreateEditPaymentLineDialog,
     PaymentLineGroupList,
   },
   data() {
@@ -113,20 +136,21 @@ export default Vue.extend({
       selectedProgram: null as IProgramEntity,
       selectedTable: null as IFinancialAssistanceTableEntity,
       programs: null as IProgramEntity[],
-      editPaymentLine: null as boolean,
+      lineToEdit: null as IFinancialAssistancePaymentLine,
+      groupToEdit: null as IFinancialAssistancePaymentGroup,
       showAddPaymentLineForm: false,
-      showEditPaymentLineForm: false,
       showConfirm: false,
       isSaving: false,
       saved: false,
       validationFailed: false,
       loading: false,
+      isEditMode: this.$route.name === routes.caseFile.financialAssistance.edit.name,
     };
   },
 
   computed: {
     submitLabel(): TranslateResult {
-      return this.$t('common.buttons.create');
+      return this.isEditMode ? this.$t('common.buttons.save') : this.$t('common.buttons.create');
     },
 
     showWarning() : boolean {
@@ -166,11 +190,19 @@ export default Vue.extend({
   },
 
   async created() {
-    this.financialAssistance = new FinancialAssistancePaymentEntity();
-    this.financialAssistance.caseFileId = this.$route.params.id;
+    this.loading = true;
+    if (this.$route.params.financialAssistancePaymentId) {
+      this.financialAssistance = new FinancialAssistancePaymentEntity(
+        (await this.$storage.financialAssistancePayment.actions.fetch(this.$route.params.financialAssistancePaymentId)).entity,
+      );
+    } else {
+      this.financialAssistance = new FinancialAssistancePaymentEntity();
+      this.financialAssistance.caseFileId = this.$route.params.id;
+    }
 
     await this.searchTables();
     await this.$storage.financialAssistanceCategory.actions.fetchAll();
+    this.loading = false;
   },
 
   methods: {
@@ -190,12 +222,22 @@ export default Vue.extend({
     },
 
     async saveFinancialAssistance() {
-      const result = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePayment(this.financialAssistance);
+      const result = this.isEditMode ? (
+        await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePayment(this.financialAssistance))
+        : (await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePayment(this.financialAssistance)
+        );
       if (result) {
-        this.financialAssistance = new FinancialAssistancePaymentEntity(result);
-        this.$toasted.global.success(this.$t('financialAssistancePayment_create.success'));
+        this.$toasted.global.success(
+          this.isEditMode ? this.$t('financialAssistancePayment_edit.success') : this.$t('financialAssistancePayment_create.success'),
+        );
         this.$router.replace({ name: routes.caseFile.financialAssistance.home.name });
       }
+    },
+
+    editPaymentLine(event : { line: IFinancialAssistancePaymentLine, group: IFinancialAssistancePaymentGroup }) {
+      this.lineToEdit = event?.line;
+      this.groupToEdit = event?.group;
+      this.showAddPaymentLineForm = true;
     },
 
     updateSelectedData(table: IFinancialAssistanceTableEntity) {
@@ -213,13 +255,15 @@ export default Vue.extend({
 
     async updateSelectedTable(table: IFinancialAssistanceTableEntity) {
       this.selectedTable = table;
-      const tableWithMetadata = this.$storage.financialAssistance.getters.get(table.id);
-      const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-      const program = await this.$storage.program.actions.fetch({
-        id: tableWithMetadata.entity.programId,
-        eventId: tableWithMetadata.entity.eventId,
-      });
-      this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, program.entity);
+      if (this.selectedTable) {
+        const tableWithMetadata = this.$storage.financialAssistance.getters.get(table.id);
+        const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
+        const program = await this.$storage.program.actions.fetch({
+          id: tableWithMetadata.entity.programId,
+          eventId: tableWithMetadata.entity.eventId,
+        });
+        this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, program.entity);
+      }
     },
 
     back(): void {
@@ -229,6 +273,12 @@ export default Vue.extend({
     },
 
     onSubmitPaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
+      if (submittedPaymentGroup.lines[0].id) {
+        // until we implement the save... just so it doesnt add visually we remove the old
+        const oldGroup = _find(this.financialAssistance.groups, (g) => !!g.lines.find((l) => l.id === submittedPaymentGroup.lines[0].id));
+        oldGroup.lines = oldGroup.lines.filter((l) => l.id !== submittedPaymentGroup.lines[0].id);
+      }
+
       // Find the payment group based on modality and payee
       const paymentInfo = submittedPaymentGroup.groupingInformation;
       const paymentGroup = _find(this.financialAssistance.groups, (group: IFinancialAssistancePaymentGroup) => {

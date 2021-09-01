@@ -17,13 +17,35 @@ describe('>>> Financial assistance payment Service', () => {
     http = mockHttp();
     service = new FinancialAssistancePaymentsService(http as never);
   });
-  
-  describe('todo once we have specific endpoints...', () => {
+
+  describe('addFinancialAssistancePayment', () => {
     it('is linked to the correct URL and params', async () => {
-      // await service.updateDocument(entity);
-      // expect(http.patch).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/documents/myId/edit',
-      //   entity);
+      await service.addFinancialAssistancePayment(entity);
+      expect(http.post).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments',
+        {
+          caseFileId: "myParent",
+          description: "thl payment desc",
+          financialAssistanceTableId: "c05bd971-f0fe-4e3d-a20e-6a0c7c7bd52a",
+          groups: [
+            {
+              ...entity.groups[0].groupingInformation,
+              lines: entity.groups[0].lines
+            },
+          ],
+          name: "thl payment",
+        });
     });
   });
-  
+
+  describe('editFinancialAssistancePayment', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.editFinancialAssistancePayment(entity);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myId',
+        {
+          description: "thl payment desc",
+          financialAssistanceTableId: "c05bd971-f0fe-4e3d-a20e-6a0c7c7bd52a",
+          name: "thl payment",
+        });
+    });
+  });
 });

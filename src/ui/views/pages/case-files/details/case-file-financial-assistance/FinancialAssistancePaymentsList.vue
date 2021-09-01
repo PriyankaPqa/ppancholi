@@ -51,7 +51,7 @@
       </template>
 
       <template #[`item.edit`]="{ item }">
-        <v-btn v-if="isModifiable(item)" icon data-test="edit-link">
+        <v-btn v-if="isModifiable(item)" icon data-test="edit-link" :to="getFapEditRoute(item.entity.id)">
           <v-icon size="24" color="grey darken-2">
             mdi-pencil
           </v-icon>
@@ -244,6 +244,15 @@ export default Vue.extend({
         // params: {
         //   documentId: id,
         // },
+      };
+    },
+
+    getFapEditRoute(id: string) {
+      return {
+        name: routes.caseFile.financialAssistance.edit.name,
+        params: {
+          financialAssistancePaymentId: id,
+        },
       };
     },
   },

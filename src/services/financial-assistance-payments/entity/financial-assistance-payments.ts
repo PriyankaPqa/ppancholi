@@ -25,4 +25,13 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
     } as CreateFinancialAssistancePaymentServiceRequest;
     return this.http.post(`${this.baseUrl}`, payload);
   }
+
+  async editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity> {
+    const payload = {
+      description: entity.description,
+      financialAssistanceTableId: entity.financialAssistanceTableId,
+      name: entity.name,
+    };
+    return this.http.patch(`${this.baseUrl}/${entity.id}`, payload);
+  }
 }
