@@ -202,6 +202,10 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
     editFinancialAssistance: (): Promise<IFinancialAssistanceTableEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistance`),
 
     reloadItems: (categories: IOptionItem[]): Promise<void> => this.store.dispatch(`${this.entityModuleName}/reloadItems`, { categories }),
+
+    fetchByProgramId: (
+      programId: uuid,
+    ): Promise<IFinancialAssistanceTableEntity[]> => this.store.dispatch(`${this.entityModuleName}/fetchByProgramId`, { programId }),
   };
 
   public make = () => ({

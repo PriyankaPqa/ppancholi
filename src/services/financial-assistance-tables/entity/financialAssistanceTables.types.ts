@@ -15,6 +15,7 @@ export interface IFinancialAssistanceTablesService extends IDomainBaseService<IF
   editSubItem(faId: uuid, itemId: uuid, subItemId: uuid, subItem: IFinancialAssistanceTableSubItemData): Promise<IFinancialAssistanceTableEntity>;
   deleteItem(faId: uuid, itemId: uuid): Promise<IFinancialAssistanceTableEntity>;
   deleteSubItem(faId: uuid, itemId: uuid, subItemId: uuid): Promise<IFinancialAssistanceTableEntity>;
+  fetchByProgramId(programId: uuid): Promise<IFinancialAssistanceTableEntity[]>;
 }
 
 export interface IFinancialAssistanceTablesServiceMock {
@@ -25,4 +26,5 @@ export interface IFinancialAssistanceTablesServiceMock {
   editSubItem: jest.Mock<IFinancialAssistanceTableEntity>;
   deleteItem: jest.Mock<IFinancialAssistanceTableEntity>;
   deleteSubItem: jest.Mock<IFinancialAssistanceTableEntity>;
+  fetchByProgramId: jest.Mock<IFinancialAssistanceTableEntity[]>;
 }

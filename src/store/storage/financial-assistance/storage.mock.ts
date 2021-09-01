@@ -90,6 +90,7 @@ export class FinancialAssistanceStorageMock extends BaseMock<IFinancialAssistanc
     deleteItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
     deleteSubItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
     reloadItems: jest.fn(),
+    fetchByProgramId: jest.fn(() => [mockFinancialAssistanceTableEntity()]),
   };
 
   public make = () => ({

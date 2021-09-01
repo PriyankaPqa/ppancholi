@@ -67,4 +67,8 @@ export class FinancialAssistanceTablesService extends DomainBaseService<IFinanci
   ): Promise<IFinancialAssistanceTableEntity> {
     return this.http.delete(`${this.baseUrl}/${faId}/items/${itemId}/sub-items/${subItemId}`);
   }
+
+  async fetchByProgramId(programId: uuid): Promise<IFinancialAssistanceTableEntity[]> {
+    return this.http.get(`${API_URL_SUFFIX}/programs/${programId}/${CONTROLLER}`);
+  }
 }

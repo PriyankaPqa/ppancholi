@@ -144,6 +144,7 @@ export interface IActions extends IBaseActions<IFinancialAssistanceTableEntity, 
   deleteItem(itemIndex: number): Promise<IFinancialAssistanceTableEntity>;
   deleteSubItem(itemIndex: number, subItemIndex: number): Promise<IFinancialAssistanceTableEntity>;
   reloadItems(categories: IOptionItem[]): Promise<void>;
+  fetchByProgramId(programId: uuid): Promise<IFinancialAssistanceTableEntity[]>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {
@@ -155,6 +156,7 @@ export interface IActionsMock extends IBaseActionsMock<IFinancialAssistanceTable
   deleteItem: jest.Mock<IFinancialAssistanceTableEntity>;
   deleteSubItem: jest.Mock<IFinancialAssistanceTableEntity>;
   reloadItems: jest.Mock<IFinancialAssistanceTableEntity>;
+  fetchByProgramId: jest.Mock<IFinancialAssistanceTableEntity[]>;
 }
 
 export interface IStorageMake {

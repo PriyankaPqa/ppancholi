@@ -2,6 +2,7 @@ import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
+import { mockFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 import Component from './ProgramDetails.vue';
 
 const localVue = createLocalVue();
@@ -24,6 +25,9 @@ describe('ProgramDetails.vue', () => {
           return program;
         },
       },
+      mocks: {
+        $storage: storage,
+      },
     });
   });
 
@@ -45,6 +49,10 @@ describe('ProgramDetails.vue', () => {
         },
       });
 
+      await wrapper.setData({
+        loading: false,
+      });
+
       const button = wrapper.findDataTest('edit-button');
 
       expect(button.props('to')).toEqual({
@@ -63,6 +71,29 @@ describe('ProgramDetails.vue', () => {
       await button.trigger('click');
 
       expect(wrapper.vm.back).toHaveBeenCalledTimes(1);
+    });
+
+    describe('financial assistance tables', () => {
+      it('displays correct text if no financial assistance', async () => {
+        await wrapper.setData({
+          financialAssistanceTables: [],
+        });
+
+        const col = wrapper.findDataTest('no-financialAssistance');
+
+        expect(col.exists()).toBeTruthy();
+      });
+
+      it('displays financial assistance name', async () => {
+        await wrapper.setData({
+          financialAssistanceTables: [mockFinancialAssistanceTableEntity()],
+        });
+
+        const col = wrapper.findDataTest('financialAssistance-0');
+
+        expect(col.exists()).toBeTruthy();
+        expect(col.text()).toBe(mockFinancialAssistanceTableEntity().name.translation.en);
+      });
     });
   });
 
@@ -116,6 +147,23 @@ describe('ProgramDetails.vue', () => {
         });
 
         expect(wrapper.vm.$storage.program.actions.fetch).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls method to fetch and set financial assistance tables', async () => {
+        jest.clearAllMocks();
+
+        await wrapper.setData({
+          financialAssistanceTables: [],
+        });
+        expect(wrapper.vm.financialAssistanceTables).toEqual([]);
+
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.$storage.financialAssistance.actions.fetchByProgramId).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.financialAssistance.actions.fetchByProgramId).toHaveBeenCalledWith('PROGRAM_ID');
+        expect(wrapper.vm.financialAssistanceTables).toEqual([mockFinancialAssistanceTableEntity()]);
       });
     });
   });

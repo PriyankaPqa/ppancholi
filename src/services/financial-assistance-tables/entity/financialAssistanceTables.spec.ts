@@ -66,4 +66,11 @@ describe('>>> Financial assistance table Service', () => {
       expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/faId/items/itemId`);
     });
   });
+
+  describe('fetchByProgramId', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.fetchByProgramId('programId');
+      expect(http.get).toHaveBeenCalledWith('financial-assistance/programs/programId/financial-assistance-tables');
+    });
+  });
 });

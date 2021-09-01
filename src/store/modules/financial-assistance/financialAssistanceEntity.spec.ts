@@ -801,5 +801,18 @@ describe('>>> Financial Assistance Module', () => {
         });
       });
     });
+
+    describe('fetchByProgramId', () => {
+      it('calls the service with proper parameters', async () => {
+        module.service.fetchByProgramId = jest.fn();
+
+        expect(module.service.fetchByProgramId).toHaveBeenCalledTimes(0);
+
+        await module.actions.fetchByProgramId(actionContext, { programId: 'programId' });
+
+        expect(module.service.fetchByProgramId).toHaveBeenCalledTimes(1);
+        expect(module.service.fetchByProgramId).toHaveBeenCalledWith('programId');
+      });
+    });
   });
 });

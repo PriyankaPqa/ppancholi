@@ -12,4 +12,5 @@ export const mockFinancialAssistanceTablesService = (): IFinancialAssistanceTabl
   editSubItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
   deleteItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
   deleteSubItem: jest.fn(() => mockFinancialAssistanceTableEntity()),
+  fetchByProgramId: jest.fn(() => [mockFinancialAssistanceTableEntity()]),
 });

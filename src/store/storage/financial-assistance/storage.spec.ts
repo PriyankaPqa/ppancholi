@@ -426,5 +426,15 @@ describe('>>> Financial Assistance Storage', () => {
 
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/reloadItems`, { categories: [] });
     });
+
+    it('should proxy fetchByProgramId', () => {
+      jest.clearAllMocks();
+
+      const programId = 'programId';
+
+      storage.actions.fetchByProgramId(programId);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchByProgramId`, { programId });
+    });
   });
 });

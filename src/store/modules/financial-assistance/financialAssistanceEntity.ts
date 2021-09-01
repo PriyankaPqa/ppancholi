@@ -464,6 +464,15 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
       context.commit('setItems', { items: itemEntities });
     },
+
+    fetchByProgramId: async (
+      context: ActionContext<IFinancialAssistanceEntityState, IFinancialAssistanceEntityState>,
+      { programId }: { programId: uuid },
+    ): Promise<IFinancialAssistanceTableEntity[]> => {
+      const res: IFinancialAssistanceTableEntity[] = await this.service.fetchByProgramId(programId);
+
+      return res;
+    },
   };
 
   protected mapItem = (item: IFinancialAssistanceTableItemData, categories: IOptionItem[]): IFinancialAssistanceTableItem => {

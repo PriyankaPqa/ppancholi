@@ -115,15 +115,20 @@
 
         <v-col class="mt-4" cols="12" md="10">
           <h5 class="rc-heading-5">
-            {{ $t('event.programManagement.financialAssistance') }} (0)
+            {{ $t('event.programManagement.financialAssistance') }} ({{ financialAssistanceTables.length }})
           </h5>
         </v-col>
 
-        <v-col class="disabled" cols="12" md="10">
+        <v-col cols="12" md="10">
           <v-container>
-            <v-row class="list-row">
-              <v-col class="rc-body14 fw-bold" cols="12" md="5">
+            <v-row v-if="financialAssistanceTables.length === 0" class="list-row">
+              <v-col data-test="no-financialAssistance" class="rc-body14 fw-bold disabled" cols="12">
                 {{ $t('event.programManagement.noFinancialAssistance') }}
+              </v-col>
+            </v-row>
+            <v-row v-for="(fa, index) in financialAssistanceTables" :key="fa.id" class="list-row">
+              <v-col :data-test="`financialAssistance-${index}`" class="rc-body14 fw-bold" cols="12">
+                {{ $m(fa.name) }}
               </v-col>
             </v-row>
           </v-container>
@@ -164,6 +169,7 @@ import {
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
+import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 
 export default Vue.extend({
   name: 'ProgramDetails',
@@ -189,6 +195,7 @@ export default Vue.extend({
   data() {
     return {
       loading: false,
+      financialAssistanceTables: [] as IFinancialAssistanceTableEntity[],
     };
   },
 
@@ -206,6 +213,8 @@ export default Vue.extend({
       if (!program?.entity?.id) {
         await this.$storage.program.actions.fetch({ id: this.programId, eventId: this.id });
       }
+
+      this.financialAssistanceTables = await this.$storage.financialAssistance.actions.fetchByProgramId(this.programId);
     } finally {
       this.loading = false;
     }
