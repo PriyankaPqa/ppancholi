@@ -1,5 +1,10 @@
+/* eslint-disable */
 import {
-  IFinancialAssistancePaymentCombined, IFinancialAssistancePaymentEntity, mockCaseFinancialAssistanceEntity, mockCombinedCaseFinancialAssistance,
+  IFinancialAssistancePaymentCombined,
+  IFinancialAssistancePaymentEntity,
+  IFinancialAssistancePaymentGroup,
+  mockCaseFinancialAssistanceEntity,
+  mockCombinedCaseFinancialAssistance,
 } from '@/entities/financial-assistance-payment';
 
 import { BaseMock } from '../base/base.mock';
@@ -17,6 +22,8 @@ export class FinancialAssistancePaymentStorageMock extends BaseMock<IFinancialAs
     ...this.baseActions,
     addFinancialAssistancePayment: jest.fn((payload: IFinancialAssistancePaymentEntity) => payload),
     editFinancialAssistancePayment: jest.fn((payload: IFinancialAssistancePaymentEntity) => payload),
+    addFinancialAssistancePaymentLine:
+      jest.fn((financialAssistanceId: uuid, payload: IFinancialAssistancePaymentGroup) => this.baseGetters.get().entity),
   }
 
   protected mutations = {

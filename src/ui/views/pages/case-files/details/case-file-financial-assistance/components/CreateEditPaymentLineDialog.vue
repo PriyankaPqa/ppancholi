@@ -1,10 +1,10 @@
 <template>
   <ValidationObserver ref="form" v-slot="{ failed }" slim>
     <rc-dialog
-      :title="$t('caseFile.financialAssistance.addNewPaymentLine')"
+      :title="currentLine ? $t('caseFile.financialAssistance.editPaymentLine'): $t('caseFile.financialAssistance.addNewPaymentLine')"
       :show.sync="show"
       :cancel-action-label="$t('common.buttons.cancel')"
-      :submit-action-label="$t('common.apply')"
+      :submit-action-label="currentLine ? $t('common.buttons.save'): $t('common.buttons.add')"
       :submit-button-disabled="failed"
 
       :persistent="true"

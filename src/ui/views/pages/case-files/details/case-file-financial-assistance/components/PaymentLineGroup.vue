@@ -10,8 +10,19 @@
           {{ $t('common.status') }}:
         </span>
 
-        <span>
-          <status-chip status-name="FinancialAssistancePaymentStatus" :status="paymentGroup.paymentStatus" />
+        <span v-if="transactionApprovalStatus !== ApprovalStatus.New">
+          <status-chip
+            data-test="paymentLineGroup__status"
+            status-name="FinancialAssistancePaymentStatus"
+            :status="paymentGroup.paymentStatus" />
+        </span>
+        <span
+          v-else
+          data-test="paymentLineGroup__paymentMustBeSubmitted">
+          <v-icon small class="mt-n1" color="red">
+            mdi-alert-outline
+          </v-icon>
+          {{ $t('financialAssistancePayment.paymentMustBeSubmitted') }}
         </span>
       </span>
     </div>
@@ -86,6 +97,7 @@ import {
   PaymentStatus,
   EPaymentCancellationReason,
   IFinancialAssistancePaymentGroup,
+  ApprovalStatus,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import PaymentLineItem from './PaymentLineItem.vue';
@@ -133,6 +145,7 @@ export default Vue.extend({
       showCancelPaymentDialog: false,
       loading: false,
       cancellationReason: null as EPaymentCancellationReason,
+      ApprovalStatus,
     };
   },
 

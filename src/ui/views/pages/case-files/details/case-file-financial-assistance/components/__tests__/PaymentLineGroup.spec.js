@@ -40,6 +40,28 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.findDataTest('paymentLineGroup__total').exists()).toBeFalsy();
       });
     });
+
+    describe('paymentLineGroup__status', () => {
+      it('renders when not new payment', async () => {
+        await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findDataTest('paymentLineGroup__status').exists()).toBeFalsy();
+        await wrapper.setProps({ transactionApprovalStatus: 2 });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findDataTest('paymentLineGroup__status').exists()).toBeTruthy();
+      });
+    });
+
+    describe('warning paymentLineGroup__paymentMustBeSubmitted', () => {
+      it('renders when new payment', async () => {
+        await wrapper.setProps({ transactionApprovalStatus: 2 });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findDataTest('paymentLineGroup__paymentMustBeSubmitted').exists()).toBeFalsy();
+        await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
+        await wrapper.vm.$nextTick();
+        expect(wrapper.findDataTest('paymentLineGroup__paymentMustBeSubmitted').exists()).toBeTruthy();
+      });
+    });
   });
 
   describe('Computed', () => {

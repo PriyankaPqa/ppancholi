@@ -272,13 +272,15 @@ export default Vue.extend({
       });
     },
 
-    onSubmitPaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
-      if (submittedPaymentGroup.lines[0].id) {
-        // until we implement the save... just so it doesnt add visually we remove the old
-        const oldGroup = _find(this.financialAssistance.groups, (g) => !!g.lines.find((l) => l.id === submittedPaymentGroup.lines[0].id));
-        oldGroup.lines = oldGroup.lines.filter((l) => l.id !== submittedPaymentGroup.lines[0].id);
+    async onSubmitPaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
+      if (this.isEditMode) {
+        await this.savePaymentLine(submittedPaymentGroup);
+      } else {
+        this.mergePaymentLine(submittedPaymentGroup);
       }
+    },
 
+    mergePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
       // Find the payment group based on modality and payee
       const paymentInfo = submittedPaymentGroup.groupingInformation;
       const paymentGroup = _find(this.financialAssistance.groups, (group: IFinancialAssistancePaymentGroup) => {
@@ -305,6 +307,24 @@ export default Vue.extend({
         this.financialAssistance.groups.push(newGroup);
       }
       this.showAddPaymentLineForm = false;
+    },
+
+    async savePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
+      if (!submittedPaymentGroup.lines[0].id) {
+        const newVersion = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine(
+          this.financialAssistance.id, submittedPaymentGroup,
+        );
+        if (newVersion) {
+          this.showAddPaymentLineForm = false;
+          this.financialAssistance.groups = newVersion.groups;
+          this.$toasted.global.success(
+            this.$t('financialAssistancePayment_lineAdded.success'),
+          );
+        }
+      } else {
+        // until we implement the save... just so it doesnt add visually we remove the old
+        this.showAddPaymentLineForm = false;
+      }
     },
   },
 });

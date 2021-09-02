@@ -35,5 +35,11 @@ describe('>>> Financial Assistance Payment Storage', () => {
       storage.actions.editFinancialAssistancePayment(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/editFinancialAssistancePayment`, payload);
     });
+    
+    it('should proxy addFinancialAssistancePaymentLine', () => {
+      const payload = mockCaseFinancialAssistanceEntity().groups[0];
+      storage.actions.addFinancialAssistancePaymentLine('myId', payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/addFinancialAssistancePaymentLine`, { entity: payload, financialAssistanceId: 'myId' });
+    });
   });
 });

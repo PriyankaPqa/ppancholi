@@ -42,7 +42,7 @@ describe('Financial assistance payment entity module', () => {
       });
     });
 
-    describe('editCaseNote', () => {
+    describe('editFinancialAssistancePayment', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
         const entity = mockCaseFinancialAssistanceEntity();
@@ -51,6 +51,19 @@ describe('Financial assistance payment entity module', () => {
         const res = await module.actions.editFinancialAssistancePayment(actionContext, entity);
 
         expect(module.service.editFinancialAssistancePayment).toBeCalledWith(entity);
+        expect(res).toEqual(serviceRes);
+      });
+    });
+    
+    describe('addFinancialAssistancePaymentLine', () => {
+      it('calls the right service and returns the result', async () => {
+        const serviceRes = mockCaseFinancialAssistanceEntity();
+        const id = 'mock-id';
+        const entity = mockCaseFinancialAssistanceEntity();
+        module.service.addFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await module.actions.addFinancialAssistancePaymentLine(actionContext, { entity: entity.groups[0], financialAssistanceId: id });
+
+        expect(module.service.addFinancialAssistancePaymentLine).toBeCalledWith(id, entity.groups[0]);
         expect(res).toEqual(serviceRes);
       });
     });

@@ -1,5 +1,7 @@
 import { IStore, IState } from '@/store';
-import { IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata } from '@/entities/financial-assistance-payment';
+import {
+  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata,
+} from '@/entities/financial-assistance-payment';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
 
@@ -20,6 +22,9 @@ export class FinancialAssistancePaymentStorage
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePayment`, entity),
     editFinancialAssistancePayment: (entity: IFinancialAssistancePaymentEntity):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistancePayment`, entity),
+    addFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePaymentLine`
+      , ({ entity, financialAssistanceId })),
   }
 
   private mutations = {

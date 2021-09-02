@@ -1,12 +1,12 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
-import { IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
+import { IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup } from '@/entities/financial-assistance-payment';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
 
-export class FinancialAssistancePaymentEntityModule extends BaseModule <IFinancialAssistancePaymentEntity, uuid> {
+export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancialAssistancePaymentEntity, uuid> {
   constructor(readonly service: FinancialAssistancePaymentsService) {
     super(service);
   }
@@ -34,9 +34,9 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule <IFinanci
   public actions = {
     ...this.baseActions,
 
-    addFinancialAssistancePayment: async (context:ActionContext<IFinancialAssistancePaymentEntityState,
+    addFinancialAssistancePayment: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
       IFinancialAssistancePaymentEntityState>, payload: IFinancialAssistancePaymentEntity)
-    : Promise<IFinancialAssistancePaymentEntity> => {
+      : Promise<IFinancialAssistancePaymentEntity> => {
       const result = await this.service.addFinancialAssistancePayment(payload);
       if (result) {
         context.commit('set', result);
@@ -44,10 +44,20 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule <IFinanci
       return result;
     },
 
-    editFinancialAssistancePayment: async (context:ActionContext<IFinancialAssistancePaymentEntityState,
+    editFinancialAssistancePayment: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
       IFinancialAssistancePaymentEntityState>, payload: IFinancialAssistancePaymentEntity)
-    : Promise<IFinancialAssistancePaymentEntity> => {
+      : Promise<IFinancialAssistancePaymentEntity> => {
       const result = await this.service.editFinancialAssistancePayment(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
+
+    addFinancialAssistancePaymentLine: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
+      IFinancialAssistancePaymentEntityState>, payload: { entity: IFinancialAssistancePaymentGroup, financialAssistanceId: uuid })
+      : Promise<IFinancialAssistancePaymentEntity> => {
+      const result = await this.service.addFinancialAssistancePaymentLine(payload.financialAssistanceId, payload.entity);
       if (result) {
         context.commit('set', result);
       }

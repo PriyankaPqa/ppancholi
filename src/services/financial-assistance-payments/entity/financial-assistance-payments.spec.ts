@@ -48,4 +48,16 @@ describe('>>> Financial assistance payment Service', () => {
         });
     });
   });
+  
+  describe('addFinancialAssistancePaymentLine', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.addFinancialAssistancePaymentLine('myParent', entity.groups[0]);
+      expect(http.post).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myParent/lines',
+        {
+          ...entity.groups[0].groupingInformation,
+          ...entity.groups[0].lines[0],
+        });
+    });
+  });
+
 });

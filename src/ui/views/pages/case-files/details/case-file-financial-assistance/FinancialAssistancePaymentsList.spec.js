@@ -146,7 +146,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true for level1+ and Finance', async () => {
+      it('returns true for level1+ only', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canEdit).toBeTruthy();
         await mountWrapper(false, null);
@@ -156,7 +156,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper(false, null, 'contributor3');
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null, 'contributorFinance');
-        expect(wrapper.vm.canEdit).toBeTruthy();
+        expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
 

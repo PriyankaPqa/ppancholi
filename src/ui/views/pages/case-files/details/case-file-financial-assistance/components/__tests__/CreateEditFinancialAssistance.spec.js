@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import
@@ -509,7 +510,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
     });
 
     describe('onSubmitPaymentLine', () => {
-      it('should add the new PaymentLine', async () => {
+      it('should add the new PaymentLine when isEditMode is false', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
         wrapper.vm.financialAssistance.groups = [];
         // mock data already has id - here we are creating
@@ -519,6 +520,35 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.financialAssistance.groups[0].groupingInformation).toBe(caseFileFinancialAssistanceGroups[0].groupingInformation);
         expect(wrapper.vm.financialAssistance.groups[0].lines).toBe(caseFileFinancialAssistanceGroups[0].lines);
         expect(wrapper.vm.financialAssistance.groups[0].paymentStatus).toBe(caseFileFinancialAssistanceGroups[0].paymentStatus);
+      });
+
+      it('should call savePaymentLine only when isEditMode is true', async () => {
+        wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.financialAssistance.groups = [];
+        wrapper.vm.savePaymentLine = jest.fn();
+        // mock data already has id - here we are creating
+        caseFileFinancialAssistanceGroups[0].lines.forEach((l) => { l.id = null; });
+
+        await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
+        expect(wrapper.vm.savePaymentLine).not.toHaveBeenCalled();
+
+        await wrapper.setData({ isEditMode: true });
+        await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
+        expect(wrapper.vm.savePaymentLine).toHaveBeenCalled();
+      });
+    });
+
+    describe('savePaymentLine', () => {
+      it('should call the add service when new line is received', async () => {
+        wrapper.vm.financialAssistance = financialAssistance;
+        wrapper.vm.financialAssistance.groups = [];
+        const newGroup = mockCaseFinancialAssistancePaymentGroups();
+        // mock data already has id - here we are creating
+        newGroup[0].lines.forEach((l) => { l.id = null; });
+
+        await wrapper.vm.savePaymentLine(newGroup[0]);
+        expect(storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0]);
+        expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine().groups);
       });
     });
   });

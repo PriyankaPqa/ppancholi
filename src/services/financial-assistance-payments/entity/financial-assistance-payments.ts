@@ -3,6 +3,7 @@ import { DomainBaseService } from '@/services/base';
 import {
   IFinancialAssistancePaymentEntity,
   CreateFinancialAssistancePaymentServiceRequest,
+  IFinancialAssistancePaymentGroup,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
@@ -33,5 +34,14 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
       name: entity.name,
     };
     return this.http.patch(`${this.baseUrl}/${entity.id}`, payload);
+  }
+
+  async addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
+    Promise<IFinancialAssistancePaymentEntity> {
+    const payload = {
+      ...entity.groupingInformation,
+      ...entity.lines[0],
+    };
+    return this.http.post(`${this.baseUrl}/${financialAssistanceId}/lines`, payload);
   }
 }

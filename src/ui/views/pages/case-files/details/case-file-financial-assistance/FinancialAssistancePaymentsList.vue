@@ -202,7 +202,7 @@ export default Vue.extend({
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1') || this.$hasRole('contributorFinance');
+      return this.$hasLevel('level1');
     },
 
     canDelete(): boolean {
