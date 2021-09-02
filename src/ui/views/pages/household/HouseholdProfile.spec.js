@@ -1,6 +1,4 @@
-import {
-  mockGenders, mockHouseholdCreate, mockPreferredLanguages, mockPrimarySpokenLanguages,
-} from '@crctech/registration-lib/src/entities/household-create';
+import { mockHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
 import { mockCombinedHousehold, mockHouseholdEntity, mockHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
@@ -34,14 +32,9 @@ const events = [
     },
   )];
 
-describe('HouseholdProfile.spec.vue', () => {
+describe('HouseholdProfile.vue', () => {
   let wrapper;
-  storage.registration.actions.fetchGenders = jest.fn(() => mockGenders());
-  storage.registration.actions.fetchPreferredLanguages = jest.fn(() => mockPreferredLanguages());
-  storage.registration.actions.fetchPrimarySpokenLanguages = jest.fn(() => mockPrimarySpokenLanguages());
   storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
-  storage.registration.mutations.setHouseholdCreate = jest.fn();
-  storage.household.actions.fetch = jest.fn(() => household);
   storage.caseFile.actions.search = jest.fn(() => ({ ids: ['1'] }));
   storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
 
@@ -482,6 +475,7 @@ describe('HouseholdProfile.spec.vue', () => {
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({ filter: expectedFilter, top: 999 });
       });
     });
+
     describe('fetchHouseholdData', () => {
       it('calls household storage action fetch with the id', async () => {
         await wrapper.vm.fetchHouseholdData();
@@ -505,6 +499,22 @@ describe('HouseholdProfile.spec.vue', () => {
       it('saves into caseFileIds the data received from search', async () => {
         await wrapper.vm.fetchCaseFilesInformation();
         expect(wrapper.vm.caseFileIds).toEqual(['1']);
+      });
+    });
+
+    describe('editAddress', () => {
+      it('it show edit household address dialog', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+        });
+        expect(wrapper.vm.showEditAddress).toBe(false);
+
+        wrapper.vm.editAddress();
+
+        expect(wrapper.vm.showEditAddress).toBe(true);
       });
     });
   });

@@ -32,21 +32,26 @@
                 icon
                 x-small
                 data-test="member_address_edit_btn"
-                @click="return false">
+                @click="editAddress()">
                 <v-icon color="gray darken-2">
                   mdi-pencil
                 </v-icon>
               </v-btn>
             </div>
-            <div v-if="addressLine1">
-              {{ addressLine1 }}
-            </div>
-            <div v-if="addressLine2">
-              {{ addressLine2 }}
-            </div>
-            <div v-if="country">
-              {{ country }}
-            </div>
+            <template v-if="household.noFixedHome">
+              {{ $t('registration.addresses.noFixedHomeAddress') }}
+            </template>
+            <template v-else>
+              <div v-if="addressLine1">
+                {{ addressLine1 }}
+              </div>
+              <div v-if="addressLine2">
+                {{ addressLine2 }}
+              </div>
+              <div v-if="country">
+                {{ country }}
+              </div>
+            </template>
           </div>
 
           <div class="pt-6  d-flex flex-column" data-test="household_profile_created_date">
@@ -131,6 +136,7 @@
         </v-col>
       </v-row>
     </template>
+    <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
   </rc-page-content>
 </template>
 
@@ -152,11 +158,13 @@ import {
 } from '@/entities/event';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
+import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 
 export default mixins(household).extend({
   name: 'HouseholdProfile',
 
   components: {
+    EditHouseholdAddressDialog,
     RcPageLoading,
     RcPageContent,
     HouseholdCaseFileCard,
@@ -180,6 +188,7 @@ export default mixins(household).extend({
       householdData: null as IHouseholdCombined,
       caseFileIds: [] as string[],
       events: [] as IEventMainInfo[],
+      showEditAddress: false,
     };
   },
 
@@ -317,6 +326,10 @@ export default mixins(household).extend({
 
     navigateBack() {
       this.$router.back();
+    },
+
+    editAddress() {
+      this.showEditAddress = true;
     },
   },
 });
