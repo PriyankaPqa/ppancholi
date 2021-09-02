@@ -1,3 +1,4 @@
+import { IMultilingual } from '../../types/interfaces/IMultilingual';
 import { IPhoneNumber } from '../value-objects/contact-information';
 import { IAddressData } from '../value-objects/address';
 import { IEntity, IEntityCombined } from '../base';
@@ -27,9 +28,19 @@ export interface IMemberMetadata {
   alternatePhoneNumber?: IPhoneNumber;
 }
 
+export interface IHouseholdCaseFile {
+  eventId: uuid;
+  eventName: IMultilingual;
+  caseFileId: uuid;
+  caseFileNumber: string;
+  caseFileStatus: number;
+  registeredDate: string | Date;
+}
+
 export interface IHouseholdMetadata extends IEntity {
   memberMetadata: Array<IMemberMetadata>;
   eventIds: Array<uuid>;
+  caseFiles: IHouseholdCaseFile[];
 }
 
 export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, IHouseholdMetadata>

@@ -26,7 +26,7 @@ export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseho
     },
     from: '2021-05-26T19:52:44.379Z',
     to: '2021-05-26T19:52:44.379Z',
-    observation: 'observation'
+    observation: 'observation',
   },
   addressHistory: [
     {
@@ -64,6 +64,14 @@ export const mockHouseholdMetadata = (force?: Partial<IHouseholdMetadata>): IHou
   ...mockBaseEntity(),
   memberMetadata: [mockMemberMetadata()],
   eventIds: ['1', '2'],
+  caseFiles: [{
+    eventId: '60983874-18bb-467d-b55a-94dc55818151',
+    eventName: { translation: { en: 'my event 1', fr: ' my event fr' } },
+    caseFileId: '11-22-334',
+    caseFileNumber: '111',
+    caseFileStatus: 1,
+    registeredDate: '2021-02-02',
+  }],
   ...force,
 });
 
