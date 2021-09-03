@@ -1,14 +1,20 @@
 /* eslint-disable */
 import { createLocalVue, mount } from '@/test/testSetup';
+import { mockStorage } from '@/store/storage';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus } from '@/entities/financial-assistance-payment';
 import Component from '../CreateEditPaymentLineDialog.vue';
+import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import { AddressForm } from '@crctech/registration-lib';
+import { mockAddressData, Address, mockAddress } from '@crctech/registration-lib/src/entities/value-objects/address';
 
 const localVue = createLocalVue();
 const program = mockProgramEntity();
 const items = mockItems();
+const storage = mockStorage();
 let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
+libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
 
 describe('CreateEditPaymentLineDialog.vue', () => {
   let wrapper;
@@ -23,6 +29,17 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         show: true,
         program,
         items,
+      },
+      mocks: {
+        $storage: storage,
+      },
+      computed: {
+        apiKey() {
+          return 'mock-apiKey';
+        },
+      },
+      stubs: {
+        RcGoogleAutocomplete: true,
       },
     });
 
@@ -115,6 +132,44 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.findDataTest('txt_related_number').exists()).toBeTruthy();
       });
     });
+    
+    describe('payeeSection', () => {
+      it(' is shown for Cheque', async () => {
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeTruthy();        
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.DirectDeposit } } });
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();        
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.GiftCard } } });
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice } } });
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.PrepaidCard } } });
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
+      });
+    });
+    
+    describe('AddressForm', () => {
+      it('should be displayed if Cheque', async () => {
+        expect(wrapper.findComponent(AddressForm).exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
+        expect(wrapper.findComponent(AddressForm).exists()).toBeFalsy();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
+        expect(wrapper.findComponent(AddressForm).exists()).toBeTruthy();
+      });
+
+      it('should trigger setAddress event @change', async () => {
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
+        wrapper.vm.setAddress = jest.fn();
+        const component = wrapper.findComponent(AddressForm);
+        await component.vm.$emit('change');
+        expect(wrapper.vm.setAddress).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 
   describe('Validation rules', () => {
@@ -158,6 +213,17 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           program,
           items,
         },
+        mocks: {
+          $storage: storage,
+        },
+        computed: {
+          apiKey() {
+            return 'mock-apiKey';
+          },
+        },
+        stubs: {
+          RcGoogleAutocomplete: true,
+        },
       });
 
       await wrapper.vm.$nextTick();
@@ -196,7 +262,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           groupingInformation:
           {
             modality: null,
-            payeeName: 'undefined undefined',
+            payeeName: 'John Joe',
             payeeType: 1,
           },
           id: '',
@@ -207,7 +273,8 @@ describe('CreateEditPaymentLineDialog.vue', () => {
               address: null,
               amount: null,
               careOf: null,
-              documentReceived: null,
+              documentReceived: false,
+              id: undefined,
               mainCategoryId: null,
               relatedNumber: null,
               subCategoryId: null,
@@ -231,7 +298,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           groupingInformation:
           {
             modality: 2,
-            payeeName: 'undefined undefined',
+            payeeName: 'thl',
             payeeType: 1,
           },
           id: '',
@@ -254,6 +321,31 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           tenantId: '',
           timestamp: '',
         });
+      });
+      
+      it('sets the defaultBeneficiaryData from household and case file', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.initCreateMode();
+        expect(wrapper.vm.defaultBeneficiaryData.name).toEqual('John Joe');
+        expect(wrapper.vm.defaultBeneficiaryData.address.streetAddress).not.toBeNull();
+      });
+
+      it('sets the address from household when none already set', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.initCreateMode();
+        expect(storage.household.actions.fetch).toHaveBeenCalledWith(storage.caseFile.getters.get().entity.householdId);
+        expect(wrapper.vm.address.streetAddress).not.toBeNull();
+        expect(wrapper.vm.address).toEqual(storage.household.actions.fetch().entity.address.address);
+      });
+
+      it('sets the predefined address when one already set', async () => {
+        caseFileFinancialAssistanceGroup.lines[0].address = mockAddressData();
+        caseFileFinancialAssistanceGroup.lines[0].address.streetAddress = 'abc street';
+        await wrapper.setProps({currentLine: caseFileFinancialAssistanceGroup.lines[0], currentGroup: caseFileFinancialAssistanceGroup});
+        
+        jest.clearAllMocks();
+        await wrapper.vm.initCreateMode();
+        expect(wrapper.vm.address.streetAddress).toEqual('abc street');
       });
     });
 
@@ -291,6 +383,36 @@ describe('CreateEditPaymentLineDialog.vue', () => {
     });
 
     describe('onSubmit', () => {
+      it('accepts data from payee when Cheque', async () => {
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 99, payeeName: 'manual' } } });
+        wrapper.vm.currentPaymentLine.careOf = 'blah';
+        await wrapper.setData({address: mockAddressData()});
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.onSubmit();
+        const emitted = wrapper.emitted('submit')[0][0];
+        expect(emitted.groupingInformation.modality).toEqual(EPaymentModalities.Cheque);
+        expect(emitted.groupingInformation.payeeType).toEqual(99);
+        expect(emitted.groupingInformation.payeeName).toEqual('manual');
+        expect(emitted.lines[0].address).not.toBeNull();
+        expect(emitted.lines[0].address).toEqual(wrapper.vm.address);
+        expect(emitted.lines[0].careOf).toEqual('blah');
+      });
+
+      it('clears data from payee when not Cheque', async () => {
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice, payeeType: 99, payeeName: 'manual' } } });
+        wrapper.vm.currentPaymentLine.careOf = 'blah';
+        await wrapper.setData({address: mockAddressData()});
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.onSubmit();
+        const emitted = wrapper.emitted('submit')[0][0];
+        expect(emitted.groupingInformation.modality).toEqual(EPaymentModalities.Invoice);
+        expect(emitted.groupingInformation.payeeType).toEqual(1);
+        expect(emitted.groupingInformation.payeeName).not.toEqual('manual');
+        expect(emitted.lines[0].address).toBeNull();
+        expect(emitted.lines[0].careOf).toBeNull();
+      });
+
+
       it('doesnt proceed unless form validation succeeds', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         await wrapper.vm.onSubmit();
@@ -318,6 +440,43 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         await wrapper.setData({ paymentGroup: caseFileFinancialAssistanceGroup });
         await wrapper.vm.resetSubCategory();
         expect(wrapper.vm.resetDocuments).toHaveBeenCalled();
+      });
+    });
+    
+    describe('setAddress', () => {
+      it('should set the address', async () => {
+        await wrapper.setData({
+          address: {},
+        });
+
+        wrapper.vm.setAddress(mockAddressData());
+
+        const expected = new Address(mockAddressData());
+
+        expect(wrapper.vm.address).toEqual(expected);
+      });
+    });
+
+    describe('resetPayeeInformation', () => {
+      it('sets payee information to the beneficiary info when beneficiary', async () => {
+        await wrapper.setData({ address: new Address(), paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 2, payeeName: 'manual' } } });
+        await wrapper.setData({ defaultBeneficiaryData: { name: 'myNewName', address: new Address(mockAddressData()) } });
+
+        await wrapper.setData({ paymentGroup: { groupingInformation: { payeeType: 1 } } });
+        wrapper.vm.resetPayeeInformation();
+        const expected = new Address(mockAddressData());
+        expect(wrapper.vm.address).toEqual(expected);
+        expect(wrapper.vm.paymentGroup.groupingInformation.payeeName).toEqual('myNewName');
+      });
+      it('clears payee information when third party', async () => {
+        await wrapper.setData({ address: new Address(mockAddressData()), paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 1, payeeName: 'myNewName' } } });
+        await wrapper.setData({ defaultBeneficiaryData: { name: 'myNewName', address: new Address(mockAddressData()) } });
+
+        await wrapper.setData({ paymentGroup: { groupingInformation: { payeeType: 2 } } });
+        wrapper.vm.resetPayeeInformation();
+        const expected = new Address(mockAddressData());
+        expect(wrapper.vm.address).toEqual(new Address());
+        expect(wrapper.vm.paymentGroup.groupingInformation.payeeName).toEqual('');
       });
     });
   });

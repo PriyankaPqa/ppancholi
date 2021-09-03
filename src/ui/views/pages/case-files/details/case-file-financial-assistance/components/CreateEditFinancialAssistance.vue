@@ -281,6 +281,14 @@ export default Vue.extend({
     },
 
     mergePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
+      if (this.lineToEdit) {
+        // we remove the original line before we re-insert it in the right group
+        this.groupToEdit.lines = this.groupToEdit.lines.filter((l) => l !== this.lineToEdit);
+        if (!this.groupToEdit.lines.length) {
+          this.financialAssistance.groups = this.financialAssistance.groups.filter((g) => g !== this.groupToEdit);
+        }
+      }
+
       // Find the payment group based on modality and payee
       const paymentInfo = submittedPaymentGroup.groupingInformation;
       const paymentGroup = _find(this.financialAssistance.groups, (group: IFinancialAssistancePaymentGroup) => {

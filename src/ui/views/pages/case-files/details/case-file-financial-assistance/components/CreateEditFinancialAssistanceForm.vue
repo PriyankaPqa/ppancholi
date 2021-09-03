@@ -57,7 +57,7 @@ import {
 import _sortBy from 'lodash/sortBy';
 import { IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
+import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { FinancialAssistancePaymentEntity, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 
@@ -102,10 +102,10 @@ export default Vue.extend({
       rules: {
         name: {
           required: true,
-          max: MAX_LENGTH_SM,
+          max: MAX_LENGTH_MD,
         },
         description: {
-          max: MAX_LENGTH_MD,
+          max: MAX_LENGTH_LG,
         },
         table: {
           required: true,

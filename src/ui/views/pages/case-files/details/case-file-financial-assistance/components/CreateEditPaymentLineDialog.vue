@@ -1,6 +1,7 @@
 <template>
   <ValidationObserver ref="form" v-slot="{ failed }" slim>
     <rc-dialog
+      v-if="loaded"
       :title="currentLine ? $t('caseFile.financialAssistance.editPaymentLine'): $t('caseFile.financialAssistance.addNewPaymentLine')"
       :show.sync="show"
       :cancel-action-label="$t('common.buttons.cancel')"
@@ -100,6 +101,55 @@
                 :label="`${$t('caseFile.financialAssistance.relatedNumber')}`" />
             </v-col>
           </v-row>
+
+          <div v-if="showPayee" data-test="payeeSection">
+            <v-row>
+              <v-col cols="12">
+                <span class="rc-body16 fw-bold">
+                  {{ $t('caseFile.financialAssistance.payee') }}
+                </span>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="6">
+                <v-select-with-validation
+                  v-model="paymentGroup.groupingInformation.payeeType"
+                  :items="payeeTypes"
+                  :label="`${$t('caseFile.financialAssistance.payee.paymentMadeTo')} *`"
+                  data-test="payment_payeetypes"
+                  @change="resetPayeeInformation" />
+              </v-col>
+              <v-col cols="6">
+                <v-text-field-with-validation
+                  v-model="paymentGroup.groupingInformation.payeeName"
+                  data-test="payment_payeename"
+                  autocomplete="nope"
+                  :rules="rules.payeeName"
+                  :label="`${$t('caseFile.financialAssistance.payee.payeeName')} *`" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <v-text-field-with-validation
+                  v-model="currentPaymentLine.careOf"
+                  data-test="payment_careof"
+                  autocomplete="nope"
+                  :rules="rules.careOf"
+                  :label="`${$t('caseFile.financialAssistance.payee.careOf')}`" />
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12">
+                <address-form
+                  :key="paymentGroup.groupingInformation.payeeType"
+                  :api-key="apiKey"
+                  :canadian-provinces-items="canadianProvincesItems"
+                  prefix-data-test="address"
+                  :home-address="address"
+                  @change="setAddress($event)" />
+              </v-col>
+            </v-row>
+          </div>
         </v-col>
       </v-row>
     </rc-dialog>
@@ -114,9 +164,11 @@ import {
   VAutocompleteWithValidation,
   VCheckboxWithValidation,
   VTextFieldWithValidation,
-  // VTextAreaWithValidation,
   VSelectWithValidation,
 } from '@crctech/component-library';
+import { AddressForm } from '@crctech/registration-lib';
+import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import { Address } from '@crctech/registration-lib/src/entities/value-objects/address';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import {
   PayeeType,
@@ -127,9 +179,9 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import helpers from '@/ui/helpers';
-import { VForm } from '@/types';
-// import PaymentTypeHandler from './PaymentTypes/PaymentTypeHandler.vue';
-// import { VForm } from '@/types';
+import { IAddress, VForm } from '@/types';
+import { localStorageKeys } from '@/constants/localStorage';
+import { MAX_LENGTH_MD } from '@/constants/validations';
 
 export default Vue.extend({
   name: 'CreateEditPaymentLineDialog',
@@ -140,7 +192,7 @@ export default Vue.extend({
     VCheckboxWithValidation,
     VTextFieldWithValidation,
     VSelectWithValidation,
-    // PaymentTypeHandler,
+    AddressForm,
   },
 
   props: {
@@ -173,6 +225,7 @@ export default Vue.extend({
   data() {
     return {
       paymentGroup: null as IFinancialAssistancePaymentGroup,
+      address: new Address(),
       rules: {
         item: {
           required: true,
@@ -192,6 +245,22 @@ export default Vue.extend({
           min_value: 0,
           max_value: 99999999,
         },
+        relatedNumber: {
+          max: MAX_LENGTH_MD,
+        },
+        careOf: {
+          max: MAX_LENGTH_MD,
+        },
+        payeeName: {
+          required: true,
+          max: MAX_LENGTH_MD,
+        },
+      },
+      payeeTypes: helpers.enumToTranslatedCollection(PayeeType, 'enums.payeeType'),
+      loaded: false,
+      defaultBeneficiaryData: {
+        address: null as IAddress,
+        name: '',
       },
     };
   },
@@ -209,6 +278,20 @@ export default Vue.extend({
 
     currentPaymentLine(): IFinancialAssistancePaymentLine {
       return this.paymentGroup.lines[0];
+    },
+
+    showPayee(): boolean {
+      return this.paymentGroup.groupingInformation.modality === EPaymentModalities.Cheque;
+    },
+
+    apiKey(): string {
+      return localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
+        ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
+        : process.env.VUE_APP_GOOGLE_API_KEY;
+    },
+
+    canadianProvincesItems(): Record<string, unknown>[] {
+      return libHelpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
     showRelatedNumber(): boolean {
@@ -229,19 +312,25 @@ export default Vue.extend({
   },
 
   async created() {
-    this.initCreateMode();
+    await this.initCreateMode();
+    this.loaded = true;
   },
 
   methods: {
     async initCreateMode() {
-      const cf = this.$storage.caseFile.getters.get(this.$route.params.id).metadata;
+      const cf = this.$storage.caseFile.getters.get(this.$route.params.id);
+      const household = await this.$storage.household.actions.fetch(cf.entity.householdId);
+      this.defaultBeneficiaryData = {
+        name: `${cf.metadata.primaryBeneficiaryFirstName} ${cf.metadata.primaryBeneficiaryLastName}`,
+        address: household?.entity?.address?.address,
+      };
       this.paymentGroup = new FinancialAssistancePaymentGroup();
 
       this.paymentGroup.lines.push({
         id: this.currentLine?.id,
         mainCategoryId: this.currentLine?.mainCategoryId || null,
         subCategoryId: this.currentLine?.subCategoryId || null,
-        documentReceived: this.currentLine?.documentReceived || null,
+        documentReceived: this.currentLine?.documentReceived || false,
         amount: this.currentLine?.amount || null,
         actualAmount: this.currentLine?.actualAmount || 0,
         relatedNumber: this.currentLine?.relatedNumber || null,
@@ -252,11 +341,28 @@ export default Vue.extend({
       this.paymentGroup.groupingInformation = {
         modality: this.currentGroup?.groupingInformation?.modality || null,
         payeeType: this.currentGroup?.groupingInformation?.payeeType || PayeeType.Beneficiary,
-        payeeName: `${cf.primaryBeneficiaryFirstName} ${cf.primaryBeneficiaryLastName}`,
+        payeeName: this.currentGroup?.groupingInformation?.payeeName
+          || this.defaultBeneficiaryData.name,
       };
+
+      this.address = new Address(this.currentLine?.address || this.defaultBeneficiaryData.address);
+    },
+
+    setAddress(address: IAddress) {
+      this.address = new Address(address);
     },
 
     async onSubmit() {
+      if (this.showPayee) {
+        this.currentPaymentLine.address = this.address;
+      } else {
+        // reset non-editable fields if they had been changed
+        this.currentPaymentLine.address = null;
+        this.currentPaymentLine.careOf = null;
+        this.paymentGroup.groupingInformation.payeeType = PayeeType.Beneficiary;
+        this.paymentGroup.groupingInformation.payeeName = this.defaultBeneficiaryData.name;
+      }
+
       if (this.currentPaymentLine.amount) {
         this.currentPaymentLine.amount = Number(this.currentPaymentLine.amount);
       }
@@ -274,6 +380,16 @@ export default Vue.extend({
 
     resetDocuments() {
       this.currentPaymentLine.documentReceived = false;
+    },
+
+    resetPayeeInformation() {
+      if (this.paymentGroup.groupingInformation.payeeType === PayeeType.Beneficiary) {
+        this.paymentGroup.groupingInformation.payeeName = this.defaultBeneficiaryData.name;
+        this.address = new Address(this.defaultBeneficiaryData.address);
+      } else {
+        this.paymentGroup.groupingInformation.payeeName = '';
+        this.address = new Address();
+      }
     },
   },
 });
