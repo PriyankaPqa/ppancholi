@@ -85,6 +85,7 @@ export interface IStorage {
     updatePersonAddress({
       member, isPrimaryMember, index, sameAddress,
     }: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean}): Promise<IHouseholdEntity>;
+    addAdditionalMember({ householdId, member, sameAddress }: { householdId: string; member: IMember; sameAddress?: boolean}): Promise<IHouseholdEntity>;
   };
 }
 
@@ -155,5 +156,6 @@ export interface IStorageMock {
     updatePersonIdentity: jest.Mock<IHouseholdEntity>;
     updatePersonContactInformation: jest.Mock<IHouseholdEntity>;
     updatePersonAddress: jest.Mock<IHouseholdEntity>;
+    addAdditionalMember: jest.Mock<IHouseholdEntity>;
   };
 }

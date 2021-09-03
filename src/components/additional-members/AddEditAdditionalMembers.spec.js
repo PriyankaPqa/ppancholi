@@ -17,6 +17,7 @@ import { mockAddress } from '../../entities/household-create';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+const householdId = '4113a553-13ed-41da-a692-f39c934bee05';
 
 describe('AddEditAdditionalMembers.vue', () => {
   let wrapper;
@@ -29,6 +30,7 @@ describe('AddEditAdditionalMembers.vue', () => {
         member: mockAdditionalMember(),
         index: -1,
         i18n,
+        householdId,
       },
       data() {
         return {
@@ -112,15 +114,8 @@ describe('AddEditAdditionalMembers.vue', () => {
       it('should calls addAdditionalMember with proper params', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.validate();
-        expect(wrapper.vm.$storage.registration.mutations.addAdditionalMember)
-          .toHaveBeenCalledWith(wrapper.vm.member, wrapper.vm.sameAddress);
-      });
-
-      it('should call addAdditionalMember with proper params', async () => {
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        await wrapper.vm.validate();
-        expect(wrapper.vm.$storage.registration.mutations.addAdditionalMember)
-          .toHaveBeenCalledWith(wrapper.vm.member, wrapper.vm.sameAddress);
+        expect(wrapper.vm.$storage.registration.actions.addAdditionalMember)
+          .toHaveBeenCalled();
       });
 
       it('should call submitChanges  if inHouseholdProfile is true', async () => {
@@ -250,6 +245,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               member,
               index: 0,
               i18n,
+              householdId,
             },
             data() {
               return {
@@ -279,6 +275,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               member,
               index: 0,
               i18n,
+              householdId,
             },
             data() {
               return {
@@ -307,6 +304,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               member,
               index: 0,
               i18n,
+              householdId,
             },
             data() {
               return {

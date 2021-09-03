@@ -6,7 +6,7 @@ import { mockAdditionalMember, mockMember } from '@/entities/value-objects/membe
 import { mockIdentitySet } from '@/entities/value-objects/identity-set';
 import { mockAddress } from '@/entities/value-objects/address';
 import { mockCampGround } from '@/entities/value-objects/current-address';
-import { mockHouseholdCreateData } from '@/entities/household-create';
+import { mockHouseholdCreateData, mockHouseholdCreate } from '@/entities/household-create';
 import { mockHttpError } from '@/services/httpClient.mock';
 import { makeStorage } from './storage';
 import { mockEventData } from '../../../entities/event';
@@ -312,6 +312,16 @@ describe('>>> Registration Storage', () => {
       storage.actions.updatePersonAddress({ member, isPrimaryMember });
       expect(store.dispatch).toBeCalledWith('registration/updatePersonAddress', {
         member, isPrimaryMember, index: -1, sameAddress: false,
+      });
+    });
+
+    it('should proxy addAdditionalMember', () => {
+      const householdId = '4113a553-13ed-41da-a692-f39c934bee05';
+      const member = mockMember();
+      const sameAddress = true;
+      storage.actions.addAdditionalMember({ householdId, member, sameAddress });
+      expect(store.dispatch).toBeCalledWith('registration/addAdditionalMember', {
+        householdId, member, sameAddress,
       });
     });
   });

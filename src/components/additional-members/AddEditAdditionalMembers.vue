@@ -26,7 +26,6 @@
             :current-address-type-items="currentAddressTypeItems"
             :loading="loadingIndigenousCommunities"
             :member="member"
-            :in-household-profile="inHouseholdProfile"
             @identity-change="setIdentity($event)"
             @indigenous-identity-change="setIndigenousIdentity($event)"
             @temporary-address-change="setCurrentAddress($event)" />
@@ -90,6 +89,11 @@ export default Vue.extend({
     i18n: {
       type: Object as () => VueI18n,
       required: true,
+    },
+
+    householdId: {
+      type: String,
+      default: '',
     },
 
     inHouseholdProfile: {
@@ -200,7 +204,13 @@ export default Vue.extend({
           this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
         }
       } else {
-        this.$storage.registration.mutations.addAdditionalMember(this.member, this.sameAddress);
+        if (this.householdId) {
+          this.$storage.registration.actions.addAdditionalMember({
+            householdId: this.householdId, member: this.member, sameAddress: this.sameAddress,
+          });
+        } else {
+          this.$storage.registration.mutations.addAdditionalMember(this.member, this.sameAddress);
+        }
         this.$emit('add');
       }
       this.close();

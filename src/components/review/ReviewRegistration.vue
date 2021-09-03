@@ -118,10 +118,10 @@
     <add-edit-additional-members
       v-if="showAddAdditionalMember"
       :i18n="i18n"
+      :household-id="householdCreate.id"
       :show.sync="showAddAdditionalMember"
       :index="-1"
-      :member="newAdditionalMember"
-      @add="onAdditionalMemberAdd()" />
+      :member="newAdditionalMember" />
   </div>
 </template>
 
@@ -222,6 +222,14 @@ export default mixins(additionalMemberForm).extend({
     this.cancelPersonalInformation();
     this.cancelAddresses();
     this.cancelAllAdditionalMembers();
+  },
+
+  watch: {
+    additionalMembersCopy() {
+      if (this.additionalMembers.length !== this.additionalMembersCopy.length) {
+        this.buildAdditionalMembersState();
+      }
+    },
   },
 
   methods: {
@@ -370,23 +378,6 @@ export default mixins(additionalMemberForm).extend({
         this.$toasted.global.warning(this.$t('warning.MAX_ADDITIONAL_MEMBERS_reached', { x: MAX_ADDITIONAL_MEMBERS }));
         this.disabledAddMembers = true;
       }
-    },
-
-    async onAdditionalMemberAdd() {
-      const lastAddedIndex = this.householdCreate.additionalMembers.length - 1;
-      const member = this.householdCreate.additionalMembers[lastAddedIndex];
-      const res = await this.$services.households.addMember(this.householdCreate.id, member);
-
-      if (!res) {
-        this.$storage.registration.mutations.removeAdditionalMember(this.householdCreate.additionalMembers.length - 1);
-        return;
-      }
-      this.$toasted.global.success(this.$t('registration.member.added'));
-
-      this.buildAdditionalMembersState();
-
-      // We add the id on the object
-      this.$storage.registration.mutations.editAdditionalMember({ ...member, id: res.id }, lastAddedIndex, this.additionalMembers[lastAddedIndex].sameAddress);
     },
   },
 });

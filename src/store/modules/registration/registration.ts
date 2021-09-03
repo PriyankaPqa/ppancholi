@@ -510,6 +510,21 @@ const actions = (mode: ERegistrationMode) => ({
 
     return result;
   },
+
+  async addAdditionalMember(
+    this: IStore<IState>,
+    context: ActionContext<IState, IState>,
+    { householdId, member, sameAddress = false }: { householdId: string; member: IMember; sameAddress: boolean },
+  ): Promise<IHouseholdEntity> {
+    if (sameAddress) {
+      member.currentAddress = { ...context.state.householdCreate.primaryBeneficiary.currentAddress };
+    }
+    const res = await this.$services.households.addMember(householdId, member);
+    if (res) {
+      context.commit('addAdditionalMember', { payload: new Member({ ...member, id: res.members[res.members.length - 1] }), sameAddress });
+    }
+    return res;
+  },
 });
 
 export const makeRegistrationModule = (

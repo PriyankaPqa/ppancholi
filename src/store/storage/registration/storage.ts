@@ -253,5 +253,13 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
         member, isPrimaryMember, index, sameAddress,
       });
     },
+
+    addAdditionalMember({
+      householdId, member, sameAddress = false,
+    }: { householdId: string; member: IMember; sameAddress: boolean }): Promise<IHouseholdEntity> {
+      return store.dispatch('registration/addAdditionalMember', {
+        householdId, member, sameAddress,
+      });
+    },
   },
 });

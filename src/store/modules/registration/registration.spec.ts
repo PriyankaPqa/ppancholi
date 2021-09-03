@@ -17,7 +17,9 @@ import {
   mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
-  mockHouseholdCreate, mockContactInformation, mockIdentitySet, mockMember, mockAddress, mockAdditionalMember, mockHouseholdCreateData, ECurrentAddressTypes,
+  mockHouseholdCreate, mockContactInformation, mockIdentitySet,
+  mockMember, mockAddress, mockAdditionalMember, mockHouseholdCreateData, ECurrentAddressTypes,
+  Member,
 } from '../../../entities/household-create';
 
 import { mockHouseholdEntity } from '../../../entities/household';
@@ -868,6 +870,33 @@ describe('>>> Registration Module', () => {
         });
 
         expect(store.commit).toHaveBeenCalledWith('registration/editAdditionalMember', { payload: member, index, sameAddress: true }, undefined);
+      });
+    });
+    describe('addAdditionalMember', () => {
+      it('call the addAdditionalMember service with proper params', async () => {
+        const member = mockMember();
+        const householdId = 'test';
+        const sameAddress = true;
+        store.commit = jest.fn();
+        store.$services.households.addMember = jest.fn(() => (mockHouseholdEntity()));
+
+        await store.dispatch('registration/addAdditionalMember', { householdId, member, sameAddress });
+
+        expect(store.$services.households.addMember).toHaveBeenCalledWith(householdId, member);
+      });
+
+      it('call the mutation after the resolution', async () => {
+        const member = mockMember();
+        const householdId = 'test';
+        const sameAddress = true;
+        const mockhousehold = mockHouseholdEntity();
+        store.commit = jest.fn();
+        store.$services.households.addMember = jest.fn(() => (mockHouseholdEntity()));
+
+        await store.dispatch('registration/addAdditionalMember', { householdId, member, sameAddress });
+
+        expect(store.commit).toHaveBeenCalledWith('registration/addAdditionalMember',
+          { payload: new Member({ ...member, id: mockhousehold.members[mockhousehold.members.length - 1] }), sameAddress }, undefined);
       });
     });
   });

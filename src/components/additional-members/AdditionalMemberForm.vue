@@ -128,11 +128,6 @@ export default Vue.extend({
       type: Object as () => VueI18n,
       required: true,
     },
-
-    inHouseholdProfile: {
-      type: Boolean,
-      default: false,
-    },
   },
 
   data() {

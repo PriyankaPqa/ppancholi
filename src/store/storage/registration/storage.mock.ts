@@ -80,5 +80,6 @@ export const mockStorageRegistration = (): IStorageMock => ({
     updatePersonAddress: jest.fn(() => mockHouseholdEntity()),
     updatePersonIdentity: jest.fn(() => mockHouseholdEntity()),
     updatePersonContactInformation: jest.fn(() => mockHouseholdEntity()),
+    addAdditionalMember: jest.fn(() => mockHouseholdEntity()),
   },
 });
