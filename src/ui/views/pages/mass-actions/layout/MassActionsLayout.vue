@@ -4,7 +4,7 @@
     :show-left-menu="showLeftMenu"
     :loading="false"
     :group-mode="true"
-    :left-menu-title="$t('system_management.leftMenu.title')"
+    :left-menu-title="$t('leftMenu.mass_actions_title')"
     hide-dividers
     @click:tab="onClick($event)">
     <rc-router-view-transition />

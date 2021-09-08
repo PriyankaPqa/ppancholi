@@ -1,15 +1,15 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
-import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import Component from './ImportValidationStatusHome.vue';
+import Component from './FinancialAssistanceHome.vue';
 import { MassActionType } from '@/entities/mass-action';
+import routes from '@/constants/routes';
 
 const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-describe('ImportValidationStatusHome.vue', () => {
+describe('FinancialAssistanceHome.vue', () => {
   let wrapper;
 
   describe('Data', () => {
@@ -23,19 +23,19 @@ describe('ImportValidationStatusHome.vue', () => {
     });
 
     it('should have proper mass action type', () => {
-      expect(wrapper.vm.massActionType).toEqual(MassActionType.ImportValidationOfImpactStatus);
+      expect(wrapper.vm.massActionType).toEqual(MassActionType.FinancialAssistance);
     });
 
     it('should have proper detailsRouteName', () => {
-      expect(wrapper.vm.detailsRouteName).toEqual(routes.massActions.importValidationStatus.details.name);
+      expect(wrapper.vm.detailsRouteName).toEqual(routes.massActions.financialAssistance.details.name);
     });
 
     it('should have proper table title', () => {
-      expect(wrapper.vm.tableTitle).toEqual('massAction.impactValidationStatusTable.title');
+      expect(wrapper.vm.tableTitle).toEqual('massAction.financialAssistanceTable.title');
     });
 
     it('should have proper search end point', () => {
-      expect(wrapper.vm.searchEndpoint).toEqual('validate-impact-status-mass-actions');
+      expect(wrapper.vm.searchEndpoint).toEqual('financial-assistance-mass-actions');
     });
   });
 
@@ -50,9 +50,14 @@ describe('ImportValidationStatusHome.vue', () => {
     });
 
     describe('goToAdd', () => {
-      it('should redirect to create page', () => {
-        wrapper.vm.goToAdd();
-        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.massActions.importValidationStatus.create.name });
+      it('should redirect to correct route if we process via file', () => {
+        wrapper.vm.goToAdd({ value: 'file' });
+        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.massActions.financialAssistance.create.name });
+      });
+
+      it('should show dialog to filter by list', () => {
+        wrapper.vm.goToAdd({ value: 'list' });
+        expect(wrapper.vm.showProcessByList).toEqual(true);
       });
     });
   });
@@ -75,6 +80,7 @@ describe('ImportValidationStatusHome.vue', () => {
             dateCreated: 'Entity/Created',
             projected: 'Metadata/LastRun/Results/Total',
             successful: 'Metadata/LastRun/Results/Successes',
+            totalAmount: 'Metadata/LastRun/TotalAmount',
             status: 'Metadata/LastRun/RunStatus',
             deleteButton: 'deleteButton',
           });
@@ -103,7 +109,13 @@ describe('ImportValidationStatusHome.vue', () => {
             text: 'massAction.common.successful',
             value: wrapper.vm.customColumns.successful,
             sortable: true,
-          }, {
+          },
+          {
+            sortable: true,
+            text: 'massAction.common.total',
+            value: wrapper.vm.customColumns.totalAmount,
+          },
+          {
             text: 'massAction.common.status',
             value: wrapper.vm.customColumns.status,
             sortable: false,
@@ -114,6 +126,22 @@ describe('ImportValidationStatusHome.vue', () => {
             sortable: false,
           }];
         expect(wrapper.vm.headers).toEqual(headers);
+      });
+    });
+
+    describe('menuItems', () => {
+      it('should return proper items to add', () => {
+        expect(wrapper.vm.menuItems).toEqual([{
+          text: 'massAction.financialAssistance.table.add.list',
+          value: 'list',
+          icon: 'mdi-filter-variant',
+          dataTest: 'fa-mass-action-list',
+        }, {
+          text: 'massAction.financialAssistance.table.add.file',
+          value: 'file',
+          icon: 'mdi-upload',
+          dataTest: 'fa-mass-action-file',
+        }]);
       });
     });
   });

@@ -29,11 +29,11 @@
       </template>
 
       <template #[`item.${customColumns.projected}`]="{ item }">
-        {{ isPreprocessing(item) ? $t('common.toBeDetermined') : getLastRunMetadata(item) && getLastRunMetadata(item).results.total }}
+        {{ getLastRunMetadata(item) ? getLastRunMetadata(item) && getLastRunMetadata(item).results.total : $t('common.toBeDetermined') }}
       </template>
 
       <template #[`item.${customColumns.successful}`]="{ item }">
-        {{ isPreprocessing(item) ? $t('common.toBeDetermined') : getLastRunMetadata(item) && getLastRunMetadata(item).results.successes }}
+        {{ getLastRunMetadata(item) ? getLastRunMetadata(item) && getLastRunMetadata(item).results.successes : $t('common.toBeDetermined') }}
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
@@ -56,19 +56,13 @@ import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
 import { RcDataTable } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
-import moment from 'moment';
-import _orderBy from 'lodash/orderBy';
-import {
-  IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
-} from '@/entities/mass-action';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureSearchParams } from '@/types';
-import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
+import massActionsTable from '@/ui/mixins/massActionsTable';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { Status } from '@/entities/base';
+import { MassActionType } from '@/entities/mass-action';
 
-export default mixins(TablePaginationSearchMixin).extend({
+export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
   name: 'ImportValidationStatusHome',
 
   components: {
@@ -78,18 +72,16 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   data() {
     return {
-      itemsCount: 0,
-      searchResultIds: [] as string[],
-      moment,
-      options: {
-        page: 1,
-        sortBy: ['Entity/Created'],
-        sortDesc: [true],
-      },
+      // To be defined to filter on type for the search api (see mixin massActionsTable)
+      massActionType: MassActionType.ImportValidationOfImpactStatus,
+      detailsRouteName: routes.massActions.importValidationStatus.details.name,
+      tableTitle: 'massAction.impactValidationStatusTable.title',
+      searchEndpoint: 'validate-impact-status-mass-actions',
     };
   },
 
   computed: {
+
     customColumns(): Record<string, string> {
       return {
         name: 'Entity/Name',
@@ -97,15 +89,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         projected: 'Metadata/LastRun/Results/Total',
         successful: 'Metadata/LastRun/Results/Successes',
         status: 'Metadata/LastRun/RunStatus',
-      };
-    },
-
-    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
-      return {
-        header: {
-          title: this.$t('massAction.impactValidationStatusTable.title'),
-          searchPlaceholder: this.$t('common.inputs.quick_search'),
-        },
+        deleteButton: 'deleteButton',
       };
     },
 
@@ -139,92 +123,12 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortable: false,
       }];
     },
-
-    tableData(): IMassActionCombined[] {
-      return this.$storage.massAction.getters.getByIds(this.searchResultIds, true);
-    },
-
-    tableProps(): Record<string, string> {
-      return {
-        loading: this.$store.state.massActionEntities.searchLoading,
-      };
-    },
   },
 
   methods: {
     goToAdd() {
       this.$router.push({ name: routes.massActions.importValidationStatus.create.name });
     },
-
-    goToDetails(id: string) {
-      return {
-        name: routes.massActions.importValidationStatus.details.name,
-        params: {
-          id,
-        },
-      };
-    },
-
-    async onDelete(massAction: IMassActionCombined) {
-      const userChoice = await this.$confirm(this.$t('massAction.confirm.delete.title'), this.$t('massAction.confirm.delete.message'));
-      if (userChoice) {
-        const res = await this.$storage.massAction.actions.deactivate(massAction.entity.id);
-        if (res) {
-          this.$toasted.global.success(this.$t('massAction.delete.success'));
-          this.itemsCount -= 1;
-        }
-      }
-    },
-
-    getLastRunEntity(massAction: IMassActionCombined): IMassActionRun {
-      return _orderBy(massAction.entity.runs, 'timestamp', 'desc')[0];
-    },
-
-    getLastRunMetadata(massAction: IMassActionCombined): IMassActionRunMetadataModel {
-      return massAction?.metadata.lastRun;
-    },
-
-    isPreprocessing(massAction: IMassActionCombined) {
-      return this.getLastRunEntity(massAction).runStatus === MassActionRunStatus.PreProcessing;
-    },
-
-    isPreprocessed(massAction: IMassActionCombined) {
-      return this.getLastRunEntity(massAction).runStatus === MassActionRunStatus.PreProcessed;
-    },
-
-    showDeleteIcon(massAction: IMassActionCombined) {
-      return this.isPreprocessing(massAction) || this.isPreprocessed(massAction);
-    },
-
-    async fetchData(params: IAzureSearchParams) {
-      const res = await this.$storage.massAction.actions.search({
-        search: params.search,
-        filter: {
-          ...params.filter as Record<string, unknown>,
-          Entity: {
-            Status: Status.Active,
-          },
-        },
-        top: params.top,
-        skip: params.skip,
-        orderBy: params.orderBy,
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
-      });
-
-      this.setResults(res);
-      return res;
-    },
-
-    setResults(res: IAzureTableSearchResults) {
-      this.itemsCount = res.count;
-      this.searchResultIds = res.ids;
-    },
   },
 });
 </script>
-
-<style lang="scss" scoped>
-
-</style>

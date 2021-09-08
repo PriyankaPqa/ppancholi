@@ -60,6 +60,7 @@ export interface IMassActionRunMetadataModel {
   completed: Date | string;
   runType: MassActionRunType;
   runStatus: MassActionRunStatus;
+  totalAmount?: number;
 }
 
 export interface IMassActionEntityData extends IEntity {

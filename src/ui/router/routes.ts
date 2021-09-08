@@ -447,6 +447,7 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.massActions.financialAssistance.details.name,
                 component: MassActionsFinancialAssistanceDetails,
                 meta: { level: 'level6' },
+                props: true,
               },
               {
                 path: Routes.massActions.importValidationStatus.home.path,
