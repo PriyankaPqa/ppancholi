@@ -10,6 +10,7 @@ import {
   MassActionType,
 } from '@/entities/mass-action/massActions.types';
 import { MassActionEntity } from '@/entities/mass-action/massAction';
+import { EPaymentModalities } from '@/entities/program';
 
 export const mockMassActionRun = (force? : Partial<IMassActionRun>): IMassActionRun => ({
   ...mockBaseData(),
@@ -24,7 +25,15 @@ export const mockMassActionEntityData = (force? : Partial<IMassActionEntityData>
   ...mockBaseData(),
   name: 'mass action name',
   description: 'mass action description',
-  details: {},
+  details: {
+    paymentModality: EPaymentModalities.DirectDeposit,
+    amount: 100,
+    eventId: '1',
+    itemId: '1',
+    programId: '1',
+    subItemId: '2',
+    tableId: '1',
+  },
   type: MassActionType.FinancialAssistance,
   group: MassActionGroup.Group1,
   runs: [

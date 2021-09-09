@@ -10,8 +10,12 @@
         <mass-action-details-table :mass-action="massAction" :mass-action-type="massActionType" />
       </template>
     </mass-action-processing-base>
-    <!--    Use this slot to add more -->
-    <slot />
+    <v-row justify="center" class="pt-12">
+      <v-col cols="12" md="8" xl="7" sm="12">
+        <!--    Use this slot to add more -->
+        <slot />
+      </v-col>
+    </v-row>
   </div>
 </template>
 

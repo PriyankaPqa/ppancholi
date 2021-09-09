@@ -52,7 +52,6 @@
 </template>
 
 <script lang="ts">
-import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
 import { RcDataTable } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';

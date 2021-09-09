@@ -150,6 +150,8 @@
     "caseFile.financialAssistance.cancellationReason.reason": "Reason: ",
     "caseFile.financialAssistance.changeStatusDialog.message": "Are you sure you want to change the status of this payment group to \"{status}\"?",
     "caseFile.financialAssistance.changeStatusDialog.title": "Change payment status",
+    "caseFile.financialAssistance.confirm.delete.message": "Are you sure that you want to delete this payment?",
+    "caseFile.financialAssistance.confirm.delete.title": "Delete payment",
     "caseFile.financialAssistance.create.title": "Add financial assistance",
     "caseFile.financialAssistance.deletePaymentLine.message": "Are you sure you want to remove this payment line?",
     "caseFile.financialAssistance.deletePaymentLine.title": "Remove payment line",

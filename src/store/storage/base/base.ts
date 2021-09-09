@@ -83,9 +83,15 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     fetch: async (idParams: IdParams,
       { useEntityGlobalHandler, useMetadataGlobalHandler } = { useEntityGlobalHandler: true, useMetadataGlobalHandler: true })
       : Promise<IEntityCombined<TEntity, TMetadata>> => {
-      const [entity, metadata] = await Promise.all([
-        this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler }),
-        this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler })]);
+      const entity = await this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler });
+
+      let metadata = null;
+      // Metadata do not exist for option items (financial categories, document categories etc.)
+
+      if (this.metadataActionExists('fetch')) {
+        metadata = await this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler });
+      }
+
       return {
         entity,
         metadata,

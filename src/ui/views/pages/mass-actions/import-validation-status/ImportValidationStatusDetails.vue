@@ -31,21 +31,18 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
-import _isEmpty from 'lodash/isEmpty';
-import _orderBy from 'lodash/orderBy';
+import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
-import {
-  IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
-} from '@/entities/mass-action';
+
 import ImportValidationStatusProcessing from './ImportValidationStatusProcessing.vue';
 import ImportValidationStatusPreProcessing from './ImportValidationStatusPreProcessing.vue';
 import ImportValidationStatusPreProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusPreProcessed.vue';
 import ImportValidationStatusProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusProcessed.vue';
+import massActionDetails from '@/ui/mixins/massActionDetails';
 
-export default Vue.extend({
+export default mixins(massActionDetails).extend({
   name: 'ImportValidationStatusDetails',
 
   components: {
@@ -57,52 +54,11 @@ export default Vue.extend({
   },
 
   computed: {
-    massActionId(): string {
-      return this.$route.params.id;
-    },
-
-    massAction(): IMassActionCombined {
-      return this.$storage.massAction.getters.get(this.massActionId);
-    },
-
-    lastRunEntity(): IMassActionRun {
-      return _orderBy(this.massAction.entity.runs, 'timestamp', 'desc')[0];
-    },
-
-    lastRunMetadata(): IMassActionRunMetadataModel {
-      if (this.massAction.metadata) {
-        return this.massAction.metadata.lastRun;
-      }
-      return null;
-    },
-
-    preProcessing(): boolean {
-      return this.lastRunEntity?.runStatus === MassActionRunStatus.PreProcessing;
-    },
-
-    processing(): boolean {
-      return this.lastRunEntity?.runStatus === MassActionRunStatus.Processing;
-    },
-
-    preProcessed(): boolean {
-      return this.lastRunEntity?.runStatus === MassActionRunStatus.PreProcessed;
-    },
-
-    processed(): boolean {
-      return this.lastRunEntity?.runStatus === MassActionRunStatus.Processed;
-    },
-
     title(): TranslateResult {
       if (this.preProcessing) return this.$t('massActions.impactValidation.status.preprocessing.title');
       if (this.processing) return this.$t('massActions.impactValidation.status.processing.title');
       return this.$t('massActions.impactValidation.status.details.title');
     },
-  },
-
-  created() {
-    if (_isEmpty(this.massAction.entity)) {
-      this.$storage.massAction.actions.fetch(this.massActionId);
-    }
   },
 
   methods: {

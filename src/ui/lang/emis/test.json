@@ -150,6 +150,8 @@
     "caseFile.financialAssistance.cancellationReason.reason": "caseFile.financialAssistance.cancellationReason.reason",
     "caseFile.financialAssistance.changeStatusDialog.message": "caseFile.financialAssistance.changeStatusDialog.message",
     "caseFile.financialAssistance.changeStatusDialog.title": "caseFile.financialAssistance.changeStatusDialog.title",
+    "caseFile.financialAssistance.confirm.delete.message": "caseFile.financialAssistance.confirm.delete.message",
+    "caseFile.financialAssistance.confirm.delete.title": "caseFile.financialAssistance.confirm.delete.title",
     "caseFile.financialAssistance.create.title": "caseFile.financialAssistance.create.title",
     "caseFile.financialAssistance.deletePaymentLine.message": "caseFile.financialAssistance.deletePaymentLine.message",
     "caseFile.financialAssistance.deletePaymentLine.title": "caseFile.financialAssistance.deletePaymentLine.title",

@@ -1,4 +1,5 @@
 import { IEntity, IEntityCombined } from '@/entities/base';
+import { EPaymentModalities } from '@/entities/program';
 
 export enum MassActionGroup {
   Unknown = 0,
@@ -31,7 +32,13 @@ export enum MassActionRunStatus {
 }
 
 export interface IMassActionDetails {
-
+  paymentModality?: EPaymentModalities
+  amount?: number;
+  eventId?: uuid;
+  itemId?: uuid;
+  programId?: uuid;
+  subItemId?: uuid;
+  tableId? : uuid;
 }
 
 export interface IMassActionRun extends IEntity {

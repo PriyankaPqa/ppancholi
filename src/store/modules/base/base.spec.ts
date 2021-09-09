@@ -298,6 +298,17 @@ describe('Base Module', () => {
         expect(baseModule.state.searchLoading).toEqual(false);
       });
     });
+
+    describe('setActionLoading', () => {
+      it('should mutate the state', () => {
+        const baseModule = new BaseModuleTest(service);
+        mockUserAccountEntities();
+        baseModule.mutations.setActionLoading(baseModule.state, true);
+        expect(baseModule.state.actionLoading).toEqual(true);
+        baseModule.mutations.setActionLoading(baseModule.state, false);
+        expect(baseModule.state.actionLoading).toEqual(false);
+      });
+    });
   });
 
   describe('getModule', () => {

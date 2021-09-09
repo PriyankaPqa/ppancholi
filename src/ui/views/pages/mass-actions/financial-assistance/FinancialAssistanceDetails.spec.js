@@ -9,11 +9,11 @@ import {
   mockMassActionRun, MassActionRunStatus, mockCombinedMassAction,
 } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
-import ImportValidationStatusPreProcessing
-  from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusPreProcessing.vue';
-import ImportValidationStatusProcessing from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusProcessing.vue';
-import Component from './ImportValidationStatusDetails.vue';
-import ImportValidationStatusPreProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusPreProcessed.vue';
+
+import FinancialAssistancePreProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessing.vue';
+import FinancialAssistanceProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessing.vue';
+
+import Component from './FinancialAssistanceDetails.vue';
 
 const localVue = createLocalVue();
 
@@ -31,7 +31,7 @@ describe('ImportValidationStatusDetails.vue', () => {
           massAction: () => mockCombinedMassAction(),
         },
       });
-      expect(wrapper.findComponent(ImportValidationStatusProcessing).exists()).toBe(true);
+      expect(wrapper.findComponent(FinancialAssistanceProcessing).exists()).toBe(true);
     });
 
     it('should render pre-processing component if pre-processing', () => {
@@ -42,18 +42,7 @@ describe('ImportValidationStatusDetails.vue', () => {
           massAction: () => mockCombinedMassAction(),
         },
       });
-      expect(wrapper.findComponent(ImportValidationStatusPreProcessing).exists()).toBe(true);
-    });
-
-    it('should render pre-processed component if pre-processed', () => {
-      wrapper = mount(Component, {
-        localVue,
-        computed: {
-          preProcessed: () => true,
-          massAction: () => mockCombinedMassAction(),
-        },
-      });
-      expect(wrapper.findComponent(ImportValidationStatusPreProcessed).exists()).toBe(true);
+      expect(wrapper.findComponent(FinancialAssistancePreProcessing).exists()).toBe(true);
     });
   });
 
@@ -70,7 +59,7 @@ describe('ImportValidationStatusDetails.vue', () => {
     describe('back', () => {
       it('should redirect to home page', () => {
         wrapper.vm.back();
-        expect(wrapper.vm.$router.replace).toHaveBeenLastCalledWith({ name: routes.massActions.importValidationStatus.home.name });
+        expect(wrapper.vm.$router.replace).toHaveBeenLastCalledWith({ name: routes.massActions.financialAssistance.home.name });
       });
     });
   });
@@ -93,7 +82,7 @@ describe('ImportValidationStatusDetails.vue', () => {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processing }),
           },
         });
-        expect(wrapper.vm.title).toBe('massActions.impactValidation.status.processing.title');
+        expect(wrapper.vm.title).toBe('massActions.financialAssistance.status.processing.title');
       });
 
       it('should return proper title if pre-processing', () => {
@@ -103,7 +92,7 @@ describe('ImportValidationStatusDetails.vue', () => {
             lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
           },
         });
-        expect(wrapper.vm.title).toBe('massActions.impactValidation.status.preprocessing.title');
+        expect(wrapper.vm.title).toBe('massActions.financialAssistance.status.preprocessing.title');
       });
     });
   });

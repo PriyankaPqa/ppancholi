@@ -27,6 +27,7 @@ export class BaseModule<T extends IEntity, IdParams> {
   protected baseState = {
     items: [] as Array<T>,
     searchLoading: false,
+    actionLoading: false,
   }
 
   protected baseGetters = {
@@ -46,6 +47,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     fetch: async (context: ActionContext<IState<T>, IState<T>>, { idParams, useGlobalHandler }: {idParams: IdParams, useGlobalHandler: boolean})
     : Promise<T> => {
       try {
+        context.commit('setActionLoading', true);
         const res = await this.service.get(idParams, useGlobalHandler);
         if (res) {
           context.commit('set', res);
@@ -53,11 +55,14 @@ export class BaseModule<T extends IEntity, IdParams> {
         return res;
       } catch (e) {
         return null;
+      } finally {
+        context.commit('setActionLoading', false);
       }
     },
 
     fetchAll: async (context: ActionContext<IState<T>, IState<T>>, parentId?: Omit<IdParams, 'id'>): Promise<T[]> => {
       try {
+        context.commit('setActionLoading', true);
         const res = await this.service.getAll(parentId);
         if (res) {
           context.commit('setAll', res);
@@ -65,36 +70,47 @@ export class BaseModule<T extends IEntity, IdParams> {
         return res;
       } catch (e) {
         return null;
+      } finally {
+        context.commit('setActionLoading', false);
       }
     },
 
     fetchAllIncludingInactive: async (context: ActionContext<IState<T>, IState<T>>): Promise<T[]> => {
       try {
+        context.commit('setActionLoading', true);
         const res = await this.service.getAllIncludingInactive();
         context.commit('setAll', res);
         return res;
       } catch (e) {
         return null;
+      } finally {
+        context.commit('setActionLoading', false);
       }
     },
 
     deactivate: async (context: ActionContext<IState<T>, IState<T>>, idParams: IdParams): Promise<T> => {
       try {
+        context.commit('setActionLoading', true);
         const res = await this.service.deactivate(idParams);
         context.commit('set', res);
         return res;
       } catch (e) {
         return null;
+      } finally {
+        context.commit('setActionLoading', false);
       }
     },
 
     activate: async (context: ActionContext<IState<T>, IState<T>>, idParams: IdParams): Promise<T> => {
       try {
+        context.commit('setActionLoading', true);
         const res = await this.service.activate(idParams);
         context.commit('set', res);
         return res;
       } catch (e) {
         return null;
+      } finally {
+        context.commit('setActionLoading', false);
       }
     },
 
@@ -121,6 +137,10 @@ export class BaseModule<T extends IEntity, IdParams> {
 
     setSearchLoading(state: IState<T>, payload: boolean) {
       state.searchLoading = payload;
+    },
+
+    setActionLoading(state: IState<T>, payload: boolean) {
+      state.actionLoading = payload;
     },
 
   }
