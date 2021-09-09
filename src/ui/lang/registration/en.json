@@ -132,7 +132,7 @@
     "registration.household_member.add.title": "Add household member",
     "registration.household_member.definition": "A household is defined as: a person or group of persons who live together and consider themselves a household. There can be multiple households living in the same dwelling.",
     "registration.household_member.edit.title": "Edit household member",
-    "registration.household_member.sameAddress": "Is household member located in the same temporary address as primary?",
+    "registration.household_member.sameAddress": "Is household member located in the same temporary address as the primary?",
     "registration.household_member.sameAddress.no.detail": "If no, user must enter temporary address for the household member.",
     "registration.household_member.sameAddress.yes.detail": "If yes, household member will be assigned same temporary address as Primary.",
     "registration.household_members.add.label": "Add new member",

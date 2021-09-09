@@ -292,7 +292,7 @@
     "caseFileActivity.activityList.title.ReferralAdded": "Référence ajoutée",
     "caseFileActivity.activityList.title.ReferralUpdated": "Référence modifiée",
     "caseFileActivity.activityList.title.Registration": "Inscription",
-    "caseFileActivity.activityList.title.RegistrationAdded": "Inscription ajoutée",
+    "caseFileActivity.activityList.title.RegistrationAdded": "Inscription",
     "caseFileActivity.activityList.title.RemovedTag": "Attribut(s) retiré(s)",
     "caseFileActivity.activityList.title.UnassignedFromCaseFile": "Annulation de l'affectation de {x} au dossier",
     "caseFileActivity.activityList.title.addedDuplicateFlag": "Marqué comme doublon potentiel",

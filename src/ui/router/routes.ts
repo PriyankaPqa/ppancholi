@@ -225,6 +225,13 @@ export const routes: Array<RouteConfig> = [
                     props: true,
                   },
                   {
+                    path: Routes.caseFile.financialAssistance.details.path,
+                    name: Routes.caseFile.financialAssistance.details.name,
+                    component: CreateEditCaseFileFinancialAssistance,
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
+                  },
+                  {
                     path: Routes.caseFile.referrals.home.path,
                     name: Routes.caseFile.referrals.home.name,
                     component: CaseFileReferral,

@@ -133,7 +133,7 @@ export default Vue.extend({
     // },
 
     showEditButton(): boolean {
-      return true;
+      return this.$hasLevel('level1') && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
       // ToDo : Not implemented yet
       // if (!this.caseFileIsOpen) {
       //   return false;
@@ -162,18 +162,7 @@ export default Vue.extend({
     },
 
     showDeleteButton(): boolean {
-      // ToDo: Not implemeted yet
-      // if (!this.caseFileIsOpen) {
-      //   return false;
-      // }
-
-      // // If we are creating a new transaction, delete button is always visible
-      // if (this.transactionApprovalStatus === '') {
-      //   return true;
-      // }
-
-      // return this.$can('EditNewTransaction') && this.transactionApprovalStatus === ETransactionApprovalStatus.New;
-      return true;
+      return this.$hasLevel('level1') && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
     },
   },
 

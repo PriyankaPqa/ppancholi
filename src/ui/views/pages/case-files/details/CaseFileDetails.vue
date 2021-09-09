@@ -130,7 +130,7 @@
     </template>
 
     <template slot="default">
-      <router-view />
+      <router-view :key="$route.fullPath" />
     </template>
   </page-template>
 </template>

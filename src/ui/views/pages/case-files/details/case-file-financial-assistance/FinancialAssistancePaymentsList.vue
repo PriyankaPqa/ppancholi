@@ -238,12 +238,12 @@ export default Vue.extend({
       });
     },
 
-    getFapDetailsRoute(/* id: string */) {
+    getFapDetailsRoute(id: string) {
       return {
-        // name: routes.caseFile.financialAssistance.details.name,
-        // params: {
-        //   documentId: id,
-        // },
+        name: routes.caseFile.financialAssistance.details.name,
+        params: {
+          financialAssistancePaymentId: id,
+        },
       };
     },
 

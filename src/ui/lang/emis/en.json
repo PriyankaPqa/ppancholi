@@ -1990,11 +1990,5 @@
     "zendesk.question.register_a_beneficiary": "How to register a beneficiary?",
     "zendesk.question.select_language_preferences": "How do I select my language preferences?",
     "zendesk.referral": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360056417493",
-    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242353",
-    "massAction.financialAssistanceTable.title": "Mass financial assistance",
-    "massAction.common.total": "Total",
-    "massAction.financialAssistance.table.add.file": "Process via file upload",
-    "massAction.financialAssistance.table.add.list": "Process via filtered list",
-    "massAction.common.export": "Export",
-    "massAction.use.filter": "Please use the {0} filter to select case files for processing"
+    "zendesk.register.help_link": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242353"
 }

@@ -262,6 +262,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       });
     });
 
+    describe('getFapDetailsRoute', () => {
+      it('returns the detail route', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.getFapDetailsRoute('abc')).toEqual({
+          name: routes.caseFile.financialAssistance.details.name,
+          params: {
+            financialAssistancePaymentId: 'abc',
+          },
+        });
+      });
+    });
+
     describe('getFapEditRoute', () => {
       it('returns the edit route', async () => {
         await mountWrapper();

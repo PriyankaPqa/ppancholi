@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import
@@ -12,6 +12,7 @@ import
   FinancialAssistancePaymentEntity,
   mockCaseFinancialAssistanceEntity,
   mockCaseFinancialAssistancePaymentGroups,
+  ApprovalStatus,
 } from '@/entities/financial-assistance-payment';
 import {
   mockCombinedCaseFile,
@@ -23,6 +24,7 @@ import { mockProgramEntity, mockCombinedPrograms } from '@/entities/program';
 import { mockOptionItemData } from '@/entities/optionItem';
 import Component from '../CreateEditFinancialAssistance.vue';
 import routes from '@/constants/routes';
+import flushPromises from 'flush-promises';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -38,6 +40,26 @@ const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGrou
 describe('CreateEditFinancialAssistance.vue', () => {
   let wrapper;
 
+  const mountWrapper = async (fullMount = false, mode = 'edit', level = 6, hasRole = 'role', additionalOverwrites = {}) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
+      localVue,
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}` && level,
+        $hasRole: (r) => r === hasRole,
+        $storage: storage,
+        $route: {
+          name: routes.caseFile.financialAssistance[mode].name,
+          params: {
+            financialAssistancePaymentId: mode !== 'create' ? 'myId' : null,
+          },
+        },
+      },
+      ...additionalOverwrites,
+    });
+    
+    await flushPromises();
+  };
+
   beforeEach(async () => {
     jest.clearAllMocks();
     storage.financialAssistance.actions.addFinancialAssistance = jest.fn(() => combinedFinancialAssistance);
@@ -47,40 +69,28 @@ describe('CreateEditFinancialAssistance.vue', () => {
     storage.financialAssistance.getters.items = jest.fn(() => items);
     storage.financialAssistanceCategory.getters.getAll = jest.fn(() => optionItems);
 
-    wrapper = shallowMount(Component, {
-      localVue,
-      mocks: {
-        $storage: storage,
-      },
-      computed: {
-        caseFile() {
-          return caseFileCombined.entity;
-        },
-      },
-    });
-    await wrapper.vm.$nextTick();
+    await mountWrapper();
   });
 
   describe('Template', () => {
-    beforeEach(async () => {
-      jest.clearAllMocks();
-
-      wrapper = mount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-        },
-        computed: {
-          caseFile() {
-            return caseFileCombined.entity;
-          },
-        },
-      });
-    });
-
     describe('page-title', () => {
       it('is rendered', async () => {
         expect(wrapper.findDataTest('page-title').exists()).toBeTruthy();
+      });
+    });
+
+    describe('financial-assistance-form and financial-assistance-details', () => {
+      let element;
+      it('switches render when isDetailsMode', async () => {
+        element = wrapper.find('[data-test="financial-assistance-form"]');
+        expect(element.exists()).toBeTruthy();
+        element = wrapper.find('[data-test="financial-assistance-details"]');
+        expect(element.exists()).toBeFalsy();
+        await mountWrapper(false, 'details');
+        element = wrapper.find('[data-test="financial-assistance-form"]');
+        expect(element.exists()).toBeFalsy();
+        element = wrapper.find('[data-test="financial-assistance-details"]');
+        expect(element.exists()).toBeTruthy();
       });
     });
 
@@ -89,76 +99,49 @@ describe('CreateEditFinancialAssistance.vue', () => {
       beforeEach(() => {
         element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
       });
-      it('renders', async () => {
+      it('renders when canAddNewLines', async () => {
+        await mountWrapper(false, 'edit', 6, null, { computed: { canAddNewLines() { return true; } } });
+        
+        element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
         expect(element.exists()).toBeTruthy();
+        await mountWrapper(false, 'edit', 6, null, { computed: { canAddNewLines() { return false; } } });
+        element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
+        expect(element.exists()).toBeFalsy();
       });
       it('is disabled', async () => {
         wrapper.vm.selectedProgram = null;
         await wrapper.vm.$nextTick();
-        expect(element.element.disabled).toBe(true);
+        expect(element.vm.$props.disabled).toBe(true);
       });
       it('is enabled', async () => {
         wrapper.vm.selectedProgram = program;
         await wrapper.vm.$nextTick();
-        expect(element.element.disabled).toBe(false);
+        expect(element.vm.$props.disabled).toBe(false);
       });
     });
   });
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call storage to fetch categories', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
-          propsData: {},
-        });
+      it('should call storage to fetch categories', async () => {
         jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
 
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
 
         expect(storage.financialAssistanceCategory.actions.fetchAll).toHaveBeenCalled();
       });
 
-      it('call searchTables', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
-          propsData: {},
-        });
+      it('call searchTables', async () => {
         jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
 
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
         expect(wrapper.vm.searchTables).toHaveBeenCalledTimes(1);
       });
 
-      it('inits financialAssistance from storage when id is passed', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-            $route: {
-              name: routes.caseFile.activity.name,
-              params: {
-                financialAssistancePaymentId: caseFileFinancialAssistance.id,
-              },
-            },
-          },
-          propsData: {},
-        });
-
-        await wrapper.vm.$nextTick();
-
-        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(caseFileFinancialAssistance.id);
+      it('inits financialAssistance from storage when id is passed', () => {
+        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith('myId');
         expect(wrapper.vm.financialAssistance.id).toBe(caseFileFinancialAssistance.id);
         expect(wrapper.vm.financialAssistance.name).toBe(caseFileFinancialAssistance.name);
       });
@@ -166,32 +149,42 @@ describe('CreateEditFinancialAssistance.vue', () => {
   });
 
   describe('Computed', () => {
-    beforeEach(() => {
-      jest.clearAllMocks();
+    describe('canAddNewLines', () => {
+      it('returns true for level1+', async () => {
+        await mountWrapper(false, 'edit', 1);
+        expect(wrapper.vm.canAddNewLines).toBeTruthy();
+        await mountWrapper(false, 'edit', null);
+        expect(wrapper.vm.canAddNewLines).toBeFalsy();
+        await mountWrapper(false, 'edit', null, 'readonly');
+        expect(wrapper.vm.canAddNewLines).toBeFalsy();
+        await mountWrapper(false, 'edit', null, 'contributor3');
+        expect(wrapper.vm.canAddNewLines).toBeFalsy();
+        await mountWrapper(false, 'edit', null, 'contributorFinance');
+        expect(wrapper.vm.canAddNewLines).toBeFalsy();
+      });
 
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-        },
+      it('returns false when status > new', async () => {
+        await mountWrapper(false, 'edit', 1);
+        expect(wrapper.vm.canAddNewLines).toBeTruthy();
+        await wrapper.setData({ financialAssistance: { approvalStatus: ApprovalStatus.New } });
+        expect(wrapper.vm.canAddNewLines).toBeTruthy();
+        await wrapper.setData({ financialAssistance: { approvalStatus: ApprovalStatus.Approved } });
+        expect(wrapper.vm.canAddNewLines).toBeFalsy();
       });
     });
 
     describe('submitLabel', () => {
       it('returns the key for submitLabel depending on isEditMode', async () => {
+        await mountWrapper(false, 'create');
         expect(wrapper.vm.submitLabel).toBe('common.buttons.create');
-        await wrapper.setData({ isEditMode: true });
+        await mountWrapper(false, 'edit');
         expect(wrapper.vm.submitLabel).toBe('common.buttons.save');
       });
     });
 
     describe('showWarning', () => {
-      it('return true if any condition is not meet', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
+      it('return true if any condition is not meet', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
               return caseFileCombined.entity;
@@ -208,12 +201,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.showWarning).toBe(true);
       });
 
-      it('return true if any condition is not meet', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
+      it('return true if any condition is not meet', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
               return caseFileCombined.entity;
@@ -230,12 +219,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.showWarning).toBe(true);
       });
 
-      it('return true if both condition is not meet', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
+      it('return true if both condition is not meet', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
               return caseFileCombined.entity;
@@ -252,12 +237,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.showWarning).toBe(true);
       });
 
-      it('return false if both conditions are meet', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
+      it('return false if both conditions are meet', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
               return caseFileCombined.entity;
@@ -287,12 +268,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.isImpacted).toBe(true);
       });
 
-      it('should return true if program requires to be impacted and user is impacted', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
+      it('should return true if program requires to be impacted and user is impacted', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
               const caseFile2 = caseFileCombined.entity;
@@ -309,12 +286,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.isImpacted).toBe(true);
       });
 
-      it('should return false if program requires to be impacted and user isnt impacted', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
+      it('should return false if program requires to be impacted and user isnt impacted', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
               const caseFile2 = caseFileCombined.entity;
@@ -344,12 +317,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.isAuthenticated).toBe(true);
       });
 
-      it('should return true if program requires to be authenticated and user is authenticated', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
+      it('should return true if program requires to be authenticated and user is authenticated', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
               const caseFile2 = caseFileCombined.entity;
@@ -366,12 +335,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.isAuthenticated).toBe(true);
       });
 
-      it('should return false if program requires to be authenticated and user isnt authenticated', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-          },
+      it('should return false if program requires to be authenticated and user isnt authenticated', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
               const caseFile2 = caseFileCombined.entity;
@@ -496,6 +461,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('saveFinancialAssistance', () => {
       it('should call the storage depending when adding', async () => {
+        await mountWrapper(false, 'create');
         wrapper.vm.financialAssistance = financialAssistance;
         await wrapper.vm.saveFinancialAssistance();
         expect(storage.financialAssistancePayment.actions.addFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance);
@@ -503,7 +469,6 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
       it('should call the storage depending when editing', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
-        await wrapper.setData({ isEditMode: true });
         await wrapper.vm.saveFinancialAssistance();
         expect(storage.financialAssistancePayment.actions.editFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance);
       });
@@ -511,18 +476,20 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('onSubmitPaymentLine', () => {
       it('should add the new PaymentLine when isEditMode is false', async () => {
+        await mountWrapper(false, 'create');
         wrapper.vm.financialAssistance = financialAssistance;
         wrapper.vm.financialAssistance.groups = [];
         // mock data already has id - here we are creating
         caseFileFinancialAssistanceGroups[0].lines.forEach((l) => { l.id = null; });
 
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
-        expect(wrapper.vm.financialAssistance.groups[0].groupingInformation).toBe(caseFileFinancialAssistanceGroups[0].groupingInformation);
-        expect(wrapper.vm.financialAssistance.groups[0].lines).toBe(caseFileFinancialAssistanceGroups[0].lines);
-        expect(wrapper.vm.financialAssistance.groups[0].paymentStatus).toBe(caseFileFinancialAssistanceGroups[0].paymentStatus);
+        expect(wrapper.vm.financialAssistance.groups[0].groupingInformation).toEqual(caseFileFinancialAssistanceGroups[0].groupingInformation);
+        expect(wrapper.vm.financialAssistance.groups[0].lines).toEqual(caseFileFinancialAssistanceGroups[0].lines);
+        expect(wrapper.vm.financialAssistance.groups[0].paymentStatus).toEqual(caseFileFinancialAssistanceGroups[0].paymentStatus);
       });
 
       it('should call savePaymentLine only when isEditMode is true', async () => {
+        await mountWrapper(false, 'create');
         wrapper.vm.financialAssistance = financialAssistance;
         wrapper.vm.financialAssistance.groups = [];
         wrapper.vm.savePaymentLine = jest.fn();
@@ -532,7 +499,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
         expect(wrapper.vm.savePaymentLine).not.toHaveBeenCalled();
 
-        await wrapper.setData({ isEditMode: true });
+        await wrapper.setData({ isEditMode: true, isAddMode: false });
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
         expect(wrapper.vm.savePaymentLine).toHaveBeenCalled();
       });
