@@ -420,6 +420,20 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         },
       },
     },
+    {
+      id: 'mock-activity-id-24',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.Registration,
+      details: {
+        subject: {
+          translation:
+              { en: 'CreatedBy Beneficiary', fr: 'Créé par le bénéficiaire' },
+        },
+      },
+    },
   ];
 
   if (type) {

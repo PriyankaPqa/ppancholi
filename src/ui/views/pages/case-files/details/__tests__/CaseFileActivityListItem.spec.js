@@ -693,6 +693,19 @@ describe('CaseFileActivityListItem.vue', () => {
             body,
           });
         });
+        it('returns the correct data when action type is Registration', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.Registration)[0];
+
+          await wrapper.setProps({
+            item,
+          });
+          const body = `${item.details.subject.translation.en}`;
+
+          expect(wrapper.vm.makeContentForRegistration()).toEqual({
+            title: 'caseFileActivity.activityList.title.Registration',
+            body,
+          });
+        });
       });
     });
   });

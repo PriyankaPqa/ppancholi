@@ -116,8 +116,8 @@ export default Vue.extend({
         };
       }
       return {
-        userName: (this.item as ICaseFileActivity).user.name,
-        roleName: (this.item as ICaseFileActivity).role.name,
+        userName: (this.item as ICaseFileActivity).user?.name,
+        roleName: (this.item as ICaseFileActivity).role?.name,
         created: (this.item as ICaseFileActivity).created,
       };
     },

@@ -94,6 +94,8 @@ export default Vue.extend({
         case CaseFileActivityType.CaseNoteUpdated:
           return this.makeContentForCaseNote(activityType);
 
+        case CaseFileActivityType.Registration:
+          return this.makeContentForRegistration();
         default:
           return null;
       }
@@ -315,6 +317,14 @@ export default Vue.extend({
 
       return { title, body };
     },
+
+    makeContentForRegistration(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.Registration');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const body = `${this.$m(this.item.details.subject as IMultilingual)}`;
+      return { title, body };
+    },
+
   },
 });
 </script>
