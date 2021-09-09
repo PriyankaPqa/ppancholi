@@ -203,6 +203,9 @@ export default Vue.extend({
     formCopy: {
       deep: true,
       handler(form: IIdentitySet) {
+        if (form.gender && !form.gender.isOther) {
+          form.genderOther = null;
+        }
         this.$emit('change', form);
       },
     },
