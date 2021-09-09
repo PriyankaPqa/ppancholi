@@ -16,14 +16,22 @@
     <rc-confirmation-dialog
       ref="defaultConfirm"
       :show.sync="showConfirm"
-      :title="confirmationTitle"
-      :messages="confirmationMessages" />
+      :title="dialogTitle"
+      :messages="dialogMessages" />
+
+    <rc-error-dialog
+      :show.sync="showMessage"
+      :title="dialogTitle"
+      :submit-action-label="submitActionLabel"
+      :message="dialogMessages"
+      :min-height="dialogMinHeight"
+      :max-width="dialogMaxWidth" />
   </v-app>
 </template>
 
 <script>
 import Vue from 'vue';
-import { RcRouterViewTransition, RcConfirmationDialog } from '@crctech/component-library';
+import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@crctech/component-library';
 import { localStorageKeys } from '@/constants/localStorage';
 
 export default {
@@ -32,6 +40,7 @@ export default {
   components: {
     RcRouterViewTransition,
     RcConfirmationDialog,
+    RcErrorDialog,
   },
 
   metaInfo() {
@@ -49,8 +58,12 @@ export default {
   data() {
     return {
       showConfirm: false,
-      confirmationTitle: '',
-      confirmationMessages: '',
+      showMessage: false,
+      dialogTitle: '',
+      dialogMessages: '',
+      dialogMaxWidth: 500,
+      dialogMinHeight: 'auto',
+      submitActionLabel: this.$t('common.buttons.ok'),
       cspContent: '',
       cspContentProd: '',
       cspContentDev: `
@@ -109,14 +122,27 @@ export default {
     }
 
     Vue.prototype.$confirm = async (title, messages) => {
-      this.confirmationTitle = title;
-      this.confirmationMessages = messages;
+      this.dialogTitle = title;
+      this.dialogMessages = messages;
       this.showConfirm = true;
 
       const userChoice = await this.$refs.defaultConfirm.open();
 
       this.showConfirm = false;
       return userChoice;
+    };
+
+    Vue.prototype.$message = ({
+      title, message, submitActionLabel, minHeight, maxWidth,
+    }) => {
+      this.dialogTitle = title;
+      this.dialogMessages = message;
+      if (submitActionLabel) { this.submitActionLabel = submitActionLabel; }
+      if (minHeight) { this.dialogMinHeight = minHeight; }
+      if (maxWidth) { this.dialogMaxWidth = maxWidth; }
+
+      this.showMessage = true;
+      return true;
     };
 
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix

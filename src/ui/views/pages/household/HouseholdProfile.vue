@@ -88,8 +88,8 @@
           </h5>
 
           <v-row class="pt-4">
-            <v-col v-for="caseFile in activeCaseFiles" :key="caseFile.entity.id" cols="12" md="6">
-              <household-case-file-card :case-file="caseFile" />
+            <v-col v-for="caseFile in activeCaseFiles" :key="caseFile.caseFileId" cols="12" md="6">
+              <household-case-file-card :my-events="events" :case-file="caseFile" :is-active="true" />
             </v-col>
           </v-row>
 
@@ -129,8 +129,8 @@
             {{ $t('household.profile.registered_previous_events') }} ({{ inactiveCaseFiles.length }})
           </h5>
           <v-row>
-            <v-col v-for="caseFile in inactiveCaseFiles" :key="caseFile.entity.id" cols="12" md="6">
-              <household-case-file-card :case-file="caseFile" />
+            <v-col v-for="caseFile in inactiveCaseFiles" :key="caseFile.caseFileId" cols="12" md="6">
+              <household-case-file-card :case-file="caseFile" :is-active="false" />
             </v-col>
           </v-row>
         </v-col>
@@ -147,10 +147,9 @@ import mixins from 'vue-typed-mixins';
 
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import { IHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
-import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdCombined, IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
 import { ECanadaProvinces } from '@/types';
-
-import { CaseFileStatus, ICaseFileCombined } from '@/entities/case-file';
+import { CaseFileStatus } from '@/entities/case-file';
 import household from '@/ui/mixins/household';
 import helpers from '@/ui/helpers';
 import {
@@ -211,12 +210,20 @@ export default mixins(household).extend({
       return this.$storage.registration.getters.householdCreate();
     },
 
-    activeCaseFiles():ICaseFileCombined[] {
-      return this.caseFiles.filter((c) => c.entity.caseFileStatus === CaseFileStatus.Open || c.entity.caseFileStatus === CaseFileStatus.Inactive);
+    activeCaseFiles():IHouseholdCaseFile[] {
+      return this.caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
     },
 
-    inactiveCaseFiles():ICaseFileCombined[] {
-      return this.caseFiles.filter((c) => c.entity.caseFileStatus === CaseFileStatus.Archived || c.entity.caseFileStatus === CaseFileStatus.Closed);
+    inactiveCaseFiles():IHouseholdCaseFile[] {
+      return this.caseFiles
+        .filter((c) => c.caseFileStatus === CaseFileStatus.Archived || c.caseFileStatus === CaseFileStatus.Closed);
+    },
+
+    caseFiles(): IHouseholdCaseFile[] {
+      if (this.householdData?.metadata) {
+        return this.householdData.metadata.caseFiles;
+      }
+      return [];
     },
 
     addressLine1(): string {
@@ -232,13 +239,6 @@ export default mixins(household).extend({
       const city = homeAddress.city ? `${homeAddress.city}, ` : '';
       const province = this.provinceCodeName ? `${this.provinceCodeName}, ` : '';
       return city + province + (homeAddress.postalCode || '');
-    },
-
-    caseFiles(): ICaseFileCombined[] {
-      if (this.caseFileIds) {
-        return this.$storage.caseFile.getters.getByIds(this.caseFileIds) || [];
-      }
-      return [];
     },
 
     country() : string {
@@ -277,15 +277,14 @@ export default mixins(household).extend({
       this.$storage.registration.actions.fetchPreferredLanguages(),
       this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
       this.$storage.registration.actions.fetchIndigenousCommunities(),
-      this.fetchCaseFilesInformation(),
     ]);
+    await this.fetchHouseholdData();
     await this.fetchActiveEvents();
-    this.fetchHouseholdData();
   },
 
   methods: {
     async fetchActiveEvents() {
-      const eventIds = this.activeCaseFiles.map((cf) => cf.entity.eventId);
+      const eventIds = this.activeCaseFiles.map((cf) => cf.eventId);
       const filter = `search.in(Entity/Id, '${eventIds.join('|')}', '|') and Entity/Schedule/Status eq ${EEventStatus.Open}`;
       const eventsData = await this.$services.events.searchMyEvents({
         filter,
@@ -304,21 +303,6 @@ export default mixins(household).extend({
 
           this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
         }
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    async fetchCaseFilesInformation() {
-      const filter = {
-        Entity: { HouseholdId: this.id },
-      };
-      this.loading = true;
-      try {
-        const caseFilesData = await this.$storage.caseFile.actions.search({
-          filter,
-        });
-        this.caseFileIds = caseFilesData?.ids;
       } finally {
         this.loading = false;
       }

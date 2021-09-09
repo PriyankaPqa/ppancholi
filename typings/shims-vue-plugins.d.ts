@@ -24,5 +24,12 @@ declare module 'vue/types/vue' {
     $hasLevel: (p: string) => boolean;
     $hasRole: (p: string) => boolean;
     $confirm: (title: TranslateResult, messages: TranslateResult | TranslateResult[]) => Promise<boolean>;
+    $message: ({
+      title, message, submitActionLabel, minHeight, maxWidth,
+    } :{title: TranslateResult,
+      message: TranslateResult,
+      submitActionLabel?: TranslateResult,
+      minHeight?: number | string,
+      maxWidth?: number | string }) => boolean;
   }
 }

@@ -61,6 +61,7 @@ const mocks = {
     params: {},
   },
   $confirm: jest.fn(() => true),
+  $message: jest.fn(() => true),
   $t: jest.fn((key) => key),
   $tc: jest.fn((key) => key),
   $m: jest.fn((m) => m?.translation?.en),

@@ -153,21 +153,6 @@
       </template>
     </rc-page-content>
 
-    <rc-dialog
-      :title="$t('common.error')"
-      :cancel-action-label="$t('common.close')"
-      :show-submit="false"
-      :show.sync="errorDialogVisible"
-      :persistent="true"
-      :max-width="500"
-      :min-height="170"
-      @cancel="errorDialogVisible = false"
-      @close="errorDialogVisible = false">
-      <div class="rc-body14">
-        {{ $t(errorMessage) }}
-      </div>
-    </rc-dialog>
-
     <confirm-before-action
       data-test="financialCreate__confirmTemplateDialog"
       :show.sync="confirmChangeTemplateDialogVisible"
@@ -191,7 +176,7 @@ import { TranslateResult } from 'vue-i18n';
 import { NavigationGuardNext, Route } from 'vue-router';
 import _sortBy from 'lodash/sortBy';
 import {
-  RcPageContent, RcTabs, RcTab, RcDialog, VTextFieldWithValidation, VAutocompleteWithValidation,
+  RcPageContent, RcTabs, RcTab, VTextFieldWithValidation, VAutocompleteWithValidation,
 } from '@crctech/component-library';
 import helpers from '@/ui/helpers';
 import routes from '@/constants/routes';
@@ -217,7 +202,6 @@ export default Vue.extend({
     VAutocompleteWithValidation,
     RcTabs,
     RcTab,
-    RcDialog,
     FinancialAssistanceItems,
     ConfirmBeforeAction,
     ErrorPanel,
@@ -240,8 +224,6 @@ export default Vue.extend({
       programs: [] as IProgramEntity[],
       isSaving: false,
       tableEditActive: false,
-      errorMessage: '',
-      errorDialogVisible: false,
       confirmChangeTemplateDialogVisible: false,
       loadingTemplate: false,
       loading: true,
@@ -571,8 +553,7 @@ export default Vue.extend({
     },
 
     showErrorDialog(error: string) {
-      this.errorMessage = error;
-      this.errorDialogVisible = true;
+      this.$message({ title: this.$t('common.error'), message: this.$t(error), submitActionLabel: this.$t('common.close') });
     },
 
     /**

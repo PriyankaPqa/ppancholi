@@ -4,7 +4,7 @@
     rounded
     :outlined="!isActive"
     class="pa-3"
-    :class="{ 'background': isActive }">
+    :class="{ 'activeBackground': isActive, 'noAccessBackground':isActive && !hasAccessToEvent }">
     <table>
       <tbody class="rc-body14">
         <tr>
@@ -13,36 +13,45 @@
               mdi-calendar
             </v-icon>
           </td>
-
-          <td>
-            <button
+          <td style="width:100%">
+            <component
               :is="isActive ? 'span': 'button'"
               class="fw-bold"
               :class="[isActive? 'rc-body18': 'rc-link14' ]"
               data-test="household_profile_case_file_event_name"
               @click="openCaseFileSummary = true">
-              {{ $m(caseFile.metadata.event.name) }}
-            </button>
+              {{ $m(caseFile.eventName) }}
+            </component>
+          </td>
+          <td class="icon">
+            <v-tooltip v-if="isActive && !hasAccessToEvent" bottom data-test="household-profile-no-access-icon">
+              <template #activator="{ on }">
+                <v-icon size="24" color="red" v-on="on">
+                  mdi-cancel
+                </v-icon>
+              </template>
+              <span>{{ $t('household.profile.event.no_access.message') }}</span>
+            </v-tooltip>
           </td>
         </tr>
 
         <tr>
           <td />
           <td>
-            <router-link
-              :is="isActive ? 'router-link': 'span'"
+            <component
+              :is="isActive && hasAccessToEvent? 'router-link': 'span'"
               :to="caseFileRoute"
               data-test="household_profile_case_file_number"
-              :class="{'rc-link14': isActive}">
-              {{ `${$t('household.profile.case_file')}: ${caseFile.entity.caseFileNumber}` }}
-            </router-link>
+              :class="{'rc-link14': isActive && hasAccessToEvent, 'fw-bold': !hasAccessToEvent}">
+              {{ `${$t('household.profile.case_file')}: ${caseFile.caseFileNumber}` }}
+            </component>
           </td>
         </tr>
 
         <tr>
           <td />
           <td data-test="household_profile_case_file_registered_date">
-            {{ `${$t('household.profile.registered')}: ${moment(caseFile.entity.created).format('ll')}` }}
+            {{ `${$t('household.profile.registered')}: ${moment(caseFile.registeredDate).format('ll')}` }}
           </td>
         </tr>
       </tbody>
@@ -53,9 +62,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-
+import { IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
 import routes from '@/constants/routes';
-import { CaseFileStatus, ICaseFileCombined } from '@/entities/case-file';
+import { IEventMainInfo } from '@/entities/event';
 
 export default Vue.extend({
   name: 'HouseholdCaseFileCard',
@@ -65,7 +74,21 @@ export default Vue.extend({
      * The case file of the household
      */
     caseFile: {
-      type: Object as ()=> ICaseFileCombined,
+      type: Object as ()=> IHouseholdCaseFile,
+      required: true,
+    },
+    /**
+     * The list of events to which the user has access
+     */
+    myEvents: {
+      type: Array as ()=> IEventMainInfo[],
+      default: () => [] as IEventMainInfo[],
+    },
+    /**
+     * Whether the case file is active
+     */
+    isActive: {
+      type: Boolean,
       required: true,
     },
   },
@@ -74,6 +97,7 @@ export default Vue.extend({
     return {
       moment,
       openCaseFileSummary: false,
+      noAccessDialogVisible: false,
     };
   },
   computed: {
@@ -81,20 +105,26 @@ export default Vue.extend({
       return {
         name: routes.caseFile.activity.name,
         params: {
-          id: this.caseFile.entity?.id,
+          id: this.caseFile.caseFileId,
         },
       };
     },
 
-    isActive():boolean {
-      return this.caseFile.entity.caseFileStatus === CaseFileStatus.Open;
+    hasAccessToEvent():boolean {
+      const { eventId } = this.caseFile;
+      return this.myEvents.map((e) => e.entity.id).includes(eventId);
     },
   },
+
 });
 </script>
 
 <style scoped lang="scss">
-  .background {
+  .activeBackground {
     background: var(--v-primary-lighten2);
   }
+  .noAccessBackground {
+    background: var(--v-grey-lighten4);
+  }
+
 </style>

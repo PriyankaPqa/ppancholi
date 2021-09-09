@@ -1368,6 +1368,8 @@
     "household.profile.edit.address.success": "The household address has been successfully updated",
     "household.profile.edit.address.title": "Edit household address",
     "household.profile.edit.noFixedHome.details.label": "Observations",
+    "household.profile.event.no_access": "No access",
+    "household.profile.event.no_access.message": "You don't have access to this event!",
     "household.profile.household_members": "Household members",
     "household.profile.last_updated": "Last updated",
     "household.profile.member.date_of_birth": "Date of birth",

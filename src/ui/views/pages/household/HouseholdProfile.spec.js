@@ -5,10 +5,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { ECanadaProvinces } from '@/types';
 import { mockEventMainInfo, EEventLocationStatus, EEventStatus } from '@/entities/event';
-
-import {
-  mockCombinedCaseFile, mockCaseFileEntity, mockCaseFileMetadata, CaseFileStatus,
-} from '@/entities/case-file';
+import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
 
 import Component from './HouseholdProfile.vue';
@@ -35,7 +32,8 @@ const events = [
 describe('HouseholdProfile.vue', () => {
   let wrapper;
   storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
-  storage.caseFile.actions.search = jest.fn(() => ({ ids: ['1'] }));
+  // storage.caseFile.actions.search = jest.fn(() => ({ ids: ['1'] }));
+  storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
   storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
 
   describe('Template', () => {
@@ -49,6 +47,7 @@ describe('HouseholdProfile.vue', () => {
           return {
             events,
             householdData: household,
+            loading: false,
           };
         },
         computed: {
@@ -64,23 +63,27 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('registration number', () => {
-      it('renders', () => {
+      it('renders', async () => {
+        await wrapper.setData({ loading: false });
         const element = wrapper.findDataTest('household_profile_registration_number');
         expect(element.exists()).toBeTruthy();
       });
-      it('displays the right data', () => {
+      it('displays the right data', async () => {
+        await wrapper.setData({ loading: false });
         const element = wrapper.findDataTest('household_profile_registration_number');
         expect(element.text()).toContain(wrapper.vm.household.registrationNumber);
       });
     });
 
     describe('homeAddress', () => {
-      it('renders', () => {
+      it('renders', async () => {
+        await wrapper.setData({ loading: false });
         const element = wrapper.findDataTest('household_profile_home_address');
         expect(element.exists()).toBeTruthy();
       });
 
-      it('displays the right data', () => {
+      it('displays the right data', async () => {
+        await wrapper.setData({ loading: false });
         const element = wrapper.findDataTest('household_profile_home_address');
         expect(element.text()).toContain(wrapper.vm.addressLine1);
         expect(element.text()).toContain(wrapper.vm.addressLine2);
@@ -89,24 +92,32 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('created', () => {
-      it('renders', () => {
+      it('renders', async () => {
+        await wrapper.setData({ loading: false });
+
         const element = wrapper.findDataTest('household_profile_created_date');
         expect(element.exists()).toBeTruthy();
       });
 
-      it('displays the right data', () => {
+      it('displays the right data', async () => {
+        await wrapper.setData({ loading: false });
+
         const element = wrapper.findDataTest('household_profile_created_date');
         expect(element.text()).toContain('May 26, 2021');
       });
     });
 
     describe('last updated', () => {
-      it('renders', () => {
+      it('renders', async () => {
+        await wrapper.setData({ loading: false });
+
         const element = wrapper.findDataTest('household_profile_last_updated_date');
         expect(element.exists()).toBeTruthy();
       });
 
-      it('displays the right data', () => {
+      it('displays the right data', async () => {
+        await wrapper.setData({ loading: false });
+
         const element = wrapper.findDataTest('household_profile_last_updated_date');
         expect(element.text()).toContain('May 26, 2021');
       });
@@ -152,6 +163,12 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
+
+          },
+          data() {
+            return {
+              householdData: household,
+            };
           },
           mocks: {
             $storage: storage,
@@ -163,8 +180,8 @@ describe('HouseholdProfile.vue', () => {
 
     describe('activeCaseFiles', () => {
       it('returns the open case files', () => {
-        const cfOpen = { entity: mockCaseFileEntity({ id: '1', caseFileStatus: CaseFileStatus.Open }), metadata: mockCaseFileMetadata() };
-        const cfClosed = { entity: mockCaseFileEntity({ id: '1', caseFileStatus: CaseFileStatus.Closed }), metadata: mockCaseFileMetadata() };
+        const cfOpen = { caseFileId: '1', caseFileStatus: CaseFileStatus.Open };
+        const cfClosed = { caseFileId: '2', caseFileStatus: CaseFileStatus.Closed };
         const caseFiles = [cfOpen, cfClosed];
         wrapper = shallowMount(Component, {
           localVue,
@@ -179,6 +196,11 @@ describe('HouseholdProfile.vue', () => {
               return householdCreate;
             },
           },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
           mocks: {
             $storage: storage,
           },
@@ -190,8 +212,8 @@ describe('HouseholdProfile.vue', () => {
 
     describe('inactiveCaseFiles', () => {
       it('returns the open case files', () => {
-        const cfOpen = { entity: mockCaseFileEntity({ id: '1', caseFileStatus: CaseFileStatus.Open }), metadata: mockCaseFileMetadata() };
-        const cfClosed = { entity: mockCaseFileEntity({ id: '1', caseFileStatus: CaseFileStatus.Closed }), metadata: mockCaseFileMetadata() };
+        const cfOpen = { caseFileId: '1', caseFileStatus: CaseFileStatus.Open };
+        const cfClosed = { caseFileId: '2', caseFileStatus: CaseFileStatus.Closed };
         const caseFiles = [cfOpen, cfClosed];
         wrapper = shallowMount(Component, {
           localVue,
@@ -203,6 +225,11 @@ describe('HouseholdProfile.vue', () => {
               return caseFiles;
             },
             household() { return householdCreate; },
+          },
+          data() {
+            return {
+              householdData: household,
+            };
           },
           mocks: {
             $storage: storage,
@@ -223,6 +250,11 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() { return { ...householdCreate, homeAddress: { ...householdCreate.homeAddress, unitSuite: '13' } }; },
           },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
           mocks: {
             $storage: storage,
           },
@@ -240,6 +272,11 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() { return householdCreate; },
           },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
           mocks: {
             $storage: storage,
           },
@@ -255,6 +292,11 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           propsData: {
             id: household.entity.id,
+          },
+          data() {
+            return {
+              householdData: household,
+            };
           },
           computed: {
             provinceCodeName() {
@@ -292,7 +334,7 @@ describe('HouseholdProfile.vue', () => {
           },
         });
 
-        expect(wrapper.vm.caseFiles).toMatchObject([caseFile]);
+        expect(wrapper.vm.caseFiles).toEqual(wrapper.vm.householdData.metadata.caseFiles);
       });
     });
 
@@ -306,6 +348,11 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
+          },
+          data() {
+            return {
+              householdData: household,
+            };
           },
           mocks: {
             $storage: storage,
@@ -366,6 +413,11 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: household.entity.id,
           },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
           computed: {
             household() { return { ...householdCreate, homeAddress: { ...householdCreate.homeAddress, province: ECanadaProvinces.QC } }; },
           },
@@ -390,6 +442,11 @@ describe('HouseholdProfile.vue', () => {
               };
             },
           },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
           mocks: { $storage: storage },
         });
 
@@ -407,10 +464,16 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: household.entity.id,
           },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
           mocks: {
             $storage: storage,
           },
         });
+        jest.spyOn(wrapper.vm, 'fetchHouseholdData').mockImplementation(() => {});
       });
       it('calls registration storage action fetchGenders', () => {
         expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalledTimes(1);
@@ -425,36 +488,15 @@ describe('HouseholdProfile.vue', () => {
       });
 
       it('calls fetchHouseholdData', async () => {
-        jest.spyOn(wrapper.vm, 'fetchHouseholdData').mockImplementation(() => {});
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.fetchHouseholdData).toHaveBeenCalledTimes(1);
       });
-
-      it('calls fetchCaseFilesInformation', () => {
-        jest.spyOn(wrapper.vm, 'fetchCaseFilesInformation').mockImplementation(() => {});
-        wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-        expect(wrapper.vm.fetchCaseFilesInformation).toHaveBeenCalledTimes(1);
-      });
     });
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          id: household.entity.id,
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
-    });
-
     describe('fetchActiveEvents', () => {
       it('calls searchMyEvents service with the right filter', async () => {
         wrapper = shallowMount(Component, {
@@ -463,7 +505,13 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            activeCaseFiles() { return [{ entity: { eventId: 'id-1' } }, { entity: { eventId: 'id-2' } }]; },
+            activeCaseFiles() { return [{ eventId: 'id-1' }, { eventId: 'id-2' }]; },
+            household() { return householdCreate; },
+          },
+          data() {
+            return {
+              householdData: household,
+            };
           },
           mocks: {
             $storage: storage,
@@ -477,6 +525,22 @@ describe('HouseholdProfile.vue', () => {
     });
 
     describe('fetchHouseholdData', () => {
+      beforeEach(() => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+      });
       it('calls household storage action fetch with the id', async () => {
         await wrapper.vm.fetchHouseholdData();
         expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(household.entity.id);
@@ -487,34 +551,6 @@ describe('HouseholdProfile.vue', () => {
         jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
         await wrapper.vm.fetchHouseholdData();
         expect(storage.registration.mutations.setHouseholdCreate).toHaveBeenCalledWith(householdCreate);
-      });
-    });
-
-    describe('fetchCaseFilesInformation', () => {
-      it('calls case files storage action search with the right filter', async () => {
-        await wrapper.vm.fetchCaseFilesInformation();
-        expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({ filter: { Entity: { HouseholdId: household.entity.id } } });
-      });
-
-      it('saves into caseFileIds the data received from search', async () => {
-        await wrapper.vm.fetchCaseFilesInformation();
-        expect(wrapper.vm.caseFileIds).toEqual(['1']);
-      });
-    });
-
-    describe('editAddress', () => {
-      it('it show edit household address dialog', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-        });
-        expect(wrapper.vm.showEditAddress).toBe(false);
-
-        wrapper.vm.editAddress();
-
-        expect(wrapper.vm.showEditAddress).toBe(true);
       });
     });
   });

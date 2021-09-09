@@ -17,6 +17,7 @@ describe('HouseholdMemberCard.vue', () => {
       propsData: {
         member,
         isPrimaryMember,
+        shelterLocations: [],
       },
       store: {
         modules: {

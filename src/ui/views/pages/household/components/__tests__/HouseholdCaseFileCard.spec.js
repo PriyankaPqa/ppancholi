@@ -1,26 +1,25 @@
+import { mockHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import {
-  mockCombinedCaseFile, mockCaseFileEntity, mockCaseFileMetadata, CaseFileStatus,
-} from '@/entities/case-file';
 import routes from '@/constants/routes';
 
 import Component from '../HouseholdCaseFileCard.vue';
 
 const localVue = createLocalVue();
-const caseFile = mockCombinedCaseFile();
+const caseFile = mockHouseholdMetadata().caseFiles[0];
 
 describe('HouseholdCaseFileCard.vue', () => {
   let wrapper;
 
-  const doMount = (isActive = false) => {
+  const doMount = (isActive = false, hasAccessToEvent = true) => {
     const options = {
       localVue,
       propsData: {
         caseFile,
+        isActive,
       },
       computed: {
-        isActive() {
-          return isActive;
+        hasAccessToEvent() {
+          return hasAccessToEvent;
         },
       },
     };
@@ -45,7 +44,7 @@ describe('HouseholdCaseFileCard.vue', () => {
       it('displays the name of the event', () => {
         doMount(true);
         const span = wrapper.find("span[data-test='household_profile_case_file_event_name']");
-        expect(span.text()).toContain(wrapper.vm.caseFile.metadata.event.name.translation.en);
+        expect(span.text()).toContain(wrapper.vm.caseFile.eventName.translation.en);
       });
     });
 
@@ -57,16 +56,28 @@ describe('HouseholdCaseFileCard.vue', () => {
         expect(span.exists()).toBeTruthy();
       });
 
-      it('renders as an anchor element when isActive is true', () => {
-        doMount(true);
+      it('renders as an anchor element when isActive is true and hasAccessToEvent is true', () => {
+        doMount(true, true);
         const a = wrapper.find("a[data-test='household_profile_case_file_number']");
         expect(a.exists()).toBeTruthy();
+      });
+
+      it('renders as a span when isActive is true and hasAccessToEvent is false', () => {
+        doMount(true, false);
+        const span = wrapper.find("span[data-test='household_profile_case_file_number']");
+        expect(span.exists()).toBeTruthy();
       });
 
       it('displays the number of the case file', () => {
         doMount(false);
         const span = wrapper.find("span[data-test='household_profile_case_file_number']");
-        expect(span.text()).toContain(wrapper.vm.caseFile.entity.caseFileNumber);
+        expect(span.text()).toContain(wrapper.vm.caseFile.caseFileNumber);
+      });
+
+      it('displays a cancel icon when isActive is true and hasAccessToEvent is false ', () => {
+        doMount(true, false);
+        const icon = wrapper.findDataTest('household-profile-no-access-icon');
+        expect(icon.exists()).toBeTruthy();
       });
     });
     describe('registered date', () => {
@@ -80,7 +91,7 @@ describe('HouseholdCaseFileCard.vue', () => {
       });
 
       it('displays the creation date of the case file', () => {
-        expect(element.text()).toContain('Apr 6, 2021');
+        expect(element.text()).toContain('Feb 2, 2021');
       });
     });
   });
@@ -92,41 +103,37 @@ describe('HouseholdCaseFileCard.vue', () => {
         expect(wrapper.vm.caseFileRoute).toEqual({
           name: routes.caseFile.activity.name,
           params: {
-            id: wrapper.vm.caseFile.entity.id,
+            id: wrapper.vm.caseFile.caseFileId,
           },
         });
       });
     });
 
-    describe('isActive', () => {
-      it('returns true if case file is open', () => {
-        const altCaseFile = {
-          entity: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open }),
-          metadata: mockCaseFileMetadata(),
-        };
-
-        const wrapper = shallowMount(Component, {
+    describe('hasAccessToEvent', () => {
+      it('returns true if the event of the case file is among the events in myEvents', () => {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            caseFile: altCaseFile,
+            isActive: true,
+            caseFile: { eventId: 'id-1' },
+            myEvents: [{ entity: { id: 'id-1' } }, { entity: { id: 'id-2' } }],
           },
         });
-        expect(wrapper.vm.isActive).toBeTruthy();
+
+        expect(wrapper.vm.hasAccessToEvent).toBeTruthy();
       });
 
-      it('returns false if case file is not open', () => {
-        const altCaseFile = {
-          entity: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Closed }),
-          metadata: mockCaseFileMetadata(),
-        };
-
-        const wrapper = shallowMount(Component, {
+      it('returns false if the event of the case file is not among the events in myEvents', () => {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            caseFile: altCaseFile,
+            isActive: true,
+            caseFile: { eventId: 'foo' },
+            myEvents: [{ entity: { id: 'id-1' } }, { entity: { id: 'id-2' } }],
           },
         });
-        expect(wrapper.vm.isActive).toBeFalsy();
+
+        expect(wrapper.vm.hasAccessToEvent).toBeFalsy();
       });
     });
   });

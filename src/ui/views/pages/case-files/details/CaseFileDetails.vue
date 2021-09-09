@@ -104,7 +104,7 @@
         </v-icon>
         <span data-test="caseFileDetails-household-member-count">
           {{ household && household.entity && household.entity.members
-            ? $t('caseFileDetail.fullHouseHold', {x: household.entity.members.length})
+            ? `${$t('caseFileDetail.fullHouseHold')} ${household.entity.members.length}`
             : "-" }}
         </span>
       </div>

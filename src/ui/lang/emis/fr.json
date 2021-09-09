@@ -1368,6 +1368,8 @@
     "household.profile.edit.address.success": "L'adresse du foyer a été mise à jour avec succès",
     "household.profile.edit.address.title": "Modifier l'adresse du foyer",
     "household.profile.edit.noFixedHome.details.label": "Observations",
+    "household.profile.event.no_access": "Pas d'accès",
+    "household.profile.event.no_access.message": "Vous n'avez pas accès à cet événement!",
     "household.profile.household_members": "Membres du foyer",
     "household.profile.last_updated": "Dernière mise à jour",
     "household.profile.member.date_of_birth": "Date de naissance",

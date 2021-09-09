@@ -1368,6 +1368,8 @@
     "household.profile.edit.address.success": "household.profile.edit.address.success",
     "household.profile.edit.address.title": "household.profile.edit.address.title",
     "household.profile.edit.noFixedHome.details.label": "household.profile.edit.noFixedHome.details.label",
+    "household.profile.event.no_access": "",
+    "household.profile.event.no_access.message": "",
     "household.profile.household_members": "household.profile.household_members",
     "household.profile.last_updated": "household.profile.last_updated",
     "household.profile.member.date_of_birth": "household.profile.member.date_of_birth",
