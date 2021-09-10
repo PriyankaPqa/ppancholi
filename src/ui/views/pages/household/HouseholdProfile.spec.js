@@ -1,6 +1,9 @@
-import { mockHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import {
+  mockHouseholdCreate, Member, mockAdditionalMember,
+} from '@crctech/registration-lib/src/entities/household-create';
 import { mockCombinedHousehold, mockHouseholdEntity, mockHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { ECanadaProvinces } from '@/types';
@@ -551,6 +554,94 @@ describe('HouseholdProfile.vue', () => {
         jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
         await wrapper.vm.fetchHouseholdData();
         expect(storage.registration.mutations.setHouseholdCreate).toHaveBeenCalledWith(householdCreate);
+      });
+    });
+
+    describe('addAdditionalMember', () => {
+      it('should set newAdditionalMember to new instance of member', () => {
+        wrapper.vm.addAdditionalMember();
+        expect(wrapper.vm.newAdditionalMember).toEqual(new Member());
+      });
+
+      it('should set showAddAdditionalMember to true', () => {
+        wrapper.vm.addAdditionalMember();
+        expect(wrapper.vm.showAddAdditionalMember).toEqual(true);
+      });
+
+      it('should display a warning message if limit is reached', () => {
+        const house = householdCreate;
+        house.additionalMembers = new Array(20).fill(mockAdditionalMember());
+
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          data() {
+            return {
+              events,
+              householdData: household,
+            };
+          },
+          computed: {
+            addressLine1() { return 'address-line-1'; },
+            addressLine2() { return 'address-line-2'; },
+            country() { return 'mock-country'; },
+            household() { return house; },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.addAdditionalMember();
+        expect(wrapper.vm.$toasted.global.warning).toHaveBeenCalledWith('warning.MAX_ADDITIONAL_MEMBERS_reached');
+      });
+
+      it('should disabled the button add if limit is reached', () => {
+        const house = householdCreate;
+        house.additionalMembers = new Array(MAX_ADDITIONAL_MEMBERS).fill(mockAdditionalMember());
+
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          data() {
+            return {
+              events,
+              householdData: household,
+            };
+          },
+          computed: {
+            addressLine1() { return 'address-line-1'; },
+            addressLine2() { return 'address-line-2'; },
+            country() { return 'mock-country'; },
+            household() { return house; },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        wrapper.vm.addAdditionalMember();
+        expect(wrapper.vm.disabledAddMembers).toBe(true);
+      });
+    });
+
+    describe('editAddress', () => {
+      it('it show edit household address dialog', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+        });
+        expect(wrapper.vm.showEditAddress).toBe(false);
+
+        wrapper.vm.editAddress();
+
+        expect(wrapper.vm.showEditAddress).toBe(true);
       });
     });
   });

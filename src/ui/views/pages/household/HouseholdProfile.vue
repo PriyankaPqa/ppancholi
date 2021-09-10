@@ -104,7 +104,11 @@
                 </v-icon>
                 <span class="fw-bold"> {{ $t('household.profile.move_members') }} </span>
               </v-btn>
-              <v-btn color="primary" small>
+              <v-btn
+                :disabled="disabledAddMembers"
+                color="primary"
+                small
+                @click.native="addAdditionalMember()">
                 <v-icon left>
                   mdi-plus
                 </v-icon>
@@ -136,6 +140,16 @@
         </v-col>
       </v-row>
     </template>
+
+    <add-edit-additional-members
+      v-if="showAddAdditionalMember"
+      :show.sync="showAddAdditionalMember"
+      :member="newAdditionalMember"
+      :household-id="household.id"
+      :index="index"
+      :shelter-locations-list="shelterLocations"
+      :i18n="i18n"
+      in-household-profile />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
   </rc-page-content>
 </template>
@@ -145,9 +159,11 @@
 import moment, { Moment } from 'moment';
 import mixins from 'vue-typed-mixins';
 
+import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
-import { IHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { IHouseholdCreate, Member } from '@crctech/registration-lib/src/entities/household-create';
 import { IHouseholdCombined, IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
+import { AddEditAdditionalMembers } from '@crctech/registration-lib';
 import { ECanadaProvinces } from '@/types';
 import { CaseFileStatus } from '@/entities/case-file';
 import household from '@/ui/mixins/household';
@@ -168,6 +184,7 @@ export default mixins(household).extend({
     RcPageContent,
     HouseholdCaseFileCard,
     HouseholdMemberCard,
+    AddEditAdditionalMembers,
   },
 
   props: {
@@ -182,11 +199,16 @@ export default mixins(household).extend({
 
   data() {
     return {
+      i18n: this.$i18n,
+      index: -1,
       moment,
       loading: false,
       householdData: null as IHouseholdCombined,
       caseFileIds: [] as string[],
       events: [] as IEventMainInfo[],
+      showAddAdditionalMember: false,
+      newAdditionalMember: null,
+      disabledAddMembers: false,
       showEditAddress: false,
     };
   },
@@ -305,6 +327,16 @@ export default mixins(household).extend({
         }
       } finally {
         this.loading = false;
+      }
+    },
+
+    addAdditionalMember() {
+      if (this.household.additionalMembers.length < MAX_ADDITIONAL_MEMBERS) {
+        this.newAdditionalMember = new Member();
+        this.showAddAdditionalMember = true;
+      } else {
+        this.$toasted.global.warning(this.$t('warning.MAX_ADDITIONAL_MEMBERS_reached', { x: MAX_ADDITIONAL_MEMBERS }));
+        this.disabledAddMembers = true;
       }
     },
 

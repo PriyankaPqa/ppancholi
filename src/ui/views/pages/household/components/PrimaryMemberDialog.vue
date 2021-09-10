@@ -15,7 +15,7 @@
       @submit="onSubmit">
       <v-row class="justify-center">
         <v-col cols="12" md="8">
-          <lib-personal-information :i18n="i18n" />
+          <lib-personal-information :i18n="i18n" skip-phone-email-rules />
           <current-address-form
             :shelter-locations="shelterLocations"
             :canadian-provinces-items="canadianProvincesItems"
