@@ -3,6 +3,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import Component from '../PaymentLineGroup.vue';
 import { mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
+import { Status } from '@/entities/base';
 
 const localVue = createLocalVue();
 const items = mockItems();
@@ -95,12 +96,29 @@ describe('PaymentLineGroup.vue', () => {
       });
     });
 
+    describe('activeLines', () => {
+      it('should filter out inactive lines', () => {
+        paymentGroup.lines = [];
+        paymentGroup.lines.push({ amount: 4562.15, status: Status.Active });
+        paymentGroup.lines.push({ amount: 123, status: Status.Active });
+        paymentGroup.lines.push({ amount: 123.55, status: Status.Inactive });
+        expect(wrapper.vm.activeLines).toEqual([paymentGroup.lines[0], paymentGroup.lines[1]]);
+      });
+    });
+
     describe('total', () => {
       it('should return the total value of payment group', () => {
         paymentGroup.lines = [];
-        paymentGroup.lines.push({ amount: 4562.15 });
-        paymentGroup.lines.push({ amount: 123.55 });
+        paymentGroup.lines.push({ amount: 4562.15, status: Status.Active });
+        paymentGroup.lines.push({ amount: 123.55, status: Status.Active });
         expect(wrapper.vm.total).toEqual(4562.15 + 123.55);
+      });
+
+      it('should ignore inactive lines', () => {
+        paymentGroup.lines = [];
+        paymentGroup.lines.push({ amount: 123, status: Status.Active });
+        paymentGroup.lines.push({ amount: 123.55, status: Status.Inactive });
+        expect(wrapper.vm.total).toEqual(123);
       });
     });
 

@@ -103,7 +103,6 @@ export default Vue.extend({
 
   data() {
     return {
-      showDeleteDialog: false,
       loading: false,
     };
   },
@@ -171,30 +170,16 @@ export default Vue.extend({
       this.$emit('edit-payment-line', this.paymentLine);
     },
 
-    onClickDelete() {
+    async onClickDelete() {
       if (this.disableDeleteButton) {
         this.$toasted.global.warning(this.$t('caseFile.financialAssistance.deleteTooltip'));
       } else {
-        this.showDeleteDialog = true;
+        const doDelete = await this.$confirm(this.$t('caseFile.financialAssistance.deletePaymentLine.title'),
+          this.$t('caseFile.financialAssistance.deletePaymentLine.message'));
+        if (doDelete) {
+          this.$emit('delete-payment-line', this.paymentLine);
+        }
       }
-    },
-
-    async onConfirmDelete() {
-      // ToDo: Not implemented yet
-      // if (this.paymentLine && this.paymentLine.id) {
-      //   this.loading = true;
-
-      //   const res = await this.$services.financialAssistanceTransactions.deletePaymentLine(this.paymentLine.id);
-
-      //   if (res.success) {
-      //     this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.paymentLineDeleted'));
-      //   }
-
-      //   this.loading = false;
-      // }
-
-      // this.showDeleteDialog = false;
-      // this.$emit('delete-payment-line', this.paymentLine);
     },
 
     linkToPaymentLineDetails() {

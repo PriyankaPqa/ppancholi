@@ -2,6 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import Component from '../PaymentLineGroupList.vue';
 import { mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
+import { Status } from '@/entities/base';
 
 const localVue = createLocalVue();
 const items = mockItems();
@@ -45,6 +46,11 @@ describe('PaymentLineGroupList.vue', () => {
         paymentGroup2.paymentStatus = 6;
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.total).toEqual(paymentGroups[0].lines[0].amount);
+      });
+
+      it('should ignore lines inactive', async () => {
+        paymentGroups[0].lines[0].status = Status.Inactive;
+        expect(wrapper.vm.total).toEqual(0);
       });
     });
   });

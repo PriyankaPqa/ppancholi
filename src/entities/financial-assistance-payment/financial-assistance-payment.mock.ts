@@ -22,6 +22,7 @@ export const mockCaseFinancialAssistancePaymentGroups = ():
     },
     lines: [
       {
+        ...mockBaseData(),
         id: 'line-id',
         mainCategoryId: mockItems()[0].mainCategory.id,
         subCategoryId: mockItems()[0].subItems[0].subCategory.id,

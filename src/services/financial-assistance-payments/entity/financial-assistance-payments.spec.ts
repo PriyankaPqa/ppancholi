@@ -60,4 +60,21 @@ describe('>>> Financial assistance payment Service', () => {
     });
   });
 
+  describe('editFinancialAssistancePaymentLine', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.editFinancialAssistancePaymentLine('myParent', entity.groups[0]);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myParent/lines/' + entity.groups[0].lines[0].id,
+        {
+          ...entity.groups[0].groupingInformation,
+          ...entity.groups[0].lines[0],
+        });
+    });
+  });
+
+  describe('deleteFinancialAssistancePaymentLine', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.deleteFinancialAssistancePaymentLine('myParent', 'myId');
+      expect(http.delete).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myParent/lines/myId');
+    });
+  });
 });

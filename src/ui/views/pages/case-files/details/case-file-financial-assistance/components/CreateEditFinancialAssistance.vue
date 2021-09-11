@@ -59,12 +59,14 @@
             </v-col>
             <v-col cols="12">
               <payment-line-group-list
-                v-if="hasPaymentLines"
-                :payment-groups="financialAssistance.groups"
+                v-if="nbPaymentLines > 0"
+                :disable-delete-button="nbPaymentLines === 1"
+                :payment-groups="activePaymentGroups"
                 :transaction-approval-status="financialAssistance.approvalStatus"
                 :items="items"
                 data-test="paymentGroupList"
-                @edit-payment-line="editPaymentLine" />
+                @edit-payment-line="editPaymentLine"
+                @delete-payment-line="deletePaymentLine" />
               <div v-else class="rc-body14">
                 {{ $t('caseFile.financialAssistance.noPaymentLines') }}
               </div>
@@ -107,11 +109,13 @@ import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import _find from 'lodash/find';
+import { Route, NavigationGuardNext } from 'vue-router';
 import { EPaymentModalities } from '@/entities/program/program.types';
 import {
   ApprovalStatus,
   FinancialAssistancePaymentEntity,
   FinancialAssistancePaymentGroup,
+  IFinancialAssistancePaymentEntity,
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
 } from '@/entities/financial-assistance-payment';
@@ -130,6 +134,7 @@ import routes from '@/constants/routes';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
 import CreateEditPaymentLineDialog from './CreateEditPaymentLineDialog.vue';
+import { VForm } from '@/types';
 
 export default Vue.extend({
   name: 'CreateEditFinancialAssistance',
@@ -142,6 +147,21 @@ export default Vue.extend({
     PaymentLineGroupList,
     ViewFinancialAssistanceDetails,
   },
+
+  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
+    if ((this.$refs.form as VForm).flags.dirty) {
+      const leavingConfirmed = await this.$confirm(this.$t('confirmLeaveDialog.title'), [
+        this.$t('confirmLeaveDialog.message_1'),
+        this.$t('confirmLeaveDialog.message_2'),
+      ]);
+      if (leavingConfirmed) {
+        next();
+      }
+    } else {
+      next();
+    }
+  },
+
   data() {
     return {
       financialAssistanceLoading: false,
@@ -165,6 +185,11 @@ export default Vue.extend({
   },
 
   computed: {
+    activePaymentGroups(): IFinancialAssistancePaymentGroup[] {
+      if (!this.financialAssistance?.groups?.length) return [];
+      return this.financialAssistance?.groups.filter((g) => g.status === Status.Active);
+    },
+
     submitLabel(): TranslateResult {
       return this.isEditMode ? this.$t('common.buttons.save') : this.$t('common.buttons.create');
     },
@@ -189,7 +214,7 @@ export default Vue.extend({
     },
 
     isDisabled() : boolean {
-      return !(this.financialAssistance.validate() === true && this.financialAssistance.groups?.length > 0);
+      return !(this.financialAssistance.validate() === true && this.activePaymentGroups.length > 0);
     },
 
     canAddNewLines(): boolean {
@@ -204,8 +229,9 @@ export default Vue.extend({
       return this.$storage.financialAssistance.getters.items();
     },
 
-    hasPaymentLines() : boolean {
-      return this.financialAssistance?.groups?.length > 0;
+    nbPaymentLines() : number {
+      return this.activePaymentGroups?.map((g) => g.lines.filter((l) => l.status === Status.Active))
+        .reduce((acc, element) => acc + element.length, 0);
     },
   },
 
@@ -253,12 +279,17 @@ export default Vue.extend({
         this.$toasted.global.success(
           this.isEditMode ? this.$t('financialAssistancePayment_edit.success') : this.$t('financialAssistancePayment_create.success'),
         );
-        this.$router.replace({
-          name: routes.caseFile.financialAssistance.details.name,
-          params: {
-            financialAssistancePaymentId: result.id,
-          },
-        });
+        // so we can leave without warning
+        (this.$refs.form as VForm).reset();
+        // reset actually takes a few ms but isnt awaitable...
+        const timeout = setTimeout(() => {
+          this.$router.replace({
+            name: routes.caseFile.financialAssistance.details.name,
+            params: {
+              financialAssistancePaymentId: result.id,
+            },
+          });
+        }, 50);
       }
     },
 
@@ -315,7 +346,7 @@ export default Vue.extend({
 
       // Find the payment group based on modality and payee
       const paymentInfo = submittedPaymentGroup.groupingInformation;
-      const paymentGroup = _find(this.financialAssistance.groups, (group: IFinancialAssistancePaymentGroup) => {
+      const paymentGroup = _find(this.activePaymentGroups, (group: IFinancialAssistancePaymentGroup) => {
         const groupInfo = group.groupingInformation;
         if (paymentInfo.modality === EPaymentModalities.Cheque || paymentInfo.modality === EPaymentModalities.DirectDeposit) {
           return groupInfo.modality === paymentInfo.modality
@@ -333,6 +364,7 @@ export default Vue.extend({
       // If no payment group is found, create a new payment group
       } else {
         const newGroup = new FinancialAssistancePaymentGroup();
+        newGroup.status = Status.Active;
         newGroup.groupingInformation = paymentInfo;
         newGroup.paymentStatus = submittedPaymentGroup.paymentStatus;
         newGroup.lines = submittedPaymentGroup.lines;
@@ -342,20 +374,40 @@ export default Vue.extend({
     },
 
     async savePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
+      let newVersion = null as IFinancialAssistancePaymentEntity;
       if (!submittedPaymentGroup.lines[0].id) {
-        const newVersion = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine(
+        newVersion = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine(
           this.financialAssistance.id, submittedPaymentGroup,
         );
+      } else {
+        newVersion = await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine(
+          this.financialAssistance.id, submittedPaymentGroup,
+        );
+      }
+      if (newVersion) {
+        this.showAddPaymentLineForm = false;
+        this.financialAssistance.groups = newVersion.groups;
+        this.$toasted.global.success(
+          this.$t(!submittedPaymentGroup.lines[0].id
+            ? 'financialAssistancePayment_lineAdded.success' : 'financialAssistancePayment_lineModified.success'),
+        );
+      }
+    },
+
+    async deletePaymentLine(event : { line: IFinancialAssistancePaymentLine, group: IFinancialAssistancePaymentGroup }) {
+      if (event.line.id) {
+        const newVersion = await this.$storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine(
+          this.financialAssistance.id, event.line.id,
+        );
         if (newVersion) {
-          this.showAddPaymentLineForm = false;
           this.financialAssistance.groups = newVersion.groups;
-          this.$toasted.global.success(
-            this.$t('financialAssistancePayment_lineAdded.success'),
-          );
+          this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.paymentLineDeleted'));
         }
       } else {
-        // until we implement the save... just so it doesnt add visually we remove the old
-        this.showAddPaymentLineForm = false;
+        event.group.lines = event.group.lines.filter((l) => l !== event.line);
+        if (!event.group.lines.length) {
+          this.financialAssistance.groups = this.financialAssistance.groups.filter((g) => g !== event.group);
+        }
       }
     },
   },

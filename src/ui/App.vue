@@ -23,7 +23,7 @@
       :show.sync="showMessage"
       :title="dialogTitle"
       :submit-action-label="submitActionLabel"
-      :message="dialogMessages"
+      :message="dialogMessages[0] || dialogMessages"
       :min-height="dialogMinHeight"
       :max-width="dialogMaxWidth" />
   </v-app>

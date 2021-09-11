@@ -25,6 +25,12 @@ export class FinancialAssistancePaymentStorage
     addFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePaymentLine`
       , ({ entity, financialAssistanceId })),
+    editFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistancePaymentLine`
+      , ({ entity, financialAssistanceId })),
+    deleteFinancialAssistancePaymentLine: (financialAssistanceId: uuid, paymentId: uuid):
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/deleteFinancialAssistancePaymentLine`
+      , ({ paymentId, financialAssistanceId })),
   }
 
   private mutations = {

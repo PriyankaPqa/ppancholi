@@ -44,4 +44,18 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
     };
     return this.http.post(`${this.baseUrl}/${financialAssistanceId}/lines`, payload);
   }
+
+  async editFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
+    Promise<IFinancialAssistancePaymentEntity> {
+    const payload = {
+      ...entity.groupingInformation,
+      ...entity.lines[0],
+    };
+    return this.http.patch(`${this.baseUrl}/${financialAssistanceId}/lines/${entity.lines[0].id}`, payload);
+  }
+
+  async deleteFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid):
+    Promise<IFinancialAssistancePaymentEntity> {
+    return this.http.delete(`${this.baseUrl}/${financialAssistanceId}/lines/${paymentId}`);
+  }
 }

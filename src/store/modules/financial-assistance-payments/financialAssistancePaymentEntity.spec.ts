@@ -67,5 +67,30 @@ describe('Financial assistance payment entity module', () => {
         expect(res).toEqual(serviceRes);
       });
     });
+    
+    describe('editFinancialAssistancePaymentLine', () => {
+      it('calls the right service and returns the result', async () => {
+        const serviceRes = mockCaseFinancialAssistanceEntity();
+        const id = 'mock-id';
+        const entity = mockCaseFinancialAssistanceEntity();
+        module.service.editFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await module.actions.editFinancialAssistancePaymentLine(actionContext, { entity: entity.groups[0], financialAssistanceId: id });
+
+        expect(module.service.editFinancialAssistancePaymentLine).toBeCalledWith(id, entity.groups[0]);
+        expect(res).toEqual(serviceRes);
+      });
+    });
+    
+    describe('deleteFinancialAssistancePaymentLine', () => {
+      it('calls the right service and returns the result', async () => {
+        const serviceRes = mockCaseFinancialAssistanceEntity();
+        const id = 'mock-id';
+        module.service.deleteFinancialAssistancePaymentLine = jest.fn(() => Promise.resolve(serviceRes));
+        const res = await module.actions.deleteFinancialAssistancePaymentLine(actionContext, { paymentId: 'myId', financialAssistanceId: id });
+
+        expect(module.service.deleteFinancialAssistancePaymentLine).toBeCalledWith(id, 'myId');
+        expect(res).toEqual(serviceRes);
+      });
+    });
   });
 });

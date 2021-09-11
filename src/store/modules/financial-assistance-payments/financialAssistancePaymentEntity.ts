@@ -63,5 +63,25 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancia
       }
       return result;
     },
+
+    editFinancialAssistancePaymentLine: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
+      IFinancialAssistancePaymentEntityState>, payload: { entity: IFinancialAssistancePaymentGroup, financialAssistanceId: uuid })
+      : Promise<IFinancialAssistancePaymentEntity> => {
+      const result = await this.service.editFinancialAssistancePaymentLine(payload.financialAssistanceId, payload.entity);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
+
+    deleteFinancialAssistancePaymentLine: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
+      IFinancialAssistancePaymentEntityState>, payload: { paymentId: uuid, financialAssistanceId: uuid })
+      : Promise<IFinancialAssistancePaymentEntity> => {
+      const result = await this.service.deleteFinancialAssistancePaymentLine(payload.financialAssistanceId, payload.paymentId);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
   }
 }

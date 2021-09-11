@@ -16,12 +16,18 @@ export interface IActions extends IBaseActions<IFinancialAssistancePaymentEntity
   editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
     Promise<IFinancialAssistancePaymentEntity>;
+  editFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
+    Promise<IFinancialAssistancePaymentEntity>;
+  deleteFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid):
+    Promise<IFinancialAssistancePaymentEntity>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata> {
   addFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
+  editFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
+  deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
 }
 
 export interface IMutations extends IBaseMutations<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata> {

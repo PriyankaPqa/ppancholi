@@ -123,5 +123,25 @@ describe('CaseFilePaymentLineItem.vue', () => {
         expect(wrapper.emitted('edit-payment-line')[0][0]).toEqual(paymentLine);
       });
     });
+
+    describe('onClickDelete', () => {
+      it('should not emit an delete-payment-line if disableDeleteButton', async () => {
+        await wrapper.setProps({ disableDeleteButton: true });
+        await wrapper.vm.onClickDelete();
+        expect(wrapper.emitted('delete-payment-line')).toBeUndefined();
+      });
+
+      it('should emit an delete-payment-line if confirmed', async () => {
+        const paymentLine = paymentGroup.lines[0];
+        await wrapper.vm.onClickDelete();
+        expect(wrapper.emitted('delete-payment-line')[0][0]).toEqual(paymentLine);
+      });
+
+      it('should not emit an delete-payment-line if not confirmed', async () => {
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.onClickDelete();
+        expect(wrapper.emitted('delete-payment-line')).toBeUndefined();
+      });
+    });
   });
 });

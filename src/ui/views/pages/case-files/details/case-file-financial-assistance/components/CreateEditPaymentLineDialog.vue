@@ -175,6 +175,7 @@ import {
   FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
+  FinancialAssistancePaymentLine,
   PaymentStatus,
 } from '@/entities/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
@@ -326,17 +327,7 @@ export default Vue.extend({
       };
       this.paymentGroup = new FinancialAssistancePaymentGroup();
 
-      this.paymentGroup.lines.push({
-        id: this.currentLine?.id,
-        mainCategoryId: this.currentLine?.mainCategoryId || null,
-        subCategoryId: this.currentLine?.subCategoryId || null,
-        documentReceived: this.currentLine?.documentReceived || false,
-        amount: this.currentLine?.amount || null,
-        actualAmount: this.currentLine?.actualAmount || 0,
-        relatedNumber: this.currentLine?.relatedNumber || null,
-        careOf: this.currentLine?.careOf || null,
-        address: this.currentLine?.address || null,
-      });
+      this.paymentGroup.lines.push(new FinancialAssistancePaymentLine(this.currentLine));
 
       this.paymentGroup.groupingInformation = {
         modality: this.currentGroup?.groupingInformation?.modality || null,

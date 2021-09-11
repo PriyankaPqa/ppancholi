@@ -27,6 +27,7 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import PaymentLineGroup from './PaymentLineGroup.vue';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'PaymentLineGroupList',
@@ -69,7 +70,7 @@ export default Vue.extend({
       this.paymentGroups.forEach((group: IFinancialAssistancePaymentGroup) => {
         if (group.paymentStatus !== PaymentStatus.Cancelled) {
           group.lines?.forEach((line: IFinancialAssistancePaymentLine) => {
-            total += line.amount;
+            if (line.status === Status.Active) total += line.amount;
           });
         }
       });

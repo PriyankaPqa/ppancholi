@@ -25,6 +25,12 @@ export type VForm = Vue & {
   reset: () => void;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: Record<string, any>
+  flags: {
+    dirty: boolean,
+    pristine: boolean,
+    failed: boolean,
+    valid: boolean,
+  }
 }
 
 export type ConfirmationDialog = Vue & {

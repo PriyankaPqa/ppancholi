@@ -39,7 +39,7 @@ export enum EPaymentCancellationReason {
 /**
  * Value objects
  */
-export interface IFinancialAssistancePaymentLine {
+export interface IFinancialAssistancePaymentLine extends IEntity {
   id: string;
   mainCategoryId: string;
   subCategoryId: string | null;

@@ -28,7 +28,7 @@
     </div>
 
     <payment-line-item
-      v-for="(line, $index) in paymentGroup.lines"
+      v-for="(line, $index) in activeLines"
       :key="$index"
       :payment-line="line"
       :transaction-approval-status="transactionApprovalStatus"
@@ -38,7 +38,7 @@
       :disable-delete-button="disableDeleteButton"
       :items="items"
       @edit-payment-line="$emit('edit-payment-line', { line: $event, group: paymentGroup })"
-      @delete-payment-line="$emit('delete-payment-line', $event)" />
+      @delete-payment-line="$emit('delete-payment-line', { line: $event, group: paymentGroup })" />
 
     <div v-if="!isCancelled" class="paymentGroup__total rc-body14 fw-bold" data-test="paymentLineGroup__total">
       {{ $t('caseFile.financialAssistance.groupTotal', { total: $formatCurrency(total), modality }) }}
@@ -101,6 +101,7 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import PaymentLineItem from './PaymentLineItem.vue';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'PaymentLineGroup',
@@ -162,10 +163,14 @@ export default Vue.extend({
       return this.$t(`event.programManagement.paymentModalities.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`);
     },
 
+    activeLines(): IFinancialAssistancePaymentLine[] {
+      return (this.paymentGroup.lines || []).filter((l) => l.status === Status.Active);
+    },
+
     total(): number {
       let total = 0;
 
-      this.paymentGroup.lines?.forEach((line: IFinancialAssistancePaymentLine) => {
+      this.activeLines.forEach((line: IFinancialAssistancePaymentLine) => {
         total += line.amount;
       });
 
