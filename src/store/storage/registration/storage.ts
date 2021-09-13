@@ -261,5 +261,9 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
         householdId, member, sameAddress,
       });
     },
+
+    deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity> {
+      return store.dispatch('registration/deleteAdditionalMember', { householdId, memberId, index });
+    },
   },
 });

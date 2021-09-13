@@ -525,6 +525,18 @@ const actions = (mode: ERegistrationMode) => ({
     }
     return res;
   },
+
+  async deleteAdditionalMember(
+    this: IStore<IState>,
+    context: ActionContext<IState, IState>,
+    { householdId, memberId, index }: { householdId: string; memberId: string; index: number },
+  ): Promise<IHouseholdEntity> {
+    const res = await this.$services.households.deleteAdditionalMember(householdId, memberId);
+    if (res) {
+      context.commit('removeAdditionalMember', index);
+    }
+    return res;
+  },
 });
 
 export const makeRegistrationModule = (

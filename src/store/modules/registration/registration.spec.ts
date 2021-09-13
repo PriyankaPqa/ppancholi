@@ -899,5 +899,30 @@ describe('>>> Registration Module', () => {
           { payload: new Member({ ...member, id: mockhousehold.members[mockhousehold.members.length - 1] }), sameAddress }, undefined);
       });
     });
+    describe('deleteAdditionalMember', () => {
+      it('call the deleteAdditionalMember service with proper params', async () => {
+        const memberId = mockMember().id;
+        const householdId = 'test';
+        store.commit = jest.fn();
+        store.$services.households.deleteAdditionalMember = jest.fn(() => (mockHouseholdEntity()));
+
+        await store.dispatch('registration/deleteAdditionalMember', { householdId, memberId });
+
+        expect(store.$services.households.deleteAdditionalMember).toHaveBeenCalledWith(householdId, memberId);
+      });
+
+      it('call the mutation after the resolution', async () => {
+        const memberId = mockMember().id;
+        const householdId = 'test';
+        const mockhousehold = mockHouseholdEntity();
+        const index = mockhousehold.members.length - 1;
+        store.commit = jest.fn();
+        store.$services.households.deleteAdditionalMember = jest.fn(() => (mockHouseholdEntity()));
+
+        await store.dispatch('registration/deleteAdditionalMember', { householdId, memberId, index });
+
+        expect(store.commit).toHaveBeenCalledWith('registration/removeAdditionalMember', index, undefined);
+      });
+    });
   });
 });

@@ -580,8 +580,8 @@ describe('ReviewRegistration.vue', () => {
 
         await wrapper.vm.deleteAdditionalMember();
 
-        expect(wrapper.vm.$services.households.deleteAdditionalMember)
-          .toHaveBeenCalledWith(wrapper.vm.householdCreate.id, wrapper.vm.householdCreate.additionalMembers[0].id);
+        expect(wrapper.vm.$storage.registration.actions.deleteAdditionalMember)
+          .toHaveBeenCalled(wrapper.vm.householdCreate.id, wrapper.vm.householdCreate.additionalMembers[0].id, 0);
       });
     });
 

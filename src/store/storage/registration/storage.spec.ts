@@ -324,5 +324,15 @@ describe('>>> Registration Storage', () => {
         householdId, member, sameAddress,
       });
     });
+
+    it('should proxy deleteAdditionalMember', () => {
+      const householdId = '4113a553-13ed-41da-a692-f39c934bee05';
+      const memberId = mockMember().id;
+      const index = 0;
+      storage.actions.deleteAdditionalMember({ householdId, memberId, index });
+      expect(store.dispatch).toBeCalledWith('registration/deleteAdditionalMember', {
+        householdId, memberId, index,
+      });
+    });
   });
 });

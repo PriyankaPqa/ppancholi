@@ -191,14 +191,17 @@ export default Vue.extend({
 
     deleteAdditionalMember() {
       if (this.associationMode) {
-        const member = this.householdCreate.additionalMembers[this.indexAdditionalMember];
-        const res = this.$services.households.deleteAdditionalMember(this.householdCreate.id, member.id);
+        const memberId = this.householdCreate.additionalMembers[this.indexAdditionalMember].id;
+        const householdId = this.householdCreate.id;
+        const index = this.indexAdditionalMember;
+        const res = this.$storage.registration.actions.deleteAdditionalMember({ householdId, memberId, index });
         if (!res) {
           return;
         }
+      } else {
+        this.$storage.registration.mutations.removeAdditionalMember(this.indexAdditionalMember);
       }
       this.$toasted.global.success(this.$t('registration.member.removed'));
-      this.$storage.registration.mutations.removeAdditionalMember(this.indexAdditionalMember);
       this.showAdditionalMemberDelete = false;
     },
 
