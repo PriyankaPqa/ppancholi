@@ -16,6 +16,8 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
   let wrapper;
 
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
+    jest.clearAllMocks();
+
     financialAssistance = mockCaseFinancialAssistanceEntity();
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
@@ -122,6 +124,31 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
             financialAssistancePaymentId: financialAssistance.id,
           },
         });
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('deletePayment', () => {
+      it('calls deactivate after confirmation and then goes to documents', async () => {
+        await mountWrapper();
+        await wrapper.vm.deletePayment();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.financialAssistance.confirm.delete.title',
+          'caseFile.financialAssistance.confirm.delete.message');
+        expect(storage.financialAssistancePayment.actions.deactivate)
+          .toHaveBeenCalledWith(financialAssistance.id);
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.financialAssistance.home.name,
+        });
+      });
+      it('doesnt call deactivate if no confirmation', async () => {
+        await mountWrapper();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.deletePayment();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.financialAssistance.confirm.delete.title',
+          'caseFile.financialAssistance.confirm.delete.message');
+        expect(storage.financialAssistancePayment.actions.deactivate)
+          .toHaveBeenCalledTimes(0);
       });
     });
   });

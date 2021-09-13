@@ -478,5 +478,20 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.paymentGroup.groupingInformation.payeeName).toEqual('');
       });
     });
+    
+    describe('onCancel', () => {
+      it('emits cancel if the confirmation dialog returns true', async () => {
+        wrapper.vm.$refs.form.flags = { dirty: true };
+        await wrapper.vm.onCancel();
+        expect(wrapper.emitted('cancelChange')).toBeTruthy();
+      });
+
+      it('does not emit cancel if the confirmation dialog returns false', async () => {
+        wrapper.vm.$refs.form.flags = { dirty: true };
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.onCancel();
+        expect(wrapper.emitted('cancelChange')).toBeFalsy();
+      });
+    });
   });
 });

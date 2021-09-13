@@ -135,6 +135,7 @@ import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceFo
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
 import CreateEditPaymentLineDialog from './CreateEditPaymentLineDialog.vue';
 import { VForm } from '@/types';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'CreateEditFinancialAssistance',
@@ -149,17 +150,7 @@ export default Vue.extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if ((this.$refs.form as VForm).flags.dirty) {
-      const leavingConfirmed = await this.$confirm(this.$t('confirmLeaveDialog.title'), [
-        this.$t('confirmLeaveDialog.message_1'),
-        this.$t('confirmLeaveDialog.message_2'),
-      ]);
-      if (leavingConfirmed) {
-        next();
-      }
-    } else {
-      next();
-    }
+    await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty, next);
   },
 
   data() {
@@ -282,7 +273,7 @@ export default Vue.extend({
         // so we can leave without warning
         (this.$refs.form as VForm).reset();
         // reset actually takes a few ms but isnt awaitable...
-        const timeout = setTimeout(() => {
+        setTimeout(() => {
           this.$router.replace({
             name: routes.caseFile.financialAssistance.details.name,
             params: {

@@ -109,6 +109,21 @@ export default Vue.extend({
       };
     },
   },
+
+  methods: {
+    async deletePayment() {
+      const doDelete = await this.$confirm(this.$t('caseFile.financialAssistance.confirm.delete.title'),
+        this.$t('caseFile.financialAssistance.confirm.delete.message'));
+      if (doDelete) {
+        const result = await this.$storage.financialAssistancePayment.actions.deactivate(this.financialAssistance.id);
+        if (result) {
+          this.$router.push({
+            name: routes.caseFile.financialAssistance.home.name,
+          });
+        }
+      }
+    },
+  },
 });
 </script>
 

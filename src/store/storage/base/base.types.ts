@@ -9,7 +9,7 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
   fetchAllIncludingInactive(): Promise<IEntityCombined<TEntity, TMetadata>[]>;
   deactivate(idParams: IdParams): Promise<TEntity>;
   activate(idParams: IdParams): Promise<TEntity>;
-  search(params: IAzureSearchParams, searchEndpoint?: string): Promise<IAzureTableSearchResults>
+  search(params: IAzureSearchParams, searchEndpoint?: string, includeInactiveItems?: boolean): Promise<IAzureTableSearchResults>
 }
 
 export interface IBaseGetters<TEntity extends IEntity, TMetadata extends IEntity> {

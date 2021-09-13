@@ -59,7 +59,7 @@
       </template>
 
       <template #[`item.delete`]="{ item }">
-        <v-btn v-if="isModifiable(item)" icon data-test="delete-link">
+        <v-btn v-if="isModifiable(item)" icon data-test="delete-link" @click="deletePayment(item)">
           <v-icon size="24" color="grey darken-2">
             mdi-delete
           </v-icon>
@@ -116,7 +116,7 @@ export default Vue.extend({
   computed: {
 
     tableData(): IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds);
+      return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds, true);
     },
 
     customColumns(): Record<string, string> {
@@ -254,6 +254,14 @@ export default Vue.extend({
           financialAssistancePaymentId: id,
         },
       };
+    },
+
+    async deletePayment(item: IFinancialAssistancePaymentCombined) {
+      const doDelete = await this.$confirm(this.$t('caseFile.financialAssistance.confirm.delete.title'),
+        this.$t('caseFile.financialAssistance.confirm.delete.message'));
+      if (doDelete) {
+        await this.$storage.financialAssistancePayment.actions.deactivate(item.entity.id);
+      }
     },
   },
 });

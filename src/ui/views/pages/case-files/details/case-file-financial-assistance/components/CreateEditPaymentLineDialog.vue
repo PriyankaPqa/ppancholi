@@ -12,8 +12,8 @@
       data-test="payment_title"
       :tooltip-label="$t('common.tooltip_label')"
       fullscreen
-      @cancel="$emit('cancelChange')"
-      @close="$emit('cancelChange')"
+      @cancel="onCancel"
+      @close="onCancel"
       @submit="onSubmit">
       <v-row justify="center" class="pa-0">
         <v-col cols="8">
@@ -381,6 +381,10 @@ export default Vue.extend({
         this.paymentGroup.groupingInformation.payeeName = '';
         this.address = new Address();
       }
+    },
+
+    async onCancel() {
+      if (await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty)) this.$emit('cancelChange');
     },
   },
 });

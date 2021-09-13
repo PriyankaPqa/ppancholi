@@ -180,7 +180,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper();
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
-        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc']);
+        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'], true);
         expect(data.length).toBe(storage.financialAssistancePayment.getters.getByIds().length);
       });
     });
@@ -283,6 +283,28 @@ describe('FinancialAssistancePaymentsList.vue', () => {
             financialAssistancePaymentId: 'abc',
           },
         });
+      });
+    });
+
+    describe('deletePayment', () => {
+      it('calls deactivate after confirmation', async () => {
+        const mock = mockCombinedCaseFinancialAssistance();
+        await mountWrapper();
+        await wrapper.vm.deletePayment(mock);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.financialAssistance.confirm.delete.title',
+          'caseFile.financialAssistance.confirm.delete.message');
+        expect(storage.financialAssistancePayment.actions.deactivate)
+          .toHaveBeenCalledWith(mock.entity.id);
+      });
+      it('doesnt call deactivate if no confirmation', async () => {
+        const mock = mockCombinedCaseFinancialAssistance();
+        await mountWrapper();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.deletePayment(mock);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.financialAssistance.confirm.delete.title',
+          'caseFile.financialAssistance.confirm.delete.message');
+        expect(storage.financialAssistancePayment.actions.deactivate)
+          .toHaveBeenCalledTimes(0);
       });
     });
   });

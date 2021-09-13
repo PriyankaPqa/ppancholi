@@ -205,8 +205,26 @@ describe('BaseStorage', () => {
     describe('search', () => {
       it('should call action search with the payload', async () => {
         const params = { filter: { Foo: 'foo' } };
-        await storage.actions.search(params);
+        await storage.actions.search(params, null, true);
         expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`, { params, searchEndpoint: null });
+      });
+
+      it('should filterout inactives by default or if specified', async () => {
+        const params = { filter: { Foo: 'foo' } };
+        await storage.actions.search(params);
+        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
+          { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null })
+        jest.clearAllMocks();
+          
+        await storage.actions.search(params, null, false);
+        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
+          { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null });
+        jest.clearAllMocks();
+
+        const paramsNoFilter = { filter: '' };
+        await storage.actions.search(paramsNoFilter, null, false);
+        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
+          { params: { filter: { 'Entity/Status': 1 } }, searchEndpoint: null });
       });
 
       it('should call commit set for both entity and metadata', async () => {

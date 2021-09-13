@@ -1,4 +1,5 @@
 import { en, fr } from '@crctech/component-library/src/components/atoms/RcCountrySelect/countries';
+import { NavigationGuardNext } from 'vue-router';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
@@ -247,6 +248,18 @@ export default {
       }
     }
     return fileName;
+  },
+
+  async confirmBeforeLeaving(vue: Vue, hasChanged: boolean, next: NavigationGuardNext = null) {
+    let leavingConfirmed = true;
+    if (hasChanged) {
+      leavingConfirmed = await vue.$confirm(vue.$t('confirmLeaveDialog.title'), [
+        vue.$t('confirmLeaveDialog.message_1'),
+        vue.$t('confirmLeaveDialog.message_2'),
+      ]);
+    }
+    if (next && leavingConfirmed) next();
+    return leavingConfirmed;
   },
 
 };
