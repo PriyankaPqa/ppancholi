@@ -18,7 +18,8 @@
         :filter-key="FilterKey.CaseFiles"
         :count="itemsCount"
         :filter-options="filters"
-        @update:appliedFilter="onApplyFilter">
+        @open="fetchEventsFilter"
+        @update:appliedFilter="onApplyFilterLocal">
         <template #toolbarActions>
           <div class="flex-row">
             <v-switch
@@ -84,7 +85,7 @@
     </template>
 
     <template #[`item.${customColumns.created}`]="{ item: caseFile }">
-      {{ getStringDate(caseFile.entity.created, 'll') }}
+      {{ getLocalStringDate(caseFile.entity.created, 'll') }}
     </template>
   </rc-data-table>
 </template>
@@ -96,18 +97,25 @@ import {
   RcDataTable,
   IFilterSettings,
 } from '@crctech/component-library';
+import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+
+import isEqual from 'lodash/isEqual';
+import pickBy from 'lodash/pickBy';
+import isEmpty from 'lodash/isEmpty';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { ICaseFileCombined, CaseFileStatus } from '@/entities/case-file';
+import { ICaseFileCombined, CaseFileStatus, CaseFileTriage } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
 import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
+import { IEventCombined, EEventStatus } from '@/entities/event';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseFilesTable',
+
   components: {
     RcDataTable,
     StatusChip,
@@ -131,9 +139,12 @@ export default mixins(TablePaginationSearchMixin).extend({
       itemsCount: 0,
       FilterKey,
       myCaseFiles: false,
-      getStringDate: helpers.getStringDate,
+      getLocalStringDate: helpers.getLocalStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
       searchResultIds: [] as string[],
+      searchEventsResultIds: [] as string[],
+      eventsFilter: [] as IEventCombined[],
+      eventsFilterLoading: false,
       searchLoading: false,
       options: {
         page: 1,
@@ -148,6 +159,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     userId():string {
       return this.$storage.user.getters.userId();
     },
+
     myCaseFilesFilter(): Record<string, unknown> {
       return {
         Entity: {
@@ -157,6 +169,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         },
       };
     },
+
     canViewHousehold():boolean {
       return this.$hasLevel('level1');
     },
@@ -211,9 +224,73 @@ export default mixins(TablePaginationSearchMixin).extend({
       ];
     },
 
-    // TODO add filters
     filters(): Array<IFilterSettings> {
-      return [];
+      return [
+        {
+          key: 'Metadata/PrimaryBeneficiaryFirstName',
+          type: EFilterType.Text,
+          label: this.$t('caseFilesTable.tableHeaders.firstName') as string,
+        },
+        {
+          key: 'Metadata/PrimaryBeneficiaryLastName',
+          type: EFilterType.Text,
+          label: this.$t('caseFilesTable.tableHeaders.lastName') as string,
+        },
+        {
+          key: 'Entity/EventId',
+          type: EFilterType.Select,
+          label: this.$t('caseFileTable.filters.eventName') as string,
+          items: this.eventsFilter,
+          loading: this.eventsFilterLoading,
+          disabled: this.eventsFilterLoading,
+        },
+        {
+          key: `Metadata/TriageName/Translation/${this.$i18n.locale}`,
+          type: EFilterType.MultiSelect,
+          label: this.$t('caseFileTable.tableHeaders.triage') as string,
+          items: helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage', true),
+        },
+        {
+          key: 'Entity/Created',
+          type: EFilterType.Date,
+          label: this.$t('caseFileTable.filters.createdDate') as string,
+        },
+        {
+          key: `Metadata/CaseFileStatusName/Translation/${this.$i18n.locale}`,
+          type: EFilterType.MultiSelect,
+          label: this.$t('caseFileTable.tableHeaders.status') as string,
+          items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
+        },
+        {
+          key: 'Entity/IsDuplicate',
+          type: EFilterType.Select,
+          label: this.$t('caseFilesTable.filters.isDuplicate') as string,
+          items: [{
+            text: this.$t('common.yes'),
+            value: true,
+          }, {
+            text: this.$t('common.no'),
+            value: false,
+          }],
+        },
+        {
+          key: 'Entity/AssignedIndividualIds',
+          type: EFilterType.Select,
+          label: this.$t('caseFileTable.filters.isAssigned') as string,
+          items: [{
+            text: this.$t('common.yes'),
+            value: 'arrayNotEmpty',
+          }, {
+            text: this.$t('common.no'),
+            value: 'arrayEmpty',
+          }],
+        },
+        {
+          key: 'Metadata/LastActionDate',
+          type: EFilterType.Date,
+          label: this.$t('caseFileTable.filters.lastActionDate') as string,
+        },
+      ];
     },
 
     labels(): Record<string, unknown> {
@@ -235,25 +312,28 @@ export default mixins(TablePaginationSearchMixin).extend({
   watch: {
     myCaseFiles(newValue) {
       if (newValue) {
-        this.onApplyFilter({ preparedFilters: this.myCaseFilesFilter });
+        // We apply filters from the switch + the ones from the filters panel
+        this.onApplyFilter({ preparedFilters: { ...this.userFilters, ...this.myCaseFilesFilter } });
       } else {
-        this.onApplyFilter({ preparedFilters: null });
+        let preparedFilters = {};
+        if (isEqual(this.myCaseFilesFilter, this.userFilters)) { // If the only filter is myCaseFile
+          preparedFilters = null;
+        } else {
+          const caseFileFilterValue = Object.values(this.myCaseFilesFilter)[0];
+          preparedFilters = pickBy(this.userFilters, (value) => !isEqual(caseFileFilterValue, value)); // Only filters from panel
+        }
+        this.onApplyFilter({ preparedFilters });
       }
     },
   },
 
   methods: {
     async fetchData(params: IAzureSearchParams) {
-      let { filter } = params;
-      if (this.myCaseFiles) {
-        filter = this.myCaseFilesFilter;
-      }
-
       try {
         this.searchLoading = false;
         const res = await this.$storage.caseFile.actions.search({
           search: params.search,
-          filter,
+          filter: params.filter,
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
@@ -296,6 +376,53 @@ export default mixins(TablePaginationSearchMixin).extend({
           id: caseFile.entity.id,
         },
       };
+    },
+
+    async fetchEventsFilter() {
+      this.eventsFilterLoading = true;
+      try {
+        const res = await this.$storage.caseFile.actions.search({
+          filter: {
+            or: [
+              {
+                Metadata: {
+                  Event: {
+                    Status: EEventStatus.Open.toString(),
+                  },
+                },
+              },
+              {
+                Metadata: {
+                  Event: {
+                    Status: EEventStatus.OnHold.toString(),
+                  },
+                },
+              },
+            ],
+          },
+          top: 999,
+          orderBy: `Metadata/Event/Name/Translation/${this.$i18n.locale} asc`,
+          queryType: 'full',
+          searchMode: 'all',
+        });
+        this.eventsFilter = this.$storage.caseFile.getters.getByIds(res.ids)
+          .map((c: ICaseFileCombined) => ({ text: this.$m(c.metadata.event.name), value: c.metadata.event.id }));
+      } finally {
+        this.eventsFilterLoading = false;
+      }
+    },
+
+    async onApplyFilterLocal(
+      { preparedFilters, searchFilters }
+        : { preparedFilters: Record<string, unknown>, searchFilters: Record<string, unknown> },
+    ) {
+      let finalFilters = {};
+      if (this.myCaseFiles) {
+        finalFilters = isEmpty(preparedFilters) ? this.myCaseFilesFilter : { ...preparedFilters, ...this.myCaseFilesFilter };
+      } else {
+        finalFilters = isEmpty(preparedFilters) ? null : preparedFilters;
+      }
+      await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters });
     },
   },
 

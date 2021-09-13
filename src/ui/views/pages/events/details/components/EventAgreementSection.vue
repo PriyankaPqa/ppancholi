@@ -120,7 +120,7 @@ export default Vue.extend({
     return {
       showInfoDialog: false,
       showDeleteConfirmationDialog: false,
-      getStringDate: helpers.getStringDate,
+      getLocalStringDate: helpers.getLocalStringDate,
     };
   },
 
@@ -139,11 +139,11 @@ export default Vue.extend({
       return {
         startDate: {
           key: 'eventSummary.agreement.startDate',
-          value: this.agreement.startDate ? this.getStringDate(this.agreement.startDate, 'll') : '-',
+          value: this.agreement.startDate ? this.getLocalStringDate(this.agreement.startDate, 'll') : '-',
         },
         endDate: {
           key: 'eventSummary.agreement.endDate',
-          value: this.agreement.endDate ? this.getStringDate(this.agreement.endDate, 'll') : '-',
+          value: this.agreement.endDate ? this.getLocalStringDate(this.agreement.endDate, 'll') : '-',
         },
         type: {
           key: 'eventSummary.agreement.type',

@@ -58,7 +58,7 @@ describe('EventCallCentreSection.vue', () => {
 
       it('displays the right date', () => {
         const element = wrapper.findDataTest('event-call-centre-section-start-date-0');
-        expect(element.text()).toEqual(helpers.getStringDate(wrapper.vm.callCentre.startDate, 'll'));
+        expect(element.text()).toEqual(helpers.getLocalStringDate(wrapper.vm.callCentre.startDate, 'll'));
       });
     });
 
@@ -140,7 +140,7 @@ describe('EventCallCentreSection.vue', () => {
         expect(wrapper.vm.infoData).toEqual({
           startDate: {
             key: 'eventSummary.callCentre.startDate',
-            value: helpers.getStringDate(wrapper.vm.callCentre.startDate, 'll'),
+            value: helpers.getLocalStringDate(wrapper.vm.callCentre.startDate, 'll'),
           },
           endDate: {
             key: 'eventSummary.callCentre.endDate',

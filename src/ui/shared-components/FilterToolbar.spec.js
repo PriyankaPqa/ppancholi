@@ -98,6 +98,17 @@ describe('Filter Toolbar', () => {
 
         expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(1);
       });
+
+      it('does not call refreshUserFilters method if create filter failed', async () => {
+        const filter = {};
+        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+
+        wrapper.vm.$storage.userAccount.actions.addFilter = jest.fn(() => null);
+
+        await wrapper.vm.createFilter(filter);
+
+        expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(0);
+      });
     });
 
     describe('onLoadAll', () => {
@@ -174,13 +185,23 @@ describe('Filter Toolbar', () => {
             key: 'UserName',
           },
           {
+            type: 'text',
+            operator: EFilterOperator.FuzzySearch,
+            key: 'UserName',
+          },
+          {
+            type: 'text',
+            operator: EFilterOperator.Equal,
+            key: 'UserName',
+          },
+          {
             type: 'select',
             operator: EFilterOperator.Equal,
             key: 'TeamStatus',
           },
         ];
         wrapper.vm.onApplyFilter(filters);
-        expect(wrapper.vm.prepareSearchFilters).toHaveBeenCalledWith([filters[0], filters[1]]);
+        expect(wrapper.vm.prepareSearchFilters).toHaveBeenCalledWith([filters[0], filters[1], filters[2]]);
       });
 
       it('emits update:appliedFilter with proper parameter', () => {
@@ -199,9 +220,7 @@ describe('Filter Toolbar', () => {
           },
         ];
         wrapper.vm.onApplyFilter(filters);
-        expect(wrapper.emitted('update:appliedFilter')[0][0]).toEqual(
-          { preparedFilters: 'preparedFilters', searchFilters: 'translateSearchFilter' },
-        );
+        expect(wrapper.emitted('update:appliedFilter')[0][0]).toEqual({ preparedFilters: 'preparedFilters', searchFilters: 'translateSearchFilter' });
       });
     });
 
@@ -217,15 +236,39 @@ describe('Filter Toolbar', () => {
         expect(newFilter).toEqual(_set({}, filter.key, { ge: 'today', le: 'tomorrow' }));
       });
 
-      it('builds the proper structure for equal operator', () => {
-        const filter = {
-          key: 'Prop.Sub',
-          operator: EFilterOperator.Equal,
-          type: EFilterType.Date,
-          value: 'today',
-        };
-        const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, filter.value));
+      describe('Equal operator', () => {
+        it('builds the proper structure for arrayNotEmpty value', () => {
+          const filter = {
+            key: 'Prop.Sub',
+            operator: EFilterOperator.Equal,
+            type: EFilterType.Select,
+            value: 'arrayNotEmpty',
+          };
+          const newFilter = wrapper.vm.translateFilter(filter);
+          expect(newFilter).toEqual(_set({}, filter.key, { arrayNotEmpty: filter.value }));
+        });
+
+        it('builds the proper structure for arrayEmpty value', () => {
+          const filter = {
+            key: 'Prop.Sub',
+            operator: EFilterOperator.Equal,
+            type: EFilterType.MultiSelect,
+            value: 'arrayEmpty',
+          };
+          const newFilter = wrapper.vm.translateFilter(filter);
+          expect(newFilter).toEqual(_set({}, filter.key, { arrayEmpty: filter.value }));
+        });
+
+        it('builds the proper structure for regular value', () => {
+          const filter = {
+            key: 'Prop.Sub',
+            operator: EFilterOperator.Equal,
+            type: EFilterType.Date,
+            value: 'today',
+          };
+          const newFilter = wrapper.vm.translateFilter(filter);
+          expect(newFilter).toEqual(_set({}, filter.key, filter.value));
+        });
       });
 
       it('builds the proper structure for GreaterEqual operator', () => {
@@ -337,7 +380,7 @@ describe('Filter Toolbar', () => {
           key: 'TeamName',
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
-        expect(newFilter).toEqual('TeamName: "myValue"');
+        expect(newFilter).toEqual('TeamName: /.*myValue.*/');
       });
 
       it('creates the correct string for DoesNotContain operator', () => {
@@ -349,6 +392,28 @@ describe('Filter Toolbar', () => {
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
         expect(newFilter).toEqual('TeamName:(/.*/ NOT /.*myValue.*/)');
+      });
+
+      it('creates the correct string for Fuzzy Search operator', () => {
+        const filter = {
+          type: 'text',
+          value: 'myValue',
+          operator: EFilterOperator.FuzzySearch,
+          key: 'TeamName',
+        };
+        const newFilter = wrapper.vm.translateSearchFilter(filter);
+        expect(newFilter).toEqual('TeamName: "myValue~"');
+      });
+
+      it('creates the correct string for Equals Search operator', () => {
+        const filter = {
+          type: 'text',
+          value: 'myValue',
+          operator: EFilterOperator.Equal,
+          key: 'TeamName',
+        };
+        const newFilter = wrapper.vm.translateSearchFilter(filter);
+        expect(newFilter).toEqual('TeamName: "myValue"');
       });
     });
 
@@ -461,61 +526,94 @@ describe('Filter Toolbar', () => {
     });
   });
 
-  // describe('Computed properties', () => {
-  // describe('Labels', () => {
-  // test('labels are ok', () => {
-  //   const labels = {
-  //     save: 'common.save',
-  //     cancel: 'common.cancel',
-  //     apply: 'common.apply',
-  //     download: 'common.download',
-  //     filterCopySuffix: 'common.copy',
-  //     yourFilters: 'genericFilter.yourFilters',
-  //     tooltipNew: 'genericFilter.newFilter',
-  //     tooltipAdd: 'genericFilter.addFilter',
-  //     tooltipCopy: 'genericFilter.copyFilter',
-  //     tooltipDelete: 'genericFilter.deleteFilter',
-  //     tooltipCloseFilter: 'genericFilter.clickToClose',
-  //     removeTitle: 'genericFilter.deleteFilter',
-  //     removeBody: 'genericFilter.removeBody',
-  //     removeCancel: 'common.cancel',
-  //     removeConfirm: 'common.confirm',
-  //     importLabel: 'common.import',
-  //     exportLabel: 'common.export',
-  //     exportTitle: 'genericFilter.exportToCsv',
-  //     exportCancel: 'common.cancel',
-  //     exportDownload: 'common.download',
-  //     exportFormat: 'genericFilter.exportFormat',
-  //     exportItems: 'genericFilter.exportItems',
-  //     formFilterName: 'genericFilter.filterName',
-  //     formRequiredField: 'validations.required',
-  //     defaultFilterName: 'genericFilter.defaultFilterName',
-  //     filterSubtitle: 'genericFilter.filterSubtitle',
-  //     dialogTitle: 'titleDialog',
-  //     operators: {
-  //       [EFilterOperator.Between]: 'genericFilter.operators.Between',
-  //       [EFilterOperator.Equal]: 'genericFilter.operators.Equal',
-  //       [EFilterOperator.GreaterEqual]: 'genericFilter.operators.GreaterEqual',
-  //       [EFilterOperator.GreaterThan]: 'genericFilter.operators.GreaterThan',
-  //       [EFilterOperator.LessThan]: 'genericFilter.operators.LessThan',
-  //       [EFilterOperator.LessEqual]: 'genericFilter.operators.LessEqual',
-  //       [EFilterOperator.In]: 'genericFilter.operators.In',
-  //       [EFilterOperator.BeginsWith]: 'genericFilter.operators.BeginsWith',
-  //       [EFilterOperator.EndsWith]: 'genericFilter.operators.EndsWith',
-  //       [EFilterOperator.Contains]: 'genericFilter.operators.Contains',
-  //       [EFilterOperator.DoesNotContain]: 'genericFilter.operators.DoesNotContain',
-  //     },
-  //     errors: {
-  //       maxLength: 'genericFilter.errors.maxLength',
-  //       maxGreaterThanMin: 'genericFilter.errors.maxGreaterThanMin',
-  //       401: 'genericFilter.errors.401',
-  //       500: 'genericFilter.errors.500',
-  //       NoSelectedFilter: 'genericFilter.errors.noSelectedFilter',
-  //       Error409002CustomFilterDuplicateName: 'genericFilter.errors.duplicateName',
-  //     },
-  //   };
-  //   expect(wrapper.vm.filterLabels).toEqual(labels);
-  // });
-  // });
-  // });
+  describe('Computed properties', () => {
+    describe('filterLabels', () => {
+      test('labels are ok', () => {
+        const labels = {
+          save: 'common.save',
+          cancel: 'common.cancel',
+          apply: 'common.apply',
+          download: 'common.download',
+          filterCopySuffix: 'common.copy',
+          yourFilters: 'genericFilter.yourFilters',
+          tooltipNew: 'genericFilter.newFilter',
+          tooltipAdd: 'genericFilter.addFilter',
+          tooltipCopy: 'genericFilter.copyFilter',
+          tooltipDelete: 'genericFilter.deleteFilter',
+          tooltipCloseFilter: 'genericFilter.clickToClose',
+          removeTitle: 'genericFilter.deleteFilter',
+          removeBody: 'genericFilter.removeBody',
+          removeCancel: 'common.cancel',
+          removeConfirm: 'common.confirm',
+          importLabel: 'common.import',
+          exportLabel: 'common.export',
+          exportTitle: 'genericFilter.exportToCsv',
+          exportCancel: 'common.cancel',
+          exportDownload: 'common.download',
+          exportFormat: 'genericFilter.exportFormat',
+          exportItems: 'genericFilter.exportItems',
+          formFilterName: 'genericFilter.filterName',
+          formRequiredField: 'validations.required',
+          defaultFilterName: 'genericFilter.defaultFilterName',
+          filterSubtitle: 'genericFilter.filterSubtitle',
+          dialogTitle: 'titleDialog',
+          operators: {
+            [EFilterOperator.Between]: 'genericFilter.operators.Between',
+            [EFilterOperator.Equal]: 'genericFilter.operators.Equal',
+            [EFilterOperator.GreaterEqual]: 'genericFilter.operators.GreaterEqual',
+            [EFilterOperator.GreaterThan]: 'genericFilter.operators.GreaterThan',
+            [EFilterOperator.LessThan]: 'genericFilter.operators.LessThan',
+            [EFilterOperator.LessEqual]: 'genericFilter.operators.LessEqual',
+            [EFilterOperator.In]: 'genericFilter.operators.In',
+            [EFilterOperator.BeginsWith]: 'genericFilter.operators.BeginsWith',
+            [EFilterOperator.EndsWith]: 'genericFilter.operators.EndsWith',
+            [EFilterOperator.Contains]: 'genericFilter.operators.Contains',
+            [EFilterOperator.DoesNotContain]: 'genericFilter.operators.DoesNotContain',
+            [EFilterOperator.FuzzySearch]: 'genericFilter.operators.FuzzySearch',
+          },
+          errors: {
+            // maxLength: 'genericFilter.errors.maxLength',
+            // maxGreaterThanMin: 'genericFilter.errors.maxGreaterThanMin',
+            // 401: 'genericFilter.errors.401',
+            // 500: 'genericFilter.errors.500',
+            // NoSelectedFilter: 'genericFilter.errors.noSelectedFilter',
+            // Error409002CustomFilterDuplicateName: 'genericFilter.errors.duplicateName',
+          },
+        };
+        expect(wrapper.vm.filterLabels).toEqual(labels);
+      });
+    });
+
+    describe('filterOperators', () => {
+      test('labels are ok', () => {
+        const operators = {
+          text: [
+            { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
+            { label: 'genericFilter.operators.BeginsWith', operator: EFilterOperator.BeginsWith },
+            // { label: 'Ends With', operator: EFilterOperator.EndsWith },
+            { label: 'genericFilter.operators.Contains', operator: EFilterOperator.Contains },
+            // { label: 'genericFilter.operators.FuzzySearch', operator: EFilterOperator.FuzzySearch },
+            // { label: 'Does not contain', operator: EFilterOperator.DoesNotContain },
+          ],
+          number: [
+            { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
+            { label: 'genericFilter.operators.Between', operator: EFilterOperator.Between },
+            { label: 'genericFilter.operators.GreaterThan', operator: EFilterOperator.GreaterThan },
+            { label: 'genericFilter.operators.LessThan', operator: EFilterOperator.LessThan },
+          ],
+          select: [{ label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal }],
+          multiselect: [{ label: 'genericFilter.operators.In', operator: EFilterOperator.In }],
+          date: [
+            { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
+            { label: 'genericFilter.operators.After', operator: EFilterOperator.GreaterThan },
+            { label: 'genericFilter.operators.OnOrAfter', operator: EFilterOperator.GreaterEqual },
+            { label: 'genericFilter.operators.Before', operator: EFilterOperator.LessThan },
+            { label: 'genericFilter.operators.OnOrBefore', operator: EFilterOperator.LessEqual },
+            { label: 'genericFilter.operators.Between', operator: EFilterOperator.Between },
+          ],
+        };
+        expect(wrapper.vm.filterOperators).toEqual(operators);
+      });
+    });
+  });
 });

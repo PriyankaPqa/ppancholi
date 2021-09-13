@@ -56,12 +56,17 @@ export default {
     return Object.keys(myEnum).filter((x) => !(parseInt(x, 0) >= 0));
   },
 
-  enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string) {
+  enumToTranslatedCollection(myEnum: Record<string, unknown>, translationPath: string, textToValue = false) {
     const enumKeys = this.getEnumKeys(myEnum);
     const data = [] as Array<{ value: unknown, text: string }>;
     enumKeys.forEach((val) => {
-      const value = myEnum[val];
-      data.push({ value, text: i18n.t(`${translationPath}.${val}`).toString() });
+      if (textToValue) {
+        const text = i18n.t(`${translationPath}.${val}`).toString();
+        data.push({ value: text, text });
+      } else {
+        const value = myEnum[val];
+        data.push({ value, text: i18n.t(`${translationPath}.${val}`).toString() });
+      }
     });
     return data.sort((a, b) => a.text.localeCompare(b.text));
   },
@@ -152,7 +157,12 @@ export default {
     return res;
   },
 
-  getStringDate(date: Date | string, format = 'YYYY-MM-DD'): string {
+  getLocalStringDate(date: Date | string, format = 'YYYY-MM-DD'): string {
+    if (!date) return '';
+    return moment(date).format(format);
+  },
+
+  getUtcStringDate(date: Date | string, format = 'YYYY-MM-DD'): string {
     if (!date) return '';
     return moment(date).utc().format(format);
   },

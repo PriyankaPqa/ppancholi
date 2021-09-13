@@ -1,11 +1,14 @@
 import { RcDataTable } from '@crctech/component-library';
+import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { mockUserStateLevel } from '@/test/helpers';
 
-import { mockCombinedCaseFiles } from '@/entities/case-file';
+import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@/entities/case-file';
 import Component from './CaseFilesTable.vue';
+import helpers from '@/ui/helpers';
+import { EEventStatus, mockCombinedEvents } from '@/entities/event';
 
 const storage = mockStorage();
 const mockCaseFiles = mockCombinedCaseFiles();
@@ -63,25 +66,6 @@ describe('CaseFilesTable.vue', () => {
         expect(headers.wrappers[5].find('span').text()).toBe('caseFilesTable.tableHeaders.createdDate');
       });
 
-      test('the my case files toggle switch apply the filter myCaseFilesFilter', async () => {
-        const params = wrapper.vm.azureSearchParams;
-        const { myCaseFilesFilter } = wrapper.vm;
-        const myCaseFilesSwitch = wrapper.find('[data-test="caseFilesTable__myCaseFilesSwitch"]');
-
-        await myCaseFilesSwitch.trigger('click');
-
-        expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
-          search: params.search,
-          filter: myCaseFilesFilter,
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        });
-      });
-
       describe('help button', () => {
         it('displays the help button ', async () => {
           wrapper.vm.helpLink = 'mock-help-data-url';
@@ -110,43 +94,70 @@ describe('CaseFilesTable.vue', () => {
       });
     });
   });
-  describe('Watch myCaseFiles', () => {
-    it('sets filter to myCaseFilesFilter when true', async () => {
-      const params = wrapper.vm.azureSearchParams;
-      await wrapper.setData({
-        myCaseFiles: true,
-      });
 
-      expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
-        search: params.search,
-        filter: wrapper.vm.myCaseFilesFilter,
-        top: params.top,
-        skip: params.skip,
-        orderBy: params.orderBy,
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
+  describe('Watch', () => {
+    beforeEach(() => {
+      wrapper = mount(Component, {
+        localVue,
+        mocks: {
+          $storage: storage,
+        },
       });
     });
+    describe('myCaseFiles', () => {
+      describe('On', () => {
+        it('should call onApplyFilter with filters from the panel + myCaseFileFilter', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          const expected = { preparedFilters: { ...wrapper.vm.userFilters, ...wrapper.vm.myCaseFilesFilter } };
 
-    it('sets filter to myCaseFilesFilter when false', async () => {
-      const params = wrapper.vm.azureSearchParams;
-      await wrapper.setData({
-        myCaseFiles: false,
+          await wrapper.setData({
+            myCaseFiles: true,
+          });
+
+          expect(wrapper.vm.onApplyFilter).toHaveBeenCalledWith(expected);
+        });
       });
 
-      expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
-        search: params.search,
-        filter: '',
-        top: params.top,
-        skip: params.skip,
-        orderBy: params.orderBy,
-        count: true,
-        queryType: 'full',
-        searchMode: 'all',
+      describe('Off', () => {
+        it('should call onApplyFilter with {} if the only filter is myCaseFileFilter', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+
+          await wrapper.setData({
+            myCaseFiles: true,
+          });
+
+          await wrapper.setData({
+            myCaseFiles: false,
+          });
+
+          expect(wrapper.vm.onApplyFilter).toHaveBeenLastCalledWith({ preparedFilters: {} });
+        });
+
+        it('should call onApplyFilter with filters from the panel if present', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+
+          await wrapper.setData({
+            myCaseFiles: true,
+          });
+
+          const filterFromPanel = {
+            test: {},
+          };
+
+          await wrapper.setData({
+            myCaseFiles: false,
+            userFilters: {
+              ...wrapper.vm.myCaseFilesFilter,
+              ...filterFromPanel,
+            },
+          });
+
+          expect(wrapper.vm.onApplyFilter).toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel });
+        });
       });
     });
   });
+
   describe('Computed', () => {
     beforeEach(() => {
       storage.user.getters.userId = jest.fn(() => 'mock-id');
@@ -351,6 +362,78 @@ describe('CaseFilesTable.vue', () => {
         });
       });
     });
+
+    describe('filters', () => {
+      it('should have correct filters', () => {
+        const expected = [
+          {
+            key: 'Metadata/PrimaryBeneficiaryFirstName',
+            type: EFilterType.Text,
+            label: 'caseFilesTable.tableHeaders.firstName',
+          },
+          {
+            key: 'Metadata/PrimaryBeneficiaryLastName',
+            type: EFilterType.Text,
+            label: 'caseFilesTable.tableHeaders.lastName',
+          },
+          {
+            key: 'Entity/EventId',
+            type: EFilterType.Select,
+            label: 'caseFileTable.filters.eventName',
+            items: wrapper.vm.eventsFilter,
+            loading: wrapper.vm.eventsFilterLoading,
+            disabled: wrapper.vm.eventsFilterLoading,
+          },
+          {
+            key: `Metadata/TriageName/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.MultiSelect,
+            label: 'caseFileTable.tableHeaders.triage',
+            items: helpers.enumToTranslatedCollection(CaseFileTriage, 'enums.Triage', true),
+          },
+          {
+            key: 'Entity/Created',
+            type: EFilterType.Date,
+            label: 'caseFileTable.filters.createdDate',
+          },
+          {
+            key: `Metadata/CaseFileStatusName/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.MultiSelect,
+            label: 'caseFileTable.tableHeaders.status',
+            items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
+          },
+          {
+            key: 'Entity/IsDuplicate',
+            type: EFilterType.Select,
+            label: 'caseFilesTable.filters.isDuplicate',
+            items: [{
+              text: 'common.yes',
+              value: true,
+            }, {
+              text: 'common.no',
+              value: false,
+            }],
+          },
+          {
+            key: 'Entity/AssignedIndividualIds',
+            type: EFilterType.Select,
+            label: 'caseFileTable.filters.isAssigned',
+            items: [{
+              text: 'common.yes',
+              value: 'arrayNotEmpty',
+            }, {
+              text: 'common.no',
+              value: 'arrayEmpty',
+            }],
+          },
+          {
+            key: 'Metadata/LastActionDate',
+            type: EFilterType.Date,
+            label: 'caseFileTable.filters.lastActionDate',
+          },
+        ];
+        expect(wrapper.vm.filters).toEqual(expected);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -432,6 +515,82 @@ describe('CaseFilesTable.vue', () => {
           params: {
             id: mockCaseFiles[0].entity.id,
           },
+        });
+      });
+    });
+
+    describe('fetchEventsFilter', () => {
+      it('should search user events with status onhold or open', async () => {
+        await wrapper.vm.fetchEventsFilter();
+
+        expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
+          filter: {
+            or: [
+              {
+                Metadata: {
+                  Event: {
+                    Status: EEventStatus.Open.toString(),
+                  },
+                },
+              },
+              {
+                Metadata: {
+                  Event: {
+                    Status: EEventStatus.OnHold.toString(),
+                  },
+                },
+              },
+            ],
+          },
+          top: 999,
+          orderBy: 'Metadata/Event/Name/Translation/en asc',
+          queryType: 'full',
+          searchMode: 'all',
+        });
+      });
+
+      it('should set eventsFilter the search results', async () => {
+        jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => mockCombinedEvents());
+        await wrapper.vm.fetchEventsFilter();
+        const expected = mockCombinedCaseFiles().map((c) => ({ text: c.metadata.event.name.translation.en, value: c.metadata.event.id }));
+        expect(wrapper.vm.eventsFilter).toEqual(expected);
+      });
+    });
+
+    describe('onApplyFilterLocal', () => {
+      describe('when user is using my case file filter', () => {
+        it('should call onApplyFilter with proper filters if filters panel also', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            myCaseFiles: true,
+          });
+
+          const preparedFilters = { test: {} };
+
+          await wrapper.vm.onApplyFilterLocal({ preparedFilters, searchFilters: null });
+
+          expect(wrapper.vm.onApplyFilter).toHaveBeenLastCalledWith({
+            preparedFilters: { ...preparedFilters, ...wrapper.vm.myCaseFilesFilter },
+            searchFilters: null,
+          });
+        });
+      });
+
+      describe('when user is not using my case file filter', () => {
+        it('should call onApplyFilter with proper filters', async () => {
+          wrapper.vm.onApplyFilter = jest.fn();
+          await wrapper.setData({
+            myCaseFiles: false,
+          });
+
+          const preparedFilters = { test: {} };
+
+          await wrapper.vm.onApplyFilterLocal({ preparedFilters, searchFilters: null });
+
+          expect(wrapper.vm.onApplyFilter).toHaveBeenLastCalledWith({
+            preparedFilters,
+            searchFilters: null,
+          });
         });
       });
     });

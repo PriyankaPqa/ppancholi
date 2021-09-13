@@ -92,7 +92,7 @@ export default Vue.extend({
     return {
       showInfoDialog: false,
       EEventCallCentreStatus,
-      getStringDate: helpers.getStringDate,
+      getLocalStringDate: helpers.getLocalStringDate,
     };
   },
 
@@ -101,11 +101,11 @@ export default Vue.extend({
       return {
         startDate: {
           key: 'eventSummary.callCentre.startDate',
-          value: this.callCentre.startDate ? this.getStringDate(this.callCentre.startDate, 'll') : '-',
+          value: this.callCentre.startDate ? this.getLocalStringDate(this.callCentre.startDate, 'll') : '-',
         },
         endDate: {
           key: 'eventSummary.callCentre.endDate',
-          value: this.callCentre.endDate ? this.getStringDate(this.callCentre.endDate, 'll') : '-',
+          value: this.callCentre.endDate ? this.getLocalStringDate(this.callCentre.endDate, 'll') : '-',
         },
         details: {
           key: 'eventSummary.callCentre.details',

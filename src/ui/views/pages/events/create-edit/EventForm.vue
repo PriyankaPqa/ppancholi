@@ -131,7 +131,7 @@
                   <div>
                     <span class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.on_hold') }}</span>
                     <span v-if="isStatusOpen">{{ $t('event.start_on_a_date',) }}
-                      {{ getStringDate(event.schedule.scheduledOpenDate, 'll') }}</span>
+                      {{ getLocalStringDate(event.schedule.scheduledOpenDate, 'll') }}</span>
                   </div>
 
                   <v-switch
@@ -294,7 +294,6 @@ import {
   IEventCombined,
   EventEntity,
 } from '@/entities/event';
-import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { TOOLTIP_DELAY } from '@/ui/constants';
 // import _cloneDeep from 'lodash/cloneDeep';
@@ -339,7 +338,7 @@ export default Vue.extend({
   },
 
   data() {
-    const getStringDate = (date: Date| string, format = 'YYYY-MM-DD'): string => moment(date).utc().format(format);
+    const { getLocalStringDate } = helpers;
     let localEvent;
     if (this.isEditMode) {
       localEvent = new EventEntity(this.event);
@@ -354,14 +353,14 @@ export default Vue.extend({
     };
 
     if (this.isEditMode) {
-      localEvent.responseDetails.dateReported = getStringDate(localEvent.responseDetails.dateReported);
+      localEvent.responseDetails.dateReported = getLocalStringDate(localEvent.responseDetails.dateReported);
 
       if (localEvent.schedule.scheduledOpenDate) {
-        localEvent.schedule.scheduledOpenDate = getStringDate(localEvent.schedule.scheduledOpenDate);
+        localEvent.schedule.scheduledOpenDate = getLocalStringDate(localEvent.schedule.scheduledOpenDate);
       }
 
       if (localEvent.schedule.scheduledCloseDate) {
-        localEvent.schedule.scheduledCloseDate = getStringDate(localEvent.schedule.scheduledCloseDate);
+        localEvent.schedule.scheduledCloseDate = getLocalStringDate(localEvent.schedule.scheduledCloseDate);
       }
 
       if (localEvent && localEvent.responseDetails.assistanceNumber) {
@@ -381,7 +380,7 @@ export default Vue.extend({
       initialStatus: localEvent.schedule.status,
       initialOpenDate: localEvent.schedule.scheduledOpenDate,
       initialCloseDate: localEvent.schedule.scheduledCloseDate,
-      getStringDate,
+      getLocalStringDate,
     };
   },
 
@@ -587,7 +586,7 @@ export default Vue.extend({
         && this.localEvent.hasBeenOpen;
     },
 
-    today(): string { return this.getStringDate(new Date()); },
+    today(): string { return this.getLocalStringDate(new Date()); },
   },
 
   watch: {

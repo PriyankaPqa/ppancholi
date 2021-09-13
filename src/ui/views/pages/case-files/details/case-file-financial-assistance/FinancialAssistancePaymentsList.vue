@@ -37,7 +37,7 @@
       </template>
 
       <template #[`item.${customColumns.created}`]="{ item }">
-        <span data-test="fap_created"> {{ getStringDate(item.entity.created, 'll') }}</span>
+        <span data-test="fap_created"> {{ getLocalStringDate(item.entity.created, 'll') }}</span>
       </template>
 
       <template #[`item.${customColumns.totals}`]="{ item }">
@@ -109,7 +109,7 @@ export default Vue.extend({
       tableProps: {
         loading: false,
       },
-      getStringDate: helpers.getStringDate,
+      getLocalStringDate: helpers.getLocalStringDate,
     };
   },
 

@@ -110,7 +110,20 @@ export function renderPrimitiveValue(key: string, val: any, aliases: Alias[] = [
   if(key.includes('/searchIn_az')) {
     const newKey = key.replace("/searchIn_az", "");
     const value = handleValue(`${val}`, aliases);
-    return `search.in(${newKey}, ${value})`
+    // By default search.in assumes that spaces and commas are delimiters.
+    // We need to specify the delimiter , to exclude space from it
+    // Works assuming our value does not have , in it. So , is just the separator
+    return `search.in(${newKey}, ${value}, ',')`
+  }
+
+  if(key.includes('/arrayNotEmpty')) {
+    const newKey = key.replace("/arrayNotEmpty", "");
+    return `${newKey}/any()`
+  }
+
+  if(key.includes('/arrayEmpty')) {
+    const newKey = key.replace("/arrayEmpty", "");
+    return `not(${newKey}/any())`
   }
 
   return `${key} eq ${handleValue(val, aliases)}`;

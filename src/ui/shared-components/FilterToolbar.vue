@@ -3,6 +3,7 @@
     v-bind="$attrs"
     :filter-key="filterKey"
     :filter-options="filterOptions"
+    :filter-operators="filterOperators"
     :labels="filterLabels"
     :user-filters="userFilters"
     :loading="loading"
@@ -11,7 +12,8 @@
     @delete:filter="onDelete"
     @update:appliedFilter="onApplyFilter"
     @export="$emit('export')"
-    @import="$emit('import')">
+    @import="$emit('import')"
+    @open="$emit('open')">
     <!-- Template for toolbar -->
     <template #toolbarActions>
       <slot name="toolbarActions" />
@@ -24,7 +26,7 @@ import Vue from 'vue';
 import _set from 'lodash/set';
 import _difference from 'lodash/difference';
 import {
-  IFilterSettings, IFilterData, RcFilterToolbar, IFilterToolbarLabels,
+  IFilterData, IFilterSettings, IFilterToolbarLabels, IFilterTypeOperators, RcFilterToolbar,
 } from '@crctech/component-library';
 import { EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import { IFilter, IUserAccountEntity } from '@/entities/user-account';
@@ -115,9 +117,43 @@ export default Vue.extend({
           [EFilterOperator.EndsWith]: this.$t('genericFilter.operators.EndsWith') as string,
           [EFilterOperator.Contains]: this.$t('genericFilter.operators.Contains') as string,
           [EFilterOperator.DoesNotContain]: this.$t('genericFilter.operators.DoesNotContain') as string,
+          [EFilterOperator.FuzzySearch]: this.$t('genericFilter.operators.FuzzySearch') as string,
         },
         errors: {
         },
+      };
+    },
+
+    filterOperators(): IFilterTypeOperators {
+      return {
+        text: [
+          { label: this.$t('genericFilter.operators.Equal') as string, operator: EFilterOperator.Equal },
+          { label: this.$t('genericFilter.operators.BeginsWith') as string, operator: EFilterOperator.BeginsWith },
+          // { label: 'Ends With', operator: EFilterOperator.EndsWith },
+          { label: this.$t('genericFilter.operators.Contains') as string, operator: EFilterOperator.Contains },
+          // { label: this.$t('genericFilter.operators.FuzzySearch') as string, operator: EFilterOperator.FuzzySearch },
+          // { label: 'Does not contain', operator: EFilterOperator.DoesNotContain },
+        ],
+        number: [
+          { label: this.$t('genericFilter.operators.Equal') as string, operator: EFilterOperator.Equal },
+          { label: this.$t('genericFilter.operators.Between') as string, operator: EFilterOperator.Between },
+          { label: this.$t('genericFilter.operators.GreaterThan') as string, operator: EFilterOperator.GreaterThan },
+          { label: this.$t('genericFilter.operators.LessThan') as string, operator: EFilterOperator.LessThan },
+        ],
+        select: [
+          { label: this.$t('genericFilter.operators.Equal') as string, operator: EFilterOperator.Equal },
+        ],
+        multiselect: [
+          { label: this.$t('genericFilter.operators.In') as string, operator: EFilterOperator.In },
+        ],
+        date: [
+          { label: this.$t('genericFilter.operators.Equal') as string, operator: EFilterOperator.Equal },
+          { label: this.$t('genericFilter.operators.After') as string, operator: EFilterOperator.GreaterThan },
+          { label: this.$t('genericFilter.operators.OnOrAfter') as string, operator: EFilterOperator.GreaterEqual },
+          { label: this.$t('genericFilter.operators.Before') as string, operator: EFilterOperator.LessThan },
+          { label: this.$t('genericFilter.operators.OnOrBefore') as string, operator: EFilterOperator.LessEqual },
+          { label: this.$t('genericFilter.operators.Between') as string, operator: EFilterOperator.Between },
+        ],
       };
     },
   },
@@ -156,8 +192,10 @@ export default Vue.extend({
       this.loading = true;
       try {
         const userAccount = await this.$storage.userAccount.actions.addFilter(filter);
-        this.refreshUserFilters(userAccount);
-        this.$toasted.global.success(this.$t('filters.create.success'));
+        if (userAccount) {
+          this.refreshUserFilters(userAccount);
+          this.$toasted.global.success(this.$t('filters.create.success'));
+        }
       } finally {
         this.loading = false;
       }
@@ -178,7 +216,7 @@ export default Vue.extend({
       try {
         const userAccount = await this.$storage.userAccount.actions.deleteFilter(filter);
         this.refreshUserFilters(userAccount);
-        this.$toasted.global.success(this.$t('filters.create.success'));
+        this.$toasted.global.success(this.$t('filters.delete.success'));
       } finally {
         this.loading = false;
       }
@@ -215,7 +253,13 @@ export default Vue.extend({
           _set(newFilter, key, { ge: (value as Array<string | number>)[0], le: (value as Array<string | number>)[1] });
           break;
         case EFilterOperator.Equal:
-          _set(newFilter, key, value);
+          if (value === 'arrayNotEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
+            _set(newFilter, key, { arrayNotEmpty: value });
+          } else if (value === 'arrayEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
+            _set(newFilter, key, { arrayEmpty: value });
+          } else {
+            _set(newFilter, key, value);
+          }
           break;
         case EFilterOperator.GreaterEqual:
           _set(newFilter, key, { ge: value });
@@ -253,17 +297,22 @@ export default Vue.extend({
       const { value } = filter;
 
       if (type !== 'text') throw Error('only filter whose type is text can be processed here');
-      if (type === 'text' && operator === EFilterOperator.Equal) throw Error('filter with type text and operator equal cannot be processed here');
 
       switch (operator) {
         case EFilterOperator.BeginsWith: // ex: FirstName:/Jo.*/
           return `${key}:/${value}.*/`;
         case EFilterOperator.Contains: // ex: EventName/Translation/En: "full string contains"
-          return `${key}: "${value}"`;
+          return `${key}: /.*${value}.*/`;
           // return `${key}:/.*${value}.*/`;
         case EFilterOperator.DoesNotContain: // TeamName:(/.*/ NOT /.*name.*/)
           // return `${key}: "!${value}"`;
           return `${key}:(/.*/ NOT /.*${value}.*/)`;
+
+        case EFilterOperator.FuzzySearch:
+          return `${key}: "${value}~"`;
+
+        case EFilterOperator.Equal:
+          return `${key}: "${value}"`;
         default:
           return '';
       }

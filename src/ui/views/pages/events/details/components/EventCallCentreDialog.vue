@@ -158,7 +158,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
       },
       callCentre: null as IEventCallCentre,
       isActive: false,
-      getStringDate: helpers.getStringDate,
+      getLocalStringDate: helpers.getLocalStringDate,
       loading: false,
     };
   },
@@ -222,8 +222,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
       const callCentre = this.event.callCentres.find((centre:IEventCallCentre) => centre.id === this.id);
       if (callCentre) {
         this.callCentre = _cloneDeep(callCentre);
-        this.callCentre.startDate = callCentre.startDate ? this.getStringDate(callCentre.startDate) : null;
-        this.callCentre.endDate = callCentre.endDate ? this.getStringDate(callCentre.endDate) : null;
+        this.callCentre.startDate = callCentre.startDate ? this.getLocalStringDate(callCentre.startDate) : null;
+        this.callCentre.endDate = callCentre.endDate ? this.getLocalStringDate(callCentre.endDate) : null;
         this.isActive = callCentre.status === EEventCallCentreStatus.Active;
       }
     },

@@ -90,7 +90,7 @@
             {{ $t('eventDetail.created') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-created-date">
-            {{ getStringDate(event.entity.created) }}
+            {{ getLocalStringDate(event.entity.created) }}
           </div>
         </div>
 
@@ -99,7 +99,7 @@
             {{ $t('eventDetail.reported') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-reported-date">
-            {{ event.entity.responseDetails? getStringDate(event.entity.responseDetails.dateReported): "-" }}
+            {{ event.entity.responseDetails? getLocalStringDate(event.entity.responseDetails.dateReported): "-" }}
           </div>
         </div>
 
@@ -109,7 +109,7 @@
           </div>
 
           <div class="rc-body14 fw-bold" data-test="status-change-date">
-            {{ getStringDate(statusChange.date) }}
+            {{ getLocalStringDate(statusChange.date) }}
           </div>
 
           <template v-if="statusChange.reason">
@@ -168,7 +168,7 @@ export default Vue.extend({
       removeBorder: false,
       showExpandedLeftMenu: false,
       idDigitsCount: 6,
-      getStringDate: helpers.getStringDate,
+      getLocalStringDate: helpers.getLocalStringDate,
       loading: false,
     };
   },

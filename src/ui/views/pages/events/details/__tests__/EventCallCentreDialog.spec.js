@@ -1,5 +1,6 @@
 import { VSwitch } from 'vuetify/lib';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import helpers from '@/ui/helpers';
 import { mockEventEntity, EEventCallCentreStatus } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
@@ -321,7 +322,7 @@ describe('EventCallCentreDialog.vue', () => {
           },
         });
         await wrapper.vm.initEditMode();
-        expect(wrapper.vm.callCentre).toEqual({ ...mockEvent.callCentres[0], startDate: '2021-03-01' });
+        expect(wrapper.vm.callCentre).toEqual({ ...mockEvent.callCentres[0], startDate: helpers.getLocalStringDate('2021-03-01T00:00:00Z') });
         expect(wrapper.vm.isActive).toBeTruthy();
       });
     });
