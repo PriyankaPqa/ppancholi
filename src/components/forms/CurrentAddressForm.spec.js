@@ -220,8 +220,8 @@ describe('CurrentAddressForm.vue', () => {
         wrapper.vm.onCountryChange();
       });
 
-      it('reset the address but preserve place name', () => {
-        expect(wrapper.vm.form.reset).toHaveBeenLastCalledWith(wrapper.vm.form.addressType, true);
+      it('reset the address but preserve place name and country', () => {
+        expect(wrapper.vm.form.reset).toHaveBeenLastCalledWith(wrapper.vm.form.addressType, true, 'CA');
       });
 
       it('resets the form', () => {

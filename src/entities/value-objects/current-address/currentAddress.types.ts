@@ -56,5 +56,5 @@ export interface ICurrentAddress extends ICurrentAddressData, IEntity {
     requiresProvince(): boolean;
     requiresCity(): boolean;
     requiresShelterLocation(): boolean;
-    reset(type?: ECurrentAddressTypes, preservePlace?: boolean): void;
+    reset(type?: ECurrentAddressTypes, preservePlace?: boolean, country?: string,): void;
 }

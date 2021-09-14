@@ -99,9 +99,13 @@ export default Vue.extend({
       if (this.currentAddress?.address?.city) {
         line.push(this.currentAddress.address.city);
       }
-      if (this.currentAddress?.address?.province) {
+
+      if (this.currentAddress?.address?.province && this.currentAddress.address.province !== ECanadaProvinces.OT) {
         line.push(ECanadaProvinces[this.currentAddress.address.province as number]);
+      } else if (this.currentAddress?.address?.specifiedOtherProvince) {
+        line.push(this.currentAddress.address.specifiedOtherProvince);
       }
+
       if (this.currentAddress?.address?.postalCode) {
         line.push(this.currentAddress.address.postalCode);
       }

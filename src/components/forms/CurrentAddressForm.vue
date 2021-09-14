@@ -306,7 +306,7 @@ export default Vue.extend({
     },
 
     onCountryChange() {
-      this.form.reset(this.form.addressType, true);
+      this.form.reset(this.form.addressType, true, this.form.address.country);
       (this.$refs.form as VForm).reset();
     },
   },

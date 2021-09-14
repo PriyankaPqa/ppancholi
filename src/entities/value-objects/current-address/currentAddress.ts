@@ -74,7 +74,7 @@ export class CurrentAddress implements ICurrentAddress {
     return errors;
   }
 
-  reset(type?: ECurrentAddressTypes, preservePlace = false): void {
+  reset(type?: ECurrentAddressTypes, preservePlace = false, country?: string): void {
     this.addressType = type ?? null;
 
     if (!preservePlace) {
@@ -83,6 +83,9 @@ export class CurrentAddress implements ICurrentAddress {
     }
 
     this.address = new Address();
+    if (country) {
+      this.address.reset(country);
+    }
     this.shelterLocation = null;
   }
 
