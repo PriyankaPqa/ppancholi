@@ -1,7 +1,7 @@
 import {
   IAddress,
   IContactInformation, ICurrentAddress,
-  IHouseholdCreate, IIdentitySet, IIndigenousCommunityData, IMember, IMemberData,
+  IHouseholdCreate, IIdentitySet, IIndigenousCommunityData, IMember, IMemberData, IValidateEmailRequest, IValidateEmailResponse,
 } from '../../../entities/household-create';
 import { IOptionItemData } from '../../../types';
 import {
@@ -23,6 +23,7 @@ export interface IHouseholdsService {
   updateNoFixedHomeAddress(id: string, observation?: string): Promise<IHouseholdEntity> | false;
   deleteAdditionalMember(householdId: string, memberId: string): Promise<IHouseholdEntity>;
   addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity>;
+  validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
 }
 
 export interface IHouseholdsServiceMock {
@@ -40,4 +41,5 @@ export interface IHouseholdsServiceMock {
   updateNoFixedHomeAddress: jest.Mock<IHouseholdEntity>;
   deleteAdditionalMember: jest.Mock<IHouseholdEntity>;
   addMember: jest.Mock<IHouseholdEntity>;
+  validateEmail: jest.Mock<IValidateEmailResponse>;
 }

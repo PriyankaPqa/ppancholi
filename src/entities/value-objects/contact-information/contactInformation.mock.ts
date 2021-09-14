@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
 import { IOptionItemData } from '../../../types';
 import { ContactInformation } from './contactInformation';
-import { IContactInformationData, IContactInformation, IContactInformationCreateRequest } from './contactInformation.types';
+import { IContactInformationData, IContactInformation, IContactInformationCreateRequest, IValidateEmailResponse } from './contactInformation.types';
 
 export const mockPreferredLanguages = (): IOptionItemData[] => [
   {
@@ -89,6 +89,7 @@ export const mockContactInformationData = (): IContactInformationData => ({
   primarySpokenLanguage: mockPrimarySpokenLanguage(),
   primarySpokenLanguageOther: '',
   email: 'test@test.ca',
+  emailValidatedByBackend: true,
 });
 
 export const mockPrimarySpokenLanguageOther = (): IContactInformation => new ContactInformation(
@@ -111,4 +112,9 @@ export const mockContactInformationCreateRequest = (): IContactInformationCreate
   ...mockContactInformationData(),
   preferredLanguage: { optionItemId: 'bd84e12c-b20b-4415-b3b6-c3f205b195ab', specifiedOther: null },
   primarySpokenLanguage: { optionItemId: '0a5956c2-16f0-4a79-acc4-4e36afcf3c3f', specifiedOther: null },
+});
+
+export const mockValidateEmailResponse = (): IValidateEmailResponse => ({
+  errors: [],
+  emailIsValid: true,
 });

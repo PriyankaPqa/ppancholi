@@ -28,6 +28,8 @@ export class ContactInformation implements IContactInformation {
 
   primarySpokenLanguageOther: string;
 
+  emailValidatedByBackend: boolean;
+
   constructor(data?: IContactInformationData) {
     if (!data) {
       this.reset();
@@ -40,6 +42,7 @@ export class ContactInformation implements IContactInformation {
       this.preferredLanguageOther = data.preferredLanguageOther;
       this.primarySpokenLanguage = data.primarySpokenLanguage;
       this.primarySpokenLanguageOther = data.primarySpokenLanguageOther;
+      this.emailValidatedByBackend = data.emailValidatedByBackend;
     }
   }
 
@@ -76,6 +79,10 @@ export class ContactInformation implements IContactInformation {
       }
     }
 
+    if (!this.emailValidatedByBackend) {
+      errors.push('invalid email');
+    }
+
     return errors;
   }
 
@@ -103,5 +110,6 @@ export class ContactInformation implements IContactInformation {
     this.preferredLanguageOther = null;
     this.primarySpokenLanguage = null;
     this.primarySpokenLanguageOther = null;
+    this.emailValidatedByBackend = true;
   }
 }

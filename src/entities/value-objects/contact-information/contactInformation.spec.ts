@@ -221,6 +221,22 @@ describe('>>> ContactInformation', () => {
           expect(p.validate(false)).not.toContain('email is required if no phone');
         });
       });
+
+      describe('emailValidatedByBackend', () => {
+        it('should be valid', () => {
+          const p = new ContactInformation();
+
+          expect(p.validate(false)).not.toContain('invalid email');
+        });
+
+        it('should not be valid', () => {
+          const p = new ContactInformation();
+
+          p.emailValidatedByBackend = false;
+
+          expect(p.validate(false)).toContain('invalid email');
+        });
+      });
     });
   });
 });

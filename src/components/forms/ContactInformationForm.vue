@@ -134,6 +134,11 @@ export default Vue.extend({
       formCopy: null as IContactInformation,
       focusPhoneCounter: 0,
       triggerPhoneMessage: 3,
+      validateEmailTimeout: null,
+      customValidator: {
+        isValid: true,
+        messageKey: null,
+      },
     };
   },
 
@@ -160,6 +165,7 @@ export default Vue.extend({
           required: this.emailRequired,
           email: true,
           max: MAX_LENGTH_MD,
+          customValidator: this.customValidator,
         },
       };
     },
@@ -209,6 +215,10 @@ export default Vue.extend({
         phone: true,
       };
     },
+
+    isCRCRegistration(): boolean {
+      return this.$storage.registration.getters.isCRCRegistration();
+    },
   },
 
   watch: {
@@ -216,6 +226,31 @@ export default Vue.extend({
       deep: true,
       handler(form: IContactInformation) {
         this.$emit('change', form);
+      },
+    },
+
+    'formCopy.email': {
+      async handler(newVal) {
+        clearTimeout(this.validateEmailTimeout);
+        this.formCopy.emailValidatedByBackend = !newVal;
+        this.validateEmailTimeout = setTimeout(async () => {
+          if (newVal) {
+            const result = await this.$services.households.validateEmail({ emailAddress: newVal });
+            this.customValidator = {
+              isValid: result.emailIsValid,
+              messageKey: result.emailIsValid ? null : result.errors[0].code,
+            };
+
+            this.formCopy.emailValidatedByBackend = this.customValidator.isValid;
+
+            const emailAreadyExists = 'errors.the-email-provided-already-exists-in-the-system';
+            if (this.customValidator.messageKey === emailAreadyExists) {
+              this.customValidator.messageKey = this.isCRCRegistration
+                ? this.$t(`${emailAreadyExists}.crc-registration`)
+                : this.$t(`${emailAreadyExists}.self-registration`, { phoneNumber: this.$storage.registration.getters.event().responseDetails.assistanceNumber });
+            }
+          }
+        }, 500);
       },
     },
   },

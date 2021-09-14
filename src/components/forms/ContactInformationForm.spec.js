@@ -93,11 +93,22 @@ describe('ContactInformationForm.vue', () => {
         });
       });
 
-      test('email', () => {
+      test('email', async () => {
+        await wrapper.setData({
+          customValidator: {
+            isValid: true,
+            messageKey: 'messageKey',
+          },
+        });
+
         expect(wrapper.vm.rules.email).toEqual({
           required: wrapper.vm.emailRequired,
           email: true,
           max: MAX_LENGTH_MD,
+          customValidator: {
+            isValid: true,
+            messageKey: 'messageKey',
+          },
         });
       });
     });
@@ -219,6 +230,16 @@ describe('ContactInformationForm.vue', () => {
         });
       });
     });
+
+    describe('isCRCRegistration', () => {
+      it('returns correct value', async () => {
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+        expect(wrapper.vm.isCRCRegistration).toBe(true);
+
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+        expect(wrapper.vm.isCRCRegistration).toBe(false);
+      });
+    });
   });
 
   describe('Template', () => {
@@ -299,6 +320,20 @@ describe('ContactInformationForm.vue', () => {
       it('is linked to proper rules', () => {
         const element = wrapper.findDataTest('personalInfo__email');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.email);
+      });
+
+      it('calls backend to validate', async () => {
+        wrapper.vm.$services.households.validateEmail = jest.fn(() => ({ emailIsValid: true }));
+
+        await wrapper.setData({
+          formCopy: {
+            email: 'email',
+          },
+        });
+
+        await new Promise((resolve) => setTimeout(resolve, 500));
+
+        expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledWith({ emailAddress: 'email' });
       });
     });
   });

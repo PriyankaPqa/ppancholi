@@ -118,6 +118,15 @@ describe('>>> Beneficiaries Service', () => {
     });
   });
 
+  test('validateEmail is linked to the correct URL', async () => {
+    const email = 'abc@abc.ca';
+
+    await service.validateEmail({ emailAddress: email });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/validate-email-address`, {
+      emailAddress: email,
+    });
+  });
+
   describe('parseMember', () => {
     it('should return the correct object', () => {
       const member = mockMember();

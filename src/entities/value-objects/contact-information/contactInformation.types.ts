@@ -27,6 +27,8 @@ export interface IContactInformationData {
   primarySpokenLanguage: IOptionItemData;
 
   primarySpokenLanguageOther: string;
+
+  emailValidatedByBackend: boolean;
 }
 
 export interface IContactInformationCreateRequest {
@@ -40,4 +42,22 @@ export interface IContactInformationCreateRequest {
 
 export interface IContactInformation extends IContactInformationData {
   validate(skipEmailPhoneRules: boolean): string[];
+}
+
+export interface IValidateEmailRequest {
+  personId?: uuid;
+  emailAddress: string;
+}
+
+export interface IValidateEmailResponse {
+  emailIsValid: boolean;
+  errors: IApiError[];
+}
+
+export interface IApiError {
+  status: string;
+  code: string;
+  title: string;
+  detail: string;
+  meta: object;
 }

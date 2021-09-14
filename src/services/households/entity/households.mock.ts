@@ -4,6 +4,7 @@ import {
   mockIndigenousCommunitiesGetData, mockMemberData,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
+  mockValidateEmailResponse,
 } from '../../../entities/household-create';
 import { IHouseholdsServiceMock } from './households.types';
 
@@ -22,4 +23,5 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   updateNoFixedHomeAddress: jest.fn(() => mockHouseholdEntity()),
   deleteAdditionalMember: jest.fn(() => mockHouseholdEntity()),
   addMember: jest.fn(() => mockHouseholdEntity()),
+  validateEmail: jest.fn(() => mockValidateEmailResponse()),
 });

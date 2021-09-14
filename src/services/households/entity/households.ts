@@ -18,7 +18,7 @@ import {
   MemberCreateRequest,
   IIdentitySet,
   IIdentitySetCreateRequest,
-  IMemberData, IAddress,
+  IMemberData, IAddress, IValidateEmailResponse, IValidateEmailRequest,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
@@ -105,6 +105,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
       ...parsePayload,
       registrationType: ERegistrationMode.CRC,
     });
+  }
+
+  async validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
+    return this.http.post(`${API_URL_SUFFIX}/persons/validate-email-address`, request);
   }
 
   parseHouseholdPayload(household: IHouseholdCreate, eventId: string): ICreateHouseholdRequest {
