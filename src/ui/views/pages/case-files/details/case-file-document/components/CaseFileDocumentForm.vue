@@ -59,6 +59,17 @@
           </v-row>
 
           <v-row>
+            <v-col v-if="localDocument.category && categoryIsOther(localDocument.category.optionItemId)" cols="12">
+              <v-text-field-with-validation
+                v-model="localDocument.category.specifiedOther"
+                data-test="category-specified-other"
+                autocomplete="nope"
+                :label="`${$t('common.pleaseSpecify')} *`"
+                :rules="rules.specifiedOther" />
+            </v-col>
+          </v-row>
+
+          <v-row>
             <v-col cols="12">
               <v-text-area-with-validation
                 v-model="localDocument.note"
@@ -156,6 +167,10 @@ export default mixins(fileUpload).extend({
       return this.$storage.caseFileDocument.getters.categories(true, this.localDocument.category?.optionItemId);
     },
 
+    categoryIsOther(): (id: string) => boolean {
+      return (id) => this.documentCategories.find((c) => c.id === id)?.isOther;
+    },
+
     rules(): Record<string, unknown> {
       return {
         name: {
@@ -170,6 +185,10 @@ export default mixins(fileUpload).extend({
         },
         file: {
           requiredFile: this.file.size,
+        },
+        specifiedOther: {
+          required: true,
+          max: MAX_LENGTH_MD,
         },
       };
     },
@@ -200,6 +219,9 @@ export default mixins(fileUpload).extend({
   watch: {
     localDocument: {
       handler(newDocument) {
+        if (!newDocument.category || !this.categoryIsOther(newDocument.category.optionItemId)) {
+          newDocument.category.specifiedOther = null;
+        }
         this.$emit('update:document', newDocument);
       },
       deep: true,

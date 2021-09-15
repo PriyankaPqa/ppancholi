@@ -106,6 +106,9 @@ export default Vue.extend({
       if (!this.document?.category?.optionItemId) return null;
       const types = this.$storage.caseFileDocument.getters.categories(false);
       const type = types.find((t) => t.id === this.document.category.optionItemId);
+      if (type.isOther && this.document.category.specifiedOther) {
+        return this.document.category.specifiedOther;
+      }
       return this.$m(type?.name);
     },
 

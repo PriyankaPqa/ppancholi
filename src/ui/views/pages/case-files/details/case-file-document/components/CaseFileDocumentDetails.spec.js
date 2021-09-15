@@ -81,6 +81,21 @@ describe('CaseFileDocumentDetails', () => {
         await mountWrapper();
         expect(wrapper.vm.category).toEqual(mockOptionItemData()[0].name.translation.en);
       });
+
+      it('returns the right category if category is other', async () => {
+        storage.caseFileDocument.getters.categories = jest.fn(()=> ([{...mockOptionItemData()[0], isOther: true}]))
+        await mountWrapper(false, 6, null, {
+          computed:
+           { document(){
+             return {
+              ...mockDocument,
+              category: {optionItemId: mockOptionItemData()[0].id, specifiedOther: 'foo'}
+             }
+            }
+          }
+        });
+        expect(wrapper.vm.category).toEqual('foo');
+      });
     });
 
     describe('documentData', () => {
