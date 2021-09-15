@@ -20,7 +20,7 @@ import { IMultilingual } from '@/types';
 import { IProgramEntity } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
-import { BaseModule } from '../base';
+import { BaseModule, filterAndSortActiveItems, filterAndSortActiveSubItems } from '../base';
 import { IState } from '../base/base.types';
 
 export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssistanceTableEntity, uuid> {
@@ -74,7 +74,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     // eslint-disable-next-line
     faCategories: (_state: any, _getters: any, _rootState: any, rootGetters: any) => {
-      const allCategories = rootGetters['financialAssistanceCategoryEntities/getAll'];
+      const allCategories = filterAndSortActiveItems(rootGetters['financialAssistanceCategoryEntities/getAll']);
       return allCategories;
     },
 
