@@ -61,8 +61,8 @@ export class ContactInformation implements IContactInformation {
 
     maxLengthCheck(this.alternatePhoneNumber.extension, MAX_LENGTH_MD, 'alternate phone extension', errors);
 
-    isEmail(this.email, 'email not valid', errors);
-    maxLengthCheck(this.email, MAX_LENGTH_MD, 'email', errors);
+    // isEmail(this.email, 'email not valid', errors);
+    // maxLengthCheck(this.email, MAX_LENGTH_MD, 'email', errors);
 
     if (!skipEmailPhoneRules) {
       hasAtLeastAPhoneIfNoEmail({

@@ -163,8 +163,6 @@ export default Vue.extend({
         },
         email: {
           required: this.emailRequired,
-          email: true,
-          max: MAX_LENGTH_MD,
           customValidator: this.customValidator,
         },
       };

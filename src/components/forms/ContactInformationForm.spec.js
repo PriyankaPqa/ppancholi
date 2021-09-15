@@ -103,8 +103,6 @@ describe('ContactInformationForm.vue', () => {
 
         expect(wrapper.vm.rules.email).toEqual({
           required: wrapper.vm.emailRequired,
-          email: true,
-          max: MAX_LENGTH_MD,
           customValidator: {
             isValid: true,
             messageKey: 'messageKey',

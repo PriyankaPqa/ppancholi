@@ -89,21 +89,6 @@ describe('>>> ContactInformation', () => {
       });
     });
 
-    describe('Email', () => {
-      it('should be valid', () => {
-        const p = new ContactInformation();
-        p.email = 'abcd';
-
-        expect(p.validate(false)).toContain('email not valid');
-      });
-      it(`has a max of ${MAX_LENGTH_MD} characters`, () => {
-        const p = new ContactInformation();
-        p.email = longText;
-
-        expect(p.validate(false)).toContain(`email exceeds max length of ${MAX_LENGTH_MD}`);
-      });
-    });
-
     describe('preferredLanguage', () => {
       it('is required', () => {
         const p = new ContactInformation();
