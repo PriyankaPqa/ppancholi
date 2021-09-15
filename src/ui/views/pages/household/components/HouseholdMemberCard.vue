@@ -39,7 +39,7 @@
         <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
         <v-btn
           v-for="btn in buttons"
-          v-if="!isPrimaryMember || !btn.additionalMemberOnly"
+          v-if="!btn.hide && (!isPrimaryMember || !btn.additionalMemberOnly)"
           :key="btn.test"
           icon
           class="ml-2"
@@ -111,6 +111,12 @@
       :member="member"
       :shelter-locations-list="shelterLocations"
       in-household-profile />
+
+    <split-household-dialog
+      v-if="showSplitDialog"
+      :show.sync="showSplitDialog"
+      :index="index"
+      :new-primary-member="member" />
   </v-sheet>
 </template>
 
@@ -124,6 +130,7 @@ import { CurrentAddressTemplate, AddEditAdditionalMembers } from '@crctech/regis
 import { IEventGenericLocation } from '@/entities/event';
 
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
+import SplitHouseholdDialog from './SplitHouseholdDialog.vue';
 
 export default Vue.extend({
   name: 'HouseholdMemberCard',
@@ -131,6 +138,7 @@ export default Vue.extend({
     CurrentAddressTemplate,
     PrimaryMemberDialog,
     AddEditAdditionalMembers,
+    SplitHouseholdDialog,
   },
 
   props: {
@@ -168,6 +176,7 @@ export default Vue.extend({
     return {
       showPrimaryMemberDialog: false,
       showAdditionalMemberDialog: false,
+      showSplitDialog: false,
       i18n: this.$i18n,
     };
   },
@@ -185,7 +194,8 @@ export default Vue.extend({
           test: 'transfer',
           icon: 'mdi-call-split',
           additionalMemberOnly: true,
-          event: () => false,
+          event: () => { this.showSplitDialog = true; },
+          hide: !this.canSplit,
         },
         {
           test: 'delete',
@@ -194,6 +204,10 @@ export default Vue.extend({
           event: () => false,
         },
       ];
+    },
+
+    canSplit():boolean {
+      return this.$hasLevel('level2');
     },
 
     memberInfo(): Array<Record<string, unknown>> {

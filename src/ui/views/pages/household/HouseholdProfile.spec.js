@@ -1,6 +1,4 @@
-import {
-  mockHouseholdCreate, Member, mockAdditionalMember,
-} from '@crctech/registration-lib/src/entities/household-create';
+import { mockHouseholdCreate, Member } from '@crctech/registration-lib/src/entities/household-create';
 import { mockCombinedHousehold, mockHouseholdEntity, mockHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
@@ -378,7 +376,7 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               householdData:
-              { entity: mockHouseholdEntity({ timestamp: '2021-07-01' }), metadata: mockHouseholdMetadata({ timestamp: '2021-07-03' }) },
+                { entity: mockHouseholdEntity({ timestamp: '2021-07-01' }), metadata: mockHouseholdMetadata({ timestamp: '2021-07-03' }) },
             };
           },
           mocks: { $storage: storage },
@@ -396,7 +394,7 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               householdData:
-              { entity: mockHouseholdEntity({ timestamp: '2021-07-01' }), metadata: mockHouseholdMetadata({ timestamp: null }) },
+                { entity: mockHouseholdEntity({ timestamp: '2021-07-01' }), metadata: mockHouseholdMetadata({ timestamp: null }) },
             };
           },
           computed: {
@@ -441,7 +439,7 @@ describe('HouseholdProfile.vue', () => {
               return {
                 ...householdCreate,
                 homeAddress:
-              { ...householdCreate.homeAddress, province: ECanadaProvinces.OT, specifiedOtherProvince: 'mock-province' },
+                  { ...householdCreate.homeAddress, province: ECanadaProvinces.OT, specifiedOtherProvince: 'mock-province' },
               };
             },
           },
@@ -476,7 +474,7 @@ describe('HouseholdProfile.vue', () => {
             $storage: storage,
           },
         });
-        jest.spyOn(wrapper.vm, 'fetchHouseholdData').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm, 'fetchHouseholdData').mockImplementation(() => { });
       });
       it('calls registration storage action fetchGenders', () => {
         expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalledTimes(1);
@@ -559,20 +557,50 @@ describe('HouseholdProfile.vue', () => {
 
     describe('addAdditionalMember', () => {
       it('should set newAdditionalMember to new instance of member', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
         wrapper.vm.addAdditionalMember();
         expect(wrapper.vm.newAdditionalMember).toEqual(new Member());
       });
 
       it('should set showAddAdditionalMember to true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
         wrapper.vm.addAdditionalMember();
         expect(wrapper.vm.showAddAdditionalMember).toEqual(true);
       });
 
       it('should display a warning message if limit is reached', () => {
-        const house = householdCreate;
-        house.additionalMembers = new Array(20).fill(mockAdditionalMember());
+        const altHousehold = householdCreate;
+        [...Array(MAX_ADDITIONAL_MEMBERS).keys()].forEach((i) => {
+          altHousehold.additionalMembers.push(mockMember({ id: Math.random() + i }));
+        });
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: household.entity.id,
@@ -587,7 +615,7 @@ describe('HouseholdProfile.vue', () => {
             addressLine1() { return 'address-line-1'; },
             addressLine2() { return 'address-line-2'; },
             country() { return 'mock-country'; },
-            household() { return house; },
+            household() { return altHousehold; },
           },
           mocks: {
             $storage: storage,
@@ -599,10 +627,12 @@ describe('HouseholdProfile.vue', () => {
       });
 
       it('should disabled the button add if limit is reached', () => {
-        const house = householdCreate;
-        house.additionalMembers = new Array(MAX_ADDITIONAL_MEMBERS).fill(mockAdditionalMember());
+        const altHousehold = householdCreate;
+        [...Array(MAX_ADDITIONAL_MEMBERS).keys()].forEach((i) => {
+          altHousehold.additionalMembers.push(mockMember({ id: Math.random() + i }));
+        });
 
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: household.entity.id,
@@ -617,15 +647,16 @@ describe('HouseholdProfile.vue', () => {
             addressLine1() { return 'address-line-1'; },
             addressLine2() { return 'address-line-2'; },
             country() { return 'mock-country'; },
-            household() { return house; },
+            household() { return altHousehold; },
           },
           mocks: {
             $storage: storage,
           },
         });
 
+        expect(wrapper.vm.disabledAddMembers).toBeFalsy();
         wrapper.vm.addAdditionalMember();
-        expect(wrapper.vm.disabledAddMembers).toBe(true);
+        expect(wrapper.vm.disabledAddMembers).toBeTruthy();
       });
     });
 

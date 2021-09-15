@@ -2,6 +2,7 @@ import { mockMemberData } from '@crctech/registration-lib/src/entities/value-obj
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@crctech/registration-lib/src/entities/household-create';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../HouseholdMemberCard.vue';
 
@@ -109,6 +110,20 @@ describe('HouseholdMemberCard.vue', () => {
         element = wrapper.findDataTest('household_profile_member_action_btn_mock-button');
         await element.trigger('click');
         expect(buttons[0].event).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not render if hide option is false', () => {
+        buttons = [{
+          test: 'mock-button',
+          label: 'mock-button',
+          additionalMemberOnly: true,
+          icon: 'mock-icon',
+          event: jest.fn(),
+          hide: true,
+        }];
+        doMount(false, true, { computed: { buttons() { return buttons; } } });
+        const element = wrapper.findDataTest('household_profile_member_action_btn_mock-button');
+        expect(element.exists()).toBeFalsy();
       });
     });
 
@@ -219,6 +234,40 @@ describe('HouseholdMemberCard.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('canSplit', () => {
+      it('returns true if the user has level 2 or more', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          store: {
+            ...mockUserStateLevel(2),
+          },
+
+        });
+        expect(wrapper.vm.canSplit).toBeTruthy();
+      });
+      it('returns false if the user has level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          store: {
+            modules: {
+              ...mockUserStateLevel(1),
+            },
+          },
+
+        });
+        expect(wrapper.vm.canSplit).toBeFalsy();
+      });
+    });
     describe('birthDate', () => {
       beforeEach(() => {
         jest.spyOn(libHelpers, 'displayBirthDate').mockImplementation(() => 'Jan 1, 1945');
