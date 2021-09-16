@@ -176,11 +176,11 @@ describe('CreateEditDocument', () => {
         await wrapper.setData({ document: mockDocument });
 
         const formData = new FormData();
-        formData.append('name', mockDocument.name);
-        formData.append('note', mockDocument.note || '');
-        formData.append('categoryId', mockDocument.category.optionItemId.toString());
-        formData.append('documentStatus', mockDocument.documentStatus.toString());
-        formData.append('file', {});
+        formData.set('name', mockDocument.name);
+        formData.set('note', mockDocument.note || '');
+        formData.set('categoryId', mockDocument.category.optionItemId.toString());
+        formData.set('documentStatus', mockDocument.documentStatus.toString());
+        formData.set('file', {});
 
         await wrapper.vm.uploadNewDocument();
         expect(wrapper.vm.$refs.documentForm.upload).toHaveBeenCalledWith(formData, 'case-file/case-files/CASEFILE_ID/documents');

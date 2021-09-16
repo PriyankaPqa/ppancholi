@@ -124,35 +124,35 @@ describe('MassActionBaseCreate.vue', () => {
 
     describe('upload', () => {
       it('should add the name to the formData', async () => {
-        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.formData.set = jest.fn();
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.vm.upload();
-        expect(wrapper.vm.formData.append).toHaveBeenCalledWith('name', wrapper.vm.name);
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('name', wrapper.vm.name);
       });
 
       it('should add the description to the formData', async () => {
-        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.formData.set = jest.fn();
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.vm.upload();
-        expect(wrapper.vm.formData.append).toHaveBeenCalledWith('description', wrapper.vm.description);
+        expect(wrapper.vm.formData.set).toHaveBeenCalledWith('description', wrapper.vm.description);
       });
 
       it('should add the file to the formData', async () => {
-        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.formData.set = jest.fn();
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.vm.upload();
-        expect(wrapper.vm.formData.append).toHaveBeenLastCalledWith('file', wrapper.vm.file);
+        expect(wrapper.vm.formData.set).toHaveBeenLastCalledWith('file', wrapper.vm.file);
       });
 
       it('should call uploadForm with file and url from the mixin', async () => {
-        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.formData.set = jest.fn();
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.vm.upload();
         expect(wrapper.vm.uploadForm).toHaveBeenLastCalledWith(wrapper.vm.formData, wrapper.vm.url);
       });
 
       it('should emit upload:success in case of successful upload with proper params', async () => {
-        wrapper.vm.formData.append = jest.fn();
+        wrapper.vm.formData.set = jest.fn();
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.setData({ uploadSuccess: true });
         await wrapper.vm.upload();

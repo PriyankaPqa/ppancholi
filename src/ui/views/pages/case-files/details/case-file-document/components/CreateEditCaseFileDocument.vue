@@ -135,14 +135,14 @@ export default Vue.extend({
 
     async uploadNewDocument(): Promise<ICaseFileDocumentEntity> {
       const formData = new FormData();
-      formData.append('name', this.document.name);
-      formData.append('note', this.document.note || '');
-      formData.append('categoryId', this.document.category.optionItemId.toString());
+      formData.set('name', this.document.name);
+      formData.set('note', this.document.note || '');
+      formData.set('categoryId', this.document.category.optionItemId.toString());
       if (this.document.category.specifiedOther) {
-        formData.append('categoryOther', this.document.category.specifiedOther);
+        formData.set('categoryOther', this.document.category.specifiedOther);
       }
-      formData.append('documentStatus', this.document.documentStatus.toString());
-      formData.append('file', this.file);
+      formData.set('documentStatus', this.document.documentStatus.toString());
+      formData.set('file', this.file);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       return (this.$refs.documentForm as any).upload(formData, `case-file/case-files/${this.id}/documents`);
     },

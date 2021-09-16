@@ -76,13 +76,13 @@ export default Vue.extend({
     },
 
     onUploadStart() {
-      this.formData.append('eventId', this.form.event.id);
-      this.formData.append('tableId', this.form.table.id);
-      this.formData.append('programId', this.form.table.programId);
-      this.formData.append('itemId', this.form.item.id);
-      this.formData.append('subItemId', this.form.subItem.id);
-      this.formData.append('paymentModality', this.form.paymentModality.toString());
-      this.formData.append('amount', this.form.amount.toString());
+      this.formData.set('eventId', this.form.event.id);
+      this.formData.set('tableId', this.form.table.id);
+      this.formData.set('programId', this.form.table.programId);
+      this.formData.set('mainCategoryId', this.form.item.id);
+      this.formData.set('subCategoryId', this.form.subItem.id);
+      this.formData.set('paymentModality', this.form.paymentModality.toString());
+      this.formData.set('amount', this.form.amount.toString());
     },
   },
 });

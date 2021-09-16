@@ -169,7 +169,7 @@ export default mixins(fileUpload).extend({
           this.$t('massAction.confirm.preprocessing.message'));
         if (userChoice) {
           this.showUploadDialog = true;
-          // So the parent update the formData props ex:  this.formData.append('extra', this.extra);
+          // So the parent update the formData props ex:  this.formData.set('extra', this.extra);
           this.$emit('upload:start');
           await this.upload();
         }
@@ -182,9 +182,9 @@ export default mixins(fileUpload).extend({
 
     async upload() {
       // A mass action always has a name, description and a file
-      this.formData.append('name', this.name);
-      this.formData.append('description', this.description);
-      this.formData.append('file', this.file);
+      this.formData.set('name', this.name);
+      this.formData.set('description', this.description);
+      this.formData.set('file', this.file);
 
       await this.uploadForm(this.formData, this.url);
 

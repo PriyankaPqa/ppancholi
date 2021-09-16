@@ -129,13 +129,13 @@ describe('ImportValidationStatusCreate.vue', () => {
 
         wrapper.vm.onUploadStart();
 
-        wrapper.vm.formData.append('eventId', wrapper.vm.form.event.id);
-        wrapper.vm.formData.append('tableId', wrapper.vm.form.table.id);
-        wrapper.vm.formData.append('programId', wrapper.vm.form.table.programId);
-        wrapper.vm.formData.append('itemId', wrapper.vm.form.item.id);
-        wrapper.vm.formData.append('subItemId', wrapper.vm.form.subItem.id);
-        wrapper.vm.formData.append('paymentModality', wrapper.vm.form.paymentModality.toString());
-        wrapper.vm.formData.append('amount', wrapper.vm.form.amount.toString());
+        wrapper.vm.formData.set('eventId', wrapper.vm.form.event.id);
+        wrapper.vm.formData.set('tableId', wrapper.vm.form.table.id);
+        wrapper.vm.formData.set('programId', wrapper.vm.form.table.programId);
+        wrapper.vm.formData.set('itemId', wrapper.vm.form.item.id);
+        wrapper.vm.formData.set('subItemId', wrapper.vm.form.subItem.id);
+        wrapper.vm.formData.set('paymentModality', wrapper.vm.form.paymentModality.toString());
+        wrapper.vm.formData.set('amount', wrapper.vm.form.amount.toString());
       });
     });
   });

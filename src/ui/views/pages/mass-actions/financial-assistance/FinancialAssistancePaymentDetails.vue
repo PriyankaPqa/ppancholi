@@ -113,6 +113,7 @@ import { EEventStatus, IEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { EPaymentModalities } from '@/entities/program';
 import { Status } from '@/entities/base';
+import { PaymentDetailsForm } from './FinancialAssistanceCreateFile.vue';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentDetails',
@@ -133,7 +134,7 @@ export default Vue.extend({
     return {
       loadingEvent: false,
       events: [],
-      formCopy: null,
+      formCopy: null as PaymentDetailsForm,
       program: null,
       isEmpty,
     };
@@ -212,13 +213,13 @@ export default Vue.extend({
       return [];
     },
 
-    subItems(): Record<string, unknown>[] {
+    subItems(): IOptionSubItem[] {
       if (this.currentFinancialAssistanceTable && this.formCopy.item) {
         const currentItem = this.currentFinancialAssistanceTable.entity.items.find((i) => i.mainCategory.optionItemId === this.formCopy.item.id);
         if (currentItem?.subItems) {
           const subItemsCurrentTableIds = currentItem.subItems.filter((s) => s.status === Status.Active).map((s) => s.subCategory.optionItemId);
           if (this.formCopy?.item?.subitems) {
-            return this.formCopy.item.subitems.filter((s: IOptionSubItem) => subItemsCurrentTableIds.includes(s.id) && s.status === Status.Active);
+            return this.formCopy.item.subitems.filter((s) => subItemsCurrentTableIds.includes(s.id) && s.status === Status.Active);
           }
         }
         return [];
