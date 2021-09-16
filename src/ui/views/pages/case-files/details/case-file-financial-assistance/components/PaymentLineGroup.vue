@@ -32,13 +32,12 @@
       :key="$index"
       :payment-line="line"
       :transaction-approval-status="transactionApprovalStatus"
-      :modality="paymentGroup.groupingInformation.modality"
+      :payment-group="paymentGroup"
       :is-cancelled="isCancelled"
-      :link="link"
       :disable-delete-button="disableDeleteButton"
       :items="items"
-      @edit-payment-line="$emit('edit-payment-line', { line: $event, group: paymentGroup })"
-      @delete-payment-line="$emit('delete-payment-line', { line: $event, group: paymentGroup })" />
+      @edit-payment-line="$emit('edit-payment-line', $event)"
+      @delete-payment-line="$emit('delete-payment-line', $event)" />
 
     <div v-if="!isCancelled" class="paymentGroup__total rc-body14 fw-bold" data-test="paymentLineGroup__total">
       {{ $t('caseFile.financialAssistance.groupTotal', { total: $formatCurrency(total), modality }) }}
@@ -98,6 +97,7 @@ import {
   EPaymentCancellationReason,
   IFinancialAssistancePaymentGroup,
   ApprovalStatus,
+  FinancialAssistancePaymentGroup,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import PaymentLineItem from './PaymentLineItem.vue';
@@ -121,11 +121,6 @@ export default Vue.extend({
     transactionApprovalStatus: {
       type: Number,
       default: null,
-    },
-
-    link: {
-      type: Boolean,
-      default: false,
     },
 
     disableDeleteButton: {
@@ -152,8 +147,7 @@ export default Vue.extend({
 
   computed: {
     title(): string | TranslateResult {
-      if (this.paymentGroup.groupingInformation.modality === EPaymentModalities.Cheque
-        || this.paymentGroup.groupingInformation.modality === EPaymentModalities.DirectDeposit) {
+      if (FinancialAssistancePaymentGroup.showPayee(this.paymentGroup)) {
         const modality = this.$t(`event.programManagement.paymentModalities.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`);
         const payeeType = this.$t(`enums.payeeType.${PayeeType[this.paymentGroup.groupingInformation.payeeType]}`);
 

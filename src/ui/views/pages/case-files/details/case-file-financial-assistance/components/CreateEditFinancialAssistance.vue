@@ -110,7 +110,6 @@ import { RcPageContent } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import _find from 'lodash/find';
 import { Route, NavigationGuardNext } from 'vue-router';
-import { EPaymentModalities } from '@/entities/program/program.types';
 import {
   ApprovalStatus,
   FinancialAssistancePaymentEntity,
@@ -339,7 +338,7 @@ export default Vue.extend({
       const paymentInfo = submittedPaymentGroup.groupingInformation;
       const paymentGroup = _find(this.activePaymentGroups, (group: IFinancialAssistancePaymentGroup) => {
         const groupInfo = group.groupingInformation;
-        if (paymentInfo.modality === EPaymentModalities.Cheque || paymentInfo.modality === EPaymentModalities.DirectDeposit) {
+        if (FinancialAssistancePaymentGroup.showPayee(paymentInfo.modality)) {
           return groupInfo.modality === paymentInfo.modality
           && groupInfo.payeeType === paymentInfo.payeeType
           && groupInfo.payeeName === paymentInfo.payeeName;

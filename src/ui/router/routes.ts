@@ -20,6 +20,7 @@ const CaseFileDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/v
 const CaseFileActivity = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-activity/CaseFileActivity.vue');
 const FinancialAssistancePaymentsList = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/FinancialAssistancePaymentsList.vue');
 const CreateEditCaseFileFinancialAssistance = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/CreateEditFinancialAssistance.vue');
+const ViewPaymentLineDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-financial-assistance/components/ViewPaymentLineDetails.vue');
 const CaseNote = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-note/CaseNote.vue');
 const CaseFileReferral = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/CaseFileReferral.vue');
 const CaseFileReferralDetails = () => import(/* webpackChunkName: "case-file" */ '@/ui/views/pages/case-files/details/case-file-referral/components/CaseFileReferralDetails.vue');
@@ -228,6 +229,13 @@ export const routes: Array<RouteConfig> = [
                     path: Routes.caseFile.financialAssistance.details.path,
                     name: Routes.caseFile.financialAssistance.details.name,
                     component: CreateEditCaseFileFinancialAssistance,
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.financialAssistance.paymentLineDetails.path,
+                    name: Routes.caseFile.financialAssistance.paymentLineDetails.name,
+                    component: ViewPaymentLineDetails,
                     meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
                   },

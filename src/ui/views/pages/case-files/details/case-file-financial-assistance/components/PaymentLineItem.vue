@@ -1,7 +1,7 @@
 <template>
   <div class="pa-4 paymentLine__container">
     <div class="flex-row">
-      <span v-if="link" class="rc-link16 fw-bold" @click="linkToPaymentLineDetails">
+      <span v-if="paymentLine.id" class="rc-link16 fw-bold" @click="linkToPaymentLineDetails">
         {{ title }}
       </span>
 
@@ -23,9 +23,9 @@
         </span>
       </v-tooltip>
 
-      <span :class="{ 'rc-body14': true, 'text-decoration-line-through': isCancelled }">
-        {{ $formatCurrency(paymentLine.amount) }}
-      </span>
+      <div :class="{ 'rc-body14': true, 'text-decoration-line-through': isCancelled }">
+        {{ amounts }}
+      </div>
 
       <v-btn v-if="showEditButton" class="ml-2" icon small data-test="paymentLineItem__editBtn" @click="onClickEdit">
         <v-icon small>
@@ -39,16 +39,21 @@
         </v-icon>
       </v-btn>
     </div>
+    <div v-if="showRelatedNumber(paymentGroup)" class="flex-row">
+      <span :class="{ 'rc-body14': true }">
+        {{ $t('caseFile.financialAssistance.relatedNumber') + ': ' + (paymentLine.relatedNumber || '—') }}
+      </span>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { EPaymentModalities } from '@/entities/program/program.types';
 import {
-  ApprovalStatus, IFinancialAssistancePaymentLine,
+  ApprovalStatus, FinancialAssistancePaymentGroup, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentLine, PayeeType,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'PaymentLineItem',
@@ -74,18 +79,12 @@ export default Vue.extend({
       },
     },
 
-    modality: {
-      type: Number,
+    paymentGroup: {
+      type: Object as () => IFinancialAssistancePaymentGroup,
       required: true,
-      validator: (value: number) => Object.values(EPaymentModalities).includes(value),
     },
 
     isCancelled: {
-      type: Boolean,
-      default: false,
-    },
-
-    link: {
       type: Boolean,
       default: false,
     },
@@ -104,6 +103,9 @@ export default Vue.extend({
   data() {
     return {
       loading: false,
+      showRelatedNumber: FinancialAssistancePaymentGroup.showRelatedNumber,
+      showIssuedActualAmounts: FinancialAssistancePaymentGroup.showIssuedActualAmounts,
+      PayeeType,
     };
   },
 
@@ -127,9 +129,12 @@ export default Vue.extend({
       return this.subItem?.maximumAmount && Number(this.paymentLine.amount) > this.subItem?.maximumAmount;
     },
 
-    // showProxyNumber(): boolean {
-    //   return this.modality === EPaymentModalities.PrepaidCard || this.modality === EPaymentModalities.Voucher;
-    // },
+    amounts(): string {
+      return this.showIssuedActualAmounts(this.paymentGroup)
+        // eslint-disable-next-line max-len
+        ? `${this.$t('caseFile.financialAssistance.issuedAmountSmall')}: ${this.$formatCurrency(this.paymentLine.amount)} ${this.$t('caseFile.financialAssistance.actualAmountSmall')}: ${(this.paymentLine.actualAmount !== null ? this.$formatCurrency(this.paymentLine.actualAmount) : '—')}`
+        : this.$formatCurrency(this.paymentLine.amount);
+    },
 
     showEditButton(): boolean {
       return this.$hasLevel('level1') && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
@@ -167,7 +172,7 @@ export default Vue.extend({
 
   methods: {
     onClickEdit() {
-      this.$emit('edit-payment-line', this.paymentLine);
+      this.$emit('edit-payment-line', { line: this.paymentLine, group: this.paymentGroup });
     },
 
     async onClickDelete() {
@@ -177,20 +182,18 @@ export default Vue.extend({
         const doDelete = await this.$confirm(this.$t('caseFile.financialAssistance.deletePaymentLine.title'),
           this.$t('caseFile.financialAssistance.deletePaymentLine.message'));
         if (doDelete) {
-          this.$emit('delete-payment-line', this.paymentLine);
+          this.$emit('delete-payment-line', { line: this.paymentLine, group: this.paymentGroup });
         }
       }
     },
 
     linkToPaymentLineDetails() {
-      // ToDo: Not implemented yet
-      // this.$router.push({
-      //   name: routes.caseFileFinancialAssistancePaymentLineDetails.name,
-      //   params: {
-      //     transactionId: this.$route.params.transactionId,
-      //     paymentLineId: this.paymentLine.id,
-      //   },
-      // });
+      this.$router.push({
+        name: routes.caseFile.financialAssistance.paymentLineDetails.name,
+        params: {
+          financialAssistancePaymentLineId: this.paymentLine.id,
+        },
+      });
     },
   },
 });

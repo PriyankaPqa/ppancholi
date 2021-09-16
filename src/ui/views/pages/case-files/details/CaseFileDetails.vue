@@ -140,11 +140,12 @@ import Vue from 'vue';
 import { IHouseholdCombined, IMemberMetadata } from '@crctech/registration-lib/src/entities/household';
 import { ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
-import { ECanadaProvinces, INavigationTab } from '@/types';
+import { INavigationTab } from '@/types';
 import routes from '@/constants/routes';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'CaseFileDetails',
@@ -178,16 +179,11 @@ export default Vue.extend({
 
   computed: {
     addressFirstLine(): string {
-      const { address } = this.household?.entity?.address;
-      if (!address) return '';
-      const unitSuite = address.unitSuite ? `${address.unitSuite}-` : '';
-      return unitSuite + address.streetAddress;
+      return helpers.getAddressLines(this.household?.entity?.address?.address)[0] || '';
     },
 
     addressSecondLine(): string {
-      const { address } = this.household?.entity?.address;
-      if (!address) return '';
-      return `${address.city}, ${this.provinceCodeName} ${address.postalCode}`;
+      return helpers.getAddressLines(this.household?.entity?.address?.address)[1] || '';
     },
 
     caseFile(): ICaseFileCombined {
@@ -234,12 +230,7 @@ export default Vue.extend({
     },
 
     provinceCodeName(): string {
-      const provinceCode = this.household?.entity.address.address.province;
-      if (!provinceCode) return '';
-      if (provinceCode === ECanadaProvinces.OT) {
-        return this.household?.entity.address.address.specifiedOtherProvince;
-      }
-      return this.$t(`common.provinces.code.${ECanadaProvinces[provinceCode]}`) as string;
+      return helpers.provinceCodeName(this.household?.entity.address.address);
     },
 
     tabs(): Array<INavigationTab> {

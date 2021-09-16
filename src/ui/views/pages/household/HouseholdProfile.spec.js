@@ -4,7 +4,6 @@ import { mockMember } from '@crctech/registration-lib/src/entities/value-objects
 import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { ECanadaProvinces } from '@/types';
 import { mockEventMainInfo, EEventLocationStatus, EEventStatus } from '@/entities/event';
 import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
 import helpers from '@/ui/helpers';
@@ -300,9 +299,6 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           computed: {
-            provinceCodeName() {
-              return 'QC';
-            },
             household() { return householdCreate; },
           },
           mocks: {
@@ -310,7 +306,7 @@ describe('HouseholdProfile.vue', () => {
           },
         });
         expect(wrapper.vm.addressLine2)
-          .toEqual(`${wrapper.vm.household.homeAddress.city}, ${wrapper.vm.provinceCodeName}, ${wrapper.vm.household.homeAddress.postalCode}`);
+          .toEqual(`${wrapper.vm.household.homeAddress.city}, ON, ${wrapper.vm.household.homeAddress.postalCode}`);
       });
     });
 
@@ -404,54 +400,6 @@ describe('HouseholdProfile.vue', () => {
         });
 
         expect(wrapper.vm.lastUpdated).toEqual('Jul 1, 2021');
-      });
-    });
-
-    describe('provinceCodeName', () => {
-      it(' returns the right data when province is not other', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
-          computed: {
-            household() { return { ...householdCreate, homeAddress: { ...householdCreate.homeAddress, province: ECanadaProvinces.QC } }; },
-          },
-          mocks: { $storage: storage },
-        });
-
-        expect(wrapper.vm.provinceCodeName).toEqual('QC');
-      });
-
-      it('returns the right data when province is other', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          computed: {
-            household() {
-              return {
-                ...householdCreate,
-                homeAddress:
-                  { ...householdCreate.homeAddress, province: ECanadaProvinces.OT, specifiedOtherProvince: 'mock-province' },
-              };
-            },
-          },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
-          mocks: { $storage: storage },
-        });
-
-        expect(wrapper.vm.provinceCodeName).toEqual('mock-province');
       });
     });
   });

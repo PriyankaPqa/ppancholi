@@ -81,18 +81,23 @@ describe('PaymentLineGroup.vue', () => {
     });
 
     describe('title', () => {
-      it('should return the modality + payeeType + payee name when cheque or deposit', () => {
+      it('should return the modality + payeeType + payee name when cheque', () => {
         expect(wrapper.vm.title).toBe('event.programManagement.paymentModalities.Cheque (enums.payeeType.Beneficiary) - thl');
         wrapper.vm.paymentGroup.groupingInformation = {
-          modality: 3,
+          modality: 2,
           payeeType: 2,
           payeeName: 'abc',
         };
-        expect(wrapper.vm.title).toBe('event.programManagement.paymentModalities.DirectDeposit (enums.payeeType.ThirdParty) - abc');
+        expect(wrapper.vm.title).toBe('event.programManagement.paymentModalities.Cheque (enums.payeeType.ThirdParty) - abc');
       });
 
-      it('should return the modality if it isnt Cheque or Direct deposit', () => {
-        expect(wrapper.vm.title).toBe('event.programManagement.paymentModalities.Cheque (enums.payeeType.Beneficiary) - thl');
+      it('should return the modality if it isnt Cheque', () => {
+        wrapper.vm.paymentGroup.groupingInformation = {
+          modality: 1,
+          payeeType: 2,
+          payeeName: 'abc',
+        };
+        expect(wrapper.vm.title).toBe('event.programManagement.paymentModalities.ETransfer');
       });
     });
 

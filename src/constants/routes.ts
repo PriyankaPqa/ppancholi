@@ -63,6 +63,10 @@ const routes = {
         path: 'financialAssistance/:financialAssistancePaymentId',
         name: 'casefile.financialAssistance.details',
       },
+      paymentLineDetails: {
+        path: 'financialAssistance/:financialAssistancePaymentId/line/:financialAssistancePaymentLineId',
+        name: 'caseFile.financialAssistance.paymentLineDetails',
+      },
     },
     note: {
       path: 'note',

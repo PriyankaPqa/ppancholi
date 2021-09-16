@@ -83,14 +83,15 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     fetch: async (idParams: IdParams,
       { useEntityGlobalHandler, useMetadataGlobalHandler } = { useEntityGlobalHandler: true, useMetadataGlobalHandler: true })
       : Promise<IEntityCombined<TEntity, TMetadata>> => {
-      const entity = await this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler });
+      const requests = [this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler })];
 
-      let metadata = null;
       // Metadata do not exist for option items (financial categories, document categories etc.)
-
       if (this.metadataActionExists('fetch')) {
-        metadata = await this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler });
+        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler }));
       }
+      const results = await Promise.all(requests);
+      const entity = results[0];
+      const metadata = results[1] || null;
 
       return {
         entity,
@@ -99,25 +100,29 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     },
 
     fetchAll: async (parentId?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
-      const entities = await this.store.dispatch(`${this.entityModuleName}/fetchAll`, parentId);
-      let metadata = [];
-      // Metadata do not exist for option items (financial categories, document categoris etc.)
+      const requests = [this.store.dispatch(`${this.entityModuleName}/fetchAll`, parentId)];
 
+      // Metadata do not exist for option items (financial categories, document categoris etc.)
       if (this.metadataActionExists('fetchAll')) {
-        metadata = await this.store.dispatch(`${this.metadataModuleName}/fetchAll`, parentId);
+        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetchAll`, parentId));
       }
+      const results = await Promise.all(requests);
+      const entities = results[0];
+      const metadata = results[1] || [];
 
       return this.combinedCollections(entities, metadata);
     },
 
     fetchAllIncludingInactive: async (): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
-      const entities = await this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`);
-      let metadata = [];
-      // Metadata do not exist for option items (financial categories, document categoris etc.)
+      const requests = [this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`)];
 
+      // Metadata do not exist for option items (financial categories, document categoris etc.)
       if (this.metadataActionExists('fetchAllIncludingInactive')) {
-        metadata = await this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`);
+        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`));
       }
+      const results = await Promise.all(requests);
+      const entities = results[0];
+      const metadata = results[1] || [];
 
       return this.combinedCollections(entities, metadata);
     },

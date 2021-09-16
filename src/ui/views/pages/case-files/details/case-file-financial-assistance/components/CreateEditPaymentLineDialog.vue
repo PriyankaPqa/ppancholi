@@ -75,10 +75,11 @@
                 type="number"
                 prefix="$"
                 :rules="rules.amount"
-                :label="`${$t(showIssuedActualAmounts ? 'caseFile.financialAssistance.issuedAmount': 'caseFile.financialAssistance.amount')} *`" />
+                :label="`${$t(showIssuedActualAmounts(paymentGroup) ? 'caseFile.financialAssistance.issuedAmount'
+                  : 'caseFile.financialAssistance.amount')} *`" />
             </v-col>
           </v-row>
-          <v-row v-if="showIssuedActualAmounts">
+          <v-row v-if="showIssuedActualAmounts(paymentGroup)">
             <v-col cols="3">
               <v-text-field-with-validation
                 v-model="currentPaymentLine.actualAmount"
@@ -91,7 +92,7 @@
                 :label="`${$t('caseFile.financialAssistance.actualAmount')}`" />
             </v-col>
           </v-row>
-          <v-row v-if="showRelatedNumber">
+          <v-row v-if="showRelatedNumber(paymentGroup)">
             <v-col cols="6">
               <v-text-field-with-validation
                 v-model="currentPaymentLine.relatedNumber"
@@ -102,7 +103,7 @@
             </v-col>
           </v-row>
 
-          <div v-if="showPayee" data-test="payeeSection">
+          <div v-if="showPayee(paymentGroup)" data-test="payeeSection">
             <v-row>
               <v-col cols="12">
                 <span class="rc-body16 fw-bold">
@@ -263,6 +264,9 @@ export default Vue.extend({
         address: null as IAddress,
         name: '',
       },
+      showRelatedNumber: FinancialAssistancePaymentGroup.showRelatedNumber,
+      showIssuedActualAmounts: FinancialAssistancePaymentGroup.showIssuedActualAmounts,
+      showPayee: FinancialAssistancePaymentGroup.showPayee,
     };
   },
 
@@ -281,10 +285,6 @@ export default Vue.extend({
       return this.paymentGroup.lines[0];
     },
 
-    showPayee(): boolean {
-      return this.paymentGroup.groupingInformation.modality === EPaymentModalities.Cheque;
-    },
-
     apiKey(): string {
       return localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
@@ -293,18 +293,6 @@ export default Vue.extend({
 
     canadianProvincesItems(): Record<string, unknown>[] {
       return libHelpers.getCanadianProvincesWithoutOther(this.$i18n);
-    },
-
-    showRelatedNumber(): boolean {
-      return this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.PrepaidCard
-        || this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.GiftCard
-        || this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.Voucher
-        || this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.Invoice;
-    },
-
-    showIssuedActualAmounts(): boolean {
-      return this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.Voucher
-        || this.paymentGroup?.groupingInformation?.modality === EPaymentModalities.Invoice;
     },
 
     canSetActualAmount(): boolean {
@@ -344,7 +332,7 @@ export default Vue.extend({
     },
 
     async onSubmit() {
-      if (this.showPayee) {
+      if (this.showPayee(this.paymentGroup)) {
         this.currentPaymentLine.address = this.address;
       } else {
         // reset non-editable fields if they had been changed

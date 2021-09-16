@@ -442,7 +442,7 @@ describe('CaseFileDetails.vue', () => {
           household: altHousehold,
         });
 
-        expect(wrapper.vm.addressSecondLine).toEqual('Montreal, common.provinces.code.QC H2H 2H2');
+        expect(wrapper.vm.addressSecondLine).toEqual('Montreal, QC, H2H 2H2');
       });
     });
 
@@ -608,7 +608,7 @@ describe('CaseFileDetails.vue', () => {
         await wrapper.setData({
           household: altHousehold,
         });
-        expect(wrapper.vm.provinceCodeName).toEqual('common.provinces.code.QC');
+        expect(wrapper.vm.provinceCodeName).toEqual('QC');
       });
 
       it('returns the province other name  if the province is  other', async () => {

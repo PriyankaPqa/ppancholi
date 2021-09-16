@@ -164,7 +164,6 @@ import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import { IHouseholdCreate, Member } from '@crctech/registration-lib/src/entities/household-create';
 import { IHouseholdCombined, IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
 import { AddEditAdditionalMembers } from '@crctech/registration-lib';
-import { ECanadaProvinces } from '@/types';
 import { CaseFileStatus } from '@/entities/case-file';
 import household from '@/ui/mixins/household';
 import helpers from '@/ui/helpers';
@@ -249,18 +248,12 @@ export default mixins(household).extend({
     },
 
     addressLine1(): string {
-      if (!this.household?.homeAddress) return '';
-      const { homeAddress } = this.household;
-      const suite = homeAddress.unitSuite ? `${homeAddress.unitSuite}-` : '';
-      return homeAddress.streetAddress ? `${suite + homeAddress.streetAddress},` : '';
+      const line = helpers.getAddressLines(this.household?.homeAddress)[0];
+      return line ? `${line},` : '';
     },
 
     addressLine2(): string {
-      if (!this.household?.homeAddress) return '';
-      const { homeAddress } = this.household;
-      const city = homeAddress.city ? `${homeAddress.city}, ` : '';
-      const province = this.provinceCodeName ? `${this.provinceCodeName}, ` : '';
-      return city + province + (homeAddress.postalCode || '');
+      return helpers.getAddressLines(this.household?.homeAddress)[1];
     },
 
     country() : string {
@@ -281,15 +274,6 @@ export default mixins(household).extend({
       }
 
       return date.format('ll');
-    },
-
-    provinceCodeName(): string {
-      const provinceCode = this.household.homeAddress?.province;
-      if (!provinceCode) return '';
-      if (provinceCode === ECanadaProvinces.OT) {
-        return this.household?.homeAddress?.specifiedOtherProvince;
-      }
-      return ECanadaProvinces[provinceCode];
     },
   },
 

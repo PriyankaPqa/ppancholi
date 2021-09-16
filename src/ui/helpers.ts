@@ -1,7 +1,7 @@
 import { en, fr } from '@crctech/component-library/src/components/atoms/RcCountrySelect/countries';
 import { NavigationGuardNext } from 'vue-router';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
-import { IMultilingual } from '@/types';
+import { ECanadaProvinces, IAddress, IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 import moment from '@/ui/plugins/moment';
 import { IRestResponse } from '@/services/httpClient';
@@ -208,6 +208,29 @@ export default {
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return `${parseFloat((bytes / (k ** i)).toFixed(dm))} ${sizes[i]}`;
+  },
+
+  provinceCodeName(address: IAddress): string {
+    const provinceCode = address?.province;
+    if (!provinceCode) return '';
+    if (provinceCode === ECanadaProvinces.OT) {
+      return address?.specifiedOtherProvince;
+    }
+    return i18n.t(`common.provinces.code.${ECanadaProvinces[provinceCode]}`) as string;
+  },
+
+  getAddressLines(address: IAddress): string[] {
+    const addressLines = [] as string[];
+    if (!address) return addressLines;
+    const suite = address.unitSuite ? `${address.unitSuite}-` : '';
+    addressLines.push(address.streetAddress ? `${suite + address.streetAddress}` : '');
+
+    const city = address.city ? `${address.city}, ` : '';
+    const provinceCodeName = this.provinceCodeName(address);
+    const province = provinceCodeName ? `${provinceCodeName}, ` : '';
+    addressLines.push(city + province + (address.postalCode || ''));
+    if (this.countryName(address.country)) addressLines.push(this.countryName(address.country));
+    return addressLines;
   },
 
   countryName(countryCode: string): string {

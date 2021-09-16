@@ -1,15 +1,16 @@
+/* eslint-disable max-len */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockStorage } from '@/store/storage';
 import Component from '../PaymentLineItem.vue';
 import { EPaymentModalities } from '@/entities/program/program.types';
 import { ApprovalStatus, mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
+import routes from '@/constants/routes';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 const items = mockItems();
 const paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
-const cheque = EPaymentModalities.Cheque;
 const approvalStatus = ApprovalStatus.New;
 
 describe('CaseFilePaymentLineItem.vue', () => {
@@ -21,8 +22,8 @@ describe('CaseFilePaymentLineItem.vue', () => {
       localVue,
       propsData: {
         paymentLine,
+        paymentGroup,
         approvalStatus,
-        modality: cheque,
         items,
       },
       mocks: {
@@ -109,6 +110,19 @@ describe('CaseFilePaymentLineItem.vue', () => {
         expect(wrapper.vm.showDeleteButton).toBeFalsy();
       });
     });
+
+    describe('amounts', () => {
+      it('returns data according to modality', async () => {
+        await mountWrapper(false, 1);
+        await wrapper.setProps({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
+        await wrapper.setProps({ paymentLine: { amount: 99.55, actualAmount: 3.42 } });
+        expect(wrapper.vm.amounts).toEqual('$99.55');
+        await wrapper.setProps({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.vm.amounts).toEqual('caseFile.financialAssistance.issuedAmountSmall: $99.55 caseFile.financialAssistance.actualAmountSmall: $3.42');
+        await wrapper.setProps({ paymentLine: { amount: 99.55, actualAmount: null } });
+        expect(wrapper.vm.amounts).toEqual('caseFile.financialAssistance.issuedAmountSmall: $99.55 caseFile.financialAssistance.actualAmountSmall: —');
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -120,7 +134,7 @@ describe('CaseFilePaymentLineItem.vue', () => {
       it('should emit an edit-payment-line', () => {
         const paymentLine = paymentGroup.lines[0];
         wrapper.vm.onClickEdit();
-        expect(wrapper.emitted('edit-payment-line')[0][0]).toEqual(paymentLine);
+        expect(wrapper.emitted('edit-payment-line')[0][0]).toEqual({ line: paymentLine, group: paymentGroup });
       });
     });
 
@@ -134,13 +148,26 @@ describe('CaseFilePaymentLineItem.vue', () => {
       it('should emit an delete-payment-line if confirmed', async () => {
         const paymentLine = paymentGroup.lines[0];
         await wrapper.vm.onClickDelete();
-        expect(wrapper.emitted('delete-payment-line')[0][0]).toEqual(paymentLine);
+        expect(wrapper.emitted('delete-payment-line')[0][0]).toEqual({ line: paymentLine, group: paymentGroup });
       });
 
       it('should not emit an delete-payment-line if not confirmed', async () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.onClickDelete();
         expect(wrapper.emitted('delete-payment-line')).toBeUndefined();
+      });
+    });
+
+    describe('linkToPaymentLineDetails', () => {
+      it('returns the detail route', async () => {
+        await mountWrapper();
+        wrapper.vm.linkToPaymentLineDetails();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.caseFile.financialAssistance.paymentLineDetails.name,
+          params: {
+            financialAssistancePaymentLineId: wrapper.vm.paymentLine.id,
+          },
+        });
       });
     });
   });
