@@ -6,7 +6,7 @@ export enum MassActionGroup {
   Group1 = 1,
   Group2 = 2,
   Group3 = 3,
-  Group4 = 4
+  Group4 = 4,
 }
 
 export enum MassActionType {
@@ -15,13 +15,13 @@ export enum MassActionType {
   ImportValidationOfImpactStatus = 2,
   ExportValidationOfImpactStatus = 3,
   GenerateFundingRequest = 4,
-  ImportPaymentStatuses = 5
+  ImportPaymentStatuses = 5,
 }
 
 export enum MassActionRunType {
   Unknown = 0,
   PreProcess = 1,
-  Process = 2
+  Process = 2,
 }
 export enum MassActionRunStatus {
   Unknown = 0,
@@ -32,13 +32,13 @@ export enum MassActionRunStatus {
 }
 
 export interface IMassActionDetails {
-  paymentModality?: EPaymentModalities
+  paymentModality?: EPaymentModalities;
   amount?: number;
   eventId?: uuid;
-  itemId?: uuid;
+  mainCategoryId?: uuid;
   programId?: uuid;
-  subItemId?: uuid;
-  tableId? : uuid;
+  subCategoryId?: uuid;
+  tableId?: uuid;
 }
 
 export interface IMassActionRun extends IEntity {
@@ -54,7 +54,7 @@ export interface IMassActionRunResultMetadataModel {
   failures: number;
 }
 
-export interface IMassActionErrorResultMetadataModel{
+export interface IMassActionErrorResultMetadataModel {
   error: string;
   total: number;
 }
@@ -62,7 +62,7 @@ export interface IMassActionErrorResultMetadataModel{
 export interface IMassActionRunMetadataModel {
   runId: uuid;
   results: IMassActionRunResultMetadataModel;
-  errors: Array<IMassActionErrorResultMetadataModel>
+  errors: Array<IMassActionErrorResultMetadataModel>;
   started: Date | string;
   completed: Date | string;
   runType: MassActionRunType;
@@ -81,7 +81,7 @@ export interface IMassActionEntityData extends IEntity {
 
   group: MassActionGroup;
 
-  runs: Array<IMassActionRun>
+  runs: Array<IMassActionRun>;
 }
 
 export interface IMassActionEntity extends IMassActionEntityData {
@@ -89,8 +89,8 @@ export interface IMassActionEntity extends IMassActionEntityData {
 }
 
 export interface IMassActionMetadata extends IEntity {
-  runs: Array<IMassActionRunMetadataModel>
-  lastRun: IMassActionRunMetadataModel
+  runs: Array<IMassActionRunMetadataModel>;
+  lastRun: IMassActionRunMetadataModel;
 }
 
-export type IMassActionCombined = IEntityCombined<IMassActionEntity, IMassActionMetadata>
+export type IMassActionCombined = IEntityCombined<IMassActionEntity, IMassActionMetadata>;

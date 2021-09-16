@@ -131,7 +131,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
 
     describe('fetchItem', () => {
       it('should fetch the item', async () => {
-        const id = mockCombinedMassAction().entity.details.itemId;
+        const id = mockCombinedMassAction().entity.details.mainCategoryId;
         await wrapper.vm.fetchItem();
         expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetch).toHaveBeenCalledWith(id);
       });

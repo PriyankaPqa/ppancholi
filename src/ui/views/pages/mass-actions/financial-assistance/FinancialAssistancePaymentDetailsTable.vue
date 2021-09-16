@@ -112,7 +112,7 @@ export default Vue.extend({
 
     subItem(): IOptionSubItem {
       if (this.item?.entity) {
-        return this.item.entity.subitems.find((s) => s.id === this.massAction.entity.details.subItemId);
+        return this.item.entity.subitems.find((s) => s.id === this.massAction.entity.details.subCategoryId);
       }
       return null;
     },
@@ -141,7 +141,7 @@ export default Vue.extend({
     },
 
     async fetchItem() {
-      this.item = await this.$storage.financialAssistanceCategory.actions.fetch(this.massAction.entity.details.itemId);
+      this.item = await this.$storage.financialAssistanceCategory.actions.fetch(this.massAction.entity.details.mainCategoryId);
     },
   },
 });
