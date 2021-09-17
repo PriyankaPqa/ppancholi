@@ -60,7 +60,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         expect(tds.wrappers[0].text()).toBe('thl payment');
         expect(tds.wrappers[1].text()).toBe('Apr 6, 2021');
         expect(tds.wrappers[2].text()).toBe('$123.00');
-        expect(tds.wrappers[3].text()).toBe('caseFile.financialAssistance.paymentStatus.New');
+        expect(tds.wrappers[3].text()).toBe('enums.ApprovalStatus.New');
       });
 
       it('binds show-add to canAdd', async () => {

@@ -27,13 +27,13 @@
         {{ amounts }}
       </div>
 
-      <v-btn v-if="showEditButton" class="ml-2" icon small data-test="paymentLineItem__editBtn" @click="onClickEdit">
+      <v-btn v-visible="showEditButton" class="ml-2" icon small data-test="paymentLineItem__editBtn" @click="onClickEdit">
         <v-icon small>
           mdi-pencil
         </v-icon>
       </v-btn>
 
-      <v-btn v-if="showDeleteButton" icon small data-test="paymentLineItem__deleteBtn" @click="onClickDelete">
+      <v-btn v-visible="showDeleteButton" icon small data-test="paymentLineItem__deleteBtn" @click="onClickDelete">
         <v-icon small>
           mdi-delete
         </v-icon>

@@ -54,6 +54,16 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancia
       return result;
     },
 
+    submitFinancialAssistancePayment: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
+      IFinancialAssistancePaymentEntityState>, payload: uuid)
+      : Promise<IFinancialAssistancePaymentEntity> => {
+      const result = await this.service.submitFinancialAssistancePayment(payload);
+      if (result) {
+        context.commit('set', result);
+      }
+      return result;
+    },
+
     addFinancialAssistancePaymentLine: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
       IFinancialAssistancePaymentEntityState>, payload: { entity: IFinancialAssistancePaymentGroup, financialAssistanceId: uuid })
       : Promise<IFinancialAssistancePaymentEntity> => {

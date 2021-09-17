@@ -47,7 +47,7 @@
       </template>
 
       <template #[`item.${customColumns.approvalStatus}`]="{ item }">
-        <status-chip status-name="FinancialAssistancePaymentStatus" :status="item.entity.approvalStatus" />
+        <status-chip status-name="ApprovalStatus" :status="item.entity.approvalStatus" />
       </template>
 
       <template #[`item.edit`]="{ item }">

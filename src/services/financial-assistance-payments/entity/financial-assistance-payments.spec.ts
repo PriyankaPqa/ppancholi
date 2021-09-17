@@ -49,6 +49,14 @@ describe('>>> Financial assistance payment Service', () => {
     });
   });
   
+
+  describe('submitFinancialAssistancePayment', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.submitFinancialAssistancePayment(entity.id);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myId/submit');
+    });
+  });
+  
   describe('addFinancialAssistancePaymentLine', () => {
     it('is linked to the correct URL and params', async () => {
       await service.addFinancialAssistancePaymentLine('myParent', entity.groups[0]);

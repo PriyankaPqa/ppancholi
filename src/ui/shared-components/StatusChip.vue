@@ -198,7 +198,7 @@ export default Vue.extend({
         case ApprovalStatus.New:
           return colors.chips.green_pale;
         default:
-          return colors.chips.green_pale;
+          return colors.chips.green;
       }
     },
 
@@ -207,7 +207,7 @@ export default Vue.extend({
         case PaymentStatus.New:
           return colors.chips.green_pale;
         default:
-          return colors.chips.green_pale;
+          return colors.chips.green;
       }
     },
 

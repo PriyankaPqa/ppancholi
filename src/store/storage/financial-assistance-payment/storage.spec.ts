@@ -30,12 +30,18 @@ describe('>>> Financial Assistance Payment Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/addFinancialAssistancePayment`, payload);
     });
 
-    it('should proxy updateReferral', () => {
+    it('should proxy editFinancialAssistancePayment', () => {
       const payload = mockCaseFinancialAssistanceEntity();
       storage.actions.editFinancialAssistancePayment(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/editFinancialAssistancePayment`, payload);
     });
     
+    it('should proxy submitFinancialAssistancePayment', () => {
+      const payload = mockCaseFinancialAssistanceEntity().id;
+      storage.actions.submitFinancialAssistancePayment(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/submitFinancialAssistancePayment`, payload);
+    });
+
     it('should proxy addFinancialAssistancePaymentLine', () => {
       const payload = mockCaseFinancialAssistanceEntity().groups[0];
       storage.actions.addFinancialAssistancePaymentLine('myId', payload);

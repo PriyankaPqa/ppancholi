@@ -23,7 +23,7 @@ declare module 'vue/types/vue' {
     $m: IMFunction;
     $hasLevel: (p: string) => boolean;
     $hasRole: (p: string) => boolean;
-    $confirm: (title: TranslateResult, messages: TranslateResult | TranslateResult[]) => Promise<boolean>;
+    $confirm: (title: TranslateResult, messages: TranslateResult | TranslateResult[], htmlContent?: string) => Promise<boolean>;
     $message: ({
       title, message, submitActionLabel, minHeight, maxWidth,
     } :{title: TranslateResult,

@@ -13,11 +13,17 @@
     </div>
     <rc-router-view-transition v-else />
 
+    <!-- eslint-disable -->
     <rc-confirmation-dialog
       ref="defaultConfirm"
       :show.sync="showConfirm"
       :title="dialogTitle"
-      :messages="dialogMessages" />
+      :messages="dialogMessages">
+      <template>
+        <div v-html="dialogHtml" />
+      </template>
+    </rc-confirmation-dialog>
+    <!-- eslint-enable -->
 
     <rc-error-dialog
       :show.sync="showMessage"
@@ -32,6 +38,7 @@
 <script>
 import Vue from 'vue';
 import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@crctech/component-library';
+import sanitizeHtml from 'sanitize-html';
 import { localStorageKeys } from '@/constants/localStorage';
 
 export default {
@@ -61,6 +68,7 @@ export default {
       showMessage: false,
       dialogTitle: '',
       dialogMessages: '',
+      dialogHtml: '',
       dialogMaxWidth: 500,
       dialogMinHeight: 'auto',
       submitActionLabel: this.$t('common.buttons.ok'),
@@ -121,9 +129,10 @@ export default {
       this.cspContent = this.cspContentProd;
     }
 
-    Vue.prototype.$confirm = async (title, messages) => {
+    Vue.prototype.$confirm = async (title, messages, htmlContent) => {
       this.dialogTitle = title;
       this.dialogMessages = messages;
+      this.dialogHtml = sanitizeHtml(htmlContent, { allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, '*': ['class'] } });
       this.showConfirm = true;
 
       const userChoice = await this.$refs.defaultConfirm.open();

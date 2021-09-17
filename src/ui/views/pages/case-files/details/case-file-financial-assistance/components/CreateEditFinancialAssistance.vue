@@ -65,6 +65,7 @@
                 :transaction-approval-status="financialAssistance.approvalStatus"
                 :items="items"
                 data-test="paymentGroupList"
+                @submit-payment="onSubmitPayment"
                 @edit-payment-line="editPaymentLine"
                 @delete-payment-line="deletePaymentLine" />
               <div v-else class="rc-body14">
@@ -76,7 +77,7 @@
       </v-row>
       <!-- Actions -->
       <template slot="actions">
-        <v-btn data-test="cancel" @click.stop="back()">
+        <v-btn :color="isAddMode ? '' : 'primary'" data-test="cancel" @click.stop="back()">
           {{ isAddMode ? $t('common.cancel') : $t('financialAssistance.back') }}
         </v-btn>
         <v-btn
@@ -163,10 +164,6 @@ export default Vue.extend({
       lineToEdit: null as IFinancialAssistancePaymentLine,
       groupToEdit: null as IFinancialAssistancePaymentGroup,
       showAddPaymentLineForm: false,
-      showConfirm: false,
-      isSaving: false,
-      saved: false,
-      validationFailed: false,
       loading: false,
       isDetailsMode: this.$route.name === routes.caseFile.financialAssistance.details.name,
       isEditMode: this.$route.name === routes.caseFile.financialAssistance.edit.name,
@@ -325,6 +322,25 @@ export default Vue.extend({
       }
     },
 
+    async onSubmitPayment(event: { total: string }) {
+      const result = await this.$confirm(this.$t('caseFile.financialAssistance.submitAssistance.confirmTitle'), '',
+        `
+        <div class="row col">${this.$t('caseFile.financialAssistance.submitAssistance.confirmMessage')}</div>
+        <div class="row list-row rc-body14">
+          <div class="col fw-bold">${this.financialAssistance.name}</div><div class="col-auto">${event.total}</div>
+        </div>
+        `);
+
+      if (result) {
+        const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions
+          .submitFinancialAssistancePayment(this.financialAssistance.id);
+        if (updatedFinancialAssistance) {
+          this.financialAssistance = new FinancialAssistancePaymentEntity(updatedFinancialAssistance);
+          this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.approvalSubmitted'));
+        }
+      }
+    },
+
     mergePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
       if (this.lineToEdit) {
         // we remove the original line before we re-insert it in the right group
@@ -364,19 +380,19 @@ export default Vue.extend({
     },
 
     async savePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
-      let newVersion = null as IFinancialAssistancePaymentEntity;
+      let updatedFinancialAssistance = null as IFinancialAssistancePaymentEntity;
       if (!submittedPaymentGroup.lines[0].id) {
-        newVersion = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine(
+        updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine(
           this.financialAssistance.id, submittedPaymentGroup,
         );
       } else {
-        newVersion = await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine(
+        updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine(
           this.financialAssistance.id, submittedPaymentGroup,
         );
       }
-      if (newVersion) {
+      if (updatedFinancialAssistance) {
         this.showAddPaymentLineForm = false;
-        this.financialAssistance.groups = newVersion.groups;
+        this.financialAssistance.groups = updatedFinancialAssistance.groups;
         this.$toasted.global.success(
           this.$t(!submittedPaymentGroup.lines[0].id
             ? 'financialAssistancePayment_lineAdded.success' : 'financialAssistancePayment_lineModified.success'),
@@ -386,11 +402,11 @@ export default Vue.extend({
 
     async deletePaymentLine(event : { line: IFinancialAssistancePaymentLine, group: IFinancialAssistancePaymentGroup }) {
       if (event.line.id) {
-        const newVersion = await this.$storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine(
+        const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine(
           this.financialAssistance.id, event.line.id,
         );
-        if (newVersion) {
-          this.financialAssistance.groups = newVersion.groups;
+        if (updatedFinancialAssistance) {
+          this.financialAssistance.groups = updatedFinancialAssistance.groups;
           this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.paymentLineDeleted'));
         }
       } else {

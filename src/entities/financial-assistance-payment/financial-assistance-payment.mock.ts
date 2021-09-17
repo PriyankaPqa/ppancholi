@@ -39,7 +39,7 @@ export const mockCaseFinancialAssistancePaymentGroups = ():
 
 export const mockCaseFinancialAssistanceEntity = (force?: Partial<IFinancialAssistancePaymentEntity>, index = 0): IFinancialAssistancePaymentEntity => ({
   ...mockBaseData(),
-  id: mockBaseData().id + index,
+  id: mockBaseData().id + (index || ''),
   caseFileId: '21f78eff-7b48-46b6-a363-ed479011d572',
   financialAssistanceTableId: 'c05bd971-f0fe-4e3d-a20e-6a0c7c7bd52a',
   name: 'thl payment',

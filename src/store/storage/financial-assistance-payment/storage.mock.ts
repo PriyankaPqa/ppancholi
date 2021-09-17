@@ -22,6 +22,7 @@ export class FinancialAssistancePaymentStorageMock extends BaseMock<IFinancialAs
     ...this.baseActions,
     addFinancialAssistancePayment: jest.fn((payload: IFinancialAssistancePaymentEntity) => payload),
     editFinancialAssistancePayment: jest.fn((payload: IFinancialAssistancePaymentEntity) => payload),
+    submitFinancialAssistancePayment: jest.fn((payload: uuid) => this.baseGetters.get().entity),
     addFinancialAssistancePaymentLine:
       jest.fn((financialAssistanceId: uuid, payload: IFinancialAssistancePaymentGroup) => this.baseGetters.get().entity),
     editFinancialAssistancePaymentLine:

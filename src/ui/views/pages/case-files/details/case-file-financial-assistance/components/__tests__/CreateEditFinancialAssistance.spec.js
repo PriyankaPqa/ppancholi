@@ -639,6 +639,40 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine().groups);
       });
     });
+    
+    describe('onSubmitPayment', () => {
+      it('calls service if the confirmation dialog returns true', async () => {
+        await wrapper.vm.onSubmitPayment({ total: '3.99$' });
+        expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance.id);
+        expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment()));
+      });
+  
+      it('does not call service if the confirmation dialog returns false', async () => {
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.onSubmitPayment({ total: '3.99$' });
+        expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).not.toHaveBeenCalled();
+      });
+
+      it('asks confirmation with correct details', async () => {
+        await wrapper.vm.onSubmitPayment({ total: '3.99$' });
+        const callArguments = wrapper.vm.$confirm.mock.calls[0];
+        
+        expect(callArguments[0]).toEqual('caseFile.financialAssistance.submitAssistance.confirmTitle');
+        expect(callArguments[1]).toEqual('');
+        // check for html but if we change the html layout, really all we want to make sure is data's there
+        expect(callArguments[2].indexOf('caseFile.financialAssistance.submitAssistance.confirmMessage') > -1).toBeTruthy();
+        expect(callArguments[2].indexOf('thl payment') > -1).toBeTruthy();
+        expect(callArguments[2].indexOf('3.99$') > -1).toBeTruthy();
+        // full html - change if required....
+        expect(callArguments[2]).toEqual(`
+        <div class="row col">caseFile.financialAssistance.submitAssistance.confirmMessage</div>
+        <div class="row list-row rc-body14">
+          <div class="col fw-bold">thl payment</div><div class="col-auto">3.99$</div>
+        </div>
+        `);
+      });
+    });
+    
   });
 
   describe('beforeRouteLeave', () => {

@@ -12,8 +12,13 @@
       @delete-payment-line="$emit('delete-payment-line', $event)"
       @update-payment-status="$emit('update-payment-status')" />
 
-    <div class="paymentGroups__total rc-heading-5">
-      {{ $t('caseFile.financialAssistance.transactionTotal', { total: $formatCurrency(total) }) }}
+    <div class="row paymentGroups__total rc-heading-5">
+      <v-btn v-if="canSubmit" color="primary" data-test="submit" class="mr-4" @click="$emit('submit-payment', { total: $formatCurrency(total) })">
+        {{ $t('caseFile.financialAssistance.submitAssistance') }}
+      </v-btn>
+      <div>
+        {{ $t('caseFile.financialAssistance.transactionTotal', { total: $formatCurrency(total) }) }}
+      </div>
     </div>
   </div>
 </template>
@@ -24,6 +29,7 @@ import {
   PaymentStatus,
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
+  ApprovalStatus,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import PaymentLineGroup from './PaymentLineGroup.vue';
@@ -77,6 +83,10 @@ export default Vue.extend({
 
       return Math.round(total * 100) / 100;
     },
+
+    canSubmit(): boolean {
+      return this.$hasLevel('level1') && this.transactionApprovalStatus === ApprovalStatus.New;
+    },
   },
 });
 </script>
@@ -90,7 +100,11 @@ export default Vue.extend({
 
 .paymentGroups__total {
   border-top: 1px solid var(--v-grey-lighten2);
-  text-align: right;
-  padding: 16px 80px 16px 0px;
+  padding: 16px 80px 16px 16px;
+  margin: 0;
+}
+
+.paymentGroups__total > :last-child {
+  margin-left: auto;
 }
 </style>

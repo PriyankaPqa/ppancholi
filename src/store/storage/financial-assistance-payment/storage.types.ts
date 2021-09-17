@@ -14,6 +14,7 @@ export interface IGettersMock extends IBaseGettersMock<IFinancialAssistancePayme
 export interface IActions extends IBaseActions<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, uuid> {
   addFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
+  submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
     Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
@@ -25,6 +26,7 @@ export interface IActions extends IBaseActions<IFinancialAssistancePaymentEntity
 export interface IActionsMock extends IBaseActionsMock<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata> {
   addFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
+  submitFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;

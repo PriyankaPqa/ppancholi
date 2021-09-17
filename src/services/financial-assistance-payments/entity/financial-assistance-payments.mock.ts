@@ -4,6 +4,7 @@ import { IFinancialAssistancePaymentsServiceMock } from './financial-assistance-
 export const mockFinancialAssistanceService = (): IFinancialAssistancePaymentsServiceMock => ({
   addFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   editFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
+  submitFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   addFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   editFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   deleteFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
