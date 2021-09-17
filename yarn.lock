@@ -1126,30 +1126,21 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@crctech/component-library@1.0.79":
-  version "1.0.79"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.79.tgz#83c41ef412bf14981c40f25ef6fe64e22f42d796"
-  integrity sha1-g8Qe9BK/FJgcQPJe9v5k4i9C15Y=
+"@crctech/component-library@1.0.85", "@crctech/component-library@^1.0.85":
+  version "1.0.85"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.85.tgz#8832e39514aa495a2e064e02688586d0f5bbf53b"
+  integrity sha1-iDLjlRSqSVouBk4CaIWG0PW79Ts=
   dependencies:
     "@googlemaps/js-api-loader" "^1.11.0"
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
-"@crctech/component-library@^1.0.82":
-  version "1.0.82"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.82.tgz#1d562fb3fbef4c2cf5054fdb9094e4f8a7369fd1"
-  integrity sha1-HVYvs/vvTCz1BU/bkJTk+Kc2n9E=
+"@crctech/registration-lib@1.0.465":
+  version "1.0.465"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.465.tgz#95ed91110ed8c39b077119e036c9a3eaccb2259a"
+  integrity sha1-le2REQ7Yw5sHcRngNsmj6syyJZo=
   dependencies:
-    "@googlemaps/js-api-loader" "^1.11.0"
-    date-fns "^2.14.0"
-    vuedraggable "^2.24.1"
-
-"@crctech/registration-lib@1.0.463":
-  version "1.0.463"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.463.tgz#e2fa7d7652d480e3c6cc2d815daf8a04159f09a8"
-  integrity sha1-4vp9dlLUgOPGzC2BXa+KBBWfCag=
-  dependencies:
-    "@crctech/component-library" "^1.0.82"
+    "@crctech/component-library" "^1.0.85"
     axios "^0.21.1"
     camelcase-keys "^6.2.2"
     moment "^2.29.1"
@@ -1173,9 +1164,9 @@
     strip-json-comments "^3.1.1"
 
 "@googlemaps/js-api-loader@^1.11.0":
-  version "1.11.1"
-  resolved "https://registry.yarnpkg.com/@googlemaps/js-api-loader/-/js-api-loader-1.11.1.tgz#b7f02c04d8d8602fb4bd873b03685fccefce1c6f"
-  integrity sha512-2ug4uBu0onRXTAo7Yxkay5N7pdNIz3XpTElMTLdCtEfQDxikbjeR6GS8atVhblX+ubFBNlXvDzz7VtuXv0vMRQ==
+  version "1.12.3"
+  resolved "https://registry.yarnpkg.com/@googlemaps/js-api-loader/-/js-api-loader-1.12.3.tgz#fb329f750399850d6a938a2c02b703b3a22fea47"
+  integrity sha512-u+MA+iZ2863YgugRRJH2EgI6exUIFq9yC7QEOj2VZkWE9d/FR4QmxNW5zaJBu4scglkI9O+E6yByj+7d06N7Sg==
   dependencies:
     fast-deep-equal "^3.1.3"
 
@@ -4693,9 +4684,9 @@ data-urls@^2.0.0:
     whatwg-url "^8.0.0"
 
 date-fns@^2.14.0:
-  version "2.18.0"
-  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.18.0.tgz#08e50aee300ad0d2c5e054e3f0d10d8f9cdfe09e"
-  integrity sha512-NYyAg4wRmGVU4miKq5ivRACOODdZRY3q5WLmOJSq8djyzftYphU7dTHLcEtLqEvfqMKQ0jVv91P4BAwIjsXIcw==
+  version "2.23.0"
+  resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.23.0.tgz#4e886c941659af0cf7b30fafdd1eaa37e88788a9"
+  integrity sha512-5ycpauovVyAk0kXNZz6ZoB9AYMZB4DObse7P3BPWmyEjXNORTI8EJ6X0uaSAq4sCHzM1uajzrkr6HnsLQpxGXA==
 
 de-indent@^1.0.2:
   version "1.0.2"
@@ -9453,9 +9444,9 @@ obuf@^1.0.0, obuf@^1.1.2:
   integrity sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==
 
 odata-query@^6.7.0:
-  version "6.7.0"
-  resolved "https://registry.yarnpkg.com/odata-query/-/odata-query-6.7.0.tgz#ae095fb0c8b85de090a5d7c0e02e530de81da9b9"
-  integrity sha512-sgYf31kOxtWA44+LFiPnF+B5+NJ69ZroXHXTsdFwWmaoHldcLK175adUtNysqQZ5rFAKSyUPgHQlPNX0ptNjuw==
+  version "6.7.1"
+  resolved "https://registry.yarnpkg.com/odata-query/-/odata-query-6.7.1.tgz#04f8cea75788ee205365ea7de2e9220547170600"
+  integrity sha512-R4OGbzTBah+7Uhi0sH/ayRraVcgMRbyjtaV08U1uZ84grD5xRfLcO5BTz812kYdVNo/xmpZOKlnDNymwP40cWg==
   dependencies:
     tslib "^1.10.0"
 
