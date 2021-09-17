@@ -201,7 +201,7 @@ export default Vue.extend({
           test: 'delete',
           icon: 'mdi-delete',
           additionalMemberOnly: true,
-          event: () => false,
+          event: this.deleteAdditionalMember,
         },
       ];
     },
@@ -351,6 +351,21 @@ export default Vue.extend({
         this.showPrimaryMemberDialog = true;
       } else {
         this.showAdditionalMemberDialog = true;
+      }
+    },
+
+    async deleteAdditionalMember() {
+      const doDelete = await this.$confirm(this.$t('common.delete'),
+        this.$t('household.profile.member.delete.message'));
+      if (doDelete) {
+        const res = await this.$storage.registration.actions.deleteAdditionalMember({
+          householdId: this.$storage.registration.getters.householdCreate().id,
+          memberId: this.member.id,
+          index: this.index,
+        });
+        if (res) {
+          this.$toasted.global.success(this.$t('registration.member.removed'));
+        }
       }
     },
   },

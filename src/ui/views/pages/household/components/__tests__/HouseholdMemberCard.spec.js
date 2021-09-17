@@ -1,24 +1,32 @@
-import { mockMemberData } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@crctech/registration-lib/src/entities/household-create';
+import { mockIndigenousCommunitiesGetData, EIndigenousTypes, mockHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
-const member = mockMemberData();
+const member = mockMember();
+const storage = mockStorage();
+const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
 
 describe('HouseholdMemberCard.vue', () => {
   let wrapper;
+  storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
 
-  const doMount = (isPrimaryMember = false, isShallow = true, customOptions = null) => {
+  const doMount = (isPrimaryMember = false, isShallow = true, customOptions = null, index = 0) => {
     const options = {
       localVue,
       propsData: {
         member,
         isPrimaryMember,
         shelterLocations: [],
+        index,
+      },
+      mocks: {
+        $storage: storage,
       },
       store: {
         modules: {
@@ -453,6 +461,36 @@ describe('HouseholdMemberCard.vue', () => {
         expect(wrapper.vm.showAdditionalMemberDialog).toBeFalsy();
         await wrapper.vm.openEditDialog();
         expect(wrapper.vm.showAdditionalMemberDialog).toBeTruthy();
+      });
+    });
+
+    describe('deleteAdditionalMember', () => {
+      it('should call confirm with the right parameters', () => {
+        doMount(false);
+        wrapper.vm.deleteAdditionalMember();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('common.delete', 'household.profile.member.delete.message');
+      });
+
+      it('should call deleteAdditionalMember storage action', async () => {
+        doMount(false);
+        wrapper.vm.$confirm = jest.fn(() => true);
+        await wrapper.setData({ index: 0 });
+
+        await wrapper.vm.deleteAdditionalMember();
+
+        expect(wrapper.vm.$storage.registration.actions.deleteAdditionalMember)
+          .toHaveBeenCalled(householdCreate.id, wrapper.vm.member.id, 0);
+      });
+
+      it('should call deleteAdditionalMember', async () => {
+        doMount(false);
+        wrapper.vm.$confirm = jest.fn(() => true);
+        await wrapper.setData({ index: 0 });
+
+        await wrapper.vm.deleteAdditionalMember();
+
+        expect(wrapper.vm.$storage.registration.actions.deleteAdditionalMember)
+          .toHaveBeenCalled(householdCreate.id, wrapper.vm.member.id, 0);
       });
     });
   });

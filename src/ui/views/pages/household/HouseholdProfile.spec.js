@@ -32,7 +32,6 @@ const events = [
 describe('HouseholdProfile.vue', () => {
   let wrapper;
   storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
-  // storage.caseFile.actions.search = jest.fn(() => ({ ids: ['1'] }));
   storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
   storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
 

@@ -95,7 +95,7 @@
 
           <v-row class="no-gutters pt-8 pb-4 d-flex justify-space-between">
             <h5 class="rc-heading-5 ">
-              {{ $t('household.profile.household_members') }} ({{ householdData.entity.members.length }})
+              {{ $t('household.profile.household_members') }} ({{ household.additionalMembers.length + 1 }})
             </h5>
             <div>
               <v-btn color="grey lighten-5" small depressed class="mr-4">
@@ -146,7 +146,7 @@
       :show.sync="showAddAdditionalMember"
       :member="newAdditionalMember"
       :household-id="household.id"
-      :index="index"
+      :index="-1"
       :shelter-locations-list="shelterLocations"
       :i18n="i18n"
       in-household-profile />
@@ -199,7 +199,6 @@ export default mixins(household).extend({
   data() {
     return {
       i18n: this.$i18n,
-      index: -1,
       moment,
       loading: false,
       householdData: null as IHouseholdCombined,
