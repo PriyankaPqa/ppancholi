@@ -21,13 +21,13 @@
     ]"
     @add-button="addEvent"
     @search="search">
-    <!-- <template v-if="!isDashboard" #filter>
+    <template v-if="!isDashboard" #filter>
       <filter-toolbar
-        filter-key="FilterKey.Events"
+        :filter-key="FilterKey.Events"
         :filter-options="filters"
-        :count="count"
+        :count="itemsCount"
         @update:appliedFilter="onApplyFilter($event)" />
-    </template> -->
+    </template>
 
     <template #[`item.${customColumns.name}`]="{ item: event }">
       <router-link
@@ -72,12 +72,16 @@ import {
   ISearchData,
 } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
+import { EFilterType, IFilterSettings } from '@crctech/component-library/src/types';
+import { FilterKey } from '@/entities/user-account';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
   EResponseLevel,
   EEventStatus,
   IEventCombined,
   IEventSchedule,
 } from '@/entities/event';
+import helpers from '@/ui/helpers';
 import { IAzureSearchParams } from '@/types';
 import routes from '@/constants/routes';
 import moment from '@/ui/plugins/moment';
@@ -90,7 +94,7 @@ export default Vue.extend({
 
   components: {
     RcDataTable,
-    // FilterToolbar,
+    FilterToolbar,
     StatusChip,
   },
 
@@ -105,6 +109,7 @@ export default Vue.extend({
 
   data() {
     return {
+      FilterKey,
       routes,
       loading: false,
       EResponseLevel,
@@ -176,41 +181,27 @@ export default Vue.extend({
       }];
     },
 
-    // filters(): Array<IFilterSettings> {
-    //   return [{
-    //     key: this.customColumns.name,
-    //     type: EFilterType.Text,
-    //     label: this.$t('eventsTable.name') as string,
-    //   }, {
-    //     key: 'ResponseLevel',
-    //     type: EFilterType.Select,
-    //     label: this.$t('eventsTable.levelInteger') as string,
-    //     items: helpers.enumToTranslatedCollection(EResponseLevel, 'event.response_level'),
-    //   }, {
-    //     key: 'OpenDate',
-    //     type: EFilterType.Date,
-    //     label: this.$t('eventsTable.startDate') as string,
-    //     startLabel: this.$t('common.start') as string,
-    //     endLabel: this.$t('common.end') as string,
-    //   }, {
-    //     key: 'ScheduleEventStatusName',
-    //     type: EFilterType.Select,
-    //     label: this.$t('eventsTable.eventStatus') as string,
-    //     items: [{
-    //       text: this.$t('eventsTable.eventStatus.Open') as string,
-    //       value: EEventStatus.Open,
-    //     }, {
-    //       text: this.$t('eventsTable.eventStatus.OnHold') as string,
-    //       value: EEventStatus.OnHold,
-    //     }, {
-    //       text: this.$t('eventsTable.eventStatus.Closed') as string,
-    //       value: EEventStatus.Closed,
-    //     }, {
-    //       text: this.$t('eventsTable.eventStatus.Archived') as string,
-    //       value: EEventStatus.Archived,
-    //     }],
-    //   }];
-    // },
+    filters(): Array<IFilterSettings> {
+      return [{
+        key: this.customColumns.name,
+        type: EFilterType.Text,
+        label: this.$t('eventsTable.name') as string,
+      }, {
+        key: this.customColumns.responseLevel,
+        type: EFilterType.MultiSelect,
+        label: this.$t('eventsTable.levelInteger') as string,
+        items: helpers.enumToTranslatedCollection(EResponseLevel, 'event.response_level', true),
+      }, {
+        key: this.customColumns.openDate,
+        type: EFilterType.Date,
+        label: this.$t('eventsTable.startDate') as string,
+      }, {
+        key: this.customColumns.eventStatus,
+        type: EFilterType.MultiSelect,
+        label: this.$t('eventsTable.eventStatus') as string,
+        items: helpers.enumToTranslatedCollection(EEventStatus, 'eventsTable.eventStatus', true),
+      }];
+    },
 
     tableProps(): Record<string, string> {
       return {

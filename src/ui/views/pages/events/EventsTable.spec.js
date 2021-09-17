@@ -1,11 +1,13 @@
 import { RcDataTable } from '@crctech/component-library';
 import moment from 'moment';
+import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import helpers from '@/ui/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import {
-  mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata,
+  mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus
 } from '@/entities/event';
 import Component from './EventsTable.vue';
 
@@ -362,6 +364,58 @@ describe('EventsTable.vue', () => {
             sortable: false,
           },
         ]);
+      });
+    });
+    describe('filters', () => {
+      it('should have correct filters', () => {
+        wrapper = mount(Component, {
+          localVue,
+
+          propsData: {
+            isDashboard: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            customColumns() {
+              return {
+                name: 'Entity/Name/Translation/en',
+                responseLevel: 'Metadata/ResponseLevelName/Translation/en',
+                openDate: 'Entity/Schedule/OpenDate',
+                daysOpen: 'DaysOpen',
+                eventStatus: 'Metadata/ScheduleEventStatusName/Translation/en',
+              };
+            },
+            tableData: () => mockEvents(),
+          },
+        });
+
+        const expected = [
+          {
+            key: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.Text,
+            label: 'eventsTable.name',
+          },
+          {
+            key: `Metadata/ResponseLevelName/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.MultiSelect,
+            label: 'eventsTable.levelInteger',
+            items: helpers.enumToTranslatedCollection(EResponseLevel, 'event.response_level', true),
+          },
+          {
+            key: 'Entity/Schedule/OpenDate',
+            type: EFilterType.Date,
+            label: 'eventsTable.startDate',
+          },
+          {
+            key: `Metadata/ScheduleEventStatusName/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.MultiSelect,
+            label: 'eventsTable.eventStatus',
+            items: helpers.enumToTranslatedCollection(EEventStatus, 'eventsTable.eventStatus', true),
+          },
+        ];
+        expect(wrapper.vm.filters).toEqual(expected);
       });
     });
 
