@@ -231,7 +231,7 @@ describe('ProgramsHome.vue', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        });
+        }, null, true);
       });
     });
 

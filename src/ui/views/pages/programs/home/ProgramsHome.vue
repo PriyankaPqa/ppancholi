@@ -144,7 +144,7 @@ export default Vue.extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, true);
 
       this.count = res.count;
       this.programs = this.$storage.program.getters.getByIds(res.ids).map((combined) => combined.entity);

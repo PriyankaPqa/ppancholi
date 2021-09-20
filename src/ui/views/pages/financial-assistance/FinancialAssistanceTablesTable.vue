@@ -22,6 +22,14 @@
       <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="onClickMenuItem($event)" />
     </template>
 
+    <template #filter>
+      <filter-toolbar
+        :filter-key="FilterKey.FinancialAssistanceTables"
+        :filter-options="filters"
+        :count="count"
+        @update:appliedFilter="onApplyFilterLocal($event)" />
+    </template>
+
     <template #[`item.${customColumns.program}`]="{ item }">
       {{ $m(item.metadata.programName) }}
     </template>
@@ -50,30 +58,37 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { RcDataTable, RcAddButtonWithMenu } from '@crctech/component-library';
+import mixins from 'vue-typed-mixins';
+import { RcDataTable, RcAddButtonWithMenu, IFilterSettings } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
+import { EFilterType } from '@crctech/component-library/src/types';
+import _isEmpty from 'lodash/isEmpty';
+import { FilterKey } from '@/entities/user-account';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import helpers from '@/ui/helpers';
+import { IEntityCombined, Status } from '@/entities/base';
+import { IProgramEntity, IProgramMetadata } from '@/entities/program';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistanceTablesTable',
 
   components: {
     RcDataTable,
     RcAddButtonWithMenu,
     StatusChip,
+    FilterToolbar,
   },
-
-  mixins: [TablePaginationSearchMixin],
 
   data() {
     return {
+      FilterKey,
       count: 0,
       searchResultIds: [] as string[],
       options: {
@@ -81,6 +96,7 @@ export default Vue.extend({
         sortBy: [`Metadata/FinancialAssistanceTableStatusName/Translation/${this.$i18n.locale}`],
         sortDesc: [false],
       },
+      programs: [],
     };
   },
 
@@ -114,6 +130,27 @@ export default Vue.extend({
         text: '',
         value: 'editButton',
         sortable: false,
+      }];
+    },
+
+    filters(): Array<IFilterSettings> {
+      return [{
+        key: this.customColumns.program,
+        type: EFilterType.MultiSelect,
+        label: this.$t('financialAssistance.program') as string,
+        items: this.programs.map((p: IProgramEntity) => ({
+          value: this.$m(p.name),
+          text: this.$m(p.name),
+        })),
+      }, {
+        key: this.customColumns.name,
+        type: EFilterType.Text,
+        label: this.$t('common.name') as string,
+      }, {
+        key: this.customColumns.status,
+        type: EFilterType.MultiSelect,
+        label: this.$t('common.status') as string,
+        items: helpers.enumToTranslatedCollection(Status, 'enums.Status', true),
       }];
     },
 
@@ -155,12 +192,23 @@ export default Vue.extend({
     eventId(): string {
       return this.$route.params.id;
     },
-  },
-  methods: {
-    async fetchData(params: IAzureSearchParams) {
-      params.filter = {
+
+    presetFilter(): Record<string, unknown> {
+      return {
         'Entity/EventId': this.eventId,
       };
+    },
+  },
+
+  async created() {
+    await this.fetchPrograms();
+  },
+
+  methods: {
+    async fetchData(params: IAzureSearchParams) {
+      if (_isEmpty(params.filter)) {
+        params.filter = this.presetFilter;
+      }
 
       const res = await this.$storage.financialAssistance.actions.search({
         search: params.search,
@@ -171,7 +219,7 @@ export default Vue.extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, true);
       this.setResults(res);
       return res;
     },
@@ -203,6 +251,26 @@ export default Vue.extend({
           faId: item.entity.id,
         },
       };
+    },
+
+    async fetchPrograms() {
+      const res = await this.$storage.program.actions.search({
+        filter: this.presetFilter,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+        orderBy: `Entity/Name/Translation/${this.$i18n.locale}`,
+      }, null, true);
+
+      this.programs = this.$storage.program.getters.getByIds(res.ids)
+        .map((combined: IEntityCombined<IProgramEntity, IProgramMetadata>) => (combined.entity));
+    },
+
+    async onApplyFilterLocal(
+      { preparedFilters, searchFilters }
+        : { preparedFilters: Record<string, unknown>, searchFilters: Record<string, unknown> },
+    ) {
+      await this.onApplyFilter({ preparedFilters: { ...preparedFilters, ...this.presetFilter }, searchFilters });
     },
   },
 });

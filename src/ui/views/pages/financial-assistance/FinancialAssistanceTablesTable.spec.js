@@ -1,8 +1,12 @@
 import { RcDataTable } from '@crctech/component-library';
+import { EFilterType } from '@crctech/component-library/src/types';
+import helpers from '@/ui/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
+import { Status } from '@/entities/base';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedFinancialAssistances } from '@/entities/financial-assistance';
+import { mockProgramEntities } from '@/entities/program';
 import routes from '@/constants/routes';
 import Component from './FinancialAssistanceTablesTable.vue';
 
@@ -106,6 +110,41 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       });
     });
 
+    describe('filters', () => {
+      it('should have correct filters', async () => {
+        await wrapper.setData({
+          programs: mockProgramEntities(),
+        });
+
+        const expected = [
+          {
+            key: `Metadata/ProgramName/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.MultiSelect,
+            label: 'financialAssistance.program',
+            items: [{
+              value: 'Program A',
+              text: 'Program A',
+            }, {
+              value: 'Program A',
+              text: 'Program A',
+            }],
+          },
+          {
+            key: `Entity/Name/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.Text,
+            label: 'common.name',
+          },
+          {
+            key: `Metadata/FinancialAssistanceTableStatusName/Translation/${wrapper.vm.$i18n.locale}`,
+            type: EFilterType.MultiSelect,
+            label: 'common.status',
+            items: helpers.enumToTranslatedCollection(Status, 'enums.Status', true),
+          },
+        ];
+        expect(wrapper.vm.filters).toEqual(expected);
+      });
+    });
+
     describe('customColumns', () => {
       it('should return the correct column names', () => {
         const expectedColumns = {
@@ -199,6 +238,20 @@ describe('FinancialAssistanceTablesTable.vue', () => {
     });
   });
 
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('should call fetchPrograms', async () => {
+        wrapper.vm.fetchPrograms = jest.fn();
+
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.fetchPrograms).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
   describe('Methods', () => {
     describe('fetchData', () => {
       let params;
@@ -206,7 +259,6 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       beforeEach(() => {
         params = {
           search: 'query',
-          filter: 'filter',
           top: 10,
           skip: 10,
           orderBy: 'name asc',
@@ -237,7 +289,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        });
+        }, null, true);
       });
 
       it('calls setResults with the search results', async () => {
@@ -315,6 +367,37 @@ describe('FinancialAssistanceTablesTable.vue', () => {
             faId: 'fa id',
           },
         });
+      });
+    });
+
+    describe('fetchPrograms', () => {
+      it('calls search action', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        await wrapper.setData({
+          presetFilter: {
+            'Entity/EventId': 'EventId',
+          },
+        });
+
+        jest.clearAllMocks();
+
+        await wrapper.vm.fetchPrograms();
+
+        expect(wrapper.vm.$storage.program.actions.search).toHaveBeenLastCalledWith({
+          filter: {
+            'Entity/EventId': 'EventId',
+          },
+          count: true,
+          orderBy: 'Entity/Name/Translation/en',
+          queryType: 'full',
+          searchMode: 'all',
+        }, null, true);
       });
     });
   });
