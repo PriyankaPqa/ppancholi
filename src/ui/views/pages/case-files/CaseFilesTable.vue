@@ -63,9 +63,8 @@
 
     <template #[`item.${customColumns.name}`]="{ item: caseFile }">
       <router-link
-        :is="canViewHousehold ? 'router-link' : 'span'"
         v-if="caseFile.metadata"
-        :class="[canViewHousehold ? 'rc-link14': 'rc-body14']"
+        class="rc-link14"
         data-test="beneficiaryName-link"
         :to="getHouseholdProfileRoute(caseFile)">
         {{ getBeneficiaryName(caseFile) }}
@@ -168,10 +167,6 @@ export default mixins(TablePaginationSearchMixin).extend({
           },
         },
       };
-    },
-
-    canViewHousehold():boolean {
-      return this.$hasLevel('level1');
     },
 
     tableData(): ICaseFileCombined[] {

@@ -78,10 +78,16 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('make member button ', () => {
-      it('renders if member is not primary', () => {
-        doMount(false);
+      it('renders if member is not primary and can edit', () => {
+        doMount(false, true, { computed: { canEdit() { return true; } } });
         const element = wrapper.findDataTest('household_profile_member_make_primary_btn');
         expect(element.exists()).toBeTruthy();
+      });
+
+      it('does not render if member is not primary and cannot edit', () => {
+        doMount(false, true, { computed: { canEdit() { return false; } } });
+        const element = wrapper.findDataTest('household_profile_member_make_primary_btn');
+        expect(element.exists()).toBeFalsy();
       });
 
       it('does not render if member is  primary', () => {
@@ -274,6 +280,50 @@ describe('HouseholdMemberCard.vue', () => {
 
         });
         expect(wrapper.vm.canSplit).toBeFalsy();
+      });
+    });
+
+    describe('canEdit', () => {
+      it('returns true if the user has level 1 or more', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          store: {
+            ...mockUserStateLevel(1),
+          },
+
+        });
+        expect(wrapper.vm.canEdit).toBeTruthy();
+      });
+      it('returns false if the user has level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          store: {
+            modules: {
+              user: {
+                state:
+                  {
+                    oid: '7',
+                    email: 'test@test.ca',
+                    family_name: 'Joe',
+                    given_name: 'Pink',
+                    roles: ['contributorIM'],
+                  },
+              },
+            },
+          },
+
+        });
+        expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
     describe('birthDate', () => {

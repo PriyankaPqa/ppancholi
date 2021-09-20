@@ -301,7 +301,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.household.householdProfile.path,
                 name: Routes.household.householdProfile.name,
                 component: HouseholdProfile,
-                meta: { level: 'level1' },
+                meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                 props: true,
               },
             ],

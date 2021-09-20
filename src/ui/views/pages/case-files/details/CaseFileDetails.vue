@@ -110,7 +110,7 @@
       </div>
 
       <v-btn
-        v-if="canViewHousehold && household"
+        v-if="household"
         small
         color="primary"
         class="mb-4"
@@ -191,10 +191,6 @@ export default Vue.extend({
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1');
-    },
-
-    canViewHousehold():boolean {
       return this.$hasLevel('level1');
     },
 

@@ -29,6 +29,7 @@
                 {{ $t('household.profile.address') }}:
               </div>
               <v-btn
+                v-if="canEdit"
                 icon
                 x-small
                 data-test="member_address_edit_btn"
@@ -97,7 +98,7 @@
             <h5 class="rc-heading-5 ">
               {{ $t('household.profile.household_members') }} ({{ household.additionalMembers.length + 1 }})
             </h5>
-            <div>
+            <div v-if="canEdit">
               <v-btn color="grey lighten-5" small depressed class="mr-4">
                 <v-icon left>
                   mdi-compare-horizontal
@@ -273,6 +274,10 @@ export default mixins(household).extend({
       }
 
       return date.format('ll');
+    },
+
+    canEdit():boolean {
+      return this.$hasLevel('level1');
     },
   },
 

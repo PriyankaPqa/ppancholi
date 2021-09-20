@@ -3,7 +3,6 @@ import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { mockUserStateLevel } from '@/test/helpers';
 
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@/entities/case-file';
 import Component from './CaseFilesTable.vue';
@@ -171,74 +170,6 @@ describe('CaseFilesTable.vue', () => {
         mocks: {
           $storage: storage,
         },
-      });
-    });
-
-    describe('canViewHousehold', () => {
-      it('returns true if user has level 1', () => {
-        wrapper = mount(Component, {
-          localVue,
-          store: {
-            ...mockUserStateLevel(1),
-            caseFile: {
-              searchLoading: false,
-            },
-          },
-          mocks: {
-            $storage: {
-              caseFile: {
-                getters: { getByIds: jest.fn(() => mockCaseFiles) },
-                actions: {
-                  search: jest.fn(() => ({
-                    ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
-                    count: 2,
-                  })),
-                },
-              },
-            },
-          },
-        });
-
-        expect(wrapper.vm.canViewHousehold).toBeTruthy();
-      });
-
-      it('returns false if user does not have level 1', () => {
-        jest.clearAllMocks();
-        wrapper = mount(Component, {
-          localVue,
-          store: {
-            modules: {
-              caseFile: {
-                searchLoading: false,
-              },
-              user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
-              },
-            },
-          },
-          mocks: {
-            $storage: {
-              caseFile: {
-                getters: { getByIds: jest.fn(() => mockCaseFiles) },
-                actions: {
-                  search: jest.fn(() => ({
-                    ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
-                    count: 2,
-                  })),
-                },
-              },
-            },
-          },
-        });
-
-        expect(wrapper.vm.canViewHousehold).toBeFalsy();
       });
     });
 

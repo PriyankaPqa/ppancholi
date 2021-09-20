@@ -6,6 +6,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockEventMainInfo, EEventLocationStatus, EEventStatus } from '@/entities/event';
 import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
+import { mockUserStateLevel } from '@/test/helpers';
 import helpers from '@/ui/helpers';
 
 import Component from './HouseholdProfile.vue';
@@ -87,6 +88,61 @@ describe('HouseholdProfile.vue', () => {
         expect(element.text()).toContain(wrapper.vm.addressLine1);
         expect(element.text()).toContain(wrapper.vm.addressLine2);
         expect(element.text()).toContain(wrapper.vm.country);
+      });
+
+      it('renders the edit button if the user can edit', () => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          data() {
+            return {
+              events,
+              householdData: household,
+              loading: false,
+            };
+          },
+          computed: {
+            addressLine1() { return 'address-line-1'; },
+            addressLine2() { return 'address-line-2'; },
+            country() { return 'mock-country'; },
+            household() { return householdCreate; },
+            canEdit() { return true; },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.findDataTest('member_address_edit_btn').exists()).toBeTruthy();
+      });
+      it('does not render the edit button if the user cannot edit', () => {
+        wrapper = mount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          data() {
+            return {
+              events,
+              householdData: household,
+              loading: false,
+            };
+          },
+          computed: {
+            addressLine1() { return 'address-line-1'; },
+            addressLine2() { return 'address-line-2'; },
+            country() { return 'mock-country'; },
+            household() { return householdCreate; },
+            canEdit() { return false; },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.findDataTest('member_address_edit_btn').exists()).toBeFalsy();
       });
     });
 
@@ -399,6 +455,77 @@ describe('HouseholdProfile.vue', () => {
         });
 
         expect(wrapper.vm.lastUpdated).toEqual('Jul 1, 2021');
+      });
+    });
+
+    describe('canEdit', () => {
+      it('returns true if user has level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            household() { return householdCreate; },
+          },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
+          store: {
+            ...mockUserStateLevel(1),
+          },
+          mocks: {
+            $storage: {
+              registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
+              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeTruthy();
+      });
+
+      it('returns false if user does not have level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            household() { return householdCreate; },
+          },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
+          store: {
+            modules: {
+              user: {
+                state:
+                  {
+                    oid: '7',
+                    email: 'test@test.ca',
+                    family_name: 'Joe',
+                    given_name: 'Pink',
+                    roles: ['contributorIM'],
+                  },
+              },
+            },
+          },
+          mocks: {
+            $storage: {
+              registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
+              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
   });
