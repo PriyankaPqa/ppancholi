@@ -670,6 +670,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
           <div class="col fw-bold">thl payment</div><div class="col-auto">3.99$</div>
         </div>
         `);
+        expect(callArguments[3]).toEqual('common.submit');
       });
     });
     

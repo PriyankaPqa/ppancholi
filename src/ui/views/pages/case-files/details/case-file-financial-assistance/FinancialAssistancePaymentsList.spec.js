@@ -175,6 +175,21 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       });
     });
 
+    describe('canSubmit', () => {
+      it('returns true for level1+ only', async () => {
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.canSubmit).toBeTruthy();
+        await mountWrapper(false, null);
+        expect(wrapper.vm.canSubmit).toBeFalsy();
+        await mountWrapper(false, null, 'readonly');
+        expect(wrapper.vm.canSubmit).toBeFalsy();
+        await mountWrapper(false, null, 'contributor3');
+        expect(wrapper.vm.canSubmit).toBeFalsy();
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.canSubmit).toBeFalsy();
+      });
+    });
+
     describe('tableData', () => {
       it('should call getById', async () => {
         await mountWrapper();
@@ -182,6 +197,46 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         const data = wrapper.vm.tableData;
         expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'], true);
         expect(data.length).toBe(storage.financialAssistancePayment.getters.getByIds().length);
+      });
+    });
+
+    describe('itemsToSubmit', () => {
+      it('should filter tableData for new items', async () => {
+        const data = [mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance()];
+        data[1].entity.approvalStatus = 2;
+        await mountWrapper(false, 6, null, {
+          computed: {
+            tableData: () => data,
+          },
+        });
+        expect(wrapper.vm.itemsToSubmit).toEqual([data[0], data[2]]);
+      });
+    });
+
+    describe('itemsToSubmitSelectAll', () => {
+      it('sets or remove all selectedItems', async () => {
+        const data = [mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance()];
+        data[0].entity.id = 'id-0';
+        data[1].entity.id = 'id-1';
+        data[2].entity.id = 'id-2';
+        await mountWrapper(false, 6, null, {
+          computed: {
+            tableData: () => data,
+          },
+        });
+        expect(wrapper.vm.selectedItems).toEqual([]);
+        expect(wrapper.vm.itemsToSubmitSelectAll).toBeFalsy();
+        wrapper.vm.itemsToSubmitSelectAll = true;
+        expect(wrapper.vm.selectedItems).toEqual(['id-0', 'id-1', 'id-2']);
+        expect(wrapper.vm.itemsToSubmitSelectAll).toBeTruthy();
+        wrapper.vm.itemsToSubmitSelectAll = false;
+        expect(wrapper.vm.selectedItems).toEqual([]);
+
+        await wrapper.setData({ selectedItems: ['id-0', 'id-1', 'id-2'] });
+        expect(wrapper.vm.itemsToSubmitSelectAll).toBeTruthy();
+
+        await wrapper.setData({ selectedItems: ['id-0'] });
+        expect(wrapper.vm.itemsToSubmitSelectAll).toBeFalsy();
       });
     });
 
@@ -305,6 +360,20 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           'caseFile.financialAssistance.confirm.delete.message');
         expect(storage.financialAssistancePayment.actions.deactivate)
           .toHaveBeenCalledTimes(0);
+      });
+    });
+
+    describe('submitSelectedPayments', () => {
+      it('calls submit for all selected', async () => {
+        await mountWrapper();
+        await wrapper.setData({ selectedItems: ['id-0', 'id-1', 'id-2'] });
+        await wrapper.vm.submitSelectedPayments();
+        expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment)
+          .toHaveBeenCalledWith('id-0');
+        expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment)
+          .toHaveBeenCalledWith('id-1');
+        expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment)
+          .toHaveBeenCalledWith('id-2');
       });
     });
   });

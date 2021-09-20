@@ -18,7 +18,8 @@
       ref="defaultConfirm"
       :show.sync="showConfirm"
       :title="dialogTitle"
-      :messages="dialogMessages">
+      :messages="dialogMessages"
+      :submit-button-key="submitActionLabel">
       <template>
         <div v-html="dialogHtml" />
       </template>
@@ -129,9 +130,10 @@ export default {
       this.cspContent = this.cspContentProd;
     }
 
-    Vue.prototype.$confirm = async (title, messages, htmlContent) => {
+    Vue.prototype.$confirm = async (title, messages, htmlContent = null, submitActionLabel = 'common.buttons.yes') => {
       this.dialogTitle = title;
       this.dialogMessages = messages;
+      if (submitActionLabel) { this.submitActionLabel = submitActionLabel; }
       this.dialogHtml = sanitizeHtml(htmlContent, { allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, '*': ['class'] } });
       this.showConfirm = true;
 

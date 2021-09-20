@@ -20,6 +20,17 @@
           :count="count"
           @update:appliedFilter="onApplyFilter">
           <template #toolbarActions>
+            <v-btn
+              :v-if="canSubmit"
+              :disabled="!itemsToSubmit.length"
+              height="32"
+              color="primary"
+              style="color: white"
+              class="mr-4"
+              data-test="financialAssistanceOverview__submitAllButton"
+              @click="openSubmitDialog">
+              {{ $t('caseFile.financialAssistance.submitAllNewButton') }}
+            </v-btn>
             <v-btn height="32" color="primary" style="color: white" data-test="financialAssistanceOverview__statsButton">
               {{ $t('caseFile.financialAssistance.statsButton') }}
             </v-btn>
@@ -66,6 +77,49 @@
         </v-btn>
       </template>
     </rc-data-table>
+
+    <rc-dialog
+      v-if="showSubmitDialog"
+      data-test="submit-dialog"
+      :title="$t('caseFile.financialAssistance.submitDialog.title')"
+      :cancel-action-label="$t('common.cancel')"
+      :submit-action-label="$t('common.submit')"
+      :show.sync="showSubmitDialog"
+      :submit-button-disabled="!selectedItems.length"
+      :max-width="750"
+      @close="showSubmitDialog = false"
+      @cancel="showSubmitDialog = false"
+      @submit="submitSelectedPayments">
+      <div class="row col">
+        {{ $t('caseFile.financialAssistance.submitDialog.message') }}
+      </div>
+      <div class="row list-row-header">
+        <div class="col-auto pa-2">
+          <v-checkbox
+            v-model="itemsToSubmitSelectAll"
+            hide-details
+            class="mt-0" />
+        </div>
+        <div class="col">
+          {{ $t('caseFile.financialAssistance.submitDialog.selectAll') }}
+        </div>
+      </div>
+      <div v-for="fa in itemsToSubmit" :key="fa.entity.id" class="row list-row rc-body14">
+        <div class="col-auto pa-2">
+          <v-checkbox
+            v-model="selectedItems"
+            hide-details
+            class="mt-0"
+            :value="fa.entity.id" />
+        </div>
+        <div class="col fw-bold">
+          {{ fa.entity.name }}
+        </div>
+        <div class="col-auto">
+          {{ $formatCurrency(fa.metadata.total) }}
+        </div>
+      </div>
+    </rc-dialog>
   </div>
 </template>
 
@@ -75,6 +129,7 @@ import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable,
   IFilterSettings,
+  RcDialog,
 } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
@@ -93,6 +148,7 @@ export default Vue.extend({
     RcDataTable,
     FilterToolbar,
     StatusChip,
+    RcDialog,
   },
 
   mixins: [TablePaginationSearchMixin],
@@ -110,6 +166,8 @@ export default Vue.extend({
         loading: false,
       },
       getLocalStringDate: helpers.getLocalStringDate,
+      showSubmitDialog: false,
+      selectedItems: [] as string[],
     };
   },
 
@@ -117,6 +175,19 @@ export default Vue.extend({
 
     tableData(): IFinancialAssistancePaymentCombined[] {
       return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds, true);
+    },
+
+    itemsToSubmit() : IFinancialAssistancePaymentCombined[] {
+      return this.tableData.filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
+    },
+
+    itemsToSubmitSelectAll: {
+      get(): boolean {
+        return this.itemsToSubmit.length === this.selectedItems.length;
+      },
+      set(value: boolean) {
+        this.selectedItems = value ? this.itemsToSubmit.map((e) => e.entity.id) : [];
+      },
     },
 
     customColumns(): Record<string, string> {
@@ -205,6 +276,10 @@ export default Vue.extend({
       return this.$hasLevel('level1');
     },
 
+    canSubmit(): boolean {
+      return this.$hasLevel('level1');
+    },
+
     canDelete(): boolean {
       return this.$hasLevel('level1');
     },
@@ -263,6 +338,25 @@ export default Vue.extend({
         await this.$storage.financialAssistancePayment.actions.deactivate(item.entity.id);
       }
     },
+
+    openSubmitDialog() {
+      this.showSubmitDialog = true;
+      this.selectedItems = [];
+    },
+
+    async submitSelectedPayments() {
+      this.showSubmitDialog = false;
+      let nbSuccess = 0;
+      for (let i = 0; i < this.selectedItems.length; i += 1) {
+        // we will do each request at a time because validation might conflict between each
+        // eslint-disable-next-line no-await-in-loop
+        if (await this.$storage.financialAssistancePayment.actions.submitFinancialAssistancePayment(this.selectedItems[i])) nbSuccess += 1;
+      }
+      if (nbSuccess === this.selectedItems.length) {
+        this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.multipleApprovalSubmitted', { nbSuccess }));
+      }
+      this.selectedItems = [];
+    },
   },
 });
 </script>
@@ -273,5 +367,8 @@ export default Vue.extend({
   text-align: right;
   min-width: 80px;
   display: inline-block;
+}
+.list-row-header {
+  padding: 0px 16px;
 }
 </style>

@@ -13,7 +13,13 @@
       @update-payment-status="$emit('update-payment-status')" />
 
     <div class="row paymentGroups__total rc-heading-5">
-      <v-btn v-if="canSubmit" color="primary" data-test="submit" class="mr-4" @click="$emit('submit-payment', { total: $formatCurrency(total) })">
+      <v-btn
+        v-if="canSubmit"
+        :disabled="disableSubmitPayment"
+        color="primary"
+        data-test="submit"
+        class="mr-4"
+        @click="$emit('submit-payment', { total: $formatCurrency(total) })">
         {{ $t('caseFile.financialAssistance.submitAssistance') }}
       </v-btn>
       <div>
@@ -59,6 +65,11 @@ export default Vue.extend({
     },
 
     disableDeleteButton: {
+      type: Boolean,
+      default: false,
+    },
+
+    disableSubmitPayment: {
       type: Boolean,
       default: false,
     },

@@ -64,6 +64,7 @@
                 :payment-groups="activePaymentGroups"
                 :transaction-approval-status="financialAssistance.approvalStatus"
                 :items="items"
+                :disable-submit-payment="dirty"
                 data-test="paymentGroupList"
                 @submit-payment="onSubmitPayment"
                 @edit-payment-line="editPaymentLine"
@@ -329,7 +330,7 @@ export default Vue.extend({
         <div class="row list-row rc-body14">
           <div class="col fw-bold">${this.financialAssistance.name}</div><div class="col-auto">${event.total}</div>
         </div>
-        `);
+        `, this.$t('common.submit'));
 
       if (result) {
         const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions
