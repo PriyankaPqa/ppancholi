@@ -1,4 +1,5 @@
 import { RcDataTable } from '@crctech/component-library';
+import { EFilterType } from '@crctech/component-library/src/types';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedCaseFinancialAssistance } from '@/entities/financial-assistance-payment';
@@ -268,6 +269,21 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         });
         headers = wrapper.vm.headers;
         expect(headers.length).toBe(5);
+      });
+    });
+
+    describe('filters', () => {
+      it('returns correct value', async () => {
+        expect(wrapper.vm.filters).toEqual([{
+          key: 'Entity/Name',
+          type: EFilterType.Text,
+          label: 'common.name',
+        },
+        {
+          key: 'Entity/Created',
+          type: EFilterType.Date,
+          label: 'caseFilesTable.filters.createdDate',
+        }]);
       });
     });
   });

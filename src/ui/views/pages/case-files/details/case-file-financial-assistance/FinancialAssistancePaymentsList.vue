@@ -132,6 +132,7 @@ import {
   RcDialog,
 } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
+import { EFilterType } from '@crctech/component-library/src/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -243,20 +244,17 @@ export default Vue.extend({
       return headers;
     },
 
-    /* These filters will work but for now that's been scratched out of jira
-      - approvalStatus is not filterable yet on backend either */
     filters(): Array<IFilterSettings> {
-      return [];
-      //   key: 'Entity/Name',
-      //   type: EFilterType.Text,
-      //   label: this.$t('common.name') as string,
-      // },
-      // {
-      //   key: 'Entity/ApprovalStatus',
-      //   type: EFilterType.Select,
-      //   label: this.$t('caseFile.financialAssistance.approvalStatus') as string,
-      //   items: helpers.enumToTranslatedCollection(ApprovalStatus, 'enums.transactionApprovalStatus'),
-      // },
+      return [{
+        key: this.customColumns.name,
+        type: EFilterType.Text,
+        label: this.$t('common.name') as string,
+      },
+      {
+        key: this.customColumns.created,
+        type: EFilterType.Date,
+        label: this.$t('caseFilesTable.filters.createdDate') as string,
+      }];
     },
 
     labels(): Record<string, Record<string, TranslateResult>> {
