@@ -99,6 +99,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.delete(`${this.baseUrl}/${householdId}/members/${memberId}`);
   }
 
+  // async splitMembers(householdId: string, memberIds: string[]): Promise<IHouseholdEntity> {
+  //   return this.http.patch(`${this.baseUrl}/${householdId}/split`, memberIds);
+  // }
+
   async addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity> {
     const parsePayload = this.parseMember(payload);
     return this.http.post(`${this.baseUrl}/${householdId}/members`, {

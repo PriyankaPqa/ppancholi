@@ -8,7 +8,7 @@ import {
 } from './contactInformation.types';
 
 import {
-  required, maxLengthCheck, isPhone, isEmail, hasAtLeastAPhoneIfNoEmail, isValidOption,
+  required, maxLengthCheck, isPhone, hasAtLeastAPhoneIfNoEmail, isValidOption,
 } from '../../classValidation';
 
 export class ContactInformation implements IContactInformation {

@@ -37,6 +37,7 @@ export interface IStorage {
     registrationErrors(): IError[];
     householdCreate(): HouseholdCreate;
     personalInformation(): IContactInformation & IMember;
+    isSplitMode(): boolean;
   };
 
   mutations: {
@@ -71,6 +72,9 @@ export interface IStorage {
     setHouseholdAlreadyRegistered(payload: boolean): void;
     setHouseholdCreate(payload: IHouseholdCreateData): void;
     setRegistrationErrors(payload: IError[]): void;
+    setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: {originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }): void;
+    resetSplitHousehold(): void;
+    setTabs(tabs: IRegistrationMenuItem[]): void;
   };
 
   actions: {
@@ -86,6 +90,8 @@ export interface IStorage {
       member, isPrimaryMember, index, sameAddress,
     }: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean}): Promise<IHouseholdEntity>;
     addAdditionalMember({ householdId, member, sameAddress }: { householdId: string; member: IMember; sameAddress?: boolean}): Promise<IHouseholdEntity>;
+    // splitMembers ({ householdId, primaryMember, additionalMembers }:
+    //   { householdId: string; primaryMember: IMember; additionalMembers: IMember[] }): Promise<IHouseholdEntity>;
     deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity>;
   };
 }
@@ -110,6 +116,7 @@ export interface IStorageMock {
     registrationErrors: jest.Mock<IError[]>;
     householdCreate: jest.Mock<IHouseholdCreate>;
     personalInformation: jest.Mock<IContactInformation & IMember>;
+    isSplitMode: jest.Mock<boolean>;
   };
 
   mutations: {
@@ -145,6 +152,9 @@ export interface IStorageMock {
     setHouseholdAlreadyRegistered: jest.Mock<void>;
     setHouseholdCreate: jest.Mock<void>;
     setRegistrationErrors: jest.Mock<void>;
+    setSplitHousehold: jest.Mock<void>;
+    resetSplitHousehold: jest.Mock<void>;
+    setTabs: jest.Mock<void>;
   };
 
   actions: {
@@ -158,6 +168,7 @@ export interface IStorageMock {
     updatePersonContactInformation: jest.Mock<IHouseholdEntity>;
     updatePersonAddress: jest.Mock<IHouseholdEntity>;
     addAdditionalMember: jest.Mock<IHouseholdEntity>;
+    // splitMembers: jest.Mock<IHouseholdEntity>;
     deleteAdditionalMember: jest.Mock<IHouseholdEntity>;
   };
 }

@@ -1,3 +1,4 @@
+/* eslint-disable max-lines-per-function */
 import {
   ActionContext, ActionTree, GetterTree, Module, MutationTree,
 } from 'vuex';
@@ -6,6 +7,16 @@ import VueI18n from 'vue-i18n';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
+import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
+import {
+  isRegisteredValid,
+  privacyStatementValid,
+  personalInformationValid,
+  addressesValid,
+  additionalMembersValid,
+  reviewRegistrationValid,
+} from './registrationUtils';
+
 import { IHouseholdEntity } from '../../../entities/household';
 import { ERegistrationMode } from '../../../types/enums/ERegistrationMode';
 import { IError } from '../../../services/httpClient';
@@ -29,9 +40,6 @@ import {
 import { Event, IEvent, IEventData } from '../../../entities/event';
 
 import { resetVuexModuleState } from '../../storeUtils';
-import {
-  isRegisteredValid, privacyStatementValid, personalInformationValid, addressesValid, additionalMembersValid, reviewRegistrationValid,
-} from './registrationUtils';
 
 import { IState } from './registration.types';
 
@@ -54,6 +62,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   householdCreate: new HouseholdCreate(),
   householdAssociationMode: false,
   householdAlreadyRegistered: false,
+  splitHousehold: null as ISplitHousehold,
 });
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
@@ -183,6 +192,8 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   personalInformation: (state: IState) => _cloneDeep(
     _merge(state.householdCreate.primaryBeneficiary.contactInformation, state.householdCreate.primaryBeneficiary.identitySet),
   ),
+
+  isSplitMode: (state: IState) => !!(state.splitHousehold),
 });
 
 const mutations = (): MutationTree<IState> => ({
@@ -355,6 +366,18 @@ const mutations = (): MutationTree<IState> => ({
     state.householdCreate = new HouseholdCreate(payload);
   },
 
+  setSplitHousehold(state: IState,
+    { originHouseholdId, primaryMember, additionalMembers }: {originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
+    state.splitHousehold = { originHouseholdId, splitMembers: { primaryMember, additionalMembers } };
+  },
+
+  resetSplitHousehold(state: IState) {
+    state.splitHousehold = null;
+  },
+
+  setTabs(state: IState, tabs: IRegistrationMenuItem[]) {
+    state.tabs = tabs;
+  },
 });
 
 const actions = (mode: ERegistrationMode) => ({
@@ -525,6 +548,26 @@ const actions = (mode: ERegistrationMode) => ({
     }
     return res;
   },
+
+  // async splitMembers(
+  //   this: IStore<IState>,
+  //   context: ActionContext<IState, IState>,
+  //   { householdId, primaryMember, additionalMembers }: { householdId: string; primaryMember: IMember; additionalMembers: IMember[] },
+  // ): Promise<IHouseholdEntity> {
+  //   const additionalMemberIds = additionalMembers.map((m) => m.id);
+  //   const res = await this.$services.households.splitMembers(householdId, [primaryMember.id, ...additionalMemberIds]);
+  //   if (res) {
+  //     const allAdditionalMembers = this.state.householdCreate.additionalMembers;
+
+  //     [primaryMember.id, ...additionalMemberIds].forEach((id) => {
+  //       const index = allAdditionalMembers.findIndex((member) => member.id === id);
+  //       context.commit('removeAdditionalMember', index);
+  //     });
+
+  //     context.commit('setSplitHouseholdMembers', { primaryMember, additionalMembers });
+  //   }
+  //   return res;
+  // },
 
   async deleteAdditionalMember(
     this: IStore<IState>,

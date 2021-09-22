@@ -1,6 +1,6 @@
 <template>
   <div id="summary">
-    <template v-if="associationMode">
+    <template v-if="associationMode || splitMode">
       <div class="mb-8" data-test="summary__existingBeneficiary__section">
         <span class="rc-heading-3">{{ getPersonalInformation.firstName }} {{ getPersonalInformation.lastName }}</span>
         <div class="rc-body14">
@@ -8,7 +8,7 @@
         </div>
       </div>
       <slot name="previous-events" />
-      <template v-if="!householdAlreadyRegistered">
+      <template v-if="!householdAlreadyRegistered && !splitMode">
         <div data-test="title" class="rc-heading-5 fw-bold  mb-2 mt-8">
           {{ $t('registration.menu.privacy') }}
         </div>
@@ -19,7 +19,7 @@
     </template>
     <validation-observer ref="personalInfo">
       <summary-section
-        :show-edit-button="!householdAlreadyRegistered"
+        :show-edit-button="!householdAlreadyRegistered && !splitMode"
         data-test="personalInformation"
         :title="$t('registration.menu.personal_info')"
         :inline-edit="personalInformation.inlineEdit"
@@ -36,7 +36,7 @@
 
     <validation-observer ref="addresses">
       <summary-section
-        :show-edit-button="!householdAlreadyRegistered"
+        :show-edit-button="!householdAlreadyRegistered && !splitMode"
         data-test="addresses"
         :title="$t('registration.menu.addresses')"
         :inline-edit="addresses.inlineEdit"
@@ -56,7 +56,7 @@
         {{ `${$t('registration.household_members.title')} (${householdCreate.additionalMembers.length})` }}
       </div>
       <v-btn
-        v-if="associationMode"
+        v-if="associationMode || !splitMode"
         class="ml-2"
         color="primary"
         :disabled="disabledAddMembers"
@@ -72,8 +72,8 @@
       <validation-observer :ref="`additionalMember_${index}`" :key="index" slim>
         <additional-member-section
           :key="index"
-          :show-edit-button="!householdAlreadyRegistered"
-          :show-delete-button="!householdAlreadyRegistered"
+          :show-edit-button="!householdAlreadyRegistered && !splitMode"
+          :show-delete-button="!householdAlreadyRegistered && !splitMode"
           :data-test="`additionalMember_${index}`"
           :member="member"
           :inline-edit="additionalMembers[index].inlineEdit"
@@ -211,6 +211,10 @@ export default mixins(additionalMemberForm).extend({
 
     associationMode(): boolean {
       return this.$store.state.registration.householdAssociationMode;
+    },
+
+    splitMode(): boolean {
+      return this.$storage.registration.getters.isSplitMode();
     },
 
     householdAlreadyRegistered(): boolean {

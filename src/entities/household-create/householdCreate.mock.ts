@@ -1,6 +1,6 @@
 import deepmerge from 'deepmerge';
 import {
-  mockAdditionalMembers, mockMemberData, mockMemberCreateRequest,
+  mockAdditionalMembers, mockMemberData, mockMemberCreateRequest, mockMember,
 } from '../value-objects/member';
 import { HouseholdCreate } from './householdCreate';
 import { mockAddressData } from '../value-objects/address/address.mock';
@@ -27,4 +27,12 @@ export const mockCreateHouseholdRequest = (): ICreateHouseholdRequest => ({
   additionalMembers: [],
   eventId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
   consentInformation: null,
+});
+
+export const mockSplitHousehold = () => ({
+  originHouseholdId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
+  splitMembers: {
+    primaryMember: mockMember({ id: 'id-1' }),
+    additionalMembers: [mockMember({ id: 'id-2' })],
+  },
 });

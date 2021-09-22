@@ -33,6 +33,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     registrationErrors: jest.fn(() => []),
     householdCreate: jest.fn(() => _cloneDeep(mockHouseholdCreate())),
     personalInformation: jest.fn(() => _merge(mockContactInformation(), mockMember())),
+    isSplitMode: jest.fn(() => false),
   },
 
   mutations: {
@@ -68,6 +69,9 @@ export const mockStorageRegistration = (): IStorageMock => ({
     setHouseholdAlreadyRegistered: jest.fn(),
     setHouseholdCreate: jest.fn(),
     setRegistrationErrors: jest.fn(),
+    setSplitHousehold: jest.fn(),
+    resetSplitHousehold: jest.fn(),
+    setTabs: jest.fn(),
   },
 
   actions: {
@@ -81,6 +85,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     updatePersonIdentity: jest.fn(() => mockHouseholdEntity()),
     updatePersonContactInformation: jest.fn(() => mockHouseholdEntity()),
     addAdditionalMember: jest.fn(() => mockHouseholdEntity()),
+    // splitMembers: jest.fn(() => mockHouseholdEntity()),
     deleteAdditionalMember: jest.fn(() => mockHouseholdEntity()),
   },
 });

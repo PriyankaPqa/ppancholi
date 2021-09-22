@@ -85,6 +85,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     personalInformation() {
       return store.getters['registration/personalInformation'];
     },
+
+    isSplitMode() {
+      return store.getters['registration/isSplitMode'];
+    },
   },
 
   mutations: {
@@ -211,6 +215,18 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     setRegistrationErrors(payload: IError[]) {
       store.commit('registration/setRegistrationErrors', payload);
     },
+
+    setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: {originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }) {
+      store.commit('registration/setSplitHousehold', { originHouseholdId, primaryMember, additionalMembers });
+    },
+
+    resetSplitHousehold() {
+      store.commit('registration/resetSplitHousehold');
+    },
+
+    setTabs(tabs: IRegistrationMenuItem[]) {
+      store.commit('registration/setTabs', tabs);
+    },
   },
 
   actions: {
@@ -262,6 +278,13 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       });
     },
 
+    // splitMembers({
+    //   householdId, primaryMember, additionalMembers,
+    // }: { householdId: string; primaryMember: IMember; additionalMembers: IMember[] }): Promise<IHouseholdEntity> {
+    //   return store.dispatch('registration/splitMembers', {
+    //     householdId, primaryMember, additionalMembers,
+    //   });
+    // },
     deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity> {
       return store.dispatch('registration/deleteAdditionalMember', { householdId, memberId, index });
     },

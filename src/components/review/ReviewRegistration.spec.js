@@ -862,6 +862,12 @@ describe('ReviewRegistration.vue', () => {
         expect(wrapper.vm.currentAdditionalMember).toEqual(wrapper.vm.additionalMembersCopy[wrapper.vm.indexAdditionalMember]);
       });
     });
+
+    describe('splitMode', () => {
+      it('returns the proper data', async () => {
+        expect(wrapper.vm.splitMode).toEqual(storage.registration.getters.isSplitMode());
+      });
+    });
   });
 
   describe('Life cycle', () => {

@@ -1,7 +1,9 @@
 import deepmerge from 'deepmerge';
 import { IOptionItemData } from '../../../types';
 import { ContactInformation } from './contactInformation';
-import { IContactInformationData, IContactInformation, IContactInformationCreateRequest, IValidateEmailResponse } from './contactInformation.types';
+import {
+  IContactInformationData, IContactInformation, IContactInformationCreateRequest, IValidateEmailResponse,
+} from './contactInformation.types';
 
 export const mockPreferredLanguages = (): IOptionItemData[] => [
   {

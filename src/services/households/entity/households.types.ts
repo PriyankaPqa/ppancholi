@@ -22,6 +22,7 @@ export interface IHouseholdsService {
   updateHomeAddress(id: string, payload: IAddress): Promise<IHouseholdEntity> | false;
   updateNoFixedHomeAddress(id: string, observation?: string): Promise<IHouseholdEntity> | false;
   deleteAdditionalMember(householdId: string, memberId: string): Promise<IHouseholdEntity>;
+  // splitMembers(householdId: string, memberIds: string[]): Promise<IHouseholdEntity>;
   addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
 }
@@ -40,6 +41,7 @@ export interface IHouseholdsServiceMock {
   updateHomeAddress: jest.Mock<IHouseholdEntity>;
   updateNoFixedHomeAddress: jest.Mock<IHouseholdEntity>;
   deleteAdditionalMember: jest.Mock<IHouseholdEntity>;
+  // splitMembers: jest.Mock<IHouseholdEntity>;
   addMember: jest.Mock<IHouseholdEntity>;
   validateEmail: jest.Mock<IValidateEmailResponse>;
 }

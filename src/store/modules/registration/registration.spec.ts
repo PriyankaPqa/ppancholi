@@ -3,6 +3,7 @@ import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import { mockHttpError } from '@/services/httpClient.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
+import { mockSplitHousehold } from '../../../entities/household-create/householdCreate.mock';
 import { HouseholdCreate } from '../../../entities/household-create/householdCreate';
 import {
   ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
@@ -55,6 +56,7 @@ describe('>>> Registration Module', () => {
           householdCreate: new HouseholdCreate(),
           householdAlreadyRegistered: false,
           householdAssociationMode: false,
+          splitHousehold: null,
         });
       });
     });
@@ -245,6 +247,18 @@ describe('>>> Registration Module', () => {
         );
 
         expect(store.getters['registration/personalInformation']).toEqual(expected);
+      });
+    });
+
+    describe('isSplitMode', () => {
+      it('returns true if splitHousehold object is not null', () => {
+        store.state.registration.splitHousehold = { originHouseholdId: 'Id-1', splitMembers: null };
+        expect(store.getters['registration/isSplitMode']).toBeTruthy();
+      });
+
+      it('returns false if splitHousehold object is  null', () => {
+        store.state.registration.splitHousehold = null;
+        expect(store.getters['registration/isSplitMode']).toBeFalsy();
       });
     });
   });
@@ -606,6 +620,31 @@ describe('>>> Registration Module', () => {
       it('should set householdCreate', () => {
         store.commit('registration/setHouseholdCreate', mockHouseholdCreateData());
         expect(store.state.registration.householdCreate).toEqual(new HouseholdCreate(mockHouseholdCreateData()));
+      });
+    });
+
+    describe('setSplitHousehold', () => {
+      it('should set splitHousehold', () => {
+        const { originHouseholdId } = mockSplitHousehold();
+        const { primaryMember } = mockSplitHousehold().splitMembers;
+        const { additionalMembers } = mockSplitHousehold().splitMembers;
+        store.commit('registration/setSplitHousehold', { originHouseholdId, primaryMember, additionalMembers });
+        expect(store.state.registration.splitHousehold).toEqual(mockSplitHousehold());
+      });
+    });
+
+    describe('resetSplitHousehold', () => {
+      it('should reset splitHousehold', () => {
+        store.commit('registration/resetSplitHousehold');
+        expect(store.state.registration.splitHousehold).toEqual(null);
+      });
+    });
+
+    describe('setTabs', () => {
+      it('should set tabs', () => {
+        const tabs = mockTabs();
+        store.commit('registration/setTabs', tabs);
+        expect(store.state.registration.tabs).toEqual(tabs);
       });
     });
   });

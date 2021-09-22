@@ -1,3 +1,4 @@
+import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
 import { IOptionItemData } from '../../../types';
 import { IError } from '../../../services/httpClient';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
@@ -28,4 +29,5 @@ export type IState = {
   householdCreate: HouseholdCreate;
   householdAssociationMode: boolean;
   householdAlreadyRegistered: boolean;
+  splitHousehold: ISplitHousehold;
 };

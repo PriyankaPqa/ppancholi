@@ -2,6 +2,16 @@ import { ERegistrationMethod } from '../../types';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
 import { IMemberData, IMember, MemberCreateRequest } from '../value-objects/member';
 
+export interface ISplitHouseholdMembers {
+  primaryMember: IMember;
+  additionalMembers: IMember[];
+}
+
+export interface ISplitHousehold {
+  originHouseholdId: string;
+  splitMembers: ISplitHouseholdMembers;
+}
+
 export interface IHouseholdCreateData {
   primaryBeneficiary: IMemberData;
   noFixedHome: boolean;

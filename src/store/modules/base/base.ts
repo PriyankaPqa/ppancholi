@@ -26,6 +26,8 @@ export class BaseModule<T extends IEntity> {
 
   protected baseState = {
     items: [] as Array<T>,
+    searchLoading: false,
+    actionLoading: false,
   }
 
   protected baseGetters = {

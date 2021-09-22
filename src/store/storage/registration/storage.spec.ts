@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 import { mockStore } from '@/store';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import _merge from 'lodash/merge';
@@ -6,7 +7,7 @@ import { mockAdditionalMember, mockMember } from '@/entities/value-objects/membe
 import { mockIdentitySet } from '@/entities/value-objects/identity-set';
 import { mockAddress } from '@/entities/value-objects/address';
 import { mockCampGround } from '@/entities/value-objects/current-address';
-import { mockHouseholdCreateData, mockHouseholdCreate } from '@/entities/household-create';
+import { mockHouseholdCreateData, mockSplitHousehold } from '@/entities/household-create';
 import { mockHttpError } from '@/services/httpClient.mock';
 import { makeStorage } from './storage';
 import { mockEventData } from '../../../entities/event';
@@ -88,6 +89,9 @@ describe('>>> Registration Storage', () => {
 
     it('should proxy personalInformation', () => {
       expect(storage.getters.personalInformation()).toEqual(store.getters['registration/personalInformation']);
+    });
+    it('should proxy isSplitMode', () => {
+      expect(storage.getters.isSplitMode()).toEqual(store.getters['registration/isSplitMode']);
     });
   });
 
@@ -257,6 +261,25 @@ describe('>>> Registration Storage', () => {
       const errors = [mockHttpError()];
       storage.mutations.setRegistrationErrors(errors);
       expect(store.commit).toBeCalledWith('registration/setRegistrationErrors', errors);
+    });
+
+    it('should proxy setSplitHousehold', () => {
+      const { originHouseholdId } = mockSplitHousehold();
+      const { primaryMember } = mockSplitHousehold().splitMembers;
+      const { additionalMembers } = mockSplitHousehold().splitMembers;
+      storage.mutations.setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers });
+      expect(store.commit).toBeCalledWith('registration/setSplitHousehold', { originHouseholdId, primaryMember, additionalMembers });
+    });
+
+    it('should proxy resetSplitHousehold', () => {
+      storage.mutations.resetSplitHousehold();
+      expect(store.commit).toBeCalledWith('registration/resetSplitHousehold');
+    });
+
+    it('should proxy setTabs', () => {
+      const tabs = mockTabs();
+      storage.mutations.setTabs(tabs);
+      expect(store.commit).toBeCalledWith('registration/setTabs', tabs);
     });
   });
 
