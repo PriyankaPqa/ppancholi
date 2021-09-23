@@ -9,8 +9,11 @@ import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { MassActionEntity } from '@/entities/mass-action';
 import Component from './MassActionBaseCreate.vue';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
+import { mockStorage } from '@/store/storage';
 
 const localVue = createLocalVue();
+
+const storage = mockStorage();
 
 describe('MassActionBaseCreate.vue', () => {
   let wrapper;
@@ -82,6 +85,9 @@ describe('MassActionBaseCreate.vue', () => {
           url: 'url',
           applyToLabel: 'applyToLabel',
         },
+        mocks: {
+          $storage: storage,
+        },
       });
       wrapper.vm.$refs.form.validate = jest.fn(() => true);
     });
@@ -149,6 +155,14 @@ describe('MassActionBaseCreate.vue', () => {
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.vm.upload();
         expect(wrapper.vm.uploadForm).toHaveBeenLastCalledWith(wrapper.vm.formData, wrapper.vm.url);
+      });
+
+      it('should set the mass action to the store entity in case of successful upload', async () => {
+        wrapper.vm.formData.set = jest.fn();
+        wrapper.vm.uploadForm = jest.fn();
+        await wrapper.setData({ uploadSuccess: true });
+        await wrapper.vm.upload();
+        expect(wrapper.vm.$storage.massAction.mutations.setEntity).toHaveBeenCalledWith(new MassActionEntity(wrapper.vm.response.data));
       });
 
       it('should emit upload:success in case of successful upload with proper params', async () => {

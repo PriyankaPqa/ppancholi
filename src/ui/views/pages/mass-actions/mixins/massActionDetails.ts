@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-
 import _isEmpty from 'lodash/isEmpty';
 import {
   IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,

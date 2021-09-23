@@ -63,7 +63,6 @@ export default Vue.extend({
     },
 
     onSuccess(entity: IMassActionEntity) {
-      this.$storage.massAction.mutations.setEntity(entity);
       this.goToDetail(entity.id);
     },
 

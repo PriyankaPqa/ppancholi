@@ -1,5 +1,5 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import massActionsTable from '@/ui/mixins/massActionsTable';
+import massActionsTable from './massActionsTable';
 import {
   MassActionRunStatus, mockCombinedMassAction, mockCombinedMassActions, mockMassActionRun,
 } from '@/entities/mass-action';

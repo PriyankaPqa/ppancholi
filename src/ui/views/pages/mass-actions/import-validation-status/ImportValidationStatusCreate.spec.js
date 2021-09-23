@@ -73,11 +73,6 @@ describe('ImportValidationStatusCreate.vue', () => {
     });
 
     describe('onSuccess', () => {
-      it('should add the new mass action to the store', () => {
-        wrapper.vm.onSuccess(mockMassActionEntity());
-        expect(wrapper.vm.$storage.massAction.mutations.setEntity).toHaveBeenLastCalledWith(mockMassActionEntity());
-      });
-
       it('should call goToDetail', () => {
         wrapper.vm.goToDetail = jest.fn();
         wrapper.vm.onSuccess(mockMassActionEntity());

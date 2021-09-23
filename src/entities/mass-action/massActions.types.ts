@@ -68,6 +68,7 @@ export interface IMassActionRunMetadataModel {
   runType: MassActionRunType;
   runStatus: MassActionRunStatus;
   totalAmount?: number;
+  projectedAmount?: number;
 }
 
 export interface IMassActionEntityData extends IEntity {

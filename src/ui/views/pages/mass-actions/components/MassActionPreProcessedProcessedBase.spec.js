@@ -4,7 +4,9 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { MassActionRunStatus, MassActionRunType, mockCombinedMassAction } from '@/entities/mass-action';
+import {
+  MassActionRunStatus, MassActionRunType, MassActionType, mockCombinedMassAction, mockMassActionEntity, mockMassActionMetadata,
+} from '@/entities/mass-action';
 import Component from './MassActionPreProcessedProcessedBase.vue';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
@@ -15,6 +17,7 @@ import helpers from '@/ui/helpers';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+
 describe('MassActionPreProcessedProcessedBase.vue', () => {
   let wrapper;
 
@@ -24,7 +27,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         localVue,
         propsData: {
           massAction: mockCombinedMassAction(),
-          massActionType: 'massActionType',
+          massActionType: MassActionType.FinancialAssistance,
           massActionStatus: MassActionRunStatus.PreProcessed,
           total: 100,
           successes: 50,
@@ -59,6 +62,14 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
 
       it('should display the total items processed', () => {
         expect(wrapper.findDataTest('total').text()).toEqual(wrapper.vm.total.toString());
+      });
+
+      it('should display the projected amount if it is a financial assistance type mass action', () => {
+        expect(wrapper.findDataTest('projectedAmount').text()).toEqual(wrapper.vm.$formatCurrency(wrapper.vm.projectedAmount.toString()));
+      });
+
+      it('should display the successes amount if it is a financial assistance type mass action', () => {
+        expect(wrapper.findDataTest('successesAmount').text()).toEqual(wrapper.vm.$formatCurrency(wrapper.vm.successesAmount.toString()));
       });
 
       it('should display the successful items processed', () => {
@@ -98,7 +109,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         localVue,
         propsData: {
           massAction: mockCombinedMassAction(),
-          massActionType: 'massActionType',
+          massActionType: MassActionType.FinancialAssistance,
           massActionStatus: MassActionRunStatus.PreProcessed,
           total: 100,
           successes: 50,
@@ -185,6 +196,60 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         await wrapper.vm.download();
 
         expect(helpers.downloadFile).toBeCalled();
+      });
+    });
+  });
+
+  describe('Computed', () => {
+    beforeEach(() => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          massAction: {
+            entity: mockMassActionEntity(),
+            metadata: mockMassActionMetadata({}, { runStatus: MassActionRunStatus.PreProcessed }),
+          },
+          massActionType: MassActionType.FinancialAssistance,
+          massActionStatus: MassActionRunStatus.PreProcessed,
+          total: 100,
+          successes: 50,
+          failures: 50,
+          failuresLabel: 'failuresLabel',
+          successesLabel: 'successesLabel',
+          totalLabel: 'totalLabel',
+        },
+        data() {
+          return {
+            userAccount: mockCombinedUserAccount(),
+          };
+        },
+        mocks: {
+          $storage: storage,
+        },
+      });
+    });
+
+    describe('hasErrors', () => {
+      it('should return true in case of errors', () => {
+        expect(wrapper.vm.hasErrors).toBe(true);
+      });
+    });
+
+    describe('hasFailures', () => {
+      it('should return true in case of failures', () => {
+        expect(wrapper.vm.hasFailures).toBe(true);
+      });
+    });
+
+    describe('isPreprocessed', () => {
+      it('should return true if the last run status is preprocessed', () => {
+        expect(wrapper.vm.isPreprocessed).toBe(true);
+      });
+    });
+
+    describe('isFinancial', () => {
+      it('should return true if the mass action type is financial assistance', () => {
+        expect(wrapper.vm.isFinancial).toBe(true);
       });
     });
   });

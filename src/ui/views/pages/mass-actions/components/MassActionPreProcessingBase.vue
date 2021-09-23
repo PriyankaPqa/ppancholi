@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
+import { IMassActionCombined, MassActionRunStatus, MassActionType } from '@/entities/mass-action';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 
@@ -54,7 +54,7 @@ export default Vue.extend({
     },
 
     massActionType: {
-      type: String,
+      type: Number as () => MassActionType,
       required: true,
     },
   },

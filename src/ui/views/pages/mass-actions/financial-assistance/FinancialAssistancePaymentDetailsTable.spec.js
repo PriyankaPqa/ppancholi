@@ -75,7 +75,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
           },
           {
             label: 'massActions.financialAssistance.create.amount.label',
-            value: `$${wrapper.vm.massAction.entity.details.amount}`,
+            value: wrapper.vm.$formatCurrency(wrapper.vm.massAction.entity.details.amount),
             dataTest: 'amount',
             customClass: 'grey-back',
             customClassValue: 'fw-bold',

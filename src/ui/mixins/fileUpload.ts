@@ -67,7 +67,6 @@ export default Vue.extend({
             this.percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
           },
         });
-        // TODO Set the response (mass action entity) to the store
         this.uploadSuccess = true;
       } catch (e) {
         if (axios.isCancel(e)) {

@@ -3,7 +3,7 @@ import {
   mount,
 } from '@/test/testSetup';
 
-import { MassActionRunStatus, mockCombinedMassAction } from '@/entities/mass-action';
+import { MassActionRunStatus, MassActionType, mockCombinedMassAction } from '@/entities/mass-action';
 import Component from './MassActionProcessingBase.vue';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 
@@ -18,6 +18,7 @@ describe('MassActionProcessingBase.vue', () => {
         localVue,
         propsData: {
           massAction: mockCombinedMassAction(),
+          massActionType: MassActionType.FinancialAssistance,
           massActionStatus: MassActionRunStatus.Processing,
         },
       });

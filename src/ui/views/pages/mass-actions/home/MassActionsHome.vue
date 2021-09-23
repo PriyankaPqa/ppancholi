@@ -22,7 +22,7 @@
 import { RcMenuCard } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
-import massActions, { IMassActionCards } from '@/ui/mixins/massActions';
+import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mixins/massActions';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',

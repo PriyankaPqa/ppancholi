@@ -90,6 +90,7 @@
         <v-col cols="3">
           <v-text-field-with-validation
             v-model="formCopy.amount"
+            :disabled="currentSubItem && currentSubItem.amountType === EFinancialAmountModes.Fixed"
             :rules="rules.amount"
             type="number"
             prefix="$"
@@ -107,7 +108,11 @@ import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
 import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
 import sortBy from 'lodash/sortBy';
-import { IFinancialAssistanceTableCombined, IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
+import {
+  IFinancialAssistanceTableCombined,
+  IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData, IFinancialAssistanceTableSubItemData,
+  EFinancialAmountModes,
+} from '@/entities/financial-assistance';
 import { IOptionItem, IOptionItemCombined, IOptionSubItem } from '@/entities/optionItem';
 import { EEventStatus, IEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers';
@@ -137,6 +142,7 @@ export default Vue.extend({
       formCopy: null as PaymentDetailsForm,
       program: null,
       isEmpty,
+      EFinancialAmountModes,
     };
   },
 
@@ -172,9 +178,7 @@ export default Vue.extend({
 
     eventTables(): IFinancialAssistanceTableEntity[] {
       if (this.formCopy.event) {
-        return this.financialAssistanceTables
-          .filter((t) => t.entity.eventId === this.formCopy.event.id && t.entity.items.length > 0 && t.entity.status === Status.Active)
-          .map((t) => t.entity);
+        return this.financialAssistanceTables.filter((t) => t.entity.eventId === this.formCopy.event.id).map((t) => t.entity);
       }
       return [];
     },
@@ -187,7 +191,12 @@ export default Vue.extend({
     },
 
     financialAssistanceTables(): Array<IFinancialAssistanceTableCombined> {
-      return this.$storage.financialAssistance.getters.getAll();
+      // We keep tables having at least one active item having at least one sub-item for which document is not required
+      // We can't create mass action with sub-item requiring a documentation
+      return this.$storage.financialAssistance.getters.getAll()
+        .filter((t) => t.entity.items.length > 0
+        && t.entity.status === Status.Active
+        && t.entity.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
     },
 
     financialAssistanceCategories(): Array<IOptionItemCombined> {
@@ -196,8 +205,10 @@ export default Vue.extend({
 
     financialAssistanceTableItems(): Array<IOptionItem> {
       if (this.currentFinancialAssistanceTable) {
+        // We keep only items having at least one sub-item for which document is not required.
+        // We can't create mass action with sub-item requiring a documentation
         const currentItemsIds = this.currentFinancialAssistanceTable.entity.items
-          .filter((i) => i.status === Status.Active)
+          .filter((i) => i.status === Status.Active && i.subItems.some((s) => s.documentationRequired === false))
           .map((i) => i.mainCategory.optionItemId);
 
         return this.financialAssistanceCategories.filter((c) => currentItemsIds.includes(c.entity.id)).map((c) => c.entity);
@@ -213,16 +224,28 @@ export default Vue.extend({
       return [];
     },
 
-    subItems(): IOptionSubItem[] {
+    currentItem(): IFinancialAssistanceTableItemData {
       if (this.currentFinancialAssistanceTable && this.formCopy.item) {
-        const currentItem = this.currentFinancialAssistanceTable.entity.items.find((i) => i.mainCategory.optionItemId === this.formCopy.item.id);
-        if (currentItem?.subItems) {
-          const subItemsCurrentTableIds = currentItem.subItems.filter((s) => s.status === Status.Active).map((s) => s.subCategory.optionItemId);
-          if (this.formCopy?.item?.subitems) {
-            return this.formCopy.item.subitems.filter((s) => subItemsCurrentTableIds.includes(s.id) && s.status === Status.Active);
-          }
+        return this.currentFinancialAssistanceTable.entity.items.find((i) => i.mainCategory.optionItemId === this.formCopy.item.id);
+      }
+      return null;
+    },
+
+    currentSubItem(): IFinancialAssistanceTableSubItemData {
+      if (this.currentItem && this.formCopy.subItem) {
+        return this.currentItem.subItems.find((s) => s.subCategory.optionItemId === this.formCopy.subItem.id);
+      }
+      return null;
+    },
+
+    subItems(): IOptionSubItem[] {
+      if (this.currentItem?.subItems) {
+        const subItemsCurrentTableIds = this.currentItem.subItems
+          .filter((s) => s.status === Status.Active && s.documentationRequired === false)
+          .map((s) => s.subCategory.optionItemId);
+        if (this.formCopy?.item?.subitems) {
+          return this.formCopy.item.subitems.filter((s) => subItemsCurrentTableIds.includes(s.id) && s.status === Status.Active);
         }
-        return [];
       }
       return [];
     },
@@ -257,6 +280,14 @@ export default Vue.extend({
       async handler(item) {
         if (item) {
           this.onSetItem(item);
+        }
+      },
+    },
+
+    'formCopy.subItem': {
+      async handler(subItem) {
+        if (subItem && this.currentSubItem.amountType === EFinancialAmountModes.Fixed) {
+          this.formCopy.amount = this.currentSubItem.maximumAmount;
         }
       },
     },
@@ -314,7 +345,7 @@ export default Vue.extend({
         .filter((e) => (
           e.entity.schedule.status === EEventStatus.OnHold || e.entity.schedule.status === EEventStatus.Open)
           && this.eventIdsWithFinancialAssistanceTable.includes(e.entity.id))
-        .map((e) => e.entity);
+        .map((e) => ({ id: e.entity.id, name: e.entity.name }));
 
       this.events = sortBy(this.events, (event) => this.$m(event.name));
 

@@ -8,7 +8,7 @@ import {
 import { mockStorage } from '@/store/storage';
 import Component from './FinancialAssistancePaymentDetails.vue';
 import { EEventStatus } from '@/entities/event';
-import { mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
+import { mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData } from '@/entities/financial-assistance';
 import { EPaymentModalities, mockCombinedProgram } from '@/entities/program';
 import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@/entities/optionItem';
 import helpers from '@/ui/helpers';
@@ -193,6 +193,9 @@ describe('FinancialAssistancePaymentDetails.vue', () => {
         mocks: {
           $storage: storage,
         },
+        computed: {
+          currentSubItem: () => mockSubItemData(),
+        },
       });
       wrapper.vm.fetchProgram = jest.fn();
       wrapper.vm.onSetFinancialAssistanceTable = jest.fn();
@@ -223,8 +226,14 @@ describe('FinancialAssistancePaymentDetails.vue', () => {
     });
 
     describe('formCopy.item', () => {
-      it('should call onSetItem with proper param ', async () => {
+      it('should call onSetItem with proper param', async () => {
         expect(wrapper.vm.onSetItem).toHaveBeenLastCalledWith(wrapper.vm.formCopy.item);
+      });
+    });
+
+    describe('formCopy.subItem', () => {
+      it('should assign the amount if the select sub-item has a fixed amount', async () => {
+        expect(wrapper.vm.formCopy.amount).toEqual(wrapper.vm.currentSubItem.maximumAmount);
       });
     });
   });
@@ -277,7 +286,7 @@ describe('FinancialAssistancePaymentDetails.vue', () => {
     });
 
     describe('eventTables', () => {
-      it('should return a list of active financial assistance tables of an specific event', () => {
+      it('should return the list of financial assistance tables of an specific event', () => {
         const expected = wrapper.vm.financialAssistanceTables
           .filter((t) => t.entity.eventId === wrapper.vm.formCopy.event.id && t.entity.items.length > 0 && t.entity.status === Status.Active)
           .map((t) => t.entity);
@@ -299,8 +308,14 @@ describe('FinancialAssistancePaymentDetails.vue', () => {
     });
 
     describe('financialAssistanceTables', () => {
-      it('should return all financial assistance tables', () => {
-        expect(wrapper.vm.financialAssistanceTables).toEqual([mockCombinedFinancialAssistance()]);
+      it('should return all financial assistance tables having at least one active item having at least one sub item '
+        + 'for which document is not required', () => {
+        const expected = [mockCombinedFinancialAssistance()]
+          .filter((t) => t.entity.items.length > 0
+          && t.entity.status === Status.Active
+          && t.entity.items.some((item) => item.subItems.some((subItem) => subItem.documentationRequired === false)));
+
+        expect(wrapper.vm.financialAssistanceTables).toEqual(expected);
       });
     });
 
@@ -324,11 +339,16 @@ describe('FinancialAssistancePaymentDetails.vue', () => {
         },
       });
 
-      it('should return all active categories of the current financial assistance table item', () => {
+      it('should return all active categories having at least one sub-item for which document is not '
+        + 'required for the current financial assistance table', () => {
         const idItemCurrentTable = '9b275d2f-00a1-4345-94fe-c37b84beb400';
+
         const expected = wrapper.vm.financialAssistanceCategories
-          .filter((c) => c.entity.id === idItemCurrentTable && c.entity.status === Status.Active)
+          .filter((c) => c.entity.id === idItemCurrentTable
+            && c.entity.status === Status.Active
+            && c.subItems.some((s) => s.documentationRequired === false))
           .map((c) => c.entity);
+
         expect(wrapper.vm.financialAssistanceTableItems).toEqual(expected);
       });
     });
@@ -371,7 +391,7 @@ describe('FinancialAssistancePaymentDetails.vue', () => {
         },
       });
 
-      it('should return all active subitems of the selected item for the current table', async () => {
+      it('should return all active subitems for which documentationRequired is false the selected item for the current table', async () => {
         const expected = [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' })];
         wrapper.setData({
           formCopy: {

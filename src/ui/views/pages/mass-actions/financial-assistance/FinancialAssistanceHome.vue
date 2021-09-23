@@ -33,7 +33,10 @@
       </template>
 
       <template #[`item.${customColumns.totalAmount}`]="{ item }">
-        {{ getLastRunMetadata(item) ? getLastRunMetadata(item) && getLastRunMetadata(item).totalAmount : $t('common.toBeDetermined') }}
+        {{ getLastRunMetadata(item) ?
+          $formatCurrency(getLastRunMetadata(item) && getLastRunMetadata(item).totalAmount)
+          : $t('common.toBeDetermined')
+        }}
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item }">
@@ -59,7 +62,7 @@ import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import massActionsTable from '@/ui/mixins/massActionsTable';
+import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
 import { MassActionType } from '@/entities/mass-action';
 import FinancialAssistanceCreateByList from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreateByList.vue';
 

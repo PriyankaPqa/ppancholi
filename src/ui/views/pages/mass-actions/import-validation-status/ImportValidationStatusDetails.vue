@@ -7,16 +7,12 @@
     <import-validation-status-pre-processed
       v-else-if="lastRunMetadata && preProcessed"
       :mass-action="massAction"
-      :total="lastRunMetadata.results.total"
-      :successes="lastRunMetadata.results.successes"
-      :failures="lastRunMetadata.results.failures" />
+      :last-run-metadata="lastRunMetadata" />
 
     <import-validation-status-processed
       v-else-if="lastRunMetadata && processed"
       :mass-action="massAction"
-      :total="lastRunMetadata.results.total"
-      :successes="lastRunMetadata.results.successes"
-      :failures="lastRunMetadata.results.failures" />
+      :last-run-metadata="lastRunMetadata" />
 
     <template v-else>
       This mass action status page is not yet implemented
@@ -40,7 +36,7 @@ import ImportValidationStatusProcessing from './ImportValidationStatusProcessing
 import ImportValidationStatusPreProcessing from './ImportValidationStatusPreProcessing.vue';
 import ImportValidationStatusPreProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusPreProcessed.vue';
 import ImportValidationStatusProcessed from '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusProcessed.vue';
-import massActionDetails from '@/ui/mixins/massActionDetails';
+import massActionDetails from '@/ui/views/pages/mass-actions/mixins/massActionDetails';
 
 export default mixins(massActionDetails).extend({
   name: 'ImportValidationStatusDetails',

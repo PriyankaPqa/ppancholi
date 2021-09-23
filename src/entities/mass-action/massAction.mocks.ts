@@ -62,10 +62,13 @@ export const mockMassActionRunMetadata = (force?: Partial<IMassActionRunMetadata
   ...force,
 });
 
-export const mockMassActionMetadata = (force?: Partial<IMassActionMetadata>): IMassActionMetadata => ({
+export const mockMassActionMetadata = (
+  force?: Partial<IMassActionMetadata>,
+  forceLastRun?: Partial<IMassActionRunMetadataModel>,
+): IMassActionMetadata => ({
   ...mockBaseData(),
   runs: [mockMassActionRunMetadata()],
-  lastRun: mockMassActionRunMetadata(),
+  lastRun: mockMassActionRunMetadata(forceLastRun),
   ...force,
 });
 

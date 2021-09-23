@@ -56,7 +56,7 @@ import { DataTableHeader } from 'vuetify';
 import { RcDataTable } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import massActionsTable from '@/ui/mixins/massActionsTable';
+import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { MassActionType } from '@/entities/mass-action';

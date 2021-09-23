@@ -1,9 +1,10 @@
 import {
   createLocalVue,
   mount,
+  shallowMount,
 } from '@/test/testSetup';
 
-import { mockCombinedMassAction } from '@/entities/mass-action';
+import { MassActionType, mockCombinedMassAction } from '@/entities/mass-action';
 import Component from './MassActionDetailsTable.vue';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 
@@ -18,7 +19,7 @@ describe('MassActionDetailsTable.vue', () => {
         localVue,
         propsData: {
           massAction: mockCombinedMassAction(),
-          massActionType: 'massActionType',
+          massActionType: MassActionType.ImportValidationOfImpactStatus,
         },
         data() {
           return {
@@ -28,18 +29,40 @@ describe('MassActionDetailsTable.vue', () => {
       });
     });
 
-    describe('Template', () => {
-      it('should display the type of the mass action', () => {
-        expect(wrapper.findDataTest('massActionType').text()).toBe(wrapper.vm.massActionType);
-      });
+    it('should display the type of the mass action', () => {
+      expect(wrapper.findDataTest('massActionTypeText').text()).toBe(wrapper.vm.massActionTypeText);
+    });
 
-      it('should display the date the mass action was created', () => {
-        expect(wrapper.findDataTest('dateCreated').exists()).toBe(true);
-      });
+    it('should display the date the mass action was created', () => {
+      expect(wrapper.findDataTest('dateCreated').exists()).toBe(true);
+    });
 
-      it('should display user who created the mass action', () => {
-        expect(wrapper.findDataTest('createdBy').text()).toBe(mockCombinedUserAccount().metadata.displayName);
+    it('should display user who created the mass action', () => {
+      expect(wrapper.findDataTest('createdBy').text()).toBe(mockCombinedUserAccount().metadata.displayName);
+    });
+  });
+
+  describe('Computed', () => {
+    it('should return proper text for ImportValidationOfImpactStatus', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          massAction: mockCombinedMassAction(),
+          massActionType: MassActionType.ImportValidationOfImpactStatus,
+        },
       });
+      expect(wrapper.vm.massActionTypeText).toBe('massActions.type.importValidationImpactStatus');
+    });
+
+    it('should return proper text for FinancialAssistance', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          massAction: mockCombinedMassAction(),
+          massActionType: MassActionType.FinancialAssistance,
+        },
+      });
+      expect(wrapper.vm.massActionTypeText).toBe('massActions.type.financialAssistance');
     });
   });
 });

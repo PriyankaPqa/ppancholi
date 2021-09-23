@@ -5,7 +5,7 @@
         <span class="rc-body14 fw-bold">{{ $t('massActions.type') }}</span>
       </v-col>
       <v-col md="7">
-        <span class="rc-body14" data-test="massActionType">{{ $t(massActionType) }}</span>
+        <span class="rc-body14" data-test="massActionTypeText">{{ $t(massActionTypeText) }}</span>
       </v-col>
     </v-row>
 
@@ -33,7 +33,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
+import { IMassActionCombined, MassActionRunStatus, MassActionType } from '@/entities/mass-action';
 
 export default Vue.extend({
   name: 'MassActionDetailsTable',
@@ -44,7 +44,7 @@ export default Vue.extend({
       required: true,
     },
     massActionType: {
-      type: String,
+      type: Number as () => MassActionType,
       required: true,
     },
   },
@@ -56,6 +56,14 @@ export default Vue.extend({
       MassActionRunStatus,
       loading: false,
     };
+  },
+
+  computed: {
+    massActionTypeText(): string {
+      if (this.massActionType === MassActionType.FinancialAssistance) return 'massActions.type.financialAssistance';
+      if (this.massActionType === MassActionType.ImportValidationOfImpactStatus) return 'massActions.type.importValidationImpactStatus';
+      return '';
+    },
   },
 
   async mounted() {

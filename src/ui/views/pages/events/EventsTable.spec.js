@@ -7,7 +7,7 @@ import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import {
-  mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus
+  mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus,
 } from '@/entities/event';
 import Component from './EventsTable.vue';
 

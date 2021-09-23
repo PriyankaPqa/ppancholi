@@ -213,9 +213,9 @@ describe('BaseStorage', () => {
         const params = { filter: { Foo: 'foo' } };
         await storage.actions.search(params);
         expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
-          { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null })
+          { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null });
         jest.clearAllMocks();
-          
+
         await storage.actions.search(params, null, false);
         expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
           { params: { filter: { Foo: 'foo', 'Entity/Status': 1 } }, searchEndpoint: null });

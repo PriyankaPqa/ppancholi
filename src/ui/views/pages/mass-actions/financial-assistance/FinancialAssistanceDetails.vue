@@ -4,6 +4,16 @@
 
     <financial-assistance-processing v-else-if="processing && lastRunMetadata" :mass-action="massAction" />
 
+    <financial-assistance-pre-processed
+      v-else-if="lastRunMetadata && preProcessed"
+      :mass-action="massAction"
+      :last-run-metadata="lastRunMetadata" />
+
+    <financial-assistance-processed
+      v-else-if="lastRunMetadata && processed"
+      :mass-action="massAction"
+      :last-run-metadata="lastRunMetadata" />
+
     <template v-else>
       This mass action status page is not yet implemented
     </template>
@@ -21,13 +31,21 @@ import { TranslateResult } from 'vue-i18n';
 import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
 import FinancialAssistancePreProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessing.vue';
-import massActionDetails from '@/ui/mixins/massActionDetails';
+import massActionDetails from '@/ui/views/pages/mass-actions/mixins/massActionDetails';
 import routes from '@/constants/routes';
 import FinancialAssistanceProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessing.vue';
+import FinancialAssistancePreProcessed from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessed.vue';
+import FinancialAssistanceProcessed from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessed.vue';
 
 export default mixins(massActionDetails).extend({
   name: 'FinancialAssistanceDetails',
-  components: { FinancialAssistanceProcessing, FinancialAssistancePreProcessing, RcPageContent },
+  components: {
+    RcPageContent,
+    FinancialAssistancePreProcessed,
+    FinancialAssistanceProcessing,
+    FinancialAssistancePreProcessing,
+    FinancialAssistanceProcessed,
+  },
 
   computed: {
     title(): TranslateResult {

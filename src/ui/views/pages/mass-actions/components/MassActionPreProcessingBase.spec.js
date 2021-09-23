@@ -3,7 +3,7 @@ import {
   mount,
 } from '@/test/testSetup';
 
-import { mockCombinedMassAction } from '@/entities/mass-action';
+import { MassActionType, mockCombinedMassAction } from '@/entities/mass-action';
 import Component from './MassActionPreProcessingBase.vue';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
@@ -19,7 +19,7 @@ describe('MassActionPreProcessingBase.vue', () => {
         localVue,
         propsData: {
           massAction: mockCombinedMassAction(),
-          massActionType: 'massActionType',
+          massActionType: MassActionType.ImportValidationOfImpactStatus,
         },
       });
     });

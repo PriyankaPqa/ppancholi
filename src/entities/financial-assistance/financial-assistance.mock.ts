@@ -43,7 +43,7 @@ export const mockSubItems = (): IFinancialAssistanceTableSubItem[] => [
   },
 ];
 
-export const mockSubItemData = (): IFinancialAssistanceTableSubItemData => ({
+export const mockSubItemData = (force?: Partial<IFinancialAssistanceTableSubItemData>): IFinancialAssistanceTableSubItemData => ({
   subCategory: {
     optionItemId: 'optionItemId',
     specifiedOther: null,
@@ -52,6 +52,7 @@ export const mockSubItemData = (): IFinancialAssistanceTableSubItemData => ({
   amountType: EFinancialAmountModes.Fixed,
   documentationRequired: false,
   frequency: EFinancialFrequency.OneTime,
+  ...force,
 });
 
 export const mockItems = (): IFinancialAssistanceTableItem[] => [

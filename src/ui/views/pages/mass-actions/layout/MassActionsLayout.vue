@@ -18,7 +18,7 @@ import mixins from 'vue-typed-mixins';
 import metadata from '@/ui/mixins/metadata';
 import routes from '@/constants/routes';
 import { PageTemplate } from '@/ui/views/components/layout';
-import massActions from '@/ui/mixins/massActions';
+import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
 import { INavigationTabGroup } from '@/types/interfaces/ui/INavigationTab';
 
 export default mixins(massActions).extend({

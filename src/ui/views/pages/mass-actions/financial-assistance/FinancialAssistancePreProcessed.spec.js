@@ -1,7 +1,7 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import Component from './ImportValidationStatusPreProcessed.vue';
+import Component from './FinancialAssistancePreProcessed.vue';
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
 import { mockCombinedMassAction, mockMassActionRunMetadata } from '@/entities/mass-action';
 import routes from '@/constants/routes';
@@ -10,7 +10,7 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-describe('ImportValidationStatusPreProcessed.vue', () => {
+describe('FinancialAssistancePreProcessed.vue', () => {
   let wrapper;
 
   describe('Template', () => {
@@ -59,7 +59,7 @@ describe('ImportValidationStatusPreProcessed.vue', () => {
     describe('goToHome', () => {
       it('should redirect to home page', () => {
         wrapper.vm.goToHome();
-        expect(wrapper.vm.$router.replace).toHaveBeenLastCalledWith({ name: routes.massActions.importValidationStatus.home.name });
+        expect(wrapper.vm.$router.replace).toHaveBeenLastCalledWith({ name: routes.massActions.financialAssistance.home.name });
       });
     });
   });

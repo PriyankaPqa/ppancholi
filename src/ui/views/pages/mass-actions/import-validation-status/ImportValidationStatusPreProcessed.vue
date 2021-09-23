@@ -1,28 +1,28 @@
 <template>
-  <div>
-    <mass-action-pre-processed-processed-base
-      mass-action-type="massActions.type.importValidationImpactStatus"
-      :mass-action-status="MassActionRunStatus.PreProcessed"
-      :mass-action="massAction"
-      :total="total"
-      :successes="successes"
-      :failures="failures"
-      total-label="massAction.pre_processed.title.1"
-      successes-label="massAction.pre_processed.title.2"
-      failures-label="massAction.pre_processed.title.3"
-      show-download-button
-      show-process-button
-      show-delete-icon
-      show-edit-icon
-      @delete:success="goToHome()" />
-  </div>
+  <mass-action-pre-processed-processed-base
+    :mass-action-type="MassActionType.ImportValidationOfImpactStatus"
+    :mass-action-status="MassActionRunStatus.PreProcessed"
+    :mass-action="massAction"
+    :total="lastRunMetadata.results.total"
+    :successes="lastRunMetadata.results.successes"
+    :failures="lastRunMetadata.results.failures"
+    total-label="massAction.pre_processed.title.1"
+    successes-label="massAction.pre_processed.title.2"
+    failures-label="massAction.pre_processed.title.3"
+    show-download-button
+    show-process-button
+    show-delete-icon
+    show-edit-icon
+    @delete:success="goToHome()" />
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
-import { IMassActionCombined, MassActionRunStatus } from '@/entities/mass-action';
+import {
+  IMassActionCombined, IMassActionRunMetadataModel, MassActionRunStatus, MassActionType,
+} from '@/entities/mass-action';
 import routes from '@/constants/routes';
 
 export default Vue.extend({
@@ -37,18 +37,8 @@ export default Vue.extend({
       required: true,
     },
 
-    total: {
-      type: Number,
-      required: true,
-    },
-
-    successes: {
-      type: Number,
-      required: true,
-    },
-
-    failures: {
-      type: Number,
+    lastRunMetadata: {
+      type: Object as () => IMassActionRunMetadataModel,
       required: true,
     },
   },
@@ -56,6 +46,7 @@ export default Vue.extend({
   data() {
     return {
       MassActionRunStatus,
+      MassActionType,
     };
   },
 

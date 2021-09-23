@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="rc-body16 fw-bold mb-6">
+    <div class="rc-heading-5 fw-bold mb-6">
       {{ $t('massActions.financialAssistance.create.payment_details.title') }}
     </div>
 
@@ -23,9 +23,7 @@ import { IMassActionCombined } from '@/entities/mass-action';
 import { EPaymentModalities, IProgramCombined } from '@/entities/program';
 import { IEventCombined } from '@/entities/event';
 import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
-import {
-  EVENT_ENTITIES, FINANCIAL_ASSISTANCE_ENTITIES, PROGRAM_ENTITIES, FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES,
-} from '@/constants/vuex-modules';
+
 import { IOptionSubItem, IOptionItemCombined } from '@/entities/optionItem';
 
 export default Vue.extend({
@@ -44,6 +42,10 @@ export default Vue.extend({
       table: null as IFinancialAssistanceTableCombined,
       program: null as IProgramCombined,
       item: null as IOptionItemCombined,
+      eventLoading: false,
+      tableLoading: false,
+      programLoading: false,
+      itemLoading: false,
     };
   },
   computed: {
@@ -51,25 +53,25 @@ export default Vue.extend({
       return [
         {
           label: 'massActions.financialAssistance.create.event.label',
-          value: this.event && this.$m(this.event.entity.name),
+          value: this.event?.entity && this.$m(this.event.entity.name),
           dataTest: 'event',
           loading: this.eventLoading,
         },
         {
           label: 'massActions.financialAssistance.create.table.label',
-          value: this.table && this.$m(this.table.entity.name),
+          value: this.table?.entity && this.$m(this.table.entity.name),
           dataTest: 'table',
           loading: this.tableLoading,
         },
         {
           label: 'massActions.financialAssistance.create.program.label',
-          value: this.program && this.$m(this.program.entity.name),
+          value: this.program?.entity && this.$m(this.program.entity.name),
           dataTest: 'program',
           loading: this.programLoading,
         },
         {
           label: 'massActions.financialAssistance.create.item.label',
-          value: this.item && this.$m(this.item.entity.name),
+          value: this.item?.entity && this.$m(this.item.entity.name),
           dataTest: 'item',
           loading: this.itemLoading,
         },
@@ -86,28 +88,12 @@ export default Vue.extend({
         },
         {
           label: 'massActions.financialAssistance.create.amount.label',
-          value: `$${this.massAction.entity.details.amount}`,
+          value: this.$formatCurrency(this.massAction.entity.details.amount),
           dataTest: 'amount',
           customClass: 'grey-back',
           customClassValue: 'fw-bold',
         },
       ];
-    },
-
-    eventLoading(): boolean {
-      return this.$store.state[EVENT_ENTITIES].actionLoading;
-    },
-
-    tableLoading(): boolean {
-      return this.$store.state[FINANCIAL_ASSISTANCE_ENTITIES].actionLoading;
-    },
-
-    programLoading(): boolean {
-      return this.$store.state[PROGRAM_ENTITIES].actionLoading;
-    },
-
-    itemLoading(): boolean {
-      return this.$store.state[FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES].actionLoading;
     },
 
     subItem(): IOptionSubItem {
@@ -126,22 +112,30 @@ export default Vue.extend({
 
   methods: {
     async fetchEvent() {
+      this.eventLoading = true;
       this.event = await this.$storage.event.actions.fetch(this.massAction.entity.details.eventId);
+      this.eventLoading = false;
     },
 
     async fetchTable() {
+      this.tableLoading = true;
       this.table = await this.$storage.financialAssistance.actions.fetch(this.massAction.entity.details.tableId);
+      this.tableLoading = false;
     },
 
     async fetchProgram() {
+      this.programLoading = true;
       this.program = await this.$storage.program.actions.fetch({
         id: this.massAction.entity.details.programId,
         eventId: this.massAction.entity.details.eventId,
       });
+      this.programLoading = false;
     },
 
     async fetchItem() {
+      this.itemLoading = true;
       this.item = await this.$storage.financialAssistanceCategory.actions.fetch(this.massAction.entity.details.mainCategoryId);
+      this.itemLoading = false;
     },
   },
 });

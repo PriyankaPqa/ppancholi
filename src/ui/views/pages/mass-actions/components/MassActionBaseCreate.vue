@@ -189,8 +189,12 @@ export default mixins(fileUpload).extend({
       await this.uploadForm(this.formData, this.url);
 
       if (this.uploadSuccess) {
+        const entity = new MassActionEntity(this.response.data as IMassActionEntity);
+
+        this.$storage.massAction.mutations.setEntity(entity);
+
         // So the parent can redirect where needed
-        this.$emit('upload:success', new MassActionEntity(this.response.data as IMassActionEntity));
+        this.$emit('upload:success', entity);
       }
     },
   },

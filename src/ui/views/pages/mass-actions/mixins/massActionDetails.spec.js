@@ -1,6 +1,6 @@
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import massActionDetails from '@/ui/mixins/massActionDetails';
+import massActionDetails from './massActionDetails';
 import {
   MassActionRunStatus, mockCombinedMassAction, mockMassActionRun, mockMassActionRunMetadata,
 } from '@/entities/mass-action';

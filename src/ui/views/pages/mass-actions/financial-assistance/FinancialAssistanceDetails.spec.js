@@ -12,6 +12,8 @@ import { mockStorage } from '@/store/storage';
 
 import FinancialAssistancePreProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessing.vue';
 import FinancialAssistanceProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessing.vue';
+import FinancialAssistancePreProcessed from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessed.vue';
+import FinancialAssistanceProcessed from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessed.vue';
 
 import Component from './FinancialAssistanceDetails.vue';
 
@@ -19,7 +21,7 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-describe('ImportValidationStatusDetails.vue', () => {
+describe('FinancialAssistanceDetails.vue', () => {
   let wrapper;
 
   describe('Template', () => {
@@ -43,6 +45,28 @@ describe('ImportValidationStatusDetails.vue', () => {
         },
       });
       expect(wrapper.findComponent(FinancialAssistancePreProcessing).exists()).toBe(true);
+    });
+
+    it('should render pre-processed component if pre-processed', () => {
+      wrapper = mount(Component, {
+        localVue,
+        computed: {
+          preProcessed: () => true,
+          massAction: () => mockCombinedMassAction(),
+        },
+      });
+      expect(wrapper.findComponent(FinancialAssistancePreProcessed).exists()).toBe(true);
+    });
+
+    it('should render processed component if processed', () => {
+      wrapper = mount(Component, {
+        localVue,
+        computed: {
+          processed: () => true,
+          massAction: () => mockCombinedMassAction(),
+        },
+      });
+      expect(wrapper.findComponent(FinancialAssistanceProcessed).exists()).toBe(true);
     });
   });
 

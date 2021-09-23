@@ -23,8 +23,11 @@
           <v-col cols="12" md="5">
             <span class="rc-body14 fw-bold" data-test="totalLabel">{{ $t(totalLabel) }}</span>
           </v-col>
-          <v-col md="7">
+          <v-col md="2">
             <span class="rc-body14" data-test="total">{{ total }}</span>
+          </v-col>
+          <v-col v-if="isFinancial" md="4">
+            <span class="rc-body14" data-test="projectedAmount">{{ $formatCurrency(projectedAmount) }}</span>
           </v-col>
         </v-row>
 
@@ -35,11 +38,14 @@
               {{ $t(successesLabel) }}
             </span>
           </v-col>
-          <v-col md="5">
+          <v-col md="2">
             <span class="rc-body14" data-test="successes">{{ successes }}</span>
           </v-col>
-          <v-col md="2" class="d-flex justify-end">
-            <v-btn v-if="showProcessButton" data-test="processButton" small color="primary" @click="onProcess()">
+          <v-col md="4">
+            <span v-if="isFinancial" class="rc-body14" data-test="successesAmount">{{ $formatCurrency(successesAmount) }}</span>
+          </v-col>
+          <v-col md="1" class="d-flex justify-end">
+            <v-btn v-if="showProcessButton" data-test="processButton" :disabled="successes === 0" small color="primary" @click="onProcess()">
               {{ $t('massAction.process.button.label') }}
             </v-btn>
           </v-col>
@@ -89,13 +95,19 @@
       <mass-action-details-table :mass-action="massAction" :mass-action-type="massActionType" class="mt-12" />
 
       <slot name="preprocessing" />
+
+      <div class="mt-6">
+        <slot name="payment-details" />
+      </div>
     </v-col>
   </v-row>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMassActionCombined, MassActionRunStatus, MassActionRunType } from '@/entities/mass-action';
+import {
+  IMassActionCombined, MassActionRunStatus, MassActionRunType, MassActionType,
+} from '@/entities/mass-action';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 import colors from '@/ui/plugins/vuetify/colors';
@@ -123,13 +135,18 @@ export default Vue.extend({
     },
 
     massActionType: {
-      type: String,
+      type: Number as () => MassActionType,
       required: true,
     },
 
     total: {
       type: Number,
       required: true,
+    },
+
+    projectedAmount: {
+      type: Number,
+      default: 0,
     },
 
     successes: {
@@ -150,6 +167,11 @@ export default Vue.extend({
     successesLabel: {
       type: String,
       required: true,
+    },
+
+    successesAmount: {
+      type: Number,
+      default: 0,
     },
 
     failuresLabel: {
@@ -197,6 +219,10 @@ export default Vue.extend({
 
     isPreprocessed(): boolean {
       return this.massAction.metadata.lastRun.runStatus === MassActionRunStatus.PreProcessed;
+    },
+
+    isFinancial(): boolean {
+      return this.massActionType === MassActionType.FinancialAssistance;
     },
   },
 
