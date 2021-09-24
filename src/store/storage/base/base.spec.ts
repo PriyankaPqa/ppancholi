@@ -227,6 +227,13 @@ describe('BaseStorage', () => {
           { params: { filter: { 'Entity/Status': 1 } }, searchEndpoint: null });
       });
 
+      it('should filterout inactives by default or if specified and build the correct filter when the filter is a string', async () => {
+        const params = { filter: 'filter string' };
+        await storage.actions.search(params);
+        expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
+          { params: { filter: 'filter string and Entity/Status eq 1' }, searchEndpoint: null });
+      });
+
       it('should call commit set for both entity and metadata', async () => {
         store.dispatch = jest.fn().mockReturnValueOnce(Promise.resolve(
           {

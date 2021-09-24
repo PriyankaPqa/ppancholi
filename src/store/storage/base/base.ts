@@ -143,13 +143,19 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     search: async (params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean): Promise<IAzureTableSearchResults> => {
       this.store.commit(`${this.entityModuleName}/setSearchLoading`, true);
       const newParams = { ...params };
+
       if (includeInactiveItems !== true) {
         newParams.filter = newParams.filter || {};
-        newParams.filter = {
-          ...(typeof (newParams.filter) === 'string' ? { filter: newParams.filter } : newParams.filter),
-          'Entity/Status': Status.Active,
-        };
+        if (typeof (newParams.filter) === 'string') {
+          newParams.filter = `${newParams.filter} and Entity/Status eq 1`;
+        } else {
+          newParams.filter = {
+            ...newParams.filter as Record<string, unknown>,
+            'Entity/Status': Status.Active,
+          };
+        }
       }
+
       const res = await this.store.dispatch(`${this.entityModuleName}/search`, { params: newParams, searchEndpoint });
 
       const data = res?.value;
