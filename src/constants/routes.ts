@@ -158,6 +158,10 @@ const routes = {
       path: 'household/:id',
       name: 'casefile.householdProfile',
     },
+    householdSplit: {
+      path: 'household/:id/split',
+      name: 'casefile.householdSplit',
+    },
   },
   loginError: {
     path: 'login-error',

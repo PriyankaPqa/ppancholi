@@ -1,4 +1,7 @@
 import Vuetify from 'vuetify';
+import { RcDialog } from '@crctech/component-library';
+import { mockSplitHousehold } from '@crctech/registration-lib/src/entities/household-create';
+import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import {
   createLocalVue,
   shallowMount,
@@ -24,6 +27,7 @@ describe('IsRegistered.vue', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
 
+    storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
     wrapper = shallowMount(Component, {
       localVue,
       vuetify,
@@ -88,6 +92,25 @@ describe('IsRegistered.vue', () => {
         expect(component.props().items).toEqual([]);
       });
     });
+
+    describe('Details dialog', () => {
+      it('renders if showDetailsDialog is true', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          data() {
+            return {
+              showDetailsDialog: true,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.findComponent(RcDialog).exists()).toBeTruthy();
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -118,6 +141,77 @@ describe('IsRegistered.vue', () => {
       it('should call setHouseholdResultsShown mutation with proper parameter', async () => {
         await wrapper.vm.search({});
         expect(wrapper.vm.$storage.registration.mutations.setHouseholdResultsShown).toHaveBeenCalledWith(true);
+      });
+
+      it('should call filterOutSplittedHousehold if in split mode', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          computed: {
+            isSplitMode() { return true; },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        jest.spyOn(wrapper.vm, 'filterOutSplittedHousehold').mockImplementation(() => {});
+        await wrapper.vm.search({});
+        expect(wrapper.vm.filterOutSplittedHousehold).toHaveBeenCalled();
+      });
+    });
+
+    describe('showDetails', () => {
+      it('calls fetchCaseFilesInformation', () => {
+        jest.spyOn(wrapper.vm, 'fetchCaseFilesInformation').mockImplementation(() => {});
+        wrapper.vm.showDetails('mock-id');
+        expect(wrapper.vm.fetchCaseFilesInformation).toHaveBeenCalledWith('mock-id');
+      });
+
+      it('calls fetchCaseFilesInformation if isSplitMode is true', async () => {
+        expect(wrapper.vm.showDetailsDialog).toBeFalsy();
+        await wrapper.vm.showDetails('mock-id');
+        expect(wrapper.vm.showDetailsDialog).toBeTruthy();
+      });
+    });
+
+    describe('filterOutSplittedHousehold', () => {
+      it('removes the results with the id of the origin household for the split', async () => {
+        storage.household.getters.getAll = jest.fn(() => [
+          { entity: { id: mockSplitHousehold().originHouseholdId } },
+          { entity: { id: 'foo' } },
+        ]);
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          mocks: {
+            $storage: storage,
+          },
+          store: {
+            modules: {
+              registration: {
+                state: {
+                  splitHousehold: mockSplitHousehold(),
+                },
+              },
+            },
+          },
+        });
+
+        await wrapper.vm.filterOutSplittedHousehold();
+        expect(wrapper.vm.searchResults).toEqual([{ entity: { id: 'foo' } }]);
+      });
+    });
+
+    describe('fetchCaseFilesInformation', () => {
+      it('calls household actions fetch', () => {
+        wrapper.vm.fetchCaseFilesInformation();
+        expect(storage.household.actions.fetch).toHaveBeenCalled();
+      });
+
+      it('updates caseFiles with the call result', async () => {
+        await wrapper.vm.fetchCaseFilesInformation();
+        expect(wrapper.vm.caseFiles).toEqual(mockCombinedHousehold().metadata.caseFiles);
       });
     });
   });
@@ -221,6 +315,18 @@ describe('IsRegistered.vue', () => {
         });
       });
     });
+
+    describe('searchLoading', () => {
+      it('returns the right value', (() => {
+        expect(wrapper.vm.searchLoading).toEqual(wrapper.vm.$store.state.householdEntities.searchLoading);
+      }));
+    });
+
+    describe('isSplitMode', () => {
+      it('returns the right value', (() => {
+        expect(wrapper.vm.isSplitMode).toEqual(wrapper.vm.$storage.registration.getters.isSplitMode());
+      }));
+    });
   });
 
   describe('Lifecycle', () => {
@@ -232,6 +338,23 @@ describe('IsRegistered.vue', () => {
         });
 
         expect(wrapper.vm.$storage.household.getters.getAll).toHaveBeenCalledTimes(1);
+      });
+
+      it('calls filterOutSplittedHousehold if isSplitMode is true', () => {
+        storage.registration.getters.isSplitMode = jest.fn(() => true);
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          mocks: {
+            $storage: storage,
+          },
+        });
+        jest.spyOn(wrapper.vm, 'filterOutSplittedHousehold').mockImplementation(() => {});
+        wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.filterOutSplittedHousehold).toHaveBeenCalled();
       });
     });
   });

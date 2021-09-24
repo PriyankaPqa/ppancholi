@@ -116,7 +116,8 @@
       v-if="showSplitDialog"
       :show.sync="showSplitDialog"
       :index="index"
-      :new-primary-member="member" />
+      :new-primary-member="member"
+      :initial-additional-members="splitAdditionalMembers" />
   </v-sheet>
 </template>
 
@@ -130,7 +131,7 @@ import { CurrentAddressTemplate, AddEditAdditionalMembers } from '@crctech/regis
 import { IEventGenericLocation } from '@/entities/event';
 
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
-import SplitHouseholdDialog from './SplitHouseholdDialog.vue';
+import SplitHouseholdDialog from '../split/SplitHouseholdDialog.vue';
 
 export default Vue.extend({
   name: 'HouseholdMemberCard',
@@ -178,6 +179,7 @@ export default Vue.extend({
       showAdditionalMemberDialog: false,
       showSplitDialog: false,
       i18n: this.$i18n,
+      splitAdditionalMembers: [] as IMember[],
     };
   },
 
@@ -351,7 +353,25 @@ export default Vue.extend({
     },
   },
 
+  created() {
+    // When coming back to the household profile page from the household split flow,
+    // the split household dialog needs to open with the correct state
+    // (the previously selected additional members involved in the split need to be displayed as selected)
+    if (this.$storage.registration.getters.isSplitMode()) {
+      this.initSplitView();
+    }
+  },
+
   methods: {
+    initSplitView() {
+      const splitHouseholdMembers = this.$store.state.registration.splitHousehold?.splitMembers;
+      if (splitHouseholdMembers?.primaryMember?.id === this.member.id) {
+        this.splitAdditionalMembers = splitHouseholdMembers.additionalMembers;
+        this.$storage.registration.mutations.resetSplitHousehold();
+        this.showSplitDialog = true;
+      }
+    },
+
     openEditDialog() {
       if (this.isPrimaryMember) {
         this.showPrimaryMemberDialog = true;

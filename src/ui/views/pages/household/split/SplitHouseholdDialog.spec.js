@@ -2,10 +2,11 @@ import { mockMember } from '@crctech/registration-lib/src/entities/value-objects
 import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@crctech/registration-lib/src/entities/household-create';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
+import routes from '@/constants/routes';
 
 import { mockStorage } from '@/store/storage';
 
-import Component from '../SplitHouseholdDialog.vue';
+import Component from './SplitHouseholdDialog.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -109,6 +110,30 @@ describe('SplitHouseholdDialog', () => {
         expect(wrapper.vm.displayName(member)).toEqual(`${member.identitySet.firstName} ${member.identitySet.lastName}`);
       });
     });
+
+    describe('householdId', () => {
+      it('returns the right data', () => {
+        expect(wrapper.vm.householdId).toEqual(storage.registration.getters.householdCreate().id);
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('create', () => {
+      it('sets the value from the props initialAdditionalMembers into selectedMembers', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            newPrimaryMember: member,
+            initialAdditionalMembers: ['foo'],
+          },
+          mocks: { $storage: storage },
+        });
+
+        expect(wrapper.vm.selectedMembers).toEqual(['foo']);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -191,6 +216,27 @@ describe('SplitHouseholdDialog', () => {
       it('emits close', async () => {
         await wrapper.vm.onCancel();
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+      });
+    });
+
+    describe('onNext', () => {
+      it('calls the registration mutations setSplitHousehold with the right payload', async () => {
+        wrapper.vm.onNext();
+        expect(storage.registration.mutations.setSplitHousehold).toHaveBeenCalledWith({
+          originHouseholdId: wrapper.vm.householdId,
+          primaryMember: wrapper.vm.newPrimaryMember,
+          additionalMembers: wrapper.vm.selectedMembers,
+        });
+      });
+
+      it('calls router push with the right parameters', () => {
+        wrapper.vm.onNext();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.household.householdSplit.name,
+          params: {
+            id: wrapper.vm.householdId,
+          },
+        });
       });
     });
   });

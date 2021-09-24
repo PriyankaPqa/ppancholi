@@ -123,7 +123,7 @@ import { MAX_LENGTH_MD } from '@/constants/validations';
 import { VForm } from '@/types';
 
 export default Vue.extend({
-  name: 'SearchBeneficiary',
+  name: 'HouseholdSearch',
   components: {
     RcPhoneWithValidation,
     VSelectWithValidation,
@@ -131,6 +131,10 @@ export default Vue.extend({
   },
   props: {
     loading: {
+      type: Boolean,
+      required: true,
+    },
+    isSplitMode: {
       type: Boolean,
       required: true,
     },
@@ -237,6 +241,14 @@ export default Vue.extend({
       },
     },
   },
+
+  created() {
+    // when displayed as part of the split flow, the name fields should be pre-filled with the name of the new primary member
+    if (this.isSplitMode) {
+      this.fillInSplitHouseholdData();
+    }
+  },
+
   methods: {
     clear() {
       this.form = {
@@ -263,6 +275,14 @@ export default Vue.extend({
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid && !isEmpty(this.nonEmptySearchCriteria)) {
         this.$emit('search', this.nonEmptySearchCriteria);
+      }
+    },
+
+    fillInSplitHouseholdData() {
+      const splitHouseholdMembers = this.$store.state.registration.splitHousehold?.splitMembers;
+      if (splitHouseholdMembers) {
+        this.form.firstName = splitHouseholdMembers.primaryMember.identitySet.firstName;
+        this.form.lastName = splitHouseholdMembers.primaryMember.identitySet.lastName;
       }
     },
   },

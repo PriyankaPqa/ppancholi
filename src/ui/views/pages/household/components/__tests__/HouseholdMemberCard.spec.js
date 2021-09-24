@@ -1,6 +1,8 @@
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { mockIndigenousCommunitiesGetData, EIndigenousTypes, mockHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import {
+  mockIndigenousCommunitiesGetData, EIndigenousTypes, mockSplitHousehold, mockHouseholdCreate,
+} from '@crctech/registration-lib/src/entities/household-create';
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
@@ -8,7 +10,7 @@ import { mockUserStateLevel } from '@/test/helpers';
 import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
-const member = mockMember();
+const member = mockMember({ id: 'id-1' });
 const storage = mockStorage();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
 
@@ -497,6 +499,23 @@ describe('HouseholdMemberCard.vue', () => {
     });
   });
 
+  describe('Lifecycle', () => {
+    describe('create', () => {
+      it('calls initSplitView if is in split mode (e.g we land back on the page from the split flow)', () => {
+        storage.registration.getters.isSplitMode = jest.fn(() => true);
+        doMount(false, true, {
+          mocks: { $storage: storage },
+        });
+        jest.spyOn(wrapper.vm, 'initSplitView').mockImplementation(() => {});
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.initSplitView).toHaveBeenCalledTimes(1);
+      });
+    });
+  });
+
   describe('Methods', () => {
     describe('openEditDialog', () => {
       it('sets showPrimaryMemberDialog if isPrimaryMember', async () => {
@@ -511,6 +530,38 @@ describe('HouseholdMemberCard.vue', () => {
         expect(wrapper.vm.showAdditionalMemberDialog).toBeFalsy();
         await wrapper.vm.openEditDialog();
         expect(wrapper.vm.showAdditionalMemberDialog).toBeTruthy();
+      });
+    });
+
+    describe('initSplitView', () => {
+      beforeEach(() => {
+        jest.clearAllMocks();
+        doMount(false, true, {
+          mocks: { $storage: storage },
+          store: {
+            modules: {
+              registration: {
+                state: {
+                  splitHousehold: mockSplitHousehold(),
+                },
+              },
+            },
+          },
+        });
+      });
+      it('sets splitAdditionalMembers to the right data', async () => {
+        await wrapper.vm.initSplitView();
+        expect(wrapper.vm.splitAdditionalMembers).toEqual(mockSplitHousehold().splitMembers.additionalMembers);
+      });
+
+      it('calls the registration mutation resetSplitHousehold', async () => {
+        await wrapper.vm.initSplitView();
+        expect(storage.registration.mutations.resetSplitHousehold).toHaveBeenCalled();
+      });
+
+      it('sets showSplitDialog to true', async () => {
+        await wrapper.vm.initSplitView();
+        expect(wrapper.vm.showSplitDialog).toBeTruthy();
       });
     });
 

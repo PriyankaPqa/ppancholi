@@ -1,4 +1,5 @@
 import Vuetify from 'vuetify';
+import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import {
   createLocalVue,
   shallowMount,
@@ -19,6 +20,7 @@ describe('ReviewRegistration.vue', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
 
     wrapper = shallowMount(Component, {
       localVue,
@@ -43,27 +45,14 @@ describe('ReviewRegistration.vue', () => {
 
   describe('Methods', () => {
     describe('fetchCaseFilesInformation', () => {
-      it('should call case files search with correct filter', async () => {
-        const id = '1';
-
-        await wrapper.vm.fetchCaseFilesInformation(id);
-
-        expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
-          filter: {
-            Entity: { HouseholdId: id },
-          },
-        });
+      it('calls household actions fetch', () => {
+        wrapper.vm.fetchCaseFilesInformation();
+        expect(storage.household.actions.fetch).toHaveBeenCalled();
       });
 
-      it('should set caseFiles', async () => {
-        const id = '1';
-        wrapper.vm.$storage.caseFile.actions.search = jest.fn(() => ({ ids: ['1'] }));
-        wrapper.vm.$storage.caseFile.getters.getByIds = jest.fn(() => ([]));
-
-        await wrapper.vm.fetchCaseFilesInformation(id);
-
-        expect(wrapper.vm.$storage.caseFile.getters.getByIds).toHaveBeenCalledWith(['1']);
-        expect(wrapper.vm.caseFiles).toEqual([]);
+      it('updates caseFiles with the call result', async () => {
+        await wrapper.vm.fetchCaseFilesInformation();
+        expect(wrapper.vm.caseFiles).toEqual(mockCombinedHousehold().metadata.caseFiles);
       });
     });
   });

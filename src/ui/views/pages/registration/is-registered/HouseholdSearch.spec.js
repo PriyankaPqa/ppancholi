@@ -1,4 +1,5 @@
 import Vuetify from 'vuetify';
+import { mockSplitHousehold } from '@crctech/registration-lib/src/entities/household-create';
 import {
   createLocalVue,
   shallowMount, mount,
@@ -26,6 +27,7 @@ describe('HouseholdSearch.vue', () => {
       vuetify,
       propsData: {
         loading: false,
+        isSplitMode: false,
       },
       mocks: {
         $storage: storage,
@@ -105,6 +107,7 @@ describe('HouseholdSearch.vue', () => {
           vuetify,
           propsData: {
             loading: false,
+            isSplitMode: false,
           },
           mocks: {
             $storage: storage,
@@ -146,6 +149,7 @@ describe('HouseholdSearch.vue', () => {
           vuetify,
           propsData: {
             loading: false,
+            isSplitMode: false,
           },
           mocks: {
             $storage: storage,
@@ -156,6 +160,59 @@ describe('HouseholdSearch.vue', () => {
         await element.vm.$emit('click');
 
         expect(wrapper.vm.search).toBeCalledTimes(1);
+      });
+    });
+
+    describe('fillInSplitHouseholdData', () => {
+      it('fills in the right name data into the form', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            loading: false,
+            isSplitMode: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          store: {
+            modules: {
+              registration: {
+                state: {
+                  splitHousehold: mockSplitHousehold(),
+                },
+              },
+            },
+          },
+        });
+
+        await wrapper.vm.fillInSplitHouseholdData();
+        expect(wrapper.vm.form.firstName).toEqual(mockSplitHousehold().splitMembers.primaryMember.identitySet.firstName);
+        expect(wrapper.vm.form.lastName).toEqual(mockSplitHousehold().splitMembers.primaryMember.identitySet.lastName);
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('create', () => {
+      it('calls fillInSplitHouseholdData if is in split mode', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          propsData: {
+            loading: false,
+            isSplitMode: true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        jest.spyOn(wrapper.vm, 'fillInSplitHouseholdData').mockImplementation(() => {});
+
+        wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.fillInSplitHouseholdData).toHaveBeenCalledTimes(1);
       });
     });
   });

@@ -10,7 +10,7 @@
     show-close
     @close="onCancel"
     @cancel="onCancel"
-    @submit="onSubmit">
+    @submit="onNext">
     <v-row class="justify-center">
       <v-col cols="12" md="6">
         <h3 class="pt-4 pb-2">
@@ -95,7 +95,7 @@
                     {{ item.data }}
                   </span>
                 </td>
-                <td v-if="item.customContent === 'address'" class="address" :data-test="`household_profile_member_info_data_${item.test}`">
+                <td v-if="item.customContent === 'address'" :data-test="`household_profile_member_info_data_${item.test}`">
                   <current-address-template :current-address="member.currentAddress" />
                 </td>
               </tr>
@@ -113,6 +113,7 @@ import { RcDialog } from '@crctech/component-library';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@crctech/registration-lib/src/entities/household-create';
 import { CurrentAddressTemplate } from '@crctech/registration-lib';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'SplitHouseholdDialog',
@@ -131,6 +132,10 @@ export default Vue.extend({
       type: Object as () => IMember,
       required: true,
     },
+    initialAdditionalMembers: {
+      type: Array as () => IMember[],
+      default: () => [] as IMember[],
+    },
   },
 
   data() {
@@ -146,6 +151,10 @@ export default Vue.extend({
         return allMembers.filter((m) => m.id !== this.newPrimaryMember.id);
       }
       return [];
+    },
+
+    householdId(): string {
+      return this.$storage.registration.getters.householdCreate().id;
     },
 
     memberInfo(): (member:IMember) => Array<Record<string, unknown>> {
@@ -178,6 +187,12 @@ export default Vue.extend({
       return (member:IMember) => `${member.identitySet.firstName} ${member.identitySet.lastName}`;
     },
 
+  },
+
+  created() {
+    if (this.initialAdditionalMembers) {
+      this.selectedMembers = this.initialAdditionalMembers;
+    }
   },
 
   methods: {
@@ -216,8 +231,19 @@ export default Vue.extend({
       this.$emit('update:show', false);
     },
 
-    async onSubmit() {
-      return true;
+    async onNext() {
+      this.$storage.registration.mutations.setSplitHousehold({
+        originHouseholdId: this.householdId,
+        primaryMember: this.newPrimaryMember,
+        additionalMembers: this.selectedMembers,
+      });
+
+      this.$router.push({
+        name: routes.household.householdSplit.name,
+        params: {
+          id: this.householdId,
+        },
+      });
     },
   },
 });
@@ -228,8 +254,5 @@ export default Vue.extend({
 .chip {
   font-size: 10px;
   padding-top: 2px;
-}
-.address > div {
-  font-size: 12px  !important;
 }
 </style>

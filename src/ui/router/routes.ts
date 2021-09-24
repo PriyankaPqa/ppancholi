@@ -42,6 +42,7 @@ const MainLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/compo
 const HomeLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/pages/home/layout/HomeLayout.vue');
 
 const HouseholdProfile = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/HouseholdProfile.vue');
+const SplitHousehold = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/split/SplitHousehold.vue');
 
 const FinancialAssistanceLayout = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/layout/FinancialAssistanceLayout.vue');
 const FinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/home/FinancialAssistanceHome.vue');
@@ -302,6 +303,13 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.household.householdProfile.name,
                 component: HouseholdProfile,
                 meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                props: true,
+              },
+              {
+                path: Routes.household.householdSplit.path,
+                name: Routes.household.householdSplit.name,
+                component: SplitHousehold,
+                meta: { level: 'level1' },
                 props: true,
               },
             ],

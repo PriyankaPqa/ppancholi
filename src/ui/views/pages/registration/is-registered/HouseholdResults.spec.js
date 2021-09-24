@@ -34,6 +34,7 @@ describe('HouseholdResults.vue', () => {
       vuetify,
       propsData: {
         items: mockCombinedHouseholds(),
+        isSplitMode: false,
       },
       mocks: {
         $storage: storage,
@@ -153,21 +154,41 @@ describe('HouseholdResults.vue', () => {
         expect(wrapper.vm.$storage.registration.mutations.setHouseholdCreate).toHaveBeenLastCalledWith({});
       });
 
-      it('should set association mode to true', async () => {
-        await wrapper.vm.viewDetails(parsedHousehold);
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdAssociationMode).toHaveBeenLastCalledWith(true);
+      describe('not split more', () => {
+        it('should set association mode to true', async () => {
+          await wrapper.vm.viewDetails(parsedHousehold);
+          expect(wrapper.vm.$storage.registration.mutations.setHouseholdAssociationMode).toHaveBeenLastCalledWith(true);
+        });
+
+        it('should set already registered to correct value', async () => {
+          wrapper.vm.isRegisteredInCurrentEvent = jest.fn(() => true);
+          await wrapper.vm.viewDetails(parsedHousehold);
+          expect(wrapper.vm.$storage.registration.mutations.setHouseholdAlreadyRegistered).toHaveBeenLastCalledWith(true);
+        });
+
+        it('should set currentTab to review ', async () => {
+          wrapper.vm.isRegisteredInCurrentEvent = jest.fn(() => true);
+          await wrapper.vm.viewDetails(parsedHousehold);
+          expect(wrapper.vm.$storage.registration.mutations.setCurrentTabIndex).toHaveBeenLastCalledWith(tabs().findIndex((t) => t.id === 'review'));
+        });
       });
 
-      it('should set already registered to correct value', async () => {
-        wrapper.vm.isRegisteredInCurrentEvent = jest.fn(() => true);
-        await wrapper.vm.viewDetails(parsedHousehold);
-        expect(wrapper.vm.$storage.registration.mutations.setHouseholdAlreadyRegistered).toHaveBeenLastCalledWith(true);
-      });
-
-      it('should set currentTab to review ', async () => {
-        wrapper.vm.isRegisteredInCurrentEvent = jest.fn(() => true);
-        await wrapper.vm.viewDetails(parsedHousehold);
-        expect(wrapper.vm.$storage.registration.mutations.setCurrentTabIndex).toHaveBeenLastCalledWith(tabs().findIndex((t) => t.id === 'review'));
+      describe('in split mode', () => {
+        it('emits showDetails, with the household id as parameter', async () => {
+          wrapper = shallowMount(Component, {
+            localVue,
+            vuetify,
+            propsData: {
+              items: mockCombinedHouseholds(),
+              isSplitMode: true,
+            },
+            mocks: {
+              $storage: storage,
+            },
+          });
+          await wrapper.vm.viewDetails(parsedHousehold);
+          expect(wrapper.emitted('showDetails')[0][0]).toEqual(parsedHousehold.id);
+        });
       });
     });
   });

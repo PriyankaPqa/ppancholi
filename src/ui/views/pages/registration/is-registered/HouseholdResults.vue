@@ -119,7 +119,7 @@
           </v-icon>
           {{ $t('registration.isRegistered.household_member') }}
         </div>
-        <div class="rc-body12">
+        <div v-if="!isSplitMode" class="rc-body12">
           <v-icon small color="grey" class="ml-2 mr-1 ">
             mdi-check-circle-outline
           </v-icon>
@@ -168,6 +168,10 @@ export default mixins(household).extend({
       type: Array as () => IHouseholdCombined[],
       required: true,
     },
+    isSplitMode: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
@@ -178,7 +182,7 @@ export default mixins(household).extend({
   },
   computed: {
     headers(): Array<Record<string, unknown>> {
-      return [
+      const headers = [
         {
           text: this.$t('registration.isRegistered.table.name'),
           value: 'name',
@@ -209,17 +213,21 @@ export default mixins(household).extend({
         },
         {
           text: '',
-          value: 'isRegisteredToEvent',
-          sortable: false,
-          width: '10px',
-        },
-        {
-          text: '',
           value: 'actions',
           sortable: false,
           width: '110px',
         },
       ];
+
+      if (!this.isSplitMode) {
+        headers.push({
+          text: '',
+          value: 'isRegisteredToEvent',
+          sortable: false,
+          width: '10px',
+        });
+      }
+      return headers;
     },
     formattedItems(): IFormattedHousehold[] {
       return this.items.map((household: IHouseholdCombined) => {
@@ -269,9 +277,15 @@ export default mixins(household).extend({
         this.detailsLoading = false;
       }
 
-      this.$storage.registration.mutations.setHouseholdAssociationMode(true);
-      this.$storage.registration.mutations.setHouseholdAlreadyRegistered(this.isRegisteredInCurrentEvent(household));
-      this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'review'));
+      // when this component is rendered in the search stage of the split flow, the household is not selected for registration,
+      // only a dialog is opened with the household details
+      if (this.isSplitMode) {
+        this.$emit('showDetails', household.id);
+      } else {
+        this.$storage.registration.mutations.setHouseholdAlreadyRegistered(this.isRegisteredInCurrentEvent(household));
+        this.$storage.registration.mutations.setHouseholdAssociationMode(true);
+        this.$storage.registration.mutations.setCurrentTabIndex(tabs().findIndex((t) => t.id === 'review'));
+      }
 
       return true;
     },

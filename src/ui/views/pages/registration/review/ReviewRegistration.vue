@@ -10,6 +10,7 @@
 import Vue from 'vue';
 import { ReviewRegistration as LibReviewRegistration } from '@crctech/registration-lib';
 import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
 import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
 
@@ -24,7 +25,7 @@ export default Vue.extend({
   data() {
     return {
       i18n,
-      caseFiles: [],
+      caseFiles: [] as IHouseholdCaseFile[],
       loading: false,
     };
   },
@@ -41,15 +42,12 @@ export default Vue.extend({
 
   methods: {
     async fetchCaseFilesInformation(householdId: string) {
-      const filter = {
-        Entity: { HouseholdId: householdId },
-      };
       this.loading = true;
       try {
-        const res = await this.$storage.caseFile.actions.search({
-          filter,
-        });
-        this.caseFiles = this.$storage.caseFile.getters.getByIds(res.ids);
+        const household = await this.$storage.household.actions.fetch(householdId);
+        if (household) {
+          this.caseFiles = household.metadata.caseFiles;
+        }
       } finally {
         this.loading = false;
       }

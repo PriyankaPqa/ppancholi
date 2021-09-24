@@ -7,19 +7,19 @@
     </div>
     <template v-if="caseFiles.length > 0">
       <div data-test="title__previousEvents" class="rc-heading-5 fw-bold mb-2">
-        {{ $t('registration.details.previousEvents.title') }}
+        {{ $t('household.split.title.beneficiary_details.registered_in_events', {x:caseFiles.length}) }}
       </div>
       <div class="info-container mb-8">
         <div v-for="(c, index) in caseFiles" :key="index" class="row-data">
           <v-row dense>
             <v-col cols="6" class="rc-body14 fw-bold" :data-test="`previous_event_${index}`">
-              {{ $m(c.metadata.event.name) }}
+              {{ $m(c.eventName) }}
             </v-col>
             <v-col cols="3" class="rc-body14" :data-test="`previous_event_registered_${index}`">
-              {{ $t('registration.details.registered') }}: {{ moment(c.entity.created).format('ll') }}
+              {{ $t('registration.details.registered') }}: {{ moment(c.registeredDate).format('ll') }}
             </v-col>
             <v-col cols="3" class="rc-body14" data-test="`previous_casefileNumber_${index}`">
-              {{ $t('registration.details.caseFile') }}: {{ c.entity.caseFileNumber }}
+              {{ $t('registration.details.caseFile') }}: {{ c.caseFileNumber }}
             </v-col>
           </v-row>
         </div>
@@ -31,13 +31,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import { ICaseFileCombined } from '@/entities/case-file';
+import { IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
 
 export default Vue.extend({
   name: 'PreviousEventsTemplate',
   props: {
     caseFiles: {
-      type: Array as () => Array<ICaseFileCombined>,
+      type: Array as () => Array<IHouseholdCaseFile>,
       required: true,
     },
     loading: {
