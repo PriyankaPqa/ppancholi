@@ -706,6 +706,18 @@ describe('CaseFileActivityListItem.vue', () => {
             body,
           });
         });
+        it('returns the correct data when action type is PaymentSubmitted', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.PaymentSubmitted)[0];
+
+          await wrapper.setProps({
+            item,
+          });
+          const body = `${item.details.paymentName}: $${item.details.totalAmount}`;
+          expect(wrapper.vm.makeContentForFinancialAssistancePaymentSubmit()).toEqual({
+            title: 'caseFileActivity.activityList.title.PaymentSubmitted',
+            body,
+          });
+        });
       });
     });
   });

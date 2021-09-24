@@ -434,6 +434,18 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         },
       },
     },
+    {
+      id: 'mock-activity-id-25',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.PaymentSubmitted,
+      details: {
+        paymentName: 'Add Pyament Submitted',
+        totalAmount: 10.10,
+      },
+    },
   ];
 
   if (type) {

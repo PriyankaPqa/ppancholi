@@ -96,6 +96,9 @@ export default Vue.extend({
 
         case CaseFileActivityType.Registration:
           return this.makeContentForRegistration();
+
+        case CaseFileActivityType.PaymentSubmitted:
+          return this.makeContentForFinancialAssistancePaymentSubmit();
         default:
           return null;
       }
@@ -322,6 +325,12 @@ export default Vue.extend({
       const title = this.$t('caseFileActivity.activityList.title.Registration');
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const body = `${this.$m(this.item.details.subject as IMultilingual)}`;
+      return { title, body };
+    },
+
+    makeContentForFinancialAssistancePaymentSubmit(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.PaymentSubmitted');
+      const body = `${this.item.details.paymentName}: $${this.item.details.totalAmount}`;
       return { title, body };
     },
 
