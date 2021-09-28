@@ -6,7 +6,7 @@ import { mockCombinedCaseFinancialAssistance } from '@/entities/financial-assist
 import Component from './FinancialAssistancePaymentsList.vue';
 import routes from '@/constants/routes';
 
-const storage = mockStorage();
+let storage = mockStorage();
 const localVue = createLocalVue();
 
 describe('FinancialAssistancePaymentsList.vue', () => {
@@ -28,6 +28,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks();
+    storage = mockStorage();
   });
 
   describe('Template', () => {
@@ -45,23 +46,24 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       it('displays the correct header values', () => {
         const headers = wrapper.findAll('th');
 
-        expect(headers.length).toBe(6);
+        expect(headers.length).toBe(7);
 
-        expect(headers.wrappers[0].find('span').text()).toBe('caseFilesTable.tableHeaders.name');
-        expect(headers.wrappers[1].find('span').text()).toBe('caseFilesTable.filters.createdDate');
-        expect(headers.wrappers[2].find('span').text()).toBe('caseFile.financialAssistance.totals');
-        expect(headers.wrappers[3].find('span').text()).toBe('caseFile.financialAssistance.approvalStatus');
-        expect(headers.wrappers[4].find('span').text()).toBe('');
+        expect(headers.wrappers[0].find('span').text()).toBe('');
+        expect(headers.wrappers[1].find('span').text()).toBe('caseFilesTable.tableHeaders.name');
+        expect(headers.wrappers[2].find('span').text()).toBe('caseFilesTable.filters.createdDate');
+        expect(headers.wrappers[3].find('span').text()).toBe('caseFile.financialAssistance.totals');
+        expect(headers.wrappers[4].find('span').text()).toBe('caseFile.financialAssistance.approvalStatus');
         expect(headers.wrappers[5].find('span').text()).toBe('');
+        expect(headers.wrappers[6].find('span').text()).toBe('');
       });
 
       it('displays the correct row', async () => {
         const tds = wrapper.findAll('td');
 
-        expect(tds.wrappers[0].text()).toBe('thl payment');
-        expect(tds.wrappers[1].text()).toBe('Apr 6, 2021');
-        expect(tds.wrappers[2].text()).toBe('$123.00');
-        expect(tds.wrappers[3].text()).toBe('enums.ApprovalStatus.New');
+        expect(tds.wrappers[1].text()).toBe('thl payment');
+        expect(tds.wrappers[2].text()).toBe('Apr 6, 2021');
+        expect(tds.wrappers[3].text()).toBe('$123.00');
+        expect(tds.wrappers[4].text()).toBe('enums.ApprovalStatus.New');
       });
 
       it('binds show-add to canAdd', async () => {
@@ -202,15 +204,15 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('itemsToSubmit', () => {
-      it('should filter tableData for new items', async () => {
+      it('should filter for new items', async () => {
         const data = [mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance(), mockCombinedCaseFinancialAssistance()];
         data[1].entity.approvalStatus = 2;
-        await mountWrapper(false, 6, null, {
-          computed: {
-            tableData: () => data,
-          },
-        });
+        storage.financialAssistancePayment.getters.getByIds = jest.fn(() => data);
+        await mountWrapper();
+        jest.clearAllMocks();
+        await wrapper.setData({ allItemsIds: ['abc'] });
         expect(wrapper.vm.itemsToSubmit).toEqual([data[0], data[2]]);
+        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'], true);
       });
     });
 
@@ -220,11 +222,8 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         data[0].entity.id = 'id-0';
         data[1].entity.id = 'id-1';
         data[2].entity.id = 'id-2';
-        await mountWrapper(false, 6, null, {
-          computed: {
-            tableData: () => data,
-          },
-        });
+        storage.financialAssistancePayment.getters.getByIds = jest.fn(() => data);
+        await mountWrapper();
         expect(wrapper.vm.selectedItems).toEqual([]);
         expect(wrapper.vm.itemsToSubmitSelectAll).toBeFalsy();
         wrapper.vm.itemsToSubmitSelectAll = true;
@@ -390,6 +389,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           .toHaveBeenCalledWith('id-1');
         expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment)
           .toHaveBeenCalledWith('id-2');
+      });
+    });
+  });
+
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('should call storage for all items', async () => {
+        await mountWrapper();
+        expect(storage.financialAssistancePayment.actions.search).toHaveBeenCalledWith(
+          { filter: { 'Entity/CaseFileId': wrapper.vm.$route.params.id } },
+        );
+        expect(wrapper.vm.allItemsIds).toEqual(storage.financialAssistancePayment.actions.search().ids);
       });
     });
   });

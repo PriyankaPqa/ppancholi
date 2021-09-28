@@ -82,13 +82,13 @@ describe('PaymentLineGroup.vue', () => {
 
     describe('title', () => {
       it('should return the modality + payeeType + payee name when cheque', () => {
-        expect(wrapper.vm.title).toBe('event.programManagement.paymentModalities.Cheque (enums.payeeType.Beneficiary) - thl');
+        expect(wrapper.vm.title).toBe('Cheque (Beneficiary) - thl');
         wrapper.vm.paymentGroup.groupingInformation = {
           modality: 2,
           payeeType: 2,
           payeeName: 'abc',
         };
-        expect(wrapper.vm.title).toBe('event.programManagement.paymentModalities.Cheque (enums.payeeType.ThirdParty) - abc');
+        expect(wrapper.vm.title).toBe('Cheque (Third-party) - abc');
       });
 
       it('should return the modality if it isnt Cheque', () => {
@@ -97,7 +97,7 @@ describe('PaymentLineGroup.vue', () => {
           payeeType: 2,
           payeeName: 'abc',
         };
-        expect(wrapper.vm.title).toBe('event.programManagement.paymentModalities.ETransfer');
+        expect(wrapper.vm.title).toBe('E-Transfer');
       });
     });
 

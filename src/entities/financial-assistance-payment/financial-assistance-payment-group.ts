@@ -1,11 +1,15 @@
+import { TranslateResult } from 'vue-i18n';
 import {
   IFinancialAssistancePaymentGroup,
   IGroupingInformation,
   PaymentStatus,
   IFinancialAssistancePaymentLine,
+  PayeeType,
 } from './financial-assistance-payment.types';
 import { BaseEntity } from '@/entities/base/base';
 import { EPaymentModalities } from '../program';
+import { i18n } from '@/ui/plugins/i18n';
+import { Status } from '../base';
 
 export class FinancialAssistancePaymentGroup extends BaseEntity implements IFinancialAssistancePaymentGroup {
   groupingInformation: IGroupingInformation;
@@ -45,5 +49,30 @@ export class FinancialAssistancePaymentGroup extends BaseEntity implements IFina
   static showPayee(modalityOrGroup: EPaymentModalities | IFinancialAssistancePaymentGroup): boolean {
     const modality = typeof (modalityOrGroup) === 'object' ? modalityOrGroup?.groupingInformation?.modality : modalityOrGroup;
     return modality === EPaymentModalities.Cheque;
+  }
+
+  static groupTitle(paymentGroup: IFinancialAssistancePaymentGroup) : string | TranslateResult {
+    if (FinancialAssistancePaymentGroup.showPayee(paymentGroup)) {
+      const modality = i18n.t(`event.programManagement.paymentModalities.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
+      const payeeType = i18n.t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`);
+
+      return `${modality} (${payeeType}) - ${paymentGroup.groupingInformation.payeeName}`;
+    }
+
+    return i18n.t(`event.programManagement.paymentModalities.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
+  }
+
+  static total(paymentGroups: IFinancialAssistancePaymentGroup[]): number {
+    let total = 0;
+
+    paymentGroups.forEach((group: IFinancialAssistancePaymentGroup) => {
+      if (group.paymentStatus !== PaymentStatus.Cancelled && group.status === Status.Active) {
+        group.lines?.forEach((line: IFinancialAssistancePaymentLine) => {
+          if (line.status === Status.Active) total += Number(line.amount);
+        });
+      }
+    });
+
+    return Math.round(total * 100) / 100;
   }
 }

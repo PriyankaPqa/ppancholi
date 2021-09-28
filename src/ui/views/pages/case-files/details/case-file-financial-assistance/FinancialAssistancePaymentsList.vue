@@ -76,6 +76,35 @@
           </v-icon>
         </v-btn>
       </template>
+      <template #expanded-item="{ item }">
+        <td>
+          &nbsp;
+        </td>
+        <td :colspan="headers.length">
+          <table class="rc-body10 details-table">
+            <tbody>
+              <template v-for="group in item.entity.groups">
+                <tr v-if="group.status === Status.Active" :key="group.id">
+                  <td class="group-col">
+                    {{ groupTitle(group) }}
+                  </td>
+                  <td class="text-right">
+                    {{ $formatCurrency(groupTotal([group])) }}
+                  </td>
+                  <td>
+                    <v-icon size="12" color="grey darken-2">
+                      mdi-arrow-right
+                    </v-icon>
+                  </td>
+                  <td>
+                    {{ $t('common.status') }}: {{ $t(`caseFile.financialAssistance.paymentStatus.${PaymentStatus[group.paymentStatus]}`) }}
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </td>
+      </template>
     </rc-data-table>
 
     <rc-dialog
@@ -140,7 +169,13 @@ import { FilterKey } from '@/entities/user-account';
 import { IAzureSearchParams } from '@/types';
 import helpers from '@/ui/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { ApprovalStatus, IFinancialAssistancePaymentCombined } from '@/entities/financial-assistance-payment';
+import {
+  ApprovalStatus,
+  FinancialAssistancePaymentGroup,
+  IFinancialAssistancePaymentCombined,
+  PaymentStatus,
+} from '@/entities/financial-assistance-payment';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentsList',
@@ -157,18 +192,26 @@ export default Vue.extend({
   data() {
     return {
       FilterKey,
+      allItemsIds: [] as string[],
       searchResultIds: [] as string[],
       count: 0,
       options: {
-        sortBy: ['Entity/Name'],
-        sortDesc: [false],
+        sortBy: ['Entity/Created'],
+        sortDesc: [true],
       },
       tableProps: {
+        showExpand: true,
+        itemKey: 'entity.id',
+        expandIcon: 'mdi-menu-down',
         loading: false,
       },
       getLocalStringDate: helpers.getLocalStringDate,
       showSubmitDialog: false,
       selectedItems: [] as string[],
+      Status,
+      PaymentStatus,
+      groupTitle: FinancialAssistancePaymentGroup.groupTitle,
+      groupTotal: FinancialAssistancePaymentGroup.total,
     };
   },
 
@@ -179,7 +222,8 @@ export default Vue.extend({
     },
 
     itemsToSubmit() : IFinancialAssistancePaymentCombined[] {
-      return this.tableData.filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
+      return this.$storage.financialAssistancePayment.getters.getByIds(this.allItemsIds, true)
+        .filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
     },
 
     itemsToSubmitSelectAll: {
@@ -207,6 +251,7 @@ export default Vue.extend({
         text: this.$t('caseFilesTable.tableHeaders.name') as string,
         value: this.customColumns.name,
         sortable: true,
+        width: '50%',
       }, {
         text: this.$t('caseFilesTable.filters.createdDate') as string,
         value: this.customColumns.created,
@@ -281,6 +326,15 @@ export default Vue.extend({
     canDelete(): boolean {
       return this.$hasLevel('level1');
     },
+  },
+
+  async created() {
+    // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
+    // and since ApprovalStatus is not filterable...  we will filter on the computed - not really a problem
+    const res = await this.$storage.financialAssistancePayment.actions.search({
+      filter: { 'Entity/CaseFileId': this.$route.params.id },
+    });
+    this.allItemsIds = res.ids;
   },
 
   methods: {
@@ -359,7 +413,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .amount {
   font-weight: bold;
   text-align: right;
@@ -368,5 +422,27 @@ export default Vue.extend({
 }
 .list-row-header {
   padding: 0px 16px;
+}
+
+::v-deep .v-data-table > .v-data-table__wrapper tbody tr.v-data-table__expanded__row td {
+  border-bottom: 0px !important;
+}
+
+::v-deep .v-data-table > .v-data-table__wrapper tbody tr.v-data-table__expanded__content {
+  box-shadow: initial !important;
+  & td {
+    height: initial;
+  }
+}
+
+.details-table{
+  min-width: 500px;
+  & td {
+    border: 0px !important;
+    padding: 0px 6px;
+  }
+  & .group-col {
+    min-width: 280px;
+  }
 }
 </style>

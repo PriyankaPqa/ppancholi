@@ -92,7 +92,6 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { EPaymentModalities } from '@/entities/program/program.types';
 import {
   IFinancialAssistancePaymentLine,
-  PayeeType,
   PaymentStatus,
   EPaymentCancellationReason,
   IFinancialAssistancePaymentGroup,
@@ -147,14 +146,7 @@ export default Vue.extend({
 
   computed: {
     title(): string | TranslateResult {
-      if (FinancialAssistancePaymentGroup.showPayee(this.paymentGroup)) {
-        const modality = this.$t(`event.programManagement.paymentModalities.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`);
-        const payeeType = this.$t(`enums.payeeType.${PayeeType[this.paymentGroup.groupingInformation.payeeType]}`);
-
-        return `${modality} (${payeeType}) - ${this.paymentGroup.groupingInformation.payeeName}`;
-      }
-
-      return this.$t(`event.programManagement.paymentModalities.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`);
+      return FinancialAssistancePaymentGroup.groupTitle(this.paymentGroup);
     },
 
     activeLines(): IFinancialAssistancePaymentLine[] {
