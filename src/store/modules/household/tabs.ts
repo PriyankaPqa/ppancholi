@@ -14,4 +14,17 @@ export const tabs = (): IRegistrationMenuItem[] => [
     componentName: 'isRegistered',
     helpLink: '',
   },
+  {
+    id: 'event',
+    labelKey: 'household.split.choose_event',
+    titleKey: 'household.split.select_event',
+    icon: '',
+    disabled: false,
+    isValid: true,
+    isTouched: false,
+    backButtonTextKey: 'common.button.back',
+    nextButtonTextKey: 'common.button.next',
+    componentName: 'SplitHouseholdEvent',
+    helpLink: '',
+  },
 ];

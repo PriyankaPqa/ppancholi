@@ -154,6 +154,12 @@ export default Vue.extend({
           { label: this.$t('genericFilter.operators.OnOrBefore') as string, operator: EFilterOperator.LessEqual },
           { label: this.$t('genericFilter.operators.Between') as string, operator: EFilterOperator.Between },
         ],
+        selectExclude: [
+          { label: '', operator: EFilterOperator.NotEqual },
+        ],
+        multiselectExclude: [
+          { label: '', operator: EFilterOperator.NotIn },
+        ],
       };
     },
   },

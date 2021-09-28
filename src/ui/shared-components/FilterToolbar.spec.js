@@ -611,6 +611,12 @@ describe('Filter Toolbar', () => {
             { label: 'genericFilter.operators.OnOrBefore', operator: EFilterOperator.LessEqual },
             { label: 'genericFilter.operators.Between', operator: EFilterOperator.Between },
           ],
+          selectExclude: [
+            { label: '', operator: EFilterOperator.NotEqual },
+          ],
+          multiselectExclude: [
+            { label: '', operator: EFilterOperator.NotIn },
+          ],
         };
         expect(wrapper.vm.filterOperators).toEqual(operators);
       });

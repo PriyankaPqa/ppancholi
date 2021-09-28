@@ -81,14 +81,18 @@ import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
 import AdditionalMembers from '@/ui/views/pages/registration/additional-members/AdditionalMembers.vue';
 import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegistration.vue';
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
+import SplitHouseholdEvent from '@/ui/views/pages/household/split/SplitHouseholdEvent.vue';
 import { tabs } from '@/store/modules/household/tabs';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.currentTab.id !== 'isRegistered') {
+    if (!this.goBackToOriginHousehold) {
       const userChoice = await (this.$confirm(this.titleLeave, this.messagesLeave) as Promise<unknown>);
+      if (userChoice) {
+        this.$storage.registration.mutations.resetSplitHousehold();
+      }
       next(userChoice);
     } else {
       next();
@@ -106,6 +110,7 @@ export default mixins(individual).extend({
     AdditionalMembers,
     ReviewRegistration,
     ConfirmRegistration,
+    SplitHouseholdEvent,
   },
 
   mixins: [individual],
@@ -113,6 +118,7 @@ export default mixins(individual).extend({
   data() {
     return {
       tabs: tabs(),
+      goBackToOriginHousehold: false,
     };
   },
 
@@ -162,12 +168,12 @@ export default mixins(individual).extend({
 
   methods: {
     async back() {
-      if (this.currentTab.id === 'isRegistered' && this.$store.state.registration.householdResultsShown) {
-        this.$storage.registration.mutations.setHouseholdResultsShown(false);
-        return;
-      }
-
+      if (!this.splitHousehold) return;
       if (this.currentTabIndex === 0) {
+        this.goBackToOriginHousehold = true;
+        if (this.$store.state.registration.householdResultsShown) {
+          this.$storage.registration.mutations.setHouseholdResultsShown(false);
+        }
         await this.$router.push({
           name: routes.household.householdProfile.name,
           params: {
@@ -181,6 +187,7 @@ export default mixins(individual).extend({
     },
 
     async next() {
+      if (!this.splitHousehold) return;
       await this.jump(this.currentTabIndex + 1);
     },
 

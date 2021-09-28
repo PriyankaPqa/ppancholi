@@ -20,6 +20,7 @@ describe('SplitHousehold.vue', () => {
         localVue,
         computed: {
           currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
+          splitHousehold() { return mockSplitHousehold(); },
         },
         mocks: {
           $storage: storage,
@@ -32,7 +33,7 @@ describe('SplitHousehold.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            currentTab: () => ({ id: 'isRegistered' }),
+            currentTabIndex: () => 0,
             splitHousehold() { return mockSplitHousehold(); },
           },
           mocks: {
@@ -73,6 +74,7 @@ describe('SplitHousehold.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
+            splitHousehold() { return mockSplitHousehold(); },
             currentTabIndex: () => 1,
           },
         });
