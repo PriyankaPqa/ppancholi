@@ -1,15 +1,6 @@
 <template>
   <validation-observer ref="form" slim>
     <v-row>
-      <v-col cols="12" sm="6" md="8">
-        <rc-country-select-with-validation
-          v-model="form.country"
-          :rules="rules.country"
-          :data-test="`${prefixDataTest}__country`"
-          :label="`${$t('registration.addresses.country')} *`"
-          @change="$onChangeCountry($event)" />
-      </v-col>
-
       <v-col cols="12" sm="9" md="8">
         <rc-google-autocomplete-with-validation
           ref="address__street_autocomplete"
@@ -64,6 +55,16 @@
           :label="`${$t('registration.addresses.postalCode')} *`"
           @input="$resetGeoLocation()" />
       </v-col>
+
+      <v-col cols="12" sm="6" md="8">
+        <rc-country-select-with-validation
+          v-model="form.country"
+          :rules="rules.country"
+          :data-test="`${prefixDataTest}__country`"
+          :label="`${$t('registration.addresses.country')} *`"
+          @change="$onChangeCountry($event)" />
+      </v-col>
+
     </v-row>
   </validation-observer>
 </template>
