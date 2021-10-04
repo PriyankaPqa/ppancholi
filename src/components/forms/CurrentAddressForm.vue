@@ -46,15 +46,6 @@
             :label="placeNumberLabel" />
         </v-col>
 
-        <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8">
-          <rc-country-select-with-validation
-            v-model="form.address.country"
-            :rules="rules.country"
-            :data-test="`${prefixDataTest}__country`"
-            :label="`${$t('registration.addresses.country')} *`"
-            @change="onCountryChange()" />
-        </v-col>
-
         <v-col v-if="form.hasStreet()" cols="12" sm="9" md="8">
           <rc-google-autocomplete-with-validation
             v-model="form.address.streetAddress"
@@ -109,6 +100,15 @@
             :data-test="`${prefixDataTest}__postalCode`"
             :label="`${$t('registration.addresses.postalCode')}`"
             @input="$resetGeoLocation()" />
+        </v-col>
+
+        <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8">
+          <rc-country-select-with-validation
+            v-model="form.address.country"
+            :rules="rules.country"
+            :data-test="`${prefixDataTest}__country`"
+            :label="`${$t('registration.addresses.country')} *`"
+            @change="onCountryChange()" />
         </v-col>
 
         <v-col v-if="form.requiresShelterLocation()" cols="12" sm="6" md="8">
