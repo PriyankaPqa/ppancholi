@@ -54,9 +54,7 @@ export interface IGettersMock extends IBaseGettersMock<IFinancialAssistanceTable
 }
 
 export interface IMutations extends IBaseMutations<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {
-  setId(id: uuid): void;
   setName(name: string, language: string): void;
-  setNameInAllLanguages(name: IMultilingual): void;
   setStatus(status: Status): void;
   setAddingItem(addingItem: boolean): void;
   setProgram(program: IProgramEntity): void;
@@ -64,11 +62,6 @@ export interface IMutations extends IBaseMutations<IFinancialAssistanceTableEnti
   setItem(item: IFinancialAssistanceTableItem, index: number): void;
   setItemItem(item: IOptionItem, index: number): void;
   setSubItem(subItem: IFinancialAssistanceTableSubItem, index: number, parentIndex: number): void;
-  setSubItemSubItem(subItem: IOptionSubItem, index: number, parentIndex: number): void;
-  setSubItemMaximum(maximum: number, index: number, parentIndex: number): void;
-  setSubItemAmountType(amountType: EFinancialAmountModes, index: number, parentIndex: number): void;
-  setSubItemDocumentationRequired(documentationRequired: boolean, index: number, parentIndex: number): void;
-  setSubItemFrequency(frequency: EFinancialFrequency, index: number, parentIndex: number): void;
   setNewItemItem(item: IOptionItem): void;
   setNewSubItem(newSubItem: IFinancialAssistanceTableSubItem): void;
   setNewSubItemSubItem(subItem: IOptionSubItem): void;
@@ -78,7 +71,6 @@ export interface IMutations extends IBaseMutations<IFinancialAssistanceTableEnti
   setNewSubItemFrequency(frequency: EFinancialFrequency): void;
   addItem(item: IFinancialAssistanceTableItem): void;
   addSubItem(subItem: IFinancialAssistanceTableSubItem, index: number): void;
-  setItemSubItems(index: number, subItems: Array<IFinancialAssistanceTableSubItem>): void;
   setEditedItem(editedItem: IFinancialAssistanceTableItem): void;
   setEditedItemIndex(editedItemIndex: number): void;
   setEditedSubItemIndex(editedSubItemIndex: number): void;
@@ -91,13 +83,14 @@ export interface IMutations extends IBaseMutations<IFinancialAssistanceTableEnti
   resetNewSubItem(): void;
   resetState(): void;
   cancelOperation(): void;
-  setFinancialAssistance(fa: IFinancialAssistanceTableCombined, categories: IOptionItem[], program: IProgramEntity): void;
+  setFinancialAssistance(fa: IFinancialAssistanceTableCombined,
+    categories: IOptionItem[],
+    program: IProgramEntity,
+    removeInactiveItems?: boolean): void;
 }
 
 export interface IMutationsMock extends IBaseMutationsMock<IFinancialAssistanceTableEntity, IFinancialAssistanceTableMetadata> {
-  setId: jest.Mock<void>;
   setName: jest.Mock<void>;
-  setNameInAllLanguages: jest.Mock<void>;
   setStatus: jest.Mock<void>;
   setAddingItem: jest.Mock<void>;
   setProgram: jest.Mock<void>;
@@ -105,11 +98,6 @@ export interface IMutationsMock extends IBaseMutationsMock<IFinancialAssistanceT
   setItem: jest.Mock<void>;
   setItemItem: jest.Mock<void>;
   setSubItem: jest.Mock<void>;
-  setSubItemSubItem: jest.Mock<void>;
-  setSubItemMaximum: jest.Mock<void>;
-  setSubItemAmountType: jest.Mock<void>;
-  setSubItemDocumentationRequired: jest.Mock<void>;
-  setSubItemFrequency: jest.Mock<void>;
   setNewItemItem: jest.Mock<void>;
   setNewSubItem: jest.Mock<void>;
   setNewSubItemSubItem: jest.Mock<void>;
@@ -119,7 +107,6 @@ export interface IMutationsMock extends IBaseMutationsMock<IFinancialAssistanceT
   setNewSubItemFrequency: jest.Mock<void>;
   addItem: jest.Mock<void>;
   addSubItem: jest.Mock<void>;
-  setItemSubItems: jest.Mock<void>;
   setEditedItem: jest.Mock<void>;
   setEditedItemIndex: jest.Mock<void>;
   setEditedSubItemIndex: jest.Mock<void>;

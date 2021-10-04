@@ -83,24 +83,12 @@ describe('>>> Financial Assistance Storage', () => {
 
   // eslint-disable-next-line
   describe('>> Mutations', () => {
-    it('should proxy setId', () => {
-      storage.mutations.setId('id');
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setId`, { id: 'id' });
-    });
-
     it('should proxy setName', () => {
       const name = 'name';
       const language = 'en';
 
       storage.mutations.setName(name, language);
       expect(store.commit).toBeCalledWith(`${entityModuleName}/setName`, { name, language });
-    });
-
-    it('should proxy setNameInAllLanguages', () => {
-      const { name } = mockFinancialAssistanceTableEntity();
-
-      storage.mutations.setNameInAllLanguages(name);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setNameInAllLanguages`, { name });
     });
 
     it('should proxy setStatus', () => {
@@ -154,55 +142,6 @@ describe('>>> Financial Assistance Storage', () => {
 
       storage.mutations.setSubItem(subItem, index, parentIndex);
       expect(store.commit).toBeCalledWith(`${entityModuleName}/setSubItem`, { subItem, index, parentIndex });
-    });
-
-    it('should proxy setSubItemSubItem', () => {
-      const { subCategory: subItem } = mockSubItems()[0];
-      const index = 1;
-      const parentIndex = 0;
-
-      storage.mutations.setSubItemSubItem(subItem, index, parentIndex);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setSubItemSubItem`, { subItem, index, parentIndex });
-    });
-
-    it('should proxy setSubItemMaximum', () => {
-      const maximum = 7;
-      const index = 1;
-      const parentIndex = 0;
-
-      storage.mutations.setSubItemMaximum(maximum, index, parentIndex);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setSubItemMaximum`, { maximum, index, parentIndex });
-    });
-
-    it('should proxy setSubItemAmountType', () => {
-      const amountType = EFinancialAmountModes.Fixed;
-      const index = 1;
-      const parentIndex = 0;
-
-      storage.mutations.setSubItemAmountType(amountType, index, parentIndex);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setSubItemAmountType`, { amountType, index, parentIndex });
-    });
-
-    it('should proxy setSubItemDocumentationRequired', () => {
-      const documentationRequired = true;
-      const index = 1;
-      const parentIndex = 0;
-
-      storage.mutations.setSubItemDocumentationRequired(documentationRequired, index, parentIndex);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setSubItemDocumentationRequired`, {
-        documentationRequired,
-        index,
-        parentIndex,
-      });
-    });
-
-    it('should proxy setSubItemFrequency', () => {
-      const frequency = EFinancialFrequency.Multiple;
-      const index = 1;
-      const parentIndex = 0;
-
-      storage.mutations.setSubItemFrequency(frequency, index, parentIndex);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setSubItemFrequency`, { frequency, index, parentIndex });
     });
 
     it('should proxy setNewItemItem', () => {
@@ -267,14 +206,6 @@ describe('>>> Financial Assistance Storage', () => {
 
       storage.mutations.addSubItem(subItem, index);
       expect(store.commit).toBeCalledWith(`${entityModuleName}/addSubItem`, { subItem, index });
-    });
-
-    it('should proxy setItemSubItems', () => {
-      const subItems = mockSubItems();
-      const index = 1;
-
-      storage.mutations.setItemSubItems(index, subItems);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setItemSubItems`, { index, subItems });
     });
 
     it('should proxy setEditedItem', () => {
@@ -360,7 +291,10 @@ describe('>>> Financial Assistance Storage', () => {
       const program = mockProgramEntity();
 
       storage.mutations.setFinancialAssistance(fa, categories, program);
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setFinancialAssistance`, { fa, categories, program });
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setFinancialAssistance`,
+        {
+          fa, categories, program, removeInactiveItems: true,
+        });
     });
   });
 

@@ -250,7 +250,7 @@ export default Vue.extend({
       const tableWithMetadata = this.$storage.financialAssistance.getters.get(this.financialAssistance.financialAssistanceTableId);
       const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
       const combinedProgram = await this.$storage.program.actions.fetch({ id: tableWithMetadata.entity.programId, eventId: this.caseFile.eventId });
-      this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, combinedProgram.entity);
+      this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, combinedProgram.entity, false);
     },
   },
 });

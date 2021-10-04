@@ -28,7 +28,7 @@ export const mockCaseFinancialAssistancePaymentGroups = ():
         subCategoryId: mockItems()[0].subItems[0].subCategory.id,
         documentReceived: true,
         amount: 88,
-        actualAmount: 0,
+        actualAmount: null,
         relatedNumber: '',
         careOf: '',
         address: null,

@@ -39,7 +39,7 @@ export class FinancialAssistancePaymentLine extends BaseEntity implements IFinan
       this.subCategoryId = null;
       this.documentReceived = false;
       this.amount = null;
-      this.actualAmount = 0;
+      this.actualAmount = null;
       this.relatedNumber = null;
       this.careOf = null;
       this.address = null;

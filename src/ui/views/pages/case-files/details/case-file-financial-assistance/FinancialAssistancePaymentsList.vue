@@ -206,6 +206,7 @@ export default Vue.extend({
         loading: false,
       },
       getLocalStringDate: helpers.getLocalStringDate,
+      containsActiveTables: null as boolean,
       showSubmitDialog: false,
       selectedItems: [] as string[],
       Status,
@@ -312,7 +313,7 @@ export default Vue.extend({
     },
 
     canAdd(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && this.containsActiveTables != null;
     },
 
     canEdit(): boolean {
@@ -329,6 +330,7 @@ export default Vue.extend({
   },
 
   async created() {
+    this.initContainsActiveTables();
     // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
     // and since ApprovalStatus is not filterable...  we will filter on the computed - not really a problem
     const res = await this.$storage.financialAssistancePayment.actions.search({
@@ -355,14 +357,30 @@ export default Vue.extend({
       return { value: this.$storage.financialAssistancePayment.getters.getByIds(res.ids), odataCount: res.count };
     },
 
+    async initContainsActiveTables() {
+      const caseFile = await this.$storage.caseFile.getters.get(this.$route.params.id);
+      if (caseFile) {
+        const tableData = await this.$storage.financialAssistance.actions.search({
+          filter: {
+            'Entity/EventId': caseFile.entity.eventId,
+          },
+        });
+        this.containsActiveTables = !!(tableData?.ids?.length);
+      }
+    },
+
     isModifiable(item: IFinancialAssistancePaymentCombined) {
       return item.entity.approvalStatus === ApprovalStatus.New;
     },
 
     routeToCreate() {
-      this.$router.push({
-        name: routes.caseFile.financialAssistance.create.name,
-      });
+      if (this.containsActiveTables) {
+        this.$router.push({
+          name: routes.caseFile.financialAssistance.create.name,
+        });
+      } else {
+        this.$message({ title: this.$t('common.error'), message: this.$t('caseFile.financialAssistance.noActiveTables') });
+      }
     },
 
     getFapDetailsRoute(id: string) {

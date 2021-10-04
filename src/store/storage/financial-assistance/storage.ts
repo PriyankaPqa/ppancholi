@@ -11,7 +11,6 @@ import {
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { IProgramEntity } from '@/entities/program';
 import { IStore, IState } from '@/store/store.types';
-import { IMultilingual } from '@/types';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
 
@@ -59,11 +58,7 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
   private mutations = {
     ...this.baseMutations,
 
-    setId: (id: uuid) => this.store.commit(`${this.entityModuleName}/setId`, { id }),
-
     setName: (name: string, language: string) => this.store.commit(`${this.entityModuleName}/setName`, { name, language }),
-
-    setNameInAllLanguages: (name: IMultilingual) => this.store.commit(`${this.entityModuleName}/setNameInAllLanguages`, { name }),
 
     setStatus: (status: Status) => this.store.commit(`${this.entityModuleName}/setStatus`, { status }),
 
@@ -81,31 +76,6 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
       subItem: IFinancialAssistanceTableSubItem,
       index: number, parentIndex: number,
     ) => this.store.commit(`${this.entityModuleName}/setSubItem`, { subItem, index, parentIndex }),
-
-    setSubItemSubItem: (
-      subItem: IOptionSubItem,
-      index: number, parentIndex: number,
-    ) => this.store.commit(`${this.entityModuleName}/setSubItemSubItem`, { subItem, index, parentIndex }),
-
-    setSubItemMaximum: (
-      maximum: number,
-      index: number, parentIndex: number,
-    ) => this.store.commit(`${this.entityModuleName}/setSubItemMaximum`, { maximum, index, parentIndex }),
-
-    setSubItemAmountType: (
-      amountType: EFinancialAmountModes,
-      index: number, parentIndex: number,
-    ) => this.store.commit(`${this.entityModuleName}/setSubItemAmountType`, { amountType, index, parentIndex }),
-
-    setSubItemDocumentationRequired: (
-      documentationRequired: boolean,
-      index: number, parentIndex: number,
-    ) => this.store.commit(`${this.entityModuleName}/setSubItemDocumentationRequired`, { documentationRequired, index, parentIndex }),
-
-    setSubItemFrequency: (
-      frequency: EFinancialFrequency,
-      index: number, parentIndex: number,
-    ) => this.store.commit(`${this.entityModuleName}/setSubItemFrequency`, { frequency, index, parentIndex }),
 
     setNewItemItem: (item: IOptionItem) => this.store.commit(`${this.entityModuleName}/setNewItemItem`, { item }),
 
@@ -130,11 +100,6 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
     addSubItem: (
       subItem: IFinancialAssistanceTableSubItem, index: number,
     ) => this.store.commit(`${this.entityModuleName}/addSubItem`, { subItem, index }),
-
-    setItemSubItems: (
-      index: number,
-      subItems: Array<IFinancialAssistanceTableSubItem>,
-    ) => this.store.commit(`${this.entityModuleName}/setItemSubItems`, { index, subItems }),
 
     setEditedItem: (editedItem: IFinancialAssistanceTableItem) => this.store.commit(`${this.entityModuleName}/setEditedItem`, { editedItem }),
 
@@ -166,7 +131,10 @@ export class FinancialAssistanceStorage extends Base<IFinancialAssistanceTableEn
       fa: IFinancialAssistanceTableCombined,
       categories: IOptionItem[],
       program: IProgramEntity,
-    ) => this.store.commit(`${this.entityModuleName}/setFinancialAssistance`, { fa, categories, program }),
+      removeInactiveItems = true,
+    ) => this.store.commit(`${this.entityModuleName}/setFinancialAssistance`, {
+      fa, categories, program, removeInactiveItems,
+    }),
   };
 
   private actions = {

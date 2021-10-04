@@ -1,5 +1,5 @@
 import { ActionContext, ActionTree } from 'vuex';
-import { cloneDeep } from 'lodash';
+import { cloneDeep, orderBy } from 'lodash';
 import { IRootState } from '@/store/store.types';
 import utils from '@/entities/utils';
 import { Status } from '@/entities/base';
@@ -16,7 +16,6 @@ import {
   IFinancialAssistanceTableSubItemData,
 } from '@/entities/financial-assistance';
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
-import { IMultilingual } from '@/types';
 import { IProgramEntity } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
@@ -117,17 +116,8 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
   public mutations = {
     ...this.baseMutations,
 
-    setId: (state: IFinancialAssistanceEntityState, { id }: { id: string }) => {
-      state.id = id;
-    },
-
     setName: (state: IFinancialAssistanceEntityState, { name, language }: { name: string; language: string }) => {
       state.name.translation[language] = name;
-      state.formDirty = true;
-    },
-
-    setNameInAllLanguages: (state: IFinancialAssistanceEntityState, { name }: { name: IMultilingual }) => {
-      state.name = name;
       state.formDirty = true;
     },
 
@@ -194,46 +184,6 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
       state.dirty = true;
     },
 
-    setSubItemSubItem: (
-      state: IFinancialAssistanceEntityState,
-      { subItem, index, parentIndex }: { subItem: IOptionSubItem; index: number; parentIndex: number },
-    ) => {
-      state.mainItems[parentIndex].subItems[index].subCategory = subItem;
-      state.dirty = true;
-    },
-
-    setSubItemMaximum: (
-      state: IFinancialAssistanceEntityState,
-      { maximum, index, parentIndex }: { maximum: number; index: number; parentIndex: number },
-    ) => {
-      state.mainItems[parentIndex].subItems[index].maximumAmount = maximum;
-      state.dirty = true;
-    },
-
-    setSubItemAmountType: (
-      state: IFinancialAssistanceEntityState,
-      { amountType, index, parentIndex }: { amountType: EFinancialAmountModes; index: number; parentIndex: number },
-    ) => {
-      state.mainItems[parentIndex].subItems[index].amountType = amountType;
-      state.dirty = true;
-    },
-
-    setSubItemDocumentationRequired: (
-      state: IFinancialAssistanceEntityState,
-      { documentationRequired, index, parentIndex }: { documentationRequired: boolean; index: number; parentIndex: number },
-    ) => {
-      state.mainItems[parentIndex].subItems[index].documentationRequired = documentationRequired;
-      state.dirty = true;
-    },
-
-    setSubItemFrequency: (
-      state: IFinancialAssistanceEntityState,
-      { frequency, index, parentIndex }: { frequency: EFinancialFrequency; index: number; parentIndex: number },
-    ) => {
-      state.mainItems[parentIndex].subItems[index].frequency = frequency;
-      state.dirty = true;
-    },
-
     addItem: (state: IFinancialAssistanceEntityState, { item }: { item: IFinancialAssistanceTableItem }) => {
       state.mainItems.push(item);
       state.dirty = true;
@@ -244,14 +194,6 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
         ...subItem,
         maximumAmount: Number(subItem.maximumAmount),
       });
-      state.dirty = true;
-    },
-
-    setItemSubItems: (
-      state: IFinancialAssistanceEntityState,
-      { index, subItems }: { index: number; subItems: Array<IFinancialAssistanceTableSubItem> },
-    ) => {
-      state.mainItems[index].subItems = subItems;
       state.dirty = true;
     },
 
@@ -346,14 +288,20 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     setFinancialAssistance: (
       state: IFinancialAssistanceEntityState,
-      { fa, categories, program }: { fa: IFinancialAssistanceTableCombined, categories: IOptionItem[], program: IProgramEntity },
+      {
+        fa, categories, program, removeInactiveItems,
+      }: {
+        fa: IFinancialAssistanceTableCombined, categories: IOptionItem[], program: IProgramEntity, removeInactiveItems: boolean,
+      },
     ) => {
       state.id = fa.entity.id;
       state.program = program;
       state.name = fa.entity.name;
       state.status = fa.entity.status;
 
-      const items = this.excludeDeleted(fa.entity.items);
+      // when editing an existing payment
+      // or showing one that was submitted already, we need to keep inactive items
+      const items = this.prepareItemsArray(fa.entity.items, removeInactiveItems);
       state.mainItems = items.map((item) => this.mapItem(item, categories));
     },
   };
@@ -458,7 +406,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
     ): Promise<void> => {
       const res: IFinancialAssistanceTableEntity = await context.dispatch('fetch', { idParams: context.state.id });
 
-      const items = this.excludeDeleted(res.items);
+      const items = this.prepareItemsArray(res.items, true);
 
       const itemEntities: IFinancialAssistanceTableItem[] = items.map((item) => this.mapItem(item, categories));
 
@@ -480,6 +428,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
 
     return {
       id: item.id,
+      status: item.status,
       mainCategory,
       subItems: item.subItems.map((subItem) => ({
         id: subItem.id,
@@ -498,6 +447,7 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
         amountType: subItem.amountType,
         documentationRequired: subItem.documentationRequired,
         frequency: subItem.frequency,
+        status: subItem.status,
       })),
     };
   };
@@ -526,16 +476,17 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
     frequency: sub.frequency,
   });
 
-  protected excludeDeleted(items: IFinancialAssistanceTableItemData[]): IFinancialAssistanceTableItemData[] {
+  // sorts items and subitems, plus can remove inactive items if required
+  protected prepareItemsArray(items: IFinancialAssistanceTableItemData[], excludeDeleted: boolean): IFinancialAssistanceTableItemData[] {
     const itemsCopy = cloneDeep(items);
 
-    const results = itemsCopy.filter((item) => {
-      if (item.status === Status.Inactive) return false;
+    const results = orderBy(itemsCopy.filter((item) => {
+      if (item.status === Status.Inactive && excludeDeleted) return false;
 
-      item.subItems = item.subItems.filter((subItem) => subItem.status === Status.Active);
+      item.subItems = orderBy(item.subItems.filter((subItem) => subItem.status === Status.Active || !excludeDeleted), 'status');
 
       return true;
-    });
+    }), 'status');
 
     return results;
   }

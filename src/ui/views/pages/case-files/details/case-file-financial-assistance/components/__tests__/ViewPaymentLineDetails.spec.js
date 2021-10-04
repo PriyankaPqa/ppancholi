@@ -216,7 +216,7 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
         expect(storage.program.actions.fetch).toHaveBeenCalledWith({id: storage.financialAssistance.getters.get().entity.programId, eventId: storage.caseFile.getters.get().entity.eventId});
         expect(storage.financialAssistance.mutations.setFinancialAssistance).toHaveBeenLastCalledWith(storage.financialAssistance.getters.get(), 
-            storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity), storage.program.actions.fetch().entity)
+            storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity), storage.program.actions.fetch().entity, false)
       });
     });
   });

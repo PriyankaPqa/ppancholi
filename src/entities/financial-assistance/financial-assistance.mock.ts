@@ -184,6 +184,19 @@ export const mockItems = (): IFinancialAssistanceTableItem[] => [
   },
 ];
 
+export const mockItemsWithBasicData = (): IFinancialAssistanceTableItem[] => {
+  const items = mockItems();
+  for (let i = 0; i < items.length; i += 1) {
+    items[i] = { ...items[i], ...mockBaseData({ id: `table-${i}` }) };
+    items[i].mainCategory = { ...items[i].mainCategory, ...mockBaseData({ id: `m-${i}` }) };
+    for (let j = 0; j < items[i].subItems.length; j += 1) {
+      items[i].subItems[j] = { ...items[i].subItems[j], ...mockBaseData({ id: `s-${i}-${j}` }) };
+      items[i].subItems[j].subCategory.id = `s-${i}-${j}`;
+    }
+  }
+  return items;
+};
+
 export const mockItemData = (): IFinancialAssistanceTableItemData => ({
   mainCategory: {
     optionItemId: 'optionItemId',

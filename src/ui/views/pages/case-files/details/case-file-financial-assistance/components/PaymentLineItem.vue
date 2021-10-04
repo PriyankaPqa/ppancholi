@@ -1,7 +1,7 @@
 <template>
   <div class="pa-4 paymentLine__container">
     <div class="flex-row">
-      <span v-if="paymentLine.id" class="rc-link16 fw-bold" @click="linkToPaymentLineDetails">
+      <span v-if="paymentLine.id" class="rc-link16 fw-bold" :class="{ 'error--text': isInactive }" @click="linkToPaymentLineDetails">
         {{ title }}
       </span>
 
@@ -54,6 +54,7 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import routes from '@/constants/routes';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'PaymentLineItem',
@@ -124,6 +125,11 @@ export default Vue.extend({
       return `${this.$m(this.mainItem.mainCategory.name)} > ${this.$m(this.subItem.subCategory.name)}`;
     },
 
+    isInactive(): boolean {
+      return (this.mainItem?.status === Status.Inactive || this.subItem?.status === Status.Inactive)
+        && this.transactionApprovalStatus === ApprovalStatus.New;
+    },
+
     showTooltip(): boolean {
       // Validate if we're over limit
       return this.subItem?.maximumAmount && Number(this.paymentLine.amount) > this.subItem?.maximumAmount;
@@ -168,6 +174,15 @@ export default Vue.extend({
     showDeleteButton(): boolean {
       return this.$hasLevel('level1') && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
     },
+  },
+
+  created() {
+    if (this.isInactive) {
+      this.$message({
+        title: this.$t('caseFile.financialAssistance.inactiveDetails.title'),
+        message: this.$t('caseFile.financialAssistance.inactiveDetails.message'),
+      });
+    }
   },
 
   methods: {

@@ -189,6 +189,14 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.financialAssistance.id).toBe(caseFileFinancialAssistance.id);
         expect(wrapper.vm.financialAssistance.name).toBe(caseFileFinancialAssistance.name);
       });
+
+      it('calls warnIfInvalid', async () => {
+        jest.spyOn(wrapper.vm, 'warnIfInvalid');
+
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.warnIfInvalid).toHaveBeenCalledTimes(1);
+      });
     });
   });
 
@@ -574,6 +582,31 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await wrapper.setData({ isEditMode: true, isAddMode: false });
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
         expect(wrapper.vm.savePaymentLine).toHaveBeenCalled();
+      });
+    });
+
+    describe('warnIfInvalid', () => {
+      it('should show a message if the user opens an existing unsubmitted payment that refers to an inactive table', async () => {
+        const table = mockFinancialAssistanceTableEntity();
+        jest.clearAllMocks();
+        table.status = Status.Inactive;
+        await wrapper.setData({ financialAssistance: { approvalStatus: ApprovalStatus.New } });
+        await wrapper.setData({ selectedTable: { ...table } });
+        wrapper.vm.warnIfInvalid();
+        expect(wrapper.vm.$message).toHaveBeenCalled();
+
+        jest.clearAllMocks();
+        table.status = Status.Active;
+        await wrapper.setData({ selectedTable: { ...table } });
+        wrapper.vm.warnIfInvalid();
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+        
+        jest.clearAllMocks();
+        table.status = Status.Inactive;
+        await wrapper.setData({ financialAssistance: { approvalStatus: ApprovalStatus.Approved } });
+        await wrapper.setData({ selectedTable: { ...table } });
+        wrapper.vm.warnIfInvalid();
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
       });
     });
 

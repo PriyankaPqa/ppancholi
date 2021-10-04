@@ -6,6 +6,7 @@
       :payment-group="group"
       :transaction-approval-status="transactionApprovalStatus"
       :link="link"
+      :program="program"
       :disable-delete-button="disableDeleteButton"
       :items="items"
       @edit-payment-line="$emit('edit-payment-line', $event)"
@@ -32,14 +33,13 @@
 <script lang="ts">
 import Vue from 'vue';
 import {
-  PaymentStatus,
   IFinancialAssistancePaymentGroup,
-  IFinancialAssistancePaymentLine,
   ApprovalStatus,
+  FinancialAssistancePaymentGroup,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import PaymentLineGroup from './PaymentLineGroup.vue';
-import { Status } from '@/entities/base';
+import { IProgramEntity } from '@/entities/program';
 
 export default Vue.extend({
   name: 'PaymentLineGroupList',
@@ -78,21 +78,16 @@ export default Vue.extend({
       type: Array as () => IFinancialAssistanceTableItem[],
       required: true,
     },
+
+    program: {
+      type: Object as () => IProgramEntity,
+      default: null,
+    },
   },
 
   computed: {
     total(): number {
-      let total = 0;
-
-      this.paymentGroups.forEach((group: IFinancialAssistancePaymentGroup) => {
-        if (group.paymentStatus !== PaymentStatus.Cancelled) {
-          group.lines?.forEach((line: IFinancialAssistancePaymentLine) => {
-            if (line.status === Status.Active) total += line.amount;
-          });
-        }
-      });
-
-      return Math.round(total * 100) / 100;
+      return FinancialAssistancePaymentGroup.total(this.paymentGroups);
     },
 
     canSubmit(): boolean {

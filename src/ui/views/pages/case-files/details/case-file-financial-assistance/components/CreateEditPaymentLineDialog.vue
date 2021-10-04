@@ -29,7 +29,7 @@
                 :label="`${$t('financialAssistance.nestedTable.headers.item')} *`"
                 :item-text="(item) => item.mainCategory ? $m(item.mainCategory.name) : ''"
                 :item-value="(item) => item.mainCategory ? item.mainCategory.id : null"
-                :items="items"
+                :items="activeItems"
                 :rules="rules.item"
                 data-test="payment_item"
                 @change="resetSubCategory" />
@@ -44,7 +44,7 @@
                 :disabled="!currentPaymentLine.mainCategoryId"
                 :rules="rules.subitem"
                 data-test="payment_subItem"
-                @change="resetDocuments" />
+                @change="categorySelected" />
             </v-col>
           </v-row>
           <v-row>
@@ -56,12 +56,11 @@
                 :label="`${$t('caseFile.financialAssistance.paymentModality')} *`"
                 data-test="payment_modalities" />
             </v-col>
-            <v-col cols="6">
-              <!-- ToDo : Document requirement validation -->
+            <v-col v-if="subItem && subItem.documentationRequired" cols="6">
               <v-checkbox-with-validation
                 v-model="currentPaymentLine.documentReceived"
-                :disabled="!currentPaymentLine.subCategoryId"
-                data-test="checkbox_consent"
+                :rules="rules.documentReceived"
+                data-test="checkbox_documentReceived"
                 class="rc-body12"
                 :label="`${$t('caseFile.financialAssistance.supportingDocuments')} *`" />
             </v-col>
@@ -74,6 +73,7 @@
                 autocomplete="nope"
                 type="number"
                 prefix="$"
+                :disabled="fixedAmount"
                 :rules="rules.amount"
                 :label="`${$t(showIssuedActualAmounts(paymentGroup) ? 'caseFile.financialAssistance.issuedAmount'
                   : 'caseFile.financialAssistance.amount')} *`" />
@@ -170,7 +170,7 @@ import {
 import { AddressForm } from '@crctech/registration-lib';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { Address } from '@crctech/registration-lib/src/entities/value-objects/address';
-import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
+import { EFinancialAmountModes, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import {
   PayeeType,
   FinancialAssistancePaymentGroup,
@@ -178,12 +178,14 @@ import {
   IFinancialAssistancePaymentLine,
   FinancialAssistancePaymentLine,
   PaymentStatus,
+  IFinancialAssistancePaymentEntity,
 } from '@/entities/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import helpers from '@/ui/helpers';
 import { IAddress, VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@/constants/validations';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'CreateEditPaymentLineDialog',
@@ -222,63 +224,78 @@ export default Vue.extend({
       type: Object as () => IFinancialAssistancePaymentGroup,
       default: null,
     },
+
+    financialAssistance: {
+      type: Object as () => IFinancialAssistancePaymentEntity,
+      required: true,
+    },
   },
 
   data() {
     return {
       paymentGroup: null as IFinancialAssistancePaymentGroup,
       address: new Address(),
-      rules: {
-        item: {
-          required: true,
-        },
-        subitem: {
-          required: true,
-        },
-        modalities: {
-          required: true,
-        },
-        amount: {
-          required: true,
-          min_value: 0.01,
-          max_value: 99999999,
-        },
-        actualAmount: {
-          min_value: 0,
-          max_value: 99999999,
-        },
-        relatedNumber: {
-          max: MAX_LENGTH_MD,
-        },
-        careOf: {
-          max: MAX_LENGTH_MD,
-        },
-        payeeName: {
-          required: true,
-          max: MAX_LENGTH_MD,
-        },
-      },
       payeeTypes: helpers.enumToTranslatedCollection(PayeeType, 'enums.payeeType'),
       loaded: false,
       defaultBeneficiaryData: {
         address: null as IAddress,
         name: '',
+        email: '',
       },
       showRelatedNumber: FinancialAssistancePaymentGroup.showRelatedNumber,
       showIssuedActualAmounts: FinancialAssistancePaymentGroup.showIssuedActualAmounts,
       showPayee: FinancialAssistancePaymentGroup.showPayee,
+      fixedAmount: false,
     };
   },
 
   computed: {
     paymentModalities(): Array<{ text: string, value: unknown }> {
       const paymentModalities = helpers.enumToTranslatedCollection(EPaymentModalities, 'event.programManagement.paymentModalities')
-        .filter((p) => this.program.paymentModalities.find((payment : EPaymentModalities) => payment === p.value));
+        .filter((p) => this.program.paymentModalities.find((payment : EPaymentModalities) => payment === p.value)
+          || this.paymentGroup.groupingInformation.modality === p.value);
       return _orderBy(paymentModalities, 'text');
     },
 
+    modalityError() : string {
+      if (this.paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer && !this.defaultBeneficiaryData.email) {
+        return 'caseFile.financialAssistance.ETransfer.noEmail';
+      }
+      return null;
+    },
+
+    amountError() : string {
+      if (this.paymentGroup.groupingInformation.modality === EPaymentModalities.ETransfer) {
+        let total = FinancialAssistancePaymentGroup.total(
+          this.financialAssistance.groups.filter((g) => g.groupingInformation.modality === EPaymentModalities.ETransfer),
+        );
+        // we remove the currentLine if it was also an etransfer - we are editing it
+        if (this.currentGroup?.groupingInformation?.modality === EPaymentModalities.ETransfer) total -= this.currentLine.amount;
+        return total + Number(this.currentPaymentLine.amount) > 10000
+          ? this.$t('caseFile.financialAssistance.ETransfer.moreThanX', { maximumAmount: 10000 }) as string : null;
+      }
+      return null;
+    },
+
+    actualAmountError() : string {
+      if (this.paymentGroup.groupingInformation.modality === EPaymentModalities.Voucher
+        && Number(this.currentPaymentLine.actualAmount) > Number(this.currentPaymentLine.amount)) {
+        return 'caseFile.financialAssistance.Voucher.actualAmountMustBeLessThanAmount';
+      }
+      return null;
+    },
+
+    activeItems(): IFinancialAssistanceTableItem[] {
+      return this.items.filter((i) => i.status === Status.Active || i.mainCategory?.id === this.currentPaymentLine.mainCategoryId);
+    },
+
     subItems() : Array<IFinancialAssistanceTableSubItem> {
-      return this.items.find((i) => i.mainCategory?.id === this.currentPaymentLine.mainCategoryId)?.subItems;
+      const sub = this.activeItems.find((i) => i.mainCategory?.id === this.currentPaymentLine.mainCategoryId)?.subItems || [];
+      return sub.filter((s) => s.status === Status.Active || s.subCategory.id === this.currentPaymentLine.subCategoryId);
+    },
+
+    subItem() : IFinancialAssistanceTableSubItem {
+      return this.subItems?.find((s) => s.subCategory.id === this.currentPaymentLine.subCategoryId);
     },
 
     currentPaymentLine(): IFinancialAssistancePaymentLine {
@@ -298,10 +315,50 @@ export default Vue.extend({
     canSetActualAmount(): boolean {
       return this.paymentGroup?.paymentStatus === PaymentStatus.Completed;
     },
+
+    rules(): Record<string, unknown> {
+      return {
+        item: {
+          required: true,
+        },
+        subitem: {
+          required: true,
+        },
+        modalities: {
+          required: true,
+          customValidator: { isValid: !this.modalityError, messageKey: this.modalityError },
+        },
+        documentReceived: {
+          required: { allowFalse: false },
+        },
+        amount: {
+          required: true,
+          min_value: 0.01,
+          max_value: 99999999,
+          customValidator: { isValid: !this.amountError, messageKey: this.amountError },
+        },
+        actualAmount: {
+          min_value: 0,
+          max_value: 99999999,
+          customValidator: { isValid: !this.actualAmountError, messageKey: this.actualAmountError },
+        },
+        relatedNumber: {
+          max: MAX_LENGTH_MD,
+        },
+        careOf: {
+          max: MAX_LENGTH_MD,
+        },
+        payeeName: {
+          required: true,
+          max: MAX_LENGTH_MD,
+        },
+      };
+    },
   },
 
   async created() {
     await this.initCreateMode();
+    this.categorySelected(false);
     this.loaded = true;
   },
 
@@ -312,6 +369,7 @@ export default Vue.extend({
       this.defaultBeneficiaryData = {
         name: `${cf.metadata.primaryBeneficiaryFirstName} ${cf.metadata.primaryBeneficiaryLastName}`,
         address: household?.entity?.address?.address,
+        email: (household?.metadata?.memberMetadata || []).filter((m) => m.id === household?.entity?.primaryBeneficiary)[0]?.email,
       };
       this.paymentGroup = new FinancialAssistancePaymentGroup();
 
@@ -354,11 +412,16 @@ export default Vue.extend({
 
     resetSubCategory() {
       this.currentPaymentLine.subCategoryId = null;
-      this.resetDocuments();
+      this.categorySelected();
     },
 
-    resetDocuments() {
-      this.currentPaymentLine.documentReceived = false;
+    categorySelected(resetRelatedFields = true) {
+      if (resetRelatedFields) this.currentPaymentLine.documentReceived = false;
+      if (resetRelatedFields && this.fixedAmount !== (this.subItem?.amountType === EFinancialAmountModes.Fixed)) {
+        this.currentPaymentLine.amount = null;
+      }
+      this.fixedAmount = this.subItem?.amountType === EFinancialAmountModes.Fixed;
+      if (this.fixedAmount) this.currentPaymentLine.amount = this.subItem?.maximumAmount;
     },
 
     resetPayeeInformation() {

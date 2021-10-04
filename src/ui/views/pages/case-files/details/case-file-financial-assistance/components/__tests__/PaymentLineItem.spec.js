@@ -1,4 +1,4 @@
-/* eslint-disable max-len */
+/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockStorage } from '@/store/storage';
@@ -6,6 +6,7 @@ import Component from '../PaymentLineItem.vue';
 import { EPaymentModalities } from '@/entities/program/program.types';
 import { ApprovalStatus, mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
 import routes from '@/constants/routes';
+import { Status } from '@/entities/base';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -54,7 +55,70 @@ describe('CaseFilePaymentLineItem.vue', () => {
     });
   });
 
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('shows a message if the data is inactive', async () => {
+        await mountWrapper(false, 6, null, {
+          computed: {
+            isInactive() { return true; },
+          },
+        });
+
+        jest.clearAllMocks();
+        let hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.$message).toHaveBeenCalled();
+
+        await mountWrapper(false, 6, null, {
+          computed: {
+            isInactive() { return false; },
+          },
+        });
+
+        hook = wrapper.vm.$options.created[0];
+        jest.clearAllMocks();
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+
+      });
+    });
+  });
+
   describe('Computed', () => {
+    
+    describe('isInactive', () => {
+      it('returns whether the current item/subitem is not available when the payment is still new', async () => {
+        await mountWrapper(false, 6, null, {
+          computed: {
+            mainItem() { return { ...items[0], status : Status.Active}; },
+            subItem() { return { ...items[0].subItems[0], status : Status.Active}; },
+          },
+        });
+        await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
+        expect(wrapper.vm.isInactive).toBeFalsy();
+
+        await mountWrapper(false, 6, null, {
+          computed: {
+            mainItem() { return { ...items[0], status : Status.Inactive}; },
+            subItem() { return { ...items[0].subItems[0], status : Status.Active}; },
+          },
+        });
+        await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
+        expect(wrapper.vm.isInactive).toBeTruthy();
+        
+        await mountWrapper(false, 6, null, {
+          computed: {
+            mainItem() { return { ...items[0], status : Status.Active}; },
+            subItem() { return { ...items[0].subItems[0], status : Status.Inactive}; },
+          },
+        });
+        await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
+        expect(wrapper.vm.isInactive).toBeTruthy();
+        await wrapper.setProps({ transactionApprovalStatus: 2 });
+        expect(wrapper.vm.isInactive).toBeFalsy();
+      });
+    });
+
     describe('title', () => {
       it('it should return the name of the mainItem and subtItem linked to the PaymentLine', async () => {
         await mountWrapper();

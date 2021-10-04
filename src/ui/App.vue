@@ -30,7 +30,7 @@
       :show.sync="showMessage"
       :title="dialogTitle"
       :submit-action-label="submitActionLabel"
-      :message="dialogMessages[0] || dialogMessages"
+      :message="singleDialogMessage"
       :min-height="dialogMinHeight"
       :max-width="dialogMaxWidth" />
   </v-app>
@@ -69,6 +69,7 @@ export default {
       showMessage: false,
       dialogTitle: '',
       dialogMessages: '',
+      singleDialogMessage: '',
       dialogHtml: '',
       dialogMaxWidth: 500,
       dialogMinHeight: 'auto',
@@ -130,10 +131,10 @@ export default {
       this.cspContent = this.cspContentProd;
     }
 
-    Vue.prototype.$confirm = async (title, messages, htmlContent = null, submitActionLabel = 'common.buttons.yes') => {
+    Vue.prototype.$confirm = async (title, messages, htmlContent = null, submitActionLabel = null) => {
       this.dialogTitle = title;
       this.dialogMessages = messages;
-      if (submitActionLabel) { this.submitActionLabel = submitActionLabel; }
+      this.submitActionLabel = submitActionLabel || this.$t('common.buttons.yes');
       this.dialogHtml = sanitizeHtml(htmlContent, { allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, '*': ['class'] } });
       this.showConfirm = true;
 
@@ -146,9 +147,11 @@ export default {
     Vue.prototype.$message = ({
       title, message, submitActionLabel, minHeight, maxWidth,
     }) => {
+      // we only show one message box at a time
+      if (this.showMessage) return false;
       this.dialogTitle = title;
-      this.dialogMessages = message;
-      if (submitActionLabel) { this.submitActionLabel = submitActionLabel; }
+      this.singleDialogMessage = message;
+      this.submitActionLabel = submitActionLabel || this.$t('common.buttons.ok');
       if (minHeight) { this.dialogMinHeight = minHeight; }
       if (maxWidth) { this.dialogMaxWidth = maxWidth; }
 

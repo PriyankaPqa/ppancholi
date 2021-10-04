@@ -51,7 +51,7 @@
                   v-if="canAddNewLines"
                   color="primary"
                   data-test="financial-addPaymentLineBtn"
-                  :disabled="!selectedProgram"
+                  :disabled="!selectedProgram || showWarning"
                   @click="editPaymentLine(null)">
                   {{ $t('caseFile.financialAssistance.addNewPaymentLines') }}
                 </v-btn>
@@ -65,6 +65,7 @@
                 :transaction-approval-status="financialAssistance.approvalStatus"
                 :items="items"
                 :disable-submit-payment="dirty"
+                :program="selectedProgram"
                 data-test="paymentGroupList"
                 @submit-payment="onSubmitPayment"
                 @edit-payment-line="editPaymentLine"
@@ -99,6 +100,7 @@
         :items="items"
         :current-line="lineToEdit"
         :current-group="groupToEdit"
+        :financial-assistance="financialAssistance"
         data-test="case-file-financial-assistance-payment-line-dialog"
         @submit="onSubmitPaymentLine($event)"
         @cancelChange="showAddPaymentLineForm = false" />
@@ -237,9 +239,19 @@ export default Vue.extend({
     await this.$storage.financialAssistanceCategory.actions.fetchAll();
     await this.searchTables();
     this.loading = false;
+    this.warnIfInvalid();
   },
 
   methods: {
+    warnIfInvalid() {
+      if (this.financialAssistance.approvalStatus === ApprovalStatus.New && this.selectedTable?.status === Status.Inactive) {
+        this.$message({
+          title: this.$t('caseFile.financialAssistance.tableInactive.title'),
+          message: this.$t('caseFile.financialAssistance.tableInactive.message'),
+        });
+      }
+    },
+
     async searchTables() {
       await this.$storage.caseFile.actions.fetch(this.$route.params.id);
       if (this.caseFile) {
@@ -247,11 +259,11 @@ export default Vue.extend({
           filter: {
             'Entity/EventId': this.caseFile.eventId,
           },
-        });
+        }, null, true);
         const { ids } = tableData;
 
         this.financialTables = this.$storage.financialAssistance.getters.getByIds(ids).map((t : IFinancialAssistanceTableCombined) => t.entity)
-          .filter((t: IFinancialAssistanceTableEntity) => t.status === Status.Active);
+          .filter((t: IFinancialAssistanceTableEntity) => t.status === Status.Active || t.id === this.financialAssistance.financialAssistanceTableId);
 
         await this.updateSelectedData(this.financialTables
           .find((x) => x.id === this.financialAssistance.financialAssistanceTableId));
@@ -305,7 +317,7 @@ export default Vue.extend({
       if (this.selectedTable) {
         const tableWithMetadata = this.$storage.financialAssistance.getters.get(table.id);
         const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-        this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, this.selectedProgram);
+        this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, this.selectedProgram, false);
       }
     },
 

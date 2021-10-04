@@ -108,7 +108,9 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(error.config)) {
       if (errors && Array.isArray(errors)) {
         errors.forEach((error: IError) => {
-          Vue.toasted.global.error(i18n.t(`${error.title || error.code}`));
+          // take error.code if we have it translated...
+          const errorText = i18n.t(error.code) !== error.code ? i18n.t(error.code) : i18n.t(`${error.title || error.code}`);
+          Vue.toasted.global.error(errorText);
         });
       } else {
         Vue.toasted.global.error(i18n.t('error.unexpected_error'));

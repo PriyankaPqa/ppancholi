@@ -177,34 +177,12 @@ describe('>>> Financial Assistance Module', () => {
 
   // eslint-disable-next-line
   describe('>> Mutations', () => {
-    describe('setId', () => {
-      it('sets the id', () => {
-        module.mutations.setId(module.state, { id: 'test id' });
-
-        expect(module.state.id).toBe('test id');
-      });
-    });
 
     describe('setName', () => {
       it('sets the name', () => {
         module.mutations.setName(module.state, { name: 'test name', language: 'en' });
 
         expect(module.state.name.translation.en).toBe('test name');
-      });
-    });
-
-    describe('setNameInAllLanguages', () => {
-      it('sets the  in all languages', () => {
-        const newName: IMultilingual = {
-          translation: {
-            en: 'name en',
-            fr: 'name fr',
-          },
-        };
-
-        module.mutations.setNameInAllLanguages(module.state, { name: newName });
-
-        expect(module.state.name).toEqual(newName);
       });
     });
 
@@ -328,58 +306,6 @@ describe('>>> Financial Assistance Module', () => {
       });
     });
 
-    describe('setSubItemSubItem', () => {
-      it('sets the setSubItemSubItem', () => {
-        const { subCategory } = mockSubItems()[1];
-
-        module.state.mainItems = mockItems();
-
-        module.mutations.setSubItemSubItem(module.state, { subItem: subCategory, index: 1, parentIndex: 0 });
-
-        expect(module.state.mainItems[0].subItems[1].subCategory).toEqual(subCategory);
-      });
-    });
-
-    describe('setSubItemMaximum', () => {
-      it('sets the setSubItemMaximum', () => {
-        module.state.mainItems = mockItems();
-
-        module.mutations.setSubItemMaximum(module.state, { maximum: 8, index: 1, parentIndex: 0 });
-
-        expect(module.state.mainItems[0].subItems[1].maximumAmount).toEqual(8);
-      });
-    });
-
-    describe('setSubItemAmountType', () => {
-      it('sets the setSubItemAmountType', () => {
-        module.state.mainItems = mockItems();
-
-        module.mutations.setSubItemAmountType(module.state, { amountType: EFinancialAmountModes.Fixed, index: 1, parentIndex: 0 });
-
-        expect(module.state.mainItems[0].subItems[1].amountType).toEqual(EFinancialAmountModes.Fixed);
-      });
-    });
-
-    describe('setSubItemDocumentationRequired', () => {
-      it('sets the setSubItemDocumentationRequired', () => {
-        module.state.mainItems = mockItems();
-
-        module.mutations.setSubItemDocumentationRequired(module.state, { documentationRequired: true, index: 1, parentIndex: 0 });
-
-        expect(module.state.mainItems[0].subItems[1].documentationRequired).toEqual(true);
-      });
-    });
-
-    describe('setSubItemFrequency', () => {
-      it('sets the setSubItemFrequency', () => {
-        module.state.mainItems = mockItems();
-
-        module.mutations.setSubItemFrequency(module.state, { frequency: EFinancialFrequency.Multiple, index: 1, parentIndex: 0 });
-
-        expect(module.state.mainItems[0].subItems[1].frequency).toEqual(EFinancialFrequency.Multiple);
-      });
-    });
-
     describe('addItem', () => {
       it('adds item', () => {
         const item = mockItems()[1];
@@ -405,18 +331,6 @@ describe('>>> Financial Assistance Module', () => {
         module.mutations.addSubItem(module.state, { subItem, index: 1 });
 
         expect(module.state.mainItems[1].subItems.length).toEqual(2);
-      });
-    });
-
-    describe('setItemSubItems', () => {
-      it('sets the subItems', () => {
-        const subItems = mockSubItems();
-
-        module.state.mainItems = mockItems();
-
-        module.mutations.setItemSubItems(module.state, { index: 1, subItems });
-
-        expect(module.state.mainItems[1].subItems).toStrictEqual(subItems);
       });
     });
 
@@ -574,6 +488,7 @@ describe('>>> Financial Assistance Module', () => {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
+          removeInactiveItems: true,
         });
 
         expect(module.state.id).toEqual(mockCombinedFinancialAssistance().entity.id);
@@ -586,6 +501,7 @@ describe('>>> Financial Assistance Module', () => {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
+          removeInactiveItems: true,
         });
 
         expect(module.state.program).toEqual(mockProgram);
@@ -603,6 +519,7 @@ describe('>>> Financial Assistance Module', () => {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
+          removeInactiveItems: true,
         });
 
         expect(module.state.name).toEqual(mockCombinedFinancialAssistance().entity.name);
@@ -615,9 +532,23 @@ describe('>>> Financial Assistance Module', () => {
           fa: mockCombinedFinancialAssistance(),
           categories: mockOptionItems(),
           program: mockProgram,
+          removeInactiveItems: true,
         });
 
         expect(module.state.status).toEqual(mockCombinedFinancialAssistance().entity.status);
+      });
+
+      it('should set mainItems', () => {
+        expect(module.state.mainItems).toEqual([]);
+
+        module.mutations.setFinancialAssistance(module.state, {
+          fa: mockCombinedFinancialAssistance(),
+          categories: mockOptionItems(),
+          program: mockProgram,
+          removeInactiveItems: true,
+        });
+
+        expect(module.state.mainItems.length).toEqual(2);
       });
     });
   });

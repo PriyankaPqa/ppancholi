@@ -4,10 +4,12 @@ import { mockItems } from '@/entities/financial-assistance';
 import Component from '../PaymentLineGroup.vue';
 import { mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
 import { Status } from '@/entities/base';
+import { mockProgramEntity } from '@/entities/program';
 
 const localVue = createLocalVue();
 const items = mockItems();
 let paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
+let program = mockProgramEntity();
 
 describe('PaymentLineGroup.vue', () => {
   let wrapper;
@@ -23,6 +25,7 @@ describe('PaymentLineGroup.vue', () => {
         propsData: {
           paymentGroup,
           items,
+          program,
         },
       });
     });
@@ -64,6 +67,49 @@ describe('PaymentLineGroup.vue', () => {
       });
     });
   });
+  
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('shows a message if the data is inactive', async () => {
+        paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
+    
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            paymentGroup,
+            items,
+            program,
+          },
+          computed: {
+            isInactive() { return true; },
+          },
+        });
+
+        jest.clearAllMocks();
+        let hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.$message).toHaveBeenCalled();
+
+        
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            paymentGroup,
+            items,
+            program,
+          },
+          computed: {
+            isInactive() { return false; },
+          },
+        });
+        hook = wrapper.vm.$options.created[0];
+        jest.clearAllMocks();
+        await hook.call(wrapper.vm);
+        expect(wrapper.vm.$message).not.toHaveBeenCalled();
+
+      });
+    });
+  });
 
   describe('Computed', () => {
 
@@ -76,6 +122,7 @@ describe('PaymentLineGroup.vue', () => {
         propsData: {
           paymentGroup,
           items,
+          program,
         },
       });
     });
@@ -98,6 +145,20 @@ describe('PaymentLineGroup.vue', () => {
           payeeName: 'abc',
         };
         expect(wrapper.vm.title).toBe('E-Transfer');
+      });
+    });
+
+    describe('isInactive', () => {
+      it('returns whether the current modality is not available when the payment is still new', async () => {
+        wrapper.vm.paymentGroup.groupingInformation = { modality: 2 };
+        await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
+        await wrapper.setProps({ program: { paymentModalities: [1, 2] } });
+        expect(wrapper.vm.isInactive).toBeFalsy();
+        await wrapper.setProps({ program: { paymentModalities: [1] } });
+        expect(wrapper.vm.isInactive).toBeTruthy();
+        await wrapper.setProps({ transactionApprovalStatus: 2 });
+        await wrapper.setProps({ program: { paymentModalities: [1, 2] } });
+        expect(wrapper.vm.isInactive).toBeFalsy();
       });
     });
 

@@ -27,6 +27,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
   };
 
   beforeEach(async () => {
+    storage = mockStorage();
     jest.clearAllMocks();
     storage = mockStorage();
   });
@@ -375,6 +376,21 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           'caseFile.financialAssistance.confirm.delete.message');
         expect(storage.financialAssistancePayment.actions.deactivate)
           .toHaveBeenCalledTimes(0);
+      });
+    });
+
+    describe('routeToCreate', () => {
+      it('goes to route if active tables exist', async () => {
+        await mountWrapper();
+        await wrapper.vm.routeToCreate();
+        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.caseFile.financialAssistance.create.name });
+      });
+      it('goes to route if no active tables exist', async () => {
+        storage.financialAssistance.actions.search = jest.fn(() => ({ ids: [] }));
+        await mountWrapper();
+        await wrapper.vm.routeToCreate();
+        expect(storage.financialAssistance.actions.search).toHaveBeenCalled();
+        expect(wrapper.vm.$router.push).not.toHaveBeenCalled();
       });
     });
 

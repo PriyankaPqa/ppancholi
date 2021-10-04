@@ -1,7 +1,7 @@
 <template>
   <div class="paymentGroup">
     <div class="paymentGroup__header flex-row justify-space-between">
-      <span class="rc-heading-5" data-test="paymentLineGroup__title">
+      <span class="rc-heading-5" data-test="paymentLineGroup__title" :class="{ 'error--text': isInactive }">
         {{ title }}
       </span>
 
@@ -89,7 +89,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 // import { VSelectWithValidation } from '@crctech/component-library';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { EPaymentModalities } from '@/entities/program/program.types';
+import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import {
   IFinancialAssistancePaymentLine,
   PaymentStatus,
@@ -106,7 +106,6 @@ export default Vue.extend({
   name: 'PaymentLineGroup',
 
   components: {
-    // VSelectWithValidation,
     StatusChip,
     PaymentLineItem,
   },
@@ -131,6 +130,11 @@ export default Vue.extend({
       type: Array as () => IFinancialAssistanceTableItem[],
       required: true,
     },
+
+    program: {
+      type: Object as () => IProgramEntity,
+      default: null,
+    },
   },
 
   data() {
@@ -154,13 +158,7 @@ export default Vue.extend({
     },
 
     total(): number {
-      let total = 0;
-
-      this.activeLines.forEach((line: IFinancialAssistancePaymentLine) => {
-        total += line.amount;
-      });
-
-      return Math.round(total * 100) / 100;
+      return FinancialAssistancePaymentGroup.total([this.paymentGroup]);
     },
 
     modality(): string {
@@ -174,6 +172,12 @@ export default Vue.extend({
 
     isCancelled(): boolean {
       return this.paymentGroup.paymentStatus === PaymentStatus.Cancelled;
+    },
+
+    isInactive(): boolean {
+      if (this.transactionApprovalStatus === ApprovalStatus.New && this.program
+        && this.program.paymentModalities.indexOf(this.paymentGroup.groupingInformation.modality) === -1) return true;
+      return false;
     },
 
     // ToDo: Used to modify the paymentStatus according to the current modality.
@@ -226,6 +230,14 @@ export default Vue.extend({
     //     text: `enums.paymentStatus.${status}`,
     //   }));
     // },
+  },
+  created() {
+    if (this.isInactive) {
+      this.$message({
+        title: this.$t('caseFile.financialAssistance.inactiveDetails.title'),
+        message: this.$t('caseFile.financialAssistance.inactiveDetails.message'),
+      });
+    }
   },
 
   methods: {

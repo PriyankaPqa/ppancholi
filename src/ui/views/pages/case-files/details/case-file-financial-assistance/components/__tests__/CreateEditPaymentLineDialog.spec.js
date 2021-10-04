@@ -2,16 +2,19 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
-import { mockItems } from '@/entities/financial-assistance';
-import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus } from '@/entities/financial-assistance-payment';
+import { mockItemsWithBasicData } from '@/entities/financial-assistance';
+import { 
+  mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, PaymentStatus } from '@/entities/financial-assistance-payment';
 import Component from '../CreateEditPaymentLineDialog.vue';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { AddressForm } from '@crctech/registration-lib';
+import { Status } from '@/entities/base';
 import { mockAddressData, Address, mockAddress } from '@crctech/registration-lib/src/entities/value-objects/address';
 
 const localVue = createLocalVue();
 const program = mockProgramEntity();
-const items = mockItems();
+const financialAssistance = mockCaseFinancialAssistanceEntity();
+const items = mockItemsWithBasicData();
 const storage = mockStorage();
 let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
@@ -29,6 +32,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         show: true,
         program,
         items,
+        financialAssistance,
       },
       mocks: {
         $storage: storage,
@@ -71,9 +75,15 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       });
     });
 
-    describe('checkbox_consent', () => {
-      it('is rendered', () => {
-        expect(wrapper.findDataTest('checkbox_consent').exists()).toBeTruthy();
+    describe('checkbox_documentReceived', () => {
+      it('is rendered depending on documentationRequired', async () => {
+        expect(wrapper.findDataTest('checkbox_documentReceived').exists()).toBeFalsy();
+        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
+        expect(wrapper.findDataTest('checkbox_documentReceived').exists()).toBeFalsy();
+        // s-0-1 has documentationRequired= 1
+        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
+        expect(wrapper.findDataTest('checkbox_documentReceived').exists()).toBeTruthy();
+        expect(wrapper.findDataTest('checkbox_documentReceived').props('rules')).toEqual(wrapper.vm.rules.documentReceived);
       });
     });
 
@@ -212,6 +222,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           show: true,
           program,
           items,
+          financialAssistance,
         },
         mocks: {
           $storage: storage,
@@ -242,10 +253,76 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       });
     });
 
+    describe('activeItems', () => {
+      it('filters items either active or currently selected', async () => {
+        let items = mockItemsWithBasicData();
+        await wrapper.setProps({items: items});
+        expect(wrapper.vm.activeItems).toEqual(items);
+
+        items = mockItemsWithBasicData();
+        items[0].status = Status.Inactive;
+        await wrapper.setProps({items: items});
+
+        expect(wrapper.vm.activeItems).toEqual(items.filter((i,index) => index > 0));
+        wrapper.vm.currentPaymentLine.mainCategoryId = items[0].mainCategory.id;
+        expect(wrapper.vm.activeItems).toEqual(items);
+      });
+    });
+
     describe('subItems', () => {
       it('should return the list of subItem matching the selected item', () => {
         wrapper.vm.currentPaymentLine.mainCategoryId = items[0].mainCategory.id;
         expect(wrapper.vm.subItems).toEqual(items[0].subItems);
+      });
+
+      it('filters items either active or currently selected', async () => {
+        let items = mockItemsWithBasicData();
+        wrapper.vm.currentPaymentLine.mainCategoryId = items[0].mainCategory.id;
+        await wrapper.setProps({items: items});
+        expect(wrapper.vm.subItems).toEqual(items[0].subItems);
+
+        items = mockItemsWithBasicData();
+        items[0].subItems[0].status = Status.Inactive;
+        await wrapper.setProps({items: items});
+
+        expect(wrapper.vm.subItems).toEqual(items[0].subItems.filter((i,index) => index > 0));
+        wrapper.vm.currentPaymentLine.subCategoryId = items[0].subItems[0].subCategory.id;
+        expect(wrapper.vm.subItems).toEqual(items[0].subItems);
+      });
+    });
+
+    describe('modalityError', () => {
+      it('returns an error when Etransfer and no email', async () => {
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
+        await wrapper.setData({ defaultBeneficiaryData: { email: 'myEmail' } });
+        expect(wrapper.vm.modalityError).toBeNull();
+        await wrapper.setData({ defaultBeneficiaryData: { email: null } });
+        expect(wrapper.vm.modalityError).toBe('caseFile.financialAssistance.ETransfer.noEmail');
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
+        expect(wrapper.vm.modalityError).toBeNull();
+      });
+    });
+
+    describe('amountError', () => {
+      it('returns an error when Etransfer total > 10000', async () => {
+        const financialAssistance = mockCaseFinancialAssistanceEntity();
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
+        wrapper.vm.currentPaymentLine.amount = 9999;
+        await wrapper.setProps({ financialAssistance: {...financialAssistance} });
+        expect(wrapper.vm.amountError).toBeNull();
+
+        financialAssistance.groups[0].groupingInformation.modality = EPaymentModalities.ETransfer;
+        financialAssistance.groups[0].lines[0].amount = 1;
+        await wrapper.setProps({ financialAssistance: {...financialAssistance} });
+        expect(wrapper.vm.amountError).toBeNull();
+
+        financialAssistance.groups[0].lines[0].amount = 2;
+        await wrapper.setProps({ financialAssistance: {...financialAssistance} });
+        expect(wrapper.vm.amountError).toBe('caseFile.financialAssistance.ETransfer.moreThanX');
+        
+        financialAssistance.groups[0].groupingInformation.modality = EPaymentModalities.Cheque;
+        await wrapper.setProps({ financialAssistance: {...financialAssistance} });
+        expect(wrapper.vm.amountError).toBeNull();
       });
     });
   });
@@ -269,7 +346,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           lastUpdatedBy: '',
           lines: [
             {
-              actualAmount: 0,
+              actualAmount: null,
               address: null,
               amount: null,
               careOf: null,
@@ -324,9 +401,14 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       
       it('sets the defaultBeneficiaryData from household and case file', async () => {
         jest.clearAllMocks();
+        const household = storage.household.actions.fetch();
+        household.metadata.memberMetadata[0].email = 'myEmail';
+        household.metadata.memberMetadata[0].id = household.entity.primaryBeneficiary;
+        storage.household.actions.fetch = jest.fn(() => household);
         await wrapper.vm.initCreateMode();
         expect(wrapper.vm.defaultBeneficiaryData.name).toEqual('John Joe');
         expect(wrapper.vm.defaultBeneficiaryData.address.streetAddress).not.toBeNull();
+        expect(wrapper.vm.defaultBeneficiaryData.email).toBe('myEmail');
       });
 
       it('sets the address from household when none already set', async () => {
@@ -348,12 +430,59 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       });
     });
 
-    describe('resetDocuments', () => {
-      it('should reset documentReceived', async () => {
+    describe('categorySelected', () => {
+      it('should reset documentReceived if not passed false', async () => {
         await wrapper.setData({ paymentGroup: caseFileFinancialAssistanceGroup });
         expect(wrapper.vm.currentPaymentLine.documentReceived).toBeTruthy();
-        await wrapper.vm.resetDocuments();
+        wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.documentReceived).toBeFalsy();
+        wrapper.vm.currentPaymentLine.documentReceived = true;
+        
+        wrapper.vm.categorySelected(true);
+        expect(wrapper.vm.currentPaymentLine.documentReceived).toBeFalsy();
+        wrapper.vm.currentPaymentLine.documentReceived = true;
+        
+        wrapper.vm.categorySelected(false);
+        expect(wrapper.vm.currentPaymentLine.documentReceived).toBeTruthy();
+      });
+      
+      it('should reset amount if not passed false and fixed amount changed', async () => {
+        // s-0-0 is fixed
+        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
+        wrapper.vm.categorySelected();
+        expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
+        
+        // s-0-1 is not fixed
+        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
+        wrapper.vm.categorySelected(false);
+        expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
+        
+        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
+        wrapper.vm.categorySelected();
+        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
+        wrapper.vm.categorySelected();
+        expect(wrapper.vm.currentPaymentLine.amount).toBe(null);
+      });
+
+      it('should set fixed amount when subitem says so', async () => {
+        // s-0-0 is fixed
+        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
+        wrapper.vm.categorySelected();
+        expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
+        expect(wrapper.vm.fixedAmount).toBeTruthy();
+        await wrapper.setData({currentPaymentLine: { amount: 567 }});
+        wrapper.vm.categorySelected();
+        expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
+        expect(wrapper.vm.fixedAmount).toBeTruthy();
+        // s-0-1 is not fixed
+        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
+        wrapper.vm.categorySelected();
+        expect(wrapper.vm.currentPaymentLine.amount).toBeNull();
+        expect(wrapper.vm.fixedAmount).toBeFalsy();
+        await wrapper.setData({currentPaymentLine: { amount: 123 }});
+        wrapper.vm.categorySelected();
+        expect(wrapper.vm.currentPaymentLine.amount).toBe(123);
+        expect(wrapper.vm.fixedAmount).toBeFalsy();
       });
     });
 
@@ -369,15 +498,6 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         await wrapper.vm.onSubmit();
         expect(wrapper.emitted('submit')).toBeFalsy();
-      });
-    });
-
-    describe('resetDocuments', () => {
-      it('should reset documentReceived', async () => {
-        await wrapper.setData({ paymentGroup: caseFileFinancialAssistanceGroup });
-        expect(wrapper.vm.currentPaymentLine.documentReceived).toBeTruthy();
-        await wrapper.vm.resetDocuments();
-        expect(wrapper.vm.currentPaymentLine.documentReceived).toBeFalsy();
       });
     });
 
@@ -434,11 +554,11 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.currentPaymentLine.subCategoryId).toEqual(null);
       });
 
-      it('should call resetDocuments', async () => {
-        jest.spyOn(wrapper.vm, 'resetDocuments').mockImplementation(() => {});
+      it('should call categorySelected', async () => {
+        jest.spyOn(wrapper.vm, 'categorySelected').mockImplementation(() => {});
         await wrapper.setData({ paymentGroup: caseFileFinancialAssistanceGroup });
         await wrapper.vm.resetSubCategory();
-        expect(wrapper.vm.resetDocuments).toHaveBeenCalled();
+        expect(wrapper.vm.categorySelected).toHaveBeenCalled();
       });
     });
     
