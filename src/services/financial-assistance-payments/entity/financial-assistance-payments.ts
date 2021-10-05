@@ -7,7 +7,7 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
-const API_URL_SUFFIX = 'financial-assistance';
+const API_URL_SUFFIX = 'finance';
 const CONTROLLER = 'financial-assistance-payments';
 
 export class FinancialAssistancePaymentsService extends DomainBaseService<IFinancialAssistancePaymentEntity, uuid>

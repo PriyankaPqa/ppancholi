@@ -9,7 +9,7 @@ import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@/services/httpClient';
 import { IFinancialAssistanceTablesService } from './financialAssistanceTables.types';
 
-const API_URL_SUFFIX = 'financial-assistance';
+const API_URL_SUFFIX = 'finance';
 const CONTROLLER = 'financial-assistance-tables';
 
 export class FinancialAssistanceTablesService extends DomainBaseService<IFinancialAssistanceTableEntity, uuid>

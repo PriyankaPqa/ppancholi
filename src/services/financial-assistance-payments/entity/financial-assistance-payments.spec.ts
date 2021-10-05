@@ -21,7 +21,7 @@ describe('>>> Financial assistance payment Service', () => {
   describe('addFinancialAssistancePayment', () => {
     it('is linked to the correct URL and params', async () => {
       await service.addFinancialAssistancePayment(entity);
-      expect(http.post).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments',
+      expect(http.post).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments',
         {
           caseFileId: "myParent",
           description: "thl payment desc",
@@ -40,7 +40,7 @@ describe('>>> Financial assistance payment Service', () => {
   describe('editFinancialAssistancePayment', () => {
     it('is linked to the correct URL and params', async () => {
       await service.editFinancialAssistancePayment(entity);
-      expect(http.patch).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myId',
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myId',
         {
           description: "thl payment desc",
           financialAssistanceTableId: "c05bd971-f0fe-4e3d-a20e-6a0c7c7bd52a",
@@ -53,14 +53,14 @@ describe('>>> Financial assistance payment Service', () => {
   describe('submitFinancialAssistancePayment', () => {
     it('is linked to the correct URL and params', async () => {
       await service.submitFinancialAssistancePayment(entity.id);
-      expect(http.patch).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myId/submit');
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myId/submit');
     });
   });
   
   describe('addFinancialAssistancePaymentLine', () => {
     it('is linked to the correct URL and params', async () => {
       await service.addFinancialAssistancePaymentLine('myParent', entity.groups[0]);
-      expect(http.post).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myParent/lines',
+      expect(http.post).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myParent/lines',
         {
           ...entity.groups[0].groupingInformation,
           ...entity.groups[0].lines[0],
@@ -71,7 +71,7 @@ describe('>>> Financial assistance payment Service', () => {
   describe('editFinancialAssistancePaymentLine', () => {
     it('is linked to the correct URL and params', async () => {
       await service.editFinancialAssistancePaymentLine('myParent', entity.groups[0]);
-      expect(http.patch).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myParent/lines/' + entity.groups[0].lines[0].id,
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myParent/lines/' + entity.groups[0].lines[0].id,
         {
           ...entity.groups[0].groupingInformation,
           ...entity.groups[0].lines[0],
@@ -82,7 +82,7 @@ describe('>>> Financial assistance payment Service', () => {
   describe('deleteFinancialAssistancePaymentLine', () => {
     it('is linked to the correct URL and params', async () => {
       await service.deleteFinancialAssistancePaymentLine('myParent', 'myId');
-      expect(http.delete).toHaveBeenCalledWith('www.test.com/financial-assistance/financial-assistance-payments/myParent/lines/myId');
+      expect(http.delete).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myParent/lines/myId');
     });
   });
 });

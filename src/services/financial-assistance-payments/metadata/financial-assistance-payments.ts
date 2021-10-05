@@ -3,7 +3,7 @@ import { IHttpClient } from '@/services/httpClient';
 import { IFinancialAssistancePaymentMetadata } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistancePaymentsMetadataService } from './financial-assistance-payments.types';
 
-const API_URL_SUFFIX = 'financial-assistance';
+const API_URL_SUFFIX = 'finance';
 const CONTROLLER = 'financial-assistance-payments';
 
 export class FinancialAssistancePaymentsMetadataService extends DomainBaseService<IFinancialAssistancePaymentMetadata, uuid>
