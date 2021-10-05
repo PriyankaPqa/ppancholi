@@ -147,7 +147,7 @@ export default Vue.extend({
   },
 
   computed: {
-    rules() {
+    rules(): Record<string, unknown> {
       return {
         event: {
           required: true,
@@ -167,7 +167,7 @@ export default Vue.extend({
         amount: {
           required: true,
           min_value: 0.01,
-          max_value: 99999999,
+          max_value: this.currentSubItem?.maximumAmount || 99999999,
         },
       };
     },
@@ -288,6 +288,8 @@ export default Vue.extend({
       async handler(subItem) {
         if (subItem && this.currentSubItem.amountType === EFinancialAmountModes.Fixed) {
           this.formCopy.amount = this.currentSubItem.maximumAmount;
+        } else {
+          this.formCopy.amount = 0;
         }
       },
     },

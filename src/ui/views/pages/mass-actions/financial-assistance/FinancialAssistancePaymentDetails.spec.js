@@ -8,7 +8,9 @@ import {
 import { mockStorage } from '@/store/storage';
 import Component from './FinancialAssistancePaymentDetails.vue';
 import { EEventStatus } from '@/entities/event';
-import { mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData } from '@/entities/financial-assistance';
+import {
+  mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems,
+} from '@/entities/financial-assistance';
 import { EPaymentModalities, mockCombinedProgram } from '@/entities/program';
 import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@/entities/optionItem';
 import helpers from '@/ui/helpers';
@@ -235,6 +237,29 @@ describe('FinancialAssistancePaymentDetails.vue', () => {
       it('should assign the amount if the select sub-item has a fixed amount', async () => {
         expect(wrapper.vm.formCopy.amount).toEqual(wrapper.vm.currentSubItem.maximumAmount);
       });
+
+      it('should reset the amount if the select sub-item has a variable amount', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            form: formCopy,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            currentSubItem: () => mockSubItems()[1],
+          },
+        });
+
+        await wrapper.setData({
+          formCopy: {
+            subItem: mockSubItems()[1],
+          },
+        });
+
+        expect(wrapper.vm.formCopy.amount).toEqual(0);
+      });
     });
   });
 
@@ -273,7 +298,7 @@ describe('FinancialAssistancePaymentDetails.vue', () => {
             amount: {
               required: true,
               min_value: 0.01,
-              max_value: 99999999,
+              max_value: wrapper.vm.currentSubItem?.maximumAmount || 99999999,
             },
           });
       });

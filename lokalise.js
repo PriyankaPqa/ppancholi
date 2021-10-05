@@ -64,7 +64,7 @@ const uploadToLokalise = ({
 const getAllErrors = () => new Promise((resolve, reject) => {
   let errors = {};
 
-  https.get('https://emis-api-common-dev.azurewebsites.net/api-error-templates', (resp) => {
+  https.get('https://api-dev.crc-tech.ca/common/api-error-templates', (resp) => {
     let data = '';
 
     // A chunk of data has been received.
@@ -73,8 +73,12 @@ const getAllErrors = () => new Promise((resolve, reject) => {
     });
 
     resp.on('end', () => {
-      errors = JSON.parse(data);
-      resolve(errors);
+      try {
+        errors = JSON.parse(data);
+        resolve(errors);
+      } catch (e) {
+        resolve(false);
+      }
     });
   }).on('error', (err) => {
     reject(err.message);
@@ -85,6 +89,8 @@ async function uploadErrors() {
   const finalObject = {};
 
   const errors = await getAllErrors();
+
+  if (!errors) return;
 
   // eslint-disable-next-line no-restricted-syntax,no-unused-vars
   for (const [key, error] of Object.entries(errors)) {
