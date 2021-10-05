@@ -54,20 +54,6 @@
             </v-row>
 
             <v-row>
-              <v-col cols="12" md="8" class="pb-0">
-                <validation-provider v-slot="{ errors, classes }" :rules="rules.country" mode="aggressive" data-test="location-country">
-                  <rc-country-select
-                    v-model="location.address.country"
-                    outlined
-                    :error-messages="errors"
-                    :class="classes"
-                    :label="`${$t('common.address.country')} *`"
-                    @change="onChangeCountry($event)" />
-                </validation-provider>
-              </v-col>
-
-              <v-col cols="4" />
-
               <v-col cols="12" class="pb-0">
                 <validation-provider v-slot="{ errors, classes }" :rules="rules.streetAddress" mode="aggressive" data-test="location-streetAddress">
                   <rc-google-autocomplete
@@ -112,6 +98,18 @@
                   :rules="rules.postalCode"
                   data-test="location-postalCode"
                   :label="$t('common.address.postalCode')" />
+              </v-col>
+
+              <v-col cols="12" md="8" class="pb-0">
+                <validation-provider v-slot="{ errors, classes }" :rules="rules.country" mode="aggressive" data-test="location-country">
+                  <rc-country-select
+                    v-model="location.address.country"
+                    outlined
+                    :error-messages="errors"
+                    :class="classes"
+                    :label="`${$t('common.address.country')} *`"
+                    @change="onChangeCountry($event)" />
+                </validation-provider>
               </v-col>
             </v-row>
           </v-col>
