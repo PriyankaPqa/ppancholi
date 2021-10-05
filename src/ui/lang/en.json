@@ -79,7 +79,7 @@
     "metaInfo.registrationPortal.title": "Registration portal",
     "registration.addresses.addressType": "Temporary address type",
     "registration.addresses.campgroundName": "Campground name",
-    "registration.addresses.city": "City",
+    "registration.addresses.city": "Municipality",
     "registration.addresses.country": "Country",
     "registration.addresses.currentAddress": "Temporary address",
     "registration.addresses.homeAddress": "Home address",
