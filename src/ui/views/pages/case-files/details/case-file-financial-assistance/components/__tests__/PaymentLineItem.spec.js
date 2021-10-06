@@ -141,13 +141,22 @@ describe('CaseFilePaymentLineItem.vue', () => {
         expect(wrapper.vm.showEditButton).toBeFalsy();
       });
 
-      it('returns false when status > new', async () => {
+      it('returns false when status > new and modality doesnt allow for issuedAmount or related number', async () => {
+        // current modality doesnt allow for issuedAmount or related number
         await mountWrapper(false, 1);
         expect(wrapper.vm.showEditButton).toBeTruthy();
         await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.New });
         expect(wrapper.vm.showEditButton).toBeTruthy();
         await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.Approved });
         expect(wrapper.vm.showEditButton).toBeFalsy();
+      });
+
+      it('returns true when status = approved and modality allow for issuedAmount or related number', async () => {
+        await mountWrapper(false, 1);
+        // modality allows for issuedAmount or related number
+        await wrapper.setProps({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        await wrapper.setProps({ transactionApprovalStatus: ApprovalStatus.Approved });
+        expect(wrapper.vm.showEditButton).toBeTruthy();
       });
     });
 

@@ -1,19 +1,19 @@
 /* eslint-disable */
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
 import { mockItemsWithBasicData } from '@/entities/financial-assistance';
 import { 
-  mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, PaymentStatus } from '@/entities/financial-assistance-payment';
+  mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
 import Component from '../CreateEditPaymentLineDialog.vue';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { AddressForm } from '@crctech/registration-lib';
 import { Status } from '@/entities/base';
-import { mockAddressData, Address, mockAddress } from '@crctech/registration-lib/src/entities/value-objects/address';
+import { mockAddressData, Address } from '@crctech/registration-lib/src/entities/value-objects/address';
 
 const localVue = createLocalVue();
 const program = mockProgramEntity();
-const financialAssistance = mockCaseFinancialAssistanceEntity();
+let financialAssistance = mockCaseFinancialAssistanceEntity();
 const items = mockItemsWithBasicData();
 const storage = mockStorage();
 let caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
@@ -22,11 +22,11 @@ libHelpers.getCanadianProvincesWithoutOther = jest.fn(() => [{ id: '1' }]);
 describe('CreateEditPaymentLineDialog.vue', () => {
   let wrapper;
 
-  beforeEach(async () => {
-    caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
-    jest.clearAllMocks();
+  const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
+    additionalOverwrites.computed = additionalOverwrites.computed || {};
+    additionalOverwrites.computed.apiKey = additionalOverwrites.computed.apiKey || jest.fn(() => 'mock-apiKey');
 
-    wrapper = mount(Component, {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       propsData: {
         show: true,
@@ -35,19 +35,24 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         financialAssistance,
       },
       mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}` && level,
+        $hasRole: (r) => r === hasRole,
         $storage: storage,
-      },
-      computed: {
-        apiKey() {
-          return 'mock-apiKey';
-        },
       },
       stubs: {
         RcGoogleAutocomplete: true,
       },
+      ...additionalOverwrites,
     });
-
     await wrapper.vm.$nextTick();
+  };
+
+  beforeEach(async () => {
+    caseFileFinancialAssistanceGroup = mockCaseFinancialAssistancePaymentGroups()[0];
+    financialAssistance = mockCaseFinancialAssistanceEntity();
+    jest.clearAllMocks();
+
+    await mountWrapper();
   });
 
   describe('Template', () => {
@@ -73,6 +78,18 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       it('is rendered', () => {
         expect(wrapper.findDataTest('payment_modalities').exists()).toBeTruthy();
       });
+
+      it('is disabled once payment is completed', async () => {
+        financialAssistance.approvalStatus = null;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('payment_modalities').vm.$attrs.disabled).toBeFalsy();
+        financialAssistance.approvalStatus = ApprovalStatus.New;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('payment_modalities').vm.$attrs.disabled).toBeFalsy();
+        financialAssistance.approvalStatus = ApprovalStatus.Approved;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('payment_modalities').vm.$attrs.disabled).toBeTruthy();
+      });
     });
 
     describe('checkbox_documentReceived', () => {
@@ -90,6 +107,18 @@ describe('CreateEditPaymentLineDialog.vue', () => {
     describe('txt_amount', () => {
       it('is rendered', () => {
         expect(wrapper.findDataTest('txt_amount').exists()).toBeTruthy();
+      });
+
+      it('is disabled once payment is completed', async () => {
+        financialAssistance.approvalStatus = null;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('txt_amount').vm.$attrs.disabled).toBeFalsy();
+        financialAssistance.approvalStatus = ApprovalStatus.New;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('txt_amount').vm.$attrs.disabled).toBeFalsy();
+        financialAssistance.approvalStatus = ApprovalStatus.Approved;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('txt_amount').vm.$attrs.disabled).toBeTruthy();
       });
     });
 
@@ -113,13 +142,15 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       });
 
       it('is disabled until payment is completed', async () => {
-        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher }, paymentStatus: PaymentStatus.New } });
+        financialAssistance.approvalStatus = null;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
         expect(wrapper.findDataTest('txt_actualamount').vm.$attrs.disabled).toBeTruthy();
-        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher }, paymentStatus: PaymentStatus.Issued } });
+        financialAssistance.approvalStatus = ApprovalStatus.New;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
         expect(wrapper.findDataTest('txt_actualamount').vm.$attrs.disabled).toBeTruthy();
-        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher }, paymentStatus: PaymentStatus.Completed } });
+        financialAssistance.approvalStatus = ApprovalStatus.Approved;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
         expect(wrapper.findDataTest('txt_actualamount').vm.$attrs.disabled).toBeFalsy();
-
       });
     });
 
@@ -140,6 +171,18 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.findDataTest('txt_related_number').exists()).toBeTruthy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
         expect(wrapper.findDataTest('txt_related_number').exists()).toBeTruthy();
+      });
+
+      it('is not disabled regardless of status', async () => {
+        financialAssistance.approvalStatus = null;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('txt_related_number').vm.$attrs.disabled).toBeFalsy();
+        financialAssistance.approvalStatus = ApprovalStatus.New;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('txt_related_number').vm.$attrs.disabled).toBeFalsy();
+        financialAssistance.approvalStatus = ApprovalStatus.Approved;
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Voucher } } });
+        expect(wrapper.findDataTest('txt_related_number').vm.$attrs.disabled).toBeFalsy();
       });
     });
     
@@ -216,28 +259,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
     beforeEach(async () => {
       jest.clearAllMocks();
 
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          show: true,
-          program,
-          items,
-          financialAssistance,
-        },
-        mocks: {
-          $storage: storage,
-        },
-        computed: {
-          apiKey() {
-            return 'mock-apiKey';
-          },
-        },
-        stubs: {
-          RcGoogleAutocomplete: true,
-        },
-      });
-
-      await wrapper.vm.$nextTick();
+      await mountWrapper();
     });
 
     describe('paymentModalities', () => {
@@ -488,6 +510,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
 
     describe('onSubmit', () => {
       it('sets amount as a number (as text field will return text)', async () => {
+        await mountWrapper(true);
         caseFileFinancialAssistanceGroup.lines[0].amount = '100';
         await wrapper.setData({ paymentGroup: caseFileFinancialAssistanceGroup });
         await wrapper.vm.onSubmit();

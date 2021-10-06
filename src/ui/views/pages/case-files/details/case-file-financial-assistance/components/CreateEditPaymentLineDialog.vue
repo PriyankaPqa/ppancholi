@@ -29,6 +29,7 @@
                 :label="`${$t('financialAssistance.nestedTable.headers.item')} *`"
                 :item-text="(item) => item.mainCategory ? $m(item.mainCategory.name) : ''"
                 :item-value="(item) => item.mainCategory ? item.mainCategory.id : null"
+                :disabled="paymentApproved"
                 :items="activeItems"
                 :rules="rules.item"
                 data-test="payment_item"
@@ -41,7 +42,7 @@
                 :item-text="(item) => item.subCategory ? $m(item.subCategory.name) : ''"
                 :item-value="(item) => item.subCategory ? item.subCategory.id : null"
                 :items="subItems"
-                :disabled="!currentPaymentLine.mainCategoryId"
+                :disabled="!currentPaymentLine.mainCategoryId || paymentApproved"
                 :rules="rules.subitem"
                 data-test="payment_subItem"
                 @change="categorySelected" />
@@ -52,6 +53,7 @@
               <v-select-with-validation
                 v-model="paymentGroup.groupingInformation.modality"
                 :items="paymentModalities"
+                :disabled="paymentApproved"
                 :rules="rules.modalities"
                 :label="`${$t('caseFile.financialAssistance.paymentModality')} *`"
                 data-test="payment_modalities" />
@@ -60,6 +62,7 @@
               <v-checkbox-with-validation
                 v-model="currentPaymentLine.documentReceived"
                 :rules="rules.documentReceived"
+                :disabled="!currentPaymentLine.subCategoryId || paymentApproved"
                 data-test="checkbox_documentReceived"
                 class="rc-body12"
                 :label="`${$t('caseFile.financialAssistance.supportingDocuments')} *`" />
@@ -73,7 +76,7 @@
                 autocomplete="nope"
                 type="number"
                 prefix="$"
-                :disabled="fixedAmount"
+                :disabled="fixedAmount || paymentApproved"
                 :rules="rules.amount"
                 :label="`${$t(showIssuedActualAmounts(paymentGroup) ? 'caseFile.financialAssistance.issuedAmount'
                   : 'caseFile.financialAssistance.amount')} *`" />
@@ -87,7 +90,7 @@
                 autocomplete="nope"
                 type="number"
                 prefix="$"
-                :disabled="!canSetActualAmount"
+                :disabled="!paymentApproved"
                 :rules="rules.actualAmount"
                 :label="`${$t('caseFile.financialAssistance.actualAmount')}`" />
             </v-col>
@@ -117,6 +120,7 @@
                   v-model="paymentGroup.groupingInformation.payeeType"
                   :items="payeeTypes"
                   :label="`${$t('caseFile.financialAssistance.payee.paymentMadeTo')} *`"
+                  :disabled="paymentApproved"
                   data-test="payment_payeetypes"
                   @change="resetPayeeInformation" />
               </v-col>
@@ -126,6 +130,7 @@
                   data-test="payment_payeename"
                   autocomplete="nope"
                   :rules="rules.payeeName"
+                  :disabled="paymentApproved"
                   :label="`${$t('caseFile.financialAssistance.payee.payeeName')} *`" />
               </v-col>
             </v-row>
@@ -136,6 +141,7 @@
                   data-test="payment_careof"
                   autocomplete="nope"
                   :rules="rules.careOf"
+                  :disabled="paymentApproved"
                   :label="`${$t('caseFile.financialAssistance.payee.careOf')}`" />
               </v-col>
             </v-row>
@@ -177,7 +183,7 @@ import {
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
   FinancialAssistancePaymentLine,
-  PaymentStatus,
+  ApprovalStatus,
   IFinancialAssistancePaymentEntity,
 } from '@/entities/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
@@ -280,7 +286,7 @@ export default Vue.extend({
     actualAmountError() : string {
       if (this.paymentGroup.groupingInformation.modality === EPaymentModalities.Voucher
         && Number(this.currentPaymentLine.actualAmount) > Number(this.currentPaymentLine.amount)) {
-        return 'caseFile.financialAssistance.Voucher.actualAmountMustBeLessThanAmount';
+        return 'errors.actual-amount-must-be-less-than-or-equal-to-voucher-amount';
       }
       return null;
     },
@@ -312,8 +318,8 @@ export default Vue.extend({
       return libHelpers.getCanadianProvincesWithoutOther(this.$i18n);
     },
 
-    canSetActualAmount(): boolean {
-      return this.paymentGroup?.paymentStatus === PaymentStatus.Completed;
+    paymentApproved(): boolean {
+      return this.financialAssistance.approvalStatus === ApprovalStatus.Approved;
     },
 
     rules(): Record<string, unknown> {

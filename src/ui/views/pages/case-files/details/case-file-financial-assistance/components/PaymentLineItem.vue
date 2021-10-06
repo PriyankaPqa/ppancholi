@@ -143,32 +143,12 @@ export default Vue.extend({
     },
 
     showEditButton(): boolean {
-      return this.$hasLevel('level1') && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
-      // ToDo : Not implemented yet
-      // if (!this.caseFileIsOpen) {
-      //   return false;
-      // }
+      if (!this.$hasLevel('level1')) return false;
+      if (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New) return true;
+      if ((this.transactionApprovalStatus === ApprovalStatus.Approved)
+        && (this.showRelatedNumber(this.paymentGroup) || this.showIssuedActualAmounts(this.paymentGroup))) return true;
 
-      // const { transactionApprovalStatus, modality } = this;
-
-      // // If we are creating a new transaction, edit button is always visible
-      // if (transactionApprovalStatus === '') {
-      //   return true;
-      // }
-
-      // // If approval status is New, all fields are editable
-      // if (transactionApprovalStatus === ETransactionApprovalStatus.New) {
-      //   return this.$can('EditNewTransaction');
-      // }
-
-      // // If approval status is Pending or Approved and the modality is Voucher or Prepaid card
-      // // the Proxy Number and Actual Amount fields are editable
-      // if ((transactionApprovalStatus === ETransactionApprovalStatus.Pending || transactionApprovalStatus === ETransactionApprovalStatus.Approved)
-      // && (modality === EPaymentModalities.Voucher || modality === EPaymentModalities.PrepaidCard)) {
-      //   return this.$can('EditPaymentLineProxyActualAmount');
-      // }
-
-      // return false;
+      return false;
     },
 
     showDeleteButton(): boolean {

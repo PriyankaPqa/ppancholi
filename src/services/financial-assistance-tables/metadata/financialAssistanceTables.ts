@@ -5,7 +5,7 @@ import { DomainBaseService } from '@/services/base';
 import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistance';
 import { IFinancialAssistanceTablesMetadataService } from './financialAssistanceTables.types';
 
-const apiUrlSuffix = 'financial-assistance';
+const apiUrlSuffix = 'finance';
 const controller = 'financial-assistance-tables/metadata';
 
 export class FinancialAssistanceTablesMetadataService extends DomainBaseService<IFinancialAssistanceTableMetadata, uuid>
