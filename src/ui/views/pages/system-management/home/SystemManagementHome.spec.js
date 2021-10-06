@@ -98,5 +98,22 @@ describe('SystemManagementHome.vue', () => {
         expect(card.button).toBe('system_management.card.btn.user_accounts_title');
       });
     });
+
+    describe('Branding card', () => {
+      it('has the correct title', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__branding');
+        expect(card.title).toBe('system_management.card.branding.title');
+      });
+
+      it('has the correct description', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__branding');
+        expect(card.description).toBe('system_management.card.branding.description');
+      });
+
+      it('has the correct button label', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__branding');
+        expect(card.button).toBe('system_management.card.branding.btn.label');
+      });
+    });
   });
 });

@@ -3,7 +3,7 @@ import { RouteConfig } from 'vue-router';
 
 import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
-import { USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE } from '@/constants/vuex-modules';
+import { USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, BRANDING_ENTITIES } from '@/constants/vuex-modules';
 import Routes from '../../constants/routes';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
@@ -82,6 +82,7 @@ const CaseFileInactiveReasons = () => import(/* webpackChunkName: "system" */ '@
 const UserAccounts = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/user-accounts/home/UserAccounts.vue');
 const AccountSettings = () => import(/* webpackChunkName: "account-settings" */ '@/ui/views/pages/system-management/lists/user-accounts/account-settings/AccountSettings.vue');
 const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
+const Branding = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/branding/Branding.vue');
 const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
 const CaseFileCloseReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
 const ReferralOutcomeStatuses = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ReferralOutcomeStatuses.vue');
@@ -105,6 +106,9 @@ export const routes: Array<RouteConfig> = [
     beforeEnter: async (to, from, next) => {
       await Promise.all([
         store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`),
+        store.dispatch(`${BRANDING_ENTITIES}/getBranding`),
+        store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'en'),
+        store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'fr'),
       ]);
       store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: false });
       Trans.routeMiddleware(to, from, next);
@@ -570,6 +574,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.roles.path,
                 name: Routes.systemManagement.roles.name,
                 component: Roles,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.branding.path,
+                name: Routes.systemManagement.branding.name,
+                component: Branding,
                 meta: { level: 'level6' },
               },
               {

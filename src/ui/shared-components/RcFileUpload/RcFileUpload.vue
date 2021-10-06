@@ -3,9 +3,9 @@
     <v-file-input
       id="inputUpload"
       v-model="localFiles"
-      counter
+      :counter="counter"
       :multiple="multiple"
-      show-size
+      :show-size="showSize"
       :accept="acceptedTypes"
       :error-messages="[...errors, ...errorMessages]"
       :error-count="2"
@@ -21,7 +21,8 @@
         </v-btn>
       </template>
     </v-file-input>
-    <div v-if="errors.length === 0 && errorMessages.length === 0" class="rc-caption12 mt-n6">
+    <!-- eslint-disable-next-line vue/no-v-html -->
+    <div v-if="errors.length === 0 && errorMessages.length === 0 && showRules" class="rc-caption12 mt-n6">
       {{ $t('common.upload.max_file.size', {x: helpers.formatBytes(maxSize)}) }}
     </div>
   </div>
@@ -61,6 +62,18 @@ export default Vue.extend({
     maxSize: {
       type: [Number, String],
       default: 5000000, // 5Mb
+    },
+    counter: {
+      type: Boolean,
+      default: true,
+    },
+    showSize: {
+      type: Boolean,
+      default: true,
+    },
+    showRules: {
+      type: Boolean,
+      default: true,
     },
     /**
      * Whether or not the user can select multiple files to upload
@@ -167,7 +180,9 @@ export default Vue.extend({
     onChange(files: File[]) {
       this.checkRules(files);
       const file = Array.isArray(files) ? files[0] : files;
-      this.$emit('update:file', file || {});
+
+      const isValid = !this.errorMessages.length;
+      this.$emit('update:file', file || {}, isValid);
     },
 
     openSelection() {

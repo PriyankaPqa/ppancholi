@@ -26,10 +26,18 @@ export type VForm = Vue & {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   errors: Record<string, any>
   flags: {
+    untouched: boolean,
+    touched: boolean,
     dirty: boolean,
     pristine: boolean,
-    failed: boolean,
     valid: boolean,
+    invalid: boolean,
+    validated: boolean,
+    pending: boolean,
+    required: boolean,
+    changed: boolean,
+    passed: boolean,
+    failed: boolean,
   }
 }
 

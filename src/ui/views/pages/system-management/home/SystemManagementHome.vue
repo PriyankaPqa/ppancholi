@@ -52,6 +52,13 @@ export default Vue.extend({
         route: routes.systemManagement.roles.name,
         dataTest: 'sysManagementHome__roles',
         level: 'level6',
+      }, {
+        title: 'system_management.card.branding.title',
+        description: 'system_management.card.branding.description',
+        button: 'system_management.card.branding.btn.label',
+        route: routes.systemManagement.branding.name,
+        dataTest: 'sysManagementHome__branding',
+        level: 'level6',
       }];
     },
 

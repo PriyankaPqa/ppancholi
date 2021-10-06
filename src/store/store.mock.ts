@@ -74,6 +74,8 @@ import { FinancialAssistancePaymentsService } from '@/services/financial-assista
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
+import { BrandingEntityModule } from './modules/branding/brandingEntity';
+import { BrandingsService } from '@/services/brandings/entity';
 
 const i18n = {
   t: jest.fn(),
@@ -128,6 +130,9 @@ const mockConfig = {
       new FinancialAssistancePaymentEntityModule(new FinancialAssistancePaymentsService(httpClient)).getModule(),
     [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]:
       new FinancialAssistancePaymentMetadataModule(new FinancialAssistancePaymentsMetadataService(httpClient)).getModule(),
+
+    [vuexModule.BRANDING_ENTITIES]:
+      new BrandingEntityModule(new BrandingsService(httpClient)).getModule(),
   },
 };
 

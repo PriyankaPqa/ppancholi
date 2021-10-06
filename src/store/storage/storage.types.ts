@@ -59,6 +59,11 @@ import {
   IStorageMakeMock as IFinancialAssistancePaymentMakeStorageMock,
 } from './financial-assistance-payment';
 
+import {
+  IStorageMake as IBrandingMakeStorage,
+  IStorageMakeMock as IBrandingMakeStorageMock,
+} from './branding';
+
 export interface IStorage {
   user: IUserStorage;
   caseFile: ICaseFileMakeStorage;
@@ -77,6 +82,7 @@ export interface IStorage {
   household: IStorageMake;
   userAccount: IUserAccountMakeStorage;
   massAction: IMassActionMakeStorage;
+  branding: IBrandingMakeStorage;
 }
 
 export interface IStorageMock {
@@ -97,4 +103,5 @@ export interface IStorageMock {
   household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
   massAction: IMassActionMakeStorageMock;
+  branding: IBrandingMakeStorageMock;
 }

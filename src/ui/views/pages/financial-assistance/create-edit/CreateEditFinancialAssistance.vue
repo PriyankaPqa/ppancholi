@@ -18,8 +18,7 @@
 
     <rc-page-content v-else :title="title" show-help :help-link="$t('zendesk.help_link.create_financial_assistance_table')" :show-add-button="false">
       <v-container>
-        <validation-observer ref="form" v-slot="{ pristine, invalid }" slim>
-          {{ watchPristine(pristine) }}
+        <validation-observer ref="form" v-slot="{ changed, invalid }" slim>
           <v-row class="justify-center">
             <v-col :class="{ 'table-wrapper': isEdit }" cols="12" xl="7" lg="9" md="11" sm="12">
               <rc-tabs>
@@ -117,7 +116,7 @@
                     color="primary"
                     data-test="financial-assistance-save-edit-btn"
                     :loading="isSaving"
-                    :disabled="pristine || invalid || isOperating"
+                    :disabled="!changed || invalid || isOperating"
                     @click="saveEdit">
                     {{ $t('common.buttons.save') }}
                   </v-btn>
@@ -208,7 +207,7 @@ export default Vue.extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    const isDirty = this.isEdit ? this.formDirty : this.itemsDirty || this.formDirty;
+    const isDirty = this.isEdit ? (this.$refs.form as VForm).flags.changed : this.itemsDirty || this.formDirty;
 
     if (!isDirty || (isDirty && (await (this.$refs.confirmLeavePopup as ConfirmationDialog).open()))) {
       next();
@@ -537,10 +536,6 @@ export default Vue.extend({
       }
 
       return 'grey lighten-3 black--text';
-    },
-
-    watchPristine(pristine: boolean) {
-      this.formDirty = !pristine;
     },
 
     /**

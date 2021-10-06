@@ -3,8 +3,13 @@
     <v-app-bar color="white" app clipped-right clipped-left class="elevation-2">
       <v-app-bar-nav-icon id="hamburgerMenu" data-test="left-menu-trigger" @click.stop="handleLeftMenu" />
       <v-toolbar-title>
-        <div :class="`${$i18n.locale === 'en' ? 'logoEn' : 'logoFr'} ml-n4 ml-md-0`" data-test="appHeader__logo" />
+        <img alt="logo" :src="logoUrl" class="logo ml-n4 ml-md-0" data-test="appHeader__logo">
       </v-toolbar-title>
+
+      <template v-if="branding.showName">
+        <v-divider vertical class="mx-5" />
+        <span class="rc-heading-4">{{ $m(branding.name) }}</span>
+      </template>
 
       <v-spacer />
       <v-btn
@@ -40,9 +45,10 @@
 import Vue from 'vue';
 import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
+import { IBrandingEntity } from '@/entities/branding';
 
 export default Vue.extend({
-  name: 'Header',
+  name: 'AppHeader',
 
   components: {
     LanguageSelector,
@@ -65,6 +71,14 @@ export default Vue.extend({
       return this.$route.name !== routes.registration.home.name
         && this.$route.name !== routes.registration.individual.name
         && this.$hasLevel('level1');
+    },
+
+    logoUrl(): string {
+      return this.$storage.branding.getters.logoUrl(this.$i18n.locale);
+    },
+
+    branding(): IBrandingEntity {
+      return this.$storage.branding.getters.branding();
     },
   },
 
@@ -107,41 +121,30 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-  $url-logo: "../../../../../public/img/logo.png";
-  $url-rc-en-logo: "../../../../../public/img/logos/rc/rc-en.svg";
-  $url-rc-fr-logo: "../../../../../public/img/logos/rc/rc-fr.svg";
-
   .v-app-bar__nav-icon {
     margin-left: 0px!important;
   }
 
-  .logoEn {
+  .logo {
     background-size: cover;
-    background-image: url($url-rc-en-logo);
-  }
-
-  .logoFr {
-    background-size: cover;
-    background-image: url($url-rc-fr-logo);
   }
 
   @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
-    .logoEn, .logoFr {
-      background-image: url($url-logo);
-      width: 40px;
-      height: 40px;
+    .logo {
+      max-width: 40px;
+      max-height: 40px;
     }
   }
   @media only screen and (min-width: $breakpoint-sm-min) and (max-width: $breakpoint-md-max) {
-    .logoEn, .logoFr {
-      width: 133px;
-      height: 48px;
+    .logo {
+      max-width: 133px;
+      max-height: 48px;
     }
   }
   @media only screen and (min-width: $breakpoint-lg-min) {
-    .logoEn, .logoFr {
-      width:  160px;
-      height: 64px;
+    .logo {
+      max-width:  160px;
+      max-height: 64px;
     }
   }
 </style>

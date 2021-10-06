@@ -56,6 +56,12 @@ export default Vue.extend({
         to: routes.systemManagement.roles.name,
         exact: false,
         level: 'level6',
+      }, {
+        text: this.$t('system_management.lists.branding'),
+        test: 'systemManagement__menu__branding',
+        to: routes.systemManagement.branding.name,
+        exact: false,
+        level: 'level6',
       }];
     },
 

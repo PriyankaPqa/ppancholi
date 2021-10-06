@@ -302,6 +302,10 @@ const routes = {
       path: 'roles',
       name: 'systemManagement.lists.roles',
     },
+    branding: {
+      path: 'branding',
+      name: 'systemManagement.lists.branding',
+    },
     caseFileInactiveReasons: {
       path: 'lists/case-file-inactive-reasons',
       name: 'systemManagement.lists.caseFileInactiveReasons',

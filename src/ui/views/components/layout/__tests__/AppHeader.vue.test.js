@@ -1,4 +1,6 @@
 import Vuetify from 'vuetify';
+import { mockStorage } from '@/store/storage';
+import { mockBrandingEntity } from '@/entities/branding';
 import {
   createLocalVue,
   mount,
@@ -10,6 +12,7 @@ import { mockUserStateContributor } from '@/test/helpers';
 import Component from '../AppHeader.vue';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
 
 describe('AppHeader.vue', () => {
   let wrapper;
@@ -45,6 +48,7 @@ describe('AppHeader.vue', () => {
         $route: {
           name: routes.events.home.name,
         },
+        $storage: storage,
       },
     });
   });
@@ -55,6 +59,18 @@ describe('AppHeader.vue', () => {
         expect(wrapper.vm.getAvatarName).toEqual('JW');
       });
     });
+
+    describe('logoUrl', () => {
+      it('should return the logoUrl', () => {
+        expect(wrapper.vm.logoUrl).toEqual(wrapper.vm.$storage.branding.getters.logoUrl('en'));
+      });
+    });
+
+    describe('branding', () => {
+      it('should return the branding', () => {
+        expect(wrapper.vm.branding).toEqual(wrapper.vm.$storage.branding.getters.branding());
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -63,10 +79,10 @@ describe('AppHeader.vue', () => {
         wrapper.vm.$vuetify.breakpoint.mdAndUp = true;
         wrapper.vm.handleLeftMenu();
         await wrapper.vm.$nextTick();
-        expect(mutations.setProperty).toHaveBeenCalledWith(expect.anything(), {
-          property: 'leftMenuVisible',
-          value: true,
-        });
+
+        expect(storage.dashboard.mutations.setProperty).toHaveBeenNthCalledWith(1, { property: 'leftMenuVisible', value: true });
+
+        expect(storage.dashboard.mutations.setProperty).toHaveBeenNthCalledWith(2, { property: 'leftMenuExpanded', value: true });
       });
 
       it('if device size is not medium and down, does not change leftMenuVisible state in the store', async () => {
@@ -74,7 +90,7 @@ describe('AppHeader.vue', () => {
         await wrapper.vm.$nextTick();
         wrapper.vm.handleLeftMenu();
         await wrapper.vm.$nextTick();
-        expect(mutations.setProperty).not.toHaveBeenCalledWith(expect.anything(), {
+        expect(storage.dashboard.mutations.setProperty).not.toHaveBeenCalledWith(expect.anything(), {
           property: 'leftMenuVisible',
           value: true,
         });
@@ -83,10 +99,10 @@ describe('AppHeader.vue', () => {
       it('sets into the store the opposite state of leftMenuExpanded', async () => {
         wrapper.vm.handleLeftMenu();
         await wrapper.vm.$nextTick();
-        expect(mutations.setProperty).toHaveBeenCalledWith(expect.anything(), {
-          property: 'leftMenuExpanded',
-          value: true,
-        });
+
+        expect(storage.dashboard.mutations.setProperty).toHaveBeenNthCalledWith(1, { property: 'leftMenuVisible', value: true });
+
+        expect(storage.dashboard.mutations.setProperty).toHaveBeenNthCalledWith(2, { property: 'leftMenuExpanded', value: true });
       });
     });
 
@@ -94,7 +110,7 @@ describe('AppHeader.vue', () => {
       it('sets into the store the opposite state of rightMenuVisible ', async () => {
         wrapper.vm.handleRightMenu();
         await wrapper.vm.$nextTick();
-        expect(mutations.setProperty).toHaveBeenCalledWith(expect.anything(), {
+        expect(storage.dashboard.mutations.setProperty).toHaveBeenCalledWith({
           property: 'rightMenuVisible',
           value: true,
         });
@@ -105,7 +121,7 @@ describe('AppHeader.vue', () => {
       it('sets into the store the opposite state of generalHelpMenuVisible', async () => {
         wrapper.vm.handleGeneralHelpMenu();
         await wrapper.vm.$nextTick();
-        expect(mutations.setProperty).toHaveBeenCalledWith(expect.anything(), {
+        expect(storage.dashboard.mutations.setProperty).toHaveBeenCalledWith({
           property: 'generalHelpMenuVisible',
           value: true,
         });
@@ -146,6 +162,11 @@ describe('AppHeader.vue', () => {
           store: {
             ...mockUserStateContributor(1),
           },
+          computed: {
+            branding() {
+              return mockBrandingEntity();
+            },
+          },
         });
         const button = wrapper.find('[data-test="appHeader__registerBeneficiaries"]');
         expect(button.exists()).toBe(false);
@@ -166,14 +187,9 @@ describe('AppHeader.vue', () => {
         expect(button.exists()).toBe(true);
       });
 
-      test('The logo is displayed correctly by changing the system language', async () => {
+      test('The logo is displayed correctly', async () => {
         const element = wrapper.find('[data-test="appHeader__logo"]');
-        expect(element.classes('logoEn')).toBeTruthy();
-
-        wrapper.vm.$i18n.locale = 'fr';
-        await wrapper.vm.$nextTick();
-
-        expect(element.classes('logoFr')).toBeTruthy();
+        expect(element.classes('logo')).toBeTruthy();
       });
     });
 
