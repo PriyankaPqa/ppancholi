@@ -12,6 +12,8 @@ export interface IEntity {
   timestamp: Date | string;
   status: Status;
   eTag: string;
+  lastAction: string;
+  lastActionCorrelationId: uuid;
 }
 
 export interface IEntityCombined <TEntity extends IEntity, TMetadata extends IEntity> {

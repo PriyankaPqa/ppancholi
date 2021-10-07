@@ -8,7 +8,7 @@
       :content-only-scrolling="true"
       :persistent="true"
       fullscreen
-      :submit-button-disabled="failed"
+      :submit-button-disabled="failed || (!identityChanged && !addressChanged && !sameAddressChanged)"
       @cancel="cancel()"
       @close="cancel()"
       @submit="validate()">
@@ -108,12 +108,18 @@ export default Vue.extend({
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VUE_APP_GOOGLE_API_KEY,
-      backupPerson: null,
-      backupSameAddress: null,
+      backupPerson: null as IMember,
+      backupSameAddress: null as boolean,
+      addressChanged: false,
+      identityChanged: false,
     };
   },
 
   computed: {
+    sameAddressChanged(): boolean {
+      return this.sameAddress !== this.backupSameAddress;
+    },
+
     primaryBeneficiaryAddress(): ICurrentAddress {
       return this.$storage.registration.getters.householdCreate().primaryBeneficiary.currentAddress;
     },
@@ -169,7 +175,7 @@ export default Vue.extend({
     },
   },
 
-  mounted() {
+  created() {
     if (this.editMode) {
       this.sameAddress = _isEqual(this.member.currentAddress, this.primaryBeneficiaryAddress);
       this.backupSameAddress = this.sameAddress;
@@ -217,27 +223,44 @@ export default Vue.extend({
     },
 
     async submitChanges() {
-      const updatedIdentity = await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: false, index: this.index });
-      const updatedAddress = await this.$storage.registration.actions.updatePersonAddress({
-        member: this.member, isPrimaryMember: false, index: this.index, sameAddress: this.sameAddress,
-      });
+      if (this.addressChanged || this.sameAddressChanged) {
+        const updatedAddress = await this.$storage.registration.actions.updatePersonAddress({
+          member: this.member, isPrimaryMember: false, index: this.index, sameAddress: this.sameAddress,
+        });
+        if (!updatedAddress) {
+          this.cancel();
+          return;
+        }
+      }
 
-      if (!updatedIdentity || !updatedAddress) {
-        this.cancel();
+      if (this.identityChanged) {
+        const updatedIdentity = await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: false, index: this.index });
+        if (!updatedIdentity) {
+          this.cancel();
+        }
       }
     },
 
     setIdentity(form: IIdentitySet) {
+      if (!_isEqual(form, this.backupPerson?.identitySet)) {
+        this.identityChanged = true;
+      }
       this.member.identitySet.setIdentity(form);
     },
 
     setIndigenousIdentity(form: IIdentitySet) {
+      if (!_isEqual(form, this.backupPerson?.identitySet)) {
+        this.identityChanged = true;
+      }
       this.member.identitySet.setIndigenousIdentity(form);
       // Update the member data, so the indigenous communities list get recalculated
       this.$storage.registration.mutations.editAdditionalMember(this.member, this.index, this.sameAddress);
     },
 
     setCurrentAddress(form: ICurrentAddress) {
+      if (!_isEqual(form, this.backupPerson?.currentAddress)) {
+        this.addressChanged = true;
+      }
       this.member.setCurrentAddress(form);
     },
   },

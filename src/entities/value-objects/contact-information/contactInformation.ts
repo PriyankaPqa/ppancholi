@@ -38,10 +38,10 @@ export class ContactInformation implements IContactInformation {
       this.homePhoneNumber = data.homePhoneNumber;
       this.alternatePhoneNumber = data.alternatePhoneNumber;
       this.email = data.email;
-      this.preferredLanguage = data.preferredLanguage;
-      this.preferredLanguageOther = data.preferredLanguageOther;
-      this.primarySpokenLanguage = data.primarySpokenLanguage;
-      this.primarySpokenLanguageOther = data.primarySpokenLanguageOther;
+      this.preferredLanguage = data.preferredLanguage ?? null;
+      this.preferredLanguageOther = data.preferredLanguageOther ?? null;
+      this.primarySpokenLanguage = data.primarySpokenLanguage ?? null;
+      this.primarySpokenLanguageOther = data.primarySpokenLanguageOther ?? null;
       this.emailValidatedByBackend = data.emailValidatedByBackend;
     }
   }

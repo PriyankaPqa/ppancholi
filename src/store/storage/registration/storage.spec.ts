@@ -174,7 +174,7 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy setPersonalInformation', () => {
-      const payload = _merge(mockContactInformation(), mockMember());
+      const payload = _merge(mockContactInformation(), mockIdentitySet());
       storage.mutations.setPersonalInformation(payload);
       expect(store.commit).toBeCalledWith('registration/setPersonalInformation', payload);
     });

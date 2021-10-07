@@ -1,7 +1,8 @@
-import { IEntity, mockBaseEntity } from '../base';
 import {
-  IHouseholdCombined, IHouseholdEntity, IHouseholdMetadata, IMemberMetadata,
+  IHouseholdCombined, IHouseholdEntity, IHouseholdMetadata, IHouseholdMemberMetadata,
 } from './household.types';
+/* eslint-disable no-nested-ternary */
+import { IEntity, mockBaseEntity } from '../base';
 
 export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseholdEntity => ({
   id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
@@ -12,15 +13,17 @@ export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseho
   eTag: 'string',
   createdBy: '',
   lastUpdatedBy: '',
+  lastAction: '',
+  lastActionCorrelationId: '',
   address: {
     address: {
-      country: 'st',
-      streetAddress: 'string',
-      unitSuite: 'string',
+      country: 'USA',
+      streetAddress: 'West str.',
+      unitSuite: '100',
       province: 1,
       specifiedOtherProvince: 'string',
-      city: 'string',
-      postalCode: 'string',
+      city: 'New York',
+      postalCode: '123456',
       latitude: 90,
       longitude: 180,
     },
@@ -53,7 +56,7 @@ export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseho
   ...force,
 });
 
-export const mockMemberMetadata = (force?: Partial<IMemberMetadata>): IMemberMetadata => ({
+export const mockHouseholdMemberMetadata = (force?: Partial<IHouseholdMemberMetadata>): IHouseholdMemberMetadata => ({
   firstName: 'Mister',
   lastName: 'Test',
   dateOfBirth: '2000-06-12',
@@ -62,7 +65,7 @@ export const mockMemberMetadata = (force?: Partial<IMemberMetadata>): IMemberMet
 
 export const mockHouseholdMetadata = (force?: Partial<IHouseholdMetadata>): IHouseholdMetadata => ({
   ...mockBaseEntity(),
-  memberMetadata: [mockMemberMetadata()],
+  memberMetadata: [mockHouseholdMemberMetadata()],
   eventIds: ['1', '2'],
   caseFiles: [{
     eventId: '60983874-18bb-467d-b55a-94dc55818151',

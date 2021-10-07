@@ -1,3 +1,4 @@
+import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
 import { IAddress } from '../../../entities/value-objects/address';
 import { IStore, IState } from '../../store.types';
 import { Base } from '../base';
@@ -20,6 +21,7 @@ export class HouseholdStorage extends Base<IHouseholdEntity, IHouseholdMetadata>
     updateNoFixedHomeAddress: (householdId: string, observation: string): Promise<IHouseholdEntity> => this.store.dispatch(`${this.entityModuleName}/updateNoFixedHomeAddress`, { householdId, observation }),
     // eslint-disable-next-line
     updateHomeAddress: (householdId: string, address: IAddress): Promise<IHouseholdEntity> => this.store.dispatch(`${this.entityModuleName}/updateHomeAddress`, { householdId, address }),
+    fetchHouseholdHistory: (household: IHouseholdEntity): Promise<IVersionedEntity[]> => this.store.dispatch(`${this.entityModuleName}/fetchHouseholdHistory`, household),
   }
 
   private mutations = {

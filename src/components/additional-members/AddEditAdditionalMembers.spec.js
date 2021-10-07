@@ -13,7 +13,7 @@ import { mockAdditionalMember } from '../../entities/value-objects/member';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './AddEditAdditionalMembers.vue';
 import { mockIdentitySet } from '../../entities/value-objects/identity-set';
-import { mockAddress } from '../../entities/household-create';
+import { mockAddress, mockHouseholdCreate } from '../../entities/household-create';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -21,6 +21,7 @@ const householdId = '4113a553-13ed-41da-a692-f39c934bee05';
 
 describe('AddEditAdditionalMembers.vue', () => {
   let wrapper;
+  storage.registration.getters.householdCreate = jest.fn(() => mockHouseholdCreate());
 
   beforeEach(() => {
     wrapper = shallowMount(Component, {
@@ -44,6 +45,17 @@ describe('AddEditAdditionalMembers.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('sameAddressChanged', () => {
+      it('return true if same address is not same as backupaddress', async () => {
+        await wrapper.setData({ sameAddress: true, backupSameAddress: false });
+        expect(wrapper.vm.sameAddressChanged).toBeTruthy();
+      });
+      it('return false if same address is  same as backupaddress', async () => {
+        await wrapper.setData({ sameAddress: true, backupSameAddress: true });
+        expect(wrapper.vm.sameAddressChanged).toBeFalsy();
+      });
+    });
+
     describe('primaryBeneficiaryAddress', () => {
       it('returns the right value', () => {
         expect(wrapper.vm.primaryBeneficiaryAddress).toEqual(mockCampGround());
@@ -132,39 +144,60 @@ describe('AddEditAdditionalMembers.vue', () => {
         await wrapper.vm.validate();
         expect(wrapper.vm.close).toHaveBeenCalledTimes(1);
       });
+    });
 
-      describe('submitChanges', () => {
-        it('should call the updatePersonIdentity action', async () => {
-          await wrapper.vm.submitChanges();
-          expect(wrapper.vm.$storage.registration.actions.updatePersonIdentity).toHaveBeenCalledWith(
-            { member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index },
-          );
-        });
-
-        it('should call the updatePersonAddress action', async () => {
-          await wrapper.vm.submitChanges();
-          expect(wrapper.vm.$storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith(
-            {
-              member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index, sameAddress: wrapper.vm.sameAddress,
-            },
-          );
-        });
-
-        it('should call cancel if the calls fail', async () => {
-          jest.spyOn(wrapper.vm, 'cancel').mockImplementation(() => {});
-          wrapper.vm.$storage.registration.actions.updatePersonAddress = jest.fn(() => null);
-          await wrapper.vm.submitChanges();
-          expect(wrapper.vm.cancel).toHaveBeenCalledTimes(1);
-        });
+    describe('submitChanges', () => {
+      it('should call the updatePersonAddress action if address changed', async () => {
+        await wrapper.setData({ addressChanged: true });
+        await wrapper.vm.submitChanges();
+        expect(wrapper.vm.$storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith(
+          {
+            member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index, sameAddress: wrapper.vm.sameAddress,
+          },
+        );
       });
 
-      describe('cancel', () => {
-        it('should reset household member with the backup', async () => {
-          await wrapper.setProps({ index: 0 });
-          await wrapper.vm.cancel();
-          expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
-            .toHaveBeenCalledWith(wrapper.vm.backupPerson, 0, wrapper.vm.backupSameAddress);
-        });
+      it('should call cancel if the call to the updatePersonAddress action fails', async () => {
+        jest.spyOn(wrapper.vm, 'cancel').mockImplementation(() => {});
+        wrapper.vm.$storage.registration.actions.updatePersonAddress = jest.fn(() => null);
+        await wrapper.setData({ addressChanged: true });
+        await wrapper.vm.submitChanges();
+        expect(wrapper.vm.cancel).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call the updatePersonAddress action if sameAddress changed', async () => {
+        await wrapper.setData({ sameAddress: true });
+        await wrapper.vm.submitChanges();
+        expect(wrapper.vm.$storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith(
+          {
+            member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index, sameAddress: wrapper.vm.sameAddress,
+          },
+        );
+      });
+
+      it('should call the updatePersonIdentity action if identity changed ', async () => {
+        await wrapper.setData({ identityChanged: true });
+        await wrapper.vm.submitChanges();
+        expect(wrapper.vm.$storage.registration.actions.updatePersonIdentity).toHaveBeenCalledWith(
+          { member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index },
+        );
+      });
+
+      it('should call cancel if the call to updatePersonAddress  fails', async () => {
+        jest.spyOn(wrapper.vm, 'cancel').mockImplementation(() => {});
+        wrapper.vm.$storage.registration.actions.updatePersonAddress = jest.fn(() => null);
+        await wrapper.setData({ identityChanged: true });
+        await wrapper.vm.submitChanges();
+        expect(wrapper.vm.cancel).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('cancel', () => {
+      it('should reset household member with the backup', async () => {
+        await wrapper.setProps({ index: 0 });
+        await wrapper.vm.cancel();
+        expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
+          .toHaveBeenCalledWith(wrapper.vm.backupPerson, 0, wrapper.vm.backupSameAddress);
       });
     });
 
@@ -259,7 +292,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               $storage: storage,
             },
           });
-          wrapper.vm.$options.mounted.forEach((hook) => {
+          wrapper.vm.$options.created.forEach((hook) => {
             hook.call(wrapper.vm);
           });
           expect(wrapper.vm.sameAddress).toBeTruthy();
@@ -289,7 +322,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               $storage: storage,
             },
           });
-          wrapper.vm.$options.mounted.forEach((hook) => {
+          wrapper.vm.$options.created.forEach((hook) => {
             hook.call(wrapper.vm);
           });
           expect(wrapper.vm.sameAddress).toBeFalsy();
@@ -315,7 +348,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               $storage: storage,
             },
           });
-          wrapper.vm.$options.mounted.forEach((hook) => {
+          wrapper.vm.$options.created.forEach((hook) => {
             hook.call(wrapper.vm);
           });
           expect(wrapper.vm.backupPerson).toEqual(member);

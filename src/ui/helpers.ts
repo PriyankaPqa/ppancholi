@@ -1,9 +1,28 @@
 import moment from 'moment';
 import VueI18n from 'vue-i18n';
+import { en, fr } from '@crctech/component-library/src/components/atoms/RcCountrySelect/countries';
+
 import { ECanadaProvinces } from '../types/enums/ECanadaProvinces';
 import { IBirthDate } from '../entities/value-objects/identity-set/identitySet.types';
+import { IAddress } from '../entities/value-objects/address/address.types';
+import { IMultilingual } from '../types';
 
 export default {
+  // eslint-disable-next-line
+    getMultilingualValue(m: IMultilingual, i18n: VueI18n, trim: boolean = false) {
+    let { locale } = i18n;
+
+    if (locale !== 'en' && locale !== 'fr') {
+      locale = 'en';
+    }
+
+    if (m && m.translation && m.translation[locale]) {
+      return trim ? m.translation[locale].trim() : m.translation[locale];
+    }
+
+    return '';
+  },
+
   getEnumKeys(myEnum: Record<string, unknown>) {
     return Object.keys(myEnum).filter((key) => Number.isNaN(Number(key)));
   },
@@ -39,6 +58,24 @@ export default {
     });
   },
 
+  getBirthDateUTCString(birthdate: IBirthDate) {
+    const year = birthdate.year as number;
+    const month = birthdate.month as number;
+    const day = birthdate.day as number;
+
+    return new Date(Date.UTC(year, +month - 1, day)).toISOString();
+  },
+
+  convertBirthDateStringToObject(birthdate: string) {
+    const bdayMoment = moment(birthdate).utc();
+
+    return {
+      month: bdayMoment.month() + 1,
+      day: `${bdayMoment.date()}`,
+      year: `${bdayMoment.year()}`,
+    };
+  },
+
   isValidCanadianPostalCode(value: string, errorMsg: string, errors: string[]): void {
     if (!value) return;
 
@@ -61,6 +98,15 @@ export default {
       return birthdate.format('ll');
     }
     return '';
+  },
+
+  getBirthDateAndAge(dateOfBirth: string, i18n: VueI18n): string {
+    const birthDate: IBirthDate = this.convertBirthDateStringToObject(dateOfBirth);
+    if (!birthDate) return '';
+
+    let result = this.displayBirthDate(birthDate);
+    result += ` (${this.getAge(birthDate)} ${i18n.t('common.years')})`;
+    return result;
   },
 
   openHelpCenterWindow(url: string, width = 500) {
@@ -185,6 +231,38 @@ export default {
       }
       return false;
     }));
+  },
+
+  provinceCodeName(address: IAddress, i18n: VueI18n): string {
+    const provinceCode = address?.province;
+    if (!provinceCode) return '';
+    if (provinceCode === ECanadaProvinces.OT) {
+      return address?.specifiedOtherProvince;
+    }
+    return i18n.t(`common.provinces.code.${ECanadaProvinces[provinceCode]}`) as string;
+  },
+
+  getAddressLines(address: IAddress, i18n: VueI18n): string[] {
+    const addressLines = [] as string[];
+    if (!address) return addressLines;
+    const suite = address.unitSuite ? `${address.unitSuite}-` : '';
+    addressLines.push(address.streetAddress ? `${suite + address.streetAddress}` : '');
+
+    const city = address.city ? `${address.city}, ` : '';
+    const provinceCodeName = this.provinceCodeName(address, i18n);
+    const province = provinceCodeName ? `${provinceCodeName}, ` : '';
+    addressLines.push(city + province + (address.postalCode || ''));
+    if (this.countryName(address.country, i18n)) addressLines.push(this.countryName(address.country, i18n));
+    return addressLines;
+  },
+
+  countryName(countryCode: string, i18n: VueI18n): string {
+    if (!countryCode) return '';
+
+    const countriesData = { en, fr } as Record<string, Record<string, string>>;
+
+    const countries = countriesData[i18n.locale];
+    return countries[countryCode];
   },
 
 };

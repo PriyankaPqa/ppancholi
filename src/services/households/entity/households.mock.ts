@@ -1,3 +1,4 @@
+import { mockVersionedEntity } from '../../../entities/value-objects/versioned-entity';
 import { mockHouseholdEntity } from '../../../entities/household';
 import {
   mockGenders,
@@ -25,4 +26,8 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   addMember: jest.fn(() => mockHouseholdEntity()),
   // splitMembers: jest.fn(() => mockHouseholdEntity()),
   validateEmail: jest.fn(() => mockValidateEmailResponse()),
+  getHouseholdHistory: jest.fn(() => [mockVersionedEntity()]),
+  getHouseholdMetadataHistory: jest.fn(() => [mockVersionedEntity()]),
+  getMemberHistory: jest.fn(() => [mockVersionedEntity()]),
+  getMemberMetadataHistory: jest.fn(() => [mockVersionedEntity()]),
 });

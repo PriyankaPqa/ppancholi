@@ -1,4 +1,3 @@
-import moment from 'moment';
 import {
   IdentitySet, EIndigenousTypes, mockIdentitySetData,
   mockGenderOther,
@@ -50,7 +49,7 @@ describe('Identity Set', () => {
         expect(p.gender).toEqual(mockIdentitySetData().gender);
         expect(p.genderOther).toEqual(mockIdentitySetData().genderOther);
         expect(p.birthDate).toEqual(mockIdentitySetData().birthDate);
-        expect(p.dateOfBirth).toEqual(moment.utc(helpers.getBirthDateMomentObject(mockIdentitySetData().birthDate)).format());
+        expect(p.dateOfBirth).toEqual(helpers.getBirthDateUTCString(mockIdentitySetData().birthDate));
       });
     });
 

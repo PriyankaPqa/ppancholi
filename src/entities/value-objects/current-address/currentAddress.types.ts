@@ -23,6 +23,8 @@ export interface ICurrentAddressData {
     address?: IAddress;
 
     shelterLocation?: IShelterLocationData;
+
+    shelterLocationId?: string;
 }
 
 export interface IShelterLocationData {

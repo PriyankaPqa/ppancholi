@@ -1,4 +1,3 @@
-import moment from 'moment';
 import {
   IIdentitySet, IIdentitySetData, IBirthDate, EIndigenousTypes, IIndigenousIdentityOption,
 } from './identitySet.types';
@@ -47,7 +46,7 @@ export class IdentitySet implements IIdentitySet {
       this.gender = data.gender;
       this.genderOther = data.genderOther;
       this.birthDate = data.birthDate;
-      this.dateOfBirth = data.dateOfBirth;
+      this.dateOfBirth = data.dateOfBirth ? new Date(data.dateOfBirth).toISOString() : null;
       this.indigenousProvince = data.indigenousProvince;
       this.indigenousType = data.indigenousType;
       this.indigenousCommunityId = data.indigenousCommunityId;
@@ -107,7 +106,7 @@ export class IdentitySet implements IIdentitySet {
     this.gender = data.gender;
     this.genderOther = data.genderOther;
     this.birthDate = data.birthDate;
-    this.dateOfBirth = moment.utc(helpers.getBirthDateMomentObject(data.birthDate)).format();
+    this.dateOfBirth = helpers.getBirthDateUTCString(data.birthDate);
   }
 
   setIndigenousIdentity(data: IIdentitySetData) {

@@ -1,5 +1,6 @@
 import { IStore, IState } from '@/store/store.types';
 import { TranslateResult } from 'vue-i18n';
+import { IIdentitySet } from '../../../entities/value-objects/identity-set/identitySet.types';
 import { IHouseholdEntity } from '../../../entities/household';
 import {
   ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
@@ -152,7 +153,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       store.commit('registration/setHouseholdResultsShown', payload);
     },
 
-    setPersonalInformation(payload: IContactInformation & IMember) {
+    setPersonalInformation(payload: IContactInformation & IIdentitySet) {
       store.commit('registration/setPersonalInformation', payload);
     },
 

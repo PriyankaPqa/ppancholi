@@ -1,11 +1,12 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
+import { mockIdentitySet } from '../../../entities/value-objects/identity-set/identitySet.mock';
 import { mockHouseholdEntity } from '../../../entities/household';
 import {
   mockContactInformation,
   mockGenders, mockHouseholdCreate,
   mockIndigenousCommunitiesItems,
-  mockIndigenousTypesItems, mockMember,
+  mockIndigenousTypesItems,
   mockPreferredLanguages,
   mockPrimarySpokenLanguages,
 } from '../../../entities/household-create';
@@ -32,7 +33,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     registrationResponse: jest.fn(() => mockHouseholdEntity()),
     registrationErrors: jest.fn(() => []),
     householdCreate: jest.fn(() => _cloneDeep(mockHouseholdCreate())),
-    personalInformation: jest.fn(() => _merge(mockContactInformation(), mockMember())),
+    personalInformation: jest.fn(() => _merge(mockContactInformation(), mockIdentitySet())),
     isSplitMode: jest.fn(() => false),
   },
 

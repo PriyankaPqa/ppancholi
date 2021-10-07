@@ -17,7 +17,8 @@ export interface IHouseholdEntity extends IEntity {
   primaryBeneficiary?: string;
   registrationNumber?: string;
 }
-export interface IMemberMetadata {
+
+export interface IHouseholdMemberMetadata {
   id?: string;
   firstName: string;
   lastName: string;
@@ -38,7 +39,7 @@ export interface IHouseholdCaseFile {
 }
 
 export interface IHouseholdMetadata extends IEntity {
-  memberMetadata: Array<IMemberMetadata>;
+  memberMetadata: Array<IHouseholdMemberMetadata>;
   eventIds: Array<uuid>;
   caseFiles: IHouseholdCaseFile[];
 }

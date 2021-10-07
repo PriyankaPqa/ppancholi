@@ -226,7 +226,7 @@ export default Vue.extend({
     loadGender() {
       if (this.form.gender?.optionItemId) {
         const gender = this.genderItems.find((option: IOptionItemData) => option.id === this.form.gender.optionItemId);
-        this.formCopy.gender = gender;
+        this.formCopy.gender = { ...gender, ...this.form.gender };
       }
     },
   },

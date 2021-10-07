@@ -3,7 +3,7 @@ import { ContactInformation, IContactInformation } from '../contact-information'
 import { IdentitySet, IIdentitySet } from '../identity-set';
 import { CurrentAddress, ICurrentAddress } from '../current-address';
 
-import { IMember, IMemberData } from './member.types';
+import { IMember, IMemberEntity } from './member.types';
 
 export class Member extends BaseEntity implements IMember {
   identitySet: IIdentitySet
@@ -14,7 +14,7 @@ export class Member extends BaseEntity implements IMember {
 
   addressHistory: string[];
 
-  constructor(data?: IMemberData) {
+  constructor(data?: IMemberEntity) {
     if (!data) {
       super();
       this.reset();

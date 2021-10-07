@@ -18,6 +18,7 @@ export class HouseholdStorageMock extends BaseMock<IHouseholdCombined, IHousehol
 
     updateNoFixedHomeAddress: jest.fn(() => this.entity),
     updateHomeAddress: jest.fn(() => this.entity),
+    fetchHouseholdHistory: jest.fn(),
   }
 
   protected mutations = {

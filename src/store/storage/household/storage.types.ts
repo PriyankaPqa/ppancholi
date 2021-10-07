@@ -8,15 +8,18 @@ import {
   IBaseGettersMock,
   IBaseMutationsMock,
 } from '../base/base.types';
+import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
 
 export interface IActions extends IBaseActions<IHouseholdEntity, IHouseholdMetadata> {
   updateNoFixedHomeAddress (householdId: string, observation: string): Promise<IHouseholdEntity>;
   updateHomeAddress (householdId: string, address: IAddress): Promise<IHouseholdEntity>;
+  fetchHouseholdHistory (household: IHouseholdEntity): Promise<IVersionedEntity[]>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IHouseholdEntity, IHouseholdMetadata> {
   updateNoFixedHomeAddress: jest.Mock<IHouseholdEntity>;
   updateHomeAddress: jest.Mock<IHouseholdEntity>;
+  fetchHouseholdHistory: jest.Mock<IVersionedEntity[]>;
 }
 
 export interface IGetters extends IBaseGetters<IHouseholdEntity, IHouseholdMetadata> {}

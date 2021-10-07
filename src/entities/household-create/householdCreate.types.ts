@@ -1,6 +1,6 @@
 import { ERegistrationMethod } from '../../types';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
-import { IMemberData, IMember, MemberCreateRequest } from '../value-objects/member';
+import { IMemberEntity, IMember, MemberCreateRequest } from '../value-objects/member';
 
 export interface ISplitHouseholdMembers {
   primaryMember: IMember;
@@ -13,10 +13,10 @@ export interface ISplitHousehold {
 }
 
 export interface IHouseholdCreateData {
-  primaryBeneficiary: IMemberData;
+  primaryBeneficiary: IMemberEntity;
   noFixedHome: boolean;
   homeAddress: IAddressData;
-  additionalMembers: IMemberData[];
+  additionalMembers: IMemberEntity[];
   consentInformation: IConsentInformation;
   id?: uuid;
   registrationNumber?: string;

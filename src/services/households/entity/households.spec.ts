@@ -127,6 +127,30 @@ describe('>>> Beneficiaries Service', () => {
     });
   });
 
+  test('getHouseholdHistory is linked to the correct URL', async () => {
+    const id = 'mock-id';
+    await service.getHouseholdHistory(id);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/history`);
+  });
+
+  test('getHouseholdMetadataHistory is linked to the correct URL', async () => {
+    const id = 'mock-id';
+    await service.getHouseholdMetadataHistory(id);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/metadata/${id}/history`);
+  });
+
+  test('getMemberHistory is linked to the correct URL', async () => {
+    const id = 'mock-id';
+    await service.getMemberHistory(id);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/${id}/history`);
+  });
+
+  test('getMemberMetadataHistory is linked to the correct URL', async () => {
+    const id = 'mock-id';
+    await service.getMemberMetadataHistory(id);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/persons/metadata/${id}/history`);
+  });
+
   describe('parseMember', () => {
     it('should return the correct object', () => {
       const member = mockMember();

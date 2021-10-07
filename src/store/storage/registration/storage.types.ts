@@ -36,7 +36,7 @@ export interface IStorage {
     registrationResponse(): IHouseholdEntity;
     registrationErrors(): IError[];
     householdCreate(): HouseholdCreate;
-    personalInformation(): IContactInformation & IMember;
+    personalInformation(): IContactInformation & IIdentitySet;
     isSplitMode(): boolean;
   };
 
@@ -56,7 +56,7 @@ export interface IStorage {
     decreaseInlineEditCounter(): void;
     increaseInlineEditCounter(): void;
     setHouseholdResultsShown(payload: boolean): void;
-    setPersonalInformation(payload: IContactInformation & IMember): void;
+    setPersonalInformation(payload: IContactInformation & IIdentitySet): void;
     setPrimaryBeneficiary(payload: IMember): void;
     setIdentity(payload: IIdentitySet): void;
     setIndigenousIdentity(payload: IIdentitySet): void;
@@ -115,7 +115,7 @@ export interface IStorageMock {
     registrationResponse: jest.Mock<IHouseholdEntity>;
     registrationErrors: jest.Mock<IError[]>;
     householdCreate: jest.Mock<IHouseholdCreate>;
-    personalInformation: jest.Mock<IContactInformation & IMember>;
+    personalInformation: jest.Mock<IContactInformation & IIdentitySet>;
     isSplitMode: jest.Mock<boolean>;
   };
 

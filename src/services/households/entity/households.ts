@@ -18,10 +18,11 @@ import {
   MemberCreateRequest,
   IIdentitySet,
   IIdentitySetCreateRequest,
-  IMemberData, IAddress, IValidateEmailResponse, IValidateEmailRequest,
+  IMemberEntity, IAddress, IValidateEmailResponse, IValidateEmailRequest,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
+import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.types';
 
 const API_URL_SUFFIX = 'household';
 const CONTROLLER = 'households';
@@ -57,8 +58,8 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.post(`${this.baseUrl}`, payload, { globalHandler: false });
   }
 
-  async getPerson(id: uuid): Promise<IMemberData> {
-    return this.http.get<IMemberData>(`${this.baseApi}/persons/${id}`);
+  async getPerson(id: uuid): Promise<IMemberEntity> {
+    return this.http.get<IMemberEntity>(`${this.baseApi}/persons/${id}`);
   }
 
   async updatePersonContactInformation(id: string, payload: IContactInformation): Promise<IHouseholdEntity> {
@@ -112,8 +113,26 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
   }
 
   async validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
-    return this.http.post(`${API_URL_SUFFIX}/persons/validate-email-address`, request);
+    return this.http.post(`${this.baseApi}/persons/validate-email-address`, request);
   }
+
+  async getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]> {
+    return this.http.get(`${this.baseUrl}/${id}/history`);
+  }
+
+  async getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
+    return this.http.get(`${this.baseUrl}/metadata/${id}/history`);
+  }
+
+  async getMemberHistory(id: uuid): Promise<IVersionedEntity[]> {
+    return this.http.get(`${this.baseApi}/persons/${id}/history`);
+  }
+
+  async getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
+    return this.http.get(`${this.baseApi}/persons/metadata/${id}/history`);
+  }
+
+  /** Private methods * */
 
   parseHouseholdPayload(household: IHouseholdCreate, eventId: string): ICreateHouseholdRequest {
     return {

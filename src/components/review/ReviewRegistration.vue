@@ -133,14 +133,13 @@ import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
 import CrcPrivacyStatement from '@/components/privacy-statement/CrcPrivacyStatement.vue';
 import moment from 'moment';
-import { IHouseholdCreate, Member } from '@/entities/household-create';
+import { IHouseholdCreate, IIdentitySet, Member } from '@/entities/household-create';
 import _isEqual from 'lodash/isEqual';
 
 import helpers from '@/ui/helpers';
 import { MAX_ADDITIONAL_MEMBERS } from '@/constants/validations';
 import AddEditAdditionalMembers from '@/components/additional-members/AddEditAdditionalMembers.vue';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
-import { IMember } from '../../entities/value-objects/member';
 import additionalMemberForm from '../forms/mixins/additionalMemberForm';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
 import Addresses from '../addresses/Addresses.vue';
@@ -205,7 +204,7 @@ export default mixins(additionalMemberForm).extend({
   },
 
   computed: {
-    getPersonalInformation(): IContactInformation & IMember {
+    getPersonalInformation(): IContactInformation & IIdentitySet {
       return this.$storage.registration.getters.personalInformation();
     },
 

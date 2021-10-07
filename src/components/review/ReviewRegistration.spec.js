@@ -12,7 +12,6 @@ import {
   mockContactInformation,
   mockIndigenousCommunitiesItems,
   mockIndigenousTypesItems,
-  mockMember,
   mockCampGround, mockIdentitySet, mockAddress, mockAdditionalMember, Member,
 } from '../../entities/household-create';
 import AddressesTemplate from './addresses/AddressesTemplate.vue';
@@ -829,7 +828,7 @@ describe('ReviewRegistration.vue', () => {
 
     describe('getPersonalInformation', () => {
       it('should return personalInformation', () => {
-        expect(wrapper.vm.getPersonalInformation).toEqual(_merge(mockContactInformation(), mockMember()));
+        expect(wrapper.vm.getPersonalInformation).toEqual(_merge(mockContactInformation(), mockIdentitySet()));
       });
     });
 
