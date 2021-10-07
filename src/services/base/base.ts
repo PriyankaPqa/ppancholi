@@ -12,7 +12,7 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
   controller: string;
 
   constructor(protected readonly http: IHttpClient, apiUrlSuffix: string, controller: string) {
-    this.baseApi = `${process.env.VUE_APP_API_BASE_URL}/${controller}`;
+    this.baseApi = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}`;
     this.baseUrl = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}/${controller}`;
     this.controller = controller;
   }

@@ -11,4 +11,7 @@ export const localStorageKeys = {
   baseUrl: {
     name: 'base-url',
   },
+  last401Redirect: {
+    name: 'last-401-redirect',
+  },
 };

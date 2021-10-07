@@ -181,5 +181,4 @@ export default Vue.extend({
 ::v-deep .v-input--checkbox .v-label {
   font-size: 12px;
 }
-
 </style>

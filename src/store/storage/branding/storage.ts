@@ -6,8 +6,8 @@ import {
 } from '@/entities/branding';
 
 export class BrandingStorage extends Base<IBrandingEntity, never, uuid> implements IStorage {
-  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
-    super(pStore, pEntityModuleName, pMetadataModuleName);
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string) {
+    super(pStore, pEntityModuleName, null);
   }
 
   private getters = {
@@ -20,6 +20,8 @@ export class BrandingStorage extends Base<IBrandingEntity, never, uuid> implemen
 
   private actions = {
     ...this.baseActions,
+
+    getUserTenants: (): Promise<IBrandingEntity[]> => this.store.dispatch(`${this.entityModuleName}/getUserTenants`),
 
     getBranding: (): Promise<IBrandingEntity> => this.store.dispatch(`${this.entityModuleName}/getBranding`),
 

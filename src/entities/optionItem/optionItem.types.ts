@@ -48,6 +48,4 @@ export interface ICreateOptionItemRequest {
   description?: IMultilingual;
 }
 
-export interface IOptionItemMetadata extends IEntity {}
-
-export type IOptionItemCombined = IEntityCombined<IOptionItem, IOptionItemMetadata>
+export type IOptionItemCombined = IEntityCombined<IOptionItem, never>

@@ -111,7 +111,7 @@ export const mockOptionItem = (force?: Partial<IOptionItem>): IOptionItem => ({
 
 export const mockCombineOptionItem = (): IOptionItemCombined => ({
   entity: mockOptionItem(),
-  metadata: null,
+  metadata: null as never,
 });
 
 export const mockOptionItems = (): IOptionItem[] => [mockOptionItem()];

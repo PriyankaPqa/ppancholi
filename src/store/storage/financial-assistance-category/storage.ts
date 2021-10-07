@@ -1,11 +1,11 @@
 import { IStore, IState } from '@/store/store.types';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
-import { IOptionItem, IOptionItemMetadata } from '@/entities/optionItem';
+import { IOptionItem } from '@/entities/optionItem';
 
-export class FinancialAssistanceCategoryStorage extends Base<IOptionItem, IOptionItemMetadata, uuid> implements IStorage {
-  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
-    super(pStore, pEntityModuleName, pMetadataModuleName);
+export class FinancialAssistanceCategoryStorage extends Base<IOptionItem, never, uuid> implements IStorage {
+  constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string) {
+    super(pStore, pEntityModuleName, null);
   }
 
   private getters = {

@@ -16,6 +16,7 @@ export class BrandingStorageMock extends BaseMock<IBrandingCombined, IBrandingEn
 
   protected actions = {
     ...this.baseActions,
+    getUserTenants: jest.fn(() => [mockBrandingEntity()]),
     getBranding: jest.fn(() => mockBrandingEntity()),
     updateColours: jest.fn(() => mockBrandingEntity()),
     updateTenantDetails: jest.fn(() => mockBrandingEntity()),

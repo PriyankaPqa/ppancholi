@@ -1,4 +1,4 @@
-import { IOptionItem, IOptionItemMetadata } from '@/entities/optionItem';
+import { IOptionItem } from '@/entities/optionItem';
 import {
   IBaseActions,
   IBaseActionsMock,
@@ -8,25 +8,25 @@ import {
   IBaseMutationsMock,
 } from '../base';
 
-export interface IActions extends IBaseActions<IOptionItem, IOptionItemMetadata, uuid> {
+export interface IActions extends IBaseActions<IOptionItem, never, uuid> {
 }
 
-export interface IActionsMock extends IBaseActionsMock<IOptionItem, IOptionItemMetadata> {
-
-}
-
-export interface IGetters extends IBaseGetters<IOptionItem, IOptionItemMetadata> {
+export interface IActionsMock extends IBaseActionsMock<IOptionItem, never> {
 
 }
 
-export interface IGettersMock extends IBaseGettersMock<IOptionItem, IOptionItemMetadata> {
+export interface IGetters extends IBaseGetters<IOptionItem, never> {
 
 }
 
-export interface IMutations extends IBaseMutations<IOptionItem, IOptionItemMetadata> {
+export interface IGettersMock extends IBaseGettersMock<IOptionItem, never> {
+
 }
 
-export interface IMutationsMock extends IBaseMutationsMock<IOptionItem, IOptionItemMetadata> {
+export interface IMutations extends IBaseMutations<IOptionItem, never> {
+}
+
+export interface IMutationsMock extends IBaseMutationsMock<IOptionItem, never> {
 }
 
 export interface IStorageMake {

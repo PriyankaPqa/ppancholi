@@ -28,4 +28,3 @@ export const FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES = 'financialAssistanceCatego
 export const FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES = 'financialAssistancePaymentEntities';
 export const FINANCIAL_ASSISTANCE_PAYMENT_METADATA = 'financialAssistancePaymentMetadata';
 export const BRANDING_ENTITIES = 'brandingEntities';
-export const BRANDING_METADATA = 'brandingMetadata';

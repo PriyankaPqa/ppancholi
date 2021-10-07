@@ -16,6 +16,7 @@ export interface IGettersMock extends IBaseGettersMock<IBrandingEntity, never> {
 }
 
 export interface IActions extends IBaseActions<IBrandingEntity, never, uuid> {
+  getUserTenants(): Promise<IBrandingEntity[]>;
   getBranding(): Promise<IBrandingEntity>;
   updateColours(payload: IEditColoursRequest): Promise<IBrandingEntity>;
   updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<IBrandingEntity>;
@@ -23,6 +24,7 @@ export interface IActions extends IBaseActions<IBrandingEntity, never, uuid> {
 }
 
 export interface IActionsMock extends IBaseActionsMock<IBrandingEntity, never> {
+  getUserTenants: jest.Mock<IBrandingEntity[]>;
   getBranding: jest.Mock<IBrandingEntity>;
   updateColours: jest.Mock<IBrandingEntity>;
   updateTenantDetails: jest.Mock<IBrandingEntity>;

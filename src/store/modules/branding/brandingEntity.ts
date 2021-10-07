@@ -63,6 +63,16 @@ export class BrandingEntityModule extends BaseModule<IBrandingEntity, uuid> {
   public actions = {
     ...this.baseActions,
 
+    getUserTenants: async (context: ActionContext<IBrandingEntityState, IBrandingEntityState>): Promise<IBrandingEntity[]> => {
+      const results = await this.service.getUserTenants();
+
+      if (results) {
+        context.commit('setAll', results);
+      }
+
+      return results.map((r) => new BrandingEntity(r));
+    },
+
     getBranding: async (context: ActionContext<IBrandingEntityState, IBrandingEntityState>): Promise<IBrandingEntity> => {
       const results = await this.service.getAll();
 

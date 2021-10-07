@@ -4,7 +4,7 @@
     app
     right
     temporary
-    :width="$vuetify.breakpoint.xs ? '100%' : '350px'"
+    :width="$vuetify.breakpoint.xs ? '100%' : '450px'"
     :style="$vuetify.breakpoint.xs ? '' : `top: ${$vuetify.application.top}px`"
     :height="$vuetify.breakpoint.xs ? '100%' : `calc(100vh - ${$vuetify.application.top}px)`"
     @input="updateShow">
@@ -18,59 +18,102 @@
       </v-btn>
     </v-toolbar>
 
-    <div class="flex-row align-start pa-4">
-      <v-avatar class="mr-4" color="grey darken-2" size="32" data-test="rightMenu__avatar">
-        <span class="rc-body12 fw-medium white--text">
-          {{ user.getInitials() }}
-        </span>
-      </v-avatar>
+    <div class="pa-4">
+      <div class="flex-row align-start">
+        <v-avatar class="mr-4" color="grey darken-2" size="32" data-test="rightMenu__avatar">
+          <span class="rc-body12 fw-medium white--text">
+            {{ user.getInitials() }}
+          </span>
+        </v-avatar>
 
-      <div>
-        <div class="rc-title-3 fw-medium break-word" data-test="rightMenu__userName">
-          {{ user.getFullName() }}
+        <div>
+          <div class="rc-title-3 fw-medium break-word" data-test="rightMenu__userName">
+            {{ user.getFullName() }}
+          </div>
         </div>
       </div>
-    </div>
 
-    <div v-if="user.email" class="flex-row align-start align-center ps-4 pb-4">
-      <v-icon small>
-        mdi-email
-      </v-icon>
-      <div class="rc-body14 break-word pl-2" data-test="rightMenu__email">
-        {{ user.email }}
+      <v-divider v-if="user.email" class="my-4" />
+
+      <div v-if="user.email" class="flex-row align-start align-center">
+        <v-icon small>
+          mdi-email
+        </v-icon>
+        <div class="rc-body14 break-word pl-2" data-test="rightMenu__email">
+          {{ user.email }}
+        </div>
       </div>
-    </div>
 
-    <div class="flex-row align-start align-center ps-4">
-      <v-icon small>
-        mdi-account-circle
-      </v-icon>
-      <div class="rc-body14 break-word pl-2" data-test="rightMenu__role">
-        <template v-if="user.hasRole(NO_ROLE)">
-          {{ $t('rightmenu.noRoleAssigned') }}
-        </template>
-        <template v-else>
-          {{ userAccount ? $m(userAccount.metadata.roleName) : '' }}
-        </template>
+      <v-divider class="my-4" />
+
+      <div class="flex-row align-start align-center">
+        <v-icon small>
+          mdi-account-circle
+        </v-icon>
+        <div class="rc-body14 break-word pl-2" data-test="rightMenu__role">
+          <template v-if="user.hasRole(NO_ROLE)">
+            {{ $t('rightmenu.noRoleAssigned') }}
+          </template>
+          <template v-else>
+            {{ userAccount ? $m(userAccount.metadata.roleName) : '' }}
+          </template>
+        </div>
       </div>
-    </div>
 
-    <v-select
-      v-if="isDev"
-      class="mt-4 pa-4"
-      outlined
-      :items="[
-        {text: 'No role', value: ''},
-        {text: 'level1', value: 'level1'},
-        {text: 'level2', value: 'level2'},
-        {text: 'level3', value: 'level3'},
-        {text: 'level4', value: 'level4'},
-        {text: 'level5', value: 'level5'},
-        {text: 'level6', value: 'level6'},
-        {text: 'contributorIM', value: 'contributorIM'},
-        {text: 'contributorFinance', value: 'contributorFinance'},
-      ]"
-      @change="$store.commit('user/setRole', $event);" />
+      <v-divider class="my-4" />
+
+      <div>
+        <div class="rc-body12">
+          {{ $t('rightmenu.switchTenant') }}
+        </div>
+        <div data-test="rightMenu__tenant">
+          <v-select
+            v-model="currentTenantId"
+            :items="tenants"
+            item-value="id"
+            outlined>
+            <template #item="data">
+              <div class="flex-row justify-space-between full-width">
+                <div>
+                  {{ $m(data.item.name) }}
+                </div>
+                <v-icon v-if="currentTenantId === data.item.id" small color="status_success">
+                  mdi-check-circle
+                </v-icon>
+              </div>
+            </template>
+            <template #selection="data">
+              <div class="flex-row justify-space-between full-width">
+                <div>
+                  {{ $m(data.item.name) }}
+                </div>
+                <v-icon v-if="currentTenantId === data.item.id" small color="status_success">
+                  mdi-check-circle
+                </v-icon>
+              </div>
+            </template>
+          </v-select>
+        </div>
+      </div>
+
+      <v-divider v-if="isDev" class="my-4" />
+
+      <v-select
+        v-if="isDev"
+        outlined
+        :items="[
+          {text: 'No role', value: ''},
+          {text: 'level1', value: 'level1'},
+          {text: 'level2', value: 'level2'},
+          {text: 'level3', value: 'level3'},
+          {text: 'level4', value: 'level4'},
+          {text: 'level5', value: 'level5'},
+          {text: 'level6', value: 'level6'},
+          {text: 'contributorIM', value: 'contributorIM'},
+          {text: 'contributorFinance', value: 'contributorFinance'},
+        ]"
+        @change="$store.commit('user/setRole', $event);" />
+    </div>
 
     <template #append>
       <v-divider />
@@ -108,6 +151,8 @@
 import Vue from 'vue';
 import { IUser, NO_ROLE } from '@/entities/user';
 import routes from '@/constants/routes';
+import { IBrandingEntity } from '@/entities/branding';
+import { IUserAccountCombined } from '@/entities/user-account';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -115,7 +160,9 @@ export default Vue.extend({
   data() {
     return {
       NO_ROLE,
-      userAccount: null,
+      userAccount: null as IUserAccountCombined,
+      tenantIds: [] as string[],
+      currentTenantId: null as string,
     };
   },
 
@@ -126,6 +173,9 @@ export default Vue.extend({
     user(): IUser {
       return this.$storage.user.getters.user();
     },
+    tenants(): IBrandingEntity[] {
+      return this.$storage.branding.getters.getByIds(this.tenantIds, true).map((e) => e.entity);
+    },
     isDev() {
       return process.env.NODE_ENV === 'development';
     },
@@ -133,6 +183,8 @@ export default Vue.extend({
 
   async mounted() {
     this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId());
+    this.currentTenantId = this.userAccount.entity.tenantId;
+    this.tenantIds = (await this.$storage.branding.actions.getUserTenants()).map((t) => t.id);
   },
 
   methods: {

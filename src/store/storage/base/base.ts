@@ -32,22 +32,17 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     });
   }
 
-  protected metadataActionExists(actionName: string): boolean {
-    // eslint-disable-next-line
-    return Object.keys(this.store._actions).includes(`${this.metadataModuleName}/${actionName}`);
-  }
-
   protected baseGetters = {
     getAll: (): Array<IEntityCombined<TEntity, TMetadata>> => {
       const entities = this.store.getters[`${this.entityModuleName}/getAll`];
-      const metadata = this.store.getters[`${this.metadataModuleName}/getAll`];
+      const metadata = this.metadataModuleName ? this.store.getters[`${this.metadataModuleName}/getAll`] : null;
 
       return this.combinedCollections(entities, metadata);
     },
 
     get: (id: uuid): IEntityCombined<TEntity, TMetadata> => {
       const entity = this.store.getters[`${this.entityModuleName}/get`](id);
-      const metadata = this.store.getters[`${this.metadataModuleName}/get`](id);
+      const metadata = this.metadataModuleName ? this.store.getters[`${this.metadataModuleName}/get`](id) : null;
       return {
         entity,
         metadata,
@@ -57,7 +52,8 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     getByCriteria: (query: string, searchAll: boolean, searchAmong: Array<string>) => {
       // We get results from entities and metadata
       const entities = this.store.getters[`${this.entityModuleName}/getByCriteria`](query, searchAll, searchAmong) as Array<TEntity>;
-      const metadata = this.store.getters[`${this.metadataModuleName}/getByCriteria`](query, searchAll, searchAmong) as Array<TMetadata>;
+      const metadata = this.metadataModuleName
+        ? this.store.getters[`${this.metadataModuleName}/getByCriteria`](query, searchAll, searchAmong) as Array<TMetadata> : [];
 
       const entityIds = entities.map((h) => h.id);
       const metadataIds = metadata.map((m) => m.id);
@@ -66,14 +62,15 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
 
       const foundEntities = this.store.getters[`${this.entityModuleName}/getAll`].filter((e: TEntity) => matchingIds.indexOf(e.id) >= 0);
 
-      const foundMetadata = this.store.getters[`${this.metadataModuleName}/getAll`].filter((e: TMetadata) => matchingIds.indexOf(e.id) >= 0);
+      const foundMetadata = this.metadataModuleName
+        ? this.store.getters[`${this.metadataModuleName}/getAll`].filter((e: TMetadata) => matchingIds.indexOf(e.id) >= 0) : [];
 
       return this.combinedCollections(foundEntities, foundMetadata);
     },
 
     getByIds: (ids: uuid[], onlyActive = false) => {
       const entities = this.store.getters[`${this.entityModuleName}/getByIds`](ids, onlyActive);
-      const metadata = this.store.getters[`${this.metadataModuleName}/getByIds`](ids, onlyActive);
+      const metadata = this.metadataModuleName ? this.store.getters[`${this.metadataModuleName}/getByIds`](ids, onlyActive) : [];
 
       return this.combinedCollections(entities, metadata);
     },
@@ -85,8 +82,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       : Promise<IEntityCombined<TEntity, TMetadata>> => {
       const requests = [this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler })];
 
-      // Metadata do not exist for option items (financial categories, document categories etc.)
-      if (this.metadataActionExists('fetch')) {
+      if (this.metadataModuleName) {
         requests.push(this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler }));
       }
       const results = await Promise.all(requests);
@@ -102,8 +98,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     fetchAll: async (parentId?: Omit<IdParams, 'id'>): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
       const requests = [this.store.dispatch(`${this.entityModuleName}/fetchAll`, parentId)];
 
-      // Metadata do not exist for option items (financial categories, document categoris etc.)
-      if (this.metadataActionExists('fetchAll')) {
+      if (this.metadataModuleName) {
         requests.push(this.store.dispatch(`${this.metadataModuleName}/fetchAll`, parentId));
       }
       const results = await Promise.all(requests);
@@ -116,8 +111,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     fetchAllIncludingInactive: async (): Promise<IEntityCombined<TEntity, TMetadata>[]> => {
       const requests = [this.store.dispatch(`${this.entityModuleName}/fetchAllIncludingInactive`)];
 
-      // Metadata do not exist for option items (financial categories, document categoris etc.)
-      if (this.metadataActionExists('fetchAllIncludingInactive')) {
+      if (this.metadataModuleName) {
         requests.push(this.store.dispatch(`${this.metadataModuleName}/fetchAllIncludingInactive`));
       }
       const results = await Promise.all(requests);
@@ -131,9 +125,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       const returned = await this.store.dispatch(`${this.entityModuleName}/deactivate`, idParams) as TEntity;
       // If entity is inactive, deactivate Metadata
       if (returned && returned.status === Status.Inactive) {
-        const metadata = _cloneDeep(await this.store.getters[`${this.metadataModuleName}/get`](returned.id));
-        metadata.status = Status.Inactive;
-        this.store.commit(`${this.metadataModuleName}/set`, metadata);
+        if (this.metadataModuleName) {
+          const metadata = _cloneDeep(await this.store.getters[`${this.metadataModuleName}/get`](returned.id));
+          metadata.status = Status.Inactive;
+          this.store.commit(`${this.metadataModuleName}/set`, metadata);
+        }
       }
       return returned;
     },
@@ -165,7 +161,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
             const entity = { ...res.entity, eTag: res.entityETag };
             const metadata = { ...res.metadata, eTag: res.metadataETag };
             this.store.commit(`${this.entityModuleName}/set`, entity);
-            this.store.commit(`${this.metadataModuleName}/set`, metadata);
+            if (this.metadataModuleName) this.store.commit(`${this.metadataModuleName}/set`, metadata);
             return entity.id;
           });
 
@@ -187,11 +183,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     },
 
     setMetadata: (metadata: TMetadata) => {
-      this.store.commit(`${this.metadataModuleName}/set`, metadata);
+      if (this.metadataModuleName) this.store.commit(`${this.metadataModuleName}/set`, metadata);
     },
 
     setAllMetadata: (payload:TMetadata[]) => {
-      this.store.commit(`${this.metadataModuleName}/setAll`, payload);
+      if (this.metadataModuleName) this.store.commit(`${this.metadataModuleName}/setAll`, payload);
     },
   }
 

@@ -40,7 +40,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   userAccount: new UserAccountStorage(store, vuexModule.USER_ACCOUNT_ENTITIES, vuexModule.USER_ACCOUNT_METADATA).make(),
   event: new EventStorage(store, vuexModule.EVENT_ENTITIES, vuexModule.EVENT_METADATA).make(),
   massAction: new MassActionStorage(store, vuexModule.MASS_ACTION_ENTITIES, vuexModule.MASS_ACTION_METADATA).make(),
-  financialAssistanceCategory: new FinancialAssistanceCategoryStorage(store, vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES, null).make(),
+  financialAssistanceCategory: new FinancialAssistanceCategoryStorage(store, vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES).make(),
   financialAssistancePayment: new FinancialAssistancePaymentStorage(
     store,
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES,
@@ -49,6 +49,5 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   branding: new BrandingStorage(
     store,
     vuexModule.BRANDING_ENTITIES,
-    vuexModule.BRANDING_METADATA,
   ).make(),
 });

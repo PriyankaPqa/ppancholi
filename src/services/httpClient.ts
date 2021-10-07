@@ -9,6 +9,7 @@ import buildQuery from '@/services/odata-query';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IAzureSearchParams, IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
+import routes from '@/constants/routes';
 
 export interface IRestResponse<T> {
   headers?: any;
@@ -46,6 +47,8 @@ export interface IHttpClient {
 
 class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
+
+  private reloadTimeout = null as NodeJS.Timeout;
 
   constructor() {
     this.axios = axios.create({
@@ -92,9 +95,30 @@ class HttpClient implements IHttpClient {
 
   private async error401Handler() {
     Vue.toasted.global.warning(i18n.t('error.401.refresh'));
-    setTimeout(() => {
-      window.location.reload();
-    }, 4000);
+
+    try {
+      const last401Redirect = localStorage.getItem(localStorageKeys.last401Redirect.name);
+      // so not to loop the user indefinitely, if he had been redirected already in the last 30 seconds we wont
+      if (!last401Redirect || Number.isNaN(new Date(last401Redirect).getTime())
+        || Math.abs(new Date().getTime() - new Date(last401Redirect).getTime()) > 30000) {
+        localStorage.setItem(localStorageKeys.last401Redirect.name, (new Date()).toISOString());
+        this.reloadTimeout = setTimeout(() => {
+          this.reloadTimeout = null;
+          window.location.reload();
+        }, 4000);
+      } else if (!this.reloadTimeout && !window.location.href.endsWith(routes.loginError.path)) {
+        // if we just tried but it didnt work, try to send them to logout page...
+        setTimeout(() => {
+          window.location.href = routes.loginError.path;
+        }, 4000);
+      }
+    } catch (error) {
+      if (!window.location.href.endsWith(routes.loginError.path)) {
+        setTimeout(() => {
+          window.location.href = routes.loginError.path;
+        }, 4000);
+      }
+    }
   }
 
   private async responseErrorHandler(error: any) {

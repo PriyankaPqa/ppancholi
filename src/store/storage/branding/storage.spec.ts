@@ -1,10 +1,9 @@
 import { mockStore } from '@/store';
 import { BrandingStorage } from './storage';
-import { BRANDING_ENTITIES, BRANDING_METADATA } from '@/constants/vuex-modules';
+import { BRANDING_ENTITIES } from '@/constants/vuex-modules';
 import { mockEditColoursRequest, mockEditTenantDetailsRequest } from '@/entities/branding';
 
 const entityModuleName = BRANDING_ENTITIES;
-const metadataModuleName = BRANDING_METADATA;
 
 const store = mockStore(
   {
@@ -12,15 +11,12 @@ const store = mockStore(
       [entityModuleName]: {
         state: {},
       },
-      [metadataModuleName]: {
-        state: {},
-      },
     },
   },
   { commit: true, dispatch: true },
 );
 
-const storage = new BrandingStorage(store, entityModuleName, metadataModuleName).make();
+const storage = new BrandingStorage(store, entityModuleName).make();
 
 describe('>>> Branding Storage', () => {
   describe('>> Getters', () => {

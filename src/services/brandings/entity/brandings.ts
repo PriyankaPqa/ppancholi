@@ -7,10 +7,15 @@ import { IBrandingsService } from './brandings.types';
 
 const API_URL_SUFFIX = 'system-management';
 const ENTITY = 'brandings';
+const USER_TENANT_CONTROLLER = 'tenants';
 
 export class BrandingsService extends DomainBaseService<IBrandingEntity, uuid> implements IBrandingsService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, ENTITY);
+  }
+
+  async getUserTenants(): Promise<IBrandingEntityData[]> {
+    return this.http.get(`${this.baseApi}/${USER_TENANT_CONTROLLER}`);
   }
 
   async updateColours(payload: IEditColoursRequest): Promise<IBrandingEntityData> {
