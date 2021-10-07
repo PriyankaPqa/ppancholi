@@ -58,7 +58,7 @@
                   data-test="nextButton"
                   :aria-label="getNextButtonLabel"
                   :loading="submitLoading"
-                  :disabled="failed || inlineEdit"
+                  :disabled="submitLoading || failed || inlineEdit"
                   @click="next()">
                   {{ getNextButtonLabel }}
                 </v-btn>
@@ -148,10 +148,6 @@ export default mixins(individual).extend({
 
     eventName(): string {
       return this.$m(this.event.name);
-    },
-
-    submitLoading(): boolean {
-      return false;
     },
 
     titleLeave(): TranslateResult {

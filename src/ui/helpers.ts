@@ -220,8 +220,7 @@ export default {
 
   provinceCodeName(address: IAddress): string {
     const provinceCode = address?.province;
-    if (!provinceCode) return '';
-    if (provinceCode === ECanadaProvinces.OT) {
+    if (!provinceCode || provinceCode === ECanadaProvinces.OT) {
       return address?.specifiedOtherProvince;
     }
     return i18n.t(`common.provinces.code.${ECanadaProvinces[provinceCode]}`) as string;

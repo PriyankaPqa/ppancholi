@@ -325,12 +325,6 @@ describe('Individual.vue', () => {
       });
     });
 
-    describe('submitLoading', () => {
-      it('should return false', () => {
-        expect(wrapper.vm.submitLoading).toEqual(false);
-      });
-    });
-
     describe('titleLeave', () => {
       it('should return proper text for association household', () => {
         wrapper = shallowMount(Component, {

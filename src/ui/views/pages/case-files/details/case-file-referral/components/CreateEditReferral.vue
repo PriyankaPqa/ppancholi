@@ -118,7 +118,7 @@ export default Vue.extend({
           }
           if (referral) {
             this.$toasted.global.success(this.$t(this.isEditMode ? 'referral.edit.success' : 'referral.create.success'));
-            this.$router.replace({ name: routes.caseFile.referrals.home.name });
+            this.$router.replace({ name: routes.caseFile.referrals.details.name, params: { referralId: referral.id } });
           }
         } catch (e) {
           this.$toasted.global.error(this.$t(e.code));

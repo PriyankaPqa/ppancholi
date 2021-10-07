@@ -1,14 +1,14 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { CaseFileReferralEntity, mockCombinedCaseFileReferral } from '@/entities/case-file-referral';
 import Component from './CreateEditReferral.vue';
+import { mockStorage } from '@/store/storage';
 
 const localVue = createLocalVue();
+const storage = mockStorage();
 
 describe('CreateEditReferral', () => {
   let wrapper;
   let actions;
-  let mockReferral;
 
   const doMount = (isEditMode) => {
     wrapper = shallowMount(Component, {
@@ -28,24 +28,14 @@ describe('CreateEditReferral', () => {
             id: 'CASEFILE_ID',
           },
         },
-      },
-      store: {
-        modules: {
-          caseReferralEntities: {
-            actions,
-          },
-        },
+        $storage: storage,
       },
     });
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockReferral = new CaseFileReferralEntity(mockCombinedCaseFileReferral());
-    actions = {
-      createReferral: jest.fn(() => mockReferral),
-      updateReferral: jest.fn(() => mockReferral),
-    };
+    actions = storage.caseFileReferral.actions;
     doMount(false);
   });
 
@@ -80,13 +70,14 @@ describe('CreateEditReferral', () => {
         expect(actions.updateReferral).toHaveBeenCalledTimes(1);
       });
 
-      test('after submitting, the user is redirected to the referrals list page', async () => {
+      test('after submitting, the user is redirected to the referral detail page', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-
+        wrapper.vm.$storage.caseFileReferral.actions.createReferral = jest.fn(() => ({ id: 'abc' }));
         await wrapper.vm.submit();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
-          name: routes.caseFile.referrals.home.name,
+          name: routes.caseFile.referrals.details.name,
+          params: { referralId: 'abc' },
         });
       });
 
@@ -123,6 +114,7 @@ describe('CreateEditReferral', () => {
                 referralId: 'REF_ID',
               },
             },
+            $storage: storage,
           },
         });
 
@@ -144,6 +136,7 @@ describe('CreateEditReferral', () => {
                 referralId: 'REF_ID',
               },
             },
+            $storage: storage,
           },
         });
 
@@ -187,6 +180,9 @@ describe('CreateEditReferral', () => {
           localVue,
           propsData: {
             id: 'CASEFILE_ID',
+          },
+          mocks: {
+            $storage: storage,
           },
         });
       });
