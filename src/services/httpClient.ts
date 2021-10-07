@@ -7,7 +7,7 @@ import axios, {
 import { camelKeys } from 'js-convert-case';
 import buildQuery from '@/services/odata-query';
 import { localStorageKeys } from '@/constants/localStorage';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams, IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 
 export interface IRestResponse<T> {
@@ -24,6 +24,14 @@ export interface RequestConfig extends AxiosRequestConfig {
   containsEncodedURL?: boolean;
 }
 
+export interface IError {
+  status: string,
+  code: string,
+  title: string,
+  detail: string,
+  meta: Record<string, string | IMultilingual>
+}
+
 export interface IHttpClient {
   getFullResponse: <T>(url: string, config?: RequestConfig) => Promise<IRestResponse<T>>;
   get: <T>(url: string, config?: RequestConfig) => Promise<T>;
@@ -33,14 +41,7 @@ export interface IHttpClient {
   delete: <T>(url: string, data?: any) => Promise<T>;
   setHeadersLanguage(lang: string): void;
   setHeadersTenant(tenantId: string): void;
-}
-
-export interface IError {
-  status: string,
-  code: string,
-  title: string,
-  detail: string,
-  meta: Record<string, string>
+  getFormattedError(error: IError): string;
 }
 
 class HttpClient implements IHttpClient {
@@ -108,9 +109,7 @@ class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(error.config)) {
       if (errors && Array.isArray(errors)) {
         errors.forEach((error: IError) => {
-          // take error.code if we have it translated...
-          const errorText = i18n.t(error.code) !== error.code ? i18n.t(error.code) : i18n.t(`${error.title || error.code}`);
-          Vue.toasted.global.error(errorText);
+          Vue.toasted.global.error(this.getFormattedError(error));
         });
       } else {
         Vue.toasted.global.error(i18n.t('error.unexpected_error'));
@@ -147,7 +146,7 @@ class HttpClient implements IHttpClient {
     return request;
   }
 
-  private createErrorObject(error: AxiosError): AxiosError {
+  private createErrorObject(error: any): AxiosError {
     return error;
   }
 
@@ -198,6 +197,43 @@ class HttpClient implements IHttpClient {
     } catch (e) {
       throw this.createErrorObject(e);
     }
+  }
+
+  public getFormattedError(error: IError): string {
+    /*
+      expected error object looks like this
+      error.meta: Record<string, string | IMultilingual>
+
+      so it could be this:
+      error.meta = { 'PaymentModality' :{ translation: {'en': 'my english value', 'fr': 'en francais c toujours mieux'} }}
+      or
+      error.meta = { 'MaxValue' : '128'}
+
+      with a lokalise text that would be something like 'This is my {PaymentModality}'
+    */
+
+    // take error.code if we have it translated...
+    let text = (i18n.t(error.code) !== error.code ? i18n.t(error.code) : i18n.t(`${error.title || error.code}`)) as string;
+    let { locale } = i18n;
+
+    if (locale !== 'en' && locale !== 'fr') {
+      locale = 'en';
+    }
+
+    if (error.meta) {
+      for (let i = 0; i < Object.keys(error.meta).length; i += 1) {
+        const key = Object.keys(error.meta)[i];
+        const val = error.meta[key];
+        if (typeof (val) !== 'object') {
+          // if it's a string, replace it directly
+          text = text.replace(new RegExp(`{${key}}`, 'gi'), val);
+        } else {
+          // if it's a multilingual, we use the translation
+          text = text.replace(new RegExp(`{${key}}`, 'gi'), (val && val.translation && val.translation[locale]) || '');
+        }
+      }
+    }
+    return text;
   }
 }
 
