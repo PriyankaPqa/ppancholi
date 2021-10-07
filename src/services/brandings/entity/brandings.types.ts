@@ -4,6 +4,7 @@ import {
 import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 
 export interface IBrandingsService extends IDomainBaseService<IBrandingEntity, uuid> {
+  getCurrentBranding(): Promise<IBrandingEntityData>;
   getUserTenants(): Promise<IBrandingEntityData[]>;
   updateColours(payload: IEditColoursRequest): Promise<IBrandingEntityData>;
   updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<IBrandingEntityData>;
@@ -11,6 +12,7 @@ export interface IBrandingsService extends IDomainBaseService<IBrandingEntity, u
 }
 
 export interface IBrandingsServiceMock extends IDomainBaseServiceMock<IBrandingEntity> {
+  getCurrentBranding: jest.Mock<IBrandingEntityData>;
   getUserTenants: jest.Mock<IBrandingEntityData[]>;
   updateColours: jest.Mock<IBrandingEntityData>;
   updateTenantDetails: jest.Mock<IBrandingEntityData>;

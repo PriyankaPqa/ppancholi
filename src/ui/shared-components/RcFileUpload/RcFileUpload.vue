@@ -21,7 +21,6 @@
         </v-btn>
       </template>
     </v-file-input>
-    <!-- eslint-disable-next-line vue/no-v-html -->
     <div v-if="errors.length === 0 && errorMessages.length === 0 && showRules" class="rc-caption12 mt-n6">
       {{ $t('common.upload.max_file.size', {x: helpers.formatBytes(maxSize)}) }}
     </div>

@@ -14,6 +14,10 @@ export class BrandingsService extends DomainBaseService<IBrandingEntity, uuid> i
     super(http, API_URL_SUFFIX, ENTITY);
   }
 
+  async getCurrentBranding(): Promise<IBrandingEntityData> {
+    return this.http.get(`${this.baseUrl}/current-branding`);
+  }
+
   async getUserTenants(): Promise<IBrandingEntityData[]> {
     return this.http.get(`${this.baseApi}/${USER_TENANT_CONTROLLER}`);
   }
@@ -28,6 +32,8 @@ export class BrandingsService extends DomainBaseService<IBrandingEntity, uuid> i
 
   async getLogoUrl(languageCode: string): Promise<string> {
     const response = await this.http.getFullResponse<BlobPart>(`${this.baseUrl}/logo/${languageCode}`, { responseType: 'blob' });
+
+    if (!response?.data) return null;
 
     const blob = new Blob([response.data], { type: response.headers['content-type'] });
     const url = window.URL.createObjectURL(blob);

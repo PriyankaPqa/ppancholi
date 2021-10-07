@@ -32,21 +32,21 @@ describe('Branding.vue', () => {
   });
 
   describe('>> Computed', () => {
-    describe('disableEditBtn', () => {
+    describe('isEditingBranding', () => {
       it('returns correct value', async () => {
         await wrapper.setData({
           isEditingColours: true,
           isEditingTenantDetails: false,
         });
 
-        expect(wrapper.vm.disableEditBtn).toBeTruthy();
+        expect(wrapper.vm.isEditingBranding).toBeTruthy();
 
         await wrapper.setData({
           isEditingColours: false,
           isEditingTenantDetails: false,
         });
 
-        expect(wrapper.vm.disableEditBtn).toBeFalsy();
+        expect(wrapper.vm.isEditingBranding).toBeFalsy();
       });
     });
   });

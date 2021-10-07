@@ -28,8 +28,8 @@ export class BrandingEntityModule extends BaseModule<IBrandingEntity, uuid> {
 
     branding: null,
     logoUrl: {
-      en: '',
-      fr: '',
+      en: '/img/placeholder-logo-en.png',
+      fr: '/img/placeholder-logo-fr.png',
     },
   };
 
@@ -74,14 +74,13 @@ export class BrandingEntityModule extends BaseModule<IBrandingEntity, uuid> {
     },
 
     getBranding: async (context: ActionContext<IBrandingEntityState, IBrandingEntityState>): Promise<IBrandingEntity> => {
-      const results = await this.service.getAll();
+      const result = await this.service.getCurrentBranding();
 
-      if (results) {
-        // tenant has only one branding
-        context.commit('setBranding', results[0]);
+      if (result) {
+        context.commit('setBranding', result);
       }
 
-      return new BrandingEntity((results[0] as unknown) as IBrandingEntityData);
+      return new BrandingEntity(result);
     },
 
     updateColours: async (
@@ -117,7 +116,9 @@ export class BrandingEntityModule extends BaseModule<IBrandingEntity, uuid> {
 
       const url = await this.service.getLogoUrl(lang);
 
-      context.commit('setLogoUrl', { languageCode: lang, url });
+      if (url) {
+        context.commit('setLogoUrl', { languageCode: lang, url });
+      }
 
       return url;
     },

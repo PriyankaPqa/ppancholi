@@ -1,4 +1,3 @@
-import { IMultilingual } from '@/types';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,

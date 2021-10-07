@@ -3,7 +3,6 @@ import { Status } from '@/entities/base';
 import {
   EFinancialAmountModes,
   EFinancialFrequency, mockCombinedFinancialAssistance,
-  mockFinancialAssistanceTableEntity,
   mockItems,
   mockSubItems,
 } from '@/entities/financial-assistance';

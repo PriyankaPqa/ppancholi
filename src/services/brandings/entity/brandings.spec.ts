@@ -15,6 +15,13 @@ describe('>>> Brandings service', () => {
     service = new BrandingsService(http as never);
   });
 
+  describe('getCurrentBranding', () => {
+    it('is linked to the correct url', async () => {
+      await service.getCurrentBranding();
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/brandings/current-branding');
+    });
+  });
+
   describe('updateColours', () => {
     it('is linked to the correct url', async () => {
       await service.updateColours(mockEditColoursRequest());

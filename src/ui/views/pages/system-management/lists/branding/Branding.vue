@@ -1,11 +1,19 @@
 <template>
-  <rc-page-content :title="$t('system_management.lists.branding')" content-padding="10" :outer-scroll="true" :full-height="false">
+  <rc-page-content :title="$t('system_management.lists.branding')" content-padding="10" :outer-scroll="true" :full-height="true">
     <v-container class="px-12">
-      <colours class="px-12" :disable-edit-btn="disableEditBtn" :is-editing-colours.sync="isEditingColours" />
+      <colours
+        ref="colours"
+        class="px-12"
+        :disable-edit-btn="isEditingBranding"
+        :is-editing-colours.sync="isEditingColours" />
 
-      <logo class="px-12" :disable-edit-btn="disableEditBtn" />
+      <logo ref="logo" class="px-12" :disable-edit-btn="isEditingBranding" />
 
-      <tenant-details class="px-12" :disable-edit-btn="disableEditBtn" :is-editing-tenant-details.sync="isEditingTenantDetails" />
+      <tenant-details
+        ref="tenantDetails"
+        class="px-12"
+        :disable-edit-btn="isEditingBranding"
+        :is-editing-tenant-details.sync="isEditingTenantDetails" />
     </v-container>
 
     <template slot="actions">
@@ -19,10 +27,14 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
+import { Route, NavigationGuardNext } from 'vue-router';
 import routes from '@/constants/routes';
 import Colours from './Colours.vue';
 import Logo from './Logo.vue';
 import TenantDetails from './TenantDetails.vue';
+import helpers from '@/ui/helpers';
+
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 export default Vue.extend({
   name: 'Branding',
@@ -34,6 +46,15 @@ export default Vue.extend({
     TenantDetails,
   },
 
+  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
+    const colourDirty = (this.$refs.colours as any).isDirty;
+    const logoDirty = (this.$refs.logo as any).isDirty;
+    const tenantDetailsDirty = (this.$refs.tenantDetails as any).isDirty;
+    const isDirty = colourDirty || logoDirty || tenantDetailsDirty;
+
+    await helpers.confirmBeforeLeaving(this, this.isEditingBranding && isDirty, next);
+  },
+
   data() {
     return {
       isEditingColours: false,
@@ -42,7 +63,7 @@ export default Vue.extend({
   },
 
   computed: {
-    disableEditBtn(): boolean {
+    isEditingBranding(): boolean {
       return this.isEditingColours || this.isEditingTenantDetails;
     },
   },

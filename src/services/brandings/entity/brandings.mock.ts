@@ -4,6 +4,7 @@ import { IBrandingsServiceMock } from './brandings.types';
 
 export const mockProgramsService = (): IBrandingsServiceMock => ({
   ...mockDomainBaseService([mockBrandingEntity()]),
+  getCurrentBranding: jest.fn(() => mockBrandingEntityData()),
   getUserTenants: jest.fn(() => [mockBrandingEntityData()]),
   updateColours: jest.fn(() => mockBrandingEntityData()),
   updateTenantDetails: jest.fn(() => mockBrandingEntityData()),

@@ -13,7 +13,7 @@
         <v-col
           v-for="lang in supportedLanguages"
           :key="lang.key"
-          :class="{ 'img-container d-flex flex-column': true, 'mr-3': lang.key === 'en', 'ml-3': lang.key === 'fr' }">
+          :class="{ 'img-container d-flex flex-column': true, 'mr-2': lang.key === 'en', 'ml-2': lang.key === 'fr' }">
           <div class="logo-title rc-body14 ml-2">
             <span>{{ $t(`tab.${lang.key}`) }}</span>
             <v-btn :data-test="`logo-${lang}__editBtn`" icon :disabled="disableEditBtn" @click="enterEditMode(lang.key)">
@@ -102,7 +102,7 @@ export default mixins(fileUpload).extend({
       loading: false,
 
       allowedExtensions: LOGO_EXTENSIONS,
-      tempLogoUrl: '',
+      tempLogoUrl: null,
       currentLogoLanguage: '',
       errors: [] as string[],
     };
@@ -122,7 +122,7 @@ export default mixins(fileUpload).extend({
     },
 
     isDirty(): boolean {
-      return this.tempLogoUrl !== this.getLogoUrlFromStore(this.currentLogoLanguage);
+      return !!this.tempLogoUrl && this.tempLogoUrl !== this.getLogoUrlFromStore(this.currentLogoLanguage);
     },
   },
 
@@ -136,6 +136,7 @@ export default mixins(fileUpload).extend({
     exitEditMode() {
       this.isEditing = false;
       this.errors = [];
+      this.tempLogoUrl = null;
     },
 
     updateFile(file: File, isValid: boolean) {

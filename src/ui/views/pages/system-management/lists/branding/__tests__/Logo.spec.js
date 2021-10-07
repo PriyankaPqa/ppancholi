@@ -54,6 +54,37 @@ describe('Logo.vue', () => {
         expect(wrapper.vm.typesRuleText).toEqual(`system_management.branding.logo.typesAllowed: .${LOGO_EXTENSIONS.join(', .')}`);
       });
     });
+
+    describe('isDirty', () => {
+      it('returns false if no tempLogoUrl', async () => {
+        await wrapper.setData({
+          tempLogoUrl: null,
+        });
+
+        expect(wrapper.vm.isDirty).toBe(false);
+      });
+
+      it('returns false if no tempLogoUrl is the same from storage', async () => {
+        const testUrl = 'url';
+
+        wrapper.vm.getLogoUrlFromStore = jest.fn(() => testUrl);
+
+        await wrapper.setData({
+          tempLogoUrl: testUrl,
+        });
+
+        expect(wrapper.vm.isDirty).toBe(false);
+      });
+
+      it('returns true if no tempLogoUrl is different than storage', async () => {
+        wrapper.vm.getLogoUrlFromStore = jest.fn(() => 'url 1');
+        await wrapper.setData({
+          tempLogoUrl: 'url 2',
+        });
+
+        expect(wrapper.vm.isDirty).toBe(true);
+      });
+    });
   });
 
   describe('>> Methods', () => {

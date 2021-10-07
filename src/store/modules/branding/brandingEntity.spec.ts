@@ -86,20 +86,20 @@ describe('>>> Branding entity module', () => {
 
   describe('>> Actions', () => {
     describe('getBranding', () => {
-      it('calls the getAll service', async () => {
-        module.service.getAll = jest.fn(() => Promise.resolve([mockBrandingEntity()]));
+      it('calls the getCurrentBranding service', async () => {
+        module.service.getCurrentBranding = jest.fn(() => Promise.resolve(mockBrandingEntityData()));
 
         await module.actions.getBranding(actionContext);
 
-        expect(module.service.getAll).toHaveBeenCalledTimes(1);
+        expect(module.service.getCurrentBranding).toHaveBeenCalledTimes(1);
       });
 
       it('commits the branding', async () => {
-        module.service.getAll = jest.fn(() => Promise.resolve([mockBrandingEntity()]));
+        module.service.getCurrentBranding = jest.fn(() => Promise.resolve(mockBrandingEntityData()));
 
         await module.actions.getBranding(actionContext);
 
-        expect(actionContext.commit).toBeCalledWith('setBranding', mockBrandingEntity());
+        expect(actionContext.commit).toBeCalledWith('setBranding', mockBrandingEntityData());
       });
     });
 

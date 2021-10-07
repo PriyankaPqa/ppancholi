@@ -10,7 +10,6 @@ import {
 import { mockProgramEntity } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { httpClient } from '@/services/httpClient';
-import { IMultilingual } from '@/types';
 import { Status } from '@/entities/base';
 import { FinancialAssistanceEntityModule } from './financialAssistanceEntity';
 

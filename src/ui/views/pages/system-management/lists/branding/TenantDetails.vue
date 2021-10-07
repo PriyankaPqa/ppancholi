@@ -20,7 +20,7 @@
             <td class="fw-bold text-no-wrap">
               {{ $t('common.name') }}
             </td>
-            <td>
+            <td class="py-3">
               {{ $m(tenantDetails.name) }}
               <br>
               <span
@@ -33,7 +33,7 @@
             <td class="fw-bold text-no-wrap">
               {{ $t('common.description') }}
             </td>
-            <td>
+            <td class="py-3">
               {{ $m(tenantDetails.description) }}
             </td>
           </tr>
@@ -42,7 +42,7 @@
     </v-col>
 
     <v-col v-else cols="12" data-test="edit-tenant-details">
-      <validation-observer ref="form" v-slot="{ dirty, invalid }" slim>
+      <validation-observer ref="form" v-slot="{ invalid }" slim>
         <language-tabs :language="languageMode" @click="setLanguageMode" />
 
         <v-col cols="12">
@@ -73,7 +73,7 @@
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" class="ml-4" :disabled="!dirty || invalid" :loading="loading" @click.stop="submit()">
+          <v-btn color="primary" data-test="save" class="ml-4" :disabled="!isDirty || invalid" :loading="loading" @click.stop="submit()">
             {{ $t('common.save') }}
           </v-btn>
         </v-col>
@@ -86,6 +86,7 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VTextFieldWithValidation, VCheckboxWithValidation, VTextAreaWithValidation } from '@crctech/component-library';
+import _isEqual from 'lodash/isEqual';
 import entityUtils from '@/entities/utils';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { IEditTenantDetailsRequest, ITenantDetailsEntity } from '@/entities/branding';
@@ -133,6 +134,10 @@ export default Vue.extend({
         },
       };
     },
+
+    isDirty(): boolean {
+      return !!this.tempTenantDetails && !_isEqual(this.tempTenantDetails, this.tenantDetails);
+    },
   },
 
   methods: {
@@ -149,6 +154,7 @@ export default Vue.extend({
 
     exitEditMode() {
       this.isEditing = false;
+      this.tempTenantDetails = null;
       this.$emit('update:is-editing-tenant-details', this.isEditing);
     },
 

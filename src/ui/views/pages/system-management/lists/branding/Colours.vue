@@ -44,9 +44,9 @@
 import Vue from 'vue';
 
 type ColourViewModel = {
-  labelKey: string,
-  value: string,
-  errorMsgKey: string,
+  labelKey: string;
+  value: string;
+  errorMsgKey: string;
 };
 
 export default Vue.extend({
@@ -63,7 +63,6 @@ export default Vue.extend({
     return {
       isEditing: false,
       loading: false,
-      isDirty: false,
       isValid: true,
       colours: [
         {
@@ -90,6 +89,18 @@ export default Vue.extend({
     };
   },
 
+  computed: {
+    isDirty(): boolean {
+      const colors = this.$storage.branding.getters.branding().colours;
+      return (
+        this.colours[0].value !== colors.primary
+        || this.colours[1].value !== colors.primaryLight
+        || this.colours[2].value !== colors.primaryDark
+        || this.colours[3].value !== colors.secondary
+      );
+    },
+  },
+
   watch: {
     colours: {
       handler(colours: ColourViewModel[]) {
@@ -103,7 +114,6 @@ export default Vue.extend({
           }
         });
 
-        this.isDirty = this.isEditing;
         this.isValid = isValid;
       },
       deep: true,
@@ -120,7 +130,6 @@ export default Vue.extend({
       this.$emit('update:is-editing-colours', this.isEditing);
 
       if (!this.isEditing) {
-        this.isDirty = false;
         this.resetColours();
       }
     },

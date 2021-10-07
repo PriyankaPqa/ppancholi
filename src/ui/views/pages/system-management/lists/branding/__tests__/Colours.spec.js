@@ -1,7 +1,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import Component from '../Colours.vue';
-import { mockBrandingEntity } from '@/entities/branding';
+import { mockBrandingEntity, mockEditColoursRequest } from '@/entities/branding';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -37,6 +37,38 @@ describe('Colours.vue', () => {
 
       expect(wrapper.findDataTest('cancel').exists()).toBeTruthy();
       expect(wrapper.findDataTest('save').exists()).toBeTruthy();
+    });
+  });
+
+  describe('>> Computed', () => {
+    describe('isDirty', () => {
+      it('compares the colours with store', async () => {
+        const { colours } = mockEditColoursRequest();
+
+        jest.spyOn(storage.branding.getters, 'branding').mockImplementation(() => ({ colours }));
+
+        await wrapper.setData({
+          colours: [
+            { value: colours.primary },
+            { value: colours.primaryLight },
+            { value: colours.primaryDark },
+            { value: colours.secondary },
+          ],
+        });
+
+        expect(wrapper.vm.isDirty).toBeFalsy();
+
+        await wrapper.setData({
+          colours: [
+            { value: colours.primary },
+            { value: colours.primaryLight },
+            { value: colours.primaryDark },
+            { value: '000000' },
+          ],
+        });
+
+        expect(wrapper.vm.isDirty).toBeTruthy();
+      });
     });
   });
 
