@@ -131,7 +131,7 @@
                   <div>
                     <span class="fw-medium text-uppercase mr-2">{{ isStatusOpen ? $t('event.status.open') : $t('event.status.on_hold') }}</span>
                     <span v-if="isStatusOpen">{{ $t('event.start_on_a_date',) }}
-                      {{ getLocalStringDate(event.schedule.scheduledOpenDate, 'll') }}</span>
+                      {{ getLocalStringDate(event.schedule.scheduledOpenDate, 'EventSchedule.scheduledOpenDate', 'll') }}</span>
                   </div>
 
                   <v-switch
@@ -353,14 +353,14 @@ export default Vue.extend({
     };
 
     if (this.isEditMode) {
-      localEvent.responseDetails.dateReported = getLocalStringDate(localEvent.responseDetails.dateReported);
+      localEvent.responseDetails.dateReported = getLocalStringDate(localEvent.responseDetails.dateReported, 'EventResponseDetails.dateReported');
 
       if (localEvent.schedule.scheduledOpenDate) {
-        localEvent.schedule.scheduledOpenDate = getLocalStringDate(localEvent.schedule.scheduledOpenDate);
+        localEvent.schedule.scheduledOpenDate = getLocalStringDate(localEvent.schedule.scheduledOpenDate, 'EventSchedule.scheduledOpenDate');
       }
 
       if (localEvent.schedule.scheduledCloseDate) {
-        localEvent.schedule.scheduledCloseDate = getLocalStringDate(localEvent.schedule.scheduledCloseDate);
+        localEvent.schedule.scheduledCloseDate = getLocalStringDate(localEvent.schedule.scheduledCloseDate, 'EventSchedule.scheduledCloseDate');
       }
 
       if (localEvent && localEvent.responseDetails.assistanceNumber) {
@@ -586,7 +586,7 @@ export default Vue.extend({
         && this.localEvent.hasBeenOpen;
     },
 
-    today(): string { return this.getLocalStringDate(new Date()); },
+    today(): string { return this.getLocalStringDate(new Date(), 'local'); },
   },
 
   watch: {

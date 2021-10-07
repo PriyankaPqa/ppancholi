@@ -90,7 +90,7 @@
             {{ $t('eventDetail.created') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-created-date">
-            {{ getLocalStringDate(event.entity.created) }}
+            {{ getLocalStringDate(event.entity.created, 'Entity.created') }}
           </div>
         </div>
 
@@ -99,7 +99,8 @@
             {{ $t('eventDetail.reported') }}
           </div>
           <div class="rc-body14 fw-bold" data-test="event-reported-date">
-            {{ event.entity.responseDetails? getLocalStringDate(event.entity.responseDetails.dateReported): "-" }}
+            {{ event.entity.responseDetails?
+              getLocalStringDate(event.entity.responseDetails.dateReported, 'EventResponseDetails.dateReported'): "-" }}
           </div>
         </div>
 
@@ -109,7 +110,7 @@
           </div>
 
           <div class="rc-body14 fw-bold" data-test="status-change-date">
-            {{ getLocalStringDate(statusChange.date) }}
+            {{ getLocalStringDate(statusChange.date, 'Entity.timestamp') }}
           </div>
 
           <template v-if="statusChange.reason">

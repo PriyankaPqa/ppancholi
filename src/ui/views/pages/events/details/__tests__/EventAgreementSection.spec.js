@@ -54,7 +54,7 @@ describe('EventAgreementSection.vue', () => {
 
       it('displays the right date', () => {
         const element = wrapper.findDataTest('event-agreement-section-start-date-0');
-        expect(element.text()).toEqual(helpers.getLocalStringDate(wrapper.vm.agreement.startDate, 'll'));
+        expect(element.text()).toEqual(helpers.getLocalStringDate(wrapper.vm.agreement.startDate, 'EventAgreement.startDate', 'll'));
       });
     });
 
@@ -213,7 +213,7 @@ describe('EventAgreementSection.vue', () => {
         expect(wrapper.vm.infoData).toEqual({
           startDate: {
             key: 'eventSummary.agreement.startDate',
-            value: helpers.getLocalStringDate(wrapper.vm.agreement.startDate, 'll'),
+            value: helpers.getLocalStringDate(wrapper.vm.agreement.startDate, 'EventAgreement.startDate', 'll'),
           },
           endDate: {
             key: 'eventSummary.agreement.endDate',

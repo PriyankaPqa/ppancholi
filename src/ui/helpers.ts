@@ -5,6 +5,7 @@ import { ECanadaProvinces, IAddress, IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 import moment from '@/ui/plugins/moment';
 import { IRestResponse } from '@/services/httpClient';
+import { DateTypes, dateTypes } from '@/constants/dateTypes';
 
 export default {
   // Method to format the backend error messages and display in a toast.
@@ -157,8 +158,15 @@ export default {
     return res;
   },
 
-  getLocalStringDate(date: Date | string, format = 'YYYY-MM-DD'): string {
+  getLocalStringDate(date: Date | string, dateFieldName: string, format = 'YYYY-MM-DD'): string {
+    const dateType = dateTypes.getType(dateFieldName);
     if (!date) return '';
+    if (typeof date === 'string' && /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/.test(date)) {
+      // here we have been passed a string date already in YYYY-MM-DD = we HAVE to consider it local as it doesnt have time...
+      return moment(date).format(format);
+    }
+
+    if (dateType === DateTypes.ConvertToUtc || dateType === DateTypes.Static) return moment(date).utc().format(format);
     return moment(date).format(format);
   },
 

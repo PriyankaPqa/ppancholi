@@ -252,8 +252,8 @@ export default mixins(handleUniqueNameSubmitError).extend({
       const agreement = this.event.agreements?.find((agr: IEventAgreement) => agr.id === this.id);
       if (agreement) {
         this.agreement = _cloneDeep(agreement);
-        this.agreement.startDate = agreement.startDate ? this.getLocalStringDate(agreement.startDate) : null;
-        this.agreement.endDate = agreement.endDate ? this.getLocalStringDate(agreement.endDate) : null;
+        this.agreement.startDate = agreement.startDate ? this.getLocalStringDate(agreement.startDate, 'EventAgreement.startDate') : null;
+        this.agreement.endDate = agreement.endDate ? this.getLocalStringDate(agreement.endDate, 'EventAgreement.endDate') : null;
 
         if (agreement.agreementType.optionItemId) {
           this.agreementType = this.agreementTypes.find((type:IOptionItem) => type.id === agreement.agreementType.optionItemId);
