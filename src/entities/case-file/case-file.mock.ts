@@ -81,8 +81,6 @@ export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICase
       },
     },
   },
-  primaryBeneficiaryFirstName: 'John',
-  primaryBeneficiaryLastName: 'Joe',
   lastActionDate: '2021-04-30',
   triageName: {
     translation: {
@@ -101,6 +99,45 @@ export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICase
       },
     },
   ],
+  primaryBeneficiary: {
+    id: '011a62da-0e21-478a-bb56-00b0b4845167',
+    identitySet: {
+      firstName: 'Ben 2',
+      lastName: 'Test',
+      dateOfBirth: '1990-01-01T00:00:00Z',
+    },
+    contactInformation: {
+      email: null,
+    },
+  },
+  household: {
+    address: {
+      address: {
+        streetAddress: '312 Trudeau Drive',
+        city: 'Milton',
+        postalCode: 'L9T 6J1',
+        provinceCode: {
+          translation: {
+            en: 'ON',
+            fr: 'ON',
+          },
+        },
+      },
+    },
+  },
+  appliedProgramIds: ['program-id-1'],
+  identityAuthenticationStatusName: {
+    translation: {
+      en: 'Passed',
+      fr: 'Passe',
+    },
+  },
+  impactStatusValidationName: {
+    translation: {
+      en: 'Impacted',
+      fr: 'Impacte',
+    },
+  },
   ...force,
 });
 
@@ -401,7 +438,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       },
     },
     {
-      id: 'mock-activity-id-23',
+      id: 'mock-activity-id-26',
       caseFileId: 'mock-id-1',
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       user: { id: '1', name: 'Jane Doe' },

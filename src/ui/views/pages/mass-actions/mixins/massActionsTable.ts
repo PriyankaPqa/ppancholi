@@ -5,7 +5,6 @@ import { TranslateResult } from 'vue-i18n';
 import {
   IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
 } from '@/entities/mass-action';
-import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 import { IAzureSearchParams } from '@/types';
 import { Status } from '@/entities/base';
 
@@ -13,8 +12,6 @@ export default Vue.extend({
 
   data() {
     return {
-      itemsCount: 0,
-      searchResultIds: [] as string[],
       moment,
       options: {
         page: 1,
@@ -25,6 +22,8 @@ export default Vue.extend({
       detailsRouteName: '',
       searchEndpoint: '',
       tableTitle: '',
+      searchResultIds: [],
+      itemsCount: 0,
     };
   },
   computed: {
@@ -88,11 +87,6 @@ export default Vue.extend({
       return this.isPreprocessing(massAction) || this.isPreprocessed(massAction);
     },
 
-    setResults(res: IAzureTableSearchResults) {
-      this.itemsCount = res.count;
-      this.searchResultIds = res.ids;
-    },
-
     async fetchData(params: IAzureSearchParams) {
       const res = await this.$storage.massAction.actions.search({
         search: params.search,
@@ -111,7 +105,6 @@ export default Vue.extend({
         searchMode: 'all',
       }, this.searchEndpoint);
 
-      this.setResults(res);
       return res;
     },
   },

@@ -373,7 +373,7 @@ export default Vue.extend({
       const cf = this.$storage.caseFile.getters.get(this.$route.params.id);
       const household = await this.$storage.household.actions.fetch(cf.entity.householdId);
       this.defaultBeneficiaryData = {
-        name: `${cf.metadata.primaryBeneficiaryFirstName} ${cf.metadata.primaryBeneficiaryLastName}`,
+        name: `${cf.metadata.primaryBeneficiary.identitySet.firstName} ${cf.metadata.primaryBeneficiary.identitySet.lastName}`,
         address: household?.entity?.address?.address,
         email: (household?.metadata?.memberMetadata || []).filter((m) => m.id === household?.entity?.primaryBeneficiary)[0]?.email,
       };

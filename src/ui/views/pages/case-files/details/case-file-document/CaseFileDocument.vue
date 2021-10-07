@@ -71,15 +71,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
 import {
   RcDataTable,
 } from '@crctech/component-library';
+import mixins from 'vue-typed-mixins';
 import moment from '@/ui/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { DocumentStatus, ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import { DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined } from '@/entities/case-file-document';
 import { IAzureSearchParams } from '@/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
@@ -93,15 +93,13 @@ interface caseFileDocumentsMapped {
   entity: ICaseFileDocumentEntity;
 }
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseFileDocument',
 
   components: {
     RcDataTable,
     StatusChip,
   },
-
-  mixins: [TablePaginationSearchMixin],
 
   data() {
     return {
@@ -136,7 +134,7 @@ export default Vue.extend({
 
     caseFileDocumentsMapped():caseFileDocumentsMapped[] {
       const documentsByCaseFile = this.$storage.caseFileDocument.getters.getByCaseFile(this.caseFileId) || [];
-      return documentsByCaseFile.map((d) => ({
+      return documentsByCaseFile.map((d: ICaseFileDocumentCombined) => ({
         name: d.entity.name,
         id: d.entity.id,
         category: this.getCategory(d.entity),

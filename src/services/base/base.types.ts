@@ -1,6 +1,5 @@
 import { IEntity } from '@/entities/base/base.types';
-import { IAzureSearchParams } from '@/types';
-import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
+import { IAzureSearchParams, IAzureCombinedSearchResult } from '@/types';
 
 export interface IDomainBaseService<T extends IEntity, IdParams> {
   get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T>;
@@ -17,5 +16,5 @@ export interface IDomainBaseServiceMock <T extends IEntity> {
   getAllIncludingInactive: jest.Mock<Array<T>>;
   activate: jest.Mock<T>;
   deactivate: jest.Mock<T>;
-  search: jest.Mock<Array<T>>;
+  search: jest.Mock<IAzureCombinedSearchResult<T, unknown>>;
 }

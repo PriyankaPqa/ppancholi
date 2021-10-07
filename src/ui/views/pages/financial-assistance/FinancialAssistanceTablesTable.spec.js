@@ -291,29 +291,6 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           searchMode: 'all',
         }, null, true);
       });
-
-      it('calls setResults with the search results', async () => {
-        jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => {});
-        await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.setResults).toHaveBeenCalledWith({
-          ids: ['1'],
-          count: 1,
-        });
-      });
-    });
-
-    describe('setResults', () => {
-      it('sets the results', () => {
-        const response = {
-          count: 11,
-          ids: ['1', '2'],
-        };
-
-        wrapper.vm.setResults(response);
-
-        expect(wrapper.vm.count).toEqual(11);
-        expect(wrapper.vm.searchResultIds).toEqual(['1', '2']);
-      });
     });
 
     describe('onClickMenuItem', () => {

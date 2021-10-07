@@ -3,7 +3,7 @@
     <rc-data-table
       class="financialAssistanceOverview__table"
       :items="tableData"
-      :count="count"
+      :count="itemsCount"
       :headers="headers"
       :labels="labels"
       :table-props="tableProps"
@@ -17,7 +17,7 @@
         <filter-toolbar
           :filter-key="FilterKey.CaseFileFinancialAssistanceOverview"
           :filter-options="filters"
-          :count="count"
+          :count="itemsCount"
           @update:appliedFilter="onApplyFilter">
           <template #toolbarActions>
             <v-btn
@@ -153,7 +153,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable,
@@ -162,6 +161,7 @@ import {
 } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import { EFilterType } from '@crctech/component-library/src/types';
+import mixins from 'vue-typed-mixins';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
@@ -177,7 +177,7 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { Status } from '@/entities/base';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistancePaymentsList',
 
   components: {
@@ -186,8 +186,6 @@ export default Vue.extend({
     StatusChip,
     RcDialog,
   },
-
-  mixins: [TablePaginationSearchMixin],
 
   data() {
     return {
@@ -232,7 +230,7 @@ export default Vue.extend({
         return this.itemsToSubmit.length === this.selectedItems.length;
       },
       set(value: boolean) {
-        this.selectedItems = value ? this.itemsToSubmit.map((e) => e.entity.id) : [];
+        this.selectedItems = value ? this.itemsToSubmit.map((e: IFinancialAssistancePaymentCombined) => e.entity.id) : [];
       },
     },
 
@@ -306,7 +304,7 @@ export default Vue.extend({
     labels(): Record<string, Record<string, TranslateResult>> {
       return {
         header: {
-          title: this.$t('caseFile.financialAssistance.overview', { count: this.count }),
+          title: this.$t('caseFile.financialAssistance.overview', { count: this.itemsCount }),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };
@@ -352,9 +350,7 @@ export default Vue.extend({
         queryType: 'full',
         searchMode: 'all',
       });
-      this.searchResultIds = res.ids;
-      this.count = res.count;
-      return { value: this.$storage.financialAssistancePayment.getters.getByIds(res.ids), odataCount: res.count };
+      return res;
     },
 
     async initContainsActiveTables() {

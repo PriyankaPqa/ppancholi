@@ -3,6 +3,7 @@
  */
 
 import Vue from 'vue';
+import { IError } from '@/services/httpClient';
 
 export default Vue.extend({
   data() {
@@ -12,7 +13,7 @@ export default Vue.extend({
   },
 
   methods: {
-    handleSubmitError(errors) {
+    handleSubmitError(errors: IError[]) {
       if (!Array.isArray(errors)) {
         this.$toasted.global.error(this.$t('error.unexpected_error'));
       } else {

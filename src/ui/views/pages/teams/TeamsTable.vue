@@ -68,17 +68,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import {
   RcDataTable, RcAddButtonWithMenu, IFilterSettings,
 } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
-import {
-  TeamType, ITeamCombined,
-} from '@/entities/team';
+import { TeamType, ITeamCombined } from '@/entities/team';
 import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
@@ -86,9 +84,8 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import helpers from '@/ui/helpers';
 import { Status } from '@/entities/base';
-import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'TeamsTable',
 
   components: {
@@ -97,8 +94,6 @@ export default Vue.extend({
     StatusChip,
     FilterToolbar,
   },
-
-  mixins: [TablePaginationSearchMixin],
 
   props: {
     title: {
@@ -120,15 +115,12 @@ export default Vue.extend({
       FilterKey,
       TeamType,
       Status,
-      searchLoading: false,
       options: {
         page: 1,
         sortBy: ['Entity/Name'],
         sortDesc: [false],
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
-      searchResultIds: [] as string[],
-      itemsCount: 0,
     };
   },
 
@@ -222,7 +214,7 @@ export default Vue.extend({
 
     tableProps(): Record<string, unknown> {
       return {
-        loading: this.searchLoading,
+        loading: this.$store.state.teamEntities.searchLoading,
       };
     },
 
@@ -261,28 +253,17 @@ export default Vue.extend({
     },
 
     async fetchData(params: IAzureSearchParams) {
-      try {
-        this.searchLoading = false;
-        const res = await this.$storage.team.actions.search({
-          search: params.search,
-          filter: params.filter,
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        });
-        this.setResults(res);
-        return res;
-      } finally {
-        this.searchLoading = false;
-      }
-    },
-
-    setResults(res: IAzureTableSearchResults) {
-      this.itemsCount = res.count;
-      this.searchResultIds = res.ids;
+      const res = await this.$storage.team.actions.search({
+        search: params.search,
+        filter: params.filter,
+        top: params.top,
+        skip: params.skip,
+        orderBy: params.orderBy,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+      });
+      return res;
     },
 
     getTeamDetailsRoute(id: string) {

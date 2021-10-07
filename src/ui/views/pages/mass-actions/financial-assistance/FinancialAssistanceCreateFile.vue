@@ -8,7 +8,7 @@
     @upload:start="onUploadStart()"
     @upload:success="onSuccess($event)">
     <template #form>
-      <financial-assistance-payment-details :form="form" @update="onUpdate($event)" />
+      <financial-assistance-payment-details-create :form="form" @update="onUpdate($event)" />
     </template>
   </mass-action-base-create>
 </template>
@@ -22,7 +22,7 @@ import { IMassActionEntity } from '@/entities/mass-action';
 import { IEventEntity } from '@/entities/event';
 import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
-import FinancialAssistancePaymentDetails from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetails.vue';
+import FinancialAssistancePaymentDetailsCreate from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsCreate.vue';
 import { EPaymentModalities } from '@/entities/program';
 
 export interface PaymentDetailsForm {
@@ -38,7 +38,7 @@ export default Vue.extend({
 
   components: {
     MassActionBaseCreate,
-    FinancialAssistancePaymentDetails,
+    FinancialAssistancePaymentDetailsCreate,
   },
 
   data() {

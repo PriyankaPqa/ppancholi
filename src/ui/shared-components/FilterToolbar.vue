@@ -13,7 +13,9 @@
     @update:appliedFilter="onApplyFilter"
     @export="$emit('export')"
     @import="$emit('import')"
-    @open="$emit('open')">
+    @open="$emit('open')"
+    @update:autocomplete="$emit('update:autocomplete', $event)"
+    @change:autocomplete="$emit('change:autocomplete', $event)">
     <!-- Template for toolbar -->
     <template #toolbarActions>
       <slot name="toolbarActions" />
@@ -28,7 +30,7 @@ import _difference from 'lodash/difference';
 import {
   IFilterData, IFilterSettings, IFilterToolbarLabels, IFilterTypeOperators, RcFilterToolbar,
 } from '@crctech/component-library';
-import { EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import { EFilterKeyType, EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import { IFilter, IUserAccountEntity } from '@/entities/user-account';
 
 // A wrapper around the web-ui filter component to make integration as easy and consistent as possible
@@ -126,7 +128,7 @@ export default Vue.extend({
 
     filterOperators(): IFilterTypeOperators {
       return {
-        text: [
+        [EFilterType.Text]: [
           { label: this.$t('genericFilter.operators.Equal') as string, operator: EFilterOperator.Equal },
           { label: this.$t('genericFilter.operators.BeginsWith') as string, operator: EFilterOperator.BeginsWith },
           // { label: 'Ends With', operator: EFilterOperator.EndsWith },
@@ -134,31 +136,31 @@ export default Vue.extend({
           // { label: this.$t('genericFilter.operators.FuzzySearch') as string, operator: EFilterOperator.FuzzySearch },
           // { label: 'Does not contain', operator: EFilterOperator.DoesNotContain },
         ],
-        number: [
+        [EFilterType.Number]: [
           { label: this.$t('genericFilter.operators.Equal') as string, operator: EFilterOperator.Equal },
           { label: this.$t('genericFilter.operators.Between') as string, operator: EFilterOperator.Between },
           { label: this.$t('genericFilter.operators.GreaterThan') as string, operator: EFilterOperator.GreaterThan },
           { label: this.$t('genericFilter.operators.LessThan') as string, operator: EFilterOperator.LessThan },
         ],
-        select: [
+        [EFilterType.Select]: [
           { label: this.$t('genericFilter.operators.Equal') as string, operator: EFilterOperator.Equal },
         ],
-        multiselect: [
+        [EFilterType.SelectExclude]: [
+          { label: '', operator: EFilterOperator.NotEqual },
+        ],
+        [EFilterType.MultiSelect]: [
           { label: this.$t('genericFilter.operators.In') as string, operator: EFilterOperator.In },
         ],
-        date: [
+        [EFilterType.MultiSelectExclude]: [
+          { label: '', operator: EFilterOperator.NotIn },
+        ],
+        [EFilterType.Date]: [
           { label: this.$t('genericFilter.operators.Equal') as string, operator: EFilterOperator.Equal },
           { label: this.$t('genericFilter.operators.After') as string, operator: EFilterOperator.GreaterThan },
           { label: this.$t('genericFilter.operators.OnOrAfter') as string, operator: EFilterOperator.GreaterEqual },
           { label: this.$t('genericFilter.operators.Before') as string, operator: EFilterOperator.LessThan },
           { label: this.$t('genericFilter.operators.OnOrBefore') as string, operator: EFilterOperator.LessEqual },
           { label: this.$t('genericFilter.operators.Between') as string, operator: EFilterOperator.Between },
-        ],
-        selectExclude: [
-          { label: '', operator: EFilterOperator.NotEqual },
-        ],
-        multiselectExclude: [
-          { label: '', operator: EFilterOperator.NotIn },
         ],
       };
     },
@@ -240,7 +242,6 @@ export default Vue.extend({
       const searchFilters = filters.filter((f) => f.type === 'text' && f.operator !== EFilterOperator.Equal);
 
       const translatedSearchFilters = this.prepareSearchFilters(searchFilters);
-
       const preparedFilters = this.prepareFiltersForOdataQuery(_difference(filters, searchFilters));
 
       this.$emit('update:appliedFilter', { preparedFilters, searchFilters: translatedSearchFilters });
@@ -252,19 +253,19 @@ export default Vue.extend({
     translateFilter(filter: IFilterData) {
       const { key, operator } = filter;
       const { value } = filter;
-      const newFilter = {} as Record<string, unknown>;
-
+      let newFilter = {} as Record<string, unknown>;
       switch (operator) {
         case EFilterOperator.Between:
           _set(newFilter, key, { ge: (value as Array<string | number>)[0], le: (value as Array<string | number>)[1] });
           break;
         case EFilterOperator.Equal:
-          if (value === 'arrayNotEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
-            _set(newFilter, key, { arrayNotEmpty: value });
-          } else if (value === 'arrayEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
-            _set(newFilter, key, { arrayEmpty: value });
+          newFilter = this.translateEqualOperator(filter);
+          break;
+        case EFilterOperator.NotEqual:
+          if (filter.keyType === EFilterKeyType.Array) {
+            _set(newFilter, key, { notEqualOnArray_az: value });
           } else {
-            _set(newFilter, key, value);
+            _set(newFilter, `not.${key}`, value);
           }
           break;
         case EFilterOperator.GreaterEqual:
@@ -281,6 +282,13 @@ export default Vue.extend({
           break;
         case EFilterOperator.In:
           _set(newFilter, key, { searchIn_az: value });
+          break;
+        case EFilterOperator.NotIn:
+          if (filter.keyType === EFilterKeyType.Array) {
+            _set(newFilter, key, { notSearchInOnArray_az: value });
+          } else {
+            _set(newFilter, key, { notSearchIn_az: value });
+          }
           break;
         case EFilterOperator.BeginsWith:
           _set(newFilter, key, { startsWith_az: value });
@@ -369,6 +377,20 @@ export default Vue.extend({
         finalFilter = { ...finalFilter, ...this.translateFilter(filter) };
       });
       return finalFilter;
+    },
+
+    translateEqualOperator(filter: IFilterData) {
+      // To filter on a property not empty
+      if (filter.value === 'arrayNotEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
+        return _set({}, filter.key, { arrayNotEmpty: filter.value });
+        // To filter on a property which is empty
+      } if (filter.value === 'arrayEmpty' && [EFilterType.Select, EFilterType.MultiSelect].includes(filter.type)) {
+        return _set({}, filter.key, { arrayEmpty: filter.value });
+        // WHen using autocomplete returning an object, we need to extract the real value
+      } if (Object.prototype.toString.call(filter.value) === '[object Object]' && Object.prototype.hasOwnProperty.call(filter.value, 'value')) {
+        return _set({}, filter.key, (filter.value as {text: string, value: string}).value);
+      }
+      return _set({}, filter.key, filter.value);
     },
   },
 });

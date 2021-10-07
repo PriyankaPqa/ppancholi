@@ -1,4 +1,4 @@
-import { IDomainBaseService } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 import { IMassActionEntity, MassActionRunType } from '@/entities/mass-action/massActions.types';
 import { IRestResponse } from '@/services/httpClient';
 
@@ -8,7 +8,7 @@ export interface IMassActionService extends IDomainBaseService<IMassActionEntity
   getInvalidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>>
 }
 
-export interface IMassActionServiceMock {
+export interface IMassActionServiceMock extends IDomainBaseServiceMock<IMassActionEntity>{
   process: jest.Mock<IMassActionEntity>;
   update: jest.Mock<IMassActionEntity>;
   getInvalidFile: jest.Mock<IRestResponse<string>>;

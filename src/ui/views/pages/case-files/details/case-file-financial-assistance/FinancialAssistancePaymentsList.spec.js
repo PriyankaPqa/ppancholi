@@ -1,5 +1,6 @@
 import { RcDataTable } from '@crctech/component-library';
 import { EFilterType } from '@crctech/component-library/src/types';
+import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedCaseFinancialAssistance } from '@/entities/financial-assistance-payment';
@@ -92,6 +93,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           canEdit: () => true,
         },
       });
+      await flushPromises();
       expect(wrapper.findDataTest('edit-link').exists()).toBeTruthy();
 
       storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = 2;
@@ -115,6 +117,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           canDelete: () => true,
         },
       });
+      await flushPromises();
       expect(wrapper.findDataTest('delete-link').exists()).toBeTruthy();
 
       storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = 2;
@@ -312,13 +315,6 @@ describe('FinancialAssistancePaymentsList.vue', () => {
           queryType: 'full',
           searchMode: 'all',
         });
-      });
-
-      it('sets vm with the search results', async () => {
-        await mountWrapper();
-        await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.searchResultIds).toEqual(wrapper.vm.$storage.financialAssistancePayment.actions.search().ids);
-        expect(wrapper.vm.count).toEqual(wrapper.vm.$storage.financialAssistancePayment.actions.search().count);
       });
     });
 

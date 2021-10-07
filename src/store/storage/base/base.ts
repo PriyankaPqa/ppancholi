@@ -136,7 +136,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
 
     activate: (idParams: IdParams): Promise<TEntity> => this.store.dispatch(`${this.entityModuleName}/activate`, idParams),
 
-    search: async (params: IAzureSearchParams, searchEndpoint: string = null, includeInactiveItems?: boolean): Promise<IAzureTableSearchResults> => {
+    search: async (
+      params: IAzureSearchParams,
+      searchEndpoint: string = null,
+      includeInactiveItems?: boolean,
+    ): Promise<IAzureTableSearchResults> => {
       this.store.commit(`${this.entityModuleName}/setSearchLoading`, true);
       const newParams = { ...params };
 
@@ -155,20 +159,27 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       const res = await this.store.dispatch(`${this.entityModuleName}/search`, { params: newParams, searchEndpoint });
 
       const data = res?.value;
+
       if (data) {
-        const ids = data.filter((e: ICombinedIndex<TEntity, TMetadata>) => e.entity?.id)
-          .map((res: ICombinedIndex<TEntity, TMetadata>) => {
-            const entity = { ...res.entity, eTag: res.entityETag };
-            const metadata = { ...res.metadata, eTag: res.metadataETag };
-            this.store.commit(`${this.entityModuleName}/set`, entity);
-            if (this.metadataModuleName) this.store.commit(`${this.metadataModuleName}/set`, metadata);
-            return entity.id;
-          });
+        const filteredData = data.filter((e: ICombinedIndex<TEntity, TMetadata>) => e.entity?.id);
+
+        const ids = [] as string [];
+        const entities = [] as TEntity[];
+        const metadata = [] as TMetadata[];
+
+        filteredData.forEach((res: ICombinedIndex<TEntity, TMetadata>) => {
+          ids.push(res.entity.id);
+          entities.push({ ...res.entity, eTag: res.entityETag });
+          metadata.push({ ...res.metadata, eTag: res.metadataETag });
+        });
+
+        this.store.commit(`${this.entityModuleName}/setAll`, entities);
+        this.store.commit(`${this.metadataModuleName}/setAll`, metadata);
 
         this.store.commit(`${this.entityModuleName}/setSearchLoading`, false);
+
         return { ids, count: res.odataCount };
       }
-
       return { ids: [], count: 0 };
     },
   }

@@ -1,5 +1,5 @@
 import { RcDataTable } from '@crctech/component-library';
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { mockProgramEntities } from '@/entities/program';
@@ -28,9 +28,6 @@ describe('ProgramsHome.vue', () => {
           $storage: mockStorage(),
         },
       });
-
-      wrapper.vm.azureSearchItems = mockProgramEntities();
-      wrapper.vm.azureSearchCount = mockProgramEntities().length;
 
       wrapper.vm.getProgramDetailsRoute = jest.fn(() => ({
         name: routes.programs.details.name,
@@ -92,20 +89,17 @@ describe('ProgramsHome.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
+      wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           id: 'event-id',
         },
       });
-
-      wrapper.vm.azureSearchItems = mockProgramEntities();
-      wrapper.vm.azureSearchCount = mockProgramEntities().length;
     });
 
     describe('customColumns', () => {
       it('should return the correct column names', () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: 'event-id',
@@ -127,7 +121,7 @@ describe('ProgramsHome.vue', () => {
 
     describe('headers', () => {
       it('returns the correct headers data', () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             isDashboard: false,
@@ -196,7 +190,7 @@ describe('ProgramsHome.vue', () => {
         odataCount: mockProgramEntities().length,
       }));
 
-      wrapper = mount(Component, {
+      wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           id: 'event-id',
@@ -205,9 +199,6 @@ describe('ProgramsHome.vue', () => {
           $storage: storage,
         },
       });
-
-      wrapper.vm.azureSearchItems = mockProgramEntities();
-      wrapper.vm.azureSearchCount = mockProgramEntities().length;
     });
 
     describe('fetchData', () => {

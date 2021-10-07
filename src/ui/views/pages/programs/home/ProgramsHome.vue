@@ -2,8 +2,8 @@
   <div class="pa-4">
     <rc-data-table
       data-test="programs-table"
-      :items="programs"
-      :count="count"
+      :items="tableData"
+      :count="itemsCount"
       :show-help="true"
       :help-link="$t('zendesk.help_link.view_programs_list')"
       :labels="labels"
@@ -39,26 +39,24 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable,
 } from '@crctech/component-library';
+import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IProgramEntity } from '@/entities/program';
+import { IProgramCombined, IProgramEntity } from '@/entities/program';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'ProgramsHome',
 
   components: {
     RcDataTable,
     StatusChip,
   },
-
-  mixins: [TablePaginationSearchMixin],
 
   props: {
     // showFiltersBar: {
@@ -78,8 +76,6 @@ export default Vue.extend({
         sortBy: [`Entity/Name/Translation/${this.$i18n.locale}`],
         sortDesc: [true],
       },
-      count: 0,
-      programs: [] as IProgramEntity[],
     };
   },
 
@@ -128,6 +124,10 @@ export default Vue.extend({
         loading: this.$store.state.programEntities.searchLoading,
       };
     },
+
+    tableData(): IProgramEntity[] {
+      return this.$storage.program.getters.getByIds(this.searchResultIds).map((combined: IProgramCombined) => combined.entity);
+    },
   },
 
   methods: {
@@ -145,9 +145,6 @@ export default Vue.extend({
         queryType: 'full',
         searchMode: 'all',
       }, null, true);
-
-      this.count = res.count;
-      this.programs = this.$storage.program.getters.getByIds(res.ids).map((combined) => combined.entity);
 
       return res;
     },

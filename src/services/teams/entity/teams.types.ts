@@ -1,8 +1,9 @@
 import {
   ITeamEntity, ITeamMember,
 } from '@/entities/team';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 
-export interface ITeamsService {
+export interface ITeamsService extends IDomainBaseService<ITeamEntity, uuid>{
   createTeam(payload: ITeamEntity): Promise<ITeamEntity>;
   editTeam(payload: ITeamEntity): Promise<ITeamEntity>;
   getTeamsAssignable(eventId: uuid): Promise<ITeamEntity[]>;
@@ -11,7 +12,7 @@ export interface ITeamsService {
   getTeamsAssigned(eventId: uuid): Promise<ITeamEntity[]>;
 }
 
-export interface ITeamsServiceMock {
+export interface ITeamsServiceMock extends IDomainBaseServiceMock<ITeamEntity>{
   createTeam: jest.Mock <ITeamEntity>;
   editTeam: jest.Mock <ITeamEntity>;
   getTeamsAssignable: jest.Mock <ITeamEntity[]>;

@@ -6,5 +6,5 @@ export const mockDomainBaseService = (entities: any): IDomainBaseServiceMock<any
   getAllIncludingInactive: jest.fn(() => entities),
   activate: jest.fn(() => entities[0]),
   deactivate: jest.fn(() => entities[0]),
-  search: jest.fn(() => []),
+  search: jest.fn(() => ({ odataContext: '', odataCount: 0, value: [] })),
 });

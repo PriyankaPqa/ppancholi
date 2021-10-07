@@ -1126,10 +1126,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@crctech/component-library@1.0.124":
-  version "1.0.124"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.124.tgz#8ab32ba4c0d0e73cee996affd30bfa725829ee4d"
-  integrity sha1-irMrpMDQ5zzumWr/0wv6clgp7k0=
+"@crctech/component-library@1.0.130":
+  version "1.0.130"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.130.tgz#b187ee824cc9c939b963b8afb452da1e14320351"
+  integrity sha1-sYfugkzJyTm5Y7ivtFLaHhQyA1E=
   dependencies:
     "@googlemaps/js-api-loader" "^1.11.0"
     date-fns "^2.14.0"

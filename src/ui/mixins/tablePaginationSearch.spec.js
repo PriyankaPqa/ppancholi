@@ -32,12 +32,12 @@ describe('tablePaginationSearch.vue', () => {
       localVue,
     });
 
-    test('azureSearchItems', () => {
-      expect(wrapper.vm.azureSearchItems).toEqual([]);
+    test('searchResultIds', () => {
+      expect(wrapper.vm.searchResultIds).toEqual([]);
     });
 
-    test('azureSearchCount', () => {
-      expect(wrapper.vm.azureSearchCount).toEqual(0);
+    test('itemsCount', () => {
+      expect(wrapper.vm.itemsCount).toEqual(0);
     });
 
     test('azureSearchParams', () => {
@@ -254,16 +254,16 @@ describe('tablePaginationSearch.vue', () => {
         expect(wrapper.vm.fetchData).toHaveBeenCalledWith(wrapper.vm.azureSearchParams);
       });
 
-      it('sets azureSearchItems with the results', async () => {
-        jest.spyOn(wrapper.vm, 'fetchData').mockImplementation(() => ({ value: 'data', odataCount: 12 }));
+      it('sets searchResultIds with the ids returned', async () => {
+        jest.spyOn(wrapper.vm, 'fetchData').mockImplementation(() => ({ ids: [], count: 12 }));
         await wrapper.vm.search(params);
-        expect(wrapper.vm.azureSearchItems).toEqual('data');
+        expect(wrapper.vm.searchResultIds).toEqual([]);
       });
 
-      it('sets azureSearchCount with the count', async () => {
-        jest.spyOn(wrapper.vm, 'fetchData').mockImplementation(() => ({ value: 'data', odataCount: 12 }));
+      it('sets itemsCount with the count', async () => {
+        jest.spyOn(wrapper.vm, 'fetchData').mockImplementation(() => ({ ids: [], count: 12 }));
         await wrapper.vm.search(params);
-        expect(wrapper.vm.azureSearchCount).toEqual(12);
+        expect(wrapper.vm.itemsCount).toEqual(12);
       });
     });
 

@@ -1,4 +1,4 @@
-import { EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import { EFilterKeyType, EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import _set from 'lodash/set';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockUserAccountEntity, mockUserFilters, FilterKey } from '@/entities/user-account';
@@ -237,37 +237,67 @@ describe('Filter Toolbar', () => {
       });
 
       describe('Equal operator', () => {
-        it('builds the proper structure for arrayNotEmpty value', () => {
+        it('should set newFilter with the result of translateEqualFilter', () => {
           const filter = {
             key: 'Prop.Sub',
             operator: EFilterOperator.Equal,
             type: EFilterType.Select,
             value: 'arrayNotEmpty',
           };
+          wrapper.vm.translateEqualOperator = jest.fn(() => ({}));
           const newFilter = wrapper.vm.translateFilter(filter);
-          expect(newFilter).toEqual(_set({}, filter.key, { arrayNotEmpty: filter.value }));
+          expect(newFilter).toEqual({});
         });
+      });
 
-        it('builds the proper structure for arrayEmpty value', () => {
+      describe('Not equal operator', () => {
+        it('should build proper filter if the target property is an array', () => {
           const filter = {
             key: 'Prop.Sub',
-            operator: EFilterOperator.Equal,
-            type: EFilterType.MultiSelect,
-            value: 'arrayEmpty',
-          };
-          const newFilter = wrapper.vm.translateFilter(filter);
-          expect(newFilter).toEqual(_set({}, filter.key, { arrayEmpty: filter.value }));
-        });
-
-        it('builds the proper structure for regular value', () => {
-          const filter = {
-            key: 'Prop.Sub',
-            operator: EFilterOperator.Equal,
-            type: EFilterType.Date,
+            keyType: EFilterKeyType.Array,
+            operator: EFilterOperator.NotEqual,
+            type: EFilterType.Text,
             value: 'today',
           };
           const newFilter = wrapper.vm.translateFilter(filter);
-          expect(newFilter).toEqual(_set({}, filter.key, filter.value));
+          expect(newFilter).toEqual(_set(newFilter, filter.key, { notEqualOnArray_az: filter.value }));
+        });
+
+        it('should build proper filter if the target property otherwise', () => {
+          const filter = {
+            key: 'Prop.Sub',
+            keyType: EFilterKeyType.Array,
+            operator: EFilterOperator.NotEqual,
+            type: EFilterType.Text,
+            value: 'today',
+          };
+          const newFilter = wrapper.vm.translateFilter(filter);
+          expect(newFilter).toEqual(_set(newFilter, `not.${filter.key}`, filter.value));
+        });
+      });
+
+      describe('Not In operator', () => {
+        it('should build proper filter if the target property is an array', () => {
+          const filter = {
+            key: 'Prop.Sub',
+            keyType: EFilterKeyType.Array,
+            operator: EFilterOperator.NotIn,
+            type: EFilterType.Text,
+            value: 'today',
+          };
+          const newFilter = wrapper.vm.translateFilter(filter);
+          expect(newFilter).toEqual(_set(newFilter, filter.key, { notSearchInOnArray_az: filter.value }));
+        });
+
+        it('should build proper filter if the target property otherwise', () => {
+          const filter = {
+            key: 'Prop.Sub',
+            operator: EFilterOperator.NotIn,
+            type: EFilterType.Text,
+            value: 'today',
+          };
+          const newFilter = wrapper.vm.translateFilter(filter);
+          expect(newFilter).toEqual(_set(newFilter, filter.key, { notSearchIn_az: filter.value }));
         });
       });
 
@@ -524,6 +554,52 @@ describe('Filter Toolbar', () => {
         expect(finalFilters).toEqual('TeamName:/begin.*/ AND UserName:(/.*/ NOT /.*notContain.*/)');
       });
     });
+
+    describe('translateEqualOperator', () => {
+      it('builds the proper structure for arrayNotEmpty value', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.Equal,
+          type: EFilterType.Select,
+          value: 'arrayNotEmpty',
+        };
+        const newFilter = wrapper.vm.translateEqualOperator(filter);
+        expect(newFilter).toEqual(_set({}, filter.key, { arrayNotEmpty: filter.value }));
+      });
+
+      it('builds the proper structure for arrayEmpty value', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.Equal,
+          type: EFilterType.MultiSelect,
+          value: 'arrayEmpty',
+        };
+        const newFilter = wrapper.vm.translateEqualOperator(filter);
+        expect(newFilter).toEqual(_set({}, filter.key, { arrayEmpty: filter.value }));
+      });
+
+      it('builds the proper structure when receiving a object as a value', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.Equal,
+          type: EFilterType.MultiSelect,
+          value: { text: 'text', value: 0 },
+        };
+        const newFilter = wrapper.vm.translateEqualOperator(filter);
+        expect(newFilter).toEqual(_set({}, filter.key, filter.value.value));
+      });
+
+      it('builds the proper structure for regular value', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.Equal,
+          type: EFilterType.Date,
+          value: 'today',
+        };
+        const newFilter = wrapper.vm.translateEqualOperator(filter);
+        expect(newFilter).toEqual(_set({}, filter.key, filter.value));
+      });
+    });
   });
 
   describe('Computed properties', () => {
@@ -587,7 +663,7 @@ describe('Filter Toolbar', () => {
     describe('filterOperators', () => {
       test('labels are ok', () => {
         const operators = {
-          text: [
+          [EFilterType.Text]: [
             { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
             { label: 'genericFilter.operators.BeginsWith', operator: EFilterOperator.BeginsWith },
             // { label: 'Ends With', operator: EFilterOperator.EndsWith },
@@ -595,27 +671,27 @@ describe('Filter Toolbar', () => {
             // { label: 'genericFilter.operators.FuzzySearch', operator: EFilterOperator.FuzzySearch },
             // { label: 'Does not contain', operator: EFilterOperator.DoesNotContain },
           ],
-          number: [
+          [EFilterType.Number]: [
             { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
             { label: 'genericFilter.operators.Between', operator: EFilterOperator.Between },
             { label: 'genericFilter.operators.GreaterThan', operator: EFilterOperator.GreaterThan },
             { label: 'genericFilter.operators.LessThan', operator: EFilterOperator.LessThan },
           ],
-          select: [{ label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal }],
-          multiselect: [{ label: 'genericFilter.operators.In', operator: EFilterOperator.In }],
-          date: [
+          [EFilterType.Select]: [{ label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal }],
+          [EFilterType.SelectExclude]: [
+            { label: '', operator: EFilterOperator.NotEqual },
+          ],
+          [EFilterType.MultiSelect]: [{ label: 'genericFilter.operators.In', operator: EFilterOperator.In }],
+          [EFilterType.MultiSelectExclude]: [
+            { label: '', operator: EFilterOperator.NotIn },
+          ],
+          [EFilterType.Date]: [
             { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
             { label: 'genericFilter.operators.After', operator: EFilterOperator.GreaterThan },
             { label: 'genericFilter.operators.OnOrAfter', operator: EFilterOperator.GreaterEqual },
             { label: 'genericFilter.operators.Before', operator: EFilterOperator.LessThan },
             { label: 'genericFilter.operators.OnOrBefore', operator: EFilterOperator.LessEqual },
             { label: 'genericFilter.operators.Between', operator: EFilterOperator.Between },
-          ],
-          selectExclude: [
-            { label: '', operator: EFilterOperator.NotEqual },
-          ],
-          multiselectExclude: [
-            { label: '', operator: EFilterOperator.NotIn },
           ],
         };
         expect(wrapper.vm.filterOperators).toEqual(operators);

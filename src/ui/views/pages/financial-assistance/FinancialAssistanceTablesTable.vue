@@ -2,7 +2,7 @@
   <rc-data-table
     data-test="fa-templates-table"
     :items="tableData"
-    :count="count"
+    :count="itemsCount"
     :labels="labels"
     :headers="headers"
     sort-by="createdDate"
@@ -26,7 +26,7 @@
       <filter-toolbar
         :filter-key="FilterKey.FinancialAssistanceTables"
         :filter-options="filters"
-        :count="count"
+        :count="itemsCount"
         @update:appliedFilter="onApplyFilterLocal($event)" />
     </template>
 
@@ -69,7 +69,6 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
-import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers';
@@ -89,8 +88,6 @@ export default mixins(TablePaginationSearchMixin).extend({
   data() {
     return {
       FilterKey,
-      count: 0,
-      searchResultIds: [] as string[],
       options: {
         page: 1,
         sortBy: [`Metadata/FinancialAssistanceTableStatusName/Translation/${this.$i18n.locale}`],
@@ -220,13 +217,8 @@ export default mixins(TablePaginationSearchMixin).extend({
         queryType: 'full',
         searchMode: 'all',
       }, null, true);
-      this.setResults(res);
-      return res;
-    },
 
-    setResults(res: IAzureTableSearchResults) {
-      this.count = res.count;
-      this.searchResultIds = res.ids;
+      return res;
     },
 
     onClickMenuItem(item: Record<string, string>) {
@@ -268,7 +260,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async onApplyFilterLocal(
       { preparedFilters, searchFilters }
-        : { preparedFilters: Record<string, unknown>, searchFilters: Record<string, unknown> },
+        : { preparedFilters: Record<string, unknown>, searchFilters: string },
     ) {
       await this.onApplyFilter({ preparedFilters: { ...preparedFilters, ...this.presetFilter }, searchFilters });
     },

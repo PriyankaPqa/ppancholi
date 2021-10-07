@@ -1,5 +1,5 @@
 import { IProgramEntity } from '@/entities/program';
-import { IDomainBaseService } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 
 interface UrlParams {
   id: uuid;
@@ -11,7 +11,7 @@ export interface IProgramsService extends IDomainBaseService<IProgramEntity, Url
   updateProgram(payload: IProgramEntity): Promise<IProgramEntity>;
 }
 
-export interface IProgramsServiceMock {
+export interface IProgramsServiceMock extends IDomainBaseServiceMock<IProgramEntity>{
   createProgram: jest.Mock<IProgramEntity>;
   updateProgram: jest.Mock<IProgramEntity>;
 }

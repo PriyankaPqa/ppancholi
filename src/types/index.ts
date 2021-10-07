@@ -13,6 +13,7 @@ export type { IAzureSearchResult } from './interfaces/IAzureSearchResult';
 export type { IListOption } from './interfaces/IListOption';
 export type { IAddress } from './interfaces/IAddress';
 export type { IIdMultilingualName } from './interfaces/IIdMultilingualName';
+export type { IAzureCombinedSearchResult } from './interfaces/IAzureSearchResult';
 
 /**
  * Enums

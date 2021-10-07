@@ -51,7 +51,7 @@
         </v-btn>
       </template>
     </rc-data-table>
-    <financial-assistance-create-by-list :show.sync="showProcessByList" />
+    <financial-assistance-create-by-list v-if="showProcessByList" :show.sync="showProcessByList" />
   </div>
 </template>
 

@@ -4,7 +4,7 @@
     :show.sync="show"
     :cancel-action-label="$t('common.buttons.cancel')"
     :submit-action-label="$t('common.buttons.next')"
-    :submit-button-disabled="true"
+    :submit-button-disabled="!filtersOn || tableData.length === 0"
     :persistent="true"
     fullscreen
     content-padding="0"
@@ -22,8 +22,23 @@
       :custom-columns="Object.values(customColumns)"
       :options.sync="options"
       @search="search">
+      <template #filter>
+        <filter-toolbar
+          :filter-key="FilterKey.MassActionFinancialAssistance"
+          :count="itemsCount"
+          :filter-options="filters"
+          @update:appliedFilter="onApplyFilter"
+          @change:autocomplete="onAutoCompleteChange($event)">
+          <template #toolbarActions>
+            <v-btn class="export" color="primary" :disabled="!filtersOn || tableData.length === 0" @click="onExport()">
+              {{ $t('massAction.common.export') }}
+            </v-btn>
+          </template>
+        </filter-toolbar>
+      </template>
+
       <template #no-data>
-        <div class="no-data">
+        <div v-if="!filtersOn" class="no-data">
           <i18n path="massAction.use.filter" tag="div" for="edit">
             <v-icon>
               mdi-filter-variant
@@ -31,18 +46,65 @@
           </i18n>
         </div>
       </template>
-      <template #filter>
-        <filter-toolbar
-          :filter-key="FilterKey.CaseFiles"
-          :count="itemsCount"
-          :filter-options="filters"
-          @update:appliedFilter="onApplyFilter">
-          <template #toolbarActions>
-            <v-btn class="export" color="primary" :disabled="!filtersOn" @click="onExport()">
-              {{ $t('massAction.common.export') }}
-            </v-btn>
-          </template>
-        </filter-toolbar>
+
+      <template #[`item.${customColumns.caseFileNumber}`]="{ item: caseFile }">
+        {{ caseFile.entity.caseFileNumber }}
+      </template>
+
+      <template #[`item.${customColumns.firstName}`]="{ item: caseFile }">
+        {{ caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.firstName }}
+      </template>
+
+      <template #[`item.${customColumns.lastName}`]="{ item: caseFile }">
+        {{ caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.lastName }}
+      </template>
+
+      <template #[`item.${customColumns.street}`]="{ item: caseFile }">
+        {{ caseFile.metadata.household.address
+          && caseFile.metadata.household.address.address
+          && caseFile.metadata.household.address.address.streetAddress || '-' }}
+      </template>
+
+      <template #[`item.${customColumns.city}`]="{ item: caseFile }">
+        {{ caseFile.metadata.household.address
+          && caseFile.metadata.household.address.address
+          && caseFile.metadata.household.address.address.city || '-' }}
+      </template>
+
+      <template #[`item.${customColumns.province}`]="{ item: caseFile }">
+        {{ caseFile.metadata.household.address
+          && caseFile.metadata.household.address.address
+          && $m(caseFile.metadata.household.address.address.provinceCode)
+          || '-'
+        }}
+      </template>
+
+      <template #[`item.${customColumns.postalCode}`]="{ item: caseFile }">
+        {{ caseFile.metadata.household.address
+          && caseFile.metadata.household.address.address
+          && caseFile.metadata.household.address.address.postalCode
+          || '-'
+        }}
+      </template>
+
+      <template #[`item.${customColumns.email}`]="{ item: caseFile }">
+        {{ caseFile.metadata.primaryBeneficiary.contactInformation && caseFile.metadata.primaryBeneficiary.contactInformation.email || '-' }}
+      </template>
+
+      <template #[`item.${customColumns.authenticationStatus}`]="{ item: caseFile }">
+        <span>
+          {{ $m(caseFile.metadata.identityAuthenticationStatusName) }}
+        </span>
+      </template>
+
+      <template #[`item.${customColumns.validationOfImpact}`]="{ item: caseFile }">
+        <span>
+          {{ $m(caseFile.metadata.impactStatusValidationName) }}
+        </span>
+      </template>
+
+      <template #[`item.${customColumns.isDuplicate}`]="{ item: caseFile }">
+        {{ caseFile.entity.isDuplicate ? $t('common.yes') : $t('common.no') }}
       </template>
     </rc-data-table>
   </rc-dialog>
@@ -50,16 +112,21 @@
 
 <script lang="ts">
 
-import { RcDialog, RcDataTable, IFilterSettings } from '@crctech/component-library';
+import { IFilterSettings, RcDataTable, RcDialog } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import _isEmpty from 'lodash/isEmpty';
 import mixins from 'vue-typed-mixins';
+import { EDateMode, EFilterKeyType, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureSearchParams } from '@/types';
-import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
-import { IMassActionCombined } from '@/entities/mass-action';
+import { ECanadaProvinces, IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 import { FilterKey } from '@/entities/user-account';
+import {
+  CaseFileStatus, ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus,
+} from '@/entities/case-file';
+import helpers from '@/ui/helpers';
+import { EEventStatus, IEventEntity, IEventMetadata } from '@/entities/event';
+import { IProgramEntity } from '@/entities/program';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistanceCreateByList',
@@ -79,10 +146,14 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   data() {
     return {
-      title: 'test',
-      itemsCount: 0,
-      searchResultIds: [],
+      eventsFilterLoading: false,
+      eventsFilter: [],
+      eventFilterQuery: null,
+      programsFilterLoading: false,
+      programsFilter: [],
       FilterKey,
+      ValidationOfImpactStatus,
+      IdentityAuthenticationStatus,
     };
   },
 
@@ -90,33 +161,166 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: this.$store.state.caseFileEntities.searchLoading,
-        'no-data-text': 'Please use the filter to select case files for processing',
       };
     },
 
     customColumns(): Record<string, string> {
       return {
-        'no-data': 'Entity/Name',
+        caseFileNumber: 'Entity/CaseFileNumber',
+        firstName: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
+        lastName: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
+        street: 'Metadata/Household/Address/Address/StreetAddress',
+        city: 'Metadata/Household/Address/Address/City',
+        province: `Metadata/Household/Address/Address/ProvinceCode/Translation/${this.$i18n.locale}`,
+        postalCode: 'Metadata/Household/Address/Address/PostalCode',
+        email: 'Metadata/PrimaryBeneficiary/ContactInformation/Email',
+        authenticationStatus: `Metadata/IdentityAuthenticationStatusName/Translation/${this.$i18n.locale}`,
+        validationOfImpact: `Metadata/ImpactStatusValidationName/Translation/${this.$i18n.locale}`,
+        isDuplicate: 'Entity/IsDuplicate',
       };
     },
 
-    tableData(): IMassActionCombined[] {
-      return this.$storage.caseFile.getters.getByIds(this.searchResultIds, true);
-    },
-
     headers(): Array<DataTableHeader> {
-      return [];
+      return [
+        {
+          text: this.$t('massActions.financialAssistance.table.header.caseFileNumber') as string,
+          align: 'start',
+          sortable: true,
+          value: this.customColumns.caseFileNumber,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.firstName') as string,
+          value: this.customColumns.firstName,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.lastName') as string,
+          value: this.customColumns.lastName,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.street') as string,
+          value: this.customColumns.street,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.city') as string,
+          value: this.customColumns.city,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.province') as string,
+          value: this.customColumns.province,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.postalCode') as string,
+          value: this.customColumns.postalCode,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.email') as string,
+          value: this.customColumns.email,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.authenticationStatus') as string,
+          value: this.customColumns.authenticationStatus,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.validationOfImpact') as string,
+          value: this.customColumns.validationOfImpact,
+          sortable: true,
+        },
+        {
+          text: this.$t('massActions.financialAssistance.table.header.isDuplicate') as string,
+          value: this.customColumns.isDuplicate,
+          sortable: true,
+        },
+      ];
     },
 
     filters(): Array<IFilterSettings> {
       return [
-
+        {
+          key: 'Entity/EventId',
+          type: EFilterType.Select,
+          label: this.$t('caseFileTable.filters.eventName') as string,
+          items: this.eventsFilter,
+          loading: this.eventsFilterLoading,
+          disabled: this.eventsFilterLoading,
+        },
+        {
+          key: 'Metadata/AppliedProgramIds',
+          keyType: EFilterKeyType.Array,
+          type: EFilterType.MultiSelectExclude,
+          label: this.$t('massActions.financialAssistance.filter.programs.label') as string,
+          items: this.programsFilter,
+          loading: this.programsFilterLoading,
+          disabled: this.programsFilter.length === 0,
+        },
+        {
+          key: `Metadata/CaseFileStatusName/Translation/${this.$i18n.locale}`,
+          type: EFilterType.MultiSelect,
+          label: this.$t('caseFileTable.tableHeaders.status') as string,
+          items: helpers.enumToTranslatedCollection(CaseFileStatus, 'enums.CaseFileStatus', true),
+        },
+        {
+          key: this.customColumns.authenticationStatus,
+          type: EFilterType.MultiSelect,
+          label: this.$t('massActions.financialAssistance.table.header.authenticationStatus') as string,
+          items: helpers.enumToTranslatedCollection(IdentityAuthenticationStatus, 'enums.IdentityAuthenticationStatus', true),
+        },
+        {
+          key: this.customColumns.validationOfImpact,
+          type: EFilterType.MultiSelect,
+          label: this.$t('massActions.financialAssistance.table.header.validationOfImpact') as string,
+          items: helpers.enumToTranslatedCollection(ValidationOfImpactStatus, 'enums.ValidationOfImpactStatus', true),
+        },
+        {
+          key: 'Metadata/PrimaryBeneficiary/IdentitySet/DateOfBirth',
+          type: EFilterType.Date,
+          dateMode: EDateMode.Static,
+          label: this.$t('common.birthdate.label') as string,
+        },
+        {
+          key: this.customColumns.province,
+          type: EFilterType.MultiSelect,
+          label: this.$t('massActions.financialAssistance.table.header.province') as string,
+          items: helpers.getEnumKeys(ECanadaProvinces).map((key) => ({ text: this.$t(`common.provinces.${key}`) as string, value: key })),
+        },
+        {
+          key: this.customColumns.email,
+          type: EFilterType.Text,
+          label: this.$t('massActions.financialAssistance.table.header.email') as string,
+        },
+        {
+          key: this.customColumns.isDuplicate,
+          type: EFilterType.Select,
+          label: this.$t('caseFilesTable.filters.isDuplicate') as string,
+          items: [{
+            text: this.$t('common.yes') as string,
+            value: true,
+          }, {
+            text: this.$t('common.no') as string,
+            value: false,
+          }],
+        },
       ];
     },
 
-    filtersOn(): boolean {
-      return !_isEmpty(this.userFilters);
+    tableData(): ICaseFileCombined[] {
+      return this.$storage.caseFile.getters.getByIds(this.searchResultIds, true);
     },
+
+    filtersOn(): boolean {
+      return !_isEmpty(this.userFilters) || !_isEmpty(this.userSearchFilters);
+    },
+  },
+
+  created() {
+    this.fetchEventsFilter();
   },
 
   methods: {
@@ -148,15 +352,75 @@ export default mixins(TablePaginationSearchMixin).extend({
           queryType: 'full',
           searchMode: 'all',
         });
-        this.setResults(res);
         return res;
       }
-      return [];
+      return { ids: [], count: 0 };
     },
 
-    setResults(res: IAzureTableSearchResults) {
-      this.itemsCount = res.count;
-      this.searchResultIds = res.ids;
+    async fetchEventsFilter() {
+      this.eventsFilterLoading = true;
+
+      const params = {
+        filter: {
+          or: [
+            {
+              Entity: {
+                Schedule: {
+                  Status: EEventStatus.Open,
+                },
+              },
+            },
+            {
+              Entity: {
+                Schedule: {
+                  Status: EEventStatus.OnHold,
+                },
+              },
+            },
+          ],
+        },
+        select: ['Entity/Name', 'Entity/Id'],
+        top: 999,
+        orderBy: `Entity/Name/Translation/${this.$i18n.locale} asc`,
+        queryType: 'full',
+        searchMode: 'all',
+      };
+
+      const res = await this.$services.events.search(params) as IAzureCombinedSearchResult<IEventEntity, IEventMetadata>;
+
+      this.eventsFilterLoading = false;
+
+      if (res?.value) {
+        this.eventsFilter = res.value.map((e) => ({
+          text: this.$m(e.entity.name),
+          value: e.entity.id,
+        }));
+      }
+    },
+
+    async fetchProgramsFilters(eventId: string) {
+      this.programsFilterLoading = true;
+
+      const res = await this.$services.programs.getAll({ eventId });
+
+      this.programsFilterLoading = false;
+
+      if (res) {
+        this.programsFilter = res.map((p: IProgramEntity) => ({ text: this.$m(p.name), value: p.id }));
+      }
+    },
+
+    /**
+     * When an item has been selected or un-selected
+     */
+    onAutoCompleteChange({ filterKey, value }: {filterKey: string, value: string; }) {
+      if (filterKey === 'Entity/EventId') {
+        if (value === null) {
+          this.programsFilter = [];
+          return;
+        }
+        this.fetchProgramsFilters(value);
+      }
     },
   },
 });

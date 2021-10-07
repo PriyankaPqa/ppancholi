@@ -133,11 +133,33 @@ export interface ICaseFileEntity extends IEntity {
 export interface ICaseFileMetadata extends IEntity {
   caseFileStatusName?: IMultilingual;
   event?: IIdMultilingualName;
-  primaryBeneficiaryFirstName?: string;
-  primaryBeneficiaryLastName?: string;
   lastActionDate?: Date | string;
   triageName?: IMultilingual;
   tags: IIdMultilingualName[];
+  primaryBeneficiary: {
+    id: uuid;
+    identitySet: {
+      firstName: string;
+      lastName: string;
+      dateOfBirth: string;
+    },
+    contactInformation: {
+      email: string;
+    },
+  },
+  household: {
+    address: {
+      address: {
+        streetAddress: string;
+        city: string;
+        postalCode: string;
+        provinceCode: IMultilingual;
+      }
+    },
+  },
+  identityAuthenticationStatusName: IMultilingual,
+  impactStatusValidationName: IMultilingual,
+  appliedProgramIds: uuid[]
 }
 
 export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata>

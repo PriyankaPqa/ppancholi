@@ -88,6 +88,7 @@ export type QueryOptions<T> = ExpandOptions<T> & {
   aliases: Alias[];
   searchMode: string;
   queryType: string;
+  searchFields: string;
 }
 
 export const ITEM_ROOT = '';
@@ -114,6 +115,33 @@ export function renderPrimitiveValue(key: string, val: any, aliases: Alias[] = [
     // We need to specify the delimiter , to exclude space from it
     // Works assuming our value does not have , in it. So , is just the separator
     return `search.in(${newKey}, ${value}, ',')`
+  }
+
+  if(key.includes('/notSearchIn_az')) {
+    const newKey = key.replace("/notSearchIn_az", "");
+    const value = handleValue(`${val}`, aliases);
+    // By default search.in assumes that spaces and commas are delimiters.
+    // We need to specify the delimiter , to exclude space from it
+    // Works assuming our value does not have , in it. So , is just the separator
+    return `not(search.in(${newKey}, ${value}, ','))`
+  }
+
+  if(key.includes('/notSearchInOnArray_az')) {
+    const newKey = key.replace("/notSearchInOnArray_az", "");
+    const value = handleValue(`${val}`, aliases);
+    // By default search.in assumes that spaces and commas are delimiters.
+    // We need to specify the delimiter , to exclude space from it
+    // Works assuming our value does not have , in it. So , is just the separator
+    return `not(${newKey}/any(x: search.in(x, ${value}, ',')))`
+  }
+
+  if(key.includes('/notEqualOnArray_az')) {
+    const newKey = key.replace("/notEqualOnArray_az", "");
+    const value = handleValue(`${val}`, aliases);
+    // By default search.in assumes that spaces and commas are delimiters.
+    // We need to specify the delimiter , to exclude space from it
+    // Works assuming our value does not have , in it. So , is just the separator
+    return `not(${newKey}/any(x: x eq ${value}))`
   }
 
   if(key.includes('/arrayNotEmpty')) {
@@ -180,7 +208,7 @@ function buildFilter(filters: Filter = {}, aliases: Alias[] = [], propPrefix = '
             result.push(renderPrimitiveValue(propName, value, aliases));
           }
           else if (Array.isArray(value)) {
-            if (propName.includes('/searchIn_az')) {
+            if (propName.includes('/searchIn_az') || propName.includes('/notSearchIn_az') || propName.includes('/notSearchInOnArray_az')) {
               result.push(renderPrimitiveValue(propName, value, aliases));
             } else {
               const op = filterKey;
@@ -544,6 +572,7 @@ export default function <T> ({
   func,
   queryType,
   searchMode,
+  searchFields,
 }: Partial<QueryOptions<T>> = {}) {
   let path = '';
   const aliases: Alias[] = [];
@@ -563,6 +592,10 @@ export default function <T> ({
   if (queryType) params.queryType = queryType;
 
   if (searchMode) params.searchMode = searchMode;
+
+  if (searchFields) params.searchFields = searchFields;
+
+
 
   if (count) {
     if (typeof count === 'boolean') {

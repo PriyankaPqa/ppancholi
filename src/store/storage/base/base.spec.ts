@@ -209,7 +209,7 @@ describe('BaseStorage', () => {
         expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`, { params, searchEndpoint: null });
       });
 
-      it('should filterout inactives by default or if specified', async () => {
+      it('should filter out inactive by default or if specified', async () => {
         const params = { filter: { Foo: 'foo' } };
         await storage.actions.search(params);
         expect(store.dispatch).toBeCalledWith(`${storage.entityModuleName}/search`,
@@ -234,7 +234,7 @@ describe('BaseStorage', () => {
           { params: { filter: 'filter string and Entity/Status eq 1' }, searchEndpoint: null });
       });
 
-      it('should call commit set for both entity and metadata', async () => {
+      it('should call commit setAll for both entity and metadata', async () => {
         store.dispatch = jest.fn().mockReturnValueOnce(Promise.resolve(
           {
             odataContext: 'foo',
@@ -247,8 +247,8 @@ describe('BaseStorage', () => {
 
         const params = { filter: { Foo: 'foo' } };
         await storage.actions.search(params);
-        expect(store.commit).toBeCalledWith(`${storage.entityModuleName}/set`, { ...mockEntities[0], eTag: 'mock-Entity-Etag' });
-        expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/set`, { ...mockMetadatum[0], eTag: 'mock-metadata-Etag' });
+        expect(store.commit).toBeCalledWith(`${storage.entityModuleName}/setAll`, [{ ...mockEntities[0], eTag: 'mock-Entity-Etag' }]);
+        expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/setAll`, [{ ...mockMetadatum[0], eTag: 'mock-metadata-Etag' }]);
       });
 
       it('should return a list of ids and the total count of items', async () => {

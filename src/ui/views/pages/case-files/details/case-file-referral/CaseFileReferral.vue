@@ -2,8 +2,8 @@
   <div class="pa-4">
     <rc-data-table
       data-test="case-file-referrals-table"
-      :items="azureSearchItems"
-      :count="azureSearchCount"
+      :items="tableData"
+      :count="itemsCount"
       :table-props="tableProps"
       :show-help="true"
       :help-link="$t('zendesk.help_link.case_referral_list')"
@@ -18,7 +18,7 @@
       <!--      <template #filter>-->
       <!--        <filter-toolbar-->
       <!--          :filter-key="FilterKey.Referrals"-->
-      <!--          :count="azureSearchCount"-->
+      <!--          :count="itemsCount"-->
       <!--          :filter-options="filters"-->
       <!--          @update:appliedFilter="onApplyFilter" />-->
       <!--      </template>-->
@@ -51,26 +51,25 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable, IFilterSettings,
 } from '@crctech/component-library';
 import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@/types';
 import routes from '@/constants/routes';
 import { IOptionItem } from '@/entities/optionItem';
 import { FilterKey } from '@/entities/user-account';
+import { ICaseFileReferralCombined } from '@/entities/case-file-referral';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseFileReferral',
 
   components: {
     RcDataTable,
   },
-
-  mixins: [TablePaginationSearchMixin],
 
   data() {
     return {
@@ -130,6 +129,7 @@ export default Vue.extend({
         },
       };
     },
+
     filters(): Array<IFilterSettings> {
       return [
         {
@@ -151,6 +151,7 @@ export default Vue.extend({
         },
       ];
     },
+
     referralTypes(): Array<IOptionItem> {
       return this.$storage.caseFileReferral.getters.types(true, null);
     },
@@ -165,6 +166,10 @@ export default Vue.extend({
       };
     },
 
+    tableData(): ICaseFileReferralCombined[] {
+      return this.$storage.caseFileReferral.getters.getByIds(this.searchResultIds);
+    },
+
   },
 
   async created() {
@@ -173,7 +178,6 @@ export default Vue.extend({
   },
 
   methods: {
-
     addCaseReferral() {
       this.$router.push({
         name: routes.caseFile.referrals.add.name,
@@ -210,7 +214,7 @@ export default Vue.extend({
         queryType: 'full',
         searchMode: 'all',
       });
-      return { value: this.$storage.caseFileReferral.getters.getByIds(res.ids), odataCount: res.count };
+      return res;
     },
   },
 });

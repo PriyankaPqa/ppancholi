@@ -1,9 +1,10 @@
 /* eslint-disable */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import { mockCombinedTeams, mockTeamSearchData } from '@/entities/team';
+import { mockCombinedTeams } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 import Component from './TeamsTable.vue';
+import flushPromises from 'flush-promises';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -44,6 +45,7 @@ describe('TeamsTable.vue', () => {
     describe('edit-button', () => {
       it('should be visible for level 4 and above', async () => {
         await mountWrapper(true, 4);
+        await flushPromises();
         const button = wrapper.findDataTest(`edit_team_${teamId}`);
         expect(button.exists()).toBe(true);
       });
@@ -58,6 +60,7 @@ describe('TeamsTable.vue', () => {
     describe('actions', () => {
       test('clicking on team name redirects to team details page ', async () => {
         await mountWrapper();
+        await flushPromises();
         const link = wrapper.findDataTest(`team_link_${teamId}`);
 
         expect(link.props('to')).toEqual({
@@ -70,6 +73,7 @@ describe('TeamsTable.vue', () => {
 
       test('edit button calls goToEditTeam', async () => {
         await mountWrapper();
+        await flushPromises();
         jest.spyOn(wrapper.vm, 'goToEditTeam').mockImplementation(() => { });
 
         const editButton = wrapper.findDataTest(`edit_team_${teamId}`);
@@ -250,7 +254,7 @@ describe('TeamsTable.vue', () => {
         });
       });
 
-      it('returns the search results set the azureSearchItems', async () => {
+      it('returns the search results', async () => {
         const res = await wrapper.vm.fetchData(params);
         expect(res).toEqual({ ids: ['1'], count: 1 });
       });

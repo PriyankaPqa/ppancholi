@@ -82,19 +82,6 @@ describe('massActionsTable', () => {
       });
     });
 
-    describe('setResults', () => {
-      it('should set itemsCount and searchResultIds', () => {
-        const res = { ids: ['1'], count: 1 };
-        expect(wrapper.vm.itemsCount).toEqual(0);
-        expect(wrapper.vm.searchResultIds).toEqual([]);
-
-        wrapper.vm.setResults(res);
-
-        expect(wrapper.vm.itemsCount).toEqual(1);
-        expect(wrapper.vm.searchResultIds).toEqual(['1']);
-      });
-    });
-
     describe('fetchData', () => {
       it('should call mass action search with proper params', async () => {
         const params = {
@@ -119,12 +106,6 @@ describe('massActionsTable', () => {
           queryType: 'full',
           searchMode: 'all',
         }, wrapper.vm.searchEndpoint);
-      });
-
-      it('should call setResults', async () => {
-        jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => {});
-        const res = await wrapper.vm.fetchData({ });
-        expect(wrapper.vm.setResults).toHaveBeenCalledWith(res);
       });
     });
 

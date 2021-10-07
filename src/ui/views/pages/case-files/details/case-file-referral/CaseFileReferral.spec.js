@@ -20,12 +20,6 @@ describe('CaseFileReferral.vue', () => {
       computed: {
         canEdit() { return canEdit; },
       },
-      data() {
-        return {
-          azureSearchItems: mockSearchData.value,
-          azureSearchCount: mockSearchData['@odata.count'],
-        };
-      },
       mocks: {
         $storage: storage,
         $route: {
@@ -46,7 +40,7 @@ describe('CaseFileReferral.vue', () => {
 
       it('should be bound to the items', async () => {
         mountWrapper();
-        expect(wrapper.findDataTest('case-file-referrals-table').props('items').length).toEqual(wrapper.vm.azureSearchCount);
+        expect(wrapper.findDataTest('case-file-referrals-table').props('items').length).toEqual(wrapper.vm.tableData.length);
       });
     });
 
@@ -233,7 +227,7 @@ describe('CaseFileReferral.vue', () => {
         });
       });
 
-      it('returns the search results set the azureSearchItems', async () => {
+      it('returns the search results', async () => {
         const res = await wrapper.vm.fetchData(params);
         expect(res).toBeDefined();
       });

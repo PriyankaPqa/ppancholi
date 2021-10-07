@@ -4,8 +4,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
 import helpers from '@/ui/helpers';
-import { IAzureSearchParams } from '@/types';
-import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 
@@ -99,7 +98,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     },
 
     search: async (context: ActionContext<IState<T>, IState<T>>, { params, searchEndpoint }: {params: IAzureSearchParams, searchEndpoint?: string}):
-    Promise<IAzureCombinedSearchResult<T, unknown>> => {
+      Promise<IAzureCombinedSearchResult<T, unknown>> => {
       const res = await this.service.search(params, searchEndpoint);
       return res;
     },

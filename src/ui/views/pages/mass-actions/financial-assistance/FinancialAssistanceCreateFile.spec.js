@@ -17,7 +17,7 @@ const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-describe('ImportValidationStatusCreate.vue', () => {
+describe('FinancialAssistanceCreateFile.vue', () => {
   let wrapper;
 
   describe('Template', () => {

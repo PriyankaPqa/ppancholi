@@ -14,7 +14,8 @@ export enum FilterKey {
   EventPrograms = 9,
   FinancialAssistanceTemplates = 10,
   Teams = 11,
-  CaseFileFinancialAssistanceOverview = 12
+  CaseFileFinancialAssistanceOverview = 12,
+  MassActionFinancialAssistance = 13,
 }
 
 export type AccessLevels = 0 | 1 | 2 | 4 | 8 | 16 | 32 | 48 | 56 | 60 | 62 | 63 | 64 | 128 | 256 | 448 | 512;

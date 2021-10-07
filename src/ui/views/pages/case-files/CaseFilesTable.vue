@@ -18,7 +18,7 @@
         :filter-key="FilterKey.CaseFiles"
         :count="itemsCount"
         :filter-options="filters"
-        @open="fetchEventsFilter"
+        @open="fetchEventsFilter()"
         @update:appliedFilter="onApplyFilterLocal">
         <template #toolbarActions>
           <div class="flex-row">
@@ -102,15 +102,16 @@ import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 import isEmpty from 'lodash/isEmpty';
 import routes from '@/constants/routes';
-import { IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import { ICaseFileCombined, CaseFileStatus, CaseFileTriage } from '@/entities/case-file';
+import {
+  ICaseFileCombined, CaseFileStatus, CaseFileTriage,
+} from '@/entities/case-file';
 import helpers from '@/ui/helpers';
 import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
-import { IEventCombined, EEventStatus } from '@/entities/event';
+import { EEventStatus, IEventEntity, IEventMetadata } from '@/entities/event';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseFilesTable',
@@ -135,14 +136,13 @@ export default mixins(TablePaginationSearchMixin).extend({
   data() {
     return {
       CaseFileStatus,
-      itemsCount: 0,
       FilterKey,
       myCaseFiles: false,
       getLocalStringDate: helpers.getLocalStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
-      searchResultIds: [] as string[],
       searchEventsResultIds: [] as string[],
-      eventsFilter: [] as IEventCombined[],
+      eventsFilter: [],
+      eventFilterQuery: null,
       eventsFilterLoading: false,
       searchLoading: false,
       options: {
@@ -176,7 +176,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     customColumns(): Record<string, string> {
       return {
         caseFileNumber: 'Entity/CaseFileNumber',
-        name: 'Metadata/PrimaryBeneficiaryFirstName',
+        name: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
         event: `Metadata/Event/Name/Translation/${this.$i18n.locale}`,
         triage: `Metadata/TriageName/Translation/${this.$i18n.locale}`,
         status: `Metadata/CaseFileStatusName/Translation/${this.$i18n.locale}`,
@@ -222,7 +222,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     filters(): Array<IFilterSettings> {
       return [
         {
-          key: 'Metadata/PrimaryBeneficiaryFirstName',
+          key: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
           type: EFilterType.Text,
           label: this.$t('caseFilesTable.tableHeaders.firstName') as string,
         },
@@ -261,10 +261,10 @@ export default mixins(TablePaginationSearchMixin).extend({
           type: EFilterType.Select,
           label: this.$t('caseFilesTable.filters.isDuplicate') as string,
           items: [{
-            text: this.$t('common.yes'),
+            text: this.$t('common.yes') as string,
             value: true,
           }, {
-            text: this.$t('common.no'),
+            text: this.$t('common.no') as string,
             value: false,
           }],
         },
@@ -273,10 +273,10 @@ export default mixins(TablePaginationSearchMixin).extend({
           type: EFilterType.Select,
           label: this.$t('caseFileTable.filters.isAssigned') as string,
           items: [{
-            text: this.$t('common.yes'),
+            text: this.$t('common.yes') as string,
             value: 'arrayNotEmpty',
           }, {
-            text: this.$t('common.no'),
+            text: this.$t('common.no') as string,
             value: 'arrayEmpty',
           }],
         },
@@ -308,9 +308,9 @@ export default mixins(TablePaginationSearchMixin).extend({
     myCaseFiles(newValue) {
       if (newValue) {
         // We apply filters from the switch + the ones from the filters panel
-        this.onApplyFilter({ preparedFilters: { ...this.userFilters, ...this.myCaseFilesFilter } });
+        this.onApplyFilter({ preparedFilters: { ...this.userFilters, ...this.myCaseFilesFilter } as Record<string, unknown> });
       } else {
-        let preparedFilters = {};
+        let preparedFilters = {} as Record<string, unknown>;
         if (isEqual(this.myCaseFilesFilter, this.userFilters)) { // If the only filter is myCaseFile
           preparedFilters = null;
         } else {
@@ -324,35 +324,27 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   methods: {
     async fetchData(params: IAzureSearchParams) {
-      try {
-        this.searchLoading = false;
-        const res = await this.$storage.caseFile.actions.search({
-          search: params.search,
-          filter: params.filter,
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        });
-        this.setResults(res);
-        return res; // Keep using the mixin in the current form until all entities searches are updated
-      } finally {
-        this.searchLoading = false;
-      }
-    },
-
-    setResults(res: IAzureTableSearchResults) {
-      this.itemsCount = res.count;
-      this.searchResultIds = res.ids;
+      this.searchLoading = false;
+      const res = await this.$storage.caseFile.actions.search({
+        search: params.search,
+        filter: params.filter,
+        top: params.top,
+        skip: params.skip,
+        orderBy: params.orderBy,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+      });
+      return res;
     },
 
     getBeneficiaryName(caseFile: ICaseFileCombined): string {
       if (!caseFile.metadata) return '';
 
-      const { primaryBeneficiaryFirstName, primaryBeneficiaryLastName } = caseFile.metadata;
-      return `${primaryBeneficiaryFirstName} ${primaryBeneficiaryLastName}`;
+      const { firstName } = caseFile.metadata.primaryBeneficiary.identitySet;
+      const { lastName } = caseFile.metadata.primaryBeneficiary.identitySet;
+
+      return `${firstName} ${lastName}`;
     },
 
     getHouseholdProfileRoute(caseFile: ICaseFileCombined) {
@@ -375,41 +367,48 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async fetchEventsFilter() {
       this.eventsFilterLoading = true;
-      try {
-        const res = await this.$storage.caseFile.actions.search({
-          filter: {
-            or: [
-              {
-                Metadata: {
-                  Event: {
-                    Status: EEventStatus.Open.toString(),
-                  },
+
+      const params = {
+        filter: {
+          or: [
+            {
+              Entity: {
+                Schedule: {
+                  Status: EEventStatus.Open,
                 },
               },
-              {
-                Metadata: {
-                  Event: {
-                    Status: EEventStatus.OnHold.toString(),
-                  },
+            },
+            {
+              Entity: {
+                Schedule: {
+                  Status: EEventStatus.OnHold,
                 },
               },
-            ],
-          },
-          top: 999,
-          orderBy: `Metadata/Event/Name/Translation/${this.$i18n.locale} asc`,
-          queryType: 'full',
-          searchMode: 'all',
-        });
-        this.eventsFilter = this.$storage.caseFile.getters.getByIds(res.ids)
-          .map((c: ICaseFileCombined) => ({ text: this.$m(c.metadata.event.name), value: c.metadata.event.id }));
-      } finally {
-        this.eventsFilterLoading = false;
+            },
+          ],
+        },
+        select: ['Entity/Name', 'Entity/Id'],
+        top: 999,
+        orderBy: `Entity/Name/Translation/${this.$i18n.locale} asc`,
+        queryType: 'full',
+        searchMode: 'all',
+      };
+
+      const res = await this.$services.events.search(params) as IAzureCombinedSearchResult<IEventEntity, IEventMetadata>;
+
+      this.eventsFilterLoading = false;
+
+      if (res?.value) {
+        this.eventsFilter = res.value.map((e) => ({
+          text: this.$m(e.entity.name),
+          value: e.entity.id,
+        }));
       }
     },
 
     async onApplyFilterLocal(
       { preparedFilters, searchFilters }
-        : { preparedFilters: Record<string, unknown>, searchFilters: Record<string, unknown> },
+        : { preparedFilters: Record<string, unknown>, searchFilters: string },
     ) {
       let finalFilters = {};
       if (this.myCaseFiles) {

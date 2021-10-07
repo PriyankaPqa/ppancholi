@@ -303,4 +303,19 @@ export default {
     return leavingConfirmed;
   },
 
+  // Could be use when one need to wait a fixed amount of time
+  timeout(ms: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  },
+
+  // https://docs.microsoft.com/en-us/azure/search/query-lucene-syntax?redirectedfrom=MSDN#escaping-special-characters
+  // https://docs.microsoft.com/en-us/azure/search/query-lucene-syntax?redirectedfrom=MSDN#encoding-unsafe-and-reserved-characters-in-urls
+
+  // Used for search query in Azure search. Only the input query needs to be sanitize.
+  sanitize(query: string) {
+    return encodeURIComponent(query.replace(/[-[\]{}&~!():*+?./\\,^$|#\s]/g, '\\$&'));
+  },
+
 };

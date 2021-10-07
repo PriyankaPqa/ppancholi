@@ -6,6 +6,7 @@ import {
   ICaseFileDetailedCount,
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 
 export interface ICreateCaseFileRequest {
   householdId: uuid;
@@ -18,7 +19,7 @@ export interface ICreateCaseFileRequest {
   }
 }
 
-export interface ICaseFilesService {
+export interface ICaseFilesService extends IDomainBaseService<ICaseFileEntity, uuid> {
   fetchCaseFileActivities(id: uuid): Promise<ICaseFileActivity[]>;
   setCaseFileTags(id: uuid, payload: IListOption[]): Promise<ICaseFileEntity>;
   setCaseFileStatus(id: uuid, { status, rationale, reason }:{status: CaseFileStatus, rationale?: string, reason?: IListOption})
@@ -34,7 +35,7 @@ export interface ICaseFilesService {
   fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount>;
 }
 
-export interface ICaseFilesServiceMock {
+export interface ICaseFilesServiceMock extends IDomainBaseServiceMock<ICaseFileEntity>{
   fetchCaseFileActivities: jest.Mock<ICaseFileActivity[]>;
   setCaseFileTags: jest.Mock<ICaseFileEntity>;
   setCaseFileStatus: jest.Mock<ICaseFileEntity>;

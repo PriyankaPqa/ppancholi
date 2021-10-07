@@ -1,6 +1,7 @@
 import { IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup } from '@/entities/financial-assistance-payment';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 
-export interface IFinancialAssistancePaymentsService {
+export interface IFinancialAssistancePaymentsService extends IDomainBaseService<IFinancialAssistancePaymentEntity, uuid>{
   addFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity>;
@@ -12,7 +13,7 @@ export interface IFinancialAssistancePaymentsService {
     Promise<IFinancialAssistancePaymentEntity>;
 }
 
-export interface IFinancialAssistancePaymentsServiceMock {
+export interface IFinancialAssistancePaymentsServiceMock extends IDomainBaseServiceMock<IFinancialAssistancePaymentEntity>{
   addFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;
   submitFinancialAssistancePayment: jest.Mock<IFinancialAssistancePaymentEntity>;

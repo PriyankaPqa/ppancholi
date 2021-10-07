@@ -1,11 +1,10 @@
 import _isEmpty from 'lodash/isEmpty';
 import Vue from 'vue';
+import { IAzureSearchParams } from '@/types';
 
 export default Vue.extend({
   data() {
     return {
-      azureSearchItems: [],
-      azureSearchCount: 0,
       azureSearchParams: {
         search: '',
         skip: 0,
@@ -14,13 +13,15 @@ export default Vue.extend({
         filter: {},
       },
       previousPageIndex: 0,
-      userFilters: null,
+      userFilters: null as Record<string, unknown>,
       userSearchFilters: '',
       params: null,
       forceSkip: false, // when apply or un-apply user filter
       options: {
         page: 1,
       },
+      searchResultIds: [] as string [],
+      itemsCount: 0,
     };
   },
 
@@ -28,14 +29,14 @@ export default Vue.extend({
     /**
      * Number of item to select
      */
-    getTop() {
+    getTop(): number {
       return this.params.pageSize;
     },
 
     /**
      * Calculate the skip to paginated results
      */
-    getSkip() {
+    getSkip(): number {
       const {
         pageIndex,
         pageSize,
@@ -58,13 +59,13 @@ export default Vue.extend({
     /**
      * Generate the order by to sort columns
      */
-    getOrderBy() {
+    getOrderBy(): string {
       const { orderBy, descending } = this.params;
       const direction = descending ? 'desc' : 'asc';
       return `${orderBy} ${direction}`;
     },
 
-    isNewPageIndex() {
+    isNewPageIndex(): boolean {
       const { pageIndex } = this.params;
       return this.previousPageIndex !== pageIndex;
     },
@@ -120,7 +121,7 @@ export default Vue.extend({
     /**
      * Triggered as soon as a parameter of the table has changed (sort, pagination, search)
      */
-    async search(params) {
+    async search(params: IAzureSearchParams) {
       let newParams = params;
 
       if (params.search) {
@@ -135,19 +136,19 @@ export default Vue.extend({
       this.setFilterParams();
 
       this.setSearchParams();
-
-      const res = await this.fetchData(this.azureSearchParams);
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      const res = await (this as any).fetchData(this.azureSearchParams);
 
       if (res) {
-        this.azureSearchItems = res?.value;
-        this.azureSearchCount = res.odataCount;
+        this.itemsCount = res.count;
+        this.searchResultIds = res.ids;
       }
     },
 
     /**
      * Triggered when a user apply or un-apply a filter
      */
-    async onApplyFilter({ preparedFilters, searchFilters }) {
+    async onApplyFilter({ preparedFilters, searchFilters }: {preparedFilters: Record<string, unknown>; searchFilters?: string}) {
       this.forceSkip = true;
       this.options.page = 1;
       this.userFilters = _isEmpty(preparedFilters) ? null : preparedFilters;

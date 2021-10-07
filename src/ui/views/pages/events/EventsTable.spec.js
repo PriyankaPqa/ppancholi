@@ -475,14 +475,6 @@ describe('EventsTable.vue', () => {
     });
 
     describe('fetchData', () => {
-      let params;
-
-      beforeEach(() => {
-        params = {
-          search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
-        };
-      });
-
       it('should call storage actions with proper parameters', async () => {
         const params = {
           search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
@@ -498,15 +490,6 @@ describe('EventsTable.vue', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        });
-      });
-
-      it('calls setResults with the search results', async () => {
-        jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => {});
-        await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.setResults).toHaveBeenCalledWith({
-          ids: [mockEvents()[0].id, mockEvents()[1].id],
-          count: 2,
         });
       });
     });

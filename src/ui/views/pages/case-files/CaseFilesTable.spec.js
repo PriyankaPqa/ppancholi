@@ -49,28 +49,44 @@ describe('CaseFilesTable.vue', () => {
       });
 
       it('renders', () => {
-        expect(dataTable.exists()).toBeTruthy();
+        expect(dataTable.exists())
+          .toBeTruthy();
       });
 
       it('displays the correct header values', () => {
         const headers = wrapper.findAll('th');
 
-        expect(headers.length).toBe(6);
+        expect(headers.length)
+          .toBe(6);
 
-        expect(headers.wrappers[0].find('span').text()).toBe('caseFileTable.tableHeaders.caseFileNumber');
-        expect(headers.wrappers[1].find('span').text()).toBe('caseFilesTable.tableHeaders.name');
-        expect(headers.wrappers[2].find('span').text()).toBe('caseFilesTable.tableHeaders.event');
-        expect(headers.wrappers[3].find('span').text()).toBe('caseFilesTable.tableHeaders.triage');
-        expect(headers.wrappers[4].find('span').text()).toBe('caseFilesTable.tableHeaders.status');
-        expect(headers.wrappers[5].find('span').text()).toBe('caseFilesTable.tableHeaders.createdDate');
+        expect(headers.wrappers[0].find('span')
+          .text())
+          .toBe('caseFileTable.tableHeaders.caseFileNumber');
+        expect(headers.wrappers[1].find('span')
+          .text())
+          .toBe('caseFilesTable.tableHeaders.name');
+        expect(headers.wrappers[2].find('span')
+          .text())
+          .toBe('caseFilesTable.tableHeaders.event');
+        expect(headers.wrappers[3].find('span')
+          .text())
+          .toBe('caseFilesTable.tableHeaders.triage');
+        expect(headers.wrappers[4].find('span')
+          .text())
+          .toBe('caseFilesTable.tableHeaders.status');
+        expect(headers.wrappers[5].find('span')
+          .text())
+          .toBe('caseFilesTable.tableHeaders.createdDate');
       });
 
       describe('help button', () => {
         it('displays the help button ', async () => {
           wrapper.vm.helpLink = 'mock-help-data-url';
           await wrapper.vm.$nextTick();
-          expect(dataTable.props('showHelp')).toBe(true);
-          expect(dataTable.props('helpLink')).toEqual('mock-help-data-url');
+          expect(dataTable.props('showHelp'))
+            .toBe(true);
+          expect(dataTable.props('helpLink'))
+            .toEqual('mock-help-data-url');
         });
       });
     });
@@ -78,18 +94,20 @@ describe('CaseFilesTable.vue', () => {
     describe('table elements', () => {
       test('case file number redirects to getCaseFileRoute', () => {
         const link = wrapper.findDataTest('caseFileDetail-link');
-        expect(link.props('to')).toEqual({
-          name: routes.caseFile.activity.name,
-          params: mockParams,
-        });
+        expect(link.props('to'))
+          .toEqual({
+            name: routes.caseFile.activity.name,
+            params: mockParams,
+          });
       });
 
       test('name redirects to getHouseholdProfileRoute', () => {
         const link = wrapper.findDataTest('beneficiaryName-link');
-        expect(link.props('to')).toEqual({
-          name: routes.household.householdProfile.name,
-          params: mockParams,
-        });
+        expect(link.props('to'))
+          .toEqual({
+            name: routes.household.householdProfile.name,
+            params: mockParams,
+          });
       });
     });
   });
@@ -113,7 +131,8 @@ describe('CaseFilesTable.vue', () => {
             myCaseFiles: true,
           });
 
-          expect(wrapper.vm.onApplyFilter).toHaveBeenCalledWith(expected);
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenCalledWith(expected);
         });
       });
 
@@ -129,7 +148,8 @@ describe('CaseFilesTable.vue', () => {
             myCaseFiles: false,
           });
 
-          expect(wrapper.vm.onApplyFilter).toHaveBeenLastCalledWith({ preparedFilters: {} });
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({ preparedFilters: {} });
         });
 
         it('should call onApplyFilter with filters from the panel if present', async () => {
@@ -151,7 +171,8 @@ describe('CaseFilesTable.vue', () => {
             },
           });
 
-          expect(wrapper.vm.onApplyFilter).toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel });
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel });
         });
       });
     });
@@ -178,7 +199,9 @@ describe('CaseFilesTable.vue', () => {
         wrapper = mount(Component, {
           localVue,
           computed: {
-            locale() { return 'en'; },
+            locale() {
+              return 'en';
+            },
           },
           mocks: {
             $storage: storage,
@@ -186,32 +209,35 @@ describe('CaseFilesTable.vue', () => {
         });
         const expectedColumns = {
           caseFileNumber: 'Entity/CaseFileNumber',
-          name: 'Metadata/PrimaryBeneficiaryFirstName',
+          name: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
           event: 'Metadata/Event/Name/Translation/en',
           triage: 'Metadata/TriageName/Translation/en',
           status: 'Metadata/CaseFileStatusName/Translation/en',
           created: 'Entity/Created',
         };
 
-        expect(wrapper.vm.customColumns).toEqual(expectedColumns);
+        expect(wrapper.vm.customColumns)
+          .toEqual(expectedColumns);
       });
     });
 
     describe('userId', () => {
       it('returns the correct object', () => {
-        expect(wrapper.vm.userId).toEqual('mock-id');
+        expect(wrapper.vm.userId)
+          .toEqual('mock-id');
       });
     });
 
     describe('myCaseFilesFilter', () => {
       it('returns the correct object', () => {
-        expect(wrapper.vm.myCaseFilesFilter).toEqual({
-          Entity: {
-            AssignedIndividualIds: {
-              any: 'mock-id',
+        expect(wrapper.vm.myCaseFilesFilter)
+          .toEqual({
+            Entity: {
+              AssignedIndividualIds: {
+                any: 'mock-id',
+              },
             },
-          },
-        });
+          });
       });
     });
 
@@ -229,7 +255,7 @@ describe('CaseFilesTable.vue', () => {
             customColumns() {
               return {
                 caseFileNumber: 'Entity/CaseFileNumber',
-                name: 'Metadata/PrimaryBeneficiaryFirstName',
+                name: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
                 event: 'Metadata/Event/Name/Translation/en',
                 triage: 'Metadata/TriageName/Translation/en',
                 status: 'Metadata/CaseFileStatusName/Translation/en',
@@ -239,58 +265,61 @@ describe('CaseFilesTable.vue', () => {
           },
         });
 
-        expect(wrapper.vm.headers).toEqual([
-          {
-            text: 'caseFileTable.tableHeaders.caseFileNumber',
-            sortable: true,
-            value: 'Entity/CaseFileNumber',
-          },
-          {
-            text: 'caseFilesTable.tableHeaders.name',
-            sortable: true,
-            value: 'Metadata/PrimaryBeneficiaryFirstName',
-          },
-          {
-            text: 'caseFilesTable.tableHeaders.event',
-            sortable: true,
-            value: 'Metadata/Event/Name/Translation/en',
-          },
-          {
-            text: 'caseFilesTable.tableHeaders.triage',
-            sortable: true,
-            value: 'Metadata/TriageName/Translation/en',
-          },
-          {
-            text: 'caseFilesTable.tableHeaders.status',
-            sortable: true,
-            value: 'Metadata/CaseFileStatusName/Translation/en',
-          },
-          {
-            text: 'caseFilesTable.tableHeaders.createdDate',
-            sortable: true,
-            value: 'Entity/Created',
-          },
-        ]);
+        expect(wrapper.vm.headers)
+          .toEqual([
+            {
+              text: 'caseFileTable.tableHeaders.caseFileNumber',
+              sortable: true,
+              value: 'Entity/CaseFileNumber',
+            },
+            {
+              text: 'caseFilesTable.tableHeaders.name',
+              sortable: true,
+              value: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
+            },
+            {
+              text: 'caseFilesTable.tableHeaders.event',
+              sortable: true,
+              value: 'Metadata/Event/Name/Translation/en',
+            },
+            {
+              text: 'caseFilesTable.tableHeaders.triage',
+              sortable: true,
+              value: 'Metadata/TriageName/Translation/en',
+            },
+            {
+              text: 'caseFilesTable.tableHeaders.status',
+              sortable: true,
+              value: 'Metadata/CaseFileStatusName/Translation/en',
+            },
+            {
+              text: 'caseFilesTable.tableHeaders.createdDate',
+              sortable: true,
+              value: 'Entity/Created',
+            },
+          ]);
       });
     });
 
     describe('labels', () => {
       it('returns the right labels', async () => {
         await wrapper.setData({ itemsCount: mockCaseFiles.length });
-        expect(wrapper.vm.labels).toEqual({
-          header: {
-            title: `caseFiles_table.title (${mockCaseFiles.length})`,
-            searchPlaceholder: 'common.inputs.quick_search',
-          },
-        });
+        expect(wrapper.vm.labels)
+          .toEqual({
+            header: {
+              title: `caseFiles_table.title (${mockCaseFiles.length})`,
+              searchPlaceholder: 'common.inputs.quick_search',
+            },
+          });
       });
     });
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
-        expect(wrapper.vm.tableProps).toEqual({
-          loading: false,
-        });
+        expect(wrapper.vm.tableProps)
+          .toEqual({
+            loading: false,
+          });
       });
     });
 
@@ -298,7 +327,7 @@ describe('CaseFilesTable.vue', () => {
       it('should have correct filters', () => {
         const expected = [
           {
-            key: 'Metadata/PrimaryBeneficiaryFirstName',
+            key: 'Metadata/PrimaryBeneficiary/IdentitySet/FirstName',
             type: EFilterType.Text,
             label: 'caseFilesTable.tableHeaders.firstName',
           },
@@ -362,6 +391,7 @@ describe('CaseFilesTable.vue', () => {
             label: 'caseFileTable.filters.lastActionDate',
           },
         ];
+
         expect(wrapper.vm.filters).toEqual(expected);
       });
     });
@@ -387,103 +417,101 @@ describe('CaseFilesTable.vue', () => {
 
       beforeEach(() => {
         params = {
-          search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
+          search: 'query',
+          filter: 'filter',
+          top: 10,
+          skip: 10,
+          orderBy: 'name asc',
         };
       });
 
       it('should call storage actions with proper parameters', async () => {
         await wrapper.vm.fetchData(params);
 
-        expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
-          search: params.search,
-          filter: params.filter,
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        });
-      });
-
-      it('calls setResults with the search results', async () => {
-        jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => {});
-        await wrapper.vm.fetchData(params);
-        expect(wrapper.vm.setResults).toHaveBeenCalledWith({
-          ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
-          count: 2,
-        });
-      });
-    });
-
-    describe('setResults', () => {
-      it('sets the argument data into the write data variables', async () => {
-        const searchResult = {
-          ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
-          count: 2,
-        };
-        await wrapper.vm.setResults(searchResult);
-        expect(wrapper.vm.itemsCount).toEqual(2);
-        expect(wrapper.vm.searchResultIds).toEqual([mockCaseFiles[0].id, mockCaseFiles[1].id]);
+        expect(wrapper.vm.$storage.caseFile.actions.search)
+          .toHaveBeenCalledWith({
+            search: params.search,
+            filter: params.filter,
+            top: params.top,
+            skip: params.skip,
+            orderBy: params.orderBy,
+            count: true,
+            queryType: 'full',
+            searchMode: 'all',
+          });
       });
     });
 
     describe('getHouseholdProfileRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getHouseholdProfileRoute(mockCaseFiles[0])).toEqual({
-          name: routes.household.householdProfile.name,
-          params: {
-            id: mockCaseFiles[0].entity.householdId,
-          },
-        });
+        expect(wrapper.vm.getHouseholdProfileRoute(mockCaseFiles[0]))
+          .toEqual({
+            name: routes.household.householdProfile.name,
+            params: {
+              id: mockCaseFiles[0].entity.householdId,
+            },
+          });
       });
     });
 
     describe('getCaseFileRoute', () => {
       it('returns the right route object', () => {
-        expect(wrapper.vm.getCaseFileRoute(mockCaseFiles[0])).toEqual({
-          name: routes.caseFile.activity.name,
-          params: {
-            id: mockCaseFiles[0].entity.id,
-          },
-        });
+        expect(wrapper.vm.getCaseFileRoute(mockCaseFiles[0]))
+          .toEqual({
+            name: routes.caseFile.activity.name,
+            params: {
+              id: mockCaseFiles[0].entity.id,
+            },
+          });
       });
     });
 
     describe('fetchEventsFilter', () => {
-      it('should search user events with status onhold or open', async () => {
+      it('should search user events with status onhold or open filtered by inputed name', async () => {
         await wrapper.vm.fetchEventsFilter();
 
-        expect(wrapper.vm.$storage.caseFile.actions.search).toHaveBeenCalledWith({
-          filter: {
-            or: [
-              {
-                Metadata: {
-                  Event: {
-                    Status: EEventStatus.Open.toString(),
+        expect(wrapper.vm.$services.events.search)
+          .toHaveBeenCalledWith({
+            filter: {
+              or: [
+                {
+                  Entity: {
+                    Schedule: {
+                      Status: EEventStatus.Open,
+                    },
                   },
                 },
-              },
-              {
-                Metadata: {
-                  Event: {
-                    Status: EEventStatus.OnHold.toString(),
+                {
+                  Entity: {
+                    Schedule: {
+                      Status: EEventStatus.OnHold,
+                    },
                   },
                 },
-              },
-            ],
-          },
-          top: 999,
-          orderBy: 'Metadata/Event/Name/Translation/en asc',
-          queryType: 'full',
-          searchMode: 'all',
-        });
+              ],
+            },
+            select: ['Entity/Name', 'Entity/Id'],
+            top: 999,
+            orderBy: 'Entity/Name/Translation/en asc',
+            queryType: 'full',
+            searchMode: 'all',
+          });
       });
 
       it('should set eventsFilter the search results', async () => {
-        jest.spyOn(wrapper.vm, 'setResults').mockImplementation(() => mockCombinedEvents());
+        wrapper.vm.$services.events.search = jest.fn(() => ({
+          odataCount: mockCombinedEvents().length,
+          odataContext: 'odataContext',
+          value: mockCombinedEvents(),
+        }));
+
         await wrapper.vm.fetchEventsFilter();
-        const expected = mockCombinedCaseFiles().map((c) => ({ text: c.metadata.event.name.translation.en, value: c.metadata.event.id }));
+
+        const expected = mockCombinedEvents().map((e) => ({
+          text: wrapper.vm.$m(e.entity.name),
+          value: e.entity.id,
+        }));
+
         expect(wrapper.vm.eventsFilter).toEqual(expected);
       });
     });
@@ -498,12 +526,16 @@ describe('CaseFilesTable.vue', () => {
 
           const preparedFilters = { test: {} };
 
-          await wrapper.vm.onApplyFilterLocal({ preparedFilters, searchFilters: null });
-
-          expect(wrapper.vm.onApplyFilter).toHaveBeenLastCalledWith({
-            preparedFilters: { ...preparedFilters, ...wrapper.vm.myCaseFilesFilter },
+          await wrapper.vm.onApplyFilterLocal({
+            preparedFilters,
             searchFilters: null,
           });
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({
+              preparedFilters: { ...preparedFilters, ...wrapper.vm.myCaseFilesFilter },
+              searchFilters: null,
+            });
         });
       });
 
@@ -516,12 +548,16 @@ describe('CaseFilesTable.vue', () => {
 
           const preparedFilters = { test: {} };
 
-          await wrapper.vm.onApplyFilterLocal({ preparedFilters, searchFilters: null });
-
-          expect(wrapper.vm.onApplyFilter).toHaveBeenLastCalledWith({
+          await wrapper.vm.onApplyFilterLocal({
             preparedFilters,
             searchFilters: null,
           });
+
+          expect(wrapper.vm.onApplyFilter)
+            .toHaveBeenLastCalledWith({
+              preparedFilters,
+              searchFilters: null,
+            });
         });
       });
     });

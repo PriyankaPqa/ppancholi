@@ -3,7 +3,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
 import { mockItemsWithBasicData } from '@/entities/financial-assistance';
-import { 
+import {
   mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
 import Component from '../CreateEditPaymentLineDialog.vue';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
@@ -128,9 +128,9 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
         expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
-        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();        
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.DirectDeposit } } });
-        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();        
+        expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.GiftCard } } });
         expect(wrapper.findDataTest('txt_actualamount').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice } } });
@@ -160,9 +160,9 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
         expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
-        expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();        
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.DirectDeposit } } });
-        expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();        
+        expect(wrapper.findDataTest('txt_related_number').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.GiftCard } } });
         expect(wrapper.findDataTest('txt_related_number').exists()).toBeTruthy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice } } });
@@ -185,16 +185,16 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.findDataTest('txt_related_number').vm.$attrs.disabled).toBeFalsy();
       });
     });
-    
+
     describe('payeeSection', () => {
       it(' is shown for Cheque', async () => {
         expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
         expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque } } });
-        expect(wrapper.findDataTest('payeeSection').exists()).toBeTruthy();        
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeTruthy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.DirectDeposit } } });
-        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();        
+        expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.GiftCard } } });
         expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice } } });
@@ -205,7 +205,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
       });
     });
-    
+
     describe('AddressForm', () => {
       it('should be displayed if Cheque', async () => {
         expect(wrapper.findComponent(AddressForm).exists()).toBeFalsy();
@@ -341,7 +341,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         financialAssistance.groups[0].lines[0].amount = 2;
         await wrapper.setProps({ financialAssistance: {...financialAssistance} });
         expect(wrapper.vm.amountError).toBe('caseFile.financialAssistance.ETransfer.moreThanX');
-        
+
         financialAssistance.groups[0].groupingInformation.modality = EPaymentModalities.Cheque;
         await wrapper.setProps({ financialAssistance: {...financialAssistance} });
         expect(wrapper.vm.amountError).toBeNull();
@@ -361,7 +361,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           groupingInformation:
           {
             modality: null,
-            payeeName: 'John Joe',
+            payeeName: 'Ben 2 Test',
             payeeType: 1,
           },
           id: '',
@@ -420,7 +420,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           timestamp: '',
         });
       });
-      
+
       it('sets the defaultBeneficiaryData from household and case file', async () => {
         jest.clearAllMocks();
         const household = storage.household.actions.fetch();
@@ -428,7 +428,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         household.metadata.memberMetadata[0].id = household.entity.primaryBeneficiary;
         storage.household.actions.fetch = jest.fn(() => household);
         await wrapper.vm.initCreateMode();
-        expect(wrapper.vm.defaultBeneficiaryData.name).toEqual('John Joe');
+        expect(wrapper.vm.defaultBeneficiaryData.name).toEqual('Ben 2 Test');
         expect(wrapper.vm.defaultBeneficiaryData.address.streetAddress).not.toBeNull();
         expect(wrapper.vm.defaultBeneficiaryData.email).toBe('myEmail');
       });
@@ -445,7 +445,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         caseFileFinancialAssistanceGroup.lines[0].address = mockAddressData();
         caseFileFinancialAssistanceGroup.lines[0].address.streetAddress = 'abc street';
         await wrapper.setProps({currentLine: caseFileFinancialAssistanceGroup.lines[0], currentGroup: caseFileFinancialAssistanceGroup});
-        
+
         jest.clearAllMocks();
         await wrapper.vm.initCreateMode();
         expect(wrapper.vm.address.streetAddress).toEqual('abc street');
@@ -459,26 +459,26 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.documentReceived).toBeFalsy();
         wrapper.vm.currentPaymentLine.documentReceived = true;
-        
+
         wrapper.vm.categorySelected(true);
         expect(wrapper.vm.currentPaymentLine.documentReceived).toBeFalsy();
         wrapper.vm.currentPaymentLine.documentReceived = true;
-        
+
         wrapper.vm.categorySelected(false);
         expect(wrapper.vm.currentPaymentLine.documentReceived).toBeTruthy();
       });
-      
+
       it('should reset amount if not passed false and fixed amount changed', async () => {
         // s-0-0 is fixed
         await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
-        
+
         // s-0-1 is not fixed
         await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
         wrapper.vm.categorySelected(false);
         expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
-        
+
         await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
         wrapper.vm.categorySelected();
         await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
@@ -584,7 +584,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.categorySelected).toHaveBeenCalled();
       });
     });
-    
+
     describe('setAddress', () => {
       it('should set the address', async () => {
         await wrapper.setData({
@@ -621,7 +621,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.paymentGroup.groupingInformation.payeeName).toEqual('');
       });
     });
-    
+
     describe('onCancel', () => {
       it('emits cancel if the confirmation dialog returns true', async () => {
         wrapper.vm.$refs.form.flags = { dirty: true };

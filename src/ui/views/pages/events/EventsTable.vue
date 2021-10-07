@@ -65,7 +65,6 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import {
   RcDataTable,
@@ -73,6 +72,7 @@ import {
 } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import { EFilterType, IFilterSettings } from '@crctech/component-library/src/types';
+import mixins from 'vue-typed-mixins';
 import { FilterKey } from '@/entities/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
@@ -87,9 +87,8 @@ import routes from '@/constants/routes';
 import moment from '@/ui/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'EventsTable',
 
   components: {
@@ -97,8 +96,6 @@ export default Vue.extend({
     FilterToolbar,
     StatusChip,
   },
-
-  mixins: [TablePaginationSearchMixin],
 
   props: {
     isDashboard: {
@@ -120,8 +117,6 @@ export default Vue.extend({
         sortBy: ['Entity/Schedule/OpenDate'],
         sortDesc: [true],
       },
-      itemsCount: 0,
-      searchResultIds: [] as string[],
     };
   },
 
@@ -226,13 +221,7 @@ export default Vue.extend({
         queryType: 'full',
         searchMode: 'all',
       });
-      this.setResults(res);
       return res;
-    },
-
-    setResults(res: IAzureTableSearchResults) {
-      this.itemsCount = res.count;
-      this.searchResultIds = res.ids;
     },
 
     getFilterParams(params: ISearchData) {
