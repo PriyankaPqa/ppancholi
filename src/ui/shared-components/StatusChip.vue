@@ -206,6 +206,13 @@ export default Vue.extend({
       switch (this.status) {
         case PaymentStatus.New:
           return colors.chips.green_pale;
+        case PaymentStatus.InProgress:
+          return colors.chips.orange;
+        case PaymentStatus.Sent:
+        case PaymentStatus.Issued:
+          return colors.chips.blue_pale;
+        case PaymentStatus.Cancelled:
+          return colors.chips.red;
         default:
           return colors.chips.green;
       }

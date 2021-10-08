@@ -4,6 +4,7 @@ import {
   IFinancialAssistancePaymentEntity,
   CreateFinancialAssistancePaymentServiceRequest,
   IFinancialAssistancePaymentGroup,
+  PaymentStatus,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
@@ -34,6 +35,10 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
       name: entity.name,
     };
     return this.http.patch(`${this.baseUrl}/${entity.id}`, payload);
+  }
+
+  async updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus): Promise<IFinancialAssistancePaymentEntity> {
+    return this.http.patch(`${this.baseUrl}/${entityId}/groups/${paymentGroupId}/payment-status`, { paymentStatus: status });
   }
 
   async submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity> {

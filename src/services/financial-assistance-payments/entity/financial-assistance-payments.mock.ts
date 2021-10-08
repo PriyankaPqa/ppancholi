@@ -7,6 +7,7 @@ export const mockFinancialAssistanceService = (): IFinancialAssistancePaymentsSe
   addFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   editFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   submitFinancialAssistancePayment: jest.fn(() => mockCaseFinancialAssistanceEntity()),
+  updatePaymentStatus: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   addFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   editFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),
   deleteFinancialAssistancePaymentLine: jest.fn(() => mockCaseFinancialAssistanceEntity()),

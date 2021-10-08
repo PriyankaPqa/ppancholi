@@ -1,6 +1,6 @@
 import { IStore, IState } from '@/store';
 import {
-  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata,
+  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata, PaymentStatus,
 } from '@/entities/financial-assistance-payment';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
@@ -22,6 +22,9 @@ export class FinancialAssistancePaymentStorage
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePayment`, entity),
     editFinancialAssistancePayment: (entity: IFinancialAssistancePaymentEntity):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistancePayment`, entity),
+    updatePaymentStatus: (entityId: uuid, paymentGroupId: uuid, status: PaymentStatus):
+      Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/updatePaymentStatus`
+      , ({ entityId, paymentGroupId, status })),
     submitFinancialAssistancePayment: (entityId: uuid):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitFinancialAssistancePayment`, entityId),
     addFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):

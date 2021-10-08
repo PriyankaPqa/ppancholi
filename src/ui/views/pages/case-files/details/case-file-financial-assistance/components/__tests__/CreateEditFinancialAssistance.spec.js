@@ -707,6 +707,15 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
     });
     
+    describe('updatePaymentStatus', () => {
+      it('calls service', async () => {
+        const newGroup = mockCaseFinancialAssistancePaymentGroups()[0];
+        newGroup.id = 'abc-id';
+        await wrapper.vm.updatePaymentStatus({ status: 3, group: newGroup});
+        expect(storage.financialAssistancePayment.actions.updatePaymentStatus).toHaveBeenCalledWith(financialAssistance.id, newGroup.id, 3);
+        expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.updatePaymentStatus()));
+      });
+    });
   });
 
   describe('beforeRouteLeave', () => {

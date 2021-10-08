@@ -69,7 +69,8 @@
                 data-test="paymentGroupList"
                 @submit-payment="onSubmitPayment"
                 @edit-payment-line="editPaymentLine"
-                @delete-payment-line="deletePaymentLine" />
+                @delete-payment-line="deletePaymentLine"
+                @update-payment-status="updatePaymentStatus" />
               <div v-else class="rc-body14">
                 {{ $t('caseFile.financialAssistance.noPaymentLines') }}
               </div>
@@ -121,6 +122,7 @@ import {
   IFinancialAssistancePaymentEntity,
   IFinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentLine,
+  PaymentStatus,
 } from '@/entities/financial-assistance-payment';
 import
 {
@@ -429,6 +431,16 @@ export default Vue.extend({
         }
       }
     },
+
+    async updatePaymentStatus(event : {status: PaymentStatus, group: IFinancialAssistancePaymentGroup}) {
+      const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions
+        .updatePaymentStatus(this.financialAssistance.id, event.group.id, event.status);
+      if (updatedFinancialAssistance) {
+        this.financialAssistance = new FinancialAssistancePaymentEntity(updatedFinancialAssistance);
+        this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.paymentStatusUpdated'));
+      }
+    },
+
   },
 });
 </script>

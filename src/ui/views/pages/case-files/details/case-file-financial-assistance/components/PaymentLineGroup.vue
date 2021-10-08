@@ -11,10 +11,13 @@
         </span>
 
         <span v-if="transactionApprovalStatus !== ApprovalStatus.New">
-          <status-chip
+          <status-select
             data-test="paymentLineGroup__status"
+            :value="paymentGroup.paymentStatus"
+            :statuses="paymentStatusesByModality"
+            :disabled="paymentStatusesByModality.length < 2"
             status-name="FinancialAssistancePaymentStatus"
-            :status="paymentGroup.paymentStatus" />
+            @input="onPaymentStatusChange($event)" />
         </span>
         <span
           v-else
@@ -87,8 +90,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-// import { VSelectWithValidation } from '@crctech/component-library';
-import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import {
   IFinancialAssistancePaymentLine,
@@ -106,7 +108,7 @@ export default Vue.extend({
   name: 'PaymentLineGroup',
 
   components: {
-    StatusChip,
+    StatusSelect,
     PaymentLineItem,
   },
 
@@ -139,9 +141,6 @@ export default Vue.extend({
 
   data() {
     return {
-      newStatus: PaymentStatus.New,
-      showConfirmChangeStatusDialog: false,
-      showCancelPaymentDialog: false,
       loading: false,
       cancellationReason: null as EPaymentCancellationReason,
       ApprovalStatus,
@@ -180,57 +179,100 @@ export default Vue.extend({
       return false;
     },
 
-    // ToDo: Used to modify the paymentStatus according to the current modality.
-    // paymentStatusesByModality(): Array<{key: PaymentStatus; text: string;}> {
-    //   let statusArr: Array<PaymentStatus> = [];
+    // eslint-disable-next-line complexity
+    paymentStatusesByModality(): Array<PaymentStatus> {
+      /*
+        based on the excel grid of statuses available according to your role and current modality
+        see https://rctech.atlassian.net/browse/EMISV2-673
+      */
+      let statusArr: Array<PaymentStatus> = [];
+      const currentModality = this.paymentGroup.groupingInformation.modality;
+      const currentStatus = this.paymentGroup.paymentStatus;
+      const isFinance = this.$hasRole('contributorFinance');
+      const isLevel1Plus = this.$hasLevel('level1');
+      const isLevel3Plus = this.$hasLevel('level3');
+      const isLevel6 = this.$hasLevel('level6');
 
-    //   switch (this.paymentGroup.modality) {
-    //     case EPaymentModalities.ETransfer:
-    //       statusArr = [
-    //         PaymentStatus.New,
-    //         PaymentStatus.InProgress,
-    //         PaymentStatus.Sent,
-    //         PaymentStatus.Completed,
-    //         PaymentStatus.Cancelled,
-    //       ];
-    //       break;
+      if (!isFinance && !isLevel1Plus) {
+        return [currentStatus];
+      }
 
-    //     case EPaymentModalities.Cheque:
-    //     case EPaymentModalities.DirectDeposit:
-    //       statusArr = [
-    //         PaymentStatus.New,
-    //         PaymentStatus.InProgress,
-    //         PaymentStatus.Completed,
-    //         PaymentStatus.Cancelled,
-    //       ];
-    //       break;
+      switch (currentModality) {
+        case EPaymentModalities.ETransfer:
+          if (isFinance || isLevel6) {
+            statusArr = [
+              PaymentStatus.New,
+              currentStatus !== PaymentStatus.New ? PaymentStatus.InProgress : null,
+              PaymentStatus.Sent,
+              PaymentStatus.Completed,
+              PaymentStatus.Cancelled,
+            ];
+          } else if (isLevel3Plus && currentStatus === PaymentStatus.New) {
+            statusArr = [PaymentStatus.Cancelled];
+          }
+          break;
 
-    //     case EPaymentModalities.PrepaidCard:
-    //       statusArr = [
-    //         PaymentStatus.New,
-    //         PaymentStatus.Completed,
-    //         PaymentStatus.Cancelled,
-    //       ];
-    //       break;
+        case EPaymentModalities.Cheque:
+        case EPaymentModalities.DirectDeposit:
+          if (isFinance || isLevel6) {
+            statusArr = [
+              PaymentStatus.New,
+              currentStatus !== PaymentStatus.New || currentModality === EPaymentModalities.DirectDeposit ? PaymentStatus.InProgress : null,
+              PaymentStatus.Completed,
+              PaymentStatus.Cancelled,
+            ];
+          } else if (isLevel3Plus && currentStatus === PaymentStatus.New) {
+            statusArr = [PaymentStatus.Cancelled];
+          }
+          break;
 
-    //     case EPaymentModalities.Voucher:
-    //       statusArr = [
-    //         PaymentStatus.Issued,
-    //         PaymentStatus.Completed,
-    //         PaymentStatus.Cancelled,
-    //       ];
-    //       break;
+        case EPaymentModalities.Voucher:
+        case EPaymentModalities.Invoice:
+          if (isFinance || isLevel6) {
+            statusArr = [
+              PaymentStatus.Issued,
+              PaymentStatus.Completed,
+              PaymentStatus.Cancelled,
+            ];
+          } else if (isLevel3Plus && currentStatus === PaymentStatus.Issued) {
+            statusArr = [PaymentStatus.Cancelled];
+          }
+          break;
 
-    //     default:
-    //       statusArr = [];
-    //   }
+        case EPaymentModalities.PrepaidCard:
+          if (isFinance || isLevel6) {
+            statusArr = [
+              PaymentStatus.New,
+              PaymentStatus.Completed,
+              PaymentStatus.Cancelled,
+            ];
+          } else if (isLevel3Plus && currentStatus === PaymentStatus.New) {
+            statusArr = [PaymentStatus.Completed, PaymentStatus.Cancelled];
+          } else if (isLevel1Plus && currentStatus === PaymentStatus.New) {
+            statusArr = [PaymentStatus.Completed];
+          }
+          break;
 
-    //   return statusArr.map((status) => ({
-    //     key: status,
-    //     text: `enums.paymentStatus.${status}`,
-    //   }));
-    // },
+        case EPaymentModalities.GiftCard:
+          if (isFinance || isLevel6) {
+            statusArr = [
+              PaymentStatus.Issued,
+              PaymentStatus.Cancelled,
+            ];
+          } else if (isLevel3Plus && currentStatus === PaymentStatus.Issued) {
+            statusArr = [PaymentStatus.Cancelled];
+          }
+          break;
+
+        default:
+          statusArr = [];
+      }
+      if (statusArr.indexOf(currentStatus) === -1) statusArr = [currentStatus, ...statusArr];
+
+      return statusArr.filter((s) => s);
+    },
   },
+
   created() {
     if (this.isInactive) {
       this.$message({
@@ -241,6 +283,11 @@ export default Vue.extend({
   },
 
   methods: {
+    async onPaymentStatusChange(status: PaymentStatus) {
+      if (status !== PaymentStatus.Cancelled || await this.$confirm('confirm cancelled...', 'future story...')) {
+        this.$emit('update-payment-status', { status, group: this.paymentGroup });
+      }
+    },
   },
 });
 </script>

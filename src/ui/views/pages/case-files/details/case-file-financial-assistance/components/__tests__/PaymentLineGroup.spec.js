@@ -1,33 +1,46 @@
 /* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
+import { mockStorage } from '@/store/storage';
 import Component from '../PaymentLineGroup.vue';
-import { mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
+import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus } from '@/entities/financial-assistance-payment';
 import { Status } from '@/entities/base';
-import { mockProgramEntity } from '@/entities/program';
+import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
 
 const localVue = createLocalVue();
 const items = mockItems();
 let paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 let program = mockProgramEntity();
+const storage = mockStorage();
 
 describe('PaymentLineGroup.vue', () => {
   let wrapper;
+  
+  const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
+      localVue,
+      propsData: {
+        paymentGroup,
+          items,
+          program,
+      },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}` && level,
+        $hasRole: (r) => r === hasRole,
+        $storage: storage,
+      },
+      ...additionalOverwrites,
+    });
+    await wrapper.vm.$nextTick();
+  };
 
   describe('Template', () => {
 
-    beforeEach(() => {
+    beforeEach(async () => {
       jest.clearAllMocks();
       paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
 
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          paymentGroup,
-          items,
-          program,
-        },
-      });
+      await mountWrapper();
     });
 
     describe('paymentLineGroup__title', () => {
@@ -73,16 +86,10 @@ describe('PaymentLineGroup.vue', () => {
       it('shows a message if the data is inactive', async () => {
         paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
     
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            paymentGroup,
-            items,
-            program,
-          },
+        await mountWrapper(false, 6, null, {
           computed: {
-            isInactive() { return true; },
-          },
+            isInactive: () => true,
+          }
         });
 
         jest.clearAllMocks();
@@ -91,16 +98,10 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.$message).toHaveBeenCalled();
 
         
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            paymentGroup,
-            items,
-            program,
-          },
+        await mountWrapper(false, 6, null, {
           computed: {
-            isInactive() { return false; },
-          },
+            isInactive: () => false,
+          }
         });
         hook = wrapper.vm.$options.created[0];
         jest.clearAllMocks();
@@ -113,18 +114,11 @@ describe('PaymentLineGroup.vue', () => {
 
   describe('Computed', () => {
 
-    beforeEach(() => {
+    beforeEach(async () => {
       jest.clearAllMocks();
       paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
   
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          paymentGroup,
-          items,
-          program,
-        },
-      });
+      await mountWrapper();
     });
 
     describe('title', () => {
@@ -150,7 +144,7 @@ describe('PaymentLineGroup.vue', () => {
 
     describe('isInactive', () => {
       it('returns whether the current modality is not available when the payment is still new', async () => {
-        wrapper.vm.paymentGroup.groupingInformation = { modality: 2 };
+        wrapper.vm.paymentGroup.groupingInformation = { modality: 2, payeeType: 2 };
         await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
         await wrapper.setProps({ program: { paymentModalities: [1, 2] } });
         expect(wrapper.vm.isInactive).toBeFalsy();
@@ -191,6 +185,321 @@ describe('PaymentLineGroup.vue', () => {
     describe('modality', () => {
       it('should return name of the selected modality in lowercase', () => {
         expect(wrapper.vm.modality).toEqual('event.programmanagement.paymentmodalities.cheque');
+      });
+    });
+    
+    describe('paymentStatusesByModality', () => {
+      it('should return only the current status for contributors not finance', async () => {
+        paymentGroup.paymentStatus = 2;
+        await mountWrapper(false, null, 'contributorIM');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([2]);
+        paymentGroup.paymentStatus = 3;
+        await mountWrapper(false, null, 'contributorIM');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([3]);
+        await mountWrapper(false, null, 'contributor3');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([3]);
+        await mountWrapper(false, null, 'readonly');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([3]);
+      });
+      
+      /*
+        based on the excel grid of statuses available according to your role and current modality
+        see https://rctech.atlassian.net/browse/EMISV2-673
+      */
+      it('etransfer level6 PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 6);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+    
+      it('etransfer contributor finance PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+
+      it('etransfer level1 only current status', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+
+      it('etransfer level3 only current status + cancelled if new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 3);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      it('Cheque level6 PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 6);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+      
+      it('Cheque contributorFinance PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+
+      it('Cheque level1 only current status', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+
+      it('Cheque level3 only current status + cancelled if new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 3);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      
+      it('DirectDeposit level6 PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress even if not new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 6);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+
+      it('DirectDeposit contributorFinance PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress even if not new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+
+      it('DirectDeposit level1 only current status', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      it('DirectDeposit level3 only current status + cancelled if new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 3);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      it('Voucher level6 PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Voucher;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 6);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+      
+      it('Voucher contributorFinance PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Voucher;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+
+      it('Voucher level1 only current status', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Voucher;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      it('Voucher level3 only current status + cancelled if new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Voucher;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 3);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      it('Invoice level6 PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 6);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+      
+      it('Invoice contributorFinance PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+
+      it('Invoice level1 only current status', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      it('Invoice level3 only current status + cancelled if new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 3);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      
+      it('PrepaidCard level6 PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.PrepaidCard;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 6);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+      
+      it('PrepaidCard contributorFinance PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.PrepaidCard;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+      });
+
+      it('PrepaidCard level1 only current status or Completed only when New', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.PrepaidCard;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
+      });
+      
+      it('PrepaidCard level3 only current status + completed or cancelled if new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.PrepaidCard;
+        paymentGroup.paymentStatus = PaymentStatus.New;
+        await mountWrapper(false, 3);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Completed;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
+      });
+      
+      it('GiftCard level6 PaymentStatus.Issued, PaymentStatus.Cancelled', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 6);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+      });
+      
+      it('GiftCard contributorFinance PaymentStatus.Issued, PaymentStatus.Cancelled', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, null, 'contributorFinance');
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+      });
+
+      it('GiftCard level1 only current status', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 1);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
+      });
+      
+      it('GiftCard level3 only current status + cancelled if new', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
+        paymentGroup.paymentStatus = PaymentStatus.Issued;
+        await mountWrapper(false, 3);
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
+        
+        paymentGroup.paymentStatus = PaymentStatus.Cancelled;
+        expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
+      });
+    });
+  });
+  
+  describe('Methods', () => {
+    describe('onPaymentStatusChange', () => {
+  
+      it('should emit update-payment-status', async () => {
+        await mountWrapper();
+        await wrapper.vm.onPaymentStatusChange(3);
+        expect(wrapper.emitted('update-payment-status')[0][0]).toEqual({ status: 3, group: wrapper.vm.paymentGroup });
       });
     });
   });
