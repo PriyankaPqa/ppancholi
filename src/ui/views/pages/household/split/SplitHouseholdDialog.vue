@@ -213,18 +213,18 @@ export default Vue.extend({
 
     getIndigenousIdentity(member: IMember): string {
       const type = member.identitySet.indigenousType
-        ? this.$t(`common.indigenous.types.${EIndigenousTypes[member.identitySet.indigenousType]}`) : '';
+        ? `${this.$t(`common.indigenous.types.${EIndigenousTypes[member.identitySet.indigenousType]}`)}, ` : '';
 
       const community = this.$store.state.registration.indigenousCommunities
         .find((i: IIndigenousCommunityData) => i.id === member.identitySet.indigenousCommunityId);
 
       let communityName = '';
       if (member.identitySet.indigenousType === EIndigenousTypes.Other) {
-        communityName = `${member.identitySet.indigenousCommunityOther}, `;
+        communityName = `${member.identitySet.indigenousCommunityOther}`;
       } else if (member.identitySet.indigenousType && community) {
-        communityName = `${community.communityName}, `;
+        communityName = `${community.communityName}`;
       }
-      return communityName + type;
+      return type + communityName;
     },
 
     onCancel() {

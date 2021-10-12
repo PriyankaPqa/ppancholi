@@ -3,7 +3,7 @@
 
 import Vue from 'vue';
 import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
-import { IMemberData } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { IMemberEntity } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { IIndigenousCommunityData } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
 import { IAddressData, IHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import deepmerge from 'deepmerge';
@@ -20,12 +20,12 @@ export default Vue.extend({
       return householdCreateData;
     },
 
-    async fetchMembersInformation(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[]): Promise<IMemberData[]> {
+    async fetchMembersInformation(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
       let primaryBeneficiaryPromise;
-      const additionalMembersPromises = [] as Array<Promise<IMemberData>>;
+      const additionalMembersPromises = [] as Array<Promise<IMemberEntity>>;
 
       household.entity.members.forEach((id) => {
-        const promise = this.$services.households.getPerson(id) as Promise<IMemberData>;
+        const promise = this.$services.households.getPerson(id) as Promise<IMemberEntity>;
 
         if (id === household.entity.primaryBeneficiary) {
           primaryBeneficiaryPromise = promise;
@@ -45,7 +45,7 @@ export default Vue.extend({
 
     async buildHouseholdCreateData(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[] = null): Promise<IHouseholdCreateData> {
       let primaryBeneficiary;
-      const additionalMembers = [] as Array<IMemberData>;
+      const additionalMembers = [] as Array<IMemberEntity>;
 
       const genderItems = this.$storage.registration.getters.genders() as IOptionItemData[];
       const preferredLanguagesItems = this.$storage.registration.getters.preferredLanguages() as IOptionItemData[];
@@ -103,7 +103,7 @@ export default Vue.extend({
       };
     },
 
-    parseIdentitySet(member: IMemberData, indigenousCommunities: IIndigenousCommunityData[], genderItems: IOptionItemData[]) {
+    parseIdentitySet(member: IMemberEntity, indigenousCommunities: IIndigenousCommunityData[], genderItems: IOptionItemData[]) {
       const indigenous = member.identitySet?.indigenousIdentity?.indigenousCommunityId
         ? indigenousCommunities.find((c) => c.id === member.identitySet.indigenousIdentity.indigenousCommunityId) : null;
 
@@ -117,7 +117,7 @@ export default Vue.extend({
       };
     },
 
-    parseContactInformation(member: IMemberData, preferredLanguagesItems: IOptionItemData[], primarySpokenLanguagesItems: IOptionItemData[]) {
+    parseContactInformation(member: IMemberEntity, preferredLanguagesItems: IOptionItemData[], primarySpokenLanguagesItems: IOptionItemData[]) {
       const emptyPhone = {
         countryCode: 'CA',
         e164Number: '',
@@ -148,7 +148,7 @@ export default Vue.extend({
       };
     },
 
-    addShelterLocationData(members: IMemberData[], shelterLocations: IEventGenericLocation[]): IMemberData[] {
+    addShelterLocationData(members: IMemberEntity[], shelterLocations: IEventGenericLocation[]): IMemberEntity[] {
       return members.map((m) => ({
         ...m,
         currentAddress: {

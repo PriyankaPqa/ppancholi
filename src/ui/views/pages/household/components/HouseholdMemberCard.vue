@@ -68,10 +68,10 @@
               {{ member.identitySet.firstName + " " + member.identitySet.lastName }}
             </span>
             <span class="px-4 mr-4 name-cell border-right">
-              {{ $t('household.profile.member.middle_name') }}: {{ member.identitySet.middleName || "-" }}
+              {{ $t('household.profile.member.middle_name') }}: {{ member.identitySet.middleName || "—" }}
             </span>
             <span class="name-cell">
-              {{ $t('household.profile.member.preferred_name') }}: {{ member.identitySet.preferredName || "-" }}
+              {{ $t('household.profile.member.preferred_name') }}: {{ member.identitySet.preferredName || "—" }}
             </span>
           </td>
           <td v-if="item.customContent === 'phoneNumbers'" :data-test="`household_profile_member_info_data_${item.test}`">
@@ -230,7 +230,7 @@ export default Vue.extend({
           primaryMemberOnly: true,
           test: 'email_address',
           label: 'household.profile.member.email_address',
-          data: this.member.contactInformation.email || '-',
+          data: this.member.contactInformation.email || '—',
         },
         {
           test: 'phone_numbers',
@@ -242,31 +242,31 @@ export default Vue.extend({
           test: 'date_of_birth',
           primaryMemberOnly: false,
           label: 'household.profile.member.date_of_birth',
-          data: this.birthDate || '-',
+          data: this.birthDate || '—',
         },
         {
           test: 'gender',
           primaryMemberOnly: false,
           label: 'household.profile.member.gender',
-          data: this.gender || '-',
+          data: this.gender || '—',
         },
         {
           test: 'indigenous_identity',
           primaryMemberOnly: false,
           label: 'household.profile.member.indigenous_identity',
-          data: this.indigenousIdentity || '-',
+          data: this.indigenousIdentity || '—',
         },
         {
           test: 'preferred_language',
           primaryMemberOnly: true,
           label: 'household.profile.member.preferred_language',
-          data: this.preferredLanguage || '-',
+          data: this.preferredLanguage || '—',
         },
         {
           test: 'primary_spoken_language',
           primaryMemberOnly: true,
           label: 'household.profile.member.primary_spoken_language',
-          data: this.primarySpokenLanguage || '-',
+          data: this.primarySpokenLanguage || '—',
         },
         {
           test: 'temporary_address',
@@ -292,18 +292,18 @@ export default Vue.extend({
 
     indigenousIdentity(): string {
       const type = this.member.identitySet.indigenousType
-        ? this.$t(`common.indigenous.types.${EIndigenousTypes[this.member.identitySet.indigenousType]}`) : '';
+        ? `${this.$t(`common.indigenous.types.${EIndigenousTypes[this.member.identitySet.indigenousType]}`)}, ` : '';
 
       const community = this.$store.state.registration.indigenousCommunities
         .find((i: IIndigenousCommunityData) => i.id === this.member.identitySet.indigenousCommunityId);
 
       let communityName = '';
       if (this.member.identitySet.indigenousType === EIndigenousTypes.Other) {
-        communityName = `${this.member.identitySet.indigenousCommunityOther}, `;
+        communityName = `${this.member.identitySet.indigenousCommunityOther}`;
       } else if (this.member.identitySet.indigenousType && community) {
-        communityName = `${community.communityName}, `;
+        communityName = `${community.communityName}`;
       }
-      return communityName + type;
+      return type + communityName;
     },
 
     gender(): string {
@@ -328,28 +328,28 @@ export default Vue.extend({
       if (this.member.contactInformation?.mobilePhoneNumber?.number) {
         return this.member.contactInformation?.mobilePhoneNumber.number;
       }
-      return '-';
+      return '—';
     },
 
     homePhoneNumber(): string {
       if (this.member.contactInformation?.homePhoneNumber?.number) {
         return this.member.contactInformation.homePhoneNumber.number;
       }
-      return '-';
+      return '—';
     },
 
     alternatePhoneNumber(): string {
       if (this.member.contactInformation?.alternatePhoneNumber?.number) {
         return this.member.contactInformation.alternatePhoneNumber.number;
       }
-      return '-';
+      return '—';
     },
 
     alternatePhoneExtension(): string {
       if (this.member.contactInformation?.alternatePhoneNumber?.extension) {
         return this.member.contactInformation.alternatePhoneNumber.extension;
       }
-      return '-';
+      return '—';
     },
   },
 

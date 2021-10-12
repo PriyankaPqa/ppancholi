@@ -80,6 +80,8 @@ export default Vue.extend({
             eTag: '',
             createdBy: '',
             lastUpdatedBy: '',
+            lastAction: '',
+            lastActionCorrelationId: '',
             name: {
               translation: {
                 en: 'Default',

@@ -126,6 +126,8 @@ export const mockSubItem = (): IOptionSubItem => ({
   timestamp: '2021-08-12T19:58:28.654Z',
   createdBy: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
   lastUpdatedBy: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  lastAction: '',
+  lastActionCorrelationId: '',
   name: {
     translation: {
       en: 'EN',

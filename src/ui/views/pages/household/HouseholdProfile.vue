@@ -79,7 +79,8 @@
             small
             color="primary"
             class="my-4"
-            data-test="household-profile-history-btn">
+            data-test="household-profile-history-btn"
+            @click="showProfileHistory = true">
             {{ $t('household.profile.profile_history') }}
           </v-btn>
         </v-col>
@@ -152,6 +153,10 @@
       :i18n="i18n"
       in-household-profile />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
+    <household-profile-history
+      v-if="showProfileHistory && householdData"
+      :show.sync="showProfileHistory"
+      :household="householdData.entity" />
   </rc-page-content>
 </template>
 
@@ -173,6 +178,7 @@ import {
 } from '@/entities/event';
 import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
+import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 
 export default mixins(household).extend({
@@ -184,6 +190,7 @@ export default mixins(household).extend({
     RcPageContent,
     HouseholdCaseFileCard,
     HouseholdMemberCard,
+    HouseholdProfileHistory,
     AddEditAdditionalMembers,
   },
 
@@ -202,13 +209,13 @@ export default mixins(household).extend({
       i18n: this.$i18n,
       moment,
       loading: false,
-      householdData: null as IHouseholdCombined,
       caseFileIds: [] as string[],
       events: [] as IEventMainInfo[],
       showAddAdditionalMember: false,
       newAdditionalMember: null,
       disabledAddMembers: false,
       showEditAddress: false,
+      showProfileHistory: false,
     };
   },
 
@@ -231,6 +238,10 @@ export default mixins(household).extend({
       return this.$storage.registration.getters.householdCreate();
     },
 
+    householdData() : IHouseholdCombined {
+      return this.$storage.household.getters.get(this.id);
+    },
+
     activeCaseFiles():IHouseholdCaseFile[] {
       return this.caseFiles.filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive);
     },
@@ -241,7 +252,7 @@ export default mixins(household).extend({
     },
 
     caseFiles(): IHouseholdCaseFile[] {
-      if (this.householdData?.metadata) {
+      if (this.householdData?.metadata?.caseFiles) {
         return this.householdData.metadata.caseFiles;
       }
       return [];
@@ -307,9 +318,9 @@ export default mixins(household).extend({
     async fetchHouseholdData() {
       this.loading = true;
       try {
-        this.householdData = await this.$storage.household.actions.fetch(this.id);
-        if (this.householdData) {
-          const householdCreateData = await this.buildHouseholdCreateData(this.householdData, this.shelterLocations);
+        const householdData = await this.$storage.household.actions.fetch(this.id);
+        if (householdData) {
+          const householdCreateData = await this.buildHouseholdCreateData(householdData, this.shelterLocations);
 
           this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
         }

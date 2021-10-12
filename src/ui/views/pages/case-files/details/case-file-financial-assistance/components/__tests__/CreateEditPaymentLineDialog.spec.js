@@ -365,6 +365,8 @@ describe('CreateEditPaymentLineDialog.vue', () => {
             payeeType: 1,
           },
           id: '',
+          lastAction: "",
+          lastActionCorrelationId: "",
           lastUpdatedBy: '',
           lines: [
             {
@@ -384,6 +386,8 @@ describe('CreateEditPaymentLineDialog.vue', () => {
               createdBy: '',
               eTag: '',
               lastUpdatedBy: '',
+              lastAction: "",
+              lastActionCorrelationId: "",
             },
           ],
           paymentStatus: 1,
@@ -409,6 +413,8 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           },
           id: '',
           lastUpdatedBy: '',
+          lastAction: "",
+          lastActionCorrelationId: "",
           lines: [
             {
               ...caseFileFinancialAssistanceGroup.lines[0]

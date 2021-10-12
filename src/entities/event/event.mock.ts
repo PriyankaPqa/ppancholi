@@ -743,6 +743,8 @@ export const mockEmptyBaseData = () => ({
   eTag: null as uuid,
   createdBy: null as string,
   lastUpdatedBy: null as string,
+  lastAction: null as string,
+  lastActionCorrelationId: null as string,
 });
 
 export const emptyMultilingual = () : IMultilingual => (

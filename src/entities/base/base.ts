@@ -17,6 +17,10 @@ export class BaseEntity implements IEntity {
 
   lastUpdatedBy: uuid;
 
+  lastAction: string;
+
+  lastActionCorrelationId: uuid;
+
   constructor(data?: IEntity) {
     this.id = data?.id ?? '';
     this.tenantId = data?.tenantId ?? '';
@@ -26,5 +30,7 @@ export class BaseEntity implements IEntity {
     this.eTag = data?.eTag ?? '';
     this.createdBy = data?.createdBy ?? '';
     this.lastUpdatedBy = data?.lastUpdatedBy ?? '';
+    this.lastAction = data?.lastAction ?? '';
+    this.lastActionCorrelationId = data?.lastActionCorrelationId ?? '';
   }
 }

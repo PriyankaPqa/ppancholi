@@ -33,7 +33,8 @@ const events = [
 describe('HouseholdProfile.vue', () => {
   let wrapper;
   storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
-  storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
+  storage.household.getters.get = jest.fn(() => household);
+  storage.household.actions.fetch = jest.fn(() => household);
   storage.caseFile.getters.getByIds = jest.fn(() => [caseFile]);
 
   describe('Template', () => {
@@ -46,7 +47,6 @@ describe('HouseholdProfile.vue', () => {
         data() {
           return {
             events,
-            householdData: household,
             loading: false,
           };
         },
@@ -55,6 +55,7 @@ describe('HouseholdProfile.vue', () => {
           addressLine2() { return 'address-line-2'; },
           country() { return 'mock-country'; },
           household() { return householdCreate; },
+          householdData() { return household; },
         },
         mocks: {
           $storage: storage,
@@ -99,7 +100,6 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               events,
-              householdData: household,
               loading: false,
             };
           },
@@ -126,7 +126,6 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               events,
-              householdData: household,
               loading: false,
             };
           },
@@ -196,7 +195,6 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               events,
-              householdData: household,
             };
           },
           mocks: {
@@ -218,18 +216,30 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-
-          },
-          data() {
-            return {
-              householdData: household,
-            };
           },
           mocks: {
             $storage: storage,
           },
         });
         expect(wrapper.vm.household).toEqual(householdCreate);
+      });
+    });
+
+    describe('householdData', () => {
+      it('returns the right data', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            household() { return householdCreate; },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.householdData).toEqual(household);
       });
     });
 
@@ -250,11 +260,9 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
-          },
-          data() {
-            return {
-              householdData: household,
-            };
+            householdData() {
+              return household;
+            },
           },
           mocks: {
             $storage: storage,
@@ -281,11 +289,6 @@ describe('HouseholdProfile.vue', () => {
             },
             household() { return householdCreate; },
           },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
           mocks: {
             $storage: storage,
           },
@@ -305,11 +308,6 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() { return { ...householdCreate, homeAddress: { ...householdCreate.homeAddress, unitSuite: '13' } }; },
           },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
           mocks: {
             $storage: storage,
           },
@@ -327,11 +325,6 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() { return householdCreate; },
           },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
           mocks: {
             $storage: storage,
           },
@@ -347,11 +340,6 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           propsData: {
             id: household.entity.id,
-          },
-          data() {
-            return {
-              householdData: household,
-            };
           },
           computed: {
             household() { return householdCreate; },
@@ -374,12 +362,12 @@ describe('HouseholdProfile.vue', () => {
           },
           data() {
             return {
-              householdData: household,
               caseFileIds: ['1'],
             };
           },
           computed: {
             household() { return householdCreate; },
+            householdData() { return household; },
           },
           mocks: {
             $storage: storage,
@@ -401,11 +389,6 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() { return householdCreate; },
           },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
           mocks: {
             $storage: storage,
           },
@@ -423,17 +406,12 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-          },
-          data() {
-            return {
-              householdData:
-                { entity: mockHouseholdEntity({ timestamp: '2021-07-01' }), metadata: mockHouseholdMetadata({ timestamp: '2021-07-03' }) },
-            };
+            householdData() { return household; },
           },
           mocks: { $storage: storage },
         });
 
-        expect(wrapper.vm.lastUpdated).toEqual('Jul 3, 2021');
+        expect(wrapper.vm.lastUpdated).toEqual('May 26, 2021');
       });
 
       it(' returns the right date when there are timestamps only for entity', async () => {
@@ -442,14 +420,11 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: household.entity.id,
           },
-          data() {
-            return {
-              householdData:
-                { entity: mockHouseholdEntity({ timestamp: '2021-07-01' }), metadata: mockHouseholdMetadata({ timestamp: null }) },
-            };
-          },
           computed: {
             household() { return householdCreate; },
+            householdData() {
+              return { entity: mockHouseholdEntity({ timestamp: '2021-07-01' }), metadata: mockHouseholdMetadata({ timestamp: null }) };
+            },
           },
           mocks: { $storage: storage },
         });
@@ -467,11 +442,7 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-          },
-          data() {
-            return {
-              householdData: household,
-            };
+            householdData() { return household; },
           },
           store: {
             ...mockUserStateLevel(1),
@@ -496,11 +467,7 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-          },
-          data() {
-            return {
-              householdData: household,
-            };
+            householdData() { return household; },
           },
           store: {
             modules: {
@@ -538,11 +505,6 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           propsData: {
             id: household.entity.id,
-          },
-          data() {
-            return {
-              householdData: household,
-            };
           },
           mocks: {
             $storage: storage,
@@ -583,11 +545,6 @@ describe('HouseholdProfile.vue', () => {
             activeCaseFiles() { return [{ eventId: 'id-1' }, { eventId: 'id-2' }]; },
             household() { return householdCreate; },
           },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
           mocks: {
             $storage: storage,
           },
@@ -605,11 +562,6 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           propsData: {
             id: household.entity.id,
-          },
-          data() {
-            return {
-              householdData: household,
-            };
           },
           mocks: {
             $storage: storage,
@@ -636,11 +588,6 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: household.entity.id,
           },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
           mocks: {
             $storage: storage,
           },
@@ -654,11 +601,6 @@ describe('HouseholdProfile.vue', () => {
           localVue,
           propsData: {
             id: household.entity.id,
-          },
-          data() {
-            return {
-              householdData: household,
-            };
           },
           mocks: {
             $storage: storage,
@@ -682,7 +624,6 @@ describe('HouseholdProfile.vue', () => {
           data() {
             return {
               events,
-              householdData: household,
             };
           },
           computed: {
@@ -711,12 +652,6 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: household.entity.id,
           },
-          data() {
-            return {
-              events,
-              householdData: household,
-            };
-          },
           computed: {
             addressLine1() { return 'address-line-1'; },
             addressLine2() { return 'address-line-2'; },
@@ -741,6 +676,11 @@ describe('HouseholdProfile.vue', () => {
           propsData: {
             id: household.entity.id,
           },
+          computed: {
+            household() { return householdCreate; },
+            householdData() { return household; },
+          },
+          mocks: { $storage: storage },
         });
         expect(wrapper.vm.showEditAddress).toBe(false);
 

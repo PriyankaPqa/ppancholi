@@ -365,7 +365,7 @@ describe('HouseholdMemberCard.vue', () => {
         };
         doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
         expect(wrapper.vm.indigenousIdentity)
-          .toEqual(`${mockIndigenousCommunitiesGetData()[0].communityName}, common.indigenous.types.InuitCommunity`);
+          .toEqual(`common.indigenous.types.InuitCommunity, ${mockIndigenousCommunitiesGetData()[0].communityName}`);
       });
 
       it('returns the right data if member has indigenousType other', () => {
@@ -378,7 +378,7 @@ describe('HouseholdMemberCard.vue', () => {
           },
         };
         doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.indigenousIdentity).toEqual('mock-community, common.indigenous.types.Other');
+        expect(wrapper.vm.indigenousIdentity).toEqual('common.indigenous.types.Other, mock-community');
       });
     });
 
@@ -456,7 +456,7 @@ describe('HouseholdMemberCard.vue', () => {
       it('returns the right data when there is no mobile number', () => {
         const altMember = { ...member, contactInformation: { ...member.contactInformation, mobilePhoneNumber: { number: null } } };
         doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.mobilePhoneNumber).toEqual('-');
+        expect(wrapper.vm.mobilePhoneNumber).toEqual('—');
       });
     });
 
@@ -469,7 +469,7 @@ describe('HouseholdMemberCard.vue', () => {
       it('returns the right data when there is no mobile number', () => {
         const altMember = { ...member, contactInformation: { ...member.contactInformation, homePhoneNumber: { number: null } } };
         doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.homePhoneNumber).toEqual('-');
+        expect(wrapper.vm.homePhoneNumber).toEqual('—');
       });
     });
     describe('alternatePhoneNumber', () => {
@@ -481,7 +481,7 @@ describe('HouseholdMemberCard.vue', () => {
       it('returns the right data when there is no mobile number', () => {
         const altMember = { ...member, contactInformation: { ...member.contactInformation, alternatePhoneNumber: { number: null } } };
         doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.alternatePhoneNumber).toEqual('-');
+        expect(wrapper.vm.alternatePhoneNumber).toEqual('—');
       });
     });
 
@@ -494,7 +494,7 @@ describe('HouseholdMemberCard.vue', () => {
       it('returns the right data when there is no mobile number', () => {
         const altMember = { ...member, contactInformation: { ...member.contactInformation, alternatePhoneNumber: { extension: null } } };
         doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.alternatePhoneExtension).toEqual('-');
+        expect(wrapper.vm.alternatePhoneExtension).toEqual('—');
       });
     });
   });

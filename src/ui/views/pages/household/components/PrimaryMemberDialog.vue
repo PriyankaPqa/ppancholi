@@ -35,10 +35,13 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEqual from 'lodash/isEqual';
+import _merge from 'lodash/merge';
 import { PersonalInformation as LibPersonalInformation, CurrentAddressForm } from '@crctech/registration-lib';
 import { RcDialog } from '@crctech/component-library';
 import {
-  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IMember,
+  ContactInformation,
+  CurrentAddress,
+  ECurrentAddressTypes, IContactInformation, ICurrentAddress, IdentitySet, IIdentitySet, IMember,
 } from '@crctech/registration-lib/src/entities/household-create';
 import { TranslateResult } from 'vue-i18n';
 import { IEventGenericLocation } from '@crctech/registration-lib/src/entities/event';
@@ -72,7 +75,8 @@ export default Vue.extend({
   data() {
     return {
       i18n: this.$i18n,
-      backupPersonalInfo: null as IMember & IContactInformation,
+      backupIdentitySet: null as IIdentitySet,
+      backupContactInfo: null as IContactInformation,
       backupAddress: null as ICurrentAddress,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
@@ -86,11 +90,16 @@ export default Vue.extend({
     },
 
     changedAddress():boolean {
-      return !_isEqual(this.member.currentAddress, this.backupAddress);
+      return !_isEqual(new CurrentAddress(this.member.currentAddress), new CurrentAddress(this.backupAddress));
     },
 
-    changedPersonalInfo():boolean {
-      return !_isEqual(this.$storage.registration.getters.personalInformation(), this.backupPersonalInfo);
+    changedIdentitySet():boolean {
+      return !_isEqual(this.member.identitySet, new IdentitySet(this.backupIdentitySet));
+    },
+
+    changedContactInfo():boolean {
+      const adjustedBackupData = { ...this.backupContactInfo, emailValidatedByBackend: this.member.contactInformation.emailValidatedByBackend };
+      return !_isEqual(new ContactInformation(this.member.contactInformation), new ContactInformation(adjustedBackupData));
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
@@ -114,13 +123,14 @@ export default Vue.extend({
   },
 
   created() {
-    this.backupPersonalInfo = this.$storage.registration.getters.personalInformation();
+    this.backupIdentitySet = _cloneDeep(this.member.identitySet);
+    this.backupContactInfo = _cloneDeep(this.member.contactInformation);
     this.backupAddress = _cloneDeep(this.member.currentAddress);
   },
 
   methods: {
     onCancel() {
-      this.$storage.registration.mutations.setPersonalInformation(this.backupPersonalInfo);
+      this.$storage.registration.mutations.setPersonalInformation(_merge(this.backupIdentitySet, this.backupContactInfo));
       this.$storage.registration.mutations.setCurrentAddress(this.backupAddress);
       this.$emit('close');
     },
@@ -129,8 +139,12 @@ export default Vue.extend({
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
         try {
-          if (this.changedPersonalInfo) {
-            await this.submitPersonalInfoUpdate();
+          if (this.changedIdentitySet) {
+            await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: true });
+          }
+
+          if (this.changedContactInfo) {
+            await this.$storage.registration.actions.updatePersonContactInformation({ member: this.member, isPrimaryMember: true });
           }
 
           if (this.changedAddress) {
@@ -152,11 +166,6 @@ export default Vue.extend({
       if (this.additionalMembers) {
         await this.updateAdditionalMembersWithSameAddress();
       }
-    },
-
-    async submitPersonalInfoUpdate() {
-      await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: true });
-      await this.$storage.registration.actions.updatePersonContactInformation({ member: this.member, isPrimaryMember: true });
     },
 
     async updateAdditionalMembersWithSameAddress() {

@@ -1126,7 +1126,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@crctech/component-library@1.0.130":
+"@crctech/component-library@1.0.130", "@crctech/component-library@^1.0.130":
   version "1.0.130"
   resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.130.tgz#b187ee824cc9c939b963b8afb452da1e14320351"
   integrity sha1-sYfugkzJyTm5Y7ivtFLaHhQyA1E=
@@ -1135,21 +1135,12 @@
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
-"@crctech/component-library@^1.0.85":
-  version "1.0.85"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.85.tgz#8832e39514aa495a2e064e02688586d0f5bbf53b"
-  integrity sha1-iDLjlRSqSVouBk4CaIWG0PW79Ts=
+"@crctech/registration-lib@1.0.500":
+  version "1.0.500"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.500.tgz#f52755c7a42e517c41fdd980b6809bed312672fe"
+  integrity sha1-9SdVx6QuUXxB/dmAtoCb7TEmcv4=
   dependencies:
-    "@googlemaps/js-api-loader" "^1.11.0"
-    date-fns "^2.14.0"
-    vuedraggable "^2.24.1"
-
-"@crctech/registration-lib@1.0.484":
-  version "1.0.484"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.484.tgz#36774a31349278b0d28deb0ef04d15349cd489c6"
-  integrity sha1-NndKMTSSeLDSjesO8E0VNJzUicY=
-  dependencies:
-    "@crctech/component-library" "^1.0.85"
+    "@crctech/component-library" "^1.0.130"
     axios "^0.21.4"
     camelcase-keys "^6.2.2"
     moment "^2.29.1"

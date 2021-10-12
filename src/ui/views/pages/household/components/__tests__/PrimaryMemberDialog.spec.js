@@ -1,5 +1,5 @@
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { mockHouseholdCreate, mockIdentitySetData } from '@crctech/registration-lib/src/entities/household-create';
+import { mockContactInformation, mockHouseholdCreate, mockIdentitySetData } from '@crctech/registration-lib/src/entities/household-create';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers';
@@ -22,7 +22,7 @@ describe('PrimaryMemberDialog', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call personalInformation getter and save the result into backupPersonalInfo', async () => {
+      it('should store the identity set data  into backupIdentitySet', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -32,11 +32,32 @@ describe('PrimaryMemberDialog', () => {
           data() {
             return { apiKey: '123' };
           },
+          computed: {
+            member() { return householdCreate.primaryBeneficiary; },
+          },
           mocks: { $storage: storage },
         });
-        expect(wrapper.vm.$storage.registration.getters.personalInformation).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.backupPersonalInfo).toEqual(mockIdentitySetData());
+        expect(wrapper.vm.backupIdentitySet).toEqual(householdCreate.primaryBeneficiary.identitySet);
       });
+
+      it('should store the contact info into backupContactInfo', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return { apiKey: '123' };
+          },
+          computed: {
+            member() { return householdCreate.primaryBeneficiary; },
+          },
+          mocks: { $storage: storage },
+        });
+        expect(wrapper.vm.backupContactInfo).toEqual(householdCreate.primaryBeneficiary.contactInformation);
+      });
+
       it('should save the currentAddress into backupAddress', async () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -130,20 +151,37 @@ describe('PrimaryMemberDialog', () => {
       });
     });
 
-    describe('changedPersonalInfo', () => {
+    describe('changedIdentitySet', () => {
       it('returns false if the personal info and the backup info are the same', async () => {
-        await wrapper.setData({ backupPersonalInfo: householdCreate.primaryBeneficiary.identitySet });
-        expect(wrapper.vm.changedPersonalInfo).toBeFalsy();
+        await wrapper.setData({ backupIdentitySet: householdCreate.primaryBeneficiary.identitySet });
+        expect(wrapper.vm.changedIdentitySet).toBeFalsy();
       });
 
       it('returns true if the personal info and the backup info are not the same', async () => {
         await wrapper.setData({
-          backupPersonalInfo: {
+          backupIdentitySet: {
             ...mockIdentitySetData(),
             firstName: 'Foo',
           },
         });
-        expect(wrapper.vm.changedPersonalInfo).toBeTruthy();
+        expect(wrapper.vm.changedIdentitySet).toBeTruthy();
+      });
+    });
+
+    describe('changedContactInfo', () => {
+      it('returns false if the personal contact info and the backup contact info are the same', async () => {
+        await wrapper.setData({ backupContactInfo: householdCreate.primaryBeneficiary.contactInformation });
+        expect(wrapper.vm.changedContactInfo).toBeFalsy();
+      });
+
+      it('returns true if the personal info and the backup info are not the same', async () => {
+        await wrapper.setData({
+          backupContactInfo: {
+            ...householdCreate.primaryBeneficiary.contactInformation,
+            email: 'foo@bar.com',
+          },
+        });
+        expect(wrapper.vm.changedContactInfo).toBeTruthy();
       });
     });
 
@@ -192,9 +230,9 @@ describe('PrimaryMemberDialog', () => {
 
     describe('onCancel', () => {
       it('calls the setPersonalInformation mutations', async () => {
-        await wrapper.setData({ backupPersonalInfo: mockIdentitySetData() });
+        await wrapper.setData({ backupIdentitySet: mockIdentitySetData(), backupContactInfo: mockContactInformation() });
         await wrapper.vm.onCancel();
-        expect(storage.registration.mutations.setPersonalInformation).toHaveBeenCalledWith(mockIdentitySetData());
+        expect(storage.registration.mutations.setPersonalInformation).toHaveBeenCalledWith({ ...mockIdentitySetData(), ...mockContactInformation() });
       });
 
       it('calls the setCurrentAddress mutation', async () => {
@@ -216,17 +254,29 @@ describe('PrimaryMemberDialog', () => {
         expect(wrapper.vm.$refs.form.validate).toHaveBeenCalledTimes(1);
       });
 
-      it('calls submitPersonalInfoUpdate if changedPersonalInfo is true', async () => {
-        jest.spyOn(wrapper.vm, 'submitPersonalInfoUpdate').mockImplementation(() => {});
+      it('calls updatePersonIdentity action if changedIdentitySet is true', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.setData({
-          backupPersonalInfo: {
+          backupIdentitySet: {
             ...mockIdentitySetData(),
             firstName: 'Foo',
           },
         });
         await wrapper.vm.onSubmit();
-        expect(wrapper.vm.submitPersonalInfoUpdate).toHaveBeenCalledTimes(1);
+        expect(storage.registration.actions.updatePersonIdentity).toHaveBeenCalledWith({ member: wrapper.vm.member, isPrimaryMember: true });
+      });
+
+      it('calls updatePersonContactInformation action if changedContactInfo is true', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.setData({
+          backupContactInfo: {
+            ...householdCreate.primaryBeneficiary.contactInformation,
+            email: 'foo@bar.com',
+          },
+        });
+        await wrapper.vm.onSubmit();
+        expect(storage.registration.actions.updatePersonContactInformation)
+          .toHaveBeenCalledWith({ member: wrapper.vm.member, isPrimaryMember: true });
       });
 
       it('calls submitAddressUpdate if changedAddress is true', async () => {
@@ -269,19 +319,6 @@ describe('PrimaryMemberDialog', () => {
         jest.spyOn(wrapper.vm, 'updateAdditionalMembersWithSameAddress').mockImplementation(() => {});
         await wrapper.vm.submitAddressUpdate();
         expect(wrapper.vm.updateAdditionalMembersWithSameAddress).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('submitPersonalInfoUpdate', () => {
-      it('calls the action updatePersonIdentity ', async () => {
-        await wrapper.vm.submitPersonalInfoUpdate();
-        expect(storage.registration.actions.updatePersonIdentity).toHaveBeenCalledWith({ member: wrapper.vm.member, isPrimaryMember: true });
-      });
-
-      it('calls the updatePersonContactInformation action', async () => {
-        await wrapper.vm.submitPersonalInfoUpdate();
-        expect(storage.registration.actions.updatePersonContactInformation)
-          .toHaveBeenCalledWith({ member: wrapper.vm.member, isPrimaryMember: true });
       });
     });
 

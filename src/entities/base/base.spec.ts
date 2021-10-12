@@ -45,6 +45,16 @@ describe('>>> Base Entity', () => {
         const entity = new BaseEntity(mock);
         expect(entity.lastUpdatedBy).toBe(mock.lastUpdatedBy);
       });
+
+      it('should instantiate lastAction', () => {
+        const entity = new BaseEntity(mock);
+        expect(entity.lastAction).toBe(mock.lastAction);
+      });
+
+      it('should instantiate lastActionCorrelationId', () => {
+        const entity = new BaseEntity(mock);
+        expect(entity.lastActionCorrelationId).toBe(mock.lastActionCorrelationId);
+      });
     });
     describe('If no data is passed', () => {
       it('should instantiate id', () => {
@@ -85,6 +95,15 @@ describe('>>> Base Entity', () => {
       it('should instantiate lastUpdatedBy', () => {
         const entity = new BaseEntity();
         expect(entity.lastUpdatedBy).toBe('');
+      });
+      it('should instantiate lastAction', () => {
+        const entity = new BaseEntity();
+        expect(entity.lastAction).toBe('');
+      });
+
+      it('should instantiate lastActionCorrelationId', () => {
+        const entity = new BaseEntity();
+        expect(entity.lastActionCorrelationId).toBe('');
       });
     });
   });

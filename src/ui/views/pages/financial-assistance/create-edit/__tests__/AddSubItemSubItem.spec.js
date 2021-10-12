@@ -70,6 +70,8 @@ describe('AddSubItemSubItem.vue', () => {
             eTag: '',
             createdBy: '',
             lastUpdatedBy: '',
+            lastAction: '',
+            lastActionCorrelationId: '',
             name: {
               translation: {
                 en: 'Default',

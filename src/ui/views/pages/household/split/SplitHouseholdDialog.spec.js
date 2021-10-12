@@ -196,7 +196,7 @@ describe('SplitHouseholdDialog', () => {
           },
         };
         expect(wrapper.vm.getIndigenousIdentity(altMember))
-          .toEqual(`${mockIndigenousCommunitiesGetData()[0].communityName}, common.indigenous.types.InuitCommunity`);
+          .toEqual(`common.indigenous.types.InuitCommunity, ${mockIndigenousCommunitiesGetData()[0].communityName}`);
       });
 
       it('returns the right data if member has indigenousType other', () => {
@@ -208,7 +208,7 @@ describe('SplitHouseholdDialog', () => {
             indigenousCommunityOther: 'mock-community',
           },
         };
-        expect(wrapper.vm.getIndigenousIdentity(altMember)).toEqual('mock-community, common.indigenous.types.Other');
+        expect(wrapper.vm.getIndigenousIdentity(altMember)).toEqual('common.indigenous.types.Other, mock-community');
       });
     });
 

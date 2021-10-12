@@ -137,7 +137,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IHouseholdCombined, IMemberMetadata } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdCombined, IHouseholdMemberMetadata } from '@crctech/registration-lib/src/entities/household';
 import { ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@/types';
@@ -215,8 +215,8 @@ export default Vue.extend({
       return !!(this.primaryBeneficiary.mobilePhoneNumber || this.primaryBeneficiary.homePhoneNumber || this.primaryBeneficiary.alternatePhoneNumber);
     },
 
-    primaryBeneficiary(): IMemberMetadata {
-      return this.household?.metadata?.memberMetadata.find((m: IMemberMetadata) => m.id === this.household.entity.primaryBeneficiary);
+    primaryBeneficiary(): IHouseholdMemberMetadata {
+      return this.household?.metadata?.memberMetadata.find((m: IHouseholdMemberMetadata) => m.id === this.household.entity.primaryBeneficiary);
     },
 
     primaryBeneficiaryFullName(): string {

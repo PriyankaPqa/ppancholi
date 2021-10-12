@@ -613,7 +613,7 @@ describe('EventForm.vue', () => {
 
     describe('today', () => {
       it('returns the date of today', () => {
-        const today = moment(new Date()).utc().format('YYYY-MM-DD');
+        const today = moment(new Date()).format('YYYY-MM-DD');
         expect(wrapper.vm.today).toEqual(today);
       });
     });
