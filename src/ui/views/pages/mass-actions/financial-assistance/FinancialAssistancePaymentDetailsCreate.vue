@@ -106,12 +106,15 @@ import Vue from 'vue';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
 import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import _sortBy from 'lodash/sortBy';
 import {
   IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData, IFinancialAssistanceTableSubItemData,
   EFinancialAmountModes,
 } from '@/entities/financial-assistance';
-import { IOptionItem, IOptionItemCombined, IOptionSubItem } from '@/entities/optionItem';
+import {
+  IOptionItem, IOptionItemCombined, IOptionSubItem, mockOptionItemData, OptionItem,
+} from '@/entities/optionItem';
 import { EEventStatus, IEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers';
 import { EPaymentModalities } from '@/entities/program';
@@ -165,7 +168,7 @@ export default Vue.extend({
         amount: {
           required: true,
           min_value: 0.01,
-          max_value: this.currentSubItem?.maximumAmount || 99999999,
+          max_value: 99999999,
         },
       };
     },
@@ -209,7 +212,9 @@ export default Vue.extend({
           .filter((i) => i.status === Status.Active && i.subItems.some((s) => s.documentationRequired === false))
           .map((i) => i.mainCategory.optionItemId);
 
-        return this.financialAssistanceCategories.filter((c) => currentItemsIds.includes(c.entity.id)).map((c) => c.entity);
+        return _sortBy(this.financialAssistanceCategories
+          .filter((c) => currentItemsIds.includes(c.entity.id))
+          .map((c) => c.entity), 'orderRank');
       }
       return [];
     },

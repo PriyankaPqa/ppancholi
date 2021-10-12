@@ -81,8 +81,10 @@
 
           <div v-if="showErrors" class="full-width">
             <v-row v-for="(item, index) in massAction.metadata.lastRun.errors" :key="index" no-gutters>
-              <v-col cols="12" md="5" class="pl-7 mb-2">
-                <span class="rc-body14">{{ $t(`errors.${item.error}`) }}</span>
+              <v-col cols="12" md="5" class="pl-7 mb-2 pr-12">
+                <span class="rc-body14">{{ $te(`errors.${item.error}-mass-action`) ?
+                  $t(`errors.${item.error}-mass-action`)
+                  : $t(`errors.${item.error}`) }}</span>
               </v-col>
               <v-col class="pl-n7">
                 <span class="rc-body14">{{ $t(item.total) }}</span>

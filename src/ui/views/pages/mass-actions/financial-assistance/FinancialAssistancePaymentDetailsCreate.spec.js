@@ -1,4 +1,5 @@
 import { mockEvent } from '@crctech/registration-lib/src/entities/event/event.mock';
+import _sortBy from 'lodash/sortBy';
 import {
   createLocalVue,
   mount,
@@ -321,7 +322,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
             amount: {
               required: true,
               min_value: 0.01,
-              max_value: wrapper.vm.currentSubItem?.maximumAmount || 99999999,
+              max_value: 99999999,
             },
           });
       });
@@ -391,11 +392,11 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         + 'required for the current financial assistance table', () => {
         const idItemCurrentTable = '9b275d2f-00a1-4345-94fe-c37b84beb400';
 
-        const expected = wrapper.vm.financialAssistanceCategories
+        const expected = _sortBy(wrapper.vm.financialAssistanceCategories
           .filter((c) => c.entity.id === idItemCurrentTable
             && c.entity.status === Status.Active
             && c.subItems.some((s) => s.documentationRequired === false))
-          .map((c) => c.entity);
+          .map((c) => c.entity), 'orderRank');
 
         expect(wrapper.vm.financialAssistanceTableItems).toEqual(expected);
       });

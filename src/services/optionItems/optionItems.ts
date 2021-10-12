@@ -33,7 +33,7 @@ export class OptionItemsService implements IOptionItemsService {
       case EOptionLists.CaseFileCloseReasons:
         return '/case-file/close-reasons';
       case EOptionLists.FinancialAssistance:
-        return '/financial-assistance/financial-assistance-categories';
+        return '/finance/financial-assistance-categories';
       case EOptionLists.ScreeningId:
         return '/household/screening-ids';
       case EOptionLists.ReferralOutcomeStatus:

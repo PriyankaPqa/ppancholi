@@ -62,7 +62,7 @@ describe('>>> OptionItems Service', () => {
       expect(service.getPrefix(EOptionLists.ReferralTypes)).toBe('/case-file/referral-types');
     });
     it('returns correct prefix for EOptionLists.FinancialAssistance', () => {
-      expect(service.getPrefix(EOptionLists.FinancialAssistance)).toBe('/financial-assistance/financial-assistance-categories');
+      expect(service.getPrefix(EOptionLists.FinancialAssistance)).toBe('/finance/financial-assistance-categories');
     });
     it('returns correct prefix for EOptionLists.ScreeningId', () => {
       expect(service.getPrefix(EOptionLists.ScreeningId)).toBe('/household/screening-ids');
