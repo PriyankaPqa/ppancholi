@@ -268,10 +268,10 @@ describe('>>> Versioned Entity', () => {
       const entityData = mockVersionedEntity('household', { entityType: 'household', entity: { ...mockBaseEntity(), address: { address: mockAddress() } } });
       const versionedEntity = new VersionedEntityCombined(entityData, mockMetadata);
 
-      jest.spyOn(helpers, 'getAddressLines').mockImplementation(() => (['120 East Str.', '12345, NY, New York']));
+      jest.spyOn(helpers, 'getAddressLines').mockImplementation(() => (['120 East Str.', '12345, NY, New York', 'USA']));
       const expected = versionedEntity.makeHomeTemplate(versionedEntity.entity, i18n);
       expect(helpers.getAddressLines).toHaveBeenCalledWith(new Address(mockAddress()), i18n);
-      expect(expected).toEqual([{ label: 'household.history.label.home_address', value: '120 East Str.\n12345, NY, New York' }]);
+      expect(expected).toEqual([{ label: 'household.history.label.home_address', value: '120 East Str.,\n12345, NY, New York, USA' }]);
     });
   });
 
@@ -327,6 +327,7 @@ describe('>>> Versioned Entity', () => {
       expect(versionedEntity.makeMemberNameTemplate).toHaveBeenCalledWith(mockMember());
       expect(expected).toEqual([
         { label: 'member', value: 'John Smith' },
+        { label: 'household.profile.member.middle_name', value: 'middle' },
         {
           label: 'household.history.label.date_of_birth',
           value: 'Jan 13, 1955 (66 years)',
@@ -359,7 +360,7 @@ describe('>>> Versioned Entity', () => {
     });
 
     it('calls getAddressLines helper and returns the right address if the address has a place name and number', () => {
-      jest.spyOn(helpers, 'getAddressLines').mockImplementation(() => (['120 East Str.', '12345, NY, New York']));
+      jest.spyOn(helpers, 'getAddressLines').mockImplementation(() => (['120 East Str.', '12345, NY, New York', 'USA']));
       const entityData = mockVersionedEntity('householdMember', {
         entityType: 'householdMember',
         entity: {
@@ -380,12 +381,12 @@ describe('>>> Versioned Entity', () => {
       expect(expected).toEqual([
         {
           label: 'household.history.label.temporary_address',
-          value: 'Hotel/Motel, Mock Place Name #1234,\n120 East Str.,\n12345, NY, New York',
+          value: 'Hotel/Motel, Mock Place Name #1234,\n120 East Str.,\n12345, NY, New York, USA',
         },
       ]);
     });
     it('calls getAddressLines helper and returns the right address if the address has no place name and number', () => {
-      jest.spyOn(helpers, 'getAddressLines').mockImplementation(() => (['120 East Str.', '12345, NY, New York']));
+      jest.spyOn(helpers, 'getAddressLines').mockImplementation(() => (['120 East Str.', '12345, NY, New York', 'USA']));
       const entityData = mockVersionedEntity('householdMember', {
         entityType: 'householdMember',
         entity: {
@@ -406,7 +407,7 @@ describe('>>> Versioned Entity', () => {
       expect(expected).toEqual([
         {
           label: 'household.history.label.temporary_address',
-          value: 'Friends / Family, \n120 East Str.,\n12345, NY, New York',
+          value: 'Friends / Family, \n120 East Str.,\n12345, NY, New York, USA',
         },
       ]);
     });

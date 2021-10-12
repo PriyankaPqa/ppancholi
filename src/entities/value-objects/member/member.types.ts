@@ -20,7 +20,7 @@ export interface IMemberMetadata extends IEntity {
   shelterLocationName: IMultilingual;
   indigenousIdentityId: uuid;
   indigenousIdentityName: IMultilingual;
-  communityType: EIndigenousTypes;
+  indigenousCommunityType: EIndigenousTypes;
   genderId: uuid;
   genderName: IMultilingual;
   preferredLanguageId: uuid;

@@ -66,26 +66,30 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity> {
       const householdEntityRequest = this.service.getHouseholdHistory(household.id);
       const householdMetadataRequest = this.service.getHouseholdMetadataHistory(household.id);
 
-      const memberEntityRequests = [] as Promise<IVersionedEntity[]>[];
-      const memberMetadataRequests = [] as Promise<IVersionedEntity[]>[];
-      household.members.forEach((memberId) => {
-        memberEntityRequests.push(this.service.getMemberHistory(memberId));
-        memberMetadataRequests.push(this.service.getMemberMetadataHistory(memberId));
-      });
-
-      // Fetch all history from the entity and metadata endpoints for household and all members
-      const [householdEntityResponse, householdMetadataResponse, membersEntityResponses, membersMetadataResponses] = await Promise.all([
-        householdEntityRequest,
-        householdMetadataRequest,
-        Promise.all(memberEntityRequests),
-        Promise.all(memberMetadataRequests),
-      ]);
+      // Fetch  history from the entity and metadata endpoints for household
+      const [householdEntityResponse, householdMetadataResponse] = await Promise.all([householdEntityRequest, householdMetadataRequest]);
 
       // Add the type of change 'household' to the household history items
       const hhEntityResponse = householdEntityResponse?.map((r) => {
         r.entityType = 'household';
         return r;
       });
+
+      const allMemberIds = householdEntityResponse.reduce((acc, versionedEntity) => acc.concat((versionedEntity.entity as IHouseholdEntity).members), []);
+      const uniqueMemberIds = [...new Set(allMemberIds)];
+
+      const memberEntityRequests = [] as Promise<IVersionedEntity[]>[];
+      const memberMetadataRequests = [] as Promise<IVersionedEntity[]>[];
+      uniqueMemberIds.forEach((memberId) => {
+        memberEntityRequests.push(this.service.getMemberHistory(memberId));
+        memberMetadataRequests.push(this.service.getMemberMetadataHistory(memberId));
+      });
+
+      // Fetch all history from the entity and metadata endpoints for household and all members
+      const [membersEntityResponses, membersMetadataResponses] = await Promise.all([
+        Promise.all(memberEntityRequests),
+        Promise.all(memberMetadataRequests),
+      ]);
 
       // Add the type of change 'householdMember' to all the member history items
       const mEntityResponses = membersEntityResponses?.map((responses) => responses.map((r) => {

@@ -1,6 +1,8 @@
 import VueI18n from 'vue-i18n';
 
 import _difference from 'lodash/difference';
+import { IAddress } from '../address/address.types';
+import { ICurrentAddress } from '../current-address/currentAddress.types';
 import { IEntity } from '../../base';
 import { IMemberMetadata, IMemberEntity } from '../member/member.types';
 
@@ -139,11 +141,8 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
    */
   makeHomeTemplate(entity: IHouseholdEntity, i18n: VueI18n): IHistoryItemTemplateData[] {
     if (!entity?.address?.address) return this.makeEmptyTemplate();
-    const addressLines = helpers.getAddressLines(new Address(entity.address.address), i18n);
-    if (addressLines.length) {
-      return [{ label: 'household.history.label.home_address', value: `${addressLines[0]}\n${addressLines[1]}` }];
-    }
-    return this.makeEmptyTemplate();
+    const addressText = this.getAddressText(new Address(entity.address.address), i18n);
+    return [{ label: 'household.history.label.home_address', value: addressText }];
   }
 
   /**
@@ -215,6 +214,10 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
     return [
       ...this.makeMemberNameTemplate(entity),
       {
+        label: 'household.profile.member.middle_name',
+        value: entity.identitySet.middleName ? entity.identitySet.middleName : '—',
+      },
+      {
         label: 'household.history.label.date_of_birth',
         value: helpers.getBirthDateAndAge(entity.identitySet.dateOfBirth, i18n),
       },
@@ -224,8 +227,8 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
       },
       {
         label: 'household.history.label.indigenous_identity',
-        value: metadata?.communityType && metadata?.indigenousIdentityName
-          ? `${i18n.t(`common.indigenous.types.${EIndigenousTypes[metadata.communityType]}`)}, ${metadata.indigenousIdentityName}` : '—',
+        value: metadata?.indigenousCommunityType && metadata?.indigenousIdentityName
+          ? `${i18n.t(`common.indigenous.types.${EIndigenousTypes[metadata.indigenousCommunityType]}`)}, ${metadata.indigenousIdentityName}` : '—',
       },
     ];
   }
@@ -253,12 +256,8 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
         }
         address += ',';
       }
-
       if (memberAddress.address) {
-        const addressLines = helpers.getAddressLines(new Address(memberAddress.address), i18n);
-        if (addressLines) {
-          address += `\n${addressLines[0]},\n${addressLines[1]}`;
-        }
+        address += `\n${this.getAddressText(memberAddress.address, i18n)}`;
       }
     }
 
@@ -374,5 +373,19 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
     const memberAddress = this.makeTemporaryAddressTemplate(entity, metadata, i18n);
 
     return [...memberIdentity, ...this.makeEmptyLine(), ...memberAddress];
+  }
+
+  getAddressText(addressData: IAddress, i18n: VueI18n): string {
+    let address = '';
+    const addressLines = helpers.getAddressLines(new Address(addressData), i18n);
+
+    if (addressLines.length) {
+      address += `${addressLines[0]},\n${addressLines[1]},`;
+      if (addressLines.length > 2) {
+        address += ` ${addressLines[2]}`;
+      }
+    }
+
+    return address;
   }
 }

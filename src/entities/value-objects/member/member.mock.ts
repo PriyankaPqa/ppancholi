@@ -38,7 +38,7 @@ export const mockMemberMetadata = (force?: Partial<IMemberMetadata>) => ({
   shelterLocationName: { translation: { en: '' } },
   indigenousIdentityId: '',
   indigenousIdentityName: 'indigenous identity name',
-  communityType: EIndigenousTypes.FirstNation,
+  indigenousCommunityType: EIndigenousTypes.FirstNation,
   genderId: '',
   genderName: { translation: { en: 'male' } },
   preferredLanguageId: '',
