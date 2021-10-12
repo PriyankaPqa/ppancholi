@@ -115,7 +115,7 @@ export class IdentitySet implements IIdentitySet {
     this.indigenousCommunityId = data.indigenousCommunityId;
     this.indigenousCommunityOther = data.indigenousCommunityOther;
 
-    if (this.indigenousCommunityId === null && this.indigenousCommunityOther === null) {
+    if (this.indigenousCommunityId == null && this.indigenousCommunityOther == null) {
       this.indigenousIdentity = null;
     } else {
       this.indigenousIdentity = {
