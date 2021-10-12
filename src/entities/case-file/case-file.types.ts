@@ -57,6 +57,7 @@ export enum CaseFileActivityType {
   CaseNoteUpdated = 20,
   Registration = 21,
   PaymentSubmitted = 22,
+  HouseholdEdited =23,
 }
 
 export enum ImpactValidationMethod {

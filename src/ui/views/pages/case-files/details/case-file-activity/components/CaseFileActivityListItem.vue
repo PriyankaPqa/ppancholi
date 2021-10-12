@@ -99,6 +99,9 @@ export default Vue.extend({
 
         case CaseFileActivityType.PaymentSubmitted:
           return this.makeContentForFinancialAssistancePaymentSubmit();
+
+        case CaseFileActivityType.HouseholdEdited:
+          return this.makeContentForHouseholdEdited();
         default:
           return null;
       }
@@ -332,6 +335,11 @@ export default Vue.extend({
       const title = this.$t('caseFileActivity.activityList.title.PaymentSubmitted');
       const body = `${this.item.details.paymentName}: $${this.item.details.totalAmount}`;
       return { title, body };
+    },
+
+    makeContentForHouseholdEdited(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdEdited');
+      return { title, body: null };
     },
 
   },

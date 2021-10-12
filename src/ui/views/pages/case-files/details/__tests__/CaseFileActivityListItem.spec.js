@@ -718,6 +718,17 @@ describe('CaseFileActivityListItem.vue', () => {
             body,
           });
         });
+        it('returns the correct data when action type is HouseholdEdited', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.HouseholdEdited)[0];
+
+          await wrapper.setProps({
+            item,
+          });
+          expect(wrapper.vm.makeContentForHouseholdEdited()).toEqual({
+            title: 'caseFileActivity.activityList.title.HouseholdEdited',
+            body: null,
+          });
+        });
       });
     });
   });

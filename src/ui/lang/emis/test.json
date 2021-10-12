@@ -308,6 +308,7 @@
     "caseFileActivity.activityList.title.DocumentAdded": "caseFileActivity.activityList.title.DocumentAdded",
     "caseFileActivity.activityList.title.DocumentDeactivated": "caseFileActivity.activityList.title.DocumentDeactivated",
     "caseFileActivity.activityList.title.DocumentUpdated": "caseFileActivity.activityList.title.DocumentUpdated",
+    "caseFileActivity.activityList.title.HouseholdEdited": "",
     "caseFileActivity.activityList.title.IdentityAuthenticationUpdated": "caseFileActivity.activityList.title.IdentityAuthenticationUpdated",
     "caseFileActivity.activityList.title.ImpactStatusValidationUpdated": "caseFileActivity.activityList.title.ImpactStatusValidationUpdated",
     "caseFileActivity.activityList.title.PaymentSubmitted": "caseFileActivity.activityList.title.PaymentSubmitted",
