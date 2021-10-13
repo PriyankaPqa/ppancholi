@@ -287,7 +287,10 @@ export default mixins(additionalMemberForm).extend({
 
       const resIdentity = await this.$services.households.updatePersonIdentity(
         this.householdCreate.primaryBeneficiary.id,
-        this.householdCreate.primaryBeneficiary.identitySet,
+        {
+          contactInformation: this.householdCreate.primaryBeneficiary.contactInformation,
+          identitySet: this.householdCreate.primaryBeneficiary.identitySet,
+        },
       );
 
       if (!resIdentity) {
@@ -300,7 +303,11 @@ export default mixins(additionalMemberForm).extend({
 
       const resContactInfo = await this.$services.households.updatePersonContactInformation(
         this.householdCreate.primaryBeneficiary.id,
-        this.householdCreate.primaryBeneficiary.contactInformation,
+        {
+          contactInformation: this.householdCreate.primaryBeneficiary.contactInformation,
+          identitySet: this.householdCreate.primaryBeneficiary.identitySet,
+          isPrimaryBeneficiary: true,
+        },
       );
 
       if (!resContactInfo) {

@@ -108,6 +108,11 @@ export default Vue.extend({
       required: true,
     },
 
+    personId: {
+      type: String,
+      default: null,
+    },
+
     prefixDataTest: {
       type: String,
       default: 'personalInfo',
@@ -233,7 +238,7 @@ export default Vue.extend({
         this.formCopy.emailValidatedByBackend = !newVal;
         this.validateEmailTimeout = setTimeout(async () => {
           if (newVal) {
-            const result = await this.$services.households.validateEmail({ emailAddress: newVal });
+            const result = await this.$services.households.validateEmail({ emailAddress: newVal, personId: this.personId });
             this.customValidator = {
               isValid: result.emailIsValid,
               messageKey: result.emailIsValid ? null : result.errors[0].code,

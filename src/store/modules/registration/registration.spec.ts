@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { mockStore } from '@/store';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
 import { mockHttpError } from '@/services/httpClient.mock';
@@ -785,14 +786,15 @@ describe('>>> Registration Module', () => {
         store.state.registration.householdCreate.editAdditionalMember = jest.fn();
         await store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember, index });
 
-        expect(store.$services.households.updatePersonIdentity).toHaveBeenCalledWith(member.id, member.identitySet);
+        expect(store.$services.households.updatePersonIdentity).toHaveBeenCalledWith(member.id,
+          { identitySet: member.identitySet, contactInformation: member.contactInformation });
       });
 
       it('calls the right mutation when member is primary', async () => {
         const member = mockMember();
         const isPrimaryMember = true;
         store.commit = jest.fn();
-        store.$services.households.updatePersonIdentity = jest.fn(() => ({ id: 'foo' }));
+        store.$services.households.updatePersonIdentity = jest.fn(() => ({ id: 'foo' })) as any;
 
         await store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember });
 
@@ -804,7 +806,7 @@ describe('>>> Registration Module', () => {
         const isPrimaryMember = false;
         const index = 0;
         store.commit = jest.fn();
-        store.$services.households.updatePersonIdentity = jest.fn(() => ({ id: 'foo' }));
+        store.$services.households.updatePersonIdentity = jest.fn(() => ({ id: 'foo' })) as any;
 
         await store.dispatch('registration/updatePersonIdentity', { member, isPrimaryMember, index });
 
@@ -821,14 +823,15 @@ describe('>>> Registration Module', () => {
         store.state.registration.householdCreate.editAdditionalMember = jest.fn();
         await store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember, index });
 
-        expect(store.$services.households.updatePersonContactInformation).toHaveBeenCalledWith(member.id, member.contactInformation);
+        expect(store.$services.households.updatePersonContactInformation).toHaveBeenCalledWith(member.id,
+          { contactInformation: member.contactInformation, identitySet: member.identitySet, isPrimaryBeneficiary: isPrimaryMember });
       });
 
       it('calls the right mutation when member is primary', async () => {
         const member = mockMember();
         const isPrimaryMember = true;
         store.commit = jest.fn();
-        store.$services.households.updatePersonContactInformation = jest.fn(() => ({ id: 'foo' }));
+        store.$services.households.updatePersonContactInformation = jest.fn(() => ({ id: 'foo' })) as any;
 
         await store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember });
 
@@ -840,7 +843,7 @@ describe('>>> Registration Module', () => {
         const isPrimaryMember = false;
         const index = 0;
         store.commit = jest.fn();
-        store.$services.households.updatePersonContactInformation = jest.fn(() => ({ id: 'foo' }));
+        store.$services.households.updatePersonContactInformation = jest.fn(() => ({ id: 'foo' })) as any;
 
         await store.dispatch('registration/updatePersonContactInformation', { member, isPrimaryMember, index });
 
@@ -862,7 +865,7 @@ describe('>>> Registration Module', () => {
         const member = mockMember();
         const isPrimaryMember = true;
         store.commit = jest.fn();
-        store.$services.households.updatePersonAddress = jest.fn(() => ({ id: 'foo' }));
+        store.$services.households.updatePersonAddress = jest.fn(() => ({ id: 'foo' })) as any;
 
         await store.dispatch('registration/updatePersonAddress', { member, isPrimaryMember });
 

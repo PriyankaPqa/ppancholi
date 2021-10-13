@@ -64,16 +64,21 @@ describe('>>> Beneficiaries Service', () => {
 
   test('updatePersonContactInformation is linked to the correct URL', async () => {
     const contactInformation = mockContactInformation();
-    await service.updatePersonContactInformation('123', contactInformation);
+    const identitySet = mockIdentitySet();
+    await service.updatePersonContactInformation('123', { contactInformation, identitySet, isPrimaryBeneficiary: true });
     expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/contact-information`, {
       contactInformation: service.parseContactInformation(contactInformation),
+      identitySet: service.parseIdentitySet(identitySet),
+      isPrimaryBeneficiary: true,
     });
   });
 
   test('updatePersonIdentity is linked to the correct URL', async () => {
+    const contactInformation = mockContactInformation();
     const identitySet = mockIdentitySet();
-    await service.updatePersonIdentity('123', identitySet);
+    await service.updatePersonIdentity('123', { contactInformation, identitySet });
     expect(http.patch).toHaveBeenCalledWith(`${service.baseApi}/persons/${'123'}/identity-set`, {
+      contactInformation: service.parseContactInformation(contactInformation),
       identitySet: service.parseIdentitySet(identitySet),
     });
   });

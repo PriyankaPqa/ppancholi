@@ -11,6 +11,7 @@
       :preferred-languages-items="preferredLanguagesItems"
       :primary-spoken-languages-items="primarySpokenLanguagesItems"
       :skip-phone-email-rules="skipPhoneEmailRules"
+      :personId="householdCreate.primaryBeneficiary.id"
       @change="setContactInformation($event)" />
 
     <indigenous-identity-form

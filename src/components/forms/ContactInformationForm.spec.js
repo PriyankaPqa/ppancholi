@@ -331,7 +331,7 @@ describe('ContactInformationForm.vue', () => {
 
         await new Promise((resolve) => setTimeout(resolve, 500));
 
-        expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledWith({ emailAddress: 'email' });
+        expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledWith({ emailAddress: 'email', personId: null });
       });
     });
   });

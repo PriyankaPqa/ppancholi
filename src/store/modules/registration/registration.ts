@@ -387,7 +387,7 @@ const actions = (mode: ERegistrationMode) => ({
     { lang, registrationLink }: { lang: string; registrationLink: string },
   ): Promise<IEvent> {
     const result = await this.$services.publicApi.searchEvents(lang, registrationLink);
-    const eventData = result?.value?.length > 0 ? result.value[0].entity : null;
+    const eventData = result?.value?.length > 0 ? (result.value[0] as {entity: IEvent}).entity : null;
     context.commit('setEvent', eventData);
 
     return context.getters.event;
@@ -475,7 +475,8 @@ const actions = (mode: ERegistrationMode) => ({
     context: ActionContext<IState, IState>,
     { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number},
   ): Promise<IHouseholdEntity> {
-    const result = await this.$services.households.updatePersonContactInformation(member.id, member.contactInformation);
+    const result = await this.$services.households.updatePersonContactInformation(member.id,
+      { contactInformation: member.contactInformation, identitySet: member.identitySet, isPrimaryBeneficiary: isPrimaryMember });
 
     if (result) {
       if (isPrimaryMember) {
@@ -485,7 +486,7 @@ const actions = (mode: ERegistrationMode) => ({
       }
     }
 
-    return result;
+    return result || null;
   },
 
   async updatePersonIdentity(
@@ -493,7 +494,8 @@ const actions = (mode: ERegistrationMode) => ({
     context: ActionContext<IState, IState>,
     { member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number},
   ): Promise<IHouseholdEntity> {
-    const result = await this.$services.households.updatePersonIdentity(member.id, member.identitySet);
+    const result = await this.$services.households.updatePersonIdentity(member.id,
+      { contactInformation: member.contactInformation, identitySet: member.identitySet });
 
     if (result) {
       if (isPrimaryMember) {
@@ -503,7 +505,7 @@ const actions = (mode: ERegistrationMode) => ({
       }
     }
 
-    return result;
+    return result || null;
   },
 
   async updatePersonAddress(
@@ -531,7 +533,7 @@ const actions = (mode: ERegistrationMode) => ({
       }
     }
 
-    return result;
+    return result || null;
   },
 
   async addAdditionalMember(

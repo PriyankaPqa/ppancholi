@@ -2,7 +2,6 @@ import VueI18n from 'vue-i18n';
 
 import _difference from 'lodash/difference';
 import { IAddress } from '../address/address.types';
-import { ICurrentAddress } from '../current-address/currentAddress.types';
 import { IEntity } from '../../base';
 import { IMemberMetadata, IMemberEntity } from '../member/member.types';
 

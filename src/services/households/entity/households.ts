@@ -62,15 +62,20 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.get<IMemberEntity>(`${this.baseApi}/persons/${id}`);
   }
 
-  async updatePersonContactInformation(id: string, payload: IContactInformation): Promise<IHouseholdEntity> {
+  async updatePersonContactInformation(id: string,
+    payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IHouseholdEntity> {
     return this.http.patch(`${this.baseApi}/persons/${id}/contact-information`, {
-      contactInformation: this.parseContactInformation(payload),
+      isPrimaryBeneficiary: payload.isPrimaryBeneficiary,
+      contactInformation: this.parseContactInformation(payload.contactInformation),
+      identitySet: this.parseIdentitySet(payload.identitySet),
     });
   }
 
-  async updatePersonIdentity(id: string, payload: IIdentitySet): Promise<IHouseholdEntity> {
+  async updatePersonIdentity(id: string,
+    payload: { contactInformation: IContactInformation; identitySet: IIdentitySet }): Promise<IHouseholdEntity> {
     return this.http.patch(`${this.baseApi}/persons/${id}/identity-set`, {
-      identitySet: this.parseIdentitySet(payload),
+      contactInformation: this.parseContactInformation(payload.contactInformation),
+      identitySet: this.parseIdentitySet(payload.identitySet),
     });
   }
 

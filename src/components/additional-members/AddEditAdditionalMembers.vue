@@ -193,6 +193,7 @@ export default Vue.extend({
 
     close() {
       this.$emit('update:show', false);
+      this.$emit('close');
     },
 
     async validate() {

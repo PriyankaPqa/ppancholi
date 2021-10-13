@@ -15,8 +15,10 @@ export interface IHouseholdsService {
   getPerson(id: uuid): Promise<IMemberEntity>;
   submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
-  updatePersonContactInformation(id: string, payload: IContactInformation): Promise<IHouseholdEntity> | false;
-  updatePersonIdentity(id: string, payload: IIdentitySet): Promise<IHouseholdEntity> | false;
+  updatePersonContactInformation(id: string,
+      payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IHouseholdEntity> | false;
+  updatePersonIdentity(id: string,
+    payload: { contactInformation: IContactInformation; identitySet: IIdentitySet }): Promise<IHouseholdEntity> | false;
   updatePersonAddress(id: string, payload: ICurrentAddress): Promise<IHouseholdEntity> | false;
   updateHomeAddress(id: string, payload: IAddress): Promise<IHouseholdEntity> | false;
   updateNoFixedHomeAddress(id: string, observation?: string): Promise<IHouseholdEntity> | false;

@@ -365,7 +365,10 @@ describe('ReviewRegistration.vue', () => {
         await wrapper.vm.updatePersonalInformation();
         expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.primaryBeneficiary.id,
-          wrapper.vm.householdCreate.primaryBeneficiary.identitySet,
+          {
+            identitySet: wrapper.vm.householdCreate.primaryBeneficiary.identitySet,
+            contactInformation: wrapper.vm.householdCreate.primaryBeneficiary.contactInformation,
+          },
         );
       });
 
@@ -379,7 +382,11 @@ describe('ReviewRegistration.vue', () => {
         await wrapper.vm.updatePersonalInformation();
         expect(wrapper.vm.$services.households.updatePersonContactInformation).toHaveBeenCalledWith(
           wrapper.vm.householdCreate.primaryBeneficiary.id,
-          wrapper.vm.householdCreate.primaryBeneficiary.contactInformation,
+          {
+            identitySet: wrapper.vm.householdCreate.primaryBeneficiary.identitySet,
+            contactInformation: wrapper.vm.householdCreate.primaryBeneficiary.contactInformation,
+            isPrimaryBeneficiary: true,
+          },
         );
       });
 
@@ -673,7 +680,8 @@ describe('ReviewRegistration.vue', () => {
         wrapper.vm.isNewMemberCurrentAddress = jest.fn(() => false);
         const member = wrapper.vm.householdCreate.additionalMembers[index];
         await wrapper.vm.updateMember(index);
-        expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(member.id, member.identitySet);
+        expect(wrapper.vm.$services.households.updatePersonIdentity).toHaveBeenCalledWith(member.id,
+          { identitySet: member.identitySet, contactInformation: member.contactInformation });
       });
 
       it('should editAdditionalMember with backup if updateHomeAddress failed', async () => {

@@ -156,7 +156,8 @@ export default Vue.extend({
       this.additionalMembers[index].loading = true;
       const member = this.householdCreate.additionalMembers[index];
 
-      const resIdentity = await this.$services.households.updatePersonIdentity(member.id, member.identitySet);
+      const resIdentity = await this.$services.households.updatePersonIdentity(member.id,
+        { identitySet: member.identitySet, contactInformation: member.contactInformation });
       if (!resIdentity) {
         this.$storage.registration.mutations.editAdditionalMember(this.additionalMembers[index].backup, index, !this.additionalMembers[index].sameAddress);
         this.additionalMembers[index].loading = false;
