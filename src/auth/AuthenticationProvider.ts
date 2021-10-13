@@ -1,5 +1,6 @@
 import * as msal from '@azure/msal-browser';
 
+import { localStorageKeys } from '@/constants/localStorage';
 import { loginRequest, msalConfig, tokenRequest } from '@/auth/constants/azureAD';
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
@@ -9,27 +10,33 @@ let handleRedirectPromiseError: msal.AuthError;
 /**
  * handleRedirectPromise parses the URL hash when redirecting from the login page.
  */
-const handleRedirectPromise = msalInstance.handleRedirectPromise()
-  .catch((error) => {
-    handleRedirectPromiseError = error;
-  });
+const handleRedirectPromise = msalInstance.handleRedirectPromise().then((redirect) => {
+  if (redirect) {
+    msalInstance.setActiveAccount(redirect.account);
+  }
+}).catch((error) => {
+  handleRedirectPromiseError = error;
+});
 
 export default {
   /**
    * Redirects the browser to the login page
    */
-  async signIn(redirectStartPage?: string) {
+  async signIn(redirectStartPage?: string, tenantId?: string) {
+    if (tenantId) localStorage.setItem(localStorageKeys.lastTenantId.name, tenantId);
+
     await msalInstance.loginRedirect({
       ...loginRequest,
       redirectStartPage,
+      ...(tenantId ? { authority: `https://login.microsoftonline.com/${tenantId}` } : {}),
     });
   },
 
   /**
    * Signs the user out and redirects them to the logout URL
    */
-  signOut() {
-    msalInstance.logout();
+  async signOut() {
+    await msalInstance.logoutRedirect();
   },
 
   /**
@@ -65,10 +72,15 @@ export default {
     }
 
     try {
+      const account = accounts.filter((a) => a.tenantId
+        === (msalInstance.getActiveAccount()?.tenantId || localStorage.getItem(localStorageKeys.lastTenantId.name)))[0] || accounts[0];
+
       const tokenResponse = await msalInstance.acquireTokenSilent({
-        account: accounts[0],
+        account,
         scopes: tokenRequest.scopes,
+        authority: `https://login.microsoftonline.com/${account.tenantId}`,
       });
+
       return tokenResponse;
     } catch (e) {
       // Redirect the application to the Microsoft login page if the 'login_required' error is thrown.

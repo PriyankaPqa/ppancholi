@@ -31,7 +31,8 @@ export class BrandingsService extends DomainBaseService<IBrandingEntity, uuid> i
   }
 
   async getLogoUrl(languageCode: string): Promise<string> {
-    const response = await this.http.getFullResponse<BlobPart>(`${this.baseUrl}/logo/${languageCode}`, { responseType: 'blob' });
+    const response = await this.http.getFullResponse<BlobPart>(`${this.baseUrl}/logo/${languageCode}`,
+      { responseType: 'blob', globalHandler: false }).catch(() => null);
 
     if (!response?.data) return null;
 

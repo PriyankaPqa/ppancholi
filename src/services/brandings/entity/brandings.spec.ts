@@ -47,7 +47,8 @@ describe('>>> Brandings service', () => {
 
       await service.getLogoUrl('en');
 
-      expect(http.getFullResponse).toHaveBeenCalledWith('www.test.com/system-management/brandings/logo/en', { responseType: 'blob' });
+      expect(http.getFullResponse).toHaveBeenCalledWith('www.test.com/system-management/brandings/logo/en',
+        { responseType: 'blob', globalHandler: false });
     });
   });
 });

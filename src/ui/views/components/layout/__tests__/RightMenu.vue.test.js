@@ -1,7 +1,8 @@
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUsersData } from '@/entities/user';
 import routes from '@/constants/routes';
 import Component from '../RightMenu.vue';
+import authenticationProvider from '@/auth/AuthenticationProvider';
 
 const localVue = createLocalVue();
 
@@ -9,12 +10,8 @@ describe('RightMenu.vue', () => {
   let wrapper;
   let actions;
 
-  beforeEach(() => {
-    actions = {
-      signOut: jest.fn(() => true),
-    };
-
-    wrapper = mount(Component, {
+  const mountWrapper = async (fullMount = false) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       store: {
         modules: {
@@ -31,7 +28,7 @@ describe('RightMenu.vue', () => {
       },
     });
 
-    wrapper.setData({
+    await wrapper.setData({
       userAccount: {
         metadata: {
           roleName: {
@@ -42,6 +39,13 @@ describe('RightMenu.vue', () => {
         },
       },
     });
+  };
+
+  beforeEach(async () => {
+    actions = {
+      signOut: jest.fn(() => true),
+    };
+    await mountWrapper(true);
   });
 
   afterEach(() => {
@@ -104,7 +108,25 @@ describe('RightMenu.vue', () => {
       });
     });
 
+    describe('Methods', () => {
+      describe('changeTenant', () => {
+        it('calls signin with correct tenant', async () => {
+          await wrapper.setData({ currentTenantId: 'abcd' });
+          await wrapper.vm.changeTenant();
+          expect(authenticationProvider.signIn).toHaveBeenCalledWith(null, 'abcd');
+        });
+      });
+    });
+
     describe('Event handlers', () => {
+      test('rightMenu__tenantdd change event is attached to changeTenant', async () => {
+        await mountWrapper();
+        wrapper.vm.changeTenant = jest.fn();
+        const dd = wrapper.findDataTest('rightMenu__tenantdd');
+        await dd.vm.$emit('change');
+        expect(wrapper.vm.changeTenant).toHaveBeenCalledTimes(1);
+      });
+
       test('close button closes the sidebar', async () => {
         expect(wrapper.vm.$store.state.dashboard.rightMenuVisible).toBe(true);
 

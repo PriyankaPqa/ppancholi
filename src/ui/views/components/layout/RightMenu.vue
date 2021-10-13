@@ -55,7 +55,7 @@
             {{ $t('rightmenu.noRoleAssigned') }}
           </template>
           <template v-else>
-            {{ userAccount ? $m(userAccount.metadata.roleName) : '' }}
+            {{ userAccount && userAccount.metadata ? $m(userAccount.metadata.roleName) : '' }}
           </template>
         </div>
       </div>
@@ -68,10 +68,12 @@
         </div>
         <div data-test="rightMenu__tenant">
           <v-select
+            data-test="rightMenu__tenantdd"
             v-model="currentTenantId"
             :items="tenants"
             item-value="id"
-            outlined>
+            outlined
+            @change="changeTenant()">
             <template #item="data">
               <div class="flex-row justify-space-between full-width">
                 <div>
@@ -153,6 +155,7 @@ import { IUser, NO_ROLE } from '@/entities/user';
 import routes from '@/constants/routes';
 import { IBrandingEntity } from '@/entities/branding';
 import { IUserAccountCombined } from '@/entities/user-account';
+import authenticationProvider from '@/auth/AuthenticationProvider';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -205,6 +208,10 @@ export default Vue.extend({
 
     logout() {
       this.$storage.user.actions.signOut();
+    },
+
+    async changeTenant() {
+      await authenticationProvider.signIn(null, this.currentTenantId);
     },
   },
 });

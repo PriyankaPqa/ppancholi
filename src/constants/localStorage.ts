@@ -14,4 +14,7 @@ export const localStorageKeys = {
   last401Redirect: {
     name: 'last-401-redirect',
   },
+  lastTenantId: {
+    name: 'last-tenant-id',
+  },
 };
