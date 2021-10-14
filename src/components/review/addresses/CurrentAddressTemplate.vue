@@ -1,6 +1,6 @@
 <template>
   <div class="rc-body14">
-    <div v-if="inHouseholdProfile" class="fw-bold">
+    <div v-if="!hideTitle" class="fw-bold">
       {{ $t('registration.addresses.currentAddress') }}
     </div>
 
@@ -59,7 +59,7 @@ export default Vue.extend({
       required: true,
     },
 
-    inHouseholdProfile: {
+    hideTitle: {
       type: Boolean,
       default: false,
     },

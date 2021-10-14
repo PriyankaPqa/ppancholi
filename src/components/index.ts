@@ -14,3 +14,5 @@ export { default as ConfirmRegistration } from './confirm-registration/ConfirmRe
 export { default as ConfirmationPrint } from './confirm-registration/ConfirmationPrint.vue';
 export { default as CrcPrivacyStatement } from './privacy-statement/CrcPrivacyStatement.vue';
 export { default as AddEditAdditionalMembers } from './additional-members/AddEditAdditionalMembers.vue';
+export { default as AdditionalMemberTemplate } from './review/additional-members/AdditionalMemberTemplate.vue';
+export { default as AdditionalMemberSection } from './review/additional-members/AdditionalMemberSection.vue';

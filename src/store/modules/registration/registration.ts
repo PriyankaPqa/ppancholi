@@ -148,6 +148,7 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
             isValid = isRegisteredValid();
             break;
           case 'PrivacyStatement':
+          case 'SplitHouseholdEvent':
             isValid = privacyStatementValid(mode, state);
             break;
           case 'PersonalInformation':
@@ -161,6 +162,10 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
             break;
           case 'ReviewRegistration':
             isValid = reviewRegistrationValid();
+            break;
+          case 'SplitHouseholdMembers':
+          case 'ReviewSplit':
+            isValid = true;
             break;
           case 'ConfirmRegistration':
           default:

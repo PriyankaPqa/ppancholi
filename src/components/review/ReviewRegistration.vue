@@ -1,7 +1,7 @@
 <template>
   <div id="summary">
     <template v-if="associationMode || splitMode">
-      <div class="mb-8" data-test="summary__existingBeneficiary__section">
+      <div v-if="!hideName" class="mb-8" data-test="summary__existingBeneficiary__section">
         <span class="rc-heading-3">{{ getPersonalInformation.firstName }} {{ getPersonalInformation.lastName }}</span>
         <div class="rc-body14">
           {{ $t('registration.details.registered') }} {{ moment(householdCreate.primaryBeneficiary.created).format('ll') }}
@@ -177,6 +177,10 @@ export default mixins(additionalMemberForm).extend({
       default: false,
     },
     skipPhoneEmailRules: {
+      type: Boolean,
+      default: false,
+    },
+    hideName: {
       type: Boolean,
       default: false,
     },
