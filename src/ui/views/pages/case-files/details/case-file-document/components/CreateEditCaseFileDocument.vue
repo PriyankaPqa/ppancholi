@@ -143,8 +143,8 @@ export default Vue.extend({
       }
       formData.set('documentStatus', this.document.documentStatus.toString());
       formData.set('file', this.file);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return (this.$refs.documentForm as any).upload(formData, `case-file/case-files/${this.id}/documents`);
+
+      return (this.$refs.documentForm as InstanceType<typeof DocumentForm>).upload(formData, `case-file/case-files/${this.id}/documents`);
     },
   },
 });

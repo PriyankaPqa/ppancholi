@@ -28,12 +28,12 @@ export enum ApprovalStatus {
 }
 
 export enum EPaymentCancellationReason {
-  AdminCancellation = 'AdminCancellation',
-  RecipientRejected = 'RecipientRejected',
-  InvalidPin = 'InvalidPin',
-  Expired = 'Expired',
-  AdminCancellation2 = 'AdminCancellation2',
-  FailedDelivery = 'FailedDelivery',
+  AdminCancellation0 = 0,
+  RecipientRejected = 1,
+  InvalidPIN= 2,
+  Expired= 3,
+  AdminCancellation4 = 4,
+  FailedDelivery = 5
 }
 
 /**
@@ -58,6 +58,9 @@ export interface IGroupingInformation {
 }
 
 export interface IFinancialAssistancePaymentGroup extends IEntity {
+  cancellationReason: EPaymentCancellationReason;
+  cancellationDate: string | Date;
+  cancellationBy: uuid;
   groupingInformation: IGroupingInformation;
   paymentStatus: PaymentStatus;
   lines: IFinancialAssistancePaymentLine[];

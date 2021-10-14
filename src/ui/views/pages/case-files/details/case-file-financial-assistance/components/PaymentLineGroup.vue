@@ -29,6 +29,17 @@
         </span>
       </span>
     </div>
+    <div v-if="isCancelled" class="cancellationReason rc-body12">
+      <v-icon small color="red" class="mr-4">
+        mdi-alert
+      </v-icon>
+      <div class="mr-4">
+        {{ cancellationByText }}
+      </div>
+      <div v-if="cancellationReasonText">
+        {{ cancellationReasonText }}
+      </div>
+    </div>
 
     <payment-line-item
       v-for="(line, $index) in activeLines"
@@ -46,35 +57,18 @@
       {{ $t('caseFile.financialAssistance.groupTotal', { total: $formatCurrency(total), modality }) }}
     </div>
 
-    <!--
-      ToDo: Validate before action on edit/delete
-      <confirm-before-action
-      v-if="showConfirmChangeStatusDialog"
+    <rc-confirmation-dialog
+      data-test="cancel_confirmation_reason_dialog"
+      :show.sync="showCancelConfirmationReason"
       :title="$t('caseFile.financialAssistance.changeStatusDialog.title')"
-      :messages="$t('caseFile.financialAssistance.changeStatusDialog.message', { status: $t(`enums.paymentStatus.${newStatus}`) })"
-      :show.sync="showConfirmChangeStatusDialog"
-      cancel-button-key="common.cancel"
-      submit-button-key="common.confirm"
-      :loading="loading"
-      data-test="paymentGroup__confirmStatusChangeDialog"
-      @submit="onConfirmChangeStatus" />
-
-    <validation-observer ref="form" v-slot="{ failed }" slim>
-      <confirm-before-action
-        v-if="showCancelPaymentDialog"
-        :title="$t('caseFile.financialAssistance.cancelPaymentDialog.title')"
-        :show.sync="showCancelPaymentDialog"
-        :loading="loading"
-        :submit-button-disabled="failed"
-        cancel-button-key="common.cancel"
-        submit-button-key="caseFile.financialAssistance.cancelPaymentDialog.button"
-        data-test="paymentGroup__cancelPaymentDialog"
-        @submit="onConfirmCancelPayment">
+      :submit-button-disabled="cancellationReason == null"
+      submit-button-key="caseFile.financialAssistance.cancelPaymentDialog.button"
+      @submit="onConfirmCancel">
+      <template #default>
         <div>
           <div class="rc-body16 fw-bold mb-4">
             {{ $t('caseFile.financialAssistance.cancelPaymentDialog.message') }}
           </div>
-
           <v-select-with-validation
             v-model="cancellationReason"
             data-test="paymentGroup__cancellationReason"
@@ -82,14 +76,15 @@
             rules="required"
             :label="`${$t('caseFile.financialAssistance.cancelPaymentDialog.chooseReason')} *`" />
         </div>
-      </confirm-before-action>
-    </validation-observer> -->
+      </template>
+    </rc-confirmation-dialog>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
+import { RcConfirmationDialog, VSelectWithValidation } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import {
@@ -103,6 +98,7 @@ import {
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import PaymentLineItem from './PaymentLineItem.vue';
 import { Status } from '@/entities/base';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'PaymentLineGroup',
@@ -110,6 +106,8 @@ export default Vue.extend({
   components: {
     StatusSelect,
     PaymentLineItem,
+    RcConfirmationDialog,
+    VSelectWithValidation,
   },
 
   props: {
@@ -143,7 +141,9 @@ export default Vue.extend({
     return {
       loading: false,
       cancellationReason: null as EPaymentCancellationReason,
+      cancellationReasons: helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason'),
       ApprovalStatus,
+      showCancelConfirmationReason: false,
     };
   },
 
@@ -171,6 +171,19 @@ export default Vue.extend({
 
     isCancelled(): boolean {
       return this.paymentGroup.paymentStatus === PaymentStatus.Cancelled;
+    },
+
+    cancellationByText() {
+      return this.$t('caseFile.financialAssistance.cancellationReason.byOn',
+        {
+          by: this.$storage.userAccount.getters.get(this.paymentGroup.cancellationBy)?.metadata?.displayName,
+          on: helpers.getLocalStringDate(this.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'll'),
+        });
+    },
+
+    cancellationReasonText(): string {
+      const text = this.cancellationReasons.filter((a) => a.value === this.paymentGroup.cancellationReason)[0]?.text;
+      return text ? `${this.$t('caseFile.financialAssistance.cancellationReason.reason')} ${text}` : null;
     },
 
     isInactive(): boolean {
@@ -273,20 +286,40 @@ export default Vue.extend({
     },
   },
 
-  created() {
+  async created() {
     if (this.isInactive) {
       this.$message({
         title: this.$t('caseFile.financialAssistance.inactiveDetails.title'),
         message: this.$t('caseFile.financialAssistance.inactiveDetails.message'),
       });
     }
+
+    if (this.paymentGroup.cancellationBy) {
+      await this.$storage.userAccount.actions.fetch(this.paymentGroup.cancellationBy);
+    }
   },
 
   methods: {
     async onPaymentStatusChange(status: PaymentStatus) {
-      if (status !== PaymentStatus.Cancelled || await this.$confirm('confirm cancelled...', 'future story...')) {
+      if (status !== PaymentStatus.Cancelled) {
         this.$emit('update-payment-status', { status, group: this.paymentGroup });
+        return;
       }
+
+      if (this.paymentGroup.groupingInformation.modality !== EPaymentModalities.ETransfer) {
+        if (await this.$confirm(this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.title'),
+          this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.message', { modality: this.modality.toLowerCase() }))) {
+          this.$emit('update-payment-status', { status, group: this.paymentGroup });
+        }
+      } else {
+        this.cancellationReason = null;
+        this.showCancelConfirmationReason = true;
+      }
+    },
+
+    onConfirmCancel() {
+      this.showCancelConfirmationReason = false;
+      this.$emit('update-payment-status', { status: PaymentStatus.Cancelled, group: this.paymentGroup, cancellationReason: this.cancellationReason });
     },
   },
 });
@@ -308,6 +341,7 @@ export default Vue.extend({
 .cancellationReason {
   padding: 4px 16px;
   background: var(--v-status_red_pale-base);
+  display: flex;
 }
 
 .paymentGroup__total {

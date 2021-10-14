@@ -5,6 +5,7 @@ import {
   PaymentStatus,
   IFinancialAssistancePaymentLine,
   PayeeType,
+  EPaymentCancellationReason,
 } from './financial-assistance-payment.types';
 import { BaseEntity } from '@/entities/base/base';
 import { EPaymentModalities } from '../program';
@@ -18,12 +19,21 @@ export class FinancialAssistancePaymentGroup extends BaseEntity implements IFina
 
   lines: IFinancialAssistancePaymentLine[];
 
+  cancellationReason: EPaymentCancellationReason;
+
+  cancellationDate: string | Date;
+
+  cancellationBy: uuid;
+
   constructor(data?: IFinancialAssistancePaymentGroup) {
     if (data) {
       super(data);
       this.groupingInformation = data.groupingInformation;
       this.paymentStatus = data.paymentStatus;
       this.lines = data.lines;
+      this.cancellationReason = data.cancellationReason;
+      this.cancellationDate = data.cancellationDate;
+      this.cancellationBy = data.cancellationBy;
     } else {
       super();
       this.groupingInformation = null;

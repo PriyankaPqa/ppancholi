@@ -15,6 +15,9 @@ export const mockCaseFinancialAssistancePaymentGroups = ():
   {
     ...mockBaseData(),
     paymentStatus: PaymentStatus.New,
+    cancellationReason: null,
+    cancellationDate: null,
+    cancellationBy: null,
     groupingInformation: {
       modality: 2,
       payeeType: 1,

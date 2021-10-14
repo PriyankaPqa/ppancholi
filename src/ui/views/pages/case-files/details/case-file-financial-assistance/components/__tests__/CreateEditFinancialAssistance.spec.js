@@ -711,8 +711,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('calls service', async () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups()[0];
         newGroup.id = 'abc-id';
-        await wrapper.vm.updatePaymentStatus({ status: 3, group: newGroup});
-        expect(storage.financialAssistancePayment.actions.updatePaymentStatus).toHaveBeenCalledWith(financialAssistance.id, newGroup.id, 3);
+        wrapper.vm.$refs.form.reset = jest.fn();
+        await wrapper.vm.updatePaymentStatus({ status: 3, group: newGroup, cancellationReason: 5});
+        expect(storage.financialAssistancePayment.actions.updatePaymentStatus).toHaveBeenCalledWith(financialAssistance.id, newGroup.id, 3, 5);
         expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.updatePaymentStatus()));
       });
     });

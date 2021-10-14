@@ -62,9 +62,9 @@ describe('Financial assistance payment entity module', () => {
         const id = 'mock-id';
 
         module.service.updatePaymentStatus = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.updatePaymentStatus(actionContext, { paymentGroupId: 'group-id', entityId: id, status: 2 });
+        const res = await module.actions.updatePaymentStatus(actionContext, { paymentGroupId: 'group-id', entityId: id, status: 2, cancellationReason: 5 });
 
-        expect(module.service.updatePaymentStatus).toBeCalledWith(id, 'group-id', 2);
+        expect(module.service.updatePaymentStatus).toBeCalledWith(id, 'group-id', 2, 5);
         expect(res).toEqual(serviceRes);
       });
     });

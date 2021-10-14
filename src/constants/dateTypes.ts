@@ -10,6 +10,7 @@ export const dateTypes = {
     'Entity.created',
     'Entity.timestamp',
     'EventSchedule.timestamp',
+    'IFinancialAssistancePaymentGroup.cancellationDate',
     'local',
   ] as string[],
 

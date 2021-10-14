@@ -1,6 +1,8 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
-import { IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus } from '@/entities/financial-assistance-payment';
+import {
+  EPaymentCancellationReason, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,
+} from '@/entities/financial-assistance-payment';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
@@ -55,9 +57,10 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancia
     },
 
     updatePaymentStatus: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
-      IFinancialAssistancePaymentEntityState>, payload: { paymentGroupId: uuid, entityId: uuid, status: PaymentStatus })
+      IFinancialAssistancePaymentEntityState>, payload: { paymentGroupId: uuid, entityId: uuid, status: PaymentStatus,
+        cancellationReason?: EPaymentCancellationReason })
       : Promise<IFinancialAssistancePaymentEntity> => {
-      const result = await this.service.updatePaymentStatus(payload.entityId, payload.paymentGroupId, payload.status);
+      const result = await this.service.updatePaymentStatus(payload.entityId, payload.paymentGroupId, payload.status, payload.cancellationReason);
       if (result) {
         context.commit('set', result);
       }

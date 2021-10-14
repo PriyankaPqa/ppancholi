@@ -1,4 +1,5 @@
 import {
+  EPaymentCancellationReason,
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata, PaymentStatus,
 } from '@/entities/financial-assistance-payment';
 import {
@@ -14,7 +15,8 @@ export interface IGettersMock extends IBaseGettersMock<IFinancialAssistancePayme
 export interface IActions extends IBaseActions<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, uuid> {
   addFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;
-  updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus): Promise<IFinancialAssistancePaymentEntity>;
+  updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus,
+    cancellationReason?: EPaymentCancellationReason): Promise<IFinancialAssistancePaymentEntity>;
   submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity>;
   addFinancialAssistancePaymentLine(financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):
     Promise<IFinancialAssistancePaymentEntity>;

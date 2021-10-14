@@ -5,6 +5,7 @@ import {
   CreateFinancialAssistancePaymentServiceRequest,
   IFinancialAssistancePaymentGroup,
   PaymentStatus,
+  EPaymentCancellationReason,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
@@ -37,8 +38,9 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
     return this.http.patch(`${this.baseUrl}/${entity.id}`, payload);
   }
 
-  async updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus): Promise<IFinancialAssistancePaymentEntity> {
-    return this.http.patch(`${this.baseUrl}/${entityId}/groups/${paymentGroupId}/payment-status`, { paymentStatus: status });
+  async updatePaymentStatus(entityId: uuid, paymentGroupId: uuid, status: PaymentStatus,
+    cancellationReason?: EPaymentCancellationReason): Promise<IFinancialAssistancePaymentEntity> {
+    return this.http.patch(`${this.baseUrl}/${entityId}/groups/${paymentGroupId}/payment-status`, { paymentStatus: status, cancellationReason });
   }
 
   async submitFinancialAssistancePayment(entityId: uuid): Promise<IFinancialAssistancePaymentEntity> {

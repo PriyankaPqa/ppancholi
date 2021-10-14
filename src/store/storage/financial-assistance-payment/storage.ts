@@ -1,9 +1,9 @@
 import { IStore, IState } from '@/store';
-import {
-  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata, PaymentStatus,
-} from '@/entities/financial-assistance-payment';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
+import {
+  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, PaymentStatus, EPaymentCancellationReason, IFinancialAssistancePaymentGroup,
+} from '@/entities/financial-assistance-payment';
 
 export class FinancialAssistancePaymentStorage
   extends Base<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, uuid> implements IStorage {
@@ -22,9 +22,11 @@ export class FinancialAssistancePaymentStorage
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/addFinancialAssistancePayment`, entity),
     editFinancialAssistancePayment: (entity: IFinancialAssistancePaymentEntity):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/editFinancialAssistancePayment`, entity),
-    updatePaymentStatus: (entityId: uuid, paymentGroupId: uuid, status: PaymentStatus):
+    updatePaymentStatus: (entityId: uuid, paymentGroupId: uuid, status: PaymentStatus, cancellationReason?: EPaymentCancellationReason):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/updatePaymentStatus`
-      , ({ entityId, paymentGroupId, status })),
+      , ({
+        entityId, paymentGroupId, status, cancellationReason,
+      })),
     submitFinancialAssistancePayment: (entityId: uuid):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/submitFinancialAssistancePayment`, entityId),
     addFinancialAssistancePaymentLine: (financialAssistanceId: uuid, entity: IFinancialAssistancePaymentGroup):

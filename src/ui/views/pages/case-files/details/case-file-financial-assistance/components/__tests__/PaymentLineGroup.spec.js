@@ -3,9 +3,11 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockStorage } from '@/store/storage';
 import Component from '../PaymentLineGroup.vue';
-import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus } from '@/entities/financial-assistance-payment';
+import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason } from '@/entities/financial-assistance-payment';
 import { Status } from '@/entities/base';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
+import helpers from '@/ui/helpers';
+
 
 const localVue = createLocalVue();
 const items = mockItems();
@@ -46,6 +48,21 @@ describe('PaymentLineGroup.vue', () => {
     describe('paymentLineGroup__title', () => {
       it('is rendered', () => {
         expect(wrapper.findDataTest('paymentLineGroup__title').exists()).toBeTruthy();
+      });
+    });
+
+    describe('cancel_confirmation_reason_dialog', () => {
+      it('shows when showCancelConfirmationReason', async () => {
+        expect(wrapper.findDataTest('cancel_confirmation_reason_dialog').props('show')).toBeFalsy();
+        await wrapper.setData({showCancelConfirmationReason: true});
+        expect(wrapper.findDataTest('cancel_confirmation_reason_dialog').props('show')).toBeTruthy();
+      });
+
+      it('lists cancellationReasons', async () => {
+        await mountWrapper(true);
+        await wrapper.setData({showCancelConfirmationReason: true});
+        expect(wrapper.findDataTest('paymentGroup__cancellationReason').props('items')).toEqual(wrapper.vm.cancellationReasons);
+        expect(wrapper.findDataTest('paymentGroup__cancellationReason').props('items')).toEqual(helpers.enumToTranslatedCollection(EPaymentCancellationReason, 'enums.paymentCancellationReason'));
       });
     });
 
@@ -139,6 +156,27 @@ describe('PaymentLineGroup.vue', () => {
           payeeName: 'abc',
         };
         expect(wrapper.vm.title).toBe('E-Transfer');
+      });
+    });
+
+    describe('cancellationByText', () => {
+      it('should return the name and date of cancellation', () => {
+        wrapper.vm.paymentGroup.cancellationDate = '2021-10-13T14:42:03.6568718Z';
+        wrapper.vm.paymentGroup.cancellationBy = '0d22f50a-e1ab-435d-a9f0-cfda502866f4';
+        const c = wrapper.vm.cancellationByText;
+        expect(c).toBe("caseFile.financialAssistance.cancellationReason.byOn");
+        expect(wrapper.vm.$t).toHaveBeenCalledWith("caseFile.financialAssistance.cancellationReason.byOn",
+          { by: "Jane Smith", on: helpers.getLocalStringDate(wrapper.vm.paymentGroup.cancellationDate, 'IFinancialAssistancePaymentGroup.cancellationDate', 'll')});
+      });
+    });
+
+    describe('cancellationReasonText', () => {
+      it('should return the reason of cancellation if one was provided', () => {
+        let c = wrapper.vm.cancellationReasonText;
+        expect(c).toBeNull();
+        wrapper.vm.paymentGroup.cancellationReason = 0;
+        c = wrapper.vm.cancellationReasonText;
+        expect(c).toEqual('caseFile.financialAssistance.cancellationReason.reason 0 - Admin cancellation');
       });
     });
 
@@ -498,8 +536,42 @@ describe('PaymentLineGroup.vue', () => {
   
       it('should emit update-payment-status', async () => {
         await mountWrapper();
-        await wrapper.vm.onPaymentStatusChange(3);
-        expect(wrapper.emitted('update-payment-status')[0][0]).toEqual({ status: 3, group: wrapper.vm.paymentGroup });
+        await wrapper.vm.onPaymentStatusChange(PaymentStatus.Completed);
+        expect(wrapper.emitted('update-payment-status')[0][0]).toEqual({ status: PaymentStatus.Completed, group: wrapper.vm.paymentGroup });
+      });
+  
+      it('for not etransfer does not shows reason dialog when cancelling and emits cancel when confirmed', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
+        await mountWrapper();
+        await wrapper.vm.onPaymentStatusChange(PaymentStatus.Cancelled);
+        expect(wrapper.vm.showCancelConfirmationReason).toBeFalsy();
+        expect(wrapper.emitted('update-payment-status')[0][0]).toEqual({ status: PaymentStatus.Cancelled, group: wrapper.vm.paymentGroup });
+      });
+      it('for not etransfer does not shows reason dialog when cancelling and does not emit when user does not confirm', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
+        await mountWrapper();
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.onPaymentStatusChange(PaymentStatus.Cancelled);
+        expect(wrapper.vm.showCancelConfirmationReason).toBeFalsy();
+        expect(wrapper.emitted('update-payment-status')).toBeUndefined();
+      });
+      it('for etransfer only shows reason dialog when cancelling and does not emit yet', async () => {
+        paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
+        await mountWrapper();
+        await wrapper.vm.onPaymentStatusChange(PaymentStatus.Cancelled);
+        expect(wrapper.vm.showCancelConfirmationReason).toBeTruthy();
+        expect(wrapper.emitted('update-payment-status')).toBeUndefined();
+      });
+    });
+
+    describe('onConfirmCancel', () => {
+  
+      it('should emit update-payment-status with confirmation', async () => {
+        await mountWrapper();
+        await wrapper.setData({cancellationReason: 5});
+        wrapper.vm.onConfirmCancel();
+        expect(wrapper.emitted('update-payment-status')[0][0]).toEqual({ status: PaymentStatus.Cancelled, group: wrapper.vm.paymentGroup, cancellationReason: 5 });
+        expect(wrapper.vm.showCancelConfirmationReason).toBeFalsy();
       });
     });
   });

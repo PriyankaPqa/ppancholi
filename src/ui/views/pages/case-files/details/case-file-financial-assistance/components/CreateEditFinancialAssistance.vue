@@ -117,6 +117,7 @@ import _find from 'lodash/find';
 import { Route, NavigationGuardNext } from 'vue-router';
 import {
   ApprovalStatus,
+  EPaymentCancellationReason,
   FinancialAssistancePaymentEntity,
   FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentEntity,
@@ -432,11 +433,17 @@ export default Vue.extend({
       }
     },
 
-    async updatePaymentStatus(event : {status: PaymentStatus, group: IFinancialAssistancePaymentGroup}) {
+    async updatePaymentStatus(event : {
+      status: PaymentStatus,
+      group: IFinancialAssistancePaymentGroup,
+      cancellationReason?: EPaymentCancellationReason,
+      }) {
       const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions
-        .updatePaymentStatus(this.financialAssistance.id, event.group.id, event.status);
+        .updatePaymentStatus(this.financialAssistance.id, event.group.id, event.status, event.cancellationReason);
       if (updatedFinancialAssistance) {
         this.financialAssistance = new FinancialAssistancePaymentEntity(updatedFinancialAssistance);
+        // so we can leave without warning
+        (this.$refs.form as VForm).reset();
         this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.paymentStatusUpdated'));
       }
     },
