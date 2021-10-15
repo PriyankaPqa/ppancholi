@@ -122,14 +122,16 @@
           <household-member-card
             :member="household.primaryBeneficiary"
             is-primary-member
-            :shelter-locations="shelterLocations" />
+            :shelter-locations="shelterLocations"
+            @reload-household-create="fetchHouseholdData" />
 
           <household-member-card
             v-for="(member, index) in household.additionalMembers"
             :key="member.id"
             :member="member"
             :index="index"
-            :shelter-locations="shelterLocations" />
+            :shelter-locations="shelterLocations"
+            @reload-household-create="fetchHouseholdData" />
 
           <h5 v-if="inactiveCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
             {{ $t('household.profile.registered_previous_events') }} ({{ inactiveCaseFiles.length }})
@@ -151,7 +153,8 @@
       :index="-1"
       :shelter-locations-list="shelterLocations"
       :i18n="i18n"
-      in-household-profile />
+      in-household-profile
+      @close="fetchHouseholdData" />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
     <household-profile-history
       v-if="showProfileHistory && householdData"

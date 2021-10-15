@@ -594,5 +594,20 @@ describe('HouseholdMemberCard.vue', () => {
           .toHaveBeenCalled(householdCreate.id, wrapper.vm.member.id, 0);
       });
     });
+
+    describe('closeAndReload', () => {
+      it('emits and closes popups', async () => {
+        doMount(false);
+        await wrapper.setData({ showAdditionalMemberDialog: true });
+        await wrapper.setData({ showPrimaryMemberDialog: true });
+        expect(wrapper.emitted('reload-household-create')).toBeFalsy();
+
+        wrapper.vm.closeAndReload();
+
+        expect(wrapper.vm.showAdditionalMemberDialog).toBeFalsy();
+        expect(wrapper.vm.showPrimaryMemberDialog).toBeFalsy();
+        expect(wrapper.emitted('reload-household-create')).toBeTruthy();
+      });
+    });
   });
 });

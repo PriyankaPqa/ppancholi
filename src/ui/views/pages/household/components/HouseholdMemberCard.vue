@@ -98,19 +98,20 @@
     </v-simple-table>
     <primary-member-dialog
       v-if="showPrimaryMemberDialog"
-      :show.sync="showPrimaryMemberDialog"
+      :show="showPrimaryMemberDialog"
       :shelter-locations="shelterLocations"
-      @cancel="showPrimaryMemberDialog = false"
-      @close="showPrimaryMemberDialog = false" />
+      @cancel="closeAndReload"
+      @close="closeAndReload" />
 
     <add-edit-additional-members
       v-if="showAdditionalMemberDialog"
       :i18n="i18n"
-      :show.sync="showAdditionalMemberDialog"
+      :show="showAdditionalMemberDialog"
       :index="index"
       :member="member"
       :shelter-locations-list="shelterLocations"
-      in-household-profile />
+      in-household-profile
+      @close="closeAndReload" />
 
     <split-household-dialog
       v-if="showSplitDialog"
@@ -393,6 +394,12 @@ export default Vue.extend({
           this.$toasted.global.success(this.$t('registration.member.removed'));
         }
       }
+    },
+
+    closeAndReload() {
+      this.$emit('reload-household-create');
+      this.showPrimaryMemberDialog = false;
+      this.showAdditionalMemberDialog = false;
     },
   },
 });

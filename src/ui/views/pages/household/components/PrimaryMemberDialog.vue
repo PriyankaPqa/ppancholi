@@ -35,7 +35,6 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEqual from 'lodash/isEqual';
-import _merge from 'lodash/merge';
 import { PersonalInformation as LibPersonalInformation, CurrentAddressForm } from '@crctech/registration-lib';
 import { RcDialog } from '@crctech/component-library';
 import {
@@ -130,29 +129,25 @@ export default Vue.extend({
 
   methods: {
     onCancel() {
-      this.$storage.registration.mutations.setPersonalInformation(_merge(this.backupIdentitySet, this.backupContactInfo));
-      this.$storage.registration.mutations.setCurrentAddress(this.backupAddress);
       this.$emit('close');
     },
 
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        try {
-          if (this.changedIdentitySet) {
-            await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: true });
-          }
-
-          if (this.changedContactInfo) {
-            await this.$storage.registration.actions.updatePersonContactInformation({ member: this.member, isPrimaryMember: true });
-          }
-
-          if (this.changedAddress) {
-            await this.submitAddressUpdate();
-          }
-        } finally {
-          this.$emit('close');
+        let ok = true;
+        if (this.changedIdentitySet) {
+          ok = !!await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: true });
         }
+
+        if (ok && this.changedContactInfo) {
+          ok = !!await this.$storage.registration.actions.updatePersonContactInformation({ member: this.member, isPrimaryMember: true });
+        }
+
+        if (ok && this.changedAddress) {
+          ok = !!await this.submitAddressUpdate();
+        }
+        this.$emit('close');
       }
     },
 
@@ -161,11 +156,13 @@ export default Vue.extend({
     },
 
     async submitAddressUpdate() {
-      await this.$storage.registration.actions.updatePersonAddress({ member: this.member, isPrimaryMember: true });
-
-      if (this.additionalMembers) {
-        await this.updateAdditionalMembersWithSameAddress();
+      const address = await this.$storage.registration.actions.updatePersonAddress({ member: this.member, isPrimaryMember: true });
+      let ok = !!address;
+      if (ok && this.additionalMembers) {
+        const addresses = await this.updateAdditionalMembersWithSameAddress();
+        ok = addresses.filter((a) => !a).length === 0;
       }
+      return ok;
     },
 
     async updateAdditionalMembersWithSameAddress() {
@@ -179,7 +176,8 @@ export default Vue.extend({
         }
       });
 
-      await Promise.all(promises);
+      const addresses = await Promise.all(promises);
+      return addresses;
     },
   },
 

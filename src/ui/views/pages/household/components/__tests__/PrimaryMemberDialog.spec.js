@@ -1,5 +1,5 @@
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { mockContactInformation, mockHouseholdCreate, mockIdentitySetData } from '@crctech/registration-lib/src/entities/household-create';
+import { mockHouseholdCreate, mockIdentitySetData } from '@crctech/registration-lib/src/entities/household-create';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers';
@@ -229,18 +229,6 @@ describe('PrimaryMemberDialog', () => {
     });
 
     describe('onCancel', () => {
-      it('calls the setPersonalInformation mutations', async () => {
-        await wrapper.setData({ backupIdentitySet: mockIdentitySetData(), backupContactInfo: mockContactInformation() });
-        await wrapper.vm.onCancel();
-        expect(storage.registration.mutations.setPersonalInformation).toHaveBeenCalledWith({ ...mockIdentitySetData(), ...mockContactInformation() });
-      });
-
-      it('calls the setCurrentAddress mutation', async () => {
-        await wrapper.setData({ backupAddress: householdCreate.primaryBeneficiary.currentAddress });
-        await wrapper.vm.onCancel();
-        expect(storage.registration.mutations.setCurrentAddress).toHaveBeenCalledWith(householdCreate.primaryBeneficiary.currentAddress);
-      });
-
       it('emits close', async () => {
         await wrapper.vm.onCancel();
         expect(wrapper.emitted('close')).toBeTruthy();
@@ -316,7 +304,7 @@ describe('PrimaryMemberDialog', () => {
       });
 
       it('calls the updateAdditionalMembersWithSameAddress method', async () => {
-        jest.spyOn(wrapper.vm, 'updateAdditionalMembersWithSameAddress').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm, 'updateAdditionalMembersWithSameAddress').mockImplementation(() => []);
         await wrapper.vm.submitAddressUpdate();
         expect(wrapper.vm.updateAdditionalMembersWithSameAddress).toHaveBeenCalledTimes(1);
       });
