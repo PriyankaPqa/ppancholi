@@ -497,6 +497,40 @@ describe('HouseholdMemberCard.vue', () => {
         expect(wrapper.vm.alternatePhoneExtension).toEqual('—');
       });
     });
+
+    describe('splitHouseholdMembers', () => {
+      it('returns the right data', () => {
+        doMount(false, true, {
+          store: {
+            modules: {
+              registration: {
+                state: { splitHousehold: mockSplitHousehold() },
+              },
+            },
+          },
+        });
+
+        expect(wrapper.vm.splitHouseholdMembers).toEqual(mockSplitHousehold().splitMembers);
+      });
+    });
+
+    describe('splitAdditionalMembers', () => {
+      // eslint-disable-next-line max-len
+      it('returns the split additional members if there are split household members and the card corresponds to the new primary member of the split household ', () => {
+        doMount(false, true, {
+          propsData: {
+            shelterLocations: [],
+            index: 1,
+            member: mockMember({ id: mockSplitHousehold().splitMembers.primaryMember.id }),
+          },
+          computed: {
+            splitHouseholdMembers() { return mockSplitHousehold().splitMembers; },
+          },
+        });
+
+        expect(wrapper.vm.splitAdditionalMembers).toEqual(mockSplitHousehold().splitMembers.additionalMembers);
+      });
+    });
   });
 
   describe('Lifecycle', () => {
@@ -534,35 +568,22 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('initSplitView', () => {
-      beforeEach(() => {
-        jest.clearAllMocks();
-        doMount(false, true, {
-          mocks: { $storage: storage },
-          store: {
-            modules: {
-              registration: {
-                state: {
-                  splitHousehold: mockSplitHousehold(),
-                },
-              },
+      // eslint-disable-next-line max-len
+      it('sets showSplitDialog to true if there are split household members and the card corresponds to the new primary member of the split household',
+        async () => {
+          doMount(false, true, {
+            propsData: {
+              shelterLocations: [],
+              index: 1,
+              member: mockMember({ id: mockSplitHousehold().splitMembers.primaryMember.id }),
             },
-          },
+            computed: {
+              splitHouseholdMembers() { return mockSplitHousehold().splitMembers; },
+            },
+          });
+          await wrapper.vm.initSplitView();
+          expect(wrapper.vm.showSplitDialog).toBeTruthy();
         });
-      });
-      it('sets splitAdditionalMembers to the right data', async () => {
-        await wrapper.vm.initSplitView();
-        expect(wrapper.vm.splitAdditionalMembers).toEqual(mockSplitHousehold().splitMembers.additionalMembers);
-      });
-
-      it('calls the registration mutation resetSplitHousehold', async () => {
-        await wrapper.vm.initSplitView();
-        expect(storage.registration.mutations.resetSplitHousehold).toHaveBeenCalled();
-      });
-
-      it('sets showSplitDialog to true', async () => {
-        await wrapper.vm.initSplitView();
-        expect(wrapper.vm.showSplitDialog).toBeTruthy();
-      });
     });
 
     describe('deleteAdditionalMember', () => {

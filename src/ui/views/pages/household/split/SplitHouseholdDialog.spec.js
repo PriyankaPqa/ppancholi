@@ -212,10 +212,16 @@ describe('SplitHouseholdDialog', () => {
       });
     });
 
-    describe('onCancel', () => {
+    describe('onClose', () => {
       it('emits close', async () => {
-        await wrapper.vm.onCancel();
+        await wrapper.vm.onClose();
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+      });
+
+      it('calls the storage mutation resetSplitHousehold', async () => {
+        jest.clearAllMocks();
+        await wrapper.vm.onClose();
+        expect(storage.registration.mutations.resetSplitHousehold).toHaveBeenCalledTimes(1);
       });
     });
 

@@ -91,7 +91,7 @@
             </div>
           </td>
           <td v-if="item.customContent === 'address'" class="py-4" :data-test="`household_profile_member_info_data_${item.test}`">
-            <current-address-template :current-address="member.currentAddress" in-household-profile />
+            <current-address-template :current-address="member.currentAddress" hide-title />
           </td>
         </tr>
       </tbody>
@@ -180,7 +180,6 @@ export default Vue.extend({
       showAdditionalMemberDialog: false,
       showSplitDialog: false,
       i18n: this.$i18n,
-      splitAdditionalMembers: [] as IMember[],
     };
   },
 
@@ -352,12 +351,23 @@ export default Vue.extend({
       }
       return '—';
     },
+
+    splitHouseholdMembers() : {primaryMember: IMember, additionalMembers: IMember[]} {
+      return this.$store.state.registration.splitHousehold?.splitMembers;
+    },
+
+    splitAdditionalMembers() : IMember[] {
+      if (this.splitHouseholdMembers?.primaryMember?.id === this.member.id) {
+        return this.splitHouseholdMembers.additionalMembers;
+      }
+      return [];
+    },
   },
 
   created() {
     // When coming back to the household profile page from the household split flow,
-    // the split household dialog needs to open with the correct state
-    // (the previously selected additional members involved in the split need to be displayed as selected)
+    // the split household dialog should open with the correct state
+    // (the previously selected additional members involved in the split should be displayed as selected)
     if (this.$storage.registration.getters.isSplitMode()) {
       this.initSplitView();
     }
@@ -365,10 +375,7 @@ export default Vue.extend({
 
   methods: {
     initSplitView() {
-      const splitHouseholdMembers = this.$store.state.registration.splitHousehold?.splitMembers;
-      if (splitHouseholdMembers?.primaryMember?.id === this.member.id) {
-        this.splitAdditionalMembers = splitHouseholdMembers.additionalMembers;
-        this.$storage.registration.mutations.resetSplitHousehold();
+      if (this.splitHouseholdMembers && this.splitHouseholdMembers?.primaryMember?.id === this.member.id) {
         this.showSplitDialog = true;
       }
     },

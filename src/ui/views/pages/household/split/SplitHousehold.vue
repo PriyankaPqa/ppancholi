@@ -2,7 +2,7 @@
   <div class="full-height grey lighten-4">
     <page-template
       :loading="false"
-      :navigation-tabs="tabs"
+      :navigation-tabs="flowTabs"
       :left-menu-title="splitMemberName"
       :left-menu-subtitle="$t('household.split.sub-title.split_household_member')">
       <template #navigation>
@@ -16,7 +16,7 @@
           :class="`${xSmallOrSmallMenu ? 'actions' : ''}`"
           outer-scroll>
           <template slot="default">
-            <v-row justify="center" class="mt-12 full-height" no-gutters>
+            <v-row justify="center" class="mt-8 full-height" no-gutters>
               <v-col cols="12" xl="10" lg="10" md="11" sm="12" xs="12">
                 <component :is="currentTab.componentName" />
               </v-col>
@@ -65,12 +65,13 @@
 </template>
 
 <script lang="ts">
-import { RcPageContent } from '@crctech/component-library';
+import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
-import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
-import { ISplitHousehold } from '@crctech/registration-lib/src/entities/household-create';
+import individual from '@crctech/registration-lib/src/ui/mixins/individual';
+import { RcPageContent } from '@crctech/component-library';
+import { ContactInformation, IMember, ISplitHousehold } from '@crctech/registration-lib/src/entities/household-create';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';
@@ -78,11 +79,14 @@ import IsRegistered from '@/ui/views/pages/registration/is-registered/IsRegister
 import PrivacyStatement from '@/ui/views/pages/registration/privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '@/ui/views/pages/registration/personal-information/PersonalInformation.vue';
 import Addresses from '@/ui/views/pages/registration/addresses/Addresses.vue';
-import AdditionalMembers from '@/ui/views/pages/registration/additional-members/AdditionalMembers.vue';
-import ReviewRegistration from '@/ui/views/pages/registration/review/ReviewRegistration.vue';
 import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/ConfirmRegistration.vue';
 import SplitHouseholdEvent from '@/ui/views/pages/household/split/SplitHouseholdEvent.vue';
+import SplitHouseholdMembers from '@/ui/views/pages/household/split/SplitHouseholdMembers.vue';
+import ReviewSplit from '@/ui/views/pages/household/split/ReviewSplit.vue';
+
 import { tabs } from '@/store/modules/household/tabs';
+import { VForm } from '@/types';
+import helpers from '@/ui/helpers';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',
@@ -107,22 +111,25 @@ export default mixins(individual).extend({
     PersonalInformation,
     PrivacyStatement,
     Addresses,
-    AdditionalMembers,
-    ReviewRegistration,
+    ReviewSplit,
     ConfirmRegistration,
     SplitHouseholdEvent,
+    SplitHouseholdMembers,
   },
-
-  mixins: [individual],
 
   data() {
     return {
-      tabs: tabs(),
       goBackToOriginHousehold: false,
     };
   },
 
   computed: {
+    flowTabs() {
+      if (this.splitHousehold?.splitMembers.additionalMembers.length) {
+        return tabs();
+      }
+      return tabs().filter((t) => t.id !== 'additionalSplitMembers');
+    },
 
     splitMemberName(): string {
       if (this.splitHousehold?.splitMembers?.primaryMember) {
@@ -163,21 +170,25 @@ export default mixins(individual).extend({
   },
 
   created() {
-    this.$storage.registration.mutations.setTabs(this.tabs);
+    this.$storage.registration.mutations.setTabs(this.flowTabs);
+    if (!this.splitHousehold) {
+      this.back();
+    }
   },
 
   methods: {
     async back() {
-      if (!this.splitHousehold) return;
-      if (this.currentTabIndex === 0) {
-        this.goBackToOriginHousehold = true;
+      if (this.currentTabIndex === 0 || !this.splitHousehold) {
         if (this.$store.state.registration.householdResultsShown) {
           this.$storage.registration.mutations.setHouseholdResultsShown(false);
+          return;
         }
+
+        this.goBackToOriginHousehold = true;
         await this.$router.push({
           name: routes.household.householdProfile.name,
           params: {
-            id: this.splitHousehold.originHouseholdId,
+            id: this.$route.params.id,
           },
         });
         return;
@@ -188,7 +199,36 @@ export default mixins(individual).extend({
 
     async next() {
       if (!this.splitHousehold) return;
-      await this.jump(this.currentTabIndex + 1);
+      if (this.currentTabIndex === 0) {
+        this.createNewHousehold();
+      }
+      const isValid = await (this.$refs.form as VForm).validate();
+      if (!isValid) {
+        helpers.scrollToFirstError('app');
+        return;
+      }
+
+      if (this.currentTabIndex < this.flowTabs.length - 1) {
+        await this.jump(this.currentTabIndex + 1);
+      }
+    },
+
+    createNewHousehold() {
+      const primaryMember = _cloneDeep(this.splitHousehold.splitMembers.primaryMember);
+      const { additionalMembers } = this.splitHousehold.splitMembers;
+      primaryMember.setCurrentAddress(null);
+      primaryMember.contactInformation = new ContactInformation();
+
+      this.$storage.registration.mutations.resetHouseholdCreate();
+      this.$storage.registration.mutations.setPrimaryBeneficiary(primaryMember);
+
+      if (additionalMembers) {
+        additionalMembers.forEach((m: IMember) => {
+          const member = _cloneDeep(m);
+          member.setCurrentAddress(null);
+          this.$storage.registration.mutations.addAdditionalMember(member, true);
+        });
+      }
     },
 
   },

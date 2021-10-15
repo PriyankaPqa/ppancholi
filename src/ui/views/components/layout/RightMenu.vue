@@ -68,8 +68,8 @@
         </div>
         <div data-test="rightMenu__tenant">
           <v-select
-            data-test="rightMenu__tenantdd"
             v-model="currentTenantId"
+            data-test="rightMenu__tenantdd"
             :items="tenants"
             item-value="id"
             outlined

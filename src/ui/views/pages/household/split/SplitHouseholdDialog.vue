@@ -8,8 +8,8 @@
     fullscreen
     persistent
     show-close
-    @close="onCancel"
-    @cancel="onCancel"
+    @close="onClose"
+    @cancel="onClose"
     @submit="onNext">
     <v-row class="justify-center">
       <v-col cols="12" md="6">
@@ -55,7 +55,7 @@
                   </span>
                 </td>
                 <td v-if="item.customContent === 'address'" class="address" :data-test="`household_profile_member_info_data_${item.test}`">
-                  <current-address-template :current-address="newPrimaryMember.currentAddress" />
+                  <current-address-template :current-address="newPrimaryMember.currentAddress" hide-title />
                 </td>
               </tr>
             </tbody>
@@ -96,7 +96,7 @@
                   </span>
                 </td>
                 <td v-if="item.customContent === 'address'" :data-test="`household_profile_member_info_data_${item.test}`">
-                  <current-address-template :current-address="member.currentAddress" />
+                  <current-address-template :current-address="member.currentAddress" hide-title />
                 </td>
               </tr>
             </tbody>
@@ -227,7 +227,8 @@ export default Vue.extend({
       return type + communityName;
     },
 
-    onCancel() {
+    onClose() {
+      this.$storage.registration.mutations.resetSplitHousehold();
       this.$emit('update:show', false);
     },
 

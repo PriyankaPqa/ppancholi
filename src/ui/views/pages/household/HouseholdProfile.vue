@@ -211,7 +211,7 @@ export default mixins(household).extend({
     return {
       i18n: this.$i18n,
       moment,
-      loading: false,
+      loading: true,
       caseFileIds: [] as string[],
       events: [] as IEventMainInfo[],
       showAddAdditionalMember: false,
@@ -304,6 +304,7 @@ export default mixins(household).extend({
     ]);
     await this.fetchHouseholdData();
     await this.fetchActiveEvents();
+    this.loading = false;
   },
 
   methods: {
@@ -319,16 +320,11 @@ export default mixins(household).extend({
     },
 
     async fetchHouseholdData() {
-      this.loading = true;
-      try {
-        const householdData = await this.$storage.household.actions.fetch(this.id);
-        if (householdData) {
-          const householdCreateData = await this.buildHouseholdCreateData(householdData, this.shelterLocations);
+      const householdData = await this.$storage.household.actions.fetch(this.id);
+      if (householdData) {
+        const householdCreateData = await this.buildHouseholdCreateData(householdData, this.shelterLocations);
 
-          this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
-        }
-      } finally {
-        this.loading = false;
+        this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
       }
     },
 
