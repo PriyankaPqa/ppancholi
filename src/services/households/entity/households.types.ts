@@ -26,6 +26,7 @@ export interface IHouseholdsService {
   splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IHouseholdEntity>;
   addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
+  makePrimary(id: string, memberId: string): Promise<IHouseholdEntity>;
   getHouseholdHistory(id: uuid): Promise<IVersionedEntityCombined[]>;
   getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntityCombined[]>;
   getMemberHistory(id: uuid): Promise<IVersionedEntityCombined[]>;
@@ -49,6 +50,7 @@ export interface IHouseholdsServiceMock {
   splitHousehold: jest.Mock<IHouseholdEntity>;
   addMember: jest.Mock<IHouseholdEntity>;
   validateEmail: jest.Mock<IValidateEmailResponse>;
+  makePrimary: jest.Mock<IHouseholdEntity>;
   getHouseholdHistory: jest.Mock<IVersionedEntityCombined[]>;
   getHouseholdMetadataHistory: jest.Mock<IVersionedEntityCombined[]>;
   getMemberHistory: jest.Mock<IVersionedEntityCombined[]>;

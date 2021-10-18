@@ -122,6 +122,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.post(`${this.baseApi}/persons/validate-email-address`, request);
   }
 
+  async makePrimary(id: string, memberId: string): Promise<IHouseholdEntity> {
+    return this.http.post(`${this.baseUrl}/${id}/assign-primary`, { memberId });
+  }
+
   async getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]> {
     return this.http.get(`${this.baseUrl}/${id}/history`);
   }

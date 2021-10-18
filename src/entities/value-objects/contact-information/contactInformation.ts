@@ -31,19 +31,16 @@ export class ContactInformation implements IContactInformation {
   emailValidatedByBackend: boolean;
 
   constructor(data?: IContactInformationData) {
-    if (!data) {
-      this.reset();
-    } else {
-      this.mobilePhoneNumber = data.mobilePhoneNumber;
-      this.homePhoneNumber = data.homePhoneNumber;
-      this.alternatePhoneNumber = data.alternatePhoneNumber;
-      this.email = data.email;
-      this.preferredLanguage = data.preferredLanguage ?? null;
-      this.preferredLanguageOther = data.preferredLanguageOther ?? null;
-      this.primarySpokenLanguage = data.primarySpokenLanguage ?? null;
-      this.primarySpokenLanguageOther = data.primarySpokenLanguageOther ?? null;
-      this.emailValidatedByBackend = data.emailValidatedByBackend;
-    }
+    this.reset();
+    this.mobilePhoneNumber = data?.mobilePhoneNumber || this.mobilePhoneNumber;
+    this.homePhoneNumber = data?.homePhoneNumber || this.homePhoneNumber;
+    this.alternatePhoneNumber = data?.alternatePhoneNumber || this.alternatePhoneNumber;
+    this.email = data?.email || this.email;
+    this.preferredLanguage = data?.preferredLanguage || this.preferredLanguage;
+    this.preferredLanguageOther = data?.preferredLanguageOther || this.preferredLanguageOther;
+    this.primarySpokenLanguage = data?.primarySpokenLanguage || this.primarySpokenLanguage;
+    this.primarySpokenLanguageOther = data?.primarySpokenLanguageOther || this.primarySpokenLanguageOther;
+    this.emailValidatedByBackend = data ? data.emailValidatedByBackend : this.emailValidatedByBackend;
   }
 
   validate(skipEmailPhoneRules: boolean): string[] {

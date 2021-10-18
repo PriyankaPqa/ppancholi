@@ -12,7 +12,7 @@ import {
   Address, CurrentAddress, ECurrentAddressTypes, EIndigenousTypes,
 } from '../../household-create';
 import { IMultilingual } from '../../../types';
-import { IHouseholdEntity } from '../../household';
+import { IHouseholdEntity, IHouseholdMetadata } from '../../household';
 
 export class VersionedEntityCombined implements IVersionedEntityCombined {
   versionId: string;
@@ -51,6 +51,8 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
         switch (this.entity.lastAction) {
           case 'Created':
             return 'household.history.action.household_created';
+          case 'AssignPrimary':
+            return 'household.history.action.household_member_assign_primary';
           case 'AddMember':
             return 'household.history.action.household_member_added';
           case 'RemoveMember':
@@ -94,6 +96,8 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
             return isPreviousValue ? this.makeHomeTemplate(entityData, i18n) : this.makeEmptyTemplate();
           case 'UpdateAddress':
             return this.makeHomeTemplate(entityData, i18n);
+          case 'AssignPrimary':
+            return this.makePrimaryTemplate(isPreviousValue);
           case 'AddMember':
             return isPreviousValue ? this.makeEmptyTemplate() : this.makeAddMemberTemplate(historyItems, i18n);
           case 'RemoveMember':
@@ -328,6 +332,27 @@ export class VersionedEntityCombined implements IVersionedEntityCombined {
       const removedMember = historyItems.find((i) => i.entityType === 'householdMember' && i.entity.id === removedMemberId[0] && i.entity.lastAction === 'Deactivate');
       if (!removedMember) return this.makeEmptyTemplate();
       return this.makeFullMemberTemplate((removedMember.previousEntity) as IMemberEntity, (removedMember.previousMetadata) as IMemberMetadata, i18n);
+    }
+    return this.makeEmptyTemplate();
+  }
+
+  /**
+   *
+   * @param isPrevious Whether we are looking at the current value or previous
+   * @returns Template data for member name. Example:
+   *  { label: 'Primary member', value: 'John Smith' },
+   */
+  makePrimaryTemplate(isPrevious: boolean): IHistoryItemTemplateData[] {
+    const primary = (this.metadata as IHouseholdMetadata)?.memberMetadata
+      .find((i) => i.id === ((isPrevious ? this.previousEntity : this.entity) as IHouseholdEntity)?.primaryBeneficiary);
+
+    if (primary) {
+      return [
+        {
+          label: 'household.history.label.primaryMember',
+          value: `${primary.firstName} ${primary.lastName}`,
+        },
+      ];
     }
     return this.makeEmptyTemplate();
   }

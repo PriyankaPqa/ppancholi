@@ -74,9 +74,16 @@ describe('PersonalInformation.vue', () => {
     });
 
     describe('setIndigenousIdentity', () => {
-      it('triggers mutations setPrimaryBeneficiary', async () => {
-        await wrapper.vm.setIndigenousIdentity(mockMember());
-        expect(storage.registration.mutations.setIndigenousIdentity).toHaveBeenCalledWith(mockMember());
+      it('triggers mutations setPrimaryBeneficiary if storeMode but always emits', async () => {
+        const newValue = {};
+        await wrapper.vm.setIndigenousIdentity(newValue);
+        expect(storage.registration.mutations.setIndigenousIdentity).toHaveBeenCalledWith(newValue);
+        expect(wrapper.emitted('setIndigenousIdentity')[0][0]).toEqual(newValue);
+        jest.clearAllMocks();
+        await wrapper.setProps({ memberProps: mockMember() });
+        await wrapper.vm.setIndigenousIdentity(newValue);
+        expect(storage.registration.mutations.setIndigenousIdentity).not.toHaveBeenCalled();
+        expect(wrapper.emitted('setIndigenousIdentity')[0][0]).toEqual(newValue);
       });
       it('should be called when indigenous identity is changed', () => {
         jest.spyOn(wrapper.vm, 'setIndigenousIdentity');
@@ -87,9 +94,16 @@ describe('PersonalInformation.vue', () => {
     });
 
     describe('setIdentity', () => {
-      it('triggers mutations setIdentity', async () => {
-        await wrapper.vm.setIdentity(mockMember());
-        expect(storage.registration.mutations.setIdentity).toHaveBeenCalledWith(mockMember());
+      it('triggers mutations setIdentity if storeMode but always emits', async () => {
+        const newValue = {};
+        await wrapper.vm.setIdentity(newValue);
+        expect(storage.registration.mutations.setIdentity).toHaveBeenCalledWith(newValue);
+        expect(wrapper.emitted('setIdentity')[0][0]).toEqual(newValue);
+        jest.clearAllMocks();
+        await wrapper.setProps({ memberProps: mockMember() });
+        await wrapper.vm.setIdentity(newValue);
+        expect(storage.registration.mutations.setIdentity).not.toHaveBeenCalled();
+        expect(wrapper.emitted('setIdentity')[0][0]).toEqual(newValue);
       });
       it('should be called when identity is changed', () => {
         jest.spyOn(wrapper.vm, 'setIdentity');
@@ -100,9 +114,16 @@ describe('PersonalInformation.vue', () => {
     });
 
     describe('setContactInformation', () => {
-      it('triggers mutations setContactInformation', async () => {
-        await wrapper.vm.setContactInformation(mockContactInformation());
-        expect(storage.registration.mutations.setContactInformation).toHaveBeenCalledWith(mockContactInformation());
+      it('triggers mutations setContactInformation if storeMode but always emits', async () => {
+        const newValue = {};
+        await wrapper.vm.setContactInformation(newValue);
+        expect(storage.registration.mutations.setContactInformation).toHaveBeenCalledWith(newValue);
+        expect(wrapper.emitted('setContactInformation')[0][0]).toEqual(newValue);
+        jest.clearAllMocks();
+        await wrapper.setProps({ memberProps: mockMember() });
+        await wrapper.vm.setContactInformation(newValue);
+        expect(storage.registration.mutations.setContactInformation).not.toHaveBeenCalled();
+        expect(wrapper.emitted('setContactInformation')[0][0]).toEqual(newValue);
       });
       it('should be called when contact information is changed', () => {
         jest.spyOn(wrapper.vm, 'setContactInformation');
@@ -126,9 +147,9 @@ describe('PersonalInformation.vue', () => {
       });
     });
 
-    describe('householdCreate', () => {
+    describe('member', () => {
       it('returns the proper data', async () => {
-        expect(wrapper.vm.householdCreate).toEqual(mockHouseholdCreate());
+        expect(wrapper.vm.member).toEqual(mockHouseholdCreate().primaryBeneficiary);
       });
     });
 

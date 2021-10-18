@@ -1,3 +1,4 @@
+import { IContactInformation } from '@/entry';
 import { MAX_LENGTH_MD } from '../../../constants/validations';
 import { mockContactInformation, mockContactInformationData } from './contactInformation.mock';
 import { ContactInformation } from './contactInformation';
@@ -14,6 +15,33 @@ describe('>>> ContactInformation', () => {
 
     it('should reset if not data pass', () => {
       const p = new ContactInformation();
+      expect(p.mobilePhoneNumber).toEqual({
+        number: '',
+        countryCode: 'CA',
+        e164Number: '',
+        extension: '',
+      });
+      expect(p.homePhoneNumber).toEqual({
+        number: '',
+        countryCode: 'CA',
+        e164Number: '',
+        extension: '',
+      });
+      expect(p.alternatePhoneNumber).toEqual({
+        number: '',
+        countryCode: 'CA',
+        e164Number: '',
+        extension: '',
+      });
+      expect(p.email).toEqual('');
+      expect(p.preferredLanguage).toEqual(null);
+      expect(p.preferredLanguageOther).toEqual(null);
+      expect(p.primarySpokenLanguage).toEqual(null);
+      expect(p.primarySpokenLanguageOther).toEqual(null);
+    });
+
+    it('should reset if data passed not complete', () => {
+      const p = new ContactInformation({} as IContactInformation);
       expect(p.mobilePhoneNumber).toEqual({
         number: '',
         countryCode: 'CA',

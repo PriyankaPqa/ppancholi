@@ -65,6 +65,11 @@ describe('>>> Versioned Entity', () => {
       const entity = new VersionedEntityCombined(entityData, mockMetadata);
       expect(entity.getLastActionName()).toEqual('household.history.action.household_member_added');
     });
+    it('returns the right data if entity type is household and last action AssignPrimary', () => {
+      const entityData = mockVersionedEntity('household', { entityType: 'household', entity: { ...mockBaseEntity(), lastAction: 'AssignPrimary' } });
+      const entity = new VersionedEntityCombined(entityData, mockMetadata);
+      expect(entity.getLastActionName()).toEqual('household.history.action.household_member_assign_primary');
+    });
     it('returns the right data if entity type is household and last action RemoveMember', () => {
       const entityData = mockVersionedEntity('household', { entityType: 'household', entity: { ...mockBaseEntity(), lastAction: 'RemoveMember' } });
       const entity = new VersionedEntityCombined(entityData, mockMetadata);
@@ -114,6 +119,15 @@ describe('>>> Versioned Entity', () => {
         entity.getTemplateData([entity], false, i18n);
 
         expect(entity.makeAddMemberTemplate).toHaveBeenCalled();
+      });
+
+      it('calls makePrimaryTemplate for the current entity if  last action AssignPrimary', () => {
+        const entityData = mockVersionedEntity('household', { entityType: 'household', entity: { ...mockBaseEntity(), lastAction: 'AssignPrimary' } });
+        const entity = new VersionedEntityCombined(entityData, mockMetadata);
+        entity.makePrimaryTemplate = jest.fn();
+        entity.getTemplateData([entity], false, i18n);
+
+        expect(entity.makePrimaryTemplate).toHaveBeenCalled();
       });
 
       it('returns null if last action Activate', () => {
@@ -476,6 +490,28 @@ describe('>>> Versioned Entity', () => {
       expect(expected).toEqual([
         { label: 'foo', value: 'bar' },
       ]);
+    });
+  });
+
+  describe('makePrimaryTemplate', () => {
+    it('returns the right data', () => {
+      const entityData = mockVersionedEntity('household', {
+        entityType: 'household',
+        entity: { ...mockBaseEntity(), primaryBeneficiary: 'id-1' },
+        previousEntity: { ...mockBaseEntity(), primaryBeneficiary: 'id-2' },
+      });
+
+      const versionedEntity = new VersionedEntityCombined(entityData, mockMetadata);
+
+      let expected = versionedEntity.makePrimaryTemplate(false);
+
+      expect(expected).toEqual([
+        { label: 'household.history.label.primaryMember', value: 'Mister Test' },
+      ]);
+
+      expected = versionedEntity.makePrimaryTemplate(true);
+
+      expect(expected).toEqual(versionedEntity.makeEmptyTemplate());
     });
   });
 

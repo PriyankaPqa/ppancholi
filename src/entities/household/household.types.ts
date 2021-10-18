@@ -19,14 +19,14 @@ export interface IHouseholdEntity extends IEntity {
 }
 
 export interface IHouseholdMemberMetadata {
-  id?: string;
+  id: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
-  email?: string;
-  homePhoneNumber?: IPhoneNumber;
-  mobilePhoneNumber?: IPhoneNumber;
-  alternatePhoneNumber?: IPhoneNumber;
+  email: string;
+  homePhoneNumber: IPhoneNumber;
+  mobilePhoneNumber: IPhoneNumber;
+  alternatePhoneNumber: IPhoneNumber;
 }
 
 export interface IHouseholdCaseFile {

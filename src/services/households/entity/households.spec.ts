@@ -136,6 +136,15 @@ describe('>>> Beneficiaries Service', () => {
     });
   });
 
+  test('makePrimary is linked to the correct URL', async () => {
+    const id = 'mock-id';
+
+    await service.makePrimary(id, 'member');
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/assign-primary`, {
+      memberId: 'member',
+    });
+  });
+
   test('getHouseholdHistory is linked to the correct URL', async () => {
     const id = 'mock-id';
     await service.getHouseholdHistory(id);

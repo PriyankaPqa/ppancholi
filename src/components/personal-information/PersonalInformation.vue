@@ -11,7 +11,7 @@
       :preferred-languages-items="preferredLanguagesItems"
       :primary-spoken-languages-items="primarySpokenLanguagesItems"
       :skip-phone-email-rules="skipPhoneEmailRules"
-      :person-id="householdCreate.primaryBeneficiary.id"
+      :person-id="member.id"
       @change="setContactInformation($event)" />
 
     <indigenous-identity-form
@@ -31,7 +31,7 @@ import VueI18n, { TranslateResult } from 'vue-i18n';
 import helpers from '../../ui/helpers';
 import { IOptionItemData } from '../../types';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
-import { IHouseholdCreate, IIdentitySet } from '../../entities/household-create';
+import { IIdentitySet, IMember } from '../../entities/household-create';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
@@ -58,19 +58,27 @@ export default Vue.extend({
       type: Object as () => VueI18n,
       required: true,
     },
+    memberProps: {
+      type: Object as () => IMember,
+      default: null,
+    },
   },
 
   computed: {
+    storeMode(): boolean {
+      return !this.memberProps;
+    },
+
     identitySet(): IIdentitySet {
-      return this.householdCreate.primaryBeneficiary.identitySet;
+      return this.member.identitySet;
     },
 
     contactInformation(): IContactInformation {
-      return this.householdCreate.primaryBeneficiary.contactInformation;
+      return this.member.contactInformation;
     },
 
-    householdCreate(): IHouseholdCreate {
-      return this.$storage.registration.getters.householdCreate();
+    member(): IMember {
+      return this.memberProps || this.$storage.registration.getters.householdCreate().primaryBeneficiary;
     },
 
     preferredLanguagesItems(): IOptionItemData[] {
@@ -107,15 +115,18 @@ export default Vue.extend({
   },
   methods: {
     setIdentity(form: IIdentitySet) {
-      this.$storage.registration.mutations.setIdentity(form);
+      if (this.storeMode) this.$storage.registration.mutations.setIdentity(form);
+      this.$emit('setIdentity', form);
     },
 
     setIndigenousIdentity(form: IIdentitySet) {
-      this.$storage.registration.mutations.setIndigenousIdentity(form);
+      if (this.storeMode) this.$storage.registration.mutations.setIndigenousIdentity(form);
+      this.$emit('setIndigenousIdentity', form);
     },
 
     setContactInformation(form: IContactInformation) {
-      this.$storage.registration.mutations.setContactInformation(form);
+      if (this.storeMode) this.$storage.registration.mutations.setContactInformation(form);
+      this.$emit('setContactInformation', form);
     },
   },
 });

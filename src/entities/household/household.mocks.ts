@@ -57,8 +57,13 @@ export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseho
 });
 
 export const mockHouseholdMemberMetadata = (force?: Partial<IHouseholdMemberMetadata>): IHouseholdMemberMetadata => ({
+  id: 'id-1',
   firstName: 'Mister',
   lastName: 'Test',
+  email: 'Test@mail.com',
+  alternatePhoneNumber: null,
+  homePhoneNumber: null,
+  mobilePhoneNumber: null,
   dateOfBirth: '2000-06-12',
   ...force,
 });
