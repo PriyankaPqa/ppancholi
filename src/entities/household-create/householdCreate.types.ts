@@ -1,3 +1,4 @@
+import { ERegistrationMode } from '../../types/enums/ERegistrationMode';
 import { ERegistrationMethod } from '../../types';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
 import { IMemberEntity, IMember, MemberCreateRequest } from '../value-objects/member';
@@ -63,4 +64,15 @@ export interface ICreateHouseholdRequest {
   additionalMembers: MemberCreateRequest[];
   eventId: uuid;
   consentInformation: IConsentInformation;
+}
+
+export interface ISplitHouseholdRequest {
+  noFixedHome: boolean;
+  primaryBeneficiaryId: uuid;
+  primaryBeneficiary: MemberCreateRequest;
+  homeAddress: IAddressData;
+  additionalMemberIds: uuid[];
+  eventId: uuid;
+  consentInformation: IConsentInformation;
+  registrationType: ERegistrationMode;
 }

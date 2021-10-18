@@ -1,11 +1,12 @@
 import deepmerge from 'deepmerge';
+import { ERegistrationMode } from '../../types/enums/ERegistrationMode';
 import {
   mockAdditionalMembers, mockMemberData, mockMemberCreateRequest, mockMember,
 } from '../value-objects/member';
 import { HouseholdCreate } from './householdCreate';
 import { mockAddressData } from '../value-objects/address/address.mock';
 import {
-  IHouseholdCreateData, IHouseholdCreate, ICreateHouseholdRequest,
+  IHouseholdCreateData, IHouseholdCreate, ICreateHouseholdRequest, ISplitHouseholdRequest,
 } from './householdCreate.types';
 
 export const mockHouseholdCreateData = (): IHouseholdCreateData => ({
@@ -27,6 +28,17 @@ export const mockCreateHouseholdRequest = (): ICreateHouseholdRequest => ({
   additionalMembers: [],
   eventId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
   consentInformation: null,
+});
+
+export const mockSplitHouseholdRequest = (): ISplitHouseholdRequest => ({
+  noFixedHome: true,
+  primaryBeneficiary: mockMemberCreateRequest(),
+  primaryBeneficiaryId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
+  homeAddress: null,
+  additionalMemberIds: ['f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8'],
+  eventId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
+  consentInformation: null,
+  registrationType: ERegistrationMode.CRC,
 });
 
 export const mockSplitHousehold = () => ({

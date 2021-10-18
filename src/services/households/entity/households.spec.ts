@@ -2,17 +2,15 @@ import { ECanadaProvinces, ERegistrationMode } from '@/types';
 import moment from 'moment';
 import { mockHttp } from '../../httpClient.mock';
 import {
-  mockAddressData,
-  mockHouseholdCreate,
-  mockContactInformation,
-  mockCreateHouseholdRequest,
-  mockMember, ECurrentAddressTypes, mockIdentitySet, mockHotelMotel, mockCampGround, mockAddress,
+  mockAddressData, mockHouseholdCreate, mockContactInformation, mockCreateHouseholdRequest, mockSplitHouseholdRequest,
+  mockMember, ECurrentAddressTypes, mockIdentitySet, mockHotelMotel, mockCampGround, mockAddress, mockMemberCreateRequest,
 } from '../../../entities/household-create';
 import { HouseholdsService } from './households';
 
 const API_URL_SUFFIX = 'household';
 const http = mockHttp();
 const createBeneficiaryRequest = mockCreateHouseholdRequest();
+const splitBeneficiaryRequest = mockSplitHouseholdRequest();
 let service: HouseholdsService = null;
 
 describe('>>> Beneficiaries Service', () => {
@@ -113,6 +111,12 @@ describe('>>> Beneficiaries Service', () => {
   test('deleteAdditionalMember is linked to the correct URL', async () => {
     await service.deleteAdditionalMember('123', '345');
     expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/members/${'345'}`);
+  });
+
+  test('splitHousehold is linked to the correct URL', async () => {
+    service.parseSplitHouseholdPayload = jest.fn(() => splitBeneficiaryRequest);
+    await service.splitHousehold(mockHouseholdCreate(), '1234', 'event-id');
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'1234'}/split`, splitBeneficiaryRequest, { globalHandler: false });
   });
 
   test('addMember is linked to the correct URL', async () => {
@@ -247,6 +251,25 @@ describe('>>> Beneficiaries Service', () => {
           specifiedOther: identitySet.gender.isOther ? identitySet.genderOther : null,
         },
         indigenousIdentity: null,
+      });
+    });
+  });
+
+  describe('parseSplitHouseholdPayload', () => {
+    it('returns the proper object', () => {
+      service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
+
+      const household = { ...mockHouseholdCreate(), additionalMembers: [mockMember({ id: 'id-1' })] };
+
+      expect(service.parseSplitHouseholdPayload(household, '123')).toEqual({
+        noFixedHome: true,
+        primaryBeneficiary: mockMemberCreateRequest(),
+        homeAddress: null,
+        eventId: 'f4ec77c9-8b02-4ba6-9ba3-9c24e943afe8',
+        consentInformation: null,
+        primaryBeneficiaryId: household.primaryBeneficiary.id,
+        additionalMemberIds: ['id-1'],
+        registrationType: ERegistrationMode.CRC,
       });
     });
   });

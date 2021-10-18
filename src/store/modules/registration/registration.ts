@@ -378,6 +378,10 @@ const mutations = (): MutationTree<IState> => ({
 
   resetSplitHousehold(state: IState) {
     state.splitHousehold = null;
+    state.event = null;
+    state.registrationErrors = [];
+    state.registrationResponse = null;
+    state.currentTabIndex = 0;
   },
 
   setTabs(state: IState, tabs: IRegistrationMenuItem[]) {
@@ -556,26 +560,6 @@ const actions = (mode: ERegistrationMode) => ({
     return res;
   },
 
-  // async splitMembers(
-  //   this: IStore<IState>,
-  //   context: ActionContext<IState, IState>,
-  //   { householdId, primaryMember, additionalMembers }: { householdId: string; primaryMember: IMember; additionalMembers: IMember[] },
-  // ): Promise<IHouseholdEntity> {
-  //   const additionalMemberIds = additionalMembers.map((m) => m.id);
-  //   const res = await this.$services.households.splitMembers(householdId, [primaryMember.id, ...additionalMemberIds]);
-  //   if (res) {
-  //     const allAdditionalMembers = this.state.householdCreate.additionalMembers;
-
-  //     [primaryMember.id, ...additionalMemberIds].forEach((id) => {
-  //       const index = allAdditionalMembers.findIndex((member) => member.id === id);
-  //       context.commit('removeAdditionalMember', index);
-  //     });
-
-  //     context.commit('setSplitHouseholdMembers', { primaryMember, additionalMembers });
-  //   }
-  //   return res;
-  // },
-
   async deleteAdditionalMember(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
@@ -586,6 +570,25 @@ const actions = (mode: ERegistrationMode) => ({
       context.commit('removeAdditionalMember', index);
     }
     return res;
+  },
+
+  async splitHousehold(
+    this: IStore<IState>,
+    context: ActionContext<IState, IState>,
+  ): Promise<IHouseholdEntity> {
+    let result: IHouseholdEntity;
+    context.commit('setSubmitLoading', true);
+    try {
+      const { originHouseholdId } = context.state.splitHousehold;
+      result = await this.$services.households.splitHousehold(context.state.householdCreate, originHouseholdId, context.state.event.id);
+      context.commit('setRegistrationResponse', result);
+    } catch (e) {
+      context.commit('setRegistrationErrors', e);
+    } finally {
+      context.commit('setSubmitLoading', false);
+    }
+
+    return result;
   },
 });
 

@@ -8,6 +8,7 @@ import Component from './ConfirmRegistration.vue';
 const localVue = createLocalVue();
 
 const storage = mockStorage();
+storage.registration.getters.currentTab = jest.fn(() => ({ titleKey: 'mock title', nextButtonTextKey: 'mock text' }));
 
 const computed = {
   response: () => mockHouseholdEntity(),
@@ -20,6 +21,8 @@ const computed = {
   }),
   confirmationMessagePath: () => 'confirm message',
   phoneAssistance: () => 'phone',
+  initialTitle: () => 'mock-title',
+  initialButtonText: () => 'mock-text',
 };
 
 describe('ConfirmRegistration.vue', () => {
@@ -236,6 +239,18 @@ describe('ConfirmRegistration.vue', () => {
         expect(wrapper.vm.errors).toEqual(wrapper.vm.$storage.registration.getters.registrationErrors());
       });
     });
+
+    describe('initialTitle', () => {
+      it('returns the proper data', () => {
+        expect(wrapper.vm.initialTitle).toEqual('mock title');
+      });
+    });
+
+    describe('initialButtonText', () => {
+      it('returns the proper data', () => {
+        expect(wrapper.vm.initialButtonText).toEqual('mock text');
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -254,23 +269,11 @@ describe('ConfirmRegistration.vue', () => {
           isValid: false,
         };
 
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
-
         wrapper.vm.clearTabErrorFunc(tab);
 
         expect(tab).toEqual({
-          nextButtonTextKey: 'registration.confirm_registration.label',
-          titleKey: 'registration.page.confirmation',
-          isValid: true,
-        });
-
-        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
-
-        wrapper.vm.clearTabErrorFunc(tab);
-
-        expect(tab).toEqual({
-          nextButtonTextKey: 'registration.close_registration.label',
-          titleKey: 'registration.page.confirmation',
+          nextButtonTextKey: 'mock-text',
+          titleKey: 'mock-title',
           isValid: true,
         });
       });

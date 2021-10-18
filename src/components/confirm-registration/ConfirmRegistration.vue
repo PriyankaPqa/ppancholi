@@ -71,6 +71,7 @@ export default Vue.extend({
   components: {
     ConfirmationError,
   },
+
   computed: {
     success(): boolean {
       return this.errors?.length === 0;
@@ -117,11 +118,18 @@ export default Vue.extend({
     },
 
     phoneAssistance(): string {
-      return this.event.responseDetails?.assistanceNumber;
+      return this.event.responseDetails?.assistanceNumber || '';
     },
 
     isCRCRegistration(): boolean {
       return this.$storage.registration.getters.isCRCRegistration();
+    },
+
+    initialTitle(): string {
+      return this.$storage.registration.getters.currentTab()?.titleKey || '';
+    },
+    initialButtonText(): string {
+      return this.$storage.registration.getters.currentTab()?.nextButtonTextKey || '';
     },
   },
 
@@ -137,6 +145,7 @@ export default Vue.extend({
       },
     },
   },
+
   methods: {
     setTabWithError() {
       this.$storage.registration.mutations.mutateCurrentTab((tab: IRegistrationMenuItem) => {
@@ -151,10 +160,8 @@ export default Vue.extend({
     },
 
     clearTabErrorFunc(tab: IRegistrationMenuItem) {
-      tab.nextButtonTextKey = this.$storage.registration.getters.isCRCRegistration()
-        ? 'registration.confirm_registration.label'
-        : 'registration.close_registration.label';
-      tab.titleKey = 'registration.page.confirmation';
+      tab.nextButtonTextKey = this.initialButtonText;
+      tab.titleKey = this.initialTitle;
       tab.isValid = true;
     },
   },

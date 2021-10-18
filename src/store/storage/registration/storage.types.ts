@@ -90,8 +90,7 @@ export interface IStorage {
       member, isPrimaryMember, index, sameAddress,
     }: { member: IMember; isPrimaryMember: boolean; index?: number; sameAddress?: boolean}): Promise<IHouseholdEntity>;
     addAdditionalMember({ householdId, member, sameAddress }: { householdId: string; member: IMember; sameAddress?: boolean}): Promise<IHouseholdEntity>;
-    // splitMembers ({ householdId, primaryMember, additionalMembers }:
-    //   { householdId: string; primaryMember: IMember; additionalMembers: IMember[] }): Promise<IHouseholdEntity>;
+    splitHousehold (): Promise<IHouseholdEntity>;
     deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity>;
   };
 }
@@ -168,7 +167,7 @@ export interface IStorageMock {
     updatePersonContactInformation: jest.Mock<IHouseholdEntity>;
     updatePersonAddress: jest.Mock<IHouseholdEntity>;
     addAdditionalMember: jest.Mock<IHouseholdEntity>;
-    // splitMembers: jest.Mock<IHouseholdEntity>;
+    splitHousehold: jest.Mock<IHouseholdEntity>;
     deleteAdditionalMember: jest.Mock<IHouseholdEntity>;
   };
 }

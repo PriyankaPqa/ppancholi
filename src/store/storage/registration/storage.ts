@@ -279,15 +279,12 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       });
     },
 
-    // splitMembers({
-    //   householdId, primaryMember, additionalMembers,
-    // }: { householdId: string; primaryMember: IMember; additionalMembers: IMember[] }): Promise<IHouseholdEntity> {
-    //   return store.dispatch('registration/splitMembers', {
-    //     householdId, primaryMember, additionalMembers,
-    //   });
-    // },
     deleteAdditionalMember({ householdId, memberId, index }: { householdId: string; memberId: string; index: number }): Promise<IHouseholdEntity> {
       return store.dispatch('registration/deleteAdditionalMember', { householdId, memberId, index });
+    },
+
+    splitHousehold(): Promise<IHouseholdEntity> {
+      return store.dispatch('registration/splitHousehold');
     },
   },
 });

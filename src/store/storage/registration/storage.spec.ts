@@ -357,5 +357,10 @@ describe('>>> Registration Storage', () => {
         householdId, memberId, index,
       });
     });
+
+    it('should proxy splitHousehold', () => {
+      storage.actions.splitHousehold();
+      expect(store.dispatch).toBeCalledWith('registration/splitHousehold');
+    });
   });
 });

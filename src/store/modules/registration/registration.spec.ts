@@ -5,6 +5,7 @@ import { mockHttpError } from '@/services/httpClient.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import { mockSplitHousehold } from '../../../entities/household-create/householdCreate.mock';
+
 import { HouseholdCreate } from '../../../entities/household-create/householdCreate';
 import {
   ERegistrationMethod, ERegistrationMode, IRegistrationMenuItem,
@@ -638,6 +639,10 @@ describe('>>> Registration Module', () => {
       it('should reset splitHousehold', () => {
         store.commit('registration/resetSplitHousehold');
         expect(store.state.registration.splitHousehold).toEqual(null);
+        expect(store.state.registration.event).toEqual(null);
+        expect(store.state.registration.registrationErrors).toEqual([]);
+        expect(store.state.registration.registrationResponse).toEqual(null);
+        expect(store.state.registration.currentTabIndex).toEqual(0);
       });
     });
 
@@ -964,6 +969,38 @@ describe('>>> Registration Module', () => {
         await store.dispatch('registration/deleteAdditionalMember', { householdId, memberId, index });
 
         expect(store.commit).toHaveBeenCalledWith('registration/removeAdditionalMember', index, undefined);
+      });
+    });
+
+    describe('splitHousehold', () => {
+      it('call the splitHousehold service with proper params', async () => {
+        store.$services.households.splitHousehold = jest.fn(() => (mockHouseholdEntity()));
+        store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
+        store.state.registration.splitHousehold = mockSplitHousehold();
+        store.state.registration.event = mockEvent({ id: 'event-id' });
+        await store.dispatch('registration/splitHousehold');
+        expect(store.$services.households.splitHousehold).toHaveBeenCalledWith(mockHouseholdCreate(), mockSplitHousehold().originHouseholdId, 'event-id');
+      });
+
+      it('call the mutation setRegistrationResponse after the resolution', async () => {
+        store.$services.households.splitHousehold = jest.fn(() => (mockHouseholdEntity()));
+        store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
+        store.state.registration.splitHousehold = mockSplitHousehold();
+        store.state.registration.event = mockEvent({ id: 'event-id' });
+        store.commit = jest.fn();
+        await store.dispatch('registration/splitHousehold');
+        expect(store.commit).toHaveBeenCalledWith('registration/setRegistrationResponse', mockHouseholdEntity(), undefined);
+      });
+
+      it('call the mutation setRegistrationErrors if the call ', async () => {
+        store.$services.households.splitHousehold = jest.fn(() => { throw new Error(); });
+        store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
+        store.state.registration.splitHousehold = mockSplitHousehold();
+        store.state.registration.event = mockEvent({ id: 'event-id' });
+        store.commit = jest.fn();
+
+        await store.dispatch('registration/splitHousehold');
+        expect(store.commit).toHaveBeenCalledWith('registration/setRegistrationErrors', new Error(), undefined);
       });
     });
   });

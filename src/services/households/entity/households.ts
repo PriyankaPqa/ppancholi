@@ -18,7 +18,7 @@ import {
   MemberCreateRequest,
   IIdentitySet,
   IIdentitySetCreateRequest,
-  IMemberEntity, IAddress, IValidateEmailResponse, IValidateEmailRequest,
+  IMemberEntity, IAddress, IValidateEmailResponse, IValidateEmailRequest, ISplitHouseholdRequest,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
@@ -105,9 +105,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.delete(`${this.baseUrl}/${householdId}/members/${memberId}`);
   }
 
-  // async splitMembers(householdId: string, memberIds: string[]): Promise<IHouseholdEntity> {
-  //   return this.http.patch(`${this.baseUrl}/${householdId}/split`, memberIds);
-  // }
+  async splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IHouseholdEntity> {
+    const payload = this.parseSplitHouseholdPayload(household, eventId);
+    return this.http.patch(`${this.baseUrl}/${originHouseholdId}/split`, payload, { globalHandler: false });
+  }
 
   async addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity> {
     const parsePayload = this.parseMember(payload);
@@ -138,6 +139,19 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
   }
 
   /** Private methods * */
+
+  parseSplitHouseholdPayload(household: IHouseholdCreate, eventId: string): ISplitHouseholdRequest {
+    const householdPayload = this.parseHouseholdPayload(household, eventId);
+    // Remove field additionalMembers from the household payload object
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { additionalMembers, ...splitPayload } = householdPayload;
+    return {
+      ...splitPayload,
+      primaryBeneficiaryId: household.primaryBeneficiary.id,
+      additionalMemberIds: household.additionalMembers.map((member) => member.id),
+      registrationType: ERegistrationMode.CRC,
+    };
+  }
 
   parseHouseholdPayload(household: IHouseholdCreate, eventId: string): ICreateHouseholdRequest {
     return {

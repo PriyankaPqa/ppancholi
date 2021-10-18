@@ -64,7 +64,6 @@
           :label="`${$t('registration.addresses.country')} *`"
           @change="$onChangeCountry($event)" />
       </v-col>
-
     </v-row>
   </validation-observer>
 </template>
