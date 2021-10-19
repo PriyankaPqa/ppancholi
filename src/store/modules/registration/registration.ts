@@ -383,6 +383,7 @@ const mutations = (): MutationTree<IState> => ({
     state.registrationResponse = null;
     state.currentTabIndex = 0;
     state.isPrivacyAgreed = false;
+    state.householdResultsShown = false;
   },
 
   setTabs(state: IState, tabs: IRegistrationMenuItem[]) {

@@ -644,6 +644,7 @@ describe('>>> Registration Module', () => {
         expect(store.state.registration.registrationResponse).toEqual(null);
         expect(store.state.registration.currentTabIndex).toEqual(0);
         expect(store.state.registration.isPrivacyAgreed).toEqual(false);
+        expect(store.state.registration.householdResultsShown).toEqual(false);
       });
     });
 
