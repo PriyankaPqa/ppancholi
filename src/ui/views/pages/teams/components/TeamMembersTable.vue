@@ -128,7 +128,7 @@ import { DataTableHeader } from 'vuetify';
 import _orderBy from 'lodash/orderBy';
 import { RcConfirmationDialog, RcPhoneDisplay, RcDialog } from '@crctech/component-library';
 import { ITeamCombined, ITeamMemberAsUser } from '@/entities/team';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import TeamMemberTeams from '@/ui/views/pages/teams/components/TeamMemberTeams.vue';
 

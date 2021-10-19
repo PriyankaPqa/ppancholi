@@ -47,7 +47,7 @@ import { IEventGenericLocation } from '@crctech/registration-lib/src/entities/ev
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { IHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
 import { VForm } from '@/types';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';
 
 export default Vue.extend({

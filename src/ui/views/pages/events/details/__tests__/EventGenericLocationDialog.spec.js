@@ -3,7 +3,7 @@ import { mockEventEntity, EEventLocationStatus } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import entityUtils from '@/entities/utils';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { ECanadaProvinces, EEventSummarySections } from '@/types';
 
 import Component from '../components/EventGenericLocationDialog.vue';

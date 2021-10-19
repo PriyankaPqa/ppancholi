@@ -109,7 +109,7 @@ import { RcDialog } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import { TeamType, ITeamEntity, ITeamMember } from '@/entities/team';
 import { ICaseFileEntity } from '@/entities/case-file';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
 import { Status } from '@/entities/base';
 import AssignedList from './AssignedList.vue';

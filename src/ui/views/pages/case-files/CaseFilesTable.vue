@@ -107,7 +107,7 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
   ICaseFileCombined, CaseFileStatus, CaseFileTriage,
 } from '@/entities/case-file';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';

@@ -115,7 +115,7 @@ import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components
 import colors from '@/ui/plugins/vuetify/colors';
 
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'MassActionPreProcessedProcessedBase',

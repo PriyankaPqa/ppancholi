@@ -13,7 +13,7 @@ import {
   mockOptionItemData,
   OptionItem,
 } from '@/entities/optionItem';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import {
   ECanadaProvinces,
 } from '@/types';

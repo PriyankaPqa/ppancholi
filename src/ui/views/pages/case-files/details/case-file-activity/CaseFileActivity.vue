@@ -106,7 +106,7 @@ import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import { ICaseFileCombined, ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import CaseFileTags from './components/CaseFileTags.vue';
 import CaseFileLabels from './components/CaseFileLabels.vue';
 import CaseFileStatus from './components/CaseFileStatus.vue';

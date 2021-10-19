@@ -1,5 +1,5 @@
 import { mockHouseholdCreate, Member } from '@crctech/registration-lib/src/entities/household-create';
-import { mockCombinedHousehold, mockHouseholdEntity, mockHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
+import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
@@ -7,9 +7,9 @@ import { mockStorage } from '@/store/storage';
 import { mockEventMainInfo, EEventLocationStatus, EEventStatus } from '@/entities/event';
 import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
 import { mockUserStateLevel } from '@/test/helpers';
-import helpers from '@/ui/helpers';
-
+import householdHelpers from '@/ui/helpers/household';
 import Component from './HouseholdProfile.vue';
+import routes from '@/constants/routes';
 
 const localVue = createLocalVue();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
@@ -51,11 +51,8 @@ describe('HouseholdProfile.vue', () => {
           };
         },
         computed: {
-          addressLine1() { return 'address-line-1'; },
-          addressLine2() { return 'address-line-2'; },
           country() { return 'mock-country'; },
           household() { return householdCreate; },
-          householdData() { return household; },
         },
         mocks: {
           $storage: storage,
@@ -104,8 +101,6 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           computed: {
-            addressLine1() { return 'address-line-1'; },
-            addressLine2() { return 'address-line-2'; },
             country() { return 'mock-country'; },
             household() { return householdCreate; },
             canEdit() { return true; },
@@ -130,8 +125,6 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           computed: {
-            addressLine1() { return 'address-line-1'; },
-            addressLine2() { return 'address-line-2'; },
             country() { return 'mock-country'; },
             household() { return householdCreate; },
             canEdit() { return false; },
@@ -187,8 +180,6 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            addressLine1() { return 'address-line-1'; },
-            addressLine2() { return 'address-line-2'; },
             country() { return 'mock-country'; },
             household() { return householdCreate; },
           },
@@ -260,9 +251,6 @@ describe('HouseholdProfile.vue', () => {
             household() {
               return householdCreate;
             },
-            householdData() {
-              return household;
-            },
           },
           mocks: {
             $storage: storage,
@@ -298,61 +286,6 @@ describe('HouseholdProfile.vue', () => {
       });
     });
 
-    describe('addressLine1', () => {
-      it('returns the right data when there is a unit suite ', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          computed: {
-            household() { return { ...householdCreate, homeAddress: { ...householdCreate.homeAddress, unitSuite: '13' } }; },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-
-        expect(wrapper.vm.addressLine1).toEqual(`13-${wrapper.vm.household.homeAddress.streetAddress},`);
-      });
-
-      it('returns the right data when there is no unit suite ', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          computed: {
-            household() { return householdCreate; },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-
-        expect(wrapper.vm.addressLine1).toEqual(`${wrapper.vm.household.homeAddress.streetAddress},`);
-      });
-    });
-
-    describe('addressLine2', () => {
-      it('returns the right data', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            id: household.entity.id,
-          },
-          computed: {
-            household() { return householdCreate; },
-          },
-          mocks: {
-            $storage: storage,
-          },
-        });
-        expect(wrapper.vm.addressLine2)
-          .toEqual(`${wrapper.vm.household.homeAddress.city}, ON, ${wrapper.vm.household.homeAddress.postalCode}`);
-      });
-    });
-
     describe('caseFiles', () => {
       it('returns the right data', () => {
         wrapper = shallowMount(Component, {
@@ -367,7 +300,6 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-            householdData() { return household; },
           },
           mocks: {
             $storage: storage,
@@ -380,7 +312,7 @@ describe('HouseholdProfile.vue', () => {
 
     describe('country', () => {
       it(' calls helpers  countryName and returns the result', () => {
-        jest.spyOn(helpers, 'countryName').mockImplementation(() => 'mock-country');
+        jest.spyOn(householdHelpers, 'countryName').mockImplementation(() => 'mock-country');
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -406,7 +338,6 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-            householdData() { return household; },
           },
           mocks: { $storage: storage },
         });
@@ -422,14 +353,11 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-            householdData() {
-              return { entity: mockHouseholdEntity({ timestamp: '2021-07-01' }), metadata: mockHouseholdMetadata({ timestamp: null }) };
-            },
           },
           mocks: { $storage: storage },
         });
 
-        expect(wrapper.vm.lastUpdated).toEqual('Jul 1, 2021');
+        expect(wrapper.vm.lastUpdated).toEqual('May 26, 2021');
       });
     });
 
@@ -442,7 +370,6 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-            householdData() { return household; },
           },
           store: {
             ...mockUserStateLevel(1),
@@ -467,7 +394,6 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-            householdData() { return household; },
           },
           store: {
             modules: {
@@ -493,6 +419,52 @@ describe('HouseholdProfile.vue', () => {
         });
 
         expect(wrapper.vm.canEdit).toBeFalsy();
+      });
+    });
+
+    describe('canMove', () => {
+      it('returns true if user has level 2', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            household() { return householdCreate; },
+          },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
+          store: {
+            ...mockUserStateLevel(2),
+          },
+        });
+
+        expect(wrapper.vm.canMove).toBeTruthy();
+      });
+
+      it('returns false if user does not have level 2', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            household() { return householdCreate; },
+          },
+          data() {
+            return {
+              householdData: household,
+            };
+          },
+          store: {
+            ...mockUserStateLevel(1),
+          },
+        });
+
+        expect(wrapper.vm.canMove).toBeFalsy();
       });
     });
   });
@@ -627,8 +599,6 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           computed: {
-            addressLine1() { return 'address-line-1'; },
-            addressLine2() { return 'address-line-2'; },
             country() { return 'mock-country'; },
             household() { return altHousehold; },
           },
@@ -653,8 +623,6 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            addressLine1() { return 'address-line-1'; },
-            addressLine2() { return 'address-line-2'; },
             country() { return 'mock-country'; },
             household() { return altHousehold; },
           },
@@ -678,7 +646,6 @@ describe('HouseholdProfile.vue', () => {
           },
           computed: {
             household() { return householdCreate; },
-            householdData() { return household; },
           },
           mocks: { $storage: storage },
         });
@@ -687,6 +654,19 @@ describe('HouseholdProfile.vue', () => {
         wrapper.vm.editAddress();
 
         expect(wrapper.vm.showEditAddress).toBe(true);
+      });
+    });
+
+    describe('moveMembers', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          id: household.entity.id,
+        },
+      });
+      it('should redirect to proper page', () => {
+        wrapper.vm.moveMembers();
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({ name: routes.household.householdMembersMove.name });
       });
     });
   });

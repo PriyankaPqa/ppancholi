@@ -438,7 +438,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       },
     },
     {
-      id: 'mock-activity-id-26',
+      id: 'mock-activity-id-23',
       caseFileId: 'mock-id-1',
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       user: { id: '1', name: 'Jane Doe' },

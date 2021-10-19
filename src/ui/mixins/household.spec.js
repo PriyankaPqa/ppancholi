@@ -3,9 +3,11 @@ import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/ho
 import { mockMemberData, mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { mockIndigenousCommunitiesGetData, mockGenders } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
 import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
+import { mockShelterLocations } from '@crctech/registration-lib/src/entities/event/event.mock';
+import { mockCombinedHouseholds } from '@crctech/registration-lib/src/entities/household';
 import household from '@/ui/mixins/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { EEventLocationStatus } from '@/entities/event';
+import { EEventLocationStatus, mockEventMainInfo } from '@/entities/event';
 
 const Component = {
   render() {},
@@ -15,6 +17,18 @@ const Component = {
 const localVue = createLocalVue();
 const storage = mockStorage();
 const member = mockMember();
+
+const events = [
+  mockEventMainInfo({
+    id: '1',
+    shelterLocations: [{ id: 'loc-1', status: EEventLocationStatus.Active }],
+  }),
+  mockEventMainInfo(
+    {
+      id: '2',
+      shelterLocations: [{ id: 'loc-2', status: EEventLocationStatus.Inactive }, { id: 'loc-3', status: EEventLocationStatus.Active }],
+    },
+  )];
 
 let wrapper;
 
@@ -30,17 +44,17 @@ describe('household', () => {
   });
 
   describe('Methods', () => {
-    describe('fetchHousehold', () => {
+    describe('fetchHouseholdCreate', () => {
       it('should fetch the household', async () => {
         const id = 1;
-        await wrapper.vm.fetchHousehold(id);
+        await wrapper.vm.fetchHouseholdCreate(id);
         expect(wrapper.vm.$storage.household.actions.fetch).toHaveBeenCalledWith(id);
       });
-      it('should re-create a household object compatible with the UI and return it', async () => {
+      it('should call buildHouseholdCreateData', async () => {
         const id = 1;
         wrapper.vm.buildHouseholdCreateData = jest.fn(() => ({}));
-        const res = await wrapper.vm.fetchHousehold(id);
-        expect(wrapper.vm.buildHouseholdCreateData).toBeCalled();
+        const res = await wrapper.vm.fetchHouseholdCreate(id);
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHouseholds()[0], null, true);
         expect(res).toEqual({});
       });
     });
@@ -102,6 +116,24 @@ describe('household', () => {
         await wrapper.vm.buildHouseholdCreateData(household, shelterLocations);
 
         expect(wrapper.vm.fetchMembersInformation).toHaveBeenCalledWith(household, shelterLocations);
+      });
+
+      it('should call fetchShelterLocations if shelterLocations is null', async () => {
+        const household = mockCombinedHousehold();
+        wrapper.vm.fetchShelterLocations = jest.fn();
+
+        await wrapper.vm.buildHouseholdCreateData(household);
+
+        expect(wrapper.vm.fetchShelterLocations).toBeCalled();
+      });
+
+      it('should not call fetchShelterLocations if shelterLocations are passed', async () => {
+        const household = mockCombinedHousehold();
+        wrapper.vm.fetchShelterLocations = jest.fn();
+
+        await wrapper.vm.buildHouseholdCreateData(household, mockShelterLocations());
+
+        expect(wrapper.vm.fetchShelterLocations).not.toBeCalled();
       });
 
       it('should return the final object of household to be used in the UI', async () => {
@@ -341,6 +373,37 @@ describe('household', () => {
           ...member,
           currentAddress: { shelterLocation: { id: 'loc-1', status: EEventLocationStatus.Active }, shelterLocationId: 'loc-1' },
         }]);
+      });
+    });
+
+    describe('fetchShelterLocations', () => {
+      it('calls searchMyEvents service with the right filter', async () => {
+        const expectedFilter = 'search.in(Entity/Id, \'60983874-18bb-467d-b55a-94dc55818151\', \'|\')';
+
+        await wrapper.vm.fetchShelterLocations(mockCombinedHousehold());
+
+        expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({ filter: expectedFilter, top: 999 });
+      });
+
+      it('returns the correct list of shelter locations with onlyActive true', async () => {
+        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: events }));
+
+        const res = await wrapper.vm.fetchShelterLocations(mockCombinedHousehold());
+
+        expect(res).toEqual([
+          { id: 'loc-1', status: EEventLocationStatus.Active },
+          { id: 'loc-3', status: EEventLocationStatus.Active }]);
+      });
+
+      it('returns the correct list of shelter locations with onlyActive false', async () => {
+        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({ value: events }));
+
+        const res = await wrapper.vm.fetchShelterLocations(mockCombinedHousehold(), false);
+
+        expect(res).toEqual([
+          { id: 'loc-1', status: EEventLocationStatus.Active },
+          { id: 'loc-2', status: EEventLocationStatus.Inactive },
+          { id: 'loc-3', status: EEventLocationStatus.Active }]);
       });
     });
   });

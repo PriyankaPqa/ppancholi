@@ -1,19 +1,18 @@
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import {
-  mockIndigenousCommunitiesGetData, EIndigenousTypes, mockSplitHousehold, mockHouseholdCreate,
+  mockIndigenousCommunitiesGetData, mockSplitHousehold, mockHouseholdCreate,
 } from '@crctech/registration-lib/src/entities/household-create';
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../HouseholdMemberCard.vue';
+import householdHelpers from '@/ui/helpers/household';
 
 const localVue = createLocalVue();
 const member = mockMember({ id: 'id-1' });
 const storage = mockStorage();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
-
 describe('HouseholdMemberCard.vue', () => {
   let wrapper;
   storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
@@ -230,13 +229,15 @@ describe('HouseholdMemberCard.vue', () => {
             customContent: 'phoneNumbers',
           },
         ];
+
+        householdHelpers.homePhoneNumber = jest.fn(() => 'mock-homePhoneNumber');
+        householdHelpers.mobilePhoneNumber = jest.fn(() => 'mock-mobilePhoneNumber');
+        householdHelpers.alternatePhoneNumber = jest.fn(() => 'mock-alternatePhoneNumber');
+        householdHelpers.alternatePhoneExtension = jest.fn(() => 'mock-alternatePhoneExtension');
+
         doMount(false, true, {
           computed: {
             memberInfo() { return memberInfo; },
-            homePhoneNumber() { return 'mock-homePhoneNumber'; },
-            mobilePhoneNumber() { return 'mock-mobilePhoneNumber'; },
-            alternatePhoneNumber() { return 'mock-alternatePhoneNumber'; },
-            alternatePhoneExtension() { return 'mock-alternatePhoneExtension'; },
           },
         });
         const element = wrapper.findDataTest('household_profile_member_info_data_mock-test-name-1');
@@ -328,173 +329,11 @@ describe('HouseholdMemberCard.vue', () => {
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
-    describe('birthDate', () => {
-      beforeEach(() => {
-        jest.spyOn(libHelpers, 'displayBirthDate').mockImplementation(() => 'Jan 1, 1945');
-        jest.spyOn(libHelpers, 'getAge').mockImplementation(() => '75');
-      });
-
-      it('calls the lib helper functions', () => {
-        doMount();
-        expect(libHelpers.displayBirthDate).toHaveBeenCalled();
-        expect(libHelpers.getAge).toHaveBeenCalled();
-      });
-
-      it('returns the right data', () => {
-        doMount();
-        expect(wrapper.vm.birthDate).toEqual('Jan 1, 1945 (75 common.years)');
-      });
-    });
 
     describe('displayName', () => {
       it('returns the right data', () => {
         doMount();
         expect(wrapper.vm.displayName).toEqual(`${wrapper.vm.member.identitySet.firstName} ${wrapper.vm.member.identitySet.lastName}`);
-      });
-    });
-
-    describe('indigenousIdentity', () => {
-      it('returns the right data ', () => {
-        const altMember = {
-          ...member,
-          identitySet: {
-            ...member.identitySet,
-            indigenousType: EIndigenousTypes.InuitCommunity,
-            indigenousCommunityId: mockIndigenousCommunitiesGetData()[0].id,
-          },
-        };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.indigenousIdentity)
-          .toEqual(`common.indigenous.types.InuitCommunity, ${mockIndigenousCommunitiesGetData()[0].communityName}`);
-      });
-
-      it('returns the right data if member has indigenousType other', () => {
-        const altMember = {
-          ...member,
-          identitySet: {
-            ...member.identitySet,
-            indigenousType: EIndigenousTypes.Other,
-            indigenousCommunityOther: 'mock-community',
-          },
-        };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.indigenousIdentity).toEqual('common.indigenous.types.Other, mock-community');
-      });
-    });
-
-    describe('gender', () => {
-      it('returns the right data when gender is other', () => {
-        const altMember = { ...member, identitySet: { ...member.identitySet, genderOther: 'mock-gender' } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.gender).toEqual('mock-gender');
-      });
-      it('returns the right data when gender is not other', () => {
-        const altMember = { ...member, identitySet: { ...member.identitySet, genderOther: null } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.gender).toEqual(member.identitySet.gender.name.translation.en);
-      });
-    });
-
-    describe('preferredLanguage', () => {
-      it('returns the right data when preferredLanguage is other', () => {
-        const altMember = {
-          ...member,
-          contactInformation: {
-            ...member.contactInformation,
-            preferredLanguage: { isOther: true },
-            preferredLanguageOther: 'mock-language',
-          },
-        };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.preferredLanguage).toEqual('mock-language');
-      });
-      it('returns the right data when preferredLanguage is not other', () => {
-        const altMember = {
-          ...member,
-          contactInformation: {
-            ...member.contactInformation,
-            preferredLanguage: { isOther: false, name: { translation: { en: 'bar' } } },
-          },
-        };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.preferredLanguage).toEqual('bar');
-      });
-    });
-
-    describe('primarySpokenLanguage', () => {
-      it('returns the right data when primarySpokenLanguage is other', () => {
-        const altMember = {
-          ...member,
-          contactInformation: {
-            ...member.contactInformation,
-            primarySpokenLanguage: { isOther: true },
-            primarySpokenLanguageOther: 'mock-language',
-          },
-        };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.primarySpokenLanguage).toEqual('mock-language');
-      });
-      it('returns the right data when primarySpokenLanguage is not other', () => {
-        const altMember = {
-          ...member,
-          contactInformation: {
-            ...member.contactInformation,
-            primarySpokenLanguage: { isOther: false, name: { translation: { en: 'foo' } } },
-          },
-        };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.primarySpokenLanguage).toEqual('foo');
-      });
-    });
-
-    describe('mobilePhoneNumber', () => {
-      it('returns the right data when there is a mobile number', () => {
-        const altMember = { ...member, contactInformation: { ...member.contactInformation, mobilePhoneNumber: { number: 'mock-number' } } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.mobilePhoneNumber).toEqual('mock-number');
-      });
-      it('returns the right data when there is no mobile number', () => {
-        const altMember = { ...member, contactInformation: { ...member.contactInformation, mobilePhoneNumber: { number: null } } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.mobilePhoneNumber).toEqual('—');
-      });
-    });
-
-    describe('homePhoneNumber', () => {
-      it('returns the right data when there is a mobile number', () => {
-        const altMember = { ...member, contactInformation: { ...member.contactInformation, homePhoneNumber: { number: 'mock-number' } } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.homePhoneNumber).toEqual('mock-number');
-      });
-      it('returns the right data when there is no mobile number', () => {
-        const altMember = { ...member, contactInformation: { ...member.contactInformation, homePhoneNumber: { number: null } } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.homePhoneNumber).toEqual('—');
-      });
-    });
-    describe('alternatePhoneNumber', () => {
-      it('returns the right data when there is a mobile number', () => {
-        const altMember = { ...member, contactInformation: { ...member.contactInformation, alternatePhoneNumber: { number: 'mock-number' } } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.alternatePhoneNumber).toEqual('mock-number');
-      });
-      it('returns the right data when there is no mobile number', () => {
-        const altMember = { ...member, contactInformation: { ...member.contactInformation, alternatePhoneNumber: { number: null } } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.alternatePhoneNumber).toEqual('—');
-      });
-    });
-
-    describe('alternatePhoneExtension', () => {
-      it('returns the right data when there is a mobile number', () => {
-        const altMember = { ...member, contactInformation: { ...member.contactInformation, alternatePhoneNumber: { extension: 'mock-number' } } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.alternatePhoneExtension).toEqual('mock-number');
-      });
-      it('returns the right data when there is no mobile number', () => {
-        const altMember = { ...member, contactInformation: { ...member.contactInformation, alternatePhoneNumber: { extension: null } } };
-        doMount(false, false, { propsData: { member: altMember, isPrimaryMember: false } });
-        expect(wrapper.vm.alternatePhoneExtension).toEqual('—');
       });
     });
 

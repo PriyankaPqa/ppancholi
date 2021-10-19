@@ -2,7 +2,7 @@ import { mockMember } from '@crctech/registration-lib/src/entities/value-objects
 import { mockHouseholdCreate, mockIdentitySetData } from '@crctech/registration-lib/src/entities/household-create';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 import { mockStorage } from '@/store/storage';
 

@@ -17,7 +17,7 @@ import {
   IEventAgreement,
   EventEntity,
 } from '@/entities/event';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { EEventSummarySections, IAzureSearchResult } from '@/types';
 import { EventsService } from '@/services/events/entity';
 import { OptionItemsService } from '@/services/optionItems';

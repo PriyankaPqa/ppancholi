@@ -2,7 +2,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedEvent } from '@/entities/event';
 import routes from '@/constants/routes';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStorage } from '@/store/storage';
 import { ECanadaProvinces } from '@/types';

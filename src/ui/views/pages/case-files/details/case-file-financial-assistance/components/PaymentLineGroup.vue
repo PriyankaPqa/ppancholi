@@ -98,7 +98,7 @@ import {
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import PaymentLineItem from './PaymentLineItem.vue';
 import { Status } from '@/entities/base';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'PaymentLineGroup',

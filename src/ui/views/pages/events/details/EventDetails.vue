@@ -135,7 +135,7 @@ import { TranslateResult } from 'vue-i18n';
 import _orderBy from 'lodash/orderBy';
 import { RcPhoneDisplay } from '@crctech/component-library';
 import moment from '@/ui/plugins/moment';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import {

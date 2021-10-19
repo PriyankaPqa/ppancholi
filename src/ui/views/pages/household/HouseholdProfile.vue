@@ -99,14 +99,15 @@
             <h5 class="rc-heading-5 ">
               {{ $t('household.profile.household_members') }} ({{ household.additionalMembers.length + 1 }})
             </h5>
-            <div v-if="canEdit">
-              <v-btn color="grey lighten-5" small depressed class="mr-4">
+            <div>
+              <v-btn v-if="canMove" color="grey lighten-5" small depressed class="mr-4" @click="moveMembers()">
                 <v-icon left>
                   mdi-compare-horizontal
                 </v-icon>
                 <span class="fw-bold"> {{ $t('household.profile.move_members') }} </span>
               </v-btn>
               <v-btn
+                v-if="canEdit"
                 :disabled="disabledAddMembers"
                 color="primary"
                 small
@@ -175,7 +176,7 @@ import { IHouseholdCombined, IHouseholdCaseFile } from '@crctech/registration-li
 import { AddEditAdditionalMembers } from '@crctech/registration-lib';
 import { CaseFileStatus } from '@/entities/case-file';
 import household from '@/ui/mixins/household';
-import helpers from '@/ui/helpers';
+import householdHelpers from '@/ui/helpers/household';
 import {
   EEventLocationStatus, EEventStatus, IEventGenericLocation, IEventMainInfo,
 } from '@/entities/event';
@@ -183,6 +184,7 @@ import HouseholdCaseFileCard from './components/HouseholdCaseFileCard.vue';
 import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
+import routes from '@/constants/routes';
 
 export default mixins(household).extend({
   name: 'HouseholdProfile',
@@ -262,16 +264,16 @@ export default mixins(household).extend({
     },
 
     addressLine1(): string {
-      const line = helpers.getAddressLines(this.household?.homeAddress)[0];
+      const line = householdHelpers.getAddressLines(this.household?.homeAddress)[0];
       return line ? `${line},` : '';
     },
 
     addressLine2(): string {
-      return helpers.getAddressLines(this.household?.homeAddress)[1];
+      return householdHelpers.getAddressLines(this.household?.homeAddress)[1];
     },
 
     country() : string {
-      return helpers.countryName(this.household.homeAddress.country);
+      return householdHelpers.countryName(this.household.homeAddress.country);
     },
 
     lastUpdated(): string {
@@ -292,6 +294,10 @@ export default mixins(household).extend({
 
     canEdit():boolean {
       return this.$hasLevel('level1');
+    },
+
+    canMove():boolean {
+      return this.$hasLevel('level2');
     },
   },
 
@@ -320,11 +326,16 @@ export default mixins(household).extend({
     },
 
     async fetchHouseholdData() {
-      const householdData = await this.$storage.household.actions.fetch(this.id);
-      if (householdData) {
-        const householdCreateData = await this.buildHouseholdCreateData(householdData, this.shelterLocations);
+      this.loading = true;
+      try {
+        const householdData = await this.$storage.household.actions.fetch(this.id);
+        if (householdData) {
+          const householdCreateData = await this.buildHouseholdCreateData(householdData, null);
 
-        this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
+          this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
+        }
+      } finally {
+        this.loading = false;
       }
     },
 
@@ -339,11 +350,15 @@ export default mixins(household).extend({
     },
 
     navigateBack() {
-      this.$router.back();
+      this.$router.replace({ name: routes.caseFile.home.name });
     },
 
     editAddress() {
       this.showEditAddress = true;
+    },
+
+    moveMembers() {
+      return this.$router.push({ name: routes.household.householdMembersMove.name });
     },
   },
 });

@@ -103,7 +103,7 @@ import {
   RcDialog,
   VSelectWithValidation,
 } from '@crctech/component-library';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, ICaseFileEntity } from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
 

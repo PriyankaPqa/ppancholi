@@ -3,7 +3,7 @@ import { ActionContext } from 'vuex';
 import { DomainBaseService } from '@/services/base';
 import { httpClient } from '@/services/httpClient';
 import { mockUserAccountEntities, mockUserAccountEntity } from '@/entities/user-account';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { BaseModule } from './index';
 import { IState } from './base.types';
 

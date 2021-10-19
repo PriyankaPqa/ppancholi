@@ -3,7 +3,7 @@ import { mockMember } from '@crctech/registration-lib/src/entities/value-objects
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { tabs } from '@/store/modules/household/tabs';
 
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';

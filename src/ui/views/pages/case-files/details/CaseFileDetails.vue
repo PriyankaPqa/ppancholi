@@ -145,7 +145,7 @@ import routes from '@/constants/routes';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
-import helpers from '@/ui/helpers';
+import householdHelpers from '@/ui/helpers/household';
 
 export default Vue.extend({
   name: 'CaseFileDetails',
@@ -179,11 +179,11 @@ export default Vue.extend({
 
   computed: {
     addressFirstLine(): string {
-      return helpers.getAddressLines(this.household?.entity?.address?.address)[0] || '';
+      return householdHelpers.getAddressLines(this.household?.entity?.address?.address)[0] || '';
     },
 
     addressSecondLine(): string {
-      return helpers.getAddressLines(this.household?.entity?.address?.address)[1] || '';
+      return householdHelpers.getAddressLines(this.household?.entity?.address?.address)[1] || '';
     },
 
     caseFile(): ICaseFileCombined {
@@ -226,7 +226,7 @@ export default Vue.extend({
     },
 
     provinceCodeName(): string {
-      return helpers.provinceCodeName(this.household?.entity.address.address);
+      return householdHelpers.provinceCodeName(this.household?.entity.address.address);
     },
 
     tabs(): Array<INavigationTab> {

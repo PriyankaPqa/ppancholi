@@ -141,7 +141,7 @@ import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceFo
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
 import CreateEditPaymentLineDialog from './CreateEditPaymentLineDialog.vue';
 import { VForm } from '@/types';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'CreateEditFinancialAssistance',

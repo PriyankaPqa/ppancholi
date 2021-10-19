@@ -28,7 +28,7 @@ import { RcPageContent } from '@crctech/component-library';
 import { VForm } from '@/types';
 import { CaseFileReferralEntity, ICaseFileReferralEntity } from '@/entities/case-file-referral';
 import routes from '@/constants/routes';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import ReferralForm from './ReferralForm.vue';
 

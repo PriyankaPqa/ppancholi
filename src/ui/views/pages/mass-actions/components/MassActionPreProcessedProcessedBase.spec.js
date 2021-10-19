@@ -13,7 +13,7 @@ import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import { mockStorage } from '@/store/storage';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

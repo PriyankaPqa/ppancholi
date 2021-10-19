@@ -3,7 +3,7 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';

@@ -1,6 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@/entities/event';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockUserStateLevel } from '@/test/helpers';

@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'RcFileUpload',

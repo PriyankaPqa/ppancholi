@@ -14,7 +14,7 @@ import {
 } from '@/entities/financial-assistance';
 import { EPaymentModalities, mockCombinedProgram } from '@/entities/program';
 import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@/entities/optionItem';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { Status } from '@/entities/base';
 
 const formCopy = {

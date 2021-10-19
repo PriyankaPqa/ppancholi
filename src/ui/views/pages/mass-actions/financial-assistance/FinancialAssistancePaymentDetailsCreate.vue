@@ -113,10 +113,10 @@ import {
   EFinancialAmountModes,
 } from '@/entities/financial-assistance';
 import {
-  IOptionItem, IOptionItemCombined, IOptionSubItem, mockOptionItemData, OptionItem,
+  IOptionItem, IOptionItemCombined, IOptionSubItem,
 } from '@/entities/optionItem';
 import { EEventStatus, IEventEntity } from '@/entities/event';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { EPaymentModalities } from '@/entities/program';
 import { Status } from '@/entities/base';
 import { PaymentDetailsForm } from './FinancialAssistanceCreateFile.vue';

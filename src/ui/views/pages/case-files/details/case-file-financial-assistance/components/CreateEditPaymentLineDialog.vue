@@ -187,7 +187,7 @@ import {
   IFinancialAssistancePaymentEntity,
 } from '@/entities/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { IAddress, VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@/constants/validations';

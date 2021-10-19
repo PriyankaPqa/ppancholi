@@ -1,7 +1,7 @@
 import { RcDataTable } from '@crctech/component-library';
 import moment from 'moment';
 import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';

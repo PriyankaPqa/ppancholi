@@ -26,7 +26,7 @@ import { RcPageContent } from '@crctech/component-library';
 import { VForm } from '@/types';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
 import routes from '@/constants/routes';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import DocumentForm from './CaseFileDocumentForm.vue';
 

@@ -133,32 +133,13 @@
 <script lang="ts">
 import moment from 'moment';
 import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
-import { IPhoneNumber } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
 import { RcDataTable } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
 import { tabs } from '@/store/modules/registration/tabs';
 import household from '@/ui/mixins/household';
+import householdResults, { IFormattedHousehold } from '@/ui/mixins/householdResults';
 
-export interface IMember {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  email?: string;
-  homePhoneNumber?: IPhoneNumber;
-  mobilePhoneNumber?: IPhoneNumber;
-  alternatePhoneNumber?: IPhoneNumber;
-  isPrimary: boolean;
-  registrationNumber: string;
-}
-
-export interface IFormattedHousehold {
-  id: string;
-  primaryBeneficiary: IMember;
-  additionalMembers: IMember[];
-  eventIds: string[];
-}
-
-export default mixins(household).extend({
+export default mixins(household, householdResults).extend({
   name: 'HouseholdResults',
   components: {
     RcDataTable,
@@ -229,49 +210,17 @@ export default mixins(household).extend({
       }
       return headers;
     },
-    formattedItems(): IFormattedHousehold[] {
-      return this.items.map((household: IHouseholdCombined) => {
-        const final = {
-          primaryBeneficiary: {},
-          additionalMembers: [],
-          id: household.entity.id,
-          eventIds: household.metadata.eventIds,
-        } as IFormattedHousehold;
-
-        household.metadata.memberMetadata.forEach((member) => {
-          if (household.entity.primaryBeneficiary === member.id) {
-            final.primaryBeneficiary = {
-              ...member,
-              isPrimary: true,
-              registrationNumber: household.entity.registrationNumber,
-            };
-          } else {
-            final.additionalMembers.push({
-              ...member,
-              isPrimary: false,
-              registrationNumber: household.entity.registrationNumber,
-            });
-          }
-        });
-        return final;
-      });
-    },
     currentEventId(): string {
       return this.$storage.registration.getters.event().id;
     },
   },
   methods: {
-    hasAdditionalMember(household: IFormattedHousehold) {
-      if (household.additionalMembers) return household.additionalMembers.length > 0;
-      return false;
-    },
-
     async viewDetails(household: IFormattedHousehold) {
       try {
         this.detailsLoading = true;
         this.detailsId = household.id;
 
-        const householdCreateData = await this.fetchHousehold(household.id);
+        const householdCreateData = await this.fetchHouseholdCreate(household.id, null, true);
         this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
       } finally {
         this.detailsLoading = false;
@@ -290,18 +239,13 @@ export default mixins(household).extend({
       return true;
     },
 
-    getPhone(household: IFormattedHousehold): string {
-      const mPhone = household.primaryBeneficiary.mobilePhoneNumber;
-      if (mPhone) return mPhone.number;
-      const hPhone = household.primaryBeneficiary.homePhoneNumber;
-      if (hPhone) return hPhone.number;
-      const oPhone = household.primaryBeneficiary.alternatePhoneNumber;
-      if (oPhone) return oPhone.number;
-      return '';
-    },
-
     isRegisteredInCurrentEvent(household: IFormattedHousehold) {
       return household.eventIds.includes(this.currentEventId);
+    },
+
+    hasAdditionalMember(household: IFormattedHousehold) {
+      if (household.additionalMembers) return household.additionalMembers.length > 0;
+      return false;
     },
 
   },

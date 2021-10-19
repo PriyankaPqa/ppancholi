@@ -71,7 +71,7 @@ import routes from '@/constants/routes';
 import { IAzureSearchParams } from '@/types';
 import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { IEntityCombined, Status } from '@/entities/base';
 import { IProgramEntity, IProgramMetadata } from '@/entities/program';
 

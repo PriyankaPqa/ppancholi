@@ -117,7 +117,7 @@ import { RcPageContent } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import routes from '@/constants/routes';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import {
   EEventStatus,
   IEventCallCentre,

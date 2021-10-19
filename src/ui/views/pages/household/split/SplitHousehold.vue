@@ -86,7 +86,7 @@ import ReviewSplit from '@/ui/views/pages/household/split/ReviewSplit.vue';
 
 import { tabs } from '@/store/modules/household/tabs';
 import { VForm } from '@/types';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 export default mixins(individual).extend({
   name: 'SplitHousehold',

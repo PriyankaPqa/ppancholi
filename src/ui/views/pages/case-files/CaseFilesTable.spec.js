@@ -6,7 +6,7 @@ import { mockStorage } from '@/store/storage';
 
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@/entities/case-file';
 import Component from './CaseFilesTable.vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { EEventStatus, mockCombinedEvents } from '@/entities/event';
 
 const storage = mockStorage();

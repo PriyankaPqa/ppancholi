@@ -7,7 +7,7 @@ import { mockStorage } from '@/store/storage';
 import Component from '../ViewPaymentLineDetails.vue';
 import flushPromises from 'flush-promises';
 import { EPaymentModalities } from '@/entities/program/program.types';
-import helpers from '@/ui/helpers';
+import householdHelpers from '@/ui/helpers/household'
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -65,13 +65,13 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(wrapper.findDataTest('detail_item').text()).toEqual(`Children's Needs`);
       });
     });
-    
+
     describe('detail_subitem', () => {
       it('shows the correct data', () => {
         expect(wrapper.findDataTest('detail_subitem').text()).toEqual(`Children's Supplies`);
       });
     });
-    
+
     describe('doc_required', () => {
       it('shows depending on subItem.documentationRequired', async () => {
         const subItem = mockSubItemData();
@@ -82,7 +82,7 @@ describe('ViewPaymentLineDetails.vue', () => {
           },
         });
         expect(wrapper.findDataTest('doc_required').exists()).toBeTruthy();
-        
+
         subItem.documentationRequired = false;
         await mountWrapper(false, 6, null, {
           computed: {
@@ -92,7 +92,7 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(wrapper.findDataTest('doc_required').exists()).toBeFalsy();
       });
     });
-    
+
     describe('related_number', () => {
       it('shows depending on modality', async () => {
         expect(wrapper.findDataTest('related_number').exists()).toBeFalsy();
@@ -106,7 +106,7 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(wrapper.findDataTest('related_number').exists()).toBeTruthy();
       });
     });
-    
+
     describe('payeeSection', () => {
       it('shows depending on modality', async () => {
         expect(wrapper.findDataTest('payeeSection').exists()).toBeTruthy();
@@ -149,7 +149,7 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(wrapper.vm.paymentGroup).toEqual(newGroup);
       });
     });
-    
+
     describe('paymentLine', () => {
       it('filters by id within financialassistance', async () => {
         const financialAssistance = mockCaseFinancialAssistanceEntity();
@@ -178,7 +178,7 @@ describe('ViewPaymentLineDetails.vue', () => {
 
     describe('addressLines', () => {
       it('calls address helper and joins results', async () => {
-        helpers.getAddressLines = jest.fn(() => ['ab', 'c']);
+        householdHelpers.getAddressLines = jest.fn(() => ['ab', 'c']);
         await mountWrapper();
         expect(wrapper.vm.addressLines).toEqual('ab, c');
       });
@@ -194,7 +194,7 @@ describe('ViewPaymentLineDetails.vue', () => {
           },
         });
         expect(wrapper.vm.showTooltip).toBeTruthy();
-        
+
         subItem.maximumAmount = line.amount + 1;
         await mountWrapper(false, 6, null, {
           computed: {
@@ -215,7 +215,7 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(financialAssistance.id);
         expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
         expect(storage.program.actions.fetch).toHaveBeenCalledWith({id: storage.financialAssistance.getters.get().entity.programId, eventId: storage.caseFile.getters.get().entity.eventId});
-        expect(storage.financialAssistance.mutations.setFinancialAssistance).toHaveBeenLastCalledWith(storage.financialAssistance.getters.get(), 
+        expect(storage.financialAssistance.mutations.setFinancialAssistance).toHaveBeenLastCalledWith(storage.financialAssistance.getters.get(),
             storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity), storage.program.actions.fetch().entity, false)
       });
     });

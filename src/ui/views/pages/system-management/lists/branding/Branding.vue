@@ -32,7 +32,7 @@ import routes from '@/constants/routes';
 import Colours from './Colours.vue';
 import Logo from './Logo.vue';
 import TenantDetails from './TenantDetails.vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

@@ -8,15 +8,15 @@ import { IIndigenousCommunityData } from '@crctech/registration-lib/src/entities
 import { IAddressData, IHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import deepmerge from 'deepmerge';
 import { ICurrentAddressCreateRequest } from '@crctech/registration-lib/src/entities/value-objects/current-address';
-import helpers from '@/ui/helpers';
+import householdHelpers from '@/ui/helpers/household';
 import { IOptionItemData } from '@/entities/optionItem';
-import { IEventGenericLocation } from '@/entities/event';
+import { EEventLocationStatus, IEventGenericLocation } from '@/entities/event';
 
 export default Vue.extend({
   methods: {
-    async fetchHousehold(id: string, shelterLocations: IEventGenericLocation[] = null) {
+    async fetchHouseholdCreate(id: string, shelterLocations: IEventGenericLocation[] = null, onlyActiveShelters = true) {
       const householdRes = await this.$storage.household.actions.fetch(id);
-      const householdCreateData = await this.buildHouseholdCreateData(householdRes, shelterLocations);
+      const householdCreateData = await this.buildHouseholdCreateData(householdRes, shelterLocations, onlyActiveShelters);
       return householdCreateData;
     },
 
@@ -43,15 +43,69 @@ export default Vue.extend({
       return members;
     },
 
-    async buildHouseholdCreateData(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[] = null): Promise<IHouseholdCreateData> {
+    async fetchShelterLocations(household: IHouseholdCombined, onlyActive = true) {
+      const shelters = [] as IEventGenericLocation[];
+      const householdCaseFiles = household.metadata.caseFiles;
+      if (householdCaseFiles) {
+        const eventIds = householdCaseFiles.map((cf) => cf.eventId);
+
+        const resEvents = await this.$services.events.searchMyEvents({
+          filter: `search.in(Entity/Id, '${eventIds.join('|')}', '|')`,
+          top: 999,
+        });
+
+        const events = resEvents?.value;
+
+        if (events) {
+          events.forEach((e) => {
+            if (e.entity.shelterLocations) {
+              if (onlyActive) {
+                const activeLocations = e.entity.shelterLocations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
+                shelters.push(...activeLocations);
+              } else {
+                shelters.push(...e.entity.shelterLocations);
+              }
+            }
+          });
+        }
+        return shelters;
+      }
+      return [];
+    },
+
+    async buildHouseholdCreateData(
+      household: IHouseholdCombined,
+      shelterLocations: IEventGenericLocation[] = null,
+      onlyActiveShelters = true,
+    ): Promise<IHouseholdCreateData> {
       let primaryBeneficiary;
       const additionalMembers = [] as Array<IMemberEntity>;
 
-      const genderItems = this.$storage.registration.getters.genders() as IOptionItemData[];
-      const preferredLanguagesItems = this.$storage.registration.getters.preferredLanguages() as IOptionItemData[];
-      const primarySpokenLanguagesItems = this.$storage.registration.getters.primarySpokenLanguages() as IOptionItemData[];
+      let shelters = [] as IEventGenericLocation[];
 
-      const members = await this.fetchMembersInformation(household, shelterLocations);
+      // We get all shelter locations of all events linked to the household case files
+      if (shelterLocations === null) {
+        shelters = await this.fetchShelterLocations(household, onlyActiveShelters);
+      }
+
+      let genderItems = this.$storage.registration.getters.genders() as IOptionItemData[];
+
+      if (genderItems.length === 0) {
+        genderItems = await this.$storage.registration.actions.fetchGenders() as IOptionItemData[];
+      }
+
+      let preferredLanguagesItems = this.$storage.registration.getters.preferredLanguages() as IOptionItemData[];
+
+      if (preferredLanguagesItems.length === 0) {
+        preferredLanguagesItems = await this.$storage.registration.actions.fetchPreferredLanguages() as IOptionItemData[];
+      }
+      let primarySpokenLanguagesItems = this.$storage.registration.getters.primarySpokenLanguages() as IOptionItemData[];
+
+      if (primarySpokenLanguagesItems.length === 0) {
+        primarySpokenLanguagesItems = await this.$storage.registration.actions.fetchPrimarySpokenLanguages() as IOptionItemData[];
+      }
+
+      const members = await this.fetchMembersInformation(household, shelterLocations || shelters);
 
       const communitiesItems = await this.$storage.registration.actions.fetchIndigenousCommunities();
 
@@ -108,7 +162,7 @@ export default Vue.extend({
         ? indigenousCommunities.find((c) => c.id === member.identitySet.indigenousIdentity.indigenousCommunityId) : null;
 
       return {
-        birthDate: helpers.convertBirthDateStringToObject(member.identitySet.dateOfBirth),
+        birthDate: householdHelpers.convertBirthDateStringToObject(member.identitySet.dateOfBirth),
         genderOther: member.identitySet.gender.specifiedOther,
         gender: genderItems.find((i) => i.id === member.identitySet.gender.optionItemId),
         indigenousCommunityId: indigenous?.id,

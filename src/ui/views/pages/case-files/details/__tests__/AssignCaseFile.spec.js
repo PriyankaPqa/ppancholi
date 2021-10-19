@@ -3,7 +3,7 @@ import { mockCaseFileEntity } from '@/entities/case-file';
 import { mockCombinedUserAccount, AccountStatus } from '@/entities/user-account';
 import { mockTeamEntity, TeamType, mockTeamMembersData } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 import Component from '../case-file-activity/components/AssignCaseFile.vue';
 

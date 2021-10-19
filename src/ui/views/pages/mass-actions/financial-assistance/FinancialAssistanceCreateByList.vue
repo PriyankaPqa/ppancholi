@@ -124,7 +124,7 @@ import { FilterKey } from '@/entities/user-account';
 import {
   CaseFileStatus, ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus,
 } from '@/entities/case-file';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { EEventStatus, IEventEntity, IEventMetadata } from '@/entities/event';
 import { IProgramEntity } from '@/entities/program';
 

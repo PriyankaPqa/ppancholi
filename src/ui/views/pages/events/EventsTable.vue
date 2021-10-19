@@ -81,7 +81,7 @@ import {
   IEventCombined,
   IEventSchedule,
 } from '@/entities/event';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { IAzureSearchParams } from '@/types';
 import routes from '@/constants/routes';
 import moment from '@/ui/plugins/moment';

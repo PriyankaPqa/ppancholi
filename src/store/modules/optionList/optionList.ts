@@ -3,7 +3,7 @@ import {
 } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import _findIndex from 'lodash/findIndex';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { IRootState } from '@/store/store.types';
 import { IMultilingual } from '@/types';
 import {

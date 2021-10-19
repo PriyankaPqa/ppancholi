@@ -29,7 +29,7 @@ import { IError } from '@/services/httpClient';
 import { VForm } from '@/types';
 import { ProgramEntity } from '@/entities/program';
 import routes from '@/constants/routes';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import ProgramForm from './ProgramForm.vue';
 

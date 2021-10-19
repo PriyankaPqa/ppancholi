@@ -177,7 +177,7 @@ import _sortBy from 'lodash/sortBy';
 import {
   RcPageContent, RcTabs, RcTab, VTextFieldWithValidation, VAutocompleteWithValidation,
 } from '@crctech/component-library';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import routes from '@/constants/routes';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { MAX_LENGTH_SM } from '@/constants/validations';

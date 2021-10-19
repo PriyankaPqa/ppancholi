@@ -113,7 +113,7 @@ import {
 } from '@crctech/component-library';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { EPaymentModalities, ProgramEntity } from '@/entities/program';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { Status } from '@/entities/base';
 

@@ -13,7 +13,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { VSelectWithValidation } from '@crctech/component-library';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { EFinancialFrequency } from '@/entities/financial-assistance';
 
 export default Vue.extend({

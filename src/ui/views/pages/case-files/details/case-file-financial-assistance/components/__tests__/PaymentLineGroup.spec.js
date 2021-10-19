@@ -6,7 +6,7 @@ import Component from '../PaymentLineGroup.vue';
 import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason } from '@/entities/financial-assistance-payment';
 import { Status } from '@/entities/base';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 
 const localVue = createLocalVue();
@@ -17,7 +17,7 @@ const storage = mockStorage();
 
 describe('PaymentLineGroup.vue', () => {
   let wrapper;
-  
+
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
@@ -97,12 +97,12 @@ describe('PaymentLineGroup.vue', () => {
       });
     });
   });
-  
+
   describe('Lifecycle', () => {
     describe('created', () => {
       it('shows a message if the data is inactive', async () => {
         paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
-    
+
         await mountWrapper(false, 6, null, {
           computed: {
             isInactive: () => true,
@@ -114,7 +114,7 @@ describe('PaymentLineGroup.vue', () => {
         await hook.call(wrapper.vm);
         expect(wrapper.vm.$message).toHaveBeenCalled();
 
-        
+
         await mountWrapper(false, 6, null, {
           computed: {
             isInactive: () => false,
@@ -134,7 +134,7 @@ describe('PaymentLineGroup.vue', () => {
     beforeEach(async () => {
       jest.clearAllMocks();
       paymentGroup = mockCaseFinancialAssistancePaymentGroups()[0];
-  
+
       await mountWrapper();
     });
 
@@ -225,7 +225,7 @@ describe('PaymentLineGroup.vue', () => {
         expect(wrapper.vm.modality).toEqual('event.programmanagement.paymentmodalities.cheque');
       });
     });
-    
+
     describe('paymentStatusesByModality', () => {
       it('should return only the current status for contributors not finance', async () => {
         paymentGroup.paymentStatus = 2;
@@ -239,7 +239,7 @@ describe('PaymentLineGroup.vue', () => {
         await mountWrapper(false, null, 'readonly');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([3]);
       });
-      
+
       /*
         based on the excel grid of statuses available according to your role and current modality
         see https://rctech.atlassian.net/browse/EMISV2-673
@@ -249,17 +249,17 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 6);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
-    
+
       it('etransfer contributor finance PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.ETransfer;
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, null, 'contributorFinance');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Sent, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
@@ -269,7 +269,7 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 1);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
@@ -279,27 +279,27 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 3);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
+
       it('Cheque level6 PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 6);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
-      
+
       it('Cheque contributorFinance PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress only if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, null, 'contributorFinance');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
@@ -309,7 +309,7 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 1);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
@@ -319,18 +319,18 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 3);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
-      
+
+
       it('DirectDeposit level6 PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled - InProgress even if not new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 6);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
@@ -340,7 +340,7 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, null, 'contributorFinance');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.InProgress, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
@@ -350,37 +350,37 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 1);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
+
       it('DirectDeposit level3 only current status + cancelled if new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.DirectDeposit;
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 3);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
+
       it('Voucher level6 PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Voucher;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 6);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
-      
+
       it('Voucher contributorFinance PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Voucher;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, null, 'contributorFinance');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
@@ -390,37 +390,37 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 1);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
+
       it('Voucher level3 only current status + cancelled if new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Voucher;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 3);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
+
       it('Invoice level6 PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 6);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
-      
+
       it('Invoice contributorFinance PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, null, 'contributorFinance');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
@@ -430,38 +430,38 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 1);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
+
       it('Invoice level3 only current status + cancelled if new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 3);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
-      
+
+
       it('PrepaidCard level6 PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.PrepaidCard;
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 6);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
-      
+
       it('PrepaidCard contributorFinance PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.PrepaidCard;
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, null, 'contributorFinance');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
       });
@@ -471,40 +471,40 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 1);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
-      
+
       it('PrepaidCard level3 only current status + completed or cancelled if new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.PrepaidCard;
         paymentGroup.paymentStatus = PaymentStatus.New;
         await mountWrapper(false, 3);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.New, PaymentStatus.Completed, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Completed;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Completed]);
       });
-      
+
       it('GiftCard level6 PaymentStatus.Issued, PaymentStatus.Cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 6);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
       });
-      
+
       it('GiftCard contributorFinance PaymentStatus.Issued, PaymentStatus.Cancelled', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, null, 'contributorFinance');
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
       });
@@ -514,32 +514,32 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 1);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
-      
+
       it('GiftCard level3 only current status + cancelled if new', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.GiftCard;
         paymentGroup.paymentStatus = PaymentStatus.Issued;
         await mountWrapper(false, 3);
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Issued, PaymentStatus.Cancelled]);
-        
+
         paymentGroup.paymentStatus = PaymentStatus.Cancelled;
         expect(wrapper.vm.paymentStatusesByModality).toEqual([PaymentStatus.Cancelled]);
       });
     });
   });
-  
+
   describe('Methods', () => {
     describe('onPaymentStatusChange', () => {
-  
+
       it('should emit update-payment-status', async () => {
         await mountWrapper();
         await wrapper.vm.onPaymentStatusChange(PaymentStatus.Completed);
         expect(wrapper.emitted('update-payment-status')[0][0]).toEqual({ status: PaymentStatus.Completed, group: wrapper.vm.paymentGroup });
       });
-  
+
       it('for not etransfer does not shows reason dialog when cancelling and emits cancel when confirmed', async () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Cheque;
         await mountWrapper();
@@ -565,7 +565,7 @@ describe('PaymentLineGroup.vue', () => {
     });
 
     describe('onConfirmCancel', () => {
-  
+
       it('should emit update-payment-status with confirmation', async () => {
         await mountWrapper();
         await wrapper.setData({cancellationReason: 5});

@@ -282,7 +282,7 @@ import {
 } from '@crctech/component-library';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import {
   ECanadaProvinces,
 } from '@/types';

@@ -82,7 +82,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { IAzureSearchParams } from '@/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { Status } from '@/entities/base';
 
 export default mixins(TablePaginationSearchMixin).extend({

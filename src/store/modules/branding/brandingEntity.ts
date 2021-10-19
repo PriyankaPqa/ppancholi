@@ -68,9 +68,9 @@ export class BrandingEntityModule extends BaseModule<IBrandingEntity, uuid> {
 
       if (results) {
         context.commit('setAll', results);
+        return results.map((r) => new BrandingEntity(r));
       }
-
-      return results.map((r) => new BrandingEntity(r));
+      return [];
     },
 
     getBranding: async (context: ActionContext<IBrandingEntityState, IBrandingEntityState>): Promise<IBrandingEntity> => {

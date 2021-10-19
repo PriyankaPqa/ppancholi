@@ -1,6 +1,6 @@
 import { RcDataTable } from '@crctech/component-library';
 import { EFilterType } from '@crctech/component-library/src/types';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 import { Status } from '@/entities/base';

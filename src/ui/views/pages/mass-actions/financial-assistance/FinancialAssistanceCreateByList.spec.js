@@ -6,7 +6,7 @@ import {
 
 import { mockStorage } from '@/store/storage';
 import Component from './FinancialAssistanceCreateByList.vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import {
   CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus,
 } from '@/entities/case-file';

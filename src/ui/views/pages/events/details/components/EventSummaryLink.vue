@@ -53,7 +53,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { TOOLTIP_DELAY } from '@/ui/constants';
 import { localStorageKeys } from '@/constants/localStorage';
 import { EEventStatus, IEventEntity } from '@/entities/event';

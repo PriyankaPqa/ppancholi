@@ -77,16 +77,20 @@
           <td v-if="item.customContent === 'phoneNumbers'" :data-test="`household_profile_member_info_data_${item.test}`">
             <div class="d-flex flex-column py-4 line-height-24">
               <span>
-                <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.home') }}: </span> {{ homePhoneNumber }}
+                <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.home') }}: </span>
+                {{ householdHelpers.homePhoneNumber(member) }}
               </span>
               <span>
-                <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.mobile') }}: </span> {{ mobilePhoneNumber }}
+                <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.mobile') }}: </span>
+                {{ householdHelpers.mobilePhoneNumber(member) }}
               </span>
               <span>
-                <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.alternate') }}: </span> {{ alternatePhoneNumber }}
+                <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.alternate') }}: </span>
+                {{ householdHelpers.alternatePhoneNumber(member) }}
               </span>
               <span>
-                <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.extension') }}:</span>  {{ alternatePhoneExtension }}
+                <span class="fw-bold">  {{ $t('household.profile.member.phone_numbers.extension') }}:</span>
+                {{ householdHelpers.alternatePhoneExtension(member) }}
               </span>
             </div>
           </td>
@@ -124,11 +128,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import {
-  EIndigenousTypes, IIndigenousCommunityData, IMember,
-} from '@crctech/registration-lib/src/entities/household-create';
+import { IMember } from '@crctech/registration-lib/src/entities/household-create';
 import { CurrentAddressTemplate, AddEditAdditionalMembers } from '@crctech/registration-lib';
+import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@/entities/event';
 
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
@@ -180,6 +182,7 @@ export default Vue.extend({
       showAdditionalMemberDialog: false,
       showSplitDialog: false,
       i18n: this.$i18n,
+      householdHelpers,
     };
   },
 
@@ -242,31 +245,31 @@ export default Vue.extend({
           test: 'date_of_birth',
           primaryMemberOnly: false,
           label: 'household.profile.member.date_of_birth',
-          data: this.birthDate || '—',
+          data: householdHelpers.getBirthDateDisplayWithAge(this.member.identitySet.birthDate) || '—',
         },
         {
           test: 'gender',
           primaryMemberOnly: false,
           label: 'household.profile.member.gender',
-          data: this.gender || '—',
+          data: householdHelpers.gender(this.member) || '—',
         },
         {
           test: 'indigenous_identity',
           primaryMemberOnly: false,
           label: 'household.profile.member.indigenous_identity',
-          data: this.indigenousIdentity || '—',
+          data: householdHelpers.indigenousIdentity(this.member) || '—',
         },
         {
           test: 'preferred_language',
           primaryMemberOnly: true,
           label: 'household.profile.member.preferred_language',
-          data: this.preferredLanguage || '—',
+          data: householdHelpers.preferredLanguage(this.member) || '—',
         },
         {
           test: 'primary_spoken_language',
           primaryMemberOnly: true,
           label: 'household.profile.member.primary_spoken_language',
-          data: this.primarySpokenLanguage || '—',
+          data: householdHelpers.primarySpokenLanguage(this.member) || '—',
         },
         {
           test: 'temporary_address',
@@ -277,79 +280,8 @@ export default Vue.extend({
       ];
     },
 
-    birthDate(): string {
-      const { birthDate } = this.member.identitySet;
-      if (!birthDate) return '';
-
-      let result = libHelpers.displayBirthDate(birthDate);
-      result += ` (${libHelpers.getAge(birthDate)} ${this.$t('common.years')})`;
-      return result;
-    },
-
     displayName(): string {
       return `${this.member.identitySet.firstName} ${this.member.identitySet.lastName}`;
-    },
-
-    indigenousIdentity(): string {
-      const type = this.member.identitySet.indigenousType
-        ? `${this.$t(`common.indigenous.types.${EIndigenousTypes[this.member.identitySet.indigenousType]}`)}, ` : '';
-
-      const community = this.$store.state.registration.indigenousCommunities
-        .find((i: IIndigenousCommunityData) => i.id === this.member.identitySet.indigenousCommunityId);
-
-      let communityName = '';
-      if (this.member.identitySet.indigenousType === EIndigenousTypes.Other) {
-        communityName = `${this.member.identitySet.indigenousCommunityOther}`;
-      } else if (this.member.identitySet.indigenousType && community) {
-        communityName = `${community.communityName}`;
-      }
-      return type + communityName;
-    },
-
-    gender(): string {
-      if (!this.member.identitySet?.gender) return '';
-      if (this.member.identitySet.genderOther) return this.member.identitySet.genderOther;
-      return this.$m(this.member.identitySet.gender.name);
-    },
-
-    preferredLanguage(): string {
-      if (!this.member.contactInformation?.preferredLanguage) return '';
-      if (this.member.contactInformation.preferredLanguage.isOther) return this.member.contactInformation.preferredLanguageOther;
-      return this.$m(this.member.contactInformation.preferredLanguage.name);
-    },
-
-    primarySpokenLanguage(): string {
-      if (!this.member.contactInformation?.primarySpokenLanguage) return '';
-      if (this.member.contactInformation.primarySpokenLanguage.isOther) return this.member.contactInformation.primarySpokenLanguageOther;
-      return this.$m(this.member.contactInformation.primarySpokenLanguage.name);
-    },
-
-    mobilePhoneNumber(): string {
-      if (this.member.contactInformation?.mobilePhoneNumber?.number) {
-        return this.member.contactInformation?.mobilePhoneNumber.number;
-      }
-      return '—';
-    },
-
-    homePhoneNumber(): string {
-      if (this.member.contactInformation?.homePhoneNumber?.number) {
-        return this.member.contactInformation.homePhoneNumber.number;
-      }
-      return '—';
-    },
-
-    alternatePhoneNumber(): string {
-      if (this.member.contactInformation?.alternatePhoneNumber?.number) {
-        return this.member.contactInformation.alternatePhoneNumber.number;
-      }
-      return '—';
-    },
-
-    alternatePhoneExtension(): string {
-      if (this.member.contactInformation?.alternatePhoneNumber?.extension) {
-        return this.member.contactInformation.alternatePhoneNumber.extension;
-      }
-      return '—';
     },
 
     splitHouseholdMembers() : {primaryMember: IMember, additionalMembers: IMember[]} {

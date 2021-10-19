@@ -107,7 +107,7 @@ import {
   VSelectWithValidation,
 } from '@crctech/component-library';
 import moment from '@/ui/plugins/moment';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 import { EEventSummarySections, VForm } from '@/types';
 import { IEventAgreement, IEventEntity } from '@/entities/event';

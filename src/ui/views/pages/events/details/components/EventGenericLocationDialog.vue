@@ -141,7 +141,7 @@ import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import entityUtils from '@/entities/utils';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 
 export default mixins(handleUniqueNameSubmitError).extend({

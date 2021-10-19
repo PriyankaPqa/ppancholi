@@ -600,29 +600,6 @@ describe('CaseFileDetails.vue', () => {
       });
     });
 
-    describe('provinceCodeName', () => {
-      it('returns the province code if the province is not other', async () => {
-        const altHousehold = _cloneDeep(mockCombinedHousehold());
-        altHousehold.entity.address.address.province = ECanadaProvinces.QC;
-
-        await wrapper.setData({
-          household: altHousehold,
-        });
-        expect(wrapper.vm.provinceCodeName).toEqual('QC');
-      });
-
-      it('returns the province other name  if the province is  other', async () => {
-        const altHousehold = _cloneDeep(mockCombinedHousehold());
-        altHousehold.entity.address.address.province = ECanadaProvinces.OT;
-        altHousehold.entity.address.address.specifiedOtherProvince = 'mock-other-province';
-
-        await wrapper.setData({
-          household: altHousehold,
-        });
-        expect(wrapper.vm.provinceCodeName).toEqual('mock-other-province');
-      });
-    });
-
     describe('canEdit', () => {
       it('returns true if user has level 1', () => {
         wrapper = shallowMount(Component, {

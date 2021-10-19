@@ -13,7 +13,7 @@ import {
   mockEventEntity,
 } from '@/entities/event';
 import { httpClient } from '@/services/httpClient';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { EventsService } from '@/services/events/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import { EEventSummarySections } from '@/types';

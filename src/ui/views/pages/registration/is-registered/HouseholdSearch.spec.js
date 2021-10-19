@@ -127,6 +127,7 @@ describe('HouseholdSearch.vue', () => {
 
         expect(wrapper.vm.$refs.form.validate).toBeCalled();
       });
+
       it('should emit search event with criteria as params', async () => {
         wrapper.vm.$refs.form = {
           validate: jest.fn(() => true),

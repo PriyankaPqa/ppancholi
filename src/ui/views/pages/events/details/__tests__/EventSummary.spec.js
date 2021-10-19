@@ -7,7 +7,7 @@ import {
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { EEventSummarySections } from '@/types';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { mockUserStateLevel } from '@/test/helpers';
 import { mockOptionItemData } from '@/entities/optionItem';
 

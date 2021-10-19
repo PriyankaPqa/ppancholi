@@ -156,7 +156,7 @@ import {
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import { EPaymentModalities } from '@/entities/program/program.types';
 import { ICaseFileEntity } from '@/entities/case-file';
-import helpers from '@/ui/helpers';
+import householdHelpers from '@/ui/helpers/household';
 
 export default Vue.extend({
   name: 'ViewPaymentLineDetails',
@@ -226,7 +226,7 @@ export default Vue.extend({
     },
 
     addressLines(): string {
-      return helpers.getAddressLines(this.paymentLine.address).join(', ');
+      return householdHelpers.getAddressLines(this.paymentLine.address).join(', ');
     },
 
     showTooltip(): boolean {

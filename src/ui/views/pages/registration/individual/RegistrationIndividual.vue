@@ -92,7 +92,7 @@ import ConfirmRegistration from '@/ui/views/pages/registration/confirmation/Conf
 import { tabs } from '@/store/modules/registration/tabs';
 import store from '@/store/store';
 import { VForm } from '@/types';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 export default mixins(individual).extend({
   name: 'Individual',

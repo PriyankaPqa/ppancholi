@@ -45,7 +45,7 @@ import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 interface IList {
   name: string;

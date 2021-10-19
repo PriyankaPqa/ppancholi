@@ -4,7 +4,7 @@ import { mockOptionItemData } from '@/entities/optionItem';
 import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import moment from '@/ui/plugins/moment';
 import Component from './CaseFileDocument.vue';
 

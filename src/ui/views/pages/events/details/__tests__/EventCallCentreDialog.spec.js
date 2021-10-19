@@ -1,6 +1,6 @@
 import { VSwitch } from 'vuetify/lib';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { mockEventEntity, EEventCallCentreStatus } from '@/entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';

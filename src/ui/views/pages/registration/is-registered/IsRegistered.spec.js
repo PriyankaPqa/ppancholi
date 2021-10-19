@@ -12,7 +12,6 @@ import HouseholdResults from '@/ui/views/pages/registration/is-registered/Househ
 
 import { mockStorage } from '@/store/storage';
 
-import moment from '@/ui/plugins/moment';
 import Component from './IsRegistered.vue';
 
 const localVue = createLocalVue();
@@ -114,36 +113,19 @@ describe('IsRegistered.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('search', () => {
-      it('should set criteria', () => {
-        expect(wrapper.vm.criteria).toEqual({});
-        wrapper.vm.search({ test: 'test' });
-        expect(wrapper.vm.criteria).toEqual({ test: 'test' });
-      });
-      it('should call search actions with proper parameters', async () => {
-        await wrapper.vm.search({});
-        expect(wrapper.vm.$storage.household.actions.search).toHaveBeenCalledWith({
-          search: wrapper.vm.searchCriteria,
-          filter: wrapper.vm.filters,
-          top: 999,
-          queryType: 'full',
-        });
-      });
-
-      it('should set searchResults', async () => {
-        await wrapper.setData({
-          searchResults: [],
-        });
-        await wrapper.vm.search({});
-        expect(wrapper.vm.searchResults).toEqual(wrapper.vm.$storage.household.getters.getByIds());
+    describe('onSearch', () => {
+      it('should call search method for the mixin', async () => {
+        wrapper.vm.search = jest.fn();
+        await wrapper.vm.onSearch(null);
+        expect(wrapper.vm.search).toHaveBeenLastCalledWith(null);
       });
 
       it('should call setHouseholdResultsShown mutation with proper parameter', async () => {
-        await wrapper.vm.search({});
+        await wrapper.vm.onSearch({});
         expect(wrapper.vm.$storage.registration.mutations.setHouseholdResultsShown).toHaveBeenCalledWith(true);
       });
 
-      it('should call filterOutSplittedHousehold if in split mode', async () => {
+      it('should call filterOutSplitHousehold if in split mode', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           vuetify,
@@ -155,9 +137,9 @@ describe('IsRegistered.vue', () => {
           },
         });
 
-        jest.spyOn(wrapper.vm, 'filterOutSplittedHousehold').mockImplementation(() => {});
-        await wrapper.vm.search({});
-        expect(wrapper.vm.filterOutSplittedHousehold).toHaveBeenCalled();
+        jest.spyOn(wrapper.vm, 'filterOutSplitHousehold').mockImplementation(() => {});
+        await wrapper.vm.onSearch({});
+        expect(wrapper.vm.filterOutSplitHousehold).toHaveBeenCalled();
       });
     });
 
@@ -175,7 +157,7 @@ describe('IsRegistered.vue', () => {
       });
     });
 
-    describe('filterOutSplittedHousehold', () => {
+    describe('filterOutSplitHousehold', () => {
       it('removes the results with the id of the origin household for the split', async () => {
         storage.household.getters.getAll = jest.fn(() => [
           { entity: { id: mockSplitHousehold().originHouseholdId } },
@@ -198,7 +180,7 @@ describe('IsRegistered.vue', () => {
           },
         });
 
-        await wrapper.vm.filterOutSplittedHousehold();
+        await wrapper.vm.filterOutSplitHousehold();
         expect(wrapper.vm.searchResults).toEqual([{ entity: { id: 'foo' } }]);
       });
     });
@@ -217,111 +199,6 @@ describe('IsRegistered.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('metadataFilters', () => {
-      it('should add email to filter if here', () => {
-        wrapper.setData({
-          criteria: {
-            emailAddress: 'test@test.ca',
-          },
-        });
-        const expected = {
-          Email: wrapper.vm.criteria.emailAddress,
-        };
-        expect(wrapper.vm.metadataFilters).toEqual(expected);
-      });
-
-      it('should add birthDate to filter if here', () => {
-        wrapper.setData({
-          criteria: {
-            birthDate: '1990-01-01',
-          },
-        });
-        const expected = {
-          DateOfBirth: moment.utc(wrapper.vm.criteria.birthDate).format(),
-        };
-        expect(wrapper.vm.metadataFilters).toEqual(expected);
-      });
-
-      it('should add phone to filter if here', () => {
-        wrapper.setData({
-          criteria: {
-            phone: '438-888-888',
-          },
-        });
-        const expected = {
-          or: [
-            { 'HomePhoneNumber/E164Number': wrapper.vm.criteria.phone },
-            { 'MobilePhoneNumber/E164Number': wrapper.vm.criteria.phone },
-            { 'AlternatePhoneNumber/E164Number': wrapper.vm.criteria.phone },
-          ],
-        };
-        expect(wrapper.vm.metadataFilters).toEqual(expected);
-      });
-    });
-
-    describe('searchCriteria', () => {
-      it('should add firstName to search if here (contains operator)', () => {
-        wrapper.setData({
-          criteria: {
-            firstName: 'Mister',
-          },
-        });
-        const expected = `Metadata/MemberMetadata/FirstName:/.*${wrapper.vm.criteria.firstName}.*/`;
-        expect(wrapper.vm.searchCriteria).toEqual(expected);
-      });
-
-      it('should add lastName to search if here (contains operator)', () => {
-        wrapper.setData({
-          criteria: {
-            lastName: 'Test',
-          },
-        });
-        const expected = `Metadata/MemberMetadata/LastName:/.*${wrapper.vm.criteria.lastName}.*/`;
-        expect(wrapper.vm.searchCriteria).toEqual(expected);
-      });
-
-      it('should add both to filter if here (contains operator)', () => {
-        wrapper.setData({
-          criteria: {
-            firstName: 'Mister',
-            lastName: 'Test',
-          },
-        });
-        const expected = `Metadata/MemberMetadata/FirstName:/.*${wrapper.vm.criteria.firstName}.*/
-        AND Metadata/MemberMetadata/LastName:/.*${wrapper.vm.criteria.lastName}.*/`;
-        expect(wrapper.vm.searchCriteria).toEqual(expected);
-      });
-    });
-
-    describe('filters', () => {
-      it('should return the correct filters', () => {
-        expect(wrapper.vm.filters).toEqual({
-          and: [
-            {
-              Metadata: {
-                MemberMetadata: {
-                  any: {
-                    ...wrapper.vm.metadataFilters,
-                  },
-                },
-              },
-            },
-            {
-              Entity: {
-                RegistrationNumber: wrapper.vm.criteria.registrationNumber,
-              },
-            },
-          ],
-        });
-      });
-    });
-
-    describe('searchLoading', () => {
-      it('returns the right value', (() => {
-        expect(wrapper.vm.searchLoading).toEqual(wrapper.vm.$store.state.householdEntities.searchLoading);
-      }));
-    });
-
     describe('isSplitMode', () => {
       it('returns the right value', (() => {
         expect(wrapper.vm.isSplitMode).toEqual(wrapper.vm.$storage.registration.getters.isSplitMode());
@@ -340,7 +217,7 @@ describe('IsRegistered.vue', () => {
         expect(wrapper.vm.$storage.household.getters.getAll).toHaveBeenCalledTimes(1);
       });
 
-      it('calls filterOutSplittedHousehold if isSplitMode is true', () => {
+      it('calls filterOutSplitHousehold if isSplitMode is true', () => {
         storage.registration.getters.isSplitMode = jest.fn(() => true);
         wrapper = shallowMount(Component, {
           localVue,
@@ -349,12 +226,12 @@ describe('IsRegistered.vue', () => {
             $storage: storage,
           },
         });
-        jest.spyOn(wrapper.vm, 'filterOutSplittedHousehold').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm, 'filterOutSplitHousehold').mockImplementation(() => {});
         wrapper.vm.$options.mounted.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
-        expect(wrapper.vm.filterOutSplittedHousehold).toHaveBeenCalled();
+        expect(wrapper.vm.filterOutSplitHousehold).toHaveBeenCalled();
       });
     });
   });

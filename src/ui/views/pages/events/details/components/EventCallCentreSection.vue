@@ -65,7 +65,7 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/helpers';
 import { IEventCallCentre, EEventCallCentreStatus } from '@/entities/event';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import EventSummarySectionInfoDialog from './EventSummarySectionInfoDialog.vue';

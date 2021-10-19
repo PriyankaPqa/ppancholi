@@ -6,7 +6,7 @@
         <img alt="logo" :src="logoUrl" class="logo ml-n4 ml-md-0" data-test="appHeader__logo">
       </v-toolbar-title>
 
-      <template v-if="branding.showName">
+      <template v-if="branding && branding.showName">
         <v-divider vertical class="mx-5" />
         <span class="rc-heading-4">{{ $m(branding.name) }}</span>
       </template>
