@@ -5,9 +5,11 @@ import _sortBy from 'lodash/sortBy';
 import { httpClient } from '@/services/httpClient';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
 
-import { mockCaseFinancialAssistanceEntity, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
+import { mockCaseFinancialAssistanceEntity, IFinancialAssistancePaymentEntity, mockFinancialPaymentHistory } from '@/entities/financial-assistance-payment';
 import { FinancialAssistancePaymentEntityModule } from './financialAssistancePaymentEntity';
 import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
+import utils from '@crctech/registration-lib/src/entities/value-objects/versioned-entity/versionedEntityUtils';
+import { mockVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
 
 const service = new FinancialAssistancePaymentsService(httpClient);
 let module: FinancialAssistancePaymentEntityModule;
@@ -117,6 +119,25 @@ describe('Financial assistance payment entity module', () => {
 
         expect(module.service.deleteFinancialAssistancePaymentLine).toBeCalledWith(id, 'myId');
         expect(res).toEqual(serviceRes);
+      });
+    });
+    
+    describe('fetchHistory', () => {
+      it('calls the fetchHistory service for the financial assistance and metadata if true and calls mapResponses and combineEntities with the results', async () => {
+        module.service.getHistory = jest.fn(() => Promise.resolve(mockFinancialPaymentHistory()));
+        module.service.getMetadataHistory = jest.fn(() => Promise.resolve([]));
+        utils.mapResponses = jest.fn();
+        const combinedEntity = mockVersionedEntityCombined('financialAssistancePayment');
+        utils.combineEntities = jest.fn(() => ([combinedEntity]));
+
+        const expectedRes = await module.actions.fetchHistory(actionContext, { financialAssistanceId: 'id', includeMetadata: true });
+
+        expect(module.service.getHistory).toHaveBeenCalledWith('id');
+        expect(module.service.getMetadataHistory).toHaveBeenCalledWith('id');
+
+        expect(utils.mapResponses).toHaveBeenCalledTimes(2);
+        expect(utils.combineEntities).toHaveBeenCalled();
+        expect(expectedRes).toEqual([combinedEntity]);
       });
     });
   });

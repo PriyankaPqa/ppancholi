@@ -31,6 +31,8 @@ export class FinancialAssistancePaymentStorageMock extends BaseMock<IFinancialAs
       jest.fn((financialAssistanceId: uuid, payload: IFinancialAssistancePaymentGroup) => this.baseGetters.get().entity),
     deleteFinancialAssistancePaymentLine:
       jest.fn((financialAssistanceId: uuid, payload: uuid) => this.baseGetters.get().entity),
+    fetchHistory:
+      jest.fn((financialAssistanceId: uuid, includeMetadata: boolean) => []),
   }
 
   protected mutations = {

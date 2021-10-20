@@ -1,4 +1,6 @@
 import { ActionContext, ActionTree } from 'vuex';
+import { IVersionedEntity, IVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import utils from '@crctech/registration-lib/src/entities/value-objects/versioned-entity/versionedEntityUtils';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
 import {
   EPaymentCancellationReason, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,
@@ -105,6 +107,31 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancia
         context.commit('set', result);
       }
       return result;
+    },
+
+    fetchHistory: async (context: ActionContext<IFinancialAssistancePaymentEntityState,
+      IFinancialAssistancePaymentEntityState>, payload: { financialAssistanceId: uuid, includeMetadata: boolean })
+      : Promise<IVersionedEntityCombined[]> => {
+      const entityRequest = this.service.getHistory(payload.financialAssistanceId);
+      const metadataRequest = payload.includeMetadata ? this.service.getMetadataHistory(payload.financialAssistanceId) : null;
+
+      // Fetch  history from the entity and metadata endpoints for financialAssistancePayment
+      const [entityResponse, metadataResponse] = await Promise.all([entityRequest, metadataRequest]);
+
+      // Add the type of change 'financialAssistancePayment' to the financialAssistancePayment history items
+      const entityResponseWithType = entityResponse?.map((r) => {
+        r.entityType = 'financialAssistancePayment';
+        return r;
+      });
+
+      // add the previous entity to each history item and order them chronologically
+      const mappedEntityResponses: IVersionedEntity[] = utils.mapResponses([entityResponseWithType]);
+      const mappedMetadataResponses = utils.mapResponses([metadataResponse || []]);
+
+      // Combine the entities and metadata history items into one object
+      const combinedEntities: IVersionedEntityCombined[] = utils.combineEntities(mappedEntityResponses, mappedMetadataResponses);
+
+      return combinedEntities;
     },
   }
 }

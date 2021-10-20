@@ -1,3 +1,4 @@
+import { IVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
 import { IStore, IState } from '@/store';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
@@ -38,6 +39,10 @@ export class FinancialAssistancePaymentStorage
     deleteFinancialAssistancePaymentLine: (financialAssistanceId: uuid, paymentId: uuid):
       Promise<IFinancialAssistancePaymentEntity> => this.store.dispatch(`${this.entityModuleName}/deleteFinancialAssistancePaymentLine`
       , ({ paymentId, financialAssistanceId })),
+    fetchHistory: async (financialAssistanceId: uuid, includeMetadata: boolean):
+      Promise<IVersionedEntityCombined[]> => this.store.dispatch(`${this.entityModuleName}/fetchHistory`,
+      ({ financialAssistanceId, includeMetadata })),
+
   }
 
   private mutations = {

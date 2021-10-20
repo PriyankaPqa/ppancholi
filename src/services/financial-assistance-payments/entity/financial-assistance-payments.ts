@@ -1,3 +1,4 @@
+import { IVersionedEntity } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
 import { IHttpClient } from '@/services/httpClient';
 import { DomainBaseService } from '@/services/base';
 import {
@@ -68,5 +69,13 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
   async deleteFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid):
     Promise<IFinancialAssistancePaymentEntity> {
     return this.http.delete(`${this.baseUrl}/${financialAssistanceId}/lines/${paymentId}`);
+  }
+
+  async getHistory(id: uuid): Promise<IVersionedEntity[]> {
+    return this.http.get(`${this.baseUrl}/${id}/history`);
+  }
+
+  async getMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
+    return this.http.get(`${this.baseUrl}/metadata/${id}/history`);
   }
 }

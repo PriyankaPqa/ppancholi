@@ -7,6 +7,9 @@
             {{ financialAssistance.name }}
           </h3>
           <div>
+            <v-icon v-if="canViewHistory" class="mr-2" @click="showApprovalHistory = true">
+              mdi-history
+            </v-icon>
             <status-chip status-name="ApprovalStatus" :status="financialAssistance.approvalStatus" />
             <v-btn v-if="canEdit" icon :to="editRoute" data-test="edit-link">
               <v-icon>
@@ -56,6 +59,11 @@
         </div>
       </v-col>
     </v-row>
+
+    <approval-history-dialog
+      v-if="showApprovalHistory"
+      :financial-assistance="financialAssistance"
+      :show.sync="showApprovalHistory" />
   </v-container>
 </template>
 
@@ -66,12 +74,14 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { ApprovalStatus, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 import routes from '@/constants/routes';
+import ApprovalHistoryDialog from './ApprovalHistoryDialog.vue';
 
 export default Vue.extend({
   name: 'ViewFinancialAssistanceDetails',
 
   components: {
     StatusChip,
+    ApprovalHistoryDialog,
   },
 
   props: {
@@ -91,7 +101,17 @@ export default Vue.extend({
     },
   },
 
+  data() {
+    return {
+      showApprovalHistory: false,
+    };
+  },
+
   computed: {
+    canViewHistory(): boolean {
+      return this.financialAssistance.approvalStatus === ApprovalStatus.Approved;
+    },
+
     canEdit(): boolean {
       return this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
     },

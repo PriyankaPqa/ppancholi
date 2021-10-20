@@ -115,6 +115,16 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
       });
     });
 
+    describe('canViewHistory', () => {
+      it('checks for Approved', async () => {
+        await mountWrapper();
+        financialAssistance.approvalStatus = ApprovalStatus.New;
+        expect(wrapper.vm.canViewHistory).toBeFalsy();
+        financialAssistance.approvalStatus = ApprovalStatus.Approved;
+        expect(wrapper.vm.canViewHistory).toBeTruthy();
+      });
+    });
+
     describe('editRoute', () => {
       it('returns the edit route', async () => {
         await mountWrapper();

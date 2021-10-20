@@ -64,5 +64,10 @@ describe('>>> Financial Assistance Payment Storage', () => {
       storage.actions.deleteFinancialAssistancePaymentLine('myId', 'payId');
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/deleteFinancialAssistancePaymentLine`, { paymentId: 'payId', financialAssistanceId: 'myId' });
     });
+    
+    it('should proxy fetchHistory', () => {
+      storage.actions.fetchHistory('myId', true);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchHistory`, { financialAssistanceId: 'myId', includeMetadata: true });
+    });
   });
 });

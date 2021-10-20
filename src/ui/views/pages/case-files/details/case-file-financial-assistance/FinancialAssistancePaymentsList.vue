@@ -12,7 +12,6 @@
       :custom-columns="Object.values(customColumns)"
       @search="search"
       @add-button="routeToCreate">
-      <!-- :response="response" -->
       <template #filter>
         <filter-toolbar
           :filter-key="FilterKey.CaseFileFinancialAssistanceOverview"
@@ -58,6 +57,9 @@
       </template>
 
       <template #[`item.${customColumns.approvalStatus}`]="{ item }">
+        <v-icon v-if="canViewHistory(item)" data-test="history-link" class="mr-2" @click="showApprovalDialog(item)">
+          mdi-history
+        </v-icon>
         <status-chip status-name="ApprovalStatus" :status="item.entity.approvalStatus" />
       </template>
 
@@ -149,6 +151,11 @@
         </div>
       </div>
     </rc-dialog>
+
+    <approval-history-dialog
+      v-if="showApprovalHistory"
+      :financial-assistance="selectedItem"
+      :show.sync="showApprovalHistory" />
   </div>
 </template>
 
@@ -173,9 +180,11 @@ import {
   ApprovalStatus,
   FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentCombined,
+  IFinancialAssistancePaymentEntity,
   PaymentStatus,
 } from '@/entities/financial-assistance-payment';
 import { Status } from '@/entities/base';
+import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistancePaymentsList',
@@ -185,6 +194,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     FilterToolbar,
     StatusChip,
     RcDialog,
+    ApprovalHistoryDialog,
   },
 
   data() {
@@ -211,6 +221,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       PaymentStatus,
       groupTitle: FinancialAssistancePaymentGroup.groupTitle,
       groupTotal: FinancialAssistancePaymentGroup.total,
+      showApprovalHistory: false,
+      selectedItem: null as IFinancialAssistancePaymentEntity,
     };
   },
 
@@ -363,6 +375,15 @@ export default mixins(TablePaginationSearchMixin).extend({
         });
         this.containsActiveTables = !!(tableData?.ids?.length);
       }
+    },
+
+    showApprovalDialog(item: IFinancialAssistancePaymentCombined) {
+      this.selectedItem = item.entity;
+      this.showApprovalHistory = true;
+    },
+
+    canViewHistory(item: IFinancialAssistancePaymentCombined): boolean {
+      return item.entity.approvalStatus === ApprovalStatus.Approved;
     },
 
     isModifiable(item: IFinancialAssistancePaymentCombined) {

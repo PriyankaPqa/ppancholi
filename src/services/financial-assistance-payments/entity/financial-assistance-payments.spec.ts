@@ -91,4 +91,18 @@ describe('>>> Financial assistance payment Service', () => {
       expect(http.delete).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myParent/lines/myId');
     });
   });
+
+  describe('getHistory', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.getHistory('myId');
+      expect(http.get).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myId/history');
+    });
+  });
+
+  describe('getMetadataHistory', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.getMetadataHistory('myId');
+      expect(http.get).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/metadata/myId/history');
+    });
+  });
 });

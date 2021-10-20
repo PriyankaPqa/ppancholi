@@ -134,6 +134,19 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       });
       expect(wrapper.findDataTest('delete-link').exists()).toBeFalsy();
     });
+
+    it('shows history when item is approved', async () => {
+      await mountWrapper(true);
+      expect(wrapper.findDataTest('history-link').exists()).toBeFalsy();
+
+      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = 3;
+      await wrapper.vm.$nextTick();
+      expect(wrapper.findDataTest('history-link').exists()).toBeTruthy();
+
+      storage.financialAssistancePayment.getters.getByIds()[0].entity.approvalStatus = 1;
+      await wrapper.vm.$nextTick();
+      expect(wrapper.findDataTest('history-link').exists()).toBeFalsy();
+    });
   });
 
   describe('Computed', () => {
@@ -326,6 +339,29 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         expect(wrapper.vm.isModifiable(mock)).toBeFalsy();
         mock.entity.approvalStatus = 1;
         expect(wrapper.vm.isModifiable(mock)).toBeTruthy();
+      });
+    });
+
+    describe('showApprovalDialog', () => {
+      it('sets variables for dialog', async () => {
+        await mountWrapper();
+        expect(wrapper.vm.selectedItem).toBeNull();
+        expect(wrapper.vm.showApprovalHistory).toBeFalsy();
+        const mock = mockCombinedCaseFinancialAssistance();
+        wrapper.vm.showApprovalDialog(mock);
+        expect(wrapper.vm.selectedItem).toBe(mock.entity);
+        expect(wrapper.vm.showApprovalHistory).toBeTruthy();
+      });
+    });
+
+    describe('canViewHistory', () => {
+      it('checks for Approved', async () => {
+        await mountWrapper();
+        const mock = mockCombinedCaseFinancialAssistance();
+        mock.entity.approvalStatus = 2;
+        expect(wrapper.vm.canViewHistory(mock)).toBeFalsy();
+        mock.entity.approvalStatus = 3;
+        expect(wrapper.vm.canViewHistory(mock)).toBeTruthy();
       });
     });
 

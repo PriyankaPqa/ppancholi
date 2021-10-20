@@ -1,3 +1,4 @@
+import { IVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
 import {
   EPaymentCancellationReason,
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata, PaymentStatus,
@@ -24,6 +25,8 @@ export interface IActions extends IBaseActions<IFinancialAssistancePaymentEntity
     Promise<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine(financialAssistanceId: uuid, paymentId: uuid):
     Promise<IFinancialAssistancePaymentEntity>;
+  fetchHistory(financialAssistanceId: uuid, includeMetadata: boolean):
+    Promise<IVersionedEntityCombined[]>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata> {
@@ -34,6 +37,7 @@ export interface IActionsMock extends IBaseActionsMock<IFinancialAssistancePayme
   addFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   editFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
+  fetchHistory: jest.Mock<IVersionedEntityCombined[]>;
 }
 
 export interface IMutations extends IBaseMutations<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata> {
