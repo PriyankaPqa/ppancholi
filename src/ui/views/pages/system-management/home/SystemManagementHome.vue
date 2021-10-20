@@ -59,6 +59,13 @@ export default Vue.extend({
         route: routes.systemManagement.branding.name,
         dataTest: 'sysManagementHome__branding',
         level: 'level6',
+      }, {
+        title: 'system_management.card.tenantSettings.title',
+        description: 'system_management.card.tenantSettings.description',
+        button: 'system_management.card.tenantSettings.btn.label',
+        route: routes.systemManagement.tenantSettings.name,
+        dataTest: 'sysManagementHome__tenantSettings',
+        level: 'level6',
       }];
     },
 

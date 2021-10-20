@@ -62,6 +62,12 @@ export default Vue.extend({
         to: routes.systemManagement.branding.name,
         exact: false,
         level: 'level6',
+      }, {
+        text: this.$t('system_management.lists.tenantSettings'),
+        test: 'systemManagement__menu__tenantSettings',
+        to: routes.systemManagement.tenantSettings.name,
+        exact: false,
+        level: 'level6',
       }];
     },
 

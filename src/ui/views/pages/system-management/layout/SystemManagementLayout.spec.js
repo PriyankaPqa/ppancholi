@@ -53,5 +53,41 @@ describe('SystemManagementLayout.vue', () => {
         expect(wrapper.vm.showLeftMenu).toBe(true);
       });
     });
+
+    describe('tabs', () => {
+      it('returns correct value', () => {
+        expect(wrapper.vm.tabs).toEqual([{
+          text: 'system_management.leftMenu.lists_title',
+          test: 'systemManagement__menu__optionsLists',
+          to: routes.systemManagement.lists.name,
+          exact: false,
+          level: 'level6',
+        }, {
+          text: 'system_management.leftMenu.user_accounts_title',
+          test: 'systemManagement__menu__userAccounts',
+          to: routes.systemManagement.userAccounts.home.name,
+          exact: false,
+          level: 'level6',
+        }, {
+          text: 'system_management.lists.roles',
+          test: 'systemManagement__menu__roles',
+          to: routes.systemManagement.roles.name,
+          exact: false,
+          level: 'level6',
+        }, {
+          text: 'system_management.lists.branding',
+          test: 'systemManagement__menu__branding',
+          to: routes.systemManagement.branding.name,
+          exact: false,
+          level: 'level6',
+        }, {
+          text: 'system_management.lists.tenantSettings',
+          test: 'systemManagement__menu__tenantSettings',
+          to: routes.systemManagement.tenantSettings.name,
+          exact: false,
+          level: 'level6',
+        }]);
+      });
+    });
   });
 });

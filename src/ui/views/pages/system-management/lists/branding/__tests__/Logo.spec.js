@@ -64,7 +64,7 @@ describe('Logo.vue', () => {
         expect(wrapper.vm.isDirty).toBe(false);
       });
 
-      it('returns false if no tempLogoUrl is the same from storage', async () => {
+      it('returns false if tempLogoUrl is the same from storage', async () => {
         const testUrl = 'url';
 
         wrapper.vm.getLogoUrlFromStore = jest.fn(() => testUrl);
@@ -76,7 +76,7 @@ describe('Logo.vue', () => {
         expect(wrapper.vm.isDirty).toBe(false);
       });
 
-      it('returns true if no tempLogoUrl is different than storage', async () => {
+      it('returns true if tempLogoUrl is different than storage', async () => {
         wrapper.vm.getLogoUrlFromStore = jest.fn(() => 'url 1');
         await wrapper.setData({
           tempLogoUrl: 'url 2',

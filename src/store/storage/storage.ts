@@ -19,6 +19,7 @@ import { CaseFileDocumentStorage } from './case-file-document';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
 import { FinancialAssistancePaymentStorage } from './financial-assistance-payment';
 import { BrandingStorage } from './branding/storage';
+import { TenantSettingsStorage } from './tenantSettings';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   user: makeUserStorage(store),
@@ -49,5 +50,9 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
   branding: new BrandingStorage(
     store,
     vuexModule.BRANDING_ENTITIES,
+  ).make(),
+  tenantSettings: new TenantSettingsStorage(
+    store,
+    vuexModule.TENANT_SETTINGS_ENTITIES,
   ).make(),
 });

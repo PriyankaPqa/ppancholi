@@ -74,6 +74,8 @@ import { FinancialAssistancePaymentEntityModule } from './modules/financial-assi
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { BrandingEntityModule } from './modules/branding/brandingEntity';
 import { BrandingsService } from '@/services/brandings/entity';
+import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
+import { TenantSettingsService } from '@/services/tenantSettings/entity';
 
 Vue.use(Vuex);
 
@@ -145,6 +147,10 @@ const store: StoreOptions<IRootState> = {
 
     [vuexModule.BRANDING_ENTITIES]: new BrandingEntityModule(
       new BrandingsService(httpClient),
+    ).getModule(),
+
+    [vuexModule.TENANT_SETTINGS_ENTITIES]: new TenantSettingsEntityModule(
+      new TenantSettingsService(httpClient),
     ).getModule(),
   },
 };

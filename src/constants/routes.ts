@@ -310,6 +310,10 @@ const routes = {
       path: 'branding',
       name: 'systemManagement.lists.branding',
     },
+    tenantSettings: {
+      path: 'tenant-settings',
+      name: 'systemManagement.lists.tenantSettings',
+    },
     caseFileInactiveReasons: {
       path: 'lists/case-file-inactive-reasons',
       name: 'systemManagement.lists.caseFileInactiveReasons',

@@ -115,5 +115,22 @@ describe('SystemManagementHome.vue', () => {
         expect(card.button).toBe('system_management.card.branding.btn.label');
       });
     });
+
+    describe('Tenant settings', () => {
+      it('has the correct title', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__tenantSettings');
+        expect(card.title).toBe('system_management.card.tenantSettings.title');
+      });
+
+      it('has the correct description', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__tenantSettings');
+        expect(card.description).toBe('system_management.card.tenantSettings.description');
+      });
+
+      it('has the correct button label', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__tenantSettings');
+        expect(card.button).toBe('system_management.card.tenantSettings.btn.label');
+      });
+    });
   });
 });
