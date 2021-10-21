@@ -6,6 +6,7 @@
       </div>
       <v-btn
         v-if="!inlineEdit && showEditButton"
+        :aria-label="`${member.identitySet.firstName} ${member.identitySet.lastName} ${$t('common.buttons.edit')}`"
         data-test="inlineEdit__additionalMember__open"
         icon
         @click.native="edit()">
@@ -14,6 +15,7 @@
       <v-btn
         v-if="!inlineEdit && showDeleteButton"
         class="mr-2 ml-2"
+        :aria-label="`${member.identitySet.firstName} ${member.identitySet.lastName} ${$t('common.buttons.remove')}`"
         data-test="inlineEdit__additionalMember__delete"
         icon
         @click.native="onDelete()">

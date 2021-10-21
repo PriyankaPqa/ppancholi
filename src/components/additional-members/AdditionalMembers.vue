@@ -14,12 +14,20 @@
               {{ member.identitySet.firstName }} {{ member.identitySet.lastName }}
             </div>
             <div>
-              <v-btn icon :data-test="`edit-additionalMember_${i}`" @click.native="showDialog(i)">
+              <v-btn
+                icon
+                :aria-label="`${member.identitySet.firstName} ${member.identitySet.lastName} ${$t('common.buttons.edit')}`"
+                :data-test="`edit-additionalMember_${i}`"
+                @click.native="showDialog(i)">
                 <v-icon small>
                   mdi-pencil
                 </v-icon>
               </v-btn>
-              <v-btn icon :data-test="`delete-additionalMember_${i}`" @click.native="showConfirmationDelete(i)">
+              <v-btn
+                icon
+                :aria-label="`${member.identitySet.firstName} ${member.identitySet.lastName} ${$t('common.buttons.remove')}`"
+                :data-test="`delete-additionalMember_${i}`"
+                @click.native="showConfirmationDelete(i)">
                 <v-icon small>
                   mdi-delete
                 </v-icon>

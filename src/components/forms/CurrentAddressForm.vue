@@ -6,7 +6,7 @@
           {{ $t('registration.addresses.currentAddress') }}
           <v-tooltip bottom>
             <template #activator="{ on }">
-              <v-btn small class="ml-1" icon data-test="pageContent__opeHelp" v-on="on">
+              <v-btn small class="ml-1" icon :aria-label="$t('tooltip.temporary_address')" data-test="pageContent__opeHelp" v-on="on">
                 <v-icon small>
                   mdi-help-circle-outline
                 </v-icon>
