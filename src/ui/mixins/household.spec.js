@@ -193,7 +193,7 @@ describe('household', () => {
                 orderRank: 0,
                 status: 1,
               },
-              preferredLanguageOther: '',
+              preferredLanguageOther: null,
               primarySpokenLanguage: {
                 id: '5d0c1c8d-c3cd-4818-a670-c92b3cb84081',
                 isDefault: true,
@@ -207,7 +207,7 @@ describe('household', () => {
                 orderRank: 0,
                 status: 1,
               },
-              primarySpokenLanguageOther: '',
+              primarySpokenLanguageOther: null,
             },
             currentAddress: {
               address: {

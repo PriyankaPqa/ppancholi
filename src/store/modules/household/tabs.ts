@@ -79,4 +79,17 @@ export const tabs = (): IRegistrationMenuItem[] => [
     componentName: 'ReviewSplit',
     helpLink: '',
   },
+  {
+    id: 'confirmation',
+    labelKey: 'household.split.confirm_split',
+    titleKey: 'household.split.split_confirmation',
+    icon: '',
+    disabled: true,
+    isValid: true,
+    isTouched: false,
+    backButtonTextKey: 'common.button.print',
+    nextButtonTextKey: 'caseFileDetail.household_profile.button',
+    componentName: 'ConfirmRegistration',
+    helpLink: '',
+  },
 ];

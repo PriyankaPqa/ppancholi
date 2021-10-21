@@ -92,7 +92,10 @@ export default mixins(individual).extend({
   name: 'SplitHousehold',
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (!this.goBackToOriginHousehold) {
+    if (this.currentTab.id === 'confirmation') {
+      this.$storage.registration.mutations.resetSplitHousehold();
+      next();
+    } else if (!this.allowExit) {
       const userChoice = await (this.$confirm(this.titleLeave, this.messagesLeave) as Promise<unknown>);
       if (userChoice) {
         this.$storage.registration.mutations.resetSplitHousehold();
@@ -119,7 +122,7 @@ export default mixins(individual).extend({
 
   data() {
     return {
-      goBackToOriginHousehold: false,
+      allowExit: false,
     };
   },
 
@@ -184,7 +187,7 @@ export default mixins(individual).extend({
           return;
         }
 
-        this.goBackToOriginHousehold = true;
+        this.allowExit = true;
         await this.$router.push({
           name: routes.household.householdProfile.name,
           params: {
@@ -199,18 +202,40 @@ export default mixins(individual).extend({
 
     async next() {
       if (!this.splitHousehold) return;
+
+      if (this.currentTab.id === 'confirmation') {
+        this.closeSplit();
+        return;
+      }
+
       if (this.currentTabIndex === 0) {
         this.createNewHousehold();
       }
+
       const isValid = await (this.$refs.form as VForm).validate();
       if (!isValid) {
         helpers.scrollToFirstError('app');
         return;
       }
 
+      if (this.currentTab.id === 'reviewSplitInfo') {
+        await this.$storage.registration.actions.splitHousehold();
+      }
+
       if (this.currentTabIndex < this.flowTabs.length - 1) {
         await this.jump(this.currentTabIndex + 1);
       }
+    },
+
+    closeSplit() {
+      const householdId = this.$storage.registration.getters.registrationResponse()?.id;
+
+      this.$router.replace({
+        name: routes.household.householdProfile.name,
+        params: {
+          id: householdId || this.splitHousehold.originHouseholdId,
+        },
+      });
     },
 
     createNewHousehold() {

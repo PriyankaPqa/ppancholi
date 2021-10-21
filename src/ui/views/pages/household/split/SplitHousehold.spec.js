@@ -1,5 +1,6 @@
 import { mockSplitHousehold, ContactInformation } from '@crctech/registration-lib/src/entities/household-create';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { mockHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { tabs } from '@/store/modules/household/tabs';
 
@@ -101,14 +102,40 @@ describe('SplitHousehold.vue', () => {
     });
 
     describe('next', () => {
-      beforeEach(() => {
-        wrapper.vm.jump = jest.fn();
+      it('calls closeSplit if the id of the current tab is confirmation', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'confirmation', titleKey: '', nextButtonTextKey: '' }),
+            splitHousehold() { return mockSplitHousehold(); },
+          },
+          mocks: { $storage: storage },
+        });
+        wrapper.vm.closeSplit = jest.fn();
+        await wrapper.vm.next();
+        expect(wrapper.vm.closeSplit).toHaveBeenCalledTimes(1);
       });
+
+      it('calls storage action splitHousehold if the id of the current tab is reviewSplitInfo', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'reviewSplitInfo', titleKey: '', nextButtonTextKey: '' }),
+            splitHousehold() { return mockSplitHousehold(); },
+          },
+          mocks: { $storage: storage },
+        });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+
+        await wrapper.vm.next();
+        expect(storage.registration.actions.splitHousehold).toHaveBeenCalledTimes(1);
+      });
+
       it('calls createNewHousehold if current tab index is 0', async () => {
         wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 0);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.createNewHousehold = jest.fn();
-
+        wrapper.vm.jump = jest.fn();
         await wrapper.vm.next();
         expect(wrapper.vm.createNewHousehold).toHaveBeenCalledTimes(1);
       });
@@ -153,6 +180,31 @@ describe('SplitHousehold.vue', () => {
 
         await wrapper.vm.next();
         expect(wrapper.vm.jump).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('closeSplit', () => {
+      it('calls router replace with the new household id if there is one ', () => {
+        wrapper.vm.closeSplit();
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+          name: routes.household.householdProfile.name, params: { id: mockHouseholdEntity().id },
+        });
+      });
+
+      it('calls router replace with the origin household id if there is no new household id ', () => {
+        storage.registration.getters.registrationResponse = jest.fn(() => null);
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'reviewSplitInfo', titleKey: '', nextButtonTextKey: '' }),
+            splitHousehold() { return mockSplitHousehold(); },
+          },
+          mocks: { $storage: storage },
+        });
+        wrapper.vm.closeSplit();
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+          name: routes.household.householdProfile.name, params: { id: mockSplitHousehold().originHouseholdId },
+        });
       });
     });
 
