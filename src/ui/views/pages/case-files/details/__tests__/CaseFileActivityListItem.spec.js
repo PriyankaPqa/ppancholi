@@ -729,6 +729,18 @@ describe('CaseFileActivityListItem.vue', () => {
             body: null,
           });
         });
+
+        it('returns the correct data when action type is HouseholdSplit', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.HouseholdSplit)[0];
+
+          await wrapper.setProps({
+            item,
+          });
+          expect(wrapper.vm.makeContentForHouseholdSplit()).toEqual({
+            title: 'caseFileActivity.activityList.title.HouseholdSplit',
+            body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
+          });
+        });
       });
     });
   });

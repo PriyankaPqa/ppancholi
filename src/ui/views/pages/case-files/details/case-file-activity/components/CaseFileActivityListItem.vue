@@ -102,6 +102,9 @@ export default Vue.extend({
 
         case CaseFileActivityType.HouseholdEdited:
           return this.makeContentForHouseholdEdited();
+
+        case CaseFileActivityType.HouseholdSplit:
+          return this.makeContentForHouseholdSplit();
         default:
           return null;
       }
@@ -340,6 +343,13 @@ export default Vue.extend({
     makeContentForHouseholdEdited(): {title: TranslateResult, body: TranslateResult} {
       const title = this.$t('caseFileActivity.activityList.title.HouseholdEdited');
       return { title, body: null };
+    },
+
+    makeContentForHouseholdSplit(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdSplit');
+      const body = this.$t('caseFileActivity.activityList.body.HouseholdSplit')
+        + (this.item.details?.removedMembers as [] || []).map((m: {name: string}) => m.name).join(', ');
+      return { title, body };
     },
 
   },
