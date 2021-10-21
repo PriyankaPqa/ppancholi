@@ -1,12 +1,13 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
 
-import { IMassActionEntity, MassActionRunType } from '@/entities/mass-action/massActions.types';
+import { IMassActionEntity, MassActionRunType, MassActionType } from '@/entities/mass-action/massActions.types';
 import { MassActionService } from '@/services/mass-actions/entity/massAction';
 import { BaseModule } from '../base';
 
 import { IState } from '../base/base.types';
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
+import { IMassActionFinancialAssistanceCreatePayload } from '@/services/mass-actions/entity';
 
 export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid> {
   constructor(readonly service: MassActionService) {
@@ -54,6 +55,26 @@ export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid>
       { id, payload }: {id: string; payload: { name: string; description: string }},
     ): Promise<IMassActionEntity> => {
       const data = await this.service.update(id, payload);
+
+      if (data) {
+        context.commit('set', data);
+        return data;
+      }
+      return null;
+    },
+
+    create: async (
+      context: ActionContext<IMassActionEntityState, IMassActionEntityState>,
+      { massActionType, payload }: {massActionType: MassActionType; payload: unknown},
+    ): Promise<IMassActionEntity> => {
+      let data = null;
+
+      if (massActionType === MassActionType.FinancialAssistance) {
+        const urlSuffix = 'financial-assistance-from-list';
+        data = await this.service.create(urlSuffix, payload as IMassActionFinancialAssistanceCreatePayload);
+      }
+
+      /* Add future mass action call here */
 
       if (data) {
         context.commit('set', data);

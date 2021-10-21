@@ -1,5 +1,7 @@
 import { IStore, IState } from '@/store/store.types';
-import { IMassActionEntity, IMassActionMetadata, MassActionRunType } from '@/entities/mass-action';
+import {
+  IMassActionEntity, IMassActionMetadata, MassActionRunType, MassActionType,
+} from '@/entities/mass-action';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
 
@@ -16,6 +18,7 @@ export class MassActionStorage extends Base<IMassActionEntity, IMassActionMetada
     ...this.baseActions,
     process: (id: string, runType: MassActionRunType) => this.store.dispatch(`${this.entityModuleName}/process`, { id, runType }),
     update: (id: string, payload: { name: string; description: string }) => this.store.dispatch(`${this.entityModuleName}/update`, { id, payload }),
+    create: (massActionType: MassActionType, payload: unknown) => this.store.dispatch(`${this.entityModuleName}/create`, { massActionType, payload }),
   }
 
   private mutations = {

@@ -73,7 +73,7 @@ export default Vue.extend({
           this.uploadSuccess = false;
         } else {
           this.uploadSuccess = false;
-          if (e.response.data.errors) {
+          if (e?.response?.data.errors) {
             this.errors = e.response.data.errors;
           } else {
             this.errors = [{ code: 'error.unexpected_error' }];

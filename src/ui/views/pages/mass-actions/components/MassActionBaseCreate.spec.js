@@ -6,7 +6,7 @@ import {
 } from '@/test/testSetup';
 
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
-import { MassActionEntity } from '@/entities/mass-action';
+import { MassActionEntity, MassActionMode } from '@/entities/mass-action';
 import Component from './MassActionBaseCreate.vue';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
@@ -25,8 +25,9 @@ describe('MassActionBaseCreate.vue', () => {
         propsData: {
           title: 'title',
           formData: new FormData(),
-          url: 'url',
+          uploadUrl: 'url',
           applyToLabel: 'applyToLabel',
+          mode: MassActionMode.File,
         },
       });
     });
@@ -82,18 +83,21 @@ describe('MassActionBaseCreate.vue', () => {
         propsData: {
           title: 'title',
           formData: new FormData(),
-          url: 'url',
+          uploadUrl: 'url',
           applyToLabel: 'applyToLabel',
+          mode: MassActionMode.File,
         },
         mocks: {
           $storage: storage,
         },
       });
       wrapper.vm.$refs.form.validate = jest.fn(() => true);
+      wrapper.vm.uploadForm = jest.fn();
     });
 
     describe('next', () => {
       beforeEach(() => {
+        wrapper.vm.create = jest.fn();
         wrapper.vm.upload = jest.fn();
       });
 
@@ -102,22 +106,50 @@ describe('MassActionBaseCreate.vue', () => {
         expect(wrapper.vm.$refs.form.validate).toBeCalled();
       });
 
-      it('should emit upload:start to receive the formData', async () => {
-        await wrapper.vm.next();
-        expect(wrapper.emitted('upload:start')).toBeTruthy();
-      });
-
-      it('should call upload method', async () => {
-        await wrapper.vm.next();
-        expect(wrapper.vm.upload).toBeCalled();
-      });
-
       it('should confirm before emitting or uploading', async () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.next();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith('massAction.confirm.preprocessing.title', 'massAction.confirm.preprocessing.message');
         expect(wrapper.emitted('upload:start')).toBeFalsy();
         expect(wrapper.vm.upload).not.toBeCalled();
+      });
+
+      it('should show the upload dialog in file mode', async () => {
+        await wrapper.setData({ showUploadDialog: false });
+        wrapper.vm.$confirm = jest.fn(() => true);
+
+        await wrapper.vm.next();
+
+        expect(wrapper.vm.showUploadDialog).toBe(true);
+      });
+
+      it('should not show the upload dialog in list mode', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            title: 'title',
+            formData: new FormData(),
+            uploadUrl: 'url',
+            applyToLabel: 'applyToLabel',
+            mode: MassActionMode.List,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$confirm = jest.fn(() => true);
+
+        await wrapper.setData({ showUploadDialog: false });
+
+        await wrapper.vm.next();
+
+        expect(wrapper.vm.showUploadDialog).toBe(false);
+      });
+
+      it('should call the create method', async () => {
+        await wrapper.vm.next();
+        expect(wrapper.vm.create).toBeCalled();
       });
     });
 
@@ -143,18 +175,25 @@ describe('MassActionBaseCreate.vue', () => {
         expect(wrapper.vm.formData.set).toHaveBeenCalledWith('description', wrapper.vm.description);
       });
 
-      it('should add the file to the formData', async () => {
+      it('should add the file to the formData if file mode', async () => {
         wrapper.vm.formData.set = jest.fn();
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.vm.upload();
         expect(wrapper.vm.formData.set).toHaveBeenLastCalledWith('file', wrapper.vm.file);
       });
 
+      it('should not add caseFileIds to the formData if file mode', async () => {
+        wrapper.vm.formData.set = jest.fn();
+        wrapper.vm.uploadForm = jest.fn();
+        await wrapper.vm.upload();
+        expect(wrapper.vm.formData.set).not.toHaveBeenLastCalledWith('caseFileIds', '1,2');
+      });
+
       it('should call uploadForm with file and url from the mixin', async () => {
         wrapper.vm.formData.set = jest.fn();
         wrapper.vm.uploadForm = jest.fn();
         await wrapper.vm.upload();
-        expect(wrapper.vm.uploadForm).toHaveBeenLastCalledWith(wrapper.vm.formData, wrapper.vm.url);
+        expect(wrapper.vm.uploadForm).toHaveBeenLastCalledWith(wrapper.vm.formData, wrapper.vm.uploadUrl);
       });
 
       it('should set the mass action to the store entity in case of successful upload', async () => {
@@ -174,6 +213,25 @@ describe('MassActionBaseCreate.vue', () => {
         expect(wrapper.emitted('upload:success')[0]).toEqual([new MassActionEntity(wrapper.vm.response.data)]);
       });
     });
+
+    describe('create', () => {
+      it('should emit upload:start to receive the formData', async () => {
+        wrapper.vm.upload = jest.fn();
+        await wrapper.vm.create(MassActionMode.File);
+        expect(wrapper.emitted('upload:start')).toBeTruthy();
+      });
+
+      it('should emit post if list mode', async () => {
+        wrapper.vm.createFromFile = jest.fn();
+
+        await wrapper.vm.create(MassActionMode.List);
+
+        expect(wrapper.emitted('post')[0][0]).toEqual({
+          name: wrapper.vm.name,
+          description: wrapper.vm.description,
+        });
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -183,8 +241,9 @@ describe('MassActionBaseCreate.vue', () => {
         propsData: {
           title: 'title',
           formData: new FormData(),
-          url: 'url',
+          uploadUrl: 'url',
           applyToLabel: 'applyToLabel',
+          mode: MassActionMode.File,
         },
       });
     });

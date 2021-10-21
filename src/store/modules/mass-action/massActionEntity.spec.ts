@@ -1,10 +1,8 @@
 import { ActionContext } from 'vuex';
-
-import { mockMassActionService } from '@/services/mass-actions/entity';
-
+import { mockMassActionCreatePayload, mockMassActionService } from '@/services/mass-actions/entity';
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
 import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEntity';
-import { MassActionRunType } from '@/entities/mass-action';
+import { MassActionRunType, MassActionType } from '@/entities/mass-action';
 
 const service = mockMassActionService();
 const module = new MassActionEntityModule(service as never);
@@ -47,6 +45,22 @@ describe('>>> Mass Action Entity Module', () => {
         expect(module.service.update).toHaveBeenCalledWith(id, payload);
 
         expect(actionContext.commit).toBeCalledWith('set', res);
+      });
+    });
+
+    describe('create', () => {
+      describe('Financial assistance', () => {
+        it('should call the create service with proper parameters and commit the res', async () => {
+          const urlSuffix = 'financial-assistance-from-list';
+          const massActionType = MassActionType.FinancialAssistance;
+          const payload = mockMassActionCreatePayload();
+
+          const res = await module.actions.create(actionContext, { massActionType, payload });
+
+          expect(module.service.create).toHaveBeenCalledWith(urlSuffix, payload);
+
+          expect(actionContext.commit).toBeCalledWith('set', res);
+        });
       });
     });
   });

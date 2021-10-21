@@ -1,5 +1,8 @@
 import { mockDomainBaseService } from '@/services/base/base.mock';
-import { IMassActionServiceMock } from '@/services/mass-actions/entity/massAction.types';
+import {
+  IMassActionFinancialAssistanceCreatePayload,
+  IMassActionServiceMock,
+} from '@/services/mass-actions/entity/massAction.types';
 import { mockMassActionEntities, mockMassActionEntity } from '@/entities/mass-action';
 
 export const mockMassActionService = (): IMassActionServiceMock => ({
@@ -7,4 +10,20 @@ export const mockMassActionService = (): IMassActionServiceMock => ({
   process: jest.fn(() => mockMassActionEntity()),
   update: jest.fn(() => mockMassActionEntity()),
   getInvalidFile: jest.fn(() => null),
+  create: jest.fn(() => mockMassActionEntity()),
+  exportList: jest.fn(() => null),
+});
+
+export const mockMassActionCreatePayload = (): IMassActionFinancialAssistanceCreatePayload => ({
+  name: 'string',
+  description: 'string',
+  eventId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  tableId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  programId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  mainCategoryId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  subCategoryId: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+  paymentModality: 1,
+  amount: 0,
+  search: 'search',
+  filter: 'filter',
 });

@@ -2,7 +2,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
 import Component from './FinancialAssistanceHome.vue';
-import { MassActionType } from '@/entities/mass-action';
+import { MassActionMode, MassActionType } from '@/entities/mass-action';
 import routes from '@/constants/routes';
 
 const localVue = createLocalVue();
@@ -52,7 +52,10 @@ describe('FinancialAssistanceHome.vue', () => {
     describe('goToAdd', () => {
       it('should redirect to correct route if we process via file', () => {
         wrapper.vm.goToAdd({ value: 'file' });
-        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.massActions.financialAssistance.create.name });
+        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({
+          name: routes.massActions.financialAssistance.create.name,
+          query: { mode: MassActionMode.File },
+        });
       });
 
       it('should show dialog to filter by list', () => {

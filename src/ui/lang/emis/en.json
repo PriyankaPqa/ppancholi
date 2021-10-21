@@ -1677,7 +1677,7 @@
     "massActions.importValidationStatus.create.upload.title": "Apply mass financial assistance to:",
     "massActions.importValidationStatus.upload.title": "Apply mass validation of impact to:",
     "massActions.preProcessing.info1": "Please wait while the file is being pre-processed.",
-    "massActions.preProcessing.info2": "This might take a few minutes, depending on the size of the csv file",
+    "massActions.preProcessing.info2": "This might take a few minutes, depending on the number of case files",
     "massActions.processing.files": "Processing {x} case files",
     "massActions.processing.info1": "Please wait while the case files are being processed.",
     "massActions.processing.info2": "This might take a few minutes depending on the number of processed case files.",

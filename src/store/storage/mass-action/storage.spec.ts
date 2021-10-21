@@ -3,7 +3,8 @@ import { MASS_ACTION_ENTITIES, MASS_ACTION_METADATA } from '@/constants/vuex-mod
 import { mockStore } from '@/store';
 
 import { MassActionStorage } from './storage';
-import { MassActionRunType } from '@/entities/mass-action';
+import { MassActionRunType, MassActionType } from '@/entities/mass-action';
+import { mockMassActionCreatePayload } from '@/services/mass-actions/entity';
 
 const entityModuleName = MASS_ACTION_ENTITIES;
 const metadataModuleName = MASS_ACTION_METADATA;
@@ -34,6 +35,15 @@ describe('>>> Mass Action Storage', () => {
       storage.actions.update(id, payload);
 
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/update`, { id, payload });
+    });
+
+    it('should proxy create', () => {
+      const massActionType = MassActionType.FinancialAssistance;
+      const payload = mockMassActionCreatePayload();
+
+      storage.actions.create(massActionType, payload);
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/create`, { massActionType, payload });
     });
   });
 });

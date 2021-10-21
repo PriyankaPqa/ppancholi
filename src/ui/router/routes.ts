@@ -55,7 +55,7 @@ const MassActionsLayout = () => import(/* webpackChunkName: "mass-actions" */ '@
 const MassActionsHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/home/MassActionsHome.vue');
 
 const MassActionsFinancialAssistanceHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceHome.vue');
-const MassActionsFinancialAssistanceCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreateFile.vue');
+const FinancialAssistanceCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreate.vue');
 const MassActionsFinancialAssistanceDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceDetails.vue');
 
 const MassActionsImportValidationStatusHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
@@ -475,8 +475,9 @@ export const routes: Array<RouteConfig> = [
               {
                 path: Routes.massActions.financialAssistance.create.path,
                 name: Routes.massActions.financialAssistance.create.name,
-                component: MassActionsFinancialAssistanceCreate,
+                component: FinancialAssistanceCreate,
                 meta: { level: 'level6' },
+                props: true,
               },
               {
                 path: Routes.massActions.financialAssistance.details.path,

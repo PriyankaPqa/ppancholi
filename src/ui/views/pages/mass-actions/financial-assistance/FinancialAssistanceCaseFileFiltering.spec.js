@@ -5,20 +5,19 @@ import {
 } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import Component from './FinancialAssistanceCreateByList.vue';
+import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
+import Component from './FinancialAssistanceCaseFileFiltering.vue';
 import helpers from '@/ui/helpers/helpers';
-import {
-  CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus,
-} from '@/entities/case-file';
 import { ECanadaProvinces } from '@/types';
-import { EEventStatus, mockCombinedEvents } from '@/entities/event';
 import { mockProgramEntities } from '@/entities/program';
+import routes from '@/constants/routes';
+import { MassActionMode } from '@/entities/mass-action';
 
 const localVue = createLocalVue();
 
 const storage = mockStorage();
 
-describe('FinancialAssistanceCreateByList.vue', () => {
+describe('FinancialAssistanceCaseFileFiltering.vue', () => {
   let wrapper;
 
   describe('Computed', () => {
@@ -218,117 +217,6 @@ describe('FinancialAssistanceCreateByList.vue', () => {
       });
     });
 
-    describe('onCancel', () => {
-      it('should update show to false', () => {
-        wrapper.vm.onCancel();
-        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
-      });
-    });
-
-    describe('onClose', () => {
-      it('should update show to false', () => {
-        wrapper.vm.onClose();
-        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
-      });
-    });
-
-    describe('onSubmit', () => {
-      it('should update show to false', () => {
-        wrapper.vm.onSubmit();
-        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
-      });
-    });
-
-    describe('onExport', () => {
-      it('should do nothing', () => {
-        expect(wrapper.vm.onExport()).toEqual(false);
-      });
-    });
-
-    describe('fetchData', () => {
-      let params;
-
-      beforeEach(() => {
-        params = {
-          search: 'query',
-          filter: 'filter',
-          top: 10,
-          skip: 10,
-          orderBy: 'name asc',
-        };
-      });
-
-      it('should call storage actions with proper parameters if some filters are applied', async () => {
-        await wrapper.setData({
-          userFilters: [{ key: 'name' }],
-        });
-
-        await wrapper.vm.fetchData(params);
-
-        expect(wrapper.vm.$storage.caseFile.actions.search)
-          .toHaveBeenCalledWith({
-            search: params.search,
-            filter: params.filter,
-            top: params.top,
-            skip: params.skip,
-            orderBy: params.orderBy,
-            count: true,
-            queryType: 'full',
-            searchMode: 'all',
-          });
-      });
-    });
-
-    describe('fetchEventsFilter', () => {
-      it('should search case file events with status onhold or open filtered by inputed name', async () => {
-        await wrapper.vm.fetchEventsFilter('query');
-
-        expect(wrapper.vm.$services.events.search)
-          .toHaveBeenCalledWith({
-            filter: {
-              or: [
-                {
-                  Entity: {
-                    Schedule: {
-                      Status: EEventStatus.Open,
-                    },
-                  },
-                },
-                {
-                  Entity: {
-                    Schedule: {
-                      Status: EEventStatus.OnHold,
-                    },
-                  },
-                },
-              ],
-            },
-            select: ['Entity/Name', 'Entity/Id'],
-            top: 999,
-            orderBy: 'Entity/Name/Translation/en asc',
-            queryType: 'full',
-            searchMode: 'all',
-          });
-      });
-
-      it('should set eventsFilter the search results', async () => {
-        wrapper.vm.$services.events.search = jest.fn(() => ({
-          odataCount: mockCombinedEvents().length,
-          odataContext: 'odataContext',
-          value: mockCombinedEvents(),
-        }));
-
-        await wrapper.vm.fetchEventsFilter();
-
-        const expected = mockCombinedEvents().map((e) => ({
-          text: wrapper.vm.$m(e.entity.name),
-          value: e.entity.id,
-        }));
-
-        expect(wrapper.vm.eventsFilter).toEqual(expected);
-      });
-    });
-
     describe('onAutoCompleteChange (when user is selected or un-selected)', () => {
       it('should reset programs filter if not event has been selected', async () => {
         const data = { filterKey: 'Entity/EventId', value: null };
@@ -355,7 +243,6 @@ describe('FinancialAssistanceCreateByList.vue', () => {
         await wrapper.vm.fetchProgramsFilters(eventId);
         expect(wrapper.vm.$services.programs.getAll).toHaveBeenLastCalledWith({ eventId });
       });
-
       it('should set programsFilter', async () => {
         wrapper.vm.$services.programs.getAll = jest.fn(() => mockProgramEntities());
 
@@ -367,6 +254,31 @@ describe('FinancialAssistanceCreateByList.vue', () => {
         }));
 
         expect(wrapper.vm.programsFilter).toEqual(expected);
+      });
+    });
+
+    describe('onSubmit', () => {
+      it('should redirect to mass action create with filters params, proper mode and total', async () => {
+        wrapper.vm.getCaseIdsFromFilteredList = jest.fn(() => ['1', '2']);
+
+        await wrapper.vm.onSubmit();
+
+        expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
+          name: routes.massActions.financialAssistance.create.name,
+          query: {
+            azureSearchParams: JSON.stringify(wrapper.vm.azureSearchParams),
+            mode: MassActionMode.List,
+            total: wrapper.vm.itemsCount.toString(),
+          },
+        });
+      });
+
+      it('should update show to false', async () => {
+        wrapper.vm.getCaseIdsFromFilteredList = jest.fn(() => ['1', '2']);
+
+        await wrapper.vm.onSubmit();
+
+        expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
       });
     });
   });

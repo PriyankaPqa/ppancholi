@@ -1,6 +1,7 @@
 import _isEmpty from 'lodash/isEmpty';
 import Vue from 'vue';
 import { IAzureSearchParams } from '@/types';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   data() {
@@ -106,7 +107,7 @@ export default Vue.extend({
       if (!this.params.search) {
         quickSearch = '';
       } else {
-        quickSearch = `${this.params.search}`;
+        quickSearch = helpers.sanitize(`${this.params.search}`);
       }
 
       if (this.userSearchFilters && quickSearch) {

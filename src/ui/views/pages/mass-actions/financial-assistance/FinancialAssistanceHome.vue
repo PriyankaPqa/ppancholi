@@ -51,7 +51,7 @@
         </v-btn>
       </template>
     </rc-data-table>
-    <financial-assistance-create-by-list v-if="showProcessByList" :show.sync="showProcessByList" />
+    <financial-assistance-case-file-filtering v-if="showProcessByList" :show.sync="showProcessByList" />
   </div>
 </template>
 
@@ -63,14 +63,14 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import routes from '@/constants/routes';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';
-import { MassActionType } from '@/entities/mass-action';
-import FinancialAssistanceCreateByList from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCreateByList.vue';
+import { MassActionMode, MassActionType } from '@/entities/mass-action';
+import FinancialAssistanceCaseFileFiltering from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceCaseFileFiltering.vue';
 
 export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
   name: 'FinancialAssistanceHome',
 
   components: {
-    FinancialAssistanceCreateByList,
+    FinancialAssistanceCaseFileFiltering,
     RcDataTable,
     RcAddButtonWithMenu,
     StatusChip,
@@ -146,12 +146,12 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
     menuItems(): Array<Record<string, string>> {
       return [{
         text: this.$t('massAction.financialAssistance.table.add.list') as string,
-        value: 'list',
+        value: MassActionMode.List,
         icon: 'mdi-filter-variant',
         dataTest: 'fa-mass-action-list',
       }, {
         text: this.$t('massAction.financialAssistance.table.add.file') as string,
-        value: 'file',
+        value: MassActionMode.File,
         icon: 'mdi-upload',
         dataTest: 'fa-mass-action-file',
       }];
@@ -160,9 +160,9 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
 
   methods: {
     goToAdd(item: Record<string, string>) {
-      if (item.value === 'file') {
-        this.$router.push({ name: routes.massActions.financialAssistance.create.name });
-      } else if (item.value === 'list') {
+      if (item.value === MassActionMode.File) {
+        this.$router.push({ name: routes.massActions.financialAssistance.create.name, query: { mode: MassActionMode.File } });
+      } else if (item.value === MassActionMode.List) {
         this.showProcessByList = true;
       }
     },

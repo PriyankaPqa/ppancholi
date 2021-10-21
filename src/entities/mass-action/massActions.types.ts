@@ -18,6 +18,11 @@ export enum MassActionType {
   ImportPaymentStatuses = 5,
 }
 
+export enum MassActionMode {
+  File = 'file',
+  List = 'list',
+}
+
 export enum MassActionRunType {
   Unknown = 0,
   PreProcess = 1,

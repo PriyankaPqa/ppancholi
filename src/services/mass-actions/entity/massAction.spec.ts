@@ -1,6 +1,7 @@
 import { mockHttp } from '@/services/httpClient.mock';
 import { MassActionService } from '@/services/mass-actions/entity/massAction';
-import { MassActionRunType } from '@/entities/mass-action';
+import { MassActionRunType, MassActionType } from '@/entities/mass-action';
+import { mockMassActionCreatePayload } from '@/services/mass-actions/entity/massAction.mock';
 
 const http = mockHttp();
 const service = new MassActionService(http as never);
@@ -38,6 +39,26 @@ describe('>>> Mass Action Service', () => {
       params: {
         runId,
       },
+    });
+  });
+
+  test('create is linked to the correct URL', async () => {
+    const urlSuffix = 'financial-assistance-from-list';
+    const payload = mockMassActionCreatePayload();
+
+    await service.create(urlSuffix, payload);
+
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload);
+  });
+
+  describe('exportList', () => {
+    it('should be linked to correct URL for financial assistance mass action', async () => {
+      const urlSuffix = 'export-financial-assistance-records';
+      const payload = { filter: 'filter', search: 'search' };
+
+      await service.exportList(MassActionType.FinancialAssistance, payload);
+
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload);
     });
   });
 });

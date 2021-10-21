@@ -59,6 +59,7 @@ const mocks = {
   $route: {
     name: '',
     params: {},
+    query: {},
   },
   $confirm: jest.fn(() => true),
   $message: jest.fn(() => true),

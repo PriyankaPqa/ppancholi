@@ -35,6 +35,7 @@ export interface IError {
 
 export interface IHttpClient {
   getFullResponse: <T>(url: string, config?: RequestConfig) => Promise<IRestResponse<T>>;
+  postFullResponse: <T>(url: string, data?: any, config?: RequestConfig) => Promise<IRestResponse<T>>;
   get: <T>(url: string, config?: RequestConfig) => Promise<T>;
   post: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
   patch: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
@@ -181,6 +182,15 @@ class HttpClient implements IHttpClient {
   public async getFullResponse<T>(url: string, config?: AxiosRequestConfig): Promise<IRestResponse<T>> {
     try {
       const response: IRestResponse<T> = await this.axios.get(url, config);
+      return response;
+    } catch (e) {
+      throw this.createErrorObject(e);
+    }
+  }
+
+  public async postFullResponse<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<IRestResponse<T>> {
+    try {
+      const response: IRestResponse<T> = await this.axios.post(url, data, config);
       return response;
     } catch (e) {
       throw this.createErrorObject(e);

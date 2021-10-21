@@ -26,13 +26,16 @@
             <div class="rc-body-16 fw-bold mb-4">
               {{ applyToLabel }}
             </div>
-            <validation-provider v-slot="{ errors }" ref="file" :rules="rules.file" mode="aggressive">
+            <validation-provider v-if="mode === MassActionMode.File" v-slot="{ errors }" ref="file" :rules="rules.file" mode="aggressive">
               <rc-file-upload
                 :allowed-extensions="['csv']"
                 :file="file"
                 :errors="errors"
                 @update:file="onUpdateFile($event)" />
             </validation-provider>
+            <div v-else-if="mode === MassActionMode.List" class="grey-container px-6 py-4">
+              {{ $t('massAction.common.apply_to_x_caseFiles', {x: $route.query.total}) }}
+            </div>
           </v-col>
         </v-row>
       </v-container>
@@ -79,13 +82,15 @@
 
 <script lang="ts">
 import {
-  VTextFieldWithValidation, VTextAreaWithValidation, RcPageContent, RcDialog,
+  RcDialog, RcPageContent, VTextAreaWithValidation, VTextFieldWithValidation,
 } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { VForm } from '@/types';
 import fileUpload from '@/ui/mixins/fileUpload';
-import { IMassActionEntity, MassActionEntity } from '@/entities/mass-action';
+import {
+  IMassActionEntity, MassActionEntity, MassActionMode,
+} from '@/entities/mass-action';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 
 export default mixins(fileUpload).extend({
@@ -116,17 +121,25 @@ export default mixins(fileUpload).extend({
       required: true,
     },
     /**
-     * The form data to be uploaded. Don't need to include the file as it's done here
+     * The form data to be uploaded for file mode
      */
     formData: {
       type: FormData,
       required: true,
     },
     /**
-     * The endpoint
+     * The url where the form needs to be uploaded
      */
-    url: {
+    uploadUrl: {
       type: String,
+      required: true,
+    },
+
+    /**
+     *  Whether the mass action is created from a file or from a list
+     */
+    mode: {
+      type: String as () => MassActionMode,
       required: true,
     },
   },
@@ -135,15 +148,19 @@ export default mixins(fileUpload).extend({
     return {
       name: '',
       description: '',
+      MassActionMode,
     };
   },
 
   computed: {
     rules(): Record<string, unknown> {
-      return {
+      const fileModeRule = {
         file: {
           requiredFile: this.file.size,
         },
+      };
+
+      const regularRules = {
         name: {
           required: true,
           max: MAX_LENGTH_MD,
@@ -152,26 +169,36 @@ export default mixins(fileUpload).extend({
           max: MAX_LENGTH_LG,
         },
       };
+
+      if (this.mode === MassActionMode.File) {
+        return { ...fileModeRule, ...regularRules };
+      }
+      return regularRules;
     },
+
     uploadDialogTitle(): string {
       if (this.uploadHasErrors) {
         return 'common.file.uploading.error.title';
       }
       return 'common.file.uploading.title';
     },
+
   },
 
   methods: {
     async next() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        const userChoice = await this.$confirm(this.$t('massAction.confirm.preprocessing.title'),
-          this.$t('massAction.confirm.preprocessing.message'));
+        const userChoice = await this.$confirm(
+          this.$t('massAction.confirm.preprocessing.title'),
+          this.$t('massAction.confirm.preprocessing.message'),
+        );
+
         if (userChoice) {
-          this.showUploadDialog = true;
-          // So the parent update the formData props ex:  this.formData.set('extra', this.extra);
-          this.$emit('upload:start');
-          await this.upload();
+          if (this.mode === MassActionMode.File) {
+            this.showUploadDialog = true;
+          }
+          await this.create(this.mode);
         }
       }
     },
@@ -180,13 +207,21 @@ export default mixins(fileUpload).extend({
       this.$emit('back');
     },
 
+    async create(mode: MassActionMode) {
+      if (mode === MassActionMode.File) {
+        this.$emit('upload:start');
+      } else if (mode === MassActionMode.List) {
+        this.$emit('post', { name: this.name, description: this.description });
+      }
+    },
+
     async upload() {
       // A mass action always has a name, description and a file
       this.formData.set('name', this.name);
       this.formData.set('description', this.description);
       this.formData.set('file', this.file);
 
-      await this.uploadForm(this.formData, this.url);
+      await this.uploadForm(this.formData, this.uploadUrl);
 
       if (this.uploadSuccess) {
         const entity = new MassActionEntity(this.response.data as IMassActionEntity);

@@ -5,6 +5,7 @@
     :cancel-action-label="$t('common.buttons.cancel')"
     :submit-action-label="$t('common.buttons.next')"
     :submit-button-disabled="!filtersOn || tableData.length === 0"
+    :loading="fetchAllCaseFileLoading"
     :persistent="true"
     fullscreen
     content-padding="0"
@@ -30,7 +31,13 @@
           @update:appliedFilter="onApplyFilter"
           @change:autocomplete="onAutoCompleteChange($event)">
           <template #toolbarActions>
-            <v-btn class="export" color="primary" :disabled="!filtersOn || tableData.length === 0" @click="onExport()">
+            <v-btn
+              data-test="export"
+              class="export"
+              color="primary"
+              :loading="exportLoading"
+              :disabled="(!filtersOn || tableData.length === 0)"
+              @click="onExport(MassActionType.FinancialAssistance)">
               {{ $t('massAction.common.export') }}
             </v-btn>
           </template>
@@ -114,22 +121,20 @@
 
 import { IFilterSettings, RcDataTable, RcDialog } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
-import _isEmpty from 'lodash/isEmpty';
 import mixins from 'vue-typed-mixins';
 import { EDateMode, EFilterKeyType, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
-import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { ECanadaProvinces, IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { ECanadaProvinces } from '@/types';
 import { FilterKey } from '@/entities/user-account';
-import {
-  CaseFileStatus, ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus,
-} from '@/entities/case-file';
+import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
+import routes from '@/constants/routes';
+import { MassActionMode, MassActionType } from '@/entities/mass-action';
 import helpers from '@/ui/helpers/helpers';
-import { EEventStatus, IEventEntity, IEventMetadata } from '@/entities/event';
 import { IProgramEntity } from '@/entities/program';
+import massActionCaseFileFiltering from '@/ui/views/pages/mass-actions/mixins/massActionCaseFileFiltering';
 
-export default mixins(TablePaginationSearchMixin).extend({
-  name: 'FinancialAssistanceCreateByList',
+export default mixins(massActionCaseFileFiltering).extend({
+  name: 'FinancialAssistanceCaseFileFiltering',
 
   components: {
     RcDialog,
@@ -137,33 +142,18 @@ export default mixins(TablePaginationSearchMixin).extend({
     FilterToolbar,
   },
 
-  props: {
-    show: {
-      type: Boolean,
-      required: true,
-    },
-  },
-
   data() {
     return {
-      eventsFilterLoading: false,
-      eventsFilter: [],
-      eventFilterQuery: null,
       programsFilterLoading: false,
       programsFilter: [],
       FilterKey,
       ValidationOfImpactStatus,
       IdentityAuthenticationStatus,
+      MassActionType,
     };
   },
 
   computed: {
-    tableProps(): Record<string, unknown> {
-      return {
-        loading: this.$store.state.caseFileEntities.searchLoading,
-      };
-    },
-
     customColumns(): Record<string, string> {
       return {
         caseFileNumber: 'Entity/CaseFileNumber',
@@ -309,93 +299,16 @@ export default mixins(TablePaginationSearchMixin).extend({
         },
       ];
     },
-
-    tableData(): ICaseFileCombined[] {
-      return this.$storage.caseFile.getters.getByIds(this.searchResultIds, true);
-    },
-
-    filtersOn(): boolean {
-      return !_isEmpty(this.userFilters) || !_isEmpty(this.userSearchFilters);
-    },
-  },
-
-  created() {
-    this.fetchEventsFilter();
   },
 
   methods: {
-    onCancel() {
+    async onSubmit() {
+      this.$router.push({
+        name: routes.massActions.financialAssistance.create.name,
+        query: { azureSearchParams: JSON.stringify(this.azureSearchParams), mode: MassActionMode.List, total: this.itemsCount.toString() },
+      });
+
       this.$emit('update:show', false);
-    },
-
-    onClose() {
-      this.$emit('update:show', false);
-    },
-
-    onSubmit() {
-      this.$emit('update:show', false);
-    },
-
-    onExport() {
-      return false;
-    },
-
-    async fetchData(params: IAzureSearchParams) {
-      if (this.filtersOn) {
-        const res = await this.$storage.caseFile.actions.search({
-          search: params.search,
-          filter: params.filter,
-          top: params.top,
-          skip: params.skip,
-          orderBy: params.orderBy,
-          count: true,
-          queryType: 'full',
-          searchMode: 'all',
-        });
-        return res;
-      }
-      return { ids: [], count: 0 };
-    },
-
-    async fetchEventsFilter() {
-      this.eventsFilterLoading = true;
-
-      const params = {
-        filter: {
-          or: [
-            {
-              Entity: {
-                Schedule: {
-                  Status: EEventStatus.Open,
-                },
-              },
-            },
-            {
-              Entity: {
-                Schedule: {
-                  Status: EEventStatus.OnHold,
-                },
-              },
-            },
-          ],
-        },
-        select: ['Entity/Name', 'Entity/Id'],
-        top: 999,
-        orderBy: `Entity/Name/Translation/${this.$i18n.locale} asc`,
-        queryType: 'full',
-        searchMode: 'all',
-      };
-
-      const res = await this.$services.events.search(params) as IAzureCombinedSearchResult<IEventEntity, IEventMetadata>;
-
-      this.eventsFilterLoading = false;
-
-      if (res?.value) {
-        this.eventsFilter = res.value.map((e) => ({
-          text: this.$m(e.entity.name),
-          value: e.entity.id,
-        }));
-      }
     },
 
     async fetchProgramsFilters(eventId: string) {

@@ -1,7 +1,7 @@
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient, IRestResponse } from '@/services/httpClient';
-import { IMassActionService } from '@/services/mass-actions/entity/massAction.types';
-import { IMassActionEntity, MassActionRunType } from '@/entities/mass-action/massActions.types';
+import { IMassActionExportListPayload, IMassActionService } from '@/services/mass-actions/entity/massAction.types';
+import { IMassActionEntity, MassActionRunType, MassActionType } from '@/entities/mass-action/massActions.types';
 
 const API_URL_SUFFIX = 'case-file';
 const CONTROLLER = 'mass-actions';
@@ -25,5 +25,18 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
         runId,
       },
     });
+  }
+
+  async create(urlSuffix: string, payload: unknown): Promise<IMassActionEntity> {
+    return this.http.post(`${this.baseUrl}/${urlSuffix}`, payload);
+  }
+
+  async exportList(massActionType: MassActionType, payload: IMassActionExportListPayload): Promise<IRestResponse<string>> {
+    let urlSuffix = '';
+
+    if (massActionType === MassActionType.FinancialAssistance) {
+      urlSuffix = 'export-financial-assistance-records';
+    }
+    return this.http.postFullResponse(`${this.baseUrl}/${urlSuffix}`, payload);
   }
 }

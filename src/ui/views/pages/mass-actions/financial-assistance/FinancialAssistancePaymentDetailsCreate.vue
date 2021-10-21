@@ -119,7 +119,7 @@ import { EEventStatus, IEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';
 import { EPaymentModalities } from '@/entities/program';
 import { Status } from '@/entities/base';
-import { PaymentDetailsForm } from './FinancialAssistanceCreateFile.vue';
+import { PaymentDetailsForm } from './FinancialAssistanceCreate.vue';
 
 export default Vue.extend({
   name: 'FinancialAssistancePaymentDetailsCreate',
@@ -247,7 +247,7 @@ export default Vue.extend({
           .filter((s) => s.status === Status.Active && s.documentationRequired === false)
           .map((s) => s.subCategory.optionItemId);
         if (this.formCopy?.item?.subitems) {
-          return this.formCopy.item.subitems.filter((s) => subItemsCurrentTableIds.includes(s.id) && s.status === Status.Active);
+          return this.formCopy.item.subitems.filter((s: IOptionSubItem) => subItemsCurrentTableIds.includes(s.id) && s.status === Status.Active);
         }
       }
       return [];
