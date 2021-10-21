@@ -68,6 +68,8 @@ const authorizationGuard = async (to: Route, from: Route, next: NavigationGuardN
       next(from);
       Vue.toasted.global.error(i18n.t('error.no_permission'));
     }
+  } else {
+    next();
   }
 };
 
@@ -77,7 +79,6 @@ router.beforeEach(async (to, from, next) => {
   try {
     await authenticationGuard(to);
     await authorizationGuard(to, from, next);
-    next();
   } catch (e) {
     // If there is an error, redirect to the login error page
     next({

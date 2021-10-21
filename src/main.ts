@@ -20,6 +20,7 @@ import Multilingual from '@/ui/plugins/multilingual';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import '@/ui/plugins/vee-validate';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
+import applicationInsights from './applicationInsights';
 
 import moment from '@/ui/plugins/moment';
 import prepareSignalR from '@/ui/plugins/signalR';
@@ -50,6 +51,12 @@ if (process.env.NODE_ENV === 'development') {
     auto: false, // Disable auto check.
   });
 }
+
+Vue.use(applicationInsights, {
+  connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,
+  router,
+  appName: 'EMISv2',
+});
 
 new Vue({
   render: (h) => h(App),
