@@ -422,7 +422,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
     mapToTeamMember(u: IUserAccountCombined, isPrimaryContact: boolean): UserTeamMember {
       return {
         id: u.entity.id,
-        email: u.metadata.emailAddress,
+        email: u.metadata.emailAddress || u.metadata.userPrincipalName,
         displayName: u.metadata.displayName,
         isPrimaryContact,
       };
