@@ -79,14 +79,14 @@ describe('HouseholdMemberCard.vue', () => {
     });
 
     describe('make member button ', () => {
-      it('renders if member is not primary and can edit', () => {
-        doMount(false, true, { computed: { canEdit() { return true; } } });
+      it('renders if member is not primary and canChangePrimary', () => {
+        doMount(false, true, { computed: { canChangePrimary() { return true; } } });
         const element = wrapper.findDataTest('household_profile_member_make_primary_btn');
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render if member is not primary and cannot edit', () => {
-        doMount(false, true, { computed: { canEdit() { return false; } } });
+      it('does not render if member is not primary and  !canChangePrimary', () => {
+        doMount(false, true, { computed: { canChangePrimary() { return false; } } });
         const element = wrapper.findDataTest('household_profile_member_make_primary_btn');
         expect(element.exists()).toBeFalsy();
       });
@@ -283,6 +283,41 @@ describe('HouseholdMemberCard.vue', () => {
 
         });
         expect(wrapper.vm.canSplit).toBeFalsy();
+      });
+    });
+
+    describe('canChangePrimary', () => {
+      it('returns true if the user has level 2 or more', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          store: {
+            ...mockUserStateLevel(2),
+          },
+
+        });
+        expect(wrapper.vm.canChangePrimary).toBeTruthy();
+      });
+      it('returns false if the user has level 1', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            member,
+            isPrimaryMember: false,
+            shelterLocations: [],
+          },
+          store: {
+            modules: {
+              ...mockUserStateLevel(1),
+            },
+          },
+
+        });
+        expect(wrapper.vm.canChangePrimary).toBeFalsy();
       });
     });
 

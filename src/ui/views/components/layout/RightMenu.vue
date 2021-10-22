@@ -211,7 +211,7 @@ export default Vue.extend({
     },
 
     async changeTenant() {
-      await authenticationProvider.signIn(null, this.currentTenantId);
+      await authenticationProvider.signIn(routes.home.path, this.currentTenantId);
     },
   },
 });

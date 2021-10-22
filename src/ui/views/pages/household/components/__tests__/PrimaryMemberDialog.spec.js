@@ -12,6 +12,20 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };
 
+const setCurrentAddress = jest.fn();
+
+householdCreate.additionalMembers = [
+  { ...mockMember({ id: '1' }), currentAddress: householdCreate.primaryBeneficiary.currentAddress, setCurrentAddress },
+  { ...mockMember({ id: '2' }), currentAddress: householdCreate.primaryBeneficiary.currentAddress, setCurrentAddress },
+  {
+    ...mockMember({ id: '3' }),
+    currentAddress: {
+      ...householdCreate.primaryBeneficiary.currentAddress,
+      address: { ...householdCreate.primaryBeneficiary.currentAddress.address, unitSuite: '999', setCurrentAddress },
+    },
+  },
+];
+
 describe('PrimaryMemberDialog', () => {
   let wrapper;
   storage.registration.getters.householdCreate = jest.fn(() => householdCreate);
@@ -32,9 +46,6 @@ describe('PrimaryMemberDialog', () => {
           data() {
             return { apiKey: '123' };
           },
-          computed: {
-            member() { return householdCreate.primaryBeneficiary; },
-          },
           mocks: { $storage: storage },
         });
         expect(wrapper.vm.backupIdentitySet).toEqual(householdCreate.primaryBeneficiary.identitySet);
@@ -50,9 +61,6 @@ describe('PrimaryMemberDialog', () => {
           data() {
             return { apiKey: '123' };
           },
-          computed: {
-            member() { return householdCreate.primaryBeneficiary; },
-          },
           mocks: { $storage: storage },
         });
         expect(wrapper.vm.backupContactInfo).toEqual(householdCreate.primaryBeneficiary.contactInformation);
@@ -67,9 +75,6 @@ describe('PrimaryMemberDialog', () => {
           },
           data() {
             return { apiKey: '123' };
-          },
-          computed: {
-            member() { return householdCreate.primaryBeneficiary; },
           },
           mocks: { $storage: storage },
         });
@@ -114,9 +119,6 @@ describe('PrimaryMemberDialog', () => {
               backupAddress: householdCreate.primaryBeneficiary.currentAddress,
             };
           },
-          computed: {
-            member() { return householdCreate.primaryBeneficiary; },
-          },
           mocks: { $storage: storage },
         });
 
@@ -134,9 +136,6 @@ describe('PrimaryMemberDialog', () => {
             return {
               apiKey: '123',
             };
-          },
-          computed: {
-            member() { return householdCreate.primaryBeneficiary; },
           },
         });
 
@@ -198,14 +197,61 @@ describe('PrimaryMemberDialog', () => {
     });
 
     describe('member', () => {
-      it('returns the right value', () => {
+      it('returns the primaryBeneficiary when no id passed', () => {
         expect(wrapper.vm.member).toEqual(householdCreate.primaryBeneficiary);
       });
     });
 
+    describe('member', () => {
+      it('returns the member of the right id when id passed', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+            memberId: householdCreate.primaryBeneficiary.id,
+          },
+          data() {
+            return { apiKey: '123' };
+          },
+          mocks: { $storage: storage },
+        });
+        expect(wrapper.vm.member).toEqual(householdCreate.primaryBeneficiary);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+            memberId: householdCreate.additionalMembers[0].id,
+          },
+          data() {
+            return { apiKey: '123' };
+          },
+          mocks: { $storage: storage },
+        });
+        expect(wrapper.vm.member).toEqual(householdCreate.additionalMembers[0]);
+      });
+    });
+
     describe('additionalMembers', () => {
-      it('returns the right value', () => {
+      it('returns the other members', () => {
         expect(wrapper.vm.additionalMembers).toEqual(householdCreate.additionalMembers);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+            memberId: householdCreate.additionalMembers[0].id,
+          },
+          data() {
+            return { apiKey: '123' };
+          },
+          mocks: { $storage: storage },
+        });
+        expect(wrapper.vm.additionalMembers).toEqual([householdCreate.primaryBeneficiary,
+          householdCreate.additionalMembers[1], householdCreate.additionalMembers[2]]);
       });
     });
   });
@@ -220,9 +266,6 @@ describe('PrimaryMemberDialog', () => {
         },
         data() {
           return { apiKey: '123' };
-        },
-        computed: {
-          member() { return householdCreate.primaryBeneficiary; },
         },
         mocks: { $storage: storage },
       });
@@ -287,11 +330,38 @@ describe('PrimaryMemberDialog', () => {
       });
     });
 
+    describe('setIdentity', () => {
+      it('calls the member setIdentity ', async () => {
+        const param = {};
+        wrapper.vm.member.identitySet.setIdentity = jest.fn();
+        await wrapper.vm.setIdentity(param);
+        expect(wrapper.vm.member.identitySet.setIdentity).toHaveBeenCalledWith(param);
+      });
+    });
+
+    describe('setIndigenousIdentity', () => {
+      it('calls the member setIndigenousIdentity ', async () => {
+        const param = {};
+        wrapper.vm.member.identitySet.setIndigenousIdentity = jest.fn();
+        await wrapper.vm.setIndigenousIdentity(param);
+        expect(wrapper.vm.member.identitySet.setIndigenousIdentity).toHaveBeenCalledWith(param);
+      });
+    });
+
+    describe('setContactInformation', () => {
+      it('sets the member contactInformation ', async () => {
+        const param = {};
+        await wrapper.vm.setContactInformation(param);
+        expect(wrapper.vm.member.contactInformation).toBe(param);
+      });
+    });
+
     describe('setCurrentAddress', () => {
-      it('calls the mutation setCurrentAddress ', async () => {
-        const address = householdCreate.primaryBeneficiary.currentAddress;
-        await wrapper.vm.setCurrentAddress(address);
-        expect(storage.registration.mutations.setCurrentAddress).toHaveBeenCalledWith(address);
+      it('calls the member setCurrentAddress ', async () => {
+        const param = {};
+        wrapper.vm.member.setCurrentAddress = jest.fn();
+        await wrapper.vm.setCurrentAddress(param);
+        expect(wrapper.vm.member.setCurrentAddress).toHaveBeenCalledWith(param);
       });
     });
 
@@ -311,51 +381,35 @@ describe('PrimaryMemberDialog', () => {
     });
 
     describe('updateAdditionalMembersWithSameAddress', () => {
-      it('calls the service updatePersonAddress for each additional member that has the same address as the primary member', async () => {
-        jest.clearAllMocks();
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            show: true,
-            shelterLocations: [],
-          },
-          data() {
-            return { apiKey: '123' };
-          },
-          computed: {
-            member() { return householdCreate.primaryBeneficiary; },
-            additionalMembers() {
-              return [
-                { ...mockMember({ id: '1' }), currentAddress: householdCreate.primaryBeneficiary.currentAddress },
-                { ...mockMember({ id: '2' }), currentAddress: householdCreate.primaryBeneficiary.currentAddress },
-                {
-                  ...mockMember({ id: '3' }),
-                  currentAddress: {
-                    ...householdCreate.primaryBeneficiary.currentAddress,
-                    address: { ...householdCreate.primaryBeneficiary.currentAddress.address, unitSuite: '999' },
-                  },
-                },
-              ];
+      it('calls the service updatePersonAddress for each additional member that has the same address as the primary member and sets address',
+        async () => {
+          jest.clearAllMocks();
+          wrapper = shallowMount(Component, {
+            localVue,
+            propsData: {
+              show: true,
+              shelterLocations: [],
             },
-          },
-          mocks: { $storage: storage },
-        });
+            data() {
+              return { apiKey: '123' };
+            },
+            mocks: { $storage: storage },
+          });
 
-        await wrapper.vm.updateAdditionalMembersWithSameAddress();
-        expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledTimes(2);
-        expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith({
-          member: { ...mockMember({ id: '1' }), currentAddress: householdCreate.primaryBeneficiary.currentAddress },
-          isPrimaryMember: false,
-          index: 0,
-          sameAddress: true,
+          await wrapper.vm.updateAdditionalMembersWithSameAddress();
+          expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledTimes(2);
+          expect(setCurrentAddress).toHaveBeenCalledTimes(2);
+          expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith({
+            member: householdCreate.additionalMembers[0],
+            isPrimaryMember: false,
+            index: 0,
+          });
+          expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith({
+            member: householdCreate.additionalMembers[1],
+            isPrimaryMember: false,
+            index: 1,
+          });
         });
-        expect(storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith({
-          member: { ...mockMember({ id: '2' }), currentAddress: householdCreate.primaryBeneficiary.currentAddress },
-          isPrimaryMember: false,
-          index: 1,
-          sameAddress: true,
-        });
-      });
     });
   });
 });

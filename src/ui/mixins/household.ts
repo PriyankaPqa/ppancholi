@@ -127,17 +127,16 @@ export default Vue.extend({
           address: m.currentAddress.address === null ? emptyCurrentAddress : m.currentAddress.address,
         };
 
+        const member = deepmerge(m, {
+          identitySet: this.parseIdentitySet(m, communitiesItems, genderItems),
+          contactInformation: this.parseContactInformation(m, preferredLanguagesItems, primarySpokenLanguagesItems),
+          currentAddress,
+        });
+
         if (index === 0) {
-          primaryBeneficiary = deepmerge(m, {
-            identitySet: this.parseIdentitySet(m, communitiesItems, genderItems),
-            contactInformation: this.parseContactInformation(m, preferredLanguagesItems, primarySpokenLanguagesItems),
-            currentAddress,
-          });
+          primaryBeneficiary = member;
         } else {
-          additionalMembers.push(deepmerge(m, {
-            identitySet: this.parseIdentitySet(m, communitiesItems, genderItems),
-            currentAddress,
-          }));
+          additionalMembers.push(member);
         }
       });
 
@@ -192,9 +191,9 @@ export default Vue.extend({
         ? member.contactInformation.preferredLanguage.specifiedOther : '';
 
       return {
-        alternatePhoneNumber: member.contactInformation.alternatePhoneNumber || emptyPhone,
-        mobilePhoneNumber: member.contactInformation.mobilePhoneNumber || emptyPhone,
-        homePhoneNumber: member.contactInformation.homePhoneNumber || emptyPhone,
+        alternatePhoneNumber: member.contactInformation?.alternatePhoneNumber || emptyPhone,
+        mobilePhoneNumber: member.contactInformation?.mobilePhoneNumber || emptyPhone,
+        homePhoneNumber: member.contactInformation?.homePhoneNumber || emptyPhone,
         preferredLanguage,
         primarySpokenLanguage,
         primarySpokenLanguageOther,

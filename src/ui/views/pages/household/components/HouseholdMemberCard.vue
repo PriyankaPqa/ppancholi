@@ -27,8 +27,8 @@
           <span class="text-uppercase"> {{ $t('household.profile.member.primary_member') }} </span>
         </v-chip>
 
-        <div v-else-if="canEdit" class="pr-4 mr-1 border-right">
-          <v-btn small depressed class="mr-2" data-test="household_profile_member_make_primary_btn">
+        <div v-else-if="canChangePrimary" class="pr-4 mr-1 border-right">
+          <v-btn small depressed class="mr-2" data-test="household_profile_member_make_primary_btn" @click="makePrimary">
             <v-icon color="grey darken-3" small class="mr-1">
               mdi-account
             </v-icon>
@@ -104,6 +104,8 @@
       v-if="showPrimaryMemberDialog"
       :show="showPrimaryMemberDialog"
       :shelter-locations="shelterLocations"
+      :member-id="member.id"
+      :make-primary-mode="!isPrimaryMember"
       @cancel="closeAndReload"
       @close="closeAndReload" />
 
@@ -193,7 +195,7 @@ export default Vue.extend({
           test: 'edit',
           icon: 'mdi-pencil',
           additionalMemberOnly: false,
-          event: this.openEditDialog,
+          event: () => this.openEditDialog(),
           hide: !this.canEdit,
         },
         {
@@ -211,6 +213,10 @@ export default Vue.extend({
           hide: !this.canEdit,
         },
       ];
+    },
+
+    canChangePrimary():boolean {
+      return this.$hasLevel('level2');
     },
 
     canSplit():boolean {
@@ -309,6 +315,13 @@ export default Vue.extend({
     initSplitView() {
       if (this.splitHouseholdMembers && this.splitHouseholdMembers?.primaryMember?.id === this.member.id) {
         this.showSplitDialog = true;
+      }
+    },
+
+    async makePrimary() {
+      if (await this.$confirm(this.$t('household.profile.member.make_primary.confirm_title'), null,
+        this.$t('household.profile.member.make_primary.confirm_message', { name: this.displayName }).toString())) {
+        this.showPrimaryMemberDialog = true;
       }
     },
 

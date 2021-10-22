@@ -113,7 +113,7 @@ describe('RightMenu.vue', () => {
         it('calls signin with correct tenant', async () => {
           await wrapper.setData({ currentTenantId: 'abcd' });
           await wrapper.vm.changeTenant();
-          expect(authenticationProvider.signIn).toHaveBeenCalledWith(null, 'abcd');
+          expect(authenticationProvider.signIn).toHaveBeenCalledWith(routes.home.path, 'abcd');
         });
       });
     });

@@ -4,18 +4,27 @@
       :title="title"
       :show.sync="show"
       :cancel-action-label="$t('common.buttons.cancel')"
-      :submit-action-label="$t('common.save')"
+      :submit-action-label="makePrimaryMode ? $t('household.profile.member.make_primary') : $t('common.save')"
       :content-only-scrolling="true"
       fullscreen
       persistent
       show-close
-      :submit-button-disabled="failed || (pristine && !changedAddress)"
+      :submit-button-disabled="failed || (pristine && !changedAddress && !makePrimaryMode)"
       @close="onCancel"
       @cancel="onCancel"
       @submit="onSubmit">
       <v-row class="justify-center">
         <v-col cols="12" md="8">
-          <lib-personal-information :i18n="i18n" skip-phone-email-rules />
+          <div v-if="makePrimaryMode" class="mb-4 fw-bold rc-body14">
+            {{ $t('household.profile.member.make_primary.missing_info', {name: memberName}) }}
+          </div>
+          <lib-personal-information
+            :i18n="i18n"
+            :member-props="member"
+            skip-phone-email-rules
+            @setIdentity="setIdentity"
+            @setIndigenousIdentity="setIndigenousIdentity"
+            @setContactInformation="setContactInformation" />
           <current-address-form
             :shelter-locations="shelterLocations"
             :canadian-provinces-items="canadianProvincesItems"
@@ -65,6 +74,16 @@ export default Vue.extend({
       required: true,
     },
 
+    makePrimaryMode: {
+      type: Boolean,
+      default: false,
+    },
+
+    memberId: {
+      type: String,
+      default: null,
+    },
+
     shelterLocations: {
       type: Array as () => IEventGenericLocation[],
       required: true,
@@ -77,6 +96,9 @@ export default Vue.extend({
       backupIdentitySet: null as IIdentitySet,
       backupContactInfo: null as IContactInformation,
       backupAddress: null as ICurrentAddress,
+      allMembers: [] as IMember[],
+      member: null as IMember,
+      additionalMembers: [] as IMember[],
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VUE_APP_GOOGLE_API_KEY,
@@ -105,23 +127,23 @@ export default Vue.extend({
       return helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes');
     },
 
-    member() : IMember {
-      const household = this.$storage.registration.getters.householdCreate();
-      return household?.primaryBeneficiary;
-    },
-
-    additionalMembers(): IMember[] {
-      const household = this.$storage.registration.getters.householdCreate();
-      return household?.additionalMembers;
+    memberName(): string {
+      return `${this.member.identitySet.firstName} ${this.member.identitySet.lastName}`;
     },
 
     title(): TranslateResult {
-      const fullName = `${this.member.identitySet.firstName} ${this.member.identitySet.lastName}`;
-      return this.$t('household.details.edit.title', { x: fullName });
+      if (!this.makePrimaryMode) {
+        return this.$t('household.details.edit.title', { x: this.memberName });
+      }
+      return this.$t('household.profile.member.make_primary');
     },
   },
 
   created() {
+    const household = this.$storage.registration.getters.householdCreate();
+    this.allMembers = [household?.primaryBeneficiary, ...household?.additionalMembers];
+    this.member = this.allMembers.filter((m) => m.id === this.memberId)[0] || this.allMembers[0];
+    this.additionalMembers = this.allMembers.filter((m) => m !== this.member);
     this.backupIdentitySet = _cloneDeep(this.member.identitySet);
     this.backupContactInfo = _cloneDeep(this.member.contactInformation);
     this.backupAddress = _cloneDeep(this.member.currentAddress);
@@ -144,15 +166,32 @@ export default Vue.extend({
           ok = !!await this.$storage.registration.actions.updatePersonContactInformation({ member: this.member, isPrimaryMember: true });
         }
 
+        if (ok && this.makePrimaryMode) {
+          ok = !!await this.$services.households.makePrimary(this.$storage.registration.getters.householdCreate().id, this.member.id);
+        }
+
         if (ok && this.changedAddress) {
           ok = !!await this.submitAddressUpdate();
         }
+
         this.$emit('close');
       }
     },
 
+    setIdentity(ident: IIdentitySet) {
+      this.member.identitySet.setIdentity(ident);
+    },
+
+    setIndigenousIdentity(ident: IIdentitySet) {
+      this.member.identitySet.setIndigenousIdentity(ident);
+    },
+
+    setContactInformation(contact: IContactInformation) {
+      this.member.contactInformation = contact;
+    },
+
     setCurrentAddress(address: ICurrentAddress) {
-      this.$storage.registration.mutations.setCurrentAddress(address);
+      this.member.setCurrentAddress(address);
     },
 
     async submitAddressUpdate() {
@@ -168,10 +207,11 @@ export default Vue.extend({
     async updateAdditionalMembersWithSameAddress() {
       const promises = [] as Array<Promise<IHouseholdEntity>>;
 
-      this.additionalMembers.forEach(async (member, index) => {
-        if (_isEqual(member.currentAddress, this.member.currentAddress)) {
+      this.additionalMembers.forEach(async (otherMember, index) => {
+        if (_isEqual(otherMember.currentAddress, this.backupAddress)) {
+          otherMember.setCurrentAddress(this.member.currentAddress);
           promises.push(this.$storage.registration.actions.updatePersonAddress({
-            member, isPrimaryMember: false, index, sameAddress: true,
+            member: otherMember, isPrimaryMember: false, index,
           }) as Promise<IHouseholdEntity>);
         }
       });
