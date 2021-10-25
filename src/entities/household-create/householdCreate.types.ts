@@ -42,6 +42,7 @@ export interface IHouseholdCreate {
   addAdditionalMember(newPerson: IMember, sameAddress: boolean): void;
   removeAdditionalMember(index: number): void;
   editAdditionalMember(newPerson: IMember, index: number, sameAddress: boolean): void;
+  setPrimaryBeneficiary(member: IMember): void;
   validatePersonalInformation(skipAgeRestriction: boolean, skipEmailPhoneRules: boolean): string[];
   validateAddresses(noFixedHome: boolean): string[];
   validateAdditionalMembers(): string[];

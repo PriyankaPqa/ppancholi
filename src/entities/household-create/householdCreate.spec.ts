@@ -90,6 +90,15 @@ describe('>>> Household', () => {
       });
     });
 
+    describe('setPrimaryBeneficiary', () => {
+      it('should set the payload as the primary beneficiary', () => {
+        const h = new HouseholdCreate();
+        h.setPrimaryBeneficiary(mockMember({ id: 'mock-primary-id' }));
+
+        expect(h.primaryBeneficiary).toEqual(mockMember({ id: 'mock-primary-id' }));
+      });
+    });
+
     describe('validate', () => {
       it('should call validate method from primaryBeneficiary', () => {
         const h = new HouseholdCreate();

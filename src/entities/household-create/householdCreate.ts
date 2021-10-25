@@ -55,6 +55,10 @@ export class HouseholdCreate implements IHouseholdCreate {
     this.additionalMembers = newAdditionalMembers;
   }
 
+  setPrimaryBeneficiary(member: IMember) {
+    this.primaryBeneficiary = member ? new Member(member) : null;
+  }
+
   reset() {
     this.noFixedHome = false;
     this.primaryBeneficiary = new Member();

@@ -1,7 +1,7 @@
 <template>
   <validation-observer ref="form" slim>
     <v-row>
-      <v-col cols="12">
+      <v-col v-if="!hideTitle" cols="12">
         <h5 class="rc-heading-5">
           {{ $t('registration.addresses.currentAddress') }}
           <v-tooltip bottom>
@@ -17,7 +17,7 @@
         </h5>
       </v-col>
 
-      <v-col cols="12" sm="6" md="8">
+      <v-col cols="12" sm="6" md="8" :class="{'pb-0':compactView}">
         <v-select-with-validation
           ref="addressType"
           :value="form.addressType"
@@ -30,7 +30,7 @@
       </v-col>
 
       <template v-if="addressType">
-        <v-col v-if="form.requiresPlaceName()" cols="12" sm="9" md="8">
+        <v-col v-if="form.requiresPlaceName()" cols="12" sm="9" md="8" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.placeName"
             :rules="rules.placeName"
@@ -38,7 +38,7 @@
             :label="placeNameLabel" />
         </v-col>
 
-        <v-col v-if="form.hasPlaceNumber()" cols="6" sm="3" md="4">
+        <v-col v-if="form.hasPlaceNumber()" cols="6" sm="3" md="4" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.placeNumber"
             :rules="rules.placeNumber"
@@ -46,7 +46,7 @@
             :label="placeNumberLabel" />
         </v-col>
 
-        <v-col v-if="form.hasStreet()" cols="12" sm="9" md="8">
+        <v-col v-if="form.hasStreet()" cols="12" sm="9" md="8" :class="{'py-0':compactView}">
           <rc-google-autocomplete-with-validation
             v-model="form.address.streetAddress"
             :data-test="`${prefixDataTest}__street`"
@@ -57,7 +57,7 @@
             @on-autocompleted="$streetCurrentAddressAutocomplete($event)" />
         </v-col>
 
-        <v-col v-if="form.hasUnitSuite()" cols="6" sm="3" md="4">
+        <v-col v-if="form.hasUnitSuite()" cols="6" sm="3" md="4" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.address.unitSuite"
             :rules="rules.unitSuite"
@@ -66,7 +66,7 @@
         </v-col>
         <v-col v-else cols="6" sm="3" md="4" />
 
-        <v-col v-if="form.requiresCity()" cols="12" sm="6" md="4">
+        <v-col v-if="form.requiresCity()" cols="12" sm="6" md="4" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.address.city"
             :rules="rules.city"
@@ -75,7 +75,7 @@
             @input="$resetGeoLocation()" />
         </v-col>
 
-        <v-col v-if="form.requiresProvince()" cols="12" sm="6" md="4">
+        <v-col v-if="form.requiresProvince()" cols="12" sm="6" md="4" :class="{'py-0':compactView}">
           <v-select-with-validation
             v-if="isCanada"
             v-model="form.address.province"
@@ -93,7 +93,7 @@
             @input="$resetGeoLocation()" />
         </v-col>
 
-        <v-col v-if="form.hasPostalCode()" cols="6" sm="6" md="4">
+        <v-col v-if="form.hasPostalCode()" cols="6" sm="6" md="4" :class="{'py-0':compactView}">
           <v-text-field-with-validation
             v-model="form.address.postalCode"
             :rules="rules.postalCode"
@@ -102,7 +102,7 @@
             @input="$resetGeoLocation()" />
         </v-col>
 
-        <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8">
+        <v-col v-if="form.requiresCountry()" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
           <rc-country-select-with-validation
             v-model="form.address.country"
             :rules="rules.country"
@@ -111,7 +111,7 @@
             @change="onCountryChange()" />
         </v-col>
 
-        <v-col v-if="form.requiresShelterLocation()" cols="12" sm="6" md="8">
+        <v-col v-if="form.requiresShelterLocation()" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
           <v-select-with-validation
             v-model="form.shelterLocation"
             :rules="rules.shelterLocation"
@@ -192,6 +192,16 @@ export default Vue.extend({
     noFixedHome: {
       type: Boolean,
       required: true,
+    },
+
+    hideTitle: {
+      type: Boolean,
+      default: false,
+    },
+
+    compactView: {
+      type: Boolean,
+      default: false,
     },
   },
 

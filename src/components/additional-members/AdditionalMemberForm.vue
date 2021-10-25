@@ -45,7 +45,6 @@
             :no-fixed-home="false"
             :api-key="apiKey"
             :current-address="member.currentAddress"
-            in-household-profile
             @change="$emit('temporary-address-change', $event)" />
         </v-col>
       </v-col>
