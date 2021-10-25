@@ -8,6 +8,7 @@
     hide-dividers
     @click:tab="onClick($event)">
     <rc-router-view-transition />
+    <impact-status-case-file-filtering v-if="showExportValidationImpact" :show.sync="showExportValidationImpact" />
   </page-template>
 </template>
 
@@ -20,12 +21,14 @@ import routes from '@/constants/routes';
 import { PageTemplate } from '@/ui/views/components/layout';
 import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
 import { INavigationTabGroup } from '@/types/interfaces/ui/INavigationTab';
+import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 
 export default mixins(massActions).extend({
   name: 'MassActionsLayout',
   components: {
     RcRouterViewTransition,
     PageTemplate,
+    ImpactStatusCaseFileFiltering,
   },
 
   mixins: [metadata],

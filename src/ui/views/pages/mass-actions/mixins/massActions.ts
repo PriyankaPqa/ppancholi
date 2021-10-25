@@ -17,6 +17,12 @@ export interface IMassActionCards {
 }
 
 export default Vue.extend({
+
+  data() {
+    return {
+      showExportValidationImpact: false,
+    };
+  },
   methods: {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     filterItemsOnLevelOrRole(items: any) {
@@ -57,7 +63,7 @@ export default Vue.extend({
     },
 
     exportImpactValidation() {
-      return false;
+      this.showExportValidationImpact = true;
     },
 
     async importValidationImpact() {

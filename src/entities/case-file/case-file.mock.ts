@@ -116,6 +116,10 @@ export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICase
         streetAddress: '312 Trudeau Drive',
         city: 'Milton',
         postalCode: 'L9T 6J1',
+        country: 'CA',
+        unitSuite: '',
+        longitude: '45546',
+        latitude: '54646',
         provinceCode: {
           translation: {
             en: 'ON',

@@ -100,8 +100,10 @@ describe('massActions', () => {
     });
 
     describe('exportImpactValidation', () => {
-      it('should do nothing', () => {
-        expect(wrapper.vm.exportImpactValidation()).toBe(false);
+      it('should set showExportValidationImpact to true', () => {
+        expect(wrapper.vm.showExportValidationImpact).toBe(false);
+        wrapper.vm.exportImpactValidation();
+        expect(wrapper.vm.showExportValidationImpact).toBe(true);
       });
     });
 

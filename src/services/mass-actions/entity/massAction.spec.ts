@@ -60,5 +60,14 @@ describe('>>> Mass Action Service', () => {
 
       expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload);
     });
+
+    it('should be linked to correct URL for export validation of impact status mass action', async () => {
+      const urlSuffix = 'export-validation-of-impact-records';
+      const payload = { filter: 'filter', search: 'search' };
+
+      await service.exportList(MassActionType.ExportValidationOfImpactStatus, payload);
+
+      expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload);
+    });
   });
 });

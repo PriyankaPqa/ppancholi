@@ -15,6 +15,7 @@
           @click-secondary="onClick(card.onSecondaryClick)" />
       </v-col>
     </v-row>
+    <impact-status-case-file-filtering v-if="showExportValidationImpact" :show.sync="showExportValidationImpact" />
   </v-container>
 </template>
 
@@ -23,11 +24,13 @@ import { RcMenuCard } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
 import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mixins/massActions';
+import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
 
 export default mixins(massActions).extend({
   name: 'MassActionsHome',
 
   components: {
+    ImpactStatusCaseFileFiltering,
     RcMenuCard,
   },
 

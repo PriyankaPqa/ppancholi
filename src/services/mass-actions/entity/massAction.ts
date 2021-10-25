@@ -37,6 +37,9 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     if (massActionType === MassActionType.FinancialAssistance) {
       urlSuffix = 'export-financial-assistance-records';
     }
+    if (massActionType === MassActionType.ExportValidationOfImpactStatus) {
+      urlSuffix = 'export-validation-of-impact-records';
+    }
     return this.http.postFullResponse(`${this.baseUrl}/${urlSuffix}`, payload);
   }
 }

@@ -156,6 +156,10 @@ export interface ICaseFileMetadata extends IEntity {
         city: string;
         postalCode: string;
         provinceCode: IMultilingual;
+        unitSuite: string;
+        longitude: string;
+        latitude: string;
+        country: string;
       }
     },
   },

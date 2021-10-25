@@ -190,18 +190,6 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
         expect(wrapper.vm.filters).toEqual(expected);
       });
     });
-
-    describe('filtersOn', () => {
-      it('should return true if some filters are used', () => {
-        wrapper.vm.userFilters = [{ key: 'name' }];
-        expect(wrapper.vm.filtersOn).toBe(true);
-      });
-
-      it('should return false if no filters are used', () => {
-        wrapper.vm.userFilters = [];
-        expect(wrapper.vm.filtersOn).toBe(false);
-      });
-    });
   });
 
   describe('Methods', () => {
@@ -259,8 +247,6 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
 
     describe('onSubmit', () => {
       it('should redirect to mass action create with filters params, proper mode and total', async () => {
-        wrapper.vm.getCaseIdsFromFilteredList = jest.fn(() => ['1', '2']);
-
         await wrapper.vm.onSubmit();
 
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -274,8 +260,6 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
       });
 
       it('should update show to false', async () => {
-        wrapper.vm.getCaseIdsFromFilteredList = jest.fn(() => ['1', '2']);
-
         await wrapper.vm.onSubmit();
 
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
