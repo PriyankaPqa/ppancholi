@@ -14,21 +14,29 @@
       show-add-button
       @add-button="addProgram"
       @search="search">
+      <template #filter>
+        <filter-toolbar
+          :filter-key="FilterKey.EventPrograms"
+          :filter-options="filterOptions"
+          :count="itemsCount"
+          @update:appliedFilter="onApplyFilter($event)" />
+      </template>
+
       <template #[`item.${customColumns.name}`]="{ item: program }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
           data-test="programDetail-link"
-          :to="getProgramDetailsRoute(program)">
-          {{ $m(program.name) }}
+          :to="getProgramDetailsRoute(program.entity)">
+          {{ (program.entity && $m(program.entity.name)) || '-' }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.status}`]="{ item: program }">
-        <status-chip status-name="Status" :status="program.status" />
+        <status-chip v-if="(program.entity && program.entity.status)" status-name="Status" :status="program.entity.status" />
       </template>
 
       <template #[`item.${customColumns.edit}`]="{ item: program }">
-        <v-btn icon :to="getProgramEditRoute(program)" data-test="editProgram-link">
+        <v-btn icon :to="getProgramEditRoute(program.entity)" data-test="editProgram-link">
           <v-icon>
             mdi-pencil
           </v-icon>
@@ -41,14 +49,20 @@
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
 import {
-  RcDataTable,
+  RcDataTable, IFilterSettings,
 } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
+import _isEmpty from 'lodash/isEmpty';
+import { EFilterType } from '@crctech/component-library/src/types';
 import routes from '@/constants/routes';
+import { FilterKey } from '@/entities/user-account';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { IAzureSearchParams } from '@/types';
+import { Status } from '@/entities/base';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IProgramCombined, IProgramEntity } from '@/entities/program';
+import helpers from '@/ui/helpers/helpers';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'ProgramsHome',
@@ -56,6 +70,7 @@ export default mixins(TablePaginationSearchMixin).extend({
   components: {
     RcDataTable,
     StatusChip,
+    FilterToolbar,
   },
 
   props: {
@@ -76,6 +91,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortBy: [`Entity/Name/Translation/${this.$i18n.locale}`],
         sortDesc: [true],
       },
+      FilterKey,
     };
   },
 
@@ -83,7 +99,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     customColumns(): Record<string, string> {
       return {
         name: `Entity/Name/Translation/${this.$i18n.locale}`,
-        status: 'Entity/Status',
+        status: `Metadata/ProgramStatusName/Translation/${this.$i18n.locale}`,
         edit: 'edit',
       };
     },
@@ -125,19 +141,34 @@ export default mixins(TablePaginationSearchMixin).extend({
       };
     },
 
-    tableData(): IProgramEntity[] {
-      return this.$storage.program.getters.getByIds(this.searchResultIds).map((combined: IProgramCombined) => combined.entity);
+    tableData(): IProgramCombined[] {
+      return this.$storage.program.getters.getByIds(this.searchResultIds);
+    },
+
+    filterOptions(): Array<IFilterSettings> {
+      return [
+        {
+          key: this.customColumns.name,
+          type: EFilterType.Text,
+          label: this.$t('common.name') as string,
+        },
+        {
+          key: this.customColumns.status,
+          type: EFilterType.MultiSelect,
+          label: this.$t('common.status') as string,
+          items: helpers.enumToTranslatedCollection(Status, 'enums.Status', true),
+        },
+      ];
     },
   },
 
   methods: {
     async fetchData(params: IAzureSearchParams) {
-      params.filter = {
-        'Entity/EventId': this.id,
-      };
+      const filter = _isEmpty(params.filter) ? {} : params.filter;
+
       const res = await this.$storage.program.actions.search({
         search: params.search,
-        filter: params.filter,
+        filter: { ...filter as Record<string, unknown>, 'Entity/EventId': this.id },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,

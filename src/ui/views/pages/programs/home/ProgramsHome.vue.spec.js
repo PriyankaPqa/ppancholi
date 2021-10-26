@@ -1,4 +1,7 @@
 import { RcDataTable } from '@crctech/component-library';
+import { EFilterType } from '@crctech/component-library/src/types';
+import { Status } from '@/entities/base';
+import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
@@ -111,7 +114,7 @@ describe('ProgramsHome.vue', () => {
 
         const expectedColumns = {
           name: 'Entity/Name/Translation/en',
-          status: 'Entity/Status',
+          status: 'Metadata/ProgramStatusName/Translation/en',
           edit: 'edit',
         };
 
@@ -178,6 +181,40 @@ describe('ProgramsHome.vue', () => {
         });
       });
     });
+
+    describe('tableData', () => {
+      it('returns the correct value', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'event-id',
+          },
+          mocks: {
+            $storage: mockStorage(),
+          },
+        });
+
+        expect(wrapper.vm.tableData).toEqual(mockStorage().program.getters.getByIds());
+      });
+    });
+
+    describe('filterOptions', () => {
+      it('returns the correct value', () => {
+        expect(wrapper.vm.filterOptions).toEqual([
+          {
+            key: 'Entity/Name/Translation/en',
+            type: EFilterType.Text,
+            label: 'common.name',
+          },
+          {
+            key: 'Metadata/ProgramStatusName/Translation/en',
+            type: EFilterType.MultiSelect,
+            label: 'common.status',
+            items: helpers.enumToTranslatedCollection(Status, 'enums.Status', true),
+          },
+        ]);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -206,7 +243,7 @@ describe('ProgramsHome.vue', () => {
 
       beforeEach(() => {
         params = {
-          search: 'query', filter: 'filter', top: 10, skip: 10, orderBy: 'name asc',
+          search: 'query', filter: {}, top: 10, skip: 10, orderBy: 'name asc',
         };
       });
 
@@ -215,7 +252,9 @@ describe('ProgramsHome.vue', () => {
 
         expect(wrapper.vm.$storage.program.actions.search).toHaveBeenCalledWith({
           search: params.search,
-          filter: params.filter,
+          filter: {
+            'Entity/EventId': 'event-id',
+          },
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
