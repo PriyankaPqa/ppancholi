@@ -65,6 +65,10 @@ import {
 } from './branding';
 
 import {
+  IStorageMake as IFeatureMakeStorage,
+  IStorageMakeMock as IFeatureMakeStorageMock,
+} from './feature';
+import {
   IStorageMake as ITenantSettingsMakeStorage,
   IStorageMakeMock as ITenantSettingsMakeStorageMock,
 } from './tenantSettings';
@@ -88,6 +92,7 @@ export interface IStorage {
   userAccount: IUserAccountMakeStorage;
   massAction: IMassActionMakeStorage;
   branding: IBrandingMakeStorage;
+  feature: IFeatureMakeStorage;
   tenantSettings: ITenantSettingsMakeStorage;
 }
 
@@ -110,5 +115,6 @@ export interface IStorageMock {
   userAccount: IUserAccountMakeStorageMock;
   massAction: IMassActionMakeStorageMock;
   branding: IBrandingMakeStorageMock;
+  feature: IFeatureMakeStorageMock;
   tenantSettings: ITenantSettingsMakeStorageMock;
 }

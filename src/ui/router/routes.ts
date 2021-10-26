@@ -5,6 +5,7 @@ import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
 import { USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, BRANDING_ENTITIES } from '@/constants/vuex-modules';
 import Routes from '../../constants/routes';
+import { Features } from '@/entities/feature';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');
@@ -463,45 +464,45 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.massActions.home.path,
                 name: Routes.massActions.home.name,
                 component: MassActionsHome,
-                meta: { level: 'level6', roles: ['contributorIM', 'contributorFinance'] },
+                meta: { level: 'level6', roles: ['contributorIM', 'contributorFinance'], feature: Features.MassAction },
               },
               {
                 path: Routes.massActions.financialAssistance.home.path,
                 name: Routes.massActions.financialAssistance.home.name,
                 component: MassActionsFinancialAssistanceHome,
-                meta: { level: 'level6' },
+                meta: { level: 'level6', feature: Features.MassAction },
               },
               {
                 path: Routes.massActions.financialAssistance.create.path,
                 name: Routes.massActions.financialAssistance.create.name,
                 component: FinancialAssistanceCreate,
-                meta: { level: 'level6' },
+                meta: { level: 'level6', feature: Features.MassAction },
                 props: true,
               },
               {
                 path: Routes.massActions.financialAssistance.details.path,
                 name: Routes.massActions.financialAssistance.details.name,
                 component: MassActionsFinancialAssistanceDetails,
-                meta: { level: 'level6' },
+                meta: { level: 'level6', feature: Features.MassAction },
                 props: true,
               },
               {
                 path: Routes.massActions.importValidationStatus.home.path,
                 name: Routes.massActions.importValidationStatus.home.name,
                 component: MassActionsImportValidationStatusHome,
-                meta: { level: 'level6', roles: ['contributorIM'] },
+                meta: { level: 'level6', roles: ['contributorIM'], feature: Features.MassAction },
               },
               {
                 path: Routes.massActions.importValidationStatus.create.path,
                 name: Routes.massActions.importValidationStatus.create.name,
                 component: MassActionsImportValidationStatusCreate,
-                meta: { level: 'level6', roles: ['contributorIM'] },
+                meta: { level: 'level6', roles: ['contributorIM'], feature: Features.MassAction },
               },
               {
                 path: Routes.massActions.importValidationStatus.details.path,
                 name: Routes.massActions.importValidationStatus.details.name,
                 component: MassActionsImportValidationStatusDetails,
-                meta: { level: 'level6', roles: ['contributorIM'] },
+                meta: { level: 'level6', roles: ['contributorIM'], feature: Features.MassAction },
                 props: true,
               },
             ],

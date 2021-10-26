@@ -42,6 +42,7 @@ import { IFinancialAssistancePaymentMetadata } from '@/entities/financial-assist
 import { IFinancialAssistancePaymentEntityState } from './modules/financial-assistance-payments/financialAssistancePaymentEntity.types';
 
 import { IBrandingEntityState } from '@/store/modules/branding/brandingEntity.types';
+import { IFeatureEntityState } from '@/store/modules/feature/featureEntity.types';
 import { ITenantSettingsEntityState } from './modules/tenantSettings/tenantSettingsEntity.types';
 
 export interface IRootState {
@@ -75,6 +76,7 @@ export interface IRootState {
   [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES]?: IFinancialAssistancePaymentEntityState,
   [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]?: IBaseState<IFinancialAssistancePaymentMetadata>,
   [vuexModule.BRANDING_ENTITIES]?: IBrandingEntityState,
+  [vuexModule.FEATURE_ENTITIES]?: IFeatureEntityState,
   [vuexModule.TENANT_SETTINGS_ENTITIES]?: ITenantSettingsEntityState,
 }
 

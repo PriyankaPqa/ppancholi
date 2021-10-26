@@ -1,10 +1,12 @@
 import Vue from 'vue';
-import VueRouter, { NavigationGuardNext, Route } from 'vue-router';
+import VueRouter, { Route } from 'vue-router';
 import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import store from '@/store/store';
 import { i18n } from '@/ui/plugins/i18n';
+import { FEATURE_ENTITIES } from '@/constants/vuex-modules';
+import { IFeatureEntity } from '@/entities/feature';
 
 Vue.use(VueRouter);
 
@@ -45,7 +47,26 @@ const authenticationGuard = async (to: Route) => {
   }
 };
 
-const authorizationGuard = async (to: Route, from: Route, next: NavigationGuardNext) => {
+const featureGuard = async (to: Route) => {
+  let featureEnabled = true;
+  const features: IFeatureEntity[] = store.getters[`${FEATURE_ENTITIES}/getAll`];
+  if (!features?.length) {
+    await store.dispatch(`${FEATURE_ENTITIES}/fetchAll`);
+  }
+
+  if (to.meta.feature) {
+    const feature: IFeatureEntity = store.getters[`${FEATURE_ENTITIES}/feature`](to.meta.feature);
+    featureEnabled = feature?.enabled;
+  }
+
+  if (!featureEnabled) {
+    Vue.toasted.global.error(i18n.t('error.feature_disabled'));
+  }
+
+  return featureEnabled;
+};
+
+const authorizationGuard = async (to: Route) => {
   if (to.matched.some((record) => record.meta.requiresAuthorization)) {
     let hasProperLevel;
     let hasProperRole;
@@ -62,15 +83,13 @@ const authorizationGuard = async (to: Route, from: Route, next: NavigationGuardN
       hasProperRole = false;
     }
 
-    if (hasProperLevel || hasProperRole) {
-      next();
-    } else {
-      next(from);
+    if ((!hasProperLevel && !hasProperRole)) {
       Vue.toasted.global.error(i18n.t('error.no_permission'));
+      return false;
     }
-  } else {
-    next();
+    return true;
   }
+  return true;
 };
 
 router.beforeEach(async (to, from, next) => {
@@ -78,7 +97,14 @@ router.beforeEach(async (to, from, next) => {
 
   try {
     await authenticationGuard(to);
-    await authorizationGuard(to, from, next);
+    const authorized = await authorizationGuard(to);
+
+    if (authorized) {
+      const featureEnabled = await featureGuard(to);
+      featureEnabled ? next() : next(from);
+    } else {
+      next(from);
+    }
   } catch (e) {
     // If there is an error, redirect to the login error page
     next({

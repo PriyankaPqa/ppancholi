@@ -50,6 +50,7 @@ import routes from '@/constants/routes';
 import { ui } from '@/constants/ui';
 import { INavigationTab } from '@/types';
 import { NO_ROLE } from '@/entities/user';
+import { Features } from '@/entities/feature';
 
 export default Vue.extend({
   name: 'LeftMenu',
@@ -123,6 +124,7 @@ export default Vue.extend({
           exact: false,
           level: 'level6',
           roles: ['contributorIM', 'contributorFinance'],
+          feature: Features.MassAction,
         },
         {
           to: routes.assessments.home.name,
@@ -163,6 +165,7 @@ export default Vue.extend({
       return this.items.filter((item) => {
         let levelCheck = false;
         let rolesCheck = false;
+        let featureCheck = true;
 
         if (item.level) {
           levelCheck = this.$hasLevel(item.level);
@@ -171,7 +174,12 @@ export default Vue.extend({
         if (item.roles) {
           rolesCheck = item.roles.some((r: string) => this.$hasRole(r));
         }
-        return levelCheck || rolesCheck;
+
+        if (item.feature) {
+          featureCheck = this.$storage.feature.getters.feature(item.feature)?.enabled;
+        }
+
+        return (levelCheck || rolesCheck) && featureCheck;
       });
     },
 

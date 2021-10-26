@@ -1,4 +1,5 @@
 import { TranslateResult } from 'vue-i18n';
+import { Features } from '../../../entities/feature/feature.types';
 
 export interface INavigationTab {
   text: string | TranslateResult;
@@ -9,6 +10,7 @@ export interface INavigationTab {
   exact?: boolean;
   level?: string;
   roles?: string[];
+  feature?: Features;
   active?: boolean;
   onClick?: string;
 }

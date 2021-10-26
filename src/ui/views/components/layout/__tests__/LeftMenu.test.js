@@ -107,6 +107,78 @@ describe('LeftMenu.vue', () => {
         });
         expect(wrapper.vm.availableItems).toMatchObject([items[1]]);
       });
+
+      it('does not return items with feature disabled', () => {
+        const items = [
+          {
+            to: 'routes.home.name',
+            icon: 'mdi-home',
+            text: 'leftMenu.home_title',
+            test: 'home',
+            level: 'level6',
+            roles: ['contributorIM'],
+            feature: 'feature',
+          },
+        ];
+
+        const wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          computed: {
+            items() {
+              return items;
+            },
+          },
+          mocks: {
+            $storage: {
+              feature: {
+                getters: {
+                  feature: jest.fn(() => ({ enabled: false })),
+                },
+              },
+            },
+            $hasLevel: jest.fn(() => true),
+            $hasRole: jest.fn(() => true),
+          },
+        });
+
+        expect(wrapper.vm.availableItems).toEqual([]);
+      });
+
+      it('returns items with feature enabled', () => {
+        const items = [
+          {
+            to: 'routes.home.name',
+            icon: 'mdi-home',
+            text: 'leftMenu.home_title',
+            test: 'home',
+            level: 'level6',
+            roles: ['contributorIM'],
+            feature: 'feature',
+          },
+        ];
+
+        const wrapper = shallowMount(Component, {
+          localVue: createLocalVue(),
+          computed: {
+            items() {
+              return items;
+            },
+          },
+          mocks: {
+            $storage: {
+              feature: {
+                getters: {
+                  feature: jest.fn(() => ({ enabled: true })),
+                },
+              },
+            },
+            $hasLevel: jest.fn(() => true),
+            $hasRole: jest.fn(() => true),
+          },
+        });
+
+        expect(wrapper.vm.availableItems).toEqual(items);
+      });
     });
 
     describe('approvalRedirection', () => {
