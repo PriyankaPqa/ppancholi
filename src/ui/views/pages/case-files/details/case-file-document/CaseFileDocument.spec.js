@@ -1,3 +1,4 @@
+import { EFilterType } from '@crctech/component-library/src/types';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseFileDocument, DocumentStatus } from '@/entities/case-file-document';
 import { mockOptionItemData } from '@/entities/optionItem';
@@ -20,10 +21,12 @@ describe('CaseFileDocument.vue', () => {
   storage = {
     caseFileDocument: {
       getters: {
+        getByIds: jest.fn(() => [document]),
         categories: jest.fn(() => options),
         getByCaseFile: jest.fn(() => [document]),
       },
       actions: {
+        search: jest.fn(),
         fetchCategories: jest.fn(() => options),
         fetchAll: jest.fn(() => [document]),
         deactivate: jest.fn(() => document),
@@ -48,14 +51,24 @@ describe('CaseFileDocument.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       computed: {
-        canEdit() { return canEdit; },
-        canAdd() { return canAdd; },
-        canDelete() { return canDelete; },
-        canDownload() { return canDownload; },
-        caseFileDocuments() {
+        canEdit() {
+          return canEdit;
+        },
+        canAdd() {
+          return canAdd;
+        },
+        canDelete() {
+          return canDelete;
+        },
+        canDownload() {
+          return canDownload;
+        },
+        caseFileDocumentsMapped() {
           return [mockDocumentMapped];
         },
-        caseFileId() { return 'mock-id'; },
+        caseFileId() {
+          return 'mock-id';
+        },
       },
       mocks: { $storage: storage },
     });
@@ -70,9 +83,10 @@ describe('CaseFileDocument.vue', () => {
 
       it('should be bound to the items', async () => {
         mountWrapper();
-        const test = wrapper.vm.caseFileDocuments[0];
-        expect(wrapper.findDataTest('case-file-documents-table').props('items').length).toEqual(wrapper.vm.caseFileDocuments.length);
-        Object.keys(wrapper.vm.customColumns).filter((c) => c !== 'edit' && c !== 'preview' && c !== 'download' && c !== 'delete')
+        const test = wrapper.vm.caseFileDocumentsMapped[0];
+        expect(wrapper.findDataTest('case-file-documents-table').props('items').length).toEqual(wrapper.vm.caseFileDocumentsMapped.length);
+        Object.keys(wrapper.vm.customColumns)
+          .filter((c) => c !== 'edit' && c !== 'preview' && c !== 'download' && c !== 'delete')
           .forEach((c) => expect(Object.keys(test)).toContain(c));
       });
     });
@@ -167,14 +181,13 @@ describe('CaseFileDocument.vue', () => {
           store: {
             modules: {
               user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
+                state: {
+                  oid: '7',
+                  email: 'test@test.ca',
+                  family_name: 'Joe',
+                  given_name: 'Pink',
+                  roles: ['contributorIM'],
+                },
               },
             },
           },
@@ -216,14 +229,13 @@ describe('CaseFileDocument.vue', () => {
           store: {
             modules: {
               user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
+                state: {
+                  oid: '7',
+                  email: 'test@test.ca',
+                  family_name: 'Joe',
+                  given_name: 'Pink',
+                  roles: ['contributorIM'],
+                },
               },
             },
           },
@@ -296,14 +308,13 @@ describe('CaseFileDocument.vue', () => {
           store: {
             modules: {
               user: {
-                state:
-                  {
-                    oid: '7',
-                    email: 'test@test.ca',
-                    family_name: 'Joe',
-                    given_name: 'Pink',
-                    roles: ['contributorIM'],
-                  },
+                state: {
+                  oid: '7',
+                  email: 'test@test.ca',
+                  family_name: 'Joe',
+                  given_name: 'Pink',
+                  roles: ['contributorIM'],
+                },
               },
             },
           },
@@ -377,7 +388,7 @@ describe('CaseFileDocument.vue', () => {
           {
             text: 'caseFile.document.status',
             sortable: true,
-            value: wrapper.vm.customColumns.documentStatus,
+            value: wrapper.vm.customColumns.documentStatusName,
           },
           {
             text: '',
@@ -416,19 +427,21 @@ describe('CaseFileDocument.vue', () => {
           {
             text: 'caseFile.document.status',
             sortable: true,
-            value: wrapper.vm.customColumns.documentStatus,
+            value: wrapper.vm.customColumns.documentStatusName,
           },
           {
             text: '',
             sortable: false,
             value: wrapper.vm.customColumns.preview,
             width: '5%',
-          }, {
+          },
+          {
             text: '',
             sortable: false,
             value: wrapper.vm.customColumns.download,
             width: '5%',
-          }, {
+          },
+          {
             text: '',
             sortable: false,
             value: wrapper.vm.customColumns.edit,
@@ -459,19 +472,21 @@ describe('CaseFileDocument.vue', () => {
           {
             text: 'caseFile.document.status',
             sortable: true,
-            value: wrapper.vm.customColumns.documentStatus,
+            value: wrapper.vm.customColumns.documentStatusName,
           },
           {
             text: '',
             sortable: false,
             value: wrapper.vm.customColumns.preview,
             width: '5%',
-          }, {
+          },
+          {
             text: '',
             sortable: false,
             value: wrapper.vm.customColumns.download,
             width: '5%',
-          }, {
+          },
+          {
             text: '',
             sortable: false,
             value: wrapper.vm.customColumns.edit,
@@ -498,16 +513,17 @@ describe('CaseFileDocument.vue', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
           localVue,
-          computed: {
-            caseFileId() { return 'mock-id'; },
-          },
           mocks: {
             $storage: storage,
           },
         });
       });
-      it('calls the getByCaseFile getter and sets the result into caseFileDocuments, extracting the properties', async () => {
-        expect(storage.caseFileDocument.getters.getByCaseFile).toHaveBeenCalledWith('mock-id');
+      it('calls the getByIds getter', async () => {
+        await wrapper.setData({
+          searchResultIds: ['mock-id'],
+        });
+
+        expect(storage.caseFileDocument.getters.getByIds).toHaveBeenCalledWith(['mock-id']);
       });
 
       it('return the mapped documents', async () => {
@@ -516,54 +532,69 @@ describe('CaseFileDocument.vue', () => {
           {
             name: document.entity.name,
             id: document.entity.id,
-            category: options[0].name.translation.en,
+            category: wrapper.vm.$m(document.metadata.documentCategoryName),
             created: moment(document.entity.created),
             documentStatus: document.entity.documentStatus,
-            documentStatusName: `caseFile.document.status.${document.entity.documentStatus === DocumentStatus.Past ? 'Past' : 'Current'}`,
+            documentStatusName: wrapper.vm.$m(document.metadata.documentStatusName),
             entity: document.entity,
           },
         ]);
       });
     });
 
-    describe('caseFileDocuments', () => {
-      it('returns the sorted and filtered documents', () => {
-        const doc1 = { name: 'z' };
-        const doc2 = { name: 'a' };
-        const unorderedDocuments = [doc1, doc2];
+    describe('filterOptions', () => {
+      it('returns the correct value', () => {
+        const customColumns = {
+          name: 'name',
+          category: 'category',
+          created: 'created',
+          documentStatus: 'documentStatus',
+          documentStatusName: 'documentStatusName',
+          preview: 'preview',
+          download: 'download',
+          edit: 'edit',
+          delete: 'delete',
+        };
 
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            caseFileDocumentsMapped() { return unorderedDocuments; },
+            customColumns() {
+              return customColumns;
+            },
           },
           mocks: {
             $storage: storage,
           },
         });
-        wrapper.vm.options = { sortBy: ['name'], sortDesc: [false] };
-        expect(wrapper.vm.caseFileDocuments).toEqual([doc2, doc1]);
-      });
 
-      it('calls filterCollectionByValue if there is a filter ', () => {
-        const doc1 = { name: 'z' };
-        const doc2 = { name: 'a' };
-        const unorderedDocuments = [doc1, doc2];
-        jest.spyOn(helpers, 'filterCollectionByValue').mockImplementation(() => unorderedDocuments);
-
-        wrapper = shallowMount(Component, {
-          localVue,
-          data() {
-            return {
-              filter: 'foo',
-            };
+        expect(wrapper.vm.filterOptions).toEqual([
+          {
+            key: customColumns.name,
+            type: EFilterType.Text,
+            label: 'common.name',
           },
-          mocks: {
-            $storage: storage,
+          {
+            key: customColumns.category,
+            type: EFilterType.MultiSelect,
+            label: 'caseFile.document.category',
+            items: wrapper.vm.$storage.caseFileDocument.getters
+              .categories(false)
+              .map((c) => ({ text: wrapper.vm.$m(c.name), value: wrapper.vm.$m(c.name) }))
+              .sort((a, b) => a.value.localeCompare(b.value)),
           },
-        });
-        wrapper.vm.options = { sortBy: ['name'], sortDesc: [false] };
-        expect(wrapper.vm.caseFileDocuments).toEqual([doc2, doc1]);
+          {
+            key: customColumns.created,
+            type: EFilterType.Date,
+            label: 'caseFile.document.dateAdded',
+          },
+          {
+            key: customColumns.documentStatusName,
+            type: EFilterType.MultiSelect,
+            label: 'caseFile.document.status',
+            items: helpers.enumToTranslatedCollection(DocumentStatus, 'enums.DocumentStatus', true),
+          },
+        ]);
       });
     });
   });
@@ -574,29 +605,57 @@ describe('CaseFileDocument.vue', () => {
         mountWrapper();
         expect(storage.caseFileDocument.actions.fetchCategories).toHaveBeenCalled();
       });
-
-      it('should call fetchAll', async () => {
-        mountWrapper();
-        await wrapper.vm.$options.created.forEach((hook) => {
-          hook.call(wrapper.vm);
-        });
-
-        expect(storage.caseFileDocument.actions.fetchAll).toHaveBeenCalledWith({ caseFileId: 'mock-id' });
-      });
     });
   });
 
   describe('Methods', () => {
-    describe('search', () => {
-      it('sets the filter', () => {
-        const searchParams = {
-          search: 'abcd', orderBy: 'my order by', top: 10, skip: 10,
+    describe('fetchData', () => {
+      it('calls the search action', async () => {
+        const params = {
+          filter: {
+            and: {
+              'Entity/Name': 'a',
+            },
+          },
+          orderBy: 'Entity/Name asc',
+          search: '',
+          skip: 0,
+          top: 10,
         };
 
-        mountWrapper();
-        wrapper.vm.search(searchParams);
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            caseFileId() {
+              return 'caseFileId';
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
 
-        expect(wrapper.vm.filter).toEqual('abcd');
+        await wrapper.vm.fetchData(params);
+
+        expect(wrapper.vm.$storage.caseFileDocument.actions.search).toHaveBeenCalledWith(
+          {
+            search: params.search,
+            filter: {
+              and: {
+                'Entity/Name': 'a',
+                'Entity/CaseFileId': 'caseFileId',
+              },
+            },
+            top: 999,
+            skip: params.skip,
+            orderBy: params.orderBy,
+            count: true,
+            queryType: 'full',
+            searchMode: 'all',
+          },
+          null,
+          true,
+        );
       });
     });
 
@@ -605,16 +664,14 @@ describe('CaseFileDocument.vue', () => {
         mountWrapper();
         await wrapper.vm.deleteDocument(mockDocumentMapped);
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
-        expect(storage.caseFileDocument.actions.deactivate)
-          .toHaveBeenCalledWith({ id: mockDocumentMapped.id, caseFileId: wrapper.vm.caseFileId });
+        expect(storage.caseFileDocument.actions.deactivate).toHaveBeenCalledWith({ id: mockDocumentMapped.id, caseFileId: wrapper.vm.caseFileId });
       });
       it('doesnt call deactivate if no confirmation', async () => {
         mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.deleteDocument(mockDocumentMapped);
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
-        expect(storage.caseFileDocument.actions.deactivate)
-          .toHaveBeenCalledTimes(0);
+        expect(storage.caseFileDocument.actions.deactivate).toHaveBeenCalledTimes(0);
       });
     });
 
@@ -632,22 +689,6 @@ describe('CaseFileDocument.vue', () => {
         window.open = jest.fn();
         wrapper.vm.preview(document);
         expect(storage.caseFileDocument.actions.downloadDocumentAsUrl).toHaveBeenCalledWith(document.entity, false);
-      });
-    });
-
-    describe('getCategory', () => {
-      it('returns optionitem from storage by id', async () => {
-        document.entity.category = { optionItemId: 'myFakeId' };
-        mountWrapper();
-        options[1].id = 'myFakeId';
-        expect(wrapper.vm.getCategory(document.entity)).toEqual(options[1].name.translation.en);
-      });
-
-      it('returns empty when null', async () => {
-        document.entity.category = null;
-        mountWrapper();
-        options[1].id = 'myFakeId';
-        expect(wrapper.vm.getCategory(document.entity)).toEqual('');
       });
     });
 

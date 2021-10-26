@@ -2,8 +2,8 @@
   <div class="pa-4">
     <rc-data-table
       data-test="case-file-documents-table"
-      :items="caseFileDocuments"
-      :count="caseFileDocuments.length"
+      :items="caseFileDocumentsMapped"
+      :count="itemsCount"
       :show-help="true"
       :help-link="$t('zendesk.help_link.case_document_list')"
       :labels="labels"
@@ -14,6 +14,14 @@
       :show-add-button="canAdd"
       @add-button="addCaseDocument"
       @search="search">
+      <template #filter>
+        <filter-toolbar
+          :filter-key="FilterKey.Documents"
+          :filter-options="filterOptions"
+          :count="itemsCount"
+          @update:appliedFilter="onApplyFilter($event)" />
+      </template>
+
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
@@ -31,7 +39,7 @@
         {{ item.created.format('ll') }}
       </template>
 
-      <template #[`item.${customColumns.documentStatus}`]="{ item }">
+      <template #[`item.${customColumns.documentStatusName}`]="{ item }">
         <status-chip status-name="DocumentStatus" :status="item.documentStatus" />
       </template>
 
@@ -72,14 +80,18 @@
 
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
-import _orderBy from 'lodash/orderBy';
 import {
+  IFilterSettings,
   RcDataTable,
 } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
+import { EFilterType } from '@crctech/component-library/src/types';
+import isEmpty from 'lodash/isEmpty';
 import moment from '@/ui/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined } from '@/entities/case-file-document';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import { FilterKey } from '@/entities/user-account';
 import { IAzureSearchParams } from '@/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
@@ -99,15 +111,16 @@ export default mixins(TablePaginationSearchMixin).extend({
   components: {
     RcDataTable,
     StatusChip,
+    FilterToolbar,
   },
 
   data() {
     return {
       options: {
-        sortBy: ['name'],
+        sortBy: ['Entity/Name'],
         sortDesc: [false],
       },
-      filter: '',
+      FilterKey,
     };
   },
 
@@ -133,33 +146,24 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     caseFileDocumentsMapped():caseFileDocumentsMapped[] {
-      const documentsByCaseFile = this.$storage.caseFileDocument.getters.getByCaseFile(this.caseFileId) || [];
-      return documentsByCaseFile.map((d: ICaseFileDocumentCombined) => ({
-        name: d.entity.name,
-        id: d.entity.id,
-        category: this.getCategory(d.entity),
-        documentStatus: d.entity.documentStatus,
-        documentStatusName: this.$t(`caseFile.document.status.${DocumentStatus[d.entity.documentStatus]}`),
-        created: moment(d.entity.created),
+      const documents = this.$storage.caseFileDocument.getters.getByIds(this.searchResultIds);
+      return documents.map((d: ICaseFileDocumentCombined) => ({
+        name: d.entity?.name || '-',
+        id: d.entity?.id,
+        category: this.$m(d.metadata?.documentCategoryName) || '-',
+        documentStatus: d.entity?.documentStatus || '-',
+        documentStatusName: this.$m(d.metadata?.documentStatusName) || '-',
+        created: moment(d.entity?.created) || '-',
         entity: d.entity,
       }));
     },
 
-    caseFileDocuments(): caseFileDocumentsMapped[] {
-      let documents = this.caseFileDocumentsMapped;
-      if (this.filter) {
-        documents = helpers.filterCollectionByValue(documents, this.filter, false, Object.values(this.customColumns));
-      }
-      return _orderBy(documents, this.options.sortBy[0], this.options.sortDesc[0] ? 'desc' : 'asc');
-    },
-
     customColumns(): Record<string, string> {
       return {
-        name: 'name',
-        category: 'category',
-        created: 'created',
-        documentStatus: 'documentStatus',
-        documentStatusName: 'documentStatusName',
+        name: 'Entity/Name',
+        category: `Metadata/DocumentCategoryName/Translation/${this.$i18n.locale}`,
+        created: 'Entity/Created',
+        documentStatusName: `Metadata/DocumentStatusName/Translation/${this.$i18n.locale}`,
         preview: 'preview',
         download: 'download',
         edit: 'edit',
@@ -188,7 +192,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         {
           text: this.$t('caseFile.document.status') as string,
           sortable: true,
-          value: this.customColumns.documentStatus,
+          value: this.customColumns.documentStatusName,
         },
         {
           text: '',
@@ -228,10 +232,40 @@ export default mixins(TablePaginationSearchMixin).extend({
       return headers;
     },
 
+    filterOptions(): Array<IFilterSettings> {
+      return [
+        {
+          key: this.customColumns.name,
+          type: EFilterType.Text,
+          label: this.$t('common.name') as string,
+        },
+        {
+          key: this.customColumns.category,
+          type: EFilterType.MultiSelect,
+          label: this.$t('caseFile.document.category') as string,
+          items: this.$storage.caseFileDocument.getters
+            .categories(false)
+            .map((c) => ({ text: this.$m(c.name), value: this.$m(c.name) }))
+            .sort((a, b) => a.value.localeCompare(b.value)),
+        },
+        {
+          key: this.customColumns.created,
+          type: EFilterType.Date,
+          label: this.$t('caseFile.document.dateAdded') as string,
+        },
+        {
+          key: this.customColumns.documentStatusName,
+          type: EFilterType.MultiSelect,
+          label: this.$t('caseFile.document.status') as string,
+          items: helpers.enumToTranslatedCollection(DocumentStatus, 'enums.DocumentStatus', true),
+        },
+      ];
+    },
+
     labels(): Record<string, unknown> {
       return {
         header: {
-          title: `${this.$t('caseFile.document.title')} (${this.caseFileDocuments.length})`,
+          title: `${this.$t('caseFile.document.title')} (${this.itemsCount})`,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };
@@ -240,18 +274,31 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   async created() {
     await this.$storage.caseFileDocument.actions.fetchCategories();
-    await this.$storage.caseFileDocument.actions.fetchAll({ caseFileId: this.caseFileId });
   },
 
   methods: {
-    search(searchParams?: IAzureSearchParams) {
-      this.filter = searchParams?.search;
-    },
+    async fetchData(params: IAzureSearchParams) {
+      const caseFileFilter = {
+        'Entity/CaseFileId': this.caseFileId,
+      };
 
-    getCategory(item: ICaseFileDocumentEntity): string {
-      if (!item?.category?.optionItemId) return '';
-      const opt = this.$storage.caseFileDocument.getters.categories(false).find((c) => c.id === item.category.optionItemId);
-      return opt ? this.$m(opt.name) : '';
+      if (isEmpty(params.filter)) {
+        params.filter = caseFileFilter;
+      } else {
+        (params.filter as Record<string, unknown>).and = Object.assign((params.filter as Record<string, unknown>).and, caseFileFilter);
+      }
+
+      const res = await this.$storage.caseFileDocument.actions.search({
+        search: params.search,
+        filter: params.filter,
+        top: 999,
+        skip: params.skip,
+        orderBy: params.orderBy,
+        count: true,
+        queryType: 'full',
+        searchMode: 'all',
+      }, null, true);
+      return res;
     },
 
     addCaseDocument() {
