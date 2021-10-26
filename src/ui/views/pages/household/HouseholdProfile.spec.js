@@ -637,6 +637,23 @@ describe('HouseholdProfile.vue', () => {
       });
     });
 
+    describe('navigateBack', () => {
+      it('should call router back method to new instance of member', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.$router.back = jest.fn();
+        wrapper.vm.navigateBack();
+        expect(wrapper.vm.$router.back).toHaveBeenCalledTimes(1);
+      });
+    });
+
     describe('editAddress', () => {
       it('it show edit household address dialog', async () => {
         wrapper = shallowMount(Component, {

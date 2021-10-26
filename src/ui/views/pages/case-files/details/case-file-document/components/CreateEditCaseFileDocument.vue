@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
+  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
     <page-template :loading="documentLoading" :show-left-menu="false">
       <rc-page-content
         :title="isEditMode ? $t('document.edit.title') : $t('document.add.title')">
@@ -16,7 +16,7 @@
         </template>
       </rc-page-content>
     </page-template>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang="ts">

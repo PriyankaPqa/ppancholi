@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="verifyIdentity" v-slot="{ pristine, failed }" slim>
+  <validation-observer ref="verifyIdentity" v-slot="{ pristine, failed }" slim>
     <rc-dialog
       show-help
       :help-link="helpLink"
@@ -23,7 +23,7 @@
                   {{ $t('caseFileDetail.verifyIdentityDialog.status') }}
                 </div>
                 <div class="status-radio-container">
-                  <ValidationProvider v-slot="{ errors }" :rules="rules.status">
+                  <validation-provider v-slot="{ errors }" :rules="rules.status">
                     <v-radio-group
                       v-model="form.status"
                       :error-messages="errors"
@@ -54,7 +54,7 @@
                         :label="$t('caseFile.beneficiaryIdentityVerificationStatus.NotVerified')"
                         :value="status.NotVerified" />
                     </v-radio-group>
-                  </ValidationProvider>
+                  </validation-provider>
                 </div>
               </div>
             </v-col>
@@ -93,7 +93,7 @@
         </v-form>
       </div>
     </rc-dialog>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang="ts">

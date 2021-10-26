@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
+  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
     <page-template :loading="programLoading" :show-left-menu="false">
       <rc-page-content
         :title="isEditMode ? $t('event.programManagement.updateProgram') : $t('event.programManagement.addNewProgram')"
@@ -18,7 +18,7 @@
         </template>
       </rc-page-content>
     </page-template>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang="ts">

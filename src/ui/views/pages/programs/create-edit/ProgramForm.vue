@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <ValidationObserver ref="form">
+    <validation-observer ref="form">
       <v-row justify="center">
         <v-col cols="12" xl="8" lg="9" md="11">
           <language-tabs :language="languageMode" @click="setLanguageMode" />
@@ -98,7 +98,7 @@
           </v-row>
         </v-col>
       </v-row>
-    </ValidationObserver>
+    </validation-observer>
   </v-container>
 </template>
 

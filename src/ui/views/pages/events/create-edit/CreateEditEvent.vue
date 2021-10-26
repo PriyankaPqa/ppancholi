@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
+  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
     <page-template ref="pageTemplate" :loading="eventLoading" :show-left-menu="false">
       <rc-page-content :title="isEditMode ? $t('event.edit.title') : $t('event.create.title')" :show-help="true" :help-link="helpLink">
         <event-form
@@ -19,7 +19,7 @@
         </template>
       </rc-page-content>
     </page-template>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang="ts">

@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="impactValidation" v-slot="{failed, pristine}">
+  <validation-observer ref="impactValidation" v-slot="{failed, pristine}">
     <rc-dialog
       show-help
       :help-link="helpLink"
@@ -22,7 +22,7 @@
               <div class="rc-body16 fw-bold mb-4">
                 {{ $t('caseFileDetail.impactValidationDialog.method') }}
               </div>
-              <ValidationProvider v-slot="{ errors }" :rules="rules.method">
+              <validation-provider v-slot="{ errors }" :rules="rules.method">
                 <v-radio-group
                   v-model="form.method"
                   :error-messages="errors"
@@ -51,7 +51,7 @@
                     :label="$t('caseFile.beneficiaryImpactValidationMethod.NotApplicable')"
                     :value="method.NotApplicable" />
                 </v-radio-group>
-              </ValidationProvider>
+              </validation-provider>
             </v-col>
           </v-row>
           <v-row>
@@ -61,7 +61,7 @@
                   {{ $t('caseFileDetail.impactValidationDialog.status') }}
                 </div>
                 <div class="status-radio-container">
-                  <ValidationProvider v-slot="{ errors }" :rules="rules.status">
+                  <validation-provider v-slot="{ errors }" :rules="rules.status">
                     <v-radio-group
                       v-model="form.status"
                       :error-messages="errors"
@@ -92,7 +92,7 @@
                         :label="$t('caseFile.beneficiaryImpactValidationStatus.Undetermined')"
                         :value="status.Undetermined" />
                     </v-radio-group>
-                  </ValidationProvider>
+                  </validation-provider>
                 </div>
               </div>
             </v-col>
@@ -100,7 +100,7 @@
         </v-form>
       </div>
     </rc-dialog>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang="ts">

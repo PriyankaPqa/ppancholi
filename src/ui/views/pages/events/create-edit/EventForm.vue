@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <ValidationObserver ref="form">
+    <validation-observer ref="form">
       <v-row justify="center">
         <v-col cols="12" xl="8" lg="9" md="11" sm="12">
           <language-tabs :language="languageMode" @click="setLanguageMode" />
@@ -94,7 +94,7 @@
             </v-col>
 
             <v-col cols="6" md="6" sm="12">
-              <ValidationProvider v-slot="{ errors }" :rules="rules.responseDetails.assistanceNumber">
+              <validation-provider v-slot="{ errors }" :rules="rules.responseDetails.assistanceNumber">
                 <rc-phone
                   :value="assistanceNumber"
                   outlined
@@ -103,7 +103,7 @@
                   data-test="event-phone"
                   :disabled="inputDisabled"
                   @input="setAssistanceNumber($event)" />
-              </ValidationProvider>
+              </validation-provider>
             </v-col>
           </v-row>
 
@@ -265,7 +265,7 @@
           </v-row>
         </v-col>
       </v-row>
-    </ValidationObserver>
+    </validation-observer>
   </v-container>
 </template>
 

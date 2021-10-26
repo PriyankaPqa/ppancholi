@@ -32,9 +32,14 @@
     <div v-for="(m, i) in members" :key="i" :class="[ i !== members.length-1 ? 'border-bottom' : '', 'pa-4']">
       <v-row>
         <v-col cols="9" sm="7" xs>
-          <v-btn icon small class="mt-n1 ml-n1 mr-1" @click="showHide(i)">
+          <v-btn
+            icon
+            small
+            class="mt-n1 ml-n1 mr-1"
+            :disabled="expandDisabled(m)"
+            @click="showHide(m.id)">
             <v-icon>
-              {{ expand[i] ? 'mdi-menu-up': 'mdi-menu-down' }}
+              {{ expand.includes(m.id) ? 'mdi-menu-up': 'mdi-menu-down' }}
             </v-icon>
           </v-btn>
           <span class="rc-heading-5">{{ m.identitySet.firstName }} {{ m.identitySet.lastName }}</span>
@@ -55,7 +60,7 @@
               <span class="text-uppercase fw-bold"> {{ $t('household.profile.member.primary_member') }} </span>
             </v-chip>
 
-            <v-btn v-else-if="i !== 0 && showMoveButton" small data-test="move" color="primary" @click="move(m)">
+            <v-btn v-if="showMoveButton(i)" small data-test="move" color="primary" class="ml-2 mt-1 mt-xl-0" @click="move(m)">
               <v-icon left>
                 {{ position === 'left' ? 'mdi-arrow-right': 'mdi-arrow-left' }}
               </v-icon>
@@ -64,7 +69,7 @@
           </v-row>
         </v-col>
       </v-row>
-      <div v-show="expand[i]" style="margin-left: 29px">
+      <div v-show="expand.includes(m.id)" style="margin-left: 29px">
         <v-row no-gutters class="rc-body14 mb-1">
           <v-col cols="5">
             <span class="fw-bold"> {{ $t('household.move.card.gender') }} </span>
@@ -126,35 +131,108 @@
             <span class="fw-bold"> {{ $t('household.move.card.temporaryAddress') }} </span>
           </v-col>
           <v-col cols="6" class="ml-8">
-            <current-address-template :current-address="m.currentAddress" />
+            <current-address-template v-if="!m.selectedCurrentAddress" :current-address="m.currentAddress" hide-title />
+
+            <div v-else>
+              <validation-provider v-slot="{ errors }" :rules="rules.newAddress">
+                <v-radio-group
+                  v-model="m.selectedCurrentAddress.sameAddressSelected"
+                  class="mt-1"
+                  :hide-details="!errors.length"
+                  small
+                  :error-messages="errors">
+                  <v-radio :label=" $t('household.move.same_as_primary')" :value="1" data-test="household_move_same_address" />
+                  <v-radio
+                    :label=" $t('household.move.new_address')"
+                    :value="0"
+                    data-test="household_move_new_address"
+                    @click="!m.selectedCurrentAddress.newAddress && openNewAddressDialog(m)" />
+                </v-radio-group>
+              </validation-provider>
+
+              <div v-if="m.selectedCurrentAddress.newAddress" class="ml-8 my-0">
+                <current-address-template
+                  :current-address="m.selectedCurrentAddress.newAddress"
+                  hide-title />
+              </div>
+
+              <v-btn
+                v-if="m.selectedCurrentAddress.newAddress"
+                class="ml-8 mt-2"
+                small
+                color="primary"
+                :disabled="!!m.selectedCurrentAddress.sameAddressSelected"
+                @click="openNewAddressDialog(m)">
+                {{ $t('household.move.edit_address') }}
+              </v-btn>
+            </div>
           </v-col>
         </v-row>
       </div>
     </div>
+    <validation-observer ref="addressForm" v-slot="{ failed }">
+      <rc-dialog
+        v-if="showNewAddressDialog"
+        :title="$t('household.move.card.temporaryAddress')"
+        :show="showNewAddressDialog"
+        :content-only-scrolling="true"
+        :submit-action-label="$t('common.buttons.save')"
+        :submit-button-disabled="failed"
+        :persistent="true"
+        :max-width="750"
+        :min-height="600"
+        :show-cancel="false"
+        @submit="setAddress"
+        @close="resetSelectNewAddress">
+        <div>
+          <current-address-form
+            :shelter-locations="shelterLocations"
+            :canadian-provinces-items="canadianProvincesItems"
+            :current-address-type-items="currentAddressTypeItems"
+            :no-fixed-home="false"
+            :api-key="apiKey"
+            hide-title
+            compact-view
+            :current-address="newAddress || new CurrentAddress()"
+            @change="updateAddress" />
+        </div>
+      </rc-dialog>
+    </validation-observer>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { HouseholdCreate, IMember } from '@crctech/registration-lib/src/entities/household-create';
-import { CurrentAddressTemplate } from '@crctech/registration-lib';
+import _cloneDeep from 'lodash/cloneDeep';
+import {
+  ECurrentAddressTypes, IMember, CurrentAddress, ICurrentAddress,
+} from '@crctech/registration-lib/src/entities/household-create';
+import { CurrentAddressForm, CurrentAddressTemplate } from '@crctech/registration-lib';
+import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import { IEventGenericLocation } from '@crctech/registration-lib/src/entities/event';
+import { RcDialog } from '@crctech/component-library';
 import helpers from '@/ui/helpers/helpers';
 import householdHelpers from '@/ui/helpers/household';
+import { localStorageKeys } from '@/constants/localStorage';
+import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
+import { VForm } from '@/types';
 
 export default Vue.extend({
   name: 'HouseholdCard',
 
   components: {
     CurrentAddressTemplate,
+    CurrentAddressForm,
+    RcDialog,
   },
 
   props: {
     household: {
-      type: Object as () => HouseholdCreate,
+      type: Object as () => IMovingHouseholdCreate,
       required: true,
     },
 
-    showMoveButton: {
+    enabledMove: {
       type: Boolean,
       default: false,
     },
@@ -165,36 +243,125 @@ export default Vue.extend({
       validator: (value: string) => (
         ['left', 'right'].indexOf(value) > -1),
     },
+
+    shelterLocations: {
+      type: Array as () => IEventGenericLocation[],
+      required: true,
+    },
   },
 
   data() {
     return {
-      expand: [],
+      showNewAddressDialog: false,
+      expand: [] as string[],
       helpers,
       householdHelpers,
+      apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
+        ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
+        : process.env.VUE_APP_GOOGLE_API_KEY,
+      selectedMember: null as IMovingMember,
+      newAddress: null as ICurrentAddress,
+      CurrentAddress,
     };
   },
 
   computed: {
+    rules(): Record<string, unknown> {
+      return {
+        newAddress: {
+          required: { messageKey: 'household.move.address_select_error_message' },
+          oneOf: [0, 1],
+        },
+      };
+    },
+
     // The main beneficiary must be first
-    members(): IMember[] {
-      return [this.household.primaryBeneficiary, ...this.household.additionalMembers];
+    members(): IMovingMember[] {
+      let members = [];
+
+      if (this.household.primaryBeneficiary) {
+        members.push(this.household.primaryBeneficiary);
+      }
+      members = members.concat(...this.household.additionalMembers, ...this.household.movingAdditionalMembers);
+
+      return members;
+    },
+
+    showMoveButton(): (index: number) => boolean {
+      return (index: number) => this.enabledMove && (index > 0 || this.members.length === 1);
+    },
+
+    expandDisabled(): (m:IMovingMember) => boolean {
+      return (m:IMovingMember) => m.selectedCurrentAddress && m.selectedCurrentAddress.sameAddressSelected == null && this.expand.includes(m.id);
+    },
+
+    canadianProvincesItems(): Record<string, unknown>[] {
+      return libHelpers.getCanadianProvincesWithoutOther(this.$i18n);
+    },
+
+    currentAddressTypeItems(): Record<string, unknown>[] {
+      return helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes');
+    },
+
+    movingAdditionalMembers():IMovingMember[] {
+      return this.household.movingAdditionalMembers;
     },
   },
 
-  created() {
-    this.expand = Array(this.members.length).fill(false);
+  watch: {
+    movingAdditionalMembers(newMembers, oldMembers) {
+      if (newMembers.length > oldMembers.length) {
+        this.expand.push(newMembers[newMembers.length - 1].id);
+      }
+    },
   },
 
   methods: {
-    showHide(i: number) {
-      Vue.set(this.expand, i, !this.expand[i]);
+    showHide(id: string) {
+      if (this.expand.includes(id)) {
+        this.expand = this.expand.filter((item) => item !== id);
+      } else {
+        this.expand.push(id);
+      }
     },
 
     move(member: IMember) {
       const direction = this.position === 'left' ? 'right' : 'left';
-
       this.$emit('move', { direction, member });
+    },
+
+    openNewAddressDialog(member: IMovingMember) {
+      this.selectedMember = member;
+      this.newAddress = _cloneDeep(member.selectedCurrentAddress.newAddress);
+      this.showNewAddressDialog = true;
+    },
+
+    updateAddress(address: ICurrentAddress) {
+      this.newAddress = address;
+    },
+
+    async setAddress() {
+      const isValid = await (this.$refs.addressForm as VForm).validate();
+      if (isValid) {
+        const updatedMember = this.members.find((m) => m.id === this.selectedMember.id);
+        updatedMember.selectedCurrentAddress.newAddress = this.newAddress;
+
+        this.closeNewAddressDialog();
+      }
+    },
+
+    resetSelectNewAddress() {
+      const updatedMember = this.members.find((m) => m.id === this.selectedMember.id);
+      if (updatedMember.selectedCurrentAddress.newAddress == null) {
+        updatedMember.selectedCurrentAddress.sameAddressSelected = null;
+      }
+      this.closeNewAddressDialog();
+    },
+
+    closeNewAddressDialog() {
+      this.showNewAddressDialog = false;
+      this.selectedMember = null;
+      this.newAddress = null;
     },
   },
 });
@@ -208,5 +375,22 @@ export default Vue.extend({
 
  .border-bottom {
    border-bottom: 1px solid var(--v-grey-lighten2);
+ }
+
+ ::v-deep .v-icon {
+   font-size: 21px;
+ }
+
+ ::v-deep .v-radio .v-label {
+   font-size: 14px;
+ }
+
+ ::v-deep .v-radio:not(.v-radio--is-disabled) .v-label {
+   color: var(--v-grey-darken4);
+   font-weight: bold;
+ }
+
+ ::v-deep .v-input--radio-group--column {
+   margin-bottom: 0px;
  }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
+  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
     <page-template :loading="referralLoading" :show-left-menu="false">
       <rc-page-content
         :title="isEditMode ? $t('referral.edit.title') : $t('referral.add.title')"
@@ -18,7 +18,7 @@
         </template>
       </rc-page-content>
     </page-template>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang="ts">

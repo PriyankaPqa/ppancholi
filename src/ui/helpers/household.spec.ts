@@ -156,6 +156,19 @@ describe('householdHelpers', () => {
       expect(householdHelpers.indigenousIdentity(altMember, mockIndigenousCommunitiesGetData()))
         .toEqual('Other, mock-community');
     });
+
+    it('returns a dash if member has no indigenous data', () => {
+      const altMember = {
+        ...member,
+        identitySet: {
+          ...member.identitySet,
+          indigenousType: null as EIndigenousTypes,
+          indigenousCommunityOther: '',
+        },
+      };
+      expect(householdHelpers.indigenousIdentity(altMember, mockIndigenousCommunitiesGetData()))
+        .toEqual('-');
+    });
   });
 
   describe('provinceCodeName', () => {

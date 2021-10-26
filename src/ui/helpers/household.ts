@@ -78,7 +78,7 @@ export default {
     } else if (member.identitySet.indigenousType && community) {
       communityName = `${community.communityName}`;
     }
-    return type + communityName;
+    return type && communityName ? type + communityName : '-';
   },
 
   provinceCodeName(address: IAddress): string {

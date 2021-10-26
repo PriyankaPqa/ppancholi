@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <ValidationObserver ref="form">
+    <validation-observer ref="form">
       <v-row justify="center">
         <v-col cols="12" xl="8" lg="9" md="11">
           <v-row class="mt-4">
@@ -80,7 +80,7 @@
           </v-row>
         </v-col>
       </v-row>
-    </ValidationObserver>
+    </validation-observer>
 
     <rc-dialog
       :title="$t(uploadDialogTitle)"

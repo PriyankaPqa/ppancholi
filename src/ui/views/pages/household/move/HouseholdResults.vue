@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-resize="onResize">
     <h5 class="rc-heading-5 mb-4">
       <template v-if="items.length > 0">
         {{ $t('registration.isRegistered.search_result', { length: items.length }) }}
@@ -8,7 +8,7 @@
         {{ $t('registration.isRegistered.no_result') }}
       </template>
     </h5>
-    <v-row no-gutters class="rc-body14 fw-bold border pa-4 border-radius-left border-radius-right">
+    <v-row no-gutters class="rc-body14 fw-bold border pa-4 border-radius-top">
       <v-col cols="4">
         {{ $t('household.move.results.name') }}
       </v-col>
@@ -20,7 +20,7 @@
       </v-col>
     </v-row>
 
-    <div class="max-height">
+    <div :style="styleObject">
       <div v-for="(household, i) in formattedItems" :key="i" class="rc-body14 cell px-4 py-2">
         <v-row no-gutters class="mb-3">
           <v-col cols="4">
@@ -73,7 +73,7 @@
       </div>
     </div>
 
-    <div class="cell pa-4">
+    <div class="cell pa-4 border-radius-bottom">
       <v-btn data-test="reset" @click="reset()">
         <v-icon left>
           mdi-magnify
@@ -93,6 +93,7 @@ import { HouseholdCreate } from '@crctech/registration-lib/src/entities/househol
 import householdResults from '@/ui/mixins/householdResults';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';
+import { EEventLocationStatus, IEventGenericLocation } from '@/entities/event';
 
 export default mixins(householdResults, household).extend({
   name: 'HouseholdResults',
@@ -104,11 +105,25 @@ export default mixins(householdResults, household).extend({
       loadingSelect: false,
       // Used to build householdCreate data
       householdData: null as IHouseholdCombined,
+      maxHeight: 0,
     };
+  },
+
+  computed: {
+    styleObject(): Record<string, string> {
+      return {
+        maxHeight: `${this.maxHeight}px`,
+        overflow: 'auto',
+      };
+    },
   },
 
   components: {
     RcDataTable,
+  },
+
+  mounted() {
+    this.onResize();
   },
 
   methods: {
@@ -121,11 +136,18 @@ export default mixins(householdResults, household).extend({
 
       this.loadingSelect = true;
 
-      const householdCreateData = await this.fetchHouseholdCreate(id, null, false);
+      const householdData = await this.$storage.household.actions.fetch(id);
+      const allShelterLocations = await this.fetchShelterLocations(householdData, false);
+      const householdCreateData = await this.buildHouseholdCreateData(householdData, allShelterLocations, false);
+      const activeShelterLocations = allShelterLocations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
 
       this.loadingSelect = false;
 
-      this.$emit('select', new HouseholdCreate(householdCreateData));
+      this.$emit('select', { household: new HouseholdCreate(householdCreateData), shelterLocations: activeShelterLocations });
+    },
+
+    onResize() {
+      this.maxHeight = document.getElementById('scrollAnchor') ? document.getElementById('scrollAnchor').clientHeight - 220 : 600;
     },
   },
 });
@@ -133,10 +155,6 @@ export default mixins(householdResults, household).extend({
 
 <style lang="scss" scoped>
 
-.max-height {
-  max-height: 600px;
-  overflow: auto;
-}
 .border {
   border: 1px solid var(--v-grey-lighten2);
 }

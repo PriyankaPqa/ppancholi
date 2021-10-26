@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <ValidationObserver ref="form">
+    <validation-observer ref="form">
       <v-row justify="center">
         <v-col cols="12" xl="8" lg="9" md="11">
           <v-row class="mt-4">
@@ -37,7 +37,7 @@
 
           <v-row>
             <v-col cols="12">
-              <ValidationProvider>
+              <validation-provider>
                 <v-radio-group v-model="localReferral.method" class="mt-1" row>
                   <v-col cols="6">
                     <v-radio :label="$t('referral.method.Referral')" :value="methodsEnum.Referral" data-test="refmethod_referral" />
@@ -52,7 +52,7 @@
                     </div>
                   </v-col>
                 </v-radio-group>
-              </ValidationProvider>
+              </validation-provider>
             </v-col>
           </v-row>
 
@@ -84,7 +84,7 @@
           </v-row>
         </v-col>
       </v-row>
-    </ValidationObserver>
+    </validation-observer>
   </v-container>
 </template>
 

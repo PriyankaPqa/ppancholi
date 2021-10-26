@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="form" v-slot="{ failed, dirty }" slim>
+  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
     <rc-page-content
       v-if="!loading"
       :title="isAddMode ? $t('caseFile.financialAssistance.create.title') : $t('caseFile.financialAssistance.details.title')"
@@ -106,7 +106,7 @@
         @submit="onSubmitPaymentLine($event)"
         @cancelChange="showAddPaymentLineForm = false" />
     </rc-page-content>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang="ts">

@@ -1,7 +1,8 @@
-import { mockCombinedHouseholds } from '@crctech/registration-lib/src/entities/household';
+import { mockCombinedHouseholds, mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import { mockHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create/householdCreate.mock';
-import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { HouseholdCreate, mockShelterData } from '@crctech/registration-lib/src/entities/household-create';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { EEventLocationStatus } from '@/entities/event';
 import { mockStorage } from '@/store/storage';
 
 import Component from './HouseholdResults.vue';
@@ -11,6 +12,7 @@ const storage = mockStorage();
 
 describe('HouseholdResults.vue', () => {
   let wrapper;
+  storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
 
   describe('Methods', () => {
     beforeEach(() => {
@@ -49,16 +51,34 @@ describe('HouseholdResults.vue', () => {
         expect(wrapper.vm.selectedId).toBe('1');
       });
 
-      it('should call fetchHouseholdCreate', async () => {
-        wrapper.vm.fetchHouseholdCreate = jest.fn();
+      it('should call the household action fetch', async () => {
         await wrapper.vm.select('1');
-        expect(wrapper.vm.fetchHouseholdCreate).toHaveBeenCalledWith('1', null, false);
+        expect(storage.household.actions.fetch).toHaveBeenCalledWith('1');
       });
 
-      it('should emit select event with built household', async () => {
-        wrapper.vm.buildHouseholdCreateData = jest.fn(() => mockHouseholdCreateData());
+      it('should call fetchShelterLocations', async () => {
+        wrapper.vm.fetchShelterLocations = jest.fn(() => []);
         await wrapper.vm.select('1');
-        expect(wrapper.emitted('select')[0][0]).toEqual(new HouseholdCreate(mockHouseholdCreateData()));
+        expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalledWith(mockCombinedHousehold(), false);
+      });
+
+      it('should call buildHouseholdCreateData', async () => {
+        wrapper.vm.fetchShelterLocations = jest.fn(() => [mockShelterData()]);
+        wrapper.vm.buildHouseholdCreateData = jest.fn(() => {});
+        await wrapper.vm.select('1');
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHousehold(), [mockShelterData()], false);
+      });
+
+      it('should emit select event with built household and active shelter locations', async () => {
+        const shelters = [{ ...mockShelterData(), id: 'id-1', status: EEventLocationStatus.Active },
+          { ...mockShelterData(), id: 'id-2', status: EEventLocationStatus.Inactive }];
+        wrapper.vm.buildHouseholdCreateData = jest.fn(() => mockHouseholdCreateData());
+        wrapper.vm.fetchShelterLocations = jest.fn(() => shelters);
+        await wrapper.vm.select('1');
+        expect(wrapper.emitted('select')[0][0]).toEqual({
+          household: new HouseholdCreate(mockHouseholdCreateData()),
+          shelterLocations: [{ ...mockShelterData(), id: 'id-1', status: EEventLocationStatus.Active }],
+        });
       });
     });
   });

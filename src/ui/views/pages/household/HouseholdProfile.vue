@@ -350,7 +350,7 @@ export default mixins(household).extend({
     },
 
     navigateBack() {
-      this.$router.replace({ name: routes.caseFile.home.name });
+      this.$router.back();
     },
 
     editAddress() {

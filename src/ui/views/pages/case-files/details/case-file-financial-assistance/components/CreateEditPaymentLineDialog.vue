@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="form" v-slot="{ failed }" slim>
+  <validation-observer ref="form" v-slot="{ failed }" slim>
     <rc-dialog
       v-if="loaded"
       :title="currentLine ? $t('caseFile.financialAssistance.editPaymentLine'): $t('caseFile.financialAssistance.addNewPaymentLine')"
@@ -160,7 +160,7 @@
         </v-col>
       </v-row>
     </rc-dialog>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang='ts'>

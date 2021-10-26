@@ -9,7 +9,7 @@
       </span>
     </div>
 
-    <ValidationObserver ref="form" v-slot="{ invalid }" slim>
+    <validation-observer ref="form" v-slot="{ invalid }" slim>
       <v-form class="full-width">
         <v-row dense>
           <v-col cols="12">
@@ -48,7 +48,7 @@
           {{ isEdit ? $t('common.save') : $t('common.add') }}
         </v-btn>
       </div>
-    </ValidationObserver>
+    </validation-observer>
 
     <rc-confirmation-dialog
       v-if="showConfirmationDialog"

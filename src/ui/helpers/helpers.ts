@@ -33,7 +33,7 @@ export default {
 
     if (!containerElement) return;
 
-    const errorElements = containerElement.getElementsByClassName('failed');
+    const errorElements = containerElement.querySelectorAll('.failed, .error--text');
 
     if (errorElements.length > 0) {
       if (containerID === 'app') {

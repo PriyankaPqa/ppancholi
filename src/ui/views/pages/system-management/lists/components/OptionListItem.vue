@@ -206,7 +206,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ValidationObserver, ValidationProvider } from 'vee-validate';
 import { RcDialog } from '@crctech/component-library';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IMultilingual, VForm } from '@/types';
@@ -219,8 +218,6 @@ export default Vue.extend({
   name: 'OptionListItem',
 
   components: {
-    ValidationObserver,
-    ValidationProvider,
     StatusSelect,
     RcDialog,
   },

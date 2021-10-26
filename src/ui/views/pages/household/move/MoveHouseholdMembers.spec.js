@@ -1,19 +1,22 @@
-import { mockHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { mockHouseholdCreate, mockShelterData } from '@crctech/registration-lib/src/entities/household-create';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
+import { mockShelterLocations } from '@crctech/registration-lib/src/entities/event/event.mock';
+import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 
 import Component from './MoveHouseholdMembers.vue';
-import routes from '@/constants/routes';
 import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResults.vue';
 import HouseholdSearch from '@/ui/views/pages/registration/is-registered/HouseholdSearch.vue';
 
 const localVue = createLocalVue();
 const household = mockCombinedHousehold();
+const householdCreate = { ...mockHouseholdCreate(), id: 'id-1' };
 const storage = mockStorage();
 
 describe('MoveHouseholdMembers.vue', () => {
   let wrapper;
+  storage.household.actions.fetch = jest.fn(() => mockCombinedHousehold());
 
   describe('lifecycle', () => {
     describe('created', () => {
@@ -28,12 +31,24 @@ describe('MoveHouseholdMembers.vue', () => {
             $storage: storage,
           },
           computed: {
-            currentHousehold: () => ({ id: '' }),
+            currentHousehold: () => (householdCreate),
           },
         });
       });
 
       it('goes back to household profile if no householdCreate in the store', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          mocks: {
+            $storage: storage,
+          },
+          computed: {
+            currentHousehold: () => ({ id: '' }),
+          },
+        });
         wrapper.vm.back = jest.fn();
 
         await wrapper.vm.$options.created.forEach((hook) => {
@@ -41,6 +56,38 @@ describe('MoveHouseholdMembers.vue', () => {
         });
 
         expect(wrapper.vm.back).toHaveBeenCalledTimes(1);
+      });
+
+      it('sets the firstHousehold data', async () => {
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.firstHousehold).toEqual({ ...householdCreate, movingAdditionalMembers: [] });
+      });
+
+      it('should call the household action fetch', async () => {
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(storage.household.actions.fetch).toHaveBeenCalledWith(householdCreate.id);
+      });
+
+      it('should call fetchShelterLocations', async () => {
+        wrapper.vm.fetchShelterLocations = jest.fn(() => []);
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalledWith(mockCombinedHousehold(), true);
+      });
+
+      it('should set firstHouseholdShelterLocations', async () => {
+        wrapper.vm.fetchShelterLocations = jest.fn(() => [mockShelterData()]);
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.firstHouseholdShelterLocations).toEqual([mockShelterData()]);
       });
     });
   });
@@ -53,6 +100,7 @@ describe('MoveHouseholdMembers.vue', () => {
         propsData: {
           id: household.entity.id,
         },
+        computed: { currentHousehold() { return householdCreate; } },
         mocks: {
           $storage: storage,
         },
@@ -61,8 +109,9 @@ describe('MoveHouseholdMembers.vue', () => {
 
     describe('back', () => {
       it('should redirect to household profile page', () => {
+        wrapper.vm.$router.back = jest.fn();
         wrapper.vm.back();
-        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.household.householdProfile.name });
+        expect(wrapper.vm.$router.back).toHaveBeenCalled();
       });
     });
 
@@ -111,10 +160,12 @@ describe('MoveHouseholdMembers.vue', () => {
         expect(wrapper.vm.onSelect).toBeCalled();
       });
 
-      it('should set the selected household', async () => {
+      it('should set the selected household and shelterLocations', async () => {
         expect(wrapper.vm.secondHousehold).toBe(null);
-        await wrapper.vm.onSelect(mockHouseholdCreate());
-        expect(wrapper.vm.secondHousehold).toEqual(mockHouseholdCreate());
+        const shelterLocations = mockShelterLocations();
+        await wrapper.vm.onSelect({ household: mockHouseholdCreate(), shelterLocations });
+        expect(wrapper.vm.secondHousehold).toEqual({ ...mockHouseholdCreate(), movingAdditionalMembers: [] });
+        expect(wrapper.vm.secondHouseholdShelterLocations).toEqual(shelterLocations);
       });
     });
 
@@ -149,6 +200,122 @@ describe('MoveHouseholdMembers.vue', () => {
         await wrapper.setData({ secondHousehold: mockHouseholdCreate() });
         await wrapper.vm.removeSelection();
         expect(wrapper.vm.secondHousehold).toBe(null);
+      });
+
+      it('should reset the first Household', async () => {
+        await wrapper.vm.removeSelection();
+        expect(wrapper.vm.firstHousehold).toEqual({ ...householdCreate, movingAdditionalMembers: [] });
+      });
+    });
+
+    describe('move', () => {
+      it('calls moveMember with right payload when direction is left and sets the data into the right household variables', async () => {
+        const firstHousehold = { ...mockHouseholdCreate(), id: '1', movingAdditionalMembers: [] };
+        const secondHousehold = { ...mockHouseholdCreate(), id: '2', movingAdditionalMembers: [] };
+        const originHousehold = { ...mockHouseholdCreate(), id: '3', movingAdditionalMembers: [] };
+        const targetHousehold = { ...mockHouseholdCreate(), id: '4', movingAdditionalMembers: [] };
+
+        wrapper.vm.moveMember = jest.fn(() => ({ originHousehold, targetHousehold }));
+        await wrapper.setData({ firstHousehold, secondHousehold });
+
+        await wrapper.vm.move({ member: mockMember(), direction: 'left' });
+        expect(wrapper.vm.moveMember).toHaveBeenCalledWith(mockMember(), secondHousehold, firstHousehold);
+        expect(wrapper.vm.firstHousehold).toEqual(targetHousehold);
+        expect(wrapper.vm.secondHousehold).toEqual(originHousehold);
+      });
+
+      it('calls moveMember with right payload when direction is right and sets the data into the right household variables', async () => {
+        const firstHousehold = { ...mockHouseholdCreate(), id: '1', movingAdditionalMembers: [] };
+        const secondHousehold = { ...mockHouseholdCreate(), id: '2', movingAdditionalMembers: [] };
+        const originHousehold = { ...mockHouseholdCreate(), id: '3', movingAdditionalMembers: [] };
+        const targetHousehold = { ...mockHouseholdCreate(), id: '4', movingAdditionalMembers: [] };
+
+        wrapper.vm.moveMember = jest.fn(() => ({ originHousehold, targetHousehold }));
+        await wrapper.setData({ firstHousehold, secondHousehold });
+
+        await wrapper.vm.move({ member: mockMember(), direction: 'right' });
+        expect(wrapper.vm.moveMember).toHaveBeenCalledWith(mockMember(), firstHousehold, secondHousehold);
+        expect(wrapper.vm.firstHousehold).toEqual(originHousehold);
+        expect(wrapper.vm.secondHousehold).toEqual(targetHousehold);
+      });
+    });
+
+    describe('moveMember', () => {
+      it('should add the moving member to the target household movingAdditionalMembers list, if member does not move back', async () => {
+        const movingMember = { ...mockMember(), id: 'moving' };
+        const originHousehold = { ...mockHouseholdCreate(), id: 'origin', movingAdditionalMembers: [] };
+        const targetHousehold = { ...mockHouseholdCreate(), id: 'target', movingAdditionalMembers: [] };
+        originHousehold.removeAdditionalMember = jest.fn();
+
+        const result = await wrapper.vm.moveMember(movingMember, originHousehold, targetHousehold);
+
+        expect(result.targetHousehold).toEqual({
+          ...targetHousehold,
+          movingAdditionalMembers: [{ ...movingMember, selectedCurrentAddress: { sameAddressSelected: null, newAddress: null } }],
+        });
+      });
+
+      // eslint-disable-next-line max-len
+      it('should remove the moving member from the origin household additionalMembers list, if member does not move back and the origin household has a primary member', async () => {
+        const movingMember = { ...mockMember(), id: 'moving' };
+        const originHousehold = {
+          ...mockHouseholdCreate(),
+          id: 'origin',
+          additionalMembers: [movingMember],
+          movingAdditionalMembers: [],
+        };
+        const targetHousehold = { ...mockHouseholdCreate(), id: 'target', movingAdditionalMembers: [] };
+        originHousehold.removeAdditionalMember = jest.fn(() => {});
+        const result = await wrapper.vm.moveMember(movingMember, originHousehold, targetHousehold);
+
+        expect(result.originHousehold.removeAdditionalMember).toHaveBeenCalledWith(0);
+      });
+
+      // eslint-disable-next-line max-len
+      it('should remove the moving member as primary member of origin household, if member does not move back and the origin household has no additional members',
+        async () => {
+          const movingMember = { ...mockMember(), id: 'moving' };
+          const originHousehold = {
+            ...mockHouseholdCreate(),
+            id: 'origin',
+            additionalMembers: [],
+            movingAdditionalMembers: [],
+          };
+          const targetHousehold = { ...mockHouseholdCreate(), id: 'target', movingAdditionalMembers: [] };
+          originHousehold.setPrimaryBeneficiary = jest.fn(() => {});
+          await wrapper.vm.moveMember(movingMember, originHousehold, targetHousehold);
+
+          expect(originHousehold.setPrimaryBeneficiary).toHaveBeenCalledWith(null);
+        });
+
+      it('should remove the moving member from the list of moving members of origin household, if member moves back', async () => {
+        const movingMember = { ...mockMember(), id: 'moving' };
+        const originHousehold = {
+          ...mockHouseholdCreate(),
+          id: 'origin',
+          additionalMembers: [],
+          movingAdditionalMembers: [movingMember],
+        };
+        const targetHousehold = { ...mockHouseholdCreate(), id: 'target', movingAdditionalMembers: [] };
+        targetHousehold.addAdditionalMember = jest.fn(() => {});
+        const result = await wrapper.vm.moveMember(movingMember, originHousehold, targetHousehold);
+
+        expect(result.originHousehold.movingAdditionalMembers).toEqual([]);
+      });
+
+      it('should add the moving member to the list of additional members of the target household, if member moves back', async () => {
+        const movingMember = { ...mockMember(), id: 'moving' };
+        const originHousehold = {
+          ...mockHouseholdCreate(),
+          id: 'origin',
+          additionalMembers: [],
+          movingAdditionalMembers: [movingMember],
+        };
+        const targetHousehold = { ...mockHouseholdCreate(), id: 'target', movingAdditionalMembers: [] };
+        targetHousehold.addAdditionalMember = jest.fn(() => {});
+        await wrapper.vm.moveMember(movingMember, originHousehold, targetHousehold);
+
+        expect(targetHousehold.addAdditionalMember).toHaveBeenLastCalledWith({ ...movingMember, selectedCurrentAddress: null }, false);
       });
     });
   });

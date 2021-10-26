@@ -1,5 +1,5 @@
 <template>
-  <ValidationObserver ref="form" v-slot="{ failed }" slim>
+  <validation-observer ref="form" v-slot="{ failed }" slim>
     <rc-dialog
       :title="title"
       :show.sync="show"
@@ -30,7 +30,7 @@
           :rules="rules.reason" />
       </div>
     </rc-dialog>
-  </ValidationObserver>
+  </validation-observer>
 </template>
 
 <script lang='ts'>
