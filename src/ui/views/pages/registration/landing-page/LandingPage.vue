@@ -1,8 +1,13 @@
 <template>
-  <rc-registration-landing-page
-    :title="$t('registration.landingpage.welcome_self')"
-    :phone-number="phoneNumber"
-    @redirect="redirect" />
+  <div>
+    <h1 class="d-flex justify-center pt-6">
+      {{ $m(event.name) }}
+    </h1>
+    <rc-registration-landing-page
+      :title="$t('registration.landingpage.welcome_self')"
+      :phone-number="phoneNumber"
+      @redirect="redirect" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -25,6 +30,10 @@ export default Vue.extend({
     event(): IEvent {
       return this.$storage.registration.getters.event();
     },
+  },
+
+  created() {
+    document.title = this.$m(this.event.name) as string;
   },
 
   methods: {

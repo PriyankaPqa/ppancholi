@@ -7,6 +7,7 @@ export default {
   primary: colors.primary,
   secondary: colors.secondary,
   grey: colors.grey,
+  error: colors.status.error,
   status_error: colors.status.error,
   status_success: colors.status.success,
   status_warning: colors.status.warning,
