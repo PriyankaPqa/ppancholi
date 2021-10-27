@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@azure/msal-browser": "^2.8.0",
-    "@crctech/component-library": "1.0.130",
+    "@crctech/component-library": "1.0.135",
     "@crctech/registration-lib": "1.0.534",
     "@mdi/font": "^5.6.55",
     "@microsoft/applicationinsights-web": "^2.7.0",

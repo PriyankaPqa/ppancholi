@@ -12,6 +12,16 @@
   max-width: 748px!important;
 }
 
+/* to remove opacity on hover and switch to background color instead */
+.v-btn.primary:hover::before,
+.v-btn.primary:focus::before {
+  background-color:  var(--v-primary-darken1) !important;
+  opacity: 1 !important;
+}
+.v-btn.primary:before {
+  transition: initial !important;
+}
+/* end to remove opacity on hover and switch to background color instead */
 
 .clickable.v-data-table tbody tr:hover  {
   cursor: pointer;

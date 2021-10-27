@@ -1126,16 +1126,7 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@crctech/component-library@1.0.130":
-  version "1.0.130"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.130.tgz#b187ee824cc9c939b963b8afb452da1e14320351"
-  integrity sha1-sYfugkzJyTm5Y7ivtFLaHhQyA1E=
-  dependencies:
-    "@googlemaps/js-api-loader" "^1.11.0"
-    date-fns "^2.14.0"
-    vuedraggable "^2.24.1"
-
-"@crctech/component-library@^1.0.135":
+"@crctech/component-library@1.0.135", "@crctech/component-library@^1.0.135":
   version "1.0.135"
   resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.135.tgz#011f619aed3609bd0f1590c975d521f43697a079"
   integrity sha1-AR9hmu02Cb0PFZDJddUh9DaXoHk=
