@@ -4,12 +4,14 @@ import {
   IFinancialAssistancePaymentEntity,
   IFinancialAssistancePaymentGroup,
   ApprovalStatus,
+  PaymentsSummary,
   IFinancialAssistancePaymentCombined,
   IFinancialAssistancePaymentMetadata,
 } from './financial-assistance-payment.types';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockBaseData } from '../base';
 import { IVersionedEntity } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { EPaymentModalities } from '../program';
 
 export const mockCaseFinancialAssistancePaymentGroups = ():
   IFinancialAssistancePaymentGroup[] => [
@@ -50,6 +52,7 @@ export const mockCaseFinancialAssistanceEntity = (force?: Partial<IFinancialAssi
   description: 'thl payment desc',
   groups: mockCaseFinancialAssistancePaymentGroups(),
   approvalStatus: ApprovalStatus.New,
+  approvalAction: null,
   ...force,
 });
 
@@ -64,6 +67,20 @@ export const mockCaseFinancialAssistanceMetadata = (force? : Partial<IFinancialA
   },
   ...force,
 });
+
+export const mockPaymentSummary = () : PaymentsSummary => {
+  return ({
+    totalAmountCommitted: 121.56,
+    totalAmountCompleted: 233.43,
+    totalAmountUnapproved: 333.43,
+    grandTotalAmount: 876.43,
+    paymentModalityCounts: [
+      { modality: EPaymentModalities.Cheque, count: 1 },
+      { modality: EPaymentModalities.DirectDeposit, count: 2 },
+      { modality: EPaymentModalities.ETransfer, count: 1 },
+    ]
+  });
+}
 
 export const mockFinancialPaymentHistory = () : IVersionedEntity[] => {
   return [{

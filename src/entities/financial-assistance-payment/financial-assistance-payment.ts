@@ -1,5 +1,6 @@
 import { BaseEntity } from '@/entities/base/base';
 import {
+  ApprovalAction,
   ApprovalStatus,
   IFinancialAssistancePaymentEntity,
   IFinancialAssistancePaymentGroup,
@@ -18,6 +19,8 @@ export class FinancialAssistancePaymentEntity extends BaseEntity implements IFin
 
   approvalStatus: ApprovalStatus;
 
+  approvalAction: ApprovalAction;
+
   constructor(data?: IFinancialAssistancePaymentEntity) {
     if (data) {
       super(data);
@@ -26,6 +29,7 @@ export class FinancialAssistancePaymentEntity extends BaseEntity implements IFin
       this.name = data.name;
       this.description = data.description;
       this.approvalStatus = data.approvalStatus;
+      this.approvalAction = data.approvalAction;
       this.groups = data.groups;
     } else {
       super();
@@ -34,6 +38,7 @@ export class FinancialAssistancePaymentEntity extends BaseEntity implements IFin
       this.name = null;
       this.description = null;
       this.approvalStatus = ApprovalStatus.New;
+      this.approvalAction = null;
       this.groups = [];
     }
   }

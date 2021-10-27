@@ -105,4 +105,11 @@ describe('>>> Financial assistance payment Service', () => {
       expect(http.get).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/metadata/myId/history');
     });
   });
+
+  describe('getPaymentSummary', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.getPaymentSummary('myCaseId');
+      expect(http.get).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/payments-summary?caseFileId=myCaseId');
+    });
+  });
 });

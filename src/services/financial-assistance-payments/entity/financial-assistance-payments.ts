@@ -7,6 +7,7 @@ import {
   IFinancialAssistancePaymentGroup,
   PaymentStatus,
   EPaymentCancellationReason,
+  PaymentsSummary,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
@@ -77,5 +78,9 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
 
   async getMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
     return this.http.get(`${this.baseUrl}/metadata/${id}/history`);
+  }
+
+  async getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary> {
+    return this.http.get(`${this.baseUrl}/payments-summary?caseFileId=${caseFileId}`);
   }
 }

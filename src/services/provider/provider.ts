@@ -15,6 +15,7 @@ import { CaseFileDocumentsService } from '../case-file-documents/entity';
 import { CaseNotesService } from '../case-notes/entity';
 import { FinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
 import { MassActionService } from '@/services/mass-actions/entity';
+import { FinancialAssistancePaymentsService } from '../financial-assistance-payments/entity';
 
 export const provider = (): IProvider => ({
   appUsers: new AppUsersService(httpClient),
@@ -29,6 +30,7 @@ export const provider = (): IProvider => ({
   publicApi: new PublicService(httpClient),
   households: new HouseholdsService(httpClient),
   financialAssistanceTables: new FinancialAssistanceTablesService(httpClient),
+  financialAssistancePaymentsService: new FinancialAssistancePaymentsService(httpClient),
   userAccounts: new UserAccountsService(httpClient),
   financialAssistanceCategories: new FinancialAssistanceCategoriesService(httpClient),
   massActions: new MassActionService(httpClient),

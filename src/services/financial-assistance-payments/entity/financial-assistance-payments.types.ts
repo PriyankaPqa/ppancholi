@@ -1,5 +1,7 @@
 import { IVersionedEntity } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
-import { IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus } from '@/entities/financial-assistance-payment';
+import {
+  IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentsSummary, PaymentStatus,
+} from '@/entities/financial-assistance-payment';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 
 export interface IFinancialAssistancePaymentsService extends IDomainBaseService<IFinancialAssistancePaymentEntity, uuid>{
@@ -15,6 +17,7 @@ export interface IFinancialAssistancePaymentsService extends IDomainBaseService<
     Promise<IFinancialAssistancePaymentEntity>;
   getHistory(financialAssistanceId: uuid): Promise<IVersionedEntity[]>;
   getMetadataHistory(financialAssistanceId: uuid): Promise<IVersionedEntity[]>;
+  getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary>;
 }
 
 export interface IFinancialAssistancePaymentsServiceMock extends IDomainBaseServiceMock<IFinancialAssistancePaymentEntity>{
@@ -27,4 +30,5 @@ export interface IFinancialAssistancePaymentsServiceMock extends IDomainBaseServ
   deleteFinancialAssistancePaymentLine: jest.Mock<IFinancialAssistancePaymentEntity>;
   getHistory: jest.Mock<IVersionedEntity[]>;
   getMetadataHistory: jest.Mock<IVersionedEntity[]>;
+  getPaymentSummary: jest.Mock<PaymentsSummary>;
 }

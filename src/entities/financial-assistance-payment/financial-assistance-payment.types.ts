@@ -27,6 +27,13 @@ export enum ApprovalStatus {
   Declined = 4
 }
 
+export enum ApprovalAction {
+    Submitted = 1,
+    RequestAdditionalInfo = 2,
+    Approved = 3,
+    Declined = 4
+}
+
 export enum EPaymentCancellationReason {
   AdminCancellation0 = 0,
   RecipientRejected = 1,
@@ -72,6 +79,7 @@ export interface IFinancialAssistancePaymentEntity extends IEntity {
   name: string,
   description: string,
   approvalStatus: ApprovalStatus,
+  approvalAction: ApprovalAction,
   groups?: Array<IFinancialAssistancePaymentGroup>,
 }
 
@@ -95,4 +103,17 @@ export interface CreateFinancialAssistancePaymentServiceRequest {
   name: string;
   description: string;
   groups: CreatePaymentGroupServiceRequest[];
+}
+
+export interface PaymentModalityCount {
+  modality: EPaymentModalities;
+  count: number;
+}
+
+export interface PaymentsSummary {
+  paymentModalityCounts: PaymentModalityCount[];
+  totalAmountUnapproved: number;
+  totalAmountCommitted: number;
+  totalAmountCompleted: number;
+  grandTotalAmount: number;
 }

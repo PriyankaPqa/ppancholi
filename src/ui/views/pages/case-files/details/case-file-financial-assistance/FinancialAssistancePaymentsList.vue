@@ -30,7 +30,7 @@
               @click="openSubmitDialog">
               {{ $t('caseFile.financialAssistance.submitAllNewButton') }}
             </v-btn>
-            <v-btn height="32" color="primary" style="color: white" data-test="financialAssistanceOverview__statsButton">
+            <v-btn height="32" color="primary" style="color: white" data-test="financialAssistanceOverview__statsButton" @click="showStats = true">
               {{ $t('caseFile.financialAssistance.statsButton') }}
             </v-btn>
           </template>
@@ -156,6 +156,11 @@
       v-if="showApprovalHistory"
       :financial-assistance="selectedItem"
       :show.sync="showApprovalHistory" />
+
+    <statistics-dialog
+      v-if="showStats"
+      :case-file-id="caseFileId"
+      :show.sync="showStats" />
   </div>
 </template>
 
@@ -185,6 +190,7 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { Status } from '@/entities/base';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
+import StatisticsDialog from './components/StatisticsDialog.vue';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistancePaymentsList',
@@ -195,6 +201,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     StatusChip,
     RcDialog,
     ApprovalHistoryDialog,
+    StatisticsDialog,
   },
 
   data() {
@@ -223,6 +230,8 @@ export default mixins(TablePaginationSearchMixin).extend({
       groupTotal: FinancialAssistancePaymentGroup.total,
       showApprovalHistory: false,
       selectedItem: null as IFinancialAssistancePaymentEntity,
+      showStats: false,
+      caseFileId: this.$route.params.id,
     };
   },
 
@@ -344,7 +353,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
     // and since ApprovalStatus is not filterable...  we will filter on the computed - not really a problem
     const res = await this.$storage.financialAssistancePayment.actions.search({
-      filter: { 'Entity/CaseFileId': this.$route.params.id },
+      filter: { 'Entity/CaseFileId': this.caseFileId },
     });
     this.allItemsIds = res.ids;
   },
@@ -354,7 +363,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       const filterParams = Object.keys(params.filter).length > 0 ? params.filter as Record<string, unknown> : {} as Record<string, unknown>;
       const res = await this.$storage.financialAssistancePayment.actions.search({
         search: params.search,
-        filter: { 'Entity/CaseFileId': this.$route.params.id, ...filterParams },
+        filter: { 'Entity/CaseFileId': this.caseFileId, ...filterParams },
         top: params.top,
         skip: params.skip,
         orderBy: params.orderBy,

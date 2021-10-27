@@ -44,7 +44,7 @@ import { IVersionedEntityCombined } from '@crctech/registration-lib/src/entities
 import { DataTableHeader } from 'vuetify';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
+import { ApprovalAction, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
 
 interface IApprovalHistory {
   username: string,
@@ -130,7 +130,10 @@ export default Vue.extend({
 
   async created() {
     this.historyItems = await this.$storage.financialAssistancePayment.actions.fetchHistory(this.financialAssistance.id, false);
-    this.submittedHistory = this.historyItems.find((h) => h.entity.lastAction === 'Submit');
+    /// we find the one history line we want... and massactions doesnt create a submitted last action...
+    this.submittedHistory = this.historyItems.find((h) => h.entity.lastAction === 'Submit')
+      || this.historyItems.find((h) => h.entity.lastAction === 'Created'
+        && (h.entity as IFinancialAssistancePaymentEntity).approvalAction === ApprovalAction.Submitted);
   },
 
   methods: {

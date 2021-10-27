@@ -36,6 +36,14 @@ describe('>>> Case Financial Assistance', () => {
         const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity(mockData);
         expect(caseFinancialAssistanceEntity.groups).toEqual(mockData.groups);
       });
+
+      it('should instanciate approvalAction', () => {
+        const caseFinancialAssistanceEntity = new FinancialAssistancePaymentEntity(mockData);
+        expect(caseFinancialAssistanceEntity.approvalAction).toEqual(null);
+
+        const caseFinancialAssistanceEntity2 = new FinancialAssistancePaymentEntity({ ...mockData, approvalAction: 1 });
+        expect(caseFinancialAssistanceEntity2.approvalAction).toEqual(1);
+      });
     });
 
     describe('>> instantitate when data is not passed', () => {

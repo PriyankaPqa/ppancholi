@@ -84,6 +84,26 @@ describe('ApprovalHistoryDialog.vue', () => {
         expect(storage.financialAssistancePayment.actions.fetchHistory).toHaveBeenCalled();
         expect(wrapper.vm.submittedHistory).toEqual(storage.financialAssistancePayment.actions.fetchHistory()[0]);
       });
+
+      it('sets submittedHistory to the action with Submit or if none, Created and approvalAction Submitted', async () => {
+        const hist = mockFinancialPaymentHistory();
+        hist[0].lastAction = 'Submit';
+        hist[0].entity.lastAction = 'Submit';
+        storage.financialAssistancePayment.actions.fetchHistory = jest.fn(() => hist);
+        await mountWrapper();
+        expect(wrapper.vm.submittedHistory).toEqual(hist[0]);
+        hist[0].lastAction = 'Created';
+        hist[0].entity.lastAction = 'Created';
+        hist[0].entity.approvalAction = null;
+        await mountWrapper();
+        expect(wrapper.vm.submittedHistory).toBeFalsy();
+        hist[0].entity.approvalAction = 1;
+        await mountWrapper();
+        expect(wrapper.vm.submittedHistory).toEqual(hist[0]);
+
+        // reset for other tests
+        storage.financialAssistancePayment.actions.fetchHistory = jest.fn(() => mockFinancialPaymentHistory());
+      });
     });
   });
 });
