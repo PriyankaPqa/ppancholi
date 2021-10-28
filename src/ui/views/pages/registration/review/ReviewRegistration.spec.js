@@ -33,12 +33,46 @@ describe('ReviewRegistration.vue', () => {
 
   describe('Lifecycle', () => {
     describe('mounted', () => {
-      it('should call fetchCaseFilesInformation', async () => {
+      it('should call fetchCaseFilesInformation if we have an id', async () => {
+        jest.clearAllMocks();
+        const h = storage.registration.getters.householdCreate();
+        h.id = '123';
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          computed: {
+            household() {
+              return h;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
         wrapper.vm.fetchCaseFilesInformation = jest.fn();
         await wrapper.vm.$options.mounted.forEach((hook) => {
           hook.call(wrapper.vm);
         });
         expect(wrapper.vm.fetchCaseFilesInformation).toHaveBeenCalledTimes(1);
+
+        h.id = null;
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          computed: {
+            household() {
+              return h;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.fetchCaseFilesInformation = jest.fn();
+        await wrapper.vm.$options.mounted.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        expect(wrapper.vm.fetchCaseFilesInformation).not.toHaveBeenCalled();
       });
     });
   });
