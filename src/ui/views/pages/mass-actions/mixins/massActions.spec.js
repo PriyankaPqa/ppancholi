@@ -1,7 +1,6 @@
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import massActions from './massActions';
-import routes from '@/constants/routes';
 
 const Component = {
   render() {},
@@ -31,22 +30,10 @@ describe('massActions', () => {
         expect(wrapper.vm.exportImpactValidation).toHaveBeenCalledTimes(1);
       });
 
-      it('should trigger proper method importValidationImpact', () => {
-        wrapper.vm.importValidationImpact = jest.fn();
-        wrapper.vm.onClick('importValidationImpact');
-        expect(wrapper.vm.importValidationImpact).toHaveBeenCalledTimes(1);
-      });
-
       it('should trigger proper method generateFundingRequest', () => {
         wrapper.vm.generateFundingRequest = jest.fn();
         wrapper.vm.onClick('generateFundingRequest');
         expect(wrapper.vm.generateFundingRequest).toHaveBeenCalledTimes(1);
-      });
-
-      it('should trigger proper method importPaymentStatuses', () => {
-        wrapper.vm.importPaymentStatuses = jest.fn();
-        wrapper.vm.onClick('importPaymentStatuses');
-        expect(wrapper.vm.importPaymentStatuses).toHaveBeenCalledTimes(1);
       });
 
       it('should trigger proper method downloadTemplate', () => {
@@ -107,22 +94,9 @@ describe('massActions', () => {
       });
     });
 
-    describe('importValidationImpact', () => {
-      it('should redirect to home page', async () => {
-        await wrapper.vm.importValidationImpact();
-        expect(wrapper.vm.$router.push).toHaveBeenLastCalledWith({ name: routes.massActions.importValidationStatus.home.name });
-      });
-    });
-
     describe('generateFundingRequest', () => {
       it('should do nothing', () => {
         expect(wrapper.vm.generateFundingRequest()).toBe(false);
-      });
-    });
-
-    describe('importPaymentStatuses', () => {
-      it('should do nothing', () => {
-        expect(wrapper.vm.importPaymentStatuses()).toBe(false);
       });
     });
 

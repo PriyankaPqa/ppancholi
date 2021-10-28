@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import routes from '@/constants/routes';
 
 export interface IMassActionCards {
   title: string;
@@ -46,14 +45,8 @@ export default Vue.extend({
         case 'exportImpactValidation':
           this.exportImpactValidation();
           break;
-        case 'importValidationImpact':
-          this.importValidationImpact();
-          break;
         case 'generateFundingRequest':
           this.generateFundingRequest();
-          break;
-        case 'importPaymentStatuses':
-          this.importPaymentStatuses();
           break;
         case 'downloadTemplate':
           this.downloadTemplate();
@@ -66,18 +59,9 @@ export default Vue.extend({
       this.showExportValidationImpact = true;
     },
 
-    async importValidationImpact() {
-      await this.$router.push({ name: routes.massActions.importValidationStatus.home.name });
-    },
-
     generateFundingRequest() {
       return false;
     },
-
-    importPaymentStatuses() {
-      return false;
-    },
-
     downloadTemplate() {
       return false;
     },

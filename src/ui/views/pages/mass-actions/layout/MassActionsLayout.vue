@@ -88,7 +88,7 @@ export default mixins(massActions).extend({
             {
               text: this.$t('mass_action.card.import_payment_statuses'),
               test: 'mass_action.card.import_payment_statuses',
-              to: null,
+              to: routes.massActions.importPaymentStatus.home.name,
               exact: false,
               level: 'level6',
               roles: ['contributorFinance'],

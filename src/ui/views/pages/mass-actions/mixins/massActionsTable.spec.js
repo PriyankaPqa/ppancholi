@@ -40,7 +40,7 @@ describe('massActionsTable', () => {
     describe('goToDetails', () => {
       it('should return route to detail', () => {
         expect(wrapper.vm.goToDetails('1')).toEqual({
-          name: wrapper.vm.detailsRouteName,
+          name: wrapper.vm.detailsRouteNameData,
           params: {
             id: '1',
           },
@@ -96,7 +96,7 @@ describe('massActionsTable', () => {
             ...params.filter,
             Entity: {
               Status: Status.Active,
-              Type: wrapper.vm.massActionType,
+              Type: wrapper.vm.massActionTypeData,
             },
           },
           top: params.top,
@@ -105,7 +105,7 @@ describe('massActionsTable', () => {
           count: true,
           queryType: 'full',
           searchMode: 'all',
-        }, wrapper.vm.searchEndpoint);
+        }, wrapper.vm.searchEndpointData);
       });
     });
 
@@ -158,7 +158,7 @@ describe('massActionsTable', () => {
         expect(wrapper.vm.labels)
           .toEqual({
             header: {
-              title: `${wrapper.vm.tableTitle} (0)`,
+              title: `${wrapper.vm.tableTitleData} (0)`,
               searchPlaceholder: 'common.inputs.quick_search',
             },
           });

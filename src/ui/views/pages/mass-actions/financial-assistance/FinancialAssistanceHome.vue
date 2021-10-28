@@ -79,11 +79,11 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
   data() {
     return {
       // To be defined to filter on type for the search api (see mixin massActionsTable)
-      massActionType: MassActionType.FinancialAssistance,
-      detailsRouteName: routes.massActions.financialAssistance.details.name,
-      tableTitle: 'massAction.financialAssistanceTable.title',
+      massActionTypeData: MassActionType.FinancialAssistance,
+      detailsRouteNameData: routes.massActions.financialAssistance.details.name,
+      tableTitleData: 'massAction.financialAssistanceTable.title',
       showProcessByList: false,
-      searchEndpoint: 'financial-assistance-mass-actions',
+      searchEndpointData: 'financial-assistance-mass-actions',
     };
   },
 

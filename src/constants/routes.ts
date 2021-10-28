@@ -222,6 +222,20 @@ const routes = {
         name: 'massActions.importValidationStatus.details',
       },
     },
+    importPaymentStatus: {
+      home: {
+        path: 'import-payment-status',
+        name: 'massActions.importPaymentStatuses.home',
+      },
+      create: {
+        path: 'import-payment-status/create',
+        name: 'massActions.importPaymentStatuses.create',
+      },
+      details: {
+        path: 'import-payment-status/details/:id',
+        name: 'massActions.importPaymentStatuses.details',
+      },
+    },
   },
   programs: {
     home: {

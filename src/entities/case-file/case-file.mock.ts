@@ -518,8 +518,6 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
     },
   ];
 
-  activities.forEach((a) => { a.id = `mock-activity-id-${a.activityType}`; });
-
   if (type) {
     return activities.filter((a) => a.activityType === type);
   }

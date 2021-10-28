@@ -247,7 +247,7 @@ class HttpClient implements IHttpClient {
     */
 
     // take error.code if we have it translated...
-    let text = (i18n.t(error.code) !== error.code ? i18n.t(error.code) : i18n.t(`${error.title || error.code}`)) as string;
+    let text = (i18n.te(error.code) ? i18n.t(error.code) : i18n.t(`${error.title || error.code}`)) as string;
     let { locale } = i18n;
 
     if (locale !== 'en' && locale !== 'fr') {

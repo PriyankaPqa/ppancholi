@@ -186,6 +186,7 @@ describe('AccountSettings.vue', () => {
   describe('life cycle', () => {
     it('should call fetchUserAccount with id', async () => {
       wrapper.vm.fetchUserAccount = jest.fn();
+      wrapper.vm.setRoles = jest.fn();
       await wrapper.vm.$options.created.forEach((hook) => {
         hook.call(wrapper.vm);
       });
@@ -322,6 +323,7 @@ describe('AccountSettings.vue', () => {
         expect(wrapper.vm.$storage.optionList.mutations.setList).toBeCalledWith(6); // EOptionLists.Roles
         expect(wrapper.vm.$storage.optionList.actions.fetchItems).toBeCalledTimes(1);
       });
+
       it('filters for active roles', async () => {
         const itemData = mockOptionItemData();
         itemData.forEach((a) => { a.subitems.forEach((s) => { s.status = 1; }); });
@@ -332,6 +334,7 @@ describe('AccountSettings.vue', () => {
         expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[1]);
         expect(wrapper.vm.allAccessLevelRoles.filter((x) => x === itemData[0].subitems[0])[0]).toBeUndefined();
       });
+
       describe('setAllAccessLevelRoles', () => {
         it('includes current user\'s inactive role', async () => {
           const itemData = mockOptionItemData();

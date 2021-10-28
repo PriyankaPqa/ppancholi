@@ -62,6 +62,10 @@ const MassActionsFinancialAssistanceDetails = () => import(/* webpackChunkName: 
 const MassActionsImportValidationStatusHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusHome.vue');
 const MassActionsImportValidationStatusCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusCreate.vue');
 const MassActionsImportValidationStatusDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-validation-status/ImportValidationStatusDetails.vue');
+
+const MassActionsImportPaymentStatusHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusHome.vue');
+const MassActionsImportPaymentStatusCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusCreate.vue');
+
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
 
@@ -503,6 +507,25 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.massActions.importValidationStatus.details.name,
                 component: MassActionsImportValidationStatusDetails,
                 meta: { level: 'level6', roles: ['contributorIM'], feature: Features.MassAction },
+                props: true,
+              },
+              {
+                path: Routes.massActions.importPaymentStatus.home.path,
+                name: Routes.massActions.importPaymentStatus.home.name,
+                component: MassActionsImportPaymentStatusHome,
+                meta: { level: 'level6', roles: ['contributorFinance'] },
+              },
+              {
+                path: Routes.massActions.importPaymentStatus.create.path,
+                name: Routes.massActions.importPaymentStatus.create.name,
+                component: MassActionsImportPaymentStatusCreate,
+                meta: { level: 'level6', roles: ['contributorFinance'] },
+              },
+              {
+                path: Routes.massActions.importPaymentStatus.details.path,
+                name: Routes.massActions.importPaymentStatus.details.name,
+                component: { template: '<div>Not yet implemented</div>' },
+                meta: { level: 'level6', roles: ['contributorFinance'] },
                 props: true,
               },
             ],

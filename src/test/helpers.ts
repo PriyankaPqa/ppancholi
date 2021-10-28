@@ -34,20 +34,27 @@ export const mockUserStateLevel = (level: number) => ({
   },
 });
 
+export enum Contributor {
+  'IM' =1,
+  'Finance' = 2,
+  'Three' = 3,
+
+}
+
 export const mockUserStateContributor = (number: number) => {
   let mockUser;
   switch (number) {
-    case 1:
+    case Contributor.IM:
       // eslint-disable-next-line prefer-destructuring
-      mockUser = mockUsersData()[6];
+      mockUser = mockUsersData()[6]; // contributorIM
       break;
-    case 2:
+    case Contributor.Finance:
       // eslint-disable-next-line prefer-destructuring
-      mockUser = mockUsersData()[7];
+      mockUser = mockUsersData()[7]; // contributorFinance
       break;
-    case 3:
+    case Contributor.Three:
       // eslint-disable-next-line prefer-destructuring
-      mockUser = mockUsersData()[8];
+      mockUser = mockUsersData()[8]; // contributor3
       break;
     default:
       break;

@@ -18,14 +18,15 @@ export default Vue.extend({
         sortBy: ['Entity/Created'],
         sortDesc: [true],
       },
-      massActionType: null,
-      detailsRouteName: '',
-      searchEndpoint: '',
-      tableTitle: '',
+      massActionTypeData: null,
+      detailsRouteNameData: '',
+      searchEndpointData: '',
+      tableTitleData: '',
       searchResultIds: [],
       itemsCount: 0,
     };
   },
+
   computed: {
     tableData(): IMassActionCombined[] {
       return this.$storage.massAction.getters.getByIds(this.searchResultIds, true);
@@ -40,16 +41,17 @@ export default Vue.extend({
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
       return {
         header: {
-          title: `${this.$t(this.tableTitle)} (${this.itemsCount})`,
+          title: `${this.$t(this.tableTitleData)} (${this.itemsCount})`,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };
     },
   },
+
   methods: {
     goToDetails(id: string) {
       return {
-        name: this.detailsRouteName,
+        name: this.detailsRouteNameData,
         params: {
           id,
         },
@@ -94,7 +96,7 @@ export default Vue.extend({
           ...params.filter as Record<string, unknown>,
           Entity: {
             Status: Status.Active,
-            Type: this.massActionType,
+            Type: this.massActionTypeData,
           },
         },
         top: params.top,
@@ -103,7 +105,7 @@ export default Vue.extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      }, this.searchEndpoint);
+      }, this.searchEndpointData);
 
       return res;
     },

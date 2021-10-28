@@ -36,8 +36,26 @@ export class User implements IUser {
   }
 
   hasRole(role: string): boolean {
+    const acceptedValues = [
+      'noAccess',
+      'level1',
+      'level2',
+      'level3',
+      'level4',
+      'level5',
+      'level6',
+      'contributorIM',
+      'contributorFinance',
+      'contributor3',
+      'readonly',
+      'no_role',
+    ];
     if (typeof role !== 'string') {
       throw new Error(`The function $hasRole is expecting a string. A ${typeof role} was passed`);
+    }
+
+    if (acceptedValues.indexOf(role) === -1) {
+      throw new Error(`The role ${role} is not valid. Please choose among ${acceptedValues.join(', ')}`);
     }
     if (this.roles) {
       return this.roles.some((r: string) => r.toLowerCase() === role.toLowerCase());

@@ -5,7 +5,7 @@
     :add-route-name="addRouteName"
     :table-title="tableTitle"
     :search-endpoint="searchEndpoint"
-    :show-add-button="$hasLevel('level6') || $hasRole('contributorIM')" />
+    :show-add-button="$hasLevel('level6') || $hasRole('contributorFinance')" />
 </template>
 
 <script lang="ts">
@@ -16,18 +16,18 @@ import { MassActionType } from '@/entities/mass-action';
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
 
 export default Vue.extend({
-  name: 'ImportValidationStatusHome',
+  name: 'ImportPaymentStatusHome',
 
   components: {
     MassActionBaseTable,
   },
 
   data: () => ({
-    massActionType: MassActionType.ImportValidationOfImpactStatus,
-    detailsRouteName: routes.massActions.importValidationStatus.details.name,
-    tableTitle: 'massAction.impactValidationStatusTable.title',
-    searchEndpoint: 'validate-impact-status-mass-actions',
-    addRouteName: routes.massActions.importValidationStatus.create.name,
+    massActionType: MassActionType.ImportPaymentStatuses,
+    detailsRouteName: routes.massActions.importPaymentStatus.details.name,
+    tableTitle: 'massAction.importPaymentStatusTable.title',
+    searchEndpoint: 'import-payment-status-mass-actions',
+    addRouteName: routes.massActions.importPaymentStatus.create.name,
   }),
 });
 </script>

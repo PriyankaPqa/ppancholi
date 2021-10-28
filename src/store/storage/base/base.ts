@@ -180,6 +180,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
 
         return { ids, count: res.odataCount };
       }
+      this.store.commit(`${this.entityModuleName}/setSearchLoading`, false);
       return { ids: [], count: 0 };
     },
   }
