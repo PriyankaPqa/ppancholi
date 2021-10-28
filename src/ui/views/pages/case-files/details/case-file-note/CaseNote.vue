@@ -9,11 +9,16 @@
     content-padding="6"
     actions-padding="2"
     :help-link="$t('caseNote.help_link')"
-    @search="search"
+    @search="debounceSearch"
     @add-button="isBeingCreated = true">
     <rc-page-loading v-if="loading" />
     <template v-else>
-      <filter-toolbar class="caseNote__filter" :filter-options="[]" :count="totalCount" :filter-key="filterKey">
+      <filter-toolbar
+        class="caseNote__filter"
+        :filter-key="filterKey"
+        :filter-options="filterOptions"
+        :count="itemsCount"
+        @update:appliedFilter="onApplyFilter($event)">
         <template #toolbarActions>
           <div class="flex-row">
             <span
@@ -44,28 +49,29 @@
           @saved="onSaved($event)" />
       </case-file-list-wrapper>
     </template>
-
-    <template v-if="!loading" #actions>
-      <v-data-footer v-if="false" :options.sync="options" :pagination.sync="pagination" :items-per-page-options="[5, 10, 15, 20]" />
-    </template>
   </rc-page-content>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import { RcPageContent, RcPageLoading } from '@crctech/component-library';
-import _orderBy from 'lodash/orderBy';
+import mixins from 'vue-typed-mixins';
+import { IFilterSettings, RcPageContent, RcPageLoading } from '@crctech/component-library';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
+import _isEmpty from 'lodash/isEmpty';
+import _debounce from 'lodash/debounce';
+import { EFilterType } from '@crctech/component-library/src/types';
+import * as searchEndpoints from '@/constants/searchEndpoints';
 import { FilterKey } from '@/entities/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { ICaseNoteCombined } from '@/entities/case-note';
-import * as searchEndpoints from '@/constants/searchEndpoints';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';
 import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
+import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
+import { IAzureSearchParams } from '@/types';
+import { IOptionItem } from '@/entities/optionItem';
 
-export default Vue.extend({
+export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseNote',
   components: {
     RcPageContent,
@@ -89,24 +95,16 @@ export default Vue.extend({
 
   data() {
     return {
-      caseNoteIds: [] as string[],
       isBeingCreated: false,
       isBeingEdited: false,
       filterKey: FilterKey.CaseNotes,
-      totalCount: 0,
       dateSortDesc: true,
-      options: {
-        page: 1,
-        itemsPerPage: 10,
-      },
-      searchTimeout: null,
-      params: {
-        filter: {
-          'Entity/CaseFileId': this.$route.params.id,
-        },
+      dataTableParams: {
         search: '',
-        orderBy: 'Entity/IsPinned desc, Entity/Created desc',
-        count: true,
+        orderBy: 'Entity/Created',
+        descending: true,
+        pageIndex: 1,
+        pageSize: 1000,
       },
     };
   },
@@ -117,67 +115,83 @@ export default Vue.extend({
     },
 
     caseNotes(): ICaseNoteCombined[] {
-      const caseNotes = this.$storage.caseNote.getters.getByIds(this.caseNoteIds);
-      const orderbyDate = this.dateSortDesc ? 'desc' : 'asc';
-      return _orderBy(caseNotes, ['entity.isPinned', 'entity.created'], ['desc', orderbyDate]);
+      return this.$storage.caseNote.getters.getByIds(this.searchResultIds);
     },
 
     title(): string {
-      return `${this.$t('caseNote.caseNotes')} (${this.totalCount})`;
+      return `${this.$t('caseNote.caseNotes')} (${this.itemsCount})`;
     },
-    filterOptions(): Array<Record<string, unknown>> {
-      return [];
+
+    filterOptions(): Array<IFilterSettings> {
+      return [
+        {
+          key: `Metadata/CaseNoteCategoryName/Translation/${this.$i18n.locale}`,
+          type: EFilterType.MultiSelect,
+          label: this.$t('caseNote.category') as string,
+          items: this.$storage.caseNote.getters.caseNoteCategories().map((c: IOptionItem) => ({ text: this.$m(c.name), value: this.$m(c.name) })),
+        },
+        {
+          key: 'Entity/Created',
+          type: EFilterType.Date,
+          label: this.$t('caseNote.createdDate') as string,
+        },
+      ];
     },
-    pagination(): Record<string, number> {
-      return { };
-    },
+
     loading(): boolean {
       return this.$store.state.caseNoteEntities.isLoadingCaseNotes;
     },
+
     titleLeave(): TranslateResult {
       return this.$t('confirmLeaveDialog.title');
     },
+
     messagesLeave(): Array<TranslateResult> {
-      return [
-        this.$t('confirmLeaveDialog.message_1'),
-        this.$t('confirmLeaveDialog.message_2'),
-      ];
+      return [this.$t('confirmLeaveDialog.message_1'), this.$t('confirmLeaveDialog.message_2')];
     },
   },
 
   watch: {
-    dateSortDesc(desc: boolean) {
-      this.params.orderBy = `Entity/IsPinned desc, Entity/Created${desc ? ' desc' : ''}`;
-      this.searchCaseNotes();
+    async dateSortDesc(desc: boolean) {
+      this.dataTableParams.descending = desc;
+      await this.search(this.dataTableParams);
     },
   },
 
   async created() {
     await this.$storage.caseNote.actions.fetchCaseNoteCategories();
-    await this.searchCaseNotes();
+    await this.search(this.dataTableParams);
   },
 
   methods: {
     addNewCaseNoteId(id: string) {
-      this.caseNoteIds.unshift(id);
+      this.searchResultIds.unshift(id);
     },
 
     onSaved() {
       // TODO
     },
 
-    search(keyword: string) {
-      this.params.search = keyword || '';
-      clearTimeout(this.searchTimeout);
-      this.searchTimeout = setTimeout(() => this.searchCaseNotes(), 500);
-    },
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    debounceSearch: _debounce(function func(this:any, keyword: string) {
+      this.dataTableParams.search = keyword || '';
+      this.search(this.dataTableParams);
+    }, 500),
 
-    async searchCaseNotes() {
-      const res = await this.$storage.caseNote.actions.search(this.params, searchEndpoints.CASE_NOTES);
-      if (res) {
-        this.caseNoteIds = res.ids;
-        this.totalCount = res.count;
-      }
+    async fetchData(params: IAzureSearchParams) {
+      const filter = _isEmpty(params?.filter) ? {} : params.filter;
+      const res = await this.$storage.caseNote.actions.search(
+        {
+          ...params,
+          filter: { ...(filter as Record<string, unknown>), 'Entity/CaseFileId': this.$route.params.id },
+          count: true,
+          queryType: 'full',
+          searchMode: 'all',
+        },
+        searchEndpoints.CASE_NOTES,
+        true,
+      );
+      return res;
     },
 
     async pinCaseNote(caseNote: ICaseNoteCombined) {
@@ -185,7 +199,7 @@ export default Vue.extend({
         await this.$storage.caseNote.actions.pinCaseNote(this.$route.params.id, caseNote.entity.id, !caseNote.entity.isPinned);
         // Since back end search has a delay, update case note and sort case note list locally
         caseNote.entity.isPinned = !caseNote.entity.isPinned;
-      // eslint-disable-next-line no-empty
+        // eslint-disable-next-line no-empty
       } catch (e) {}
     },
   },

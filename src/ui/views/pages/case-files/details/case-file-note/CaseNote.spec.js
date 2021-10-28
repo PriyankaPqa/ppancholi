@@ -1,9 +1,11 @@
+import { EFilterType } from '@crctech/component-library/src/types';
 import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@/entities/case-note';
 import { mockStorage } from '@/store/storage';
 import Component from './CaseNote.vue';
 import CaseNoteForm from './components/CaseNoteForm.vue';
+import * as searchEndpoints from '@/constants/searchEndpoints';
 
 const localVue = createLocalVue();
 const caseNote = mockCombinedCaseNote();
@@ -38,25 +40,25 @@ describe('CaseNote.vue', () => {
 
     describe('Watch dateSortDesc', () => {
       it('sets orderBy in the params', async () => {
-        expect(wrapper.vm.params.orderBy).toBe('Entity/IsPinned desc, Entity/Created desc');
+        expect(wrapper.vm.dataTableParams.descending).toBe(true);
 
         await wrapper.setData({
           dateSortDesc: false,
         });
 
-        expect(wrapper.vm.params.orderBy).toBe('Entity/IsPinned desc, Entity/Created');
+        expect(wrapper.vm.dataTableParams.descending).toBe(false);
       });
 
-      it('calls searchCaseNotes', async () => {
-        wrapper.vm.searchCaseNotes = jest.fn();
+      it('calls search', async () => {
+        wrapper.vm.search = jest.fn();
 
-        expect(wrapper.vm.searchCaseNotes).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.search).toHaveBeenCalledTimes(0);
 
         await wrapper.setData({
           dateSortDesc: false,
         });
 
-        expect(wrapper.vm.searchCaseNotes).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -153,29 +155,35 @@ describe('CaseNote.vue', () => {
         });
       });
 
-      it('calls the getByIds getter and sets the result into caseNotes, ordered by ', () => {
-        expect(wrapper.vm.caseNotes).toEqual([caseFiles[1], caseFiles[2], caseFiles[0]]);
-      });
-
-      it('sorts caseNotes based on dateSortDesc', async () => {
-        await wrapper.setData({
-          dateSortDesc: false,
-        });
-
-        expect(wrapper.vm.caseNotes).toEqual([caseFiles[1], caseFiles[0], caseFiles[2]]);
+      it('calls the getByIds getter and sets the result into caseNotes', () => {
+        expect(wrapper.vm.caseNotes).toEqual([caseFiles[0], caseFiles[1], caseFiles[2]]);
       });
     });
 
     describe('title', () => {
       it('should return proper data', async () => {
-        wrapper.vm.totalCount = 99;
+        wrapper.vm.itemsCount = 99;
         expect(wrapper.vm.title).toEqual('caseNote.caseNotes (99)');
       });
     });
 
     describe('filterOptions', () => {
       it('should return proper data', () => {
-        expect(wrapper.vm.filterOptions).toEqual([]);
+        expect(wrapper.vm.filterOptions).toEqual([
+          {
+            key: 'Metadata/CaseNoteCategoryName/Translation/en',
+            type: EFilterType.MultiSelect,
+            label: 'caseNote.category',
+            items: wrapper.vm.$storage.caseNote.getters
+              .caseNoteCategories()
+              .map((c) => ({ text: wrapper.vm.$m(c.name), value: wrapper.vm.$m(c.name) })),
+          },
+          {
+            key: 'Entity/Created',
+            type: EFilterType.Date,
+            label: 'caseNote.createdDate',
+          },
+        ]);
       });
     });
 
@@ -206,18 +214,14 @@ describe('CaseNote.vue', () => {
     describe('created', () => {
       it('should call fetchCaseNoteCategories and searchCaseNotes', async () => {
         wrapper.vm.$storage.caseNote.actions.fetchCaseNoteCategories = jest.fn();
-        wrapper.vm.searchCaseNotes = jest.fn();
+        wrapper.vm.search = jest.fn();
 
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
 
         expect(wrapper.vm.$storage.caseNote.actions.fetchCaseNoteCategories).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.searchCaseNotes).toHaveBeenCalledTimes(1);
-      });
-
-      it('should fetch case notes with multiple orderBy', async () => {
-        expect(wrapper.vm.params.orderBy).toBe('Entity/IsPinned desc, Entity/Created desc');
+        expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
       });
     });
   });
@@ -225,33 +229,55 @@ describe('CaseNote.vue', () => {
   describe('Methods', () => {
     describe('addNewCaseNoteId', () => {
       it('adds the id in the argument to the beginning of the ids', async () => {
-        wrapper.vm.caseNoteIds = ['1', '2'];
+        wrapper.vm.searchResultIds = ['1', '2'];
         await wrapper.vm.addNewCaseNoteId('0');
-        expect(wrapper.vm.caseNoteIds).toEqual(['0', '1', '2']);
+        expect(wrapper.vm.searchResultIds).toEqual(['0', '1', '2']);
       });
     });
 
-    describe('search', () => {
-      it('should call searchCaseNotes', async () => {
-        wrapper.vm.searchCaseNotes = jest.fn();
+    describe('debounceSearch', () => {
+      it('should call search', async () => {
+        wrapper.vm.search = jest.fn();
 
-        wrapper.vm.search();
+        wrapper.vm.debounceSearch();
         await new Promise((resolve) => setTimeout(resolve, 600));
 
-        expect(wrapper.vm.searchCaseNotes).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.search).toHaveBeenCalledTimes(1);
       });
     });
 
-    describe('searchCaseNotes', () => {
+    describe('fetchData', () => {
       it('should call storage', async () => {
-        wrapper.vm.$storage.caseNote.actions.search = jest.fn(() => ({
-          ids: [],
-          count: 0,
-        }));
+        wrapper.vm.$storage.caseNote.actions.search = jest.fn();
 
-        await wrapper.vm.searchCaseNotes();
+        wrapper.vm.$route = {
+          params: {
+            id: 'id',
+          },
+        };
+
+        const params = {
+          search: '',
+          orderBy: 'Entity/Created',
+          descending: true,
+          pageIndex: 1,
+          pageSize: 1000,
+        };
+
+        await wrapper.vm.fetchData(params);
 
         expect(wrapper.vm.$storage.caseNote.actions.search).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.caseNote.actions.search).toHaveBeenLastCalledWith(
+          {
+            ...params,
+            filter: { 'Entity/CaseFileId': 'id' },
+            count: true,
+            queryType: 'full',
+            searchMode: 'all',
+          },
+          searchEndpoints.CASE_NOTES,
+          true,
+        );
       });
     });
 
