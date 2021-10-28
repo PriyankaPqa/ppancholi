@@ -54,6 +54,14 @@ describe('ApplicationInsights', () => {
     });
   });
 
+  it('should not throw load app insights fails', () => {
+    appInsights.loadAppInsights.mockImplementation(() => {
+      throw new Error('Failed to load');
+    });
+
+    expect(() => install(vue, { connectionString: '', router, appName })).not.toThrow();
+  });
+
   describe('Once properly initialized', () => {
     beforeEach(() => {
       install(vue, { connectionString, router, appName });

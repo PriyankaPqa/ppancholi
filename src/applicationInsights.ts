@@ -8,7 +8,7 @@ export interface ApplicationInsightsOptions {
   appName: string,
 }
 
-const install = (vue: typeof Vue, options: ApplicationInsightsOptions) => {
+const performInstall = (vue: typeof Vue, options: ApplicationInsightsOptions) => {
   const { connectionString, router, appName } = options;
 
   // Config options: https://docs.microsoft.com/en-us/azure/azure-monitor/app/javascript#configuration
@@ -48,6 +48,15 @@ const install = (vue: typeof Vue, options: ApplicationInsightsOptions) => {
     });
     next();
   });
+};
+
+const install = (vue: typeof Vue, options: ApplicationInsightsOptions) => {
+  try {
+    performInstall(vue, options);
+  } catch (error) {
+    /* eslint-disable no-console */
+    console.error(error);
+  }
 };
 
 export default install;
