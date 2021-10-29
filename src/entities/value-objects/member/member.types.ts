@@ -35,6 +35,13 @@ export interface MemberCreateRequest {
   contactInformation: IContactInformationCreateRequest;
 }
 
+export interface IMemberMoveRequest {
+  isPrimaryBeneficiary: boolean;
+  preferredLanguageId: uuid;
+  memberId: uuid;
+  currentAddress: ICurrentAddressCreateRequest;
+}
+
 export interface IMember extends IMemberEntity {
   setCurrentAddress(currentAddress: ICurrentAddress): void;
   validate(skipAgeRestriction?: boolean): string[];

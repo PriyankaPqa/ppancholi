@@ -1,9 +1,10 @@
 import { ECanadaProvinces, ERegistrationMode } from '@/types';
 import moment from 'moment';
+import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { mockHttp } from '../../httpClient.mock';
 import {
   mockAddressData, mockHouseholdCreate, mockContactInformation, mockCreateHouseholdRequest, mockSplitHouseholdRequest,
-  mockMember, ECurrentAddressTypes, mockIdentitySet, mockHotelMotel, mockCampGround, mockAddress, mockMemberCreateRequest,
+  mockMember, ECurrentAddressTypes, mockIdentitySet, mockHotelMotel, mockCampGround, mockAddress, mockMemberCreateRequest, IMemberMoveRequest, IMember,
 } from '../../../entities/household-create';
 import { HouseholdsService } from './households';
 
@@ -117,6 +118,12 @@ describe('>>> Beneficiaries Service', () => {
     service.parseSplitHouseholdPayload = jest.fn(() => splitBeneficiaryRequest);
     await service.splitHousehold(mockHouseholdCreate(), '1234', 'event-id');
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${'1234'}/split`, splitBeneficiaryRequest, { globalHandler: false });
+  });
+
+  test('moveMembers is linked to the correct URL', async () => {
+    service.parseMovePayload = jest.fn(() => ({ foo: 'bar' } as unknown as IMoveHouseholdRequest));
+    await service.moveMembers(mockHouseholdCreate(), mockHouseholdCreate());
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/move-household-members`, { foo: 'bar' });
   });
 
   test('addMember is linked to the correct URL', async () => {
@@ -283,6 +290,24 @@ describe('>>> Beneficiaries Service', () => {
     });
   });
 
+  describe('parseMovePayload', () => {
+    it('returns the proper object', () => {
+      service.parseMoveMember = jest.fn(() => ({ memberId: 'id' } as unknown as IMemberMoveRequest));
+      const household1 = {
+        ...mockHouseholdCreate(), id: 'hh-1', primaryBeneficiary: mockMember(), additionalMembers: [] as IMember[],
+      };
+      const household2 = {
+        ...mockHouseholdCreate(), id: 'hh-2', primaryBeneficiary: mockMember(), additionalMembers: [mockMember()],
+      };
+      expect(service.parseMovePayload(household1, household2)).toEqual({
+        firstHouseholdId: 'hh-1',
+        firstHouseholdMembers: [{ memberId: 'id' }],
+        secondHouseholdId: 'hh-2',
+        secondHouseholdMembers: [{ memberId: 'id' }, { memberId: 'id' }],
+      });
+    });
+  });
+
   describe('parseHouseholdPayload', () => {
     it('does not generate homeAddress if noFixedHome', () => {
       const household = mockHouseholdCreate();
@@ -308,6 +333,20 @@ describe('>>> Beneficiaries Service', () => {
         identitySet: service.parseIdentitySet(member.identitySet),
         currentAddress: service.parseCurrentAddress(member.currentAddress),
         contactInformation: null,
+      });
+    });
+  });
+
+  describe('parseMoveMember', () => {
+    it('should return the proper object', () => {
+      const member = mockMember();
+      const isPrimaryBeneficiary = true;
+      const built = service.parseMoveMember(member, isPrimaryBeneficiary);
+      expect(built).toEqual({
+        isPrimaryBeneficiary,
+        preferredLanguageId: member.contactInformation.preferredLanguage.id,
+        memberId: member.id,
+        currentAddress: service.parseCurrentAddress(member.currentAddress),
       });
     });
   });

@@ -26,6 +26,7 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   addMember: jest.fn(() => mockHouseholdEntity()),
   makePrimary: jest.fn(() => mockHouseholdEntity()),
   splitHousehold: jest.fn(() => mockHouseholdEntity()),
+  moveMembers: jest.fn(() => [mockHouseholdEntity(), mockHouseholdEntity()]),
   validateEmail: jest.fn(() => mockValidateEmailResponse()),
   getHouseholdHistory: jest.fn(() => [mockVersionedEntity()]),
   getHouseholdMetadataHistory: jest.fn(() => [mockVersionedEntity()]),

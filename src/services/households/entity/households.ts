@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHttpClient } from '../../httpClient';
 import { IHouseholdEntity } from '../../../entities/household';
 import {
@@ -18,7 +19,7 @@ import {
   MemberCreateRequest,
   IIdentitySet,
   IIdentitySetCreateRequest,
-  IMemberEntity, IAddress, IValidateEmailResponse, IValidateEmailRequest, ISplitHouseholdRequest,
+  IMemberEntity, IAddress, IValidateEmailResponse, IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
@@ -101,6 +102,14 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     });
   }
 
+  async addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity> {
+    const parsePayload = this.parseMember(payload);
+    return this.http.post(`${this.baseUrl}/${householdId}/members`, {
+      ...parsePayload,
+      registrationType: ERegistrationMode.CRC,
+    });
+  }
+
   async deleteAdditionalMember(householdId: string, memberId: string): Promise<IHouseholdEntity> {
     return this.http.delete(`${this.baseUrl}/${householdId}/members/${memberId}`);
   }
@@ -110,12 +119,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.patch(`${this.baseUrl}/${originHouseholdId}/split`, payload, { globalHandler: false });
   }
 
-  async addMember(householdId: string, payload: IMember): Promise<IHouseholdEntity> {
-    const parsePayload = this.parseMember(payload);
-    return this.http.post(`${this.baseUrl}/${householdId}/members`, {
-      ...parsePayload,
-      registrationType: ERegistrationMode.CRC,
-    });
+  async moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]> {
+    const payload = this.parseMovePayload(firstHousehold, secondHousehold);
+    // the return value is the 2 modified households
+    return this.http.patch(`${this.baseUrl}/move-household-members`, payload);
   }
 
   async validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
@@ -154,6 +161,21 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
       primaryBeneficiaryId: household.primaryBeneficiary.id,
       additionalMemberIds: household.additionalMembers.map((member) => member.id),
       registrationType: ERegistrationMode.CRC,
+    };
+  }
+
+  parseMovePayload(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): IMoveHouseholdRequest {
+    return {
+      firstHouseholdId: firstHousehold.id,
+      firstHouseholdMembers: [
+        this.parseMoveMember(firstHousehold.primaryBeneficiary, true),
+        ...firstHousehold.additionalMembers.map((m) => this.parseMoveMember(m, false)),
+      ],
+      secondHouseholdId: secondHousehold.id,
+      secondHouseholdMembers: [
+        this.parseMoveMember(secondHousehold.primaryBeneficiary, true),
+        ...secondHousehold.additionalMembers.map((m) => this.parseMoveMember(m, false)),
+      ],
     };
   }
 
@@ -247,6 +269,15 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
         specifiedOther: identitySet?.gender?.isOther ? identitySet.genderOther : null,
       },
       indigenousIdentity,
+    };
+  }
+
+  parseMoveMember(member: IMember, isPrimaryBeneficiary: boolean): IMemberMoveRequest {
+    return {
+      isPrimaryBeneficiary,
+      preferredLanguageId: member.contactInformation.preferredLanguage?.id,
+      memberId: member.id,
+      currentAddress: this.parseCurrentAddress(member.currentAddress),
     };
   }
 }

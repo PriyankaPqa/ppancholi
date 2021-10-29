@@ -1,7 +1,9 @@
 import { ERegistrationMode } from '../../types/enums/ERegistrationMode';
 import { ERegistrationMethod } from '../../types';
 import { IAddress, IAddressData } from '../value-objects/address/address.types';
-import { IMemberEntity, IMember, MemberCreateRequest } from '../value-objects/member';
+import {
+  IMemberEntity, IMember, MemberCreateRequest, IMemberMoveRequest,
+} from '../value-objects/member';
 
 export interface ISplitHouseholdMembers {
   primaryMember: IMember;
@@ -76,4 +78,11 @@ export interface ISplitHouseholdRequest {
   eventId: uuid;
   consentInformation: IConsentInformation;
   registrationType: ERegistrationMode;
+}
+
+export interface IMoveHouseholdRequest {
+  firstHouseholdId: uuid;
+  firstHouseholdMembers: IMemberMoveRequest[];
+  secondHouseholdId: uuid;
+  secondHouseholdMembers: IMemberMoveRequest[];
 }
