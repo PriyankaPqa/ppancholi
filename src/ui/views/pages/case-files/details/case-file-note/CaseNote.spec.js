@@ -227,14 +227,6 @@ describe('CaseNote.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('addNewCaseNoteId', () => {
-      it('adds the id in the argument to the beginning of the ids', async () => {
-        wrapper.vm.searchResultIds = ['1', '2'];
-        await wrapper.vm.addNewCaseNoteId('0');
-        expect(wrapper.vm.searchResultIds).toEqual(['0', '1', '2']);
-      });
-    });
-
     describe('debounceSearch', () => {
       it('should call search', async () => {
         wrapper.vm.search = jest.fn();

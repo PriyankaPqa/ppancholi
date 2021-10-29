@@ -163,11 +163,13 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: this.$store.state.caseReferralEntities.searchLoading,
+        itemClass: (item: ICaseFileReferralCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
 
     tableData(): ICaseFileReferralCombined[] {
-      return this.$storage.caseFileReferral.getters.getByIds(this.searchResultIds);
+      return this.$storage.caseFileReferral.getters.getByIds(this.searchResultIds,
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
   },

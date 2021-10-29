@@ -134,6 +134,10 @@
   }
 }
 
+.pinned {
+  background-color: var(--v-status_yellow_pale-base) !important;
+}
+
 /* error messages for disabled field dont appear red by default */
 .invalid.validated.failed .v-messages {
   color: var(--v-error-base) !important;

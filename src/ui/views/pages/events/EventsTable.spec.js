@@ -248,7 +248,8 @@ describe('EventsTable.vue', () => {
         wrapper.vm.itemsCount = mockEvents().length;
 
         expect(JSON.stringify(wrapper.vm.tableData)).toEqual(JSON.stringify(mockEvents()));
-        expect(wrapper.vm.$storage.event.getters.getByIds).toHaveBeenCalledWith(wrapper.vm.searchResultIds);
+        expect(wrapper.vm.$storage.event.getters.getByIds).toHaveBeenCalledWith(wrapper.vm.searchResultIds,
+          { baseDate: null, prependPinnedItems: true });
       });
     });
 
@@ -436,9 +437,8 @@ describe('EventsTable.vue', () => {
             isDashboard: false,
           },
         });
-        expect(wrapper.vm.tableProps).toEqual({
-          loading: false,
-        });
+        expect(wrapper.vm.tableProps.loading).toEqual(false);
+        expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });
     });
   });

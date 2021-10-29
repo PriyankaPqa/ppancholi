@@ -260,6 +260,12 @@ describe('tablePaginationSearch.vue', () => {
         expect(wrapper.vm.searchResultIds).toEqual([]);
       });
 
+      it('sets the date of the search', async () => {
+        jest.spyOn(wrapper.vm, 'fetchData').mockImplementation(() => ({ ids: [], count: 12, date: 'myDate' }));
+        await wrapper.vm.search(params);
+        expect(wrapper.vm.searchExecutionDate).toEqual('myDate');
+      });
+
       it('sets itemsCount with the count', async () => {
         jest.spyOn(wrapper.vm, 'fetchData').mockImplementation(() => ({ ids: [], count: 12 }));
         await wrapper.vm.search(params);

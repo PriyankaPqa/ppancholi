@@ -212,7 +212,10 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
     ): Promise<IUserAccountEntity> => {
       try {
         const res = await this.service.createCaseFile(payload);
-        context.commit('set', res);
+        if (res) {
+          context.commit('addNewlyCreatedId', res);
+          context.commit('set', res);
+        }
         return res;
       } catch (e) {
         return null;

@@ -170,7 +170,8 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): ICaseFileCombined[] {
-      return this.$storage.caseFile.getters.getByIds(this.searchResultIds);
+      // since items created while creating a new household dont get pinned yet we'll remove pinned items for now
+      return this.$storage.caseFile.getters.getByIds(this.searchResultIds, { prependPinnedItems: false, baseDate: this.searchExecutionDate });
     },
 
     customColumns(): Record<string, string> {
@@ -300,6 +301,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: this.searchLoading,
+        itemClass: (item: ICaseFileCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
   },
@@ -339,10 +341,9 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     getBeneficiaryName(caseFile: ICaseFileCombined): string {
-      if (!caseFile.metadata) return '';
+      if (!caseFile?.metadata?.primaryBeneficiary?.identitySet) return '';
 
-      const { firstName } = caseFile.metadata.primaryBeneficiary.identitySet;
-      const { lastName } = caseFile.metadata.primaryBeneficiary.identitySet;
+      const { firstName, lastName } = caseFile.metadata.primaryBeneficiary.identitySet;
 
       return `${firstName} ${lastName}`;
     },

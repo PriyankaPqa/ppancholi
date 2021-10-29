@@ -59,7 +59,10 @@ export class TeamEntityModule extends BaseModule <ITeamEntity, uuid> {
     ): Promise<ITeamEntity> => {
       // error will be thrown to UI on purpose
       const res = await this.service.createTeam(payload);
-      context.commit('set', res);
+      if (res) {
+        context.commit('addNewlyCreatedId', res);
+        context.commit('set', res);
+      }
       return res;
     },
 

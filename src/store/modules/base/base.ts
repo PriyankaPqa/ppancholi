@@ -25,10 +25,16 @@ export class BaseModule<T extends IEntity, IdParams> {
 
   protected baseState = {
     items: [] as Array<T>,
+    newlyCreatedIds: [] as Array<{id: uuid, createdOn: number}>,
     searchLoading: false,
+    maxTimeInSecondsForNewlyCreatedIds: 60,
   }
 
   protected baseGetters = {
+    getNewlyCreatedIds: (state:IState<T>) => (baseDate?: Date) => {
+      const maxTime = (baseDate || new Date()).getTime() - state.maxTimeInSecondsForNewlyCreatedIds * 1000;
+      return _cloneDeep(state.newlyCreatedIds.filter((i) => i.createdOn > maxTime));
+    },
     getAll: (state:IState<T>) => _cloneDeep(state.items),
     get: (state:IState<T>) => (id: uuid) => _cloneDeep(state.items.find((e) => e.id === id) || {}),
     // eslint-disable-next-line
@@ -105,6 +111,10 @@ export class BaseModule<T extends IEntity, IdParams> {
   }
 
   protected baseMutations = {
+
+    addNewlyCreatedId: (state: IState<T>, item: T) => {
+      state.newlyCreatedIds.unshift({ id: item.id, createdOn: (new Date()).getTime() });
+    },
 
     set: (state: IState<T>, item: T) => {
       this.upsert(state, item);

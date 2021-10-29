@@ -1,7 +1,7 @@
 import { ActionContext } from 'vuex';
 import {
   EFinancialAmountModes,
-  EFinancialFrequency, mockCombinedFinancialAssistance,
+  EFinancialFrequency, IFinancialAssistanceTableEntity, mockCombinedFinancialAssistance,
   mockFinancialAssistanceTableEntity,
   mockItemData,
   mockItems,
@@ -23,6 +23,8 @@ const mockProgram = mockProgramEntity();
 const mockState: IFinancialAssistanceEntityState = {
   id: '',
   items: [],
+  newlyCreatedIds: [],
+  maxTimeInSecondsForNewlyCreatedIds: 60,
   name: mockFinancialAssistanceTableEntity().name,
   status: Status.Inactive,
   program: mockProgram,
@@ -555,12 +557,15 @@ describe('>>> Financial Assistance Module', () => {
   describe('>> Actions', () => {
     describe('createFinancialAssistance', () => {
       it('calls the service', async () => {
-        module.service.createFinancialAssistanceTable = jest.fn();
+        const res = {} as IFinancialAssistanceTableEntity;
+        module.service.createFinancialAssistanceTable = jest.fn(() => Promise.resolve(res));
 
         expect(module.service.createFinancialAssistanceTable).toHaveBeenCalledTimes(0);
 
         await module.actions.createFinancialAssistance(actionContext, { table: true });
 
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
+        expect(actionContext.commit).toBeCalledWith('set', res);
         expect(module.service.createFinancialAssistanceTable).toHaveBeenCalledTimes(1);
         expect(module.service.createFinancialAssistanceTable).toHaveBeenCalledWith({
           status: Status.Inactive,

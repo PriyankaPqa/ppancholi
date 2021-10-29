@@ -41,11 +41,13 @@ describe('Team entity module', () => {
 
     describe('createTeam', () => {
       it('should call createTeam service with proper params and commit results', async () => {
-        module.service.createTeam = jest.fn(() => Promise.resolve(mockTeamsDataAddHoc()));
+        const res = mockTeamsDataAddHoc();
+        module.service.createTeam = jest.fn(() => Promise.resolve(res));
         await module.actions.createTeam(actionContext, mockTeamsDataStandard());
 
         expect(module.service.createTeam).toBeCalledWith(mockTeamsDataStandard());
-        expect(actionContext.commit).toBeCalledWith('set', mockTeamsDataAddHoc());
+        expect(actionContext.commit).toBeCalledWith('set', res);
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
       });
     });
 

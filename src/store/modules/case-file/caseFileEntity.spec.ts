@@ -7,7 +7,7 @@ import { OptionItemsService } from '@/services/optionItems';
 import {
   CaseFileStatus, CaseFileTriage, mockCaseFileActivities, mockTagsOptions, mockCaseFileEntity,
   IIdentityAuthentication, IdentityAuthenticationStatus, IdentityAuthenticationMethod, IImpactStatusValidation,
-  ImpactValidationMethod, ValidationOfImpactStatus,
+  ImpactValidationMethod, ValidationOfImpactStatus, ICaseFileEntity,
 } from '@/entities/case-file';
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
 import { CaseFileEntityModule } from './caseFileEntity';
@@ -344,10 +344,13 @@ describe('Case file entity module', () => {
             privacyDateTimeConsent: '2021-07-06T19:37:10.185Z',
           },
         };
-        module.service.createCaseFile = jest.fn();
+        const res = {} as ICaseFileEntity;
+        module.service.createCaseFile = jest.fn(() => Promise.resolve(res));
         await module.actions.createCaseFile(actionContext, payload);
 
         expect(module.service.createCaseFile).toBeCalledWith(payload);
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
+        expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });
 

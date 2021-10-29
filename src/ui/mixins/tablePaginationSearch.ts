@@ -2,6 +2,7 @@ import _isEmpty from 'lodash/isEmpty';
 import Vue from 'vue';
 import { IAzureSearchParams } from '@/types';
 import helpers from '@/ui/helpers/helpers';
+import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 
 export default Vue.extend({
   data() {
@@ -23,6 +24,7 @@ export default Vue.extend({
       },
       searchResultIds: [] as string [],
       itemsCount: 0,
+      searchExecutionDate: null as Date,
     };
   },
 
@@ -138,11 +140,12 @@ export default Vue.extend({
 
       this.setSearchParams();
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      const res = await (this as any).fetchData(this.azureSearchParams);
+      const res = await (this as any).fetchData(this.azureSearchParams) as IAzureTableSearchResults;
 
       if (res) {
         this.itemsCount = res.count;
         this.searchResultIds = res.ids;
+        this.searchExecutionDate = res.date;
       }
     },
 

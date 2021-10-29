@@ -36,8 +36,7 @@
       <case-note-form
         v-if="isBeingCreated"
         :action-title="$t('caseNote.create.rowTitle')"
-        @close-case-note-form="isBeingCreated = false"
-        @add-case-note-id="addNewCaseNoteId($event)" />
+        @close-case-note-form="isBeingCreated = false" />
 
       <case-file-list-wrapper :loading="loading" :empty="caseNotes.length === 0">
         <case-notes-list-item
@@ -115,7 +114,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     caseNotes(): ICaseNoteCombined[] {
-      return this.$storage.caseNote.getters.getByIds(this.searchResultIds);
+      return this.$storage.caseNote.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     title(): string {
@@ -164,14 +163,6 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   methods: {
-    addNewCaseNoteId(id: string) {
-      this.searchResultIds.unshift(id);
-    },
-
-    onSaved() {
-      // TODO
-    },
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     debounceSearch: _debounce(function func(this:any, keyword: string) {
       this.dataTableParams.search = keyword || '';

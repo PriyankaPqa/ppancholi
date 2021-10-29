@@ -215,7 +215,8 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper();
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
-        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'], true);
+        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'],
+          { baseDate: null, onlyActive: true, prependPinnedItems: true });
         expect(data.length).toBe(storage.financialAssistancePayment.getters.getByIds().length);
       });
     });
@@ -229,7 +230,8 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         jest.clearAllMocks();
         await wrapper.setData({ allItemsIds: ['abc'] });
         expect(wrapper.vm.itemsToSubmit).toEqual([data[0], data[2]]);
-        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'], true);
+        expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'],
+          { baseDate: null, onlyActive: true, prependPinnedItems: true });
       });
     });
 

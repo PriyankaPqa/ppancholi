@@ -133,9 +133,8 @@ describe('CaseFileReferral.vue', () => {
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
-        expect(wrapper.vm.tableProps).toEqual({
-          loading: false,
-        });
+        expect(wrapper.vm.tableProps.loading).toEqual(false);
+        expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });
     });
   });

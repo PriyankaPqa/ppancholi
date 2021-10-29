@@ -147,9 +147,8 @@ describe('massActionsTable', () => {
 
     describe('tableProps', () => {
       it('should return correct tableProps', () => {
-        expect(wrapper.vm.tableProps).toEqual({
-          loading: wrapper.vm.$store.state.massActionEntities.searchLoading,
-        });
+        expect(wrapper.vm.tableProps.loading).toEqual(wrapper.vm.$store.state.massActionEntities.searchLoading);
+        expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });
     });
 

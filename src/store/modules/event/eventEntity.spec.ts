@@ -9,6 +9,7 @@ import { Status } from '@/entities/base';
 import {
   EEventStatus,
   EventEntity,
+  IEventEntity,
   mockEventEntities,
   mockEventEntity,
 } from '@/entities/event';
@@ -364,6 +365,19 @@ describe('>>> Event Module', () => {
         expect(module.service.removeAgreement).toHaveBeenCalledTimes(1);
         expect(module.service.removeAgreement).toHaveBeenCalledWith(event.id, agreementId);
         expect(res).toEqual(event);
+      });
+    });
+
+    describe('createEvent', () => {
+      it('should call createEvent service with proper params', async () => {
+        const payload = {} as IEventEntity;
+        const res = {} as IEventEntity;
+        module.service.createEvent = jest.fn(() => Promise.resolve(res));
+        await module.actions.createEvent(actionContext, payload);
+
+        expect(module.service.createEvent).toBeCalledWith(payload);
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
+        expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });
 

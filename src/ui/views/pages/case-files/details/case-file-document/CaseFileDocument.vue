@@ -8,6 +8,7 @@
       :help-link="$t('zendesk.help_link.case_document_list')"
       :labels="labels"
       :headers="headers"
+      :table-props="tableProps"
       :options.sync="options"
       :custom-columns="Object.values(customColumns)"
       :hide-footer="true"
@@ -103,6 +104,7 @@ interface caseFileDocumentsMapped {
   id: string;
   category: string;
   entity: ICaseFileDocumentEntity;
+  pinned: boolean;
 }
 
 export default mixins(TablePaginationSearchMixin).extend({
@@ -121,6 +123,9 @@ export default mixins(TablePaginationSearchMixin).extend({
         sortDesc: [false],
       },
       FilterKey,
+      tableProps: {
+        itemClass: (item: { pinned: boolean }) => (item.pinned ? 'pinned' : ''),
+      },
     };
   },
 
@@ -146,7 +151,8 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     caseFileDocumentsMapped():caseFileDocumentsMapped[] {
-      const documents = this.$storage.caseFileDocument.getters.getByIds(this.searchResultIds);
+      const documents = this.$storage.caseFileDocument.getters.getByIds(this.searchResultIds,
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate });
       return documents.map((d: ICaseFileDocumentCombined) => ({
         name: d.entity?.name || '-',
         id: d.entity?.id,
@@ -155,6 +161,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         documentStatusName: this.$m(d.metadata?.documentStatusName) || '-',
         created: moment(d.entity?.created) || '-',
         entity: d.entity,
+        pinned: d.pinned,
       }));
     },
 

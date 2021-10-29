@@ -177,7 +177,7 @@ export default Vue.extend({
       return this.$storage.user.getters.user();
     },
     tenants(): IBrandingEntity[] {
-      return this.$storage.branding.getters.getByIds(this.tenantIds, true).map((e) => e.entity);
+      return this.$storage.branding.getters.getByIds(this.tenantIds, { onlyActive: true }).map((e) => e.entity);
     },
     isDev() {
       return process.env.NODE_ENV === 'development';

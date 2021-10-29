@@ -19,6 +19,9 @@ describe('FinancialAssistanceTablesTable.vue', () => {
   beforeEach(() => {
     wrapper = mount(Component, {
       localVue,
+      mocks: {
+        $storage: storage,
+      },
       store: {
         ...mockUserStateLevel(6),
       },
@@ -174,6 +177,9 @@ describe('FinancialAssistanceTablesTable.vue', () => {
       it('returns the correct object', () => {
         wrapper = mount(Component, {
           localVue,
+          mocks: {
+            $storage: storage,
+          },
           store: {
             modules: {
               financialAssistanceEntities: {
@@ -185,12 +191,14 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           },
         });
 
-        expect(wrapper.vm.tableProps).toEqual({
-          loading: false,
-        });
+        expect(wrapper.vm.tableProps.loading).toEqual(false);
+        expect(wrapper.vm.tableProps.itemClass).toBeDefined();
 
         wrapper = mount(Component, {
           localVue,
+          mocks: {
+            $storage: storage,
+          },
           store: {
             modules: {
               financialAssistanceEntities: {
@@ -202,9 +210,7 @@ describe('FinancialAssistanceTablesTable.vue', () => {
           },
         });
 
-        expect(wrapper.vm.tableProps).toEqual({
-          loading: true,
-        });
+        expect(wrapper.vm.tableProps.loading).toEqual(true);
       });
     });
 

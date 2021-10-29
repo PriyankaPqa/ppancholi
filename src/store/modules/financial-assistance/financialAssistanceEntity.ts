@@ -327,6 +327,10 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
         const res = await this.service.createFinancialAssistanceTable(payload);
         context.commit('setDirty', { dirty: false });
         context.commit('setFormDirty', { formDirty: false });
+        if (res) {
+          context.commit('addNewlyCreatedId', res);
+          context.commit('set', res);
+        }
         return res;
       }
       return null;

@@ -77,6 +77,7 @@ export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid>
       /* Add future mass action call here */
 
       if (data) {
+        context.commit('addNewlyCreatedId', data);
         context.commit('set', data);
         return data;
       }

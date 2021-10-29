@@ -31,7 +31,8 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): ICaseFileCombined[] {
-      return this.$storage.caseFile.getters.getByIds(this.searchResultIds, true);
+      return this.$storage.caseFile.getters.getByIds(this.searchResultIds,
+        { onlyActive: true });
     },
 
     tableProps(): Record<string, unknown> {

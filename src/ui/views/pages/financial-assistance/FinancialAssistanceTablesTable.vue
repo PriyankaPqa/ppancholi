@@ -160,12 +160,14 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): IFinancialAssistanceTableCombined[] {
-      return this.$storage.financialAssistance.getters.getByIds(this.searchResultIds);
+      return this.$storage.financialAssistance.getters.getByIds(this.searchResultIds,
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
-    tableProps(): Record<string, string> {
+    tableProps(): Record<string, unknown> {
       return {
         loading: this.$store.state.financialAssistanceEntities.searchLoading,
+        itemClass: (item: IFinancialAssistanceTableCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
 

@@ -43,6 +43,7 @@ export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancia
       : Promise<IFinancialAssistancePaymentEntity> => {
       const result = await this.service.addFinancialAssistancePayment(payload);
       if (result) {
+        context.commit('addNewlyCreatedId', result);
         context.commit('set', result);
       }
       return result;

@@ -176,9 +176,8 @@ describe('ProgramsHome.vue', () => {
 
     describe('tableProps', () => {
       it('returns the correct object', () => {
-        expect(wrapper.vm.tableProps).toEqual({
-          loading: wrapper.vm.$store.state.programEntities.searchLoading,
-        });
+        expect(wrapper.vm.tableProps.loading).toEqual(wrapper.vm.$store.state.programEntities.searchLoading);
+        expect(wrapper.vm.tableProps.itemClass).toBeDefined();
       });
     });
 

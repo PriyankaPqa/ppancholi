@@ -60,6 +60,7 @@ describe('>>> Mass Action Entity Module', () => {
           expect(module.service.create).toHaveBeenCalledWith(urlSuffix, payload);
 
           expect(actionContext.commit).toBeCalledWith('set', res);
+          expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
         });
       });
     });

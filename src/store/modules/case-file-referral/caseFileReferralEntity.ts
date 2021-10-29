@@ -92,6 +92,7 @@ export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralE
       payload: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity> => {
       const result = await this.service.createReferral(payload);
       if (result) {
+        context.commit('addNewlyCreatedId', result);
         context.commit('set', result);
       }
       return result;

@@ -87,6 +87,8 @@ describe('Case file entity module', () => {
 
         expect(module.service.addCaseNote).toBeCalledWith(id, caseNote);
         expect(res).toEqual(serviceRes);
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
+        expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });
 

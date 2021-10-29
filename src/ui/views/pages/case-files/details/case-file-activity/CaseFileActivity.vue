@@ -69,7 +69,8 @@
         <v-col cols="12">
           <case-file-list-wrapper :empty="caseFileActivities.length === 0" :loading="loadingActivity" class="pa-4">
             <v-row>
-              <v-col class="rc-body12" data-test="caseFileActivity-last-action-date" cols="12" md="6">
+              <!-- hide lastActionDate until lee decides otherwise - too many issues in BE -->
+              <v-col class="rc-body12" data-test="caseFileActivity-last-action-date" style="visibility:hidden" cols="12" md="6">
                 {{ $t('caseFileActivity.lastAction', {x: lastActionDate }) }} <span class="fw-bold ml-1">({{ daysAgo }})</span>
               </v-col>
               <v-col cols="12" md="6" class="d-flex justify-end align-center rc-body14">

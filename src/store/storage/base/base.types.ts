@@ -14,13 +14,16 @@ export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity
 
 export interface IBaseGetters<TEntity extends IEntity, TMetadata extends IEntity> {
   get(id: uuid): IEntityCombined<TEntity, TMetadata>;
+  getNewlyCreatedIds(maxDate?: Date): Array<{id: uuid, createdOn: number}>,
   getAll(): Array<IEntityCombined<TEntity, TMetadata>>;
   getByCriteria (query: string, searchAll: boolean, searchAmong: string[]): Array<IEntityCombined<TEntity, TMetadata>>;
-  getByIds (ids: uuid[], onlyActive?: boolean): Array<IEntityCombined<TEntity, TMetadata>>;
+  getByIds (ids: uuid[], options?: { onlyActive?: boolean, prependPinnedItems?: boolean, baseDate?: Date }):
+    Array<IEntityCombined<TEntity, TMetadata>>;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface IBaseMutations<TEntity, TMetadata> {
+  addNewlyCreatedId(entity: TEntity): void;
   setEntity(entity: TEntity): void;
   setAllEntities(payload: TEntity[]): void;
   setMetadata(payload: TMetadata): void;

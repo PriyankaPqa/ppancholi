@@ -123,7 +123,7 @@ export default mixins(TablePaginationSearchMixin).extend({
   computed: {
 
     tableData(): IEventCombined[] {
-      return this.$storage.event.getters.getByIds(this.searchResultIds);
+      return this.$storage.event.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     customColumns(): Record<string, string> {
@@ -198,9 +198,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       }];
     },
 
-    tableProps(): Record<string, string> {
+    tableProps(): Record<string, unknown> {
       return {
         loading: this.$store.state.eventEntities.searchLoading,
+        itemClass: (item: IEventCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
   },

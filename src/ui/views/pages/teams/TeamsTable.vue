@@ -127,7 +127,7 @@ export default mixins(TablePaginationSearchMixin).extend({
   computed: {
 
     tableData(): ITeamCombined[] {
-      return this.$storage.team.getters.getByIds(this.searchResultIds);
+      return this.$storage.team.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
@@ -215,6 +215,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     tableProps(): Record<string, unknown> {
       return {
         loading: this.$store.state.teamEntities.searchLoading,
+        itemClass: (item: ITeamCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
 

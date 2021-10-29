@@ -65,6 +65,10 @@ const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName)
 const id = '1';
 
 describe('BaseStorage', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   describe('constructor', () => {
     it('should instantiate store', () => {
       expect(storage.store).toEqual(store);
@@ -87,9 +91,20 @@ describe('BaseStorage', () => {
           return {
             entity: { ...e },
             metadata: { ...match },
+            pinned: false,
           };
         });
         expect(storage.getters.getAll()).toEqual(expected);
+      });
+    });
+
+    describe('getNewlyCreatedIds', () => {
+      it('should call store', () => {
+        const res = {};
+        const date = new Date('2020/01/10');
+        store.getters['entityModule/getNewlyCreatedIds'] = jest.fn(() => res);
+        expect(storage.getters.getNewlyCreatedIds(date)).toEqual(res);
+        expect(store.getters['entityModule/getNewlyCreatedIds']).toHaveBeenCalledWith(date);
       });
     });
 
@@ -114,8 +129,19 @@ describe('BaseStorage', () => {
     describe('getByIds', () => {
       it('should return a list of entities and metadata filtered by the ids', () => {
         const ids = [mockEntities[0].id];
-        const expected = [{ entity: mockEntities[0], metadata: mockMetadatum[0] }];
+        const expected = [{ entity: mockEntities[0], metadata: mockMetadatum[0], pinned: false }];
         expect(storage.getters.getByIds(ids)).toEqual(expected);
+      });
+
+      it('returns newlycreated items pinned according to id', () => {
+        const ids = [mockEntities[0].id];
+        store.getters['entityModule/getNewlyCreatedIds'] = jest.fn(() => [{ id: mockEntities[0].id }]);
+        expect(storage.getters.getByIds(ids, { prependPinnedItems: true }))
+          .toEqual([{ entity: mockEntities[0], metadata: mockMetadatum[0], pinned: true }]);
+
+        store.getters['entityModule/getNewlyCreatedIds'] = jest.fn(() => []);
+        expect(storage.getters.getByIds(ids, { prependPinnedItems: true }))
+          .toEqual([{ entity: mockEntities[0], metadata: mockMetadatum[0], pinned: false }]);
       });
     });
   });
@@ -158,6 +184,7 @@ describe('BaseStorage', () => {
           return {
             entity: e,
             metadata: match,
+            pinned: false,
           };
         });
         expect(res).toEqual(expected);
@@ -182,6 +209,7 @@ describe('BaseStorage', () => {
           return {
             entity: e,
             metadata: match,
+            pinned: false,
           };
         });
         expect(res).toEqual(expected);
@@ -264,7 +292,10 @@ describe('BaseStorage', () => {
 
         const params = { filter: { Foo: 'foo' } };
         const res = await storage.actions.search(params);
-        expect(res).toEqual({ ids: [mockEntities[0].id], count: 1 });
+        expect(res.ids).toEqual([mockEntities[0].id]);
+        expect(res.count).toEqual(1);
+        expect(res.date.getTime()).toBeLessThanOrEqual(new Date().getTime());
+        expect(res.date.getTime()).toBeGreaterThanOrEqual(new Date().getTime() - 10000);
       });
     });
   });

@@ -24,17 +24,20 @@ export default Vue.extend({
       tableTitleData: '',
       searchResultIds: [],
       itemsCount: 0,
+      searchExecutionDate: null as Date,
     };
   },
 
   computed: {
     tableData(): IMassActionCombined[] {
-      return this.$storage.massAction.getters.getByIds(this.searchResultIds, true);
+      return this.$storage.massAction.getters.getByIds(this.searchResultIds,
+        { onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
-    tableProps(): Record<string, string> {
+    tableProps(): Record<string, unknown> {
       return {
         loading: this.$store.state.massActionEntities.searchLoading,
+        itemClass: (item: IMassActionCombined) => (item.pinned ? 'pinned' : ''),
       };
     },
 

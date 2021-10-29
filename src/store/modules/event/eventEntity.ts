@@ -182,6 +182,7 @@ export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
     ): Promise<IEventEntity> => {
       const data = await this.service.createEvent(payload);
       if (data) {
+        context.commit('addNewlyCreatedId', data);
         context.commit('set', data);
         return data;
       }

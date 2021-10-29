@@ -48,7 +48,7 @@ describe('>>> Case File Document Storage', () => {
     describe('getByCaseFile', () => {
       it('should return all documents of a case file, with entity and metadata', () => {
         const expected = storage.getters.getByCaseFile('case-file-1');
-        expect(expected).toEqual([{entity: documentEntity1, metadata: documentMetadata1}]);
+        expect(expected).toEqual([{entity: documentEntity1, metadata: documentMetadata1, pinned: false}]);
       });
     });
   });

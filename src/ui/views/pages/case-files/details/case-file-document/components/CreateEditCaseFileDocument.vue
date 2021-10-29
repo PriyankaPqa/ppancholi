@@ -110,6 +110,8 @@ export default Vue.extend({
             document = await this.tryUpload();
           }
           if (document) {
+            // eslint-disable-next-line max-depth
+            if (!this.isEditMode) this.$storage.caseFileDocument.mutations.addNewlyCreatedId(document);
             this.$storage.caseFileDocument.mutations.setEntity(document);
             this.$toasted.global.success(this.$t(this.isEditMode ? 'document.edit.success' : 'document.create.success'));
             this.isEditMode ? this.back()

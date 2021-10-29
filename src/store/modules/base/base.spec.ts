@@ -75,6 +75,21 @@ describe('Base Module', () => {
       });
     });
 
+    describe('getNewlyCreatedIds', () => {
+      it('should return the right list of Ids based on a time frame', () => {
+        baseModule.state.newlyCreatedIds = [{ createdOn: new Date().getTime() - 2000, id: ' 1' },
+          { createdOn: new Date().getTime() - 10000, id: ' 2' }, { createdOn: new Date().getTime() - 65000, id: ' 1' }];
+        baseModule.state.maxTimeInSecondsForNewlyCreatedIds = 60;
+        expect(baseModule.getters.getNewlyCreatedIds(baseModule.state)())
+          .toEqual([baseModule.state.newlyCreatedIds[0], baseModule.state.newlyCreatedIds[1]]);
+        baseModule.state.maxTimeInSecondsForNewlyCreatedIds = 5;
+        expect(baseModule.getters.getNewlyCreatedIds(baseModule.state)())
+          .toEqual([baseModule.state.newlyCreatedIds[0]]);
+        expect(baseModule.getters.getNewlyCreatedIds(baseModule.state)(new Date(baseModule.state.newlyCreatedIds[2].createdOn)))
+          .toEqual([baseModule.state.newlyCreatedIds[0], baseModule.state.newlyCreatedIds[1], baseModule.state.newlyCreatedIds[2]]);
+      });
+    });
+
     describe('getByIds', () => {
       it('should return the right list of items', () => {
         baseModule.mutations.setAll(baseModule.state, mockUserAccountEntities());
@@ -302,6 +317,7 @@ describe('Base Module', () => {
 
   describe('getModule', () => {
     it('should return a module object to be used in initialization of the store', () => {
+      const baseModule = new BaseModuleTest(service);
       expect(baseModule.getModule()).toEqual({
         namespaced: true,
         state: baseModule.state,

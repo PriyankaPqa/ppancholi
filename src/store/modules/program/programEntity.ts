@@ -37,6 +37,7 @@ export class ProgramEntityModule extends BaseModule<IProgramEntity, { id: uuid; 
     createProgram: async (context: ActionContext<IProgramEntityState, IProgramEntityState>, payload: IProgramEntity): Promise<IProgramEntity> => {
       const result = await this.service.createProgram(payload);
       if (result) {
+        context.commit('addNewlyCreatedId', result);
         context.commit('set', result);
       }
       return result;

@@ -19,7 +19,8 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     this.entityModuleName = pEntityModuleName;
   }
 
-  protected combinedCollections(entities: Array<TEntity>, metadata: Array<TMetadata>): Array<IEntityCombined<TEntity, TMetadata>> {
+  protected combinedCollections(entities: Array<TEntity>,
+    metadata: Array<TMetadata>, pinnedIds: Array<string> = []): Array<IEntityCombined<TEntity, TMetadata>> {
     if (!Array.isArray(entities)) {
       return [];
     }
@@ -28,6 +29,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return {
         entity: e,
         metadata: match || {},
+        pinned: pinnedIds.indexOf(e.id) > -1,
       } as IEntityCombined<TEntity, TMetadata>;
     });
   }
@@ -38,6 +40,11 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       const metadata = this.metadataModuleName ? this.store.getters[`${this.metadataModuleName}/getAll`] : null;
 
       return this.combinedCollections(entities, metadata);
+    },
+
+    // eslint-disable-next-line arrow-body-style
+    getNewlyCreatedIds: (maxDate?: Date): Array<{id: uuid, createdOn: number}> => {
+      return this.store.getters[`${this.entityModuleName}/getNewlyCreatedIds`](maxDate);
     },
 
     get: (id: uuid): IEntityCombined<TEntity, TMetadata> => {
@@ -68,11 +75,28 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return this.combinedCollections(foundEntities, foundMetadata);
     },
 
-    getByIds: (ids: uuid[], onlyActive = false) => {
-      const entities = this.store.getters[`${this.entityModuleName}/getByIds`](ids, onlyActive);
-      const metadata = this.metadataModuleName ? this.store.getters[`${this.metadataModuleName}/getByIds`](ids, onlyActive) : [];
+    getByIds: (ids: uuid[], options?: { onlyActive?: boolean, prependPinnedItems?: boolean, baseDate?: Date }) => {
+      /* jira-2482
+        prependPinnedItems and baseDate are used to filter within the list of objects created by the user recently.
+        The goal is to use them in lists after a search so that the new items show at the top of the list
+        we use baseDate as the static moment the list was first populated (last search that occured). Thus
+        the filter on the date of creation of the item keeps returning the same data until a new search is applied
+        — else signalr sends messages and getByIds always gets recomputed. If the date was always new Date(), items
+        would simply start disappearing because of actions outside of the current user's reach — someone else saving a case file
+        would trigger getByIds, with the same 10 search results as before, and because it has been more than one minute pinned items
+        would disappear from the list (a new search would have returned them by now, but no search was triggered!)
+      */
+      const opts = {
+        onlyActive: false, prependPinnedItems: false, baseDate: new Date(), ...(options || {}),
+      };
+      const pinnedIds = opts.prependPinnedItems ? this.baseGetters.getNewlyCreatedIds(opts.baseDate).map((x) => x.id) : [];
+      const idsExceptPinned = ids.filter((s) => pinnedIds.indexOf(s) < 0);
+      const idsToFetch = [...pinnedIds, ...idsExceptPinned];
 
-      return this.combinedCollections(entities, metadata);
+      const entities = this.store.getters[`${this.entityModuleName}/getByIds`](idsToFetch, opts.onlyActive);
+      const metadata = this.metadataModuleName ? this.store.getters[`${this.metadataModuleName}/getByIds`](idsToFetch, opts.onlyActive) : [];
+
+      return this.combinedCollections(entities, metadata, pinnedIds);
     },
   }
 
@@ -178,14 +202,18 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
 
         this.store.commit(`${this.entityModuleName}/setSearchLoading`, false);
 
-        return { ids, count: res.odataCount };
+        return { ids, count: res.odataCount, date: new Date() };
       }
       this.store.commit(`${this.entityModuleName}/setSearchLoading`, false);
-      return { ids: [], count: 0 };
+      return { ids: [], count: 0, date: new Date() };
     },
   }
 
   protected baseMutations = {
+    addNewlyCreatedId: (entity: TEntity) => {
+      this.store.commit(`${this.entityModuleName}/addNewlyCreatedId`, entity);
+    },
+
     setEntity: (entity: TEntity) => {
       this.store.commit(`${this.entityModuleName}/set`, entity);
     },

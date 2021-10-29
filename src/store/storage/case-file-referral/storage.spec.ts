@@ -56,7 +56,7 @@ describe('>>> Case File Storage', () => {
     describe('getByCaseFile', () => {
       it('should return all referrals of a case file, with entity and metadata', () => {
         const expected = storage.getters.getByCaseFile('case-file-1');
-        expect(expected).toEqual([{entity: referralEntity1, metadata: referralMetadata1}]);
+        expect(expected).toEqual([{entity: referralEntity1, metadata: referralMetadata1, pinned: false}]);
       });
     });
   });

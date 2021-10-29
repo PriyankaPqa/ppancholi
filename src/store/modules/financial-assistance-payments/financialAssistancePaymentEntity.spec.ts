@@ -41,6 +41,8 @@ describe('Financial assistance payment entity module', () => {
 
         expect(module.service.addFinancialAssistancePayment).toBeCalledWith(entity);
         expect(res).toEqual(serviceRes);
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', serviceRes);
+        expect(actionContext.commit).toBeCalledWith('set', serviceRes);
       });
     });
 

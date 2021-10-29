@@ -226,6 +226,7 @@ export default mixins(fileUpload).extend({
       if (this.uploadSuccess) {
         const entity = new MassActionEntity(this.response.data as IMassActionEntity);
 
+        this.$storage.massAction.mutations.addNewlyCreatedId(entity);
         this.$storage.massAction.mutations.setEntity(entity);
 
         // So the parent can redirect where needed

@@ -135,14 +135,15 @@ export default mixins(TablePaginationSearchMixin).extend({
       };
     },
 
-    tableProps(): Record<string, boolean> {
+    tableProps(): Record<string, unknown> {
       return {
         loading: this.$store.state.programEntities.searchLoading,
+        itemClass: (item: { pinned: boolean }) => (item.pinned ? 'pinned' : ''),
       };
     },
 
     tableData(): IProgramCombined[] {
-      return this.$storage.program.getters.getByIds(this.searchResultIds);
+      return this.$storage.program.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     filterOptions(): Array<IFilterSettings> {

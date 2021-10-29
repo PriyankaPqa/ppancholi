@@ -7,7 +7,7 @@ import { CaseFileReferralsService } from '@/services/case-file-referrals/entity'
 import { OptionItemsService } from '@/services/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
-import { mockCaseFileReferralEntity, mockCaseFileReferralEntities } from '@/entities/case-file-referral';
+import { mockCaseFileReferralEntity, mockCaseFileReferralEntities, ICaseFileReferralEntity } from '@/entities/case-file-referral';
 import { CaseFileReferralEntityModule } from './caseFileReferralEntity';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
 import { Status } from '@/entities/base';
@@ -126,5 +126,19 @@ describe('Case file entity module', () => {
         expect(actionContext.commit).toBeCalledWith('setOutcomeStatusesFetched', true);
       });
     });
+
+    describe('createReferral', () => {
+      it('should call createReferral service with proper params', async () => {
+        const payload = {} as ICaseFileReferralEntity;
+        const res = {} as ICaseFileReferralEntity;
+        module.service.createReferral = jest.fn(() => Promise.resolve(res));
+        await module.actions.createReferral(actionContext, payload);
+
+        expect(module.service.createReferral).toBeCalledWith(payload);
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
+        expect(actionContext.commit).toBeCalledWith('set', res);
+      });
+    });
+
   });
 });

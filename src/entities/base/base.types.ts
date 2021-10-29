@@ -19,4 +19,5 @@ export interface IEntity {
 export interface IEntityCombined <TEntity extends IEntity, TMetadata extends IEntity> {
   entity: TEntity,
   metadata: TMetadata,
+  pinned?: boolean;
 }

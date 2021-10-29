@@ -25,4 +25,5 @@ export interface IAzureCombinedSearchResult <TEntity, TMetadata> {
 export interface IAzureTableSearchResults {
   count: number;
   ids: Array<uuid>;
+  date?: Date;
 }

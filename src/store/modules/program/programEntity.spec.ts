@@ -42,6 +42,7 @@ describe('>>> Program entity module', () => {
         await module.actions.createProgram(actionContext, program);
 
         expect(actionContext.commit).toHaveBeenCalledWith('set', program);
+        expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', program);
       });
     });
 

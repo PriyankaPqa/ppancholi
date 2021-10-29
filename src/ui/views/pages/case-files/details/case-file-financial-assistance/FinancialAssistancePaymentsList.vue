@@ -219,6 +219,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         itemKey: 'entity.id',
         expandIcon: 'mdi-menu-down',
         loading: false,
+        itemClass: (item: IFinancialAssistancePaymentCombined) => (item.pinned ? 'pinned' : ''),
       },
       getLocalStringDate: helpers.getLocalStringDate,
       containsActiveTables: null as boolean,
@@ -238,11 +239,13 @@ export default mixins(TablePaginationSearchMixin).extend({
   computed: {
 
     tableData(): IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds, true);
+      return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds,
+        { onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     itemsToSubmit() : IFinancialAssistancePaymentCombined[] {
-      return this.$storage.financialAssistancePayment.getters.getByIds(this.allItemsIds, true)
+      return this.$storage.financialAssistancePayment.getters.getByIds(this.allItemsIds,
+        { onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate })
         .filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
     },
 

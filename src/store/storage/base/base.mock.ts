@@ -25,6 +25,7 @@ export class BaseMock<T, S> {
   }
 
   protected baseMutations = {
+    addNewlyCreatedId: jest.fn(),
     setEntity: jest.fn(),
     setAllEntities: jest.fn(),
     setMetadata: jest.fn(),

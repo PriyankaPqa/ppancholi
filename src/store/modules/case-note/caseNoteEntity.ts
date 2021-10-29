@@ -75,6 +75,7 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
       context.commit('setIsSavingCaseNote', true);
       const result = await this.service.addCaseNote(payload.id, payload.caseNote);
       if (result) {
+        context.commit('addNewlyCreatedId', result);
         context.commit('set', result);
       }
       context.commit('setIsSavingCaseNote', false);
