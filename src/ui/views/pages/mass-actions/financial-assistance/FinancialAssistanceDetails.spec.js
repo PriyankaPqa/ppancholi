@@ -1,123 +1,62 @@
 import {
   createLocalVue,
-  mount,
   shallowMount,
 } from '@/test/testSetup';
 
-import routes from '@/constants/routes';
-import {
-  mockMassActionRun, MassActionRunStatus, mockCombinedMassAction,
-} from '@/entities/mass-action';
-import { mockStorage } from '@/store/storage';
-
-import FinancialAssistancePreProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessing.vue';
-import FinancialAssistanceProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessing.vue';
-import FinancialAssistancePreProcessed from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessed.vue';
-import FinancialAssistanceProcessed from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessed.vue';
-
+import { MassActionType } from '@/entities/mass-action';
 import Component from './FinancialAssistanceDetails.vue';
+import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
+import routes from '@/constants/routes';
 
 const localVue = createLocalVue();
-
-const storage = mockStorage();
 
 describe('FinancialAssistanceDetails.vue', () => {
   let wrapper;
 
   describe('Template', () => {
-    it('should render processing component if processing', () => {
-      wrapper = mount(Component, {
-        localVue,
-        computed: {
-          processing: () => true,
-          massAction: () => mockCombinedMassAction(),
-        },
-      });
-      expect(wrapper.findComponent(FinancialAssistanceProcessing).exists()).toBe(true);
+    it('should pass correct mass action type', () => {
+      wrapper = shallowMount(Component, { localVue });
+      const component = wrapper.findComponent(MassActionBaseDetails);
+      const props = 'massActionType';
+      const expected = MassActionType.FinancialAssistance;
+
+      expect(component.props(props)).toEqual(expected);
     });
 
-    it('should render pre-processing component if pre-processing', () => {
-      wrapper = mount(Component, {
-        localVue,
-        computed: {
-          preProcessing: () => true,
-          massAction: () => mockCombinedMassAction(),
-        },
-      });
-      expect(wrapper.findComponent(FinancialAssistancePreProcessing).exists()).toBe(true);
+    it('should pass correct pre processing title', () => {
+      wrapper = shallowMount(Component, { localVue });
+      const component = wrapper.findComponent(MassActionBaseDetails);
+      const props = 'preProcessingTitle';
+      const expected = 'massActions.financialAssistance.status.preprocessing.title';
+
+      expect(component.props(props)).toEqual(expected);
     });
 
-    it('should render pre-processed component if pre-processed', () => {
-      wrapper = mount(Component, {
-        localVue,
-        computed: {
-          preProcessed: () => true,
-          massAction: () => mockCombinedMassAction(),
-        },
-      });
-      expect(wrapper.findComponent(FinancialAssistancePreProcessed).exists()).toBe(true);
+    it('should pass correct processing title', () => {
+      wrapper = shallowMount(Component, { localVue });
+      const component = wrapper.findComponent(MassActionBaseDetails);
+      const props = 'processingTitle';
+      const expected = 'massActions.financialAssistance.status.processing.title';
+
+      expect(component.props(props)).toEqual(expected);
     });
 
-    it('should render processed component if processed', () => {
-      wrapper = mount(Component, {
-        localVue,
-        computed: {
-          processed: () => true,
-          massAction: () => mockCombinedMassAction(),
-        },
-      });
-      expect(wrapper.findComponent(FinancialAssistanceProcessed).exists()).toBe(true);
-    });
-  });
+    it('should pass correct details title', () => {
+      wrapper = shallowMount(Component, { localVue });
+      const component = wrapper.findComponent(MassActionBaseDetails);
+      const props = 'detailsTitle';
+      const expected = 'massActions.financialAssistance.status.details.title';
 
-  describe('Methods', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-        },
-      });
+      expect(component.props(props)).toEqual(expected);
     });
 
-    describe('back', () => {
-      it('should redirect to home page', () => {
-        wrapper.vm.back();
-        expect(wrapper.vm.$router.replace).toHaveBeenLastCalledWith({ name: routes.massActions.financialAssistance.home.name });
-      });
-    });
-  });
+    it('should pass correct backRouteName', () => {
+      wrapper = shallowMount(Component, { localVue });
+      const component = wrapper.findComponent(MassActionBaseDetails);
+      const props = 'backRouteName';
+      const expected = routes.massActions.financialAssistance.home.name;
 
-  describe('Computed', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-        },
-      });
-    });
-
-    describe('title', () => {
-      it('should return proper title if processing', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.Processing }),
-          },
-        });
-        expect(wrapper.vm.title).toBe('massActions.financialAssistance.status.processing.title');
-      });
-
-      it('should return proper title if pre-processing', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          computed: {
-            lastRunEntity: () => mockMassActionRun({ runStatus: MassActionRunStatus.PreProcessing }),
-          },
-        });
-        expect(wrapper.vm.title).toBe('massActions.financialAssistance.status.preprocessing.title');
-      });
+      expect(component.props(props)).toEqual(expected);
     });
   });
 });

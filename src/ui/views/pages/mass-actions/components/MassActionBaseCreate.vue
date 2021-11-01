@@ -28,6 +28,7 @@
             </div>
             <validation-provider v-if="mode === MassActionMode.File" v-slot="{ errors }" ref="file" :rules="rules.file" mode="aggressive">
               <rc-file-upload
+                ref="fileUpload"
                 :allowed-extensions="['csv']"
                 :file="file"
                 :errors="errors"
@@ -231,7 +232,19 @@ export default mixins(fileUpload).extend({
 
         // So the parent can redirect where needed
         this.$emit('upload:success', entity);
+      } else {
+        this.resetFileInput();
       }
+    },
+
+    resetFileInput() {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const fileInput = (this.$refs.fileUpload as InstanceType<typeof RcFileUpload>).$refs.input as any;
+      // eslint-disable-next-line no-unused-expressions
+      fileInput && fileInput.focus();
+      this.$nextTick(() => {
+        fileInput.internalValue = null;
+      });
     },
   },
 });

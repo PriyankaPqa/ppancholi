@@ -1,63 +1,50 @@
 <template>
-  <rc-page-content :title="title">
-    <financial-assistance-pre-processing v-if="preProcessing" :mass-action="massAction" />
-
-    <financial-assistance-processing v-else-if="processing && lastRunMetadata" :mass-action="massAction" />
-
-    <financial-assistance-pre-processed
-      v-else-if="lastRunMetadata && preProcessed"
-      :mass-action="massAction"
-      :last-run-metadata="lastRunMetadata" />
-
-    <financial-assistance-processed
-      v-else-if="lastRunMetadata && processed"
-      :mass-action="massAction"
-      :last-run-metadata="lastRunMetadata" />
-
-    <template v-else>
-      This mass action status page is not yet implemented
+  <mass-action-base-details
+    :back-route-name="routes.massActions.financialAssistance.home.name"
+    details-title="massActions.financialAssistance.status.details.title"
+    processing-title="massActions.financialAssistance.status.processing.title"
+    pre-processing-title="massActions.financialAssistance.status.preprocessing.title"
+    :mass-action-type="MassActionType.FinancialAssistance">
+    <template #pre-processing>
+      <financial-assistance-payment-details-table :mass-action="massAction" />
     </template>
-
-    <template slot="actions">
-      <v-btn color="primary" @click="back()">
-        {{ $t('massActions.backToList.label') }}
-      </v-btn>
+    <template #pre-processed>
+      <financial-assistance-payment-details-table :mass-action="massAction" />
     </template>
-  </rc-page-content>
+    <template #processed>
+      <financial-assistance-payment-details-table :mass-action="massAction" />
+    </template>
+  </mass-action-base-details>
 </template>
 
 <script lang="ts">
-import { TranslateResult } from 'vue-i18n';
-import mixins from 'vue-typed-mixins';
-import { RcPageContent } from '@crctech/component-library';
-import FinancialAssistancePreProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessing.vue';
-import massActionDetails from '@/ui/views/pages/mass-actions/mixins/massActionDetails';
+import Vue from 'vue';
+import FinancialAssistancePaymentDetailsTable from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePaymentDetailsTable.vue';
+import { MassActionType, IMassActionCombined } from '@/entities/mass-action';
+import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
-import FinancialAssistanceProcessing from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessing.vue';
-import FinancialAssistancePreProcessed from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistancePreProcessed.vue';
-import FinancialAssistanceProcessed from '@/ui/views/pages/mass-actions/financial-assistance/FinancialAssistanceProcessed.vue';
 
-export default mixins(massActionDetails).extend({
+export default Vue.extend({
   name: 'FinancialAssistanceDetails',
   components: {
-    RcPageContent,
-    FinancialAssistancePreProcessed,
-    FinancialAssistanceProcessing,
-    FinancialAssistancePreProcessing,
-    FinancialAssistanceProcessed,
+    MassActionBaseDetails,
+    FinancialAssistancePaymentDetailsTable,
+  },
+
+  data() {
+    return {
+      MassActionType,
+      routes,
+    };
   },
 
   computed: {
-    title(): TranslateResult {
-      if (this.preProcessing) return this.$t('massActions.financialAssistance.status.preprocessing.title');
-      if (this.processing) return this.$t('massActions.financialAssistance.status.processing.title');
-      return this.$t('massActions.financialAssistance.status.details.title');
+    massActionId(): string {
+      return this.$route.params.id;
     },
-  },
 
-  methods: {
-    back() {
-      this.$router.replace({ name: routes.massActions.financialAssistance.home.name });
+    massAction(): IMassActionCombined {
+      return this.$storage.massAction.getters.get(this.massActionId);
     },
   },
 });

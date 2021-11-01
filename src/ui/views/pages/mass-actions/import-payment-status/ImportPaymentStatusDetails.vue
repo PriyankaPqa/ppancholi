@@ -1,10 +1,10 @@
 <template>
   <mass-action-base-details
-    :mass-action-type="MassActionType.ImportValidationOfImpactStatus"
-    pre-processing-title="massActions.impactValidation.status.preprocessing.title"
-    processing-title="massActions.impactValidation.status.processing.title"
-    details-title="massActions.impactValidation.status.details.title"
-    :back-route-name="routes.massActions.importValidationStatus.home.name" />
+    :mass-action-type="MassActionType.ImportPaymentStatuses"
+    pre-processing-title="massActions.importPaymentStatus.status.preprocessing.title"
+    processing-title="massActions.importPaymentStatus.status.processing.title"
+    details-title="massActions.importPaymentStatus.status.details.title"
+    :back-route-name="routes.massActions.importPaymentStatus.home.name" />
 </template>
 
 <script lang="ts">
@@ -14,7 +14,7 @@ import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/Mass
 import { MassActionType } from '@/entities/mass-action';
 
 export default Vue.extend({
-  name: 'ImportValidationStatusDetails',
+  name: 'ImportPaymentStatusDetails',
 
   components: {
     MassActionBaseDetails,

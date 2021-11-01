@@ -2,6 +2,7 @@
   <div>
     <v-file-input
       id="inputUpload"
+      ref="input"
       v-model="localFiles"
       :counter="counter"
       :multiple="multiple"

@@ -4,13 +4,13 @@ import {
 } from '@/test/testSetup';
 
 import { MassActionType } from '@/entities/mass-action';
-import Component from './ImportValidationStatusDetails.vue';
+import Component from './ImportPaymentStatusDetails.vue';
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
 
 const localVue = createLocalVue();
 
-describe('ImportValidationStatusDetails.vue', () => {
+describe('ImportPaymentStatusDetails.vue', () => {
   let wrapper;
 
   describe('Template', () => {
@@ -18,7 +18,7 @@ describe('ImportValidationStatusDetails.vue', () => {
       wrapper = shallowMount(Component, { localVue });
       const component = wrapper.findComponent(MassActionBaseDetails);
       const props = 'massActionType';
-      const expected = MassActionType.ImportValidationOfImpactStatus;
+      const expected = MassActionType.ImportPaymentStatuses;
 
       expect(component.props(props)).toEqual(expected);
     });
@@ -27,7 +27,7 @@ describe('ImportValidationStatusDetails.vue', () => {
       wrapper = shallowMount(Component, { localVue });
       const component = wrapper.findComponent(MassActionBaseDetails);
       const props = 'preProcessingTitle';
-      const expected = 'massActions.impactValidation.status.preprocessing.title';
+      const expected = 'massActions.importPaymentStatus.status.preprocessing.title';
 
       expect(component.props(props)).toEqual(expected);
     });
@@ -36,7 +36,7 @@ describe('ImportValidationStatusDetails.vue', () => {
       wrapper = shallowMount(Component, { localVue });
       const component = wrapper.findComponent(MassActionBaseDetails);
       const props = 'processingTitle';
-      const expected = 'massActions.impactValidation.status.processing.title';
+      const expected = 'massActions.importPaymentStatus.status.processing.title';
 
       expect(component.props(props)).toEqual(expected);
     });
@@ -45,7 +45,7 @@ describe('ImportValidationStatusDetails.vue', () => {
       wrapper = shallowMount(Component, { localVue });
       const component = wrapper.findComponent(MassActionBaseDetails);
       const props = 'detailsTitle';
-      const expected = 'massActions.impactValidation.status.details.title';
+      const expected = 'massActions.importPaymentStatus.status.details.title';
 
       expect(component.props(props)).toEqual(expected);
     });
@@ -54,7 +54,7 @@ describe('ImportValidationStatusDetails.vue', () => {
       wrapper = shallowMount(Component, { localVue });
       const component = wrapper.findComponent(MassActionBaseDetails);
       const props = 'backRouteName';
-      const expected = routes.massActions.importValidationStatus.home.name;
+      const expected = routes.massActions.importPaymentStatus.home.name;
 
       expect(component.props(props)).toEqual(expected);
     });

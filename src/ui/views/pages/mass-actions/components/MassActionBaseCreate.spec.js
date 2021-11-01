@@ -93,6 +93,7 @@ describe('MassActionBaseCreate.vue', () => {
       });
       wrapper.vm.$refs.form.validate = jest.fn(() => true);
       wrapper.vm.uploadForm = jest.fn();
+      wrapper.vm.resetFileInput = jest.fn();
     });
 
     describe('next', () => {
@@ -206,11 +207,18 @@ describe('MassActionBaseCreate.vue', () => {
 
       it('should emit upload:success in case of successful upload with proper params', async () => {
         wrapper.vm.formData.set = jest.fn();
-        wrapper.vm.uploadForm = jest.fn();
         await wrapper.setData({ uploadSuccess: true });
         await wrapper.vm.upload();
         expect(wrapper.emitted('upload:success')).toBeTruthy();
         expect(wrapper.emitted('upload:success')[0]).toEqual([new MassActionEntity(wrapper.vm.response.data)]);
+      });
+
+      it('should reset the file in case of failure', async () => {
+        wrapper.vm.formData.set = jest.fn();
+        await wrapper.setData({ uploadSuccess: false });
+        await wrapper.vm.upload();
+
+        expect(wrapper.vm.resetFileInput).toBeCalled();
       });
     });
 
