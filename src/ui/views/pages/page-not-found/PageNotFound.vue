@@ -7,7 +7,7 @@
         </h3>
 
         <p class="rc-body14" data-test="pageNotFound__message">
-          {{ $t('pageNotFound.message') }}
+          {{ $t('pageNotFound.message') }} test
         </p>
       </div>
     </div>
