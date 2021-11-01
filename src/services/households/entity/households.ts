@@ -167,12 +167,12 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
   parseMovePayload(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): IMoveHouseholdRequest {
     return {
       firstHouseholdId: firstHousehold.id,
-      firstHouseholdMembers: [
+      firstHouseholdMembers: !firstHousehold.primaryBeneficiary ? [] : [
         this.parseMoveMember(firstHousehold.primaryBeneficiary, true),
         ...firstHousehold.additionalMembers.map((m) => this.parseMoveMember(m, false)),
       ],
       secondHouseholdId: secondHousehold.id,
-      secondHouseholdMembers: [
+      secondHouseholdMembers: !secondHousehold.primaryBeneficiary ? [] : [
         this.parseMoveMember(secondHousehold.primaryBeneficiary, true),
         ...secondHousehold.additionalMembers.map((m) => this.parseMoveMember(m, false)),
       ],
@@ -273,6 +273,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
   }
 
   parseMoveMember(member: IMember, isPrimaryBeneficiary: boolean): IMemberMoveRequest {
+    if (!member) return null;
     return {
       isPrimaryBeneficiary,
       preferredLanguageId: member.contactInformation.preferredLanguage?.id,
