@@ -5,7 +5,7 @@ import {
 } from '../../../entities/household-create';
 import { IOptionItemData } from '../../../types';
 import { IHouseholdEntity } from '../../../entities/household';
-import { IVersionedEntityCombined } from '../../../entities/value-objects/versioned-entity';
+import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
 
 export interface IHouseholdsService {
   getGenders(): Promise<IOptionItemData[]>;
@@ -28,10 +28,10 @@ export interface IHouseholdsService {
   moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
   makePrimary(id: string, memberId: string): Promise<IHouseholdEntity>;
-  getHouseholdHistory(id: uuid): Promise<IVersionedEntityCombined[]>;
-  getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntityCombined[]>;
-  getMemberHistory(id: uuid): Promise<IVersionedEntityCombined[]>;
-  getMemberMetadataHistory(id: uuid): Promise<IVersionedEntityCombined[]>;
+  getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]>;
+  getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
+  getMemberHistory(id: uuid): Promise<IVersionedEntity[]>;
+  getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
 }
 
 export interface IHouseholdsServiceMock {
@@ -53,8 +53,8 @@ export interface IHouseholdsServiceMock {
   moveMembers: jest.Mock<IHouseholdEntity[]>;
   validateEmail: jest.Mock<IValidateEmailResponse>;
   makePrimary: jest.Mock<IHouseholdEntity>;
-  getHouseholdHistory: jest.Mock<IVersionedEntityCombined[]>;
-  getHouseholdMetadataHistory: jest.Mock<IVersionedEntityCombined[]>;
-  getMemberHistory: jest.Mock<IVersionedEntityCombined[]>;
-  getMemberMetadataHistory: jest.Mock<IVersionedEntityCombined[]>;
+  getHouseholdHistory: jest.Mock<IVersionedEntity[]>;
+  getHouseholdMetadataHistory: jest.Mock<IVersionedEntity[]>;
+  getMemberHistory: jest.Mock<IVersionedEntity[]>;
+  getMemberMetadataHistory: jest.Mock<IVersionedEntity[]>;
 }
