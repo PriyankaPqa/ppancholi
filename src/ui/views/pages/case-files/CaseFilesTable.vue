@@ -102,7 +102,7 @@ import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 import isEmpty from 'lodash/isEmpty';
 import routes from '@/constants/routes';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
   ICaseFileCombined, CaseFileStatus, CaseFileTriage,
@@ -111,7 +111,7 @@ import helpers from '@/ui/helpers/helpers';
 import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { EEventStatus, IEventEntity, IEventMetadata } from '@/entities/event';
+import { EEventStatus } from '@/entities/event';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseFilesTable',
@@ -388,14 +388,13 @@ export default mixins(TablePaginationSearchMixin).extend({
             },
           ],
         },
-        select: ['Entity/Name', 'Entity/Id'],
         top: 999,
         orderBy: `Entity/Name/Translation/${this.$i18n.locale} asc`,
         queryType: 'full',
         searchMode: 'all',
       };
 
-      const res = await this.$services.events.search(params) as IAzureCombinedSearchResult<IEventEntity, IEventMetadata>;
+      const res = await this.$services.events.searchMyEvents(params);
 
       this.eventsFilterLoading = false;
 

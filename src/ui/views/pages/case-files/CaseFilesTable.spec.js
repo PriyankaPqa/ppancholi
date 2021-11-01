@@ -468,7 +468,7 @@ describe('CaseFilesTable.vue', () => {
       it('should search user events with status onhold or open filtered by inputed name', async () => {
         await wrapper.vm.fetchEventsFilter();
 
-        expect(wrapper.vm.$services.events.search)
+        expect(wrapper.vm.$services.events.searchMyEvents)
           .toHaveBeenCalledWith({
             filter: {
               or: [
@@ -488,7 +488,6 @@ describe('CaseFilesTable.vue', () => {
                 },
               ],
             },
-            select: ['Entity/Name', 'Entity/Id'],
             top: 999,
             orderBy: 'Entity/Name/Translation/en asc',
             queryType: 'full',
@@ -497,7 +496,7 @@ describe('CaseFilesTable.vue', () => {
       });
 
       it('should set eventsFilter the search results', async () => {
-        wrapper.vm.$services.events.search = jest.fn(() => ({
+        wrapper.vm.$services.events.searchMyEvents = jest.fn(() => ({
           odataCount: mockCombinedEvents().length,
           odataContext: 'odataContext',
           value: mockCombinedEvents(),
