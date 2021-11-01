@@ -152,6 +152,13 @@ describe('>>> Beneficiaries Service', () => {
     });
   });
 
+  test('hasOutstandingPayments is linked to the correct URL', async () => {
+    const id = 'mock-id';
+
+    await service.hasOutstandingPayments(id);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}/info-outstanding-payments`);
+  });
+
   test('getHouseholdHistory is linked to the correct URL', async () => {
     const id = 'mock-id';
     await service.getHouseholdHistory(id);

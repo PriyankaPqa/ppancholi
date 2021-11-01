@@ -45,3 +45,7 @@ export interface IHouseholdMetadata extends IEntity {
 }
 
 export type IHouseholdCombined = IEntityCombined<IHouseholdEntity, IHouseholdMetadata>
+
+export interface IOustandingPaymentResponse {
+  hasOutstandingPayments: boolean;
+}

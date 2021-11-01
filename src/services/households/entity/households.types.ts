@@ -1,10 +1,17 @@
 import {
+  IHouseholdCreate,
+  IContactInformation,
+  IIndigenousCommunityData,
+  IMember,
+  ICurrentAddress,
+  IIdentitySet,
+  IMemberEntity,
   IAddress,
-  IContactInformation, ICurrentAddress,
-  IHouseholdCreate, IIdentitySet, IIndigenousCommunityData, IMember, IMemberEntity, IValidateEmailRequest, IValidateEmailResponse,
+  IValidateEmailResponse,
+  IValidateEmailRequest,
 } from '../../../entities/household-create';
 import { IOptionItemData } from '../../../types';
-import { IHouseholdEntity } from '../../../entities/household';
+import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
 
 export interface IHouseholdsService {
@@ -28,6 +35,7 @@ export interface IHouseholdsService {
   moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
   makePrimary(id: string, memberId: string): Promise<IHouseholdEntity>;
+  hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse>;
   getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]>;
   getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
   getMemberHistory(id: uuid): Promise<IVersionedEntity[]>;
@@ -53,6 +61,7 @@ export interface IHouseholdsServiceMock {
   moveMembers: jest.Mock<IHouseholdEntity[]>;
   validateEmail: jest.Mock<IValidateEmailResponse>;
   makePrimary: jest.Mock<IHouseholdEntity>;
+  hasOutstandingPayments: jest.Mock<IOustandingPaymentResponse>;
   getHouseholdHistory: jest.Mock<IVersionedEntity[]>;
   getHouseholdMetadataHistory: jest.Mock<IVersionedEntity[]>;
   getMemberHistory: jest.Mock<IVersionedEntity[]>;

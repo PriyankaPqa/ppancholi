@@ -24,6 +24,7 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   updateNoFixedHomeAddress: jest.fn(() => mockHouseholdEntity()),
   deleteAdditionalMember: jest.fn(() => mockHouseholdEntity()),
   addMember: jest.fn(() => mockHouseholdEntity()),
+  hasOutstandingPayments: jest.fn(() => ({ hasOutstandingPayments: false })),
   makePrimary: jest.fn(() => mockHouseholdEntity()),
   splitHousehold: jest.fn(() => mockHouseholdEntity()),
   moveMembers: jest.fn(() => [mockHouseholdEntity(), mockHouseholdEntity()]),

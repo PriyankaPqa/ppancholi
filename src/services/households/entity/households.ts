@@ -1,7 +1,7 @@
 import moment from 'moment';
 import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHttpClient } from '../../httpClient';
-import { IHouseholdEntity } from '../../../entities/household';
+import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import {
   ECanadaProvinces, ERegistrationMode, IOptionItemData,
 } from '../../../types';
@@ -19,7 +19,12 @@ import {
   MemberCreateRequest,
   IIdentitySet,
   IIdentitySetCreateRequest,
-  IMemberEntity, IAddress, IValidateEmailResponse, IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest,
+  IMemberEntity,
+  IAddress,
+  IValidateEmailResponse,
+  IValidateEmailRequest,
+  ISplitHouseholdRequest,
+  IMemberMoveRequest,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
@@ -131,6 +136,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
 
   async makePrimary(id: string, memberId: string): Promise<IHouseholdEntity> {
     return this.http.post(`${this.baseUrl}/${id}/assign-primary`, { memberId });
+  }
+
+  async hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse> {
+    return this.http.get(`${this.baseUrl}/${id}/info-outstanding-payments`);
   }
 
   async getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]> {
