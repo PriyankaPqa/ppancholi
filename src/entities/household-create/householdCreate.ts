@@ -26,7 +26,7 @@ export class HouseholdCreate implements IHouseholdCreate {
       this.reset();
     } else {
       this.noFixedHome = data.noFixedHome;
-      this.primaryBeneficiary = new Member(data.primaryBeneficiary);
+      this.primaryBeneficiary = data.primaryBeneficiary ? new Member(data.primaryBeneficiary) : null;
       this.homeAddress = new Address(data.homeAddress);
       this.additionalMembers = data.additionalMembers ? data.additionalMembers.map((h) => new Member(h)) : [];
       this.consentInformation = data.consentInformation;
