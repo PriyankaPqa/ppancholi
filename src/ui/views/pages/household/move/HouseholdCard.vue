@@ -60,7 +60,14 @@
               <span class="text-uppercase fw-bold"> {{ $t('household.profile.member.primary_member') }} </span>
             </v-chip>
 
-            <v-btn v-if="showMoveButton(i)" small data-test="move" color="primary" class="ml-2 mt-1 mt-xl-0" @click="move(m)">
+            <v-btn
+              v-if="showMoveButton(i)"
+              :disabled="errorOutstandingPayments(i)"
+              small
+              data-test="move"
+              color="primary"
+              class="ml-2 mt-1 mt-xl-0"
+              @click="move(m)">
               <v-icon left>
                 {{ position === 'left' ? 'mdi-arrow-right': 'mdi-arrow-left' }}
               </v-icon>
@@ -68,6 +75,10 @@
             </v-btn>
           </v-row>
         </v-col>
+        <message-box
+          v-if="errorOutstandingPayments(i)"
+          icon="mdi-alert"
+          :message="m.identitySet.firstName + ' ' + m.identitySet.lastName + ' ' + $t('household.move.errorOutstandingPayments')" />
       </v-row>
       <div v-show="expand.includes(m.id)" style="margin-left: 29px">
         <v-row no-gutters class="rc-body14 mb-1">
@@ -215,6 +226,7 @@ import helpers from '@/ui/helpers/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
+import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { VForm } from '@/types';
 
 export default Vue.extend({
@@ -224,6 +236,7 @@ export default Vue.extend({
     CurrentAddressTemplate,
     CurrentAddressForm,
     RcDialog,
+    MessageBox,
   },
 
   props: {
@@ -289,6 +302,11 @@ export default Vue.extend({
 
     showMoveButton(): (index: number) => boolean {
       return (index: number) => this.enabledMove && (index > 0 || this.members.length === 1);
+    },
+
+    errorOutstandingPayments(): (index: number) => boolean {
+      return (index: number) => this.enabledMove && index === 0 && this.members.length === 1
+        && this.household.hasOutstandingPayments !== false;
     },
 
     expandDisabled(): (m:IMovingMember) => boolean {
@@ -392,5 +410,9 @@ export default Vue.extend({
 
  ::v-deep .v-input--radio-group--column {
    margin-bottom: 0px;
+ }
+
+ .error-outstanding-payments {
+   background-color: var(--v-status_red_pale-base) !important;
  }
 </style>

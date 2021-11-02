@@ -2,6 +2,7 @@ import { mockHouseholdCreate, mockShelterData } from '@crctech/registration-lib/
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import { mockShelterLocations } from '@crctech/registration-lib/src/entities/event/event.mock';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
+import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 
@@ -20,7 +21,7 @@ describe('MoveHouseholdMembers.vue', () => {
 
   describe('lifecycle', () => {
     describe('created', () => {
-      beforeEach(() => {
+      beforeEach(async () => {
         jest.clearAllMocks();
         wrapper = shallowMount(Component, {
           localVue,
@@ -34,6 +35,8 @@ describe('MoveHouseholdMembers.vue', () => {
             currentHousehold: () => (householdCreate),
           },
         });
+
+        await flushPromises();
       });
 
       it('goes back to household profile if no householdCreate in the store', async () => {
@@ -54,6 +57,7 @@ describe('MoveHouseholdMembers.vue', () => {
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
+        await flushPromises();
 
         expect(wrapper.vm.back).toHaveBeenCalledTimes(1);
       });
@@ -62,14 +66,17 @@ describe('MoveHouseholdMembers.vue', () => {
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
+        await flushPromises();
 
-        expect(wrapper.vm.firstHousehold).toEqual({ ...householdCreate, movingAdditionalMembers: [] });
+        expect(wrapper.vm.firstHousehold).toEqual({ ...householdCreate, movingAdditionalMembers: [], hasOutstandingPayments: false });
       });
 
       it('should call the household action fetch', async () => {
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
+        await flushPromises();
+
         expect(storage.household.actions.fetch).toHaveBeenCalledWith(householdCreate.id);
       });
 
@@ -78,7 +85,20 @@ describe('MoveHouseholdMembers.vue', () => {
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
+        await flushPromises();
+
         expect(wrapper.vm.fetchShelterLocations).toHaveBeenCalledWith(mockCombinedHousehold(), true);
+      });
+
+      it('should call hasOutstandingPayments', async () => {
+        wrapper.vm.$services.households.hasOutstandingPayments = jest.fn(() => ({ hasOutstandingPayments: true }));
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+        await flushPromises();
+
+        expect(wrapper.vm.$services.households.hasOutstandingPayments).toHaveBeenCalledWith(householdCreate.id);
+        expect(wrapper.vm.firstHousehold.hasOutstandingPayments).toEqual(true);
       });
 
       it('should set firstHouseholdShelterLocations', async () => {
@@ -86,7 +106,7 @@ describe('MoveHouseholdMembers.vue', () => {
         await wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        await wrapper.vm.$nextTick();
+        await flushPromises();
         expect(wrapper.vm.firstHouseholdShelterLocations).toEqual([mockShelterData()]);
       });
     });
@@ -164,8 +184,9 @@ describe('MoveHouseholdMembers.vue', () => {
         expect(wrapper.vm.secondHousehold).toBe(null);
         const shelterLocations = mockShelterLocations();
         await wrapper.vm.onSelect({ household: mockHouseholdCreate(), shelterLocations });
-        expect(wrapper.vm.secondHousehold).toEqual({ ...mockHouseholdCreate(), movingAdditionalMembers: [] });
+        expect(wrapper.vm.secondHousehold).toEqual({ ...mockHouseholdCreate(), movingAdditionalMembers: [], hasOutstandingPayments: false });
         expect(wrapper.vm.secondHouseholdShelterLocations).toEqual(shelterLocations);
+        expect(wrapper.vm.$services.households.hasOutstandingPayments).toHaveBeenLastCalledWith(mockHouseholdCreate().id);
       });
     });
 
@@ -210,10 +231,18 @@ describe('MoveHouseholdMembers.vue', () => {
 
     describe('move', () => {
       it('calls moveMember with right payload when direction is left and sets the data into the right household variables', async () => {
-        const firstHousehold = { ...mockHouseholdCreate(), id: '1', movingAdditionalMembers: [] };
-        const secondHousehold = { ...mockHouseholdCreate(), id: '2', movingAdditionalMembers: [] };
-        const originHousehold = { ...mockHouseholdCreate(), id: '3', movingAdditionalMembers: [] };
-        const targetHousehold = { ...mockHouseholdCreate(), id: '4', movingAdditionalMembers: [] };
+        const firstHousehold = {
+          ...mockHouseholdCreate(), id: '1', movingAdditionalMembers: [], hasOutstandingPayments: false,
+        };
+        const secondHousehold = {
+          ...mockHouseholdCreate(), id: '2', movingAdditionalMembers: [], hasOutstandingPayments: false,
+        };
+        const originHousehold = {
+          ...mockHouseholdCreate(), id: '3', movingAdditionalMembers: [], hasOutstandingPayments: false,
+        };
+        const targetHousehold = {
+          ...mockHouseholdCreate(), id: '4', movingAdditionalMembers: [], hasOutstandingPayments: false,
+        };
 
         wrapper.vm.moveMember = jest.fn(() => ({ originHousehold, targetHousehold }));
         await wrapper.setData({ firstHousehold, secondHousehold });
@@ -225,10 +254,18 @@ describe('MoveHouseholdMembers.vue', () => {
       });
 
       it('calls moveMember with right payload when direction is right and sets the data into the right household variables', async () => {
-        const firstHousehold = { ...mockHouseholdCreate(), id: '1', movingAdditionalMembers: [] };
-        const secondHousehold = { ...mockHouseholdCreate(), id: '2', movingAdditionalMembers: [] };
-        const originHousehold = { ...mockHouseholdCreate(), id: '3', movingAdditionalMembers: [] };
-        const targetHousehold = { ...mockHouseholdCreate(), id: '4', movingAdditionalMembers: [] };
+        const firstHousehold = {
+          ...mockHouseholdCreate(), id: '1', movingAdditionalMembers: [], hasOutstandingPayments: false,
+        };
+        const secondHousehold = {
+          ...mockHouseholdCreate(), id: '2', movingAdditionalMembers: [], hasOutstandingPayments: false,
+        };
+        const originHousehold = {
+          ...mockHouseholdCreate(), id: '3', movingAdditionalMembers: [], hasOutstandingPayments: false,
+        };
+        const targetHousehold = {
+          ...mockHouseholdCreate(), id: '4', movingAdditionalMembers: [], hasOutstandingPayments: false,
+        };
 
         wrapper.vm.moveMember = jest.fn(() => ({ originHousehold, targetHousehold }));
         await wrapper.setData({ firstHousehold, secondHousehold });

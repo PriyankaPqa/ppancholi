@@ -115,6 +115,7 @@ export interface IMovingMember extends IMember {
 
 export interface IMovingHouseholdCreate extends IHouseholdCreate {
   movingAdditionalMembers?: IMovingMember[];
+  hasOutstandingPayments?: boolean;
 }
 
 export default mixins(searchHousehold, household).extend({
@@ -165,6 +166,8 @@ export default mixins(searchHousehold, household).extend({
       this.firstHousehold.movingAdditionalMembers = [];
       const firstHouseholdData = await this.$storage.household.actions.fetch(this.currentHousehold.id);
       this.firstHouseholdShelterLocations = await this.fetchShelterLocations(firstHouseholdData, true) || [];
+      this.firstHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(this.currentHousehold.id))
+        ?.hasOutstandingPayments;
       this.loading = false;
     }
   },
@@ -180,10 +183,12 @@ export default mixins(searchHousehold, household).extend({
       this.showResults = true;
     },
 
-    onSelect({ household, shelterLocations }:{household: IMovingHouseholdCreate, shelterLocations:IEventGenericLocation[]}) {
+    async onSelect({ household, shelterLocations }:{household: IMovingHouseholdCreate, shelterLocations:IEventGenericLocation[]}) {
       this.secondHousehold = _cloneDeep(household) as IMovingHouseholdCreate;
       this.secondHousehold.movingAdditionalMembers = [];
       this.secondHouseholdShelterLocations = shelterLocations || [];
+      this.secondHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(household.id))
+        ?.hasOutstandingPayments;
     },
 
     onReset() {

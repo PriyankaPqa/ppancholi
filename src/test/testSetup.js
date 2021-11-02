@@ -55,6 +55,7 @@ const mocks = {
     replace: jest.fn(),
     push: jest.fn(),
     go: jest.fn(),
+    back: jest.fn(),
   },
   $route: {
     name: '',

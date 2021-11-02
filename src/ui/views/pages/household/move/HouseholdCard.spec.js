@@ -109,6 +109,80 @@ describe('HouseholdCard.vue', () => {
       });
     });
 
+    describe('errorOutstandingPayments', () => {
+      it('returns false if enabledMode is false', async () => {
+        const h = mockMovingHouseholdCreate();
+        h.hasOutstandingPayments = true;
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            household: h,
+            position: 'left',
+            shelterLocations,
+            enabledMove: false,
+          },
+          computed: {
+            members() { return [mockMember()]; },
+          },
+          mocks: { $storage: storage },
+        });
+
+        expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(false);
+
+        await wrapper.setProps({ enabledMove: true });
+        expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(true);
+      });
+
+      it('returns false for the primary member if there are additional members', () => {
+        const h = mockMovingHouseholdCreate();
+        h.hasOutstandingPayments = true;
+        const members = [mockMember({ id: '1' }), mockMember({ id: '2' })];
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            household: h,
+            position: 'left',
+            shelterLocations,
+            enabledMove: true,
+          },
+          computed: {
+            members() { return members; },
+          },
+          mocks: { $storage: storage },
+        });
+
+        expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(false);
+
+        members.pop();
+
+        expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(true);
+      });
+
+      it('returns false if hasOutstandingPayments is false', async () => {
+        const h = mockMovingHouseholdCreate();
+        h.hasOutstandingPayments = false;
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            household: h,
+            position: 'left',
+            shelterLocations,
+            enabledMove: true,
+          },
+          computed: {
+            members() { return [mockMember({ id: '1' })]; },
+          },
+          mocks: { $storage: storage },
+        });
+
+        expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(false);
+
+        h.hasOutstandingPayments = true;
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.errorOutstandingPayments(0)).toEqual(true);
+      });
+    });
+
     describe('expandDisabled', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
