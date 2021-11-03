@@ -128,7 +128,7 @@ export default Vue.extend({
         },
         {
           to: routes.assessments.home.name,
-          icon: 'mdi-poll-box',
+          icon: 'mdi-chart-box',
           text: 'leftMenu.assessments_title',
           test: 'assessments',
           level: 'level6',

@@ -307,7 +307,7 @@ describe('LeftMenu.vue', () => {
       test('Item[7]', () => {
         const item = wrapper.vm.items[7];
         expect(item.to).toBe(routes.assessments.home.name);
-        expect(item.icon).toBe('mdi-poll-box');
+        expect(item.icon).toBe('mdi-chart-box');
         expect(item.text).toBe('leftMenu.assessments_title');
         expect(item.test).toBe('assessments');
         expect(item.level).toBe('level6');
