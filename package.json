@@ -57,7 +57,7 @@
   ],
   "dependencies": {
     "@crctech/component-library": "^1.0.135",
-    "axios": "^0.21.4",
+    "axios": "^0.24.0",
     "camelcase-keys": "^6.2.2",
     "moment": "^2.29.1",
     "odata-query": "^6.7.0",
