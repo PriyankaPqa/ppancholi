@@ -107,7 +107,7 @@ export interface ICaseFileActivity {
 export interface IIdentityAuthentication {
   status: IdentityAuthenticationStatus;
   method: IdentityAuthenticationMethod;
-  identificationIds: string[];
+  identificationIds: IListOption[];
 }
 
 export interface IImpactStatusValidation {

@@ -147,7 +147,7 @@ describe('>>> Case File Storage', () => {
     it('should proxy setCaseFileIdentityAuthentication', () => {
       const id = '5';
       const identityAuthentication = {
-        identificationIds: ['abc'],
+        identificationIds: [{ optionItemId: '1', specifiedOther: null }],
         method: IdentityAuthenticationMethod.InPerson,
         status: IdentityAuthenticationStatus.Passed,
       } as IIdentityAuthentication;

@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
+import { mockOptionItemData } from '@/entities/optionItem';
 
 import { IdentityAuthenticationMethod, IdentityAuthenticationStatus } from '@/entities/case-file';
 import Component from '../components/CaseFileVerifyIdentityDialog.vue';
@@ -13,6 +14,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
 
   beforeEach(async () => {
     storage = mockStorage();
+    storage.caseFile.getters.screeningIds = jest.fn(() => mockOptionItemData());
     wrapper = await mount(Component, {
       localVue,
       propsData: {
@@ -85,6 +87,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
         expect(wrapper.vm.form.status).toEqual(IdentityAuthenticationStatus.NotVerified);
         expect(wrapper.vm.form.identificationIds).toEqual([]);
+        expect(wrapper.vm.form.specifiedOther).toEqual(null);
       });
 
       it('sets form when identityAuthentication is passed', async () => {
@@ -97,7 +100,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
               identityAuthentication: {
                 method: IdentityAuthenticationMethod.Exceptional,
                 status: IdentityAuthenticationStatus.Passed,
-                identificationIds: ['abc'],
+                identificationIds: [{ optionItemId: 'abc', specifiedOther: 'def' }],
               },
             },
           },
@@ -109,6 +112,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.Exceptional);
         expect(wrapper.vm.form.status).toEqual(IdentityAuthenticationStatus.Passed);
         expect(wrapper.vm.form.identificationIds).toEqual(['abc']);
+        expect(wrapper.vm.form.specifiedOther).toEqual('def');
       });
 
       it('calls fetchScreeningIds', async () => {
@@ -131,7 +135,6 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
     describe('verificationOptions', () => {
       it('calls storage for screeningIds and passes current value', async () => {
         await wrapper.setData({ form: { identificationIds: ['abc'] } });
-        wrapper.vm.$storage.caseFile.getters.screeningIds = jest.fn();
         let opt = wrapper.vm.verificationOptions;
         expect(wrapper.vm.$storage.caseFile.getters.screeningIds).toHaveBeenCalledWith(true, ['abc']);
         await wrapper.setData({ form: { identificationIds: [] } });
@@ -164,6 +167,37 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       });
     });
 
+    describe('mustSpecifyOther', () => {
+      it('returns true selected ids contains one option with isOther = true', async () => {
+        const withOther = mockOptionItemData().filter((m) => m.isOther)[0].id;
+        const notOther = mockOptionItemData().filter((m) => !m.isOther)[0].id;
+        await wrapper.setData({
+          form: { status: IdentityAuthenticationStatus.Passed, method: IdentityAuthenticationMethod.InPerson, identificationIds: [] },
+        });
+        expect(wrapper.vm.mustSpecifyOther).toBeFalsy();
+        await wrapper.setData({
+          form: { status: IdentityAuthenticationStatus.Passed, method: IdentityAuthenticationMethod.InPerson, identificationIds: [notOther] },
+        });
+        expect(wrapper.vm.mustSpecifyOther).toBeFalsy();
+        await wrapper.setData({
+          form: {
+            status: IdentityAuthenticationStatus.Passed,
+            method: IdentityAuthenticationMethod.InPerson,
+            identificationIds: [withOther],
+          },
+        });
+        expect(wrapper.vm.mustSpecifyOther).toBeTruthy();
+        await wrapper.setData({
+          form: {
+            status: IdentityAuthenticationStatus.Passed,
+            method: IdentityAuthenticationMethod.InPerson,
+            identificationIds: [notOther, withOther],
+          },
+        });
+        expect(wrapper.vm.mustSpecifyOther).toBeTruthy();
+      });
+    });
+
     describe('watcher isValidAuthStatus', () => {
       it('empties form when validation of identity isnt ok', async () => {
         await wrapper.setData({
@@ -190,11 +224,13 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
     describe('Save', () => {
       it('saves changes and triggers a toast', async () => {
         wrapper.vm.$toasted.global.success = jest.fn();
+        const withOther = mockOptionItemData().filter((m) => m.isOther)[0].id;
         await wrapper.setData({
           form: {
             method: IdentityAuthenticationMethod.Exceptional,
             status: IdentityAuthenticationStatus.Passed,
-            identificationIds: ['abc'],
+            identificationIds: [withOther],
+            specifiedOther: 'xxx',
           },
         });
 
@@ -202,7 +238,7 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(storage.caseFile.actions.setCaseFileIdentityAuthentication).toHaveBeenCalledWith(wrapper.vm.caseFile.id, {
           method: IdentityAuthenticationMethod.Exceptional,
           status: IdentityAuthenticationStatus.Passed,
-          identificationIds: ['abc'],
+          identificationIds: [{ optionItemId: withOther, specifiedOther: 'xxx' }],
         });
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);

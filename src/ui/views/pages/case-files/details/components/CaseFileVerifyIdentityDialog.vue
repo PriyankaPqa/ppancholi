@@ -90,6 +90,16 @@
                 :rules="rules.identificationIds" />
             </v-col>
           </v-row>
+          <v-row v-if="mustSpecifyOther">
+            <v-col>
+              <v-text-field-with-validation
+                v-model="form.specifiedOther"
+                data-test="specified-other"
+                autocomplete="nope"
+                :label="`${$t('common.pleaseSpecify')} *`"
+                :rules="rules.specifiedOther" />
+            </v-col>
+          </v-row>
         </v-form>
       </div>
     </rc-dialog>
@@ -102,16 +112,21 @@ import { ValidationObserver } from 'vee-validate';
 import {
   RcDialog,
   VSelectWithValidation,
+  VTextFieldWithValidation,
 } from '@crctech/component-library';
 import helpers from '@/ui/helpers/helpers';
-import { IdentityAuthenticationMethod, IdentityAuthenticationStatus, ICaseFileEntity } from '@/entities/case-file';
+import {
+  IdentityAuthenticationMethod, IdentityAuthenticationStatus, ICaseFileEntity, IIdentityAuthentication,
+} from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';
+import { MAX_LENGTH_SM } from '@/constants/validations';
 
 export default Vue.extend({
   name: 'VerifyIdentity',
   components: {
     VSelectWithValidation,
     RcDialog,
+    VTextFieldWithValidation,
   },
   props: {
     /**
@@ -134,6 +149,7 @@ export default Vue.extend({
         method: 0 as IdentityAuthenticationMethod,
         identificationIds: [] as Array<string>,
         status: 0 as IdentityAuthenticationStatus,
+        specifiedOther: null as string,
       },
       helpLink: this.$t('zendesk.authentication_identity'),
     };
@@ -174,7 +190,15 @@ export default Vue.extend({
         },
         identificationIds: { required: this.canSelectIds },
         status: { oneOf: Object.values(IdentityAuthenticationStatus) },
+        specifiedOther: {
+          required: true,
+          max: MAX_LENGTH_SM,
+        },
       };
+    },
+
+    mustSpecifyOther(): boolean {
+      return this.verificationOptions.filter((v) => this.form.identificationIds.indexOf(v.id) > -1 && v.isOther).length > 0;
     },
   },
 
@@ -185,13 +209,20 @@ export default Vue.extend({
         this.form.identificationIds = [];
       }
     },
+    mustSpecifyOther(newValue: boolean) {
+      if (!newValue) {
+        this.form.specifiedOther = null;
+      }
+    },
   },
 
   async created() {
     await this.$storage.caseFile.actions.fetchScreeningIds();
     this.form.method = this.caseFile.identityAuthentication?.method || IdentityAuthenticationMethod.NotApplicable;
     this.form.status = this.caseFile.identityAuthentication?.status || IdentityAuthenticationStatus.NotVerified;
-    this.form.identificationIds = this.caseFile.identityAuthentication?.identificationIds || [];
+    this.form.identificationIds = (this.caseFile.identityAuthentication?.identificationIds || []).map((x) => x.optionItemId);
+    this.form.specifiedOther = (this.caseFile.identityAuthentication?.identificationIds || [])
+      .filter((x) => x.specifiedOther)[0]?.specifiedOther || null;
   },
   methods: {
     /**
@@ -199,12 +230,21 @@ export default Vue.extend({
      * @public
      */
     async save() {
+      if (!this.mustSpecifyOther) this.form.specifiedOther = null;
+
       const isValid = await (this.$refs.verifyIdentity as InstanceType<typeof ValidationObserver>).validate();
 
       if (isValid) {
         this.loading = true;
 
-        const res = await this.$storage.caseFile.actions.setCaseFileIdentityAuthentication(this.caseFile.id, this.form);
+        const value = ({ status: this.form.status, method: this.form.method, identificationIds: [] }) as IIdentityAuthentication;
+        value.identificationIds = this.form.identificationIds.map((m) => (
+          {
+            optionItemId: m,
+            specifiedOther: this.verificationOptions.filter((v) => m === v.id && v.isOther).length > 0 ? this.form.specifiedOther : null,
+          }));
+
+        const res = await this.$storage.caseFile.actions.setCaseFileIdentityAuthentication(this.caseFile.id, value);
 
         this.loading = false;
 

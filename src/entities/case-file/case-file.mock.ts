@@ -54,7 +54,7 @@ export const mockCaseFileEntity = (force? : Partial<IEntity>): ICaseFileEntity =
   ],
   triage: 1,
   identityAuthentication: {
-    identificationIds: ['1', '2'],
+    identificationIds: [{ optionItemId: '1', specifiedOther: null }, { optionItemId: '2', specifiedOther: null }],
     method: IdentityAuthenticationMethod.InPerson,
     status: IdentityAuthenticationStatus.Passed,
   },
