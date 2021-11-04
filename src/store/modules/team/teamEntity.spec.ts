@@ -33,9 +33,9 @@ describe('Team entity module', () => {
     describe('getTeamsAssigned', () => {
       it('calls the service getTeamsAssigned with the right params', async () => {
         module.service.getTeamsAssigned = jest.fn();
-        const eventId = '1234';
-        await module.actions.getTeamsAssigned(actionContext, eventId);
-        expect(module.service.getTeamsAssigned).toHaveBeenCalledWith(eventId);
+        const caseFileId = '1234';
+        await module.actions.getTeamsAssigned(actionContext, caseFileId);
+        expect(module.service.getTeamsAssigned).toHaveBeenCalledWith(caseFileId);
       });
     });
 

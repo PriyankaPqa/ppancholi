@@ -84,7 +84,6 @@ describe('EventAgreementDialog.vue', () => {
     describe('specify other', () => {
       let element;
       beforeEach(async () => {
-        // eslint-disable-next-line prefer-destructuring
         wrapper.vm.agreementType = mockOptionItemData()[0]; // isOther : true
         await wrapper.vm.$nextTick();
         element = wrapper.findDataTest('agreement-type-specifiedOther');
@@ -104,7 +103,6 @@ describe('EventAgreementDialog.vue', () => {
       });
 
       it('should not render if event type is not other', async () => {
-        // eslint-disable-next-line prefer-destructuring
         wrapper.vm.agreementType = mockOptionItemData()[1]; // isOther : false
         await wrapper.vm.$nextTick();
         element = wrapper.findDataTest('agreement-type-specifiedOther');

@@ -27,6 +27,7 @@ module.exports = {
       code: 150, tabWidth: 4, ignoreUrls: true, ignoreComments: true,
     }],
     'max-lines-per-function': ['error', { max: 155, skipBlankLines: true, skipComments: true }],
+    'prefer-destructuring': ['error', { object: false, array: false }],
     'vue/max-attributes-per-line': ['error', {
       singleline: 8,
       multiline: {

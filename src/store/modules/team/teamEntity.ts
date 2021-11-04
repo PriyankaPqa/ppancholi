@@ -46,10 +46,13 @@ export class TeamEntityModule extends BaseModule <ITeamEntity, uuid> {
 
     getTeamsAssigned: async (
       context: ActionContext<ITeamEntityState, ITeamEntityState>,
-      eventId: uuid,
+      caseFileId: uuid,
     ): Promise<ITeamEntity[]> => {
-      const teams = await this.service.getTeamsAssigned(eventId);
-      if (teams && teams.length) return teams;
+      const teams = await this.service.getTeamsAssigned(caseFileId);
+      if (teams && teams.length) {
+        context.commit('setAll', teams);
+        return teams;
+      }
       return [];
     },
 

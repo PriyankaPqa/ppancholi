@@ -193,7 +193,7 @@ describe('AssignCaseFile.vue', () => {
     });
 
     describe('getTeamsData', () => {
-      it('calls storage action getTeamsAssigned with the right id', async () => {
+      it('calls storage action getTeamsAssignable with the right id', async () => {
         jest.clearAllMocks();
         await wrapper.vm.getTeamsData();
         expect(storage.team.actions.getTeamsAssignable).toHaveBeenCalledWith(mockCaseFile.eventId);

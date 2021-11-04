@@ -9,7 +9,7 @@ export interface ITeamsService extends IDomainBaseService<ITeamEntity, uuid>{
   getTeamsAssignable(eventId: uuid): Promise<ITeamEntity[]>;
   addTeamMembers(teamId: uuid, teamMembers: ITeamMember[]): Promise<ITeamEntity>;
   removeTeamMember(teamId: uuid, teamMemberId: uuid) : Promise<ITeamEntity>;
-  getTeamsAssigned(eventId: uuid): Promise<ITeamEntity[]>;
+  getTeamsAssigned(caseFileId: uuid): Promise<ITeamEntity[]>;
 }
 
 export interface ITeamsServiceMock extends IDomainBaseServiceMock<ITeamEntity>{

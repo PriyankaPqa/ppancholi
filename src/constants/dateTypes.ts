@@ -27,6 +27,7 @@ export const dateTypes = {
     'EventAgreement.endDate',
     'EventCallCentre.startDate',
     'EventCallCentre.endDate',
+    'HouseholdMemberMetadata.dateOfBirth',
   ] as string[],
 
   getType(dateField: string) : DateTypes {

@@ -56,6 +56,21 @@
         </tr>
       </tbody>
     </table>
+
+    <rc-dialog
+      v-if="openCaseFileSummary"
+      :title="$t('casefile.summary.title')"
+      :show="openCaseFileSummary"
+      :cancel-action-label="$t('common.buttons.close')"
+      max-width="1250"
+      min-height="600"
+      :fullscreen="$vuetify.breakpoint.mdAndDown"
+      persistent
+      :show-submit="false"
+      @close="openCaseFileSummary = false"
+      @cancel="openCaseFileSummary = false">
+      <case-file-summary :case-file-id="caseFile.caseFileId" />
+    </rc-dialog>
   </v-sheet>
 </template>
 
@@ -63,11 +78,18 @@
 import Vue from 'vue';
 import moment from 'moment';
 import { IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
+import { RcDialog } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { IEventMainInfo } from '@/entities/event';
+import CaseFileSummary from '../../case-files/details/CaseFileSummary.vue';
 
 export default Vue.extend({
   name: 'HouseholdCaseFileCard',
+
+  components: {
+    RcDialog,
+    CaseFileSummary,
+  },
 
   props: {
     /**

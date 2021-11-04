@@ -241,7 +241,6 @@ export default {
     } else {
       const matches = asciiFilenameRegex.exec(disposition);
       if (matches != null && matches[2]) {
-        // eslint-disable-next-line prefer-destructuring
         fileName = matches[2];
       }
     }

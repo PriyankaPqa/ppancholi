@@ -45,15 +45,12 @@ export const mockUserStateContributor = (number: number) => {
   let mockUser;
   switch (number) {
     case Contributor.IM:
-      // eslint-disable-next-line prefer-destructuring
       mockUser = mockUsersData()[6]; // contributorIM
       break;
     case Contributor.Finance:
-      // eslint-disable-next-line prefer-destructuring
       mockUser = mockUsersData()[7]; // contributorFinance
       break;
     case Contributor.Three:
-      // eslint-disable-next-line prefer-destructuring
       mockUser = mockUsersData()[8]; // contributor3
       break;
     default:
