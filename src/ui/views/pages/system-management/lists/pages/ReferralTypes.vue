@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.referralTypes" />
+  <option-list title="system_management.lists.referralTypes" add-button-label="system_management.lists.add.type" />
 </template>
 
 <script lang="ts">

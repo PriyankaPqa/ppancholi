@@ -22,6 +22,7 @@ export default Vue.extend({
       detailsRouteNameData: '',
       searchEndpointData: '',
       tableTitleData: '',
+      addButtonLabelData: '',
       searchResultIds: [],
       itemsCount: 0,
       searchExecutionDate: null as Date,
@@ -41,11 +42,12 @@ export default Vue.extend({
       };
     },
 
-    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
+    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult, addButtonLabel: TranslateResult } } {
       return {
         header: {
           title: `${this.$t(this.tableTitleData)} (${this.itemsCount})`,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
+          addButtonLabel: this.$t(this.addButtonLabelData),
         },
       };
     },

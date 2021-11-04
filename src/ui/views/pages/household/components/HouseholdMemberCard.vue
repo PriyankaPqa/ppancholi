@@ -37,18 +37,26 @@
         </div>
 
         <!-- eslint-disable vue/no-use-v-if-with-v-for,vue/no-confusing-v-for-v-if -->
-        <v-btn
+        <rc-tooltip
           v-for="btn in buttons"
           v-if="!btn.hide && (!isPrimaryMember || !btn.additionalMemberOnly)"
           :key="btn.test"
-          icon
-          class="ml-2"
-          :data-test="`household_profile_member_action_btn_${btn.test}`"
-          @click="btn.event">
-          <v-icon size="24" color="grey darken-2">
-            {{ btn.icon }}
-          </v-icon>
-        </v-btn>
+          :disabled="!btn.tooltipText"
+          bottom>
+          <template #activator="{ on }">
+            <v-btn
+              icon
+              class="ml-2"
+              :data-test="`household_profile_member_action_btn_${btn.test}`"
+              v-on="on"
+              @click="btn.event">
+              <v-icon size="24" color="grey darken-2">
+                {{ btn.icon }}
+              </v-icon>
+            </v-btn>
+          </template>
+          {{ btn.tooltipText }}
+        </rc-tooltip>
       </div>
     </div>
     <v-simple-table>
@@ -132,6 +140,7 @@
 import Vue from 'vue';
 import { IMember } from '@crctech/registration-lib/src/entities/household-create';
 import { CurrentAddressTemplate, AddEditAdditionalMembers } from '@crctech/registration-lib';
+import { RcTooltip } from '@crctech/component-library';
 import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@/entities/event';
 
@@ -145,6 +154,7 @@ export default Vue.extend({
     PrimaryMemberDialog,
     AddEditAdditionalMembers,
     SplitHouseholdDialog,
+    RcTooltip,
   },
 
   props: {
@@ -204,6 +214,7 @@ export default Vue.extend({
           additionalMemberOnly: true,
           event: () => { this.showSplitDialog = true; },
           hide: !this.canSplit,
+          tooltipText: this.$t('household.profile.split.member.title'),
         },
         {
           test: 'delete',

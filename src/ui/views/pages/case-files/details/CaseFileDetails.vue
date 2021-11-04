@@ -22,31 +22,43 @@
       <div class="divider" />
 
       <div class="mb-4">
-        <v-btn
-          v-if="canEdit"
-          class="mr-2 status"
-          text
-          :color="colorVerifyIdentity"
-          data-test="caseFileDetails-verify-identity-icon"
-          @click="openVerifyIdentity">
-          <v-icon>mdi-shield-check</v-icon>
-        </v-btn>
-        <v-icon v-else :color="colorVerifyIdentity" class="mr-2 status">
-          mdi-shield-check
-        </v-icon>
+        <rc-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn
+              v-if="canEdit"
+              class="mr-2 status"
+              text
+              :color="colorVerifyIdentity"
+              data-test="caseFileDetails-verify-identity-icon"
+              v-on="on"
+              @click="openVerifyIdentity">
+              <v-icon>mdi-shield-check</v-icon>
+            </v-btn>
+            <v-icon v-else :color="colorVerifyIdentity" class="mr-2 status" v-on="on">
+              mdi-shield-check
+            </v-icon>
+          </template>
+          {{ $t('caseFileDetail.verifyIdentityDialog.title') }}
+        </rc-tooltip>
 
-        <v-btn
-          v-if="canEdit"
-          class="mr-2 status"
-          text
-          :color="colorValidationImpact"
-          data-test="caseFileDetails-verify-impact-icon"
-          @click="openImpactValidation">
-          <v-icon>mdi-map-check</v-icon>
-        </v-btn>
-        <v-icon v-else :color="colorValidationImpact" class="mr-2 status">
-          mdi-map-check
-        </v-icon>
+        <rc-tooltip bottom>
+          <template #activator="{ on }">
+            <v-btn
+              v-if="canEdit"
+              class="mr-2 status"
+              text
+              :color="colorValidationImpact"
+              data-test="caseFileDetails-verify-impact-icon"
+              v-on="on"
+              @click="openImpactValidation">
+              <v-icon>mdi-map-check</v-icon>
+            </v-btn>
+            <v-icon v-else :color="colorValidationImpact" class="mr-2 status" v-on="on">
+              mdi-map-check
+            </v-icon>
+          </template>
+          {{ $t('caseFileDetail.impactValidationDialog.title') }}
+        </rc-tooltip>
       </div>
 
       <div
@@ -137,6 +149,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { RcTooltip } from '@crctech/component-library';
 import { IHouseholdCombined, IHouseholdMemberMetadata } from '@crctech/registration-lib/src/entities/household';
 import { ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
@@ -155,6 +168,7 @@ export default Vue.extend({
     CaseFileDetailsBeneficiaryPhoneNumber,
     CaseFileVerifyIdentityDialog,
     ImpactValidation,
+    RcTooltip,
   },
 
   props: {

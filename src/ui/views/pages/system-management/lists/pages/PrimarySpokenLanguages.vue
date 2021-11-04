@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.primarySpokenLanguages" has-other has-default />
+  <option-list title="system_management.lists.primarySpokenLanguages" add-button-label="system_management.lists.add.language" has-other has-default />
 </template>
 
 <script lang="ts">

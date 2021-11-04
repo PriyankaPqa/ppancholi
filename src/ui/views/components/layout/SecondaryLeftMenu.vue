@@ -1,9 +1,22 @@
 <template>
   <div class="secondary-left-menu" v-bind="$attrs">
     <div class="top-container">
-      <v-btn v-if="!hideBackButton" class="mb-4" elevation="2" color="white" fab small data-test="back-button" @click="$emit('backButtonClicked')">
-        <v-icon>mdi-arrow-left</v-icon>
-      </v-btn>
+      <rc-tooltip v-if="!hideBackButton" right>
+        <template #activator="{ on }">
+          <v-btn
+            class="mb-4"
+            elevation="2"
+            color="white"
+            fab
+            small
+            data-test="back-button"
+            v-on="on"
+            @click="$emit('backButtonClicked')">
+            <v-icon>mdi-arrow-left</v-icon>
+          </v-btn>
+        </template>
+        {{ $t('common.buttons.back') }}
+      </rc-tooltip>
       <div class="rc-body12 fw-bold" data-test="subtitle-title-left-menu">
         {{ subtitle }}
       </div>
@@ -99,10 +112,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { RcTooltip } from '@crctech/component-library';
 import { INavigationTab } from '@/types';
 
 export default Vue.extend({
   name: 'SecondaryLeftMenu',
+
+  components: {
+    RcTooltip,
+  },
+
   props: {
     /*
      * Title shown on the secondary left menu

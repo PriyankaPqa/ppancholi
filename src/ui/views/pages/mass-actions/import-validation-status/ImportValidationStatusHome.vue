@@ -5,7 +5,8 @@
     :add-route-name="addRouteName"
     :table-title="tableTitle"
     :search-endpoint="searchEndpoint"
-    :show-add-button="$hasLevel('level6') || $hasRole('contributorIM')" />
+    :show-add-button="$hasLevel('level6') || $hasRole('contributorIM')"
+    :add-button-label="addButtonLabel" />
 </template>
 
 <script lang="ts">
@@ -26,6 +27,7 @@ export default Vue.extend({
     massActionType: MassActionType.ImportValidationOfImpactStatus,
     detailsRouteName: routes.massActions.importValidationStatus.details.name,
     tableTitle: 'massAction.impactValidationStatusTable.title',
+    addButtonLabel: 'massActions.importValidationStatus.create.title',
     searchEndpoint: 'validate-impact-status-mass-actions',
     addRouteName: routes.massActions.importValidationStatus.create.name,
   }),

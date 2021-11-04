@@ -126,6 +126,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         header: {
           title: this.$t('caseFile.referral.title'),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
+          addButtonLabel: this.$t('caseFile.referral.addNewReferral'),
         },
       };
     },

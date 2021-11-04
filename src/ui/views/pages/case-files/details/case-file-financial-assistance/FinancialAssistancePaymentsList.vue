@@ -16,6 +16,7 @@
         <filter-toolbar
           :filter-key="FilterKey.CaseFileFinancialAssistanceOverview"
           :filter-options="filters"
+          add-filter-label="financialAssistance.filter"
           :count="itemsCount"
           @update:appliedFilter="onApplyFilter">
           <template #toolbarActions>
@@ -330,6 +331,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         header: {
           title: this.$t('caseFile.financialAssistance.overview', { count: this.itemsCount }),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
+          addButtonLabel: this.$t('caseFile.financialAssistance.create.title'),
         },
       };
     },

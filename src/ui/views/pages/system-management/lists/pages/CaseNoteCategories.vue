@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.caseNoteCategories" />
+  <option-list title="system_management.lists.caseNoteCategories" add-button-label="system_management.lists.add.category" />
 </template>
 
 <script lang="ts">

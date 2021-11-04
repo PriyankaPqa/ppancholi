@@ -38,17 +38,23 @@
             vertical
             class="ml-4 mr-4" />
 
-          <v-btn
-            data-test="caseFileActivity-duplicateBtn"
-            :class="{ 'no-pointer': !canEdit }"
-            icon
-            :loading="duplicateLoading"
-            :disabled="!canEdit"
-            @click="setCaseFileIsDuplicate">
-            <v-icon :color="caseFile && caseFile.entity.isDuplicate ? 'secondary' : ''">
-              $rctech-duplicate
-            </v-icon>
-          </v-btn>
+          <rc-tooltip right>
+            <template #activator="{ on }">
+              <v-btn
+                data-test="caseFileActivity-duplicateBtn"
+                :class="{ 'no-pointer': !canEdit }"
+                icon
+                :loading="duplicateLoading"
+                :disabled="!canEdit"
+                v-on="on"
+                @click="setCaseFileIsDuplicate">
+                <v-icon :color="caseFile && caseFile.entity.isDuplicate ? 'secondary' : ''">
+                  $rctech-duplicate
+                </v-icon>
+              </v-btn>
+            </template>
+            {{ $t('caseFileActivity.duplicate') }}
+          </rc-tooltip>
         </v-col>
 
         <case-file-assignments
@@ -104,7 +110,7 @@
 import Vue from 'vue';
 import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
-import { RcPageContent, RcPageLoading } from '@crctech/component-library';
+import { RcPageContent, RcPageLoading, RcTooltip } from '@crctech/component-library';
 import { ICaseFileCombined, ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
@@ -120,6 +126,7 @@ export default Vue.extend({
   name: 'CaseFileActivity',
   components: {
     RcPageLoading,
+    RcTooltip,
     RcPageContent,
     CaseFileTags,
     CaseFileListWrapper,

@@ -27,6 +27,7 @@
         :filter-key="FilterKey.FinancialAssistanceTables"
         :filter-options="filters"
         :count="itemsCount"
+        add-filter-label="financialAssistance.filter"
         @update:appliedFilter="onApplyFilterLocal($event)" />
     </template>
 

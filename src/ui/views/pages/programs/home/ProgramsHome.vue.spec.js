@@ -169,6 +169,7 @@ describe('ProgramsHome.vue', () => {
           header: {
             title: 'programs.title',
             searchPlaceholder: 'common.inputs.quick_search',
+            addButtonLabel: 'programs.addProgram',
           },
         });
       });

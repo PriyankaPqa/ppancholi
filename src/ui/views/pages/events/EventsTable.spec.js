@@ -305,6 +305,7 @@ describe('EventsTable.vue', () => {
           header: {
             title: 'eventsTable.title',
             searchPlaceholder: 'common.inputs.quick_search',
+            addButtonLabel: 'eventsTable.addEvent',
           },
         });
       });

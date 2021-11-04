@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.agreementTypes" has-other has-default />
+  <option-list title="system_management.lists.agreementTypes" add-button-label="system_management.lists.add.type" has-other has-default />
 </template>
 
 <script lang="ts">

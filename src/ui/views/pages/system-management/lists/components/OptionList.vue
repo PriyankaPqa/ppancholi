@@ -3,6 +3,7 @@
     :title="formattedTitle"
     :help-link="helpLink"
     :show-add-button="showAddButton"
+    :add-button-label="$t(addButtonLabel)"
     :show-help="!embedded"
     show-search
     :fullscreen="embedded"
@@ -224,6 +225,11 @@ export default Vue.extend({
     addSubItemLabel: {
       type: String,
       default: 'system_management.lists.addSubItem',
+    },
+
+    addButtonLabel: {
+      type: String,
+      default: 'common.add',
     },
 
     hasDescription: {

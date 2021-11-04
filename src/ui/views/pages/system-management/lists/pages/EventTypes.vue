@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.eventTypes" has-other has-default />
+  <option-list title="system_management.lists.eventTypes" add-button-label="system_management.lists.add.type" has-other has-default />
 </template>
 
 <script lang="ts">

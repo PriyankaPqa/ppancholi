@@ -7,7 +7,8 @@
     item-label="financialAssistance.nestedTable.headers.item"
     sub-item-label="financialAssistance.nestedTable.headers.subItem"
     sub-item-name-label="financialAssistance.nestedTable.headers.subItem"
-    add-sub-item-label="financialAssistance.addSubItem" />
+    add-sub-item-label="financialAssistance.addSubItem"
+    add-button-label="system_management.lists.add.category" />
 </template>
 
 <script lang="ts">

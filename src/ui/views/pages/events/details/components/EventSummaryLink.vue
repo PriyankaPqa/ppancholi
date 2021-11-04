@@ -17,7 +17,7 @@
         {{ registrationUrl }}
       </a>
 
-      <v-tooltip :open-delay="TOOLTIP_DELAY" bottom>
+      <rc-tooltip bottom>
         <template #activator="{ on }">
           <v-btn
             data-test="event-summary-copy-link-btn"
@@ -29,23 +29,26 @@
             </v-icon>
           </v-btn>
         </template>
-
-        <span>
-          {{ $t('eventSummary.copyLinkTooltip') }}
-        </span>
-      </v-tooltip>
+        {{ $t('eventSummary.copyLinkTooltip') }}
+      </rc-tooltip>
 
       <v-spacer />
 
-      <v-switch
-        v-if="$hasLevel('level6') && showSwitchBtn"
-        :input-value="event.selfRegistrationEnabled"
-        :loading="updatingSelfRegistration"
-        :disabled="updatingSelfRegistration"
-        class="mt-0 pt-0 mr-2"
-        data-test="event-summary-toggle-self-registration"
-        hide-details
-        @change="toggleSelfRegistration($event)" />
+      <rc-tooltip v-if="$hasLevel('level6') && showSwitchBtn" bottom>
+        <template #activator="{ on }">
+          <div v-on="on">
+            <v-switch
+              :input-value="event.selfRegistrationEnabled"
+              :loading="updatingSelfRegistration"
+              :disabled="updatingSelfRegistration"
+              class="mt-0 pt-0 mr-2"
+              data-test="event-summary-toggle-self-registration"
+              hide-details
+              @change="toggleSelfRegistration($event)" />
+          </div>
+        </template>
+        {{ event.selfRegistrationEnabled ? $t('event.self-registration.disable') : $t('event.self-registration.enable') }}
+      </rc-tooltip>
     </div>
     <v-divider />
   </div>
@@ -53,13 +56,17 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import { RcTooltip } from '@crctech/component-library';
 import helpers from '@/ui/helpers/helpers';
-import { TOOLTIP_DELAY } from '@/ui/constants';
 import { localStorageKeys } from '@/constants/localStorage';
 import { EEventStatus, IEventEntity } from '@/entities/event';
 
 export default Vue.extend({
   name: 'EventSummaryLink',
+
+  components: {
+    RcTooltip,
+  },
 
   props: {
     event: {
@@ -70,7 +77,6 @@ export default Vue.extend({
 
   data() {
     return {
-      TOOLTIP_DELAY,
       updatingSelfRegistration: false,
       prefixRegistrationLink: localStorage.getItem(localStorageKeys.prefixRegistrationLink.name),
     };

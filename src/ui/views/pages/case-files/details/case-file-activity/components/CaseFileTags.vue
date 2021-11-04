@@ -1,15 +1,19 @@
 <template>
   <v-row class="no-gutters">
-    <v-chip
-      v-for="tag in existingTags"
-      :key="tag.id"
-      :data-test="`caseFileTags-chip-${tag.id}`"
-      class="chip mr-3 mb-1"
-      color="primary"
-      :close="!readonly"
-      @click:close="initDeleteTag(tag)">
-      {{ $m(tag.name) }}
-    </v-chip>
+    <rc-tooltip v-for="tag in existingTags" :key="tag.id" bottom>
+      <template #activator="{ on }">
+        <v-chip
+          :data-test="`caseFileTags-chip-${tag.id}`"
+          class="chip mr-3 mb-1"
+          color="primary"
+          :close="!readonly"
+          v-on="on"
+          @click:close="initDeleteTag(tag)">
+          {{ $m(tag.name) }}
+        </v-chip>
+      </template>
+      {{ $t('caseFile.tags.removeTag') }}
+    </rc-tooltip>
 
     <v-btn
       v-if="!readonly"
@@ -89,7 +93,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog, RcConfirmationDialog } from '@crctech/component-library';
+import { RcDialog, RcConfirmationDialog, RcTooltip } from '@crctech/component-library';
 
 import {
   IOptionItem,
@@ -110,6 +114,7 @@ export default Vue.extend({
   components: {
     RcDialog,
     RcConfirmationDialog,
+    RcTooltip,
   },
   props: {
     tags: {

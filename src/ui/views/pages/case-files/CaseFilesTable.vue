@@ -18,6 +18,7 @@
         :filter-key="FilterKey.CaseFiles"
         :count="itemsCount"
         :filter-options="filters"
+        add-filter-label="caseFileTable.filter"
         @open="fetchEventsFilter()"
         @update:appliedFilter="onApplyFilterLocal">
         <template #toolbarActions>

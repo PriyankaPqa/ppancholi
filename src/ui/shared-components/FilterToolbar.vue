@@ -65,6 +65,10 @@ export default Vue.extend({
       default: '',
     },
 
+    addFilterLabel: {
+      type: String,
+      default: null,
+    },
   },
 
   data() {
@@ -87,7 +91,7 @@ export default Vue.extend({
         filterCopySuffix: this.$t('common.copy') as string,
         yourFilters: this.$t('genericFilter.yourFilters') as string,
         tooltipNew: this.$t('genericFilter.newFilter') as string,
-        tooltipAdd: this.$t('genericFilter.addFilter') as string,
+        tooltipAdd: this.$t(this.addFilterLabel) as string || this.$t('genericFilter.addFilter') as string,
         tooltipCopy: this.$t('genericFilter.copyFilter') as string,
         tooltipDelete: this.$t('genericFilter.deleteFilter') as string,
         tooltipCloseFilter: this.$t('genericFilter.clickToClose') as string,

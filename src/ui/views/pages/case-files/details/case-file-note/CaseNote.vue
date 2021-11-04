@@ -4,6 +4,7 @@
     outer-scroll
     show-search
     :show-add-button="showAddButton"
+    :add-button-label="$t('caseNote.create.rowTitle')"
     add-button-data-test="caseNote__createBtn"
     show-help
     content-padding="6"
@@ -18,6 +19,7 @@
         :filter-key="filterKey"
         :filter-options="filterOptions"
         :count="itemsCount"
+        add-filter-label="caseNote.filter"
         @update:appliedFilter="onApplyFilter($event)">
         <template #toolbarActions>
           <div class="flex-row">

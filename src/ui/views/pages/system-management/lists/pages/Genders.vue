@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.genders" has-other has-default />
+  <option-list title="system_management.lists.genders" add-button-label="system_management.lists.genders.add" has-other has-default />
 </template>
 
 <script lang="ts">

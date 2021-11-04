@@ -28,6 +28,7 @@
           :filter-key="FilterKey.MassActionImpactStatuses"
           :count="itemsCount"
           :filter-options="filters"
+          add-filter-label="caseFileTable.filter"
           @update:appliedFilter="onApplyFilter" />
       </template>
 

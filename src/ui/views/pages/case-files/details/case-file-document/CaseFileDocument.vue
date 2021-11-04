@@ -19,6 +19,7 @@
         <filter-toolbar
           :filter-key="FilterKey.Documents"
           :filter-options="filterOptions"
+          add-filter-label="document.filter"
           :count="itemsCount"
           @update:appliedFilter="onApplyFilter($event)" />
       </template>
@@ -274,6 +275,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         header: {
           title: `${this.$t('caseFile.document.title')} (${this.itemsCount})`,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
+          addButtonLabel: this.$t('document.add.title'),
         },
       };
     },

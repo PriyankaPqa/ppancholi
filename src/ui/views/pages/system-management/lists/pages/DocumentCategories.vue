@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.documentCategories" has-other />
+  <option-list title="system_management.lists.documentCategories" add-button-label="system_management.lists.add.category" has-other />
 </template>
 
 <script lang="ts">

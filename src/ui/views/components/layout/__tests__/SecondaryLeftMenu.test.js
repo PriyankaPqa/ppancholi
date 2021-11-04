@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '../SecondaryLeftMenu.vue';
 
 describe('SecondaryLeftMenu.vue', () => {
@@ -6,7 +6,7 @@ describe('SecondaryLeftMenu.vue', () => {
   const localVue = createLocalVue();
   beforeEach(async () => {
     jest.clearAllMocks();
-    wrapper = shallowMount(Component, {
+    wrapper = mount(Component, {
       localVue,
       mocks: {
         $t: () => 'test',

@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.referralOutcomeStatuses" />
+  <option-list title="system_management.lists.referralOutcomeStatuses" add-button-label="system_management.lists.add.status" />
 </template>
 
 <script lang="ts">

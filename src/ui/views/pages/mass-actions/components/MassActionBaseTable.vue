@@ -98,6 +98,11 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
       type: Boolean,
       required: true,
     },
+
+    addButtonLabel: {
+      type: String,
+      default: '',
+    },
   },
 
   // MassActionBaseTable and FinancialAssistanceHome are both using the same mixin
@@ -107,6 +112,7 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
     this.massActionTypeData = this.massActionType;
     this.detailsRouteNameData = this.detailsRouteName;
     this.tableTitleData = this.tableTitle;
+    this.addButtonLabelData = this.addButtonLabel;
     this.searchEndpointData = this.searchEndpoint;
   },
 

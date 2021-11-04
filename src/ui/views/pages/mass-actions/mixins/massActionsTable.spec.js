@@ -159,6 +159,7 @@ describe('massActionsTable', () => {
             header: {
               title: `${wrapper.vm.tableTitleData} (0)`,
               searchPlaceholder: 'common.inputs.quick_search',
+              addButtonLabel: '',
             },
           });
       });

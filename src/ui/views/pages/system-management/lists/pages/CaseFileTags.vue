@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.caseFileTags" />
+  <option-list title="system_management.lists.caseFileTags" add-button-label="caseFile.tags.AddTag" />
 </template>
 
 <script lang="ts">

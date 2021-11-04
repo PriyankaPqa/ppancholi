@@ -26,6 +26,7 @@
         :filter-key="FilterKey.Events"
         :filter-options="filters"
         :count="itemsCount"
+        add-filter-label="eventsTable.filter.title"
         @update:appliedFilter="onApplyFilter($event)" />
     </template>
 
@@ -136,11 +137,12 @@ export default mixins(TablePaginationSearchMixin).extend({
       };
     },
 
-    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
+    labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult, addButtonLabel: TranslateResult } } {
       return {
         header: {
           title: this.$t('eventsTable.title'),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
+          addButtonLabel: this.$t('eventsTable.addEvent'),
         },
       };
     },

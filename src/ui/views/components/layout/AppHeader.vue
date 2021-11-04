@@ -1,7 +1,12 @@
 <template>
   <div>
     <v-app-bar color="white" app clipped-right clipped-left class="elevation-2">
-      <v-app-bar-nav-icon id="hamburgerMenu" data-test="left-menu-trigger" @click.stop="handleLeftMenu" />
+      <rc-tooltip bottom>
+        <template #activator="{ on }">
+          <v-app-bar-nav-icon id="hamburgerMenu" data-test="left-menu-trigger" v-on="on" @click.stop="handleLeftMenu" />
+        </template>
+        {{ $t('aria.label.menu') }}
+      </rc-tooltip>
       <v-toolbar-title>
         <img alt="logo" :src="logoUrl" class="logo ml-n4 ml-md-0" data-test="appHeader__logo">
       </v-toolbar-title>
@@ -26,23 +31,34 @@
 
       <language-selector />
 
-      <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" @click.stop="handleGeneralHelpMenu">
-        <v-icon color="grey darken-2">
-          mdi-information
-        </v-icon>
-      </v-btn>
+      <rc-tooltip bottom>
+        <template #activator="{ on }">
+          <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" v-on="on" @click.stop="handleGeneralHelpMenu">
+            <v-icon color="grey darken-2">
+              mdi-information
+            </v-icon>
+          </v-btn>
+        </template>
+        {{ $t('common.help') }}
+      </rc-tooltip>
 
-      <v-btn icon data-test="right-menu-trigger" @click.stop="handleRightMenu">
-        <v-avatar color="grey darken-2" size="36">
-          <span class="white--text">{{ getAvatarName }}</span>
-        </v-avatar>
-      </v-btn>
+      <rc-tooltip bottom>
+        <template #activator="{ on }">
+          <v-btn icon data-test="right-menu-trigger" v-on="on" @click.stop="handleRightMenu">
+            <v-avatar color="grey darken-2" size="36">
+              <span class="white--text">{{ getAvatarName }}</span>
+            </v-avatar>
+          </v-btn>
+        </template>
+        {{ $t('rightmenu.title') }}
+      </rc-tooltip>
     </v-app-bar>
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { RcTooltip } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
 import { IBrandingEntity } from '@/entities/branding';
@@ -52,6 +68,7 @@ export default Vue.extend({
 
   components: {
     LanguageSelector,
+    RcTooltip,
   },
 
   data() {

@@ -18,6 +18,7 @@
         <filter-toolbar
           :filter-key="FilterKey.EventPrograms"
           :filter-options="filterOptions"
+          add-filter-label="programs.filter"
           :count="itemsCount"
           @update:appliedFilter="onApplyFilter($event)" />
       </template>
@@ -131,6 +132,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         header: {
           title: this.$t('programs.title'),
           searchPlaceholder: this.$t('common.inputs.quick_search'),
+          addButtonLabel: this.$t('programs.addProgram'),
         },
       };
     },

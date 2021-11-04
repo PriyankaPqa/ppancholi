@@ -1,4 +1,4 @@
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
@@ -125,7 +125,31 @@ describe('CaseFileActivity.vue', () => {
 
     describe('duplicate button', () => {
       let element;
-      beforeEach(() => {
+      beforeEach(async () => {
+        wrapper = mount(Component, {
+          localVue,
+          data() {
+            return {
+              caseFileActivities: mockActivities,
+            };
+          },
+          computed: {
+            id() {
+              return mockCaseFile.entity.id;
+            },
+            canEdit() { return true; },
+            caseFile() {
+              return mockCaseFile;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        await wrapper.setData({
+          loading: false,
+        });
         element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
       });
       it('renders', () => {
@@ -133,10 +157,59 @@ describe('CaseFileActivity.vue', () => {
       });
 
       it('sets disabled according to readonly', async () => {
-        await mountWrapper(false);
+        wrapper = mount(Component, {
+          localVue,
+          data() {
+            return {
+              caseFileActivities: mockActivities,
+            };
+          },
+          computed: {
+            id() {
+              return mockCaseFile.entity.id;
+            },
+            canEdit() { return false; },
+            caseFile() {
+              return mockCaseFile;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        await wrapper.setData({
+          loading: false,
+        });
+
         let element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
         expect(element.props('disabled')).toBeTruthy();
-        await mountWrapper(true);
+
+        wrapper = mount(Component, {
+          localVue,
+          data() {
+            return {
+              caseFileActivities: mockActivities,
+            };
+          },
+          computed: {
+            id() {
+              return mockCaseFile.entity.id;
+            },
+            canEdit() { return true; },
+            caseFile() {
+              return mockCaseFile;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        await wrapper.setData({
+          loading: false,
+        });
+
         element = wrapper.findDataTest('caseFileActivity-duplicateBtn');
         expect(element.props('disabled')).toBeFalsy();
       });

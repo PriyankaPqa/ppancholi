@@ -16,10 +16,15 @@
           :filter-key="FilterKey.Teams"
           :count="itemsCount"
           :filter-options="filters"
+          add-filter-label="team.filter"
           @update:appliedFilter="onApplyFilter" />
       </template>
       <template v-if="$hasLevel('level5')" #headerLeft>
-        <rc-add-button-with-menu :items="menuItems" data-test="create-team-button" @click-item="goToCreateTeam($event)" />
+        <rc-add-button-with-menu
+          :items="menuItems"
+          data-test="create-team-button"
+          :add-button-label="$t('teams.add_team')"
+          @click-item="goToCreateTeam($event)" />
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item }">

@@ -5,6 +5,7 @@
     :title="$t('system_management.leftMenu.user_accounts_title')"
     :help-link="$t('zendesk.help_link.manageEMISUsers')"
     :show-add-button="true"
+    :add-button-label="$t('system_management.userAccounts.add_user_account_title')"
     :labels="labels"
     :table-props="tableProps"
     :search="search"

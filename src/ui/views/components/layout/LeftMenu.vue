@@ -13,12 +13,11 @@
     clipped
     @input="updateShow">
     <v-list nav>
-      <v-tooltip
+      <rc-tooltip
         v-for="(item, index) in availableItems"
         :key="index"
         right
-        :disabled="!mini"
-        :open-delay="uiConstants.tooltip_open_delay">
+        :disabled="!mini">
         <template #activator="{ on } ">
           <v-list-item
             link
@@ -38,14 +37,15 @@
             <v-list-item-content><v-list-item-title>{{ $t(item.text) }}</v-list-item-title></v-list-item-content>
           </v-list-item>
         </template>
-        <span>{{ $t(item.text) }}</span>
-      </v-tooltip>
+        {{ $t(item.text) }}
+      </rc-tooltip>
     </v-list>
   </v-navigation-drawer>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
+import { RcTooltip } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { ui } from '@/constants/ui';
 import { INavigationTab } from '@/types';
@@ -54,6 +54,10 @@ import { Features } from '@/entities/feature';
 
 export default Vue.extend({
   name: 'LeftMenu',
+
+  components: {
+    RcTooltip,
+  },
 
   data() {
     return {

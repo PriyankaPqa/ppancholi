@@ -102,6 +102,7 @@ describe('CaseFileReferral.vue', () => {
           header: {
             title: 'caseFile.referral.title',
             searchPlaceholder: 'common.inputs.quick_search',
+            addButtonLabel: 'caseFile.referral.addNewReferral',
           },
         });
       });

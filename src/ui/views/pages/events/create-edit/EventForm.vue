@@ -208,7 +208,7 @@
                     {{ $t('event.registration_link') }}
                   </div>
 
-                  <v-tooltip :open-delay="TOOLTIP_DELAY" bottom>
+                  <rc-tooltip bottom>
                     <template #activator="{ on }">
                       <v-btn data-test="copy-link-btn" icon bottom v-on="on" @click="copyRegistrationLink">
                         <v-icon size="24" color="grey darken-2">
@@ -217,7 +217,7 @@
                       </v-btn>
                     </template>
                     <span>{{ $t('eventSummary.copyLinkTooltip') }}</span>
-                  </v-tooltip>
+                  </rc-tooltip>
                 </div>
                 <v-row>
                   <v-col cols="12" xl="12" lg="12">
@@ -279,6 +279,7 @@ import {
   VTextAreaWithValidation,
   RcPhone,
   RcAutosuggest,
+  RcTooltip,
 } from '@crctech/component-library';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
@@ -295,8 +296,6 @@ import {
   EventEntity,
 } from '@/entities/event';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
-import { TOOLTIP_DELAY } from '@/ui/constants';
-// import _cloneDeep from 'lodash/cloneDeep';
 import { IOptionItem } from '@/entities/optionItem';
 import utils from '@/entities/utils';
 import { localStorageKeys } from '@/constants/localStorage';
@@ -313,6 +312,7 @@ export default Vue.extend({
     VTextAreaWithValidation,
     RcPhone,
     RcAutosuggest,
+    RcTooltip,
   },
 
   props: {
@@ -376,7 +376,6 @@ export default Vue.extend({
       languageMode: 'en',
       otherProvinces: [],
       regions: [],
-      TOOLTIP_DELAY,
       initialStatus: localEvent.schedule.status,
       initialOpenDate: localEvent.schedule.scheduledOpenDate,
       initialCloseDate: localEvent.schedule.scheduledCloseDate,

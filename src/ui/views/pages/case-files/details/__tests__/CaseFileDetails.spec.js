@@ -1,7 +1,7 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import { ECanadaProvinces } from '@crctech/registration-lib/src/types';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFile } from '@/entities/case-file';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
@@ -66,7 +66,7 @@ describe('CaseFileDetails.vue', () => {
       },
     };
 
-    wrapper = shallowMount(Component, params);
+    wrapper = mount(Component, params);
     await wrapper.setRole('level1');
   };
 

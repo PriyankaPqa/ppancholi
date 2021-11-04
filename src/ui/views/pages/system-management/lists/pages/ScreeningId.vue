@@ -1,5 +1,5 @@
 <template>
-  <option-list title="system_management.lists.screeningId" />
+  <option-list title="system_management.lists.screeningId" add-button-label="system_management.lists.screeningId.add" />
 </template>
 
 <script lang="ts">

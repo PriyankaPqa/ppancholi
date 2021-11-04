@@ -109,7 +109,7 @@ describe('HouseholdMemberCard.vue', () => {
           icon: 'mock-icon',
           event: jest.fn(),
         }];
-        doMount(false, true, { computed: { buttons() { return buttons; } } });
+        doMount(false, false, { computed: { buttons() { return buttons; } } });
         element = wrapper.findDataTest('household_profile_member_action_btn_mock-button');
       });
       it('renders with the right label', () => {
@@ -117,7 +117,7 @@ describe('HouseholdMemberCard.vue', () => {
       });
 
       it('displays the right icon', () => {
-        expect(element.text()).toContain('mock-icon');
+        expect(element.find('i').classes('mock-icon')).toBeTruthy();
       });
 
       it('calls the right method', async () => {

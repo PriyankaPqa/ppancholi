@@ -5,7 +5,8 @@
     :add-route-name="addRouteName"
     :table-title="tableTitle"
     :search-endpoint="searchEndpoint"
-    :show-add-button="$hasLevel('level6') || $hasRole('contributorFinance')" />
+    :show-add-button="$hasLevel('level6') || $hasRole('contributorFinance')"
+    :add-button-label="addButtonLabel" />
 </template>
 
 <script lang="ts">
@@ -26,6 +27,7 @@ export default Vue.extend({
     massActionType: MassActionType.ImportPaymentStatuses,
     detailsRouteName: routes.massActions.importPaymentStatus.details.name,
     tableTitle: 'massAction.importPaymentStatusTable.title',
+    addButtonLabel: 'massActions.importPaymentStatus.create.title',
     searchEndpoint: 'import-payment-status-mass-actions',
     addRouteName: routes.massActions.importPaymentStatus.create.name,
   }),
