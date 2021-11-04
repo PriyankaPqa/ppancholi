@@ -288,6 +288,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
       preferredLanguageId: member.contactInformation.preferredLanguage?.id,
       memberId: member.id,
       currentAddress: this.parseCurrentAddress(member.currentAddress),
+      identitySet: isPrimaryBeneficiary ? this.parseIdentitySet(member.identitySet) : null,
     };
   }
 }

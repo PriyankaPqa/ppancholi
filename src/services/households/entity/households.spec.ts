@@ -354,6 +354,7 @@ describe('>>> Beneficiaries Service', () => {
         preferredLanguageId: member.contactInformation.preferredLanguage.id,
         memberId: member.id,
         currentAddress: service.parseCurrentAddress(member.currentAddress),
+        identitySet: service.parseIdentitySet(member.identitySet),
       });
     });
   });

@@ -1,4 +1,4 @@
-import { IMultilingual } from '@/types';
+import { IMultilingual } from '../../../types';
 import { EIndigenousTypes } from '../identity-set/identitySet.types';
 import { IIdentitySet, IIdentitySetCreateRequest } from '../identity-set';
 import { IContactInformation, IContactInformationCreateRequest } from '../contact-information';
@@ -40,6 +40,7 @@ export interface IMemberMoveRequest {
   preferredLanguageId: uuid;
   memberId: uuid;
   currentAddress: ICurrentAddressCreateRequest;
+  identitySet: IIdentitySetCreateRequest;
 }
 
 export interface IMember extends IMemberEntity {
