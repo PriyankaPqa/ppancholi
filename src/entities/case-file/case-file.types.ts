@@ -12,13 +12,14 @@ export enum CaseFileStatus {
   Archived = 4,
 }
 
+// 2674 remove triage options 4-5 for now
 export enum CaseFileTriage {
   None = 0,
   Tier1 = 1,
   Tier2 = 2,
   Tier3 = 3,
-  Tier4 = 4,
-  Tier5 = 5,
+  // Tier4 = 4,
+  // Tier5 = 5,
 }
 
 export enum IdentityAuthenticationStatus {

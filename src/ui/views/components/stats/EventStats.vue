@@ -73,16 +73,6 @@
               <span class="fw-bold" data-test="event_stats_tier_3">({{ quickStats.caseFileTriageCounts.tier3 }})</span>
             </div>
             <div class="rc-body14">
-              {{ $t('event_stats.tier4.label') }}
-              <span class="fw-bold" data-test="event_stats_tier_4">({{ quickStats.caseFileTriageCounts.tier4 }})</span>
-            </div>
-          </div>
-          <div class="line">
-            <div class="rc-body14">
-              {{ $t('event_stats.tier5.label') }}
-              <span class="fw-bold" data-test="event_stats_tier_5">({{ quickStats.caseFileTriageCounts.tier5 }})</span>
-            </div>
-            <div class="rc-body14">
               {{ $t('event_stats.na.label') }}
               <span class="fw-bold" data-test="event_stats_tier_na">({{ quickStats.caseFileTriageCounts.tierNone }})</span>
             </div>
