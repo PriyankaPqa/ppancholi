@@ -191,13 +191,14 @@ export default Vue.extend({
         newFilter: filter,
       };
       this.loading = true;
-      try {
-        const userAccount = await this.$storage.userAccount.actions.editFilter(payload.oldFilter, payload.newFilter);
+
+      const userAccount = await this.$storage.userAccount.actions.editFilter(payload.oldFilter, payload.newFilter);
+      if (userAccount) {
         this.refreshUserFilters(userAccount);
         this.$toasted.global.success(this.$t('filters.edit.success'));
-      } finally {
-        this.loading = false;
       }
+
+      this.loading = false;
     },
 
     async createFilter(filter: IFilter) {

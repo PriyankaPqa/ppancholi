@@ -78,6 +78,20 @@ describe('Filter Toolbar', () => {
 
         expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(1);
       });
+
+      it('doest not call refreshUserFilters method if edit filter fails', async () => {
+        const filter = {};
+        const filterIndex = 0;
+        jest.spyOn(wrapper.vm, 'refreshUserFilters')
+          .mockImplementation(() => null);
+        jest.spyOn(wrapper.vm.$storage.userAccount.actions, 'editFilter')
+          .mockImplementation(() => null);
+
+        await wrapper.vm.editFilter(filter, filterIndex);
+
+        expect(wrapper.vm.refreshUserFilters)
+          .toHaveBeenCalledTimes(0);
+      });
     });
 
     describe('createFilter', () => {
