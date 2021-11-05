@@ -2,7 +2,7 @@ import { mockHouseholdCreate, Member } from '@crctech/registration-lib/src/entit
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
-import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockEventMainInfo, EEventLocationStatus, EEventStatus } from '@/entities/event';
 import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
@@ -39,7 +39,7 @@ describe('HouseholdProfile.vue', () => {
 
   describe('Template', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
+      wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           id: household.entity.id,
@@ -89,7 +89,7 @@ describe('HouseholdProfile.vue', () => {
       });
 
       it('renders the edit button if the user can edit', () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: household.entity.id,
@@ -113,7 +113,7 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.findDataTest('member_address_edit_btn').exists()).toBeTruthy();
       });
       it('does not render the edit button if the user cannot edit', () => {
-        wrapper = mount(Component, {
+        wrapper = shallowMount(Component, {
           localVue,
           propsData: {
             id: household.entity.id,
@@ -432,13 +432,15 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() { return householdCreate; },
           },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
           store: {
             ...mockUserStateLevel(2),
+          },
+          mocks: {
+            $storage: {
+              registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
+              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
           },
         });
 
@@ -454,13 +456,15 @@ describe('HouseholdProfile.vue', () => {
           computed: {
             household() { return householdCreate; },
           },
-          data() {
-            return {
-              householdData: household,
-            };
-          },
           store: {
             ...mockUserStateLevel(1),
+          },
+          mocks: {
+            $storage: {
+              registration: { getters: { householdCreate: jest.fn(() => householdCreate) } },
+              caseFile: { getters: { getByIds: jest.fn(() => [caseFile]) } },
+              household: { actions: { fetch: jest.fn(() => mockCombinedHousehold()) } },
+            },
           },
         });
 

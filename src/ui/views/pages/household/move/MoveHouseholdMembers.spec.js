@@ -5,6 +5,7 @@ import { mockMember } from '@crctech/registration-lib/src/entities/value-objects
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
+import helpers from '@/ui/helpers/helpers';
 
 import Component from './MoveHouseholdMembers.vue';
 import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResults.vue';
@@ -47,6 +48,7 @@ describe('MoveHouseholdMembers.vue', () => {
           },
           mocks: {
             $storage: storage,
+            $router: { back: jest.fn() },
           },
           computed: {
             currentHousehold: () => ({ id: '' }),
@@ -123,6 +125,11 @@ describe('MoveHouseholdMembers.vue', () => {
         computed: { currentHousehold() { return householdCreate; } },
         mocks: {
           $storage: storage,
+        },
+        data() {
+          return {
+            firstHousehold: householdCreate,
+          };
         },
       });
     });
@@ -353,6 +360,120 @@ describe('MoveHouseholdMembers.vue', () => {
         await wrapper.vm.moveMember(movingMember, originHousehold, targetHousehold);
 
         expect(targetHousehold.addAdditionalMember).toHaveBeenLastCalledWith({ ...movingMember, selectedCurrentAddress: null }, false);
+      });
+    });
+
+    describe('submitMove', () => {
+      it('should call scrollToFirstError if form is not valid', async () => {
+        helpers.scrollToFirstError = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => false);
+
+        await wrapper.vm.submitMove();
+        expect(helpers.scrollToFirstError).toHaveBeenCalledWith('scrollAnchor');
+      });
+
+      it('should call setPrimaryMember, setNewMembers and the household service moveMembers if form is  valid', async () => {
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.setPrimaryMember = jest.fn();
+        wrapper.vm.setNewMembers = jest.fn();
+        wrapper.vm.$services.households.moveMembers = jest.fn(() => {});
+
+        await wrapper.vm.submitMove();
+        expect(wrapper.vm.setPrimaryMember).toHaveBeenCalledWith(wrapper.vm.firstHousehold, 0);
+        expect(wrapper.vm.setPrimaryMember).toHaveBeenCalledWith(wrapper.vm.secondHousehold, 1);
+        expect(wrapper.vm.setNewMembers).toHaveBeenCalledWith(wrapper.vm.firstHousehold);
+        expect(wrapper.vm.setNewMembers).toHaveBeenCalledWith(wrapper.vm.secondHousehold);
+        expect(wrapper.vm.$services.households.moveMembers).toHaveBeenCalledWith(wrapper.vm.firstHousehold, wrapper.vm.secondHousehold);
+      });
+
+      it('should set moveSubmitted to true if there is a response from the service call', async () => {
+        expect(wrapper.vm.moveSubmitted).toBeFalsy();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.setPrimaryMember = jest.fn();
+        wrapper.vm.setNewMembers = jest.fn();
+        wrapper.vm.$services.households.moveMembers = jest.fn(() => [householdCreate]);
+        await wrapper.vm.submitMove();
+        expect(wrapper.vm.moveSubmitted).toBeTruthy();
+      });
+    });
+
+    describe('setPrimaryMember', () => {
+      it('should do nothing when primary', async () => {
+        const memberLeft = { ...mockMember(), id: 'new primary' };
+        const originHousehold = {
+          ...mockHouseholdCreate(),
+          id: 'origin',
+          additionalMembers: [memberLeft, mockMember()],
+          movingAdditionalMembers: [{ ...mockMember(), id: 'moving' }],
+          primaryBeneficiary: {},
+        };
+        originHousehold.removeAdditionalMember = jest.fn(() => {});
+        originHousehold.setPrimaryBeneficiary = jest.fn(() => {});
+        await wrapper.setData({ firstHouseholdInitialPreferredLanguage: 'lang 1', secondHouseholdInitialPreferredLanguage: 'lan 2' });
+        wrapper.vm.setPrimaryMember(originHousehold, 0);
+
+        expect(originHousehold.removeAdditionalMember).not.toHaveBeenCalled();
+        expect(originHousehold.setPrimaryBeneficiary).not.toHaveBeenCalled();
+      });
+      it('should set primary to the first additional member if there are any when no primary', async () => {
+        const memberLeft = { ...mockMember(), id: 'new primary' };
+        const originHousehold = {
+          ...mockHouseholdCreate(),
+          id: 'origin',
+          additionalMembers: [memberLeft, mockMember()],
+          movingAdditionalMembers: [{ ...mockMember(), id: 'moving' }],
+          primaryBeneficiary: null,
+        };
+        originHousehold.removeAdditionalMember = jest.fn(() => {});
+        originHousehold.setPrimaryBeneficiary = jest.fn(() => {});
+        await wrapper.setData({ firstHouseholdInitialPreferredLanguage: 'lang 1', secondHouseholdInitialPreferredLanguage: 'lan 2' });
+        wrapper.vm.setPrimaryMember(originHousehold, 0);
+
+        expect(memberLeft.contactInformation.preferredLanguage).toBe('lang 1');
+        expect(originHousehold.removeAdditionalMember).toHaveBeenCalledWith(0);
+        expect(originHousehold.setPrimaryBeneficiary).toHaveBeenCalledWith(memberLeft);
+      });
+      it('should set primary to the first moving member if there are any when no primary and no additional', async () => {
+        const memberLeft = { ...mockMember(), id: 'new primary', selectedCurrentAddress: { sameAddressSelected: null, newAddress: 'new addr' } };
+        const originHousehold = {
+          ...mockHouseholdCreate(),
+          id: 'origin',
+          additionalMembers: [],
+          movingAdditionalMembers: [memberLeft, { ...mockMember(), id: 'moving' }],
+          primaryBeneficiary: null,
+        };
+        originHousehold.removeAdditionalMember = jest.fn(() => {});
+        originHousehold.setPrimaryBeneficiary = jest.fn(() => {});
+        memberLeft.setCurrentAddress = jest.fn(() => {});
+        await wrapper.setData({ firstHouseholdInitialPreferredLanguage: 'lang 1', secondHouseholdInitialPreferredLanguage: 'lan 2' });
+        wrapper.vm.setPrimaryMember(originHousehold, 0);
+
+        expect(memberLeft.contactInformation.preferredLanguage).toBe('lang 1');
+        expect(originHousehold.removeAdditionalMember).not.toHaveBeenCalled();
+        expect(memberLeft.setCurrentAddress).toHaveBeenCalledWith('new addr');
+        expect(originHousehold.setPrimaryBeneficiary).toHaveBeenCalledWith(memberLeft);
+        expect(originHousehold.movingAdditionalMembers).toEqual([{ ...mockMember(), id: 'moving' }]);
+      });
+    });
+
+    describe('setNewMembers', () => {
+      it('should set the address and add to the household moving members', () => {
+        const memberLeft = { ...mockMember(), id: 'new primary', selectedCurrentAddress: { sameAddressSelected: null, newAddress: 'new addr' } };
+        const originHousehold = {
+          ...mockHouseholdCreate(),
+          id: 'origin',
+          additionalMembers: [],
+          movingAdditionalMembers: [memberLeft],
+          primaryBeneficiary: null,
+        };
+        originHousehold.addAdditionalMember = jest.fn(() => {});
+        memberLeft.setCurrentAddress = jest.fn(() => {});
+        wrapper.vm.setNewMembers(originHousehold);
+
+        expect(memberLeft.setCurrentAddress).toHaveBeenCalledWith('new addr');
+        expect(originHousehold.addAdditionalMember).toHaveBeenCalledTimes(1);
+        expect(originHousehold.movingAdditionalMembers).toEqual([]);
       });
     });
   });

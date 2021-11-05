@@ -21,6 +21,7 @@ export default Vue.extend({
     },
 
     async fetchMembersInformation(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
+      if (!household.entity.members.length) return [];
       let primaryBeneficiaryPromise;
       const additionalMembersPromises = [] as Array<Promise<IMemberEntity>>;
 

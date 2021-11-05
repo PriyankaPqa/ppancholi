@@ -29,6 +29,18 @@
         </div>
       </v-col>
     </v-row>
+    <v-row no-gutters class="grey-container px-4 pt-1 pb-4">
+      <v-col>
+        <v-btn
+          v-if="moveSubmitted"
+          small
+          color="primary"
+          data-test="household-profile-btn"
+          @click="goToHouseholdProfile()">
+          {{ $t('household.move.view_household') }}
+        </v-btn>
+      </v-col>
+    </v-row>
     <div v-for="(m, i) in members" :key="i" :class="[ i !== members.length-1 ? 'border-bottom' : '', 'pa-4']">
       <v-row>
         <v-col cols="9" sm="7" xs>
@@ -152,7 +164,11 @@
                   :hide-details="!errors.length"
                   small
                   :error-messages="errors">
-                  <v-radio :label=" $t('household.move.same_as_primary')" :value="1" data-test="household_move_same_address" />
+                  <v-radio
+                    :label=" $t('household.move.same_as_primary')"
+                    :value="1"
+                    :disabled="i===0"
+                    data-test="household_move_same_address" />
                   <v-radio
                     :label=" $t('household.move.new_address')"
                     :value="0"
@@ -228,6 +244,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { VForm } from '@/types';
+import routes from '@/constants/routes';
 
 export default Vue.extend({
   name: 'HouseholdCard',
@@ -260,6 +277,11 @@ export default Vue.extend({
     shelterLocations: {
       type: Array as () => IEventGenericLocation[],
       required: true,
+    },
+
+    moveSubmitted: {
+      type: Boolean,
+      default: false,
     },
   },
 
@@ -301,7 +323,7 @@ export default Vue.extend({
     },
 
     showMoveButton(): (index: number) => boolean {
-      return (index: number) => this.enabledMove && (index > 0 || this.members.length === 1);
+      return (index: number) => this.enabledMove && !this.moveSubmitted && (index > 0 || this.members.length === 1);
     },
 
     errorOutstandingPayments(): (index: number) => boolean {
@@ -381,6 +403,16 @@ export default Vue.extend({
       this.selectedMember = null;
       this.newAddress = null;
     },
+
+    goToHouseholdProfile() {
+      this.$router.replace({
+        name: routes.household.householdProfile.name,
+        params: {
+          id: this.household.id,
+        },
+      });
+    },
+
   },
 });
 </script>

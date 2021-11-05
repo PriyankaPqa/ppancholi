@@ -5,11 +5,19 @@
       v-else
       :title="$t('household.move.title')"
       :show-add-button="false"
-      show-back-button
+      :show-back-button="!moveSubmitted"
       :show-edit-button="false"
       content-padding="0"
       @back="back()">
-      <v-row id="scrollAnchor" no-gutters class="pt-8 px-8">
+      <v-row id="scrollAnchor" no-gutters class="py-8 px-8">
+        <v-col v-if="moveSubmitted" cols="12" class="d-flex align-center mt-6 mb-10 flex-column">
+          <h1 style="font-weight: 500">
+            {{ $t("household.move.saved_successfully") }}
+          </h1>
+          <div class="rc-body14">
+            {{ $t("household.move.select_household") }}
+          </div>
+        </v-col>
         <v-col cols="6" class="pr-3">
           <h5 class="rc-heading-5 mb-4">
             {{ $t('household.move.left.title') }}
@@ -18,8 +26,9 @@
             v-if="firstHousehold"
             :household="firstHousehold"
             position="left"
-            :enabled-move="secondHousehold !== null"
+            :enabled-move="secondHousehold !== null && !submitError"
             :shelter-locations="firstHouseholdShelterLocations"
+            :move-submitted="moveSubmitted"
             @move="move($event)" />
         </v-col>
         <v-col cols="6" class="pl-3">
@@ -51,7 +60,7 @@
                 </h5>
               </v-col>
               <v-col cols="1">
-                <v-btn icon small data-test="removeSelection" @click="removeSelection()">
+                <v-btn v-if="!moveSubmitted" icon small data-test="removeSelection" @click="removeSelection()">
                   <v-icon>
                     mdi-close
                   </v-icon>
@@ -63,13 +72,14 @@
               v-if="secondHousehold"
               :household="secondHousehold"
               position="right"
-              :enabled-move="secondHousehold !== null"
+              :enabled-move="secondHousehold !== null && !submitError"
               :shelter-locations="secondHouseholdShelterLocations"
+              :move-submitted="moveSubmitted"
               @move="move($event)" />
           </template>
         </v-col>
       </v-row>
-      <template v-if="secondHousehold" slot="actions">
+      <template v-if="secondHousehold && !moveSubmitted" slot="actions">
         <v-btn color="primary" data-test="save" :loading="submitLoading" :disabled="failed || !dirty" @click="submitMove">
           {{ $t('common.buttons.save') }}
         </v-btn>
@@ -148,6 +158,8 @@ export default mixins(searchHousehold, household).extend({
       secondHouseholdShelterLocations: [] as IEventGenericLocation[],
       firstHouseholdInitialPreferredLanguage: null as IOptionItemData,
       secondHouseholdInitialPreferredLanguage: null as IOptionItemData,
+      moveSubmitted: false,
+      submitError: false,
     };
   },
 
@@ -166,6 +178,7 @@ export default mixins(searchHousehold, household).extend({
       this.firstHousehold.movingAdditionalMembers = [];
       const firstHouseholdData = await this.$storage.household.actions.fetch(this.currentHousehold.id);
       this.firstHouseholdShelterLocations = await this.fetchShelterLocations(firstHouseholdData, true) || [];
+      this.firstHouseholdInitialPreferredLanguage = this.firstHousehold.primaryBeneficiary?.contactInformation.preferredLanguage;
       this.firstHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(this.currentHousehold.id))
         ?.hasOutstandingPayments;
       this.loading = false;
@@ -184,11 +197,16 @@ export default mixins(searchHousehold, household).extend({
     },
 
     async onSelect({ household, shelterLocations }:{household: IMovingHouseholdCreate, shelterLocations:IEventGenericLocation[]}) {
-      this.secondHousehold = _cloneDeep(household) as IMovingHouseholdCreate;
-      this.secondHousehold.movingAdditionalMembers = [];
-      this.secondHouseholdShelterLocations = shelterLocations || [];
-      this.secondHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(household.id))
+      this.submitError = false;
+
+      const secondHousehold = _cloneDeep(household) as IMovingHouseholdCreate;
+      secondHousehold.movingAdditionalMembers = [];
+      secondHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(household.id))
         ?.hasOutstandingPayments;
+      this.secondHousehold = secondHousehold;
+
+      this.secondHouseholdInitialPreferredLanguage = secondHousehold.primaryBeneficiary?.contactInformation.preferredLanguage;
+      this.secondHouseholdShelterLocations = shelterLocations || [];
     },
 
     onReset() {
@@ -251,8 +269,60 @@ export default mixins(searchHousehold, household).extend({
       const isValid = await (this.$refs.form as VForm).validate();
       if (!isValid) {
         helpers.scrollToFirstError('scrollAnchor');
+      } else {
+        this.setPrimaryMember(this.firstHousehold, 0);
+        this.setPrimaryMember(this.secondHousehold, 1);
+        this.setNewMembers(this.firstHousehold);
+        this.setNewMembers(this.secondHousehold);
+        this.submitLoading = true;
+        const response = await this.$services.households.moveMembers(this.firstHousehold, this.secondHousehold);
+        if (response) {
+          this.moveSubmitted = true;
+        } else {
+          this.submitError = true;
+        }
+        this.submitLoading = false;
       }
     },
+
+    setPrimaryMember(household: IMovingHouseholdCreate, i: number) {
+      if (!household.primaryBeneficiary) {
+        let newPrimaryMember: IMovingMember;
+
+        if (household.additionalMembers.length) {
+          // eslint-disable-next-line prefer-destructuring
+          newPrimaryMember = household.additionalMembers[0];
+          household.removeAdditionalMember(0);
+        } else if (household.movingAdditionalMembers.length) {
+          // eslint-disable-next-line prefer-destructuring
+          newPrimaryMember = household.movingAdditionalMembers[0];
+          household.movingAdditionalMembers.shift();
+          newPrimaryMember.setCurrentAddress(newPrimaryMember.selectedCurrentAddress.newAddress);
+        }
+
+        if (newPrimaryMember) {
+          newPrimaryMember.contactInformation.preferredLanguage = i === 0
+            ? this.firstHouseholdInitialPreferredLanguage : this.secondHouseholdInitialPreferredLanguage;
+
+          household.setPrimaryBeneficiary(newPrimaryMember);
+        }
+      }
+      return household;
+    },
+
+    setNewMembers(household: IMovingHouseholdCreate) {
+      household.movingAdditionalMembers.forEach((m:IMovingMember) => {
+        m.setCurrentAddress(m.selectedCurrentAddress.sameAddressSelected
+          ? household.primaryBeneficiary.currentAddress : m.selectedCurrentAddress.newAddress);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { selectedCurrentAddress, ...memberData } = m;
+        household.addAdditionalMember(memberData, false);
+      });
+
+      household.movingAdditionalMembers = [];
+      return household;
+    },
+
   },
 });
 </script>

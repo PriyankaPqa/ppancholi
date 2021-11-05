@@ -5,6 +5,7 @@ import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/store/storage';
+import routes from '@/constants/routes';
 
 import Component from './HouseholdCard.vue';
 
@@ -28,6 +29,7 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+            moveSubmitted: false,
           },
           mocks: { $storage: storage },
         });
@@ -47,11 +49,27 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: false,
+            moveSubmitted: false,
           },
           mocks: { $storage: storage },
         });
 
         expect(wrapper.vm.showMoveButton(1)).toEqual(false);
+      });
+      it('returns true if moveSubmitted is false', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            household: mockMovingHouseholdCreate(),
+            position: 'left',
+            shelterLocations,
+            enabledMove: true,
+            moveSubmitted: false,
+          },
+          mocks: { $storage: storage },
+        });
+
+        expect(wrapper.vm.showMoveButton(1)).toEqual(true);
       });
 
       it('returns true for the primary member if enabledMove is true and the household has no additional members', () => {
@@ -62,6 +80,7 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+            moveSubmitted: false,
           },
           computed: {
             members() { return [mockMember()]; },
@@ -80,6 +99,7 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+            moveSubmitted: false,
           },
           computed: {
             members() { return [mockMember({ id: '1' }), mockMember({ id: '2' })]; },
@@ -98,6 +118,7 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+            moveSubmitted: false,
           },
           computed: {
             members() { return [mockMember({ id: '1' }), mockMember({ id: '2' })]; },
@@ -192,6 +213,7 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+            moveSubmitted: false,
           },
           mocks: { $storage: storage },
         });
@@ -219,6 +241,7 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+            moveSubmitted: false,
           },
           mocks: { $storage: storage },
         });
@@ -235,6 +258,7 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+            moveSubmitted: false,
           },
           mocks: { $storage: storage },
         });
@@ -252,6 +276,7 @@ describe('HouseholdCard.vue', () => {
           position: 'left',
           shelterLocations,
           enabledMove: true,
+          moveSubmitted: false,
         },
         data() {
           return { expand: ['id-1'] };
@@ -274,6 +299,7 @@ describe('HouseholdCard.vue', () => {
           position: 'left',
           shelterLocations,
           enabledMove: true,
+          moveSubmitted: false,
         },
         mocks: { $storage: storage },
       });
@@ -347,6 +373,7 @@ describe('HouseholdCard.vue', () => {
               position: 'left',
               shelterLocations,
               enabledMove: true,
+              moveSubmitted: false,
             },
             data() {
               return {
@@ -387,6 +414,7 @@ describe('HouseholdCard.vue', () => {
             position: 'left',
             shelterLocations,
             enabledMove: true,
+            moveSubmitted: false,
           },
           data() {
             return {
@@ -399,6 +427,19 @@ describe('HouseholdCard.vue', () => {
 
         await wrapper.vm.resetSelectNewAddress();
         expect(wrapper.vm.members[0].selectedCurrentAddress.sameAddressSelected).toEqual(null);
+      });
+    });
+
+    describe('goToHouseholdProfile', () => {
+      it('should redirect to the household profile page', async () => {
+        wrapper.vm.goToHouseholdProfile();
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({
+          name: routes.household.householdProfile.name,
+          params: {
+            id: wrapper.vm.household.id,
+          },
+        });
       });
     });
   });

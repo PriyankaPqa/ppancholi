@@ -97,17 +97,17 @@
 
           <v-row class="no-gutters pt-8 pb-4 d-flex justify-space-between">
             <h5 class="rc-heading-5 ">
-              {{ $t('household.profile.household_members') }} ({{ household.additionalMembers.length + 1 }})
+              {{ $t('household.profile.household_members') }} ({{ household.primaryBeneficiary? household.additionalMembers.length + 1 : 0 }})
             </h5>
             <div>
-              <v-btn v-if="canMove" color="grey lighten-5" small depressed class="mr-4" @click="moveMembers()">
+              <v-btn v-if="canMove && household.primaryBeneficiary" color="grey lighten-5" small depressed class="mr-4" @click="moveMembers()">
                 <v-icon left>
                   mdi-compare-horizontal
                 </v-icon>
                 <span class="fw-bold"> {{ $t('household.profile.move_members') }} </span>
               </v-btn>
               <v-btn
-                v-if="canEdit"
+                v-if="canEdit && household.primaryBeneficiary"
                 :disabled="disabledAddMembers"
                 color="primary"
                 small
@@ -121,6 +121,7 @@
           </v-row>
 
           <household-member-card
+            v-if="household.primaryBeneficiary"
             :member="household.primaryBeneficiary"
             is-primary-member
             :shelter-locations="shelterLocations"
