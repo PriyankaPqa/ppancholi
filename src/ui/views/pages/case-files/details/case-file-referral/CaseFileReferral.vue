@@ -15,28 +15,28 @@
       :show-add-button="canEdit"
       @add-button="addCaseReferral"
       @search="search">
-      <!--      <template #filter>-->
-      <!--        <filter-toolbar-->
-      <!--          :filter-key="FilterKey.Referrals"-->
-      <!--          :count="itemsCount"-->
-      <!--          :filter-options="filters"-->
-      <!--          @update:appliedFilter="onApplyFilter" />-->
-      <!--      </template>-->
+      <template #filter>
+        <filter-toolbar
+          :filter-key="FilterKey.Referrals"
+          :count="itemsCount"
+          :filter-options="filters"
+          @update:appliedFilter="onApplyFilter" />
+      </template>
       <template #[`item.${customColumns.name}`]="{ item }">
         <router-link
           class="rc-link14 font-weight-bold pr-1"
           data-test="referralDetail-link"
           :to="getReferralDetailsRoute(item.entity.id)">
-          {{ item.entity.name }}
+          {{ (item.entity && item.entity.name) || '-' }}
         </router-link>
       </template>
 
       <template #[`item.${customColumns.refType}`]="{ item }">
-        {{ $m(item.metadata.referralTypeName) }}
+        {{ (item.metadata && $m(item.metadata.referralTypeName)) || '-' }}
       </template>
 
       <template #[`item.${customColumns.outcomeStatus}`]="{ item }">
-        {{ $m(item.metadata.referralOutcomeStatusName) }}
+        {{ (item.metadata && $m(item.metadata.referralOutcomeStatusName) || '-') }}
       </template>
 
       <template v-if="canEdit" #[`item.${customColumns.edit}`]="{ item }">
@@ -63,12 +63,14 @@ import routes from '@/constants/routes';
 import { IOptionItem } from '@/entities/optionItem';
 import { FilterKey } from '@/entities/user-account';
 import { ICaseFileReferralCombined } from '@/entities/case-file-referral';
+import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'CaseFileReferral',
 
   components: {
     RcDataTable,
+    FilterToolbar,
   },
 
   data() {
@@ -134,31 +136,31 @@ export default mixins(TablePaginationSearchMixin).extend({
     filters(): Array<IFilterSettings> {
       return [
         {
-          key: 'Entity/Name',
+          key: this.customColumns.name,
           type: EFilterType.Text,
           label: this.$t('common.name') as string,
         },
         {
-          key: 'Entity/Type/OptionItemId',
+          key: this.customColumns.refType,
           type: EFilterType.MultiSelect,
           label: this.$t('caseFile.referral.referralType') as string,
-          items: (this.referralTypes || []).map(({ id, name }) => ({ value: id, text: this.$m(name) })),
+          items: this.referralTypes.map((t) => ({ text: this.$m(t.name), value: this.$m(t.name) })),
         },
         {
-          key: 'Entity/OutcomeStatus/OptionItemId',
+          key: 'Metadata/ReferralOutcomeStatusId',
           type: EFilterType.MultiSelect,
           label: this.$t('caseFile.referral.outcomeStatus') as string,
-          items: (this.outcomeStatuses || []).map(({ id, name }) => ({ value: id, text: this.$m(name) })),
+          items: this.outcomeStatuses.map((s) => ({ text: this.$m(s.name), value: s.id })).concat([{ text: '-', value: null }]),
         },
       ];
     },
 
     referralTypes(): Array<IOptionItem> {
-      return this.$storage.caseFileReferral.getters.types(true, null);
+      return this.$storage.caseFileReferral.getters.types(false, null);
     },
 
     outcomeStatuses(): Array<IOptionItem> {
-      return this.$storage.caseFileReferral.getters.outcomeStatuses(true, null);
+      return this.$storage.caseFileReferral.getters.outcomeStatuses(false, null);
     },
 
     tableProps(): Record<string, unknown> {

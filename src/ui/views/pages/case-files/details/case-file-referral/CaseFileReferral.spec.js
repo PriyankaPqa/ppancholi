@@ -18,7 +18,9 @@ describe('CaseFileReferral.vue', () => {
     wrapper = shallowMount(Component, {
       localVue,
       computed: {
-        canEdit() { return canEdit; },
+        canEdit() {
+          return canEdit;
+        },
       },
       mocks: {
         $storage: storage,
@@ -112,21 +114,23 @@ describe('CaseFileReferral.vue', () => {
       test('they are defined correctly', async () => {
         expect(wrapper.vm.filters).toEqual([
           {
-            key: 'Entity/Name',
+            key: wrapper.vm.customColumns.name,
             type: 'text',
             label: 'common.name',
           },
           {
-            key: 'Entity/Type/OptionItemId',
+            key: wrapper.vm.customColumns.refType,
             type: 'multiselect',
             label: 'caseFile.referral.referralType',
-            items: (wrapper.vm.referralTypes || []).map(({ id, name }) => ({ value: id, text: wrapper.vm.$m(name) })),
+            items: wrapper.vm.referralTypes.map((t) => ({ text: wrapper.vm.$m(t.name), value: wrapper.vm.$m(t.name) })),
           },
           {
-            key: 'Entity/OutcomeStatus/OptionItemId',
+            key: 'Metadata/ReferralOutcomeStatusId',
             type: 'multiselect',
             label: 'caseFile.referral.outcomeStatus',
-            items: (wrapper.vm.outcomeStatuses || []).map(({ id, name }) => ({ value: id, text: wrapper.vm.$m(name) })),
+            items: wrapper.vm.outcomeStatuses
+              .map((s) => ({ text: wrapper.vm.$m(s.name), value: s.id }))
+              .concat([{ text: '-', value: null }]),
           },
         ]);
       });
@@ -210,7 +214,11 @@ describe('CaseFileReferral.vue', () => {
       });
 
       const params = {
-        search: 'query', filter: { 'Entity/CaseFileId': '1' }, top: 1000, skip: 10, orderBy: 'name asc',
+        search: 'query',
+        filter: { 'Entity/CaseFileId': '1' },
+        top: 1000,
+        skip: 10,
+        orderBy: 'name asc',
       };
 
       it('should call storage actions with proper parameters', async () => {

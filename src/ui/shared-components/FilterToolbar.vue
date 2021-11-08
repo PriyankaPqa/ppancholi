@@ -259,6 +259,7 @@ export default Vue.extend({
       const { key, operator } = filter;
       const { value } = filter;
       let newFilter = {} as Record<string, unknown>;
+
       switch (operator) {
         case EFilterOperator.Between:
           _set(newFilter, key, { ge: (value as Array<string | number>)[0], le: (value as Array<string | number>)[1] });
@@ -286,7 +287,7 @@ export default Vue.extend({
           _set(newFilter, key, { le: value });
           break;
         case EFilterOperator.In:
-          _set(newFilter, key, { searchIn_az: value });
+          newFilter = this.translateInOperator(filter);
           break;
         case EFilterOperator.NotIn:
           if (filter.keyType === EFilterKeyType.Array) {
@@ -376,11 +377,25 @@ export default Vue.extend({
      */
     prepareFiltersForOdataQuery(filters: IFilterData []) {
       let finalFilter = {};
+      const orFilters = [] as Array<Record<string, unknown>>;
 
       filters.forEach((filter: IFilterData) => {
         this.convertToInteger(filter);
-        finalFilter = { ...finalFilter, ...this.translateFilter(filter) };
+
+        const translatedFilter = this.translateFilter(filter);
+        // If filters are linked with a OR they need to be merged with a AND
+        // Check the test to understand
+
+        if (Object.keys(translatedFilter).includes('or')) {
+          orFilters.push(translatedFilter);
+        } else {
+          finalFilter = { ...finalFilter, ...translatedFilter };
+        }
       });
+
+      if (orFilters.length > 0) {
+        return { ...finalFilter, ...{ and: orFilters } };
+      }
       return finalFilter;
     },
 
@@ -396,6 +411,18 @@ export default Vue.extend({
         return _set({}, filter.key, (filter.value as {text: string, value: string}).value);
       }
       return _set({}, filter.key, filter.value);
+    },
+
+    translateInOperator(filter: IFilterData) {
+      // We cannot search.in for empty string
+      // So we need to replace by key eq '' or key eq 'test' instead of search.in(key, '"", test', ',')
+      // _set(newFilter, key, { searchIn_az: value });
+
+      const values = filter.value as string[];
+
+      const or = values.map((v) => _set({}, filter.key, v));
+
+      return _set({}, 'or', or);
     },
   },
 });

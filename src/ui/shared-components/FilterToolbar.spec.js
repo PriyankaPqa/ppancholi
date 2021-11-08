@@ -37,20 +37,32 @@ describe('Filter Toolbar', () => {
         const filter = {};
         const edit = true;
         const filterIndex = 1;
-        jest.spyOn(wrapper.vm, 'editFilter').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'editFilter')
+          .mockImplementation(() => null);
 
-        await wrapper.vm.onSave({ filter, edit, filterIndex });
-        expect(wrapper.vm.editFilter).toHaveBeenCalledWith(filter, filterIndex);
+        await wrapper.vm.onSave({
+          filter,
+          edit,
+          filterIndex,
+        });
+        expect(wrapper.vm.editFilter)
+          .toHaveBeenCalledWith(filter, filterIndex);
       });
 
       it('it calls createFilter otherwise', async () => {
         const filter = {};
         const edit = false;
         const filterIndex = 1;
-        jest.spyOn(wrapper.vm, 'createFilter').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'createFilter')
+          .mockImplementation(() => null);
 
-        await wrapper.vm.onSave({ filter, edit, filterIndex });
-        expect(wrapper.vm.createFilter).toHaveBeenCalledWith(filter);
+        await wrapper.vm.onSave({
+          filter,
+          edit,
+          filterIndex,
+        });
+        expect(wrapper.vm.createFilter)
+          .toHaveBeenCalledWith(filter);
       });
     });
 
@@ -63,20 +75,24 @@ describe('Filter Toolbar', () => {
           oldFilter: mockUserFilters()[filterIndex],
           newFilter: filter,
         };
-        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'refreshUserFilters')
+          .mockImplementation(() => null);
         await wrapper.vm.editFilter(filter, filterIndex);
 
-        expect(wrapper.vm.$storage.userAccount.actions.editFilter).toHaveBeenCalledWith(expectedPayload.oldFilter, expectedPayload.newFilter);
+        expect(wrapper.vm.$storage.userAccount.actions.editFilter)
+          .toHaveBeenCalledWith(expectedPayload.oldFilter, expectedPayload.newFilter);
       });
 
       it('calls refreshUserFilters method', async () => {
         const filter = {};
         const filterIndex = 0;
-        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'refreshUserFilters')
+          .mockImplementation(() => null);
 
         await wrapper.vm.editFilter(filter, filterIndex);
 
-        expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.refreshUserFilters)
+          .toHaveBeenCalledTimes(1);
       });
 
       it('doest not call refreshUserFilters method if edit filter fails', async () => {
@@ -97,78 +113,97 @@ describe('Filter Toolbar', () => {
     describe('createFilter', () => {
       it('calls addFilter action with proper payload', async () => {
         const filter = {};
-        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'refreshUserFilters')
+          .mockImplementation(() => null);
 
         await wrapper.vm.createFilter(filter);
 
-        expect(wrapper.vm.$storage.userAccount.actions.addFilter).toHaveBeenCalledWith(filter);
+        expect(wrapper.vm.$storage.userAccount.actions.addFilter)
+          .toHaveBeenCalledWith(filter);
       });
 
       it('calls refreshUserFilters method', async () => {
         const filter = {};
-        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'refreshUserFilters')
+          .mockImplementation(() => null);
 
         await wrapper.vm.createFilter(filter);
 
-        expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.refreshUserFilters)
+          .toHaveBeenCalledTimes(1);
       });
 
       it('does not call refreshUserFilters method if create filter failed', async () => {
         const filter = {};
-        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'refreshUserFilters')
+          .mockImplementation(() => null);
 
         wrapper.vm.$storage.userAccount.actions.addFilter = jest.fn(() => null);
 
         await wrapper.vm.createFilter(filter);
 
-        expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.refreshUserFilters)
+          .toHaveBeenCalledTimes(0);
       });
     });
 
     describe('onLoadAll', () => {
       it('calls getter currentUserFiltersByKey', async () => {
         await wrapper.vm.onLoadAll();
-        expect(storage.userAccount.getters.currentUserFiltersByKey).toHaveBeenCalledWith(wrapper.vm.filterKey);
+        expect(storage.userAccount.getters.currentUserFiltersByKey)
+          .toHaveBeenCalledWith(wrapper.vm.filterKey);
       });
 
       it('assign the result to userFilters', async () => {
-        jest.spyOn(storage.userAccount.getters, 'currentUserFiltersByKey').mockImplementation(() => ['filters']);
+        jest.spyOn(storage.userAccount.getters, 'currentUserFiltersByKey')
+          .mockImplementation(() => ['filters']);
         await wrapper.vm.onLoadAll();
-        expect(wrapper.vm.userFilters).toEqual(['filters']);
+        expect(wrapper.vm.userFilters)
+          .toEqual(['filters']);
       });
     });
 
     describe('onDelete', () => {
       it('calls deleteFilter action with proper payload', async () => {
-        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'refreshUserFilters')
+          .mockImplementation(() => null);
         await wrapper.vm.onDelete(mockUserFilters()[0]);
-        expect(wrapper.vm.$storage.userAccount.actions.deleteFilter).toHaveBeenCalledWith(mockUserFilters()[0]);
+        expect(wrapper.vm.$storage.userAccount.actions.deleteFilter)
+          .toHaveBeenCalledWith(mockUserFilters()[0]);
       });
 
       it('calls refreshUserFilters method', async () => {
-        jest.spyOn(wrapper.vm, 'refreshUserFilters').mockImplementation(() => null);
+        jest.spyOn(wrapper.vm, 'refreshUserFilters')
+          .mockImplementation(() => null);
         await wrapper.vm.onDelete({});
-        expect(wrapper.vm.refreshUserFilters).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.refreshUserFilters)
+          .toHaveBeenCalledTimes(1);
       });
     });
 
     describe('refreshUserFilters', () => {
       it('calls setCurrentUserAccount mutations with proper payload', async () => {
         await wrapper.vm.refreshUserFilters(mockUserAccountEntity());
-        expect(storage.userAccount.mutations.setCurrentUserAccount).toHaveBeenCalledWith(mockUserAccountEntity());
+        expect(storage.userAccount.mutations.setCurrentUserAccount)
+          .toHaveBeenCalledWith(mockUserAccountEntity());
       });
 
       it('calls filtersByKey and sets userFilters', async () => {
-        jest.spyOn(storage.userAccount.getters, 'currentUserFiltersByKey').mockImplementation(() => ['filters']);
+        jest.spyOn(storage.userAccount.getters, 'currentUserFiltersByKey')
+          .mockImplementation(() => ['filters']);
         await wrapper.vm.refreshUserFilters(mockUserAccountEntity());
-        expect(storage.userAccount.getters.currentUserFiltersByKey).toHaveBeenCalledWith(wrapper.vm.filterKey);
-        expect(wrapper.vm.userFilters).toEqual(['filters']);
+        expect(storage.userAccount.getters.currentUserFiltersByKey)
+          .toHaveBeenCalledWith(wrapper.vm.filterKey);
+        expect(wrapper.vm.userFilters)
+          .toEqual(['filters']);
       });
     });
 
     describe('onApplyFilter', () => {
       it('calls prepareFiltersForOdataQuery to prepare userFilters', () => {
-        jest.spyOn(wrapper.vm, 'prepareFiltersForOdataQuery').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm, 'prepareFiltersForOdataQuery')
+          .mockImplementation(() => {
+          });
         const filters = [
           {
             type: 'text',
@@ -182,11 +217,14 @@ describe('Filter Toolbar', () => {
           },
         ];
         wrapper.vm.onApplyFilter(filters);
-        expect(wrapper.vm.prepareFiltersForOdataQuery).toHaveBeenCalledWith([filters[1]]);
+        expect(wrapper.vm.prepareFiltersForOdataQuery)
+          .toHaveBeenCalledWith([filters[1]]);
       });
 
       it('calls translateSearchFilter to prepare userFilters of type "search"', () => {
-        jest.spyOn(wrapper.vm, 'prepareSearchFilters').mockImplementation(() => {});
+        jest.spyOn(wrapper.vm, 'prepareSearchFilters')
+          .mockImplementation(() => {
+          });
         const filters = [
           {
             type: 'text',
@@ -215,12 +253,15 @@ describe('Filter Toolbar', () => {
           },
         ];
         wrapper.vm.onApplyFilter(filters);
-        expect(wrapper.vm.prepareSearchFilters).toHaveBeenCalledWith([filters[0], filters[1], filters[2]]);
+        expect(wrapper.vm.prepareSearchFilters)
+          .toHaveBeenCalledWith([filters[0], filters[1], filters[2]]);
       });
 
       it('emits update:appliedFilter with proper parameter', () => {
-        jest.spyOn(wrapper.vm, 'prepareFiltersForOdataQuery').mockImplementation(() => 'preparedFilters');
-        jest.spyOn(wrapper.vm, 'translateSearchFilter').mockImplementation(() => 'translateSearchFilter');
+        jest.spyOn(wrapper.vm, 'prepareFiltersForOdataQuery')
+          .mockImplementation(() => 'preparedFilters');
+        jest.spyOn(wrapper.vm, 'translateSearchFilter')
+          .mockImplementation(() => 'translateSearchFilter');
         const filters = [
           {
             type: 'text',
@@ -234,7 +275,11 @@ describe('Filter Toolbar', () => {
           },
         ];
         wrapper.vm.onApplyFilter(filters);
-        expect(wrapper.emitted('update:appliedFilter')[0][0]).toEqual({ preparedFilters: 'preparedFilters', searchFilters: 'translateSearchFilter' });
+        expect(wrapper.emitted('update:appliedFilter')[0][0])
+          .toEqual({
+            preparedFilters: 'preparedFilters',
+            searchFilters: 'translateSearchFilter',
+          });
       });
     });
 
@@ -247,7 +292,11 @@ describe('Filter Toolbar', () => {
           value: ['today', 'tomorrow'],
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { ge: 'today', le: 'tomorrow' }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, {
+            ge: 'today',
+            le: 'tomorrow',
+          }));
       });
 
       describe('Equal operator', () => {
@@ -260,7 +309,8 @@ describe('Filter Toolbar', () => {
           };
           wrapper.vm.translateEqualOperator = jest.fn(() => ({}));
           const newFilter = wrapper.vm.translateFilter(filter);
-          expect(newFilter).toEqual({});
+          expect(newFilter)
+            .toEqual({});
         });
       });
 
@@ -274,7 +324,8 @@ describe('Filter Toolbar', () => {
             value: 'today',
           };
           const newFilter = wrapper.vm.translateFilter(filter);
-          expect(newFilter).toEqual(_set(newFilter, filter.key, { notEqualOnArray_az: filter.value }));
+          expect(newFilter)
+            .toEqual(_set(newFilter, filter.key, { notEqualOnArray_az: filter.value }));
         });
 
         it('should build proper filter if the target property otherwise', () => {
@@ -286,7 +337,8 @@ describe('Filter Toolbar', () => {
             value: 'today',
           };
           const newFilter = wrapper.vm.translateFilter(filter);
-          expect(newFilter).toEqual(_set(newFilter, `not.${filter.key}`, filter.value));
+          expect(newFilter)
+            .toEqual(_set(newFilter, `not.${filter.key}`, filter.value));
         });
       });
 
@@ -300,7 +352,8 @@ describe('Filter Toolbar', () => {
             value: 'today',
           };
           const newFilter = wrapper.vm.translateFilter(filter);
-          expect(newFilter).toEqual(_set(newFilter, filter.key, { notSearchInOnArray_az: filter.value }));
+          expect(newFilter)
+            .toEqual(_set(newFilter, filter.key, { notSearchInOnArray_az: filter.value }));
         });
 
         it('should build proper filter if the target property otherwise', () => {
@@ -311,7 +364,8 @@ describe('Filter Toolbar', () => {
             value: 'today',
           };
           const newFilter = wrapper.vm.translateFilter(filter);
-          expect(newFilter).toEqual(_set(newFilter, filter.key, { notSearchIn_az: filter.value }));
+          expect(newFilter)
+            .toEqual(_set(newFilter, filter.key, { notSearchIn_az: filter.value }));
         });
       });
 
@@ -323,7 +377,8 @@ describe('Filter Toolbar', () => {
           value: 'today',
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { ge: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { ge: filter.value }));
       });
 
       it('builds the proper structure for GreaterThan operator', () => {
@@ -334,7 +389,8 @@ describe('Filter Toolbar', () => {
           value: 'today',
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { gt: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { gt: filter.value }));
       });
 
       it('builds the proper structure for LessThan operator', () => {
@@ -345,7 +401,8 @@ describe('Filter Toolbar', () => {
           value: 'today',
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { lt: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { lt: filter.value }));
       });
 
       it('builds the proper structure for LessEqual operator', () => {
@@ -356,18 +413,23 @@ describe('Filter Toolbar', () => {
           value: 'today',
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { le: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { le: filter.value }));
       });
 
-      it('builds the proper structure for In operator', () => {
+      it('builds the proper structure for In operator (calling translateInOperator)', () => {
         const filter = {
           key: 'Prop.Sub',
           operator: EFilterOperator.In,
           type: EFilterType.Number,
           value: ['1', '2'],
         };
-        const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { searchIn_az: filter.value }));
+        wrapper.vm.translateInOperator = jest.fn();
+
+        wrapper.vm.translateFilter(filter);
+
+        expect(wrapper.vm.translateInOperator)
+          .toHaveBeenCalledWith(filter);
       });
 
       it('builds the proper structure for BeginsWith operator', () => {
@@ -378,7 +440,8 @@ describe('Filter Toolbar', () => {
           value: 'start',
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { startsWith_az: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { startsWith_az: filter.value }));
       });
 
       it('builds the proper structure for Contains operator', () => {
@@ -389,7 +452,8 @@ describe('Filter Toolbar', () => {
           value: 'start',
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { contains_az: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { contains_az: filter.value }));
       });
 
       it('builds the proper structure for DoesNotContain operator', () => {
@@ -400,7 +464,8 @@ describe('Filter Toolbar', () => {
           value: 'start',
         };
         const newFilter = wrapper.vm.translateFilter(filter);
-        expect(newFilter).toEqual(_set({}, `not.${filter.key}`, { contains_az: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, `not.${filter.key}`, { contains_az: filter.value }));
       });
     });
 
@@ -413,7 +478,8 @@ describe('Filter Toolbar', () => {
           key: 'TeamName',
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
-        expect(newFilter).toEqual('TeamName:/myValue.*/');
+        expect(newFilter)
+          .toEqual('TeamName:/myValue.*/');
       });
 
       it('creates the correct string for Contains operator', () => {
@@ -424,7 +490,8 @@ describe('Filter Toolbar', () => {
           key: 'TeamName',
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
-        expect(newFilter).toEqual('TeamName: /.*myValue.*/');
+        expect(newFilter)
+          .toEqual('TeamName: /.*myValue.*/');
       });
 
       it('creates the correct string for DoesNotContain operator', () => {
@@ -435,7 +502,8 @@ describe('Filter Toolbar', () => {
           key: 'TeamName',
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
-        expect(newFilter).toEqual('TeamName:(/.*/ NOT /.*myValue.*/)');
+        expect(newFilter)
+          .toEqual('TeamName:(/.*/ NOT /.*myValue.*/)');
       });
 
       it('creates the correct string for Fuzzy Search operator', () => {
@@ -446,7 +514,8 @@ describe('Filter Toolbar', () => {
           key: 'TeamName',
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
-        expect(newFilter).toEqual('TeamName: "myValue~"');
+        expect(newFilter)
+          .toEqual('TeamName: "myValue~"');
       });
 
       it('creates the correct string for Equals Search operator', () => {
@@ -457,7 +526,8 @@ describe('Filter Toolbar', () => {
           key: 'TeamName',
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
-        expect(newFilter).toEqual('TeamName: "myValue"');
+        expect(newFilter)
+          .toEqual('TeamName: "myValue"');
       });
     });
 
@@ -470,7 +540,8 @@ describe('Filter Toolbar', () => {
           value: '12345',
         };
         wrapper.vm.convertToInteger(filter);
-        expect(filter.value).toBe('12345');
+        expect(filter.value)
+          .toBe('12345');
       });
 
       it('converts string number to a number if filter type is number', () => {
@@ -480,7 +551,8 @@ describe('Filter Toolbar', () => {
           value: '12345',
         };
         wrapper.vm.convertToInteger(filter);
-        expect(filter.value).toBe(12345);
+        expect(filter.value)
+          .toBe(12345);
       });
 
       it('converts array of string number to array of number if filter type is number', () => {
@@ -490,7 +562,8 @@ describe('Filter Toolbar', () => {
           value: ['12345', '6789'],
         };
         wrapper.vm.convertToInteger(filter);
-        expect(filter.value).toEqual([12345, 6789]);
+        expect(filter.value)
+          .toEqual([12345, 6789]);
       });
     });
 
@@ -511,10 +584,46 @@ describe('Filter Toolbar', () => {
           },
         ];
         const finalFilters = wrapper.vm.prepareFiltersForOdataQuery(filters);
-        expect(finalFilters).toEqual({
-          Number: 2,
-          Text: '12345',
-        });
+        expect(finalFilters)
+          .toEqual({
+            Number: 2,
+            Text: '12345',
+          });
+      });
+
+      it('should build correct object for multiselect (or)', () => {
+        const filters = [
+          {
+            key: 'Type',
+            type: EFilterType.MultiSelect,
+            operator: EFilterOperator.In,
+            value: ['1', '2'],
+          },
+          {
+            key: 'Status',
+            type: EFilterType.MultiSelect,
+            operator: EFilterOperator.In,
+            value: ['3', '4'],
+          },
+        ];
+        const finalFilters = wrapper.vm.prepareFiltersForOdataQuery(filters);
+        expect(finalFilters)
+          .toEqual({
+            and: [
+              {
+                or: [
+                  { Type: '1' },
+                  { Type: '2' },
+                ],
+              },
+              {
+                or: [
+                  { Status: '3' },
+                  { Status: '4' },
+                ],
+              },
+            ],
+          });
       });
     });
 
@@ -530,7 +639,8 @@ describe('Filter Toolbar', () => {
         try {
           wrapper.vm.prepareSearchFilters(filters);
         } catch (error) {
-          expect(error).toEqual(Error('only filter whose type is text can be processed here'));
+          expect(error)
+            .toEqual(Error('only filter whose type is text can be processed here'));
         }
       });
 
@@ -545,7 +655,8 @@ describe('Filter Toolbar', () => {
         try {
           wrapper.vm.prepareSearchFilters(filters);
         } catch (error) {
-          expect(error).toEqual(Error('filter with type text and operator equal cannot be processed here'));
+          expect(error)
+            .toEqual(Error('filter with type text and operator equal cannot be processed here'));
         }
       });
 
@@ -565,7 +676,8 @@ describe('Filter Toolbar', () => {
           },
         ];
         const finalFilters = wrapper.vm.prepareSearchFilters(filters);
-        expect(finalFilters).toEqual('TeamName:/begin.*/ AND UserName:(/.*/ NOT /.*notContain.*/)');
+        expect(finalFilters)
+          .toEqual('TeamName:/begin.*/ AND UserName:(/.*/ NOT /.*notContain.*/)');
       });
     });
 
@@ -578,7 +690,8 @@ describe('Filter Toolbar', () => {
           value: 'arrayNotEmpty',
         };
         const newFilter = wrapper.vm.translateEqualOperator(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { arrayNotEmpty: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { arrayNotEmpty: filter.value }));
       });
 
       it('builds the proper structure for arrayEmpty value', () => {
@@ -589,7 +702,8 @@ describe('Filter Toolbar', () => {
           value: 'arrayEmpty',
         };
         const newFilter = wrapper.vm.translateEqualOperator(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, { arrayEmpty: filter.value }));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, { arrayEmpty: filter.value }));
       });
 
       it('builds the proper structure when receiving a object as a value', () => {
@@ -597,10 +711,14 @@ describe('Filter Toolbar', () => {
           key: 'Prop.Sub',
           operator: EFilterOperator.Equal,
           type: EFilterType.MultiSelect,
-          value: { text: 'text', value: 0 },
+          value: {
+            text: 'text',
+            value: 0,
+          },
         };
         const newFilter = wrapper.vm.translateEqualOperator(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, filter.value.value));
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, filter.value.value));
       });
 
       it('builds the proper structure for regular value', () => {
@@ -611,104 +729,179 @@ describe('Filter Toolbar', () => {
           value: 'today',
         };
         const newFilter = wrapper.vm.translateEqualOperator(filter);
-        expect(newFilter).toEqual(_set({}, filter.key, filter.value));
-      });
-    });
-  });
-
-  describe('Computed properties', () => {
-    describe('filterLabels', () => {
-      test('labels are ok', () => {
-        const labels = {
-          save: 'common.save',
-          cancel: 'common.cancel',
-          apply: 'common.apply',
-          download: 'common.download',
-          filterCopySuffix: 'common.copy',
-          yourFilters: 'genericFilter.yourFilters',
-          tooltipNew: 'genericFilter.newFilter',
-          tooltipAdd: 'genericFilter.addFilter',
-          tooltipCopy: 'genericFilter.copyFilter',
-          tooltipDelete: 'genericFilter.deleteFilter',
-          tooltipCloseFilter: 'genericFilter.clickToClose',
-          removeTitle: 'genericFilter.deleteFilter',
-          removeBody: 'genericFilter.removeBody',
-          removeCancel: 'common.cancel',
-          removeConfirm: 'common.confirm',
-          importLabel: 'common.import',
-          exportLabel: 'common.export',
-          exportTitle: 'genericFilter.exportToCsv',
-          exportCancel: 'common.cancel',
-          exportDownload: 'common.download',
-          exportFormat: 'genericFilter.exportFormat',
-          exportItems: 'genericFilter.exportItems',
-          formFilterName: 'genericFilter.filterName',
-          formRequiredField: 'validations.required',
-          defaultFilterName: 'genericFilter.defaultFilterName',
-          filterSubtitle: 'genericFilter.filterSubtitle',
-          dialogTitle: 'titleDialog',
-          operators: {
-            [EFilterOperator.Between]: 'genericFilter.operators.Between',
-            [EFilterOperator.Equal]: 'genericFilter.operators.Equal',
-            [EFilterOperator.GreaterEqual]: 'genericFilter.operators.GreaterEqual',
-            [EFilterOperator.GreaterThan]: 'genericFilter.operators.GreaterThan',
-            [EFilterOperator.LessThan]: 'genericFilter.operators.LessThan',
-            [EFilterOperator.LessEqual]: 'genericFilter.operators.LessEqual',
-            [EFilterOperator.In]: 'genericFilter.operators.In',
-            [EFilterOperator.BeginsWith]: 'genericFilter.operators.BeginsWith',
-            [EFilterOperator.EndsWith]: 'genericFilter.operators.EndsWith',
-            [EFilterOperator.Contains]: 'genericFilter.operators.Contains',
-            [EFilterOperator.DoesNotContain]: 'genericFilter.operators.DoesNotContain',
-            [EFilterOperator.FuzzySearch]: 'genericFilter.operators.FuzzySearch',
-          },
-          errors: {
-            // maxLength: 'genericFilter.errors.maxLength',
-            // maxGreaterThanMin: 'genericFilter.errors.maxGreaterThanMin',
-            // 401: 'genericFilter.errors.401',
-            // 500: 'genericFilter.errors.500',
-            // NoSelectedFilter: 'genericFilter.errors.noSelectedFilter',
-            // Error409002CustomFilterDuplicateName: 'genericFilter.errors.duplicateName',
-          },
-        };
-        expect(wrapper.vm.filterLabels).toEqual(labels);
+        expect(newFilter)
+          .toEqual(_set({}, filter.key, filter.value));
       });
     });
 
-    describe('filterOperators', () => {
-      test('labels are ok', () => {
-        const operators = {
-          [EFilterType.Text]: [
-            { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
-            { label: 'genericFilter.operators.BeginsWith', operator: EFilterOperator.BeginsWith },
-            // { label: 'Ends With', operator: EFilterOperator.EndsWith },
-            { label: 'genericFilter.operators.Contains', operator: EFilterOperator.Contains },
-            // { label: 'genericFilter.operators.FuzzySearch', operator: EFilterOperator.FuzzySearch },
-            // { label: 'Does not contain', operator: EFilterOperator.DoesNotContain },
-          ],
-          [EFilterType.Number]: [
-            { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
-            { label: 'genericFilter.operators.Between', operator: EFilterOperator.Between },
-            { label: 'genericFilter.operators.GreaterThan', operator: EFilterOperator.GreaterThan },
-            { label: 'genericFilter.operators.LessThan', operator: EFilterOperator.LessThan },
-          ],
-          [EFilterType.Select]: [{ label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal }],
-          [EFilterType.SelectExclude]: [
-            { label: '', operator: EFilterOperator.NotEqual },
-          ],
-          [EFilterType.MultiSelect]: [{ label: 'genericFilter.operators.In', operator: EFilterOperator.In }],
-          [EFilterType.MultiSelectExclude]: [
-            { label: '', operator: EFilterOperator.NotIn },
-          ],
-          [EFilterType.Date]: [
-            { label: 'genericFilter.operators.Equal', operator: EFilterOperator.Equal },
-            { label: 'genericFilter.operators.After', operator: EFilterOperator.GreaterThan },
-            { label: 'genericFilter.operators.OnOrAfter', operator: EFilterOperator.GreaterEqual },
-            { label: 'genericFilter.operators.Before', operator: EFilterOperator.LessThan },
-            { label: 'genericFilter.operators.OnOrBefore', operator: EFilterOperator.LessEqual },
-            { label: 'genericFilter.operators.Between', operator: EFilterOperator.Between },
+    describe('translateInOperator', () => {
+      it('should build proper structure', () => {
+        const filter = {
+          key: 'Prop.Sub',
+          operator: EFilterOperator.In,
+          type: EFilterType.Number,
+          value: ['1', '2'],
+        };
+
+        const newFilter = wrapper.vm.translateInOperator(filter);
+        const expected = {
+          or: [
+            { Prop: { Sub: '1' } },
+            { Prop: { Sub: '2' } },
           ],
         };
-        expect(wrapper.vm.filterOperators).toEqual(operators);
+
+        expect(newFilter).toEqual(expected);
+      });
+    });
+
+    describe('Computed properties', () => {
+      describe('filterLabels', () => {
+        test('labels are ok', () => {
+          const labels = {
+            save: 'common.save',
+            cancel: 'common.cancel',
+            apply: 'common.apply',
+            download: 'common.download',
+            filterCopySuffix: 'common.copy',
+            yourFilters: 'genericFilter.yourFilters',
+            tooltipNew: 'genericFilter.newFilter',
+            tooltipAdd: 'genericFilter.addFilter',
+            tooltipCopy: 'genericFilter.copyFilter',
+            tooltipDelete: 'genericFilter.deleteFilter',
+            tooltipCloseFilter: 'genericFilter.clickToClose',
+            removeTitle: 'genericFilter.deleteFilter',
+            removeBody: 'genericFilter.removeBody',
+            removeCancel: 'common.cancel',
+            removeConfirm: 'common.confirm',
+            importLabel: 'common.import',
+            exportLabel: 'common.export',
+            exportTitle: 'genericFilter.exportToCsv',
+            exportCancel: 'common.cancel',
+            exportDownload: 'common.download',
+            exportFormat: 'genericFilter.exportFormat',
+            exportItems: 'genericFilter.exportItems',
+            formFilterName: 'genericFilter.filterName',
+            formRequiredField: 'validations.required',
+            defaultFilterName: 'genericFilter.defaultFilterName',
+            filterSubtitle: 'genericFilter.filterSubtitle',
+            dialogTitle: 'titleDialog',
+            operators: {
+              [EFilterOperator.Between]: 'genericFilter.operators.Between',
+              [EFilterOperator.Equal]: 'genericFilter.operators.Equal',
+              [EFilterOperator.GreaterEqual]: 'genericFilter.operators.GreaterEqual',
+              [EFilterOperator.GreaterThan]: 'genericFilter.operators.GreaterThan',
+              [EFilterOperator.LessThan]: 'genericFilter.operators.LessThan',
+              [EFilterOperator.LessEqual]: 'genericFilter.operators.LessEqual',
+              [EFilterOperator.In]: 'genericFilter.operators.In',
+              [EFilterOperator.BeginsWith]: 'genericFilter.operators.BeginsWith',
+              [EFilterOperator.EndsWith]: 'genericFilter.operators.EndsWith',
+              [EFilterOperator.Contains]: 'genericFilter.operators.Contains',
+              [EFilterOperator.DoesNotContain]: 'genericFilter.operators.DoesNotContain',
+              [EFilterOperator.FuzzySearch]: 'genericFilter.operators.FuzzySearch',
+            },
+            errors: {
+              // maxLength: 'genericFilter.errors.maxLength',
+              // maxGreaterThanMin: 'genericFilter.errors.maxGreaterThanMin',
+              // 401: 'genericFilter.errors.401',
+              // 500: 'genericFilter.errors.500',
+              // NoSelectedFilter: 'genericFilter.errors.noSelectedFilter',
+              // Error409002CustomFilterDuplicateName: 'genericFilter.errors.duplicateName',
+            },
+          };
+          expect(wrapper.vm.filterLabels)
+            .toEqual(labels);
+        });
+      });
+
+      describe('filterOperators', () => {
+        test('labels are ok', () => {
+          const operators = {
+            [EFilterType.Text]: [
+              {
+                label: 'genericFilter.operators.Equal',
+                operator: EFilterOperator.Equal,
+              },
+              {
+                label: 'genericFilter.operators.BeginsWith',
+                operator: EFilterOperator.BeginsWith,
+              },
+              // { label: 'Ends With', operator: EFilterOperator.EndsWith },
+              {
+                label: 'genericFilter.operators.Contains',
+                operator: EFilterOperator.Contains,
+              },
+              // { label: 'genericFilter.operators.FuzzySearch', operator: EFilterOperator.FuzzySearch },
+              // { label: 'Does not contain', operator: EFilterOperator.DoesNotContain },
+            ],
+            [EFilterType.Number]: [
+              {
+                label: 'genericFilter.operators.Equal',
+                operator: EFilterOperator.Equal,
+              },
+              {
+                label: 'genericFilter.operators.Between',
+                operator: EFilterOperator.Between,
+              },
+              {
+                label: 'genericFilter.operators.GreaterThan',
+                operator: EFilterOperator.GreaterThan,
+              },
+              {
+                label: 'genericFilter.operators.LessThan',
+                operator: EFilterOperator.LessThan,
+              },
+            ],
+            [EFilterType.Select]: [{
+              label: 'genericFilter.operators.Equal',
+              operator: EFilterOperator.Equal,
+            }],
+            [EFilterType.SelectExclude]: [
+              {
+                label: '',
+                operator: EFilterOperator.NotEqual,
+              },
+            ],
+            [EFilterType.MultiSelect]: [{
+              label: 'genericFilter.operators.In',
+              operator: EFilterOperator.In,
+            }],
+            [EFilterType.MultiSelectExclude]: [
+              {
+                label: '',
+                operator: EFilterOperator.NotIn,
+              },
+            ],
+            [EFilterType.Date]: [
+              {
+                label: 'genericFilter.operators.Equal',
+                operator: EFilterOperator.Equal,
+              },
+              {
+                label: 'genericFilter.operators.After',
+                operator: EFilterOperator.GreaterThan,
+              },
+              {
+                label: 'genericFilter.operators.OnOrAfter',
+                operator: EFilterOperator.GreaterEqual,
+              },
+              {
+                label: 'genericFilter.operators.Before',
+                operator: EFilterOperator.LessThan,
+              },
+              {
+                label: 'genericFilter.operators.OnOrBefore',
+                operator: EFilterOperator.LessEqual,
+              },
+              {
+                label: 'genericFilter.operators.Between',
+                operator: EFilterOperator.Between,
+              },
+            ],
+          };
+          expect(wrapper.vm.filterOperators)
+            .toEqual(operators);
+        });
       });
     });
   });
