@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import _cloneDeep from 'lodash/cloneDeep';
 import { IStore, IState } from '../..';
 import { IAzureSearchParams } from '../../../types';
@@ -134,8 +135,34 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity> implements
       this.store.commit(`${this.entityModuleName}/set`, entity);
     },
 
+    /// call this from signalR - we will decide here whether this item is of interest
+    /// and if so will upsert it in items
+    setEntityFromOutsideNotification: (entity: TEntity) => {
+      if (!entity?.id) return;
+      const knownEntity = this.baseGetters.get(entity.id);
+      if (knownEntity?.entity?.id || knownEntity?.metadata?.id) {
+        this.baseMutations.setEntity(entity);
+        console.log(`${this.entityModuleName} - ${entity.lastAction}`, entity.id);
+      } else {
+        console.log(`${this.entityModuleName} - ignored`, entity.id);
+      }
+    },
+
     setAllEntities: (payload: TEntity[]) => {
       this.store.commit(`${this.entityModuleName}/setAll`, payload);
+    },
+
+    /// call this from signalR - we will decide here whether this item is of interest
+    /// and if so will upsert it in items
+    setMetadataFromOutsideNotification: (entity: TMetadata) => {
+      if (!entity?.id || !this.metadataModuleName) return;
+      const knownEntity = this.baseGetters.get(entity.id);
+      if (knownEntity?.entity?.id || knownEntity?.metadata?.id) {
+        this.baseMutations.setMetadata(entity);
+        console.log(`${this.metadataModuleName} - ${entity.lastAction}`, entity.id);
+      } else {
+        console.log(`${this.metadataModuleName} - ignored`, entity.id);
+      }
     },
 
     setMetadata: (metadata: TMetadata) => {

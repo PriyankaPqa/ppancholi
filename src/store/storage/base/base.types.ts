@@ -25,6 +25,8 @@ export interface IBaseMutations<TEntity, TMetadata> {
   setMetadata(payload: TMetadata): void;
   setAllMetadata(payload: TMetadata[]): void;
   reset(): void;
+  setEntityFromOutsideNotification(entity: TEntity): void;
+  setMetadataFromOutsideNotification(entity: TMetadata): void;
 }
 
 export interface IStorageMake<TEntity extends IEntity, TMetadata extends IEntity> {

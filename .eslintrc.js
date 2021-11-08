@@ -48,6 +48,7 @@ module.exports = {
     'vue/valid-v-slot': ['error', {
       allowModifiers: true,
     }],
+    'prefer-destructuring': ['error', { object: false, array: false }],
   },
 
   parserOptions: {
