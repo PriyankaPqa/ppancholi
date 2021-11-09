@@ -3,7 +3,7 @@ import { IEntity, mockBaseData } from '@/entities/base';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
-  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount,
+  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 
@@ -469,14 +469,22 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       created: '2021-05-04',
       activityType: CaseFileActivityType.Registration,
       details: {
-        subject: {
-          translation:
-              { en: 'CreatedBy Beneficiary', fr: 'Créé par le bénéficiaire' },
-        },
+        registrationType: RegistrationType.Crc,
       },
     },
     {
       id: 'mock-activity-id-25',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.Registration,
+      details: {
+        registrationType: RegistrationType.Public,
+      },
+    },
+    {
+      id: 'mock-activity-id-26',
       caseFileId: 'mock-id-1',
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       user: { id: '1', name: 'Jane Doe' },
@@ -488,7 +496,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       },
     },
     {
-      id: 'mock-activity-id-26',
+      id: 'mock-activity-id-27',
       caseFileId: 'mock-id-1',
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       user: { id: '1', name: 'Jane Doe' },

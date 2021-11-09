@@ -62,6 +62,11 @@ export enum CaseFileActivityType {
   HouseholdSplit = 24,
 }
 
+export enum RegistrationType {
+  Crc = 1,
+  Public = 2,
+}
+
 export enum ImpactValidationMethod {
   NotApplicable = 0,
   Manual = 1,

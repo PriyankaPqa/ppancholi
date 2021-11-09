@@ -16,7 +16,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
 import {
-  CaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, ValidationOfImpactStatus,
+  CaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, RegistrationType, ValidationOfImpactStatus,
 } from '@/entities/case-file';
 import { IIdMultilingualName, IMultilingual } from '@/types';
 
@@ -329,9 +329,17 @@ export default Vue.extend({
 
     makeContentForRegistration(): {title: TranslateResult, body: TranslateResult} {
       const title = this.$t('caseFileActivity.activityList.title.Registration');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const body = `${this.$m(this.item.details.subject as IMultilingual)}`;
+      let body;
+      if (this.item.details.registrationType === RegistrationType.Crc) {
+        body = this.$t('caseFileActivity.activityList.body.CRCRegistration',
+          {
+            By: this.item.user.name,
+          });
+      } else {
+        body = this.$t('caseFileActivity.activityList.body.PublicRegistration');
+      }
       return { title, body };
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     },
 
     makeContentForFinancialAssistancePaymentSubmit(): {title: TranslateResult, body: TranslateResult} {

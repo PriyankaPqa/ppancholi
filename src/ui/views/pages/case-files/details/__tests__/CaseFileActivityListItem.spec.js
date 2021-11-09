@@ -693,13 +693,26 @@ describe('CaseFileActivityListItem.vue', () => {
             body,
           });
         });
-        it('returns the correct data when action type is Registration', async () => {
+        it('returns the correct data when action type is Registration and RegistrationType is crc', async () => {
           const item = mockCaseFileActivities(CaseFileActivityType.Registration)[0];
 
           await wrapper.setProps({
             item,
           });
-          const body = `${item.details.subject.translation.en}`;
+          const body = 'caseFileActivity.activityList.body.CRCRegistration';
+
+          expect(wrapper.vm.makeContentForRegistration()).toEqual({
+            title: 'caseFileActivity.activityList.title.Registration',
+            body,
+          });
+        });
+        it('returns the correct data when action type is Registration and RegistrationType is public', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.Registration)[1];
+
+          await wrapper.setProps({
+            item,
+          });
+          const body = 'caseFileActivity.activityList.body.PublicRegistration';
 
           expect(wrapper.vm.makeContentForRegistration()).toEqual({
             title: 'caseFileActivity.activityList.title.Registration',
