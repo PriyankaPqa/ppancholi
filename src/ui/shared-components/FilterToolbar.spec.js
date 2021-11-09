@@ -111,6 +111,10 @@ describe('Filter Toolbar', () => {
     });
 
     describe('createFilter', () => {
+      beforeEach(() => {
+        wrapper.vm.$refs.rcFilterToolbar.setEditMode = jest.fn();
+      });
+
       it('calls addFilter action with proper payload', async () => {
         const filter = {};
         jest.spyOn(wrapper.vm, 'refreshUserFilters')

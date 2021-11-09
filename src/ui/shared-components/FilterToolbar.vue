@@ -1,5 +1,6 @@
 <template>
   <rc-filter-toolbar
+    ref="rcFilterToolbar"
     v-bind="$attrs"
     :filter-key="filterKey"
     :filter-options="filterOptions"
@@ -206,6 +207,8 @@ export default Vue.extend({
       try {
         const userAccount = await this.$storage.userAccount.actions.addFilter(filter);
         if (userAccount) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (this.$refs.rcFilterToolbar as any).setEditMode(true);
           this.refreshUserFilters(userAccount);
           this.$toasted.global.success(this.$t('filters.create.success'));
         }
