@@ -79,7 +79,7 @@ export default mixins(massActions).extend({
             {
               text: this.$t('mass_action.card.generate_funding'),
               test: 'mass_action.card.generate_funding',
-              to: null,
+              to: routes.massActions.fundingRequest.home.name,
               exact: false,
               level: 'level6',
               roles: ['contributorFinance'],

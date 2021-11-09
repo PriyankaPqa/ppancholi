@@ -6,6 +6,7 @@
     :upload-url="uploadUrl"
     :mode="$route.query.mode"
     :form-data="formData"
+    :loading="loading"
     @back="back()"
     @upload:start="onUploadStart()"
     @upload:success="onSuccess($event)"
@@ -58,6 +59,7 @@ export default Vue.extend({
         amount: null,
         paymentModality: null,
       } as PaymentDetailsForm,
+      loading: false,
     };
   },
 
@@ -109,7 +111,7 @@ export default Vue.extend({
     /**
      * Triggered when creating a mass action from a file
      */
-    onUploadStart() {
+    async onUploadStart() {
       this.formData.set('eventId', this.form.event.id);
       this.formData.set('tableId', this.form.table.id);
       this.formData.set('programId', this.form.table.programId);
@@ -118,7 +120,9 @@ export default Vue.extend({
       this.formData.set('paymentModality', this.form.paymentModality.toString());
       this.formData.set('amount', this.form.amount.toString());
 
-      (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
+      this.loading = true;
+      await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
+      this.loading = false;
     },
   },
 });

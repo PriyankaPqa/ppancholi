@@ -236,6 +236,20 @@ const routes = {
         name: 'massActions.importPaymentStatuses.details',
       },
     },
+    fundingRequest: {
+      home: {
+        path: 'funding-request',
+        name: 'massActions.fundingRequest.home',
+      },
+      create: {
+        path: 'funding-request/create',
+        name: 'massActions.fundingRequest.create',
+      },
+      details: {
+        path: 'funding-request/details/:id',
+        name: 'massActions.fundingRequest.details',
+      },
+    },
   },
   programs: {
     home: {

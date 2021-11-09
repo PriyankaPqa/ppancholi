@@ -67,6 +67,9 @@ const MassActionsImportPaymentStatusHome = () => import(/* webpackChunkName: "ma
 const MassActionsImportPaymentStatusCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusCreate.vue');
 const MassActionsImportPaymentStatusDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusDetails.vue');
 
+const MassActionsFundingRequestHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestHome.vue');
+const MassActionsFundingRequestCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestCreate.vue');
+
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
 
@@ -526,6 +529,25 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.massActions.importPaymentStatus.details.path,
                 name: Routes.massActions.importPaymentStatus.details.name,
                 component: MassActionsImportPaymentStatusDetails,
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+                props: true,
+              },
+              {
+                path: Routes.massActions.fundingRequest.home.path,
+                name: Routes.massActions.fundingRequest.home.name,
+                component: MassActionsFundingRequestHome,
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+              },
+              {
+                path: Routes.massActions.fundingRequest.create.path,
+                name: Routes.massActions.fundingRequest.create.name,
+                component: MassActionsFundingRequestCreate,
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+              },
+              {
+                path: Routes.massActions.fundingRequest.details.path,
+                name: Routes.massActions.fundingRequest.details.name,
+                component: { template: '<div>Not yet implemented</div>' },
                 meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
                 props: true,
               },

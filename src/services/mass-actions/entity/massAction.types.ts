@@ -22,6 +22,11 @@ export interface IMassActionExportListPayload {
   search: string;
 }
 
+export interface IMassActionFundingRequestCreatePayload {
+  name: string;
+  description: string;
+}
+
 export interface IMassActionService extends IDomainBaseService<IMassActionEntity, uuid> {
   process(id: uuid, runType: MassActionRunType): Promise<IMassActionEntity>
   update(id: uuid, payload: {name: string; description: string}): Promise<IMassActionEntity>

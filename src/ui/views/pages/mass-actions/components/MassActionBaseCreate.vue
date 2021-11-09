@@ -22,7 +22,7 @@
             <slot name="form" />
           </v-col>
 
-          <v-col cols="12" xl="8" lg="9" md="11" sm="12">
+          <v-col v-if="mode !== MassActionMode.NoAttachment" cols="12" xl="8" lg="9" md="11" sm="12">
             <div class="rc-body-16 fw-bold mb-4">
               {{ applyToLabel }}
             </div>
@@ -41,13 +41,14 @@
         </v-row>
       </v-container>
       <template slot="actions">
-        <v-btn data-test="cancel" @click.stop="back()">
+        <v-btn data-test="cancel" :disabled="loading" @click.stop="back()">
           {{ $t('common.buttons.cancel') }}
         </v-btn>
         <v-btn
           color="primary"
           data-test="next"
           :disabled="failed"
+          :loading="loading"
           @click="next()">
           {{ $t('common.buttons.next') }}
         </v-btn>
@@ -55,6 +56,7 @@
     </rc-page-content>
 
     <rc-dialog
+      v-if="showUploadDialog"
       :title="$t(uploadDialogTitle)"
       :submit-action-label="$t('common.button.next')"
       :cancel-action-label="$t('common.buttons.cancel')"
@@ -89,9 +91,7 @@ import mixins from 'vue-typed-mixins';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { VForm } from '@/types';
 import fileUpload from '@/ui/mixins/fileUpload';
-import {
-  IMassActionEntity, MassActionEntity, MassActionMode,
-} from '@/entities/mass-action';
+import { IMassActionEntity, MassActionEntity, MassActionMode } from '@/entities/mass-action';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 
 export default mixins(fileUpload).extend({
@@ -119,21 +119,21 @@ export default mixins(fileUpload).extend({
      */
     applyToLabel: {
       type: String,
-      required: true,
+      default: '',
     },
     /**
      * The form data to be uploaded for file mode
      */
     formData: {
       type: FormData,
-      required: true,
+      default: () => new FormData(),
     },
     /**
      * The url where the form needs to be uploaded
      */
     uploadUrl: {
       type: String,
-      required: true,
+      default: '',
     },
 
     /**
@@ -141,6 +141,11 @@ export default mixins(fileUpload).extend({
      */
     mode: {
       type: String as () => MassActionMode,
+      required: true,
+    },
+
+    loading: {
+      type: Boolean,
       required: true,
     },
   },
@@ -211,7 +216,7 @@ export default mixins(fileUpload).extend({
     async create(mode: MassActionMode) {
       if (mode === MassActionMode.File) {
         this.$emit('upload:start');
-      } else if (mode === MassActionMode.List) {
+      } else if (mode === MassActionMode.List || mode === MassActionMode.NoAttachment) {
         this.$emit('post', { name: this.name, description: this.description });
       }
     },

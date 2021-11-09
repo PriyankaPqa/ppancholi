@@ -7,7 +7,7 @@ import { BaseModule } from '../base';
 
 import { IState } from '../base/base.types';
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
-import { IMassActionFinancialAssistanceCreatePayload } from '@/services/mass-actions/entity';
+import { IMassActionFinancialAssistanceCreatePayload, IMassActionFundingRequestCreatePayload } from '@/services/mass-actions/entity';
 
 export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid> {
   constructor(readonly service: MassActionService) {
@@ -72,6 +72,11 @@ export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid>
       if (massActionType === MassActionType.FinancialAssistance) {
         const urlSuffix = 'financial-assistance-from-list';
         data = await this.service.create(urlSuffix, payload as IMassActionFinancialAssistanceCreatePayload);
+      }
+
+      if (massActionType === MassActionType.GenerateFundingRequest) {
+        const urlSuffix = 'generate-funding';
+        data = await this.service.create(urlSuffix, payload as IMassActionFundingRequestCreatePayload);
       }
 
       /* Add future mass action call here */

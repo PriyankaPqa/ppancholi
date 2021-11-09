@@ -76,8 +76,8 @@ export default mixins(massActions).extend({
         {
           title: 'mass_action.card.generate_funding',
           description: 'mass_action.card.group4',
-          button: 'mass_action.card.action.generate',
-          route: null,
+          button: 'mass_action.card.action.view',
+          route: routes.massActions.fundingRequest.home.name,
           dataTest: 'massAction_generate_funding',
           level: 'level6',
           roles: ['contributorFinance'],

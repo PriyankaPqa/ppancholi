@@ -6,6 +6,7 @@
     :mode="MassActionMode.File"
     :upload-url="url"
     :form-data="formData"
+    :loading="loading"
     @back="back()"
     @upload:start="onUploadStart()"
     @upload:success="onSuccess($event)" />
@@ -31,6 +32,7 @@ export default Vue.extend({
       url: 'case-file/mass-actions/import-payment-status',
       formData: new FormData(),
       MassActionMode,
+      loading: false,
     };
   },
 
@@ -47,8 +49,10 @@ export default Vue.extend({
       this.$router.push({ name: routes.massActions.importPaymentStatus.details.name, params: { id } });
     },
 
-    onUploadStart() {
-      (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
+    async onUploadStart() {
+      this.loading = true;
+      await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
+      this.loading = false;
     },
   },
 });

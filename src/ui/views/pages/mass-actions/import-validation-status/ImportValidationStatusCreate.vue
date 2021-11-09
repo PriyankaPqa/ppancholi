@@ -6,6 +6,7 @@
     :upload-url="uploadUrl"
     :mode="MassActionMode.File"
     :form-data="formData"
+    :loading="loading"
     @back="back()"
     @upload:start="onUploadStart()"
     @upload:success="onSuccess($event)" />
@@ -30,6 +31,7 @@ export default Vue.extend({
       uploadUrl: 'case-file/mass-actions/validate-impact-status',
       formData: new FormData(),
       MassActionMode,
+      loading: false,
     };
   },
 
@@ -46,8 +48,10 @@ export default Vue.extend({
       this.$router.push({ name: routes.massActions.importValidationStatus.details.name, params: { id } });
     },
 
-    onUploadStart() {
-      (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
+    async onUploadStart() {
+      this.loading = true;
+      await (this.$refs.base as InstanceType<typeof MassActionBaseCreate>).upload();
+      this.loading = false;
     },
   },
 });

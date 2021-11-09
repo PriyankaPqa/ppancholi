@@ -21,6 +21,7 @@ export enum MassActionType {
 export enum MassActionMode {
   File = 'file',
   List = 'list',
+  NoAttachment = 'noAttachment'
 }
 
 export enum MassActionRunType {

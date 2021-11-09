@@ -63,6 +63,20 @@ describe('>>> Mass Action Entity Module', () => {
           expect(actionContext.commit).toBeCalledWith('addNewlyCreatedId', res);
         });
       });
+
+      describe('Generate funding request', () => {
+        it('should call the create service with proper parameters and commit the res', async () => {
+          const urlSuffix = 'generate-funding';
+          const massActionType = MassActionType.GenerateFundingRequest;
+          const payload = { name: 'test', description: '' };
+
+          const res = await module.actions.create(actionContext, { massActionType, payload });
+
+          expect(module.service.create).toHaveBeenCalledWith(urlSuffix, payload);
+
+          expect(actionContext.commit).toBeCalledWith('set', res);
+        });
+      });
     });
   });
 });

@@ -239,6 +239,17 @@ describe('MassActionBaseCreate.vue', () => {
           description: wrapper.vm.description,
         });
       });
+
+      it('should emit post if no attachment mode', async () => {
+        wrapper.vm.createFromFile = jest.fn();
+
+        await wrapper.vm.create(MassActionMode.NoAttachment);
+
+        expect(wrapper.emitted('post')[0][0]).toEqual({
+          name: wrapper.vm.name,
+          description: wrapper.vm.description,
+        });
+      });
     });
   });
 
