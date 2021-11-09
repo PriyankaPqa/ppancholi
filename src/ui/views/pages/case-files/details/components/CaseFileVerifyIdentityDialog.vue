@@ -1,5 +1,5 @@
 <template>
-  <validation-observer ref="verifyIdentity" v-slot="{ pristine, failed }" slim>
+  <validation-observer ref="verifyIdentity" v-slot="{ dirty, failed }" slim>
     <rc-dialog
       show-help
       :help-link="helpLink"
@@ -8,7 +8,7 @@
       :submit-action-label="$t('common.buttons.save')"
       :cancel-action-label="$t('common.cancel')"
       :loading="loading"
-      :submit-button-disabled="pristine || failed"
+      :submit-button-disabled="(!dirty && !isChanged) || failed"
       max-width="800"
       :persistent="true"
       @cancel="close"
@@ -87,7 +87,8 @@
                 :item-text="(item) => $m(item.name)"
                 :item-value="(item) => item.id"
                 :label="canSelectIds ? $t('caseFileDetail.verifyIdentityDialog.options.label') : $t('common.notApplicable')"
-                :rules="rules.identificationIds" />
+                :rules="rules.identificationIds"
+                @delete="isChanged = true" />
             </v-col>
           </v-row>
           <v-row v-if="mustSpecifyOther">
@@ -144,6 +145,7 @@ export default Vue.extend({
   data() {
     return {
       loading: false,
+      isChanged: false,
       status: IdentityAuthenticationStatus,
       form: {
         method: 0 as IdentityAuthenticationMethod,
