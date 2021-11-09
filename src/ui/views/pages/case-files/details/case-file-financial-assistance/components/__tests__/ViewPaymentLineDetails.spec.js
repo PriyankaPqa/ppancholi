@@ -32,6 +32,7 @@ describe('ViewPaymentLineDetails.vue', () => {
       propsData: {
         financialAssistancePaymentLineId: line.id,
         financialAssistancePaymentId: financialAssistance.id,
+        id: 'cfid',
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,

@@ -47,7 +47,8 @@ extend('regex', {
 extend('required', {
   ...required,
   params: ['messageKey'],
-  message: (_, values) => (values.messageKey ? i18n.t(values.messageKey) : i18n.t('validations.required', values)),
+  message: (_, values) => (values.messageKey && typeof values.messageKey === 'string'
+    ? i18n.t(values.messageKey) : i18n.t('validations.required', values)),
 });
 
 extend('min', {

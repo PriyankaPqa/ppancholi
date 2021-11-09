@@ -144,7 +144,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
 import {
   FinancialAssistancePaymentGroup,
@@ -155,10 +155,10 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import { EPaymentModalities } from '@/entities/program/program.types';
-import { ICaseFileEntity } from '@/entities/case-file';
 import householdHelpers from '@/ui/helpers/household';
+import caseFileDetail from '../../caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'ViewPaymentLineDetails',
 
   components: {
@@ -221,10 +221,6 @@ export default Vue.extend({
       return `${this.$m(this.mainItem.mainCategory.name)} > ${this.$m(this.subItem.subCategory.name)}`;
     },
 
-    caseFile(): ICaseFileEntity {
-      return this.$storage.caseFile.getters.get(this.$route.params.id)?.entity;
-    },
-
     addressLines(): string {
       return householdHelpers.getAddressLines(this.paymentLine.address).join(', ');
     },
@@ -249,7 +245,10 @@ export default Vue.extend({
     async setFinancialAssistance() {
       const tableWithMetadata = this.$storage.financialAssistance.getters.get(this.financialAssistance.financialAssistanceTableId);
       const categories = this.$storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity);
-      const combinedProgram = await this.$storage.program.actions.fetch({ id: tableWithMetadata.entity.programId, eventId: this.caseFile.eventId });
+      const combinedProgram = await this.$storage.program.actions.fetch({
+        id: tableWithMetadata.entity.programId,
+        eventId: this.caseFile.entity.eventId,
+      });
       this.$storage.financialAssistance.mutations.setFinancialAssistance(tableWithMetadata, categories, combinedProgram.entity, false);
     },
   },

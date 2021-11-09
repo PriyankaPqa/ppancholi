@@ -111,7 +111,11 @@ describe('BaseStorage', () => {
     describe('get', () => {
       it('should return one entity combined with its metadata', () => {
         const { id } = mockEntities[0];
-        const expected = { entity: { ...mockEntities[0] }, metadata: { ...mockMetadatum[0] } };
+        const expected = {
+          entity: { ...mockEntities[0] },
+          metadata: { ...mockMetadatum[0] },
+          pinned: false,
+        };
         expect(storage.getters.get(id)).toEqual(expected);
       });
     });

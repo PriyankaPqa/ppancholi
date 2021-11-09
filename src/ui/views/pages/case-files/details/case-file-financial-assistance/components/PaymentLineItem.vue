@@ -68,6 +68,11 @@ export default Vue.extend({
       required: true,
     },
 
+    readonly: {
+      type: Boolean,
+      required: true,
+    },
+
     transactionApprovalStatus: {
       type: Number,
       default: null,
@@ -143,7 +148,7 @@ export default Vue.extend({
     },
 
     showEditButton(): boolean {
-      if (!this.$hasLevel('level1')) return false;
+      if (this.readonly || !this.$hasLevel('level1')) return false;
       if (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New) return true;
       if ((this.transactionApprovalStatus === ApprovalStatus.Approved)
         && (this.showRelatedNumber(this.paymentGroup) || this.showIssuedActualAmounts(this.paymentGroup))) return true;
@@ -152,7 +157,7 @@ export default Vue.extend({
     },
 
     showDeleteButton(): boolean {
-      return this.$hasLevel('level1') && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
+      return !this.readonly && this.$hasLevel('level1') && (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New);
     },
   },
 

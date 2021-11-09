@@ -25,6 +25,7 @@ describe('PaymentLineGroup.vue', () => {
         paymentGroup,
           items,
           program,
+          readonly: false,
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,

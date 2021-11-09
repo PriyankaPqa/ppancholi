@@ -33,6 +33,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         program,
         items,
         financialAssistance,
+        id: 'cfid'
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,

@@ -37,12 +37,21 @@ describe('CaseFileDocumentDetails', () => {
 
   describe('Computed', () => {
     describe('canEdit', () => {
-      it('returns true if only if level1+', async () => {
+      it('returns true if only if level1+ and not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canEdit).toBeTruthy();
         await mountWrapper(false, null, 'readonly');
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null, 'contributor3');
+        expect(wrapper.vm.canEdit).toBeFalsy();
+        await mountWrapper(false, 1, null,
+          { 
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
         expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });

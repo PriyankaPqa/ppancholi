@@ -63,9 +63,10 @@ import routes from '@/constants/routes';
 import { IOptionItem } from '@/entities/optionItem';
 import { FilterKey } from '@/entities/user-account';
 import { ICaseFileReferralCombined } from '@/entities/case-file-referral';
+import caseFileDetail from '../caseFileDetail';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 
-export default mixins(TablePaginationSearchMixin).extend({
+export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   name: 'CaseFileReferral',
 
   components: {
@@ -76,7 +77,6 @@ export default mixins(TablePaginationSearchMixin).extend({
   data() {
     return {
       FilterKey,
-      caseFileId: this.$route.params.id,
       options: {
         sortBy: ['Entity/Name'],
         sortDesc: [false],
@@ -86,7 +86,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && !this.readonly;
     },
 
     customColumns(): Record<string, string> {

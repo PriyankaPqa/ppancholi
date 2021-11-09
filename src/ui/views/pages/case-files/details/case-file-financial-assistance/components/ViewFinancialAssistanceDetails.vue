@@ -68,15 +68,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { ApprovalStatus, IFinancialAssistancePaymentEntity } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 import routes from '@/constants/routes';
 import ApprovalHistoryDialog from './ApprovalHistoryDialog.vue';
+import caseFileDetail from '../../caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'ViewFinancialAssistanceDetails',
 
   components: {
@@ -113,11 +114,11 @@ export default Vue.extend({
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
+      return !this.readonly && this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
     },
 
     canDelete(): boolean {
-      return this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
+      return !this.readonly && this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
     },
 
     editRoute(): {name: string, params: Record<string, string>} {

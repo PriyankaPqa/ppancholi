@@ -1,6 +1,5 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';
-import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 
 import moment from '@/ui/plugins/moment';
@@ -22,10 +21,8 @@ describe('CaseFileActivity.vue', () => {
           caseFileActivities: mockActivities,
         };
       },
+      propsData: { id: mockCaseFile.entity.id },
       computed: {
-        id() {
-          return mockCaseFile.entity.id;
-        },
         canEdit() { return canEdit; },
         caseFile() {
           return mockCaseFile;
@@ -234,13 +231,8 @@ describe('CaseFileActivity.vue', () => {
 
       wrapper = shallowMount(Component, {
         localVue,
+        propsData: { id: mockCaseFile.entity.id },
         mocks: {
-          $route: {
-            name: routes.caseFile.activity.name,
-            params: {
-              id: mockCaseFile.entity.id,
-            },
-          },
           $storage: storage,
         },
         store: {
@@ -267,17 +259,11 @@ describe('CaseFileActivity.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns the true for level 1+ users', async () => {
+      it('returns the true for level 1+ users if not readonly', async () => {
+        mockCaseFile.readonly = false;
         wrapper = shallowMount(Component, {
           localVue,
-          mocks: {
-            $route: {
-              name: routes.caseFile.activity.name,
-              params: {
-                id: mockCaseFile.entity.id,
-              },
-            },
-          },
+          propsData: { id: mockCaseFile.entity.id },
           computed: {
             caseFile() {
               return mockCaseFile;
@@ -288,6 +274,18 @@ describe('CaseFileActivity.vue', () => {
         expect(wrapper.vm.canEdit).toBe(false);
         await wrapper.setRole('level1');
         expect(wrapper.vm.canEdit).toBe(true);
+
+        mockCaseFile.readonly = true;
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: { id: mockCaseFile.entity.id },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+          },
+        });
+        expect(wrapper.vm.canEdit).toBe(false);
       });
     });
 
@@ -308,13 +306,8 @@ describe('CaseFileActivity.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        propsData: { id: mockCaseFile.entity.id },
         mocks: {
-          $route: {
-            name: routes.caseFile.activity.name,
-            params: {
-              id: mockCaseFile.entity.id,
-            },
-          },
           $storage: storage,
         },
         computed: {
@@ -358,13 +351,11 @@ describe('CaseFileActivity.vue', () => {
     beforeEach(() => {
       wrapper = shallowMount(Component, {
         localVue,
+        propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
         },
         computed: {
-          id() {
-            return mockCaseFile.entity.id;
-          },
           caseFile() {
             return mockCaseFile;
           },
@@ -440,13 +431,11 @@ describe('CaseFileActivity.vue', () => {
       it('sets the right value into daysAgo', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: { id: mockCaseFile.entity.id },
           mocks: {
             $storage: storage,
           },
           computed: {
-            id() {
-              return mockCaseFile.entity.id;
-            },
             caseFile() {
               const altCaseFile = { ...mockCaseFile };
               altCaseFile.metadata.lastActionDate = moment().subtract(2, 'days');

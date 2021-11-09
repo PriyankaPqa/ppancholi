@@ -96,6 +96,7 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@/entities/user-account';
 import { IAzureSearchParams } from '@/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import caseFileDetail from '../caseFileDetail';
 
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
@@ -108,7 +109,7 @@ interface caseFileDocumentsMapped {
   pinned: boolean;
 }
 
-export default mixins(TablePaginationSearchMixin).extend({
+export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   name: 'CaseFileDocument',
 
   components: {
@@ -131,16 +132,12 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   computed: {
-    caseFileId(): string {
-      return this.$route.params.id;
-    },
-
     canAdd(): boolean {
-      return this.$hasLevel('level1') || this.$hasRole('contributor3');
+      return (this.$hasLevel('level1') || this.$hasRole('contributor3')) && !this.readonly;
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && !this.readonly;
     },
 
     canDownload(): boolean {
@@ -148,7 +145,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     canDelete(): boolean {
-      return this.$hasLevel('level6');
+      return this.$hasLevel('level6') && !this.readonly;
     },
 
     caseFileDocumentsMapped():caseFileDocumentsMapped[] {

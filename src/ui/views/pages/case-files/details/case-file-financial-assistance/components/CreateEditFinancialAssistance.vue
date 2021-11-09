@@ -34,6 +34,7 @@
           </v-sheet>
           <v-sheet v-else rounded outlined class="pa-2 mb-8">
             <view-financial-assistance-details
+              :id="id"
               :financial-assistance.sync="financialAssistance"
               :financial-assistance-table="selectedTable"
               :program="selectedProgram"
@@ -60,6 +61,7 @@
             <v-col cols="12">
               <payment-line-group-list
                 v-if="nbPaymentLines > 0"
+                :readonly="readonly"
                 :disable-delete-button="nbPaymentLines === 1"
                 :payment-groups="activePaymentGroups"
                 :transaction-approval-status="financialAssistance.approvalStatus"
@@ -110,7 +112,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import _find from 'lodash/find';
@@ -132,7 +134,7 @@ import
   IFinancialAssistanceTableItem,
 } from '@/entities/financial-assistance';
 import { Status } from '@/entities/base/index';
-import { ICaseFileEntity, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
+import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import { IProgramEntity } from '@/entities/program';
@@ -142,8 +144,9 @@ import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue
 import CreateEditPaymentLineDialog from './CreateEditPaymentLineDialog.vue';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
+import caseFileDetail from '../../caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'CreateEditFinancialAssistance',
 
   components: {
@@ -193,14 +196,14 @@ export default Vue.extend({
 
     isAuthenticated(): boolean {
       if (this.selectedProgram?.eligibilityCriteria?.authenticated) {
-        return this.caseFile?.identityAuthentication?.status === IdentityAuthenticationStatus.Passed;
+        return this.caseFile?.entity?.identityAuthentication?.status === IdentityAuthenticationStatus.Passed;
       }
       return true;
     },
 
     isImpacted(): boolean {
       if (this.selectedProgram?.eligibilityCriteria?.impacted) {
-        return this.caseFile?.impactStatusValidation?.status === ValidationOfImpactStatus.Impacted;
+        return this.caseFile?.entity?.impactStatusValidation?.status === ValidationOfImpactStatus.Impacted;
       }
 
       return true;
@@ -211,11 +214,7 @@ export default Vue.extend({
     },
 
     canAddNewLines(): boolean {
-      return this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
-    },
-
-    caseFile(): ICaseFileEntity {
-      return this.$storage.caseFile.getters.get(this.$route.params.id).entity;
+      return !this.readonly && this.$hasLevel('level1') && this.financialAssistance.approvalStatus === ApprovalStatus.New;
     },
 
     items(): Array<IFinancialAssistanceTableItem> {
@@ -256,11 +255,10 @@ export default Vue.extend({
     },
 
     async searchTables() {
-      await this.$storage.caseFile.actions.fetch(this.$route.params.id);
       if (this.caseFile) {
         const tableData = await this.$storage.financialAssistance.actions.search({
           filter: {
-            'Entity/EventId': this.caseFile.eventId,
+            'Entity/EventId': this.caseFile.entity.eventId,
           },
         }, null, true);
         const { ids } = tableData;
@@ -310,7 +308,7 @@ export default Vue.extend({
     async updateSelectedProgram(table: IFinancialAssistanceTableEntity) {
       const selectedProgramId = table?.programId;
       if (selectedProgramId && this.selectedProgram?.id !== selectedProgramId) {
-        const combinedProgram = await this.$storage.program.actions.fetch({ id: selectedProgramId, eventId: this.caseFile.eventId });
+        const combinedProgram = await this.$storage.program.actions.fetch({ id: selectedProgramId, eventId: this.caseFile.entity.eventId });
         this.selectedProgram = combinedProgram.entity;
       }
     },

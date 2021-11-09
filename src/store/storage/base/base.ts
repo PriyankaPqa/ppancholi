@@ -29,6 +29,7 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return {
         entity: e,
         metadata: match || {},
+        // for newly created entities we pass the pinnedIds array so they can be highlighted
         pinned: pinnedIds.indexOf(e.id) > -1,
       } as IEntityCombined<TEntity, TMetadata>;
     });
@@ -50,10 +51,9 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     get: (id: uuid): IEntityCombined<TEntity, TMetadata> => {
       const entity = this.store.getters[`${this.entityModuleName}/get`](id);
       const metadata = this.metadataModuleName ? this.store.getters[`${this.metadataModuleName}/get`](id) : null;
-      return {
-        entity,
-        metadata,
-      };
+      // case file store has overwritten combinedCollections to add properties
+      // thus if you need more properties you can also override combinedCollections
+      return this.combinedCollections([entity], [metadata])[0] || { entity, metadata };
     },
 
     getByCriteria: (query: string, searchAll: boolean, searchAmong: Array<string>) => {

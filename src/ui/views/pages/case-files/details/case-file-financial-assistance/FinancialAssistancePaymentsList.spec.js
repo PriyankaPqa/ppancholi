@@ -16,6 +16,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
   const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      propsData: { id: 'mock-cf-id' },
       mocks: {
         $hasLevel: (lvl) => (lvl <= `level${level}`) && !!level,
         $hasRole: (r) => r === hasRole,
@@ -151,9 +152,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
 
   describe('Computed', () => {
     describe('canAdd', () => {
-      it('returns true for level1+', async () => {
+      it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canAdd).toBeTruthy();
+        await mountWrapper(false, 1, null,
+          {
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
+        expect(wrapper.vm.canAdd).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canAdd).toBeFalsy();
         await mountWrapper(false, null, 'readonly');
@@ -166,9 +176,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true for level1+ only', async () => {
+      it('returns true for level1+ only when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canEdit).toBeTruthy();
+        await mountWrapper(false, 1, null,
+          {
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
+        expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null, 'readonly');
@@ -181,9 +200,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('canDelete', () => {
-      it('returns true for level1+', async () => {
+      it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canDelete).toBeTruthy();
+        await mountWrapper(false, 1, null,
+          {
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
+        expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null, 'readonly');
@@ -196,9 +224,18 @@ describe('FinancialAssistancePaymentsList.vue', () => {
     });
 
     describe('canSubmit', () => {
-      it('returns true for level1+ only', async () => {
+      it('returns true for level1+ only when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canSubmit).toBeTruthy();
+        await mountWrapper(false, 1, null,
+          {
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
+        expect(wrapper.vm.canSubmit).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canSubmit).toBeFalsy();
         await mountWrapper(false, null, 'readonly');
@@ -322,7 +359,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
 
         expect(wrapper.vm.$storage.financialAssistancePayment.actions.search).toHaveBeenCalledWith({
           search: params.search,
-          filter: { 'Entity/CaseFileId': wrapper.vm.$route.params.id, MyFilter: 'zzz' },
+          filter: { 'Entity/CaseFileId': wrapper.vm.id, MyFilter: 'zzz' },
           top: params.top,
           skip: params.skip,
           orderBy: params.orderBy,
@@ -448,7 +485,7 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       it('should call storage for all items', async () => {
         await mountWrapper();
         expect(storage.financialAssistancePayment.actions.search).toHaveBeenCalledWith(
-          { filter: { 'Entity/CaseFileId': wrapper.vm.$route.params.id } },
+          { filter: { 'Entity/CaseFileId': wrapper.vm.id } },
         );
         expect(wrapper.vm.allItemsIds).toEqual(storage.financialAssistancePayment.actions.search().ids);
       });

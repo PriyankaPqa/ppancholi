@@ -44,6 +44,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
   const mountWrapper = async (fullMount = false, mode = 'edit', level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
+      propsData: {
+        id: caseFileCombined.entity.id,
+      },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
         $hasRole: (r) => r === hasRole,
@@ -202,7 +205,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
   describe('Computed', () => {
     describe('canAddNewLines', () => {
-      it('returns true for level1+', async () => {
+      it('returns true for level1+ if not readonly', async () => {
         await mountWrapper(false, 'edit', 1);
         expect(wrapper.vm.canAddNewLines).toBeTruthy();
         await mountWrapper(false, 'edit', null);
@@ -212,6 +215,16 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', null, 'contributor3');
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
         await mountWrapper(false, 'edit', null, 'contributorFinance');
+        expect(wrapper.vm.canAddNewLines).toBeFalsy();
+        
+        await mountWrapper(false, 'edit', 1, null,
+          { 
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
       });
 
@@ -239,7 +252,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
-              return caseFileCombined.entity;
+              return caseFileCombined;
             },
             isAuthenticated() {
               return false;
@@ -257,7 +270,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
-              return caseFileCombined.entity;
+              return caseFileCombined;
             },
             isAuthenticated() {
               return true;
@@ -275,7 +288,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
-              return caseFileCombined.entity;
+              return caseFileCombined;
             },
             isAuthenticated() {
               return false;
@@ -293,7 +306,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
-              return caseFileCombined.entity;
+              return caseFileCombined;
             },
             isAuthenticated() {
               return true;
@@ -350,8 +363,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
-              const caseFile2 = caseFileCombined.entity;
-              caseFile2.impactStatusValidation.status = ValidationOfImpactStatus.Impacted;
+              const caseFile2 = caseFileCombined;
+              caseFile2.entity.impactStatusValidation.status = ValidationOfImpactStatus.Impacted;
 
               return caseFile2;
             },
@@ -368,8 +381,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
-              const caseFile2 = caseFileCombined.entity;
-              caseFile2.impactStatusValidation.status = ValidationOfImpactStatus.NotImpacted;
+              const caseFile2 = caseFileCombined;
+              caseFile2.entity.impactStatusValidation.status = ValidationOfImpactStatus.NotImpacted;
 
               return caseFile2;
             },
@@ -399,8 +412,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
-              const caseFile2 = caseFileCombined.entity;
-              caseFile2.identityAuthentication.status = IdentityAuthenticationStatus.Passed;
+              const caseFile2 = caseFileCombined;
+              caseFile2.entity.identityAuthentication.status = IdentityAuthenticationStatus.Passed;
 
               return caseFile2;
             },
@@ -417,8 +430,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await mountWrapper(false, 'edit', 6, '', {
           computed: {
             caseFile() {
-              const caseFile2 = caseFileCombined.entity;
-              caseFile2.identityAuthentication.status = IdentityAuthenticationStatus.Failed;
+              const caseFile2 = caseFileCombined;
+              caseFile2.entity.identityAuthentication.status = IdentityAuthenticationStatus.Failed;
 
               return caseFile2;
             },
@@ -448,7 +461,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
     describe('caseFile', () => {
       it('should return the associated caseFile', () => {
-        expect(wrapper.vm.caseFile).toEqual(caseFileCombined.entity);
+        expect(wrapper.vm.caseFile).toEqual(caseFileCombined);
       });
     });
 

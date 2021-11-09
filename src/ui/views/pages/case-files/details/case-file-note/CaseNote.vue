@@ -45,6 +45,7 @@
           v-for="item in caseNotes"
           :key="item.id"
           :item="item"
+          :readonly="readonly"
           @setIsEdit="isBeingEdited = $event"
           @pin-case-note="pinCaseNote"
           @saved="onSaved($event)" />
@@ -71,8 +72,9 @@ import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@/types';
 import { IOptionItem } from '@/entities/optionItem';
+import caseFileDetail from '../caseFileDetail';
 
-export default mixins(TablePaginationSearchMixin).extend({
+export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   name: 'CaseNote',
   components: {
     RcPageContent,
@@ -112,7 +114,8 @@ export default mixins(TablePaginationSearchMixin).extend({
 
   computed: {
     showAddButton(): boolean {
-      return this.$hasLevel('level1') || this.$hasRole('contributorFinance') || this.$hasRole('contributor3');
+      return (this.$hasLevel('level1') || this.$hasRole('contributorFinance') || this.$hasRole('contributor3'))
+        && !this.readonly;
     },
 
     caseNotes(): ICaseNoteCombined[] {
@@ -176,7 +179,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       const res = await this.$storage.caseNote.actions.search(
         {
           ...params,
-          filter: { ...(filter as Record<string, unknown>), 'Entity/CaseFileId': this.$route.params.id },
+          filter: { ...(filter as Record<string, unknown>), 'Entity/CaseFileId': this.caseFileId },
           count: true,
           queryType: 'full',
           searchMode: 'all',
@@ -189,7 +192,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async pinCaseNote(caseNote: ICaseNoteCombined) {
       try {
-        await this.$storage.caseNote.actions.pinCaseNote(this.$route.params.id, caseNote.entity.id, !caseNote.entity.isPinned);
+        await this.$storage.caseNote.actions.pinCaseNote(this.caseFileId, caseNote.entity.id, !caseNote.entity.isPinned);
         // Since back end search has a delay, update case note and sort case note list locally
         caseNote.entity.isPinned = !caseNote.entity.isPinned;
         // eslint-disable-next-line no-empty

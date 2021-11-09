@@ -50,6 +50,7 @@ describe('CaseFileDocument.vue', () => {
 
     wrapper = shallowMount(Component, {
       localVue,
+      propsData: { id: 'mock-id' },
       computed: {
         canEdit() {
           return canEdit;
@@ -65,9 +66,6 @@ describe('CaseFileDocument.vue', () => {
         },
         caseFileDocumentsMapped() {
           return [mockDocumentMapped];
-        },
-        caseFileId() {
-          return 'mock-id';
         },
       },
       mocks: { $storage: storage },
@@ -104,25 +102,8 @@ describe('CaseFileDocument.vue', () => {
   });
 
   describe('Computed', () => {
-    describe('caseFileId', () => {
-      it('returns the right value', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          mocks: {
-            $storage: storage,
-            $route: {
-              params: {
-                id: 'mock-id',
-              },
-            },
-          },
-        });
-        expect(wrapper.vm.caseFileId).toEqual('mock-id');
-      });
-    });
-
     describe('canAdd', () => {
-      it('returns true if user has level 1', () => {
+      it('returns true if user has level 1 and not readonly', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -138,6 +119,27 @@ describe('CaseFileDocument.vue', () => {
         });
 
         expect(wrapper.vm.canAdd).toBeTruthy();
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          computed: {
+            readonly() {
+              return true;
+            },
+          },
+          store: {
+            ...mockUserStateLevel(1),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.canAdd).toBeFalsy();
       });
 
       it('returns true if user does not have level but hasRole is called with contributor3', () => {
@@ -201,7 +203,7 @@ describe('CaseFileDocument.vue', () => {
     });
 
     describe('canEdit', () => {
-      it('returns true if user has level 1', () => {
+      it('returns true if user has level 1 and not readonly', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -217,6 +219,27 @@ describe('CaseFileDocument.vue', () => {
         });
 
         expect(wrapper.vm.canEdit).toBeTruthy();
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          computed: {
+            readonly() {
+              return true;
+            },
+          },
+          store: {
+            ...mockUserStateLevel(1),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeFalsy();
       });
 
       it('returns false if user does not have level 1', () => {
@@ -328,7 +351,7 @@ describe('CaseFileDocument.vue', () => {
     });
 
     describe('canDelete', () => {
-      it('returns true if user has level 6', () => {
+      it('returns true if user has level 6 and not readonly', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -344,9 +367,30 @@ describe('CaseFileDocument.vue', () => {
         });
 
         expect(wrapper.vm.canDelete).toBeTruthy();
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+            referralId: 'mock-referral-id',
+          },
+          computed: {
+            readonly() {
+              return true;
+            },
+          },
+          store: {
+            ...mockUserStateLevel(6),
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.canDelete).toBeFalsy();
       });
 
-      it('returns false if user does not have level 1', () => {
+      it('returns false if user does not have level 6', () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -513,6 +557,9 @@ describe('CaseFileDocument.vue', () => {
       beforeEach(() => {
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+          },
           mocks: {
             $storage: storage,
           },
@@ -558,6 +605,9 @@ describe('CaseFileDocument.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+          },
           computed: {
             customColumns() {
               return customColumns;
@@ -625,6 +675,9 @@ describe('CaseFileDocument.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: {
+            id: 'mock-caseFile-id',
+          },
           computed: {
             caseFileId() {
               return 'caseFileId';

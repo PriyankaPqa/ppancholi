@@ -26,6 +26,7 @@ describe('CaseFilePaymentLineItem.vue', () => {
         paymentGroup,
         approvalStatus,
         items,
+        readonly: false,
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
@@ -128,9 +129,13 @@ describe('CaseFilePaymentLineItem.vue', () => {
     });
 
     describe('showEditButton', () => {
-      it('returns true for level1+', async () => {
+      it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.showEditButton).toBeTruthy();
+
+        await wrapper.setProps({ readonly: true });
+        expect(wrapper.vm.showEditButton).toBeFalsy();
+
         await mountWrapper(false, null);
         expect(wrapper.vm.showEditButton).toBeFalsy();
         await mountWrapper(false, null, 'readonly');
@@ -161,9 +166,11 @@ describe('CaseFilePaymentLineItem.vue', () => {
     });
 
     describe('showDeleteButton', () => {
-      it('returns true for level1+', async () => {
+      it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.showDeleteButton).toBeTruthy();
+        await wrapper.setProps({ readonly: true });
+        expect(wrapper.vm.showDeleteButton).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.showDeleteButton).toBeFalsy();
         await mountWrapper(false, null, 'readonly');

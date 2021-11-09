@@ -20,6 +20,7 @@ describe('PaymentLineGroupList.vue', () => {
         paymentGroups,
         items,
         transactionApprovalStatus: ApprovalStatus.New,
+        readonly: false,
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
@@ -53,9 +54,11 @@ describe('PaymentLineGroupList.vue', () => {
     });
 
     describe('canSubmit', () => {
-      it('returns true for level1+', async () => {
+      it('returns true for level1+ if not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canSubmit).toBeTruthy();
+        await wrapper.setProps({ readonly: true });
+        expect(wrapper.vm.canSubmit).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canSubmit).toBeFalsy();
         await mountWrapper(false, null, 'readonly');

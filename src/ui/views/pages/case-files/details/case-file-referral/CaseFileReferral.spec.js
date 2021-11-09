@@ -22,13 +22,9 @@ describe('CaseFileReferral.vue', () => {
           return canEdit;
         },
       },
+      propsData: { id: 'foo' },
       mocks: {
         $storage: storage,
-        $route: {
-          params: {
-            id: 'foo',
-          },
-        },
       },
     });
   };
@@ -207,6 +203,7 @@ describe('CaseFileReferral.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: { id: 'foo' },
           mocks: {
             $storage: storage,
           },

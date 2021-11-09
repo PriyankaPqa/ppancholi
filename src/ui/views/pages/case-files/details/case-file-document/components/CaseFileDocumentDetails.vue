@@ -52,15 +52,16 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
 import moment from '@/ui/plugins/moment';
 import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import DownloadViewDocument from './DownloadViewDocument.vue';
+import caseFileDetail from '../../caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'CreateEditDocumentDetails',
 
   components: {
@@ -70,10 +71,6 @@ export default Vue.extend({
   },
 
   props: {
-    id: {
-      type: String,
-      default: '',
-    },
     documentId: {
       type: String,
       default: '',
@@ -90,11 +87,11 @@ export default Vue.extend({
 
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && !this.readonly;
     },
 
     canDelete(): boolean {
-      return this.$hasLevel('level6');
+      return this.$hasLevel('level6') && !this.readonly;
     },
 
     document(): ICaseFileDocumentEntity {
@@ -145,7 +142,7 @@ export default Vue.extend({
 
   async created() {
     await this.$storage.caseFileDocument.actions.fetchCategories();
-    await this.$storage.caseFileDocument.actions.fetch({ caseFileId: this.id, id: this.documentId },
+    await this.$storage.caseFileDocument.actions.fetch({ caseFileId: this.caseFileId, id: this.documentId },
       { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
   },
 
@@ -158,7 +155,7 @@ export default Vue.extend({
 
     async deleteDocument() {
       if (await this.$confirm(this.$t('caseFile.document.confirm.delete.title'), this.$t('caseFile.document.confirm.delete.message'))) {
-        await this.$storage.caseFileDocument.actions.deactivate({ caseFileId: this.id, id: this.documentId });
+        await this.$storage.caseFileDocument.actions.deactivate({ caseFileId: this.caseFileId, id: this.documentId });
         this.goToDocuments();
       }
     },

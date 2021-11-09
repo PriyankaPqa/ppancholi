@@ -68,6 +68,10 @@ export default Vue.extend({
       type: Object as () => ICaseNoteCombined,
       required: true,
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -78,7 +82,7 @@ export default Vue.extend({
 
   computed: {
     canEditCaseNote(): boolean {
-      return this.$hasLevel('level4');
+      return this.$hasLevel('level4') && !this.readonly;
     },
 
     caseNoteCategories(): IOptionItem[] {

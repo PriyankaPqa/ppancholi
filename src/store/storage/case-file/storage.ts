@@ -3,6 +3,7 @@ import {
   IImpactStatusValidation,
   ICaseFileDetailedCount,
   ICaseFileCount,
+  ICaseFileCombined,
 } from '@/entities/case-file/case-file.types';
 import { IStore, IState } from '@/store';
 import { IStorage } from '@/store/storage/case-file/storage.types';
@@ -16,6 +17,14 @@ export class CaseFileStorage
   extends Base<ICaseFileEntity, ICaseFileMetadata, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);
+  }
+
+  protected combinedCollections(entities: Array<ICaseFileEntity>, metadata: Array<ICaseFileMetadata>): Array<ICaseFileCombined> {
+    const result = super.combinedCollections(entities, metadata) as Array<ICaseFileCombined>;
+    if (result) {
+      result.forEach((e) => { e.readonly = e.entity?.caseFileStatus !== CaseFileStatus.Open; });
+    }
+    return result;
   }
 
   private getters = {

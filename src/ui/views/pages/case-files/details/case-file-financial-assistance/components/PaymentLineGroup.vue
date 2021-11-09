@@ -15,7 +15,7 @@
             data-test="paymentLineGroup__status"
             :value="paymentGroup.paymentStatus"
             :statuses="paymentStatusesByModality"
-            :disabled="paymentStatusesByModality.length < 2"
+            :disabled="readonly || paymentStatusesByModality.length < 2"
             status-name="FinancialAssistancePaymentStatus"
             @input="onPaymentStatusChange($event)" />
         </span>
@@ -45,6 +45,7 @@
       v-for="(line, $index) in activeLines"
       :key="$index"
       :payment-line="line"
+      :readonly="readonly"
       :transaction-approval-status="transactionApprovalStatus"
       :payment-group="paymentGroup"
       :is-cancelled="isCancelled"
@@ -124,6 +125,11 @@ export default Vue.extend({
     disableDeleteButton: {
       type: Boolean,
       default: false,
+    },
+
+    readonly: {
+      type: Boolean,
+      required: true,
     },
 
     items: {

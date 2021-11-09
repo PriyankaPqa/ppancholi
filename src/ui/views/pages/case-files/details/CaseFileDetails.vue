@@ -148,10 +148,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
 import { RcTooltip } from '@crctech/component-library';
 import { IHouseholdCombined, IHouseholdMemberMetadata } from '@crctech/registration-lib/src/entities/household';
-import { ICaseFileCombined, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
+import mixins from 'vue-typed-mixins';
+import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@/types';
 import routes from '@/constants/routes';
@@ -159,8 +159,9 @@ import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsB
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
 import householdHelpers from '@/ui/helpers/household';
+import caseFileDetail from './caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'CaseFileDetails',
 
   components: {
@@ -169,16 +170,6 @@ export default Vue.extend({
     CaseFileVerifyIdentityDialog,
     ImpactValidation,
     RcTooltip,
-  },
-
-  props: {
-    /**
-     * The id of the current case file
-     */
-    id: {
-      type: String,
-      required: true,
-    },
   },
 
   data() {
@@ -200,12 +191,8 @@ export default Vue.extend({
       return householdHelpers.getAddressLines(this.household?.entity?.address?.address)[1] || '';
     },
 
-    caseFile(): ICaseFileCombined {
-      return this.$storage.caseFile.getters.get(this.id);
-    },
-
     canEdit(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && !this.readonly;
     },
 
     colorValidationImpact() {
@@ -285,7 +272,7 @@ export default Vue.extend({
   async created() {
     this.loading = true;
     try {
-      await this.$storage.caseFile.actions.fetch(this.id);
+      await this.$storage.caseFile.actions.fetch(this.caseFileId);
       await this.getHouseholdInfo();
     } catch {
       this.error = true;

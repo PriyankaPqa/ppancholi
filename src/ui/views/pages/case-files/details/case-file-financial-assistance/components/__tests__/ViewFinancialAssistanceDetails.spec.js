@@ -25,6 +25,7 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
         financialAssistance,
         financialAssistanceTable,
         program,
+        id: 'cfid',
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
@@ -68,9 +69,18 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
 
   describe('Computed', () => {
     describe('canEdit', () => {
-      it('returns true for level1+', async () => {
+      it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canEdit).toBeTruthy();
+        await mountWrapper(false, 1, null,
+          {
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
+        expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, null, 'readonly');
@@ -92,9 +102,18 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
     });
 
     describe('showDeleteButton', () => {
-      it('returns true for level1+', async () => {
+      it('returns true for level1+ when not readonly', async () => {
         await mountWrapper(false, 1);
         expect(wrapper.vm.canDelete).toBeTruthy();
+        await mountWrapper(false, 1, null,
+          {
+            computed: {
+              readonly() {
+                return true;
+              },
+            },
+          });
+        expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null);
         expect(wrapper.vm.canDelete).toBeFalsy();
         await mountWrapper(false, null, 'readonly');

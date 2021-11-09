@@ -164,7 +164,7 @@
 </template>
 
 <script lang='ts'>
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import _orderBy from 'lodash/orderBy';
 import {
   RcDialog,
@@ -192,8 +192,9 @@ import { IAddress, VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { Status } from '@/entities/base';
+import caseFileDetail from '../../caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'CreateEditPaymentLineDialog',
 
   components: {
@@ -370,7 +371,7 @@ export default Vue.extend({
 
   methods: {
     async initCreateMode() {
-      const cf = this.$storage.caseFile.getters.get(this.$route.params.id);
+      const cf = this.caseFile;
       const household = await this.$storage.household.actions.fetch(cf.entity.householdId);
       this.defaultBeneficiaryData = {
         name: `${cf.metadata.primaryBeneficiary.identitySet.firstName} ${cf.metadata.primaryBeneficiary.identitySet.lastName}`,

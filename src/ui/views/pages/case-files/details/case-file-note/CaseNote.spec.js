@@ -18,6 +18,9 @@ describe('CaseNote.vue', () => {
     jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
+      propsData: {
+        id: 'id',
+      },
       mocks: {
         $storage: storage,
       },
@@ -106,6 +109,9 @@ describe('CaseNote.vue', () => {
       it('returns correct value', async () => {
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: {
+            id: 'id',
+          },
           mocks: {
             $storage: {
               caseNote: new CaseNoteStorageMock().make(),
@@ -130,6 +136,25 @@ describe('CaseNote.vue', () => {
 
         await wrapper.setRole('read only');
         expect(wrapper.vm.showAddButton).toBe(false);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: 'id',
+          },
+          mocks: {
+            $storage: {
+              caseNote: new CaseNoteStorageMock().make(),
+            },
+          },
+          computed: {
+            readonly() {
+              return true;
+            },
+          },
+        });
+        await wrapper.setRole('level1');
+        expect(wrapper.vm.showAddButton).toBe(false);
       });
     });
 
@@ -149,6 +174,9 @@ describe('CaseNote.vue', () => {
 
         wrapper = shallowMount(Component, {
           localVue,
+          propsData: {
+            id: 'id',
+          },
           mocks: {
             $storage: storage,
           },
@@ -242,12 +270,6 @@ describe('CaseNote.vue', () => {
       it('should call storage', async () => {
         wrapper.vm.$storage.caseNote.actions.search = jest.fn();
 
-        wrapper.vm.$route = {
-          params: {
-            id: 'id',
-          },
-        };
-
         const params = {
           search: '',
           orderBy: 'Entity/Created',
@@ -276,16 +298,11 @@ describe('CaseNote.vue', () => {
     describe('pinCaseNote', () => {
       it('should call storage', async () => {
         wrapper.vm.$storage.caseNote.actions.pinCaseNote = jest.fn();
-
-        const id = 'case file id';
-        wrapper.vm.$route = {
-          params: { id },
-        };
         const { isPinned } = caseNote;
 
         await wrapper.vm.pinCaseNote(caseNote);
 
-        expect(wrapper.vm.$storage.caseNote.actions.pinCaseNote).toHaveBeenCalledWith(id, caseNote.entity.id, !isPinned);
+        expect(wrapper.vm.$storage.caseNote.actions.pinCaseNote).toHaveBeenCalledWith(wrapper.vm.caseFileId, caseNote.entity.id, !isPinned);
       });
       it('should update isPinned in case note', async () => {
         const mockCaseNote = {

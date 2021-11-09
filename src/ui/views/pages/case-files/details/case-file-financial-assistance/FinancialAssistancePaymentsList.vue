@@ -21,7 +21,7 @@
           @update:appliedFilter="onApplyFilter">
           <template #toolbarActions>
             <v-btn
-              :v-if="canSubmit"
+              v-if="canSubmit"
               :disabled="!itemsToSubmit.length"
               height="32"
               color="primary"
@@ -192,8 +192,9 @@ import {
 import { Status } from '@/entities/base';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
+import caseFileDetail from '../caseFileDetail';
 
-export default mixins(TablePaginationSearchMixin).extend({
+export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   name: 'FinancialAssistancePaymentsList',
 
   components: {
@@ -233,7 +234,6 @@ export default mixins(TablePaginationSearchMixin).extend({
       showApprovalHistory: false,
       selectedItem: null as IFinancialAssistancePaymentEntity,
       showStats: false,
-      caseFileId: this.$route.params.id,
     };
   },
 
@@ -337,19 +337,19 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     canAdd(): boolean {
-      return this.$hasLevel('level1') && this.containsActiveTables != null;
+      return this.$hasLevel('level1') && this.containsActiveTables != null && !this.readonly;
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && !this.readonly;
     },
 
     canSubmit(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && !this.readonly;
     },
 
     canDelete(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && !this.readonly;
     },
   },
 
@@ -380,11 +380,10 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     async initContainsActiveTables() {
-      const caseFile = await this.$storage.caseFile.getters.get(this.$route.params.id);
-      if (caseFile) {
+      if (this.caseFile) {
         const tableData = await this.$storage.financialAssistance.actions.search({
           filter: {
-            'Entity/EventId': caseFile.entity.eventId,
+            'Entity/EventId': this.caseFile.entity.eventId,
           },
         });
         this.containsActiveTables = !!(tableData?.ids?.length);

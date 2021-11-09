@@ -58,12 +58,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { CaseFileReferralEntity, ICaseFileReferralEntity, ReferralMethod } from '@/entities/case-file-referral';
+import caseFileDetail from '../../caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'CreateEditReferralDetails',
 
   components: {
@@ -71,10 +72,6 @@ export default Vue.extend({
   },
 
   props: {
-    id: {
-      type: String,
-      default: '',
-    },
     referralId: {
       type: String,
       default: '',
@@ -91,7 +88,7 @@ export default Vue.extend({
 
   computed: {
     canEdit(): boolean {
-      return this.$hasLevel('level1');
+      return this.$hasLevel('level1') && !this.readonly;
     },
 
     referral(): ICaseFileReferralEntity {

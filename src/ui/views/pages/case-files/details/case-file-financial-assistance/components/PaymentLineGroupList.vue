@@ -4,6 +4,7 @@
       v-for="(group, $index) in paymentGroups"
       :key="$index"
       :payment-group="group"
+      :readonly="readonly"
       :transaction-approval-status="transactionApprovalStatus"
       :link="link"
       :program="program"
@@ -64,6 +65,11 @@ export default Vue.extend({
       default: false,
     },
 
+    readonly: {
+      type: Boolean,
+      required: true,
+    },
+
     disableDeleteButton: {
       type: Boolean,
       default: false,
@@ -91,7 +97,7 @@ export default Vue.extend({
     },
 
     canSubmit(): boolean {
-      return this.$hasLevel('level1') && this.transactionApprovalStatus === ApprovalStatus.New;
+      return !this.readonly && this.$hasLevel('level1') && this.transactionApprovalStatus === ApprovalStatus.New;
     },
   },
 });

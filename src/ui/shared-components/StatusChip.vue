@@ -53,7 +53,7 @@ export default Vue.extend({
 
     status: {
       type: Number,
-      required: true,
+      default: null,
     },
 
     text: {

@@ -107,11 +107,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import mixins from 'vue-typed-mixins';
 import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
 import { RcPageContent, RcPageLoading, RcTooltip } from '@crctech/component-library';
-import { ICaseFileCombined, ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
+import { ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 import CaseFileTags from './components/CaseFileTags.vue';
@@ -121,8 +121,9 @@ import CaseFileListWrapper from '../components/CaseFileListWrapper.vue';
 import CaseFileActivityListItem from './components/CaseFileActivityListItem.vue';
 import AssignCaseFile from './components/AssignCaseFile.vue';
 import CaseFileAssignments from './components/CaseFileAssignments.vue';
+import caseFileDetail from '../caseFileDetail';
 
-export default Vue.extend({
+export default mixins(caseFileDetail).extend({
   name: 'CaseFileActivity',
   components: {
     RcPageLoading,
@@ -160,20 +161,12 @@ export default Vue.extend({
     };
   },
   computed: {
-    id() {
-      return this.$route.params.id;
-    },
-
     locale() {
       return this.$i18n.locale;
     },
 
     canEdit(): boolean {
-      return this.$hasLevel('level1');
-    },
-
-    caseFile(): ICaseFileCombined {
-      return this.$storage.caseFile.getters.get(this.id);
+      return this.$hasLevel('level1') && !this.readonly;
     },
 
     duplicateLoading(): boolean {
@@ -199,7 +192,7 @@ export default Vue.extend({
     try {
       this.loading = true;
 
-      await this.$storage.caseFile.actions.fetch(this.id);
+      await this.$storage.caseFile.actions.fetch(this.caseFileId);
 
       this.setLastAction();
       await this.fetchCaseFileActivities();
@@ -216,7 +209,7 @@ export default Vue.extend({
         this.loadingActivity = true;
         // wait for a few milliseconds before making the call after the case file was modified, to give the backend time to process the modification
         await new Promise((resolve) => setTimeout(resolve, delay));
-        const activity: ICaseFileActivity[] = await this.$storage.caseFile.actions.fetchCaseFileActivities(this.id);
+        const activity: ICaseFileActivity[] = await this.$storage.caseFile.actions.fetchCaseFileActivities(this.caseFileId);
         if (activity) {
           this.caseFileActivities = activity;
         }
@@ -246,7 +239,7 @@ export default Vue.extend({
     },
 
     async setCaseFileTriage(triage: number) {
-      await this.$storage.caseFile.actions.setCaseFileTriage(this.id, triage);
+      await this.$storage.caseFile.actions.setCaseFileTriage(this.caseFileId, triage);
       this.fetchCaseFileActivities(this.activityFetchDelay);
     },
 

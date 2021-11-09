@@ -133,6 +133,11 @@ describe('CaseNotesListItem.vue', () => {
         expect(wrapper.vm.canEditCaseNote).toBeTruthy();
 
         await wrapper.setRole('level3');
+
+        expect(wrapper.vm.canEditCaseNote).toBeFalsy();
+
+        await wrapper.setProps({ readonly: true });
+        await wrapper.setRole('level4');
         expect(wrapper.vm.canEditCaseNote).toBeFalsy();
       });
     });

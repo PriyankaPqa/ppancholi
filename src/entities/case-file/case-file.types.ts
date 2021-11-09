@@ -174,7 +174,7 @@ export interface ICaseFileMetadata extends IEntity {
   appliedProgramIds: uuid[]
 }
 
-export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata>
+export type ICaseFileCombined = IEntityCombined<ICaseFileEntity, ICaseFileMetadata> & { readonly?: boolean }
 
 export interface ICaseFileCount {
   inactiveCount: number;

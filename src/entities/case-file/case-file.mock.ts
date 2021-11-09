@@ -155,9 +155,10 @@ export const mockCaseFileMetadatum = () : ICaseFileMetadata[] => [
   mockCaseFileMetadata(),
 ];
 
-export const mockCombinedCaseFile = (force?: Partial<IEntity>): ICaseFileCombined => ({
+export const mockCombinedCaseFile = (force?: Partial<IEntity>, readonly = false): ICaseFileCombined => ({
   entity: mockCaseFileEntity(force),
   metadata: mockCaseFileMetadata(force),
+  readonly,
 });
 export const mockCombinedCaseFiles = (): ICaseFileCombined[] => [
   mockCombinedCaseFile(),
