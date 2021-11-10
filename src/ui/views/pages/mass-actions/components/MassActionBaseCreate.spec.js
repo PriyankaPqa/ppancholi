@@ -28,6 +28,7 @@ describe('MassActionBaseCreate.vue', () => {
           uploadUrl: 'url',
           applyToLabel: 'applyToLabel',
           mode: MassActionMode.File,
+          loading: false,
         },
       });
     });
@@ -86,6 +87,7 @@ describe('MassActionBaseCreate.vue', () => {
           uploadUrl: 'url',
           applyToLabel: 'applyToLabel',
           mode: MassActionMode.File,
+          loading: false,
         },
         mocks: {
           $storage: storage,
@@ -133,6 +135,7 @@ describe('MassActionBaseCreate.vue', () => {
             uploadUrl: 'url',
             applyToLabel: 'applyToLabel',
             mode: MassActionMode.List,
+            loading: false,
           },
           mocks: {
             $storage: storage,
@@ -263,6 +266,7 @@ describe('MassActionBaseCreate.vue', () => {
           uploadUrl: 'url',
           applyToLabel: 'applyToLabel',
           mode: MassActionMode.File,
+          loading: false,
         },
       });
     });

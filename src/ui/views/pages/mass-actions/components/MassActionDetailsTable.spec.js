@@ -64,5 +64,27 @@ describe('MassActionDetailsTable.vue', () => {
       });
       expect(wrapper.vm.massActionTypeText).toBe('massActions.type.financialAssistance');
     });
+
+    it('should return proper text for ImportPaymentStatuses', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          massAction: mockCombinedMassAction(),
+          massActionType: MassActionType.ImportPaymentStatuses,
+        },
+      });
+      expect(wrapper.vm.massActionTypeText).toBe('massActions.type.importPaymentStatus');
+    });
+
+    it('should return proper text for GenerateFundingRequest', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          massAction: mockCombinedMassAction(),
+          massActionType: MassActionType.GenerateFundingRequest,
+        },
+      });
+      expect(wrapper.vm.massActionTypeText).toBe('massActions.type.fundingRequest');
+    });
   });
 });

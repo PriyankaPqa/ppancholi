@@ -27,7 +27,7 @@ export default Vue.extend({
     massActionType: MassActionType.ImportPaymentStatuses,
     detailsRouteName: routes.massActions.importPaymentStatus.details.name,
     tableTitle: 'massAction.importPaymentStatusTable.title',
-    addButtonLabel: 'massActions.importPaymentStatus.create.title',
+    addButtonLabel: 'massActions.importPaymentStatus.tooltip.add',
     searchEndpoint: 'import-payment-status-mass-actions',
     addRouteName: routes.massActions.importPaymentStatus.create.name,
   }),

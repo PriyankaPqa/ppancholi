@@ -264,7 +264,7 @@ export default Vue.extend({
     async download() {
       const res = await this.$services.massActions.getInvalidFile(this.massAction.entity.id, this.massAction.metadata.lastRun.runId);
       if (res) {
-        helpers.downloadFile(res, `${this.massAction.entity.name}.invalid`);
+        helpers.downloadFile(res, `${this.massAction.entity.name}.invalid.csv`);
       }
     },
   },

@@ -11,7 +11,11 @@
       @add-button="goToAdd"
       @search="search">
       <template v-if="$hasLevel('level6')" #headerLeft>
-        <rc-add-button-with-menu :items="menuItems" data-test="create-fa-mass-action" @click-item="goToAdd($event)" />
+        <rc-add-button-with-menu
+          :add-button-label="$t('massActions.financialAssistance.tooltip.add')"
+          :items="menuItems"
+          data-test="create-fa-mass-action"
+          @click-item="goToAdd($event)" />
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item }">

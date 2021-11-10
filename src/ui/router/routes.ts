@@ -69,6 +69,7 @@ const MassActionsImportPaymentStatusDetails = () => import(/* webpackChunkName: 
 
 const MassActionsFundingRequestHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestHome.vue');
 const MassActionsFundingRequestCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestCreate.vue');
+const MassActionsFundingRequestDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestDetails.vue');
 
 const PageNotFound = () => import(/* webpackChunkName: "not-found" */ '@/ui/views/pages/page-not-found/PageNotFound.vue');
 const LoginError = () => import(/* webpackChunkName: "login-error" */ '@/ui/views/pages/login-error/LoginError.vue');
@@ -547,7 +548,7 @@ export const routes: Array<RouteConfig> = [
               {
                 path: Routes.massActions.fundingRequest.details.path,
                 name: Routes.massActions.fundingRequest.details.name,
-                component: { template: '<div>Not yet implemented</div>' },
+                component: MassActionsFundingRequestDetails,
                 meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
                 props: true,
               },

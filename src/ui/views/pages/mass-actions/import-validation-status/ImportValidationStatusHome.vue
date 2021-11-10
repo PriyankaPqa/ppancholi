@@ -27,7 +27,7 @@ export default Vue.extend({
     massActionType: MassActionType.ImportValidationOfImpactStatus,
     detailsRouteName: routes.massActions.importValidationStatus.details.name,
     tableTitle: 'massAction.impactValidationStatusTable.title',
-    addButtonLabel: 'massActions.importValidationStatus.create.title',
+    addButtonLabel: 'massActions.importValidationStatus.tooltip.add',
     searchEndpoint: 'validate-impact-status-mass-actions',
     addRouteName: routes.massActions.importValidationStatus.create.name,
   }),
