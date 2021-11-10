@@ -1,6 +1,7 @@
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import massActions from './massActions';
+import helpers from '@/ui/helpers/helpers';
 
 const Component = {
   render() {},
@@ -101,8 +102,14 @@ describe('massActions', () => {
     });
 
     describe('downloadTemplate', () => {
-      it('should do nothing', () => {
-        expect(wrapper.vm.downloadTemplate()).toBe(false);
+      it('should call downloadBlob with proper params', () => {
+        const fileName = 'ImportPaymentStatusTemplate.csv';
+        const blob = new Blob(['PaymentGroupId,Status,CancellationReason'], { type: 'text/csv' });
+        helpers.downloadBlob = jest.fn();
+
+        wrapper.vm.downloadTemplate();
+
+        expect(helpers.downloadBlob).toHaveBeenCalledWith(blob, fileName);
       });
     });
   });

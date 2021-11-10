@@ -208,15 +208,22 @@ export default {
   },
 
   downloadFile(response: IRestResponse<string | BlobPart>, forceFileName?: string) {
-    const fileName = this.getFileNameStringFromContentDisposition(response.headers['content-disposition']);
+    let fileName = '';
 
-    // Creating a blob object from non-blob data using the Blob constructor
+    if (forceFileName) {
+      fileName = forceFileName;
+    } else if (response.headers['content-disposition']) {
+      fileName = this.getFileNameStringFromContentDisposition(response.headers['content-disposition']);
+    }
     const blob = new Blob([response.data], { type: response.headers['content-type'] });
+    this.downloadBlob(blob, fileName);
+  },
+
+  downloadBlob(blob: Blob, fileName: string) {
     const url = URL.createObjectURL(blob);
-    // Create a new anchor element
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${fileName}` || `${forceFileName}`;
+    a.download = fileName;
     a.click();
     a.remove();
   },

@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import helpers from '@/ui/helpers/helpers';
 
 export interface IMassActionCards {
   title: string;
@@ -62,8 +63,11 @@ export default Vue.extend({
     generateFundingRequest() {
       return false;
     },
+
     downloadTemplate() {
-      return false;
+      const fileName = 'ImportPaymentStatusTemplate.csv';
+      const blob = new Blob(['PaymentGroupId,Status,CancellationReason'], { type: 'text/csv' });
+      helpers.downloadBlob(blob, fileName);
     },
   },
 });
