@@ -98,6 +98,7 @@
 
       <create-edit-payment-line-dialog
         v-if="showAddPaymentLineForm"
+        :id="caseFileId"
         :show.sync="showAddPaymentLineForm"
         :program="selectedProgram"
         :items="items"
