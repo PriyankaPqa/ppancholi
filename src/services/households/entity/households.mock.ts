@@ -8,6 +8,7 @@ import {
   mockValidateEmailResponse,
 } from '../../../entities/household-create';
 import { IHouseholdsServiceMock } from './households.types';
+import { mockHouseholdActivities } from '../../../entities/value-objects/household-activity';
 
 export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   getGenders: jest.fn(() => mockGenders()),
@@ -29,6 +30,7 @@ export const mockHouseholdsService = (): IHouseholdsServiceMock => ({
   splitHousehold: jest.fn(() => mockHouseholdEntity()),
   moveMembers: jest.fn(() => [mockHouseholdEntity(), mockHouseholdEntity()]),
   validateEmail: jest.fn(() => mockValidateEmailResponse()),
+  getHouseholdActivity: jest.fn(() => mockHouseholdActivities()),
   getHouseholdHistory: jest.fn(() => [mockVersionedEntity()]),
   getHouseholdMetadataHistory: jest.fn(() => [mockVersionedEntity()]),
   getMemberHistory: jest.fn(() => [mockVersionedEntity()]),

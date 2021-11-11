@@ -13,6 +13,7 @@ import {
 import { IOptionItemData } from '../../../types';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
+import { IHouseholdActivity } from '../../../entities/value-objects/household-activity';
 
 export interface IHouseholdsService {
   getGenders(): Promise<IOptionItemData[]>;
@@ -36,6 +37,7 @@ export interface IHouseholdsService {
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
   makePrimary(id: string, memberId: string): Promise<IHouseholdEntity>;
   hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse>;
+  getHouseholdActivity(id: uuid): Promise<IHouseholdActivity[]>;
   getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]>;
   getHouseholdMetadataHistory(id: uuid): Promise<IVersionedEntity[]>;
   getMemberHistory(id: uuid): Promise<IVersionedEntity[]>;
@@ -62,6 +64,7 @@ export interface IHouseholdsServiceMock {
   validateEmail: jest.Mock<IValidateEmailResponse>;
   makePrimary: jest.Mock<IHouseholdEntity>;
   hasOutstandingPayments: jest.Mock<IOustandingPaymentResponse>;
+  getHouseholdActivity: jest.Mock<IHouseholdActivity[]>;
   getHouseholdHistory: jest.Mock<IVersionedEntity[]>;
   getHouseholdMetadataHistory: jest.Mock<IVersionedEntity[]>;
   getMemberHistory: jest.Mock<IVersionedEntity[]>;

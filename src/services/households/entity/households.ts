@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { mockHouseholdActivities } from '../../../entities/value-objects/household-activity/householdActivity.mock';
 import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHttpClient } from '../../httpClient';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
@@ -6,29 +7,15 @@ import {
   ECanadaProvinces, ERegistrationMode, IOptionItemData,
 } from '../../../types';
 import {
-  IAddressData,
-  IHouseholdCreate,
-  IContactInformation,
-  IContactInformationCreateRequest,
-  ICreateHouseholdRequest,
-  IIndigenousCommunityData,
-  IMember,
-  ICurrentAddress,
-  ICurrentAddressCreateRequest,
-  ECurrentAddressTypes,
-  MemberCreateRequest,
-  IIdentitySet,
-  IIdentitySetCreateRequest,
-  IMemberEntity,
-  IAddress,
-  IValidateEmailResponse,
-  IValidateEmailRequest,
-  ISplitHouseholdRequest,
-  IMemberMoveRequest,
+  IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
+  IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
+  MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IMemberEntity, IAddress, IValidateEmailResponse,
+  IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
 import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.types';
+import { HouseholdActivityType, IHouseholdActivity } from '../../../entities/value-objects/household-activity';
 
 const API_URL_SUFFIX = 'household';
 const CONTROLLER = 'households';
@@ -140,6 +127,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
 
   async hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse> {
     return this.http.get(`${this.baseUrl}/${id}/info-outstanding-payments`);
+  }
+
+  async getHouseholdActivity(id: uuid): Promise<IHouseholdActivity[]> {
+    return this.http.get(`${this.baseUrl}/${id}/activities`);
   }
 
   async getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]> {

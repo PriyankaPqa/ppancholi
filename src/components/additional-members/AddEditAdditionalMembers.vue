@@ -212,7 +212,7 @@ export default Vue.extend({
         }
       } else {
         if (this.householdId) {
-          this.$storage.registration.actions.addAdditionalMember({
+          await this.$storage.registration.actions.addAdditionalMember({
             householdId: this.householdId, member: this.member, sameAddress: this.sameAddress,
           });
         } else {
