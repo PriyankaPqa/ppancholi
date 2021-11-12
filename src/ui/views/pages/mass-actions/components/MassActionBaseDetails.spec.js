@@ -21,7 +21,7 @@ const storage = mockStorage();
 let wrapper;
 
 const doMount = (fullMount = false, {
-  processing, preProcessing, preProcessed, processed,
+  processing, preProcessing, preProcessed, processed, showValidDownload = false,
 }) => {
   const options = {
     localVue,
@@ -39,6 +39,7 @@ const doMount = (fullMount = false, {
       processingTitle: 'processingTitle',
       detailsTitle: 'detailsTitle',
       backRouteName: 'backRouteName',
+      showValidDownload,
     },
     mocks: {
       $storage: storage,
@@ -53,36 +54,52 @@ const doMount = (fullMount = false, {
 
 describe('MassActionBaseDetails.vue', () => {
   describe('Template', () => {
-    it('should render processing component if processing', () => {
-      doMount(true, {
-        processing: true, preProcessing: false, preProcessed: false, processed: false,
+    describe('Processing', () => {
+      it('should render processing component if processing', () => {
+        doMount(true, {
+          processing: true, preProcessing: false, preProcessed: false, processed: false,
+        });
+        expect(wrapper.findComponent(MassActionProcessingBase).exists()).toBe(true);
       });
-      expect(wrapper.findComponent(MassActionProcessingBase).exists()).toBe(true);
     });
 
-    it('should render pre-processing component if pre-processing', () => {
-      doMount(true, {
-        processing: false, preProcessing: true, preProcessed: false, processed: false,
+    describe('Pre-processing', () => {
+      it('should render pre-processing component if pre-processing', () => {
+        doMount(true, {
+          processing: false, preProcessing: true, preProcessed: false, processed: false,
+        });
+        expect(wrapper.findComponent(MassActionPreProcessingBase).exists()).toBe(true);
       });
-      expect(wrapper.findComponent(MassActionPreProcessingBase).exists()).toBe(true);
     });
 
-    it('should render pre-processed component if pre-processed', () => {
-      doMount(true, {
-        processing: false, preProcessing: false, preProcessed: true, processed: false,
+    describe('Pre-processed', () => {
+      it('should render pre-processed component if pre-processed', () => {
+        doMount(true, {
+          processing: false, preProcessing: false, preProcessed: true, processed: false,
+        });
+        const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
+        expect(component.exists()).toBe(true);
+        expect(component.props('massActionStatus')).toBe(MassActionRunStatus.PreProcessed);
       });
-      const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
-      expect(component.exists()).toBe(true);
-      expect(component.props('massActionStatus')).toBe(MassActionRunStatus.PreProcessed);
     });
 
-    it('should render processed component if processed', () => {
-      doMount(true, {
-        processing: false, preProcessing: false, preProcessed: false, processed: true,
+    describe('Processed', () => {
+      it('should render processed component if processed', () => {
+        doMount(true, {
+          processing: false, preProcessing: false, preProcessed: false, processed: true,
+        });
+        const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
+        expect(component.exists()).toBe(true);
+        expect(component.props('massActionStatus')).toBe(MassActionRunStatus.Processed);
       });
-      const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
-      expect(component.exists()).toBe(true);
-      expect(component.props('massActionStatus')).toBe(MassActionRunStatus.Processed);
+
+      it('should link show-valid-download-button', () => {
+        doMount(true, {
+          processing: false, preProcessing: false, preProcessed: false, processed: true, showValidDownload: true,
+        });
+        const component = wrapper.findComponent(MassActionPreProcessedProcessedBase);
+        expect(component.props('showValidDownloadButton')).toBe(true);
+      });
     });
   });
 

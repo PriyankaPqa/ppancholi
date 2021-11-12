@@ -12,6 +12,7 @@ export const mockMassActionService = (): IMassActionServiceMock => ({
   getInvalidFile: jest.fn(() => null),
   create: jest.fn(() => mockMassActionEntity()),
   exportList: jest.fn(() => null),
+  getValidFile: jest.fn(() => null),
 });
 
 export const mockMassActionCreatePayload = (): IMassActionFinancialAssistanceCreatePayload => ({

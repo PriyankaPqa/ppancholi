@@ -33,6 +33,7 @@ export interface IMassActionService extends IDomainBaseService<IMassActionEntity
   getInvalidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>>
   create(urlSuffix: string, payload: unknown): Promise<IMassActionEntity>
   exportList(massActionType: MassActionType, payload: IMassActionExportListPayload): Promise<IRestResponse<string>>
+  getValidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>>
 }
 
 export interface IMassActionServiceMock extends IDomainBaseServiceMock<IMassActionEntity>{
@@ -41,4 +42,5 @@ export interface IMassActionServiceMock extends IDomainBaseServiceMock<IMassActi
   getInvalidFile: jest.Mock<IRestResponse<string>>;
   create: jest.Mock<IMassActionEntity>;
   exportList: jest.Mock<IRestResponse<string>>;
+  getValidFile: jest.Mock<IRestResponse<string>>;
 }

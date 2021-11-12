@@ -26,7 +26,7 @@
       total-label="massAction.pre_processed.title.1"
       successes-label="massAction.pre_processed.title.2"
       failures-label="massAction.pre_processed.title.3"
-      show-download-button
+      show-invalid-download-button
       show-process-button
       show-delete-icon
       show-edit-icon
@@ -47,7 +47,8 @@
       total-label="massAction.processed.title.1"
       successes-label="massAction.processed.title.2"
       failures-label="massAction.processed.title.3"
-      show-download-button>
+      :show-valid-download-button="showValidDownload"
+      show-invalid-download-button>
       <template #payment-details>
         <slot name="processed" />
       </template>
@@ -105,6 +106,11 @@ export default mixins(massActionDetails).extend({
     backRouteName: {
       type: String,
       required: true,
+    },
+
+    showValidDownload: {
+      type: Boolean,
+      default: false,
     },
   },
 

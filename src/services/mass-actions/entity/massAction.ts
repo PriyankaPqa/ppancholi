@@ -42,4 +42,12 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     }
     return this.http.postFullResponse(`${this.baseUrl}/${urlSuffix}`, payload);
   }
+
+  async getValidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>> {
+    return this.http.getFullResponse(`${this.baseUrl}/${massActionId}/valid-file`, {
+      params: {
+        runId,
+      },
+    });
+  }
 }

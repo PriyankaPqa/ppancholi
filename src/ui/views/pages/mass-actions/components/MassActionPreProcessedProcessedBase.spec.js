@@ -5,7 +5,7 @@ import {
 } from '@/test/testSetup';
 
 import {
-  MassActionRunStatus, MassActionRunType, MassActionType, mockCombinedMassAction, mockMassActionEntity, mockMassActionMetadata,
+  MassActionRunStatus, MassActionRunType, MassActionType, mockMassActionEntity, mockMassActionMetadata,
 } from '@/entities/mass-action';
 import Component from './MassActionPreProcessedProcessedBase.vue';
 import { mockCombinedUserAccount } from '@/entities/user-account';
@@ -17,31 +17,45 @@ import helpers from '@/ui/helpers/helpers';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
+let wrapper;
+
+const doMount = (mountMode = false, runStatus = MassActionRunStatus.Processed) => {
+  const options = {
+    localVue,
+    propsData: {
+      massAction: {
+        entity: mockMassActionEntity(),
+        metadata: mockMassActionMetadata({}, { runStatus }),
+      },
+      massActionType: MassActionType.FinancialAssistance,
+      massActionStatus: MassActionRunStatus.PreProcessed,
+      total: 100,
+      successes: 50,
+      failures: 50,
+      failuresLabel: 'failuresLabel',
+      successesLabel: 'successesLabel',
+      totalLabel: 'totalLabel',
+    },
+    data() {
+      return {
+        userAccount: mockCombinedUserAccount(),
+      };
+    },
+    mocks: {
+      $storage: storage,
+    },
+  };
+  if (mountMode) {
+    wrapper = mount(Component, options);
+  } else {
+    wrapper = shallowMount(Component, options);
+  }
+};
 
 describe('MassActionPreProcessedProcessedBase.vue', () => {
-  let wrapper;
-
   describe('Template', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          massAction: mockCombinedMassAction(),
-          massActionType: MassActionType.FinancialAssistance,
-          massActionStatus: MassActionRunStatus.PreProcessed,
-          total: 100,
-          successes: 50,
-          failures: 50,
-          failuresLabel: 'failuresLabel',
-          successesLabel: 'successesLabel',
-          totalLabel: 'totalLabel',
-        },
-        data() {
-          return {
-            userAccount: mockCombinedUserAccount(),
-          };
-        },
-      });
+      doMount(true);
     });
 
     describe('Template', () => {
@@ -80,53 +94,26 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         expect(wrapper.findDataTest('failures').text()).toEqual(wrapper.vm.failures.toString());
       });
 
-      it('should display processButton if the props showProcessButton is true ', async () => {
-        await wrapper.setProps({
-          showProcessButton: true,
-        });
-        expect(wrapper.findDataTest('failures').text()).toEqual(wrapper.vm.failures.toString());
-      });
-
-      it('should display processButton if the props showProcessButton is true ', async () => {
+      it('should display processButton if the props showProcessButton is true and status is different from Processed', async () => {
+        doMount(true, MassActionRunStatus.PreProcessed);
         await wrapper.setProps({
           showProcessButton: true,
         });
         expect(wrapper.findDataTest('processButton').exists()).toBe(true);
       });
 
-      it('should display downloadButton if the props showProcessButton is true ', async () => {
+      it('should display invalidDownloadButton if the props showInvalidDownloadButton is true and status is Processed ', async () => {
         await wrapper.setProps({
-          showDownloadButton: true,
+          showInvalidDownloadButton: true,
         });
-        expect(wrapper.findDataTest('downloadButton').exists()).toBe(true);
+        expect(wrapper.findDataTest('invalidDownloadButton').exists()).toBe(true);
       });
     });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          massAction: mockCombinedMassAction(),
-          massActionType: MassActionType.FinancialAssistance,
-          massActionStatus: MassActionRunStatus.PreProcessed,
-          total: 100,
-          successes: 50,
-          failures: 50,
-          failuresLabel: 'failuresLabel',
-          successesLabel: 'successesLabel',
-          totalLabel: 'totalLabel',
-        },
-        data() {
-          return {
-            userAccount: mockCombinedUserAccount(),
-          };
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
+      doMount(false);
     });
 
     describe('update', () => {
@@ -182,9 +169,9 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       });
     });
 
-    describe('download', () => {
+    describe('downloadInvalid', () => {
       it('should call service getInvalidFile with proper params', async () => {
-        await wrapper.vm.download();
+        await wrapper.vm.downloadInvalid();
         expect(wrapper.vm.$services.massActions.getInvalidFile)
           .toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, wrapper.vm.massAction.metadata.lastRun.runId);
       });
@@ -193,7 +180,24 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
         wrapper.vm.$services.massActions.getInvalidFile = jest.fn(() => true);
         helpers.downloadFile = jest.fn();
 
-        await wrapper.vm.download();
+        await wrapper.vm.downloadInvalid();
+
+        expect(helpers.downloadFile).toBeCalled();
+      });
+    });
+
+    describe('downloadValid', () => {
+      it('should call service getValidFile with proper params', async () => {
+        await wrapper.vm.downloadValid();
+        expect(wrapper.vm.$services.massActions.getValidFile)
+          .toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, wrapper.vm.massAction.metadata.lastRun.runId);
+      });
+
+      it('should call helpers downloadFile', async () => {
+        wrapper.vm.$services.massActions.getValidFile = jest.fn(() => true);
+        helpers.downloadFile = jest.fn();
+
+        await wrapper.vm.downloadValid();
 
         expect(helpers.downloadFile).toBeCalled();
       });
@@ -202,31 +206,7 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          massAction: {
-            entity: mockMassActionEntity(),
-            metadata: mockMassActionMetadata({}, { runStatus: MassActionRunStatus.PreProcessed }),
-          },
-          massActionType: MassActionType.FinancialAssistance,
-          massActionStatus: MassActionRunStatus.PreProcessed,
-          total: 100,
-          successes: 50,
-          failures: 50,
-          failuresLabel: 'failuresLabel',
-          successesLabel: 'successesLabel',
-          totalLabel: 'totalLabel',
-        },
-        data() {
-          return {
-            userAccount: mockCombinedUserAccount(),
-          };
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
+      doMount(false, MassActionRunStatus.PreProcessed);
     });
 
     describe('hasErrors', () => {

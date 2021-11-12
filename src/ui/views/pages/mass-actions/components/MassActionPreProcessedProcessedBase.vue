@@ -45,8 +45,23 @@
             <span v-if="isFinancial" class="rc-body14" data-test="successesAmount">{{ $formatCurrency(successesAmount) }}</span>
           </v-col>
           <v-col md="1" class="d-flex justify-end">
-            <v-btn v-if="showProcessButton" data-test="processButton" :disabled="successes === 0" small color="primary" @click="onProcess()">
+            <v-btn
+              v-if="showProcessButton && !isProcessed"
+              data-test="processButton"
+              :disabled="successes === 0"
+              small
+              color="primary"
+              @click="onProcess()">
               {{ $t('massAction.process.button.label') }}
+            </v-btn>
+            <v-btn
+              v-if="showValidDownloadButton && isProcessed"
+              data-test="validDownloadButton"
+              :disabled="successes === 0"
+              small
+              color="primary"
+              @click="downloadValid()">
+              {{ $t('massAction.download.button.label') }}
             </v-btn>
           </v-col>
         </v-row>
@@ -73,7 +88,13 @@
                 <v-divider vertical class="mr-5" />
               </template>
 
-              <v-btn v-if="showDownloadButton" data-test="downloadButton" :disabled="!hasFailures" small color="primary" @click="download()">
+              <v-btn
+                v-if="showInvalidDownloadButton"
+                data-test="invalidDownloadButton"
+                :disabled="!hasFailures"
+                small
+                color="primary"
+                @click="downloadInvalid()">
                 {{ $t('massAction.download.button.label') }}
               </v-btn>
             </v-col>
@@ -186,7 +207,12 @@ export default Vue.extend({
       default: false,
     },
 
-    showDownloadButton: {
+    showInvalidDownloadButton: {
+      type: Boolean,
+      default: false,
+    },
+
+    showValidDownloadButton: {
       type: Boolean,
       default: false,
     },
@@ -221,6 +247,10 @@ export default Vue.extend({
 
     isPreprocessed(): boolean {
       return this.massAction.metadata.lastRun.runStatus === MassActionRunStatus.PreProcessed;
+    },
+
+    isProcessed(): boolean {
+      return this.massAction.metadata.lastRun.runStatus === MassActionRunStatus.Processed;
     },
 
     isFinancial(): boolean {
@@ -261,10 +291,17 @@ export default Vue.extend({
       }
     },
 
-    async download() {
+    async downloadInvalid() {
       const res = await this.$services.massActions.getInvalidFile(this.massAction.entity.id, this.massAction.metadata.lastRun.runId);
       if (res) {
         helpers.downloadFile(res, `${this.massAction.entity.name}.invalid.csv`);
+      }
+    },
+
+    async downloadValid() {
+      const res = await this.$services.massActions.getValidFile(this.massAction.entity.id, this.massAction.metadata.lastRun.runId);
+      if (res) {
+        helpers.downloadFile(res, `${this.massAction.entity.name}.valid.csv`);
       }
     },
   },

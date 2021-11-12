@@ -58,5 +58,14 @@ describe('FundingRequestDetails.vue', () => {
 
       expect(component.props(props)).toEqual(expected);
     });
+
+    it('should show valid download button', () => {
+      wrapper = shallowMount(Component, { localVue });
+      const component = wrapper.findComponent(MassActionBaseDetails);
+      const props = 'showValidDownload';
+      const expected = true;
+
+      expect(component.props(props)).toEqual(expected);
+    });
   });
 });

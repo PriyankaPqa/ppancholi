@@ -4,6 +4,7 @@
     pre-processing-title="massActions.fundingRequest.status.preprocessing.title"
     processing-title="massActions.fundingRequest.status.processing.title"
     details-title="massActions.fundingRequest.status.details.title"
+    show-valid-download
     :back-route-name="routes.massActions.fundingRequest.home.name" />
 </template>
 

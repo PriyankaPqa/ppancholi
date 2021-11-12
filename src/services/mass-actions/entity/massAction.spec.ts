@@ -70,4 +70,16 @@ describe('>>> Mass Action Service', () => {
       expect(http.postFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${urlSuffix}`, payload);
     });
   });
+
+  test('getValidFile is linked to the correct URL', async () => {
+    const massActionId = '1';
+    const runId = '1';
+
+    await service.getValidFile(massActionId, runId);
+    expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${massActionId}/valid-file`, {
+      params: {
+        runId,
+      },
+    });
+  });
 });
