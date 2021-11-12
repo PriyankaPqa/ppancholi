@@ -138,16 +138,20 @@ export class HouseholdActivity implements IHouseholdActivity {
   makeContactInfoTemplate(data: IHouseholdActivityContactInfo, i18n: VueI18n): IHistoryItemTemplateData[] {
     if (!data?.contactInformation) return this.makeEmptyTemplate();
 
-    const alternatePhoneNumber = data.contactInformation.alternatePhoneNumber?.number ? {
+    const alternatePhoneNumber = data.contactInformation.alternatePhoneNumber?.number ? [{
       label: 'household.history.label.alternate_phone',
       value: data.contactInformation.alternatePhoneNumber.number,
-    } : null;
+    },
+    {
+      label: 'household.profile.member.phone_numbers.extension',
+      value: data.contactInformation.alternatePhoneNumber.extension || '-',
+    }] : [];
 
     const contactInfoTemplate = [
       ...this.makeMemberNameTemplate(data.personFullName || ''),
       {
         label: 'household.history.label.email',
-        value: data.contactInformation.email || '—',
+        value: data.contactInformation.email || '-',
       },
       {
         label: 'household.history.label.home_phone',
@@ -158,7 +162,7 @@ export class HouseholdActivity implements IHouseholdActivity {
         value: data.contactInformation.mobilePhoneNumber?.number || '-',
       },
       // Only add alternate phone number line if it exists
-      ...([alternatePhoneNumber] || []),
+      ...alternatePhoneNumber,
       {
         label: 'household.history.label.preferred_language',
         value: data.preferredLanguageName ? helpers.getMultilingualValue(data.preferredLanguageName, i18n) : '-',
@@ -191,6 +195,10 @@ export class HouseholdActivity implements IHouseholdActivity {
       {
         label: 'household.profile.member.middle_name',
         value: data.identitySet.middleName ? data.identitySet.middleName : '-',
+      },
+      {
+        label: 'household.profile.member.preferred_name',
+        value: data.identitySet.preferredName ? data.identitySet.preferredName : '-',
       },
       {
         label: 'household.history.label.date_of_birth',

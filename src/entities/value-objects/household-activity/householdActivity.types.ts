@@ -1,5 +1,5 @@
-import { IMultilingual } from '@/types';
 import VueI18n from 'vue-i18n';
+import { IMultilingual } from '../../../types';
 import { ICurrentAddress } from '../current-address/currentAddress.types';
 import { IContactInformation } from '../contact-information';
 import { EIndigenousTypes, IIdentitySet } from '../identity-set/identitySet.types';

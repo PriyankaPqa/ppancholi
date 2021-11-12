@@ -245,6 +245,10 @@ describe('>>> Household Activity', () => {
           value: contactInfoData.contactInformation.alternatePhoneNumber.number,
         },
         {
+          label: 'household.profile.member.phone_numbers.extension',
+          value: contactInfoData.contactInformation.alternatePhoneNumber.extension,
+        },
+        {
           label: 'household.history.label.preferred_language',
           value: contactInfoData.preferredLanguageName.translation.en,
         },
@@ -272,6 +276,10 @@ describe('>>> Household Activity', () => {
       expect(expected).toEqual([
         { label: 'member', value: 'John Smith' },
         { label: 'household.profile.member.middle_name', value: identityData.identitySet.middleName },
+        {
+          label: 'household.profile.member.preferred_name',
+          value: identityData.identitySet.preferredName,
+        },
         {
           label: 'household.history.label.date_of_birth',
           value: 'Jan 13, 1955 (66 years)',
