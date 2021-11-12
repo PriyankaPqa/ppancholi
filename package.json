@@ -34,7 +34,8 @@
     "patch": "yarn build:lib && yarn version --patch",
     "pr": "yarn test && yarn lint",
     "watch": "npm-watch",
-    "push": "yarn build:lib && yalc push"
+    "push": "yarn build:lib && yalc push",
+    "i18n:report": "node i18n-report.js"
   },
   "main": "dist/registration-lib.ssr.js",
   "browser": "dist/registration-lib.esm.js",
