@@ -330,7 +330,7 @@ describe('CaseFilesTable.vue', () => {
             label: 'caseFilesTable.tableHeaders.firstName',
           },
           {
-            key: 'Metadata/PrimaryBeneficiaryLastName',
+            key: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
             type: EFilterType.Text,
             label: 'caseFilesTable.tableHeaders.lastName',
           },

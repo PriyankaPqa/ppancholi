@@ -229,7 +229,7 @@ export default mixins(TablePaginationSearchMixin).extend({
           label: this.$t('caseFilesTable.tableHeaders.firstName') as string,
         },
         {
-          key: 'Metadata/PrimaryBeneficiaryLastName',
+          key: 'Metadata/PrimaryBeneficiary/IdentitySet/LastName',
           type: EFilterType.Text,
           label: this.$t('caseFilesTable.tableHeaders.lastName') as string,
         },
