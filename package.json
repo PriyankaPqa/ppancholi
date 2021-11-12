@@ -21,7 +21,8 @@
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
     "pr": "yarn test && yarn lint",
     "link:registration": "yalc link @crctech/registration-lib",
-    "remove:registration": "yalc remove @crctech/registration-lib"
+    "remove:registration": "yalc remove @crctech/registration-lib",
+    "i18n:report": "node i18n-report.js"
   },
   "dependencies": {
     "@crctech/component-library": "1.0.135",
