@@ -23,7 +23,8 @@
     "coverage": "vue-cli-service test:unit --coverage --coverageReporters=cobertura",
     "pr": "yarn test && yarn lint",
     "link:registration": "yalc link @crctech/registration-lib",
-    "remove:registration": "yalc remove @crctech/registration-lib"
+    "remove:registration": "yalc remove @crctech/registration-lib",
+    "i18n:report": "node i18n-report.js"
   },
   "dependencies": {
     "@azure/msal-browser": "^2.19.0",
