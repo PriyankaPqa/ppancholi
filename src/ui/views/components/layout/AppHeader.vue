@@ -12,9 +12,14 @@
 
     <v-spacer />
 
-    <span class="toolbar-title fw-bold mr-2 text-truncate" data-test="registration-portal-toolbar-event-name">
-      {{ eventName }}
-    </span>
+    <div class="d-flex flex-column align-end">
+      <span class="toolbar-title fw-bold mr-2  text-truncate" data-test="registration-portal-toolbar-event-name">
+        {{ eventName }}
+      </span>
+      <span v-if="eventPhoneNumber" class="rc-body14 text-truncate mr-2" data-test="registration-portal-toolbar-event-phone-number">
+        {{ $t('common.help') }}: <rc-phone-display show-as-link :value="eventPhoneNumber" />
+      </span>
+    </div>
 
     <language-selector data-test="registration-portal-language-selector" />
 
@@ -29,14 +34,17 @@
 <script lang="ts">
 import Vue from 'vue';
 import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
+import { RcPhoneDisplay } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
+import { IEvent } from '@crctech/registration-lib/src/entities/event';
 
 export default Vue.extend({
   name: 'AppHeader',
 
   components: {
     LanguageSelector,
+    RcPhoneDisplay,
   },
 
   data() {
@@ -46,10 +54,18 @@ export default Vue.extend({
   },
 
   computed: {
-    eventName() {
-      const event = this.$storage.registration.getters.event();
-      return this.$m(event.name);
+    event(): IEvent {
+      return this.$storage.registration.getters.event();
     },
+
+    eventName(): string {
+      return this.event ? this.$m(this.event.name) : '';
+    },
+
+    eventPhoneNumber() : string {
+      return this.event?.responseDetails?.assistanceNumber;
+    },
+
     isLandingPage(): boolean {
       return this.$route.name === routes.landingPage.name;
     },
