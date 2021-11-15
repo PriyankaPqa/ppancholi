@@ -236,19 +236,26 @@ export class HouseholdActivity implements IHouseholdActivity {
         if (memberAddress.hasPlaceNumber && memberAddress.placeNumber) {
           address += ` #${memberAddress.placeNumber}`;
         }
+      }
+
+      if (memberAddress.requiresPlaceName() && memberAddress.address) {
         address += ',';
       }
+
       if (memberAddress.address) {
         address += `\n${this.getAddressText(memberAddress.address, i18n)}`;
       }
     }
 
-    const addressTypeName = i18n.t(`registration.addresses.temporaryAddressTypes.${ECurrentAddressTypes[data.currentAddress.addressType]}`);
+    const addressTypeName = data.currentAddress.addressType === ECurrentAddressTypes.Other
+      ? '' : `${i18n.t(`registration.addresses.temporaryAddressTypes.${ECurrentAddressTypes[data.currentAddress.addressType]}`)}`;
+
+    const comma = addressTypeName && address ? ', ' : '';
 
     return [
       {
         label: 'household.history.label.temporary_address',
-        value: `${addressTypeName}${address ? `, ${address}` : ''}`,
+        value: `${addressTypeName}${comma}${address}`,
       },
     ];
   }
