@@ -47,33 +47,35 @@
       </template>
 
       <template #[`item.${customColumns.firstName}`]="{ item: caseFile }">
-        {{ caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.firstName }}
+        {{ caseFile.metadata.primaryBeneficiary &&
+          caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.firstName }}
       </template>
 
       <template #[`item.${customColumns.lastName}`]="{ item: caseFile }">
-        {{ caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.lastName }}
+        {{ caseFile.metadata.primaryBeneficiary &&
+          caseFile.metadata.primaryBeneficiary.identitySet && caseFile.metadata.primaryBeneficiary.identitySet.lastName }}
       </template>
 
       <template #[`item.${customColumns.street}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household.address
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && caseFile.metadata.household.address.address.streetAddress || '-' }}
       </template>
 
       <template #[`item.${customColumns.unitSuite}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household.address
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && caseFile.metadata.household.address.address.unitSuite || '-' }}
       </template>
 
       <template #[`item.${customColumns.country}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household.address
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && caseFile.metadata.household.address.address.country || '-' }}
       </template>
 
       <template #[`item.${customColumns.province}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household.address
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && $m(caseFile.metadata.household.address.address.provinceCode)
           || '-'
@@ -81,13 +83,13 @@
       </template>
 
       <template #[`item.${customColumns.city}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household.address
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && caseFile.metadata.household.address.address.city || '-' }}
       </template>
 
       <template #[`item.${customColumns.postalCode}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household.address
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && caseFile.metadata.household.address.address.postalCode
           || '-'
@@ -95,7 +97,7 @@
       </template>
 
       <template #[`item.${customColumns.longitude}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household.address
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && caseFile.metadata.household.address.address.longitude
           || '-'
@@ -103,7 +105,7 @@
       </template>
 
       <template #[`item.${customColumns.latitude}`]="{ item: caseFile }">
-        {{ caseFile.metadata.household.address
+        {{ caseFile.metadata.household && caseFile.metadata.household.address
           && caseFile.metadata.household.address.address
           && caseFile.metadata.household.address.address.latitude
           || '-'
