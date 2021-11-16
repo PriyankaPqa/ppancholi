@@ -3,7 +3,7 @@
     <page-template :loading="referralLoading" :show-left-menu="false">
       <rc-page-content
         :title="isEditMode ? $t('referral.edit.title') : $t('referral.add.title')"
-        :show-help="true"
+        :show-help="false"
         :help-link="helpLink">
         <referral-form :referral.sync="referral" :is-edit-mode="isEditMode" />
 

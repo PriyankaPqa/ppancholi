@@ -1,7 +1,7 @@
 <template>
   <validation-observer ref="impactValidation" v-slot="{failed, pristine}">
     <rc-dialog
-      show-help
+      :show-help="false"
       :help-link="helpLink"
       :tooltip-label="$t('common.tooltip_label')"
       :title="$t('caseFileDetail.impactValidationDialog.title')"

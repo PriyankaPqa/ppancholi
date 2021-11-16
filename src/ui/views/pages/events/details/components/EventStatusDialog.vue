@@ -8,7 +8,7 @@
       :submit-button-disabled="failed"
       :content-only-scrolling="true"
       :persistent="true"
-      :show-help="true"
+      :show-help="false"
       :help-link="$t('zendesk.help_link.change_event_status')"
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"

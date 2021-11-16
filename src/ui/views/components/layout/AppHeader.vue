@@ -31,7 +31,7 @@
 
       <language-selector />
 
-      <rc-tooltip bottom>
+      <rc-tooltip v-if="false" bottom>
         <template #activator="{ on }">
           <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" v-on="on" @click.stop="handleGeneralHelpMenu">
             <v-icon color="grey darken-2">

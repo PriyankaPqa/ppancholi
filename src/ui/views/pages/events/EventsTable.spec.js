@@ -123,8 +123,8 @@ describe('EventsTable.vue', () => {
       });
 
       describe('help button', () => {
-        it('displays the help button for level 6 users', () => {
-          expect(dataTable.props('showHelp')).toBe(true);
+        it('should be hidden for now (displays the help button for level 6 users)', () => {
+          expect(dataTable.props('showHelp')).toBe(false);
         });
 
         it('does not display the help button for users level 5 and below', async () => {

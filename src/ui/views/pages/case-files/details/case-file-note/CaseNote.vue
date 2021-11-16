@@ -6,7 +6,7 @@
     :show-add-button="showAddButton"
     :add-button-label="$t('caseNote.create.rowTitle')"
     add-button-data-test="caseNote__createBtn"
-    show-help
+    :show-help="false"
     content-padding="6"
     actions-padding="2"
     :help-link="$t('caseNote.help_link')"

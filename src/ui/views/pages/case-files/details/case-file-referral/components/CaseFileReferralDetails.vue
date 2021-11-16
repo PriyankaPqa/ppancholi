@@ -1,7 +1,7 @@
 <template>
   <rc-page-content
     :title=" $t('referralDetails.title')"
-    :show-help="true"
+    :show-help="false"
     :help-link="$t('zendesk.help_link.case_referral_list')">
     <v-row class="justify-center mt-10">
       <v-col cols="12" lg="7">

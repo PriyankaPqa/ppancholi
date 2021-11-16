@@ -41,9 +41,9 @@ describe('ImpactValidation.vue', () => {
         expect(inputSelect.element.checked).toBe(true);
       });
     });
-    test('Help button exists and has the correct link', () => {
+    test('Help button does not exist and has the correct link', () => {
       const helpButton = wrapper.find('[data-test="showHelp"]');
-      expect(helpButton.exists()).toBe(true);
+      expect(helpButton.exists()).toBe(false);
       expect(wrapper.vm.helpLink).toBe('zendesk.impact_validation');
     });
 

@@ -58,9 +58,9 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
         expect(inputSelect.attributes('disabled')).not.toBe('disabled');
       });
     });
-    test('Help button exists and has the correct link', () => {
+    it('should be hidden for now (help button exists and has the correct link)', () => {
       const helpButton = wrapper.find('[data-test="showHelp"]');
-      expect(helpButton.exists()).toBe(true);
+      expect(helpButton.exists()).toBe(false);
       expect(wrapper.vm.helpLink).toBe('zendesk.authentication_identity');
     });
 

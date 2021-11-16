@@ -64,8 +64,8 @@ describe('ProgramsHome.vue', () => {
       });
 
       describe('help button', () => {
-        it('displays the help button ', () => {
-          expect(dataTable.props('showHelp')).toBe(true);
+        it('does not display the help button ', () => {
+          expect(dataTable.props('showHelp')).toBe(false);
           expect(dataTable.props('helpLink')).toEqual('zendesk.help_link.view_programs_list');
         });
       });

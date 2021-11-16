@@ -5,7 +5,7 @@
       :items="tableData"
       :count="itemsCount"
       :table-props="tableProps"
-      :show-help="true"
+      :show-help="false"
       :help-link="$t('zendesk.help_link.case_referral_list')"
       :labels="labels"
       :headers="headers"

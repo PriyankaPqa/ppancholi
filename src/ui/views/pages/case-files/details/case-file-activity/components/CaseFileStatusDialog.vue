@@ -7,7 +7,7 @@
       :submit-action-label="$t('common.apply')"
       :submit-button-disabled="failed"
       :persistent="true"
-      :show-help="true"
+      :show-help="false"
       :help-link="helpLink"
       :tooltip-label="$t('common.tooltip_label')"
       :max-width="750"

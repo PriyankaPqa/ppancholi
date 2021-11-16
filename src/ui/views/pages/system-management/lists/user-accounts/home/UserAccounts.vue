@@ -9,7 +9,7 @@
     :labels="labels"
     :table-props="tableProps"
     :search="search"
-    show-help
+    :show-help="false"
     show-search
     content-padding="0"
     @search="setSearch($event)"

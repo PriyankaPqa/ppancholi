@@ -1,5 +1,5 @@
 <template>
-  <rc-page-content :outer-scroll="true" :title="$t('eventSummary.title')" :show-help="true" :help-link="$t('zendesk.help_link.eventDetails')">
+  <rc-page-content :outer-scroll="true" :title="$t('eventSummary.title')" :show-help="false" :help-link="$t('zendesk.help_link.eventDetails')">
     <template slot="top">
       <v-row class=" ma-0 pa-0 pb-4">
         <v-col class="d-flex ma-0 pa-0 align-center" cols="10">

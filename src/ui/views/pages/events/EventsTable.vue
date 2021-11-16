@@ -2,7 +2,7 @@
   <rc-data-table
     ref="eventsTable"
     data-test="events-table"
-    :show-help="$hasLevel('level6')"
+    :show-help="false && $hasLevel('level6')"
     :help-link="$t(helpLink)"
     :items="tableData"
     :count="itemsCount"

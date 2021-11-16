@@ -16,7 +16,12 @@
       </error-panel>
     </div>
 
-    <rc-page-content v-else :title="title" show-help :help-link="$t('zendesk.help_link.create_financial_assistance_table')" :show-add-button="false">
+    <rc-page-content
+      v-else
+      :title="title"
+      :show-help="false"
+      :help-link="$t('zendesk.help_link.create_financial_assistance_table')"
+      :show-add-button="false">
       <v-container>
         <validation-observer ref="form" v-slot="{ changed, invalid }" slim>
           <v-row class="justify-center">

@@ -13,7 +13,7 @@
       <validation-observer ref="form" v-slot="{ failed }" slim>
         <rc-page-content
           :show-back-button="showBackButton"
-          :show-help="currentTab.helpLink !== '' "
+          :show-help="false && currentTab.helpLink !== '' "
           :help-link="$t(currentTab.helpLink)"
           :title="getTitle"
           :class="`${xSmallOrSmallMenu ? 'actions' : ''}`"

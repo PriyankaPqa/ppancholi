@@ -4,7 +4,7 @@
       data-test="case-file-documents-table"
       :items="caseFileDocumentsMapped"
       :count="itemsCount"
-      :show-help="true"
+      :show-help="false"
       :help-link="$t('zendesk.help_link.case_document_list')"
       :labels="labels"
       :headers="headers"

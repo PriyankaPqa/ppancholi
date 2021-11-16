@@ -5,7 +5,7 @@
       :show-add-button="false"
       :show-back-button="true"
       :help-link="$t('zendesk.help_link.teams.create')"
-      show-help
+      :show-help="false"
       @back="onCancel(dirty || changed)">
       <v-container v-if="isLoading">
         <v-row justify="center">

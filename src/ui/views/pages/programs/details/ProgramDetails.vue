@@ -2,7 +2,7 @@
   <rc-page-content
     :outer-scroll="true"
     :title="$t('event.programManagement.ProgramDetails')"
-    show-help
+    :show-help="false"
     :help-link="$t('zendesk.help_link.view_programs_list')">
     <rc-page-loading v-if="loading" />
     <v-container v-else>

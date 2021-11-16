@@ -80,11 +80,11 @@ describe('CaseFilesTable.vue', () => {
       });
 
       describe('help button', () => {
-        it('displays the help button ', async () => {
+        it('shou;d be hidden', async () => {
           wrapper.vm.helpLink = 'mock-help-data-url';
           await wrapper.vm.$nextTick();
           expect(dataTable.props('showHelp'))
-            .toBe(true);
+            .toBe(false);
           expect(dataTable.props('helpLink'))
             .toEqual('mock-help-data-url');
         });

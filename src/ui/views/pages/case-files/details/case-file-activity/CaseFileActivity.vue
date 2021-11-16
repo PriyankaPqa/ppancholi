@@ -3,7 +3,7 @@
     content-padding="0"
     :outer-scroll="true"
     :title="$t('caseFile.caseFileActivity')"
-    :show-help="true"
+    :show-help="false"
     :help-link="$t('zendesk.help_link.caseFileActivity')">
     <rc-page-loading v-if="loading" />
     <template v-if="!loading" slot="top">

@@ -177,9 +177,9 @@ describe('AppHeader.vue', () => {
         expect(icon.exists()).toBe(true);
       });
 
-      test('The page contains a help icon', () => {
+      test('The page does not contain a help icon', () => {
         const icon = wrapper.find('[data-test="general-help-trigger"]');
-        expect(icon.exists()).toBe(true);
+        expect(icon.exists()).toBe(false);
       });
 
       test('The page contains an account settings button', () => {
@@ -201,12 +201,12 @@ describe('AppHeader.vue', () => {
         expect(wrapper.vm.handleLeftMenu).toBeCalledTimes(1);
       });
 
-      test('Clicking on the help icon calls handleGeneralHelpMenu', async () => {
-        const icon = wrapper.find('[data-test="general-help-trigger"]');
-        jest.spyOn(wrapper.vm, 'handleGeneralHelpMenu').mockImplementation(() => {});
-        await icon.trigger('click');
-        expect(wrapper.vm.handleGeneralHelpMenu).toBeCalledTimes(1);
-      });
+      // test('Clicking on the help icon calls handleGeneralHelpMenu', async () => {
+      //   const icon = wrapper.find('[data-test="general-help-trigger"]');
+      //   jest.spyOn(wrapper.vm, 'handleGeneralHelpMenu').mockImplementation(() => {});
+      //   await icon.trigger('click');
+      //   expect(wrapper.vm.handleGeneralHelpMenu).toBeCalledTimes(1);
+      // });
 
       test('Clicking on the account icon calls handleRightMenu', async () => {
         const icon = wrapper.find('[data-test="right-menu-trigger"]');

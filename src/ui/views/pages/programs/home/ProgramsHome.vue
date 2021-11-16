@@ -4,7 +4,7 @@
       data-test="programs-table"
       :items="tableData"
       :count="itemsCount"
-      :show-help="true"
+      :show-help="false"
       :help-link="$t('zendesk.help_link.view_programs_list')"
       :labels="labels"
       :headers="headers"

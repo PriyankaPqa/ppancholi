@@ -4,7 +4,7 @@
     :help-link="helpLink"
     :show-add-button="showAddButton"
     :add-button-label="$t(addButtonLabel)"
-    :show-help="!embedded"
+    :show-help="false && !embedded"
     show-search
     :fullscreen="embedded"
     @search="search = $event"

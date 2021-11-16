@@ -10,7 +10,7 @@
     fullscreen
     persistent
     show-close
-    :show-help="true"
+    :show-help="false"
     :help-link="$t('zendesk.help_link.assign_case_file')"
     :tooltip-label="$t('common.tooltip_label')"
     :loading="loading"

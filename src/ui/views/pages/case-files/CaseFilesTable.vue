@@ -4,7 +4,7 @@
     data-test="case-files-table"
     :items="tableData"
     :count="itemsCount"
-    :show-help="true"
+    :show-help="false"
     :help-link="$t(helpLink)"
     :labels="labels"
     :headers="headers"

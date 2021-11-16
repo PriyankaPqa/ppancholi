@@ -3,7 +3,7 @@
     <page-template :loading="programLoading" :show-left-menu="false">
       <rc-page-content
         :title="isEditMode ? $t('event.programManagement.updateProgram') : $t('event.programManagement.addNewProgram')"
-        :show-help="true"
+        :show-help="false"
         :help-link="helpLink">
         <program-form :program.sync="program" :is-edit-mode="isEditMode" :is-name-unique.sync="isNameUnique" :is-dirty.sync="isDirty" />
 

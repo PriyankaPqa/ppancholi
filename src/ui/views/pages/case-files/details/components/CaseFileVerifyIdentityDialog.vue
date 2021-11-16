@@ -1,7 +1,7 @@
 <template>
   <validation-observer ref="verifyIdentity" v-slot="{ dirty, failed }" slim>
     <rc-dialog
-      show-help
+      :show-help="false"
       :help-link="helpLink"
       :title="$t('caseFileDetail.verifyIdentityDialog.title')"
       :show="show"

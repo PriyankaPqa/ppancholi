@@ -4,7 +4,7 @@
     :outer-scroll="true"
     :title="$t('system_management.leftMenu.lists_title')"
     :help-link="$t('zendesk.help_link.view_option_lists')"
-    show-help
+    :show-help="false"
     show-search
     content-padding="0"
     @search="searchString = $event">
