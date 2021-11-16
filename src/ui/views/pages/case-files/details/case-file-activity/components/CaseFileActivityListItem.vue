@@ -105,6 +105,13 @@ export default Vue.extend({
 
         case CaseFileActivityType.HouseholdSplit:
           return this.makeContentForHouseholdSplit();
+
+        case CaseFileActivityType.HouseholdMovedMembersOut:
+          return this.makeContentForHouseholdMovedMembersOut();
+
+        case CaseFileActivityType.HouseholdMovedMembersIn:
+          return this.makeContentForHouseholdMovedMembersIn();
+
         default:
           return null;
       }
@@ -357,6 +364,20 @@ export default Vue.extend({
       const title = this.$t('caseFileActivity.activityList.title.HouseholdSplit');
       const body = this.$t('caseFileActivity.activityList.body.HouseholdSplit')
         + (this.item.details?.removedMembers as [] || []).map((m: {name: string}) => m.name).join(', ');
+      return { title, body };
+    },
+
+    makeContentForHouseholdMovedMembersOut(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersOut');
+      const body = this.$t('caseFileActivity.activityList.body.HouseholdMovedMembers')
+        + (this.item.details?.members as [] || []).map((m: {name: string}) => m.name).join(', ');
+      return { title, body };
+    },
+
+    makeContentForHouseholdMovedMembersIn(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersIn');
+      const body = this.$t('caseFileActivity.activityList.body.HouseholdMovedMembers')
+        + (this.item.details?.members as [] || []).map((m: {name: string}) => m.name).join(', ');
       return { title, body };
     },
 

@@ -755,6 +755,32 @@ describe('CaseFileActivityListItem.vue', () => {
           });
         });
       });
+
+      describe('makeContentForHouseholdMovedMembersOut', () => {
+        it('returns the correct data when activity type is HouseholdMovedMembersOut', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.HouseholdMovedMembersOut)[0],
+          });
+
+          expect(wrapper.vm.makeContentForHouseholdMovedMembersOut()).toEqual({
+            title: 'caseFileActivity.activityList.title.HouseholdMovedMembersOut',
+            body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
+          });
+        });
+      });
+
+      describe('makeContentForHouseholdMovedMembersIn', () => {
+        it('returns the correct data when activity type is HouseholdMovedMembersIn', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.HouseholdMovedMembersIn)[0],
+          });
+
+          expect(wrapper.vm.makeContentForHouseholdMovedMembersIn()).toEqual({
+            title: 'caseFileActivity.activityList.title.HouseholdMovedMembersIn',
+            body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
+          });
+        });
+      });
     });
   });
 });

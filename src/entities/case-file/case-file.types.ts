@@ -60,6 +60,8 @@ export enum CaseFileActivityType {
   PaymentSubmitted = 22,
   HouseholdEdited =23,
   HouseholdSplit = 24,
+  HouseholdMovedMembersOut = 25,
+  HouseholdMovedMembersIn = 26,
 }
 
 export enum RegistrationType {

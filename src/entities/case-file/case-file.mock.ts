@@ -506,7 +506,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       details: {},
     },
     {
-      id: 'mock-activity-id',
+      id: 'mock-activity-id-28',
       caseFileId: 'mock-id-1',
       role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
       user: { id: '1', name: 'Jane Doe' },
@@ -514,6 +514,46 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       activityType: CaseFileActivityType.HouseholdSplit,
       details: {
         removedMembers: [
+          {
+            id: '61016652-3939-41fc-99a6-b4ca2c790254',
+            name: 'firstname1 lastname',
+          },
+          {
+            id: '61016652-3939-41fc-99a6-b4ca2c790252',
+            name: 'firstname2 lastname',
+          },
+        ],
+      },
+    },
+    {
+      id: 'mock-activity-id-29',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.HouseholdMovedMembersOut,
+      details: {
+        members: [
+          {
+            id: '61016652-3939-41fc-99a6-b4ca2c790254',
+            name: 'firstname1 lastname',
+          },
+          {
+            id: '61016652-3939-41fc-99a6-b4ca2c790252',
+            name: 'firstname2 lastname',
+          },
+        ],
+      },
+    },
+    {
+      id: 'mock-activity-id-30',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.HouseholdMovedMembersIn,
+      details: {
+        members: [
           {
             id: '61016652-3939-41fc-99a6-b4ca2c790254',
             name: 'firstname1 lastname',
