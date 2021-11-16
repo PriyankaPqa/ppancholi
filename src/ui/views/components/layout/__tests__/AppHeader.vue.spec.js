@@ -49,21 +49,21 @@ describe('AppHeader.vue', () => {
     });
 
     describe('Help link', () => {
-      it('should be displayed', async () => {
+      it('should not be displayed', async () => {
         const icon = wrapper.find('[data-test="general-help-trigger"]');
-        expect(icon.exists()).toBe(true);
+        expect(icon.exists()).toBe(false);
       });
 
       it('is linked to the correct key', async () => {
         expect(wrapper.vm.helpLink).toBe('zendesk.beneficiary_registration.introduction');
       });
 
-      it('should trigger openHelp method', async () => {
-        wrapper.vm.openHelp = jest.fn();
-        const icon = wrapper.find('[data-test="general-help-trigger"]');
-        icon.vm.$emit('click');
-        expect(wrapper.vm.openHelp).toHaveBeenCalledTimes(1);
-      });
+      // it('should trigger openHelp method', async () => {
+      //   wrapper.vm.openHelp = jest.fn();
+      //   const icon = wrapper.find('[data-test="general-help-trigger"]');
+      //   icon.vm.$emit('click');
+      //   expect(wrapper.vm.openHelp).toHaveBeenCalledTimes(1);
+      // });
     });
   });
 

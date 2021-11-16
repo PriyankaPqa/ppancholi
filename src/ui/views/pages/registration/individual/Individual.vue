@@ -4,7 +4,7 @@
 
     <ValidationObserver ref="form" v-slot="{ failed }" slim>
       <rc-page-content
-        :show-help="currentTab.helpLink !== '' "
+        :show-help="false && currentTab.helpLink !== '' "
         :help-link="$t(currentTab.helpLink)"
         :title="$t(currentTab.titleKey)"
         :subtitle="$t('registration.type.individual')"

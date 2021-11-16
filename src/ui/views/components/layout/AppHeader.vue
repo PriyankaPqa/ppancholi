@@ -23,7 +23,7 @@
 
     <language-selector data-test="registration-portal-language-selector" />
 
-    <v-btn icon data-test="general-help-trigger" :aria-label="$t('common.help')" @click="openHelp()">
+    <v-btn v-if="false" icon data-test="general-help-trigger" :aria-label="$t('common.help')" @click="openHelp()">
       <v-icon color="grey darken-2">
         mdi-information
       </v-icon>
