@@ -37,6 +37,12 @@ prepareServices(store);
 prepareStorage(store);
 prepareSignalR(store);
 
+applicationInsights.initialize({
+  connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,
+  router,
+  appName: 'EMISv2',
+});
+
 Vue.prototype.$i18nRoute = Trans.i18nRoute.bind(Trans);
 Vue.config.productionTip = false;
 
@@ -51,12 +57,6 @@ if (process.env.NODE_ENV === 'development') {
     auto: false, // Disable auto check.
   });
 }
-
-Vue.use(applicationInsights, {
-  connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,
-  router,
-  appName: 'EMISv2',
-});
 
 new Vue({
   render: (h) => h(App),

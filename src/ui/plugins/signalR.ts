@@ -30,7 +30,7 @@ export class SignalRConnection {
         .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
           accessTokenFactory: async () => {
             const tokenResponse = await AuthenticationProvider.acquireToken();
-            return tokenResponse.accessToken;
+            return tokenResponse?.accessToken;
           },
         })
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients

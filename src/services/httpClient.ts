@@ -99,6 +99,7 @@ class HttpClient implements IHttpClient {
 
     try {
       const last401Redirect = localStorage.getItem(localStorageKeys.last401Redirect.name);
+
       // so not to loop the user indefinitely, if he had been redirected already in the last 30 seconds we wont
       if (!last401Redirect || Number.isNaN(new Date(last401Redirect).getTime())
         || Math.abs(new Date().getTime() - new Date(last401Redirect).getTime()) > 30000) {
