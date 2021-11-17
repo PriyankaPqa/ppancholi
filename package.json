@@ -14,17 +14,18 @@
     "inspect": "vue-cli-service inspect",
     "install:clean": "rm -rf node_modules/ && yarn install",
     "lint:fix": "vue-cli-service lint --fix",
-    "lokalise:down": "node lokalise.js down",
-    "lokalise:up": "node lokalise.js up",
+    "lokalise:down": "node scripts/lokalise.js down",
+    "lokalise:up": "node scripts/lokalise.js up",
+    "lokalise:delete": "node scripts/lokalise.js delete",
     "lokalise": "yarn lokalise:up && yarn lokalise:upErrors && yarn lokalise:down",
-    "lokalise:upErrors": "node lokalise.js upErrors",
+    "lokalise:upErrors": "node scripts/lokalise.js upErrors",
     "report": "vue-cli-service build --report",
     "report-json": "vue-cli-service build --report-json",
     "coverage": "vue-cli-service test:unit --coverage --coverageReporters=cobertura",
     "pr": "yarn test && yarn lint",
     "link:registration": "yalc link @crctech/registration-lib",
     "remove:registration": "yalc remove @crctech/registration-lib",
-    "i18n:report": "node i18n-report.js"
+    "i18n:report": "node scripts/i18n-report.js"
   },
   "dependencies": {
     "@azure/msal-browser": "^2.19.0",
