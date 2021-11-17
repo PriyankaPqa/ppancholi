@@ -21,8 +21,8 @@
     "test": "vue-cli-service test:unit --runInBand",
     "lint": "vue-cli-service lint --fix",
     "lokalise": "yarn lokalise:up && yarn lokalise:down",
-    "lokalise:down": "node lokalise.js down",
-    "lokalise:up": "node lokalise.js up",
+    "lokalise:down": "node scripts/lokalise.js down",
+    "lokalise:up": "node scripts/lokalise.js up",
     "build:lib:webpack": "vue-cli-service build --target lib --name registration-lib src/entry.ts",
     "build:all": "yarn build:lib && yarn build:app",
     "build:app": "vue-cli-service build --dest dist-app",
@@ -35,7 +35,8 @@
     "pr": "yarn test && yarn lint",
     "watch": "npm-watch",
     "push": "yarn build:lib && yalc push",
-    "i18n:report": "node i18n-report.js"
+    "i18n:report": "node i18n-report.js",
+    "lokalise:delete": "node scripts/lokalise.js delete"
   },
   "main": "dist/registration-lib.ssr.js",
   "browser": "dist/registration-lib.esm.js",
