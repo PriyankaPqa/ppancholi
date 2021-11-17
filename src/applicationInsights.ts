@@ -71,7 +71,11 @@ class AppInsights {
   }
 
   public trackException(error: Error, properties: Record<string, unknown> = {}) {
-    this.getInstance()?.trackException({ exception: error, properties });
+    this.getInstance()?.trackException({ exception: error }, properties);
+  }
+
+  public trackTrace(message: string, properties: Record<string, unknown> = {}) {
+    this.getInstance()?.trackTrace({ message }, properties);
   }
 }
 
