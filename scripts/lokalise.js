@@ -1,4 +1,4 @@
-/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable */
 //  https://github.com/lokalise/node-lokalise-api#installation
 const unzipper = require('unzipper');
 const https = require('https');
@@ -49,6 +49,58 @@ const uploadToLokalise = (base64File, fileName, langISO) => new Promise((resolve
   });
 });
 
+function deleteTranslations(keysToBeDeletedPath, folder) {
+  ['en.json', 'fr.json', 'test.json'].forEach((fileName) => {
+    const filePath = `${folder}/${fileName}`;
+
+    if (!fs.existsSync(filePath)) {
+      console.warn(`Path "${filePath}" not found !`);
+      return;
+    }
+
+    const origin = fs.readFileSync(filePath).toString().split('\n');
+    const listToDelete = fs.readFileSync(keysToBeDeletedPath).toString().split('\n');
+
+    const result = [];
+
+    for (line of origin) {
+      let keyToDelete = null;
+      for (key of listToDelete) {
+        if (line.trim().includes(`"${key.trim()}":`)) {
+          keyToDelete = key;
+        }
+      }
+      if (keyToDelete) {
+        console.log(`Found: ${keyToDelete.trim()} in ${filePath}`);
+      } else {
+        result.push(line);
+      }
+    }
+
+    const lastItemIndex = result.length - 2;
+    const lastItem = result[lastItemIndex];
+    if (lastItem[lastItem.length - 1] === ',') {
+      result[lastItemIndex] = lastItem.slice(0, -1); // remove the last comma
+    }
+
+    fs.writeFileSync(filePath, result.join('\n'), 'utf8');
+  });
+}
+
+function deleteLocalKeys(keysToBeDeletedPath, languageFolderPath) {
+  const files = fs.readdirSync(languageFolderPath);
+  if (files.includes('en.json')) {
+    deleteTranslations(keysToBeDeletedPath, languageFolderPath);
+  } else {
+    files.forEach((f) => {
+      const path = `${languageFolderPath}/${f}`;
+      if (fs.statSync(path).isDirectory()) {
+        deleteLocalKeys(keysToBeDeletedPath, path);
+      }
+    });
+  }
+}
+
 async function up() {
   // We will upload all files contained in the lang folder
   const files = fs.readdirSync(LANG_FOLDER_PATH);
@@ -66,17 +118,28 @@ async function up() {
   }
 }
 
-for (let i = 0; i < process.argv.length; i += 1) {
-  switch (process.argv[i]) {
-    case 'down':
-      down();
-      break;
-    case 'up':
-      up();
-      break;
-    default:
-      break;
-  }
+const arguments = process.argv.slice(2);
+
+switch (arguments[0]) {
+  case 'down':
+    down();
+    break;
+  case 'up':
+    up();
+    break;
+  case 'delete':
+    if (arguments[1] && arguments[1] === '-file' && arguments[3] === '-path') {
+      const keysToBeDeletedPath = arguments[2];
+      const languageFolderPath = arguments[4];
+      deleteLocalKeys(keysToBeDeletedPath, languageFolderPath);
+    } else if (arguments[1] !== '-file') {
+      console.log('Please specify the file path including keys to be deleted -file file_path');
+    } else if (arguments[3] !== '-path') {
+      console.log('Please specify the file path of the folder containing locales');
+    }
+    break;
+  default:
+    break;
 }
 
 module.exports.down = down;

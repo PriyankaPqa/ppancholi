@@ -13,8 +13,8 @@
     "install:clean": "rm -rf node_modules/ && yarn install && yarn dev",
     "lint:fix": "vue-cli-service lint --fix",
     "lokalise": "yarn lokalise:up && yarn lokalise:down",
-    "lokalise:down": "node lokalise.js down",
-    "lokalise:up": "node lokalise.js up",
+    "lokalise:down": "node scripts/lokalise.js down",
+    "lokalise:up": "node scripts/lokalise.js up",
     "report": "vue-cli-service build --report",
     "report-json": "vue-cli-service build --report-json",
     "test": "vue-cli-service test:unit --runInBand",
@@ -22,7 +22,8 @@
     "pr": "yarn test && yarn lint",
     "link:registration": "yalc link @crctech/registration-lib",
     "remove:registration": "yalc remove @crctech/registration-lib",
-    "i18n:report": "node i18n-report.js"
+    "i18n:report": "node i18n-report.js",
+    "lokalise:delete": "node scripts/lokalise.js delete"
   },
   "dependencies": {
     "@crctech/component-library": "1.0.172",
