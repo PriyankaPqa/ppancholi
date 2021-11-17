@@ -159,6 +159,8 @@
     "registration.personal_info.validations.minimumAge": "L'âge minimum est de {x} ans.",
     "registration.personal_info.validations.notInFuture": "La date de naissance ne peut se situer dans le futur.",
     "registration.personal_info.year": "Année",
+    "registration.privacy_statement.InPerson": "En personne",
+    "registration.privacy_statement.Phone": "Téléphone",
     "registration.privacy_statement.agreeCRC": "Le bénéficiaire a déclaré «J'accepte» aux énoncés ci-dessus.",
     "registration.privacy_statement.agreeSelf": "J'accepte les énoncés ci-dessus.",
     "registration.privacy_statement.crc_username": "Nom d'utilisateur CRC",

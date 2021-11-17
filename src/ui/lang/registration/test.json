@@ -159,6 +159,8 @@
     "registration.personal_info.validations.minimumAge": "registration.personal_info.validations.minimumAge",
     "registration.personal_info.validations.notInFuture": "registration.personal_info.validations.notInFuture",
     "registration.personal_info.year": "registration.personal_info.year",
+    "registration.privacy_statement.InPerson": "registration.privacy_statement.InPerson",
+    "registration.privacy_statement.Phone": "registration.privacy_statement.Phone",
     "registration.privacy_statement.agreeCRC": "registration.privacy_statement.agreeCRC",
     "registration.privacy_statement.agreeSelf": "registration.privacy_statement.agreeSelf",
     "registration.privacy_statement.crc_username": "registration.privacy_statement.crc_username",
