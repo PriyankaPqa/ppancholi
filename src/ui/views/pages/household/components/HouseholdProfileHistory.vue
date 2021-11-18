@@ -23,8 +23,8 @@
       hide-footer>
       <template #[`item.${customColumns.editedBy}`]="{ item }">
         <div class="d-flex flex-column full-height py-2" data-test="household_history_edited-by">
-          <span class="fw-bold">{{ item.userName }}</span>
-          <span class="rc-body12">{{ $m(item.roleName) }}</span>
+          <span class="fw-bold">{{ item.user.name }}</span>
+          <span class="rc-body12">{{ $m(item.role.name) }}</span>
         </div>
       </template>
 
@@ -36,7 +36,7 @@
 
       <template #[`item.${customColumns.changeType}`]="{ item }">
         <div class="py-2 full-height" data-test="household_history_last-action">
-          <span> {{ item.lastActionName }} </span>
+          <span> {{ item.activityName }} </span>
         </div>
       </template>
 
@@ -70,13 +70,15 @@ import { RcDialog, RcDataTable } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
 import { IHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
 
-import { IVersionedEntityCombined, IHistoryItemTemplateData } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IHistoryItemTemplateData } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IHouseholdActivity, HouseholdActivity, HouseholdActivityType }
+  from '@crctech/registration-lib/src/entities/value-objects/household-activity';
 import moment from '@/ui/plugins/moment';
 
-interface IHistoryItem extends IVersionedEntityCombined {
-  lastActionName: string;
-  templateData: IHistoryItemTemplateData[]
-  templatePreviousData: IHistoryItemTemplateData[]
+interface IActivityItem extends IHouseholdActivity {
+  activityName: string;
+  templateData: IHistoryItemTemplateData[];
+  templatePreviousData: IHistoryItemTemplateData[];
 }
 
 export default Vue.extend({
@@ -103,7 +105,7 @@ export default Vue.extend({
     return {
       moment,
       i18n: this.$i18n,
-      historyItems: [] as IVersionedEntityCombined[],
+      activityItems: [] as IHouseholdActivity[],
       loading: true,
       options: {
         sortBy: ['timestamp'],
@@ -117,7 +119,7 @@ export default Vue.extend({
       return {
         editedBy: 'userName',
         dateOfChange: 'timestamp',
-        changeType: 'lastActionName',
+        changeType: 'activityName',
         previousValue: 'previousValue',
         newValue: 'newValue',
       };
@@ -158,14 +160,13 @@ export default Vue.extend({
       ];
     },
 
-    displayedItems():IHistoryItem[] {
-      const items = this.historyItems.map((i) => ({
+    displayedItems():IActivityItem[] {
+      const items = this.activityItems.map((i) => ({
         ...i,
-        lastActionName: this.$t(i.getLastActionName()) as string,
-        templateData: i.getTemplateData(this.historyItems, false, this.$i18n),
-        templatePreviousData: i.getTemplateData(this.historyItems, true, this.$i18n),
-      })).filter((item) => !!item.templateData);
-
+        activityName: this.$t(i.getActivityName()) as string,
+        templateData: i.getTemplateData(false, this.$i18n),
+        templatePreviousData: i.getTemplateData(true, this.$i18n),
+      }));
       return _orderBy(items, this.options.sortBy[0], this.options.sortDesc[0] ? 'desc' : 'asc');
     },
   },
@@ -173,11 +174,31 @@ export default Vue.extend({
   async created() {
     if (this.household) {
       try {
-        this.historyItems = await this.$storage.household.actions.fetchHouseholdHistory(this.household);
+        const activityItemsData = await this.$services.households.getHouseholdActivity(this.household.id);
+        const processedData = this.handleMoveActivity(activityItemsData);
+        this.activityItems = processedData.length ? processedData.map((i: IHouseholdActivity) => new HouseholdActivity(i)) : [];
       } finally {
         this.loading = false;
       }
     }
+  },
+
+  methods: {
+    handleMoveActivity(activityList: IHouseholdActivity[]):IHouseholdActivity[] {
+      if (!activityList) return [];
+      let processedList = [] as IHouseholdActivity[];
+      activityList.forEach((item: IHouseholdActivity) => {
+        if (item.activityType === HouseholdActivityType.HouseholdMoved) {
+          const movedOut = { ...item, newDetails: null as unknown };
+          const movedIn = { ...item, previousDetails: null as unknown };
+          processedList = processedList.concat([movedOut, movedIn]);
+        } else {
+          processedList.push(item);
+        }
+      });
+
+      return processedList;
+    },
   },
 
 });
