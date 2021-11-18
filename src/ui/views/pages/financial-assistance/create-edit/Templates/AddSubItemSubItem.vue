@@ -1,6 +1,7 @@
 <template>
   <div class="flex-row">
     <v-select-with-validation
+      v-if="!item || !item.id"
       v-model="value"
       data-test="financialAssistanceItems__addSubItemSelect"
       hide-details
@@ -11,7 +12,9 @@
       :item-text="(item) => $m(item.name)"
       :rules="{ required: true }"
       :label="`${$t('financialAssistance.nestedTable.headers.subItem')}*`" />
-
+    <div v-else-if="value">
+      {{ $m(value.name) }}
+    </div>
     <tooltip-financial-assistance-category
       v-if="value && value.description && $m(value.description)"
       class-name="ml-1"
