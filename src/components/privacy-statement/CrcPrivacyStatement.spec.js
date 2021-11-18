@@ -79,6 +79,26 @@ describe('CrcPrivacyStatement.vue', () => {
       it('should return the registration location from the current event', () => {
         expect(wrapper.vm.activeRegistrationLocations).toEqual(mockRegistrationLocations());
       });
+
+      it('should return the registration location prop data if there is any', () => {
+        const location = { ...mockRegistrationLocations()[0], name: { translation: { en: 'mock-name' } } };
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            user() {
+              return mockUserL6();
+            },
+          },
+          propsData: {
+            i18n,
+            registrationLocations: [location],
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.activeRegistrationLocations).toEqual([location]);
+      });
     });
 
     describe('isRegistrationMethodInPerson', () => {

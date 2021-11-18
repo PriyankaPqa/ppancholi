@@ -48,18 +48,18 @@ export enum EEventLocationStatus {
 }
 
 export interface IEventGenericLocationAddress {
-  country: string;
-  streetAddress: string;
+  country?: string;
+  streetAddress?: string;
   unitSuite?: string;
-  province: ECanadaProvinces;
-  city: string;
-  postalCode: string;
-  latitude?: string;
-  longitude?: string;
+  province?: ECanadaProvinces;
+  city?: string;
+  postalCode?: string;
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface IEventGenericLocation {
-  id: uuid;
+  id?: uuid;
   name: IMultilingual;
   status: EEventLocationStatus;
   address: IEventGenericLocationAddress;

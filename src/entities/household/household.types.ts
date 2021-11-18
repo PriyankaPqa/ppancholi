@@ -1,3 +1,4 @@
+import { IEventGenericLocation } from '../event/event.types';
 import { IMultilingual } from '../../types/interfaces/IMultilingual';
 import { IPhoneNumber } from '../value-objects/contact-information';
 import { IAddressData } from '../value-objects/address';
@@ -36,6 +37,7 @@ export interface IHouseholdCaseFile {
   caseFileNumber: string;
   caseFileStatus: number;
   registeredDate: string | Date;
+  registrationLocations: IEventGenericLocation[];
 }
 
 export interface IHouseholdMetadata extends IEntity {

@@ -9,6 +9,7 @@ import {
   IAddress,
   IValidateEmailResponse,
   IValidateEmailRequest,
+  IConsentInformation,
 } from '../../../entities/household-create';
 import { IOptionItemData } from '../../../types';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
@@ -35,7 +36,7 @@ export interface IHouseholdsService {
   splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IHouseholdEntity>;
   moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
-  makePrimary(id: string, memberId: string): Promise<IHouseholdEntity>;
+  makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity>;
   hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse>;
   getHouseholdActivity(id: uuid): Promise<IHouseholdActivity[]>;
   getHouseholdHistory(id: uuid): Promise<IVersionedEntity[]>;

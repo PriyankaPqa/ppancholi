@@ -1,4 +1,4 @@
-import { ECanadaProvinces, ERegistrationMode } from '@/types';
+import { ECanadaProvinces, ERegistrationMethod, ERegistrationMode } from '@/types';
 import moment from 'moment';
 import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { mockHttp } from '../../httpClient.mock';
@@ -127,9 +127,10 @@ describe('>>> Beneficiaries Service', () => {
   });
 
   test('addMember is linked to the correct URL', async () => {
-    await service.addMember('123', mockMember());
+    const member = mockMember();
+    await service.addMember('123', member);
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${'123'}/members`, {
-      ...service.parseMember(mockMember()),
+      ...service.parseMember(member),
       registrationType: ERegistrationMode.CRC,
     });
   });
@@ -145,10 +146,16 @@ describe('>>> Beneficiaries Service', () => {
 
   test('makePrimary is linked to the correct URL', async () => {
     const id = 'mock-id';
-
-    await service.makePrimary(id, 'member');
+    const consentInformation = {
+      registrationMethod: ERegistrationMethod.InPerson,
+      registrationLocationId: null as string,
+      crcUserName: 'John',
+      privacyDateTimeConsent: '2021-01-01',
+    };
+    await service.makePrimary(id, 'member', consentInformation);
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/assign-primary`, {
       memberId: 'member',
+      consentInformation,
     });
   });
 

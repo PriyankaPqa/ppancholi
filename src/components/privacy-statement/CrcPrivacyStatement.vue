@@ -73,6 +73,11 @@ export default Vue.extend({
       type: Object as () => VueI18n,
       required: true,
     },
+
+    registrationLocations: {
+      type: Array as () => IEventGenericLocation[],
+      default: null,
+    },
   },
 
   data() {
@@ -122,6 +127,9 @@ export default Vue.extend({
     },
 
     activeRegistrationLocations(): IEventGenericLocation[] {
+      if (this.registrationLocations) {
+        return this.registrationLocations;
+      }
       if (this.event.registrationLocations) {
         return this.event.registrationLocations.filter((r) => r.status === EEventLocationStatus.Active);
       }

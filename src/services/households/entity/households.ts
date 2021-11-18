@@ -1,6 +1,5 @@
 import moment from 'moment';
-import { mockHouseholdActivities } from '../../../entities/value-objects/household-activity/householdActivity.mock';
-import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
+import { IConsentInformation, IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHttpClient } from '../../httpClient';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import {
@@ -15,7 +14,7 @@ import {
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
 import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.types';
-import { HouseholdActivityType, IHouseholdActivity } from '../../../entities/value-objects/household-activity';
+import { IHouseholdActivity } from '../../../entities/value-objects/household-activity';
 
 const API_URL_SUFFIX = 'household';
 const CONTROLLER = 'households';
@@ -121,8 +120,8 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.post(`${this.baseApi}/persons/validate-email-address`, request);
   }
 
-  async makePrimary(id: string, memberId: string): Promise<IHouseholdEntity> {
-    return this.http.post(`${this.baseUrl}/${id}/assign-primary`, { memberId });
+  async makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity> {
+    return this.http.post(`${this.baseUrl}/${id}/assign-primary`, { memberId, consentInformation });
   }
 
   async hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse> {

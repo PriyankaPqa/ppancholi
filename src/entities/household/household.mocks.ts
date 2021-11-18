@@ -1,5 +1,7 @@
+import { mockRegistrationLocations } from '../event/event.mock';
 import {
   IHouseholdCombined, IHouseholdEntity, IHouseholdMetadata, IHouseholdMemberMetadata,
+  IHouseholdCaseFile,
 } from './household.types';
 /* eslint-disable no-nested-ternary */
 import { IEntity, mockBaseEntity } from '../base';
@@ -68,18 +70,22 @@ export const mockHouseholdMemberMetadata = (force?: Partial<IHouseholdMemberMeta
   ...force,
 });
 
+export const mockHouseholdCaseFile = (force?: Partial<IHouseholdCaseFile>): IHouseholdCaseFile => ({
+  eventId: '60983874-18bb-467d-b55a-94dc55818151',
+  eventName: { translation: { en: 'my event 1', fr: ' my event fr' } },
+  caseFileId: '11-22-334',
+  caseFileNumber: '111',
+  caseFileStatus: 1,
+  registeredDate: '2021-02-02',
+  registrationLocations: mockRegistrationLocations(),
+  ...force,
+});
+
 export const mockHouseholdMetadata = (force?: Partial<IHouseholdMetadata>): IHouseholdMetadata => ({
   ...mockBaseEntity(),
   memberMetadata: [mockHouseholdMemberMetadata()],
   eventIds: ['1', '2'],
-  caseFiles: [{
-    eventId: '60983874-18bb-467d-b55a-94dc55818151',
-    eventName: { translation: { en: 'my event 1', fr: ' my event fr' } },
-    caseFileId: '11-22-334',
-    caseFileNumber: '111',
-    caseFileStatus: 1,
-    registeredDate: '2021-02-02',
-  }],
+  caseFiles: [mockHouseholdCaseFile()],
   ...force,
 });
 
