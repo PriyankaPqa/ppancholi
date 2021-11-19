@@ -1,11 +1,11 @@
 import {
-  IFeatureCombined, IFeatureEntity, mockFeatureEntity, mockCombinedFeature,
+  IFeatureCombined, IFeatureEntity, mockFeatureEntity, mockCombinedFeatures,
 } from '@/entities/feature';
 import { BaseMock } from '../base/base.mock';
 
 export class FeatureStorageMock extends BaseMock<IFeatureCombined, IFeatureEntity> {
   constructor() {
-    super([mockCombinedFeature()], mockFeatureEntity());
+    super(mockCombinedFeatures(), mockFeatureEntity());
   }
 
   protected getters = {

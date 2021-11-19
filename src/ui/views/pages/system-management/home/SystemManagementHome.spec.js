@@ -116,7 +116,7 @@ describe('SystemManagementHome.vue', () => {
       });
     });
 
-    describe('Tenant settings', () => {
+    describe('Tenant settings card', () => {
       it('has the correct title', async () => {
         const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__tenantSettings');
         expect(card.title).toBe('system_management.card.tenantSettings.title');
@@ -130,6 +130,23 @@ describe('SystemManagementHome.vue', () => {
       it('has the correct button label', async () => {
         const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__tenantSettings');
         expect(card.button).toBe('system_management.card.tenantSettings.btn.label');
+      });
+    });
+
+    describe('Features card', () => {
+      it('has the correct title', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__features');
+        expect(card.title).toBe('system_management.card.features.title');
+      });
+
+      it('has the correct description', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__features');
+        expect(card.description).toBe('system_management.card.features.description');
+      });
+
+      it('has the correct button label', async () => {
+        const card = wrapper.vm.cards.find((c) => c.dataTest === 'sysManagementHome__features');
+        expect(card.button).toBe('system_management.card.features.btn.label');
       });
     });
   });

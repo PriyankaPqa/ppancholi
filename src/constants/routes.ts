@@ -342,6 +342,10 @@ const routes = {
       path: 'tenant-settings',
       name: 'systemManagement.lists.tenantSettings',
     },
+    features: {
+      path: 'features',
+      name: 'systemManagement.lists.features',
+    },
     caseFileInactiveReasons: {
       path: 'lists/case-file-inactive-reasons',
       name: 'systemManagement.lists.caseFileInactiveReasons',

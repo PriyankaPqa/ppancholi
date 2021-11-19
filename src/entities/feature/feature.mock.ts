@@ -9,7 +9,7 @@ export const mockFeatureEntityData = (force?: Partial<IFeatureEntityData>): IFea
   description: {
     translation: {
       en: 'description en',
-      fr: 'description en',
+      fr: 'description fr',
     },
   },
 
@@ -28,3 +28,5 @@ export const mockCombinedFeature = (force?: Partial<IEntity>): IFeatureCombined 
   metadata: null as never,
   entity: mockFeatureEntity(force),
 });
+
+export const mockCombinedFeatures = () => [mockCombinedFeature({ id: '1' }), mockCombinedFeature({ id: '2' })];

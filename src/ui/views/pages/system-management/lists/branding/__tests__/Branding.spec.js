@@ -54,10 +54,6 @@ describe('Branding.vue', () => {
   describe('>> Methods', () => {
     describe('back', () => {
       it('redirects', () => {
-        wrapper.vm.$router = {
-          replace: jest.fn(),
-        };
-
         wrapper.vm.back();
 
         expect(wrapper.vm.$router.replace).toHaveBeenCalledWith({

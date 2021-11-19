@@ -94,6 +94,7 @@ const AccountSettings = () => import(/* webpackChunkName: "account-settings" */ 
 const Roles = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/Roles.vue');
 const Branding = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/branding/Branding.vue');
 const TenantSettings = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/tenantSettings/TenantSettings.vue');
+const FeaturesComponent = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/features/Features.vue');
 const CaseNoteCategories = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseNoteCategories.vue');
 const CaseFileCloseReasons = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/CaseFileCloseReasons.vue');
 const ReferralOutcomeStatuses = () => import(/* webpackChunkName: "system" */ '@/ui/views/pages/system-management/lists/pages/ReferralOutcomeStatuses.vue');
@@ -643,6 +644,12 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.tenantSettings.path,
                 name: Routes.systemManagement.tenantSettings.name,
                 component: TenantSettings,
+                meta: { level: 'level6' },
+              },
+              {
+                path: Routes.systemManagement.features.path,
+                name: Routes.systemManagement.features.name,
+                component: FeaturesComponent,
                 meta: { level: 'level6' },
               },
               {

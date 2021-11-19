@@ -68,6 +68,12 @@ export default Vue.extend({
         to: routes.systemManagement.tenantSettings.name,
         exact: false,
         level: 'level6',
+      }, {
+        text: this.$t('system_management.card.features.title'),
+        test: 'systemManagement__menu__features',
+        to: routes.systemManagement.features.name,
+        exact: false,
+        level: 'level6',
       }];
     },
 
