@@ -5,7 +5,7 @@
     </p>
     <i18n path="registration.privacy_statement.p2" tag="p" class="rc-body14">
       <template #website>
-        <a href="https://redcross.ca/privacy-policy" target="_blank">{{ $t('registration.privacy_statement.website') }}</a>
+        <a :href="$t('registration.privacy_statement.website')" target="_blank">{{ $t('registration.privacy_statement.website') }}</a>
       </template>
       <template #email>
         <a href="mailto:privacy@redcross.ca">{{ $t('registration.privacy_statement.email') }}</a>
