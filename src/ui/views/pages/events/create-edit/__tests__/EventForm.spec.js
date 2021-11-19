@@ -240,6 +240,21 @@ describe('EventForm.vue', () => {
         expect(wrapper.emitted('update:is-name-unique')[0][0]).toBe(true);
       });
     });
+
+    describe('clearDescription', () => {
+      it('clears the field description', async () => {
+        wrapper.setData({
+          localEvent: { description: { en: 'foo', fr: 'bar' } },
+        });
+        await wrapper.vm.clearDescription();
+        expect(wrapper.vm.localEvent.description).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
+      });
+    });
   });
 
   describe('Computed', () => {
@@ -670,6 +685,13 @@ describe('EventForm.vue', () => {
           e164Number: '+11234567890',
           number: '1234567890',
         });
+      });
+
+      test('clear button on description input calls clearDescription', async () => {
+        jest.spyOn(wrapper.vm, 'clearDescription').mockImplementation(() => {});
+        const field = wrapper.findDataTest('event-description');
+        await field.vm.$emit('click:clear');
+        expect(wrapper.vm.clearDescription).toHaveBeenCalled();
       });
     });
   });

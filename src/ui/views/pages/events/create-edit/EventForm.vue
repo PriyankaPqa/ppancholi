@@ -260,7 +260,9 @@
                 data-test="event-description"
                 full-width
                 :label="$t('event.description')"
-                :rules="rules.description" />
+                :rules="rules.description"
+                clearable
+                @click:clear="clearDescription()" />
             </v-col>
           </v-row>
         </v-col>
@@ -662,6 +664,10 @@ export default Vue.extend({
       if (!this.isNameUnique) {
         this.$emit('update:is-name-unique', true);
       }
+    },
+
+    clearDescription() {
+      this.localEvent.description = utils.initMultilingualAttributes();
     },
   },
 });

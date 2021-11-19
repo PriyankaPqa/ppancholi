@@ -150,5 +150,20 @@ describe('TenantDetails.vue', () => {
         });
       });
     });
+
+    describe('clearDescription', () => {
+      it('clears the field description', async () => {
+        wrapper.setData({
+          tempTenantDetails: { description: { en: 'foo', fr: 'bar' } },
+        });
+        await wrapper.vm.clearDescription();
+        expect(wrapper.vm.tempTenantDetails.description).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
+      });
+    });
   });
 });

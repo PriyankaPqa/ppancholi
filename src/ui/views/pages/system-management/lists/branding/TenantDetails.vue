@@ -65,7 +65,9 @@
             v-model="tempTenantDetails.description.translation[languageMode]"
             :rules="rules.description"
             data-test="branding-description"
-            :label="$t('common.description')" />
+            :label="$t('common.description')"
+            clearable
+            @click:clear="clearDescription()" />
         </v-col>
 
         <v-col cols="12" class="d-flex justify-end">
@@ -174,6 +176,10 @@ export default Vue.extend({
       if (result) this.exitEditMode();
 
       this.loading = false;
+    },
+
+    clearDescription() {
+      this.tempTenantDetails.description = entityUtils.initMultilingualAttributes();
     },
   },
 });

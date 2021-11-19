@@ -190,6 +190,12 @@ describe('EventAgreementDialog.vue', () => {
       it('is linked to the right rule attribute', () => {
         expect(element.props('rules')).toEqual(wrapper.vm.rules.details);
       });
+
+      test('clear button calls clearDetails', async () => {
+        jest.spyOn(wrapper.vm, 'clearDetails').mockImplementation(() => {});
+        await element.vm.$emit('click:clear');
+        expect(wrapper.vm.clearDetails).toHaveBeenCalled();
+      });
     });
   });
 
@@ -475,6 +481,21 @@ describe('EventAgreementDialog.vue', () => {
         jest.spyOn(wrapper.vm, 'fillEmptyMultilingualFields').mockImplementation(() => {});
         await wrapper.vm.setLanguageMode('fr');
         expect(wrapper.vm.fillEmptyMultilingualFields).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('clearDetails', () => {
+      it('clears the field details', async () => {
+        wrapper.setData({
+          agreement: { details: { en: 'foo', fr: 'bar' } },
+        });
+        await wrapper.vm.clearDetails();
+        expect(wrapper.vm.agreement.details).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
       });
     });
   });

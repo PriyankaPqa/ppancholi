@@ -74,8 +74,10 @@
               outlined
               dense
               background-color="white"
+              clearable
               @keydown.enter="save"
-              @keydown.esc="cancel" />
+              @keydown.esc="cancel"
+              @click:clear="clearDescription" />
           </validation-provider>
         </v-col>
       </template>
@@ -294,6 +296,10 @@ export default Vue.extend({
         const langs = Object.keys(name.translation);
         return langs.some((lang) => treat(name.translation[lang]) === treatedInput);
       });
+    },
+
+    clearDescription() {
+      this.description = entityUtils.initMultilingualAttributes();
     },
   },
 });

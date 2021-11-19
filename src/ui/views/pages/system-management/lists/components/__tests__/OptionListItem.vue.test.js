@@ -193,6 +193,19 @@ describe('OptionListItem.vue', () => {
         expect(wrapper.vm.$storage.optionList.actions.updateStatus).toHaveBeenCalledWith(mockOptionItemData()[0].id, status);
       });
     });
+
+    describe('clearDescription', () => {
+      it('clears the field description', async () => {
+        wrapper.setData({ description: { en: 'foo', fr: 'bar' } });
+        await wrapper.vm.clearDescription();
+        expect(wrapper.vm.description).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
+      });
+    });
   });
 
   test('form is not visible if edit mode is false', async () => {

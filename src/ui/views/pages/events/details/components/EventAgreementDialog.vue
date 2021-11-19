@@ -59,7 +59,9 @@
                   full-width
                   rows="3"
                   :label="$t('eventSummary.agreement.details')"
-                  :rules="rules.details" />
+                  :rules="rules.details"
+                  clearable
+                  @click:clear="clearDetails()" />
               </v-col>
             </v-row>
 
@@ -301,6 +303,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
       this.fillEmptyMultilingualFields();
     },
 
+    clearDetails() {
+      this.agreement.details = entityUtils.initMultilingualAttributes();
+    },
   },
 });
 

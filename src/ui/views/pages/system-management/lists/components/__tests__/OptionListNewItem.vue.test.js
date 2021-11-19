@@ -136,6 +136,32 @@ describe('OptionListNewItem.vue', () => {
         expect(wrapper.vm.checkNameUniqueness).toHaveBeenCalledTimes(1);
       });
     });
+
+    describe('clearDescription', () => {
+      it('clears the field description', async () => {
+        const wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            isSubItem: true,
+            hasDescription: true,
+            addMode: true,
+            languageMode: 'en',
+            addSubItemLabel: 'add sub item',
+          },
+          data() {
+            return { description: { en: 'foo', fr: 'bar' } };
+          },
+        });
+
+        await wrapper.vm.clearDescription();
+        expect(wrapper.vm.description).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
+      });
+    });
   });
 
   test('loading state disables the button and text input', () => {
