@@ -1,3 +1,4 @@
+/* eslint-disable no-empty */
 import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchResult } from '@/types';
 import { IEventData } from '../../entities/event';
@@ -14,5 +15,21 @@ export class PublicService implements IPublicService {
       },
       containsEncodedURL: true,
     });
+  }
+
+  async getTenantByEmisDomain(domain: string): Promise<string> {
+    let tenantId = null;
+    try {
+      tenantId = await this.http.get<string>(`/system-management/tenants/id-from-domain?domain=${domain}`, { globalHandler: false });
+    } catch {}
+    return tenantId;
+  }
+
+  async getTenantByRegistrationDomain(domain: string): Promise<string> {
+    let tenantId = null;
+    try {
+      tenantId = await this.http.get<string>(`/system-management/tenants/id-from-registration-domain?registrationDomain=${domain}`, { globalHandler: false });
+    } catch {}
+    return tenantId;
   }
 }
