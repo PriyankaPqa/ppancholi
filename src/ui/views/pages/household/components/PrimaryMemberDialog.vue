@@ -10,14 +10,22 @@
       persistent
       show-close
       :submit-button-disabled="failed || (pristine && !changedAddress && !makePrimaryMode)"
+      scroll-anchor-id="dialogScrollAnchor"
       @close="onCancel"
       @cancel="onCancel"
       @submit="onSubmit">
       <v-row class="justify-center">
         <v-col cols="12" md="8">
-          <div v-if="makePrimaryMode" class="mb-4 fw-bold rc-body14">
-            {{ $t('household.profile.member.make_primary.missing_info', {name: memberName}) }}
+          <div v-if="makePrimaryMode" class="mb-6">
+            <span class=" fw-bold rc-body14"> {{ $t('household.profile.member.make_primary.missing_info', {name: memberName}) }} </span>
+            <h3 class="pt-6 pb-3">
+              {{ $t('registration.menu.privacy') }}
+            </h3>
+            <crc-privacy-statement :i18n="i18n" :registration-locations="registrationLocations" />
           </div>
+          <h3 v-if="makePrimaryMode" class="py-4">
+            {{ $t('registration.menu.personal_info') }}
+          </h3>
           <lib-personal-information
             :i18n="i18n"
             :member-props="member"
@@ -44,7 +52,7 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEqual from 'lodash/isEqual';
-import { PersonalInformation as LibPersonalInformation, CurrentAddressForm } from '@crctech/registration-lib';
+import { PersonalInformation as LibPersonalInformation, CurrentAddressForm, CrcPrivacyStatement } from '@crctech/registration-lib';
 import { RcDialog } from '@crctech/component-library';
 import {
   ContactInformation,
@@ -66,6 +74,7 @@ export default Vue.extend({
     LibPersonalInformation,
     RcDialog,
     CurrentAddressForm,
+    CrcPrivacyStatement,
   },
 
   props: {
@@ -87,6 +96,11 @@ export default Vue.extend({
     shelterLocations: {
       type: Array as () => IEventGenericLocation[],
       required: true,
+    },
+
+    registrationLocations: {
+      type: Array as () => IEventGenericLocation[],
+      default: null,
     },
   },
 
@@ -151,6 +165,7 @@ export default Vue.extend({
 
   methods: {
     onCancel() {
+      this.$storage.registration.mutations.setIsPrivacyAgreed(false);
       this.$emit('close');
     },
 
@@ -167,7 +182,9 @@ export default Vue.extend({
         }
 
         if (ok && this.makePrimaryMode) {
-          ok = !!await this.$services.households.makePrimary(this.$storage.registration.getters.householdCreate().id, this.member.id);
+          const household = this.$storage.registration.getters.householdCreate();
+          ok = !!await this.$services.households.makePrimary(household.id, this.member.id, household.consentInformation);
+          this.$storage.registration.mutations.setIsPrivacyAgreed(false);
         }
 
         if (ok && this.changedAddress) {
@@ -175,6 +192,8 @@ export default Vue.extend({
         }
 
         this.$emit('close');
+      } else {
+        helpers.scrollToFirstError('dialogScrollAnchor');
       }
     },
 

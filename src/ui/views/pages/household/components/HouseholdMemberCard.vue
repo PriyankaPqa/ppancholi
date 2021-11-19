@@ -114,6 +114,7 @@
       :shelter-locations="shelterLocations"
       :member-id="member.id"
       :make-primary-mode="!isPrimaryMember"
+      :registration-locations="registrationLocations"
       @cancel="closeAndReload"
       @close="closeAndReload" />
 
@@ -183,6 +184,13 @@ export default Vue.extend({
      * The shelter locations of active events in which the member has an active case file
      */
     shelterLocations: {
+      type: Array as ()=> IEventGenericLocation[],
+      default: null,
+    },
+    /**
+     * The active registration locations of events in which the member has an active case file
+     */
+    registrationLocations: {
       type: Array as ()=> IEventGenericLocation[],
       default: null,
     },

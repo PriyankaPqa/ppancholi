@@ -323,6 +323,26 @@ describe('PrimaryMemberDialog', () => {
         expect(wrapper.vm.submitAddressUpdate).toHaveBeenCalledTimes(1);
       });
 
+      it('calls the makePrimary service and the setIsPrivacyAgreed mutation if makePrimaryMode is true', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+            makePrimaryMode: true,
+          },
+          data() {
+            return { apiKey: '123', member: mockMember() };
+          },
+          mocks: { $storage: storage },
+        });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.onSubmit();
+        expect(wrapper.vm.$services.households.makePrimary)
+          .toHaveBeenCalledWith(householdCreate.id, wrapper.vm.member.id, householdCreate.consentInformation);
+        expect(storage.registration.mutations.setIsPrivacyAgreed).toHaveBeenCalledWith(false);
+      });
+
       it('emits close', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.onSubmit();

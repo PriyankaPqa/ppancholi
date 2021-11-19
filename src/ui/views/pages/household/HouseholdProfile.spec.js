@@ -1,5 +1,5 @@
 import { mockHouseholdCreate, Member } from '@crctech/registration-lib/src/entities/household-create';
-import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
+import { mockCombinedHousehold, mockHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
@@ -172,6 +172,52 @@ describe('HouseholdProfile.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('registrationLocations', () => {
+      it('returns the right data', () => {
+        const caseFiles = [mockHouseholdCaseFile(
+          {
+            caseFileId: 'id-1',
+            registrationLocations: [
+              { id: ' loc-id-1-active', status: EEventLocationStatus.Active },
+              { id: ' loc-id-2-inactive', status: EEventLocationStatus.Inactive },
+            ],
+          },
+        ),
+        mockHouseholdCaseFile(
+          {
+            registrationLocations: [
+              { id: ' loc-id-3-active', status: EEventLocationStatus.Active },
+              { id: ' loc-id-4-inactive', status: EEventLocationStatus.Inactive },
+            ],
+          },
+        ),
+
+        ];
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            activeCaseFiles() { return caseFiles; },
+          },
+          data() {
+            return {
+              events,
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.registrationLocations).toEqual([
+          { id: ' loc-id-1-active', status: EEventLocationStatus.Active }, { id: ' loc-id-3-active', status: EEventLocationStatus.Active },
+        ]);
+      });
+    });
+
     describe('shelterLocations', () => {
       it('returns the correct list of shelter locations', () => {
         wrapper = shallowMount(Component, {

@@ -125,6 +125,7 @@
             :member="household.primaryBeneficiary"
             is-primary-member
             :shelter-locations="shelterLocations"
+            :registration-locations="registrationLocations"
             @reload-household-create="fetchHouseholdData" />
 
           <household-member-card
@@ -133,6 +134,7 @@
             :member="member"
             :index="index"
             :shelter-locations="shelterLocations"
+            :registration-locations="registrationLocations"
             @reload-household-create="fetchHouseholdData" />
 
           <h5 v-if="inactiveCaseFiles.length" class="rc-heading-5 pt-4 pb-4">
@@ -226,7 +228,19 @@ export default mixins(household).extend({
   },
 
   computed: {
-    shelterLocations() {
+    registrationLocations() : IEventGenericLocation[] {
+      const locations:IEventGenericLocation[] = [];
+      this.activeCaseFiles.forEach((cf) => {
+        if (cf.registrationLocations?.length) {
+          const activeLocations = cf.registrationLocations.filter((s) => s.status === EEventLocationStatus.Active);
+          locations.push(...activeLocations);
+        }
+      });
+
+      return locations;
+    },
+
+    shelterLocations() :IEventGenericLocation[] {
       const locations:IEventGenericLocation[] = [];
       if (this.events) {
         this.events.forEach((e) => {
