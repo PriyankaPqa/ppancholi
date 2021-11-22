@@ -10,4 +10,12 @@ export class FeaturesService extends DomainBaseService<IFeatureEntity, uuid> imp
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, ENTITY);
   }
+
+  enableFeature(featureId: string): Promise<IFeatureEntity> {
+    return this.http.patch(`${this.baseUrl}/${featureId}/enable`);
+  }
+
+  disableFeature(featureId: string): Promise<IFeatureEntity> {
+    return this.http.patch(`${this.baseUrl}/${featureId}/disable`);
+  }
 }

@@ -11,6 +11,7 @@ import { ProgramsService } from '../programs/entity';
 import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { FinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
 import { MassActionService } from '@/services/mass-actions/entity';
+import { FeaturesService } from '../features/entity';
 
 jest.mock('../user-accounts/entity');
 jest.mock('../events/entity');
@@ -26,6 +27,7 @@ jest.mock('../user-accounts/entity');
 jest.mock('../financial-assistance-tables/entity');
 jest.mock('../financial-assistance-categories/entity');
 jest.mock('../mass-actions/entity');
+jest.mock('../features/entity');
 
 describe('Provider', () => {
   it('should instantiate AppUsersService', () => {
@@ -91,5 +93,10 @@ describe('Provider', () => {
   it('should instantiate MassActionService', () => {
     provider();
     expect(MassActionService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate FeaturesService', () => {
+    provider();
+    expect(FeaturesService.prototype.constructor).toBeCalled();
   });
 });

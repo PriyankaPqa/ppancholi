@@ -11,9 +11,15 @@ export interface IGettersMock extends IBaseGettersMock<IFeatureEntity, never> {
   feature: jest.Mock<IFeatureEntity>;
 }
 
-export interface IActions extends IBaseActions<IFeatureEntity, never, uuid> {}
+export interface IActions extends IBaseActions<IFeatureEntity, never, uuid> {
+  enableFeature(featureId: uuid): Promise<IFeatureEntity>;
+  disableFeature(featureId: uuid): Promise<IFeatureEntity>;
+}
 
-export interface IActionsMock extends IBaseActionsMock<IFeatureEntity, never> {}
+export interface IActionsMock extends IBaseActionsMock<IFeatureEntity, never> {
+  enableFeature: jest.Mock<IFeatureEntity>;
+  disableFeature: jest.Mock<IFeatureEntity>;
+}
 
 export interface IMutations extends IBaseMutations<IFeatureEntity, never> {}
 

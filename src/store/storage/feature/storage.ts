@@ -16,6 +16,10 @@ export class FeatureStorage extends Base<IFeatureEntity, never, uuid> implements
 
   private actions = {
     ...this.baseActions,
+
+    enableFeature: (featureId: uuid): Promise<IFeatureEntity> => this.store.dispatch(`${this.entityModuleName}/enableFeature`, featureId),
+
+    disableFeature: (featureId: uuid): Promise<IFeatureEntity> => this.store.dispatch(`${this.entityModuleName}/disableFeature`, featureId),
   };
 
   private mutations = {

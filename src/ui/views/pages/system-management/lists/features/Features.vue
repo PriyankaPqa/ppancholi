@@ -2,7 +2,7 @@
   <rc-page-content :title="$t('system_management.card.features.title')" :outer-scroll="true" :full-height="true">
     <v-row justify="center" class="mt-8">
       <v-col cols="10" lg="8">
-        <feature-wrapper v-for="feature in features" :key="feature.id" :feature="feature" />
+        <feature-wrapper v-for="feature in features" :key="feature.id" :feature="feature" class="mb-4" />
       </v-col>
     </v-row>
 

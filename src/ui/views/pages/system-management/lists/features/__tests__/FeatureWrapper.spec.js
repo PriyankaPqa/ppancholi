@@ -40,4 +40,30 @@ describe('FeatureWrapper.vue', () => {
       expect(description.text()).toBe(mockFeature.description.translation.en);
     });
   });
+
+  describe('>> Methods', () => {
+    describe('onChange', () => {
+      it('calls storage to enable feature', async () => {
+        await wrapper.vm.onChange(true);
+
+        expect(storage.feature.actions.enableFeature).toHaveBeenCalledTimes(1);
+        expect(storage.feature.actions.enableFeature).toHaveBeenCalledWith(mockFeature.id);
+      });
+
+      it('calls storage to disable feature', async () => {
+        await wrapper.vm.onChange(false);
+
+        expect(storage.feature.actions.disableFeature).toHaveBeenCalledTimes(1);
+        expect(storage.feature.actions.disableFeature).toHaveBeenCalledWith(mockFeature.id);
+      });
+
+      it('roll back data if request failed', async () => {
+        storage.feature.actions.enableFeature.mockReturnValueOnce(null);
+
+        await wrapper.vm.onChange(true);
+
+        expect(wrapper.vm.enabled).toBe(false);
+      });
+    });
+  });
 });

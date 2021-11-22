@@ -46,11 +46,12 @@ export default Vue.extend({
   methods: {
     async onChange(newValue: boolean) {
       this.loading = true;
-      this.$nextTick(async () => {
-        // TODO: EMISV2-2459
-        // System management - Feature flagging - Select pre-release features
-        await new Promise((r) => setTimeout(r, 500));
-        this.enabled = !newValue;
+      this.$nextTick(async () => { // Use nextTick to be able to roll back swich button if api call fails
+        const result = newValue
+          ? await this.$storage.feature.actions.enableFeature(this.feature.id)
+          : await this.$storage.feature.actions.disableFeature(this.feature.id);
+
+        if (!result) this.enabled = !newValue; // roll back
 
         this.loading = false;
       });

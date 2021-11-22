@@ -15,6 +15,9 @@ export class FeatureStorageMock extends BaseMock<IFeatureCombined, IFeatureEntit
 
   protected actions = {
     ...this.baseActions,
+
+    enableFeature: jest.fn(() => mockFeatureEntity()),
+    disableFeature: jest.fn(() => mockFeatureEntity()),
   };
 
   protected mutations = {

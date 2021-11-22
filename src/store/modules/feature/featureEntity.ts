@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ActionTree } from 'vuex';
+import { ActionContext, ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
@@ -36,5 +36,23 @@ export class FeatureEntityModule extends BaseModule<IFeatureEntity, uuid> {
 
   public actions = {
     ...this.baseActions,
+
+    enableFeature: async (context: ActionContext<IFeatureEntityState, IFeatureEntityState>, featureId: uuid): Promise<IFeatureEntity> => {
+      const result = await this.service.enableFeature(featureId);
+      if (result) {
+        context.commit('set', result);
+      }
+
+      return result;
+    },
+
+    disableFeature: async (context: ActionContext<IFeatureEntityState, IFeatureEntityState>, featureId: uuid): Promise<IFeatureEntity> => {
+      const result = await this.service.disableFeature(featureId);
+      if (result) {
+        context.commit('set', result);
+      }
+
+      return result;
+    },
   };
 }
