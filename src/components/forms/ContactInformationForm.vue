@@ -80,7 +80,15 @@
     </v-col>
 
     <v-col cols="12" sm="6">
-      <v-text-field-with-validation v-model="formCopy.email" :data-test="`${prefixDataTest}__email`" :rules="rules.email" :label="emailLabel" />
+      <validation-observer ref="email">
+        <v-text-field-with-validation
+          v-model="formCopy.email"
+          :loading="emailChecking"
+          :data-test="`${prefixDataTest}__email`"
+          :rules="rules.email"
+          :label="emailLabel"
+          @blur="validateEmail($event.target.value)" />
+      </validation-observer>
     </v-col>
   </v-row>
 </template>
@@ -88,10 +96,12 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { VTextFieldWithValidation, VSelectWithValidation, RcPhoneWithValidation } from '@crctech/component-library';
-import { IOptionItemData } from '../../types';
+import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import { TranslateResult } from 'vue-i18n';
+import { ValidationObserver } from 'vee-validate';
+import { ERegistrationMode, IOptionItemData } from '../../types';
 import { MAX_LENGTH_MD } from '../../constants/validations';
-import { IContactInformation } from '../../entities/value-objects/contact-information';
+import { IContactInformation, IValidateEmailResponse } from '../../entities/value-objects/contact-information';
 
 export default Vue.extend({
   name: 'ContactInformationForm',
@@ -139,11 +149,12 @@ export default Vue.extend({
       formCopy: null as IContactInformation,
       focusPhoneCounter: 0,
       triggerPhoneMessage: 3,
-      validateEmailTimeout: null,
-      customValidator: {
+      emailValidator: {
         isValid: true,
         messageKey: null,
       },
+      emailChecking: false,
+      previousEmail: '',
     };
   },
 
@@ -168,7 +179,7 @@ export default Vue.extend({
         },
         email: {
           required: this.emailRequired,
-          customValidator: this.customValidator,
+          customValidator: this.emailValidator,
         },
       };
     },
@@ -222,6 +233,14 @@ export default Vue.extend({
     isCRCRegistration(): boolean {
       return this.$storage.registration.getters.isCRCRegistration();
     },
+
+    emailAlreadyExistMessage(): TranslateResult {
+      const emailAlreadyExists = 'errors.the-email-provided-already-exists-in-the-system';
+      if (this.isCRCRegistration) {
+        return this.$t(`${emailAlreadyExists}.crc-registration`);
+      }
+      return this.$t(`${emailAlreadyExists}.self-registration`, { phoneNumber: this.$storage.registration.getters.event().responseDetails.assistanceNumber });
+    },
   },
 
   watch: {
@@ -229,31 +248,6 @@ export default Vue.extend({
       deep: true,
       handler(form: IContactInformation) {
         this.$emit('change', form);
-      },
-    },
-
-    'formCopy.email': {
-      async handler(newVal) {
-        clearTimeout(this.validateEmailTimeout);
-        this.formCopy.emailValidatedByBackend = !newVal;
-        this.validateEmailTimeout = setTimeout(async () => {
-          if (newVal) {
-            const result = await this.$services.households.validateEmail({ emailAddress: newVal, personId: this.personId });
-            this.customValidator = {
-              isValid: result.emailIsValid,
-              messageKey: result.emailIsValid ? null : result.errors[0].code,
-            };
-
-            this.formCopy.emailValidatedByBackend = this.customValidator.isValid;
-
-            const emailAreadyExists = 'errors.the-email-provided-already-exists-in-the-system';
-            if (this.customValidator.messageKey === emailAreadyExists) {
-              this.customValidator.messageKey = this.isCRCRegistration
-                ? this.$t(`${emailAreadyExists}.crc-registration`)
-                : this.$t(`${emailAreadyExists}.self-registration`, { phoneNumber: this.$storage.registration.getters.event().responseDetails.assistanceNumber });
-            }
-          }
-        }, 500);
       },
     },
   },
@@ -280,6 +274,49 @@ export default Vue.extend({
     incrementFocusPhoneCounter() {
       this.focusPhoneCounter += 1;
     },
+
+    async validateEmail(email: string) {
+      if (email && email !== this.previousEmail) {
+        this.previousEmail = email;
+
+        let recaptchaToken = null;
+        let registrationType = ERegistrationMode.CRC;
+
+        if (!this.isCRCRegistration) {
+          await this.$recaptchaLoaded();
+          recaptchaToken = await this.$recaptcha('validateEmail');
+          registrationType = ERegistrationMode.Self;
+        }
+
+        this.emailChecking = true;
+
+        const result = await this.$services.households.validateEmail({
+          emailAddress: email,
+          personId: this.personId,
+          registrationType,
+          recaptchaToken,
+        });
+
+        this.emailChecking = false;
+
+        this.formCopy.emailValidatedByBackend = result.emailIsValid;
+        this.setEmailValidator(result);
+        (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
+      }
+    },
+
+    setEmailValidator(result: IValidateEmailResponse) {
+      this.emailValidator.isValid = result.emailIsValid;
+
+      const error = result.emailIsValid ? null : result.errors[0].code;
+
+      if (error === 'errors.the-email-provided-already-exists-in-the-system') {
+        this.emailValidator.messageKey = this.emailAlreadyExistMessage;
+      } else {
+        this.emailValidator.messageKey = error;
+      }
+    },
+
   },
 });
 </script>

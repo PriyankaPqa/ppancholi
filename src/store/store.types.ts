@@ -13,4 +13,6 @@ export type IState = IRootState;
 export interface IStore<S> extends Store<S> {
   // eslint-disable-next-line
   $services: any;
+  // eslint-disable-next-line
+  _vm?: any;
 }

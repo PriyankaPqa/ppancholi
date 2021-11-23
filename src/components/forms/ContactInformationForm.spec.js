@@ -6,6 +6,7 @@ import {
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './ContactInformationForm.vue';
+import { ERegistrationMode } from '../../types';
 
 const localVue = createLocalVue();
 
@@ -19,6 +20,7 @@ describe('ContactInformationForm.vue', () => {
         form: mockContactInformation(),
         preferredLanguagesItems: mockPreferredLanguages(),
         primarySpokenLanguagesItems: mockPrimarySpokenLanguages(),
+        personId: 'personId',
       },
     });
   });
@@ -95,7 +97,7 @@ describe('ContactInformationForm.vue', () => {
 
       test('email', async () => {
         await wrapper.setData({
-          customValidator: {
+          emailValidator: {
             isValid: true,
             messageKey: 'messageKey',
           },
@@ -319,20 +321,6 @@ describe('ContactInformationForm.vue', () => {
         const element = wrapper.findDataTest('personalInfo__email');
         expect(element.props('rules')).toEqual(wrapper.vm.rules.email);
       });
-
-      it('calls backend to validate', async () => {
-        wrapper.vm.$services.households.validateEmail = jest.fn(() => ({ emailIsValid: true }));
-
-        await wrapper.setData({
-          formCopy: {
-            email: 'email',
-          },
-        });
-
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledWith({ emailAddress: 'email', personId: null });
-      });
     });
   });
 
@@ -389,6 +377,118 @@ describe('ContactInformationForm.vue', () => {
         const element = wrapper.findDataTest('personalInfo__alternatePhoneNumber');
         element.vm.$emit('focusout');
         expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1);
+      });
+    });
+
+    describe('validateEmail', () => {
+      beforeEach(() => {
+        wrapper.vm.$refs = {
+          email: {
+            validate: jest.fn(),
+          },
+        };
+        wrapper.vm.setEmailValidator = jest.fn();
+      });
+      it('should do nothing if email is empty', async () => {
+        await wrapper.vm.validateEmail('');
+        expect(wrapper.vm.setEmailValidator).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledTimes(0);
+      });
+
+      it('should do nothing if new email is the same as previous one', async () => {
+        await wrapper.setData({ previousEmail: 'test@test.ca' });
+        await wrapper.vm.validateEmail('test@test.ca');
+        expect(wrapper.vm.setEmailValidator).toHaveBeenCalledTimes(0);
+        expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledTimes(0);
+      });
+
+      it('should set emailValidatedByBackend', async () => {
+        await wrapper.setData({
+          formCopy: {
+            emailValidatedByBackend: false,
+          },
+        });
+        await wrapper.vm.validateEmail('test@test.ca');
+        expect(wrapper.vm.formCopy.emailValidatedByBackend).toBe(true);
+      });
+
+      it('should trigger validate email with proper params for CRC Registration', async () => {
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => true);
+        await wrapper.vm.validateEmail('test@test.ca');
+
+        expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledWith({
+          emailAddress: 'test@test.ca',
+          recaptchaToken: null,
+          registrationType: ERegistrationMode.CRC,
+          personId: 'personId',
+        });
+        expect(wrapper.vm.formCopy.emailValidatedByBackend).toBe(true);
+      });
+
+      it('should trigger validate email with proper params for Self Registration', async () => {
+        wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
+        wrapper.vm.$recaptchaLoaded = jest.fn();
+        wrapper.vm.$recaptcha = jest.fn(() => 'token');
+        await wrapper.vm.validateEmail('test@test.ca');
+
+        expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledWith({
+          emailAddress: 'test@test.ca',
+          recaptchaToken: 'token',
+          registrationType: ERegistrationMode.Self,
+          personId: 'personId',
+        });
+        expect(wrapper.vm.formCopy.emailValidatedByBackend).toBe(true);
+      });
+
+      it('should call setEmailValidator method', async () => {
+        const result = {
+          emailIsValid: true,
+          errors: [],
+        };
+
+        await wrapper.vm.validateEmail('test@test.ca');
+        expect(wrapper.vm.setEmailValidator).toHaveBeenCalledWith(result);
+      });
+
+      it('should be triggered when blurring email field', () => {
+        wrapper.vm.validateEmail = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__email');
+        element.vm.$emit('blur', { target: { value: 'email' } });
+
+        expect(wrapper.vm.validateEmail).toHaveBeenLastCalledWith('email');
+      });
+    });
+
+    describe('setEmailValidator', () => {
+      it('should set isValid', () => {
+        const result = {
+          emailIsValid: false,
+          errors: [{ code: 'errorCode' }],
+        };
+        wrapper.vm.setEmailValidator(result);
+
+        expect(wrapper.vm.emailValidator.isValid).toBe(false);
+      });
+
+      it('should set custom messageKey if email already exists', () => {
+        const result = {
+          emailIsValid: false,
+          errors: [{ code: 'errors.the-email-provided-already-exists-in-the-system' }],
+        };
+
+        wrapper.vm.setEmailValidator(result);
+
+        expect(wrapper.vm.emailValidator.messageKey).toBe(wrapper.vm.emailAlreadyExistMessage);
+      });
+
+      it('should set messageKey otherwise', () => {
+        const result = {
+          emailIsValid: false,
+          errors: [{ code: 'errorCode' }],
+        };
+        wrapper.vm.setEmailValidator(result);
+
+        expect(wrapper.vm.emailValidator.messageKey).toBe('errorCode');
       });
     });
   });

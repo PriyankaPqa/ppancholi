@@ -22,7 +22,7 @@ export interface IHouseholdsService {
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   getIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
   getPerson(id: uuid): Promise<IMemberEntity>;
-  submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
+  submitRegistration({ household, eventId, recaptchaToken }: {household: IHouseholdCreate; eventId: string; recaptchaToken: string}): Promise<IHouseholdEntity>;
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
   updatePersonContactInformation(id: string,
       payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IHouseholdEntity> | false;
