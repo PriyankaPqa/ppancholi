@@ -54,7 +54,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import {
-  mockMember, mockAddress, mockContactInformation, mockCampGround, mockAdditionalMember,
+  mockMember, mockAddress, mockContactInformation, mockCampGround,
 } from '@crctech/registration-lib/src/entities/household-create';
 import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
 
@@ -98,7 +98,6 @@ export default Vue.extend({
       this.$storage.registration.mutations.setContactInformation(mockContactInformation());
       this.$storage.registration.mutations.setHomeAddress(mockAddress());
       this.$storage.registration.mutations.setCurrentAddress(mockCampGround());
-      this.$storage.registration.mutations.addHouseholdMember(mockAdditionalMember(), false);
     },
   },
 });

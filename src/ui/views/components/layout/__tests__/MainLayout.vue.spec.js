@@ -1,6 +1,10 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
+import { mockEvent } from '@crctech/registration-lib/src/entities/event';
 import Component from '../MainLayout.vue';
+
+const storage = mockStorage();
+storage.registration.actions.fetchEvent = jest.fn(() => mockEvent());
 
 describe('MainLayout.vue', () => {
   const localVue = createLocalVue();
@@ -8,13 +12,15 @@ describe('MainLayout.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
     wrapper = shallowMount(Component, {
       localVue,
       mocks: {
-        $storage: mockStorage(),
+        $storage: storage,
       },
     });
+
+    await wrapper.setData({ fetchingData: false });
+    jest.clearAllMocks();
   });
 
   describe('Template', () => {
@@ -31,20 +37,34 @@ describe('MainLayout.vue', () => {
     });
 
     describe('Methods', () => {
+      describe('verifyLocation', () => {
+        it('gets the tenant from the current url', async () => {
+          wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' } };
+          await wrapper.vm.verifyLocation();
+          expect(wrapper.vm.$services.publicApi.getTenantByRegistrationDomain).toHaveBeenCalledWith(wrapper.vm.getCurrentDomain());
+        });
+
+        it('gets the event from storage', async () => {
+          wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' } };
+          await wrapper.vm.verifyLocation();
+          expect(storage.registration.actions.fetchEvent).toHaveBeenCalledWith('lang', 'reg');
+        });
+      });
+
       describe('fetchData', () => {
         it('calls fetchGenders', async () => {
           await wrapper.vm.fetchData();
-          expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalledTimes(2);
+          expect(wrapper.vm.$storage.registration.actions.fetchGenders).toHaveBeenCalled();
         });
 
         it('calls fetchPreferredLanguages', async () => {
           await wrapper.vm.fetchData();
-          expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalledTimes(2);
+          expect(wrapper.vm.$storage.registration.actions.fetchPreferredLanguages).toHaveBeenCalled();
         });
 
         it('calls fetchPrimarySpokenLanguages', async () => {
           await wrapper.vm.fetchData();
-          expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalledTimes(2);
+          expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalled();
         });
       });
     });
