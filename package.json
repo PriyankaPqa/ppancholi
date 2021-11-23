@@ -58,7 +58,7 @@
     "typings/**"
   ],
   "dependencies": {
-    "@crctech/component-library": "^1.0.135",
+    "@crctech/component-library": "1.0.178",
     "axios": "^0.24.0",
     "camelcase-keys": "^6.2.2",
     "moment": "^2.29.1",
