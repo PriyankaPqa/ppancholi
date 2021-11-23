@@ -83,7 +83,9 @@ describe('HouseholdCard.vue', () => {
             moveSubmitted: false,
           },
           computed: {
-            members() { return [mockMember()]; },
+            members() {
+              return [mockMember()];
+            },
           },
           mocks: { $storage: storage },
         });
@@ -102,7 +104,9 @@ describe('HouseholdCard.vue', () => {
             moveSubmitted: false,
           },
           computed: {
-            members() { return [mockMember({ id: '1' }), mockMember({ id: '2' })]; },
+            members() {
+              return [mockMember({ id: '1' }), mockMember({ id: '2' })];
+            },
           },
           mocks: { $storage: storage },
         });
@@ -121,7 +125,9 @@ describe('HouseholdCard.vue', () => {
             moveSubmitted: false,
           },
           computed: {
-            members() { return [mockMember({ id: '1' }), mockMember({ id: '2' })]; },
+            members() {
+              return [mockMember({ id: '1' }), mockMember({ id: '2' })];
+            },
           },
           mocks: { $storage: storage },
         });
@@ -143,7 +149,9 @@ describe('HouseholdCard.vue', () => {
             enabledMove: false,
           },
           computed: {
-            members() { return [mockMember()]; },
+            members() {
+              return [mockMember()];
+            },
           },
           mocks: { $storage: storage },
         });
@@ -167,7 +175,9 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
           },
           computed: {
-            members() { return members; },
+            members() {
+              return members;
+            },
           },
           mocks: { $storage: storage },
         });
@@ -191,7 +201,9 @@ describe('HouseholdCard.vue', () => {
             enabledMove: true,
           },
           computed: {
-            members() { return [mockMember({ id: '1' })]; },
+            members() {
+              return [mockMember({ id: '1' })];
+            },
           },
           mocks: { $storage: storage },
         });
@@ -381,7 +393,11 @@ describe('HouseholdCard.vue', () => {
                 newAddress: address,
               };
             },
-            computed: { members() { return [member]; } },
+            computed: {
+              members() {
+                return [member];
+              },
+            },
             mocks: { $storage: storage },
           });
           wrapper.vm.$refs.addressForm.validate = jest.fn(() => true);
@@ -422,7 +438,11 @@ describe('HouseholdCard.vue', () => {
               newAddress: address,
             };
           },
-          computed: { members() { return [member]; } },
+          computed: {
+            members() {
+              return [member];
+            },
+          },
         });
 
         await wrapper.vm.resetSelectNewAddress();

@@ -384,9 +384,13 @@ export default Vue.extend({
     allNames(): IMultilingual[] {
       const names: IMultilingual[] = [];
       this.items.forEach((item) => {
-        if (item.id !== this.item.id) names.push(item.name);
+        if (item.id !== this.item.id) {
+          names.push(item.name);
+        }
         item.subitems.forEach((sub) => {
-          if (sub.id !== this.item.id) names.push(sub.name);
+          if (sub.id !== this.item.id) {
+            names.push(sub.name);
+          }
         });
       });
 

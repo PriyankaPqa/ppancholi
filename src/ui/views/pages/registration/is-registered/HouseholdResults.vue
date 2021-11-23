@@ -244,7 +244,9 @@ export default mixins(household, householdResults).extend({
     },
 
     hasAdditionalMember(household: IFormattedHousehold) {
-      if (household.additionalMembers) return household.additionalMembers.length > 0;
+      if (household.additionalMembers) {
+        return household.additionalMembers.length > 0;
+      }
       return false;
     },
 

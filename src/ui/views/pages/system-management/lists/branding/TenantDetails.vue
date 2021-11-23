@@ -173,7 +173,9 @@ export default Vue.extend({
 
       const result = await this.$storage.branding.actions.updateTenantDetails(editTenantDetailsRequest);
 
-      if (result) this.exitEditMode();
+      if (result) {
+        this.exitEditMode();
+      }
 
       this.loading = false;
     },

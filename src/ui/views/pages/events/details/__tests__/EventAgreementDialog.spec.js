@@ -442,7 +442,9 @@ describe('EventAgreementDialog.vue', () => {
       });
 
       it('calls handleSubmitError if there is an error', async () => {
-        jest.spyOn(wrapper.vm, 'submitAgreement').mockImplementation(() => { throw new Error(); });
+        jest.spyOn(wrapper.vm, 'submitAgreement').mockImplementation(() => {
+          throw new Error();
+        });
         jest.spyOn(wrapper.vm, 'handleSubmitError').mockImplementation(() => { });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 

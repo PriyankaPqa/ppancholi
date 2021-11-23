@@ -130,8 +130,12 @@ export default Vue.extend({
 
     backgroundColor(): Record<string, unknown> {
       let color = colors.grey.lighten4;
-      if (this.toStatus === CaseFileStatus.Open) color = colors.chips.green_pale;
-      if (this.toStatus === CaseFileStatus.Closed) color = colors.chips.red_pale;
+      if (this.toStatus === CaseFileStatus.Open) {
+        color = colors.chips.green_pale;
+      }
+      if (this.toStatus === CaseFileStatus.Closed) {
+        color = colors.chips.red_pale;
+      }
       return { backgroundColor: color };
     },
 

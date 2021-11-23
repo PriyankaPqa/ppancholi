@@ -194,12 +194,16 @@ export default mixins(caseFileDetail).extend({
     },
 
     paymentGroup() : IFinancialAssistancePaymentGroup {
-      if (!this.financialAssistance) return null;
+      if (!this.financialAssistance) {
+        return null;
+      }
       return this.financialAssistance.groups.filter((g) => g.lines.filter((l) => l.id === this.financialAssistancePaymentLineId)[0])[0];
     },
 
     paymentLine() : IFinancialAssistancePaymentLine {
-      if (!this.paymentGroup) return null;
+      if (!this.paymentGroup) {
+        return null;
+      }
       return this.paymentGroup.lines.filter((l) => l.id === this.financialAssistancePaymentLineId)[0];
     },
 
@@ -212,12 +216,16 @@ export default mixins(caseFileDetail).extend({
     },
 
     subItem(): IFinancialAssistanceTableSubItem {
-      if (!this.mainItem) return null;
+      if (!this.mainItem) {
+        return null;
+      }
       return this.mainItem.subItems.find((s) => s.subCategory.id === this.paymentLine.subCategoryId);
     },
 
     title(): string {
-      if (!this.subItem) return '';
+      if (!this.subItem) {
+        return '';
+      }
       return `${this.$m(this.mainItem.mainCategory.name)} > ${this.$m(this.subItem.subCategory.name)}`;
     },
 

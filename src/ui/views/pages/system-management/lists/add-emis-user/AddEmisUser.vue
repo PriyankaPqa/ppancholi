@@ -325,7 +325,9 @@ export default Vue.extend({
     },
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    debounceSearch: _debounce(function func(this:any, value) { this.findUsers(value); }, 500),
+    debounceSearch: _debounce(function func(this:any, value) {
+      this.findUsers(value);
+    }, 500),
 
     async submit() {
       if (this.isSubmitAllowed) {

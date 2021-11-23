@@ -447,7 +447,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
-      if (!isValid) return;
+      if (!isValid) {
+        return;
+      }
 
       this.setPrimaryContactTeam();
       if (!this.isEditMode) {

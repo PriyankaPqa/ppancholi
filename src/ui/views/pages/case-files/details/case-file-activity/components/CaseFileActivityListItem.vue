@@ -194,7 +194,9 @@ export default Vue.extend({
       const reasonString = this.$m((this.item.details.reason as IIdMultilingualName).name);
       const rationaleString = this.item.details.rationale as string;
       let body = `${this.$t('caseFileActivity.activityList.status.reason')}: ${reasonString}`;
-      if (rationaleString) body = body.concat(`\n${this.$t('caseFileActivity.activityList.status.rationale')}: ${rationaleString}`);
+      if (rationaleString) {
+        body = body.concat(`\n${this.$t('caseFileActivity.activityList.status.rationale')}: ${rationaleString}`);
+      }
       return { title, body };
     },
 

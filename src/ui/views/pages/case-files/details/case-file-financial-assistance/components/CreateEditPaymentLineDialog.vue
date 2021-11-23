@@ -277,7 +277,9 @@ export default mixins(caseFileDetail).extend({
           this.financialAssistance.groups.filter((g) => g.groupingInformation.modality === EPaymentModalities.ETransfer),
         );
         // we remove the currentLine if it was also an etransfer - we are editing it
-        if (this.currentGroup?.groupingInformation?.modality === EPaymentModalities.ETransfer) total -= this.currentLine.amount;
+        if (this.currentGroup?.groupingInformation?.modality === EPaymentModalities.ETransfer) {
+          total -= this.currentLine.amount;
+        }
         return total + Number(this.currentPaymentLine.amount) > 10000
           ? this.$t('caseFile.financialAssistance.ETransfer.moreThanX', { maximumAmount: 10000 }) as string : null;
       }
@@ -423,12 +425,16 @@ export default mixins(caseFileDetail).extend({
     },
 
     categorySelected(resetRelatedFields = true) {
-      if (resetRelatedFields) this.currentPaymentLine.documentReceived = false;
+      if (resetRelatedFields) {
+        this.currentPaymentLine.documentReceived = false;
+      }
       if (resetRelatedFields && this.fixedAmount !== (this.subItem?.amountType === EFinancialAmountModes.Fixed)) {
         this.currentPaymentLine.amount = null;
       }
       this.fixedAmount = this.subItem?.amountType === EFinancialAmountModes.Fixed;
-      if (this.fixedAmount) this.currentPaymentLine.amount = this.subItem?.maximumAmount;
+      if (this.fixedAmount) {
+        this.currentPaymentLine.amount = this.subItem?.maximumAmount;
+      }
     },
 
     resetPayeeInformation() {
@@ -442,7 +448,9 @@ export default mixins(caseFileDetail).extend({
     },
 
     async onCancel() {
-      if (await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty)) this.$emit('cancelChange');
+      if (await helpers.confirmBeforeLeaving(this, (this.$refs.form as VForm).flags.dirty)) {
+        this.$emit('cancelChange');
+      }
     },
   },
 });

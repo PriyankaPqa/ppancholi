@@ -19,7 +19,6 @@ import {
 } from '@/types';
 import moment from '@/ui/plugins/moment';
 import { MAX_LENGTH_MD, MAX_LENGTH_LG } from '@/constants/validations';
-import { localStorageKeys } from '@/constants/localStorage';
 import { mockStorage } from '@/store/storage';
 import Component from '../EventForm.vue';
 
@@ -75,13 +74,6 @@ describe('EventForm.vue', () => {
     });
 
     it('sets the right value from store into prefixRegistrationLink', async () => {
-      global.localStorage = {
-        store: {},
-        getItem: (key) => this.store[key],
-        setItem: (key, value) => { this.store[key] = value; },
-      };
-      global.localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, 'https://foo.test');
-
       wrapper = shallowMount(Component, {
         localVue: createLocalVue(),
         propsData: {
@@ -95,7 +87,7 @@ describe('EventForm.vue', () => {
         },
       });
 
-      expect(wrapper.vm.prefixRegistrationLink).toEqual('https://foo.test/en/registration/');
+      expect(wrapper.vm.prefixRegistrationLink).toEqual('https://registration domain en/en/registration/');
     });
   });
 
@@ -668,6 +660,7 @@ describe('EventForm.vue', () => {
                 fetchRegions: jest.fn(() => mockRegionData()),
               },
             },
+            tenantSettings: storage.tenantSettings,
           },
         },
       });
@@ -737,6 +730,7 @@ describe('EventForm.vue', () => {
                 fetchRegions: jest.fn(() => mockRegionData()),
               },
             },
+            tenantSettings: storage.tenantSettings,
           },
         },
       });
@@ -828,6 +822,22 @@ describe('EventForm.vue', () => {
         store: {
           ...mockUserStateLevel(6),
         },
+        mocks: {
+          $storage: {
+            event: {
+              getters: {
+                eventTypes: jest.fn(() => mockOptionItemData().map((e) => new OptionItem(e))),
+              },
+              actions: {
+                fetchEventTypes: jest.fn(() => mockOptionItemData()),
+                fetchAll: jest.fn(() => mockCombinedEvents()),
+                fetchOtherProvinces: jest.fn(() => mockOtherProvinceData()),
+                fetchRegions: jest.fn(() => mockRegionData()),
+              },
+            },
+            tenantSettings: storage.tenantSettings,
+          },
+        },
       });
       wrapper.vm.assistanceNumber = {
         number: '',
@@ -913,6 +923,7 @@ describe('EventForm.vue', () => {
                 fetchRegions: jest.fn(() => mockRegionData()),
               },
             },
+            tenantSettings: storage.tenantSettings,
           },
         },
       });

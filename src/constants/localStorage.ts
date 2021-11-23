@@ -2,9 +2,6 @@ export const localStorageKeys = {
   accessToken: {
     name: 'aad-access-token',
   },
-  prefixRegistrationLink: {
-    name: 'prefix-registration-link',
-  },
   googleMapsAPIKey: {
     name: 'google-maps-api-key',
   },
@@ -13,8 +10,5 @@ export const localStorageKeys = {
   },
   last401Redirect: {
     name: 'last-401-redirect',
-  },
-  lastTenantId: {
-    name: 'last-tenant-id',
   },
 };

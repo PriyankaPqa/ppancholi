@@ -60,10 +60,18 @@ export default Vue.extend({
 
   computed: {
     massActionTypeText(): string {
-      if (this.massActionType === MassActionType.FinancialAssistance) return 'massActions.type.financialAssistance';
-      if (this.massActionType === MassActionType.ImportValidationOfImpactStatus) return 'massActions.type.importValidationImpactStatus';
-      if (this.massActionType === MassActionType.ImportPaymentStatuses) return 'massActions.type.importPaymentStatus';
-      if (this.massActionType === MassActionType.GenerateFundingRequest) return 'massActions.type.fundingRequest';
+      if (this.massActionType === MassActionType.FinancialAssistance) {
+        return 'massActions.type.financialAssistance';
+      }
+      if (this.massActionType === MassActionType.ImportValidationOfImpactStatus) {
+        return 'massActions.type.importValidationImpactStatus';
+      }
+      if (this.massActionType === MassActionType.ImportPaymentStatuses) {
+        return 'massActions.type.importPaymentStatus';
+      }
+      if (this.massActionType === MassActionType.GenerateFundingRequest) {
+        return 'massActions.type.fundingRequest';
+      }
       return '';
     },
   },

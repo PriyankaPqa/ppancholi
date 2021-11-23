@@ -261,7 +261,9 @@ export default Vue.extend({
      * Disable the add sub item button if another item is being edited, or the item already has the Default sub item
      */
     disableAddSubItem(): Array<boolean> | boolean {
-      if (this.isOperating) return true;
+      if (this.isOperating) {
+        return true;
+      }
       return this.items.map((item) => item.subItems && item.subItems.length && item.subItems[0].subCategory.id === '-1');
     },
 

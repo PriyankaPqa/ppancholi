@@ -194,7 +194,9 @@ export default mixins(fileUpload).extend({
     },
 
     statusColor(): string {
-      if (this.localDocument.documentStatus === DocumentStatus.Current) return 'status_success white--text';
+      if (this.localDocument.documentStatus === DocumentStatus.Current) {
+        return 'status_success white--text';
+      }
       return 'status_green_pale black--text';
     },
 

@@ -149,7 +149,9 @@ export default Vue.extend({
         this.errorMessages = [];
       } else {
         // We check if the size of the file does not exceed the limit
-        if (!this.isFileSizeOK(file.size)) this.errorMessages.push(`${this.errorSize} ${helpers.formatBytes(this.maxSize as number, 2)}`);
+        if (!this.isFileSizeOK(file.size)) {
+          this.errorMessages.push(`${this.errorSize} ${helpers.formatBytes(this.maxSize as number, 2)}`);
+        }
         // We check if extension of the file is authorized
         if (!this.isFileExtensionAuthorized(this.getFileExtension(file))) {
           this.errorMessages.push(`${this.allowedExtensions.join(', ')} ${this.errorExtensions}`);

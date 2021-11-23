@@ -203,7 +203,9 @@ export default Vue.extend({
     },
 
     summary(): CaseFileSummary {
-      if (!this.caseFile?.entity?.id || !this.caseFile?.metadata?.id) return null;
+      if (!this.caseFile?.entity?.id || !this.caseFile?.metadata?.id) {
+        return null;
+      }
       const s = {} as CaseFileSummary;
       const cf = this.caseFile.entity;
       const cfm = this.caseFile.metadata;

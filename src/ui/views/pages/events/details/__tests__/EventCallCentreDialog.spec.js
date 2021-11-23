@@ -26,7 +26,9 @@ describe('EventCallCentreDialog.vue', () => {
           id: '',
         },
         computed: {
-          statusName() { return 'eventSummary.status.Active'; },
+          statusName() {
+            return 'eventSummary.status.Active';
+          },
           rules() {
             return {
               name: {
@@ -408,7 +410,9 @@ describe('EventCallCentreDialog.vue', () => {
       });
 
       it('calls handleSubmitError if there is an error', async () => {
-        jest.spyOn(wrapper.vm, 'submitCallCentre').mockImplementation(() => { throw new Error(); });
+        jest.spyOn(wrapper.vm, 'submitCallCentre').mockImplementation(() => {
+          throw new Error();
+        });
         jest.spyOn(wrapper.vm, 'handleSubmitError').mockImplementation(() => { });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
 

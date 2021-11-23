@@ -29,7 +29,9 @@ describe('EventAgreementSection.vue', () => {
           ...mockUserStateLevel(5),
         },
         computed: {
-          agreementTypeName() { return 'agreement-type-name'; },
+          agreementTypeName() {
+            return 'agreement-type-name';
+          },
         },
       });
     });
@@ -207,7 +209,9 @@ describe('EventAgreementSection.vue', () => {
             index: 0,
           },
           computed: {
-            agreementTypeName() { return 'agreement-type-name'; },
+            agreementTypeName() {
+              return 'agreement-type-name';
+            },
           },
         });
         expect(wrapper.vm.infoData).toEqual({

@@ -503,7 +503,9 @@ describe('AddEmisUser.vue', () => {
 
       it('returns true if all selected users have roles', () => {
         wrapper.vm.selectedUsers = usersTestData();
-        wrapper.vm.selectedUsers.forEach((user) => { user.roles = [mockRolesData[0]]; });
+        wrapper.vm.selectedUsers.forEach((user) => {
+          user.roles = [mockRolesData[0]];
+        });
         expect(wrapper.vm.allSelectedUsersHaveRole()).toBeTruthy();
       });
     });

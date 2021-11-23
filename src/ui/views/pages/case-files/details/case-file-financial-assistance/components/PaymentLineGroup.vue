@@ -194,7 +194,9 @@ export default Vue.extend({
 
     isInactive(): boolean {
       if (this.transactionApprovalStatus === ApprovalStatus.New && this.program
-        && this.program.paymentModalities.indexOf(this.paymentGroup.groupingInformation.modality) === -1) return true;
+        && this.program.paymentModalities.indexOf(this.paymentGroup.groupingInformation.modality) === -1) {
+        return true;
+      }
       return false;
     },
 
@@ -286,7 +288,9 @@ export default Vue.extend({
         default:
           statusArr = [];
       }
-      if (statusArr.indexOf(currentStatus) === -1) statusArr = [currentStatus, ...statusArr];
+      if (statusArr.indexOf(currentStatus) === -1) {
+        statusArr = [currentStatus, ...statusArr];
+      }
 
       return statusArr.filter((s) => s);
     },

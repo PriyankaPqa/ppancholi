@@ -81,7 +81,9 @@ class HttpClient implements IHttpClient {
 
   // By default the global handler is ON. Need to pass { globalHandler: false } to turn in off
   private isGlobalHandlerEnabled(config = { globalHandler: true }) {
-    if (config.globalHandler === undefined) return true;
+    if (config.globalHandler === undefined) {
+      return true;
+    }
     return config.globalHandler;
   }
 
@@ -90,7 +92,9 @@ class HttpClient implements IHttpClient {
       // Add what you want when request is successful. It is applied globally except when { globalHandler: false }
     }
     if (response?.headers && response.headers['content-disposition']
-      && response.headers['content-disposition'].toLowerCase().indexOf('attachment') > -1) return response;
+      && response.headers['content-disposition'].toLowerCase().indexOf('attachment') > -1) {
+      return response;
+    }
     return camelKeys(response, { recursive: true, recursiveInArray: true }) as AxiosResponse<Record<string, unknown>>;
   }
 
@@ -124,7 +128,9 @@ class HttpClient implements IHttpClient {
   }
 
   private async responseErrorHandler(error: any) {
-    if (!error || !error.response) return false;
+    if (!error || !error.response) {
+      return false;
+    }
 
     if (error.response.status === 401) {
       await this.error401Handler();

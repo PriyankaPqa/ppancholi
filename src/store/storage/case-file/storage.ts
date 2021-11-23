@@ -22,7 +22,9 @@ export class CaseFileStorage
   protected combinedCollections(entities: Array<ICaseFileEntity>, metadata: Array<ICaseFileMetadata>): Array<ICaseFileCombined> {
     const result = super.combinedCollections(entities, metadata) as Array<ICaseFileCombined>;
     if (result) {
-      result.forEach((e) => { e.readonly = e.entity?.caseFileStatus !== CaseFileStatus.Open; });
+      result.forEach((e) => {
+        e.readonly = e.entity?.caseFileStatus !== CaseFileStatus.Open;
+      });
     }
     return result;
   }

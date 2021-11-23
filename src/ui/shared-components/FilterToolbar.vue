@@ -319,7 +319,9 @@ export default Vue.extend({
       const { key, operator, type } = filter;
       const { value } = filter;
 
-      if (type !== 'text') throw Error('only filter whose type is text can be processed here');
+      if (type !== 'text') {
+        throw Error('only filter whose type is text can be processed here');
+      }
 
       switch (operator) {
         case EFilterOperator.BeginsWith: // ex: FirstName:/Jo.*/

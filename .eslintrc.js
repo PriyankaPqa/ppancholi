@@ -50,6 +50,8 @@ module.exports = {
       allowModifiers: true,
     }],
     'no-underscore-dangle': 'off',
+    curly: ['error', 'all'],
+    'brace-style': [1, '1tbs', { allowSingleLine: false }],
   },
 
   parserOptions: {

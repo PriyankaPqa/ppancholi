@@ -450,7 +450,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       for (let i = 0; i < this.selectedItems.length; i += 1) {
         // we will do each request at a time because validation might conflict between each
         // eslint-disable-next-line no-await-in-loop
-        if (await this.$storage.financialAssistancePayment.actions.submitFinancialAssistancePayment(this.selectedItems[i])) nbSuccess += 1;
+        if (await this.$storage.financialAssistancePayment.actions.submitFinancialAssistancePayment(this.selectedItems[i])) {
+          nbSuccess += 1;
+        }
       }
       if (nbSuccess === this.selectedItems.length) {
         this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.multipleApprovalSubmitted', { nbSuccess }));

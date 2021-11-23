@@ -212,7 +212,9 @@ export default mixins(caseFileDetail).extend({
     },
 
     hasPhoneNumbers(): boolean {
-      if (!this.primaryBeneficiary) return false;
+      if (!this.primaryBeneficiary) {
+        return false;
+      }
       return !!(this.primaryBeneficiary.mobilePhoneNumber || this.primaryBeneficiary.homePhoneNumber || this.primaryBeneficiary.alternatePhoneNumber);
     },
 
@@ -221,7 +223,9 @@ export default mixins(caseFileDetail).extend({
     },
 
     primaryBeneficiaryFullName(): string {
-      if (!this.primaryBeneficiary) return '';
+      if (!this.primaryBeneficiary) {
+        return '';
+      }
       const { firstName, lastName } = this.primaryBeneficiary;
       return `${firstName} ${lastName}`;
     },

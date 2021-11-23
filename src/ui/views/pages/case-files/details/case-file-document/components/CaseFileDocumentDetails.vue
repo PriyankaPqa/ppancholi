@@ -100,7 +100,9 @@ export default mixins(caseFileDetail).extend({
     },
 
     category(): string {
-      if (!this.document?.category?.optionItemId) return null;
+      if (!this.document?.category?.optionItemId) {
+        return null;
+      }
       const types = this.$storage.caseFileDocument.getters.categories(false);
       const type = types.find((t) => t.id === this.document.category.optionItemId);
       if (type.isOther && this.document.category.specifiedOther) {

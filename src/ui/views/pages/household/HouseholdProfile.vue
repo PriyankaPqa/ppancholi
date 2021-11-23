@@ -293,7 +293,9 @@ export default mixins(household).extend({
 
     lastUpdated(): string {
       const entityTimestamp = this.householdData?.entity?.timestamp;
-      if (!entityTimestamp) return '';
+      if (!entityTimestamp) {
+        return '';
+      }
 
       const metadataTimestamp = this.householdData.metadata?.timestamp;
       let date: Moment;

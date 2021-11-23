@@ -201,7 +201,9 @@ export default mixins(individual).extend({
     },
 
     async next() {
-      if (!this.splitHousehold) return;
+      if (!this.splitHousehold) {
+        return;
+      }
 
       if (this.currentTab.id === 'confirmation') {
         this.closeSplit();

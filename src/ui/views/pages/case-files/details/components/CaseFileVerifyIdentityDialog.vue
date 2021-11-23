@@ -232,7 +232,9 @@ export default Vue.extend({
      * @public
      */
     async save() {
-      if (!this.mustSpecifyOther) this.form.specifiedOther = null;
+      if (!this.mustSpecifyOther) {
+        this.form.specifiedOther = null;
+      }
 
       const isValid = await (this.$refs.verifyIdentity as InstanceType<typeof ValidationObserver>).validate();
 

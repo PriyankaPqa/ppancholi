@@ -485,7 +485,9 @@ export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssist
     const itemsCopy = cloneDeep(items);
 
     const results = orderBy(itemsCopy.filter((item) => {
-      if (item.status === Status.Inactive && excludeDeleted) return false;
+      if (item.status === Status.Inactive && excludeDeleted) {
+        return false;
+      }
 
       item.subItems = orderBy(item.subItems.filter((subItem) => subItem.status === Status.Active || !excludeDeleted), 'status');
 

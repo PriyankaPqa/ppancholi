@@ -135,7 +135,9 @@ describe('>>> Team', () => {
       test('A primary contact status is required', () => {
         const team = new TeamEntity(mockCombinedTeams()[0].entity);
 
-        team.teamMembers.forEach((t) => { t.isPrimaryContact = false; });
+        team.teamMembers.forEach((t) => {
+          t.isPrimaryContact = false;
+        });
 
         expect(team.validate()).toContain('A primary contact team member is required');
       });

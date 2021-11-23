@@ -148,19 +148,24 @@ export default {
       title, message, submitActionLabel, minHeight, maxWidth,
     }) => {
       // we only show one message box at a time
-      if (this.showMessage) return false;
+      if (this.showMessage) {
+        return false;
+      }
       this.dialogTitle = title;
       this.singleDialogMessage = message;
       this.submitActionLabel = submitActionLabel || this.$t('common.buttons.ok');
-      if (minHeight) { this.dialogMinHeight = minHeight; }
-      if (maxWidth) { this.dialogMaxWidth = maxWidth; }
+      if (minHeight) {
+        this.dialogMinHeight = minHeight;
+      }
+      if (maxWidth) {
+        this.dialogMaxWidth = maxWidth;
+      }
 
       this.showMessage = true;
       return true;
     };
 
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
-    localStorage.setItem(localStorageKeys.prefixRegistrationLink.name, process.env.VUE_APP_EVENT_LINK_PREFIX);
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VUE_APP_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VUE_APP_API_BASE_URL);
   },

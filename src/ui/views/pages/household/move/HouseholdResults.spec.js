@@ -23,7 +23,9 @@ describe('HouseholdResults.vue', () => {
           items: mockCombinedHouseholds(),
         },
         computed: {
-          activeCaseFiles() { return [{ eventId: 'id-1' }, { eventId: 'id-2' }]; },
+          activeCaseFiles() {
+            return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
+          },
         },
         mocks: {
           $storage: storage,

@@ -75,7 +75,9 @@ export default Vue.extend({
 
   methods: {
     buildEventsString(events: IUserAccountTeamEvent[]): string {
-      if (events.length === 0) return '';
+      if (events.length === 0) {
+        return '';
+      }
       return events.map((e: IUserAccountTeamEvent) => this.$m(e.name)).join(', ');
     },
   },

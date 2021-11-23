@@ -80,13 +80,25 @@ describe('HouseholdMemberCard.vue', () => {
 
     describe('make member button ', () => {
       it('renders if member is not primary and canChangePrimary', () => {
-        doMount(false, true, { computed: { canChangePrimary() { return true; } } });
+        doMount(false, true, {
+          computed: {
+            canChangePrimary() {
+              return true;
+            },
+          },
+        });
         const element = wrapper.findDataTest('household_profile_member_make_primary_btn');
         expect(element.exists()).toBeTruthy();
       });
 
       it('does not render if member is not primary and  !canChangePrimary', () => {
-        doMount(false, true, { computed: { canChangePrimary() { return false; } } });
+        doMount(false, true, {
+          computed: {
+            canChangePrimary() {
+              return false;
+            },
+          },
+        });
         const element = wrapper.findDataTest('household_profile_member_make_primary_btn');
         expect(element.exists()).toBeFalsy();
       });
@@ -109,7 +121,13 @@ describe('HouseholdMemberCard.vue', () => {
           icon: 'mock-icon',
           event: jest.fn(),
         }];
-        doMount(false, false, { computed: { buttons() { return buttons; } } });
+        doMount(false, false, {
+          computed: {
+            buttons() {
+              return buttons;
+            },
+          },
+        });
         element = wrapper.findDataTest('household_profile_member_action_btn_mock-button');
       });
       it('renders with the right label', () => {
@@ -121,7 +139,13 @@ describe('HouseholdMemberCard.vue', () => {
       });
 
       it('calls the right method', async () => {
-        doMount(false, false, { computed: { buttons() { return buttons; } } });
+        doMount(false, false, {
+          computed: {
+            buttons() {
+              return buttons;
+            },
+          },
+        });
         element = wrapper.findDataTest('household_profile_member_action_btn_mock-button');
         await element.trigger('click');
         expect(buttons[0].event).toHaveBeenCalledTimes(1);
@@ -136,7 +160,13 @@ describe('HouseholdMemberCard.vue', () => {
           event: jest.fn(),
           hide: true,
         }];
-        doMount(false, true, { computed: { buttons() { return buttons; } } });
+        doMount(false, true, {
+          computed: {
+            buttons() {
+              return buttons;
+            },
+          },
+        });
         const element = wrapper.findDataTest('household_profile_member_action_btn_mock-button');
         expect(element.exists()).toBeFalsy();
       });
@@ -152,7 +182,13 @@ describe('HouseholdMemberCard.vue', () => {
             primaryMemberOnly: false,
           },
         ];
-        doMount(false, false, { computed: { memberInfo() { return memberInfo; } } });
+        doMount(false, false, {
+          computed: {
+            memberInfo() {
+              return memberInfo;
+            },
+          },
+        });
         const element = wrapper.findDataTest('household_profile_member_info_label_mock-test-name-1');
         expect(element.exists()).toBeTruthy();
       });
@@ -166,7 +202,13 @@ describe('HouseholdMemberCard.vue', () => {
             primaryMemberOnly: false,
           },
         ];
-        doMount(false, false, { computed: { memberInfo() { return memberInfo; } } });
+        doMount(false, false, {
+          computed: {
+            memberInfo() {
+              return memberInfo;
+            },
+          },
+        });
         const element = wrapper.findDataTest('household_profile_member_info_data_mock-test-name-1');
         expect(element.text()).toContain(memberInfo[0].data);
       });
@@ -188,14 +230,26 @@ describe('HouseholdMemberCard.vue', () => {
         ];
 
         // is primary
-        doMount(true, true, { computed: { memberInfo() { return memberInfo; } } });
+        doMount(true, true, {
+          computed: {
+            memberInfo() {
+              return memberInfo;
+            },
+          },
+        });
         const element1 = wrapper.findDataTest('household_profile_member_info_data_mock-test-name-1');
         expect(element1.text()).toContain(memberInfo[0].data);
         const element2 = wrapper.findDataTest('household_profile_member_info_data_mock-test-name-2');
         expect(element2.text()).toContain(memberInfo[1].data);
 
         // is not primary
-        doMount(false, true, { computed: { memberInfo() { return memberInfo; } } });
+        doMount(false, true, {
+          computed: {
+            memberInfo() {
+              return memberInfo;
+            },
+          },
+        });
         const element3 = wrapper.findDataTest('household_profile_member_info_data_mock-test-name-1');
         expect(element3.text()).toContain(memberInfo[0].data);
         const element4 = wrapper.findDataTest('household_profile_member_info_data_mock-test-name-2');
@@ -211,7 +265,13 @@ describe('HouseholdMemberCard.vue', () => {
             customContent: 'name',
           },
         ];
-        doMount(false, true, { computed: { memberInfo() { return memberInfo; } } });
+        doMount(false, true, {
+          computed: {
+            memberInfo() {
+              return memberInfo;
+            },
+          },
+        });
         const element = wrapper.findDataTest('household_profile_member_info_data_mock-test-name-1');
         expect(element.exists()).toBeTruthy();
         expect(element.text()).toContain(member.identitySet.firstName);
@@ -237,7 +297,9 @@ describe('HouseholdMemberCard.vue', () => {
 
         doMount(false, true, {
           computed: {
-            memberInfo() { return memberInfo; },
+            memberInfo() {
+              return memberInfo;
+            },
           },
         });
         const element = wrapper.findDataTest('household_profile_member_info_data_mock-test-name-1');
@@ -398,7 +460,9 @@ describe('HouseholdMemberCard.vue', () => {
             member: mockMember({ id: mockSplitHousehold().splitMembers.primaryMember.id }),
           },
           computed: {
-            splitHouseholdMembers() { return mockSplitHousehold().splitMembers; },
+            splitHouseholdMembers() {
+              return mockSplitHousehold().splitMembers;
+            },
           },
         });
 
@@ -452,7 +516,9 @@ describe('HouseholdMemberCard.vue', () => {
               member: mockMember({ id: mockSplitHousehold().splitMembers.primaryMember.id }),
             },
             computed: {
-              splitHouseholdMembers() { return mockSplitHousehold().splitMembers; },
+              splitHouseholdMembers() {
+                return mockSplitHousehold().splitMembers;
+              },
             },
           });
           await wrapper.vm.initSplitView();

@@ -108,7 +108,9 @@ describe('ProgramsHome.vue', () => {
             id: 'event-id',
           },
           computed: {
-            locale() { return 'en'; },
+            locale() {
+              return 'en';
+            },
           },
         });
 

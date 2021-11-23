@@ -260,7 +260,9 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     getDaysOpen(schedule: IEventSchedule): number {
-      if (!schedule) return null;
+      if (!schedule) {
+        return null;
+      }
       const { openDate, closeDate, scheduledOpenDate } = schedule;
       if (openDate && closeDate) {
         return moment(closeDate).startOf('day').diff(moment(openDate).startOf('day'), 'days');

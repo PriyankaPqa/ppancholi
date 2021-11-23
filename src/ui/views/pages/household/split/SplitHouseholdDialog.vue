@@ -198,7 +198,9 @@ export default Vue.extend({
   methods: {
     getBirthDate(member: IMember): string {
       const { birthDate } = member.identitySet;
-      if (!birthDate) return '';
+      if (!birthDate) {
+        return '';
+      }
 
       let result = libHelpers.displayBirthDate(birthDate);
       result += ` (${libHelpers.getAge(birthDate)} ${this.$t('common.years')})`;
@@ -206,8 +208,12 @@ export default Vue.extend({
     },
 
     getGender(member: IMember): string {
-      if (!member.identitySet?.gender) return '';
-      if (member.identitySet.genderOther) return member.identitySet.genderOther;
+      if (!member.identitySet?.gender) {
+        return '';
+      }
+      if (member.identitySet.genderOther) {
+        return member.identitySet.genderOther;
+      }
       return this.$m(member.identitySet.gender.name);
     },
 

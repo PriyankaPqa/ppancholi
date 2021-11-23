@@ -34,7 +34,9 @@ export class BrandingsService extends DomainBaseService<IBrandingEntity, uuid> i
     const response = await this.http.getFullResponse<BlobPart>(`${this.baseUrl}/logo/${languageCode}`,
       { responseType: 'blob', globalHandler: false }).catch(() => null);
 
-    if (!response?.data) return null;
+    if (!response?.data) {
+      return null;
+    }
 
     const blob = new Blob([response.data], { type: response.headers['content-type'] });
     const url = window.URL.createObjectURL(blob);

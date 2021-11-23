@@ -4,8 +4,6 @@ import { i18n } from '@/ui/plugins/i18n';
 const clientId = process.env.VUE_APP_AUTH_AAD_CLIENTID;
 const authority = process.env.VUE_APP_AUTH_AAD_AUTHORITY;
 const navigateToLoginRequestUrl = process.env.VUE_APP_AUTH_AAD_NAVIGATE_TO_LOGIN_REQUEST_URL === 'true';
-const redirectUri = process.env.VUE_APP_AUTH_AAD_REDIRECT_URI;
-const postLogoutRedirectUri = process.env.VUE_APP_AUTH_AAD_POSTLOGOUT_REDIRECT_URI;
 const apiPermissions = process.env.VUE_APP_AUTH_AAD_API_PERMISSIONS;
 
 const adPolicies = {
@@ -27,8 +25,7 @@ const msalConfig: Configuration = {
     knownAuthorities: [
       authority,
     ],
-    redirectUri,
-    postLogoutRedirectUri,
+    postLogoutRedirectUri: window.location.origin,
     navigateToLoginRequestUrl,
   },
   cache: {

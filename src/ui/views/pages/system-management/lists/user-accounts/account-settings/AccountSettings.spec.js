@@ -326,7 +326,11 @@ describe('AccountSettings.vue', () => {
 
       it('filters for active roles', async () => {
         const itemData = mockOptionItemData();
-        itemData.forEach((a) => { a.subitems.forEach((s) => { s.status = 1; }); });
+        itemData.forEach((a) => {
+          a.subitems.forEach((s) => {
+            s.status = 1;
+          });
+        });
         itemData[0].subitems[0].status = 0;
         storage.optionList.mutations.setList = jest.fn();
         wrapper.vm.$storage.optionList.actions.fetchItems = jest.fn(() => itemData);
@@ -338,7 +342,11 @@ describe('AccountSettings.vue', () => {
       describe('setAllAccessLevelRoles', () => {
         it('includes current user\'s inactive role', async () => {
           const itemData = mockOptionItemData();
-          itemData.forEach((a) => { a.subitems.forEach((s) => { s.status = 1; }); });
+          itemData.forEach((a) => {
+            a.subitems.forEach((s) => {
+              s.status = 1;
+            });
+          });
           itemData[0].subitems[0].status = 0;
           storage.optionList.mutations.setList = jest.fn();
           wrapper.vm.$storage.optionList.actions.fetchItems = jest.fn(() => itemData);

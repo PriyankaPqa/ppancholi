@@ -220,7 +220,9 @@ export default Vue.extend({
           test: 'transfer',
           icon: 'mdi-call-split',
           additionalMemberOnly: true,
-          event: () => { this.showSplitDialog = true; },
+          event: () => {
+            this.showSplitDialog = true;
+          },
           hide: !this.canSplit,
           tooltipText: this.$t('household.profile.split.member.title'),
         },

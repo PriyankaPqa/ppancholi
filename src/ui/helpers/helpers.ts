@@ -31,7 +31,9 @@ export default {
   scrollToFirstError(containerID: string) {
     const containerElement = document.getElementById(containerID);
 
-    if (!containerElement) return;
+    if (!containerElement) {
+      return;
+    }
 
     const errorElements = containerElement.querySelectorAll('.failed, .error--text');
 
@@ -134,7 +136,9 @@ export default {
     return collection.filter((o: Record<string, unknown>) => {
       const flat = deepSearch ? this.flattenObj(o) : o;
       return Object.keys(flat).some((k) => {
-        if (!searchAll && searchAmong.indexOf(k) === -1) return false;
+        if (!searchAll && searchAmong.indexOf(k) === -1) {
+          return false;
+        }
 
         if (typeof flat[k] === 'string') {
           return (flat[k] as string).toLowerCase().includes(query.toLowerCase());
@@ -159,18 +163,24 @@ export default {
 
   getLocalStringDate(date: Date | string, dateFieldName: string, format = 'YYYY-MM-DD'): string {
     const dateType = dateTypes.getType(dateFieldName);
-    if (!date) return '';
+    if (!date) {
+      return '';
+    }
     if (typeof date === 'string' && /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/.test(date)) {
       // here we have been passed a string date already in YYYY-MM-DD = we HAVE to consider it local as it doesnt have time...
       return moment(date).format(format);
     }
 
-    if (dateType === DateTypes.ConvertToUtc || dateType === DateTypes.Static) return moment(date).utc().format(format);
+    if (dateType === DateTypes.ConvertToUtc || dateType === DateTypes.Static) {
+      return moment(date).utc().format(format);
+    }
     return moment(date).format(format);
   },
 
   getUtcStringDate(date: Date | string, format = 'YYYY-MM-DD'): string {
-    if (!date) return '';
+    if (!date) {
+      return '';
+    }
     return moment(date).utc().format(format);
   },
 
@@ -199,7 +209,9 @@ export default {
   },
 
   formatBytes(bytes: number, decimals = 2, mode = 'bits') {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) {
+      return '0 Bytes';
+    }
     const k = mode === 'bits' ? 1000 : 1024;
     const dm = decimals < 0 ? 0 : decimals;
     const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -262,7 +274,9 @@ export default {
         vue.$t('confirmLeaveDialog.message_2'),
       ]);
     }
-    if (next && leavingConfirmed) next();
+    if (next && leavingConfirmed) {
+      next();
+    }
     return leavingConfirmed;
   },
 

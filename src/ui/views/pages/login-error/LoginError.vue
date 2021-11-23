@@ -33,7 +33,7 @@ export default Vue.extend({
 
   methods: {
     signIn() {
-      authenticationProvider.signIn(process.env.VUE_APP_AUTH_AAD_REDIRECT_URI);
+      authenticationProvider.signIn();
     },
 
     signOut() {

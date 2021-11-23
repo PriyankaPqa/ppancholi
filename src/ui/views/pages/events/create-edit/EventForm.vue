@@ -300,7 +300,6 @@ import {
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { IOptionItem } from '@/entities/optionItem';
 import utils from '@/entities/utils';
-import { localStorageKeys } from '@/constants/localStorage';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -455,7 +454,9 @@ export default Vue.extend({
         return [];
       }
 
-      if (!this.regions) return [];
+      if (!this.regions) {
+        return [];
+      }
 
       const sorted = helpers.sortMultilingualArray(this.regions, 'name');
       const filtered = sorted.filter((i) => i.province === this.localEvent.location.province);
@@ -561,13 +562,19 @@ export default Vue.extend({
     },
 
     statusColor(): string {
-      if (this.isStatusOpen) return 'status_success white--text';
+      if (this.isStatusOpen) {
+        return 'status_success white--text';
+      }
       return 'status_green_pale black--text';
     },
 
     prefixRegistrationLink(): string {
-      const prefix = localStorage.getItem(localStorageKeys.prefixRegistrationLink.name);
-      return `${prefix}/${this.languageMode}/registration/`;
+      const prefix = this.$storage.tenantSettings.getters.currentTenantSettings();
+      if (!prefix?.registrationDomain) {
+        return null;
+      }
+      const urlStart = `https://${prefix.registrationDomain.translation[this.languageMode]}`;
+      return `${urlStart}/${this.languageMode}/registration/`;
     },
 
     registrationLink(): string {
@@ -587,7 +594,9 @@ export default Vue.extend({
         && this.localEvent.hasBeenOpen;
     },
 
-    today(): string { return this.getLocalStringDate(new Date(), 'local'); },
+    today(): string {
+      return this.getLocalStringDate(new Date(), 'local');
+    },
   },
 
   watch: {
@@ -610,6 +619,7 @@ export default Vue.extend({
       this.localEvent.responseDetails.dateReported = this.today;
     }
 
+    await this.$storage.tenantSettings.actions.getCurrentTenantSettings();
     await this.$storage.event.actions.fetchEventTypes();
     await this.$storage.event.actions.fetchAll();
 

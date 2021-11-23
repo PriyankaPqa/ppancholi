@@ -51,8 +51,12 @@ describe('HouseholdProfile.vue', () => {
           };
         },
         computed: {
-          country() { return 'mock-country'; },
-          household() { return householdCreate; },
+          country() {
+            return 'mock-country';
+          },
+          household() {
+            return householdCreate;
+          },
         },
         mocks: {
           $storage: storage,
@@ -101,9 +105,15 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           computed: {
-            country() { return 'mock-country'; },
-            household() { return householdCreate; },
-            canEdit() { return true; },
+            country() {
+              return 'mock-country';
+            },
+            household() {
+              return householdCreate;
+            },
+            canEdit() {
+              return true;
+            },
           },
           mocks: {
             $storage: storage,
@@ -125,9 +135,15 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           computed: {
-            country() { return 'mock-country'; },
-            household() { return householdCreate; },
-            canEdit() { return false; },
+            country() {
+              return 'mock-country';
+            },
+            household() {
+              return householdCreate;
+            },
+            canEdit() {
+              return false;
+            },
           },
           mocks: {
             $storage: storage,
@@ -200,7 +216,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            activeCaseFiles() { return caseFiles; },
+            activeCaseFiles() {
+              return caseFiles;
+            },
           },
           data() {
             return {
@@ -226,8 +244,12 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            country() { return 'mock-country'; },
-            household() { return householdCreate; },
+            country() {
+              return 'mock-country';
+            },
+            household() {
+              return householdCreate;
+            },
           },
           data() {
             return {
@@ -252,7 +274,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: {
             $storage: storage,
@@ -270,7 +294,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: {
             $storage: storage,
@@ -321,7 +347,9 @@ describe('HouseholdProfile.vue', () => {
             caseFiles() {
               return caseFiles;
             },
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: {
             $storage: storage,
@@ -345,7 +373,9 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: {
             $storage: storage,
@@ -365,7 +395,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: {
             $storage: storage,
@@ -383,7 +415,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: { $storage: storage },
         });
@@ -398,7 +432,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: { $storage: storage },
         });
@@ -415,7 +451,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           store: {
             ...mockUserStateLevel(1),
@@ -439,7 +477,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           store: {
             modules: {
@@ -476,7 +516,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           store: {
             ...mockUserStateLevel(2),
@@ -500,7 +542,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           store: {
             ...mockUserStateLevel(1),
@@ -564,8 +608,12 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            activeCaseFiles() { return [{ eventId: 'id-1' }, { eventId: 'id-2' }]; },
-            household() { return householdCreate; },
+            activeCaseFiles() {
+              return [{ eventId: 'id-1' }, { eventId: 'id-2' }];
+            },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: {
             $storage: storage,
@@ -649,8 +697,12 @@ describe('HouseholdProfile.vue', () => {
             };
           },
           computed: {
-            country() { return 'mock-country'; },
-            household() { return altHousehold; },
+            country() {
+              return 'mock-country';
+            },
+            household() {
+              return altHousehold;
+            },
           },
           mocks: {
             $storage: storage,
@@ -673,8 +725,12 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            country() { return 'mock-country'; },
-            household() { return altHousehold; },
+            country() {
+              return 'mock-country';
+            },
+            household() {
+              return altHousehold;
+            },
           },
           mocks: {
             $storage: storage,
@@ -712,7 +768,9 @@ describe('HouseholdProfile.vue', () => {
             id: household.entity.id,
           },
           computed: {
-            household() { return householdCreate; },
+            household() {
+              return householdCreate;
+            },
           },
           mocks: { $storage: storage },
         });

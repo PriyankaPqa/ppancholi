@@ -155,7 +155,6 @@ import { IUser, NO_ROLE } from '@/entities/user';
 import routes from '@/constants/routes';
 import { IBrandingEntity } from '@/entities/branding';
 import { IUserAccountCombined } from '@/entities/user-account';
-import authenticationProvider from '@/auth/AuthenticationProvider';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -188,6 +187,7 @@ export default Vue.extend({
     this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId());
     this.currentTenantId = this.userAccount.entity?.tenantId;
     this.tenantIds = (await this.$storage.branding.actions.getUserTenants()).map((t) => t.id);
+    (await this.$storage.tenantSettings.actions.fetchAll());
   },
 
   methods: {
@@ -210,8 +210,13 @@ export default Vue.extend({
       this.$storage.user.actions.signOut();
     },
 
-    async changeTenant() {
-      await authenticationProvider.signIn(routes.home.path, this.currentTenantId);
+    changeTenant() {
+      const tenant = this.$storage.tenantSettings.getters.get(this.currentTenantId).entity;
+      // while testing we might want to switch to localhost... localhost is not https
+      // outside of localhost everything is https.
+      const url = this.$m(tenant.emisDomain).indexOf('localhost') > -1 ? `http://${this.$m(tenant.emisDomain)}` : `https://${this.$m(tenant.emisDomain)}`;
+
+      window.location.href = url;
     },
   },
 });

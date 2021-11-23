@@ -101,7 +101,9 @@ export default Vue.extend({
   computed: {
     team(): ITeamCombined {
       const t = this.$storage.team.getters.get(this.id);
-      if (!t?.entity?.id || !t?.metadata?.id) return null;
+      if (!t?.entity?.id || !t?.metadata?.id) {
+        return null;
+      }
       return t;
     },
 
@@ -121,7 +123,9 @@ export default Vue.extend({
   methods: {
     async loadTeam() {
       await this.$storage.team.actions.fetch(this.id);
-      if (this.primaryContactId) await this.$storage.userAccount.actions.fetch(this.primaryContactId);
+      if (this.primaryContactId) {
+        await this.$storage.userAccount.actions.fetch(this.primaryContactId);
+      }
     },
 
     navigateToHome() {
@@ -134,7 +138,9 @@ export default Vue.extend({
     },
 
     buildEventsString(events: ITeamEvent[]): string {
-      if (events.length === 0) return '';
+      if (events.length === 0) {
+        return '';
+      }
       return events.map((e: ITeamEvent) => this.$m(e.name)).join(', ');
     },
   },

@@ -31,9 +31,15 @@ export const dateTypes = {
   ] as string[],
 
   getType(dateField: string) : DateTypes {
-    if (this.convertToLocal.indexOf(dateField) > -1) return DateTypes.ConvertToLocal;
-    if (this.convertToUtc.indexOf(dateField) > -1) return DateTypes.ConvertToUtc;
-    if (this.static.indexOf(dateField) > -1) return DateTypes.Static;
+    if (this.convertToLocal.indexOf(dateField) > -1) {
+      return DateTypes.ConvertToLocal;
+    }
+    if (this.convertToUtc.indexOf(dateField) > -1) {
+      return DateTypes.ConvertToUtc;
+    }
+    if (this.static.indexOf(dateField) > -1) {
+      return DateTypes.Static;
+    }
     return DateTypes.Unknown;
   },
 };

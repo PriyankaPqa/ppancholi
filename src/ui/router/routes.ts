@@ -113,7 +113,9 @@ export const routes: Array<RouteConfig> = [
     path: '/:lang',
     name: '',
     component: {
-      render(c) { return c('router-view'); },
+      render(c) {
+        return c('router-view');
+      },
     },
     beforeEnter: async (to, from, next) => {
       await Promise.all([

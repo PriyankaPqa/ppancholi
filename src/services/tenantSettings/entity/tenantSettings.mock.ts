@@ -1,10 +1,9 @@
-import { mockBrandingEntity } from '@/entities/branding';
-import { mockTenantSettingsEntityData } from '@/entities/tenantSettings';
+import { mockTenantSettingsEntity, mockTenantSettingsEntityData } from '@/entities/tenantSettings';
 import { mockDomainBaseService } from '@/services/base/base.mock';
 import { ITenantSettingsServiceMock } from './tenantSettings.types';
 
-export const mockProgramsService = (): ITenantSettingsServiceMock => ({
-  ...mockDomainBaseService([mockBrandingEntity()]),
+export const mockTenantSettingsService = (): ITenantSettingsServiceMock => ({
+  ...mockDomainBaseService([mockTenantSettingsEntity()]),
   getCurrentTenantSettings: jest.fn(() => mockTenantSettingsEntityData()),
   createTenantSettings: jest.fn(() => mockTenantSettingsEntityData()),
   createTenantDomains: jest.fn(() => mockTenantSettingsEntityData()),

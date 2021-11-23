@@ -184,7 +184,9 @@ export default Vue.extend({
     },
 
     eventTypeName(): IMultilingual {
-      if (this.event.entity.responseDetails?.eventType?.optionItemId == null) return null;
+      if (this.event.entity.responseDetails?.eventType?.optionItemId == null) {
+        return null;
+      }
       const eventTypes = this.$storage.event.getters.eventTypes(false);
       const currentType = eventTypes?.find((t) => t.id === this.event.entity.responseDetails.eventType.optionItemId);
       return currentType?.name;
@@ -192,7 +194,9 @@ export default Vue.extend({
 
     provinceName(): TranslateResult {
       const provinceCode = this.event?.entity?.location?.province;
-      if (!provinceCode) return null;
+      if (!provinceCode) {
+        return null;
+      }
       const isOther = provinceCode === ECanadaProvinces.OT;
       if (isOther) {
         return this.$m(this.event.entity.location.provinceOther);

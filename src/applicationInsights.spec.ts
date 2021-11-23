@@ -16,7 +16,11 @@ describe('ApplicationInsights', () => {
 
   beforeEach(() => {
     vue = { config: { } };
-    router = { beforeEach: jest.fn((guard: NavigationGuard) => { navigationGuard = guard; }) };
+    router = {
+      beforeEach: jest.fn((guard: NavigationGuard) => {
+        navigationGuard = guard;
+      }),
+    };
     appInsights = {
       loadAppInsights: jest.fn(),
       trackPageView: jest.fn(),

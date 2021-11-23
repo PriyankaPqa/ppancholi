@@ -124,13 +124,17 @@ export default Vue.extend({
     },
 
     async getAssignedTeamInfo() {
-      if (!this.caseFile.assignedTeamIds.length) { return null; }
+      if (!this.caseFile.assignedTeamIds.length) {
+        return null;
+      }
       this.assignedTeams = await this.$storage.team.actions.getTeamsAssigned(this.caseFile.id);
       return this.assignedTeams?.[0]?.name;
     },
 
     async getAssignedIndividualsInfo() {
-      if (!this.caseFile.assignedIndividualIds.length) { return null; }
+      if (!this.caseFile.assignedIndividualIds.length) {
+        return null;
+      }
 
       const filter = `search.in(Entity/Id, '${this.caseFile.assignedIndividualIds.slice(0, 2).join('|')}', '|')`;
 
@@ -148,7 +152,9 @@ export default Vue.extend({
     },
 
     createAssignedIndividualsInfo(userNames:string[]): string {
-      if (!userNames || !userNames.length) return '';
+      if (!userNames || !userNames.length) {
+        return '';
+      }
       const and = userNames[0] && userNames[1] ? ` ${this.$t('common.and')} ` : '';
       return (userNames[0] || '') + and + (userNames[1] || '');
     },

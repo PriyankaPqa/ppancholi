@@ -40,7 +40,9 @@ export class TeamEntityModule extends BaseModule <ITeamEntity, uuid> {
       eventId: uuid,
     ): Promise<ITeamEntity[]> => {
       const teams = await this.service.getTeamsAssignable(eventId);
-      if (teams && teams.length) return teams;
+      if (teams && teams.length) {
+        return teams;
+      }
       return [];
     },
 

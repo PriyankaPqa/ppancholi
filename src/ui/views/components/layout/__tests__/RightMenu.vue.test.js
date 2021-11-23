@@ -1,4 +1,6 @@
+/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
+import { mockCombinedTenantSettings } from '@/entities/tenantSettings';
 import { mockUsersData } from '@/entities/user';
 import routes from '@/constants/routes';
 import Component from '../RightMenu.vue';
@@ -110,10 +112,18 @@ describe('RightMenu.vue', () => {
 
     describe('Methods', () => {
       describe('changeTenant', () => {
-        it('calls signin with correct tenant', async () => {
+        it('changes the url to the one from the tenant', async () => {
+          const oldWindowLoc = window.location;
+          delete window.location
+          window.location = { href: ''};
+
+          wrapper.vm.$storage.tenantSettings.getters.get = jest.fn(() => mockCombinedTenantSettings());
           await wrapper.setData({ currentTenantId: 'abcd' });
-          await wrapper.vm.changeTenant();
-          expect(authenticationProvider.signIn).toHaveBeenCalledWith(routes.home.path, 'abcd');
+          wrapper.vm.changeTenant();
+          expect(wrapper.vm.$storage.tenantSettings.getters.get).toHaveBeenCalledWith('abcd');
+          expect(window.location.href).toEqual('https://emis domain en');
+
+          window.location = oldWindowLoc;
         });
       });
     });

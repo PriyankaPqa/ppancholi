@@ -2,8 +2,6 @@ import { VSwitch } from 'vuetify/lib';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity, EEventStatus } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';
-import { mockUserStateLevel } from '@/test/helpers';
-import { mockUsersData } from '@/entities/user';
 import { mockStorage } from '@/store/storage';
 
 import Component from '../components/EventSummaryLink.vue';
@@ -12,38 +10,45 @@ const localVue = createLocalVue();
 const mockEvent = mockEventEntity();
 const storage = mockStorage();
 
-const actions = {
-  toggleSelfRegistration: jest.fn(),
-};
-
 describe('EventSummaryLink.vue', () => {
   let wrapper;
 
+  const mountWrapper = async (fullMount = false, level = 6, hasRole = 'role', additionalOverwrites = {}) => {
+    wrapper = (fullMount ? mount : shallowMount)(Component, {
+      localVue,
+      propsData: {
+        event: mockEvent,
+      },
+      mocks: {
+        $hasLevel: (lvl) => lvl <= `level${level}` && level,
+        $hasRole: (r) => r === hasRole,
+        $storage: storage,
+      },
+      ...additionalOverwrites,
+    });
+    jest.clearAllMocks();
+  };
+
+  describe('Lifecycle', () => {
+    describe('created', () => {
+      it('should call storage for getCurrentTenantSettings', async () => {
+        await mountWrapper();
+        const hook = wrapper.vm.$options.created[0];
+        await hook.call(wrapper.vm);
+        expect(storage.tenantSettings.actions.getCurrentTenantSettings).toHaveBeenCalled();
+      });
+    });
+  });
+
   describe('Template', () => {
-    beforeEach(() => {
-      wrapper = mount(Component, {
-        localVue,
-        propsData: {
-          event: mockEvent,
-        },
+    beforeEach(async () => {
+      await mountWrapper(true, 6, null, {
         computed: {
           registrationUrl() {
             return 'mock-url';
           },
           showSwitchBtn() {
             return true;
-          },
-        },
-        store: {
-          modules: {
-            user: {
-              state: {
-                ...mockUsersData()[5],
-              },
-            },
-            event: {
-              actions,
-            },
           },
         },
       });
@@ -85,138 +90,82 @@ describe('EventSummaryLink.vue', () => {
       });
 
       it('does not render if showSwitchBtn is false', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-          },
+        await mountWrapper(true, 6, null, {
           computed: {
             showSwitchBtn() {
               return false;
             },
           },
         });
-
-        await wrapper.setRole('level6');
 
         const element = wrapper.findDataTest('event-summary-toggle-self-registration');
         expect(element.exists()).toBeFalsy();
       });
 
       it('does not render if the user is level below 6', async () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-          },
+        await mountWrapper(true, 5, null, {
           computed: {
             showSwitchBtn() {
               return false;
             },
           },
         });
-        await wrapper.setRole('level5');
 
         const element = wrapper.findDataTest('event-summary-toggle-self-registration');
         expect(element.exists()).toBeFalsy();
       });
 
       it('calls toggleSelfRegistration when changed', async () => {
-        wrapper = mount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-          },
+        await mountWrapper(true, 6, null, {
           computed: {
             showSwitchBtn() {
               return true;
             },
           },
         });
-        jest.spyOn(wrapper.vm, 'toggleSelfRegistration').mockImplementation(() => {});
-        await wrapper.setRole('level6');
-        expect(actions.toggleSelfRegistration).toHaveBeenCalledTimes(0);
+        expect(storage.event.actions.toggleSelfRegistration).toHaveBeenCalledTimes(0);
 
-        // const element = wrapper.findDataTest('event-summary-toggle-self-registration');
         const element = wrapper.findComponent(VSwitch);
 
         element.vm.$emit('change');
 
-        expect(wrapper.vm.toggleSelfRegistration).toHaveBeenCalledTimes(1);
+        expect(storage.event.actions.toggleSelfRegistration).toHaveBeenCalledTimes(1);
       });
     });
   });
 
   describe('Computed', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          event: mockEvent,
-        },
-      });
+    beforeEach(async () => {
+      await mountWrapper();
     });
 
     describe('registrationUrl', () => {
       it('returns the right url', () => {
-        wrapper.vm.prefixRegistrationLink = 'mock-prefixRegistrationLink';
-        expect(wrapper.vm.registrationUrl).toEqual(`mock-prefixRegistrationLink/en/registration/${mockEvent.registrationLink.translation.en}`);
+        expect(wrapper.vm.registrationUrl).toEqual(`https://registration domain en/en/registration/${mockEvent.registrationLink.translation.en}`);
       });
     });
 
     describe('showSwitchBtn', () => {
-      it('returns true if the event status is open and the user has level 6', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-          },
-          store: {
-            ...mockUserStateLevel(6),
-          },
-        });
+      it('returns true if the event status is open and the user has level 6', async () => {
+        await mountWrapper(false, 6);
         wrapper.vm.event.schedule.status = EEventStatus.Open;
         expect(wrapper.vm.showSwitchBtn).toBeTruthy();
       });
 
-      it('returns false if the event status is not open', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-          },
-          store: {
-            ...mockUserStateLevel(6),
-          },
-        });
+      it('returns false if the event status is not open', async () => {
+        await mountWrapper(false, 6);
         wrapper.vm.event.schedule.status = EEventStatus.Closed;
         expect(wrapper.vm.showSwitchBtn).toBeFalsy();
       });
 
-      it('returns false if the user is not level 6', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-          },
-          store: {
-            ...mockUserStateLevel(5),
-          },
-        });
+      it('returns false if the user is not level 6', async () => {
+        await mountWrapper(false, 5);
         wrapper.vm.event.schedule.status = EEventStatus.Open;
         expect(wrapper.vm.showSwitchBtn).toBeFalsy();
       });
 
-      it('returns false if the event has no schedule defined', () => {
-        wrapper = shallowMount(Component, {
-          localVue,
-          propsData: {
-            event: mockEvent,
-          },
-          store: {
-            ...mockUserStateLevel(6),
-          },
-        });
+      it('returns false if the event has no schedule defined', async () => {
+        await mountWrapper(false, 6);
         wrapper.vm.event.schedule = null;
         expect(wrapper.vm.showSwitchBtn).toBeFalsy();
       });
@@ -224,20 +173,12 @@ describe('EventSummaryLink.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
-      storage.event.actions.toggleSelfRegistration = jest.fn();
-      wrapper = shallowMount(Component, {
-        localVue,
-        propsData: {
-          event: mockEvent,
-        },
+    beforeEach(async () => {
+      await mountWrapper(false, 6, null, {
         computed: {
           registrationUrl() {
             return 'mock-url';
           },
-        },
-        mocks: {
-          $storage: storage,
         },
       });
     });

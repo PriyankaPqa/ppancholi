@@ -17,7 +17,11 @@ describe('SplitHouseholdMembers', () => {
       wrapper = shallowMount(Component, {
         localVue,
         mocks: { $storage: storage },
-        computed: { members() { return [mockMember({ id: '1' })]; } },
+        computed: {
+          members() {
+            return [mockMember({ id: '1' })];
+          },
+        },
       });
     });
 

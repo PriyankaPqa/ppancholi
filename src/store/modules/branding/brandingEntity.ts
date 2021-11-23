@@ -102,7 +102,9 @@ export class BrandingEntityModule extends BaseModule<IBrandingEntity, uuid> {
     ): Promise<IBrandingEntity> => {
       const result = await this.service.updateTenantDetails(payload);
 
-      if (result) context.commit('setBranding', result);
+      if (result) {
+        context.commit('setBranding', result);
+      }
 
       return new BrandingEntity(result);
     },

@@ -121,12 +121,16 @@ export default Vue.extend({
     },
 
     subItem(): IFinancialAssistanceTableSubItem {
-      if (!this.mainItem) return null;
+      if (!this.mainItem) {
+        return null;
+      }
       return this.mainItem.subItems.find((s) => s.subCategory.id === this.paymentLine.subCategoryId);
     },
 
     title(): string {
-      if (!this.subItem) return null;
+      if (!this.subItem) {
+        return null;
+      }
       return `${this.$m(this.mainItem.mainCategory.name)} > ${this.$m(this.subItem.subCategory.name)}`;
     },
 
@@ -148,10 +152,16 @@ export default Vue.extend({
     },
 
     showEditButton(): boolean {
-      if (this.readonly || !this.$hasLevel('level1')) return false;
-      if (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New) return true;
+      if (this.readonly || !this.$hasLevel('level1')) {
+        return false;
+      }
+      if (!this.transactionApprovalStatus || this.transactionApprovalStatus === ApprovalStatus.New) {
+        return true;
+      }
       if ((this.transactionApprovalStatus === ApprovalStatus.Approved)
-        && (this.showRelatedNumber(this.paymentGroup) || this.showIssuedActualAmounts(this.paymentGroup))) return true;
+        && (this.showRelatedNumber(this.paymentGroup) || this.showIssuedActualAmounts(this.paymentGroup))) {
+        return true;
+      }
 
       return false;
     },

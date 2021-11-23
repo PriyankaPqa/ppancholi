@@ -37,7 +37,9 @@ export default Vue.extend({
   },
 
   async mounted() {
-    if (this.household?.id) await this.fetchCaseFilesInformation(this.household.id);
+    if (this.household?.id) {
+      await this.fetchCaseFilesInformation(this.household.id);
+    }
   },
 
   methods: {

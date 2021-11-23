@@ -146,7 +146,9 @@ export default Vue.extend({
         slug: this.tempSlug,
       });
 
-      if (result) this.exitEditMode();
+      if (result) {
+        this.exitEditMode();
+      }
 
       this.loading = false;
       this.showConfirmationDialog = false;
@@ -160,7 +162,9 @@ export default Vue.extend({
           this.$t('confirmLeaveDialog.message_2'),
         ]);
       }
-      if (leavingConfirmed) this.exitEditMode();
+      if (leavingConfirmed) {
+        this.exitEditMode();
+      }
     },
   },
 });

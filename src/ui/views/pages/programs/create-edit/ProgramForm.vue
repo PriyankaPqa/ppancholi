@@ -187,7 +187,9 @@ export default Vue.extend({
     },
 
     statusColor(): string {
-      if (this.isStatusActive) return 'status_success white--text';
+      if (this.isStatusActive) {
+        return 'status_success white--text';
+      }
       return 'status_green_pale black--text';
     },
 

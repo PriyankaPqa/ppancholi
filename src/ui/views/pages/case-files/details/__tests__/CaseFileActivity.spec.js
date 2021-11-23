@@ -23,7 +23,9 @@ describe('CaseFileActivity.vue', () => {
       },
       propsData: { id: mockCaseFile.entity.id },
       computed: {
-        canEdit() { return canEdit; },
+        canEdit() {
+          return canEdit;
+        },
         caseFile() {
           return mockCaseFile;
         },
@@ -134,7 +136,9 @@ describe('CaseFileActivity.vue', () => {
             id() {
               return mockCaseFile.entity.id;
             },
-            canEdit() { return true; },
+            canEdit() {
+              return true;
+            },
             caseFile() {
               return mockCaseFile;
             },
@@ -165,7 +169,9 @@ describe('CaseFileActivity.vue', () => {
             id() {
               return mockCaseFile.entity.id;
             },
-            canEdit() { return false; },
+            canEdit() {
+              return false;
+            },
             caseFile() {
               return mockCaseFile;
             },
@@ -193,7 +199,9 @@ describe('CaseFileActivity.vue', () => {
             id() {
               return mockCaseFile.entity.id;
             },
-            canEdit() { return true; },
+            canEdit() {
+              return true;
+            },
             caseFile() {
               return mockCaseFile;
             },

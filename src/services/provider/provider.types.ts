@@ -17,6 +17,7 @@ import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMoc
 import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '../financial-assistance-categories/entity';
 import { IMassActionService, IMassActionServiceMock } from '@/services/mass-actions/entity';
 import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '../financial-assistance-payments/entity';
+import { ITenantSettingsService, ITenantSettingsServiceMock } from '../tenantSettings/entity';
 import { IFeaturesService, IFeaturesServiceMock } from '../features/entity';
 
 export interface IProvider {
@@ -36,6 +37,7 @@ export interface IProvider {
   userAccounts: UserAccountsService,
   financialAssistanceCategories: IFinancialAssistanceCategoriesService,
   massActions: IMassActionService;
+  tenantSettings: ITenantSettingsService;
   features: IFeaturesService;
 }
 
@@ -56,5 +58,6 @@ export interface IProviderMock {
   userAccounts: IUserAccountsServiceMock,
   financialAssistanceCategories: IFinancialAssistanceCategoriesServiceMock,
   massActions: IMassActionServiceMock,
+  tenantSettings: ITenantSettingsServiceMock;
   features: IFeaturesServiceMock,
 }

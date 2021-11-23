@@ -97,14 +97,18 @@ export default mixins(caseFileDetail).extend({
     },
 
     typeName(): string {
-      if (!this.referral?.type?.optionItemId) return null;
+      if (!this.referral?.type?.optionItemId) {
+        return null;
+      }
       const types = this.$storage.caseFileReferral.getters.types(false);
       const type = types.find((t) => t.id === this.referral.type.optionItemId);
       return this.$m(type?.name);
     },
 
     outcomeStatus(): string {
-      if (!this.referral?.outcomeStatus?.optionItemId) return null;
+      if (!this.referral?.outcomeStatus?.optionItemId) {
+        return null;
+      }
       const statuses = this.$storage.caseFileReferral.getters.outcomeStatuses(false);
       const status = statuses.find((t) => t.id === this.referral.outcomeStatus.optionItemId);
       return this.$m(status?.name);

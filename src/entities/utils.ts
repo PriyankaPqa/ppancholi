@@ -72,7 +72,9 @@ export default {
     const translations = field.translation;
     const newTranslations: Record<string, string> = {};
 
-    if (!field) throw new Error('You need to specify a field');
+    if (!field) {
+      throw new Error('You need to specify a field');
+    }
 
     // Get the first filled value from the field
     SUPPORTED_LANGUAGES_INFO.forEach((lang) => {

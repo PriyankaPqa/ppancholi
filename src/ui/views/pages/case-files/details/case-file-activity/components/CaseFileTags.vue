@@ -150,7 +150,9 @@ export default Vue.extend({
     },
 
     deleteTagDialogTitle(): string {
-      if (!this.tagToDelete) return '';
+      if (!this.tagToDelete) {
+        return '';
+      }
       return `${this.$t('caseFile.tags.removeTag')} "${this.$m(this.tagToDelete.name)}"`;
     },
 
@@ -212,7 +214,9 @@ export default Vue.extend({
     onSelectTag(tags: IListTag[]) {
       // From all the tags returned, keep the ids of all the items that have been currently selected by the user
       const newItemsIds = tags.reduce((ids, t) => {
-        if (!t.existing) { ids.push(t.id); }
+        if (!t.existing) {
+          ids.push(t.id);
+        }
         return ids;
       }, []);
 
@@ -265,7 +269,9 @@ export default Vue.extend({
     },
 
     makePayload(tags: IIdMultilingualName[]): IListOption[] {
-      if (!tags) return [];
+      if (!tags) {
+        return [];
+      }
       return tags.map((tag) => ({
         optionItemId: tag.id,
         specifiedOther: null,

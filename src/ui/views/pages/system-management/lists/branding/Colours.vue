@@ -156,7 +156,9 @@ export default Vue.extend({
 
       this.loading = false;
 
-      if (result) this.toggleEditMode(false);
+      if (result) {
+        this.toggleEditMode(false);
+      }
     },
   },
 });

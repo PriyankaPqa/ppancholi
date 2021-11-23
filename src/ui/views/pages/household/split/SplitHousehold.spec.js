@@ -25,7 +25,9 @@ describe('SplitHousehold.vue', () => {
         localVue,
         computed: {
           currentTab: () => ({ id: '', titleKey: '', nextButtonTextKey: '' }),
-          splitHousehold() { return mockSplitHousehold(); },
+          splitHousehold() {
+            return mockSplitHousehold();
+          },
         },
         mocks: {
           $storage: storage,
@@ -39,7 +41,9 @@ describe('SplitHousehold.vue', () => {
           localVue,
           computed: {
             currentTabIndex: () => 0,
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
           },
           mocks: {
             $storage: storage,
@@ -64,7 +68,9 @@ describe('SplitHousehold.vue', () => {
 
           computed: {
             currentTabIndex: () => 0,
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
           },
           mocks: {
             $route: {
@@ -89,7 +95,9 @@ describe('SplitHousehold.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
             currentTabIndex: () => 1,
           },
         });
@@ -107,7 +115,9 @@ describe('SplitHousehold.vue', () => {
           localVue,
           computed: {
             currentTab: () => ({ id: 'confirmation', titleKey: '', nextButtonTextKey: '' }),
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
           },
           mocks: { $storage: storage },
         });
@@ -121,7 +131,9 @@ describe('SplitHousehold.vue', () => {
           localVue,
           computed: {
             currentTab: () => ({ id: 'reviewSplitInfo', titleKey: '', nextButtonTextKey: '' }),
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
           },
           mocks: { $storage: storage },
         });
@@ -152,9 +164,13 @@ describe('SplitHousehold.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
             currentTabIndex: () => 1,
-            flowTabs() { return [{ id: '1' }, { id: 2 }, { id: 3 }]; },
+            flowTabs() {
+              return [{ id: '1' }, { id: 2 }, { id: 3 }];
+            },
           },
         });
         wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 1);
@@ -169,9 +185,13 @@ describe('SplitHousehold.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
             currentTabIndex: () => 1,
-            flowTabs() { return [{ id: '1' }, { id: 2 }]; },
+            flowTabs() {
+              return [{ id: '1' }, { id: 2 }];
+            },
           },
         });
         wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 1);
@@ -197,7 +217,9 @@ describe('SplitHousehold.vue', () => {
           localVue,
           computed: {
             currentTab: () => ({ id: 'reviewSplitInfo', titleKey: '', nextButtonTextKey: '' }),
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
           },
           mocks: { $storage: storage },
         });
@@ -237,7 +259,9 @@ describe('SplitHousehold.vue', () => {
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
           },
           mocks: { $storage: storage },
         });
@@ -272,7 +296,9 @@ describe('SplitHousehold.vue', () => {
           localVue,
           computed: {
             currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
-            splitHousehold() { return mockSplitHousehold(); },
+            splitHousehold() {
+              return mockSplitHousehold();
+            },
           },
           mocks: {
             $storage: storage,
@@ -374,7 +400,9 @@ describe('SplitHousehold.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         computed: {
-          flowTabs() { return [{ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }]; },
+          flowTabs() {
+            return [{ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }];
+          },
         },
         mocks: { $storage: storage },
       });
@@ -391,7 +419,9 @@ describe('SplitHousehold.vue', () => {
       wrapper = shallowMount(Component, {
         localVue,
         computed: {
-          splitHousehold() { return null; },
+          splitHousehold() {
+            return null;
+          },
         },
         mocks: {
           $storage: storage,

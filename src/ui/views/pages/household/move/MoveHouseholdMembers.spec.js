@@ -122,7 +122,11 @@ describe('MoveHouseholdMembers.vue', () => {
         propsData: {
           id: household.entity.id,
         },
-        computed: { currentHousehold() { return householdCreate; } },
+        computed: {
+          currentHousehold() {
+            return householdCreate;
+          },
+        },
         mocks: {
           $storage: storage,
         },

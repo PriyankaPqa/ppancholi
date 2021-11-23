@@ -100,7 +100,9 @@ extend('mustBeAfterOrSame', {
   validate: (value, { X, Y }) => {
     const xValid = moment(X, 'YYYY-MM-DD', true).isValid();
     const yValid = moment(Y, 'YYYY-MM-DD', true).isValid();
-    if (!xValid || !yValid) return false;
+    if (!xValid || !yValid) {
+      return false;
+    }
     return moment(X).isSameOrAfter(Y);
   },
 });
@@ -112,7 +114,9 @@ extend('mustBeBeforeOrSame', {
   validate: (value, { X, Y }) => {
     const xValid = moment(X, 'YYYY-MM-DD', true).isValid();
     const yValid = moment(Y, 'YYYY-MM-DD', true).isValid();
-    if (!xValid || !yValid) return false;
+    if (!xValid || !yValid) {
+      return false;
+    }
     return moment(X).isSameOrBefore(Y);
   },
 });
@@ -149,7 +153,9 @@ extend('birthday', {
   validate: (value, args) => {
     const { birthdate } = args;
 
-    if (birthdate.year < 0) return false;
+    if (birthdate.year < 0) {
+      return false;
+    }
 
     const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
     if (momentBirthdate.isValid()) {
@@ -166,7 +172,9 @@ extend('minimumAge', {
   params: ['birthdate', 'age'],
   validate: (value, args) => {
     const { birthdate, age } = args;
-    if (!birthdate.year || !birthdate.month || !birthdate.day) return true;
+    if (!birthdate.year || !birthdate.month || !birthdate.day) {
+      return true;
+    }
 
     const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
     const now = moment().endOf('day');

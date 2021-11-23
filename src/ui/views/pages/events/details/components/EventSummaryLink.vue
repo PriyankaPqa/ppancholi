@@ -58,7 +58,6 @@
 import Vue from 'vue';
 import { RcTooltip } from '@crctech/component-library';
 import helpers from '@/ui/helpers/helpers';
-import { localStorageKeys } from '@/constants/localStorage';
 import { EEventStatus, IEventEntity } from '@/entities/event';
 
 export default Vue.extend({
@@ -78,19 +77,29 @@ export default Vue.extend({
   data() {
     return {
       updatingSelfRegistration: false,
-      prefixRegistrationLink: localStorage.getItem(localStorageKeys.prefixRegistrationLink.name),
     };
   },
 
   computed: {
     registrationUrl(): string {
-      return `${this.prefixRegistrationLink}/${this.$i18n.locale}/registration/${this.$m(this.event.registrationLink)}`;
+      const prefixRegistrationLink = this.$storage.tenantSettings.getters.currentTenantSettings();
+      if (!prefixRegistrationLink?.registrationDomain) {
+        return null;
+      }
+      const urlStart = `https://${this.$m(prefixRegistrationLink.registrationDomain)}`;
+      return `${urlStart}/${this.$i18n.locale}/registration/${this.$m(this.event.registrationLink)}`;
     },
 
     showSwitchBtn() {
-      if (!this.event.schedule) return false;
+      if (!this.event.schedule) {
+        return false;
+      }
       return this.event.schedule.status === EEventStatus.Open && this.$hasLevel('level6');
     },
+  },
+
+  async created() {
+    await this.$storage.tenantSettings.actions.getCurrentTenantSettings();
   },
 
   methods: {

@@ -1,4 +1,3 @@
-import { IBrandingEntity } from '@/entities/branding';
 import {
   ICreateTenantSettingsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
@@ -10,7 +9,7 @@ export interface ITenantSettingsService extends IDomainBaseService<ITenantSettin
   createTenantDomains(payload: ISetDomainsRequest): Promise<ITenantSettingsEntityData>;
 }
 
-export interface ITenantSettingsServiceMock extends IDomainBaseServiceMock<IBrandingEntity> {
+export interface ITenantSettingsServiceMock extends IDomainBaseServiceMock<ITenantSettingsEntity> {
   getCurrentTenantSettings: jest.Mock<ITenantSettingsEntityData>;
   createTenantSettings: jest.Mock<ITenantSettingsEntityData>;
   createTenantDomains: jest.Mock<ITenantSettingsEntityData>;

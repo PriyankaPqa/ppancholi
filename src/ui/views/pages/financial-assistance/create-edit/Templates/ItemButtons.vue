@@ -107,7 +107,9 @@ export default Vue.extend({
     },
 
     canDelete(): boolean {
-      if (!this.isEdit) return true;
+      if (!this.isEdit) {
+        return true;
+      }
 
       const validItems = this.items.filter((i) => i.subItems?.length > 0);
 

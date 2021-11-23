@@ -33,7 +33,9 @@ describe('HouseholdProfileHistory', () => {
           household,
         },
         computed: {
-          displayedItems() { return [displayedItem]; },
+          displayedItems() {
+            return [displayedItem];
+          },
         },
         mocks: { $services: services },
       });

@@ -109,7 +109,9 @@ export default Vue.extend({
 
     /// note that this method covers the requirements for release 1 - it WILL NOT reflect new approval stories without rework
     formattedHistory(): IApprovalHistory[] {
-      if (!this.submittedHistory) return [];
+      if (!this.submittedHistory) {
+        return [];
+      }
       // totally static data - this feature will EVENTUALLY be rewritten...
       return [{
         username: this.submittedHistory.userName,

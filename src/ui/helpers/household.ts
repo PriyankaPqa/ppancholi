@@ -13,14 +13,22 @@ import moment from '@/ui/plugins/moment';
 
 export default {
   preferredLanguage(member: IMember): string {
-    if (!member.contactInformation?.preferredLanguage) return '';
-    if (member.contactInformation.preferredLanguage.isOther) return member.contactInformation.preferredLanguageOther;
+    if (!member.contactInformation?.preferredLanguage) {
+      return '';
+    }
+    if (member.contactInformation.preferredLanguage.isOther) {
+      return member.contactInformation.preferredLanguageOther;
+    }
     return helpers.getMultilingualValue(member.contactInformation.preferredLanguage.name);
   },
 
   primarySpokenLanguage(member: IMember): string {
-    if (!member.contactInformation?.primarySpokenLanguage) return '';
-    if (member.contactInformation.primarySpokenLanguage.isOther) return member.contactInformation.primarySpokenLanguageOther;
+    if (!member.contactInformation?.primarySpokenLanguage) {
+      return '';
+    }
+    if (member.contactInformation.primarySpokenLanguage.isOther) {
+      return member.contactInformation.primarySpokenLanguageOther;
+    }
     return helpers.getMultilingualValue(member.contactInformation.primarySpokenLanguage.name);
   },
 
@@ -53,8 +61,12 @@ export default {
   },
 
   gender(member: IMember): string {
-    if (!member.identitySet?.gender) return '';
-    if (member.identitySet.genderOther) return member.identitySet.genderOther;
+    if (!member.identitySet?.gender) {
+      return '';
+    }
+    if (member.identitySet.genderOther) {
+      return member.identitySet.genderOther;
+    }
     return helpers.getMultilingualValue(member.identitySet.gender.name);
   },
 
@@ -90,7 +102,9 @@ export default {
   },
 
   countryName(countryCode: string): string {
-    if (!countryCode) return '';
+    if (!countryCode) {
+      return '';
+    }
 
     const countriesData = { en, fr } as Record<string, Record<string, string>>;
 
@@ -112,7 +126,9 @@ export default {
 
   getAddressLines(address: IAddress): string[] {
     const addressLines = [] as string[];
-    if (!address) return addressLines;
+    if (!address) {
+      return addressLines;
+    }
     const suite = address.unitSuite ? `${address.unitSuite}-` : '';
     addressLines.push(address.streetAddress ? `${suite + address.streetAddress}` : '');
 
@@ -120,7 +136,9 @@ export default {
     const provinceCodeName = this.provinceCodeName(address);
     const province = provinceCodeName ? `${provinceCodeName}, ` : '';
     addressLines.push(city + province + (address.postalCode || ''));
-    if (this.countryName(address.country)) addressLines.push(this.countryName(address.country));
+    if (this.countryName(address.country)) {
+      addressLines.push(this.countryName(address.country));
+    }
     return addressLines;
   },
 

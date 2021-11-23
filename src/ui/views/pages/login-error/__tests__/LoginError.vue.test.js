@@ -22,7 +22,5 @@ describe('AppHeader.vue', () => {
     await button.trigger('click');
 
     expect(authenticationProvider.signIn).toHaveBeenCalledTimes(1);
-
-    expect(authenticationProvider.signIn).toHaveBeenCalledWith('http://localhost:8080');
   });
 });

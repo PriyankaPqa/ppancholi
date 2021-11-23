@@ -1,10 +1,11 @@
+/* eslint-disable no-console */
 import * as msal from '@azure/msal-browser';
-
-import { localStorageKeys } from '@/constants/localStorage';
 import { loginRequest, msalConfig, tokenRequest } from '@/auth/constants/azureAD';
+import { provider } from '@/services/provider';
 import applicationInsights from '@/applicationInsights';
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
+const services = provider();
 
 let handleRedirectPromiseError: msal.AuthError;
 
@@ -24,13 +25,13 @@ export default {
   /**
    * Redirects the browser to the login page
    */
-  async signIn(redirectStartPage?: string, tenantId?: string) {
-    if (tenantId) localStorage.setItem(localStorageKeys.lastTenantId.name, tenantId);
-
+  async signIn(specificTenant?: string) {
+    console.log('signin', specificTenant);
+    const authority = specificTenant || 'common';
     await msalInstance.loginRedirect({
       ...loginRequest,
-      redirectStartPage,
-      ...(tenantId ? { authority: `https://login.microsoftonline.com/${tenantId}` } : {}),
+      redirectUri: window.location.origin,
+      authority: `https://login.microsoftonline.com/${authority}`,
     });
   },
 
@@ -38,6 +39,7 @@ export default {
    * Signs the user out and redirects them to the logout URL
    */
   async signOut() {
+    console.log('signout');
     await msalInstance.logoutRedirect();
   },
 
@@ -67,15 +69,25 @@ export default {
    * redirected to the login error page.
    */
   async acquireToken() {
-    const accounts = msalInstance.getAllAccounts();
+    console.log('acquireToken');
+    // we will have an authority (tenantid)
+    // if the current domain is directly associated with a tenant, which will be forced on the user
+    const authority = await services.publicApi.getTenantByEmisDomain(window.location.host);
+    if (!authority) console.log(`no tenants for ${window.location.host} we'll use the default tenant`);
+    const accounts = msalInstance.getAllAccounts() || [];
 
-    if (!accounts || !accounts.length) {
+    if (!accounts.length || (authority && !accounts.filter((a) => a.tenantId === authority)[0])) {
+      if (authority) {
+        await this.signIn(authority);
+        return null;
+      }
       throw new Error('User is not logged in.');
     }
 
     try {
-      const account = accounts.filter((a) => a.tenantId
-        === (msalInstance.getActiveAccount()?.tenantId || localStorage.getItem(localStorageKeys.lastTenantId.name)))[0] || accounts[0];
+      const account = accounts.filter((a) => a.tenantId === authority)[0]
+        // in case or localhost or unofficial sites (feature branch) we'll use the main tenant
+        || accounts[0];
 
       applicationInsights.trackTrace('account', { context: 'AuthenticationProvider', value: account });
 
@@ -97,7 +109,7 @@ export default {
       applicationInsights.trackException(e.errorCode, { context: 'AuthenticationProvider' });
 
       if (e.errorCode === 'login_required') {
-        this.signIn(process.env.VUE_APP_AUTH_AAD_REDIRECT_URI);
+        this.signIn();
       }
     }
 

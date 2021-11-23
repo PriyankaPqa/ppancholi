@@ -329,7 +329,9 @@ export default Vue.extend({
     },
 
     getRole(user: ITeamMemberAsUser): string {
-      if (user.metadata.roleName) return this.$m(user.metadata.roleName);
+      if (user.metadata.roleName) {
+        return this.$m(user.metadata.roleName);
+      }
       return '';
     },
 

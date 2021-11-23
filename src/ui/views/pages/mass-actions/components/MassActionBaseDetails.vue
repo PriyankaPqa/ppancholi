@@ -124,8 +124,12 @@ export default mixins(massActionDetails).extend({
 
   computed: {
     title(): TranslateResult {
-      if (this.preProcessing) return this.$t(this.preProcessingTitle);
-      if (this.processing) return this.$t(this.processingTitle);
+      if (this.preProcessing) {
+        return this.$t(this.preProcessingTitle);
+      }
+      if (this.processing) {
+        return this.$t(this.processingTitle);
+      }
       return this.$t(this.detailsTitle);
     },
   },

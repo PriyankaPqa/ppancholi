@@ -61,7 +61,9 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
  * If a string is passed, will replaced only the {id}
  */
   protected getItemUrl(url: string, idParams: IdParams | Omit<IdParams, 'id'>) : string {
-    if (!idParams) return url;
+    if (!idParams) {
+      return url;
+    }
     if (typeof idParams === 'object') {
       let url2 = url;
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment

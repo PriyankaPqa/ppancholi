@@ -342,7 +342,9 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     getBeneficiaryName(caseFile: ICaseFileCombined): string {
-      if (!caseFile?.metadata?.primaryBeneficiary?.identitySet) return '';
+      if (!caseFile?.metadata?.primaryBeneficiary?.identitySet) {
+        return '';
+      }
 
       const { firstName, lastName } = caseFile.metadata.primaryBeneficiary.identitySet;
 

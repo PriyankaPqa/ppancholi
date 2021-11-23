@@ -127,7 +127,9 @@ export default Vue.extend({
   computed: {
     agreementTypeName(): string {
       const type = this.agreementTypes.find((type) => type.id === this.agreement.agreementType.optionItemId);
-      if (!type) return '';
+      if (!type) {
+        return '';
+      }
       const { isOther } = type;
       if (isOther) {
         return this.agreement.agreementType.specifiedOther;

@@ -172,7 +172,9 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
   computed: {
     dayAfterStartDate(): string {
-      if (!this.agreement.startDate) return null;
+      if (!this.agreement.startDate) {
+        return null;
+      }
       return (moment(this.agreement.startDate).clone().add(1, 'days').format('YYYY-MM-DD'));
     },
 

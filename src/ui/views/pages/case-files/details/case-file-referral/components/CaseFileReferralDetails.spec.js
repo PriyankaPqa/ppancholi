@@ -270,7 +270,9 @@ describe('CaseFileReferralDetails', () => {
           outcomeStatus() {
             return 'mock-outcome';
           },
-          canEdit() { return true; },
+          canEdit() {
+            return true;
+          },
         },
       });
     });

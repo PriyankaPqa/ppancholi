@@ -69,7 +69,9 @@ export default Vue.extend({
 
     filteredCategories(): IOptionItem[] {
       const filtered = this.financialAssistanceCategories.filter((c) => {
-        if (this.item?.mainCategory?.id === c.id) return true;
+        if (this.item?.mainCategory?.id === c.id) {
+          return true;
+        }
 
         const isSelected = this.items.some((i) => i.mainCategory.id === c.id);
         return !isSelected && c.status === Status.Active;

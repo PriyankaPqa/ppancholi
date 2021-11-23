@@ -130,7 +130,9 @@ describe('IsRegistered.vue', () => {
           localVue,
           vuetify,
           computed: {
-            isSplitMode() { return true; },
+            isSplitMode() {
+              return true;
+            },
           },
           mocks: {
             $storage: storage,

@@ -250,7 +250,9 @@ export default Vue.extend({
       handler(newVal) {
         // We trigger validation so user is aware he has to fill birthdate fields
         this.$nextTick(() => {
-          if (this.$refs.form) (this.$refs.form as VForm).validate();
+          if (this.$refs.form) {
+            (this.$refs.form as VForm).validate();
+          }
         });
         if (this.dateComponentNotEmpty) {
           this.form.birthDate = moment({

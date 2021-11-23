@@ -93,7 +93,9 @@ const actions = {
     const { list } = context.state;
     const data = await this.$services.optionItems.createOptionItem(list, payload);
 
-    if (data != null) context.commit('addOrUpdateItem', data);
+    if (data != null) {
+      context.commit('addOrUpdateItem', data);
+    }
 
     return null;
   },
@@ -106,7 +108,9 @@ const actions = {
 
     const data = await this.$services.optionItems.addSubItem(context.state.list, payload.itemId, payload.subItem);
 
-    if (data != null) context.commit('addOrUpdateItem', data);
+    if (data != null) {
+      context.commit('addOrUpdateItem', data);
+    }
 
     return null;
   },
@@ -121,7 +125,9 @@ const actions = {
     const { list } = context.state;
     const data = await this.$services.optionItems.updateOptionItem(list, payload.id, payload.name, payload.description);
 
-    if (data != null) context.commit('addOrUpdateItem', data);
+    if (data != null) {
+      context.commit('addOrUpdateItem', data);
+    }
 
     return null;
   },
@@ -136,7 +142,9 @@ const actions = {
     const { list } = context.state;
     const data = await this.$services.optionItems.updateOptionSubItem(list, payload.itemId, payload.subItemId, payload.name, payload.description);
 
-    if (data != null) context.commit('addOrUpdateItem', data);
+    if (data != null) {
+      context.commit('addOrUpdateItem', data);
+    }
 
     return null;
   },
@@ -153,7 +161,9 @@ const actions = {
     const { list } = context.state;
     const data = await this.$services.optionItems.updateOptionItemStatus(list, payload.id, payload.status);
 
-    if (data != null) context.commit('addOrUpdateItem', data);
+    if (data != null) {
+      context.commit('addOrUpdateItem', data);
+    }
 
     return null;
   },
@@ -170,7 +180,9 @@ const actions = {
     const { list } = context.state;
     const data = await this.$services.optionItems.updateOptionSubItemStatus(list, payload.itemId, payload.subItemId, payload.status);
 
-    if (data != null) context.commit('addOrUpdateItem', data);
+    if (data != null) {
+      context.commit('addOrUpdateItem', data);
+    }
 
     return null;
   },

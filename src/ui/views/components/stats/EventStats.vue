@@ -117,9 +117,15 @@ export default Vue.extend({
     },
 
     tip(): TranslateResult[] {
-      if (this.currentTab === 0) return [this.$t('event_stats.tip.number_of_case_file'), this.$t('event_stats.tip.case_file_group_by.status')];
-      if (this.currentTab === 1) return [this.$t('event_stats.tip.number_of_open_case_file'), this.$t('event_stats.tip.case_file_group_by.assigned')];
-      if (this.currentTab === 2) return [this.$t('event_stats.tip.number_of_case_file'), this.$t('event_stats.tip.case_file_group_by.triage')];
+      if (this.currentTab === 0) {
+        return [this.$t('event_stats.tip.number_of_case_file'), this.$t('event_stats.tip.case_file_group_by.status')];
+      }
+      if (this.currentTab === 1) {
+        return [this.$t('event_stats.tip.number_of_open_case_file'), this.$t('event_stats.tip.case_file_group_by.assigned')];
+      }
+      if (this.currentTab === 2) {
+        return [this.$t('event_stats.tip.number_of_case_file'), this.$t('event_stats.tip.case_file_group_by.triage')];
+      }
       return null;
     },
 

@@ -223,11 +223,15 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     },
 
     setMetadata: (metadata: TMetadata) => {
-      if (this.metadataModuleName) this.store.commit(`${this.metadataModuleName}/set`, metadata);
+      if (this.metadataModuleName) {
+        this.store.commit(`${this.metadataModuleName}/set`, metadata);
+      }
     },
 
     setAllMetadata: (payload:TMetadata[]) => {
-      if (this.metadataModuleName) this.store.commit(`${this.metadataModuleName}/setAll`, payload);
+      if (this.metadataModuleName) {
+        this.store.commit(`${this.metadataModuleName}/setAll`, payload);
+      }
     },
   }
 

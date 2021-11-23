@@ -13,6 +13,10 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
     super(http, API_URL_SUFFIX, ENTITY);
   }
 
+  async getAll(): Promise<ITenantSettingsEntityData[]> {
+    return this.http.get(`${this.baseApi}/tenants/settings`);
+  }
+
   async getCurrentTenantSettings(): Promise<ITenantSettingsEntityData> {
     return this.http.get(`${this.baseUrl}/current-tenant-settings`, { globalHandler: false });
   }

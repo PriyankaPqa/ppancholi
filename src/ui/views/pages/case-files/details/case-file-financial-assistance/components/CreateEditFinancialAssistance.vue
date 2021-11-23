@@ -183,7 +183,9 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     activePaymentGroups(): IFinancialAssistancePaymentGroup[] {
-      if (!this.financialAssistance?.groups?.length) return [];
+      if (!this.financialAssistance?.groups?.length) {
+        return [];
+      }
       return this.financialAssistance?.groups.filter((g) => g.status === Status.Active);
     },
 

@@ -72,11 +72,17 @@ export default Vue.extend({
   methods: {
     getPhone(household: IFormattedHousehold): string {
       const mPhone = household.primaryBeneficiary.mobilePhoneNumber;
-      if (mPhone) return mPhone.number;
+      if (mPhone) {
+        return mPhone.number;
+      }
       const hPhone = household.primaryBeneficiary.homePhoneNumber;
-      if (hPhone) return hPhone.number;
+      if (hPhone) {
+        return hPhone.number;
+      }
       const oPhone = household.primaryBeneficiary.alternatePhoneNumber;
-      if (oPhone) return oPhone.number;
+      if (oPhone) {
+        return oPhone.number;
+      }
       return '';
     },
   },

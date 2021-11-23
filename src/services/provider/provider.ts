@@ -16,6 +16,7 @@ import { CaseNotesService } from '../case-notes/entity';
 import { FinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
 import { MassActionService } from '@/services/mass-actions/entity';
 import { FinancialAssistancePaymentsService } from '../financial-assistance-payments/entity';
+import { TenantSettingsService } from '../tenantSettings/entity';
 import { FeaturesService } from '../features/entity';
 
 export const provider = (): IProvider => ({
@@ -35,5 +36,6 @@ export const provider = (): IProvider => ({
   userAccounts: new UserAccountsService(httpClient),
   financialAssistanceCategories: new FinancialAssistanceCategoriesService(httpClient),
   massActions: new MassActionService(httpClient),
+  tenantSettings: new TenantSettingsService(httpClient),
   features: new FeaturesService(httpClient),
 });

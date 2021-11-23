@@ -78,7 +78,9 @@ export default Vue.extend({
 
     accessibleCards(): Array<Record<string, string>> {
       return this.cards.filter((card) => {
-        if (card.level) return this.$hasLevel(card.level);
+        if (card.level) {
+          return this.$hasLevel(card.level);
+        }
         return true;
       });
     },

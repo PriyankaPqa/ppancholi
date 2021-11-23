@@ -54,7 +54,9 @@ export default Vue.extend({
     },
 
     assistanceNumber(): string {
-      if (!this.event) return '';
+      if (!this.event) {
+        return '';
+      }
       return this.event.entity.responseDetails.assistanceNumber;
     },
   },

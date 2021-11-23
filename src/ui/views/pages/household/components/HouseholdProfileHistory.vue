@@ -185,7 +185,9 @@ export default Vue.extend({
 
   methods: {
     handleMoveActivity(activityList: IHouseholdActivity[]):IHouseholdActivity[] {
-      if (!activityList) return [];
+      if (!activityList) {
+        return [];
+      }
       let processedList = [] as IHouseholdActivity[];
       activityList.forEach((item: IHouseholdActivity) => {
         if (item.activityType === HouseholdActivityType.HouseholdMoved) {
