@@ -141,6 +141,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
+import moment from 'moment';
 import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
 import {
   CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileCombined,
@@ -288,8 +289,11 @@ export default Vue.extend({
         let historyM = (await this.$services.households.getHouseholdMetadataHistory(this.caseFile?.entity?.householdId) || []);
         historyE = _orderBy(historyE, 'timestamp', 'desc');
         historyM = _orderBy(historyM, 'timestamp', 'desc');
-        const lastMeta = historyM.filter((h) => h.timestamp <= this.closeActivity.created)[0]?.entity as IHouseholdMetadata;
-        const lastEntity = historyE.filter((h) => h.timestamp <= this.closeActivity.created)[0]?.entity as IHouseholdEntity;
+        // since our BE stuff happens async, some history might not be recorded at the exact same time
+        // it has been decided that we will look at the version of history that was valid one minute before the close/archive
+        const oneMinuteBeforeCloseArchive = moment(this.closeActivity.created).add(-1, 'minute').toISOString();
+        const lastMeta = historyM.filter((h) => h.timestamp <= oneMinuteBeforeCloseArchive)[0]?.entity as IHouseholdMetadata;
+        const lastEntity = historyE.filter((h) => h.timestamp <= oneMinuteBeforeCloseArchive)[0]?.entity as IHouseholdEntity;
         if (lastMeta) {
           this.primary = (lastMeta.memberMetadata || []).filter((m) => m.id === lastEntity?.primaryBeneficiary).map(mapToMember)[0];
           this.householdMembers = (lastMeta.memberMetadata || []).filter((m) => m.id !== lastEntity?.primaryBeneficiary).map(mapToMember);

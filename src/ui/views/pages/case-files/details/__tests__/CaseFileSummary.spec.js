@@ -55,16 +55,23 @@ describe('CaseFileSummary.vue', () => {
 
   describe('Methods', () => {
     describe('getHouseholdMembers', () => {
-      it('calls the household history to get the members at the time of closing', async () => {
+      it('calls the household history to get the members at the time of closing - 1 minute', async () => {
         await mountWrapper();
         jest.clearAllMocks();
-        wrapper.vm.closeActivity.created = '2020-02-01T00:00:00Z';
+        wrapper.vm.closeActivity.created = '2020-02-01T00:05:00Z';
 
+        // 02 will be ignored as the change >  wrapper.vm.closeActivity.created - 1 minute
         wrapper.vm.$services.households.getHouseholdHistory = jest.fn(() => [
           {
-            timestamp: '2020-01-01T00:00:00Z',
+            timestamp: '2020-02-01T00:03:10Z',
             entity: {
               primaryBeneficiary: '01',
+            },
+          },
+          {
+            timestamp: '2020-02-01T00:04:55Z',
+            entity: {
+              primaryBeneficiary: '02',
             },
           },
         ]);
