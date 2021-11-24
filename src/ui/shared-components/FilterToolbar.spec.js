@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import { EFilterKeyType, EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import _set from 'lodash/set';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
@@ -225,7 +226,7 @@ describe('Filter Toolbar', () => {
           .toHaveBeenCalledWith([filters[1]]);
       });
 
-      it('calls translateSearchFilter to prepare userFilters of type "search"', () => {
+      it('calls translateSearchFilter to prepare userFilters of type "search" (all text)', () => {
         jest.spyOn(wrapper.vm, 'prepareSearchFilters')
           .mockImplementation(() => {
           });
@@ -258,7 +259,7 @@ describe('Filter Toolbar', () => {
         ];
         wrapper.vm.onApplyFilter(filters);
         expect(wrapper.vm.prepareSearchFilters)
-          .toHaveBeenCalledWith([filters[0], filters[1], filters[2]]);
+          .toHaveBeenCalledWith([filters[0], filters[1], filters[2], filters[3]]);
       });
 
       it('emits update:appliedFilter with proper parameter', () => {
@@ -483,7 +484,19 @@ describe('Filter Toolbar', () => {
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
         expect(newFilter)
-          .toEqual('TeamName:/myValue.*/');
+          .toEqual(['(TeamName:/myValue.*/ OR TeamName:"\\"myValue\\"")']);
+      });
+
+      it('creates the correct string for BeginsWith operator when multiple words', () => {
+        const filter = {
+          type: 'text',
+          value: 'myValue  spaced out',
+          operator: EFilterOperator.BeginsWith,
+          key: 'TeamName',
+        };
+        const newFilter = wrapper.vm.translateSearchFilter(filter);
+        expect(newFilter)
+          .toEqual(['(TeamName:/myValue.*/ OR TeamName:"\\"myValue\\"")', '(TeamName:/spaced.*/ OR TeamName:"\\"spaced\\"")', '(TeamName:/out.*/ OR TeamName:"\\"out\\"")']);
       });
 
       it('creates the correct string for Contains operator', () => {
@@ -495,7 +508,19 @@ describe('Filter Toolbar', () => {
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
         expect(newFilter)
-          .toEqual('TeamName: /.*myValue.*/');
+          .toEqual(['(TeamName:/.*myValue.*/ OR TeamName:"\\"myValue\\"")']);
+      });
+
+      it('creates the correct string for Contains operator when multiple words', () => {
+        const filter = {
+          type: 'text',
+          value: 'myValue  spaced out',
+          operator: EFilterOperator.Contains,
+          key: 'TeamName',
+        };
+        const newFilter = wrapper.vm.translateSearchFilter(filter);
+        expect(newFilter)
+          .toEqual(['(TeamName:/.*myValue.*/ OR TeamName:"\\"myValue\\"")', '(TeamName:/.*spaced.*/ OR TeamName:"\\"spaced\\"")', '(TeamName:/.*out.*/ OR TeamName:"\\"out\\"")']);
       });
 
       it('creates the correct string for DoesNotContain operator', () => {
@@ -507,7 +532,7 @@ describe('Filter Toolbar', () => {
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
         expect(newFilter)
-          .toEqual('TeamName:(/.*/ NOT /.*myValue.*/)');
+          .toEqual(['TeamName:(/.*/ NOT /.*myValue.*/)']);
       });
 
       it('creates the correct string for Fuzzy Search operator', () => {
@@ -519,7 +544,7 @@ describe('Filter Toolbar', () => {
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
         expect(newFilter)
-          .toEqual('TeamName: "myValue~"');
+          .toEqual(['TeamName:"myValue~"']);
       });
 
       it('creates the correct string for Equals Search operator', () => {
@@ -531,7 +556,7 @@ describe('Filter Toolbar', () => {
         };
         const newFilter = wrapper.vm.translateSearchFilter(filter);
         expect(newFilter)
-          .toEqual('TeamName: "myValue"');
+          .toEqual(['TeamName:"\\"myValue\\""']);
       });
     });
 
@@ -681,7 +706,7 @@ describe('Filter Toolbar', () => {
         ];
         const finalFilters = wrapper.vm.prepareSearchFilters(filters);
         expect(finalFilters)
-          .toEqual('TeamName:/begin.*/ AND UserName:(/.*/ NOT /.*notContain.*/)');
+          .toEqual('(TeamName:/begin.*/ OR TeamName:"\\"begin\\"") AND UserName:(/.*/ NOT /.*notContain.*/)');
       });
     });
 

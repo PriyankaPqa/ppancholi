@@ -247,7 +247,7 @@ export default Vue.extend({
      * Emits the event when a filter is applied or removed from the table
      */
     async onApplyFilter(filters: IFilterData[]) {
-      const searchFilters = filters.filter((f) => f.type === 'text' && f.operator !== EFilterOperator.Equal);
+      const searchFilters = filters.filter((f) => f.type === 'text');
 
       const translatedSearchFilters = this.prepareSearchFilters(searchFilters);
       const preparedFilters = this.prepareFiltersForOdataQuery(_difference(filters, searchFilters));
@@ -317,29 +317,27 @@ export default Vue.extend({
 
     translateSearchFilter(filter: IFilterData) {
       const { key, operator, type } = filter;
-      const { value } = filter;
+      const value = filter.value == null ? '' : filter.value as string;
 
       if (type !== 'text') {
         throw Error('only filter whose type is text can be processed here');
       }
 
       switch (operator) {
-        case EFilterOperator.BeginsWith: // ex: FirstName:/Jo.*/
-          return `${key}:/${value}.*/`;
-        case EFilterOperator.Contains: // ex: EventName/Translation/En: "full string contains"
-          return `${key}: /.*${value}.*/`;
-          // return `${key}:/.*${value}.*/`;
+        case EFilterOperator.BeginsWith: // ex: FirstName:/Jo.*/ + equal
+          return value.split(' ').filter((x) => x !== '').map((v) => `(${key}:/${v}.*/ OR ${key}:"\\"${v}\\"")`);
+        case EFilterOperator.Contains: // ex: EventName/Translation/En: "full string contains" + equal
+          return value.split(' ').filter((x) => x !== '').map((v) => `(${key}:/.*${v}.*/ OR ${key}:"\\"${v}\\"")`);
         case EFilterOperator.DoesNotContain: // TeamName:(/.*/ NOT /.*name.*/)
-          // return `${key}: "!${value}"`;
-          return `${key}:(/.*/ NOT /.*${value}.*/)`;
+          return [`${key}:(/.*/ NOT /.*${value}.*/)`];
 
         case EFilterOperator.FuzzySearch:
-          return `${key}: "${value}~"`;
+          return [`${key}:"${value}~"`];
 
-        case EFilterOperator.Equal:
-          return `${key}: "${value}"`;
+        case EFilterOperator.Equal: // ex: EventName:"\"forest fire\""
+          return [`${key}:"\\"${value}\\""`];
         default:
-          return '';
+          return [''];
       }
     },
 
@@ -365,14 +363,15 @@ export default Vue.extend({
     prepareSearchFilters(filters: IFilterData []) {
       let finalFilter = '';
 
-      filters.forEach((filter: IFilterData, index: number) => {
-        const stringSearch = this.translateSearchFilter(filter);
-        if (index === 0) {
+      const translatedFilters = ([] as string[]).concat(...filters.map((filter) => this.translateSearchFilter(filter)));
+      translatedFilters.forEach((stringSearch) => {
+        if (finalFilter === '') {
           finalFilter = `${stringSearch}`;
         } else {
           finalFilter += ` AND ${stringSearch}`;
         }
       });
+
       return finalFilter;
     },
 
