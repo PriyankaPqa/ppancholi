@@ -28,6 +28,7 @@
       class="table border-radius-bottom"
       data-test="teamMembers__table"
       hide-default-footer
+      must-sort
       :headers="headers"
       :items="computedTeamMembers"
       :items-per-page="Math.max(computedTeamMembers.length, 1)"

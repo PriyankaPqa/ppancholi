@@ -35,6 +35,7 @@
               data-test="table"
               class="search_members"
               show-select
+              must-sort
               hide-default-footer
               :headers="headers"
               :item-class="getClassRow"

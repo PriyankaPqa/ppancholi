@@ -25,6 +25,7 @@
       class="flex-grow-1 scrollable"
       :headers="headers"
       hide-default-footer
+      must-sort
       :items="formattedHistory">
       <template #[`item.username`]="{ item }">
         <b>{{ item.username }}</b>
