@@ -51,7 +51,9 @@ export default Vue.extend({
           ? await this.$storage.feature.actions.enableFeature(this.feature.id)
           : await this.$storage.feature.actions.disableFeature(this.feature.id);
 
-        if (!result) this.enabled = !newValue; // roll back
+        if (!result) {
+          this.enabled = !newValue; // roll back
+        }
 
         this.loading = false;
       });

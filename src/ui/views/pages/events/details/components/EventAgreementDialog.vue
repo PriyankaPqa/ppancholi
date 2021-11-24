@@ -8,7 +8,7 @@
       :content-only-scrolling="true"
       :persistent="true"
       :max-width="750"
-      :min-height="600"
+      :min-height="610"
       :loading="loading"
       :submit-button-disabled="failed || (isEditMode && pristine)"
       @cancel="$emit('close')"

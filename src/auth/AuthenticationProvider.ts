@@ -73,7 +73,9 @@ export default {
     // we will have an authority (tenantid)
     // if the current domain is directly associated with a tenant, which will be forced on the user
     const authority = await services.publicApi.getTenantByEmisDomain(window.location.host);
-    if (!authority) console.log(`no tenants for ${window.location.host} we'll use the default tenant`);
+    if (!authority) {
+      console.log(`no tenants for ${window.location.host} we'll use the default tenant`);
+    }
     const accounts = msalInstance.getAllAccounts() || [];
 
     if (!accounts.length || (authority && !accounts.filter((a) => a.tenantId === authority)[0])) {
