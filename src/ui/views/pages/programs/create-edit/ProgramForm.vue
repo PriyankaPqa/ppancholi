@@ -194,7 +194,7 @@ export default Vue.extend({
     },
 
     paymentModalities(): Array<{ text: string, value: unknown }> {
-      const paymentModalities = helpers.enumToTranslatedCollection(EPaymentModalities, 'event.programManagement.paymentModalities');
+      const paymentModalities = helpers.enumToTranslatedCollection(EPaymentModalities, 'enums.PaymentModality');
       return _orderBy(paymentModalities, 'text');
     },
   },

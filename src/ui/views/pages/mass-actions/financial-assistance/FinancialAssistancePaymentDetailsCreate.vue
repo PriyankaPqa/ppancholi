@@ -221,7 +221,7 @@ export default Vue.extend({
 
     paymentModalities(): Record<string, unknown>[] {
       if (this.program?.entity) {
-        return helpers.enumToTranslatedCollection(EPaymentModalities, 'event.programManagement.paymentModalities')
+        return helpers.enumToTranslatedCollection(EPaymentModalities, 'enums.PaymentModality')
           .filter((p) => this.program.entity.paymentModalities.includes(p.value));
       }
       return [];

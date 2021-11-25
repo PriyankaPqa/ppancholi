@@ -172,19 +172,19 @@ describe('ProgramDetails.vue', () => {
     describe('getTranslatedPaymentModality', () => {
       it('returns the correct translation key for the payment modality', () => {
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.ETransfer))
-          .toBe('event.programManagement.paymentModalities.ETransfer');
+          .toBe('enums.PaymentModality.ETransfer');
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.Cheque))
-          .toBe('event.programManagement.paymentModalities.Cheque');
+          .toBe('enums.PaymentModality.Cheque');
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.DirectDeposit))
-          .toBe('event.programManagement.paymentModalities.DirectDeposit');
+          .toBe('enums.PaymentModality.DirectDeposit');
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.GiftCard))
-          .toBe('event.programManagement.paymentModalities.GiftCard');
+          .toBe('enums.PaymentModality.GiftCard');
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.Invoice))
-          .toBe('event.programManagement.paymentModalities.Invoice');
+          .toBe('enums.PaymentModality.Invoice');
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.PrepaidCard))
-          .toBe('event.programManagement.paymentModalities.PrepaidCard');
+          .toBe('enums.PaymentModality.PrepaidCard');
         expect(wrapper.vm.getTranslatedPaymentModality(EPaymentModalities.Voucher))
-          .toBe('event.programManagement.paymentModalities.Voucher');
+          .toBe('enums.PaymentModality.Voucher');
       });
     });
 

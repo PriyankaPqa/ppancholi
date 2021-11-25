@@ -6,7 +6,7 @@
       <v-col cols="12" lg="7">
         <div class="pb-4 d-flex justify-space-between" data-test="detail_modality">
           <h3>
-            {{ $t(`event.programManagement.paymentModalities.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`) }}
+            {{ $t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`) }}
           </h3>
         </div>
         <div class="pb-4 d-flex justify-space-between" data-test="detail_title">

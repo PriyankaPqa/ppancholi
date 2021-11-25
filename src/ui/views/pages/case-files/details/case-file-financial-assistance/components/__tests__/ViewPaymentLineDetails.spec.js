@@ -51,7 +51,7 @@ describe('ViewPaymentLineDetails.vue', () => {
 
     describe('detail_modality', () => {
       it('shows the correct data', () => {
-        expect(wrapper.findDataTest('detail_modality').text()).toEqual('event.programManagement.paymentModalities.Cheque');
+        expect(wrapper.findDataTest('detail_modality').text()).toEqual('enums.PaymentModality.Cheque');
       });
     });
 

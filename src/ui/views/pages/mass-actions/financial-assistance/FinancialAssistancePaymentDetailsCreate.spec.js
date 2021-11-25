@@ -419,7 +419,7 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
       });
 
       it('should return all payment modalities included in the program', () => {
-        const expected = helpers.enumToTranslatedCollection(EPaymentModalities, 'event.programManagement.paymentModalities')
+        const expected = helpers.enumToTranslatedCollection(EPaymentModalities, 'enums.PaymentModality')
           .filter((p) => mockCombinedProgram().entity.paymentModalities.includes(p.value));
 
         expect(wrapper.vm.paymentModalities).toEqual(expected);

@@ -193,11 +193,12 @@ async function uploadRegistration() {
 
 async function deleteKeys(filePath, projectID, sliceSize = SLICE_SIZE) {
   try {
-    let keysToBeDeleted = fs.readFileSync(filePath, "utf-8").split("\r\n");
+    let keysToBeDeleted = fs.readFileSync(filePath, "utf-8").split("\n");
     // We slice the file otherwise the URL is too long
     for (let i = 0; i < keysToBeDeleted.length; i+= sliceSize) {
       const slice = keysToBeDeleted.slice(i, i + sliceSize);
       const idsToBeDeleted = await fetchKeysIds(projectID, slice);
+      console.log('idsToBeDeleted', idsToBeDeleted)
       if (idsToBeDeleted.length === 0) return;
       await deleteFromLokalise(projectID, idsToBeDeleted);
     }

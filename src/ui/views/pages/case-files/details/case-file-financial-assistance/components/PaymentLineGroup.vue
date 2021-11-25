@@ -168,7 +168,7 @@ export default Vue.extend({
 
     modality(): string {
       const label = this.$t(
-        `event.programManagement.paymentModalities.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`,
+        `enums.PaymentModality.${EPaymentModalities[this.paymentGroup.groupingInformation.modality]}`,
       ) as string;
 
       // in lowercase so that it continues from Total...

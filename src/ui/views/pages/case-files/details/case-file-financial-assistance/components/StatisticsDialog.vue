@@ -120,7 +120,7 @@ export default Vue.extend({
 
   methods: {
     getTranslatedPaymentModality(modality: EPaymentModalities) {
-      return this.$t(`event.programManagement.paymentModalities.${EPaymentModalities[modality]}`);
+      return this.$t(`enums.PaymentModality.${EPaymentModalities[modality]}`);
     },
 
     close() {

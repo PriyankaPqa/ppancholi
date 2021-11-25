@@ -258,7 +258,7 @@ export default mixins(caseFileDetail).extend({
 
   computed: {
     paymentModalities(): Array<{ text: string, value: unknown }> {
-      const paymentModalities = helpers.enumToTranslatedCollection(EPaymentModalities, 'event.programManagement.paymentModalities')
+      const paymentModalities = helpers.enumToTranslatedCollection(EPaymentModalities, 'enums.PaymentModality')
         .filter((p) => this.program.paymentModalities.find((payment : EPaymentModalities) => payment === p.value)
           || this.paymentGroup.groupingInformation.modality === p.value);
       return _orderBy(paymentModalities, 'text');

@@ -223,7 +223,7 @@ describe('PaymentLineGroup.vue', () => {
 
     describe('modality', () => {
       it('should return name of the selected modality in lowercase', () => {
-        expect(wrapper.vm.modality).toEqual('event.programmanagement.paymentmodalities.cheque');
+        expect(wrapper.vm.modality).toEqual('enums.paymentmodality.cheque');
       });
     });
 

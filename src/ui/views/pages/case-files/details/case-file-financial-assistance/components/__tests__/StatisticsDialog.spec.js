@@ -36,11 +36,11 @@ describe('StatisticsDialog.vue', () => {
         await mountWrapper();
         const sheets = wrapper.findDataTest('paymentModalityCounts_section').findAll('v-sheet-stub').wrappers;
         expect(sheets.length).toEqual(wrapper.vm.summary.paymentModalityCounts.length);
-        expect(sheets[0].text()).toContain('event.programManagement.paymentModalities.Cheque');
+        expect(sheets[0].text()).toContain('enums.PaymentModality.Cheque');
         expect(sheets[0].text()).toContain('1');
-        expect(sheets[1].text()).toContain('event.programManagement.paymentModalities.DirectDeposit');
+        expect(sheets[1].text()).toContain('enums.PaymentModality.DirectDeposit');
         expect(sheets[1].text()).toContain('2');
-        expect(sheets[2].text()).toContain('event.programManagement.paymentModalities.ETransfer');
+        expect(sheets[2].text()).toContain('enums.PaymentModality.ETransfer');
         expect(sheets[2].text()).toContain('1');
       });
     });

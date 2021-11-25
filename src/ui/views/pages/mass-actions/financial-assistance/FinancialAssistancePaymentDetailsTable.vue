@@ -83,7 +83,7 @@ export default Vue.extend({
         },
         {
           label: 'massActions.financialAssistance.create.payment.label',
-          value: this.$t(`event.programManagement.paymentModalities.${EPaymentModalities[this.massAction.entity.details.paymentModality]}`),
+          value: this.$t(`enums.PaymentModality.${EPaymentModalities[this.massAction.entity.details.paymentModality]}`),
           dataTest: 'payment',
         },
         {

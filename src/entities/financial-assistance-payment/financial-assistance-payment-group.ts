@@ -63,13 +63,13 @@ export class FinancialAssistancePaymentGroup extends BaseEntity implements IFina
 
   static groupTitle(paymentGroup: IFinancialAssistancePaymentGroup) : string | TranslateResult {
     if (FinancialAssistancePaymentGroup.showPayee(paymentGroup)) {
-      const modality = i18n.t(`event.programManagement.paymentModalities.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
+      const modality = i18n.t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
       const payeeType = i18n.t(`enums.payeeType.${PayeeType[paymentGroup.groupingInformation.payeeType]}`);
 
       return `${modality} (${payeeType}) - ${paymentGroup.groupingInformation.payeeName}`;
     }
 
-    return i18n.t(`event.programManagement.paymentModalities.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
+    return i18n.t(`enums.PaymentModality.${EPaymentModalities[paymentGroup.groupingInformation.modality]}`);
   }
 
   static total(paymentGroups: IFinancialAssistancePaymentGroup[]): number {

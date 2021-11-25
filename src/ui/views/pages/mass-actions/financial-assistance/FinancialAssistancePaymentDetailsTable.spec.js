@@ -70,7 +70,7 @@ describe('FinancialAssistancePaymentDetailsTable.vue', () => {
           },
           {
             label: 'massActions.financialAssistance.create.payment.label',
-            value: `event.programManagement.paymentModalities.${EPaymentModalities[wrapper.vm.massAction.entity.details.paymentModality]}`,
+            value: `enums.PaymentModality.${EPaymentModalities[wrapper.vm.massAction.entity.details.paymentModality]}`,
             dataTest: 'payment',
           },
           {
