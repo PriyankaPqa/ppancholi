@@ -17,7 +17,7 @@ export default Vue.extend({
       previousPageIndex: 0,
       userFilters: null as Record<string, unknown>,
       userSearchFilters: '',
-      params: null,
+      params: null as IAzureSearchParams & { pageSize?: number, pageIndex?: number, descending?: boolean },
       forceSkip: false, // when apply or un-apply user filter
       options: {
         page: 1,
@@ -104,12 +104,16 @@ export default Vue.extend({
     },
 
     setSearchParams() {
-      let quickSearch;
+      let quickSearch = '';
 
-      if (!this.params.search) {
-        quickSearch = '';
-      } else {
-        quickSearch = helpers.sanitize(`${this.params.search}`);
+      if (this.params.search) {
+        // any quick search will be treated as a Contains on all searchable fields
+        // this splits the search by space and verifies Contains or Equal (like in filters)
+        quickSearch = this.params.search.split(' ').filter((x) => x !== '')
+          .map((v) => helpers.sanitize(v))
+          .map((v) => `(/.*${v}.*/ OR "\\"${v}\\"")`)
+          .join(' AND ');
+        quickSearch = `(${quickSearch})`;
       }
 
       if (this.userSearchFilters && quickSearch) {
@@ -125,14 +129,7 @@ export default Vue.extend({
      * Triggered as soon as a parameter of the table has changed (sort, pagination, search)
      */
     async search(params: IAzureSearchParams) {
-      let newParams = params;
-
-      if (params.search) {
-        // We replace space by + so it works with azure search
-        newParams = { ...params, search: params.search.replace(/\s/g, '+') };
-      }
-
-      this.params = newParams;
+      this.params = params;
 
       this.setPaginationParams();
 

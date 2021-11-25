@@ -211,7 +211,7 @@ describe('tablePaginationSearch.vue', () => {
 
         wrapper.vm.setSearchParams();
 
-        expect(wrapper.vm.azureSearchParams.search).toEqual('filter AND search');
+        expect(wrapper.vm.azureSearchParams.search).toEqual('filter AND ((/.*search.*/ OR "\\"search\\""))');
       });
 
       it('sets azureSearchParams.search with sanitized quickSearch', () => {
@@ -220,7 +220,16 @@ describe('tablePaginationSearch.vue', () => {
 
         wrapper.vm.setSearchParams();
 
-        expect(wrapper.vm.azureSearchParams.search).toEqual('%5C%5Bsearch');
+        expect(wrapper.vm.azureSearchParams.search).toEqual('((/.*%5C%5Bsearch.*/ OR "\\"%5C%5Bsearch\\""))');
+      });
+
+      it('sets azureSearchParams.search with quickSearch split by space', () => {
+        wrapper.vm.userSearchFilters = '';
+        wrapper.vm.params.search = 'search test';
+
+        wrapper.vm.setSearchParams();
+
+        expect(wrapper.vm.azureSearchParams.search).toEqual('((/.*search.*/ OR "\\"search\\"") AND (/.*test.*/ OR "\\"test\\""))');
       });
     });
 
