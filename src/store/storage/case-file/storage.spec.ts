@@ -2,12 +2,16 @@ import { CASE_FILE_ENTITIES, CASE_FILE_METADATA } from '@/constants/vuex-modules
 import {
   CaseFileTriage, ICaseFileLabel, CaseFileStatus, IIdentityAuthentication, IdentityAuthenticationMethod,
   IdentityAuthenticationStatus, IImpactStatusValidation, ImpactValidationMethod, ValidationOfImpactStatus,
+  ICaseFileCombined,
+  mockCaseFileEntity,
+  mockCaseFileMetadata,
 } from '@/entities/case-file';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStore } from '@/store';
 import { IListOption } from '@/types';
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { CaseFileStorage } from './storage';
+import { EEventStatus } from '@/entities/event';
 
 const entityModuleName = CASE_FILE_ENTITIES;
 const metadataModuleName = CASE_FILE_METADATA;
@@ -23,6 +27,13 @@ const store = mockStore({
         inactiveReasons: mockOptionItemData(),
         closeReasons: mockOptionItemData(),
         triageLoading: false,
+        items: [mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open } as any),
+          mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive } as any)],
+      },
+    },
+    [metadataModuleName]: {
+      state: {
+        items: [mockCaseFileMetadata()],
       },
     },
   },
@@ -32,6 +43,22 @@ const storage = new CaseFileStorage(store, entityModuleName, metadataModuleName)
 
 describe('>>> Case File Storage', () => {
   describe('>> Getters', () => {
+    describe('base getters - combinedCollections overload', () => {
+      it('should set readonly on the combined entry based on caseFileStatus', () => {
+        const storageGetter = storage.getters.getAll() as ICaseFileCombined[];
+        expect(storageGetter[0].readonly).toEqual(false);
+        expect(storageGetter[1].readonly).toEqual(true);
+      });
+
+      it('should set readonly on the combined entry based on event.status', () => {
+        let storageGetter = storage.getters.getAll() as ICaseFileCombined[];
+        expect(storageGetter[0].readonly).toEqual(false);
+        store.state.caseFileMetadata.items[0].event.status = EEventStatus.OnHold;
+        storageGetter = storage.getters.getAll() as ICaseFileCombined[];
+        expect(storageGetter[0].readonly).toEqual(true);
+      });
+    });
+
     describe('tagsOptions', () => {
       it('should proxy tagsOptions', () => {
         const storageGetter = storage.getters.tagsOptions();

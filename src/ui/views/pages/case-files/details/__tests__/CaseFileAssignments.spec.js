@@ -252,11 +252,12 @@ describe('CaseFileAssignments.vue', () => {
         expect(wrapper.vm.canAssign).toBeTruthy();
       });
 
-      it('returns false if the user has level between 3 and 5 and case file status is not open', async () => {
+      it('returns false if the user has level between 3 and 5 and property readonly is true', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
-            caseFile: mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Archived }),
+            caseFile: mockCaseFileEntity(),
+            readonly: false,
           },
           store: {
             ...mockUserStateLevel(4),
@@ -276,6 +277,8 @@ describe('CaseFileAssignments.vue', () => {
             },
           },
         });
+        expect(wrapper.vm.canAssign).toBeTruthy();
+        await wrapper.setProps({ readonly: true });
         expect(wrapper.vm.canAssign).toBeFalsy();
       });
 

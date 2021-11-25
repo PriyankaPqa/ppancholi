@@ -4,7 +4,7 @@ import { mockMember } from '@crctech/registration-lib/src/entities/value-objects
 import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockEventMainInfo, EEventLocationStatus, EEventStatus } from '@/entities/event';
+import { mockEventMainInfo, EEventLocationStatus } from '@/entities/event';
 import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
 import { mockUserStateLevel } from '@/test/helpers';
 import householdHelpers from '@/ui/helpers/household';
@@ -253,7 +253,14 @@ describe('HouseholdProfile.vue', () => {
           },
           data() {
             return {
-              events,
+              events: [...events,
+                mockEventMainInfo(
+                  {
+                    id: '2',
+                    schedule: { status: 0 },
+                    shelterLocations: [{ id: 'loc-5', status: EEventLocationStatus.Active }],
+                  },
+                )],
             };
           },
           mocks: {
@@ -600,7 +607,7 @@ describe('HouseholdProfile.vue', () => {
   });
 
   describe('Methods', () => {
-    describe('fetchActiveEvents', () => {
+    describe('fetchMyEvents', () => {
       it('calls searchMyEvents service with the right filter', async () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -620,8 +627,8 @@ describe('HouseholdProfile.vue', () => {
           },
         });
 
-        const expectedFilter = `search.in(Entity/Id, 'id-1|id-2', '|') and Entity/Schedule/Status eq ${EEventStatus.Open}`;
-        await wrapper.vm.fetchActiveEvents();
+        const expectedFilter = 'search.in(Entity/Id, \'id-1|id-2\', \'|\')';
+        await wrapper.vm.fetchMyEvents();
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({ filter: expectedFilter, top: 999 });
       });
     });

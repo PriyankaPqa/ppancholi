@@ -59,6 +59,7 @@
 
         <case-file-assignments
           :case-file="caseFile.entity"
+          :readonly="readonly"
           data-test="case-file-assignments"
           @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
       </v-row>

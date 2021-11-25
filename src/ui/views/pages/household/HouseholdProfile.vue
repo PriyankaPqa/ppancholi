@@ -243,7 +243,7 @@ export default mixins(household).extend({
     shelterLocations() :IEventGenericLocation[] {
       const locations:IEventGenericLocation[] = [];
       if (this.events) {
-        this.events.forEach((e) => {
+        this.events.filter((e) => e.entity?.schedule?.status === EEventStatus.Open).forEach((e) => {
           if (e.entity.shelterLocations) {
             const activeLocations = e.entity.shelterLocations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
             locations.push(...activeLocations);
@@ -326,14 +326,14 @@ export default mixins(household).extend({
       this.$storage.registration.actions.fetchIndigenousCommunities(),
     ]);
     await this.fetchHouseholdData();
-    await this.fetchActiveEvents();
+    await this.fetchMyEvents();
     this.loading = false;
   },
 
   methods: {
-    async fetchActiveEvents() {
+    async fetchMyEvents() {
       const eventIds = this.activeCaseFiles.map((cf) => cf.eventId);
-      const filter = `search.in(Entity/Id, '${eventIds.join('|')}', '|') and Entity/Schedule/Status eq ${EEventStatus.Open}`;
+      const filter = `search.in(Entity/Id, '${eventIds.join('|')}', '|')`;
       const eventsData = await this.$services.events.searchMyEvents({
         filter,
         top: 999,

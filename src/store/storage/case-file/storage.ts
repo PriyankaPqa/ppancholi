@@ -12,6 +12,7 @@ import { IListOption } from '@/types';
 
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { Base } from '../base';
+import { EEventStatus } from '@/entities/event';
 
 export class CaseFileStorage
   extends Base<ICaseFileEntity, ICaseFileMetadata, uuid> implements IStorage {
@@ -19,11 +20,13 @@ export class CaseFileStorage
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }
 
-  protected combinedCollections(entities: Array<ICaseFileEntity>, metadata: Array<ICaseFileMetadata>): Array<ICaseFileCombined> {
-    const result = super.combinedCollections(entities, metadata) as Array<ICaseFileCombined>;
+  protected combinedCollections(entities: Array<ICaseFileEntity>, metadata: Array<ICaseFileMetadata>,
+    pinnedIds: Array<string> = []): Array<ICaseFileCombined> {
+    const result = super.combinedCollections(entities, metadata, pinnedIds) as Array<ICaseFileCombined>;
     if (result) {
       result.forEach((e) => {
-        e.readonly = e.entity?.caseFileStatus !== CaseFileStatus.Open;
+        e.readonly = e.entity?.caseFileStatus !== CaseFileStatus.Open
+          || +e.metadata?.event?.status !== +EEventStatus.Open;
       });
     }
     return result;

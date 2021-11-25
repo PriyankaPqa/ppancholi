@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { CaseFileStatus, ICaseFileEntity } from '@/entities/case-file';
+import { ICaseFileEntity } from '@/entities/case-file';
 import { ITeamEntity } from '@/entities/team';
 import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
 import AssignCaseFile from './AssignCaseFile.vue';
@@ -67,6 +67,10 @@ export default Vue.extend({
       type: Object as () => ICaseFileEntity,
       required: true,
     },
+    readonly: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   data() {
@@ -82,7 +86,7 @@ export default Vue.extend({
 
   computed: {
     canAssign() {
-      return this.$hasLevel('level6') || (this.$hasLevel('level3') && (this.caseFile.caseFileStatus === CaseFileStatus.Open));
+      return this.$hasLevel('level6') || (this.$hasLevel('level3') && !this.readonly);
     },
   },
 

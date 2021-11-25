@@ -36,6 +36,7 @@ import Vue from 'vue';
 import {
   RcConfirmationDialog,
 } from '@crctech/component-library';
+import { EEventStatus } from '@crctech/registration-lib/src/entities/event';
 import { ICaseFileCombined, CaseFileStatus } from '@/entities/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IListOption } from '@/types/interfaces/IListOption';
@@ -80,6 +81,9 @@ export default Vue.extend({
     },
 
     disableStatus() {
+      if (this.caseFile.metadata?.event?.status !== EEventStatus.Open && !this.$hasLevel('level6')) {
+        return true;
+      }
       if (this.caseFile.entity.caseFileStatus === CaseFileStatus.Archived && !this.$hasLevel('level5')) {
         return true;
       }

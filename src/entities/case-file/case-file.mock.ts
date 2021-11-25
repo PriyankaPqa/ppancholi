@@ -6,6 +6,7 @@ import {
   ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
+import { EEventStatus } from '@/entities/event';
 
 export const mockCaseFileCount = (): ICaseFileCount => ({
   inactiveCount: 0, openCount: 1, closedCount: 1, archivedCount: 0,
@@ -78,6 +79,13 @@ export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICase
       translation: {
         en: 'Event 1 EN',
         fr: 'Event 1 FR',
+      },
+    },
+    status: EEventStatus.Open,
+    programName: {
+      translation: {
+        en: 'PN 1 EN',
+        fr: 'PN 1 FR',
       },
     },
   },
