@@ -49,7 +49,6 @@ module.exports = {
       allowModifiers: true,
     }],
     'prefer-destructuring': ['error', { object: false, array: false }],
-    'no-underscore-dangle': 'off',
   },
 
   parserOptions: {

@@ -3,20 +3,8 @@ import moment from 'moment';
 import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { mockHttp } from '../../httpClient.mock';
 import {
-  ECurrentAddressTypes,
-  IMember,
-  IMemberMoveRequest,
-  mockAddress,
-  mockAddressData,
-  mockCampGround,
-  mockContactInformation,
-  mockCreateHouseholdRequest,
-  mockHotelMotel,
-  mockHouseholdCreate,
-  mockIdentitySet,
-  mockMember,
-  mockMemberCreateRequest,
-  mockSplitHouseholdRequest,
+  mockAddressData, mockHouseholdCreate, mockContactInformation, mockCreateHouseholdRequest, mockSplitHouseholdRequest,
+  mockMember, ECurrentAddressTypes, mockIdentitySet, mockHotelMotel, mockCampGround, mockAddress, mockMemberCreateRequest, IMemberMoveRequest, IMember,
 } from '../../../entities/household-create';
 import { HouseholdsService } from './households';
 
@@ -55,15 +43,9 @@ describe('>>> Beneficiaries Service', () => {
   test('submitRegistration is linked to the correct URL', async () => {
     service.parseHouseholdPayload = jest.fn(() => createBeneficiaryRequest);
 
-    await service.submitRegistration({
-      household: mockHouseholdCreate(),
-      eventId: 'event id',
-      recaptchaToken: 'token',
-    });
+    await service.submitRegistration(mockHouseholdCreate(), 'event id');
 
-    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public`,
-      { ...createBeneficiaryRequest, recaptchaToken: 'token' },
-      { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/public`, createBeneficiaryRequest, { globalHandler: false });
   });
 
   test('submitCRCRegistration is linked to the correct URL', async () => {
@@ -156,11 +138,9 @@ describe('>>> Beneficiaries Service', () => {
   test('validateEmail is linked to the correct URL', async () => {
     const email = 'abc@abc.ca';
 
-    await service.validateEmail({ emailAddress: email, registrationType: ERegistrationMode.CRC, recaptchaToken: null });
+    await service.validateEmail({ emailAddress: email });
     expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/validate-email-address`, {
       emailAddress: email,
-      registrationType: ERegistrationMode.CRC,
-      recaptchaToken: null,
     });
   });
 

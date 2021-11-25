@@ -467,13 +467,7 @@ const actions = (mode: ERegistrationMode) => ({
     try {
       let result;
       if (mode === ERegistrationMode.Self) {
-        await this._vm.$recaptchaLoaded();
-        const recaptchaToken = await this._vm.$recaptcha('submitRegistration');
-        result = await this.$services.households.submitRegistration({
-          household: context.state.householdCreate,
-          eventId: context.state.event.id,
-          recaptchaToken,
-        });
+        result = await this.$services.households.submitRegistration(context.state.householdCreate, context.state.event.id);
       } else {
         result = await this.$services.households.submitCRCRegistration(context.state.householdCreate, context.state.event.id);
       }

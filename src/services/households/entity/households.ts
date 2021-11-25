@@ -40,9 +40,9 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 
-  async submitRegistration({ household, eventId, recaptchaToken }: {household: IHouseholdCreate; eventId: string; recaptchaToken: string}): Promise<IHouseholdEntity> {
+  async submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {
     const payload = this.parseHouseholdPayload(household, eventId);
-    return this.http.post(`${this.baseUrl}/public`, { ...payload, recaptchaToken }, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/public`, payload, { globalHandler: false });
   }
 
   async submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {

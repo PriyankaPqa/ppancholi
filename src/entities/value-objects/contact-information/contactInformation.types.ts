@@ -1,4 +1,4 @@
-import { ERegistrationMode, IListOption, IOptionItemData } from '../../../types';
+import { IListOption, IOptionItemData } from '../../../types';
 
 export interface IPhoneNumber {
   number?: string;
@@ -47,8 +47,6 @@ export interface IContactInformation extends IContactInformationData {
 export interface IValidateEmailRequest {
   personId?: uuid;
   emailAddress: string;
-  registrationType: ERegistrationMode;
-  recaptchaToken: string;
 }
 
 export interface IValidateEmailResponse {
