@@ -224,7 +224,7 @@
                     <v-text-field
                       :value="registrationLink"
                       background-color="white"
-                      readonly
+                      disabled
                       outlined
                       data-test="event-registration-path"
                       :prefix="prefixRegistrationLink"
