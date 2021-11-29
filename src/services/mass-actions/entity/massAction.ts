@@ -19,10 +19,11 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     return this.http.patch(`${this.baseUrl}/${id}`, payload);
   }
 
-  async getInvalidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>> {
+  async getInvalidFile({ massActionId, runId, language }: {massActionId: uuid; runId: uuid; language: string}): Promise<IRestResponse<string>> {
     return this.http.getFullResponse(`${this.baseUrl}/${massActionId}/invalid-file`, {
       params: {
         runId,
+        language,
       },
     });
   }
@@ -43,10 +44,11 @@ export class MassActionService extends DomainBaseService<IMassActionEntity, uuid
     return this.http.postFullResponse(`${this.baseUrl}/${urlSuffix}`, payload);
   }
 
-  async getValidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>> {
+  async getValidFile({ massActionId, runId, language }: {massActionId: uuid; runId: uuid; language: string}): Promise<IRestResponse<string>> {
     return this.http.getFullResponse(`${this.baseUrl}/${massActionId}/valid-file`, {
       params: {
         runId,
+        language,
       },
     });
   }

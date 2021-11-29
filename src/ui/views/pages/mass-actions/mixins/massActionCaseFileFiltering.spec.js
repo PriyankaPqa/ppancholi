@@ -170,6 +170,7 @@ describe('massActionCaseFileFiltering.vue', () => {
         expect(wrapper.vm.$services.massActions.exportList).toHaveBeenLastCalledWith(massActionType, {
           filter: "Entity/id eq '1'",
           search: 'search',
+          language: 'en',
         });
       });
 

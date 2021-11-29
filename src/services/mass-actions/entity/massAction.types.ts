@@ -20,6 +20,7 @@ export interface IMassActionFinancialAssistanceCreatePayload {
 export interface IMassActionExportListPayload {
   filter: string;
   search: string;
+  language: string;
 }
 
 export interface IMassActionFundingRequestCreatePayload {
@@ -30,10 +31,10 @@ export interface IMassActionFundingRequestCreatePayload {
 export interface IMassActionService extends IDomainBaseService<IMassActionEntity, uuid> {
   process(id: uuid, runType: MassActionRunType): Promise<IMassActionEntity>
   update(id: uuid, payload: {name: string; description: string}): Promise<IMassActionEntity>
-  getInvalidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>>
+  getInvalidFile({ massActionId, runId, language }: {massActionId: uuid; runId: uuid; language: string}): Promise<IRestResponse<string>>
   create(urlSuffix: string, payload: unknown): Promise<IMassActionEntity>
   exportList(massActionType: MassActionType, payload: IMassActionExportListPayload): Promise<IRestResponse<string>>
-  getValidFile(massActionId: uuid, runId: uuid): Promise<IRestResponse<string>>
+  getValidFile({ massActionId, runId, language }: {massActionId: uuid; runId: uuid; language: string}): Promise<IRestResponse<string>>
 }
 
 export interface IMassActionServiceMock extends IDomainBaseServiceMock<IMassActionEntity>{

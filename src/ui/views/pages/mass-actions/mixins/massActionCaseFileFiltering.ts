@@ -117,6 +117,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       const res = await this.$services.massActions.exportList(massActionType, {
         filter,
         search: this.azureSearchParams.search,
+        language: this.$i18n.locale,
       });
 
       if (res) {

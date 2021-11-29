@@ -173,7 +173,11 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       it('should call service getInvalidFile with proper params', async () => {
         await wrapper.vm.downloadInvalid();
         expect(wrapper.vm.$services.massActions.getInvalidFile)
-          .toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, wrapper.vm.massAction.metadata.lastRun.runId);
+          .toHaveBeenCalledWith({
+            massActionId: wrapper.vm.massAction.entity.id,
+            runId: wrapper.vm.massAction.metadata.lastRun.runId,
+            language: 'en',
+          });
       });
 
       it('should call helpers downloadFile', async () => {
@@ -190,7 +194,11 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
       it('should call service getValidFile with proper params', async () => {
         await wrapper.vm.downloadValid();
         expect(wrapper.vm.$services.massActions.getValidFile)
-          .toHaveBeenCalledWith(wrapper.vm.massAction.entity.id, wrapper.vm.massAction.metadata.lastRun.runId);
+          .toHaveBeenCalledWith({
+            massActionId: wrapper.vm.massAction.entity.id,
+            runId: wrapper.vm.massAction.metadata.lastRun.runId,
+            language: 'en',
+          });
       });
 
       it('should call helpers downloadFile', async () => {

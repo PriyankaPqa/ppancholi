@@ -292,14 +292,23 @@ export default Vue.extend({
     },
 
     async downloadInvalid() {
-      const res = await this.$services.massActions.getInvalidFile(this.massAction.entity.id, this.massAction.metadata.lastRun.runId);
+      const res = await this.$services.massActions.getInvalidFile({
+        massActionId: this.massAction.entity.id,
+        runId: this.massAction.metadata.lastRun.runId,
+        language: this.$i18n.locale,
+      });
+
       if (res) {
         helpers.downloadFile(res, `${this.massAction.entity.name}.invalid.csv`);
       }
     },
 
     async downloadValid() {
-      const res = await this.$services.massActions.getValidFile(this.massAction.entity.id, this.massAction.metadata.lastRun.runId);
+      const res = await this.$services.massActions.getValidFile({
+        massActionId: this.massAction.entity.id,
+        runId: this.massAction.metadata.lastRun.runId,
+        language: this.$i18n.locale,
+      });
       if (res) {
         helpers.downloadFile(res, `${this.massAction.entity.name}.valid.csv`);
       }

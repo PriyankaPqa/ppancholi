@@ -33,11 +33,13 @@ describe('>>> Mass Action Service', () => {
   test('getInvalidFile is linked to the correct URL', async () => {
     const massActionId = '1';
     const runId = '1';
+    const language = 'en';
 
-    await service.getInvalidFile(massActionId, runId);
+    await service.getInvalidFile({ massActionId, runId, language });
     expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${massActionId}/invalid-file`, {
       params: {
         runId,
+        language,
       },
     });
   });
@@ -54,7 +56,7 @@ describe('>>> Mass Action Service', () => {
   describe('exportList', () => {
     it('should be linked to correct URL for financial assistance mass action', async () => {
       const urlSuffix = 'export-financial-assistance-records';
-      const payload = { filter: 'filter', search: 'search' };
+      const payload = { filter: 'filter', search: 'search', language: 'en' };
 
       await service.exportList(MassActionType.FinancialAssistance, payload);
 
@@ -63,7 +65,7 @@ describe('>>> Mass Action Service', () => {
 
     it('should be linked to correct URL for export validation of impact status mass action', async () => {
       const urlSuffix = 'export-validation-of-impact-records';
-      const payload = { filter: 'filter', search: 'search' };
+      const payload = { filter: 'filter', search: 'search', language: 'en' };
 
       await service.exportList(MassActionType.ExportValidationOfImpactStatus, payload);
 
@@ -74,11 +76,13 @@ describe('>>> Mass Action Service', () => {
   test('getValidFile is linked to the correct URL', async () => {
     const massActionId = '1';
     const runId = '1';
+    const language = 'en';
 
-    await service.getValidFile(massActionId, runId);
+    await service.getValidFile({ massActionId, runId, language });
     expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${massActionId}/valid-file`, {
       params: {
         runId,
+        language,
       },
     });
   });
