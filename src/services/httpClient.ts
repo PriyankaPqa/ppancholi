@@ -46,7 +46,7 @@ export interface IHttpClient {
   getFormattedError(error: IError): string;
 }
 
-class HttpClient implements IHttpClient {
+export class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
 
   private reloadTimeout = null as NodeJS.Timeout;
@@ -170,12 +170,13 @@ class HttpClient implements IHttpClient {
 
     if (request.isOData) {
       // build OData search query and remove the '?' that is added by the query building library at the beginning of the string
-      request.paramsSerializer = (params: IAzureSearchParams) => {
-        const odataParams = buildQuery(params).slice(1);
-        return odataParams.replace('$search', 'search');
-      };
+      request.paramsSerializer = this.serializeParams;
     }
     return request;
+  }
+
+  private serializeParams(params: IAzureSearchParams) {
+    return buildQuery(params).slice(1).replace('$search', 'search');
   }
 
   private createErrorObject(error: any): AxiosError {
