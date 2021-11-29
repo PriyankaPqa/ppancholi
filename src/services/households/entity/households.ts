@@ -9,7 +9,7 @@ import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
   IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
   MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IMemberEntity, IAddress, IValidateEmailResponse,
-  IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest,
+  IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IValidateEmailPublicRequest,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
@@ -40,9 +40,9 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
     return this.http.get(`${API_URL_SUFFIX}/indigenous-communities`);
   }
 
-  async submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {
+  async submitRegistration({ household, eventId, recaptchaToken }: {household: IHouseholdCreate; eventId: string; recaptchaToken: string}): Promise<IHouseholdEntity> {
     const payload = this.parseHouseholdPayload(household, eventId);
-    return this.http.post(`${this.baseUrl}/public`, payload, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/public`, { ...payload, recaptchaToken }, { globalHandler: false });
   }
 
   async submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity> {
@@ -118,6 +118,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
 
   async validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
     return this.http.post(`${this.baseApi}/persons/validate-email-address`, request);
+  }
+
+  async validatePublicEmail(request: IValidateEmailPublicRequest): Promise<IValidateEmailResponse> {
+    return this.http.post(`${this.baseApi}/persons/public/validate-email-address`, request);
   }
 
   async makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity> {

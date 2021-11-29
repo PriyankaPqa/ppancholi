@@ -9,7 +9,7 @@ import {
   IAddress,
   IValidateEmailResponse,
   IValidateEmailRequest,
-  IConsentInformation,
+  IConsentInformation, IValidateEmailPublicRequest,
 } from '../../../entities/household-create';
 import { IOptionItemData } from '../../../types';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
@@ -22,7 +22,7 @@ export interface IHouseholdsService {
   getPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
   getIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
   getPerson(id: uuid): Promise<IMemberEntity>;
-  submitRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
+  submitRegistration({ household, eventId, recaptchaToken }: {household: IHouseholdCreate; eventId: string; recaptchaToken: string}): Promise<IHouseholdEntity>;
   submitCRCRegistration(household: IHouseholdCreate, eventId: string): Promise<IHouseholdEntity>;
   updatePersonContactInformation(id: string,
       payload: { contactInformation: IContactInformation; isPrimaryBeneficiary: boolean; identitySet: IIdentitySet }): Promise<IHouseholdEntity> | false;
@@ -36,6 +36,7 @@ export interface IHouseholdsService {
   splitHousehold(household: IHouseholdCreate, originHouseholdId: uuid, eventId: string): Promise<IHouseholdEntity>;
   moveMembers(firstHousehold: IHouseholdCreate, secondHousehold: IHouseholdCreate): Promise<IHouseholdEntity[]>;
   validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse>;
+  validatePublicEmail(request: IValidateEmailPublicRequest): Promise<IValidateEmailResponse>;
   makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity>;
   hasOutstandingPayments(id: uuid): Promise<IOustandingPaymentResponse>;
   getHouseholdActivity(id: uuid): Promise<IHouseholdActivity[]>;
@@ -63,6 +64,7 @@ export interface IHouseholdsServiceMock {
   splitHousehold: jest.Mock<IHouseholdEntity>;
   moveMembers: jest.Mock<IHouseholdEntity[]>;
   validateEmail: jest.Mock<IValidateEmailResponse>;
+  validatePublicEmail: jest.Mock<IValidateEmailResponse>;
   makePrimary: jest.Mock<IHouseholdEntity>;
   hasOutstandingPayments: jest.Mock<IOustandingPaymentResponse>;
   getHouseholdActivity: jest.Mock<IHouseholdActivity[]>;

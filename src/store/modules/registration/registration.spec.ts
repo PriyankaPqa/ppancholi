@@ -734,6 +734,11 @@ describe('>>> Registration Module', () => {
     });
 
     describe('submitRegistration', () => {
+      beforeEach(() => {
+        store._vm.$recaptchaLoaded = jest.fn();
+        store._vm.$recaptcha = jest.fn(() => 'recaptchaToken');
+      });
+
       it('calls difference service according to mode', async () => {
         await store.commit('registration/setEvent', mockEventData());
         await store.dispatch('registration/submitRegistration');
@@ -760,10 +765,11 @@ describe('>>> Registration Module', () => {
 
         await store.dispatch('registration/submitRegistration');
 
-        expect(store.$services.households.submitRegistration).toHaveBeenCalledWith(
-          store.state.registration.householdCreate,
-          mockEventData().id,
-        );
+        expect(store.$services.households.submitRegistration).toHaveBeenCalledWith({
+          household: store.state.registration.householdCreate,
+          eventId: mockEventData().id,
+          recaptchaToken: 'recaptchaToken',
+        });
       });
 
       it('sets registrationResponse in case of success', async () => {
@@ -857,6 +863,7 @@ describe('>>> Registration Module', () => {
         expect(store.commit).toHaveBeenCalledWith('registration/editAdditionalMember', { payload: member, index, sameAddress: false }, undefined);
       });
     });
+
     describe('updatePersonAddress', () => {
       it('call the updatePersonAddress service with proper params if the member is primary', async () => {
         const member = mockMember();
@@ -921,6 +928,7 @@ describe('>>> Registration Module', () => {
         expect(store.commit).toHaveBeenCalledWith('registration/editAdditionalMember', { payload: member, index, sameAddress: true }, undefined);
       });
     });
+
     describe('addAdditionalMember', () => {
       it('call the addAdditionalMember service with proper params', async () => {
         const member = mockMember();
@@ -948,6 +956,7 @@ describe('>>> Registration Module', () => {
           { payload: new Member({ ...member, id: mockhousehold.members[mockhousehold.members.length - 1] }), sameAddress }, undefined);
       });
     });
+
     describe('deleteAdditionalMember', () => {
       it('call the deleteAdditionalMember service with proper params', async () => {
         const memberId = mockMember().id;

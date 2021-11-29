@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IState, IStore, mockStore } from '@/store';
 import { mockBaseEntities, mockBaseMetadatum } from '../../../entities/base';
 import { Base } from './index';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CombinedTest = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Entity = any;
 
 export class BaseStorageTest extends Base<CombinedTest, Entity> {
@@ -34,7 +33,6 @@ export class BaseStorageTest extends Base<CombinedTest, Entity> {
 const entityModuleName = 'entityModule';
 const metadataModuleName = 'metadataModule';
 const mockEntities = mockBaseEntities();
-// eslint-disable-next-line
 const mockMetadatum = mockBaseMetadatum() as any[];
 
 const store = mockStore({
