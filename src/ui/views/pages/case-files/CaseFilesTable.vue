@@ -171,8 +171,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     },
 
     tableData(): ICaseFileCombined[] {
-      // since items created while creating a new household dont get pinned yet we'll remove pinned items for now
-      return this.$storage.caseFile.getters.getByIds(this.searchResultIds, { prependPinnedItems: false, baseDate: this.searchExecutionDate });
+      return this.$storage.caseFile.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     customColumns(): Record<string, string> {

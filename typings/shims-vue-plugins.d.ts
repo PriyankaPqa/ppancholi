@@ -3,6 +3,7 @@ import { Store } from 'vuex';
 import { Toasted } from 'vue-toasted';
 import { TranslateResult } from 'vue-i18n';
 import { IMultilingual } from '@/types';
+import { SignalRConnection } from '@/ui/plugins/signalR';
 
 interface IFormatCurrency {
   (value: number): string;
@@ -18,6 +19,7 @@ declare module 'vue/types/vue' {
     $route: Route;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     $store: Store<any>;
+    $signalR: SignalRConnection;
     $toasted: Toasted;
     $formatCurrency: IFormatCurrency;
     $m: IMFunction;

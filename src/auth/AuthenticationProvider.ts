@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import * as msal from '@azure/msal-browser';
 import { loginRequest, msalConfig, tokenRequest } from '@/auth/constants/azureAD';
+import applicationInsights from '@/ui/plugins/applicationInsights/applicationInsights';
 import { provider } from '@/services/provider';
-import applicationInsights from '@/applicationInsights';
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 const services = provider();

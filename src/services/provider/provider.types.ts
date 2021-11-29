@@ -3,6 +3,7 @@ import {
   IPublicService,
   IPublicServiceMock,
 } from '@crctech/registration-lib/src/services/public';
+import { IHouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
 import { ICaseFilesService, ICaseFilesServiceMock } from '../case-files/entity';
 import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
 import { ITeamsService, ITeamsServiceMock } from '../teams/entity';
@@ -17,23 +18,36 @@ import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMoc
 import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '../financial-assistance-categories/entity';
 import { IMassActionService, IMassActionServiceMock } from '@/services/mass-actions/entity';
 import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '../financial-assistance-payments/entity';
+import { ICaseFilesMetadataService } from '../case-files/metadata';
+import { ICaseNotesMetadataService } from '../case-notes/metadata';
+import { ICaseFileReferralsMetadataService } from '../case-file-referrals/metadata';
+import { ICaseFileDocumentsMetadataService } from '../case-file-documents/metadata';
+import { IEventsMetadataService } from '../events/metadata';
+import { IFinancialAssistancePaymentsMetadataService } from '../financial-assistance-payments/metadata';
 import { ITenantSettingsService, ITenantSettingsServiceMock } from '../tenantSettings/entity';
 import { IFeaturesService, IFeaturesServiceMock } from '../features/entity';
 
 export interface IProvider {
   appUsers: IAppUsersService,
   caseFiles: ICaseFilesService,
+  caseFilesMetadata: ICaseFilesMetadataService,
   caseFileNotes: ICaseNotesService,
+  caseFileNotesMetadata: ICaseNotesMetadataService,
   caseFileReferrals: ICaseFileReferralsService
+  caseFileReferralsMetadata: ICaseFileReferralsMetadataService
   caseFileDocuments: ICaseFileDocumentsService
+  caseFileDocumentsMetadata: ICaseFileDocumentsMetadataService
   events: IEventsService;
+  eventsMetadata: IEventsMetadataService;
   optionItems: IOptionItemsService;
   teams: ITeamsService,
   programs: IProgramsService,
   publicApi: IPublicService,
   households: IHouseholdsService,
+  householdsMetadata: IHouseholdMetadataService,
   financialAssistanceTables: IFinancialAssistanceTablesService,
   financialAssistancePaymentsService: IFinancialAssistancePaymentsService,
+  financialAssistancePaymentsServiceMetadata: IFinancialAssistancePaymentsMetadataService,
   userAccounts: UserAccountsService,
   financialAssistanceCategories: IFinancialAssistanceCategoriesService,
   massActions: IMassActionService;

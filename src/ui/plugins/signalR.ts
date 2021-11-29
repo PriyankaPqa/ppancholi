@@ -1,22 +1,19 @@
 /* eslint-disable */
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
-import {IRootState} from '@/store';
-import {HubConnection, HubConnectionBuilder} from '@microsoft/signalr';
-import {Store} from 'vuex';
+import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import Vue from "vue";
-import {IMassActionEntityData, MassActionRunStatus} from "@/entities/mass-action";
+import { IMassActionEntityData, MassActionRunStatus } from "@/entities/mass-action";
 import _orderBy from "lodash/orderBy";
-import * as vuexModule from '@/constants/vuex-modules';
-import {i18n} from "@/ui/plugins/i18n";
+import { i18n } from "@/ui/plugins/i18n";
+import { IStorage } from '@/store/storage';
+import { IEntity } from '@/entities/base';
 
 
 export class SignalRConnection {
-  private connection: HubConnection;
+  public connection: HubConnection;
+  public logMessages = [] as { messageName: string, count: number, lastMessage: string, lastTime: Date }[];
 
-  private store;
-
-  constructor(store: Store<IRootState>) {
-    this.store = store;
+  constructor(private storage: IStorage) {
 
     this.buildHubConnection();
   }
@@ -47,42 +44,38 @@ export class SignalRConnection {
 
   private createBindings() {
     // Event
-    this.listenForEntityChanges('event', 'AgreementType');
-    this.listenForEntityChanges('event', 'Event');
-    this.listenForMetadataChanges('event', 'EventMetadata');
-    this.listenForEntityChanges('event', 'EventType');
-    this.listenForEntityChanges('event', 'Program');
-    this.listenForMetadataChanges('event', 'ProgramMetadata');
+    this.listenForEventModuleChanges();
+    this.listenForProgramModuleChanges();
 
     // CaseFile
-    this.listenForEntityChanges('caseFile', 'CaseFile');
-    this.listenForMetadataChanges('caseFile', 'CaseFileMetadata');
-    this.listenForEntityChanges('caseFile', 'CaseNote');
-    this.listenForMetadataChanges('caseFile', 'CaseNoteMetadata');
-    this.listenForEntityChanges('caseFile', 'Referral');
-    this.listenForMetadataChanges('caseFile', 'ReferralMetadata');
+    this.listenForCaseFileModuleChanges();
+    this.listenForCaseNoteModuleChanges();
+    this.listenForCaseReferralModuleChanges();
+    this.listenForCaseDocumentModuleChanges();
+    this.listenForFinancialAssistancePaymentModuleChanges();
+
+    // Financial Assistance
+    this.listenForFinancialAssistanceModuleChanges();
+    this.listenForFinancialAssistanceCategoryModuleChanges();
 
     // Household
-    this.listenForEntityChanges('household', 'Household');
-    this.listenForMetadataChanges('household', 'HouseholdMetadata');
+    this.listenForHouseholdModuleChanges();
 
     // Team
-    this.listenForEntityChanges('team', 'Team');
-    this.listenForMetadataChanges('team', 'TeamMetadata');
+    this.listenForTeamModuleChanges();
 
     // UserAccount
-    this.listenForEntityChanges('userAccount', 'UserAccount');
-    this.listenForMetadataChanges('userAccount', 'UserAccountMetadata');
+    this.listenForUserAccountModuleChanges();
 
     // Mass actions
-    this.listenForMassActionsChanges();
+    this.listenForMassActionsModuleChanges();
     this.massActionNotifications();
   }
 
   private massActionNotifications() {
     this.connection.on('caseFile.MassActionRunCompleted', (entity: IMassActionEntityData) => {
       const lastRun = _orderBy(entity.runs, 'timestamp', 'desc')[0];
-      const currentUserId = this.store.getters['user/userId'];
+      const currentUserId = this.storage.user.getters.userId();
 
       const initiatedByCurrentUser = currentUserId === lastRun.lastUpdatedBy || currentUserId === lastRun.createdBy;
 
@@ -96,38 +89,110 @@ export class SignalRConnection {
     });
   }
 
-  private listenForMassActionsChanges() {
-    this.listenForEntityChanges('caseFile', 'MassAction', vuexModule.MASS_ACTION_ENTITIES);
-    this.listenForMetadataChanges('caseFile', 'MassActionMetadata', vuexModule.MASS_ACTION_METADATA);
+  private listenForHouseholdModuleChanges() {
+    this.listenForChanges('household', 'Household', this.storage.household.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('household', 'HouseholdMetadata', this.storage.household.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges('household', 'Person', this.noAction);
+    this.listenForChanges('household', 'PersonMetadata', this.noAction);
+  }  
+
+  private listenForProgramModuleChanges() {
+    this.listenForChanges('event', 'Program', this.storage.program.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('event', 'ProgramMetadata', this.storage.program.mutations.setMetadataFromOutsideNotification);
+  }  
+
+  private listenForUserAccountModuleChanges() {
+    this.listenForChanges('userAccount', 'UserAccount', this.storage.userAccount.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('userAccount', 'UserAccountMetadata', this.storage.userAccount.mutations.setMetadataFromOutsideNotification);
   }
 
-  private listenForEntityChanges(domain: string, entityName: string, vuexModuleName = domain) {
-    const target = vuexModuleName === domain ? `${vuexModuleName}Entities` : vuexModuleName;
+  private listenForEventModuleChanges() {
+    this.listenForChanges('event', 'Event', this.storage.event.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('event', 'EventMetadata', this.storage.event.mutations.setMetadataFromOutsideNotification);
+  }
 
+  private listenForTeamModuleChanges() {
+    this.listenForChanges('team', 'Team', this.storage.team.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('team', 'TeamMetadata', this.storage.team.mutations.setMetadataFromOutsideNotification);
+  }
+
+  private listenForMassActionsModuleChanges() {
+    this.listenForChanges('caseFile', 'MassAction', this.storage.massAction.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('caseFile', 'MassActionMetadata', this.storage.massAction.mutations.setMetadataFromOutsideNotification);
+  }
+
+  private listenForCaseFileModuleChanges() {
+    this.listenForChanges('caseFile', 'CaseFile', this.storage.caseFile.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('caseFile', 'CaseFileMetadata', this.storage.caseFile.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges('caseFile', 'CaseFileActivity', this.noAction);
+  }
+  
+  private listenForCaseNoteModuleChanges() {
+    this.listenForChanges('caseFile', 'CaseNote', this.storage.caseNote.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('caseFile', 'CaseNoteMetadata', this.storage.caseNote.mutations.setMetadataFromOutsideNotification);
+  }
+
+  private listenForCaseReferralModuleChanges() {
+    this.listenForChanges('caseFile', 'Referral', this.storage.caseFileReferral.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('caseFile', 'ReferralMetadata', this.storage.caseFileReferral.mutations.setMetadataFromOutsideNotification);
+  }
+
+  private listenForFinancialAssistancePaymentModuleChanges() {
+    this.listenForChanges('finance', 'FinancialAssistancePayment', this.storage.financialAssistancePayment.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('finance', 'FinancialAssistancePaymentMetadata', this.storage.financialAssistancePayment.mutations.setMetadataFromOutsideNotification);
+  }
+
+  private listenForCaseDocumentModuleChanges() {
+    this.listenForChanges('caseFile', 'Document', this.storage.caseFileDocument.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('caseFile', 'DocumentMetadata', this.storage.caseFileDocument.mutations.setMetadataFromOutsideNotification);
+  }
+
+  private listenForFinancialAssistanceModuleChanges() {
+    this.listenForChanges('finance', 'FinancialAssistanceTable', this.storage.financialAssistance.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges('finance', 'FinancialAssistanceTableMetadata', this.storage.financialAssistance.mutations.setMetadataFromOutsideNotification);
+  }
+
+  private listenForFinancialAssistanceCategoryModuleChanges() {
+    this.listenForChanges('finance', 'FinancialAssistanceCategories', this.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification);
+  }
+
+  private listenForChanges<T extends IEntity>(domain: string, entityName: string, action?: (entity: T) => void) {
     this.connection.on(`${domain}.${entityName}Updated`, (entity) => {
-      this.store.commit(`${target}/set`, entity);
-      // console.log(`${domain}.${entityName}Updated`, entity);
+      if (action) action(entity);
+      this.log(`${domain}.${entityName}Updated`, entity);
     });
 
     this.connection.on(`${domain}.${entityName}Created`, (entity) => {
-      // console.log(`${domain}.${entityName}Created`, entity);
-      this.store.commit(`${target}/set`, entity);
+      if (action) action(entity);
+      this.log(`${domain}.${entityName}Created`, entity);
     });
   }
 
-  private listenForMetadataChanges(domain: string, entityName: string,  vuexModuleName = domain) {
-    const target = vuexModuleName === domain ? `${vuexModuleName}Metadata` : vuexModuleName;
-
-    this.connection.on(`${domain}.${entityName}Updated`, (entity) => {
-      // console.log(`${domain}.${entityName}Updated`, entity);
-      this.store.commit(`${target}/set`, entity);
-    });
-
-    this.connection.on(`${domain}.${entityName}Created`, (entity) => {
-      // console.log(`${domain}.${entityName}Created`, entity);
-      this.store.commit(`${target}/set`, entity);
-    });
+  private log(name: string, message: any) {
+    console.log(name, message.id || message);
+    let entry = this.logMessages.find((m) => m.messageName === name);
+    if (!entry) {
+      entry = { messageName: name, count: 1, lastMessage: message, lastTime: new Date() };
+      this.logMessages.push(entry);
+    } else {
+      entry.count = entry.count + 1;
+      entry.lastMessage = message;
+      entry.lastTime = new Date();
+    }
   }
+
+  /// used when logging only - can be omitted but it's easier to read...
+  private noAction() { }
 }
 
-export default (store: Store<IRootState>) => new SignalRConnection(store);
+export default (storage: IStorage): SignalRConnection => {
+  const connection = new SignalRConnection(storage);
+
+  Vue.mixin({
+    beforeCreate() {
+      this.$signalR = connection;
+    },
+  });
+
+  return connection;
+};

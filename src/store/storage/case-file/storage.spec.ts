@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { CASE_FILE_ENTITIES, CASE_FILE_METADATA } from '@/constants/vuex-modules';
 import {
   CaseFileTriage, ICaseFileLabel, CaseFileStatus, IIdentityAuthentication, IdentityAuthenticationMethod,

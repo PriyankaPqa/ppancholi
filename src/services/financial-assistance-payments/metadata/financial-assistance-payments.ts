@@ -4,7 +4,7 @@ import { IFinancialAssistancePaymentMetadata } from '@/entities/financial-assist
 import { IFinancialAssistancePaymentsMetadataService } from './financial-assistance-payments.types';
 
 const API_URL_SUFFIX = 'finance';
-const CONTROLLER = 'financial-assistance-payments';
+const CONTROLLER = 'financial-assistance-payments/metadata';
 
 export class FinancialAssistancePaymentsMetadataService extends DomainBaseService<IFinancialAssistancePaymentMetadata, uuid>
   implements IFinancialAssistancePaymentsMetadataService {

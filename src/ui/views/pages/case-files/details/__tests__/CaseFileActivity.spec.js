@@ -1,3 +1,4 @@
+import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';
 import { mockStorage } from '@/store/storage';
@@ -32,9 +33,10 @@ describe('CaseFileActivity.vue', () => {
       },
       mocks: {
         $storage: storage,
+        $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
       },
     });
-    await wrapper.setData({ loading: false });
+    await flushPromises();
   };
 
   describe('Template', () => {
@@ -67,14 +69,6 @@ describe('CaseFileActivity.vue', () => {
 
       it('passes the case file id as props', () => {
         expect(element.props('caseFileId')).toEqual(mockCaseFile.entity.id);
-      });
-
-      it('calls fetchCaseFileActivities when updateActivities is emitted', async () => {
-        jest.spyOn(wrapper.vm, 'fetchCaseFileActivities').mockImplementation(() => {});
-        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
-        await element.vm.$emit('updateActivities');
-
-        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -132,10 +126,8 @@ describe('CaseFileActivity.vue', () => {
               caseFileActivities: mockActivities,
             };
           },
+          propsData: { id: mockCaseFile.entity.id },
           computed: {
-            id() {
-              return mockCaseFile.entity.id;
-            },
             canEdit() {
               return true;
             },
@@ -145,6 +137,7 @@ describe('CaseFileActivity.vue', () => {
           },
           mocks: {
             $storage: storage,
+            $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
           },
         });
 
@@ -165,10 +158,8 @@ describe('CaseFileActivity.vue', () => {
               caseFileActivities: mockActivities,
             };
           },
+          propsData: { id: mockCaseFile.entity.id },
           computed: {
-            id() {
-              return mockCaseFile.entity.id;
-            },
             canEdit() {
               return false;
             },
@@ -178,6 +169,7 @@ describe('CaseFileActivity.vue', () => {
           },
           mocks: {
             $storage: storage,
+            $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
           },
         });
 
@@ -195,10 +187,8 @@ describe('CaseFileActivity.vue', () => {
               caseFileActivities: mockActivities,
             };
           },
+          propsData: { id: mockCaseFile.entity.id },
           computed: {
-            id() {
-              return mockCaseFile.entity.id;
-            },
             canEdit() {
               return true;
             },
@@ -208,6 +198,7 @@ describe('CaseFileActivity.vue', () => {
           },
           mocks: {
             $storage: storage,
+            $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
           },
         });
 
@@ -242,6 +233,7 @@ describe('CaseFileActivity.vue', () => {
         propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
+          $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
         },
         store: {
           modules: {
@@ -311,12 +303,13 @@ describe('CaseFileActivity.vue', () => {
   });
 
   describe('lifecycle', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       wrapper = shallowMount(Component, {
         localVue,
         propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
+          $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
         },
         computed: {
           caseFile() {
@@ -324,34 +317,60 @@ describe('CaseFileActivity.vue', () => {
           },
         },
       });
+
+      await flushPromises();
     });
 
-    it('should call fetch', () => {
-      expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(mockCaseFile.entity.id);
-    });
-
-    it('should call setLastAction', async () => {
-      wrapper.vm.setLastAction = jest.fn();
-
-      expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(0);
-
-      await wrapper.vm.$options.created.forEach((hook) => {
-        hook.call(wrapper.vm);
+    describe('created', () => {
+      it('should call fetch', () => {
+        expect(wrapper.vm.$storage.caseFile.actions.fetch).toHaveBeenCalledWith(mockCaseFile.entity.id);
       });
 
-      expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(1);
-    });
+      it('should call setLastAction', async () => {
+        wrapper.vm.setLastAction = jest.fn();
 
-    it('should call fetchCaseFileActivities', async () => {
-      wrapper.vm.fetchCaseFileActivities = jest.fn();
+        expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(0);
 
-      expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
 
-      await wrapper.vm.$options.created.forEach((hook) => {
-        hook.call(wrapper.vm);
+        expect(wrapper.vm.setLastAction).toHaveBeenCalledTimes(1);
       });
 
-      expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(1);
+      it('should call fetchCaseFileActivities', async () => {
+        wrapper.vm.fetchCaseFileActivities = jest.fn();
+
+        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.$options.created.forEach((hook) => {
+          hook.call(wrapper.vm);
+        });
+
+        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledTimes(1);
+      });
+
+      it('should call attachToChanges', async () => {
+        wrapper.vm.attachToChanges = jest.fn();
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.$options.created[0].call(wrapper.vm);
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledWith(true);
+      });
+    });
+
+    describe('destroyed', () => {
+      it('should call attachToChanges', async () => {
+        wrapper.vm.attachToChanges = jest.fn();
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledTimes(0);
+
+        await wrapper.vm.$options.destroyed[0].call(wrapper.vm);
+
+        expect(wrapper.vm.attachToChanges).toHaveBeenCalledWith(false);
+      });
     });
   });
 
@@ -362,12 +381,38 @@ describe('CaseFileActivity.vue', () => {
         propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
+          $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
         },
         computed: {
           caseFile() {
             return mockCaseFile;
           },
         },
+      });
+    });
+
+    describe('attachToChanges', () => {
+      it('should connect on to signalr updates when true', () => {
+        wrapper.vm.attachToChanges(true);
+        expect(wrapper.vm.$signalR.connection.on).toHaveBeenCalledWith('caseFile.CaseFileActivityCreated', wrapper.vm.activityChanged);
+        expect(wrapper.vm.$signalR.connection.on).toHaveBeenCalledWith('caseFile.CaseFileActivityUpdated', wrapper.vm.activityChanged);
+      });
+      it('should connect of to signalr updates when false', () => {
+        wrapper.vm.attachToChanges(false);
+        expect(wrapper.vm.$signalR.connection.off).toHaveBeenCalledWith('caseFile.CaseFileActivityCreated', wrapper.vm.activityChanged);
+        expect(wrapper.vm.$signalR.connection.off).toHaveBeenCalledWith('caseFile.CaseFileActivityUpdated', wrapper.vm.activityChanged);
+      });
+    });
+
+    describe('activityChanged', () => {
+      it('calls fetchCaseFileActivities when the activity has the same case file id after debounce', async () => {
+        jest.clearAllMocks();
+        wrapper.vm.activityChanged({ caseFileId: 'nope' });
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        expect(storage.caseFile.actions.fetchCaseFileActivities).toHaveBeenCalledTimes(0);
+        wrapper.vm.activityChanged({ caseFileId: wrapper.vm.id });
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+        expect(storage.caseFile.actions.fetchCaseFileActivities).toHaveBeenCalled();
       });
     });
 
@@ -399,14 +444,6 @@ describe('CaseFileActivity.vue', () => {
           !mockCaseFile.entity.isDuplicate,
         );
       });
-
-      it('calls fetchCaseFileActivities', async () => {
-        jest.spyOn(wrapper.vm, 'fetchCaseFileActivities').mockImplementation(() => mockActivities);
-        wrapper.vm.activityFetchDelay = 500;
-
-        await wrapper.vm.setCaseFileIsDuplicate();
-        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledWith(wrapper.vm.activityFetchDelay);
-      });
     });
 
     describe('setCaseFileTriage', () => {
@@ -423,16 +460,6 @@ describe('CaseFileActivity.vue', () => {
           triage,
         );
       });
-
-      it('calls fetchCaseFileActivities', async () => {
-        jest.spyOn(wrapper.vm, 'fetchCaseFileActivities').mockImplementation(() => mockActivities);
-        wrapper.vm.activityFetchDelay = 500;
-
-        const triage = CaseFileTriage.Tier1;
-
-        await wrapper.vm.setCaseFileTriage(triage);
-        expect(wrapper.vm.fetchCaseFileActivities).toHaveBeenCalledWith(wrapper.vm.activityFetchDelay);
-      });
     });
 
     describe('setLastAction', () => {
@@ -442,6 +469,7 @@ describe('CaseFileActivity.vue', () => {
           propsData: { id: mockCaseFile.entity.id },
           mocks: {
             $storage: storage,
+            $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
           },
           computed: {
             caseFile() {

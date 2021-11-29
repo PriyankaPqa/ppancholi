@@ -11,6 +11,12 @@ import { ProgramsService } from '../programs/entity';
 import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { FinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
 import { MassActionService } from '@/services/mass-actions/entity';
+import { CaseFilesMetadataService } from '../case-files/metadata';
+import { CaseNotesMetadataService } from '../case-notes/metadata';
+import { CaseFileReferralsMetadataService } from '../case-file-referrals/metadata';
+import { CaseFileDocumentsMetadataService } from '../case-file-documents/metadata';
+import { EventsMetadataService } from '../events/metadata';
+import { FinancialAssistancePaymentsMetadataService } from '../financial-assistance-payments/metadata';
 import { FeaturesService } from '../features/entity';
 
 jest.mock('../user-accounts/entity');
@@ -27,6 +33,12 @@ jest.mock('../user-accounts/entity');
 jest.mock('../financial-assistance-tables/entity');
 jest.mock('../financial-assistance-categories/entity');
 jest.mock('../mass-actions/entity');
+jest.mock('../case-files/metadata');
+jest.mock('../case-notes/metadata');
+jest.mock('../case-file-referrals/metadata');
+jest.mock('../case-file-documents/metadata');
+jest.mock('../events/metadata');
+jest.mock('../financial-assistance-payments/metadata');
 jest.mock('../features/entity');
 
 describe('Provider', () => {
@@ -93,6 +105,36 @@ describe('Provider', () => {
   it('should instantiate MassActionService', () => {
     provider();
     expect(MassActionService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate CaseFilesMetadataService', () => {
+    provider();
+    expect(CaseFilesMetadataService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate CaseNotesMetadataService', () => {
+    provider();
+    expect(CaseNotesMetadataService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate CaseFileReferralsMetadataService', () => {
+    provider();
+    expect(CaseFileReferralsMetadataService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate CaseFileDocumentsMetadataService', () => {
+    provider();
+    expect(CaseFileDocumentsMetadataService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate EventsMetadataService', () => {
+    provider();
+    expect(EventsMetadataService.prototype.constructor).toBeCalled();
+  });
+
+  it('should instantiate FinancialAssistancePaymentsMetadataService', () => {
+    provider();
+    expect(FinancialAssistancePaymentsMetadataService.prototype.constructor).toBeCalled();
   });
 
   it('should instantiate FeaturesService', () => {

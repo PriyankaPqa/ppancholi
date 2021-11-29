@@ -188,7 +188,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
 
       it('inits financialAssistance from storage when id is passed', () => {
-        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith('myId');
+        expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith('myId',
+          { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
         expect(wrapper.vm.financialAssistance.id).toBe(caseFileFinancialAssistance.id);
         expect(wrapper.vm.financialAssistance.name).toBe(caseFileFinancialAssistance.name);
       });

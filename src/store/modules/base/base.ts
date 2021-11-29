@@ -113,7 +113,9 @@ export class BaseModule<T extends IEntity, IdParams> {
   protected baseMutations = {
 
     addNewlyCreatedId: (state: IState<T>, item: T) => {
-      state.newlyCreatedIds.unshift({ id: item.id, createdOn: (new Date()).getTime() });
+      if (!state.newlyCreatedIds.find((n) => n.id === item.id)) {
+        state.newlyCreatedIds.unshift({ id: item.id, createdOn: (new Date()).getTime() });
+      }
     },
 
     set: (state: IState<T>, item: T) => {

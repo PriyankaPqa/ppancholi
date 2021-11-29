@@ -1,10 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IState, IStore, mockStore } from '@/store';
 import { mockUserAccountEntities, mockUserAccountMetadatum } from '@/entities/user-account';
 import { Base } from './index';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CombinedTest = any;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Entity = any;
 
 export class BaseStorageTest extends Base<CombinedTest, Entity, uuid> {
@@ -38,6 +37,11 @@ const mockMetadatum = mockUserAccountMetadatum();
 
 const store = mockStore({
   modules: {
+    user: {
+      getters: {
+        userId: () => 'its me',
+      },
+    },
     entityModule: {
       getters: {
         'entityModule/getAll': () => mockEntities,
@@ -305,6 +309,49 @@ describe('BaseStorage', () => {
   });
 
   describe('baseMutations', () => {
+    describe('setEntityFromOutsideNotification', () => {
+      it('should proxy set mutation if the entity is already in the store', () => {
+        jest.clearAllMocks();
+        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
+
+        const payload = mockEntities[0];
+        (storage as any).baseGetters.get = (): any => ({ entity: mockEntities[0] });
+        storage.mutations.setEntityFromOutsideNotification(payload);
+        expect(store.commit).toHaveBeenCalledWith(`${storage.entityModuleName}/set`, payload);
+      });
+
+      it('should not proxy set mutation if the entity is not already in the store', () => {
+        jest.clearAllMocks();
+        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
+        (storage as any).baseGetters.get = (): any => null;
+        const payload = mockEntities[0];
+        storage.mutations.setEntityFromOutsideNotification(payload);
+        expect(store.commit).not.toHaveBeenCalled();
+      });
+
+      it('should proxy set mutation if the entity was changed by the user', () => {
+        jest.clearAllMocks();
+        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
+
+        const payload = mockEntities[0];
+        payload.lastUpdatedBy = 'its me';
+        (storage as any).baseGetters.get = (): any => null;
+        storage.mutations.setEntityFromOutsideNotification(payload);
+        expect(store.commit).toHaveBeenCalledWith(`${storage.entityModuleName}/set`, payload);
+      });
+
+      it('should not proxy set mutation if the entity is not changed by the user', () => {
+        jest.clearAllMocks();
+        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
+
+        const payload = mockEntities[0];
+        payload.lastUpdatedBy = 'its not me';
+        (storage as any).baseGetters.get = (): any => null;
+        storage.mutations.setEntityFromOutsideNotification(payload);
+        expect(store.commit).not.toHaveBeenCalled();
+      });
+    });
+
     describe('setEntity', () => {
       it('should proxy set mutation from the entity module only', () => {
         const payload = {};
@@ -326,6 +373,49 @@ describe('BaseStorage', () => {
         const payload = {};
         storage.mutations.setMetadata(payload);
         expect(store.commit).toBeCalledWith(`${storage.metadataModuleName}/set`, payload);
+      });
+    });
+
+    describe('setMetadataFromOutsideNotification', () => {
+      it('should proxy set mutation if the entity is already in the store', () => {
+        jest.clearAllMocks();
+        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
+        const payload = mockEntities[0];
+
+        (storage as any).baseGetters.get = (): any => ({ entity: mockEntities[0] });
+        storage.mutations.setMetadataFromOutsideNotification(payload);
+        expect(store.commit).toHaveBeenCalledWith(`${storage.metadataModuleName}/set`, payload);
+      });
+
+      it('should not proxy set mutation if the entity is not already in the store', () => {
+        jest.clearAllMocks();
+        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
+        (storage as any).baseGetters.get = (): any => null;
+        const payload = mockEntities[0];
+        storage.mutations.setMetadataFromOutsideNotification(payload);
+        expect(store.commit).not.toHaveBeenCalled();
+      });
+
+      it('should proxy set mutation if the entity was changed by the user', () => {
+        jest.clearAllMocks();
+        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
+
+        const payload = mockEntities[0];
+        payload.lastUpdatedBy = 'its me';
+        (storage as any).baseGetters.get = (): any => null;
+        storage.mutations.setMetadataFromOutsideNotification(payload);
+        expect(store.commit).toHaveBeenCalledWith(`${storage.metadataModuleName}/set`, payload);
+      });
+
+      it('should not proxy set mutation if the entity is not changed by the user', () => {
+        jest.clearAllMocks();
+        const storage = new BaseStorageTest(store, entityModuleName, metadataModuleName);
+
+        const payload = mockEntities[0];
+        payload.lastUpdatedBy = 'its not me';
+        (storage as any).baseGetters.get = (): any => null;
+        storage.mutations.setMetadataFromOutsideNotification(payload);
+        expect(store.commit).not.toHaveBeenCalled();
       });
     });
 

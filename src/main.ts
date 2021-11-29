@@ -20,9 +20,8 @@ import Multilingual from '@/ui/plugins/multilingual';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import '@/ui/plugins/vee-validate';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
-import applicationInsights from './applicationInsights';
+import applicationInsights from '@/ui/plugins/applicationInsights/applicationInsights';
 
-import moment from '@/ui/plugins/moment';
 import prepareSignalR from '@/ui/plugins/signalR';
 
 import prepareServices from '@/ui/plugins/services';
@@ -34,8 +33,8 @@ import router from './ui/router';
 import App from './ui/App.vue';
 
 prepareServices(store);
-prepareStorage(store);
-prepareSignalR(store);
+const storage = prepareStorage(store);
+prepareSignalR(storage);
 
 applicationInsights.initialize({
   connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,

@@ -233,9 +233,10 @@ export default mixins(caseFileDetail).extend({
   async created() {
     this.loading = true;
     if (this.$route.params.financialAssistancePaymentId) {
-      this.financialAssistance = new FinancialAssistancePaymentEntity(
-        (await this.$storage.financialAssistancePayment.actions.fetch(this.$route.params.financialAssistancePaymentId)).entity,
-      );
+      const faPayment = (await this.$storage.financialAssistancePayment.actions.fetch(
+        this.$route.params.financialAssistancePaymentId, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false },
+      ));
+      this.financialAssistance = new FinancialAssistancePaymentEntity(faPayment.entity);
     } else {
       this.financialAssistance = new FinancialAssistancePaymentEntity();
       this.financialAssistance.caseFileId = this.$route.params.id;

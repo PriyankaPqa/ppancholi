@@ -11,14 +11,12 @@
         data-test="caseFileActivity-tags"
         :readonly="!canEdit"
         :case-file-id="caseFile.entity.id"
-        :tags="caseFile.metadata.tags || []"
-        @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
+        :tags="caseFile.metadata.tags || []" />
 
       <v-row class="ma-0 pa-0">
         <v-col cols="12" md="6" class="flex-row">
           <case-file-status
-            :case-file="caseFile"
-            @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
+            :case-file="caseFile" />
 
           <v-divider vertical class="ml-4 mr-4" />
 
@@ -60,8 +58,7 @@
         <case-file-assignments
           :case-file="caseFile.entity"
           :readonly="readonly"
-          data-test="case-file-assignments"
-          @updateActivities="fetchCaseFileActivities(activityFetchDelay)" />
+          data-test="case-file-assignments" />
       </v-row>
     </template>
     <template v-if="!loading" slot="default">
@@ -111,6 +108,7 @@
 import mixins from 'vue-typed-mixins';
 import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
+import _debounce from 'lodash/debounce';
 import { RcPageContent, RcPageLoading, RcTooltip } from '@crctech/component-library';
 import { ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
@@ -149,7 +147,6 @@ export default mixins(caseFileDetail).extend({
       lastActionDate: null,
       daysAgo: null,
       caseFileActivities: [] as ICaseFileActivity[],
-      activityFetchDelay: 800,
       sortingListItems: [
         {
           value: 'asc', text: this.$t('caseFileActivity.ascending'),
@@ -197,6 +194,7 @@ export default mixins(caseFileDetail).extend({
 
       this.setLastAction();
       await this.fetchCaseFileActivities();
+      this.attachToChanges(true);
     } catch {
       this.error = true;
     } finally {
@@ -204,12 +202,31 @@ export default mixins(caseFileDetail).extend({
     }
   },
 
+  destroyed() {
+    this.attachToChanges(false);
+  },
+
   methods: {
-    async fetchCaseFileActivities(delay = 0) {
+    attachToChanges(on: boolean) {
+      if (on) {
+        this.$signalR.connection.on('caseFile.CaseFileActivityCreated', this.activityChanged);
+        this.$signalR.connection.on('caseFile.CaseFileActivityUpdated', this.activityChanged);
+      } else {
+        this.$signalR.connection.off('caseFile.CaseFileActivityCreated', this.activityChanged);
+        this.$signalR.connection.off('caseFile.CaseFileActivityUpdated', this.activityChanged);
+      }
+    },
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    activityChanged: _debounce(function func(this:any, item: ICaseFileActivity) {
+      if (this.id === item?.caseFileId || this.id === item?.id) {
+        this.fetchCaseFileActivities();
+      }
+    }, 1000),
+
+    async fetchCaseFileActivities() {
       try {
         this.loadingActivity = true;
-        // wait for a few milliseconds before making the call after the case file was modified, to give the backend time to process the modification
-        await new Promise((resolve) => setTimeout(resolve, delay));
         const activity: ICaseFileActivity[] = await this.$storage.caseFile.actions.fetchCaseFileActivities(this.caseFileId);
         if (activity) {
           this.caseFileActivities = activity;
@@ -236,12 +253,10 @@ export default mixins(caseFileDetail).extend({
     async setCaseFileIsDuplicate() {
       const { id, isDuplicate } = this.caseFile.entity;
       await this.$storage.caseFile.actions.setCaseFileIsDuplicate(id, !isDuplicate);
-      this.fetchCaseFileActivities(this.activityFetchDelay);
     },
 
     async setCaseFileTriage(triage: number) {
       await this.$storage.caseFile.actions.setCaseFileTriage(this.caseFileId, triage);
-      this.fetchCaseFileActivities(this.activityFetchDelay);
     },
 
     async sortCaseFileActivities(direction: 'asc' | 'desc') {

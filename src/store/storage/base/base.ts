@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEmpty from 'lodash/isEmpty';
 import { IEntity, IEntityCombined, Status } from '@/entities/base';
@@ -33,6 +34,14 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
         pinned: pinnedIds.indexOf(e.id) > -1,
       } as IEntityCombined<TEntity, TMetadata>;
     });
+  }
+
+  protected userId() {
+    return this.store.getters['user/userId'];
+  }
+
+  protected initiatedByCurrentUser(entity: IEntity) {
+    return this.userId() === entity.lastUpdatedBy || this.userId() === entity.createdBy;
   }
 
   protected baseGetters = {
@@ -218,6 +227,24 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       this.store.commit(`${this.entityModuleName}/set`, entity);
     },
 
+    /// call this from signalR - we will decide here whether this item is of interest
+    /// and if so will upsert it in items
+    setEntityFromOutsideNotification: (entity: TEntity) => {
+      if (!entity?.id) {
+        return;
+      }
+      const knownEntity = this.baseGetters.get(entity.id);
+      if (this.initiatedByCurrentUser(entity) || knownEntity?.entity?.id || knownEntity?.metadata?.id) {
+        if (entity.lastAction === 'Created' && this.initiatedByCurrentUser(entity)) {
+          this.baseMutations.addNewlyCreatedId(entity);
+        }
+        this.baseMutations.setEntity(entity);
+        console.log(`${this.entityModuleName} - ${entity.lastAction}`, entity.id);
+      } else {
+        console.log(`${this.entityModuleName} - ignored`, entity.id);
+      }
+    },
+
     setAllEntities: (payload:TEntity[]) => {
       this.store.commit(`${this.entityModuleName}/setAll`, payload);
     },
@@ -225,6 +252,21 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
     setMetadata: (metadata: TMetadata) => {
       if (this.metadataModuleName) {
         this.store.commit(`${this.metadataModuleName}/set`, metadata);
+      }
+    },
+
+    /// call this from signalR - we will decide here whether this item is of interest
+    /// and if so will upsert it in items
+    setMetadataFromOutsideNotification: (entity: TMetadata) => {
+      if (!entity?.id || !this.metadataModuleName) {
+        return;
+      }
+      const knownEntity = this.baseGetters.get(entity.id);
+      if (this.initiatedByCurrentUser(entity) || knownEntity?.entity?.id || knownEntity?.metadata?.id) {
+        this.baseMutations.setMetadata(entity);
+        console.log(`${this.metadataModuleName} - ${entity.lastAction}`, entity.id);
+      } else {
+        console.log(`${this.metadataModuleName} - ignored`, entity.id);
       }
     },
 
