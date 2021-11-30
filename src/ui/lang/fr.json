@@ -48,9 +48,13 @@
     "common.tooltip_label": "Ouvrir l'aide",
     "common.years": "années",
     "common.yes": "Oui",
+    "errors.fresh-address-email-address-not-safe-to-send": "Cette adresse courriel n'est pas sûre",
+    "errors.fresh-address-general-exception": "Échec de la nouvelle adresse: {Message}",
+    "errors.fresh-address-validation-failed": "Cette adresse courriel semble invalide",
     "errors.person-identified-as-duplicate": "Le\/la bénéficiaire existe déjà dans le système.",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate": "Le\/la bénéficiaire existe déjà dans le système.",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number": "Le\/la bénéficiaire existe déjà dans le système.",
+    "errors.the-email-address-format-is-not-valid": "Le format de l'adresse e-mail n'est pas valide",
     "errors.the-email-provided-already-exists-in-the-system": "Le\/la bénéficiaire existe déjà dans le système.",
     "errors.the-email-provided-already-exists-in-the-system.crc-registration": "Il semble que quelqu'un se soit déjà inscrit avec cette adresse électronique. Veuillez la modifier.",
     "errors.the-email-provided-already-exists-in-the-system.self-registration": "Il semble que quelqu'un se soit déjà inscrit avec cette adresse électronique. Veuillez réviser votre inscription ou appelez-nous au {phoneNumber}.",
@@ -159,6 +163,8 @@
     "registration.personal_info.validations.minimumAge": "L'âge minimum est de {x} ans.",
     "registration.personal_info.validations.notInFuture": "La date de naissance ne peut se situer dans le futur.",
     "registration.personal_info.year": "Année",
+    "registration.privacy_statement.InPerson": "En personne",
+    "registration.privacy_statement.Phone": "Téléphone",
     "registration.privacy_statement.agreeCRC": "Le bénéficiaire a déclaré «J'accepte» aux énoncés ci-dessus.",
     "registration.privacy_statement.agreeSelf": "J'accepte les énoncés ci-dessus.",
     "registration.privacy_statement.crc_username": "Nom d'utilisateur CRC",
@@ -195,5 +201,6 @@
     "zendesk.registration.addresses": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360053455714",
     "zendesk.registration.isRegistered": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242133 ",
     "zendesk.registration.personalInformation": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360056417213",
-    "zendesk.registration.review": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242153"
+    "zendesk.registration.review": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242153",
+    "errors.google-re-captcha-validation-failed": "Activité suspecte détectée"
 }

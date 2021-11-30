@@ -9,6 +9,7 @@ import {
 import Multilingual from '@/ui/plugins/multilingual';
 import '@/ui/plugins/vue-toasted';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
+import { VueReCaptcha } from 'vue-recaptcha-v3';
 import App from './ui/App.vue';
 import './registerServiceWorker';
 import router from './ui/router';
@@ -16,6 +17,13 @@ import store from './store/store';
 
 prepareServices(store);
 prepareStorage(store);
+
+Vue.use(VueReCaptcha, {
+  siteKey: process.env.VUE_APP_GOOGLE_RECAPTCHA_KEY,
+  loaderOptions: {
+    autoHideBadge: true,
+  },
+});
 
 Vue.use(Multilingual);
 

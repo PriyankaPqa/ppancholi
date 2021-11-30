@@ -1019,10 +1019,10 @@
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
-"@crctech/registration-lib@1.0.604":
-  version "1.0.604"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.604.tgz#e8b5c9a2ed07b77e3e43175e3f9510b6fafeebdd"
-  integrity sha1-6LXJou0Ht34+QxdeP5UQtvr+690=
+"@crctech/registration-lib@1.0.616":
+  version "1.0.616"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.616.tgz#de9adbfe62d57a066a9295187ccf62bafb2d3825"
+  integrity sha1-3prb/mLVegZqkpUYfM9iuvstOCU=
   dependencies:
     "@crctech/component-library" "1.0.181"
     axios "^0.24.0"
@@ -10412,6 +10412,11 @@ realpath-native@^1.1.0:
   dependencies:
     util.promisify "^1.0.0"
 
+recaptcha-v3@^1.8.0:
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/recaptcha-v3/-/recaptcha-v3-1.10.0.tgz#f966b5a0d8021fd2ed85ac4be832f6acb6ec1ed1"
+  integrity sha512-aGTxYSk3FFNKnXeKDbLpgRDRyIHRZNBF5HyaXXAN1Aj4TSyyZvmoAn9CylvpqLV3pYpIQavwc+2rzhNFn5SsLQ==
+
 rechoir@^0.6.2:
   version "0.6.2"
   resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
@@ -12463,6 +12468,13 @@ vue-meta@^2.3.1:
   integrity sha512-XEeZUmlVeODclAjCNpWDnjgw+t3WA6gdzs6ENoIAgwO1J1d5p1tezDhtteLUFwcaQaTtayRrsx7GL6oXp/m2Jw==
   dependencies:
     deepmerge "^4.2.2"
+
+vue-recaptcha-v3@^1.9.0:
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/vue-recaptcha-v3/-/vue-recaptcha-v3-1.9.0.tgz#6315ea07e2ae34abbb11e840ab9f18a427c5d53b"
+  integrity sha512-WQIlhcOcETk3SYbEC88podUSq1J7UjmHpKgJhSy0Xm3DAjTIPjl19g9kn5KRdyTxNLiS/eR5C6H3Jk3c7b9baA==
+  dependencies:
+    recaptcha-v3 "^1.8.0"
 
 vue-router@^3.2.0:
   version "3.5.1"

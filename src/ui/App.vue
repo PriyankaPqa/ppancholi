@@ -15,9 +15,6 @@ export default {
       title: 'metaInfo.app.title',
       // all titles will be injected into this template
       titleTemplate: 'hello',
-      meta: [
-        { name: 'Content-Security-Policy', content: this.cspContent },
-      ],
     };
   },
   async created() {
