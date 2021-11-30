@@ -289,14 +289,17 @@ export default Vue.extend({
             await this.$recaptchaLoaded();
             recaptchaToken = await this.$recaptcha('validateEmail');
           } catch (e) {
-            recaptchaToken = 'server_not_reachable'; // We don't want to block the submission if google is down
+            recaptchaToken = 'server_not_reachable'; // We don't want to block the submission if Google is down
           } finally {
             result = await this.$services.households.validatePublicEmail({ emailAddress: email, personId: this.personId, recaptchaToken });
           }
         }
 
-        this.emailChecking = false;
+        if (result.emailIsValid === undefined) {
+          result = { ...result, emailIsValid: false };
+        }
 
+        this.emailChecking = false;
         this.formCopy.emailValidatedByBackend = result.emailIsValid;
         this.setEmailValidator(result);
         (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
