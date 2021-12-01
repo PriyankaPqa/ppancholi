@@ -10,6 +10,7 @@ export default Vue.extend({
   data() {
     return {
       isFormReady: false,
+      recaptchaToken: null,
     };
   },
 
@@ -93,7 +94,7 @@ export default Vue.extend({
 
       const effectiveToIndex = this.$storage.registration.getters.findEffectiveJumpIndex(toIndex);
       this.setSkippedStepsToValid(this.currentTabIndex, effectiveToIndex - 1);
-      // We validate before leaving so we see error if we can't go next
+      // We validate before leaving, so we see error if we can't go next
       await (this.$refs.form as VForm).validate();
       this.$storage.registration.mutations.jump(effectiveToIndex);
 
@@ -109,8 +110,8 @@ export default Vue.extend({
         return;
       }
 
-      if (this.currentTab.id === 'review') {
-        await this.$storage.registration.actions.submitRegistration();
+      if (this.currentTab.id === 'review') { // The recaptchaToken is set in Individual.vue (benef app), in the callback
+        await this.$storage.registration.actions.submitRegistration(this.recaptchaToken);
       }
 
       await this.jump(this.currentTabIndex + 1);

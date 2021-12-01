@@ -213,15 +213,17 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.jump).toHaveBeenCalledTimes(0);
       });
 
-      it('should call submit registration if current tab is review', async () => {
+      it('should call submit registration with recaptchaToken if current tab is review', async () => {
         wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
           id: 'review',
         }));
+        await wrapper.setData({ recaptchaToken: 'recaptchaToken' });
         wrapper.vm.jump = jest.fn();
 
         await wrapper.vm.next();
 
         expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.registration.actions.submitRegistration).toHaveBeenCalledWith('recaptchaToken');
       });
     });
 

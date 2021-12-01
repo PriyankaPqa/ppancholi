@@ -81,13 +81,31 @@
 
     <v-col cols="12" sm="6">
       <validation-observer ref="email">
-        <v-text-field-with-validation
-          v-model="formCopy.email"
-          :loading="emailChecking"
-          :data-test="`${prefixDataTest}__email`"
-          :rules="rules.email"
-          :label="emailLabel"
-          @blur="validateEmail($event.target.value)" />
+        <template v-if="recaptchaKey">
+          <vue-programmatic-invisible-google-recaptcha
+            ref="recaptchaEmail"
+            :sitekey="recaptchaKey"
+            element-id="recaptchaEmail"
+            badge-position="left"
+            :show-badge-mobile="false"
+            @recaptcha-callback="recaptchaCallBack" />
+          <v-text-field-with-validation
+            v-model="formCopy.email"
+            :loading="emailChecking"
+            :data-test="`${prefixDataTest}__email`"
+            :rules="rules.email"
+            :label="emailLabel"
+            @blur="getTokenAndValidate($event.target.value)" />
+        </template>
+        <template v-else>
+          <v-text-field-with-validation
+            v-model="formCopy.email"
+            :loading="emailChecking"
+            :data-test="`${prefixDataTest}__email`"
+            :rules="rules.email"
+            :label="emailLabel"
+            @blur="validateEmail($event.target.value)" />
+        </template>
       </validation-observer>
     </v-col>
   </v-row>
@@ -141,6 +159,11 @@ export default Vue.extend({
     skipPhoneEmailRules: {
       type: Boolean,
       default: false,
+    },
+
+    recaptchaKey: {
+      type: String,
+      default: '',
     },
   },
 
@@ -275,34 +298,15 @@ export default Vue.extend({
       this.focusPhoneCounter += 1;
     },
 
-    async validateEmail(email: string) {
+    getTokenAndValidate(email: string) {
       if (email && email !== this.previousEmail) {
-        this.previousEmail = email;
-        this.emailChecking = true;
-        let result = null;
+        (this.$refs.recaptchaEmail as any).execute();
+      }
+    },
 
-        if (this.isCRCRegistration) {
-          result = await this.$services.households.validateEmail({ emailAddress: email, personId: this.personId });
-        } else {
-          let recaptchaToken;
-          try {
-            await this.$recaptchaLoaded();
-            recaptchaToken = await this.$recaptcha('validateEmail');
-          } catch (e) {
-            recaptchaToken = 'server_not_reachable'; // We don't want to block the submission if Google is down
-          } finally {
-            result = await this.$services.households.validatePublicEmail({ emailAddress: email, personId: this.personId, recaptchaToken });
-          }
-        }
-
-        if (result.emailIsValid === undefined) {
-          result = { ...result, emailIsValid: false };
-        }
-
-        this.emailChecking = false;
-        this.formCopy.emailValidatedByBackend = result.emailIsValid;
-        this.setEmailValidator(result);
-        (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
+    async recaptchaCallBack(token: string) {
+      if (token) { // you're not a robot
+        await this.validateEmail(this.formCopy.email, token);
       }
     },
 
@@ -318,6 +322,29 @@ export default Vue.extend({
       }
     },
 
+    async validateEmail(email: string, recaptchaToken?: string) {
+      if (email && email !== this.previousEmail) {
+        this.previousEmail = email;
+        this.emailChecking = true;
+        let result = null;
+
+        if (this.isCRCRegistration) {
+          result = await this.$services.households.validateEmail({ emailAddress: email, personId: this.personId });
+        } else {
+          result = await this.$services.households.validatePublicEmail({ emailAddress: email, personId: this.personId, recaptchaToken });
+        }
+
+        if (result.emailIsValid === undefined) {
+          result = { ...result, emailIsValid: false };
+        }
+
+        this.emailChecking = false;
+        this.formCopy.emailValidatedByBackend = result.emailIsValid;
+        this.setEmailValidator(result);
+        (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
+      }
+    },
   },
+
 });
 </script>

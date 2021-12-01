@@ -461,14 +461,13 @@ const actions = (mode: ERegistrationMode) => ({
   async submitRegistration(
     this: IStore<IState>,
     context: ActionContext<IState, IState>,
+    recaptchaToken?: string,
   ): Promise<IHouseholdEntity> {
     let result: IHouseholdEntity;
     context.commit('setSubmitLoading', true);
     try {
       let result;
       if (mode === ERegistrationMode.Self) {
-        await this._vm.$recaptchaLoaded();
-        const recaptchaToken = await this._vm.$recaptcha('submitRegistration');
         result = await this.$services.households.submitRegistration({
           household: context.state.householdCreate,
           eventId: context.state.event.id,

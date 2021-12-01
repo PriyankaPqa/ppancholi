@@ -83,7 +83,7 @@ export interface IStorage {
     fetchPreferredLanguages(): Promise<IOptionItemData[]>;
     fetchPrimarySpokenLanguages(): Promise<IOptionItemData[]>;
     fetchIndigenousCommunities(): Promise<IIndigenousCommunityData[]>;
-    submitRegistration(): Promise<IHouseholdEntity>;
+    submitRegistration(recaptchaToken?: string): Promise<IHouseholdEntity>;
     updatePersonContactInformation({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number}): Promise<IHouseholdEntity>;
     updatePersonIdentity({ member, isPrimaryMember, index }: { member: IMember; isPrimaryMember: boolean; index?: number}): Promise<IHouseholdEntity>;
     updatePersonAddress({

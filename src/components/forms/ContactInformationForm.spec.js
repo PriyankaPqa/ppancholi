@@ -21,6 +21,9 @@ describe('ContactInformationForm.vue', () => {
         primarySpokenLanguagesItems: mockPrimarySpokenLanguages(),
         personId: 'personId',
       },
+      stubs: {
+        'vue-programmatic-invisible-google-recaptcha': { template: '<div></div>' },
+      },
     });
   });
 
@@ -425,29 +428,9 @@ describe('ContactInformationForm.vue', () => {
       });
 
       describe('Self Registration', () => {
-        it('should trigger validatePublicEmail with proper params when Google is down', async () => {
-          wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
-          wrapper.vm.$recaptchaLoaded = jest.fn();
-          wrapper.vm.$recaptchaLoaded.mockImplementation(() => {
-            throw new Error('Server down');
-          });
-
-          wrapper.vm.$recaptcha = jest.fn();
-          await wrapper.vm.validateEmail('test@test.ca');
-
-          expect(wrapper.vm.$services.households.validatePublicEmail).toHaveBeenCalledWith({
-            emailAddress: 'test@test.ca',
-            recaptchaToken: 'server_not_reachable',
-            personId: 'personId',
-          });
-          expect(wrapper.vm.formCopy.emailValidatedByBackend).toBe(true);
-        });
-
         it('should trigger validatePublicEmail with proper params', async () => {
           wrapper.vm.$storage.registration.getters.isCRCRegistration = jest.fn(() => false);
-          wrapper.vm.$recaptchaLoaded = jest.fn();
-          wrapper.vm.$recaptcha = jest.fn(() => 'token');
-          await wrapper.vm.validateEmail('test@test.ca');
+          await wrapper.vm.validateEmail('test@test.ca', 'token');
 
           expect(wrapper.vm.$services.households.validatePublicEmail).toHaveBeenCalledWith({
             emailAddress: 'test@test.ca',
@@ -468,7 +451,7 @@ describe('ContactInformationForm.vue', () => {
         expect(wrapper.vm.setEmailValidator).toHaveBeenCalledWith(result);
       });
 
-      it('should be triggered when blurring email field', () => {
+      it('should be triggered when blurring email field if for CRC (no recaptcha key)', () => {
         wrapper.vm.validateEmail = jest.fn();
         const element = wrapper.findDataTest('personalInfo__email');
         element.vm.$emit('blur', { target: { value: 'email' } });
@@ -507,6 +490,50 @@ describe('ContactInformationForm.vue', () => {
         wrapper.vm.setEmailValidator(result);
 
         expect(wrapper.vm.emailValidator.messageKey).toBe('errorCode');
+      });
+    });
+
+    describe('recaptchaCallBack', () => {
+      it('should call validateEmail with the email and the token', async () => {
+        wrapper.vm.validateEmail = jest.fn();
+        await wrapper.vm.recaptchaCallBack('token');
+        expect(wrapper.vm.validateEmail).toHaveBeenCalledWith(wrapper.vm.formCopy.email, 'token');
+      });
+      it('should do nothing if no token (user will need to face a challenge)', async () => {
+        wrapper.vm.validateEmail = jest.fn();
+        await wrapper.vm.recaptchaCallBack('');
+        expect(wrapper.vm.validateEmail).not.toHaveBeenCalledWith(wrapper.vm.formCopy.email, 'token');
+      });
+    });
+
+    describe('getTokenAndValidate', () => {
+      beforeEach(() => {
+        wrapper.vm.$refs = {
+          recaptchaEmail: {
+            execute: jest.fn(),
+          },
+        };
+      });
+
+      it('should not call execute method if no email', () => {
+        wrapper.vm.getTokenAndValidate('');
+        expect(wrapper.vm.$refs.recaptchaEmail.execute).toHaveBeenCalledTimes(0);
+      });
+
+      it('should call execute method from recaptcha', () => {
+        wrapper.vm.getTokenAndValidate('test@test.ca');
+        expect(wrapper.vm.$refs.recaptchaEmail.execute).toHaveBeenCalledTimes(1);
+      });
+
+      it('should be triggered when blurring email field if for Registration (with recaptcha key)', async () => {
+        await wrapper.setProps({
+          recaptchaKey: '12345',
+        });
+        wrapper.vm.getTokenAndValidate = jest.fn();
+        const element = wrapper.findDataTest('personalInfo__email');
+        element.vm.$emit('blur', { target: { value: 'email' } });
+
+        expect(wrapper.vm.getTokenAndValidate).toHaveBeenLastCalledWith('email');
       });
     });
   });

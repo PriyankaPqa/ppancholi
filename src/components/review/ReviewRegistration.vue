@@ -28,7 +28,7 @@
         @cancel="cancelPersonalInformation()"
         @submit="submitPersonalInformation()">
         <template #inline>
-          <personal-information :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" />
+          <personal-information :recaptcha-key="recaptchaKey" :i18n="i18n" :skip-phone-email-rules="skipPhoneEmailRules" />
         </template>
         <personal-information-template :personal-information="getPersonalInformation" :show-age-in-review="showAgeInReview" />
       </summary-section>
@@ -183,6 +183,10 @@ export default mixins(additionalMemberForm).extend({
     hideName: {
       type: Boolean,
       default: false,
+    },
+    recaptchaKey: {
+      type: String,
+      default: '',
     },
   },
 

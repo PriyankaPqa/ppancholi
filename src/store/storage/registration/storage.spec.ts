@@ -305,14 +305,15 @@ describe('>>> Registration Storage', () => {
       storage.actions.fetchPrimarySpokenLanguages();
       expect(store.dispatch).toBeCalledWith('registration/fetchPrimarySpokenLanguages');
     });
+
     it('should proxy fetchIndigenousCommunities', () => {
       storage.actions.fetchIndigenousCommunities();
       expect(store.dispatch).toBeCalledWith('registration/fetchIndigenousCommunities');
     });
 
     it('should proxy submitRegistration', () => {
-      storage.actions.submitRegistration();
-      expect(store.dispatch).toBeCalledWith('registration/submitRegistration');
+      storage.actions.submitRegistration('recaptchaToken');
+      expect(store.dispatch).toBeCalledWith('registration/submitRegistration', 'recaptchaToken');
     });
 
     it('should proxy updatePersonContactInformation', () => {

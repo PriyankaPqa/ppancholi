@@ -12,6 +12,7 @@
       :primary-spoken-languages-items="primarySpokenLanguagesItems"
       :skip-phone-email-rules="skipPhoneEmailRules"
       :person-id="member.id"
+      :recaptcha-key="recaptchaKey"
       @change="setContactInformation($event)" />
 
     <indigenous-identity-form
@@ -61,6 +62,10 @@ export default Vue.extend({
     memberProps: {
       type: Object as () => IMember,
       default: null,
+    },
+    recaptchaKey: {
+      type: String,
+      default: '',
     },
   },
 

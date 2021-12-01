@@ -251,8 +251,8 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.dispatch('registration/fetchIndigenousCommunities');
     },
 
-    submitRegistration(): Promise<IHouseholdEntity> {
-      return store.dispatch('registration/submitRegistration');
+    submitRegistration(recaptchaToken?: string): Promise<IHouseholdEntity> {
+      return store.dispatch('registration/submitRegistration', recaptchaToken);
     },
 
     updatePersonContactInformation({ member, isPrimaryMember, index = -1 }: { member: IMember; isPrimaryMember: boolean; index: number}): Promise<IHouseholdEntity> {

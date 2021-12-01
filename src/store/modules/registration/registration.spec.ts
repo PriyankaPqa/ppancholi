@@ -734,11 +734,6 @@ describe('>>> Registration Module', () => {
     });
 
     describe('submitRegistration', () => {
-      beforeEach(() => {
-        store._vm.$recaptchaLoaded = jest.fn();
-        store._vm.$recaptcha = jest.fn(() => 'recaptchaToken');
-      });
-
       it('calls difference service according to mode', async () => {
         await store.commit('registration/setEvent', mockEventData());
         await store.dispatch('registration/submitRegistration');
@@ -753,7 +748,7 @@ describe('>>> Registration Module', () => {
           },
         });
         await store.commit('registration/setEvent', mockEventData());
-        await store.dispatch('registration/submitRegistration');
+        await store.dispatch('registration/submitRegistration', 'recaptchaToken');
 
         expect(store.$services.households.submitRegistration).toHaveBeenCalledTimes(0);
         expect(store.$services.households.submitCRCRegistration).toHaveBeenCalledTimes(1);
@@ -763,7 +758,7 @@ describe('>>> Registration Module', () => {
         store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         await store.commit('registration/setEvent', mockEventData());
 
-        await store.dispatch('registration/submitRegistration');
+        await store.dispatch('registration/submitRegistration', 'recaptchaToken' );
 
         expect(store.$services.households.submitRegistration).toHaveBeenCalledWith({
           household: store.state.registration.householdCreate,
