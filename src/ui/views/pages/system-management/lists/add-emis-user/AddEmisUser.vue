@@ -332,8 +332,8 @@ export default Vue.extend({
     async submit() {
       if (this.isSubmitAllowed) {
         this.loading = true; // So the user knows we're working
-        const successfulCreations = [];
-        let successfulCreation;
+        const successfulCreations = [] as IUserAccountCombined[];
+        let successfulCreation = null as IUserAccountCombined;
         // eslint-disable-next-line
         for (let user of this.selectedUsers) {
           // eslint-disable-next-line
@@ -353,8 +353,8 @@ export default Vue.extend({
       return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
     },
 
-    async setUserRole(user: IAppUserData): Promise<boolean> {
-      let successfulCreation;
+    async setUserRole(user: IAppUserData): Promise<IUserAccountCombined> {
+      let successfulCreation = null as IUserAccountCombined;
       const subRole:IOptionSubItem = this.getSubRoleById(user.roles[0].id);
 
       if (subRole) {
@@ -371,7 +371,7 @@ export default Vue.extend({
           this.$toasted.global.error(this.$t('system_management.add_users.error'));
         }
       }
-      return !!successfulCreation;
+      return successfulCreation;
     },
 
     updateIsSubmitAllowed() {

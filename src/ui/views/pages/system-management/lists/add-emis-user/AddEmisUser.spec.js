@@ -569,11 +569,12 @@ describe('AddEmisUser.vue', () => {
         wrapper.vm.createUserAccount = jest.fn();
         wrapper.vm.getSubRoleById = jest.fn(() => mockSubRole);
 
-        await wrapper.vm.setUserRole(wrapper.vm.selectedUsers[0]);
+        const result = await wrapper.vm.setUserRole(wrapper.vm.selectedUsers[0]);
         wrapper.vm.$nextTick();
 
         expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('system_management.add_users.success');
+        expect(result).toEqual(wrapper.vm.$storage.userAccount.actions.fetch(wrapper.vm.selectedUsers[0].id));
       });
 
       it('emits error toast on null response', async () => {
