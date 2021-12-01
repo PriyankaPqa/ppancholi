@@ -88,6 +88,7 @@
             element-id="recaptchaEmail"
             badge-position="left"
             :show-badge-mobile="false"
+            :show-badge-desktop="false"
             @recaptcha-callback="recaptchaCallBack" />
           <v-text-field-with-validation
             v-model="formCopy.email"
