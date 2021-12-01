@@ -17,7 +17,7 @@ const handleRedirectPromise = msalInstance.handleRedirectPromise().then((redirec
     msalInstance.setActiveAccount(redirect.account);
   }
 }).catch((error) => {
-  applicationInsights.trackException(error, { context: 'AuthenticationProvider' });
+  applicationInsights.trackTrace('handleRedirectPromise - error', { context: 'AuthenticationProvider', error });
   handleRedirectPromiseError = error;
 });
 
@@ -107,8 +107,7 @@ export default {
       // This error is thrown in cases where the refresh token has expired.
       // We may need to add other error types to this list in the future. Otherwise, all errors go to the LoginError.vue page
 
-      applicationInsights.trackException(e, { context: 'AuthenticationProvider' });
-      applicationInsights.trackException(e.errorCode, { context: 'AuthenticationProvider' });
+      applicationInsights.trackTrace('acquireToken - catch error', { context: 'AuthenticationProvider', error: e, errorCode: e.errorCode });
 
       if (e.errorCode === 'login_required') {
         this.signIn();

@@ -272,6 +272,9 @@ export default Vue.extend({
 
     filteredUserAccounts(): IUserAccountCombined[] {
       let filteredUsers:IUserAccountCombined[];
+      if (this.loading) {
+        return [];
+      }
       if (isEmpty(this.search) || this.allUsers === null) {
         filteredUsers = this.allUsers ? this.allUsers : [];
       } else {
@@ -287,9 +290,11 @@ export default Vue.extend({
     },
   },
 
-  mounted() {
-    this.fetchAllEmisUsers();
-    this.setRoles();
+  async mounted() {
+    this.loading = true;
+    await this.fetchAllEmisUsers();
+    await this.setRoles();
+    this.loading = false;
   },
 
   methods: {
@@ -409,10 +414,8 @@ export default Vue.extend({
     },
 
     async fetchAllEmisUsers() {
-      this.loading = true;
       await this.$storage.userAccount.actions.fetchAll();
       this.allUsers = this.excludeDeletedUsers(_cloneDeep(this.originalUsers));
-      this.loading = false;
     },
 
     async setRoles() {

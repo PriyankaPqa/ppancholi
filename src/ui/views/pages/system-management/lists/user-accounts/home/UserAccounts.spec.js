@@ -58,9 +58,11 @@ describe('UserAccounts.vue', () => {
       jest.spyOn(wrapper.vm, 'fetchAllEmisUsers').mockImplementation(() => true);
       jest.spyOn(wrapper.vm, 'setRoles').mockImplementation(() => mockOptionItemData());
 
-      wrapper.vm.$options.mounted.forEach((hook) => {
-        hook.call(wrapper.vm);
-      });
+      for (let i = 0; i < wrapper.vm.$options.mounted.length; i += 1) {
+        // eslint-disable-next-line no-await-in-loop
+        await wrapper.vm.$options.mounted[i].call(wrapper.vm);
+      }
+
       expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalledTimes(1);
       expect(wrapper.vm.setRoles).toHaveBeenCalledTimes(1);
     });
