@@ -5,6 +5,7 @@ import {
 import _cloneDeep from 'lodash/cloneDeep';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household/index';
 import { ECanadaProvinces } from '@crctech/registration-lib/src/types/index';
+import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import householdHelpers from '@/ui/helpers/household';
 
 const member = mockMember({ id: 'id-1' });
@@ -237,7 +238,8 @@ describe('householdHelpers', () => {
         month: 12,
         year: 1990,
       };
-      expect(householdHelpers.getBirthDateDisplayWithAge(birthdate)).toEqual('Dec 1, 1990 (30 years)');
+      libHelpers.getAge = jest.fn(() => 10);
+      expect(householdHelpers.getBirthDateDisplayWithAge(birthdate)).toEqual('Dec 1, 1990 (10 years)');
     });
   });
 
