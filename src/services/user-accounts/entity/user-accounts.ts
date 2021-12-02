@@ -18,7 +18,7 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
   }
 
   async fetchCurrentUserAccount(): Promise<IUserAccountEntity> {
-    return this.http.get(`${this.baseUrl}/current-user`);
+    return this.http.get(`${this.baseUrl}/current-user`, { globalHandler: false });
   }
 
   async addFilter(filter: IFilter): Promise<IUserAccountEntity> {

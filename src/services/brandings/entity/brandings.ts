@@ -19,7 +19,7 @@ export class BrandingsService extends DomainBaseService<IBrandingEntity, uuid> i
   }
 
   async getUserTenants(): Promise<IBrandingEntityData[]> {
-    return this.http.get(`${this.baseApi}/${USER_TENANT_CONTROLLER}`);
+    return this.http.get(`${this.baseApi}/${USER_TENANT_CONTROLLER}`, { globalHandler: false });
   }
 
   async updateColours(payload: IEditColoursRequest): Promise<IBrandingEntityData> {

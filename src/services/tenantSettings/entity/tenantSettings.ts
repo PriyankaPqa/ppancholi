@@ -14,7 +14,7 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
   }
 
   async getAll(): Promise<ITenantSettingsEntityData[]> {
-    return this.http.get(`${this.baseApi}/tenants/settings`);
+    return this.http.get(`${this.baseApi}/tenants/settings`, { globalHandler: false });
   }
 
   async getCurrentTenantSettings(): Promise<ITenantSettingsEntityData> {

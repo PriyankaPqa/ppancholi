@@ -14,7 +14,7 @@ describe('>>> UserAccounts Service', () => {
 
   test('fetchCurrentUserAccount is linked to the correct URL', async () => {
     await service.fetchCurrentUserAccount();
-    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/current-user`);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/current-user`, { globalHandler: false });
   });
 
   test('addFilter is linked to the correct URL and payload', async () => {

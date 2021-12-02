@@ -184,7 +184,8 @@ export default Vue.extend({
   },
 
   async mounted() {
-    this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId());
+    this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId(),
+      { useEntityGlobalHandler: false, useMetadataGlobalHandler: false });
     this.currentTenantId = this.userAccount.entity?.tenantId;
     this.tenantIds = (await this.$storage.branding.actions.getUserTenants()).map((t) => t.id);
     (await this.$storage.tenantSettings.actions.fetchAll());
