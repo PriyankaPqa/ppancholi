@@ -758,7 +758,7 @@ describe('>>> Registration Module', () => {
         store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         await store.commit('registration/setEvent', mockEventData());
 
-        await store.dispatch('registration/submitRegistration', 'recaptchaToken' );
+        await store.dispatch('registration/submitRegistration', 'recaptchaToken');
 
         expect(store.$services.households.submitRegistration).toHaveBeenCalledWith({
           household: store.state.registration.householdCreate,

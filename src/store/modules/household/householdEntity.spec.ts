@@ -1,5 +1,5 @@
 import { ActionContext } from 'vuex';
-import { httpClient } from '@/services/httpClient';
+import { mockHttp } from '@/services/httpClient.mock';
 
 import { HouseholdEntityModule } from '@/store/modules/household/householdEntity';
 import { HouseholdsService } from '@/services/households/entity';
@@ -9,7 +9,7 @@ import { mockAddress } from '@/entities/value-objects/address';
 import { mockVersionedEntityCombined, mockVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.mock';
 import utils from '../../../entities/value-objects/versioned-entity/versionedEntityUtils';
 
-const module = new HouseholdEntityModule(new HouseholdsService(httpClient));
+const module = new HouseholdEntityModule(new HouseholdsService(mockHttp()));
 
 const actionContext = {
   commit: jest.fn(),

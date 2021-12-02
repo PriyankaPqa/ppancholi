@@ -7,6 +7,7 @@ import VueI18n from 'vue-i18n';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
+import applicationInsights from '../../../plugins/applicationInsights/applicationInsights';
 import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
 import {
   isRegisteredValid,
@@ -478,6 +479,7 @@ const actions = (mode: ERegistrationMode) => ({
       }
       context.commit('setRegistrationResponse', result);
     } catch (e) {
+      applicationInsights.trackTrace(`submitRegistration error - self: ${mode === ERegistrationMode.Self}`, { error: e }, 'store.registration', 'submitRegistration');
       context.commit('setRegistrationErrors', e);
     } finally {
       context.commit('setSubmitLoading', false);
@@ -590,6 +592,7 @@ const actions = (mode: ERegistrationMode) => ({
       result = await this.$services.households.splitHousehold(context.state.householdCreate, originHouseholdId, context.state.event.id);
       context.commit('setRegistrationResponse', result);
     } catch (e) {
+      applicationInsights.trackTrace('splitHousehold error', { error: e }, 'store.registration', 'splitHousehold');
       context.commit('setRegistrationErrors', e);
     } finally {
       context.commit('setSubmitLoading', false);

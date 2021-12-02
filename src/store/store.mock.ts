@@ -11,7 +11,7 @@ import { mockTabs } from './modules/registration/tabs.mock';
 import { makeRegistrationModule } from './modules/registration';
 import { HouseholdEntityModule } from './modules/household';
 import { IState, IStore } from './store.types';
-import { httpClient } from '../services/httpClient';
+import { mockHttp } from '../services/httpClient.mock';
 import { HouseholdsService } from '../services/households/entity';
 
 const i18n = {
@@ -25,7 +25,7 @@ const mockConfig = {
     registration: makeRegistrationModule({
       i18n, tabs: mockTabs(), skipAgeRestriction: false, skipEmailPhoneRules: false, mode: ERegistrationMode.Self,
     }),
-    household: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
+    household: new HouseholdEntityModule(new HouseholdsService(mockHttp())).getModule(),
   },
 };
 

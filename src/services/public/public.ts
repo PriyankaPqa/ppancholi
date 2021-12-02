@@ -1,6 +1,7 @@
 /* eslint-disable no-empty */
-import { IHttpClient } from '@/services/httpClient';
 import { IAzureSearchResult } from '@/types';
+import { IHttpClient } from '@/services/httpClient';
+import applicationInsights from '../../plugins/applicationInsights/applicationInsights';
 import { IEventData } from '../../entities/event';
 import { IPublicService } from './public.types';
 
@@ -20,16 +21,23 @@ export class PublicService implements IPublicService {
   async getTenantByEmisDomain(domain: string): Promise<string> {
     let tenantId = null;
     try {
-      tenantId = await this.http.get<string>(`/system-management/tenants/id-from-domain?domain=${domain}`, { globalHandler: false });
-    } catch {}
+      tenantId = await this.http.get<string>(`/system-management/tenants/id-from-domain?domain=${domain}`, { globalHandler: false, noErrorLogging: true });
+    } catch (e) {
+      // allow to fail silently - probably dev...
+      applicationInsights.trackTrace('PublicService.getTenantByEmisDomain', { error: e }, 'public', 'getTenantByEmisDomain');
+    }
     return tenantId;
   }
 
   async getTenantByRegistrationDomain(domain: string): Promise<string> {
     let tenantId = null;
     try {
-      tenantId = await this.http.get<string>(`/system-management/tenants/id-from-registration-domain?registrationDomain=${domain}`, { globalHandler: false });
-    } catch {}
+      tenantId = await this.http.get<string>(`/system-management/tenants/id-from-registration-domain?registrationDomain=${domain}`,
+        { globalHandler: false, noErrorLogging: true });
+    } catch (e) {
+      // allow to fail silently - probably dev...
+      applicationInsights.trackTrace('PublicService.getTenantByRegistrationDomain', { error: e }, 'public', 'getTenantByRegistrationDomain');
+    }
     return tenantId;
   }
 }

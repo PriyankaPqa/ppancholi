@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext } from 'vuex';
 import { DomainBaseService } from '../../../services/base';
-import { httpClient } from '../../../services/httpClient';
+import { mockHttp } from '../../../services/httpClient.mock';
 import { mockBaseEntities, mockBaseEntity } from '../../../entities/base';
 import helpers from '../../../ui/helpers';
 import { BaseModule } from './index';
@@ -31,7 +31,7 @@ export class BaseModuleTest extends BaseModule<any> {
   };
 }
 
-const service = new DomainBaseService(httpClient, '', '');
+const service = new DomainBaseService(mockHttp(), '', '');
 const baseModule = new BaseModuleTest(service);
 
 const actionContext = {

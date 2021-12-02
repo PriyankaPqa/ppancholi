@@ -14,6 +14,9 @@ export class BaseModule<T extends IEntity> {
 
   // Add or edit an item if the one pass as parameter is newer than existing one
   private upsert(state: IState<T>, item: T) {
+    if (item == null) {
+      return;
+    }
     const index = state.items.findIndex((x) => x?.id === item.id);
     const stateItem = state.items[index];
 
@@ -40,53 +43,33 @@ export class BaseModule<T extends IEntity> {
 
   protected baseActions = {
     fetch: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
-      try {
-        const res = await this.service.get(id);
-        context.commit('set', res);
-        return res;
-      } catch (e) {
-        return null;
-      }
+      const res = await this.service.get(id);
+      context.commit('set', res);
+      return res;
     },
 
     fetchAll: async (context: ActionContext<IState<T>, IState<T>>): Promise<T[]> => {
-      try {
-        const res = await this.service.getAll();
-        context.commit('setAll', res);
-        return res;
-      } catch (e) {
-        return null;
-      }
+      const res = await this.service.getAll();
+      context.commit('setAll', res);
+      return res;
     },
 
     fetchAllIncludingInactive: async (context: ActionContext<IState<T>, IState<T>>): Promise<T[]> => {
-      try {
-        const res = await this.service.getAllIncludingInactive();
-        context.commit('setAll', res);
-        return res;
-      } catch (e) {
-        return null;
-      }
+      const res = await this.service.getAllIncludingInactive();
+      context.commit('setAll', res);
+      return res;
     },
 
     deactivate: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
-      try {
-        const res = await this.service.deactivate(id);
-        context.commit('set', res);
-        return res;
-      } catch (e) {
-        return null;
-      }
+      const res = await this.service.deactivate(id);
+      context.commit('set', res);
+      return res;
     },
 
     activate: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
-      try {
-        const res = await this.service.activate(id);
-        context.commit('set', res);
-        return res;
-      } catch (e) {
-        return null;
-      }
+      const res = await this.service.activate(id);
+      context.commit('set', res);
+      return res;
     },
 
     search: async (context: ActionContext<IState<T>, IState<T>>, { params, searchEndpoint }: {params: IAzureSearchParams; searchEndpoint?: string}):
@@ -103,7 +86,7 @@ export class BaseModule<T extends IEntity> {
     },
 
     setAll: (state: IState<T>, payload: Array<T>) => {
-      payload.forEach((item) => this.upsert(state, item));
+      (payload || []).forEach((item) => this.upsert(state, item));
     },
 
     upsert: (state: IState<T>, item: T) => {
