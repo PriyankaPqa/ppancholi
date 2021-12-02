@@ -19,7 +19,7 @@
           </span>
         </v-col>
 
-        <v-col v-if="showEditButton" cols="2" class="text-right ma-0 pa-0">
+        <v-col v-if="canEdit" cols="2" class="text-right ma-0 pa-0">
           <v-btn icon data-test="event-edit-button" @click="editEvent()">
             <v-icon>
               mdi-pencil
@@ -45,17 +45,20 @@
 
       <event-summary-section-title
         :section="EEventSummarySections.CallCentre"
+        :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
       <event-summary-section-body v-slot="{item, index}" :items="sortedCallCentres">
         <event-call-centre-section
           data-test="call-centre-section"
           :call-centre="item"
           :index="index"
+          :can-edit="canEditSections"
           @edit="editSection($event, EEventSummarySections.CallCentre)" />
       </event-summary-section-body>
 
       <event-summary-section-title
         :section="EEventSummarySections.RegistrationLocation"
+        :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
 
       <event-summary-section-body v-slot="{item, index}" :items="sortedRegistrationLocations">
@@ -64,11 +67,13 @@
           data-test-prefix="registration"
           :location="item"
           :index="index"
+          :can-edit="canEditSections"
           @edit="editSection($event, EEventSummarySections.RegistrationLocation)" />
       </event-summary-section-body>
 
       <event-summary-section-title
         :section="EEventSummarySections.ShelterLocation"
+        :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
       <event-summary-section-body v-slot="{item, index}" :items="sortedShelterLocations">
         <event-location-section
@@ -76,11 +81,13 @@
           data-test-prefix="shelter"
           :location="item"
           :index="index"
+          :can-edit="canEditSections"
           @edit="editSection($event, EEventSummarySections.ShelterLocation)" />
       </event-summary-section-body>
 
       <event-summary-section-title
         :section="EEventSummarySections.Agreement"
+        :can-add="canEditSections"
         @click-add-button="onSectionAdd($event)" />
       <event-summary-section-body v-slot="{item, index}" :items="sortedAgreements">
         <event-agreement-section
@@ -89,6 +96,7 @@
           :agreement-types="agreementTypes"
           :index="index"
           :event-id="event.id"
+          :can-edit="canEditSections"
           @edit="editSection($event, EEventSummarySections.Agreement)" />
       </event-summary-section-body>
 
@@ -221,11 +229,6 @@ export default Vue.extend({
       return [];
     },
 
-    showEditButton(): boolean {
-      return this.$hasLevel('level5')
-        && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
-    },
-
     sortedAgreements():Array<IEventAgreement> {
       return helpers.sortMultilingualArray(this.event.agreements, 'name');
     },
@@ -240,6 +243,16 @@ export default Vue.extend({
 
     sortedShelterLocations(): Array<IEventGenericLocation> {
       return helpers.sortMultilingualArray(this.event.shelterLocations, 'name');
+    },
+
+    canEditSections(): boolean {
+      return (this.$hasLevel('level6') && this.event.schedule.status === EEventStatus.OnHold)
+      || (this.$hasLevel('level5') && this.event.schedule.status === EEventStatus.Open);
+    },
+
+    canEdit(): boolean {
+      return this.$hasLevel('level5')
+      && (this.event.schedule.status === EEventStatus.Open || this.event.schedule.status === EEventStatus.OnHold);
     },
   },
 

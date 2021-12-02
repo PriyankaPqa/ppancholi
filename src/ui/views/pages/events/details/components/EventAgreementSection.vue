@@ -12,7 +12,7 @@
 
           <div class="d-flex justify-end align-center py-0">
             <v-btn
-              v-if="$hasLevel('level5')"
+              v-if="canEdit"
               icon
               class="mr-2"
               :data-test="`edit-event-agreement-${index}`"
@@ -22,7 +22,7 @@
               </v-icon>
             </v-btn>
             <v-btn
-              v-if="$hasLevel('level5')"
+              v-if="canEdit"
               icon
               :data-test="`delete-event-agreement-${index}`"
               @click="showDeleteConfirmationDialog = true">
@@ -66,6 +66,7 @@
       :title="$t('eventSummary.agreement.infoDialog.title')"
       :name="$m(agreement.name)"
       :table-data="infoData"
+      :can-edit="canEdit"
       data-test="agreement-info-dialog"
       @close="showInfoDialog = false"
       @edit="editFromInfoDialog()" />
@@ -113,6 +114,13 @@ export default Vue.extend({
     },
     index: {
       type: Number,
+      required: true,
+    },
+    /**
+     * Whether the user can edit event sections
+     */
+    canEdit: {
+      type: Boolean,
       required: true,
     },
   },

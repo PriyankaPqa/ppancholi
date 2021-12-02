@@ -7,7 +7,7 @@ import { mockUserStateLevel } from '@/test/helpers';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import {
-  mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus,
+  mockCombinedEvents, mockCombinedEvent, mockEventEntities, mockEventMetadata, EResponseLevel, EEventStatus, mockEventEntity,
 } from '@/entities/event';
 import Component from './EventsTable.vue';
 
@@ -440,6 +440,153 @@ describe('EventsTable.vue', () => {
         });
         expect(wrapper.vm.tableProps.loading).toEqual(false);
         expect(wrapper.vm.tableProps.itemClass).toBeDefined();
+      });
+    });
+
+    describe('canEdit', () => {
+      it('returns true if user is level 5 and event is on hold', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(5),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                getters: {
+                  getByIds: jest.fn(() => mockCombinedEvents()),
+                },
+                actions: {
+                  search: jest.fn(() => ({
+                    ids: [mockEvents()[0].id, mockEvents()[1].id],
+                    count: mockEvents().length,
+                  })),
+                },
+              },
+            },
+          },
+
+        });
+
+        const event = mockCombinedEvent({
+          ...mockEventEntity({ schedule: { status: EEventStatus.OnHold } }),
+        });
+
+        expect(wrapper.vm.canEdit(event)).toBeTruthy();
+      });
+
+      it('returns true if user is level 5 and event is on hold', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(5),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                getters: {
+                  getByIds: jest.fn(() => mockCombinedEvents()),
+                },
+                actions: {
+                  search: jest.fn(() => ({
+                    ids: [mockEvents()[0].id, mockEvents()[1].id],
+                    count: mockEvents().length,
+                  })),
+                },
+              },
+            },
+          },
+        });
+
+        const event = mockCombinedEvent({
+          ...mockEventEntity({ schedule: { status: EEventStatus.OnHold } }),
+        });
+
+        expect(wrapper.vm.canEdit(event)).toBeTruthy();
+      });
+
+      it('returns false if user is level 5 and event is not open or on hold', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(5),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                getters: {
+                  getByIds: jest.fn(() => mockCombinedEvents()),
+                },
+                actions: {
+                  search: jest.fn(() => ({
+                    ids: [mockEvents()[0].id, mockEvents()[1].id],
+                    count: mockEvents().length,
+                  })),
+                },
+              },
+            },
+          },
+        });
+
+        const event = mockCombinedEvent({
+          ...mockEventEntity({ schedule: { status: EEventStatus.Closed } }),
+        });
+
+        expect(wrapper.vm.canEdit(event)).toBeFalsy();
+      });
+
+      it('returns false if user is not level 5', () => {
+        wrapper = mount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(4),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                getters: {
+                  getByIds: jest.fn(() => mockCombinedEvents()),
+                },
+                actions: {
+                  search: jest.fn(() => ({
+                    ids: [mockEvents()[0].id, mockEvents()[1].id],
+                    count: mockEvents().length,
+                  })),
+                },
+              },
+            },
+          },
+        });
+
+        const event = mockCombinedEvent({
+          ...mockEventEntity({ schedule: { status: EEventStatus.Open } }),
+        });
+
+        expect(wrapper.vm.canEdit(event)).toBeFalsy();
       });
     });
   });

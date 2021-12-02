@@ -56,7 +56,7 @@
     </template>
 
     <template #[`item.editButton`]="{ item }">
-      <v-btn v-if="$hasLevel('level5')" icon class="mr-2" data-test="edit_event" @click="goToEditEvent(item)">
+      <v-btn v-if="canEdit(item)" icon class="mr-2" data-test="edit_event" @click="goToEditEvent(item)">
         <v-icon size="24" color="grey darken-2">
           mdi-pencil
         </v-icon>
@@ -122,7 +122,6 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   computed: {
-
     tableData(): IEventCombined[] {
       return this.$storage.event.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
@@ -205,6 +204,11 @@ export default mixins(TablePaginationSearchMixin).extend({
         loading: this.$store.state.eventEntities.searchLoading,
         itemClass: (item: IEventCombined) => (item.pinned ? 'pinned' : ''),
       };
+    },
+
+    canEdit(): (event: IEventCombined) => boolean {
+      return (event) => this.$hasLevel('level5')
+      && (event.entity.schedule.status === EEventStatus.Open || event.entity.schedule.status === EEventStatus.OnHold);
     },
   },
 

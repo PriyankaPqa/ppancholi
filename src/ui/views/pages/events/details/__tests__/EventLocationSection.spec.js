@@ -1,7 +1,6 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockEventEntity } from '@/entities/event';
 import { ECanadaProvinces } from '@/types';
-import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../components/EventLocationSection.vue';
 
@@ -20,9 +19,7 @@ describe('EventLocationSection.vue', () => {
           location: mockEvent.registrationLocations[0],
           index: 0,
           dataTestPrefix: 'registration',
-        },
-        store: {
-          ...mockUserStateLevel(5),
+          canEdit: true,
         },
       });
     });
@@ -64,8 +61,16 @@ describe('EventLocationSection.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render if user is below level 5', async () => {
-        await wrapper.setRole('level4');
+      it('does not render if canEdit is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            location: mockEvent.registrationLocations[0],
+            index: 0,
+            dataTestPrefix: 'registration',
+            canEdit: false,
+          },
+        });
 
         const element = wrapper.findDataTest('event-registration-location-section-edit-0');
         expect(element.exists()).toBeFalsy();
@@ -88,6 +93,7 @@ describe('EventLocationSection.vue', () => {
           location: mockEvent.registrationLocations[0],
           index: 0,
           dataTestPrefix: 'registration',
+          canEdit: true,
         },
       });
     });

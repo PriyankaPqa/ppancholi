@@ -5,7 +5,7 @@
     </v-col>
     <v-col class="d-flex justify-end ma-0 pa-0" md="12" lg="6">
       <v-btn
-        v-if="$hasLevel('level5')"
+        v-if="canAdd"
         class="pl-3 pr-4"
         color="primary"
         data-test="add-section-button"
@@ -32,6 +32,13 @@ export default Vue.extend({
      */
     section: {
       type: String,
+      required: true,
+    },
+    /**
+     * Whether the user can add event sections
+     */
+    canAdd: {
+      type: Boolean,
       required: true,
     },
   },

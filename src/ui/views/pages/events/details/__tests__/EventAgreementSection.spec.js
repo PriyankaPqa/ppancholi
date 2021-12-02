@@ -3,7 +3,6 @@ import { mockEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData } from '@/entities/optionItem';
-import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../components/EventAgreementSection.vue';
 
@@ -24,9 +23,7 @@ describe('EventAgreementSection.vue', () => {
           agreementTypes: [],
           eventId: mockEvent.id,
           index: 0,
-        },
-        store: {
-          ...mockUserStateLevel(5),
+          canEdit: true,
         },
         computed: {
           agreementTypeName() {
@@ -102,8 +99,22 @@ describe('EventAgreementSection.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render if user is below level 5', async () => {
-        await wrapper.setRole('level4');
+      it('does not render if canEdit is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            agreement: mockEvent.agreements[0],
+            agreementTypes: [],
+            eventId: mockEvent.id,
+            index: 0,
+            canEdit: false,
+          },
+          computed: {
+            agreementTypeName() {
+              return 'agreement-type-name';
+            },
+          },
+        });
 
         const element = wrapper.findDataTest('edit-event-agreement-0');
         expect(element.exists()).toBeFalsy();
@@ -123,8 +134,22 @@ describe('EventAgreementSection.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render if user is below level 5', async () => {
-        await wrapper.setRole('level4');
+      it('does not render if canEdit is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            agreement: mockEvent.agreements[0],
+            agreementTypes: [],
+            eventId: mockEvent.id,
+            index: 0,
+            canEdit: false,
+          },
+          computed: {
+            agreementTypeName() {
+              return 'agreement-type-name';
+            },
+          },
+        });
 
         const element = wrapper.findDataTest('delete-event-agreement-0');
         expect(element.exists()).toBeFalsy();
@@ -181,6 +206,7 @@ describe('EventAgreementSection.vue', () => {
           eventId: mockEvent.id,
           agreementTypes: mockOptionItemData(),
           index: 0,
+          canEdit: true,
         },
       });
     });
@@ -207,6 +233,7 @@ describe('EventAgreementSection.vue', () => {
             eventId: mockEvent.id,
             agreementTypes: [],
             index: 0,
+            canEdit: true,
           },
           computed: {
             agreementTypeName() {
@@ -246,6 +273,7 @@ describe('EventAgreementSection.vue', () => {
           eventId: mockEvent.id,
           agreementTypes: [],
           index: 0,
+          canEdit: true,
         },
         mocks: {
           $storage: storage,

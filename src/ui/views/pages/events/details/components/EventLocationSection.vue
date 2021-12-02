@@ -12,7 +12,7 @@
             :status="location.status"
             :data-test="getDataTest('status', index)" />
           <v-btn
-            v-if="$hasLevel('level5')"
+            v-if="canEdit"
             icon
             :data-test="getDataTest('edit', index)"
             @click="$emit('edit', location.id)">
@@ -59,6 +59,13 @@ export default Vue.extend({
 
     dataTestPrefix: {
       type: String,
+      required: true,
+    },
+    /**
+     * Whether the user can edit event sections
+     */
+    canEdit: {
+      type: Boolean,
       required: true,
     },
   },

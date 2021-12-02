@@ -1,6 +1,5 @@
 import { RcDialog } from '@crctech/component-library';
-import { createLocalVue, mount } from '@/test/testSetup';
-import { mockUserStateLevel } from '@/test/helpers';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import Component from '../components/EventSummarySectionInfoDialog.vue';
 
@@ -18,15 +17,13 @@ describe('EventSummarySectionInfoDialog.vue', () => {
           title: 'mock-title',
           name: 'mock-name',
           status: 1,
+          canEdit: true,
           tableData: {
             mockData: {
               key: 'mock-key',
               value: 'mock-value',
             },
           },
-        },
-        store: {
-          ...mockUserStateLevel(5),
         },
       });
     });
@@ -104,8 +101,23 @@ describe('EventSummarySectionInfoDialog.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render if user is below level 5', async () => {
-        await wrapper.setRole('level4');
+      it('does not render if canEdit is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            title: 'mock-title',
+            name: 'mock-name',
+            status: 1,
+            canEdit: false,
+            tableData: {
+              mockData: {
+                key: 'mock-key',
+                value: 'mock-value',
+              },
+            },
+          },
+        });
 
         const element = wrapper.findDataTest('edit-section-from-info-dialog');
         expect(element.exists()).toBeFalsy();

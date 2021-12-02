@@ -1,7 +1,5 @@
-import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EEventSummarySections } from '@/types';
-import { mockUserStateLevel } from '@/test/helpers';
-
 import Component from '../components/EventSummarySectionTitle.vue';
 
 const localVue = createLocalVue();
@@ -11,18 +9,16 @@ describe('EventSummarySectionTitle.vue', () => {
 
   describe('Template', () => {
     beforeEach(() => {
-      wrapper = mount(Component, {
+      wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           section: EEventSummarySections.CallCentre,
+          canAdd: true,
         },
         computed: {
           title() {
             return 'eventSummary.callCentre';
           },
-        },
-        store: {
-          ...mockUserStateLevel(5),
         },
       });
     });
@@ -45,8 +41,19 @@ describe('EventSummarySectionTitle.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render if user is below level 5', async () => {
-        await wrapper.setRole('level4');
+      it('does not render if canAdd is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            section: EEventSummarySections.CallCentre,
+            canAdd: false,
+          },
+          computed: {
+            title() {
+              return 'eventSummary.callCentre';
+            },
+          },
+        });
 
         const element = wrapper.findDataTest('add-section-button');
         expect(element.exists()).toBeFalsy();
@@ -66,6 +73,7 @@ describe('EventSummarySectionTitle.vue', () => {
         localVue,
         propsData: {
           section: EEventSummarySections.CallCentre,
+          canAdd: true,
         },
       });
     });
@@ -100,6 +108,7 @@ describe('EventSummarySectionTitle.vue', () => {
         localVue,
         propsData: {
           section: EEventSummarySections.CallCentre,
+          canAdd: true,
         },
         data() {
           return {

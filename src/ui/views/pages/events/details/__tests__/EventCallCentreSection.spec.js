@@ -1,7 +1,6 @@
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';
-import { mockUserStateLevel } from '@/test/helpers';
 
 import Component from '../components/EventCallCentreSection.vue';
 
@@ -19,9 +18,7 @@ describe('EventCallCentreSection.vue', () => {
         propsData: {
           callCentre: mockEvent.callCentres[0],
           index: 0,
-        },
-        store: {
-          ...mockUserStateLevel(5),
+          canEdit: true,
         },
       });
     });
@@ -92,8 +89,15 @@ describe('EventCallCentreSection.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render if user is below level 5', async () => {
-        await wrapper.setRole('level4');
+      it('does not render if canEdit is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            callCentre: mockEvent.callCentres[0],
+            index: 0,
+            canEdit: false,
+          },
+        });
 
         const element = wrapper.findDataTest('edit-event-call-centre-0');
         expect(element.exists()).toBeFalsy();
@@ -131,6 +135,7 @@ describe('EventCallCentreSection.vue', () => {
         propsData: {
           callCentre: mockEvent.callCentres[0],
           index: 0,
+          canEdit: false,
         },
       });
     });
@@ -162,6 +167,7 @@ describe('EventCallCentreSection.vue', () => {
         propsData: {
           callCentre: mockEvent.callCentres[0],
           index: 0,
+          canEdit: false,
         },
       });
     });

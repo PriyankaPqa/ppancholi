@@ -25,7 +25,7 @@
               data-test="event-section-info-dialog-status" />
 
             <v-btn
-              v-if="$hasLevel('level5')"
+              v-if="canEdit"
               icon
               class="mx-2"
               data-test="edit-section-from-info-dialog"
@@ -91,6 +91,13 @@ export default Vue.extend({
     status: {
       type: Number,
       default: 0,
+    },
+    /**
+     * Whether the user can edit event sections
+     */
+    canEdit: {
+      type: Boolean,
+      required: true,
     },
   },
 

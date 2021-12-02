@@ -17,7 +17,7 @@
               :data-test="`event-call-centre-section-status-${index}`"
               :status="callCentre.status" />
             <v-btn
-              v-if="$hasLevel('level5')"
+              v-if="canEdit"
               icon
               :data-test="`edit-event-call-centre-${index}`"
               @click="$emit('edit', callCentre.id)">
@@ -56,6 +56,7 @@
       :title="$t('eventSummary.callCentre.infoDialog.title')"
       :name="$m(callCentre.name)"
       :status="callCentre.status"
+      :can-edit="canEdit"
       :table-data="infoData"
       data-test="call-centre-info-dialog"
       @close="showInfoDialog = false"
@@ -85,6 +86,13 @@ export default Vue.extend({
     },
     index: {
       type: Number,
+      required: true,
+    },
+    /**
+     * Whether the user can edit event sections
+     */
+    canEdit: {
+      type: Boolean,
       required: true,
     },
   },

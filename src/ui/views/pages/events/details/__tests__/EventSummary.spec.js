@@ -82,6 +82,12 @@ describe('EventSummary.vue', () => {
           responseLevelName() {
             return 'mock-response-level';
           },
+          canEditSections() {
+            return true;
+          },
+          canEdit() {
+            return true;
+          },
         },
         store: {
           ...mockUserStateLevel(5),
@@ -94,6 +100,9 @@ describe('EventSummary.vue', () => {
             },
           },
           $storage: {
+            tenantSettings: {
+              actions: { getCurrentTenantSettings: jest.fn() },
+            },
             event: {
               actions: {
                 fetch: jest.fn(() => mockCombinedEvent()),
@@ -148,33 +157,25 @@ describe('EventSummary.vue', () => {
     });
 
     describe('edit button', () => {
-      it('renders when user is above level 5', () => {
+      it('renders when canEditSections is true', () => {
         const element = wrapper.findDataTest('event-edit-button');
         expect(element.exists()).toBeTruthy();
       });
 
-      it('does not render when user is below level 5', async () => {
-        await wrapper.setRole('level4');
-
-        const element = wrapper.findDataTest('event-edit-button');
-        expect(element.exists()).toBeFalsy();
-      });
-
-      it('calls the method editEvent on click', () => {
-        jest.spyOn(wrapper.vm, 'editEvent').mockImplementation(() => {});
-        const element = wrapper.findDataTest('event-edit-button');
-        element.vm.$emit('click');
-        expect(wrapper.vm.editEvent).toHaveBeenCalledTimes(1);
-      });
-
-      it('is hidden if showEditButton is false', async () => {
+      it('does not render when canEditSections is false', async () => {
         wrapper = mount(Component, {
           localVue,
           computed: {
             event() {
               return mockEvent;
             },
-            showEditButton() {
+            agreementTypes() {
+              return [];
+            },
+            responseLevelName() {
+              return 'mock-response-level';
+            },
+            canEdit() {
               return false;
             },
           },
@@ -192,7 +193,15 @@ describe('EventSummary.vue', () => {
           },
         });
 
-        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
+        const element = wrapper.findDataTest('event-edit-button');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      it('calls the method editEvent on click', () => {
+        jest.spyOn(wrapper.vm, 'editEvent').mockImplementation(() => {});
+        const element = wrapper.findDataTest('event-edit-button');
+        element.vm.$emit('click');
+        expect(wrapper.vm.editEvent).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -464,46 +473,6 @@ describe('EventSummary.vue', () => {
       });
     });
 
-    describe('showEditButton', () => {
-      it('returns true if the event status is open or on hold', () => {
-        wrapper = mountWithStatus(EEventStatus.Open);
-
-        expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.Open);
-
-        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(true);
-
-        wrapper = mountWithStatus(EEventStatus.OnHold);
-
-        expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.OnHold);
-
-        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(true);
-      });
-
-      it('returns false if the event status is closed or archived', () => {
-        wrapper = mountWithStatus(EEventStatus.Archived);
-
-        expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.Archived);
-
-        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
-
-        wrapper = mountWithStatus(EEventStatus.Closed);
-
-        expect(wrapper.vm.event.schedule.status).toBe(EEventStatus.Closed);
-
-        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
-      });
-
-      it('returns false if user level is below 5', async () => {
-        wrapper = mountWithStatus(EEventStatus.Open);
-
-        await wrapper.setRole('level4');
-
-        expect(wrapper.vm.showEditButton).toBeFalsy();
-
-        expect(wrapper.findDataTest('event-edit-button').exists()).toBe(false);
-      });
-    });
-
     describe('statuses', () => {
       it('returns onhold and closed if event status is open', async () => {
         wrapper = mountWithStatus(EEventStatus.Open);
@@ -534,6 +503,309 @@ describe('EventSummary.vue', () => {
       it('return the agreements sorted by name', () => {
         expect(wrapper.vm.sortedAgreements).toEqual(helpers.sortMultilingualArray(mockEvent.agreements, 'name')
           .map((a) => ({ ...a, startDate: new Date(a.startDate) })));
+      });
+    });
+
+    describe('canEditSections', () => {
+      let event;
+      beforeEach(() => {
+        event = mockEventEntity();
+      });
+      it('returns true if user is level 6 and event is on hold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(6),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                actions: {
+                  fetch: jest.fn(() => mockCombinedEvent()),
+                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+                  setEventStatus: jest.fn(() => null),
+                },
+                getters: {
+                  get: jest.fn(() => mockCombinedEvent()),
+                  agreementTypes: jest.fn(() => mockOptionItemData()),
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.Open,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditSections).toBeTruthy();
+      });
+
+      it('returns false if user is level 6 and event is not open or on hold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(6),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                actions: {
+                  fetch: jest.fn(() => mockCombinedEvent()),
+                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+                  setEventStatus: jest.fn(() => null),
+                },
+                getters: {
+                  get: jest.fn(() => mockCombinedEvent()),
+                  agreementTypes: jest.fn(() => mockOptionItemData()),
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.Closed,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditSections).toBeFalsy();
+      });
+
+      it('returns true if user is level 5 and event is open', () => {
+        wrapper = mountWithStatus(EEventStatus.Open);
+
+        expect(wrapper.vm.canEditSections).toBeTruthy();
+      });
+
+      it('returns false if user is level 5 and event is not open', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(5),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                actions: {
+                  fetch: jest.fn(() => mockCombinedEvent()),
+                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+                  setEventStatus: jest.fn(() => null),
+                },
+                getters: {
+                  get: jest.fn(() => mockCombinedEvent()),
+                  agreementTypes: jest.fn(() => mockOptionItemData()),
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.Closed,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditSections).toBeFalsy();
+      });
+
+      it('returns false if user is not level 5', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(4),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                actions: {
+                  fetch: jest.fn(() => mockCombinedEvent()),
+                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+                  setEventStatus: jest.fn(() => null),
+                },
+                getters: {
+                  get: jest.fn(() => mockCombinedEvent()),
+                  agreementTypes: jest.fn(() => mockOptionItemData()),
+                },
+              },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEditSections).toBeFalsy();
+      });
+    });
+
+    describe('canEdit', () => {
+      let event;
+      beforeEach(() => {
+        event = mockEventEntity();
+      });
+      it('returns true if user is level 5 and event is on hold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(5),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                actions: {
+                  fetch: jest.fn(() => mockCombinedEvent()),
+                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+                  setEventStatus: jest.fn(() => null),
+                },
+                getters: {
+                  get: jest.fn(() => mockCombinedEvent()),
+                  agreementTypes: jest.fn(() => mockOptionItemData()),
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.OnHold,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeTruthy();
+      });
+
+      it('returns false if user is level 5 and event is not open or on hold', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(5),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                actions: {
+                  fetch: jest.fn(() => mockCombinedEvent()),
+                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+                  setEventStatus: jest.fn(() => null),
+                },
+                getters: {
+                  get: jest.fn(() => mockCombinedEvent()),
+                  agreementTypes: jest.fn(() => mockOptionItemData()),
+                },
+              },
+            },
+          },
+          computed: {
+            event() {
+              return new EventEntity({
+                ...event,
+                schedule: {
+                  ...event.schedule,
+                  status: EEventStatus.Closed,
+                },
+              });
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeFalsy();
+      });
+
+      it('returns true if user is level 5 and event is open', () => {
+        wrapper = mountWithStatus(EEventStatus.Open);
+
+        expect(wrapper.vm.canEdit).toBeTruthy();
+      });
+
+      it('returns false if user is not level 5', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          store: {
+            ...mockUserStateLevel(4),
+          },
+          mocks: {
+            $route: {
+              name: routes.events.edit.name,
+              params: {
+                id: '7c076603-580a-4400-bef2-5ddececb0931',
+              },
+            },
+            $storage: {
+              event: {
+                actions: {
+                  fetch: jest.fn(() => mockCombinedEvent()),
+                  fetchAgreementTypes: jest.fn(() => mockOptionItemData()),
+                  setEventStatus: jest.fn(() => null),
+                },
+                getters: {
+                  get: jest.fn(() => mockCombinedEvent()),
+                  agreementTypes: jest.fn(() => mockOptionItemData()),
+                },
+              },
+            },
+          },
+        });
+
+        expect(wrapper.vm.canEdit).toBeFalsy();
       });
     });
   });
