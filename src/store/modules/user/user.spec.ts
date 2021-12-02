@@ -186,7 +186,7 @@ describe('>>> Users Module', () => {
           email: authenticationData.account.idTokenClaims.email as string,
           family_name: authenticationData.account.idTokenClaims.family_name as string,
           given_name: authenticationData.account.idTokenClaims.given_name as string,
-          roles: authenticationData.account.idTokenClaims.roles as string[],
+          roles: ['level3'], // level comes from decoded access token
         }));
       });
     });

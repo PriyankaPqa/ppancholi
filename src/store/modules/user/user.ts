@@ -11,6 +11,7 @@ import { IRootState } from '../../store.types';
 import {
   IState,
 } from './user.types';
+import helpers from '@/ui/helpers/helpers';
 
 const getDefaultState = (): IState => ({
   oid: '',
@@ -79,7 +80,8 @@ const actions = {
     if (accessTokenResponse?.accessToken) {
       localStorage.setItem(localStorageKeys.accessToken.name, accessTokenResponse.accessToken);
       const { account } = accessTokenResponse;
-      const userData = account.idTokenClaims;
+      const userData = { ...account.idTokenClaims } as IMSALUserData;
+      userData.roles = helpers.decodeJwt(accessTokenResponse.accessToken).roles;
       context.commit('setUser', userData);
     } else {
       throw new Error('User data not found');
