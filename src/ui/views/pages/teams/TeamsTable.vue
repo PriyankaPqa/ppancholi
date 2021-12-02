@@ -268,7 +268,7 @@ export default mixins(TablePaginationSearchMixin).extend({
         count: true,
         queryType: 'full',
         searchMode: 'all',
-      });
+      }, null, true);
       return res;
     },
 

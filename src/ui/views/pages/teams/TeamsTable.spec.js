@@ -251,7 +251,7 @@ describe('TeamsTable.vue', () => {
           skip: params.skip,
           orderBy: params.orderBy,
           count: true,
-        });
+        }, null, true);
       });
 
       it('returns the search results', async () => {
