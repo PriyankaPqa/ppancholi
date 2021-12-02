@@ -295,7 +295,7 @@ switch (arguments[0]) {
   case 'upErrors':
     uploadErrors();
     break;
-  case 'delete':
+  case 'delete': // Example: yarn lokalise:delete -file C:/CRC/EMIS/emis-webapp/scripts/i18n_keys_to_delete.txt -path C:/CRC/EMIS/emis-webapp/src/ui/lang
     if (arguments[1] && arguments[1] === '-file' && arguments[3] === '-path') {
       const keysToBeDeletedPath = arguments[2];
       const languageFolderPath = arguments[4];

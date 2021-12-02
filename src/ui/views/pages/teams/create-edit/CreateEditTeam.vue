@@ -132,7 +132,7 @@
       @cancel="showErrorDialog = false"
       @close="showErrorDialog = false">
       <div class="rc-body14">
-        {{ $t('errors.team.has-activefile-message') }}
+        {{ $t('errors.team-has-active-case-file') }}
       </div>
     </rc-dialog>
 

@@ -814,7 +814,6 @@
     "errors.team-has-active-case-file": "errors.team-has-active-case-file",
     "errors.team-member-has-active-case-file": "errors.team-member-has-active-case-file",
     "errors.team.has-activefile": "errors.team.has-activefile",
-    "errors.team.has-activefile-message": "errors.team.has-activefile-message",
     "errors.teams-must-have-a-primary-contact": "errors.teams-must-have-a-primary-contact",
     "errors.text-does-not-match-supplied-pattern": "errors.text-does-not-match-supplied-pattern",
     "errors.text-max-length-invalid": "errors.text-max-length-invalid",

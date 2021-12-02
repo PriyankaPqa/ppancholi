@@ -814,7 +814,6 @@
     "errors.team-has-active-case-file": "Cannot make this team inactive due to assigned case files",
     "errors.team-member-has-active-case-file": "Team member has active case file",
     "errors.team.has-activefile": "Cannot perform action",
-    "errors.team.has-activefile-message": "Event(s) cannot be removed at this time due to assigned case files.",
     "errors.teams-must-have-a-primary-contact": "Teams must have a primary contact",
     "errors.text-does-not-match-supplied-pattern": "Text does not match supplied pattern",
     "errors.text-max-length-invalid": "The length must be {MaxLength} or less",
