@@ -62,7 +62,7 @@ import DownloadViewDocument from './DownloadViewDocument.vue';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
-  name: 'CreateEditDocumentDetails',
+  name: 'CaseFileDocumentDetails',
 
   components: {
     RcPageContent,

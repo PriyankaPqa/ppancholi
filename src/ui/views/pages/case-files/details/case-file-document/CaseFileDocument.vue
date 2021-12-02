@@ -150,7 +150,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     caseFileDocumentsMapped():caseFileDocumentsMapped[] {
       const documents = this.$storage.caseFileDocument.getters.getByIds(this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+        { onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate });
       return documents.map((d: ICaseFileDocumentCombined) => ({
         name: d.entity?.name || '-',
         id: d.entity?.id,

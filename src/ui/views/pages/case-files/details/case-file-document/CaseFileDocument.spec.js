@@ -570,7 +570,11 @@ describe('CaseFileDocument.vue', () => {
           searchResultIds: ['mock-id'],
         });
 
-        expect(storage.caseFileDocument.getters.getByIds).toHaveBeenCalledWith(['mock-id'], { prependPinnedItems: true, baseDate: null });
+        expect(storage.caseFileDocument.getters.getByIds).toHaveBeenCalledWith(['mock-id'], {
+          onlyActive: true,
+          prependPinnedItems: true,
+          baseDate: null,
+        });
       });
 
       it('return the mapped documents', async () => {
