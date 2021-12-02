@@ -71,7 +71,9 @@ import { DataTableHeader } from 'vuetify';
 import { IHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
 
 import { IHistoryItemTemplateData } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
-import { IHouseholdActivity, HouseholdActivity, HouseholdActivityType }
+import {
+  IHouseholdActivity, HouseholdActivity, HouseholdActivityType, IHouseholdActivityMembers,
+}
   from '@crctech/registration-lib/src/entities/value-objects/household-activity';
 import moment from '@/ui/plugins/moment';
 
@@ -190,7 +192,11 @@ export default Vue.extend({
       }
       let processedList = [] as IHouseholdActivity[];
       activityList.forEach((item: IHouseholdActivity) => {
-        if (item.activityType === HouseholdActivityType.HouseholdMoved) {
+        // If the move data contains both moved in and moved out members, split the activity into two lines, one for the moved in, one for the moved out members
+        if (item.activityType === HouseholdActivityType.HouseholdMoved
+        && (item.previousDetails as IHouseholdActivityMembers).memberDetails.length
+        && (item.newDetails as IHouseholdActivityMembers).memberDetails.length
+        ) {
           const movedOut = { ...item, newDetails: null as unknown };
           const movedIn = { ...item, previousDetails: null as unknown };
           processedList = processedList.concat([movedOut, movedIn]);
