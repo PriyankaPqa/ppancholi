@@ -117,11 +117,11 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
   }
 
   async validateEmail(request: IValidateEmailRequest): Promise<IValidateEmailResponse> {
-    return this.http.post(`${this.baseApi}/persons/validate-email-address`, request);
+    return this.http.post(`${this.baseApi}/persons/validate-email-address`, request, { globalHandler: false });
   }
 
   async validatePublicEmail(request: IValidateEmailPublicRequest): Promise<IValidateEmailResponse> {
-    return this.http.post(`${this.baseApi}/persons/public/validate-email-address`, request);
+    return this.http.post(`${this.baseApi}/persons/public/validate-email-address`, request, { globalHandler: false });
   }
 
   async makePrimary(id: string, memberId: string, consentInformation: IConsentInformation): Promise<IHouseholdEntity> {

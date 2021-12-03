@@ -159,7 +159,7 @@ describe('>>> Beneficiaries Service', () => {
     await service.validateEmail({ emailAddress: email });
     expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/validate-email-address`, {
       emailAddress: email,
-    });
+    }, { globalHandler: false });
   });
 
   test('validatePublicEmail is linked to the correct URL', async () => {
@@ -169,7 +169,7 @@ describe('>>> Beneficiaries Service', () => {
     expect(http.post).toHaveBeenCalledWith(`${service.baseApi}/persons/public/validate-email-address`, {
       emailAddress: email,
       recaptchaToken: '123',
-    });
+    }, { globalHandler: false });
   });
 
   test('makePrimary is linked to the correct URL', async () => {

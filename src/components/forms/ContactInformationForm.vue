@@ -329,17 +329,18 @@ export default Vue.extend({
         this.emailChecking = true;
         let result = null;
 
-        if (this.isCRCRegistration) {
-          result = await this.$services.households.validateEmail({ emailAddress: email, personId: this.personId });
-        } else {
-          result = await this.$services.households.validatePublicEmail({ emailAddress: email, personId: this.personId, recaptchaToken });
+        try {
+          if (this.isCRCRegistration) {
+            result = await this.$services.households.validateEmail({ emailAddress: email, personId: this.personId });
+          } else {
+            result = await this.$services.households.validatePublicEmail({ emailAddress: email, personId: this.personId, recaptchaToken });
+          }
+        } catch (e) {
+          result = { emailIsValid: false, errors: e };
+        } finally {
+          this.emailChecking = false;
         }
 
-        if (result.emailIsValid === undefined) {
-          result = { ...result, emailIsValid: false };
-        }
-
-        this.emailChecking = false;
         this.formCopy.emailValidatedByBackend = result.emailIsValid;
         this.setEmailValidator(result);
         (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
