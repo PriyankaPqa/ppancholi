@@ -56,5 +56,34 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.jump).toHaveBeenCalledWith(1);
       });
     });
+
+    describe('goNext', () => {
+      it('should called execute from recaptcha if on review stage ', async () => {
+        wrapper.vm.$refs.recaptchaSubmit = {};
+        wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
+        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          id: 'review',
+        }));
+        await wrapper.vm.goNext();
+        expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
+      });
+      it('should call next from mixin otherwise', async () => {
+        wrapper.vm.next = jest.fn();
+        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+          id: 'other',
+        }));
+        await wrapper.vm.goNext();
+        expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('recaptchaCallBack', () => {
+      it('should set the token and call next from the mixin ', async () => {
+        wrapper.vm.next = jest.fn();
+        await wrapper.vm.recaptchaCallBack('token');
+        expect(wrapper.vm.recaptchaToken).toBe('token');
+        expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 });

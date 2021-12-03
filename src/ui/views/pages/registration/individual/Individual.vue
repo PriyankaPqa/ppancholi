@@ -41,13 +41,21 @@
 
             <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
               <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
+              <vue-programmatic-invisible-google-recaptcha
+                ref="recaptchaSubmit"
+                :sitekey="recaptchaKey"
+                element-id="recaptchaSubmit"
+                badge-position="left"
+                :show-badge-mobile="false"
+                :show-badge-desktop="false"
+                @recaptcha-callback="recaptchaCallBack" />
               <v-btn
                 color="primary"
                 data-test="nextButton"
                 :aria-label="$t(currentTab.nextButtonTextKey)"
                 :loading="submitLoading"
                 :disabled="failed || inlineEdit"
-                @click="next()">
+                @click="goNext()">
                 {{ $t(currentTab.nextButtonTextKey) }}
               </v-btn>
             </div>
@@ -63,6 +71,7 @@ import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';
+import { localStorageKeys } from '@/constants/localStorage';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -85,6 +94,11 @@ export default mixins(individual).extend({
     ConfirmRegistration,
   },
 
+  data: () => ({
+    recaptchaToken: null,
+    recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
+  }),
+
   mixins: [individual],
 
   methods: {
@@ -94,6 +108,22 @@ export default mixins(individual).extend({
         return;
       }
       await this.jump(this.currentTabIndex - 1);
+    },
+
+    async goNext() {
+      if (this.currentTab.id === 'review') {
+        // eslint-disable-next-line
+        (this.$refs.recaptchaSubmit as any).execute();
+      } else {
+        await this.next();
+      }
+    },
+
+    async recaptchaCallBack(token: string) {
+      if (token) { // you're not a robot
+        this.recaptchaToken = token;
+        await this.next();
+      }
     },
   },
 });

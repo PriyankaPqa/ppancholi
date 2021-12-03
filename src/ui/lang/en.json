@@ -51,6 +51,8 @@
     "errors.fresh-address-email-address-not-safe-to-send": "This email address is not safe",
     "errors.fresh-address-general-exception": "Fresh address failed: {Message}",
     "errors.fresh-address-validation-failed": "This email address seems invalid",
+    "errors.google-re-captcha-validation-failed": "Suspicious activity detected",
+    "errors.need_to_resolve_challenge": "The challenge must be resolved",
     "errors.person-identified-as-duplicate": "This beneficiary already exists in the system",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate": "This beneficiary already exists in the system",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number": "This beneficiary already exists in the system",
@@ -61,6 +63,8 @@
     "errors.the-household-have-duplicate-first-name-last-name-birthdate": "The household member already exists",
     "event.beneficiaries.registration_number": "Registration number",
     "event.registration_link": "Registration link",
+    "metaInfo.app.short": "CRC",
+    "metaInfo.app.title": "Canadian Red Cross",
     "metaInfo.crc_registration.description": "This is a description for crc_registration",
     "metaInfo.crc_registration.title": "CRC Registration",
     "registration.addresses.addressType": "Temporary address type",
@@ -201,6 +205,5 @@
     "zendesk.registration.addresses": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360053455714",
     "zendesk.registration.isRegistered": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242133 ",
     "zendesk.registration.personalInformation": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242113",
-    "zendesk.registration.review": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242153",
-    "errors.google-re-captcha-validation-failed": "Suspicious activity detected"
+    "zendesk.registration.review": "https:\/\/canadianredcross.zendesk.com\/hc\/en-us\/articles\/360055242153"
 }

@@ -10,21 +10,18 @@ import Multilingual from '@/ui/plugins/multilingual';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import '@/ui/plugins/vue-toasted';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
-import { VueReCaptcha } from 'vue-recaptcha-v3';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import VueProgrammaticInvisibleGoogleRecaptcha from 'vue-programmatic-invisible-google-recaptcha';
 import App from './ui/App.vue';
 import './registerServiceWorker';
 import router from './ui/router';
 import store from './store/store';
 
+Vue.component('VueProgrammaticInvisibleGoogleRecaptcha', VueProgrammaticInvisibleGoogleRecaptcha);
+
 prepareServices(store);
 prepareStorage(store);
-
-Vue.use(VueReCaptcha, {
-  siteKey: process.env.VUE_APP_GOOGLE_RECAPTCHA_KEY,
-  loaderOptions: {
-    autoHideBadge: true,
-  },
-});
 
 Vue.use(Multilingual);
 
