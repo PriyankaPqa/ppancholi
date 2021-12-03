@@ -7,6 +7,7 @@ import {
   i18n, Trans,
 } from '@/ui/plugins';
 import Multilingual from '@/ui/plugins/multilingual';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import '@/ui/plugins/vue-toasted';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 import { VueReCaptcha } from 'vue-recaptcha-v3';
@@ -27,7 +28,17 @@ Vue.use(VueReCaptcha, {
 
 Vue.use(Multilingual);
 
+applicationInsights.initialize({
+  connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,
+  router,
+  appName: 'beneficiary-webapp',
+});
+
+applicationInsights.setBasicContext({ app: 'beneficiary-webapp' });
+
 Vue.prototype.$i18nRoute = Trans.i18nRoute.bind(Trans);
+Vue.prototype.$appInsights = applicationInsights;
+
 Vue.config.productionTip = false;
 
 new Vue({

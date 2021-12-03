@@ -49,6 +49,25 @@ describe('MainLayout.vue', () => {
           await wrapper.vm.verifyLocation();
           expect(storage.registration.actions.fetchEvent).toHaveBeenCalledWith('lang', 'reg');
         });
+
+        it('set the tenantId to appInsights', async () => {
+          wrapper.vm.$route = { params: { lang: 'lang', registrationLink: 'reg' } };
+          await wrapper.vm.verifyLocation();
+
+          expect(wrapper.vm.$appInsights.setBasicContext).toHaveBeenCalledTimes(2);
+          expect(wrapper.vm.$appInsights.setBasicContext.mock.calls).toEqual([
+            [
+              {
+                tenantId: expect.anything(),
+              },
+            ],
+            [
+              {
+                event: expect.anything(),
+              },
+            ],
+          ]);
+        });
       });
 
       describe('fetchData', () => {
@@ -65,6 +84,20 @@ describe('MainLayout.vue', () => {
         it('calls fetchPrimarySpokenLanguages', async () => {
           await wrapper.vm.fetchData();
           expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalled();
+        });
+
+        it('tracks exception', async () => {
+          const testError = new Error('err');
+
+          wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages = jest.fn(
+            () => new Promise(() => {
+              throw testError;
+            }),
+          );
+
+          await wrapper.vm.fetchData();
+
+          expect(wrapper.vm.$appInsights.trackException).toHaveBeenCalledWith(testError, {}, 'MainLayout', 'fetchData');
         });
       });
     });

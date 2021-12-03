@@ -52,7 +52,11 @@ export default Vue.extend({
       httpClient.setHeadersTenant(tenantId);
       const event: IEvent = await this.$storage.registration.actions.fetchEvent(lang, registrationLink);
 
+      this.$appInsights.setBasicContext({ tenantId });
+      this.$appInsights.setBasicContext({ event });
+
       if (_isEmpty(event) || !event.selfRegistrationEnabled || event.schedule.status !== EEventStatus.Open) {
+        this.$appInsights.trackTrace('trying to register with invalid event', {}, 'MainLayout', 'verifyLocation');
         window.location.replace(i18n.t('registration.redirection_link') as string);
         return false;
       }
@@ -76,8 +80,9 @@ export default Vue.extend({
         this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
       ]).then(() => {
         this.fetchingData = false;
-      }).catch(() => {
+      }).catch((error) => {
         this.fetchingData = false;
+        this.$appInsights.trackException(error, {}, 'MainLayout', 'fetchData');
       });
     },
   },

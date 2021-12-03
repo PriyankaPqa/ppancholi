@@ -62,6 +62,14 @@ const mocks = {
     show: jest.fn(),
   },
   $services: mockProvider(),
+  $appInsights: {
+    loadAppInsights: jest.fn(),
+    trackPageView: jest.fn(),
+    flush: jest.fn(),
+    trackException: jest.fn(),
+    trackTrace: jest.fn(),
+    setBasicContext: jest.fn(),
+  },
 };
 
 const stubs = {

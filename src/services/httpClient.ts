@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ISearchData } from '@/types';
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import buildQuery from 'odata-query';
 import camelCaseKeys from 'camelcase-keys';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,11 +26,14 @@ export interface IError {
 
 export interface RequestConfig extends AxiosRequestConfig {
   globalHandler?: boolean;
+  noErrorLogging?: boolean;
   isOData?: boolean;
   containsEncodedURL?: boolean;
 }
 
 export interface IHttpClient {
+  getFullResponse: <T>(url: string, config?: RequestConfig) => Promise<IRestResponse<T>>;
+  postFullResponse: <T>(url: string, data?: any, config?: RequestConfig) => Promise<IRestResponse<T>>;
   get: <T>(url: string, config?: RequestConfig) => Promise<T>;
   post: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
   patch: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
@@ -39,7 +43,7 @@ export interface IHttpClient {
   setHeadersTenant(tenantId: string): void;
 }
 
-class HttpClient implements IHttpClient {
+export class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
 
   constructor() {
@@ -86,6 +90,8 @@ class HttpClient implements IHttpClient {
   private responseErrorHandler(error: any) {
     const { errors } = error.response.data;
 
+    this.logToAppInsights(errors, error);
+
     if (this.isGlobalHandlerEnabled(error.config)) {
       if (errors && Array.isArray(errors)) {
         errors.forEach((error: IError) => {
@@ -98,6 +104,24 @@ class HttpClient implements IHttpClient {
       return Promise.reject(errors || error);
     }
     return false;
+  }
+
+  private logToAppInsights(errors: any, error: any) {
+    if (error.config?.noErrorLogging) {
+      return;
+    }
+    // we'll consider an error with a "errors" prop as a validation error from the BE and thus only trace those
+    // except 404 errors which we will consider errors
+    // we remove guids from the error name so as to merge similar errors
+    const regexGuid = /[0-9a-f]{8}-([0-9a-f]{4}-){3}[0-9a-f]{12}/gi;
+    const urlWithoutGuids = (error.response.config?.url || '').replace(regexGuid, 'GUID');
+    const errorName = `${urlWithoutGuids} http error ${error.response.status}`;
+    const errorDetails = { error: errors || error, failedMethod: error.response.config?.method, failedRequestUrl: error.response.config?.url };
+    if (errors && Array.isArray(errors) && error.response.status !== 404) {
+      applicationInsights.trackTrace(errorName, errorDetails, 'httpClient', error.response.config?.method);
+    } else {
+      applicationInsights.trackException(errorName, errorDetails, 'httpClient', error.response.config?.method);
+    }
   }
 
   private requestHandler(request: any) {
@@ -126,53 +150,38 @@ class HttpClient implements IHttpClient {
     return request;
   }
 
-  private createErrorObject(error: AxiosError): AxiosError {
-    return error;
+  public async get<T>(url: string, config?: RequestConfig): Promise<T> {
+    return (await this.getFullResponse<T>(url, config))?.data;
   }
 
-  public async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const response: IRestResponse<T> = await this.axios.get(url, config);
-      return response.data;
-    } catch (e) {
-      throw this.createErrorObject(e);
-    }
+  public async getFullResponse<T>(url: string, config?: RequestConfig): Promise<IRestResponse<T>> {
+    const response: IRestResponse<T> = await this.axios.get(url, config);
+    return response;
   }
 
-  public async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const response: IRestResponse<T> = await this.axios.post(url, data, config);
-      return response.data;
-    } catch (e) {
-      throw this.createErrorObject(e);
-    }
+  public async postFullResponse<T>(url: string, data?: any, config?: RequestConfig): Promise<IRestResponse<T>> {
+    const response: IRestResponse<T> = await this.axios.post(url, data, config);
+    return response;
   }
 
-  public async patch<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const response: IRestResponse<T> = await this.axios.patch(url, data, config);
-      return response.data;
-    } catch (e) {
-      throw this.createErrorObject(e);
-    }
+  public async post<T>(url: string, data?: any, config?: RequestConfig): Promise<T> {
+    const response: IRestResponse<T> = await this.axios.post(url, data, config);
+    return response.data;
   }
 
-  public async put<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const response: IRestResponse<T> = await this.axios.put(url, data, config);
-      return response.data;
-    } catch (e) {
-      throw this.createErrorObject(e);
-    }
+  public async patch<T>(url: string, data?: any, config?: RequestConfig): Promise<T> {
+    const response: IRestResponse<T> = await this.axios.patch(url, data, config);
+    return response.data;
   }
 
-  public async delete<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<T> {
-    try {
-      const response: IRestResponse<T> = await this.axios.delete(url, config);
-      return response.data;
-    } catch (e) {
-      throw this.createErrorObject(e);
-    }
+  public async put<T>(url: string, data?: any, config?: RequestConfig): Promise<T> {
+    const response: IRestResponse<T> = await this.axios.put(url, data, config);
+    return response.data;
+  }
+
+  public async delete<T>(url: string, data?: any): Promise<T> {
+    const response: IRestResponse<T> = await this.axios.delete(url, data);
+    return response.data;
   }
 }
 
