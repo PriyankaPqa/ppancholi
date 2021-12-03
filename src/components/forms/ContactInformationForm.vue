@@ -121,6 +121,7 @@ import { ValidationObserver } from 'vee-validate';
 import { IOptionItemData } from '../../types';
 import { MAX_LENGTH_MD } from '../../constants/validations';
 import { IContactInformation, IValidateEmailResponse } from '../../entities/value-objects/contact-information';
+import helpers from "@/ui/helpers";
 
 export default Vue.extend({
   name: 'ContactInformationForm',
@@ -179,6 +180,8 @@ export default Vue.extend({
       },
       emailChecking: false,
       previousEmail: '',
+      recaptchaRequired: false,
+      recaptchaResolved: false,
     };
   },
 
@@ -299,14 +302,17 @@ export default Vue.extend({
       this.focusPhoneCounter += 1;
     },
 
-    getTokenAndValidate(email: string) {
+    async getTokenAndValidate(email: string) {
       if (email && email !== this.previousEmail) {
-        (this.$refs.recaptchaEmail as any).execute();
+       (this.$refs.recaptchaEmail as any).execute();
+       // Display error, will be resolved automatically if no challenge to resolve
+        this.setEmailValidator({emailIsValid: false, errors: [{code: 'errors.need_to_resolve_challenge'} as any]})
       }
     },
 
     async recaptchaCallBack(token: string) {
       if (token) { // you're not a robot
+        this.setEmailValidator({emailIsValid: true, errors: []}) // Once token is got (with or without resolving challenge), we clean the previous error
         await this.validateEmail(this.formCopy.email, token);
       }
     },

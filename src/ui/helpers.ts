@@ -265,4 +265,11 @@ export default {
     return countries[countryCode];
   },
 
+  // Could be use when one need to wait a fixed amount of time
+  timeout(ms: number) {
+    return new Promise((resolve) => {
+      setTimeout(resolve, ms);
+    });
+  },
+
 };
