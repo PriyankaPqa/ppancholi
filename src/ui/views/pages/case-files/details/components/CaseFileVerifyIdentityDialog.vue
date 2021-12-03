@@ -67,6 +67,7 @@
               <v-select-with-validation
                 v-model="form.method"
                 data-test="verifyIdentity_method"
+                :attach="false"
                 :disabled="!isValidAuthStatus"
                 :items="verificationMethods"
                 :label="isValidAuthStatus ? $t('caseFileDetail.verifyIdentityDialog.method.label') : $t('common.notApplicable')"
@@ -80,6 +81,7 @@
               </div>
               <v-select-with-validation
                 v-model="form.identificationIds"
+                :attach="false"
                 data-test="verifyIdentity_options"
                 multiple
                 :disabled="!canSelectIds"

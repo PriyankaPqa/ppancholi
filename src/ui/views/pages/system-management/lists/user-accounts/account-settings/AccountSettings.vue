@@ -51,6 +51,7 @@
                   <div v-if="$hasLevel('level6')">
                     <v-select-with-validation
                       v-model="currentRole"
+                      :attach="false"
                       item-value="id"
                       :item-disabled="(item) => item.status !== activeStatus"
                       :item-text="(item) => item ? $m(item.name) : ''"
@@ -142,6 +143,7 @@
                     v-model="preferredLanguage"
                     hide-details
                     dense
+                    :attach="false"
                     class="py-2 rc-body10"
                     width="50%"
                     data-test="userAccount-language-preferences"

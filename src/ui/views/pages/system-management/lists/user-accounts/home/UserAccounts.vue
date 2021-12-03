@@ -55,6 +55,7 @@
               outlined
               return-object
               hide-details
+              :attach="false"
               data-test="user_roleId"
               :value="getRoleListItem(item.metadata.roleId)"
               :item-text="(item) => item ? $m(item.text): ''"
