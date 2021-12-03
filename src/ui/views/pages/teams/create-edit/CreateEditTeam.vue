@@ -487,6 +487,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.resetFormValidation();
         this.setOriginalData();
       } catch (e) {
+        this.$appInsights.trackTrace('Team create error', { error: e });
         this.handleSubmitError(e);
       } finally {
         this.isSubmitting = false;
@@ -504,6 +505,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         if (errors.length > 0 && errors[0].code === 'errors.team-has-active-case-file') {
           this.showErrorDialog = true;
         } else {
+          this.$appInsights.trackTrace('Team edit error', { error: errors });
           this.handleSubmitError(errors);
         }
         this.loadTeamFromState();

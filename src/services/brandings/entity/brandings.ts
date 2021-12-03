@@ -1,3 +1,4 @@
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import {
   IBrandingEntity, IBrandingEntityData, IEditColoursRequest, IEditTenantDetailsRequest,
 } from '@/entities/branding';
@@ -32,7 +33,10 @@ export class BrandingsService extends DomainBaseService<IBrandingEntity, uuid> i
 
   async getLogoUrl(languageCode: string): Promise<string> {
     const response = await this.http.getFullResponse<BlobPart>(`${this.baseUrl}/logo/${languageCode}`,
-      { responseType: 'blob', globalHandler: false }).catch(() => null);
+      { responseType: 'blob', globalHandler: false }).catch((e) => {
+      applicationInsights.trackException(e, {}, 'brandings', 'getLogoUrl');
+      return null;
+    });
 
     if (!response?.data) {
       return null;

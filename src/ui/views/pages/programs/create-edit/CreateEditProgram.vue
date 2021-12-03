@@ -136,6 +136,7 @@ export default Vue.extend({
           }
           this.$router.replace({ name: routes.programs.details.name, params: { programId } });
         } catch (e) {
+          this.$appInsights.trackTrace('Program submit error', { error: e }, 'CreateEditProgram', 'submit');
           this.handleSubmitError(e);
         } finally {
           this.loading = false;

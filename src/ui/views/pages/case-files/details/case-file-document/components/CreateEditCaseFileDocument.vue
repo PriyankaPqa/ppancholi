@@ -120,6 +120,7 @@ export default Vue.extend({
               : this.$router.replace({ name: routes.caseFile.documents.details.name, params: { documentId: document.id } });
           }
         } catch (e) {
+          this.$appInsights.trackTrace('caseFileDocument submit error', { error: e }, 'CreateEditCaseFileDocument', 'submit');
           this.$toasted.global.error(this.$t(e.code));
         } finally {
           this.loading = false;

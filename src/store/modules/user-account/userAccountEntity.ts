@@ -1,4 +1,5 @@
 import { ActionContext, ActionTree } from 'vuex';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import {
   IFilter, IUserAccountEntity, FilterKey, UserAccountEntity,
 } from '@/entities/user-account';
@@ -59,6 +60,7 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { payload }, 'module.userAccountEntity', 'genericFilterAction');
         return null;
       }
     },
@@ -93,6 +95,7 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { payload }, 'module.userAccountEntity', 'assignRole');
         return null;
       }
     },
@@ -106,6 +109,7 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { id, languageCode }, 'module.userAccountEntity', 'setUserPreferredLanguage');
         return null;
       }
     },
@@ -119,6 +123,7 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { languageCode }, 'module.userAccountEntity', 'setCurrentUserPreferredLanguage');
         return null;
       }
     },
@@ -131,6 +136,7 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
         context.commit('setCurrentUserAccount', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, {}, 'module.userAccountEntity', 'fetchCurrentUserAccount');
         return null;
       }
     },

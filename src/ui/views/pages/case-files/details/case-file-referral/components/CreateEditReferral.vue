@@ -121,6 +121,7 @@ export default Vue.extend({
             this.$router.replace({ name: routes.caseFile.referrals.details.name, params: { referralId: referral.id } });
           }
         } catch (e) {
+          this.$appInsights.trackTrace('caseFileReferral submit error', { error: e }, 'CreateEditReferral', 'submit');
           this.$toasted.global.error(this.$t(e.code));
         } finally {
           this.loading = false;

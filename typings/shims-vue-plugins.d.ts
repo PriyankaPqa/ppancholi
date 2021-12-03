@@ -2,6 +2,7 @@ import VueRouter, { Route } from 'vue-router';
 import { Store } from 'vuex';
 import { Toasted } from 'vue-toasted';
 import { TranslateResult } from 'vue-i18n';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { IMultilingual } from '@/types';
 import { SignalRConnection } from '@/ui/plugins/signalR';
 
@@ -24,6 +25,7 @@ declare module 'vue/types/vue' {
     $formatCurrency: IFormatCurrency;
     $m: IMFunction;
     $hasLevel: (p: string) => boolean;
+    $appInsights: typeof applicationInsights;
     $hasRole: (p: string) => boolean;
     $confirm: (title: TranslateResult, messages: TranslateResult | TranslateResult[],
       htmlContent?: string, submitActionLabel?: TranslateResult,) => Promise<boolean>;

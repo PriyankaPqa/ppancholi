@@ -1,11 +1,14 @@
 /* eslint-disable no-console */
 import * as msal from '@azure/msal-browser';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { loginRequest, msalConfig, tokenRequest } from '@/auth/constants/azureAD';
-import applicationInsights from '@/ui/plugins/applicationInsights/applicationInsights';
 import { provider } from '@/services/provider';
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 const services = provider();
+
+let tenantForCurrentDomain = null as string;
+let tenantFetchedForCurrentDomain = false;
 
 let handleRedirectPromiseError: msal.AuthError;
 
@@ -17,7 +20,7 @@ const handleRedirectPromise = msalInstance.handleRedirectPromise().then((redirec
     msalInstance.setActiveAccount(redirect.account);
   }
 }).catch((error) => {
-  applicationInsights.trackTrace('handleRedirectPromise - error', { context: 'AuthenticationProvider', error });
+  applicationInsights.trackTrace('handleRedirectPromise - error', { error }, 'AuthenticationProvider', 'handleRedirectPromise');
   handleRedirectPromiseError = error;
 });
 
@@ -72,7 +75,12 @@ export default {
     console.log('acquireToken');
     // we will have an authority (tenantid)
     // if the current domain is directly associated with a tenant, which will be forced on the user
-    const authority = await services.publicApi.getTenantByEmisDomain(window.location.host);
+    if (!tenantFetchedForCurrentDomain) {
+      // so we only fetch it once
+      tenantForCurrentDomain = await services.publicApi.getTenantByEmisDomain(window.location.host);
+      tenantFetchedForCurrentDomain = true;
+    }
+    const authority = tenantForCurrentDomain;
     if (!authority) {
       console.log(`no tenants for ${window.location.host} we'll use the default tenant`);
     }
@@ -91,7 +99,7 @@ export default {
         // in case or localhost or unofficial sites (feature branch) we'll use the main tenant
         || accounts[0];
 
-      applicationInsights.trackTrace('account', { context: 'AuthenticationProvider', value: account });
+      applicationInsights.trackTrace('account', { account }, 'AuthenticationProvider', 'acquireToken');
 
       const tokenResponse = await msalInstance.acquireTokenSilent({
         account,
@@ -99,7 +107,8 @@ export default {
         authority: `https://login.microsoftonline.com/${account.tenantId}`,
       });
 
-      applicationInsights.trackTrace('tokenResponse', { context: 'AuthenticationProvider', value: tokenResponse });
+      applicationInsights.setBasicContext({ tenantId: account.tenantId });
+      applicationInsights.trackTrace('tokenResponse', { tokenResponse }, 'AuthenticationProvider', 'acquireToken');
 
       return tokenResponse;
     } catch (e) {
@@ -107,7 +116,7 @@ export default {
       // This error is thrown in cases where the refresh token has expired.
       // We may need to add other error types to this list in the future. Otherwise, all errors go to the LoginError.vue page
 
-      applicationInsights.trackTrace('acquireToken - catch error', { context: 'AuthenticationProvider', error: e, errorCode: e.errorCode });
+      applicationInsights.trackTrace('acquireToken - catch error', { error: e, errorCode: e.errorCode }, 'AuthenticationProvider', 'acquireToken');
 
       if (e.errorCode === 'login_required') {
         this.signIn();

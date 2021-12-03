@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import VueRouter, { Route } from 'vue-router';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
 import authenticationProvider from '@/auth/AuthenticationProvider';
@@ -60,6 +61,8 @@ const featureGuard = async (to: Route) => {
   }
 
   if (!featureEnabled) {
+    applicationInsights.trackTrace(`feature disabled ${to.fullPath}`, { to },
+      'router', 'featureGuard');
     Vue.toasted.global.error(i18n.t('error.feature_disabled'));
   }
 
@@ -84,6 +87,7 @@ const authorizationGuard = async (to: Route) => {
     }
 
     if ((!hasProperLevel && !hasProperRole)) {
+      applicationInsights.trackTrace(`authorizationGuard ${to.fullPath}`, { to }, 'router', 'authorizationGuard');
       Vue.toasted.global.error(i18n.t('error.no_permission'));
       return false;
     }
@@ -106,6 +110,7 @@ router.beforeEach(async (to, from, next) => {
       next(from);
     }
   } catch (e) {
+    applicationInsights.trackException(e, { context: 'route.beforeeach', to, from }, 'router', 'beforeEach');
     // If there is an error, redirect to the login error page
     next({
       name: routeConstants.loginError.name,

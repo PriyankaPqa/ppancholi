@@ -333,6 +333,7 @@ export default Vue.extend({
         this.loading = false;
         this.itemLoading = false;
       } catch (e) {
+        this.$appInsights.trackException(e, {}, 'OptionList', 'fetchItems');
         clearTimeout(this.loadingTimeout);
         this.loading = false;
         this.error = true;
@@ -383,7 +384,8 @@ export default Vue.extend({
 
       try {
         await this.$storage.optionList.actions.createOption(payload);
-      } catch {
+      } catch (e) {
+        this.$appInsights.trackException(e, {}, 'OptionList', 'saveNewItem');
         this.itemLoading = false;
         return;
       }
@@ -411,7 +413,8 @@ export default Vue.extend({
 
       try {
         await this.$storage.optionList.actions.addSubItem(itemId, payload);
-      } catch {
+      } catch (e) {
+        this.$appInsights.trackException(e, {}, 'OptionList', 'saveNewSubItem');
         this.itemLoading = false;
         return;
       }
@@ -439,6 +442,7 @@ export default Vue.extend({
       try {
         await this.$storage.optionList.actions.updateItem(item.id, payloadName, payloadDescription);
       } catch (e) {
+        this.$appInsights.trackException(e, {}, 'OptionList', 'saveItem');
         this.itemLoading = false;
         return;
       }
@@ -473,6 +477,7 @@ export default Vue.extend({
       try {
         await this.$storage.optionList.actions.updateOrderRanks(items);
       } catch (e) {
+        this.$appInsights.trackException(e, {}, 'OptionList', 'sortItem');
         return;
       }
 

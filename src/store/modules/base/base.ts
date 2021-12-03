@@ -1,6 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
 import helpers from '@/ui/helpers/helpers';
@@ -57,6 +58,7 @@ export class BaseModule<T extends IEntity, IdParams> {
         }
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { idParams }, 'module.base', 'fetch');
         return null;
       }
     },
@@ -69,6 +71,7 @@ export class BaseModule<T extends IEntity, IdParams> {
         }
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { parentId }, 'module.base', 'fetchAll');
         return null;
       }
     },
@@ -79,6 +82,7 @@ export class BaseModule<T extends IEntity, IdParams> {
         context.commit('setAll', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, {}, 'module.base', 'fetch');
         return null;
       }
     },
@@ -89,6 +93,7 @@ export class BaseModule<T extends IEntity, IdParams> {
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { idParams }, 'module.base', 'deactivate');
         return null;
       }
     },
@@ -99,6 +104,7 @@ export class BaseModule<T extends IEntity, IdParams> {
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { idParams }, 'module.base', 'activate');
         return null;
       }
     },

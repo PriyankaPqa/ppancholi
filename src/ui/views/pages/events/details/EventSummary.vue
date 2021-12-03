@@ -183,7 +183,6 @@ export default Vue.extend({
     return {
       EEventSummarySections,
       EEventStatus,
-      error: false,
       newStatus: null,
       showEventStatusDialog: false,
       loading: false,
@@ -263,8 +262,8 @@ export default Vue.extend({
         await this.$storage.event.actions.fetch(id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       }
       await this.$storage.event.actions.fetchAgreementTypes();
-    } catch {
-      this.error = true;
+    } catch (e) {
+      this.$appInsights.trackException(e, {}, 'EventSummary', 'created');
     }
   },
 

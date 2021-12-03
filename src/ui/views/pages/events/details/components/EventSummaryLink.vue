@@ -116,7 +116,8 @@ export default Vue.extend({
           id: this.event.id,
           selfRegistrationEnabled,
         });
-      } catch {
+      } catch (e) {
+        this.$appInsights.trackException(e, { id: this.event.id, selfRegistrationEnabled }, 'EventSummaryLink', 'toggleSelfRegistration');
         return;
       } finally {
         this.updatingSelfRegistration = false;

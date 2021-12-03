@@ -140,7 +140,6 @@ export default mixins(caseFileDetail).extend({
   data() {
     return {
       moment,
-      error: false,
       showLabelsDialog: false,
       loading: false,
       loadingActivity: false,
@@ -195,8 +194,6 @@ export default mixins(caseFileDetail).extend({
       this.setLastAction();
       await this.fetchCaseFileActivities();
       this.attachToChanges(true);
-    } catch {
-      this.error = true;
     } finally {
       this.loading = false;
     }
@@ -231,8 +228,6 @@ export default mixins(caseFileDetail).extend({
         if (activity) {
           this.caseFileActivities = activity;
         }
-      } catch {
-        this.error = true;
       } finally {
         this.loadingActivity = false;
       }

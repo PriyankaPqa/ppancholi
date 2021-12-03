@@ -54,7 +54,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
     return {
       eventLoading: false,
       loading: false,
-      error: false,
       event: new EventEntity(),
       isNameUnique: true,
       isDirty: false, // Need to manually sync dirty state because v-switch doesn't work with vee-validate
@@ -85,8 +84,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
       try {
         const storeEvent = await this.$storage.event.actions.fetch(this.id);
         this.event = new EventEntity(storeEvent.entity);
-      } catch {
-        this.error = true;
       } finally {
         this.eventLoading = false;
       }
@@ -131,6 +128,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
           }
           this.$router.replace({ name: routes.events.summary.name, params: { id: eventId } });
         } catch (e) {
+          this.$appInsights.trackTrace('Event submit error', { error: e }, 'CreateEditEvent', 'submit');
           this.handleSubmitError(e);
         } finally {
           this.loading = false;

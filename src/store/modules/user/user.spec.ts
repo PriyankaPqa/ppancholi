@@ -1,4 +1,5 @@
 import { Store } from 'vuex';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { mockStore, IRootState } from '@/store';
 import {
   mockUsersData, User,
@@ -14,11 +15,14 @@ import {
   mockStoreUserNoRole,
 } from '@/test/helpers';
 
+jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
+
 describe('>>> Users Module', () => {
   let store: Store<IRootState>;
 
   beforeEach(() => {
     store = mockStoreUserLevel(1);
+    jest.clearAllMocks();
   });
 
   describe('>> Getters', () => {
@@ -146,6 +150,18 @@ describe('>>> Users Module', () => {
           given_name: mockUser.given_name,
           roles: mockUser.roles,
         }));
+      });
+
+      it('sets the user data in application insights', () => {
+        store = mockStore();
+
+        const mockUser = mockUsersData()[0];
+        store.commit('user/setUser', mockUser);
+
+        expect(applicationInsights.setUserId).toHaveBeenCalledWith(`${mockUser.email}_${mockUser.oid}`);
+        expect(applicationInsights.setBasicContext).toHaveBeenCalledWith({ name: mockUser.email });
+        expect(applicationInsights.setBasicContext).toHaveBeenCalledWith({ uid: mockUser.oid });
+        expect(applicationInsights.setBasicContext).toHaveBeenCalledWith({ roles: mockUser.roles });
       });
     });
 

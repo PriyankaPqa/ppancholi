@@ -165,7 +165,6 @@ export default Vue.extend({
   data() {
     return {
       moment,
-      error: false,
       removeBorder: false,
       showExpandedLeftMenu: false,
       idDigitsCount: 6,
@@ -262,8 +261,6 @@ export default Vue.extend({
 
     try {
       await this.$storage.event.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-    } catch {
-      this.error = true;
     } finally {
       this.loading = false;
     }

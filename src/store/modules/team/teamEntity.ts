@@ -1,4 +1,5 @@
 import { ActionTree, ActionContext } from 'vuex';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { ITeamEntity, ITeamMember } from '@/entities/team';
 import { TeamsService } from '@/services/teams/entity';
 import { BaseModule } from '../base';
@@ -90,6 +91,7 @@ export class TeamEntityModule extends BaseModule <ITeamEntity, uuid> {
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { payload }, 'module.teamEntity', 'addTeamMembers');
         return null;
       }
     },
@@ -103,6 +105,7 @@ export class TeamEntityModule extends BaseModule <ITeamEntity, uuid> {
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { payload }, 'module.teamEntity', 'removeTeamMembers');
         return null;
       }
     },

@@ -9,6 +9,7 @@ import '@/ui/styles/main.scss';
 // Import i18n related files
 
 import VueAxe from 'vue-axe';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import {
   i18n, Trans,
 } from '@/ui/plugins';
@@ -20,7 +21,6 @@ import Multilingual from '@/ui/plugins/multilingual';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import '@/ui/plugins/vee-validate';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
-import applicationInsights from '@/ui/plugins/applicationInsights/applicationInsights';
 
 import prepareSignalR from '@/ui/plugins/signalR';
 
@@ -43,6 +43,7 @@ applicationInsights.initialize({
 });
 
 Vue.prototype.$i18nRoute = Trans.i18nRoute.bind(Trans);
+Vue.prototype.$appInsights = applicationInsights;
 Vue.config.productionTip = false;
 
 // Some custom plugins

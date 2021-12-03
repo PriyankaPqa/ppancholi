@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import axios, { CancelTokenStatic, CancelTokenSource } from 'axios';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IRestResponse } from '@/services/httpClient';
@@ -75,7 +76,11 @@ export default Vue.extend({
           this.uploadSuccess = false;
           if (e?.response?.data.errors) {
             this.errors = e.response.data.errors;
+            applicationInsights.trackTrace(`File upload error ${e.response.status}`, { error: this.errors },
+              'fileUpload', 'uploadForm');
           } else {
+            applicationInsights.trackException(`File upload error ${e.response.status}`, { error: e },
+              'fileUpload', 'uploadForm');
             this.errors = [{ code: 'error.unexpected_error' }];
           }
         }

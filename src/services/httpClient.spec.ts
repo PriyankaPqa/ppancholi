@@ -4,6 +4,7 @@ import Vue from 'vue';
 import { camelKeys } from 'js-convert-case';
 import axios from 'axios';
 import { Toasted } from 'vue-toasted';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import buildQuery from '@/services/odata-query';
 import { mockHttp } from '@/services/httpClient.mock';
 import { httpClient, HttpClient, IRestResponse } from './httpClient';
@@ -12,6 +13,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 
 jest.mock('uuid');
 jest.mock('@/services/odata-query');
+jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
 
 const mockAxios = axios.create();
 mockAxios.interceptors.request.use = jest.fn();
@@ -282,18 +284,6 @@ describe('httpClient', () => {
       });
     });
 
-    describe('createErrorObject', () => {
-      it('returns error', () => {
-        const error = {
-          code: '1',
-        };
-
-        const res = mockHttpClient.createErrorObject(error);
-
-        expect(res).toEqual(error);
-      });
-    });
-
     describe('get', () => {
       it('returns correct value', async () => {
         mockHttpClient.getFullResponse = mockHttp().getFullResponse;
@@ -423,6 +413,34 @@ describe('httpClient', () => {
           meta: { param1: { translation: { en: 'my english text', fr: 'en francais svp' } }, param2: '123' },
         });
         expect(res).toBe('my my english text is really my english text, not 123');
+      });
+    });
+
+    describe('logToAppInsights', () => {
+      it('calls trace when errors object is found and not a 404', async () => {
+        mockHttpClient.logToAppInsights([{ error: 'error' }], { response: { status: 500, config: { url: 'my_call_url', method: 'GET' } } });
+        expect(applicationInsights.trackTrace).toBeCalledWith('my_call_url http error 500',
+          { error: [{ error: 'error' }], failedMethod: 'GET', failedRequestUrl: 'my_call_url' }, 'httpClient', 'GET');
+      });
+
+      it('calls exception when errors object is found and a 404', async () => {
+        mockHttpClient.logToAppInsights([{ error: 'error' }], { response: { status: 404, config: { url: 'my_call_url', method: 'GET' } } });
+        expect(applicationInsights.trackException).toBeCalledWith('my_call_url http error 404',
+          { error: [{ error: 'error' }], failedMethod: 'GET', failedRequestUrl: 'my_call_url' }, 'httpClient', 'GET');
+      });
+
+      it('calls exception when errors object is not found', async () => {
+        const exception = { response: { status: 500, config: { url: 'my_call_url', method: 'GET' } } };
+        mockHttpClient.logToAppInsights(null, exception);
+        expect(applicationInsights.trackException).toBeCalledWith('my_call_url http error 500',
+          { error: exception, failedMethod: 'GET', failedRequestUrl: 'my_call_url' }, 'httpClient', 'GET');
+      });
+
+      it('removes GUIDs from url in error name for eventual grouping of similar errors', async () => {
+        const exception = { response: { status: 500, config: { url: 'https://emis-dev.crc-tech.ca/fr/events/da9dde49-8f34-4bab-bac8-bba8008b4005/financial-assistance/0da3d377-36f1-40af-b5c6-a0755fa494d9', method: 'GET' } } };
+        mockHttpClient.logToAppInsights(null, exception);
+        expect(applicationInsights.trackException).toBeCalledWith('https://emis-dev.crc-tech.ca/fr/events/GUID/financial-assistance/GUID http error 500',
+          { error: exception, failedMethod: 'GET', failedRequestUrl: 'https://emis-dev.crc-tech.ca/fr/events/da9dde49-8f34-4bab-bac8-bba8008b4005/financial-assistance/0da3d377-36f1-40af-b5c6-a0755fa494d9' }, 'httpClient', 'GET');
       });
     });
   });

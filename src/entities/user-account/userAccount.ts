@@ -1,3 +1,4 @@
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { BaseEntity } from '@/entities/base/base';
 import { IListOption } from '@/types';
 import {
@@ -37,6 +38,8 @@ export class UserAccountEntity extends BaseEntity {
         criteria: f.criteria.map((c: string) => JSON.parse(c)),
       }));
     } catch (e) {
+      applicationInsights.trackException(new Error('Could not parse filters'),
+        { originalError: e, filters }, 'userAccount', 'parseFilters');
       return [];
     }
   }

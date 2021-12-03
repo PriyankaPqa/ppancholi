@@ -175,7 +175,6 @@ export default mixins(caseFileDetail).extend({
   data() {
     return {
       loading: false,
-      error: false,
       household: null as IHouseholdCombined,
       showVerifyIdentityDialog: false,
       showImpact: false,
@@ -278,8 +277,6 @@ export default mixins(caseFileDetail).extend({
     try {
       await this.$storage.caseFile.actions.fetch(this.caseFileId);
       await this.getHouseholdInfo();
-    } catch {
-      this.error = true;
     } finally {
       this.loading = false;
     }

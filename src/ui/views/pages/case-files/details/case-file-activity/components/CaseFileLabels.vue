@@ -141,9 +141,8 @@ export default Vue.extend({
 
         try {
           await this.$storage.caseFile.actions.setCaseFileLabels(this.caseFileId, this.labels);
-          this.loading = false;
           this.showLabelsDialog = false;
-        } catch {
+        } finally {
           this.loading = false;
         }
       }

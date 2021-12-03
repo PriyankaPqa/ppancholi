@@ -191,12 +191,9 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     async pinCaseNote(caseNote: ICaseNoteCombined) {
-      try {
-        await this.$storage.caseNote.actions.pinCaseNote(this.caseFileId, caseNote.entity.id, !caseNote.entity.isPinned);
-        // Since back end search has a delay, update case note and sort case note list locally
-        caseNote.entity.isPinned = !caseNote.entity.isPinned;
-        // eslint-disable-next-line no-empty
-      } catch (e) {}
+      await this.$storage.caseNote.actions.pinCaseNote(this.caseFileId, caseNote.entity.id, !caseNote.entity.isPinned);
+      // Since back end search has a delay, update case note and sort case note list locally
+      caseNote.entity.isPinned = !caseNote.entity.isPinned;
     },
   },
 });

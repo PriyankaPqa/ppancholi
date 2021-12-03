@@ -1,4 +1,5 @@
 import { ActionContext, ActionTree } from 'vuex';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import {
   CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileCount, ICaseFileDetailedCount, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
   IImpactStatusValidation,
@@ -143,6 +144,9 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
         context.commit('set', res);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, {
+          id, payload, element,
+        }, 'module.caseFileEntity', 'genericSetAction');
         return null;
       }
     },
@@ -218,6 +222,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
         }
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, {}, 'module.caseFileEntity', 'createCaseFile');
         return null;
       }
     },
@@ -233,6 +238,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
         });
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { eventId, teamId }, 'module.caseFileEntity', 'fetchCaseFileAssignedCounts');
         return null;
       }
     },
@@ -245,6 +251,7 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
         const res = await this.service.fetchCaseFileDetailedCounts(eventId);
         return res;
       } catch (e) {
+        applicationInsights.trackException(e, { eventId }, 'module.caseFileEntity', 'fetchCaseFileDetailedCounts');
         return null;
       }
     },

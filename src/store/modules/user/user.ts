@@ -1,6 +1,7 @@
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
+import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { localStorageKeys } from '@/constants/localStorage';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import {
@@ -57,15 +58,26 @@ const getters = {
 
 const mutations = {
   setUser(state: IState, payload: IMSALUserData) {
-    state.oid = payload.oid;
+    if (state.oid !== payload.oid || (state.email !== (payload.email || payload.preferred_username))) {
+      state.oid = payload.oid;
+      state.email = payload.email || payload.preferred_username;
+      applicationInsights.setUserId(`${state.email}_${payload.oid}`);
+      applicationInsights.setBasicContext({ name: state.email });
+      applicationInsights.setBasicContext({ uid: state.oid });
+    }
     state.family_name = payload.family_name;
     state.given_name = payload.given_name;
-    state.email = payload.email || payload.preferred_username;
-    state.roles = payload.roles;
+    if (state.roles[0] !== payload.roles[0]) {
+      state.roles = payload.roles;
+      applicationInsights.setBasicContext({ roles: state.roles });
+    }
   },
 
   setRole(state: IState, payload: string) {
-    state.roles = [payload];
+    if (state.roles[0] !== payload) {
+      state.roles = [payload];
+      applicationInsights.setBasicContext({ roles: state.roles });
+    }
   },
 };
 
