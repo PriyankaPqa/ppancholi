@@ -54,6 +54,21 @@ describe('>>> Registration utils', () => {
         expect(isValid).toEqual(false);
       });
 
+      it('should return false if CRC user name is empty, undefined or null', () => {
+        const mode = ERegistrationMode.CRC;
+        const state = {
+          isPrivacyAgreed: true,
+          householdCreate: {
+            consentInformation: {
+              crcUserName: '',
+            },
+          },
+        } as IState;
+
+        const isValid = privacyStatementValid(mode, state);
+        expect(isValid).toEqual(false);
+      });
+
       it('should return false registration method is null', () => {
         const mode = ERegistrationMode.CRC;
         const state = {
@@ -93,6 +108,7 @@ describe('>>> Registration utils', () => {
             consentInformation: {
               registrationMethod: ERegistrationMethod.InPerson,
               registrationLocationId: 'id',
+              crcUserName: 'Mister test',
             },
           },
         } as IState;
