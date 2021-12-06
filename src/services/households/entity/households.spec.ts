@@ -370,6 +370,13 @@ describe('>>> Beneficiaries Service', () => {
       const built = service.parseHouseholdPayload(household, null);
       expect(built.homeAddress).toEqual(mockAddressData());
     });
+
+    it('returns honeypot name if one was passed', () => {
+      const household = mockHouseholdCreate();
+      expect(service.parseHouseholdPayload(household, null).name).toBeFalsy();
+      (household.primaryBeneficiary.identitySet as any).name = 'dummy';
+      expect(service.parseHouseholdPayload(household, null).name).toBe('dummy');
+    });
   });
 
   describe('parseAdditionalMember', () => {

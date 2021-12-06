@@ -67,6 +67,8 @@ export interface ICreateHouseholdRequest {
   additionalMembers: MemberCreateRequest[];
   eventId: uuid;
   consentInformation: IConsentInformation;
+  // name is honey pot - it should always be null...
+  name?: string;
 }
 
 export interface ISplitHouseholdRequest {

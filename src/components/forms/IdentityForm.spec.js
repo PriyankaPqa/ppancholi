@@ -284,5 +284,13 @@ describe('IdentityForm.vue', () => {
       });
       expect(wrapper.vm.prePopulate).toHaveBeenCalledTimes(1);
     });
+
+    test('form includes honeypot field', async () => {
+      wrapper.vm.$options.created.forEach((hook) => {
+        hook.call(wrapper.vm);
+      });
+      expect(Object.keys(wrapper.vm.formCopy).indexOf('name')).toBeGreaterThan(-1);
+      expect(wrapper.vm.formCopy.name).toBeFalsy();
+    });
   });
 });

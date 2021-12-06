@@ -1,5 +1,5 @@
 import {
-  IIdentitySet, IIdentitySetData, IBirthDate, EIndigenousTypes, IIndigenousIdentityOption,
+  IIdentitySetData, IBirthDate, EIndigenousTypes, IIndigenousIdentityOption, IHoneyPotIdentitySet,
 } from './identitySet.types';
 import { ECanadaProvinces, IOptionItemData } from '../../../types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../../constants/validations';
@@ -8,7 +8,7 @@ import {
 } from '../../classValidation';
 import helpers from '../../../ui/helpers';
 
-export class IdentitySet implements IIdentitySet {
+export class IdentitySet implements IHoneyPotIdentitySet {
   firstName: string;
 
   middleName: string;
@@ -35,6 +35,8 @@ export class IdentitySet implements IIdentitySet {
 
   indigenousIdentity: IIndigenousIdentityOption;
 
+  name: string;
+
   constructor(data?: IIdentitySetData) {
     if (!data) {
       this.reset();
@@ -52,6 +54,8 @@ export class IdentitySet implements IIdentitySet {
       this.indigenousCommunityId = data.indigenousCommunityId;
       this.indigenousCommunityOther = data.indigenousCommunityOther;
       this.indigenousIdentity = data.indigenousIdentity;
+      // name is honey pot - it should always be null...
+      this.name = (data as IHoneyPotIdentitySet).name;
     }
   }
 
@@ -107,6 +111,8 @@ export class IdentitySet implements IIdentitySet {
     this.genderOther = data.genderOther;
     this.birthDate = data.birthDate;
     this.dateOfBirth = helpers.getBirthDateUTCString(data.birthDate);
+    // name is honey pot - it should always be null...
+    this.name = (data as IHoneyPotIdentitySet).name;
   }
 
   setIndigenousIdentity(data: IIdentitySetData) {
@@ -143,5 +149,6 @@ export class IdentitySet implements IIdentitySet {
     this.indigenousCommunityId = null;
     this.indigenousCommunityOther = null;
     this.indigenousIdentity = null;
+    this.name = null;
   }
 }

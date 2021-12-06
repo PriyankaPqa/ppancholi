@@ -1,6 +1,6 @@
 import {
   IdentitySet, EIndigenousTypes, mockIdentitySetData,
-  mockGenderOther,
+  mockGenderOther, IHoneyPotIdentitySet,
 } from './index';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../../constants/validations';
 import { ECanadaProvinces } from '../../../types';
@@ -18,6 +18,7 @@ describe('Identity Set', () => {
 
     it('should reset if not data pass', () => {
       const p = new IdentitySet();
+      expect(p.name).toEqual(null);
       expect(p.firstName).toEqual('');
       expect(p.middleName).toEqual('');
       expect(p.lastName).toEqual('');
@@ -41,7 +42,7 @@ describe('Identity Set', () => {
     describe('setIdentity', () => {
       it('should set identity related attributes', () => {
         const p = new IdentitySet();
-        p.setIdentity(mockIdentitySetData());
+        p.setIdentity({ ...mockIdentitySetData(), name: 'dummy' } as IHoneyPotIdentitySet);
         expect(p.firstName).toEqual(mockIdentitySetData().firstName);
         expect(p.middleName).toEqual(mockIdentitySetData().middleName);
         expect(p.lastName).toEqual(mockIdentitySetData().lastName);
@@ -49,6 +50,7 @@ describe('Identity Set', () => {
         expect(p.gender).toEqual(mockIdentitySetData().gender);
         expect(p.genderOther).toEqual(mockIdentitySetData().genderOther);
         expect(p.birthDate).toEqual(mockIdentitySetData().birthDate);
+        expect(p.name).toEqual('dummy');
         expect(p.dateOfBirth).toEqual(helpers.getBirthDateUTCString(mockIdentitySetData().birthDate));
       });
     });

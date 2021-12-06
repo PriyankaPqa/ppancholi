@@ -9,7 +9,7 @@ import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
   IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,
   MemberCreateRequest, IIdentitySet, IIdentitySetCreateRequest, IMemberEntity, IAddress, IValidateEmailResponse,
-  IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IValidateEmailPublicRequest,
+  IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IValidateEmailPublicRequest, IHoneyPotIdentitySet,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
 import { DomainBaseService } from '../../base';
@@ -190,6 +190,8 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity> imple
       homeAddress: household.noFixedHome ? null : this.parseAddress(household.homeAddress),
       eventId,
       consentInformation: household.consentInformation,
+      // name is honey pot - it should always be null...
+      name: (household.primaryBeneficiary.identitySet as IHoneyPotIdentitySet).name,
     };
   }
 

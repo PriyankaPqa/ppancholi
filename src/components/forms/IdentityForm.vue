@@ -24,6 +24,8 @@
         :label="`${$t('registration.personal_info.lastName')}*`" />
     </v-col>
 
+    <pot @change="formCopy.name = $event" />
+
     <v-col cols="12" sm="6">
       <v-text-field-with-validation
         v-model="formCopy.preferredName"
@@ -95,8 +97,9 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import { VTextFieldWithValidation, VSelectWithValidation } from '@crctech/component-library';
+import Pot from './HoneyPot.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import { IBirthDate, IIdentitySet } from '../../entities/household-create';
+import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet } from '../../entities/household-create';
 import { IOptionItemData } from '../../types';
 import months from '../../constants/months';
 
@@ -106,6 +109,7 @@ export default Vue.extend({
   components: {
     VSelectWithValidation,
     VTextFieldWithValidation,
+    Pot,
   },
 
   props: {
@@ -134,7 +138,7 @@ export default Vue.extend({
   data() {
     return {
       months,
-      formCopy: null as IIdentitySet,
+      formCopy: null as IHoneyPotIdentitySet,
     };
   },
 
@@ -202,7 +206,7 @@ export default Vue.extend({
   watch: {
     formCopy: {
       deep: true,
-      handler(form: IIdentitySet) {
+      handler(form: IHoneyPotIdentitySet) {
         if (form.gender && !form.gender.isOther) {
           form.genderOther = null;
         }
@@ -212,7 +216,8 @@ export default Vue.extend({
   },
 
   created() {
-    this.formCopy = _cloneDeep(this.form);
+    // name is for honey-pot (bots) its a fake field!
+    this.formCopy = { name: '', ..._cloneDeep(this.form) };
     this.loadGender();
     this.prePopulate();
   },

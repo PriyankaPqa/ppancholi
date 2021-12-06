@@ -70,3 +70,7 @@ export interface IIdentitySet extends IIdentitySetData {
   setIdentity(data: IIdentitySetData): void;
   setIndigenousIdentity(data: IIdentitySetData): void;
 }
+
+export interface IHoneyPotIdentitySet extends IIdentitySet {
+  name?: string;
+}
