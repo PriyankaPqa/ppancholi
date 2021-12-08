@@ -9,6 +9,4 @@ export const mockUserAccountsService = (): IUserAccountsServiceMock => ({
   editFilter: jest.fn(() => mockUserAccountEntity()),
   deleteFilter: jest.fn(() => mockUserAccountEntity()),
   assignRole: jest.fn(() => mockUserAccountEntity()),
-  setUserPreferredLanguage: jest.fn(() => mockUserAccountEntity()),
-  setCurrentUserPreferredLanguage: jest.fn(() => mockUserAccountEntity()),
 });

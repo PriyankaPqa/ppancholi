@@ -84,19 +84,4 @@ describe('>>> UserAccounts Service', () => {
     await service.assignRole(request);
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${request.userId}/role`, { roleId: request.subRole.id });
   });
-
-  test('setUserPreferredLanguage is linked to the correct URL and payload', async () => {
-    const userId = 'some-id';
-    const languageCode = 'EN';
-
-    await service.setUserPreferredLanguage(userId, languageCode);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${userId}/preferred-language`, { languageCode });
-  });
-
-  test('setCurrentUserPreferredLanguage is linked to the correct URL and payload', async () => {
-    const languageCode = 'EN';
-
-    await service.setCurrentUserPreferredLanguage(languageCode);
-    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/preferred-language`, { languageCode });
-  });
 });

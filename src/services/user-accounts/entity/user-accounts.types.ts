@@ -20,8 +20,6 @@ export interface IUserAccountsService extends IDomainBaseService<IUserAccountEnt
   editFilter(payload: IEditFilterRequest): Promise<IUserAccountEntity>;
   deleteFilter(filter: IFilter): Promise<IUserAccountEntity>;
   assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity>;
-  setUserPreferredLanguage(id: uuid, languageCode: string): Promise<IUserAccountEntity>;
-  setCurrentUserPreferredLanguage(languageCode: string): Promise<IUserAccountEntity>;
 }
 
 export interface IUserAccountsServiceMock extends IDomainBaseServiceMock<IUserAccountEntity> {
@@ -30,6 +28,4 @@ export interface IUserAccountsServiceMock extends IDomainBaseServiceMock<IUserAc
   editFilter: jest.Mock<IUserAccountEntity>;
   deleteFilter: jest.Mock<IUserAccountEntity>;
   assignRole: jest.Mock<IUserAccountEntity>;
-  setUserPreferredLanguage: jest.Mock<IUserAccountEntity>;
-  setCurrentUserPreferredLanguage: jest.Mock<IUserAccountEntity>;
 }

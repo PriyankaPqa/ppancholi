@@ -78,36 +78,6 @@ describe('User account entity module', () => {
       });
     });
 
-    describe('setUserPreferredLanguage', () => {
-      it('should call service setUserPreferredLanguage with proper parameters and commit the result', async () => {
-        const payload = {
-          id: '123',
-          languageCode: 'fr',
-        };
-        const res = mockUserAccountEntity();
-        module.service.setUserPreferredLanguage = jest.fn(() => Promise.resolve(res));
-
-        await module.actions.setUserPreferredLanguage(actionContext, payload);
-
-        expect(module.service.setUserPreferredLanguage).toBeCalledWith(payload.id, payload.languageCode);
-        expect(actionContext.commit).toBeCalledWith('set', res);
-      });
-    });
-
-    describe('setCurrentUserPreferredLanguage', () => {
-      it('should call service setCurrentUserPreferredLanguage with proper parameters and commit the result', async () => {
-        const payload = 'fr';
-
-        const res = mockUserAccountEntity();
-        module.service.setCurrentUserPreferredLanguage = jest.fn(() => Promise.resolve(res));
-
-        await module.actions.setCurrentUserPreferredLanguage(actionContext, payload);
-
-        expect(module.service.setCurrentUserPreferredLanguage).toBeCalledWith(payload);
-        expect(actionContext.commit).toBeCalledWith('set', res);
-      });
-    });
-
     describe('fetchCurrentUserAccount', () => {
       it('should call service fetchCurrentUserAccount and commit the result', async () => {
         const res = mockUserAccountEntity();

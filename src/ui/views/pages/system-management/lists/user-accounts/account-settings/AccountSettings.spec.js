@@ -231,6 +231,59 @@ describe('AccountSettings.vue', () => {
         expect(wrapper.vm.roleHasChanged).toBeFalsy();
       });
     });
+
+    describe('preferredLanguage', () => {
+      it('returns English if includes en', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            user() {
+              return {
+                metadata: {
+                  preferredLanguage: 'en-CA',
+                },
+              };
+            },
+          },
+        });
+
+        expect(wrapper.vm.preferredLanguage).toBe('enums.preferredLanguage.English (en-CA)');
+      });
+
+      it('returns Français if includes fr', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            user() {
+              return {
+                metadata: {
+                  preferredLanguage: 'fr-CA',
+                },
+              };
+            },
+          },
+        });
+
+        expect(wrapper.vm.preferredLanguage).toBe('enums.preferredLanguage.French (fr-CA)');
+      });
+
+      it('returns undefined if is null', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            user() {
+              return {
+                metadata: {
+                  preferredLanguage: null,
+                },
+              };
+            },
+          },
+        });
+
+        expect(wrapper.vm.preferredLanguage).toBe('account_settings.preferredLanguage.notSet');
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -254,19 +307,6 @@ describe('AccountSettings.vue', () => {
         mocks: {
           $storage: storage,
         },
-      });
-    });
-
-    describe('setPreferredLanguage', () => {
-      it('should be called when changing language', () => {
-        const element = wrapper.findDataTest('userAccount-language-preferences');
-        wrapper.vm.setPreferredLanguage = jest.fn();
-        element.vm.$emit('change', 'bar');
-        expect(wrapper.vm.setPreferredLanguage).toHaveBeenCalledWith('bar');
-      });
-      it('should call setUserPreferredLanguage with correct param ', async () => {
-        wrapper.vm.setPreferredLanguage({ key: 'fr' });
-        expect(wrapper.vm.$storage.userAccount.actions.setUserPreferredLanguage).toHaveBeenCalledWith('myId', 'fr');
       });
     });
 

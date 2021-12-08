@@ -16,8 +16,6 @@ export interface IActions extends IBaseActions<IUserAccountEntity, IUserAccountM
   editFilter(oldFilter: IFilter, newFilter: IFilter): Promise<IUserAccountEntity>;
   deleteFilter(filter: IFilter): Promise<IUserAccountEntity>;
   assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity>;
-  setUserPreferredLanguage(id: uuid, languageCode: string): Promise<IUserAccountEntity>;
-  setCurrentUserPreferredLanguage(languageCode: string): Promise<IUserAccountEntity>;
   fetchCurrentUserAccount(): Promise<IUserAccountEntity>;
 }
 
@@ -26,8 +24,6 @@ export interface IActionsMock extends IBaseActionsMock<IUserAccountEntity, IUser
   editFilter: jest.Mock<IUserAccountEntity>
   deleteFilter: jest.Mock<IUserAccountEntity>
   assignRole: jest.Mock<IUserAccountEntity>
-  setUserPreferredLanguage: jest.Mock<IUserAccountEntity>
-  setCurrentUserPreferredLanguage: jest.Mock<IUserAccountEntity>
   fetchCurrentUserAccount: jest.Mock<IUserAccountEntity>
 }
 

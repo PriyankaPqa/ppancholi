@@ -138,20 +138,16 @@
                   </v-icon>
                   {{ $t('user.accountSettings.language') }}
                 </td>
-                <td style="width: 40%">
-                  <v-select-with-validation
-                    v-model="preferredLanguage"
-                    hide-details
-                    dense
-                    :attach="false"
-                    class="py-2 rc-body10"
-                    width="50%"
-                    data-test="userAccount-language-preferences"
-                    :label="`${$t('user.accountSettings.language')} *`"
-                    :items="languages"
-                    :item-text="(item) => item.name"
-                    return-object
-                    @change="setPreferredLanguage($event)" />
+                <td class="fw-bold" data-test="userAccount-language-preferences">
+                  {{ preferredLanguage }}
+                  <rc-tooltip top>
+                    <template #activator="{ on }">
+                      <v-icon small class="ml-1" v-on="on">
+                        mdi-help-circle-outline
+                      </v-icon>
+                    </template>
+                    {{ $t('account_settings.preferredLanguage.tooltip') }}
+                  </rc-tooltip>
                 </td>
                 <td />
               </tr>
@@ -169,11 +165,10 @@ import {
   RcPageContent,
   RcPageLoading,
   VSelectWithValidation,
+  RcTooltip,
 } from '@crctech/component-library';
 import { IUserAccountCombined, AccountStatus } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-
-import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
   EOptionLists, IOptionItem, IOptionSubItem,
 } from '@/entities/optionItem';
@@ -187,12 +182,12 @@ export default Vue.extend({
     RcPageLoading,
     VSelectWithValidation,
     StatusChip,
+    RcTooltip,
   },
 
   data() {
     return {
       AccountStatus,
-      preferredLanguage: null,
       loading: false,
       currentRole: null as IOptionSubItem,
       allAccessLevelRoles: [] as Array<IOptionSubItem|{header: string, id?: string}>,
@@ -205,10 +200,6 @@ export default Vue.extend({
       return this.$storage.userAccount.getters.get(this.id);
     },
 
-    languages(): Record<string, string>[] {
-      return SUPPORTED_LANGUAGES_INFO; // Temporary values until preferred language setting mechanism is put in place
-    },
-
     roleHasChanged() : boolean {
       if (this.currentRole) {
         return this.user?.entity?.roles && this.user.entity.roles[0]?.optionItemId !== this.currentRole?.id;
@@ -218,6 +209,20 @@ export default Vue.extend({
 
     id(): string {
       return this.$route.params.id || this.$storage.user.getters.userId();
+    },
+
+    preferredLanguage(): string {
+      const preferredLanguage = this.user.metadata.preferredLanguage;
+
+      if (preferredLanguage?.includes('en')) {
+        return `${this.$t('enums.preferredLanguage.English')} (${preferredLanguage})`;
+      }
+
+      if (preferredLanguage?.includes('fr')) {
+        return `${this.$t('enums.preferredLanguage.French')} (${preferredLanguage})`;
+      }
+
+      return `${this.$t('account_settings.preferredLanguage.notSet')}`;
     },
   },
 
@@ -229,15 +234,9 @@ export default Vue.extend({
     }
 
     this.resetCurrentRole();
-
-    this.preferredLanguage = this.languages.find((l) => l.key === this.user.metadata.preferredLanguage);
   },
 
   methods: {
-    setPreferredLanguage({ key }: {key:string;}) {
-      this.$storage.userAccount.actions.setUserPreferredLanguage(this.id, key);
-    },
-
     async setRoles() {
       this.$storage.optionList.mutations.setList(EOptionLists.Roles);
       const roles = await this.$storage.optionList.actions.fetchItems();

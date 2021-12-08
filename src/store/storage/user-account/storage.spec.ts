@@ -51,25 +51,6 @@ describe('>>> User Account Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/assignRole`, payload);
     });
 
-    it('should proxy setUserPreferredLanguage', () => {
-      const payload = {
-        id: '123',
-        languageCode: 'fr',
-      };
-
-      storage.actions.setUserPreferredLanguage(payload.id, payload.languageCode);
-
-      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setUserPreferredLanguage`, payload);
-    });
-
-    it('should proxy setCurrentUserPreferredLanguage', () => {
-      const payload = 'fr';
-
-      storage.actions.setCurrentUserPreferredLanguage(payload);
-
-      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/setCurrentUserPreferredLanguage`, payload);
-    });
-
     it('should proxy fetchCurrentUserAccount', () => {
       storage.actions.fetchCurrentUserAccount();
 

@@ -100,34 +100,6 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
       }
     },
 
-    setUserPreferredLanguage: async (
-      context: ActionContext<IUserAccountEntityState, IUserAccountEntityState>,
-      { id, languageCode }: {id: uuid; languageCode: string},
-    ): Promise<IUserAccountEntity> => {
-      try {
-        const res = await this.service.setUserPreferredLanguage(id, languageCode);
-        context.commit('set', res);
-        return res;
-      } catch (e) {
-        applicationInsights.trackException(e, { id, languageCode }, 'module.userAccountEntity', 'setUserPreferredLanguage');
-        return null;
-      }
-    },
-
-    setCurrentUserPreferredLanguage: async (
-      context: ActionContext<IUserAccountEntityState, IUserAccountEntityState>,
-      languageCode: string,
-    ): Promise<IUserAccountEntity> => {
-      try {
-        const res = await this.service.setCurrentUserPreferredLanguage(languageCode);
-        context.commit('set', res);
-        return res;
-      } catch (e) {
-        applicationInsights.trackException(e, { languageCode }, 'module.userAccountEntity', 'setCurrentUserPreferredLanguage');
-        return null;
-      }
-    },
-
     fetchCurrentUserAccount: async (
       context: ActionContext<IUserAccountEntityState, IUserAccountEntityState>,
     ): Promise<IUserAccountEntity> => {

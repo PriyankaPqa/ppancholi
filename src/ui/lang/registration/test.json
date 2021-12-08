@@ -52,6 +52,7 @@
     "errors.fresh-address-general-exception": "errors.fresh-address-general-exception",
     "errors.fresh-address-validation-failed": "errors.fresh-address-validation-failed",
     "errors.google-re-captcha-validation-failed": "errors.google-re-captcha-validation-failed",
+    "errors.need_to_resolve_challenge": "errors.need_to_resolve_challenge",
     "errors.person-identified-as-duplicate": "errors.person-identified-as-duplicate",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate": "errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number": "errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number",

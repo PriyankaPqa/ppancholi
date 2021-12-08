@@ -19,8 +19,6 @@ export class UserAccountStorageMock extends BaseMock<IUserAccountCombined, IUser
     editFilter: jest.fn(() => this.entity),
     deleteFilter: jest.fn(() => this.entity),
     assignRole: jest.fn(() => this.entity),
-    setUserPreferredLanguage: jest.fn(() => this.entity),
-    setCurrentUserPreferredLanguage: jest.fn(() => this.entity),
     fetchCurrentUserAccount: jest.fn(() => this.entity),
   }
 

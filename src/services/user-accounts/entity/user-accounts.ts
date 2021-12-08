@@ -55,12 +55,4 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
   async assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> {
     return this.http.post<IUserAccountEntity>(`${this.baseUrl}/${payload.userId}/role`, { roleId: payload.subRole.id });
   }
-
-  async setUserPreferredLanguage(id: uuid, languageCode: string): Promise<IUserAccountEntity> {
-    return this.http.patch<IUserAccountEntity>(`${this.baseUrl}/${id}/preferred-language`, { languageCode });
-  }
-
-  async setCurrentUserPreferredLanguage(languageCode: string): Promise<IUserAccountEntity> {
-    return this.http.patch<IUserAccountEntity>(`${this.baseUrl}/preferred-language`, { languageCode });
-  }
 }

@@ -1,6 +1,8 @@
 {
     "DuplicateStatus.Added": "Le dossier a été signalé comme un doublon potentiel",
     "DuplicateStatus.Removed": "L'indicateur de doublon potentiel a été supprimé du dossier",
+    "account_settings.preferredLanguage.notSet": "Pas de langue définie",
+    "account_settings.preferredLanguage.tooltip": "Détermine la langue dans laquelle l'utilisateur recevra les communications du système",
     "app.loading": "Récupération des données",
     "approval.requests.title": "Demandes d'approbation",
     "approval.template.title": "Modèles d'approbation",
@@ -814,6 +816,7 @@
     "errors.team-has-active-case-file": "Impossible de rendre cette équipe inactive en raison des dossiers qui lui sont attribués.",
     "errors.team-member-has-active-case-file": "Un(e) membre de l’équipe a un dossier actif.",
     "errors.team.has-activefile": "Impossible d'effectuer l'action",
+    "errors.team.has-activefile-message": "Cet événement comprend des dossiers actifs qui ont été attribués. Veuillez les réattribuer avant de supprimer l’événement.",
     "errors.teams-must-have-a-primary-contact": "L’équipe doit avoir une personne-ressource.",
     "errors.text-does-not-match-supplied-pattern": "Le domaine saisi n’est pas valide.",
     "errors.text-max-length-invalid": "La longueur ne doit pas dépasser {MaxLength} caractères.",
