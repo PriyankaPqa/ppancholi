@@ -229,10 +229,6 @@ export default mixins(individual).extend({
     },
 
     async next() {
-      await (this.$refs.form as VForm).validate();
-      if (this.currentStepHasError) {
-        return;
-      }
       if (this.currentTab.id === 'confirmation') {
         await this.closeRegistration();
         return;

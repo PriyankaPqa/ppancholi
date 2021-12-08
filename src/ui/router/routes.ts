@@ -118,12 +118,16 @@ export const routes: Array<RouteConfig> = [
       },
     },
     beforeEnter: async (to, from, next) => {
-      await Promise.all([
-        store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`),
-        store.dispatch(`${BRANDING_ENTITIES}/getBranding`),
-        store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'en'),
-        store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'fr'),
-      ]);
+      if (to.name !== Routes.loginError.name) {
+        const userAccount = await store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`);
+        if (userAccount) {
+          await Promise.all([
+            store.dispatch(`${BRANDING_ENTITIES}/getBranding`),
+            store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'en'),
+            store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'fr'),
+          ]);
+        }
+      }
       store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: false });
       Trans.routeMiddleware(to, from, next);
     },

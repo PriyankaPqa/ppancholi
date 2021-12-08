@@ -109,7 +109,14 @@ export class HttpClient implements IHttpClient {
       // so not to loop the user indefinitely, if he had been redirected already in the last 30 seconds we wont
       if (!last401Redirect || Number.isNaN(new Date(last401Redirect).getTime())
         || Math.abs(new Date().getTime() - new Date(last401Redirect).getTime()) > 30000) {
+        applicationInsights.trackTrace('error401Handler - before reload', {
+          last401Redirect,
+          second: Number.isNaN(new Date(last401Redirect).getTime()),
+          third: Math.abs(new Date().getTime() - new Date(last401Redirect).getTime()),
+        }, 'httpClient', 'error401Handler');
+
         localStorage.setItem(localStorageKeys.last401Redirect.name, (new Date()).toISOString());
+
         this.reloadTimeout = setTimeout(() => {
           this.reloadTimeout = null;
           window.location.reload();

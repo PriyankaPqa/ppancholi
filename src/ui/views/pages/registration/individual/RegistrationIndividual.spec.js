@@ -113,7 +113,6 @@ describe('Individual.vue', () => {
         wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({ id: 'personalInfo' }));
         wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
         wrapper.vm.jump = jest.fn();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.goToHouseholdProfile = jest.fn();
 
         await wrapper.vm.next();
@@ -134,7 +133,6 @@ describe('Individual.vue', () => {
         });
         wrapper.vm.closeRegistration = jest.fn();
         wrapper.vm.jump = jest.fn();
-        wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.next();
 
@@ -157,7 +155,6 @@ describe('Individual.vue', () => {
           });
           wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({ id: 'review' }));
           wrapper.vm.goToHouseholdProfile = jest.fn();
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
           await wrapper.vm.next();
 
@@ -242,7 +239,6 @@ describe('Individual.vue', () => {
             },
           });
           wrapper.vm.jump = jest.fn();
-          wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
           await wrapper.vm.next();
 
