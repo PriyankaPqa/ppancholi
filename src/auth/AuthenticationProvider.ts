@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 import * as msal from '@azure/msal-browser';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import { InteractionRequiredAuthError } from '@azure/msal-browser';
 import { loginRequest, msalConfig, tokenRequest } from '@/auth/constants/azureAD';
 import { provider } from '@/services/provider';
 
@@ -94,30 +95,36 @@ export default {
       throw new Error('User is not logged in.');
     }
 
+    // in case or localhost or unofficial sites (feature branch) we'll use the main tenant
+    const account = accounts.filter((a) => a.tenantId === authority)[0] || accounts[0];
+
+    applicationInsights.trackTrace('account', { account }, 'AuthenticationProvider', 'acquireToken');
+
+    const request = {
+      account,
+      scopes: tokenRequest.scopes,
+      authority: `https://login.microsoftonline.com/${account.tenantId}`,
+    };
+
     try {
-      const account = accounts.filter((a) => a.tenantId === authority)[0]
-        // in case or localhost or unofficial sites (feature branch) we'll use the main tenant
-        || accounts[0];
-
-      applicationInsights.trackTrace('account', { account }, 'AuthenticationProvider', 'acquireToken');
-
-      const tokenResponse = await msalInstance.acquireTokenSilent({
-        account,
-        scopes: tokenRequest.scopes,
-        authority: `https://login.microsoftonline.com/${account.tenantId}`,
-      });
+      const tokenResponse = await msalInstance.acquireTokenSilent(request);
 
       applicationInsights.setBasicContext({ tenantId: account.tenantId });
       applicationInsights.trackTrace('tokenResponse', { tokenResponse }, 'AuthenticationProvider', 'acquireToken');
 
       return tokenResponse;
     } catch (e) {
-      // Redirect the application to the Microsoft login page if the 'login_required' error is thrown.
       // This error is thrown in cases where the refresh token has expired.
       // We may need to add other error types to this list in the future. Otherwise, all errors go to the LoginError.vue page
 
       applicationInsights.trackTrace('acquireToken - catch error', { error: e, errorCode: e.errorCode }, 'AuthenticationProvider', 'acquireToken');
 
+      if (e instanceof InteractionRequiredAuthError) {
+        // fallback to interaction when silent call fails
+        return msalInstance.acquireTokenRedirect(request);
+      }
+
+      // Redirect the application to the Microsoft login page if the 'login_required' error is thrown.
       if (e.errorCode === 'login_required') {
         this.signIn();
       }

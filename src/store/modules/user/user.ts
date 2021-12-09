@@ -2,6 +2,7 @@ import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import { AuthenticationResult } from '@azure/msal-browser';
 import { localStorageKeys } from '@/constants/localStorage';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import {
@@ -87,7 +88,7 @@ const actions = {
   },
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
-    const accessTokenResponse = await authenticationProvider.acquireToken();
+    const accessTokenResponse = await authenticationProvider.acquireToken() as AuthenticationResult;
 
     if (accessTokenResponse?.accessToken) {
       localStorage.setItem(localStorageKeys.accessToken.name, accessTokenResponse.accessToken);

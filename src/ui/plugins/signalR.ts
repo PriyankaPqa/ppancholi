@@ -7,6 +7,7 @@ import _orderBy from "lodash/orderBy";
 import { i18n } from "@/ui/plugins/i18n";
 import { IStorage } from '@/store/storage';
 import { IEntity } from '@/entities/base';
+import {AuthenticationResult} from "@azure/msal-browser";
 
 
 export class SignalRConnection {
@@ -26,8 +27,8 @@ export class SignalRConnection {
         // .configureLogging(LogLevel.Debug)
         .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
           accessTokenFactory: async () => {
-            const tokenResponse = await AuthenticationProvider.acquireToken();
-            return tokenResponse?.accessToken;
+            const tokenResponse = await AuthenticationProvider.acquireToken() as AuthenticationResult
+              return tokenResponse?.accessToken;
           },
         })
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
@@ -94,12 +95,12 @@ export class SignalRConnection {
     this.listenForChanges('household', 'HouseholdMetadata', this.storage.household.mutations.setMetadataFromOutsideNotification);
     this.listenForChanges('household', 'Person', this.noAction);
     this.listenForChanges('household', 'PersonMetadata', this.noAction);
-  }  
+  }
 
   private listenForProgramModuleChanges() {
     this.listenForChanges('event', 'Program', this.storage.program.mutations.setEntityFromOutsideNotification);
     this.listenForChanges('event', 'ProgramMetadata', this.storage.program.mutations.setMetadataFromOutsideNotification);
-  }  
+  }
 
   private listenForUserAccountModuleChanges() {
     this.listenForChanges('userAccount', 'UserAccount', this.storage.userAccount.mutations.setEntityFromOutsideNotification);
@@ -126,7 +127,7 @@ export class SignalRConnection {
     this.listenForChanges('caseFile', 'CaseFileMetadata', this.storage.caseFile.mutations.setMetadataFromOutsideNotification);
     this.listenForChanges('caseFile', 'CaseFileActivity', this.noAction);
   }
-  
+
   private listenForCaseNoteModuleChanges() {
     this.listenForChanges('caseFile', 'CaseNote', this.storage.caseNote.mutations.setEntityFromOutsideNotification);
     this.listenForChanges('caseFile', 'CaseNoteMetadata', this.storage.caseNote.mutations.setMetadataFromOutsideNotification);

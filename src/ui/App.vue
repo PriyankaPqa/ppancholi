@@ -41,6 +41,7 @@ import Vue from 'vue';
 import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@crctech/component-library';
 import sanitizeHtml from 'sanitize-html';
 import { localStorageKeys } from '@/constants/localStorage';
+import prepareSignalR from '@/ui/plugins/signalR';
 
 export default {
   name: 'App',
@@ -71,6 +72,7 @@ export default {
       dialogMaxWidth: 500,
       dialogMinHeight: 'auto',
       submitActionLabel: this.$t('common.buttons.ok'),
+      signalRDelay: 10000, // 10sec
     };
   },
 
@@ -118,6 +120,10 @@ export default {
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VUE_APP_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VUE_APP_API_BASE_URL);
+
+    setTimeout(() => {
+      prepareSignalR(this.$storage);
+    }, this.signalRDelay);
   },
 };
 </script>
