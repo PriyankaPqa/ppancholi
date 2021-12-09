@@ -21,7 +21,10 @@
           @back="backToHouseholdResults()">
           <template slot="default">
             <v-row justify="center" class="mt-12 full-height" no-gutters>
-              <v-col cols="12" xl="10" lg="10" md="11" sm="12" xs="12">
+              <v-col v-if="currentTab.componentName === 'isRegistered'" cols="12">
+                <component :is="currentTab.componentName" />
+              </v-col>
+              <v-col v-else cols="12" xl="10" lg="10" md="11" sm="12" xs="12">
                 <component :is="currentTab.componentName" />
               </v-col>
             </v-row>

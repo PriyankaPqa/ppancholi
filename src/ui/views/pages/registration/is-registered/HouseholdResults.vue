@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-col cols="12">
-      <div class="rc-heading-5 mb-8">
+      <div class="rc-heading-5 mb-2">
         <template v-if="items.length > 0">
           {{ $t('registration.isRegistered.search_result', { length: items.length }) }}
         </template>
@@ -12,7 +12,7 @@
     </v-col>
     <v-col cols="12">
       <rc-data-table
-        class="elevation-0 rc-body14 full-width"
+        class="elevation-0 full-width"
         data-test="resultsTable"
         :headers="headers"
         :items="formattedItems"
@@ -23,11 +23,11 @@
         :hide-footer="true"
         :count="items.length">
         <template #item.name="{ item: household }">
-          <div>
+          <div class="no-wrap">
             <v-icon data-test="iconType" small class="icon success--text mr-2">
               mdi-account-box
             </v-icon>
-            <span data-test="name" class="fw-bold">
+            <span data-test="name" class="fw-bold no-wrap">
               {{ household.primaryBeneficiary.firstName }} {{ household.primaryBeneficiary.lastName }}
             </span>
           </div>
@@ -35,13 +35,13 @@
             <v-icon data-test="iconType" small color="grey" class="mr-2">
               mdi-account-supervisor
             </v-icon>
-            <span :data-test="`name__houseHoldMember_${i}`" class="fw-bold">
+            <span :data-test="`name__houseHoldMember_${i}`" class="fw-bold ">
               {{ member.firstName }}  {{ member.lastName }}
             </span>
           </div>
         </template>
         <template #item.emailAddress="{ item: household }">
-          <div>
+          <div class="no-wrap ">
             <span data-test="emailAddress">
               {{ household.primaryBeneficiary.email || '-' }}
             </span>
@@ -52,7 +52,7 @@
         </template>
         <template #item.phone="{ item: household }">
           <div>
-            <span data-test="phoneNumber">
+            <span data-test="phoneNumber" class=" no-wrap">
               {{ getPhone(household) }}
             </span>
             <div v-for="(member) in household.additionalMembers" :key="member.id">
@@ -62,7 +62,7 @@
         </template>
         <template #item.birthDate="{ item: household }">
           <div>
-            <span data-test="birthDate">
+            <span data-test="birthDate" class=" no-wrap">
               {{ moment(household.primaryBeneficiary.dateOfBirth).utc().format('ll') }}
             </span>
           </div>
@@ -168,35 +168,37 @@ export default mixins(household, householdResults).extend({
           text: this.$t('registration.isRegistered.table.name'),
           value: 'name',
           sortable: false,
+          width: '30%',
         },
         {
           text: this.$t('registration.isRegistered.table.email'),
           value: 'emailAddress',
           sortable: false,
+          width: '20%',
         },
         {
           text: this.$t('registration.isRegistered.table.phone'),
           value: 'phone',
           sortable: false,
-          width: '180px',
+          width: '150px',
         },
         {
           text: this.$t('registration.isRegistered.table.birthDate'),
           value: 'birthDate',
           sortable: false,
-          width: '150px',
+          width: '130px',
         },
         {
           text: this.$t('registration.isRegistered.table.registrationNumber'),
           value: 'registrationNumber',
           sortable: false,
-          width: '170px',
+          width: '110px',
         },
         {
           text: '',
           value: 'actions',
           sortable: false,
-          width: '110px',
+          width: '100px',
         },
       ];
 
@@ -262,5 +264,8 @@ export default mixins(household, householdResults).extend({
   display:flex;
   margin-left: 16px;
   margin-top: 20px;
+}
+.no-wrap{
+      white-space: nowrap;
 }
 </style>
