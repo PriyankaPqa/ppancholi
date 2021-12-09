@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
-  productionSourceMap: false, // Remove dev tools mapping
+  productionSourceMap: true, // Remove dev tools mapping
   pluginOptions: {
     webpackBundleAnalyzer: {
       openAnalyzer: true, // Open the tab with bundle analyzer
