@@ -29,6 +29,7 @@
       <rc-dialog
         v-if="isEditing"
         :title="$t('system_management.branding.logo.upload.title')"
+        :cancel-action-label="$t('common.buttons.cancel')"
         :submit-action-label="$t('system_management.branding.logo.upload')"
         :submit-button-disabled="!isDirty"
         :show.sync="isEditing"
