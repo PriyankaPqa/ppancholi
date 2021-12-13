@@ -4,7 +4,7 @@ import { Toasted } from 'vue-toasted';
 import { TranslateResult } from 'vue-i18n';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { IMultilingual } from '@/types';
-import { SignalRConnection } from '@/ui/plugins/signalR';
+import { SignalR } from '@/ui/plugins/signalR';
 
 interface IFormatCurrency {
   (value: number): string;
@@ -20,7 +20,7 @@ declare module 'vue/types/vue' {
     $route: Route;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     $store: Store<any>;
-    $signalR: SignalRConnection;
+    $signalR: SignalR;
     $toasted: Toasted;
     $formatCurrency: IFormatCurrency;
     $m: IMFunction;

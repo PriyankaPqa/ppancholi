@@ -6,6 +6,7 @@ import store from '@/store/store';
 import { USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, BRANDING_ENTITIES } from '@/constants/vuex-modules';
 import Routes from '../../constants/routes';
 import { Features } from '@/entities/feature';
+import { SignalR } from '../plugins/signalR';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');
@@ -126,6 +127,7 @@ export const routes: Array<RouteConfig> = [
             store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'en'),
             store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'fr'),
           ]);
+          await SignalR.instance.buildHubConnection();
         }
       }
       store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: false });

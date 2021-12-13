@@ -1,25 +1,40 @@
-/* eslint-disable */
-import AuthenticationProvider from '@/auth/AuthenticationProvider';
+/* eslint-disable no-console */
+import _orderBy from 'lodash/orderBy';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
-import Vue from "vue";
-import { IMassActionEntityData, MassActionRunStatus } from "@/entities/mass-action";
-import _orderBy from "lodash/orderBy";
-import { i18n } from "@/ui/plugins/i18n";
+import Vue from 'vue';
+import { AuthenticationResult } from '@azure/msal-browser';
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import { IMassActionEntityData, MassActionRunStatus } from '@/entities/mass-action';
+import { i18n } from '@/ui/plugins/i18n';
 import { IStorage } from '@/store/storage';
 import { IEntity } from '@/entities/base';
-import {AuthenticationResult} from "@azure/msal-browser";
 
+export class SignalR {
+  private static _instance: SignalR;
 
-export class SignalRConnection {
   public connection: HubConnection;
+
   public logMessages = [] as { messageName: string, count: number, lastMessage: string, lastTime: Date }[];
 
-  constructor(private storage: IStorage) {
-
-    this.buildHubConnection();
+  private constructor(private storage: IStorage) {
   }
 
-  private async buildHubConnection() {
+  public static Initialize(storage: IStorage) {
+    SignalR._instance = new SignalR(storage);
+    Vue.mixin({
+      beforeCreate() {
+        this.$signalR = SignalR.instance;
+      },
+    });
+
+    return SignalR.instance;
+  }
+
+  static get instance() {
+    return SignalR._instance;
+  }
+
+  public async buildHubConnection() {
     const isSignedIn = await AuthenticationProvider.isSignedIn();
 
     if (isSignedIn) {
@@ -27,8 +42,8 @@ export class SignalRConnection {
         // .configureLogging(LogLevel.Debug)
         .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
           accessTokenFactory: async () => {
-            const tokenResponse = await AuthenticationProvider.acquireToken() as AuthenticationResult
-              return tokenResponse?.accessToken;
+            const tokenResponse = await AuthenticationProvider.acquireToken() as AuthenticationResult;
+            return tokenResponse?.accessToken;
           },
         })
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
@@ -81,119 +96,246 @@ export class SignalRConnection {
       const initiatedByCurrentUser = currentUserId === lastRun.lastUpdatedBy || currentUserId === lastRun.createdBy;
 
       if (lastRun.runStatus === MassActionRunStatus.PreProcessed && initiatedByCurrentUser) {
-        Vue.toasted.success(i18n.t('massAction.notification.preprocessed',  { x: entity.name }) as string)
+        Vue.toasted.success(i18n.t('massAction.notification.preprocessed', { x: entity.name }) as string);
       }
 
       if (lastRun.runStatus === MassActionRunStatus.Processed && initiatedByCurrentUser) {
-        Vue.toasted.success(i18n.t('massAction.notification.processed',  { x: entity.name }) as string)
+        Vue.toasted.success(i18n.t('massAction.notification.processed', { x: entity.name }) as string);
       }
     });
   }
 
   private listenForHouseholdModuleChanges() {
-    this.listenForChanges('household', 'Household', this.storage.household.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('household', 'HouseholdMetadata', this.storage.household.mutations.setMetadataFromOutsideNotification);
-    this.listenForChanges('household', 'Person', this.noAction);
-    this.listenForChanges('household', 'PersonMetadata', this.noAction);
+    this.listenForChanges({
+      domain: 'household',
+      entityName: 'Household',
+      action: this.storage.household.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'household',
+      entityName: 'HouseholdMetadata',
+      action: this.storage.household.mutations.setMetadataFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'household',
+      entityName: 'Person',
+      action: this.noAction,
+    });
+
+    this.listenForChanges({
+      domain: 'household',
+      entityName: 'PersonMetadata',
+      action: this.noAction,
+    });
   }
 
   private listenForProgramModuleChanges() {
-    this.listenForChanges('event', 'Program', this.storage.program.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('event', 'ProgramMetadata', this.storage.program.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'event',
+      entityName: 'Program',
+      action: this.storage.program.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'event',
+      entityName: 'ProgramMetadata',
+      action: this.storage.program.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForUserAccountModuleChanges() {
-    this.listenForChanges('userAccount', 'UserAccount', this.storage.userAccount.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('userAccount', 'UserAccountMetadata', this.storage.userAccount.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'userAccount',
+      entityName: 'UserAccount',
+      action: this.storage.userAccount.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'userAccount',
+      entityName: 'UserAccountMetadata',
+      action: this.storage.userAccount.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForEventModuleChanges() {
-    this.listenForChanges('event', 'Event', this.storage.event.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('event', 'EventMetadata', this.storage.event.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'event',
+      entityName: 'Event',
+      action: this.storage.event.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'event',
+      entityName: 'EventMetadata',
+      action: this.storage.event.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForTeamModuleChanges() {
-    this.listenForChanges('team', 'Team', this.storage.team.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('team', 'TeamMetadata', this.storage.team.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'team',
+      entityName: 'Team',
+      action: this.storage.team.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'team',
+      entityName: 'TeamMetadata',
+      action: this.storage.team.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForMassActionsModuleChanges() {
-    this.listenForChanges('caseFile', 'MassAction', this.storage.massAction.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('caseFile', 'MassActionMetadata', this.storage.massAction.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'MassAction',
+      action: this.storage.massAction.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'MassActionMetadata',
+      action: this.storage.massAction.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForCaseFileModuleChanges() {
-    this.listenForChanges('caseFile', 'CaseFile', this.storage.caseFile.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('caseFile', 'CaseFileMetadata', this.storage.caseFile.mutations.setMetadataFromOutsideNotification);
-    this.listenForChanges('caseFile', 'CaseFileActivity', this.noAction);
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'CaseFile',
+      action: this.storage.caseFile.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'CaseFileMetadata',
+      action: this.storage.caseFile.mutations.setMetadataFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'CaseFileActivity',
+      action: this.noAction,
+    });
   }
 
   private listenForCaseNoteModuleChanges() {
-    this.listenForChanges('caseFile', 'CaseNote', this.storage.caseNote.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('caseFile', 'CaseNoteMetadata', this.storage.caseNote.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'CaseNote',
+      action: this.storage.caseNote.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'CaseNoteMetadata',
+      action: this.storage.caseNote.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForCaseReferralModuleChanges() {
-    this.listenForChanges('caseFile', 'Referral', this.storage.caseFileReferral.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('caseFile', 'ReferralMetadata', this.storage.caseFileReferral.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'Referral',
+      action: this.storage.caseFileReferral.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'ReferralMetadata',
+      action: this.storage.caseFileReferral.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForFinancialAssistancePaymentModuleChanges() {
-    this.listenForChanges('finance', 'FinancialAssistancePayment', this.storage.financialAssistancePayment.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('finance', 'FinancialAssistancePaymentMetadata', this.storage.financialAssistancePayment.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'finance',
+      entityName: 'FinancialAssistancePayment',
+      action: this.storage.financialAssistancePayment.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'finance',
+      entityName: 'FinancialAssistancePaymentMetadata',
+      action: this.storage.financialAssistancePayment.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForCaseDocumentModuleChanges() {
-    this.listenForChanges('caseFile', 'Document', this.storage.caseFileDocument.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('caseFile', 'DocumentMetadata', this.storage.caseFileDocument.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'Document',
+      action: this.storage.caseFileDocument.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'caseFile',
+      entityName: 'DocumentMetadata',
+      action: this.storage.caseFileDocument.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForFinancialAssistanceModuleChanges() {
-    this.listenForChanges('finance', 'FinancialAssistanceTable', this.storage.financialAssistance.mutations.setEntityFromOutsideNotification);
-    this.listenForChanges('finance', 'FinancialAssistanceTableMetadata', this.storage.financialAssistance.mutations.setMetadataFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'finance',
+      entityName: 'FinancialAssistanceTable',
+      action: this.storage.financialAssistance.mutations.setEntityFromOutsideNotification,
+    });
+
+    this.listenForChanges({
+      domain: 'finance',
+      entityName: 'FinancialAssistanceTableMetadata',
+      action: this.storage.financialAssistance.mutations.setMetadataFromOutsideNotification,
+    });
   }
 
   private listenForFinancialAssistanceCategoryModuleChanges() {
-    this.listenForChanges('finance', 'FinancialAssistanceCategories', this.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification);
+    this.listenForChanges({
+      domain: 'finance',
+      entityName: 'FinancialAssistanceCategories',
+      action: this.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification,
+    });
   }
 
-  private listenForChanges<T extends IEntity>(domain: string, entityName: string, action?: (entity: T) => void) {
+  private listenForChanges<T extends IEntity>(
+    { domain, entityName, action }: {domain: string, entityName: string, action?: (entity: T)=> void},
+  ) {
     this.connection.on(`${domain}.${entityName}Updated`, (entity) => {
-      if (action) action(entity);
+      if (action) {
+        action(entity);
+      }
       this.log(`${domain}.${entityName}Updated`, entity);
     });
 
     this.connection.on(`${domain}.${entityName}Created`, (entity) => {
-      if (action) action(entity);
+      if (action) {
+        action(entity);
+      }
       this.log(`${domain}.${entityName}Created`, entity);
     });
   }
 
+  // eslint-disable-next-line
   private log(name: string, message: any) {
     console.log(name, message.id || message);
     let entry = this.logMessages.find((m) => m.messageName === name);
     if (!entry) {
-      entry = { messageName: name, count: 1, lastMessage: message, lastTime: new Date() };
+      entry = {
+        messageName: name, count: 1, lastMessage: message, lastTime: new Date(),
+      };
       this.logMessages.push(entry);
     } else {
-      entry.count = entry.count + 1;
+      entry.count += 1;
       entry.lastMessage = message;
       entry.lastTime = new Date();
     }
   }
 
   /// used when logging only - can be omitted but it's easier to read...
+  // eslint-disable-next-line
   private noAction() { }
 }
 
-export default (storage: IStorage): SignalRConnection => {
-  const connection = new SignalRConnection(storage);
-
-  Vue.mixin({
-    beforeCreate() {
-      this.$signalR = connection;
-    },
-  });
-
-  return connection;
-};
+export default SignalR;

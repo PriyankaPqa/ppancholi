@@ -23,6 +23,7 @@ import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
 import '@/ui/plugins/vee-validate';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 
+import { SignalR } from '@/ui/plugins/signalR';
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
 
@@ -33,6 +34,7 @@ import App from './ui/App.vue';
 
 prepareServices(store);
 const storage = prepareStorage(store);
+SignalR.Initialize(storage);
 
 applicationInsights.initialize({
   connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,
