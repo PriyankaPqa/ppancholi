@@ -87,7 +87,11 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
     if (this.isBeingCreated || this.isBeingEdited) {
-      const leavingConfirmed = await this.$confirm(this.titleLeave, this.messagesLeave);
+      const leavingConfirmed = await this.$confirm({
+        title: this.titleLeave,
+        messages: this.messagesLeave,
+      });
+
       if (leavingConfirmed) {
         next();
       }

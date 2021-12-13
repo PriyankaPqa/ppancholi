@@ -84,6 +84,7 @@ const mocks = {
     trackException: jest.fn(),
     trackTrace: jest.fn(),
   },
+  $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
 };
 
 const stubs = {

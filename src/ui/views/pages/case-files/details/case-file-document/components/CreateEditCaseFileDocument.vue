@@ -131,8 +131,12 @@ export default Vue.extend({
     },
 
     async tryUpload(): Promise<ICaseFileDocumentEntity> {
-      if (await this.$confirm(this.$t('caseFile.document.confirm.preprocessing.title'),
-        this.$t('caseFile.document.confirm.preprocessing.message'))) {
+      const userChoice = await this.$confirm({
+        title: this.$t('caseFile.document.confirm.preprocessing.title'),
+        messages: this.$t('caseFile.document.confirm.preprocessing.message'),
+      });
+
+      if (userChoice) {
         return this.uploadNewDocument();
       }
       return null;

@@ -226,10 +226,13 @@ export default Vue.extend({
     async cancel() {
       let leavingConfirmed = true;
       if (this.isDirty) {
-        leavingConfirmed = await this.$confirm(this.$t('confirmLeaveDialog.title'), [
-          this.$t('system_management.userAccounts.tenantSettings.warning.message.leave'),
-          this.$t('confirmLeaveDialog.message_2'),
-        ]);
+        leavingConfirmed = await this.$confirm({
+          title: this.$t('confirmLeaveDialog.title'),
+          messages: [
+            this.$t('system_management.userAccounts.tenantSettings.warning.message.leave'),
+            this.$t('confirmLeaveDialog.message_2'),
+          ],
+        });
       }
       if (leavingConfirmed) {
         this.exitEditMode();

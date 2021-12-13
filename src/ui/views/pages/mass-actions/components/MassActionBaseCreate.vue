@@ -196,10 +196,10 @@ export default mixins(fileUpload).extend({
     async next() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
-        const userChoice = await this.$confirm(
-          this.$t('massAction.confirm.preprocessing.title'),
-          this.$t('massAction.confirm.preprocessing.message'),
-        );
+        const userChoice = await this.$confirm({
+          title: this.$t('massAction.confirm.preprocessing.title'),
+          messages: this.$t('massAction.confirm.preprocessing.message'),
+        });
 
         if (userChoice) {
           if (this.mode === MassActionMode.File) {

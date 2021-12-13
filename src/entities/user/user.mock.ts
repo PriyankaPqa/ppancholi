@@ -8,6 +8,7 @@ export const mockUserData = (force?: Partial<IUserData>): IUserData => ({
   family_name: 'White',
   given_name: 'John',
   roles: ['level1'],
+  homeAccountId: 'homeAccountId',
   ...force,
 });
 
@@ -17,6 +18,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'White',
   given_name: 'John',
   roles: ['level1'],
+  homeAccountId: 'homeAccountId',
 }, {
   oid: '2',
   email: undefined,
@@ -24,6 +26,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Black',
   given_name: 'Peter',
   roles: ['level2'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '3',
@@ -31,6 +34,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Pink',
   given_name: 'Alan',
   roles: ['level3'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '4',
@@ -38,6 +42,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Hilary',
   given_name: 'Purple',
   roles: ['level4'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '5',
@@ -45,6 +50,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Tony',
   given_name: 'Brown',
   roles: ['level5'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '6',
@@ -52,6 +58,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Jack',
   given_name: 'Orange',
   roles: ['level6'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '7',
@@ -59,6 +66,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Joe',
   given_name: 'Pink',
   roles: ['contributorIM'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '8',
@@ -66,6 +74,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Joe',
   given_name: 'Joe',
   roles: ['contributorFinance'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '9',
@@ -73,6 +82,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Thomas',
   given_name: 'William',
   roles: ['contributor3'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '10',
@@ -80,6 +90,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'Lily',
   given_name: 'Park',
   roles: ['readonly'],
+  homeAccountId: 'homeAccountId',
 },
 {
   oid: '11',
@@ -87,6 +98,7 @@ export const mockUsersData = (): IUserData[] => [{
   family_name: 'First',
   given_name: 'Albert',
   roles: undefined,
+  homeAccountId: 'homeAccountId',
 },
 ];
 

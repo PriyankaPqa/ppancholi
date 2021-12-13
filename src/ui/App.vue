@@ -13,12 +13,17 @@
     </div>
     <rc-router-view-transition v-else />
 
+    <activity-watcher v-if="!isLoading" />
+
     <!-- eslint-disable -->
     <rc-confirmation-dialog
       ref="defaultConfirm"
       :show.sync="showConfirm"
       :title="dialogTitle"
       :messages="dialogMessages"
+      :show-cancel="showCancelButton"
+      :show-close="false"
+      :cancel-button-key="cancelActionLabel"
       :submit-button-key="submitActionLabel">
       <template>
         <div v-html="dialogHtml" />
@@ -41,12 +46,14 @@ import Vue from 'vue';
 import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@crctech/component-library';
 import sanitizeHtml from 'sanitize-html';
 import { localStorageKeys } from '@/constants/localStorage';
+import ActivityWatcher from '@/ui/ActivityWatcher.vue';
 import prepareSignalR from '@/ui/plugins/signalR';
 
 export default {
   name: 'App',
 
   components: {
+    ActivityWatcher,
     RcRouterViewTransition,
     RcConfirmationDialog,
     RcErrorDialog,
@@ -72,6 +79,8 @@ export default {
       dialogMaxWidth: 500,
       dialogMinHeight: 'auto',
       submitActionLabel: this.$t('common.buttons.ok'),
+      cancelActionLabel: this.$t('common.buttons.no'),
+      showCancelButton: true,
       signalRDelay: 10000, // 10sec
     };
   },
@@ -83,10 +92,14 @@ export default {
   },
 
   async created() {
-    Vue.prototype.$confirm = async (title, messages, htmlContent = null, submitActionLabel = null) => {
+    Vue.prototype.$confirm = async ({
+      title, messages, htmlContent = null, submitActionLabel = null, cancelActionLabel = null, showCancelButton = true,
+    }) => {
       this.dialogTitle = title;
       this.dialogMessages = messages;
       this.submitActionLabel = submitActionLabel || this.$t('common.buttons.yes');
+      this.cancelActionLabel = cancelActionLabel || this.$t('common.buttons.no');
+      this.showCancelButton = showCancelButton;
       this.dialogHtml = sanitizeHtml(htmlContent, { allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, '*': ['class'] } });
       this.showConfirm = true;
 

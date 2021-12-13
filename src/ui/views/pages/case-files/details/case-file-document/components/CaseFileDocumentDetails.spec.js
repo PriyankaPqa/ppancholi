@@ -45,7 +45,7 @@ describe('CaseFileDocumentDetails', () => {
         await mountWrapper(false, null, 'contributor3');
         expect(wrapper.vm.canEdit).toBeFalsy();
         await mountWrapper(false, 1, null,
-          { 
+          {
             computed: {
               readonly() {
                 return true;
@@ -272,7 +272,9 @@ describe('CaseFileDocumentDetails', () => {
       it('calls deactivate after confirmation and then goes to documents', async () => {
         mountWrapper();
         await wrapper.vm.deleteDocument();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title:'caseFile.document.confirm.delete.title',
+          messages: 'caseFile.document.confirm.delete.message'});
         expect(storage.caseFileDocument.actions.deactivate)
           .toHaveBeenCalledWith({ caseFileId: 'mock-caseFile-id', id: 'mock-document-id' });
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -283,7 +285,12 @@ describe('CaseFileDocumentDetails', () => {
         mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.deleteDocument();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith(
+          {
+            title:'caseFile.document.confirm.delete.title',
+            messages: 'caseFile.document.confirm.delete.message'
+          }
+        );
         expect(storage.caseFileDocument.actions.deactivate)
           .toHaveBeenCalledTimes(0);
       });

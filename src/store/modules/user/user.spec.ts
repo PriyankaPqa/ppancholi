@@ -35,6 +35,7 @@ describe('>>> Users Module', () => {
         family_name: mockUser.family_name,
         given_name: mockUser.given_name,
         roles: mockUser.roles,
+        homeAccountId: mockUser.homeAccountId,
       }));
     });
 
@@ -113,6 +114,7 @@ describe('>>> Users Module', () => {
           family_name: '',
           given_name: '',
           roles: [],
+          homeAccountId: '',
         }));
 
         store.commit('user/setUser', mockUsersData()[0]);
@@ -125,6 +127,7 @@ describe('>>> Users Module', () => {
           family_name: mockUser.family_name,
           given_name: mockUser.given_name,
           roles: mockUser.roles,
+          homeAccountId: mockUser.homeAccountId,
         }));
       });
 
@@ -137,6 +140,7 @@ describe('>>> Users Module', () => {
           family_name: '',
           given_name: '',
           roles: [],
+          homeAccountId: '',
         }));
 
         store.commit('user/setUser', mockUsersData()[1]);
@@ -149,6 +153,7 @@ describe('>>> Users Module', () => {
           family_name: mockUser.family_name,
           given_name: mockUser.given_name,
           roles: mockUser.roles,
+          homeAccountId: mockUser.homeAccountId,
         }));
       });
 
@@ -203,6 +208,7 @@ describe('>>> Users Module', () => {
           family_name: authenticationData.account.idTokenClaims.family_name as string,
           given_name: authenticationData.account.idTokenClaims.given_name as string,
           roles: ['level3'], // level comes from decoded access token
+          homeAccountId: authenticationData.account.homeAccountId,
         }));
       });
     });

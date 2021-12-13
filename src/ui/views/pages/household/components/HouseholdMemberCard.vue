@@ -340,8 +340,13 @@ export default Vue.extend({
     },
 
     async makePrimary() {
-      if (await this.$confirm(this.$t('household.profile.member.make_primary.confirm_title'), null,
-        this.$t('household.profile.member.make_primary.confirm_message', { name: this.displayName }).toString())) {
+      const userChoice = await this.$confirm({
+        title: this.$t('household.profile.member.make_primary.confirm_title'),
+        messages: null,
+        htmlContent: this.$t('household.profile.member.make_primary.confirm_message', { name: this.displayName }).toString(),
+      });
+
+      if (userChoice) {
         this.showPrimaryMemberDialog = true;
       }
     },
@@ -355,8 +360,11 @@ export default Vue.extend({
     },
 
     async deleteAdditionalMember() {
-      const doDelete = await this.$confirm(this.$t('common.delete'),
-        this.$t('household.profile.member.delete.message'));
+      const doDelete = await this.$confirm({
+        title: this.$t('common.delete'),
+        messages: this.$t('household.profile.member.delete.message'),
+      });
+
       if (doDelete) {
         const res = await this.$storage.registration.actions.deleteAdditionalMember({
           householdId: this.$storage.registration.getters.householdCreate().id,

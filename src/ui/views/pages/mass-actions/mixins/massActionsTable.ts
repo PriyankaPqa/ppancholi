@@ -64,7 +64,10 @@ export default Vue.extend({
     },
 
     async onDelete(massAction: IMassActionCombined) {
-      const userChoice = await this.$confirm(this.$t('massAction.confirm.delete.title'), this.$t('massAction.confirm.delete.message'));
+      const userChoice = await this.$confirm({
+        title: this.$t('massAction.confirm.delete.title'),
+        messages: this.$t('massAction.confirm.delete.message'),
+      });
       if (userChoice) {
         const res = await this.$storage.massAction.actions.deactivate(massAction.entity.id);
         if (res) {

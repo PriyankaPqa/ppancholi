@@ -433,8 +433,10 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         const mock = mockCombinedCaseFinancialAssistance();
         await mountWrapper();
         await wrapper.vm.deletePayment(mock);
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.financialAssistance.confirm.delete.title',
-          'caseFile.financialAssistance.confirm.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.financialAssistance.confirm.delete.title',
+          messages: 'caseFile.financialAssistance.confirm.delete.message',
+        });
         expect(storage.financialAssistancePayment.actions.deactivate)
           .toHaveBeenCalledWith(mock.entity.id);
       });
@@ -443,8 +445,10 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.deletePayment(mock);
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.financialAssistance.confirm.delete.title',
-          'caseFile.financialAssistance.confirm.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.financialAssistance.confirm.delete.title',
+          messages: 'caseFile.financialAssistance.confirm.delete.message',
+        });
         expect(storage.financialAssistancePayment.actions.deactivate)
           .toHaveBeenCalledTimes(0);
       });

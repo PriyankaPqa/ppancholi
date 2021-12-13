@@ -1,4 +1,5 @@
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import massActionDetails from './massActionDetails';
 import {
@@ -13,6 +14,8 @@ const Component = {
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
+
+jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
 
 describe('massActions', () => {
   describe('Computed', () => {

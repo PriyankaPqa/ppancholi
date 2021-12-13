@@ -2,8 +2,10 @@
 import * as msal from '@azure/msal-browser';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { InteractionRequiredAuthError } from '@azure/msal-browser';
+import Vue from 'vue';
 import { loginRequest, msalConfig, tokenRequest } from '@/auth/constants/azureAD';
 import { provider } from '@/services/provider';
+import routes from '@/constants/routes';
 
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 const services = provider();
@@ -42,9 +44,22 @@ export default {
   /**
    * Signs the user out and redirects them to the logout URL
    */
-  async signOut() {
-    console.log('signout');
-    await msalInstance.logoutRedirect();
+  async signOut(homeAccountId?: string) {
+    let logoutRequest = {};
+
+    if (homeAccountId) {
+      const currentAccount = msalInstance.getAccountByHomeId(homeAccountId);
+      logoutRequest = {
+        account: currentAccount,
+      };
+    }
+    // Remove local storage
+    localStorage.clear();
+
+    // Remove all cookies
+    Vue.$cookies.keys().forEach((cookie) => Vue.$cookies.remove(cookie));
+
+    await msalInstance.logoutRedirect(logoutRequest);
   },
 
   /**
@@ -52,6 +67,10 @@ export default {
    * accounts are returned by getAllAccounts
    */
   async isSignedIn() {
+    if (window.location.href.endsWith(routes.loginError.path)) {
+      return false;
+    }
+
     // Must wait for handleRedirectPromise to be resolved before we can check for accounts
     await handleRedirectPromise;
 

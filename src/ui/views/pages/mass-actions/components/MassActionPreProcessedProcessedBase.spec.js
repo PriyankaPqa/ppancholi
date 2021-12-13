@@ -135,7 +135,12 @@ describe('MassActionPreProcessedProcessedBase.vue', () => {
     describe('onProcess', () => {
       it('should display confirmation dialog', async () => {
         await wrapper.vm.onProcess();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('massAction.confirm.processing.title', 'massAction.confirm.processing.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith(
+          {
+            title: 'massAction.confirm.processing.title',
+            messages: 'massAction.confirm.processing.message',
+          },
+        );
       });
 
       it('should call process actions with proper params', async () => {

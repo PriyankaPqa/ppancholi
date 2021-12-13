@@ -720,14 +720,20 @@ describe('CaseFileDocument.vue', () => {
       it('calls deactivate after confirmation', async () => {
         mountWrapper();
         await wrapper.vm.deleteDocument(mockDocumentMapped);
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.document.confirm.delete.title',
+          messages: 'caseFile.document.confirm.delete.message',
+        });
         expect(storage.caseFileDocument.actions.deactivate).toHaveBeenCalledWith({ id: mockDocumentMapped.id, caseFileId: wrapper.vm.caseFileId });
       });
       it('doesnt call deactivate if no confirmation', async () => {
         mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.deleteDocument(mockDocumentMapped);
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.delete.title', 'caseFile.document.confirm.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.document.confirm.delete.title',
+          messages: 'caseFile.document.confirm.delete.message',
+        });
         expect(storage.caseFileDocument.actions.deactivate).toHaveBeenCalledTimes(0);
       });
     });

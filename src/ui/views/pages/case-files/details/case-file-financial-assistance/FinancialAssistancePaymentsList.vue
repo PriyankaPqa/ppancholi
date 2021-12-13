@@ -432,8 +432,11 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     async deletePayment(item: IFinancialAssistancePaymentCombined) {
-      const doDelete = await this.$confirm(this.$t('caseFile.financialAssistance.confirm.delete.title'),
-        this.$t('caseFile.financialAssistance.confirm.delete.message'));
+      const doDelete = await this.$confirm({
+        title: this.$t('caseFile.financialAssistance.confirm.delete.title'),
+        messages: this.$t('caseFile.financialAssistance.confirm.delete.message'),
+      });
+
       if (doDelete) {
         await this.$storage.financialAssistancePayment.actions.deactivate(item.entity.id);
       }

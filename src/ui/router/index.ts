@@ -100,6 +100,11 @@ router.beforeEach(async (to, from, next) => {
   localStorage.setItem('fromOutside', (from.name === null).toString());
 
   try {
+    if (to.name === routeConstants.loginError.name) {
+      next();
+      return;
+    }
+
     await authenticationGuard(to);
     const authorized = await authorizationGuard(to);
 

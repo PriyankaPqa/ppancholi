@@ -144,8 +144,10 @@ export default Vue.extend({
     async triggerUpdateSelectedData(table: IFinancialAssistanceTableEntity) {
       let doChange = true;
       if (this.localFinancialAssistance.groups?.length) {
-        doChange = await this.$confirm(this.$t('financialAssistancePayment.confirm.changeTable.title'),
-          this.$t('financialAssistancePayment.confirm.changeTable.message'));
+        doChange = await this.$confirm({
+          title: this.$t('financialAssistancePayment.confirm.changeTable.title'),
+          messages: this.$t('financialAssistancePayment.confirm.changeTable.message'),
+        });
       }
       if (doChange) {
         this.localFinancialAssistance.groups = [];

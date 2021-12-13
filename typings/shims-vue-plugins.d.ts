@@ -27,8 +27,16 @@ declare module 'vue/types/vue' {
     $hasLevel: (p: string) => boolean;
     $appInsights: typeof applicationInsights;
     $hasRole: (p: string) => boolean;
-    $confirm: (title: TranslateResult, messages: TranslateResult | TranslateResult[],
-      htmlContent?: string, submitActionLabel?: TranslateResult,) => Promise<boolean>;
+    $confirm: ({
+      title, messages, htmlContent, submitActionLabel, cancelActionLabel, showCancelButton,
+    }: {
+    title: TranslateResult, messages: TranslateResult | TranslateResult[],
+    htmlContent?: string,
+    submitActionLabel?: TranslateResult,
+    cancelActionLabel?: TranslateResult,
+      showCancelButton?: boolean
+  }) => Promise<boolean>;
+
     $message: ({
       title, message, submitActionLabel, minHeight, maxWidth,
     } :{title: TranslateResult,

@@ -162,8 +162,10 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
       it('calls deactivate after confirmation and then goes to documents', async () => {
         await mountWrapper();
         await wrapper.vm.deletePayment();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.financialAssistance.confirm.delete.title',
-          'caseFile.financialAssistance.confirm.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.financialAssistance.confirm.delete.title',
+          messages: 'caseFile.financialAssistance.confirm.delete.message',
+        });
         expect(storage.financialAssistancePayment.actions.deactivate)
           .toHaveBeenCalledWith(financialAssistance.id);
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -174,8 +176,10 @@ describe('ViewFinancialAssistanceDetails.vue', () => {
         await mountWrapper();
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.deletePayment();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.financialAssistance.confirm.delete.title',
-          'caseFile.financialAssistance.confirm.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.financialAssistance.confirm.delete.title',
+          messages: 'caseFile.financialAssistance.confirm.delete.message',
+        });
         expect(storage.financialAssistancePayment.actions.deactivate)
           .toHaveBeenCalledTimes(0);
       });

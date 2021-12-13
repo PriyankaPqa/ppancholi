@@ -21,6 +21,7 @@ const getDefaultState = (): IState => ({
   given_name: '',
   email: '',
   roles: [],
+  homeAccountId: '',
 });
 
 const moduleState: IState = getDefaultState();
@@ -32,6 +33,7 @@ const getters = {
     given_name: state.given_name,
     email: state.email,
     roles: state.roles,
+    homeAccountId: state.homeAccountId,
   }),
 
   userId: (state: IState) => state.oid,
@@ -66,8 +68,11 @@ const mutations = {
       applicationInsights.setBasicContext({ name: state.email });
       applicationInsights.setBasicContext({ uid: state.oid });
     }
+
     state.family_name = payload.family_name;
     state.given_name = payload.given_name;
+    state.homeAccountId = payload.homeAccountId;
+
     if (state.roles[0] !== payload.roles[0]) {
       state.roles = payload.roles;
       applicationInsights.setBasicContext({ roles: state.roles });
@@ -83,8 +88,9 @@ const mutations = {
 };
 
 const actions = {
-  async signOut(this: Store<IState>) {
-    authenticationProvider.signOut();
+  async signOut(this: Store<IState>, context: ActionContext<IState, IState>) {
+    localStorage.removeItem(localStorageKeys.accessToken.name);
+    await authenticationProvider.signOut(context.state.homeAccountId);
   },
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
@@ -93,7 +99,7 @@ const actions = {
     if (accessTokenResponse?.accessToken) {
       localStorage.setItem(localStorageKeys.accessToken.name, accessTokenResponse.accessToken);
       const { account } = accessTokenResponse;
-      const userData = { ...account.idTokenClaims } as IMSALUserData;
+      const userData = { ...account.idTokenClaims, homeAccountId: account.homeAccountId } as IMSALUserData;
       userData.roles = helpers.decodeJwt(accessTokenResponse.accessToken).roles;
       context.commit('setUser', userData);
     } else {

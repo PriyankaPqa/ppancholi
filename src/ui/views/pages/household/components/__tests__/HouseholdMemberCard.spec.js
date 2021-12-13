@@ -530,7 +530,7 @@ describe('HouseholdMemberCard.vue', () => {
       it('should call confirm with the right parameters', () => {
         doMount(false);
         wrapper.vm.deleteAdditionalMember();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('common.delete', 'household.profile.member.delete.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: 'common.delete', messages: 'household.profile.member.delete.message' });
       });
 
       it('should call deleteAdditionalMember storage action', async () => {

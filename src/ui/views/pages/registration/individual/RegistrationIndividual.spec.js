@@ -268,7 +268,7 @@ describe('Individual.vue', () => {
 
         await wrapper.vm.associateHousehold(household, event);
 
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith(wrapper.vm.titleLeave, wrapper.vm.messagesLeave);
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({ title: wrapper.vm.titleLeave, messages: wrapper.vm.messagesLeave });
       });
       it('should call create case file action if user confirmed', async () => {
         const household = mockHouseholdCreateData();

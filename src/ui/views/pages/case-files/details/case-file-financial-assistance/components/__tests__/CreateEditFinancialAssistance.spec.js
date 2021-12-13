@@ -60,7 +60,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
       },
       ...additionalOverwrites,
     });
-    
+
     await flushPromises();
   };
 
@@ -97,7 +97,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
     });
-    
+
 
     describe('paymentGroupList', () => {
       let element;
@@ -148,7 +148,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
       it('renders when canAddNewLines', async () => {
         await mountWrapper(false, 'edit', 6, null, { computed: { canAddNewLines() { return true; } } });
-        
+
         element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
         expect(element.exists()).toBeTruthy();
         await mountWrapper(false, 'edit', 6, null, { computed: { canAddNewLines() { return false; } } });
@@ -217,9 +217,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
         await mountWrapper(false, 'edit', null, 'contributorFinance');
         expect(wrapper.vm.canAddNewLines).toBeFalsy();
-        
+
         await mountWrapper(false, 'edit', 1, null,
-          { 
+          {
             computed: {
               readonly() {
                 return true;
@@ -614,7 +614,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await wrapper.setData({ selectedTable: { ...table } });
         wrapper.vm.warnIfInvalid();
         expect(wrapper.vm.$message).not.toHaveBeenCalled();
-        
+
         jest.clearAllMocks();
         table.status = Status.Inactive;
         await wrapper.setData({ financialAssistance: { approvalStatus: ApprovalStatus.Approved } });
@@ -647,7 +647,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.editFinancialAssistancePaymentLine().groups);
       });
     });
-    
+
     describe('deletePaymentLine', () => {
       it('should simply remove the line when line that hadnt been saved yet is received', async () => {
         wrapper.vm.financialAssistance = financialAssistance;
@@ -686,14 +686,14 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine().groups);
       });
     });
-    
+
     describe('onSubmitPayment', () => {
       it('calls service if the confirmation dialog returns true', async () => {
         await wrapper.vm.onSubmitPayment({ total: '3.99$' });
         expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance.id);
         expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment()));
       });
-  
+
       it('does not call service if the confirmation dialog returns false', async () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.onSubmitPayment({ total: '3.99$' });
@@ -703,24 +703,16 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('asks confirmation with correct details', async () => {
         await wrapper.vm.onSubmitPayment({ total: '3.99$' });
         const callArguments = wrapper.vm.$confirm.mock.calls[0];
-        
-        expect(callArguments[0]).toEqual('caseFile.financialAssistance.submitAssistance.confirmTitle');
-        expect(callArguments[1]).toEqual('');
-        // check for html but if we change the html layout, really all we want to make sure is data's there
-        expect(callArguments[2].indexOf('caseFile.financialAssistance.submitAssistance.confirmMessage') > -1).toBeTruthy();
-        expect(callArguments[2].indexOf('thl payment') > -1).toBeTruthy();
-        expect(callArguments[2].indexOf('3.99$') > -1).toBeTruthy();
-        // full html - change if required....
-        expect(callArguments[2]).toEqual(`
-        <div class="row col">caseFile.financialAssistance.submitAssistance.confirmMessage</div>
-        <div class="row list-row rc-body14">
-          <div class="col fw-bold">thl payment</div><div class="col-auto">3.99$</div>
-        </div>
-        `);
-        expect(callArguments[3]).toEqual('common.submit');
+
+        expect(callArguments[0]).toEqual({
+          "htmlContent": "\n        <div class=\"row col\">caseFile.financialAssistance.submitAssistance.confirmMessage</div>\n        <div class=\"row list-row rc-body14\">\n          <div class=\"col fw-bold\">thl payment</div><div class=\"col-auto\">3.99$</div>\n        </div>\n        ",
+          "messages": "",
+          "submitActionLabel": "common.submit",
+          "title": "caseFile.financialAssistance.submitAssistance.confirmTitle"
+        });
       });
     });
-    
+
     describe('updatePaymentStatus', () => {
       it('calls service', async () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups()[0];

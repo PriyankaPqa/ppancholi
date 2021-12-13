@@ -133,8 +133,11 @@ export default mixins(caseFileDetail).extend({
 
   methods: {
     async deletePayment() {
-      const doDelete = await this.$confirm(this.$t('caseFile.financialAssistance.confirm.delete.title'),
-        this.$t('caseFile.financialAssistance.confirm.delete.message'));
+      const doDelete = await this.$confirm({
+        title: this.$t('caseFile.financialAssistance.confirm.delete.title'),
+        messages: this.$t('caseFile.financialAssistance.confirm.delete.message'),
+      });
+
       if (doDelete) {
         const result = await this.$storage.financialAssistancePayment.actions.deactivate(this.financialAssistance.id);
         if (result) {

@@ -13,12 +13,15 @@ export class User implements IUser {
 
   readonly roles: Array<string>;
 
+  readonly homeAccountId: string;
+
   constructor(data: IUserData) {
     this.id = data.oid;
     this.email = data.email;
     this.lastName = data.family_name;
     this.firstName = data.given_name;
     this.roles = data?.roles ? data.roles : [NO_ROLE];
+    this.homeAccountId = data.homeAccountId;
   }
 
   getFullName(): string {

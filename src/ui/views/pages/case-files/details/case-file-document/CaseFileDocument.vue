@@ -314,7 +314,12 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     },
 
     async deleteDocument(item: caseFileDocumentsMapped) {
-      if (await this.$confirm(this.$t('caseFile.document.confirm.delete.title'), this.$t('caseFile.document.confirm.delete.message'))) {
+      const userChoice = await this.$confirm({
+        title: this.$t('caseFile.document.confirm.delete.title'),
+        messages: this.$t('caseFile.document.confirm.delete.message'),
+      });
+
+      if (userChoice) {
         await this.$storage.caseFileDocument.actions.deactivate({ id: item.id, caseFileId: this.caseFileId });
       }
     },

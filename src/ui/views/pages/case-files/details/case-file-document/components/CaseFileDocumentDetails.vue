@@ -156,7 +156,11 @@ export default mixins(caseFileDetail).extend({
     },
 
     async deleteDocument() {
-      if (await this.$confirm(this.$t('caseFile.document.confirm.delete.title'), this.$t('caseFile.document.confirm.delete.message'))) {
+      const userChoice = await this.$confirm({
+        title: this.$t('caseFile.document.confirm.delete.title'),
+        messages: this.$t('caseFile.document.confirm.delete.message'),
+      });
+      if (userChoice) {
         await this.$storage.caseFileDocument.actions.deactivate({ caseFileId: this.caseFileId, id: this.documentId });
         this.goToDocuments();
       }

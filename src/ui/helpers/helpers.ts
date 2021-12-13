@@ -269,10 +269,13 @@ export default {
   async confirmBeforeLeaving(vue: Vue, hasChanged: boolean, next: NavigationGuardNext = null) {
     let leavingConfirmed = true;
     if (hasChanged) {
-      leavingConfirmed = await vue.$confirm(vue.$t('confirmLeaveDialog.title'), [
-        vue.$t('confirmLeaveDialog.message_1'),
-        vue.$t('confirmLeaveDialog.message_2'),
-      ]);
+      leavingConfirmed = await vue.$confirm({
+        title: vue.$t('confirmLeaveDialog.title'),
+        messages: [
+          vue.$t('confirmLeaveDialog.message_1'),
+          vue.$t('confirmLeaveDialog.message_2'),
+        ],
+      });
     }
     if (next && leavingConfirmed) {
       next();

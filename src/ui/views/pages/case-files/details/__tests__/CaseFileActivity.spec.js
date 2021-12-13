@@ -33,7 +33,7 @@ describe('CaseFileActivity.vue', () => {
       },
       mocks: {
         $storage: storage,
-        $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
+
       },
     });
     await flushPromises();
@@ -137,7 +137,7 @@ describe('CaseFileActivity.vue', () => {
           },
           mocks: {
             $storage: storage,
-            $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
+
           },
         });
 
@@ -169,7 +169,7 @@ describe('CaseFileActivity.vue', () => {
           },
           mocks: {
             $storage: storage,
-            $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
+
           },
         });
 
@@ -198,7 +198,7 @@ describe('CaseFileActivity.vue', () => {
           },
           mocks: {
             $storage: storage,
-            $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
+
           },
         });
 
@@ -233,7 +233,6 @@ describe('CaseFileActivity.vue', () => {
         propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
-          $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
         },
         store: {
           modules: {
@@ -309,7 +308,7 @@ describe('CaseFileActivity.vue', () => {
         propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
-          $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
+
         },
         computed: {
           caseFile() {
@@ -381,7 +380,7 @@ describe('CaseFileActivity.vue', () => {
         propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
-          $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
+
         },
         computed: {
           caseFile() {
@@ -469,7 +468,7 @@ describe('CaseFileActivity.vue', () => {
           propsData: { id: mockCaseFile.entity.id },
           mocks: {
             $storage: storage,
-            $signalR: { connection: { on: jest.fn(), off: jest.fn() } },
+
           },
           computed: {
             caseFile() {

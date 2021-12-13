@@ -10,6 +10,7 @@ import '@/ui/styles/main.scss';
 
 import VueAxe from 'vue-axe';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import VueCookies from 'vue-cookies';
 import {
   i18n, Trans,
 } from '@/ui/plugins';
@@ -48,6 +49,7 @@ Vue.use(VueMeta);
 Vue.use(Multilingual);
 Vue.use(formatCurrency);
 Vue.use(rolesAndPermissions);
+Vue.use(VueCookies);
 
 if (process.env.NODE_ENV === 'development') {
   Vue.use(VueAxe, {

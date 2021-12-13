@@ -159,7 +159,9 @@ describe('CreateEditDocument', () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         let res = await wrapper.vm.tryUpload();
         expect(res).toBeNull();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('caseFile.document.confirm.preprocessing.title', 'caseFile.document.confirm.preprocessing.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.document.confirm.preprocessing.title',
+          messages: 'caseFile.document.confirm.preprocessing.message'});
         expect(wrapper.vm.uploadNewDocument).toHaveBeenCalledTimes(0);
 
         wrapper.vm.$confirm = jest.fn(() => true);

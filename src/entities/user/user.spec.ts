@@ -44,6 +44,7 @@ describe('>>> User', () => {
           family_name: '',
           given_name: 'John',
           roles: [''],
+          homeAccountId: '',
         });
         expect(user.getFullName()).toEqual('');
       });
@@ -55,6 +56,7 @@ describe('>>> User', () => {
           family_name: 'White',
           given_name: '',
           roles: [''],
+          homeAccountId: '',
         });
         expect(user.getFullName()).toEqual('');
       });
@@ -73,6 +75,7 @@ describe('>>> User', () => {
           family_name: '',
           given_name: 'John',
           roles: [''],
+          homeAccountId: '',
         });
         expect(user.getInitials()).toEqual('');
       });
@@ -84,6 +87,7 @@ describe('>>> User', () => {
           family_name: 'White',
           given_name: '',
           roles: [''],
+          homeAccountId: '',
         });
         expect(user.getInitials()).toEqual('');
       });

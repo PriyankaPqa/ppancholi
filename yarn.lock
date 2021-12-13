@@ -1135,6 +1135,15 @@
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
+"@crctech/component-library@1.0.185":
+  version "1.0.185"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.185.tgz#eca77c245edf026199f9a1fee62e1281d161c436"
+  integrity sha1-7Kd8JF7fAmGZ+aH+5i4SgdFhxDY=
+  dependencies:
+    "@googlemaps/js-api-loader" "^1.11.0"
+    date-fns "^2.14.0"
+    vuedraggable "^2.24.1"
+
 "@crctech/registration-lib@1.0.666":
   version "1.0.666"
   resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.666.tgz#8e41877bde665a33b043b3be6bab9fdc93befb47"
@@ -12832,6 +12841,11 @@ vue-cli-plugin-webpack-bundle-analyzer@^2.0.0:
   integrity sha512-zOsxSaJC0+yYqnJNsxvGJOgtso8kL2ejlsx3p614LTNFSzaxc+KJ8AsBb712Yw19eVzhCXZrCpnhRad3kRa+aw==
   dependencies:
     webpack-bundle-analyzer "^3.6.0"
+
+vue-cookies@^1.7.4:
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/vue-cookies/-/vue-cookies-1.7.4.tgz#d241d0a0431da0795837651d10b4d73e7c8d3e8d"
+  integrity sha512-mOS5Btr8V9zvAtkmQ7/TfqJIropOx7etDAgBywPCmHjvfJl2gFbH2XgoMghleLoyyMTi5eaJss0mPN7arMoslA==
 
 vue-eslint-parser@^7.0.0:
   version "7.10.0"

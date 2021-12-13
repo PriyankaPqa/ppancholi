@@ -317,8 +317,12 @@ export default Vue.extend({
       }
 
       if (this.paymentGroup.groupingInformation.modality !== EPaymentModalities.ETransfer) {
-        if (await this.$confirm(this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.title'),
-          this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.message', { modality: this.modality.toLowerCase() }))) {
+        const userChoice = await this.$confirm({
+          title: this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.title'),
+          messages: this.$t('caseFile.financialAssistance.cancelPaymentGroup.confirm.message', { modality: this.modality.toLowerCase() }),
+        });
+
+        if (userChoice) {
           this.$emit('update-payment-status', { status, group: this.paymentGroup });
         }
       } else {

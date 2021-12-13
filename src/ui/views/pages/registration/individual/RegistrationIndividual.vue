@@ -115,7 +115,10 @@ export default mixins(individual).extend({
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
     if (this.currentTab.id !== 'confirmation' && this.currentTab.id !== 'review') {
-      const userChoice = await (this.$confirm(this.titleLeave, this.messagesLeave) as Promise<unknown>);
+      const userChoice = await (this.$confirm({
+        title: this.titleLeave,
+        messages: this.messagesLeave,
+      }) as Promise<unknown>);
       next(userChoice);
     } else {
       next();
@@ -280,7 +283,10 @@ export default mixins(individual).extend({
     },
 
     async associateHousehold(household: HouseholdCreate, event: IEvent): Promise<boolean> {
-      const userChoice = await (this.$confirm(this.titleLeave, this.messagesLeave));
+      const userChoice = await (this.$confirm({
+        title: this.titleLeave,
+        messages: this.messagesLeave,
+      }));
       if (userChoice) {
         await this.$storage.caseFile.actions.createCaseFile({
           householdId: household.id,

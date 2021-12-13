@@ -341,13 +341,17 @@ export default mixins(caseFileDetail).extend({
     },
 
     async onSubmitPayment(event: { total: string }) {
-      const result = await this.$confirm(this.$t('caseFile.financialAssistance.submitAssistance.confirmTitle'), '',
-        `
+      const result = await this.$confirm({
+        title: this.$t('caseFile.financialAssistance.submitAssistance.confirmTitle'),
+        messages: '',
+        htmlContent: `
         <div class="row col">${this.$t('caseFile.financialAssistance.submitAssistance.confirmMessage')}</div>
         <div class="row list-row rc-body14">
           <div class="col fw-bold">${this.financialAssistance.name}</div><div class="col-auto">${event.total}</div>
         </div>
-        `, this.$t('common.submit'));
+        `,
+        submitActionLabel: this.$t('common.submit'),
+      });
 
       if (result) {
         const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions

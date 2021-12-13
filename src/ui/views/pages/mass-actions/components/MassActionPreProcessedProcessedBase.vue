@@ -274,14 +274,20 @@ export default Vue.extend({
     },
 
     async onProcess() {
-      const userChoice = await this.$confirm(this.$t('massAction.confirm.processing.title'), this.$t('massAction.confirm.processing.message'));
+      const userChoice = await this.$confirm({
+        title: this.$t('massAction.confirm.processing.title'),
+        messages: this.$t('massAction.confirm.processing.message'),
+      });
       if (userChoice) {
         await this.$storage.massAction.actions.process(this.massAction.entity.id, MassActionRunType.Process);
       }
     },
 
     async onDelete() {
-      const userChoice = await this.$confirm(this.$t('massAction.confirm.delete.title'), this.$t('massAction.confirm.delete.message'));
+      const userChoice = await this.$confirm({
+        title: this.$t('massAction.confirm.delete.title'),
+        messages: this.$t('massAction.confirm.delete.message'),
+      });
       if (userChoice) {
         const res = await this.$storage.massAction.actions.deactivate(this.massAction.entity.id);
         if (res) {

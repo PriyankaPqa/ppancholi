@@ -112,7 +112,12 @@ describe('MassActionBaseCreate.vue', () => {
       it('should confirm before emitting or uploading', async () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.next();
-        expect(wrapper.vm.$confirm).toHaveBeenCalledWith('massAction.confirm.preprocessing.title', 'massAction.confirm.preprocessing.message');
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith(
+          {
+            title: 'massAction.confirm.preprocessing.title',
+            messages: 'massAction.confirm.preprocessing.message',
+          },
+        );
         expect(wrapper.emitted('upload:start')).toBeFalsy();
         expect(wrapper.vm.upload).not.toBeCalled();
       });

@@ -189,8 +189,10 @@ export default Vue.extend({
       if (this.disableDeleteButton) {
         this.$toasted.global.warning(this.$t('caseFile.financialAssistance.deleteTooltip'));
       } else {
-        const doDelete = await this.$confirm(this.$t('caseFile.financialAssistance.deletePaymentLine.title'),
-          this.$t('caseFile.financialAssistance.deletePaymentLine.message'));
+        const doDelete = await this.$confirm({
+          title: this.$t('caseFile.financialAssistance.deletePaymentLine.title'),
+          messages: this.$t('caseFile.financialAssistance.deletePaymentLine.message'),
+        });
         if (doDelete) {
           this.$emit('delete-payment-line', { line: this.paymentLine, group: this.paymentGroup });
         }

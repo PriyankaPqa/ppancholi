@@ -1,14 +1,15 @@
 // Coming from MSAL
 export interface IMSALUserData {
-   oid: uuid;
-   email?: string;
+  oid: uuid;
+  email?: string;
   // eslint-disable-next-line camelcase
-   family_name: string;
+  family_name: string;
   // eslint-disable-next-line camelcase
-   given_name: string;
-   roles: Array<string>;
+  given_name: string;
+  roles: Array<string>;
   // eslint-disable-next-line camelcase
-   preferred_username?: string;
+  preferred_username?: string;
+  homeAccountId: string;
 }
 
 export interface IUserData extends IMSALUserData{}

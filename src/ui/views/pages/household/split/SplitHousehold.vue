@@ -96,7 +96,10 @@ export default mixins(individual).extend({
       this.$storage.registration.mutations.resetSplitHousehold();
       next();
     } else if (!this.allowExit) {
-      const userChoice = await (this.$confirm(this.titleLeave, this.messagesLeave) as Promise<unknown>);
+      const userChoice = await (this.$confirm({
+        title: this.titleLeave,
+        messages: this.messagesLeave,
+      }) as Promise<unknown>);
       if (userChoice) {
         this.$storage.registration.mutations.resetSplitHousehold();
       }
