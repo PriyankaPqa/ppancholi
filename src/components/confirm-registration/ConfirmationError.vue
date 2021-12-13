@@ -53,8 +53,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IError } from '@/services/httpClient';
 import VueI18n from 'vue-i18n';
+import { IError } from '../../services/httpClient';
 
 type TranslateResult = VueI18n.TranslateResult;
 
