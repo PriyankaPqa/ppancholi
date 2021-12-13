@@ -8,7 +8,7 @@
       :content-only-scrolling="true"
       :persistent="true"
       fullscreen
-      :submit-button-disabled="failed || (!identityChanged && !addressChanged && !sameAddressChanged)"
+      :submit-button-disabled="failed || (!identityChanged && !addressChanged && !sameAddressChanged) || submitLoading"
       @cancel="cancel()"
       @close="cancel()"
       @submit="validate()">
@@ -112,6 +112,7 @@ export default Vue.extend({
       backupSameAddress: null as boolean,
       addressChanged: false,
       identityChanged: false,
+      submitLoading: false,
     };
   },
 
@@ -203,6 +204,8 @@ export default Vue.extend({
         helpers.scrollToFirstErrorDialog('additionalMemberDialog');
         return;
       }
+
+      this.submitLoading = true;
 
       if (this.editMode) {
         if (this.inHouseholdProfile) {
