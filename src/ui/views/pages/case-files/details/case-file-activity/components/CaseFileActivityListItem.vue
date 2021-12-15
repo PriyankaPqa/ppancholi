@@ -370,14 +370,14 @@ export default Vue.extend({
     },
 
     makeContentForHouseholdMovedMembersOut(): {title: TranslateResult, body: TranslateResult} {
-      const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersOut');
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersOut', { x: this.item.details.registrationNumber });
       const body = this.$t('caseFileActivity.activityList.body.HouseholdMovedMembers')
         + (this.item.details?.members as [] || []).map((m: {name: string}) => m.name).join(', ');
       return { title, body };
     },
 
     makeContentForHouseholdMovedMembersIn(): {title: TranslateResult, body: TranslateResult} {
-      const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersIn');
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersIn', { x: this.item.details.registrationNumber });
       const body = this.$t('caseFileActivity.activityList.body.HouseholdMovedMembers')
         + (this.item.details?.members as [] || []).map((m: {name: string}) => m.name).join(', ');
       return { title, body };
