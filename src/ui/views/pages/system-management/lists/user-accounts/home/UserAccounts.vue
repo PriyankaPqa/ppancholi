@@ -46,7 +46,7 @@
           </template>
 
           <template #[`item.${customColumns.email}`]="{ item }">
-            <span data-test="user_email"> {{ item.metadata.emailAddress }}</span>
+            <span data-test="user_email"> {{ item.metadata.emailAddress || item.metadata.userPrincipalName }} </span>
           </template>
 
           <template #[`item.${customColumns.roleId}`]="{ item }">
@@ -240,7 +240,7 @@ export default Vue.extend({
     customColumns(): Record<string, string> {
       return {
         displayName: 'metadata.displayName',
-        email: 'metadata.email',
+        email: 'metadata.emailAddress',
         roleId: 'metadata.roleId',
         accountStatus: 'entity.accountStatus',
         edit: 'edit',

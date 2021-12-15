@@ -106,7 +106,7 @@
                   {{ $t('user.accountSettings.email_username') }}
                 </td>
                 <td class="fw-bold" data-test="userAccount-status-email">
-                  {{ user.metadata.emailAddress }}
+                  {{ user.metadata.emailAddress || user.metadata.userPrincipalName }}
                 </td>
               </tr>
               <tr>

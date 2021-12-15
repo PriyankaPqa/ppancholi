@@ -156,7 +156,7 @@ describe('UserAccounts.vue', () => {
         expect(wrapper.vm.customColumns).toEqual(
           {
             displayName: 'metadata.displayName',
-            email: 'metadata.email',
+            email: 'metadata.emailAddress',
             roleId: 'metadata.roleId',
             accountStatus: 'entity.accountStatus',
             edit: 'edit',
