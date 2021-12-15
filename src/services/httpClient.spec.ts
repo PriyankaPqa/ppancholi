@@ -10,6 +10,7 @@ import { mockHttp } from '@/services/httpClient.mock';
 import { httpClient, HttpClient, IRestResponse } from './httpClient';
 import { i18n } from '@/ui/plugins/i18n';
 import { localStorageKeys } from '@/constants/localStorage';
+import authenticationProvider from '@/auth/AuthenticationProvider';
 
 jest.mock('uuid');
 jest.mock('@/services/odata-query');
@@ -219,12 +220,7 @@ describe('httpClient', () => {
       jest.spyOn(uuid, 'v4').mockImplementation(() => 'uuid-mock');
 
       it('should set accessToken if existing', () => {
-        Object.defineProperty(window, 'localStorage', {
-          value: {
-            getItem: jest.fn(() => 'test access token'),
-          },
-          writable: true,
-        });
+        authenticationProvider.accessToken = 'test access token';
 
         const request = {
           headers: {

@@ -34,7 +34,11 @@ import App from './ui/App.vue';
 
 prepareServices(store);
 const storage = prepareStorage(store);
-SignalR.Initialize(storage);
+
+SignalR.Initialize({
+  storage,
+  showConsole: true,
+});
 
 applicationInsights.initialize({
   connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,

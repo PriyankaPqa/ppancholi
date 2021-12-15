@@ -4,4 +4,5 @@ export interface IState {
   rightMenuVisible: boolean;
   generalHelpMenuVisible: boolean;
   initLoading: boolean;
+  checkingAccount: boolean;
 }

@@ -119,7 +119,9 @@ export const routes: Array<RouteConfig> = [
       },
     },
     beforeEnter: async (to, from, next) => {
+      store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'checkingAccount', value: false });
       if (to.name !== Routes.loginError.name) {
+        store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: true });
         const userAccount = await store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`);
         if (userAccount) {
           await Promise.all([

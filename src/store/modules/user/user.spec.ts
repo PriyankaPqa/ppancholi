@@ -14,6 +14,7 @@ import {
   mockStoreUserReadOnly,
   mockStoreUserNoRole,
 } from '@/test/helpers';
+import helpers from '@/ui/helpers/helpers';
 
 jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
 
@@ -195,12 +196,14 @@ describe('>>> Users Module', () => {
     describe('fetchUserData', () => {
       it('calls the acquireToken method of the authentications provider and fetchUser and sets the user data', async () => {
         store = mockStore();
-
+        const authenticationData = mockAuthenticationData();
+        authenticationProvider.account = authenticationData.account;
+        jest.spyOn(helpers, 'decodeJwt').mockImplementation(() => ({
+          roles: ['level3'],
+        }));
         await store.dispatch('user/fetchUserData');
 
         expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(1);
-
-        const authenticationData = mockAuthenticationData();
 
         expect(store.getters['user/user']).toEqual(new User({
           oid: authenticationData.account.idTokenClaims.oid as string,

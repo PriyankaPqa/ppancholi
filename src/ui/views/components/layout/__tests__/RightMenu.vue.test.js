@@ -4,7 +4,6 @@ import { mockCombinedTenantSettings } from '@/entities/tenantSettings';
 import { mockUsersData } from '@/entities/user';
 import routes from '@/constants/routes';
 import Component from '../RightMenu.vue';
-import authenticationProvider from '@/auth/AuthenticationProvider';
 
 const localVue = createLocalVue();
 

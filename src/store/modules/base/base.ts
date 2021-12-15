@@ -14,6 +14,9 @@ export class BaseModule<T extends IEntity, IdParams> {
 
   // Add or edit an item if the one pass as parameter is newer than existing one
   private upsert(state: IState<T>, item: T) {
+    if (!item) {
+      return;
+    }
     const index = state.items.findIndex((x) => x?.id === item.id);
     const stateItem = state.items[index];
 

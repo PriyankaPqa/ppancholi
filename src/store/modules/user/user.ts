@@ -2,8 +2,6 @@ import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
-import { AuthenticationResult } from '@azure/msal-browser';
-import { localStorageKeys } from '@/constants/localStorage';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import {
   IMSALUserData,
@@ -88,19 +86,17 @@ const mutations = {
 };
 
 const actions = {
-  async signOut(this: Store<IState>, context: ActionContext<IState, IState>) {
-    localStorage.removeItem(localStorageKeys.accessToken.name);
-    await authenticationProvider.signOut(context.state.homeAccountId);
+  async signOut(this: Store<IState>) {
+    await authenticationProvider.signOut();
   },
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
-    const accessTokenResponse = await authenticationProvider.acquireToken() as AuthenticationResult;
+    const accessToken = await authenticationProvider.acquireToken('fetchUserData');
 
-    if (accessTokenResponse?.accessToken) {
-      localStorage.setItem(localStorageKeys.accessToken.name, accessTokenResponse.accessToken);
-      const { account } = accessTokenResponse;
+    if (accessToken) {
+      const account = authenticationProvider.account;
       const userData = { ...account.idTokenClaims, homeAccountId: account.homeAccountId } as IMSALUserData;
-      userData.roles = helpers.decodeJwt(accessTokenResponse.accessToken).roles;
+      userData.roles = helpers.decodeJwt(accessToken).roles;
       context.commit('setUser', userData);
     } else {
       throw new Error('User data not found');

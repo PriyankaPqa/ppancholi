@@ -8,11 +8,11 @@ const listenForChangesFct = SignalR.prototype.listenForChanges;
 SignalR.prototype.buildHubConnection = jest.fn();
 SignalR.prototype.listenForChanges = jest.fn();
 
-let conn = new SignalR(storage);
+let conn = new SignalR({storage, showConsole: false});
 
 describe('signalR', () => {
   beforeEach(() => {
-    conn = new SignalR(storage);
+    conn = new SignalR({storage, showConsole: false});
     conn.connection = { on: jest.fn() };
   });
   describe('createBindings', () => {
@@ -348,7 +348,7 @@ describe('signalR', () => {
   describe('listenForChanges', () => {
     it('attaches the action to the connection', () => {
       SignalR.prototype.listenForChanges = listenForChangesFct;
-      conn = new SignalR(storage);
+      conn = new SignalR({storage, showConsole: false});
       conn.connection = { on: jest.fn() };
       conn.listenForChanges({ domain: 'financialAssistance', entityName: 'FinancialAssistanceCategories' });
       expect(conn.connection.on).toHaveBeenCalledWith('financialAssistance.FinancialAssistanceCategoriesUpdated', expect.any(Function));

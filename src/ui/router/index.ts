@@ -36,8 +36,8 @@ const hasRole = (roleToCheck: string) => {
 const authenticationGuard = async (to: Route) => {
   if (to.matched.some((record) => record.meta.requiresAuthentication)) {
     // Check if the user is already signed in and redirect to login page if not
-    const isSignedIn = await authenticationProvider.isSignedIn();
-
+    await authenticationProvider.loadAuthModule('authenticationGuard');
+    const isSignedIn = await authenticationProvider.isAuthenticated();
     if (!isSignedIn) {
       await authenticationProvider.signIn();
     }
@@ -115,7 +115,7 @@ router.beforeEach(async (to, from, next) => {
       next(from);
     }
   } catch (e) {
-    applicationInsights.trackException(e, { context: 'route.beforeeach', to, from }, 'router', 'beforeEach');
+    applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');
     // If there is an error, redirect to the login error page
     next({
       name: routeConstants.loginError.name,

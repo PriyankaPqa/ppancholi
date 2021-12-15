@@ -2,8 +2,7 @@
 import _orderBy from 'lodash/orderBy';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import Vue from 'vue';
-import { AuthenticationResult } from '@azure/msal-browser';
-import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import authenticationProvider from '@/auth/AuthenticationProvider';
 import { IMassActionEntityData, MassActionRunStatus } from '@/entities/mass-action';
 import { i18n } from '@/ui/plugins/i18n';
 import { IStorage } from '@/store/storage';
@@ -16,11 +15,17 @@ export class SignalR {
 
   public logMessages = [] as { messageName: string, count: number, lastMessage: string, lastTime: Date }[];
 
-  private constructor(private storage: IStorage) {
+  private readonly showConsole: boolean;
+
+  private storage: IStorage;
+
+  private constructor({ storage, showConsole }: {storage: IStorage; showConsole: boolean}) {
+    this.storage = storage;
+    this.showConsole = showConsole;
   }
 
-  public static Initialize(storage: IStorage) {
-    SignalR._instance = new SignalR(storage);
+  public static Initialize({ storage, showConsole }: {storage: IStorage; showConsole: boolean}) {
+    SignalR._instance = new SignalR({ storage, showConsole });
     Vue.mixin({
       beforeCreate() {
         this.$signalR = SignalR.instance;
@@ -35,16 +40,15 @@ export class SignalR {
   }
 
   public async buildHubConnection() {
-    const isSignedIn = await AuthenticationProvider.isSignedIn();
+    // await authenticationProvider.loadAuthModule('signalR');
+    const isSignedIn = await authenticationProvider.isAuthenticated();
 
     if (isSignedIn) {
       const connection = new HubConnectionBuilder()
         // .configureLogging(LogLevel.Debug)
         .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
-          accessTokenFactory: async () => {
-            const tokenResponse = await AuthenticationProvider.acquireToken() as AuthenticationResult;
-            return tokenResponse?.accessToken;
-          },
+          // eslint-disable-next-line no-return-await
+          accessTokenFactory: async () => await authenticationProvider.acquireToken('signalR'),
         })
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
         .withAutomaticReconnect()
@@ -319,7 +323,10 @@ export class SignalR {
 
   // eslint-disable-next-line
   private log(name: string, message: any) {
-    console.log(name, message.id || message);
+    if (this.showConsole) {
+      console.log(name, message.id || message);
+    }
+
     let entry = this.logMessages.find((m) => m.messageName === name);
     if (!entry) {
       entry = {

@@ -1,154 +1,37 @@
-/* eslint-disable no-console */
-import * as msal from '@azure/msal-browser';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
-import { InteractionRequiredAuthError } from '@azure/msal-browser';
-import Vue from 'vue';
-import { loginRequest, msalConfig, tokenRequest } from '@/auth/constants/azureAD';
-import { provider } from '@/services/provider';
-import routes from '@/constants/routes';
+import { BrowserAuthOptions, BrowserSystemOptions } from '@azure/msal-browser/dist/config/Configuration';
+import { CacheOptions, RedirectRequest } from '@azure/msal-browser';
+import { MSAL } from './MSAL';
 
-const msalInstance = new msal.PublicClientApplication(msalConfig);
-const services = provider();
+const clientId = process.env.VUE_APP_AUTH_AAD_CLIENTID;
+const authority = process.env.VUE_APP_AUTH_AAD_AUTHORITY;
+const navigateToLoginRequestUrl = process.env.VUE_APP_AUTH_AAD_NAVIGATE_TO_LOGIN_REQUEST_URL === 'true';
+const apiPermissions = process.env.VUE_APP_AUTH_AAD_API_PERMISSIONS;
 
-let tenantForCurrentDomain = null as string;
-let tenantFetchedForCurrentDomain = false;
-
-let handleRedirectPromiseError: msal.AuthError;
-
-/**
- * handleRedirectPromise parses the URL hash when redirecting from the login page.
- */
-const handleRedirectPromise = msalInstance.handleRedirectPromise().then((redirect) => {
-  if (redirect) {
-    msalInstance.setActiveAccount(redirect.account);
-  }
-}).catch((error) => {
-  applicationInsights.trackTrace('handleRedirectPromise - error', { error }, 'AuthenticationProvider', 'handleRedirectPromise');
-  handleRedirectPromiseError = error;
-});
-
-export default {
-  /**
-   * Redirects the browser to the login page
-   */
-  async signIn(specificTenant?: string) {
-    console.log('signin', specificTenant);
-    const authority = specificTenant || 'common';
-    await msalInstance.loginRedirect({
-      ...loginRequest,
-      redirectUri: window.location.origin,
-      authority: `https://login.microsoftonline.com/${authority}`,
-    });
-  },
-
-  /**
-   * Signs the user out and redirects them to the logout URL
-   */
-  async signOut(homeAccountId?: string) {
-    let logoutRequest = {};
-
-    if (homeAccountId) {
-      const currentAccount = msalInstance.getAccountByHomeId(homeAccountId);
-      logoutRequest = {
-        account: currentAccount,
-      };
-    }
-    // Remove local storage
-    localStorage.clear();
-
-    // Remove all cookies
-    Vue.$cookies.keys().forEach((cookie) => Vue.$cookies.remove(cookie));
-
-    await msalInstance.logoutRedirect(logoutRequest);
-  },
-
-  /**
-   * Checks if the user has any logged in accounts, returns true if one or more
-   * accounts are returned by getAllAccounts
-   */
-  async isSignedIn() {
-    if (window.location.href.endsWith(routes.loginError.path)) {
-      return false;
-    }
-
-    // Must wait for handleRedirectPromise to be resolved before we can check for accounts
-    await handleRedirectPromise;
-
-    if (handleRedirectPromiseError) {
-      throw handleRedirectPromiseError;
-    }
-
-    const accounts = msalInstance.getAllAccounts();
-
-    if (accounts && accounts.length) {
-      return true;
-    }
-
-    return false;
-  },
-
-  /**
-   * Attempts to acquire the token from msal. If this fails, the user should be
-   * redirected to the login error page.
-   */
-  async acquireToken() {
-    console.log('acquireToken');
-    // we will have an authority (tenantid)
-    // if the current domain is directly associated with a tenant, which will be forced on the user
-    if (!tenantFetchedForCurrentDomain) {
-      // so we only fetch it once
-      tenantForCurrentDomain = await services.publicApi.getTenantByEmisDomain(window.location.host);
-      tenantFetchedForCurrentDomain = true;
-    }
-    const authority = tenantForCurrentDomain;
-    if (!authority) {
-      console.log(`no tenants for ${window.location.host} we'll use the default tenant`);
-    }
-    const accounts = msalInstance.getAllAccounts() || [];
-
-    if (!accounts.length || (authority && !accounts.filter((a) => a.tenantId === authority)[0])) {
-      if (authority) {
-        await this.signIn(authority);
-        return null;
-      }
-      throw new Error('User is not logged in.');
-    }
-
-    // in case or localhost or unofficial sites (feature branch) we'll use the main tenant
-    const account = accounts.filter((a) => a.tenantId === authority)[0] || accounts[0];
-
-    applicationInsights.trackTrace('account', { account }, 'AuthenticationProvider', 'acquireToken');
-
-    const request = {
-      account,
-      scopes: tokenRequest.scopes,
-      authority: `https://login.microsoftonline.com/${account.tenantId}`,
-    };
-
-    try {
-      const tokenResponse = await msalInstance.acquireTokenSilent(request);
-
-      applicationInsights.setBasicContext({ tenantId: account.tenantId });
-      applicationInsights.trackTrace('tokenResponse', { tokenResponse }, 'AuthenticationProvider', 'acquireToken');
-
-      return tokenResponse;
-    } catch (e) {
-      // This error is thrown in cases where the refresh token has expired.
-      // We may need to add other error types to this list in the future. Otherwise, all errors go to the LoginError.vue page
-
-      applicationInsights.trackTrace('acquireToken - catch error', { error: e, errorCode: e.errorCode }, 'AuthenticationProvider', 'acquireToken');
-
-      if (e instanceof InteractionRequiredAuthError) {
-        // fallback to interaction when silent call fails
-        return msalInstance.acquireTokenRedirect(request);
-      }
-
-      // Redirect the application to the Microsoft login page if the 'login_required' error is thrown.
-      if (e.errorCode === 'login_required') {
-        this.signIn();
-      }
-    }
-
-    return null;
-  },
+const msalConfig = {
+  auth: {
+    clientId,
+    authority,
+    knownAuthorities: [
+      authority,
+    ],
+    navigateToLoginRequestUrl,
+  } as BrowserAuthOptions,
+  cache: {
+    cacheLocation: 'localStorage',
+    storeAuthStateInCookie: false, // Set this to "true" to save cache in cookies to address trusted zones limitations in IE (see: https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/Known-issues-on-IE-and-Edge-Browser)
+  } as CacheOptions,
+  system: {
+    tokenRenewalOffsetSeconds: 300, // access token will be renewed 5 minutes before expiration (acquireToken) (instead of using cached)
+  } as BrowserSystemOptions,
+  loginRedirectRequest: {
+    scopes: ['openid', 'profile'],
+  } as RedirectRequest,
+  tokenRequest: {
+    scopes: [apiPermissions],
+  } as RedirectRequest,
+  showConsole: true, // enable console added by us
+  enableLogger: process.env.NODE_ENV === 'development' && false, // enable logger by microsoft
+  enableAppInsights: process.env.NODE_ENV === 'production',
 };
+
+export default new MSAL(msalConfig);

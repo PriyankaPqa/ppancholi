@@ -1,12 +1,15 @@
 <template>
   <!-- App.vue -->
   <v-app>
-    <div v-if="isLoading" class="loading_container">
+    <div v-if="isLoading || checkingAccount" class="loading_container">
       <div>
         <div :class="`${$i18n.locale === 'en' ? 'logoEn' : 'logoFr'}`" />
 
-        <span class="mt-8 mb-4">
+        <span v-if="isLoading" class="mt-8 mb-4">
           {{ $t('app.loading') }}
+        </span>
+        <span v-if="checkingAccount" class="mt-8 mb-4">
+          {{ $t('app.checkingAccount') }}
         </span>
         <v-progress-circular color="primary" indeterminate />
       </div>
@@ -47,6 +50,7 @@ import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@cr
 import sanitizeHtml from 'sanitize-html';
 import { localStorageKeys } from '@/constants/localStorage';
 import ActivityWatcher from '@/ui/ActivityWatcher.vue';
+import authenticationProvider from '@/auth/AuthenticationProvider';
 
 export default {
   name: 'App',
@@ -86,6 +90,9 @@ export default {
   computed: {
     isLoading() {
       return this.$store.state.dashboard.initLoading;
+    },
+    checkingAccount() {
+      return this.$store.state.dashboard.checkingAccount;
     },
   },
 
@@ -131,6 +138,12 @@ export default {
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VUE_APP_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VUE_APP_API_BASE_URL);
+
+    const currentTenant = await this.$services.publicApi.getTenantByEmisDomain(window.location.host);
+    authenticationProvider.setCurrentTenantDomain(currentTenant);
+
+    // The access token will be refreshed automatically every 5 minutes
+    authenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
   },
 };
 </script>
