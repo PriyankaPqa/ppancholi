@@ -257,7 +257,7 @@ export default mixins(caseFileDetail).extend({
         text: this.$t('caseFileDetail.menu_assessments') as string,
         test: 'assessments',
         // to: routes.caseFileAssessments.name,
-        disabled: true,
+        disabled: false,
       }, {
         text: this.$t('caseFileDetail.menu_referrals') as string,
         test: 'referrals',
@@ -266,7 +266,7 @@ export default mixins(caseFileDetail).extend({
       }, {
         text: this.$t('caseFileDetail.menu_recoveryPlan') as string,
         test: 'recovery-plan',
-        disabled: true,
+        disabled: false,
       }];
     },
 
