@@ -9,7 +9,7 @@
       fullscreen
       persistent
       show-close
-      :submit-button-disabled="failed || (pristine && !changedAddress && !makePrimaryMode)"
+      :submit-button-disabled="submitButtonDisabled(failed, pristine)"
       scroll-anchor-id="dialogScrollAnchor"
       @close="onCancel"
       @cancel="onCancel"
@@ -113,6 +113,7 @@ export default Vue.extend({
       allMembers: [] as IMember[],
       member: null as IMember,
       additionalMembers: [] as IMember[],
+      submitLoading: false,
       apiKey: localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         ? localStorage.getItem(localStorageKeys.googleMapsAPIKey.name)
         : process.env.VUE_APP_GOOGLE_API_KEY,
@@ -151,6 +152,10 @@ export default Vue.extend({
       }
       return this.$t('household.profile.member.make_primary');
     },
+
+    submitButtonDisabled(): (failed: boolean, pristine:boolean) => boolean {
+      return (failed, pristine) => failed || (pristine && !this.changedAddress && !this.makePrimaryMode) || this.submitLoading;
+    },
   },
 
   created() {
@@ -172,6 +177,7 @@ export default Vue.extend({
     async onSubmit() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
+        this.submitLoading = true;
         let ok = true;
         if (this.changedIdentitySet) {
           ok = !!await this.$storage.registration.actions.updatePersonIdentity({ member: this.member, isPrimaryMember: true });
@@ -190,9 +196,9 @@ export default Vue.extend({
         if (ok && this.changedAddress) {
           ok = !!await this.submitAddressUpdate();
         }
-
         this.$emit('close');
       } else {
+        this.submitLoading = false;
         helpers.scrollToFirstError('dialogScrollAnchor');
       }
     },

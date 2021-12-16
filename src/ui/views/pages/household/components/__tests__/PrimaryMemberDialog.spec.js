@@ -254,6 +254,58 @@ describe('PrimaryMemberDialog', () => {
           householdCreate.additionalMembers[1], householdCreate.additionalMembers[2]]);
       });
     });
+
+    describe('submitButtonDisabled', () => {
+      it('returns true if failed is true', async () => {
+        expect(wrapper.vm.submitButtonDisabled(true, false)).toBeTruthy();
+      });
+
+      it('returns true if pristine is true, changedAddress is false and makePrimaryMode is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+            makePrimaryMode: false,
+          },
+          data() {
+            return {
+              apiKey: '123',
+            };
+          },
+          computed: {
+            changedAddress() {
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.submitButtonDisabled(false, true)).toBeTruthy();
+      });
+
+      it('returns true if submitLoading is true', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return {
+              apiKey: '123',
+              submitLoading: true,
+            };
+          },
+          computed: {
+            changedAddress() {
+              return false;
+            },
+          },
+        });
+
+        expect(wrapper.vm.submitButtonDisabled(false, false)).toBeTruthy();
+      });
+    });
   });
 
   describe('Methods', () => {
