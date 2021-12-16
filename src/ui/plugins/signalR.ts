@@ -47,8 +47,7 @@ export class SignalR {
       const connection = new HubConnectionBuilder()
         // .configureLogging(LogLevel.Debug)
         .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
-          // eslint-disable-next-line no-return-await
-          accessTokenFactory: async () => await authenticationProvider.acquireToken('signalR'),
+          accessTokenFactory: async () => authenticationProvider.accessToken,
         })
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
         .withAutomaticReconnect()
