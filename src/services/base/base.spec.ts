@@ -22,8 +22,8 @@ describe('>>> Domain Base Service', () => {
   describe('get', () => {
     it('should call the proper endpoint', async () => {
       const id = '123';
-      await service.get(id);
-      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`);
+      await service.get(id, true);
+      expect(http.get).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: true });
     });
   });
 

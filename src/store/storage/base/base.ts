@@ -76,9 +76,10 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity> implements
   }
 
   protected baseActions = {
-    fetch: async (id: uuid): Promise<IEntityCombined<TEntity, TMetadata>> => {
-      const entity = await this.store.dispatch(`${this.entityModuleName}/fetch`, id);
-      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetch`, id);
+    fetch: async (id: uuid, { useEntityGlobalHandler, useMetadataGlobalHandler } = { useEntityGlobalHandler: true, useMetadataGlobalHandler: true }):
+     Promise<IEntityCombined<TEntity, TMetadata>> => {
+      const entity = await this.store.dispatch(`${this.entityModuleName}/fetch`, { id, useGlobalHandler: useEntityGlobalHandler });
+      const metadata = await this.store.dispatch(`${this.metadataModuleName}/fetch`, { id, useGlobalHandler: useMetadataGlobalHandler });
       return {
         entity,
         metadata,

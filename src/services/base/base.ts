@@ -17,8 +17,8 @@ export class DomainBaseService<T extends IEntity> implements IDomainBaseService<
     this.controller = controller;
   }
 
-  async get(id: uuid): Promise<T> {
-    return this.http.get<T>(`${this.baseUrl}/${id}`);
+  async get(id: uuid, useGlobalHandler = true): Promise<T> {
+    return this.http.get<T>(`${this.baseUrl}/${id}`, { globalHandler: useGlobalHandler });
   }
 
   async getAll(): Promise<T[]> {

@@ -80,16 +80,16 @@ describe('Base Module', () => {
     describe('fetch', () => {
       it('should call get method from the service', () => {
         baseModule.service.get = jest.fn();
-        baseModule.actions.fetch(actionContext, id);
+        baseModule.actions.fetch(actionContext, { id, useGlobalHandler: true });
 
-        expect(baseModule.service.get).toBeCalledWith(id);
+        expect(baseModule.service.get).toBeCalledWith(id, true);
       });
 
       it('should commit set mutation with the result', async () => {
         const res = mockBaseEntity();
         baseModule.service.get = jest.fn(() => Promise.resolve(res));
 
-        await baseModule.actions.fetch(actionContext, id);
+        await baseModule.actions.fetch(actionContext, { id, useGlobalHandler: true });
 
         expect(actionContext.commit).toBeCalledWith('set', res);
       });

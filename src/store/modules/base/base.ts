@@ -42,8 +42,8 @@ export class BaseModule<T extends IEntity> {
   }
 
   protected baseActions = {
-    fetch: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
-      const res = await this.service.get(id);
+    fetch: async (context: ActionContext<IState<T>, IState<T>>, { id, useGlobalHandler }: {id: uuid; useGlobalHandler: boolean}): Promise<T> => {
+      const res = await this.service.get(id, useGlobalHandler);
       context.commit('set', res);
       return res;
     },
