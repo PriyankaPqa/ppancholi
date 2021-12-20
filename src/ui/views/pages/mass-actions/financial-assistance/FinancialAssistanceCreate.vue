@@ -102,7 +102,9 @@ export default Vue.extend({
         filter,
       } as IMassActionFinancialAssistanceCreatePayload;
 
+      this.loading = true;
       const entity = await this.$storage.massAction.actions.create(MassActionType.FinancialAssistance, payload);
+      this.loading = false;
 
       if (entity) {
         this.onSuccess(entity);

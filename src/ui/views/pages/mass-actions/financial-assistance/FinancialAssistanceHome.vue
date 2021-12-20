@@ -111,7 +111,6 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
           align: 'start',
           sortable: true,
           value: this.customColumns.name,
-          width: '50%',
         },
         {
           text: this.$t('massAction.common.dateCreated') as string,

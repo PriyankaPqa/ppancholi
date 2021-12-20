@@ -247,7 +247,11 @@ export class MSAL implements IMSAL {
           { },
           'MSAL',
           'acquireToken');
-        this.msalLibrary.acquireTokenRedirect(this.getInteractiveRequest()).catch(console.error);
+        this.msalLibrary.acquireTokenRedirect(this.getInteractiveRequest())
+          .catch((e) => {
+            this.showConsole && console.error('acquireTokenRedirect error - will trigger sign in method', e)
+            this.signIn();
+          });
       } else {
         this.showConsole && console.error('acquireToken error', e)
         this.enableAppInsights && applicationInsights.trackTrace(
@@ -271,7 +275,7 @@ export class MSAL implements IMSAL {
    * @param interval
    */
   public startAccessTokenAutoRenewal(interval: number) {
-    if (interval > this.tokenRenewalOffsetSeconds) {
+    if (interval > this.tokenRenewalOffsetSeconds * 1000) {
       console.warn(`You may end up with expired token. Please use <= to ${this.tokenRenewalOffsetSeconds}`)
     }
     setInterval(async () => {
@@ -463,7 +467,8 @@ export class MSAL implements IMSAL {
     } else { // not coming back from an auth redirect
       this.showConsole && console.debug('handleResponse - Will set account from method getAccount')
       this.account = this.getAccount();
-      this.showConsole && console.debug('Set account to:', this.account)
+      this.showConsole && console.debug('Set account to:')
+      this.showConsole && console.debug(this.account)
     }
   }
 }

@@ -78,7 +78,6 @@ describe('MassActionBaseTable.vue', () => {
             align: 'start',
             sortable: true,
             value: wrapper.vm.customColumns.name,
-            width: '50%',
           },
           {
             text: 'massAction.common.dateCreated',
