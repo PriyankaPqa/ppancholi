@@ -509,6 +509,21 @@ describe('HouseholdMemberCard.vue', () => {
       });
     });
 
+    describe('openSplitDialog', () => {
+      it('sets showSplitDialog to true', async () => {
+        doMount(true);
+        expect(wrapper.vm.showSplitDialog).toBeFalsy();
+        await wrapper.vm.openSplitDialog();
+        expect(wrapper.vm.showSplitDialog).toBeTruthy();
+      });
+      it('calls the mutation resetSplitHousehold if is not in split mode', async () => {
+        storage.registration.getters.isSplitMode = jest.fn(() => false);
+        doMount(true);
+        await wrapper.vm.openSplitDialog();
+        expect(storage.registration.mutations.resetSplitHousehold).toHaveBeenCalled();
+      });
+    });
+
     describe('initSplitView', () => {
       // eslint-disable-next-line max-len
       it('sets showSplitDialog to true if there are split household members and the card corresponds to the new primary member of the split household',

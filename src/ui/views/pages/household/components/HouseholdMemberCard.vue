@@ -220,9 +220,7 @@ export default Vue.extend({
           test: 'transfer',
           icon: 'mdi-call-split',
           additionalMemberOnly: true,
-          event: () => {
-            this.showSplitDialog = true;
-          },
+          event: () => this.openSplitDialog(),
           hide: !this.canSplit,
           tooltipText: this.$t('household.profile.split.member.title'),
         },
@@ -357,6 +355,13 @@ export default Vue.extend({
       } else {
         this.showAdditionalMemberDialog = true;
       }
+    },
+
+    openSplitDialog() {
+      if (!this.$storage.registration.getters.isSplitMode()) {
+        this.$storage.registration.mutations.resetSplitHousehold();
+      }
+      this.showSplitDialog = true;
     },
 
     async deleteAdditionalMember() {
