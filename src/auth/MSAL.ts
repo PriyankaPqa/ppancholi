@@ -12,6 +12,7 @@ import {
   Configuration, LogLevel, CacheOptions
 } from "@azure/msal-browser";
 import {BrowserAuthOptions} from "@azure/msal-browser/dist/config/Configuration";
+import {localStorageKeys} from "@/constants/localStorage";
 
 export interface Options extends Configuration {
   loginRedirectRequest?: RedirectRequest,
@@ -224,6 +225,9 @@ export class MSAL implements IMSAL {
 
       this.accessToken = response.accessToken;
 
+      // Used by BE for convenience
+      localStorage.setItem(localStorageKeys.accessToken.name, this.accessToken);
+
       this.showConsole && console.debug("acquireToken - success", response.accessToken);
 
       return response.accessToken;
@@ -300,7 +304,7 @@ export class MSAL implements IMSAL {
       throw new Error('No account found for signing out')
     }
 
-
+    localStorage.removeItem(localStorageKeys.accessToken.name);
 
     const logOutRequest: EndSessionRequest = {account};
     this.msalLibrary.logoutRedirect(logOutRequest);

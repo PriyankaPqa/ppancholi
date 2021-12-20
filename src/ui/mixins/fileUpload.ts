@@ -5,6 +5,7 @@ import { VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IRestResponse } from '@/services/httpClient';
 import { IEntity } from '@/entities/base';
+import authenticationProvider from '@/auth/AuthenticationProvider';
 
 const httpClient = axios.create({
   baseURL: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/`,
@@ -26,7 +27,7 @@ export default Vue.extend({
   computed: {
     headers(): Record<string, string> {
       let headers = {};
-      const accessToken = localStorage.getItem(localStorageKeys.accessToken.name);
+      const accessToken = authenticationProvider.accessToken;
 
       if (accessToken) {
         // Add the access token to the request headers
