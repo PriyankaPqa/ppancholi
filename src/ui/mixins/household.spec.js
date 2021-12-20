@@ -1,3 +1,7 @@
+/**
+ * @group ui/mixins
+ */
+
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household/household.mocks';
 import { mockMemberData, mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';

@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/mass-action
+ */
+
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import Component from './FundingRequestHome.vue';

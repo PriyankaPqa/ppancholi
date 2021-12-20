@@ -1,3 +1,7 @@
+/**
+ * @group storage
+ */
+
 import { mockStore } from '@/store';
 import { IState } from '@/store/modules/dashboard';
 import { makeStorage } from './storage';

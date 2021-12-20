@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/mass-action
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import massActionsTable from './massActionsTable';
 import {

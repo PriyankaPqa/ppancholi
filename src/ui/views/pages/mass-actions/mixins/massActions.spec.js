@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/mass-action
+ */
+
 import { mockStorage } from '@crctech/registration-lib/src/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import massActions from './massActions';

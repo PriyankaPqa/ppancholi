@@ -1,3 +1,7 @@
+/**
+ * @group ui/helpers
+ */
+
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member/index';
 import {
   EIndigenousTypes, IMember, mockIndigenousCommunitiesGetData, mockHouseholdCreate, HouseholdCreate,

@@ -1,3 +1,6 @@
+/**
+ * @group ui/components/system-management
+ */
 import flushPromises from 'flush-promises';
 import {
   createLocalVue,

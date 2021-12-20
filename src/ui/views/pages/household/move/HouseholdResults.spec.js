@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/household
+ */
+
 import { mockCombinedHouseholds, mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import { mockHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create/householdCreate.mock';
 import { HouseholdCreate, mockShelterData } from '@crctech/registration-lib/src/entities/household-create';

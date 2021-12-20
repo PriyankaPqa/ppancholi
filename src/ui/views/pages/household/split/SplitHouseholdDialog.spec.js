@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/household
+ */
+
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
 import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@crctech/registration-lib/src/entities/household-create';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';

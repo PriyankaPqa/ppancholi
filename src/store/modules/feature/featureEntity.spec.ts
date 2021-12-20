@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
 import { FeatureEntityModule } from './featureEntity';

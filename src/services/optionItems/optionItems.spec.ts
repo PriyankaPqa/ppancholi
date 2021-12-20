@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import {
   mockOptionItemData, mockSubItem, EOptionLists,
 } from '@/entities/optionItem';

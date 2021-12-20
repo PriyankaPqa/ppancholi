@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/teams
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import TeamsTable from '@/ui/views/pages/teams/TeamsTable.vue';
 import Component from './TeamsHome.vue';

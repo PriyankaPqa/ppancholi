@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import {
   EEventStatus,
   EventEntity,

@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/registration
+ */
+
 import { mockHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 

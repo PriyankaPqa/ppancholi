@@ -62,7 +62,7 @@ import Vue from 'vue';
 import { RcStatsTemplate, VSelectWithValidation } from '@crctech/component-library';
 import { IEntityCombined } from '@crctech/registration-lib/src/entities/base';
 import { EEventStatus, IEventMainInfo } from '@/entities/event';
-import { ITeamEntity, ITeamMetadata } from '../../../../entities/team';
+import { ITeamEntity, ITeamMetadata } from '@/entities/team';
 
 const defaultTeamStats = {
   countTeamMembers: 0,

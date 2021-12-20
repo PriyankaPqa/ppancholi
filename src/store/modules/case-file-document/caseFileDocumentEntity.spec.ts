@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 /* eslint-disable */
 import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
@@ -26,11 +30,11 @@ const actionContext = {
 } as ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>;
 
 describe('Case file document entity module', () => {
-  
+
   beforeEach(() => {
     module = new CaseFileDocumentEntityModule(service, optionItemService);
   });
-  
+
   describe('getters', () => {
     describe('categories', () => {
       test('the getter returns the sorted types', () => {
@@ -102,7 +106,7 @@ describe('Case file document entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', { name: 'name2' });
       });
     });
-    
+
     describe('downloadDocumentAsUrl', () => {
       it('should call service downloadDocumentAsUrl', async () => {
         module.service.downloadDocumentAsUrl = jest.fn();

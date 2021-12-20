@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 import { Store } from 'vuex';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { mockStore, IRootState } from '@/store';

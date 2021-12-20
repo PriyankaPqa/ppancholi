@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/events
+ */
+
 import { RcDataTable } from '@crctech/component-library';
 import moment from 'moment';
 import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';

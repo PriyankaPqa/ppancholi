@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 

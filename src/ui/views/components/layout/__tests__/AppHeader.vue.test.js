@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/layout
+ */
+
 import Vuetify from 'vuetify';
 import { mockStorage } from '@/store/storage';
 import { mockBrandingEntity } from '@/entities/branding';

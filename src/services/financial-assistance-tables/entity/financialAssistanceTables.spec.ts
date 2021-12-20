@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import {
   mockFinancialAssistanceTableEntity, mockItemData, mockSubItemData,
 } from '@/entities/financial-assistance';

@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { MassActionEntity } from '@/entities/mass-action/massAction';
 import { mockMassActionEntityData } from '@/entities/mass-action/massAction.mocks';
 import { MassActionGroup, MassActionType } from '@/entities/mass-action/massActions.types';

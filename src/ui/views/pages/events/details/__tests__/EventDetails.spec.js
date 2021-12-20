@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/events
+ */
+
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedEvent } from '@/entities/event';

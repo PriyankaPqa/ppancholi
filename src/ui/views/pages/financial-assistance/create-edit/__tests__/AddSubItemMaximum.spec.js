@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/financial-assistance
+ */
+
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockSubItems } from '@/entities/financial-assistance';

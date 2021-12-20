@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/mass-action
+ */
+
 import { RcPageContent } from '@crctech/component-library';
 import {
   createLocalVue,

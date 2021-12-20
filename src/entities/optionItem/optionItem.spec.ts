@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { OptionItem } from './optionItem';
 import { mockOptionItemData } from './optionItem.mock';
 import { mockBaseData } from '@/entities/base';

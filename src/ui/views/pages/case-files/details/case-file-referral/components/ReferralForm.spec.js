@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 /* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@/entities/case-file-referral';
@@ -198,7 +202,7 @@ describe('ReferralForm.vue', () => {
       el = wrapper.findTextFieldWithValidation('referral-notes');
       expect(el.classes('invalid')).toBe(false);
     });
-    
+
     test('consent is required when warm', async () => {
       await wrapper.setData({ localReferral: { method: ReferralMethod.Warm } });
       await wrapper.vm.$refs.form.validate();

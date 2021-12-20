@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext } from 'vuex';
 import { UserAccountsService, IAddRoleToUserRequest } from '@/services/user-accounts/entity';

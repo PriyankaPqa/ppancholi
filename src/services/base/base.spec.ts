@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import { mockHttp } from '@/services/httpClient.mock';
 import { DomainBaseService } from './base';
 

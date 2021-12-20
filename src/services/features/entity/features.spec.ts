@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { FeaturesService } from './features';
 

@@ -1,3 +1,7 @@
+/**
+ * @group storage
+ */
+
 import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
 import { mockCreateTenantSettingsRequest, mockSetDomainsRequest } from '@/entities/tenantSettings';
 import { mockStore } from '@/store';

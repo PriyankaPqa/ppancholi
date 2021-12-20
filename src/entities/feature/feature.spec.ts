@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { FeatureEntity } from './feature';
 import { mockFeatureEntityData } from './feature.mock';
 

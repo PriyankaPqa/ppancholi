@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/mass-action
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import massActionCaseFileFiltering from './massActionCaseFileFiltering';
 import { mockStorage } from '@/store/storage';

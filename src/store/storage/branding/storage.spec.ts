@@ -1,3 +1,7 @@
+/**
+ * @group storage
+ */
+
 import { mockStore } from '@/store';
 import { BrandingStorage } from './storage';
 import { BRANDING_ENTITIES } from '@/constants/vuex-modules';

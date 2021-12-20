@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/shared-components
+ */
+
 /* eslint-disable max-len */
 import { EFilterKeyType, EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import _set from 'lodash/set';

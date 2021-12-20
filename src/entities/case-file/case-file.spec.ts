@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import {
   mockCaseFileEntity, CaseFileEntity, IdentityAuthenticationMethod, IdentityAuthenticationStatus, ImpactValidationMethod, ValidationOfImpactStatus,
 } from './index';

@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/others
+ */
+
 import {
   createLocalVue,
   mount,

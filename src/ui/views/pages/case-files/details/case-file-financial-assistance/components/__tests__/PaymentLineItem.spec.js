@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 /* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
@@ -86,7 +90,7 @@ describe('CaseFilePaymentLineItem.vue', () => {
   });
 
   describe('Computed', () => {
-    
+
     describe('isInactive', () => {
       it('returns whether the current item/subitem is not available when the payment is still new', async () => {
         await mountWrapper(false, 6, null, {
@@ -106,7 +110,7 @@ describe('CaseFilePaymentLineItem.vue', () => {
         });
         await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
         expect(wrapper.vm.isInactive).toBeTruthy();
-        
+
         await mountWrapper(false, 6, null, {
           computed: {
             mainItem() { return { ...items[0], status : Status.Active}; },

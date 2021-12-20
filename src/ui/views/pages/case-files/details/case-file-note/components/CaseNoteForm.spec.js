@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';

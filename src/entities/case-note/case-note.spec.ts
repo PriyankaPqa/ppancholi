@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { mockCaseNoteEntity, CaseNoteEntity } from './index';
 
 const mockData = mockCaseNoteEntity();

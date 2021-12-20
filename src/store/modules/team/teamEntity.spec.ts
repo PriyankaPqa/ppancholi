@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 /* eslint-disable */
 import { ActionContext } from 'vuex';
 

@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 import _cloneDeep from 'lodash/cloneDeep';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import { ECanadaProvinces } from '@crctech/registration-lib/src/types';

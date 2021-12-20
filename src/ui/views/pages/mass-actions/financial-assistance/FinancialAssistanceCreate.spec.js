@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/mass-action
+ */
+
 import { mockEvent } from '@crctech/registration-lib/src/entities/event/event.mock';
 import {
   createLocalVue,

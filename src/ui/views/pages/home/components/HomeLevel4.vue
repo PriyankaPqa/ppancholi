@@ -26,8 +26,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import TeamsTable from '@/ui/views/pages/teams/TeamsTable.vue';
-import TeamStats from '@/ui/views/components/stats/TeamStats.vue';
-import EventStats from '@/ui/views/components/stats/EventStats.vue';
+import TeamStats from '@/ui/views/pages/home/components/stats/TeamStats.vue';
+import EventStats from '@/ui/views/pages/home/components/stats/EventStats.vue';
 
 export default Vue.extend({
   name: 'HomeLevel4',

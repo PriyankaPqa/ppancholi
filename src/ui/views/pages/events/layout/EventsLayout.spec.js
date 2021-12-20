@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/events
+ */
+
 import { RcRouterViewTransition } from '@crctech/component-library';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import Component from './EventsLayout.vue';

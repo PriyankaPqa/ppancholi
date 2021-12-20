@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 /* eslint-disable */
 import { ICaseFileDocumentEntity, mockCaseFileDocumentEntity } from '@/entities/case-file-document';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
@@ -17,7 +21,7 @@ describe('>>> Case File Document Service', () => {
     http = mockHttp();
     service = new CaseFileDocumentsService(http as never);
   });
-  
+
   describe('updateDocument', () => {
     it('is linked to the correct URL and params', async () => {
       await service.updateDocument(entity);
@@ -25,7 +29,7 @@ describe('>>> Case File Document Service', () => {
         entity);
     });
   });
-  
+
   describe('downloadDocumentAsUrl', () => {
     it('is linked to the correct URL and params and returns the url', async () => {
       window.URL.createObjectURL = jest.fn(() => 'myUrl');

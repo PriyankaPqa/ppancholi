@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 import { RcDataTable } from '@crctech/component-library';
 import { EFilterType } from '@crctech/component-library/src/types';
 import flushPromises from 'flush-promises';

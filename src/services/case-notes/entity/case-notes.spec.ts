@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import { mockCaseNoteEntity } from '@/entities/case-note';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { CaseNotesService } from './case-notes';

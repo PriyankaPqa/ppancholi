@@ -1,8 +1,12 @@
+/**
+ * @group ui/components/home
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import CaseFilesTable from '@/ui/views/pages/case-files/CaseFilesTable.vue';
 import TeamsTable from '@/ui/views/pages/teams/TeamsTable.vue';
-import EventStats from '@/ui/views/components/stats/EventStats.vue';
-import TeamStats from '@/ui/views/components/stats/TeamStats.vue';
+import EventStats from '@/ui/views/pages/home/components/stats/EventStats.vue';
+import TeamStats from '@/ui/views/pages/home/components/stats/TeamStats.vue';
 
 import Component from './HomeLevel3.vue';
 

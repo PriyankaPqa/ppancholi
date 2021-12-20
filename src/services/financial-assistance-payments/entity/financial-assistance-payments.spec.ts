@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 /* eslint-disable */
 import { IFinancialAssistancePaymentEntity, mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
@@ -48,7 +52,7 @@ describe('>>> Financial assistance payment Service', () => {
         });
     });
   });
-  
+
   describe('updatePaymentStatus', () => {
     it('is linked to the correct URL and params', async () => {
       await service.updatePaymentStatus(entity.id, 'group-id', 2);
@@ -62,7 +66,7 @@ describe('>>> Financial assistance payment Service', () => {
       expect(http.patch).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/myId/submit');
     });
   });
-  
+
   describe('addFinancialAssistancePaymentLine', () => {
     it('is linked to the correct URL and params', async () => {
       await service.addFinancialAssistancePaymentLine('myParent', entity.groups[0]);

@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import Component from '../components/CaseFileDetailsBeneficiaryPhoneNumber.vue';

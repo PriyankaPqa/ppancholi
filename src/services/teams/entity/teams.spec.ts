@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import {
   TeamEntity, mockTeamMembersData, mockTeamEntity,
 } from '@/entities/team';

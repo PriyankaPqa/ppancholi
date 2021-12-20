@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 import { Store, ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 import { mockStore, IRootState } from '@/store';

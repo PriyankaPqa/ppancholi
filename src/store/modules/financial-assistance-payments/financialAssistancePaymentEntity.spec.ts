@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 /* eslint-disable */
 import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
@@ -24,11 +28,11 @@ const actionContext = {
 } as ActionContext<IFinancialAssistancePaymentEntityState, IFinancialAssistancePaymentEntityState>;
 
 describe('Financial assistance payment entity module', () => {
-  
+
   beforeEach(() => {
     module = new FinancialAssistancePaymentEntityModule(service);
   });
-  
+
   describe('actions', () => {
 
     describe('addFinancialAssistancePayment', () => {
@@ -58,7 +62,7 @@ describe('Financial assistance payment entity module', () => {
         expect(res).toEqual(serviceRes);
       });
     });
-    
+
     describe('updatePaymentStatus', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
@@ -72,7 +76,7 @@ describe('Financial assistance payment entity module', () => {
         expect(res).toEqual(serviceRes);
       });
     });
-    
+
     describe('submitFinancialAssistancePayment', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
@@ -98,7 +102,7 @@ describe('Financial assistance payment entity module', () => {
         expect(res).toEqual(serviceRes);
       });
     });
-    
+
     describe('editFinancialAssistancePaymentLine', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
@@ -111,7 +115,7 @@ describe('Financial assistance payment entity module', () => {
         expect(res).toEqual(serviceRes);
       });
     });
-    
+
     describe('deleteFinancialAssistancePaymentLine', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
@@ -123,7 +127,7 @@ describe('Financial assistance payment entity module', () => {
         expect(res).toEqual(serviceRes);
       });
     });
-    
+
     describe('fetchHistory', () => {
       it('calls the fetchHistory service for the financial assistance and metadata if true and calls mapResponses and combineEntities with the results', async () => {
         module.service.getHistory = jest.fn(() => Promise.resolve(mockFinancialPaymentHistory()));

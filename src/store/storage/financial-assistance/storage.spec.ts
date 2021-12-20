@@ -1,3 +1,7 @@
+/**
+ * @group storage
+ */
+
 import { FINANCIAL_ASSISTANCE_ENTITIES, FINANCIAL_ASSISTANCE_METADATA } from '@/constants/vuex-modules';
 import { Status } from '@/entities/base';
 import {

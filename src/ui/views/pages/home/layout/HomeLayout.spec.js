@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/home
+ */
+
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import DashboardCaseFile from '@/ui/views/pages/home/components/DashboardCaseFile.vue';

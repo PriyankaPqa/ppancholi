@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/household
+ */
+
 import { mockHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
 import {
   HouseholdActivity,

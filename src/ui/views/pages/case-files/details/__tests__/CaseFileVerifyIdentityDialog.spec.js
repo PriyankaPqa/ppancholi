@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 /* eslint-disable no-unused-vars */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';

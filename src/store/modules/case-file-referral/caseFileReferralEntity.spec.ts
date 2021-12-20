@@ -1,3 +1,7 @@
+/**
+ * @group store
+ */
+
 /* eslint-disable */
 import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
@@ -26,7 +30,7 @@ const actionContext = {
 } as ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>;
 
 describe('Case file entity module', () => {
-  
+
   beforeEach(() => {
     module = new CaseFileReferralEntityModule(service, optionItemService);
   });

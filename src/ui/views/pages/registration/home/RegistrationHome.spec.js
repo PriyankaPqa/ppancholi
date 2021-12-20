@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/registration
+ */
+
 import Vuetify from 'vuetify';
 import {
   createLocalVue,

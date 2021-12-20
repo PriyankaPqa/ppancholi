@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { BrandingEntity } from './branding';
 import { mockBrandingEntityData } from './branding.mock';
 

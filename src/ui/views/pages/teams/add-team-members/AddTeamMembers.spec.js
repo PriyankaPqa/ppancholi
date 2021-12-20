@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/teams
+ */
+
 import { RcDialog } from '@crctech/component-library';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';

@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import { mockEditColoursRequest, mockEditTenantDetailsRequest } from '@/entities/branding';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { BrandingsService } from './brandings';

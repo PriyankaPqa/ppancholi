@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@/entities/case-file-referral';
 import { mockStorage } from '@/store/storage';

@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 /* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';

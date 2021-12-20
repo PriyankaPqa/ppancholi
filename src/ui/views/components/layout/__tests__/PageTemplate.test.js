@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/layout
+ */
+
 import { RcPageLoading } from '@crctech/component-library';
 import { createLocalVue, mount } from '@/test/testSetup';
 import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vue';

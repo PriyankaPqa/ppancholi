@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import { mockHttp } from '@/services/httpClient.mock';
 import { OptionItemBaseService } from './base';
 import { mockOptionItemData, mockSubItem } from '@/entities/optionItem';

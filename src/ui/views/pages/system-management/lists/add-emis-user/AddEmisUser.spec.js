@@ -1,3 +1,6 @@
+/**
+ * @group ui/components/system-management
+ */
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockAppUserData, mockRolesData } from '@/entities/app-user';

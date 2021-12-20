@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 /* eslint-disable max-len */
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';

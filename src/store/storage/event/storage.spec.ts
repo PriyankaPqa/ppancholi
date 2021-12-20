@@ -1,3 +1,7 @@
+/**
+ * @group storage
+ */
+
 import { EVENT_ENTITIES, EVENT_METADATA } from '@/constants/vuex-modules';
 import {
   EEventStatus,

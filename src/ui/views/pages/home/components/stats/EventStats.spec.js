@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/home
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import Component from './EventStats.vue';

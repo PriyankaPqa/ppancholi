@@ -1,3 +1,6 @@
+/**
+ * @group ui/components/registration
+ */
 import Vuetify from 'vuetify';
 import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
 import {

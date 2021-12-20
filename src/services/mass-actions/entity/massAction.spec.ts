@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import { mockHttp } from '@/services/httpClient.mock';
 import { MassActionService } from '@/services/mass-actions/entity/massAction';
 import { MassActionRunType, MassActionType } from '@/entities/mass-action';

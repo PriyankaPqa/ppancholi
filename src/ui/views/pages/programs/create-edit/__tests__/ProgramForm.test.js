@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/programs
+ */
+
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { Status } from '@/entities/base';
 import { ProgramEntity } from '@/entities/program';

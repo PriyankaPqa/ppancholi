@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { MAX_LENGTH_LG, MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { ECanadaProvinces } from '@/types';
 import { EventEntity } from './event';

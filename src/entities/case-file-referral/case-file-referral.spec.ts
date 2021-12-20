@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { ReferralMethod } from './case-file-referral.types';
 import {
   mockCaseFileReferralEntity, CaseFileReferralEntity,

@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/home
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockUsersData, User } from '@/entities/user';
 import { mockStorage } from '@/store/storage';

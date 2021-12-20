@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/system-management
+ */
+
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';

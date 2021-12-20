@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/layout
+ */
+
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import { createLocalVue, shallowMount } from '@/test/testSetup';

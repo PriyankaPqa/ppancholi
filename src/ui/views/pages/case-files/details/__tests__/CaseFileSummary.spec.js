@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 /* eslint-disable */
 import flushPromises from 'flush-promises';
 import _orderBy from 'lodash/orderBy';

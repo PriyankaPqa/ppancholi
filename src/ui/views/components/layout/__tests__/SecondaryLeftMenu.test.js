@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/layout
+ */
+
 import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '../SecondaryLeftMenu.vue';
 

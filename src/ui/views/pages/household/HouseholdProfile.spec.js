@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/household
+ */
+
 import { mockHouseholdCreate, Member } from '@crctech/registration-lib/src/entities/household-create';
 import { mockCombinedHousehold, mockHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';

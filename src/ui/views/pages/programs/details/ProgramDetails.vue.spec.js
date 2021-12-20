@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/programs
+ */
+
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';

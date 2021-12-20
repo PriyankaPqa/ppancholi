@@ -1,3 +1,7 @@
+/**
+ * @group storage
+ */
+
 import { mockStore } from '@/store';
 import { FeatureStorage } from './storage';
 import { FEATURE_ENTITIES } from '@/constants/vuex-modules';

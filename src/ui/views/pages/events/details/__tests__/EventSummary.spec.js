@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/events
+ */
+
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import {

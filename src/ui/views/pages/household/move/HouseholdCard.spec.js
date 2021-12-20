@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/household
+ */
+
 import { mockHouseholdCreate, CurrentAddress } from '@crctech/registration-lib/src/entities/household-create';
 import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member/index';
 import { mockShelterLocations } from '@crctech/registration-lib/src/entities/event/event.mock';

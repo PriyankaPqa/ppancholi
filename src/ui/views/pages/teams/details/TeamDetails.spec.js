@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/teams
+ */
+
 /* eslint-disable */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
@@ -12,7 +16,7 @@ const localVue = createLocalVue();
 
 describe('TeamDetails.vue', () => {
   let wrapper;
-  
+
   const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
@@ -33,14 +37,14 @@ describe('TeamDetails.vue', () => {
   describe('Template', () => {
     describe('Edit button', () => {
       it('should be enabled for L4+', async () => {
-        
+
         await mountWrapper(false, 4);
 
         const props = wrapper.findComponent(RcPageContent).props('showEditButton');
         expect(props).toBeTruthy();
       });
       it('should be hidden for L3', async () => {
-        
+
         await mountWrapper(false, 3);
         const props = wrapper.findComponent(RcPageContent).props('showEditButton');
         expect(props).toBeFalsy();
@@ -48,7 +52,7 @@ describe('TeamDetails.vue', () => {
     });
 
     describe('Elements', () => {
-      
+
       beforeEach(async () => {
         await mountWrapper(false);
       });

@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/financial-assistance
+ */
+
 import { RcRouterViewTransition } from '@crctech/component-library';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import Component from './FinancialAssistanceLayout.vue';

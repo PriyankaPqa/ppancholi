@@ -1,3 +1,7 @@
+/**
+ * @group storage
+ */
+
 import { mockStore } from '@/store';
 import { UserAccountStorage } from '@/store/storage/user-account/storage';
 import { USER_ACCOUNT_ENTITIES, USER_ACCOUNT_METADATA } from '@/constants/vuex-modules';

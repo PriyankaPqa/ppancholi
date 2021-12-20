@@ -1,3 +1,7 @@
+/**
+ * @group ui/helpers
+ */
+
 /* eslint-disable max-len */
 import moment from 'moment';
 import { dateTypes } from '@/constants/dateTypes';

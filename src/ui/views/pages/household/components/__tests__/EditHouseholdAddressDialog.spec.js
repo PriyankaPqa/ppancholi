@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/household
+ */
+
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import { mockAddressData, Address } from '@crctech/registration-lib/src/entities/value-objects/address';
 import { mockAddress, mockHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';

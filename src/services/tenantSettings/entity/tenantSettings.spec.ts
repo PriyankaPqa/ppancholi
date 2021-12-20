@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import { mockCreateTenantSettingsRequest, mockSetDomainsRequest } from '@/entities/tenantSettings';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { TenantSettingsService } from './tenantSettings';

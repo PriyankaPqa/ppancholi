@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { BaseEntity, mockBaseData } from './index';
 import { Status } from './base.types';
 

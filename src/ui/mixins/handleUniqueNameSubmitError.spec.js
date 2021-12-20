@@ -1,3 +1,7 @@
+/**
+ * @group ui/mixins
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 

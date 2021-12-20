@@ -1,3 +1,7 @@
+/**
+ * @group services
+ */
+
 import { PublicService } from '@crctech/registration-lib/src/services/public';
 import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
 import { provider } from './index';

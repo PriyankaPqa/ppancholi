@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 import { RcDialog, RcConfirmationDialog } from '@crctech/component-library';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFile, mockCaseFileEntity } from '@/entities/case-file';

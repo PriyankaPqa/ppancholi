@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 /* eslint-disable */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFileDocuments } from '@/entities/case-file-document';

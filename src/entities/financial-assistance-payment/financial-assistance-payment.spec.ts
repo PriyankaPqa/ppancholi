@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { mockCaseFinancialAssistanceEntity } from './financial-assistance-payment.mock';
 import { FinancialAssistancePaymentEntity } from './index';
 import { ApprovalStatus } from './financial-assistance-payment.types';

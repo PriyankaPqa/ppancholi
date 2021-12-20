@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/case-file
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCaseFileEntity, CaseFileStatus } from '@/entities/case-file';
 // import { mockTeamsData, mockSearchTeams } from '@/entities/team';

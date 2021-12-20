@@ -1,3 +1,7 @@
+/**
+ * @group ui/mixins
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 

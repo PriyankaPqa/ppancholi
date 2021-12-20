@@ -1,3 +1,7 @@
+/**
+ * @group entities
+ */
+
 import { User } from './user';
 import { mockUsersData } from './user.mock';
 

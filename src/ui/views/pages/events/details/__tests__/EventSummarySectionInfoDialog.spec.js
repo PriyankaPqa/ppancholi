@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/events
+ */
+
 import { RcDialog } from '@crctech/component-library';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 

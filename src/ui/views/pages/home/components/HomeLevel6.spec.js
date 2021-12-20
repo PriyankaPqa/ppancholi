@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/home
+ */
+
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import HomeLevel5 from '@/ui/views/pages/home/components/HomeLevel5.vue';
 import Component from './HomeLevel6.vue';

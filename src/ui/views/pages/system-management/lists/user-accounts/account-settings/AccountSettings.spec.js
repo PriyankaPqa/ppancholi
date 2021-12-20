@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/system-management
+ */
+
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 import { mockOptionItemData } from '@/entities/optionItem';
