@@ -71,7 +71,7 @@ const mutations = {
     state.given_name = payload.given_name;
     state.homeAccountId = payload.homeAccountId;
 
-    if (state.roles[0] !== payload.roles[0]) {
+    if (payload?.roles && state.roles[0] !== payload.roles[0]) {
       state.roles = payload.roles;
       applicationInsights.setBasicContext({ roles: state.roles });
     }

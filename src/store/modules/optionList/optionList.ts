@@ -23,7 +23,7 @@ const getDefaultState = (): IState => ({
 const moduleState: IState = getDefaultState();
 
 const getters = {
-  items: (state: IState) => _sortBy(state.items.map((e) => new OptionItem(e)), 'orderRank'),
+  items: (state: IState) => (state.items ? _sortBy(state.items.map((e) => new OptionItem(e)), 'orderRank') : []),
 };
 
 const mutations = {

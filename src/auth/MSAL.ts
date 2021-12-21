@@ -247,10 +247,12 @@ export class MSAL implements IMSAL {
           { },
           'MSAL',
           'acquireToken');
+
+        await this.msalLibrary.handleRedirectPromise();
+
         this.msalLibrary.acquireTokenRedirect(this.getInteractiveRequest())
           .catch((e) => {
-            this.showConsole && console.error('acquireTokenRedirect error - will trigger sign in method', e)
-            this.signIn();
+            this.showConsole && console.error('acquireTokenRedirect error', e)
           });
       } else {
         this.showConsole && console.error('acquireToken error', e)
@@ -304,8 +306,6 @@ export class MSAL implements IMSAL {
 
     if (this.account) {
       account = this.account
-    } else {
-      throw new Error('No account found for signing out')
     }
 
     localStorage.removeItem(localStorageKeys.accessToken.name);
@@ -387,7 +387,8 @@ export class MSAL implements IMSAL {
         'MSAL',
         'checkIfLoggedInCurrentTenant'
       );
-        await this.signIn(this.currentDomainTenant);
+      await this.msalLibrary.handleRedirectPromise();
+      this.signIn(this.currentDomainTenant);
     } else {
       if (this.account.localAccountId !== accountForTenant.localAccountId) {
         this.showConsole && console.debug('accountForTenant - Setting new account', accountForTenant)
@@ -408,6 +409,7 @@ export class MSAL implements IMSAL {
    */
   private getInteractiveRequest(): RedirectRequest {
     return {
+      account: this.account,
       scopes: this.tokenRequest.scopes,
     }
   }
@@ -419,8 +421,16 @@ export class MSAL implements IMSAL {
    */
   private getAccount(): AccountInfo | null {
     const currentAccounts = this.msalLibrary.getAllAccounts();
+    this.showConsole && console.debug("Result if we would have used msal.getActiveAccount");
+    this.showConsole && console.debug(this.msalLibrary.getActiveAccount());
     if (currentAccounts === null) {
       this.showConsole && console.debug("getAccount - No accounts detected");
+      this.enableAppInsights && applicationInsights.trackTrace(
+        'getAccount - No accounts detected',
+        {},
+        'MSAL',
+        'getAccount'
+      );
       return null;
     }
 
@@ -428,8 +438,22 @@ export class MSAL implements IMSAL {
       // Add choose account code here
       this.showConsole && console.debug("getAccount - Multiple accounts detected, need to add choose account code. For now we pick the first one");
       this.showConsole && console.table(currentAccounts);
+      this.enableAppInsights && applicationInsights.trackTrace(
+        'getAccount - Multiple accounts detected, need to add choose account code. For now we pick the first one',
+        {currentAccounts},
+        'MSAL',
+        'getAccount'
+      );
       return currentAccounts[0];
     } else if (currentAccounts.length === 1) {
+      this.showConsole && console.debug("getAccount - one account");
+      this.showConsole && console.table(currentAccounts);
+      this.enableAppInsights && applicationInsights.trackTrace(
+        'getAccount - one account',
+        {currentAccounts},
+        'MSAL',
+        'getAccount'
+      );
       return currentAccounts[0];
     }
 
@@ -443,16 +467,41 @@ export class MSAL implements IMSAL {
    */
   private getAccountForCurrentTenant() : AccountInfo | null {
     const currentAccounts = this.msalLibrary.getAllAccounts();
+    this.showConsole && console.debug("Result if we would have used msal.getActiveAccount");
+    this.showConsole && console.debug(this.msalLibrary.getActiveAccount());
     if (currentAccounts === null) {
       this.showConsole && console.debug("getAccountForCurrentTenant - No accounts detected");
+      this.enableAppInsights && applicationInsights.trackTrace(
+        'getAccountForCurrentTenant - No accounts detected',
+        {},
+        'MSAL',
+        'getAccountForCurrentTenant'
+      );
       return null;
     }
     if (currentAccounts.length > 1) {
       // Add choose account code here
       this.showConsole && console.debug("getAccountForCurrentTenant - Multiple accounts detected, need to add choose account code. For now we pick the first one matching current tenant");
       this.showConsole && console.table(currentAccounts);
+      this.enableAppInsights && applicationInsights.trackTrace(
+        'getAccountForCurrentTenant - Multiple accounts detected, need to add choose account code. For now we pick the first one matching current tenant',
+        {currentAccounts, currentDomainTenant: this.currentDomainTenant},
+        'MSAL',
+        'getAccountForCurrentTenant'
+      );
+      this.showConsole && console.debug('currentDomainTenant', this.currentDomainTenant);
       return currentAccounts.filter((a) => a.tenantId === this.currentDomainTenant)[0]
     } else if (currentAccounts.length === 1) {
+      this.showConsole && console.debug("getAccountForCurrentTenant - one account");
+      this.showConsole && console.table(currentAccounts);
+      this.enableAppInsights && applicationInsights.trackTrace(
+        'getAccountForCurrentTenant - one account',
+        {currentAccounts, currentDomainTenant: this.currentDomainTenant},
+        'MSAL',
+        'getAccountForCurrentTenant'
+      );
+      this.showConsole && console.debug('currentDomainTenant', this.currentDomainTenant);
+
       return currentAccounts.filter((a) => a.tenantId === this.currentDomainTenant)[0]
     }
   }
@@ -465,10 +514,12 @@ export class MSAL implements IMSAL {
       this.showConsole && console.debug('handleResponse - Set account with using response', response)
       this.account = response.account;
     } else { // not coming back from an auth redirect
+      this.showConsole && console.debug('this.account', this.account)
       this.showConsole && console.debug('handleResponse - Will set account from method getAccount')
       this.account = this.getAccount();
       this.showConsole && console.debug('Set account to:')
       this.showConsole && console.debug(this.account)
+      this.showConsole && console.debug('Current tenant id :', this.currentDomainTenant)
     }
   }
 }
