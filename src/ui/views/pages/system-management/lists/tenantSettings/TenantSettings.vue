@@ -64,10 +64,6 @@ export default Vue.extend({
     },
   },
 
-  async created() {
-    await this.$storage.tenantSettings.actions.getCurrentTenantSettings();
-  },
-
   methods: {
     back() {
       this.$router.replace({

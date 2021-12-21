@@ -619,7 +619,6 @@ export default Vue.extend({
       this.localEvent.responseDetails.dateReported = this.today;
     }
 
-    await this.$storage.tenantSettings.actions.getCurrentTenantSettings();
     await this.$storage.event.actions.fetchEventTypes();
     await this.$storage.event.actions.fetchAll();
 

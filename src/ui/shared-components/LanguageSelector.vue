@@ -42,6 +42,11 @@ export default Vue.extend({
       }
       return '';
     },
+
+    tenantLanguages(): Array<string> {
+      const currentTenantSettings = this.$storage.tenantSettings.getters.currentTenantSettings();
+      return currentTenantSettings?.availableLanguages;
+    },
     /**
      * Get the list of available locales from the Translation plugin and use them
      * to populate the list of options in the menu
@@ -49,36 +54,24 @@ export default Vue.extend({
     locales(): Array<Record<string, unknown>> {
       const locales: Array<Record<string, unknown>> = [];
 
-      Trans.supportedLanguages.forEach((language) => {
-        // // 'test' is not a valid language in production
-        // if (process.env.NODE_ENV === 'production' && language === 'test') {
-        //   return;
-        // }
+      let supportedLanguages = Trans.supportedLanguages;
 
-        switch (language) {
-          case 'fr':
-            locales.push({
-              label: 'Français',
-              value: language,
-              disabled: language === Trans.currentLanguage,
-            });
-            break;
+      const labels: Record<string, string> = {
+        fr: 'Français',
+        en: 'English',
+        test: 'Test',
+      };
 
-          case 'test':
-            locales.push({
-              label: 'Test',
-              value: language,
-              disabled: language === Trans.currentLanguage,
-            });
-            break;
+      if (this.tenantLanguages && this.tenantLanguages.length > 0) {
+        supportedLanguages = this.tenantLanguages;
+      }
 
-          default:
-            locales.push({
-              label: 'English',
-              value: language,
-              disabled: language === Trans.currentLanguage,
-            });
-        }
+      supportedLanguages.forEach((language) => {
+        locales.push({
+          label: labels[language],
+          value: language,
+          disabled: language === Trans.currentLanguage,
+        });
       });
 
       return locales;

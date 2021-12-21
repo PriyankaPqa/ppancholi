@@ -23,6 +23,7 @@ export const mockTenantSettingsEntityData = (force?: Partial<ITenantSettingsEnti
       fr: 'registration domain fr',
     },
   },
+  availableLanguages: ['en', 'fr'],
 
   ...force,
 });

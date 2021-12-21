@@ -33,17 +33,6 @@ describe('EventSummaryLink.vue', () => {
     jest.clearAllMocks();
   };
 
-  describe('Lifecycle', () => {
-    describe('created', () => {
-      it('should call storage for getCurrentTenantSettings', async () => {
-        await mountWrapper();
-        const hook = wrapper.vm.$options.created[0];
-        await hook.call(wrapper.vm);
-        expect(storage.tenantSettings.actions.getCurrentTenantSettings).toHaveBeenCalled();
-      });
-    });
-  });
-
   describe('Template', () => {
     beforeEach(async () => {
       await mountWrapper(true, 6, null, {

@@ -3,7 +3,9 @@ import { RouteConfig } from 'vue-router';
 
 import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
-import { USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, BRANDING_ENTITIES } from '@/constants/vuex-modules';
+import {
+  USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, BRANDING_ENTITIES, TENANT_SETTINGS_ENTITIES,
+} from '@/constants/vuex-modules';
 import Routes from '../../constants/routes';
 import { Features } from '@/entities/feature';
 import { SignalR } from '../plugins/signalR';
@@ -128,6 +130,7 @@ export const routes: Array<RouteConfig> = [
             store.dispatch(`${BRANDING_ENTITIES}/getBranding`),
             store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'en'),
             store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'fr'),
+            store.dispatch(`${TENANT_SETTINGS_ENTITIES}/getCurrentTenantSettings`),
           ]);
           await SignalR.instance.buildHubConnection();
         }

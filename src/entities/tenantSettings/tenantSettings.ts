@@ -9,6 +9,8 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
 
   registrationDomain: IMultilingual;
 
+  availableLanguages: Array<string>
+
   constructor(data?: ITenantSettingsEntityData) {
     super(data);
     this.slug = data?.slug || '';
@@ -24,5 +26,7 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
         fr: '',
       },
     };
+
+    this.availableLanguages = data?.availableLanguages || [];
   }
 }

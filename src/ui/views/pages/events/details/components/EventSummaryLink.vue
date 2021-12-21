@@ -98,10 +98,6 @@ export default Vue.extend({
     },
   },
 
-  async created() {
-    await this.$storage.tenantSettings.actions.getCurrentTenantSettings();
-  },
-
   methods: {
     copyRegistrationLink() {
       helpers.copyToClipBoard(this.registrationUrl);

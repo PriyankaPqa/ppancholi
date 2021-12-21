@@ -6,6 +6,7 @@ export interface ITenantSettingsEntityData extends IEntity {
   slug: string;
   emisDomain: IMultilingual;
   registrationDomain: IMultilingual;
+  availableLanguages: Array<string>
 }
 
 export interface ITenantSettingsEntity extends ITenantSettingsEntityData {}

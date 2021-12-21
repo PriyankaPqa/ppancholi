@@ -24,6 +24,11 @@ describe('>>> TenantSettingsEntity', () => {
         const entity = new TenantSettingsEntity(mock);
         expect(entity.registrationDomain).toEqual(mock.registrationDomain);
       });
+
+      it('should instantiate availableLanguages', () => {
+        const entity = new TenantSettingsEntity(mock);
+        expect(entity.availableLanguages).toEqual(mock.availableLanguages);
+      });
     });
 
     describe('if data is not passed', () => {
@@ -50,6 +55,11 @@ describe('>>> TenantSettingsEntity', () => {
             fr: '',
           },
         });
+      });
+
+      it('should instantiate availableLanguages', () => {
+        const entity = new TenantSettingsEntity();
+        expect(entity.availableLanguages).toEqual([]);
       });
     });
   });

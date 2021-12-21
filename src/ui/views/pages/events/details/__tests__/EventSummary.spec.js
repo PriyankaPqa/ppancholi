@@ -104,9 +104,6 @@ describe('EventSummary.vue', () => {
             },
           },
           $storage: {
-            tenantSettings: {
-              actions: { getCurrentTenantSettings: jest.fn() },
-            },
             event: {
               actions: {
                 fetch: jest.fn(() => mockCombinedEvent()),
