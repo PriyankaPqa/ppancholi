@@ -17,7 +17,7 @@
               </v-icon>
               {{ $t('household.profile.registration_number') }}:
             </div>
-            <span>{{ household.registrationNumber }}</span>
+            <span>{{ householdData.entity.registrationNumber }}</span>
           </div>
 
           <div v-if="household.homeAddress" class="pt-6 d-flex flex-column" data-test="household_profile_home_address">
@@ -345,7 +345,7 @@ export default mixins(household).extend({
     async fetchHouseholdData() {
       this.loading = true;
       try {
-        const householdData = await this.$storage.household.actions.fetch(this.id);
+        const householdData = await this.$storage.household.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
         if (householdData) {
           const householdCreateData = await this.buildHouseholdCreateData(householdData, null);
 
