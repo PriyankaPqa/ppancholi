@@ -30,7 +30,7 @@ const msalConfig = {
     scopes: [apiPermissions],
   } as RedirectRequest,
   showConsole: true, // enable console added by us
-  enableLogger: process.env.NODE_ENV === 'development' && false, // enable logger by microsoft
+  enableLogger: true, // process.env.NODE_ENV === 'development' && false, // enable logger by microsoft
   enableAppInsights: process.env.NODE_ENV === 'production',
 };
 
