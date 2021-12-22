@@ -63,6 +63,7 @@ export enum CaseFileActivityType {
   HouseholdSplit = 24,
   HouseholdMovedMembersOut = 25,
   HouseholdMovedMembersIn = 26,
+  HouseholdCreatedAfterSplit = 27
 }
 
 export enum RegistrationType {

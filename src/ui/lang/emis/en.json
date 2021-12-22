@@ -185,6 +185,8 @@
     "caseFileActivity.activityList.title.HouseholdMovedMembersIn": "Household member(s) moved in from Household #{x}",
     "caseFileActivity.activityList.title.HouseholdMovedMembersOut": "Household member(s) moved out to Household #{x}",
     "caseFileActivity.activityList.title.HouseholdSplit": "Household member(s) split",
+    "caseFileActivity.activityList.title.HouseholdSplitFrom": "Household member(s) split from Household #{x}",
+    "caseFileActivity.activityList.title.HouseholdSplitTo": "Household member(s) split to Household #{x}",
     "caseFileActivity.activityList.title.IdentityAuthenticationUpdated": "Changed authenticate identity status",
     "caseFileActivity.activityList.title.ImpactStatusValidationUpdated": "Changed validation of impact status",
     "caseFileActivity.activityList.title.PaymentSubmitted": "Payment submitted for approval",

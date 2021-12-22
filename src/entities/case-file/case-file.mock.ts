@@ -573,6 +573,26 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
         ],
       },
     },
+    {
+      id: 'mock-activity-id-28',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.HouseholdCreatedAfterSplit,
+      details: {
+        removedMembers: [
+          {
+            id: '61016652-3939-41fc-99a6-b4ca2c790254',
+            name: 'firstname1 lastname',
+          },
+          {
+            id: '61016652-3939-41fc-99a6-b4ca2c790252',
+            name: 'firstname2 lastname',
+          },
+        ],
+      },
+    },
   ];
 
   if (type) {

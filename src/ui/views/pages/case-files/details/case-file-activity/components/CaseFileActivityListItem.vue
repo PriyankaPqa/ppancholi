@@ -106,6 +106,9 @@ export default Vue.extend({
         case CaseFileActivityType.HouseholdSplit:
           return this.makeContentForHouseholdSplit();
 
+        case CaseFileActivityType.HouseholdCreatedAfterSplit:
+          return this.makeContentForHouseholdCreatedAfterSplit();
+
         case CaseFileActivityType.HouseholdMovedMembersOut:
           return this.makeContentForHouseholdMovedMembersOut();
 
@@ -363,7 +366,14 @@ export default Vue.extend({
     },
 
     makeContentForHouseholdSplit(): {title: TranslateResult, body: TranslateResult} {
-      const title = this.$t('caseFileActivity.activityList.title.HouseholdSplit');
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdSplitTo', { x: this.item.details.registrationNumber });
+      const body = this.$t('caseFileActivity.activityList.body.HouseholdSplit')
+        + (this.item.details?.removedMembers as [] || []).map((m: {name: string}) => m.name).join(', ');
+      return { title, body };
+    },
+
+    makeContentForHouseholdCreatedAfterSplit(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.HouseholdSplitFrom', { x: this.item.details.registrationNumber });
       const body = this.$t('caseFileActivity.activityList.body.HouseholdSplit')
         + (this.item.details?.removedMembers as [] || []).map((m: {name: string}) => m.name).join(', ');
       return { title, body };

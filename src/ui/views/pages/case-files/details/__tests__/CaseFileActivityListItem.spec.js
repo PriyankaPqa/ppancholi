@@ -746,7 +746,9 @@ describe('CaseFileActivityListItem.vue', () => {
             body: null,
           });
         });
+      });
 
+      describe('makeContentForHouseholdSplit', () => {
         it('returns the correct data when action type is HouseholdSplit', async () => {
           const item = mockCaseFileActivities(CaseFileActivityType.HouseholdSplit)[0];
 
@@ -754,7 +756,21 @@ describe('CaseFileActivityListItem.vue', () => {
             item,
           });
           expect(wrapper.vm.makeContentForHouseholdSplit()).toEqual({
-            title: 'caseFileActivity.activityList.title.HouseholdSplit',
+            title: 'caseFileActivity.activityList.title.HouseholdSplitTo',
+            body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
+          });
+        });
+      });
+
+      describe('makeContentForHouseholdCreatedAfterSplit', () => {
+        it('returns the correct data when action type is HouseholdCreatedAfterSplit', async () => {
+          const item = mockCaseFileActivities(CaseFileActivityType.HouseholdCreatedAfterSplit)[0];
+
+          await wrapper.setProps({
+            item,
+          });
+          expect(wrapper.vm.makeContentForHouseholdCreatedAfterSplit()).toEqual({
+            title: 'caseFileActivity.activityList.title.HouseholdSplitFrom',
             body: 'caseFileActivity.activityList.body.HouseholdSplitfirstname1 lastname, firstname2 lastname',
           });
         });
