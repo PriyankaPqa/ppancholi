@@ -1,5 +1,5 @@
 import { BrowserAuthOptions, BrowserSystemOptions } from '@azure/msal-browser/dist/config/Configuration';
-import { CacheOptions, RedirectRequest } from '@azure/msal-browser';
+import { BrowserCacheLocation, CacheOptions, RedirectRequest } from '@azure/msal-browser';
 import { MSAL } from './MSAL';
 
 const clientId = process.env.VUE_APP_AUTH_AAD_CLIENTID;
@@ -17,7 +17,7 @@ const msalConfig = {
     navigateToLoginRequestUrl,
   } as BrowserAuthOptions,
   cache: {
-    cacheLocation: 'localStorage',
+    cacheLocation: BrowserCacheLocation.LocalStorage,
     storeAuthStateInCookie: false, // Set this to "true" to save cache in cookies to address trusted zones limitations in IE (see: https://github.com/AzureAD/microsoft-authentication-library-for-js/wiki/Known-issues-on-IE-and-Edge-Browser)
   } as CacheOptions,
   system: {

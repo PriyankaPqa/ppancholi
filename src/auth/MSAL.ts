@@ -48,7 +48,7 @@ export interface IMSAL {
 
 
 export class MSAL implements IMSAL {
-  private msalLibrary: PublicClientApplication;
+  public msalLibrary: PublicClientApplication;
 
   public account: AccountInfo | null;
 
@@ -262,6 +262,11 @@ export class MSAL implements IMSAL {
           'MSAL',
           'acquireToken'
         );
+        try {
+          await this.msalLibrary.handleRedirectPromise();
+        } catch (e) {
+          this.showConsole && console.error('handleRedirectPromise error', e)
+        }
         this.signIn();
       }
     }
@@ -365,7 +370,8 @@ export class MSAL implements IMSAL {
       account: this.account,
       scopes: this.tokenRequest.scopes,
       authority: `https://login.microsoftonline.com/${this.account.tenantId}`,
-      forceRefresh: false
+      forceRefresh: false,
+      redirectUri: `${window.location.origin}/auth.html` // When doing acquireTokenSilent, redirect to blank page to prevent issues
     }
   }
 
@@ -387,7 +393,12 @@ export class MSAL implements IMSAL {
         'MSAL',
         'checkIfLoggedInCurrentTenant'
       );
-      await this.msalLibrary.handleRedirectPromise();
+      try {
+        await this.msalLibrary.handleRedirectPromise();
+      } catch (e) {
+        this.showConsole && console.error('handleRedirectPromise error', e)
+      }
+
       this.signIn(this.currentDomainTenant);
     } else {
       if (this.account.localAccountId !== accountForTenant.localAccountId) {
@@ -466,7 +477,12 @@ export class MSAL implements IMSAL {
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
    */
   private getAccountForCurrentTenant() : AccountInfo | null {
-    const currentAccounts = this.msalLibrary.getAllAccounts();
+    if (this.account?.tenantId === this.currentDomainTenant) {
+      this.showConsole && console.debug("The current account matches tenant id, so we return it");
+      return this.account;
+    }
+
+    let currentAccounts = this.msalLibrary.getAllAccounts();
     this.showConsole && console.debug("Result if we would have used msal.getActiveAccount");
     this.showConsole && console.debug(this.msalLibrary.getActiveAccount());
     if (currentAccounts === null) {
