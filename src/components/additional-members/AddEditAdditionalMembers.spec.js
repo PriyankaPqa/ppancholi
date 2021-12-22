@@ -120,7 +120,7 @@ describe('AddEditAdditionalMembers.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.validate();
         expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
-          .toHaveBeenCalledWith(wrapper.vm.member, 0, wrapper.vm.sameAddress);
+          .toHaveBeenCalledWith(wrapper.vm.memberClone, 0, wrapper.vm.sameAddress);
       });
 
       it('should calls addAdditionalMember with proper params', async () => {
@@ -152,7 +152,7 @@ describe('AddEditAdditionalMembers.vue', () => {
         await wrapper.vm.submitChanges();
         expect(wrapper.vm.$storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith(
           {
-            member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index, sameAddress: wrapper.vm.sameAddress,
+            member: wrapper.vm.memberClone, isPrimaryMember: false, index: wrapper.vm.index, sameAddress: wrapper.vm.sameAddress,
           },
         );
       });
@@ -170,7 +170,7 @@ describe('AddEditAdditionalMembers.vue', () => {
         await wrapper.vm.submitChanges();
         expect(wrapper.vm.$storage.registration.actions.updatePersonAddress).toHaveBeenCalledWith(
           {
-            member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index, sameAddress: wrapper.vm.sameAddress,
+            member: wrapper.vm.memberClone, isPrimaryMember: false, index: wrapper.vm.index, sameAddress: wrapper.vm.sameAddress,
           },
         );
       });
@@ -179,7 +179,7 @@ describe('AddEditAdditionalMembers.vue', () => {
         await wrapper.setData({ identityChanged: true });
         await wrapper.vm.submitChanges();
         expect(wrapper.vm.$storage.registration.actions.updatePersonIdentity).toHaveBeenCalledWith(
-          { member: wrapper.vm.member, isPrimaryMember: false, index: wrapper.vm.index },
+          { member: wrapper.vm.memberClone, isPrimaryMember: false, index: wrapper.vm.index },
         );
       });
 
@@ -210,9 +210,9 @@ describe('AddEditAdditionalMembers.vue', () => {
       });
 
       it('calls setIdentity of the class IdentitySet ', async () => {
-        jest.spyOn(wrapper.vm.member.identitySet, 'setIdentity');
+        jest.spyOn(wrapper.vm.memberClone.identitySet, 'setIdentity');
         await wrapper.vm.setIdentity(mockIdentitySet());
-        expect(wrapper.vm.member.identitySet.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
+        expect(wrapper.vm.memberClone.identitySet.setIdentity).toHaveBeenCalledWith(mockIdentitySet());
       });
     });
 
@@ -225,9 +225,9 @@ describe('AddEditAdditionalMembers.vue', () => {
       });
 
       it('calls setIndigenousIdentity of the class IdentitySet ', async () => {
-        jest.spyOn(wrapper.vm.member.identitySet, 'setIndigenousIdentity');
+        jest.spyOn(wrapper.vm.memberClone.identitySet, 'setIndigenousIdentity');
         await wrapper.vm.setIndigenousIdentity(mockIdentitySet());
-        expect(wrapper.vm.member.identitySet.setIndigenousIdentity).toHaveBeenCalledWith(mockIdentitySet());
+        expect(wrapper.vm.memberClone.identitySet.setIndigenousIdentity).toHaveBeenCalledWith(mockIdentitySet());
       });
 
       it('should call editAdditionalMember with proper params', async () => {
@@ -235,7 +235,7 @@ describe('AddEditAdditionalMembers.vue', () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.setIndigenousIdentity(mockIdentitySet());
         expect(wrapper.vm.$storage.registration.mutations.editAdditionalMember)
-          .toHaveBeenCalledWith(wrapper.vm.member, 0, wrapper.vm.sameAddress);
+          .toHaveBeenCalledWith(wrapper.vm.memberClone, 0, wrapper.vm.sameAddress);
       });
     });
 
@@ -248,9 +248,9 @@ describe('AddEditAdditionalMembers.vue', () => {
       });
 
       it('calls setCurrentAddress of the class IdentitySet ', async () => {
-        jest.spyOn(wrapper.vm.member, 'setCurrentAddress');
+        jest.spyOn(wrapper.vm.memberClone, 'setCurrentAddress');
         await wrapper.vm.setCurrentAddress(mockAddress());
-        expect(wrapper.vm.member.setCurrentAddress).toHaveBeenCalledWith(mockAddress());
+        expect(wrapper.vm.memberClone.setCurrentAddress).toHaveBeenCalledWith(mockAddress());
       });
     });
   });
