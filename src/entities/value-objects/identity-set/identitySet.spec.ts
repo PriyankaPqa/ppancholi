@@ -4,7 +4,7 @@ import {
 } from './index';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../../constants/validations';
 import { ECanadaProvinces } from '../../../types';
-import helpers from '../../../ui/helpers';
+import helpers from '../../../ui/helpers/index';
 
 const longText = 'x'.repeat(MAX_LENGTH_MD + 1);
 const longSmallText = 'y'.repeat(MAX_LENGTH_SM + 1);

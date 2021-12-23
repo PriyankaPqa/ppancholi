@@ -4,7 +4,7 @@ import _pickBy from 'lodash/pickBy';
 import Vue from 'vue';
 import { IRegistrationMenuItem, VForm } from '../../types';
 import { HouseholdCreate, IHouseholdCreateData } from '../../entities/household-create';
-import helpers from '../helpers';
+import helpers from '../helpers/index';
 
 export default Vue.extend({
   data() {

@@ -14,7 +14,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import helpers from '../../../ui/helpers';
+import helpers from '../../../ui/helpers/index';
 import {
   EIndigenousTypes, IContactInformation, IIdentitySet, IIndigenousCommunityData,
 } from '../../../entities/household-create';

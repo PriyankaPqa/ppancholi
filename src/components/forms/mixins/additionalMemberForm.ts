@@ -2,7 +2,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
-import helpers from '../../../ui/helpers';
+import helpers from '../../../ui/helpers/index';
 import { IOptionItemData, EOptionItemStatus } from '../../../types';
 import { localStorageKeys } from '../../../constants/localStorage';
 import {

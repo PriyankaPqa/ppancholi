@@ -3,7 +3,7 @@ import { createLocalVue, shallowMount } from '../../test/testSetup';
 import { mockAddress } from '../../entities/household-create';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 import { ECanadaProvinces } from '../../types';
 import Component from './AddressForm.vue';
 

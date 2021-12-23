@@ -8,7 +8,7 @@
         {{ address.streetAddress }} {{ address.unitSuite ? `#${address.unitSuite}`: '' }}
       </div>
       <div data-test="homeAddress__line">
-        {{ address.city }}, {{ ECanadaProvinces[address.province] }}, {{ address.postalCode }}
+        {{ addressLine }}
       </div>
       <div data-test="homeAddress__country">
         {{ address.country }}
@@ -22,6 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import helpers from '@/ui/helpers/index';
 import { IAddress } from '../../../entities/household-create';
 import { ECanadaProvinces } from '../../../types';
 
@@ -41,6 +42,14 @@ export default Vue.extend({
   computed: {
     noHomeAddress(): boolean {
       return this.$storage.registration.getters.householdCreate().noFixedHome;
+    },
+
+    addressLine(): string {
+      const lines = helpers.getAddressLines(this.address, this.$i18n);
+      if (lines[1]) {
+        return helpers.getAddressLines(this.address, this.$i18n)[1];
+      }
+      return '';
     },
   },
 });

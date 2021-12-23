@@ -1,4 +1,4 @@
-import helpers from './helpers';
+import helpers from '../index';
 
 describe('encodeUrl', () => {
   it('returns the right encoded string', () => {

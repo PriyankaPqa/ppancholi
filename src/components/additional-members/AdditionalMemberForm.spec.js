@@ -2,7 +2,7 @@ import { i18n } from '@/ui/plugins/i18n';
 import IndigenousIdentityForm from '../forms/IndigenousIdentityForm.vue';
 import IdentityForm from '../forms/IdentityForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 import { ECurrentAddressTypes, mockCampGround } from '../../entities/value-objects/current-address/index';
 import {
   mockShelterLocations,

@@ -16,7 +16,7 @@ import {
 
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './PersonalInformation.vue';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

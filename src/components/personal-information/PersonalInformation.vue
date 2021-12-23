@@ -29,7 +29,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 import { IOptionItemData } from '../../types';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
 import { IIdentitySet, IMember } from '../../entities/household-create';

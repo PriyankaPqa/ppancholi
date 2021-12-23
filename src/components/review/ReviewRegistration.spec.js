@@ -6,7 +6,7 @@ import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { RcConfirmationDialog } from '@crctech/component-library';
 import { i18n } from '../../ui/plugins/i18n';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 import {
   mockHouseholdCreate,
   mockContactInformation,

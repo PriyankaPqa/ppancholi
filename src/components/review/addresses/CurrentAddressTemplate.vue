@@ -48,7 +48,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ECanadaProvinces } from '@/types';
+import helpers from '@/ui/helpers/index';
 import { ECurrentAddressTypes, ICurrentAddress } from '../../../entities/value-objects/current-address';
 
 export default Vue.extend({
@@ -92,24 +92,11 @@ export default Vue.extend({
     },
 
     currentAddressLine(): string {
-      if (!this.currentAddress) {
-        return '';
+      const lines = helpers.getAddressLines(this.currentAddress.address, this.$i18n);
+      if (lines[1]) {
+        return helpers.getAddressLines(this.currentAddress.address, this.$i18n)[1];
       }
-      const line = [];
-      if (this.currentAddress?.address?.city) {
-        line.push(this.currentAddress.address.city);
-      }
-
-      if (this.currentAddress?.address?.province && this.currentAddress.address.province !== ECanadaProvinces.OT) {
-        line.push(ECanadaProvinces[this.currentAddress.address.province as number]);
-      } else if (this.currentAddress?.address?.specifiedOtherProvince) {
-        line.push(this.currentAddress.address.specifiedOtherProvince);
-      }
-
-      if (this.currentAddress?.address?.postalCode) {
-        line.push(this.currentAddress.address.postalCode);
-      }
-      return line.join(', ');
+      return '';
     },
   },
 });

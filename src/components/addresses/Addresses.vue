@@ -55,7 +55,7 @@ import VueI18n from 'vue-i18n';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';
 import { EOptionItemStatus } from '../../types';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 import { localStorageKeys } from '../../constants/localStorage';
 import { Address, IAddress } from '../../entities/value-objects/address';
 import {

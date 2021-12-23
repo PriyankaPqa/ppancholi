@@ -4,7 +4,7 @@ import { ECurrentAddressTypes, mockHouseholdCreate, mockCampGround } from '../..
 
 import { mockShelterLocations } from '../../entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 
 import Component from './CurrentAddressForm.vue';
 

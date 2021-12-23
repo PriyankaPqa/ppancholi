@@ -1,7 +1,7 @@
 import { RcDialog } from '@crctech/component-library';
 import { i18n } from '@/ui/plugins/i18n';
 import { mockStorage } from '../../store/storage/storage.mock';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 import { mockEvent } from '../../entities/event';
 import AdditionalMemberForm from './AdditionalMemberForm.vue';
 import { EOptionItemStatus } from '../../types';

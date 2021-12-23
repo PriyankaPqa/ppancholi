@@ -136,7 +136,7 @@ import moment from 'moment';
 import { IHouseholdCreate, IIdentitySet, Member } from '@/entities/household-create';
 import _isEqual from 'lodash/isEqual';
 
-import helpers from '@/ui/helpers';
+import helpers from '@/ui/helpers/index';
 import { MAX_ADDITIONAL_MEMBERS } from '@/constants/validations';
 import AddEditAdditionalMembers from '@/components/additional-members/AddEditAdditionalMembers.vue';
 import { IContactInformation } from '../../entities/value-objects/contact-information';

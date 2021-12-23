@@ -1,5 +1,5 @@
 import { i18n } from '../../ui/plugins/i18n';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 import { mockStorage } from '../../store/storage/storage.mock';
 import AddressForm from '../forms/AddressForm.vue';
 import CurrentAddressForm from '../forms/CurrentAddressForm.vue';

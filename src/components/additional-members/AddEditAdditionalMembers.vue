@@ -48,7 +48,8 @@ import {
   IOptionItemData,
   VForm,
 } from '../../types';
-import helpers from '../../ui/helpers';
+
+import helpers from '../../ui/helpers/index';
 
 import { localStorageKeys } from '../../constants/localStorage';
 import {

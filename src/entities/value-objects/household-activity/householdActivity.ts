@@ -1,6 +1,6 @@
 import VueI18n from 'vue-i18n';
 import { IAddress } from '../address/address.types';
-import helpers from '../../../ui/helpers';
+import helpers from '../../../ui/helpers/index';
 import {
   HouseholdActivityType,
   IHouseholdActivity,
@@ -94,7 +94,7 @@ export class HouseholdActivity implements IHouseholdActivity {
         return this.makeMultipleMembersTemplate((data as IHouseholdActivityMembers)?.memberDetails, i18n);
 
       case HouseholdActivityType.HomeAddressEdited:
-        return this.makeHomeTemplate((data as CurrentAddress)?.address, i18n);
+        return this.makeHomeTemplate(new Address((data as CurrentAddress)?.address), i18n);
 
       case HouseholdActivityType.TempAddressEdited:
         return [...this.makeMemberNameTemplate((data as IHouseholdActivityPerson).personFullName),

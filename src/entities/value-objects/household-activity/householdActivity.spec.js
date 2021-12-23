@@ -1,6 +1,6 @@
 import { HouseholdActivity, mockHouseholdActivities, HouseholdActivityType } from '.';
 import { i18n } from '../../../ui/plugins/i18n';
-import helpers from '../../../ui/helpers';
+import helpers from '../../../ui/helpers/index';
 import { Address } from '../address';
 import { mockCampGround, mockShelter } from '../current-address';
 

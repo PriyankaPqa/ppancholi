@@ -1,7 +1,7 @@
 import { i18n } from '@/ui/plugins/i18n';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import _merge from 'lodash/merge';
-import helpers from '../../ui/helpers';
+import helpers from '../../ui/helpers/index';
 import {
   mockContactInformation,
   mockMember,

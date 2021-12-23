@@ -25,7 +25,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CurrentAddressTemplate from '../addresses/CurrentAddressTemplate.vue';
-import helpers from '../../../ui/helpers';
+import helpers from '../../../ui/helpers/index';
 import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '../../../entities/household-create';
 
 export default Vue.extend({
