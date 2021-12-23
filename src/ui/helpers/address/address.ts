@@ -1,7 +1,7 @@
 import VueI18n from 'vue-i18n';
 import { en, fr } from '@crctech/component-library/src/components/atoms/RcCountrySelect/countries/index';
 import { ECanadaProvinces } from '../../../types';
-import { IAddress } from '../../../entities/value-objects/address';
+import {IAddress, IAddressData} from '../../../entities/value-objects/address';
 import generalHelper from '../general/general';
 
 export default {
@@ -10,7 +10,7 @@ export default {
     return allProvinces.filter((p) => p.value !== ECanadaProvinces.OT);
   },
 
-  provinceCode(address: IAddress): string {
+  provinceCode(address: IAddress | IAddressData): string {
     if (address?.province && address.province !== ECanadaProvinces.OT) {
       return ECanadaProvinces[address.province];
     } if (address?.specifiedOtherProvince) {
@@ -19,7 +19,7 @@ export default {
     return '';
   },
 
-  getAddressLines(address: IAddress, i18n: VueI18n): string[] {
+  getAddressLines(address: IAddress | IAddressData, i18n: VueI18n): string[] {
     const addressLines = [] as string[];
 
     if (!address) {
