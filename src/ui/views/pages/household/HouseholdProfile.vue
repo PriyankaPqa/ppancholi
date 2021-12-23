@@ -227,6 +227,13 @@ export default mixins(household).extend({
     };
   },
 
+  watch: {
+    householdData() {
+      this.fetchMyEvents();
+      this.setHouseholdCreate();
+    },
+  },
+
   computed: {
     registrationLocations() : IEventGenericLocation[] {
       const locations:IEventGenericLocation[] = [];
@@ -345,14 +352,17 @@ export default mixins(household).extend({
     async fetchHouseholdData() {
       this.loading = true;
       try {
-        const householdData = await this.$storage.household.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-        if (householdData) {
-          const householdCreateData = await this.buildHouseholdCreateData(householdData, null);
-
-          this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
-        }
+        await this.$storage.household.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+        await this.setHouseholdCreate();
       } finally {
         this.loading = false;
+      }
+    },
+
+    async setHouseholdCreate() {
+      if (this.householdData) {
+        const householdCreateData = await this.buildHouseholdCreateData(this.householdData, null);
+        this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
       }
     },
 

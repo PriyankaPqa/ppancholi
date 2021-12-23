@@ -21,7 +21,7 @@ export default Vue.extend({
     },
 
     async fetchMembersInformation(household: IHouseholdCombined, shelterLocations: IEventGenericLocation[]): Promise<IMemberEntity[]> {
-      if (!household.entity.members.length) {
+      if (!household.entity.members?.length) {
         return [];
       }
       let primaryBeneficiaryPromise;
@@ -127,7 +127,7 @@ export default Vue.extend({
       members.forEach((m, index) => {
         const currentAddress = {
           ...m.currentAddress,
-          address: m.currentAddress.address === null ? emptyCurrentAddress : m.currentAddress.address,
+          address: !m.currentAddress || m.currentAddress.address === null ? emptyCurrentAddress : m.currentAddress.address,
         };
 
         const member = deepmerge(m, {
@@ -153,9 +153,9 @@ export default Vue.extend({
           privacyDateTimeConsent: '',
         },
         primaryBeneficiary,
-        homeAddress: household.entity.address.address,
+        homeAddress: household.entity.address?.address,
         additionalMembers,
-        noFixedHome: household.entity.address.address === null,
+        noFixedHome: household.entity.address?.address === null,
       };
     },
 

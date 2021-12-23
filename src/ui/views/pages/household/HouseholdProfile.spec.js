@@ -655,10 +655,34 @@ describe('HouseholdProfile.vue', () => {
           { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
       });
 
-      it('calls the registration mutation with the data received from buildHouseholdCreateData', async () => {
+      it('calls setHouseholdCreate', async () => {
+        jest.spyOn(wrapper.vm, 'setHouseholdCreate').mockImplementation(() => {});
+        await wrapper.vm.fetchHouseholdData();
+        expect(wrapper.vm.setHouseholdCreate).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('setHouseholdCreate', () => {
+      it('calls buildHouseholdCreateData and the registration mutation with the data received from buildHouseholdCreateData', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            householdData() {
+              return household;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
         jest.spyOn(wrapper.vm, 'buildHouseholdCreateData').mockImplementation(() => householdCreate);
         jest.spyOn(wrapper.vm, 'addShelterLocationData').mockImplementation(() => [member]);
-        await wrapper.vm.fetchHouseholdData();
+        await wrapper.vm.setHouseholdCreate();
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(household, null);
         expect(storage.registration.mutations.setHouseholdCreate).toHaveBeenCalledWith(householdCreate);
       });
     });
