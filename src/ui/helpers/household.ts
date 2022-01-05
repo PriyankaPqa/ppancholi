@@ -1,15 +1,14 @@
 import {
   EIndigenousTypes, IIndigenousCommunityData, IMember, HouseholdCreate,
+  IAddressData,
 } from '@crctech/registration-lib/src/entities/household-create/index';
-import { en, fr } from '@crctech/component-library/src/components/atoms/RcCountrySelect/countries/index';
 import { IBirthDate } from '@crctech/registration-lib/src/entities/value-objects/identity-set/identitySet.types';
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import { IAddress } from '@crctech/registration-lib/src/entities/value-objects/address/address.types';
 import helpers from '@/ui/helpers/helpers';
-import { ECanadaProvinces, IAddress } from '@/types';
 import { i18n } from '@/ui/plugins';
 
 import store from '@/store/store';
-import moment from '@/ui/plugins/moment';
 
 export default {
   preferredLanguage(member: IMember): string {
@@ -93,23 +92,8 @@ export default {
     return type && communityName ? type + communityName : '-';
   },
 
-  provinceCodeName(address: IAddress): string {
-    const provinceCode = address?.province;
-    if (!provinceCode || provinceCode === ECanadaProvinces.OT) {
-      return address?.specifiedOtherProvince;
-    }
-    return i18n.t(`common.provinces.code.${ECanadaProvinces[provinceCode]}`) as string;
-  },
-
   countryName(countryCode: string): string {
-    if (!countryCode) {
-      return '';
-    }
-
-    const countriesData = { en, fr } as Record<string, Record<string, string>>;
-
-    const countries = countriesData[i18n.locale];
-    return countries[countryCode];
+    return libHelpers.countryName(countryCode, i18n);
   },
 
   addressLine1(household: HouseholdCreate): string {
@@ -124,22 +108,12 @@ export default {
     return this.countryName(household.homeAddress.country);
   },
 
-  getAddressLines(address: IAddress): string[] {
-    const addressLines = [] as string[];
-    if (!address) {
-      return addressLines;
-    }
-    const suite = address.unitSuite ? `${address.unitSuite}-` : '';
-    addressLines.push(address.streetAddress ? `${suite + address.streetAddress}` : '');
+  getAddressLines(address: IAddress | IAddressData): string[] {
+    return libHelpers.getAddressLines(address, i18n);
+  },
 
-    const city = address.city ? `${address.city}, ` : '';
-    const provinceCodeName = this.provinceCodeName(address);
-    const province = provinceCodeName ? `${provinceCodeName}, ` : '';
-    addressLines.push(city + province + (address.postalCode || ''));
-    if (this.countryName(address.country)) {
-      addressLines.push(this.countryName(address.country));
-    }
-    return addressLines;
+  provinceCodeName(address: IAddress | IAddressData): string {
+    return libHelpers.provinceCode(address);
   },
 
   getBirthDateDisplayWithAge(birthDate: IBirthDate): string {
@@ -149,12 +123,6 @@ export default {
   },
 
   convertBirthDateStringToObject(birthdate: string) {
-    const bdayMoment = moment(birthdate).utc();
-
-    return {
-      month: bdayMoment.month() + 1,
-      day: `${bdayMoment.date()}`,
-      year: `${bdayMoment.year()}`,
-    };
+    return libHelpers.convertBirthDateStringToObject(birthdate);
   },
 };
