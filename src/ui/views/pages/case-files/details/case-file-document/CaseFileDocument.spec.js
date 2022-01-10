@@ -578,6 +578,7 @@ describe('CaseFileDocument.vue', () => {
           onlyActive: true,
           prependPinnedItems: true,
           baseDate: null,
+          parentId: { caseFileId: 'mock-caseFile-id' },
         });
       });
 

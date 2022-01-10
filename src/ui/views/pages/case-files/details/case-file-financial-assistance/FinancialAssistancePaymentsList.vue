@@ -241,13 +241,16 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     tableData(): IFinancialAssistancePaymentCombined[] {
       return this.$storage.financialAssistancePayment.getters.getByIds(this.searchResultIds,
-        { onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate });
+        {
+          onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
+        });
     },
 
     itemsToSubmit() : IFinancialAssistancePaymentCombined[] {
       return this.$storage.financialAssistancePayment.getters.getByIds(this.allItemsIds,
-        { onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate })
-        .filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
+        {
+          onlyActive: true, prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId },
+        }).filter((fa) => fa.entity.approvalStatus === ApprovalStatus.New);
     },
 
     itemsToSubmitSelectAll: {

@@ -51,7 +51,7 @@ const store = mockStore({
         'entityModule/getAll': () => mockEntities,
         'entityModule/getByCriteria': () => () => [mockEntities[0]],
         'entityModule/get': () => () => mockEntities[0],
-        'entityModule/getByIds': () => () => [mockEntities[0]],
+        'entityModule/getByIds': () => (ids: string[]) => (mockEntities.filter((e) => ids.indexOf(e.id) > -1)),
       },
     },
     metadataModule: {
@@ -151,9 +151,26 @@ describe('BaseStorage', () => {
         expect(storage.getters.getByIds(ids, { prependPinnedItems: true }))
           .toEqual([{ entity: mockEntities[0], metadata: mockMetadatum[0], pinned: true }]);
 
+        expect(storage.getters.getByIds([], { prependPinnedItems: true }))
+          .toEqual([{ entity: mockEntities[0], metadata: mockMetadatum[0], pinned: true }]);
+
+        expect(storage.getters.getByIds([], { prependPinnedItems: false }))
+          .toEqual([]);
+
         store.getters['entityModule/getNewlyCreatedIds'] = jest.fn(() => []);
         expect(storage.getters.getByIds(ids, { prependPinnedItems: true }))
           .toEqual([{ entity: mockEntities[0], metadata: mockMetadatum[0], pinned: false }]);
+      });
+
+      it('filters newlycreated items pinned according to parentId', () => {
+        const ids: string[] = [];
+        store.getters['entityModule/getNewlyCreatedIds'] = jest.fn(() => [{ id: mockEntities[0].id }]);
+        // here we'll fake that tenantId is a parent of mockEntities
+        expect(storage.getters.getByIds(ids, { prependPinnedItems: true, parentId: { tenantId: mockEntities[0].tenantId } as any }))
+          .toEqual([{ entity: mockEntities[0], metadata: mockMetadatum[0], pinned: true }]);
+
+        expect(storage.getters.getByIds(ids, { prependPinnedItems: true, parentId: { tenantId: 'nope' } as any }))
+          .toEqual([]);
       });
     });
   });

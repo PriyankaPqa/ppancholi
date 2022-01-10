@@ -162,7 +162,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     tableData(): IFinancialAssistanceTableCombined[] {
       return this.$storage.financialAssistance.getters.getByIds(this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { eventId: this.eventId } });
     },
 
     tableProps(): Record<string, unknown> {

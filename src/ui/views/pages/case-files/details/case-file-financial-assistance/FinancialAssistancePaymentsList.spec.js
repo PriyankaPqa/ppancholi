@@ -257,7 +257,9 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await wrapper.setData({ searchResultIds: ['abc'] });
         const data = wrapper.vm.tableData;
         expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'],
-          { baseDate: null, onlyActive: true, prependPinnedItems: true });
+          {
+            baseDate: null, onlyActive: true, prependPinnedItems: true, parentId: { caseFileId: 'mock-cf-id' },
+          });
         expect(data.length).toBe(storage.financialAssistancePayment.getters.getByIds().length);
       });
     });
@@ -272,7 +274,9 @@ describe('FinancialAssistancePaymentsList.vue', () => {
         await wrapper.setData({ allItemsIds: ['abc'] });
         expect(wrapper.vm.itemsToSubmit).toEqual([data[0], data[2]]);
         expect(storage.financialAssistancePayment.getters.getByIds).toHaveBeenCalledWith(['abc'],
-          { baseDate: null, onlyActive: true, prependPinnedItems: true });
+          {
+            baseDate: null, onlyActive: true, prependPinnedItems: true, parentId: { caseFileId: 'mock-cf-id' },
+          });
       });
     });
 

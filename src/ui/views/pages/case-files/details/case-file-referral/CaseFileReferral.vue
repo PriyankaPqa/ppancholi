@@ -172,7 +172,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
 
     tableData(): ICaseFileReferralCombined[] {
       return this.$storage.caseFileReferral.getters.getByIds(this.searchResultIds,
-        { prependPinnedItems: true, baseDate: this.searchExecutionDate });
+        { prependPinnedItems: true, baseDate: this.searchExecutionDate, parentId: { caseFileId: this.caseFileId } });
     },
 
   },

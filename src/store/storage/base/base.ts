@@ -84,7 +84,8 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return this.combinedCollections(foundEntities, foundMetadata);
     },
 
-    getByIds: (ids: uuid[], options?: { onlyActive?: boolean, prependPinnedItems?: boolean, baseDate?: Date }) => {
+    getByIds: (ids: uuid[], options?: { onlyActive?: boolean, prependPinnedItems?: boolean, baseDate?: Date,
+      parentId?: Record<string, unknown> }) => {
       /* jira-2482
         prependPinnedItems and baseDate are used to filter within the list of objects created by the user recently.
         The goal is to use them in lists after a search so that the new items show at the top of the list
@@ -94,11 +95,23 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
         would simply start disappearing because of actions outside of the current user's reach — someone else saving a case file
         would trigger getByIds, with the same 10 search results as before, and because it has been more than one minute pinned items
         would disappear from the list (a new search would have returned them by now, but no search was triggered!)
+
+        parentId is also added so we can filter within pinnedItems - so that for subitems under a case file for example only
+        newly created for that case file are visible
       */
       const opts = {
         onlyActive: false, prependPinnedItems: false, baseDate: new Date(), ...(options || {}),
       };
-      const pinnedIds = opts.prependPinnedItems ? this.baseGetters.getNewlyCreatedIds(opts.baseDate).map((x) => x.id) : [];
+      let pinnedIds = opts.prependPinnedItems ? this.baseGetters.getNewlyCreatedIds(opts.baseDate).map((x) => x.id) : [];
+      if (pinnedIds.length && opts.parentId && typeof opts.parentId === 'object') {
+        let newEntities: TEntity[] = this.store.getters[`${this.entityModuleName}/getByIds`](pinnedIds);
+        // eslint-disable-next-line
+        for (const [key, value] of Object.entries(opts.parentId)) {
+          // eslint-disable-next-line
+          newEntities = newEntities.filter((e: any) => e[key] === value);
+        }
+        pinnedIds = newEntities.map((e) => e.id);
+      }
       const idsExceptPinned = ids.filter((s) => pinnedIds.indexOf(s) < 0);
       const idsToFetch = [...pinnedIds, ...idsExceptPinned];
 
