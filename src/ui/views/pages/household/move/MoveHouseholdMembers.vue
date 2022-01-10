@@ -26,7 +26,7 @@
             v-if="firstHousehold"
             :household="firstHousehold"
             position="left"
-            :enabled-move="secondHousehold !== null && !submitError"
+            :enabled-move="secondHousehold !== null && !submitError && secondHousehold.primaryBeneficiary !== null"
             :shelter-locations="firstHouseholdShelterLocations"
             :move-submitted="moveSubmitted"
             @move="move($event)" />
@@ -72,14 +72,18 @@
               v-if="secondHousehold"
               :household="secondHousehold"
               position="right"
-              :enabled-move="secondHousehold !== null && !submitError"
+              :enabled-move="secondHousehold !== null && !submitError && firstHousehold.primaryBeneficiary !== null"
               :shelter-locations="secondHouseholdShelterLocations"
               :move-submitted="moveSubmitted"
               @move="move($event)" />
           </template>
         </v-col>
       </v-row>
+
       <template v-if="secondHousehold && !moveSubmitted" slot="actions">
+        <v-btn data-test="cancel" @click="removeSelection()">
+          {{ $t('common.buttons.cancel') }}
+        </v-btn>
         <v-btn color="primary" data-test="save" :loading="submitLoading" :disabled="failed || !dirty" @click="submitMove">
           {{ $t('common.buttons.save') }}
         </v-btn>
@@ -96,7 +100,7 @@ import {
   HouseholdCreate, ICurrentAddress, IHouseholdCreate, IMember,
 } from '@crctech/registration-lib/src/entities/household-create';
 import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
-import { IOptionItemData, VForm } from '@crctech/registration-lib/src/types';
+import { VForm } from '@crctech/registration-lib/src/types';
 import household from '@/ui/mixins/household';
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import HouseholdCard from '@/ui/views/pages/household/move/HouseholdCard.vue';
@@ -156,8 +160,6 @@ export default mixins(searchHousehold, household).extend({
       secondHousehold: null as IMovingHouseholdCreate,
       firstHouseholdShelterLocations: [] as IEventGenericLocation[],
       secondHouseholdShelterLocations: [] as IEventGenericLocation[],
-      firstHouseholdInitialPreferredLanguage: null as IOptionItemData,
-      secondHouseholdInitialPreferredLanguage: null as IOptionItemData,
       moveSubmitted: false,
       submitError: false,
     };
@@ -178,7 +180,6 @@ export default mixins(searchHousehold, household).extend({
       this.firstHousehold.movingAdditionalMembers = [];
       const firstHouseholdData = await this.$storage.household.actions.fetch(this.currentHousehold.id);
       this.firstHouseholdShelterLocations = await this.fetchShelterLocations(firstHouseholdData, true) || [];
-      this.firstHouseholdInitialPreferredLanguage = this.firstHousehold.primaryBeneficiary?.contactInformation.preferredLanguage;
       this.firstHousehold.hasOutstandingPayments = (await this.$services.households.hasOutstandingPayments(this.currentHousehold.id))
         ?.hasOutstandingPayments;
       this.loading = false;
@@ -205,7 +206,6 @@ export default mixins(searchHousehold, household).extend({
         ?.hasOutstandingPayments;
       this.secondHousehold = secondHousehold;
 
-      this.secondHouseholdInitialPreferredLanguage = secondHousehold.primaryBeneficiary?.contactInformation.preferredLanguage;
       this.secondHouseholdShelterLocations = shelterLocations || [];
     },
 
@@ -213,10 +213,12 @@ export default mixins(searchHousehold, household).extend({
       this.showResults = false;
     },
 
-    removeSelection() {
+    async removeSelection() {
       this.secondHousehold = null;
+      const hasOutstandingPayments = this.firstHousehold.hasOutstandingPayments;
       this.firstHousehold = _cloneDeep(this.currentHousehold) as IMovingHouseholdCreate;
       this.firstHousehold.movingAdditionalMembers = [];
+      this.firstHousehold.hasOutstandingPayments = hasOutstandingPayments;
     },
 
     move({ member, direction }: {member: IMember, direction: string}) {
@@ -270,8 +272,6 @@ export default mixins(searchHousehold, household).extend({
       if (!isValid) {
         helpers.scrollToFirstError('scrollAnchor');
       } else {
-        this.setPrimaryMember(this.firstHousehold, 0);
-        this.setPrimaryMember(this.secondHousehold, 1);
         this.setNewMembers(this.firstHousehold);
         this.setNewMembers(this.secondHousehold);
         this.submitLoading = true;
@@ -283,31 +283,6 @@ export default mixins(searchHousehold, household).extend({
         }
         this.submitLoading = false;
       }
-    },
-
-    setPrimaryMember(household: IMovingHouseholdCreate, i: number) {
-      if (!household.primaryBeneficiary) {
-        let newPrimaryMember: IMovingMember;
-
-        if (household.additionalMembers.length) {
-          // eslint-disable-next-line prefer-destructuring
-          newPrimaryMember = household.additionalMembers[0];
-          household.removeAdditionalMember(0);
-        } else if (household.movingAdditionalMembers.length) {
-          // eslint-disable-next-line prefer-destructuring
-          newPrimaryMember = household.movingAdditionalMembers[0];
-          household.movingAdditionalMembers.shift();
-          newPrimaryMember.setCurrentAddress(newPrimaryMember.selectedCurrentAddress.newAddress);
-        }
-
-        if (newPrimaryMember) {
-          newPrimaryMember.contactInformation.preferredLanguage = i === 0
-            ? this.firstHouseholdInitialPreferredLanguage : this.secondHouseholdInitialPreferredLanguage;
-
-          household.setPrimaryBeneficiary(newPrimaryMember);
-        }
-      }
-      return household;
     },
 
     setNewMembers(household: IMovingHouseholdCreate) {
