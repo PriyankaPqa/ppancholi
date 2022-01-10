@@ -133,31 +133,26 @@ export default Vue.extend({
           text: this.$t('household.profile.history.edited_by') as string,
           sortable: true,
           value: this.customColumns.editedBy,
-          width: '15%',
         },
         {
           text: this.$t('household.profile.history.date_of_change') as string,
           sortable: true,
           value: this.customColumns.dateOfChange,
-          width: '15%',
         },
         {
           text: this.$t('household.profile.history.what_changed') as string,
           sortable: true,
           value: this.customColumns.changeType,
-          width: '15%',
         },
         {
           text: this.$t('household.profile.history.previous_value') as string,
           sortable: false,
           value: this.customColumns.previousValue,
-          width: '25%',
         },
         {
           text: this.$t('household.profile.history.new_value') as string,
           sortable: false,
           value: this.customColumns.newValue,
-          width: '25%',
         },
       ];
     },
@@ -213,6 +208,10 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+
+::v-deep .v-data-table > .v-data-table__wrapper > table > tbody > tr > td {
+  height: 100%;
+}
 
   .pre-line {
     white-space: pre-line;
