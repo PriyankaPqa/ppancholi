@@ -66,6 +66,16 @@ export enum CaseFileActivityType {
   HouseholdCreatedAfterSplit = 27
 }
 
+export enum HouseholdCaseFileActivityType {
+  ContactInformationEdited = 1,
+  IdentitySetEdited = 2,
+  MemberAdded = 3,
+  MemberRemoved = 4,
+  HomeAddressEdited = 5,
+  TempAddressEdited = 6,
+  PrimaryAssigned = 7
+}
+
 export enum RegistrationType {
   Crc = 1,
   Public = 2,

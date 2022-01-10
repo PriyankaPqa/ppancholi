@@ -3,7 +3,7 @@ import { IEntity, mockBaseData } from '@/entities/base';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
-  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType,
+  ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
 import { EEventStatus } from '@/entities/event';
@@ -511,7 +511,7 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
       user: { id: '1', name: 'Jane Doe' },
       created: '2021-05-04',
       activityType: CaseFileActivityType.HouseholdEdited,
-      details: {},
+      details: { householdActivityType: HouseholdCaseFileActivityType.MemberAdded, member: { id: '123', name: 'John Smith' } },
     },
     {
       id: 'mock-activity-id-28',

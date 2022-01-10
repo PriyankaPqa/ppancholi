@@ -16,7 +16,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import CaseFileListItemWrapper from '@/ui/views/pages/case-files/details/components/CaseFileListItemWrapper.vue';
 import {
-  CaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, RegistrationType, ValidationOfImpactStatus,
+  CaseFileActivityType, HouseholdCaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, RegistrationType, ValidationOfImpactStatus,
 } from '@/entities/case-file';
 import { IIdMultilingualName, IMultilingual } from '@/types';
 
@@ -362,7 +362,8 @@ export default Vue.extend({
 
     makeContentForHouseholdEdited(): {title: TranslateResult, body: TranslateResult} {
       const title = this.$t('caseFileActivity.activityList.title.HouseholdEdited');
-      return { title, body: null };
+      const body = this.makeHouseholdEditedBody();
+      return { title, body };
     },
 
     makeContentForHouseholdSplit(): {title: TranslateResult, body: TranslateResult} {
@@ -391,6 +392,31 @@ export default Vue.extend({
       const body = this.$t('caseFileActivity.activityList.body.HouseholdMovedMembers')
         + (this.item.details?.members as [] || []).map((m: {name: string}) => m.name).join(', ');
       return { title, body };
+    },
+
+    makeHouseholdEditedBody(): TranslateResult {
+      const name = (this.item.details?.member as {name:string})?.name;
+      const displayedName = name ? `: ${name}` : '';
+
+      switch (this.item.details?.householdActivityType as HouseholdCaseFileActivityType) {
+        case HouseholdCaseFileActivityType.IdentitySetEdited:
+          return this.$t('household.history.action.personal_information_changed');
+        case HouseholdCaseFileActivityType.ContactInformationEdited:
+          return this.$t('household.history.action.contact_information_changed');
+        case HouseholdCaseFileActivityType.TempAddressEdited:
+          return this.$t('household.history.action.temporary_address_changed');
+        case HouseholdCaseFileActivityType.HomeAddressEdited:
+          return this.$t('household.history.action.address_information_changed');
+        case HouseholdCaseFileActivityType.MemberAdded:
+          return `${this.$t('household.history.action.household_member_added')}${displayedName}`;
+        case HouseholdCaseFileActivityType.MemberRemoved:
+          return `${this.$t('household.history.action.household_member_removed')}${displayedName}`;
+        case HouseholdCaseFileActivityType.PrimaryAssigned:
+          return `${this.$t('household.history.action.household_member_assign_primary')}${displayedName}`;
+
+        default:
+          return '';
+      }
     },
 
   },
