@@ -213,6 +213,14 @@ describe('>>> Household Activity', () => {
       expect(helpers.getAddressLines).toHaveBeenCalledWith(new Address(activity.previousDetails.address), i18n);
       expect(expected).toEqual([{ label: 'household.history.label.home_address', value: '120 East Str.,\n12345, NY, New York, USA' }]);
     });
+
+    it('displays the right text if there is no address', ()=> {
+      const activity = mockHouseholdActivities(HouseholdActivityType.HomeAddressEdited)[0];
+      const historyActivity = new HouseholdActivity(activity);
+      const expected = historyActivity.makeHomeTemplate(null, i18n);
+      expect(expected).toEqual([{ label: 'household.history.label.home_address', value: 'No fixed home address' }]);
+    }
+    )
   });
 
   describe('makeContactInfoTemplate', () => {

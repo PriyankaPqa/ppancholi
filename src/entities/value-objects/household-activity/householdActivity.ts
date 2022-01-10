@@ -94,7 +94,7 @@ export class HouseholdActivity implements IHouseholdActivity {
         return this.makeMultipleMembersTemplate((data as IHouseholdActivityMembers)?.memberDetails, i18n);
 
       case HouseholdActivityType.HomeAddressEdited:
-        return this.makeHomeTemplate(new Address((data as CurrentAddress)?.address), i18n);
+        return this.makeHomeTemplate((data as CurrentAddress)?.address, i18n);
 
       case HouseholdActivityType.TempAddressEdited:
         return [...this.makeMemberNameTemplate((data as IHouseholdActivityPerson).personFullName),
@@ -118,7 +118,7 @@ export class HouseholdActivity implements IHouseholdActivity {
    * {label: Home address, value: '120 East Str.\n12345, NY, New York}
    */
   makeHomeTemplate(data: Address, i18n: VueI18n): IHistoryItemTemplateData[] {
-    const addressText = data ? this.getAddressText(data, i18n) : '-';
+    const addressText = data ? this.getAddressText(data, i18n) : i18n.t('registration.addresses.temporaryAddressTypes.NoFixedAddress');
     return [{ label: 'household.history.label.home_address', value: addressText }];
   }
 
