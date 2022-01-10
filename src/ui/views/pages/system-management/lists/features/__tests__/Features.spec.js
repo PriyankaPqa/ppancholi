@@ -4,9 +4,8 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
-import FeatureWrapper from '../FeatureWrapper.vue';
-import { mockCombinedFeatures } from '@/entities/feature';
 import Component from '../Features.vue';
+import { FeatureType } from '@/entities/tenantSettings';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -25,16 +24,29 @@ beforeEach(() => {
 
 describe('Features.vue', () => {
   describe('>> Template', () => {
-    it('renders child components', () => {
-      const children = wrapper.findAllComponents(FeatureWrapper);
-      expect(children).toHaveLength(mockCombinedFeatures().length);
+    it('renders temporary features and permanent features', () => {
+      const temporaryFeaturesComponent = wrapper.findDataTest('temporary-features');
+      expect(temporaryFeaturesComponent.exists()).toBeTruthy();
+
+      const permanentFeaturesComponent = wrapper.findDataTest('permanent-features');
+      expect(permanentFeaturesComponent.exists()).toBeTruthy();
     });
   });
 
   describe('>> Computed', () => {
-    describe('features', () => {
+    describe('temporaryFeatures', () => {
       it('returns correct value', () => {
-        expect(wrapper.vm.features).toEqual(storage.feature.getters.getAll().map((f) => f.entity));
+        expect(wrapper.vm.temporaryFeatures).toEqual(
+          storage.tenantSettings.getters.currentTenantSettings().features.filter((f) => f.type === FeatureType.Temporary),
+        );
+      });
+    });
+
+    describe('permanentFeatures', () => {
+      it('returns correct value', () => {
+        expect(wrapper.vm.permanentFeatures).toEqual(
+          storage.tenantSettings.getters.currentTenantSettings().features.filter((f) => f.type === FeatureType.Permanent),
+        );
       });
     });
   });

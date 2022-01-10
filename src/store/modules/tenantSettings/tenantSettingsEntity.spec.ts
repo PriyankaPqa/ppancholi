@@ -114,5 +114,49 @@ describe('>>> TenantSettings entity module', () => {
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
     });
+
+    describe('enableFeature', () => {
+      it('calls the service', async () => {
+        const featureId = 'id';
+
+        module.service.enableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+
+        await module.actions.enableFeature(actionContext, featureId);
+
+        expect(module.service.enableFeature).toHaveBeenCalledWith(featureId);
+      });
+
+      it('updates the entity', async () => {
+        const featureId = 'id';
+
+        module.service.enableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+
+        await module.actions.enableFeature(actionContext, featureId);
+
+        expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
+      });
+    });
+
+    describe('disableFeature', () => {
+      it('calls the service', async () => {
+        const featureId = 'id';
+
+        module.service.disableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+
+        await module.actions.disableFeature(actionContext, featureId);
+
+        expect(module.service.disableFeature).toHaveBeenCalledWith(featureId);
+      });
+
+      it('updates the entity', async () => {
+        const featureId = 'id';
+
+        module.service.disableFeature = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+
+        await module.actions.disableFeature(actionContext, featureId);
+
+        expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
+      });
+    });
   });
 });

@@ -18,6 +18,8 @@ export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined,
     getCurrentTenantSettings: jest.fn(() => mockTenantSettingsEntityData()),
     createTenantSettings: jest.fn(() => mockTenantSettingsEntityData()),
     createTenantDomains: jest.fn(() => mockTenantSettingsEntityData()),
+    enableFeature: jest.fn(() => mockTenantSettingsEntityData()),
+    disableFeature: jest.fn(() => mockTenantSettingsEntityData()),
   };
 
   protected mutations = {

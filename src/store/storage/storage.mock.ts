@@ -17,7 +17,6 @@ import { CaseFileDocumentStorageMock } from './case-file-document';
 import { FinancialAssistanceCategoryStorageMock } from './financial-assistance-category/storage.mock';
 import { FinancialAssistancePaymentStorageMock } from './financial-assistance-payment';
 import { BrandingStorageMock } from './branding/storage.mock';
-import { FeatureStorageMock } from './feature/storage.mock';
 import { TenantSettingsStorageMock } from './tenantSettings';
 
 export const mockStorage = (): IStorageMock => ({
@@ -39,6 +38,5 @@ export const mockStorage = (): IStorageMock => ({
   userAccount: new UserAccountStorageMock().make(),
   massAction: new MassActionStorageMock().make(),
   branding: new BrandingStorageMock().make(),
-  feature: new FeatureStorageMock().make(),
   tenantSettings: new TenantSettingsStorageMock().make(),
 });

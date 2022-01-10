@@ -4,11 +4,11 @@ import { RouteConfig } from 'vue-router';
 import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
 import {
-  USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, BRANDING_ENTITIES, TENANT_SETTINGS_ENTITIES,
+  USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, BRANDING_ENTITIES,
 } from '@/constants/vuex-modules';
 import Routes from '../../constants/routes';
-import { Features } from '@/entities/feature';
 import { SignalR } from '../plugins/signalR';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');
@@ -130,7 +130,6 @@ export const routes: Array<RouteConfig> = [
             store.dispatch(`${BRANDING_ENTITIES}/getBranding`),
             store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'en'),
             store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'fr'),
-            store.dispatch(`${TENANT_SETTINGS_ENTITIES}/getCurrentTenantSettings`),
           ]);
           await SignalR.instance.buildHubConnection();
         }
@@ -487,83 +486,83 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.massActions.home.path,
                 name: Routes.massActions.home.name,
                 component: MassActionsHome,
-                meta: { level: 'level6', roles: ['contributorIM', 'contributorFinance'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorIM', 'contributorFinance'], feature: FeatureKeys.MassAction },
               },
               {
                 path: Routes.massActions.financialAssistance.home.path,
                 name: Routes.massActions.financialAssistance.home.name,
                 component: MassActionsFinancialAssistanceHome,
-                meta: { level: 'level6', feature: Features.MassAction },
+                meta: { level: 'level6', feature: FeatureKeys.MassAction },
               },
               {
                 path: Routes.massActions.financialAssistance.create.path,
                 name: Routes.massActions.financialAssistance.create.name,
                 component: FinancialAssistanceCreate,
-                meta: { level: 'level6', feature: Features.MassAction },
+                meta: { level: 'level6', feature: FeatureKeys.MassAction },
                 props: true,
               },
               {
                 path: Routes.massActions.financialAssistance.details.path,
                 name: Routes.massActions.financialAssistance.details.name,
                 component: MassActionsFinancialAssistanceDetails,
-                meta: { level: 'level6', feature: Features.MassAction },
+                meta: { level: 'level6', feature: FeatureKeys.MassAction },
                 props: true,
               },
               {
                 path: Routes.massActions.importValidationStatus.home.path,
                 name: Routes.massActions.importValidationStatus.home.name,
                 component: MassActionsImportValidationStatusHome,
-                meta: { level: 'level6', roles: ['contributorIM'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorIM'], feature: FeatureKeys.MassAction },
               },
               {
                 path: Routes.massActions.importValidationStatus.create.path,
                 name: Routes.massActions.importValidationStatus.create.name,
                 component: MassActionsImportValidationStatusCreate,
-                meta: { level: 'level6', roles: ['contributorIM'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorIM'], feature: FeatureKeys.MassAction },
               },
               {
                 path: Routes.massActions.importValidationStatus.details.path,
                 name: Routes.massActions.importValidationStatus.details.name,
                 component: MassActionsImportValidationStatusDetails,
-                meta: { level: 'level6', roles: ['contributorIM'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorIM'], feature: FeatureKeys.MassAction },
                 props: true,
               },
               {
                 path: Routes.massActions.importPaymentStatus.home.path,
                 name: Routes.massActions.importPaymentStatus.home.name,
                 component: MassActionsImportPaymentStatusHome,
-                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: FeatureKeys.MassAction },
               },
               {
                 path: Routes.massActions.importPaymentStatus.create.path,
                 name: Routes.massActions.importPaymentStatus.create.name,
                 component: MassActionsImportPaymentStatusCreate,
-                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: FeatureKeys.MassAction },
               },
               {
                 path: Routes.massActions.importPaymentStatus.details.path,
                 name: Routes.massActions.importPaymentStatus.details.name,
                 component: MassActionsImportPaymentStatusDetails,
-                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: FeatureKeys.MassAction },
                 props: true,
               },
               {
                 path: Routes.massActions.fundingRequest.home.path,
                 name: Routes.massActions.fundingRequest.home.name,
                 component: MassActionsFundingRequestHome,
-                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: FeatureKeys.MassAction },
               },
               {
                 path: Routes.massActions.fundingRequest.create.path,
                 name: Routes.massActions.fundingRequest.create.name,
                 component: MassActionsFundingRequestCreate,
-                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: FeatureKeys.MassAction },
               },
               {
                 path: Routes.massActions.fundingRequest.details.path,
                 name: Routes.massActions.fundingRequest.details.name,
                 component: MassActionsFundingRequestDetails,
-                meta: { level: 'level6', roles: ['contributorFinance'], feature: Features.MassAction },
+                meta: { level: 'level6', roles: ['contributorFinance'], feature: FeatureKeys.MassAction },
                 props: true,
               },
             ],

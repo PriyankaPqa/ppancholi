@@ -16,7 +16,6 @@ import { mockFinancialAssistanceCategoriesService } from '../financial-assistanc
 import { mockMassActionService } from '@/services/mass-actions/entity';
 import { mockFinancialAssistanceService } from '../financial-assistance-payments/entity';
 import { mockTenantSettingsService } from '../tenantSettings/entity';
-import { mockFeaturesService } from '../features/entity';
 
 export const mockProvider = (): IProviderMock => ({
   appUsers: mockAppUsersService(),
@@ -36,5 +35,4 @@ export const mockProvider = (): IProviderMock => ({
   financialAssistanceCategories: mockFinancialAssistanceCategoriesService(),
   massActions: mockMassActionService(),
   tenantSettings: mockTenantSettingsService(),
-  features: mockFeaturesService(),
 });

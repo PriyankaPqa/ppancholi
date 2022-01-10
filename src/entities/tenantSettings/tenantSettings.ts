@@ -1,6 +1,6 @@
 import { BaseEntity } from '@/entities/base/base';
 import { IMultilingual } from '@/types';
-import { ITenantSettingsEntity, ITenantSettingsEntityData } from './tenantSettings.types';
+import { IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData } from './tenantSettings.types';
 
 export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsEntity {
   slug: string;
@@ -9,7 +9,9 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
 
   registrationDomain: IMultilingual;
 
-  availableLanguages: Array<string>
+  availableLanguages: Array<string>;
+
+  features: Array<IFeatureEntity>;
 
   constructor(data?: ITenantSettingsEntityData) {
     super(data);
@@ -28,5 +30,7 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
     };
 
     this.availableLanguages = data?.availableLanguages || [];
+
+    this.features = data?.features || [];
   }
 }

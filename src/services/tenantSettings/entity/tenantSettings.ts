@@ -28,4 +28,12 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
   async createTenantDomains(payload: ISetDomainsRequest): Promise<ITenantSettingsEntityData> {
     return this.http.patch(`${this.baseUrl}/domains`, payload);
   }
+
+  async enableFeature(featureId: string): Promise<ITenantSettingsEntityData> {
+    return this.http.patch(`${this.baseUrl}/feature/${featureId}/enable`);
+  }
+
+  async disableFeature(featureId: string): Promise<ITenantSettingsEntityData> {
+    return this.http.patch(`${this.baseUrl}/feature/${featureId}/disable`);
+  }
 }

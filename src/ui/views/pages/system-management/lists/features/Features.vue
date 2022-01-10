@@ -2,7 +2,19 @@
   <rc-page-content :title="$t('system_management.card.features.title')" :outer-scroll="true" :full-height="true">
     <v-row justify="center" class="mt-8">
       <v-col cols="10" lg="8">
-        <feature-wrapper v-for="feature in features" :key="feature.id" :feature="feature" class="mb-4" />
+        <div class="rc-body18 fw-bold mb-4">
+          {{ $t('system_management.features.temporaryFeatures') }}
+        </div>
+        <feature-table data-test="temporary-features" class="mt-4" :features="temporaryFeatures" />
+      </v-col>
+    </v-row>
+
+    <v-row justify="center" class="my-8">
+      <v-col cols="10" lg="8">
+        <div class="rc-body18 fw-bold mb-4">
+          {{ $t('system_management.features.permanentFeatures') }}
+        </div>
+        <feature-table data-test="permanent-features" class="mt-4" :features="permanentFeatures" />
       </v-col>
     </v-row>
 
@@ -17,21 +29,24 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
-import FeatureWrapper from './FeatureWrapper.vue';
+import FeatureTable from './FeatureTable.vue';
 import routes from '@/constants/routes';
-import { IFeatureEntity } from '@/entities/feature';
+import { FeatureType, IFeatureEntity } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'Features',
 
   components: {
     RcPageContent,
-    FeatureWrapper,
+    FeatureTable,
   },
 
   computed: {
-    features(): IFeatureEntity[] {
-      return this.$storage.feature.getters.getAll().map((f) => f.entity);
+    temporaryFeatures(): IFeatureEntity[] {
+      return this.$storage.tenantSettings.getters.currentTenantSettings().features.filter((f) => f.type === FeatureType.Temporary);
+    },
+    permanentFeatures(): IFeatureEntity[] {
+      return this.$storage.tenantSettings.getters.currentTenantSettings().features.filter((f) => f.type === FeatureType.Permanent);
     },
   },
 

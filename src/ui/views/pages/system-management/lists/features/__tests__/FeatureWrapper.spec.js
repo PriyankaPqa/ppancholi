@@ -3,14 +3,14 @@
  */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import { mockCombinedFeature } from '@/entities/feature';
+import { mockFeatures } from '@/entities/tenantSettings';
 import Component from '../FeatureWrapper.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
-const mockFeature = mockCombinedFeature().entity;
+const mockFeature = mockFeatures()[0];
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -30,7 +30,7 @@ describe('FeatureWrapper.vue', () => {
   describe('>> Template', () => {
     it('renders feature name', () => {
       const name = wrapper.findDataTest(`feature-name-${mockFeature.id}`);
-      expect(name.text()).toBe(mockFeature.name);
+      expect(name.text()).toBe(mockFeature.name.translation.en);
     });
 
     it('renders feature status switch', () => {
@@ -49,19 +49,19 @@ describe('FeatureWrapper.vue', () => {
       it('calls storage to enable feature', async () => {
         await wrapper.vm.onChange(true);
 
-        expect(storage.feature.actions.enableFeature).toHaveBeenCalledTimes(1);
-        expect(storage.feature.actions.enableFeature).toHaveBeenCalledWith(mockFeature.id);
+        expect(storage.tenantSettings.actions.enableFeature).toHaveBeenCalledTimes(1);
+        expect(storage.tenantSettings.actions.enableFeature).toHaveBeenCalledWith(mockFeature.id);
       });
 
       it('calls storage to disable feature', async () => {
         await wrapper.vm.onChange(false);
 
-        expect(storage.feature.actions.disableFeature).toHaveBeenCalledTimes(1);
-        expect(storage.feature.actions.disableFeature).toHaveBeenCalledWith(mockFeature.id);
+        expect(storage.tenantSettings.actions.disableFeature).toHaveBeenCalledTimes(1);
+        expect(storage.tenantSettings.actions.disableFeature).toHaveBeenCalledWith(mockFeature.id);
       });
 
       it('roll back data if request failed', async () => {
-        storage.feature.actions.enableFeature.mockReturnValueOnce(null);
+        storage.tenantSettings.actions.enableFeature.mockReturnValueOnce(null);
 
         await wrapper.vm.onChange(true);
 

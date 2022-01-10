@@ -86,5 +86,29 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
 
       return result;
     },
+
+    enableFeature: async (
+      context: ActionContext<ITenantSettingsEntityState, ITenantSettingsEntityState>,
+      featureId: uuid,
+    ): Promise<ITenantSettingsEntityData> => {
+      const result = await this.service.enableFeature(featureId);
+      if (result) {
+        context.commit('setCurrentTenantSettings', result);
+      }
+
+      return result;
+    },
+
+    disableFeature: async (
+      context: ActionContext<ITenantSettingsEntityState, ITenantSettingsEntityState>,
+      featureId: uuid,
+    ): Promise<ITenantSettingsEntityData> => {
+      const result = await this.service.disableFeature(featureId);
+      if (result) {
+        context.commit('setCurrentTenantSettings', result);
+      }
+
+      return result;
+    },
   };
 }

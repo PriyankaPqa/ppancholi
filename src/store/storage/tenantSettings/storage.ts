@@ -26,6 +26,12 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
 
     createTenantDomains: (payload: ISetDomainsRequest):
       Promise<ITenantSettingsEntityData> => this.store.dispatch(`${this.entityModuleName}/createTenantDomains`, payload),
+
+    enableFeature: (featureId: uuid):
+      Promise<ITenantSettingsEntityData> => this.store.dispatch(`${this.entityModuleName}/enableFeature`, featureId),
+
+    disableFeature: (featureId: uuid):
+      Promise<ITenantSettingsEntityData> => this.store.dispatch(`${this.entityModuleName}/disableFeature`, featureId),
   };
 
   private mutations = {

@@ -76,8 +76,6 @@ import { FinancialAssistancePaymentMetadataModule } from './modules/financial-as
 import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
 import { BrandingEntityModule } from './modules/branding/brandingEntity';
 import { BrandingsService } from '@/services/brandings/entity';
-import { FeatureEntityModule } from './modules/feature/featureEntity';
-import { FeaturesService } from '@/services/features/entity';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
 
@@ -137,8 +135,6 @@ const mockConfig = {
 
     [vuexModule.BRANDING_ENTITIES]:
       new BrandingEntityModule(new BrandingsService(httpClient)).getModule(),
-    [vuexModule.FEATURE_ENTITIES]:
-      new FeatureEntityModule(new FeaturesService(httpClient)).getModule(),
 
     [vuexModule.TENANT_SETTINGS_ENTITIES]:
       new TenantSettingsEntityModule(new TenantSettingsService(httpClient)).getModule(),

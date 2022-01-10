@@ -6,6 +6,7 @@ import Vue from 'vue';
 export type { IAppUserData } from './interfaces/IAppUserData';
 export type { IAuthenticationAccessToken } from './interfaces/IAuthenticationAccessToken';
 export type { IMultilingual } from './interfaces/IMultilingual';
+// eslint-disable-next-line import/no-cycle
 export type { INavigationTab } from './interfaces/ui/INavigationTab';
 export type { IRestResponse } from './interfaces/IRestResponse';
 export type { IAzureSearchParams } from './interfaces/IAzureSearchParams';

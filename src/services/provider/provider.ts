@@ -24,7 +24,6 @@ import { CaseFileDocumentsMetadataService } from '../case-file-documents/metadat
 import { EventsMetadataService } from '../events/metadata';
 import { FinancialAssistancePaymentsMetadataService } from '../financial-assistance-payments/metadata';
 import { TenantSettingsService } from '../tenantSettings/entity';
-import { FeaturesService } from '../features/entity';
 
 export const provider = (): IProvider => ({
   appUsers: new AppUsersService(httpClient),
@@ -51,5 +50,4 @@ export const provider = (): IProvider => ({
   financialAssistanceCategories: new FinancialAssistanceCategoriesService(httpClient),
   massActions: new MassActionService(httpClient),
   tenantSettings: new TenantSettingsService(httpClient),
-  features: new FeaturesService(httpClient),
 });

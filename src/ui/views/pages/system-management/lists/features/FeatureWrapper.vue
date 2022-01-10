@@ -1,30 +1,36 @@
 <template>
-  <v-container :class="{ container: true, enabled, 'border-radius-all': true }">
-    <v-row>
+  <div class="py-3">
+    <v-row class="flex-1 align-center">
       <v-col cols="10">
-        <span class="rc-body18 fw-bold" :data-test="`feature-name-${feature.id}`">
-          {{ feature.name }}
-        </span>
+        <div class="rc-body14 fw-bold mb-1" :data-test="`feature-name-${feature.id}`">
+          {{ $m(feature.name) }}
+        </div>
       </v-col>
       <v-col cols="2">
-        <v-switch
-          v-model="enabled"
-          class="mt-0 pt-0"
-          hide-details
-          :data-test="`feature-switch-${feature.id}`"
-          :disabled="loading"
-          :loading="loading"
-          dense
-          @change="onChange($event)" />
+        <v-row class="flex-1 justify-end pr-2">
+          <v-switch
+            v-model="enabled"
+            class="mt-0 pt-0"
+            hide-details
+            :data-test="`feature-switch-${feature.id}`"
+            :disabled="loading"
+            :loading="loading"
+            dense
+            @change="onChange($event)" />
+        </v-row>
       </v-col>
     </v-row>
-    <span class="rc-body12 description" :data-test="`feature-description-${feature.id}`">{{ $m(feature.description) }}</span>
-  </v-container>
+    <v-col cols="10">
+      <v-row class="rc-body12 text-justify" :data-test="`feature-description-${feature.id}`">
+        {{ $m(feature.description) }}
+      </v-row>
+    </v-col>
+  </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
-import { IFeatureEntity } from '@/entities/feature';
+import { IFeatureEntity } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'FeatureWrapper',
@@ -48,8 +54,8 @@ export default Vue.extend({
       this.loading = true;
       this.$nextTick(async () => { // Use nextTick to be able to roll back swich button if api call fails
         const result = newValue
-          ? await this.$storage.feature.actions.enableFeature(this.feature.id)
-          : await this.$storage.feature.actions.disableFeature(this.feature.id);
+          ? await this.$storage.tenantSettings.actions.enableFeature(this.feature.id)
+          : await this.$storage.tenantSettings.actions.disableFeature(this.feature.id);
 
         if (!result) {
           this.enabled = !newValue; // roll back
@@ -61,20 +67,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style scoped>
-.container {
-  border-style: solid;
-  border-width: 1px;
-  border-color: var(--v-grey-lighten3);
-}
-.enabled {
-  background-color: #d9edf7;
-}
-::v-deep .v-input__slot {
-  justify-content: right;
-}
-.description {
-  color: var(--v-grey-darken2);
-}
-</style>

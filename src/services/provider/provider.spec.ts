@@ -21,7 +21,6 @@ import { CaseFileReferralsMetadataService } from '../case-file-referrals/metadat
 import { CaseFileDocumentsMetadataService } from '../case-file-documents/metadata';
 import { EventsMetadataService } from '../events/metadata';
 import { FinancialAssistancePaymentsMetadataService } from '../financial-assistance-payments/metadata';
-import { FeaturesService } from '../features/entity';
 
 jest.mock('../user-accounts/entity');
 jest.mock('../events/entity');
@@ -43,7 +42,6 @@ jest.mock('../case-file-referrals/metadata');
 jest.mock('../case-file-documents/metadata');
 jest.mock('../events/metadata');
 jest.mock('../financial-assistance-payments/metadata');
-jest.mock('../features/entity');
 
 describe('Provider', () => {
   it('should instantiate AppUsersService', () => {
@@ -139,10 +137,5 @@ describe('Provider', () => {
   it('should instantiate FinancialAssistancePaymentsMetadataService', () => {
     provider();
     expect(FinancialAssistancePaymentsMetadataService.prototype.constructor).toBeCalled();
-  });
-
-  it('should instantiate FeaturesService', () => {
-    provider();
-    expect(FeaturesService.prototype.constructor).toBeCalled();
   });
 });

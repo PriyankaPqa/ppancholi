@@ -48,5 +48,19 @@ describe('>>> TenantSettings Storage', () => {
       storage.actions.createTenantDomains(payload);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/createTenantDomains`, payload);
     });
+
+    it('should proxy enableFeature', async () => {
+      const featureId = 'id';
+
+      await storage.actions.enableFeature(featureId);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/enableFeature`, featureId);
+    });
+
+    it('should proxy disableFeature', async () => {
+      const featureId = 'id';
+
+      await storage.actions.disableFeature(featureId);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/disableFeature`, featureId);
+    });
   });
 });

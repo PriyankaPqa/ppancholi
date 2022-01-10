@@ -6,8 +6,8 @@ import routeConstants from '@/constants/routes';
 import authenticationProvider from '@/auth/AuthenticationProvider';
 import store from '@/store/store';
 import { i18n } from '@/ui/plugins/i18n';
-import { FEATURE_ENTITIES } from '@/constants/vuex-modules';
-import { IFeatureEntity } from '@/entities/feature';
+import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
+import { ITenantSettingsEntity } from '@/entities/tenantSettings';
 
 Vue.use(VueRouter);
 
@@ -50,13 +50,14 @@ const authenticationGuard = async (to: Route) => {
 
 const featureGuard = async (to: Route) => {
   let featureEnabled = true;
-  const features: IFeatureEntity[] = store.getters[`${FEATURE_ENTITIES}/getAll`];
+  const { features } = store.getters[`${TENANT_SETTINGS_ENTITIES}/currentTenantSettings`] as ITenantSettingsEntity;
   if (!features?.length) {
-    await store.dispatch(`${FEATURE_ENTITIES}/fetchAll`);
+    await store.dispatch(`${TENANT_SETTINGS_ENTITIES}/getCurrentTenantSettings`);
   }
 
   if (to.meta.feature) {
-    const feature: IFeatureEntity = store.getters[`${FEATURE_ENTITIES}/feature`](to.meta.feature);
+    const { features } = store.getters[`${TENANT_SETTINGS_ENTITIES}/currentTenantSettings`] as ITenantSettingsEntity;
+    const feature = features.find((f) => f.key === to.meta.feature);
     featureEnabled = feature?.enabled;
   }
 

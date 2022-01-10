@@ -45,4 +45,20 @@ describe('>>> TenantSettings service', () => {
       expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/domains', payload);
     });
   });
+
+  describe('enableFeature', () => {
+    it('is linked to the correct URL and params', async () => {
+      const featureId = 'MOCK_ID';
+      await service.enableFeature(featureId);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/feature/${featureId}/enable`);
+    });
+  });
+
+  describe('disableFeature', () => {
+    it('is linked to the correct URL and params', async () => {
+      const featureId = 'MOCK_ID';
+      await service.disableFeature(featureId);
+      expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/feature/${featureId}/disable`);
+    });
+  });
 });
