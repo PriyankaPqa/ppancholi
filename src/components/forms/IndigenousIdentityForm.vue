@@ -29,7 +29,7 @@
         v-model="formCopy.indigenousCommunityId"
         clearable
         :loading="loading"
-        :disabled="loading || !form.indigenousType"
+        :disabled="loading || !formCopy.indigenousType"
         :label="`${$t('registration.personal_info.indigenousCommunity.label')}*`"
         :items="indigenousCommunitiesItems"
         :rules="rules.indigenousCommunityId"
