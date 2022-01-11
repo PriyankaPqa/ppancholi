@@ -61,7 +61,11 @@ export class BaseModule<T extends IEntity, IdParams> {
         }
         return res;
       } catch (e) {
-        applicationInsights.trackException(e, { idParams }, 'module.base', 'fetch');
+        // normal errors already logged in service.get
+        // when e is an array returned from BE (a validation error or 404)
+        if (!Array.isArray(e)) {
+          applicationInsights.trackException(e, { idParams }, 'module.base', 'fetch');
+        }
         return null;
       }
     },

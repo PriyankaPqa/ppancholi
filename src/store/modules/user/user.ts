@@ -99,8 +99,9 @@ const actions = {
       userData.roles = helpers.decodeJwt(accessToken).roles;
       context.commit('setUser', userData);
     } else {
-      throw new Error('User data not found');
+      applicationInsights.trackTrace('User data not found', null, 'user', 'fetchUserData');
     }
+    return !!accessToken;
   },
 };
 

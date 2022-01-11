@@ -44,8 +44,10 @@ const authenticationGuard = async (to: Route) => {
 
     // Dispatch the action to the store to fetch the user data from the JWT token
     // and store it in module state
-    await store.dispatch('user/fetchUserData');
+    const loggedIn = await store.dispatch('user/fetchUserData');
+    return loggedIn;
   }
+  return true;
 };
 
 const featureGuard = async (to: Route) => {
@@ -99,6 +101,7 @@ const authorizationGuard = async (to: Route) => {
 
 router.beforeEach(async (to, from, next) => {
   localStorage.setItem('fromOutside', (from.name === null).toString());
+  let loginError = false;
 
   try {
     if (to.name === routeConstants.loginError.name) {
@@ -106,17 +109,23 @@ router.beforeEach(async (to, from, next) => {
       return;
     }
 
-    await authenticationGuard(to);
-    const authorized = await authorizationGuard(to);
+    loginError = !await authenticationGuard(to);
+    if (!loginError) {
+      const authorized = await authorizationGuard(to);
 
-    if (authorized) {
-      const featureEnabled = await featureGuard(to);
-      featureEnabled ? next() : next(from);
-    } else {
-      next(from);
+      if (authorized) {
+        const featureEnabled = await featureGuard(to);
+        featureEnabled ? next() : next(from);
+      } else {
+        next(from);
+      }
     }
   } catch (e) {
     applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');
+    loginError = true;
+  }
+
+  if (loginError) {
     // If there is an error, redirect to the login error page
     next({
       name: routeConstants.loginError.name,
