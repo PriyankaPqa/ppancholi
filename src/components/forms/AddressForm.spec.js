@@ -19,6 +19,7 @@ describe('AddressForm.vue', () => {
         apiKey: '1235',
         homeAddress: mockAddress({ province: ECanadaProvinces.ON }),
         canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
+        disableAutocomplete: false,
       },
     });
   });

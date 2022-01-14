@@ -13,6 +13,7 @@ import {
 
 import { mockEvent } from '../../../entities/event';
 import { IStorageMock } from './storage.types';
+import { mockFeatures } from '../../../entities/tenantSettings';
 
 export const mockStorageRegistration = (): IStorageMock => ({
   getters: {
@@ -35,6 +36,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     householdCreate: jest.fn(() => _cloneDeep(mockHouseholdCreate())),
     personalInformation: jest.fn(() => _merge(mockContactInformation(), mockIdentitySet())),
     isSplitMode: jest.fn(() => false),
+    features: jest.fn(() => mockFeatures()),
   },
 
   mutations: {
@@ -73,6 +75,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     setSplitHousehold: jest.fn(),
     resetSplitHousehold: jest.fn(),
     setTabs: jest.fn(),
+    setFeatures: jest.fn(),
   },
 
   actions: {

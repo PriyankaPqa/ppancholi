@@ -26,4 +26,10 @@ describe('>>> Public Service', () => {
     expect(http.get).toHaveBeenCalledWith('/system-management/tenants/id-from-registration-domain?registrationDomain=myDomain',
       { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
   });
+
+  test('getPublicFeatures is linked to the correct URL', async () => {
+    await service.getPublicFeatures();
+    expect(http.get).toHaveBeenCalledWith('/system-management/tenant-settings/public-features',
+      { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
+  });
 });

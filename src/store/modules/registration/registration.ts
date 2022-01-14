@@ -39,6 +39,7 @@ import {
   ICurrentAddress, IAddress, IHouseholdCreateData,
 } from '../../../entities/household-create';
 import { Event, IEvent, IEventData } from '../../../entities/event';
+import { IFeatureEntity } from '../../../entities/tenantSettings';
 
 import { resetVuexModuleState } from '../../storeUtils';
 
@@ -64,6 +65,7 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   householdAssociationMode: false,
   householdAlreadyRegistered: false,
   splitHousehold: null as ISplitHousehold,
+  features: [] as IFeatureEntity[],
 });
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
@@ -200,6 +202,8 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   ),
 
   isSplitMode: (state: IState) => !!(state.splitHousehold),
+
+  features: (state: IState) => state.features,
 });
 
 const mutations = (): MutationTree<IState> => ({
@@ -389,6 +393,10 @@ const mutations = (): MutationTree<IState> => ({
 
   setTabs(state: IState, tabs: IRegistrationMenuItem[]) {
     state.tabs = tabs;
+  },
+
+  setFeatures(state: IState, features: IFeatureEntity[]) {
+    state.features = features;
   },
 });
 

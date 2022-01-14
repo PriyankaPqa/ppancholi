@@ -18,6 +18,7 @@ describe('AdditionalMembers.vue', () => {
       localVue,
       propsData: {
         i18n,
+        disableAutocomplete: false,
       },
       computed: {
         additionalMembers() {
@@ -82,6 +83,7 @@ describe('AdditionalMembers.vue', () => {
           },
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           computed: {
             additionalMembers() {
@@ -121,6 +123,7 @@ describe('AdditionalMembers.vue', () => {
           localVue,
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           computed: {
             additionalMembers() {
@@ -137,6 +140,7 @@ describe('AdditionalMembers.vue', () => {
           localVue,
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           computed: {
             additionalMembers() {

@@ -26,6 +26,7 @@ import {
 } from '../../../entities/household-create';
 
 import { mockHouseholdEntity } from '../../../entities/household';
+import { mockFeatures } from '../../../entities/tenantSettings';
 
 import * as registrationUtils from './registrationUtils';
 
@@ -59,6 +60,7 @@ describe('>>> Registration Module', () => {
           householdAlreadyRegistered: false,
           householdAssociationMode: false,
           splitHousehold: null,
+          features: [],
         });
       });
     });
@@ -261,6 +263,15 @@ describe('>>> Registration Module', () => {
       it('returns false if splitHousehold object is  null', () => {
         store.state.registration.splitHousehold = null;
         expect(store.getters['registration/isSplitMode']).toBeFalsy();
+      });
+    });
+
+    describe('features', () => {
+      it('returns features', () => {
+        expect(store.getters['registration/features']).toEqual([]);
+
+        store.state.registration.features = mockFeatures();
+        expect(store.getters['registration/features']).toEqual(store.state.registration.features);
       });
     });
   });
@@ -653,6 +664,14 @@ describe('>>> Registration Module', () => {
         const tabs = mockTabs();
         store.commit('registration/setTabs', tabs);
         expect(store.state.registration.tabs).toEqual(tabs);
+      });
+    });
+
+    describe('setFeatures', () => {
+      it('should set features', () => {
+        const features = mockFeatures();
+        store.commit('registration/setFeatures', features);
+        expect(store.state.registration.features).toEqual(features);
       });
     });
   });

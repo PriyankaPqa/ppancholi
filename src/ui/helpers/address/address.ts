@@ -1,7 +1,7 @@
 import VueI18n from 'vue-i18n';
 import { en, fr } from '@crctech/component-library/src/components/atoms/RcCountrySelect/countries/index';
 import { ECanadaProvinces } from '../../../types';
-import {IAddress, IAddressData} from '../../../entities/value-objects/address';
+import { IAddress, IAddressData } from '../../../entities/value-objects/address';
 import generalHelper from '../general/general';
 
 export default {

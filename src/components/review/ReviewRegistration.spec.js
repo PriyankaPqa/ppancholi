@@ -30,6 +30,7 @@ describe('ReviewRegistration.vue', () => {
       vuetify,
       propsData: {
         i18n,
+        disableAutocomplete: false,
       },
       mocks: {
         $storage: storage,
@@ -343,6 +344,7 @@ describe('ReviewRegistration.vue', () => {
           vuetify,
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           mocks: {
             $storage: storage,
@@ -420,6 +422,7 @@ describe('ReviewRegistration.vue', () => {
           vuetify,
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           mocks: {
             $storage: storage,
@@ -497,6 +500,7 @@ describe('ReviewRegistration.vue', () => {
           vuetify,
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           mocks: {
             $storage: storage,
@@ -573,6 +577,7 @@ describe('ReviewRegistration.vue', () => {
           vuetify,
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           mocks: {
             $storage: storage,
@@ -786,6 +791,7 @@ describe('ReviewRegistration.vue', () => {
           localVue,
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           computed: {
             householdCreate() {
@@ -805,6 +811,7 @@ describe('ReviewRegistration.vue', () => {
           localVue,
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           computed: {
             householdCreate() {

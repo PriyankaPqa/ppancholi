@@ -45,7 +45,7 @@
         @cancel="cancelAddresses()"
         @submit="submitAddresses()">
         <template #inline>
-          <addresses :i18n="i18n" />
+          <addresses :i18n="i18n" :disable-autocomplete="disableAutocomplete" />
         </template>
         <addresses-template :household="householdCreate" />
       </summary-section>
@@ -95,6 +95,7 @@
               :member="member"
               :same-address.sync="additionalMembers[index].sameAddress"
               :shelter-locations="shelterLocations"
+              :disable-autocomplete="disableAutocomplete"
               @identity-change="setIdentity($event)"
               @indigenous-identity-change="setIndigenousIdentity($event)"
               @temporary-address-change="setCurrentAddress($event)" />
@@ -120,6 +121,7 @@
       :i18n="i18n"
       :household-id="householdCreate.id"
       :show.sync="showAddAdditionalMember"
+      :disable-autocomplete="disableAutocomplete"
       :index="-1"
       :member="newAdditionalMember" />
   </div>
@@ -187,6 +189,10 @@ export default mixins(additionalMemberForm).extend({
     recaptchaKey: {
       type: String,
       default: '',
+    },
+    disableAutocomplete: {
+      type: Boolean,
+      required: true,
     },
   },
 

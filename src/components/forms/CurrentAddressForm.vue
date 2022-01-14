@@ -52,6 +52,7 @@
             :data-test="`${prefixDataTest}__street`"
             :rules="rules.streetAddress"
             :api-key="apiKey"
+            :disable-autocomplete="disableAutocomplete"
             :label="`${$t('registration.addresses.streetAddress')}`"
             @input="$resetGeoLocation()"
             @on-autocompleted="$streetCurrentAddressAutocomplete($event)" />
@@ -202,6 +203,11 @@ export default Vue.extend({
     compactView: {
       type: Boolean,
       default: false,
+    },
+
+    disableAutocomplete: {
+      type: Boolean,
+      required: true,
     },
   },
 

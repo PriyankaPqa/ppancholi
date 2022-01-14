@@ -44,6 +44,7 @@
             :current-address-type-items="currentAddressTypeItems"
             :no-fixed-home="false"
             :api-key="apiKey"
+            :disable-autocomplete="disableAutocomplete"
             :current-address="member.currentAddress"
             @change="$emit('temporary-address-change', $event)" />
         </v-col>
@@ -110,6 +111,11 @@ export default Vue.extend({
 
     apiKey: {
       type: String,
+      required: true,
+    },
+
+    disableAutocomplete: {
+      type: Boolean,
       required: true,
     },
 

@@ -12,6 +12,7 @@ import { mockHttpError } from '@/services/httpClient.mock';
 import { makeStorage } from './storage';
 import { mockEventData } from '../../../entities/event';
 import { ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
+import { mockFeatures } from '../../../entities/tenantSettings';
 
 const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);
@@ -92,6 +93,10 @@ describe('>>> Registration Storage', () => {
     });
     it('should proxy isSplitMode', () => {
       expect(storage.getters.isSplitMode()).toEqual(store.getters['registration/isSplitMode']);
+    });
+
+    it('should proxy features', () => {
+      expect(storage.getters.features()).toEqual(store.getters['registration/features']);
     });
   });
 
@@ -280,6 +285,12 @@ describe('>>> Registration Storage', () => {
       const tabs = mockTabs();
       storage.mutations.setTabs(tabs);
       expect(store.commit).toBeCalledWith('registration/setTabs', tabs);
+    });
+
+    it('should proxy setFeatures', () => {
+      const features = mockFeatures();
+      storage.mutations.setFeatures(features);
+      expect(store.commit).toBeCalledWith('registration/setFeatures', features);
     });
   });
 

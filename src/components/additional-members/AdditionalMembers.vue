@@ -52,6 +52,7 @@
       :i18n="i18n"
       :show.sync="showAddAdditionalMember"
       :index="index"
+      :disable-autocomplete="disableAutocomplete"
       :member="currentAdditionalMember" />
     <rc-confirmation-dialog
       v-if="showDeleteDialog"
@@ -85,6 +86,11 @@ export default Vue.extend({
   props: {
     i18n: {
       type: Object as () => VueI18n,
+      required: true,
+    },
+
+    disableAutocomplete: {
+      type: Boolean,
       required: true,
     },
   },

@@ -60,7 +60,7 @@
   ],
   "dependencies": {
     "@microsoft/applicationinsights-web": "^2.7.0",
-    "@crctech/component-library": "1.0.181",
+    "@crctech/component-library": "1.0.189",
     "axios": "^0.24.0",
     "camelcase-keys": "^6.2.2",
     "moment": "^2.29.1",

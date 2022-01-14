@@ -30,6 +30,7 @@
         :canadian-provinces-items="canadianProvincesItems"
         prefix-data-test="address"
         :home-address="homeAddress"
+        :disable-autocomplete="disableAutocomplete"
         @change="setHomeAddress($event)" />
     </template>
 
@@ -41,6 +42,7 @@
         :api-key="apiKey"
         :current-address="currentAddress"
         :no-fixed-home="noFixedHome"
+        :disable-autocomplete="disableAutocomplete"
         prefix-data-test="tempAddress"
         @change="setCurrentAddress($event)" />
     </validation-observer>
@@ -76,6 +78,11 @@ export default Vue.extend({
   props: {
     i18n: {
       type: Object as () => VueI18n,
+      required: true,
+    },
+
+    disableAutocomplete: {
+      type: Boolean,
       required: true,
     },
   },

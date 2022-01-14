@@ -26,6 +26,7 @@
             :current-address-type-items="currentAddressTypeItems"
             :loading="loadingIndigenousCommunities"
             :member="member"
+            :disable-autocomplete="disableAutocomplete"
             @identity-change="setIdentity($event)"
             @indigenous-identity-change="setIndigenousIdentity($event)"
             @temporary-address-change="setCurrentAddress($event)" />
@@ -100,6 +101,11 @@ export default Vue.extend({
     inHouseholdProfile: {
       type: Boolean,
       default: false,
+    },
+
+    disableAutocomplete: {
+      type: Boolean,
+      required: true,
     },
   },
 

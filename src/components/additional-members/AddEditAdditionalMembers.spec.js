@@ -32,6 +32,7 @@ describe('AddEditAdditionalMembers.vue', () => {
         index: -1,
         i18n,
         householdId,
+        disableAutocomplete: false,
       },
       data() {
         return {
@@ -279,6 +280,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               index: 0,
               i18n,
               householdId,
+              disableAutocomplete: false,
             },
             data() {
               return {
@@ -309,6 +311,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               index: 0,
               i18n,
               householdId,
+              disableAutocomplete: false,
             },
             data() {
               return {
@@ -338,6 +341,7 @@ describe('AddEditAdditionalMembers.vue', () => {
               index: 0,
               i18n,
               householdId,
+              disableAutocomplete: false,
             },
             data() {
               return {

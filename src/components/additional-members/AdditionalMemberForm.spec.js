@@ -38,6 +38,7 @@ describe('AdditionalMemberForm.vue', () => {
         apiKey: 'google-api-key',
         shelterLocations: mockShelterLocations(),
         i18n,
+        disableAutocomplete: false,
       },
       mocks: {
         $storage: storage,

@@ -16,6 +16,7 @@ import {
   HouseholdCreate, IHouseholdCreate, IHouseholdCreateData,
 } from '../../../entities/household-create';
 import { IHouseholdEntity } from '../../../entities/household';
+import { IFeatureEntity } from '../../../entities/tenantSettings';
 
 export interface IStorage {
   getters: {
@@ -38,6 +39,7 @@ export interface IStorage {
     householdCreate(): HouseholdCreate;
     personalInformation(): IContactInformation & IIdentitySet;
     isSplitMode(): boolean;
+    features(): IFeatureEntity[];
   };
 
   mutations: {
@@ -75,6 +77,7 @@ export interface IStorage {
     setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: {originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }): void;
     resetSplitHousehold(): void;
     setTabs(tabs: IRegistrationMenuItem[]): void;
+    setFeatures(features: IFeatureEntity[]): void;
   };
 
   actions: {
@@ -116,6 +119,7 @@ export interface IStorageMock {
     householdCreate: jest.Mock<IHouseholdCreate>;
     personalInformation: jest.Mock<IContactInformation & IIdentitySet>;
     isSplitMode: jest.Mock<boolean>;
+    features: jest.Mock<IFeatureEntity[]>;
   };
 
   mutations: {
@@ -154,6 +158,7 @@ export interface IStorageMock {
     setSplitHousehold: jest.Mock<void>;
     resetSplitHousehold: jest.Mock<void>;
     setTabs: jest.Mock<void>;
+    setFeatures: jest.Mock<void>;
   };
 
   actions: {

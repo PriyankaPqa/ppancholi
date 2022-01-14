@@ -23,6 +23,7 @@ describe('CurrentAddressForm.vue', () => {
         canadianProvincesItems: helpers.getCanadianProvincesWithoutOther(i18n),
         shelterLocations: mockShelterLocations(),
         noFixedHome: false,
+        disableAutocomplete: false,
       },
     });
   });

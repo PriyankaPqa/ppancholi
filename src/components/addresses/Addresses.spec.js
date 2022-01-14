@@ -27,6 +27,7 @@ describe('Addresses.vue', () => {
       },
       propsData: {
         i18n,
+        disableAutocomplete: false,
       },
       mocks: {
         $storage: storage,
@@ -75,6 +76,7 @@ describe('Addresses.vue', () => {
           },
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
           computed: {
             noFixedHome() {
@@ -108,6 +110,7 @@ describe('Addresses.vue', () => {
           },
           propsData: {
             i18n,
+            disableAutocomplete: false,
           },
         });
         const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
@@ -145,6 +148,7 @@ describe('Addresses.vue', () => {
         },
         propsData: {
           i18n,
+          disableAutocomplete: false,
         },
         computed: {
           noFixedHome() {
