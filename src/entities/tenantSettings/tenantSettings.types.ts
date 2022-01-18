@@ -4,6 +4,7 @@ import { IEntity, IEntityCombined } from '@/entities/base/base.types';
 
 export enum FeatureKeys {
   MassAction = 'mass-action',
+  AddressAutoFill = 'AddressAutoFill',
 }
 
 export enum FeatureType {

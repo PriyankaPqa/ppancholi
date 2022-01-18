@@ -5,6 +5,7 @@ import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
 import {
+  FeatureKeys,
   ICreateTenantSettingsRequest,
   ISetDomainsRequest,
   ITenantSettingsEntity,
@@ -36,6 +37,9 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
     ...this.baseGetters,
 
     currentTenantSettings: (state: ITenantSettingsEntityState) => state.currentTenantSettings,
+
+    isFeatureEnabled: (state: ITenantSettingsEntityState) => (featureKey: FeatureKeys): boolean => state
+      .currentTenantSettings?.features?.find((f) => f.key === featureKey)?.enabled || false,
   };
 
   public mutations = {

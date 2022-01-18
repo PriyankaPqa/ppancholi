@@ -125,6 +125,7 @@
       :index="index"
       :member="member"
       :shelter-locations-list="shelterLocations"
+      :disable-autocomplete="!enableAutocomplete"
       in-household-profile
       @close="closeAndReload" />
 
@@ -147,6 +148,7 @@ import { IEventGenericLocation } from '@/entities/event';
 
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
 import SplitHouseholdDialog from '../split/SplitHouseholdDialog.vue';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'HouseholdMemberCard',
@@ -318,6 +320,10 @@ export default Vue.extend({
         return this.splitHouseholdMembers.additionalMembers;
       }
       return [];
+    },
+
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
   },
 

@@ -3,7 +3,7 @@
  */
 
 import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
-import { mockCreateTenantSettingsRequest, mockSetDomainsRequest } from '@/entities/tenantSettings';
+import { FeatureKeys, mockCreateTenantSettingsRequest, mockSetDomainsRequest } from '@/entities/tenantSettings';
 import { mockStore } from '@/store';
 import { TenantSettingsStorage } from './storage';
 
@@ -27,6 +27,13 @@ describe('>>> TenantSettings Storage', () => {
     it('should proxy currentTenantSettings', () => {
       const storageGetter = storage.getters.currentTenantSettings();
       const storeGetter = store.getters[`${entityModuleName}/currentTenantSettings`];
+      expect(storageGetter).toEqual(storeGetter);
+    });
+
+    it('should proxy isFeatureEnabled', () => {
+      const featureKey = FeatureKeys.AddressAutoFill;
+      const storageGetter = storage.getters.isFeatureEnabled(featureKey);
+      const storeGetter = store.getters[`${entityModuleName}/isFeatureEnabled`](featureKey);
       expect(storageGetter).toEqual(storeGetter);
     });
   });

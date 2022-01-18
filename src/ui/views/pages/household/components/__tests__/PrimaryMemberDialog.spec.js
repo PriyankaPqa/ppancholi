@@ -310,6 +310,44 @@ describe('PrimaryMemberDialog', () => {
         expect(wrapper.vm.submitButtonDisabled(false, false)).toBeTruthy();
       });
     });
+
+    describe('enableAutocomplete', () => {
+      it('return correct value', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return {
+              apiKey: '123',
+              submitLoading: true,
+            };
+          },
+          mocks: { $storage: storage },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
+
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            shelterLocations: [],
+          },
+          data() {
+            return {
+              apiKey: '123',
+              submitLoading: true,
+            };
+          },
+          mocks: { $storage: storage },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
   });
 
   describe('Methods', () => {

@@ -151,6 +151,7 @@
                   :key="paymentGroup.groupingInformation.payeeType"
                   :api-key="apiKey"
                   :canadian-provinces-items="canadianProvincesItems"
+                  :disable-autocomplete="!enableAutocomplete"
                   prefix-data-test="address"
                   :home-address="address"
                   @change="setAddress($event)" />
@@ -193,6 +194,7 @@ import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { Status } from '@/entities/base';
 import caseFileDetail from '../../caseFileDetail';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default mixins(caseFileDetail).extend({
   name: 'CreateEditPaymentLineDialog',
@@ -362,6 +364,10 @@ export default mixins(caseFileDetail).extend({
           max: MAX_LENGTH_MD,
         },
       };
+    },
+
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
   },
 

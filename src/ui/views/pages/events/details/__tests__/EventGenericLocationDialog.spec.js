@@ -32,6 +32,9 @@ describe('EventGenericLocationDialog.vue', () => {
           apiKey() {
             return 'mock-apiKey';
           },
+          enableAutocomplete() {
+            return true;
+          },
         },
         stubs: {
           RcGoogleAutocomplete: true,
@@ -353,6 +356,46 @@ describe('EventGenericLocationDialog.vue', () => {
         expect(wrapper.vm.rules.postalCode).toEqual({
           max: MAX_LENGTH_MD,
         });
+      });
+    });
+
+    describe('enableAutocomplete', () => {
+      it('returns true if storage returns true', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            id: mockEvent.registrationLocations[0].name.translation.en,
+            isRegistrationLocation: true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
+      });
+
+      it('returns false if storage returns false', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: false,
+            id: mockEvent.registrationLocations[0].name.translation.en,
+            isRegistrationLocation: true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });
   });

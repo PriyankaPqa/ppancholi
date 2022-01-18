@@ -21,6 +21,7 @@
         v-if="!noFixedHome"
         :api-key="apiKey"
         :canadian-provinces-items="canadianProvincesItems"
+        :disable-autocomplete="!enableAutocomplete"
         prefix-data-test="address"
         :home-address="address"
         @change="setAddress($event)" />
@@ -48,6 +49,7 @@ import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
 import { VForm } from '@/types';
 import { MAX_LENGTH_LG } from '@/constants/validations';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'EditHouseholdAddressDialog',
@@ -104,6 +106,9 @@ export default Vue.extend({
         || this.noFixedHomeDetails !== this.currentHousehold.entity.address.observation;
     },
 
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+    },
   },
 
   watch: {

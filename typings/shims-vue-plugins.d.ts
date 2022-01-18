@@ -5,6 +5,7 @@ import { TranslateResult } from 'vue-i18n';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { IMultilingual } from '@/types';
 import { SignalR } from '@/ui/plugins/signalR';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 interface IFormatCurrency {
   (value: number): string;
@@ -27,6 +28,7 @@ declare module 'vue/types/vue' {
     $hasLevel: (p: string) => boolean;
     $appInsights: typeof applicationInsights;
     $hasRole: (p: string) => boolean;
+    $hasFeature: (feature: FeatureKeys) => boolean;
     $confirm: ({
       title, messages, htmlContent, submitActionLabel, cancelActionLabel, showCancelButton,
     }: {

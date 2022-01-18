@@ -1,4 +1,5 @@
 import {
+  FeatureKeys,
   ICreateTenantSettingsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
 import {
@@ -7,10 +8,12 @@ import {
 
 export interface IGetters extends IBaseGetters<ITenantSettingsEntity, never> {
   currentTenantSettings(): ITenantSettingsEntity;
+  isFeatureEnabled(featureKe: FeatureKeys): boolean;
 }
 
 export interface IGettersMock extends IBaseGettersMock<ITenantSettingsEntity, never> {
   currentTenantSettings: jest.Mock<ITenantSettingsEntity>;
+  isFeatureEnabled: jest.Mock<boolean>;
 }
 
 export interface IActions extends IBaseActions<ITenantSettingsEntity, never, uuid> {

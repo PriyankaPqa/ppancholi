@@ -180,7 +180,7 @@ export default Vue.extend({
         }
 
         if (item.feature) {
-          featureCheck = this.$storage.tenantSettings.getters.currentTenantSettings().features.find((f) => f.key === item.feature)?.enabled;
+          featureCheck = this.$hasFeature(item.feature);
         }
 
         return (levelCheck || rolesCheck) && featureCheck;

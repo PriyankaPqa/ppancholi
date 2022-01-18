@@ -29,6 +29,11 @@ describe('EditHouseholdAddressDialog.vue', () => {
       mocks: {
         $storage: storage,
       },
+      data() {
+        return {
+          apiKey: 'apiKey',
+        };
+      },
     };
     if (mountMode) {
       wrapper = mount(Component, options);
@@ -106,6 +111,18 @@ describe('EditHouseholdAddressDialog.vue', () => {
         });
 
         expect(wrapper.vm.hasChanged).toBe(true);
+      });
+    });
+
+    describe('enableAutocomplete', () => {
+      it('return correct value', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
+        doMount(false);
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
+
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
+        doMount(false);
+        expect(wrapper.vm.enableAutocomplete).toBe(false);
       });
     });
   });

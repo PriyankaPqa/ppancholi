@@ -352,6 +352,42 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.amountError).toBeNull();
       });
     });
+
+    describe('enableAutocomplete', () => {
+      it('return correct value', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            program,
+            items,
+            financialAssistance,
+            id: 'cfid'
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
+
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            program,
+            items,
+            financialAssistance,
+            id: 'cfid'
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
   });
 
   describe('Methods', () => {

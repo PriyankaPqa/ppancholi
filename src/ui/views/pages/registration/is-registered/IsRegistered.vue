@@ -16,7 +16,7 @@
       @submit="showDetailsDialog = false">
       <v-row justify="center">
         <v-col cols="12" lg="8">
-          <lib-review-registration :i18n="i18n" show-age-in-review skip-phone-email-rules>
+          <lib-review-registration :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
             <template #previous-events>
               <previous-events-template :case-files="caseFiles" :loading="loading" />
             </template>
@@ -39,6 +39,7 @@ import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
 
 import searchHousehold, { ICriteria } from '@/ui/mixins/searchHousehold';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default mixins(searchHousehold).extend({
   name: 'IsRegistered',
@@ -61,6 +62,9 @@ export default mixins(searchHousehold).extend({
       return this.$store.state.registration.householdResultsShown;
     },
 
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
+    },
   },
 
   mounted() {

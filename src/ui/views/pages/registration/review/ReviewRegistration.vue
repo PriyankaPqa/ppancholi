@@ -1,5 +1,5 @@
 <template>
-  <lib-review-registration :i18n="i18n" show-age-in-review skip-phone-email-rules>
+  <lib-review-registration :i18n="i18n" show-age-in-review skip-phone-email-rules :disable-autocomplete="!enableAutocomplete">
     <template #previous-events>
       <previous-events-template :case-files="caseFiles" :loading="loading" />
     </template>
@@ -13,6 +13,7 @@ import { HouseholdCreate } from '@crctech/registration-lib/src/entities/househol
 import { IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
 import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'ReviewRegistration',
@@ -33,6 +34,10 @@ export default Vue.extend({
   computed: {
     household(): HouseholdCreate {
       return this.$storage.registration.getters.householdCreate();
+    },
+
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
   },
 

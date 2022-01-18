@@ -22,10 +22,10 @@
           <template slot="default">
             <v-row justify="center" class="mt-12 full-height" no-gutters>
               <v-col v-if="currentTab.componentName === 'isRegistered'" cols="12">
-                <component :is="currentTab.componentName" />
+                <component :is="currentTab.componentName" :disable-autocomplete="!enableAutocomplete" />
               </v-col>
               <v-col v-else cols="12" xl="10" lg="10" md="11" sm="12" xs="12">
-                <component :is="currentTab.componentName" />
+                <component :is="currentTab.componentName" :disable-autocomplete="!enableAutocomplete" />
               </v-col>
             </v-row>
           </template>
@@ -96,6 +96,7 @@ import { tabs } from '@/store/modules/registration/tabs';
 import store from '@/store/store';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default mixins(individual).extend({
   name: 'Individual',
@@ -205,6 +206,10 @@ export default mixins(individual).extend({
 
     event(): IEvent {
       return this.$storage.registration.getters.event();
+    },
+
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
   },
 

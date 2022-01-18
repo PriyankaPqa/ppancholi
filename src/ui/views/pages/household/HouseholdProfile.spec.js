@@ -572,6 +572,44 @@ describe('HouseholdProfile.vue', () => {
         expect(wrapper.vm.canMove).toBeFalsy();
       });
     });
+
+    describe('enableAutocomplete', () => {
+      it('return correct value', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
+
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            id: household.entity.id,
+          },
+          computed: {
+            household() {
+              return householdCreate;
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
   });
 
   describe('lifecycle', () => {

@@ -63,6 +63,7 @@
                     :error-messages="errors"
                     :api-key="apiKey"
                     outlined
+                    :disable-autocomplete="!enableAutocomplete"
                     :label="`${$t('common.address.streetAddress')} *`"
                     @on-autocompleted="streetAddressAutocomplete" />
                 </validation-provider>
@@ -143,6 +144,7 @@ import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '@/constants/validations';
 import { localStorageKeys } from '@/constants/localStorage';
 import helpers from '@/ui/helpers/helpers';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default mixins(handleUniqueNameSubmitError).extend({
 
@@ -255,6 +257,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
 
     allLocations(): IEventGenericLocation[] {
       return this.isRegistrationLocation ? this.event.registrationLocations : this.event.shelterLocations;
+    },
+
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
   },
 

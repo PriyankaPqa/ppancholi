@@ -453,5 +453,35 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.getNextButtonLabel).toEqual(wrapper.vm.currentTab.nextButtonTextKey);
       });
     });
+
+    describe('enableAutocomplete', () => {
+      it('return correct value', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+            associationMode: () => true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
+
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
+        wrapper = shallowMount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'review', titleKey: 'titleKey', nextButtonTextKey: 'nextButtonTextKey' }),
+            associationMode: () => true,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
   });
 });

@@ -172,12 +172,7 @@ describe('LeftMenu.vue', () => {
             $storage: {
               tenantSettings: {
                 getters: {
-                  currentTenantSettings: jest.fn(() => ({
-                    features: [{
-                      key: 'feature',
-                      enabled: true,
-                    }],
-                  })),
+                  isFeatureEnabled: jest.fn(() => true),
                 },
               },
             },

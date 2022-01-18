@@ -8,6 +8,9 @@ import { TenantSettingsEntityModule } from './tenantSettingsEntity';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
 import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import {
+  FeatureKeys,
+  IFeatureEntity,
+  ITenantSettingsEntity,
   mockCreateTenantSettingsRequest,
   mockSetDomainsRequest,
   mockTenantSettingsEntity,
@@ -40,6 +43,42 @@ describe('>>> TenantSettings entity module', () => {
         const res = module.getters.currentTenantSettings(module.state);
 
         expect(res).toEqual(mockTenantSettingsEntity());
+      });
+    });
+
+    describe('isFeatureEnabled', () => {
+      it('returns true if AddressAutoFill is enabled', () => {
+        module.state.currentTenantSettings = {
+          features: [{
+            key: FeatureKeys.AddressAutoFill,
+            enabled: true,
+          } as IFeatureEntity],
+        } as ITenantSettingsEntity;
+
+        const res = module.getters.isFeatureEnabled(module.state)(FeatureKeys.AddressAutoFill);
+
+        expect(res).toBe(true);
+      });
+
+      it('returns false if AddressAutoFill is disabled', () => {
+        module.state.currentTenantSettings = {
+          features: [{
+            key: FeatureKeys.AddressAutoFill,
+            enabled: false,
+          } as IFeatureEntity],
+        } as ITenantSettingsEntity;
+
+        const res = module.getters.isFeatureEnabled(module.state)(FeatureKeys.AddressAutoFill);
+
+        expect(res).toBe(false);
+      });
+
+      it('returns false if feature not found', () => {
+        module.state.currentTenantSettings = null as ITenantSettingsEntity;
+
+        const res = module.getters.isFeatureEnabled(module.state)(FeatureKeys.AddressAutoFill);
+
+        expect(res).toBe(false);
       });
     });
   });

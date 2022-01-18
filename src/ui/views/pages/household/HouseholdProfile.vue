@@ -157,6 +157,7 @@
       :index="-1"
       :shelter-locations-list="shelterLocations"
       :i18n="i18n"
+      :disable-autocomplete="!enableAutocomplete"
       in-household-profile
       @close="fetchHouseholdData" />
     <edit-household-address-dialog v-if="showEditAddress" :show.sync="showEditAddress" />
@@ -188,6 +189,7 @@ import HouseholdMemberCard from './components/HouseholdMemberCard.vue';
 import HouseholdProfileHistory from './components/HouseholdProfileHistory.vue';
 import EditHouseholdAddressDialog from '@/ui/views/pages/household/components/EditHouseholdAddressDialog.vue';
 import routes from '@/constants/routes';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default mixins(household).extend({
   name: 'HouseholdProfile',
@@ -322,6 +324,10 @@ export default mixins(household).extend({
 
     canMove():boolean {
       return this.$hasLevel('level2');
+    },
+
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
   },
 

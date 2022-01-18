@@ -209,6 +209,30 @@ describe('IsRegistered.vue', () => {
         expect(wrapper.vm.isSplitMode).toEqual(wrapper.vm.$storage.registration.getters.isSplitMode());
       }));
     });
+
+    describe('enableAutocomplete', () => {
+      it('return correct value', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
+
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
+        wrapper = shallowMount(Component, {
+          localVue,
+          vuetify,
+          mocks: {
+            $storage: storage,
+          },
+        });
+        expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
   });
 
   describe('Lifecycle', () => {

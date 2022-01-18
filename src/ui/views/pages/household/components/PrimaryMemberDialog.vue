@@ -40,6 +40,7 @@
             :api-key="apiKey"
             :current-address="member.currentAddress"
             :no-fixed-home="false"
+            :disable-autocomplete="!enableAutocomplete"
             prefix-data-test="tempAddress"
             @change="setCurrentAddress($event)" />
         </v-col>
@@ -66,6 +67,7 @@ import { IHouseholdEntity } from '@crctech/registration-lib/src/entities/househo
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';
+import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'PrimaryMemberDialog',
@@ -155,6 +157,10 @@ export default Vue.extend({
 
     submitButtonDisabled(): (failed: boolean, pristine:boolean) => boolean {
       return (failed, pristine) => failed || (pristine && !this.changedAddress && !this.makePrimaryMode) || this.submitLoading;
+    },
+
+    enableAutocomplete(): boolean {
+      return this.$hasFeature(FeatureKeys.AddressAutoFill);
     },
   },
 

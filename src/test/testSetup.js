@@ -16,6 +16,7 @@ import VueI18n from 'vue-i18n';
 
 import formatCurrency from '@/ui/plugins/formatCurrency';
 import rolesAndPermissions from '@/ui/plugins/rolesAndPermissions';
+import features from '@/ui/plugins/features';
 import { mockProvider } from '@/services/provider';
 import { mockStore } from '@/store';
 import { makeStorage } from '@/store/storage';
@@ -46,6 +47,7 @@ export const createLocalVue = () => {
   localVue.use(Vuex);
   localVue.use(formatCurrency);
   localVue.use(rolesAndPermissions);
+  localVue.use(features);
 
   return localVue;
 };

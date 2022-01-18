@@ -2,6 +2,7 @@ import { IStore, IState } from '@/store';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
 import {
+  FeatureKeys,
   ICreateTenantSettingsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
 
@@ -14,6 +15,8 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
     ...this.baseGetters,
 
     currentTenantSettings: () => this.store.getters[`${this.entityModuleName}/currentTenantSettings`],
+
+    isFeatureEnabled: (featureKey: FeatureKeys): boolean => this.store.getters[`${this.entityModuleName}/isFeatureEnabled`](featureKey),
   };
 
   private actions = {

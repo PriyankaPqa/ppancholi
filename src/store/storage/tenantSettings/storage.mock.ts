@@ -11,6 +11,7 @@ export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined,
   protected getters = {
     ...this.baseGetters,
     currentTenantSettings: jest.fn(() => mockTenantSettingsEntity()),
+    isFeatureEnabled: jest.fn(() => true),
   };
 
   protected actions = {

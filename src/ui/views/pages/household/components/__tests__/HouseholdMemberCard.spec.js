@@ -473,6 +473,18 @@ describe('HouseholdMemberCard.vue', () => {
         expect(wrapper.vm.splitAdditionalMembers).toEqual(mockSplitHousehold().splitMembers.additionalMembers);
       });
     });
+
+    describe('enableAutocomplete', () => {
+      it('return correct value', () => {
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(true);
+        doMount();
+        expect(wrapper.vm.enableAutocomplete).toBe(true);
+
+        storage.tenantSettings.getters.isFeatureEnabled.mockReturnValueOnce(false);
+        doMount();
+        expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
   });
 
   describe('Lifecycle', () => {
