@@ -86,6 +86,13 @@ describe('MainLayout.vue', () => {
           expect(wrapper.vm.$storage.registration.actions.fetchPrimarySpokenLanguages).toHaveBeenCalled();
         });
 
+        it('calls fetchFeatures', async () => {
+          wrapper.vm.fetchFeatures = jest.fn();
+
+          await wrapper.vm.fetchData();
+          expect(wrapper.vm.fetchFeatures).toHaveBeenCalled();
+        });
+
         it('tracks exception', async () => {
           const testError = new Error('err');
 
@@ -98,6 +105,18 @@ describe('MainLayout.vue', () => {
           await wrapper.vm.fetchData();
 
           expect(wrapper.vm.$appInsights.trackException).toHaveBeenCalledWith(testError, {}, 'MainLayout', 'fetchData');
+        });
+      });
+
+      describe('fetchFeatures', () => {
+        it('calls service', async () => {
+          await wrapper.vm.fetchFeatures();
+          expect(wrapper.vm.$services.publicApi.getPublicFeatures).toHaveBeenCalled();
+        });
+
+        it('sets features', async () => {
+          await wrapper.vm.fetchFeatures();
+          expect(wrapper.vm.$storage.registration.mutations.setFeatures).toHaveBeenCalled();
         });
       });
     });

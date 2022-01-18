@@ -17,6 +17,7 @@ import App from './ui/App.vue';
 import './registerServiceWorker';
 import router from './ui/router';
 import store from './store/store';
+import features from './ui/plugins/features';
 
 Vue.component('VueProgrammaticInvisibleGoogleRecaptcha', VueProgrammaticInvisibleGoogleRecaptcha);
 
@@ -24,6 +25,7 @@ prepareServices(store);
 prepareStorage(store);
 
 Vue.use(Multilingual);
+Vue.use(features);
 
 applicationInsights.initialize({
   connectionString: process.env.VUE_APP_APPLICATION_INSIGHTS_CONNECTION_STRING,

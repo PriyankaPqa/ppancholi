@@ -58,12 +58,13 @@ describe('Individual.vue', () => {
     });
 
     describe('goNext', () => {
-      it('should called execute from recaptcha if on review stage ', async () => {
+      it('should called execute from recaptcha if on review stage and if BotProtection is enabled', async () => {
         wrapper.vm.$refs.recaptchaSubmit = {};
         wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
         wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
           id: 'review',
         }));
+        wrapper.vm.$hasFeature = jest.fn(() => true);
         await wrapper.vm.goNext();
         expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
       });

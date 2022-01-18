@@ -78,12 +78,20 @@ export default Vue.extend({
         this.$storage.registration.actions.fetchGenders(),
         this.$storage.registration.actions.fetchPreferredLanguages(),
         this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
+        this.fetchFeatures(),
       ]).then(() => {
         this.fetchingData = false;
       }).catch((error) => {
         this.fetchingData = false;
         this.$appInsights.trackException(error, {}, 'MainLayout', 'fetchData');
       });
+    },
+
+    async fetchFeatures() {
+      const features = await this.$services.publicApi.getPublicFeatures();
+      if (features) {
+        this.$storage.registration.mutations.setFeatures(features);
+      }
     },
   },
 });

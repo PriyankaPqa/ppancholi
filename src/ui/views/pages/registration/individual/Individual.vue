@@ -13,7 +13,7 @@
         <template slot="default">
           <v-row justify="center" class="mt-12 full-height" no-gutters>
             <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
-              <component :is="currentTab.componentName" />
+              <component :is="currentTab.componentName" :disable-autocomplete="!$hasFeature(FeatureKeys.AddressAutoFill)" />
             </v-col>
           </v-row>
         </template>
@@ -42,6 +42,7 @@
             <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
               <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
               <vue-programmatic-invisible-google-recaptcha
+                v-if="$hasFeature(FeatureKeys.BotProtection)"
                 ref="recaptchaSubmit"
                 :sitekey="recaptchaKey"
                 element-id="recaptchaSubmit"
@@ -72,6 +73,7 @@ import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { localStorageKeys } from '@/constants/localStorage';
+import { FeatureKeys } from '@crctech/registration-lib/src/entities/tenantSettings';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -97,6 +99,7 @@ export default mixins(individual).extend({
   data: () => ({
     recaptchaToken: null,
     recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
+    FeatureKeys,
   }),
 
   mixins: [individual],
@@ -111,7 +114,7 @@ export default mixins(individual).extend({
     },
 
     async goNext() {
-      if (this.currentTab.id === 'review') {
+      if (this.currentTab.id === 'review' && this.$hasFeature(FeatureKeys.BotProtection)) {
         // eslint-disable-next-line
         (this.$refs.recaptchaSubmit as any).execute();
       } else {

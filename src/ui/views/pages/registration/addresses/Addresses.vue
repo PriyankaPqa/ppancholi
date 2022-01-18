@@ -1,5 +1,5 @@
 <template>
-  <lib-addresses :i18n="i18n" />
+  <lib-addresses :i18n="i18n" :disable-autocomplete="disableAutocomplete" />
 </template>
 
 <script lang="ts">
@@ -12,6 +12,14 @@ export default Vue.extend({
   components: {
     LibAddresses,
   },
+
+  props: {
+    disableAutocomplete: {
+      type: Boolean,
+      required: true,
+    },
+  },
+
   data() {
     return {
       i18n,

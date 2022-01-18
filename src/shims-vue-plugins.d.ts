@@ -1,4 +1,5 @@
 import { IMultilingual } from '@/types';
+import { FeatureKeys } from '@crctech/registration-lib/src/entities/tenantSettings';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { Toasted } from 'vue-toasted';
 
@@ -11,5 +12,6 @@ declare module 'vue/types/vue' {
     $m: IMFunction;
     $toasted: Toasted;
     $appInsights: typeof applicationInsights;
+    $hasFeature: (feature: FeatureKeys) => boolean;
   }
 }

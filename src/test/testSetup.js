@@ -10,6 +10,7 @@ import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 import deepmerge from 'deepmerge';
 import '@/ui/plugins/vee-validate';
+import features from '@/ui/plugins/features';
 
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
@@ -38,6 +39,7 @@ export const createLocalVue = () => {
   const localVue = clv();
   localVue.use(Vuetify);
   localVue.use(Vuex);
+  localVue.use(features);
   Vue.use(VueI18n);
   return localVue;
 };
