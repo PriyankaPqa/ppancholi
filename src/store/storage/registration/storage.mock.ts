@@ -37,6 +37,7 @@ export const mockStorageRegistration = (): IStorageMock => ({
     personalInformation: jest.fn(() => _merge(mockContactInformation(), mockIdentitySet())),
     isSplitMode: jest.fn(() => false),
     features: jest.fn(() => mockFeatures()),
+    isFeatureEnabled: jest.fn(() => true),
   },
 
   mutations: {

@@ -3,6 +3,7 @@ import { IMultilingual } from '../../types';
 export enum FeatureKeys {
   MassAction = 'mass-action',
   AddressAutoFill = 'AddressAutoFill',
+  BotProtection = 'BotProtection',
 }
 
 export enum FeatureType {
@@ -15,7 +16,7 @@ export interface IFeatureEntity {
   tenantId: uuid;
   name: IMultilingual;
   description: IMultilingual;
-  key: string;
+  key: FeatureKeys;
   enabled: boolean;
   type: FeatureType;
 }

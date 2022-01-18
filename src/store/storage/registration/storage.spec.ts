@@ -12,7 +12,7 @@ import { mockHttpError } from '@/services/httpClient.mock';
 import { makeStorage } from './storage';
 import { mockEventData } from '../../../entities/event';
 import { ERegistrationMethod, IRegistrationMenuItem } from '../../../types';
-import { mockFeatures } from '../../../entities/tenantSettings';
+import { FeatureKeys, mockFeatures } from '../../../entities/tenantSettings';
 
 const store = mockStore({}, { commit: true, dispatch: true });
 const storage = makeStorage(store);
@@ -97,6 +97,10 @@ describe('>>> Registration Storage', () => {
 
     it('should proxy features', () => {
       expect(storage.getters.features()).toEqual(store.getters['registration/features']);
+    });
+
+    it('should proxy isFeatureEnabled', () => {
+      expect(storage.getters.isFeatureEnabled(FeatureKeys.AddressAutoFill)).toEqual(store.getters['registration/isFeatureEnabled'](FeatureKeys.AddressAutoFill));
     });
   });
 

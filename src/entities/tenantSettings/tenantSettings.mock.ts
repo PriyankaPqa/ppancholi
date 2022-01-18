@@ -1,5 +1,6 @@
 import {
   FeatureType,
+  FeatureKeys,
   IFeatureEntity,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
@@ -24,7 +25,7 @@ export const mockFeatures = (): IFeatureEntity[] => [{
     },
   },
 
-  key: 'feature key-1',
+  key: FeatureKeys.AddressAutoFill,
 
   enabled: false,
 
@@ -48,7 +49,7 @@ export const mockFeatures = (): IFeatureEntity[] => [{
     },
   },
 
-  key: 'feature key-2',
+  key: FeatureKeys.BotProtection,
 
   enabled: false,
 

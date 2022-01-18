@@ -11,7 +11,7 @@ import {
 } from '../../../entities/household-create';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
-import { IFeatureEntity } from '../../../entities/tenantSettings';
+import { FeatureKeys, IFeatureEntity } from '../../../entities/tenantSettings';
 
 // eslint-disable-next-line
 export const makeStorage = (store: IStore<IState>): IStorage => ({
@@ -94,6 +94,10 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     features() {
       return store.getters['registration/features'];
+    },
+
+    isFeatureEnabled(featureKey: FeatureKeys) {
+      return store.getters['registration/isFeatureEnabled'](featureKey);
     },
   },
 

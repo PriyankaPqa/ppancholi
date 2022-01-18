@@ -39,7 +39,7 @@ import {
   ICurrentAddress, IAddress, IHouseholdCreateData,
 } from '../../../entities/household-create';
 import { Event, IEvent, IEventData } from '../../../entities/event';
-import { IFeatureEntity } from '../../../entities/tenantSettings';
+import { FeatureKeys, IFeatureEntity } from '../../../entities/tenantSettings';
 
 import { resetVuexModuleState } from '../../storeUtils';
 
@@ -204,6 +204,9 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   isSplitMode: (state: IState) => !!(state.splitHousehold),
 
   features: (state: IState) => state.features,
+
+  isFeatureEnabled: (state: IState) => (featureKey: FeatureKeys): boolean => state
+    .features?.find((f) => f.key === featureKey)?.enabled || false,
 });
 
 const mutations = (): MutationTree<IState> => ({
