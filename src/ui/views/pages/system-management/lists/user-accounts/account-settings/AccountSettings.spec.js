@@ -26,7 +26,8 @@ describe('AccountSettings.vue', () => {
         roleHasChanged: () => roleHasChanged,
       },
       mocks: {
-        $hasLevel: jest.fn((lv) => lv !== 'level6' || isLevel6),
+        $hasLevel: jest.fn((lv) => lv !== 'level5' || isLevel6),
+        $storage: storage,
       },
     });
     await wrapper.setData({
@@ -96,6 +97,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
+        element = wrapper.findDataTest('userAccount-status-roleName');
         expect(element.text()).toEqual(wrapper.vm.user.metadata.roleName.translation.en);
       });
     });
@@ -349,7 +351,7 @@ describe('AccountSettings.vue', () => {
       it('resets currentRole to user role', async () => {
         const mockSubItemData = [...mockOptionItemData()[0].subitems, mockOptionItemData()[1]];
         const resettedOption = { id: mockUser.entity.roles[0].optionItemId, name: 'that is great' };
-        await wrapper.setData({ allAccessLevelRoles: mockSubItemData.concat(resettedOption) });
+        await wrapper.setData({ allRoles: mockSubItemData.concat(resettedOption) });
         const currentRole = { id: 'myId', name: 'nope' };
         await wrapper.setData({ currentRole });
         wrapper.vm.resetCurrentRole();
@@ -361,8 +363,8 @@ describe('AccountSettings.vue', () => {
 
     describe('setRoles', () => {
       it('invokes the correct storage function', async () => {
+        jest.clearAllMocks();
         storage.optionList.mutations.setList = jest.fn();
-        wrapper.vm.$storage.optionList.actions.fetchItems = jest.fn();
         await wrapper.vm.setRoles();
         expect(wrapper.vm.$storage.optionList.mutations.setList).toBeCalledWith(6); // EOptionLists.Roles
         expect(wrapper.vm.$storage.optionList.actions.fetchItems).toBeCalledTimes(1);
@@ -409,13 +411,14 @@ describe('AccountSettings.vue', () => {
       storage.user.getters.userId = jest.fn(() => 'mock-id');
       storage.userAccount.actions.fetch = jest.fn(() => {});
 
-      wrapper = shallowMount(Component, {
-        localVue,
-        mocks: {
-          $storage: storage,
-        },
-      });
       it('should call fetchUserAccount with the response of the user storage getter if none in route params', () => {
+        jest.clearAllMocks();
+        wrapper = shallowMount(Component, {
+          localVue,
+          mocks: {
+            $storage: storage,
+          },
+        });
         expect(wrapper.vm.$storage.userAccount.actions.fetch).toHaveBeenCalledWith('mock-id');
       });
 
@@ -431,6 +434,56 @@ describe('AccountSettings.vue', () => {
         });
         expect(wrapper.vm.$storage.userAccount.actions.fetch).toHaveBeenCalledWith('abcd');
         expect(wrapper.vm.id).toEqual('abcd');
+      });
+    });
+
+    describe('setNonEditableRolesForL5', () => {
+      it('returns user if user is in the notAllowed level', () => {
+        const level = {
+          subitems: [
+            {
+              id: 'id',
+            }, {
+              id: mockUser.entity.roles[0].optionItemId,
+            },
+          ],
+        };
+
+        const result = wrapper.vm.setNonEditableRolesForL5(level);
+        expect(result).toEqual([{
+          id: mockUser.entity.roles[0].optionItemId,
+        }]);
+      });
+
+      it('disable dropdown if user is in the notAllowed level', () => {
+        const level = {
+          subitems: [
+            {
+              id: 'id',
+            }, {
+              id: mockUser.entity.roles[0].optionItemId,
+            },
+          ],
+        };
+
+        expect(wrapper.vm.disableForL5).toEqual(false);
+        wrapper.vm.setNonEditableRolesForL5(level);
+        expect(wrapper.vm.disableForL5).toEqual(true);
+      });
+
+      it('returns empty array if user is not in the notAllowed level', () => {
+        const level = {
+          subitems: [
+            {
+              id: 'id1',
+            }, {
+              id: 'id2',
+            },
+          ],
+        };
+
+        const result = wrapper.vm.setNonEditableRolesForL5(level);
+        expect(result).toEqual([]);
       });
     });
   });

@@ -57,7 +57,8 @@
               hide-details
               :attach="false"
               data-test="user_roleId"
-              :value="getRoleListItem(item.metadata.roleId)"
+              :disabled="canNotManageRoleForUser(item)"
+              :value="getRoleListItem(item.entity.roles[0].optionItemId)"
               :item-text="(item) => item ? $m(item.text): ''"
               :item-disabled="(item) => item.isInactive"
               :label="$t('system_management.userAccounts.role_header')"
@@ -95,6 +96,7 @@
           <template #[`item.${customColumns.delete}`]="{ item }">
             <v-btn
               icon
+              :disabled="canNotManageRoleForUser(item)"
               data-test="delete-user"
               @click="deleteUserAccount(item)">
               <v-icon>
@@ -181,6 +183,8 @@ export default Vue.extend({
       allActiveSubRoles: [] as IOptionSubItem[],
       allAccessLevelRoles: [],
       changedAccounts: [] as IUserAccountCombined[],
+      disallowedLevels: ['Level 6', 'ContributorIM', 'ContributorFinance', 'Contributor 3', 'Read Only'],
+      disallowedRoles: [] as IOptionSubItem[],
     };
   },
 
@@ -336,6 +340,13 @@ export default Vue.extend({
     },
 
     getRolesForUser(user: IUserAccountCombined) {
+      if (this.canNotManageRoleForUser(user)) {
+        return [{ // in this case, dropdown should be disabled
+          text: user.metadata.roleName,
+          value: user.metadata.roleId,
+        }];
+      }
+
       if (this.allAccessLevelRoles.find((x) => x.value === user.entity.roles[0]?.optionItemId)) {
         return this.allAccessLevelRoles;
       }
@@ -349,6 +360,7 @@ export default Vue.extend({
 
         user.metadata.roleId = role.id;
         user.metadata.roleName = role.name;
+        user.entity.roles[0].optionItemId = role.id;
         this.changedAccounts.push(user); // Register for pending change
       }
     },
@@ -388,6 +400,7 @@ export default Vue.extend({
       const originalUser = this.originalUsers.find((u) => u.entity.id === user.entity.id);
       user.metadata.roleId = originalUser.metadata.roleId;
       user.metadata.roleName = originalUser.metadata.roleName;
+      user.entity.roles[0].optionItemId = originalUser.metadata.roleId;
     },
 
     deleteUserAccount(user: IUserAccountCombined) {
@@ -422,6 +435,10 @@ export default Vue.extend({
     async setRoles() {
       this.$storage.optionList.mutations.setList(EOptionLists.Roles);
       const roles = await this.$storage.optionList.actions.fetchItems();
+
+      this.disallowedRoles = roles
+        .filter((r) => this.disallowedLevels.some((level) => level === r.name.translation.en))
+        .reduce((acc, val) => acc.concat(val.subitems), []);
       this.setAllActiveSubRoles(roles);
       this.setAllAccessLevelRoles(roles);
     },
@@ -437,6 +454,11 @@ export default Vue.extend({
     // set the hierarchical list of roles and subroles in the format needed for the dropdown of the select component
     setAllAccessLevelRoles(roles: IOptionItem[]) {
       roles.forEach((accessLevel : IOptionItem) => {
+        if (this.$hasLevel('level5') && !this.$hasLevel('level6')
+        && this.disallowedLevels.some((level) => level === accessLevel.name.translation.en)) {
+          return;
+        }
+
         const activeSubRoles: {text: IMultilingual, value: string}[] = [];
         accessLevel.subitems.forEach((role: IOptionSubItem) => {
           if (role.status === Status.Active) {
@@ -490,6 +512,14 @@ export default Vue.extend({
           id,
         },
       };
+    },
+
+    canNotManageRoleForUser(user: IUserAccountCombined): boolean {
+      if (this.$hasLevel('level5') && !this.$hasLevel('level6')) {
+        return this.disallowedRoles.some((r) => r.name.translation.en === user.metadata?.roleName?.translation.en);
+      }
+
+      return false;
     },
   },
 });

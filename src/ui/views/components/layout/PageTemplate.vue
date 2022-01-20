@@ -78,7 +78,7 @@ export default Vue.extend({
      * @values {text: '', test: 'case-file-activity', icon: 'mdi-clipboard-text', disabled: false, to: routes.xxx.name, exact: true}
      */
     navigationTabs: {
-      type: Array,
+      type: Array as () => INavigationTab[],
       default: () => [] as Array<INavigationTab>,
     },
     /**
@@ -135,13 +135,7 @@ export default Vue.extend({
   },
   computed: {
     navigationTabsFilteredForPermissions(): Array<INavigationTab> {
-      return this.navigationTabs as Array<INavigationTab>;
-      // return this.navigationTabs.filter((tab) => {
-      //   if ((tab as INavigationTab).permission) {
-      //     return this.$can((tab as INavigationTab).permission);
-      //   }
-      //   return true;
-      // }) as Array<INavigationTab>;
+      return this.navigationTabs.filter((tab: INavigationTab) => this.$hasLevel(tab.level));
     },
   },
   methods: {

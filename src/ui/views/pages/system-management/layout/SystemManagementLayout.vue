@@ -49,7 +49,7 @@ export default Vue.extend({
         test: 'systemManagement__menu__userAccounts',
         to: routes.systemManagement.userAccounts.home.name,
         exact: false,
-        level: 'level6',
+        level: 'level5',
       }, {
         text: this.$t('system_management.lists.roles'),
         test: 'systemManagement__menu__roles',

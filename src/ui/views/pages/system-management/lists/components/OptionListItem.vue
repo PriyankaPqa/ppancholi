@@ -63,7 +63,7 @@
             data-test="optionsListItem__nameInput"
             class="optionListItem__nameInput ml-4"
             :label="$t(itemNameLabel)"
-            :disabled="loading"
+            :disabled="loading || renameNotAllowed"
             :error="!!errors.length"
             :hide-details="!errors.length"
             :error-messages="errors"
@@ -213,7 +213,7 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IMultilingual, VForm } from '@/types';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import entityUtils from '@/entities/utils';
-import { IOptionItem } from '@/entities/optionItem';
+import { EOptionLists, IOptionItem } from '@/entities/optionItem';
 import { Status } from '@/entities/base';
 
 export default Vue.extend({
@@ -395,6 +395,10 @@ export default Vue.extend({
       });
 
       return names;
+    },
+
+    renameNotAllowed(): boolean {
+      return this.$store.state.optionList.list === EOptionLists.Roles && !this.isSubItem;
     },
   },
 

@@ -8,7 +8,7 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData, EOptionLists } from '@/entities/optionItem';
 import entityUtils from '@/entities/utils';
 import Component from '../OptionListItem.vue';
 import { Status } from '@/entities/base';
@@ -104,6 +104,38 @@ describe('OptionListItem.vue', () => {
             fr: 'name 2 fr',
           },
         }]);
+      });
+    });
+
+    describe('renameNotAllowed', () => {
+      it('returns true if is Role name', async () => {
+        wrapper.vm.$storage.optionList.mutations.setList(EOptionLists.Roles);
+
+        await wrapper.setProps({
+          isSubItem: false,
+        });
+
+        expect(wrapper.vm.renameNotAllowed).toBeTruthy();
+      });
+
+      it('returns false if is not Role', async () => {
+        wrapper.vm.$storage.optionList.mutations.setList(EOptionLists.FinancialAssistance);
+
+        await wrapper.setProps({
+          isSubItem: false,
+        });
+
+        expect(wrapper.vm.renameNotAllowed).toBeFalsy();
+      });
+
+      it('returns false if is subItem', async () => {
+        wrapper.vm.$storage.optionList.mutations.setList(EOptionLists.Roles);
+
+        await wrapper.setProps({
+          isSubItem: true,
+        });
+
+        expect(wrapper.vm.renameNotAllowed).toBeFalsy();
       });
     });
   });

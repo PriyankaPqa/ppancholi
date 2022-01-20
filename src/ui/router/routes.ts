@@ -578,7 +578,7 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.home.path,
                 name: Routes.systemManagement.home.name,
                 component: SystemManagementHome,
-                meta: { level: 'level6' },
+                meta: { level: 'level5' },
               },
               {
                 path: Routes.systemManagement.lists.path,
@@ -632,13 +632,13 @@ export const routes: Array<RouteConfig> = [
                 path: Routes.systemManagement.userAccounts.home.path,
                 name: Routes.systemManagement.userAccounts.home.name,
                 component: UserAccounts,
-                meta: { level: 'level6' },
+                meta: { level: 'level5' },
               },
               {
                 path: Routes.systemManagement.userAccounts.details.path,
                 name: Routes.systemManagement.userAccounts.details.name,
                 component: AccountSettings,
-                meta: { level: 'level6' },
+                meta: { level: 'level5' },
               },
               {
                 path: Routes.systemManagement.roles.path,

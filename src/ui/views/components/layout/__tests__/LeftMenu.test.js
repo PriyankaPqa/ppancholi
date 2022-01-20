@@ -323,7 +323,7 @@ describe('LeftMenu.vue', () => {
         expect(item.icon).toBe('dvr');
         expect(item.text).toBe('system_management.leftMenu.title');
         expect(item.test).toBe('system_management');
-        expect(item.level).toBe('level6');
+        expect(item.level).toBe('level5');
       });
     });
   });

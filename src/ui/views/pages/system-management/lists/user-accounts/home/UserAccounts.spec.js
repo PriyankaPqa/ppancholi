@@ -6,7 +6,7 @@ import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { mockOptionItemData } from '@/entities/optionItem';
+import { mockOptionItemData, mockRoles } from '@/entities/optionItem';
 import { AccountStatus, mockCombinedUserAccounts } from '@/entities/user-account';
 import { Status } from '@/entities/base';
 import Component from './UserAccounts.vue';
@@ -178,11 +178,9 @@ describe('UserAccounts.vue', () => {
 
     describe('tableProps', () => {
       it('is correctly defined', async () => {
-        expect(wrapper.vm.tableProps).toEqual(
-          {
-            loading: wrapper.vm.loading,
-          },
-        );
+        expect(wrapper.vm.tableProps).toEqual({
+          loading: wrapper.vm.loading,
+        });
       });
     });
 
@@ -199,14 +197,12 @@ describe('UserAccounts.vue', () => {
 
     describe('labels', () => {
       it('is correctly defined', async () => {
-        expect(wrapper.vm.labels).toEqual(
-          {
-            header: {
-              title: 'system_management.leftMenu.user_accounts_title',
-              searchPlaceholder: 'common.inputs.quick_search',
-            },
+        expect(wrapper.vm.labels).toEqual({
+          header: {
+            title: 'system_management.leftMenu.user_accounts_title',
+            searchPlaceholder: 'common.inputs.quick_search',
           },
-        );
+        });
       });
     });
 
@@ -324,7 +320,7 @@ describe('UserAccounts.vue', () => {
     });
 
     describe('getRolesForUser', () => {
-      it('includes current user\'s inactive role', async () => {
+      it("includes current user's inactive role", async () => {
         wrapper.vm.allSubRoles = [{ id: -999, name: 'outdated', status: 2 }];
         await wrapper.vm.setAllAccessLevelRoles(mockOptionItemData());
         const user = usersTestData[0];
@@ -333,6 +329,18 @@ describe('UserAccounts.vue', () => {
         expect(rolesReturned).toContainEqual({ text: 'outdated', value: -999, isInactive: true });
         expect(rolesReturned.length).toEqual(wrapper.vm.allAccessLevelRoles.length + 1);
       });
+
+      it('returns only one item if user role cannot be managed', async () => {
+        const user = usersTestData[0];
+
+        wrapper.vm.canNotManageRoleForUser = jest.fn(() => true);
+
+        const rolesReturned = wrapper.vm.getRolesForUser(user);
+
+        expect(rolesReturned.length).toBe(1);
+        expect(rolesReturned[0].text).toEqual(user.metadata.roleName);
+        expect(rolesReturned[0].value).toEqual(user.metadata.roleId);
+      });
     });
 
     describe('assignRoleToUser', () => {
@@ -340,6 +348,9 @@ describe('UserAccounts.vue', () => {
         const user = {
           entity: {
             id: '12345',
+            roles: [{
+              optionItemId: '123',
+            }],
           },
           metadata: {
             id: '12345',
@@ -354,6 +365,7 @@ describe('UserAccounts.vue', () => {
 
         expect(user.metadata.roleId).toEqual(wrapper.vm.allSubRoles[0].id);
         expect(user.metadata.roleName).toEqual(wrapper.vm.allSubRoles[0].name);
+        expect(user.entity.roles[0].optionItemId).toEqual(wrapper.vm.allSubRoles[0].id);
         expect(wrapper.vm.changedAccounts.indexOf(user)).toBeGreaterThanOrEqual(0);
       });
     });
@@ -427,6 +439,9 @@ describe('UserAccounts.vue', () => {
           entity: {
             id: '12345',
             status: 1,
+            roles: [{
+              optionItemId: '123',
+            }],
           },
           metadata: {
             id: '12345',
@@ -438,6 +453,9 @@ describe('UserAccounts.vue', () => {
           entity: {
             id: '12345',
             status: 1,
+            roles: [{
+              optionItemId: '456',
+            }],
           },
           metadata: {
             id: '12345',
@@ -454,15 +472,19 @@ describe('UserAccounts.vue', () => {
         expect(wrapper.vm.changedAccounts.indexOf(changedUser)).not.toBeGreaterThanOrEqual(0); // Not found
         expect(changedUser.metadata.roleId).toEqual(user.metadata.roleId);
         expect(changedUser.metadata.roleName).toEqual(user.metadata.roleName);
+        expect(changedUser.entity.roles[0].optionItemId).toEqual(user.metadata.roleId);
       });
     });
 
     describe('revertToOriginalRole', () => {
-      it('restores the user\'s original role', () => {
+      it("restores the user's original role", () => {
         const user = {
           entity: {
             id: '12345',
             status: 1,
+            roles: [{
+              optionItemId: '123',
+            }],
           },
           metadata: {
             id: '12345',
@@ -474,6 +496,9 @@ describe('UserAccounts.vue', () => {
           entity: {
             id: '12345',
             status: 1,
+            roles: [{
+              optionItemId: '456',
+            }],
           },
           metadata: {
             id: '12345',
@@ -487,6 +512,7 @@ describe('UserAccounts.vue', () => {
         wrapper.vm.revertToOriginalRole(changedUser);
         expect(changedUser.metadata.roleId).toEqual(user.metadata.roleId);
         expect(changedUser.metadata.roleName).toEqual(user.metadata.roleName);
+        expect(changedUser.entity.roles[0].optionItemId).toEqual(user.metadata.roleId);
       });
     });
 
@@ -552,15 +578,29 @@ describe('UserAccounts.vue', () => {
         expect(wrapper.vm.setAllActiveSubRoles).toHaveBeenCalledWith(mockOptionItemData());
         expect(wrapper.vm.setAllAccessLevelRoles).toHaveBeenCalledWith(mockOptionItemData());
       });
+
+      it('sets disallowedRoles', async () => {
+        jest.spyOn(wrapper.vm.$storage.optionList.actions, 'fetchItems').mockImplementation(() => mockRoles());
+
+        await wrapper.vm.setRoles();
+
+        expect(wrapper.vm.disallowedRoles).toEqual(
+          mockRoles()
+            .filter((r) => wrapper.vm.disallowedLevels.some((level) => level === r.name.translation.en))
+            .reduce((acc, val) => acc.concat(val.subitems), []),
+        );
+      });
     });
 
     describe('setAllActiveSubRoles', () => {
       it('sets the right data into allActiveSubRoles', async () => {
         await wrapper.vm.setAllActiveSubRoles(mockOptionItemData());
-        const expected = mockOptionItemData().reduce((acc, curr) => {
-          acc.push(...curr.subitems);
-          return acc;
-        }, []).filter((role) => role.status === Status.Active) || [];
+        const expected = mockOptionItemData()
+          .reduce((acc, curr) => {
+            acc.push(...curr.subitems);
+            return acc;
+          }, [])
+          .filter((role) => role.status === Status.Active) || [];
 
         expect(wrapper.vm.allActiveSubRoles).toEqual(expected);
       });
@@ -589,15 +629,8 @@ describe('UserAccounts.vue', () => {
 
     describe('replaceOrAddToAllUsersById', () => {
       it('finds a user by id', () => {
-        wrapper.vm.allUsers = [
-          { entity: { id: '123', status: 1 } },
-          { entity: { id: '456', status: 1 } },
-          { entity: { id: '789', status: 1 } },
-        ];
-        const arrayToRemoveOrReplace = [
-          { entity: { id: '123', displayName: 'some name', status: 1 } },
-          { entity: { id: '999', status: 1 } },
-        ];
+        wrapper.vm.allUsers = [{ entity: { id: '123', status: 1 } }, { entity: { id: '456', status: 1 } }, { entity: { id: '789', status: 1 } }];
+        const arrayToRemoveOrReplace = [{ entity: { id: '123', displayName: 'some name', status: 1 } }, { entity: { id: '999', status: 1 } }];
         wrapper.vm.replaceOrAddToAllUsersById(arrayToRemoveOrReplace);
         const entityMatch = wrapper.vm.allUsers.find((u) => u.entity.id === arrayToRemoveOrReplace[0].entity.id);
         expect(entityMatch.entity.displayName).toEqual(arrayToRemoveOrReplace[0].entity.displayName);
@@ -636,6 +669,78 @@ describe('UserAccounts.vue', () => {
             id: 'myid',
           },
         });
+      });
+    });
+
+    describe('canNotManageRoleForUser', () => {
+      beforeEach(async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              disallowedRoles: [
+                {
+                  name: {
+                    translation: {
+                      en: 'System Admin',
+                    },
+                  },
+                },
+                {
+                  name: {
+                    translation: {
+                      en: 'Information Management Team Member',
+                    },
+                  },
+                },
+              ],
+            };
+          },
+        });
+      });
+
+      it('return false is current user is level 6', async () => {
+        await wrapper.setRole('level6');
+
+        const result = await wrapper.vm.canNotManageRoleForUser();
+
+        expect(result).toBeFalsy();
+      });
+
+      it('return false is current user is level 5 and the user in param is allowed', async () => {
+        const testUser = {
+          metadata: {
+            roleName: {
+              translation: {
+                en: 'some role',
+              },
+            },
+          },
+        };
+
+        await wrapper.setRole('level5');
+
+        const result = await wrapper.vm.canNotManageRoleForUser(testUser);
+
+        expect(result).toBeFalsy();
+      });
+
+      it('return true is current user is level 5 and the user in param is allowed', async () => {
+        const testUser = {
+          metadata: {
+            roleName: {
+              translation: {
+                en: 'Information Management Team Member',
+              },
+            },
+          },
+        };
+
+        await wrapper.setRole('level5');
+
+        const result = await wrapper.vm.canNotManageRoleForUser(testUser);
+
+        expect(result).toBeTruthy();
       });
     });
   });

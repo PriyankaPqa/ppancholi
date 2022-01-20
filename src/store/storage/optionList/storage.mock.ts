@@ -1,4 +1,5 @@
 import { IStorageMock } from './storage.types';
+import { mockOptionItemData } from '@/entities/optionItem';
 
 export const mockStorageOptionList = () : IStorageMock => ({
   getters: {
@@ -12,7 +13,7 @@ export const mockStorageOptionList = () : IStorageMock => ({
   },
 
   actions: {
-    fetchItems: jest.fn(),
+    fetchItems: jest.fn(() => mockOptionItemData()),
 
     fetchSubItems: jest.fn(),
 

@@ -48,13 +48,14 @@
                   {{ $t('user.accountSettings.role') }}
                 </td>
                 <td class="fw-bold" data-test="userAccount-status-roleName" style="width: 40%">
-                  <div v-if="$hasLevel('level6')">
+                  <div v-if="$hasLevel('level5')">
                     <v-select-with-validation
                       v-model="currentRole"
                       :attach="false"
                       item-value="id"
                       :item-disabled="(item) => item.status !== activeStatus"
                       :item-text="(item) => item ? $m(item.name) : ''"
+                      :disabled="disableForL5"
                       dense
                       outlined
                       return-object
@@ -192,6 +193,8 @@ export default Vue.extend({
       currentRole: null as IOptionSubItem,
       allAccessLevelRoles: [] as Array<IOptionSubItem|{header: string, id?: string}>,
       activeStatus: Status.Active,
+      allRoles: [] as IOptionSubItem[],
+      disableForL5: false,
     };
   },
 
@@ -224,6 +227,10 @@ export default Vue.extend({
 
       return `${this.$t('account_settings.preferredLanguage.notSet')}`;
     },
+
+    isL5(): boolean {
+      return this.$hasLevel('level5') && !this.$hasLevel('level6');
+    },
   },
 
   async created() {
@@ -241,14 +248,23 @@ export default Vue.extend({
       this.$storage.optionList.mutations.setList(EOptionLists.Roles);
       const roles = await this.$storage.optionList.actions.fetchItems();
       this.setAllAccessLevelRoles(roles);
+      this.allRoles = roles.reduce((acc: IOptionSubItem[], curr: IOptionItem) => acc.concat(curr.subitems), []);
     },
 
     // set the hierarchical list of roles and subroles in the format needed for the dropdown of the select component
     setAllAccessLevelRoles(roles: IOptionItem[]) {
       if (roles?.length) {
-        roles.forEach((accessLevel : IOptionItem) => {
-          const activeSubRoles : IOptionSubItem[] = [];
-          accessLevel.subitems.forEach((role: IOptionSubItem) => {
+        roles.forEach((accessLevel: IOptionItem) => {
+          let subitems: IOptionSubItem[];
+
+          if (this.isL5 && this.isLevelNotAllowedForL5(accessLevel)) {
+            subitems = this.setNonEditableRolesForL5(accessLevel);
+          } else {
+            subitems = accessLevel.subitems;
+          }
+
+          const activeSubRoles: IOptionSubItem[] = [];
+          subitems.forEach((role: IOptionSubItem) => {
             if (role.status === Status.Active || (this.user.entity.roles && this.user.entity.roles[0]?.optionItemId === role.id)) {
               activeSubRoles.push(role);
             }
@@ -283,7 +299,7 @@ export default Vue.extend({
 
     resetCurrentRole() {
       if (this.user.entity.roles && this.user.entity.roles[0]) {
-        this.currentRole = this.allAccessLevelRoles.find((l) => l.id === this.user.entity.roles[0].optionItemId) as IOptionSubItem;
+        this.currentRole = this.allRoles.find((l) => l.id === this.user.entity.roles[0].optionItemId) as IOptionSubItem;
       }
     },
 
@@ -295,7 +311,21 @@ export default Vue.extend({
         this.loading = false;
       }
     },
-  },
 
+    isLevelNotAllowedForL5(level: IOptionItem): boolean {
+      return ['Level 6', 'ContributorIM', 'ContributorFinance', 'Contributor 3', 'Read Only']
+        .some((lev) => lev === level.name.translation.en);
+    },
+
+    setNonEditableRolesForL5(level: IOptionItem): IOptionSubItem[] {
+      const roleToDisable = level.subitems.find((sub) => sub.id === this.user.entity.roles[0]?.optionItemId);
+      if (roleToDisable) {
+        this.disableForL5 = true;
+        return [roleToDisable];
+      }
+      return [];
+    },
+
+  },
 });
 </script>

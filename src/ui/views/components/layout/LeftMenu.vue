@@ -143,7 +143,7 @@ export default Vue.extend({
           text: 'system_management.leftMenu.title',
           test: 'system_management',
           exact: false,
-          level: 'level6',
+          level: 'level5',
         },
       ];
     },

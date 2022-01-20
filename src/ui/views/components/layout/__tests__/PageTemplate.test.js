@@ -3,7 +3,7 @@
  */
 
 import { RcPageLoading } from '@crctech/component-library';
-import { createLocalVue, mount } from '@/test/testSetup';
+import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import SecondaryLeftMenu from '@/ui/views/components/layout/SecondaryLeftMenu.vue';
 import SecondaryRightMenu from '@/ui/views/components/layout/SecondaryRightMenu.vue';
 
@@ -18,6 +18,7 @@ describe('PageTemplate.vue', () => {
       localVue,
       mocks: {
         $t: () => 'test',
+        $hasLevel: jest.fn(() => true),
       },
       propsData: {
         leftMenuTitle: 'titleLeftMenu',
@@ -160,6 +161,32 @@ describe('PageTemplate.vue', () => {
       expect(wrapper.findComponent(RcPageLoading).exists()).toBe(true);
     });
   });
+
+  describe('Computed', () => {
+    describe('navigationTabsFilteredForPermissions', () => {
+      it('filters tabs', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            navigationTabs: [
+              {
+                level: 'level5',
+              },
+              {
+                level: 'level6',
+              },
+            ],
+            loading: false,
+          },
+        });
+
+        await wrapper.setRole('level5');
+
+        expect(wrapper.vm.navigationTabsFilteredForPermissions.length).toBe(1);
+      });
+    });
+  });
+
   describe('Slots', () => {
     test('left-menu is correctly displayed', () => {
       const slot = wrapper.find('[data-test="left-menu-slot"]');

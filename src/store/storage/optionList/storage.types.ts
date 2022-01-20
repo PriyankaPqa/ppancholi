@@ -56,7 +56,7 @@ export interface IStorageMock {
   }
 
   actions: {
-    fetchItems: jest.Mock<void>;
+    fetchItems: jest.Mock<IOptionItem[]>;
 
     fetchSubItems: jest.Mock<void>;
 

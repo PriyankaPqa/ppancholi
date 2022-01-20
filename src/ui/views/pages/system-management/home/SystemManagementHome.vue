@@ -44,7 +44,7 @@ export default Vue.extend({
         button: 'system_management.card.btn.user_accounts_title',
         route: routes.systemManagement.userAccounts.home.name,
         dataTest: 'sysManagementHome__accounts',
-        level: 'level6',
+        level: 'level5',
       }, {
         title: 'system_management.card.roles_title',
         description: 'system_management.card.roles_description',
