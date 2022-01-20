@@ -210,12 +210,14 @@ export default Vue.extend({
         icon: '',
         disabled: false,
         to: routes.events.summary.name,
+        level: 'level4',
       }, {
         text: this.$t('eventDetail.menu_programs'),
         test: 'event-programs',
         icon: '',
         disabled: false,
         to: routes.programs.home.name,
+        level: 'level6',
         exact: false,
       }, {
         text: this.$t('eventDetail.menu_financial'),
@@ -223,6 +225,7 @@ export default Vue.extend({
         icon: '',
         disabled: false,
         to: routes.events.financialAssistance.home.name,
+        level: 'level6',
         exact: false,
       }];
     },

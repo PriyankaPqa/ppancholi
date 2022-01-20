@@ -367,12 +367,14 @@ describe('EventDetails.vue', () => {
             icon: '',
             disabled: false,
             to: routes.events.summary.name,
+            level: 'level4',
           }, {
             text: 'eventDetail.menu_programs',
             test: 'event-programs',
             icon: '',
             disabled: false,
             to: routes.programs.home.name,
+            level: 'level6',
             exact: false,
           }, {
             text: 'eventDetail.menu_financial',
@@ -380,6 +382,7 @@ describe('EventDetails.vue', () => {
             icon: '',
             disabled: false,
             to: routes.events.financialAssistance.home.name,
+            level: 'level6',
             exact: false,
           }],
         );

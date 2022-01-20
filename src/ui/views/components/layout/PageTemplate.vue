@@ -135,7 +135,7 @@ export default Vue.extend({
   },
   computed: {
     navigationTabsFilteredForPermissions(): Array<INavigationTab> {
-      return this.navigationTabs.filter((tab: INavigationTab) => this.$hasLevel(tab.level));
+      return this.navigationTabs.filter((tab: INavigationTab) => this.$hasLevel(tab.level) || !tab.level);
     },
   },
   methods: {

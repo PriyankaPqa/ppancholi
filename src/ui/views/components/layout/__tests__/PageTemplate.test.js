@@ -164,7 +164,7 @@ describe('PageTemplate.vue', () => {
 
   describe('Computed', () => {
     describe('navigationTabsFilteredForPermissions', () => {
-      it('filters tabs', async () => {
+      it('filters tabs by level', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           propsData: {
@@ -183,6 +183,27 @@ describe('PageTemplate.vue', () => {
         await wrapper.setRole('level5');
 
         expect(wrapper.vm.navigationTabsFilteredForPermissions.length).toBe(1);
+      });
+
+      it('If tab has no level property, it should be displayed', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            navigationTabs: [
+              {
+                level: undefined,
+              },
+              {
+                level: null,
+              },
+            ],
+            loading: false,
+          },
+        });
+
+        await wrapper.setRole('level5');
+
+        expect(wrapper.vm.navigationTabsFilteredForPermissions.length).toBe(2);
       });
     });
   });
