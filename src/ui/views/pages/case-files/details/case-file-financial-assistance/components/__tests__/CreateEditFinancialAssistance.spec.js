@@ -174,13 +174,13 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
   describe('Lifecycle', () => {
     describe('created', () => {
-      it('should call storage to fetch categories', async () => {
+      it('should call storage to fetch categories - including inactives', async () => {
         jest.spyOn(wrapper.vm, 'searchTables').mockImplementation(() => financialAssistance);
 
         const hook = wrapper.vm.$options.created[0];
         await hook.call(wrapper.vm);
 
-        expect(storage.financialAssistanceCategory.actions.fetchAll).toHaveBeenCalled();
+        expect(storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalled();
       });
 
       it('call searchTables', async () => {

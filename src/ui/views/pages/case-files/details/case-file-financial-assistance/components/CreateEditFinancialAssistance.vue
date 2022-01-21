@@ -242,7 +242,7 @@ export default mixins(caseFileDetail).extend({
       this.financialAssistance.caseFileId = this.$route.params.id;
     }
 
-    await this.$storage.financialAssistanceCategory.actions.fetchAll();
+    await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
     await this.searchTables();
     this.loading = false;
     this.warnIfInvalid();

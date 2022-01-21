@@ -197,11 +197,11 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
         expect(wrapper.vm.$storage.financialAssistance.actions.fetchAll).toHaveBeenCalledTimes(1);
       });
 
-      it('should fetch all financial assistance categories', async () => {
+      it('should fetch all financial assistance categories - including inactive ones', async () => {
         wrapper.vm.$options.created.forEach((hook) => {
           hook.call(wrapper.vm);
         });
-        expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetchAll).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive).toHaveBeenCalledTimes(1);
       });
 
       it('should fetch all events', async () => {
@@ -453,6 +453,19 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
           },
         });
         expect(wrapper.vm.subItems).toEqual(expected);
+      });
+
+      it('should return items even if the subitem is marked as inactive in sys management if it\'s active in the table', async () => {
+        const expected = [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' })];
+        formCopy.item.subitems.forEach((s) => { s.status = false; });
+
+        wrapper.setData({
+          formCopy: {
+            table: formCopy.table,
+            item: formCopy.item,
+          },
+        });
+        expect(wrapper.vm.subItems[0]?.id).toEqual(expected[0].id);
       });
     });
   });

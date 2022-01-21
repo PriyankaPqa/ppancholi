@@ -247,7 +247,7 @@ export default Vue.extend({
           .filter((s) => s.status === Status.Active && s.documentationRequired === false)
           .map((s) => s.subCategory.optionItemId);
         if (this.formCopy?.item?.subitems) {
-          return this.formCopy.item.subitems.filter((s: IOptionSubItem) => subItemsCurrentTableIds.includes(s.id) && s.status === Status.Active);
+          return this.formCopy.item.subitems.filter((s: IOptionSubItem) => subItemsCurrentTableIds.includes(s.id));
         }
       }
       return [];
@@ -301,7 +301,7 @@ export default Vue.extend({
   async created() {
     this.formCopy = cloneDeep(this.form);
     await this.$storage.financialAssistance.actions.fetchAll();
-    await this.$storage.financialAssistanceCategory.actions.fetchAll();
+    await this.$storage.financialAssistanceCategory.actions.fetchAllIncludingInactive();
     await this.fetchEvents();
   },
 
