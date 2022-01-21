@@ -296,6 +296,16 @@ describe('>>> Registration Storage', () => {
       storage.mutations.setFeatures(features);
       expect(store.commit).toBeCalledWith('registration/setFeatures', features);
     });
+
+    it('should proxy setPrimarySpokenLanguagesFetched', () => {
+      storage.mutations.setPrimarySpokenLanguagesFetched(true);
+      expect(store.commit).toBeCalledWith('registration/setPrimarySpokenLanguagesFetched', true);
+    });
+
+    it('should proxy setGendersFetched', () => {
+      storage.mutations.setGendersFetched(true);
+      expect(store.commit).toBeCalledWith('registration/setGendersFetched', true);
+    });
   });
 
   describe('>> Actions', () => {

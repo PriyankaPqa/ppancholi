@@ -61,6 +61,8 @@ describe('>>> Registration Module', () => {
           householdAssociationMode: false,
           splitHousehold: null,
           features: [],
+          primarySpokenLanguagesFetched: false,
+          gendersFetched: false,
         });
       });
     });
@@ -415,6 +417,14 @@ describe('>>> Registration Module', () => {
       });
     });
 
+    describe('setGendersFetched', () => {
+      it('should set gendersFetched', () => {
+        expect(store.state.registration.gendersFetched).toEqual(false);
+        store.commit('registration/setGendersFetched', true);
+        expect(store.state.registration.gendersFetched).toEqual(true);
+      });
+    });
+
     describe('setPreferredLanguages', () => {
       it('should set preferredLanguages', () => {
         expect(store.state.registration.preferredLanguages).toEqual([]);
@@ -428,6 +438,14 @@ describe('>>> Registration Module', () => {
         expect(store.state.registration.primarySpokenLanguages).toEqual([]);
         store.commit('registration/setPrimarySpokenLanguages', mockPrimarySpokenLanguages());
         expect(store.state.registration.primarySpokenLanguages).toEqual(mockPrimarySpokenLanguages());
+      });
+    });
+
+    describe('setPrimarySpokenLanguagesFetched', () => {
+      it('should set primarySpokenLanguagesFetched', () => {
+        expect(store.state.registration.primarySpokenLanguagesFetched).toEqual(false);
+        store.commit('registration/setPrimarySpokenLanguagesFetched', true);
+        expect(store.state.registration.primarySpokenLanguagesFetched).toEqual(true);
       });
     });
 

@@ -79,6 +79,8 @@ export interface IStorage {
     resetSplitHousehold(): void;
     setTabs(tabs: IRegistrationMenuItem[]): void;
     setFeatures(features: IFeatureEntity[]): void;
+    setPrimarySpokenLanguagesFetched(payload: boolean): void;
+    setGendersFetched(payload: boolean): void;
   };
 
   actions: {
@@ -161,6 +163,8 @@ export interface IStorageMock {
     resetSplitHousehold: jest.Mock<void>;
     setTabs: jest.Mock<void>;
     setFeatures: jest.Mock<void>;
+    setPrimarySpokenLanguagesFetched: jest.Mock<void>;
+    setGendersFetched: jest.Mock<void>;
   };
 
   actions: {

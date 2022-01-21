@@ -66,6 +66,8 @@ export const getDefaultState = (tabs: IRegistrationMenuItem[]): IState => ({
   householdAlreadyRegistered: false,
   splitHousehold: null as ISplitHousehold,
   features: [] as IFeatureEntity[],
+  primarySpokenLanguagesFetched: false,
+  gendersFetched: false,
 });
 
 const moduleState = (tabs: IRegistrationMenuItem[]): IState => getDefaultState(tabs);
@@ -253,12 +255,20 @@ const mutations = (): MutationTree<IState> => ({
     state.genders = payload;
   },
 
+  setGendersFetched(state: IState, payload: boolean) {
+    state.gendersFetched = payload;
+  },
+
   setPreferredLanguages(state: IState, payload: IOptionItemData[]) {
     state.preferredLanguages = payload;
   },
 
   setPrimarySpokenLanguages(state: IState, payload: IOptionItemData[]) {
     state.primarySpokenLanguages = payload;
+  },
+
+  setPrimarySpokenLanguagesFetched(state: IState, payload: boolean) {
+    state.primarySpokenLanguagesFetched = payload;
   },
 
   setIndigenousCommunities(state: IState, { communities }: {communities: IIndigenousCommunityData[]}) {
@@ -417,33 +427,41 @@ const actions = (mode: ERegistrationMode) => ({
   },
 
   async fetchGenders(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
-    const data: IOptionItemData[] = await this.$services.households.getGenders();
+    if (!context.state.primarySpokenLanguagesFetched) {
+      const data: IOptionItemData[] = await this.$services.households.getGenders();
 
-    if (data?.length > 0) {
-      context.commit('setGenders', data.filter((entry) => entry.status === EOptionItemStatus.Active));
+      if (data?.length > 0) {
+        context.commit('setGenders', data.filter((entry) => entry.status === EOptionItemStatus.Active));
+        context.commit('setGendersFetched', true);
+      }
     }
 
-    return data;
+    return context.getters.genders;
   },
 
   async fetchPreferredLanguages(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
-    const data: IOptionItemData[] = await this.$services.households.getPreferredLanguages();
+    if (!context.state.preferredLanguages?.length) {
+      const data: IOptionItemData[] = await this.$services.households.getPreferredLanguages();
 
-    if (data?.length > 0) {
-      context.commit('setPreferredLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
+      if (data?.length > 0) {
+        context.commit('setPreferredLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
+      }
     }
 
-    return data;
+    return context.getters.preferredLanguages;
   },
 
   async fetchPrimarySpokenLanguages(this: IStore<IState>, context: ActionContext<IState, IState>): Promise<IOptionItemData[]> {
-    const data: IOptionItemData[] = await this.$services.households.getPrimarySpokenLanguages();
+    if (!context.state.primarySpokenLanguagesFetched) {
+      const data: IOptionItemData[] = await this.$services.households.getPrimarySpokenLanguages();
 
-    if (data?.length > 0) {
-      context.commit('setPrimarySpokenLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
+      if (data?.length > 0) {
+        context.commit('setPrimarySpokenLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
+        context.commit('setPrimarySpokenLanguagesFetched', true);
+      }
     }
 
-    return data;
+    return context.getters.primarySpokenLanguages;
   },
 
   async fetchIndigenousCommunities(

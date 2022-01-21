@@ -32,4 +32,6 @@ export type IState = {
   householdAlreadyRegistered: boolean;
   splitHousehold: ISplitHousehold;
   features: IFeatureEntity[];
+  primarySpokenLanguagesFetched: boolean;
+  gendersFetched: boolean;
 };

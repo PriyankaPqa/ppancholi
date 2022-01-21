@@ -241,6 +241,14 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     setFeatures(features: IFeatureEntity[]) {
       store.commit('registration/setFeatures', features);
     },
+
+    setPrimarySpokenLanguagesFetched(payload: boolean) {
+      store.commit('registration/setPrimarySpokenLanguagesFetched', payload);
+    },
+
+    setGendersFetched(payload: boolean) {
+      store.commit('registration/setGendersFetched', payload);
+    },
   },
 
   actions: {
