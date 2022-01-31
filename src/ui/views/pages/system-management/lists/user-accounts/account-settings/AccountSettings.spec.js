@@ -17,6 +17,9 @@ describe('AccountSettings.vue', () => {
   let wrapper;
   let roleHasChanged = false;
   let isLevel6 = false;
+  storage.userAccount.getters.roles = jest.fn(() => mockOptionItemData());
+  storage.userAccount.actions.fetchUserAccount = jest.fn(() => mockCombinedUserAccount());
+  storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
 
   const doMount = async () => {
     wrapper = mount(Component, {
@@ -191,6 +194,7 @@ describe('AccountSettings.vue', () => {
 
   describe('life cycle', () => {
     it('should call fetchUserAccount with id', async () => {
+      doMount();
       wrapper.vm.fetchUserAccount = jest.fn();
       wrapper.vm.setRoles = jest.fn();
       await wrapper.vm.$options.created.forEach((hook) => {
@@ -217,6 +221,12 @@ describe('AccountSettings.vue', () => {
       });
     });
 
+    describe('roles', () => {
+      it('returns the roles from the store ', async () => {
+        expect(wrapper.vm.roles).toEqual(mockOptionItemData());
+      });
+    });
+
     describe('user', () => {
       it('return the user account by id from the storage', () => {
         expect(wrapper.vm.user).toEqual(mockUser);
@@ -240,16 +250,16 @@ describe('AccountSettings.vue', () => {
 
     describe('preferredLanguage', () => {
       it('returns English if includes en', () => {
+        const user = mockCombinedUserAccount({ preferredLanguage: 'en-CA' });
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
             user() {
-              return {
-                metadata: {
-                  preferredLanguage: 'en-CA',
-                },
-              };
+              return user;
             },
+          },
+          mocks: {
+            $storage: storage,
           },
         });
 
@@ -257,16 +267,16 @@ describe('AccountSettings.vue', () => {
       });
 
       it('returns Français if includes fr', () => {
+        const user = mockCombinedUserAccount({ preferredLanguage: 'fr-CA' });
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
             user() {
-              return {
-                metadata: {
-                  preferredLanguage: 'fr-CA',
-                },
-              };
+              return user;
             },
+          },
+          mocks: {
+            $storage: storage,
           },
         });
 
@@ -274,16 +284,16 @@ describe('AccountSettings.vue', () => {
       });
 
       it('returns undefined if is null', () => {
+        const user = mockCombinedUserAccount({ preferredLanguage: null });
         wrapper = shallowMount(Component, {
           localVue,
           computed: {
             user() {
-              return {
-                metadata: {
-                  preferredLanguage: null,
-                },
-              };
+              return user;
             },
+          },
+          mocks: {
+            $storage: storage,
           },
         });
 
@@ -362,14 +372,6 @@ describe('AccountSettings.vue', () => {
     });
 
     describe('setRoles', () => {
-      it('invokes the correct storage function', async () => {
-        jest.clearAllMocks();
-        storage.optionList.mutations.setList = jest.fn();
-        await wrapper.vm.setRoles();
-        expect(wrapper.vm.$storage.optionList.mutations.setList).toBeCalledWith(6); // EOptionLists.Roles
-        expect(wrapper.vm.$storage.optionList.actions.fetchItems).toBeCalledTimes(1);
-      });
-
       it('filters for active roles', async () => {
         const itemData = mockOptionItemData();
         itemData.forEach((a) => {
@@ -378,32 +380,29 @@ describe('AccountSettings.vue', () => {
           });
         });
         itemData[0].subitems[0].status = 0;
-        storage.optionList.mutations.setList = jest.fn();
-        wrapper.vm.$storage.optionList.actions.fetchItems = jest.fn(() => itemData);
+
         await wrapper.vm.setRoles();
-        expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[1]);
+        expect(wrapper.vm.allAccessLevelRoles).toContainEqual(itemData[0].subitems[1]);
         expect(wrapper.vm.allAccessLevelRoles.filter((x) => x === itemData[0].subitems[0])[0]).toBeUndefined();
       });
+    });
 
-      describe('setAllAccessLevelRoles', () => {
-        it('includes current user\'s inactive role', async () => {
-          const itemData = mockOptionItemData();
-          itemData.forEach((a) => {
-            a.subitems.forEach((s) => {
-              s.status = 1;
-            });
+    describe('setAllAccessLevelRoles', () => {
+      it('includes current user\'s inactive role', async () => {
+        const itemData = mockOptionItemData();
+        itemData.forEach((a) => {
+          a.subitems.forEach((s) => {
+            s.status = 1;
           });
-          itemData[0].subitems[0].status = 0;
-          storage.optionList.mutations.setList = jest.fn();
-          wrapper.vm.$storage.optionList.actions.fetchItems = jest.fn(() => itemData);
-
-          const user = mockUser;
-          user.entity.roles[0].optionItemId = itemData[0].subitems[0].id;
-
-          await wrapper.vm.setRoles();
-          expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[1]);
-          expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[0]);
         });
+        itemData[0].subitems[0].status = 0;
+
+        const user = mockUser;
+        user.entity.roles[0].optionItemId = itemData[0].subitems[0].id;
+
+        await wrapper.vm.setAllAccessLevelRoles(itemData);
+        expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[1]);
+        expect(wrapper.vm.allAccessLevelRoles).toContain(itemData[0].subitems[0]);
       });
     });
 

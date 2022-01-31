@@ -1,5 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
+import _sortBy from 'lodash/sortBy';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import { EOptionLists, IOptionItem, OptionItem } from '@/entities/optionItem';
 import {
   IFilter, IUserAccountEntity, FilterKey, UserAccountEntity,
 } from '@/entities/user-account';
@@ -9,9 +11,10 @@ import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 
 import { IState } from '../base/base.types';
+import { OptionItemsService } from '@/services/optionItems';
 
 export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uuid> {
-  constructor(readonly service: UserAccountsService) {
+  constructor(readonly service: UserAccountsService, readonly optionsService:OptionItemsService) {
     super(service);
   }
 
@@ -26,6 +29,8 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
   public state = {
     ...this.baseState,
     currentUserAccount: null as IUserAccountEntity,
+    roles: [] as IOptionItem[],
+    rolesFetched: false,
   }
 
   public getters = {
@@ -37,12 +42,22 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
       }
       return [];
     },
+
+    roles: (state: IUserAccountEntityState) => (state.roles ? _sortBy(state.roles.map((e) => new OptionItem(e)), 'orderRank') : []),
   }
 
   public mutations = {
     ...this.baseMutations,
     setCurrentUserAccount: (state: IUserAccountEntityState, entity: IUserAccountEntity) => {
       state.currentUserAccount = entity;
+    },
+
+    setRoles(state: IUserAccountEntityState, payload: Array<IOptionItem>) {
+      state.roles = payload;
+    },
+
+    setRolesFetched(state: IUserAccountEntityState, payload: boolean) {
+      state.rolesFetched = payload;
     },
   }
 
@@ -112,5 +127,18 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
         return null;
       }
     },
+
+    fetchRoles: async (
+      context: ActionContext<IUserAccountEntityState, IUserAccountEntityState>,
+    ): Promise<IOptionItem[]> => {
+      if (!this.state.rolesFetched) {
+        const data = await this.optionsService.getOptionList(EOptionLists.Roles);
+        context.commit('setRoles', data);
+        context.commit('setRolesFetched', true);
+      }
+
+      return context.getters.roles;
+    },
+
   };
 }

@@ -109,7 +109,8 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
     [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
 
-    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(new UserAccountsService(httpClient)).getModule(),
+    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(new UserAccountsService(httpClient),
+      new OptionItemsService(httpClient)).getModule(),
     [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(new UserAccountsMetadataService(httpClient)).getModule(),
 
     [vuexModule.EVENT_ENTITIES]: new EventEntityModule(new EventsService(httpClient), new OptionItemsService(httpClient)).getModule(),

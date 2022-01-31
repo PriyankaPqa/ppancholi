@@ -1,4 +1,4 @@
-import { IEntity, mockBaseData } from '@/entities/base';
+import { IEntity, mockBaseData, Status } from '@/entities/base';
 import { IListOption } from '@/types';
 
 import {
@@ -38,6 +38,7 @@ export const mockUserAccountEntity = (force?: Partial<IEntity>) : IUserAccountEn
     mockListOption(),
   ],
   accountStatus: AccountStatus.Active,
+  status: Status.Active,
   ...force,
 });
 

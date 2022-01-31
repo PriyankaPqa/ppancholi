@@ -168,10 +168,11 @@ import {
   VSelectWithValidation,
   RcTooltip,
 } from '@crctech/component-library';
+import { NavigationGuardNext, Route } from 'vue-router';
 import { IUserAccountCombined, AccountStatus } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
-  EOptionLists, IOptionItem, IOptionSubItem,
+  IOptionItem, IOptionSubItem,
 } from '@/entities/optionItem';
 
 import { Status } from '@/entities/base';
@@ -184,6 +185,21 @@ export default Vue.extend({
     VSelectWithValidation,
     StatusChip,
     RcTooltip,
+  },
+
+  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
+    if (this.roleHasChanged) {
+      const leavingConfirmed = await this.$confirm({
+        title: this.$t('confirmLeaveDialog.title'),
+        messages: [this.$t('confirmLeaveDialog.message_1'), this.$t('confirmLeaveDialog.message_2')],
+      });
+
+      if (leavingConfirmed) {
+        next();
+      }
+    } else {
+      next();
+    }
   },
 
   data() {
@@ -199,6 +215,10 @@ export default Vue.extend({
   },
 
   computed: {
+    roles(): IOptionItem[] {
+      return this.$storage.userAccount.getters.roles();
+    },
+
     user(): IUserAccountCombined {
       return this.$storage.userAccount.getters.get(this.id);
     },
@@ -234,7 +254,7 @@ export default Vue.extend({
   },
 
   async created() {
-    await this.fetchUserAccount(this.id);
+    await Promise.all([this.$storage.userAccount.actions.fetchRoles(), this.fetchUserAccount(this.id)]);
 
     if (!this.$hasRole('noAccess')) {
       await this.setRoles();
@@ -245,10 +265,8 @@ export default Vue.extend({
 
   methods: {
     async setRoles() {
-      this.$storage.optionList.mutations.setList(EOptionLists.Roles);
-      const roles = await this.$storage.optionList.actions.fetchItems();
-      this.setAllAccessLevelRoles(roles);
-      this.allRoles = roles.reduce((acc: IOptionSubItem[], curr: IOptionItem) => acc.concat(curr.subitems), []);
+      this.setAllAccessLevelRoles(this.roles);
+      this.allRoles = this.roles.reduce((acc: IOptionSubItem[], curr: IOptionItem) => acc.concat(curr.subitems), []);
     },
 
     // set the hierarchical list of roles and subroles in the format needed for the dropdown of the select component

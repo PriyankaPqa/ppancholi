@@ -1,3 +1,4 @@
+import { mockOptionItems } from '@/entities/optionItem';
 import { BaseMock } from '@/store/storage/base/base.mock';
 import {
   mockCombinedUserAccounts, mockUserAccountEntity, IUserAccountEntity, IUserAccountCombined, mockUserFilters,
@@ -11,6 +12,7 @@ export class UserAccountStorageMock extends BaseMock<IUserAccountCombined, IUser
   protected getters = {
     ...this.baseGetters,
     currentUserFiltersByKey: jest.fn(() => [mockUserFilters()[2]]),
+    roles: jest.fn(() => mockOptionItems()),
   }
 
   protected actions = {
@@ -20,11 +22,13 @@ export class UserAccountStorageMock extends BaseMock<IUserAccountCombined, IUser
     deleteFilter: jest.fn(() => this.entity),
     assignRole: jest.fn(() => this.entity),
     fetchCurrentUserAccount: jest.fn(() => this.entity),
+    fetchRoles: jest.fn(() => mockOptionItems()),
   }
 
   protected mutations = {
     ...this.baseMutations,
     setCurrentUserAccount: jest.fn(),
+    setRolesFetched: jest.fn(),
   }
 
   public make = () => ({

@@ -7,7 +7,11 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { mockOptionItemData, mockRoles } from '@/entities/optionItem';
-import { AccountStatus, mockCombinedUserAccounts } from '@/entities/user-account';
+import { mockUserStateLevel } from '@/test/helpers';
+
+import {
+  AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
+} from '@/entities/user-account';
 import { Status } from '@/entities/base';
 import Component from './UserAccounts.vue';
 
@@ -26,10 +30,14 @@ const fakeSubRole = {
 
 describe('UserAccounts.vue', () => {
   let wrapper;
+  storage.userAccount.actions.fetchRoles = jest.fn(() => mockOptionItemData());
+  storage.userAccount.getters.roles = jest.fn(() => mockOptionItemData());
+  storage.userAccount.getters.getAll = jest.fn(() => usersTestData);
+  storage.userAccount.actions.deactivate = jest.fn(() => usersTestData[0].entity);
+  storage.userAccount.actions.assignRole = jest.fn(() => usersTestData[0].entity);
+  storage.userAccount.actions.fetchAll = jest.fn(() => usersTestData);
 
-  beforeEach(() => {
-    storage.optionList.mutations.setList = jest.fn();
-    storage.optionList.actions.fetchItems = jest.fn(() => mockOptionItemData());
+  const mountWrapper = async (additionalOverwrites = {}) => {
     wrapper = shallowMount(Component, {
       localVue,
       data() {
@@ -44,8 +52,7 @@ describe('UserAccounts.vue', () => {
           showAddEmisUserDialog: false,
           showDeleteUserAccountDialog: false,
           userToDelete: null,
-          loading: true,
-          allUsers: [],
+          loading: false,
           allSubRoles: [],
           allActiveSubRoles: [],
           changedAccounts: [],
@@ -54,55 +61,39 @@ describe('UserAccounts.vue', () => {
       mocks: {
         $storage: storage,
       },
+      ...additionalOverwrites,
     });
-  });
+  };
 
-  describe('Mounted', () => {
+  describe('Created', () => {
     it('loads lookup lists', async () => {
-      jest.spyOn(wrapper.vm, 'fetchAllEmisUsers').mockImplementation(() => true);
+      jest.clearAllMocks();
+      mountWrapper();
+
+      jest.spyOn(wrapper.vm, 'fetchAllEmisUsers').mockImplementation(() => usersTestData);
       jest.spyOn(wrapper.vm, 'setRoles').mockImplementation(() => mockOptionItemData());
 
-      for (let i = 0; i < wrapper.vm.$options.mounted.length; i += 1) {
+      for (let i = 0; i < wrapper.vm.$options.created.length; i += 1) {
         // eslint-disable-next-line no-await-in-loop
-        await wrapper.vm.$options.mounted[i].call(wrapper.vm);
+        await wrapper.vm.$options.created[i].call(wrapper.vm);
       }
 
-      expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalledTimes(1);
-      expect(wrapper.vm.setRoles).toHaveBeenCalledTimes(1);
+      expect(storage.userAccount.actions.fetchRoles).toHaveBeenCalled();
+      expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalled();
+      expect(wrapper.vm.setRoles).toHaveBeenCalled();
     });
   });
 
   describe('Computed', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        data() {
-          return {
-            routes,
-            options: {
-              page: 1,
-              sortBy: ['displayName'],
-              sortDesc: [false],
-            },
-            search: '',
-            showAddEmisUserDialog: false,
-            showDeleteUserAccountDialog: false,
-            userToDelete: null,
-            loading: true,
-            allUsers: [],
-            allSubRoles: [],
-            allActiveSubRoles: [],
-            changedAccounts: [],
-          };
-        },
-        mocks: {
-          $storage: storage,
-        },
+    describe('roles', () => {
+      it('returns theroles from the store ', async () => {
+        mountWrapper();
+        expect(wrapper.vm.roles).toEqual(mockOptionItemData());
       });
     });
-
     describe('headers', () => {
       it('is correctly defined', async () => {
+        mountWrapper();
         expect(wrapper.vm.headers).toEqual([
           {
             text: 'system_management.userAccounts.name_header',
@@ -157,6 +148,7 @@ describe('UserAccounts.vue', () => {
 
     describe('customColumns', () => {
       it('is correctly defined', async () => {
+        mountWrapper();
         expect(wrapper.vm.customColumns).toEqual(
           {
             displayName: 'metadata.displayName',
@@ -172,12 +164,14 @@ describe('UserAccounts.vue', () => {
 
     describe('loadingText', () => {
       it('is correctly defined', async () => {
+        mountWrapper();
         expect(wrapper.vm.loadingText).toEqual('system_management.userAccounts.loading_users');
       });
     });
 
     describe('tableProps', () => {
       it('is correctly defined', async () => {
+        mountWrapper();
         expect(wrapper.vm.tableProps).toEqual({
           loading: wrapper.vm.loading,
         });
@@ -186,17 +180,20 @@ describe('UserAccounts.vue', () => {
 
     describe('itemsPerPage', () => {
       it('returns correct count for populated array', async () => {
-        wrapper.vm.allUsers = usersTestData;
+        mountWrapper({
+          computed: {
+            users() {
+              return usersTestData;
+            },
+          },
+        });
         expect(wrapper.vm.itemsPerPage).toEqual(usersTestData.length);
-      });
-      it('returns correct count of zero for null array', async () => {
-        wrapper.vm.allUsers = null;
-        expect(wrapper.vm.itemsPerPage).toEqual(0);
       });
     });
 
     describe('labels', () => {
       it('is correctly defined', async () => {
+        mountWrapper();
         expect(wrapper.vm.labels).toEqual({
           header: {
             title: 'system_management.leftMenu.user_accounts_title',
@@ -208,60 +205,56 @@ describe('UserAccounts.vue', () => {
 
     describe('filteredUserAccounts', () => {
       it('returns correct count for populated array', async () => {
-        wrapper.vm.allUsers = usersTestData;
-        wrapper.vm.search = usersTestData[0].metadata.displayName.substring(3);
-        wrapper.vm.$nextTick();
+        mountWrapper({
+          computed: {
+            users() {
+              return usersTestData;
+            },
+          },
+        });
+        await wrapper.setData({ search: usersTestData[0].metadata.displayName.substring(3) });
         expect(wrapper.vm.filteredUserAccounts[0]).toEqual(usersTestData[0]);
       });
+
       it('returns empty array if nothing matches', async () => {
-        wrapper.vm.allUsers = usersTestData;
+        mountWrapper({
+          computed: {
+            users() {
+              return usersTestData;
+            },
+          },
+        });
         wrapper.vm.search = 'this string will match nothing';
         wrapper.vm.$nextTick();
         expect(wrapper.vm.filteredUserAccounts.length).toEqual(0);
       });
       it('returns all users if no search filter exists', async () => {
-        wrapper.vm.allUsers = usersTestData;
+        mountWrapper({
+          computed: {
+            users() {
+              return usersTestData;
+            },
+          },
+        });
         wrapper.vm.search = '';
         wrapper.vm.$nextTick();
         expect(wrapper.vm.filteredUserAccounts).toEqual(usersTestData);
       });
     });
 
-    describe('originalUsers', () => {
-      it('is correctly defined', async () => {
-        wrapper.vm.$storage.userAccount.getters.userAccounts = jest.fn(() => usersTestData);
-        expect(wrapper.vm.originalUsers).toEqual(usersTestData);
+    describe('users', () => {
+      it('returns the filtered users from the store filtered ', async () => {
+        storage.userAccount.getters.getAll = jest.fn(() => [...usersTestData,
+          mockCombinedUserAccount({ id: 3, status: Status.Inactive }), mockCombinedUserAccount({ id: 4, status: Status.Active })]);
+        mountWrapper();
+        expect(wrapper.vm.users).toEqual([...usersTestData, mockCombinedUserAccount({ id: 4, status: Status.Active })]);
       });
     });
   });
 
   describe('Methods', () => {
     beforeEach(() => {
-      wrapper = shallowMount(Component, {
-        localVue,
-        data() {
-          return {
-            routes,
-            options: {
-              page: 1,
-              sortBy: ['displayName'],
-              sortDesc: [false],
-            },
-            search: '',
-            showAddEmisUserDialog: false,
-            showDeleteUserAccountDialog: false,
-            userToDelete: null,
-            loading: true,
-            allUsers: [],
-            allSubRoles: [],
-            allActiveSubRoles: [],
-            changedAccounts: [],
-          };
-        },
-        mocks: {
-          $storage: storage,
-        },
-      });
+      mountWrapper();
     });
 
     describe('clearSearch', () => {
@@ -281,25 +274,17 @@ describe('UserAccounts.vue', () => {
       });
     });
 
-    describe('itemIsChanged', () => {
-      it('recognizes a user with a pending role change', async () => {
-        const user = {
-          id: '12345',
-          roleId: '123',
-          roleName: 'ROLE',
-        };
-        wrapper.vm.changedAccounts = [...usersTestData, user];
-        expect(wrapper.vm.itemIsChanged(user)).toBeTruthy();
+    describe('modifiedUser', () => {
+      it('returns the user if it is in modifiedUsers list', async () => {
+        const user = mockCombinedUserAccount({ id: '1234' });
+        wrapper.vm.modifiedUsers = [...usersTestData, user];
+        expect(wrapper.vm.modifiedUser(user)).toEqual(user);
       });
 
-      it('does not recognize a user without a pending role change', async () => {
-        const user = {
-          id: '12345',
-          roleId: '123',
-          roleName: 'ROLE',
-        };
-        wrapper.vm.changedAccounts = usersTestData;
-        expect(wrapper.vm.itemIsChanged(user)).toBeFalsy();
+      it('does not return a user if it is not in modifiedUsers list', async () => {
+        const user = mockCombinedUserAccount({ id: '1234' });
+        wrapper.vm.modifiedUsers = usersTestData;
+        expect(wrapper.vm.modifiedUser(user)).toBeFalsy();
       });
     });
 
@@ -343,53 +328,43 @@ describe('UserAccounts.vue', () => {
       });
     });
 
-    describe('assignRoleToUser', () => {
-      it('assigns the correct sub-role to a user', async () => {
-        const user = {
-          entity: {
-            id: '12345',
-            roles: [{
-              optionItemId: '123',
-            }],
-          },
-          metadata: {
-            id: '12345',
-            roleId: '123',
-            roleName: 'ROLE',
-          },
-        };
+    describe('updateUserRole', () => {
+      it('adds the modified user to the list modifiedUsers', () => {
+        const user = mockCombinedUserAccount({ id: '1234', roles: [{ optionItemId: '123' }] });
         wrapper.vm.allSubRoles = mockOptionItemData()[0].subitems;
         const roleData = { value: wrapper.vm.allSubRoles[0].id };
 
-        wrapper.vm.assignRoleToUser(roleData, user);
+        wrapper.vm.updateUserRole(roleData, user);
 
-        expect(user.metadata.roleId).toEqual(wrapper.vm.allSubRoles[0].id);
-        expect(user.metadata.roleName).toEqual(wrapper.vm.allSubRoles[0].name);
-        expect(user.entity.roles[0].optionItemId).toEqual(wrapper.vm.allSubRoles[0].id);
-        expect(wrapper.vm.changedAccounts.indexOf(user)).toBeGreaterThanOrEqual(0);
+        const expected = _cloneDeep(user);
+        expected.entity.roles[0].optionItemId = wrapper.vm.allSubRoles[0].id;
+        expected.metadata.roleId = wrapper.vm.allSubRoles[0].id;
+        expected.metadata.roleName = wrapper.vm.allSubRoles[0].name;
+
+        expect(wrapper.vm.modifiedUsers).toEqual([expected]);
+      });
+
+      it('removes the modified user from the user of modified users, if the new role is the same as the original', async () => {
+        wrapper.vm.allSubRoles = mockOptionItemData()[0].subitems;
+        const user = ({
+          entity: mockUserAccountEntity({ id: '1234', roles: [{ optionItemId: wrapper.vm.allSubRoles[0].id }] }),
+          metadata: mockUserAccountMetadata(),
+        });
+        const modifiedUser = { entity: { ...user.entity, roles: [{ optionItemId: '123' }] }, metadata: user.metadata };
+        jest.spyOn(wrapper.vm, 'modifiedUser').mockImplementation(() => modifiedUser);
+        wrapper.vm.modifiedUsers = [modifiedUser];
+        const roleData = { value: wrapper.vm.allSubRoles[0].id };
+
+        await wrapper.vm.updateUserRole(roleData, user);
+
+        expect(wrapper.vm.modifiedUsers).toEqual([]);
       });
     });
 
     describe('applyRoleChange', () => {
-      it('does nothing if no change in role', async () => {
-        wrapper.vm.itemIsChanged = jest.fn(() => false);
-        wrapper.vm.$storage.userAccount.actions.addRoleToUser = jest.fn();
-        const user = {
-          entity: {
-            id: '12345',
-          },
-          metadata: {
-            id: '12345',
-            roleId: '123',
-            roleName: 'ROLE',
-          },
-        };
-        await wrapper.vm.applyRoleChange(user);
-        expect(wrapper.vm.$storage.userAccount.actions.addRoleToUser).not.toHaveBeenCalled();
-      });
-
-      it('applies a pending role change and triggers a success toast', async () => {
+      it('applies a pending role change and triggers a success toast and a reload of data and removes the user from modifiedUsers', async () => {
         wrapper.vm.$toasted.global.success = jest.fn();
+
         const user = {
           entity: {
             id: '12345',
@@ -407,6 +382,7 @@ describe('UserAccounts.vue', () => {
             id: '12345',
             status: Status.Active,
             accountStatus: AccountStatus.Active,
+            roles: [{ optionItemId: fakeSubRole.id }],
           },
           metadata: {
             id: '12345',
@@ -415,40 +391,23 @@ describe('UserAccounts.vue', () => {
             roleName: fakeSubRole.name,
           },
         };
-        wrapper.vm.itemIsChanged = jest.fn(() => true);
+
+        wrapper.vm.modifiedUser = jest.fn(() => changedUser);
+        wrapper.vm.fetchAllEmisUsers = jest.fn();
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
         wrapper.vm.$storage.userAccount.actions.assignRole = jest.fn(() => changedUser.entity);
         wrapper.vm.getSubRoleById = jest.fn(() => fakeSubRole);
         await wrapper.vm.applyRoleChange(user);
-        wrapper.vm.$nextTick();
 
-        expect(user.metadata.roleName).toEqual(fakeSubRole.name);
-        expect(user.metadata.roleId).toEqual(fakeSubRole.id);
-        expect(user.entity.accountStatus).toEqual(changedUser.entity.accountStatus);
-        expect(user.entity.status).toEqual(changedUser.entity.status);
-        expect(wrapper.vm.loading).toBeFalsy();
-
-        expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.userAccount.actions.assignRole).toHaveBeenCalledWith({ subRole: fakeSubRole, userId: user.entity.id });
+        expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.modifiedUsers.indexOf(changedUser)).not.toBeGreaterThanOrEqual(0); // Not found
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('cancelRoleChange', () => {
       it('cancels a pending role change', () => {
-        const user = {
-          entity: {
-            id: '12345',
-            status: 1,
-            roles: [{
-              optionItemId: '123',
-            }],
-          },
-          metadata: {
-            id: '12345',
-            roleId: '123',
-            roleName: 'ROLE',
-          },
-        };
         const changedUser = {
           entity: {
             id: '12345',
@@ -463,56 +422,12 @@ describe('UserAccounts.vue', () => {
             roleName: 'NEW ROLE',
           },
         };
-        const origUsers = _cloneDeep(usersTestData);
-        origUsers.push(user);
-        wrapper.vm.$storage.userAccount.getters.getAll = jest.fn(() => origUsers);
-        wrapper.vm.changedAccounts.push(changedUser);
-        expect(wrapper.vm.changedAccounts.indexOf(changedUser)).toBeGreaterThanOrEqual(0); // Found
-        wrapper.vm.cancelRoleChange(changedUser);
-        expect(wrapper.vm.changedAccounts.indexOf(changedUser)).not.toBeGreaterThanOrEqual(0); // Not found
-        expect(changedUser.metadata.roleId).toEqual(user.metadata.roleId);
-        expect(changedUser.metadata.roleName).toEqual(user.metadata.roleName);
-        expect(changedUser.entity.roles[0].optionItemId).toEqual(user.metadata.roleId);
-      });
-    });
 
-    describe('revertToOriginalRole', () => {
-      it("restores the user's original role", () => {
-        const user = {
-          entity: {
-            id: '12345',
-            status: 1,
-            roles: [{
-              optionItemId: '123',
-            }],
-          },
-          metadata: {
-            id: '12345',
-            roleId: '123',
-            roleName: 'ROLE',
-          },
-        };
-        const changedUser = {
-          entity: {
-            id: '12345',
-            status: 1,
-            roles: [{
-              optionItemId: '456',
-            }],
-          },
-          metadata: {
-            id: '12345',
-            roleId: '456',
-            roleName: 'NEW ROLE',
-          },
-        };
-        const origUsers = _cloneDeep(usersTestData);
-        origUsers.push(user);
-        wrapper.vm.$storage.userAccount.getters.getAll = jest.fn(() => origUsers);
-        wrapper.vm.revertToOriginalRole(changedUser);
-        expect(changedUser.metadata.roleId).toEqual(user.metadata.roleId);
-        expect(changedUser.metadata.roleName).toEqual(user.metadata.roleName);
-        expect(changedUser.entity.roles[0].optionItemId).toEqual(user.metadata.roleId);
+        wrapper.vm.modifiedUsers.push(changedUser);
+        expect(wrapper.vm.modifiedUsers.indexOf(changedUser)).toBeGreaterThanOrEqual(0); // Found
+
+        wrapper.vm.cancelRoleChange(changedUser);
+        expect(wrapper.vm.modifiedUsers.indexOf(changedUser)).not.toBeGreaterThanOrEqual(0); // Not found
       });
     });
 
@@ -526,18 +441,22 @@ describe('UserAccounts.vue', () => {
     });
 
     describe('applyDeleteUserAccount', () => {
-      it('deletes the user and clears out the account deletion variables', async () => {
-        wrapper.vm.$storage.userAccount.actions.deactivate = jest.fn();
+      it('deletes the user and reloads the data', async () => {
+        storage.userAccount.actions.deactivate = jest.fn(() => {});
+        wrapper.vm.$toasted.global.success = jest.fn();
         wrapper.vm.clearDeletionStatus = jest.fn();
-        wrapper.vm.removeUserAccountById = jest.fn();
+        wrapper.vm.fetchAllEmisUsers = jest.fn();
+
         const user = { entity: { id: '12345', accountStatus: AccountStatus.Active, status: Status.Active } };
         wrapper.vm.userToDelete = user;
-        wrapper.vm.showDeleteUserAccountDialog = true;
+        wrapper.vm.$storage.userAccount.actions.deactivate = jest.fn(() => user.entity);
+
         await wrapper.vm.applyDeleteUserAccount();
-        wrapper.vm.$nextTick();
+
         expect(wrapper.vm.$storage.userAccount.actions.deactivate).toHaveBeenCalledTimes(1);
-        expect(wrapper.vm.removeUserAccountById).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.fetchAllEmisUsers).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.clearDeletionStatus).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -553,23 +472,21 @@ describe('UserAccounts.vue', () => {
 
     describe('fetchAllEmisUsers', () => {
       it('invokes the correct storage function', async () => {
-        wrapper.vm.$storage.userAccount.getters.getAll = jest.fn(() => usersTestData);
-        wrapper.vm.$storage.userAccount.actions.fetchAll = jest.fn(() => usersTestData);
+        jest.clearAllMocks();
         await wrapper.vm.fetchAllEmisUsers();
-        expect(wrapper.vm.allUsers).toEqual(usersTestData);
-        expect(wrapper.vm.filteredUserAccounts).toEqual(usersTestData);
+        expect(wrapper.vm.$storage.userAccount.actions.fetchAll).toHaveBeenCalledTimes(1);
       });
     });
 
     describe('setRoles', () => {
-      it('invokes the correct storage function', async () => {
-        jest.clearAllMocks();
-        await wrapper.vm.setRoles();
-        expect(storage.optionList.mutations.setList).toBeCalledWith(6); // EOptionLists.Roles
-        expect(storage.optionList.actions.fetchItems).toBeCalledTimes(1);
-      });
-
       it('calls setAllActiveSubRoles and setAllAccessLevelRoles with the result of the storage call', async () => {
+        mountWrapper({
+          computed: {
+            roles() {
+              return mockOptionItemData();
+            },
+          },
+        });
         jest.spyOn(wrapper.vm, 'setAllActiveSubRoles').mockImplementation(() => {});
         jest.spyOn(wrapper.vm, 'setAllAccessLevelRoles').mockImplementation(() => {});
 
@@ -580,7 +497,13 @@ describe('UserAccounts.vue', () => {
       });
 
       it('sets disallowedRoles', async () => {
-        jest.spyOn(wrapper.vm.$storage.optionList.actions, 'fetchItems').mockImplementation(() => mockRoles());
+        mountWrapper({
+          computed: {
+            roles() {
+              return mockRoles();
+            },
+          },
+        });
 
         await wrapper.vm.setRoles();
 
@@ -603,60 +526,6 @@ describe('UserAccounts.vue', () => {
           .filter((role) => role.status === Status.Active) || [];
 
         expect(wrapper.vm.allActiveSubRoles).toEqual(expected);
-      });
-    });
-
-    describe('excludeDeletedUsers', () => {
-      it('returns an empty array if a null user array is passed', async () => {
-        expect(wrapper.vm.excludeDeletedUsers(null)).toEqual([]);
-      });
-
-      it('removes deleted accounts', async () => {
-        const users = mockCombinedUserAccounts();
-        expect(wrapper.vm.excludeDeletedUsers(users)).toEqual(users);
-        users[0].entity.status = Status.Inactive;
-        expect(wrapper.vm.excludeDeletedUsers(users)).toEqual([users[1]]);
-      });
-    });
-
-    describe('handleUserAdded', () => {
-      it('runs the correct functions', () => {
-        wrapper.vm.replaceOrAddToAllUsersById = jest.fn();
-        wrapper.vm.handleUsersAdded();
-        expect(wrapper.vm.replaceOrAddToAllUsersById).toHaveBeenCalledTimes(1);
-      });
-    });
-
-    describe('replaceOrAddToAllUsersById', () => {
-      it('finds a user by id', () => {
-        wrapper.vm.allUsers = [{ entity: { id: '123', status: 1 } }, { entity: { id: '456', status: 1 } }, { entity: { id: '789', status: 1 } }];
-        const arrayToRemoveOrReplace = [{ entity: { id: '123', displayName: 'some name', status: 1 } }, { entity: { id: '999', status: 1 } }];
-        wrapper.vm.replaceOrAddToAllUsersById(arrayToRemoveOrReplace);
-        const entityMatch = wrapper.vm.allUsers.find((u) => u.entity.id === arrayToRemoveOrReplace[0].entity.id);
-        expect(entityMatch.entity.displayName).toEqual(arrayToRemoveOrReplace[0].entity.displayName);
-        expect(wrapper.vm.allUsers[3]).toEqual(arrayToRemoveOrReplace[1]);
-      });
-    });
-
-    describe('findUserAccountById', () => {
-      it('finds a user by id', () => {
-        const array = [{ entity: { id: '123' } }, { entity: { id: '345' } }, { entity: { id: '567' } }];
-        expect(wrapper.vm.findUserAccountById(array, array[1].entity.id)).toEqual(array[1]);
-      });
-    });
-
-    describe('removeUserAccountById', () => {
-      it('removes account by id', async () => {
-        const users = _cloneDeep(mockCombinedUserAccounts());
-        const removedUser = users[0];
-        wrapper.vm.removeUserAccountById(users, mockCombinedUserAccounts()[0].entity.id);
-        expect(users).not.toContain(removedUser);
-      });
-
-      it('does not change array if no match found', async () => {
-        const users = _cloneDeep(mockCombinedUserAccounts());
-        wrapper.vm.removeUserAccountById(users, { entity: { id: '1234567' } });
-        expect(users).toEqual(users);
       });
     });
 
@@ -696,11 +565,71 @@ describe('UserAccounts.vue', () => {
               ],
             };
           },
+          store: {
+            ...mockUserStateLevel(6),
+          },
+          mocks: {
+            $storage: {
+              userAccount: {
+                actions: {
+                  fetchRoles: jest.fn(() => mockOptionItemData()),
+                  deactivate: jest.fn(() => usersTestData[0].entity),
+                  assignRole: jest.fn(() => usersTestData[0].entity),
+                  fetchAll: jest.fn(() => usersTestData),
+                },
+                getters: {
+                  roles: jest.fn(() => mockOptionItemData()),
+                  getAll: jest.fn(() => usersTestData),
+                },
+              },
+            },
+          },
         });
       });
 
       it('return false is current user is level 6', async () => {
-        await wrapper.setRole('level6');
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              disallowedRoles: [
+                {
+                  name: {
+                    translation: {
+                      en: 'System Admin',
+                    },
+                  },
+                },
+                {
+                  name: {
+                    translation: {
+                      en: 'Information Management Team Member',
+                    },
+                  },
+                },
+              ],
+            };
+          },
+          store: {
+            ...mockUserStateLevel(6),
+          },
+          mocks: {
+            $storage: {
+              userAccount: {
+                actions: {
+                  fetchRoles: jest.fn(() => mockOptionItemData()),
+                  deactivate: jest.fn(() => usersTestData[0].entity),
+                  assignRole: jest.fn(() => usersTestData[0].entity),
+                  fetchAll: jest.fn(() => usersTestData),
+                },
+                getters: {
+                  roles: jest.fn(() => mockOptionItemData()),
+                  getAll: jest.fn(() => usersTestData),
+                },
+              },
+            },
+          },
+        });
 
         const result = await wrapper.vm.canNotManageRoleForUser();
 
@@ -718,14 +647,55 @@ describe('UserAccounts.vue', () => {
           },
         };
 
-        await wrapper.setRole('level5');
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              disallowedRoles: [
+                {
+                  name: {
+                    translation: {
+                      en: 'System Admin',
+                    },
+                  },
+                },
+                {
+                  name: {
+                    translation: {
+                      en: 'Information Management Team Member',
+                    },
+                  },
+                },
+              ],
+            };
+          },
+          store: {
+            ...mockUserStateLevel(5),
+          },
+          mocks: {
+            $storage: {
+              userAccount: {
+                actions: {
+                  fetchRoles: jest.fn(() => mockOptionItemData()),
+                  deactivate: jest.fn(() => usersTestData[0].entity),
+                  assignRole: jest.fn(() => usersTestData[0].entity),
+                  fetchAll: jest.fn(() => usersTestData),
+                },
+                getters: {
+                  roles: jest.fn(() => mockOptionItemData()),
+                  getAll: jest.fn(() => usersTestData),
+                },
+              },
+            },
+          },
+        });
 
         const result = await wrapper.vm.canNotManageRoleForUser(testUser);
 
         expect(result).toBeFalsy();
       });
 
-      it('return true is current user is level 5 and the user in param is allowed', async () => {
+      it('return true is current user is level 5 and the user in param is not allowed', async () => {
         const testUser = {
           metadata: {
             roleName: {
@@ -736,11 +706,82 @@ describe('UserAccounts.vue', () => {
           },
         };
 
-        await wrapper.setRole('level5');
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              disallowedRoles: [
+                {
+                  name: {
+                    translation: {
+                      en: 'System Admin',
+                    },
+                  },
+                },
+                {
+                  name: {
+                    translation: {
+                      en: 'Information Management Team Member',
+                    },
+                  },
+                },
+              ],
+            };
+          },
+          store: {
+            ...mockUserStateLevel(5),
+          },
+          mocks: {
+            $storage: {
+              userAccount: {
+                actions: {
+                  fetchRoles: jest.fn(() => mockOptionItemData()),
+                  deactivate: jest.fn(() => usersTestData[0].entity),
+                  assignRole: jest.fn(() => usersTestData[0].entity),
+                  fetchAll: jest.fn(() => usersTestData),
+                },
+                getters: {
+                  roles: jest.fn(() => mockOptionItemData()),
+                  getAll: jest.fn(() => usersTestData),
+                },
+              },
+            },
+          },
+        });
 
         const result = await wrapper.vm.canNotManageRoleForUser(testUser);
 
         expect(result).toBeTruthy();
+      });
+    });
+
+    describe('getRoleValue', () => {
+      it('calls getRoleListItem with the role id of the modified user, if the user is in the modifiedUSers list', () => {
+        const user = ({
+          entity: mockUserAccountEntity({ id: '1234', roles: [{ optionItemId: '1' }] }),
+          metadata: mockUserAccountMetadata(),
+        });
+        const modifiedUser = { entity: { ...user.entity, roles: [{ optionItemId: '123' }] }, metadata: user.metadata };
+        wrapper.vm.modifiedUsers = [modifiedUser];
+        wrapper.vm.modifiedUser = jest.fn(() => modifiedUser);
+        wrapper.vm.getRoleListItem = jest.fn();
+
+        wrapper.vm.getRoleValue(user);
+
+        expect(wrapper.vm.getRoleListItem).toHaveBeenCalledWith('123');
+      });
+
+      it('calls getRoleListItem with the role id of the  user, if the user is not in the modifiedUSers list', () => {
+        const user = ({
+          entity: mockUserAccountEntity({ id: '1234', roles: [{ optionItemId: '1' }] }),
+          metadata: mockUserAccountMetadata(),
+        });
+        wrapper.vm.modifiedUser = jest.fn(() => null);
+        wrapper.vm.getRoleListItem = jest.fn();
+
+        wrapper.vm.getRoleValue(user);
+
+        expect(wrapper.vm.getRoleListItem).toHaveBeenCalledWith('1');
       });
     });
   });

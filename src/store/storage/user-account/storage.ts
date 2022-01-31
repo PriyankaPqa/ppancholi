@@ -1,3 +1,4 @@
+import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store';
 
 import {
@@ -17,6 +18,8 @@ export class UserAccountStorage
   private getters = {
     ...this.baseGetters,
     currentUserFiltersByKey: (key: FilterKey): IFilter[] => this.store.getters[`${this.entityModuleName}/currentUserFiltersByKey`](key),
+
+    roles: () : IOptionItem[] => this.store.getters[`${this.entityModuleName}/roles`],
   }
 
   private actions = {
@@ -31,6 +34,8 @@ export class UserAccountStorage
     assignRole: (payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/assignRole`, payload),
 
     fetchCurrentUserAccount: (): Promise<IUserAccountEntity> => this.store.dispatch(`${this.entityModuleName}/fetchCurrentUserAccount`),
+
+    fetchRoles: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchRoles`),
   }
 
   private mutations = {
@@ -38,6 +43,10 @@ export class UserAccountStorage
 
     setCurrentUserAccount: (entity: IUserAccountEntity) => {
       this.store.commit(`${this.entityModuleName}/setCurrentUserAccount`, entity);
+    },
+
+    setRolesFetched: (payload: boolean) => {
+      this.store.commit(`${this.entityModuleName}/setRolesFetched`, payload);
     },
   }
 

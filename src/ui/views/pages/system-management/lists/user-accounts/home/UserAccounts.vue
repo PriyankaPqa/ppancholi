@@ -58,12 +58,12 @@
               :attach="false"
               data-test="user_roleId"
               :disabled="canNotManageRoleForUser(item)"
-              :value="getRoleListItem(item.entity.roles[0].optionItemId)"
+              :value="getRoleValue(item)"
               :item-text="(item) => item ? $m(item.text): ''"
               :item-disabled="(item) => item.isInactive"
               :label="$t('system_management.userAccounts.role_header')"
               :items="getRolesForUser(item)"
-              @change="assignRoleToUser($event, item)" />
+              @change="updateUserRole($event, item)" />
           </template>
 
           <template #[`item.${customColumns.accountStatus}`]="{ item }">
@@ -74,10 +74,11 @@
           </template>
 
           <template #[`item.${customColumns.edit}`]="{ item }">
-            <div v-if="itemIsChanged(item)" class="inline-flex align-vertical-centre">
+            <div v-if="modifiedUser(item)" class="inline-flex align-vertical-centre">
               <v-btn
                 small
                 color="primary"
+                :loading="submitting[item.entity.id]"
                 data-test="apply-role-button"
                 @click="applyRoleChange(item)">
                 {{ $t('common.apply') }}
@@ -113,15 +114,16 @@
       data-test="add-emis-user"
       :all-sub-roles="allActiveSubRoles"
       :all-access-level-roles="allAccessLevelRoles"
-      :all-emis-users="allUsers"
+      :all-emis-users="users"
       :show.sync="showAddEmisUserDialog"
       @hide="showAddEmisUserDialog = false"
-      @users-added="handleUsersAdded" />
+      @users-added="fetchAllEmisUsers" />
 
     <rc-confirmation-dialog
       v-if="showDeleteUserAccountDialog"
       data-test="delete-user-account-dialog"
       :show.sync="showDeleteUserAccountDialog"
+      :loading="submittingDelete"
       :title="$t('system_management.userAccounts.delete_user.title')"
       :messages="$t('system_management.userAccounts.confirmDeleteDialog.message')"
       @submit="applyDeleteUserAccount()"
@@ -141,9 +143,9 @@ import { DataTableHeader } from 'vuetify';
 import { TranslateResult } from 'vue-i18n';
 import { isEmpty } from 'lodash';
 import _cloneDeep from 'lodash/cloneDeep';
+import { Route, NavigationGuardNext } from 'vue-router';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
-  EOptionLists,
   IOptionItem,
   IOptionSubItem,
 } from '@/entities/optionItem';
@@ -165,6 +167,21 @@ export default Vue.extend({
     RcConfirmationDialog,
   },
 
+  async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
+    if (this.modifiedUsers.length) {
+      const leavingConfirmed = await this.$confirm({
+        title: this.$t('confirmLeaveDialog.title'),
+        messages: [this.$t('confirmLeaveDialog.message_1'), this.$t('confirmLeaveDialog.message_2')],
+      });
+
+      if (leavingConfirmed) {
+        next();
+      }
+    } else {
+      next();
+    }
+  },
+
   data() {
     return {
       routes,
@@ -178,17 +195,22 @@ export default Vue.extend({
       showDeleteUserAccountDialog: false,
       userToDelete: null as IUserAccountCombined,
       loading: true,
-      allUsers: [] as IUserAccountCombined[], // All users, minus "deleted in EMIS"
+      submitting: {} as Record<string, boolean>,
+      submittingDelete: false,
       allSubRoles: [] as IOptionSubItem[],
       allActiveSubRoles: [] as IOptionSubItem[],
       allAccessLevelRoles: [],
-      changedAccounts: [] as IUserAccountCombined[],
+      modifiedUsers: [] as IUserAccountCombined[],
       disallowedLevels: ['Level 6', 'ContributorIM', 'ContributorFinance', 'Contributor 3', 'Read Only'],
       disallowedRoles: [] as IOptionSubItem[],
     };
   },
 
   computed: {
+    roles(): IOptionItem[] {
+      return this.$storage.userAccount.getters.roles();
+    },
+
     headers(): Array<DataTableHeader> {
       return [
         {
@@ -263,7 +285,7 @@ export default Vue.extend({
     },
 
     itemsPerPage(): number {
-      return this.allUsers ? this.allUsers.length : 0;
+      return this.users ? this.users.length : 0;
     },
 
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
@@ -277,28 +299,26 @@ export default Vue.extend({
 
     filteredUserAccounts(): IUserAccountCombined[] {
       let filteredUsers:IUserAccountCombined[];
-      if (this.loading) {
-        return [];
-      }
-      if (isEmpty(this.search) || this.allUsers === null) {
-        filteredUsers = this.allUsers ? this.allUsers : [];
+
+      if (isEmpty(this.search) || !this.users) {
+        filteredUsers = this.users || [];
       } else {
-        filteredUsers = this.allUsers.filter(
+        filteredUsers = this.users.filter(
           (user) => user.metadata.displayName && user.metadata.displayName.toLowerCase().indexOf(this.search.toLowerCase()) >= 0,
         );
       }
+
       return filteredUsers;
     },
 
-    originalUsers(): IUserAccountCombined[] {
-      return this.$storage.userAccount.getters.getAll();
+    users(): IUserAccountCombined[] {
+      return this.$storage.userAccount.getters.getAll()?.filter((u) => u.entity.status === Status.Active) || [];
     },
   },
 
-  async mounted() {
-    this.loading = true;
-    await this.fetchAllEmisUsers();
-    await this.setRoles();
+  async created() {
+    await Promise.all([this.$storage.userAccount.actions.fetchRoles(), this.fetchAllEmisUsers()]);
+    this.setRoles();
     this.loading = false;
   },
 
@@ -319,8 +339,8 @@ export default Vue.extend({
       this.showAddEmisUserDialog = true;
     },
 
-    itemIsChanged(user: IUserAccountCombined): boolean {
-      return this.changedAccounts.indexOf(user) >= 0;
+    modifiedUser(user: IUserAccountCombined): IUserAccountCombined {
+      return this.modifiedUsers.find((u) => u.entity.id === user.entity.id);
     },
 
     getSubRoleById(roleId: string) {
@@ -336,7 +356,7 @@ export default Vue.extend({
           isInactive: role.status === Status.Inactive,
         };
       }
-      return null;
+      return { } as {text:IMultilingual, value: string, isInactive: boolean};
     },
 
     getRolesForUser(user: IUserAccountCombined) {
@@ -353,54 +373,61 @@ export default Vue.extend({
       return [this.getRoleListItem(user.entity.roles[0]?.optionItemId), ...this.allAccessLevelRoles];
     },
 
-    assignRoleToUser(roleData: {text: IMultilingual, value: string}, user: IUserAccountCombined) {
-      // Only update if this changes the user role
-      if (roleData && user && roleData.value !== user.metadata.roleId) {
-        const role:IOptionSubItem = this.allSubRoles.find((r) => r.id === roleData.value);
+    updateUserRole(roleData: {text: IMultilingual, value: string}, user: IUserAccountCombined) {
+      if (!roleData || !user) {
+        return;
+      }
 
-        user.metadata.roleId = role.id;
-        user.metadata.roleName = role.name;
-        user.entity.roles[0].optionItemId = role.id;
-        this.changedAccounts.push(user); // Register for pending change
+      const previouslyModifiedUser = this.modifiedUser(user);
+
+      // Only update if this changes the user role
+      if (roleData.value !== user.entity.roles[0].optionItemId) {
+        const role:IOptionSubItem = this.allSubRoles.find((r) => r.id === roleData.value);
+        const userToUpdate = previouslyModifiedUser || _cloneDeep(user);
+
+        userToUpdate.entity.roles[0].optionItemId = role.id;
+        userToUpdate.metadata.roleId = role.id;
+        userToUpdate.metadata.roleName = role.name;
+
+        // If the currently modified user has not been previously modified, add it to the list of modified users
+        if (!previouslyModifiedUser) {
+          this.modifiedUsers.push(userToUpdate);
+        }
+      } else {
+        this.modifiedUsers.splice(this.modifiedUsers.indexOf(previouslyModifiedUser), 1);
       }
     },
 
     async applyRoleChange(user: IUserAccountCombined) {
-      const newRole = this.getSubRoleById(user.metadata.roleId);
-      if (this.itemIsChanged(user) && newRole) {
-        try {
-          this.loading = true; // Visual cue of busy state
-          const request = {
-            subRole: newRole,
-            userId: user.entity.id,
-          };
-          const resultAccount:IUserAccountEntity = await this.$storage.userAccount.actions.assignRole(request);
-          // Update status
-          user.entity = resultAccount;
-          user.metadata.roleName = request.subRole.name;
-          user.metadata.roleId = request.subRole.id;
-          this.changedAccounts.splice(this.changedAccounts.indexOf(user), 1);
-          this.replaceOrAddToAllUsersById([user]);
+      const modifiedUser = this.modifiedUser(user);
+      if (!modifiedUser) {
+        return;
+      }
+
+      this.submitting = { ...this.submitting, [user.entity.id]: true }; // Visual cue of busy state for the specific user
+      const newRole = this.getSubRoleById(modifiedUser.entity.roles[0].optionItemId);
+      const request = {
+        subRole: newRole,
+        userId: user.entity.id,
+      };
+
+      try {
+        const resultAccount:IUserAccountEntity = await this.$storage.userAccount.actions.assignRole(request);
+        if (resultAccount) {
+          this.fetchAllEmisUsers();
+          this.modifiedUsers.splice(this.modifiedUsers.findIndex((u) => u.entity.id === user.entity.id), 1);
           this.$toasted.global.success(this.$t('system_management.userAccounts.role_update_success'));
-        } finally {
-          this.loading = false;
         }
+      } finally {
+        this.submitting[user.entity.id] = false;
       }
     },
 
     cancelRoleChange(user: IUserAccountCombined) {
       // Remove from pending role change
-      if (this.itemIsChanged(user)) {
-        this.changedAccounts.splice(this.changedAccounts.indexOf(user), 1);
+      if (this.modifiedUser(user)) {
+        this.modifiedUsers.splice(this.modifiedUsers.findIndex((u) => u.entity.id === user.entity.id), 1);
       }
-      this.revertToOriginalRole(user);
-    },
-
-    revertToOriginalRole(user: IUserAccountCombined) {
-      const originalUser = this.originalUsers.find((u) => u.entity.id === user.entity.id);
-      user.metadata.roleId = originalUser.metadata.roleId;
-      user.metadata.roleName = originalUser.metadata.roleName;
-      user.entity.roles[0].optionItemId = originalUser.metadata.roleId;
     },
 
     deleteUserAccount(user: IUserAccountCombined) {
@@ -410,14 +437,17 @@ export default Vue.extend({
 
     async applyDeleteUserAccount() {
       if (this.userToDelete) {
-        this.loading = true;
+        this.submittingDelete = true;
         try {
-          await this.$storage.userAccount.actions.deactivate(this.userToDelete.entity.id);
-          this.removeUserAccountById(this.allUsers, this.userToDelete.entity.id);
-          this.clearDeletionStatus();
-          this.$toasted.global.success(this.$t('system_management.userAccounts.delete_success'));
+          const response = await this.$storage.userAccount.actions.deactivate(this.userToDelete.entity.id);
+
+          if (response) {
+            this.fetchAllEmisUsers();
+            this.clearDeletionStatus();
+            this.$toasted.global.success(this.$t('system_management.userAccounts.delete_success'));
+          }
         } finally {
-          this.loading = false;
+          this.submittingDelete = false;
         }
       }
     },
@@ -429,18 +459,14 @@ export default Vue.extend({
 
     async fetchAllEmisUsers() {
       await this.$storage.userAccount.actions.fetchAll();
-      this.allUsers = this.excludeDeletedUsers(_cloneDeep(this.originalUsers));
     },
 
-    async setRoles() {
-      this.$storage.optionList.mutations.setList(EOptionLists.Roles);
-      const roles = await this.$storage.optionList.actions.fetchItems();
-
-      this.disallowedRoles = roles
+    setRoles() {
+      this.disallowedRoles = this.roles
         .filter((r) => this.disallowedLevels.some((level) => level === r.name.translation.en))
         .reduce((acc, val) => acc.concat(val.subitems), []);
-      this.setAllActiveSubRoles(roles);
-      this.setAllAccessLevelRoles(roles);
+      this.setAllActiveSubRoles(this.roles);
+      this.setAllAccessLevelRoles(this.roles);
     },
 
     setAllActiveSubRoles(roles: IOptionItem[]) {
@@ -477,34 +503,6 @@ export default Vue.extend({
       });
     },
 
-    excludeDeletedUsers(users: IUserAccountCombined[]): IUserAccountCombined[] {
-      if (users) {
-        return users.filter((u) => u.entity.status === Status.Active);
-      }
-      return [];
-    },
-
-    handleUsersAdded(users: IUserAccountCombined[]) {
-      this.replaceOrAddToAllUsersById(users);
-    },
-
-    replaceOrAddToAllUsersById(newUsers: IUserAccountCombined[]) {
-      // Replace the "guts" of these updated users and build new ones, as needed
-      newUsers.forEach((u) => this.removeUserAccountById(this.allUsers, u.entity.id));
-      this.allUsers = this.excludeDeletedUsers(this.allUsers.concat(newUsers));
-    },
-
-    findUserAccountById(array: IUserAccountCombined[], userId: string): IUserAccountCombined {
-      return array.find((u) => u.entity.id === userId);
-    },
-
-    removeUserAccountById(array: IUserAccountCombined[], userId: string) {
-      const item = this.findUserAccountById(array, userId);
-      if (item) {
-        array.splice(array.indexOf(item), 1);
-      }
-    },
-
     getUserAccountDetailsRoute(id: string) {
       return {
         name: routes.systemManagement.userAccounts.details.name,
@@ -520,6 +518,16 @@ export default Vue.extend({
       }
 
       return false;
+    },
+
+    getRoleValue(user: IUserAccountCombined) {
+      const modifiedUser = this.modifiedUsers.length && this.modifiedUser(user);
+
+      if (modifiedUser) {
+        return this.getRoleListItem(modifiedUser.entity.roles[0].optionItemId);
+      }
+
+      return this.getRoleListItem(user.entity.roles[0].optionItemId);
     },
   },
 });

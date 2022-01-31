@@ -2,8 +2,10 @@
  * @group store
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+import _sortBy from 'lodash/sortBy';
 import { ActionContext } from 'vuex';
+import { mockOptionItems } from '../../../entities/optionItem/optionItem.mock';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserAccountsService, IAddRoleToUserRequest } from '@/services/user-accounts/entity';
 import { httpClient } from '@/services/httpClient';
 import {
@@ -11,14 +13,17 @@ import {
 } from '@/entities/user-account';
 import { IUserAccountEntityState } from './userAccountEntity.types';
 import { UserAccountEntityModule } from './userAccountEntity';
+import { OptionItemsService } from '@/services/optionItems';
+import { OptionItem } from '@/entities/optionItem';
 
 const service = new UserAccountsService(httpClient);
-const module = new UserAccountEntityModule(service);
+const optionsService = new OptionItemsService(httpClient);
+const module = new UserAccountEntityModule(service, optionsService);
 
 const actionContext = {
   commit: jest.fn(),
   dispatch: jest.fn(),
-  state: null,
+  state: {} as IUserAccountEntityState,
   getters: {},
   rootState: null,
   rootGetters: {},
@@ -93,6 +98,18 @@ describe('User account entity module', () => {
         expect(actionContext.commit).toBeCalledWith('setCurrentUserAccount', res);
       });
     });
+
+    describe('fetchRoles', () => {
+      it('should call option service getOptionList and commit the result', async () => {
+        const res = mockOptionItems();
+        module.optionsService.getOptionList = jest.fn(() => Promise.resolve(res));
+
+        await module.actions.fetchRoles(actionContext);
+
+        expect(module.optionsService.getOptionList).toBeCalledTimes(1);
+        expect(actionContext.commit).toBeCalledWith('setRoles', res);
+      });
+    });
   });
 
   describe('getters', () => {
@@ -105,6 +122,17 @@ describe('User account entity module', () => {
         expect(res).toEqual([userAccount.filters[2]]);
       });
     });
+
+    describe('roles', () => {
+      it('returns the roles list', () => {
+        module.mutations.setRoles(module.state, mockOptionItems());
+        const res = module.getters.roles(module.state);
+        expect(res).toEqual(_sortBy(
+          mockOptionItems().map((e) => new OptionItem(e)),
+          'orderRank',
+        ));
+      });
+    });
   });
 
   describe('mutations', () => {
@@ -113,6 +141,21 @@ describe('User account entity module', () => {
         const entity = mockUserAccountEntity();
         module.mutations.setCurrentUserAccount(module.state, entity);
         expect(module.state.currentUserAccount).toEqual(entity);
+      });
+    });
+
+    describe('setRoles', () => {
+      it('should set roles', () => {
+        const roles = mockOptionItems();
+        module.mutations.setRoles(module.state, roles);
+        expect(module.state.roles).toEqual(roles);
+      });
+    });
+
+    describe('setRolesFetched', () => {
+      it('should set rolesFetched', () => {
+        module.mutations.setRolesFetched(module.state, true);
+        expect(module.state.rolesFetched).toEqual(true);
       });
     });
   });

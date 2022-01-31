@@ -1,3 +1,4 @@
+import { mockOptionItems } from '@/entities/optionItem';
 /**
  * @group storage
  */
@@ -60,6 +61,12 @@ describe('>>> User Account Storage', () => {
 
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCurrentUserAccount`);
     });
+
+    it('should proxy fetchRoles', () => {
+      storage.actions.fetchRoles();
+
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchRoles`);
+    });
   });
 
   describe('>> Getters', () => {
@@ -68,6 +75,13 @@ describe('>>> User Account Storage', () => {
         store.commit(`${entityModuleName}/setCurrentUserAccount`, mockUserAccountEntity());
         const storageGetter = storage.getters.currentUserFiltersByKey(FilterKey.CaseFiles);
         const storeGetter = store.getters[`${entityModuleName}/currentUserFiltersByKey`](FilterKey.CaseFiles);
+        expect(storageGetter).toEqual(storeGetter);
+      });
+
+      it('should proxy roles', () => {
+        store.commit(`${entityModuleName}/setRoles`, mockOptionItems());
+        const storageGetter = storage.getters.roles();
+        const storeGetter = store.getters[`${entityModuleName}/roles`];
         expect(storageGetter).toEqual(storeGetter);
       });
     });
@@ -79,6 +93,11 @@ describe('>>> User Account Storage', () => {
         const payload = mockUserAccountEntity();
         storage.mutations.setCurrentUserAccount(payload);
         expect(store.commit).toBeCalledWith(`${entityModuleName}/setCurrentUserAccount`, payload);
+      });
+
+      it('should proxy setRolesFetched', () => {
+        storage.mutations.setRolesFetched(true);
+        expect(store.commit).toBeCalledWith(`${entityModuleName}/setRolesFetched`, true);
       });
     });
   });

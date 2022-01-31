@@ -1,3 +1,4 @@
+import { IOptionItem } from '@/entities/optionItem';
 import {
   FilterKey, IFilter, IUserAccountEntity, IUserAccountMetadata,
 } from '@/entities/user-account';
@@ -17,6 +18,7 @@ export interface IActions extends IBaseActions<IUserAccountEntity, IUserAccountM
   deleteFilter(filter: IFilter): Promise<IUserAccountEntity>;
   assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity>;
   fetchCurrentUserAccount(): Promise<IUserAccountEntity>;
+  fetchRoles(): Promise<IOptionItem[]>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<IUserAccountEntity, IUserAccountMetadata> {
@@ -25,22 +27,27 @@ export interface IActionsMock extends IBaseActionsMock<IUserAccountEntity, IUser
   deleteFilter: jest.Mock<IUserAccountEntity>
   assignRole: jest.Mock<IUserAccountEntity>
   fetchCurrentUserAccount: jest.Mock<IUserAccountEntity>
+  fetchRoles: jest.Mock<IOptionItem[]>;
 }
 
 export interface IGetters extends IBaseGetters<IUserAccountEntity, IUserAccountMetadata> {
   currentUserFiltersByKey(key: FilterKey): IFilter[];
+  roles(): IOptionItem[];
 }
 
 export interface IGettersMock extends IBaseGettersMock<IUserAccountEntity, IUserAccountMetadata> {
   currentUserFiltersByKey: jest.Mock<IFilter[]>,
+  roles: jest.Mock<IOptionItem[]>,
 }
 
 export interface IMutations extends IBaseMutations<IUserAccountEntity, IUserAccountMetadata> {
  setCurrentUserAccount(payload: IUserAccountEntity): void;
+ setRolesFetched(payload: boolean): void;
 }
 
 export interface IMutationsMock extends IBaseMutationsMock<IUserAccountEntity, IUserAccountMetadata> {
   setCurrentUserAccount: jest.Mock<void>
+  setRolesFetched: jest.Mock<void>
 }
 
 export interface IStorageMake {
