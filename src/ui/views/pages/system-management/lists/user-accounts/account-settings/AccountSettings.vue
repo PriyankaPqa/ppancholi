@@ -174,6 +174,7 @@ import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
   IOptionItem, IOptionSubItem,
 } from '@/entities/optionItem';
+import helpers from '@/ui/helpers/helpers';
 
 import { Status } from '@/entities/base';
 
@@ -188,18 +189,7 @@ export default Vue.extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.roleHasChanged) {
-      const leavingConfirmed = await this.$confirm({
-        title: this.$t('confirmLeaveDialog.title'),
-        messages: [this.$t('confirmLeaveDialog.message_1'), this.$t('confirmLeaveDialog.message_2')],
-      });
-
-      if (leavingConfirmed) {
-        next();
-      }
-    } else {
-      next();
-    }
+    await helpers.confirmBeforeLeaving(this, this.roleHasChanged, next);
   },
 
   data() {

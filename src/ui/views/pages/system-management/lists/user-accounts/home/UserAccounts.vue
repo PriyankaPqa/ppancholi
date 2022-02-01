@@ -155,6 +155,7 @@ import routes from '@/constants/routes';
 import { IUserAccountCombined, IUserAccountEntity } from '@/entities/user-account';
 import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
+import helpers from '@/ui/helpers/helpers';
 
 export default Vue.extend({
   name: 'UserAccounts',
@@ -168,18 +169,7 @@ export default Vue.extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.modifiedUsers.length) {
-      const leavingConfirmed = await this.$confirm({
-        title: this.$t('confirmLeaveDialog.title'),
-        messages: [this.$t('confirmLeaveDialog.message_1'), this.$t('confirmLeaveDialog.message_2')],
-      });
-
-      if (leavingConfirmed) {
-        next();
-      }
-    } else {
-      next();
-    }
+    await helpers.confirmBeforeLeaving(this, !!this.modifiedUsers.length, next);
   },
 
   data() {
