@@ -228,7 +228,7 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
 
     const { primary }: any = lightTheme;
     primary.base = colours.primary;
-    primary.lighten1 = colours.primaryLight;
+    primary.lighten2 = colours.primaryLight;
     primary.darken1 = colours.primaryDark;
 
     const { secondary }: any = lightTheme;
