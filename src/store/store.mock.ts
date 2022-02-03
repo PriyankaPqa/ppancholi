@@ -17,6 +17,9 @@ import { ERegistrationMode } from '@crctech/registration-lib/src/types';
 import * as vuexModule from '@/constants/vuex-modules';
 import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
 import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata/index';
+import { TenantSettingsEntityModule } from '@crctech/registration-lib/src/store/modules/tenantSettings/tenantSettingsEntity';
+import { TenantSettingsService } from '@crctech/registration-lib/src/services/tenantSettings/entity';
+import vuetify from '@/ui/plugins/vuetify/vuetify';
 
 const i18n = {
   t: jest.fn(),
@@ -31,6 +34,8 @@ const mockConfig = {
     }),
     [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
     [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
+    [vuexModule.TENANT_SETTINGS_ENTITIES]:
+    new TenantSettingsEntityModule(new TenantSettingsService(httpClient), vuetify).getModule(),
   },
 };
 

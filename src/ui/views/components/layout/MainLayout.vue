@@ -18,6 +18,7 @@ import _isEmpty from 'lodash/isEmpty';
 import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
 import { EEventStatus, IEvent } from '@crctech/registration-lib/src/entities/event';
+import { SUPPORTED_LANGUAGES } from '@/constants/trans';
 
 export default Vue.extend({
   name: 'MainLayout',
@@ -78,20 +79,15 @@ export default Vue.extend({
         this.$storage.registration.actions.fetchGenders(),
         this.$storage.registration.actions.fetchPreferredLanguages(),
         this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
-        this.fetchFeatures(),
+        this.$storage.tenantSettings.actions.fetchPublicFeatures(),
+        this.$storage.tenantSettings.actions.fetchBranding(),
+        SUPPORTED_LANGUAGES.map((lang) => this.$storage.tenantSettings.actions.fetchLogoUrl(lang)),
       ]).then(() => {
         this.fetchingData = false;
       }).catch((error) => {
         this.fetchingData = false;
         this.$appInsights.trackException(error, {}, 'MainLayout', 'fetchData');
       });
-    },
-
-    async fetchFeatures() {
-      const features = await this.$services.publicApi.getPublicFeatures();
-      if (features) {
-        this.$storage.registration.mutations.setFeatures(features);
-      }
     },
   },
 });

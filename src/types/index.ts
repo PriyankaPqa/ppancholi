@@ -5,12 +5,10 @@
 import Vue from 'vue';
 
 export type { IOptionItemData } from './interfaces/IOptionItemData';
-export type { IRestResponse } from './interfaces/IRestResponse';
 export type { IMultilingual } from './interfaces/IMultilingual';
 export type { INavigationTab } from './interfaces/INavigationTab';
 export type { ISearchData } from './interfaces/ISearchData';
 export type { IEntity } from './interfaces/IEntity';
-export type { IAzureSearchResult } from './interfaces/IAzureSearchResult';
 export type { IAzureSearchParams } from './interfaces/IAzureSearchParams';
 
 /**

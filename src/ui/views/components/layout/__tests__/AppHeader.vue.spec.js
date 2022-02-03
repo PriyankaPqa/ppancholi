@@ -22,17 +22,6 @@ describe('AppHeader.vue', () => {
       });
     });
 
-    test('The logo is displayed correctly by changing the system language', async () => {
-      const element = wrapper.find('[data-test="registration-portal-logo"]');
-      expect(element.classes('logoEn')).toBeTruthy();
-
-      wrapper.vm.$i18n.locale = 'fr';
-
-      await wrapper.vm.$nextTick();
-
-      expect(element.classes('logoFr')).toBeTruthy();
-    });
-
     test('The event name is displayed correctly', async () => {
       const element = wrapper.find('[data-test="registration-portal-toolbar-event-name"]');
       expect(element.exists()).toBe(true);
@@ -74,6 +63,17 @@ describe('AppHeader.vue', () => {
         mocks: {
           $storage: storage,
         },
+      });
+    });
+    describe('logoUrl', () => {
+      it('should return the logoUrl', () => {
+        expect(wrapper.vm.logoUrl).toEqual(wrapper.vm.$storage.tenantSettings.getters.logoUrl('en'));
+      });
+    });
+
+    describe('branding', () => {
+      it('should return the branding', () => {
+        expect(wrapper.vm.branding).toEqual(wrapper.vm.$storage.tenantSettings.getters.branding());
       });
     });
     describe('event', () => {

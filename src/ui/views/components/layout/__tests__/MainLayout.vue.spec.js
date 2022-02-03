@@ -90,7 +90,7 @@ describe('MainLayout.vue', () => {
           wrapper.vm.fetchFeatures = jest.fn();
 
           await wrapper.vm.fetchData();
-          expect(wrapper.vm.fetchFeatures).toHaveBeenCalled();
+          expect(wrapper.vm.$storage.tenantSettings.actions.fetchPublicFeatures).toHaveBeenCalled();
         });
 
         it('tracks exception', async () => {
@@ -105,18 +105,6 @@ describe('MainLayout.vue', () => {
           await wrapper.vm.fetchData();
 
           expect(wrapper.vm.$appInsights.trackException).toHaveBeenCalledWith(testError, {}, 'MainLayout', 'fetchData');
-        });
-      });
-
-      describe('fetchFeatures', () => {
-        it('calls service', async () => {
-          await wrapper.vm.fetchFeatures();
-          expect(wrapper.vm.$services.publicApi.getPublicFeatures).toHaveBeenCalled();
-        });
-
-        it('sets features', async () => {
-          await wrapper.vm.fetchFeatures();
-          expect(wrapper.vm.$storage.registration.mutations.setFeatures).toHaveBeenCalled();
         });
       });
     });

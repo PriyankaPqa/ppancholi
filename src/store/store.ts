@@ -9,8 +9,11 @@ import { httpClient } from '@/services/httpClient';
 import * as vuexModule from '@/constants/vuex-modules';
 import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
 import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
-import { tabs } from './modules/registration/tabs';
+import { TenantSettingsEntityModule } from '@crctech/registration-lib/src/store/modules/tenantSettings/tenantSettingsEntity';
+import { TenantSettingsService } from '@crctech/registration-lib/src/services/tenantSettings/entity';
+import vuetify from '@/ui/plugins/vuetify/vuetify';
 import { IRootState } from './store.types';
+import { tabs } from './modules/registration/tabs';
 
 Vue.use(Vuex);
 
@@ -25,6 +28,10 @@ const store: StoreOptions<IRootState> = {
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n, tabs: tabs(), skipAgeRestriction: false, skipEmailPhoneRules: false, mode: ERegistrationMode.Self,
     }),
+    [vuexModule.TENANT_SETTINGS_ENTITIES]: new TenantSettingsEntityModule(
+      new TenantSettingsService(httpClient),
+      vuetify,
+    ).getModule(),
   },
 };
 

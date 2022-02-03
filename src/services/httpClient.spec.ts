@@ -5,9 +5,10 @@ import camelCaseKeys from 'camelcase-keys';
 import axios from 'axios';
 import { Toasted } from 'vue-toasted';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
-import { mockHttp } from '@/services/httpClient.mock';
 import { i18n } from '@/ui/plugins/i18n';
-import { HttpClient, IRestResponse } from './httpClient';
+import { mockHttp } from '@crctech/registration-lib/src/services/httpClient.mock';
+import { IRestResponse } from '@crctech/registration-lib/src/types';
+import { HttpClient } from './httpClient';
 
 jest.mock('uuid');
 jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
@@ -96,6 +97,18 @@ describe('httpClient', () => {
     });
 
     describe('responseSuccessHandler', () => {
+      it('returns original response if response is expected to download', () => {
+        const response = {
+          headers: {
+            'content-disposition': 'attachment',
+          },
+        };
+
+        const result = mockHttpClient.responseSuccessHandler(response);
+
+        expect(result).toEqual(response);
+      });
+
       it('returns camelCase format of response if response is not expected to download', () => {
         const response = {
           headers: {

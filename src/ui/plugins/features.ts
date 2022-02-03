@@ -8,7 +8,7 @@ export type VuePlugin = Vue & {
 export default {
   install: (V: typeof Vue) => {
     function hasFeature(this: Vue, featureKey: FeatureKeys) {
-      return this.$storage.registration.getters.isFeatureEnabled(featureKey);
+      return this.$storage.tenantSettings.getters.isFeatureEnabled(featureKey);
     }
 
     V.prototype.$hasFeature = hasFeature;

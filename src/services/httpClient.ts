@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ISearchData } from '@/types';
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import buildQuery from 'odata-query';
 import camelCaseKeys from 'camelcase-keys';
@@ -8,40 +8,9 @@ import { v4 as uuidv4 } from 'uuid';
 import Vue from 'vue';
 import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@/ui/helpers';
-
-export interface IRestResponse<T> {
-  success: boolean;
-  status: number;
-  statusText: string;
-  data: T;
-}
-
-export interface IError {
-  status: string,
-  code: string,
-  title: string,
-  detail: string,
-  meta: Record<string, string>
-}
-
-export interface RequestConfig extends AxiosRequestConfig {
-  globalHandler?: boolean;
-  noErrorLogging?: boolean;
-  isOData?: boolean;
-  containsEncodedURL?: boolean;
-}
-
-export interface IHttpClient {
-  getFullResponse: <T>(url: string, config?: RequestConfig) => Promise<IRestResponse<T>>;
-  postFullResponse: <T>(url: string, data?: any, config?: RequestConfig) => Promise<IRestResponse<T>>;
-  get: <T>(url: string, config?: RequestConfig) => Promise<T>;
-  post: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
-  patch: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
-  put: <T>(url: string, data?: any, config?: RequestConfig) => Promise<T>;
-  delete: <T>(url: string, config?: RequestConfig) => Promise<T>;
-  setHeadersLanguage(lang: string): void;
-  setHeadersTenant(tenantId: string): void;
-}
+import {
+  IError, IHttpClient, IRestResponse, RequestConfig,
+} from '@crctech/registration-lib/src/services/httpClient';
 
 export class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
@@ -56,9 +25,7 @@ export class HttpClient implements IHttpClient {
       },
     });
 
-    this.axios.interceptors.request.use(
-      (request) => this.requestHandler(request),
-    );
+    this.axios.interceptors.request.use((request) => this.requestHandler(request));
 
     this.axios.interceptors.response.use(
       (response) => this.responseSuccessHandler(response),
@@ -84,6 +51,15 @@ export class HttpClient implements IHttpClient {
     if (this.isGlobalHandlerEnabled(response.config)) {
       // Add what you want when request is successful. It is applied globally except when { globalHandler: false }
     }
+
+    if (
+      response?.headers
+      && response.headers['content-disposition']
+      && response.headers['content-disposition'].toLowerCase().indexOf('attachment') > -1
+    ) {
+      return response;
+    }
+
     return camelCaseKeys(response, { deep: true });
   }
 
@@ -182,6 +158,43 @@ export class HttpClient implements IHttpClient {
   public async delete<T>(url: string, data?: any): Promise<T> {
     const response: IRestResponse<T> = await this.axios.delete(url, data);
     return response.data;
+  }
+
+  public getFormattedError(error: IError): string {
+    /*
+      expected error object looks like this
+      error.meta: Record<string, string | IMultilingual>
+
+      so it could be this:
+      error.meta = { 'PaymentModality' :{ translation: {'en': 'my english value', 'fr': 'en francais c toujours mieux'} }}
+      or
+      error.meta = { 'MaxValue' : '128'}
+
+      with a lokalise text that would be something like 'This is my {PaymentModality}'
+    */
+
+    // take error.code if we have it translated...
+    let text = (i18n.te(error.code) ? i18n.t(error.code) : i18n.t(`${error.title || error.code}`)) as string;
+    let { locale } = i18n;
+
+    if (locale !== 'en' && locale !== 'fr') {
+      locale = 'en';
+    }
+
+    if (error.meta) {
+      for (let i = 0; i < Object.keys(error.meta).length; i += 1) {
+        const key = Object.keys(error.meta)[i];
+        const val = error.meta[key];
+        if (typeof val !== 'object') {
+          // if it's a string, replace it directly
+          text = text.replace(new RegExp(`{${key}}`, 'gi'), val);
+        } else {
+          // if it's a multilingual, we use the translation
+          text = text.replace(new RegExp(`{${key}}`, 'gi'), (val && val.translation && val.translation[locale]) || '');
+        }
+      }
+    }
+    return text;
   }
 }
 

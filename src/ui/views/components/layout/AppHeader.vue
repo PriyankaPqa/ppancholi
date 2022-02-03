@@ -8,7 +8,13 @@
       data-test="left-menu-trigger"
       @click.stop="toggleLeftMenu" />
 
-    <div :class="$i18n.locale === 'en' ? 'logoEn' : 'logoFr'" data-test="registration-portal-logo" />
+    <v-toolbar-title class="pl-0">
+      <img alt="logo" :src="logoUrl" class="logo" data-test="registration-portal-logo">
+    </v-toolbar-title>
+    <div v-if="branding && branding.showName" class="branding-name">
+      <v-divider vertical class="mx-5" />
+      <span class="rc-heading-4">{{ $m(branding.name) }}</span>
+    </div>
 
     <v-spacer />
 
@@ -38,6 +44,7 @@ import { RcPhoneDisplay } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers';
 import { IEvent } from '@crctech/registration-lib/src/entities/event';
+import { IBrandingEntity } from '@crctech/registration-lib/src/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -54,6 +61,14 @@ export default Vue.extend({
   },
 
   computed: {
+    logoUrl(): string {
+      return this.$storage.tenantSettings.getters.logoUrl(this.$i18n.locale);
+    },
+
+    branding(): IBrandingEntity {
+      return this.$storage.tenantSettings.getters.branding();
+    },
+
     event(): IEvent {
       return this.$storage.registration.getters.event();
     },
@@ -62,7 +77,7 @@ export default Vue.extend({
       return this.event ? this.$m(this.event.name) : '';
     },
 
-    eventPhoneNumber() : string {
+    eventPhoneNumber(): string {
       return this.event?.responseDetails?.assistanceNumber;
     },
 
@@ -84,37 +99,28 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-$url-logo: '../../../../../public/img/logo.png';
-$url-rc-en-logo: '../../../../../public/img/logos/rc/rc-en.svg';
-$url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
-
-.logoEn {
+.logo {
   background-size: cover;
-  background-image: url($url-rc-en-logo);
-  margin-right: 10px;
-}
-
-.logoFr {
-  background-size: cover;
-  background-image: url($url-rc-fr-logo);
-  margin-right: 10px;
 }
 
 @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
-  .logoEn,
-  .logoFr {
-    background-image: url($url-logo);
-    min-width: 30px;
-    width: 30px;
-    height: 30px;
+  .logo {
+      max-width: 80px;
+      max-height: 40px;
+  }
+
+  .branding-name {
+    display: none;
   }
 }
 @media only screen and (min-width: $breakpoint-sm-min) and (max-width: $breakpoint-sm-max) {
-  .logoEn,
-  .logoFr {
-    min-width: 140px;
-    width: 140px;
-    height: 56px;
+  .logo {
+    max-width: 133px;
+    max-height: 48px;
+  }
+
+  .branding-name {
+    display: none;
   }
 
   .toolbar-title {
@@ -123,11 +129,9 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
   }
 }
 @media only screen and (min-width: $breakpoint-md-min) and (max-width: $breakpoint-md-max) {
-  .logoEn,
-  .logoFr {
-    width: 140px;
-    min-width: 140px;
-    height: 56px;
+  .logo {
+    max-width: 133px;
+    max-height: 48px;
   }
 
   .toolbar-title {
@@ -136,11 +140,9 @@ $url-rc-fr-logo: '../../../../../public/img/logos/rc/rc-fr.svg';
   }
 }
 @media only screen and (min-width: $breakpoint-lg-min) {
-  .logoEn,
-  .logoFr {
-    min-width: 160px;
-    width: 160px;
-    height: 64px;
+  .logo {
+    max-width: 160px;
+    max-height: 64px;
   }
 
   .toolbar-title {
