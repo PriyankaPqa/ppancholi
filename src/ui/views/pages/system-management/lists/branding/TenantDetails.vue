@@ -91,7 +91,7 @@ import { VTextFieldWithValidation, VCheckboxWithValidation, VTextAreaWithValidat
 import _isEqual from 'lodash/isEqual';
 import entityUtils from '@/entities/utils';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
-import { IEditTenantDetailsRequest, ITenantDetailsEntity } from '@/entities/branding';
+import { IEditTenantDetailsRequest, ITenantDetailsEntity } from '@/entities/tenantSettings';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 
 export default Vue.extend({
@@ -122,7 +122,7 @@ export default Vue.extend({
 
   computed: {
     tenantDetails(): ITenantDetailsEntity {
-      return this.$storage.branding.getters.branding() as ITenantDetailsEntity;
+      return this.$storage.tenantSettings.getters.currentTenantSettings().branding as ITenantDetailsEntity;
     },
 
     rules(): Record<string, unknown> {
@@ -171,7 +171,7 @@ export default Vue.extend({
         hideName: !this.tempTenantDetails.showName,
       };
 
-      const result = await this.$storage.branding.actions.updateTenantDetails(editTenantDetailsRequest);
+      const result = await this.$storage.tenantSettings.actions.updateTenantDetails(editTenantDetailsRequest);
 
       if (result) {
         this.exitEditMode();

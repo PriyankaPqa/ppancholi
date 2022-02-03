@@ -1,6 +1,8 @@
 import { BaseEntity } from '@/entities/base/base';
 import { IMultilingual } from '@/types';
-import { IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData } from './tenantSettings.types';
+import {
+  IBrandingEntity, IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData,
+} from './tenantSettings.types';
 
 export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsEntity {
   slug: string;
@@ -12,6 +14,8 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
   availableLanguages: Array<string>;
 
   features: Array<IFeatureEntity>;
+
+  branding: IBrandingEntity;
 
   constructor(data?: ITenantSettingsEntityData) {
     super(data);
@@ -32,5 +36,10 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
     this.availableLanguages = data?.availableLanguages || [];
 
     this.features = data?.features || [];
+
+    if (data?.branding) {
+      this.branding = data.branding;
+      this.branding.showName = !data.branding.hideName;
+    }
   }
 }

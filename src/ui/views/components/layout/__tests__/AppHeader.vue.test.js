@@ -4,7 +4,7 @@
 
 import Vuetify from 'vuetify';
 import { mockStorage } from '@/store/storage';
-import { mockBrandingEntity } from '@/entities/branding';
+import { mockBrandingEntity } from '@/entities/tenantSettings';
 import {
   createLocalVue,
   mount,
@@ -66,13 +66,13 @@ describe('AppHeader.vue', () => {
 
     describe('logoUrl', () => {
       it('should return the logoUrl', () => {
-        expect(wrapper.vm.logoUrl).toEqual(wrapper.vm.$storage.branding.getters.logoUrl('en'));
+        expect(wrapper.vm.logoUrl).toEqual(wrapper.vm.$storage.tenantSettings.getters.logoUrl('en'));
       });
     });
 
     describe('branding', () => {
       it('should return the branding', () => {
-        expect(wrapper.vm.branding).toEqual(wrapper.vm.$storage.branding.getters.branding());
+        expect(wrapper.vm.branding).toEqual(wrapper.vm.$storage.tenantSettings.getters.currentTenantSettings().branding);
       });
     });
   });

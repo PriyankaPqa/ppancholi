@@ -18,7 +18,6 @@ import { CaseFileReferralStorage } from './case-file-referral';
 import { CaseFileDocumentStorage } from './case-file-document';
 import { FinancialAssistanceCategoryStorage } from './financial-assistance-category';
 import { FinancialAssistancePaymentStorage } from './financial-assistance-payment';
-import { BrandingStorage } from './branding/storage';
 import { TenantSettingsStorage } from './tenantSettings';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
@@ -46,10 +45,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     store,
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES,
     vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA,
-  ).make(),
-  branding: new BrandingStorage(
-    store,
-    vuexModule.BRANDING_ENTITIES,
   ).make(),
   tenantSettings: new TenantSettingsStorage(
     store,

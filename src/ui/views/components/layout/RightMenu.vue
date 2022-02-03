@@ -153,8 +153,9 @@
 import Vue from 'vue';
 import { IUser, NO_ROLE } from '@/entities/user';
 import routes from '@/constants/routes';
-import { IBrandingEntity } from '@/entities/branding';
+import { IBrandingEntity } from '@/entities/tenantSettings';
 import { IUserAccountCombined } from '@/entities/user-account';
+import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -163,7 +164,7 @@ export default Vue.extend({
     return {
       NO_ROLE,
       userAccount: null as IUserAccountCombined,
-      tenantIds: [] as string[],
+      tenants: [] as IBrandingEntity[],
       currentTenantId: null as string,
     };
   },
@@ -175,9 +176,6 @@ export default Vue.extend({
     user(): IUser {
       return this.$storage.user.getters.user();
     },
-    tenants(): IBrandingEntity[] {
-      return this.$storage.branding.getters.getByIds(this.tenantIds, { onlyActive: true }).map((e) => e.entity);
-    },
     isDev() {
       return process.env.NODE_ENV === 'development';
     },
@@ -187,7 +185,8 @@ export default Vue.extend({
     this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId(),
       { useEntityGlobalHandler: false, useMetadataGlobalHandler: false });
     this.currentTenantId = this.userAccount.entity?.tenantId;
-    this.tenantIds = (await this.$storage.branding.actions.getUserTenants()).map((t) => t.id);
+    this.tenants = await this.$storage.tenantSettings.actions.fetchUserTenants();
+    this.tenants = this.tenants.filter((t) => t.status === Status.Active);
     (await this.$storage.tenantSettings.actions.fetchAll());
   },
 

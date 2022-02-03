@@ -4,7 +4,7 @@ import { RouteConfig } from 'vue-router';
 import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
 import {
-  USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, BRANDING_ENTITIES,
+  USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, TENANT_SETTINGS_ENTITIES,
 } from '@/constants/vuex-modules';
 import Routes from '../../constants/routes';
 import { SignalR } from '../plugins/signalR';
@@ -127,9 +127,8 @@ export const routes: Array<RouteConfig> = [
         const userAccount = await store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`);
         if (userAccount) {
           await Promise.all([
-            store.dispatch(`${BRANDING_ENTITIES}/getBranding`),
-            store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'en'),
-            store.dispatch(`${BRANDING_ENTITIES}/getLogoUrl`, 'fr'),
+            store.dispatch(`${TENANT_SETTINGS_ENTITIES}/fetchLogoUrl`, 'en'),
+            store.dispatch(`${TENANT_SETTINGS_ENTITIES}/fetchLogoUrl`, 'fr'),
           ]);
           await SignalR.instance.buildHubConnection();
         }

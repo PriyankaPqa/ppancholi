@@ -165,7 +165,7 @@ export default mixins(fileUpload).extend({
     },
 
     getLogoUrlFromStore(key: string) {
-      return this.$storage.branding.getters.logoUrl(key);
+      return this.$storage.tenantSettings.getters.logoUrl(key);
     },
 
     async upload() {
@@ -174,10 +174,10 @@ export default mixins(fileUpload).extend({
       formData.set('file', this.file);
 
       this.loading = true;
-      await this.uploadForm(formData, 'system-management/brandings/logo');
+      await this.uploadForm(formData, 'system-management/tenant-settings/logo');
 
       if (this.uploadSuccess) {
-        await this.$storage.branding.actions.getLogoUrl(this.currentLogoLanguage);
+        await this.$storage.tenantSettings.actions.fetchLogoUrl(this.currentLogoLanguage);
         this.exitEditMode();
       } else {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

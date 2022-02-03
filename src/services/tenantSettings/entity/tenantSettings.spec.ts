@@ -2,7 +2,12 @@
  * @group services
  */
 
-import { mockCreateTenantSettingsRequest, mockSetDomainsRequest } from '@/entities/tenantSettings';
+import {
+  mockCreateTenantSettingsRequest,
+  mockEditColoursRequest,
+  mockEditTenantDetailsRequest,
+  mockSetDomainsRequest,
+} from '@/entities/tenantSettings';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { TenantSettingsService } from './tenantSettings';
 
@@ -59,6 +64,45 @@ describe('>>> TenantSettings service', () => {
       const featureId = 'MOCK_ID';
       await service.disableFeature(featureId);
       expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/feature/${featureId}/disable`);
+    });
+  });
+
+  describe('getUserTenants', () => {
+    it('is linked to the correct url', async () => {
+      await service.getUserTenants();
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenants/brandings', { globalHandler: false });
+    });
+  });
+
+  describe('updateColours', () => {
+    it('is linked to the correct url', async () => {
+      await service.updateColours(mockEditColoursRequest());
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/colours', mockEditColoursRequest());
+    });
+  });
+
+  describe('updateTenantDetails', () => {
+    it('is linked to the correct url', async () => {
+      await service.updateTenantDetails(mockEditTenantDetailsRequest());
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/tenant-details', mockEditTenantDetailsRequest());
+    });
+  });
+
+  describe('getLogoUrl', () => {
+    it('is linked to the correct url', async () => {
+      http.getFullResponse = jest.fn(() => Promise.resolve({
+        data: 'data',
+        headers: {},
+      }));
+
+      window.URL.createObjectURL = jest.fn();
+
+      await service.getLogoUrl('en');
+
+      expect(http.getFullResponse).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/logo/en', {
+        responseType: 'blob',
+        globalHandler: false,
+      });
     });
   });
 });

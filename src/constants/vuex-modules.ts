@@ -27,5 +27,4 @@ export const MASS_ACTION_METADATA = 'massActionMetadata';
 export const FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES = 'financialAssistanceCategoryEntities';
 export const FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES = 'financialAssistancePaymentEntities';
 export const FINANCIAL_ASSISTANCE_PAYMENT_METADATA = 'financialAssistancePaymentMetadata';
-export const BRANDING_ENTITIES = 'brandingEntities';
 export const TENANT_SETTINGS_ENTITIES = 'tenantSettingsEntities';

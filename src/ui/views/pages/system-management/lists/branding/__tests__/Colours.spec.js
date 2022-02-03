@@ -4,7 +4,7 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import Component from '../Colours.vue';
-import { mockBrandingEntity, mockEditColoursRequest } from '@/entities/branding';
+import { mockBrandingEntity, mockEditColoursRequest } from '@/entities/tenantSettings';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -48,7 +48,7 @@ describe('Colours.vue', () => {
       it('compares the colours with store', async () => {
         const { colours } = mockEditColoursRequest();
 
-        jest.spyOn(storage.branding.getters, 'branding').mockImplementation(() => ({ colours }));
+        jest.spyOn(storage.tenantSettings.getters, 'currentTenantSettings').mockImplementation(() => ({ branding: { colours } }));
 
         await wrapper.setData({
           colours: [
@@ -149,7 +149,7 @@ describe('Colours.vue', () => {
 
         await wrapper.vm.saveEdit();
 
-        expect(storage.branding.actions.updateColours).toHaveBeenCalledWith({
+        expect(storage.tenantSettings.actions.updateColours).toHaveBeenCalledWith({
           colours: {
             primary: 'primary',
             primaryLight: 'primaryLight',

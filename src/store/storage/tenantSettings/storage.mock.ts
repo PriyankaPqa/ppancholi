@@ -1,5 +1,10 @@
 import {
-  ITenantSettingsCombined, ITenantSettingsEntity, mockCombinedTenantSettings, mockTenantSettingsEntity, mockTenantSettingsEntityData,
+  ITenantSettingsCombined,
+  ITenantSettingsEntity,
+  mockBrandingEntity,
+  mockCombinedTenantSettings,
+  mockTenantSettingsEntity,
+  mockTenantSettingsEntityData,
 } from '@/entities/tenantSettings';
 import { BaseMock } from '../base/base.mock';
 
@@ -12,15 +17,20 @@ export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined,
     ...this.baseGetters,
     currentTenantSettings: jest.fn(() => mockTenantSettingsEntity()),
     isFeatureEnabled: jest.fn(() => true),
+    logoUrl: jest.fn(),
   };
 
   protected actions = {
     ...this.baseActions,
-    getCurrentTenantSettings: jest.fn(() => mockTenantSettingsEntityData()),
+    fetchCurrentTenantSettings: jest.fn(() => mockTenantSettingsEntityData()),
     createTenantSettings: jest.fn(() => mockTenantSettingsEntityData()),
     createTenantDomains: jest.fn(() => mockTenantSettingsEntityData()),
     enableFeature: jest.fn(() => mockTenantSettingsEntityData()),
     disableFeature: jest.fn(() => mockTenantSettingsEntityData()),
+    fetchUserTenants: jest.fn(() => [mockBrandingEntity()]),
+    updateColours: jest.fn(() => mockTenantSettingsEntity()),
+    updateTenantDetails: jest.fn(() => mockTenantSettingsEntity()),
+    fetchLogoUrl: jest.fn(),
   };
 
   protected mutations = {

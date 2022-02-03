@@ -54,7 +54,7 @@ const featureGuard = async (to: Route) => {
   let featureEnabled = true;
   const { features } = store.getters[`${TENANT_SETTINGS_ENTITIES}/currentTenantSettings`] as ITenantSettingsEntity;
   if (!features?.length) {
-    await store.dispatch(`${TENANT_SETTINGS_ENTITIES}/getCurrentTenantSettings`);
+    await store.dispatch(`${TENANT_SETTINGS_ENTITIES}/fetchCurrentTenantSettings`);
   }
 
   if (to.meta.feature) {

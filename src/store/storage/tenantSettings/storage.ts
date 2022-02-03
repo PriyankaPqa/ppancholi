@@ -3,7 +3,8 @@ import { IStorage } from './storage.types';
 import { Base } from '../base';
 import {
   FeatureKeys,
-  ICreateTenantSettingsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
+  IBrandingEntity,
+  ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
 
 export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uuid> implements IStorage {
@@ -17,12 +18,14 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
     currentTenantSettings: () => this.store.getters[`${this.entityModuleName}/currentTenantSettings`],
 
     isFeatureEnabled: (featureKey: FeatureKeys): boolean => this.store.getters[`${this.entityModuleName}/isFeatureEnabled`](featureKey),
+
+    logoUrl: (languageCode: string) => this.store.getters[`${this.entityModuleName}/logoUrl`](languageCode),
   };
 
   private actions = {
     ...this.baseActions,
 
-    getCurrentTenantSettings: (): Promise<ITenantSettingsEntityData> => this.store.dispatch(`${this.entityModuleName}/getCurrentTenantSettings`),
+    fetchCurrentTenantSettings: (): Promise<ITenantSettingsEntityData> => this.store.dispatch(`${this.entityModuleName}/fetchCurrentTenantSettings`),
 
     createTenantSettings: (payload: ICreateTenantSettingsRequest):
       Promise<ITenantSettingsEntityData> => this.store.dispatch(`${this.entityModuleName}/createTenantSettings`, payload),
@@ -35,6 +38,16 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
 
     disableFeature: (featureId: uuid):
       Promise<ITenantSettingsEntityData> => this.store.dispatch(`${this.entityModuleName}/disableFeature`, featureId),
+
+    fetchUserTenants: (): Promise<IBrandingEntity[]> => this.store.dispatch(`${this.entityModuleName}/fetchUserTenants`),
+
+    updateColours: (payload: IEditColoursRequest):
+      Promise<ITenantSettingsEntity> => this.store.dispatch(`${this.entityModuleName}/updateColours`, payload),
+
+    updateTenantDetails: (payload: IEditTenantDetailsRequest):
+      Promise<ITenantSettingsEntity> => this.store.dispatch(`${this.entityModuleName}/updateTenantDetails`, payload),
+
+    fetchLogoUrl: (languageCode: string): Promise<string> => this.store.dispatch(`${this.entityModuleName}/fetchLogoUrl`, languageCode),
   };
 
   private mutations = {

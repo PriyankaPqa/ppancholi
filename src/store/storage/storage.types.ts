@@ -60,11 +60,6 @@ import {
 } from './financial-assistance-payment';
 
 import {
-  IStorageMake as IBrandingMakeStorage,
-  IStorageMakeMock as IBrandingMakeStorageMock,
-} from './branding';
-
-import {
   IStorageMake as ITenantSettingsMakeStorage,
   IStorageMakeMock as ITenantSettingsMakeStorageMock,
 } from './tenantSettings';
@@ -87,7 +82,6 @@ export interface IStorage {
   household: IStorageMake;
   userAccount: IUserAccountMakeStorage;
   massAction: IMassActionMakeStorage;
-  branding: IBrandingMakeStorage;
   tenantSettings: ITenantSettingsMakeStorage;
 }
 
@@ -109,6 +103,5 @@ export interface IStorageMock {
   household: IStorageMakeMock;
   userAccount: IUserAccountMakeStorageMock;
   massAction: IMassActionMakeStorageMock;
-  branding: IBrandingMakeStorageMock;
   tenantSettings: ITenantSettingsMakeStorageMock;
 }

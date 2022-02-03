@@ -123,7 +123,7 @@ describe('Logo.vue', () => {
 
     describe('getLogoUrlFromStore', () => {
       it('returns correct value', () => {
-        wrapper.vm.$storage.branding.getters.logoUrl = jest.fn(() => 'url');
+        wrapper.vm.$storage.tenantSettings.getters.logoUrl = jest.fn(() => 'url');
 
         expect(wrapper.vm.getLogoUrlFromStore('en')).toEqual('url');
       });
@@ -145,7 +145,7 @@ describe('Logo.vue', () => {
 
         await wrapper.vm.upload();
 
-        expect(wrapper.vm.$storage.branding.actions.getLogoUrl).toHaveBeenCalledTimes(1);
+        expect(wrapper.vm.$storage.tenantSettings.actions.fetchLogoUrl).toHaveBeenCalledTimes(1);
       });
     });
   });

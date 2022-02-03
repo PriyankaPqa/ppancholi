@@ -2,7 +2,7 @@
  * @group ui/components/system-management
  */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import { mockBrandingEntity } from '@/entities/branding';
+import { mockBrandingEntity } from '@/entities/tenantSettings';
 import entityUtils from '@/entities/utils';
 import { mockStorage } from '@/store/storage';
 import Component from '../TenantDetails.vue';
@@ -67,7 +67,7 @@ describe('TenantDetails.vue', () => {
   describe('Computed', () => {
     describe('tenantDetails', () => {
       it('returns correct value', () => {
-        expect(wrapper.vm.tenantDetails).toEqual(storage.branding.getters.branding());
+        expect(wrapper.vm.tenantDetails).toEqual(storage.tenantSettings.getters.currentTenantSettings().branding);
       });
     });
   });
@@ -147,7 +147,7 @@ describe('TenantDetails.vue', () => {
 
         await wrapper.vm.submit();
 
-        expect(storage.branding.actions.updateTenantDetails).toHaveBeenCalledWith({
+        expect(storage.tenantSettings.actions.updateTenantDetails).toHaveBeenCalledWith({
           ...mockBrandingEntity(),
           hideName: !mockBrandingEntity().showName,
         });

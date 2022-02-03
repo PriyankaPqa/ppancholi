@@ -91,7 +91,7 @@ export default Vue.extend({
 
   computed: {
     isDirty(): boolean {
-      const colors = this.$storage.branding.getters.branding().colours;
+      const colors = this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours;
       return (
         this.colours[0].value !== colors.primary
         || this.colours[1].value !== colors.primaryLight
@@ -135,7 +135,7 @@ export default Vue.extend({
     },
 
     resetColours() {
-      const colors = this.$storage.branding.getters.branding().colours;
+      const colors = this.$storage.tenantSettings.getters.currentTenantSettings().branding.colours;
       this.colours[0].value = colors.primary;
       this.colours[1].value = colors.primaryLight;
       this.colours[2].value = colors.primaryDark;
@@ -145,7 +145,7 @@ export default Vue.extend({
     async saveEdit() {
       this.loading = true;
 
-      const result = await this.$storage.branding.actions.updateColours({
+      const result = await this.$storage.tenantSettings.actions.updateColours({
         colours: {
           primary: this.colours[0].value,
           primaryLight: this.colours[1].value,

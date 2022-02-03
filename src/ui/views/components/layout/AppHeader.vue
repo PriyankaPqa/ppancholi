@@ -61,7 +61,7 @@ import Vue from 'vue';
 import { RcTooltip } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
-import { IBrandingEntity } from '@/entities/branding';
+import { IBrandingEntity } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'AppHeader',
@@ -91,11 +91,11 @@ export default Vue.extend({
     },
 
     logoUrl(): string {
-      return this.$storage.branding.getters.logoUrl(this.$i18n.locale);
+      return this.$storage.tenantSettings.getters.logoUrl(this.$i18n.locale);
     },
 
     branding(): IBrandingEntity {
-      return this.$storage.branding.getters.branding();
+      return this.$storage.tenantSettings.getters.currentTenantSettings().branding;
     },
   },
 

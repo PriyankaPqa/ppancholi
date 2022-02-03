@@ -9,9 +9,13 @@ import { TenantSettingsService } from '@/services/tenantSettings/entity';
 import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import {
   FeatureKeys,
+  IBrandingEntityData,
   IFeatureEntity,
   ITenantSettingsEntity,
+  mockBrandingEntityData,
   mockCreateTenantSettingsRequest,
+  mockEditColoursRequest,
+  mockEditTenantDetailsRequest,
   mockSetDomainsRequest,
   mockTenantSettingsEntity,
   mockTenantSettingsEntityData,
@@ -81,6 +85,18 @@ describe('>>> TenantSettings entity module', () => {
         expect(res).toBe(false);
       });
     });
+
+    describe('logoUrl', () => {
+      it('returns the correct url', () => {
+        module.state.logoUrl = {
+          en: 'url en',
+          fr: 'url fr',
+        };
+
+        expect(module.getters.logoUrl(module.state)('en')).toEqual('url en');
+        expect(module.getters.logoUrl(module.state)('fr')).toEqual('url fr');
+      });
+    });
   });
 
   describe('>> Mutations', () => {
@@ -92,15 +108,38 @@ describe('>>> TenantSettings entity module', () => {
 
         expect(module.state.currentTenantSettings).toEqual(new TenantSettingsEntity(tenantSettingsData));
       });
+
+      it('updates the theme', () => {
+        const tenantSettingsData = mockTenantSettingsEntityData();
+
+        module.updateTheme = jest.fn();
+
+        module.mutations.setCurrentTenantSettings(module.state, tenantSettingsData);
+
+        expect(module.updateTheme).toHaveBeenCalledWith(new TenantSettingsEntity(tenantSettingsData).branding);
+      });
+    });
+
+    describe('setLogoUrl', () => {
+      it('sets the logo url', () => {
+        const url = 'mock url';
+
+        module.mutations.setLogoUrl(module.state, {
+          languageCode: 'en',
+          url,
+        });
+
+        expect(module.state.logoUrl.en).toEqual('mock url');
+      });
     });
   });
 
   describe('>> Actions', () => {
-    describe('getCurrentTenantSettings', () => {
+    describe('fetchCurrentTenantSettings', () => {
       it('calls the getCurrentTenantSettings service', async () => {
         module.service.getCurrentTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.getCurrentTenantSettings(actionContext);
+        await module.actions.fetchCurrentTenantSettings(actionContext);
 
         expect(module.service.getCurrentTenantSettings).toHaveBeenCalledTimes(1);
       });
@@ -108,7 +147,7 @@ describe('>>> TenantSettings entity module', () => {
       it('commits the tenant settings', async () => {
         module.service.getCurrentTenantSettings = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
 
-        await module.actions.getCurrentTenantSettings(actionContext);
+        await module.actions.fetchCurrentTenantSettings(actionContext);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
       });
@@ -195,6 +234,94 @@ describe('>>> TenantSettings entity module', () => {
         await module.actions.disableFeature(actionContext, featureId);
 
         expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
+      });
+    });
+
+    describe('fetchUserTenants', () => {
+      it('calls the getUserTenants service', async () => {
+        module.service.getUserTenants = jest.fn();
+
+        await module.actions.fetchUserTenants();
+
+        expect(module.service.getUserTenants).toHaveBeenCalledTimes(1);
+      });
+
+      it('maps the brandings', async () => {
+        const mockData = [mockBrandingEntityData()];
+
+        module.service.getUserTenants = jest.fn(() => Promise.resolve(mockData));
+
+        const results = await module.actions.fetchUserTenants();
+
+        expect(results).toEqual(mockData.map((data: IBrandingEntityData) => ({
+          ...data,
+          showName: !data.hideName,
+        })));
+      });
+    });
+
+    describe('updateColours', () => {
+      it('calls the updateColours service', async () => {
+        const payload = mockEditColoursRequest();
+
+        module.service.updateColours = jest.fn();
+
+        await module.actions.updateColours(actionContext, payload);
+
+        expect(module.service.updateColours).toHaveBeenCalledWith(payload);
+      });
+
+      it('commits the tenantSettings', async () => {
+        const payload = mockEditColoursRequest();
+
+        module.service.updateColours = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+
+        await module.actions.updateColours(actionContext, payload);
+
+        expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
+      });
+    });
+
+    describe('updateTenantDetails', () => {
+      it('calls the updateTenantDetails service', async () => {
+        const payload = mockEditTenantDetailsRequest();
+
+        module.service.updateTenantDetails = jest.fn();
+
+        await module.actions.updateTenantDetails(actionContext, payload);
+
+        expect(module.service.updateTenantDetails).toHaveBeenCalledWith(payload);
+      });
+
+      it('commits the tenantSettings', async () => {
+        const payload = mockEditTenantDetailsRequest();
+
+        module.service.updateTenantDetails = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+
+        await module.actions.updateTenantDetails(actionContext, payload);
+
+        expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
+      });
+    });
+
+    describe('fetchLogoUrl', () => {
+      it('calls the getLogoUrl service', async () => {
+        module.service.getLogoUrl = jest.fn();
+
+        await module.actions.fetchLogoUrl(actionContext, 'en');
+
+        expect(module.service.getLogoUrl).toHaveBeenCalledWith('en');
+      });
+
+      it('commits the logoUrl', async () => {
+        module.service.getLogoUrl = jest.fn(() => Promise.resolve('mock url'));
+
+        await module.actions.fetchLogoUrl(actionContext, 'en');
+
+        expect(actionContext.commit).toBeCalledWith('setLogoUrl', {
+          languageCode: 'en',
+          url: 'mock url',
+        });
       });
     });
   });
