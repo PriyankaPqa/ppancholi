@@ -12,7 +12,7 @@ import {
   Configuration, LogLevel, CacheOptions
 } from "@azure/msal-browser";
 import {BrowserAuthOptions} from "@azure/msal-browser/dist/config/Configuration";
-import {localStorageKeys} from "@/constants/localStorage";
+import {localStorageKeys} from "../constants/localStorage";
 
 export interface Options extends Configuration {
   loginRedirectRequest?: RedirectRequest,

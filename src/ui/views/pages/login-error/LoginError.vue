@@ -26,18 +26,18 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
 
 export default Vue.extend({
   name: 'LoginError',
 
   methods: {
     signIn() {
-      authenticationProvider.signIn();
+      AuthenticationProvider.signIn();
     },
 
     signOut() {
-      authenticationProvider.signOut();
+      AuthenticationProvider.signOut();
     },
   },
 });

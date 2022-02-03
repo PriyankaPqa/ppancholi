@@ -50,7 +50,7 @@ import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@cr
 import sanitizeHtml from 'sanitize-html';
 import { localStorageKeys } from '@/constants/localStorage';
 import ActivityWatcher from '@/ui/ActivityWatcher.vue';
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
 
 export default {
   name: 'App',
@@ -140,10 +140,10 @@ export default {
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VUE_APP_API_BASE_URL);
 
     const currentTenant = await this.$services.publicApi.getTenantByEmisDomain(window.location.host);
-    authenticationProvider.setCurrentTenantDomain(currentTenant);
+    AuthenticationProvider.setCurrentTenantDomain(currentTenant);
 
     // The access token will be refreshed automatically every 5 minutes
-    authenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
+    AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
   },
 };
 </script>

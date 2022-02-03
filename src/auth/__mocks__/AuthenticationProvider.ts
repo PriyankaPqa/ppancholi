@@ -8,4 +8,6 @@ export default {
   isSignedIn: jest.fn(),
 
   acquireToken: jest.fn(async () => ({ ...mockAuthenticationData() })),
+
+  accessToken: mockAuthenticationData().accessToken,
 };

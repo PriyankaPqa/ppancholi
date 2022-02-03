@@ -1,6 +1,6 @@
 // Coming from MSAL
 export interface IMSALUserData {
-  oid: uuid;
+  oid: string;
   email?: string;
   // eslint-disable-next-line camelcase
   family_name: string;
@@ -15,7 +15,7 @@ export interface IMSALUserData {
 export interface IUserData extends IMSALUserData{}
 
 export interface IUser {
-  readonly id: uuid;
+  readonly id: string;
   readonly email: string;
   readonly lastName: string;
   readonly firstName: string;

@@ -4,7 +4,7 @@
       v-for="lang in supportedLanguages"
       :key="lang.key"
       :label="$t(`tab.${lang.key}`)"
-      :data-test="`eventCreate__lang-${lang.key}`"
+      :data-test="`tab-lang-${lang.key}`"
       :active="language === lang.key"
       @click="$emit('click',lang.key)" />
   </rc-tabs>

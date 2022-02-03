@@ -3,7 +3,7 @@ import VueRouter, { Route } from 'vue-router';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
 import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import store from '@/store/store';
 import { i18n } from '@/ui/plugins/i18n';
 import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
@@ -36,10 +36,10 @@ const hasRole = (roleToCheck: string) => {
 const authenticationGuard = async (to: Route) => {
   if (to.matched.some((record) => record.meta.requiresAuthentication)) {
     // Check if the user is already signed in and redirect to login page if not
-    await authenticationProvider.loadAuthModule('authenticationGuard');
-    const isSignedIn = await authenticationProvider.isAuthenticated();
+    await AuthenticationProvider.loadAuthModule('authenticationGuard');
+    const isSignedIn = await AuthenticationProvider.isAuthenticated();
     if (!isSignedIn) {
-      await authenticationProvider.signIn();
+      await AuthenticationProvider.signIn('authenticationGuard');
     }
 
     // Dispatch the action to the store to fetch the user data from the JWT token

@@ -33,7 +33,7 @@ import store from './store/store';
 import router from './ui/router';
 import App from './ui/App.vue';
 
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import { CustomNavigationClient } from '@/ui/router/NavigationClient';
 
 prepareServices(store);
@@ -51,7 +51,7 @@ applicationInsights.initialize({
 });
 
 const navigationClient = new CustomNavigationClient(router);
-authenticationProvider.msalLibrary.setNavigationClient(navigationClient);
+AuthenticationProvider.msalLibrary.setNavigationClient(navigationClient);
 
 Vue.prototype.$i18nRoute = Trans.i18nRoute.bind(Trans);
 Vue.prototype.$appInsights = applicationInsights;

@@ -457,7 +457,9 @@ describe('FinancialAssistancePaymentDetailsCreate.vue', () => {
 
       it('should return items even if the subitem is marked as inactive in sys management if it\'s active in the table', async () => {
         const expected = [mockOptionSubItem({ id: '7eb37c59-4947-4edf-8146-c2458bd2b6f6' })];
-        formCopy.item.subitems.forEach((s) => { s.status = false; });
+        formCopy.item.subitems.forEach((s) => {
+          s.status = false;
+        });
 
         wrapper.setData({
           formCopy: {

@@ -2,7 +2,7 @@ import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import {
   IMSALUserData,
   User,
@@ -12,6 +12,7 @@ import {
   IState,
 } from './user.types';
 import helpers from '@/ui/helpers/helpers';
+import { localStorageKeys } from '@/constants/localStorage';
 
 const getDefaultState = (): IState => ({
   oid: '',
@@ -87,14 +88,15 @@ const mutations = {
 
 const actions = {
   async signOut(this: Store<IState>) {
-    await authenticationProvider.signOut();
+    await AuthenticationProvider.signOut();
   },
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
-    const accessToken = await authenticationProvider.acquireToken('fetchUserData');
-
+    await AuthenticationProvider.acquireToken('fetchUserData');
+    const accessToken = localStorage.getItem(localStorageKeys.accessToken.name) || AuthenticationProvider.accessToken;
     if (accessToken) {
-      const account = authenticationProvider.account;
+      const account = JSON.parse(localStorage.getItem(localStorageKeys.msalAccount.name)) || AuthenticationProvider.account;
+
       const userData = { ...account.idTokenClaims, homeAccountId: account.homeAccountId } as IMSALUserData;
       userData.roles = helpers.decodeJwt(accessToken).roles;
       context.commit('setUser', userData);

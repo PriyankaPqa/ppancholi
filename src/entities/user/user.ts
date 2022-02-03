@@ -2,6 +2,21 @@ import { IUser, IUserData } from './user.types';
 
 export const NO_ROLE = 'no_role';
 
+export enum UserRoles {
+  'noAccess' = 'noAccess',
+  'level1'='level1',
+  'level2'='level2',
+  'level3'= 'level3',
+  'level4'='level4',
+  'level5'='level5',
+  'level6'='level6',
+  'contributorIM'='contributorIM',
+  'contributorFinance'='contributorFinance',
+  'contributor3'='contributor3',
+  'readonly'='readonly',
+  'no_role'='no_role'
+}
+
 export class User implements IUser {
   readonly id: string;
 
@@ -39,20 +54,8 @@ export class User implements IUser {
   }
 
   hasRole(role: string): boolean {
-    const acceptedValues = [
-      'noAccess',
-      'level1',
-      'level2',
-      'level3',
-      'level4',
-      'level5',
-      'level6',
-      'contributorIM',
-      'contributorFinance',
-      'contributor3',
-      'readonly',
-      'no_role',
-    ];
+    const acceptedValues = Object.keys(UserRoles);
+
     if (typeof role !== 'string') {
       throw new Error(`The function $hasRole is expecting a string. A ${typeof role} was passed`);
     }

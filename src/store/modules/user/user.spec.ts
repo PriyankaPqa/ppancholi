@@ -9,7 +9,7 @@ import {
   mockUsersData, User,
 } from '@/entities/user';
 import { mockAuthenticationData } from '@/auth/authentication.mock';
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import {
   mockStoreUserLevel,
   mockStoreUserContributorIM,
@@ -190,24 +190,24 @@ describe('>>> Users Module', () => {
 
   describe('>> Actions', () => {
     test('the signOut action calls the signOut method of the authentication provider', async () => {
-      expect(authenticationProvider.signOut).toHaveBeenCalledTimes(0);
+      expect(AuthenticationProvider.signOut).toHaveBeenCalledTimes(0);
 
       await store.dispatch('user/signOut');
 
-      expect(authenticationProvider.signOut).toHaveBeenCalledTimes(1);
+      expect(AuthenticationProvider.signOut).toHaveBeenCalledTimes(1);
     });
 
     describe('fetchUserData', () => {
       it('calls the acquireToken method of the authentications provider and fetchUser and sets the user data', async () => {
         store = mockStore();
         const authenticationData = mockAuthenticationData();
-        authenticationProvider.account = authenticationData.account;
+        AuthenticationProvider.account = authenticationData.account;
         jest.spyOn(helpers, 'decodeJwt').mockImplementation(() => ({
           roles: ['level3'],
         }));
         await store.dispatch('user/fetchUserData');
 
-        expect(authenticationProvider.acquireToken).toHaveBeenCalledTimes(1);
+        expect(AuthenticationProvider.acquireToken).toHaveBeenCalledTimes(1);
 
         expect(store.getters['user/user']).toEqual(new User({
           oid: authenticationData.account.idTokenClaims.oid as string,

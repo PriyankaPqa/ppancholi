@@ -14,7 +14,7 @@ import { mockHttp } from '@/services/httpClient.mock';
 import { httpClient, HttpClient, IRestResponse } from './httpClient';
 import { i18n } from '@/ui/plugins/i18n';
 import { localStorageKeys } from '@/constants/localStorage';
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '../auth/AuthenticationProvider';
 
 jest.mock('uuid');
 jest.mock('@/services/odata-query');
@@ -224,7 +224,7 @@ describe('httpClient', () => {
       jest.spyOn(uuid, 'v4').mockImplementation(() => 'uuid-mock');
 
       it('should set accessToken if existing', () => {
-        authenticationProvider.accessToken = 'test access token';
+        AuthenticationProvider.accessToken = 'test access token';
 
         const request = {
           headers: {

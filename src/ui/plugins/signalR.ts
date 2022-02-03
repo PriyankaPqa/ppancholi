@@ -3,7 +3,7 @@ import _orderBy from 'lodash/orderBy';
 import _camelCase from 'lodash/camelCase';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import Vue from 'vue';
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import { IMassActionEntityData, MassActionRunStatus } from '@/entities/mass-action';
 import { i18n } from '@/ui/plugins/i18n';
 import { IStorage } from '@/store/storage';
@@ -42,13 +42,13 @@ export class SignalR {
 
   public async buildHubConnection() {
     // await authenticationProvider.loadAuthModule('signalR');
-    const isSignedIn = await authenticationProvider.isAuthenticated();
+    const isSignedIn = await AuthenticationProvider.isAuthenticated();
 
     if (isSignedIn) {
       const connection = new HubConnectionBuilder()
         // .configureLogging(LogLevel.Debug)
         .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
-          accessTokenFactory: async () => authenticationProvider.accessToken,
+          accessTokenFactory: async () => AuthenticationProvider.accessToken,
         })
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
         .withAutomaticReconnect()

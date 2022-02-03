@@ -11,4 +11,7 @@ export const localStorageKeys = {
   last401Redirect: {
     name: 'last-401-redirect',
   },
+  msalAccount: {
+    name: 'msal-account',
+  },
 };

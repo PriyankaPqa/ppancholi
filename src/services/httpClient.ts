@@ -12,7 +12,7 @@ import { IAzureSearchParams, IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 import routes from '@/constants/routes';
 
-import authenticationProvider from '@/auth/AuthenticationProvider';
+import AuthenticationProvider from '../auth/AuthenticationProvider';
 
 export interface IRestResponse<T> {
   headers?: any;
@@ -186,7 +186,7 @@ export class HttpClient implements IHttpClient {
   }
 
   private requestHandler(request: any) {
-    const accessToken = authenticationProvider.accessToken;
+    const accessToken = localStorage.getItem(localStorageKeys.accessToken.name) || AuthenticationProvider.accessToken;
     if (accessToken) {
       request.headers.common.Authorization = `Bearer ${accessToken}`;
     }
