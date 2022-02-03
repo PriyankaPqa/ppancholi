@@ -30,13 +30,16 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
 
   public state: ICaseFileEntityState = {
     ...this.baseState,
-    tagsOptions: [] as IOptionItem[],
     getLoading: false,
     duplicateLoading: false,
+    triageLoading: false,
+    tagsOptions: [] as IOptionItem[],
     inactiveReasons: [] as IOptionItem[],
     closeReasons: [] as IOptionItem[],
-    triageLoading: false,
     allScreeningIds: [] as IOptionItem[],
+    tagsOptionsFetched: false,
+    inactiveReasonsFetched: false,
+    closeReasonsFetched: false,
     screeningIdsFetched: false,
   }
 
@@ -62,8 +65,16 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
       state.tagsOptions = payload;
     },
 
+    setTagsOptionsFetched(state: ICaseFileEntityState, payload: boolean) {
+      state.tagsOptionsFetched = payload;
+    },
+
     setInactiveReasons(state: ICaseFileEntityState, payload: Array<IOptionItem>) {
       state.inactiveReasons = payload;
+    },
+
+    setInactiveReasonsFetched(state: ICaseFileEntityState, payload: boolean) {
+      state.inactiveReasonsFetched = payload;
     },
 
     setScreeningIds(state: ICaseFileEntityState, payload: Array<IOptionItem>) {
@@ -76,6 +87,10 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
 
     setCloseReasons(state: ICaseFileEntityState, payload: Array<IOptionItem>) {
       state.closeReasons = payload;
+    },
+
+    setCloseReasonsFetched(state: ICaseFileEntityState, payload: boolean) {
+      state.closeReasonsFetched = payload;
     },
 
     setGetLoading(state: ICaseFileEntityState, payload: boolean) {
@@ -95,37 +110,40 @@ export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
     ...this.baseActions,
 
     fetchTagsOptions: async (context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>): Promise<IOptionItem[]> => {
-      // if (!context.state.tagsOptionsFetched) { disable caching until signalR events are implemented
-      const data = await this.optionItemService.getOptionList(EOptionLists.CaseFileTags);
-      context.commit('setTagsOptions', data);
-      // context.commit('setTagsOptionsFetched', true);
+      if (!context.state.tagsOptionsFetched) {
+        const data = await this.optionItemService.getOptionList(EOptionLists.CaseFileTags);
+        context.commit('setTagsOptions', data);
+        context.commit('setTagsOptionsFetched', true);
+      }
 
       return context.getters.tagsOptions();
     },
 
     fetchInactiveReasons: async (context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>): Promise<IOptionItem[]> => {
-      // if (!context.state.tagsOptionsFetched) { disable caching until signalR events are implemented
-      const data = await this.optionItemService.getOptionList(EOptionLists.CaseFileInactiveReasons);
-      context.commit('setInactiveReasons', data);
-      // context.commit('setInactiveReasons', true);
-
+      if (!context.state.inactiveReasonsFetched) {
+        const data = await this.optionItemService.getOptionList(EOptionLists.CaseFileInactiveReasons);
+        context.commit('setInactiveReasons', data);
+        context.commit('setInactiveReasonsFetched', true);
+      }
       return context.getters.inactiveReasons();
     },
 
     fetchScreeningIds: async (context: ActionContext<ICaseFileEntityState, ICaseFileEntityState>): Promise<IOptionItem[]> => {
-      // if (!context.state.setScreeningIdsFetched) { disable caching until signalR events are implemented
-      const data = await this.optionItemService.getOptionList(EOptionLists.ScreeningId);
-      context.commit('setScreeningIds', data);
-      context.commit('setScreeningIdsFetched', true);
+      if (!context.state.screeningIdsFetched) {
+        const data = await this.optionItemService.getOptionList(EOptionLists.ScreeningId);
+        context.commit('setScreeningIds', data);
+        context.commit('setScreeningIdsFetched', true);
+      }
 
       return context.getters.screeningIds();
     },
 
     fetchCloseReasons: async (context:ActionContext<ICaseFileEntityState, ICaseFileEntityState>): Promise<IOptionItem[]> => {
-      // if (!context.state.tagsOptionsFetched) { disable caching until signalR events are implemented
-      const data = await this.optionItemService.getOptionList(EOptionLists.CaseFileCloseReasons);
-      context.commit('setCloseReasons', data);
-      // context.commit('setCloseReasons', true);
+      if (!context.state.closeReasonsFetched) {
+        const data = await this.optionItemService.getOptionList(EOptionLists.CaseFileCloseReasons);
+        context.commit('setCloseReasons', data);
+        context.commit('setCloseReasonFetched', true);
+      }
 
       return context.getters.closeReasons();
     },

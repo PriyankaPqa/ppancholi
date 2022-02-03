@@ -88,4 +88,21 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateReferral`, payload);
     });
   });
+
+  describe('>> Mutations', () => {
+    it('should proxy setTypesFetched', () => {
+      const payload = true;
+      storage.mutations.setTypesFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setTypesFetched`, payload);
+
+    });
+
+    it('should proxy setOutcomeStatusesFetched', () => {
+      const payload = true;
+      storage.mutations.setOutcomeStatusesFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setOutcomeStatusesFetched`, payload);
+
+    });
+
+  });
 });

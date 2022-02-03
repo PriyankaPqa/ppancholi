@@ -33,6 +33,8 @@ export class EventStorageMock extends BaseMock<IEventCombined, IEventEntity> {
 
   protected mutations = {
     ...this.baseMutations,
+    setAgreementTypesFetched: jest.fn(),
+    setEventTypesFetched: jest.fn(),
   }
 
   public make = () => ({

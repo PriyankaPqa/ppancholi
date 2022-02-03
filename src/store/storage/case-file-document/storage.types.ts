@@ -27,9 +27,11 @@ export interface IActionsMock extends IBaseActionsMock<ICaseFileDocumentEntity, 
 }
 
 export interface IMutations extends IBaseMutations<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
+  setCategoriesFetched(payload: boolean) : void;
  }
 
 export interface IMutationsMock extends IBaseMutationsMock<ICaseFileDocumentEntity, ICaseFileDocumentMetadata> {
+  setCategoriesFetched(payload: boolean) : jest.Mock<void>;
 }
 
 export interface IStorageMake {

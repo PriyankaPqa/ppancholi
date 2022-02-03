@@ -24,7 +24,7 @@ const module = new CaseFileEntityModule(service, optionItemService);
 const actionContext = {
   commit: jest.fn(),
   dispatch: jest.fn(),
-  state: null,
+  state: {} as ICaseFileEntityState,
   getters: {
     tagsOptions: jest.fn(), inactiveReasons: jest.fn(), closeReasons: jest.fn(), screeningIds: jest.fn(),
   },
@@ -96,6 +96,13 @@ describe('Case file entity module', () => {
       });
     });
 
+    describe('setTagsOptionsFetched', () => {
+      test('the setTagsOptionsFetched mutation sets the tagsOptionsFetched state', () => {
+        module.mutations.setTagsOptionsFetched(module.state, true);
+        expect(module.state.tagsOptionsFetched).toEqual(true);
+      });
+    });
+
     describe('setInactiveReasons', () => {
       test('the setInactiveReasons mutation sets the inactiveReasons state', () => {
         const reasons = mockOptionItemData();
@@ -104,11 +111,25 @@ describe('Case file entity module', () => {
       });
     });
 
+    describe('setInactiveReasonsFetched', () => {
+      test('the setInactiveReasonsFetched mutation sets the inactiveReasonsFetched state', () => {
+        module.mutations.setInactiveReasonsFetched(module.state, true);
+        expect(module.state.inactiveReasonsFetched).toEqual(true);
+      });
+    });
+
     describe('setCloseReasons', () => {
       test('the setCloseReasons mutation sets the closeReasons state', () => {
         const reasons = mockOptionItemData();
         module.mutations.setCloseReasons(module.state, reasons);
         expect(module.state.closeReasons).toEqual(reasons);
+      });
+    });
+
+    describe('setCloseReasonsFetched', () => {
+      test('the setCloseReasonsFetched mutation sets the closeReasonsFetched state', () => {
+        module.mutations.setCloseReasonsFetched(module.state, true);
+        expect(module.state.closeReasonsFetched).toEqual(true);
       });
     });
 

@@ -128,4 +128,18 @@ describe('>>> Event Storage', () => {
       });
     });
   });
+
+  describe('>> Mutations', () => {
+    it('should proxy setAgreementTypesFetched', () => {
+      const payload = true;
+      storage.mutations.setAgreementTypesFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setAgreementTypesFetched`, payload);
+    });
+
+    it('should proxy setEventTypesFetched', () => {
+      const payload = true;
+      storage.mutations.setEventTypesFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setEventTypesFetched`, payload);
+    });
+  });
 });

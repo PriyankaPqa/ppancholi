@@ -145,10 +145,6 @@ export default mixins(handleUniqueNameSubmitError).extend({
       type: Boolean,
       required: true,
     },
-    agreementTypes: {
-      type: Array as ()=> Array<IOptionItem>,
-      required: true,
-    },
   },
 
   data() {
@@ -171,6 +167,10 @@ export default mixins(handleUniqueNameSubmitError).extend({
   },
 
   computed: {
+    agreementTypes(): Array<IOptionItem> {
+      return this.$storage.event.getters.agreementTypes(true, this.isEditMode ? this.agreement.agreementType.optionItemId : null);
+    },
+
     dayAfterStartDate(): string {
       if (!this.agreement.startDate) {
         return null;

@@ -6,4 +6,5 @@ export interface ICaseNoteEntityState extends IState<ICaseNoteEntity> {
   caseNoteCategories: IOptionItem[];
   isSavingCaseNote: boolean;
   isLoadingCaseNotes: boolean;
+  caseNoteCategoriesFetched: boolean;
 }

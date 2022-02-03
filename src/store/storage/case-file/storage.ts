@@ -103,6 +103,14 @@ export class CaseFileStorage
 
   private mutations = {
     ...this.baseMutations,
+
+    setTagsOptionsFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setTagsOptionsFetched`, payload),
+
+    setInactiveReasonsFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setInactiveReasonsFetched`, payload),
+
+    setScreeningIdsFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setScreeningIdsFetched`, payload),
+
+    setCloseReasonsFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setCloseReasonsFetched`, payload),
   }
 
   public make = () => ({

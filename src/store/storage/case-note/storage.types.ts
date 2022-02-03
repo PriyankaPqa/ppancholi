@@ -33,9 +33,11 @@ export interface IActionsMock extends IBaseActionsMock<ICaseNoteEntity, ICaseNot
 }
 
 export interface IMutations extends IBaseMutations<ICaseNoteEntity, ICaseNoteMetadata> {
+  setCaseNoteCategoriesFetched(payload: boolean) : void;
  }
 
 export interface IMutationsMock extends IBaseMutationsMock<ICaseNoteEntity, ICaseNoteMetadata> {
+  setCaseNoteCategoriesFetched(payload: boolean) : jest.Mock<void>;
 }
 
 export interface IStorageMake {

@@ -25,6 +25,7 @@ export class CaseNoteStorageMock extends BaseMock<ICaseNoteCombined, ICaseNoteEn
 
   protected mutations = {
     ...this.baseMutations,
+    setCaseNoteCategoriesFetched: jest.fn(),
   }
 
   public make = () => ({

@@ -26,6 +26,8 @@ export class CaseFileReferralStorageMock extends BaseMock<ICaseFileReferralCombi
 
   protected mutations = {
     ...this.baseMutations,
+    setTypesFetched: jest.fn(),
+    setOutcomeStatusesFetched: jest.fn(),
   }
 
   public make = () => ({

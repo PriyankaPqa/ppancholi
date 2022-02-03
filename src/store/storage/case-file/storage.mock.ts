@@ -39,6 +39,10 @@ export class CaseFileStorageMock extends BaseMock<ICaseFileCombined, ICaseFileEn
 
   protected mutations = {
     ...this.baseMutations,
+    setTagsOptionsFetched: jest.fn(),
+    setInactiveReasonsFetched: jest.fn(),
+    setScreeningIdsFetched: jest.fn(),
+    setCloseReasonsFetched: jest.fn(),
   }
 
   public make = () => ({

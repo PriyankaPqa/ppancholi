@@ -63,9 +63,13 @@ export interface IGettersMock extends IBaseGettersMock<IEventEntity, IEventMetad
 }
 
 export interface IMutations extends IBaseMutations<IEventEntity, IEventMetadata> {
+  setAgreementTypesFetched(payload: boolean) : void;
+  setEventTypesFetched(payload: boolean) : void;
 }
 
 export interface IMutationsMock extends IBaseMutationsMock<IEventEntity, IEventMetadata> {
+  setAgreementTypesFetched: jest.Mock<void>;
+  setEventTypesFetched: jest.Mock<void>;
 }
 
 export interface IStorageMake {

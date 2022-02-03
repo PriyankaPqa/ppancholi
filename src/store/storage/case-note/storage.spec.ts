@@ -72,4 +72,12 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/search`, { params, searchEndpoint });
     });
   });
+
+  describe('>> Mutations', () => {
+    it('should proxy setCaseNoteCategoriesFetched', () => {
+      const payload = true;
+      storage.mutations.setCaseNoteCategoriesFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setCaseNoteCategoriesFetched`, payload);
+    });
+  });
 });

@@ -40,6 +40,8 @@ export class CaseFileDocumentStorage
 
   private mutations = {
     ...this.baseMutations,
+
+    setCategoriesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setCategoriesFetched`, payload),
   }
 
   public make = () => ({

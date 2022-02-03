@@ -272,13 +272,14 @@ describe('CaseFileActivity.vue', () => {
               return mockCaseFile;
             },
           },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => false,
+            $hasRole: (r) => r === 'contributor3',
+          },
         });
-
         expect(wrapper.vm.canEdit).toBe(false);
-        await wrapper.setRole('level1');
-        expect(wrapper.vm.canEdit).toBe(true);
 
-        mockCaseFile.readonly = true;
         wrapper = shallowMount(Component, {
           localVue,
           propsData: { id: mockCaseFile.entity.id },
@@ -286,6 +287,28 @@ describe('CaseFileActivity.vue', () => {
             caseFile() {
               return mockCaseFile;
             },
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => true,
+          },
+        });
+        expect(wrapper.vm.canEdit).toBe(true);
+
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: { id: mockCaseFile.entity.id },
+          computed: {
+            caseFile() {
+              return mockCaseFile;
+            },
+            readonly() {
+              return true;
+            },
+          },
+          mocks: {
+            $storage: storage,
+            $hasLevel: () => true,
           },
         });
         expect(wrapper.vm.canEdit).toBe(false);
@@ -312,7 +335,6 @@ describe('CaseFileActivity.vue', () => {
         propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
-
         },
         computed: {
           caseFile() {
@@ -384,7 +406,6 @@ describe('CaseFileActivity.vue', () => {
         propsData: { id: mockCaseFile.entity.id },
         mocks: {
           $storage: storage,
-
         },
         computed: {
           caseFile() {
@@ -397,13 +418,13 @@ describe('CaseFileActivity.vue', () => {
     describe('attachToChanges', () => {
       it('should connect on to signalr updates when true', () => {
         wrapper.vm.attachToChanges(true);
-        expect(wrapper.vm.$signalR.connection.on).toHaveBeenCalledWith('caseFile.CaseFileActivityCreated', wrapper.vm.activityChanged);
-        expect(wrapper.vm.$signalR.connection.on).toHaveBeenCalledWith('caseFile.CaseFileActivityUpdated', wrapper.vm.activityChanged);
+        expect(wrapper.vm.$signalR.connection.on).toHaveBeenCalledWith('case-file.CaseFileActivityCreated', wrapper.vm.activityChanged);
+        expect(wrapper.vm.$signalR.connection.on).toHaveBeenCalledWith('case-file.CaseFileActivityUpdated', wrapper.vm.activityChanged);
       });
       it('should connect of to signalr updates when false', () => {
         wrapper.vm.attachToChanges(false);
-        expect(wrapper.vm.$signalR.connection.off).toHaveBeenCalledWith('caseFile.CaseFileActivityCreated', wrapper.vm.activityChanged);
-        expect(wrapper.vm.$signalR.connection.off).toHaveBeenCalledWith('caseFile.CaseFileActivityUpdated', wrapper.vm.activityChanged);
+        expect(wrapper.vm.$signalR.connection.off).toHaveBeenCalledWith('case-file.CaseFileActivityCreated', wrapper.vm.activityChanged);
+        expect(wrapper.vm.$signalR.connection.off).toHaveBeenCalledWith('case-file.CaseFileActivityUpdated', wrapper.vm.activityChanged);
       });
     });
 

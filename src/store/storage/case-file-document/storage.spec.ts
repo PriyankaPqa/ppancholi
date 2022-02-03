@@ -72,4 +72,12 @@ describe('>>> Case File Document Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/downloadDocumentAsUrl`, { item: { mydoc: 'mm' }, saveDownloadedFile: true });
     });
   });
+
+  describe('>> Mutations', () => {
+    it('should proxy setCategoriesFetched', () => {
+      const payload = true;
+      storage.mutations.setCategoriesFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setCategoriesFetched`, payload);
+    });
+  });
 });

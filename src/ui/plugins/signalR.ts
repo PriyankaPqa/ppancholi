@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import _orderBy from 'lodash/orderBy';
+import _camelCase from 'lodash/camelCase';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import Vue from 'vue';
 import authenticationProvider from '@/auth/AuthenticationProvider';
@@ -132,6 +133,27 @@ export class SignalR {
       entityName: 'PersonMetadata',
       action: this.noAction,
     });
+
+    this.listenForOptionItemChanges({
+      domain: 'household',
+      optionItemName: 'ScreeningId',
+      cacheResetMutationName: 'setScreeningIdsFetched',
+      mutationDomain: 'caseFile',
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'household',
+      optionItemName: 'Gender',
+      cacheResetMutationName: 'setGendersFetched',
+      mutationDomain: 'registration',
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'household',
+      optionItemName: 'PrimarySpokenLanguage',
+      cacheResetMutationName: 'setPrimarySpokenLanguagesFetched',
+      mutationDomain: 'registration',
+    });
   }
 
   private listenForProgramModuleChanges() {
@@ -150,13 +172,13 @@ export class SignalR {
 
   private listenForUserAccountModuleChanges() {
     this.listenForChanges({
-      domain: 'userAccount',
+      domain: 'user-account',
       entityName: 'UserAccount',
       action: this.storage.userAccount.mutations.setEntityFromOutsideNotification,
     });
 
     this.listenForChanges({
-      domain: 'userAccount',
+      domain: 'user-account',
       entityName: 'UserAccountMetadata',
       action: this.storage.userAccount.mutations.setMetadataFromOutsideNotification,
     });
@@ -173,6 +195,18 @@ export class SignalR {
       domain: 'event',
       entityName: 'EventMetadata',
       action: this.storage.event.mutations.setMetadataFromOutsideNotification,
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'event',
+      optionItemName: 'AgreementType',
+      cacheResetMutationName: 'setAgreementTypesFetched',
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'event',
+      optionItemName: 'EventType',
+      cacheResetMutationName: 'setEventTypesFetched',
     });
   }
 
@@ -192,13 +226,13 @@ export class SignalR {
 
   private listenForMassActionsModuleChanges() {
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'MassAction',
       action: this.storage.massAction.mutations.setEntityFromOutsideNotification,
     });
 
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'MassActionMetadata',
       action: this.storage.massAction.mutations.setMetadataFromOutsideNotification,
     });
@@ -206,49 +240,88 @@ export class SignalR {
 
   private listenForCaseFileModuleChanges() {
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'CaseFile',
       action: this.storage.caseFile.mutations.setEntityFromOutsideNotification,
     });
 
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'CaseFileMetadata',
       action: this.storage.caseFile.mutations.setMetadataFromOutsideNotification,
     });
 
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'CaseFileActivity',
       action: this.noAction,
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'case-file',
+      optionItemName: 'CloseReason',
+      cacheResetMutationName: 'setCloseReasonsFetched',
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'case-file',
+      optionItemName: 'InactiveReason',
+      cacheResetMutationName: 'setInactiveReasonsFetched',
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'case-file',
+      optionItemName: 'Tag',
+      cacheResetMutationName: 'setTagsOptionsFetched',
     });
   }
 
   private listenForCaseNoteModuleChanges() {
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'CaseNote',
       action: this.storage.caseNote.mutations.setEntityFromOutsideNotification,
     });
 
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'CaseNoteMetadata',
       action: this.storage.caseNote.mutations.setMetadataFromOutsideNotification,
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'case-file',
+      optionItemName: 'CaseNoteCategory',
+      cacheResetMutationName: 'setCaseNoteCategoriesFetched',
+      mutationDomain: 'caseNote',
     });
   }
 
   private listenForCaseReferralModuleChanges() {
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'Referral',
       action: this.storage.caseFileReferral.mutations.setEntityFromOutsideNotification,
     });
 
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'ReferralMetadata',
       action: this.storage.caseFileReferral.mutations.setMetadataFromOutsideNotification,
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'case-file',
+      optionItemName: 'ReferralType',
+      cacheResetMutationName: 'setTypesFetched',
+      mutationDomain: 'caseFileReferral',
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'case-file',
+      optionItemName: 'ReferralOutcomeStatus',
+      cacheResetMutationName: 'setOutcomeStatusesFetched',
+      mutationDomain: 'caseFileReferral',
     });
   }
 
@@ -268,15 +341,22 @@ export class SignalR {
 
   private listenForCaseDocumentModuleChanges() {
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'Document',
       action: this.storage.caseFileDocument.mutations.setEntityFromOutsideNotification,
     });
 
     this.listenForChanges({
-      domain: 'caseFile',
+      domain: 'case-file',
       entityName: 'DocumentMetadata',
       action: this.storage.caseFileDocument.mutations.setMetadataFromOutsideNotification,
+    });
+
+    this.listenForOptionItemChanges({
+      domain: 'case-file',
+      optionItemName: 'DocumentCategory',
+      cacheResetMutationName: 'setCategoriesFetched',
+      mutationDomain: 'caseFileDocument',
     });
   }
 
@@ -297,7 +377,7 @@ export class SignalR {
   private listenForFinancialAssistanceCategoryModuleChanges() {
     this.listenForChanges({
       domain: 'finance',
-      entityName: 'FinancialAssistanceCategories',
+      entityName: 'FinancialAssistanceCategory',
       action: this.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification,
     });
   }
@@ -320,10 +400,36 @@ export class SignalR {
     });
   }
 
+  private listenForOptionItemChanges(
+    {
+      domain, optionItemName, cacheResetMutationName, mutationDomain = null,
+    }: {domain: string, optionItemName: string, cacheResetMutationName: string, mutationDomain?: string},
+  ) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const storage = this.storage as any;
+    const storageDomain = mutationDomain || _camelCase(domain);
+
+    this.connection.on(`${domain}.${optionItemName}Updated`, (entity) => {
+      if (storage?.[storageDomain]?.mutations?.[cacheResetMutationName]) {
+        storage[storageDomain].mutations[cacheResetMutationName](false);
+
+        this.log(`Cache for ${domain}.${optionItemName} reset - entity updated`, entity);
+      }
+    });
+
+    this.connection.on(`${domain}.${optionItemName}Created`, (entity) => {
+      if (storage?.[storageDomain]?.mutations?.[cacheResetMutationName]) {
+        storage[storageDomain].mutations[cacheResetMutationName](false);
+
+        this.log(`Cache for ${domain}.${optionItemName} reset - entity created`, entity);
+      }
+    });
+  }
+
   // eslint-disable-next-line
-  private log(name: string, message: any) {
+  private log(name: string, message?: any) {
     if (this.showConsole) {
-      console.log(name, message.id || message);
+      console.log(name, message?.id || message || '');
     }
 
     let entry = this.logMessages.find((m) => m.messageName === name);

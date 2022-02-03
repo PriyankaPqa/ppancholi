@@ -67,9 +67,17 @@ export interface IActionsMock extends IBaseActionsMock<ICaseFileEntity, ICaseFil
 }
 
 export interface IMutations extends IBaseMutations<ICaseFileEntity, ICaseFileMetadata> {
+  setTagsOptionsFetched(payload: boolean) : void;
+  setInactiveReasonsFetched(payload: boolean) : void;
+  setScreeningIdsFetched(payload: boolean) : void;
+  setCloseReasonsFetched(payload: boolean) : void;
  }
 
 export interface IMutationsMock extends IBaseMutationsMock<ICaseFileEntity, ICaseFileMetadata> {
+  setTagsOptionsFetched(payload: boolean) : jest.Mock<void>;
+  setInactiveReasonsFetched(payload: boolean) : jest.Mock<void>;
+  setScreeningIdsFetched(payload: boolean) : jest.Mock<void>;
+  setCloseReasonsFetched(payload: boolean) : jest.Mock<void>;
 }
 
 export interface IStorageMake {

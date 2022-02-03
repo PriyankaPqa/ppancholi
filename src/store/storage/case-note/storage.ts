@@ -65,6 +65,8 @@ export class CaseNoteStorage
 
   private mutations = {
     ...this.baseMutations,
+
+    setCaseNoteCategoriesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setCaseNoteCategoriesFetched`, payload),
   }
 
   public make = () => ({

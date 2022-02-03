@@ -21,7 +21,7 @@ const module = new CaseNoteEntityModule(service, optionItemService);
 const actionContext = {
   commit: jest.fn(),
   dispatch: jest.fn(),
-  state: null,
+  state: {} as ICaseNoteEntityState,
   getters: {},
   rootState: null,
   rootGetters: {},
@@ -49,6 +49,13 @@ describe('Case file entity module', () => {
         const categories = mockOptionItemData();
         module.mutations.setCaseNoteCategories(module.state, categories);
         expect(module.state.caseNoteCategories).toEqual(categories);
+      });
+    });
+
+    describe('setCaseNoteCategoriesFetched', () => {
+      test('the setCaseNoteCategoriesFetched mutation sets the caseNoteCategoriesFetched state', () => {
+        module.mutations.setCaseNoteCategoriesFetched(module.state, true);
+        expect(module.state.caseNoteCategoriesFetched).toEqual(true);
       });
     });
 

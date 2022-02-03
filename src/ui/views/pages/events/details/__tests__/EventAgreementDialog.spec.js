@@ -27,11 +27,13 @@ describe('EventAgreementDialog.vue', () => {
           event: mockEvent,
           isEditMode: false,
           id: '',
-          agreementTypes: [],
         },
         computed: {
           dayAfterStartDate() {
             return '2020-01-02';
+          },
+          agreementTypes() {
+            return mockOptionItemData();
           },
           rules() {
             return {
@@ -205,14 +207,44 @@ describe('EventAgreementDialog.vue', () => {
 
   describe('Computed', () => {
     beforeEach(() => {
+      storage.event.getters.agreementTypes = jest.fn(() => mockOptionItemData());
       wrapper = shallowMount(Component, {
         localVue,
         propsData: {
           event: mockEvent,
           isEditMode: false,
           id: '',
-          agreementTypes: mockOptionItemData(),
         },
+        mocks: {
+          $storage: storage,
+        },
+      });
+    });
+
+    describe('agreementTypes', () => {
+      it('calls the getter with the current agreement type id if in edit more', () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            event: mockEvent,
+            isEditMode: true,
+            id: '',
+          },
+          data() {
+            return {
+              agreement: mockEvent.agreements[0],
+            };
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        expect(storage.event.getters.agreementTypes).toHaveBeenCalledWith(true, wrapper.vm.agreement.agreementType.optionItemId);
+      });
+
+      it('calls the getter without the current agreement type id if not in edit more', () => {
+        expect(storage.event.getters.agreementTypes).toHaveBeenCalledWith(true, null);
       });
     });
 
@@ -272,7 +304,6 @@ describe('EventAgreementDialog.vue', () => {
             event: mockEvent,
             isEditMode: true,
             id: mockEvent.agreements[0].name.translation.en,
-            agreementTypes: [],
           },
         });
 
@@ -285,7 +316,6 @@ describe('EventAgreementDialog.vue', () => {
           propsData: {
             event: mockEvent,
             isEditMode: false,
-            agreementTypes: [],
           },
         });
         expect(wrapper.vm.title).toEqual('eventSummary.addAgreement');
@@ -301,7 +331,6 @@ describe('EventAgreementDialog.vue', () => {
           event: mockEvent,
           isEditMode: false,
           id: mockEvent.agreements[0].id,
-          agreementTypes: mockOptionItemData(),
         },
       });
       wrapper.vm.initCreateMode = jest.fn();
@@ -318,7 +347,6 @@ describe('EventAgreementDialog.vue', () => {
           event: mockEvent,
           isEditMode: true,
           id: mockEvent.agreements[0].id,
-          agreementTypes: mockOptionItemData(),
         },
       });
       wrapper.vm.initEditMode = jest.fn();
@@ -336,7 +364,11 @@ describe('EventAgreementDialog.vue', () => {
         propsData: {
           event: mockEvent,
           isEditMode: false,
-          agreementTypes: mockOptionItemData(),
+        },
+        computed: {
+          agreementTypes() {
+            return mockOptionItemData();
+          },
         },
         mocks: {
           $storage: storage,
@@ -379,7 +411,11 @@ describe('EventAgreementDialog.vue', () => {
             event: mockEvent,
             isEditMode: true,
             id: mockEvent.agreements[0].id,
-            agreementTypes: mockOptionItemData(),
+          },
+          computed: {
+            agreementTypes() {
+              return mockOptionItemData();
+            },
           },
         });
       });
@@ -390,7 +426,11 @@ describe('EventAgreementDialog.vue', () => {
             event: mockEvent,
             isEditMode: true,
             id: mockEvent.agreements[0].id,
-            agreementTypes: mockOptionItemData(),
+          },
+          computed: {
+            agreementTypes() {
+              return mockOptionItemData();
+            },
           },
         });
         await wrapper.vm.initEditMode();

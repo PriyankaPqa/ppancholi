@@ -24,6 +24,7 @@ export class CaseFileDocumentStorageMock extends BaseMock<ICaseFileDocumentCombi
 
   protected mutations = {
     ...this.baseMutations,
+    setCategoriesFetched: jest.fn(),
   }
 
   public make = () => ({

@@ -67,6 +67,10 @@ export class EventStorage
 
   private mutations = {
     ...this.baseMutations,
+
+    setAgreementTypesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setAgreementTypesFetched`, payload),
+
+    setEventTypesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setEventTypesFetched`, payload),
   }
 
   public make = () => ({

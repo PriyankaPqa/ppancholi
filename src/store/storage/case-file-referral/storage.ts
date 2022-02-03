@@ -44,6 +44,10 @@ export class CaseFileReferralStorage
 
   private mutations = {
     ...this.baseMutations,
+
+    setTypesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setTypesFetched`, payload),
+
+    setOutcomeStatusesFetched: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setOutcomeStatusesFetched`, payload),
   }
 
   public make = () => ({

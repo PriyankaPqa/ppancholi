@@ -31,9 +31,13 @@ export interface IActionsMock extends IBaseActionsMock<ICaseFileReferralEntity, 
 }
 
 export interface IMutations extends IBaseMutations<ICaseFileReferralEntity, ICaseFileReferralMetadata> {
+  setTypesFetched(payload: boolean) : void;
+  setOutcomeStatusesFetched(payload: boolean) : void;
  }
 
 export interface IMutationsMock extends IBaseMutationsMock<ICaseFileReferralEntity, ICaseFileReferralMetadata> {
+  setTypesFetched(payload: boolean) : jest.Mock<void>;
+  setOutcomeStatusesFetched(payload: boolean) : jest.Mock<void>;
 }
 
 export interface IStorageMake {

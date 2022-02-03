@@ -219,4 +219,33 @@ describe('>>> Case File Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/createCaseFile`, payload);
     });
   });
+
+  describe('>> Mutations', () => {
+    it('should proxy setTagsOptionsFetched', () => {
+      const payload = true;
+      storage.mutations.setTagsOptionsFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setTagsOptionsFetched`, payload);
+    });
+
+    it('should proxy setInactiveReasonsFetched', () => {
+      const payload = true;
+      storage.mutations.setInactiveReasonsFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setInactiveReasonsFetched`, payload);
+
+    });
+
+    it('should proxy setScreeningIdsFetched', () => {
+      const payload = true;
+      storage.mutations.setScreeningIdsFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setScreeningIdsFetched`, payload);
+
+    });
+
+    it('should proxy setCloseReasonsFetched', () => {
+      const payload = true;
+      storage.mutations.setCloseReasonsFetched(payload);
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setCloseReasonsFetched`, payload);
+
+    });
+  });
 });
