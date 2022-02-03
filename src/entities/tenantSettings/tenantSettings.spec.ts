@@ -34,6 +34,16 @@ describe('>>> TenantSettingsEntity', () => {
         const entity = new TenantSettingsEntity(mock);
         expect(entity.features).toEqual(mock.features);
       });
+
+      it('should instantiate branding', () => {
+        const entity = new TenantSettingsEntity(mock);
+        expect(entity.branding).toEqual(mock.branding);
+      });
+
+      it('should instantiate branding.showNamw', () => {
+        const entity = new TenantSettingsEntity(mock);
+        expect(entity.branding.showName).toEqual(!mock.branding.hideName);
+      });
     });
 
     describe('if data is not passed', () => {
@@ -70,6 +80,11 @@ describe('>>> TenantSettingsEntity', () => {
       it('should instantiate features', () => {
         const entity = new TenantSettingsEntity();
         expect(entity.features).toEqual([]);
+      });
+
+      it('should not instantiate branding', () => {
+        const entity = new TenantSettingsEntity();
+        expect(entity.branding).toBeUndefined();
       });
     });
   });

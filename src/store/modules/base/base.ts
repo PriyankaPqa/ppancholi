@@ -9,8 +9,8 @@ import { IAzureCombinedSearchResult } from '../../../types/interfaces/IAzureSear
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 
-export class BaseModule<T extends IEntity> {
-  constructor(protected service: DomainBaseService<T>) {}
+export class BaseModule<T extends IEntity, IdParams> {
+  constructor(protected service: DomainBaseService<T, IdParams>) {}
 
   // Add or edit an item if the one pass as parameter is newer than existing one
   private upsert(state: IState<T>, item: T) {
@@ -42,8 +42,8 @@ export class BaseModule<T extends IEntity> {
   }
 
   protected baseActions = {
-    fetch: async (context: ActionContext<IState<T>, IState<T>>, { id, useGlobalHandler }: {id: uuid; useGlobalHandler: boolean}): Promise<T> => {
-      const res = await this.service.get(id, useGlobalHandler);
+    fetch: async (context: ActionContext<IState<T>, IState<T>>, { idParams, useGlobalHandler }: {idParams: IdParams; useGlobalHandler: boolean}): Promise<T> => {
+      const res = await this.service.get(idParams, useGlobalHandler);
       context.commit('set', res);
       return res;
     },
@@ -60,14 +60,14 @@ export class BaseModule<T extends IEntity> {
       return res;
     },
 
-    deactivate: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
-      const res = await this.service.deactivate(id);
+    deactivate: async (context: ActionContext<IState<T>, IState<T>>, idParams: IdParams): Promise<T> => {
+      const res = await this.service.deactivate(idParams);
       context.commit('set', res);
       return res;
     },
 
-    activate: async (context: ActionContext<IState<T>, IState<T>>, id: uuid): Promise<T> => {
-      const res = await this.service.activate(id);
+    activate: async (context: ActionContext<IState<T>, IState<T>>, idParams: IdParams): Promise<T> => {
+      const res = await this.service.activate(idParams);
       context.commit('set', res);
       return res;
     },

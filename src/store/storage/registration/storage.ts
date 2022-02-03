@@ -11,7 +11,6 @@ import {
 } from '../../../entities/household-create';
 import { IEvent, IEventData } from '../../../entities/event';
 import { IStorage } from './storage.types';
-import { FeatureKeys, IFeatureEntity } from '../../../entities/tenantSettings';
 
 // eslint-disable-next-line
 export const makeStorage = (store: IStore<IState>): IStorage => ({
@@ -90,14 +89,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     isSplitMode() {
       return store.getters['registration/isSplitMode'];
-    },
-
-    features() {
-      return store.getters['registration/features'];
-    },
-
-    isFeatureEnabled(featureKey: FeatureKeys) {
-      return store.getters['registration/isFeatureEnabled'](featureKey);
     },
   },
 
@@ -236,10 +227,6 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
 
     setTabs(tabs: IRegistrationMenuItem[]) {
       store.commit('registration/setTabs', tabs);
-    },
-
-    setFeatures(features: IFeatureEntity[]) {
-      store.commit('registration/setFeatures', features);
     },
 
     setPrimarySpokenLanguagesFetched(payload: boolean) {

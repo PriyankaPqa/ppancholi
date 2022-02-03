@@ -7,10 +7,10 @@ import helpers from '../../../ui/helpers/index';
 import { BaseModule } from './index';
 import { IState } from './base.types';
 
-export class BaseModuleTest extends BaseModule<any> {
-  public service: DomainBaseService<any>
+export class BaseModuleTest extends BaseModule<any, uuid> {
+  declare public service: DomainBaseService<any, uuid>
 
-  constructor(protected pService: DomainBaseService<any>) {
+  constructor(protected pService: DomainBaseService<any, uuid>) {
     super(pService);
   }
 
@@ -80,7 +80,7 @@ describe('Base Module', () => {
     describe('fetch', () => {
       it('should call get method from the service', () => {
         baseModule.service.get = jest.fn();
-        baseModule.actions.fetch(actionContext, { id, useGlobalHandler: true });
+        baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true });
 
         expect(baseModule.service.get).toBeCalledWith(id, true);
       });
@@ -89,7 +89,7 @@ describe('Base Module', () => {
         const res = mockBaseEntity();
         baseModule.service.get = jest.fn(() => Promise.resolve(res));
 
-        await baseModule.actions.fetch(actionContext, { id, useGlobalHandler: true });
+        await baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true });
 
         expect(actionContext.commit).toBeCalledWith('set', res);
       });

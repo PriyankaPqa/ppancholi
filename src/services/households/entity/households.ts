@@ -19,7 +19,7 @@ import { IHouseholdActivity } from '../../../entities/value-objects/household-ac
 const API_URL_SUFFIX = 'household';
 const CONTROLLER = 'households';
 
-export class HouseholdsService extends DomainBaseService<IHouseholdEntity> implements IHouseholdsService {
+export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid> implements IHouseholdsService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);
   }

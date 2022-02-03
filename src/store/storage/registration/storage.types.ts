@@ -16,7 +16,6 @@ import {
   HouseholdCreate, IHouseholdCreate, IHouseholdCreateData,
 } from '../../../entities/household-create';
 import { IHouseholdEntity } from '../../../entities/household';
-import { FeatureKeys, IFeatureEntity } from '../../../entities/tenantSettings';
 
 export interface IStorage {
   getters: {
@@ -39,8 +38,6 @@ export interface IStorage {
     householdCreate(): HouseholdCreate;
     personalInformation(): IContactInformation & IIdentitySet;
     isSplitMode(): boolean;
-    features(): IFeatureEntity[];
-    isFeatureEnabled(featureKey: FeatureKeys): boolean;
   };
 
   mutations: {
@@ -78,7 +75,6 @@ export interface IStorage {
     setSplitHousehold({ originHouseholdId, primaryMember, additionalMembers }: {originHouseholdId: string; primaryMember: IMember; additionalMembers: IMember[] }): void;
     resetSplitHousehold(): void;
     setTabs(tabs: IRegistrationMenuItem[]): void;
-    setFeatures(features: IFeatureEntity[]): void;
     setPrimarySpokenLanguagesFetched(payload: boolean): void;
     setGendersFetched(payload: boolean): void;
   };
@@ -122,8 +118,6 @@ export interface IStorageMock {
     householdCreate: jest.Mock<IHouseholdCreate>;
     personalInformation: jest.Mock<IContactInformation & IIdentitySet>;
     isSplitMode: jest.Mock<boolean>;
-    features: jest.Mock<IFeatureEntity[]>;
-    isFeatureEnabled: jest.Mock<boolean>;
   };
 
   mutations: {
@@ -162,7 +156,6 @@ export interface IStorageMock {
     setSplitHousehold: jest.Mock<void>;
     resetSplitHousehold: jest.Mock<void>;
     setTabs: jest.Mock<void>;
-    setFeatures: jest.Mock<void>;
     setPrimarySpokenLanguagesFetched: jest.Mock<void>;
     setGendersFetched: jest.Mock<void>;
   };

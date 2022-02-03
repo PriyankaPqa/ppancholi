@@ -1,15 +1,65 @@
+import { IEntity, mockBaseData } from '../base';
 import {
   FeatureType,
-  FeatureKeys,
+  IBrandingEntity,
+  IBrandingEntityData,
+  ICreateTenantSettingsRequest,
+  IEditColoursRequest,
+  IEditTenantDetailsRequest,
   IFeatureEntity,
+  ISetDomainsRequest,
+  ITenantSettingsCombined,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
 } from './tenantSettings.types';
 
-export const mockFeatures = (): IFeatureEntity[] => [{
-  id: 'id-1',
+export const mockEditColoursRequest = (): IEditColoursRequest => ({
+  colours: {
+    primary: '#007DA3',
+    primaryLight: '#A7D0E1',
+    primaryDark: '#005670',
+    secondary: '#EE0000',
+  },
+});
 
-  tenantId: 'tenant id-1',
+export const mockEditTenantDetailsRequest = (): IEditTenantDetailsRequest => ({
+  name: {
+    translation: {
+      en: 'name en',
+      fr: 'name fr',
+    },
+  },
+  description: {
+    translation: {
+      en: 'description en',
+      fr: 'description fr',
+    },
+  },
+  hideName: false,
+});
+
+export const mockBrandingEntityData = (force?: Partial<IBrandingEntityData>): IBrandingEntityData => ({
+  ...mockBaseData(),
+
+  ...mockEditColoursRequest(),
+
+  ...mockEditTenantDetailsRequest(),
+
+  ...force,
+});
+
+export const mockBrandingEntity = (force?: Partial<IBrandingEntity>): IBrandingEntity => ({
+  ...mockBrandingEntityData(),
+
+  showName: true,
+
+  ...force,
+});
+
+export const mockFeatures = (): IFeatureEntity[] => [{
+  ...mockBaseData(),
+
+  id: 'id-1',
 
   name: {
     translation: {
@@ -25,15 +75,15 @@ export const mockFeatures = (): IFeatureEntity[] => [{
     },
   },
 
-  key: FeatureKeys.AddressAutoFill,
+  key: 'feature key-1',
 
   enabled: false,
 
   type: FeatureType.Temporary,
 }, {
-  id: 'id-2',
+  ...mockBaseData(),
 
-  tenantId: 'tenant id-2',
+  id: 'id-2',
 
   name: {
     translation: {
@@ -49,7 +99,7 @@ export const mockFeatures = (): IFeatureEntity[] => [{
     },
   },
 
-  key: FeatureKeys.BotProtection,
+  key: 'feature key-2',
 
   enabled: false,
 
@@ -57,7 +107,8 @@ export const mockFeatures = (): IFeatureEntity[] => [{
 }];
 
 export const mockTenantSettingsEntityData = (force?: Partial<ITenantSettingsEntityData>): ITenantSettingsEntityData => ({
-  id: 'id',
+  ...mockBaseData(),
+
   slug: 'slug',
   emisDomain: {
     translation: {
@@ -74,11 +125,40 @@ export const mockTenantSettingsEntityData = (force?: Partial<ITenantSettingsEnti
   availableLanguages: ['en', 'fr'],
 
   features: mockFeatures(),
+
+  branding: mockBrandingEntityData(),
+
   ...force,
+});
+
+export const mockCreateTenantSettingsRequest = (): ICreateTenantSettingsRequest => ({
+  slug: 'slug',
+});
+
+export const mockSetDomainsRequest = (): ISetDomainsRequest => ({
+  emis: {
+    translation: {
+      en: 'emis domain en',
+      fr: 'emis domain fr',
+    },
+  },
+  registration: {
+    translation: {
+      en: 'registration domain en',
+      fr: 'registration domain fr',
+    },
+  },
 });
 
 export const mockTenantSettingsEntity = (force?: Partial<ITenantSettingsEntity>): ITenantSettingsEntity => ({
   ...mockTenantSettingsEntityData(),
 
+  branding: mockBrandingEntity(),
+
   ...force,
+});
+
+export const mockCombinedTenantSettings = (force?: Partial<IEntity>): ITenantSettingsCombined => ({
+  metadata: null as never,
+  entity: mockTenantSettingsEntity(force),
 });

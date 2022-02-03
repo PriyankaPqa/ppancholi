@@ -9,7 +9,7 @@ import utils from '../../../entities/value-objects/versioned-entity/versionedEnt
 import { IRootState } from '../../store.types';
 import { IVersionedEntity, IVersionedEntityCombined } from '../../../entities/value-objects/versioned-entity/versionedEntity.types';
 
-export class HouseholdEntityModule extends BaseModule <IHouseholdEntity> {
+export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
   constructor(readonly service: HouseholdsService) {
     super(service);
   }

@@ -1,4 +1,3 @@
-import { IFeatureEntity } from '../../../entities/tenantSettings';
 import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
 import { IOptionItemData } from '../../../types';
 import { IError } from '../../../services/httpClient';
@@ -31,7 +30,6 @@ export type IState = {
   householdAssociationMode: boolean;
   householdAlreadyRegistered: boolean;
   splitHousehold: ISplitHousehold;
-  features: IFeatureEntity[];
   primarySpokenLanguagesFetched: boolean;
   gendersFetched: boolean;
 };

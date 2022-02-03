@@ -13,23 +13,17 @@ describe('>>> Public Service', () => {
     };
 
     await service.searchEvents(params.language, params.registrationLink);
-    expect(http.get).toHaveBeenCalledWith('/public-search/beneficiary-event', { params, containsEncodedURL: true, ignoreJwt: true });
+    expect(http.get).toHaveBeenCalledWith('/public-search/beneficiary-event', { params, containsEncodedURL: true });
   });
 
   test('getTenantByEmisDomain is linked to the correct URL', async () => {
     await service.getTenantByEmisDomain('myDomain');
-    expect(http.get).toHaveBeenCalledWith('/system-management/tenants/id-from-domain?domain=myDomain', { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
+    expect(http.get).toHaveBeenCalledWith('/system-management/tenants/id-from-domain?domain=myDomain', { globalHandler: false, noErrorLogging: true });
   });
 
   test('getTenantByRegistrationDomain is linked to the correct URL', async () => {
     await service.getTenantByRegistrationDomain('myDomain');
     expect(http.get).toHaveBeenCalledWith('/system-management/tenants/id-from-registration-domain?registrationDomain=myDomain',
-      { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
-  });
-
-  test('getPublicFeatures is linked to the correct URL', async () => {
-    await service.getPublicFeatures();
-    expect(http.get).toHaveBeenCalledWith('/system-management/tenant-settings/public-features',
-      { globalHandler: false, noErrorLogging: true, ignoreJwt: true });
+      { globalHandler: false, noErrorLogging: true });
   });
 });

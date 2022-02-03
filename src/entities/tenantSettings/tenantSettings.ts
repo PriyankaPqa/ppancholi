@@ -1,9 +1,10 @@
+import { BaseEntity } from '../base/base';
 import { IMultilingual } from '../../types';
-import { IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData } from './tenantSettings.types';
+import {
+  IBrandingEntity, IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData,
+} from './tenantSettings.types';
 
-export class TenantSettingsEntity implements ITenantSettingsEntity {
-  id: uuid;
-
+export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsEntity {
   slug: string;
 
   emisDomain: IMultilingual;
@@ -14,8 +15,10 @@ export class TenantSettingsEntity implements ITenantSettingsEntity {
 
   features: Array<IFeatureEntity>;
 
+  branding: IBrandingEntity;
+
   constructor(data?: ITenantSettingsEntityData) {
-    this.id = data?.id;
+    super(data);
     this.slug = data?.slug || '';
     this.emisDomain = data?.emisDomain || {
       translation: {
@@ -33,5 +36,10 @@ export class TenantSettingsEntity implements ITenantSettingsEntity {
     this.availableLanguages = data?.availableLanguages || [];
 
     this.features = data?.features || [];
+
+    if (data?.branding) {
+      this.branding = data.branding;
+      this.branding.showName = !data.branding.hideName;
+    }
   }
 }
