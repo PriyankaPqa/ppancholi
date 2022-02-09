@@ -441,6 +441,42 @@ describe('AddEmisUser.vue', () => {
         expect(wrapper.vm.selectedUsers).toEqual([...appUsersTestData(), ...items]);
       });
 
+      it('adds the users to the list without duplicates', () => {
+        wrapper.vm.appUsers = usersTestData();
+
+        const item1 = {
+          id: '5',
+          roles: [],
+          status: 1,
+          accountStatus: 1,
+          displayName: 'Test Brown',
+          givenName: 'Test',
+          jobTitle: 'jobTitle',
+          mail: null,
+          userPrincipalName: 'test@test.com',
+        };
+
+        const item2 = {
+          id: '6',
+          roles: [],
+          status: 1,
+          accountStatus: 1,
+          displayName: 'Test Brown 2',
+          givenName: 'Test2',
+          jobTitle: 'jobTitle',
+          mail: null,
+          userPrincipalName: 'test2@test.com',
+        };
+
+        const items = [item1, item2];
+        wrapper.vm.isAlreadyInEmis = jest.fn(() => false);
+
+        wrapper.vm.selectedUsers = [...appUsersTestData(), item1];
+
+        wrapper.vm.onSelectAll({ items, value: true });
+        expect(wrapper.vm.selectedUsers).toEqual([...appUsersTestData(), item1, item2]);
+      });
+
       it('updates selectedUsers by removing unselected members', () => {
         wrapper.vm.appUsers = [];
         wrapper.vm.searchResults = mockAppUserData();

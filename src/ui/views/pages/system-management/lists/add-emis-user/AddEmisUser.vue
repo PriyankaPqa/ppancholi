@@ -292,7 +292,8 @@ export default Vue.extend({
 
     onSelectAll({ items, value }: {items: Array<IAppUserData>; value: boolean}) {
       if (value) { // select all, get the new ones + old ones
-        this.selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInEmis(i))];
+        const selectedUsers = [...this.selectedUsers, ...items.filter((i) => !this.isAlreadyInEmis(i))];
+        this.selectedUsers = selectedUsers.filter((user, index) => selectedUsers.findIndex((u) => u.id === user.id) === index); // deduplicate the list of users
       } else { // deselect, only remove what is currently removed
         this.selectedUsers = _difference(this.selectedUsers, items);
       }
