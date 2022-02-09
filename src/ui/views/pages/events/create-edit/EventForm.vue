@@ -288,8 +288,9 @@ import {
 import libHelpers from '@crctech/registration-lib/src/ui/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers/helpers';
+import utils from '@/entities/utils';
 import {
-  ECanadaProvinces,
+  ECanadaProvinces, IMultilingual,
 } from '@/types';
 import {
   IOtherProvince,
@@ -301,7 +302,6 @@ import {
 } from '@/entities/event';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { IOptionItem } from '@/entities/optionItem';
-import utils from '@/entities/utils';
 
 export default Vue.extend({
   name: 'EventForm',
@@ -383,6 +383,8 @@ export default Vue.extend({
       initialOpenDate: localEvent.schedule.scheduledOpenDate,
       initialCloseDate: localEvent.schedule.scheduledCloseDate,
       getLocalStringDate,
+      newRegion: { translation: {} } as IMultilingual,
+      newProvince: { translation: {} } as IMultilingual,
     };
   },
 
@@ -426,9 +428,16 @@ export default Vue.extend({
 
       set(value: string | IOtherProvince) {
         if (typeof value === 'string') {
-          this.localEvent.location.provinceOther.translation[this.languageMode] = value;
+          const valueInItems = this.otherProvincesSorted.find((r) => r.name.translation[this.languageMode] === value);
+          if (!valueInItems) {
+            this.newProvince.translation[this.languageMode] = value;
+            this.localEvent.location.provinceOther = { ...this.newProvince };
+          } else {
+            this.newProvince = { translation: {} };
+            this.localEvent.location.provinceOther = { ...valueInItems.name };
+          }
         } else {
-          this.localEvent.location.provinceOther.translation = { ...value.name.translation };
+          this.localEvent.location.provinceOther = { ...value.name };
         }
       },
     },
@@ -444,9 +453,16 @@ export default Vue.extend({
 
       set(value: string | IRegion) {
         if (typeof value === 'string') {
-          this.localEvent.location.region.translation[this.languageMode] = value;
+          const valueInItems = this.regionsSorted.find((r) => r.name.translation[this.languageMode] === value);
+          if (!valueInItems) {
+            this.newRegion.translation[this.languageMode] = value;
+            this.localEvent.location.region = { ...this.newRegion };
+          } else {
+            this.newRegion = { translation: {} };
+            this.localEvent.location.region = { ...valueInItems.name };
+          }
         } else {
-          this.localEvent.location.region.translation = { ...value.name.translation };
+          this.localEvent.location.region = { ...value.name };
         }
       },
     },
@@ -612,6 +628,12 @@ export default Vue.extend({
     eventType() {
       if (!this.eventType || !this.eventType.isOther) {
         this.localEvent.responseDetails.eventType.specifiedOther = '';
+      }
+    },
+
+    provinceOther(newValue, oldValue) {
+      if (newValue !== oldValue) {
+        this.localEvent.location.region = utils.initMultilingualAttributes();
       }
     },
   },
