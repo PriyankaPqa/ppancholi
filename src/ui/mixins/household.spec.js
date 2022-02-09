@@ -382,7 +382,7 @@ describe('household', () => {
 
     describe('fetchShelterLocations', () => {
       it('calls searchMyEvents service with the right filter', async () => {
-        const expectedFilter = 'search.in(Entity/Id, \'60983874-18bb-467d-b55a-94dc55818151\', \'|\')';
+        const expectedFilter = 'search.in(Entity/Id, \'60983874-18bb-467d-b55a-94dc55818151\', \'|\') and Entity/Schedule/Status eq 2';
 
         await wrapper.vm.fetchShelterLocations(mockCombinedHousehold());
 

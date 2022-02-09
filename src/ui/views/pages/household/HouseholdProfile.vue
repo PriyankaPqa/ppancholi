@@ -172,6 +172,7 @@
 
 import moment, { Moment } from 'moment';
 import mixins from 'vue-typed-mixins';
+import _isEmpty from 'lodash/isEmpty';
 
 import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
@@ -230,9 +231,11 @@ export default mixins(household).extend({
   },
 
   watch: {
-    householdData() {
-      this.fetchMyEvents();
-      this.setHouseholdCreate();
+    householdData(newValue) {
+      if (newValue && !_isEmpty(newValue.metadata)) {
+        this.fetchMyEvents();
+        this.setHouseholdCreate();
+      }
     },
   },
 
@@ -345,14 +348,16 @@ export default mixins(household).extend({
 
   methods: {
     async fetchMyEvents() {
-      const eventIds = this.activeCaseFiles.map((cf) => cf.eventId);
-      const filter = `search.in(Entity/Id, '${eventIds.join('|')}', '|')`;
-      const eventsData = await this.$services.events.searchMyEvents({
-        filter,
-        top: 999,
-      });
+      if (this.activeCaseFiles.length) {
+        const eventIds = this.activeCaseFiles.map((cf) => cf.eventId);
+        const filter = `search.in(Entity/Id, '${eventIds.join('|')}', '|')`;
+        const eventsData = await this.$services.events.searchMyEvents({
+          filter,
+          top: 999,
+        });
 
-      this.events = eventsData?.value;
+        this.events = eventsData?.value;
+      }
     },
 
     async fetchHouseholdData() {

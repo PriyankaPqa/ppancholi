@@ -10,7 +10,8 @@ import deepmerge from 'deepmerge';
 import { ICurrentAddressCreateRequest } from '@crctech/registration-lib/src/entities/value-objects/current-address';
 import householdHelpers from '@/ui/helpers/household';
 import { IOptionItemData } from '@/entities/optionItem';
-import { EEventLocationStatus, IEventGenericLocation } from '@/entities/event';
+import { EEventLocationStatus, EEventStatus, IEventGenericLocation } from '@/entities/event';
+import { CaseFileStatus } from '@/entities/case-file';
 
 export default Vue.extend({
   methods: {
@@ -37,7 +38,7 @@ export default Vue.extend({
         }
       });
 
-      let members = await Promise.all([primaryBeneficiaryPromise, ...additionalMembersPromises]);
+      let members: IMemberEntity[] = await Promise.all([primaryBeneficiaryPromise, ...additionalMembersPromises]);
 
       if (shelterLocations) {
         members = this.addShelterLocationData(members, shelterLocations);
@@ -50,10 +51,12 @@ export default Vue.extend({
       const shelters = [] as IEventGenericLocation[];
       const householdCaseFiles = household.metadata.caseFiles;
       if (householdCaseFiles) {
-        const eventIds = householdCaseFiles.map((cf) => cf.eventId);
+        const eventIds = householdCaseFiles
+          .filter((c) => c.caseFileStatus === CaseFileStatus.Open || c.caseFileStatus === CaseFileStatus.Inactive)
+          .map((cf) => cf.eventId);
 
         const resEvents = await this.$services.events.searchMyEvents({
-          filter: `search.in(Entity/Id, '${eventIds.join('|')}', '|')`,
+          filter: `search.in(Entity/Id, '${eventIds.join('|')}', '|') and Entity/Schedule/Status eq ${EEventStatus.Open}`,
           top: 999,
         });
 
