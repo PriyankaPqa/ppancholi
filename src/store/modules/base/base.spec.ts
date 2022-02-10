@@ -279,6 +279,24 @@ describe('Base Module', () => {
       });
     });
 
+    describe('addNewlyCreatedId', () => {
+      it('should mutate the state if the id wasnt already the array', () => {
+        const baseModule = new BaseModuleTest(service);
+
+        baseModule.mutations.addNewlyCreatedId(baseModule.state, { id: 'test me' });
+        expect(baseModule.state.newlyCreatedIds[0].id).toEqual('test me');
+        expect(baseModule.state.newlyCreatedIds.length).toEqual(1);
+
+        baseModule.mutations.addNewlyCreatedId(baseModule.state, { id: 'test me2' });
+        expect(baseModule.state.newlyCreatedIds[0].id).toEqual('test me2');
+        expect(baseModule.state.newlyCreatedIds.length).toEqual(2);
+
+        baseModule.mutations.addNewlyCreatedId(baseModule.state, { id: 'test me' });
+        expect(baseModule.state.newlyCreatedIds[0].id).toEqual('test me2');
+        expect(baseModule.state.newlyCreatedIds.length).toEqual(2);
+      });
+    });
+
     describe('reset', () => {
       it('should reset items', () => {
         const baseModule = new BaseModuleTest(service);

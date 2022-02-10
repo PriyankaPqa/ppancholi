@@ -64,6 +64,19 @@ export default Vue.extend({
     inlineEdit(): boolean {
       return this.$store.state.registration.inlineEditCounter > 0;
     },
+
+    event() {
+      return this.$storage.registration.getters.event();
+    },
+
+    registrationNumber(): string {
+      // eslint-disable-next-line no-nested-ternary
+      return this.$store.state.registration.householdAssociationMode
+        ? (this.household as IHouseholdCreateData).registrationNumber
+        : this.$storage.registration.getters.registrationResponse()
+          ? this.$storage.registration.getters.registrationResponse().registrationNumber
+          : '';
+    },
   },
 
   watch: {
@@ -117,25 +130,31 @@ export default Vue.extend({
       await this.jump(this.currentTabIndex + 1);
     },
 
-    print() {
-      const event = this.$storage.registration.getters.event();
-
-      const registrationNumber = this.$store.state.registration.householdAssociationMode
-        ? (this.household as IHouseholdCreateData).registrationNumber : this.$storage.registration.getters.registrationResponse().registrationNumber;
-
-      const routeData = this.$router.resolve({
-        name: 'print-confirmation',
-        query: {
-          eventName: this.$m(event.name),
-          confirmationID: registrationNumber,
-          phoneAssistance: event.responseDetails.assistanceNumber,
-        },
+    async print() {
+      let stylesHtml = '';
+      const nodes = [...document.querySelectorAll('link[rel="stylesheet"], style')];
+      nodes.forEach((node) => {
+        stylesHtml += node.outerHTML;
       });
 
-      const pdfView = window.open(routeData.href, '_blank');
-      setTimeout(() => {
-        pdfView.print();
-      }, 2000);
+      const html = (this.$refs.printConfirm as Vue).$el.innerHTML;
+
+      const WinPrint = window.open('', '_blank', 'left=0,top=0,width=1000,height=1000,toolbar=0,status=0');
+
+      WinPrint.document.write(`<!DOCTYPE html>
+        <html>
+          <head>
+              ${stylesHtml}
+          </head>
+          <body>
+            <div>${html}</div>
+          </body>
+        </html>`);
+
+      await helpers.timeout(1000);
+
+      WinPrint.focus();
+      WinPrint.print();
     },
 
     async closeRegistration() {

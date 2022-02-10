@@ -29,6 +29,7 @@ export class BaseModule<T extends IEntity, IdParams> {
 
   protected baseState = {
     items: [] as Array<T>,
+    newlyCreatedIds: [] as Array<{id: uuid; createdOn: number}>,
     searchLoading: false,
     actionLoading: false,
   }
@@ -80,6 +81,12 @@ export class BaseModule<T extends IEntity, IdParams> {
   }
 
   protected baseMutations = {
+
+    addNewlyCreatedId: (state: IState<T>, item: T) => {
+      if (!state.newlyCreatedIds.find((n) => n.id === item.id)) {
+        state.newlyCreatedIds.unshift({ id: item.id, createdOn: (new Date()).getTime() });
+      }
+    },
 
     set: (state: IState<T>, item: T) => {
       this.upsert(state, item);
