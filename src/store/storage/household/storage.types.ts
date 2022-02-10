@@ -10,7 +10,7 @@ import {
 } from '../base/base.types';
 import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
 
-export interface IActions extends IBaseActions<IHouseholdEntity, IHouseholdMetadata> {
+export interface IActions extends IBaseActions<IHouseholdEntity, IHouseholdMetadata, uuid> {
   updateNoFixedHomeAddress (householdId: string, observation: string): Promise<IHouseholdEntity>;
   updateHomeAddress (householdId: string, address: IAddress): Promise<IHouseholdEntity>;
   fetchHouseholdHistory (household: IHouseholdEntity): Promise<IVersionedEntity[]>;

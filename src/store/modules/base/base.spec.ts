@@ -6,6 +6,7 @@ import { mockBaseEntities, mockBaseEntity } from '../../../entities/base';
 import helpers from '../../../ui/helpers/index';
 import { BaseModule } from './index';
 import { IState } from './base.types';
+import { mockUserAccountEntities } from '../../../entities/user-account/userAccount.mock';
 
 export class BaseModuleTest extends BaseModule<any, uuid> {
   declare public service: DomainBaseService<any, uuid>
@@ -264,6 +265,17 @@ describe('Base Module', () => {
         baseModule.mutations.setAll(baseModule.state, payload);
 
         expect(baseModule.state.items).toEqual(items);
+      });
+    });
+
+    describe('setSearchLoading', () => {
+      it('should mutate the state', () => {
+        const baseModule = new BaseModuleTest(service);
+        mockUserAccountEntities();
+        baseModule.mutations.setSearchLoading(baseModule.state, true);
+        expect(baseModule.state.searchLoading).toEqual(true);
+        baseModule.mutations.setSearchLoading(baseModule.state, false);
+        expect(baseModule.state.searchLoading).toEqual(false);
       });
     });
 

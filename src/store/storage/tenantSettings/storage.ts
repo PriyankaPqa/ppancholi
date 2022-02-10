@@ -7,7 +7,7 @@ import {
 import { IStorage } from './storage.types';
 import { Base } from '../base';
 
-export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never> implements IStorage {
+export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string) {
     super(pStore, pEntityModuleName, null);
   }

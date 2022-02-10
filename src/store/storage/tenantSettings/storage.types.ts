@@ -27,7 +27,7 @@ export interface IGettersMock extends IBaseGettersMock<ITenantSettingsEntity, ne
   logoUrl: jest.Mock<string>;
 }
 
-export interface IActions extends IBaseActions<ITenantSettingsEntity, never> {
+export interface IActions extends IBaseActions<ITenantSettingsEntity, never, uuid> {
   fetchCurrentTenantSettings(): Promise<ITenantSettingsEntityData>;
   fetchPublicFeatures(): Promise<IFeatureEntity[]>;
   fetchBranding(): Promise<IBrandingEntity>;

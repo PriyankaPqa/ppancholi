@@ -93,6 +93,10 @@ export class BaseModule<T extends IEntity, IdParams> {
       this.upsert(state, item);
     },
 
+    setSearchLoading(state: IState<T>, payload: boolean) {
+      state.searchLoading = payload;
+    },
+
     reset: (state: IState<T>) => {
       state.items = [];
     },

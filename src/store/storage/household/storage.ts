@@ -5,7 +5,7 @@ import { Base } from '../base';
 import { IHouseholdEntity, IHouseholdMetadata } from '../../../entities/household';
 import { IStorage } from './storage.types';
 
-export class HouseholdStorage extends Base<IHouseholdEntity, IHouseholdMetadata> implements IStorage {
+export class HouseholdStorage extends Base<IHouseholdEntity, IHouseholdMetadata, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     super(pStore, pEntityModuleName, pMetadataModuleName);
   }
