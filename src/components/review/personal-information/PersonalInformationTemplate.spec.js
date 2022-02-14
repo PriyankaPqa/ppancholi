@@ -165,7 +165,7 @@ describe('PersonalInformationTemplate.vue', () => {
         await wrapper.setProps({
           showAgeInReview: true,
         });
-        expect(wrapper.vm.getBirthDate).toEqual('Feb 12, 1999 (22 common.years)');
+        expect(wrapper.vm.getBirthDate).toEqual('Feb 12, 1999 (23 common.years)');
       });
 
       it('returns "" otherwise', async () => {
