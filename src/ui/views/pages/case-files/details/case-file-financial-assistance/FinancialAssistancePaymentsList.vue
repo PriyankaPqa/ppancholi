@@ -20,17 +20,6 @@
           :count="itemsCount"
           @update:appliedFilter="onApplyFilter">
           <template #toolbarActions>
-            <v-btn
-              v-if="canSubmit"
-              :disabled="!itemsToSubmit.length"
-              height="32"
-              color="primary"
-              style="color: white"
-              class="mr-4"
-              data-test="financialAssistanceOverview__submitAllButton"
-              @click="openSubmitDialog">
-              {{ $t('caseFile.financialAssistance.submitAllNewButton') }}
-            </v-btn>
             <v-btn height="32" color="primary" style="color: white" data-test="financialAssistanceOverview__statsButton" @click="showStats = true">
               {{ $t('caseFile.financialAssistance.statsButton') }}
             </v-btn>
@@ -347,10 +336,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       return this.$hasLevel('level1') && !this.readonly;
     },
 
-    canSubmit(): boolean {
-      return this.$hasLevel('level1') && !this.readonly;
-    },
-
     canDelete(): boolean {
       return this.$hasLevel('level1') && !this.readonly;
     },
@@ -443,11 +428,6 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
       if (doDelete) {
         await this.$storage.financialAssistancePayment.actions.deactivate(item.entity.id);
       }
-    },
-
-    openSubmitDialog() {
-      this.showSubmitDialog = true;
-      this.selectedItems = [];
     },
 
     async submitSelectedPayments() {

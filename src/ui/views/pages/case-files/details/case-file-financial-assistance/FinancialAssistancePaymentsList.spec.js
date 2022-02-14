@@ -227,30 +227,6 @@ describe('FinancialAssistancePaymentsList.vue', () => {
       });
     });
 
-    describe('canSubmit', () => {
-      it('returns true for level1+ only when not readonly', async () => {
-        await mountWrapper(false, 1);
-        expect(wrapper.vm.canSubmit).toBeTruthy();
-        await mountWrapper(false, 1, null,
-          {
-            computed: {
-              readonly() {
-                return true;
-              },
-            },
-          });
-        expect(wrapper.vm.canSubmit).toBeFalsy();
-        await mountWrapper(false, null);
-        expect(wrapper.vm.canSubmit).toBeFalsy();
-        await mountWrapper(false, null, 'readonly');
-        expect(wrapper.vm.canSubmit).toBeFalsy();
-        await mountWrapper(false, null, 'contributor3');
-        expect(wrapper.vm.canSubmit).toBeFalsy();
-        await mountWrapper(false, null, 'contributorFinance');
-        expect(wrapper.vm.canSubmit).toBeFalsy();
-      });
-    });
-
     describe('tableData', () => {
       it('should call getById', async () => {
         await mountWrapper();

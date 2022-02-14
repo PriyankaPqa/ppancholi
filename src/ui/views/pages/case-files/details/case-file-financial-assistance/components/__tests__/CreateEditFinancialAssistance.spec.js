@@ -3,7 +3,7 @@
  */
 
 /* eslint-disable */
-import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
+import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import
 {
@@ -45,11 +45,17 @@ const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGrou
 describe('CreateEditFinancialAssistance.vue', () => {
   let wrapper;
 
-  const mountWrapper = async (fullMount = false, mode = 'edit', level = 6, hasRole = 'role', additionalOverwrites = {}) => {
-    wrapper = (fullMount ? mount : shallowMount)(Component, {
+  const mountWrapper = async (_fullMount = false, mode = 'edit', level = 6, hasRole = 'role', additionalOverwrites = {}) => {
+    wrapper = (mount)(Component, {
+      shallow: true,
       localVue,
       propsData: {
         id: caseFileCombined.entity.id,
+      },
+      data() {
+        return {
+          financialAssistance: { name: null },
+        };
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
@@ -61,6 +67,11 @@ describe('CreateEditFinancialAssistance.vue', () => {
             financialAssistancePaymentId: mode !== 'create' ? 'myId' : null,
           },
         },
+      },
+      stubs: {
+        ValidationObserver: false,
+        PaymentLineGroup: true,
+        ViewFinancialAssistanceDetails: true,
       },
       ...additionalOverwrites,
     });
@@ -475,6 +486,27 @@ describe('CreateEditFinancialAssistance.vue', () => {
         expect(wrapper.vm.items).toEqual(items);
       });
     });
+
+    describe('rules', () => {
+      test('agree', async () => {
+        expect(wrapper.vm.rules.agree).toEqual({
+          required: { allowFalse: false },
+        });
+      });
+    });
+  });
+
+  describe('Validation rules', () => {
+    describe('agree', () => {
+      it('is linked to proper rules', async () => {
+        await wrapper.setData({
+          showSubmitPaymentDialog: true,
+        });
+
+        const element = wrapper.findDataTest('checkbox_agreed');
+        expect(element.props('rules')).toEqual(wrapper.vm.rules.agree);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -692,28 +724,20 @@ describe('CreateEditFinancialAssistance.vue', () => {
     });
 
     describe('onSubmitPayment', () => {
-      it('calls service if the confirmation dialog returns true', async () => {
-        await wrapper.vm.onSubmitPayment({ total: '3.99$' });
+      it('calls service if form is valid', async () => {
+        wrapper.vm.$refs.submitPaymentForm.validate = jest.fn(() => true);
+        wrapper.vm.closeSubmitPaymentDialog = jest.fn();
+
+        await wrapper.vm.onSubmitPayment();
         expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance.id);
         expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment()));
       });
 
-      it('does not call service if the confirmation dialog returns false', async () => {
-        wrapper.vm.$confirm = jest.fn(() => false);
-        await wrapper.vm.onSubmitPayment({ total: '3.99$' });
+      it('does not call service if form is not valid', async () => {
+        wrapper.vm.$refs.submitPaymentForm.validate = jest.fn(() => false);
+
+        await wrapper.vm.onSubmitPayment();
         expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).not.toHaveBeenCalled();
-      });
-
-      it('asks confirmation with correct details', async () => {
-        await wrapper.vm.onSubmitPayment({ total: '3.99$' });
-        const callArguments = wrapper.vm.$confirm.mock.calls[0];
-
-        expect(callArguments[0]).toEqual({
-          "htmlContent": "\n        <div class=\"row col\">caseFile.financialAssistance.submitAssistance.confirmMessage</div>\n        <div class=\"row list-row rc-body14\">\n          <div class=\"col fw-bold\">thl payment</div><div class=\"col-auto\">3.99$</div>\n        </div>\n        ",
-          "messages": "",
-          "submitActionLabel": "common.submit",
-          "title": "caseFile.financialAssistance.submitAssistance.confirmTitle"
-        });
       });
     });
 
@@ -725,6 +749,44 @@ describe('CreateEditFinancialAssistance.vue', () => {
         await wrapper.vm.updatePaymentStatus({ status: 3, group: newGroup, cancellationReason: 5});
         expect(storage.financialAssistancePayment.actions.updatePaymentStatus).toHaveBeenCalledWith(financialAssistance.id, newGroup.id, 3, 5);
         expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.updatePaymentStatus()));
+      });
+    });
+
+    describe('onClickSubmitPayment', () => {
+      it('sets totalAmountToSubmit', async () => {
+        const total = '$10.00';
+
+        wrapper.vm.onClickSubmitPayment( { total });
+
+        expect(wrapper.vm.totalAmountToSubmit).toBe(total);
+      });
+
+      it('sets showSubmitPaymentDialog', async () => {
+        expect(wrapper.vm.showSubmitPaymentDialog).toBe(false);
+
+        wrapper.vm.onClickSubmitPayment( { total: '$10.00' });
+
+        expect(wrapper.vm.showSubmitPaymentDialog).toBe(true);
+      });
+    });
+
+    describe('closeSubmitPaymentDialog', () => {
+      it('clears totalAmountToSubmit', async () => {
+        wrapper.vm.$refs.submitPaymentForm.reset = jest.fn();
+        wrapper.vm.totalAmountToSubmit = '$10.00';
+
+        wrapper.vm.closeSubmitPaymentDialog();
+
+        expect(wrapper.vm.totalAmountToSubmit).toBe('');
+      });
+
+      it('sets showSubmitPaymentDialog', async () => {
+        wrapper.vm.$refs.submitPaymentForm.reset = jest.fn();
+        wrapper.vm.showSubmitPaymentDialog = true;
+
+        wrapper.vm.closeSubmitPaymentDialog();
+
+        expect(wrapper.vm.showSubmitPaymentDialog).toBe(false);
       });
     });
   });

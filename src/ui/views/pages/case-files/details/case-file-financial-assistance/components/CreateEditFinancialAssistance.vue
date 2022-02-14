@@ -1,120 +1,164 @@
 <template>
-  <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
-    <rc-page-content
-      v-if="!loading"
-      :title="isAddMode ? $t('caseFile.financialAssistance.create.title') : $t('caseFile.financialAssistance.details.title')"
-      data-test="page-title">
-      <v-row justify="center">
-        <v-col cols="8">
-          <!-- Warning -->
-          <message-box v-if="showWarning" icon="mdi-alert" :message="$t('caseFile.financialAssistance.warning.program.eligibility')" />
-          <!-- Form -->
-          <v-sheet v-if="!isDetailsMode" rounded outlined class="pa-8 mb-8">
-            <create-edit-financial-assistance-form
-              :financial-assistance.sync="financialAssistance"
-              :financial-assistance-tables="financialTables"
-              :program="selectedProgram"
-              :is-edit-mode="isEditMode"
-              data-test="financial-assistance-form"
-              @updateSelectedData="updateSelectedData" />
-            <v-row v-if="isEditMode" justify="end">
-              <v-btn data-test="cancel" class="mr-4" @click.stop="$router.back()">
-                {{ $t('common.cancel') }}
-              </v-btn>
-              <v-btn
-                color="primary"
-                data-test="save"
-                class="mr-4"
-                :loading="loading"
-                :disabled="failed || !dirty || isDisabled || showWarning"
-                @click.stop="saveFinancialAssistance">
-                {{ submitLabel }}
-              </v-btn>
-            </v-row>
-          </v-sheet>
-          <v-sheet v-else rounded outlined class="pa-2 mb-8">
-            <view-financial-assistance-details
-              :id="id"
-              :financial-assistance.sync="financialAssistance"
-              :financial-assistance-table="selectedTable"
-              :program="selectedProgram"
-              data-test="financial-assistance-details" />
-          </v-sheet>
-          <!-- Add payment line -->
-          <v-row justify="center">
-            <v-col cols="12">
-              <div class="flex-row justify-space-between">
-                <span class="rc-body16 fw-bold">
-                  {{ $t('caseFile.financialAssistance.paymentLines') }}
-                </span>
-
-                <v-btn
-                  v-if="canAddNewLines"
-                  color="primary"
-                  data-test="financial-addPaymentLineBtn"
-                  :disabled="!selectedProgram || showWarning"
-                  @click="editPaymentLine(null)">
-                  {{ $t('caseFile.financialAssistance.addNewPaymentLines') }}
-                </v-btn>
-              </div>
-            </v-col>
-            <v-col cols="12">
-              <payment-line-group-list
-                v-if="nbPaymentLines > 0"
-                :readonly="readonly"
-                :disable-delete-button="nbPaymentLines === 1"
-                :payment-groups="activePaymentGroups"
-                :transaction-approval-status="financialAssistance.approvalStatus"
-                :items="items"
-                :disable-submit-payment="dirty"
+  <div class="full-height">
+    <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
+      <rc-page-content
+        v-if="!loading"
+        :title="isAddMode ? $t('caseFile.financialAssistance.create.title') : $t('caseFile.financialAssistance.details.title')"
+        data-test="page-title">
+        <v-row justify="center">
+          <v-col cols="8">
+            <!-- Warning -->
+            <message-box v-if="showWarning" icon="mdi-alert" :message="$t('caseFile.financialAssistance.warning.program.eligibility')" />
+            <!-- Form -->
+            <v-sheet v-if="!isDetailsMode" rounded outlined class="pa-8 mb-8">
+              <create-edit-financial-assistance-form
+                :financial-assistance.sync="financialAssistance"
+                :financial-assistance-tables="financialTables"
                 :program="selectedProgram"
-                data-test="paymentGroupList"
-                @submit-payment="onSubmitPayment"
-                @edit-payment-line="editPaymentLine"
-                @delete-payment-line="deletePaymentLine"
-                @update-payment-status="updatePaymentStatus" />
-              <div v-else class="rc-body14">
-                {{ $t('caseFile.financialAssistance.noPaymentLines') }}
-              </div>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-      <!-- Actions -->
-      <template slot="actions">
-        <v-btn :color="isAddMode ? '' : 'primary'" data-test="cancel" @click.stop="back()">
-          {{ isAddMode ? $t('common.cancel') : $t('financialAssistance.back') }}
-        </v-btn>
-        <v-btn
-          v-if="isAddMode"
-          color="primary"
-          data-test="save"
-          :loading="loading"
-          :disabled="failed || !dirty || isDisabled || showWarning"
-          @click.stop="saveFinancialAssistance">
-          {{ submitLabel }}
-        </v-btn>
-      </template>
+                :is-edit-mode="isEditMode"
+                data-test="financial-assistance-form"
+                @updateSelectedData="updateSelectedData" />
+              <v-row v-if="isEditMode" justify="end">
+                <v-btn data-test="cancel" class="mr-4" @click.stop="$router.back()">
+                  {{ $t('common.cancel') }}
+                </v-btn>
+                <v-btn
+                  color="primary"
+                  data-test="save"
+                  class="mr-4"
+                  :loading="loading"
+                  :disabled="failed || !dirty || isDisabled || showWarning"
+                  @click.stop="saveFinancialAssistance">
+                  {{ submitLabel }}
+                </v-btn>
+              </v-row>
+            </v-sheet>
+            <v-sheet v-else rounded outlined class="pa-2 mb-8">
+              <view-financial-assistance-details
+                :id="id"
+                :financial-assistance.sync="financialAssistance"
+                :financial-assistance-table="selectedTable"
+                :program="selectedProgram"
+                data-test="financial-assistance-details" />
+            </v-sheet>
+            <!-- Add payment line -->
+            <v-row justify="center">
+              <v-col cols="12">
+                <div class="flex-row justify-space-between">
+                  <span class="rc-body16 fw-bold">
+                    {{ $t('caseFile.financialAssistance.paymentLines') }}
+                  </span>
 
-      <create-edit-payment-line-dialog
-        v-if="showAddPaymentLineForm"
-        :id="caseFileId"
-        :show.sync="showAddPaymentLineForm"
-        :program="selectedProgram"
-        :items="items"
-        :current-line="lineToEdit"
-        :current-group="groupToEdit"
-        :financial-assistance="financialAssistance"
-        data-test="case-file-financial-assistance-payment-line-dialog"
-        @submit="onSubmitPaymentLine($event)"
-        @cancelChange="showAddPaymentLineForm = false" />
-    </rc-page-content>
-  </validation-observer>
+                  <v-btn
+                    v-if="canAddNewLines"
+                    color="primary"
+                    data-test="financial-addPaymentLineBtn"
+                    :disabled="!selectedProgram || showWarning"
+                    @click="editPaymentLine(null)">
+                    {{ $t('caseFile.financialAssistance.addNewPaymentLines') }}
+                  </v-btn>
+                </div>
+              </v-col>
+              <v-col cols="12">
+                <payment-line-group-list
+                  v-if="nbPaymentLines > 0"
+                  :readonly="readonly"
+                  :disable-delete-button="nbPaymentLines === 1"
+                  :payment-groups="activePaymentGroups"
+                  :transaction-approval-status="financialAssistance.approvalStatus"
+                  :items="items"
+                  :disable-submit-payment="dirty"
+                  :program="selectedProgram"
+                  data-test="paymentGroupList"
+                  @submit-payment="onClickSubmitPayment"
+                  @edit-payment-line="editPaymentLine"
+                  @delete-payment-line="deletePaymentLine"
+                  @update-payment-status="updatePaymentStatus" />
+                <div v-else class="rc-body14">
+                  {{ $t('caseFile.financialAssistance.noPaymentLines') }}
+                </div>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+
+        <!-- Actions -->
+        <template slot="actions">
+          <v-btn :color="isAddMode ? '' : 'primary'" data-test="cancel" @click.stop="back()">
+            {{ isAddMode ? $t('common.cancel') : $t('financialAssistance.back') }}
+          </v-btn>
+          <v-btn
+            v-if="isAddMode"
+            color="primary"
+            data-test="save"
+            :loading="loading"
+            :disabled="failed || !dirty || isDisabled || showWarning"
+            @click.stop="saveFinancialAssistance">
+            {{ submitLabel }}
+          </v-btn>
+        </template>
+
+        <create-edit-payment-line-dialog
+          v-if="showAddPaymentLineForm"
+          :id="caseFileId"
+          :show.sync="showAddPaymentLineForm"
+          :program="selectedProgram"
+          :items="items"
+          :current-line="lineToEdit"
+          :current-group="groupToEdit"
+          :financial-assistance="financialAssistance"
+          data-test="case-file-financial-assistance-payment-line-dialog"
+          @submit="onSubmitPaymentLine($event)"
+          @cancelChange="showAddPaymentLineForm = false" />
+      </rc-page-content>
+    </validation-observer>
+
+    <validation-observer ref="submitPaymentForm" v-slot="{ failed }" slim>
+      <rc-dialog
+        :title="$t('caseFile.financialAssistance.submitAssistance.confirmTitle')"
+        :submit-action-label="$t('common.submit')"
+        :cancel-action-label="$t('common.buttons.cancel')"
+        :submit-button-disabled="failed || submittingPayment"
+        :show.sync="showSubmitPaymentDialog"
+        :max-width="750"
+        content-padding="10"
+        persistent
+        :show-close="false"
+        :show-help="false"
+        :loading="submittingPayment"
+        @close="closeSubmitPaymentDialog()"
+        @cancel="closeSubmitPaymentDialog()"
+        @submit="onSubmitPayment">
+        <v-row>
+          <v-col cols="12" class="mb-4 pa-0">
+            {{ $t('caseFile.financialAssistance.submitAssistance.confirmMessage') }}
+          </v-col>
+          <v-col cols="12" class="list-row d-flex justify-space-between rc-body14 px-6 py-3">
+            <span class="fw-bold">
+              {{ financialAssistance ? financialAssistance.name : '' }}
+            </span>
+            <span>
+              {{ totalAmountToSubmit }}
+            </span>
+          </v-col>
+        </v-row>
+        <v-row class="grey-container mt-8 pl-2">
+          <v-checkbox-with-validation
+            v-model="agree"
+            :rules="rules.agree"
+            data-test="checkbox_agreed"
+            class="rc-body12"
+            dense
+            :label="$t('caseFile.financialAssistance.submitAssistance.agree')" />
+        </v-row>
+      </rc-dialog>
+    </validation-observer>
+  </div>
 </template>
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent, RcDialog, VCheckboxWithValidation } from '@crctech/component-library';
 import { TranslateResult } from 'vue-i18n';
 import _find from 'lodash/find';
 import { Route, NavigationGuardNext } from 'vue-router';
@@ -157,6 +201,8 @@ export default mixins(caseFileDetail).extend({
     CreateEditPaymentLineDialog,
     PaymentLineGroupList,
     ViewFinancialAssistanceDetails,
+    RcDialog,
+    VCheckboxWithValidation,
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
@@ -178,6 +224,10 @@ export default mixins(caseFileDetail).extend({
       isDetailsMode: this.$route.name === routes.caseFile.financialAssistance.details.name,
       isEditMode: this.$route.name === routes.caseFile.financialAssistance.edit.name,
       isAddMode: this.$route.name === routes.caseFile.financialAssistance.create.name,
+      showSubmitPaymentDialog: false,
+      submittingPayment: false,
+      totalAmountToSubmit: '',
+      agree: false,
     };
   },
 
@@ -227,6 +277,14 @@ export default mixins(caseFileDetail).extend({
     nbPaymentLines() : number {
       return this.activePaymentGroups?.map((g) => g.lines.filter((l) => l.status === Status.Active))
         .reduce((acc, element) => acc + element.length, 0);
+    },
+
+    rules(): Record<string, unknown> {
+      return {
+        agree: {
+          required: { allowFalse: false },
+        },
+      };
     },
   },
 
@@ -340,27 +398,34 @@ export default mixins(caseFileDetail).extend({
       }
     },
 
-    async onSubmitPayment(event: { total: string }) {
-      const result = await this.$confirm({
-        title: this.$t('caseFile.financialAssistance.submitAssistance.confirmTitle'),
-        messages: '',
-        htmlContent: `
-        <div class="row col">${this.$t('caseFile.financialAssistance.submitAssistance.confirmMessage')}</div>
-        <div class="row list-row rc-body14">
-          <div class="col fw-bold">${this.financialAssistance.name}</div><div class="col-auto">${event.total}</div>
-        </div>
-        `,
-        submitActionLabel: this.$t('common.submit'),
-      });
+    onClickSubmitPayment(event: { total: string }) {
+      this.totalAmountToSubmit = event.total;
+      this.showSubmitPaymentDialog = true;
+    },
 
-      if (result) {
-        const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions
-          .submitFinancialAssistancePayment(this.financialAssistance.id);
-        if (updatedFinancialAssistance) {
-          this.financialAssistance = new FinancialAssistancePaymentEntity(updatedFinancialAssistance);
-          this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.approvalSubmitted'));
-        }
+    closeSubmitPaymentDialog() {
+      this.showSubmitPaymentDialog = false;
+      this.totalAmountToSubmit = '';
+      this.agree = false;
+      (this.$refs.submitPaymentForm as VForm).reset();
+    },
+
+    async onSubmitPayment() {
+      const isValid = await (this.$refs.submitPaymentForm as VForm).validate();
+
+      if (!isValid) {
+        return;
       }
+
+      this.submittingPayment = true;
+      const updatedFinancialAssistance = await this.$storage.financialAssistancePayment.actions
+        .submitFinancialAssistancePayment(this.financialAssistance.id);
+      if (updatedFinancialAssistance) {
+        this.financialAssistance = new FinancialAssistancePaymentEntity(updatedFinancialAssistance);
+        this.$toasted.global.success(this.$t('caseFile.financialAssistance.toast.approvalSubmitted'));
+        this.closeSubmitPaymentDialog();
+      }
+      this.submittingPayment = false;
     },
 
     mergePaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
@@ -457,7 +522,3 @@ export default mixins(caseFileDetail).extend({
   },
 });
 </script>
-
-<style>
-
-</style>
