@@ -130,7 +130,7 @@ export default Vue.extend({
       await this.jump(this.currentTabIndex + 1);
     },
 
-    async print() {
+    print() {
       let stylesHtml = '';
       const nodes = [...document.querySelectorAll('link[rel="stylesheet"], style')];
       nodes.forEach((node) => {
@@ -139,7 +139,7 @@ export default Vue.extend({
 
       const html = (this.$refs.printConfirm as Vue).$el.innerHTML;
 
-      const WinPrint = window.open('', '_blank', 'left=0,top=0,width=1000,height=1000,toolbar=0,status=0');
+      const WinPrint = window.open('Print', '', 'left=0,top=0,width=1000,height=1000,toolbar=0,status=0');
 
       WinPrint.document.write(`<!DOCTYPE html>
         <html>
@@ -151,10 +151,11 @@ export default Vue.extend({
           </body>
         </html>`);
 
-      await helpers.timeout(1000);
-
-      WinPrint.focus();
-      WinPrint.print();
+      setTimeout(() => {
+        WinPrint.focus();
+        WinPrint.print();
+        WinPrint.close();
+      }, 2000);
     },
 
     async closeRegistration() {
