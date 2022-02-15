@@ -189,16 +189,16 @@ export default Vue.extend({
 
     computedBirthdate(): IBirthDate {
       return {
-        year: this.form.birthDate.year,
-        month: this.form.birthDate.month,
-        day: this.form.birthDate.day,
+        year: this.formCopy.birthDate.year,
+        month: this.formCopy.birthDate.month,
+        day: this.formCopy.birthDate.day,
       };
     },
 
     fullDate(): boolean {
-      return this.form.birthDate.day !== null && this.form.birthDate.day !== ''
-        && this.form.birthDate.month !== null && this.form.birthDate.month !== ''
-        && this.form.birthDate.year !== null && this.form.birthDate.year !== '';
+      return this.formCopy.birthDate.day !== null && this.formCopy.birthDate.day !== ''
+        && this.formCopy.birthDate.month !== null && this.formCopy.birthDate.month !== ''
+        && this.formCopy.birthDate.year !== null && this.formCopy.birthDate.year !== '';
     },
 
   },

@@ -130,7 +130,7 @@ describe('IdentityForm.vue', () => {
     describe('fullDate', () => {
       it('should return false if only day is not empty', async () => {
         await wrapper.setData({
-          form: {
+          formCopy: {
             birthDate: {
               day: '12',
               month: '',
@@ -143,7 +143,7 @@ describe('IdentityForm.vue', () => {
 
       it('should return false if only month is not empty', async () => {
         await wrapper.setData({
-          form: {
+          formCopy: {
             birthDate: {
               day: '',
               month: '01',
@@ -156,7 +156,7 @@ describe('IdentityForm.vue', () => {
 
       it('should return false if only year is not empty', async () => {
         await wrapper.setData({
-          form: {
+          formCopy: {
             birthDate: {
               day: '',
               month: '',
@@ -169,7 +169,7 @@ describe('IdentityForm.vue', () => {
 
       it('should return true if all components are not empty', async () => {
         await wrapper.setData({
-          form: {
+          formCopy: {
             birthDate: {
               day: '01',
               month: '01',
