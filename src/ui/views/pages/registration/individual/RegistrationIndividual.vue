@@ -71,6 +71,7 @@
         </rc-page-content>
       </validation-observer>
     </page-template>
+    <confirmation-print ref="printConfirm" :event="event" :registration-number="registrationNumber" />
   </div>
 </template>
 
@@ -82,6 +83,7 @@ import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
 import { IEvent } from '@crctech/registration-lib/src/entities/event';
+import { ConfirmationPrint } from '@crctech/registration-lib';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';
@@ -137,6 +139,7 @@ export default mixins(individual).extend({
     AdditionalMembers,
     ReviewRegistration,
     ConfirmRegistration,
+    ConfirmationPrint,
   },
 
   mixins: [individual],

@@ -61,6 +61,7 @@
         </rc-page-content>
       </validation-observer>
     </page-template>
+    <confirmation-print ref="printConfirm" :event="event" :registration-number="registrationNumber" />
   </div>
 </template>
 
@@ -72,6 +73,7 @@ import { TranslateResult } from 'vue-i18n';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';
 import { RcPageContent } from '@crctech/component-library';
 import { ContactInformation, IMember, ISplitHousehold } from '@crctech/registration-lib/src/entities/household-create';
+import { ConfirmationPrint } from '@crctech/registration-lib';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';
@@ -121,6 +123,7 @@ export default mixins(individual).extend({
     ConfirmRegistration,
     SplitHouseholdEvent,
     SplitHouseholdMembers,
+    ConfirmationPrint,
   },
 
   data() {
