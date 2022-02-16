@@ -64,6 +64,7 @@
         </template>
       </rc-page-content>
     </ValidationObserver>
+    <confirmation-print ref="printConfirm" :event="event" :registration-number="registrationNumber" />
   </div>
 </template>
 
@@ -72,6 +73,7 @@ import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import individual from '@crctech/registration-lib/src/ui/mixins/individual';
+import { ConfirmationPrint } from '@crctech/registration-lib';
 import { localStorageKeys } from '@/constants/localStorage';
 import { FeatureKeys } from '@crctech/registration-lib/src/entities/tenantSettings';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
@@ -94,6 +96,7 @@ export default mixins(individual).extend({
     AdditionalMembers,
     ReviewRegistration,
     ConfirmRegistration,
+    ConfirmationPrint,
   },
 
   data: () => ({
