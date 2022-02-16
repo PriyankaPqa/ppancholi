@@ -93,7 +93,7 @@ extend('birthday', {
   validate: (value, args) => {
     const { birthdate } = args;
 
-    if (birthdate.year < 0) return false;
+    if (birthdate.year < 1901) return false;
 
     const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
     if (momentBirthdate.isValid()) {
