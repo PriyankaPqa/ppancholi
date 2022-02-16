@@ -10,6 +10,7 @@ import {
   ISetDomainsRequest,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
+  IValidateCaptchaAllowedIpAddressResponse,
 } from '../../../entities/tenantSettings';
 import { ITenantSettingsService } from './tenantSettings.types';
 
@@ -32,6 +33,10 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
 
   async getPublicFeatures(): Promise<IFeatureEntity[]> {
     return this.http.get(`${this.baseUrl}/public-features`);
+  }
+
+  async validateCaptchaAllowedIpAddress(): Promise<IValidateCaptchaAllowedIpAddressResponse> {
+    return this.http.get(`${this.baseUrl}/validate-captcha-allowed-ip-address`);
   }
 
   async getBranding(): Promise<IBrandingEntityData> {

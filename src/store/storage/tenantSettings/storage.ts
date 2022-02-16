@@ -3,6 +3,7 @@ import {
   FeatureKeys,
   IBrandingEntity,
   ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, IFeatureEntity, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
+  IValidateCaptchaAllowedIpAddressResponse,
 } from '../../../entities/tenantSettings';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
@@ -22,6 +23,8 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
     isFeatureEnabled: (featureKey: FeatureKeys): boolean => this.store.getters[`${this.entityModuleName}/isFeatureEnabled`](featureKey),
 
     logoUrl: (languageCode: string) => this.store.getters[`${this.entityModuleName}/logoUrl`](languageCode),
+
+    validateCaptchaAllowedIpAddress: () => this.store.getters[`${this.entityModuleName}/validateCaptchaAllowedIpAddress`],
   };
 
   private actions = {
@@ -54,6 +57,9 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
       Promise<ITenantSettingsEntity> => this.store.dispatch(`${this.entityModuleName}/updateTenantDetails`, payload),
 
     fetchLogoUrl: (languageCode: string): Promise<string> => this.store.dispatch(`${this.entityModuleName}/fetchLogoUrl`, languageCode),
+
+    validateCaptchaAllowedIpAddress: ():
+      Promise<IValidateCaptchaAllowedIpAddressResponse> => this.store.dispatch(`${this.entityModuleName}/validateCaptchaAllowedIpAddress`),
   };
 
   private mutations = {

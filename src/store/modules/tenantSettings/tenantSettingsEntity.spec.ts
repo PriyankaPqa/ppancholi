@@ -109,6 +109,18 @@ describe('>>> TenantSettings entity module', () => {
         expect(module.getters.logoUrl(module.state)('fr')).toEqual('url fr');
       });
     });
+
+    describe('validateCaptchaAllowedIpAddress', () => {
+      it('returns the validateCaptchaAllowedIpAddress', () => {
+        module.state.validateCaptchaAllowedIpAddress = {
+          ipAddressIsAllowed: true,
+          clientIpAddress: '192.168.0.1',
+        };
+
+        expect(module.getters.validateCaptchaAllowedIpAddress(module.state).ipAddressIsAllowed).toEqual(true);
+        expect(module.getters.validateCaptchaAllowedIpAddress(module.state).clientIpAddress).toEqual('192.168.0.1');
+      });
+    });
   });
 
   describe('>> Mutations', () => {
@@ -176,6 +188,20 @@ describe('>>> TenantSettings entity module', () => {
         });
 
         expect(module.state.logoUrl.en).toEqual('mock url');
+      });
+    });
+
+    describe('setValidateCaptchaAllowedIpAddress', () => {
+      it('sets the validateCaptchaAllowedIpAddress', () => {
+        const ipAddr = '192.168.0.1';
+
+        module.mutations.setValidateCaptchaAllowedIpAddress(module.state, {
+          ipAddressIsAllowed: true,
+          clientIpAddress: ipAddr,
+        });
+
+        expect(module.state.validateCaptchaAllowedIpAddress.ipAddressIsAllowed).toEqual(true);
+        expect(module.state.validateCaptchaAllowedIpAddress.clientIpAddress).toEqual('192.168.0.1');
       });
     });
   });
@@ -403,6 +429,30 @@ describe('>>> TenantSettings entity module', () => {
         expect(actionContext.commit).toBeCalledWith('setLogoUrl', {
           languageCode: 'en',
           url: 'mock url',
+        });
+      });
+    });
+
+    describe('doValidateCaptchaAllowedIpAddress', () => {
+      it('calls the validateCaptchaAllowedIpAddress service', async () => {
+        module.service.validateCaptchaAllowedIpAddress = jest.fn();
+
+        await module.actions.validateCaptchaAllowedIpAddress(actionContext);
+
+        expect(module.service.validateCaptchaAllowedIpAddress).toHaveBeenCalledTimes(1);
+      });
+
+      it('commits the validateCaptchaAllowedIpAddress', async () => {
+        module.service.validateCaptchaAllowedIpAddress = jest.fn(() => Promise.resolve({
+          ipAddressIsAllowed: true,
+          clientIpAddress: '192.168.0.1',
+        }));
+
+        await module.actions.validateCaptchaAllowedIpAddress(actionContext);
+
+        expect(actionContext.commit).toBeCalledWith('setValidateCaptchaAllowedIpAddress', {
+          ipAddressIsAllowed: true,
+          clientIpAddress: '192.168.0.1',
         });
       });
     });

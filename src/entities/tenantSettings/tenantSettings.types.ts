@@ -81,4 +81,9 @@ export interface ICreateTenantSettingsRequest {
   slug: string;
 }
 
+export interface IValidateCaptchaAllowedIpAddressResponse {
+  ipAddressIsAllowed: boolean;
+  clientIpAddress: string;
+}
+
 export type ITenantSettingsCombined = IEntityCombined<ITenantSettingsEntity, never>;

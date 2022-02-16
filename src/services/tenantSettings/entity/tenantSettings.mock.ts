@@ -17,4 +17,5 @@ export const mockTenantSettingsService = (): ITenantSettingsServiceMock => ({
   updateColours: jest.fn(() => mockTenantSettingsEntityData()),
   updateTenantDetails: jest.fn(() => mockTenantSettingsEntityData()),
   getLogoUrl: jest.fn(),
+  validateCaptchaAllowedIpAddress: jest.fn(),
 });

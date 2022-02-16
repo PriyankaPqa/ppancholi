@@ -8,6 +8,7 @@ import {
   ISetDomainsRequest,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
+  IValidateCaptchaAllowedIpAddressResponse,
 } from '../../../entities/tenantSettings';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
@@ -18,6 +19,7 @@ export interface IGetters extends IBaseGetters<ITenantSettingsEntity, never> {
   isFeatureEnabled(featureKe: FeatureKeys): boolean;
   branding(): IBrandingEntity;
   logoUrl(languageCode: string): string;
+  validateCaptchaAllowedIpAddress(): IValidateCaptchaAllowedIpAddressResponse;
 }
 
 export interface IGettersMock extends IBaseGettersMock<ITenantSettingsEntity, never> {
@@ -25,6 +27,7 @@ export interface IGettersMock extends IBaseGettersMock<ITenantSettingsEntity, ne
   branding(): IBrandingEntity;
   isFeatureEnabled: jest.Mock<boolean>;
   logoUrl: jest.Mock<string>;
+  validateCaptchaAllowedIpAddress: jest.Mock<IValidateCaptchaAllowedIpAddressResponse>;
 }
 
 export interface IActions extends IBaseActions<ITenantSettingsEntity, never, uuid> {
@@ -39,6 +42,7 @@ export interface IActions extends IBaseActions<ITenantSettingsEntity, never, uui
   updateColours(payload: IEditColoursRequest): Promise<ITenantSettingsEntity>;
   updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<ITenantSettingsEntity>;
   fetchLogoUrl(languageCode: string): Promise<string>;
+  validateCaptchaAllowedIpAddress(): Promise<IValidateCaptchaAllowedIpAddressResponse>;
 }
 
 export interface IActionsMock extends IBaseActionsMock<ITenantSettingsEntity, never> {
@@ -53,6 +57,7 @@ export interface IActionsMock extends IBaseActionsMock<ITenantSettingsEntity, ne
   updateColours: jest.Mock<ITenantSettingsEntity>;
   updateTenantDetails: jest.Mock<ITenantSettingsEntity>;
   fetchLogoUrl: jest.Mock<string>;
+  validateCaptchaAllowedIpAddress: jest.Mock<IValidateCaptchaAllowedIpAddressResponse>;
 }
 
 export interface IMutations extends IBaseMutations<ITenantSettingsEntity, never> {}

@@ -1,4 +1,4 @@
-import { ITenantSettingsEntity } from '../../../entities/tenantSettings';
+import { ITenantSettingsEntity, IValidateCaptchaAllowedIpAddressResponse } from '../../../entities/tenantSettings';
 import { IState } from '../base/base.types';
 
 export interface ITenantSettingsEntityState extends IState<ITenantSettingsEntity> {
@@ -7,4 +7,5 @@ export interface ITenantSettingsEntityState extends IState<ITenantSettingsEntity
     en: string;
     fr: string;
   };
+  validateCaptchaAllowedIpAddress: IValidateCaptchaAllowedIpAddressResponse;
 }

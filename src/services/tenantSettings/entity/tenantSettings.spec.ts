@@ -115,4 +115,11 @@ describe('>>> TenantSettings service', () => {
       });
     });
   });
+
+  describe('validateCaptchaAllowedIpAddress', () => {
+    it('is linked to the correct url', async () => {
+      await service.validateCaptchaAllowedIpAddress();
+      expect(http.get).toHaveBeenCalledWith('system-management/tenant-settings/validate-captcha-allowed-ip-address');
+    });
+  });
 });

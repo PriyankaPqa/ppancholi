@@ -7,6 +7,7 @@ import {
   ISetDomainsRequest,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
+  IValidateCaptchaAllowedIpAddressResponse,
 } from '../../../entities/tenantSettings';
 import { IDomainBaseService, IDomainBaseServiceMock } from '../../base/base.types';
 
@@ -22,6 +23,7 @@ export interface ITenantSettingsService extends IDomainBaseService<ITenantSettin
   updateColours(payload: IEditColoursRequest): Promise<ITenantSettingsEntityData>;
   updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<ITenantSettingsEntityData>;
   getLogoUrl(languageCode: string): Promise<string>;
+  validateCaptchaAllowedIpAddress(): Promise<IValidateCaptchaAllowedIpAddressResponse>;
 }
 
 export interface ITenantSettingsServiceMock extends IDomainBaseServiceMock<ITenantSettingsEntity> {
@@ -36,4 +38,5 @@ export interface ITenantSettingsServiceMock extends IDomainBaseServiceMock<ITena
   updateColours: jest.Mock<ITenantSettingsEntityData>;
   updateTenantDetails: jest.Mock<ITenantSettingsEntityData>;
   getLogoUrl: jest.Mock<string>;
+  validateCaptchaAllowedIpAddress: jest.Mock<IValidateCaptchaAllowedIpAddressResponse>;
 }

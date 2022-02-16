@@ -16,6 +16,7 @@ import {
   ISetDomainsRequest,
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
+  IValidateCaptchaAllowedIpAddressResponse,
   TenantSettingsEntity,
 } from '../../../entities/tenantSettings';
 import { TenantSettingsService } from '../../../services/tenantSettings/entity';
@@ -42,6 +43,11 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       en: '/img/placeholder-logo-en.png',
       fr: '/img/placeholder-logo-fr.png',
     },
+
+    validateCaptchaAllowedIpAddress: {
+      ipAddressIsAllowed: false,
+      clientIpAddress: '',
+    },
   };
 
   public getters = {
@@ -60,6 +66,8 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       }
       return state.logoUrl[languageCode];
     },
+
+    validateCaptchaAllowedIpAddress: (state: ITenantSettingsEntityState) => state.validateCaptchaAllowedIpAddress,
   };
 
   public mutations = {
@@ -86,6 +94,10 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
 
     setLogoUrl: (state: ITenantSettingsEntityState, { languageCode, url }: { languageCode: 'en' | 'fr'; url: string }) => {
       state.logoUrl[languageCode] = url;
+    },
+
+    setValidateCaptchaAllowedIpAddress(state: ITenantSettingsEntityState, response: IValidateCaptchaAllowedIpAddressResponse) {
+      state.validateCaptchaAllowedIpAddress = response;
     },
   };
 
@@ -189,6 +201,17 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
 
       if (result) {
         context.commit('setFeatures', result);
+      }
+
+      return result;
+    },
+
+    validateCaptchaAllowedIpAddress: async (context: ActionContext<ITenantSettingsEntityState, ITenantSettingsEntityState>):
+    Promise<IValidateCaptchaAllowedIpAddressResponse> => {
+      const result = await this.service.validateCaptchaAllowedIpAddress();
+
+      if (result) {
+        context.commit('setValidateCaptchaAllowedIpAddress', result);
       }
 
       return result;
