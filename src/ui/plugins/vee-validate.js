@@ -153,7 +153,7 @@ extend('birthday', {
   validate: (value, args) => {
     const { birthdate } = args;
 
-    if (birthdate.year < 0) {
+    if (birthdate.year < 1901) {
       return false;
     }
 
