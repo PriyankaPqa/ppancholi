@@ -52,7 +52,7 @@ export class MSAL implements IMSAL {
 
   public account: AccountInfo | null;
 
-  private currentDomainTenant: string;
+  public currentDomainTenant: string;
 
   private readonly showConsole: boolean;
 

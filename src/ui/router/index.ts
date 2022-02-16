@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter, { Route } from 'vue-router';
 import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import { PublicService } from '@crctech/registration-lib/src/services/public';
 import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
@@ -8,6 +9,7 @@ import store from '@/store/store';
 import { i18n } from '@/ui/plugins/i18n';
 import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
 import { ITenantSettingsEntity } from '@/entities/tenantSettings';
+import { httpClient } from '@/services/httpClient';
 
 Vue.use(VueRouter);
 
@@ -40,6 +42,12 @@ const authenticationGuard = async (to: Route) => {
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
     if (!isSignedIn) {
       await AuthenticationProvider.signIn('authenticationGuard');
+    }
+
+    // If we are in localhost or haven't fetched the current tenant yet
+    if (!AuthenticationProvider.currentDomainTenant) {
+      const currentTenant = await new PublicService(httpClient).getTenantByEmisDomain(window.location.host);
+      AuthenticationProvider.setCurrentTenantDomain(currentTenant);
     }
 
     // Dispatch the action to the store to fetch the user data from the JWT token
