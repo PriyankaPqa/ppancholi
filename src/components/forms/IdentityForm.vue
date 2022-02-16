@@ -85,6 +85,8 @@
           <v-text-field-with-validation
             v-model="formCopy.birthDate.year"
             :data-test="`${prefixDataTest}__year`"
+            type="number"
+            min="1901"
             :rules="rules.year"
             :label="`${$t('registration.personal_info.year')}*`" />
         </v-col>
