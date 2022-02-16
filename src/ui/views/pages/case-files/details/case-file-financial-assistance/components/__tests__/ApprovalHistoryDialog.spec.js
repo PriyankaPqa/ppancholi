@@ -64,17 +64,17 @@ describe('ApprovalHistoryDialog.vue', () => {
           {
             username: 'Thi Hung Lieu',
             roleName: 'System Admin',
-            rationale: 'Payment created',
+            rationale: 'caseFile.financialAssistance.approvalHistory.rationale.created',
             date: new Date('2021-10-15T14:27:07.000Z'),
             formattedDate: 'Oct 15, 2021',
-            action: 'Submitted',
+            action: 'caseFile.financialAssistance.approvalHistory.action.submitted',
           },
           {
-            username: 'System',
-            rationale: 'Assistance approved on assessment form or assistance did not require approval',
+            username: 'caseFile.financialAssistance.approvalHistory.system',
+            rationale: 'caseFile.financialAssistance.approvalHistory.rationale.approved',
             formattedDate: 'Oct 15, 2021',
             date: new Date('2021-10-15T14:27:07.000Z'),
-            action: 'Approved - Final',
+            action: 'caseFile.financialAssistance.approvalHistory.action.approved',
           },
         ]);
       });

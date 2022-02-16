@@ -117,16 +117,16 @@ export default Vue.extend({
       return [{
         username: this.submittedHistory.userName,
         roleName: this.$m(this.submittedHistory.roleName),
-        rationale: 'Payment created',
+        rationale: this.$t('caseFile.financialAssistance.approvalHistory.rationale.created') as string,
         date: new Date(this.submittedHistory.timestamp),
         formattedDate: helpers.getLocalStringDate(this.submittedHistory.timestamp, 'Entity.timestamp', 'll'),
-        action: 'Submitted',
+        action: this.$t('caseFile.financialAssistance.approvalHistory.action.submitted') as string,
       }, {
-        username: 'System',
-        rationale: 'Assistance approved on assessment form or assistance did not require approval',
+        username: this.$t('caseFile.financialAssistance.approvalHistory.system') as string,
+        rationale: this.$t('caseFile.financialAssistance.approvalHistory.rationale.approved') as string,
         formattedDate: helpers.getLocalStringDate(this.submittedHistory.timestamp, 'Entity.timestamp', 'll'),
         date: new Date(this.submittedHistory.timestamp),
-        action: 'Approved - Final',
+        action: this.$t('caseFile.financialAssistance.approvalHistory.action.approved') as string,
       }];
     },
   },
