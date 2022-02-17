@@ -15,6 +15,7 @@ export interface RequestConfig extends AxiosRequestConfig {
   noErrorLogging?: boolean;
   isOData?: boolean;
   containsEncodedURL?: boolean;
+  ignoreJwt?: boolean;
 }
 
 export interface IError {
