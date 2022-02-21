@@ -814,15 +814,7 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('loadTeam', (() => {
-      it('sets the right primary contact user', async () => {
-        await wrapper.vm.loadTeam();
-        expect(wrapper.vm.currentPrimaryContact).toEqual({
-          displayName: 'Jane Smith',
-          email: 'Jane.Smith@example.com',
-          id: '1',
-          isPrimaryContact: true,
-        });
-      });
+
 
       it('calls the action getTeam', async () => {
         await wrapper.vm.loadTeam();
@@ -852,8 +844,24 @@ describe('CreateEditTeam.vue', () => {
         wrapper.vm.$route.params = { id: 'foo' };
       });
 
+      it('sets the right primary contact user', async () => {
+        await wrapper.vm.loadTeamFromState();
+        expect(wrapper.vm.currentPrimaryContact).toEqual({
+          displayName: 'Jane Smith',
+          email: 'Jane.Smith@example.com',
+          id: '1',
+          isPrimaryContact: true,
+        });
+      });
+
+      it('should do nothing if it receives an error of existing name as argument ', async () => {
+        wrapper.setData({team: mockTeamEntity({id: "my-mock-id"})})
+        await wrapper.vm.loadTeamFromState([{code: 'errors.an-entity-with-this-name-already-exists'}]);
+        expect(wrapper.vm.team).toEqual(mockTeamEntity({id: "my-mock-id"}));
+      });
+
       it('should set the team with a cloneDeep of team from storage', async () => {
-        await wrapper.vm.loadTeam();
+        await wrapper.vm.loadTeamFromState();
         expect(wrapper.vm.team).toEqual(mockTeamEntity());
       });
     }));

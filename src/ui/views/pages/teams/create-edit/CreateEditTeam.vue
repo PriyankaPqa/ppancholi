@@ -185,6 +185,7 @@ import { VForm } from '@/types';
 import { IUserAccountCombined } from '@/entities/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { Status } from '@/entities/base';
+import { IError } from '@/services/httpClient';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,
@@ -380,7 +381,12 @@ export default mixins(handleUniqueNameSubmitError).extend({
       }
     },
 
-    loadTeamFromState() {
+    loadTeamFromState(errors? : IError[]) {
+      // Doesn't reload the state of the team if the error is an existing team name
+      if (Array.isArray(errors) && errors.findIndex((error) => error.code === 'errors.an-entity-with-this-name-already-exists') >= 0) {
+        return;
+      }
+
       this.team = new TeamEntity(_cloneDeep(this.$storage.team.getters.get(this.id).entity));
       this.currentPrimaryContact = !this.team.getPrimaryContact() ? null
         : this.mapToTeamMember(this.$storage.userAccount.getters.get(this.team.getPrimaryContact().id), true);
@@ -488,7 +494,7 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.setOriginalData();
       } catch (e) {
         this.$appInsights.trackTrace('Team create error', { error: e });
-        this.handleSubmitError(e);
+        this.handleSubmitError(e as IError[]);
       } finally {
         this.isSubmitting = false;
       }
@@ -501,14 +507,15 @@ export default mixins(handleUniqueNameSubmitError).extend({
         this.$toasted.global.success(this.$t('teams.team_updated'));
         this.resetFormValidation();
         this.setOriginalData();
-      } catch (errors) {
+      } catch (e:unknown) {
+        const errors = e as IError[];
         if (errors.length > 0 && errors[0].code === 'errors.team-has-active-case-file') {
           this.showErrorDialog = true;
         } else {
           this.$appInsights.trackTrace('Team edit error', { error: errors });
           this.handleSubmitError(errors);
         }
-        this.loadTeamFromState();
+        this.loadTeamFromState(errors);
       } finally {
         this.isSubmitting = false;
       }
