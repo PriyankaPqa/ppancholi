@@ -84,14 +84,14 @@
 
         <!-- Actions -->
         <template slot="actions">
-          <v-btn :color="isAddMode ? '' : 'primary'" data-test="cancel" @click.stop="back()">
+          <v-btn :color="isAddMode ? '' : 'primary'" data-test="cancel" :disabled="savingFinancialAssistance" @click.stop="back()">
             {{ isAddMode ? $t('common.cancel') : $t('financialAssistance.back') }}
           </v-btn>
           <v-btn
             v-if="isAddMode"
             color="primary"
             data-test="save"
-            :loading="loading"
+            :loading="savingFinancialAssistance"
             :disabled="failed || !dirty || isDisabled || showWarning"
             @click.stop="saveFinancialAssistance">
             {{ submitLabel }}
@@ -106,6 +106,7 @@
           :items="items"
           :current-line="lineToEdit"
           :current-group="groupToEdit"
+          :submitting-payment-line="submittingPaymentLine"
           :financial-assistance="financialAssistance"
           data-test="case-file-financial-assistance-payment-line-dialog"
           @submit="onSubmitPaymentLine($event)"
@@ -228,6 +229,8 @@ export default mixins(caseFileDetail).extend({
       submittingPayment: false,
       totalAmountToSubmit: '',
       agree: false,
+      submittingPaymentLine: false,
+      savingFinancialAssistance: false,
     };
   },
 
@@ -334,6 +337,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     async saveFinancialAssistance() {
+      this.savingFinancialAssistance = true;
       const result = this.isEditMode ? (
         await this.$storage.financialAssistancePayment.actions.editFinancialAssistancePayment(this.financialAssistance))
         : (await this.$storage.financialAssistancePayment.actions.addFinancialAssistancePayment(this.financialAssistance)
@@ -354,6 +358,7 @@ export default mixins(caseFileDetail).extend({
           });
         }, 50);
       }
+      this.savingFinancialAssistance = false;
     },
 
     editPaymentLine(event : { line: IFinancialAssistancePaymentLine, group: IFinancialAssistancePaymentGroup }) {
@@ -391,11 +396,14 @@ export default mixins(caseFileDetail).extend({
     },
 
     async onSubmitPaymentLine(submittedPaymentGroup: IFinancialAssistancePaymentGroup) {
+      this.submittingPaymentLine = true;
       if (!this.isAddMode) {
         await this.savePaymentLine(submittedPaymentGroup);
       } else {
+        await new Promise((s) => setTimeout(s, 1000)); // force user to stay on the dialog, in order to avoid hitting the Create button underneath
         this.mergePaymentLine(submittedPaymentGroup);
       }
+      this.submittingPaymentLine = false;
     },
 
     onClickSubmitPayment(event: { total: string }) {

@@ -7,7 +7,7 @@
       :cancel-action-label="$t('common.buttons.cancel')"
       :submit-action-label="currentLine ? $t('common.buttons.save'): $t('common.buttons.add')"
       :submit-button-disabled="failed"
-
+      :loading="submittingPaymentLine"
       :persistent="true"
       data-test="payment_title"
       :tooltip-label="$t('common.tooltip_label')"
@@ -237,6 +237,11 @@ export default mixins(caseFileDetail).extend({
     financialAssistance: {
       type: Object as () => IFinancialAssistancePaymentEntity,
       required: true,
+    },
+
+    submittingPaymentLine: {
+      type: Boolean,
+      default: false,
     },
   },
 
