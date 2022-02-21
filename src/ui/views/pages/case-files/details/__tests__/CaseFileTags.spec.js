@@ -59,9 +59,8 @@ describe('CaseFileTags.vue', () => {
       });
 
       it('has close attribute when not readonly', async () => {
+        await wrapper.setProps({ readonly: false });
         expect(element.props('close')).toBeTruthy();
-        await wrapper.setProps({ readonly: true });
-        expect(element.props('close')).toBeFalsy();
       });
 
       it('contains the tag name', () => {

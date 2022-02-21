@@ -1,19 +1,29 @@
 <template>
   <v-row class="no-gutters">
-    <rc-tooltip v-for="tag in existingTags" :key="tag.id" bottom>
-      <template #activator="{ on }">
-        <v-chip
-          :data-test="`caseFileTags-chip-${tag.id}`"
-          class="chip mr-3 mb-1"
-          color="primary"
-          :close="!readonly"
-          v-on="on"
-          @click:close="initDeleteTag(tag)">
-          {{ $m(tag.name) }}
-        </v-chip>
-      </template>
-      {{ $t('caseFile.tags.removeTag') }}
-    </rc-tooltip>
+    <div v-for="tag in existingTags" :key="tag.id">
+      <v-chip
+        v-if="readonly"
+        :data-test="`caseFileTags-chip-${tag.id}`"
+        class="chip mr-3 mb-1"
+        color="primary">
+        {{ $m(tag.name) }}
+      </v-chip>
+
+      <rc-tooltip v-else bottom>
+        <template #activator="{ on }">
+          <v-chip
+            :data-test="`caseFileTags-chip-${tag.id}`"
+            class="chip mr-3 mb-1"
+            color="primary"
+            :close="!readonly"
+            v-on="on"
+            @click:close="initDeleteTag(tag)">
+            {{ $m(tag.name) }}
+          </v-chip>
+        </template>
+        {{ $t('caseFile.tags.removeTag') }}
+      </rc-tooltip>
+    </div>
 
     <v-btn
       v-if="!readonly"
