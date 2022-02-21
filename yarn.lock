@@ -2036,10 +2036,10 @@
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
-"@crctech/registration-lib@1.0.752":
-  version "1.0.752"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.752.tgz#2dd6e984ee2b70b2843cc6c6481d4782d98630bd"
-  integrity sha1-LdbphO4rcLKEPMbGSB1HgtmGML0=
+"@crctech/registration-lib@1.0.757":
+  version "1.0.757"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/registration-lib/-/registration-lib-1.0.757.tgz#ec345c2eede16cbfc91b1fb626857bdfc13435fe"
+  integrity sha1-7DRcLu3hbL/JGx+2JoV738E0Nf4=
   dependencies:
     "@crctech/component-library" "1.0.189"
     "@microsoft/applicationinsights-web" "^2.7.0"

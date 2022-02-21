@@ -240,6 +240,22 @@ describe('httpClient', () => {
         expect(res.headers.common.Authorization).toEqual('Bearer test access token');
       });
 
+      it('should not set accessToken if ignoreJwt is true', () => {
+        const request = {
+          headers: {
+            common: {
+              'X-Request-ID': '',
+              'X-Correlation-ID': '',
+            },
+          },
+          ignoreJwt: true,
+        };
+
+        const res = mockHttpClient.requestHandler(request);
+
+        expect(res.headers.common.Authorization).toBeFalsy();
+      });
+
       it('should set the X-Request-ID and X-Correlation-ID header with uuidv4', () => {
         const request = {
           headers: {

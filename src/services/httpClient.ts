@@ -27,6 +27,7 @@ export interface RequestConfig extends AxiosRequestConfig {
   noErrorLogging?: boolean;
   isOData?: boolean;
   containsEncodedURL?: boolean;
+  ignoreJwt?: boolean;
 }
 
 export interface IError {
@@ -186,9 +187,11 @@ export class HttpClient implements IHttpClient {
   }
 
   private requestHandler(request: any) {
-    const accessToken = localStorage.getItem(localStorageKeys.accessToken.name) || AuthenticationProvider.accessToken;
-    if (accessToken) {
-      request.headers.common.Authorization = `Bearer ${accessToken}`;
+    if (!request.ignoreJwt) {
+      const accessToken = localStorage.getItem(localStorageKeys.accessToken.name) || AuthenticationProvider.accessToken;
+      if (accessToken) {
+        request.headers.common.Authorization = `Bearer ${accessToken}`;
+      }
     }
 
     // Add 'X-Request-ID' and 'X-Correlation-ID' headers to each request
