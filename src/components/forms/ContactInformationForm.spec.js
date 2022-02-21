@@ -391,8 +391,11 @@ describe('ContactInformationForm.vue', () => {
         };
         wrapper.vm.setEmailValidator = jest.fn();
       });
-      it('should do nothing if email is empty', async () => {
+
+      it('should call resetEmailValidation and not execute method if no email', async () => {
+        wrapper.vm.resetEmailValidation = jest.fn();
         await wrapper.vm.validateEmail('');
+        expect(wrapper.vm.resetEmailValidation).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.setEmailValidator).toHaveBeenCalledTimes(0);
         expect(wrapper.vm.$services.households.validateEmail).toHaveBeenCalledTimes(0);
       });
@@ -515,8 +518,10 @@ describe('ContactInformationForm.vue', () => {
         };
       });
 
-      it('should not call execute method if no email', () => {
+      it('should call resetEmailValidation and not execute method if no email', () => {
+        wrapper.vm.resetEmailValidation = jest.fn();
         wrapper.vm.getTokenAndValidate('');
+        expect(wrapper.vm.resetEmailValidation).toHaveBeenCalledTimes(1);
         expect(wrapper.vm.$refs.recaptchaEmail.execute).toHaveBeenCalledTimes(0);
       });
 
@@ -534,6 +539,29 @@ describe('ContactInformationForm.vue', () => {
         element.vm.$emit('blur', { target: { value: 'email' } });
 
         expect(wrapper.vm.getTokenAndValidate).toHaveBeenLastCalledWith('email');
+      });
+    });
+
+    describe('resetEmailValidation', () => {
+      it('resets the value of emailValidator and emailValidatedByBackend', async () => {
+        wrapper.setData({
+          emailValidator: {
+            isValid: false,
+            messageKey: 'mock key',
+          },
+          formCopy: {
+            emailValidatedByBackend: false,
+          },
+        });
+
+        await wrapper.vm.resetEmailValidation();
+
+        expect(wrapper.vm.emailValidator).toEqual({
+          isValid: true,
+          messageKey: null,
+        });
+
+        expect(wrapper.vm.formCopy.emailValidatedByBackend).toBeTruthy();
       });
     });
   });

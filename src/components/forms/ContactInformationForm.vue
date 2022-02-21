@@ -302,6 +302,10 @@ export default Vue.extend({
     },
 
     async getTokenAndValidate(email: string) {
+      if (!email) {
+        this.resetEmailValidation();
+      }
+
       if (email && email !== this.previousEmail) {
         (this.$refs.recaptchaEmail as any).execute();
         // Display error, will be resolved automatically if no challenge to resolve
@@ -319,7 +323,7 @@ export default Vue.extend({
     setEmailValidator(result: IValidateEmailResponse) {
       this.emailValidator.isValid = result.emailIsValid;
 
-      const error = result.emailIsValid ? null : result.errors[0].code;
+      const error = result.emailIsValid ? null : result.errors[0]?.code;
 
       if (error === 'errors.the-email-provided-already-exists-in-the-system') {
         this.emailValidator.messageKey = this.emailAlreadyExistMessage;
@@ -329,6 +333,10 @@ export default Vue.extend({
     },
 
     async validateEmail(email: string, recaptchaToken?: string) {
+      if (!email) {
+        this.resetEmailValidation();
+      }
+
       if (email && email !== this.previousEmail) {
         this.previousEmail = email;
         this.emailChecking = true;
@@ -350,6 +358,15 @@ export default Vue.extend({
         this.setEmailValidator(result);
         (this.$refs.email as InstanceType<typeof ValidationObserver>).validate();
       }
+    },
+
+    resetEmailValidation() {
+      this.setEmailValidator({
+        emailIsValid: true,
+        errors: [],
+      });
+
+      this.formCopy.emailValidatedByBackend = true;
     },
   },
 
