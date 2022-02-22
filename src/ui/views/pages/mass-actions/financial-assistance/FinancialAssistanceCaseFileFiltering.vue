@@ -28,7 +28,7 @@
           :filter-key="FilterKey.MassActionFinancialAssistance"
           :count="itemsCount"
           :filter-options="filters"
-          @update:appliedFilter="onApplyFilter"
+          @update:appliedFilter="onApplyCaseFileFilter"
           @change:autocomplete="onAutoCompleteChange($event)">
           <template #toolbarActions>
             <v-btn
@@ -285,8 +285,25 @@ export default mixins(massActionCaseFileFiltering).extend({
         },
         {
           key: this.customColumns.email,
-          type: EFilterType.Text,
+          type: EFilterType.Select,
           label: this.$t('massActions.financialAssistance.table.header.email') as string,
+          items: [{
+            text: this.$t('common.yes') as string,
+            value: {
+              and: [
+                { 'Metadata/PrimaryBeneficiary/ContactInformation/Email': { ne: null } },
+                { 'Metadata/PrimaryBeneficiary/ContactInformation/Email': { ne: '' } },
+              ],
+            },
+          }, {
+            text: this.$t('common.no') as string,
+            value: {
+              or: [
+                { 'Metadata/PrimaryBeneficiary/ContactInformation/Email': null },
+                { 'Metadata/PrimaryBeneficiary/ContactInformation/Email': '' },
+              ],
+            },
+          }],
         },
         {
           key: this.customColumns.isDuplicate,
@@ -337,6 +354,22 @@ export default mixins(massActionCaseFileFiltering).extend({
         }
         this.fetchProgramsFilters(value);
       }
+    },
+
+    async onApplyCaseFileFilter({ preparedFilters, searchFilters }: {preparedFilters: Record<string, unknown>; searchFilters?: string }) {
+      const emailFilter = preparedFilters[this.customColumns.email];
+
+      if (emailFilter) {
+        if (!preparedFilters.and) {
+          preparedFilters.and = [];
+        }
+
+        (preparedFilters.and as unknown[]).push(emailFilter);
+
+        delete preparedFilters[this.customColumns.email];
+      }
+
+      await this.onApplyFilter({ preparedFilters, searchFilters });
     },
   },
 });

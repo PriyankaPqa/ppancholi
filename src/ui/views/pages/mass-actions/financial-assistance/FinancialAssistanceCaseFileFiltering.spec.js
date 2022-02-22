@@ -174,8 +174,25 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
           },
           {
             key: wrapper.vm.customColumns.email,
-            type: EFilterType.Text,
+            type: EFilterType.Select,
             label: 'massActions.financialAssistance.table.header.email',
+            items: [{
+              text: 'common.yes',
+              value: {
+                and: [
+                  { 'Metadata/PrimaryBeneficiary/ContactInformation/Email': { ne: null } },
+                  { 'Metadata/PrimaryBeneficiary/ContactInformation/Email': { ne: '' } },
+                ],
+              },
+            }, {
+              text: 'common.no',
+              value: {
+                or: [
+                  { 'Metadata/PrimaryBeneficiary/ContactInformation/Email': null },
+                  { 'Metadata/PrimaryBeneficiary/ContactInformation/Email': '' },
+                ],
+              },
+            }],
           },
           {
             key: wrapper.vm.customColumns.isDuplicate,
@@ -267,6 +284,30 @@ describe('FinancialAssistanceCaseFileFiltering.vue', () => {
         await wrapper.vm.onSubmit();
 
         expect(wrapper.emitted('update:show')[0][0]).toEqual(false);
+      });
+    });
+
+    describe('onApplyCaseFileFilter', () => {
+      it('should assign email filter and remove original email filter', async () => {
+        const testFilter = { test: 'filter' };
+
+        const preparedFilters = {
+          'Metadata/PrimaryBeneficiary/ContactInformation/Email': testFilter,
+          and: [],
+        };
+
+        wrapper.vm.onApplyFilter = jest.fn();
+
+        await wrapper.vm.onApplyCaseFileFilter({ preparedFilters, searchFilters: '' });
+
+        expect(wrapper.vm.onApplyFilter).toHaveBeenCalledWith({
+          preparedFilters: {
+            and: [
+              testFilter,
+            ],
+          },
+          searchFilters: '',
+        });
       });
     });
   });
