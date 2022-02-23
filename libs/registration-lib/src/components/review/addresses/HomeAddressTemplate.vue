@@ -22,7 +22,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import helpers from '@/ui/helpers/index';
+import helpers from '@libs/registration-lib/ui/helpers';
 import { IAddress } from '../../../entities/household-create';
 import { ECanadaProvinces } from '../../../types';
 

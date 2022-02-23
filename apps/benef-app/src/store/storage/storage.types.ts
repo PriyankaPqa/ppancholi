@@ -9,10 +9,14 @@ export interface IStorage {
   registration: IRegistrationStorage;
   household: IStorageMake;
   tenantSettings: ITenantSettingsMakeStorage;
+  // eslint-disable-next-line
+  user?: any; // Otherwise TS complains because of registration library
 }
 
 export interface IStorageMock {
   registration: IRegistrationMock;
   household: IStorageMakeMock;
   tenantSettings: ITenantSettingsMakeStorageMock;
+  // eslint-disable-next-line
+  user?: any; // Otherwise TS complains because of registration library
 }

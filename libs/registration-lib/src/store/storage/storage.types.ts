@@ -6,10 +6,14 @@ export interface IStorage {
   registration: IRegistrationStorage;
   household: IHouseholdStorageMake;
   tenantSettings: ITenantSettingsStorageMake;
+  // eslint-disable-next-line
+  user?: any;
 }
 
 export interface IStorageMock {
   registration: IRegistrationMock;
   household: IHouseholdStorageMakeMock;
   tenantSettings: ITenantSettingsStorageMakeMock;
+  // eslint-disable-next-line
+  user?: any;
 }

@@ -43,7 +43,7 @@ import VueI18n, { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 
-import { IIdentitySet } from '@/entities/value-objects/identity-set';
+import { IIdentitySet } from '@libs/registration-lib/entities/value-objects/identity-set';
 import {
   EOptionItemStatus,
   IOptionItemData,
