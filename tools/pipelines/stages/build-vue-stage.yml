@@ -1,0 +1,26 @@
+parameters:
+  packageFeed: ''
+  lokalise: true
+  lint: true
+  distDir: 'dist'
+  buildCommand: 'build --mode production'
+  lokaliseCommand: 'lokalise --mode production'
+  workingDir: ''
+
+stages:
+  - stage: 'Build'
+    jobs:
+      - job: 'Build'
+        steps:
+          - template: '../steps/build-vue-steps.yml'
+            parameters:
+              packageFeed: ${{ parameters.packageFeed }}
+              lokalise: ${{ parameters.lokalise }}
+              lint: ${{ parameters.lint }}
+              buildCommand: ${{ parameters.buildCommand }}
+              lokaliseCommand: ${{ parameters.lokaliseCommand }}
+              workingDir:  ${{ parameters.workingDir }}
+
+          - publish: ${{ parameters.distDir }}
+            artifact: dist
+            displayName: "Publish Distribution"
