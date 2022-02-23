@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="30px" viewBox="0 0 30 30" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>rc30</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Elements" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="CRC-Wordmark" transform="translate(-1008.000000, -198.000000)" fill="#EE0000">
+            <g id="cross" transform="translate(752.000000, 142.000000)">
+                <g id="logo/cross/rc30" transform="translate(256.000000, 56.000000)">
+                    <path d="M20,0 L20,10 L30,10 L30,20 L20,20 L20,30 L10,30 L10,20 L0,20 L0,10 L10,10 L10,0 L20,0 Z" id="atoms/logo/rc32"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

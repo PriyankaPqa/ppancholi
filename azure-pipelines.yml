@@ -1,0 +1,31 @@
+trigger:
+- master
+
+pool:
+  name: 'self-hosted-ubuntu-latest'
+
+variables:
+- group: Build-Defaults
+- name: Patch
+  value: $[counter(format('{0}.{1}',variables['Major'],variables['Minor']),0)]
+- name: cdnEndpoint
+  value: 'emis-cdne-beneficiary'
+- name: cdnProfile
+  value: 'emis-cdnp-beneficiary'
+
+name: $(Major).$(Minor).$(Patch)
+
+resources:
+  repositories:
+  - repository: Templates
+    name: 'Shared/pipeline-templates'
+    type: git
+    ref: master
+
+stages:
+- template: stages/deploy-vue-stages.yml@Templates
+  parameters:
+    storage: $(BeneficiaryWebAppStorage)
+    packageFeed: $(PackageFeed-Npm)
+    cdnEndpoint: $(cdnEndpoint)    
+    cdnProfile: $(cdnProfile)
