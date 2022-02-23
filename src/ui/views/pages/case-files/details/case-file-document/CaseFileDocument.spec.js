@@ -634,12 +634,12 @@ describe('CaseFileDocument.vue', () => {
             label: 'common.name',
           },
           {
-            key: customColumns.category,
+            key: 'Entity/Category/OptionItemId',
             type: EFilterType.MultiSelect,
             label: 'caseFile.document.category',
             items: wrapper.vm.$storage.caseFileDocument.getters
               .categories(false)
-              .map((c) => ({ text: wrapper.vm.$m(c.name), value: wrapper.vm.$m(c.name) }))
+              .map((c) => ({ text: wrapper.vm.$m(c.name), value: c.id }))
               .sort((a, b) => a.value.localeCompare(b.value)),
           },
           {

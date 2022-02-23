@@ -247,12 +247,12 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
           label: this.$t('common.name') as string,
         },
         {
-          key: this.customColumns.category,
+          key: 'Entity/Category/OptionItemId',
           type: EFilterType.MultiSelect,
           label: this.$t('caseFile.document.category') as string,
           items: this.$storage.caseFileDocument.getters
             .categories(false)
-            .map((c) => ({ text: this.$m(c.name), value: this.$m(c.name) }))
+            .map((c) => ({ text: this.$m(c.name), value: c.id }))
             .sort((a, b) => a.value.localeCompare(b.value)),
         },
         {
