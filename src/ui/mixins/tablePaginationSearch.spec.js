@@ -2,6 +2,8 @@
  * @group ui/mixins
  */
 
+import _cloneDeep from 'lodash/cloneDeep';
+import { mockStorage } from '@/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 
@@ -12,6 +14,8 @@ const params = {
   orderBy: 'name',
   descending: true,
 };
+
+const storage = mockStorage();
 
 const Component = {
   render() {},
@@ -31,6 +35,17 @@ const localVue = createLocalVue();
 let wrapper;
 
 describe('tablePaginationSearch.vue', () => {
+  beforeEach(async () => {
+    jest.clearAllMocks();
+    wrapper = shallowMount(Component, {
+      localVue,
+      mocks: {
+        $storage: storage,
+      },
+    });
+    wrapper.vm.route = 'current route';
+  });
+
   describe('Data', () => {
     wrapper = shallowMount(Component, {
       localVue,
@@ -63,6 +78,17 @@ describe('tablePaginationSearch.vue', () => {
     describe('getTop', () => {
       it('returns the page size', () => {
         expect(wrapper.vm.getTop).toBe(params.pageSize);
+      });
+    });
+
+    describe('footerText', () => {
+      it('returns the date of last search', () => {
+        wrapper.vm.$t = jest.fn(() => 'hello');
+        wrapper.setData({
+          searchExecutionDate: '20200101',
+        });
+        expect(wrapper.vm.footerText).toBe('hello');
+        expect(wrapper.vm.$t).toHaveBeenCalledWith('searchTable.footer', { date: 'Jan 1, 2020 12:00 AM' });
       });
     });
 
@@ -283,6 +309,73 @@ describe('tablePaginationSearch.vue', () => {
         jest.spyOn(wrapper.vm, 'fetchData').mockImplementation(() => ({ ids: [], count: 12 }));
         await wrapper.vm.search(params);
         expect(wrapper.vm.itemsCount).toEqual(12);
+      });
+
+      it('calls setState', async () => {
+        jest.spyOn(wrapper.vm, 'setState');
+        await wrapper.vm.search(params);
+        expect(wrapper.vm.setState).toHaveBeenCalled();
+      });
+    });
+
+    describe('setState', () => {
+      it('calls setSearchTableState when saveState is true', () => {
+        wrapper.setData({ saveState: true });
+        wrapper.vm.setState();
+        expect(wrapper.vm.$storage.uiState.mutations.setSearchTableState).toHaveBeenCalledWith(wrapper.vm.route, _cloneDeep({
+          azureSearchParams: wrapper.vm.azureSearchParams,
+          previousPageIndex: wrapper.vm.previousPageIndex,
+          userFilters: wrapper.vm.userFilters,
+          userSearchFilters: wrapper.vm.userSearchFilters,
+          params: wrapper.vm.params,
+          options: wrapper.vm.options,
+          searchResultIds: wrapper.vm.searchResultIds,
+          itemsCount: wrapper.vm.itemsCount,
+          searchExecutionDate: wrapper.vm.searchExecutionDate,
+          filterState: wrapper.vm.filterState,
+        }));
+      });
+
+      it('does not call setSearchTableState when saveState is false', () => {
+        wrapper.setData({ saveState: false });
+        wrapper.vm.setState();
+        expect(wrapper.vm.$storage.uiState.mutations.setSearchTableState).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('loadState', () => {
+      it('calls getSearchTableState when saveState is true', () => {
+        wrapper.vm.$storage.uiState.getters.getSearchTableState = jest.fn(() => ({
+          azureSearchParams: 'azureSearchParams',
+          previousPageIndex: 'previousPageIndex',
+          userFilters: 'userFilters',
+          userSearchFilters: 'userSearchFilters',
+          params: 'params',
+          options: 'options',
+          searchResultIds: 'searchResultIds',
+          itemsCount: 'itemsCount',
+          searchExecutionDate: 'searchExecutionDate',
+          filterState: 'filterState',
+        }));
+        wrapper.setData({ saveState: true });
+        wrapper.vm.loadState();
+        expect(wrapper.vm.$storage.uiState.getters.getSearchTableState).toHaveBeenCalledWith(wrapper.vm.route);
+        expect(wrapper.vm.azureSearchParams).toEqual('azureSearchParams');
+        expect(wrapper.vm.previousPageIndex).toEqual('previousPageIndex');
+        expect(wrapper.vm.userFilters).toEqual('userFilters');
+        expect(wrapper.vm.userSearchFilters).toEqual('userSearchFilters');
+        expect(wrapper.vm.params).toEqual('params');
+        expect(wrapper.vm.options).toEqual('options');
+        expect(wrapper.vm.searchResultIds).toEqual('searchResultIds');
+        expect(wrapper.vm.itemsCount).toEqual('itemsCount');
+        expect(wrapper.vm.searchExecutionDate).toEqual('searchExecutionDate');
+        expect(wrapper.vm.filterState).toEqual('filterState');
+      });
+
+      it('does not call getSearchTableState when saveState is false', () => {
+        wrapper.setData({ saveState: false });
+        wrapper.vm.loadState();
+        expect(wrapper.vm.$storage.uiState.mutations.setSearchTableState).not.toHaveBeenCalled();
       });
     });
 

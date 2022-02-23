@@ -74,6 +74,7 @@ import { FinancialAssistancePaymentEntityModule } from './modules/financial-assi
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
+import { UIStateModule } from './modules/ui-state/uiState';
 
 Vue.use(Vuex);
 
@@ -146,6 +147,9 @@ const store: StoreOptions<IRootState> = {
 
     [vuexModule.TENANT_SETTINGS_ENTITIES]: new TenantSettingsEntityModule(
       new TenantSettingsService(httpClient),
+    ).getModule(),
+
+    [vuexModule.UI_STATE]: new UIStateModule(
     ).getModule(),
   },
 };

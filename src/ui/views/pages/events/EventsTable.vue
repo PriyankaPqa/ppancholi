@@ -7,9 +7,11 @@
     :items="tableData"
     :count="itemsCount"
     :headers="headers"
+    :footer-text="footerText"
     :labels="labels"
     :table-props="tableProps"
     :show-add-button="$hasLevel('level6')"
+    :initial-search="params && params.search"
     :options.sync="options"
     :custom-columns="[
       customColumns.name,
@@ -25,9 +27,10 @@
       <filter-toolbar
         :filter-key="FilterKey.Events"
         :filter-options="filters"
+        :initial-filter="filterState"
         :count="itemsCount"
         add-filter-label="eventsTable.filter.title"
-        @update:appliedFilter="onApplyFilter($event)" />
+        @update:appliedFilter="onApplyFilter" />
     </template>
 
     <template #[`item.${customColumns.name}`]="{ item: event }">
@@ -210,6 +213,11 @@ export default mixins(TablePaginationSearchMixin).extend({
       return (event) => this.$hasLevel('level5')
       && (event.entity.schedule.status === EEventStatus.Open || event.entity.schedule.status === EEventStatus.OnHold);
     },
+  },
+
+  async created() {
+    this.saveState = true;
+    this.loadState();
   },
 
   methods: {

@@ -4,9 +4,11 @@
       :items="tableData"
       :count="itemsCount"
       :headers="headers"
+      :footer-text="footerText"
       :labels="labels"
       :table-props="tableProps"
       :options.sync="options"
+      :initial-search="params && params.search"
       :custom-columns="Object.values(customColumns)"
       @add-button="goToAdd"
       @search="search">
@@ -159,6 +161,11 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
         dataTest: 'fa-mass-action-file',
       }];
     },
+  },
+
+  created() {
+    this.saveState = true;
+    this.loadState();
   },
 
   methods: {

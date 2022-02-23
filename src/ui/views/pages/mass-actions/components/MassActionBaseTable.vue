@@ -4,8 +4,10 @@
       :items="tableData"
       :count="itemsCount"
       :headers="headers"
+      :footer-text="footerText"
       :labels="labels"
       :table-props="tableProps"
+      :initial-search="params && params.search"
       :show-add-button="showAddButton"
       :options.sync="options"
       :custom-columns="[
@@ -114,6 +116,11 @@ export default mixins(TablePaginationSearchMixin, massActionsTable).extend({
     this.tableTitleData = this.tableTitle;
     this.addButtonLabelData = this.addButtonLabel;
     this.searchEndpointData = this.searchEndpoint;
+  },
+
+  created() {
+    this.saveState = true;
+    this.loadState();
   },
 
   computed: {

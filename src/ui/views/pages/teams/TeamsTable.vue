@@ -8,14 +8,17 @@
       :hide-footer="hideFooter"
       :labels="labels"
       :headers="headers"
+      :footer-text="footerText"
       :custom-columns="Object.values(customColumns)"
       :options.sync="options"
+      :initial-search="params && params.search"
       @search="search">
       <template #filter>
         <filter-toolbar
           :filter-key="FilterKey.Teams"
           :count="itemsCount"
           :filter-options="filters"
+          :initial-filter="filterState"
           add-filter-label="team.filter"
           @update:appliedFilter="onApplyFilter" />
       </template>
@@ -245,6 +248,11 @@ export default mixins(TablePaginationSearchMixin).extend({
         },
       ];
     },
+  },
+
+  created() {
+    this.saveState = true;
+    this.loadState();
   },
 
   methods: {

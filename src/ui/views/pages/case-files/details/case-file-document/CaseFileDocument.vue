@@ -8,8 +8,10 @@
       :help-link="$t('zendesk.help_link.case_document_list')"
       :labels="labels"
       :headers="headers"
+      :footer-text="footerText"
       :table-props="tableProps"
       :options.sync="options"
+      :initial-search="params && params.search"
       :custom-columns="Object.values(customColumns)"
       :hide-footer="true"
       :show-add-button="canAdd"
@@ -19,9 +21,10 @@
         <filter-toolbar
           :filter-key="FilterKey.Documents"
           :filter-options="filterOptions"
+          :initial-filter="filterState"
           add-filter-label="document.filter"
           :count="itemsCount"
-          @update:appliedFilter="onApplyFilter($event)" />
+          @update:appliedFilter="onApplyFilter" />
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item }">
@@ -281,6 +284,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   async created() {
+    this.saveState = true;
+    this.loadState();
     await this.$storage.caseFileDocument.actions.fetchCategories();
   },
 

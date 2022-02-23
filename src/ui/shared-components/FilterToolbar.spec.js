@@ -283,12 +283,14 @@ describe('Filter Toolbar', () => {
             key: 'TeamStatus',
           },
         ];
-        wrapper.vm.onApplyFilter(filters);
+        wrapper.vm.onApplyFilter(filters, { name: 'filterState' });
         expect(wrapper.emitted('update:appliedFilter')[0][0])
           .toEqual({
             preparedFilters: 'preparedFilters',
             searchFilters: 'translateSearchFilter',
           });
+        expect(wrapper.emitted('update:appliedFilter')[0][1])
+          .toEqual({ name: 'filterState' });
       });
     });
 

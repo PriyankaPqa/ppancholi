@@ -5,10 +5,12 @@
       :items="tableData"
       :count="itemsCount"
       :headers="headers"
+      :footer-text="footerText"
       :labels="labels"
       :table-props="tableProps"
       :show-add-button="canAdd"
       :options.sync="options"
+      :initial-search="params && params.search"
       :custom-columns="Object.values(customColumns)"
       @search="search"
       @add-button="routeToCreate">
@@ -16,6 +18,7 @@
         <filter-toolbar
           :filter-key="FilterKey.CaseFileFinancialAssistanceOverview"
           :filter-options="filters"
+          :initial-filter="filterState"
           add-filter-label="financialAssistance.filter"
           :count="itemsCount"
           @update:appliedFilter="onApplyFilter">
@@ -342,6 +345,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   async created() {
+    this.saveState = true;
+    this.loadState();
     this.initContainsActiveTables();
     // we fetch all the payments for the case file because we will need to submit all at once possibly if some arent submitted
     // and since ApprovalStatus is not filterable...  we will filter on the computed - not really a problem

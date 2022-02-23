@@ -1,4 +1,5 @@
 import _isEmpty from 'lodash/isEmpty';
+import _cloneDeep from 'lodash/cloneDeep';
 import Vue from 'vue';
 import { IAzureSearchParams } from '@/types';
 import helpers from '@/ui/helpers/helpers';
@@ -7,6 +8,8 @@ import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult'
 export default Vue.extend({
   data() {
     return {
+      saveState: false,
+      route: this.$route.path,
       azureSearchParams: {
         search: '',
         skip: 0,
@@ -25,6 +28,7 @@ export default Vue.extend({
       searchResultIds: [] as string [],
       itemsCount: 0,
       searchExecutionDate: null as Date,
+      filterState: null as unknown,
     };
   },
 
@@ -34,6 +38,11 @@ export default Vue.extend({
      */
     getTop(): number {
       return this.params.pageSize;
+    },
+
+    footerText(): string {
+      return this.searchExecutionDate
+        ? this.$t('searchTable.footer', { date: helpers.getLocalStringDate(this.searchExecutionDate, 'local', 'lll') }) as string : '';
     },
 
     /**
@@ -144,16 +153,70 @@ export default Vue.extend({
         this.searchResultIds = res.ids;
         this.searchExecutionDate = res.date;
       }
+
+      this.setState();
+    },
+
+    setState() {
+      if (!this.saveState) {
+        return;
+      }
+      this.$storage.uiState.mutations.setSearchTableState(this.route, _cloneDeep({
+        azureSearchParams: this.azureSearchParams,
+        previousPageIndex: this.previousPageIndex,
+        userFilters: this.userFilters,
+        userSearchFilters: this.userSearchFilters,
+        params: this.params,
+        options: this.options,
+        searchResultIds: this.searchResultIds,
+        itemsCount: this.itemsCount,
+        searchExecutionDate: this.searchExecutionDate,
+        filterState: this.filterState,
+        ...this.additionalFilters(),
+      }));
+    },
+
+    additionalFilters() {
+      return {};
+    },
+
+    loadState() {
+      if (!this.saveState || !this.route) {
+        return;
+      }
+
+      // eslint-disable-next-line
+      let state = this.$storage.uiState.getters.getSearchTableState(this.route) as any;
+      if (state) {
+        state = _cloneDeep(state);
+        this.azureSearchParams = state.azureSearchParams;
+        this.previousPageIndex = state.previousPageIndex;
+        this.userFilters = state.userFilters;
+        this.userSearchFilters = state.userSearchFilters;
+        this.params = state.params;
+        this.options = state.options;
+        this.searchResultIds = state.searchResultIds;
+        this.itemsCount = state.itemsCount;
+        this.searchExecutionDate = state.searchExecutionDate;
+        this.filterState = state.filterState;
+      }
+      this.setAdditionalFilters(state);
+    },
+
+    // eslint-disable-next-line
+    setAdditionalFilters(_state: unknown) {
+      return true;
     },
 
     /**
      * Triggered when a user apply or un-apply a filter
      */
-    async onApplyFilter({ preparedFilters, searchFilters }: {preparedFilters: Record<string, unknown>; searchFilters?: string}) {
+    async onApplyFilter({ preparedFilters, searchFilters }: {preparedFilters: Record<string, unknown>; searchFilters?: string}, filterState?: any) {
       this.forceSkip = true;
       this.options.page = 1;
       this.userFilters = _isEmpty(preparedFilters) ? null : preparedFilters;
       this.userSearchFilters = searchFilters;
+      this.filterState = filterState;
       await this.search(this.params);
       this.forceSkip = false;
     },

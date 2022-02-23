@@ -8,8 +8,10 @@
       :help-link="$t('zendesk.help_link.view_programs_list')"
       :labels="labels"
       :headers="headers"
+      :footer-text="footerText"
       :table-props="tableProps"
       :options.sync="options"
+      :initial-search="params && params.search"
       :custom-columns="Object.values(customColumns)"
       show-add-button
       @add-button="addProgram"
@@ -18,9 +20,10 @@
         <filter-toolbar
           :filter-key="FilterKey.EventPrograms"
           :filter-options="filterOptions"
+          :initial-filter="filterState"
           add-filter-label="programs.filter"
           :count="itemsCount"
-          @update:appliedFilter="onApplyFilter($event)" />
+          @update:appliedFilter="onApplyFilter" />
       </template>
 
       <template #[`item.${customColumns.name}`]="{ item: program }">
@@ -75,10 +78,6 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   props: {
-    // showFiltersBar: {
-    //   type: Boolean,
-    //   default: false,
-    // },
     id: {
       type: String,
       required: true,
@@ -164,6 +163,11 @@ export default mixins(TablePaginationSearchMixin).extend({
         },
       ];
     },
+  },
+
+  created() {
+    this.saveState = true;
+    this.loadState();
   },
 
   methods: {

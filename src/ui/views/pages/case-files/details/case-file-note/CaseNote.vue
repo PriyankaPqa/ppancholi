@@ -20,7 +20,7 @@
         :filter-options="filterOptions"
         :count="itemsCount"
         add-filter-label="caseNote.filter"
-        @update:appliedFilter="onApplyFilter($event)">
+        @update:appliedFilter="onApplyFilter">
         <template #toolbarActions>
           <div class="flex-row">
             <span

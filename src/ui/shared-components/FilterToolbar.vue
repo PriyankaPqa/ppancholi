@@ -7,6 +7,7 @@
     :filter-operators="filterOperators"
     :labels="filterLabels"
     :user-filters="userFilters"
+    :initial-filter="initialFilter"
     :loading="loading"
     @save:filter="onSave"
     @load:all="onLoadAll"
@@ -69,6 +70,11 @@ export default Vue.extend({
     addFilterLabel: {
       type: String,
       default: null,
+    },
+
+    initialFilter: {
+      type: Object as () => IFilter,
+      default: () => ({}),
     },
   },
 
@@ -246,13 +252,13 @@ export default Vue.extend({
     /**
      * Emits the event when a filter is applied or removed from the table
      */
-    async onApplyFilter(filters: IFilterData[]) {
+    async onApplyFilter(filters: IFilterData[], filterState: IFilter) {
       const searchFilters = filters.filter((f) => f.type === 'text');
 
       const translatedSearchFilters = this.prepareSearchFilters(searchFilters);
       const preparedFilters = this.prepareFiltersForOdataQuery(_difference(filters, searchFilters));
 
-      this.$emit('update:appliedFilter', { preparedFilters, searchFilters: translatedSearchFilters });
+      this.$emit('update:appliedFilter', { preparedFilters, searchFilters: translatedSearchFilters }, filterState);
     },
 
     /**

@@ -76,6 +76,7 @@ import { FinancialAssistancePaymentMetadataModule } from './modules/financial-as
 import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
+import { UIStateModule } from './modules/ui-state/uiState';
 
 const i18n = {
   t: jest.fn(),
@@ -134,6 +135,9 @@ const mockConfig = {
 
     [vuexModule.TENANT_SETTINGS_ENTITIES]:
       new TenantSettingsEntityModule(new TenantSettingsService(httpClient)).getModule(),
+
+    [vuexModule.UI_STATE]:
+      new UIStateModule().getModule(),
   },
 };
 

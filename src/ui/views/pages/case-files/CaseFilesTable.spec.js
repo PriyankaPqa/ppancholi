@@ -117,12 +117,15 @@ describe('CaseFilesTable.vue', () => {
   });
 
   describe('Watch', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       wrapper = mount(Component, {
         localVue,
         mocks: {
           $storage: storage,
         },
+      });
+      await wrapper.setData({
+        myCaseFiles: false,
       });
     });
     describe('myCaseFiles', () => {
@@ -136,7 +139,7 @@ describe('CaseFilesTable.vue', () => {
           });
 
           expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenCalledWith(expected);
+            .toHaveBeenCalledWith(expected, null);
         });
       });
 
@@ -153,7 +156,7 @@ describe('CaseFilesTable.vue', () => {
           });
 
           expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenLastCalledWith({ preparedFilters: {} });
+            .toHaveBeenLastCalledWith({ preparedFilters: {} }, null);
         });
 
         it('should call onApplyFilter with filters from the panel if present', async () => {
@@ -176,7 +179,7 @@ describe('CaseFilesTable.vue', () => {
           });
 
           expect(wrapper.vm.onApplyFilter)
-            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel });
+            .toHaveBeenLastCalledWith({ preparedFilters: filterFromPanel }, null);
         });
       });
     });
@@ -400,7 +403,7 @@ describe('CaseFilesTable.vue', () => {
   });
 
   describe('Methods', () => {
-    beforeEach(() => {
+    beforeEach(async () => {
       storage.caseFile.actions.search = jest.fn(() => ({
         ids: [mockCaseFiles[0].id, mockCaseFiles[1].id],
         count: 2,
@@ -411,6 +414,10 @@ describe('CaseFilesTable.vue', () => {
         mocks: {
           $storage: storage,
         },
+      });
+
+      await wrapper.setData({
+        myCaseFiles: false,
       });
     });
 
@@ -530,13 +537,13 @@ describe('CaseFilesTable.vue', () => {
           await wrapper.vm.onApplyFilterLocal({
             preparedFilters,
             searchFilters: null,
-          });
+          }, { name: 'filterState' });
 
           expect(wrapper.vm.onApplyFilter)
             .toHaveBeenLastCalledWith({
               preparedFilters: { ...preparedFilters, ...wrapper.vm.myCaseFilesFilter },
               searchFilters: null,
-            });
+            }, { name: 'filterState' });
         });
       });
 
@@ -552,13 +559,13 @@ describe('CaseFilesTable.vue', () => {
           await wrapper.vm.onApplyFilterLocal({
             preparedFilters,
             searchFilters: null,
-          });
+          }, { name: 'filterState' });
 
           expect(wrapper.vm.onApplyFilter)
             .toHaveBeenLastCalledWith({
               preparedFilters,
               searchFilters: null,
-            });
+            }, { name: 'filterState' });
         });
       });
     });

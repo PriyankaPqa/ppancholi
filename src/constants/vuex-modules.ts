@@ -28,3 +28,4 @@ export const FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES = 'financialAssistanceCatego
 export const FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES = 'financialAssistancePaymentEntities';
 export const FINANCIAL_ASSISTANCE_PAYMENT_METADATA = 'financialAssistancePaymentMetadata';
 export const TENANT_SETTINGS_ENTITIES = 'tenantSettingsEntities';
+export const UI_STATE = 'uiState';

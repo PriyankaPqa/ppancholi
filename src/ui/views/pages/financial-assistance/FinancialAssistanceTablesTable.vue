@@ -5,12 +5,14 @@
     :count="itemsCount"
     :labels="labels"
     :headers="headers"
+    :footer-text="footerText"
     sort-by="createdDate"
     sort-desc
     :table-props="tableProps"
     :show-help="false"
     :help-link="$t('zendesk.help_link.financial_assistance_tables_list')"
     :options.sync="options"
+    :initial-search="params && params.search"
     :custom-columns="[
       customColumns.program,
       customColumns.name,
@@ -27,8 +29,9 @@
         :filter-key="FilterKey.FinancialAssistanceTables"
         :filter-options="filters"
         :count="itemsCount"
+        :initial-filter="filterState"
         add-filter-label="financialAssistance.filter"
-        @update:appliedFilter="onApplyFilterLocal($event)" />
+        @update:appliedFilter="onApplyFilterLocal" />
     </template>
 
     <template #[`item.${customColumns.program}`]="{ item }">
@@ -201,6 +204,8 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   async created() {
+    this.saveState = true;
+    this.loadState();
     await this.fetchPrograms();
   },
 

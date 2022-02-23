@@ -8,9 +8,11 @@
     :help-link="$t(helpLink)"
     :labels="labels"
     :headers="headers"
+    :footer-text="footerText"
     :table-props="tableProps"
     :hide-footer="hideFooter"
     :options.sync="options"
+    :initial-search="params && params.search"
     :custom-columns="Object.values(customColumns)"
     @search="search">
     <template #filter>
@@ -18,6 +20,7 @@
         :filter-key="FilterKey.CaseFiles"
         :count="itemsCount"
         :filter-options="filters"
+        :initial-filter="filterState"
         add-filter-label="caseFileTable.filter"
         @open="fetchEventsFilter()"
         @update:appliedFilter="onApplyFilterLocal">
@@ -138,7 +141,7 @@ export default mixins(TablePaginationSearchMixin).extend({
     return {
       CaseFileStatus,
       FilterKey,
-      myCaseFiles: false,
+      myCaseFiles: null as boolean,
       getLocalStringDate: helpers.getLocalStringDate,
       helpLink: 'zendesk.help_link.caseFilesTable',
       searchEventsResultIds: [] as string[],
@@ -153,6 +156,11 @@ export default mixins(TablePaginationSearchMixin).extend({
         ...this.limitResults ? { itemsPerPage: this.limitResults } : {}, // Add the property itemsPerPage only if limitResults is truthy
       },
     };
+  },
+
+  async created() {
+    this.saveState = true;
+    this.loadState();
   },
 
   computed: {
@@ -307,10 +315,13 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   watch: {
-    myCaseFiles(newValue) {
+    myCaseFiles(newValue, oldValue) {
+      if (oldValue == null || newValue === oldValue) {
+        return;
+      }
       if (newValue) {
         // We apply filters from the switch + the ones from the filters panel
-        this.onApplyFilter({ preparedFilters: { ...this.userFilters, ...this.myCaseFilesFilter } as Record<string, unknown> });
+        this.onApplyFilter({ preparedFilters: { ...this.userFilters, ...this.myCaseFilesFilter } as Record<string, unknown> }, this.filterState);
       } else {
         let preparedFilters = {} as Record<string, unknown>;
         if (isEqual(this.myCaseFilesFilter, this.userFilters)) { // If the only filter is myCaseFile
@@ -319,12 +330,21 @@ export default mixins(TablePaginationSearchMixin).extend({
           const caseFileFilterValue = Object.values(this.myCaseFilesFilter)[0];
           preparedFilters = pickBy(this.userFilters, (value) => !isEqual(caseFileFilterValue, value)); // Only filters from panel
         }
-        this.onApplyFilter({ preparedFilters });
+        this.onApplyFilter({ preparedFilters }, this.filterState);
       }
     },
   },
 
   methods: {
+    additionalFilters() {
+      return { myCaseFilesFilter: this.myCaseFiles };
+    },
+
+    setAdditionalFilters(state: unknown) {
+      // eslint-disable-next-line
+      this.myCaseFiles = (state as any)?.myCaseFilesFilter || false;
+    },
+
     async fetchData(params: IAzureSearchParams) {
       this.searchLoading = false;
       const res = await this.$storage.caseFile.actions.search({
@@ -410,7 +430,7 @@ export default mixins(TablePaginationSearchMixin).extend({
 
     async onApplyFilterLocal(
       { preparedFilters, searchFilters }
-        : { preparedFilters: Record<string, unknown>, searchFilters: string },
+        : { preparedFilters: Record<string, unknown>, searchFilters: string }, filterState: unknown,
     ) {
       let finalFilters = {};
       if (this.myCaseFiles) {
@@ -418,7 +438,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       } else {
         finalFilters = isEmpty(preparedFilters) ? null : preparedFilters;
       }
-      await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters });
+      await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);
     },
   },
 

@@ -9,7 +9,9 @@
       :help-link="$t('zendesk.help_link.case_referral_list')"
       :labels="labels"
       :headers="headers"
+      :footer-text="footerText"
       :options.sync="options"
+      :initial-search="params && params.search"
       :custom-columns="Object.values(customColumns)"
       :hide-footer="true"
       :show-add-button="canEdit"
@@ -19,6 +21,7 @@
         <filter-toolbar
           :filter-key="FilterKey.Referrals"
           :count="itemsCount"
+          :initial-filter="filterState"
           :filter-options="filters"
           @update:appliedFilter="onApplyFilter" />
       </template>
@@ -178,6 +181,8 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   async created() {
+    this.saveState = true;
+    this.loadState();
     await this.$storage.caseFileReferral.actions.fetchTypes();
     await this.$storage.caseFileReferral.actions.fetchOutcomeStatuses();
   },
