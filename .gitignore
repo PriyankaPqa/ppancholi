@@ -1,8 +1,6 @@
 .DS_Store
 node_modules
 /dist
-/dist-app
-/storybook-static
 /coverage
 
 # local env files
@@ -24,3 +22,7 @@ yarn-error.log*
 *.sln
 *.sw?
 .vs
+
+
+.yalc
+yalc.lock

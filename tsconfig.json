@@ -1,0 +1,48 @@
+{
+  "compilerOptions": {
+    "preserveSymlinks": true,
+    "strictNullChecks": false,
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "skipLibCheck": true, // Fixes testcafe + jest type collision
+    "types": [
+      "webpack-env",
+      "jest",
+      "vuetify",
+      "vue-meta"
+    ],
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "lib": [
+      "es6",
+      "es2017",
+      "dom",
+      "dom.iterable",
+      "scripthost"
+    ]
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
+    "typings/**.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "src/**/*.spec.ts", // Fixes testcafe + jest type collision
+    "src/e2e/**/*.ts" // Fixes testcafe + jest type collision
+  ]
+}

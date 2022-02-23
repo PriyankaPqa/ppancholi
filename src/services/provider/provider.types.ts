@@ -1,0 +1,74 @@
+import { IHouseholdsService, IHouseholdsServiceMock } from '@crctech/registration-lib/src/services/households/entity';
+import {
+  IPublicService,
+  IPublicServiceMock,
+} from '@crctech/registration-lib/src/services/public';
+import { IHouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
+import { ICaseFilesService, ICaseFilesServiceMock } from '../case-files/entity';
+import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
+import { ITeamsService, ITeamsServiceMock } from '../teams/entity';
+import { IAppUsersService, IAppUsersServiceMock } from '../app-users';
+import { IProgramsService, IProgramsServiceMock } from '../programs/entity';
+import { IUserAccountsServiceMock, UserAccountsService } from '../user-accounts/entity';
+import { IEventsService, IEventsServiceMock } from '../events/entity';
+import { ICaseNotesService, ICaseNotesServiceMock } from '../case-notes/entity';
+import { ICaseFileReferralsService, ICaseFileReferralsServiceMock } from '../case-file-referrals/entity';
+import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '../case-file-documents/entity';
+import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '../financial-assistance-tables/entity';
+import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '../financial-assistance-categories/entity';
+import { IMassActionService, IMassActionServiceMock } from '@/services/mass-actions/entity';
+import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '../financial-assistance-payments/entity';
+import { ICaseFilesMetadataService } from '../case-files/metadata';
+import { ICaseNotesMetadataService } from '../case-notes/metadata';
+import { ICaseFileReferralsMetadataService } from '../case-file-referrals/metadata';
+import { ICaseFileDocumentsMetadataService } from '../case-file-documents/metadata';
+import { IEventsMetadataService } from '../events/metadata';
+import { IFinancialAssistancePaymentsMetadataService } from '../financial-assistance-payments/metadata';
+import { ITenantSettingsService, ITenantSettingsServiceMock } from '../tenantSettings/entity';
+
+export interface IProvider {
+  appUsers: IAppUsersService,
+  caseFiles: ICaseFilesService,
+  caseFilesMetadata: ICaseFilesMetadataService,
+  caseFileNotes: ICaseNotesService,
+  caseFileNotesMetadata: ICaseNotesMetadataService,
+  caseFileReferrals: ICaseFileReferralsService
+  caseFileReferralsMetadata: ICaseFileReferralsMetadataService
+  caseFileDocuments: ICaseFileDocumentsService
+  caseFileDocumentsMetadata: ICaseFileDocumentsMetadataService
+  events: IEventsService;
+  eventsMetadata: IEventsMetadataService;
+  optionItems: IOptionItemsService;
+  teams: ITeamsService,
+  programs: IProgramsService,
+  publicApi: IPublicService,
+  households: IHouseholdsService,
+  householdsMetadata: IHouseholdMetadataService,
+  financialAssistanceTables: IFinancialAssistanceTablesService,
+  financialAssistancePaymentsService: IFinancialAssistancePaymentsService,
+  financialAssistancePaymentsServiceMetadata: IFinancialAssistancePaymentsMetadataService,
+  userAccounts: UserAccountsService,
+  financialAssistanceCategories: IFinancialAssistanceCategoriesService,
+  massActions: IMassActionService;
+  tenantSettings: ITenantSettingsService;
+}
+
+export interface IProviderMock {
+  appUsers: IAppUsersServiceMock,
+  caseFiles: ICaseFilesServiceMock,
+  caseFileNotes: ICaseNotesServiceMock,
+  caseFileReferrals: ICaseFileReferralsServiceMock,
+  caseFileDocuments: ICaseFileDocumentsServiceMock,
+  events: IEventsServiceMock;
+  optionItems: IOptionItemsServiceMock;
+  teams: ITeamsServiceMock,
+  programs: IProgramsServiceMock,
+  publicApi: IPublicServiceMock,
+  households: IHouseholdsServiceMock,
+  financialAssistanceTables: IFinancialAssistanceTablesServiceMock,
+  financialAssistancePaymentsService: IFinancialAssistancePaymentsServiceMock,
+  userAccounts: IUserAccountsServiceMock,
+  financialAssistanceCategories: IFinancialAssistanceCategoriesServiceMock,
+  massActions: IMassActionServiceMock,
+  tenantSettings: ITenantSettingsServiceMock;
+}

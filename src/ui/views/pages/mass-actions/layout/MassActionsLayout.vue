@@ -1,0 +1,120 @@
+<template>
+  <page-template
+    :navigation-tabs="availableTabs"
+    :show-left-menu="showLeftMenu"
+    :loading="false"
+    :group-mode="true"
+    :left-menu-title="$t('leftMenu.mass_actions_title')"
+    hide-dividers
+    @click:tab="onClick($event)">
+    <rc-router-view-transition />
+    <impact-status-case-file-filtering v-if="showExportValidationImpact" :show.sync="showExportValidationImpact" />
+  </page-template>
+</template>
+
+<script lang="ts">
+import { TranslateResult } from 'vue-i18n';
+import { RcRouterViewTransition } from '@crctech/component-library';
+import mixins from 'vue-typed-mixins';
+import metadata from '@/ui/mixins/metadata';
+import routes from '@/constants/routes';
+import { PageTemplate } from '@/ui/views/components/layout';
+import massActions from '@/ui/views/pages/mass-actions/mixins/massActions';
+import { INavigationTabGroup } from '@/types/interfaces/ui/INavigationTab';
+import ImpactStatusCaseFileFiltering from '@/ui/views/pages/mass-actions/export-validation-status/ImpactStatusCaseFileFiltering.vue';
+
+export default mixins(massActions).extend({
+  name: 'MassActionsLayout',
+  components: {
+    RcRouterViewTransition,
+    PageTemplate,
+    ImpactStatusCaseFileFiltering,
+  },
+
+  mixins: [metadata],
+
+  computed: {
+    metaTitle(): TranslateResult {
+      return this.$t('metaInfo.mass_actions.title');
+    },
+
+    metaDescription(): TranslateResult {
+      return this.$t('metaInfo.mass_actions.description');
+    },
+
+    tabs(): Array<INavigationTabGroup> {
+      return [
+        {
+          name: this.$t('mass_action.card.group1'),
+          items: [
+            {
+              text: this.$t('mass_action.card.financial_assistance'),
+              test: 'mass_action.card.financial_assistance',
+              to: routes.massActions.financialAssistance.home.name,
+              exact: false,
+              level: 'level6',
+            },
+          ],
+        },
+        {
+          name: this.$t('mass_action.card.group4'),
+          items: [
+            {
+              text: this.$t('mass_action.card.export_validation_impact'),
+              test: 'mass_action.card.export_validation_impact',
+              to: null,
+              exact: false,
+              level: 'level6',
+              roles: ['contributorIM'],
+              onClick: 'exportImpactValidation',
+            },
+            {
+              text: this.$t('mass_action.card.import_validation_impact'),
+              test: 'mass_action.card.import_validation_impact',
+              to: routes.massActions.importValidationStatus.home.name,
+              exact: false,
+              level: 'level6',
+              roles: ['contributorIM'],
+            },
+            {
+              text: this.$t('mass_action.card.generate_funding'),
+              test: 'mass_action.card.generate_funding',
+              to: routes.massActions.fundingRequest.home.name,
+              exact: false,
+              level: 'level6',
+              roles: ['contributorFinance'],
+              onClick: 'generateFundingRequest',
+            },
+            {
+              text: this.$t('mass_action.card.import_payment_statuses'),
+              test: 'mass_action.card.import_payment_statuses',
+              to: routes.massActions.importPaymentStatus.home.name,
+              exact: false,
+              level: 'level6',
+              roles: ['contributorFinance'],
+              onClick: 'importPaymentStatuses',
+            },
+          ],
+        },
+      ];
+    },
+
+    showLeftMenu(): boolean {
+      return (this.$route.name !== routes.massActions.home.name);
+    },
+
+    availableTabs(): Array<INavigationTabGroup> {
+      return this.tabs.reduce((result, group) => {
+        const filterItems = this.filterItemsOnLevelOrRole(group.items);
+        if (filterItems.length > 0) {
+          result.push({
+            name: group.name,
+            items: filterItems,
+          });
+        }
+        return result;
+      }, []);
+    },
+  },
+});
+</script>
