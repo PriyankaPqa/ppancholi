@@ -44,11 +44,11 @@
 </template>
 
 <script lang="ts">
-import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
+import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 import Vue from 'vue';
 import {
   mockMember, mockAddress, mockContactInformation, mockCampGround, mockAdditionalMember,
-} from '@crctech/registration-lib/src/entities/household-create';
+} from '@libs/registration-lib/entities/household-create';
 
 export default Vue.extend({
   name: 'Tabs',

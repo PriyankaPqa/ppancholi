@@ -11,8 +11,8 @@ import { IOptionItem } from '@/entities/optionItem';
 import { IListOption } from '@/types';
 
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
-import { Base } from '../base';
 import { EEventStatus } from '@/entities/event';
+import { Base } from '../base';
 
 export class CaseFileStorage
   extends Base<ICaseFileEntity, ICaseFileMetadata, uuid> implements IStorage {

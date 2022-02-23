@@ -233,18 +233,19 @@ import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import {
   ECurrentAddressTypes, IMember, CurrentAddress, ICurrentAddress,
-} from '@crctech/registration-lib/src/entities/household-create';
-import { CurrentAddressForm, CurrentAddressTemplate } from '@crctech/registration-lib';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { IEventGenericLocation } from '@crctech/registration-lib/src/entities/event';
+} from '@libs/registration-lib/entities/household-create';
+import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
+import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
+import libHelpers from '@libs/registration-lib/ui/helpers';
+import { IEventGenericLocation } from '@libs/registration-lib/entities/event';
 import { RcDialog } from '@crctech/component-library';
 import helpers from '@/ui/helpers/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import { localStorageKeys } from '@/constants/localStorage';
-import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { VForm } from '@/types';
 import routes from '@/constants/routes';
+import { IMovingHouseholdCreate, IMovingMember } from './MoveHouseholdMembers.vue';
 
 export default Vue.extend({
   name: 'HouseholdCard',

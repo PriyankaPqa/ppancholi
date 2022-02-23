@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as msal from '@azure/msal-browser';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import {
   AccountInfo,
   AuthenticationResult,

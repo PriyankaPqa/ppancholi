@@ -149,16 +149,16 @@
 
 <script lang="ts">
 import { RcTooltip } from '@crctech/component-library';
-import { IHouseholdCombined, IHouseholdMemberMetadata } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdCombined, IHouseholdMemberMetadata } from '@libs/registration-lib/entities/household';
 import mixins from 'vue-typed-mixins';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@/types';
 import routes from '@/constants/routes';
+import householdHelpers from '@/ui/helpers/household';
 import CaseFileDetailsBeneficiaryPhoneNumber from './components/CaseFileDetailsBeneficiaryPhoneNumber.vue';
 import CaseFileVerifyIdentityDialog from './components/CaseFileVerifyIdentityDialog.vue';
 import ImpactValidation from './components/ImpactValidationDialog.vue';
-import householdHelpers from '@/ui/helpers/household';
 import caseFileDetail from './caseFileDetail';
 
 export default mixins(caseFileDetail).extend({

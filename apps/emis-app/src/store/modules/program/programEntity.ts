@@ -1,10 +1,10 @@
 import { ActionContext, ActionTree } from 'vuex';
 import { IProgramEntity } from '@/entities/program';
 import { IRootState } from '@/store/store.types';
+import { ProgramsService } from '@/services/programs/entity';
 import { IProgramEntityState } from './programEntity.types';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
-import { ProgramsService } from '@/services/programs/entity';
 
 export class ProgramEntityModule extends BaseModule<IProgramEntity, { id: uuid; eventId: uuid }> {
   constructor(readonly service: ProgramsService) {

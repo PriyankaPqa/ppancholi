@@ -1,6 +1,6 @@
 import { mockCaseFileReferralEntities, mockCaseFileReferralEntity } from '@/entities/case-file-referral';
-import { ICaseFileReferralsServiceMock } from './case-file-referrals.types';
 import { mockDomainBaseService } from '@/services/base/base.mock';
+import { ICaseFileReferralsServiceMock } from './case-file-referrals.types';
 
 export const mockCaseFileReferralsService = (): ICaseFileReferralsServiceMock => ({
   ...mockDomainBaseService(mockCaseFileReferralEntities()),

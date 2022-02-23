@@ -110,9 +110,9 @@
 <script lang='ts'>
 import Vue from 'vue';
 import { RcDialog } from '@crctech/component-library';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@crctech/registration-lib/src/entities/household-create';
-import { CurrentAddressTemplate } from '@crctech/registration-lib';
+import libHelpers from '@libs/registration-lib/ui/helpers';
+import { EIndigenousTypes, IIndigenousCommunityData, IMember } from '@libs/registration-lib/entities/household-create';
+import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

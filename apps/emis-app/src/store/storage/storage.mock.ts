@@ -1,5 +1,5 @@
-import { mockStorageRegistration } from '@crctech/registration-lib/src/store/storage/registration';
-import { HouseholdStorageMock } from '@crctech/registration-lib/src/store/storage/household';
+import { mockStorageRegistration } from '@libs/registration-lib/store/storage/registration';
+import { HouseholdStorageMock } from '@libs/registration-lib/store/storage/household';
 import { UserAccountStorageMock } from '@/store/storage/user-account/storage.mock';
 import { CaseFileStorageMock } from '@/store/storage/case-file/storage.mock';
 import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';

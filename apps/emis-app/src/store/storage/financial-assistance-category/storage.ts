@@ -1,7 +1,7 @@
 import { IStore, IState } from '@/store/store.types';
+import { IOptionItem } from '@/entities/optionItem';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
-import { IOptionItem } from '@/entities/optionItem';
 
 export class FinancialAssistanceCategoryStorage extends Base<IOptionItem, never, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string) {

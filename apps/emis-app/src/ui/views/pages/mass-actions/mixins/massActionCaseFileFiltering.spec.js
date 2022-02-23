@@ -3,11 +3,11 @@
  */
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import massActionCaseFileFiltering from './massActionCaseFileFiltering';
 import { mockStorage } from '@/store/storage';
 import { MassActionType } from '@/entities/mass-action';
 import { EEventStatus, mockCombinedEvents } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';
+import massActionCaseFileFiltering from './massActionCaseFileFiltering';
 
 const storage = mockStorage();
 

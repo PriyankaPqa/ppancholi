@@ -8,11 +8,10 @@ import {
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
 import { IOptionItemsService } from '@/services/optionItems';
 import { ICaseNoteEntity } from '@/entities/case-note';
+import { Status } from '@/entities/base';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
-
-import { Status } from '@/entities/base';
 
 export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
   constructor(readonly service: CaseNotesService, readonly optionItemService: IOptionItemsService) {

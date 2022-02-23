@@ -65,8 +65,12 @@ const Trans = {
    * @return {Promise<any>}
    */
   changeLanguage(lang) {
-    if (!Trans.isLangSupported(lang)) return Promise.reject(new Error('Language not supported'));
-    if (i18n.locale === lang) return Promise.resolve(lang); // has been loaded prior
+    if (!Trans.isLangSupported(lang)) {
+      return Promise.reject(new Error('Language not supported'));
+    }
+    if (i18n.locale === lang) {
+      return Promise.resolve(lang);
+    } // has been loaded prior
     return Trans.loadLanguageFile(lang).then((msgs) => {
       i18n.setLocaleMessage(lang, msgs.default || msgs);
       return Trans.setI18nLanguageInServices(lang);
@@ -98,7 +102,9 @@ const Trans = {
   routeMiddleware(to, from, next) {
     // Load async message files here
     const { lang } = to.params;
-    if (!Trans.isLangSupported(lang)) return next(Trans.getUserSupportedLang());
+    if (!Trans.isLangSupported(lang)) {
+      return next(Trans.getUserSupportedLang());
+    }
     return Trans.changeLanguage(lang).then(() => next());
   },
   /**

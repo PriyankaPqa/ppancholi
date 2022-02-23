@@ -43,7 +43,9 @@ export default {
   },
 
   countryName(countryCode: string, i18n: VueI18n): string {
-    if (!countryCode) return '';
+    if (!countryCode) {
+      return '';
+    }
 
     const countriesData = { en, fr } as Record<string, Record<string, string>>;
 

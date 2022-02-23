@@ -9,7 +9,7 @@ import {
 } from 'vee-validate/dist/rules.umd.min';
 import moment from 'moment';
 import Vue from 'vue';
-import helpers from '@crctech/registration-lib/src/ui/helpers';
+import helpers from '@libs/registration-lib/ui/helpers';
 import { i18n } from './i18n';
 
 // Keep in mind that changing classes' name here will affect any binding done with those ones in the code
@@ -93,7 +93,9 @@ extend('birthday', {
   validate: (value, args) => {
     const { birthdate } = args;
 
-    if (birthdate.year < 1901) return false;
+    if (birthdate.year < 1901) {
+      return false;
+    }
 
     const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
     if (momentBirthdate.isValid()) {
@@ -111,7 +113,9 @@ extend('minimumAge', {
   validate: (value, args) => {
     const { birthdate, age } = args;
 
-    if (!birthdate.year || !birthdate.month || !birthdate.day) return true;
+    if (!birthdate.year || !birthdate.month || !birthdate.day) {
+      return true;
+    }
 
     const momentBirthdate = helpers.getBirthDateMomentObject(birthdate);
     const now = moment().endOf('day');

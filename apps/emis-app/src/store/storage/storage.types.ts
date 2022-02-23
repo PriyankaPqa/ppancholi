@@ -1,5 +1,5 @@
-import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } from '@crctech/registration-lib/src/store/storage/registration';
-import { IStorageMake, IStorageMakeMock } from '@crctech/registration-lib/src/store/storage/household';
+import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } from '@libs/registration-lib/store/storage/registration';
+import { IStorageMake, IStorageMakeMock } from '@libs/registration-lib/store/storage/household';
 import { IStorage as IUserStorage, IStorageMock as IUserStorageMock } from './user';
 import { IStorage as IDashboardStorage, IStorageMock as IDashboardStorageMock } from './dashboard';
 import { IStorage as IOptionListStorage, IStorageMock as IOptionListStorageMock } from './optionList';

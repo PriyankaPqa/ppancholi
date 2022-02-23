@@ -1,8 +1,8 @@
 // Mixin used for household results in registration (EMIS) and household profile move
 
 import Vue from 'vue';
-import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household/index';
-import { IPhoneNumber } from '@crctech/registration-lib/src/entities/value-objects/contact-information/index';
+import { IHouseholdCombined } from '@libs/registration-lib/entities/household/index';
+import { IPhoneNumber } from '@libs/registration-lib/entities/value-objects/contact-information/index';
 import moment from 'moment';
 
 export interface IMember {

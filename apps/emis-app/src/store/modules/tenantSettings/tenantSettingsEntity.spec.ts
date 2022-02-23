@@ -4,9 +4,7 @@
 
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
-import { TenantSettingsEntityModule } from './tenantSettingsEntity';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
-import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import {
   FeatureKeys,
   IBrandingEntityData,
@@ -21,6 +19,8 @@ import {
   mockTenantSettingsEntityData,
   TenantSettingsEntity,
 } from '@/entities/tenantSettings';
+import { TenantSettingsEntityModule } from './tenantSettingsEntity';
+import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 
 const service = new TenantSettingsService(httpClient);
 let module: TenantSettingsEntityModule;

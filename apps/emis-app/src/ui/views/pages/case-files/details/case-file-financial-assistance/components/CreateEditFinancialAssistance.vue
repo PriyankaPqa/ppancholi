@@ -182,14 +182,14 @@ import
 import { Status } from '@/entities/base/index';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
-import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import { IProgramEntity } from '@/entities/program';
 import routes from '@/constants/routes';
+import { VForm } from '@/types';
+import helpers from '@/ui/helpers/helpers';
+import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
 import CreateEditPaymentLineDialog from './CreateEditPaymentLineDialog.vue';
-import { VForm } from '@/types';
-import helpers from '@/ui/helpers/helpers';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({

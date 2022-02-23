@@ -6,8 +6,8 @@
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
 import { mockProgramEntity } from '@/entities/program';
-import Component from '../CreateEditFinancialAssistanceForm.vue';
 import { mockCombinedFinancialAssistance } from '@/entities/financial-assistance';
+import Component from '../CreateEditFinancialAssistanceForm.vue';
 
 const localVue = createLocalVue();
 let financialAssistance = mockCaseFinancialAssistanceEntity();

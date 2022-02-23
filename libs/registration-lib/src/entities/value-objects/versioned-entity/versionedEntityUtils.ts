@@ -15,7 +15,9 @@ export default {
 
   mapResponses(responses: IVersionedEntity[][]): IVersionedEntity[] {
     const parsedResponses = responses.map((historyItems: IVersionedEntity[]) => {
-      if (!historyItems) return [];
+      if (!historyItems) {
+        return [];
+      }
       // Order items and add the previous entity to each history item
       const orderedItems = _orderBy(historyItems, 'timestamp', 'desc');
       const itemsWithPreviousState = this.addPreviousState(orderedItems);

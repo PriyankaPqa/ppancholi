@@ -1,4 +1,4 @@
-import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
+import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export const tabs = (): IRegistrationMenuItem[] => [
   {

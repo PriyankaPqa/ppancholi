@@ -2,18 +2,18 @@
  * @group ui/components/household
  */
 
-import { mockHouseholdCreate, Member } from '@crctech/registration-lib/src/entities/household-create';
-import { mockCombinedHousehold, mockHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
-import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { MAX_ADDITIONAL_MEMBERS } from '@crctech/registration-lib/src/constants/validations';
+import { mockHouseholdCreate, Member } from '@libs/registration-lib/entities/household-create';
+import { mockCombinedHousehold, mockHouseholdCaseFile } from '@libs/registration-lib/entities/household';
+import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
+import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockEventMainInfo, EEventLocationStatus } from '@/entities/event';
 import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';
 import { mockUserStateLevel } from '@/test/helpers';
 import householdHelpers from '@/ui/helpers/household';
-import Component from './HouseholdProfile.vue';
 import routes from '@/constants/routes';
+import Component from './HouseholdProfile.vue';
 
 const localVue = createLocalVue();
 const householdCreate = { ...mockHouseholdCreate(), additionalMembers: [mockMember()] };

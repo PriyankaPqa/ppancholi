@@ -4,14 +4,14 @@ import Vue from 'vue';
 import camelCaseKeys from 'camelcase-keys';
 import axios from 'axios';
 import { Toasted } from 'vue-toasted';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { i18n } from '@/ui/plugins/i18n';
-import { mockHttp } from '@crctech/registration-lib/src/services/httpClient.mock';
-import { IRestResponse } from '@crctech/registration-lib/src/types';
+import { mockHttp } from '@libs/registration-lib/services/httpClient.mock';
+import { IRestResponse } from '@libs/registration-lib/types';
 import { HttpClient } from './httpClient';
 
 jest.mock('uuid');
-jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
+jest.mock('@libs/registration-lib/plugins/applicationInsights/applicationInsights');
 
 const mockAxios = axios.create();
 mockAxios.interceptors.request.use = jest.fn();

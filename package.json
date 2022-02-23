@@ -21,18 +21,18 @@
 
     "emis-app:build": "lerna run build --scope @apps/emis-app",
     "emis-app:serve": "lerna run serve --scope @apps/emis-app --stream",
-    "emis-app:test": "lerna run test --scope @apps/emis-app",
+    "emis-app:test": "yarn --cwd apps/emis-app test",
     "emis-app:coverage": "yarn --cwd apps/emis-app test --coverage  --coverageReporters=cobertura",
     "emis-app:lint": "yarn --cwd apps/emis-app lint",
 
     "benef-app:build": "lerna run build --scope @apps/benef-app",
     "benef-app:serve": "lerna run serve --scope @apps/benef-app --stream",
-    "benef-app:test": "lerna run test --scope @apps/benef-app",
+    "benef-app:test": "yarn --cwd apps/benef-app test",
     "benef-app:coverage": "yarn --cwd apps/benef-app test --coverage  --coverageReporters=cobertura",
     "benef-app:lint": "yarn --cwd apps/benef-app lint",
 
     "registration-lib:build": "lerna run build:final --scope @libs/registration-lib",
-    "registration-lib:test": "lerna run test --scope @libs/registration-lib",
+    "registration-lib:test": "yarn --cwd libs/registration-lib test --scope @libs/registration-lib",
     "registration-lib:coverage": "yarn --cwd libs/registration-lib test --coverage  --coverageReporters=cobertura",
     "registration-lib:lint": "yarn --cwd libs/registration-lib lint"
   },

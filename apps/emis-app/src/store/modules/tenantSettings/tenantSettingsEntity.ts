@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext, ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
-import { IState } from '../base/base.types';
-import { BaseModule } from '../base';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
 import {
   FeatureKeys,
@@ -16,8 +14,10 @@ import {
   ITenantSettingsEntityData,
   TenantSettingsEntity,
 } from '@/entities/tenantSettings';
-import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
+import { IState } from '../base/base.types';
+import { BaseModule } from '../base';
+import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 
 export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity, uuid> {
   constructor(readonly service: TenantSettingsService) {

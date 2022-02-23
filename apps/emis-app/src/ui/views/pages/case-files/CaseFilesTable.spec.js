@@ -9,9 +9,9 @@ import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 
 import { CaseFileStatus, CaseFileTriage, mockCombinedCaseFiles } from '@/entities/case-file';
-import Component from './CaseFilesTable.vue';
 import helpers from '@/ui/helpers/helpers';
 import { EEventStatus, mockCombinedEvents } from '@/entities/event';
+import Component from './CaseFilesTable.vue';
 
 const storage = mockStorage();
 const mockCaseFiles = mockCombinedCaseFiles();

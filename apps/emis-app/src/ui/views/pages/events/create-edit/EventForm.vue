@@ -285,7 +285,7 @@ import {
   RcAutosuggest,
   RcTooltip,
 } from '@crctech/component-library';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import libHelpers from '@libs/registration-lib/ui/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers/helpers';
 import utils from '@/entities/utils';

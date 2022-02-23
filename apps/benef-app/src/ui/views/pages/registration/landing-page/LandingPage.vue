@@ -14,7 +14,7 @@
 import Vue from 'vue';
 import { RcRegistrationLandingPage } from '@crctech/component-library';
 import routes from '@/constants/routes';
-import { IEvent } from '@crctech/registration-lib/src/entities/event';
+import { IEvent } from '@libs/registration-lib/entities/event';
 
 export default Vue.extend({
   name: 'LandingPage',

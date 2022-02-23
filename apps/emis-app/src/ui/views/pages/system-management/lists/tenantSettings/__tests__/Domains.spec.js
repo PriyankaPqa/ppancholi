@@ -5,9 +5,9 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import entityUtils from '@/entities/utils';
 import { mockStorage } from '@/store/storage';
-import Component from '../Domains.vue';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { mockTenantSettingsEntity } from '@/entities/tenantSettings';
+import Component from '../Domains.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

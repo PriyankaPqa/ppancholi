@@ -1,9 +1,9 @@
-import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } from '@crctech/registration-lib/src/store/storage/registration';
-import { IStorageMake, IStorageMakeMock } from '@crctech/registration-lib/src/store/storage/household';
+import { IStorage as IRegistrationStorage, IStorageMock as IRegistrationMock } from '@libs/registration-lib/store/storage/registration';
+import { IStorageMake, IStorageMakeMock } from '@libs/registration-lib/store/storage/household';
 import {
   IStorageMake as ITenantSettingsMakeStorage,
   IStorageMakeMock as ITenantSettingsMakeStorageMock,
-} from '@crctech/registration-lib/src/store/storage/tenantSettings';
+} from '@libs/registration-lib/store/storage/tenantSettings';
 
 export interface IStorage {
   registration: IRegistrationStorage;

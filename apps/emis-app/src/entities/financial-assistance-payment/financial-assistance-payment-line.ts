@@ -1,8 +1,8 @@
+import { BaseEntity } from '@/entities/base/base';
+import { IAddress } from '@/types';
 import {
   IFinancialAssistancePaymentLine,
 } from './financial-assistance-payment.types';
-import { BaseEntity } from '@/entities/base/base';
-import { IAddress } from '@/types';
 import { Status } from '../base';
 
 export class FinancialAssistancePaymentLine extends BaseEntity implements IFinancialAssistancePaymentLine {

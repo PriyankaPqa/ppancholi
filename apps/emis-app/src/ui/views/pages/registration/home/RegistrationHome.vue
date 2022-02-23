@@ -26,8 +26,8 @@
 import Vue from 'vue';
 
 import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
-import { IShelterLocationData } from '@crctech/registration-lib/src/entities/household-create';
-import { IEventData as IRegistrationEventData } from '@crctech/registration-lib/src/entities/event';
+import { IShelterLocationData } from '@libs/registration-lib/entities/household-create';
+import { IEventData as IRegistrationEventData } from '@libs/registration-lib/entities/event';
 import routes from '@/constants/routes';
 import { EEventStatus, IEventMainInfo } from '@/entities/event';
 import { tabs } from '@/store/modules/registration/tabs';

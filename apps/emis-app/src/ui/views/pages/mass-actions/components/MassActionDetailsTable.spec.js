@@ -9,8 +9,8 @@ import {
 } from '@/test/testSetup';
 
 import { MassActionType, mockCombinedMassAction } from '@/entities/mass-action';
-import Component from './MassActionDetailsTable.vue';
 import { mockCombinedUserAccount } from '@/entities/user-account';
+import Component from './MassActionDetailsTable.vue';
 
 const localVue = createLocalVue();
 

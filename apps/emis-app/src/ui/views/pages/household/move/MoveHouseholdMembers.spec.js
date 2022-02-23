@@ -2,18 +2,18 @@
  * @group ui/components/household
  */
 
-import { mockHouseholdCreate, mockShelterData } from '@crctech/registration-lib/src/entities/household-create';
-import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
-import { mockShelterLocations } from '@crctech/registration-lib/src/entities/event/event.mock';
-import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { mockHouseholdCreate, mockShelterData } from '@libs/registration-lib/entities/household-create';
+import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
+import { mockShelterLocations } from '@libs/registration-lib/entities/event/event.mock';
+import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import helpers from '@/ui/helpers/helpers';
 
-import Component from './MoveHouseholdMembers.vue';
 import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResults.vue';
 import HouseholdSearch from '@/ui/views/pages/registration/is-registered/HouseholdSearch.vue';
+import Component from './MoveHouseholdMembers.vue';
 
 const localVue = createLocalVue();
 const household = mockCombinedHousehold();

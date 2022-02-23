@@ -1,8 +1,8 @@
 import { ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
-import { IState } from '../base/base.types';
 import { IOptionItem } from '@/entities/optionItem';
 import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
+import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
 
 export class FinancialAssistanceCategoryEntityModule extends BaseModule <IOptionItem, uuid> {

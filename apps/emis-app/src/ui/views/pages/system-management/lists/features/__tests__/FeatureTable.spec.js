@@ -2,8 +2,8 @@
  * @group ui/components/system-management
  */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import Component from '../FeatureTable.vue';
 import { mockFeatures } from '@/entities/tenantSettings';
+import Component from '../FeatureTable.vue';
 import FeatureWrapper from '../FeatureWrapper.vue';
 
 const localVue = createLocalVue();

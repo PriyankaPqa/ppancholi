@@ -10,8 +10,8 @@ import {
 
 import { mockOptionItemData, EOptionLists } from '@/entities/optionItem';
 import entityUtils from '@/entities/utils';
-import Component from '../OptionListItem.vue';
 import { Status } from '@/entities/base';
+import Component from '../OptionListItem.vue';
 
 const localVue = createLocalVue();
 

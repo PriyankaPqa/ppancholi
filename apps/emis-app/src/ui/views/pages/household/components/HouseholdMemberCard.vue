@@ -140,15 +140,16 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { IMember } from '@crctech/registration-lib/src/entities/household-create';
-import { CurrentAddressTemplate, AddEditAdditionalMembers } from '@crctech/registration-lib';
+import { IMember } from '@libs/registration-lib/entities/household-create';
+import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
+import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
 import { RcTooltip } from '@crctech/component-library';
 import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@/entities/event';
 
+import { FeatureKeys } from '@/entities/tenantSettings';
 import PrimaryMemberDialog from './PrimaryMemberDialog.vue';
 import SplitHouseholdDialog from '../split/SplitHouseholdDialog.vue';
-import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'HouseholdMemberCard',

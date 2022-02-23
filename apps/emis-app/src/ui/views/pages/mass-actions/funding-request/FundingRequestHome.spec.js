@@ -4,11 +4,11 @@
 
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
-import Component from './FundingRequestHome.vue';
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';
 import { MassActionType } from '@/entities/mass-action';
 import routes from '@/constants/routes';
 import { Contributor, mockUserStateContributor, mockUserStateLevel } from '@/test/helpers';
+import Component from './FundingRequestHome.vue';
 
 const localVue = createLocalVue();
 let wrapper;

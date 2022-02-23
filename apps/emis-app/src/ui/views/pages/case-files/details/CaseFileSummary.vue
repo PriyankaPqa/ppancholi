@@ -142,15 +142,15 @@
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import moment from 'moment';
-import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdEntity, IHouseholdMemberMetadata, IHouseholdMetadata } from '@libs/registration-lib/entities/household';
 import {
   CaseFileActivityType, CaseFileStatus, ICaseFileActivity, ICaseFileCombined,
 } from '@/entities/case-file';
 import { IIdMultilingualName } from '@/types';
 import helpers from '@/ui/helpers/helpers';
-import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import { PaymentsSummary } from '@/entities/financial-assistance-payment';
+import CaseFileTags from './case-file-activity/components/CaseFileTags.vue';
 
 export interface CaseFileSummary {
   closedArchivedActivity: { name: string; date: string; reason: string; isClosed: boolean };

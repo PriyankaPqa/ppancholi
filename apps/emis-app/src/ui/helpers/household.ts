@@ -1,10 +1,10 @@
 import {
   EIndigenousTypes, IIndigenousCommunityData, IMember, HouseholdCreate,
   IAddressData,
-} from '@crctech/registration-lib/src/entities/household-create/index';
-import { IBirthDate } from '@crctech/registration-lib/src/entities/value-objects/identity-set/identitySet.types';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { IAddress } from '@crctech/registration-lib/src/entities/value-objects/address/address.types';
+} from '@libs/registration-lib/entities/household-create/index';
+import { IBirthDate } from '@libs/registration-lib/entities/value-objects/identity-set/identitySet.types';
+import libHelpers from '@libs/registration-lib/ui/helpers';
+import { IAddress } from '@libs/registration-lib/entities/value-objects/address/address.types';
 import helpers from '@/ui/helpers/helpers';
 import { i18n } from '@/ui/plugins';
 

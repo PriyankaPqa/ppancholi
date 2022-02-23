@@ -10,7 +10,7 @@ import {
 } from './financial-assistance-payment.types';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockBaseData } from '../base';
-import { IVersionedEntity } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IVersionedEntity } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import { EPaymentModalities } from '../program';
 
 export const mockCaseFinancialAssistancePaymentGroups = ():

@@ -1,6 +1,6 @@
 import { mockCaseNoteEntities, mockCaseNoteEntity } from '@/entities/case-note';
-import { ICaseNotesServiceMock } from './case-notes.types';
 import { mockDomainBaseService } from '@/services/base/base.mock';
+import { ICaseNotesServiceMock } from './case-notes.types';
 
 export const mockCaseNotesService = (): ICaseNotesServiceMock => ({
   ...mockDomainBaseService(mockCaseNoteEntities()),

@@ -8,8 +8,8 @@ import {
 } from '@/test/testSetup';
 
 import { MassActionRunStatus, mockCombinedMassAction } from '@/entities/mass-action';
-import Component from './MassActionTitleDescription.vue';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
+import Component from './MassActionTitleDescription.vue';
 
 const localVue = createLocalVue();
 

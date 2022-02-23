@@ -3,9 +3,8 @@ import {
   IOptionItemData, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
-import { IOptionItemsService } from './optionItems.types';
-
 import { Status } from '@/entities/base';
+import { IOptionItemsService } from './optionItems.types';
 
 export class OptionItemsService implements IOptionItemsService {
   constructor(private readonly http: IHttpClient) {}

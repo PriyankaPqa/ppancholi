@@ -3,8 +3,8 @@
  */
 
 import _cloneDeep from 'lodash/cloneDeep';
-import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
-import { ECanadaProvinces } from '@crctech/registration-lib/src/types';
+import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
+import { ECanadaProvinces } from '@libs/registration-lib/types';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFile } from '@/entities/case-file';
 import routes from '@/constants/routes';

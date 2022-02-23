@@ -6,9 +6,9 @@ import store from '@/store/store';
 import {
   USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, TENANT_SETTINGS_ENTITIES,
 } from '@/constants/vuex-modules';
+import { FeatureKeys } from '@/entities/tenantSettings';
 import Routes from '../../constants/routes';
 import { SignalR } from '../plugins/signalR';
-import { FeatureKeys } from '@/entities/tenantSettings';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');

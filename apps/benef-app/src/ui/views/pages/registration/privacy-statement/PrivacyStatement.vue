@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { PrivacyStatement as LibPrivacyStatement } from '@crctech/registration-lib';
+import LibPrivacyStatement from '@libs/registration-lib/components/privacy-statement/PrivacyStatement.vue';
 
 export default Vue.extend({
   name: 'PrivacyStatement',

@@ -1,9 +1,10 @@
-import { IHouseholdsService, IHouseholdsServiceMock } from '@crctech/registration-lib/src/services/households/entity';
+import { IHouseholdsService, IHouseholdsServiceMock } from '@libs/registration-lib/services/households/entity';
 import {
   IPublicService,
   IPublicServiceMock,
-} from '@crctech/registration-lib/src/services/public';
-import { IHouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
+} from '@libs/registration-lib/services/public';
+import { IHouseholdMetadataService } from '@libs/registration-lib/services/households/metadata';
+import { IMassActionService, IMassActionServiceMock } from '@/services/mass-actions/entity';
 import { ICaseFilesService, ICaseFilesServiceMock } from '../case-files/entity';
 import { IOptionItemsService, IOptionItemsServiceMock } from '../optionItems';
 import { ITeamsService, ITeamsServiceMock } from '../teams/entity';
@@ -16,7 +17,6 @@ import { ICaseFileReferralsService, ICaseFileReferralsServiceMock } from '../cas
 import { ICaseFileDocumentsService, ICaseFileDocumentsServiceMock } from '../case-file-documents/entity';
 import { IFinancialAssistanceTablesService, IFinancialAssistanceTablesServiceMock } from '../financial-assistance-tables/entity';
 import { IFinancialAssistanceCategoriesService, IFinancialAssistanceCategoriesServiceMock } from '../financial-assistance-categories/entity';
-import { IMassActionService, IMassActionServiceMock } from '@/services/mass-actions/entity';
 import { IFinancialAssistancePaymentsService, IFinancialAssistancePaymentsServiceMock } from '../financial-assistance-payments/entity';
 import { ICaseFilesMetadataService } from '../case-files/metadata';
 import { ICaseNotesMetadataService } from '../case-notes/metadata';

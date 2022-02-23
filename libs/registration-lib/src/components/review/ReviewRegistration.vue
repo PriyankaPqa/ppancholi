@@ -376,7 +376,7 @@ export default mixins(additionalMemberForm).extend({
       this.addresses.loading = false;
     },
 
-    async updateHomeAddress(householdId: uuid, household: IHouseholdCreate) {
+    async updateHomeAddress(householdId: string, household: IHouseholdCreate) {
       let res;
       if (household.noFixedHome) {
         res = await this.$services.households.updateNoFixedHomeAddress(householdId);

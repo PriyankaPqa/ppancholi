@@ -1,4 +1,4 @@
-import { IVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import {
   EPaymentCancellationReason,
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, IFinancialAssistancePaymentMetadata, PaymentStatus,

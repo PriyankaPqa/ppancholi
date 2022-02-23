@@ -2,9 +2,9 @@
  * @group ui/components/household
  */
 
-import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@crctech/registration-lib/src/entities/household-create';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
+import { mockIndigenousCommunitiesGetData, EIndigenousTypes } from '@libs/registration-lib/entities/household-create';
+import libHelpers from '@libs/registration-lib/ui/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 

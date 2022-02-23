@@ -10,12 +10,12 @@ import {
 
 import { mockStorage } from '@/store/storage';
 import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
-import Component from './FinancialAssistanceCaseFileFiltering.vue';
 import helpers from '@/ui/helpers/helpers';
 import { ECanadaProvinces } from '@/types';
 import { mockProgramEntities } from '@/entities/program';
 import routes from '@/constants/routes';
 import { MassActionMode } from '@/entities/mass-action';
+import Component from './FinancialAssistanceCaseFileFiltering.vue';
 
 const localVue = createLocalVue();
 

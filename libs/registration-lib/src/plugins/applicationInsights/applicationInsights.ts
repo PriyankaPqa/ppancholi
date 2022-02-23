@@ -81,7 +81,7 @@ class AppInsights {
       console.error(error);
     }
   }
-
+  // eslint-disable-next-line
   public trackException(error: Error | any, properties: Record<string, unknown> = {}, filename = '', methodName = '') {
     console.error(error);
     try {

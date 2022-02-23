@@ -2,9 +2,9 @@
  * @group ui/components/household
  */
 
-import { mockCombinedHouseholds, mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
-import { mockHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create/householdCreate.mock';
-import { HouseholdCreate, mockShelterData } from '@crctech/registration-lib/src/entities/household-create';
+import { mockCombinedHouseholds, mockCombinedHousehold } from '@libs/registration-lib/entities/household';
+import { mockHouseholdCreateData } from '@libs/registration-lib/entities/household-create/householdCreate.mock';
+import { HouseholdCreate, mockShelterData } from '@libs/registration-lib/entities/household-create';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EEventLocationStatus } from '@/entities/event';
 import { mockStorage } from '@/store/storage';

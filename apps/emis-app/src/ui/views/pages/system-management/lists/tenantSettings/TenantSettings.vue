@@ -27,10 +27,10 @@
 import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
 import { Route, NavigationGuardNext } from 'vue-router';
-import Slug from './Slug.vue';
-import Domains from './Domains.vue';
 import helpers from '@/ui/helpers/helpers';
 import routes from '@/constants/routes';
+import Slug from './Slug.vue';
+import Domains from './Domains.vue';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

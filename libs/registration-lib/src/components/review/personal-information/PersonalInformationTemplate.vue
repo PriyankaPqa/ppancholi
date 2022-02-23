@@ -115,24 +115,34 @@ export default Vue.extend({
 
       let result = helpers.displayBirthDate(birthDate);
 
-      if (this.showAgeInReview) result += ` (${helpers.getAge(birthDate)} ${this.$t('common.years')})`;
+      if (this.showAgeInReview) {
+        result += ` (${helpers.getAge(birthDate)} ${this.$t('common.years')})`;
+      }
 
       return result;
     },
 
     getPrimarySpokenLanguage(): TranslateResult {
-      if (!this.personalInformation.primarySpokenLanguage) return null;
-      if (this.personalInformation.primarySpokenLanguage.isOther) return this.personalInformation.primarySpokenLanguageOther;
+      if (!this.personalInformation.primarySpokenLanguage) {
+        return null;
+      }
+      if (this.personalInformation.primarySpokenLanguage.isOther) {
+        return this.personalInformation.primarySpokenLanguageOther;
+      }
       return this.$m(this.personalInformation.primarySpokenLanguage.name);
     },
 
     getPreferredLanguage(): TranslateResult {
-      if (this.personalInformation.preferredLanguageOther) return this.personalInformation.preferredLanguageOther;
+      if (this.personalInformation.preferredLanguageOther) {
+        return this.personalInformation.preferredLanguageOther;
+      }
       return this.$m(this.personalInformation.preferredLanguage.name);
     },
 
     getGender(): TranslateResult {
-      if (this.personalInformation.gender.isOther) return this.personalInformation.genderOther;
+      if (this.personalInformation.gender.isOther) {
+        return this.personalInformation.genderOther;
+      }
       return this.$m(this.personalInformation.gender.name);
     },
 

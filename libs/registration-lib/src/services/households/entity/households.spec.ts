@@ -374,6 +374,7 @@ describe('>>> Beneficiaries Service', () => {
     it('returns honeypot name if one was passed', () => {
       const household = mockHouseholdCreate();
       expect(service.parseHouseholdPayload(household, null).name).toBeFalsy();
+      // eslint-disable-next-line
       (household.primaryBeneficiary.identitySet as any).name = 'dummy';
       expect(service.parseHouseholdPayload(household, null).name).toBe('dummy');
     });

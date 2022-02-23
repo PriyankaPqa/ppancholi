@@ -1,4 +1,4 @@
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import {
   IBrandingEntityData,
   ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,

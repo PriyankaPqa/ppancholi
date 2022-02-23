@@ -2,10 +2,10 @@
  * @group ui/components/household
  */
 
-import { mockHouseholdCreate, CurrentAddress } from '@crctech/registration-lib/src/entities/household-create';
-import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member/index';
-import { mockShelterLocations } from '@crctech/registration-lib/src/entities/event/event.mock';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import { mockHouseholdCreate, CurrentAddress } from '@libs/registration-lib/entities/household-create';
+import { mockMember } from '@libs/registration-lib/entities/value-objects/member/index';
+import { mockShelterLocations } from '@libs/registration-lib/entities/event/event.mock';
+import libHelpers from '@libs/registration-lib/ui/helpers';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';
 import { mockStorage } from '@/store/storage';

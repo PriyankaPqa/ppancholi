@@ -1,18 +1,18 @@
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import {
   IMSALUserData,
   User,
 } from '@/entities/user';
+import helpers from '@/ui/helpers/helpers';
+import { localStorageKeys } from '@/constants/localStorage';
 import { IRootState } from '../../store.types';
 import {
   IState,
 } from './user.types';
-import helpers from '@/ui/helpers/helpers';
-import { localStorageKeys } from '@/constants/localStorage';
 
 const getDefaultState = (): IState => ({
   oid: '',

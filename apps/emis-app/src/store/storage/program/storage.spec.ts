@@ -4,8 +4,8 @@
 
 import { mockStore } from '@/store';
 import { PROGRAM_ENTITIES, PROGRAM_METADATA } from '@/constants/vuex-modules';
-import { ProgramStorage } from './storage';
 import { mockProgramEntity, mockProgramMetadata } from '@/entities/program';
+import { ProgramStorage } from './storage';
 
 const entityModuleName = PROGRAM_ENTITIES;
 const metadataModuleName = PROGRAM_METADATA;

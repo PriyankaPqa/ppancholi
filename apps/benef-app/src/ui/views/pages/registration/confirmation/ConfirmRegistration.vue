@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ConfirmRegistration as LibConfirmRegistration } from '@crctech/registration-lib';
+import LibConfirmRegistration from '@libs/registration-lib/components/confirm-registration/ConfirmRegistration.vue';
 import { i18n } from '@/ui/plugins';
 
 export default Vue.extend({

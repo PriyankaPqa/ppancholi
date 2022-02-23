@@ -170,7 +170,9 @@ export default Vue.extend({
       this.disableOtherTabs(confirmationScreenIndex);
 
       this.$storage.registration.mutations.mutateTabAtIndex(confirmationScreenIndex, (tab: IRegistrationMenuItem) => {
-        if (this.$store.state.registration.householdAssociationMode) tab.titleKey = 'registration.page.confirmation.association.title';
+        if (this.$store.state.registration.householdAssociationMode) {
+          tab.titleKey = 'registration.page.confirmation.association.title';
+        }
 
         tab.isTouched = true;
       });

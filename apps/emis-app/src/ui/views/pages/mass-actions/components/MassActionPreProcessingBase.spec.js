@@ -8,9 +8,9 @@ import {
 } from '@/test/testSetup';
 
 import { MassActionType, mockCombinedMassAction } from '@/entities/mass-action';
-import Component from './MassActionPreProcessingBase.vue';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
+import Component from './MassActionPreProcessingBase.vue';
 
 const localVue = createLocalVue();
 

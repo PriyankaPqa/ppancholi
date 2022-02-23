@@ -9,7 +9,7 @@ import '@/ui/styles/main.scss';
 // Import i18n related files
 
 import VueAxe from 'vue-axe';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import VueCookies from 'vue-cookies';
 import {
   i18n, Trans,
@@ -28,13 +28,12 @@ import { SignalR } from '@/ui/plugins/signalR';
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
 
+import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import { CustomNavigationClient } from '@/ui/router/NavigationClient';
 import store from './store/store';
 
 import router from './ui/router';
 import App from './ui/App.vue';
-
-import AuthenticationProvider from '@/auth/AuthenticationProvider';
-import { CustomNavigationClient } from '@/ui/router/NavigationClient';
 
 prepareServices(store);
 const storage = prepareStorage(store);

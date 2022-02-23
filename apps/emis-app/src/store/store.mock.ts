@@ -3,12 +3,12 @@ import deepmerge from 'deepmerge';
 import Vue from 'vue';
 import Vuex from 'vuex';
 import VueI18n from 'vue-i18n';
-import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
-import { ERegistrationMode } from '@crctech/registration-lib/src/types';
-import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
-import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
-import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
-import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
+import { makeRegistrationModule } from '@libs/registration-lib/store/modules/registration';
+import { ERegistrationMode } from '@libs/registration-lib/types';
+import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
+import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
+import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
+import { HouseholdMetadataService } from '@libs/registration-lib/services/households/metadata';
 import { IRootState, IStore } from '@/store/store.types';
 import { mockProvider } from '@/services/provider';
 
@@ -71,11 +71,11 @@ import { ProgramsMetadataService } from '@/services/programs/metadata';
 import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financial-assistance-category/financialAssistanceCategoryEntity';
 import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
+import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
+import { TenantSettingsService } from '@/services/tenantSettings/entity';
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
-import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
-import { TenantSettingsService } from '@/services/tenantSettings/entity';
 import { UIStateModule } from './modules/ui-state/uiState';
 
 const i18n = {

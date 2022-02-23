@@ -55,8 +55,8 @@
 import Vue from 'vue';
 import {
   mockMember, mockAddress, mockContactInformation, mockCampGround,
-} from '@crctech/registration-lib/src/entities/household-create';
-import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types/interfaces/IRegistrationMenuItem';
+} from '@libs/registration-lib/entities/household-create';
+import { IRegistrationMenuItem } from '@libs/registration-lib/types/interfaces/IRegistrationMenuItem';
 
 export default Vue.extend({
   name: 'LeftMenu',

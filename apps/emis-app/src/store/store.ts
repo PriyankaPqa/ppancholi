@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Vuex, { StoreOptions } from 'vuex';
-import { makeRegistrationModule } from '@crctech/registration-lib/src/store/modules/registration';
-import { ERegistrationMode } from '@crctech/registration-lib/src/types';
-import { HouseholdEntityModule } from '@crctech/registration-lib/src/store/modules/household';
-import { HouseholdMetadataModule } from '@crctech/registration-lib/src/store/modules/household/householdMetadata';
-import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
-import { HouseholdMetadataService } from '@crctech/registration-lib/src/services/households/metadata';
+import { makeRegistrationModule } from '@libs/registration-lib/store/modules/registration';
+import { ERegistrationMode } from '@libs/registration-lib/types';
+import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
+import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
+import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
+import { HouseholdMetadataService } from '@libs/registration-lib/services/households/metadata';
 import { i18n } from '@/ui/plugins';
 import * as vuexModule from '@/constants/vuex-modules';
 import { httpClient } from '@/services/httpClient';
@@ -59,10 +59,8 @@ import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEn
 import { MassActionService } from '@/services/mass-actions/entity';
 import { MassActionMetadataModule } from '@/store/modules/mass-action/massActionMetadata';
 import { MassActionMetadataService } from '@/services/mass-actions/metadata';
-import { IRootState } from './store.types';
 
 import { ProgramEntityModule } from '@/store/modules/program/programEntity';
-import { ProgramMetadataModule } from './modules/program/programMetadata';
 import { ProgramsService } from '@/services/programs/entity';
 import { ProgramsMetadataService } from '@/services/programs/metadata';
 
@@ -70,10 +68,12 @@ import { FinancialAssistanceCategoryEntityModule } from '@/store/modules/financi
 import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
 import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
+import { TenantSettingsService } from '@/services/tenantSettings/entity';
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
-import { TenantSettingsService } from '@/services/tenantSettings/entity';
+import { ProgramMetadataModule } from './modules/program/programMetadata';
+import { IRootState } from './store.types';
 import { UIStateModule } from './modules/ui-state/uiState';
 
 Vue.use(Vuex);

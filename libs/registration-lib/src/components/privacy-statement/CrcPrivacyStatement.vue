@@ -48,7 +48,7 @@ import { ERegistrationMethod } from '../../types';
 import { EEventLocationStatus, IEvent, IEventGenericLocation } from '../../entities/event';
 
 export interface IUser {
-  readonly id: uuid;
+  readonly id: string;
   readonly email: string;
   readonly lastName: string;
   readonly firstName: string;

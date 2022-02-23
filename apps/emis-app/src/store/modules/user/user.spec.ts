@@ -3,7 +3,7 @@
  */
 
 import { Store } from 'vuex';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { mockStore, IRootState } from '@/store';
 import {
   mockUsersData, User,
@@ -20,7 +20,7 @@ import {
 } from '@/test/helpers';
 import helpers from '@/ui/helpers/helpers';
 
-jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
+jest.mock('@libs/registration-lib/plugins/applicationInsights/applicationInsights');
 
 describe('>>> Users Module', () => {
   let store: Store<IRootState>;

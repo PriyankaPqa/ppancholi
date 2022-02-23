@@ -2,7 +2,7 @@
  * @group ui/components/mass-action
  */
 
-import { mockEvent } from '@crctech/registration-lib/src/entities/event/event.mock';
+import { mockEvent } from '@libs/registration-lib/entities/event/event.mock';
 import _sortBy from 'lodash/sortBy';
 import {
   createLocalVue,
@@ -11,7 +11,6 @@ import {
 } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import Component from './FinancialAssistancePaymentDetailsCreate.vue';
 import { EEventStatus, mockCombinedEvents } from '@/entities/event';
 import {
   mockCombinedFinancialAssistance, mockFinancialAssistanceTableEntity, mockSubItemData, mockSubItems,
@@ -20,6 +19,7 @@ import { EPaymentModalities, mockCombinedProgram } from '@/entities/program';
 import { mockCombinedOptionItems, mockOptionItem, mockOptionSubItem } from '@/entities/optionItem';
 import helpers from '@/ui/helpers/helpers';
 import { Status } from '@/entities/base';
+import Component from './FinancialAssistancePaymentDetailsCreate.vue';
 
 const formCopy = {
   event: mockEvent(),

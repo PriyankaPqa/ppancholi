@@ -7,7 +7,7 @@ import {
   i18n, Trans,
 } from '@/ui/plugins';
 import Multilingual from '@/ui/plugins/multilingual';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import '@/ui/plugins/vue-toasted';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

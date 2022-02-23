@@ -2,9 +2,9 @@
  * @group entities
  */
 
+import { mockBaseData } from '@/entities/base';
 import { OptionItem } from './optionItem';
 import { mockOptionItemData } from './optionItem.mock';
-import { mockBaseData } from '@/entities/base';
 
 const mockData = mockOptionItemData()[0];
 

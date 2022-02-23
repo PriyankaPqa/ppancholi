@@ -4,8 +4,8 @@
 
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import Component from '../StatisticsDialog.vue';
 import { mockProvider } from '@/services/provider';
+import Component from '../StatisticsDialog.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

@@ -84,15 +84,21 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
   currentTab: (state: IState) => state.tabs[state.currentTabIndex],
 
   previousTabName: (state: IState) => {
-    if (state.currentTabIndex === 0) return 'registration.privacy_statement.start_registration';
+    if (state.currentTabIndex === 0) {
+      return 'registration.privacy_statement.start_registration';
+    }
 
-    if (state.tabs[state.currentTabIndex].id === 'confirmation') return '';
+    if (state.tabs[state.currentTabIndex].id === 'confirmation') {
+      return '';
+    }
 
     return state.tabs[state.currentTabIndex - 1].titleKey;
   },
 
   nextTabName: (state: IState) => {
-    if (state.currentTabIndex >= state.tabs.length - 2) return '';
+    if (state.currentTabIndex >= state.tabs.length - 2) {
+      return '';
+    }
     return state.tabs[state.currentTabIndex + 1].titleKey;
   },
 
@@ -229,7 +235,9 @@ const mutations = (): MutationTree<IState> => ({
 
   jump(state: IState, toIndex: number): void {
     const currentIndex = state.currentTabIndex;
-    if (toIndex === currentIndex || toIndex < 0 || toIndex >= state.tabs.length) return;
+    if (toIndex === currentIndex || toIndex < 0 || toIndex >= state.tabs.length) {
+      return;
+    }
 
     state.tabs[currentIndex].isTouched = true;
 

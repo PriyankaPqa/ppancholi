@@ -9,11 +9,10 @@ import { IMultilingual } from '@/types';
 import {
   IOptionItemData, IOptionItem, OptionItem, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';
+import { Status } from '@/entities/base';
 import {
   IState,
 } from './optionList.types';
-
-import { Status } from '@/entities/base';
 
 const getDefaultState = (): IState => ({
   items: [],

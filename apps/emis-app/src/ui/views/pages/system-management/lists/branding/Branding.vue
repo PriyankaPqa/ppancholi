@@ -29,10 +29,10 @@ import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
 import { Route, NavigationGuardNext } from 'vue-router';
 import routes from '@/constants/routes';
+import helpers from '@/ui/helpers/helpers';
 import Colours from './Colours.vue';
 import Logo from './Logo.vue';
 import TenantDetails from './TenantDetails.vue';
-import helpers from '@/ui/helpers/helpers';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

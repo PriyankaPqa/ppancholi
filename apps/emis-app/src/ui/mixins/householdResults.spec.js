@@ -2,8 +2,8 @@
  * @group ui/mixins
  */
 
-import { mockStorage } from '@crctech/registration-lib/src/store/storage';
-import { mockCombinedHouseholds } from '@crctech/registration-lib/src/entities/household';
+import { mockStorage } from '@libs/registration-lib/store/storage';
+import { mockCombinedHouseholds } from '@libs/registration-lib/entities/household';
 import householdResults from '@/ui/mixins/householdResults';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 

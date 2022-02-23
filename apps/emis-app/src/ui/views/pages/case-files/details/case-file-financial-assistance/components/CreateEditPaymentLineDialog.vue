@@ -174,9 +174,9 @@ import {
   VTextFieldWithValidation,
   VSelectWithValidation,
 } from '@crctech/component-library';
-import { AddressForm } from '@crctech/registration-lib';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { Address } from '@crctech/registration-lib/src/entities/value-objects/address';
+import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
+import libHelpers from '@libs/registration-lib/ui/helpers';
+import { Address } from '@libs/registration-lib/entities/value-objects/address';
 import { EFinancialAmountModes, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import {
   PayeeType,
@@ -193,8 +193,8 @@ import { IAddress, VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { Status } from '@/entities/base';
-import caseFileDetail from '../../caseFileDetail';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({
   name: 'CreateEditPaymentLineDialog',

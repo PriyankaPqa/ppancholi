@@ -2,8 +2,9 @@
  * @group services
  */
 
-import { PublicService } from '@crctech/registration-lib/src/services/public';
-import { HouseholdsService } from '@crctech/registration-lib/src/services/households/entity';
+import { PublicService } from '@libs/registration-lib/services/public';
+import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
+import { MassActionService } from '@/services/mass-actions/entity';
 import { provider } from './index';
 import { EventsService } from '../events/entity';
 import { UserAccountsService } from '../user-accounts/entity';
@@ -14,7 +15,6 @@ import { TeamsService } from '../teams/entity';
 import { ProgramsService } from '../programs/entity';
 import { FinancialAssistanceTablesService } from '../financial-assistance-tables/entity';
 import { FinancialAssistanceCategoriesService } from '../financial-assistance-categories/entity';
-import { MassActionService } from '@/services/mass-actions/entity';
 import { CaseFilesMetadataService } from '../case-files/metadata';
 import { CaseNotesMetadataService } from '../case-notes/metadata';
 import { CaseFileReferralsMetadataService } from '../case-file-referrals/metadata';
@@ -30,8 +30,8 @@ jest.mock('../events/entity');
 jest.mock('../optionItems');
 jest.mock('../teams/entity');
 jest.mock('../programs/entity');
-jest.mock('@crctech/registration-lib/src/services/public');
-jest.mock('@crctech/registration-lib/src/services/households/entity');
+jest.mock('@libs/registration-lib/services/public');
+jest.mock('@libs/registration-lib/services/households/entity');
 jest.mock('../user-accounts/entity');
 jest.mock('../financial-assistance-tables/entity');
 jest.mock('../financial-assistance-categories/entity');

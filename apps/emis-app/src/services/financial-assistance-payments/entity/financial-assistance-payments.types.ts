@@ -1,4 +1,4 @@
-import { IVersionedEntity } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IVersionedEntity } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import {
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentsSummary, PaymentStatus,
 } from '@/entities/financial-assistance-payment';

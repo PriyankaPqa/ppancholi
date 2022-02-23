@@ -4,7 +4,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ReviewRegistration as LibReviewRegistration } from '@crctech/registration-lib';
+import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
+
 import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default Vue.extend({

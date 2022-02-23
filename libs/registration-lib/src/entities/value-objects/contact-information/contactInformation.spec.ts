@@ -1,4 +1,4 @@
-import { IContactInformation } from '@/entry';
+import { IContactInformation } from '.';
 import { MAX_LENGTH_MD } from '../../../constants/validations';
 import { mockContactInformation, mockContactInformationData } from './contactInformation.mock';
 import { ContactInformation } from './contactInformation';

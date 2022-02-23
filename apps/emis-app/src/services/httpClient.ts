@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import axios, {
   AxiosInstance, AxiosRequestConfig, AxiosResponse,
 } from 'axios';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { camelKeys } from 'js-convert-case';
 import buildQuery from '@/services/odata-query';
 import { localStorageKeys } from '@/constants/localStorage';

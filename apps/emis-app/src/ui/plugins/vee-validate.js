@@ -9,7 +9,7 @@ import {
   required, min, max, email, oneOf, regex, min_value, max_value, numeric,
 } from 'vee-validate/dist/rules.umd.min';
 
-import helpers from '@crctech/registration-lib/src/ui/helpers';
+import helpers from '@libs/registration-lib/ui/helpers';
 import Vue from 'vue';
 import moment from '@/ui/plugins/moment';
 

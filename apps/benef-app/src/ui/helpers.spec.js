@@ -1,4 +1,4 @@
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import libHelpers from '@libs/registration-lib/ui/helpers';
 import helpers from './helpers';
 
 describe('objectToQueryString', () => {

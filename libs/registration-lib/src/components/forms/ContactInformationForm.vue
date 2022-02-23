@@ -307,8 +307,10 @@ export default Vue.extend({
       }
 
       if (email && email !== this.previousEmail) {
+        // eslint-disable-next-line
         (this.$refs.recaptchaEmail as any).execute();
         // Display error, will be resolved automatically if no challenge to resolve
+        // eslint-disable-next-line
         this.setEmailValidator({ emailIsValid: false, errors: [{ code: 'errors.need_to_resolve_challenge' } as any] });
       }
     },

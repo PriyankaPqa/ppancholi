@@ -2,9 +2,9 @@
  * @group ui/components/household
  */
 
-import { mockSplitHousehold, ContactInformation } from '@crctech/registration-lib/src/entities/household-create';
-import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { mockHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
+import { mockSplitHousehold, ContactInformation } from '@libs/registration-lib/entities/household-create';
+import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
+import { mockHouseholdEntity } from '@libs/registration-lib/entities/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { tabs } from '@/store/modules/household/tabs';
 

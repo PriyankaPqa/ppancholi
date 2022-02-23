@@ -11,9 +11,9 @@ import {
 
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { MassActionEntity, MassActionMode } from '@/entities/mass-action';
-import Component from './MassActionBaseCreate.vue';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
+import Component from './MassActionBaseCreate.vue';
 
 const localVue = createLocalVue();
 

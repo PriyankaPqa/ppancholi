@@ -3,12 +3,12 @@
  */
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import massActionsTable from './massActionsTable';
 import {
   MassActionRunStatus, mockCombinedMassAction, mockCombinedMassActions, mockMassActionRun,
 } from '@/entities/mass-action';
 import { Status } from '@/entities/base';
 import { mockStorage } from '@/store/storage';
+import massActionsTable from './massActionsTable';
 
 const Component = {
   render() {},

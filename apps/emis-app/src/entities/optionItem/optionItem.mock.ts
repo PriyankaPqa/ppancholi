@@ -1,7 +1,7 @@
+import { mockBaseData, Status } from '@/entities/base';
 import {
   IOptionItem, IOptionItemCombined, IOptionItemData, IOptionSubItem,
 } from './optionItem.types';
-import { mockBaseData, Status } from '@/entities/base';
 
 export const mockOptionSubItem = (force?: Partial<IOptionSubItem>): IOptionSubItem => ({
   ...mockBaseData(),

@@ -3,9 +3,8 @@ import {
 } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
 import { IMultilingual } from '@/types';
-import { IStorage } from './storage.types';
-
 import { Status } from '@/entities/base';
+import { IStorage } from './storage.types';
 
 export const makeStorage = (store: IStore<IState>): IStorage => ({
   getters: {

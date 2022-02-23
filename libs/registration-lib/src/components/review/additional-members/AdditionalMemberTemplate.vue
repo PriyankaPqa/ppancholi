@@ -64,7 +64,9 @@ export default Vue.extend({
     },
 
     getGender(): TranslateResult {
-      if (this.member.identitySet.genderOther) return this.member.identitySet.genderOther;
+      if (this.member.identitySet.genderOther) {
+        return this.member.identitySet.genderOther;
+      }
       return this.$m(this.member.identitySet.gender.name);
     },
   },

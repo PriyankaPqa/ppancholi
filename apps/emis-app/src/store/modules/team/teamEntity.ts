@@ -1,5 +1,5 @@
 import { ActionTree, ActionContext } from 'vuex';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { ITeamEntity, ITeamMember } from '@/entities/team';
 import { TeamsService } from '@/services/teams/entity';
 import { BaseModule } from '../base';

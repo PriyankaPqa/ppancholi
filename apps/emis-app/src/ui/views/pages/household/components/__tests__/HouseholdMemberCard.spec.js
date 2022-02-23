@@ -2,16 +2,16 @@
  * @group ui/components/household
  */
 
-import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
 import {
   mockIndigenousCommunitiesGetData, mockSplitHousehold, mockHouseholdCreate,
-} from '@crctech/registration-lib/src/entities/household-create';
+} from '@libs/registration-lib/entities/household-create';
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
 
-import Component from '../HouseholdMemberCard.vue';
 import householdHelpers from '@/ui/helpers/household';
+import Component from '../HouseholdMemberCard.vue';
 
 const localVue = createLocalVue();
 const member = mockMember({ id: 'id-1' });

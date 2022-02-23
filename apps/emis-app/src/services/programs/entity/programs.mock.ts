@@ -1,6 +1,6 @@
 import { mockProgramEntities } from '@/entities/program';
-import { IProgramsServiceMock } from './programs.types';
 import { mockDomainBaseService } from '@/services/base/base.mock';
+import { IProgramsServiceMock } from './programs.types';
 
 export const mockProgramsService = (): IProgramsServiceMock => ({
   ...mockDomainBaseService([mockProgramEntities()]),

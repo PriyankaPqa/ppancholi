@@ -53,15 +53,15 @@ export interface IValidateEmailPublicRequest extends IValidateEmailRequest{
   recaptchaToken: string;
 }
 
-export interface IValidateEmailResponse {
-  emailIsValid: boolean;
-  errors: IApiError[];
-}
-
 export interface IApiError {
   status: string;
   code: string;
   title: string;
   detail: string;
-  meta: object;
+  meta: Record<string, unknown>;
+}
+
+export interface IValidateEmailResponse {
+  emailIsValid: boolean;
+  errors: IApiError[];
 }

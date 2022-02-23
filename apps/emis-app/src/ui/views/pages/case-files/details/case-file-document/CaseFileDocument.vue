@@ -99,10 +99,10 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@/entities/user-account';
 import { IAzureSearchParams } from '@/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import caseFileDetail from '../caseFileDetail';
 
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
+import caseFileDetail from '../caseFileDetail';
 
 interface caseFileDocumentsMapped {
   name: string;

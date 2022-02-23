@@ -53,17 +53,20 @@
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEqual from 'lodash/isEqual';
-import { PersonalInformation as LibPersonalInformation, CurrentAddressForm, CrcPrivacyStatement } from '@crctech/registration-lib';
+import LibPersonalInformation from '@libs/registration-lib/components/personal-information/PersonalInformation.vue';
+import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
+import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
+
 import { RcDialog } from '@crctech/component-library';
 import {
   ContactInformation,
   CurrentAddress,
   ECurrentAddressTypes, IContactInformation, ICurrentAddress, IdentitySet, IIdentitySet, IMember,
-} from '@crctech/registration-lib/src/entities/household-create';
+} from '@libs/registration-lib/entities/household-create';
 import { TranslateResult } from 'vue-i18n';
-import { IEventGenericLocation } from '@crctech/registration-lib/src/entities/event';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { IHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
+import { IEventGenericLocation } from '@libs/registration-lib/entities/event';
+import libHelpers from '@libs/registration-lib/ui/helpers';
+import { IHouseholdEntity } from '@libs/registration-lib/entities/household';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
 import { localStorageKeys } from '@/constants/localStorage';

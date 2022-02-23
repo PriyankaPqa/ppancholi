@@ -15,10 +15,10 @@ import { mockProgramEntity } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { httpClient } from '@/services/httpClient';
 import { Status } from '@/entities/base';
+import { mockOptionItems } from '@/entities/optionItem';
 import { FinancialAssistanceEntityModule } from './financialAssistanceEntity';
 
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
-import { mockOptionItems } from '@/entities/optionItem';
 
 const service = new FinancialAssistanceTablesService(httpClient);
 let module: FinancialAssistanceEntityModule;

@@ -7,8 +7,8 @@ import { mockCombinedFinancialAssistance } from '@/entities/financial-assistance
 import { ApprovalStatus, mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
 import { mockProgramEntity } from '@/entities/program';
 import { mockStorage } from '@/store/storage';
-import Component from '../ViewFinancialAssistanceDetails.vue';
 import routes from '@/constants/routes';
+import Component from '../ViewFinancialAssistanceDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

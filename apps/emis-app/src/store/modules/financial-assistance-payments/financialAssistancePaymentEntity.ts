@@ -1,6 +1,6 @@
 import { ActionContext, ActionTree } from 'vuex';
-import { IVersionedEntity, IVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
-import utils from '@crctech/registration-lib/src/entities/value-objects/versioned-entity/versionedEntityUtils';
+import { IVersionedEntity, IVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
+import utils from '@libs/registration-lib/entities/value-objects/versioned-entity/versionedEntityUtils';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
 import {
   EPaymentCancellationReason, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,

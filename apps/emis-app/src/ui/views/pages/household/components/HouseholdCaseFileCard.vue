@@ -77,7 +77,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import moment from 'moment';
-import { IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
 import { RcDialog } from '@crctech/component-library';
 import routes from '@/constants/routes';
 import { IEventMainInfo } from '@/entities/event';

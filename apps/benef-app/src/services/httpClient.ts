@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ISearchData } from '@/types';
 import axios, { AxiosInstance } from 'axios';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import buildQuery from 'odata-query';
 import camelCaseKeys from 'camelcase-keys';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,7 +10,7 @@ import { i18n } from '@/ui/plugins/i18n';
 import helpers from '@/ui/helpers';
 import {
   IError, IHttpClient, IRestResponse, RequestConfig,
-} from '@crctech/registration-lib/src/services/httpClient';
+} from '@libs/registration-lib/services/httpClient';
 
 export class HttpClient implements IHttpClient {
   private axios: AxiosInstance;
@@ -43,7 +43,9 @@ export class HttpClient implements IHttpClient {
 
   // By default the global handler is ON. Need to pass { globalHandler: false } to turn in off
   private isGlobalHandlerEnabled(config = { globalHandler: true }) {
-    if (config.globalHandler === undefined) return true;
+    if (config.globalHandler === undefined) {
+      return true;
+    }
     return config.globalHandler;
   }
 

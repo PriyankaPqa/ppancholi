@@ -1,4 +1,4 @@
-import { FeatureKeys } from '@crctech/registration-lib/src/entities/tenantSettings';
+import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';
 import Vue from 'vue';
 
 export type VuePlugin = Vue & {

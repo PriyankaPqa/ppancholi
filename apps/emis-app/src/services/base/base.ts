@@ -1,8 +1,8 @@
 import { IHttpClient } from '@/services/httpClient';
 import { IEntity } from '@/entities/base/base.types';
 import { IAzureSearchParams } from '@/types';
-import { IDomainBaseService } from './base.types';
 import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
+import { IDomainBaseService } from './base.types';
 
 export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBaseService<T, IdParams> {
   baseUrl: string;

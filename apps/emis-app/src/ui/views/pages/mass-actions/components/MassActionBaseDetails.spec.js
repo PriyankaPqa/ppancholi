@@ -13,10 +13,10 @@ import {
 } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
 
-import Component from './MassActionBaseDetails.vue';
 import MassActionPreProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessingBase.vue';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
+import Component from './MassActionBaseDetails.vue';
 
 const localVue = createLocalVue();
 

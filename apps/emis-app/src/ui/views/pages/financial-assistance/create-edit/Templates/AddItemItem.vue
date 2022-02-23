@@ -24,9 +24,8 @@ import Vue from 'vue';
 import { VSelectWithValidation } from '@crctech/component-library';
 import { IOptionItem } from '@/entities/optionItem';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
-import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
-
 import { Status } from '@/entities/base';
+import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
 
 export default Vue.extend({
   name: 'AddItemItem',

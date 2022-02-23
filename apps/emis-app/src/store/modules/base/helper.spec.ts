@@ -4,8 +4,8 @@
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IOptionItemData, IOptionSubItem } from '@/entities/optionItem';
-import { filterAndSortActiveItems, filterAndSortActiveSubItems } from './index';
 import { Status } from '@/entities/base';
+import { filterAndSortActiveItems, filterAndSortActiveSubItems } from './index';
 
 describe('Base Helper', () => {
   const itemData = [

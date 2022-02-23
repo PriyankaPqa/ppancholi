@@ -132,7 +132,7 @@
 
 <script lang="ts">
 import moment from 'moment';
-import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdCombined } from '@libs/registration-lib/entities/household';
 import { RcDataTable } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
 import { tabs } from '@/store/modules/registration/tabs';

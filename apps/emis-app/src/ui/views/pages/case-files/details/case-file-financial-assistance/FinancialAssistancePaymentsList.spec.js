@@ -8,8 +8,8 @@ import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedCaseFinancialAssistance } from '@/entities/financial-assistance-payment';
-import Component from './FinancialAssistancePaymentsList.vue';
 import routes from '@/constants/routes';
+import Component from './FinancialAssistancePaymentsList.vue';
 
 let storage = mockStorage();
 const localVue = createLocalVue();

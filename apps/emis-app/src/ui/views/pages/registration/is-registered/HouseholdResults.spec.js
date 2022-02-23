@@ -2,7 +2,7 @@
  * @group ui/components/registration
  */
 import Vuetify from 'vuetify';
-import { mockCombinedHouseholds } from '@crctech/registration-lib/src/entities/household';
+import { mockCombinedHouseholds } from '@libs/registration-lib/entities/household';
 import {
   createLocalVue,
   shallowMount,

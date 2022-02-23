@@ -6,8 +6,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import FeatureWrapper from './FeatureWrapper.vue';
 import { IFeatureEntity } from '@/entities/tenantSettings';
+import FeatureWrapper from './FeatureWrapper.vue';
 
 export default Vue.extend({
   name: 'FeatureTable',

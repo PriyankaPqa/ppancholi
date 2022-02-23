@@ -39,8 +39,8 @@ import {
   FinancialAssistancePaymentGroup,
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
-import PaymentLineGroup from './PaymentLineGroup.vue';
 import { IProgramEntity } from '@/entities/program';
+import PaymentLineGroup from './PaymentLineGroup.vue';
 
 export default Vue.extend({
   name: 'PaymentLineGroupList',

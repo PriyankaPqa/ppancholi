@@ -4,8 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
-import { AdditionalMembers as LibAdditionalMembers } from '@crctech/registration-lib';
+import LibAdditionalMembers from '@libs/registration-lib/components/additional-members/AdditionalMembers.vue';
 import { i18n } from '@/ui/plugins';
 import { FeatureKeys } from '@/entities/tenantSettings';
 

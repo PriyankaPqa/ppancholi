@@ -4,8 +4,8 @@
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
-import Component from '../Features.vue';
 import { FeatureType } from '@/entities/tenantSettings';
+import Component from '../Features.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

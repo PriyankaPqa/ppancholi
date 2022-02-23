@@ -13,6 +13,13 @@ export enum ECurrentAddressTypes {
     Shelter = 7,
 }
 
+export interface IShelterLocationData {
+  id?: uuid;
+  name: IMultilingual;
+  status: number;
+  address: IAddressData;
+}
+
 export interface ICurrentAddressData {
     addressType: ECurrentAddressTypes;
 
@@ -25,13 +32,6 @@ export interface ICurrentAddressData {
     shelterLocation?: IShelterLocationData;
 
     shelterLocationId?: string;
-}
-
-export interface IShelterLocationData {
-    id?: uuid;
-    name: IMultilingual;
-    status: number;
-    address: IAddressData;
 }
 
 export interface ICurrentAddressCreateRequest {

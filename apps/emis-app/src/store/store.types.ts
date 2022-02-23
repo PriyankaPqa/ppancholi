@@ -1,7 +1,7 @@
 import { Store } from 'vuex';
-import { IState as IRegistrationState } from '@crctech/registration-lib/src/store/modules/registration/registration.types';
-import { IHouseholdEntityState } from '@crctech/registration-lib/src/store/modules/household/householdEntity.types';
-import { IHouseholdMetadata } from '@crctech/registration-lib/src/entities/household';
+import { IState as IRegistrationState } from '@libs/registration-lib/store/modules/registration/registration.types';
+import { IHouseholdEntityState } from '@libs/registration-lib/store/modules/household/householdEntity.types';
+import { IHouseholdMetadata } from '@libs/registration-lib/entities/household';
 import { IProvider, IProviderMock } from '@/services/provider';
 import * as vuexModule from '@/constants/vuex-modules';
 import { IState as IDashboardState } from '@/store/modules/dashboard/dashboard.types';

@@ -1,11 +1,11 @@
 import { IStore, IState } from '@/store';
-import { IStorage } from './storage.types';
-import { Base } from '../base';
 import {
   FeatureKeys,
   IBrandingEntity,
   ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
+import { IStorage } from './storage.types';
+import { Base } from '../base';
 
 export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uuid> implements IStorage {
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string) {

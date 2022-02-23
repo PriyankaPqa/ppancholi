@@ -4,8 +4,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ConfirmRegistration as LibConfirmRegistration } from '@crctech/registration-lib';
-import { IRegistrationMenuItem } from '@crctech/registration-lib/src/types';
+import LibConfirmRegistration from '@libs/registration-lib/components/confirm-registration/ConfirmRegistration.vue';
+import { IRegistrationMenuItem } from '@libs/registration-lib/types';
 import { i18n } from '@/ui/plugins';
 import { tabs } from '@/store/modules/registration/tabs';
 

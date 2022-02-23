@@ -8,9 +8,9 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ReviewRegistration as LibReviewRegistration } from '@crctech/registration-lib';
-import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
-import { IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
+import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
+import { HouseholdCreate } from '@libs/registration-lib/entities/household-create';
+import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
 import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
 import { FeatureKeys } from '@/entities/tenantSettings';

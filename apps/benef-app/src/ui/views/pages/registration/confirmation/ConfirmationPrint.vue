@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ConfirmationPrint as LibConfirmationPrint } from '@crctech/registration-lib';
+import LibConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
 
 export default Vue.extend({
   name: 'ConfirmationPrint',

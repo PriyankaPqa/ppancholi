@@ -98,9 +98,9 @@ import mixins from 'vue-typed-mixins';
 import { RcPageContent, RcPageLoading } from '@crctech/component-library';
 import {
   HouseholdCreate, ICurrentAddress, IHouseholdCreate, IMember,
-} from '@crctech/registration-lib/src/entities/household-create';
-import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
-import { VForm } from '@crctech/registration-lib/src/types';
+} from '@libs/registration-lib/entities/household-create';
+import { IHouseholdCombined } from '@libs/registration-lib/entities/household';
+import { VForm } from '@libs/registration-lib/types';
 import household from '@/ui/mixins/household';
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import HouseholdCard from '@/ui/views/pages/household/move/HouseholdCard.vue';

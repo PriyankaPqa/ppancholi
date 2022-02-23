@@ -288,7 +288,9 @@ describe('AddEditAdditionalMembers.vue', () => {
               };
             },
             computed: {
-              primaryBeneficiaryAddress() { return mockCampGround(); },
+              primaryBeneficiaryAddress() {
+                return mockCampGround();
+              },
             },
             mocks: {
               $storage: storage,
@@ -319,7 +321,9 @@ describe('AddEditAdditionalMembers.vue', () => {
               };
             },
             computed: {
-              primaryBeneficiaryAddress() { return mockCampGround(); },
+              primaryBeneficiaryAddress() {
+                return mockCampGround();
+              },
             },
             mocks: {
               $storage: storage,

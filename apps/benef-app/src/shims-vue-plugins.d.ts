@@ -1,6 +1,6 @@
 import { IMultilingual } from '@/types';
-import { FeatureKeys } from '@crctech/registration-lib/src/entities/tenantSettings';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { Toasted } from 'vue-toasted';
 
 interface IMFunction {

@@ -68,13 +68,13 @@ import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import { RcDialog, RcDataTable } from '@crctech/component-library';
 import { DataTableHeader } from 'vuetify';
-import { IHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdEntity } from '@libs/registration-lib/entities/household';
 
-import { IHistoryItemTemplateData } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IHistoryItemTemplateData } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import {
   IHouseholdActivity, HouseholdActivity, HouseholdActivityType, IHouseholdActivityMembers,
 }
-  from '@crctech/registration-lib/src/entities/value-objects/household-activity';
+  from '@libs/registration-lib/entities/value-objects/household-activity';
 import moment from '@/ui/plugins/moment';
 
 interface IActivityItem extends IHouseholdActivity {

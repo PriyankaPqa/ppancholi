@@ -1,8 +1,8 @@
 import {
   mockTeamEntity,
 } from '@/entities/team';
-import { ITeamsServiceMock } from './teams.types';
 import { mockDomainBaseService } from '@/services/base/base.mock';
+import { ITeamsServiceMock } from './teams.types';
 
 export const mockTeamsService = (): ITeamsServiceMock => ({
   ...mockDomainBaseService([mockTeamEntity()]),

@@ -2,7 +2,7 @@
  * @group ui/components/household
  */
 
-import { mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
+import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 

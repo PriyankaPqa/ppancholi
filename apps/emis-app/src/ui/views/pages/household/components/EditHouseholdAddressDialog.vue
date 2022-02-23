@@ -37,14 +37,14 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { AddressForm } from '@crctech/registration-lib';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
+import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
+import libHelpers from '@libs/registration-lib/ui/helpers';
 import { RcDialog, VCheckboxWithValidation, VTextAreaWithValidation } from '@crctech/component-library';
-import { IAddressData, IHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { IAddressData, IHouseholdCreate } from '@libs/registration-lib/entities/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
-import { Address, IAddress } from '@crctech/registration-lib/src/entities/value-objects/address';
-import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
+import { Address, IAddress } from '@libs/registration-lib/entities/value-objects/address';
+import { IHouseholdCombined } from '@libs/registration-lib/entities/household';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
 import { VForm } from '@/types';

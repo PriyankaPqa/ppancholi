@@ -1,17 +1,17 @@
 import { ActionContext, ActionTree } from 'vuex';
 import _sortBy from 'lodash/sortBy';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { EOptionLists, IOptionItem, OptionItem } from '@/entities/optionItem';
 import {
   IFilter, IUserAccountEntity, FilterKey, UserAccountEntity,
 } from '@/entities/user-account';
 import { IAddRoleToUserRequest, IEditFilterRequest, UserAccountsService } from '@/services/user-accounts/entity';
 import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
+import { OptionItemsService } from '@/services/optionItems';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 
 import { IState } from '../base/base.types';
-import { OptionItemsService } from '@/services/optionItems';
 
 export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uuid> {
   constructor(readonly service: UserAccountsService, readonly optionsService:OptionItemsService) {

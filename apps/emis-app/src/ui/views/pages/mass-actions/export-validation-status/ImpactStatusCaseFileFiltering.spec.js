@@ -9,10 +9,10 @@ import {
 } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
-import Component from './ImpactStatusCaseFileFiltering.vue';
 import helpers from '@/ui/helpers/helpers';
 import { CaseFileStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import { MassActionType } from '@/entities/mass-action';
+import Component from './ImpactStatusCaseFileFiltering.vue';
 
 const localVue = createLocalVue();
 

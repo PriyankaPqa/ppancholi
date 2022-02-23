@@ -169,10 +169,9 @@ import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import {
   IOptionItem, OptionItem, ICreateOptionItemRequest, IOptionSubItem,
 } from '@/entities/optionItem';
+import { Status } from '@/entities/base';
 import OptionListItem from './OptionListItem.vue';
 import OptionListNewItem from './OptionListNewItem.vue';
-
-import { Status } from '@/entities/base';
 
 export default Vue.extend({
   name: 'OptionList',

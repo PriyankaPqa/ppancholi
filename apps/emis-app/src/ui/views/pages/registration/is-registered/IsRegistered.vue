@@ -28,10 +28,9 @@
 </template>
 
 <script lang="ts">
-
-import { ReviewRegistration as LibReviewRegistration } from '@crctech/registration-lib';
+import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
 import { RcDialog } from '@crctech/component-library';
-import { IHouseholdCaseFile } from '@crctech/registration-lib/src/entities/household';
+import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
 import mixins from 'vue-typed-mixins';
 import HouseholdSearch from '@/ui/views/pages/registration/is-registered/HouseholdSearch.vue';
 import HouseholdResults from '@/ui/views/pages/registration/is-registered/HouseholdResults.vue';

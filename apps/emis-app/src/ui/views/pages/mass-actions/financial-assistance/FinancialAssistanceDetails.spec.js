@@ -8,9 +8,9 @@ import {
 } from '@/test/testSetup';
 
 import { MassActionType } from '@/entities/mass-action';
-import Component from './FinancialAssistanceDetails.vue';
 import MassActionBaseDetails from '@/ui/views/pages/mass-actions/components/MassActionBaseDetails.vue';
 import routes from '@/constants/routes';
+import Component from './FinancialAssistanceDetails.vue';
 
 const localVue = createLocalVue();
 

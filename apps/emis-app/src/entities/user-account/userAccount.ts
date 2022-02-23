@@ -1,4 +1,4 @@
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { BaseEntity } from '@/entities/base/base';
 import { IListOption } from '@/types';
 import {

@@ -29,9 +29,9 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcPageContent } from '@crctech/component-library';
-import FeatureTable from './FeatureTable.vue';
 import routes from '@/constants/routes';
 import { FeatureType, IFeatureEntity } from '@/entities/tenantSettings';
+import FeatureTable from './FeatureTable.vue';
 
 export default Vue.extend({
   name: 'Features',

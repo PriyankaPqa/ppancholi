@@ -136,7 +136,9 @@ export class HouseholdActivity implements IHouseholdActivity {
       { label: 'Primary spoken language', value: 'English', },
    */
   makeContactInfoTemplate(data: IHouseholdActivityContactInfo, i18n: VueI18n): IHistoryItemTemplateData[] {
-    if (!data?.contactInformation) return this.makeEmptyTemplate();
+    if (!data?.contactInformation) {
+      return this.makeEmptyTemplate();
+    }
 
     const alternatePhoneNumber = data.contactInformation.alternatePhoneNumber?.number ? [{
       label: 'household.history.label.alternate_phone',
@@ -188,7 +190,9 @@ export class HouseholdActivity implements IHouseholdActivity {
       { label: 'Indigenous identity', value: 'Metis, Fishing Lake Métis Settlement', },
    */
   makePersonalInfoTemplate(data: IHouseholdActivityIdentity, i18n: VueI18n): IHistoryItemTemplateData[] {
-    if (!data) return this.makeEmptyTemplate();
+    if (!data) {
+      return this.makeEmptyTemplate();
+    }
 
     return [
       ...this.makeMemberNameTemplate(data.identitySet.firstName, data.identitySet.lastName),
@@ -224,7 +228,9 @@ export class HouseholdActivity implements IHouseholdActivity {
    *  { label: 'Temporary address', value: 'Hotel/Motel, Mock Place Name #1234,\n120 East Str.,\n12345, NY, New York' },
    */
   makeTemporaryAddressTemplate(data: IHouseholdActivityTempAddress, i18n: VueI18n): IHistoryItemTemplateData[] {
-    if (!data?.currentAddress) return this.makeEmptyTemplate();
+    if (!data?.currentAddress) {
+      return this.makeEmptyTemplate();
+    }
     let address = '';
 
     if (data.currentAddress.addressType === ECurrentAddressTypes.Shelter && data.shelterLocationName) {

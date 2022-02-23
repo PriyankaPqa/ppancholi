@@ -2,16 +2,16 @@
  * @group ui/components/household
  */
 
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { mockAddressData, Address } from '@crctech/registration-lib/src/entities/value-objects/address';
-import { mockAddress, mockHouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
-import { AddressForm } from '@crctech/registration-lib';
-import { mockHouseholdEntity } from '@crctech/registration-lib/src/entities/household';
+import libHelpers from '@libs/registration-lib/ui/helpers';
+import { mockAddressData, Address } from '@libs/registration-lib/entities/value-objects/address';
+import { mockAddress, mockHouseholdCreate } from '@libs/registration-lib/entities/household-create';
+import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
+import { mockHouseholdEntity } from '@libs/registration-lib/entities/household';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import Component from '../EditHouseholdAddressDialog.vue';
 import { i18n } from '@/ui/plugins';
 import { MAX_LENGTH_LG } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
+import Component from '../EditHouseholdAddressDialog.vue';
 
 const storage = mockStorage();
 

@@ -71,7 +71,9 @@ export default Vue.extend({
   },
   computed: {
     shelterLocationName(): string {
-      if (!this.currentAddress?.shelterLocation) return '';
+      if (!this.currentAddress?.shelterLocation) {
+        return '';
+      }
       return this.$m(this.currentAddress.shelterLocation.name);
     },
 

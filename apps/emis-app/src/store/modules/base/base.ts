@@ -1,7 +1,7 @@
 import { ActionContext, ActionTree } from 'vuex';
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
 import helpers from '@/ui/helpers/helpers';

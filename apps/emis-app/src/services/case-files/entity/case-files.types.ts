@@ -1,4 +1,4 @@
-import { ERegistrationMethod } from '@crctech/registration-lib/src/types';
+import { ERegistrationMethod } from '@libs/registration-lib/types';
 import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,

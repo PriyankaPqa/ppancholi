@@ -12,8 +12,8 @@ import { FinancialAssistancePaymentsService } from '@/services/financial-assista
 import { mockCaseFinancialAssistanceEntity, IFinancialAssistancePaymentEntity, mockFinancialPaymentHistory } from '@/entities/financial-assistance-payment';
 import { FinancialAssistancePaymentEntityModule } from './financialAssistancePaymentEntity';
 import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
-import utils from '@crctech/registration-lib/src/entities/value-objects/versioned-entity/versionedEntityUtils';
-import { mockVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import utils from '@libs/registration-lib/entities/value-objects/versioned-entity/versionedEntityUtils';
+import { mockVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 
 const service = new FinancialAssistancePaymentsService(httpClient);
 let module: FinancialAssistancePaymentEntityModule;

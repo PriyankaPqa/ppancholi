@@ -2,10 +2,10 @@
  * @group ui/components/mass-action
  */
 
-import { mockStorage } from '@crctech/registration-lib/src/store/storage';
+import { mockStorage } from '@libs/registration-lib/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import massActions from './massActions';
 import helpers from '@/ui/helpers/helpers';
+import massActions from './massActions';
 
 const Component = {
   render() {},

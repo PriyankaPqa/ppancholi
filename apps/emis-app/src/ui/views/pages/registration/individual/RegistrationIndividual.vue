@@ -78,12 +78,12 @@
 <script lang="ts">
 import { RcPageContent } from '@crctech/component-library';
 import mixins from 'vue-typed-mixins';
-import individual from '@crctech/registration-lib/src/ui/mixins/individual';
+import individual from '@libs/registration-lib/ui/mixins/individual';
 import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
-import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
-import { IEvent } from '@crctech/registration-lib/src/entities/event';
-import { ConfirmationPrint } from '@crctech/registration-lib';
+import { HouseholdCreate } from '@libs/registration-lib/entities/household-create';
+import { IEvent } from '@libs/registration-lib/entities/event';
+import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
 import routes from '@/constants/routes';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import Tabs from '@/ui/views/pages/registration/individual/Tabs.vue';

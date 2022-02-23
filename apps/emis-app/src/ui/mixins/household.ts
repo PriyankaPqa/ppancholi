@@ -2,12 +2,12 @@
 // In registration and also in household profile
 
 import Vue from 'vue';
-import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household';
-import { IMemberEntity } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { IIndigenousCommunityData } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
-import { IAddressData, IHouseholdCreateData } from '@crctech/registration-lib/src/entities/household-create';
+import { IHouseholdCombined } from '@libs/registration-lib/entities/household';
+import { IMemberEntity } from '@libs/registration-lib/entities/value-objects/member';
+import { IIndigenousCommunityData } from '@libs/registration-lib/entities/value-objects/identity-set';
+import { IAddressData, IHouseholdCreateData } from '@libs/registration-lib/entities/household-create';
 import deepmerge from 'deepmerge';
-import { ICurrentAddressCreateRequest } from '@crctech/registration-lib/src/entities/value-objects/current-address';
+import { ICurrentAddressCreateRequest } from '@libs/registration-lib/entities/value-objects/current-address';
 import householdHelpers from '@/ui/helpers/household';
 import { IOptionItemData } from '@/entities/optionItem';
 import { EEventLocationStatus, EEventStatus, IEventGenericLocation } from '@/entities/event';

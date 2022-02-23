@@ -1,12 +1,12 @@
 /* eslint-disable max-lines-per-function */
 import { IEntity, mockBaseData } from '@/entities/base';
+import { EEventStatus } from '@/entities/event';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,
   ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
-import { EEventStatus } from '@/entities/event';
 
 export const mockCaseFileCount = (): ICaseFileCount => ({
   inactiveCount: 0, openCount: 1, closedCount: 1, archivedCount: 0,

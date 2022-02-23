@@ -2,7 +2,7 @@
  * @group ui/mixins
  */
 
-import { mockStorage } from '@crctech/registration-lib/src/store/storage';
+import { mockStorage } from '@libs/registration-lib/store/storage';
 import searchHousehold from '@/ui/mixins/searchHousehold';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import moment from '@/ui/plugins/moment';

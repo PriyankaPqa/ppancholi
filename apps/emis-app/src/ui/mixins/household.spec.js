@@ -2,13 +2,13 @@
  * @group ui/mixins
  */
 
-import { mockStorage } from '@crctech/registration-lib/src/store/storage';
-import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household/household.mocks';
-import { mockMemberData, mockMember } from '@crctech/registration-lib/src/entities/value-objects/member';
-import { mockIndigenousCommunitiesGetData, mockGenders } from '@crctech/registration-lib/src/entities/value-objects/identity-set';
-import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@crctech/registration-lib/src/entities/value-objects/contact-information';
-import { mockShelterLocations } from '@crctech/registration-lib/src/entities/event/event.mock';
-import { mockCombinedHouseholds } from '@crctech/registration-lib/src/entities/household';
+import { mockStorage } from '@libs/registration-lib/store/storage';
+import { mockCombinedHousehold } from '@libs/registration-lib/entities/household/household.mocks';
+import { mockMemberData, mockMember } from '@libs/registration-lib/entities/value-objects/member';
+import { mockIndigenousCommunitiesGetData, mockGenders } from '@libs/registration-lib/entities/value-objects/identity-set';
+import { mockPreferredLanguages, mockPrimarySpokenLanguages } from '@libs/registration-lib/entities/value-objects/contact-information';
+import { mockShelterLocations } from '@libs/registration-lib/entities/event/event.mock';
+import { mockCombinedHouseholds } from '@libs/registration-lib/entities/household';
 import household from '@/ui/mixins/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EEventLocationStatus, mockEventMainInfo } from '@/entities/event';

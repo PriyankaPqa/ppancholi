@@ -52,7 +52,9 @@ export default {
 
   getBirthDateAndAge(dateOfBirth: string, i18n: VueI18n): string {
     const birthDate: IBirthDate = this.convertBirthDateStringToObject(dateOfBirth);
-    if (!birthDate) return '';
+    if (!birthDate) {
+      return '';
+    }
 
     let result = this.displayBirthDate(birthDate);
     result += ` (${this.getAge(birthDate)} ${i18n.t('common.years')})`;

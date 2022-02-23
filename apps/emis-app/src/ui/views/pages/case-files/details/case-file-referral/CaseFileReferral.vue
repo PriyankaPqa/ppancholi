@@ -66,8 +66,8 @@ import routes from '@/constants/routes';
 import { IOptionItem } from '@/entities/optionItem';
 import { FilterKey } from '@/entities/user-account';
 import { ICaseFileReferralCombined } from '@/entities/case-file-referral';
-import caseFileDetail from '../caseFileDetail';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
+import caseFileDetail from '../caseFileDetail';
 
 export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   name: 'CaseFileReferral',

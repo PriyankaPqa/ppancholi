@@ -1,5 +1,5 @@
 import { ActionContext, ActionTree } from 'vuex';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import {
   CaseFileStatus, CaseFileTriage, ICaseFileActivity, ICaseFileCount, ICaseFileDetailedCount, ICaseFileEntity, ICaseFileLabel, IIdentityAuthentication,
   IImpactStatusValidation,

@@ -4,12 +4,12 @@
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import Component from './FinancialAssistancePaymentDetailsTable.vue';
 import { mockCombinedMassAction } from '@/entities/mass-action';
 import { EPaymentModalities, mockCombinedProgram } from '@/entities/program';
 import { mockCombinedEvent } from '@/entities/event';
 import { mockCombinedFinancialAssistance } from '@/entities/financial-assistance';
 import { mockCombineOptionItem, mockOptionItem } from '@/entities/optionItem';
+import Component from './FinancialAssistancePaymentDetailsTable.vue';
 
 const localVue = createLocalVue();
 

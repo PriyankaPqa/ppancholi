@@ -1,4 +1,6 @@
 import { TranslateResult } from 'vue-i18n';
+import { BaseEntity } from '@/entities/base/base';
+import { i18n } from '@/ui/plugins/i18n';
 import {
   IFinancialAssistancePaymentGroup,
   IGroupingInformation,
@@ -7,9 +9,7 @@ import {
   PayeeType,
   EPaymentCancellationReason,
 } from './financial-assistance-payment.types';
-import { BaseEntity } from '@/entities/base/base';
 import { EPaymentModalities } from '../program';
-import { i18n } from '@/ui/plugins/i18n';
 import { Status } from '../base';
 
 export class FinancialAssistancePaymentGroup extends BaseEntity implements IFinancialAssistancePaymentGroup {

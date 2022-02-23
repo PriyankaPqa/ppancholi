@@ -41,7 +41,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { RcDialog } from '@crctech/component-library';
-import { IVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import { DataTableHeader } from 'vuetify';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';

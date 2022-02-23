@@ -17,7 +17,7 @@ import { RcPageLoading, RcRouterViewTransition } from '@crctech/component-librar
 import _isEmpty from 'lodash/isEmpty';
 import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
-import { EEventStatus, IEvent } from '@crctech/registration-lib/src/entities/event';
+import { EEventStatus, IEvent } from '@libs/registration-lib/entities/event';
 import { SUPPORTED_LANGUAGES } from '@/constants/trans';
 
 export default Vue.extend({

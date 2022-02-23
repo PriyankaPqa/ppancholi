@@ -11,13 +11,13 @@ import {
 import {
   MassActionRunStatus, MassActionRunType, MassActionType, mockMassActionEntity, mockMassActionMetadata,
 } from '@/entities/mass-action';
-import Component from './MassActionPreProcessedProcessedBase.vue';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 import MassActionTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionTitleDescription.vue';
 import MassActionDetailsTable from '@/ui/views/pages/mass-actions/components/MassActionDetailsTable.vue';
 import MassActionEditTitleDescription from '@/ui/views/pages/mass-actions/components/MassActionEditTitleDescription.vue';
 import { mockStorage } from '@/store/storage';
 import helpers from '@/ui/helpers/helpers';
+import Component from './MassActionPreProcessedProcessedBase.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

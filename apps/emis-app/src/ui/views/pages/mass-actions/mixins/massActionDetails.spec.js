@@ -2,13 +2,13 @@
  * @group ui/components/mass-action
  */
 
-import { mockStorage } from '@crctech/registration-lib/src/store/storage';
+import { mockStorage } from '@libs/registration-lib/store/storage';
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';
-import massActionDetails from './massActionDetails';
 import {
   MassActionRunStatus, mockCombinedMassAction, mockMassActionRun, mockMassActionRunMetadata,
 } from '@/entities/mass-action';
+import massActionDetails from './massActionDetails';
 
 const Component = {
   render() {},
@@ -19,7 +19,7 @@ const localVue = createLocalVue();
 const storage = mockStorage();
 let wrapper;
 
-jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
+jest.mock('@libs/registration-lib/plugins/applicationInsights/applicationInsights');
 
 describe('massActions', () => {
   describe('Computed', () => {

@@ -7,10 +7,10 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { ReviewRegistration as LibReviewRegistration } from '@crctech/registration-lib';
+import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
 import { i18n } from '@/ui/plugins';
 import { localStorageKeys } from '@/constants/localStorage';
-import { FeatureKeys } from '@crctech/registration-lib/src/entities/tenantSettings';
+import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';
 
 export default Vue.extend({
   name: 'ReviewRegistration',

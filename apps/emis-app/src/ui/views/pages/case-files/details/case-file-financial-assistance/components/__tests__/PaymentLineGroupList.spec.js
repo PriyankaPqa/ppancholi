@@ -4,10 +4,10 @@
 
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
-import Component from '../PaymentLineGroupList.vue';
 import { mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
 import { Status } from '@/entities/base';
 import { mockStorage } from '@/store/storage';
+import Component from '../PaymentLineGroupList.vue';
 
 const localVue = createLocalVue();
 const items = mockItems();

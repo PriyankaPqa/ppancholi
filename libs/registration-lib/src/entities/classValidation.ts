@@ -15,13 +15,19 @@ export const required = (value: unknown, errorMsg: string, errors: string[]) => 
 };
 
 export const maxLengthCheck = (value: string, length: number, fieldName: string, errors: string[]) => {
-  if (!value) return;
+  if (!value) {
+    return;
+  }
   const valid = value.trim().length <= length;
-  if (!valid) errors.push(`${fieldName} exceeds max length of ${length}`);
+  if (!valid) {
+    errors.push(`${fieldName} exceeds max length of ${length}`);
+  }
 };
 
 export const isPhone = (value: IPhoneNumber, errorMsg: string, errors: string[]) => {
-  if (!value) return;
+  if (!value) {
+    return;
+  }
 
   const { number, countryCode } = value;
   if (!number || typeof number !== 'string') {
@@ -30,15 +36,21 @@ export const isPhone = (value: IPhoneNumber, errorMsg: string, errors: string[])
 
   const pn = new PhoneNumber(number, countryCode);
 
-  if (!pn.isValid()) errors.push(errorMsg);
+  if (!pn.isValid()) {
+    errors.push(errorMsg);
+  }
 };
 
 export const isEmail = (value: string, errorMsg: string, errors: string[]) => {
-  if (!value) return;
+  if (!value) {
+    return;
+  }
 
   // eslint-disable-next-line
 const regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  if (!regex.test(value)) errors.push(errorMsg);
+  if (!regex.test(value)) {
+    errors.push(errorMsg);
+  }
 };
 
 export const hasAtLeastAPhoneIfNoEmail = ({
@@ -53,25 +65,35 @@ export const hasAtLeastAPhoneIfNoEmail = ({
 }) => {
   const anyPhone = !!(homePhoneNumber?.number || mobilePhoneNumber?.number || alternatePhoneNumber?.number);
   const valid = anyPhone || email !== '';
-  if (!valid) errors.push(errorMsg);
+  if (!valid) {
+    errors.push(errorMsg);
+  }
 };
 
 export const isValidCanadianPostalCode = (value: string, errorMsg: string, errors: string[]) => {
-  if (!value) return;
+  if (!value) {
+    return;
+  }
 
   // eslint-disable-next-line
 const regex = /^([a-zA-Z]\d[a-zA-Z]\s?\d[a-zA-Z]\d)$/;
-  if (!regex.test(value)) errors.push(errorMsg);
+  if (!regex.test(value)) {
+    errors.push(errorMsg);
+  }
 };
 
 export const isValidBirthday = (birthdate: IBirthDate, errorMsg: string, errors: string[]) => {
   const momentBirthdate = birthdateHelper.getBirthDateMomentObject(birthdate);
   const valid = birthdate.year > 0 && momentBirthdate.isValid() && !momentBirthdate.isSameOrAfter(moment());
-  if (!valid) errors.push(errorMsg);
+  if (!valid) {
+    errors.push(errorMsg);
+  }
 };
 
 export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: string[]) => {
-  if (!birthdate.year || !birthdate.month || !birthdate.day) return;
+  if (!birthdate.year || !birthdate.month || !birthdate.day) {
+    return;
+  }
 
   const age = MIN_AGE_REGISTRATION;
   const momentBirthdate = birthdateHelper.getBirthDateMomentObject(birthdate);
@@ -87,5 +109,7 @@ export const hasMinimumAge = (birthdate: IBirthDate, errorMsg: string, errors: s
 
 export const isValidOption = (option: IOptionItemData, specifiedOther: string, errorMsg: string, errors: string[]) => {
   const valid = !option?.isOther || (option.isOther && specifiedOther);
-  if (!valid) errors.push(errorMsg);
+  if (!valid) {
+    errors.push(errorMsg);
+  }
 };

@@ -2,7 +2,7 @@
  * @group ui/components/mass-action
  */
 
-import { mockEvent } from '@crctech/registration-lib/src/entities/event/event.mock';
+import { mockEvent } from '@libs/registration-lib/entities/event/event.mock';
 import {
   createLocalVue,
   mount,
@@ -13,9 +13,9 @@ import MassActionBaseCreate from '@/ui/views/pages/mass-actions/components/MassA
 import routes from '@/constants/routes';
 import { MassActionMode, MassActionType, mockMassActionEntity } from '@/entities/mass-action';
 import { mockStorage } from '@/store/storage';
-import Component from './FinancialAssistanceCreate.vue';
 import { mockFinancialAssistanceTableEntity } from '@/entities/financial-assistance';
 import { mockOptionItem, mockOptionSubItem } from '@/entities/optionItem';
+import Component from './FinancialAssistanceCreate.vue';
 
 const localVue = createLocalVue();
 

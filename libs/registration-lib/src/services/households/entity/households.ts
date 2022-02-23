@@ -278,7 +278,9 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   parseMoveMember(member: IMember, isPrimaryBeneficiary: boolean): IMemberMoveRequest {
-    if (!member) return null;
+    if (!member) {
+      return null;
+    }
     return {
       isPrimaryBeneficiary,
       preferredLanguageId: member.contactInformation.preferredLanguage?.id,

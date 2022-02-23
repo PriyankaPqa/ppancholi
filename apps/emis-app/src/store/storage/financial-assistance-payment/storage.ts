@@ -1,10 +1,10 @@
-import { IVersionedEntityCombined } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import { IStore, IState } from '@/store';
-import { IStorage } from './storage.types';
-import { Base } from '../base';
 import {
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, PaymentStatus, EPaymentCancellationReason, IFinancialAssistancePaymentGroup,
 } from '@/entities/financial-assistance-payment';
+import { IStorage } from './storage.types';
+import { Base } from '../base';
 
 export class FinancialAssistancePaymentStorage
   extends Base<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, uuid> implements IStorage {

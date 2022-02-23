@@ -3,8 +3,8 @@
  */
 import Vuetify from 'vuetify';
 import { RcDialog } from '@crctech/component-library';
-import { mockSplitHousehold } from '@crctech/registration-lib/src/entities/household-create';
-import { mockCombinedHousehold } from '@crctech/registration-lib/src/entities/household';
+import { mockSplitHousehold } from '@libs/registration-lib/entities/household-create';
+import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
 import {
   createLocalVue,
   shallowMount,

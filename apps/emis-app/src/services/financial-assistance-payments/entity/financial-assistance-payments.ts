@@ -1,4 +1,4 @@
-import { IVersionedEntity } from '@crctech/registration-lib/src/entities/value-objects/versioned-entity';
+import { IVersionedEntity } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import { IHttpClient } from '@/services/httpClient';
 import { DomainBaseService } from '@/services/base';
 import {

@@ -3,7 +3,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { CrcPrivacyStatement } from '@crctech/registration-lib';
+import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 import { i18n } from '@/ui/plugins';
 
 export default Vue.extend({

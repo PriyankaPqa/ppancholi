@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { PersonalInformation as LibPersonalInformation } from '@crctech/registration-lib';
+import LibPersonalInformation from '@libs/registration-lib/components/personal-information/PersonalInformation.vue';
 import { i18n } from '@/ui/plugins';
 
 export default Vue.extend({

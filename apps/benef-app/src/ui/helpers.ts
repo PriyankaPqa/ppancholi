@@ -1,4 +1,4 @@
-import helpers from '@crctech/registration-lib/src/ui/helpers';
+import helpers from '@libs/registration-lib/ui/helpers';
 
 import { i18n } from './plugins/i18n';
 

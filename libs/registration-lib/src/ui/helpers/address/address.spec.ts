@@ -28,6 +28,7 @@ describe('provinceCode', () => {
 describe('getAddressLines', () => {
   it('should return proper array', () => {
     const address = mockAddress();
+    // eslint-disable-next-line
     expect(helpers.getAddressLines(address, { locale: 'en' } as any)).toEqual(['247 Some Street', 'Ottawa, ON, K1W 1G7', 'Canada']);
   });
 });

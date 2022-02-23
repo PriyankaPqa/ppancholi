@@ -8,17 +8,17 @@ import Vue from 'vue';
 import { camelKeys } from 'js-convert-case';
 import axios from 'axios';
 import { Toasted } from 'vue-toasted';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import buildQuery from '@/services/odata-query';
 import { mockHttp } from '@/services/httpClient.mock';
-import { httpClient, HttpClient, IRestResponse } from './httpClient';
 import { i18n } from '@/ui/plugins/i18n';
 import { localStorageKeys } from '@/constants/localStorage';
+import { httpClient, HttpClient, IRestResponse } from './httpClient';
 import AuthenticationProvider from '../auth/AuthenticationProvider';
 
 jest.mock('uuid');
 jest.mock('@/services/odata-query');
-jest.mock('@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights');
+jest.mock('@libs/registration-lib/plugins/applicationInsights/applicationInsights');
 
 const mockAxios = axios.create();
 mockAxios.interceptors.request.use = jest.fn();

@@ -72,10 +72,10 @@
 import mixins from 'vue-typed-mixins';
 import { RcPageContent } from '@crctech/component-library';
 import routes from '@/constants/routes';
-import individual from '@crctech/registration-lib/src/ui/mixins/individual';
-import { ConfirmationPrint } from '@crctech/registration-lib';
+import individual from '@libs/registration-lib/ui/mixins/individual';
+import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
 import { localStorageKeys } from '@/constants/localStorage';
-import { FeatureKeys } from '@crctech/registration-lib/src/entities/tenantSettings';
+import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';

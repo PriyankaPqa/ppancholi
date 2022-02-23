@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter, { Route } from 'vue-router';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
-import { PublicService } from '@crctech/registration-lib/src/services/public';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import { PublicService } from '@libs/registration-lib/services/public';
 import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';

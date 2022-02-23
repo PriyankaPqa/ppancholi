@@ -3,8 +3,8 @@
  */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
-import Component from '../Colours.vue';
 import { mockBrandingEntity, mockEditColoursRequest } from '@/entities/tenantSettings';
+import Component from '../Colours.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

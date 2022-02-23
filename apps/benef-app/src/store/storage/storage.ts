@@ -1,7 +1,7 @@
-import { makeStorage as makeRegistrationStorage } from '@crctech/registration-lib/src/store/storage/registration';
-import { HouseholdStorage } from '@crctech/registration-lib/src/store/storage/household';
+import { makeStorage as makeRegistrationStorage } from '@libs/registration-lib/store/storage/registration';
+import { HouseholdStorage } from '@libs/registration-lib/store/storage/household';
 import * as vuexModule from '@/constants/vuex-modules';
-import { TenantSettingsStorage } from '@crctech/registration-lib/src/store/storage/tenantSettings';
+import { TenantSettingsStorage } from '@libs/registration-lib/store/storage/tenantSettings';
 import { IStore, IState } from '../store.types';
 import { IStorage } from './storage.types';
 

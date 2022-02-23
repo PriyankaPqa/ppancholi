@@ -2,7 +2,7 @@
  * @group ui/components/registration
  */
 import Vuetify from 'vuetify';
-import { mockSplitHousehold } from '@crctech/registration-lib/src/entities/household-create';
+import { mockSplitHousehold } from '@libs/registration-lib/entities/household-create';
 import {
   createLocalVue,
   shallowMount, mount,

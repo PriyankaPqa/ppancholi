@@ -9,8 +9,8 @@ import {
 } from '@/test/testSetup';
 
 import { mockCombinedMassAction } from '@/entities/mass-action';
-import Component from './MassActionEditTitleDescription.vue';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
+import Component from './MassActionEditTitleDescription.vue';
 
 const localVue = createLocalVue();
 

@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { Addresses as LibAddresses } from '@crctech/registration-lib';
+import LibAddresses from '@libs/registration-lib/components/addresses/Addresses.vue';
 import { i18n } from '@/ui/plugins';
 import { FeatureKeys } from '@/entities/tenantSettings';
 

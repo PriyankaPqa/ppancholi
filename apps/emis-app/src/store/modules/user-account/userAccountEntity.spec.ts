@@ -4,17 +4,17 @@
 
 import _sortBy from 'lodash/sortBy';
 import { ActionContext } from 'vuex';
-import { mockOptionItems } from '../../../entities/optionItem/optionItem.mock';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { UserAccountsService, IAddRoleToUserRequest } from '@/services/user-accounts/entity';
 import { httpClient } from '@/services/httpClient';
 import {
   FilterKey, mockUserAccountEntity, mockUserFilters, UserAccountEntity,
 } from '@/entities/user-account';
-import { IUserAccountEntityState } from './userAccountEntity.types';
-import { UserAccountEntityModule } from './userAccountEntity';
 import { OptionItemsService } from '@/services/optionItems';
 import { OptionItem } from '@/entities/optionItem';
+import { IUserAccountEntityState } from './userAccountEntity.types';
+import { UserAccountEntityModule } from './userAccountEntity';
+import { mockOptionItems } from '../../../entities/optionItem/optionItem.mock';
 
 const service = new UserAccountsService(httpClient);
 const optionsService = new OptionItemsService(httpClient);

@@ -797,7 +797,9 @@ describe('>>> Registration Module', () => {
 
       it('sets registrationErrors in case of error', async () => {
         await store.commit('registration/setEvent', mockEventData());
-        store.$services.households.submitRegistration = jest.fn(() => { throw new Error(); });
+        store.$services.households.submitRegistration = jest.fn(() => {
+          throw new Error();
+        });
         await store.dispatch('registration/submitRegistration');
         expect(store.getters['registration/registrationErrors']).toStrictEqual(new Error());
       });
@@ -1017,7 +1019,9 @@ describe('>>> Registration Module', () => {
       });
 
       it('call the mutation setRegistrationErrors if the call ', async () => {
-        store.$services.households.splitHousehold = jest.fn(() => { throw new Error(); });
+        store.$services.households.splitHousehold = jest.fn(() => {
+          throw new Error();
+        });
         store.state.registration.householdCreate = mockHouseholdCreate() as HouseholdCreate;
         store.state.registration.splitHousehold = mockSplitHousehold();
         store.state.registration.event = mockEvent({ id: 'event-id' });

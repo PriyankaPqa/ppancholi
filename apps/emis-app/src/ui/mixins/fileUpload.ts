@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import axios, { CancelTokenStatic, CancelTokenSource } from 'axios';
-import applicationInsights from '@crctech/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IRestResponse } from '@/services/httpClient';

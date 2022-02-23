@@ -4,8 +4,8 @@
 
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
-import Component from './CreateEditReferral.vue';
 import { mockStorage } from '@/store/storage';
+import Component from './CreateEditReferral.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

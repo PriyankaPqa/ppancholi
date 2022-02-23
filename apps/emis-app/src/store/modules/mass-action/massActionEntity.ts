@@ -3,11 +3,11 @@ import { IRootState } from '@/store/store.types';
 
 import { IMassActionEntity, MassActionRunType, MassActionType } from '@/entities/mass-action/massActions.types';
 import { MassActionService } from '@/services/mass-actions/entity/massAction';
+import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
+import { IMassActionFinancialAssistanceCreatePayload, IMassActionFundingRequestCreatePayload } from '@/services/mass-actions/entity';
 import { BaseModule } from '../base';
 
 import { IState } from '../base/base.types';
-import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
-import { IMassActionFinancialAssistanceCreatePayload, IMassActionFundingRequestCreatePayload } from '@/services/mass-actions/entity';
 
 export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid> {
   constructor(readonly service: MassActionService) {

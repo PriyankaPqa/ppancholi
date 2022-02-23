@@ -88,8 +88,8 @@
 
 import mixins from 'vue-typed-mixins';
 import { RcDataTable } from '@crctech/component-library';
-import { IHouseholdCombined } from '@crctech/registration-lib/src/entities/household/index';
-import { HouseholdCreate } from '@crctech/registration-lib/src/entities/household-create';
+import { IHouseholdCombined } from '@libs/registration-lib/entities/household/index';
+import { HouseholdCreate } from '@libs/registration-lib/entities/household-create';
 import householdResults from '@/ui/mixins/householdResults';
 import household from '@/ui/mixins/household';
 import householdHelpers from '@/ui/helpers/household';

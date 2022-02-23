@@ -120,17 +120,23 @@ export default Vue.extend({
   },
   methods: {
     setIdentity(form: IIdentitySet) {
-      if (this.storeMode) this.$storage.registration.mutations.setIdentity(form);
+      if (this.storeMode) {
+        this.$storage.registration.mutations.setIdentity(form);
+      }
       this.$emit('setIdentity', form);
     },
 
     setIndigenousIdentity(form: IIdentitySet) {
-      if (this.storeMode) this.$storage.registration.mutations.setIndigenousIdentity(form);
+      if (this.storeMode) {
+        this.$storage.registration.mutations.setIndigenousIdentity(form);
+      }
       this.$emit('setIndigenousIdentity', form);
     },
 
     setContactInformation(form: IContactInformation) {
-      if (this.storeMode) this.$storage.registration.mutations.setContactInformation(form);
+      if (this.storeMode) {
+        this.$storage.registration.mutations.setContactInformation(form);
+      }
       this.$emit('setContactInformation', form);
     },
   },

@@ -49,7 +49,9 @@ export default {
   scrollToFirstError(containerID: string) {
     const containerElement = document.getElementById(containerID);
 
-    if (!containerElement) return;
+    if (!containerElement) {
+      return;
+    }
 
     const errorElements = containerElement.getElementsByClassName('failed');
 
@@ -70,7 +72,9 @@ export default {
 
   scrollToFirstErrorDialog(containerId: string) {
     const containerElement = document.getElementById(containerId);
-    if (!containerElement) return;
+    if (!containerElement) {
+      return;
+    }
     const errorElements = containerElement.getElementsByClassName('failed');
     if (errorElements.length > 0) {
       const scrollContainer = document.getElementsByClassName('content')[0];
@@ -102,7 +106,9 @@ export default {
   // eslint-disable-next-line
   filterCollectionByValue(collection: any, query: string, searchAll = true, searchAmong: Array<string> = null) {
     return collection.filter((o: Record<string, unknown>) => Object.keys(o).some((k) => {
-      if (!searchAll && searchAmong.indexOf(k) === -1) return false;
+      if (!searchAll && searchAmong.indexOf(k) === -1) {
+        return false;
+      }
 
       if (typeof o[k] === 'string') {
         return (o[k] as string).toLowerCase().includes(query.toLowerCase());

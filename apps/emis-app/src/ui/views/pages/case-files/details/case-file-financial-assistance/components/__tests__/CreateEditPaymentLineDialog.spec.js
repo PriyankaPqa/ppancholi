@@ -10,10 +10,10 @@ import { mockItemsWithBasicData } from '@/entities/financial-assistance';
 import {
   mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
 import Component from '../CreateEditPaymentLineDialog.vue';
-import libHelpers from '@crctech/registration-lib/src/ui/helpers';
-import { AddressForm } from '@crctech/registration-lib';
+import libHelpers from '@libs/registration-lib/ui/helpers';
+import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
 import { Status } from '@/entities/base';
-import { mockAddressData, Address } from '@crctech/registration-lib/src/entities/value-objects/address';
+import { mockAddressData, Address } from '@libs/registration-lib/entities/value-objects/address';
 
 const localVue = createLocalVue();
 const program = mockProgramEntity();

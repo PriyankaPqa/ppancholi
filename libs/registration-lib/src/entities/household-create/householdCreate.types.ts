@@ -15,6 +15,13 @@ export interface ISplitHousehold {
   splitMembers: ISplitHouseholdMembers;
 }
 
+export interface IConsentInformation {
+  crcUserName: string;
+  registrationLocationId: string;
+  registrationMethod: ERegistrationMethod;
+  privacyDateTimeConsent: string;
+}
+
 export interface IHouseholdCreateData {
   primaryBeneficiary: IMemberEntity;
   noFixedHome: boolean;
@@ -23,13 +30,6 @@ export interface IHouseholdCreateData {
   consentInformation: IConsentInformation;
   id?: uuid;
   registrationNumber?: string;
-}
-
-export interface IConsentInformation {
-  crcUserName: string;
-  registrationLocationId: string;
-  registrationMethod: ERegistrationMethod;
-  privacyDateTimeConsent: string;
 }
 
 export interface IHouseholdCreate {
