@@ -1,0 +1,78 @@
+import { IHttpClient } from '../httpClient';
+import { IEntity } from '../../entities/base/base.types';
+import { IAzureSearchParams } from '../../types';
+import { IAzureCombinedSearchResult } from '../../types/interfaces/IAzureSearchResult';
+import { IDomainBaseService } from './base.types';
+
+export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBaseService<T, IdParams> {
+  baseUrl: string;
+
+  baseApi: string;
+
+  controller: string;
+
+  constructor(protected readonly http: IHttpClient, apiUrlSuffix: string, controller: string) {
+    this.baseApi = `${apiUrlSuffix}`;
+    this.baseUrl = `${apiUrlSuffix}/${controller}`;
+    this.controller = controller;
+  }
+
+  /**
+   *
+   * @param idParams can be a string (the id) or an object (ex: {caseFileId: string, id: string}; used for sub-entities such as case notes or case filer referrals)
+   * @param useGlobalHandler parameter for using the global handler. Can be false for cases where no notification should be displayed even if
+   * no entity is returned, such as case file metadata for a newly created case file
+   * @returns call response
+   */
+  async get(idParams: IdParams, useGlobalHandler = true): Promise<T> {
+    return this.http.get<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams), { globalHandler: useGlobalHandler });
+  }
+
+  /**
+   *
+   * @param parentId is not passed for entities. It is the parent id for sub-entities (ex. case notes, case file referrals), and the call fetches all sub-entities
+   * of the parent entity (ex. case file) with the passed parentId
+   * @returns call response
+   */
+  async getAll(parentId?: Omit<IdParams, 'id'>): Promise<T[]> {
+    return this.http.get<T[]>(this.getItemUrl(`${this.baseUrl}`, parentId));
+  }
+
+  async getAllIncludingInactive(): Promise<T[]> {
+    return this.http.get<T[]>(`${this.baseUrl}/all`);
+  }
+
+  async activate(idParams: IdParams): Promise<T> {
+    return this.http.patch<T>(`${this.getItemUrl(`${this.baseUrl}/{id}`, idParams)}/active`);
+  }
+
+  async deactivate(idParams: IdParams): Promise<T> {
+    return this.http.delete<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams));
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<T, unknown>> {
+    return this.http.get(`search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
+  }
+
+  /**
+ * @param url
+ * @param idParams (string or object} Ex: { caseFileId: 'xxx', id: 'yyy' }
+ * If an object is passed, will replaced all {caseFileId}/{id} in the URL
+ * If a string is passed, will replaced only the {id}
+ */
+  protected getItemUrl(url: string, idParams: IdParams | Omit<IdParams, 'id'>): string {
+    if (!idParams) {
+      return url;
+    }
+    if (typeof idParams === 'object') {
+      let url2 = url;
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // eslint-disable-next-line
+      for (const [key, value] of Object.entries(idParams)) {
+        url2 = url2.replace(`{${key}}`, value);
+      }
+      return url2;
+    }
+    return url.replace('{id}', idParams.toString());
+  }
+}
