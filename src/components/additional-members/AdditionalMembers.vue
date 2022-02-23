@@ -1,5 +1,5 @@
 <template>
-  <v-row>
+  <v-row class="d-block">
     <div class="rc-body14 mt-n8 mb-12">
       {{ $t('registration.household_member.definition') }}
     </div>
