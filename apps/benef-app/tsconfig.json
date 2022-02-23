@@ -17,12 +17,15 @@
       "webpack-env",
       "jest",
       "vuetify",
-      "vue-meta"
+      "vue-meta",
     ],
     "paths": {
       "@/*": [
-        "apps/benef-app/src/*"
-      ]
+        "src/*"
+      ],
+      "@libs/registration-lib/*": [
+        "../../libs/registration-lib/src/*"
+      ],
     },
     "lib": [
       "es6",
@@ -34,11 +37,12 @@
   },
 
   "include": [
-    "apps/benef-app/src/**/*.ts",
-    "apps/benef-app/src/**/*.tsx",
-    "apps/benef-app/src/**/*.vue",
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
+    "typings/**.ts"
   ],
   "exclude": [
     "node_modules"

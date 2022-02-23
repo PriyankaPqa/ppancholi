@@ -1,5 +1,10 @@
 trigger:
-- master
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - 'apps/benef-app/*'
 
 pool:
   name: 'self-hosted-ubuntu-latest'
@@ -12,20 +17,20 @@ variables:
   value: 'emis-cdne-beneficiary'
 - name: cdnProfile
   value: 'emis-cdnp-beneficiary'
+- name: workingDir
+  value: './apps/benef-app/'
+- name: distDir
+  value: './apps/benef-app/dist'
 
-name: $(Major).$(Minor).$(Patch)
+name: Benef App - $(Major).$(Minor).$(Patch)
 
-resources:
-  repositories:
-  - repository: Templates
-    name: 'Shared/pipeline-templates'
-    type: git
-    ref: master
 
 stages:
-- template: stages/deploy-vue-stages.yml@Templates
+- template: '../../tools/pipelines/stages/deploy-vue-stage.yml'
   parameters:
-    storage: $(BeneficiaryWebAppStorage)
+    storage: 'monobenefappleo'  #$(EmisWebAppStorage)
     packageFeed: $(PackageFeed-Npm)
-    cdnEndpoint: $(cdnEndpoint)    
-    cdnProfile: $(cdnProfile)
+    cdnEndpoint: '' #$(cdnEndpoint)
+    cdnProfile: '' #$(cdnProfile)
+    workingDir: $(workingDir)
+    distDir: $(distDir)

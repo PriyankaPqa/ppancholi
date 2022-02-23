@@ -1,5 +1,10 @@
 trigger:
-- master
+  branches:
+    include:
+    - master
+  paths:
+    include:
+    - 'apps/emis-app/*'
 
 pool:
   name: 'self-hosted-ubuntu-latest'
@@ -12,20 +17,20 @@ variables:
   value: 'emis-cdne-emis'
 - name: cdnProfile
   value: 'emis-cdnp-emis'
+- name: workingDir
+  value: './apps/emis-app/'
+- name: distDir
+  value: './apps/emis-app/dist'
 
-name: $(Major).$(Minor).$(Patch)
+name: EMIS App - $(Major).$(Minor).$(Patch)
 
-resources: 
-  repositories: 
-  - repository: Templates
-    name: 'Shared/pipeline-templates'
-    type: git 
-    ref: master
 
 stages:
-- template: stages/deploy-vue-stages.yml@Templates
+- template: '../../tools/pipelines/stages/deploy-vue-stage.yml'
   parameters:
     storage: $(EmisWebAppStorage)
     packageFeed: $(PackageFeed-Npm)
-    cdnEndpoint: $(cdnEndpoint)    
+    cdnEndpoint: $(cdnEndpoint)
     cdnProfile: $(cdnProfile)
+    workingDir: $(workingDir)
+    distDir: $(distDir)

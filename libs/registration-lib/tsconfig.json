@@ -13,7 +13,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "rootDir": ".",
+    "outDir": "./dist",
     "baseUrl": ".",
+    "allowJs": true,
     "types": [
       "webpack-env",
       "jest",
@@ -21,6 +24,9 @@
     ],
     "paths": {
       "@/*": [
+        "src/*"
+      ],
+      "@libs/registration-lib/*": [
         "src/*"
       ]
     },

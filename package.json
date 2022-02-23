@@ -1,0 +1,45 @@
+{
+  "name": "root",
+  "private": true,
+  "devDependencies": {
+    "eslint": "^7.23.0",
+    "eslint-import-resolver-typescript": "^2.5.0",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-vue": "^7.8.0",
+    "eslint-plugin-vuejs-accessibility": "^0.6.0",
+    "eslint-plugin-vuetify": "^1.0.0-beta.7",
+    "lerna": "^4.0.0"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap",
+    "clean": "lerna clean",
+    "lerna:list": "lerna list --all",
+    "test": "lerna exec -- yarn test",
+    "affected": "lerna ls --all --since HEAD~1 -p",
+    "test:affected": "lerna run test --since HEAD~1 --include-dependents",
+    "lint": "lerna exec -- yarn lint",
+
+    "emis-app:build": "lerna run build --scope @apps/emis-app",
+    "emis-app:serve": "lerna run serve --scope @apps/emis-app --stream",
+    "emis-app:test": "lerna run test --scope @apps/emis-app",
+    "emis-app:coverage": "yarn --cwd apps/emis-app test --coverage  --coverageReporters=cobertura",
+    "emis-app:lint": "yarn --cwd apps/emis-app lint",
+
+    "benef-app:build": "lerna run build --scope @apps/benef-app",
+    "benef-app:serve": "lerna run serve --scope @apps/benef-app --stream",
+    "benef-app:test": "lerna run test --scope @apps/benef-app",
+    "benef-app:coverage": "yarn --cwd apps/benef-app test --coverage  --coverageReporters=cobertura",
+    "benef-app:lint": "yarn --cwd apps/benef-app lint",
+
+    "registration-lib:build": "lerna run build:final --scope @libs/registration-lib",
+    "registration-lib:test": "lerna run test --scope @libs/registration-lib",
+    "registration-lib:coverage": "yarn --cwd libs/registration-lib test --coverage  --coverageReporters=cobertura",
+    "registration-lib:lint": "yarn --cwd libs/registration-lib lint"
+  },
+  "workspaces": {
+    "packages": [
+      "apps/*",
+      "libs/*"
+    ]
+  }
+}

@@ -24,6 +24,9 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@libs/registration-lib/*": [
+        "../../libs/registration-lib/src/*"
       ]
     },
     "lib": [
