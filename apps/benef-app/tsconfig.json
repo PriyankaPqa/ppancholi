@@ -21,7 +21,7 @@
     ],
     "paths": {
       "@/*": [
-        "src/*"
+        "apps/benef-app/src/*"
       ]
     },
     "lib": [
@@ -34,9 +34,9 @@
   },
 
   "include": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue",
+    "apps/benef-app/src/**/*.ts",
+    "apps/benef-app/src/**/*.tsx",
+    "apps/benef-app/src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
   ],
