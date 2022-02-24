@@ -28,9 +28,9 @@ name: Benef App - $(Major).$(Minor).$(Patch)
 stages:
 - template: '../../tools/pipelines/stages/deploy-vue-stage.yml'
   parameters:
-    storage: 'monobenefappleo'  #$(EmisWebAppStorage)
+    storage: $(EmisWebAppStorage)
     packageFeed: $(PackageFeed-Npm)
-    cdnEndpoint: '' #$(cdnEndpoint)
-    cdnProfile: '' #$(cdnProfile)
+    cdnEndpoint: $(cdnEndpoint)
+    cdnProfile: $(cdnProfile)
     workingDir: $(workingDir)
     distDir: $(distDir)
