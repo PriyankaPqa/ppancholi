@@ -50,4 +50,6 @@ stages:
       storage: ${{ parameters.storage }}
       cdnEndpoint: ${{ parameters.cdnEndpoint }}
       cdnProfile: ${{ parameters.cdnProfile }}
+      workingDir: ${{ parameters.workingDir }}
+      packageFeed: ${{ parameters.packageFeed }} # Need until we need to install npm to test
 

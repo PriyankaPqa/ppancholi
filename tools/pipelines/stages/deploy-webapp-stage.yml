@@ -3,6 +3,8 @@ parameters:
   cdnEndpoint: ''
   cdnProfile: ''
   dnsName: 'crc-tech.ca'
+  workingDir: ''
+  packageFeed: ''
 
 stages:
   - stage: 'Deploy_to_storage'
@@ -140,11 +142,16 @@ stages:
                       } 
 
 
-
-
       - job: 'Test_Affected_Packages'
         displayName: 'Test affected packages'
         steps:
+          - task: Yarn@3
+            inputs:
+              customRegistry: 'useFeed'
+              customFeed: ${{ parameters.packageFeed }}
+              arguments: --frozen-lockfile
+            displayName: 'Install NPM dependencies'
+
           - task: Bash@3
             inputs:
               filePath: 'tools/scripts/generate_yarn_command.sh'

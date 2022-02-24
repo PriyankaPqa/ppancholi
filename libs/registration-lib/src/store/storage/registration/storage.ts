@@ -1,4 +1,4 @@
-import { IStore, IState } from '@/store/store.types';
+import { IStore, IState } from '@libs/registration-lib/store/store.types';
 import { TranslateResult } from 'vue-i18n';
 import { IIdentitySet } from '../../../entities/value-objects/identity-set/identitySet.types';
 import { IHouseholdEntity } from '../../../entities/household';

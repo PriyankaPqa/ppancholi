@@ -1,6 +1,6 @@
+import { IStore, IState } from '@libs/registration-lib/store/store.types';
 import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity';
 import { IAddress } from '../../../entities/value-objects/address';
-import { IStore, IState } from '../../store.types';
 import { Base } from '../base';
 import { IHouseholdEntity, IHouseholdMetadata } from '../../../entities/household';
 import { IStorage } from './storage.types';

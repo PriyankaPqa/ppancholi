@@ -1,4 +1,5 @@
-import { IStore, IState } from '@/store';
+import { IStore, IState } from '@libs/registration-lib/store/store.types';
+
 import {
   FeatureKeys,
   IBrandingEntity,
