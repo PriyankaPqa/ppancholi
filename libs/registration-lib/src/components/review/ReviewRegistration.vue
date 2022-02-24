@@ -130,7 +130,7 @@
 <script lang="ts">
 import { RcConfirmationDialog } from '@crctech/component-library';
 import VueI18n from 'vue-i18n';
-import { VForm } from '@/types';
+import { VForm } from '@libs/registration-lib/types';
 import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';

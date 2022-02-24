@@ -244,7 +244,7 @@ export default Vue.extend({
         this.loading = true;
 
         const value = ({ status: this.form.status, method: this.form.method, identificationIds: [] }) as IIdentityAuthentication;
-        value.identificationIds = this.form.identificationIds.map((m) => (
+        value.identificationIds = this.form.identificationIds.map((m: string) => (
           {
             optionItemId: m,
             specifiedOther: this.verificationOptions.filter((v) => m === v.id && v.isOther).length > 0 ? this.form.specifiedOther : null,

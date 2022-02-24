@@ -37,7 +37,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
+import AddressForm from '@libs/registration-lib/components/forms/AddressForm.vue';
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import { RcDialog, VCheckboxWithValidation, VTextAreaWithValidation } from '@crctech/component-library';
 import { IAddressData, IHouseholdCreate } from '@libs/registration-lib/entities/household-create';

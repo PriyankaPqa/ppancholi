@@ -174,7 +174,7 @@ import {
   VTextFieldWithValidation,
   VSelectWithValidation,
 } from '@crctech/component-library';
-import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
+import AddressForm from '@libs/registration-lib/components/forms/AddressForm.vue';
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import { Address } from '@libs/registration-lib/entities/value-objects/address';
 import { EFinancialAmountModes, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
