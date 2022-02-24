@@ -12,7 +12,6 @@ import applicationInsights from '@libs/registration-lib/plugins/applicationInsig
 import buildQuery from '@/services/odata-query';
 import { mockHttp } from '@/services/httpClient.mock';
 import { i18n } from '@/ui/plugins/i18n';
-import { localStorageKeys } from '@/constants/localStorage';
 import { httpClient, HttpClient, IRestResponse } from './httpClient';
 import AuthenticationProvider from '../auth/AuthenticationProvider';
 
@@ -128,30 +127,6 @@ describe('httpClient', () => {
       });
     });
 
-    describe('error401Handler', () => {
-      it('toasts warning message', () => {
-        mockHttpClient.error401Handler();
-
-        expect(Vue.toasted.global.warning).toHaveBeenCalledWith(i18n.t('error.401.refresh'));
-      });
-
-      it('sets local storage if value not exists in storage', () => {
-        const mockLocalStorage = {
-          getItem: jest.fn(),
-          setItem: jest.fn(),
-        };
-
-        Object.defineProperty(window, 'localStorage', {
-          value: mockLocalStorage,
-          writable: true,
-        });
-
-        mockHttpClient.error401Handler();
-
-        expect(global.localStorage.setItem).toHaveBeenCalledWith(localStorageKeys.last401Redirect.name, expect.anything());
-      });
-    });
-
     describe('responseErrorHandler', () => {
       it('returns false if no response', async () => {
         const result = await mockHttpClient.responseErrorHandler();
@@ -167,6 +142,16 @@ describe('httpClient', () => {
         });
 
         expect(result).toBeFalsy();
+      });
+
+      it('toasts session expired error if is 401', async () => {
+        await mockHttpClient.responseErrorHandler({
+          response: {
+            status: 401,
+          },
+        });
+
+        expect(Vue.toasted.global.error).toHaveBeenCalledWith(i18n.t('error.log_in_again'));
       });
 
       it('toasts all errors if global handler activated', async () => {

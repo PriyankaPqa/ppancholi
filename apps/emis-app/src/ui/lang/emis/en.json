@@ -547,6 +547,7 @@
     "enums.transactionApprovalStatus.Pending": "Pending",
     "error.401.refresh": "The page will refresh due to inactivity",
     "error.feature_disabled": "Feature is disabled",
+    "error.log_in_again": "Your session expired. Please sign out and in again.",
     "error.no_permission": "You do not have permission to access this page",
     "error.unexpected_error": "An unexpected error occurred.",
     "errors.a-filter-with-this-name-already-exists": "A filter with this name already exists",
