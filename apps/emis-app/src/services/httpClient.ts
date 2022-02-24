@@ -10,7 +10,6 @@ import buildQuery from '@/services/odata-query';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IAzureSearchParams, IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
-import routes from '@/constants/routes';
 
 import AuthenticationProvider from '../auth/AuthenticationProvider';
 
@@ -103,50 +102,13 @@ export class HttpClient implements IHttpClient {
     return camelKeys(response, { recursive: true, recursiveInArray: true }) as AxiosResponse<Record<string, unknown>>;
   }
 
-  private async error401Handler() {
-    Vue.toasted.global.warning(i18n.t('error.401.refresh'));
-
-    try {
-      const last401Redirect = localStorage.getItem(localStorageKeys.last401Redirect.name);
-
-      // so not to loop the user indefinitely, if he had been redirected already in the last 30 seconds we wont
-      if (!last401Redirect || Number.isNaN(new Date(last401Redirect).getTime())
-        || Math.abs(new Date().getTime() - new Date(last401Redirect).getTime()) > 30000) {
-        applicationInsights.trackTrace('error401Handler - before reload', {
-          last401Redirect,
-          second: Number.isNaN(new Date(last401Redirect).getTime()),
-          third: Math.abs(new Date().getTime() - new Date(last401Redirect).getTime()),
-        }, 'httpClient', 'error401Handler');
-
-        localStorage.setItem(localStorageKeys.last401Redirect.name, (new Date()).toISOString());
-
-        this.reloadTimeout = setTimeout(() => {
-          this.reloadTimeout = null;
-          window.location.reload();
-        }, 4000);
-      } else if (!this.reloadTimeout && !window.location.href.endsWith(routes.loginError.path)) {
-        // if we just tried but it didnt work, try to send them to logout page...
-        setTimeout(() => {
-          window.location.href = routes.loginError.path;
-        }, 4000);
-      }
-    } catch (error) {
-      applicationInsights.trackException(error, {}, 'httpClient', 'error401Handler');
-      if (!window.location.href.endsWith(routes.loginError.path)) {
-        setTimeout(() => {
-          window.location.href = routes.loginError.path;
-        }, 4000);
-      }
-    }
-  }
-
   private async responseErrorHandler(error: any) {
     if (!error || !error.response) {
       return false;
     }
 
     if (error.response.status === 401) {
-      await this.error401Handler();
+      Vue.toasted.global.error(i18n.t('error.log_in_again'));
       return false;
     }
 
