@@ -21,53 +21,47 @@ steps:
      arguments: --frozen-lockfile
     displayName: 'Install NPM dependencies'
 
-  - bash: echo Tests
-    displayName: 'Tests after PR approval'
+  - script: yarn affected
+    displayName: 'Show affected packages'
+
+  - task: Bash@3
+    inputs:
+      filePath: 'tools/scripts/generate_yarn_command.sh'
+      arguments: ${{ parameters.workingDir }} lint
+    displayName: "Lint affected packages"
+    condition: and(succeeded(), eq('${{ parameters.lint }}', true))
+
+  - task: Bash@3
+    inputs:
+      filePath: 'tools/scripts/generate_yarn_command.sh'
+      arguments: ${{ parameters.workingDir }} coverage
+    displayName: "Test affected packages"
+    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+
+  # Publish Result #
+  - task: PublishTestResults@2
+    condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+    inputs:
+#      searchFolder: ${{ parameters.workingDir }}
+      testRunner: VSTest
+      testResultsFiles: '**/*result*.trx'
+      failTaskOnFailedTests: false
+    displayName: 'Publish Test Result'
+
+  - task: PublishCodeCoverageResults@1
+    inputs:
+#      pathToSources: ${{ parameters.workingDir }}
+      codeCoverageTool: 'Cobertura'
+      summaryFileLocation: '**/*cobertura*.xml'
+      failIfCoverageEmpty: false
+    displayName: 'Publish Code Coverage Result'
     condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
 
-  - bash: echo ${{variables['Build.SourceBranch']}}
-    displayName: 'Show build SourceBranch'
-
-#  - script: yarn affected
-#    displayName: 'Show affected packages'
-#
-#  - task: Bash@3
-#    inputs:
-#      filePath: 'tools/scripts/generate_yarn_command.sh'
-#      arguments: ${{ parameters.workingDir }} lint
-#    displayName: "Lint affected packages"
-#    condition: and(succeeded(), eq('${{ parameters.lint }}', true))
-#
-#  - task: Bash@3
-#    inputs:
-#      filePath: 'tools/scripts/generate_yarn_command.sh'
-#      arguments: ${{ parameters.workingDir }} coverage
-#    displayName: "Test affected packages"
-#    condition: succeeded()
-#
-#  # Publish Result #
-#  - task: PublishTestResults@2
-#    condition: succeededOrFailed()
-#    inputs:
-##      searchFolder: ${{ parameters.workingDir }}
-#      testRunner: VSTest
-#      testResultsFiles: '**/*result*.trx'
-#      failTaskOnFailedTests: false
-#    displayName: 'Publish Test Result'
-#
-#  - task: PublishCodeCoverageResults@1
-#    inputs:
-##      pathToSources: ${{ parameters.workingDir }}
-#      codeCoverageTool: 'Cobertura'
-#      summaryFileLocation: '**/*cobertura*.xml'
-#      failIfCoverageEmpty: false
-#    displayName: 'Publish Code Coverage Result'
-#
-#  # Building app by yarn #
-#  - script: yarn ${{ parameters.lokaliseCommand }}
-#    workingDirectory: ${{ parameters.workingDir }}
-#    displayName: 'Lokalise Sync'
-#    condition: and(succeeded(), eq('${{ parameters.lokalise }}', true))
+  # Building app by yarn #
+  - script: yarn ${{ parameters.lokaliseCommand }}
+    workingDirectory: ${{ parameters.workingDir }}
+    displayName: 'Lokalise Sync'
+    condition: and(succeeded(), eq('${{ parameters.lokalise }}', true))
 
   - script: yarn ${{ parameters.buildCommand }}
     workingDirectory: ${{ parameters.workingDir }}
