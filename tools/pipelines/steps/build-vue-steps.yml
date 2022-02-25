@@ -42,19 +42,21 @@ steps:
   - task: PublishTestResults@2
     condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
     inputs:
-#      searchFolder: ${{ parameters.workingDir }}
       testRunner: VSTest
       testResultsFiles: '**/*result*.trx'
       failTaskOnFailedTests: false
     displayName: 'Publish Test Result'
 
+  - script: node ./tools/scripts/mergeCoverage.js
+    displayName: 'Merge Code Coverage Reports'
+    condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+
   - task: PublishCodeCoverageResults@1
     inputs:
-#      pathToSources: ${{ parameters.workingDir }}
       codeCoverageTool: 'Cobertura'
-      summaryFileLocation: '**/*cobertura*.xml'
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
       failIfCoverageEmpty: false
-    displayName: 'Publish Code Coverage Result'
+    displayName: 'Publish Merged Code Coverage'
     condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
 
   # Building app by yarn #
