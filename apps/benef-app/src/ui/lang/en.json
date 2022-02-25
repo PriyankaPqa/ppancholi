@@ -52,7 +52,7 @@
     "errors.fresh-address-general-exception": "Fresh address failed: {Message}",
     "errors.fresh-address-validation-failed": "This email address seems invalid",
     "errors.google-re-captcha-validation-failed": "Suspicious activity detected",
-    "errors.need_to_resolve_challenge": "The challenge must be resolved",
+    "errors.need_to_resolve_challenge": "If presented with a challenge, please resolve.",
     "errors.person-identified-as-duplicate": "This beneficiary already exists in the system",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate": "This beneficiary already exists in the system",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number": "This beneficiary already exists in the system",
