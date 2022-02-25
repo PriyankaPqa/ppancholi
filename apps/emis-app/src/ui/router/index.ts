@@ -10,6 +10,7 @@ import { i18n } from '@/ui/plugins/i18n';
 import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
 import { ITenantSettingsEntity } from '@/entities/tenantSettings';
 import { httpClient } from '@/services/httpClient';
+import { CustomNavigationClient } from './NavigationClient';
 
 Vue.use(VueRouter);
 
@@ -38,16 +39,9 @@ const hasRole = (roleToCheck: string) => {
 const authenticationGuard = async (to: Route) => {
   if (to.matched.some((record) => record.meta.requiresAuthentication)) {
     // Check if the user is already signed in and redirect to login page if not
-    await AuthenticationProvider.loadAuthModule('authenticationGuard');
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
     if (!isSignedIn) {
       await AuthenticationProvider.signIn('authenticationGuard');
-    }
-
-    // If we are in localhost or haven't fetched the current tenant yet
-    if (!AuthenticationProvider.currentDomainTenant) {
-      const currentTenant = await new PublicService(httpClient).getTenantByEmisDomain(window.location.host);
-      AuthenticationProvider.setCurrentTenantDomain(currentTenant);
     }
 
     // Dispatch the action to the store to fetch the user data from the JWT token
@@ -107,7 +101,21 @@ const authorizationGuard = async (to: Route) => {
   return true;
 };
 
+const initializeMSAL = async () => {
+  const currentTenant = await new PublicService(httpClient).getTenantByEmisDomain(window.location.host);
+  AuthenticationProvider.setCurrentTenantDomain(currentTenant);
+
+  const msal = AuthenticationProvider.init();
+  const navigationClient = new CustomNavigationClient(this);
+  msal.setNavigationClient(navigationClient);
+  await AuthenticationProvider.loadAuthModule('router');
+};
+
 router.beforeEach(async (to, from, next) => {
+  if (!AuthenticationProvider.msalLibrary) {
+    await initializeMSAL();
+  }
+
   localStorage.setItem('fromOutside', (from.name === null).toString());
   let loginError = false;
 
