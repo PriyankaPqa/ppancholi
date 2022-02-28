@@ -5,15 +5,27 @@ const { exec } = require('child_process');
 
 const execProm = util.promisify(exec);
 
-const FILES = ['./src/ui/lang/en.json'];
-const SEARCH_TARGET_FOLDER = './src';
+// Include files having this extension
 const EXTENSIONS = 'js,vue,ts';
 const OUTPUT_PATH = './i18-report';
+
+const parameters = process.argv.slice(2);
+const SOURCE_FILES = parameters[0].split(','); // Loop through each keys contained in those files
+const SEARCH_TARGET_FOLDER = parameters[1]; // Look for key usages in this folder
+
+if (SOURCE_FILES === undefined || SEARCH_TARGET_FOLDER === undefined) {
+  console.log(new Error('1st param should be SOURCE_FILES. 2nd should be SEARCH_TARGET_FOLDER'));
+}
+
+console.log('####');
+console.log(`Will get all keys from ${SOURCE_FILES}`);
+console.log(`Look for usage within: ${SEARCH_TARGET_FOLDER}`);
+console.log('####');
 
 function getLocaleKeys() {
   let keys = [];
 
-  FILES.forEach((file) => {
+  SOURCE_FILES.forEach((file) => {
     const data = fs.readFileSync(file, { encoding: 'utf8', flag: 'r' });
     keys = keys.concat(Object.keys(JSON.parse(data)));
   });
@@ -90,4 +102,5 @@ report().then((res) => {
     fs.writeFileSync(`${OUTPUT_PATH}/error.txt`, res.errors.join('\n'));
     // console.table(res.errors);
   }
+  console.log(`Open the folder ${OUTPUT_PATH} to see the report`);
 });
