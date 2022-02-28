@@ -44,7 +44,7 @@ describe('>>> Domain Base Service', () => {
     it('will replace parameters in endpoint according to idParam when simple string', async () => {
       const id = 'abc';
       // eslint-disable-next-line
-      const service = new DomainBaseService<any, uuid>(http as never, API_URL_SUFFIX, CONTROLLER);
+      const service = new DomainBaseService<any, string>(http as never, API_URL_SUFFIX, CONTROLLER);
       service.baseUrl = 'http://MyAPI/entity';
       await service.get(id);
       expect(http.get).toHaveBeenCalledWith('http://MyAPI/entity/abc', { globalHandler: true });

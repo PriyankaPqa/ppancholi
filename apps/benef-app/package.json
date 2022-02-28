@@ -6,14 +6,10 @@
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
     "lint": "eslint . --fix --max-warnings=0",
-    "build:all": "yarn lokalise && yarn build",
-    "inspect": "vue-cli-service inspect",
     "lokalise": "yarn lokalise:up && yarn lokalise:down",
     "lokalise:down": "node scripts/lokalise.js down",
     "lokalise:up": "node scripts/lokalise.js up",
     "lokalise:delete": "node scripts/lokalise.js delete",
-    "report": "vue-cli-service build --report",
-    "report-json": "vue-cli-service build --report-json",
     "i18n:report": "node i18n-report.js"
   },
   "dependencies": {

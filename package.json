@@ -46,25 +46,29 @@
   "scripts": {
     "bootstrap": "lerna bootstrap",
     "clean": "lerna clean",
+    "clean:all": "rm -rf node_modules && lerna clean",
     "lerna:list": "lerna list --all",
     "test": "jest --runInBand",
-    "affected": "lerna ls --all --since HEAD~1 -p",
-    "test:affected": "lerna run test --since HEAD~1 --include-dependents",
     "lint": "yarn workspaces run lint",
+    "lerna:update": "lernaupdate",
+
     "emis-app:build": "yarn --cwd apps/emis-app build",
     "emis-app:serve": "yarn --cwd apps/emis-app serve",
+    "emis-app:lint": "yarn --cwd apps/emis-app lint",
     "emis-app:test": "yarn jest --projects apps/emis-app --runInBand",
     "emis-app:coverage": "yarn emis-app:test --coverage",
-    "emis-app:lint": "yarn --cwd apps/emis-app lint",
+
+
     "benef-app:build": "yarn --cwd apps/benef-app build",
     "benef-app:serve": "yarn --cwd apps/benef-app serve",
+    "benef-app:lint": "yarn --cwd apps/benef-app lint",
     "benef-app:test": "yarn jest --projects apps/benef-app --runInBand",
     "benef-app:coverage": "yarn benef-app:test --coverage",
-    "benef-app:lint": "yarn --cwd apps/benef-app lint",
-    "benef-app:all": "npm-run-all --parallel benef-app:serve benef-app:build benef-app:test",
+
+    "registration-lib:lint": "yarn --cwd libs/registration-lib lint",
     "registration-lib:test": "yarn jest --projects libs/registration-lib --runInBand",
     "registration-lib:coverage": "yarn registration-lib:test --coverage",
-    "registration-lib:lint": "yarn --cwd libs/registration-lib lint",
+
     "prepare": "husky install"
   },
   "workspaces": {
