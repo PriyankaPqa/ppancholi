@@ -29,7 +29,7 @@ The front-end part is built as a monorepo using Lerna and Yarn Workspaces. The m
 | Run development server |  ```yarn benef-app:serve```   | ```yarn emis-app:serve```  | NA                               |
 | Test the code          |   ```yarn benef-app:test```   | ```yarn benef-app:serve``` | ```yarn registration-lib:test``` | 
 | Lint                   |   ```yarn benef-app:lint```   | ```yarn benef-app:lint```  | ```yarn registration-lib:lint``` | 
-| Lokalise               | ```yarn benef-app:lokalise``` | ```yarn benef-app:lokalise```  | NA                               | 
+| Sync Lokalise          | ```yarn benef-app:lokalise``` | ```yarn benef-app:lokalise```  | NA                               | 
 
 NA: Not applicable
 

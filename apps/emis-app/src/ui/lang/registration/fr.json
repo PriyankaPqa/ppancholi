@@ -52,7 +52,7 @@
     "errors.fresh-address-general-exception": "Échec de la nouvelle adresse: {Message}",
     "errors.fresh-address-validation-failed": "Cette adresse courriel semble invalide",
     "errors.google-re-captcha-validation-failed": "Activité suspecte détectée",
-    "errors.need_to_resolve_challenge": "Le défi doit être résolu",
+    "errors.need_to_resolve_challenge": "Si un défi vous est présenté, veuillez le résoudre.",
     "errors.person-identified-as-duplicate": "Le\/la bénéficiaire existe déjà dans le système.",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-birthdate": "Le\/la bénéficiaire existe déjà dans le système.",
     "errors.the-beneficiary-have-duplicate-first-name-last-name-phone-number": "Le\/la bénéficiaire existe déjà dans le système.",
