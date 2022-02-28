@@ -153,8 +153,9 @@ export class MSAL implements IMSAL {
     this.config = config;
   }
 
-  public init(): PublicClientApplication {
+  public init() {
     let configWithCurrentTenant = this.config;
+    // if in localhost, the currentDomainTenant is null and the default authority is 'https://login.microsoftonline.com/common'
     if(this.currentDomainTenant){
       configWithCurrentTenant = {
         ...this.config,
@@ -165,7 +166,6 @@ export class MSAL implements IMSAL {
       }
     }
     this.msalLibrary = new msal.PublicClientApplication(configWithCurrentTenant);
-    return this.msalLibrary;
   }
 
   /**
@@ -436,6 +436,7 @@ export class MSAL implements IMSAL {
     let currentAccounts = this.msalLibrary.getAllAccounts();
     this.showConsole && console.debug("Result if we would have used msal.getActiveAccount");
     this.showConsole && console.debug(this.msalLibrary.getActiveAccount());
+
     if (currentAccounts === null) {
       this.showConsole && console.debug("getAccountForCurrentTenant - No accounts detected");
       this.enableAppInsights && applicationInsights.trackTrace(
@@ -446,18 +447,31 @@ export class MSAL implements IMSAL {
       );
       return null;
     }
+
+    if(!this.currentDomainTenant){ // In localhost we return the default tenant
+      return currentAccounts[0];
+    }
+
     if (currentAccounts.length > 1) {
       // Add choose account code here
-      this.showConsole && console.debug("getAccountForCurrentTenant - Multiple accounts detected, need to add choose account code. For now we pick the first one matching current tenant");
+      this.showConsole && console.debug("getAccountForCurrentTenant - Multiple accounts detected");
       this.showConsole && console.table(currentAccounts);
       this.enableAppInsights && applicationInsights.trackTrace(
-        'getAccountForCurrentTenant - Multiple accounts detected, need to add choose account code. For now we pick the first one matching current tenant',
+        'getAccountForCurrentTenant - Multiple accounts detected,',
         {currentAccounts, currentDomainTenant: this.currentDomainTenant},
         'MSAL',
         'getAccountForCurrentTenant'
       );
       this.showConsole && console.debug('currentDomainTenant', this.currentDomainTenant);
-      return currentAccounts.filter((a) => a.tenantId === this.currentDomainTenant)[0]
+      const accountsForCurrentTenant = currentAccounts.filter((a) =>  a.tenantId === this.currentDomainTenant);
+      // If we have multiple accounts in the same tenant, we return null when we first load the app (this.account = null)
+      // so that the user is forced to go to the login page and pick an account
+      if(accountsForCurrentTenant.length > 1){
+        return this.account;
+      }
+      // Return the account corresponding to the current tenant (or null if there is no account for this tenant)
+      return accountsForCurrentTenant[0];
+
     } else if (currentAccounts.length === 1) {
       this.showConsole && console.debug("getAccountForCurrentTenant - one account");
       this.showConsole && console.table(currentAccounts);
