@@ -1,5 +1,8 @@
 <script>
 /* eslint-disable max-len */
+export default {
+  name: 'ActionsIcon',
+};
 </script>
 
 <template>

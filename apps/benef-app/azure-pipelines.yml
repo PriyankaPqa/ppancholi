@@ -21,6 +21,10 @@ variables:
   value: './apps/benef-app/'
 - name: distDir
   value: './apps/benef-app/dist'
+- name: appName
+  value: 'benef-app'
+- name: isPullRequest # Can't be used in condition
+  value: $[eq(variables['Build.Reason'], 'PullRequest')]
 
 name: Benef App - $(Major).$(Minor).$(Patch)
 
@@ -28,9 +32,11 @@ name: Benef App - $(Major).$(Minor).$(Patch)
 stages:
 - template: '../../tools/pipelines/stages/deploy-vue-stage.yml'
   parameters:
-    storage: $(EmisWebAppStorage)
+    appName: $(appName)
+    storage: $(BeneficiaryWebAppStorage)
     packageFeed: $(PackageFeed-Npm)
     cdnEndpoint: $(cdnEndpoint)
     cdnProfile: $(cdnProfile)
     workingDir: $(workingDir)
     distDir: $(distDir)
+    isPullRequest: $(isPullRequest)

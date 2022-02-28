@@ -1,5 +1,4 @@
 module.exports = {
-  root: true,
   env: {
     node: true,
     jest: true,
@@ -90,16 +89,8 @@ module.exports = {
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-empty-interface': 'off',
         '@typescript-eslint/no-empty-function': 2,
-
       },
     },
   ],
-  settings: {
-    'import/resolver': {
-      node: {
-        paths: ['src'],
-      },
-    },
-  },
   plugins: ['vuejs-accessibility'],
 };

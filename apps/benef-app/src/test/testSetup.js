@@ -10,10 +10,10 @@ import Vuetify from 'vuetify';
 import Vuex from 'vuex';
 import deepmerge from 'deepmerge';
 import '@/ui/plugins/vee-validate';
-import features from '@/ui/plugins/features';
 
 import Vue from 'vue';
 import VueI18n from 'vue-i18n';
+import features from '@/ui/plugins/features';
 
 import { mockProvider } from '@/services/provider';
 import { mockStore } from '@/store';

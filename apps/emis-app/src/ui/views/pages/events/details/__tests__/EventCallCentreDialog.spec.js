@@ -328,7 +328,7 @@ describe('EventCallCentreDialog.vue', () => {
           },
         });
         await wrapper.vm.initEditMode();
-        expect(wrapper.vm.callCentre).toEqual({ ...mockEvent.callCentres[0], startDate: helpers.getLocalStringDate('2021-03-01T00:00:00Z') });
+        expect(wrapper.vm.callCentre).toMatchObject({ ...mockEvent.callCentres[0], startDate: helpers.getLocalStringDate('2021-03-01T00:00:00Z') });
         expect(wrapper.vm.isActive).toBeTruthy();
       });
     });

@@ -46,9 +46,10 @@
 
 <script>
 import Vue from 'vue';
+import { localStorageKeys } from '@/constants/localStorage';
 import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@crctech/component-library';
 import sanitizeHtml from 'sanitize-html';
-import { localStorageKeys } from '@/constants/localStorage';
+
 import ActivityWatcher from '@/ui/ActivityWatcher.vue';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 

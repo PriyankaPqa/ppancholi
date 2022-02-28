@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ISearchData } from '@/types';
 import axios, { AxiosInstance } from 'axios';
 import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import buildQuery from 'odata-query';
 import camelCaseKeys from 'camelcase-keys';
 import { v4 as uuidv4 } from 'uuid';
 import Vue from 'vue';
-import { i18n } from '@/ui/plugins/i18n';
-import helpers from '@/ui/helpers';
 import {
   IError, IHttpClient, IRestResponse, RequestConfig,
 } from '@libs/registration-lib/services/httpClient';
+import { i18n } from '@/ui/plugins/i18n';
+import helpers from '@/ui/helpers';
+import { ISearchData } from '@/types';
 
 export class HttpClient implements IHttpClient {
   private axios: AxiosInstance;

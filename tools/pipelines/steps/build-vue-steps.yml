@@ -1,70 +1,54 @@
 steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '15.x'
+      versionSpec: '16.x'
     displayName: 'Install Node.js'
 
-#  - task: Cache@2
-#    displayName: Load NPM cache
-#    inputs:
-#      key: npm | $(Agent.OS) | $(Build.SourcesDirectory)/${{parameters.workingDir}}/yarn.lock
-#      restoreKeys: |
-#        npm | "$(Agent.OS)"
-#      path: $(Build.SourcesDirectory)/${{parameters.workingDir}}/node_modules
-#      cacheHitVar: CACHE_HIT
+  - task: Cache@2
+    displayName: Cache yarn packages
+    inputs:
+      key: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+      path: $(Build.SourcesDirectory)/node_modules
+      cacheHitVar: CACHE_HIT
 
   - task: Yarn@3
+    displayName: 'Install yarn packages'
     condition: ne(variables['CACHE_HIT'], 'true')
     inputs:
      customRegistry: 'useFeed'
      customFeed: ${{ parameters.packageFeed }}
      arguments: --frozen-lockfile
-    displayName: 'Install NPM dependencies'
 
-  - script: yarn affected
-    displayName: 'Show affected packages'
-
-  - task: Bash@3
-    inputs:
-      filePath: 'tools/scripts/generate_yarn_command.sh'
-      arguments: ${{ parameters.workingDir }} lint
-    displayName: "Lint affected packages"
-    condition: and(succeeded(), eq('${{ parameters.lint }}', true))
-
-  - task: Bash@3
-    inputs:
-      filePath: 'tools/scripts/generate_yarn_command.sh'
-      arguments: ${{ parameters.workingDir }} coverage
-    displayName: "Test affected packages"
+  - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
+    displayName: 'Test affected packages'
     condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
 
-  # Publish Result #
   - task: PublishTestResults@2
+    displayName: 'Publish Test Result'
     condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
     inputs:
       testRunner: VSTest
       testResultsFiles: '**/*result*.trx'
       failTaskOnFailedTests: false
-    displayName: 'Publish Test Result'
 
-  - script: node ./tools/scripts/mergeCoverage.js
+  - script: node ./tools/scripts/merge-test-coverage.js
     displayName: 'Merge Code Coverage Reports'
     condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
 
   - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Merged Code Coverage'
     inputs:
       codeCoverageTool: 'Cobertura'
       summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
       failIfCoverageEmpty: false
-    displayName: 'Publish Merged Code Coverage'
     condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
 
-  # Building app by yarn #
   - script: yarn ${{ parameters.lokaliseCommand }}
-    workingDirectory: ${{ parameters.workingDir }}
     displayName: 'Lokalise Sync'
+    workingDirectory: ${{ parameters.workingDir }}
     condition: and(succeeded(), eq('${{ parameters.lokalise }}', true))
 
   - script: yarn ${{ parameters.buildCommand }}
-    workingDirectory: ${{ parameters.workingDir }}
     displayName: 'Build'
+    workingDirectory: ${{ parameters.workingDir }}
+

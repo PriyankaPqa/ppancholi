@@ -1,6 +1,6 @@
+import Vue from 'vue';
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
-import Vue from 'vue';
 import '@/ui/styles/main.scss';
 import '@/ui/plugins/vee-validate';
 import {

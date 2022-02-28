@@ -1,10 +1,11 @@
 parameters:
+  appName: ''
   storage: ''
   cdnEndpoint: ''
   cdnProfile: ''
   dnsName: 'crc-tech.ca'
-  workingDir: ''
   packageFeed: ''
+  isPullRequest: ''
 
 stages:
   - stage: 'Deploy_to_storage'
@@ -145,18 +146,21 @@ stages:
       - job: 'Test_Affected_Packages'
         displayName: 'Test affected packages'
         steps:
+          - task: Cache@2
+            displayName: Cache yarn packages
+            inputs:
+              key: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+              path: $(Build.SourcesDirectory)/node_modules
+              cacheHitVar: CACHE_HIT
           - task: Yarn@3
+            displayName: 'Install yarn packages'
             inputs:
               customRegistry: 'useFeed'
               customFeed: ${{ parameters.packageFeed }}
               arguments: --frozen-lockfile
-            displayName: 'Install NPM dependencies'
 
-          - task: Bash@3
-            inputs:
-              filePath: 'tools/scripts/generate_yarn_command.sh'
-              arguments: ${{ parameters.workingDir }} coverage
-            displayName: "Test affected packages"
+          - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
+            displayName: 'Test affected packages'
 
   - stage: 'Deploy_to_Dev'
     displayName: 'Deploy to Dev'

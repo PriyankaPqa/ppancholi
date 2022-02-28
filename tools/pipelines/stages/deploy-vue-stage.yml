@@ -6,11 +6,11 @@ parameters:
   cdnProfile: ''
   lokalise: true
   lint: true
-  dist: 'dist'
   buildCommand: 'build --mode production'
   lokaliseCommand: 'lokalise --mode production'
   workingDir: ''
   distDir: ''
+  isPullRequest: ''
 
 stages:
 
@@ -34,14 +34,15 @@ stages:
 
   - template: './build-vue-stage.yml'
     parameters:
+      appName: ${{ parameters.appName }}
       packageFeed: ${{ parameters.packageFeed }}
       lokalise: ${{ parameters.lokalise }}
       lint: ${{ parameters.lint }}
-      dist: ${{ parameters.dist }}
       buildCommand: ${{ parameters.buildCommand }}
       lokaliseCommand: ${{ parameters.lokaliseCommand }}
       workingDir: ${{ parameters.workingDir }}
       distDir: ${{ parameters.distDir }}
+      isPullRequest: ${{ parameters.isPullRequest }}
 
 
   - template: './deploy-webapp-stage.yml'
@@ -50,6 +51,6 @@ stages:
       storage: ${{ parameters.storage }}
       cdnEndpoint: ${{ parameters.cdnEndpoint }}
       cdnProfile: ${{ parameters.cdnProfile }}
-      workingDir: ${{ parameters.workingDir }}
-      packageFeed: ${{ parameters.packageFeed }} # Need until we need to install npm to test
+      packageFeed: ${{ parameters.packageFeed }} # Need until we need to install npm before testing
+      isPullRequest: ${{ parameters.isPullRequest }}
 

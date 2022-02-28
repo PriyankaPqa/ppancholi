@@ -1,4 +1,5 @@
 parameters:
+  appName: ''
   packageFeed: ''
   lokalise: true
   lint: true
@@ -6,6 +7,7 @@ parameters:
   buildCommand: 'build --mode production'
   lokaliseCommand: 'lokalise --mode production'
   workingDir: ''
+  isPullRequest: ''
 
 stages:
   - stage: 'Build'
@@ -14,13 +16,15 @@ stages:
         steps:
           - template: '../steps/build-vue-steps.yml'
             parameters:
+              appName: ${{ parameters.appName }}
               packageFeed: ${{ parameters.packageFeed }}
               lokalise: ${{ parameters.lokalise }}
               lint: ${{ parameters.lint }}
               buildCommand: ${{ parameters.buildCommand }}
               lokaliseCommand: ${{ parameters.lokaliseCommand }}
               workingDir:  ${{ parameters.workingDir }}
+              isPullRequest:  ${{ parameters.isPullRequest }}
 
           - publish: ${{ parameters.distDir }}
             artifact: dist
-            displayName: "Publish Distribution"
+            displayName: "Publish Artifact"
