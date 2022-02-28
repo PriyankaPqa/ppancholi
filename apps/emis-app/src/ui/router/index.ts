@@ -10,7 +10,6 @@ import { i18n } from '@/ui/plugins/i18n';
 import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
 import { ITenantSettingsEntity } from '@/entities/tenantSettings';
 import { httpClient } from '@/services/httpClient';
-import { CustomNavigationClient } from './NavigationClient';
 
 Vue.use(VueRouter);
 
@@ -105,9 +104,7 @@ const initializeMSAL = async () => {
   const currentTenant = await new PublicService(httpClient).getTenantByEmisDomain(window.location.host);
   AuthenticationProvider.setCurrentTenantDomain(currentTenant);
 
-  const msal = AuthenticationProvider.init();
-  const navigationClient = new CustomNavigationClient(this);
-  msal.setNavigationClient(navigationClient);
+  AuthenticationProvider.init();
   await AuthenticationProvider.loadAuthModule('router');
 };
 
