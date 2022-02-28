@@ -1,7 +1,7 @@
+import { mockEvent } from '@libs/registration-lib/entities/event';
 import { createLocalVue, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
-import { mockEvent } from '@libs/registration-lib/entities/event';
 import Component from './LandingPage.vue';
 
 const storage = mockStorage();

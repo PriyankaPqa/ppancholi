@@ -146,8 +146,14 @@ stages:
       - job: 'Test_Affected_Packages'
         displayName: 'Test affected packages'
         steps:
+          - task: Cache@2
+            displayName: Cache yarn packages
+            inputs:
+              key: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+              path: $(Build.SourcesDirectory)/node_modules
+              cacheHitVar: CACHE_HIT
           - task: Yarn@3
-            displayName: 'Install NPM dependencies'
+            displayName: 'Install yarn packages'
             inputs:
               customRegistry: 'useFeed'
               customFeed: ${{ parameters.packageFeed }}

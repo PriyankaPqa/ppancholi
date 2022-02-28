@@ -13,6 +13,7 @@ module.exports = {
     '!**/*.types.ts',
     '!**/index.ts',
   ],
+  coverageReporters: ['cobertura'],
   transform: {
     'vee-validate/dist/rules': 'babel-jest',
     '.*\\.(vue)$': 'vue-jest',

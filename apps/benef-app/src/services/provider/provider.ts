@@ -1,7 +1,7 @@
-import { httpClient } from '@/services/httpClient';
 import { PublicService } from '@libs/registration-lib/services/public';
 import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
 import { TenantSettingsService } from '@libs/registration-lib/services/tenantSettings/entity';
+import { httpClient } from '@/services/httpClient';
 import { IProvider } from './provider.types';
 
 export const provider = (): IProvider => ({

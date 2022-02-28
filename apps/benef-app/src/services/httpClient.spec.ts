@@ -5,9 +5,9 @@ import camelCaseKeys from 'camelcase-keys';
 import axios from 'axios';
 import { Toasted } from 'vue-toasted';
 import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
-import { i18n } from '@/ui/plugins/i18n';
 import { mockHttp } from '@libs/registration-lib/services/httpClient.mock';
 import { IRestResponse } from '@libs/registration-lib/types';
+import { i18n } from '@/ui/plugins/i18n';
 import { HttpClient } from './httpClient';
 
 jest.mock('uuid');

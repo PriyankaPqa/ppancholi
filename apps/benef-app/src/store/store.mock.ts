@@ -5,20 +5,19 @@ import Vue from 'vue';
 
 import VueI18n from 'vue-i18n';
 
-import { mockProvider } from '@/services/provider';
-
 import { makeRegistrationModule } from '@libs/registration-lib/store/modules/registration/';
 import { HouseholdEntityModule } from '@libs/registration-lib/store/modules/household';
 import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
-import { httpClient } from '@/services/httpClient';
 
-import { tabs } from '@/store/modules/registration/tabs';
 import { ERegistrationMode } from '@libs/registration-lib/types';
-import * as vuexModule from '@/constants/vuex-modules';
 import { HouseholdMetadataModule } from '@libs/registration-lib/store/modules/household/householdMetadata';
 import { HouseholdMetadataService } from '@libs/registration-lib/services/households/metadata/index';
 import { TenantSettingsEntityModule } from '@libs/registration-lib/store/modules/tenantSettings/tenantSettingsEntity';
 import { TenantSettingsService } from '@libs/registration-lib/services/tenantSettings/entity';
+import * as vuexModule from '@/constants/vuex-modules';
+import { tabs } from '@/store/modules/registration/tabs';
+import { httpClient } from '@/services/httpClient';
+import { mockProvider } from '@/services/provider';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 
 const i18n = {

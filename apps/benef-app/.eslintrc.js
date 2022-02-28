@@ -1,5 +1,19 @@
-const base = require('../../.eslintrc');
+const path = require('path');
+const baseConfig = require('../../.eslintrc');
 
 module.exports = {
-  ...base,
+  ...baseConfig,
+  root: true,
+  settings: {
+    'import/resolver': {
+      node: {
+        paths: ['src'],
+      },
+      typescript: {
+        project: [
+          path.resolve(__dirname, 'tsconfig.json'),
+        ],
+      },
+    },
+  },
 };

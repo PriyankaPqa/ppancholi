@@ -12,12 +12,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { RcPageLoading, RcRouterViewTransition } from '@crctech/component-library';
 import _isEmpty from 'lodash/isEmpty';
+import { EEventStatus, IEvent } from '@libs/registration-lib/entities/event';
+import AppHeader from '@/ui/views/components/layout/AppHeader.vue';
 import { i18n } from '@/ui/plugins';
 import { httpClient } from '@/services/httpClient';
-import { EEventStatus, IEvent } from '@libs/registration-lib/entities/event';
 import { SUPPORTED_LANGUAGES } from '@/constants/trans';
 
 export default Vue.extend({

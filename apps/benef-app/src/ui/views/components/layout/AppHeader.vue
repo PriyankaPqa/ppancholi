@@ -39,12 +39,12 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
 import { RcPhoneDisplay } from '@crctech/component-library';
-import routes from '@/constants/routes';
-import helpers from '@/ui/helpers';
 import { IEvent } from '@libs/registration-lib/entities/event';
 import { IBrandingEntity } from '@libs/registration-lib/entities/tenantSettings';
+import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';
+import routes from '@/constants/routes';
+import helpers from '@/ui/helpers';
 
 export default Vue.extend({
   name: 'AppHeader',
