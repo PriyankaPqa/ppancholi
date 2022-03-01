@@ -20,7 +20,9 @@ switch (parameters[0]) {
         .then(() => process.exit(0)));
     break;
   case 'upErrors':
-    uploadErrors().then(() => process.exit(0));
+    console.log('The synchronisation of errors is broken. Need to be fixed');
+    process.exit(0);
+    // uploadErrors().then(() => process.exit(0));
     break;
   case 'delete':
     promptDeleteKeys(parameters, 'emis-app');
