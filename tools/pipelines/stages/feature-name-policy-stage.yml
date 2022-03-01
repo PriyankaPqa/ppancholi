@@ -1,10 +1,10 @@
 stages:
   - stage: 'Feature_Name_Policy'
+    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
     displayName: 'Feature Name Policy'
     jobs:
       - job: Feature_Name_Policy
-        condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
-          steps:
+        steps:
           - task: PowerShell@2
             displayName: 'Feature Name Policy'
             inputs:
