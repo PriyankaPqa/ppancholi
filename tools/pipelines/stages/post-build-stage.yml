@@ -1,0 +1,27 @@
+parameters:
+  appName: ''
+  packageFeed: ''
+  isPullRequest: ''
+
+stages:
+  - stage: 'Pre_Deploy'
+      displayName: 'Post Build - (Only PR)'
+      jobs:
+        - job: 'Test'
+          steps:
+            - task: Cache@2
+            displayName: Cache yarn packages
+            inputs:
+            key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+            path: $(Build.SourcesDirectory)/node_modules
+            cacheHitVar: CACHE_HIT
+
+            - task: Yarn@3
+              displayName: 'Install yarn packages'
+              inputs:
+                customRegistry: 'useFeed'
+                customFeed: ${{ parameters.packageFeed }}
+                arguments: --frozen-lockfile
+
+            - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
+              displayName: 'Test affected packages'

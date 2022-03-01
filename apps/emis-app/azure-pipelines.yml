@@ -30,7 +30,7 @@ name: EMIS App - $(Major).$(Minor).$(Patch)
 
 
 stages:
-- template: '../../tools/pipelines/stages/deploy-vue-stage.yml'
+- template: '../../tools/pipelines/main.yml'
   parameters:
     appName: $(appName)
     storage: $(EmisWebAppStorage)

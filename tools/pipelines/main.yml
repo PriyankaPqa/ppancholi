@@ -13,10 +13,12 @@ parameters:
   isPullRequest: ''
 
 stages:
+  # Validate the name of the branch
+  - template: './stages/feature-name-policy-stage.yml'
+    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
 
-  - template: './feature-name-policy-stage.yml'
-
-  - template: './build-vue-stage.yml'
+  # Build the application and publish the artifact
+  - template: './stages/build-vue-stage.yml'
     parameters:
       appName: ${{ parameters.appName }}
       packageFeed: ${{ parameters.packageFeed }}
@@ -28,13 +30,17 @@ stages:
       distDir: ${{ parameters.distDir }}
       isPullRequest: ${{ parameters.isPullRequest }}
 
-
-  - template: './deploy-webapp-stage.yml'
+  # Trigger only on Pull Request after the build
+  - template: './stages/post-build-stage.yml'
+    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
     parameters:
       appName: ${{ parameters.appName }}
+      packageFeed: ${{ parameters.packageFeed }}
+      isPullRequest: ${{ parameters.isPullRequest }}
+
+  # Deploy to feature branch, dev, production
+  - template: './stages/deploy-webapp-stage.yml'
+    parameters:
       storage: ${{ parameters.storage }}
       cdnEndpoint: ${{ parameters.cdnEndpoint }}
       cdnProfile: ${{ parameters.cdnProfile }}
-      packageFeed: ${{ parameters.packageFeed }} # Need until we need to install npm before testing
-      isPullRequest: ${{ parameters.isPullRequest }}
-

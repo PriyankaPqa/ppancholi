@@ -1,37 +1,10 @@
 parameters:
-  appName: ''
   storage: ''
   cdnEndpoint: ''
   cdnProfile: ''
   dnsName: 'crc-tech.ca'
-  packageFeed: ''
-  isPullRequest: ''
 
 stages:
-  - stage: 'Test_On_PR'
-    displayName: 'Test affected packages'
-    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
-    jobs:
-      - job: 'Test'
-        steps:
-          #          - task: Cache@2
-          #            displayName: Cache yarn packages
-          #            inputs:
-          #              key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-          #              path: $(Build.SourcesDirectory)/node_modules
-          #              cacheHitVar: CACHE_HIT
-          - task: Yarn@3
-            displayName: 'Install yarn packages'
-            inputs:
-              customRegistry: 'useFeed'
-              customFeed: ${{ parameters.packageFeed }}
-              arguments: --frozen-lockfile
-
-          - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}yarn
-            displayName: 'Test affected packages'
-
-
-
   - stage: 'Deploy_to_storage'
     displayName: 'Deploy to Storage'
     dependsOn: 'Build'

@@ -10,9 +10,9 @@ parameters:
   isPullRequest: ''
 
 stages:
-  - stage: 'Build'
+  - stage: 'Build Stage'
     jobs:
-      - job: 'Build'
+      - job: 'Build Web App'
         steps:
           - template: '../steps/build-vue-steps.yml'
             parameters:
