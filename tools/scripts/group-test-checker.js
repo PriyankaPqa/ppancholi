@@ -1,5 +1,5 @@
 /*
- * This script will scan all test.js, test.ts, spec.ts, spec.js, and detect files with no @group
+ * This script will scan all test.js, test.ts, spec.ts, spec.js, and detect files with no @group or invalid one
  *
  */
 /* eslint-disable no-console */
@@ -9,7 +9,12 @@ const { exec } = require('child_process');
 
 const execProm = util.promisify(exec);
 
-const SEARCH_TARGET_FOLDER = './src';
+const parameters = process.argv.slice(2);
+const SEARCH_TARGET_FOLDER = parameters[0];
+
+if (SEARCH_TARGET_FOLDER === undefined) {
+  console.log(new Error('Please indicate a search target folder'));
+}
 
 const validGroups = [
   'entities',
@@ -86,6 +91,8 @@ getAllTestFiles().then(async (testFiles) => {
       console.warn('Please fix:');
       console.table(filesWithIssues);
       throw new Error('@group attribute missing or invalid');
+    } else {
+      console.log('All good. Group validation check successful');
     }
   }
 });

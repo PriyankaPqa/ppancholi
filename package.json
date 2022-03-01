@@ -53,6 +53,7 @@
     "test": "jest --runInBand",
     "lint": "yarn workspaces run lint",
     "lerna:update": "lernaupdate",
+    "check-test-group": "node tools/scripts/group-test-checker.js **/*/src",
 
     "emis-app:build": "yarn --cwd apps/emis-app build",
     "emis-app:serve": "yarn --cwd apps/emis-app serve",
@@ -61,6 +62,8 @@
     "emis-app:coverage": "yarn emis-app:test --coverage",
     "emis-app:i18n-report": "node tools/scripts/i18n-report.js 'apps/emis-app/src/ui/lang/emis/en.json','apps/emis-app/src/ui/lang/registration/en.json' 'apps/emis-app/src'",
     "emis-app:lokalise": "yarn --cwd apps/emis-app lokalise",
+    "emis-app:check-test-group": "node tools/scripts/group-test-checker.js apps/emis-app/src",
+
 
     "benef-app:build": "yarn --cwd apps/benef-app build",
     "benef-app:serve": "yarn --cwd apps/benef-app serve",
@@ -69,6 +72,7 @@
     "benef-app:coverage": "yarn benef-app:test --coverage",
     "benef-app:i18n-report": "node tools/scripts/i18n-report.js 'apps/benef-app/src/ui/lang/en.json' 'apps/emis-app/src'",
     "benef-app:lokalise": "yarn --cwd apps/benef-app lokalise",
+    "benef-app:check-test-group": "node tools/scripts/group-test-checker.js apps/benef-app/src",
 
     "registration-lib:lint": "yarn --cwd libs/registration-lib lint",
     "registration-lib:test": "yarn jest --projects libs/registration-lib --runInBand",

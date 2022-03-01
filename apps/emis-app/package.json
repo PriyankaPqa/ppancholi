@@ -11,8 +11,6 @@
     "lokalise:delete": "node scripts/lokalise.js delete -file scripts/i18n_keys_to_delete.txt -path src/ui/lang",
     "lokalise:upErrors": "node scripts/lokalise.js upErrors",
     "lokalise": "yarn lokalise:up && yarn lokalise:upErrors && yarn lokalise:down",
-    "i18n:report": "node scripts/i18n-report.js",
-    "check:group": "node scripts/group-test-checker.js",
     "test:e2e:headless": "cross-env VUE_APP_MOCK_AUTHENTICATION=true testcafe chrome:headless --reporter spec,xunit:report.xml",
     "debug:e2e": "cross-env VUE_APP_MOCK_AUTHENTICATION=true testcafe $NODE_DEBUG_OPTION chrome",
     "serve:e2e": "cross-env VUE_APP_MOCK_AUTHENTICATION=true yarn serve",
