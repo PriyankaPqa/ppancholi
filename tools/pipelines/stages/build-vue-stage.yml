@@ -10,7 +10,7 @@ parameters:
   isPullRequest: ''
 
 stages:
-  - stage: 'Build Stage'
+  - stage: 'Build_Stage'
     jobs:
       - job: 'Build Web App'
         steps:
