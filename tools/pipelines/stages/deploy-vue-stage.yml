@@ -36,10 +36,8 @@ stages:
           - task: PowerShell@2
             displayName: 'Store version'
             inputs:
-              azureSubscription: 'CRC Tech Dev'
-              scriptType: 'pscore'
-              scriptLocation: 'inlineScript'
-              inlineScript: |
+              targetType: 'inline'
+              script: |
                 $version = $(Major).$(Minor).$(Patch)
                 echo "Version is $version"
                 echo "##vso[task.setvariable variable=VUE_APP_VERSION]$version"
