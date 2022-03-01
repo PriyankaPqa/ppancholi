@@ -53,7 +53,7 @@
     "test": "jest --runInBand",
     "lint": "yarn workspaces run lint",
     "lerna:update": "lernaupdate",
-    "check-test-group": "node tools/scripts/group-test-checker.js **/*/src",
+    "check-test-group": "node tools/scripts/group-test-checker.js apps/*/src && node tools/scripts/group-test-checker.js libs/*/src",
 
     "emis-app:build": "yarn --cwd apps/emis-app build",
     "emis-app:serve": "yarn --cwd apps/emis-app serve",
