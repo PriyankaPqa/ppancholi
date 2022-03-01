@@ -14,24 +14,8 @@ parameters:
 
 stages:
 
-  - stage: 'Feature_Name_Policy'
-    displayName: 'Feature Name Policy'
-    jobs:
-      - job: Feature_Name_Policy
-        condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
-        steps:
-          - task: PowerShell@2
-            displayName: 'Feature Name Policy'
-            inputs:
-              targetType: 'inline'
-              script: |
-                $conforms = '$(System.PullRequest.SourceBranch)' -match 'refs/heads/feature/\d{2,}'
-                if (-not $conforms){
-                  throw "Branch name must follow feature/#### format.  Branch was $(System.PullRequest.SourceBranch)"
-                }
-                echo "The feature branch $(System.PullRequest.SourceBranch) follows the name policy"
-
-
+  - template: './feature-name-policy-stage.yml'
+  
   - template: './build-vue-stage.yml'
     parameters:
       appName: ${{ parameters.appName }}
