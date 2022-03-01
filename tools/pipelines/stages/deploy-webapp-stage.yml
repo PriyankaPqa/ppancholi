@@ -154,7 +154,9 @@ stages:
 #              key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
 #              path: $(Build.SourcesDirectory)/node_modules
 #              cacheHitVar: CACHE_HIT
+
           - script: yarn config set msvs_version 2022 --global
+          - script: yarn global add windows-build-tools
           - task: Yarn@3
             displayName: 'Install yarn packages'
             inputs:
