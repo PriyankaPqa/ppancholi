@@ -1,13 +1,13 @@
 steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '16.x'
+      versionSpec: '14.x'
     displayName: 'Install Node.js'
 
   - task: Cache@2
     displayName: Cache yarn packages
     inputs:
-      key: '**/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+      key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
       path: $(Build.SourcesDirectory)/node_modules
       cacheHitVar: CACHE_HIT
 
