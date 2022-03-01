@@ -146,6 +146,10 @@ stages:
       - job: 'Test_Affected_Packages'
         displayName: 'Test affected packages'
         steps:
+          - task: NodeTool@0
+            inputs:
+                versionSpec: '16.x'
+            displayName: 'Install Node.js'
 #          - task: Cache@2
 #            displayName: Cache yarn packages
 #            inputs:
@@ -160,7 +164,7 @@ stages:
               customFeed: ${{ parameters.packageFeed }}
               arguments: --frozen-lockfile
 
-          - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
+          - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}yarn
             displayName: 'Test affected packages'
 
   - stage: 'Deploy_to_Dev'
