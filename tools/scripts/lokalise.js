@@ -5,8 +5,6 @@ const fs = require('fs');
 const path = require('path');
 const { LokaliseApi } = require('@lokalise/node-api');
 const readline = require('readline');
-
-
 const rl = readline.createInterface({
   input: process.stdin,
   output: process.stdout,
@@ -16,7 +14,17 @@ const API_KEY_READ_WRITE = '012f35ddfa553d3fe3839189b37cb6bc320ea268';
 const EMIS_PROJECT_ID = '955065625d9745a35c6f72.71379721';
 const REGISTRATION_PROJECT_ID = '495058395f5240e2843ef1.45815308';
 
+const LANG_FOLDER_PATH_EMIS = path.resolve(__dirname, '../../apps/emis-app/src/ui/lang/emis');
+const LANG_FOLDER_PATH_REGISTRATION = path.resolve(__dirname, '../../apps/emis-app/src/ui/lang/registration');
+const LANG_FOLDER_BENEF_APP = path.resolve(__dirname, '../../apps/benef-app/src/ui/lang');
+
 const SLICE_SIZE = 100;
+const THROTTLE = 1500; //ms
+
+const timeout = (ms) => new Promise((resolve) => {
+  setTimeout(resolve, ms);
+});
+
 
 const lokaliseApi = new LokaliseApi({ apiKey: API_KEY_READ_WRITE });
 
@@ -257,11 +265,11 @@ function deleteLocalKeys(keysToBeDeletedPath, languageFolderPath) {
   }
 }
 
-// Example: yarn lokalise:delete -file C:/CRC/EMIS/emis-webapp/scripts/i18n_keys_to_delete.txt -path C:/CRC/EMIS/emis-webapp/src/ui/lang
+// Example: yarn lokalise:delete -file /scripts/i18n_keys_to_delete.txt -path C:/CRC/EMIS/emis-webapp/src/ui/lang
 async function deleteLocalAndLokaliseKeys(parameters, applicationName) {
-  if (parameters[1] && parameters[1] === '-file' && parameters[3] === '-path') {
-    const keysToBeDeletedPath = parameters[2];
-    const languageFolderPath = parameters[4];
+  if (parameters[2] && parameters[2] === '-file' && parameters[4] === '-path') {
+    const keysToBeDeletedPath = parameters[3];
+    const languageFolderPath = parameters[5];
 
     deleteLocalKeys(keysToBeDeletedPath, languageFolderPath);
 
@@ -287,10 +295,52 @@ function promptDeleteKeys(parameters, applicationName) {
   });
 }
 
-module.exports.down = down;
-module.exports.up = up;
-module.exports.uploadErrors = uploadErrors;
-module.exports.promptDeleteKeys = promptDeleteKeys;
 
-module.exports.EMIS_PROJECT_ID = EMIS_PROJECT_ID;
-module.exports.REGISTRATION_PROJECT_ID = REGISTRATION_PROJECT_ID;
+
+async function downloadEmis() {
+  await down(EMIS_PROJECT_ID, LANG_FOLDER_PATH_EMIS);
+  await timeout(THROTTLE);
+  await down(REGISTRATION_PROJECT_ID, LANG_FOLDER_PATH_REGISTRATION)
+  process.exit(0)
+}
+
+async function uploadEmis() {
+  await up(EMIS_PROJECT_ID, LANG_FOLDER_PATH_EMIS);
+  await timeout(THROTTLE);
+  await up(REGISTRATION_PROJECT_ID, LANG_FOLDER_PATH_REGISTRATION)
+  process.exit(0)
+}
+
+async function downloadBenef() {
+  await down(REGISTRATION_PROJECT_ID, LANG_FOLDER_BENEF_APP);
+  process.exit(0)
+}
+
+async function uploadBenef() {
+  await up(REGISTRATION_PROJECT_ID, LANG_FOLDER_BENEF_APP)
+  process.exit(0)
+}
+
+const parameters = process.argv.slice(2);
+const applicationName = parameters[1]
+
+const isEmisApp = applicationName === 'emis-app';
+
+switch (parameters[0]) {
+  case 'down':
+    isEmisApp ? downloadEmis() : downloadBenef();
+    break;
+  case 'up':
+    isEmisApp ? uploadEmis() : uploadBenef();
+    break;
+  case 'upErrors':
+    console.log('The synchronisation of errors is broken. Need to be fixed');
+    process.exit(0);
+    // uploadErrors().then(() => process.exit(0));
+    break;
+  case 'delete':
+    promptDeleteKeys(parameters, applicationName);
+    break;
+  default:
+    break;
+}
