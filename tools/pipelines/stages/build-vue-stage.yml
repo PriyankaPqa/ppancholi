@@ -13,6 +13,7 @@ stages:
   - stage: 'Build_Stage'
     jobs:
       - job: 'Build_Web_App'
+        displayName: 'Build Web App'
         steps:
           - template: '../steps/build-vue-steps.yml'
             parameters:
