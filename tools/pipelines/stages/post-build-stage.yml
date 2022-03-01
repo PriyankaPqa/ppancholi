@@ -4,8 +4,8 @@ parameters:
   isPullRequest: ''
 
 stages:
-  - stage: 'Pre_Deploy'
-    displayName: 'Post Build - (Only PR)'
+  - stage: 'Post_Build'
+    displayName: 'Post Build (only PR)'
     condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
     jobs:
       - job: 'Test'

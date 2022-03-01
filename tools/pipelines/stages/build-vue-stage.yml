@@ -11,6 +11,7 @@ parameters:
 
 stages:
   - stage: 'Build_Stage'
+    displayName: 'Build'
     jobs:
       - job: 'Build_Web_App'
         displayName: 'Build Web App'
