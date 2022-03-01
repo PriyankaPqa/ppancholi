@@ -185,6 +185,7 @@
     "registration.type.individual": "Inscription : Famille ou individu",
     "registration.zendesk.householdmembers": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360055242173",
     "registration.zendesk.privacyStatement": "https:\/\/canadianredcross.zendesk.com\/hc\/fr\/articles\/360053455734",
+    "test-leo-benef-app": "",
     "tooltip.home_address": "Votre domicile \/ adresse permanente doit être votre lieu de résidence principal",
     "tooltip.temporary_address": "Si vous séjournez temporairement à l'extérieur de votre domicile \/ résidence permanente, veuillez fournir l'adresse de votre emplacement actuel.",
     "validations.anyPhone": "Saisir au moins un numéro de téléphone",

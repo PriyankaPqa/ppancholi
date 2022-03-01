@@ -1,3 +1,7 @@
+/**
+ * @group ui/components/registration
+ */
+
 import { mockEvent } from '@libs/registration-lib/entities/event';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';

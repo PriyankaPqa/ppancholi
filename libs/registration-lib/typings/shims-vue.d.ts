@@ -1,4 +1,4 @@
-import Vue, { ComponentOptions } from "vue";
+import Vue from 'vue';
 
 declare module '*.vue' {
 

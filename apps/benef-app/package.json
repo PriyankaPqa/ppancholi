@@ -5,16 +5,11 @@
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint --fix --max-warnings=0",
-    "build:all": "yarn lokalise && yarn build",
-    "inspect": "vue-cli-service inspect",
+    "lint": "eslint . --fix --max-warnings=0",
+    "lokalise:down": "node ../../tools/scripts/lokalise.js down benef-app",
+    "lokalise:up": "node ../../tools/scripts/lokalise.js up benef-app",
     "lokalise": "yarn lokalise:up && yarn lokalise:down",
-    "lokalise:down": "node scripts/lokalise.js down",
-    "lokalise:up": "node scripts/lokalise.js up",
-    "lokalise:delete": "node scripts/lokalise.js delete",
-    "report": "vue-cli-service build --report",
-    "report-json": "vue-cli-service build --report-json",
-    "i18n:report": "node i18n-report.js"
+    "lokalise:delete": "node ../../tools/scripts/lokalise.js delete benef-app -file ../../tools/scripts/i18n_keys_to_delete.txt -path src/ui/lang"
   },
   "dependencies": {
     "@crctech/component-library": "1.0.195",
@@ -43,10 +38,8 @@
   },
   "devDependencies": {
     "@babel/core": "7.17.5",
-    "@lokalise/node-api": "^2.0.1",
     "@types/lodash": "4.14.179",
     "@vue/cli-plugin-babel": "^4.5.15",
-    "@vue/cli-plugin-eslint": "4.5.15",
     "@vue/cli-plugin-pwa": "4.5.15",
     "@vue/cli-plugin-router": "4.5.15",
     "@vue/cli-plugin-typescript": "4.5.15",
@@ -59,7 +52,6 @@
     "css-loader": "^4.3.0",
     "sass": "1.32.13",
     "sass-loader": "^10.0.2",
-    "unzipper": "^0.10.5",
     "vue-axe": "^2.4.3",
     "vue-cli-plugin-vuetify": "2.4.6",
     "vue-cli-plugin-webpack-bundle-analyzer": "^2.0.0",

@@ -1,3 +1,7 @@
+/**
+ * @group ui/helpers
+ */
+
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import helpers from './helpers';
 

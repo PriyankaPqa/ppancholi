@@ -93,4 +93,5 @@ module.exports = {
     },
   ],
   plugins: ['vuejs-accessibility'],
+  ignorePatterns: ['dist/**', 'node_modules/**'],
 };
