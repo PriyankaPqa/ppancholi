@@ -152,7 +152,7 @@ stages:
 #              key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
 #              path: $(Build.SourcesDirectory)/node_modules
 #              cacheHitVar: CACHE_HIT
-          - script: yarn config set msvs_version 2017
+          - script: yarn config set msvs_version 2017 --global
           - task: Yarn@3
             displayName: 'Install yarn packages'
             inputs:
