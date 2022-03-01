@@ -1,14 +1,10 @@
-const lokalise = require('../../../tools/scripts/lokalise-base');
+const path = require('path');
+const {
+  up, down, promptDeleteKeys, uploadErrors, EMIS_PROJECT_ID, REGISTRATION_PROJECT_ID,
+} = require('../../../tools/scripts/lokalise-base');
 
-const up = lokalise.up;
-const down = lokalise.down;
-const uploadErrors = lokalise.uploadErrors;
-const promptDeleteKeys = lokalise.promptDeleteKeys;
-const EMIS_PROJECT_ID = lokalise.EMIS_PROJECT_ID;
-const REGISTRATION_PROJECT_ID = lokalise.REGISTRATION_PROJECT_ID;
-
-const LANG_FOLDER_PATH_EMIS = 'src/ui/lang/emis';
-const LANG_FOLDER_PATH_REGISTRATION = 'src/ui/lang/registration';
+const LANG_FOLDER_PATH_EMIS = path.resolve(__dirname, '../src/ui/lang/emis');
+const LANG_FOLDER_PATH_REGISTRATION = path.resolve(__dirname, '../src/ui/lang/registration');
 
 const parameters = process.argv.slice(2);
 

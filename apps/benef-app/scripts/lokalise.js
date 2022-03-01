@@ -4,9 +4,7 @@ const lokalise = require('../../../tools/scripts/lokalise-base');
 const LANG_FOLDER_PATH = path.resolve(__dirname, '../src/ui/lang');
 const REGISTRATION_PROJECT_ID = lokalise.REGISTRATION_PROJECT_ID;
 
-const up = lokalise.up;
-const down = lokalise.down;
-const promptDeleteKeys = lokalise.promptDeleteKeys;
+const { up, down, promptDeleteKeys } = require('../../../tools/scripts/lokalise-base');
 
 const parameters = process.argv.slice(2);
 
