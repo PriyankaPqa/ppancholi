@@ -45,6 +45,7 @@
 </template>
 
 <script>
+/* eslint-disable no-console */
 import Vue from 'vue';
 import { localStorageKeys } from '@/constants/localStorage';
 import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@crctech/component-library';
