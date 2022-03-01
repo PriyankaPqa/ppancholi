@@ -15,7 +15,6 @@ parameters:
 stages:
   # Validate the name of the branch
   - template: './stages/feature-name-policy-stage.yml'
-    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
 
   # Build the application and publish the artifact
   - template: './stages/build-vue-stage.yml'
@@ -32,7 +31,6 @@ stages:
 
   # Trigger only on Pull Request after the build
   - template: './stages/post-build-stage.yml'
-    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
     parameters:
       appName: ${{ parameters.appName }}
       packageFeed: ${{ parameters.packageFeed }}

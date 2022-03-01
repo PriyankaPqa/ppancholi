@@ -6,6 +6,7 @@ parameters:
 stages:
   - stage: 'Pre_Deploy'
       displayName: 'Post Build - (Only PR)'
+      condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
       jobs:
         - job: 'Test'
           steps:

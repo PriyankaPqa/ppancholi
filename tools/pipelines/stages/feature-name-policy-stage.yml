@@ -1,5 +1,6 @@
 stages:
   - stage: 'Feature_Name_Policy'
+    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
     displayName: 'Pre Build Stage'
     jobs:
       - job: Feature_Name_Policy
