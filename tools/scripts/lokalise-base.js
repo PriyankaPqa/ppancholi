@@ -1,11 +1,11 @@
 /* eslint-disable */
-
 const unzipper = require('unzipper');
 const https = require('https');
 const fs = require('fs');
 const path = require('path');
 const { LokaliseApi } = require('@lokalise/node-api');
 const readline = require('readline');
+
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -64,6 +64,11 @@ const up = (projectId, folderPath) => new Promise((resolve, reject) => {
   console.log(`Upload ${folderPath} to project ${projectId}`);
   // We will upload all files contained in the lang folder
   const files = fs.readdirSync(folderPath);
+
+  if (files.length === 0) {
+    console.log('Nothing to upload')
+    resolve(true)
+  }
   for (let i = 0; i < files.length; i += 1) {
     const file = files[i];
     const langISO = path.parse(file).name;
@@ -177,11 +182,12 @@ const down = (projectId, path) => new Promise((resolve) => {
     placeholder_format: 'icu', // Placeholder will be converted to be used with our app
     replace_breaks: false,
   }).then((data) => {
-    // DOWNLOAD A ZIP OF TRANSLATIONS
-    https.get(data.bundle_url, (response) => {
-      response.pipe(unzipper.Extract({ path }));
+     https.get(data.bundle_url, (response) => {
+       const unzipExtractor = unzipper.Extract({ path });
+       response.pipe(unzipExtractor);
+       unzipExtractor.on('close', () => resolve(true));
     });
-    resolve(true);
+
   });
 });
 
