@@ -16,35 +16,7 @@ stages:
   # Validate the name of the branch
   - template: './stages/feature-name-policy-stage.yml'
 
-  - stage: 'Feature_Name_Policy'
-    displayName: 'Feature Name Policy'
-    jobs:
-      - job: Feature_Name_Policy
-        condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
-        steps:
-          - task: PowerShell@2
-            displayName: 'Feature Name Policy'
-            inputs:
-              targetType: 'inline'
-              script: |
-                $conforms = '$(System.PullRequest.SourceBranch)' -match 'refs/heads/feature/\d{2,}'
-                if (-not $conforms){
-                  throw "Branch name must follow feature/#### format.  Branch was $(System.PullRequest.SourceBranch)"
-                }
-                echo "The feature branch $(System.PullRequest.SourceBranch) follows the name policy"
-      - job: 'Store_version'
-        displayName: 'Store version'
-        steps:
-          - task: PowerShell@2
-            displayName: 'Store version'
-            inputs:
-              targetType: 'inline'
-              script: |
-                $version = "$(Major).$(Minor).$(Patch)"
-                echo "Version is $version, Build number is $(Build.BuildNumber)"
-                echo "##vso[task.setvariable variable=VUE_APP_VERSION]$version"
-
-
+  # Build the application and publish the artifact
   - template: './stages/build-vue-stage.yml'
     parameters:
       appName: ${{ parameters.appName }}

@@ -16,3 +16,14 @@ stages:
                   throw "Branch name must follow feature/#### format.  Branch was $(System.PullRequest.SourceBranch)"
                 }
                 echo "The feature branch $(System.PullRequest.SourceBranch) follows the name policy"
+      - job: 'Store_version'
+        displayName: 'Store version'
+        steps:
+          - task: PowerShell@2
+            displayName: 'Store version'
+            inputs:
+              targetType: 'inline'
+              script: |
+                $version = "$(Major).$(Minor).$(Patch)"
+                echo "Version is $version, Build number is $(Build.BuildNumber)"
+                echo "##vso[task.setvariable variable=VUE_APP_VERSION]$version"                
