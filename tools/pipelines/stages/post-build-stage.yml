@@ -5,24 +5,24 @@ parameters:
 
 stages:
   - stage: 'Pre_Deploy'
-      displayName: 'Post Build - (Only PR)'
-      condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
-      jobs:
-        - job: 'Test'
-          steps:
-            - task: Cache@2
+    displayName: 'Post Build - (Only PR)'
+    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
+    jobs:
+      - job: 'Test'
+        steps:
+          - task: Cache@2
             displayName: Cache yarn packages
             inputs:
-            key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-            path: $(Build.SourcesDirectory)/node_modules
-            cacheHitVar: CACHE_HIT
+              key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+              path: $(Build.SourcesDirectory)/node_modules
+              cacheHitVar: CACHE_HIT
 
-            - task: Yarn@3
-              displayName: 'Install yarn packages'
-              inputs:
-                customRegistry: 'useFeed'
-                customFeed: ${{ parameters.packageFeed }}
-                arguments: --frozen-lockfile
+          - task: Yarn@3
+            displayName: 'Install yarn packages'
+            inputs:
+              customRegistry: 'useFeed'
+              customFeed: ${{ parameters.packageFeed }}
+              arguments: --frozen-lockfile
 
-            - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
-              displayName: 'Test affected packages'
+          - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
+            displayName: 'Test affected packages'
