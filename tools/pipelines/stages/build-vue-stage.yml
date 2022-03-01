@@ -12,7 +12,7 @@ parameters:
 stages:
   - stage: 'Build_Stage'
     jobs:
-      - job: 'Build Web App'
+      - job: 'Build_Web_App'
         steps:
           - template: '../steps/build-vue-steps.yml'
             parameters:
