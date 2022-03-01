@@ -28,8 +28,6 @@ import { SignalR } from '@/ui/plugins/signalR';
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
 
-import AuthenticationProvider from '@/auth/AuthenticationProvider';
-import { CustomNavigationClient } from '@/ui/router/NavigationClient';
 import store from './store/store';
 
 import router from './ui/router';
@@ -48,9 +46,6 @@ applicationInsights.initialize({
   router,
   appName: 'EMISv2',
 });
-
-const navigationClient = new CustomNavigationClient(router);
-AuthenticationProvider.msalLibrary.setNavigationClient(navigationClient);
 
 Vue.prototype.$i18nRoute = Trans.i18nRoute.bind(Trans);
 Vue.prototype.$appInsights = applicationInsights;

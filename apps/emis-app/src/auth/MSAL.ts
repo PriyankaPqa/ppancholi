@@ -82,6 +82,8 @@ export class MSAL implements IMSAL {
     scopes: ['User.Read'],
   };
 
+  private config: Configuration;
+
   public accessToken: string;
 
   constructor(options: Options) {
@@ -148,8 +150,22 @@ export class MSAL implements IMSAL {
       }
     };
 
-    this.msalLibrary = new msal.PublicClientApplication(config);
+    this.config = config;
+  }
 
+  public init() {
+    let configWithCurrentTenant = this.config;
+    // if in localhost, the currentDomainTenant is null and the default authority is 'https://login.microsoftonline.com/common'
+    if(this.currentDomainTenant){
+      configWithCurrentTenant = {
+        ...this.config,
+        auth: {
+          ...this.config.auth,
+          authority: `https://login.microsoftonline.com/${this.currentDomainTenant}`
+        }
+      }
+    }
+    this.msalLibrary = new msal.PublicClientApplication(configWithCurrentTenant);
   }
 
   /**
@@ -201,7 +217,7 @@ export class MSAL implements IMSAL {
     }
 
     // TODO Remove when we're sure it does not go in. Normally because we make sure to call loadAuthModule
-    if (!this.account) { // acquireToken might be called before loadAuthModule
+    if (!this.account) {
       this.showConsole && console.debug(`acquireToken - no account`)
       this.enableAppInsights && applicationInsights.trackTrace(
         'acquireToken - no account',
@@ -209,7 +225,6 @@ export class MSAL implements IMSAL {
         'MSAL',
         'acquireToken'
       );
-      // await this.loadAuthModule('MSAL - acquireToken');
     }
 
     this.showConsole && console.debug('acquireToken - account', this.account)
@@ -248,7 +263,6 @@ export class MSAL implements IMSAL {
           'MSAL',
           'acquireToken');
 
-        await this.msalLibrary.handleRedirectPromise();
 
         this.msalLibrary.acquireTokenRedirect(this.getInteractiveRequest())
           .catch((e) => {
@@ -262,11 +276,6 @@ export class MSAL implements IMSAL {
           'MSAL',
           'acquireToken'
         );
-        try {
-          await this.msalLibrary.handleRedirectPromise();
-        } catch (e) {
-          this.showConsole && console.error('handleRedirectPromise error', e)
-        }
         this.signIn();
       }
     }
@@ -323,8 +332,6 @@ export class MSAL implements IMSAL {
    * Check if user is authenticated or not
    */
   public async isAuthenticated(): Promise<boolean> {
-    // handleRedirectPromise must be called and awaited on each page load before determining if a user is signed in or not
-    return this.msalLibrary.handleRedirectPromise().then(() => {
       if (this.account) {
         this.showConsole && console.debug('isAuthenticated - account', true)
         this.enableAppInsights && applicationInsights.trackTrace(
@@ -355,10 +362,6 @@ export class MSAL implements IMSAL {
         );
         return false;
       });
-    }).catch(() => {
-      return false;
-    });
-
   }
 
   /**
@@ -393,12 +396,6 @@ export class MSAL implements IMSAL {
         'MSAL',
         'checkIfLoggedInCurrentTenant'
       );
-      try {
-        await this.msalLibrary.handleRedirectPromise();
-      } catch (e) {
-        this.showConsole && console.error('handleRedirectPromise error', e)
-      }
-
       this.signIn(this.currentDomainTenant);
     } else {
       if (this.account.localAccountId !== accountForTenant.localAccountId) {
@@ -430,52 +427,6 @@ export class MSAL implements IMSAL {
    * TODO: Add account chooser code
    * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
    */
-  private getAccount(): AccountInfo | null {
-    const currentAccounts = this.msalLibrary.getAllAccounts();
-    this.showConsole && console.debug("Result if we would have used msal.getActiveAccount");
-    this.showConsole && console.debug(this.msalLibrary.getActiveAccount());
-    if (currentAccounts === null) {
-      this.showConsole && console.debug("getAccount - No accounts detected");
-      this.enableAppInsights && applicationInsights.trackTrace(
-        'getAccount - No accounts detected',
-        {},
-        'MSAL',
-        'getAccount'
-      );
-      return null;
-    }
-
-    if (currentAccounts.length > 1) {
-      // Add choose account code here
-      this.showConsole && console.debug("getAccount - Multiple accounts detected, need to add choose account code. For now we pick the first one");
-      this.showConsole && console.table(currentAccounts);
-      this.enableAppInsights && applicationInsights.trackTrace(
-        'getAccount - Multiple accounts detected, need to add choose account code. For now we pick the first one',
-        {currentAccounts},
-        'MSAL',
-        'getAccount'
-      );
-      return currentAccounts[0];
-    } else if (currentAccounts.length === 1) {
-      this.showConsole && console.debug("getAccount - one account");
-      this.showConsole && console.table(currentAccounts);
-      this.enableAppInsights && applicationInsights.trackTrace(
-        'getAccount - one account',
-        {currentAccounts},
-        'MSAL',
-        'getAccount'
-      );
-      return currentAccounts[0];
-    }
-
-    return null;
-  }
-
-  /**
-   * Calls getAllAccounts and determines the correct account to sign into, currently defaults to first account found in cache.
-   * TODO: Add account chooser code
-   * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
-   */
   private getAccountForCurrentTenant() : AccountInfo | null {
     if (this.account?.tenantId === this.currentDomainTenant) {
       this.showConsole && console.debug("The current account matches tenant id, so we return it");
@@ -485,6 +436,7 @@ export class MSAL implements IMSAL {
     let currentAccounts = this.msalLibrary.getAllAccounts();
     this.showConsole && console.debug("Result if we would have used msal.getActiveAccount");
     this.showConsole && console.debug(this.msalLibrary.getActiveAccount());
+
     if (currentAccounts === null) {
       this.showConsole && console.debug("getAccountForCurrentTenant - No accounts detected");
       this.enableAppInsights && applicationInsights.trackTrace(
@@ -495,18 +447,31 @@ export class MSAL implements IMSAL {
       );
       return null;
     }
+
+    if(!this.currentDomainTenant){ // In localhost we return the default tenant
+      return currentAccounts[0];
+    }
+
     if (currentAccounts.length > 1) {
       // Add choose account code here
-      this.showConsole && console.debug("getAccountForCurrentTenant - Multiple accounts detected, need to add choose account code. For now we pick the first one matching current tenant");
+      this.showConsole && console.debug("getAccountForCurrentTenant - Multiple accounts detected");
       this.showConsole && console.table(currentAccounts);
       this.enableAppInsights && applicationInsights.trackTrace(
-        'getAccountForCurrentTenant - Multiple accounts detected, need to add choose account code. For now we pick the first one matching current tenant',
+        'getAccountForCurrentTenant - Multiple accounts detected,',
         {currentAccounts, currentDomainTenant: this.currentDomainTenant},
         'MSAL',
         'getAccountForCurrentTenant'
       );
       this.showConsole && console.debug('currentDomainTenant', this.currentDomainTenant);
-      return currentAccounts.filter((a) => a.tenantId === this.currentDomainTenant)[0]
+      const accountsForCurrentTenant = currentAccounts.filter((a) =>  a.tenantId === this.currentDomainTenant);
+      // If we have multiple accounts in the same tenant, we return null when we first load the app (this.account = null)
+      // so that the user is forced to go to the login page and pick an account
+      if(accountsForCurrentTenant.length > 1){
+        return this.account;
+      }
+      // Return the account corresponding to the current tenant (or null if there is no account for this tenant)
+      return accountsForCurrentTenant[0];
+
     } else if (currentAccounts.length === 1) {
       this.showConsole && console.debug("getAccountForCurrentTenant - one account");
       this.showConsole && console.table(currentAccounts);
@@ -532,7 +497,7 @@ export class MSAL implements IMSAL {
     } else { // not coming back from an auth redirect
       this.showConsole && console.debug('this.account', this.account)
       this.showConsole && console.debug('handleResponse - Will set account from method getAccount')
-      this.account = this.getAccount();
+      this.account = this.getAccountForCurrentTenant();
       this.showConsole && console.debug('Set account to:')
       this.showConsole && console.debug(this.account)
       this.showConsole && console.debug('Current tenant id :', this.currentDomainTenant)

@@ -38,16 +38,9 @@ const hasRole = (roleToCheck: string) => {
 const authenticationGuard = async (to: Route) => {
   if (to.matched.some((record) => record.meta.requiresAuthentication)) {
     // Check if the user is already signed in and redirect to login page if not
-    await AuthenticationProvider.loadAuthModule('authenticationGuard');
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
     if (!isSignedIn) {
       await AuthenticationProvider.signIn('authenticationGuard');
-    }
-
-    // If we are in localhost or haven't fetched the current tenant yet
-    if (!AuthenticationProvider.currentDomainTenant) {
-      const currentTenant = await new PublicService(httpClient).getTenantByEmisDomain(window.location.host);
-      AuthenticationProvider.setCurrentTenantDomain(currentTenant);
     }
 
     // Dispatch the action to the store to fetch the user data from the JWT token
@@ -107,7 +100,19 @@ const authorizationGuard = async (to: Route) => {
   return true;
 };
 
+const initializeMSAL = async () => {
+  const currentTenant = await new PublicService(httpClient).getTenantByEmisDomain(window.location.host);
+  AuthenticationProvider.setCurrentTenantDomain(currentTenant);
+
+  AuthenticationProvider.init();
+  await AuthenticationProvider.loadAuthModule('router');
+};
+
 router.beforeEach(async (to, from, next) => {
+  if (!AuthenticationProvider.msalLibrary) {
+    await initializeMSAL();
+  }
+
   localStorage.setItem('fromOutside', (from.name === null).toString());
   let loginError = false;
 
