@@ -25,6 +25,8 @@ variables:
   value: 'benef-app'
 - name: isPullRequest # Can't be used in condition
   value: $[eq(variables['Build.Reason'], 'PullRequest')]
+- name: VUE_APP_VERSION
+  value: $(Major).$(Minor).$(Patch)
 
 name: Benef App - $(Major).$(Minor).$(Patch)
 
