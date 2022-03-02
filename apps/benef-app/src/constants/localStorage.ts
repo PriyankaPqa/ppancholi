@@ -5,7 +5,4 @@ export const localStorageKeys = {
   recaptchaKey: {
     name: 'recaptcha-key',
   },
-  appVersion: {
-    name: 'app-version',
-  },
 };

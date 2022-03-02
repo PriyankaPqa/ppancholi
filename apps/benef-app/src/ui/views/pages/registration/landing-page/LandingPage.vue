@@ -20,7 +20,7 @@ import Vue from 'vue';
 import { RcRegistrationLandingPage } from '@crctech/component-library';
 import { IEvent } from '@libs/registration-lib/entities/event';
 import routes from '@/constants/routes';
-import { localStorageKeys } from '@/constants/localStorage';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 export default Vue.extend({
   name: 'LandingPage',
@@ -45,7 +45,7 @@ export default Vue.extend({
   },
 
   created() {
-    this.appVersion = sessionStorage.getItem(localStorageKeys.appVersion.name);
+    this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
     document.title = this.$m(this.event.name) as string;
   },
 

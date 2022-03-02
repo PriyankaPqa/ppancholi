@@ -6,6 +6,7 @@
 
 <script>
 import { localStorageKeys } from '@/constants/localStorage';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 export default {
   name: 'App',
@@ -22,7 +23,7 @@ export default {
     );
 
     sessionStorage.setItem(
-      localStorageKeys.appVersion.name,
+      sessionStorageKeys.appVersion.name,
       process.env.VUE_APP_VERSION,
     );
   },

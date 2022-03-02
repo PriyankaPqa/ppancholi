@@ -159,7 +159,7 @@ import routes from '@/constants/routes';
 import { IBrandingEntity } from '@/entities/tenantSettings';
 import { IUserAccountCombined } from '@/entities/user-account';
 import { Status } from '@/entities/base';
-import { localStorageKeys } from '@/constants/localStorage';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -187,7 +187,7 @@ export default Vue.extend({
   },
 
   async mounted() {
-    this.appVersion = sessionStorage.getItem(localStorageKeys.appVersion.name);
+    this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
     this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId(),
       { useEntityGlobalHandler: false, useMetadataGlobalHandler: false });
     this.currentTenantId = this.userAccount.entity?.tenantId;
