@@ -72,6 +72,7 @@ stages:
                       echo "##vso[task.setvariable variable=VUE_APP_AUTH_AAD_POSTLOGOUT_REDIRECT_URI]$redirect_uri"
                       echo "##vso[task.setvariable variable=VUE_APP_AUTH_AAD_REDIRECT_URI]$redirect_uri"
                       echo "##vso[task.setvariable variable=VUE_APP_VERSION;isOutput=true]$version"
+                      echo VUE_APP_VERSION = $version > Web/.env.production
                       
                       $account = az storage account list --query "[?name=='$feature']" | ConvertFrom-Json
                       $exists = $account.length -gt 0 
