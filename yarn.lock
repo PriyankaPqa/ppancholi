@@ -1066,6 +1066,15 @@
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
+"@crctech/component-library@1.0.199":
+  version "1.0.199"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.199.tgz#352522feb59af59e50708908ba3735313893cb7c"
+  integrity sha1-NSUi/rWa9Z5QcIkIujc1MTiTy3w=
+  dependencies:
+    "@googlemaps/js-api-loader" "^1.11.0"
+    date-fns "^2.14.0"
+    vuedraggable "^2.24.1"
+
 "@devexpress/error-stack-parser@^2.0.6":
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/@devexpress/error-stack-parser/-/error-stack-parser-2.0.6.tgz#a7c32e54583566bc6abf153c32a8b86d87d1e490"
