@@ -82,12 +82,6 @@ export const mockCaseFileMetadata = (force? : Partial<ICaseFileMetadata>): ICase
       },
     },
     status: EEventStatus.Open,
-    programName: {
-      translation: {
-        en: 'PN 1 EN',
-        fr: 'PN 1 FR',
-      },
-    },
   },
   lastActionDate: '2021-04-30',
   triageName: {
