@@ -4,8 +4,7 @@ parameters:
   isPullRequest: ''
 
 stages:
-- ${{ if eq( variables['build.reason'], 'PullRequest') }}:
-  - stage: 'Post_Build'
+  - stage: 'Post_Build_Stage'
     displayName: 'Post Build'
     condition: succeeded()
     jobs:
@@ -21,10 +20,35 @@ stages:
 
           - task: Yarn@3
             displayName: 'Install yarn packages'
+            condition: ne(variables['CACHE_HIT'], 'true')
             inputs:
               customRegistry: 'useFeed'
               customFeed: ${{ parameters.packageFeed }}
               arguments: --frozen-lockfile
 
-          - script: node ./tools/scripts/run-commands.js test ${{parameters.isPullRequest}} ${{parameters.appName}}
+          - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
             displayName: 'Run tests'
+
+      - job: 'Publish_Test'
+        dependsOn: 'Test'
+        displayName: 'Publish Results'
+        steps:
+          - task: PublishTestResults@2
+            displayName: 'Publish Test Result'
+            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+            inputs:
+              testRunner: VSTest
+              testResultsFiles: '**/*result*.trx'
+              failTaskOnFailedTests: false
+
+          - script: node ./tools/scripts/merge-test-coverage.js
+            displayName: 'Merge Code Coverage Reports'
+            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+
+          - task: PublishCodeCoverageResults@1
+            displayName: 'Publish Merged Code Coverage Report'
+            inputs:
+              codeCoverageTool: 'Cobertura'
+              summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
+              failIfCoverageEmpty: false
+            condition: eq(variables['build.sourceBranch'], 'refs/heads/master')

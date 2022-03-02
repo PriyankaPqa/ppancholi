@@ -144,13 +144,14 @@ stages:
 
 
 
+
 - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
   - stage: 'Deploy_to_Dev'
     displayName: 'Deploy to Dev'
-    dependsOn: 'Build_Stage'
+    dependsOn: 'Post_Build_Stage'
     condition: succeeded()
     pool:
-      vmImage: 'windows-latest'
+      vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Dev'
         displayName: 'Deploy WebApp to Dev'
@@ -214,7 +215,7 @@ stages:
     dependsOn: 'Deploy_to_Dev'
     condition: succeeded()
     pool:
-      vmImage: 'windows-latest'
+      vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Prod'
         displayName: 'Deploy WebApp to Prod'

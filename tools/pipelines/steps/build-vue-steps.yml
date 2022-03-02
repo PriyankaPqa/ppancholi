@@ -19,30 +19,6 @@ steps:
      customFeed: ${{ parameters.packageFeed }}
      arguments: --frozen-lockfile
 
-  - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
-    displayName: 'Test affected packages'
-    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Result'
-    condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
-    inputs:
-      testRunner: VSTest
-      testResultsFiles: '**/*result*.trx'
-      failTaskOnFailedTests: false
-
-  - script: node ./tools/scripts/merge-test-coverage.js
-    displayName: 'Merge Code Coverage Reports'
-    condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
-
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Merged Code Coverage'
-    inputs:
-      codeCoverageTool: 'Cobertura'
-      summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
-      failIfCoverageEmpty: false
-    condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
-
   - script: yarn ${{ parameters.lokaliseCommand }}
     displayName: 'Lokalise Sync'
     workingDirectory: ${{ parameters.workingDir }}
