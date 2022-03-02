@@ -20,6 +20,11 @@ export default {
       localStorageKeys.recaptchaKey.name,
       process.env.VUE_APP_GOOGLE_RECAPTCHA_KEY,
     );
+
+    sessionStorage.setItem(
+      localStorageKeys.appVersion.name,
+      process.env.VUE_APP_VERSION,
+    );
   },
 };
 

@@ -118,6 +118,9 @@
     </div>
 
     <template #append>
+      <div class="rc-body12 pl-4 pb-1">
+        {{ $t('rightmenu.version') }}: {{ appVersion }}
+      </div>
       <v-divider />
 
       <v-list-item data-test="account-settings" link @click.native="accountSettings">
@@ -156,6 +159,7 @@ import routes from '@/constants/routes';
 import { IBrandingEntity } from '@/entities/tenantSettings';
 import { IUserAccountCombined } from '@/entities/user-account';
 import { Status } from '@/entities/base';
+import { localStorageKeys } from '@/constants/localStorage';
 
 export default Vue.extend({
   name: 'RightMenu',
@@ -166,6 +170,7 @@ export default Vue.extend({
       userAccount: null as IUserAccountCombined,
       tenants: [] as IBrandingEntity[],
       currentTenantId: null as string,
+      appVersion: '',
     };
   },
 
@@ -182,6 +187,7 @@ export default Vue.extend({
   },
 
   async mounted() {
+    this.appVersion = sessionStorage.getItem(localStorageKeys.appVersion.name);
     this.userAccount = await this.$storage.userAccount.actions.fetch(this.$storage.user.getters.userId(),
       { useEntityGlobalHandler: false, useMetadataGlobalHandler: false });
     this.currentTenantId = this.userAccount.entity?.tenantId;
