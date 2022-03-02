@@ -1,12 +1,17 @@
 <template>
-  <div>
-    <h1 class="d-flex justify-center pt-6">
-      {{ $m(event.name) }}
-    </h1>
-    <rc-registration-landing-page
-      :title="$t('registration.landingpage.welcome_self')"
-      :phone-number="phoneNumber"
-      @redirect="redirect" />
+  <div class="landingPage">
+    <div>
+      <h1 class="d-flex justify-center pt-6">
+        {{ $m(event.name) }}
+      </h1>
+      <rc-registration-landing-page
+        :title="$t('registration.landingpage.welcome_self')"
+        :phone-number="phoneNumber"
+        @redirect="redirect" />
+    </div>
+    <div class="d-flex rc-body12 justify-end">
+      {{ $t('registration.version') }}: {{ appVersion }}
+    </div>
   </div>
 </template>
 
@@ -15,12 +20,19 @@ import Vue from 'vue';
 import { RcRegistrationLandingPage } from '@crctech/component-library';
 import { IEvent } from '@libs/registration-lib/entities/event';
 import routes from '@/constants/routes';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 export default Vue.extend({
   name: 'LandingPage',
 
   components: {
     RcRegistrationLandingPage,
+  },
+
+  data() {
+    return {
+      appVersion: '',
+    };
   },
 
   computed: {
@@ -33,6 +45,7 @@ export default Vue.extend({
   },
 
   created() {
+    this.appVersion = sessionStorage.getItem(sessionStorageKeys.appVersion.name);
     document.title = this.$m(this.event.name) as string;
   },
 
@@ -43,3 +56,12 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style scoped lang="scss">
+  .landingPage {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+</style>

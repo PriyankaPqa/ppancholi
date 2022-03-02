@@ -6,6 +6,7 @@
 
 <script>
 import { localStorageKeys } from '@/constants/localStorage';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 export default {
   name: 'App',
@@ -19,6 +20,11 @@ export default {
     localStorage.setItem(
       localStorageKeys.recaptchaKey.name,
       process.env.VUE_APP_GOOGLE_RECAPTCHA_KEY,
+    );
+
+    sessionStorage.setItem(
+      sessionStorageKeys.appVersion.name,
+      process.env.VUE_APP_VERSION,
     );
   },
 };

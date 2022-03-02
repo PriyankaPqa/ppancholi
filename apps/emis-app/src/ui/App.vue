@@ -47,6 +47,7 @@
 <script>
 import Vue from 'vue';
 import { localStorageKeys } from '@/constants/localStorage';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@crctech/component-library';
 import sanitizeHtml from 'sanitize-html';
 
@@ -139,6 +140,7 @@ export default {
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VUE_APP_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VUE_APP_API_BASE_URL);
+    sessionStorage.setItem(sessionStorageKeys.appVersion.name, process.env.VUE_APP_VERSION);
 
     // The access token will be refreshed automatically every 5 minutes
     AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
