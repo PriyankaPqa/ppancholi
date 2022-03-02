@@ -1,0 +1,44 @@
+parameters:
+  appName: ''
+  packageFeed: ''
+  storage: ''
+  cdnEndpoint: ''
+  cdnProfile: ''
+  lokalise: true
+  lint: true
+  buildCommand: 'build --mode production'
+  lokaliseCommand: 'lokalise --mode production'
+  workingDir: ''
+  distDir: ''
+  isPullRequest: ''
+
+stages:
+  # Validate the name of the branch
+  - template: './stages/pre-build-stage.yml'
+
+  # Build the application and publish the artifact
+  - template: './stages/build-stage.yml'
+    parameters:
+      appName: ${{ parameters.appName }}
+      packageFeed: ${{ parameters.packageFeed }}
+      lokalise: ${{ parameters.lokalise }}
+      lint: ${{ parameters.lint }}
+      buildCommand: ${{ parameters.buildCommand }}
+      lokaliseCommand: ${{ parameters.lokaliseCommand }}
+      workingDir: ${{ parameters.workingDir }}
+      distDir: ${{ parameters.distDir }}
+      isPullRequest: ${{ parameters.isPullRequest }}
+
+  # Trigger only on Pull Request after the build
+  - template: './stages/post-build-stage.yml'
+    parameters:
+      appName: ${{ parameters.appName }}
+      packageFeed: ${{ parameters.packageFeed }}
+      isPullRequest: ${{ parameters.isPullRequest }}
+
+  # Deploy to feature branch, dev, production
+  - template: './stages/deploy-stage.yml'
+    parameters:
+      storage: ${{ parameters.storage }}
+      cdnEndpoint: ${{ parameters.cdnEndpoint }}
+      cdnProfile: ${{ parameters.cdnProfile }}

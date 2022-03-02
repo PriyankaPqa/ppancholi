@@ -1,22 +1,20 @@
 parameters:
-  appName: ''
   storage: ''
   cdnEndpoint: ''
   cdnProfile: ''
   dnsName: 'crc-tech.ca'
-  packageFeed: ''
-  isPullRequest: ''
 
 stages:
+- ${{ if eq( variables['build.reason'], 'PullRequest') }}:
   - stage: 'Deploy_to_storage'
-    displayName: 'Deploy to Storage'
-    dependsOn: 'Build'
-    condition: and(succeeded(), startsWith(variables['build.reason'], 'PullRequest'))
+    displayName: 'Deploy to feature branch'
+    dependsOn: 'Build_Stage'
+    condition: succeeded()
     pool:
-      vmImage: 'windows-latest'
+      vmImage: 'windows-2022'
     jobs:
       - deployment: 'Deploy_WebApp_Storage'
-        displayName: 'Deploy WebApp to Feature Storage'
+        displayName: 'Deployment to feature branch'
         environment: 'Dev'
         variables:
           - group: Env-Dev
@@ -93,6 +91,7 @@ stages:
                     tokenSuffix: "}#"
                     useLegacyPattern: false
                     enableTelemetry: true
+
                 - task: AzureCLI@2
                   displayName: 'Clean Storage Folder'
                   inputs:
@@ -110,6 +109,7 @@ stages:
                     destination: 'AzureBlob'
                     storage: $(featureStorageName)
                     containerName: '$web'
+
                 - task: AzureCLI@2
                   displayName: 'Purge CDN'
                   continueOnError: true
@@ -143,31 +143,12 @@ stages:
                       } 
 
 
-      - job: 'Test_Affected_Packages'
-        displayName: 'Test affected packages'
-        steps:
-#          - task: Cache@2
-#            displayName: Cache yarn packages
-#            inputs:
-#              key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-#              path: $(Build.SourcesDirectory)/node_modules
-#              cacheHitVar: CACHE_HIT
-          - script: yarn add node-gyp@latest -W
-            displayName: "Install last node-gyp"
-          - task: Yarn@3
-            displayName: 'Install yarn packages'
-            inputs:
-              customRegistry: 'useFeed'
-              customFeed: ${{ parameters.packageFeed }}
-              arguments: --frozen-lockfile
 
-          - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
-            displayName: 'Test affected packages'
-
+- ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
   - stage: 'Deploy_to_Dev'
     displayName: 'Deploy to Dev'
-    dependsOn: 'Build'
-    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+    dependsOn: 'Build_Stage'
+    condition: succeeded()
     pool:
       vmImage: 'windows-latest'
     jobs:
@@ -227,10 +208,11 @@ stages:
             inputs:
               script: 'echo testing job is working'
 
+- ${{ if eq(variables['build.sourceBranch'], 'refs/heads/master') }}:
   - stage: 'Deploy_to_Prod'
     displayName: 'Deploy to Prod'
     dependsOn: 'Deploy_to_Dev'
-    condition: and(succeeded(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+    condition: succeeded()
     pool:
       vmImage: 'windows-latest'
     jobs:

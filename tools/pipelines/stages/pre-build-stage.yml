@@ -1,0 +1,18 @@
+stages:
+- ${{ if eq( variables['build.reason'], 'PullRequest') }}:
+  - stage: 'Pre_Build_Stage'
+    displayName: 'Pre Build'
+    jobs:
+      - job: Feature_Name_Policy
+        displayName: 'Feature Name Policy'
+        steps:
+          - task: PowerShell@2
+            displayName: 'Validate branch name'
+            inputs:
+              targetType: 'inline'
+              script: |
+                $conforms = '$(System.PullRequest.SourceBranch)' -match 'refs/heads/feature/\d{2,}'
+                if (-not $conforms){
+                  throw "Branch name must follow feature/#### format.  Branch was $(System.PullRequest.SourceBranch)"
+                }
+                echo "The feature branch $(System.PullRequest.SourceBranch) follows the name policy"

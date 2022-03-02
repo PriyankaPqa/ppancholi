@@ -1,0 +1,30 @@
+parameters:
+  appName: ''
+  packageFeed: ''
+  isPullRequest: ''
+
+stages:
+- ${{ if eq( variables['build.reason'], 'PullRequest') }}:
+  - stage: 'Post_Build'
+    displayName: 'Post Build'
+    condition: succeeded()
+    jobs:
+      - job: 'Test'
+        displayName: 'Test affected packages'
+        steps:
+          - task: Cache@2
+            displayName: Cache yarn packages
+            inputs:
+              key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+              path: $(Build.SourcesDirectory)/node_modules
+              cacheHitVar: CACHE_HIT
+
+          - task: Yarn@3
+            displayName: 'Install yarn packages'
+            inputs:
+              customRegistry: 'useFeed'
+              customFeed: ${{ parameters.packageFeed }}
+              arguments: --frozen-lockfile
+
+          - script: node ./tools/scripts/run-commands.js test ${{parameters.isPullRequest}} ${{parameters.appName}}
+            displayName: 'Run tests'
