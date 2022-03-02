@@ -56,6 +56,7 @@ stages:
                       
                       $cdn_endpoint_name = $cdn_endpoint + "-$(environment)"
                       $cdn_profile_name = $cdn_profile + "-$(environment)"
+                      $resourceGroup = '$(ResourceGroup)' -replace "dev", "features"
                       
                       #Passing the featureStorageName variable with the feature value. So it can be used for the next tasks
                       echo "##vso[task.setvariable variable=application]$application"
