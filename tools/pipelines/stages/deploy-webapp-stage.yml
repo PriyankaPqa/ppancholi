@@ -22,8 +22,6 @@ stages:
           - group: Env-Dev
           - name: featureStorageName
             value: ''
-          - name: vueAppVersion
-            value: $(Build.BuildNumber)  
         strategy:
           runOnce:
             deploy:

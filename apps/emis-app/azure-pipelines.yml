@@ -26,7 +26,7 @@ variables:
 - name: isPullRequest # Can't be used in condition
   value: $[eq(variables['Build.Reason'], 'PullRequest')]
 - name: VUE_APP_VERSION
-  value: '1.1.0'
+  value: $(Major).$(Minor).$(Patch)
 
 name: EMIS App - $(Major).$(Minor).$(Patch)
 
