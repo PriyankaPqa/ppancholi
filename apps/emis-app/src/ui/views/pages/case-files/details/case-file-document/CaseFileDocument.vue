@@ -3,7 +3,7 @@
     <rc-data-table
       data-test="case-file-documents-table"
       :items="caseFileDocumentsMapped"
-      :count="itemsCount"
+      :count="caseFileDocumentsMapped.length"
       :show-help="false"
       :help-link="$t('zendesk.help_link.case_document_list')"
       :labels="labels"
@@ -23,7 +23,7 @@
           :filter-options="filterOptions"
           :initial-filter="filterState"
           add-filter-label="document.filter"
-          :count="itemsCount"
+          :count="caseFileDocumentsMapped.length"
           @update:appliedFilter="onApplyFilter" />
       </template>
 
@@ -275,7 +275,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
     labels(): Record<string, unknown> {
       return {
         header: {
-          title: `${this.$t('caseFile.document.title')} (${this.itemsCount})`,
+          title: `${this.$t('caseFile.document.title')} (${this.caseFileDocumentsMapped.length})`,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
           addButtonLabel: this.$t('document.add.title'),
         },
