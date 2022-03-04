@@ -118,10 +118,11 @@ describe('tablePaginationSearch.vue', () => {
         expect(wrapper.vm.getSkip).toEqual(skip);
       });
 
-      it('returns 0 when pageIndex has not changed but a search is ongoing', () => {
+      it('returns 0 when pageIndex has not changed but a search is ongoing, if forceSkip is not false', () => {
         wrapper.setData({
           previousPageIndex: params.pageIndex,
           params: { ...params, search: 'query' },
+          forceSkip: true,
         });
         expect(wrapper.vm.isNewPageIndex).toBeFalsy();
         expect(wrapper.vm.getSkip).toEqual(0);

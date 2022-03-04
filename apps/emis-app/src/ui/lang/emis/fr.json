@@ -1584,6 +1584,7 @@
     "system_management.userAccounts.tenantSettings.warning.message.leave": "Les données que vous avez saisies seront perdues.",
     "tab.en": "Anglais",
     "tab.fr": "Français",
+    "table.refresh": "Rafraîchir",
     "team.add_members.success": "Les membres ont été ajouté(e)s.",
     "team.event.confirmDeleteDialog.message": "Voulez-vous vraiment supprimer {name} ?",
     "team.event.confirmDeleteDialog.title": "Supprimer l’événement",

@@ -1066,10 +1066,10 @@
     date-fns "^2.14.0"
     vuedraggable "^2.24.1"
 
-"@crctech/component-library@1.0.199":
-  version "1.0.199"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.199.tgz#352522feb59af59e50708908ba3735313893cb7c"
-  integrity sha1-NSUi/rWa9Z5QcIkIujc1MTiTy3w=
+"@crctech/component-library@1.0.204":
+  version "1.0.204"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.204.tgz#fea8848c864681b03d9b8f2126614731256211f1"
+  integrity sha1-/qiEjIZGgbA9m48hJmFHMSViEfE=
   dependencies:
     "@googlemaps/js-api-loader" "^1.11.0"
     date-fns "^2.14.0"

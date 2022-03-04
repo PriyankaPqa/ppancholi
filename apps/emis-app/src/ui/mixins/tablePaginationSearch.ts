@@ -57,7 +57,7 @@ export default Vue.extend({
 
       const skip = (pageIndex - 1) * pageSize;
 
-      if (this.isNewPageIndex) {
+      if (this.isNewPageIndex || !this.forceSkip) {
         return skip;
       }
 
