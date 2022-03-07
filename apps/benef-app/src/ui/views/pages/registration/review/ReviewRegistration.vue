@@ -1,7 +1,7 @@
 <template>
   <lib-review-registration
     :i18n="i18n"
-    :recaptcha-key="$hasFeature(FeatureKeys.BotProtection) ? recaptchaKey : ''"
+    :recaptcha-key="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress ? recaptchaKey : ''"
     :disable-autocomplete="disableAutocomplete" />
 </template>
 
@@ -32,6 +32,12 @@ export default Vue.extend({
       recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
       FeatureKeys,
     };
+  },
+
+  computed: {
+    isCaptchaAllowedIpAddress(): boolean {
+      return this.$storage.tenantSettings.getters.validateCaptchaAllowedIpAddress().ipAddressIsAllowed;
+    },
   },
 });
 </script>

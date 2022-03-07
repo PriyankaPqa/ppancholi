@@ -42,8 +42,9 @@
             <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
               <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
               <vue-programmatic-invisible-google-recaptcha
-                v-if="$hasFeature(FeatureKeys.BotProtection)"
+                v-if="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress"
                 ref="recaptchaSubmit"
+                data-test="google-recaptcha"
                 :sitekey="recaptchaKey"
                 element-id="recaptchaSubmit"
                 badge-position="left"
@@ -107,6 +108,12 @@ export default mixins(individual).extend({
 
   mixins: [individual],
 
+  computed: {
+    isCaptchaAllowedIpAddress(): boolean {
+      return this.$storage.tenantSettings.getters.validateCaptchaAllowedIpAddress().ipAddressIsAllowed;
+    },
+  },
+
   methods: {
     async back() {
       if (this.currentTabIndex === 0) {
@@ -117,7 +124,7 @@ export default mixins(individual).extend({
     },
 
     async goNext() {
-      if (this.currentTab.id === 'review' && this.$hasFeature(FeatureKeys.BotProtection)) {
+      if (this.currentTab.id === 'review' && this.$hasFeature(FeatureKeys.BotProtection) && !this.isCaptchaAllowedIpAddress) {
         // eslint-disable-next-line
         (this.$refs.recaptchaSubmit as any).execute();
       } else {

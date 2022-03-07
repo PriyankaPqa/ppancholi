@@ -2,7 +2,7 @@
   <lib-personal-information
     :min-age-registration="MIN_AGE_REGISTRATION"
     :i18n="i18n"
-    :recaptcha-key="$hasFeature(FeatureKeys.BotProtection) ? recaptchaKey : ''" />
+    :recaptcha-key="$hasFeature(FeatureKeys.BotProtection) && !isCaptchaAllowedIpAddress ? recaptchaKey : ''" />
 </template>
 <script lang="ts">
 import Vue from 'vue';
@@ -25,6 +25,12 @@ export default Vue.extend({
       recaptchaKey: localStorage.getItem(localStorageKeys.recaptchaKey.name),
       FeatureKeys,
     };
+  },
+
+  computed: {
+    isCaptchaAllowedIpAddress(): boolean {
+      return this.$storage.tenantSettings.getters.validateCaptchaAllowedIpAddress().ipAddressIsAllowed;
+    },
   },
 });
 </script>

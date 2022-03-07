@@ -81,6 +81,7 @@ export default Vue.extend({
         this.$storage.registration.actions.fetchPrimarySpokenLanguages(),
         this.$storage.tenantSettings.actions.fetchPublicFeatures(),
         this.$storage.tenantSettings.actions.fetchBranding(),
+        this.$storage.tenantSettings.actions.validateCaptchaAllowedIpAddress(),
         SUPPORTED_LANGUAGES.map((lang) => this.$storage.tenantSettings.actions.fetchLogoUrl(lang)),
       ]).then(() => {
         this.fetchingData = false;

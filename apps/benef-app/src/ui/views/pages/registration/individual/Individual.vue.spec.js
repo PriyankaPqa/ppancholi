@@ -42,6 +42,58 @@ describe('Individual.vue', () => {
         expect(wrapper.vm.next).toHaveBeenCalledTimes(1);
       });
     });
+
+    describe('Google recaptcha', () => {
+      let element;
+
+      test('google recaptcha is shown if BotProtection is enabled and if ip address is not in allowed list', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha'],
+          computed: {
+            isCaptchaAllowedIpAddress: () => false,
+          },
+          mocks: {
+            $hasFeature: () => true,
+          },
+        });
+
+        element = wrapper.findDataTest('google-recaptcha');
+        expect(element.exists()).toBeTruthy();
+      });
+
+      test('google recaptcha is not shown if BotProtection is disabled', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha'],
+          computed: {
+            isCaptchaAllowedIpAddress: () => false,
+          },
+          mocks: {
+            $hasFeature: () => false,
+          },
+        });
+
+        element = wrapper.findDataTest('google-recaptcha');
+        expect(element.exists()).toBeFalsy();
+      });
+
+      test('google recaptcha is not shown if ip address is in allowed list', async () => {
+        wrapper = mount(Component, {
+          localVue,
+          stubs: ['i18n', 'vue-programmatic-invisible-google-recaptcha'],
+          computed: {
+            isCaptchaAllowedIpAddress: () => true,
+          },
+          mocks: {
+            $hasFeature: () => true,
+          },
+        });
+
+        element = wrapper.findDataTest('google-recaptcha');
+        expect(element.exists()).toBeFalsy();
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -62,16 +114,21 @@ describe('Individual.vue', () => {
     });
 
     describe('goNext', () => {
-      it('should called execute from recaptcha if on review stage and if BotProtection is enabled', async () => {
-        wrapper.vm.$refs.recaptchaSubmit = {};
-        wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
-        wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
-          id: 'review',
-        }));
-        wrapper.vm.$hasFeature = jest.fn(() => true);
-        await wrapper.vm.goNext();
-        expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
-      });
+      it('should called execute from recaptcha if on review stage and if BotProtection is enabled and if ip address is not in allowed list',
+        async () => {
+          wrapper.vm.$refs.recaptchaSubmit = {};
+          wrapper.vm.$refs.recaptchaSubmit.execute = jest.fn();
+          wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
+            id: 'review',
+          }));
+          wrapper.vm.$hasFeature = jest.fn(() => true);
+          wrapper.vm.$storage.tenantSettings.getters.validateCaptchaAllowedIpAddress = jest.fn(() => ({
+            ipAddressIsAllowed: false,
+            clientIpAddress: '',
+          }));
+          await wrapper.vm.goNext();
+          expect(wrapper.vm.$refs.recaptchaSubmit.execute).toHaveBeenCalledTimes(1);
+        });
       it('should call next from mixin otherwise', async () => {
         wrapper.vm.next = jest.fn();
         wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
