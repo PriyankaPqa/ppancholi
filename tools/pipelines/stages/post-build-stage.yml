@@ -20,14 +20,13 @@ stages:
           - script: yarn test:parallel ${{parameters.isPullRequest}} ${{parameters.appName}} $(System.TotalJobsInPhase) $(System.JobPositionInPhase)
             displayName: 'Run tests'
 
-  - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
       - job: 'Publish_Test'
         dependsOn: 'Test'
         displayName: 'Publish Results & Coverage'
         steps:
           - task: PublishTestResults@2
             displayName: 'Publish Test Result'
-            condition: succeededOrFailed()
+            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
             inputs:
               testRunner: VSTest
               testResultsFiles: '**/*result*.trx'
@@ -39,10 +38,11 @@ stages:
 
           - script: node ./tools/scripts/merge-test-coverage.js
             displayName: 'Merge Code Coverage Reports'
-            condition: succeededOrFailed()
+            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
 
           - task: PublishCodeCoverageResults@1
             displayName: 'Publish Merged Code Coverage Report'
+            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
             inputs:
               codeCoverageTool: 'Cobertura'
               summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
