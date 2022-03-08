@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 /* eslint-disable */
 import { mockCaseFileReferralEntity } from '@/entities/case-file-referral';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';

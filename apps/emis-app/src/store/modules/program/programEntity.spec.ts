@@ -1,7 +1,3 @@
-/**
- * @group store
- */
-
 import { ActionContext } from 'vuex';
 import { httpClient } from '@/services/httpClient';
 import { mockProgramEntity } from '@/entities/program';

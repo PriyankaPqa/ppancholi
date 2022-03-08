@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import _cloneDeep from 'lodash/cloneDeep';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFile, CaseFileStatus } from '@/entities/case-file';

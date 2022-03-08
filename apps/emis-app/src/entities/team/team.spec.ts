@@ -1,7 +1,3 @@
-/**
- * @group entities
- */
-
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { TeamEntity } from './team';
 import {

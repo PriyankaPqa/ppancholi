@@ -1,7 +1,3 @@
-/**
- * @group ui/components/system-management
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import Component from '../TenantSettings.vue';

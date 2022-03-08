@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
 import {
   FeatureKeys,

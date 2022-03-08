@@ -16,7 +16,15 @@ function mergeCodeCoverage() {
   // Build string package1=path_to_xml package2=path_to_xml
   const packages = filesPath
     .map((filePath) => {
-      const projectName = filePath.split('/')[1];
+      const filePathSplit = filePath.split('/');
+      let projectName = '';
+
+      if (filePathSplit.length === 3) { // 'benef-app/coverage/cobertura-coverage.xml'
+        projectName = filePath.split('/')[1];
+      } else { // 'coverage-job-0/cobertura-coverage.xml'
+        projectName = filePath.split('/')[0];
+      }
+
       return `${projectName}=${filePath}`;
     })
     .join(' ');

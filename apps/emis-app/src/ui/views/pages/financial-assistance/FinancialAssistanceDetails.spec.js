@@ -1,7 +1,3 @@
-/**
- * @group ui/components/financial-assistance
- */
-
 import { RcNestedTable } from '@crctech/component-library';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { Status } from '@/entities/base';

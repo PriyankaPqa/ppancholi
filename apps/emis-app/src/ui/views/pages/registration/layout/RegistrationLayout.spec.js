@@ -1,6 +1,3 @@
-/**
- * @group ui/components/registration
- */
 import { RcRouterViewTransition } from '@crctech/component-library';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import Component from './RegistrationLayout.vue';

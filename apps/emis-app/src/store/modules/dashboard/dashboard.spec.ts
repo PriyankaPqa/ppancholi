@@ -1,7 +1,3 @@
-/**
- * @group store
- */
-
 import { mockStore } from '@/store';
 
 const store = mockStore();

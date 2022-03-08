@@ -1,7 +1,3 @@
-/**
- * @group ui/components/registration
- */
-
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import Component from '../LeftMenu.vue';
 

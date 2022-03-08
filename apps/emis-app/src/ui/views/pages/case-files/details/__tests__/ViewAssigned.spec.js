@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedUserAccounts } from '@/entities/user-account';
 import { mockCombinedTeams } from '@/entities/team';

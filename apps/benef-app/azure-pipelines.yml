@@ -42,3 +42,4 @@ stages:
     workingDir: $(workingDir)
     distDir: $(distDir)
     isPullRequest: $(isPullRequest)
+    parrallelTestAgents: $(parrallelTestAgents)

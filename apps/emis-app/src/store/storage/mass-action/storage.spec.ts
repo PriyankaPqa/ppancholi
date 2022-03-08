@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import { MASS_ACTION_ENTITIES, MASS_ACTION_METADATA } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
 import { MassActionRunType, MassActionType } from '@/entities/mass-action';

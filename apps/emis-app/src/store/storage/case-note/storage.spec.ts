@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import { mockCaseNoteCategories, mockCaseNoteEntity } from '@/entities/case-note';
 import { CASE_NOTE_ENTITIES, CASE_NOTE_METADATA } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';

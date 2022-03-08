@@ -1,7 +1,3 @@
-/**
- * @group store
- */
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext } from 'vuex';
 import { DomainBaseService } from '@/services/base';

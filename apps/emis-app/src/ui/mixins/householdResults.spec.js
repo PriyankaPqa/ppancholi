@@ -1,7 +1,3 @@
-/**
- * @group ui/mixins
- */
-
 import { mockStorage } from '@libs/registration-lib/store/storage';
 import { mockCombinedHouseholds } from '@libs/registration-lib/entities/household';
 import householdResults from '@/ui/mixins/householdResults';

@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 import { renderPrimitiveValue } from './odata-query';
 
 describe('renderPrimitiveValue', () => {

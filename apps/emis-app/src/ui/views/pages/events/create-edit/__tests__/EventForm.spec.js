@@ -1,7 +1,3 @@
-/**
- * @group ui/components/events
- */
-
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';

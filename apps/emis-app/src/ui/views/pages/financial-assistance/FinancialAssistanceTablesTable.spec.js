@@ -1,7 +1,3 @@
-/**
- * @group ui/components/financial-assistance
- */
-
 import { RcDataTable } from '@crctech/component-library';
 import { EFilterType } from '@crctech/component-library/src/types';
 import helpers from '@/ui/helpers/helpers';

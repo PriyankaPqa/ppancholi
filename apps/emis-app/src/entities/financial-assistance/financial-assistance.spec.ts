@@ -1,7 +1,3 @@
-/**
- * @group entities
- */
-
 import { FinancialAssistanceTableEntity } from './financial-assistance';
 import { mockFinancialAssistanceTableEntity } from './financial-assistance.mock';
 

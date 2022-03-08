@@ -1,7 +1,3 @@
-/**
- * @group ui/components/financial-assistance
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import FinancialAssistanceTablesTable from '@/ui/views/pages/financial-assistance/FinancialAssistanceTablesTable.vue';
 import Component from './FinancialAssistanceHome.vue';

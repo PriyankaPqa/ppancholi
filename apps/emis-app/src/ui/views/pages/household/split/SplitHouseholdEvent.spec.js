@@ -1,7 +1,3 @@
-/**
- * @group ui/components/household
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EEventStatus, mockEventEntityData, mockEventMainInfo } from '@/entities/event';
 import { mockStorage } from '@/store/storage';

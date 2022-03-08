@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 /* eslint-disable */
 import { CASE_REFERRAL_ENTITIES, CASE_REFERRAL_METADATA } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';

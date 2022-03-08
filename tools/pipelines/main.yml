@@ -5,7 +5,6 @@ parameters:
   cdnEndpoint: ''
   cdnProfile: ''
   lokalise: true
-  lint: true
   buildCommand: 'build --mode production'
   lokaliseCommand: 'lokalise --mode production'
   workingDir: ''
@@ -19,15 +18,12 @@ stages:
   # Build the application and publish the artifact
   - template: './stages/build-stage.yml'
     parameters:
-      appName: ${{ parameters.appName }}
       packageFeed: ${{ parameters.packageFeed }}
       lokalise: ${{ parameters.lokalise }}
-      lint: ${{ parameters.lint }}
-      buildCommand: ${{ parameters.buildCommand }}
       lokaliseCommand: ${{ parameters.lokaliseCommand }}
+      buildCommand: ${{ parameters.buildCommand }}
       workingDir: ${{ parameters.workingDir }}
       distDir: ${{ parameters.distDir }}
-      isPullRequest: ${{ parameters.isPullRequest }}
 
   # Trigger after the build
   - template: './stages/post-build-stage.yml'

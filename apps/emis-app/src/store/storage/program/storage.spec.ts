@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import { mockStore } from '@/store';
 import { PROGRAM_ENTITIES, PROGRAM_METADATA } from '@/constants/vuex-modules';
 import { mockProgramEntity, mockProgramMetadata } from '@/entities/program';

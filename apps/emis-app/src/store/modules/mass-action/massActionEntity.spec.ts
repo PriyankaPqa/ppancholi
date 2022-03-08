@@ -1,7 +1,3 @@
-/**
- * @group store
- */
-
 import { ActionContext } from 'vuex';
 import { mockMassActionCreatePayload, mockMassActionService } from '@/services/mass-actions/entity';
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';

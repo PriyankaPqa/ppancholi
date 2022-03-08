@@ -1,7 +1,3 @@
-/**
- * @group ui/mixins
- */
-
 import _cloneDeep from 'lodash/cloneDeep';
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, shallowMount } from '@/test/testSetup';

@@ -1,6 +1,8 @@
-const { execSync } = require('child_process');
+const { shellAsync, getAffectedPackages } = require('./helpers');
 
-const shell = (cmd) => execSync(cmd, { encoding: 'utf8' });
+/**
+ * This script is to generate commands for affected packages
+ */
 
 const parameters = process.argv.slice(2);
 const paramCommand = parameters[0];
@@ -9,20 +11,10 @@ const applicationName = parameters[2];
 
 const commands = [];
 
-/**
- * Return a list of affected packages
- * @param isPullRequest
- * @returns Array<string>
- */
-const getAffectedPackages = (isPullRequest) => {
-  const since = isPullRequest === true ? 'origin/master' : 'origin/master~1';
-  const output = shell(`npx lerna list --json --all --since ${since} --include-dependents`);
-  const packages = JSON.parse(output);
-  return packages.map((p) => p.name);
-};
-
 if (paramCommand === undefined || isPullRequest === undefined || applicationName === undefined) {
+  console.log(parameters);
   console.log(new Error('1st param should be the command to execute. 2nd should be isPullRequest. 3rd should be applicationName'));
+  process.exit(1);
 }
 
 const packages = getAffectedPackages(isPullRequest);
@@ -43,4 +35,4 @@ if (packages.includes('@apps/emis-app') && applicationName === 'emis-app') {
 
 console.log(`Executing the generated command: ${commands.join(' && ')}`);
 
-shell(commands.join(' && '));
+shellAsync(commands.join(' && '));

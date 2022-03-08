@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 /* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@/entities/case-file-referral';

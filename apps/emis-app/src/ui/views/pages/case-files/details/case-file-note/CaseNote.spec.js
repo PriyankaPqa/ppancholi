@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { EFilterType } from '@crctech/component-library/src/types';
 import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';

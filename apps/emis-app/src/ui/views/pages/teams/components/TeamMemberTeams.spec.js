@@ -1,7 +1,3 @@
-/**
- * @group ui/components/teams
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockTeamEvents } from '@/entities/team';
 import { mockStorage } from '@/store/storage';

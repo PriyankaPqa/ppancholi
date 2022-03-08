@@ -1,7 +1,3 @@
-/**
- * @group ui/components/teams
- */
-
 /* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {

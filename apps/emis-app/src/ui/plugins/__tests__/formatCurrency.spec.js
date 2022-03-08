@@ -1,7 +1,3 @@
-/**
- * @group ui/plugins
- */
-
 import { createLocalVue, mount } from '@vue/test-utils';
 import formatCurrency from '../formatCurrency';
 

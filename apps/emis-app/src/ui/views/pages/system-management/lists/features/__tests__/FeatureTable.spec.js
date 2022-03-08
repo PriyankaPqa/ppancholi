@@ -1,6 +1,3 @@
-/**
- * @group ui/components/system-management
- */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockFeatures } from '@/entities/tenantSettings';
 import Component from '../FeatureTable.vue';

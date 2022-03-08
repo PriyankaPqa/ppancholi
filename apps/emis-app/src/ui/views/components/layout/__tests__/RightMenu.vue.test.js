@@ -1,7 +1,3 @@
-/**
- * @group ui/components/layout
- */
-
 /* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedTenantSettings } from '@/entities/tenantSettings';

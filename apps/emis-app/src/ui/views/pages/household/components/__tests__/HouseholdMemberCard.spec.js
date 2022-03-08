@@ -1,7 +1,3 @@
-/**
- * @group ui/components/household
- */
-
 import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
 import {
   mockIndigenousCommunitiesGetData, mockSplitHousehold, mockHouseholdCreate,

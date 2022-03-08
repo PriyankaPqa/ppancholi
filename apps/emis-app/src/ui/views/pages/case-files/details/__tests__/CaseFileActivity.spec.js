@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import flushPromises from 'flush-promises';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCaseFileActivities, CaseFileTriage, mockCombinedCaseFile } from '@/entities/case-file';

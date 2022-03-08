@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IState, IStore, mockStore } from '@/store';
 import { mockUserAccountEntities, mockUserAccountMetadatum } from '@/entities/user-account';

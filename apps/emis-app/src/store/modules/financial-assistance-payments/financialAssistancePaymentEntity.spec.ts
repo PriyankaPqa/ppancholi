@@ -1,7 +1,3 @@
-/**
- * @group store
- */
-
 /* eslint-disable */
 import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';

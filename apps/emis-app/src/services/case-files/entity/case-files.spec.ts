@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 import {
   ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus,
 } from '@/entities/case-file';

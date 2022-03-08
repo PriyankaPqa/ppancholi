@@ -1,7 +1,3 @@
-/**
- * @group store
- */
-
 import { Store } from 'vuex';
 import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
 import { mockStore, IRootState } from '@/store';

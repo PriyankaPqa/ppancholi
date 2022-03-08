@@ -1,7 +1,3 @@
-/**
- * @group ui/components/shared-components
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import Component from './LanguageSelector.vue';

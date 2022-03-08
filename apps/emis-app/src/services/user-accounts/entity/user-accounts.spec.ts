@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 import { IOptionSubItem } from '@/entities/optionItem';
 import { FilterKey, mockUserFilters } from '@/entities/user-account';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';

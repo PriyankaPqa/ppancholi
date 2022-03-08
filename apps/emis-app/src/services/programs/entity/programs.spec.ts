@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 import { mockProgramEntity } from '@/entities/program';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { ProgramsService } from './programs';

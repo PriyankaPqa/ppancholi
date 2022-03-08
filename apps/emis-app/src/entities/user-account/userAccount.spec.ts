@@ -1,7 +1,3 @@
-/**
- * @group entities
- */
-
 import {
   mockUserAccountEntity, UserAccountEntity, AccountStatus, IFilter,
 } from './index';

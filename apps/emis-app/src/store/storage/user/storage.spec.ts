@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import { mockStore } from '@/store';
 import { mockUsersData } from '@/entities/user';
 import { makeStorage } from './storage';

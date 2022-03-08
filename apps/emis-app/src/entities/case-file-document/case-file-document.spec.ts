@@ -1,7 +1,3 @@
-/**
- * @group entities
- */
-
 import {
   mockCaseFileDocumentEntity, CaseFileDocumentEntity,
 } from './index';

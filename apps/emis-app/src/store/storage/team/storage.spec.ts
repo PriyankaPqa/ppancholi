@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import { TEAM_ENTITIES, TEAM_METADATA } from '@/constants/vuex-modules';
 import { mockEventEntityData } from '@/entities/event';
 import { mockStore } from '@/store';

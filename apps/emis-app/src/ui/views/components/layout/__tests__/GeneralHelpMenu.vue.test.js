@@ -1,7 +1,3 @@
-/**
- * @group ui/components/layout
- */
-
 import Vuetify from 'vuetify';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { i18n } from '@/ui/plugins/i18n';

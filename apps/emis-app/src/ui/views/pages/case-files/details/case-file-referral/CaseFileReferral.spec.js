@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockSearchData } from '@/entities/case-file-referral';
 import { mockStorage } from '@/store/storage';

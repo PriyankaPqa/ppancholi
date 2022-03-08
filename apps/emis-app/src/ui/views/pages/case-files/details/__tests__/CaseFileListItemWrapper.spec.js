@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockCaseFileActivities } from '@/entities/case-file';
 import { mockCombinedCaseNote } from '@/entities/case-note';

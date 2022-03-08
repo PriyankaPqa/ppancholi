@@ -1,0 +1,18 @@
+parameters:
+  packageFeed: ''
+
+steps:
+  - task: Cache@2
+    displayName: Cache yarn packages
+    inputs:
+      key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+      path: $(Build.SourcesDirectory)/node_modules
+      cacheHitVar: CACHE_HIT
+
+  - task: Yarn@3
+    displayName: 'Install yarn packages'
+    condition: ne(variables['CACHE_HIT'], 'true')
+    inputs:
+      customRegistry: 'useFeed'
+      customFeed: ${{ parameters.packageFeed }}
+      arguments: --frozen-lockfile

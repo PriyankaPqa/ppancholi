@@ -1,8 +1,5 @@
 import { IState, IStore, mockStore } from '../..';
 import { mockUserAccountEntities, mockUserAccountMetadatum } from '../../../entities/user-account/userAccount.mock';
-/**
- * @group storage
- */
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Base } from './index';

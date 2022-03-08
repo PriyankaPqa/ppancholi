@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { AppUsersService } from './app-users';
 

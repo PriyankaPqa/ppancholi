@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import { mockStore } from '@/store';
 import { UI_STATE } from '@/constants/vuex-modules';
 import { UIStateStorage } from './storage';

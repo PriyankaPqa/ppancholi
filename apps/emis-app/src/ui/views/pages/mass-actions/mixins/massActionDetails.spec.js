@@ -1,7 +1,3 @@
-/**
- * @group ui/components/mass-action
- */
-
 import { mockStorage } from '@libs/registration-lib/store/storage';
 
 import { createLocalVue, shallowMount } from '@/test/testSetup';

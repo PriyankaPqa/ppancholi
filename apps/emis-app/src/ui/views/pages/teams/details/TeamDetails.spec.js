@@ -1,7 +1,3 @@
-/**
- * @group ui/components/teams
- */
-
 /* eslint-disable */
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';

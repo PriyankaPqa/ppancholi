@@ -1,7 +1,3 @@
-/**
- * @group ui/components/household
- */
-
 import { mockHouseholdMetadata } from '@libs/registration-lib/entities/household';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';

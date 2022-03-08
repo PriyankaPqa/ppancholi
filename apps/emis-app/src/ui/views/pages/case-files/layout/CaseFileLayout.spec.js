@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { RcRouterViewTransition } from '@crctech/component-library';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import Component from './CaseFileLayout.vue';

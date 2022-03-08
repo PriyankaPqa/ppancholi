@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 import { PublicService } from '@libs/registration-lib/services/public';
 import { HouseholdsService } from '@libs/registration-lib/services/households/entity';
 import { TenantSettingsService } from '@libs/registration-lib/services/tenantSettings/entity';

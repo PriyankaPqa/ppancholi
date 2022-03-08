@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 /* eslint-disable */
 import { FINANCIAL_ASSISTANCE_PAYMENT_METADATA, FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';

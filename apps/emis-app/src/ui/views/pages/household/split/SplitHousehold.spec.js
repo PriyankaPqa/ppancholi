@@ -1,7 +1,3 @@
-/**
- * @group ui/components/household
- */
-
 import { mockSplitHousehold, ContactInformation } from '@libs/registration-lib/entities/household-create';
 import { mockMember } from '@libs/registration-lib/entities/value-objects/member';
 import { mockHouseholdEntity } from '@libs/registration-lib/entities/household';

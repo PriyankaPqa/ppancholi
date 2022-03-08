@@ -1,7 +1,3 @@
-/**
- * @group ui/plugins
- */
-
 import { createLocalVue } from '@/test/testSetup';
 import rolesAndPermissions from '../rolesAndPermissions';
 

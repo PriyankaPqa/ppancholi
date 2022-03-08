@@ -1,7 +1,3 @@
-/**
- * @group ui/components/mass-action
- */
-
 import { mockEvent } from '@libs/registration-lib/entities/event/event.mock';
 import {
   createLocalVue,

@@ -7,7 +7,7 @@ parameters:
 stages:
 - ${{ if eq( variables['build.reason'], 'PullRequest') }}:
   - stage: 'Deploy_to_storage'
-    displayName: 'Deploy to feature branch'
+    displayName: 'Deployment'
     dependsOn: 'Build_Stage'
     condition: succeeded()
     pool:

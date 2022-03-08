@@ -1,7 +1,3 @@
-/**
- * @group ui/components/mass-action
- */
-
 import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
 import {
   createLocalVue,

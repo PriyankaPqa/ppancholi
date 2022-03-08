@@ -1,7 +1,3 @@
-/**
- * @group ui/components/teams
- */
-
 /* eslint-disable */
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';

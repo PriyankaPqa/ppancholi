@@ -1,6 +1,3 @@
-/**
- * @group ui/components/registration
- */
 import Vuetify from 'vuetify';
 import { mockCombinedHouseholds } from '@libs/registration-lib/entities/household';
 import {

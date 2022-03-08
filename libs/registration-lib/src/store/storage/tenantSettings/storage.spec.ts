@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import { mockStore } from '../../store.mock';
 import {
   FeatureKeys,

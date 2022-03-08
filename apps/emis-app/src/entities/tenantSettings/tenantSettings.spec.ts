@@ -1,7 +1,3 @@
-/**
- * @group entities
- */
-
 import { TenantSettingsEntity } from './tenantSettings';
 import { mockTenantSettingsEntityData } from './tenantSettings.mock';
 

@@ -1,7 +1,3 @@
-/**
- * @group ui/components/financial-assistance
- */
-
 import { createLocalVue, mount } from '@/test/testSetup';
 import {
   mockItems, mockCategories, EFinancialAmountModes, EFinancialFrequency,

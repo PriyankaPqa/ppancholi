@@ -1,7 +1,3 @@
-/**
- * @group ui/helpers
- */
-
 import { mockMember } from '@libs/registration-lib/entities/value-objects/member/index';
 import {
   EIndigenousTypes, IMember, mockIndigenousCommunitiesGetData, mockHouseholdCreate, HouseholdCreate,

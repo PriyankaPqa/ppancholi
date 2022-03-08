@@ -1,7 +1,3 @@
-/**
- * @group ui/components/home
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import CaseFilesTable from '@/ui/views/pages/case-files/CaseFilesTable.vue';
 import TeamsTable from '@/ui/views/pages/teams/TeamsTable.vue';

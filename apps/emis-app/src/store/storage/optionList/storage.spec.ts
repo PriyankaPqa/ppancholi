@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 import {
   mockOptionItemData, mockSubItem, EOptionLists,
 } from '@/entities/optionItem';

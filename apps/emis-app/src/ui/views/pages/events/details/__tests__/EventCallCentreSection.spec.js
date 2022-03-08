@@ -1,7 +1,3 @@
-/**
- * @group ui/components/events
- */
-
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';

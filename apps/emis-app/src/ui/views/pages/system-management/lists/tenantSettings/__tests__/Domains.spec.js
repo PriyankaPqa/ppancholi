@@ -1,7 +1,3 @@
-/**
- * @group ui/components/system-management
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import entityUtils from '@/entities/utils';
 import { mockStorage } from '@/store/storage';

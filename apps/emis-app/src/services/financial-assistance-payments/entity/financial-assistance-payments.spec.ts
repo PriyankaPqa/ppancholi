@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 /* eslint-disable */
 import { IFinancialAssistancePaymentEntity, mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';

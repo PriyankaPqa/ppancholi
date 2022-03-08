@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileStatus } from '@/entities/case-file';
 import colors from '@/ui/plugins/vuetify/colors';

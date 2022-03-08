@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 /* eslint-disable */
 import { ICaseFileDocumentEntity, mockCaseFileDocumentEntity } from '@/entities/case-file-document';
 import { IHttpMock, mockHttp } from '@/services/httpClient.mock';

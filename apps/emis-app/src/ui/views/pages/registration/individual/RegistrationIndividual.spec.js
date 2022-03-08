@@ -1,7 +1,3 @@
-/**
- * @group ui/components/registration
- */
-
 import { mockHouseholdCreateData } from '@libs/registration-lib/entities/household-create';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 

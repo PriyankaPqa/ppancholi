@@ -1,7 +1,3 @@
-/**
- * @group ui/plugins
- */
-
 /* eslint-disable */
 import { mockStorage } from '@/store/storage';
 import { SignalR } from '@/ui/plugins/signalR';

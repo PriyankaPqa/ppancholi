@@ -1,7 +1,3 @@
-/**
- * @group ui/components/layout
- */
-
 import { RcRouterViewTransition } from '@crctech/component-library';
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount } from '@/test/testSetup';

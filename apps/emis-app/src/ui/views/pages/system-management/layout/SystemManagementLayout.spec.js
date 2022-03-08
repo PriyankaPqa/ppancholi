@@ -1,6 +1,3 @@
-/**
- * @group ui/components/system-management
- */
 import { RcRouterViewTransition } from '@crctech/component-library';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';

@@ -1,7 +1,3 @@
-/**
- * @group ui/components/mass-action
- */
-
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import MassActionBaseTable from '@/ui/views/pages/mass-actions/components/MassActionBaseTable.vue';

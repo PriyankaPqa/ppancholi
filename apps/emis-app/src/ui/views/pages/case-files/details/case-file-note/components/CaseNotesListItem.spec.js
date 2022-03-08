@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote, mockCaseNoteCategories, mockCaseNoteEntity } from '@/entities/case-note';
 import { mockStorage } from '@/store/storage';

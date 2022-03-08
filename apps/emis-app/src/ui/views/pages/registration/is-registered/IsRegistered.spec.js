@@ -1,6 +1,3 @@
-/**
- * @group ui/components/registration
- */
 import Vuetify from 'vuetify';
 import { RcDialog } from '@crctech/component-library';
 import { mockSplitHousehold } from '@libs/registration-lib/entities/household-create';

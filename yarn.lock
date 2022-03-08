@@ -10009,11 +10009,6 @@ jest-resolve@^26.6.2:
     resolve "^1.18.1"
     slash "^3.0.0"
 
-jest-runner-groups@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/jest-runner-groups/-/jest-runner-groups-2.1.0.tgz#454cf7e0e442774b60b50ed20ed71f7fcb4a9218"
-  integrity sha512-iHBIJ38yEW7qkPTW3tSulq/5kjgIiVtZjuYimBT1PltBYwsb1B1gPWGFMDdEfy9O3+6cyfe5MmVgMHafi69MUw==
-
 jest-runner@^24.9.0:
   version "24.9.0"
   resolved "https://registry.yarnpkg.com/jest-runner/-/jest-runner-24.9.0.tgz#574fafdbd54455c2b34b4bdf4365a23857fcdf42"

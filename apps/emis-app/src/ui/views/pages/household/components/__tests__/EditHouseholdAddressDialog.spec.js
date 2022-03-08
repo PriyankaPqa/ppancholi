@@ -1,7 +1,3 @@
-/**
- * @group ui/components/household
- */
-
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import { mockAddressData, Address } from '@libs/registration-lib/entities/value-objects/address';
 import { mockAddress, mockHouseholdCreate } from '@libs/registration-lib/entities/household-create';

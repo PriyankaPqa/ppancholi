@@ -1,7 +1,3 @@
-/**
- * @group store
- */
-
 import { ActionContext } from 'vuex';
 import { TenantSettingsEntityModule } from './tenantSettingsEntity';
 import { mockTenantSettingsService, TenantSettingsService } from '../../../services/tenantSettings/entity';

@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';

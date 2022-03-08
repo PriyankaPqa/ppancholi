@@ -1,7 +1,3 @@
-/**
- * @group store
- */
-
 import { UIStateModule } from './uiState';
 
 let module: UIStateModule;

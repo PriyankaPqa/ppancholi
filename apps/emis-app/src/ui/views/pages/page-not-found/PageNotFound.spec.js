@@ -1,7 +1,3 @@
-/**
- * @group ui/components/others
- */
-
 import { createLocalVue, mount } from '@/test/testSetup';
 import Component from './PageNotFound.vue';
 

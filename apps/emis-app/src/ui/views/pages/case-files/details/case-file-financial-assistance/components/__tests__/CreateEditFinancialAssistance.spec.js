@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 /* eslint-disable */
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';

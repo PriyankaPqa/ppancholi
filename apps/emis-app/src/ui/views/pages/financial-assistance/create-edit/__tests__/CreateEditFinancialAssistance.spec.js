@@ -1,7 +1,3 @@
-/**
- * @group ui/components/financial-assistance
- */
-
 import _sortBy from 'lodash/sortBy';
 import routes from '@/constants/routes';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';

@@ -1,7 +1,3 @@
-/**
- * @group storage
- */
-
 /* eslint-disable */
 import { CASE_DOCUMENT_METADATA, CASE_DOCUMENT_ENTITIES } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';

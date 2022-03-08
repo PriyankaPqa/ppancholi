@@ -1,7 +1,3 @@
-/**
- * @group ui/components/home
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import EventsTable from '@/ui/views/pages/events/EventsTable.vue';
 import EventStats from '@/ui/views/pages/home/components/stats/EventStats.vue';

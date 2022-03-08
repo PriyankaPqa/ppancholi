@@ -1,7 +1,3 @@
-/**
- * @group ui/components/events
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { EEventSummarySections } from '@/types';
 import Component from '../components/EventSummarySectionTitle.vue';

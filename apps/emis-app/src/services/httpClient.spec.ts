@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as uuid from 'uuid';
 import Vue from 'vue';

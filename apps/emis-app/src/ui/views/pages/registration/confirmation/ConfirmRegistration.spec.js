@@ -1,7 +1,3 @@
-/**
- * @group ui/components/registration
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';

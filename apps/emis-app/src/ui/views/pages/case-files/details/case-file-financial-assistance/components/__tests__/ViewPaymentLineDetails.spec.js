@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 /* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockSubItemData, mockCombinedFinancialAssistance } from '@/entities/financial-assistance';

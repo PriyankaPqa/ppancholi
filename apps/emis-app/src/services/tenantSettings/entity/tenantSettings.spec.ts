@@ -1,7 +1,3 @@
-/**
- * @group services
- */
-
 import {
   mockCreateTenantSettingsRequest,
   mockEditColoursRequest,

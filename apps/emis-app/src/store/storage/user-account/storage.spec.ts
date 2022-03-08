@@ -1,7 +1,4 @@
 import { mockOptionItems } from '@/entities/optionItem';
-/**
- * @group storage
- */
 
 import { mockStore } from '@/store';
 import { UserAccountStorage } from '@/store/storage/user-account/storage';

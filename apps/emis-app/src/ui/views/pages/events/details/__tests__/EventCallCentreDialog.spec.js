@@ -1,7 +1,3 @@
-/**
- * @group ui/components/events
- */
-
 import { VSwitch } from 'vuetify/lib';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import helpers from '@/ui/helpers/helpers';

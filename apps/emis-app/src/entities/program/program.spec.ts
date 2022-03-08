@@ -1,7 +1,3 @@
-/**
- * @group entities
- */
-
 import { mockProgramEntityData } from '.';
 import { ProgramEntity } from './program';
 import { IProgramEntity } from './program.types';

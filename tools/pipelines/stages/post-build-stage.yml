@@ -9,37 +9,37 @@ stages:
     condition: succeeded()
     jobs:
       - job: 'Test'
-        displayName: 'Test & Report'
+        strategy:
+          parallel: 2
+        displayName: 'Test affected packages'
         steps:
-          - task: Cache@2
-            displayName: Cache yarn packages
-            inputs:
-              key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
-              path: $(Build.SourcesDirectory)/node_modules
-              cacheHitVar: CACHE_HIT
+          - template: '../steps/cache-install-npm.yml'
+            parameters:
+              packageFeed: ${{ parameters.packageFeed }}
 
-          - task: Yarn@3
-            displayName: 'Install yarn packages'
-            condition: ne(variables['CACHE_HIT'], 'true')
-            inputs:
-              customRegistry: 'useFeed'
-              customFeed: ${{ parameters.packageFeed }}
-              arguments: --frozen-lockfile
-
-          - script: node ./tools/scripts/run-commands.js coverage ${{parameters.isPullRequest}} ${{parameters.appName}}
+          - script: yarn test:parallel ${{parameters.isPullRequest}} ${{parameters.appName}} $(System.TotalJobsInPhase) $(System.JobPositionInPhase)
             displayName: 'Run tests'
 
+  - ${{ if eq( variables['build.sourceBranch'], 'refs/heads/master') }}:
+      - job: 'Publish_Test'
+        dependsOn: 'Test'
+        displayName: 'Publish Results & Coverage'
+        steps:
           - task: PublishTestResults@2
             displayName: 'Publish Test Result'
-            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+            condition: succeededOrFailed()
             inputs:
               testRunner: VSTest
               testResultsFiles: '**/*result*.trx'
               failTaskOnFailedTests: false
 
+          - template: '../steps/cache-install-npm.yml'
+            parameters:
+              packageFeed: ${{ parameters.packageFeed }}
+
           - script: node ./tools/scripts/merge-test-coverage.js
             displayName: 'Merge Code Coverage Reports'
-            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+            condition: succeededOrFailed()
 
           - task: PublishCodeCoverageResults@1
             displayName: 'Publish Merged Code Coverage Report'
@@ -47,4 +47,3 @@ stages:
               codeCoverageTool: 'Cobertura'
               summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
               failIfCoverageEmpty: false
-            condition: eq(variables['build.sourceBranch'], 'refs/heads/master')

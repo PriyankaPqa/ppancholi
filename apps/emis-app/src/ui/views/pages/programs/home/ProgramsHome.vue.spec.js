@@ -1,7 +1,3 @@
-/**
- * @group ui/components/programs
- */
-
 import { RcDataTable } from '@crctech/component-library';
 import { EFilterType } from '@crctech/component-library/src/types';
 import { Status } from '@/entities/base';

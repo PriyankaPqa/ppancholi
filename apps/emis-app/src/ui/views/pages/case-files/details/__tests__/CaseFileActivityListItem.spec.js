@@ -1,7 +1,3 @@
-/**
- * @group ui/components/case-file
- */
-
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { CaseFileActivityType, mockCaseFileActivities, HouseholdCaseFileActivityType } from '@/entities/case-file';
 

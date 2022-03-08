@@ -1,7 +1,3 @@
-/**
- * @group ui/components/household
- */
-
 import { mockHouseholdCreate, mockShelterData } from '@libs/registration-lib/entities/household-create';
 import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
 import { mockShelterLocations } from '@libs/registration-lib/entities/event/event.mock';

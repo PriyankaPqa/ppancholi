@@ -1,7 +1,3 @@
-/**
- * @group ui/components/household
- */
-
 import { mockHouseholdEntity } from '@libs/registration-lib/entities/household';
 import {
   HouseholdActivity,
