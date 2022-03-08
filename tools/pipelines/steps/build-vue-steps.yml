@@ -4,16 +4,18 @@ parameters:
   workingDir: ''
   lokaliseCommand: ''
   lokalise: ''
+  nodeJsVersion: ''
 
 steps:
   - task: NodeTool@0
     inputs:
-      versionSpec: '16.x'
+      versionSpec: '${{ parameters.nodeJsVersion }}'
     displayName: 'Install Node.js'
 
   - template: '../steps/cache-install-npm.yml'
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
+      nodeJsVersion: ${{ parameters.nodeJsVersion }}
 
   - script: yarn ${{ parameters.lokaliseCommand }}
     displayName: 'Lokalise Sync'

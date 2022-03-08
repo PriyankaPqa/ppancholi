@@ -30,7 +30,7 @@ function mergeCodeCoverage() {
     .join(' ');
 
   // Build the script command
-  const script = `npx cobertura-merge -o ${mergedDir}/merged-cobertura-coverage.xml ${packages}`;
+  const script = `yarn cobertura-merge -o ${mergedDir}/merged-cobertura-coverage.xml ${packages}`;
 
   execSync(script);
 }

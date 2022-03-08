@@ -1,11 +1,12 @@
 parameters:
   packageFeed: ''
+  nodeJsVersion: ''
 
 steps:
   - task: Cache@2
     displayName: Cache yarn packages
     inputs:
-      key: '"$(Agent.OS)" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
+      key: '"$(Agent.OS)" | "${{parameters.nodeJsVersion}}" | **/yarn.lock, !**/node_modules/**/yarn.lock, !**/.*/**/yarn.lock'
       path: $(Build.SourcesDirectory)/node_modules
       cacheHitVar: CACHE_HIT
 

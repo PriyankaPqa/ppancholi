@@ -27,6 +27,8 @@ variables:
   value: $[eq(variables['Build.Reason'], 'PullRequest')]
 - name: VUE_APP_VERSION
   value: $(Major).$(Minor).$(Patch)
+- name: nodeJsVersion
+  value: '16.x'
 
 name: EMIS App - $(Major).$(Minor).$(Patch)
 
@@ -42,3 +44,4 @@ stages:
     workingDir: $(workingDir)
     distDir: $(distDir)
     isPullRequest: $(isPullRequest)
+    nodeJsVersion: $(nodeJsVersion)
