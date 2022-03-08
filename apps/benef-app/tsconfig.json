@@ -13,6 +13,7 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "skipLibCheck": true, // Fixes testcafe + jest type collision
     "types": [
       "webpack-env",
       "jest",
@@ -45,6 +46,8 @@
     "typings/**.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "src/**/*.spec.ts", // Fixes testcafe + jest type collision
+    "src/e2e/**/*.ts" // Fixes testcafe + jest type collision
   ]
 }

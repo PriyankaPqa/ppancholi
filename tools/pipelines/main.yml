@@ -13,7 +13,7 @@ parameters:
   isPullRequest: ''
 
 stages:
-  # Validate the name of the branch
+  # Trigger before the build
   - template: './stages/pre-build-stage.yml'
 
   # Build the application and publish the artifact
@@ -29,7 +29,7 @@ stages:
       distDir: ${{ parameters.distDir }}
       isPullRequest: ${{ parameters.isPullRequest }}
 
-  # Trigger only on Pull Request after the build
+  # Trigger after the build
   - template: './stages/post-build-stage.yml'
     parameters:
       appName: ${{ parameters.appName }}
