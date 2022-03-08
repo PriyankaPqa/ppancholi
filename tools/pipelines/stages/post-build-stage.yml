@@ -2,6 +2,7 @@ parameters:
   appName: ''
   packageFeed: ''
   isPullRequest: ''
+  nodeJsVersion: ''
 
 stages:
   - stage: 'Post_Build_Stage'
@@ -16,6 +17,7 @@ stages:
           - template: '../steps/cache-install-npm.yml'
             parameters:
               packageFeed: ${{ parameters.packageFeed }}
+              nodeJsVersion:  ${{ parameters.nodeJsVersion }}
 
           - script: yarn test:parallel ${{parameters.isPullRequest}} ${{parameters.appName}} $(System.TotalJobsInPhase) $(System.JobPositionInPhase)
             displayName: 'Run tests'

@@ -33,6 +33,7 @@ stages:
       appName: ${{ parameters.appName }}
       packageFeed: ${{ parameters.packageFeed }}
       isPullRequest: ${{ parameters.isPullRequest }}
+      nodeJsVersion: ${{ parameters.nodeJsVersion }}
 
   # Deploy to feature branch, dev, production
   - template: './stages/deploy-stage.yml'
