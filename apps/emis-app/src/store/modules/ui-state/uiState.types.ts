@@ -1,3 +1,3 @@
 export interface IUIStateState {
-  searchStates: { route: string, state: unknown }[];
+  searchStates: { key: string, state: unknown }[];
 }

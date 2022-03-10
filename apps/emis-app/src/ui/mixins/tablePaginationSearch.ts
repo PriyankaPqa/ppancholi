@@ -161,7 +161,9 @@ export default Vue.extend({
       if (!this.saveState) {
         return;
       }
-      this.$storage.uiState.mutations.setSearchTableState(this.route, _cloneDeep({
+
+      const uiStateKey = this.getTableName() + this.route;
+      this.$storage.uiState.mutations.setSearchTableState(uiStateKey, _cloneDeep({
         azureSearchParams: this.azureSearchParams,
         previousPageIndex: this.previousPageIndex,
         userFilters: this.userFilters,
@@ -185,8 +187,9 @@ export default Vue.extend({
         return;
       }
 
+      const uiStateKey = this.getTableName() + this.route;
       // eslint-disable-next-line
-      let state = this.$storage.uiState.getters.getSearchTableState(this.route) as any;
+      let state = this.$storage.uiState.getters.getSearchTableState(uiStateKey) as any;
       if (state) {
         state = _cloneDeep(state);
         this.azureSearchParams = state.azureSearchParams;
@@ -219,6 +222,10 @@ export default Vue.extend({
       this.filterState = filterState;
       await this.search(this.params);
       this.forceSkip = false;
+    },
+
+    getTableName() {
+      return '';
     },
   },
 });

@@ -440,6 +440,10 @@ export default mixins(TablePaginationSearchMixin).extend({
       }
       await this.onApplyFilter({ preparedFilters: finalFilters, searchFilters }, filterState);
     },
+
+    getTableName():string {
+      return 'case-files';
+    },
   },
 
 });

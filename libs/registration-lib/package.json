@@ -6,12 +6,11 @@
     "lint": "eslint . --fix --max-warnings=0"
   },
   "dependencies": {
+    "@crctech/component-library": "1.0.209",
     "@mdi/font": "^6.5.95",
-    "axios": "^0.24.0",
-    "@crctech/component-library": "1.0.195",
     "@microsoft/applicationinsights-web": "2.7.3",
-    "vue-typed-mixins": "^0.2.0",
     "awesome-phonenumber": "2.68.0",
+    "axios": "^0.24.0",
     "deepmerge": "^4.2.2",
     "lodash": "^4.17.21",
     "moment": "2.29.1",
@@ -19,6 +18,7 @@
     "vue": "2.6.14",
     "vue-i18n": "8.27.0",
     "vue-router": "3.5.3",
+    "vue-typed-mixins": "^0.2.0",
     "vuetify": "2.6.3",
     "vuex": "^3.4.0"
   }

@@ -292,6 +292,10 @@ export default mixins(TablePaginationSearchMixin).extend({
     goToEditEvent(event: IEventCombined) {
       this.$router.push({ name: routes.events.edit.name, params: { id: event.entity.id } });
     },
+
+    getTableName():string {
+      return 'events';
+    },
   },
 });
 </script>

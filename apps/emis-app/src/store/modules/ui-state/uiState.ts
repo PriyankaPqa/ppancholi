@@ -9,16 +9,16 @@ export class UIStateModule {
   })
 
   public state = {
-    searchStates: [] as { route: string, state: unknown }[],
+    searchStates: [] as { key: string, state: unknown }[],
   }
 
   public getters = {
-    getSearchTableState: (state: IUIStateState) => (route: string) => state.searchStates.filter((s) => s.route === route)[0]?.state,
+    getSearchTableState: (state: IUIStateState) => (key: string) => state.searchStates.filter((s) => s.key === key)[0]?.state,
   }
 
   public mutations = {
-    setSearchTableState(state: IUIStateState, payload: { route: string, state: unknown }) {
-      state.searchStates = state.searchStates.filter((s) => s.route !== payload.route);
+    setSearchTableState(state: IUIStateState, payload: { key: string, state: unknown }) {
+      state.searchStates = state.searchStates.filter((s) => s.key !== payload.key);
       state.searchStates.push(payload);
     },
   }

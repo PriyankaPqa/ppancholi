@@ -288,6 +288,10 @@ export default mixins(TablePaginationSearchMixin).extend({
         },
       };
     },
+
+    getTableName():string {
+      return 'teams';
+    },
   },
 });
 </script>

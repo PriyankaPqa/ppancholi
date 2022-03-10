@@ -1057,19 +1057,10 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@crctech/component-library@1.0.195":
-  version "1.0.195"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.195.tgz#036a290efddc4c76fc5f4d33d555fbe1c897e106"
-  integrity sha1-A2opDv3cTHb8X00z1VX74ciX4QY=
-  dependencies:
-    "@googlemaps/js-api-loader" "^1.11.0"
-    date-fns "^2.14.0"
-    vuedraggable "^2.24.1"
-
-"@crctech/component-library@1.0.204":
-  version "1.0.204"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.204.tgz#fea8848c864681b03d9b8f2126614731256211f1"
-  integrity sha1-/qiEjIZGgbA9m48hJmFHMSViEfE=
+"@crctech/component-library@1.0.209":
+  version "1.0.209"
+  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.209.tgz#94660c94e25b060f176b20e338eecd8adb322542"
+  integrity sha1-lGYMlOJbBg8XayDjOO7NitsyJUI=
   dependencies:
     "@googlemaps/js-api-loader" "^1.11.0"
     date-fns "^2.14.0"
@@ -1103,9 +1094,9 @@
   integrity sha512-82cpyJyKRoQoRi+14ibCeGPu0CwypgtBAdBhq1WfvagpCZNKqwXbKwXllYSMG91DhmG4jt9gN8eP6lGOtozuaw==
 
 "@googlemaps/js-api-loader@^1.11.0":
-  version "1.13.6"
-  resolved "https://registry.yarnpkg.com/@googlemaps/js-api-loader/-/js-api-loader-1.13.6.tgz#afacf330cae6f126c68548aa72265fb4e33a6793"
-  integrity sha512-wjsNABaYaHg9Y/7sry9r4mudugyWJzNDYNMNJBbaDACtS/XvASzzIcgGgjQ1euHExJA6rEUg5qGu/XR7zw+Xhw==
+  version "1.13.8"
+  resolved "https://registry.yarnpkg.com/@googlemaps/js-api-loader/-/js-api-loader-1.13.8.tgz#9edfa766367dc145eec6a5ee6e90ba67244a4afb"
+  integrity sha512-xsn4vmrRc/p8PW6p6PglfInGiW9haEgkAeby4BGxNkVipWy8q0Wv16+sWpQ3rP31RahfWBoyVgAc1DgLXcZY3Q==
   dependencies:
     fast-deep-equal "^3.1.3"
 

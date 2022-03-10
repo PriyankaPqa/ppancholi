@@ -999,15 +999,6 @@
     exec-sh "^0.3.2"
     minimist "^1.2.0"
 
-"@crctech/component-library@1.0.189":
-  version "1.0.189"
-  resolved "https://pkgs.dev.azure.com/CRC-Tech/EMIS/_packaging/emis-npm/npm/registry/@crctech/component-library/-/component-library-1.0.189.tgz#10ebbd77257e42fd5666f327c477f9acfadec109"
-  integrity sha1-EOu9dyV+Qv1WZvMnxHf5rPrewQk=
-  dependencies:
-    "@googlemaps/js-api-loader" "^1.11.0"
-    date-fns "^2.14.0"
-    vuedraggable "^2.24.1"
-
 "@eslint/eslintrc@^0.4.3":
   version "0.4.3"
   resolved "https://registry.yarnpkg.com/@eslint/eslintrc/-/eslintrc-0.4.3.tgz#9e42981ef035beb3dd49add17acb96e8ff6f394c"

@@ -18,8 +18,8 @@ describe('>>> UIState Storage', () => {
   describe('>> Getters', () => {
     describe('getSearchTableState', () => {
       it('should proxy getSearchTableState', () => {
-        const storageGetter = storage.getters.getSearchTableState('route1');
-        const storeGetter = store.getters[`${entityModuleName}/getSearchTableState`]('route1');
+        const storageGetter = storage.getters.getSearchTableState('key1');
+        const storeGetter = store.getters[`${entityModuleName}/getSearchTableState`]('key1');
         expect(storageGetter).toEqual(storeGetter);
       });
     });
@@ -27,8 +27,8 @@ describe('>>> UIState Storage', () => {
 
   describe('>> Mutations', () => {
     it('should proxy setSearchTableState', () => {
-      storage.mutations.setSearchTableState('route1', { name: 'state1' });
-      expect(store.commit).toBeCalledWith(`${entityModuleName}/setSearchTableState`, { route: 'route1', state: { name: 'state1' } });
+      storage.mutations.setSearchTableState('key1', { name: 'state1' });
+      expect(store.commit).toBeCalledWith(`${entityModuleName}/setSearchTableState`, { key: 'key1', state: { name: 'state1' } });
     });
   });
 });

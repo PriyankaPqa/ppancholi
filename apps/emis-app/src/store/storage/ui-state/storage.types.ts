@@ -1,5 +1,5 @@
 export interface IGetters {
-  getSearchTableState(route: string): unknown;
+  getSearchTableState(key: string): unknown;
 }
 
 export interface IGettersMock {
@@ -7,7 +7,7 @@ export interface IGettersMock {
 }
 
 export interface IMutations {
-  setSearchTableState(route: string, state: unknown): void;
+  setSearchTableState(key: string, state: unknown): void;
 }
 
 export interface IMutationsMock {
