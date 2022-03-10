@@ -131,7 +131,17 @@ const fetchKeysIds = async (projectId, keys) => {
 const getAllErrors = () => new Promise((resolve, reject) => {
   let errors = {};
 
-  https.get('https://api-dev.crc-tech.ca/common/api-error-templates', (resp) => {
+  const options = {
+    hostname: 'api-dev.crc-tech.ca',
+    port: 443,
+    path: '/common/api-error-templates',
+    method: 'GET',
+    headers: {
+      'x-tenant-id': 'c400f50d-7a56-4ef2-8e44-211bfa434724',
+    }
+  };
+
+  https.get(options, (resp) => {
     let data = '';
 
     // A chunk of data has been received.
@@ -159,8 +169,9 @@ const getAllErrors = () => new Promise((resolve, reject) => {
 const uploadErrors = (projectId) => new Promise((resolve, reject) => {
   const finalObject = {};
 
+
   getAllErrors().then((errors) => {
-    console.log(errors);
+    console.log(`Downloading errors keys done`);
     if (errors) {
       for (const [key, error] of Object.entries(errors)) {
         finalObject[error.code] = error.detail || error.message;
@@ -168,7 +179,10 @@ const uploadErrors = (projectId) => new Promise((resolve, reject) => {
       const encoded = Buffer.from(JSON.stringify(finalObject)).toString('base64');
       uploadToLokalise({
         base64File: encoded, fileName: 'en.json', langISO: 'en', tags: ['ERRORS'], projectId,
-      }).then((response) => resolve(response));
+      }).then((response) => {
+        console.log(`Uploading errors keys to project ${projectId} done`);
+        return resolve(response)
+      });
     } else {
       console.log('No new errors to fetch');
       resolve(true);
@@ -334,9 +348,8 @@ switch (parameters[0]) {
     isEmisApp ? uploadEmis() : uploadBenef();
     break;
   case 'upErrors':
-    console.log('The synchronisation of errors is broken. Need to be fixed');
-    process.exit(0);
-    // uploadErrors().then(() => process.exit(0));
+    const projectId = isEmisApp ? EMIS_PROJECT_ID : REGISTRATION_PROJECT_ID;
+    uploadErrors(projectId).then(() => process.exit(0));
     break;
   case 'delete':
     promptDeleteKeys(parameters, applicationName);
