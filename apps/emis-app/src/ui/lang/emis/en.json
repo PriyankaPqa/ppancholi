@@ -1324,7 +1324,7 @@
     "massActions.importPaymentStatus.status.preprocessing.title": "Pre-processing mass payment status",
     "massActions.importPaymentStatus.status.processing.title ": "Processing mass payment status",
     "massActions.importPaymentStatus.tooltip.add": "Add mass import payment status",
-    "massActions.importPaymentStatus.upload.title": "Apply mass validation impact to:",
+    "massActions.importPaymentStatus.upload.title": "Apply mass payment status to:",
     "massActions.importValidationStatus.create.description.label": "Description",
     "massActions.importValidationStatus.create.name.label": "Name",
     "massActions.importValidationStatus.create.title": "New mass validation of impact status",
