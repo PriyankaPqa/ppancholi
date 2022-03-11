@@ -549,6 +549,7 @@
     "error.feature_disabled": "La fonctionnalité est désactivée",
     "error.log_in_again": "Votre session a expiré. Veuillez vous déconnecter et vous reconnecter.",
     "error.no_permission": "Vous n'avez pas la permission d'accéder à cette page",
+    "error.there-are-no-records-to-be-processed": "Il n'y a pas de dossiers à traiter",
     "error.unexpected_error": "Une erreur inattendue s'est produite.",
     "errors.a-filter-with-this-name-already-exists": "Un filtre existant porte déjà ce nom.",
     "errors.a-financial-assistance-payment-with-this-name-already-exists": "Un paiement d’aide financière porte déjà ce nom.",

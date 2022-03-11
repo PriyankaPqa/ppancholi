@@ -549,6 +549,7 @@
     "error.feature_disabled": "Feature is disabled",
     "error.log_in_again": "Your session expired. Please sign out and in again.",
     "error.no_permission": "You do not have permission to access this page",
+    "error.there-are-no-records-to-be-processed": "There are no records to be processed",
     "error.unexpected_error": "An unexpected error occurred.",
     "errors.a-filter-with-this-name-already-exists": "A filter with this name already exists",
     "errors.a-financial-assistance-payment-with-this-name-already-exists": "A financial assistance payment with this name already exists",
