@@ -17,6 +17,7 @@
       <v-col cols="6" sm="3" md="4">
         <v-text-field-with-validation
           v-model="form.unitSuite"
+          :rules="rules.unitSuite"
           :data-test="`${prefixDataTest}__unitSuite`"
           :label="`${$t('registration.addresses.unit')}`" />
       </v-col>

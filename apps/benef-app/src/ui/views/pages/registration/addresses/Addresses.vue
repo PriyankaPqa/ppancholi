@@ -9,6 +9,7 @@ import { i18n } from '@/ui/plugins';
 
 export default Vue.extend({
   name: 'Addresses',
+
   components: {
     LibAddresses,
   },

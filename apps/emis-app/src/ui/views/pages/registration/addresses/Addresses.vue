@@ -13,6 +13,7 @@ export default Vue.extend({
   components: {
     LibAddresses,
   },
+
   data() {
     return {
       i18n,
