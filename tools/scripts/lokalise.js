@@ -348,7 +348,8 @@ switch (parameters[0]) {
     isEmisApp ? uploadEmis() : uploadBenef();
     break;
   case 'upErrors':
-    const projectId = isEmisApp ? EMIS_PROJECT_ID : REGISTRATION_PROJECT_ID;
+    // We only upload template errors to emis project
+    const projectId = EMIS_PROJECT_ID;
     uploadErrors(projectId).then(() => process.exit(0));
     break;
   case 'delete':
