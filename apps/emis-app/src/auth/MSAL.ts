@@ -276,7 +276,7 @@ export class MSAL implements IMSAL {
           'MSAL',
           'acquireToken'
         );
-        this.signIn();
+        this.signIn(this.currentDomainTenant);
       }
     }
 
@@ -396,7 +396,7 @@ export class MSAL implements IMSAL {
         'MSAL',
         'checkIfLoggedInCurrentTenant'
       );
-      this.signIn(this.currentDomainTenant);
+      this.signIn();
     } else {
       if (this.account.localAccountId !== accountForTenant.localAccountId) {
         this.showConsole && console.debug('accountForTenant - Setting new account', accountForTenant)
