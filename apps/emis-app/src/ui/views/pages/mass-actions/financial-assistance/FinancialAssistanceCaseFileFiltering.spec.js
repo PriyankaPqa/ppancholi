@@ -1,4 +1,4 @@
-import { EDateMode, EFilterKeyType, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import { EDateMode, EFilterKeyType, EFilterType } from '@libs/component-lib/types/FilterTypes';
 import {
   createLocalVue,
   shallowMount,

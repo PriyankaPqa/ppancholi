@@ -145,7 +145,7 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import {
   FinancialAssistancePaymentGroup,
   IFinancialAssistancePaymentEntity,

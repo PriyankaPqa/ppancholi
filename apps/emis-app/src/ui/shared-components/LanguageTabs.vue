@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { RcTab, RcTabs } from '@crctech/component-library';
+import { RcTab, RcTabs } from '@libs/component-lib/components';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 
 export default {

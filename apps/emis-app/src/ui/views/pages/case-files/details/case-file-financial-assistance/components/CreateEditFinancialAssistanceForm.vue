@@ -53,7 +53,7 @@ import {
   VTextFieldWithValidation,
   VTextAreaWithValidation,
   VAutocompleteWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import _sortBy from 'lodash/sortBy';
 import { IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';

@@ -79,7 +79,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcConfirmationDialog, VTextFieldWithValidation } from '@crctech/component-library';
+import { RcConfirmationDialog, VTextFieldWithValidation } from '@libs/component-lib/components';
 
 export default Vue.extend({
   name: 'Slug',

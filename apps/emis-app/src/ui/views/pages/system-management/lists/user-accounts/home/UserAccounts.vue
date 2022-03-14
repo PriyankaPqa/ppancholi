@@ -138,7 +138,7 @@ import {
   RcPageContent,
   VSelectWithValidation,
   RcConfirmationDialog,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { TranslateResult } from 'vue-i18n';
 import { isEmpty } from 'lodash';

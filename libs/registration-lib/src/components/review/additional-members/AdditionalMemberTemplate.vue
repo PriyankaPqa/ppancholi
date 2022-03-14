@@ -75,7 +75,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@import "../../../styles/breakpoints";
+@import "../../libs/assets/styles/breakpoints";
 
 @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
   .column {

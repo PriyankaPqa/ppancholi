@@ -1,4 +1,4 @@
-import { EFilterType } from '@crctech/component-library/src/types';
+import { EFilterType } from '@libs/component-lib/types';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseFileDocument, DocumentStatus } from '@/entities/case-file-document';
 import { mockOptionItemData } from '@/entities/optionItem';

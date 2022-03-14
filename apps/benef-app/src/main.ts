@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
-import '@/ui/styles/main.scss';
+import '../../../libs/assets/styles/main.scss';
 import '@/ui/plugins/vee-validate';
 import {
   i18n, Trans,

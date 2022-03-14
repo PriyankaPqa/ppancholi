@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
-import { RcDataTable } from '@crctech/component-library';
+import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import massActionsTable from '@/ui/views/pages/mass-actions/mixins/massActionsTable';

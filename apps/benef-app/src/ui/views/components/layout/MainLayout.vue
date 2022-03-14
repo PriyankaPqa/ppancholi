@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageLoading, RcRouterViewTransition } from '@crctech/component-library';
+import { RcPageLoading, RcRouterViewTransition } from '@libs/component-lib/components';
 import _isEmpty from 'lodash/isEmpty';
 import { EEventStatus, IEvent } from '@libs/registration-lib/entities/event';
 import AppHeader from '@/ui/views/components/layout/AppHeader.vue';

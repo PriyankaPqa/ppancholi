@@ -57,7 +57,7 @@ import LibPersonalInformation from '@libs/registration-lib/components/personal-i
 import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentAddressForm.vue';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import {
   ContactInformation,
   CurrentAddress,

@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcMenuCard } from '@crctech/component-library';
+import { RcMenuCard } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 
 export default Vue.extend({

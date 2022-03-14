@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcStatsTemplate, VSelectWithValidation } from '@crctech/component-library';
+import { RcStatsTemplate, VSelectWithValidation } from '@libs/component-lib/components';
 import { IEntityCombined } from '@libs/registration-lib/entities/base';
 import { EEventStatus, IEventMainInfo } from '@/entities/event';
 import { ITeamEntity, ITeamMetadata } from '@/entities/team';

@@ -123,10 +123,10 @@
 
 <script lang="ts">
 
-import { IFilterSettings, RcDataTable, RcDialog } from '@crctech/component-library';
+import { RcDataTable, RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import mixins from 'vue-typed-mixins';
-import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@/entities/user-account';
 import { CaseFileStatus, IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';

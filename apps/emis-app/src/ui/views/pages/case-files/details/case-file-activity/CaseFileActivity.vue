@@ -109,7 +109,7 @@ import mixins from 'vue-typed-mixins';
 import _sortBy from 'lodash/sortBy';
 import _orderBy from 'lodash/orderBy';
 import _debounce from 'lodash/debounce';
-import { RcPageContent, RcPageLoading, RcTooltip } from '@crctech/component-library';
+import { RcPageContent, RcPageLoading, RcTooltip } from '@libs/component-lib/components';
 import { ICaseFileActivity, CaseFileTriage } from '@/entities/case-file';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers/helpers';

@@ -87,7 +87,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { VTextFieldWithValidation, VCheckboxWithValidation, VTextAreaWithValidation } from '@crctech/component-library';
+import { VTextFieldWithValidation, VCheckboxWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import _isEqual from 'lodash/isEqual';
 import entityUtils from '@/entities/utils';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';

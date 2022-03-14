@@ -143,7 +143,7 @@ import Vue from 'vue';
 import { IMember } from '@libs/registration-lib/entities/household-create';
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';
-import { RcTooltip } from '@crctech/component-library';
+import { RcTooltip } from '@libs/component-lib/components';
 import householdHelpers from '@/ui/helpers/household';
 import { IEventGenericLocation } from '@/entities/event';
 

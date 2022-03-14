@@ -128,7 +128,7 @@
 </template>
 
 <script lang="ts">
-import { RcConfirmationDialog } from '@crctech/component-library';
+import { RcConfirmationDialog } from '@libs/component-lib/components';
 import VueI18n from 'vue-i18n';
 import { VForm } from '@libs/registration-lib/types';
 import _cloneDeep from 'lodash/cloneDeep';

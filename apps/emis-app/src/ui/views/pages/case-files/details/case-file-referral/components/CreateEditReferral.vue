@@ -24,7 +24,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import { VForm } from '@/types';
 import { CaseFileReferralEntity, ICaseFileReferralEntity } from '@/entities/case-file-referral';
 import routes from '@/constants/routes';

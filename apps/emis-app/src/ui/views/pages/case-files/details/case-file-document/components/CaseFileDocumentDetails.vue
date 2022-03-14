@@ -53,7 +53,7 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import moment from '@/ui/plugins/moment';
 import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';

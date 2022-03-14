@@ -56,9 +56,9 @@
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
 import {
-  RcDataTable, IFilterSettings,
-} from '@crctech/component-library';
-import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+  RcDataTable,
+} from '@libs/component-lib/components';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { IAzureSearchParams } from '@/types';

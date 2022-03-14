@@ -1,4 +1,4 @@
-import { RcDialog, RcConfirmationDialog } from '@crctech/component-library';
+import { RcDialog, RcConfirmationDialog } from '@libs/component-lib/components';
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFile, mockCaseFileEntity } from '@/entities/case-file';
 import routes from '@/constants/routes';

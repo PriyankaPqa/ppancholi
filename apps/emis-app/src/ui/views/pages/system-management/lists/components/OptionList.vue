@@ -161,7 +161,7 @@ import {
   RcTabs,
   RcTab,
   RcPageContent,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { IMultilingual } from '@/types';
 import routes from '@/constants/routes';
 import entityUtils from '@/entities/utils';

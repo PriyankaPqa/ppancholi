@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VCheckboxWithValidation } from '@crctech/component-library';
+import { VCheckboxWithValidation } from '@libs/component-lib/components';
 
 import moment from 'moment';
 

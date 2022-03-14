@@ -40,7 +40,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VSelectWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import { VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import helpers from '@libs/registration-lib/ui/helpers';
 import VueI18n from 'vue-i18n';
 import PrivacyStatement from './PrivacyStatement.vue';

@@ -105,7 +105,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { TeamType, ITeamEntity, ITeamMember } from '@/entities/team';
 import { ICaseFileEntity } from '@/entities/case-file';

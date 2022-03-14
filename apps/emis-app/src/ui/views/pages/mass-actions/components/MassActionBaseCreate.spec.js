@@ -1,4 +1,4 @@
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import {
   createLocalVue,
   mount,

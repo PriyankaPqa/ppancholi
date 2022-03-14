@@ -167,7 +167,7 @@ import {
   RcPageLoading,
   VSelectWithValidation,
   RcTooltip,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { IUserAccountCombined, AccountStatus } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';

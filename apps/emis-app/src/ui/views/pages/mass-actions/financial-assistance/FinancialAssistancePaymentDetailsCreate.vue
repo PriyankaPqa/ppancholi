@@ -105,7 +105,7 @@
 import Vue from 'vue';
 import isEmpty from 'lodash/isEmpty';
 import cloneDeep from 'lodash/cloneDeep';
-import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import { VAutocompleteWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import _sortBy from 'lodash/sortBy';
 import {
   IFinancialAssistanceTableCombined,

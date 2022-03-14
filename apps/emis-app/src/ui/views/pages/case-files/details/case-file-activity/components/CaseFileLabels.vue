@@ -50,7 +50,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { RcDialog, VTextFieldWithValidation } from '@crctech/component-library';
+import { RcDialog, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { ICaseFileLabel } from '@/entities/case-file';
 import { MAX_LENGTH_SM } from '@/constants/validations';
 import { VForm } from '@/types';

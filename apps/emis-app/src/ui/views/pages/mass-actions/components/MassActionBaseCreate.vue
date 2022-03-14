@@ -87,7 +87,7 @@
 <script lang="ts">
 import {
   RcDialog, RcPageContent, VTextAreaWithValidation, VTextFieldWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { VForm } from '@/types';

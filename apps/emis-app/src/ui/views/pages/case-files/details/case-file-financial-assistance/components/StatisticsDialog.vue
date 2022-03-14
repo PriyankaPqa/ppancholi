@@ -86,7 +86,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import { PaymentsSummary } from '@/entities/financial-assistance-payment';
 import { EPaymentModalities } from '@/entities/program';
 

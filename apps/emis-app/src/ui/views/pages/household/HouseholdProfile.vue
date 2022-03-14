@@ -175,7 +175,7 @@ import mixins from 'vue-typed-mixins';
 import _isEmpty from 'lodash/isEmpty';
 
 import { MAX_ADDITIONAL_MEMBERS } from '@libs/registration-lib/constants/validations';
-import { RcPageContent, RcPageLoading } from '@crctech/component-library';
+import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { IHouseholdCreate, Member } from '@libs/registration-lib/entities/household-create';
 import { IHouseholdCombined, IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
 import AddEditAdditionalMembers from '@libs/registration-lib/components/additional-members/AddEditAdditionalMembers.vue';

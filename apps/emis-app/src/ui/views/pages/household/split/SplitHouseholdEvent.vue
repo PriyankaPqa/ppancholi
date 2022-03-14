@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VAutocompleteWithValidation } from '@crctech/component-library';
+import { VAutocompleteWithValidation } from '@libs/component-lib/components';
 import CrcPrivacyStatement from '@libs/registration-lib/components/privacy-statement/CrcPrivacyStatement.vue';
 import { IEventData, Event, IEvent } from '@libs/registration-lib/entities/event';
 import { EEventStatus, IEventMainInfo } from '@/entities/event';

@@ -12,7 +12,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcRouterViewTransition } from '@crctech/component-library';
+import { RcRouterViewTransition } from '@libs/component-lib/components';
 import metadata from '@/ui/mixins/metadata';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import { INavigationTab } from '@/types';

@@ -106,7 +106,7 @@
 <script lang="ts">
 import { ValidationObserver } from 'vee-validate';
 import Vue from 'vue';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import { ValidationOfImpactStatus, ImpactValidationMethod, CaseFileEntity } from '@/entities/case-file';
 
 export default Vue.extend({

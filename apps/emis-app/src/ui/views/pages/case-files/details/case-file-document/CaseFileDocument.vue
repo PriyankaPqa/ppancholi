@@ -85,12 +85,9 @@
 
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
-import {
-  IFilterSettings,
-  RcDataTable,
-} from '@crctech/component-library';
+import { RcDataTable } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
-import { EFilterType } from '@crctech/component-library/src/types';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import isEmpty from 'lodash/isEmpty';
 import moment from '@/ui/plugins/moment';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';

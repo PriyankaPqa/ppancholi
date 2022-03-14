@@ -95,7 +95,7 @@
 <script lang="ts">
 import _cloneDeep from 'lodash/cloneDeep';
 import mixins from 'vue-typed-mixins';
-import { RcPageContent, RcPageLoading } from '@crctech/component-library';
+import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import {
   HouseholdCreate, ICurrentAddress, IHouseholdCreate, IMember,
 } from '@libs/registration-lib/entities/household-create';

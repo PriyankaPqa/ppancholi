@@ -117,7 +117,7 @@ import {
   VTextFieldWithValidation,
   VTextAreaWithValidation,
   RcDialog,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import fileUpload from '@/ui/mixins/fileUpload';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@/constants/validations';

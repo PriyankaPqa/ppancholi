@@ -20,7 +20,7 @@
 </template>
 
 <script lang="ts">
-import { RcMenuCard } from '@crctech/component-library';
+import { RcMenuCard } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
 import massActions, { IMassActionCards } from '@/ui/views/pages/mass-actions/mixins/massActions';

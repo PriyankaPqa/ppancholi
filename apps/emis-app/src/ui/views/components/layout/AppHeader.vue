@@ -58,7 +58,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcTooltip } from '@crctech/component-library';
+import { RcTooltip } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import LanguageSelector from '@/ui/shared-components/LanguageSelector.vue';
 import { IBrandingEntity } from '@/entities/tenantSettings';

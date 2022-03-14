@@ -170,7 +170,7 @@ import {
   RcPageContent,
   VAutocompleteWithValidation,
   VTextFieldWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import _isEqual from 'lodash/isEqual';
 import _sortBy from 'lodash/sortBy';
 import {

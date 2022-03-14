@@ -85,7 +85,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcConfirmationDialog, VSelectWithValidation } from '@crctech/component-library';
+import { RcConfirmationDialog, VSelectWithValidation } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import {

@@ -1,4 +1,4 @@
-import { RcConfirmationDialog } from '@crctech/component-library';
+import { RcConfirmationDialog } from '@libs/component-lib/components';
 import { i18n } from '@/ui/plugins/i18n';
 import {
   mockHouseholdCreate, mockAdditionalMembers, mockAdditionalMember, Member,

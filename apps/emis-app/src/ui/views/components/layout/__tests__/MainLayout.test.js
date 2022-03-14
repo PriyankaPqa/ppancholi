@@ -1,4 +1,4 @@
-import { RcRouterViewTransition } from '@crctech/component-library';
+import { RcRouterViewTransition } from '@libs/component-lib/components';
 import { mockStorage } from '@/store/storage';
 import { createLocalVue, mount } from '@/test/testSetup';
 import Component from '../MainLayout.vue';

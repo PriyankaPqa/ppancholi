@@ -48,7 +48,7 @@
 import Vue from 'vue';
 import { localStorageKeys } from '@/constants/localStorage';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
-import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@crctech/component-library';
+import { RcRouterViewTransition, RcConfirmationDialog, RcErrorDialog } from '@libs/component-lib/components';
 import sanitizeHtml from 'sanitize-html';
 
 import ActivityWatcher from '@/ui/ActivityWatcher.vue';

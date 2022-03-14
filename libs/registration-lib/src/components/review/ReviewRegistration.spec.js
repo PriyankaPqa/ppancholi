@@ -4,7 +4,7 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
-import { RcConfirmationDialog } from '@crctech/component-library';
+import { RcConfirmationDialog } from '@libs/component-lib/src/components';
 import { i18n } from '../../ui/plugins/i18n';
 import helpers from '../../ui/helpers/index';
 import {

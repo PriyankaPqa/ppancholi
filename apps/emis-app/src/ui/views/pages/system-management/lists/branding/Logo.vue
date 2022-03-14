@@ -66,7 +66,7 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import fileUpload from '@/ui/mixins/fileUpload';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { LOGO_EXTENSIONS } from '@/constants/documentExtensions';

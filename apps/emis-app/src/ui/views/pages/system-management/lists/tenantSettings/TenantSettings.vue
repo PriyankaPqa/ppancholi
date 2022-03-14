@@ -25,7 +25,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import { Route, NavigationGuardNext } from 'vue-router';
 import helpers from '@/ui/helpers/helpers';
 import routes from '@/constants/routes';

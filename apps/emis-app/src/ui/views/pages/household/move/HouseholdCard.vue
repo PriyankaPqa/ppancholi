@@ -238,7 +238,7 @@ import CurrentAddressForm from '@libs/registration-lib/components/forms/CurrentA
 import CurrentAddressTemplate from '@libs/registration-lib/components/review/addresses/CurrentAddressTemplate.vue';
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import { IEventGenericLocation } from '@libs/registration-lib/entities/event';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import householdHelpers from '@/ui/helpers/household';
 import { localStorageKeys } from '@/constants/localStorage';

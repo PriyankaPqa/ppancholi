@@ -38,7 +38,7 @@ import Vue from 'vue';
 import {
   RcDialog,
   VTextFieldWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { VForm } from '@/types';
 import { EEventStatus } from '@/entities/event';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';

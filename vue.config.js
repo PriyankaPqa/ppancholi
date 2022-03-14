@@ -11,7 +11,7 @@ module.exports = {
     },
   },
   configureWebpack: {
-    entry: path.resolve( './src/main.ts'),
+    entry: path.resolve('./src/main.ts'),
     optimization: {
       runtimeChunk: 'single',
       splitChunks: {
@@ -52,10 +52,9 @@ module.exports = {
         // Here we can use the newer SCSS flavor of Sass.
         // Note that there *is* a semicolon at the end of the below line
         additionalData: `
-          @import "@/ui/styles/rctech_variables.scss";
+          @import "@libs/assets/styles/rctech_variables.scss";
         `,
       },
     },
   },
 };
-

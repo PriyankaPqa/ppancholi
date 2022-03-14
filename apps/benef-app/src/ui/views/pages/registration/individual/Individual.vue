@@ -71,7 +71,7 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
 import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';

@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import mixins from 'vue-typed-mixins';
 import MassActionProcessingBase from '@/ui/views/pages/mass-actions/components/MassActionProcessingBase.vue';

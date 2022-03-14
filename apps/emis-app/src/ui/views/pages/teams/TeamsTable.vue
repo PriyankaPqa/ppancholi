@@ -78,10 +78,10 @@
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
 import {
-  RcDataTable, RcAddButtonWithMenu, IFilterSettings,
-} from '@crctech/component-library';
+  RcDataTable, RcAddButtonWithMenu,
+} from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types/FilterTypes';
 import mixins from 'vue-typed-mixins';
 import routes from '@/constants/routes';
 import { TeamType, ITeamCombined } from '@/entities/team';

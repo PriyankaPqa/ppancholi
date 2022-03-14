@@ -1,4 +1,4 @@
-import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import {
   createLocalVue,
   shallowMount,

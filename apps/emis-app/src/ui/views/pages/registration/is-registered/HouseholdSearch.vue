@@ -126,7 +126,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import isEmpty from 'lodash/isEmpty';
 import months from '@libs/registration-lib/constants/months';
 import moment from 'moment';

@@ -39,7 +39,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPhoneDisplay } from '@crctech/component-library';
+import { RcPhoneDisplay } from '@libs/component-lib/components';
 import { IEvent } from '@libs/registration-lib/entities/event';
 import { IBrandingEntity } from '@libs/registration-lib/entities/tenantSettings';
 import LanguageSelector from '@/ui/views/components/shared/LanguageSelector.vue';

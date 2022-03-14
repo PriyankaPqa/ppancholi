@@ -60,7 +60,7 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 export default Vue.extend({

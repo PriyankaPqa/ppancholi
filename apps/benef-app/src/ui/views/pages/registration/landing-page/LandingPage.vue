@@ -17,7 +17,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcRegistrationLandingPage } from '@crctech/component-library';
+import { RcRegistrationLandingPage } from '@libs/component-lib/components';
 import { IEvent } from '@libs/registration-lib/entities/event';
 import routes from '@/constants/routes';
 import { sessionStorageKeys } from '@/constants/sessionStorage';

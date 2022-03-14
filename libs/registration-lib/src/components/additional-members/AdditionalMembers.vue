@@ -69,7 +69,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcConfirmationDialog } from '@crctech/component-library';
+import { RcConfirmationDialog } from '@libs/component-lib/components';
 import VueI18n from 'vue-i18n';
 import { MAX_ADDITIONAL_MEMBERS } from '../../constants/validations';
 import AddEditAdditionalMembers from './AddEditAdditionalMembers.vue';

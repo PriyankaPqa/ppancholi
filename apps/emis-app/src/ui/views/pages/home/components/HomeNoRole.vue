@@ -27,7 +27,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import { IUser } from '@/entities/user';
 import routes from '@/constants/routes';
 

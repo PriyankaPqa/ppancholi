@@ -134,7 +134,7 @@ import {
   RcGoogleAutocompleteWithValidation,
   VSelectWithValidation,
   VTextFieldWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import { VForm } from '../../types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';

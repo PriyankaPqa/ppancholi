@@ -29,10 +29,10 @@
 import Vue from 'vue';
 import _set from 'lodash/set';
 import _difference from 'lodash/difference';
+import { RcFilterToolbar } from '@libs/component-lib/components';
 import {
-  IFilterData, IFilterSettings, IFilterToolbarLabels, IFilterTypeOperators, RcFilterToolbar,
-} from '@crctech/component-library';
-import { EFilterKeyType, EFilterOperator, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+  EFilterKeyType, EFilterOperator, EFilterType, IFilterData, IFilterSettings, IFilterToolbarLabels, IFilterTypeOperators,
+} from '@libs/component-lib/types';
 import { IFilter, IUserAccountEntity } from '@/entities/user-account';
 
 // A wrapper around the web-ui filter component to make integration as easy and consistent as possible

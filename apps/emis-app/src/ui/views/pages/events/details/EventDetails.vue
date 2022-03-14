@@ -133,7 +133,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import _orderBy from 'lodash/orderBy';
-import { RcPhoneDisplay } from '@crctech/component-library';
+import { RcPhoneDisplay } from '@libs/component-lib/components';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 

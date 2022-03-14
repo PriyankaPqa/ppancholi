@@ -208,7 +208,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { IMultilingual, VForm } from '@/types';
 import { MAX_LENGTH_MD } from '@/constants/validations';

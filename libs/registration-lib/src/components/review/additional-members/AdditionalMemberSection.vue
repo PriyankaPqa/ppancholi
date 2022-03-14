@@ -96,7 +96,7 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-@import "../../../styles/breakpoints";
+@import "../../libs/assets/styles/breakpoints";
 
 .household-member {
   & > .header {

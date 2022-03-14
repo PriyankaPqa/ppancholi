@@ -27,6 +27,12 @@
       ],
       "@libs/registration-lib/*": [
         "../../libs/registration-lib/src/*"
+      ],
+      "@libs/component-lib/*": [
+        "../../libs/component-lib/src/*"
+      ],
+      "@libs/assets/*": [
+        "../../libs/assets/*"
       ]
     },
     "lib": [

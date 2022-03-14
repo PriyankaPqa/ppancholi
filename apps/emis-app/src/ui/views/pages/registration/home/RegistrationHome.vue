@@ -25,7 +25,7 @@
 <script lang="ts">
 import Vue from 'vue';
 
-import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@crctech/component-library';
+import { VAutocompleteWithValidation, RcRegistrationLandingPage } from '@libs/component-lib/components';
 import { IShelterLocationData } from '@libs/registration-lib/entities/household-create';
 import { IEventData as IRegistrationEventData } from '@libs/registration-lib/entities/event';
 import routes from '@/constants/routes';

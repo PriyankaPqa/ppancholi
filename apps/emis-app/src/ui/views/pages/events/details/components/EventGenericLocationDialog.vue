@@ -130,7 +130,7 @@ import {
   VSelectWithValidation,
   RcGoogleAutocomplete,
   RcCountrySelect,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { ECanadaProvinces, EEventSummarySections, VForm } from '@/types';
 import {
   EEventLocationStatus,

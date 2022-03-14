@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VSelectWithValidation } from '@crctech/component-library';
+import { VSelectWithValidation } from '@libs/component-lib/components';
 import { IOptionSubItem } from '@/entities/optionItem';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import { Status } from '@/entities/base';

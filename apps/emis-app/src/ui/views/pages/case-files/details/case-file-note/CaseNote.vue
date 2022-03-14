@@ -56,12 +56,12 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { IFilterSettings, RcPageContent, RcPageLoading } from '@crctech/component-library';
+import { RcPageContent, RcPageLoading } from '@libs/component-lib/components';
 import { NavigationGuardNext, Route } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import _isEmpty from 'lodash/isEmpty';
 import _debounce from 'lodash/debounce';
-import { EFilterType } from '@crctech/component-library/src/types';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import * as searchEndpoints from '@/constants/searchEndpoints';
 import { FilterKey } from '@/entities/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';

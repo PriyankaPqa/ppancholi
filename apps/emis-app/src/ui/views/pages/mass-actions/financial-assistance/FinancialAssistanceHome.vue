@@ -63,7 +63,7 @@
 
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
-import { RcDataTable, RcAddButtonWithMenu } from '@crctech/component-library';
+import { RcDataTable, RcAddButtonWithMenu } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import routes from '@/constants/routes';

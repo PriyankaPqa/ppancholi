@@ -78,7 +78,7 @@
 import Vue from 'vue';
 import moment from 'moment';
 import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { IEventMainInfo } from '@/entities/event';
 import CaseFileSummary from '../../case-files/details/CaseFileSummary.vue';

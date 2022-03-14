@@ -37,7 +37,7 @@
 </template>
 
 <script lang="ts">
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import Vue from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
 import _isEqual from 'lodash/isEqual';
@@ -281,7 +281,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-@import "../../../src/styles/breakpoints";
+@import "../../libs/assets/styles/breakpoints";
 
 @media only screen and (min-width: $breakpoint-xs-min) and (max-width: $breakpoint-xs-max) {
   .additionalMembersForm {

@@ -15,7 +15,8 @@ module.exports = {
     '\\.(gif|ttf|eot|svg)$': '<rootDir>/__mocks__/fileMock.js',
     '^@libs/registration-lib/src/(.*)$': '<rootDir>/../../libs/registration-lib/src/$1', // in javascript file there is path like there is for TS so we need that
     '^@libs/registration-lib/(.*)$': '<rootDir>/../../libs/registration-lib/src/$1',
-
+    '^@libs/component-lib/src/(.*)$': '<rootDir>/../../libs/component-lib/src/$1', // in javascript file there is path like there is for TS so we need that
+    '^@libs/component-lib/(.*)$': '<rootDir>/../../libs/component-lib/src/$1',
   },
   setupFilesAfterEnv: ['./jest.setup.js'],
   name: packageJson.name,

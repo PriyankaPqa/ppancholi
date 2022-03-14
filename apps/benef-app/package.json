@@ -16,8 +16,8 @@
     "debug:e2e": "testcafe $NODE_DEBUG_OPTION chrome"
   },
   "dependencies": {
-    "@crctech/component-library": "1.0.209",
     "@libs/registration-lib": "*",
+    "@libs/component-lib": "*",
     "@mdi/font": "6.5.95",
     "@types/uuid": "8.3.4",
     "awesome-phonenumber": "2.68.0",

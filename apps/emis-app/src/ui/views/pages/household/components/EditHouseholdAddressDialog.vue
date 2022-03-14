@@ -39,7 +39,7 @@
 import Vue from 'vue';
 import AddressForm from '@libs/registration-lib/components/forms/AddressForm.vue';
 import libHelpers from '@libs/registration-lib/ui/helpers';
-import { RcDialog, VCheckboxWithValidation, VTextAreaWithValidation } from '@crctech/component-library';
+import { RcDialog, VCheckboxWithValidation, VTextAreaWithValidation } from '@libs/component-lib/components';
 import { IAddressData, IHouseholdCreate } from '@libs/registration-lib/entities/household-create';
 import _cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';

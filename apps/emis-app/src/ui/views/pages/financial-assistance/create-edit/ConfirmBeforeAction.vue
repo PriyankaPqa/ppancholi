@@ -34,7 +34,7 @@
 </template>
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 
 export type ConfirmationDialog = Vue & {
     open: () => Promise<unknown>;

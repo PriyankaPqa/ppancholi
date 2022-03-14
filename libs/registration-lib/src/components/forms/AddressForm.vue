@@ -78,7 +78,7 @@ import {
   VTextFieldWithValidation,
   RcGoogleAutocompleteWithValidation,
   RcCountrySelectWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { IAddress } from '../../entities/household-create';
 import googleAutoCompleteMixin from './mixins/address';

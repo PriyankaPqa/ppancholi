@@ -159,7 +159,7 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { RcPageContent, RcDialog, VCheckboxWithValidation } from '@crctech/component-library';
+import { RcPageContent, RcDialog, VCheckboxWithValidation } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import _find from 'lodash/find';
 import { Route, NavigationGuardNext } from 'vue-router';

@@ -93,7 +93,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import _difference from 'lodash/difference';
 import { ITeamMember } from '@/entities/team';

@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VSelectWithValidation } from '@crctech/component-library';
+import { VSelectWithValidation } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { EFinancialAmountModes } from '@/entities/financial-assistance';
 

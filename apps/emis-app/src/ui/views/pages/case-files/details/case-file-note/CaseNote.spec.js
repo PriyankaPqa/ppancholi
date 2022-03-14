@@ -1,4 +1,4 @@
-import { EFilterType } from '@crctech/component-library/src/types';
+import { EFilterType } from '@libs/component-lib/types';
 import { CaseNoteStorageMock } from '@/store/storage/case-note/storage.mock';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
 import { mockCombinedCaseNote } from '@/entities/case-note';

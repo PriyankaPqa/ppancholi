@@ -1,4 +1,4 @@
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 
 import Component from '../components/EventSummarySectionInfoDialog.vue';

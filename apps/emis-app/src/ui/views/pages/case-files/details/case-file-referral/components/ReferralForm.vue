@@ -95,7 +95,7 @@ import {
   VTextFieldWithValidation,
   VTextAreaWithValidation,
   VCheckboxWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@/constants/validations';
 import { CaseFileReferralEntity, ReferralMethod } from '@/entities/case-file-referral';
 import { IOptionItem } from '@/entities/optionItem';

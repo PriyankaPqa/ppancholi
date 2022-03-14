@@ -71,7 +71,7 @@ import mixins from 'vue-typed-mixins';
 import { Route, NavigationGuardNext } from 'vue-router';
 import { TranslateResult } from 'vue-i18n';
 import individual from '@libs/registration-lib/ui/mixins/individual';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import { ContactInformation, IMember, ISplitHousehold } from '@libs/registration-lib/entities/household-create';
 import ConfirmationPrint from '@libs/registration-lib/components/confirm-registration/ConfirmationPrint.vue';
 import routes from '@/constants/routes';

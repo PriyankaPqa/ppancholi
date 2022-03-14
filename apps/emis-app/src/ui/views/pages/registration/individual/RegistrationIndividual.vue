@@ -76,7 +76,7 @@
 </template>
 
 <script lang="ts">
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import individual from '@libs/registration-lib/ui/mixins/individual';
 import { Route, NavigationGuardNext } from 'vue-router';

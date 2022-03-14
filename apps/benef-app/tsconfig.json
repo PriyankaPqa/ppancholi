@@ -27,6 +27,12 @@
       "@libs/registration-lib/*": [
         "../../libs/registration-lib/src/*"
       ],
+      "@libs/component-lib/*": [
+        "../../libs/component-lib/src/*"
+      ],
+      "@libs/assets": [
+        "../../libs/assets/*"
+      ]
     },
     "lib": [
       "es6",
@@ -41,8 +47,6 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.vue",
-    "tests/**/*.ts",
-    "tests/**/*.tsx",
     "typings/**.ts"
   ],
   "exclude": [

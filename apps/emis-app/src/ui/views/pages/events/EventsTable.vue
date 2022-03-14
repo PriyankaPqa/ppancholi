@@ -72,10 +72,9 @@
 import { TranslateResult } from 'vue-i18n';
 import {
   RcDataTable,
-  ISearchData,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
-import { EFilterType, IFilterSettings } from '@crctech/component-library/src/types';
+import { EFilterType, IFilterSettings, ISearchData } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
 import { FilterKey } from '@/entities/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';

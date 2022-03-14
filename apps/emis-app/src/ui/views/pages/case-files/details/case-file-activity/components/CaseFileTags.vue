@@ -103,7 +103,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog, RcConfirmationDialog, RcTooltip } from '@crctech/component-library';
+import { RcDialog, RcConfirmationDialog, RcTooltip } from '@libs/component-lib/components';
 
 import {
   IOptionItem,

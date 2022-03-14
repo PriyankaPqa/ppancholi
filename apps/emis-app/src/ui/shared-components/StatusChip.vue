@@ -12,7 +12,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcStatusChip } from '@crctech/component-library';
+import { RcStatusChip } from '@libs/component-lib/components';
 import { EEventCallCentreStatus, EEventStatus } from '@/entities/event';
 import colors from '@/ui/plugins/vuetify/colors';
 import { CaseFileStatus } from '@/entities/case-file';

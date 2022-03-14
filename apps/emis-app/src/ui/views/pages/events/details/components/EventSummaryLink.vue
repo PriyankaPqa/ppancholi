@@ -56,7 +56,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcTooltip } from '@crctech/component-library';
+import { RcTooltip } from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import { EEventStatus, IEventEntity } from '@/entities/event';
 

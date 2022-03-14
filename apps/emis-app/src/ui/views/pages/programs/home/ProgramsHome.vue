@@ -53,11 +53,11 @@
 <script lang="ts">
 import { DataTableHeader } from 'vuetify';
 import {
-  RcDataTable, IFilterSettings,
-} from '@crctech/component-library';
+  RcDataTable,
+} from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import _isEmpty from 'lodash/isEmpty';
-import { EFilterType } from '@crctech/component-library/src/types';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import routes from '@/constants/routes';
 import { FilterKey } from '@/entities/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';

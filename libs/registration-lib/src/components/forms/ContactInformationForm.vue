@@ -115,7 +115,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@crctech/component-library';
+import { RcPhoneWithValidation, VSelectWithValidation, VTextFieldWithValidation } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import { ValidationObserver } from 'vee-validate';
 import { IOptionItemData } from '../../types';

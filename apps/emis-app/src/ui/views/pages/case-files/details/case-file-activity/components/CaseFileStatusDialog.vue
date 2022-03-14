@@ -60,7 +60,7 @@ import {
   VTextFieldWithValidation,
   VTextAreaWithValidation,
   VSelectWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { VForm } from '@/types';
 import { CaseFileStatus } from '@/entities/case-file';
 import { IOptionItem } from '@/entities/optionItem';

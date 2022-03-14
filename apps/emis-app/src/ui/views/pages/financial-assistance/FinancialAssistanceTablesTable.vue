@@ -63,10 +63,10 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { RcDataTable, RcAddButtonWithMenu, IFilterSettings } from '@crctech/component-library';
+import { RcDataTable, RcAddButtonWithMenu } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import { DataTableHeader } from 'vuetify';
-import { EFilterType } from '@crctech/component-library/src/types';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import _isEmpty from 'lodash/isEmpty';
 import { FilterKey } from '@/entities/user-account';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';

@@ -24,7 +24,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import { IError } from '@/services/httpClient';
 import { VForm } from '@/types';
 import { ProgramEntity } from '@/entities/program';

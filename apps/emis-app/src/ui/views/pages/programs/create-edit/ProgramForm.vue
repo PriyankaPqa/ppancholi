@@ -110,7 +110,7 @@ import {
   VSelectWithValidation,
   VTextFieldWithValidation,
   VTextAreaWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import { EPaymentModalities, ProgramEntity } from '@/entities/program';
 import helpers from '@/ui/helpers/helpers';

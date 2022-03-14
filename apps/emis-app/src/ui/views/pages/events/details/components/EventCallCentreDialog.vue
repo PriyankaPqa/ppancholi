@@ -106,7 +106,7 @@ import {
   VTextFieldWithValidation,
   VDateFieldWithValidation,
   VTextAreaWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 
 import { EEventSummarySections, VForm } from '@/types';

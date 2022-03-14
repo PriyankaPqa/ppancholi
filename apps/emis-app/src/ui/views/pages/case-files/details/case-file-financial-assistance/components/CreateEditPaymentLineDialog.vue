@@ -173,7 +173,7 @@ import {
   VCheckboxWithValidation,
   VTextFieldWithValidation,
   VSelectWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import AddressForm from '@libs/registration-lib/components/forms/AddressForm.vue';
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import { Address } from '@libs/registration-lib/entities/value-objects/address';

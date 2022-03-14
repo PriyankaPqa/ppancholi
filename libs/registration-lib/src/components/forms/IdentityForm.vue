@@ -98,7 +98,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import { VTextFieldWithValidation, VSelectWithValidation } from '@crctech/component-library';
+import { VTextFieldWithValidation, VSelectWithValidation } from '@libs/component-lib/components';
 import Pot from './HoneyPot.vue';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import { IBirthDate, IHoneyPotIdentitySet, IIdentitySet } from '../../entities/household-create';

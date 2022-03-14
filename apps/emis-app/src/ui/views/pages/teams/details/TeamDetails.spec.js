@@ -4,7 +4,7 @@ import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { mockTeamEvents } from '@/entities/team';
 
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import Component from './TeamDetails.vue';
 
 const storage = mockStorage();

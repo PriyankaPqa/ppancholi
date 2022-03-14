@@ -35,7 +35,7 @@
 import Vue from 'vue';
 import {
   RcConfirmationDialog,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { EEventStatus } from '@libs/registration-lib/entities/event';
 import { ICaseFileCombined, CaseFileStatus } from '@/entities/case-file';
 import StatusSelect from '@/ui/shared-components/StatusSelect.vue';

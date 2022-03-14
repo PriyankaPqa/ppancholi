@@ -161,11 +161,10 @@
 import { DataTableHeader } from 'vuetify';
 import {
   RcDataTable,
-  IFilterSettings,
   RcDialog,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import { EFilterType } from '@crctech/component-library/src/types';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 import mixins from 'vue-typed-mixins';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';

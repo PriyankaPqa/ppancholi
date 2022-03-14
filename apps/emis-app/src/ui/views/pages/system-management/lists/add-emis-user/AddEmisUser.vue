@@ -116,7 +116,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcDialog, VSelectWithValidation } from '@crctech/component-library';
+import { RcDialog, VSelectWithValidation } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import _difference from 'lodash/difference';
 import _debounce from 'lodash/debounce';

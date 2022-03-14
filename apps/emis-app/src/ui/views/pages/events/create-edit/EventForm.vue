@@ -284,7 +284,7 @@ import {
   RcPhone,
   RcAutosuggest,
   RcTooltip,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers/helpers';

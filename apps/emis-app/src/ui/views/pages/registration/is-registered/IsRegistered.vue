@@ -29,7 +29,7 @@
 
 <script lang="ts">
 import LibReviewRegistration from '@libs/registration-lib/components/review/ReviewRegistration.vue';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
 import mixins from 'vue-typed-mixins';
 import HouseholdSearch from '@/ui/views/pages/registration/is-registered/HouseholdSearch.vue';

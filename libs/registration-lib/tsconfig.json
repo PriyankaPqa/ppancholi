@@ -14,7 +14,6 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "rootDir": ".",
-    "outDir": "./dist",
     "baseUrl": ".",
     "allowJs": true,
     "types": [
@@ -23,12 +22,15 @@
       "vuetify"
     ],
     "paths": {
+      "@libs/registration-lib/*": [
+        "src/*"
+      ],
+      "@libs/component-lib/*": [
+        "../../libs/component-lib/src/*"
+      ],
       "@/*": [
         "src/*"
       ],
-      "@libs/registration-lib/*": [
-        "src/*"
-      ]
     },
     "lib": [
       "esnext",
@@ -44,9 +46,5 @@
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "typings/**.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
   ]
 }

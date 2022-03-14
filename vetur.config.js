@@ -1,11 +1,12 @@
 module.exports = {
-    settings: {
-      "vetur.useWorkspaceDependencies": true,
-      "vetur.experimental.templateInterpolationService": true
-    },
-    projects: [
-      'apps/emis-app',
-      'apps/benef-app',
-      'libs/registration-lib',
-    ]
-  }
+  settings: {
+    'vetur.useWorkspaceDependencies': true,
+    'vetur.experimental.templateInterpolationService': true,
+  },
+  projects: [
+    'apps/emis-app',
+    'apps/benef-app',
+    'libs/registration-lib',
+    'libs/component-lib',
+  ],
+};

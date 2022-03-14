@@ -116,7 +116,7 @@ import {
   RcDialog,
   VSelectWithValidation,
   VTextFieldWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import {
   IdentityAuthenticationMethod, IdentityAuthenticationStatus, ICaseFileEntity, IIdentityAuthentication,

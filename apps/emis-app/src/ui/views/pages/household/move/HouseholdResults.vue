@@ -87,7 +87,7 @@
 <script lang="ts">
 
 import mixins from 'vue-typed-mixins';
-import { RcDataTable } from '@crctech/component-library';
+import { RcDataTable } from '@libs/component-lib/components';
 import { IHouseholdCombined } from '@libs/registration-lib/entities/household/index';
 import { HouseholdCreate } from '@libs/registration-lib/entities/household-create';
 import householdResults from '@/ui/mixins/householdResults';

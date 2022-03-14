@@ -118,7 +118,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcConfirmationDialog, VTextFieldWithValidation } from '@crctech/component-library';
+import { RcConfirmationDialog, VTextFieldWithValidation } from '@libs/component-lib/components';
 import _isEqual from 'lodash/isEqual';
 import _cloneDeep from 'lodash/cloneDeep';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';

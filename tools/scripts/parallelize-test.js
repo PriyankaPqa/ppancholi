@@ -37,6 +37,10 @@ function getAffectedTestFiles(affectedPackages) {
     allFiles = allFiles.concat(jetpack.find('libs/registration-lib', { matching: globPattern }));
   }
 
+  if (affectedPackages.includes('@libs/component-lib')) {
+    allFiles = allFiles.concat(jetpack.find('libs/component-lib', { matching: globPattern }));
+  }
+
   if (affectedPackages.includes('@apps/benef-app') && applicationName === 'benef-app') {
     allFiles = allFiles.concat(jetpack.find('apps/benef-app', { matching: globPattern }));
   }

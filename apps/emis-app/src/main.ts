@@ -4,8 +4,7 @@ import VueMeta from 'vue-meta';
 import './registerServiceWorker';
 
 // asset imports
-import '@/ui/styles/main.scss';
-
+import '../../../libs/assets/styles/main.scss';
 // Import i18n related files
 
 import VueAxe from 'vue-axe';

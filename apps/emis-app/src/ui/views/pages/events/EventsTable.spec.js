@@ -1,6 +1,6 @@
-import { RcDataTable } from '@crctech/component-library';
+import { RcDataTable } from '@libs/component-lib/components';
 import moment from 'moment';
-import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import { EFilterType } from '@libs/component-lib/types/FilterTypes';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';

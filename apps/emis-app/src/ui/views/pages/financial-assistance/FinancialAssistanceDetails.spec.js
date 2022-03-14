@@ -1,4 +1,4 @@
-import { RcNestedTable } from '@crctech/component-library';
+import { RcNestedTable } from '@libs/component-lib/components';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { Status } from '@/entities/base';
 import { mockStorage } from '@/store/storage';

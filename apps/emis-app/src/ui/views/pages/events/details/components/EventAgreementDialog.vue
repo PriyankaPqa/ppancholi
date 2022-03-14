@@ -107,7 +107,7 @@ import {
   VDateFieldWithValidation,
   VTextAreaWithValidation,
   VSelectWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import moment from '@/ui/plugins/moment';
 import helpers from '@/ui/helpers/helpers';
 

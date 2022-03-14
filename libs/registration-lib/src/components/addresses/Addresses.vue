@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VCheckboxWithValidation } from '@crctech/component-library';
+import { VCheckboxWithValidation } from '@libs/component-lib/components';
 
 import VueI18n from 'vue-i18n';
 import AddressForm from '../forms/AddressForm.vue';

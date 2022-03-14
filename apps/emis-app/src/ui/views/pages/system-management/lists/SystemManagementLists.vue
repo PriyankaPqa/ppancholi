@@ -43,7 +43,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 

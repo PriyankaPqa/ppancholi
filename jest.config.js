@@ -6,6 +6,7 @@ module.exports = {
     '<rootDir>/apps/emis-app',
     '<rootDir>/apps/benef-app',
     '<rootDir>/libs/registration-lib',
+    '<rootDir>/libs/component-lib',
   ],
   coverageDirectory: '<rootDir>/coverage/',
 };

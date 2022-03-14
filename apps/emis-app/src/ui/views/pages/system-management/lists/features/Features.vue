@@ -28,7 +28,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import routes from '@/constants/routes';
 import { FeatureType, IFeatureEntity } from '@/entities/tenantSettings';
 import FeatureTable from './FeatureTable.vue';

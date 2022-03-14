@@ -66,7 +66,7 @@
 import Vue from 'vue';
 import {
   VTextFieldWithValidation, VSelectWithValidation, VTextAreaWithValidation, RcConfirmationDialog,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import _cloneDeep from 'lodash/cloneDeep';
 import { IOptionItem } from '@/entities/optionItem';
 import { MAX_LENGTH_SM, MAX_LENGTH_XL } from '@/constants/validations';

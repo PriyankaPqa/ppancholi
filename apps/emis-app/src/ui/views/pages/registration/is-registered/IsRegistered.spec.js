@@ -1,5 +1,5 @@
 import Vuetify from 'vuetify';
-import { RcDialog } from '@crctech/component-library';
+import { RcDialog } from '@libs/component-lib/components';
 import { mockSplitHousehold } from '@libs/registration-lib/entities/household-create';
 import { mockCombinedHousehold } from '@libs/registration-lib/entities/household';
 import {

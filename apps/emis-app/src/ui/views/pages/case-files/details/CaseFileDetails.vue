@@ -148,7 +148,7 @@
 </template>
 
 <script lang="ts">
-import { RcTooltip } from '@crctech/component-library';
+import { RcTooltip } from '@libs/component-lib/components';
 import { IHouseholdCombined, IHouseholdMemberMetadata } from '@libs/registration-lib/entities/household';
 import mixins from 'vue-typed-mixins';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';

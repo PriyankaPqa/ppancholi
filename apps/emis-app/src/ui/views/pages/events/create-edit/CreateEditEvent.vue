@@ -24,7 +24,7 @@
 
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
-import { RcPageContent } from '@crctech/component-library';
+import { RcPageContent } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import PageTemplate from '@/ui/views/components/layout/PageTemplate.vue';
 import routes from '@/constants/routes';

@@ -13,7 +13,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { VTextFieldWithValidation } from '@crctech/component-library';
+import { VTextFieldWithValidation } from '@libs/component-lib/components';
 
 export default Vue.extend({
   name: 'AddSubItemMaximum',

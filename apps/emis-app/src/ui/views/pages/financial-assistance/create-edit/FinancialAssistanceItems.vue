@@ -145,7 +145,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
-import { RcNestedTable } from '@crctech/component-library';
+import { RcNestedTable } from '@libs/component-lib/components';
 import { VForm } from '@/types';
 import {
   EFinancialAmountModes,

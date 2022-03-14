@@ -14,7 +14,7 @@
 
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
-import { RcRouterViewTransition } from '@crctech/component-library';
+import { RcRouterViewTransition } from '@libs/component-lib/components';
 import mixins from 'vue-typed-mixins';
 import metadata from '@/ui/mixins/metadata';
 import routes from '@/constants/routes';

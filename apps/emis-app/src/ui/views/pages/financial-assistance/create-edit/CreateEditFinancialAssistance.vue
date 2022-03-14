@@ -181,7 +181,7 @@ import { NavigationGuardNext, Route } from 'vue-router';
 import _sortBy from 'lodash/sortBy';
 import {
   RcPageContent, RcTabs, RcTab, VTextFieldWithValidation, VAutocompleteWithValidation,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import helpers from '@/ui/helpers/helpers';
 import routes from '@/constants/routes';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';

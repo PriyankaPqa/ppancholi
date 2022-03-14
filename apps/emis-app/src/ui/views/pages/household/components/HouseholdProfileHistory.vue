@@ -66,7 +66,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
-import { RcDialog, RcDataTable } from '@crctech/component-library';
+import { RcDialog, RcDataTable } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import { IHouseholdEntity } from '@libs/registration-lib/entities/household';
 

@@ -96,11 +96,8 @@
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
 import { DataTableHeader } from 'vuetify';
-import {
-  RcDataTable,
-  IFilterSettings,
-} from '@crctech/component-library';
-import { EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import { RcDataTable } from '@libs/component-lib/components';
+import { EFilterType, IFilterSettings } from '@libs/component-lib/types';
 
 import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';

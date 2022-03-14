@@ -122,10 +122,12 @@
 
 <script lang="ts">
 
-import { IFilterSettings, RcDataTable, RcDialog } from '@crctech/component-library';
+import { RcDataTable, RcDialog } from '@libs/component-lib/components';
 import { DataTableHeader } from 'vuetify';
 import mixins from 'vue-typed-mixins';
-import { EDateMode, EFilterKeyType, EFilterType } from '@crctech/component-library/src/types/FilterTypes';
+import {
+  EDateMode, EFilterKeyType, EFilterType, IFilterSettings,
+} from '@libs/component-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { ECanadaProvinces } from '@/types';
 import { FilterKey } from '@/entities/user-account';

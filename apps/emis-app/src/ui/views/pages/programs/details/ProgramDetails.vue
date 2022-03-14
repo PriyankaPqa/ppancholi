@@ -165,7 +165,7 @@ import Vue from 'vue';
 import {
   RcPageContent,
   RcPageLoading,
-} from '@crctech/component-library';
+} from '@libs/component-lib/components';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import routes from '@/constants/routes';
