@@ -1,3 +1,7 @@
 errors.team.has-activefile-message
 test-leo
+test-leo-emis
+test-leo-benef-app
+registration.privacy_statement.p2
+registration.privacy_statement.p1
 error.there-are-no-records-to-be-processed

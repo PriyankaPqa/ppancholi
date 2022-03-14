@@ -1,14 +1,11 @@
 <template>
   <div>
-    <p class="rc-body14">
-      {{ $t('registration.privacy_statement.p1') }}
-    </p>
-    <i18n path="registration.privacy_statement.p2" tag="p" class="rc-body14">
+    <i18n path="registration.privacy_consent" tag="p" class="rc-body14 consent">
       <template #website>
         <a :href="$t('registration.privacy_statement.website')" target="_blank">{{ $t('registration.privacy_statement.website') }}</a>
       </template>
       <template #email>
-        <a href="mailto:privacy@redcross.ca">{{ $t('registration.privacy_statement.email') }}</a>
+        <a :href="`mailto:${$t('registration.privacy_statement.email')}`">{{ $t('registration.privacy_statement.email') }}</a>
       </template>
     </i18n>
     <div class="full-width grey-container py-1 px-5">
@@ -65,3 +62,10 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style lang="scss">
+.consent {
+  white-space: pre-line;
+  text-align: justify
+}
+</style>

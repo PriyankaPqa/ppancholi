@@ -25,10 +25,11 @@ stages:
       - job: 'Publish_Test'
         dependsOn: 'Test'
         displayName: 'Publish Results & Coverage'
+        condition: eq(variables['build.sourceBranch'], 'refs/heads/master')
         steps:
           - task: PublishTestResults@2
             displayName: 'Publish Test Result'
-            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+            condition: succeededOrFailed()
             inputs:
               testRunner: VSTest
               testResultsFiles: '**/*result*.trx'
@@ -40,11 +41,11 @@ stages:
 
           - script: node ./tools/scripts/merge-test-coverage.js
             displayName: 'Merge Code Coverage Reports'
-            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+            condition: succeededOrFailed()
 
           - task: PublishCodeCoverageResults@1
             displayName: 'Publish Merged Code Coverage Report'
-            condition: and(succeededOrFailed(), eq(variables['build.sourceBranch'], 'refs/heads/master'))
+            condition: succeededOrFailed()
             inputs:
               codeCoverageTool: 'Cobertura'
               summaryFileLocation: '$(Build.SourcesDirectory)/coverage/merged-cobertura-coverage.xml'
