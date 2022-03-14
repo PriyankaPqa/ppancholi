@@ -189,7 +189,7 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { EPaymentModalities, IProgramEntity } from '@/entities/program';
 import helpers from '@/ui/helpers/helpers';
-import { IAddress, VForm } from '@/types';
+import { ECanadaProvinces, IAddress, VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { Status } from '@/entities/base';
@@ -412,6 +412,7 @@ export default mixins(caseFileDetail).extend({
     async onSubmit() {
       if (this.showPayee(this.paymentGroup)) {
         this.currentPaymentLine.address = this.address;
+        this.currentPaymentLine.address.province = this.address.province ?? ECanadaProvinces.OT;
       } else {
         // reset non-editable fields if they had been changed
         this.currentPaymentLine.address = null;
