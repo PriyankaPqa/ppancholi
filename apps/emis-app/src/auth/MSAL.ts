@@ -213,7 +213,12 @@ export class MSAL implements IMSAL {
     this.showConsole && console.debug('CurrentDomain:' , this.currentDomainTenant)
 
     if (this.currentDomainTenant) { // If not in localhost
-      await this.checkIfLoggedInCurrentTenant();
+      // Set this.account to the account that belongs to the current tenant.
+      // If there is no account, the user will be forced to sign in with a different username/pw, so the flow of the current method can be stopped
+     const isLoggedInCurrentTenant = await this.setAccountForCurrentTenant();
+     if(!isLoggedInCurrentTenant){
+       return null;
+      }
     }
 
     // TODO Remove when we're sure it does not go in. Normally because we make sure to call loadAuthModule
@@ -278,9 +283,9 @@ export class MSAL implements IMSAL {
         );
         this.signIn(this.currentDomainTenant);
       }
+      return null;
     }
 
-    return null;
   }
 
   /**
@@ -378,13 +383,14 @@ export class MSAL implements IMSAL {
     }
   }
 
-  private async checkIfLoggedInCurrentTenant() {
-    this.showConsole && console.debug('checkIfLoggedInCurrentTenant')
+  // Sets the account associated with the current user and tenant into this.account, if they are different. If there is no such account, it forces the user to sign in.
+  private async setAccountForCurrentTenant() {
+    this.showConsole && console.debug('setAccountForCurrentTenant')
     this.enableAppInsights && applicationInsights.trackTrace(
-      'checkIfLoggedInCurrentTenant',
+      'setAccountForCurrentTenant',
       {},
       'MSAL',
-      'checkIfLoggedInCurrentTenant'
+      'setAccountForCurrentTenant'
     );
     const accountForTenant = this.getAccountForCurrentTenant();
 
@@ -394,21 +400,25 @@ export class MSAL implements IMSAL {
         'accountForTenant is null, will sign in',
         {accountForTenant},
         'MSAL',
-        'checkIfLoggedInCurrentTenant'
+        'setAccountForCurrentTenant'
       );
       this.signIn();
-    } else {
-      if (this.account.localAccountId !== accountForTenant.localAccountId) {
-        this.showConsole && console.debug('accountForTenant - Setting new account', accountForTenant)
-        this.enableAppInsights && applicationInsights.trackTrace(
-          'accountForTenant - Setting new account',
-          {accountForTenant},
-          'MSAL',
-          'checkIfLoggedInCurrentTenant'
-        );
-        this.account = accountForTenant;
-      }
+      return false;
     }
+
+    if (this.account.localAccountId !== accountForTenant.localAccountId) {
+      this.showConsole && console.debug('accountForTenant - Setting new account', accountForTenant)
+      this.enableAppInsights && applicationInsights.trackTrace(
+        'accountForTenant - Setting new account',
+        {accountForTenant},
+        'MSAL',
+        'setAccountForCurrentTenant'
+      );
+      this.account = accountForTenant;
+    }
+
+    return true;
+
   }
 
   /**

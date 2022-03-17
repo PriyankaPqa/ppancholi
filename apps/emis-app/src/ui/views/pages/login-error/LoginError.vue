@@ -1,24 +1,21 @@
 <template>
-  <div class="container">
-    <div class="error-banner">
-      <div class="error-message">
-        <h3 class="rc-heading-3">
-          {{ $t('loginError.title') }}
-        </h3>
+  <div id="login-error">
+    <div>
+      <v-alert type="error" border="left" elevation="1">
+        {{ $t('loginError.title') }}
+      </v-alert>
 
-        <p class="rc-body14">
-          {{ $t('loginError.message') }}
-        </p>
+      <v-card elevation="1" class="pa-4 rc-body14">
+        {{ $t('loginError.message') }}
+      </v-card>
 
-        <div>
-          <v-btn color="primary" data-test="loginError__signInButton" @click="signIn">
-            {{ $t('loginError.signIn') }}
-          </v-btn>
-
-          <v-btn class="ml-4" text data-test="loginError__signOutButton" @click="signOut">
-            {{ $t('common.logout.label') }}
-          </v-btn>
-        </div>
+      <div class="actions">
+        <v-btn color="primary" class="mt-4 mb-1" data-test="loginError__signInButton" @click="signIn">
+          {{ $t('loginError.signIn') }}
+        </v-btn>
+        <v-btn data-test="loginError__signOutButton" @click="signOut">
+          {{ $t('loginError.signOut') }}
+        </v-btn>
       </div>
     </div>
   </div>
@@ -33,7 +30,7 @@ export default Vue.extend({
 
   methods: {
     signIn() {
-      AuthenticationProvider.signIn();
+      AuthenticationProvider.signIn(AuthenticationProvider.currentDomainTenant);
     },
 
     signOut() {
@@ -42,3 +39,24 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+
+#login-error {
+  background-color: var(--v-grey-lighten4) !important;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+
+  & > div {
+    margin:auto;
+    max-width: 400px;
+  }
+
+  & .actions {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+</style>
