@@ -58,15 +58,6 @@ export interface IEventResponseDetails {
   assistanceNumber: string;
 }
 
-export interface IRegion {
-  province: ECanadaProvinces;
-  name: IMultilingual;
-}
-
-export interface IOtherProvince {
-  name: IMultilingual;
-}
-
 export interface IEventCallCentre {
   id?: uuid;
   name: IMultilingual;

@@ -6,9 +6,8 @@ import {
   IEventCombined,
   IEventEntity,
   IEventMetadata,
-  IOtherProvince,
-  IRegion,
   IRelatedEventsInfos,
+  IEventLocation,
 } from './event.types';
 /* eslint-disable max-lines-per-function */
 import { IEntity, mockBaseData, Status } from '../base';
@@ -621,47 +620,45 @@ export const mockEventMetadataData = (): IEventMetadata[] => [
   },
 ];
 
-export const mockOtherProvinceData = (): IAzureSearchResult<IOtherProvince> => ({
-  odataCount: 2,
-  odataContext: 'context',
-  value: [{
-    name: {
-      translation: {
-        en: 'New York',
-        fr: 'New York FR',
-      },
+export const mockOtherProvinceData = (): IEventLocation[] => [{
+  province: ECanadaProvinces.OT,
+  provinceOther: {
+    translation: {
+      en: 'New York',
+      fr: 'New York FR',
     },
-  }, {
-    name: {
-      translation: {
-        en: 'California',
-        fr: 'Californie',
-      },
+  },
+  region: null,
+}, {
+  province: ECanadaProvinces.OT,
+  provinceOther: {
+    translation: {
+      en: 'California',
+      fr: 'Californie',
     },
-  }],
-});
+  },
+  region: null,
+}];
 
-export const mockRegionData = (): IAzureSearchResult<IRegion> => ({
-  odataCount: 2,
-  odataContext: 'context',
-  value: [{
-    province: ECanadaProvinces.AB,
-    name: {
-      translation: {
-        en: 'Southern Alberta',
-        fr: 'Southern Alberta FR',
-      },
+export const mockRegionData = (): IEventLocation[] => [{
+  province: ECanadaProvinces.AB,
+  region: {
+    translation: {
+      en: 'Southern Alberta',
+      fr: 'Southern Alberta FR',
     },
-  }, {
-    province: ECanadaProvinces.AB,
-    name: {
-      translation: {
-        en: 'Northern Alberta',
-        fr: 'Northern Alberta FR',
-      },
+  },
+  provinceOther: null,
+}, {
+  province: ECanadaProvinces.AB,
+  region: {
+    translation: {
+      en: 'Northern Alberta',
+      fr: 'Northern Alberta FR',
     },
-  }],
-});
+  },
+  provinceOther: null,
+}];
 
 export const mockRelatedEventInfos = (): IRelatedEventsInfos[] => ([
   {

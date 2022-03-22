@@ -52,7 +52,7 @@
                 :label="`${$t('event.other')} *`"
                 :rules="rules.location.provinceOther"
                 :disabled="inputDisabled"
-                :item-text="(item) => item.name.translation[languageMode]" />
+                :item-text="(item) => item.provinceOther.translation[languageMode]" />
             </v-col>
 
             <v-col cols="6" md="6" sm="12">
@@ -63,8 +63,9 @@
                 attach="event-region"
                 :label="$t('event.region')"
                 :disabled="!localEvent.location.province || inputDisabled"
+                clearable
                 :rules="rules.location.region"
-                :item-text="(item) => item.name.translation[languageMode]" />
+                :item-text="(item) => item.region.translation[languageMode]" />
             </v-col>
           </v-row>
 
@@ -293,12 +294,11 @@ import {
   ECanadaProvinces, IMultilingual,
 } from '@/types';
 import {
-  IOtherProvince,
-  IRegion,
   EResponseLevel,
   EEventStatus,
   IEventCombined,
   EventEntity,
+  IEventLocation,
 } from '@/entities/event';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { IOptionItem } from '@/entities/optionItem';
@@ -377,8 +377,8 @@ export default Vue.extend({
       eventType: null,
       initialEventType: null,
       languageMode: 'en',
-      otherProvinces: [],
-      regions: [],
+      otherProvinces: [] as IEventLocation[],
+      regions: [] as IEventLocation[],
       initialStatus: localEvent.schedule.status,
       initialOpenDate: localEvent.schedule.scheduledOpenDate,
       initialCloseDate: localEvent.schedule.scheduledCloseDate,
@@ -426,48 +426,48 @@ export default Vue.extend({
         return this.localEvent.location.provinceOther.translation[this.languageMode];
       },
 
-      set(value: string | IOtherProvince) {
+      set(value: string | IEventLocation) {
         if (typeof value === 'string') {
-          const valueInItems = this.otherProvincesSorted.find((r) => r.name.translation[this.languageMode] === value);
+          const valueInItems = this.otherProvincesSorted.find((r) => r.provinceOther.translation[this.languageMode] === value);
           if (!valueInItems) {
             this.newProvince.translation[this.languageMode] = value;
             this.localEvent.location.provinceOther = { ...this.newProvince };
           } else {
             this.newProvince = { translation: {} };
-            this.localEvent.location.provinceOther = { ...valueInItems.name };
+            this.localEvent.location.provinceOther = { ...valueInItems.provinceOther };
           }
         } else {
-          this.localEvent.location.provinceOther = { ...value.name };
+          this.localEvent.location.provinceOther = { ...value.provinceOther };
         }
       },
     },
 
-    otherProvincesSorted(): Array<IOtherProvince> {
-      return helpers.sortMultilingualArray(this.otherProvinces, 'name');
+    otherProvincesSorted(): Array<IEventLocation> {
+      return helpers.sortMultilingualArray(this.otherProvinces, 'provinceOther');
     },
 
     region: {
       get(): string {
-        return this.localEvent.location.region.translation[this.languageMode];
+        return this.localEvent.location.region.translation ? this.localEvent.location.region.translation[this.languageMode] : '';
       },
 
-      set(value: string | IRegion) {
+      set(value: string | IEventLocation) {
         if (typeof value === 'string') {
-          const valueInItems = this.regionsSorted.find((r) => r.name.translation[this.languageMode] === value);
+          const valueInItems = this.regionsSorted.find((r) => r.region.translation[this.languageMode] === value);
           if (!valueInItems) {
             this.newRegion.translation[this.languageMode] = value;
             this.localEvent.location.region = { ...this.newRegion };
           } else {
             this.newRegion = { translation: {} };
-            this.localEvent.location.region = { ...valueInItems.name };
+            this.localEvent.location.region = { ...valueInItems.region };
           }
         } else {
-          this.localEvent.location.region = { ...value.name };
+          this.localEvent.location.region = { ...value?.region };
         }
       },
     },
 
-    regionsSorted(): Array<IRegion> {
+    regionsSorted(): Array<IEventLocation> {
       if (!this.localEvent.location.province) {
         return [];
       }
@@ -476,7 +476,7 @@ export default Vue.extend({
         return [];
       }
 
-      const sorted = helpers.sortMultilingualArray(this.regions, 'name');
+      const sorted = helpers.sortMultilingualArray(this.regions, 'region');
       const filtered = sorted.filter((i) => i.province === this.localEvent.location.province);
 
       return filtered;
@@ -646,11 +646,8 @@ export default Vue.extend({
     await this.$storage.event.actions.fetchEventTypes();
     await this.$storage.event.actions.fetchAll();
 
-    const provincesRes = await this.$storage.event.actions.fetchOtherProvinces();
-    const regionsRes = await this.$storage.event.actions.fetchRegions();
-
-    this.otherProvinces = provincesRes.value;
-    this.regions = regionsRes.value;
+    this.otherProvinces = await this.$storage.event.actions.fetchOtherProvinces();
+    this.regions = await this.$storage.event.actions.fetchRegions();
 
     if (this.localEvent && this.localEvent.responseDetails.eventType.optionItemId) {
       this.eventType = this.eventTypesSorted.find((e) => e.id === this.localEvent.responseDetails.eventType.optionItemId);

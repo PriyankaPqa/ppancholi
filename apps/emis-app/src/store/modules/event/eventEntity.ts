@@ -10,15 +10,14 @@ import {
 import {
   IEventCallCentre,
   IEventGenericLocation,
-  IOtherProvince,
-  IRegion,
   EEventStatus,
   IEventEntity,
   IEventAgreement,
   EventEntity,
+  IEventLocation,
 } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';
-import { EEventSummarySections, IAzureSearchResult } from '@/types';
+import { EEventSummarySections } from '@/types';
 import { EventsService } from '@/services/events/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import { IEventEntityState } from '@/store/modules/event/eventEntity.types';
@@ -115,9 +114,9 @@ export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
       return context.getters.eventTypes;
     },
 
-    fetchOtherProvinces: async (): Promise<IAzureSearchResult<IOtherProvince>> => this.service.getOtherProvinces(),
+    fetchOtherProvinces: async (): Promise<IEventLocation[]> => this.service.getOtherProvinces(),
 
-    fetchRegions: async (): Promise<IAzureSearchResult<IRegion>> => this.service.getRegions(),
+    fetchRegions: async (): Promise<IEventLocation[]> => this.service.getRegions(),
 
     updateEventSection: async (
       context: ActionContext<IEventEntityState, IEventEntityState>, {

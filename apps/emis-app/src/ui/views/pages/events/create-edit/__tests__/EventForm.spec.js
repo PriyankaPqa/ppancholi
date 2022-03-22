@@ -368,7 +368,7 @@ describe('EventForm.vue', () => {
       });
 
       it('sets the correct value into localEvent if the input is an object', () => {
-        const otherProvinces = mockOtherProvinceData().value;
+        const otherProvinces = mockOtherProvinceData();
 
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
@@ -391,11 +391,11 @@ describe('EventForm.vue', () => {
         wrapper.vm.provinceOther = otherProvinces[0];
         wrapper.vm.$nextTick();
 
-        expect(wrapper.vm.localEvent.location.provinceOther).toEqual(otherProvinces[0].name);
+        expect(wrapper.vm.localEvent.location.provinceOther).toEqual(otherProvinces[0].provinceOther);
       });
 
       it('sets the correct value into localEvent if the input is a string that is in the provinces list and resets the values in newProvince', () => {
-        const otherProvinces = mockOtherProvinceData().value;
+        const otherProvinces = mockOtherProvinceData();
 
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
@@ -416,16 +416,16 @@ describe('EventForm.vue', () => {
         });
 
         wrapper.vm.languageMode = 'en';
-        wrapper.vm.provinceOther = otherProvinces[0].name.translation.en;
+        wrapper.vm.provinceOther = otherProvinces[0].provinceOther.translation.en;
         wrapper.vm.$nextTick();
 
-        expect(wrapper.vm.localEvent.location.provinceOther).toEqual(otherProvinces[0].name);
+        expect(wrapper.vm.localEvent.location.provinceOther).toEqual(otherProvinces[0].provinceOther);
         expect(wrapper.vm.newProvince).toEqual({ translation: {} });
       });
 
       it('sets the correct value into localEvent if the input is a string that is  not in the provinces list and updates the values in newRegion',
         () => {
-          const otherProvinces = mockOtherProvinceData().value;
+          const otherProvinces = mockOtherProvinceData();
           wrapper = shallowMount(Component, {
             localVue: createLocalVue(),
             propsData: {
@@ -462,7 +462,7 @@ describe('EventForm.vue', () => {
       it('returns the otherProvinces in alphabetical order', async () => {
         await flushPromises();
 
-        const otherProvinces = mockOtherProvinceData().value;
+        const otherProvinces = mockOtherProvinceData();
         expect(wrapper.vm.otherProvincesSorted).toEqual([
           otherProvinces[1], // California
           otherProvinces[0], // New York
@@ -479,8 +479,8 @@ describe('EventForm.vue', () => {
       });
 
       it('sets the correct value into localEvent if the input is an object', () => {
-        const region1 = { name: { translation: { en: 'TEST EN', fr: 'TEST FR' } } };
-        const region2 = { name: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
+        const region1 = { region: { translation: { en: 'TEST EN', fr: 'TEST FR' } } };
+        const region2 = { region: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
           propsData: {
@@ -502,12 +502,12 @@ describe('EventForm.vue', () => {
         wrapper.vm.region = region1;
         wrapper.vm.$nextTick();
 
-        expect(wrapper.vm.localEvent.location.region).toEqual(region1.name);
+        expect(wrapper.vm.localEvent.location.region).toEqual(region1.region);
       });
 
       it('sets the correct value into localEvent if the input is a string that is in the regions list and resets the values in newRegion', () => {
-        const region1 = { name: { translation: { en: 'TEST EN', fr: 'TEST FR' } } };
-        const region2 = { name: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
+        const region1 = { region: { translation: { en: 'TEST EN', fr: 'TEST FR' } } };
+        const region2 = { region: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
         wrapper = shallowMount(Component, {
           localVue: createLocalVue(),
           propsData: {
@@ -530,14 +530,14 @@ describe('EventForm.vue', () => {
         wrapper.vm.region = 'TEST EN';
         wrapper.vm.$nextTick();
 
-        expect(wrapper.vm.localEvent.location.region).toEqual(region1.name);
+        expect(wrapper.vm.localEvent.location.region).toEqual(region1.region);
         expect(wrapper.vm.newRegion).toEqual({ translation: {} });
       });
 
       it('sets the correct value into localEvent if the input is a string that is  not in the regions list and updates the values in newRegion',
         () => {
-          const region1 = { name: { translation: { en: 'TEST EN', fr: 'TEST FR' } } };
-          const region2 = { name: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
+          const region1 = { region: { translation: { en: 'TEST EN', fr: 'TEST FR' } } };
+          const region2 = { region: { translation: { en: 'TEST_B EN', fr: 'TEST_B FR' } } };
           wrapper = shallowMount(Component, {
             localVue: createLocalVue(),
             propsData: {
@@ -579,7 +579,7 @@ describe('EventForm.vue', () => {
         expect(wrapper.vm.regionsSorted).toEqual([]);
 
         wrapper.vm.localEvent.location.province = ECanadaProvinces.AB;
-        const regions = mockRegionData().value;
+        const regions = mockRegionData();
         expect(wrapper.vm.regionsSorted).toEqual([
           regions[1], // Northern Alberta
           regions[0], // Southern Alberta

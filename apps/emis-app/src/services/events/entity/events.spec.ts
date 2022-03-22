@@ -19,12 +19,12 @@ describe('>>> Events Service', () => {
 
   test('createEvent is linked to the correct URL', async () => {
     await service.createEvent(new EventEntity(mockEventEntities()[0]));
-    expect(http.post).toHaveBeenCalledWith('/event/events', expect.anything(), { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(service.baseUrl, expect.anything(), { globalHandler: false });
   });
 
   test('createEvent converts the event entity to the correct payload', async () => {
     await service.createEvent(new EventEntity(mockEventEntities()[0]));
-    expect(http.post).toHaveBeenCalledWith('/event/events', {
+    expect(http.post).toHaveBeenCalledWith(service.baseUrl, {
       assistanceNumber: '+15144544545',
       dateReported: '2021-01-01T00:00:00.000Z',
       description: {
@@ -67,7 +67,7 @@ describe('>>> Events Service', () => {
   test('updateEvent is linked to the correct URL', async () => {
     const event = new EventEntity(mockEventEntities()[0]);
     await service.updateEvent(event);
-    expect(http.patch).toHaveBeenCalledWith(`/event/events/${event.id}`, expect.anything(), { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${event.id}`, expect.anything(), { globalHandler: false });
   });
 
   test('updateEvent converts the event entity to the correct payload', async () => {
@@ -75,7 +75,7 @@ describe('>>> Events Service', () => {
 
     await service.updateEvent(event);
 
-    expect(http.patch).toHaveBeenCalledWith(`/event/events/${event.id}`, {
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${event.id}`, {
       assistanceNumber: '+15144544545',
       dateReported: '2021-01-01T00:00:00.000Z',
       description: {
@@ -119,7 +119,7 @@ describe('>>> Events Service', () => {
 
   test('toggleSelfRegistration is linked to the correct url', async () => {
     await service.toggleSelfRegistration('ID', false);
-    expect(http.patch).toHaveBeenCalledWith('/event/events/ID/self-registration-enabled', { selfRegistrationEnabled: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/ID/self-registration-enabled`, { selfRegistrationEnabled: false });
   });
 
   test('searchMyEvents is linked to the correct URL and params', async () => {
@@ -131,31 +131,31 @@ describe('>>> Events Service', () => {
   describe('setEventStatus', () => {
     it('calls the open endpoint if the status is open and hasBeenOpen is false', async () => {
       await service.setEventStatus('ID', EEventStatus.Open, false);
-      expect(http.post).toHaveBeenCalledWith('event/events/ID/open', {});
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/ID/open`, {});
     });
 
     it('calls the re-open endpoint if the status is open and hasBeenOpen is true', async () => {
       await service.setEventStatus('ID', EEventStatus.Open, true, 'reason');
-      expect(http.post).toHaveBeenCalledWith('event/events/ID/re-open', {
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/ID/re-open`, {
         reOpenReason: 'reason',
       });
     });
 
     it('calls the close endpoint if the status is closed', async () => {
       await service.setEventStatus('ID', EEventStatus.Closed, false, 'reason');
-      expect(http.post).toHaveBeenCalledWith('event/events/ID/close', {
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/ID/close`, {
         closeReason: 'reason',
       });
     });
 
     it('calls the place on hold endpoint if the status is OnHold', async () => {
       await service.setEventStatus('ID', EEventStatus.OnHold, false, 'reason');
-      expect(http.post).toHaveBeenCalledWith('event/events/ID/place-on-hold', {});
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/ID/place-on-hold`, {});
     });
 
     it('calls the archive endpoint if the status is Archived', async () => {
       await service.setEventStatus('ID', EEventStatus.Archived, false, 'reason');
-      expect(http.post).toHaveBeenCalledWith('event/events/ID/archive', {});
+      expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/ID/archive`, {});
     });
   });
 
@@ -164,7 +164,7 @@ describe('>>> Events Service', () => {
     const callCentre = event.callCentres[0];
     const { id } = event;
     await service.addCallCentre(id, callCentre);
-    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/call-centres`, callCentre, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/call-centres`, callCentre, { globalHandler: false });
   });
 
   test('editCallCentre is linked to the correct URL', async () => {
@@ -172,7 +172,7 @@ describe('>>> Events Service', () => {
     const callCentre = event.callCentres[0];
     const { id } = event;
     await service.editCallCentre(id, callCentre);
-    expect(http.patch).toHaveBeenCalledWith(`/event/events/${id}/call-centres/${callCentre.id}`, callCentre, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/call-centres/${callCentre.id}`, callCentre, { globalHandler: false });
   });
 
   test('addAgreement calls the correct URL with the right payload ', async () => {
@@ -180,7 +180,7 @@ describe('>>> Events Service', () => {
     const agreement = event.agreements[0];
     const { id } = event;
     await service.addAgreement(id, agreement);
-    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/agreement`, {
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/agreement`, {
       name: agreement.name,
       details: agreement.details,
       startDate: new Date(agreement.startDate).toISOString(),
@@ -197,7 +197,7 @@ describe('>>> Events Service', () => {
     const agreement = event.agreements[0];
     const { id } = event;
     await service.editAgreement(id, agreement);
-    expect(http.patch).toHaveBeenCalledWith(`/event/events/${id}/agreement/${agreement.id}`, {
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/agreement/${agreement.id}`, {
       name: agreement.name,
       details: agreement.details,
       startDate: new Date(agreement.startDate).toISOString(),
@@ -215,7 +215,7 @@ describe('>>> Events Service', () => {
     const agreementId = event.agreements[0].id;
     const { id } = event;
     await service.removeAgreement(id, agreementId);
-    expect(http.delete).toHaveBeenCalledWith(`/event/events/${id}/agreement/${agreementId}`);
+    expect(http.delete).toHaveBeenCalledWith(`${service.baseUrl}/${id}/agreement/${agreementId}`);
   });
 
   test('addRegistrationLocation is linked to the correct URL', async () => {
@@ -223,7 +223,7 @@ describe('>>> Events Service', () => {
     const location = event.registrationLocations[0];
     const { id } = event;
     await service.addRegistrationLocation(id, location);
-    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/registration-location`, location, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-location`, location, { globalHandler: false });
   });
 
   test('editRegistrationLocation is linked to the correct URL', async () => {
@@ -231,7 +231,7 @@ describe('>>> Events Service', () => {
     const location = event.registrationLocations[0];
     const { id } = event;
     await service.editRegistrationLocation(id, location);
-    expect(http.patch).toHaveBeenCalledWith(`/event/events/${id}/registration-location/${location.id}`, location, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/registration-location/${location.id}`, location, { globalHandler: false });
   });
 
   test('addShelterLocation is linked to the correct URL', async () => {
@@ -239,7 +239,7 @@ describe('>>> Events Service', () => {
     const location = event.shelterLocations[0];
     const { id } = event;
     await service.addShelterLocation(id, location);
-    expect(http.post).toHaveBeenCalledWith(`/event/events/${id}/shelter-location`, location, { globalHandler: false });
+    expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${id}/shelter-location`, location, { globalHandler: false });
   });
 
   test('editShelterLocation is linked to the correct URL', async () => {
@@ -247,6 +247,6 @@ describe('>>> Events Service', () => {
     const location = event.shelterLocations[0];
     const { id } = event;
     await service.editShelterLocation(id, location);
-    expect(http.patch).toHaveBeenCalledWith(`/event/events/${id}/shelter-location/${location.id}`, location, { globalHandler: false });
+    expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/shelter-location/${location.id}`, location, { globalHandler: false });
   });
 });

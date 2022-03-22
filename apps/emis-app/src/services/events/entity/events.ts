@@ -9,9 +9,8 @@ import {
   IEventCallCentre,
   IEventEntity,
   IEventGenericLocation,
+  IEventLocation,
   IEventMainInfo,
-  IOtherProvince,
-  IRegion,
 } from '@/entities/event';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
@@ -27,90 +26,90 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
   async createEvent(event: IEventEntity): Promise<IEventEntity> {
     event.fillEmptyMultilingualAttributes();
     const payload = this.eventToCreateEventRequestPayload(event);
-    return this.http.post('/event/events', payload, { globalHandler: false });
+    return this.http.post(this.baseUrl, payload, { globalHandler: false });
   }
 
   async updateEvent(event: IEventEntity): Promise<IEventEntity> {
     event.fillEmptyMultilingualAttributes();
     const payload = this.eventToEditEventRequestPayload(event);
-    return this.http.patch(`/event/events/${event.id}`, payload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${event.id}`, payload, { globalHandler: false });
   }
 
   async toggleSelfRegistration(id: uuid, selfRegistrationEnabled: boolean): Promise<IEventEntity> {
-    return this.http.patch(`/event/events/${id}/self-registration-enabled`, { selfRegistrationEnabled });
+    return this.http.patch(`${this.baseUrl}/${id}/self-registration-enabled`, { selfRegistrationEnabled });
   }
 
-  async getOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>> {
-    return this.http.get('/search/event-province-others');
+  async getOtherProvinces(): Promise<IEventLocation[]> {
+    return this.http.get(`${this.baseUrl}/other-provinces`);
   }
 
-  async getRegions(): Promise<IAzureSearchResult<IRegion>> {
-    return this.http.get('/search/event-regions');
+  async getRegions(): Promise<IEventLocation[]> {
+    return this.http.get(`${this.baseUrl}/regions`);
   }
 
   async setEventStatus(id: uuid, status: EEventStatus, hasBeenOpen?: boolean, reason?: string): Promise<IEventEntity> {
     if (status === EEventStatus.Open) {
       if (hasBeenOpen) {
-        return this.http.post(`event/events/${id}/re-open`, {
+        return this.http.post(`${this.baseUrl}/${id}/re-open`, {
           reOpenReason: reason,
         });
       }
 
-      return this.http.post(`event/events/${id}/open`, {});
+      return this.http.post(`${this.baseUrl}/${id}/open`, {});
     }
 
     if (status === EEventStatus.Closed) {
-      return this.http.post(`event/events/${id}/close`, {
+      return this.http.post(`${this.baseUrl}/${id}/close`, {
         closeReason: reason,
       });
     }
 
     if (status === EEventStatus.OnHold) {
-      return this.http.post(`event/events/${id}/place-on-hold`, {});
+      return this.http.post(`${this.baseUrl}/${id}/place-on-hold`, {});
     }
 
     if (status === EEventStatus.Archived) {
-      return this.http.post(`event/events/${id}/archive`, {});
+      return this.http.post(`${this.baseUrl}/${id}/archive`, {});
     }
 
     throw new Error('Invalid status');
   }
 
   async addCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventEntity> {
-    return this.http.post(`/event/events/${eventId}/call-centres`, payload, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/${eventId}/call-centres`, payload, { globalHandler: false });
   }
 
   async editCallCentre(eventId:uuid, payload: IEventCallCentre): Promise<IEventEntity> {
-    return this.http.patch(`/event/events/${eventId}/call-centres/${payload.id}`, payload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${eventId}/call-centres/${payload.id}`, payload, { globalHandler: false });
   }
 
   async addAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventEntity> {
-    return this.http.post(`/event/events/${eventId}/agreement`, this.makeAgreementPayload(payload), { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/${eventId}/agreement`, this.makeAgreementPayload(payload), { globalHandler: false });
   }
 
   async editAgreement(eventId:uuid, payload: IEventAgreement): Promise<IEventEntity> {
-    return this.http.patch(`/event/events/${eventId}/agreement/${payload.id}`,
+    return this.http.patch(`${this.baseUrl}/${eventId}/agreement/${payload.id}`,
       this.makeAgreementPayload(payload), { globalHandler: false });
   }
 
   async removeAgreement(eventId:uuid, agreementId: uuid): Promise<IEventEntity> {
-    return this.http.delete(`/event/events/${eventId}/agreement/${agreementId}`);
+    return this.http.delete(`${this.baseUrl}/${eventId}/agreement/${agreementId}`);
   }
 
   async addRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
-    return this.http.post(`/event/events/${eventId}/registration-location`, payload, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/${eventId}/registration-location`, payload, { globalHandler: false });
   }
 
   async editRegistrationLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
-    return this.http.patch(`/event/events/${eventId}/registration-location/${payload.id}`, payload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${eventId}/registration-location/${payload.id}`, payload, { globalHandler: false });
   }
 
   async addShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
-    return this.http.post(`/event/events/${eventId}/shelter-location`, payload, { globalHandler: false });
+    return this.http.post(`${this.baseUrl}/${eventId}/shelter-location`, payload, { globalHandler: false });
   }
 
   async editShelterLocation(eventId:uuid, payload: IEventGenericLocation): Promise<IEventEntity> {
-    return this.http.patch(`/event/events/${eventId}/shelter-location/${payload.id}`, payload, { globalHandler: false });
+    return this.http.patch(`${this.baseUrl}/${eventId}/shelter-location/${payload.id}`, payload, { globalHandler: false });
   }
 
   // events that a user has access to

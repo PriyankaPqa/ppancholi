@@ -4,9 +4,8 @@ import {
   IEventCallCentre,
   IEventEntity,
   IEventGenericLocation,
+  IEventLocation,
   IEventMainInfo,
-  IOtherProvince,
-  IRegion,
 } from '@/entities/event';
 import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 import { IAzureSearchParams, IAzureSearchResult } from '@/types';
@@ -18,9 +17,9 @@ export interface IEventsService extends IDomainBaseService<IEventEntity, uuid>{
 
   toggleSelfRegistration(id: uuid, selfRegistrationEnabled: boolean): Promise<IEventEntity>;
 
-  getOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>;
+  getOtherProvinces(): Promise<IEventLocation[]>;
 
-  getRegions(): Promise<IAzureSearchResult<IRegion>>;
+  getRegions(): Promise<IEventLocation[]>;
 
   setEventStatus(id: uuid, status: EEventStatus, hasBeenOpen?: boolean, reason?: string): Promise<IEventEntity>;
 
@@ -49,8 +48,8 @@ export interface IEventsServiceMock extends IDomainBaseServiceMock<IEventEntity>
   createEvent: jest.Mock<IEventEntity>;
   updateEvent: jest.Mock<IEventEntity>;
   toggleSelfRegistration: jest.Mock<IEventEntity>;
-  getOtherProvinces: jest.Mock<IAzureSearchResult<IOtherProvince>>;
-  getRegions: jest.Mock<IAzureSearchResult<IRegion>>;
+  getOtherProvinces: jest.Mock<IEventLocation[]>;
+  getRegions: jest.Mock<IEventLocation[]>;
   setEventStatus: jest.Mock<IEventEntity>;
   addCallCentre: jest.Mock<IEventEntity>;
   editCallCentre: jest.Mock<IEventEntity>;

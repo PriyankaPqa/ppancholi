@@ -4,14 +4,13 @@ import {
   IEventAgreement,
   IEventCallCentre,
   IEventGenericLocation,
-  IOtherProvince,
-  IRegion,
   EEventStatus,
   EventEntity,
+  IEventLocation,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
 import { IStore, IState } from '@/store/store.types';
-import { EEventSummarySections, IAzureSearchResult } from '@/types';
+import { EEventSummarySections } from '@/types';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
 
@@ -40,9 +39,9 @@ export class EventStorage
 
     fetchEventTypes: (): Promise<IOptionItem[]> => this.store.dispatch(`${this.entityModuleName}/fetchEventTypes`),
 
-    fetchOtherProvinces: (): Promise<IAzureSearchResult<IOtherProvince>> => this.store.dispatch(`${this.entityModuleName}/fetchOtherProvinces`),
+    fetchOtherProvinces: (): Promise<IEventLocation[]> => this.store.dispatch(`${this.entityModuleName}/fetchOtherProvinces`),
 
-    fetchRegions: (): Promise<IAzureSearchResult<IRegion>> => this.store.dispatch(`${this.entityModuleName}/fetchRegions`),
+    fetchRegions: (): Promise<IEventLocation[]> => this.store.dispatch(`${this.entityModuleName}/fetchRegions`),
 
     updateEventSection: ({
       eventId, payload, section, action,

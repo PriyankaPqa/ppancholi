@@ -4,12 +4,10 @@ import {
   IEventAgreement,
   IEventCallCentre,
   IEventGenericLocation,
-  IOtherProvince,
-  IRegion,
   EEventStatus,
+  IEventLocation,
 } from '@/entities/event';
 import { IOptionItem } from '@/entities/optionItem';
-import { IAzureSearchResult } from '@/types';
 import { EEventSummarySections } from '@/types/enums/EEventSummarySections';
 import {
   IBaseActions,
@@ -23,8 +21,8 @@ import {
 export interface IActions extends IBaseActions<IEventEntity, IEventMetadata, uuid> {
   fetchAgreementTypes(): Promise<IOptionItem[]>,
   fetchEventTypes(): Promise<IOptionItem[]>,
-  fetchOtherProvinces(): Promise<IAzureSearchResult<IOtherProvince>>,
-  fetchRegions(): Promise<IAzureSearchResult<IRegion>>,
+  fetchOtherProvinces(): Promise<IEventLocation[]>,
+  fetchRegions(): Promise<IEventLocation[]>,
   updateEventSection({
     eventId, payload, section, action,
   }:
