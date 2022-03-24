@@ -7,6 +7,7 @@ import {
   ValidationOfImpactStatus, ImpactValidationMethod, ICaseFileCount, ICaseFileDetailedCount, RegistrationType, HouseholdCaseFileActivityType,
 } from './case-file.types';
 import { IOptionItem } from '../optionItem';
+import { EPaymentModalities } from '../program';
 
 export const mockCaseFileCount = (): ICaseFileCount => ({
   inactiveCount: 0, openCount: 1, closedCount: 1, archivedCount: 0,
@@ -585,6 +586,19 @@ export const mockCaseFileActivities = (type: CaseFileActivityType = null): ICase
             name: 'firstname2 lastname',
           },
         ],
+      },
+    },
+    {
+      id: 'mock-activity-id-32',
+      caseFileId: 'mock-id-1',
+      role: { id: '2', name: { translation: { en: 'sys admin', fr: 'admin de systeme' } } },
+      user: { id: '1', name: 'Jane Doe' },
+      created: '2021-05-04',
+      activityType: CaseFileActivityType.PaymentCompleted,
+      details: {
+        paymentModality: EPaymentModalities.DirectDeposit,
+        paymentName: 'mock payment',
+        totalAmount: '100',
       },
     },
   ];

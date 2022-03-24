@@ -19,6 +19,7 @@ import {
   CaseFileActivityType, HouseholdCaseFileActivityType, ICaseFileActivity, IdentityAuthenticationStatus, RegistrationType, ValidationOfImpactStatus,
 } from '@/entities/case-file';
 import { IIdMultilingualName, IMultilingual } from '@/types';
+import { EPaymentModalities } from '@/entities/program';
 
 export default Vue.extend({
   name: 'CaseFileActivityListItem',
@@ -115,6 +116,9 @@ export default Vue.extend({
         case CaseFileActivityType.HouseholdMovedMembersIn:
           return this.makeContentForHouseholdMovedMembersIn();
 
+        case CaseFileActivityType.PaymentCompleted:
+          return this.makeContentForFinancialAssistancePaymentCompleted();
+
         default:
           return null;
       }
@@ -152,6 +156,9 @@ export default Vue.extend({
 
         case CaseFileActivityType.ImpactStatusValidationUpdated:
           return 'mdi-map-check';
+
+        case CaseFileActivityType.PaymentCompleted:
+          return 'mdi-currency-usd';
 
         default:
           return 'mdi-message-text';
@@ -391,6 +398,15 @@ export default Vue.extend({
       const title = this.$t('caseFileActivity.activityList.title.HouseholdMovedMembersIn', { x: this.item.details.registrationNumber });
       const body = this.$t('caseFileActivity.activityList.body.HouseholdMovedMembers')
         + (this.item.details?.members as [] || []).map((m: {name: string}) => m.name).join(', ');
+      return { title, body };
+    },
+
+    makeContentForFinancialAssistancePaymentCompleted(): {title: TranslateResult, body: TranslateResult} {
+      const title = this.$t('caseFileActivity.activityList.title.PaymentCompleted');
+      let body = `${this.$t('caseFileActivity.activityList.body.paymentCompleted.name')}: ${this.item.details.paymentName}`;
+      body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.modality')}: `;
+      body += this.$t(`enums.PaymentModality.${EPaymentModalities[this.item.details.paymentModality as number]}`);
+      body += `\n${this.$t('caseFileActivity.activityList.body.paymentCompleted.amount')}: $${this.item.details.totalAmount}`;
       return { title, body };
     },
 

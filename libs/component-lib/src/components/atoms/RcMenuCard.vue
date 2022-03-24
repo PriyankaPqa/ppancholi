@@ -1,5 +1,5 @@
 <template>
-  <v-card class="pa-6">
+  <v-card class="card pa-6">
     <h5 class="rc-heading-5 mb-3">
       {{ title }}
     </h5>
@@ -15,6 +15,7 @@
         :disabled="disabledPrimary"
         :data-test="`${$attrs['data-test']}__button`"
         :to="routeName ? { name: routeName } : null"
+        class="mr-4 mt-2"
         @click="$emit('click')">
         {{ buttonText }}
       </v-btn>
@@ -23,7 +24,7 @@
         v-if="showSecondaryButton"
         :loading="loadingSecondary"
         :disabled="disabledSecondary"
-        class="ml-4"
+        class="mt-2"
         color="grey lighten-4"
         :data-test="`${$attrs['data-test']}__button__secondary`"
         @click="$emit('click-secondary')">
@@ -94,6 +95,12 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: fit-content;
+}
 .cardText {
   min-height: 125px;
 }

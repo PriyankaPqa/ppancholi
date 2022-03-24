@@ -333,6 +333,13 @@ describe('CaseFileActivityListItem.vue', () => {
         });
         expect(wrapper.vm.icon).toEqual('mdi-message-text');
       });
+
+      it('returns the correct icon when action type is PaymentCompleted', async () => {
+        await wrapper.setProps({
+          item: mockCaseFileActivities(CaseFileActivityType.PaymentCompleted)[0],
+        });
+        expect(wrapper.vm.icon).toEqual('mdi-currency-usd');
+      });
     });
 
     describe('Methods', () => {
@@ -795,6 +802,23 @@ describe('CaseFileActivityListItem.vue', () => {
           expect(wrapper.vm.makeContentForHouseholdMovedMembersIn()).toEqual({
             title: 'caseFileActivity.activityList.title.HouseholdMovedMembersIn',
             body: 'caseFileActivity.activityList.body.HouseholdMovedMembersfirstname1 lastname, firstname2 lastname',
+          });
+        });
+      });
+
+      describe('makeContentForFinancialAssistancePaymentCompleted', () => {
+        it('returns the correct data when activity type is PaymentCompleted', async () => {
+          await wrapper.setProps({
+            item: mockCaseFileActivities(CaseFileActivityType.PaymentCompleted)[0],
+          });
+
+          let body = 'caseFileActivity.activityList.body.paymentCompleted.name: mock payment';
+          body += '\ncaseFileActivity.activityList.body.paymentCompleted.modality: enums.PaymentModality.DirectDeposit';
+          body += '\ncaseFileActivity.activityList.body.paymentCompleted.amount: $100';
+
+          expect(wrapper.vm.makeContentForFinancialAssistancePaymentCompleted()).toEqual({
+            title: 'caseFileActivity.activityList.title.PaymentCompleted',
+            body,
           });
         });
       });
