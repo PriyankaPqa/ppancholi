@@ -41,7 +41,13 @@ export class SignalR {
   }
 
   public async buildHubConnection() {
-    // await authenticationProvider.loadAuthModule('signalR');
+    console.log('building connection signalr');
+
+    if (this.connection) {
+      console.log('stopping previous connection signalr');
+      await this.connection.stop();
+    }
+
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
 
     if (isSignedIn) {
@@ -54,7 +60,7 @@ export class SignalR {
         .withAutomaticReconnect()
         .build();
 
-      connection.start();
+      await connection.start();
 
       this.connection = connection;
 

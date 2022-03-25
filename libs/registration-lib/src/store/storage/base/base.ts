@@ -1,3 +1,4 @@
+/* eslint-disable no-lonely-if */
 /* eslint-disable no-console */
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEmpty from 'lodash/isEmpty';
@@ -13,6 +14,8 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
   protected readonly metadataModuleName;
 
   protected store;
+
+  protected showConsole = false;
 
   constructor(readonly pStore: IStore<IState>, readonly pEntityModuleName: string, readonly pMetadataModuleName: string) {
     this.store = pStore;
@@ -252,9 +255,13 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
           this.baseMutations.addNewlyCreatedId(entity);
         }
         this.baseMutations.setEntity(entity);
-        console.log(`${this.entityModuleName} - ${entity.lastAction}`, entity.id);
+        if (this.showConsole) {
+          console.log(`${this.entityModuleName} - ${entity.lastAction}`, entity.id);
+        }
       } else {
-        console.log(`${this.entityModuleName} - ignored`, entity.id);
+        if (this.showConsole) {
+          console.log(`${this.entityModuleName} - ignored`, entity.id);
+        }
       }
     },
 
@@ -277,9 +284,13 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       const knownEntity = this.baseGetters.get(entity.id);
       if (this.initiatedByCurrentUser(entity) || knownEntity?.entity?.id || knownEntity?.metadata?.id) {
         this.baseMutations.setMetadata(entity);
-        console.log(`${this.metadataModuleName} - ${entity.lastAction}`, entity.id);
+        if (this.showConsole) {
+          console.log(`${this.metadataModuleName} - ${entity.lastAction}`, entity.id);
+        }
       } else {
-        console.log(`${this.metadataModuleName} - ignored`, entity.id);
+        if (this.showConsole) {
+          console.log(`${this.metadataModuleName} - ignored`, entity.id);
+        }
       }
     },
 

@@ -37,7 +37,7 @@ const storage = prepareStorage(store);
 
 SignalR.Initialize({
   storage,
-  showConsole: true,
+  showConsole: false,
 });
 
 applicationInsights.initialize({
