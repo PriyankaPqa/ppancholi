@@ -26,7 +26,7 @@ describe('>>> Case File Storage', () => {
     describe('caseNoteCategories', () => {
       it('should proxy caseNoteCategories', () => {
         const storageGetter = storage.getters.caseNoteCategories();
-        const storeGetter = store.getters[`${entityModuleName}/caseNoteCategories`];
+        const storeGetter = store.getters[`${entityModuleName}/caseNoteCategories`]();
         expect(storageGetter).toEqual(storeGetter);
       });
     });

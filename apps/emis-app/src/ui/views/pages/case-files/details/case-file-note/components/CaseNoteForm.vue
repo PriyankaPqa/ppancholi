@@ -126,7 +126,7 @@ export default Vue.extend({
     },
 
     caseNoteCategories(): IOptionItem[] {
-      return this.$storage.caseNote.getters.caseNoteCategories();
+      return this.$storage.caseNote.getters.caseNoteCategories(true, this.isEdit ? this.localCaseNote.category.optionItemId : null);
     },
 
     caseFile(): ICaseFileCombined {

@@ -9,7 +9,7 @@ import {
 } from '../base';
 
 export interface IGetters extends IBaseGetters<ICaseNoteEntity, ICaseNoteMetadata> {
-  caseNoteCategories(): Array<IOptionItem>;
+  caseNoteCategories(filterOutInactive?: boolean, actualValue?: string[] | string): Array<IOptionItem>;
 }
 
 export interface IGettersMock extends IBaseGettersMock<ICaseNoteEntity, ICaseNoteMetadata> {

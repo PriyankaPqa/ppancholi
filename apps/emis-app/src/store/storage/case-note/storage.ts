@@ -16,7 +16,10 @@ export class CaseNoteStorage
 
   private getters = {
     ...this.baseGetters,
-    caseNoteCategories: (): Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/caseNoteCategories`],
+
+    caseNoteCategories: (filterOutInactive = true, actualValue?: string[] | string)
+    : Array<IOptionItem> => this.store.getters[`${this.entityModuleName}/caseNoteCategories`](filterOutInactive, actualValue),
+
   }
 
   private actions = {

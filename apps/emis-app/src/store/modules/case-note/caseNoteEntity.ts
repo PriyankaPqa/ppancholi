@@ -1,15 +1,12 @@
-import _sortBy from 'lodash/sortBy';
-
 import { ActionContext, ActionTree } from 'vuex';
 import { CaseNotesService } from '@/services/case-notes/entity';
 import {
-  OptionItem, IOptionItem, EOptionLists,
+  IOptionItem, EOptionLists,
 } from '@/entities/optionItem';
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
 import { IOptionItemsService } from '@/services/optionItems';
 import { ICaseNoteEntity } from '@/entities/case-note';
-import { Status } from '@/entities/base';
-import { BaseModule } from '../base';
+import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 
@@ -36,10 +33,11 @@ export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
 
   public getters = {
     ...this.baseGetters,
-    caseNoteCategories: (state:ICaseNoteEntityState) => _sortBy(
-      state.caseNoteCategories.map((e) => new OptionItem(e)),
-      'orderRank',
-    ).filter((i) => i.status === Status.Active),
+
+    caseNoteCategories: (state: ICaseNoteEntityState) => (filterOutInactive = true, actualValue?: string[] | string) => filterAndSortActiveItems(
+      state.caseNoteCategories, filterOutInactive, actualValue,
+    ),
+
   }
 
   public mutations = {
