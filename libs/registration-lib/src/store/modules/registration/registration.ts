@@ -7,6 +7,7 @@ import VueI18n from 'vue-i18n';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
+import { Status } from '@libs/registration-lib/entities/base';
 import applicationInsights from '../../../plugins/applicationInsights/applicationInsights';
 import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
 import {
@@ -102,11 +103,27 @@ const getters = (i18n: VueI18n, skipAgeRestriction: boolean, skipEmailPhoneRules
     return state.tabs[state.currentTabIndex + 1].titleKey;
   },
 
-  genders: (state: IState) => _sortBy(state.genders, 'orderRank'),
+  genders: (state: IState) => (includeInactive: boolean) => {
+    let { genders } = state;
+
+    if (!includeInactive) {
+      genders = genders.filter((g) => g.status === Status.Active);
+    }
+
+    return _sortBy(genders, 'orderRank');
+  },
 
   preferredLanguages: (state: IState) => _sortBy(state.preferredLanguages, 'orderRank'),
 
-  primarySpokenLanguages: (state: IState) => _sortBy(state.primarySpokenLanguages, 'orderRank'),
+  primarySpokenLanguages: (state: IState) => (includeInactive: boolean) => {
+    let { primarySpokenLanguages } = state;
+
+    if (!includeInactive) {
+      primarySpokenLanguages = primarySpokenLanguages.filter((g) => g.status === Status.Active);
+    }
+
+    return _sortBy(primarySpokenLanguages, 'orderRank');
+  },
 
   indigenousTypesItems: (state: IState) => {
     const communities = state.indigenousCommunities;
@@ -428,7 +445,7 @@ const actions = (mode: ERegistrationMode) => ({
       const data: IOptionItemData[] = await this.$services.households.getGenders();
 
       if (data?.length > 0) {
-        context.commit('setGenders', data.filter((entry) => entry.status === EOptionItemStatus.Active));
+        context.commit('setGenders', data);
         context.commit('setGendersFetched', true);
       }
     }
@@ -453,7 +470,7 @@ const actions = (mode: ERegistrationMode) => ({
       const data: IOptionItemData[] = await this.$services.households.getPrimarySpokenLanguages();
 
       if (data?.length > 0) {
-        context.commit('setPrimarySpokenLanguages', data.filter((entry) => entry.status === EOptionItemStatus.Active));
+        context.commit('setPrimarySpokenLanguages', data);
         context.commit('setPrimarySpokenLanguagesFetched', true);
       }
     }

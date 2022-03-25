@@ -94,7 +94,7 @@ export default Vue.extend({
         shelters = await this.fetchShelterLocations(household, onlyActiveShelters);
       }
 
-      let genderItems = this.$storage.registration.getters.genders() as IOptionItemData[];
+      let genderItems = this.$storage.registration.getters.genders(true) as IOptionItemData[];
 
       if (genderItems.length === 0) {
         genderItems = await this.$storage.registration.actions.fetchGenders() as IOptionItemData[];
@@ -105,7 +105,7 @@ export default Vue.extend({
       if (preferredLanguagesItems.length === 0) {
         preferredLanguagesItems = await this.$storage.registration.actions.fetchPreferredLanguages() as IOptionItemData[];
       }
-      let primarySpokenLanguagesItems = this.$storage.registration.getters.primarySpokenLanguages() as IOptionItemData[];
+      let primarySpokenLanguagesItems = this.$storage.registration.getters.primarySpokenLanguages(true) as IOptionItemData[];
 
       if (primarySpokenLanguagesItems.length === 0) {
         primarySpokenLanguagesItems = await this.$storage.registration.actions.fetchPrimarySpokenLanguages() as IOptionItemData[];

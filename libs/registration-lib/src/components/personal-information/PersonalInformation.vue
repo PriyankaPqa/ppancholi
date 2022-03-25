@@ -29,6 +29,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
+import { Status } from '@libs/registration-lib/entities/base';
 import helpers from '../../ui/helpers/index';
 import { IOptionItemData } from '../../types';
 import { IContactInformation } from '../../entities/value-objects/contact-information';
@@ -67,6 +68,10 @@ export default Vue.extend({
       type: String,
       default: '',
     },
+    includeInactiveOptions: {
+      type: Boolean,
+      default: false,
+    },
   },
 
   computed: {
@@ -91,11 +96,19 @@ export default Vue.extend({
     },
 
     primarySpokenLanguagesItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.primarySpokenLanguages();
+      let items = this.$storage.registration.getters.primarySpokenLanguages(this.includeInactiveOptions);
+
+      items = items.filter((i) => i.status === Status.Active || i.id === this.contactInformation.primarySpokenLanguage?.id);
+
+      return items;
     },
 
     genderItems(): IOptionItemData[] {
-      return this.$storage.registration.getters.genders();
+      let items = this.$storage.registration.getters.genders(this.includeInactiveOptions);
+
+      items = items.filter((i) => i.status === Status.Active || i.id === this.identitySet.gender.id);
+
+      return items;
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {

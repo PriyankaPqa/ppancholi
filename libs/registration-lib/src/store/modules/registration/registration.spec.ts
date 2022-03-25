@@ -124,11 +124,19 @@ describe('>>> Registration Module', () => {
     });
 
     describe('genders', () => {
-      it('returns genders', () => {
-        expect(store.getters['registration/genders']).toEqual([]);
+      it('returns active genders', () => {
+        expect(store.getters['registration/genders']()).toEqual([]);
 
         store.state.registration.genders = mockGenders();
-        expect(store.getters['registration/genders']).toEqual(mockGenders());
+        expect(store.getters['registration/genders']().length).toEqual(3);
+        expect(store.getters['registration/genders'](false).length).toEqual(3);
+      });
+
+      it('returns active and inactive genders', () => {
+        expect(store.getters['registration/genders']()).toEqual([]);
+
+        store.state.registration.genders = mockGenders();
+        expect(store.getters['registration/genders'](true).length).toEqual(4);
       });
     });
 
@@ -142,11 +150,19 @@ describe('>>> Registration Module', () => {
     });
 
     describe('primarySpokenLanguages', () => {
-      it('returns primarySpokenLanguages', () => {
-        expect(store.getters['registration/primarySpokenLanguages']).toEqual([]);
+      it('returns active primarySpokenLanguages', () => {
+        expect(store.getters['registration/primarySpokenLanguages']()).toEqual([]);
 
         store.state.registration.primarySpokenLanguages = mockPrimarySpokenLanguages();
-        expect(store.getters['registration/primarySpokenLanguages']).toEqual(mockPrimarySpokenLanguages());
+        expect(store.getters['registration/primarySpokenLanguages']().length).toEqual(3);
+        expect(store.getters['registration/primarySpokenLanguages'](false).length).toEqual(3);
+      });
+
+      it('returns active and inactive primarySpokenLanguages', () => {
+        expect(store.getters['registration/primarySpokenLanguages']()).toEqual([]);
+
+        store.state.registration.primarySpokenLanguages = mockPrimarySpokenLanguages();
+        expect(store.getters['registration/primarySpokenLanguages'](true).length).toEqual(4);
       });
     });
 
@@ -702,7 +718,7 @@ describe('>>> Registration Module', () => {
       });
 
       it('sets the genders', async () => {
-        expect(store.getters['registration/genders']).toEqual([]);
+        expect(store.getters['registration/genders']()).toEqual([]);
 
         await store.dispatch('registration/fetchGenders');
 
@@ -734,7 +750,7 @@ describe('>>> Registration Module', () => {
       });
 
       it('sets the primarySpokenLanguages', async () => {
-        expect(store.getters['registration/primarySpokenLanguages']).toEqual([]);
+        expect(store.getters['registration/primarySpokenLanguages']()).toEqual([]);
 
         await store.dispatch('registration/fetchPrimarySpokenLanguages');
 

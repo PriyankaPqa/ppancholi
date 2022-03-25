@@ -8,15 +8,17 @@ import {
   mockContactInformation,
   mockHouseholdCreate,
   mockPreferredLanguages,
+  mockIndigenousTypesItems,
+  mockIndigenousCommunitiesItems,
+  mockIdentitySet,
   mockPrimarySpokenLanguages,
   mockGenders,
-  mockIndigenousTypesItems,
-  mockIndigenousCommunitiesItems, mockIdentitySet,
 } from '../../entities/household-create';
 
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './PersonalInformation.vue';
 import helpers from '../../ui/helpers/index';
+import { Status } from '../../entities/base';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -160,13 +162,65 @@ describe('PersonalInformation.vue', () => {
     });
 
     describe('primarySpokenLanguagesItems', () => {
-      it('returns the proper data', async () => {
+      it('returns active items only if no primarySpokenLanguage selected', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            i18n,
+          },
+        });
+
+        expect(wrapper.vm.primarySpokenLanguagesItems).toEqual(mockPrimarySpokenLanguages().filter((g) => g.status === Status.Active));
+      });
+
+      it('returns active items and selected inactive primarySpokenLanguage', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            i18n,
+            includeInactiveOptions: true,
+          },
+          computed: {
+            contactInformation: () => ({
+              primarySpokenLanguage: {
+                id: '14718e75-2ae0-4a2a-8647-326edee4bb32',
+              },
+            }),
+          },
+        });
+
         expect(wrapper.vm.primarySpokenLanguagesItems).toEqual(mockPrimarySpokenLanguages());
       });
     });
 
     describe('genderItems', () => {
-      it('returns the proper data', async () => {
+      it('returns active items only if no gender selected', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            i18n,
+          },
+        });
+
+        expect(wrapper.vm.genderItems).toEqual(mockGenders().filter((g) => g.status === Status.Active));
+      });
+
+      it('returns active items and selected inactive gender', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            i18n,
+            includeInactiveOptions: true,
+          },
+          computed: {
+            identitySet: () => ({
+              gender: {
+                id: '14718e75-2ae0-4a2a-8647-326edee4bb32',
+              },
+            }),
+          },
+        });
+
         expect(wrapper.vm.genderItems).toEqual(mockGenders());
       });
     });

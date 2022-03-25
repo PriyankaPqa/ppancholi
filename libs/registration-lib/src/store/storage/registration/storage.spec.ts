@@ -54,7 +54,9 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy current genders', () => {
-      expect(storage.getters.genders()).toEqual(store.getters['registration/genders']);
+      expect(storage.getters.genders()).toEqual(store.getters['registration/genders'](false));
+      expect(storage.getters.genders(true)).toEqual(store.getters['registration/genders'](true));
+      expect(storage.getters.genders(false)).toEqual(store.getters['registration/genders'](false));
     });
 
     it('should proxy current preferredLanguages', () => {
@@ -62,7 +64,9 @@ describe('>>> Registration Storage', () => {
     });
 
     it('should proxy current primarySpokenLanguages', () => {
-      expect(storage.getters.primarySpokenLanguages()).toEqual(store.getters['registration/primarySpokenLanguages']);
+      expect(storage.getters.primarySpokenLanguages()).toEqual(store.getters['registration/primarySpokenLanguages'](false));
+      expect(storage.getters.primarySpokenLanguages(true)).toEqual(store.getters['registration/primarySpokenLanguages'](true));
+      expect(storage.getters.primarySpokenLanguages(false)).toEqual(store.getters['registration/primarySpokenLanguages'](false));
     });
 
     it('should proxy current indigenousTypesItems', () => {

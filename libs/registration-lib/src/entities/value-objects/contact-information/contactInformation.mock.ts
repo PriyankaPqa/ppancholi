@@ -67,6 +67,14 @@ export const mockPrimarySpokenLanguages = (): IOptionItemData[] => [
     id: '04718e75-2ae0-4a2a-8647-326edee4bb32',
     status: 1,
   },
+  {
+    name: { translation: { en: 'inactive en', fr: 'inactive fr' } },
+    orderRank: 1,
+    isOther: true,
+    isDefault: false,
+    id: '14718e75-2ae0-4a2a-8647-326edee4bb32',
+    status: 2,
+  },
 ];
 
 export const mockContactInformationData = (): IContactInformationData => ({

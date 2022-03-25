@@ -27,9 +27,9 @@ export interface IStorage {
     currentTabIndex(): number;
     previousTabName(): string;
     nextTabName(): string;
-    genders(): IOptionItemData[];
+    genders(includeInactive?: boolean): IOptionItemData[];
     preferredLanguages(): IOptionItemData[];
-    primarySpokenLanguages(): IOptionItemData[];
+    primarySpokenLanguages(includeInactive?: boolean): IOptionItemData[];
     findEffectiveJumpIndex(targetIndex: number): number;
     indigenousTypesItems(): Record<string, TranslateResult>[];
     indigenousCommunitiesItems(indigenousType: EIndigenousTypes): Record<string, string>[];

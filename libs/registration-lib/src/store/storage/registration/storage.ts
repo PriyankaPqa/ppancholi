@@ -47,16 +47,16 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
       return store.getters['registration/nextTabName'];
     },
 
-    genders(): IOptionItemData[] {
-      return store.getters['registration/genders'];
+    genders(includeInactive?: boolean): IOptionItemData[] {
+      return store.getters['registration/genders'](includeInactive);
     },
 
     preferredLanguages(): IOptionItemData[] {
       return store.getters['registration/preferredLanguages'];
     },
 
-    primarySpokenLanguages(): IOptionItemData[] {
-      return store.getters['registration/primarySpokenLanguages'];
+    primarySpokenLanguages(includeInactive?: boolean): IOptionItemData[] {
+      return store.getters['registration/primarySpokenLanguages'](includeInactive);
     },
 
     indigenousTypesItems(): Record<string, TranslateResult>[] {

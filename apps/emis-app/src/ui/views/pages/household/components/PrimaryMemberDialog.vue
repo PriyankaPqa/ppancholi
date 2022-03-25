@@ -30,6 +30,7 @@
             :i18n="i18n"
             :member-props="member"
             skip-phone-email-rules
+            include-inactive-options
             @setIdentity="setIdentity"
             @setIndigenousIdentity="setIndigenousIdentity"
             @setContactInformation="setContactInformation" />

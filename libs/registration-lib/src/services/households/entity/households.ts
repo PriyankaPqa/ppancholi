@@ -25,7 +25,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async getGenders(): Promise<IOptionItemData[]> {
-    return this.http.get<IOptionItemData[]>(`${this.baseApi}/genders`);
+    return this.http.get<IOptionItemData[]>(`${this.baseApi}/genders/all`);
   }
 
   async getPreferredLanguages(): Promise<IOptionItemData[]> {
@@ -33,7 +33,7 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
   }
 
   async getPrimarySpokenLanguages(): Promise<IOptionItemData[]> {
-    return this.http.get<IOptionItemData[]>(`${this.baseApi}/primary-spoken-languages`);
+    return this.http.get<IOptionItemData[]>(`${this.baseApi}/primary-spoken-languages/all`);
   }
 
   async getIndigenousCommunities(): Promise<IIndigenousCommunityData[]> {

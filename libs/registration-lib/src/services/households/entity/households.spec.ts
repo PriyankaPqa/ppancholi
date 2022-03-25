@@ -34,7 +34,7 @@ describe('>>> Beneficiaries Service', () => {
 
   test('getGenders is linked to the correct URL', async () => {
     await service.getGenders();
-    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/genders`);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/genders/all`);
   });
 
   test('getPreferredLanguages is linked to the correct URL', async () => {
@@ -44,7 +44,7 @@ describe('>>> Beneficiaries Service', () => {
 
   test('getPrimarySpokenLanguages is linked to the correct URL', async () => {
     await service.getPrimarySpokenLanguages();
-    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/primary-spoken-languages`);
+    expect(http.get).toHaveBeenCalledWith(`${service.baseApi}/primary-spoken-languages/all`);
   });
 
   test('getIndigenousCommunities is linked to the correct URL', async () => {
