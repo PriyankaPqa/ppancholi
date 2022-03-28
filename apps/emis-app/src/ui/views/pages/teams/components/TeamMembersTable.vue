@@ -25,6 +25,7 @@
     </div>
     <v-data-table
       v-if="showMembers"
+      id="table_member"
       class="table border-radius-bottom"
       data-test="teamMembers__table"
       hide-default-footer
@@ -231,7 +232,6 @@ export default Vue.extend({
           filterable: false,
           sortable: false,
           value: 'role',
-          width: '100px',
         },
         {
           text: this.$t('teams.teams') as string,
@@ -386,10 +386,8 @@ export default Vue.extend({
   border: solid 1px var(--v-grey-lighten2);
 }
 
-.team_member_header {
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  color: var(--v-grey-darken4) !important;;
+#table_member ::v-deep th.team_member_header {
+  white-space: nowrap;
 }
 
 .no-bottom-border {
