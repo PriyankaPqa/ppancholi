@@ -296,4 +296,30 @@ describe('CaseFileVerifyIdentityDialog.vue', () => {
       });
     });
   });
+
+  describe('Watcher', () => {
+    describe('form.status', () => {
+      test('If user put status as failed, the method should be switched to not applicable', async () => {
+        wrapper.vm.form.method = IdentityAuthenticationMethod.System;
+        await wrapper.vm.$nextTick();
+        wrapper.vm.form.status = IdentityAuthenticationStatus.NotVerified;
+        await wrapper.vm.$nextTick();
+        wrapper.vm.form.status = IdentityAuthenticationStatus.Failed;
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
+      });
+
+      test('If user put status as not verified, the method should be switched to not applicable', async () => {
+        wrapper.vm.form.method = IdentityAuthenticationMethod.System;
+        await wrapper.vm.$nextTick();
+        wrapper.vm.form.status = IdentityAuthenticationStatus.Passed;
+        await wrapper.vm.$nextTick();
+        wrapper.vm.form.status = IdentityAuthenticationStatus.NotVerified;
+        await wrapper.vm.$nextTick();
+
+        expect(wrapper.vm.form.method).toEqual(IdentityAuthenticationMethod.NotApplicable);
+      });
+    });
+  });
 });

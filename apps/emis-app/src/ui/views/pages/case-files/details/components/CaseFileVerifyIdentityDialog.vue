@@ -164,8 +164,7 @@ export default Vue.extend({
     */
     verificationMethods(): { value: number, text: string, disabled?: boolean }[] {
       const methods = helpers.enumToTranslatedCollection(IdentityAuthenticationMethod, 'caseFile.verifyMethod')
-        .filter((x) => x.value !== IdentityAuthenticationMethod.NotApplicable) as
-        { value: number, text: string, disabled?: boolean }[];
+        .filter((x) => x.value !== IdentityAuthenticationMethod.NotApplicable) as { value: number, text: string, disabled?: boolean }[];
       const systemMethod = methods.find((m) => m.value === IdentityAuthenticationMethod.System);
       systemMethod.disabled = true;
       return methods;
@@ -217,6 +216,13 @@ export default Vue.extend({
       if (!newValue) {
         this.form.specifiedOther = null;
       }
+    },
+    'form.status': {
+      handler(status) {
+        if (status === IdentityAuthenticationStatus.Failed || status === IdentityAuthenticationStatus.NotVerified) {
+          this.form.method = IdentityAuthenticationMethod.NotApplicable;
+        }
+      },
     },
   },
 
