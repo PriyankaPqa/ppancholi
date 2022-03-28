@@ -333,18 +333,13 @@ export default Vue.extend({
     async submit() {
       if (this.isSubmitAllowed) {
         this.loading = true; // So the user knows we're working
-        const successfulCreations = [] as IUserAccountCombined[];
-        let successfulCreation = null as IUserAccountCombined;
         // eslint-disable-next-line
         for (let user of this.selectedUsers) {
-          // eslint-disable-next-line
-          successfulCreation = await this.setUserRole(user);
-          if (successfulCreation) {
-            successfulCreations.push(successfulCreation);
-          }
+          // eslint-disable-next-line no-await-in-loop
+          await this.setUserRole(user);
         }
         this.close();
-        this.$emit('users-added', successfulCreations);
+        this.$emit('users-added');
         this.selectedUsers = [];
         this.loading = false;
       }
@@ -354,8 +349,7 @@ export default Vue.extend({
       return (this.allSubRoles as IOptionSubItem[]).find((r) => r.id === roleId);
     },
 
-    async setUserRole(user: IAppUserData): Promise<IUserAccountCombined> {
-      let successfulCreation = null as IUserAccountCombined;
+    async setUserRole(user: IAppUserData) {
       const subRole:IOptionSubItem = this.getSubRoleById(user.roles[0].id);
 
       if (subRole) {
@@ -366,13 +360,11 @@ export default Vue.extend({
 
         const userAccount = await this.$storage.userAccount.actions.assignRole(payload);
         if (userAccount) {
-          successfulCreation = await this.$storage.userAccount.actions.fetch(user.id);
           this.$toasted.global.success(this.$t('system_management.add_users.success'));
         } else {
           this.$toasted.global.error(this.$t('system_management.add_users.error'));
         }
       }
-      return successfulCreation;
     },
 
     updateIsSubmitAllowed() {
