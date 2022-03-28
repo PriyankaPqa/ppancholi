@@ -7,7 +7,7 @@
     :show-pagination="!!quickStats"
     :number-of-tabs="numberOfTabs">
     <template slot="top">
-      <v-select-with-validation
+      <v-autocomplete-with-validation
         v-model="selectedEventId"
         class="pb-4"
         hide-details
@@ -87,7 +87,7 @@
 import Vue from 'vue';
 import _sortBy from 'lodash/sortBy';
 import { TranslateResult } from 'vue-i18n';
-import { RcStatsTemplate, VSelectWithValidation } from '@libs/component-lib/components';
+import { RcStatsTemplate, VAutocompleteWithValidation } from '@libs/component-lib/components';
 import { IEventMainInfo } from '@/entities/event';
 import { ICaseFileDetailedCount } from '@/entities/case-file';
 
@@ -96,7 +96,7 @@ export default Vue.extend({
 
   components: {
     RcStatsTemplate,
-    VSelectWithValidation,
+    VAutocompleteWithValidation,
   },
 
   data() {

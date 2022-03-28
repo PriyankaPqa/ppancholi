@@ -90,6 +90,7 @@ describe('TeamStats.vue', () => {
         wrapper.vm.fetchActiveEvents();
         expect(wrapper.vm.$services.events.searchMyEvents).toHaveBeenCalledWith({
           filter: { Entity: { Schedule: { Status: EEventStatus.Open } } },
+          orderBy: 'Entity/Name/Translation/en asc',
           top: 999,
         });
       });
@@ -111,12 +112,16 @@ describe('TeamStats.vue', () => {
         wrapper.vm.selectEvent(mockEvent);
         expect(wrapper.vm.statsLoaded).toBe(false);
       });
+
       it('should call selectEvent and check for default stats value and call searchteam and filter team based on event id', () => {
         wrapper.vm.selectEvent(mockEvent);
         expect(wrapper.vm.teamStats).toStrictEqual({
           countClose: 0, countOpen: 0, countTeamMembers: 0, countTotal: 0,
         });
-        expect(storage.team.actions.search).toHaveBeenCalled();
+        expect(storage.team.actions.search).toHaveBeenCalledWith({
+          filter: { Metadata: { Events: { any: { Id: wrapper.vm.selectedEventId } } } },
+          orderBy: 'Entity/Name asc',
+        });
       });
 
       it('should filter team based on event id', async () => {

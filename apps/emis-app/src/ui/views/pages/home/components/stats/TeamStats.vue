@@ -1,7 +1,7 @@
 <template>
   <rc-stats-template :loading="loadingEvents" data-test-prefix="team" :title="$t('team_stats.title')">
     <template slot="top">
-      <v-select-with-validation
+      <v-autocomplete-with-validation
         v-model="selectedEventId"
         data-test="team_stats_select_event"
         class="pb-4"
@@ -13,7 +13,7 @@
         outlined
         :placeholder="$t('team_stats.event.placeholder')"
         @change="selectEvent" />
-      <v-select-with-validation
+      <v-autocomplete-with-validation
         v-model="selectedTeam"
         data-test="team_stats_select_team"
         class="pb-4"
@@ -59,7 +59,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
-import { RcStatsTemplate, VSelectWithValidation } from '@libs/component-lib/components';
+import { RcStatsTemplate, VAutocompleteWithValidation } from '@libs/component-lib/components';
 import { IEntityCombined } from '@libs/registration-lib/entities/base';
 import { EEventStatus, IEventMainInfo } from '@/entities/event';
 import { ITeamEntity, ITeamMetadata } from '@/entities/team';
@@ -76,7 +76,7 @@ export default Vue.extend({
 
   components: {
     RcStatsTemplate,
-    VSelectWithValidation,
+    VAutocompleteWithValidation,
   },
 
   data() {
@@ -112,6 +112,7 @@ export default Vue.extend({
             },
           },
         },
+        orderBy: `Entity/Name/Translation/${this.$i18n.locale} asc`,
         top: 999,
       });
       this.events = res?.value;
@@ -121,8 +122,10 @@ export default Vue.extend({
       this.loadingTeams = true;
       this.statsLoaded = false;
       this.teamStats = defaultTeamStats;
-      const eventTeams = await this.$storage.team.actions
-        .search({ filter: { Metadata: { Events: { any: { Id: this.selectedEventId } } } } });
+      const eventTeams = await this.$storage.team.actions.search({
+        filter: { Metadata: { Events: { any: { Id: this.selectedEventId } } } },
+        orderBy: 'Entity/Name asc',
+      });
       this.statTeam = this.$storage.team.getters.getByIds(eventTeams.ids);
       this.loadingTeams = false;
     },
