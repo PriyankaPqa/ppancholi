@@ -99,7 +99,7 @@ export default Vue.extend({
         paymentModality: this.form.paymentModality,
         amount: this.form.amount,
         search: azureSearchParams.search,
-        filter,
+        filter: `${filter} and Entity/Status eq 1`,
       } as IMassActionFinancialAssistanceCreatePayload;
 
       this.loading = true;

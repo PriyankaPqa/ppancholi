@@ -213,7 +213,7 @@ describe('FinancialAssistanceCreate.vue', () => {
           paymentModality: wrapper.vm.form.paymentModality,
           amount: wrapper.vm.form.amount,
           search: azureSearchParams.search,
-          filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151'",
+          filter: "Entity/EventId eq '60983874-18bb-467d-b55a-94dc55818151' and Entity/Status eq 1",
         };
 
         await wrapper.vm.onPost({ name, description });

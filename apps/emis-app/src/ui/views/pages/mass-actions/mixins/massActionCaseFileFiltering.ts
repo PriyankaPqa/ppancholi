@@ -115,7 +115,7 @@ export default mixins(TablePaginationSearchMixin).extend({
       const filter = buildQuery({ filter: this.azureSearchParams.filter }).replace('?$filter=', '');
 
       const res = await this.$services.massActions.exportList(massActionType, {
-        filter,
+        filter: `${filter} and Entity/Status eq 1`,
         search: this.azureSearchParams.search,
         language: this.$i18n.locale,
       });

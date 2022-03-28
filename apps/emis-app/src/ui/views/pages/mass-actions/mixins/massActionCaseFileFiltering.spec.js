@@ -168,7 +168,7 @@ describe('massActionCaseFileFiltering.vue', () => {
         await wrapper.vm.onExport(massActionType);
 
         expect(wrapper.vm.$services.massActions.exportList).toHaveBeenLastCalledWith(massActionType, {
-          filter: "Entity/id eq '1'",
+          filter: "Entity/id eq '1' and Entity/Status eq 1",
           search: 'search',
           language: 'en',
         });

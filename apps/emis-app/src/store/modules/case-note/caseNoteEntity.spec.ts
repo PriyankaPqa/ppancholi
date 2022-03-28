@@ -28,7 +28,7 @@ describe('Case file entity module', () => {
     describe('caseNoteCategories', () => {
       test('the getter returns the sorted case note categories', () => {
         module.mutations.setCaseNoteCategories(module.state, mockCaseNoteCategories());
-        const res = module.getters.caseNoteCategories(module.state);
+        const res = module.getters.caseNoteCategories(module.state)(true);
         expect(res).toEqual(
           _sortBy(
             mockCaseNoteCategories().map((e) => new OptionItem(e)),
