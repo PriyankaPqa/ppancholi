@@ -1,4 +1,4 @@
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient, IRestResponse } from '@/services/httpClient';
 import { IEntity } from '@/entities/base/base.types';
 import { IAzureSearchParams } from '@/types';
 import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
@@ -26,6 +26,15 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
    */
   async get(idParams: IdParams, useGlobalHandler = true): Promise<T> {
     return this.http.get<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams), { globalHandler: useGlobalHandler });
+  }
+
+  /**
+   *
+   * @param idParams
+   * @param useGlobalHandler
+   */
+  async getFullResponse(idParams: IdParams, useGlobalHandler = true): Promise<IRestResponse<T>> {
+    return this.http.getFullResponse<T>(this.getItemUrl(`${this.baseUrl}/{id}`, idParams), { globalHandler: useGlobalHandler });
   }
 
   /**

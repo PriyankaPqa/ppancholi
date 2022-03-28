@@ -823,12 +823,6 @@ describe('EventSummary.vue', () => {
         },
       });
     });
-
-    it('should call fetch and fetchAgreementTypes', () => {
-      expect(wrapper.vm.$storage.event.actions.fetch)
-        .toHaveBeenCalledWith(wrapper.vm.$route.params.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-      expect(wrapper.vm.$storage.event.actions.fetchAgreementTypes).toHaveBeenCalledTimes(1);
-    });
   });
 
   describe('Methods', () => {

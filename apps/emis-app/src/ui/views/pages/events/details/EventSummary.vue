@@ -257,10 +257,7 @@ export default Vue.extend({
 
   async created() {
     try {
-      const { id } = this.$route.params;
-      if (id) {
-        await this.$storage.event.actions.fetch(id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
-      }
+      // No need to fetch event again, because event is already fetched in EventDetails.vue
       await this.$storage.event.actions.fetchAgreementTypes();
     } catch (e) {
       this.$appInsights.trackException(e, {}, 'EventSummary', 'created');

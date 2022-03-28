@@ -981,6 +981,7 @@
     "eventDetail.menu_programs": "Programmes",
     "eventDetail.menu_summary": "Aperçu de l'événement",
     "eventDetail.open": "Ouvert",
+    "eventDetail.permission.denied": "Votre équipe est désactivée. Vous n'avez plus accès à cet événement.",
     "eventDetail.phone": "Numéro d'assistance",
     "eventDetail.relatedEvents": "Événements connexes",
     "eventDetail.reported": "Signalé",

@@ -1,7 +1,9 @@
 /* eslint-disable no-console */
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEmpty from 'lodash/isEmpty';
-import { IEntity, IEntityCombined, Status } from '@/entities/base';
+import {
+  IEntity, IEntityCombined, IFullResponseCombined, Status,
+} from '@/entities/base';
 import { IStore, IState } from '@/store';
 import { IAzureSearchParams } from '@/types';
 import { IAzureTableSearchResults, ICombinedIndex } from '@/types/interfaces/IAzureSearchResult';
@@ -123,13 +125,23 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
   }
 
   protected baseActions = {
-    fetch: async (idParams: IdParams,
-      { useEntityGlobalHandler, useMetadataGlobalHandler } = { useEntityGlobalHandler: true, useMetadataGlobalHandler: true })
-      : Promise<IEntityCombined<TEntity, TMetadata>> => {
-      const requests = [this.store.dispatch(`${this.entityModuleName}/fetch`, { idParams, useGlobalHandler: useEntityGlobalHandler })];
+    fetch: async (idParams: IdParams, {
+      useEntityGlobalHandler,
+      useMetadataGlobalHandler,
+    } = {
+      useEntityGlobalHandler: true,
+      useMetadataGlobalHandler: true,
+    }): Promise<IEntityCombined<TEntity, TMetadata>> => {
+      const requests = [this.store.dispatch(`${this.entityModuleName}/fetch`, {
+        idParams,
+        useGlobalHandler: useEntityGlobalHandler,
+      })];
 
       if (this.metadataModuleName) {
-        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetch`, { idParams, useGlobalHandler: useMetadataGlobalHandler }));
+        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetch`, {
+          idParams,
+          useGlobalHandler: useMetadataGlobalHandler,
+        }));
       }
       const results = await Promise.all(requests);
       const entity = results[0];
@@ -138,6 +150,43 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       return {
         entity,
         metadata,
+      };
+    },
+
+    fetchFullResponse: async (idParams: IdParams, {
+      useEntityGlobalHandler,
+      useMetadataGlobalHandler,
+      returnEntityFullResponse,
+      returnMetadataFullResponse,
+    } = {
+      useEntityGlobalHandler: true,
+      useMetadataGlobalHandler: true,
+      returnEntityFullResponse: true,
+      returnMetadataFullResponse: true,
+    }): Promise<IFullResponseCombined<TEntity, TMetadata>> => {
+      console.log('Storage base');
+      console.log(`returnEntityFullResponse: ${returnEntityFullResponse}`);
+      console.log(`returnMetadataFullResponse: ${returnMetadataFullResponse}`);
+      const requests = [this.store.dispatch(`${this.entityModuleName}/fetch`, {
+        idParams,
+        useGlobalHandler: useEntityGlobalHandler,
+        returnFullResponse: returnEntityFullResponse,
+      })];
+
+      if (this.metadataModuleName) {
+        requests.push(this.store.dispatch(`${this.metadataModuleName}/fetch`, {
+          idParams,
+          useGlobalHandler: useMetadataGlobalHandler,
+          returnFullResponse: returnMetadataFullResponse,
+        }));
+      }
+      const results = await Promise.all(requests);
+      const fullResponseEntity = results[0];
+      const fullResponseMetadata = results[1] || null;
+
+      return {
+        entity: fullResponseEntity,
+        metadata: fullResponseMetadata,
       };
     },
 

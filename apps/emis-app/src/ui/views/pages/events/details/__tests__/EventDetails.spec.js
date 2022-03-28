@@ -412,7 +412,9 @@ describe('EventDetails.vue', () => {
     beforeEach(() => {
       storage.event.actions.fetchAll = jest.fn(() => {});
       storage.event.actions.fetchEventTypes = jest.fn(() => {});
-      storage.event.actions.fetch = jest.fn(() => {});
+      storage.event.actions.fetchFullResponse = jest.fn(() => ({
+        entity: { status: 403 },
+      }));
 
       wrapper = shallowMount(Component, {
         localVue,
@@ -432,8 +434,17 @@ describe('EventDetails.vue', () => {
     });
 
     it('should call fetchEvent', () => {
-      expect(wrapper.vm.$storage.event.actions.fetch)
-        .toHaveBeenCalledWith(wrapper.vm.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+      expect(wrapper.vm.$storage.event.actions.fetchFullResponse)
+        .toHaveBeenCalledWith(wrapper.vm.id, {
+          useEntityGlobalHandler: false,
+          useMetadataGlobalHandler: false,
+          returnEntityFullResponse: true,
+          returnMetadataFullResponse: true,
+        });
+    });
+
+    it('should toast error in case of 403', () => {
+      expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('eventDetail.permission.denied');
     });
   });
 

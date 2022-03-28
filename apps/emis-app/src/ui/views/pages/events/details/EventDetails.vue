@@ -263,7 +263,16 @@ export default Vue.extend({
     this.loading = true;
 
     try {
-      await this.$storage.event.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
+      const res = await this.$storage.event.actions.fetchFullResponse(this.id, {
+        useEntityGlobalHandler: false,
+        useMetadataGlobalHandler: false,
+        returnEntityFullResponse: true,
+        returnMetadataFullResponse: true,
+      });
+
+      if (res.entity.status === 403 || res.metadata.status === 403) {
+        this.$toasted.global.error(this.$t('eventDetail.permission.denied'));
+      }
     } finally {
       this.loading = false;
     }

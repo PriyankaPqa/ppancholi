@@ -6,6 +6,7 @@ import { mockUserAccountEntities, mockUserAccountEntity } from '@/entities/user-
 import helpers from '@/ui/helpers/helpers';
 import { BaseModule } from './index';
 import { IState } from './base.types';
+import { mockIRestResponse } from '../../../services/httpClient.mock';
 
 export class BaseModuleTest extends BaseModule<any, uuid> {
   public service: DomainBaseService<any, uuid>
@@ -103,20 +104,41 @@ describe('Base Module', () => {
 
   describe('baseActions', () => {
     describe('fetch', () => {
-      it('should call get method from the service', () => {
-        baseModule.service.get = jest.fn();
-        baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true });
+      describe('returnFullResponse false', () => {
+        it('should call get method from the service', () => {
+          baseModule.service.get = jest.fn();
+          baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true });
 
-        expect(baseModule.service.get).toBeCalledWith(id, true);
+          expect(baseModule.service.get).toBeCalledWith(id, true);
+        });
+
+        it('should commit set mutation with the result', async () => {
+          const res = mockUserAccountEntity();
+          baseModule.service.get = jest.fn(() => Promise.resolve(res));
+
+          await baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true });
+
+          expect(actionContext.commit).toBeCalledWith('set', res);
+        });
       });
 
-      it('should commit set mutation with the result', async () => {
-        const res = mockUserAccountEntity();
-        baseModule.service.get = jest.fn(() => Promise.resolve(res));
+      describe('returnFullResponse true', () => {
+        it('should call getFullResponse method from the service', () => {
+          const res = mockIRestResponse(mockUserAccountEntity());
+          baseModule.service.getFullResponse = jest.fn(() => Promise.resolve(res));
+          baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true, returnFullResponse: true });
 
-        await baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true });
+          expect(baseModule.service.getFullResponse).toBeCalledWith(id, true);
+        });
 
-        expect(actionContext.commit).toBeCalledWith('set', res);
+        it('should commit set mutation with the result', async () => {
+          const res = mockIRestResponse(mockUserAccountEntity());
+          baseModule.service.getFullResponse = jest.fn(() => Promise.resolve(res));
+
+          await baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true, returnFullResponse: true });
+
+          expect(actionContext.commit).toBeCalledWith('set', res.data);
+        });
       });
     });
 

@@ -1,8 +1,10 @@
 import { IEntity } from '@/entities/base/base.types';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@/types';
+import { IRestResponse } from '@/services/httpClient';
 
 export interface IDomainBaseService<T extends IEntity, IdParams> {
-  get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T>;
+  get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T | IRestResponse<T>>;
+  getFullResponse(idParams: IdParams, useGlobalHandler?: boolean): Promise<IRestResponse<T>>;
   getAll(parentId?: Omit<IdParams, 'id'>): Promise<T[]>;
   getAllIncludingInactive(): Promise<T[]>;
   activate(idParams: IdParams): Promise<T>;

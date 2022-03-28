@@ -32,6 +32,19 @@ describe('>>> Domain Base Service', () => {
     });
   });
 
+  describe('getFullResponse', () => {
+    it('should call the proper endpoint and use global handler ', async () => {
+      const id = '123';
+      await service.getFullResponse(id, true);
+      expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: true });
+    });
+    it('should call the proper endpoint and not use global handler ', async () => {
+      const id = '123';
+      await service.getFullResponse(id, false);
+      expect(http.getFullResponse).toHaveBeenCalledWith(`${service.baseUrl}/${id}`, { globalHandler: false });
+    });
+  });
+
   describe('hierarchical urls', () => {
     it('will replace parameters in endpoint according to idParam when object', async () => {
       const id = { parentId: '123', id: 'abc' };

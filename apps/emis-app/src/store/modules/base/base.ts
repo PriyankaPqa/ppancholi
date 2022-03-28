@@ -6,6 +6,7 @@ import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IRestResponse } from '@/services/httpClient';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 
@@ -52,21 +53,33 @@ export class BaseModule<T extends IEntity, IdParams> {
   }
 
   protected baseActions = {
-    fetch: async (context: ActionContext<IState<T>, IState<T>>, { idParams, useGlobalHandler }: {idParams: IdParams, useGlobalHandler: boolean})
-    : Promise<T> => {
+    fetch: async (
+      context: ActionContext<IState<T>, IState<T>>,
+      { idParams, useGlobalHandler, returnFullResponse }: {idParams: IdParams, useGlobalHandler: boolean, returnFullResponse?: boolean},
+    )
+    : Promise<T | IRestResponse<T>> => {
       try {
-        const res = await this.service.get(idParams, useGlobalHandler);
-        if (res) {
-          context.commit('set', res);
+        let res;
+        if (!returnFullResponse) {
+          res = await this.service.get(idParams, useGlobalHandler);
+          if (res) {
+            context.commit('set', res);
+          }
+        } else {
+          res = await this.service.getFullResponse(idParams, useGlobalHandler);
+          if (res.data) {
+            context.commit('set', res.data);
+          }
         }
         return res;
-      } catch (e) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } catch (e: any) {
         // normal errors already logged in service.get
         // when e is an array returned from BE (a validation error or 404)
         if (!Array.isArray(e)) {
           applicationInsights.trackException(e, { idParams }, 'module.base', 'fetch');
         }
-        return null;
+        return returnFullResponse ? e.response : null;
       }
     },
 
