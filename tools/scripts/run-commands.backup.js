@@ -39,4 +39,6 @@ if (packages.includes('@apps/emis-app') && applicationName === 'emis-app') {
 
 console.log(`Executing the generated command: ${commands.join(' && ')}`);
 
-shellAsync(commands.join(' && '));
+shellAsync(commands.join(' && '))
+  .then()
+  .catch((exitCode) => process.exit(exitCode));

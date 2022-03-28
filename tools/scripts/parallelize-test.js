@@ -73,4 +73,6 @@ const globPattern = getBlobPattern(files);
 
 const script = `jest "${globPattern}" --coverage --coverageDirectory=coverage-job-${JOB_INDEX} --runInBand --logHeapUsage`;
 
-shellAsync(script);
+shellAsync(script)
+  .then()
+  .catch((exitCode) => process.exit(exitCode));

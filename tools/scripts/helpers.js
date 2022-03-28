@@ -7,7 +7,7 @@ const { execSync, spawn } = require('child_process');
  */
 const shellSync = (cmd) => execSync(cmd, { encoding: 'utf8' });
 
-const shellAsync = (cmd) => {
+const shellAsync = (cmd) => new Promise((resolve, reject) => {
   const script = spawn(cmd, { shell: true });
 
   script.stdout.on('data', (data) => {
@@ -20,9 +20,13 @@ const shellAsync = (cmd) => {
 
   script.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
+    if (code === 0) {
+      resolve(code);
+    } else if (code === 1) {
+      reject(code);
+    }
   });
-};
-
+});
 /**
  * Return a list of affected packages
  * @param isPullRequest
