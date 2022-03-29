@@ -29,4 +29,11 @@ describe('>>> Programs service', () => {
         .toHaveBeenCalledWith(`www.test.com/event/events/${entity.eventId}/programs/${entity.id}`, expect.anything(), { globalHandler: false });
     });
   });
+
+  describe('search', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.search(null);
+      expect(http.get).toHaveBeenCalledWith('event/search/programs', { params: null, isOData: true });
+    });
+  });
 });

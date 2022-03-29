@@ -35,4 +35,11 @@ describe('>>> Case File Document Service', () => {
     });
   });
 
+  describe('search', () => {
+    it('is linked to the correct URL and params', async () => {
+      await service.search(null);
+      expect(http.get).toHaveBeenCalledWith('case-file/search/documents', {params: null, isOData: true, })
+    });
+  });
+
 });

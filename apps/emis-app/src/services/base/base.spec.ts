@@ -17,6 +17,18 @@ describe('>>> Domain Base Service', () => {
     it('should build baseUrl correctly', () => {
       expect(service.baseUrl).toBe(`${process.env.VUE_APP_API_BASE_URL}/${API_URL_SUFFIX}/${CONTROLLER}`);
     });
+
+    it('should build baseApi correctly', () => {
+      expect(service.baseApi).toBe(`${process.env.VUE_APP_API_BASE_URL}/${API_URL_SUFFIX}`);
+    });
+
+    it('should set controller correctly', () => {
+      expect(service.controller).toBe(CONTROLLER);
+    });
+
+    it('should set apiUrlSuffix correctly', () => {
+      expect(service.apiUrlSuffix).toBe(API_URL_SUFFIX);
+    });
   });
 
   describe('get', () => {
@@ -99,13 +111,13 @@ describe('>>> Domain Base Service', () => {
       const params = { filter: { Foo: 'foo' } };
       const searchEndpoint = 'mock-endpoint';
       await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`search/${searchEndpoint}`, { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith(`${API_URL_SUFFIX}/search/${searchEndpoint}`, { params, isOData: true });
     });
 
     it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith(`search/${CONTROLLER}`, { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith(`${API_URL_SUFFIX}/search/${CONTROLLER}`, { params, isOData: true });
     });
   });
 });
