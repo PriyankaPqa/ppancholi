@@ -247,7 +247,7 @@ export default mixins(caseFileDetail).extend({
     },
 
     showWarning() : boolean {
-      return !(this.isImpacted && this.isAuthenticated);
+      return !(this.isImpacted && this.isAuthenticated) && this.financialAssistance.approvalStatus !== ApprovalStatus.Approved;
     },
 
     isAuthenticated(): boolean {

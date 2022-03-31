@@ -331,6 +331,48 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
         expect(wrapper.vm.showWarning).toBe(false);
       });
+
+      it('return false if any conditions is not met but financialAssistance is approved', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
+          computed: {
+            isAuthenticated() {
+              return false;
+            },
+            isImpacted() {
+              return true;
+            },
+          },
+        });
+
+        await wrapper.setData({
+          financialAssistance: {
+            approvalStatus: ApprovalStatus.Approved,
+          },
+        })
+
+        expect(wrapper.vm.showWarning).toBe(false);
+      });
+
+      it('return true if any conditions is not met and financialAssistance is not approved', async () => {
+        await mountWrapper(false, 'edit', 6, '', {
+          computed: {
+            isAuthenticated() {
+              return false;
+            },
+            isImpacted() {
+              return true;
+            },
+          },
+        });
+
+        await wrapper.setData({
+          financialAssistance: {
+            approvalStatus: ApprovalStatus.New,
+          },
+        })
+
+        expect(wrapper.vm.showWarning).toBe(true);
+      });
     });
 
     describe('activePaymentGroups', () => {
