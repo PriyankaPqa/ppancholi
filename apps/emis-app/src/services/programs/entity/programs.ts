@@ -1,7 +1,6 @@
 import { IProgramEntity } from '@/entities/program';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@/services/httpClient';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 import { IProgramsService } from './programs.types';
 
 const API_URL_SUFFIX = 'event/events/{eventId}';
@@ -23,10 +22,7 @@ export class ProgramsService extends DomainBaseService<IProgramEntity, UrlParams
 
   async updateProgram(program: IProgramEntity): Promise<IProgramEntity> {
     program.fillEmptyMultilingualAttributes();
-    return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}`, program), program, { globalHandler: false });
-  }
 
-  async search(params: IAzureSearchParams): Promise<IAzureCombinedSearchResult<IProgramEntity, unknown>> {
-    return this.http.get(`event/search/${ENTITY}`, { params, isOData: true });
+    return this.http.patch(this.getItemUrl(`${this.baseUrl}/{id}`, program), program, { globalHandler: false });
   }
 }

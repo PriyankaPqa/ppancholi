@@ -67,11 +67,4 @@ describe('>>> Case File Referral Service', () => {
       expect(result.dateTimeConsent).toEqual(new Date('2020-01-01'));
     });
   });
-
-  describe('search', () => {
-    it('is linked to the correct URL and params', async () => {
-      await service.search(null);
-      expect(http.get).toHaveBeenCalledWith('case-file/search/referrals', {params: null, isOData: true, })
-    });
-  });
 });

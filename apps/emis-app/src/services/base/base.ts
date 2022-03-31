@@ -11,13 +11,10 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
 
   controller: string;
 
-  apiUrlSuffix: string;
-
   constructor(protected readonly http: IHttpClient, apiUrlSuffix: string, controller: string) {
     this.baseApi = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}`;
     this.baseUrl = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}/${controller}`;
     this.controller = controller;
-    this.apiUrlSuffix = apiUrlSuffix;
   }
 
   /**
@@ -63,7 +60,7 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<T, unknown>> {
-    return this.http.get(`${this.apiUrlSuffix}/search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
+    return this.http.get(`search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
   }
 
   /**

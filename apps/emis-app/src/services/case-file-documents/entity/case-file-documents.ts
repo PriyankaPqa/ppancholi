@@ -1,7 +1,6 @@
 import { IHttpClient } from '@/services/httpClient';
 import { DomainBaseService } from '@/services/base';
 import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 import { ICaseFileDocumentsService } from './case-file-documents.types';
 
 const API_URL_SUFFIX = 'case-file/case-files/{caseFileId}';
@@ -12,10 +11,6 @@ export class CaseFileDocumentsService extends DomainBaseService<ICaseFileDocumen
   implements ICaseFileDocumentsService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, ENTITY);
-  }
-
-  async search(params: IAzureSearchParams): Promise<IAzureCombinedSearchResult<ICaseFileDocumentEntity, unknown>> {
-    return this.http.get(`case-file/search/${ENTITY}`, { params, isOData: true });
   }
 
   async updateDocument(item: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity> {
