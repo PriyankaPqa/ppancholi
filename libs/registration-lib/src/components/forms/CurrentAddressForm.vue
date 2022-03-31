@@ -112,7 +112,7 @@
             @change="onCountryChange()" />
         </v-col>
 
-        <v-col v-if="form.requiresShelterLocation()" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
+        <v-col v-if="form.requiresShelterLocation() && shelterLocations.length > 0" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
           <v-select-with-validation
             v-model="form.shelterLocation"
             :rules="rules.shelterLocation"

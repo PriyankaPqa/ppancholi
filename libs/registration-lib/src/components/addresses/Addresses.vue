@@ -132,8 +132,12 @@ export default Vue.extend({
     },
 
     currentAddressTypeItems(): Record<string, unknown>[] {
-      const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n)
-        .filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+      let list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', this.i18n)
+        .filter((item) => (item.value !== ECurrentAddressTypes.RemainingInHome));
+
+      if (this.shelterLocations.length === 0) {
+        list = list.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
+      }
 
       if (this.noFixedHome) {
         return list;

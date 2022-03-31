@@ -95,6 +95,35 @@ describe('AddEditAdditionalMembers.vue', () => {
         const filtered = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
         expect(wrapper.vm.currentAddressTypeItems).toEqual(filtered);
       });
+
+      it('returns the full list of temporary addresses types without remaining home and without shelter if no shelter available', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            show: true,
+            member: mockAdditionalMember(),
+            index: -1,
+            i18n,
+            householdId,
+            disableAutocomplete: false,
+          },
+          data() {
+            return {
+              apiKey: 'google-key',
+            };
+          },
+          computed: {
+            shelterLocations: () => [],
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
+        let filtered = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
+        filtered = filtered.filter((item) => (item.value !== ECurrentAddressTypes.Shelter));
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(filtered);
+      });
     });
 
     describe('shelterLocations', () => {

@@ -109,6 +109,10 @@ export default Vue.extend({
       this.setSkippedStepsToValid(this.currentTabIndex, effectiveToIndex - 1);
       // We validate before leaving, so we see error if we can't go next
       await (this.$refs.form as VForm).validate();
+
+      // scroll top
+      window.scrollTo(0, 0);
+
       this.$storage.registration.mutations.jump(effectiveToIndex);
 
       // If we stop on a step having errors, highlight errors

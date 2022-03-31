@@ -98,7 +98,7 @@
       </div>
 
       <div
-        v-if="household"
+        v-if="household && (addressFirstLine || addressSecondLine)"
         class="d-flex flex-row align-start mb-2 rc-body14">
         <v-icon small class="mr-2 mt-1">
           mdi-map-marker

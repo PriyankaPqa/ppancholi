@@ -66,7 +66,7 @@ describe('Addresses.vue', () => {
     });
 
     describe('currentAddressTypeItems', () => {
-      it('returns the full list of temporary addresses types if noFixedHome is false. Remaning home being first', async () => {
+      it('returns the full list of temporary addresses types if noFixedHome is false. Remaining home being first', async () => {
         wrapper = shallowMount(Component, {
           localVue,
           data() {
@@ -84,15 +84,41 @@ describe('Addresses.vue', () => {
             },
           },
         });
-        const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n)
-          .filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
-        expect(wrapper.vm.currentAddressTypeItems).toEqual([
+        const fullList = [
           {
-            value: ECurrentAddressTypes.RemainingInHome,
-            text: i18n.t('registration.addresses.temporaryAddressTypes.RemainingInHome').toString(),
+            text: 'Remaining in home',
+            value: 1,
           },
-          ...list,
-        ]);
+          {
+            text: 'Campground',
+            value: 2,
+          },
+          {
+            text: 'Friends / Family',
+            value: 3,
+          },
+          {
+            text: 'Hotel/Motel',
+            value: 4,
+          },
+          {
+            text: 'Medical facility',
+            value: 5,
+          },
+          {
+            text: 'Other',
+            value: 6,
+          },
+          {
+            text: 'Shelter',
+            value: 7,
+          },
+          {
+            text: 'Unknown',
+            value: 0,
+          },
+        ];
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(fullList);
       });
 
       it('returns the full list of temporary addresses types without remaining home if noFixedHome is true', async () => {
@@ -113,9 +139,89 @@ describe('Addresses.vue', () => {
             disableAutocomplete: false,
           },
         });
-        const list = helpers.enumToTranslatedCollection(ECurrentAddressTypes, 'registration.addresses.temporaryAddressTypes', i18n);
-        const filtered = list.filter((item) => item.value !== ECurrentAddressTypes.RemainingInHome);
-        expect(wrapper.vm.currentAddressTypeItems).toEqual(filtered);
+        const listNoRemainingHome = [
+          {
+            text: 'Campground',
+            value: 2,
+          },
+          {
+            text: 'Friends / Family',
+            value: 3,
+          },
+          {
+            text: 'Hotel/Motel',
+            value: 4,
+          },
+          {
+            text: 'Medical facility',
+            value: 5,
+          },
+          {
+            text: 'Other',
+            value: 6,
+          },
+          {
+            text: 'Shelter',
+            value: 7,
+          },
+          {
+            text: 'Unknown',
+            value: 0,
+          },
+        ];
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(listNoRemainingHome);
+      });
+
+      it('is hiding shelter from the list if no shelter options are available', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          data() {
+            return {
+              apiKey: 'google-api-key',
+            };
+          },
+          computed: {
+            noFixedHome() {
+              return false;
+            },
+            shelterLocations: () => [],
+          },
+          propsData: {
+            i18n,
+            disableAutocomplete: false,
+          },
+        });
+        const listNoShelter = [
+          {
+            text: 'Remaining in home',
+            value: 1,
+          },
+          {
+            text: 'Campground',
+            value: 2,
+          },
+          {
+            text: 'Friends / Family',
+            value: 3,
+          },
+          {
+            text: 'Hotel/Motel',
+            value: 4,
+          },
+          {
+            text: 'Medical facility',
+            value: 5,
+          },
+          {
+            text: 'Other',
+            value: 6,
+          },
+          {
+            text: 'Unknown',
+            value: 0,
+          },
+        ];
+        expect(wrapper.vm.currentAddressTypeItems).toEqual(listNoShelter);
       });
     });
 
