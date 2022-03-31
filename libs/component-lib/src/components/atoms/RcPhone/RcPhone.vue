@@ -9,7 +9,8 @@
     :placeholder="placeholder"
     v-on="{
       ...$listeners,
-      input: event => {}
+      input: event => {},
+      focusout: event => emitPhoneObject('focusout')
     }"
     @keypress="isNumber($event)">
     <template #prepend-inner>
@@ -197,25 +198,9 @@ export default Vue.extend({
         this.selectedCountry = getInitialCountry(value, this.defaultCountry);
       },
     },
+
     innerValue() {
-      if (this.phoneObject.isValid()) {
-        this.innerValue = this.phoneObject.getNumber('national') || '';
-        /**
-         * The input event when the text field value or country is changed
-         * @property {{ number: string, country: string }} value
-         */
-        this.$emit('input', {
-          number: this.phoneObject.getNumber('national'),
-          countryCode: this.selectedCountry.iso2,
-          e164Number: this.e164Number,
-        });
-      } else {
-        this.$emit('input', {
-          number: this.phoneObject.getNumber('national'),
-          countryCode: this.selectedCountry.iso2,
-          e164Number: this.e164Number,
-        });
-      }
+      this.emitPhoneObject('input');
     },
 
     countryListOpen(newValue) {
@@ -224,12 +209,14 @@ export default Vue.extend({
       }
     },
   },
+
   mounted() {
     if (this.value.number) {
       this.innerValue = getInitialNumber(this.value.number, this.defaultCountry);
       this.selectedCountry = getInitialCountry(this.value, this.defaultCountry);
     }
   },
+
   created() {
     document.body.addEventListener('keydown', this.scrollCountryMenu);
   },
@@ -237,6 +224,7 @@ export default Vue.extend({
   beforeDestroy() {
     document.body.removeEventListener('keydown', this.scrollCountryMenu);
   },
+
   methods: {
     /**
      * Handles selecting the country from the country list
@@ -339,7 +327,21 @@ export default Vue.extend({
       }
       return true;
     },
+
+    emitPhoneObject(emitEventName: string) {
+      const isValid = this.phoneObject.isValid();
+      if (isValid) {
+        this.innerValue = this.phoneObject.getNumber('national') || '';
+      }
+
+      this.$emit(emitEventName, {
+        number: this.phoneObject.getNumber('national'),
+        countryCode: this.selectedCountry.iso2,
+        e164Number: this.e164Number,
+      });
+    },
   },
+
 });
 </script>
 

@@ -1,6 +1,6 @@
 <template>
   <validation-provider v-slot="{ errors, classes }" :name="$attrs.name" :rules="rules" :mode="mode">
-    <rc-phone v-model="innerValue" :class="classes" :error-messages="errors" v-bind="$attrs" v-on="$listeners" />
+    <rc-phone :value="innerValue" :class="classes" :error-messages="errors" v-bind="$attrs" v-on="$listeners" />
   </validation-provider>
 </template>
 
@@ -33,7 +33,7 @@ export default Vue.extend({
 
     mode: {
       type: String,
-      default: 'aggressive',
+      default: 'lazy',
     },
   },
 
@@ -50,10 +50,6 @@ export default Vue.extend({
       handler(newValue) {
         this.innerValue = newValue;
       },
-    },
-
-    innerValue() {
-      this.$emit('update', this.innerValue);
     },
   },
 });

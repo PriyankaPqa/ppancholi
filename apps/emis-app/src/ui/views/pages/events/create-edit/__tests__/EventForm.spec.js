@@ -849,11 +849,15 @@ describe('EventForm.vue', () => {
     });
 
     describe('Event handlers', () => {
-      test('Input on assistance number calls setAssistanceNumber', async () => {
+      test('Focusing out on assistance number calls setAssistanceNumber', async () => {
         jest.spyOn(wrapper.vm, 'setAssistanceNumber').mockImplementation(() => {});
 
-        const input = wrapper.findDataTest('event-phone').find('input');
-        await input.setValue('1234567890');
+        const phone = wrapper.findDataTest('event-phone');
+        await phone.vm.$emit('focusout', {
+          countryCode: 'CA',
+          e164Number: '+11234567890',
+          number: '1234567890',
+        });
 
         expect(wrapper.vm.setAssistanceNumber).toHaveBeenCalledWith({
           countryCode: 'CA',
@@ -974,8 +978,6 @@ describe('EventForm.vue', () => {
     });
 
     test('eventType specify is required', async () => {
-      await flushPromises();
-
       await wrapper.setData({
         eventType: mockOptionItemData()[0],
       });
@@ -1027,11 +1029,18 @@ describe('EventForm.vue', () => {
         e164Number: '',
       };
 
-      await wrapper.vm.$nextTick();
+      const el = wrapper.findDataTest('event-phone');
+
+      await el.vm.$emit('focusout', {
+        countryCode: '',
+        e164Number: '',
+        number: '',
+      });
+
       await wrapper.vm.$refs.form.validate();
       await wrapper.vm.$nextTick();
-      const el = wrapper.findDataTest('event-phone');
-      expect(el.classes('error--text')).toBe(true);
+
+      expect(el.find('.v-input').classes('error--text')).toBe(true);
     });
 
     test('description max is MAX_LENGTH_LG', async () => {
@@ -1071,11 +1080,9 @@ describe('EventForm.vue', () => {
       expect(wrapper.findDataTest('event-province').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-region').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-type').attributes('disabled')).toBe('disabled');
-      expect(wrapper.findDataTest('event-phone').props('disabled')).toBe(true);
+      expect(wrapper.findDataTest('event-phone').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-reported-date').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-switch-status').attributes('disabled')).toBe('disabled');
-      // expect(wrapper.findDataTest('event-start-date').attributes('disabled')).toBe('disabled');
-      // expect(wrapper.findDataTest('event-end-date').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-related-events').attributes('disabled')).toBe('disabled');
       expect(wrapper.findDataTest('event-description').attributes('disabled')).toBeFalsy();
     });

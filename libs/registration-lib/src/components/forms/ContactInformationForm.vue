@@ -42,32 +42,32 @@
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
-        v-model="formCopy.homePhoneNumber"
+        :value="formCopy.homePhoneNumber"
         :rules="rules.homePhoneNumber"
         outlined
         :label="homePhoneNumberLabel"
         :data-test="`${prefixDataTest}__homePhoneNumber`"
-        @focusout="incrementFocusPhoneCounter()" />
+        @focusout="onFocusOut('homePhoneNumber', $event)" />
     </v-col>
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
-        v-model="formCopy.mobilePhoneNumber"
+        :value="formCopy.mobilePhoneNumber"
         :rules="rules.mobilePhoneNumber"
         outlined
         :label="mobilePhoneNumberLabel"
         :data-test="`${prefixDataTest}__mobilePhoneNumber`"
-        @focusout="incrementFocusPhoneCounter()" />
+        @focusout="onFocusOut('mobilePhoneNumber', $event)" />
     </v-col>
 
     <v-col cols="12" sm="6">
       <rc-phone-with-validation
-        v-model="formCopy.alternatePhoneNumber"
+        :value="formCopy.alternatePhoneNumber"
         :rules="rules.alternatePhoneNumber"
         outlined
         :label="alternatePhoneNumberLabel"
         :data-test="`${prefixDataTest}__alternatePhoneNumber`"
-        @focusout="incrementFocusPhoneCounter()" />
+        @focusout="onFocusOut('alternatePhoneNumber', $event)" />
     </v-col>
 
     <v-col cols="12" sm="6">
@@ -120,7 +120,7 @@ import { TranslateResult } from 'vue-i18n';
 import { ValidationObserver } from 'vee-validate';
 import { IOptionItemData } from '../../types';
 import { MAX_LENGTH_MD } from '../../constants/validations';
-import { IContactInformation, IValidateEmailResponse } from '../../entities/value-objects/contact-information';
+import { IContactInformation, IPhoneNumber, IValidateEmailResponse } from '../../entities/value-objects/contact-information';
 
 export default Vue.extend({
   name: 'ContactInformationForm',
@@ -297,7 +297,8 @@ export default Vue.extend({
       return source?.find((option) => option.isDefault);
     },
 
-    incrementFocusPhoneCounter() {
+    onFocusOut(target: 'mobilePhoneNumber' | 'homePhoneNumber' | 'alternatePhoneNumber', phone: IPhoneNumber) {
+      this.formCopy[target] = phone;
       this.focusPhoneCounter += 1;
     },
 

@@ -353,32 +353,32 @@ describe('ContactInformationForm.vue', () => {
       });
     });
 
-    describe('incrementFocusPhoneCounter', () => {
+    describe('onFocustOut', () => {
       it('should increment focusPhoneCounter', () => {
         expect(wrapper.vm.focusPhoneCounter).toEqual(0);
-        wrapper.vm.incrementFocusPhoneCounter();
+        wrapper.vm.onFocusOut();
         expect(wrapper.vm.focusPhoneCounter).toEqual(1);
       });
 
       it('should be called when focusing out homePhoneNumber', () => {
-        wrapper.vm.incrementFocusPhoneCounter = jest.fn();
+        wrapper.vm.onFocusOut = jest.fn();
         const element = wrapper.findDataTest('personalInfo__homePhoneNumber');
-        element.vm.$emit('focusout');
-        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1);
+        element.vm.$emit('focusout', null);
+        expect(wrapper.vm.onFocusOut).toBeCalledWith('homePhoneNumber', null);
       });
 
       it('should be called when focusing out mobilePhoneNumber', () => {
-        wrapper.vm.incrementFocusPhoneCounter = jest.fn();
+        wrapper.vm.onFocusOut = jest.fn();
         const element = wrapper.findDataTest('personalInfo__mobilePhoneNumber');
-        element.vm.$emit('focusout');
-        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1);
+        element.vm.$emit('focusout', null);
+        expect(wrapper.vm.onFocusOut).toBeCalledWith('mobilePhoneNumber', null);
       });
 
       it('should be called when focusing out alternatePhoneNumber', () => {
-        wrapper.vm.incrementFocusPhoneCounter = jest.fn();
+        wrapper.vm.onFocusOut = jest.fn();
         const element = wrapper.findDataTest('personalInfo__alternatePhoneNumber');
-        element.vm.$emit('focusout');
-        expect(wrapper.vm.incrementFocusPhoneCounter).toBeCalledTimes(1);
+        element.vm.$emit('focusout', null);
+        expect(wrapper.vm.onFocusOut).toBeCalledWith('alternatePhoneNumber', null);
       });
     });
 

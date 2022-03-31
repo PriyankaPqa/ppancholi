@@ -95,16 +95,14 @@
             </v-col>
 
             <v-col cols="6" md="6" sm="12">
-              <validation-provider v-slot="{ errors }" :rules="rules.responseDetails.assistanceNumber">
-                <rc-phone
-                  :value="assistanceNumber"
-                  outlined
-                  :label="`${$t('event.number')} *`"
-                  :error-messages="errors"
-                  data-test="event-phone"
-                  :disabled="inputDisabled"
-                  @input="setAssistanceNumber($event)" />
-              </validation-provider>
+              <rc-phone-with-validation
+                :value="assistanceNumber"
+                :rules="rules.responseDetails.assistanceNumber"
+                outlined
+                :label="`${$t('event.number')} *`"
+                data-test="event-phone"
+                :disabled="inputDisabled"
+                @focusout="setAssistanceNumber($event)" />
             </v-col>
           </v-row>
 
@@ -158,47 +156,6 @@
                     :disabled="inputDisabled"
                     :rules="rules.schedule.reOpenReason" />
                 </div>
-
-                <!-- <v-row>
-                  <v-col cols="6" lg="5" md="5" class="pl-0 pt-0">
-                    <v-col>
-                      <p class="rc-body16 fw-bold">
-                        {{ $t('event.schedule_open_date') }}
-                      </p>
-
-                      <v-date-field-with-validation
-                        v-model="localEvent.schedule.scheduledOpenDate"
-                        :close-on-content-click="false"
-                        :data-test="'event-start-date'"
-                        :rules="rules.schedule.scheduledOpenDate"
-                        :disabled="isStatusOpen || (isEditMode && localEvent.schedule.hasBeenOpen) || inputDisabled"
-                        prepend-inner-icon="timer"
-                        :label="`${$t('event.select_date')}`"
-                        :placeholder="$t('event.select_date')"
-                        :min="today" />
-                    </v-col>
-                  </v-col>
-
-                  <v-col cols="6" lg="5" md="5" class="pt-0">
-                    <v-col>
-                      <p class="fw-bold">
-                        {{ $t('event.schedule_close_date') }}
-                      </p>
-
-                      <v-date-field-with-validation
-                        v-model="localEvent.schedule.scheduledCloseDate"
-                        :close-on-content-click="false"
-                        :data-test="'event-end-date'"
-                        :rules="rules.schedule.scheduledCloseDate"
-                        prepend-inner-icon="timer"
-                        :placeholder="$t('event.select_date')"
-                        :label="`${$t('event.select_date')}`"
-                        :min="localEvent.schedule.scheduledOpenDate"
-                        :disabled="inputDisabled"
-                        :picker-date="localEvent.schedule.scheduledOpenDate" />
-                    </v-col>
-                  </v-col>
-                </v-row> -->
               </div>
             </v-col>
           </v-row>
@@ -282,7 +239,7 @@ import {
   VDateFieldWithValidation,
   VAutocompleteWithValidation,
   VTextAreaWithValidation,
-  RcPhone,
+  RcPhoneWithValidation,
   RcAutosuggest,
   RcTooltip,
 } from '@libs/component-lib/components';
@@ -290,9 +247,7 @@ import libHelpers from '@libs/registration-lib/ui/helpers';
 import LanguageTabs from '@/ui/shared-components/LanguageTabs.vue';
 import helpers from '@/ui/helpers/helpers';
 import utils from '@/entities/utils';
-import {
-  ECanadaProvinces, IMultilingual,
-} from '@/types';
+import { ECanadaProvinces, IMultilingual } from '@/types';
 import {
   EResponseLevel,
   EEventStatus,
@@ -313,7 +268,7 @@ export default Vue.extend({
     VDateFieldWithValidation,
     VAutocompleteWithValidation,
     VTextAreaWithValidation,
-    RcPhone,
+    RcPhoneWithValidation,
     RcAutosuggest,
     RcTooltip,
   },

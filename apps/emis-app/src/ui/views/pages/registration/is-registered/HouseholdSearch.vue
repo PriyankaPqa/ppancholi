@@ -45,11 +45,12 @@
             </v-col>
             <v-col :col=" sameLine ? 12 : 6" :class="[sameLine ? 'mt-n6': '']">
               <rc-phone-with-validation
-                v-model="phone"
+                :value="phone"
                 :rules="rules.phone"
                 data-test="isRegistered__phoneNumber"
                 outlined
                 :label="$t('registration.isRegistered.phone')"
+                @focusout="phone = $event"
                 @keyup.enter.native="search" />
             </v-col>
           </v-row>
