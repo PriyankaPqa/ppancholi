@@ -99,11 +99,6 @@ export enum ValidationOfImpactStatus {
  * Interfaces
  */
 
-export interface ICaseFileHouseholdPhoneNumber {
-  number: string;
-  extension: string;
-}
-
 export interface ICaseFileLabel {
   order: number;
   name: string;

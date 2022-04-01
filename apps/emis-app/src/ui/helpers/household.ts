@@ -1,6 +1,7 @@
 import {
   EIndigenousTypes, IIndigenousCommunityData, IMember, HouseholdCreate,
   IAddressData,
+  IPhoneNumber,
 } from '@libs/registration-lib/entities/household-create/index';
 import { IBirthDate } from '@libs/registration-lib/entities/value-objects/identity-set/identitySet.types';
 import libHelpers from '@libs/registration-lib/ui/helpers';
@@ -31,25 +32,24 @@ export default {
     return helpers.getMultilingualValue(member.contactInformation.primarySpokenLanguage.name);
   },
 
-  mobilePhoneNumber(member: IMember): string {
-    if (member.contactInformation?.mobilePhoneNumber?.number) {
-      return member.contactInformation?.mobilePhoneNumber.number;
+  phoneNumberDisplay(phone: IPhoneNumber): string {
+    if (!phone) {
+      return null;
     }
-    return '-';
+    return (phone.e164Number || phone.e164number) && phone.countryCode && phone.countryCode !== 'CA'
+      && phone.countryCode !== 'US' ? (phone.e164Number || phone.e164number) : phone.number;
+  },
+
+  mobilePhoneNumber(member: IMember): string {
+    return this.phoneNumberDisplay(member.contactInformation?.mobilePhoneNumber) || '-';
   },
 
   homePhoneNumber(member: IMember): string {
-    if (member.contactInformation?.homePhoneNumber?.number) {
-      return member.contactInformation.homePhoneNumber.number;
-    }
-    return '-';
+    return this.phoneNumberDisplay(member.contactInformation.homePhoneNumber) || '-';
   },
 
   alternatePhoneNumber(member: IMember): string {
-    if (member.contactInformation?.alternatePhoneNumber?.number) {
-      return member.contactInformation.alternatePhoneNumber.number;
-    }
-    return '-';
+    return this.phoneNumberDisplay(member.contactInformation.alternatePhoneNumber) || '-';
   },
 
   alternatePhoneExtension(member: IMember): string {

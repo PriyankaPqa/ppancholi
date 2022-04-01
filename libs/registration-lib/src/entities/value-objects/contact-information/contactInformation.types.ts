@@ -4,6 +4,7 @@ export interface IPhoneNumber {
   number?: string;
   countryCode?: string;
   e164Number: string;
+  e164number?: string;
   extension?: string;
 }
 

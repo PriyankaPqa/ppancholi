@@ -16,7 +16,7 @@ import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import helpers from '../../../ui/helpers/index';
 import {
-  EIndigenousTypes, IContactInformation, IIdentitySet, IIndigenousCommunityData,
+  EIndigenousTypes, IContactInformation, IIdentitySet, IIndigenousCommunityData, IPhoneNumber,
 } from '../../../entities/household-create';
 
 export default Vue.extend({
@@ -147,24 +147,15 @@ export default Vue.extend({
     },
 
     getMobilePhoneNumber(): string {
-      if (this.personalInformation?.mobilePhoneNumber?.number) {
-        return this.personalInformation.mobilePhoneNumber.number;
-      }
-      return '-';
+      return this.phoneNumberDisplay(this.personalInformation?.mobilePhoneNumber) || '-';
     },
 
     getHomePhoneNumber(): string {
-      if (this.personalInformation?.homePhoneNumber?.number) {
-        return this.personalInformation.homePhoneNumber.number;
-      }
-      return '-';
+      return this.phoneNumberDisplay(this.personalInformation?.homePhoneNumber) || '-';
     },
 
     getAlternatePhoneNumber(): string {
-      if (this.personalInformation?.alternatePhoneNumber?.number) {
-        return this.personalInformation.alternatePhoneNumber.number;
-      }
-      return '-';
+      return this.phoneNumberDisplay(this.personalInformation?.alternatePhoneNumber) || '-';
     },
 
     otherIndigenousType(): boolean {
@@ -186,6 +177,16 @@ export default Vue.extend({
         return `${type}, ${community?.communityName}`;
       }
       return '';
+    },
+  },
+
+  methods: {
+    phoneNumberDisplay(phone: IPhoneNumber): string {
+      if (!phone) {
+        return null;
+      }
+      return (phone.e164Number || phone.e164number) && phone.countryCode && phone.countryCode !== 'CA'
+        && phone.countryCode !== 'US' ? (phone.e164Number || phone.e164number) : phone.number;
     },
   },
 });
