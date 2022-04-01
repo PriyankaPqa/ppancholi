@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { CASE_FILE_ENTITIES, CASE_FILE_METADATA } from '@/constants/vuex-modules';
 import {
   CaseFileTriage, ICaseFileLabel, CaseFileStatus, IIdentityAuthentication, IdentityAuthenticationMethod,
@@ -11,12 +10,13 @@ import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStore } from '@/store';
 import { IListOption } from '@/types';
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
-import { CaseFileStorage } from './storage';
 import { EEventStatus } from '@/entities/event';
+import { CaseFileStorage } from './storage';
 
 const entityModuleName = CASE_FILE_ENTITIES;
 const metadataModuleName = CASE_FILE_METADATA;
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 const store = mockStore({
   modules: {
     [entityModuleName]: {
@@ -28,8 +28,10 @@ const store = mockStore({
         inactiveReasons: mockOptionItemData(),
         closeReasons: mockOptionItemData(),
         triageLoading: false,
-        items: [mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open } as any),
-          mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive } as any)],
+        items: [
+          mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Open } as any),
+          mockCaseFileEntity({ caseFileStatus: CaseFileStatus.Inactive } as any),
+        ],
       },
     },
     [metadataModuleName]: {
@@ -227,21 +229,18 @@ describe('>>> Case File Storage', () => {
       const payload = true;
       storage.mutations.setInactiveReasonsFetched(payload);
       expect(store.commit).toBeCalledWith(`${entityModuleName}/setInactiveReasonsFetched`, payload);
-
     });
 
     it('should proxy setScreeningIdsFetched', () => {
       const payload = true;
       storage.mutations.setScreeningIdsFetched(payload);
       expect(store.commit).toBeCalledWith(`${entityModuleName}/setScreeningIdsFetched`, payload);
-
     });
 
     it('should proxy setCloseReasonsFetched', () => {
       const payload = true;
       storage.mutations.setCloseReasonsFetched(payload);
       expect(store.commit).toBeCalledWith(`${entityModuleName}/setCloseReasonsFetched`, payload);
-
     });
   });
 });

@@ -1,6 +1,6 @@
 import { IEntity } from '@/entities/base/base.types';
 import { IAzureSearchParams, IAzureCombinedSearchResult } from '@/types';
-import { IRestResponse } from '@/services/httpClient';
+import { IRestResponse } from '@libs/core-lib/services/http-client';
 
 export interface IDomainBaseService<T extends IEntity, IdParams> {
   get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T | IRestResponse<T>>;

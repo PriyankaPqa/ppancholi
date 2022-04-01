@@ -1,4 +1,4 @@
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import {
   IOptionItemData, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';

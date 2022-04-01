@@ -4,7 +4,7 @@
     :show-right-menu="showRightMenu"
     :left-menu-title="$m(event.entity.name)"
     :navigation-tabs="tabs">
-    <template v-if="event" slot="left-menu">
+    <template v-if="event" #left-menu>
       <div>
         <div class="rc-body14 pb-2">
           <v-icon size="16" class="pr-2" color="gray darken-2">
@@ -76,7 +76,7 @@
 
     <router-view />
 
-    <template slot="page-right-menu-top">
+    <template #page-right-menu-top>
       <div class="pl-2">
         <v-icon size="24" class="mr-2" color="secondary">
           mdi-calendar
@@ -261,18 +261,8 @@ export default Vue.extend({
 
   async created() {
     this.loading = true;
-
     try {
-      const res = await this.$storage.event.actions.fetchFullResponse(this.id, {
-        useEntityGlobalHandler: false,
-        useMetadataGlobalHandler: false,
-        returnEntityFullResponse: true,
-        returnMetadataFullResponse: true,
-      });
-
-      if (res.entity.status === 403 || res.metadata.status === 403) {
-        this.$toasted.global.error(this.$t('eventDetail.permission.denied'));
-      }
+      await this.$storage.event.actions.fetch(this.id);
     } finally {
       this.loading = false;
     }

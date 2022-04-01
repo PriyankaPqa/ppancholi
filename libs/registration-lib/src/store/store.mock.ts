@@ -5,6 +5,7 @@ import Vue from 'vue';
 
 import VueI18n from 'vue-i18n';
 
+import { mockHttp } from '@libs/core-lib/src/services/http-client';
 import { TenantSettingsService } from '../services/tenantSettings/entity';
 import { ERegistrationMode } from '../types/enums/ERegistrationMode';
 import { mockProvider } from '../services/provider';
@@ -12,7 +13,6 @@ import { mockTabs } from './modules/registration/tabs.mock';
 import { makeRegistrationModule } from './modules/registration';
 import { HouseholdEntityModule } from './modules/household';
 import { IState, IStore } from './store.types';
-import { mockHttp } from '../services/httpClient.mock';
 import { HouseholdsService } from '../services/households/entity';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
 

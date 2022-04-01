@@ -1,6 +1,6 @@
 import { IOptionSubItem } from '@/entities/optionItem';
 import { FilterKey, mockUserFilters } from '@/entities/user-account';
-import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
+import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { UserAccountsService } from './user-accounts';
 
 describe('>>> UserAccounts Service', () => {

@@ -1,5 +1,5 @@
 import { mockProgramEntity } from '@/entities/program';
-import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
+import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { ProgramsService } from './programs';
 
 describe('>>> Programs service', () => {

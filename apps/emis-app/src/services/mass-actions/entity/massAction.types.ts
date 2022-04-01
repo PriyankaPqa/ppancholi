@@ -1,6 +1,6 @@
 import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
 import { IMassActionEntity, MassActionRunType, MassActionType } from '@/entities/mass-action/massActions.types';
-import { IRestResponse } from '@/services/httpClient';
+import { IRestResponse } from '@libs/core-lib/services/http-client';
 import { EPaymentModalities } from '@/entities/program';
 
 export interface IMassActionFinancialAssistanceCreatePayload {

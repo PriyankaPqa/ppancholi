@@ -1,11 +1,12 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { CaseFileDocumentEntity, mockCombinedCaseFileDocument, CaseFileDocumentMethod, DocumentStatus } from '@/entities/case-file-document';
+import {
+  CaseFileDocumentEntity, mockCombinedCaseFileDocument, DocumentStatus,
+} from '@/entities/case-file-document';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
+import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import Component from './CaseFileDocumentForm.vue';
 import DownloadComponent from './DownloadViewDocument.vue';
-import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -15,7 +16,6 @@ describe('CaseFileDocumentForm.vue', () => {
   let document;
 
   const mountWrapper = async (isEditMode = true, fullMount = false, level = 5, additionalOverwrites = {}) => {
-
     document = document || (isEditMode ? mockCombinedCaseFileDocument().entity : new CaseFileDocumentEntity());
 
     wrapper = (fullMount ? mount : shallowMount)(Component, {
@@ -26,15 +26,13 @@ describe('CaseFileDocumentForm.vue', () => {
         isDirty: false,
       },
       mocks: {
-        $hasLevel: (lvl) => {
-          return lvl <= 'level' + level;
-        },
+        $hasLevel: (lvl) => lvl <= `level${level}`,
         $storage: storage,
       },
       ...additionalOverwrites,
     });
 
-    wrapper.vm.uploadForm = jest.fn(() => document)
+    wrapper.vm.uploadForm = jest.fn(() => document);
   };
 
   beforeEach(() => {
@@ -122,33 +120,33 @@ describe('CaseFileDocumentForm.vue', () => {
             documentCategories() {
               return [{
                 optionItemId: 'foo',
-                isOther: true
+                isOther: true,
               }, {
                 optionItemId: 'id-1',
-                isOther: false
-              }]
-            }
-          }
+                isOther: false,
+              }];
+            },
+          },
         });
-        expect(wrapper.vm.categoryIsOther('id-1')).toBeFalsy()
-      })
+        expect(wrapper.vm.categoryIsOther('id-1')).toBeFalsy();
+      });
       it('returns true if category with id in the argument is not other', async () => {
         await mountWrapper(true, false, 6, {
           computed: {
             documentCategories() {
               return [{
                 id: 'foo',
-                isOther: false
+                isOther: false,
               }, {
                 id: 'id-1',
-                isOther: true
-              }]
-            }
-          }
+                isOther: true,
+              }];
+            },
+          },
         });
-        expect(wrapper.vm.categoryIsOther('id-1')).toBeTruthy()
-      })
-    })
+        expect(wrapper.vm.categoryIsOther('id-1')).toBeTruthy();
+      });
+    });
   });
 
   describe('Watch', () => {
@@ -159,7 +157,7 @@ describe('CaseFileDocumentForm.vue', () => {
         expect(wrapper.emitted('update:document')).toBeUndefined();
 
         await wrapper.setData({
-          localDocument: { name: 'newName' }
+          localDocument: { name: 'newName' },
         });
         expect(wrapper.emitted('update:document')).not.toBeUndefined();
       });
@@ -170,25 +168,25 @@ describe('CaseFileDocumentForm.vue', () => {
             documentCategories() {
               return [{
                 optionItemId: 'foo',
-                isOther: false
+                isOther: false,
               }, {
                 optionItemId: 'id-1',
-                isOther: true
-              }]
-            }
-          }
+                isOther: true,
+              }];
+            },
+          },
         });
         await wrapper.setData({
           localDocument: {
             ...new CaseFileDocumentEntity(),
-            category: { optionItemId: 'foo', specifiedOther: 'bar' }
-          }
+            category: { optionItemId: 'foo', specifiedOther: 'bar' },
+          },
         });
         expect(wrapper.emitted('update:document')[0][0]).toEqual({
           ...new CaseFileDocumentEntity(),
-          category: { optionItemId: 'foo', specifiedOther: null }
+          category: { optionItemId: 'foo', specifiedOther: null },
         });
-      })
+      });
     });
     describe('update:file', () => {
       it('emits when file is changed', async () => {
@@ -197,7 +195,7 @@ describe('CaseFileDocumentForm.vue', () => {
         expect(wrapper.emitted('update:file')).toBeUndefined();
 
         await wrapper.setData({
-          file: { name: 'newName' }
+          file: { name: 'newName' },
         });
         expect(wrapper.emitted('update:file')).not.toBeUndefined();
       });
@@ -217,7 +215,6 @@ describe('CaseFileDocumentForm.vue', () => {
   });
 
   describe('Template', () => {
-
     describe('Upload dialog', () => {
       it('should be rendered', async () => {
         await (mountWrapper(false));
@@ -244,7 +241,8 @@ describe('CaseFileDocumentForm.vue', () => {
 
       it('should allow multiple extensions upload', async () => {
         await (mountWrapper(false, true));
-        expect(wrapper.findComponent(RcFileUpload).props('allowedExtensions')).toEqual(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'rtf', 'ppt', 'pptx', 'jpeg', 'jpg', 'png', 'bmp', 'tiff', 'msg']);
+        expect(wrapper.findComponent(RcFileUpload).props('allowedExtensions'))
+          .toEqual(['pdf', 'doc', 'docx', 'xls', 'xlsx', 'rtf', 'ppt', 'pptx', 'jpeg', 'jpg', 'png', 'bmp', 'tiff', 'msg']);
       });
     });
 

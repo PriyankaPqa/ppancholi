@@ -1,4 +1,3 @@
-/* eslint-disable */
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@/constants/validations';
@@ -7,13 +6,13 @@ import {
   EEventStatus,
 } from '@/entities/event';
 import routes from '@/constants/routes';
-import { mockAppUsers, mockUserStateLevel } from '@/test/helpers';
+import { mockAppUsers } from '@/test/helpers';
 import {
-  TeamType, mockTeamMembersData, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc, TeamEntity,
+  TeamType, mockTeamEvents, mockTeamEntity, mockTeamsDataAddHoc,
 } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
 
-import { mockCombinedUserAccount, mockCombinedUserAccounts } from '@/entities/user-account';
+import { mockCombinedUserAccount } from '@/entities/user-account';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();
@@ -30,9 +29,7 @@ describe('CreateEditTeam.vue', () => {
         teamType: 'standard',
       },
       mocks: {
-        $hasLevel: (lvl) => {
-          return lvl <= 'level' + level;
-        },
+        $hasLevel: (lvl) => lvl <= `level${level}`,
         $storage: storage,
       },
       ...additionalOverwrites,
@@ -259,7 +256,6 @@ describe('CreateEditTeam.vue', () => {
   });
 
   describe('Template continued... shallowMount', () => {
-
     describe('Action buttons', () => {
       describe('submit button', () => {
         let element;
@@ -269,7 +265,7 @@ describe('CreateEditTeam.vue', () => {
               submitLabel() {
                 return 'mockSubmitLabel';
               },
-            }
+            },
           });
           element = wrapper.findDataTest('createEditTeam__submit');
         });
@@ -293,9 +289,7 @@ describe('CreateEditTeam.vue', () => {
           beforeEach(async () => {
             await mountWrapper(false);
             mockFn = jest.spyOn(wrapper.vm, 'isSubmitDisabled');
-            mockFn.mockImplementation(() => {
-              return true;
-            });
+            mockFn.mockImplementation(() => true);
             // trigger a rebinding
             await wrapper.setData({ isLoading: true });
             await wrapper.setData({ isLoading: false });
@@ -361,82 +355,82 @@ describe('CreateEditTeam.vue', () => {
       });
     });
 
-  describe('Authorization', () => {
-    beforeEach(async () => {
-      await mountWrapper(true, 4, {
-        computed: {
-          isEditMode() {
-            return true;
+    describe('Authorization', () => {
+      beforeEach(async () => {
+        await mountWrapper(true, 4, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
           },
-        },
+        });
+      });
+
+      test('Status selection is disabled for L4 or less', async () => {
+        let element = wrapper.findDataTest('team-status');
+        expect(element.props('disabled')).toBeTruthy();
+
+        await mountWrapper(true, 5, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+        element = wrapper.findDataTest('team-status');
+        expect(element.props('disabled')).toBeFalsy();
+      });
+
+      test('Team name input is disabled for L4 or less', async () => {
+        let element = wrapper.findSelectWithValidation('team-name');
+        expect(element.props('disabled')).toBeTruthy();
+
+        await mountWrapper(true, 5, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+        element = wrapper.findSelectWithValidation('team-name');
+        expect(element.props('disabled')).toBeFalsy();
+      });
+
+      test('Primary contact input is disabled for L4 or less', async () => {
+        let element = wrapper.findSelectWithValidation('team-contact');
+        expect(element.props('disabled')).toBeTruthy();
+
+        await mountWrapper(true, 5, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+        element = wrapper.findSelectWithValidation('team-contact');
+        expect(element.props('disabled')).toBeFalsy();
+      });
+
+      test('Event selection is disabled for L4 or less', async () => {
+        let element = wrapper.findSelectWithValidation('events');
+        expect(element.props('disabled')).toBeTruthy();
+
+        await mountWrapper(true, 5, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
+          },
+        });
+        element = wrapper.findSelectWithValidation('events');
+        expect(element.props('disabled')).toBeFalsy();
+      });
+
+      test('Cancel button is disabled for L4 or less', () => {
+        const element = wrapper.findDataTest('createEditTeam__cancel');
+        expect(element.props('disabled')).toBeTruthy();
       });
     });
-
-    test('Status selection is disabled for L4 or less', async () => {
-      let element = wrapper.findDataTest('team-status');
-      expect(element.props('disabled')).toBeTruthy();
-
-      await mountWrapper(true, 5, {
-        computed: {
-          isEditMode() {
-            return true;
-          },
-        },
-      });
-      element = wrapper.findDataTest('team-status');
-      expect(element.props('disabled')).toBeFalsy();
-    });
-
-    test('Team name input is disabled for L4 or less', async () => {
-      let element = wrapper.findSelectWithValidation('team-name');
-      expect(element.props('disabled')).toBeTruthy();
-
-      await mountWrapper(true, 5, {
-        computed: {
-          isEditMode() {
-            return true;
-          },
-        },
-      });
-      element = wrapper.findSelectWithValidation('team-name');
-      expect(element.props('disabled')).toBeFalsy();
-    });
-
-    test('Primary contact input is disabled for L4 or less', async () => {
-      let element = wrapper.findSelectWithValidation('team-contact');
-      expect(element.props('disabled')).toBeTruthy();
-
-      await mountWrapper(true, 5, {
-        computed: {
-          isEditMode() {
-            return true;
-          },
-        },
-      });
-      element = wrapper.findSelectWithValidation('team-contact');
-      expect(element.props('disabled')).toBeFalsy();
-    });
-
-    test('Event selection is disabled for L4 or less', async () => {
-      let element = wrapper.findSelectWithValidation('events');
-      expect(element.props('disabled')).toBeTruthy();
-
-      await mountWrapper(true, 5, {
-        computed: {
-          isEditMode() {
-            return true;
-          },
-        },
-      });
-      element = wrapper.findSelectWithValidation('events');
-      expect(element.props('disabled')).toBeFalsy();
-    });
-
-    test('Cancel button is disabled for L4 or less', () => {
-      const element = wrapper.findDataTest('createEditTeam__cancel');
-      expect(element.props('disabled')).toBeTruthy();
-    });
-  });
   });
 
   describe('beforeRouteEnter', () => {
@@ -473,7 +467,7 @@ describe('CreateEditTeam.vue', () => {
 
     describe('deleteEventConfirmationMessage', () => {
       it('displays the correct message ', async () => {
-        await wrapper.setData({ eventsAfterRemoval: ['zzzz']});
+        await wrapper.setData({ eventsAfterRemoval: ['zzzz'] });
         expect(wrapper.vm.deleteEventConfirmationMessage).toEqual('team.event.confirmDeleteDialog.message');
       });
     });
@@ -662,12 +656,14 @@ describe('CreateEditTeam.vue', () => {
       it('adds into availableEvents the events that are existing in the team but are not currently active/on hold, only for edit mode', async () => {
         const myTeam = mockTeamEntity();
         myTeam.eventIds = [inactiveEvent.entity.id];
-        await mountWrapper(false, 5, {computed: {
-          isEditMode() {
-            return true;
+        await mountWrapper(false, 5, {
+          computed: {
+            isEditMode() {
+              return true;
+            },
           },
-        }});
-        await wrapper.setData({team: myTeam});
+        });
+        await wrapper.setData({ team: myTeam });
 
         wrapper.vm.getAvailableEvents();
 
@@ -679,7 +675,6 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('setOriginalData', () => {
-      let team;
       beforeEach(async () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -810,8 +805,6 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('loadTeam', (() => {
-
-
       it('calls the action getTeam', async () => {
         await wrapper.vm.loadTeam();
         expect(wrapper.vm.$storage.team.actions.fetch).toHaveBeenCalledWith('abc');
@@ -851,9 +844,9 @@ describe('CreateEditTeam.vue', () => {
       });
 
       it('should do nothing if it receives an error of existing name as argument ', async () => {
-        wrapper.setData({team: mockTeamEntity({id: "my-mock-id"})})
-        await wrapper.vm.loadTeamFromState([{code: 'errors.an-entity-with-this-name-already-exists'}]);
-        expect(wrapper.vm.team).toEqual(mockTeamEntity({id: "my-mock-id"}));
+        wrapper.setData({ team: mockTeamEntity({ id: 'my-mock-id' }) });
+        await wrapper.vm.loadTeamFromState([{ code: 'errors.an-entity-with-this-name-already-exists' }]);
+        expect(wrapper.vm.team).toEqual(mockTeamEntity({ id: 'my-mock-id' }));
       });
 
       it('should set the team with a cloneDeep of team from storage', async () => {
@@ -1311,7 +1304,6 @@ describe('CreateEditTeam.vue', () => {
     });
 
     describe('prepareCreateTeam', () => {
-
       it('sets the right team type for standard team type in create mode', async () => {
         wrapper = shallowMount(Component, {
           localVue,
@@ -1322,7 +1314,9 @@ describe('CreateEditTeam.vue', () => {
             $storage: storage,
           },
           computed: {
-            isEditMode() { return false; },
+            isEditMode() {
+              return false;
+            },
           },
         });
         await wrapper.vm.prepareCreateTeam();
@@ -1339,7 +1333,9 @@ describe('CreateEditTeam.vue', () => {
             $storage: storage,
           },
           computed: {
-            isEditMode() { return false; },
+            isEditMode() {
+              return false;
+            },
           },
         });
         await wrapper.vm.prepareCreateTeam();

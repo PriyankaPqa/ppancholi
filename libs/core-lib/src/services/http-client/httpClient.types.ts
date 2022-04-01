@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { AxiosRequestConfig } from 'axios';
-import { IMultilingual } from '../types';
-
+import { IMultilingual } from '@/types';
+/* eslint-disable */
 export interface IRestResponse<T> {
   headers?: any;
   success: boolean;
@@ -19,11 +18,18 @@ export interface RequestConfig extends AxiosRequestConfig {
 }
 
 export interface IError {
-  status: string;
-  code: string;
-  title: string;
-  detail: string;
-  meta: Record<string, string | IMultilingual>;
+  status: string,
+  code: string,
+  title: string,
+  detail: string,
+  meta: Record<string, string | IMultilingual>
+}
+
+export interface IHttpClientOptions {
+  authentication: boolean;
+  accessTokenKey: string;
+  redirect403Url: string;
+  timerBeforeRedirection: number;
 }
 
 export interface IHttpClient {
@@ -37,4 +43,14 @@ export interface IHttpClient {
   setHeadersLanguage(lang: string): void;
   setHeadersTenant(tenantId: string): void;
   getFormattedError(error: IError): string;
+}
+
+export interface IHttpMock {
+  getFullResponse: jest.Mock<Promise<any>>;
+  get: jest.Mock<Promise<any>>
+  post: jest.Mock<Promise<any>>
+  postFullResponse: jest.Mock<Promise<any>>;
+  patch: jest.Mock<Promise<any>>
+  put: jest.Mock<Promise<any>>
+  delete: jest.Mock<Promise<any>>
 }

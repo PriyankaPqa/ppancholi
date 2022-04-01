@@ -28,6 +28,9 @@
       "@libs/component-lib/*": [
         "../../libs/component-lib/src/*"
       ],
+      "@libs/core-lib/*": [
+        "../../libs/core-lib/src/*"
+      ],
       "@/*": [
         "src/*"
       ],
@@ -45,6 +48,6 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx",
-    "typings/**.ts"
+    "typings/**.ts",
   ]
 }

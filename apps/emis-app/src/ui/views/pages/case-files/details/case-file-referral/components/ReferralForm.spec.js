@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileReferralEntity, mockCombinedCaseFileReferral, ReferralMethod } from '@/entities/case-file-referral';
 import { MAX_LENGTH_MD } from '@/constants/validations';
@@ -12,7 +11,7 @@ describe('ReferralForm.vue', () => {
   let referral;
   let storage;
 
-  const doMount = function (isEditMode = true) {
+  const doMount = (isEditMode = true) => {
     storage = mockStorage();
     referral = referral || (isEditMode ? mockCombinedCaseFileReferral().entity : new CaseFileReferralEntity());
     wrapper = shallowMount(Component, {
@@ -66,11 +65,8 @@ describe('ReferralForm.vue', () => {
     describe('referralTypes', () => {
       it('calls storage and passes current value', async () => {
         doMount();
-        await wrapper.setData({ localReferral: { type: { optionItemId: 'abc' } } });
-        let opt = wrapper.vm.referralTypes;
-        expect(wrapper.vm.$storage.caseFileReferral.getters.types).toHaveBeenCalledWith(true, 'abc');
+        expect(wrapper.vm.$storage.caseFileReferral.getters.types).toHaveBeenCalledWith(true, '09bda590-ad8b-4f29-af4e-c63eedd337a0');
         await wrapper.setData({ localReferral: { type: { optionItemId: null } } });
-        opt = wrapper.vm.referralTypes;
         expect(wrapper.vm.$storage.caseFileReferral.getters.types).toHaveBeenCalledWith(true, null);
       });
     });
@@ -78,10 +74,8 @@ describe('ReferralForm.vue', () => {
       it('calls storage and passes current value', async () => {
         doMount();
         await wrapper.setData({ localReferral: { outcomeStatus: { optionItemId: 'abc' } } });
-        let opt = wrapper.vm.outcomeStatuses;
         expect(wrapper.vm.$storage.caseFileReferral.getters.outcomeStatuses).toHaveBeenCalledWith(true, 'abc');
         await wrapper.setData({ localReferral: { outcomeStatus: { optionItemId: null } } });
-        opt = wrapper.vm.outcomeStatuses;
         expect(wrapper.vm.$storage.caseFileReferral.getters.outcomeStatuses).toHaveBeenCalledWith(true, null);
       });
     });
@@ -118,7 +112,7 @@ describe('ReferralForm.vue', () => {
         await wrapper.setData({
           localReferral: {
             method: ReferralMethod.Warm,
-            referralConsentInformation: { dateTimeConsent: new Date()}
+            referralConsentInformation: { dateTimeConsent: new Date() },
           },
           consentChecked: true,
         });

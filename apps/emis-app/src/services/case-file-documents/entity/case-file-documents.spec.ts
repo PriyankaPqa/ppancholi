@@ -1,6 +1,5 @@
-/* eslint-disable */
 import { ICaseFileDocumentEntity, mockCaseFileDocumentEntity } from '@/entities/case-file-document';
-import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
+import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { CaseFileDocumentsService } from './case-file-documents';
 
 describe('>>> Case File Document Service', () => {
@@ -34,5 +33,4 @@ describe('>>> Case File Document Service', () => {
       expect(ret).toEqual('myUrl');
     });
   });
-
 });

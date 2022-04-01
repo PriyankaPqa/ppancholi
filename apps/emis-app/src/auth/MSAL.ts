@@ -1,6 +1,6 @@
 /* eslint-disable */
 import * as msal from '@azure/msal-browser';
-import applicationInsights from '../../../../libs/registration-lib/src/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import {
   AccountInfo,
   AuthenticationResult,
@@ -47,7 +47,7 @@ export interface IMSAL {
 
 
 
-export class MSAL implements IMSAL {
+export class MSAL {
   public msalLibrary: PublicClientApplication;
 
   public account: AccountInfo | null;

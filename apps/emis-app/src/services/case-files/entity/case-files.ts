@@ -5,7 +5,7 @@ import {
   ICaseFileDetailedCount,
 } from '@/entities/case-file';
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IListOption } from '@/types';
 import { ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
 

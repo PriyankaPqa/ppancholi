@@ -1,0 +1,19 @@
+{
+  "name": "@libs/core-lib",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "eslint . --fix --max-warnings=0"
+  },
+  "dependencies": {
+    "@microsoft/applicationinsights-web": "2.7.3",
+    "axios": "^0.24.0",
+    "js-convert-case": "^4.1.1",
+    "tslib": "^2.3.1",
+    "uuid": "^8.3.2",
+    "vue": "2.6.14",
+    "vue-i18n": "8.27.0",
+    "vue-router": "3.5.3",
+    "vue-toasted": "1.1.28"
+  }
+}

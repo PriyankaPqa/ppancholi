@@ -25,7 +25,7 @@
 import Vue from 'vue';
 import { TranslateResult } from 'vue-i18n';
 import { RcPageContent } from '@libs/component-lib/components';
-import { IError } from '@/services/httpClient';
+import { IError } from '@libs/core-lib/services/http-client';
 import { VForm } from '@/types';
 import { ProgramEntity } from '@/entities/program';
 import routes from '@/constants/routes';

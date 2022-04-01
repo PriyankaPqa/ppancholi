@@ -59,7 +59,7 @@
 <script lang="ts">
 import { TranslateResult } from 'vue-i18n';
 import Vue from 'vue';
-import { IError } from '../../services/httpClient';
+import { IError } from '@libs/core-lib/services/http-client';
 import { IRegistrationMenuItem } from '../../types';
 import { IHouseholdCreate, IHouseholdCreateData } from '../../entities/household-create';
 import { IEvent } from '../../entities/event';

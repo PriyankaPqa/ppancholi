@@ -1,5 +1,4 @@
-/* eslint-disable */
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockStorage } from '@/store/storage';
 import { mockTeamEvents } from '@/entities/team';
@@ -20,9 +19,7 @@ describe('TeamDetails.vue', () => {
         id: 'id',
       },
       mocks: {
-        $hasLevel: (lvl) => {
-          return lvl <= 'level' + level;
-        },
+        $hasLevel: (lvl) => lvl <= `level${level}`,
         $storage: storage,
       },
       ...additionalOverwrites,
@@ -33,14 +30,12 @@ describe('TeamDetails.vue', () => {
   describe('Template', () => {
     describe('Edit button', () => {
       it('should be enabled for L4+', async () => {
-
         await mountWrapper(false, 4);
 
         const props = wrapper.findComponent(RcPageContent).props('showEditButton');
         expect(props).toBeTruthy();
       });
       it('should be hidden for L3', async () => {
-
         await mountWrapper(false, 3);
         const props = wrapper.findComponent(RcPageContent).props('showEditButton');
         expect(props).toBeFalsy();
@@ -48,7 +43,6 @@ describe('TeamDetails.vue', () => {
     });
 
     describe('Elements', () => {
-
       beforeEach(async () => {
         await mountWrapper(false);
       });

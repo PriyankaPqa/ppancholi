@@ -1,11 +1,11 @@
 import { IStore, IState } from '@libs/registration-lib/store/store.types';
 import { TranslateResult } from 'vue-i18n';
+import { IError } from '@libs/core-lib/src/services/http-client';
 import { IIdentitySet } from '../../../entities/value-objects/identity-set/identitySet.types';
 import { IHouseholdEntity } from '../../../entities/household';
 import {
   ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
-import { IError } from '../../../services/httpClient';
 import {
   IIndigenousCommunityData, EIndigenousTypes, IContactInformation, IMember, IIdentitySetData, IAddress, ICurrentAddress, IHouseholdCreateData,
 } from '../../../entities/household-create';

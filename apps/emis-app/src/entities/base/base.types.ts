@@ -1,4 +1,4 @@
-import { IRestResponse } from '@/services/httpClient';
+import { IRestResponse } from '@libs/core-lib/services/http-client';
 
 export enum Status {
   Active = 1,

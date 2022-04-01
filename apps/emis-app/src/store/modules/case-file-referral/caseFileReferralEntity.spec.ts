@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 
@@ -7,10 +6,10 @@ import { CaseFileReferralsService } from '@/services/case-file-referrals/entity'
 import { OptionItemsService } from '@/services/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
-import { mockCaseFileReferralEntity, mockCaseFileReferralEntities, ICaseFileReferralEntity } from '@/entities/case-file-referral';
+import { mockCaseFileReferralEntity, ICaseFileReferralEntity } from '@/entities/case-file-referral';
+import { Status } from '@/entities/base';
 import { CaseFileReferralEntityModule } from './caseFileReferralEntity';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
-import { Status } from '@/entities/base';
 
 const service = new CaseFileReferralsService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
@@ -26,7 +25,6 @@ const actionContext = {
 } as ActionContext<ICaseFileReferralEntityState, ICaseFileReferralEntityState>;
 
 describe('Case file entity module', () => {
-
   beforeEach(() => {
     module = new CaseFileReferralEntityModule(service, optionItemService);
   });
@@ -60,15 +58,15 @@ describe('Case file entity module', () => {
 
     describe('getByCaseFile', () => {
       test('the getter returns the referrals that have the id passed in the argument', () => {
-        const referral1 = mockCaseFileReferralEntity({id: '1', caseFileId: 'case-file-1'});
-        const referral2 = mockCaseFileReferralEntity({id: '2', caseFileId: 'case-file-2'});
+        const referral1 = mockCaseFileReferralEntity({ id: '1', caseFileId: 'case-file-1' });
+        const referral2 = mockCaseFileReferralEntity({ id: '2', caseFileId: 'case-file-2' });
         module.mutations.setAll(module.state, [referral1, referral2]);
         const res = module.getters.getByCaseFile(module.state)('case-file-1');
         expect(res).toEqual([referral1]);
       });
       test('the getter ignores inactive items', () => {
-        const item1 = mockCaseFileReferralEntity({id: '1', caseFileId: 'case-file-1', status: Status.Inactive});
-        const item2 = mockCaseFileReferralEntity({id: '2', caseFileId: 'case-file-1', status: Status.Active});
+        const item1 = mockCaseFileReferralEntity({ id: '1', caseFileId: 'case-file-1', status: Status.Inactive });
+        const item2 = mockCaseFileReferralEntity({ id: '2', caseFileId: 'case-file-1', status: Status.Active });
         module.mutations.setAll(module.state, [item1, item2]);
         const res = module.getters.getByCaseFile(module.state)('case-file-1');
         expect(res).toEqual([item2]);
@@ -139,6 +137,5 @@ describe('Case file entity module', () => {
         expect(actionContext.commit).toBeCalledWith('set', res);
       });
     });
-
   });
 });

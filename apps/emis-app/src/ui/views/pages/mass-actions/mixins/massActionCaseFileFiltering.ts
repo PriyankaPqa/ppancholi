@@ -4,9 +4,9 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { ICaseFileCombined } from '@/entities/case-file';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 import { EEventStatus, IEventEntity, IEventMetadata } from '@/entities/event';
-import buildQuery from '@/services/odata-query';
 import { MassActionType } from '@/entities/mass-action';
 import helpers from '@/ui/helpers/helpers';
+import { buildQuery } from '@libs/core-lib/services/odata-query';
 
 export default mixins(TablePaginationSearchMixin).extend({
   props: {

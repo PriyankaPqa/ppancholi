@@ -8,7 +8,8 @@ import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
 import { Status } from '@libs/registration-lib/entities/base';
-import applicationInsights from '../../../plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
+import { IError } from '@libs/core-lib/services/http-client';
 import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
 import {
   isRegisteredValid,
@@ -21,7 +22,6 @@ import {
 
 import { IHouseholdEntity } from '../../../entities/household';
 import { ERegistrationMode } from '../../../types/enums/ERegistrationMode';
-import { IError } from '../../../services/httpClient';
 import {
   EOptionItemStatus, ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';

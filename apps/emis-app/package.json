@@ -19,9 +19,9 @@
   "dependencies": {
     "@azure/msal-browser": "2.22.0",
     "@libs/component-lib": "*",
+    "@libs/core-lib": "*",
     "@libs/registration-lib": "*",
     "@mdi/font": "6.5.95",
-    "@microsoft/applicationinsights-web": "2.7.3",
     "@microsoft/signalr": "^5.0.11",
     "@types/uuid": "8.3.4",
     "awesome-phonenumber": "2.68.0",
@@ -77,7 +77,6 @@
     "sinon": "^9.0.3",
     "testcafe": "^1.18.2",
     "testcafe-reporter-xunit": "^2.2.1",
-    "tslib": "^2.3.1",
     "vue-axe": "^2.4.3",
     "vue-cli-plugin-vuetify": "2.4.6",
     "vue-cli-plugin-webpack-bundle-analyzer": "^2.0.0",

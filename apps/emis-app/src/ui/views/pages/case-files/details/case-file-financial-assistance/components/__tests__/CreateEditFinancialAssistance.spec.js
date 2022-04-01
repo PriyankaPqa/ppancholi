@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import
@@ -22,10 +21,10 @@ import {
 } from '@/entities/case-file';
 import { mockProgramEntity, mockCombinedPrograms } from '@/entities/program';
 import { mockOptionItemData } from '@/entities/optionItem';
-import Component from '../CreateEditFinancialAssistance.vue';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
 import { Status } from '@/entities/base/index';
+import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -41,6 +40,7 @@ const caseFileFinancialAssistanceGroups = mockCaseFinancialAssistancePaymentGrou
 describe('CreateEditFinancialAssistance.vue', () => {
   let wrapper;
 
+  // eslint-disable-next-line no-unused-vars,max-params
   const mountWrapper = async (_fullMount = false, mode = 'edit', level = 6, hasRole = 'role', additionalOverwrites = {}) => {
     wrapper = (mount)(Component, {
       shallow: true,
@@ -109,29 +109,58 @@ describe('CreateEditFinancialAssistance.vue', () => {
       });
     });
 
-
     describe('paymentGroupList', () => {
       let element;
       it('renders when nbPaymentLines > 0', async () => {
-        await mountWrapper(false, 'edit', 6, null, { computed: { nbPaymentLines() { return 2; } } });
+        await mountWrapper(false, 'edit', 6, null, {
+          computed: {
+            nbPaymentLines() {
+              return 2;
+            },
+          },
+        });
         element = wrapper.find('[data-test="paymentGroupList"]');
         expect(element.exists()).toBeTruthy();
 
-        await mountWrapper(false, 'edit', 6, null, { computed: { nbPaymentLines() { return 1; } } });
+        await mountWrapper(false, 'edit', 6, null, {
+          computed: {
+            nbPaymentLines() {
+              return 1;
+            },
+          },
+        });
         element = wrapper.find('[data-test="paymentGroupList"]');
         expect(element.exists()).toBeTruthy();
 
-        await mountWrapper(false, 'edit', 6, null, { computed: { nbPaymentLines() { return 0; } } });
+        await mountWrapper(false, 'edit', 6, null, {
+          computed: {
+            nbPaymentLines() {
+              return 0;
+            },
+          },
+        });
         element = wrapper.find('[data-test="paymentGroupList"]');
         expect(element.exists()).toBeFalsy();
       });
 
       it('passes disabledDeleteButton when nbPaymentLines = 1', async () => {
-        await mountWrapper(false, 'edit', 6, null, { computed: { nbPaymentLines() { return 2; } } });
+        await mountWrapper(false, 'edit', 6, null, {
+          computed: {
+            nbPaymentLines() {
+              return 2;
+            },
+          },
+        });
         element = wrapper.find('[data-test="paymentGroupList"]');
         expect(element.props('disableDeleteButton')).toBeFalsy();
 
-        await mountWrapper(false, 'edit', 6, null, { computed: { nbPaymentLines() { return 1; } } });
+        await mountWrapper(false, 'edit', 6, null, {
+          computed: {
+            nbPaymentLines() {
+              return 1;
+            },
+          },
+        });
         element = wrapper.find('[data-test="paymentGroupList"]');
         expect(element.props('disableDeleteButton')).toBeTruthy();
       });
@@ -158,11 +187,23 @@ describe('CreateEditFinancialAssistance.vue', () => {
         element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
       });
       it('renders when canAddNewLines', async () => {
-        await mountWrapper(false, 'edit', 6, null, { computed: { canAddNewLines() { return true; } } });
+        await mountWrapper(false, 'edit', 6, null, {
+          computed: {
+            canAddNewLines() {
+              return true;
+            },
+          },
+        });
 
         element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
         expect(element.exists()).toBeTruthy();
-        await mountWrapper(false, 'edit', 6, null, { computed: { canAddNewLines() { return false; } } });
+        await mountWrapper(false, 'edit', 6, null, {
+          computed: {
+            canAddNewLines() {
+              return false;
+            },
+          },
+        });
         element = wrapper.find('[data-test="financial-addPaymentLineBtn"]');
         expect(element.exists()).toBeFalsy();
       });
@@ -379,11 +420,15 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('filters the active groups', async () => {
         wrapper.vm.selectedProgram = null;
         expect(wrapper.vm.activePaymentGroups.length).toBe(1);
-        await wrapper.setData({financialAssistance: { groups: [
-          {status: Status.Active, lines: [{status: Status.Active}, {status: Status.Active}]},
-          {status: Status.Inactive, lines: [{status: Status.Active}, {status: Status.Active}]},
-          {status: Status.Active, lines: [{status: Status.Inactive}, {status: Status.Active}]},
-        ] }});
+        await wrapper.setData({
+          financialAssistance: {
+            groups: [
+              { status: Status.Active, lines: [{ status: Status.Active }, { status: Status.Active }] },
+              { status: Status.Inactive, lines: [{ status: Status.Active }, { status: Status.Active }] },
+              { status: Status.Active, lines: [{ status: Status.Inactive }, { status: Status.Active }] },
+            ],
+          },
+        });
         expect(wrapper.vm.activePaymentGroups.length).toBe(2);
       });
     });
@@ -392,11 +437,15 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('counts the number of active lines in active groups', async () => {
         wrapper.vm.selectedProgram = null;
         expect(wrapper.vm.nbPaymentLines).toBe(1);
-        await wrapper.setData({financialAssistance: { groups: [
-          {status: Status.Active, lines: [{status: Status.Active}, {status: Status.Active}]},
-          {status: Status.Inactive, lines: [{status: Status.Active}, {status: Status.Active}]},
-          {status: Status.Active, lines: [{status: Status.Inactive}, {status: Status.Active}]},
-        ] }});
+        await wrapper.setData({
+          financialAssistance: {
+            groups: [
+              { status: Status.Active, lines: [{ status: Status.Active }, { status: Status.Active }] },
+              { status: Status.Inactive, lines: [{ status: Status.Active }, { status: Status.Active }] },
+              { status: Status.Active, lines: [{ status: Status.Inactive }, { status: Status.Active }] },
+            ],
+          },
+        });
         expect(wrapper.vm.nbPaymentLines).toBe(3);
       });
     });
@@ -648,7 +697,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
         wrapper.vm.financialAssistance = financialAssistance;
         wrapper.vm.financialAssistance.groups = [];
         // mock data already has id - here we are creating
-        caseFileFinancialAssistanceGroups[0].lines.forEach((l) => { l.id = null; });
+        caseFileFinancialAssistanceGroups[0].lines.forEach((l) => {
+          l.id = null;
+        });
 
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
         expect(wrapper.vm.financialAssistance.groups[0].groupingInformation).toEqual(caseFileFinancialAssistanceGroups[0].groupingInformation);
@@ -662,7 +713,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
         wrapper.vm.financialAssistance.groups = [];
         wrapper.vm.savePaymentLine = jest.fn();
         // mock data already has id - here we are creating
-        caseFileFinancialAssistanceGroups[0].lines.forEach((l) => { l.id = null; });
+        caseFileFinancialAssistanceGroups[0].lines.forEach((l) => {
+          l.id = null;
+        });
 
         await wrapper.vm.onSubmitPaymentLine(caseFileFinancialAssistanceGroups[0]);
         expect(wrapper.vm.savePaymentLine).not.toHaveBeenCalled();
@@ -704,7 +757,9 @@ describe('CreateEditFinancialAssistance.vue', () => {
         wrapper.vm.financialAssistance.groups = [];
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
         // mock data already has id - here we are creating
-        newGroup[0].lines.forEach((l) => { l.id = null; });
+        newGroup[0].lines.forEach((l) => {
+          l.id = null;
+        });
 
         await wrapper.vm.savePaymentLine(newGroup[0]);
         expect(storage.financialAssistancePayment.actions.addFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0]);
@@ -727,13 +782,13 @@ describe('CreateEditFinancialAssistance.vue', () => {
         wrapper.vm.financialAssistance = financialAssistance;
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
         // mock data already has id - here we want to remove unsaved
-        const lineKept = {...newGroup[0].lines[0]};
+        const lineKept = { ...newGroup[0].lines[0] };
         newGroup[0].lines[0].id = null;
         newGroup[0].lines[1] = lineKept;
         lineKept.id = 'abc';
         wrapper.vm.financialAssistance.groups = [newGroup[0]];
 
-        await wrapper.vm.deletePaymentLine({line: newGroup[0].lines[0], group: newGroup[0]});
+        await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
         expect(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine).not.toHaveBeenCalled();
         expect(wrapper.vm.financialAssistance.groups[0].lines).toEqual([lineKept]);
       });
@@ -745,7 +800,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         newGroup[0].lines[0].id = null;
         wrapper.vm.financialAssistance.groups = [newGroup[0]];
 
-        await wrapper.vm.deletePaymentLine({line: newGroup[0].lines[0], group: newGroup[0]});
+        await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
         expect(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine).not.toHaveBeenCalled();
         expect(wrapper.vm.financialAssistance.groups).toEqual([]);
       });
@@ -755,7 +810,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups();
         wrapper.vm.financialAssistance.groups = [newGroup[0]];
 
-        await wrapper.vm.deletePaymentLine({line: newGroup[0].lines[0], group: newGroup[0]});
+        await wrapper.vm.deletePaymentLine({ line: newGroup[0].lines[0], group: newGroup[0] });
         expect(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine).toHaveBeenCalledWith(financialAssistance.id, newGroup[0].lines[0].id);
         expect(wrapper.vm.financialAssistance.groups).toEqual(storage.financialAssistancePayment.actions.deleteFinancialAssistancePaymentLine().groups);
       });
@@ -768,7 +823,8 @@ describe('CreateEditFinancialAssistance.vue', () => {
 
         await wrapper.vm.onSubmitPayment();
         expect(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment).toHaveBeenCalledWith(financialAssistance.id);
-        expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment()));
+        expect(wrapper.vm.financialAssistance)
+          .toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.submitFinancialAssistancePayment()));
       });
 
       it('does not call service if form is not valid', async () => {
@@ -784,7 +840,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
         const newGroup = mockCaseFinancialAssistancePaymentGroups()[0];
         newGroup.id = 'abc-id';
         wrapper.vm.$refs.form.reset = jest.fn();
-        await wrapper.vm.updatePaymentStatus({ status: 3, group: newGroup, cancellationReason: 5});
+        await wrapper.vm.updatePaymentStatus({ status: 3, group: newGroup, cancellationReason: 5 });
         expect(storage.financialAssistancePayment.actions.updatePaymentStatus).toHaveBeenCalledWith(financialAssistance.id, newGroup.id, 3, 5);
         expect(wrapper.vm.financialAssistance).toEqual(new FinancialAssistancePaymentEntity(storage.financialAssistancePayment.actions.updatePaymentStatus()));
       });
@@ -794,7 +850,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('sets totalAmountToSubmit', async () => {
         const total = '$10.00';
 
-        wrapper.vm.onClickSubmitPayment( { total });
+        wrapper.vm.onClickSubmitPayment({ total });
 
         expect(wrapper.vm.totalAmountToSubmit).toBe(total);
       });
@@ -802,7 +858,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
       it('sets showSubmitPaymentDialog', async () => {
         expect(wrapper.vm.showSubmitPaymentDialog).toBe(false);
 
-        wrapper.vm.onClickSubmitPayment( { total: '$10.00' });
+        wrapper.vm.onClickSubmitPayment({ total: '$10.00' });
 
         expect(wrapper.vm.showSubmitPaymentDialog).toBe(true);
       });

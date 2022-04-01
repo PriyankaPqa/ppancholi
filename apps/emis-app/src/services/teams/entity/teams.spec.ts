@@ -1,7 +1,7 @@
 import {
   TeamEntity, mockTeamMembersData, mockTeamEntity,
 } from '@/entities/team';
-import { mockHttp } from '@/services/httpClient.mock';
+import { mockHttp } from '@libs/core-lib/services/http-client';
 import { TeamsService } from './teams';
 
 const http = mockHttp();

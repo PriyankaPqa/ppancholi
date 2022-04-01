@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 
 import { DomainBaseService } from '@/services/base';
 import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistance';

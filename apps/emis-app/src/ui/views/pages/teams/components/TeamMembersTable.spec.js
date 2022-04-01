@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import {
   mockCombinedTeams,
@@ -6,8 +5,8 @@ import {
 import AddTeamMembers from '@/ui/views/pages/teams/add-team-members/AddTeamMembers.vue';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedUserAccount } from '@/entities/user-account';
-import Component from './TeamMembersTable.vue';
 import _orderBy from 'lodash/orderBy';
+import Component from './TeamMembersTable.vue';
 
 const localVue = createLocalVue();
 
@@ -23,10 +22,13 @@ userAccounts[0].metadata.caseFilesCount = 0;
 userAccounts[1].metadata.caseFilesCount = 0;
 userAccounts[2].metadata.caseFilesCount = 10;
 
-const mockTeamMembers = [{...userAccounts[0], isPrimaryContact: true}, {...userAccounts[1], isPrimaryContact: false}, {...userAccounts[2], isPrimaryContact: false}];
+const mockTeamMembers = [
+  { ...userAccounts[0], isPrimaryContact: true },
+  { ...userAccounts[1], isPrimaryContact: false },
+  { ...userAccounts[2], isPrimaryContact: false },
+];
 
 describe('TeamMembersTable.vue', () => {
-
   let wrapper;
 
   const mountWrapper = async (fullMount = true, level = 5, additionalOverwrites = {}) => {
@@ -36,9 +38,7 @@ describe('TeamMembersTable.vue', () => {
         teamId: 'abc',
       },
       mocks: {
-        $hasLevel: (lvl) => {
-          return lvl <= 'level' + level;
-        },
+        $hasLevel: (lvl) => lvl <= `level${level}`,
         $storage: storage,
       },
       ...additionalOverwrites,
@@ -228,14 +228,12 @@ describe('TeamMembersTable.vue', () => {
         });
         expect(wrapper.vm.computedTeamMembers.map((x) => x.entity.id)).toEqual(_orderBy(storage.userAccount.getters.getByIds().map((x) => x.entity.id), 'id', 'desc'));
 
-
         await wrapper.setData({
           search: '[nope]',
           sortBy: 'displayName',
         });
 
         expect(wrapper.vm.computedTeamMembers.map((x) => x.entity.id)).toEqual([]);
-
       });
     });
   });
@@ -344,7 +342,6 @@ describe('TeamMembersTable.vue', () => {
       });
 
       test('only l4+ can see the delete icon for other members', async () => {
-
         await mountWrapper(false, 3);
         expect(wrapper.vm.showDeleteIcon({ isPrimaryContact: false })).toBeFalsy();
 

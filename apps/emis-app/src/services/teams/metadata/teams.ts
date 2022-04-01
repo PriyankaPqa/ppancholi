@@ -1,6 +1,6 @@
 import { ITeamMetadata } from '@/entities/team';
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ITeamsMetadataService } from './teams.types';
 
 const apiUrlSuffix = 'team';

@@ -1,6 +1,6 @@
+import { IError } from '@libs/core-lib/services/http-client';
 import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';
 import { IOptionItemData } from '../../../types';
-import { IError } from '../../../services/httpClient';
 import { IRegistrationMenuItem } from '../../../types/interfaces/IRegistrationMenuItem';
 import {
   HouseholdCreate,

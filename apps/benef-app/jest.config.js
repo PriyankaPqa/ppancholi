@@ -11,6 +11,7 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@libs/registration-lib/(.*)$': '<rootDir>/../../libs/registration-lib/src/$1',
     '^@libs/component-lib/(.*)$': '<rootDir>/../../libs/component-lib/src/$1',
+    '^@libs/core-lib/(.*)$': '<rootDir>/../../libs/core-lib/src/$1',
   },
   name: packageJson.name,
   displayName: packageJson.name,

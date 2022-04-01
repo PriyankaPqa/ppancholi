@@ -1,12 +1,11 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockStorage } from '@/store/storage';
-import Component from '../PaymentLineItem.vue';
 import { EPaymentModalities } from '@/entities/program/program.types';
 import { ApprovalStatus, mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
 import routes from '@/constants/routes';
 import { Status } from '@/entities/base';
+import Component from '../PaymentLineItem.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -61,7 +60,9 @@ describe('CaseFilePaymentLineItem.vue', () => {
       it('shows a message if the data is inactive', async () => {
         await mountWrapper(false, 6, null, {
           computed: {
-            isInactive() { return true; },
+            isInactive() {
+              return true;
+            },
           },
         });
 
@@ -72,7 +73,9 @@ describe('CaseFilePaymentLineItem.vue', () => {
 
         await mountWrapper(false, 6, null, {
           computed: {
-            isInactive() { return false; },
+            isInactive() {
+              return false;
+            },
           },
         });
 
@@ -80,19 +83,21 @@ describe('CaseFilePaymentLineItem.vue', () => {
         jest.clearAllMocks();
         await hook.call(wrapper.vm);
         expect(wrapper.vm.$message).not.toHaveBeenCalled();
-
       });
     });
   });
 
   describe('Computed', () => {
-
     describe('isInactive', () => {
       it('returns whether the current item/subitem is not available when the payment is still new', async () => {
         await mountWrapper(false, 6, null, {
           computed: {
-            mainItem() { return { ...items[0], status : Status.Active}; },
-            subItem() { return { ...items[0].subItems[0], status : Status.Active}; },
+            mainItem() {
+              return { ...items[0], status: Status.Active };
+            },
+            subItem() {
+              return { ...items[0].subItems[0], status: Status.Active };
+            },
           },
         });
         await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
@@ -100,8 +105,12 @@ describe('CaseFilePaymentLineItem.vue', () => {
 
         await mountWrapper(false, 6, null, {
           computed: {
-            mainItem() { return { ...items[0], status : Status.Inactive}; },
-            subItem() { return { ...items[0].subItems[0], status : Status.Active}; },
+            mainItem() {
+              return { ...items[0], status: Status.Inactive };
+            },
+            subItem() {
+              return { ...items[0].subItems[0], status: Status.Active };
+            },
           },
         });
         await wrapper.setProps({ transactionApprovalStatus: 1 }); // new
@@ -109,8 +118,12 @@ describe('CaseFilePaymentLineItem.vue', () => {
 
         await mountWrapper(false, 6, null, {
           computed: {
-            mainItem() { return { ...items[0], status : Status.Active}; },
-            subItem() { return { ...items[0].subItems[0], status : Status.Inactive}; },
+            mainItem() {
+              return { ...items[0], status: Status.Active };
+            },
+            subItem() {
+              return { ...items[0].subItems[0], status: Status.Inactive };
+            },
           },
         });
         await wrapper.setProps({ transactionApprovalStatus: 1 }); // new

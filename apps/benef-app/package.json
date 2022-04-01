@@ -18,6 +18,7 @@
   "dependencies": {
     "@libs/registration-lib": "*",
     "@libs/component-lib": "*",
+    "@libs/core-lib": "*",
     "@mdi/font": "6.5.95",
     "@types/uuid": "8.3.4",
     "awesome-phonenumber": "2.68.0",

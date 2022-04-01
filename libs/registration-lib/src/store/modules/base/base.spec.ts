@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext } from 'vuex';
+import { mockHttp } from '@libs/core-lib/src/services/http-client';
 import { DomainBaseService } from '../../../services/base';
-import { mockHttp } from '../../../services/httpClient.mock';
 import { mockBaseEntities, mockBaseEntity } from '../../../entities/base';
 import helpers from '../../../ui/helpers/index';
 import { BaseModule } from './index';

@@ -72,8 +72,10 @@
     "registration-lib:coverage": "yarn registration-lib:test --coverage",
     "registration-lib:i18n-report": "node tools/scripts/i18n-report.js 'libs/registration-lib/src/ui/lang/en.json' 'libs/registration-lib/src'",
     "component-lib:lint": "yarn --cwd libs/component-lib lint",
-    "component-lib:test": "yarn jest --projects libs/component-lib --runInBand",
+    "component-lib:test": "yarn jest --projects libs/component-lib --maxWorkers=3",
     "component-lib:coverage": "yarn component-lib:test --coverage",
+    "core-lib:lint": "yarn --cwd libs/core-lib lint",
+    "core-lib:test": "yarn jest --projects libs/core-lib --maxWorkers=3",
     "prepare": "husky install"
   },
   "workspaces": {

@@ -6,7 +6,7 @@ import {
   IFinancialAssistanceTableSubItemData,
 } from '@/entities/financial-assistance';
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IFinancialAssistanceTablesService } from './financialAssistanceTables.types';
 
 const API_URL_SUFFIX = 'finance';

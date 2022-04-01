@@ -2,7 +2,7 @@ import VueRouter, { Route } from 'vue-router';
 import { Store } from 'vuex';
 import { Toasted } from 'vue-toasted';
 import { TranslateResult } from 'vue-i18n';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { IMultilingual } from '@/types';
 import { SignalR } from '@/ui/plugins/signalR';
 import { FeatureKeys } from '@/entities/tenantSettings';

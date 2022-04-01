@@ -1,21 +1,17 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import { mockSubItemData, mockCombinedFinancialAssistance } from '@/entities/financial-assistance';
+import { mockSubItemData } from '@/entities/financial-assistance';
 import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
-import { mockProgramEntity } from '@/entities/program';
 import { mockStorage } from '@/store/storage';
-import Component from '../ViewPaymentLineDetails.vue';
 import flushPromises from 'flush-promises';
 import { EPaymentModalities } from '@/entities/program/program.types';
-import householdHelpers from '@/ui/helpers/household'
+import householdHelpers from '@/ui/helpers/household';
+import Component from '../ViewPaymentLineDetails.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
 let financialAssistance = mockCaseFinancialAssistanceEntity();
 let paymentGroup = financialAssistance.groups[0];
 let line = paymentGroup.lines[0];
-const financialAssistanceTable = mockCombinedFinancialAssistance().entity;
-const program = mockProgramEntity();
 
 describe('ViewPaymentLineDetails.vue', () => {
   let wrapper;
@@ -57,19 +53,19 @@ describe('ViewPaymentLineDetails.vue', () => {
 
     describe('detail_title', () => {
       it('shows the correct data', () => {
-        expect(wrapper.findDataTest('detail_title').text()).toEqual(`Children's Needs > Children's Supplies`);
+        expect(wrapper.findDataTest('detail_title').text()).toEqual('Children\'s Needs > Children\'s Supplies');
       });
     });
 
     describe('detail_item', () => {
       it('shows the correct data', () => {
-        expect(wrapper.findDataTest('detail_item').text()).toEqual(`Children's Needs`);
+        expect(wrapper.findDataTest('detail_item').text()).toEqual('Children\'s Needs');
       });
     });
 
     describe('detail_subitem', () => {
       it('shows the correct data', () => {
-        expect(wrapper.findDataTest('detail_subitem').text()).toEqual(`Children's Supplies`);
+        expect(wrapper.findDataTest('detail_subitem').text()).toEqual('Children\'s Supplies');
       });
     });
 
@@ -79,7 +75,9 @@ describe('ViewPaymentLineDetails.vue', () => {
         subItem.documentationRequired = true;
         await mountWrapper(false, 6, null, {
           computed: {
-            subItem() { return subItem; },
+            subItem() {
+              return subItem;
+            },
           },
         });
         expect(wrapper.findDataTest('doc_required').exists()).toBeTruthy();
@@ -87,7 +85,9 @@ describe('ViewPaymentLineDetails.vue', () => {
         subItem.documentationRequired = false;
         await mountWrapper(false, 6, null, {
           computed: {
-            subItem() { return subItem; },
+            subItem() {
+              return subItem;
+            },
           },
         });
         expect(wrapper.findDataTest('doc_required').exists()).toBeFalsy();
@@ -101,7 +101,9 @@ describe('ViewPaymentLineDetails.vue', () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
         await mountWrapper(false, 6, null, {
           computed: {
-            paymentGroup() { return paymentGroup; },
+            paymentGroup() {
+              return paymentGroup;
+            },
           },
         });
         expect(wrapper.findDataTest('related_number').exists()).toBeTruthy();
@@ -115,7 +117,9 @@ describe('ViewPaymentLineDetails.vue', () => {
         paymentGroup.groupingInformation.modality = EPaymentModalities.Invoice;
         await mountWrapper(false, 6, null, {
           computed: {
-            paymentGroup() { return paymentGroup; },
+            paymentGroup() {
+              return paymentGroup;
+            },
           },
         });
         expect(wrapper.findDataTest('payeeSection').exists()).toBeFalsy();
@@ -136,17 +140,19 @@ describe('ViewPaymentLineDetails.vue', () => {
       it('filters by id within financialassistance', async () => {
         const financialAssistance = mockCaseFinancialAssistanceEntity();
         const newGroup = mockCaseFinancialAssistancePaymentGroups()[0];
-        newGroup.lines = [{id: 'filter'}];
+        newGroup.lines = [{ id: 'filter' }];
         financialAssistance.groups.push(newGroup);
 
         await mountWrapper(false, 6, null, {
           computed: {
-            financialAssistance() { return financialAssistance; },
+            financialAssistance() {
+              return financialAssistance;
+            },
           },
         });
         expect(wrapper.vm.paymentGroup).toEqual(paymentGroup);
 
-        await wrapper.setProps({financialAssistancePaymentLineId: 'filter'});
+        await wrapper.setProps({ financialAssistancePaymentLineId: 'filter' });
         expect(wrapper.vm.paymentGroup).toEqual(newGroup);
       });
     });
@@ -155,17 +161,19 @@ describe('ViewPaymentLineDetails.vue', () => {
       it('filters by id within financialassistance', async () => {
         const financialAssistance = mockCaseFinancialAssistanceEntity();
         const newGroup = mockCaseFinancialAssistancePaymentGroups()[0];
-        newGroup.lines = [{id: 'filter'}];
+        newGroup.lines = [{ id: 'filter' }];
         financialAssistance.groups.push(newGroup);
 
         await mountWrapper(false, 6, null, {
           computed: {
-            financialAssistance() { return financialAssistance; },
+            financialAssistance() {
+              return financialAssistance;
+            },
           },
         });
         expect(wrapper.vm.paymentLine).toEqual(line);
 
-        await wrapper.setProps({financialAssistancePaymentLineId: 'filter'});
+        await wrapper.setProps({ financialAssistancePaymentLineId: 'filter' });
         expect(wrapper.vm.paymentLine).toEqual(newGroup.lines[0]);
       });
     });
@@ -173,7 +181,7 @@ describe('ViewPaymentLineDetails.vue', () => {
     describe('title', () => {
       it('returns item and subitem data', async () => {
         await mountWrapper();
-        expect(wrapper.vm.title).toEqual(`Children's Needs > Children's Supplies`);
+        expect(wrapper.vm.title).toEqual('Children\'s Needs > Children\'s Supplies');
       });
     });
 
@@ -191,7 +199,9 @@ describe('ViewPaymentLineDetails.vue', () => {
         subItem.maximumAmount = line.amount - 1;
         await mountWrapper(false, 6, null, {
           computed: {
-            subItem() { return subItem; },
+            subItem() {
+              return subItem;
+            },
           },
         });
         expect(wrapper.vm.showTooltip).toBeTruthy();
@@ -199,7 +209,9 @@ describe('ViewPaymentLineDetails.vue', () => {
         subItem.maximumAmount = line.amount + 1;
         await mountWrapper(false, 6, null, {
           computed: {
-            subItem() { return subItem; },
+            subItem() {
+              return subItem;
+            },
           },
         });
         expect(wrapper.vm.showTooltip).toBeFalsy();
@@ -215,9 +227,12 @@ describe('ViewPaymentLineDetails.vue', () => {
         expect(storage.financialAssistanceCategory.actions.fetchAll).toHaveBeenCalled();
         expect(storage.financialAssistancePayment.actions.fetch).toHaveBeenCalledWith(financialAssistance.id);
         expect(storage.financialAssistance.actions.fetch).toHaveBeenCalledWith(financialAssistance.financialAssistanceTableId);
-        expect(storage.program.actions.fetch).toHaveBeenCalledWith({id: storage.financialAssistance.getters.get().entity.programId, eventId: storage.caseFile.getters.get().entity.eventId});
+        expect(storage.program.actions.fetch).toHaveBeenCalledWith({
+          id: storage.financialAssistance.getters.get().entity.programId,
+          eventId: storage.caseFile.getters.get().entity.eventId,
+        });
         expect(storage.financialAssistance.mutations.setFinancialAssistance).toHaveBeenLastCalledWith(storage.financialAssistance.getters.get(),
-            storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity), storage.program.actions.fetch().entity, false)
+          storage.financialAssistanceCategory.getters.getAll().map((c) => c.entity), storage.program.actions.fetch().entity, false);
       });
     });
   });

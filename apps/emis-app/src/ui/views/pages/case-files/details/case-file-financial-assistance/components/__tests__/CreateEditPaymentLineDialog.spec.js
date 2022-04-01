@@ -1,15 +1,13 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
 import { mockItemsWithBasicData } from '@/entities/financial-assistance';
-import {
-  mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
-import Component from '../CreateEditPaymentLineDialog.vue';
+import { mockCaseFinancialAssistanceEntity, mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
 import libHelpers from '@libs/registration-lib/ui/helpers';
 import AddressForm from '@libs/registration-lib/src/components/forms/AddressForm.vue';
 import { Status } from '@/entities/base';
 import { mockAddressData, Address } from '@libs/registration-lib/entities/value-objects/address';
+import Component from '../CreateEditPaymentLineDialog.vue';
 
 const localVue = createLocalVue();
 const program = mockProgramEntity();
@@ -33,7 +31,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         program,
         items,
         financialAssistance,
-        id: 'cfid'
+        id: 'cfid',
       },
       mocks: {
         $hasLevel: (lvl) => lvl <= `level${level}` && level,
@@ -96,10 +94,10 @@ describe('CreateEditPaymentLineDialog.vue', () => {
     describe('checkbox_documentReceived', () => {
       it('is rendered depending on documentationRequired', async () => {
         expect(wrapper.findDataTest('checkbox_documentReceived').exists()).toBeFalsy();
-        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
+        await wrapper.setData({ currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' } });
         expect(wrapper.findDataTest('checkbox_documentReceived').exists()).toBeFalsy();
         // s-0-1 has documentationRequired= 1
-        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
+        await wrapper.setData({ currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' } });
         expect(wrapper.findDataTest('checkbox_documentReceived').exists()).toBeTruthy();
         expect(wrapper.findDataTest('checkbox_documentReceived').props('rules')).toEqual(wrapper.vm.rules.documentReceived);
       });
@@ -279,14 +277,14 @@ describe('CreateEditPaymentLineDialog.vue', () => {
     describe('activeItems', () => {
       it('filters items either active or currently selected', async () => {
         let items = mockItemsWithBasicData();
-        await wrapper.setProps({items: items});
+        await wrapper.setProps({ items });
         expect(wrapper.vm.activeItems).toEqual(items);
 
         items = mockItemsWithBasicData();
         items[0].status = Status.Inactive;
-        await wrapper.setProps({items: items});
+        await wrapper.setProps({ items });
 
-        expect(wrapper.vm.activeItems).toEqual(items.filter((i,index) => index > 0));
+        expect(wrapper.vm.activeItems).toEqual(items.filter((i, index) => index > 0));
         wrapper.vm.currentPaymentLine.mainCategoryId = items[0].mainCategory.id;
         expect(wrapper.vm.activeItems).toEqual(items);
       });
@@ -301,14 +299,14 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       it('filters items either active or currently selected', async () => {
         let items = mockItemsWithBasicData();
         wrapper.vm.currentPaymentLine.mainCategoryId = items[0].mainCategory.id;
-        await wrapper.setProps({items: items});
+        await wrapper.setProps({ items });
         expect(wrapper.vm.subItems).toEqual(items[0].subItems);
 
         items = mockItemsWithBasicData();
         items[0].subItems[0].status = Status.Inactive;
-        await wrapper.setProps({items: items});
+        await wrapper.setProps({ items });
 
-        expect(wrapper.vm.subItems).toEqual(items[0].subItems.filter((i,index) => index > 0));
+        expect(wrapper.vm.subItems).toEqual(items[0].subItems.filter((i, index) => index > 0));
         wrapper.vm.currentPaymentLine.subCategoryId = items[0].subItems[0].subCategory.id;
         expect(wrapper.vm.subItems).toEqual(items[0].subItems);
       });
@@ -331,20 +329,20 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         const financialAssistance = mockCaseFinancialAssistanceEntity();
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.ETransfer } } });
         wrapper.vm.currentPaymentLine.amount = 9999;
-        await wrapper.setProps({ financialAssistance: {...financialAssistance} });
+        await wrapper.setProps({ financialAssistance: { ...financialAssistance } });
         expect(wrapper.vm.amountError).toBeNull();
 
         financialAssistance.groups[0].groupingInformation.modality = EPaymentModalities.ETransfer;
         financialAssistance.groups[0].lines[0].amount = 1;
-        await wrapper.setProps({ financialAssistance: {...financialAssistance} });
+        await wrapper.setProps({ financialAssistance: { ...financialAssistance } });
         expect(wrapper.vm.amountError).toBeNull();
 
         financialAssistance.groups[0].lines[0].amount = 2;
-        await wrapper.setProps({ financialAssistance: {...financialAssistance} });
+        await wrapper.setProps({ financialAssistance: { ...financialAssistance } });
         expect(wrapper.vm.amountError).toBe('caseFile.financialAssistance.ETransfer.moreThanX');
 
         financialAssistance.groups[0].groupingInformation.modality = EPaymentModalities.Cheque;
-        await wrapper.setProps({ financialAssistance: {...financialAssistance} });
+        await wrapper.setProps({ financialAssistance: { ...financialAssistance } });
         expect(wrapper.vm.amountError).toBeNull();
       });
     });
@@ -359,7 +357,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
             program,
             items,
             financialAssistance,
-            id: 'cfid'
+            id: 'cfid',
           },
           mocks: {
             $storage: storage,
@@ -375,7 +373,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
             program,
             items,
             financialAssistance,
-            id: 'cfid'
+            id: 'cfid',
           },
           mocks: {
             $storage: storage,
@@ -402,8 +400,8 @@ describe('CreateEditPaymentLineDialog.vue', () => {
             payeeType: 1,
           },
           id: '',
-          lastAction: "",
-          lastActionCorrelationId: "",
+          lastAction: '',
+          lastActionCorrelationId: '',
           lastUpdatedBy: '',
           lines: [
             {
@@ -423,8 +421,8 @@ describe('CreateEditPaymentLineDialog.vue', () => {
               createdBy: '',
               eTag: '',
               lastUpdatedBy: '',
-              lastAction: "",
-              lastActionCorrelationId: "",
+              lastAction: '',
+              lastActionCorrelationId: '',
             },
           ],
           paymentStatus: 1,
@@ -435,7 +433,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       });
 
       it('sets the right initial data when updating', async () => {
-        await wrapper.setProps({currentLine: caseFileFinancialAssistanceGroup.lines[0], currentGroup: caseFileFinancialAssistanceGroup});
+        await wrapper.setProps({ currentLine: caseFileFinancialAssistanceGroup.lines[0], currentGroup: caseFileFinancialAssistanceGroup });
         jest.clearAllMocks();
         await wrapper.vm.initCreateMode();
         expect(wrapper.vm.paymentGroup).toEqual({
@@ -450,11 +448,11 @@ describe('CreateEditPaymentLineDialog.vue', () => {
           },
           id: '',
           lastUpdatedBy: '',
-          lastAction: "",
-          lastActionCorrelationId: "",
+          lastAction: '',
+          lastActionCorrelationId: '',
           lines: [
             {
-              ...caseFileFinancialAssistanceGroup.lines[0]
+              ...caseFileFinancialAssistanceGroup.lines[0],
             },
           ],
           paymentStatus: 1,
@@ -487,7 +485,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       it('sets the predefined address when one already set', async () => {
         caseFileFinancialAssistanceGroup.lines[0].address = mockAddressData();
         caseFileFinancialAssistanceGroup.lines[0].address.streetAddress = 'abc street';
-        await wrapper.setProps({currentLine: caseFileFinancialAssistanceGroup.lines[0], currentGroup: caseFileFinancialAssistanceGroup});
+        await wrapper.setProps({ currentLine: caseFileFinancialAssistanceGroup.lines[0], currentGroup: caseFileFinancialAssistanceGroup });
 
         jest.clearAllMocks();
         await wrapper.vm.initCreateMode();
@@ -513,38 +511,38 @@ describe('CreateEditPaymentLineDialog.vue', () => {
 
       it('should reset amount if not passed false and fixed amount changed', async () => {
         // s-0-0 is fixed
-        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
+        await wrapper.setData({ currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' } });
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
 
         // s-0-1 is not fixed
-        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
+        await wrapper.setData({ currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' } });
         wrapper.vm.categorySelected(false);
         expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
 
-        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
+        await wrapper.setData({ currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' } });
         wrapper.vm.categorySelected();
-        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
+        await wrapper.setData({ currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' } });
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.amount).toBe(null);
       });
 
       it('should set fixed amount when subitem says so', async () => {
         // s-0-0 is fixed
-        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' }});
+        await wrapper.setData({ currentPaymentLine: { subCategoryId: 's-0-0', mainCategoryId: 'm-0' } });
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
         expect(wrapper.vm.fixedAmount).toBeTruthy();
-        await wrapper.setData({currentPaymentLine: { amount: 567 }});
+        await wrapper.setData({ currentPaymentLine: { amount: 567 } });
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.amount).toBe(1);
         expect(wrapper.vm.fixedAmount).toBeTruthy();
         // s-0-1 is not fixed
-        await wrapper.setData({currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' }});
+        await wrapper.setData({ currentPaymentLine: { subCategoryId: 's-0-1', mainCategoryId: 'm-0' } });
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.amount).toBeNull();
         expect(wrapper.vm.fixedAmount).toBeFalsy();
-        await wrapper.setData({currentPaymentLine: { amount: 123 }});
+        await wrapper.setData({ currentPaymentLine: { amount: 123 } });
         wrapper.vm.categorySelected();
         expect(wrapper.vm.currentPaymentLine.amount).toBe(123);
         expect(wrapper.vm.fixedAmount).toBeFalsy();
@@ -571,7 +569,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       it('accepts data from payee when Cheque', async () => {
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 99, payeeName: 'manual' } } });
         wrapper.vm.currentPaymentLine.careOf = 'blah';
-        await wrapper.setData({address: mockAddressData()});
+        await wrapper.setData({ address: mockAddressData() });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.onSubmit();
         const emitted = wrapper.emitted('submit')[0][0];
@@ -586,7 +584,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
       it('clears data from payee when not Cheque', async () => {
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice, payeeType: 99, payeeName: 'manual' } } });
         wrapper.vm.currentPaymentLine.careOf = 'blah';
-        await wrapper.setData({address: mockAddressData()});
+        await wrapper.setData({ address: mockAddressData() });
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         await wrapper.vm.onSubmit();
         const emitted = wrapper.emitted('submit')[0][0];
@@ -596,7 +594,6 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(emitted.lines[0].address).toBeNull();
         expect(emitted.lines[0].careOf).toBeNull();
       });
-
 
       it('doesnt proceed unless form validation succeeds', async () => {
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
@@ -644,7 +641,12 @@ describe('CreateEditPaymentLineDialog.vue', () => {
 
     describe('resetPayeeInformation', () => {
       it('sets payee information to the beneficiary info when beneficiary', async () => {
-        await wrapper.setData({ address: new Address(), paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 2, payeeName: 'manual' } } });
+        await wrapper.setData({
+          address: new Address(),
+          paymentGroup: {
+            groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 2, payeeName: 'manual' },
+          },
+        });
         await wrapper.setData({ defaultBeneficiaryData: { name: 'myNewName', address: new Address(mockAddressData()) } });
 
         await wrapper.setData({ paymentGroup: { groupingInformation: { payeeType: 1 } } });
@@ -654,12 +656,14 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(wrapper.vm.paymentGroup.groupingInformation.payeeName).toEqual('myNewName');
       });
       it('clears payee information when third party', async () => {
-        await wrapper.setData({ address: new Address(mockAddressData()), paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 1, payeeName: 'myNewName' } } });
+        await wrapper.setData({
+          address: new Address(mockAddressData()),
+          paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 1, payeeName: 'myNewName' } },
+        });
         await wrapper.setData({ defaultBeneficiaryData: { name: 'myNewName', address: new Address(mockAddressData()) } });
 
         await wrapper.setData({ paymentGroup: { groupingInformation: { payeeType: 2 } } });
         wrapper.vm.resetPayeeInformation();
-        const expected = new Address(mockAddressData());
         expect(wrapper.vm.address).toEqual(new Address());
         expect(wrapper.vm.paymentGroup.groupingInformation.payeeName).toEqual('');
       });

@@ -1,0 +1,33 @@
+import { IRestResponse, IHttpMock, IError } from './httpClient.types';
+
+export const mockIRestResponse = (data: unknown, statusCode = 200): IRestResponse<unknown> => ({
+  headers: {},
+  success: true,
+  status: statusCode,
+  statusText: '',
+  data,
+});
+
+export const mockHttp = (): IHttpMock => ({
+  getFullResponse: jest.fn(() => Promise.resolve(mockIRestResponse('resolved'))),
+  get: jest.fn(() => Promise.resolve('resolved')),
+  post: jest.fn(() => Promise.resolve('resolved')),
+  postFullResponse: jest.fn(() => Promise.resolve(mockIRestResponse('resolved'))),
+  patch: jest.fn(() => Promise.resolve('resolved')),
+  put: jest.fn(() => Promise.resolve('resolved')),
+  delete: jest.fn(() => Promise.resolve('resolved')),
+});
+
+export const mockHttpErrorResponse = (data: unknown, statusCode: number) => ({
+  response: {
+    ...mockIRestResponse(data, statusCode),
+  },
+});
+
+export const mockHttpError = (): IError => ({
+  status: 'status',
+  code: 'code',
+  title: 'title',
+  detail: 'detail',
+  meta: { meta: 'x' },
+});

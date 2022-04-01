@@ -1,6 +1,6 @@
 import { ActionContext, ActionTree } from 'vuex';
 import _sortBy from 'lodash/sortBy';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { EOptionLists, IOptionItem, OptionItem } from '@/entities/optionItem';
 import {
   IFilter, IUserAccountEntity, FilterKey, UserAccountEntity,

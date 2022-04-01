@@ -1,6 +1,5 @@
-/* eslint-disable */
 import { mockCaseFileReferralEntity } from '@/entities/case-file-referral';
-import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
+import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { CaseFileReferralsService } from './case-file-referrals';
 
 describe('>>> Case File Referral Service', () => {
@@ -16,8 +15,7 @@ describe('>>> Case File Referral Service', () => {
 
   describe('get', () => {
     it('is linked to the correct URL and params', async () => {
-      const id = {id: 'myId', caseFileId: 'myParent'};
-      const entity = mockCaseFileReferralEntity();
+      const id = { id: 'myId', caseFileId: 'myParent' };
       await service.get(id);
       expect(http.get).toHaveBeenCalledWith('www.test.com/case-file/case-files/myParent/referrals/myId', { globalHandler: true });
     });
@@ -62,7 +60,7 @@ describe('>>> Case File Referral Service', () => {
       let result = service.cleanReferral(entity);
       expect(result.dateTimeConsent).toBeUndefined();
 
-      entity.referralConsentInformation = { dateTimeConsent: new Date('2020-01-01'), crcUserName: '', crcUserId: ''};
+      entity.referralConsentInformation = { dateTimeConsent: new Date('2020-01-01'), crcUserName: '', crcUserId: '' };
       result = service.cleanReferral(entity);
       expect(result.dateTimeConsent).toEqual(new Date('2020-01-01'));
     });

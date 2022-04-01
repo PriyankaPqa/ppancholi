@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { mockStore } from '@/store';
 import { mockTabs } from '@/store/modules/registration/tabs.mock';
-import { mockHttpError } from '@/services/httpClient.mock';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
+import { mockHttpError } from '@libs/core-lib/services/http-client';
 import { mockSplitHousehold } from '../../../entities/household-create/householdCreate.mock';
 
 import { HouseholdCreate } from '../../../entities/household-create/householdCreate';

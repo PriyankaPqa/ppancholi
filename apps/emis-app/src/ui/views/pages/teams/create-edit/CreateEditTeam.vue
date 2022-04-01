@@ -185,7 +185,7 @@ import { VForm } from '@/types';
 import { IUserAccountCombined } from '@/entities/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
 import { Status } from '@/entities/base';
-import { IError } from '@/services/httpClient';
+import { IError } from '@libs/core-lib/services/http-client';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,

@@ -8,7 +8,7 @@ import { mockIdentitySet } from '@/entities/value-objects/identity-set';
 import { mockAddress } from '@/entities/value-objects/address';
 import { mockCampGround } from '@/entities/value-objects/current-address';
 import { mockHouseholdCreateData, mockSplitHousehold } from '@/entities/household-create';
-import { mockHttpError } from '@/services/httpClient.mock';
+import { mockHttpError } from '@libs/core-lib/services/http-client';
 import { makeStorage } from './storage';
 import { mockEventData } from '../../../entities/event';
 import { ERegistrationMethod, IRegistrationMenuItem } from '../../../types';

@@ -1,6 +1,6 @@
-import { mockHttp } from '@/services/httpClient.mock';
 import { mockOptionItemData, mockSubItem } from '@/entities/optionItem';
 import { Status } from '@/entities/base';
+import { mockHttp } from '@libs/core-lib/services/http-client';
 import { OptionItemBaseService } from './base';
 
 const http = mockHttp();

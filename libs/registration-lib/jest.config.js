@@ -9,6 +9,8 @@ module.exports = {
     '^@libs/registration-lib/(.*)$': '<rootDir>/src/$1',
     '^@libs/component-lib/src/(.*)$': '<rootDir>/../../libs/component-lib/src/$1', // in javascript file there is path like there is for TS so we need that
     '^@libs/component-lib/(.*)$': '<rootDir>/../../libs/component-lib/src/$1',
+    '^@libs/core-lib/src/(.*)$': '<rootDir>/../../libs/core-lib/src/$1', // in javascript file there is path like there is for TS so we need that
+    '^@libs/core-lib/(.*)$': '<rootDir>/../../libs/core-lib/src/$1',
   },
   collectCoverageFrom: [
     ...baseConfig.collectCoverageFrom,

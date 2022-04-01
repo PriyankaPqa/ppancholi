@@ -1,4 +1,4 @@
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { BaseEntity } from '@/entities/base/base';
 import { IListOption } from '@/types';
 import {

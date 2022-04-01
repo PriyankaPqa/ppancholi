@@ -1,8 +1,7 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument } from '@/entities/case-file-document';
-import Component from './DownloadViewDocument.vue';
 import { mockStorage } from '@/store/storage';
+import Component from './DownloadViewDocument.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -18,12 +17,8 @@ describe('DownloadViewDocument', () => {
         document: mockDocument,
       },
       mocks: {
-        $hasLevel: (lvl) => {
-          return lvl <= 'level' + level && level;
-        },
-        $hasRole: (r) => {
-          return r === hasRole;
-        },
+        $hasLevel: (lvl) => lvl <= `level${level}` && level,
+        $hasRole: (r) => r === hasRole,
         $storage: storage,
       },
       ...additionalOverwrites,

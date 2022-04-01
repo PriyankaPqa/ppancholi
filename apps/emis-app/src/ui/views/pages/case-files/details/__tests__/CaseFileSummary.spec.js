@@ -1,11 +1,10 @@
-/* eslint-disable */
 import flushPromises from 'flush-promises';
 import _orderBy from 'lodash/orderBy';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
-import Component from '../CaseFileSummary.vue';
 import { mockStorage } from '@/store/storage';
 import { CaseFileActivityType } from '@/entities/case-file';
 import helpers from '@/ui/helpers/helpers';
+import Component from '../CaseFileSummary.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -81,8 +80,12 @@ describe('CaseFileSummary.vue', () => {
             timestamp: '2020-01-01T00:00:00Z',
             entity: {
               memberMetadata: [
-                { id: '02', firstName: 'firstName2', lastName: 'lName2', dateOfBirth: '1991-01-01T00:00:00Z' },
-                { id: '01', firstName: 'firstName', lastName: 'lastName', dateOfBirth: '1990-01-01T00:00:00Z' },
+                {
+                  id: '02', firstName: 'firstName2', lastName: 'lName2', dateOfBirth: '1991-01-01T00:00:00Z',
+                },
+                {
+                  id: '01', firstName: 'firstName', lastName: 'lastName', dateOfBirth: '1990-01-01T00:00:00Z',
+                },
               ],
             },
           },
@@ -90,7 +93,9 @@ describe('CaseFileSummary.vue', () => {
             timestamp: '2021-01-01T00:00:00Z',
             entity: {
               memberMetadata: [
-                { id: '01', firstName: 'firstName', lastName: 'lastName', dateOfBirth: '1990-01-01T00:00:00Z' },
+                {
+                  id: '01', firstName: 'firstName', lastName: 'lastName', dateOfBirth: '1990-01-01T00:00:00Z',
+                },
               ],
             },
           },
@@ -101,7 +106,7 @@ describe('CaseFileSummary.vue', () => {
           { birthDate: helpers.getLocalStringDate('1991-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'll'), name: 'firstName2 lName2' },
         ]);
         expect(wrapper.vm.primary).toEqual(
-          { birthDate: helpers.getLocalStringDate('1990-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'll'), name: 'firstName lastName' }
+          { birthDate: helpers.getLocalStringDate('1990-01-01T00:00:00Z', 'HouseholdMemberMetadata.dateOfBirth', 'll'), name: 'firstName lastName' },
         );
       });
     });

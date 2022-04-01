@@ -1,8 +1,8 @@
 import { TranslateResult } from 'vue-i18n';
+import { IError } from '@libs/core-lib/src/services/http-client';
 import {
   ERegistrationMethod, IOptionItemData, IRegistrationMenuItem,
 } from '../../../types';
-import { IError } from '../../../services/httpClient';
 
 import { IEvent, IEventData } from '../../../entities/event';
 import {

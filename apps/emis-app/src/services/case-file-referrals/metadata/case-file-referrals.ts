@@ -1,6 +1,6 @@
 import { ICaseFileReferralMetadata } from '@/entities/case-file-referral';
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ICaseFileReferralsMetadataService } from './case-file-referrals.types';
 
 const API_URL_SUFFIX = 'case-file/case-files/{caseFileId}';

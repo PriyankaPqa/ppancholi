@@ -1,10 +1,9 @@
-/* eslint-disable */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { mockCombinedTeams } from '@/entities/team';
 import { mockStorage } from '@/store/storage';
-import Component from './TeamsTable.vue';
 import flushPromises from 'flush-promises';
+import Component from './TeamsTable.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -18,9 +17,7 @@ describe('TeamsTable.vue', () => {
     wrapper = (fullMount ? mount : shallowMount)(Component, {
       localVue,
       mocks: {
-        $hasLevel: (lvl) => {
-          return lvl <= 'level' + level;
-        },
+        $hasLevel: (lvl) => lvl <= `level${level}`,
         $storage: storage,
       },
     });
@@ -104,7 +101,6 @@ describe('TeamsTable.vue', () => {
   });
 
   describe('Computed', () => {
-
     beforeEach(async () => {
       await mountWrapper(false);
     });
@@ -221,7 +217,6 @@ describe('TeamsTable.vue', () => {
   });
 
   describe('Methods', () => {
-
     beforeEach(async () => {
       await mountWrapper(false);
     });

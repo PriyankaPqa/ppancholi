@@ -1,11 +1,11 @@
 import { ActionContext } from 'vuex';
-import { mockHttp } from '@/services/httpClient.mock';
 
 import { HouseholdEntityModule } from '@/store/modules/household/householdEntity';
 import { HouseholdsService } from '@/services/households/entity';
 import { IHouseholdEntity, mockHouseholdEntity } from '@/entities/household';
 import { IState } from '@/store/modules/base';
 import { mockAddress } from '@/entities/value-objects/address';
+import { mockHttp } from '@libs/core-lib/src/services/http-client';
 import { mockVersionedEntityCombined, mockVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.mock';
 import utils from '../../../entities/value-objects/versioned-entity/versionedEntityUtils';
 

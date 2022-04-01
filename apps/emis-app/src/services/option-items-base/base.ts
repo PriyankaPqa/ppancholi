@@ -1,5 +1,5 @@
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IOptionItemData, IOptionSubItem } from '@/entities/optionItem';
 import { IOptionItemBaseService } from '@/services/option-items-base/base.types';
 import { IMultilingual } from '@/types';

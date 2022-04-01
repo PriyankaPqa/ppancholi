@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { ActionContext } from 'vuex';
 import _sortBy from 'lodash/sortBy';
 
@@ -7,10 +6,10 @@ import { CaseFileDocumentsService } from '@/services/case-file-documents/entity'
 import { OptionItemsService } from '@/services/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
-import { mockCaseFileDocumentEntity, mockCaseFileDocumentEntities, ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import { mockCaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
+import { Status } from '@/entities/base';
 import { CaseFileDocumentEntityModule } from './caseFileDocumentEntity';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
-import { Status } from '@/entities/base';
 
 const service = new CaseFileDocumentsService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
@@ -26,7 +25,6 @@ const actionContext = {
 } as ActionContext<ICaseFileDocumentEntityState, ICaseFileDocumentEntityState>;
 
 describe('Case file document entity module', () => {
-
   beforeEach(() => {
     module = new CaseFileDocumentEntityModule(service, optionItemService);
   });
@@ -45,19 +43,17 @@ describe('Case file document entity module', () => {
       });
     });
 
-
-
     describe('getByCaseFile', () => {
       test('the getter returns the documents that have the id passed in the argument', () => {
-        const document1 = mockCaseFileDocumentEntity({id: '1', caseFileId: 'case-file-1'});
-        const document2 = mockCaseFileDocumentEntity({id: '2', caseFileId: 'case-file-2'});
+        const document1 = mockCaseFileDocumentEntity({ id: '1', caseFileId: 'case-file-1' });
+        const document2 = mockCaseFileDocumentEntity({ id: '2', caseFileId: 'case-file-2' });
         module.mutations.setAll(module.state, [document1, document2]);
         const res = module.getters.getByCaseFile(module.state)('case-file-1');
         expect(res).toEqual([document1]);
       });
       test('the getter ignores inactive documents', () => {
-        const item1 = mockCaseFileDocumentEntity({id: '1', caseFileId: 'case-file-1', status: Status.Inactive});
-        const item2 = mockCaseFileDocumentEntity({id: '2', caseFileId: 'case-file-1', status: Status.Active});
+        const item1 = mockCaseFileDocumentEntity({ id: '1', caseFileId: 'case-file-1', status: Status.Inactive });
+        const item2 = mockCaseFileDocumentEntity({ id: '2', caseFileId: 'case-file-1', status: Status.Active });
         module.mutations.setAll(module.state, [item1, item2]);
         const res = module.getters.getByCaseFile(module.state)('case-file-1');
         expect(res).toEqual([item2]);
@@ -78,7 +74,6 @@ describe('Case file document entity module', () => {
       module.mutations.setCategoriesFetched(module.state, true);
       expect(module.state.categoriesFetched).toEqual(true);
     });
-
   });
 
   describe('actions', () => {
@@ -106,7 +101,7 @@ describe('Case file document entity module', () => {
     describe('downloadDocumentAsUrl', () => {
       it('should call service downloadDocumentAsUrl', async () => {
         module.service.downloadDocumentAsUrl = jest.fn();
-        await module.actions.downloadDocumentAsUrl(actionContext, {item: { name: 'name' } as ICaseFileDocumentEntity, saveDownloadedFile: true});
+        await module.actions.downloadDocumentAsUrl(actionContext, { item: { name: 'name' } as ICaseFileDocumentEntity, saveDownloadedFile: true });
 
         expect(module.service.downloadDocumentAsUrl).toBeCalledWith({ name: 'name' }, true);
       });

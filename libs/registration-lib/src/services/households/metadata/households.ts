@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { IHttpClient } from '@libs/core-lib/src/services/http-client';
 import { DomainBaseService } from '../../base';
 import { IHouseholdMetadataService } from './households.types';
-import { IHttpClient } from '../../httpClient';
 
 import { IHouseholdMetadata } from '../../../entities/household';
 

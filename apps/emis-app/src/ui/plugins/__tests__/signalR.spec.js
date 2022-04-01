@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { mockStorage } from '@/store/storage';
 import { SignalR } from '@/ui/plugins/signalR';
 
@@ -10,11 +9,11 @@ SignalR.prototype.buildHubConnection = jest.fn();
 SignalR.prototype.listenForChanges = jest.fn();
 SignalR.prototype.listenForOptionItemChanges = jest.fn();
 
-let conn = new SignalR({storage, showConsole: false});
+let conn = new SignalR({ storage, showConsole: false });
 
 describe('signalR', () => {
   beforeEach(() => {
-    conn = new SignalR({storage, showConsole: false});
+    conn = new SignalR({ storage, showConsole: false });
     conn.connection = { on: jest.fn() };
   });
   describe('createBindings', () => {
@@ -109,32 +108,32 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'household',
         entityName: 'Household',
-        action: conn.storage.household.mutations.setEntityFromOutsideNotification
+        action: conn.storage.household.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'household',
         entityName: 'HouseholdMetadata',
-        action: conn.storage.household.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.household.mutations.setMetadataFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'household',
         entityName: 'Person',
-        action: conn.noAction
+        action: conn.noAction,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'household',
         entityName: 'PersonMetadata',
-        action: conn.noAction
+        action: conn.noAction,
       });
     });
 
     it('calls listenForOptionItemChanges', () => {
       conn.listenForHouseholdModuleChanges();
       expect(conn.listenForOptionItemChanges).toHaveBeenCalledWith({
-      domain: 'household',
-      optionItemName: 'ScreeningId',
-      cacheResetMutationName: 'setScreeningIdsFetched',
-      mutationDomain: 'caseFile',
+        domain: 'household',
+        optionItemName: 'ScreeningId',
+        cacheResetMutationName: 'setScreeningIdsFetched',
+        mutationDomain: 'caseFile',
       });
       expect(conn.listenForOptionItemChanges).toHaveBeenCalledWith({
         domain: 'household',
@@ -148,7 +147,7 @@ describe('signalR', () => {
         cacheResetMutationName: 'setPrimarySpokenLanguagesFetched',
         mutationDomain: 'registration',
       });
-    })
+    });
   });
 
   describe('listenForHouseholdModuleChanges', () => {
@@ -157,22 +156,22 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'household',
         entityName: 'Household',
-        action: conn.storage.household.mutations.setEntityFromOutsideNotification
+        action: conn.storage.household.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'household',
         entityName: 'HouseholdMetadata',
-        action: conn.storage.household.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.household.mutations.setMetadataFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'household',
         entityName: 'Person',
-        action: conn.noAction
+        action: conn.noAction,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'household',
         entityName: 'PersonMetadata',
-        action: conn.noAction
+        action: conn.noAction,
       });
     });
   });
@@ -183,12 +182,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'event',
         entityName: 'Program',
-        action: conn.storage.program.mutations.setEntityFromOutsideNotification
+        action: conn.storage.program.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'event',
         entityName: 'ProgramMetadata',
-        action: conn.storage.program.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.program.mutations.setMetadataFromOutsideNotification,
       });
     });
   });
@@ -199,12 +198,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'user-account',
         entityName: 'UserAccount',
-        action: conn.storage.userAccount.mutations.setEntityFromOutsideNotification
+        action: conn.storage.userAccount.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'user-account',
         entityName: 'UserAccountMetadata',
-        action: conn.storage.userAccount.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.userAccount.mutations.setMetadataFromOutsideNotification,
       });
     });
   });
@@ -215,12 +214,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'event',
         entityName: 'Event',
-        action: conn.storage.event.mutations.setEntityFromOutsideNotification
+        action: conn.storage.event.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'event',
         entityName: 'EventMetadata',
-        action: conn.storage.event.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.event.mutations.setMetadataFromOutsideNotification,
       });
     });
 
@@ -230,13 +229,13 @@ describe('signalR', () => {
         domain: 'event',
         optionItemName: 'AgreementType',
         cacheResetMutationName: 'setAgreementTypesFetched',
-        });
+      });
       expect(conn.listenForOptionItemChanges).toHaveBeenCalledWith({
         domain: 'event',
         optionItemName: 'EventType',
         cacheResetMutationName: 'setEventTypesFetched',
-        });
-    })
+      });
+    });
   });
 
   describe('listenForTeamModuleChanges', () => {
@@ -245,12 +244,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'team',
         entityName: 'Team',
-        action: conn.storage.team.mutations.setEntityFromOutsideNotification
+        action: conn.storage.team.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'team',
         entityName: 'TeamMetadata',
-        action: conn.storage.team.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.team.mutations.setMetadataFromOutsideNotification,
       });
     });
   });
@@ -261,12 +260,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'MassAction',
-        action: conn.storage.massAction.mutations.setEntityFromOutsideNotification
+        action: conn.storage.massAction.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'MassActionMetadata',
-        action: conn.storage.massAction.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.massAction.mutations.setMetadataFromOutsideNotification,
       });
     });
   });
@@ -277,17 +276,17 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'CaseFile',
-        action: conn.storage.caseFile.mutations.setEntityFromOutsideNotification
+        action: conn.storage.caseFile.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'CaseFileMetadata',
-        action: conn.storage.caseFile.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.caseFile.mutations.setMetadataFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'CaseFileActivity',
-        action: conn.noAction
+        action: conn.noAction,
       });
     });
 
@@ -297,18 +296,18 @@ describe('signalR', () => {
         domain: 'case-file',
         optionItemName: 'CloseReason',
         cacheResetMutationName: 'setCloseReasonsFetched',
-        });
+      });
       expect(conn.listenForOptionItemChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         optionItemName: 'InactiveReason',
         cacheResetMutationName: 'setInactiveReasonsFetched',
-        });
+      });
       expect(conn.listenForOptionItemChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         optionItemName: 'Tag',
         cacheResetMutationName: 'setTagsOptionsFetched',
-        });
-    })
+      });
+    });
   });
 
   describe('listenForCaseNoteModuleChanges', () => {
@@ -317,12 +316,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'CaseNote',
-        action: conn.storage.caseNote.mutations.setEntityFromOutsideNotification
+        action: conn.storage.caseNote.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'CaseNoteMetadata',
-        action: conn.storage.caseNote.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.caseNote.mutations.setMetadataFromOutsideNotification,
       });
     });
 
@@ -333,8 +332,8 @@ describe('signalR', () => {
         optionItemName: 'CaseNoteCategory',
         cacheResetMutationName: 'setCaseNoteCategoriesFetched',
         mutationDomain: 'caseNote',
-        });
-    })
+      });
+    });
   });
 
   describe('listenForCaseReferralModuleChanges', () => {
@@ -343,12 +342,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'Referral',
-        action: conn.storage.caseFileReferral.mutations.setEntityFromOutsideNotification
+        action: conn.storage.caseFileReferral.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'ReferralMetadata',
-        action: conn.storage.caseFileReferral.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.caseFileReferral.mutations.setMetadataFromOutsideNotification,
       });
     });
 
@@ -359,14 +358,14 @@ describe('signalR', () => {
         optionItemName: 'ReferralType',
         cacheResetMutationName: 'setTypesFetched',
         mutationDomain: 'caseFileReferral',
-        });
+      });
       expect(conn.listenForOptionItemChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         optionItemName: 'ReferralOutcomeStatus',
         cacheResetMutationName: 'setOutcomeStatusesFetched',
         mutationDomain: 'caseFileReferral',
-        });
-    })
+      });
+    });
   });
 
   describe('listenForFinancialAssistancePaymentModuleChanges', () => {
@@ -375,12 +374,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'finance',
         entityName: 'FinancialAssistancePayment',
-        action: conn.storage.financialAssistancePayment.mutations.setEntityFromOutsideNotification
+        action: conn.storage.financialAssistancePayment.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'finance',
         entityName: 'FinancialAssistancePaymentMetadata',
-        action: conn.storage.financialAssistancePayment.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.financialAssistancePayment.mutations.setMetadataFromOutsideNotification,
       });
     });
   });
@@ -391,12 +390,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'Document',
-        action: conn.storage.caseFileDocument.mutations.setEntityFromOutsideNotification
+        action: conn.storage.caseFileDocument.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'case-file',
         entityName: 'DocumentMetadata',
-        action: conn.storage.caseFileDocument.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.caseFileDocument.mutations.setMetadataFromOutsideNotification,
       });
     });
 
@@ -407,8 +406,8 @@ describe('signalR', () => {
         optionItemName: 'DocumentCategory',
         cacheResetMutationName: 'setCategoriesFetched',
         mutationDomain: 'caseFileDocument',
-        });
-    })
+      });
+    });
   });
 
   describe('listenForFinancialAssistanceModuleChanges', () => {
@@ -417,12 +416,12 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'finance',
         entityName: 'FinancialAssistanceTable',
-        action: conn.storage.financialAssistance.mutations.setEntityFromOutsideNotification
+        action: conn.storage.financialAssistance.mutations.setEntityFromOutsideNotification,
       });
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'finance',
         entityName: 'FinancialAssistanceTableMetadata',
-        action: conn.storage.financialAssistance.mutations.setMetadataFromOutsideNotification
+        action: conn.storage.financialAssistance.mutations.setMetadataFromOutsideNotification,
       });
     });
   });
@@ -433,7 +432,7 @@ describe('signalR', () => {
       expect(conn.listenForChanges).toHaveBeenCalledWith({
         domain: 'finance',
         entityName: 'FinancialAssistanceCategory',
-        action: conn.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification
+        action: conn.storage.financialAssistanceCategory.mutations.setEntityFromOutsideNotification,
       });
     });
   });
@@ -441,7 +440,7 @@ describe('signalR', () => {
   describe('listenForChanges', () => {
     it('attaches the action to the connection', () => {
       SignalR.prototype.listenForChanges = listenForChangesFct;
-      conn = new SignalR({storage, showConsole: false});
+      conn = new SignalR({ storage, showConsole: false });
       conn.connection = { on: jest.fn() };
       conn.listenForChanges({ domain: 'financialAssistance', entityName: 'FinancialAssistanceCategory' });
       expect(conn.connection.on).toHaveBeenCalledWith('financialAssistance.FinancialAssistanceCategoryUpdated', expect.any(Function));
@@ -451,13 +450,13 @@ describe('signalR', () => {
   describe('listenForOptionItemChanges', () => {
     it('attaches the action to the connection', () => {
       SignalR.prototype.listenForOptionItemChanges = listenForOptionItemChangesFct;
-      conn = new SignalR({storage, showConsole: false});
+      conn = new SignalR({ storage, showConsole: false });
       conn.connection = { on: jest.fn() };
       conn.listenForOptionItemChanges({
         domain: 'event',
         optionItemName: 'AgreementType',
-        cacheResetMutationName: 'setAgreementTypesFetched'
-    });
+        cacheResetMutationName: 'setAgreementTypesFetched',
+      });
       expect(conn.connection.on).toHaveBeenCalledWith('event.AgreementTypeUpdated', expect.any(Function));
       expect(conn.connection.on).toHaveBeenCalledWith('event.AgreementTypeCreated', expect.any(Function));
     });

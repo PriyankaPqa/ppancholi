@@ -1,9 +1,8 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import routes from '@/constants/routes';
 import { CaseFileDocumentEntity, mockCombinedCaseFileDocument, mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
-import Component from './CreateEditCaseFileDocument.vue';
 import { mockStorage } from '@/store/storage';
+import Component from './CreateEditCaseFileDocument.vue';
 
 const localVue = createLocalVue();
 const storage = mockStorage();
@@ -26,9 +25,7 @@ describe('CreateEditDocument', () => {
         },
       },
       mocks: {
-        $hasLevel: (lvl) => {
-          return lvl <= 'level' + level;
-        },
+        $hasLevel: (lvl) => lvl <= `level${level}`,
         $route: {
           name: routes.caseFile.documents.add.name,
           params: {
@@ -42,7 +39,7 @@ describe('CreateEditDocument', () => {
 
     actions = storage.caseFileDocument.actions;
 
-    wrapper.vm.$refs.documentForm.upload = jest.fn(() => mockDocument)
+    wrapper.vm.$refs.documentForm.upload = jest.fn(() => mockDocument);
   };
 
   beforeEach(async () => {
@@ -51,7 +48,6 @@ describe('CreateEditDocument', () => {
   });
 
   describe('LifeCycle', () => {
-
     describe('created', () => {
       it('calls and loads from the storage on edit and allows for no metadata', async () => {
         await mountWrapper(true);
@@ -61,12 +57,11 @@ describe('CreateEditDocument', () => {
 
       it('sets a new entity with the casefileid on creating', async () => {
         await mountWrapper(false);
-        expect(wrapper.vm.document).not.toEqual(new CaseFileDocumentEntity(mockCombinedCaseFileDocuments()[0].entity))
+        expect(wrapper.vm.document).not.toEqual(new CaseFileDocumentEntity(mockCombinedCaseFileDocuments()[0].entity));
         expect(wrapper.vm.document.name).toEqual(null);
         expect(wrapper.vm.document.caseFileId).toEqual('CASEFILE_ID');
       });
     });
-
   });
 
   describe('Methods', () => {
@@ -84,7 +79,7 @@ describe('CreateEditDocument', () => {
         await mountWrapper(false);
         wrapper.vm.$refs.form.validate = jest.fn(() => false);
         wrapper.vm.tryUpload = jest.fn(() => mockDocument);
-        await wrapper.setData({file: {}});
+        await wrapper.setData({ file: {} });
         await wrapper.setData({ document: mockDocument });
         await wrapper.vm.submit();
         expect(wrapper.vm.tryUpload).toHaveBeenCalledTimes(0);
@@ -94,7 +89,7 @@ describe('CreateEditDocument', () => {
         await mountWrapper(false);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.tryUpload = jest.fn(() => mockDocument);
-        await wrapper.setData({file: {}});
+        await wrapper.setData({ file: {} });
         await wrapper.setData({ document: mockDocument });
 
         await wrapper.vm.submit();
@@ -112,8 +107,8 @@ describe('CreateEditDocument', () => {
       test('after submitting, the user is redirected to the details page when adding', async () => {
         await mountWrapper(false);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
-        wrapper.vm.tryUpload = jest.fn(() => ({id: 'myNewId'}));
-        await wrapper.setData({file: {}});
+        wrapper.vm.tryUpload = jest.fn(() => ({ id: 'myNewId' }));
+        await wrapper.setData({ file: {} });
         await wrapper.setData({ document: mockDocument });
 
         await wrapper.vm.submit();
@@ -137,7 +132,7 @@ describe('CreateEditDocument', () => {
         await mountWrapper(false);
         wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.tryUpload = jest.fn(() => mockDocument);
-        await wrapper.setData({file: {}});
+        await wrapper.setData({ file: {} });
         await wrapper.setData({ document: mockDocument });
         await wrapper.vm.submit();
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('document.create.success');
@@ -161,7 +156,8 @@ describe('CreateEditDocument', () => {
         expect(res).toBeNull();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
           title: 'caseFile.document.confirm.preprocessing.title',
-          messages: 'caseFile.document.confirm.preprocessing.message'});
+          messages: 'caseFile.document.confirm.preprocessing.message',
+        });
         expect(wrapper.vm.uploadNewDocument).toHaveBeenCalledTimes(0);
 
         wrapper.vm.$confirm = jest.fn(() => true);
@@ -174,7 +170,7 @@ describe('CreateEditDocument', () => {
     describe('uploadNewDocument', () => {
       it('calls upload with the formData', async () => {
         await mountWrapper(false);
-        await wrapper.setData({file: {}});
+        await wrapper.setData({ file: {} });
         await wrapper.setData({ document: mockDocument });
 
         const formData = new FormData();

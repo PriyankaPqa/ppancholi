@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import VueRouter, { Route } from 'vue-router';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { PublicService } from '@libs/registration-lib/services/public';
 import { routes } from '@/ui/router/routes';
 import routeConstants from '@/constants/routes';

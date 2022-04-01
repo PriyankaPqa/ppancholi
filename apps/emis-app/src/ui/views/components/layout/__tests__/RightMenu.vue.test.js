@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedTenantSettings } from '@/entities/tenantSettings';
 import { mockUsersData } from '@/entities/user';
@@ -113,8 +112,8 @@ describe('RightMenu.vue', () => {
       describe('changeTenant', () => {
         it('changes the url to the one from the tenant', async () => {
           const oldWindowLoc = window.location;
-          delete window.location
-          window.location = { href: ''};
+          delete window.location;
+          window.location = { href: '' };
 
           wrapper.vm.$storage.tenantSettings.getters.get = jest.fn(() => mockCombinedTenantSettings());
           await wrapper.setData({ currentTenantId: 'abcd' });

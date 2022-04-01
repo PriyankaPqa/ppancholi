@@ -1,5 +1,5 @@
 import { IVersionedEntity } from '@libs/registration-lib/entities/value-objects/versioned-entity';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { DomainBaseService } from '@/services/base';
 import {
   IFinancialAssistancePaymentEntity,

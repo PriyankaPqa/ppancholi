@@ -3,8 +3,8 @@ import {
   EventEntity,
   mockEventEntities,
 } from '@/entities/event';
-import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { mockSearchParams } from '@/test/helpers';
+import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { EventsService } from './events';
 
 describe('>>> Events Service', () => {

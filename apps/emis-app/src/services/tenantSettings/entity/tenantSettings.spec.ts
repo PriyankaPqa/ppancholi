@@ -4,7 +4,7 @@ import {
   mockEditTenantDetailsRequest,
   mockSetDomainsRequest,
 } from '@/entities/tenantSettings';
-import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
+import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { TenantSettingsService } from './tenantSettings';
 
 describe('>>> TenantSettings service', () => {

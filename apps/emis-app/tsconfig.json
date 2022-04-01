@@ -31,6 +31,9 @@
       "@libs/component-lib/*": [
         "../../libs/component-lib/src/*"
       ],
+      "@libs/core-lib/*": [
+        "../../libs/core-lib/src/*"
+      ],
       "@libs/assets/*": [
         "../../libs/assets/*"
       ]

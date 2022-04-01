@@ -1,8 +1,7 @@
-/* eslint-disable */
 import { FINANCIAL_ASSISTANCE_PAYMENT_METADATA, FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { FinancialAssistancePaymentStorage } from './storage';
 import { mockCaseFinancialAssistanceEntity } from '@/entities/financial-assistance-payment';
+import { FinancialAssistancePaymentStorage } from './storage';
 
 const entityModuleName = FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES;
 const metadataModuleName = FINANCIAL_ASSISTANCE_PAYMENT_METADATA;
@@ -37,7 +36,6 @@ describe('>>> Financial Assistance Payment Storage', () => {
     });
 
     it('should proxy updatePaymentStatus', () => {
-      const payload = mockCaseFinancialAssistanceEntity().id;
       storage.actions.updatePaymentStatus('myId', 'group-id', 2);
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updatePaymentStatus`, { paymentGroupId: 'group-id', entityId: 'myId', status: 2 });
     });

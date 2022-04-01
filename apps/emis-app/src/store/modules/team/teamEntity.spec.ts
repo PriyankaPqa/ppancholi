@@ -1,11 +1,9 @@
-/* eslint-disable */
 import { ActionContext } from 'vuex';
-
 import { httpClient } from '@/services/httpClient';
 import { TeamsService } from '@/services/teams/entity';
+import { mockTeamMembersData, mockTeamsDataStandard, mockTeamsDataAddHoc } from '@/entities/team';
 import { TeamEntityModule } from './teamEntity';
 import { ITeamEntityState } from './teamEntity.types';
-import { mockTeamMembersData, mockTeamsDataStandard, mockTeamsDataAddHoc } from '@/entities/team';
 
 const service = new TeamsService(httpClient);
 const module = new TeamEntityModule(service);
@@ -64,7 +62,7 @@ describe('Team entity module', () => {
     describe('addTeamMembers', () => {
       it('should call addTeamMembers service with proper params and commit results', async () => {
         module.service.addTeamMembers = jest.fn(() => Promise.resolve(mockTeamsDataAddHoc()));
-        await module.actions.addTeamMembers(actionContext, {teamId: 'abc', teamMembers: mockTeamMembersData()});
+        await module.actions.addTeamMembers(actionContext, { teamId: 'abc', teamMembers: mockTeamMembersData() });
 
         expect(module.service.addTeamMembers).toBeCalledWith('abc', mockTeamMembersData());
         expect(actionContext.commit).toBeCalledWith('set', mockTeamsDataAddHoc());
@@ -74,7 +72,7 @@ describe('Team entity module', () => {
     describe('removeTeamMember', () => {
       it('should call editTeam service with proper params and commit results', async () => {
         module.service.removeTeamMember = jest.fn(() => Promise.resolve(mockTeamsDataAddHoc()));
-        await module.actions.removeTeamMember(actionContext, {teamId: 'abc', teamMemberId: 'sss'});
+        await module.actions.removeTeamMember(actionContext, { teamId: 'abc', teamMemberId: 'sss' });
 
         expect(module.service.removeTeamMember).toBeCalledWith('abc', 'sss');
         expect(actionContext.commit).toBeCalledWith('set', mockTeamsDataAddHoc());

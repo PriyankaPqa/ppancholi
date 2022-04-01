@@ -1,5 +1,5 @@
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IFinancialAssistancePaymentMetadata } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistancePaymentsMetadataService } from './financial-assistance-payments.types';
 

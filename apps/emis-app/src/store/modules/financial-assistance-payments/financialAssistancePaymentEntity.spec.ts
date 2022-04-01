@@ -1,15 +1,11 @@
-/* eslint-disable */
 import { ActionContext } from 'vuex';
-import _sortBy from 'lodash/sortBy';
-
 import { httpClient } from '@/services/httpClient';
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
-
-import { mockCaseFinancialAssistanceEntity, IFinancialAssistancePaymentEntity, mockFinancialPaymentHistory } from '@/entities/financial-assistance-payment';
-import { FinancialAssistancePaymentEntityModule } from './financialAssistancePaymentEntity';
-import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
+import { mockCaseFinancialAssistanceEntity, mockFinancialPaymentHistory } from '@/entities/financial-assistance-payment';
 import utils from '@libs/registration-lib/entities/value-objects/versioned-entity/versionedEntityUtils';
 import { mockVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
+import { FinancialAssistancePaymentEntityModule } from './financialAssistancePaymentEntity';
+import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
 
 const service = new FinancialAssistancePaymentsService(httpClient);
 let module: FinancialAssistancePaymentEntityModule;
@@ -24,17 +20,14 @@ const actionContext = {
 } as ActionContext<IFinancialAssistancePaymentEntityState, IFinancialAssistancePaymentEntityState>;
 
 describe('Financial assistance payment entity module', () => {
-
   beforeEach(() => {
     module = new FinancialAssistancePaymentEntityModule(service);
   });
 
   describe('actions', () => {
-
     describe('addFinancialAssistancePayment', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
-        const id = 'mock-id';
         const entity = mockCaseFinancialAssistanceEntity();
         module.service.addFinancialAssistancePayment = jest.fn(() => Promise.resolve(serviceRes));
         const res = await module.actions.addFinancialAssistancePayment(actionContext, entity);
@@ -62,11 +55,12 @@ describe('Financial assistance payment entity module', () => {
     describe('updatePaymentStatus', () => {
       it('calls the right service and returns the result', async () => {
         const serviceRes = mockCaseFinancialAssistanceEntity();
-        const entity = mockCaseFinancialAssistanceEntity();
         const id = 'mock-id';
 
         module.service.updatePaymentStatus = jest.fn(() => Promise.resolve(serviceRes));
-        const res = await module.actions.updatePaymentStatus(actionContext, { paymentGroupId: 'group-id', entityId: id, status: 2, cancellationReason: 5 });
+        const res = await module.actions.updatePaymentStatus(actionContext, {
+          paymentGroupId: 'group-id', entityId: id, status: 2, cancellationReason: 5,
+        });
 
         expect(module.service.updatePaymentStatus).toBeCalledWith(id, 'group-id', 2, 5);
         expect(res).toEqual(serviceRes);

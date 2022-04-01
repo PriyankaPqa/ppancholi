@@ -3,7 +3,7 @@ import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { IMultilingual } from '@/types';
 import { i18n } from '@/ui/plugins/i18n';
 import moment from '@/ui/plugins/moment';
-import { IRestResponse } from '@/services/httpClient';
+import { IRestResponse } from '@libs/core-lib/services/http-client';
 import { DateTypes, dateTypes } from '@/constants/dateTypes';
 
 export default {

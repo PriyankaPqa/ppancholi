@@ -3,7 +3,7 @@
  */
 
 import Vue from 'vue';
-import { IError } from '@/services/httpClient';
+import { IError } from '@libs/core-lib/services/http-client';
 
 export default Vue.extend({
   data() {

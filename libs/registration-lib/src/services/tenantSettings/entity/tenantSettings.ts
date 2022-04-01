@@ -1,6 +1,6 @@
+import { IHttpClient, IHttpMock } from '@libs/core-lib//services/http-client';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { DomainBaseService } from '../../base';
-import { IHttpClient } from '../../httpClient';
-import applicationInsights from '../../../plugins/applicationInsights/applicationInsights';
 import {
   IBrandingEntityData,
   ICreateTenantSettingsRequest,
@@ -19,7 +19,7 @@ const ENTITY = 'tenant-settings';
 const USER_TENANT_CONTROLLER = 'tenants';
 
 export class TenantSettingsService extends DomainBaseService<ITenantSettingsEntity, never> implements ITenantSettingsService {
-  constructor(http: IHttpClient) {
+  constructor(http: IHttpClient | IHttpMock) {
     super(http, API_URL_SUFFIX, ENTITY);
   }
 

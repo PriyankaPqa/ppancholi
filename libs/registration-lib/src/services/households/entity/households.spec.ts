@@ -1,7 +1,7 @@
 import { ECanadaProvinces, ERegistrationMethod, ERegistrationMode } from '@/types';
 import moment from 'moment';
+import { mockHttp } from '@libs/core-lib/src/services/http-client';
 import { IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
-import { mockHttp } from '../../httpClient.mock';
 import {
   ECurrentAddressTypes,
   IMember,

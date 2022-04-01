@@ -104,7 +104,7 @@ export default mixins(individual).extend({
   name: 'Individual',
 
   async beforeRouteEnter(to: Route, from: Route, next: NavigationGuardNext) {
-    const event = await store.state.registration.event;
+    const event = store.state.registration.event;
     if (!event) {
       next((vm) => {
         vm.$router.replace({

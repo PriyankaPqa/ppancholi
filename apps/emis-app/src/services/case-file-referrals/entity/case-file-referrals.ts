@@ -1,4 +1,4 @@
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { DomainBaseService } from '@/services/base';
 import { ICaseFileReferralEntity } from '@/entities/case-file-referral';
 import { ICaseFileReferralsService } from './case-file-referrals.types';

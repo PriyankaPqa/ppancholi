@@ -1,12 +1,12 @@
 import { ActionContext, ActionTree } from 'vuex';
 import Vue from 'vue';
 import _cloneDeep from 'lodash/cloneDeep';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
-import { IRestResponse } from '@/services/httpClient';
+import { IRestResponse } from '@libs/core-lib/services/http-client';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 

@@ -1,4 +1,4 @@
-import { mockHttp } from '@/services/httpClient.mock';
+import { mockHttp } from '@libs/core-lib/src/services/http-client';
 import { DomainBaseService } from './base';
 
 const http = mockHttp();

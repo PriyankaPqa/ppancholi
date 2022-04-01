@@ -1,12 +1,11 @@
 import _cloneDeep from 'lodash/cloneDeep';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedEvent } from '@/entities/event';
 import routes from '@/constants/routes';
 import helpers from '@/ui/helpers/helpers';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStorage } from '@/store/storage';
 import { ECanadaProvinces } from '@/types';
-
 import Component from '../EventDetails.vue';
 
 const localVue = createLocalVue();
@@ -16,8 +15,8 @@ const mockEvent = mockCombinedEvent();
 describe('EventDetails.vue', () => {
   let wrapper;
   describe('Template', () => {
-    beforeEach(() => {
-      wrapper = shallowMount(Component, {
+    beforeEach(async () => {
+      wrapper = mount(Component, {
         localVue,
         propsData: {
           id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
@@ -34,6 +33,9 @@ describe('EventDetails.vue', () => {
           },
           eventTypeName() {
             return { translation: { en: 'Flood' } };
+          },
+          showRightMenu() {
+            return true;
           },
         },
         mocks: {
@@ -103,7 +105,7 @@ describe('EventDetails.vue', () => {
 
         describe('if the event has a region', () => {
           beforeEach(() => {
-            wrapper = shallowMount(Component, {
+            wrapper = mount(Component, {
               localVue,
               propsData: {
                 id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f0',
@@ -134,14 +136,15 @@ describe('EventDetails.vue', () => {
                 $storage: storage,
               },
             });
-            element = wrapper.findDataTest('event-location-region');
           });
 
           it('is rendered', async () => {
+            element = wrapper.findDataTest('event-location-region');
             expect(element.exists()).toBeTruthy();
           });
 
           it('displays the correct data when the event has a region', async () => {
+            element = wrapper.findDataTest('event-location-region');
             expect(element.text()).toEqual('mock region');
           });
         });
@@ -197,6 +200,7 @@ describe('EventDetails.vue', () => {
 
       describe('date created', () => {
         it('renders', () => {
+          console.log(wrapper.html());
           const element = wrapper.findDataTest('event-created-date');
           expect(element.exists()).toBeTruthy();
         });
@@ -434,17 +438,8 @@ describe('EventDetails.vue', () => {
     });
 
     it('should call fetchEvent', () => {
-      expect(wrapper.vm.$storage.event.actions.fetchFullResponse)
-        .toHaveBeenCalledWith(wrapper.vm.id, {
-          useEntityGlobalHandler: false,
-          useMetadataGlobalHandler: false,
-          returnEntityFullResponse: true,
-          returnMetadataFullResponse: true,
-        });
-    });
-
-    it('should toast error in case of 403', () => {
-      expect(wrapper.vm.$toasted.global.error).toHaveBeenCalledWith('eventDetail.permission.denied');
+      expect(wrapper.vm.$storage.event.actions.fetch)
+        .toHaveBeenCalledWith(wrapper.vm.id);
     });
   });
 

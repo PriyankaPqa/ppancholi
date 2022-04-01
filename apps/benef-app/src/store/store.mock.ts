@@ -16,9 +16,9 @@ import { TenantSettingsEntityModule } from '@libs/registration-lib/store/modules
 import { TenantSettingsService } from '@libs/registration-lib/services/tenantSettings/entity';
 import * as vuexModule from '@/constants/vuex-modules';
 import { tabs } from '@/store/modules/registration/tabs';
-import { httpClient } from '@/services/httpClient';
 import { mockProvider } from '@/services/provider';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
+import { httpClient } from '@/services/httpClient';
 
 const i18n = {
   t: jest.fn(),

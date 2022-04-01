@@ -164,9 +164,6 @@ export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> 
       returnEntityFullResponse: true,
       returnMetadataFullResponse: true,
     }): Promise<IFullResponseCombined<TEntity, TMetadata>> => {
-      console.log('Storage base');
-      console.log(`returnEntityFullResponse: ${returnEntityFullResponse}`);
-      console.log(`returnMetadataFullResponse: ${returnMetadataFullResponse}`);
       const requests = [this.store.dispatch(`${this.entityModuleName}/fetch`, {
         idParams,
         useGlobalHandler: useEntityGlobalHandler,

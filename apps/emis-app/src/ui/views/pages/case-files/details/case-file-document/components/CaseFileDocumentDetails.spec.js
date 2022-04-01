@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 import { mockCombinedCaseFileDocuments } from '@/entities/case-file-document';
 import { mockStorage } from '@/store/storage';
@@ -92,16 +91,17 @@ describe('CaseFileDocumentDetails', () => {
       });
 
       it('returns the right category if category is other', async () => {
-        storage.caseFileDocument.getters.categories = jest.fn(()=> ([{...mockOptionItemData()[0], isOther: true}]))
+        storage.caseFileDocument.getters.categories = jest.fn(() => ([{ ...mockOptionItemData()[0], isOther: true }]));
         await mountWrapper(false, 6, null, {
           computed:
-           { document(){
-             return {
-              ...mockDocument,
-              category: {optionItemId: mockOptionItemData()[0].id, specifiedOther: 'foo'}
-             }
-            }
-          }
+           {
+             document() {
+               return {
+                 ...mockDocument,
+                 category: { optionItemId: mockOptionItemData()[0].id, specifiedOther: 'foo' },
+               };
+             },
+           },
         });
         expect(wrapper.vm.category).toEqual('foo');
       });
@@ -160,20 +160,20 @@ describe('CaseFileDocumentDetails', () => {
   });
 
   describe('Template', () => {
-    describe('document data',  () => {
+    describe('document data', () => {
       let element;
       beforeEach(async () => {
         await mountWrapper(false, 5, null, {
-              computed: {
-                documentData() {
-                  return [{
-                    label: 'mock-label',
-                    data: 'mock-data',
-                    test: 'mock-test',
-                  }];
-                },
-              }
-            });
+          computed: {
+            documentData() {
+              return [{
+                label: 'mock-label',
+                data: 'mock-data',
+                test: 'mock-test',
+              }];
+            },
+          },
+        });
         element = wrapper.findDataTest('document_details_mock-test');
       });
       it('displays the right label', () => {
@@ -207,14 +207,14 @@ describe('CaseFileDocumentDetails', () => {
         await mountWrapper(false, 6, null, {
           computed: {
             canEdit: () => true,
-          }
+          },
         });
         element = wrapper.findDataTest('editDocument-link');
         expect(element.exists()).toBeTruthy();
         await mountWrapper(false, 6, null, {
           computed: {
             canEdit: () => false,
-          }
+          },
         });
         element = wrapper.findDataTest('editDocument-link');
         expect(element.exists()).toBeFalsy();
@@ -233,14 +233,14 @@ describe('CaseFileDocumentDetails', () => {
         await mountWrapper(false, 6, null, {
           computed: {
             canDelete: () => true,
-          }
+          },
         });
         element = wrapper.findDataTest('deleteDocument-link');
         expect(element.exists()).toBeTruthy();
         await mountWrapper(false, 6, null, {
           computed: {
             canDelete: () => false,
-          }
+          },
         });
         element = wrapper.findDataTest('deleteDocument-link');
         expect(element.exists()).toBeFalsy();
@@ -257,7 +257,7 @@ describe('CaseFileDocumentDetails', () => {
   });
 
   describe('Methods', () => {
-    describe('goToDocuments',  () => {
+    describe('goToDocuments', () => {
       it('should redirect to the case document home page', async () => {
         mountWrapper();
         wrapper.vm.goToDocuments();
@@ -273,8 +273,9 @@ describe('CaseFileDocumentDetails', () => {
         mountWrapper();
         await wrapper.vm.deleteDocument();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
-          title:'caseFile.document.confirm.delete.title',
-          messages: 'caseFile.document.confirm.delete.message'});
+          title: 'caseFile.document.confirm.delete.title',
+          messages: 'caseFile.document.confirm.delete.message',
+        });
         expect(storage.caseFileDocument.actions.deactivate)
           .toHaveBeenCalledWith({ caseFileId: 'mock-caseFile-id', id: 'mock-document-id' });
         expect(wrapper.vm.$router.push).toHaveBeenCalledWith({
@@ -287,9 +288,9 @@ describe('CaseFileDocumentDetails', () => {
         await wrapper.vm.deleteDocument();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith(
           {
-            title:'caseFile.document.confirm.delete.title',
-            messages: 'caseFile.document.confirm.delete.message'
-          }
+            title: 'caseFile.document.confirm.delete.title',
+            messages: 'caseFile.document.confirm.delete.message',
+          },
         );
         expect(storage.caseFileDocument.actions.deactivate)
           .toHaveBeenCalledTimes(0);
@@ -297,4 +298,3 @@ describe('CaseFileDocumentDetails', () => {
     });
   });
 });
-

@@ -2,7 +2,7 @@ import {
   ITeamEntity, ITeamMember,
 } from '@/entities/team';
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ITeamsService } from './teams.types';
 
 const API_URL_SUFFIX = 'team';

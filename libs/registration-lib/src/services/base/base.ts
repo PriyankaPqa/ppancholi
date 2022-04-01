@@ -1,4 +1,4 @@
-import { IHttpClient } from '../httpClient';
+import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
 import { IEntity } from '../../entities/base/base.types';
 import { IAzureSearchParams } from '../../types';
 import { IAzureCombinedSearchResult } from '../../types/interfaces/IAzureSearchResult';
@@ -11,7 +11,7 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
 
   controller: string;
 
-  constructor(protected readonly http: IHttpClient, apiUrlSuffix: string, controller: string) {
+  constructor(protected readonly http: IHttpClient | IHttpMock, apiUrlSuffix: string, controller: string) {
     this.baseApi = `${apiUrlSuffix}`;
     this.baseUrl = `${apiUrlSuffix}/${controller}`;
     this.controller = controller;

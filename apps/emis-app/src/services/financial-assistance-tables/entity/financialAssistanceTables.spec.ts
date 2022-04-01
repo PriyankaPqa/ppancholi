@@ -1,7 +1,7 @@
 import {
   mockFinancialAssistanceTableEntity, mockItemData, mockSubItemData,
 } from '@/entities/financial-assistance';
-import { mockHttp } from '@/services/httpClient.mock';
+import { mockHttp } from '@libs/core-lib/services/http-client';
 import { FinancialAssistanceTablesService } from './financialAssistanceTables';
 
 const http = mockHttp();

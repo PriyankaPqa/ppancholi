@@ -4,9 +4,9 @@ import { DomainBaseService } from '@/services/base';
 import { httpClient } from '@/services/httpClient';
 import { mockUserAccountEntities, mockUserAccountEntity } from '@/entities/user-account';
 import helpers from '@/ui/helpers/helpers';
+import { mockIRestResponse } from '@libs/core-lib/services/http-client';
 import { BaseModule } from './index';
 import { IState } from './base.types';
-import { mockIRestResponse } from '../../../services/httpClient.mock';
 
 export class BaseModuleTest extends BaseModule<any, uuid> {
   public service: DomainBaseService<any, uuid>

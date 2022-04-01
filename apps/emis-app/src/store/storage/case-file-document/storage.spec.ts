@@ -1,31 +1,29 @@
-/* eslint-disable */
 import { CASE_DOCUMENT_METADATA, CASE_DOCUMENT_ENTITIES } from '@/constants/vuex-modules';
 import { mockStore } from '@/store';
-import { mockSearchParams } from '@/test/helpers';
-import { CaseFileDocumentStorage } from './storage';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockCaseFileDocumentEntity } from '@/entities/case-file-document';
-import { mockCaseFileDocumentMetadata } from './../../../entities/case-file-document/case-file-document.mock';
+import { CaseFileDocumentStorage } from './storage';
+import { mockCaseFileDocumentMetadata } from '../../../entities/case-file-document/case-file-document.mock';
 
 const entityModuleName = CASE_DOCUMENT_ENTITIES;
 const metadataModuleName = CASE_DOCUMENT_METADATA;
 
-const documentEntity1 =  mockCaseFileDocumentEntity({id: '1', caseFileId: 'case-file-1'});
-const documentEntity2 =  mockCaseFileDocumentEntity({id: '2', caseFileId: 'case-file-2'});
-const documentMetadata1 =  mockCaseFileDocumentMetadata({id: '1'});
-const documentMetadata2 =  mockCaseFileDocumentMetadata({id: '2'});
+const documentEntity1 = mockCaseFileDocumentEntity({ id: '1', caseFileId: 'case-file-1' });
+const documentEntity2 = mockCaseFileDocumentEntity({ id: '2', caseFileId: 'case-file-2' });
+const documentMetadata1 = mockCaseFileDocumentMetadata({ id: '1' });
+const documentMetadata2 = mockCaseFileDocumentMetadata({ id: '2' });
 
 const store = mockStore({
   modules: {
     [entityModuleName]: {
       state: {
         categories: mockOptionItemData(),
-        items: [documentEntity1, documentEntity2]
+        items: [documentEntity1, documentEntity2],
       },
     },
     [metadataModuleName]: {
       state: {
-        items: [documentMetadata1, documentMetadata2]
+        items: [documentMetadata1, documentMetadata2],
       },
     },
   },
@@ -43,12 +41,10 @@ describe('>>> Case File Document Storage', () => {
       });
     });
 
-
-
     describe('getByCaseFile', () => {
       it('should return all documents of a case file, with entity and metadata', () => {
         const expected = storage.getters.getByCaseFile('case-file-1');
-        expect(expected).toEqual([{entity: documentEntity1, metadata: documentMetadata1, pinned: false}]);
+        expect(expected).toEqual([{ entity: documentEntity1, metadata: documentMetadata1, pinned: false }]);
       });
     });
   });
@@ -59,13 +55,13 @@ describe('>>> Case File Document Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchCategories`);
     });
     it('should proxy updateDocument', () => {
-      storage.actions.updateDocument({ mydoc: 'mm' } as any);
-      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateDocument`, { mydoc: 'mm' });
+      storage.actions.updateDocument(documentEntity1);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateDocument`, documentEntity1);
     });
 
     it('should proxy downloadDocumentAsUrl', () => {
-      storage.actions.downloadDocumentAsUrl({ mydoc: 'mm' } as any, true);
-      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/downloadDocumentAsUrl`, { item: { mydoc: 'mm' }, saveDownloadedFile: true });
+      storage.actions.downloadDocumentAsUrl(documentEntity1, true);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/downloadDocumentAsUrl`, { item: documentEntity1, saveDownloadedFile: true });
     });
   });
 

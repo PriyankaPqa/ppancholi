@@ -1,5 +1,5 @@
 import { mockCaseNoteEntity } from '@/entities/case-note';
-import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
+import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { CaseNotesService } from './case-notes';
 
 describe('>>> Case Note Service', () => {

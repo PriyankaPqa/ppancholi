@@ -1,7 +1,7 @@
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import {
   IMSALUserData,

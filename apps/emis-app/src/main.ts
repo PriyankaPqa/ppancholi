@@ -8,7 +8,7 @@ import '../../../libs/assets/styles/main.scss';
 // Import i18n related files
 
 import VueAxe from 'vue-axe';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import VueCookies from 'vue-cookies';
 import {
   i18n, Trans,

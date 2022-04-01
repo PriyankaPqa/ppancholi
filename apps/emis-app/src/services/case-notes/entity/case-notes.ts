@@ -1,6 +1,6 @@
 import { ICaseNoteEntity } from '@/entities/case-note';
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 
 import { ICaseNotesService } from './case-notes.types';
 

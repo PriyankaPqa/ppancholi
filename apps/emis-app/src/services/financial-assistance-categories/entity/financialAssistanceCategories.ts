@@ -1,4 +1,4 @@
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IFinancialAssistanceCategoriesService } from './financialAssistanceCategories.types';
 import { OptionItemBaseService } from '../../option-items-base/base';
 

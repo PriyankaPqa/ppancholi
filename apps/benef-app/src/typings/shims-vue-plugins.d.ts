@@ -1,5 +1,5 @@
 import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { Toasted } from 'vue-toasted';
 import { IMultilingual } from '@/types';
 

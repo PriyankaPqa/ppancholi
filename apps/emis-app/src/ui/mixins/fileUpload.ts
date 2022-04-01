@@ -1,9 +1,9 @@
 import Vue from 'vue';
 import axios, { CancelTokenStatic, CancelTokenSource } from 'axios';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
+import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
-import { IRestResponse } from '@/services/httpClient';
+import { IRestResponse } from '@libs/core-lib/services/http-client';
 import { IEntity } from '@/entities/base';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 

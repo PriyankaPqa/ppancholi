@@ -1,6 +1,6 @@
 import { ICaseNoteMetadata } from '@/entities/case-note';
 import { DomainBaseService } from '@/services/base';
-import { IHttpClient } from '@/services/httpClient';
+import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ICaseNotesMetadataService } from './case-notes.types';
 
 const apiUrlSuffix = 'case-file/case-files/{caseFileId}';

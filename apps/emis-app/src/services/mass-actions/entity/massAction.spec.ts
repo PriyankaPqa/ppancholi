@@ -1,7 +1,7 @@
-import { mockHttp } from '@/services/httpClient.mock';
 import { MassActionService } from '@/services/mass-actions/entity/massAction';
 import { MassActionRunType, MassActionType } from '@/entities/mass-action';
 import { mockMassActionCreatePayload } from '@/services/mass-actions/entity/massAction.mock';
+import { mockHttp } from '@libs/core-lib/services/http-client';
 
 const http = mockHttp();
 const service = new MassActionService(http as never);

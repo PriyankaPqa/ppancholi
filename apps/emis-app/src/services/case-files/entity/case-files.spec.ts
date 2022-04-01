@@ -1,8 +1,8 @@
 import {
   ICaseFileLabel, mockCaseFileEntity, CaseFileTriage, CaseFileStatus,
 } from '@/entities/case-file';
-import { IHttpMock, mockHttp } from '@/services/httpClient.mock';
 import { IListOption } from '@/types';
+import { IHttpMock, mockHttp } from '@libs/core-lib/services/http-client';
 import { CaseFilesService } from './case-files';
 
 describe('>>> Case File Service', () => {

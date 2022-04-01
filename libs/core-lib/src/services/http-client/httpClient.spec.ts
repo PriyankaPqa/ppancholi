@@ -4,22 +4,27 @@ import Vue from 'vue';
 import { camelKeys } from 'js-convert-case';
 import axios from 'axios';
 import { Toasted } from 'vue-toasted';
-import applicationInsights from '@libs/registration-lib/plugins/applicationInsights/applicationInsights';
-import buildQuery from '@/services/odata-query';
-import { mockHttp } from '@/services/httpClient.mock';
-import { i18n } from '@/ui/plugins/i18n';
-import { httpClient, HttpClient, IRestResponse } from './httpClient';
-import AuthenticationProvider from '../auth/AuthenticationProvider';
+import { buildQuery } from '@/services/odata-query';
+import applicationInsights from '../../plugins/applicationInsights/applicationInsights';
+import {
+  HttpClient, IRestResponse, mockHttp, mockHttpErrorResponse,
+} from '.';
 
 jest.mock('uuid');
 jest.mock('@/services/odata-query');
-jest.mock('@libs/registration-lib/plugins/applicationInsights/applicationInsights');
+jest.mock('../../plugins/applicationInsights/applicationInsights');
 
 const mockAxios = axios.create();
 mockAxios.interceptors.request.use = jest.fn();
 mockAxios.interceptors.response.use = jest.fn();
 
 let mockHttpClient: any;
+
+const mockI18n = {
+  t: jest.fn((s: string) => s),
+  te: jest.fn(),
+  silentTranslationWarn: false,
+};
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -30,7 +35,12 @@ describe('httpClient', () => {
     beforeEach(() => {
       jest.spyOn(axios, 'create').mockImplementation(() => mockAxios);
 
-      mockHttpClient = new HttpClient();
+      mockHttpClient = new HttpClient(mockI18n, {
+        authentication: true,
+        accessTokenKey: 'accessTokenKey',
+        redirect403Url: 'redirect403',
+        timerBeforeRedirection: 1000,
+      });
     });
 
     it('creates AxiosInstance with correct params', () => {
@@ -55,7 +65,16 @@ describe('httpClient', () => {
 
   describe('Methods', () => {
     beforeEach(() => {
-      mockHttpClient = new HttpClient();
+      jest.useFakeTimers();
+
+      mockI18n.te.mockImplementation(() => true);
+
+      mockHttpClient = new HttpClient(mockI18n, {
+        authentication: true,
+        accessTokenKey: 'accessTokenKey',
+        redirect403Url: 'redirect403',
+        timerBeforeRedirection: 10000,
+      });
 
       Vue.toasted = {
         global: {
@@ -130,24 +149,38 @@ describe('httpClient', () => {
         expect(result).toBeFalsy();
       });
 
-      it('returns false if is 401', async () => {
-        const result = await mockHttpClient.responseErrorHandler({
-          response: {
-            status: 401,
-          },
+      describe('401', () => {
+        it('returns false', async () => {
+          const result = await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 401));
+
+          expect(result).toBeFalsy();
         });
 
-        expect(result).toBeFalsy();
+        it('toasts session expired error', async () => {
+          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 401));
+          expect(Vue.toasted.global.error).toHaveBeenCalledWith(mockI18n.t('error.log_in_again'));
+        });
       });
 
-      it('toasts session expired error if is 401', async () => {
-        await mockHttpClient.responseErrorHandler({
-          response: {
-            status: 401,
-          },
+      describe('403', () => {
+        it('returns false', async () => {
+          const result = await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 403));
+          expect(result).toBeFalsy();
         });
 
-        expect(Vue.toasted.global.error).toHaveBeenCalledWith(i18n.t('error.log_in_again'));
+        it('calls error403Handler if global handler', async () => {
+          mockHttpClient.error403Handler = jest.fn();
+          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 403));
+          expect(mockHttpClient.error403Handler).toBeCalled();
+        });
+
+        it('should not call error403Handler if no global handler', async () => {
+          mockHttpClient.isGlobalHandlerEnabled = jest.fn(() => false);
+          mockHttpClient.error403Handler = jest.fn();
+          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 403))
+            .catch(() => ({}));
+          expect(mockHttpClient.error403Handler).not.toHaveBeenCalled();
+        });
       });
 
       it('toasts all errors if global handler activated', async () => {
@@ -197,15 +230,15 @@ describe('httpClient', () => {
           },
         });
 
-        expect(Vue.toasted.global.error).toHaveBeenCalledWith(i18n.t('error.unexpected_error'));
+        expect(Vue.toasted.global.error).toHaveBeenCalledWith(mockI18n.t('error.unexpected_error'));
       });
     });
 
     describe('requestHandler', () => {
       jest.spyOn(uuid, 'v4').mockImplementation(() => 'uuid-mock');
 
-      it('should set accessToken if existing', () => {
-        AuthenticationProvider.accessToken = 'test access token';
+      it('should set accessToken if existing and authentication is activated', () => {
+        Storage.prototype.getItem = jest.fn(() => 'test access token');
 
         const request = {
           headers: {
@@ -367,42 +400,42 @@ describe('httpClient', () => {
 
     describe('getFormattedError', () => {
       it('returns the error when meta is null', () => {
-        const res = httpClient.getFormattedError({
+        const res = mockHttpClient.getFormattedError({
           status: '409',
           code: 'errors.event-has-been-open-before-so-scheduled-open-date-must-not-change',
           title: 'useless title',
           detail: '',
           meta: null,
         });
-        expect(res).toBe('Event has been open before so scheduled open date must not change');
+        expect(res).toBe('errors.event-has-been-open-before-so-scheduled-open-date-must-not-change');
       });
 
       it('returns the error when meta is string', () => {
-        const res = httpClient.getFormattedError({
+        const res = mockHttpClient.getFormattedError({
           status: '409',
           code: 'errors.description-length-more-than-maximum',
           title: 'useless title',
           detail: '',
           meta: { MaxLength: '5' },
         });
-        expect(res).toBe('The description length must be 5 or less');
+        expect(res).toBe('errors.description-length-more-than-maximum');
       });
 
       it('returns the error when meta is multilingual', () => {
-        const res = httpClient.getFormattedError({
+        const res = mockHttpClient.getFormattedError({
           status: '409',
           code: 'errors.maximum-number-of-household-members',
           title: 'useless title',
           detail: '',
           meta: { MaximumNumberOfHouseholdMembers: { translation: { en: 'my english text', fr: 'en francais svp' } } },
         });
-        expect(res).toBe('The maximum number of household members is my english text');
+        expect(res).toBe('errors.maximum-number-of-household-members');
       });
 
       it('replaces all instances of the variable in the string', () => {
-        i18n.silentTranslationWarn = true;
+        mockI18n.silentTranslationWarn = true;
 
-        const res = httpClient.getFormattedError({
+        const res = mockHttpClient.getFormattedError({
           status: '409',
           code: 'my {param1} is really {param1}, not {param2}',
           title: 'my {param1} is really {param1}, not {param2}',
@@ -438,6 +471,35 @@ describe('httpClient', () => {
         mockHttpClient.logToAppInsights(null, exception);
         expect(applicationInsights.trackException).toBeCalledWith('https://emis-dev.crc-tech.ca/fr/events/GUID/financial-assistance/GUID http error 500',
           { error: exception, failedMethod: 'GET', failedRequestUrl: 'https://emis-dev.crc-tech.ca/fr/events/da9dde49-8f34-4bab-bac8-bba8008b4005/financial-assistance/0da3d377-36f1-40af-b5c6-a0755fa494d9' }, 'httpClient', 'GET');
+      });
+    });
+
+    describe('error403Handler', () => {
+      it('should display a toast notification', () => {
+        mockHttpClient.error403Handler();
+        expect(Vue.toasted.global.error).toHaveBeenCalledWith(mockI18n.t('error.access_denied'));
+      });
+
+      it('should redirect to redirect403 with proper language after timer', () => {
+        const backUp = window.location;
+        delete window.location;
+        window.location = {
+          origin: 'origin',
+          pathname: '/en/casefile/',
+        } as any;
+
+        const setHrefSpy = jest.fn((href) => href);
+
+        Object.defineProperty(window.location, 'href', {
+          set: setHrefSpy,
+        });
+
+        mockHttpClient.error403Handler();
+        jest.runAllTimers();
+
+        expect(setHrefSpy).toBeCalledWith('origin/en/redirect403');
+
+        window.location = backUp;
       });
     });
   });

@@ -1,6 +1,6 @@
 import moment from 'moment';
+import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
 import { IConsentInformation, IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
-import { IHttpClient } from '../../httpClient';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import {
   ECanadaProvinces, ERegistrationMode, IOptionItemData,
@@ -20,7 +20,7 @@ const API_URL_SUFFIX = 'household';
 const CONTROLLER = 'households';
 
 export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid> implements IHouseholdsService {
-  constructor(http: IHttpClient) {
+  constructor(http: IHttpClient | IHttpMock) {
     super(http, API_URL_SUFFIX, CONTROLLER);
   }
 
