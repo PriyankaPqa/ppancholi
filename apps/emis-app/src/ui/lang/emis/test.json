@@ -1427,6 +1427,8 @@
     "referral.add.title": "referral.add.title",
     "referral.consent": "referral.consent",
     "referral.consent.CRC": "referral.consent.CRC",
+    "referral.consent.text": "",
+    "referral.consent.title": "",
     "referral.create.success": "referral.create.success",
     "referral.edit.success": "referral.edit.success",
     "referral.edit.title": "referral.edit.title",

@@ -7,7 +7,11 @@
       :error-messages="errors"
       :label="$attrs.label"
       type="checkbox"
-      @change="innerValue = $event" />
+      @change="innerValue = $event">
+      <template #label>
+        <slot name="label" />
+      </template>
+    </v-checkbox>
   </validation-provider>
 </template>
 

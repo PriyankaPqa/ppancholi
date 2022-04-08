@@ -37,36 +37,30 @@
 
           <v-row>
             <v-col cols="12">
-              <validation-provider>
+              <validation-provider :rules="rules.method">
                 <v-radio-group v-model="localReferral.method" class="mt-1" row>
                   <v-col cols="6">
-                    <v-radio :label="$t('referral.method.Referral')" :value="methodsEnum.Referral" data-test="refmethod_referral" />
+                    <v-radio
+                      :label="$t('referral.method.Referral')"
+                      :value="methodsEnum.Referral"
+                      data-test="refmethod_referral"
+                      @click="resetConsent" />
                     <div class="rc-body12 grey--text ml-8">
                       {{ $t('referral.method.referral.details') }}
                     </div>
                   </v-col>
                   <v-col cols="6">
-                    <v-radio :label="$t('referral.method.Warm')" :value="methodsEnum.Warm" data-test="refmethod_warm" />
+                    <v-radio
+                      :label="$t('referral.method.Warm')"
+                      :value="methodsEnum.Warm"
+                      data-test="refmethod_warm"
+                      @click="showConsent = true" />
                     <div class="rc-body12 grey--text ml-8">
                       {{ $t('referral.method.warm.details') }}
                     </div>
                   </v-col>
                 </v-radio-group>
               </validation-provider>
-            </v-col>
-          </v-row>
-
-          <v-row v-if="showConsent">
-            <v-col cols="12" class="mb-4 grey-container">
-              <v-checkbox-with-validation
-                v-model="consentChecked"
-                data-test="checkbox-consent"
-                :rules="rules.consent"
-                class="rc-body12"
-                :label="`${$t('referral.consent')} *`" />
-              <div v-if="localReferral.referralConsentInformation" class="rc-body12 grey--text pl-8 mt-n4">
-                {{ $t('referral.consent.CRC') }}: {{ localReferral.referralConsentInformation.crcUserName }}
-              </div>
             </v-col>
           </v-row>
 
@@ -85,6 +79,11 @@
         </v-col>
       </v-row>
     </validation-observer>
+    <warm-referral-consent
+      v-if="showConsent"
+      :show.sync="showConsent"
+      :referral-consent-information.sync="localReferral.referralConsentInformation"
+      @updateMethod="updateMethod" />
   </v-container>
 </template>
 
@@ -94,12 +93,12 @@ import {
   VSelectWithValidation,
   VTextFieldWithValidation,
   VTextAreaWithValidation,
-  VCheckboxWithValidation,
 } from '@libs/component-lib/components';
 import { MAX_LENGTH_MD, MAX_LENGTH_XL } from '@/constants/validations';
 import { CaseFileReferralEntity, ReferralMethod } from '@/entities/case-file-referral';
 import { IOptionItem } from '@/entities/optionItem';
 import { IListOption } from '@/types';
+import WarmReferralConsent from './WarmReferralConsent.vue';
 
 export default Vue.extend({
   name: 'ReferralForm',
@@ -108,7 +107,7 @@ export default Vue.extend({
     VSelectWithValidation,
     VTextFieldWithValidation,
     VTextAreaWithValidation,
-    VCheckboxWithValidation,
+    WarmReferralConsent,
   },
 
   props: {
@@ -132,22 +131,17 @@ export default Vue.extend({
     return {
       localReferral,
       methodsEnum: ReferralMethod,
-      consentChecked: localReferral.referralConsentInformation?.dateTimeConsent != null,
+      showConsent: false,
     };
   },
 
   computed: {
-
     referralTypes(): Array<IOptionItem> {
       return this.$storage.caseFileReferral.getters.types(true, this.localReferral.type?.optionItemId);
     },
 
     outcomeStatuses(): Array<IOptionItem> {
       return this.$storage.caseFileReferral.getters.outcomeStatuses(true, this.localReferral.outcomeStatus?.optionItemId);
-    },
-
-    showConsent(): boolean {
-      return this.localReferral.method === this.methodsEnum.Warm;
     },
 
     rules(): Record<string, unknown> {
@@ -165,6 +159,9 @@ export default Vue.extend({
         consent: {
           required: this.showConsent ? { allowFalse: false } : false,
         },
+        method: {
+          required: true,
+        },
       };
     },
   },
@@ -176,20 +173,8 @@ export default Vue.extend({
       },
       deep: true,
     },
-    showConsent(show) {
-      if (!show) {
-        this.consentChecked = false;
-      }
-    },
-    consentChecked(checked) {
-      if (checked) {
-        const user = this.$storage.user.getters.user();
-        this.localReferral.referralConsentInformation = {
-          crcUserId: user.id, crcUserName: user.getFullName(), dateTimeConsent: new Date(),
-        };
-      } else {
-        this.localReferral.referralConsentInformation = null;
-      }
+    showConsent(isOpen: boolean) {
+      this.$emit('update:isModalOpen', isOpen);
     },
   },
 
@@ -199,6 +184,17 @@ export default Vue.extend({
   },
 
   methods: {
+    // After we click on the warm referral radio button to open the consent modal, and then we close the consent modal with Cancel, without checking the consent,
+    // the radio button for warm referral stays however checked, so we need to set it to unchecked
+    updateMethod() {
+      if (this.localReferral.referralConsentInformation == null) {
+        this.localReferral.method = null;
+      }
+    },
+
+    resetConsent() {
+      this.localReferral.referralConsentInformation = null;
+    },
   },
 });
 </script>

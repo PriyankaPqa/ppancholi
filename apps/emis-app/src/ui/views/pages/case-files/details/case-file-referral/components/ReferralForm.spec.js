@@ -19,7 +19,6 @@ describe('ReferralForm.vue', () => {
       propsData: {
         isEditMode,
         referral: new CaseFileReferralEntity(referral),
-        isDirty: false,
       },
       mocks: {
         $storage: storage,
@@ -41,14 +40,12 @@ describe('ReferralForm.vue', () => {
         doMount();
         expect(wrapper.vm.localReferral.id).toEqual(referral.id);
         expect(wrapper.vm.localReferral.outcomeStatus.optionItemId).toEqual(null);
-        expect(wrapper.vm.consentChecked).toEqual(false);
 
         referral.outcomeStatus = { optionItemId: 'abc' };
         referral.referralConsentInformation = { dateTimeConsent: new Date('2020-01-01') };
         doMount();
         expect(wrapper.vm.localReferral.id).toEqual(referral.id);
         expect(wrapper.vm.localReferral.outcomeStatus.optionItemId).toEqual('abc');
-        expect(wrapper.vm.consentChecked).toEqual(true);
       });
     });
     describe('fetches', () => {
@@ -79,62 +76,24 @@ describe('ReferralForm.vue', () => {
         expect(wrapper.vm.$storage.caseFileReferral.getters.outcomeStatuses).toHaveBeenCalledWith(true, null);
       });
     });
-
-    describe('showConsent', () => {
-      it('is true when referral method is warm', async () => {
-        doMount();
-        await wrapper.setData({ localReferral: { method: ReferralMethod.Warm } });
-        expect(wrapper.vm.showConsent).toBe(true);
-        await wrapper.setData({ localReferral: { method: ReferralMethod.Referral } });
-        expect(wrapper.vm.showConsent).toBe(false);
-      });
-
-      it('flushes consent data when false', async () => {
-        doMount();
-        await wrapper.setData({
-          localReferral: {
-            method: ReferralMethod.Warm,
-          },
-          consentChecked: true,
-        });
-        expect(wrapper.vm.localReferral.referralConsentInformation).not.toBeNull();
-        await wrapper.setData({ localReferral: { method: ReferralMethod.Referral } });
-        expect(wrapper.vm.consentChecked).toBeFalsy();
-        expect(wrapper.vm.localReferral.referralConsentInformation).toBeNull();
-      });
-    });
   });
 
-  describe('Watch', () => {
-    describe('consentChecked', () => {
-      it('flushes referralConsentInformation when false', async () => {
+  describe('Methods', () => {
+    describe('updateMethod', () => {
+      it('sets method to null if referralConsentInformation is empty', async () => {
         doMount();
-        await wrapper.setData({
-          localReferral: {
-            method: ReferralMethod.Warm,
-            referralConsentInformation: { dateTimeConsent: new Date() },
-          },
-          consentChecked: true,
-        });
-        expect(wrapper.vm.localReferral.referralConsentInformation).not.toBeNull();
-        await wrapper.setData({ consentChecked: false });
-        expect(wrapper.vm.localReferral.referralConsentInformation).toBeNull();
+        await wrapper.setData({ localReferral: { referralConsentInformation: null, method: ReferralMethod.Warm } });
+        await wrapper.vm.updateMethod();
+        expect(wrapper.vm.localReferral.method).toBeNull();
       });
+    });
 
-      it('sets referralConsentInformation when true', async () => {
+    describe('resetConsent', () => {
+      it('sets referralConsentInformation to null', async () => {
         doMount();
-        await wrapper.setData({
-          localReferral: {
-            method: ReferralMethod.Warm,
-          },
-          consentChecked: false,
-        });
+        await wrapper.setData({ localReferral: { referralConsentInformation: { dateTimeConsent: new Date() } } });
+        await wrapper.vm.resetConsent();
         expect(wrapper.vm.localReferral.referralConsentInformation).toBeNull();
-        await wrapper.setData({ consentChecked: true });
-        expect(wrapper.vm.localReferral.referralConsentInformation).not.toBeNull();
-        expect(wrapper.vm.localReferral.referralConsentInformation.dateTimeConsent).not.toBeNull();
-        expect(wrapper.vm.localReferral.referralConsentInformation.crcUserName).not.toBeNull();
-        expect(wrapper.vm.localReferral.referralConsentInformation.crcUserId).not.toBeNull();
       });
     });
   });
@@ -147,7 +106,6 @@ describe('ReferralForm.vue', () => {
         propsData: {
           isEditMode: false,
           referral: new CaseFileReferralEntity(),
-          isDirty: false,
         },
       });
     });
@@ -191,21 +149,6 @@ describe('ReferralForm.vue', () => {
       await wrapper.vm.$refs.form.validate();
       el = wrapper.findTextFieldWithValidation('referral-notes');
       expect(el.classes('invalid')).toBe(false);
-    });
-
-    test('consent is required when warm', async () => {
-      await wrapper.setData({ localReferral: { method: ReferralMethod.Warm } });
-      await wrapper.vm.$refs.form.validate();
-      el = wrapper.findTextFieldWithValidation('checkbox-consent');
-      expect(el.classes('invalid')).toBe(true);
-      await wrapper.setData({ consentChecked: true });
-      await wrapper.vm.$refs.form.validate();
-      el = wrapper.findTextFieldWithValidation('checkbox-consent');
-      expect(el.classes('invalid')).toBe(false);
-      await wrapper.setData({ consentChecked: false });
-      await wrapper.vm.$refs.form.validate();
-      el = wrapper.findTextFieldWithValidation('checkbox-consent');
-      expect(el.classes('invalid')).toBe(true);
     });
   });
 });

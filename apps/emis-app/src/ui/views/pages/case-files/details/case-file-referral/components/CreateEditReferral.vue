@@ -5,14 +5,14 @@
         :title="isEditMode ? $t('referral.edit.title') : $t('referral.add.title')"
         :show-help="false"
         :help-link="helpLink">
-        <referral-form :referral.sync="referral" :is-edit-mode="isEditMode" />
+        <referral-form :referral.sync="referral" :is-edit-mode="isEditMode" :is-modal-open.sync="isModalOpen" />
 
         <template slot="actions">
           <v-btn data-test="cancel" @click.stop="back()">
             {{ $t('common.cancel') }}
           </v-btn>
 
-          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || !dirty" @click.stop="submit">
+          <v-btn color="primary" data-test="save" :loading="loading" :disabled="failed || !dirty || isModalOpen " @click.stop="submit">
             {{ submitLabel }}
           </v-btn>
         </template>
@@ -58,6 +58,7 @@ export default Vue.extend({
       loading: false,
       error: false,
       referral: new CaseFileReferralEntity(null),
+      isModalOpen: false,
     };
   },
 
