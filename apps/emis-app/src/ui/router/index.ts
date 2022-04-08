@@ -135,11 +135,6 @@ router.beforeEach(async (to, from, next) => {
     }
   } catch (e) {
     applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');
-    loginError = true;
-  }
-
-  if (loginError) {
-    // If there is an error, redirect to the login error page
     next({
       name: routeConstants.loginError.name,
       params: {
