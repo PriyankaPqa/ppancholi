@@ -138,7 +138,7 @@ export default mixins(householdResults, household).extend({
 
       const householdData = await this.$storage.household.actions.fetch(id);
       const allShelterLocations = await this.fetchShelterLocations(householdData, false);
-      const householdCreateData = await this.buildHouseholdCreateData(householdData, allShelterLocations, false);
+      const householdCreateData = await this.buildHouseholdCreateData(householdData, allShelterLocations);
       const activeShelterLocations = allShelterLocations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
 
       this.loadingSelect = false;

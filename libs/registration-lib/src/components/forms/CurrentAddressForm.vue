@@ -112,7 +112,7 @@
             @change="onCountryChange()" />
         </v-col>
 
-        <v-col v-if="form.requiresShelterLocation() && shelterLocations.length > 0" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
+        <v-col v-if="form.requiresShelterLocation() && currentShelterLocations.length > 0" cols="12" sm="6" md="8" :class="{'py-0':compactView}">
           <v-select-with-validation
             v-model="form.shelterLocation"
             :rules="rules.shelterLocation"
@@ -120,7 +120,7 @@
             return-object
             :data-test="`${prefixDataTest}__shelterLocation`"
             :label="`${$t('registration.addresses.temporaryAddressTypes.Shelter')} *`"
-            :items="shelterLocations" />
+            :items="currentShelterLocations" />
         </v-col>
       </template>
     </v-row>
@@ -136,7 +136,7 @@ import {
   VTextFieldWithValidation,
 } from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
-import { VForm } from '../../types';
+import { EOptionItemStatus, VForm } from '../../types';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
 import {
   ECurrentAddressTypes,
@@ -294,6 +294,11 @@ export default Vue.extend({
         default:
           return '';
       }
+    },
+
+    currentShelterLocations(): IShelterLocationData[] {
+      return this.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active
+        || s.id === this.currentAddress?.shelterLocation?.id);
     },
   },
 

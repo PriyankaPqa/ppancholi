@@ -94,7 +94,7 @@ describe('HouseholdResults.vue', () => {
       it('should call fetchHouseholdCreate method with id as param', async () => {
         wrapper.vm.fetchHouseholdCreate = jest.fn();
         await wrapper.vm.viewDetails(parsedHousehold);
-        expect(wrapper.vm.fetchHouseholdCreate).toHaveBeenLastCalledWith(parsedHousehold.id, null, true);
+        expect(wrapper.vm.fetchHouseholdCreate).toHaveBeenLastCalledWith(parsedHousehold.id, null);
       });
 
       it('should save the parsed household in the store', async () => {

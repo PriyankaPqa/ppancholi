@@ -17,7 +17,7 @@
           <additional-member-form
             :api-key="apiKey"
             :i18n="i18n"
-            :shelter-locations="shelterLocationsList || shelterLocations"
+            :shelter-locations="shelterLocations"
             :same-address.sync="sameAddress"
             :gender-items="genderItems"
             :canadian-provinces-items="canadianProvincesItems"
@@ -181,11 +181,8 @@ export default Vue.extend({
     },
 
     shelterLocations(): IShelterLocationData[] {
-      const event = this.$storage.registration.getters.event();
-      if (event && event.shelterLocations) {
-        return event.shelterLocations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active);
-      }
-      return [];
+      const locations = this.shelterLocationsList || this.$storage.registration.getters.event()?.shelterLocations || [];
+      return locations.filter((s: IShelterLocationData) => s.status === EOptionItemStatus.Active || s.id === this.member?.currentAddress?.shelterLocation?.id);
     },
   },
 

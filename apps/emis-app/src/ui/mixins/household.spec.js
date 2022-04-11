@@ -54,7 +54,7 @@ describe('household', () => {
         const id = 1;
         wrapper.vm.buildHouseholdCreateData = jest.fn(() => ({}));
         const res = await wrapper.vm.fetchHouseholdCreate(id);
-        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHouseholds()[0], null, true);
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHouseholds()[0], null);
         expect(res).toEqual({});
       });
     });

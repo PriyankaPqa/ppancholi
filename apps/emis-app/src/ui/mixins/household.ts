@@ -15,9 +15,9 @@ import { CaseFileStatus } from '@/entities/case-file';
 
 export default Vue.extend({
   methods: {
-    async fetchHouseholdCreate(id: string, shelterLocations: IEventGenericLocation[] = null, onlyActiveShelters = true) {
+    async fetchHouseholdCreate(id: string, shelterLocations: IEventGenericLocation[] = null) {
       const householdRes = await this.$storage.household.actions.fetch(id);
-      const householdCreateData = await this.buildHouseholdCreateData(householdRes, shelterLocations, onlyActiveShelters);
+      const householdCreateData = await this.buildHouseholdCreateData(householdRes, shelterLocations);
       return householdCreateData;
     },
 
@@ -82,7 +82,6 @@ export default Vue.extend({
     async buildHouseholdCreateData(
       household: IHouseholdCombined,
       shelterLocations: IEventGenericLocation[] = null,
-      onlyActiveShelters = true,
     ): Promise<IHouseholdCreateData> {
       let primaryBeneficiary;
       const additionalMembers = [] as Array<IMemberEntity>;
@@ -91,7 +90,7 @@ export default Vue.extend({
 
       // We get all shelter locations of all events linked to the household case files
       if (shelterLocations === null) {
-        shelters = await this.fetchShelterLocations(household, onlyActiveShelters);
+        shelters = await this.fetchShelterLocations(household, false);
       }
 
       let genderItems = this.$storage.registration.getters.genders(true) as IOptionItemData[];

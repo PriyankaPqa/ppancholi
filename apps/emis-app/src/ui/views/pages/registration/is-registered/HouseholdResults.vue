@@ -222,7 +222,7 @@ export default mixins(household, householdResults).extend({
         this.detailsLoading = true;
         this.detailsId = household.id;
 
-        const householdCreateData = await this.fetchHouseholdCreate(household.id, null, true);
+        const householdCreateData = await this.fetchHouseholdCreate(household.id, null);
         this.$storage.registration.mutations.setHouseholdCreate(householdCreateData);
       } finally {
         this.detailsLoading = false;

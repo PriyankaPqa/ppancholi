@@ -1,6 +1,8 @@
 import { i18n } from '@/ui/plugins/i18n';
 import { createLocalVue, shallowMount } from '../../test/testSetup';
-import { ECurrentAddressTypes, mockHouseholdCreate, mockCampGround } from '../../entities/household-create';
+import {
+  ECurrentAddressTypes, mockHouseholdCreate, mockCampGround, mockShelter,
+} from '../../entities/household-create';
 
 import { mockShelterLocations } from '../../entities/event';
 import { MAX_LENGTH_MD, MAX_LENGTH_SM } from '../../constants/validations';
@@ -29,6 +31,28 @@ describe('CurrentAddressForm.vue', () => {
   });
 
   describe('Computed', () => {
+    describe('currentShelterLocations', () => {
+      it('should filter on active items', async () => {
+        expect(wrapper.vm.currentShelterLocations).toEqual(mockShelterLocations());
+        const newLocations = mockShelterLocations();
+        newLocations[0].status = 0;
+
+        await wrapper.setProps({ shelterLocations: newLocations });
+        expect(wrapper.vm.currentShelterLocations.length).toEqual(newLocations.length - 1);
+      });
+
+      it('should include inactive shelters if the current data uses it', async () => {
+        const newLocations = mockShelterLocations();
+        newLocations[0].status = 0;
+        await wrapper.setProps({ shelterLocations: newLocations });
+        expect(wrapper.vm.currentShelterLocations.length).toEqual(newLocations.length - 1);
+        const shelter = mockShelter();
+        shelter.shelterLocation.id = newLocations[0].id;
+        await wrapper.setProps({ currentAddress: shelter });
+        expect(wrapper.vm.currentShelterLocations.length).toEqual(newLocations.length);
+      });
+    });
+
     describe('addressType', () => {
       it('should be linked to addressType from household', () => {
         expect(wrapper.vm.addressType).toEqual(mockHouseholdCreate().primaryBeneficiary.currentAddress.addressType);

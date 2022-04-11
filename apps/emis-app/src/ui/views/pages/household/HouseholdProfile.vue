@@ -252,22 +252,25 @@ export default mixins(household).extend({
       return locations;
     },
 
+    household() : IHouseholdCreate {
+      return this.$storage.registration.getters.householdCreate();
+    },
+
     shelterLocations() :IEventGenericLocation[] {
       const locations:IEventGenericLocation[] = [];
       if (this.events) {
         this.events.filter((e) => e.entity?.schedule?.status === EEventStatus.Open).forEach((e) => {
           if (e.entity.shelterLocations) {
-            const activeLocations = e.entity.shelterLocations.filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active);
+            const activeLocations = e.entity.shelterLocations
+              .filter((s: IEventGenericLocation) => s.status === EEventLocationStatus.Active
+                || this.household.primaryBeneficiary?.currentAddress?.shelterLocation?.id === s.id
+                || (this.household.additionalMembers || []).filter((a) => a.currentAddress?.shelterLocation?.id === s.id).length);
             locations.push(...activeLocations);
           }
         });
       }
 
       return locations;
-    },
-
-    household() : IHouseholdCreate {
-      return this.$storage.registration.getters.householdCreate();
     },
 
     householdData() : IHouseholdCombined {

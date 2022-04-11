@@ -68,7 +68,7 @@ describe('HouseholdResults.vue', () => {
         wrapper.vm.fetchShelterLocations = jest.fn(() => [mockShelterData()]);
         wrapper.vm.buildHouseholdCreateData = jest.fn(() => {});
         await wrapper.vm.select('1');
-        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHousehold(), [mockShelterData()], false);
+        expect(wrapper.vm.buildHouseholdCreateData).toHaveBeenCalledWith(mockCombinedHousehold(), [mockShelterData()]);
       });
 
       it('should emit select event with built household and active shelter locations', async () => {
