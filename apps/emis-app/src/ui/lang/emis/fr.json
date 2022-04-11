@@ -146,6 +146,8 @@
     "caseFile.referral.notes": "Remarques",
     "caseFile.referral.outcomeStatus": "Résultat",
     "caseFile.referral.referralType": "Type",
+    "caseFile.referral.resetConsentConfirm.message": "La modification de la méthode de référence supprimera le consentement initial du bénéficiaire. \n\n Êtes-vous sur de vouloir continuer?",
+    "caseFile.referral.resetConsentConfirm.title": "Confirmer la suppression du consentement",
     "caseFile.referral.title": "Références",
     "caseFile.status.Archived": "Archivé",
     "caseFile.status.Close": "Fermé",

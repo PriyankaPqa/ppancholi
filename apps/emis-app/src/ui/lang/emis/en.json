@@ -146,6 +146,8 @@
     "caseFile.referral.notes": "Notes",
     "caseFile.referral.outcomeStatus": "Outcome Status",
     "caseFile.referral.referralType": "Type",
+    "caseFile.referral.resetConsentConfirm.message": "Changing the referral method will remove the beneficiary's original consent.\n\nAre you sure you want to proceed?",
+    "caseFile.referral.resetConsentConfirm.title": "Confirm removing consent",
     "caseFile.referral.title": "Referrals",
     "caseFile.status.Archived": "Archived",
     "caseFile.status.Close": "Closed",

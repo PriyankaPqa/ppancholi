@@ -146,6 +146,8 @@
     "caseFile.referral.notes": "caseFile.referral.notes",
     "caseFile.referral.outcomeStatus": "caseFile.referral.outcomeStatus",
     "caseFile.referral.referralType": "caseFile.referral.referralType",
+    "caseFile.referral.resetConsentConfirm.message": "",
+    "caseFile.referral.resetConsentConfirm.title": "",
     "caseFile.referral.title": "caseFile.referral.title",
     "caseFile.status.Archived": "caseFile.status.Archived",
     "caseFile.status.Close": "caseFile.status.Close",

@@ -44,7 +44,7 @@
                       :label="$t('referral.method.Referral')"
                       :value="methodsEnum.Referral"
                       data-test="refmethod_referral"
-                      @click="resetConsent" />
+                      @click="confirmResetConsent" />
                     <div class="rc-body12 grey--text ml-8">
                       {{ $t('referral.method.referral.details') }}
                     </div>
@@ -192,8 +192,21 @@ export default Vue.extend({
       }
     },
 
-    resetConsent() {
-      this.localReferral.referralConsentInformation = null;
+    async confirmResetConsent() {
+      if (this.isEditMode && this.localReferral.referralConsentInformation.dateTimeConsent) {
+        const confirmReset = await this.$confirm({
+          title: this.$t('caseFile.referral.resetConsentConfirm.title'),
+          messages: this.$t('caseFile.referral.resetConsentConfirm.message'),
+        });
+
+        if (confirmReset) {
+          this.localReferral.referralConsentInformation = null;
+        } else {
+          this.localReferral.method = ReferralMethod.Warm;
+        }
+      } else {
+        this.localReferral.referralConsentInformation = null;
+      }
     },
   },
 });

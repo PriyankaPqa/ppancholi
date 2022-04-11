@@ -88,11 +88,37 @@ describe('ReferralForm.vue', () => {
       });
     });
 
-    describe('resetConsent', () => {
-      it('sets referralConsentInformation to null', async () => {
+    describe('confirmResetConsent', () => {
+      it('sets referralConsentInformation to null if not in edit mode', async () => {
+        doMount(false);
+        await wrapper.setData({ localReferral: { referralConsentInformation: { dateTimeConsent: new Date() } } });
+        await wrapper.vm.confirmResetConsent();
+        expect(wrapper.vm.localReferral.referralConsentInformation).toBeNull();
+      });
+
+      it('opens confirmation popup if in edit mode and  warm referral method is selected', async () => {
         doMount();
         await wrapper.setData({ localReferral: { referralConsentInformation: { dateTimeConsent: new Date() } } });
-        await wrapper.vm.resetConsent();
+        await wrapper.vm.confirmResetConsent();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith({
+          title: 'caseFile.referral.resetConsentConfirm.title',
+          messages: 'caseFile.referral.resetConsentConfirm.message',
+        });
+      });
+
+      it('keeps referral method as warm if confirmation is denied', async () => {
+        doMount();
+        await wrapper.setData({ localReferral: { referralConsentInformation: { dateTimeConsent: new Date() } } });
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.confirmResetConsent();
+        expect(wrapper.vm.localReferral.method).toEqual(ReferralMethod.Warm);
+      });
+
+      it('sets referralConsentInformation to null if confirmation is accepted', async () => {
+        doMount();
+        await wrapper.setData({ localReferral: { referralConsentInformation: { dateTimeConsent: new Date() } } });
+        wrapper.vm.$confirm = jest.fn(() => true);
+        await wrapper.vm.confirmResetConsent();
         expect(wrapper.vm.localReferral.referralConsentInformation).toBeNull();
       });
     });
