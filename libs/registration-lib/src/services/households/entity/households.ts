@@ -1,9 +1,10 @@
 import moment from 'moment';
+import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
 import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
 import { IConsentInformation, IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import {
-  ECanadaProvinces, ERegistrationMode, IOptionItemData,
+  ECanadaProvinces, ERegistrationMode, IAzureSearchParams, IOptionItemData,
 } from '../../../types';
 import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
@@ -150,6 +151,10 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
 
   async getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
     return this.http.get(`${this.baseApi}/persons/metadata/${id}/history`);
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<IHouseholdEntity, unknown>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 
   /** Private methods * */
