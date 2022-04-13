@@ -389,7 +389,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
           financialAssistance: {
             approvalStatus: ApprovalStatus.Approved,
           },
-        })
+        });
 
         expect(wrapper.vm.showWarning).toBe(false);
       });
@@ -410,7 +410,7 @@ describe('CreateEditFinancialAssistance.vue', () => {
           financialAssistance: {
             approvalStatus: ApprovalStatus.New,
           },
-        })
+        });
 
         expect(wrapper.vm.showWarning).toBe(true);
       });
