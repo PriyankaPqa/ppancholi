@@ -79,13 +79,15 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
     fetchCurrentTenantSettings: async (
       context: ActionContext<ITenantSettingsEntityState, ITenantSettingsEntityState>,
     ): Promise<ITenantSettingsEntityData> => {
-      const result = await this.service.getCurrentTenantSettings();
-
-      if (result) {
-        context.commit('setCurrentTenantSettings', result);
+      try {
+        const result = await this.service.getCurrentTenantSettings();
+        if (result) {
+          context.commit('setCurrentTenantSettings', result);
+        }
+        return result;
+      } catch {
+        return null;
       }
-
-      return result;
     },
 
     createTenantSettings: async (

@@ -51,20 +51,24 @@ export class SignalR {
     const isSignedIn = await AuthenticationProvider.isAuthenticated();
 
     if (isSignedIn) {
-      const connection = new HubConnectionBuilder()
+      try {
+        const connection = new HubConnectionBuilder()
         // .configureLogging(LogLevel.Debug)
-        .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
-          accessTokenFactory: async () => AuthenticationProvider.accessToken,
-        })
+          .withUrl(process.env.VUE_APP_SIGNALR_CONNECTION_HUB_URI, {
+            accessTokenFactory: async () => AuthenticationProvider.accessToken,
+          })
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
-        .withAutomaticReconnect()
-        .build();
+          .withAutomaticReconnect()
+          .build();
 
-      await connection.start();
+        await connection.start();
 
-      this.connection = connection;
+        this.connection = connection;
 
-      this.createBindings();
+        this.createBindings();
+      } catch (e) {
+        console.error('There was an error connecting to signalR', e);
+      }
     }
   }
 

@@ -12,10 +12,8 @@ import {
   Configuration, LogLevel, CacheOptions
 } from "@azure/msal-browser";
 import {BrowserAuthOptions} from "@azure/msal-browser/dist/config/Configuration";
+import helpers from '@/ui/helpers/helpers';
 import {localStorageKeys} from "../constants/localStorage";
-import routeConstants from '@/constants/routes';
-import { Trans } from '@/ui/plugins/translation';
-import { i18n } from '@/ui/plugins/i18n';
 
 export interface Options extends Configuration {
   loginRedirectRequest?: RedirectRequest,
@@ -284,8 +282,7 @@ export class MSAL {
           'MSAL',
           'acquireToken'
         );
-        const locale = Trans.getUserLang()?.langNoISO ?? i18n.locale;
-        window.location.href = `${window.location.origin}/${locale}/${routeConstants.loginError.path}`;
+        helpers.redirectToLoginErrorPage();
       }
       return null;
     }

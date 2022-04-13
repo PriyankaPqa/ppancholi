@@ -1,8 +1,9 @@
-import { RouteConfig } from 'vue-router';
 /* eslint-disable max-len */
 
+import { RouteConfig } from 'vue-router';
 import { Trans } from '@/ui/plugins/translation';
 import store from '@/store/store';
+import helpers from '@/ui/helpers/helpers';
 import {
   USER_ACCOUNT_ENTITIES, DASHBOARD_MODULE, TENANT_SETTINGS_ENTITIES,
 } from '@/constants/vuex-modules';
@@ -131,6 +132,8 @@ export const routes: Array<RouteConfig> = [
             store.dispatch(`${TENANT_SETTINGS_ENTITIES}/fetchLogoUrl`, 'fr'),
           ]);
           await SignalR.instance.buildHubConnection();
+        } else {
+          helpers.redirectToLoginErrorPage();
         }
       }
       store.commit(`${DASHBOARD_MODULE}/setProperty`, { property: 'initLoading', value: false });

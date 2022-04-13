@@ -5,6 +5,8 @@ import { i18n } from '@/ui/plugins/i18n';
 import moment from '@/ui/plugins/moment';
 import { IRestResponse } from '@libs/core-lib/services/http-client';
 import { DateTypes, dateTypes } from '@/constants/dateTypes';
+import routes from '@/constants/routes';
+import { Trans } from '../plugins';
 
 export default {
   // Method to format the backend error messages and display in a toast.
@@ -308,6 +310,11 @@ export default {
     } catch (e) {
       return {};
     }
+  },
+
+  redirectToLoginErrorPage() {
+    const locale = Trans.getUserLang()?.langNoISO ?? i18n.locale;
+    window.location.href = `${window.location.origin}/${locale}/${routes.loginError.path}`;
   },
 
 };

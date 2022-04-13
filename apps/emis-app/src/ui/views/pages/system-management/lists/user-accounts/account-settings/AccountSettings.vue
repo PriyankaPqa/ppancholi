@@ -13,10 +13,9 @@
                 <th class="text-left">
                   <span class="fw-normal">
                     <status-chip
-                      v-if="user.entity.accountStatus"
                       data-test="userAccount-status-chip"
                       status-name="AccountStatus"
-                      :status="user.entity.accountStatus" />
+                      :status="user.entity.accountStatus || accountStatus.Inactive" />
                   </span>
                 </th>
                 <th class="text-right">
@@ -32,7 +31,7 @@
                   {{ $t('user.accountSettings.first_name') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-firstName">
-                  {{ user.metadata.givenName }}
+                  {{ basicUserData.firstName }}
                 </td>
               </tr>
               <tr>
@@ -40,7 +39,7 @@
                   {{ $t('user.accountSettings.last_name') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-lastName">
-                  {{ user.metadata.surname }}
+                  {{ basicUserData.lastName }}
                 </td>
               </tr>
               <tr>
@@ -65,7 +64,7 @@
                       :items="allAccessLevelRoles" />
                   </div>
                   <div v-else>
-                    {{ $m(user.metadata.roleName) }}
+                    {{ user.metadata.roleName? $m(user.metadata.roleName) : basicUserData.roles[0] }}
                   </div>
                 </td>
                 <td>
@@ -107,7 +106,7 @@
                   {{ $t('user.accountSettings.email_username') }}
                 </td>
                 <td class="fw-bold" data-test="userAccount-status-email">
-                  {{ user.metadata.emailAddress || user.metadata.userPrincipalName }}
+                  {{ user.metadata.emailAddress || user.metadata.userPrincipalName || basicUserData.email }}
                 </td>
               </tr>
               <tr>
@@ -201,10 +200,16 @@ export default Vue.extend({
       activeStatus: Status.Active,
       allRoles: [] as IOptionSubItem[],
       disableForL5: false,
+      accountStatus: Status,
     };
   },
 
   computed: {
+    //  Get user data for users without a role, which don't have access to the user-account API
+    basicUserData() {
+      return this.$storage.user.getters.user();
+    },
+
     roles(): IOptionItem[] {
       return this.$storage.userAccount.getters.roles();
     },
@@ -244,9 +249,8 @@ export default Vue.extend({
   },
 
   async created() {
-    await Promise.all([this.$storage.userAccount.actions.fetchRoles(), this.fetchUserAccount(this.id)]);
-
     if (!this.$hasRole('noAccess')) {
+      await Promise.all([this.$storage.userAccount.actions.fetchRoles(), this.fetchUserAccount(this.id)]);
       await this.setRoles();
     }
 

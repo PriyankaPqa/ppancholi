@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-app-bar color="white" app clipped-right clipped-left class="elevation-2">
-      <rc-tooltip bottom>
+      <rc-tooltip v-if="hasRole" bottom>
         <template #activator="{ on }">
           <v-app-bar-nav-icon id="hamburgerMenu" data-test="left-menu-trigger" v-on="on" @click.stop="handleLeftMenu" />
         </template>
@@ -96,6 +96,10 @@ export default Vue.extend({
 
     branding(): IBrandingEntity {
       return this.$storage.tenantSettings.getters.currentTenantSettings().branding;
+    },
+
+    hasRole():boolean {
+      return !this.$hasRole('noAccess');
     },
   },
 

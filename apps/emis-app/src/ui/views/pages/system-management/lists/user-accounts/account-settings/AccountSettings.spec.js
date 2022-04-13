@@ -2,6 +2,7 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockCombinedUserAccount } from '@/entities/user-account';
 import { mockOptionItemData } from '@/entities/optionItem';
 import { mockStorage } from '@/store/storage';
+import { mockUsersData, User } from '@/entities/user';
 
 import Component from './AccountSettings.vue';
 
@@ -16,6 +17,7 @@ describe('AccountSettings.vue', () => {
   storage.userAccount.getters.roles = jest.fn(() => mockOptionItemData());
   storage.userAccount.actions.fetchUserAccount = jest.fn(() => mockCombinedUserAccount());
   storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
+  storage.user.getters.user = jest.fn(() => new User(mockUsersData()[0]));
 
   const doMount = async () => {
     wrapper = mount(Component, {
@@ -23,6 +25,7 @@ describe('AccountSettings.vue', () => {
       computed: {
         user: () => mockUser,
         roleHasChanged: () => roleHasChanged,
+        basicUserData: () => new User(mockUsersData()[0]),
       },
       mocks: {
         $hasLevel: jest.fn((lv) => lv !== 'level5' || isLevel6),
@@ -66,7 +69,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.metadata.givenName);
+        expect(element.text()).toEqual(wrapper.vm.basicUserData.firstName);
       });
     });
 
@@ -81,7 +84,7 @@ describe('AccountSettings.vue', () => {
       });
 
       it('contains the right data', () => {
-        expect(element.text()).toEqual(wrapper.vm.user.metadata.surname);
+        expect(element.text()).toEqual(wrapper.vm.basicUserData.lastName);
       });
     });
 
@@ -214,6 +217,12 @@ describe('AccountSettings.vue', () => {
             searchLoading: false,
           },
         },
+      });
+    });
+
+    describe('basicUserData', () => {
+      it('returns user data from the user store', () => {
+        expect(wrapper.vm.basicUserData).toEqual(new User(mockUsersData()[0]));
       });
     });
 
