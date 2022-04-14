@@ -287,7 +287,7 @@ export default Vue.extend({
     },
     filterValues: {
       handler(newValues) {
-        this.$emit('update:formData', { name: this.formData.name, values: newValues });
+        this.$emit(EFilterFormEvents.UpdateFormData, { name: this.formData.name, values: newValues });
 
         // notify that form has been changed.
         this.$emit(EFilterFormEvents.Changed, true);
@@ -296,7 +296,7 @@ export default Vue.extend({
       deep: true,
     },
     filterName(newName: string) {
-      this.$emit('update:formData', { name: newName, values: this.formData.values });
+      this.$emit(EFilterFormEvents.UpdateFormData, { name: newName, values: this.formData.values });
 
       // notify that form has been changed.
       this.$emit(EFilterFormEvents.Changed, true);
@@ -322,7 +322,6 @@ export default Vue.extend({
     emitValidation() {
       // validate the form.
       if (this.validateForm(this.formData.values)) {
-        this.$emit(EFilterFormEvents.UpdateFormData, this.formData);
         this.$emit(EFilterFormEvents.Validate, true);
       } else {
         this.$emit(EFilterFormEvents.Validate, false);
