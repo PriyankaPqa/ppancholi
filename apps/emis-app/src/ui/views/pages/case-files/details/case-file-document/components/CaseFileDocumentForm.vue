@@ -127,7 +127,7 @@ import { IOptionItem } from '@/entities/optionItem';
 import DownloadViewDocument from './DownloadViewDocument.vue';
 
 export default mixins(fileUpload).extend({
-  name: 'DocumentForm',
+  name: 'CaseFileDocumentForm',
 
   components: {
     VSelectWithValidation,

@@ -23,7 +23,7 @@
       </template>
     </v-file-input>
     <div v-if="errors.length === 0 && errorMessages.length === 0 && showRules" class="rc-caption12 mt-n6">
-      {{ $t('common.upload.max_file.size', {x: helpers.formatBytes(maxSize)}) }}
+      {{ $t('common.upload.max_file.size', {x: helpers.formatBytes(maxSize)}) }} {{ extensions }}
     </div>
   </div>
 </template>
@@ -140,6 +140,10 @@ export default Vue.extend({
         return `.${this.allowedExtensions[0]}`;
       }
       return this.allowedExtensions.map((ext) => `.${ext}`).join(', ');
+    },
+
+    extensions(): string {
+      return `(${this.allowedExtensions.map((ext) => `.${(ext as string).toUpperCase()}`).join(' ')})`;
     },
   },
   methods: {
