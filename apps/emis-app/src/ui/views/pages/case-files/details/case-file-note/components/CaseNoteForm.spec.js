@@ -11,7 +11,7 @@ const storage = mockStorage();
 const mockCaseFileId = 'id';
 const caseNote = mockCaseNoteEntity();
 
-describe('CaseNoteFor.vue', () => {
+describe('CaseNoteForm.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
@@ -302,6 +302,14 @@ describe('CaseNoteFor.vue', () => {
       it('should emit event', () => {
         wrapper.vm.closeCaseNoteForm();
         expect(wrapper.emitted('close-case-note-form'));
+      });
+
+      it('should show confirmation dialog if data changed', async () => {
+        wrapper.vm.leavingConfirmed = jest.fn();
+
+        await wrapper.vm.closeCaseNoteForm(true);
+
+        expect(wrapper.vm.leavingConfirmed).toHaveBeenCalledTimes(1);
       });
     });
   });

@@ -9,7 +9,7 @@
       </span>
     </div>
 
-    <validation-observer ref="form" v-slot="{ invalid }" slim>
+    <validation-observer ref="form" v-slot="{ invalid, changed }" slim>
       <v-form class="full-width">
         <v-row dense>
           <v-col cols="12">
@@ -41,7 +41,7 @@
       </v-form>
 
       <div class="button-row">
-        <v-btn class="mr-3" data-test="case-note-form-cancel" :disabled="isSaving" @click="closeCaseNoteForm()">
+        <v-btn class="mr-3" data-test="case-note-form-cancel" :disabled="isSaving" @click="closeCaseNoteForm(changed)">
           {{ $t('common.cancel') }}
         </v-btn>
         <v-btn class="ml-3" color="primary" data-test="case-note-form-save" :loading="isSaving" :disabled="invalid" @click="save">
@@ -190,8 +190,17 @@ export default Vue.extend({
       this.showConfirmationDialog = false;
     },
 
-    closeCaseNoteForm() {
-      this.$emit('close-case-note-form');
+    async closeCaseNoteForm(changed?: boolean) {
+      if (!changed || await this.leavingConfirmed()) {
+        this.$emit('close-case-note-form', changed);
+      }
+    },
+
+    leavingConfirmed(): Promise<boolean> {
+      return this.$confirm({
+        title: this.$t('confirmLeaveDialog.title'),
+        messages: [this.$t('confirmLeaveDialog.message_1'), this.$t('confirmLeaveDialog.message_2')],
+      });
     },
   },
 });
