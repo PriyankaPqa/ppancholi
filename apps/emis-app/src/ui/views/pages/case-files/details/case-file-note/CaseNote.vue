@@ -13,7 +13,7 @@
     @search="debounceSearch"
     @add-button="isBeingCreated = true">
     <rc-page-loading v-if="loading" />
-    <template v-else>
+    <validation-observer v-else ref="observer" slim>
       <filter-toolbar
         class="caseNote__filter"
         :filter-key="filterKey"
@@ -50,7 +50,7 @@
           @pin-case-note="pinCaseNote"
           @saved="onSaved($event)" />
       </case-file-list-wrapper>
-    </template>
+    </validation-observer>
   </rc-page-content>
 </template>
 
@@ -86,7 +86,7 @@ export default mixins(TablePaginationSearchMixin, caseFileDetail).extend({
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
-    if (this.isBeingCreated || this.isBeingEdited) {
+    if (this.$refs.observer.flags.changed) { // add or edit case note
       const leavingConfirmed = await this.$confirm({
         title: this.titleLeave,
         messages: this.messagesLeave,

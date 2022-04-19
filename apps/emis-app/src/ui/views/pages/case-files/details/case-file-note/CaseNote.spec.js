@@ -72,33 +72,44 @@ describe('CaseNote.vue', () => {
       next = jest.fn(() => {});
     });
 
-    it('opens the dialog if isBeingCreated is true', async () => {
-      await wrapper.setData({ isBeingCreated: true });
-      await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
-      expect(wrapper.vm.$confirm).toHaveBeenCalled();
-    });
-
-    it('opens the dialog if isBeingEdited is true', async () => {
-      await wrapper.setData({ isBeingEdited: true });
+    it('opens the dialog if change is detected', async () => {
+      wrapper.vm.$refs.observer = {
+        flags: {
+          changed: true,
+        },
+      };
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
       expect(wrapper.vm.$confirm).toHaveBeenCalled();
     });
 
     it('calls next if the confirmation dialog returns true', async () => {
-      await wrapper.setData({ isBeingCreated: true });
+      wrapper.vm.$confirm = jest.fn(() => true);
+      wrapper.vm.$refs.observer = {
+        flags: {
+          changed: true,
+        },
+      };
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
       expect(next).toBeCalled();
     });
 
     it('does not call next if the confirmation dialog returns false', async () => {
       wrapper.vm.$confirm = jest.fn(() => false);
-      await wrapper.setData({ isBeingCreated: true });
+      wrapper.vm.$refs.observer = {
+        flags: {
+          changed: true,
+        },
+      };
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
       expect(next).not.toBeCalled();
     });
 
-    it('calls next if isBeingEdited and isBeingCreated are false', async () => {
-      await wrapper.setData({ isBeingCreated: false, isBeingEdited: false });
+    it('calls next if no change detected', async () => {
+      wrapper.vm.$refs.observer = {
+        flags: {
+          changed: false,
+        },
+      };
       await wrapper.vm.$options.beforeRouteLeave.call(wrapper.vm, undefined, undefined, next);
       expect(next).toBeCalled();
     });
