@@ -356,7 +356,7 @@ export default mixins(caseFileDetail).extend({
               financialAssistancePaymentId: result.id,
             },
           });
-        }, 50);
+        }, 150);
       }
       this.savingFinancialAssistance = false;
     },
