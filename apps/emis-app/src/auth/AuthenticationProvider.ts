@@ -36,8 +36,8 @@ if (process.env.VUE_APP_MOCK_AUTHENTICATION === 'true') {
     tokenRequest: {
       scopes: [apiPermissions],
     } as RedirectRequest,
-    showConsole: true, // enable console added by us
-    enableLogger: true, // process.env.NODE_ENV === 'development' && false, // enable logger by microsoft
+    showConsole: false, // enable console added by us
+    enableLogger: false, // process.env.NODE_ENV === 'development' && false, // enable logger by microsoft
     enableAppInsights: process.env.NODE_ENV === 'production',
   };
 

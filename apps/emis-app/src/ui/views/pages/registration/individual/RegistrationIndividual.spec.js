@@ -114,6 +114,7 @@ describe('Individual.vue', () => {
         wrapper.vm.$storage.registration.getters.currentTabIndex = jest.fn(() => 2);
         wrapper.vm.jump = jest.fn();
         wrapper.vm.goToHouseholdProfile = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         await wrapper.vm.next();
 
@@ -239,6 +240,7 @@ describe('Individual.vue', () => {
             },
           });
           wrapper.vm.jump = jest.fn();
+          wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
           await wrapper.vm.next();
 

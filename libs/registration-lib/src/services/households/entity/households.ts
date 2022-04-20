@@ -1,6 +1,6 @@
 import moment from 'moment';
-import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
 import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
+import { IAzureCombinedSearchResult } from '../../../types/interfaces/IAzureSearchResult';
 import { IConsentInformation, IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import {

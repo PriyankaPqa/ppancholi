@@ -77,6 +77,8 @@ import ConfirmationPrint from '@libs/registration-lib/components/confirm-registr
 import { FeatureKeys } from '@libs/registration-lib/entities/tenantSettings';
 import { localStorageKeys } from '@/constants/localStorage';
 import routes from '@/constants/routes';
+import { VForm } from '@/types';
+import helpers from '@libs/registration-lib/ui/helpers';
 import LeftMenu from '../../../components/layout/LeftMenu.vue';
 import PrivacyStatement from '../privacy-statement/PrivacyStatement.vue';
 import PersonalInformation from '../personal-information/PersonalInformation.vue';
@@ -128,6 +130,11 @@ export default mixins(individual).extend({
         // eslint-disable-next-line
         (this.$refs.recaptchaSubmit as any).execute();
       } else {
+        const isValid = await (this.$refs.form as VForm).validate();
+        if (!isValid) {
+          helpers.scrollToFirstError('app');
+          return;
+        }
         await this.next();
       }
     },

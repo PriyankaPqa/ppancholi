@@ -111,6 +111,9 @@ export default Vue.extend({
       errors.forEach((error) => {
         if (error.code === 'errors.program-with-this-name-already-exists-for-this-event') {
           this.isNameUnique = false;
+          setTimeout(() => {
+            helpers.scrollToFirstError('scrollAnchor');
+          }, 300);
         } else {
           this.$toasted.global.error(this.$t(error.code));
         }

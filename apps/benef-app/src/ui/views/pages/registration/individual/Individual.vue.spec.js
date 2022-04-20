@@ -31,6 +31,7 @@ describe('Individual.vue', () => {
 
       test('Click next button triggers method', async () => {
         wrapper.vm.next = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
 
         const btn = wrapper.findDataTest('nextButton');
         await btn.trigger('click');
@@ -127,6 +128,7 @@ describe('Individual.vue', () => {
         });
       it('should call next from mixin otherwise', async () => {
         wrapper.vm.next = jest.fn();
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
         wrapper.vm.$storage.registration.getters.currentTab = jest.fn(() => ({
           id: 'other',
         }));

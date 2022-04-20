@@ -94,6 +94,7 @@ import { VForm } from '@/types';
 import fileUpload from '@/ui/mixins/fileUpload';
 import { IMassActionEntity, MassActionEntity, MassActionMode } from '@/entities/mass-action';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
+import helpers from '@/ui/helpers/helpers';
 
 export default mixins(fileUpload).extend({
   name: 'MassActionBaseCreate',
@@ -207,6 +208,8 @@ export default mixins(fileUpload).extend({
           }
           await this.create(this.mode);
         }
+      } else {
+        helpers.scrollToFirstError('scrollAnchor');
       }
     },
 

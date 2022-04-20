@@ -12,7 +12,7 @@
       @cancel="cancel()"
       @close="cancel()"
       @submit="validate()">
-      <v-row justify="center" class="mt-12" no-gutters>
+      <v-row id="additionalMemberDialog" justify="center" class="mt-12" no-gutters>
         <v-col cols="12" xl="8" lg="8" md="11" sm="11" xs="12">
           <additional-member-form
             :api-key="apiKey"

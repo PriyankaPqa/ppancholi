@@ -77,7 +77,7 @@ export default {
     }
     const errorElements = containerElement.getElementsByClassName('failed');
     if (errorElements.length > 0) {
-      const scrollContainer = document.getElementsByClassName('content')[0];
+      const scrollContainer = containerElement.parentElement;
       scrollContainer.scrollTo({
         top: (errorElements[0] as HTMLElement).offsetTop - 90,
         behavior: 'smooth',

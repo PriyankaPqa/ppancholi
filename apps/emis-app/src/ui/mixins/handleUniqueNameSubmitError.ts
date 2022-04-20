@@ -4,6 +4,7 @@
 
 import Vue from 'vue';
 import { IError } from '@libs/core-lib/services/http-client';
+import helpers from '../helpers/helpers';
 
 export default Vue.extend({
   data() {
@@ -22,6 +23,9 @@ export default Vue.extend({
           // The call should not use the global error handler
           if (error.code === 'errors.an-entity-with-this-name-already-exists') {
             this.isNameUnique = false;
+            setTimeout(() => {
+              helpers.scrollToFirstError('scrollAnchor');
+            }, 300);
           } else {
             this.$toasted.global.error(this.$t(error.code));
           }

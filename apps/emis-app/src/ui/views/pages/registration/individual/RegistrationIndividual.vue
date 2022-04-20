@@ -272,6 +272,12 @@ export default mixins(individual).extend({
         await this.$storage.registration.actions.submitRegistration();
       }
 
+      const isValid = await (this.$refs.form as VForm).validate();
+      if (!isValid) {
+        helpers.scrollToFirstError('app');
+        return;
+      }
+
       await this.jump(this.currentTabIndex + 1);
     },
 
