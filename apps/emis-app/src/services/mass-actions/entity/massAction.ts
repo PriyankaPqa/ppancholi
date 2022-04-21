@@ -2,6 +2,7 @@ import { DomainBaseService } from '@/services/base';
 import { IHttpClient, IRestResponse } from '@libs/core-lib/services/http-client';
 import { IMassActionExportListPayload, IMassActionService } from '@/services/mass-actions/entity/massAction.types';
 import { IMassActionEntity, MassActionRunType, MassActionType } from '@/entities/mass-action/massActions.types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 
 const API_URL_SUFFIX = 'case-file';
 const CONTROLLER = 'mass-actions';
@@ -9,6 +10,10 @@ const CONTROLLER = 'mass-actions';
 export class MassActionService extends DomainBaseService<IMassActionEntity, uuid> implements IMassActionService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<IMassActionEntity, unknown>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 
   async process(id: uuid, runType: MassActionRunType): Promise<IMassActionEntity> {
