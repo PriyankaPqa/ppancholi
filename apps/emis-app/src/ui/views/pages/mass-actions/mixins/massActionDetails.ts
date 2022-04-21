@@ -2,7 +2,7 @@ import Vue from 'vue';
 import _orderBy from 'lodash/orderBy';
 import _isEmpty from 'lodash/isEmpty';
 import {
-  IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
+  IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, IMassActionRunResultMetadataModel, MassActionRunStatus,
 } from '@/entities/mass-action';
 
 export default Vue.extend({
@@ -24,6 +24,10 @@ export default Vue.extend({
         return this.massAction.metadata.lastRun;
       }
       return null;
+    },
+
+    lastRunResults(): IMassActionRunResultMetadataModel {
+      return this.lastRunMetadata?.results || {} as IMassActionRunResultMetadataModel;
     },
 
     preProcessing(): boolean {

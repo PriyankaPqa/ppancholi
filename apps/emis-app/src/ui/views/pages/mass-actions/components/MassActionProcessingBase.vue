@@ -12,7 +12,7 @@
               </div>
 
               <div v-if="processTitle" class="rc-body14 fw-bold" data-test="processTitle">
-                {{ $t(processTitle, { x: massAction.metadata.lastRun.results.successes }) }}
+                {{ $t(processTitle, { x: massAction.metadata.lastRun.results && massAction.metadata.lastRun.results.successes }) }}
               </div>
 
               <div class="rc-body12" data-test="processLabelOne">

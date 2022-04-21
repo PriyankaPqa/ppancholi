@@ -31,11 +31,11 @@
       </template>
 
       <template #[`item.${customColumns.projected}`]="{ item }">
-        {{ getLastRunMetadata(item) ? getLastRunMetadata(item) && getLastRunMetadata(item).results.total : $t('common.toBeDetermined') }}
+        {{ getLastRunMetadata(item) && getLastRunMetadata(item).results ? getLastRunMetadata(item).results.total : $t('common.toBeDetermined') }}
       </template>
 
       <template #[`item.${customColumns.successful}`]="{ item }">
-        {{ getLastRunMetadata(item) ? getLastRunMetadata(item) && getLastRunMetadata(item).results.successes : $t('common.toBeDetermined') }}
+        {{ getLastRunMetadata(item) && getLastRunMetadata(item).results ? getLastRunMetadata(item).results.successes : $t('common.toBeDetermined') }}
       </template>
 
       <template #[`item.${customColumns.totalAmount}`]="{ item }">

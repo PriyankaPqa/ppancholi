@@ -242,7 +242,7 @@ export default Vue.extend({
     },
 
     hasFailures(): boolean {
-      return this.massAction.metadata.lastRun.results.failures > 0;
+      return this.massAction.metadata.lastRun.results?.failures > 0;
     },
 
     isPreprocessed(): boolean {
