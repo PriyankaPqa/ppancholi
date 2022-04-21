@@ -66,6 +66,7 @@ export interface IBaseStorage <TEntity extends IEntity, TMetadata extends IEntit
 
 export interface IBaseGettersMock<TEntity extends IEntity, TMetadata extends IEntity> {
   get: jest.Mock<IEntityCombined<TEntity, TMetadata>>,
+  getNewlyCreatedIds: jest.Mock<Array<{id: uuid, createdOn: number}>>,
   getAll: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,
   getByCriteria: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,
   getByIds: jest.Mock<IEntityCombined<TEntity, TMetadata>[]>,

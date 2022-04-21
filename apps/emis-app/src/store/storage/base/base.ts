@@ -4,9 +4,9 @@ import _isEmpty from 'lodash/isEmpty';
 import {
   IEntity, IEntityCombined, IFullResponseCombined, Status,
 } from '@/entities/base';
-import { IStore, IState } from '@/store';
 import { IAzureSearchParams } from '@/types';
 import { IAzureTableSearchResults, ICombinedIndex } from '@/types/interfaces/IAzureSearchResult';
+import { IStore, IState } from '../../store.types';
 import { IBaseStorage } from './base.types';
 
 export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> implements IBaseStorage<TEntity, TMetadata, IdParams> {

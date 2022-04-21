@@ -37,7 +37,7 @@ module.exports = {
     }],
     'linebreak-style': 0,
     'no-shadow': 'off',
-    'no-unused-expressions': ['error', { allowTernary: true }],
+    'no-unused-expressions': ['error', { allowShortCircuit: true, allowTernary: true }],
     'import/prefer-default-export': 'off',
     'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-useless-constructor': 'off',

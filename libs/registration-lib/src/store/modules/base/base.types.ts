@@ -5,4 +5,5 @@ export interface IState<T extends IEntity> {
   newlyCreatedIds: Array<{id: uuid; createdOn: number}>;
   searchLoading: boolean;
   actionLoading: boolean;
+  maxTimeInSecondsForNewlyCreatedIds: number,
 }

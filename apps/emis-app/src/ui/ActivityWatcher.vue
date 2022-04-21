@@ -111,6 +111,7 @@ export default Vue.extend({
     },
 
     signOut() {
+      this.$signalR.unsubscribeAll();
       this.$storage.user.actions.signOut();
     },
   },

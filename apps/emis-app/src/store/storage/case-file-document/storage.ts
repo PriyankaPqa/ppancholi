@@ -1,6 +1,6 @@
-import { IStore, IState } from '@/store';
 import { ICaseFileDocumentEntity, ICaseFileDocumentMetadata } from '@/entities/case-file-document';
 import { IOptionItem } from '@/entities/optionItem';
+import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
 

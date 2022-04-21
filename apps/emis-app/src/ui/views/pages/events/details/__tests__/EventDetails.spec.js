@@ -200,7 +200,6 @@ describe('EventDetails.vue', () => {
 
       describe('date created', () => {
         it('renders', () => {
-          console.log(wrapper.html());
           const element = wrapper.findDataTest('event-created-date');
           expect(element.exists()).toBeTruthy();
         });

@@ -5,14 +5,15 @@ import { FinancialAssistancePaymentsService } from '@/services/financial-assista
 import {
   EPaymentCancellationReason, IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentStatus,
 } from '@/entities/financial-assistance-payment';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
 
 export class FinancialAssistancePaymentEntityModule extends BaseModule<IFinancialAssistancePaymentEntity, uuid> {
-  constructor(readonly service: FinancialAssistancePaymentsService) {
-    super(service);
+  constructor(readonly service: FinancialAssistancePaymentsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

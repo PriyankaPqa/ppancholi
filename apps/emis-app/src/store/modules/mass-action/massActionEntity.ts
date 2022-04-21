@@ -5,13 +5,14 @@ import { IMassActionEntity, MassActionRunType, MassActionType } from '@/entities
 import { MassActionService } from '@/services/mass-actions/entity/massAction';
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
 import { IMassActionFinancialAssistanceCreatePayload, IMassActionFundingRequestCreatePayload } from '@/services/mass-actions/entity';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
 
 import { IState } from '../base/base.types';
 
 export class MassActionEntityModule extends BaseModule <IMassActionEntity, uuid> {
-  constructor(readonly service: MassActionService) {
-    super(service);
+  constructor(readonly service: MassActionService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

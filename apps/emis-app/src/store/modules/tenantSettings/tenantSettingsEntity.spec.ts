@@ -17,6 +17,7 @@ import {
 } from '@/entities/tenantSettings';
 import { TenantSettingsEntityModule } from './tenantSettingsEntity';
 import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new TenantSettingsService(httpClient);
 let module: TenantSettingsEntityModule;
@@ -30,9 +31,11 @@ const actionContext = {
   rootGetters: {},
 } as ActionContext<ITenantSettingsEntityState, ITenantSettingsEntityState>;
 
+const signalR = mockSignalR();
+
 describe('>>> TenantSettings entity module', () => {
   beforeEach(() => {
-    module = new TenantSettingsEntityModule(service);
+    module = new TenantSettingsEntityModule(service, signalR);
   });
 
   describe('>> Getters', () => {

@@ -53,6 +53,7 @@ import sanitizeHtml from 'sanitize-html';
 
 import ActivityWatcher from '@/ui/ActivityWatcher.vue';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import helpers from '@/ui/helpers/helpers';
 
 export default {
   name: 'App',
@@ -86,6 +87,8 @@ export default {
       submitActionLabel: this.$t('common.buttons.ok'),
       cancelActionLabel: this.$t('common.buttons.no'),
       showCancelButton: true,
+      waitBeforeSignalRSubscriptions: 5000,
+      intervalSignalRSubscriptions: 3 * 1000,
     };
   },
 
@@ -99,44 +102,9 @@ export default {
   },
 
   async created() {
-    Vue.prototype.$confirm = async ({
-      title, messages, htmlContent = null, submitActionLabel = null, cancelActionLabel = null, showCancelButton = true,
-    }) => {
-      this.dialogTitle = title;
-      this.dialogMessages = messages;
-      this.submitActionLabel = submitActionLabel || this.$t('common.buttons.yes');
-      this.cancelActionLabel = cancelActionLabel || this.$t('common.buttons.no');
-      this.showCancelButton = showCancelButton;
-      this.dialogHtml = sanitizeHtml(htmlContent, { allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, '*': ['class'] } });
-      this.showConfirm = true;
+    this.createPrototypes();
 
-      const userChoice = await this.$refs.defaultConfirm.open();
-
-      this.showConfirm = false;
-      return userChoice;
-    };
-
-    Vue.prototype.$message = ({
-      title, message, submitActionLabel, minHeight, maxWidth,
-    }) => {
-      // we only show one message box at a time
-      if (this.showMessage) {
-        return false;
-      }
-      this.dialogTitle = title;
-      this.singleDialogMessage = message;
-      this.submitActionLabel = submitActionLabel || this.$t('common.buttons.ok');
-      if (minHeight) {
-        this.dialogMinHeight = minHeight;
-      }
-      if (maxWidth) {
-        this.dialogMaxWidth = maxWidth;
-      }
-
-      this.showMessage = true;
-      return true;
-    };
-
+    this.subscribeSignalR();
     // The values of environment variables are currently not loaded in components in production. TODO: investigate why and find a fix
     localStorage.setItem(localStorageKeys.googleMapsAPIKey.name, process.env.VUE_APP_GOOGLE_API_KEY);
     localStorage.setItem(localStorageKeys.baseUrl.name, process.env.VUE_APP_API_BASE_URL);
@@ -144,6 +112,55 @@ export default {
 
     // The access token will be refreshed automatically every 5 minutes
     AuthenticationProvider.startAccessTokenAutoRenewal(60000 * 5);
+  },
+
+  methods: {
+    createPrototypes() {
+      Vue.prototype.$confirm = async ({
+        title, messages, htmlContent = null, submitActionLabel = null, cancelActionLabel = null, showCancelButton = true,
+      }) => {
+        this.dialogTitle = title;
+        this.dialogMessages = messages;
+        this.submitActionLabel = submitActionLabel || this.$t('common.buttons.yes');
+        this.cancelActionLabel = cancelActionLabel || this.$t('common.buttons.no');
+        this.showCancelButton = showCancelButton;
+        this.dialogHtml = sanitizeHtml(htmlContent, { allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, '*': ['class'] } });
+        this.showConfirm = true;
+
+        const userChoice = await this.$refs.defaultConfirm.open();
+
+        this.showConfirm = false;
+        return userChoice;
+      };
+
+      Vue.prototype.$message = ({
+        title, message, submitActionLabel, minHeight, maxWidth,
+      }) => {
+        // we only show one message box at a time
+        if (this.showMessage) {
+          return false;
+        }
+        this.dialogTitle = title;
+        this.singleDialogMessage = message;
+        this.submitActionLabel = submitActionLabel || this.$t('common.buttons.ok');
+        if (minHeight) {
+          this.dialogMinHeight = minHeight;
+        }
+        if (maxWidth) {
+          this.dialogMaxWidth = maxWidth;
+        }
+
+        this.showMessage = true;
+        return true;
+      };
+    },
+
+    async subscribeSignalR() {
+      await helpers.timeout(this.waitBeforeSignalRSubscriptions);
+      setInterval(() => {
+        this.$signalR.updateSubscriptions();
+      }, this.intervalSignalRSubscriptions);
+    },
   },
 };
 </script>

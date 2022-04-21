@@ -6,12 +6,14 @@ import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
 import helpers from '@/ui/helpers/helpers';
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { ISignalRMock } from '@/ui/plugins/signal-r/signalR.types';
+import { SignalR } from '@/ui/plugins/signal-r/signalR';
 import { IRestResponse } from '@libs/core-lib/services/http-client';
 import { IRootState } from '../../store.types';
 import { IState } from './base.types';
 
 export class BaseModule<T extends IEntity, IdParams> {
-  constructor(protected service: DomainBaseService<T, IdParams>) {}
+  constructor(protected service: DomainBaseService<T, IdParams>, protected signalR: typeof SignalR | ISignalRMock) {}
 
   // Add or edit an item if the one pass as parameter is newer than existing one
   private upsert(state: IState<T>, item: T) {
@@ -26,6 +28,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     } else if (stateItem.timestamp < item.timestamp) {
       Vue.set(state.items, index, item);
     }
+    this.signalR.instance.addSubscription(item.id);
   }
 
   protected baseState = {
@@ -159,7 +162,6 @@ export class BaseModule<T extends IEntity, IdParams> {
     setSearchLoading(state: IState<T>, payload: boolean) {
       state.searchLoading = payload;
     },
-
   }
 
   public getModule = () => ({

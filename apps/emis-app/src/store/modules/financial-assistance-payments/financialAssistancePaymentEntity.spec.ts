@@ -6,6 +6,7 @@ import utils from '@libs/registration-lib/entities/value-objects/versioned-entit
 import { mockVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import { FinancialAssistancePaymentEntityModule } from './financialAssistancePaymentEntity';
 import { IFinancialAssistancePaymentEntityState } from './financialAssistancePaymentEntity.types';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new FinancialAssistancePaymentsService(httpClient);
 let module: FinancialAssistancePaymentEntityModule;
@@ -19,9 +20,11 @@ const actionContext = {
   rootGetters: {},
 } as ActionContext<IFinancialAssistancePaymentEntityState, IFinancialAssistancePaymentEntityState>;
 
+const signalR = mockSignalR();
+
 describe('Financial assistance payment entity module', () => {
   beforeEach(() => {
-    module = new FinancialAssistancePaymentEntityModule(service);
+    module = new FinancialAssistancePaymentEntityModule(service, signalR);
   });
 
   describe('actions', () => {

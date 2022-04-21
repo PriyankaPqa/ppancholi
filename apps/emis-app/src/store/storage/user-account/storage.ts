@@ -1,5 +1,4 @@
 import { IOptionItem } from '@/entities/optionItem';
-import { IStore, IState } from '@/store';
 
 import {
   FilterKey,
@@ -8,6 +7,7 @@ import {
 import { IStorage } from '@/store/storage/user-account/storage.types';
 import { Base } from '@/store/storage/base/base';
 import { IAddRoleToUserRequest } from '@/services/user-accounts/entity';
+import { IStore, IState } from '../../store.types';
 
 export class UserAccountStorage
   extends Base<IUserAccountEntity, IUserAccountMetadata, uuid> implements IStorage {

@@ -1,8 +1,8 @@
 import { IVersionedEntityCombined } from '@libs/registration-lib/entities/value-objects/versioned-entity';
-import { IStore, IState } from '@/store';
 import {
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata, PaymentStatus, EPaymentCancellationReason, IFinancialAssistancePaymentGroup,
 } from '@/entities/financial-assistance-payment';
+import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
 

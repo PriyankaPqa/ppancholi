@@ -8,14 +8,15 @@ import {
 import { IOptionItemsService } from '@/services/optionItems';
 import { ICaseFileReferralEntity } from '@/entities/case-file-referral';
 import { Status } from '@/entities/base';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
 
 export class CaseFileReferralEntityModule extends BaseModule <ICaseFileReferralEntity, { id: uuid, caseFileId: uuid }> {
-  constructor(readonly service: CaseFileReferralsService, readonly optionItemService: IOptionItemsService) {
-    super(service);
+  constructor(readonly service: CaseFileReferralsService, readonly optionItemService: IOptionItemsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

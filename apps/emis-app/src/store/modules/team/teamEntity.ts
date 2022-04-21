@@ -2,6 +2,7 @@ import { ActionTree, ActionContext } from 'vuex';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { ITeamEntity, ITeamMember } from '@/entities/team';
 import { TeamsService } from '@/services/teams/entity';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 
@@ -9,8 +10,8 @@ import { IState } from '../base/base.types';
 import { ITeamEntityState } from './teamEntity.types';
 
 export class TeamEntityModule extends BaseModule <ITeamEntity, uuid> {
-  constructor(readonly service: TeamsService) {
-    super(service);
+  constructor(readonly service: TeamsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

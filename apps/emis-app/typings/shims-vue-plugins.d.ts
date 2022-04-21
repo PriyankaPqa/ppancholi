@@ -4,8 +4,8 @@ import { Toasted } from 'vue-toasted';
 import { TranslateResult } from 'vue-i18n';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { IMultilingual } from '@/types';
-import { SignalR } from '@/ui/plugins/signalR';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import { SignalR } from '@/ui/plugins/signal-r';
 
 interface IFormatCurrency {
   (value: number): string;

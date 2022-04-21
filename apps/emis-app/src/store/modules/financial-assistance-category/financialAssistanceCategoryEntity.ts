@@ -2,12 +2,13 @@ import { ActionTree } from 'vuex';
 import { IRootState } from '@/store/store.types';
 import { IOptionItem } from '@/entities/optionItem';
 import { FinancialAssistanceCategoriesService } from '@/services/financial-assistance-categories/entity';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
 
 export class FinancialAssistanceCategoryEntityModule extends BaseModule <IOptionItem, uuid> {
-  constructor(readonly service: FinancialAssistanceCategoriesService) {
-    super(service);
+  constructor(readonly service: FinancialAssistanceCategoriesService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

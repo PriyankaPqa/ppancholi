@@ -8,14 +8,15 @@ import {
 import { IOptionItemsService } from '@/services/optionItems';
 import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
 import { Status } from '@/entities/base';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
 
 export class CaseFileDocumentEntityModule extends BaseModule <ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }> {
-  constructor(readonly service: CaseFileDocumentsService, readonly optionItemService: IOptionItemsService) {
-    super(service);
+  constructor(readonly service: CaseFileDocumentsService, readonly optionItemService: IOptionItemsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

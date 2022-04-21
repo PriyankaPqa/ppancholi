@@ -108,24 +108,6 @@ describe('RightMenu.vue', () => {
       });
     });
 
-    describe('Methods', () => {
-      describe('changeTenant', () => {
-        it('changes the url to the one from the tenant', async () => {
-          const oldWindowLoc = window.location;
-          delete window.location;
-          window.location = { href: '' };
-
-          wrapper.vm.$storage.tenantSettings.getters.get = jest.fn(() => mockCombinedTenantSettings());
-          await wrapper.setData({ currentTenantId: 'abcd' });
-          wrapper.vm.changeTenant();
-          expect(wrapper.vm.$storage.tenantSettings.getters.get).toHaveBeenCalledWith('abcd');
-          expect(window.location.href).toEqual('https://emis domain en');
-
-          window.location = oldWindowLoc;
-        });
-      });
-    });
-
     describe('Event handlers', () => {
       test('rightMenu__tenantdd change event is attached to changeTenant', async () => {
         await mountWrapper();
@@ -167,6 +149,31 @@ describe('RightMenu.vue', () => {
         await button.trigger('click');
 
         expect(wrapper.vm.$router.push).toHaveBeenCalledTimes(0);
+      });
+    });
+  });
+
+  describe('Methods', () => {
+    describe('changeTenant', () => {
+      it('changes the url to the one from the tenant', async () => {
+        const oldWindowLoc = window.location;
+        delete window.location;
+        window.location = { href: '' };
+
+        wrapper.vm.$storage.tenantSettings.getters.get = jest.fn(() => mockCombinedTenantSettings());
+        await wrapper.setData({ currentTenantId: 'abcd' });
+        wrapper.vm.changeTenant();
+        expect(wrapper.vm.$storage.tenantSettings.getters.get).toHaveBeenCalledWith('abcd');
+        expect(window.location.href).toEqual('https://emis domain en');
+
+        window.location = oldWindowLoc;
+      });
+    });
+
+    describe('logout', () => {
+      it('should call unsubscribeAll from signalR', () => {
+        wrapper.vm.logout();
+        expect(wrapper.vm.$signalR.unsubscribeAll).toBeCalledTimes(1);
       });
     });
   });

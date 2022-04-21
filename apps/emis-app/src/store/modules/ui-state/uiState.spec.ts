@@ -17,6 +17,20 @@ describe('>>> UIState module', () => {
         expect(res).toEqual({ name: 'state2' });
       });
     });
+
+    describe('getAllSearchIds', () => {
+      it('returns the flat array of all searchResultIds', () => {
+        module.state.searchStates = [
+          { key: 'key1', state: { searchResultIds: ['1'] } },
+          { key: 'key2', state: { searchResultIds: ['2'] } },
+          { key: 'key2', state: { other: ['2'] } },
+        ];
+
+        const res = module.getters.getAllSearchIds(module.state);
+
+        expect(res).toMatchObject(['1', '2']);
+      });
+    });
   });
 
   describe('>> Mutations', () => {

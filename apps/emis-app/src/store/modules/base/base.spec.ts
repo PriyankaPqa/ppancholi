@@ -7,12 +7,13 @@ import helpers from '@/ui/helpers/helpers';
 import { mockIRestResponse } from '@libs/core-lib/services/http-client';
 import { BaseModule } from './index';
 import { IState } from './base.types';
+import { ISignalRMock, mockSignalR } from '../../../ui/plugins/signal-r';
 
 export class BaseModuleTest extends BaseModule<any, uuid> {
   public service: DomainBaseService<any, uuid>
 
-  constructor(protected pService: DomainBaseService<any, uuid>) {
-    super(pService);
+  constructor(protected pService: DomainBaseService<any, uuid>, protected signalR: ISignalRMock) {
+    super(pService, signalR);
   }
 
   public state = {
@@ -31,9 +32,10 @@ export class BaseModuleTest extends BaseModule<any, uuid> {
     ...this.baseActions,
   };
 }
+const signalR = mockSignalR();
 
 const service = new DomainBaseService(httpClient, '', '');
-const baseModule = new BaseModuleTest(service);
+const baseModule = new BaseModuleTest(service, signalR);
 
 const actionContext = {
   commit: jest.fn(),
@@ -225,13 +227,13 @@ describe('Base Module', () => {
   describe('baseMutations', () => {
     describe('set', () => {
       it('should insert the entity if not existing', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const entity = mockUserAccountEntity();
         baseModule.mutations.set(baseModule.state, entity);
         expect(baseModule.state.items).toEqual([mockUserAccountEntity()]);
       });
       it('should update the entity if existing and if payload has a newer timestamp', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const entity = mockUserAccountEntity();
         const newerEntity = mockUserAccountEntity({ timestamp: '2050-04-06 06:39:04' });
         baseModule.mutations.set(baseModule.state, entity);
@@ -242,7 +244,7 @@ describe('Base Module', () => {
       });
 
       it('should do nothing if entity exists and if payload has a older timestamp', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const entity = mockUserAccountEntity();
         const newerEntity = mockUserAccountEntity({ timestamp: '2000-04-06 06:39:04' });
 
@@ -256,14 +258,14 @@ describe('Base Module', () => {
 
     describe('upsert', () => {
       it('should insert the entity if not existing', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const entity = mockUserAccountEntity();
         baseModule.mutations.upsert(baseModule.state, entity);
         expect(baseModule.state.items).toEqual([entity]);
       });
 
       it('should update the entity if existing and if payload has a newer timestamp', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const entity = mockUserAccountEntity();
         const payload = mockUserAccountEntity({ timestamp: '2050-04-06 06:39:04' });
         baseModule.mutations.upsert(baseModule.state, entity);
@@ -274,7 +276,7 @@ describe('Base Module', () => {
       });
 
       it('should do nothing if entity exists and if payload has a older timestamp', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const entity = mockUserAccountEntity();
         const payload = mockUserAccountEntity({ timestamp: '2000-04-06 06:39:04' });
 
@@ -284,18 +286,26 @@ describe('Base Module', () => {
 
         expect(baseModule.state.items).toEqual([entity]);
       });
+
+      it('should call addSubscription from signalR instance', () => {
+        const baseModule = new BaseModuleTest(service, signalR);
+        const entity = mockUserAccountEntity();
+        baseModule.mutations.upsert(baseModule.state, entity);
+
+        expect(signalR.instance.addSubscription).toBeCalledWith(entity.id);
+      });
     });
 
     describe('setAll', () => {
       it('should insert each entity if not existing', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const items = mockUserAccountEntities();
         baseModule.mutations.upsert(baseModule.state, items);
         expect(baseModule.state.items).toEqual([items]);
       });
 
       it('should update each entity if existing and if payload has a newer timestamp', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const items = mockUserAccountEntities();
         const payload = [
           mockUserAccountEntity({ id: '1', timestamp: '2050-04-06 06:39:04' }),
@@ -310,7 +320,7 @@ describe('Base Module', () => {
       });
 
       it('should do nothing if entity exists and if payload has a older timestamp', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         const items = mockUserAccountEntities();
         const payload = [
           mockUserAccountEntity({ id: '1', timestamp: '2000-04-06 06:39:04' }),
@@ -327,7 +337,7 @@ describe('Base Module', () => {
 
     describe('setSearchLoading', () => {
       it('should mutate the state', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
         mockUserAccountEntities();
         baseModule.mutations.setSearchLoading(baseModule.state, true);
         expect(baseModule.state.searchLoading).toEqual(true);
@@ -338,7 +348,7 @@ describe('Base Module', () => {
 
     describe('addNewlyCreatedId', () => {
       it('should mutate the state if the id wasnt already the array', () => {
-        const baseModule = new BaseModuleTest(service);
+        const baseModule = new BaseModuleTest(service, signalR);
 
         baseModule.mutations.addNewlyCreatedId(baseModule.state, { id: 'test me' });
         expect(baseModule.state.newlyCreatedIds[0].id).toEqual('test me');
@@ -357,7 +367,7 @@ describe('Base Module', () => {
 
   describe('getModule', () => {
     it('should return a module object to be used in initialization of the store', () => {
-      const baseModule = new BaseModuleTest(service);
+      const baseModule = new BaseModuleTest(service, signalR);
       expect(baseModule.getModule()).toEqual({
         namespaced: true,
         state: baseModule.state,

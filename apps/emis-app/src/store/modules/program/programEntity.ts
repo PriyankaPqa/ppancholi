@@ -2,13 +2,14 @@ import { ActionContext, ActionTree } from 'vuex';
 import { IProgramEntity } from '@/entities/program';
 import { IRootState } from '@/store/store.types';
 import { ProgramsService } from '@/services/programs/entity';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IProgramEntityState } from './programEntity.types';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
 
 export class ProgramEntityModule extends BaseModule<IProgramEntity, { id: uuid; eventId: uuid }> {
-  constructor(readonly service: ProgramsService) {
-    super(service);
+  constructor(readonly service: ProgramsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

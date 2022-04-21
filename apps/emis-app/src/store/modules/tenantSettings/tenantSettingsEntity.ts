@@ -15,13 +15,14 @@ import {
   TenantSettingsEntity,
 } from '@/entities/tenantSettings';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
 import { ITenantSettingsEntityState } from './tenantSettingsEntity.types';
 
 export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity, uuid> {
-  constructor(readonly service: TenantSettingsService) {
-    super(service);
+  constructor(readonly service: TenantSettingsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

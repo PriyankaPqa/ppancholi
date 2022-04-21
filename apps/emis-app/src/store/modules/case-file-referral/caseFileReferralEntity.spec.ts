@@ -10,9 +10,11 @@ import { mockCaseFileReferralEntity, ICaseFileReferralEntity } from '@/entities/
 import { Status } from '@/entities/base';
 import { CaseFileReferralEntityModule } from './caseFileReferralEntity';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new CaseFileReferralsService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
+const signalR = mockSignalR();
 let module: CaseFileReferralEntityModule;
 
 const actionContext = {
@@ -26,7 +28,7 @@ const actionContext = {
 
 describe('Case file entity module', () => {
   beforeEach(() => {
-    module = new CaseFileReferralEntityModule(service, optionItemService);
+    module = new CaseFileReferralEntityModule(service, optionItemService, signalR);
   });
 
   describe('getters', () => {

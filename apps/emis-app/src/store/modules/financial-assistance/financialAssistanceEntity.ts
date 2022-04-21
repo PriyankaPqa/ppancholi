@@ -18,13 +18,14 @@ import {
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { IProgramEntity } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IState } from '../base/base.types';
 
 export class FinancialAssistanceEntityModule extends BaseModule<IFinancialAssistanceTableEntity, uuid> {
-  constructor(readonly service: FinancialAssistanceTablesService) {
-    super(service);
+  constructor(readonly service: FinancialAssistanceTablesService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

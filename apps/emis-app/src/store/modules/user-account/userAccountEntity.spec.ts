@@ -11,10 +11,13 @@ import { httpClient } from '@/services/httpClient';
 import { IUserAccountEntityState } from './userAccountEntity.types';
 import { UserAccountEntityModule } from './userAccountEntity';
 import { mockOptionItems } from '../../../entities/optionItem/optionItem.mock';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
+
+const signalR = mockSignalR();
 
 const service = new UserAccountsService(httpClient);
 const optionsService = new OptionItemsService(httpClient);
-const module = new UserAccountEntityModule(service, optionsService);
+const module = new UserAccountEntityModule(service, optionsService, signalR);
 
 const actionContext = {
   commit: jest.fn(),

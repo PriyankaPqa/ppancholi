@@ -1,9 +1,11 @@
 export interface IGetters {
   getSearchTableState(key: string): unknown;
+  getAllSearchIds(): uuid[];
 }
 
 export interface IGettersMock {
   getSearchTableState: jest.Mock<void>;
+  getAllSearchIds: jest.Mock<uuid[]>;
 }
 
 export interface IMutations {

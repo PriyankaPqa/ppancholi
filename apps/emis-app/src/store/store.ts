@@ -69,6 +69,7 @@ import { FinancialAssistanceCategoriesService } from '@/services/financial-assis
 import { FinancialAssistancePaymentsService } from '@/services/financial-assistance-payments/entity';
 import { FinancialAssistancePaymentsMetadataService } from '@/services/financial-assistance-payments/metadata';
 import { TenantSettingsService } from '@/services/tenantSettings/entity';
+import { SignalR } from '@/ui/plugins/signal-r';
 import { FinancialAssistancePaymentEntityModule } from './modules/financial-assistance-payments/financialAssistancePaymentEntity';
 import { FinancialAssistancePaymentMetadataModule } from './modules/financial-assistance-payments/financialAssistancePaymentMetadata';
 import { TenantSettingsEntityModule } from './modules/tenantSettings/tenantSettingsEntity';
@@ -84,42 +85,95 @@ const store: StoreOptions<IRootState> = {
     version: '1.0.0', // a simple property
   },
   modules: {
-    [vuexModule.CASE_FILE_ENTITIES]: new CaseFileEntityModule(new CaseFilesService(httpClient), new OptionItemsService(httpClient)).getModule(),
-    [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(new CaseFilesMetadataService(httpClient)).getModule(),
+    [vuexModule.CASE_FILE_ENTITIES]: new CaseFileEntityModule(
+      new CaseFilesService(httpClient),
+      new OptionItemsService(httpClient),
+      SignalR,
+    ).getModule(),
 
-    [vuexModule.CASE_NOTE_ENTITIES]: new CaseNoteEntityModule(new CaseNotesService(httpClient), new OptionItemsService(httpClient)).getModule(),
-    [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(new CaseNotesMetadataService(httpClient)).getModule(),
+    [vuexModule.CASE_FILE_METADATA]: new CaseFileMetadataModule(
+      new CaseFilesMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
+
+    [vuexModule.CASE_NOTE_ENTITIES]: new CaseNoteEntityModule(
+      new CaseNotesService(httpClient),
+      new OptionItemsService(httpClient),
+      SignalR,
+    ).getModule(),
+    [vuexModule.CASE_NOTE_METADATA]: new CaseNoteMetadataModule(
+      new CaseNotesMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
 
     [vuexModule.CASE_REFERRAL_ENTITIES]: new CaseFileReferralEntityModule(
-      new CaseFileReferralsService(httpClient), new OptionItemsService(httpClient),
+      new CaseFileReferralsService(httpClient),
+      new OptionItemsService(httpClient),
+      SignalR,
     ).getModule(),
-    [vuexModule.CASE_REFERRAL_METADATA]: new CaseFileReferralMetadataModule(new CaseFileReferralsMetadataService(httpClient)).getModule(),
+
+    [vuexModule.CASE_REFERRAL_METADATA]: new CaseFileReferralMetadataModule(
+      new CaseFileReferralsMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
 
     [vuexModule.CASE_DOCUMENT_ENTITIES]: new CaseFileDocumentEntityModule(
-      new CaseFileDocumentsService(httpClient), new OptionItemsService(httpClient),
+      new CaseFileDocumentsService(httpClient),
+      new OptionItemsService(httpClient),
+      SignalR,
     ).getModule(),
-    [vuexModule.CASE_DOCUMENT_METADATA]: new CaseFileDocumentMetadataModule(new CaseFileDocumentsMetadataService(httpClient)).getModule(),
+    [vuexModule.CASE_DOCUMENT_METADATA]: new CaseFileDocumentMetadataModule(
+      new CaseFileDocumentsMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
 
-    [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]: new FinancialAssistanceEntityModule(new FinancialAssistanceTablesService(httpClient)).getModule(),
+    [vuexModule.FINANCIAL_ASSISTANCE_ENTITIES]: new FinancialAssistanceEntityModule(
+      new FinancialAssistanceTablesService(httpClient),
+      SignalR,
+    ).getModule(),
     [vuexModule.FINANCIAL_ASSISTANCE_METADATA]: new FinancialAssistanceMetadataModule(
       new FinancialAssistanceTablesMetadataService(httpClient),
+      SignalR,
     ).getModule(),
 
-    [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(new HouseholdsService(httpClient)).getModule(),
-    [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(new HouseholdMetadataService(httpClient)).getModule(),
+    [vuexModule.HOUSEHOLD_ENTITIES]: new HouseholdEntityModule(
+      new HouseholdsService(httpClient),
+    ).getModule(),
+    [vuexModule.HOUSEHOLD_METADATA]: new HouseholdMetadataModule(
+      new HouseholdMetadataService(httpClient),
+    ).getModule(),
 
-    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(new UserAccountsService(httpClient),
-      new OptionItemsService(httpClient)).getModule(),
-    [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(new UserAccountsMetadataService(httpClient)).getModule(),
+    [vuexModule.USER_ACCOUNT_ENTITIES]: new UserAccountEntityModule(
+      new UserAccountsService(httpClient),
+      new OptionItemsService(httpClient),
+      SignalR,
+    ).getModule(),
+    [vuexModule.USER_ACCOUNT_METADATA]: new UserAccountMetadataModule(
+      new UserAccountsMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
 
-    [vuexModule.EVENT_ENTITIES]: new EventEntityModule(new EventsService(httpClient), new OptionItemsService(httpClient)).getModule(),
-    [vuexModule.EVENT_METADATA]: new EventMetadataModule(new EventsMetadataService(httpClient)).getModule(),
+    [vuexModule.EVENT_ENTITIES]: new EventEntityModule(
+      new EventsService(httpClient),
+      new OptionItemsService(httpClient),
+      SignalR,
+    ).getModule(),
+    [vuexModule.EVENT_METADATA]: new EventMetadataModule(
+      new EventsMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
 
     [vuexModule.USER_MODULE]: user,
     [vuexModule.DASHBOARD_MODULE]: dashboard,
     [vuexModule.OPTION_LIST_MODULE]: optionList,
-    [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(new TeamsService(httpClient)).getModule(),
-    [vuexModule.TEAM_METADATA]: new TeamMetadataModule(new TeamsMetadataService(httpClient)).getModule(),
+    [vuexModule.TEAM_ENTITIES]: new TeamEntityModule(
+      new TeamsService(httpClient),
+      SignalR,
+    ).getModule(),
+    [vuexModule.TEAM_METADATA]: new TeamMetadataModule(
+      new TeamsMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
     [vuexModule.REGISTRATION_MODULE]: makeRegistrationModule({
       i18n,
       tabs: tabs(),
@@ -128,25 +182,41 @@ const store: StoreOptions<IRootState> = {
       mode: ERegistrationMode.CRC,
     }),
 
-    [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(new MassActionService(httpClient)).getModule(),
-    [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(new MassActionMetadataService(httpClient)).getModule(),
+    [vuexModule.MASS_ACTION_ENTITIES]: new MassActionEntityModule(
+      new MassActionService(httpClient),
+      SignalR,
+    ).getModule(),
+    [vuexModule.MASS_ACTION_METADATA]: new MassActionMetadataModule(
+      new MassActionMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
 
-    [vuexModule.PROGRAM_ENTITIES]: new ProgramEntityModule(new ProgramsService(httpClient)).getModule(),
-    [vuexModule.PROGRAM_METADATA]: new ProgramMetadataModule(new ProgramsMetadataService(httpClient)).getModule(),
+    [vuexModule.PROGRAM_ENTITIES]: new ProgramEntityModule(
+      new ProgramsService(httpClient),
+      SignalR,
+    ).getModule(),
+    [vuexModule.PROGRAM_METADATA]: new ProgramMetadataModule(
+      new ProgramsMetadataService(httpClient),
+      SignalR,
+    ).getModule(),
 
     [vuexModule.FINANCIAL_ASSISTANCE_CATEGORY_ENTITIES]: new FinancialAssistanceCategoryEntityModule(
       new FinancialAssistanceCategoriesService(httpClient),
+      SignalR,
     ).getModule(),
 
     [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_ENTITIES]: new FinancialAssistancePaymentEntityModule(
       new FinancialAssistancePaymentsService(httpClient),
+      SignalR,
     ).getModule(),
     [vuexModule.FINANCIAL_ASSISTANCE_PAYMENT_METADATA]: new FinancialAssistancePaymentMetadataModule(
       new FinancialAssistancePaymentsMetadataService(httpClient),
+      SignalR,
     ).getModule(),
 
     [vuexModule.TENANT_SETTINGS_ENTITIES]: new TenantSettingsEntityModule(
       new TenantSettingsService(httpClient),
+      SignalR,
     ).getModule(),
 
     [vuexModule.UI_STATE]: new UIStateModule(

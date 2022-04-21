@@ -27,6 +27,7 @@
     "awesome-phonenumber": "2.68.0",
     "axios": "^0.24.0",
     "core-js": "3.21.0",
+    "date-fns": "^2.28.0",
     "deepmerge": "^4.2.2",
     "dotenv": "^10.0.0",
     "fstream": "^1.0.12",

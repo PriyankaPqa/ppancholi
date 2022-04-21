@@ -21,13 +21,14 @@ import { EEventSummarySections } from '@/types';
 import { EventsService } from '@/services/events/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import { IEventEntityState } from '@/store/modules/event/eventEntity.types';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { filterAndSortActiveItems, BaseModule } from '../base';
 
 import { IState } from '../base/base.types';
 
 export class EventEntityModule extends BaseModule <IEventEntity, uuid> {
-  constructor(readonly service: EventsService, readonly optionsService:OptionItemsService) {
-    super(service);
+  constructor(readonly service: EventsService, readonly optionsService:OptionItemsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

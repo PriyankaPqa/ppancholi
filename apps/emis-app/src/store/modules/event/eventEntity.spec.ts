@@ -18,13 +18,15 @@ import helpers from '@/ui/helpers/helpers';
 import { EventsService } from '@/services/events/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import { EEventSummarySections } from '@/types';
+import { mockSignalR } from '@/ui/plugins/signal-r';
 import { EventEntityModule } from './eventEntity';
 
 import { IEventEntityState } from './eventEntity.types';
 
 const service = new EventsService(httpClient);
 const optionsService = new OptionItemsService(httpClient);
-const module = new EventEntityModule(service, optionsService);
+const signalR = mockSignalR();
+const module = new EventEntityModule(service, optionsService, signalR);
 
 const actionContext = {
   commit: jest.fn(),

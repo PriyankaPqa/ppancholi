@@ -1,10 +1,9 @@
-import { IStore, IState } from '@/store';
-
 import { IStorage } from '@/store/storage/case-note/storage.types';
 import { IOptionItem } from '@/entities/optionItem';
 import { IAzureSearchParams } from '@/types';
 import { ICaseNoteEntity, ICaseNoteMetadata } from '@/entities/case-note';
 import { ICombinedIndex, IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
+import { IStore, IState } from '../../store.types';
 
 import { Base } from '../base';
 

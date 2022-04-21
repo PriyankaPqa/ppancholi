@@ -1,5 +1,5 @@
-import { IStore, IState } from '@/store';
 import { IProgramEntity, IProgramMetadata } from '@/entities/program';
+import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
 

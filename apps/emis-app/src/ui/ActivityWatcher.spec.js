@@ -83,6 +83,11 @@ describe('ActivityWatcher', () => {
         wrapper.vm.signOut();
         expect(wrapper.vm.$storage.user.actions.signOut).toHaveBeenCalledTimes(1);
       });
+
+      it('should call unsubscribeAll from signalR', () => {
+        wrapper.vm.signOut();
+        expect(wrapper.vm.$signalR.unsubscribeAll).toHaveBeenCalledTimes(1);
+      });
     });
   });
 

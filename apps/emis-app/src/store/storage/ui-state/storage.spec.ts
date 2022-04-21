@@ -23,6 +23,14 @@ describe('>>> UIState Storage', () => {
         expect(storageGetter).toEqual(storeGetter);
       });
     });
+
+    describe('getAllSearchIds', () => {
+      it('should proxy getAllSearchIds', () => {
+        const storageGetter = storage.getters.getAllSearchIds();
+        const storeGetter = store.getters[`${entityModuleName}/getAllSearchIds`];
+        expect(storageGetter).toEqual(storeGetter);
+      });
+    });
   });
 
   describe('>> Mutations', () => {

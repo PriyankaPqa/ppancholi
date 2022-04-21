@@ -6,13 +6,14 @@ import {
 import { ICaseNoteEntityState } from '@/store/modules/case-note/caseNoteEntity.types';
 import { IOptionItemsService } from '@/services/optionItems';
 import { ICaseNoteEntity } from '@/entities/case-note';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';
 
 export class CaseNoteEntityModule extends BaseModule <ICaseNoteEntity, uuid> {
-  constructor(readonly service: CaseNotesService, readonly optionItemService: IOptionItemsService) {
-    super(service);
+  constructor(readonly service: CaseNotesService, readonly optionItemService: IOptionItemsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

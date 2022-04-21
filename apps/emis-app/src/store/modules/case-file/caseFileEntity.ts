@@ -12,12 +12,13 @@ import { ICaseFileEntityState } from '@/store/modules/case-file/caseFileEntity.t
 import { IOptionItemsService } from '@/services/optionItems';
 import { IListOption } from '@/types';
 import { IUserAccountEntity } from '@/entities/user-account';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule, filterAndSortActiveItems, IState } from '../base';
 import { IRootState } from '../../store.types';
 
 export class CaseFileEntityModule extends BaseModule <ICaseFileEntity, uuid> {
-  constructor(readonly service: CaseFilesService, readonly optionItemService: IOptionItemsService) {
-    super(service);
+  constructor(readonly service: CaseFilesService, readonly optionItemService: IOptionItemsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

@@ -10,9 +10,11 @@ import { mockCaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/
 import { Status } from '@/entities/base';
 import { CaseFileDocumentEntityModule } from './caseFileDocumentEntity';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new CaseFileDocumentsService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
+const signalR = mockSignalR();
 let module: CaseFileDocumentEntityModule;
 
 const actionContext = {
@@ -26,7 +28,7 @@ const actionContext = {
 
 describe('Case file document entity module', () => {
   beforeEach(() => {
-    module = new CaseFileDocumentEntityModule(service, optionItemService);
+    module = new CaseFileDocumentEntityModule(service, optionItemService, signalR);
   });
 
   describe('getters', () => {

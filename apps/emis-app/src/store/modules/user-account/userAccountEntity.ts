@@ -8,14 +8,15 @@ import {
 import { IAddRoleToUserRequest, IEditFilterRequest, UserAccountsService } from '@/services/user-accounts/entity';
 import { IUserAccountEntityState } from '@/store/modules/user-account/userAccountEntity.types';
 import { OptionItemsService } from '@/services/optionItems';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { BaseModule } from '../base';
 import { IRootState } from '../../store.types';
 
 import { IState } from '../base/base.types';
 
 export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uuid> {
-  constructor(readonly service: UserAccountsService, readonly optionsService:OptionItemsService) {
-    super(service);
+  constructor(readonly service: UserAccountsService, readonly optionsService:OptionItemsService, protected signalR: typeof SignalR | ISignalRMock) {
+    super(service, signalR);
   }
 
   public getModule = () => ({

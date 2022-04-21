@@ -1,4 +1,4 @@
-import { IStore, IState } from '@/store';
+import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 
 export class UIStateStorage implements IStorage {
@@ -12,8 +12,8 @@ export class UIStateStorage implements IStorage {
   }
 
   private getters = {
-    getSearchTableState:
-      (key: string) => this.store.getters[`${this.entityModuleName}/getSearchTableState`](key),
+    getSearchTableState: (key: string) => this.store.getters[`${this.entityModuleName}/getSearchTableState`](key),
+    getAllSearchIds: () => this.store.getters[`${this.entityModuleName}/getAllSearchIds`],
   }
 
   private mutations = {

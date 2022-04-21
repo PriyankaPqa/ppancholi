@@ -5,13 +5,13 @@ import {
   ICaseFileCount,
   ICaseFileCombined,
 } from '@/entities/case-file/case-file.types';
-import { IStore, IState } from '@/store';
 import { IStorage } from '@/store/storage/case-file/storage.types';
 import { IOptionItem } from '@/entities/optionItem';
 import { IListOption } from '@/types';
 
 import { ICreateCaseFileRequest } from '@/services/case-files/entity';
 import { EEventStatus } from '@/entities/event';
+import { IStore, IState } from '../../store.types';
 import { Base } from '../base';
 
 export class CaseFileStorage

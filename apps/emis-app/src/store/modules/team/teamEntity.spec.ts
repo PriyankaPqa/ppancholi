@@ -4,9 +4,11 @@ import { TeamsService } from '@/services/teams/entity';
 import { mockTeamMembersData, mockTeamsDataStandard, mockTeamsDataAddHoc } from '@/entities/team';
 import { TeamEntityModule } from './teamEntity';
 import { ITeamEntityState } from './teamEntity.types';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
+const signalR = mockSignalR();
 const service = new TeamsService(httpClient);
-const module = new TeamEntityModule(service);
+const module = new TeamEntityModule(service, signalR);
 
 const actionContext = {
   commit: jest.fn(),

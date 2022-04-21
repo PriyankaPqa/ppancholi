@@ -4,7 +4,9 @@ import { mockProgramEntity } from '@/entities/program';
 import { ProgramsService } from '@/services/programs/entity';
 import { ProgramEntityModule } from './programEntity';
 import { IProgramEntityState } from './programEntity.types';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
+const signalR = mockSignalR();
 const service = new ProgramsService(httpClient);
 let module: ProgramEntityModule;
 
@@ -19,7 +21,7 @@ const actionContext = {
 
 describe('>>> Program entity module', () => {
   beforeEach(() => {
-    module = new ProgramEntityModule(service);
+    module = new ProgramEntityModule(service, signalR);
   });
 
   describe('>> Actions', () => {

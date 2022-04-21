@@ -15,6 +15,7 @@ import { mockOptionItems } from '@/entities/optionItem';
 import { FinancialAssistanceEntityModule } from './financialAssistanceEntity';
 
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
 const service = new FinancialAssistanceTablesService(httpClient);
 let module: FinancialAssistanceEntityModule;
@@ -40,6 +41,7 @@ const mockState: IFinancialAssistanceEntityState = {
   newSubItem: mockSubItems()[1],
   searchLoading: false,
 };
+const signalR = mockSignalR();
 
 const actionContext = {
   commit: jest.fn(),
@@ -52,7 +54,7 @@ const actionContext = {
 
 describe('>>> Financial Assistance Module', () => {
   beforeEach(() => {
-    module = new FinancialAssistanceEntityModule(service);
+    module = new FinancialAssistanceEntityModule(service, signalR);
   });
 
   describe('>> Getters', () => {

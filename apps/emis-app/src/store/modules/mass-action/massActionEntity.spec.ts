@@ -3,9 +3,11 @@ import { mockMassActionCreatePayload, mockMassActionService } from '@/services/m
 import { IMassActionEntityState } from '@/store/modules/mass-action/massActionEntity.types';
 import { MassActionEntityModule } from '@/store/modules/mass-action/massActionEntity';
 import { MassActionRunType, MassActionType } from '@/entities/mass-action';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
+const signalR = mockSignalR();
 const service = mockMassActionService();
-const module = new MassActionEntityModule(service as never);
+const module = new MassActionEntityModule(service as never, signalR);
 
 const actionContext = {
   commit: jest.fn(),

@@ -9,7 +9,7 @@ import {
 } from '@/constants/vuex-modules';
 import { FeatureKeys } from '@/entities/tenantSettings';
 import Routes from '../../constants/routes';
-import { SignalR } from '../plugins/signalR';
+import { SignalR } from '../plugins/signal-r/signalR';
 
 // /* ADD ROUTES FOR DASHBOARD HERE */
 const AssessmentsLayout = () => import(/* webpackChunkName: "assessments" */ '@/ui/views/pages/assessments/layout/AssessmentsLayout.vue');

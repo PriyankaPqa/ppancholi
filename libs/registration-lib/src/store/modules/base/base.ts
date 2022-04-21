@@ -32,6 +32,7 @@ export class BaseModule<T extends IEntity, IdParams> {
     newlyCreatedIds: [] as Array<{id: uuid; createdOn: number}>,
     searchLoading: false,
     actionLoading: false,
+    maxTimeInSecondsForNewlyCreatedIds: 60,
   }
 
   protected baseGetters = {
@@ -40,6 +41,10 @@ export class BaseModule<T extends IEntity, IdParams> {
     // eslint-disable-next-line
     getByCriteria: (state:IState<T>) => (query: string, searchAll: boolean, searchAmong: string[]) => helpers.filterCollectionByValue(state.items, query, searchAll, searchAmong),
     getByIds: (state: IState<T>) => (ids: uuid[]) => ids.map((id) => _cloneDeep(state.items.find((e) => e.id === id))),
+    getNewlyCreatedIds: (state:IState<T>) => (baseDate?: Date) => {
+      const maxTime = (baseDate || new Date()).getTime() - state.maxTimeInSecondsForNewlyCreatedIds * 1000;
+      return _cloneDeep(state.newlyCreatedIds.filter((i) => i.createdOn > maxTime));
+    },
   }
 
   protected baseActions = {

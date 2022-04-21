@@ -23,21 +23,25 @@ import features from '@/ui/plugins/features';
 import '@/ui/plugins/vee-validate';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
 
-import { SignalR } from '@/ui/plugins/signalR';
 import prepareServices from '@/ui/plugins/services';
 import prepareStorage from '@/ui/plugins/storage';
+import { SignalRService } from '@/services/signal-r';
 
+import { httpClient } from '@/services/httpClient';
+import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import store from './store/store';
-
 import router from './ui/router';
 import App from './ui/App.vue';
 
 prepareServices(store);
+
 const storage = prepareStorage(store);
+const signalRService = new SignalRService(httpClient);
 
 SignalR.Initialize({
+  service: signalRService,
   storage,
-  showConsole: false,
+  showConsole: true,
 });
 
 applicationInsights.initialize({

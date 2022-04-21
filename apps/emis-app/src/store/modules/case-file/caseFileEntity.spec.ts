@@ -12,10 +12,12 @@ import {
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
 import { CaseFileEntityModule } from './caseFileEntity';
 import { ICaseFileEntityState } from './caseFileEntity.types';
+import { mockSignalR } from '../../../ui/plugins/signal-r';
 
+const signalR = mockSignalR();
 const service = new CaseFilesService(httpClient);
 const optionItemService = new OptionItemsService(httpClient);
-const module = new CaseFileEntityModule(service, optionItemService);
+const module = new CaseFileEntityModule(service, optionItemService, signalR);
 
 const actionContext = {
   commit: jest.fn(),

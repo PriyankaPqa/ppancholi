@@ -1,15 +1,27 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable no-console */
 import _orderBy from 'lodash/orderBy';
 import _camelCase from 'lodash/camelCase';
+import _pick from 'lodash/pick';
+import _omit from 'lodash/omit';
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import Vue from 'vue';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import { IMassActionEntityData, MassActionRunStatus } from '@/entities/mass-action';
 import { i18n } from '@/ui/plugins/i18n';
-import { IStorage } from '@/store/storage';
 import { IEntity } from '@/entities/base';
+import { ISignalRService, ISignalRServiceMock } from '@/services/signal-r';
+import { sub } from 'date-fns';
+import { IStorage } from '../../../store/storage/storage.types';
+import { ISignalR } from './signalR.types';
 
-export class SignalR {
+export interface IOptions {
+  service: ISignalRService | ISignalRServiceMock,
+  storage: IStorage,
+  showConsole: boolean,
+}
+
+export class SignalR implements ISignalR {
   private static _instance: SignalR;
 
   public connection: HubConnection;
@@ -18,21 +30,38 @@ export class SignalR {
 
   private readonly showConsole: boolean;
 
-  private storage: IStorage;
+  private readonly storage: IStorage;
 
-  private constructor({ storage, showConsole }: {storage: IStorage; showConsole: boolean}) {
+  private service: ISignalRService;
+
+  public subscriptions: Record<string, uuid[]>;
+
+  private lastSubscribedIds: uuid[]
+
+  private lastSubscribedNewlyCreatedIds: uuid[]
+
+  constructor({
+    service, storage, showConsole,
+  }: IOptions) {
+    this.service = service;
     this.storage = storage;
     this.showConsole = showConsole;
+    this.lastSubscribedIds = [];
+    this.lastSubscribedNewlyCreatedIds = [];
+    this.subscriptions = {};
   }
 
-  public static Initialize({ storage, showConsole }: {storage: IStorage; showConsole: boolean}) {
-    SignalR._instance = new SignalR({ storage, showConsole });
+  public static Initialize({
+    service, storage, showConsole,
+  }: IOptions) {
+    SignalR._instance = new SignalR({
+      service, storage, showConsole,
+    });
     Vue.mixin({
       beforeCreate() {
         this.$signalR = SignalR.instance;
       },
     });
-
     return SignalR.instance;
   }
 
@@ -41,10 +70,10 @@ export class SignalR {
   }
 
   public async buildHubConnection() {
-    console.log('building connection signalr');
+    this.showConsole && console.log('building connection signalr');
 
     if (this.connection) {
-      console.log('stopping previous connection signalr');
+      this.showConsole && console.log('stopping previous connection signalr');
       await this.connection.stop();
     }
 
@@ -66,6 +95,19 @@ export class SignalR {
         this.connection = connection;
 
         this.createBindings();
+
+        window.addEventListener('beforeunload', async (e) => {
+          await this.unsubscribeAll();
+          e.preventDefault();
+          e.returnValue = false;
+        });
+
+        this.connection.onreconnected((connectionId) => {
+          this.showConsole && console.log(`You are reconnected with connectionId ${connectionId}`);
+          // We reset the lastSubscribedIds, so we can re-subscribe to what we subscribed with previous connectionId
+          this.lastSubscribedIds = [];
+          this.subscribe();
+        });
       } catch (e) {
         console.error('There was an error connecting to signalR', e);
       }
@@ -103,7 +145,7 @@ export class SignalR {
   }
 
   private massActionNotifications() {
-    this.connection.on('caseFile.MassActionRunCompleted', (entity: IMassActionEntityData) => {
+    this.connection.on('case-file.MassActionRunCompleted', (entity: IMassActionEntityData) => {
       const lastRun = _orderBy(entity.runs, 'timestamp', 'desc')[0];
       const currentUserId = this.storage.user.getters.userId();
 
@@ -392,9 +434,7 @@ export class SignalR {
     });
   }
 
-  private listenForChanges<T extends IEntity>(
-    { domain, entityName, action }: {domain: string, entityName: string, action?: (entity: T)=> void},
-  ) {
+  private listenForChanges<T extends IEntity>({ domain, entityName, action }: {domain: string, entityName: string, action?: (entity: T)=> void}) {
     this.connection.on(`${domain}.${entityName}Updated`, (entity) => {
       if (action) {
         action(entity);
@@ -410,11 +450,9 @@ export class SignalR {
     });
   }
 
-  private listenForOptionItemChanges(
-    {
-      domain, optionItemName, cacheResetMutationName, mutationDomain = null,
-    }: {domain: string, optionItemName: string, cacheResetMutationName: string, mutationDomain?: string},
-  ) {
+  private listenForOptionItemChanges({
+    domain, optionItemName, cacheResetMutationName, mutationDomain = null,
+  }: {domain: string, optionItemName: string, cacheResetMutationName: string, mutationDomain?: string}) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const storage = this.storage as any;
     const storageDomain = mutationDomain || _camelCase(domain);
@@ -458,6 +496,176 @@ export class SignalR {
   /// used when logging only - can be omitted but it's easier to read...
   // eslint-disable-next-line
   private noAction() { }
+
+  private getAllSubscriptionsIds(): uuid [] {
+    return Object.values(this.subscriptions).flat();
+  }
+
+  /**
+   * Returns a list of subscriptions containing only what's not related to the current path. It will be used to clean the object subscriptions.
+   * @param path
+   * @private
+   */
+  private getUnrelatedSubscriptions(path: string): Record<string, uuid[]> {
+    const toPathWithoutLang = path.split('/').splice(2).join('/');
+    const paths = Object.keys(this.subscriptions);
+    const unrelatedPaths = paths.filter((p) => {
+      const pathWithoutLang = p.split('/').splice(2).join('/');
+      return !toPathWithoutLang.includes(pathWithoutLang);
+    });
+    this.showConsole && unrelatedPaths.length && console.log('unrelated paths', unrelatedPaths, toPathWithoutLang);
+    return _pick(this.subscriptions, unrelatedPaths);
+  }
+
+  private getIdsToUnsubscribe(path: string, idsToKeep: uuid[]): uuid[] {
+    const idsToUnsubscribe = Object.values(this.getUnrelatedSubscriptions(path)).flat();
+    return idsToUnsubscribe.filter((id) => idsToKeep.indexOf(id) === -1);
+  }
+
+  /**
+   * Subscribe to not already subscribed ids from the subscriptions object
+   * @private
+   */
+  private async subscribe() {
+    let idsToSubscribe = this.getAllSubscriptionsIds();
+
+    // If nothing is new compared to last subscription
+    if (idsToSubscribe.every((id) => this.lastSubscribedIds.includes(id))) {
+      this.showConsole && console.log('Nothing new to subscribe');
+      return;
+    }
+
+    if (idsToSubscribe?.length > 0) {
+      if (this.lastSubscribedIds?.length > 0) { // Will only subscribe the difference (the new ids)
+        idsToSubscribe = idsToSubscribe.filter((id) => this.lastSubscribedIds.indexOf(id) === -1);
+      }
+      await this.service.subscribe(this.connection.connectionId, idsToSubscribe);
+      this.lastSubscribedIds = [...this.lastSubscribedIds, ...idsToSubscribe];
+    } else {
+      this.showConsole && console.log('Nothing to subscribe');
+    }
+  }
+
+  public addSubscription(id: uuid) {
+    if (!this.subscriptions[window.location.pathname]) {
+      this.subscriptions[window.location.pathname] = [];
+    }
+    if (this.subscriptions[window.location.pathname].indexOf(id) === -1) {
+      this.subscriptions[window.location.pathname] = [...this.subscriptions[window.location.pathname], id];
+    }
+  }
+
+  private getNewlyCreatedItemsSince(sinceDate?: number) {
+    const modules = Object.keys(this.storage) as Array<keyof IStorage>;
+    const ids = [] as uuid[];
+    const baseDate = sinceDate || sub(new Date(), { hours: 3 }); // by default 3h ago
+
+    modules.forEach((module) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const storageModule = this.storage[module] as any;
+      if (storageModule?.getters?.getNewlyCreatedIds) {
+        const items = storageModule.getters.getNewlyCreatedIds(baseDate) as Array<{id: uuid, createdOn: number}>;
+        items.forEach((item) => {
+          if (item.id) {
+            ids.push(item.id);
+          }
+        });
+      }
+    });
+    return ids;
+  }
+
+  /**
+   * Subscribe to newly created ids not already subscribed
+   * Unsubscribe to items not considered as newly created anymore
+   * @private
+   */
+  private async updateNewlyCreatedItemsSubscriptions() {
+    const ids = this.getNewlyCreatedItemsSince();
+
+    const idsToSubscribe = ids.filter((id) => this.lastSubscribedNewlyCreatedIds.indexOf(id) === -1);
+
+    if (idsToSubscribe.length > 0) {
+      this.showConsole && console.log(`Will subscribe to newly items: ${idsToSubscribe}`);
+      await this.service.subscribe(this.connection.connectionId, idsToSubscribe);
+      this.lastSubscribedNewlyCreatedIds = [...this.lastSubscribedNewlyCreatedIds, ...idsToSubscribe];
+    }
+
+    const idsToUnsubscribe = this.lastSubscribedNewlyCreatedIds.filter((id) => ids.indexOf(id) === -1);
+    if (idsToUnsubscribe.length > 0) {
+      this.showConsole && console.log(`Will unsubscribe to newly items: ${idsToUnsubscribe}`);
+      await this.unsubscribe(idsToUnsubscribe);
+    }
+    // We remove ids that were unsubscribed
+    this.lastSubscribedNewlyCreatedIds = this.lastSubscribedNewlyCreatedIds.filter((id) => !idsToUnsubscribe.includes(id));
+  }
+
+  /**
+   * Main method that is called every x seconds.
+   * Subscriptions are divided into two groups. NewlyCreatedItems, with no linked path and others subscriptions with a linked path
+   */
+  public async updateSubscriptions() {
+    const currentPath = window.location.pathname;
+    const idsToKeep = [...this.storage.uiState.getters.getAllSearchIds(), ...this.lastSubscribedNewlyCreatedIds];
+    const idsToUnsubscribe = this.getIdsToUnsubscribe(currentPath, idsToKeep);
+
+    // We unsubscribe ids
+    await this.unsubscribe(idsToUnsubscribe);
+
+    // Clean subscriptions object
+    this.cleanSubscriptionsObjectButSpecified(currentPath, idsToKeep);
+
+    // Once cleaned, subscribe to remaining
+    await this.subscribe();
+    this.showConsole && console.log(this.subscriptions);
+
+    // After all, deal with newly created items by subscribing and unsubscribing
+    await this.updateNewlyCreatedItemsSubscriptions();
+  }
+
+  /**
+   * Clean the subscriptions object by removing the whole path or keep the path but updating ids
+   * @param path
+   * @param idsToKeep
+   * @private
+   */
+  private cleanSubscriptionsObjectButSpecified(path: string, idsToKeep: uuid[]) {
+    const unrelatedSubscriptions = this.getUnrelatedSubscriptions(path);
+    const unrelatedPath = Object.keys(unrelatedSubscriptions);
+    const subscriptionsWithSearchState: Record<string, uuid[]> = {};
+    const pathsToRemove: string[] = [];
+
+    // For all subscription path, we keep only ids that need to be preserved, or we remove the path
+    unrelatedPath.forEach((path) => {
+      const filteredIds = unrelatedSubscriptions[path].filter((id) => idsToKeep.indexOf(id) !== -1);
+      if (filteredIds.length > 0) {
+        subscriptionsWithSearchState[path] = filteredIds;
+      } else {
+        pathsToRemove.push(path);
+      }
+    });
+
+    if (pathsToRemove.length > 0) {
+      // We remove all subscriptions from a path if none are in the state ui
+      this.subscriptions = _omit(this.subscriptions, pathsToRemove);
+    }
+    // We keep only ids from state UI if not removed
+    Object.keys(subscriptionsWithSearchState).forEach((path) => {
+      this.subscriptions[path] = subscriptionsWithSearchState[path];
+    });
+  }
+
+  private async unsubscribe(ids: uuid[]) {
+    if (ids.length > 0) {
+      this.showConsole && console.log(`You will unsubscribe from ${ids}`);
+      await this.service.unsubscribe(this.connection.connectionId, ids);
+      this.lastSubscribedIds = this.lastSubscribedIds.filter((id) => !ids.includes(id));
+    }
+  }
+
+  public async unsubscribeAll() {
+    await this.service.unsubscribeAll(this.connection.connectionId);
+  }
 }
 
 export default SignalR;

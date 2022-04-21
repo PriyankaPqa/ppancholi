@@ -1,9 +1,9 @@
-import { IStore, IState } from '@/store';
 import {
   FeatureKeys,
   IBrandingEntity,
   ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
+import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
 
