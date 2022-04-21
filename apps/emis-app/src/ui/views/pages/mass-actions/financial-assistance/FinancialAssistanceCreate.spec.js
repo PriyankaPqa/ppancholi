@@ -114,7 +114,7 @@ describe('FinancialAssistanceCreate.vue', () => {
       it('should call goToDetail', () => {
         wrapper.vm.goToDetail = jest.fn();
         wrapper.vm.onSuccess(mockMassActionEntity());
-        expect(wrapper.vm.goToDetail).toBeCalled();
+        expect(wrapper.vm.goToDetail).toBeCalledWith(mockMassActionEntity().id);
       });
     });
 

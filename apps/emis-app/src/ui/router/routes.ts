@@ -71,6 +71,10 @@ const MassActionsImportPaymentStatusHome = () => import(/* webpackChunkName: "ma
 const MassActionsImportPaymentStatusCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusCreate.vue');
 const MassActionsImportPaymentStatusDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-payment-status/ImportPaymentStatusDetails.vue');
 
+const MassActionsImportUsersHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-users/ImportUsersHome.vue');
+const MassActionsImportUsersCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-users/ImportUsersCreate.vue');
+const MassActionsImportUsersDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/import-users/ImportUsersDetails.vue');
+
 const MassActionsFundingRequestHome = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestHome.vue');
 const MassActionsFundingRequestCreate = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestCreate.vue');
 const MassActionsFundingRequestDetails = () => import(/* webpackChunkName: "mass-actions" */ '@/ui/views/pages/mass-actions/funding-request/FundingRequestDetails.vue');
@@ -546,6 +550,25 @@ export const routes: Array<RouteConfig> = [
                 name: Routes.massActions.importPaymentStatus.details.name,
                 component: MassActionsImportPaymentStatusDetails,
                 meta: { level: 'level6', roles: ['contributorFinance'], feature: FeatureKeys.MassAction },
+                props: true,
+              },
+              {
+                path: Routes.massActions.importUsers.home.path,
+                name: Routes.massActions.importUsers.home.name,
+                component: MassActionsImportUsersHome,
+                meta: { level: 'level6', feature: FeatureKeys.MassAction },
+              },
+              {
+                path: Routes.massActions.importUsers.create.path,
+                name: Routes.massActions.importUsers.create.name,
+                component: MassActionsImportUsersCreate,
+                meta: { level: 'level6', feature: FeatureKeys.MassAction },
+              },
+              {
+                path: Routes.massActions.importUsers.details.path,
+                name: Routes.massActions.importUsers.details.name,
+                component: MassActionsImportUsersDetails,
+                meta: { level: 'level6', feature: FeatureKeys.MassAction },
                 props: true,
               },
               {

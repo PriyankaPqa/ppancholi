@@ -49,8 +49,11 @@ export default Vue.extend({
         case 'generateFundingRequest':
           this.generateFundingRequest();
           break;
-        case 'downloadTemplate':
-          this.downloadTemplate();
+        case 'downloadImportPaymentStatusesTemplate':
+          this.downloadImportPaymentStatusesTemplate();
+          break;
+        case 'downloadImportUsersTemplate':
+          this.downloadImportUsersTemplate();
           break;
         default:
       }
@@ -64,9 +67,15 @@ export default Vue.extend({
       return false;
     },
 
-    downloadTemplate() {
-      const fileName = 'ImportPaymentStatusTemplate.csv';
+    downloadImportPaymentStatusesTemplate() {
+      const fileName = 'ImportPaymentStatusesTemplate.csv';
       const blob = new Blob(['PaymentGroupId,Status,CancellationReason'], { type: 'text/csv' });
+      helpers.downloadBlob(blob, fileName);
+    },
+
+    downloadImportUsersTemplate() {
+      const fileName = 'ImportUsersTemplate.csv';
+      const blob = new Blob(['FirstName,LastName,Email,Role'], { type: 'text/csv' });
       helpers.downloadBlob(blob, fileName);
     },
   },

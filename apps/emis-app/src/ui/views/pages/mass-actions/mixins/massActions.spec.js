@@ -37,10 +37,16 @@ describe('massActions', () => {
         expect(wrapper.vm.generateFundingRequest).toHaveBeenCalledTimes(1);
       });
 
-      it('should trigger proper method downloadTemplate', () => {
-        wrapper.vm.downloadTemplate = jest.fn();
-        wrapper.vm.onClick('downloadTemplate');
-        expect(wrapper.vm.downloadTemplate).toHaveBeenCalledTimes(1);
+      it('should trigger proper method downloadImportPaymentStatusesTemplate', () => {
+        wrapper.vm.downloadImportPaymentStatusesTemplate = jest.fn();
+        wrapper.vm.onClick('downloadImportPaymentStatusesTemplate');
+        expect(wrapper.vm.downloadImportPaymentStatusesTemplate).toHaveBeenCalledTimes(1);
+      });
+
+      it('should trigger proper method downloadImportUsersTemplate', () => {
+        wrapper.vm.downloadImportUsersTemplate = jest.fn();
+        wrapper.vm.onClick('downloadImportUsersTemplate');
+        expect(wrapper.vm.downloadImportUsersTemplate).toHaveBeenCalledTimes(1);
       });
     });
 
@@ -101,13 +107,25 @@ describe('massActions', () => {
       });
     });
 
-    describe('downloadTemplate', () => {
+    describe('downloadImportPaymentStatusesTemplate', () => {
       it('should call downloadBlob with proper params', () => {
-        const fileName = 'ImportPaymentStatusTemplate.csv';
+        const fileName = 'ImportPaymentStatusesTemplate.csv';
         const blob = new Blob(['PaymentGroupId,Status,CancellationReason'], { type: 'text/csv' });
         helpers.downloadBlob = jest.fn();
 
-        wrapper.vm.downloadTemplate();
+        wrapper.vm.downloadImportPaymentStatusesTemplate();
+
+        expect(helpers.downloadBlob).toHaveBeenCalledWith(blob, fileName);
+      });
+    });
+
+    describe('downloadImportUsersTemplate', () => {
+      it('should call downloadBlob with proper params', () => {
+        const fileName = 'ImportUsersTemplate.csv';
+        const blob = new Blob(['FirstName,LastName,Email,Role'], { type: 'text/csv' });
+        helpers.downloadBlob = jest.fn();
+
+        wrapper.vm.downloadImportUsersTemplate();
 
         expect(helpers.downloadBlob).toHaveBeenCalledWith(blob, fileName);
       });

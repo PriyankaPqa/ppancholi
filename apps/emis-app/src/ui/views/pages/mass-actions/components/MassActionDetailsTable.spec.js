@@ -76,6 +76,17 @@ describe('MassActionDetailsTable.vue', () => {
       expect(wrapper.vm.massActionTypeText).toBe('massActions.type.importPaymentStatus');
     });
 
+    it('should return proper text for ImportUsers', () => {
+      wrapper = shallowMount(Component, {
+        localVue,
+        propsData: {
+          massAction: mockCombinedMassAction(),
+          massActionType: MassActionType.ImportUsers,
+        },
+      });
+      expect(wrapper.vm.massActionTypeText).toBe('massActions.type.importUsers');
+    });
+
     it('should return proper text for GenerateFundingRequest', () => {
       wrapper = shallowMount(Component, {
         localVue,

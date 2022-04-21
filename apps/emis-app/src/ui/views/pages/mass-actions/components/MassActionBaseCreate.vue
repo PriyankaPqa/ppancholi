@@ -92,7 +92,9 @@ import mixins from 'vue-typed-mixins';
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
 import { VForm } from '@/types';
 import fileUpload from '@/ui/mixins/fileUpload';
-import { IMassActionEntity, MassActionEntity, MassActionMode } from '@/entities/mass-action';
+import {
+  IMassActionEntity, MassActionEntity, MassActionMode, MassActionRunType,
+} from '@/entities/mass-action';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import helpers from '@/ui/helpers/helpers';
 
@@ -146,6 +148,14 @@ export default mixins(fileUpload).extend({
       required: true,
     },
 
+    /**
+     *  Whether the mass action is being pre-processed or processed
+     */
+    runType: {
+      type: Number as () => MassActionRunType,
+      default: MassActionRunType.PreProcess,
+    },
+
     loading: {
       type: Boolean,
       required: true,
@@ -197,9 +207,19 @@ export default mixins(fileUpload).extend({
     async next() {
       const isValid = await (this.$refs.form as VForm).validate();
       if (isValid) {
+        let confirmTitle;
+        let confirmMessages;
+        if (this.runType === MassActionRunType.Process) {
+          confirmTitle = 'massAction.confirm.processing.title';
+          confirmMessages = 'massAction.confirm.processing.message';
+        } else {
+          confirmTitle = 'massAction.confirm.preprocessing.title';
+          confirmMessages = 'massAction.confirm.preprocessing.message';
+        }
+
         const userChoice = await this.$confirm({
-          title: this.$t('massAction.confirm.preprocessing.title'),
-          messages: this.$t('massAction.confirm.preprocessing.message'),
+          title: this.$t(confirmTitle),
+          messages: this.$t(confirmMessages),
         });
 
         if (userChoice) {

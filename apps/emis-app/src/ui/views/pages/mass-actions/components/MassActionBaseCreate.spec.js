@@ -6,7 +6,7 @@ import {
 } from '@/test/testSetup';
 
 import RcFileUpload from '@/ui/shared-components/RcFileUpload/RcFileUpload.vue';
-import { MassActionEntity, MassActionMode } from '@/entities/mass-action';
+import { MassActionEntity, MassActionMode, MassActionRunType } from '@/entities/mass-action';
 import { MAX_LENGTH_LG, MAX_LENGTH_MD } from '@/constants/validations';
 import { mockStorage } from '@/store/storage';
 import Component from './MassActionBaseCreate.vue';
@@ -109,13 +109,45 @@ describe('MassActionBaseCreate.vue', () => {
         expect(wrapper.vm.$refs.form.validate).toBeCalled();
       });
 
-      it('should confirm before emitting or uploading', async () => {
+      it('should confirm before emitting or uploading with message for preprocessing when run type is preprocess by default', async () => {
         wrapper.vm.$confirm = jest.fn(() => false);
         await wrapper.vm.next();
         expect(wrapper.vm.$confirm).toHaveBeenCalledWith(
           {
             title: 'massAction.confirm.preprocessing.title',
             messages: 'massAction.confirm.preprocessing.message',
+          },
+        );
+        expect(wrapper.emitted('upload:start')).toBeFalsy();
+        expect(wrapper.vm.upload).not.toBeCalled();
+      });
+
+      it('should confirm before emitting or uploading with message for processing when run type is process', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            title: 'title',
+            formData: new FormData(),
+            uploadUrl: 'url',
+            applyToLabel: 'applyToLabel',
+            mode: MassActionMode.File,
+            runType: MassActionRunType.Process,
+            loading: false,
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        wrapper.vm.create = jest.fn();
+        wrapper.vm.upload = jest.fn();
+
+        wrapper.vm.$confirm = jest.fn(() => false);
+        await wrapper.vm.next();
+        expect(wrapper.vm.$confirm).toHaveBeenCalledWith(
+          {
+            title: 'massAction.confirm.processing.title',
+            messages: 'massAction.confirm.processing.message',
           },
         );
         expect(wrapper.emitted('upload:start')).toBeFalsy();

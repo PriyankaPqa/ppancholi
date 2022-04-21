@@ -3,7 +3,10 @@
     <mass-action-pre-processing-base
       v-if="preProcessing"
       :mass-action="massAction"
-      :mass-action-type="massActionType">
+      :mass-action-type="massActionType"
+      :process-title="massActionBaseDetailsLabels.preProcessingWaitTitle"
+      :process-label-one="massActionBaseDetailsLabels.preProcessingWaitLabelOne"
+      :process-label-two="massActionBaseDetailsLabels.preProcessingWaitLabelTwo">
       <template #default>
         <slot name="pre-processing" />
       </template>
@@ -13,7 +16,9 @@
       v-else-if="processing && lastRunMetadata"
       :mass-action-status="MassActionRunStatus.Processing"
       :mass-action="massAction"
-      process-title="massActions.processing.files" />
+      :process-title="massActionBaseDetailsLabels.processingWaitTitle"
+      :process-label-one="massActionBaseDetailsLabels.processingWaitLabelOne"
+      :process-label-two="massActionBaseDetailsLabels.processingWaitLabelTwo" />
 
     <mass-action-pre-processed-processed-base
       v-else-if="lastRunMetadata && preProcessed"
@@ -24,10 +29,10 @@
       :successes="lastRunResults.successes"
       :successes-amount="lastRunMetadata.totalAmount"
       :projected-amount="lastRunMetadata.projectedAmount"
-      :failures="lastRunResults.failures"
-      total-label="massAction.pre_processed.title.1"
-      successes-label="massAction.pre_processed.title.2"
-      failures-label="massAction.pre_processed.title.3"
+      :failures="lastRunMetadata.results.failures"
+      :total-label="massActionBaseDetailsLabels.preProcessedTotalLabel"
+      :successes-label="massActionBaseDetailsLabels.preProcessedSuccessesLabel"
+      :failures-label="massActionBaseDetailsLabels.preProcessedFailuresLabel"
       show-invalid-download-button
       show-process-button
       show-delete-icon
@@ -47,10 +52,10 @@
       :successes="lastRunResults.successes"
       :successes-amount="lastRunMetadata.totalAmount"
       :projected-amount="lastRunMetadata.projectedAmount"
-      :failures="lastRunResults.failures"
-      total-label="massAction.processed.title.1"
-      successes-label="massAction.processed.title.2"
-      failures-label="massAction.processed.title.3"
+      :failures="lastRunMetadata.results.failures"
+      :total-label="massActionBaseDetailsLabels.processedTotalLabel"
+      :successes-label="massActionBaseDetailsLabels.processedSuccessesLabel"
+      :failures-label="massActionBaseDetailsLabels.processedFailuresLabel"
       :show-valid-download-button="showValidDownload"
       show-invalid-download-button>
       <template #payment-details>
@@ -75,6 +80,21 @@ import MassActionPreProcessingBase from '@/ui/views/pages/mass-actions/component
 import MassActionPreProcessedProcessedBase from '@/ui/views/pages/mass-actions/components/MassActionPreProcessedProcessedBase.vue';
 import massActionDetails from '@/ui/views/pages/mass-actions/mixins/massActionDetails';
 import { MassActionType, MassActionRunStatus } from '@/entities/mass-action';
+
+export interface IMassActionBaseDetailsLabels {
+  preProcessingWaitTitle: string;
+  preProcessingWaitLabelOne: string;
+  preProcessingWaitLabelTwo: string;
+  processingWaitTitle: string;
+  processingWaitLabelOne: string;
+  processingWaitLabelTwo: string;
+  preProcessedTotalLabel: string;
+  preProcessedSuccessesLabel: string;
+  preProcessedFailuresLabel: string;
+  processedTotalLabel: string;
+  processedSuccessesLabel: string;
+  processedFailuresLabel: string;
+}
 
 export default mixins(massActionDetails).extend({
   name: 'MassActionBaseDetails',
@@ -105,6 +125,24 @@ export default mixins(massActionDetails).extend({
     detailsTitle: {
       type: String,
       required: true,
+    },
+
+    massActionBaseDetailsLabels: {
+      type: Object as () => IMassActionBaseDetailsLabels,
+      default: () => ({
+        preProcessingWaitTitle: '',
+        preProcessingWaitLabelOne: 'massActions.preProcessing.info1',
+        preProcessingWaitLabelTwo: 'massActions.preProcessing.info2',
+        processingWaitTitle: 'massActions.processing.files',
+        processingWaitLabelOne: 'massActions.processing.info1',
+        processingWaitLabelTwo: 'massActions.processing.info2',
+        preProcessedTotalLabel: 'massAction.pre_processed.title.1',
+        preProcessedSuccessesLabel: 'massAction.pre_processed.title.2',
+        preProcessedFailuresLabel: 'massAction.pre_processed.title.3',
+        processedTotalLabel: 'massAction.processed.title.1',
+        processedSuccessesLabel: 'massAction.processed.title.2',
+        processedFailuresLabel: 'massAction.processed.title.3',
+      }),
     },
 
     backRouteName: {

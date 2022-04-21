@@ -16,6 +16,7 @@ export enum MassActionType {
   ExportValidationOfImpactStatus = 3,
   GenerateFundingRequest = 4,
   ImportPaymentStatuses = 5,
+  ImportUsers = 6,
 }
 
 export enum MassActionMode {

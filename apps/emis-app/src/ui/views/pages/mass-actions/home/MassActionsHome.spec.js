@@ -75,7 +75,21 @@ describe('MassActionsHome.vue', () => {
             roles: ['contributorFinance'],
             group: 4,
             onClick: 'importPaymentStatuses',
-            onSecondaryClick: 'downloadTemplate',
+            onSecondaryClick: 'downloadImportPaymentStatusesTemplate',
+          },
+          {
+            title: 'mass_action.card.import_users',
+            description: 'mass_action.card.group4',
+            button: 'mass_action.card.action.view',
+            secondaryButton: 'mass_action.card.action.download_template',
+            showSecondaryButton: true,
+            route: routes.massActions.importUsers.home.name,
+            dataTest: 'massAction_import_users',
+            level: 'level6',
+            roles: null,
+            group: 4,
+            onClick: 'importUsers',
+            onSecondaryClick: 'downloadImportUsersTemplate',
           },
         ];
         expect(wrapper.vm.cards).toEqual(expected);

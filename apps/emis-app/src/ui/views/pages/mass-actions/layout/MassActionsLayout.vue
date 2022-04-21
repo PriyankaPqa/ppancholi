@@ -94,6 +94,14 @@ export default mixins(massActions).extend({
               roles: ['contributorFinance'],
               onClick: 'importPaymentStatuses',
             },
+            {
+              text: this.$t('mass_action.card.import_users'),
+              test: 'mass_action.card.import_users',
+              to: routes.massActions.importUsers.home.name,
+              exact: false,
+              level: 'level6',
+              onClick: 'importUsers',
+            },
           ],
         },
       ];

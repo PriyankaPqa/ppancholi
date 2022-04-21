@@ -69,6 +69,9 @@ export default Vue.extend({
       if (this.massActionType === MassActionType.ImportPaymentStatuses) {
         return 'massActions.type.importPaymentStatus';
       }
+      if (this.massActionType === MassActionType.ImportUsers) {
+        return 'massActions.type.importUsers';
+      }
       if (this.massActionType === MassActionType.GenerateFundingRequest) {
         return 'massActions.type.fundingRequest';
       }
