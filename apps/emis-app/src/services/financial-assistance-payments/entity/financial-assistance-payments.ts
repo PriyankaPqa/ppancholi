@@ -8,7 +8,9 @@ import {
   PaymentStatus,
   EPaymentCancellationReason,
   PaymentsSummary,
+  IFinancialAssistancePaymentMetadata,
 } from '@/entities/financial-assistance-payment';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
 const API_URL_SUFFIX = 'finance';
@@ -82,5 +84,10 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
 
   async getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary> {
     return this.http.get(`${this.baseUrl}/payments-summary?caseFileId=${caseFileId}`);
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null):
+    Promise<IAzureCombinedSearchResult<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 }

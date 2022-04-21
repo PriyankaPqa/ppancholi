@@ -111,4 +111,19 @@ describe('>>> Financial assistance payment Service', () => {
       expect(http.get).toHaveBeenCalledWith('www.test.com/finance/financial-assistance-payments/payments-summary?caseFileId=myCaseId');
     });
   });
+
+  describe('search', () => {
+    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      const searchEndpoint = 'mock-endpoint';
+      await service.search(params, searchEndpoint);
+      expect(http.get).toHaveBeenCalledWith(`finance/search/${searchEndpoint}`, { params, isOData: true });
+    });
+
+    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('finance/search/financial-assistance-payments', { params, isOData: true });
+    });
+  });
 });
