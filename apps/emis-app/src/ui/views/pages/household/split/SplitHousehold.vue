@@ -129,6 +129,7 @@ export default mixins(individual).extend({
   data() {
     return {
       allowExit: false,
+      awaiting: false,
     };
   },
 
@@ -153,8 +154,7 @@ export default mixins(individual).extend({
     },
 
     submitLoading(): boolean {
-      // TO DO in later stories
-      return false;
+      return this.awaiting;
     },
 
     titleLeave(): TranslateResult {
@@ -227,7 +227,9 @@ export default mixins(individual).extend({
       }
 
       if (this.currentTab.id === 'reviewSplitInfo') {
+        this.awaiting = true;
         await this.$storage.registration.actions.splitHousehold();
+        this.awaiting = false;
       }
 
       if (this.currentTabIndex < this.flowTabs.length - 1) {
