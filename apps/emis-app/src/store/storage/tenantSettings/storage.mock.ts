@@ -30,6 +30,7 @@ export class TenantSettingsStorageMock extends BaseMock<ITenantSettingsCombined,
     fetchUserTenants: jest.fn(() => [mockBrandingEntity()]),
     updateColours: jest.fn(() => mockTenantSettingsEntity()),
     updateTenantDetails: jest.fn(() => mockTenantSettingsEntity()),
+    updateSupportEmails: jest.fn(() => mockTenantSettingsEntity()),
     fetchLogoUrl: jest.fn(),
   };
 

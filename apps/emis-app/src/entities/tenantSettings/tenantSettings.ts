@@ -17,6 +17,8 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
 
   branding: IBrandingEntity;
 
+  supportEmails: IMultilingual;
+
   constructor(data?: ITenantSettingsEntityData) {
     super(data);
     this.slug = data?.slug || '';
@@ -41,5 +43,12 @@ export class TenantSettingsEntity extends BaseEntity implements ITenantSettingsE
       this.branding = data.branding;
       this.branding.showName = !data.branding.hideName;
     }
+
+    this.supportEmails = data?.supportEmails || {
+      translation: {
+        en: '',
+        fr: '',
+      },
+    };
   }
 }

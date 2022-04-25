@@ -128,6 +128,13 @@ export const mockTenantSettingsEntityData = (force?: Partial<ITenantSettingsEnti
 
   branding: mockBrandingEntityData(),
 
+  supportEmails: {
+    translation: {
+      en: 'support_en@redcross.ca',
+      fr: 'support_fr@redcross.ca',
+    },
+  },
+
   ...force,
 });
 

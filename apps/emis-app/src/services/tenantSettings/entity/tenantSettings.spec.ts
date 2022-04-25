@@ -84,6 +84,19 @@ describe('>>> TenantSettings service', () => {
     });
   });
 
+  describe('updateSupportEmails', () => {
+    it('is linked to the correct url', async () => {
+      const mockSupportEmails = {
+        translation: {
+          en: 'support_en@redcross.ca',
+          fr: 'support_fr@redcross.ca',
+        },
+      };
+      await service.updateSupportEmails(mockSupportEmails);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/support-emails', { supportEmails: mockSupportEmails });
+    });
+  });
+
   describe('getLogoUrl', () => {
     it('is linked to the correct url', async () => {
       http.getFullResponse = jest.fn(() => Promise.resolve({

@@ -1,10 +1,11 @@
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import {
-  IBrandingEntityData,
-  ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
+  IBrandingEntityData, ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest,
+  ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
+import { IMultilingual } from '@libs/registration-lib/types';
 import { ITenantSettingsService } from './tenantSettings.types';
 
 const API_URL_SUFFIX = 'system-management';
@@ -50,6 +51,10 @@ export class TenantSettingsService extends DomainBaseService<ITenantSettingsEnti
 
   async updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<ITenantSettingsEntityData> {
     return this.http.patch(`${this.baseUrl}/tenant-details`, payload);
+  }
+
+  async updateSupportEmails(payload: IMultilingual): Promise<ITenantSettingsEntityData> {
+    return this.http.patch(`${this.baseUrl}/support-emails`, { supportEmails: payload });
   }
 
   async getLogoUrl(languageCode: string): Promise<string> {

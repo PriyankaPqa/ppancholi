@@ -26,26 +26,6 @@ describe('TenantSettings.vue', () => {
     });
   });
 
-  describe('>> Computed', () => {
-    describe('isEditing', () => {
-      it('returns correct value', async () => {
-        await wrapper.setData({
-          isEditingSlug: true,
-          isEditingDomains: false,
-        });
-
-        expect(wrapper.vm.isEditing).toBeTruthy();
-
-        await wrapper.setData({
-          isEditingSlug: false,
-          isEditingDomains: false,
-        });
-
-        expect(wrapper.vm.isEditing).toBeFalsy();
-      });
-    });
-  });
-
   describe('>> Methods', () => {
     describe('back', () => {
       it('redirects', () => {

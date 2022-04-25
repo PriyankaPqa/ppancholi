@@ -303,6 +303,38 @@ describe('>>> TenantSettings entity module', () => {
       });
     });
 
+    describe('updateSupportEmails', () => {
+      it('calls the updateSupportEmails service', async () => {
+        const payload = {
+          translation: {
+            en: 'support_en@redcross.ca',
+            fr: 'support_fr@redcross.ca',
+          },
+        };
+
+        module.service.updateSupportEmails = jest.fn();
+
+        await module.actions.updateSupportEmails(actionContext, payload);
+
+        expect(module.service.updateSupportEmails).toHaveBeenCalledWith(payload);
+      });
+
+      it('commits the tenantSettings', async () => {
+        const payload = {
+          translation: {
+            en: 'support_en@redcross.ca',
+            fr: 'support_fr@redcross.ca',
+          },
+        };
+
+        module.service.updateSupportEmails = jest.fn(() => Promise.resolve(mockTenantSettingsEntityData()));
+
+        await module.actions.updateSupportEmails(actionContext, payload);
+
+        expect(actionContext.commit).toBeCalledWith('setCurrentTenantSettings', mockTenantSettingsEntityData());
+      });
+    });
+
     describe('fetchLogoUrl', () => {
       it('calls the getLogoUrl service', async () => {
         module.service.getLogoUrl = jest.fn();

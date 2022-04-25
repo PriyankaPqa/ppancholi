@@ -95,6 +95,17 @@ describe('>>> TenantSettings Storage', () => {
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateTenantDetails`, payload);
     });
 
+    it('should proxy updateSupportEmails', () => {
+      const payload = {
+        translation: {
+          en: 'support_en@redcross.ca',
+          fr: 'support_fr@redcross.ca',
+        },
+      };
+      storage.actions.updateSupportEmails(payload);
+      expect(store.dispatch).toBeCalledWith(`${entityModuleName}/updateSupportEmails`, payload);
+    });
+
     it('should proxy fetchLogoUrl', () => {
       storage.actions.fetchLogoUrl('en');
       expect(store.dispatch).toBeCalledWith(`${entityModuleName}/fetchLogoUrl`, 'en');

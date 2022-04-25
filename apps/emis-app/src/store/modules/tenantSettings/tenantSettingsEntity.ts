@@ -15,6 +15,7 @@ import {
   TenantSettingsEntity,
 } from '@/entities/tenantSettings';
 import vuetify from '@/ui/plugins/vuetify/vuetify';
+import { IMultilingual } from '@libs/registration-lib/types';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
 import { IState } from '../base/base.types';
 import { BaseModule } from '../base';
@@ -171,6 +172,19 @@ export class TenantSettingsEntityModule extends BaseModule<ITenantSettingsEntity
       payload: IEditTenantDetailsRequest,
     ): Promise<ITenantSettingsEntity> => {
       const result = await this.service.updateTenantDetails(payload);
+
+      if (result) {
+        context.commit('setCurrentTenantSettings', result);
+      }
+
+      return new TenantSettingsEntity(result);
+    },
+
+    updateSupportEmails: async (
+      context: ActionContext<ITenantSettingsEntityState, ITenantSettingsEntityState>,
+      payload: IMultilingual,
+    ): Promise<ITenantSettingsEntity> => {
+      const result = await this.service.updateSupportEmails(payload);
 
       if (result) {
         context.commit('setCurrentTenantSettings', result);

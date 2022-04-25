@@ -142,6 +142,35 @@ describe('Domains.vue', () => {
         await wrapper.setData({
           tempEmisDomain: testEmisDomain,
           tempRegistrationDomain: testRegistrationDomain,
+          isEditing: true,
+        });
+
+        expect(wrapper.vm.isDirty).toBe(false);
+      });
+
+      it('returns false if isEditing is false', async () => {
+        wrapper = shallowMount(Component, {
+          localVue,
+          propsData: {
+            disableEditBtn: false,
+          },
+          computed: {
+            emisDomain() {
+              return 'emis-1';
+            },
+            registrationDomain() {
+              return 'registration-1';
+            },
+          },
+          mocks: {
+            $storage: storage,
+          },
+        });
+
+        await wrapper.setData({
+          tempEmisDomain: 'emis 2',
+          tempRegistrationDomain: 'registration-2',
+          isEditing: false,
         });
 
         expect(wrapper.vm.isDirty).toBe(false);
@@ -169,6 +198,7 @@ describe('Domains.vue', () => {
         await wrapper.setData({
           tempEmisDomain: 'emis 2',
           tempRegistrationDomain: 'registration-2',
+          isEditing: true,
         });
 
         expect(wrapper.vm.isDirty).toBe(true);
@@ -225,7 +255,7 @@ describe('Domains.vue', () => {
 
         wrapper.vm.enterEditMode();
 
-        expect(wrapper.emitted('update:is-editing-domains')[0][0]).toEqual(true);
+        expect(wrapper.emitted('update:is-editing')[0][0]).toEqual(true);
       });
     });
 
@@ -251,7 +281,7 @@ describe('Domains.vue', () => {
 
         wrapper.vm.exitEditMode();
 
-        expect(wrapper.emitted('update:is-editing-domains')[0][0]).toEqual(false);
+        expect(wrapper.emitted('update:is-editing')[0][0]).toEqual(false);
       });
     });
 

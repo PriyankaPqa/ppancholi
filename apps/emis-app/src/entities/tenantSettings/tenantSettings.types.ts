@@ -60,6 +60,7 @@ export interface ITenantSettingsEntityData extends IEntity {
   availableLanguages: Array<string>;
   features: Array<IFeatureEntity>;
   branding: IBrandingEntityData;
+  supportEmails: IMultilingual;
 }
 
 export interface ITenantSettingsEntity extends IEntity {
@@ -69,6 +70,7 @@ export interface ITenantSettingsEntity extends IEntity {
   availableLanguages: Array<string>;
   features: Array<IFeatureEntity>;
   branding: IBrandingEntity;
+  supportEmails: IMultilingual;
 }
 
 export interface ISetDomainsRequest {

@@ -3,6 +3,7 @@ import {
   IBrandingEntity,
   ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
+import { IMultilingual } from '@libs/registration-lib/types';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';
@@ -28,6 +29,7 @@ export interface IActions extends IBaseActions<ITenantSettingsEntity, never, uui
   fetchUserTenants(): Promise<IBrandingEntity[]>;
   updateColours(payload: IEditColoursRequest): Promise<ITenantSettingsEntity>;
   updateTenantDetails(payload: IEditTenantDetailsRequest): Promise<ITenantSettingsEntity>;
+  updateSupportEmails(payload: IMultilingual): Promise<ITenantSettingsEntity>;
   fetchLogoUrl(languageCode: string): Promise<string>;
 }
 
@@ -40,6 +42,7 @@ export interface IActionsMock extends IBaseActionsMock<ITenantSettingsEntity, ne
   fetchUserTenants: jest.Mock<IBrandingEntity[]>;
   updateColours: jest.Mock<ITenantSettingsEntity>;
   updateTenantDetails: jest.Mock<ITenantSettingsEntity>;
+  updateSupportEmails: jest.Mock<ITenantSettingsEntity>;
   fetchLogoUrl: jest.Mock<string>;
 }
 

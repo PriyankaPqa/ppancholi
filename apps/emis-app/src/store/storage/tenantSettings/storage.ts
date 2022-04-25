@@ -3,6 +3,7 @@ import {
   IBrandingEntity,
   ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest, ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
+import { IMultilingual } from '@libs/registration-lib/types';
 import { IStore, IState } from '../../store.types';
 import { IStorage } from './storage.types';
 import { Base } from '../base';
@@ -46,6 +47,9 @@ export class TenantSettingsStorage extends Base<ITenantSettingsEntity, never, uu
 
     updateTenantDetails: (payload: IEditTenantDetailsRequest):
       Promise<ITenantSettingsEntity> => this.store.dispatch(`${this.entityModuleName}/updateTenantDetails`, payload),
+
+    updateSupportEmails: (payload: IMultilingual):
+      Promise<ITenantSettingsEntity> => this.store.dispatch(`${this.entityModuleName}/updateSupportEmails`, payload),
 
     fetchLogoUrl: (languageCode: string): Promise<string> => this.store.dispatch(`${this.entityModuleName}/fetchLogoUrl`, languageCode),
   };

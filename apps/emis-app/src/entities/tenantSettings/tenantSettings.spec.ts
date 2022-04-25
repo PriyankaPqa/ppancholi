@@ -36,9 +36,14 @@ describe('>>> TenantSettingsEntity', () => {
         expect(entity.branding).toEqual(mock.branding);
       });
 
-      it('should instantiate branding.showNamw', () => {
+      it('should instantiate branding.showName', () => {
         const entity = new TenantSettingsEntity(mock);
         expect(entity.branding.showName).toEqual(!mock.branding.hideName);
+      });
+
+      it('should instantiate supportEmails', () => {
+        const entity = new TenantSettingsEntity(mock);
+        expect(entity.supportEmails).toEqual(mock.supportEmails);
       });
     });
 
@@ -81,6 +86,16 @@ describe('>>> TenantSettingsEntity', () => {
       it('should not instantiate branding', () => {
         const entity = new TenantSettingsEntity();
         expect(entity.branding).toBeUndefined();
+      });
+
+      it('should instantiate supportEmails', () => {
+        const entity = new TenantSettingsEntity();
+        expect(entity.supportEmails).toEqual({
+          translation: {
+            en: '',
+            fr: '',
+          },
+        });
       });
     });
   });

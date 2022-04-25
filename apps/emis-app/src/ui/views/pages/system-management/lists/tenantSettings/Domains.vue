@@ -19,6 +19,13 @@
     <v-col v-if="!isEditing" cols="12" data-test="view-domains">
       <v-simple-table class="table rc-body14">
         <tbody>
+          <tr class="tenant-settings-msg rc-body14">
+            <v-icon color="status_warning" small class="ml-3 mr-2">
+              mdi-alert
+            </v-icon>
+            {{ $t('system_management.tenantSettings.warning.message.domains') }}
+          </tr>
+
           <tr>
             <td>
               <v-row>
@@ -176,7 +183,7 @@ export default Vue.extend({
     },
 
     isDirty(): boolean {
-      return !_isEqual(this.tempEmisDomain, this.emisDomain) || !_isEqual(this.tempRegistrationDomain, this.registrationDomain);
+      return this.isEditing && (!_isEqual(this.tempEmisDomain, this.emisDomain) || !_isEqual(this.tempRegistrationDomain, this.registrationDomain));
     },
   },
 
@@ -184,13 +191,13 @@ export default Vue.extend({
     enterEditMode() {
       this.isEditing = true;
       this.resetDomains();
-      this.$emit('update:is-editing-domains', this.isEditing);
+      this.$emit('update:is-editing', this.isEditing);
     },
 
     exitEditMode() {
       this.isEditing = false;
       this.resetDomains();
-      this.$emit('update:is-editing-domains', this.isEditing);
+      this.$emit('update:is-editing', this.isEditing);
     },
 
     setLanguageMode(language: string) {
