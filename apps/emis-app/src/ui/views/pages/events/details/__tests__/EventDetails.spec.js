@@ -438,7 +438,7 @@ describe('EventDetails.vue', () => {
 
     it('should call fetchEvent', () => {
       expect(wrapper.vm.$storage.event.actions.fetch)
-        .toHaveBeenCalledWith(wrapper.vm.id);
+        .toHaveBeenCalledWith(wrapper.vm.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
     });
   });
 

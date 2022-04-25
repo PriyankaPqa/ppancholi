@@ -262,7 +262,7 @@ export default Vue.extend({
   async created() {
     this.loading = true;
     try {
-      await this.$storage.event.actions.fetch(this.id);
+      await this.$storage.event.actions.fetch(this.id, { useEntityGlobalHandler: true, useMetadataGlobalHandler: false });
     } finally {
       this.loading = false;
     }
