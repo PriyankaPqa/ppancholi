@@ -2,7 +2,7 @@ import _isEmpty from 'lodash/isEmpty';
 import mixins from 'vue-typed-mixins';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { ICaseFileCombined } from '@/entities/case-file';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { EEventStatus, IEventEntity, IEventMetadata } from '@/entities/event';
 import { MassActionType } from '@/entities/mass-action';
 import helpers from '@/ui/helpers/helpers';

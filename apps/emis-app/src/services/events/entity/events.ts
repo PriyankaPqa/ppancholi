@@ -13,7 +13,7 @@ import {
   IEventMainInfo,
   IEventMetadata,
 } from '@/entities/event';
-import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult } from '@libs/core-lib/types';
 import { IEventsService } from './events.types';
 
 const API_URL_SUFFIX = 'event';

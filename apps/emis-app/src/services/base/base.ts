@@ -1,7 +1,6 @@
 import { IHttpClient, IRestResponse } from '@libs/core-lib/services/http-client';
 import { IEntity } from '@/entities/base/base.types';
-import { IAzureSearchParams } from '@/types';
-import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IDomainBaseService } from './base.types';
 
 export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBaseService<T, IdParams> {

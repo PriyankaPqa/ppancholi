@@ -1,7 +1,7 @@
 /* eslint-disable no-empty */
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { IAzureSearchResult } from '../../types';
+import { IAzureSearchResult } from '@libs/core-lib/types';
 import { IEventData } from '../../entities/event';
 import { IPublicService } from './public.types';
 

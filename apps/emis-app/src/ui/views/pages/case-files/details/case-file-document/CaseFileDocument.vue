@@ -94,7 +94,7 @@ import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { DocumentStatus, ICaseFileDocumentEntity, ICaseFileDocumentCombined } from '@/entities/case-file-document';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { FilterKey } from '@/entities/user-account';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@libs/core-lib/types';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 import routes from '@/constants/routes';

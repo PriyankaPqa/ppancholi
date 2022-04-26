@@ -1,10 +1,10 @@
 import moment from 'moment';
 import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
-import { IAzureCombinedSearchResult } from '@libs/core-lib/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IConsentInformation, IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import {
-  ECanadaProvinces, ERegistrationMode, IAzureSearchParams, IOptionItemData,
+  ECanadaProvinces, ERegistrationMode, IOptionItemData,
 } from '../../../types';
 
 import {

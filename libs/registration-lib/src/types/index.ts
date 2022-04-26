@@ -22,8 +22,6 @@ export type { INavigationTab } from './interfaces/INavigationTab';
 export type { ISearchData } from './interfaces/ISearchData';
 export type { IEntity } from './interfaces/IEntity';
 export type { IRegistrationMenuItem } from './interfaces/IRegistrationMenuItem';
-export type { IAzureSearchResult, IAzureCombinedSearchResult } from './interfaces/IAzureSearchResult';
-export type { IAzureSearchParams } from './interfaces/IAzureSearchParams';
 export type { IListOption } from './interfaces/IListOption';
 
 /**

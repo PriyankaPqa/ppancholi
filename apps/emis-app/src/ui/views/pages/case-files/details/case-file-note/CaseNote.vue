@@ -67,7 +67,7 @@ import { FilterKey } from '@/entities/user-account';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import { ICaseNoteCombined } from '@/entities/case-note';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@libs/core-lib/types';
 import { IOptionItem } from '@/entities/optionItem';
 import CaseNoteForm from './components/CaseNoteForm.vue';
 import CaseNotesListItem from './components/CaseNotesListItem.vue';

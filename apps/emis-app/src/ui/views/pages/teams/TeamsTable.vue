@@ -87,7 +87,7 @@ import routes from '@/constants/routes';
 import { TeamType, ITeamCombined } from '@/entities/team';
 import { FilterKey } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@libs/core-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import helpers from '@/ui/helpers/helpers';

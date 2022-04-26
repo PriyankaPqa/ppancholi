@@ -103,7 +103,7 @@ import isEqual from 'lodash/isEqual';
 import pickBy from 'lodash/pickBy';
 import isEmpty from 'lodash/isEmpty';
 import routes from '@/constants/routes';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@libs/core-lib/types';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import {
   ICaseFileCombined, CaseFileStatus, CaseFileTriage,

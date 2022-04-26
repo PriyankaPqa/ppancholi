@@ -1,5 +1,6 @@
 import deepmerge from 'deepmerge';
-import { IAzureSearchResult, ECanadaProvinces } from '../../types';
+import { IAzureSearchResult } from '@libs/core-lib/types';
+import { ECanadaProvinces } from '../../types';
 import {
   IEventData, IEvent, IEventGenericLocation, EEventStatus, EResponseLevel,
 } from './event.types';

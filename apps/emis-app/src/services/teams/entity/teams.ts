@@ -2,7 +2,7 @@ import {
   ITeamEntity, ITeamMember,
 } from '@/entities/team';
 import { DomainBaseService } from '@/services/base';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ITeamsService } from './teams.types';
 

@@ -1,4 +1,5 @@
-import { ECanadaProvinces, IAzureSearchResult, IMultilingual } from '@/types';
+import { ECanadaProvinces, IMultilingual } from '@/types';
+import { IAzureSearchResult } from '@libs/core-lib/types';
 import {
   IEventMainInfo,
   EEventCallCentreStatus,

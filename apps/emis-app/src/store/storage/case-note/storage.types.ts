@@ -2,8 +2,7 @@ import { ICaseNoteEntity, ICaseNoteMetadata } from '@/entities/case-note';
 
 import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
 
-import { IAzureSearchParams } from '@/types';
-import { IAzureCombinedSearchResult } from '@/types/interfaces/IAzureSearchResult';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

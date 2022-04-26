@@ -85,7 +85,7 @@ import {
   IEventSchedule,
 } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@libs/core-lib/types';
 import routes from '@/constants/routes';
 import moment from '@/ui/plugins/moment';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';

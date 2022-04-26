@@ -4,8 +4,7 @@ import _isEmpty from 'lodash/isEmpty';
 import {
   IEntity, IEntityCombined, IFullResponseCombined, Status,
 } from '@/entities/base';
-import { IAzureSearchParams } from '@/types';
-import { IAzureTableSearchResults, ICombinedIndex } from '@/types/interfaces/IAzureSearchResult';
+import { IAzureTableSearchResults, ICombinedIndex, IAzureSearchParams } from '@libs/core-lib/types';
 import { IStore, IState } from '../../store.types';
 import { IBaseStorage } from './base.types';
 

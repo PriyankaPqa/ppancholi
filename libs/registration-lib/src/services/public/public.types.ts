@@ -1,4 +1,4 @@
-import { IAzureSearchResult } from '../../types';
+import { IAzureSearchResult } from '@libs/core-lib/types';
 
 export interface IPublicService {
   searchEvents(lang: string, registrationLink: string): Promise<IAzureSearchResult<unknown>>;

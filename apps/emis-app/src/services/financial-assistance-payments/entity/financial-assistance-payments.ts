@@ -10,7 +10,7 @@ import {
   PaymentsSummary,
   IFinancialAssistancePaymentMetadata,
 } from '@/entities/financial-assistance-payment';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
 const API_URL_SUFFIX = 'finance';

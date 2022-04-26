@@ -5,7 +5,7 @@ import { TranslateResult } from 'vue-i18n';
 import {
   IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
 } from '@/entities/mass-action';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@libs/core-lib/types';
 import { Status } from '@/entities/base';
 
 export default Vue.extend({

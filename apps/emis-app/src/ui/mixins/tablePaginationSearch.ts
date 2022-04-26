@@ -1,9 +1,8 @@
 import _isEmpty from 'lodash/isEmpty';
 import _cloneDeep from 'lodash/cloneDeep';
 import Vue from 'vue';
-import { IAzureSearchParams } from '@/types';
 import helpers from '@/ui/helpers/helpers';
-import { IAzureTableSearchResults } from '@/types/interfaces/IAzureSearchResult';
+import { IAzureTableSearchResults, IAzureSearchParams } from '@libs/core-lib/types';
 
 export default Vue.extend({
   data() {

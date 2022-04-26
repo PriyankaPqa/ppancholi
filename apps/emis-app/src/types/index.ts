@@ -9,12 +9,9 @@ export type { IMultilingual } from './interfaces/IMultilingual';
 // eslint-disable-next-line import/no-cycle
 export type { INavigationTab } from './interfaces/ui/INavigationTab';
 export type { IRestResponse } from './interfaces/IRestResponse';
-export type { IAzureSearchParams } from './interfaces/IAzureSearchParams';
-export type { IAzureSearchResult } from './interfaces/IAzureSearchResult';
 export type { IListOption } from './interfaces/IListOption';
 export type { IAddress } from './interfaces/IAddress';
 export type { IIdMultilingualName } from './interfaces/IIdMultilingualName';
-export type { IAzureCombinedSearchResult } from './interfaces/IAzureSearchResult';
 
 /**
  * Enums

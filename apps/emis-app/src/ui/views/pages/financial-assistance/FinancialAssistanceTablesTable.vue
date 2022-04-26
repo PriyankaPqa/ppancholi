@@ -72,7 +72,7 @@ import { FilterKey } from '@/entities/user-account';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@libs/core-lib/types';
 import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';

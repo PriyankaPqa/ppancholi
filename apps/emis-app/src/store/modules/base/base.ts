@@ -5,7 +5,7 @@ import applicationInsights from '@libs/core-lib/plugins/applicationInsights/appl
 import { IEntity, Status } from '@/entities/base/base.types';
 import { DomainBaseService } from '@/services/base';
 import helpers from '@/ui/helpers/helpers';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { ISignalRMock } from '@/ui/plugins/signal-r/signalR.types';
 import { SignalR } from '@/ui/plugins/signal-r/signalR';
 import { IRestResponse } from '@libs/core-lib/services/http-client';

@@ -6,7 +6,7 @@ import {
   IFinancialAssistanceTableSubItemData,
 } from '@/entities/financial-assistance';
 import { DomainBaseService } from '@/services/base';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IFinancialAssistanceTablesMetadataService } from '../metadata';
 import { IFinancialAssistanceTablesService } from './financialAssistanceTables.types';

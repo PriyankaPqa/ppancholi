@@ -2,7 +2,7 @@ import { DomainBaseService } from '@/services/base';
 import { IHttpClient, IRestResponse } from '@libs/core-lib/services/http-client';
 import { IMassActionExportListPayload, IMassActionService } from '@/services/mass-actions/entity/massAction.types';
 import { IMassActionEntity, MassActionRunType, MassActionType } from '@/entities/mass-action/massActions.types';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 
 const API_URL_SUFFIX = 'case-file';
 const CONTROLLER = 'mass-actions';

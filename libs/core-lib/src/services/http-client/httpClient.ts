@@ -6,7 +6,7 @@ import axios, {
   AxiosInstance, AxiosResponse,
 } from 'axios';
 import { camelKeys } from 'js-convert-case';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '../../types';
 import { buildQuery } from '../odata-query';
 import applicationInsights from '../../plugins/applicationInsights/applicationInsights';
 

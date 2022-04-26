@@ -1,7 +1,7 @@
 import { IProgramEntity, IProgramMetadata } from '@/entities/program';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IProgramsService } from './programs.types';
 
 const API_URL_SUFFIX = 'event/events/{eventId}';

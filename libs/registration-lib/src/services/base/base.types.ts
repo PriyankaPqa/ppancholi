@@ -1,6 +1,5 @@
+import { IAzureSearchParams, IAzureCombinedSearchResult } from '@libs/core-lib/types';
 import { IEntity } from '../../entities/base/base.types';
-import { IAzureSearchParams } from '../../types';
-import { IAzureCombinedSearchResult } from '../../types/interfaces/IAzureSearchResult';
 
 export interface IDomainBaseService<T extends IEntity, IdParams> {
   get(idParams: IdParams, useGlobalHandler?: boolean): Promise<T>;

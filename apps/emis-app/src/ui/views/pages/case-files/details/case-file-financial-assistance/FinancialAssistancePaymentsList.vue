@@ -170,7 +170,7 @@ import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import routes from '@/constants/routes';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import { FilterKey } from '@/entities/user-account';
-import { IAzureSearchParams } from '@/types';
+import { IAzureSearchParams } from '@libs/core-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import {
