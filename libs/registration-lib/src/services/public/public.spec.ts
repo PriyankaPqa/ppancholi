@@ -13,7 +13,7 @@ describe('>>> Public Service', () => {
     };
 
     await service.searchEvents(params.language, params.registrationLink);
-    expect(http.get).toHaveBeenCalledWith('/public-search/beneficiary-event', { params, containsEncodedURL: true, ignoreJwt: true });
+    expect(http.get).toHaveBeenCalledWith('/event/public/search/events', { params, containsEncodedURL: true, ignoreJwt: true });
   });
 
   test('getTenantByEmisDomain is linked to the correct URL', async () => {

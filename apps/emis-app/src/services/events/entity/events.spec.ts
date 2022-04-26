@@ -125,7 +125,7 @@ describe('>>> Events Service', () => {
   test('searchMyEvents is linked to the correct URL and params', async () => {
     const params = mockSearchParams;
     await service.searchMyEvents(params);
-    expect(http.get).toHaveBeenCalledWith('/search/events-main-information', { params, isOData: true });
+    expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
   });
 
   describe('setEventStatus', () => {
@@ -248,5 +248,20 @@ describe('>>> Events Service', () => {
     const { id } = event;
     await service.editShelterLocation(id, location);
     expect(http.patch).toHaveBeenCalledWith(`${service.baseUrl}/${id}/shelter-location/${location.id}`, location, { globalHandler: false });
+  });
+
+  describe('search', () => {
+    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      const searchEndpoint = 'mock-endpoint';
+      await service.search(params, searchEndpoint);
+      expect(http.get).toHaveBeenCalledWith(`event/search/${searchEndpoint}`, { params, isOData: true });
+    });
+
+    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('event/search/events', { params, isOData: true });
+    });
   });
 });

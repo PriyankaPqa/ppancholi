@@ -1,7 +1,7 @@
 import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
+import { IAzureCombinedSearchResult } from '@libs/core-lib/types';
 import { IEntity } from '../../entities/base/base.types';
 import { IAzureSearchParams } from '../../types';
-import { IAzureCombinedSearchResult } from '../../types/interfaces/IAzureSearchResult';
 import { IDomainBaseService } from './base.types';
 
 export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBaseService<T, IdParams> {

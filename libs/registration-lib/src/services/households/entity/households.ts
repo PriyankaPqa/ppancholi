@@ -1,11 +1,12 @@
 import moment from 'moment';
 import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
-import { IAzureCombinedSearchResult } from '../../../types/interfaces/IAzureSearchResult';
+import { IAzureCombinedSearchResult } from '@libs/core-lib/types';
 import { IConsentInformation, IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import {
   ECanadaProvinces, ERegistrationMode, IAzureSearchParams, IOptionItemData,
 } from '../../../types';
+
 import {
   IAddressData, IHouseholdCreate, IContactInformation, IContactInformationCreateRequest, ICreateHouseholdRequest,
   IIndigenousCommunityData, IMember, ICurrentAddress, ICurrentAddressCreateRequest, ECurrentAddressTypes,

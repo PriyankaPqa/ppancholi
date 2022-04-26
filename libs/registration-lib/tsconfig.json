@@ -13,7 +13,6 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
-    "rootDir": ".",
     "baseUrl": ".",
     "allowJs": true,
     "types": [
@@ -49,5 +48,6 @@
     "tests/**/*.ts",
     "tests/**/*.tsx",
     "typings/**.ts",
+    "../../libs/core-lib/src/**.ts"
   ]
 }

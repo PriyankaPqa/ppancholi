@@ -9,7 +9,7 @@ export class PublicService implements IPublicService {
   constructor(private readonly http: IHttpClient) {}
 
   async searchEvents(lang: string, registrationLink: string): Promise<IAzureSearchResult<IEventData>> {
-    return this.http.get<IAzureSearchResult<IEventData>>('/public-search/beneficiary-event', {
+    return this.http.get<IAzureSearchResult<IEventData>>('/event/public/search/events', {
       params: {
         language: lang,
         registrationLink,

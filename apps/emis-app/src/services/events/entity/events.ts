@@ -11,8 +11,9 @@ import {
   IEventGenericLocation,
   IEventLocation,
   IEventMainInfo,
+  IEventMetadata,
 } from '@/entities/event';
-import { IAzureSearchParams, IAzureSearchResult } from '@/types';
+import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult } from '@/types';
 import { IEventsService } from './events.types';
 
 const API_URL_SUFFIX = 'event';
@@ -114,7 +115,12 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
 
   // events that a user has access to
   async searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventMainInfo>> {
-    return this.http.get('/search/events-main-information', { params, isOData: true });
+    return this.http.get(`${API_URL_SUFFIX}/search/${CONTROLLER}`, { params, isOData: true });
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null):
+    Promise<IAzureCombinedSearchResult<IEventEntity, IEventMetadata>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 
   private eventToCreateEventRequestPayload(event: IEventEntity): ICreateEventRequest {
