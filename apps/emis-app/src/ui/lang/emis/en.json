@@ -1464,6 +1464,7 @@
     "registration.associate.confirmation.title": "Confirm household association",
     "registration.confirmation.error": "Unable to complete registration",
     "registration.confirmation.error.message.duplicate": "Please use the beneficiary search page to associate the beneficiary with this event.",
+    "registration.confirmation.error.search.button": "Search Beneficiary",
     "registration.confirmation.registration_id": "The beneficiary’s registration ID",
     "registration.details.associateBeneficiaryButton.label": "Associate beneficiary",
     "registration.details.caseFile": "Case file",

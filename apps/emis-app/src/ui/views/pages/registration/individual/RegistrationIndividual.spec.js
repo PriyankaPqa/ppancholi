@@ -1,5 +1,5 @@
 import { mockHouseholdCreateData } from '@libs/registration-lib/entities/household-create';
-import { createLocalVue, shallowMount } from '@/test/testSetup';
+import { createLocalVue, shallowMount, mount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
 import routes from '@/constants/routes';
@@ -13,6 +13,88 @@ describe('Individual.vue', () => {
   let wrapper;
   afterEach(() => {
     jest.clearAllMocks();
+  });
+
+  describe('Template', () => {
+    describe('print button', () => {
+      it('is rendered if is on confirmation tab and no error', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'confirmation' }),
+            registrationSuccess: () => true,
+            getTitle: () => 'title',
+          },
+        });
+        expect(wrapper.findDataTest('printButton').exists()).toBe(true);
+      });
+
+      it('is not rendered if is on confirmation tab but has error', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'confirmation' }),
+            registrationSuccess: () => false,
+            getTitle: () => 'title',
+          },
+        });
+
+        expect(wrapper.findDataTest('printButton').exists()).toBe(false);
+      });
+
+      it('is not rendered if is not on confirmation tab', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'review' }),
+            registrationSuccess: () => true,
+            getTitle: () => 'title',
+          },
+        });
+
+        expect(wrapper.findDataTest('printButton').exists()).toBe(false);
+      });
+    });
+
+    describe('new registration button', () => {
+      it('is rendered if is on confirmation tab and no error', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'confirmation' }),
+            registrationSuccess: () => true,
+            getTitle: () => 'title',
+          },
+        });
+        expect(wrapper.findDataTest('new-registration-button').exists()).toBe(true);
+      });
+
+      it('is not rendered if is on confirmation tab but has error', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'confirmation' }),
+            registrationSuccess: () => false,
+            getTitle: () => 'title',
+          },
+        });
+
+        expect(wrapper.findDataTest('new-registration-button').exists()).toBe(false);
+      });
+
+      it('is not rendered if is not on confirmation tab', () => {
+        wrapper = mount(Component, {
+          localVue,
+          computed: {
+            currentTab: () => ({ id: 'review' }),
+            registrationSuccess: () => true,
+            getTitle: () => 'title',
+          },
+        });
+
+        expect(wrapper.findDataTest('new-registration-button').exists()).toBe(false);
+      });
+    });
   });
 
   describe('Methods', () => {
@@ -479,6 +561,18 @@ describe('Individual.vue', () => {
           },
         });
         expect(wrapper.vm.enableAutocomplete).toBe(false);
+      });
+    });
+
+    describe('registrationSuccess', () => {
+      it('returns true if no error', () => {
+        storage.registration.getters.registrationErrors.mockReturnValueOnce([]);
+        expect(wrapper.vm.registrationSuccess).toBe(true);
+      });
+
+      it('returns false if has error', () => {
+        storage.registration.getters.registrationErrors.mockReturnValueOnce([{ detail: 'error' }]);
+        expect(wrapper.vm.registrationSuccess).toBe(false);
       });
     });
   });

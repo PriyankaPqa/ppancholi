@@ -1464,6 +1464,7 @@
     "registration.associate.confirmation.title": "Confirmer l'association du ménage",
     "registration.confirmation.error": "Impossible de terminer l’inscription",
     "registration.confirmation.error.message.duplicate": "Veuillez utiliser la page de recherche de bénéficiaires pour associer le\/la bénéficiaire à cet événement.",
+    "registration.confirmation.error.search.button": "Rechercher un bénéficiaire",
     "registration.confirmation.registration_id": "Le numéro d'inscription de la\/du bénéficiaire",
     "registration.details.associateBeneficiaryButton.label": "Associer le bénéficiaire",
     "registration.details.caseFile": "Dossier",

@@ -33,17 +33,19 @@
           <template slot="actions">
             <div class="actions">
               <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
-                <v-btn
-                  v-if="currentTab.id === 'confirmation'"
-                  class="printButton"
-                  :aria-label="$t(currentTab.backButtonTextKey)"
-                  data-test="printButton"
-                  @click="print()">
-                  <v-icon size="20" color="grey darken-2" class="pr-2">
-                    mdi-printer
-                  </v-icon>
-                  {{ $t(currentTab.backButtonTextKey) }}
-                </v-btn>
+                <template v-if="currentTab.id === 'confirmation'">
+                  <v-btn
+                    v-if="registrationSuccess"
+                    class="printButton"
+                    :aria-label="$t(currentTab.backButtonTextKey)"
+                    data-test="printButton"
+                    @click="print()">
+                    <v-icon size="20" color="grey darken-2" class="pr-2">
+                      mdi-printer
+                    </v-icon>
+                    {{ $t(currentTab.backButtonTextKey) }}
+                  </v-btn>
+                </template>
                 <v-btn v-else :aria-label="$t(currentTab.backButtonTextKey)" data-test="backButton" :disabled="submitLoading" @click="back()">
                   {{ $t(currentTab.backButtonTextKey) }}
                 </v-btn>
@@ -53,7 +55,7 @@
 
               <div :class="{half: $vuetify.breakpoint.smAndDown, column: $vuetify.breakpoint.xsOnly}">
                 <span class="fw-bold d-sm-inline d-md-none">{{ nextTabName }}</span>
-                <v-btn v-if="currentTab.id === 'confirmation'" @click="routeToNewRegistration">
+                <v-btn v-if="currentTab.id === 'confirmation' && registrationSuccess" data-test="new-registration-button" @click="routeToNewRegistration">
                   {{ $t('registration.new_registration.label') }}
                 </v-btn>
                 <v-btn
@@ -213,6 +215,10 @@ export default mixins(individual).extend({
 
     enableAutocomplete(): boolean {
       return this.$hasFeature(FeatureKeys.AddressAutoFill);
+    },
+
+    registrationSuccess(): boolean {
+      return this.$storage.registration.getters.registrationErrors()?.length === 0;
     },
   },
 
