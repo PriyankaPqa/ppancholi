@@ -17,6 +17,7 @@
         outlined
         :placeholder="eventPlaceholder"
         :items="sortedEvents"
+        clearable
         @change="selectEvent" />
     </template>
 
@@ -147,6 +148,12 @@ export default Vue.extend({
   },
   methods: {
     async selectEvent() {
+      if (!this.selectedEventId) {
+        this.quickStats = null;
+        this.openCount = 0;
+        return;
+      }
+
       this.quickStats = null;
       this.currentTab = 0;
       this.loadingQuickStats = true;

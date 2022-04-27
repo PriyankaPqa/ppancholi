@@ -5,6 +5,7 @@
         v-model="selectedEventId"
         data-test="team_stats_select_event"
         class="pb-4"
+        clearable
         hide-details
         :label="$t('team_stats.event.select.label')"
         :items="events"
@@ -17,6 +18,7 @@
         v-model="selectedTeam"
         data-test="team_stats_select_team"
         class="pb-4"
+        clearable
         hide-details
         :label="$t('team_stats.team.select.label')"
         :loading="loadingTeams"
@@ -119,6 +121,12 @@ export default Vue.extend({
     },
 
     async selectEvent() {
+      if (!this.selectedEventId) {
+        this.selectedTeam = null;
+        this.teamStats = null;
+        return;
+      }
+
       this.loadingTeams = true;
       this.statsLoaded = false;
       this.teamStats = defaultTeamStats;
@@ -131,6 +139,10 @@ export default Vue.extend({
     },
 
     async selectTeam(selectedTeam: IEntityCombined<ITeamEntity, ITeamMetadata>) {
+      if (!selectedTeam) {
+        this.teamStats = null;
+        return;
+      }
       this.statsLoaded = false;
       this.loadingStats = true;
       this.teamStats = defaultTeamStats;

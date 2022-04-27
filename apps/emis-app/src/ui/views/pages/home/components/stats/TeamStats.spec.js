@@ -15,6 +15,7 @@ describe('TeamStats.vue', () => {
   let wrapper;
 
   beforeEach(async () => {
+    jest.clearAllMocks();
     wrapper = mount(Component, {
       localVue,
       mocks: {
@@ -129,6 +130,29 @@ describe('TeamStats.vue', () => {
         await wrapper.vm.selectEvent();
         expect(wrapper.vm.statTeam).toEqual(mockCombinedTeams());
       });
+
+      it('should not search team if no event selected', async () => {
+        wrapper.vm.selectedEventId = null;
+
+        await wrapper.vm.selectEvent();
+
+        expect(storage.team.actions.search).toHaveBeenCalledTimes(0);
+      });
+
+      it('should clear team information if no event selected', async () => {
+        wrapper.vm.selectedTeam = { entity: [], metadata: {} };
+        wrapper.vm.teamStats = {
+          countTeamMembers: 1,
+          countClose: 2,
+        };
+
+        wrapper.vm.selectedEventId = null;
+
+        await wrapper.vm.selectEvent();
+
+        expect(wrapper.vm.selectedTeam).toBe(null);
+        expect(wrapper.vm.teamStats).toBe(null);
+      });
     });
 
     describe('selectTeam', () => {
@@ -174,6 +198,27 @@ describe('TeamStats.vue', () => {
           countClose: 0,
           countTeamMembers: 0,
         });
+      });
+
+      it('should not call getCaseFileAssignedCounts event if no team selected', async () => {
+        wrapper.vm.$services.caseFiles.getCaseFileAssignedCounts = jest.fn();
+
+        await wrapper.vm.selectTeam(null);
+
+        expect(wrapper.vm.$services.caseFiles.getCaseFileAssignedCounts).toHaveBeenCalledTimes(0);
+      });
+
+      it('should clear team information if no team selected', async () => {
+        wrapper.vm.teamStats = {
+          countTeamMembers: 1,
+          countClose: 2,
+        };
+
+        wrapper.vm.$services.caseFiles.getCaseFileAssignedCounts = jest.fn();
+
+        await wrapper.vm.selectTeam(null);
+
+        expect(wrapper.vm.teamStats).toBe(null);
       });
     });
   });

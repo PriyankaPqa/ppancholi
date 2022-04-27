@@ -129,6 +129,29 @@ describe('EventStats.vue', () => {
 
         expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFileAssignedCounts).toHaveBeenCalledWith(selectedEventId, null);
       });
+
+      it('should not call fetchCaseFileDetailedCounts if no event selected', async () => {
+        wrapper.vm.selectedEventId = null;
+
+        await wrapper.vm.selectEvent();
+
+        expect(wrapper.vm.$storage.caseFile.actions.fetchCaseFileDetailedCounts).toHaveBeenCalledTimes(0);
+      });
+
+      it('should clear stats information if no event selected', async () => {
+        wrapper.vm.quickStats = {
+          inactiveCount: 2,
+          closedCount: 3,
+        };
+        wrapper.vm.openCount = 100;
+
+        wrapper.vm.selectedEventId = null;
+
+        await wrapper.vm.selectEvent();
+
+        expect(wrapper.vm.quickStats).toBe(null);
+        expect(wrapper.vm.openCount).toBe(0);
+      });
     });
   });
 });
