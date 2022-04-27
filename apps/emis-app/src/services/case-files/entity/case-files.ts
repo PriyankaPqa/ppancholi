@@ -2,10 +2,11 @@ import {
   ICaseFileActivity, ICaseFileLabel, CaseFileTriage, CaseFileStatus, ICaseFileEntity, IIdentityAuthentication,
   IImpactStatusValidation,
   ICaseFileCount,
-  ICaseFileDetailedCount,
+  ICaseFileDetailedCount, ICaseFileMetadata,
 } from '@/entities/case-file';
 import { DomainBaseService } from '@/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IListOption } from '@/types';
 import { ICaseFilesService, ICreateCaseFileRequest } from './case-files.types';
 
@@ -88,5 +89,10 @@ export class CaseFilesService extends DomainBaseService<ICaseFileEntity, uuid> i
 
   async fetchCaseFileDetailedCounts(eventId: uuid): Promise<ICaseFileDetailedCount> {
     return this.http.get(`${this.baseUrl}/detailed-assigned-counts`, { params: { eventId } });
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null):
+    Promise<IAzureCombinedSearchResult<ICaseFileEntity, ICaseFileMetadata>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 }

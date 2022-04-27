@@ -1,6 +1,7 @@
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { DomainBaseService } from '@/services/base';
-import { ICaseFileReferralEntity } from '@/entities/case-file-referral';
+import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@/entities/case-file-referral';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { ICaseFileReferralsService } from './case-file-referrals.types';
 
 const API_URL_SUFFIX = 'case-file/case-files/{caseFileId}';
@@ -27,5 +28,10 @@ export class CaseFileReferralsService extends DomainBaseService<ICaseFileReferra
       dateTimeConsent: item.referralConsentInformation?.dateTimeConsent,
       outcomeStatus: item.outcomeStatus?.optionItemId ? item.outcomeStatus : null,
     };
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null):
+    Promise<IAzureCombinedSearchResult<ICaseFileReferralEntity, ICaseFileReferralMetadata>> {
+    return this.http.get(`case-file/search/${searchEndpoint ?? 'referrals'}`, { params, isOData: true });
   }
 }
