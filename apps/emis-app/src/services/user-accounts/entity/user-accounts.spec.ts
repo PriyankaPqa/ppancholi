@@ -84,4 +84,19 @@ describe('>>> UserAccounts Service', () => {
     await service.assignRole(request);
     expect(http.post).toHaveBeenCalledWith(`${service.baseUrl}/${request.userId}/role`, { roleId: request.subRole.id });
   });
+
+  describe('search', () => {
+    it('should call the proper endpoint if a searchEndpoint parameter is passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      const searchEndpoint = 'mock-endpoint';
+      await service.search(params, searchEndpoint);
+      expect(http.get).toHaveBeenCalledWith(`user-account/search/${searchEndpoint}`, { params, isOData: true });
+    });
+
+    it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
+      const params = { filter: { Foo: 'foo' } };
+      await service.search(params);
+      expect(http.get).toHaveBeenCalledWith('user-account/search/user-accounts', { params, isOData: true });
+    });
+  });
 });

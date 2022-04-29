@@ -5,6 +5,7 @@ import {
 } from '@/entities/user-account';
 import { DomainBaseService } from '@/services/base';
 
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import {
   IUserAccountsService, IAddRoleToUserRequest, IEditFilterRequest,
 } from './user-accounts.types';
@@ -54,5 +55,9 @@ export class UserAccountsService extends DomainBaseService<IUserAccountEntity, u
 
   async assignRole(payload: IAddRoleToUserRequest): Promise<IUserAccountEntity> {
     return this.http.post<IUserAccountEntity>(`${this.baseUrl}/${payload.userId}/role`, { roleId: payload.subRole.id });
+  }
+
+  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<IUserAccountEntity, unknown>> {
+    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 }
