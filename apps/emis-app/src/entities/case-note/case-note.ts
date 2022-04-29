@@ -1,5 +1,5 @@
 import { IMultilingual } from '@/types';
-import { BaseEntity } from '@/entities/base/base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import { ICaseNoteEntity } from './case-note.types';
 
 export class CaseNoteEntity extends BaseEntity {

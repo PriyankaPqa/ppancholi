@@ -1,8 +1,8 @@
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockCaseFinancialAssistancePaymentGroups, ApprovalStatus } from '@/entities/financial-assistance-payment';
-import { Status } from '@/entities/base';
 import { mockStorage } from '@/store/storage';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from '../PaymentLineGroupList.vue';
 
 const localVue = createLocalVue();

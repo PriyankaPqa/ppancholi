@@ -1,4 +1,3 @@
-import { mockBaseData } from '@/entities/base';
 import {
   IMassActionCombined,
   IMassActionEntity,
@@ -13,6 +12,7 @@ import {
 } from '@/entities/mass-action/massActions.types';
 import { MassActionEntity } from '@/entities/mass-action/massAction';
 import { EPaymentModalities } from '@/entities/program';
+import { mockBaseData } from '@libs/core-lib/entities/base';
 
 export const mockMassActionRun = (force?: Partial<IMassActionRun>): IMassActionRun => ({
   ...mockBaseData(),

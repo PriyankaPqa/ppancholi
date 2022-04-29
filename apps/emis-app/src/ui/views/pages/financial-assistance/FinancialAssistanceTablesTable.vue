@@ -76,8 +76,8 @@ import { IAzureSearchParams } from '@libs/core-lib/types';
 import { IFinancialAssistanceTableCombined } from '@/entities/financial-assistance';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 import helpers from '@/ui/helpers/helpers';
-import { IEntityCombined, Status } from '@/entities/base';
 import { IProgramEntity, IProgramMetadata } from '@/entities/program';
+import { IEntityCombined, Status } from '@libs/core-lib/entities/base';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'FinancialAssistanceTablesTable',

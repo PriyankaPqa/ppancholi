@@ -1,4 +1,4 @@
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient, IRestResponse } from '@libs/core-lib/services/http-client';
 import { IMassActionExportListPayload, IMassActionService } from '@/services/mass-actions/entity/massAction.types';
 import { IMassActionEntity, MassActionRunType, MassActionType } from '@/entities/mass-action/massActions.types';

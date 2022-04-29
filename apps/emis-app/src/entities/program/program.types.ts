@@ -1,5 +1,5 @@
 import { IMultilingual } from '@/types';
-import { IEntity, IEntityCombined } from '../base';
+import { IEntity, IEntityCombined } from '@libs/core-lib/entities/base';
 
 export enum EPaymentModalities {
   ETransfer = 1,

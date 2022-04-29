@@ -1,4 +1,4 @@
-import { IEntity, mockBaseData } from '../base';
+import { IEntity, mockBaseData } from '@libs/core-lib/entities/base';
 import {
   FeatureType,
   IBrandingEntity,

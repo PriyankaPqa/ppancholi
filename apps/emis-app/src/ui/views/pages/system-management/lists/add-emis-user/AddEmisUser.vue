@@ -128,8 +128,8 @@ import {
 import { i18n } from '@/ui/plugins';
 import { IUserAccountCombined } from '@/entities/user-account';
 import { IAppUserData } from '@/entities/app-user';
-import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
   name: 'AddEmisUser',

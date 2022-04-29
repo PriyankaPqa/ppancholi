@@ -1,9 +1,9 @@
 import { RcNestedTable } from '@libs/component-lib/components';
 import { createLocalVue, mount } from '@/test/testSetup';
-import { Status } from '@/entities/base';
 import { mockStorage } from '@/store/storage';
 import { mockItems, EFinancialAmountModes, EFinancialFrequency } from '@/entities/financial-assistance';
 import routes from '@/constants/routes';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from './FinancialAssistanceDetails.vue';
 
 const storage = mockStorage();

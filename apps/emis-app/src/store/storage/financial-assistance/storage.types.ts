@@ -9,7 +9,7 @@ import {
 } from '@/entities/financial-assistance';
 import { IProgramEntity } from '@/entities/program';
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

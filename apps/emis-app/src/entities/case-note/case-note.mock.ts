@@ -1,5 +1,4 @@
-import { mockBaseData } from '@/entities/base';
-import { IEntity } from '../base/base.types';
+import { mockBaseData, IEntity } from '@libs/core-lib/entities/base';
 import { IOptionItem } from '../optionItem';
 import { ICaseNoteCombined, ICaseNoteEntity, ICaseNoteMetadata } from './case-note.types';
 

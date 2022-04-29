@@ -8,7 +8,7 @@ import { mockUserStateLevel } from '@/test/helpers';
 import {
   AccountStatus, mockCombinedUserAccounts, mockCombinedUserAccount, mockUserAccountEntity, mockUserAccountMetadata,
 } from '@/entities/user-account';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from './UserAccounts.vue';
 
 const localVue = createLocalVue();

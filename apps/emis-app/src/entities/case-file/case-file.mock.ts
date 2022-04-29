@@ -1,6 +1,6 @@
 /* eslint-disable max-lines-per-function */
-import { IEntity, mockBaseData } from '@/entities/base';
 import { EEventStatus } from '@/entities/event';
+import { IEntity, mockBaseData } from '@libs/core-lib/entities/base';
 import {
   ICaseFileMetadata,
   CaseFileActivityType, ICaseFileActivity, ICaseFileEntity, ICaseFileCombined, IdentityAuthenticationMethod, IdentityAuthenticationStatus,

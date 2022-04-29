@@ -1,7 +1,7 @@
 import {
   ITeamEntity, ITeamMember,
 } from '@/entities/team';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ITeamsService extends IDomainBaseService<ITeamEntity, uuid>{
   createTeam(payload: ITeamEntity): Promise<ITeamEntity>;

@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge';
+import { mockBaseData } from '@libs/core-lib/entities/base';
 import { EIndigenousTypes } from '../identity-set/identitySet.types';
 import { mockContactInformation, mockContactInformationCreateRequest } from '../contact-information';
 import { mockIdentitySet, mockIdentitySetCreateRequest } from '../identity-set';
@@ -8,7 +9,6 @@ import {
 } from './member.types';
 
 import { Member } from './member';
-import { mockBaseEntity } from '../../base';
 
 export const mockMemberData = (): IMemberEntity => ({
   identitySet: mockIdentitySet(),
@@ -33,7 +33,7 @@ export const mockMemberCreateRequest = (): MemberCreateRequest => ({
 });
 
 export const mockMemberMetadata = (force?: Partial<IMemberMetadata>) => ({
-  ...mockBaseEntity(),
+  ...mockBaseData(),
   shelterLocationId: '',
   shelterLocationName: { translation: { en: '' } },
   indigenousIdentityId: '',

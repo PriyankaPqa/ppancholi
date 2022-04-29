@@ -3,10 +3,10 @@ import routes from '@/constants/routes';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockStorage } from '@/store/storage';
 import { MAX_LENGTH_SM } from '@/constants/validations';
-import { Status } from '@/entities/base';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import { mockItems } from '@/entities/financial-assistance';
 import { ProgramEntity, mockProgramEntity, mockProgramEntities } from '@/entities/program';
+import { Status } from '@libs/core-lib/entities/base';
 
 import Component from '../CreateEditFinancialAssistance.vue';
 

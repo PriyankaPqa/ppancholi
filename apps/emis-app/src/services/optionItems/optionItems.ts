@@ -3,7 +3,7 @@ import {
   IOptionItemData, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import { IOptionItemsService } from './optionItems.types';
 
 export class OptionItemsService implements IOptionItemsService {

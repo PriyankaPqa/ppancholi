@@ -7,8 +7,8 @@ import {
 } from '@/entities/optionItem';
 import { IOptionItemsService } from '@/services/optionItems';
 import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
-import { Status } from '@/entities/base';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { Status } from '@libs/core-lib/entities/base';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IRootState } from '../../store.types';
 import { IState } from '../base/base.types';

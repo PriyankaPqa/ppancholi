@@ -1,6 +1,6 @@
 import { IVersionedEntity } from '@libs/registration-lib/entities/value-objects/versioned-entity';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import {
   IFinancialAssistancePaymentEntity,
   CreateFinancialAssistancePaymentServiceRequest,
@@ -8,9 +8,7 @@ import {
   PaymentStatus,
   EPaymentCancellationReason,
   PaymentsSummary,
-  IFinancialAssistancePaymentMetadata,
 } from '@/entities/financial-assistance-payment';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
 import { IFinancialAssistancePaymentsService } from './financial-assistance-payments.types';
 
 const API_URL_SUFFIX = 'finance';
@@ -84,10 +82,5 @@ export class FinancialAssistancePaymentsService extends DomainBaseService<IFinan
 
   async getPaymentSummary(caseFileId: uuid): Promise<PaymentsSummary> {
     return this.http.get(`${this.baseUrl}/payments-summary?caseFileId=${caseFileId}`);
-  }
-
-  async search(params: IAzureSearchParams, searchEndpoint: string = null):
-    Promise<IAzureCombinedSearchResult<IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentMetadata>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 }

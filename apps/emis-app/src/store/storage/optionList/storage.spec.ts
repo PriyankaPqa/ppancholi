@@ -2,7 +2,7 @@ import {
   mockOptionItemData, mockSubItem, EOptionLists,
 } from '@/entities/optionItem';
 import { mockStore } from '@/store';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import { makeStorage } from './storage';
 
 const store = mockStore({}, { commit: true, dispatch: true });

@@ -1,6 +1,6 @@
-import { IEntity, IEntityCombined } from '@/entities/base/base.types';
 import { IAddress, IMultilingual } from '@/types';
 import { EPaymentModalities } from '@/entities/program/program.types';
+import { IEntity, IEntityCombined } from '@libs/core-lib/entities/base';
 
 /**
  * Enums

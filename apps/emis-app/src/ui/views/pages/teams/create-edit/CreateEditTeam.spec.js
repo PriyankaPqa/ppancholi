@@ -1,7 +1,6 @@
 import flushPromises from 'flush-promises';
 import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { Status } from '@/entities/base';
 import {
   EEventStatus,
 } from '@/entities/event';
@@ -13,6 +12,7 @@ import {
 import { mockStorage } from '@/store/storage';
 
 import { mockCombinedUserAccount } from '@/entities/user-account';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from './CreateEditTeam.vue';
 
 const localVue = createLocalVue();

@@ -98,8 +98,8 @@ import { DataTableHeader } from 'vuetify';
 import _difference from 'lodash/difference';
 import { ITeamMember } from '@/entities/team';
 import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
-import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
+import { Status } from '@libs/core-lib/entities/base';
 
 interface UserTeamMember {
   roleName: IMultilingual,

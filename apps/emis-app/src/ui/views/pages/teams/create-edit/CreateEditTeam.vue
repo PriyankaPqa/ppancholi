@@ -184,8 +184,8 @@ import StatusSelect from '@/ui/shared-components/StatusSelect.vue';
 import { VForm } from '@/types';
 import { IUserAccountCombined } from '@/entities/user-account';
 import handleUniqueNameSubmitError from '@/ui/mixins/handleUniqueNameSubmitError';
-import { Status } from '@/entities/base';
 import { IError } from '@libs/core-lib/services/http-client';
+import { Status } from '@libs/core-lib/entities/base';
 
 interface UserTeamMember {
   isPrimaryContact: boolean,

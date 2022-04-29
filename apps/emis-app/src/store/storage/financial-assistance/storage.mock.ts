@@ -1,4 +1,3 @@
-import { Status } from '@/entities/base';
 import {
   IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableEntity,
@@ -8,6 +7,7 @@ import {
   mockItems,
 } from '@/entities/financial-assistance';
 import { mockProgramEntity } from '@/entities/program';
+import { Status } from '@libs/core-lib/entities/base';
 import { BaseMock } from '../base/base.mock';
 import { IActionsMock, IGettersMock, IMutationsMock } from './storage.types';
 

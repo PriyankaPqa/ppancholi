@@ -2,7 +2,7 @@ import { IVersionedEntity } from '@libs/registration-lib/entities/value-objects/
 import {
   IFinancialAssistancePaymentEntity, IFinancialAssistancePaymentGroup, PaymentsSummary, PaymentStatus,
 } from '@/entities/financial-assistance-payment';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface IFinancialAssistancePaymentsService extends IDomainBaseService<IFinancialAssistancePaymentEntity, uuid>{
   addFinancialAssistancePayment(entity: IFinancialAssistancePaymentEntity): Promise<IFinancialAssistancePaymentEntity>;

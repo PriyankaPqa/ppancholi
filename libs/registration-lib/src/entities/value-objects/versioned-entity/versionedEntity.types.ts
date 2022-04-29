@@ -1,6 +1,6 @@
 import VueI18n from 'vue-i18n';
+import { IEntity } from '@libs/core-lib/entities/base';
 import { IMultilingual } from '../../../types';
-import { IEntity } from '../../base';
 
 export interface IVersionedEntity {
   versionId: uuid;

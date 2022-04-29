@@ -54,7 +54,7 @@ import {
 } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
 import routes from '@/constants/routes';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
   name: 'PaymentLineItem',

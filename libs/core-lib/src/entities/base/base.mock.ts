@@ -1,4 +1,4 @@
-import { IEntity, Status } from '@/entities/base/base.types';
+import { IEntity, Status } from './base.types';
 
 export const mockBaseData = (force? : Partial<IEntity>): IEntity => ({
   id: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
@@ -13,3 +13,13 @@ export const mockBaseData = (force? : Partial<IEntity>): IEntity => ({
   lastActionCorrelationId: '1dea3c36-d6a5-4e6c-ac36-078677b7da5f',
   ...force,
 });
+
+export const mockBaseEntities = (): IEntity[] => [mockBaseData({ id: '1' }), mockBaseData({ id: '2' })];
+// eslint-disable-next-line
+export const mockBaseMetadata = (force?: any) => ({
+  ...mockBaseData(),
+  propA: 'propA',
+  ...force,
+});
+
+export const mockBaseMetadatum = () => [mockBaseMetadata({ id: '1' }), mockBaseMetadata({ id: '2' })];

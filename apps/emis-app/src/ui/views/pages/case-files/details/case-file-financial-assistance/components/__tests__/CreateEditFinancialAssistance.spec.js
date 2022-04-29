@@ -23,7 +23,7 @@ import { mockProgramEntity, mockCombinedPrograms } from '@/entities/program';
 import { mockOptionItemData } from '@/entities/optionItem';
 import routes from '@/constants/routes';
 import flushPromises from 'flush-promises';
-import { Status } from '@/entities/base/index';
+import { Status } from '@libs/core-lib/entities/base/index';
 import Component from '../CreateEditFinancialAssistance.vue';
 
 const localVue = createLocalVue();

@@ -7,7 +7,7 @@ import VueI18n from 'vue-i18n';
 import _cloneDeep from 'lodash/cloneDeep';
 import _merge from 'lodash/merge';
 import _isEqual from 'lodash/isEqual';
-import { Status } from '@libs/registration-lib/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { IError } from '@libs/core-lib/services/http-client';
 import { ISplitHousehold } from '../../../entities/household-create/householdCreate.types';

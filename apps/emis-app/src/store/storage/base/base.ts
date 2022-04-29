@@ -1,10 +1,10 @@
 /* eslint-disable no-console */
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEmpty from 'lodash/isEmpty';
+import { IAzureTableSearchResults, ICombinedIndex, IAzureSearchParams } from '@libs/core-lib/types';
 import {
   IEntity, IEntityCombined, IFullResponseCombined, Status,
-} from '@/entities/base';
-import { IAzureTableSearchResults, ICombinedIndex, IAzureSearchParams } from '@libs/core-lib/types';
+} from '@libs/core-lib/entities/base';
 import { IStore, IState } from '../../store.types';
 import { IBaseStorage } from './base.types';
 

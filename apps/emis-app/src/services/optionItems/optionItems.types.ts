@@ -3,7 +3,7 @@ import {
 } from '@/entities/optionItem';
 import { IMultilingual } from '@/types';
 
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export interface IOptionItemsService {
   getOptionList(target: EOptionLists): Promise<IOptionItemData[]>;

@@ -1,4 +1,4 @@
-import { BaseEntity } from '../base/base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import { IMultilingual } from '../../types';
 import {
   IBrandingEntity, IFeatureEntity, ITenantSettingsEntity, ITenantSettingsEntityData,

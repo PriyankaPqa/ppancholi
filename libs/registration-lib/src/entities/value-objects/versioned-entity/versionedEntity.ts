@@ -1,4 +1,4 @@
-import { IEntity } from '../../base';
+import { IEntity } from '@libs/core-lib/entities/base';
 import { IHistoryItemTemplateData, IVersionedEntity, IVersionedEntityCombined } from './versionedEntity.types';
 import { IMultilingual } from '../../../types';
 

@@ -1,5 +1,5 @@
 import { TranslateResult } from 'vue-i18n';
-import { BaseEntity } from '@/entities/base/base';
+import { BaseEntity, Status } from '@libs/core-lib/entities/base';
 import { i18n } from '@/ui/plugins/i18n';
 import {
   IFinancialAssistancePaymentGroup,
@@ -10,7 +10,6 @@ import {
   EPaymentCancellationReason,
 } from './financial-assistance-payment.types';
 import { EPaymentModalities } from '../program';
-import { Status } from '../base';
 
 export class FinancialAssistancePaymentGroup extends BaseEntity implements IFinancialAssistancePaymentGroup {
   groupingInformation: IGroupingInformation;

@@ -1,5 +1,5 @@
-import { IEntity, IEntityCombined } from '@/entities/base';
 import { EPaymentModalities } from '@/entities/program';
+import { IEntity, IEntityCombined } from '@libs/core-lib/entities/base';
 
 export enum MassActionGroup {
   Unknown = 0,

@@ -1,9 +1,9 @@
-import { mockDomainBaseService } from '@/services/base/base.mock';
 import {
   IMassActionFinancialAssistanceCreatePayload,
   IMassActionServiceMock,
 } from '@/services/mass-actions/entity/massAction.types';
 import { mockMassActionEntities, mockMassActionEntity } from '@/entities/mass-action';
+import { mockDomainBaseService } from '@libs/core-lib/services/base';
 
 export const mockMassActionService = (): IMassActionServiceMock => ({
   ...mockDomainBaseService(mockMassActionEntities()),

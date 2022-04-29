@@ -4,7 +4,7 @@ import {
   mockFinancialPaymentHistory,
   mockPaymentSummary,
 } from '@/entities/financial-assistance-payment';
-import { mockDomainBaseService } from '@/services/base/base.mock';
+import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { IFinancialAssistancePaymentsServiceMock } from './financial-assistance-payments.types';
 
 export const mockFinancialAssistanceService = (): IFinancialAssistancePaymentsServiceMock => ({

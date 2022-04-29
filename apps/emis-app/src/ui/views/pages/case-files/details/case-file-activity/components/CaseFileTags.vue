@@ -110,7 +110,7 @@ import {
 } from '@/entities/optionItem';
 import { IListOption, IIdMultilingualName } from '@/types';
 
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 interface IListTag extends IIdMultilingualName {
   existing: boolean;

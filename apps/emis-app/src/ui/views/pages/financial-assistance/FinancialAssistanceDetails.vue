@@ -105,8 +105,8 @@ import {
   IFinancialAssistanceTableItem,
   IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
-import { Status } from '@/entities/base';
 import routes from '@/constants/routes';
+import { Status } from '@libs/core-lib/entities/base';
 import { INestedTableHeader } from './create-edit/INestedTableHeader';
 import TooltipFinancialAssistanceCategory from './create-edit/TooltipFinancialAssistanceCategory.vue';
 import ErrorPanel from './create-edit/ErrorPanel.vue';

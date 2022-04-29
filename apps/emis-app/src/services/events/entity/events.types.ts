@@ -7,7 +7,7 @@ import {
   IEventLocation,
   IEventMainInfo,
 } from '@/entities/event';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 import { IAzureSearchParams, IAzureSearchResult } from '@libs/core-lib/types';
 
 export interface IEventsService extends IDomainBaseService<IEventEntity, uuid>{

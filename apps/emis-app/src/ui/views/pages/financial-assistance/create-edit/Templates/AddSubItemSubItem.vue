@@ -27,7 +27,7 @@ import Vue from 'vue';
 import { VSelectWithValidation } from '@libs/component-lib/components';
 import { IOptionSubItem } from '@/entities/optionItem';
 import { IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem } from '@/entities/financial-assistance';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import TooltipFinancialAssistanceCategory from '../TooltipFinancialAssistanceCategory.vue';
 
 export default Vue.extend({

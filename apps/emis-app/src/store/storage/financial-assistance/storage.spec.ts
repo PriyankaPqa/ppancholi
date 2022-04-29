@@ -1,5 +1,4 @@
 import { FINANCIAL_ASSISTANCE_ENTITIES, FINANCIAL_ASSISTANCE_METADATA } from '@/constants/vuex-modules';
-import { Status } from '@/entities/base';
 import {
   EFinancialAmountModes,
   EFinancialFrequency, mockCombinedFinancialAssistance,
@@ -9,6 +8,7 @@ import {
 import { mockProgramEntity } from '@/entities/program';
 import { mockStore } from '@/store';
 import { mockOptionItems } from '@/entities/optionItem';
+import { Status } from '@libs/core-lib/entities/base';
 import { FinancialAssistanceStorage } from './storage';
 
 const entityModuleName = FINANCIAL_ASSISTANCE_ENTITIES;

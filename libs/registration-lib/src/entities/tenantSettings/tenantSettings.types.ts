@@ -1,6 +1,5 @@
+import { IEntity, IEntityCombined } from '@libs/core-lib/entities/base';
 import { IMultilingual } from '../../types';
-
-import { IEntity, IEntityCombined } from '../base/base.types';
 
 export enum FeatureKeys {
   MassAction = 'mass-action',

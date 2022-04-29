@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import {
   EEventStatus,
   ICreateEventRequest,
@@ -11,9 +11,8 @@ import {
   IEventGenericLocation,
   IEventLocation,
   IEventMainInfo,
-  IEventMetadata,
 } from '@/entities/event';
-import { IAzureCombinedSearchResult, IAzureSearchParams, IAzureSearchResult } from '@libs/core-lib/types';
+import { IAzureSearchParams, IAzureSearchResult } from '@libs/core-lib/types';
 import { IEventsService } from './events.types';
 
 const API_URL_SUFFIX = 'event';
@@ -116,11 +115,6 @@ export class EventsService extends DomainBaseService<IEventEntity, uuid> impleme
   // events that a user has access to
   async searchMyEvents(params: IAzureSearchParams): Promise<IAzureSearchResult<IEventMainInfo>> {
     return this.http.get(`${API_URL_SUFFIX}/search/${CONTROLLER}`, { params, isOData: true });
-  }
-
-  async search(params: IAzureSearchParams, searchEndpoint: string = null):
-    Promise<IAzureCombinedSearchResult<IEventEntity, IEventMetadata>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 
   private eventToCreateEventRequestPayload(event: IEventEntity): ICreateEventRequest {

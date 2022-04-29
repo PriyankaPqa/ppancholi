@@ -9,9 +9,9 @@ import Vue from 'vue';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import { IMassActionEntityData, MassActionRunStatus } from '@/entities/mass-action';
 import { i18n } from '@/ui/plugins/i18n';
-import { IEntity } from '@/entities/base';
 import { ISignalRService, ISignalRServiceMock } from '@/services/signal-r';
 import { sub } from 'date-fns';
+import { IEntity } from '@libs/core-lib/entities/base';
 import { IStorage } from '../../../store/storage/storage.types';
 import { ISignalR } from './signalR.types';
 

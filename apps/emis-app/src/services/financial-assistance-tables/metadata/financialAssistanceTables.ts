@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IFinancialAssistanceTableMetadata } from '@/entities/financial-assistance';
 import { IFinancialAssistanceTablesMetadataService } from './financialAssistanceTables.types';
 

@@ -93,7 +93,7 @@ import { MAX_LENGTH_MD } from '@/constants/validations';
 import { SUPPORTED_LANGUAGES_INFO } from '@/constants/trans';
 import entityUtils from '@/entities/utils';
 import { IOptionItem } from '@/entities/optionItem';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
   name: 'OptionListNewItem',

@@ -2,7 +2,7 @@ import { createLocalVue, mount } from '@/test/testSetup';
 
 import { mockStorage } from '@/store/storage';
 import { mockItems, mockSubItems, mockCategories } from '@/entities/financial-assistance';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from '../Templates/AddSubItemSubItem.vue';
 
 const localVue = createLocalVue();

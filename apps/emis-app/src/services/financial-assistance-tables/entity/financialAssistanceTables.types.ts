@@ -5,7 +5,7 @@ import {
   IFinancialAssistanceTableItemData,
   IFinancialAssistanceTableSubItemData,
 } from '@/entities/financial-assistance';
-import { IDomainBaseService } from '@/services/base';
+import { IDomainBaseService } from '@libs/core-lib/services/base';
 
 export interface IFinancialAssistanceTablesService extends IDomainBaseService<IFinancialAssistanceTableEntity, uuid> {
   createFinancialAssistanceTable(financialAssistance: ICreateFinancialAssistanceTableRequest): Promise<IFinancialAssistanceTableEntity>;

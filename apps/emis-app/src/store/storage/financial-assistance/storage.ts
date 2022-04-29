@@ -1,4 +1,3 @@
-import { Status } from '@/entities/base';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
@@ -11,6 +10,7 @@ import {
 import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { IProgramEntity } from '@/entities/program';
 import { IStore, IState } from '@/store/store.types';
+import { Status } from '@libs/core-lib/entities/base';
 import { Base } from '../base';
 import { IStorage } from './storage.types';
 

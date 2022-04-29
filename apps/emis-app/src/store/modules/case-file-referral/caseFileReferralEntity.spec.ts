@@ -7,7 +7,7 @@ import { OptionItemsService } from '@/services/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
 import { mockCaseFileReferralEntity, ICaseFileReferralEntity } from '@/entities/case-file-referral';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import { CaseFileReferralEntityModule } from './caseFileReferralEntity';
 import { ICaseFileReferralEntityState } from './caseFileReferralEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

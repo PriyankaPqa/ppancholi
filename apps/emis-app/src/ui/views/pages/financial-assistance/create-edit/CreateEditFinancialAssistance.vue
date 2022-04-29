@@ -189,7 +189,7 @@ import { MAX_LENGTH_SM } from '@/constants/validations';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem } from '@/entities/financial-assistance';
 import { IProgramEntity } from '@/entities/program';
 import { VForm } from '@/types';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import ConfirmBeforeAction, { ConfirmationDialog } from './ConfirmBeforeAction.vue';
 import ErrorPanel from './ErrorPanel.vue';
 import FinancialAssistanceItems from './FinancialAssistanceItems.vue';

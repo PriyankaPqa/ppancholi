@@ -7,7 +7,7 @@ import {
   mockOptionItemData,
 } from '@/entities/optionItem';
 
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 import Component from '../case-file-activity/components/CaseFileTags.vue';
 

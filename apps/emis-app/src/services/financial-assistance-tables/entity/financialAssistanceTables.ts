@@ -5,10 +5,8 @@ import {
   IFinancialAssistanceTableItemData,
   IFinancialAssistanceTableSubItemData,
 } from '@/entities/financial-assistance';
-import { DomainBaseService } from '@/services/base';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
-import { IFinancialAssistanceTablesMetadataService } from '../metadata';
 import { IFinancialAssistanceTablesService } from './financialAssistanceTables.types';
 
 const API_URL_SUFFIX = 'finance';
@@ -72,10 +70,5 @@ export class FinancialAssistanceTablesService extends DomainBaseService<IFinanci
 
   async fetchByProgramId(programId: uuid): Promise<IFinancialAssistanceTableEntity[]> {
     return this.http.get(`${API_URL_SUFFIX}/programs/${programId}/${CONTROLLER}`);
-  }
-
-  async search(params: IAzureSearchParams, searchEndpoint: string = null):
-    Promise<IAzureCombinedSearchResult<IFinancialAssistanceTableEntity, IFinancialAssistanceTablesMetadataService>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 }

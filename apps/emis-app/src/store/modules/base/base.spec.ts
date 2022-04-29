@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext } from 'vuex';
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { httpClient } from '@/services/httpClient';
 import { mockUserAccountEntities, mockUserAccountEntity } from '@/entities/user-account';
 import helpers from '@/ui/helpers/helpers';

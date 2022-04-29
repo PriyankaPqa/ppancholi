@@ -29,7 +29,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import VueI18n, { TranslateResult } from 'vue-i18n';
-import { Status } from '@libs/registration-lib/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import helpers from '../../ui/helpers/index';
 import { IOptionItemData } from '../../types';
 import { IContactInformation } from '../../entities/value-objects/contact-information';

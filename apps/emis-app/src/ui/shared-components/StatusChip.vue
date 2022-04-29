@@ -18,9 +18,9 @@ import colors from '@/ui/plugins/vuetify/colors';
 import { CaseFileStatus } from '@/entities/case-file';
 import { ApprovalStatus, PaymentStatus } from '@/entities/financial-assistance-payment';
 import { AccountStatus } from '@/entities/user-account';
-import { Status } from '@/entities/base';
 import { DocumentStatus } from '@/entities/case-file-document';
 import { MassActionRunStatus } from '@/entities/mass-action';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
   name: 'StatusChip',

@@ -1,7 +1,7 @@
 import {
   mockCaseFileActivities, mockCaseFileEntity, mockCaseFileCount, mockCaseFileDetailedCount, mockCaseFileEntities,
 } from '@/entities/case-file';
-import { mockDomainBaseService } from '@/services/base/base.mock';
+import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { ICaseFilesServiceMock } from './case-files.types';
 
 export const mockCaseFilesService = (): ICaseFilesServiceMock => ({

@@ -1,6 +1,6 @@
 import { IMultilingual, IListOption, IIdMultilingualName } from '@/types';
-import { IEntity, IEntityCombined } from '@/entities/base/base.types';
 import { EEventStatus } from '@/entities/event';
+import { IEntity, IEntityCombined } from '@libs/core-lib/entities/base';
 
 /**
  * Enums

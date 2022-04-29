@@ -158,8 +158,8 @@ import { IUser, NO_ROLE } from '@/entities/user';
 import routes from '@/constants/routes';
 import { IBrandingEntity } from '@/entities/tenantSettings';
 import { IUserAccountCombined } from '@/entities/user-account';
-import { Status } from '@/entities/base';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
   name: 'RightMenu',

@@ -4,7 +4,7 @@ import { mockStorage } from '@/store/storage';
 import { EPaymentModalities } from '@/entities/program/program.types';
 import { ApprovalStatus, mockCaseFinancialAssistancePaymentGroups } from '@/entities/financial-assistance-payment';
 import routes from '@/constants/routes';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from '../PaymentLineItem.vue';
 
 const localVue = createLocalVue();

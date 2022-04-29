@@ -118,7 +118,7 @@ import {
 import { EEventStatus, IEventEntity } from '@/entities/event';
 import helpers from '@/ui/helpers/helpers';
 import { EPaymentModalities } from '@/entities/program';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import { PaymentDetailsForm } from './FinancialAssistanceCreate.vue';
 
 export default Vue.extend({

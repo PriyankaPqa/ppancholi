@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import { IEntity, mockBaseData, Status } from '@/entities/base';
+import { IEntity, mockBaseData, Status } from '@libs/core-lib/entities/base';
 import {
   ITeamEntity, ITeamMetadata, ITeamEvent, ITeamMember, TeamType, ITeamCombined,
 } from './team.types';

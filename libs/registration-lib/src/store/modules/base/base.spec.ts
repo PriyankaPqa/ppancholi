@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ActionContext } from 'vuex';
 import { mockHttp } from '@libs/core-lib/src/services/http-client';
-import { DomainBaseService } from '../../../services/base';
-import { mockBaseEntities, mockBaseEntity } from '../../../entities/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
+import { mockBaseEntities, mockBaseData } from '@libs/core-lib/entities/base';
 import helpers from '../../../ui/helpers/index';
 import { BaseModule } from './index';
 import { IState } from './base.types';
@@ -87,7 +87,7 @@ describe('Base Module', () => {
       });
 
       it('should commit set mutation with the result', async () => {
-        const res = mockBaseEntity();
+        const res = mockBaseData();
         baseModule.service.get = jest.fn(() => Promise.resolve(res));
 
         await baseModule.actions.fetch(actionContext, { idParams: id, useGlobalHandler: true });
@@ -138,7 +138,7 @@ describe('Base Module', () => {
       });
 
       it('should commit set mutation with the result', async () => {
-        const res = mockBaseEntity();
+        const res = mockBaseData();
         baseModule.service.deactivate = jest.fn(() => Promise.resolve(res));
 
         await baseModule.actions.deactivate(actionContext, id);
@@ -155,7 +155,7 @@ describe('Base Module', () => {
       });
 
       it('should commit set mutation with the result', async () => {
-        const res = mockBaseEntity();
+        const res = mockBaseData();
         baseModule.service.activate = jest.fn(() => Promise.resolve(res));
 
         await baseModule.actions.activate(actionContext, id);
@@ -169,14 +169,14 @@ describe('Base Module', () => {
     describe('set', () => {
       it('should insert the entity if not existing', () => {
         const baseModule = new BaseModuleTest(service);
-        const entity = mockBaseEntity();
+        const entity = mockBaseData();
         baseModule.mutations.set(baseModule.state, entity);
-        expect(baseModule.state.items).toEqual([mockBaseEntity()]);
+        expect(baseModule.state.items).toEqual([mockBaseData()]);
       });
       it('should update the entity if existing and if payload has a newer timestamp', () => {
         const baseModule = new BaseModuleTest(service);
-        const entity = mockBaseEntity();
-        const newerEntity = mockBaseEntity({ timestamp: '2050-04-06 06:39:04' });
+        const entity = mockBaseData();
+        const newerEntity = mockBaseData({ timestamp: '2050-04-06 06:39:04' });
         baseModule.mutations.set(baseModule.state, entity);
 
         baseModule.mutations.set(baseModule.state, newerEntity);
@@ -186,8 +186,8 @@ describe('Base Module', () => {
 
       it('should do nothing if entity exists and if payload has a older timestamp', () => {
         const baseModule = new BaseModuleTest(service);
-        const entity = mockBaseEntity();
-        const newerEntity = mockBaseEntity({ timestamp: '2000-04-06 06:39:04' });
+        const entity = mockBaseData();
+        const newerEntity = mockBaseData({ timestamp: '2000-04-06 06:39:04' });
 
         baseModule.mutations.set(baseModule.state, entity);
 
@@ -200,15 +200,15 @@ describe('Base Module', () => {
     describe('upsert', () => {
       it('should insert the entity if not existing', () => {
         const baseModule = new BaseModuleTest(service);
-        const entity = mockBaseEntity();
+        const entity = mockBaseData();
         baseModule.mutations.upsert(baseModule.state, entity);
         expect(baseModule.state.items).toEqual([entity]);
       });
 
       it('should update the entity if existing and if payload has a newer timestamp', () => {
         const baseModule = new BaseModuleTest(service);
-        const entity = mockBaseEntity();
-        const payload = mockBaseEntity({ timestamp: '2050-04-06 06:39:04' });
+        const entity = mockBaseData();
+        const payload = mockBaseData({ timestamp: '2050-04-06 06:39:04' });
         baseModule.mutations.upsert(baseModule.state, entity);
 
         baseModule.mutations.upsert(baseModule.state, payload);
@@ -218,8 +218,8 @@ describe('Base Module', () => {
 
       it('should do nothing if entity exists and if payload has a older timestamp', () => {
         const baseModule = new BaseModuleTest(service);
-        const entity = mockBaseEntity();
-        const payload = mockBaseEntity({ timestamp: '2000-04-06 06:39:04' });
+        const entity = mockBaseData();
+        const payload = mockBaseData({ timestamp: '2000-04-06 06:39:04' });
 
         baseModule.mutations.upsert(baseModule.state, entity);
 
@@ -241,8 +241,8 @@ describe('Base Module', () => {
         const baseModule = new BaseModuleTest(service);
         const items = mockBaseEntities();
         const payload = [
-          mockBaseEntity({ id: '1', timestamp: '2050-04-06 06:39:04' }),
-          mockBaseEntity({ id: '2', timestamp: '2050-04-06 06:39:04' }),
+          mockBaseData({ id: '1', timestamp: '2050-04-06 06:39:04' }),
+          mockBaseData({ id: '2', timestamp: '2050-04-06 06:39:04' }),
         ];
 
         baseModule.mutations.setAll(baseModule.state, items);
@@ -256,8 +256,8 @@ describe('Base Module', () => {
         const baseModule = new BaseModuleTest(service);
         const items = mockBaseEntities();
         const payload = [
-          mockBaseEntity({ id: '1', timestamp: '2000-04-06 06:39:04' }),
-          mockBaseEntity({ id: '2', timestamp: '2000-04-06 06:39:04' }),
+          mockBaseData({ id: '1', timestamp: '2000-04-06 06:39:04' }),
+          mockBaseData({ id: '2', timestamp: '2000-04-06 06:39:04' }),
         ];
 
         baseModule.mutations.setAll(baseModule.state, items);
@@ -300,7 +300,7 @@ describe('Base Module', () => {
     describe('reset', () => {
       it('should reset items', () => {
         const baseModule = new BaseModuleTest(service);
-        const entity = mockBaseEntity();
+        const entity = mockBaseData();
 
         baseModule.mutations.set(baseModule.state, entity);
         baseModule.mutations.reset(baseModule.state);

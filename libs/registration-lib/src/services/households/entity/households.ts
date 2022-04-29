@@ -1,6 +1,6 @@
 import moment from 'moment';
 import { IHttpClient, IHttpMock } from '@libs/core-lib/services/http-client';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IConsentInformation, IMoveHouseholdRequest } from '../../../entities/household-create/householdCreate.types';
 import { IHouseholdEntity, IOustandingPaymentResponse } from '../../../entities/household';
 import {
@@ -14,7 +14,6 @@ import {
   IValidateEmailRequest, ISplitHouseholdRequest, IMemberMoveRequest, IValidateEmailPublicRequest, IHoneyPotIdentitySet,
 } from '../../../entities/household-create';
 import { IHouseholdsService } from './households.types';
-import { DomainBaseService } from '../../base';
 import { IVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.types';
 import { IHouseholdActivity } from '../../../entities/value-objects/household-activity';
 
@@ -152,10 +151,6 @@ export class HouseholdsService extends DomainBaseService<IHouseholdEntity, uuid>
 
   async getMemberMetadataHistory(id: uuid): Promise<IVersionedEntity[]> {
     return this.http.get(`${this.baseApi}/persons/metadata/${id}/history`);
-  }
-
-  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<IHouseholdEntity, unknown>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 
   /** Private methods * */

@@ -1,5 +1,5 @@
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { BaseEntity } from '@/entities/base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import {
   TeamType, ITeamEntity, ITeamMember,
 } from './team.types';

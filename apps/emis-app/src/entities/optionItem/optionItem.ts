@@ -1,6 +1,6 @@
 import _sortBy from 'lodash/sortBy';
 import { IMultilingual } from '@/types';
-import { BaseEntity, Status } from '@/entities/base';
+import { BaseEntity, Status } from '@libs/core-lib/entities/base';
 import {
   IOptionItem, IOptionItemData, IOptionSubItem,
 } from './optionItem.types';

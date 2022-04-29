@@ -3,8 +3,8 @@
 import _cloneDeep from 'lodash/cloneDeep';
 import _isEmpty from 'lodash/isEmpty';
 import { IAzureSearchParams, IAzureTableSearchResults, ICombinedIndex } from '@libs/core-lib/types';
+import { IEntity, IEntityCombined, Status } from '@libs/core-lib/entities/base';
 import { IStore, IState } from '../..';
-import { IEntity, IEntityCombined, Status } from '../../../entities/base';
 import { IBaseStorage } from './base.types';
 
 export class Base<TEntity extends IEntity, TMetadata extends IEntity, IdParams> implements IBaseStorage<TEntity, TMetadata, IdParams> {

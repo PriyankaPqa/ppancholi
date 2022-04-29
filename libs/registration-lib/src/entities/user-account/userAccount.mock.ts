@@ -1,4 +1,4 @@
-import { IEntity, mockBaseData, Status } from '@/entities/base';
+import { IEntity, mockBaseData, Status } from '@libs/core-lib/entities/base';
 import { IListOption } from '@/types';
 
 import {

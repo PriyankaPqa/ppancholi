@@ -4,8 +4,8 @@ import applicationInsights from '@libs/core-lib/plugins/applicationInsights/appl
 import { VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { IRestResponse } from '@libs/core-lib/services/http-client';
-import { IEntity } from '@/entities/base';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
+import { IEntity } from '@libs/core-lib/entities/base';
 
 const httpClient = axios.create({
   baseURL: `${localStorage.getItem(localStorageKeys.baseUrl.name)}/`,

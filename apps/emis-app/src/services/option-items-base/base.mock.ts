@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { IOptionItemBaseServiceMock } from '@/services/option-items-base/base.types';
-import { mockDomainBaseService } from '@/services/base/base.mock';
+import { mockDomainBaseService } from '@libs/core-lib/services/base';
 
 export const mockOptionItemDomainBaseService = (entities: any): IOptionItemBaseServiceMock => ({
   ...mockDomainBaseService(entities),

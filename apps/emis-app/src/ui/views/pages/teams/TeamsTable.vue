@@ -91,7 +91,7 @@ import { IAzureSearchParams } from '@libs/core-lib/types';
 import TablePaginationSearchMixin from '@/ui/mixins/tablePaginationSearch';
 import FilterToolbar from '@/ui/shared-components/FilterToolbar.vue';
 import helpers from '@/ui/helpers/helpers';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default mixins(TablePaginationSearchMixin).extend({
   name: 'TeamsTable',

@@ -1,6 +1,6 @@
 import { IMultilingual } from '@/types';
 import utils from '@/entities/utils';
-import { BaseEntity, Status } from '../base';
+import { BaseEntity, Status } from '@libs/core-lib/entities/base';
 import { IFinancialAssistanceTableEntity, IFinancialAssistanceTableItemData } from './financial-assistance.types';
 
 export class FinancialAssistanceTableEntity extends BaseEntity implements IFinancialAssistanceTableEntity {

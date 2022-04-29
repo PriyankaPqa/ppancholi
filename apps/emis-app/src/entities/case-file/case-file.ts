@@ -1,4 +1,4 @@
-import { BaseEntity } from '@/entities/base/base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import { IListOption } from '@/types';
 import {
   CaseFileStatus, CaseFileTriage, ICaseFileEntity, ICaseFileLabel,

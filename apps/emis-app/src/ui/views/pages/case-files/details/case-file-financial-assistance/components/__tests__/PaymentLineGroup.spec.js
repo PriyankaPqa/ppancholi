@@ -2,9 +2,9 @@ import { createLocalVue, mount, shallowMount } from '@/test/testSetup';
 import { mockItems } from '@/entities/financial-assistance';
 import { mockStorage } from '@/store/storage';
 import { mockCaseFinancialAssistancePaymentGroups, PaymentStatus, EPaymentCancellationReason } from '@/entities/financial-assistance-payment';
-import { Status } from '@/entities/base';
 import { mockProgramEntity, EPaymentModalities } from '@/entities/program';
 import helpers from '@/ui/helpers/helpers';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from '../PaymentLineGroup.vue';
 
 const localVue = createLocalVue();

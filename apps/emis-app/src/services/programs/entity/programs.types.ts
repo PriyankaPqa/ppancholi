@@ -1,5 +1,5 @@
 import { IProgramEntity } from '@/entities/program';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 interface UrlParams {
   id: uuid;

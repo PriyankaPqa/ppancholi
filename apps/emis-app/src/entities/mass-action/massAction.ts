@@ -1,4 +1,4 @@
-import { BaseEntity } from '@/entities/base/base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import {
   IMassActionDetails, IMassActionEntity, IMassActionEntityData, IMassActionRun, MassActionGroup, MassActionType,
 } from '@/entities/mass-action/massActions.types';

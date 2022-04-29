@@ -1,9 +1,9 @@
-import { Status } from '@/entities/base';
 import {
   IFinancialAssistanceTableEntity, IFinancialAssistanceTableItem, IFinancialAssistanceTableSubItem,
 } from '@/entities/financial-assistance';
 import { IProgramEntity } from '@/entities/program';
 import { IMultilingual } from '@/types';
+import { Status } from '@libs/core-lib/entities/base';
 import { IState } from '../base/base.types';
 
 export interface IFinancialAssistanceEntityState extends IState<IFinancialAssistanceTableEntity> {

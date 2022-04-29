@@ -1,4 +1,5 @@
 import { mockItems } from '@/entities/financial-assistance';
+import { mockBaseData } from '@libs/core-lib/entities/base';
 import {
   PaymentStatus,
   IFinancialAssistancePaymentEntity,
@@ -8,7 +9,6 @@ import {
   IFinancialAssistancePaymentCombined,
   IFinancialAssistancePaymentMetadata,
 } from './financial-assistance-payment.types';
-import { mockBaseData } from '../base';
 import { EPaymentModalities } from '../program';
 
 export const mockCaseFinancialAssistancePaymentGroups = ():

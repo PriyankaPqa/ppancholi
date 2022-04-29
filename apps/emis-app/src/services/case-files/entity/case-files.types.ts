@@ -6,7 +6,7 @@ import {
   ICaseFileDetailedCount,
 } from '@/entities/case-file';
 import { IListOption } from '@/types';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ICreateCaseFileRequest {
   householdId: uuid;

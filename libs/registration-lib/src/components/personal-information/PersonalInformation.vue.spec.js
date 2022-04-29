@@ -1,4 +1,5 @@
 import { i18n } from '@/ui/plugins/i18n';
+import { Status } from '@libs/core-lib/entities/base';
 import { mockStorage } from '../../store/storage/storage.mock';
 import IdentityForm from '../forms/IdentityForm.vue';
 import ContactInformationForm from '../forms/ContactInformationForm.vue';
@@ -18,7 +19,6 @@ import {
 import { createLocalVue, shallowMount } from '../../test/testSetup';
 import Component from './PersonalInformation.vue';
 import helpers from '../../ui/helpers/index';
-import { Status } from '../../entities/base';
 
 const localVue = createLocalVue();
 const storage = mockStorage();

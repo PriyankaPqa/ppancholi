@@ -16,6 +16,9 @@ export const mockHttp = (): IHttpMock => ({
   patch: jest.fn(() => Promise.resolve('resolved')),
   put: jest.fn(() => Promise.resolve('resolved')),
   delete: jest.fn(() => Promise.resolve('resolved')),
+  setHeadersLanguage: jest.fn(),
+  setHeadersTenant: jest.fn(),
+  getFormattedError: jest.fn(),
 });
 
 export const mockHttpErrorResponse = (data: unknown, statusCode: number) => ({

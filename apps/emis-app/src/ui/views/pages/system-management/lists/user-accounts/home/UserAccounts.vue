@@ -153,9 +153,9 @@ import {
 import AddEmisUser from '@/ui/views/pages/system-management/lists/add-emis-user/AddEmisUser.vue';
 import routes from '@/constants/routes';
 import { IUserAccountCombined, IUserAccountEntity } from '@/entities/user-account';
-import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
 import helpers from '@/ui/helpers/helpers';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
   name: 'UserAccounts',

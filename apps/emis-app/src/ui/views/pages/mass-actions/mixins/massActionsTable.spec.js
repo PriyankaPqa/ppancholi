@@ -2,8 +2,8 @@ import { createLocalVue, shallowMount } from '@/test/testSetup';
 import {
   MassActionRunStatus, mockCombinedMassAction, mockCombinedMassActions, mockMassActionRun,
 } from '@/entities/mass-action';
-import { Status } from '@/entities/base';
 import { mockStorage } from '@/store/storage';
+import { Status } from '@libs/core-lib/entities/base';
 import massActionsTable from './massActionsTable';
 
 const Component = {

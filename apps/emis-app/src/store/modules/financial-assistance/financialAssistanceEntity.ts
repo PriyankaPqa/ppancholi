@@ -2,7 +2,6 @@ import { ActionContext, ActionTree } from 'vuex';
 import { cloneDeep, orderBy } from 'lodash';
 import { IRootState } from '@/store/store.types';
 import utils from '@/entities/utils';
-import { Status } from '@/entities/base';
 import {
   EFinancialAmountModes,
   EFinancialFrequency,
@@ -19,6 +18,7 @@ import { IOptionItem, IOptionSubItem } from '@/entities/optionItem';
 import { IProgramEntity } from '@/entities/program';
 import { FinancialAssistanceTablesService } from '@/services/financial-assistance-tables/entity';
 import { SignalR, ISignalRMock } from '@/ui/plugins/signal-r';
+import { Status } from '@libs/core-lib/entities/base';
 import { IFinancialAssistanceEntityState } from './financialAssistanceEntity.types';
 import { BaseModule, filterAndSortActiveItems } from '../base';
 import { IState } from '../base/base.types';

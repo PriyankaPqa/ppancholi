@@ -6,6 +6,7 @@ import {
 import { ECanadaProvinces, IMultilingual } from '@/types';
 import utils from '@/entities/utils';
 
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import {
   EEventStatus,
   IEventEntity,
@@ -16,7 +17,6 @@ import {
   IEventSchedule,
   IEventAgreement,
 } from './event.types';
-import { BaseEntity } from '../base';
 
 export class EventEntity extends BaseEntity {
   name: IMultilingual;

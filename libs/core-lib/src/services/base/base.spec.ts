@@ -1,4 +1,4 @@
-import { mockHttp } from '@libs/core-lib/services/http-client';
+import { mockHttp } from '../http-client';
 import { DomainBaseService } from './base';
 
 const http = mockHttp();
@@ -99,13 +99,13 @@ describe('>>> Domain Base Service', () => {
       const params = { filter: { Foo: 'foo' } };
       const searchEndpoint = 'mock-endpoint';
       await service.search(params, searchEndpoint);
-      expect(http.get).toHaveBeenCalledWith(`search/${searchEndpoint}`, { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith(`${API_URL_SUFFIX}/search/${searchEndpoint}`, { params, isOData: true });
     });
 
     it('should call the proper endpoint if a searchEndpoint parameter is not passed', async () => {
       const params = { filter: { Foo: 'foo' } };
       await service.search(params);
-      expect(http.get).toHaveBeenCalledWith(`search/${CONTROLLER}`, { params, isOData: true });
+      expect(http.get).toHaveBeenCalledWith(`${API_URL_SUFFIX}/search/${CONTROLLER}`, { params, isOData: true });
     });
   });
 });

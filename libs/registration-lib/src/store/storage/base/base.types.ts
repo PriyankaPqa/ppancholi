@@ -1,5 +1,5 @@
 import { IAzureSearchParams, IAzureTableSearchResults } from '@libs/core-lib/types';
-import { IEntity, IEntityCombined } from '../../../entities/base';
+import { IEntity, IEntityCombined } from '@libs/core-lib/entities/base';
 
 export interface IBaseActions<TEntity extends IEntity, TMetadata extends IEntity, IdParams> {
   fetch(idParams: IdParams, { useEntityGlobalHandler, useMetadataGlobalHandler }?

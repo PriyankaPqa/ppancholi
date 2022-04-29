@@ -1,6 +1,6 @@
-import { IHttpClient, IRestResponse } from '@libs/core-lib/services/http-client';
-import { IEntity } from '@/entities/base/base.types';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
+import { IEntity } from '../../entities/base';
+import { IAzureCombinedSearchResult, IAzureSearchParams } from '../../types';
+import { IHttpClient, IRestResponse } from '../http-client';
 import { IDomainBaseService } from './base.types';
 
 export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBaseService<T, IdParams> {
@@ -10,10 +10,13 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
 
   controller: string;
 
+  apiUrlSuffix: string;
+
   constructor(protected readonly http: IHttpClient, apiUrlSuffix: string, controller: string) {
     this.baseApi = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}`;
     this.baseUrl = `${process.env.VUE_APP_API_BASE_URL}/${apiUrlSuffix}/${controller}`;
     this.controller = controller;
+    this.apiUrlSuffix = apiUrlSuffix;
   }
 
   /**
@@ -59,7 +62,7 @@ export class DomainBaseService<T extends IEntity, IdParams> implements IDomainBa
   }
 
   async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<T, unknown>> {
-    return this.http.get(`search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
+    return this.http.get(`${this.apiUrlSuffix}/search/${searchEndpoint ?? this.controller}`, { params, isOData: true });
   }
 
   /**

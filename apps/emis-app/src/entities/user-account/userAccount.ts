@@ -1,5 +1,5 @@
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { BaseEntity } from '@/entities/base/base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import { IListOption } from '@/types';
 import {
   AccessLevels, AccountStatus, IFilter, IUserAccountEntity,

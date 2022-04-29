@@ -1,4 +1,4 @@
-import { mockBaseData, Status } from '@/entities/base';
+import { mockBaseData, Status } from '@libs/core-lib/entities/base';
 import {
   IOptionItem, IOptionItemCombined, IOptionItemData, IOptionSubItem,
 } from './optionItem.types';

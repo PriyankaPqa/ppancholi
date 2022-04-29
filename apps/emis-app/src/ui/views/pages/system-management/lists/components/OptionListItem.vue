@@ -214,7 +214,7 @@ import { IMultilingual, VForm } from '@/types';
 import { MAX_LENGTH_MD } from '@/constants/validations';
 import entityUtils from '@/entities/utils';
 import { EOptionLists, IOptionItem } from '@/entities/optionItem';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
   name: 'OptionListItem',

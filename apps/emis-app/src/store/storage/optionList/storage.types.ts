@@ -4,7 +4,7 @@ import {
   OptionItem, IOptionItem, EOptionLists, ICreateOptionItemRequest, IOptionSubItem,
 } from '@/entities/optionItem';
 
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export interface IStorage {
   getters: {

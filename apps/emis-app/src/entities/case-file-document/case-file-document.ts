@@ -1,4 +1,4 @@
-import { BaseEntity } from '@/entities/base/base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import { IListOption } from '@/types';
 import { ICaseFileDocumentEntity, DocumentStatus } from './case-file-document.types';
 

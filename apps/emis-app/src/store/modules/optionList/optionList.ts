@@ -9,7 +9,7 @@ import { IMultilingual } from '@/types';
 import {
   IOptionItemData, IOptionItem, OptionItem, EOptionLists, IOptionSubItem,
 } from '@/entities/optionItem';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import {
   IState,
 } from './optionList.types';

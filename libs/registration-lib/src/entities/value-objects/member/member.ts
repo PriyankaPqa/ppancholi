@@ -1,4 +1,4 @@
-import { BaseEntity } from '../../base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import { ContactInformation, IContactInformation } from '../contact-information';
 import { IdentitySet, IIdentitySet } from '../identity-set';
 import { CurrentAddress, ICurrentAddress } from '../current-address';

@@ -1,5 +1,5 @@
 import { ICaseFileReferralEntity } from '@/entities/case-file-referral';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ICaseFileReferralsService extends IDomainBaseService<ICaseFileReferralEntity, { id: uuid, caseFileId: uuid }>{
   createReferral(item: ICaseFileReferralEntity): Promise<ICaseFileReferralEntity>;

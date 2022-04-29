@@ -1,5 +1,5 @@
 import { ITeamMetadata } from '@/entities/team';
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ITeamsMetadataService } from './teams.types';
 

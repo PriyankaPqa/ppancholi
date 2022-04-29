@@ -4,7 +4,7 @@ import {
   shallowMount,
   mount,
 } from '@/test/testSetup';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from '../OptionListNewItem.vue';
 
 const localVue = createLocalVue();

@@ -5,7 +5,6 @@ import {
   OptionItem, mockOptionItemData, EOptionLists,
 } from '@/entities/optionItem';
 
-import { Status } from '@/entities/base';
 import {
   EEventStatus,
   EventEntity,
@@ -19,6 +18,7 @@ import { EventsService } from '@/services/events/entity';
 import { OptionItemsService } from '@/services/optionItems';
 import { EEventSummarySections } from '@/types';
 import { mockSignalR } from '@/ui/plugins/signal-r';
+import { Status } from '@libs/core-lib/entities/base';
 import { EventEntityModule } from './eventEntity';
 
 import { IEventEntityState } from './eventEntity.types';

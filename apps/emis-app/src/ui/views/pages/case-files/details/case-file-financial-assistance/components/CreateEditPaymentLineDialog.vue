@@ -192,8 +192,8 @@ import helpers from '@/ui/helpers/helpers';
 import { ECanadaProvinces, IAddress, VForm } from '@/types';
 import { localStorageKeys } from '@/constants/localStorage';
 import { MAX_LENGTH_MD } from '@/constants/validations';
-import { Status } from '@/entities/base';
 import { FeatureKeys } from '@/entities/tenantSettings';
+import { Status } from '@libs/core-lib/entities/base';
 import caseFileDetail from '../../caseFileDetail';
 
 export default mixins(caseFileDetail).extend({

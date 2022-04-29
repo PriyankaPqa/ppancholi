@@ -1,5 +1,5 @@
 import { ICaseNoteEntity } from '@/entities/case-note';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ICaseNotesService extends IDomainBaseService<ICaseNoteEntity, uuid>{
   addCaseNote(id: uuid, caseNote: ICaseNoteEntity): Promise<ICaseNoteEntity>;

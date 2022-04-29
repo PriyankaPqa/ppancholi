@@ -1,4 +1,4 @@
-import { mockBaseData } from '@/entities/base';
+import { mockBaseData } from '@libs/core-lib/entities/base';
 import { OptionItem } from './optionItem';
 import { mockOptionItemData } from './optionItem.mock';
 

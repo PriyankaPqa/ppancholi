@@ -1,6 +1,6 @@
 import { IHttpClient, IHttpMock } from '@libs/core-lib//services/http-client';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
-import { DomainBaseService } from '../../base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import {
   IBrandingEntityData,
   ICreateTenantSettingsRequest,

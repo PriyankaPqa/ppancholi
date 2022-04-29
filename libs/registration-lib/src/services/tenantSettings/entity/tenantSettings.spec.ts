@@ -10,10 +10,9 @@ import { TenantSettingsService } from './tenantSettings';
 describe('>>> TenantSettings service', () => {
   let http: IHttpMock;
   let service: TenantSettingsService;
-
   beforeEach(() => {
     jest.clearAllMocks();
-
+    process.env.VUE_APP_API_BASE_URL = 'www.test.com';
     http = mockHttp();
     service = new TenantSettingsService(http as never);
   });
@@ -21,19 +20,19 @@ describe('>>> TenantSettings service', () => {
   describe('getCurrentTenantSettings', () => {
     it('is linked to the correct url', async () => {
       await service.getCurrentTenantSettings();
-      expect(http.get).toHaveBeenCalledWith('system-management/tenant-settings/current-tenant-settings', { globalHandler: false });
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/current-tenant-settings', { globalHandler: false });
     });
   });
 
   test('getPublicFeatures is linked to the correct URL', async () => {
     await service.getPublicFeatures();
-    expect(http.get).toHaveBeenCalledWith('system-management/tenant-settings/public-features');
+    expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/public-features');
   });
 
   describe('getBranding', () => {
     it('is linked to the correct url', async () => {
       await service.getBranding();
-      expect(http.get).toHaveBeenCalledWith('system-management/tenant-settings/current-branding');
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/current-branding');
     });
   });
 
@@ -43,7 +42,7 @@ describe('>>> TenantSettings service', () => {
 
       await service.createTenantSettings(payload);
 
-      expect(http.post).toHaveBeenCalledWith('system-management/tenant-settings', payload);
+      expect(http.post).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings', payload);
     });
   });
 
@@ -53,7 +52,7 @@ describe('>>> TenantSettings service', () => {
 
       await service.createTenantDomains(payload);
 
-      expect(http.patch).toHaveBeenCalledWith('system-management/tenant-settings/domains', payload);
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/domains', payload);
     });
   });
 
@@ -76,21 +75,21 @@ describe('>>> TenantSettings service', () => {
   describe('getUserTenants', () => {
     it('is linked to the correct url', async () => {
       await service.getUserTenants();
-      expect(http.get).toHaveBeenCalledWith('system-management/tenants/brandings', { globalHandler: false });
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenants/brandings', { globalHandler: false });
     });
   });
 
   describe('updateColours', () => {
     it('is linked to the correct url', async () => {
       await service.updateColours(mockEditColoursRequest());
-      expect(http.patch).toHaveBeenCalledWith('system-management/tenant-settings/colours', mockEditColoursRequest());
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/colours', mockEditColoursRequest());
     });
   });
 
   describe('updateTenantDetails', () => {
     it('is linked to the correct url', async () => {
       await service.updateTenantDetails(mockEditTenantDetailsRequest());
-      expect(http.patch).toHaveBeenCalledWith('system-management/tenant-settings/tenant-details', mockEditTenantDetailsRequest());
+      expect(http.patch).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/tenant-details', mockEditTenantDetailsRequest());
     });
   });
 
@@ -105,7 +104,7 @@ describe('>>> TenantSettings service', () => {
 
       await service.getLogoUrl('en');
 
-      expect(http.getFullResponse).toHaveBeenCalledWith('system-management/tenant-settings/logo/en', {
+      expect(http.getFullResponse).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/logo/en', {
         responseType: 'blob',
         globalHandler: false,
       });
@@ -115,7 +114,7 @@ describe('>>> TenantSettings service', () => {
   describe('validateCaptchaAllowedIpAddress', () => {
     it('is linked to the correct url', async () => {
       await service.validateCaptchaAllowedIpAddress();
-      expect(http.get).toHaveBeenCalledWith('system-management/tenant-settings/validate-captcha-allowed-ip-address');
+      expect(http.get).toHaveBeenCalledWith('www.test.com/system-management/tenant-settings/validate-captcha-allowed-ip-address');
     });
   });
 });

@@ -1,3 +1,4 @@
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 import {
   IBrandingEntityData,
   ICreateTenantSettingsRequest,
@@ -9,7 +10,6 @@ import {
   ITenantSettingsEntityData,
   IValidateCaptchaAllowedIpAddressResponse,
 } from '../../../entities/tenantSettings';
-import { IDomainBaseService, IDomainBaseServiceMock } from '../../base/base.types';
 
 export interface ITenantSettingsService extends IDomainBaseService<ITenantSettingsEntity, uuid> {
   getCurrentTenantSettings(): Promise<ITenantSettingsEntityData>;

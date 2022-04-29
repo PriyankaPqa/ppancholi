@@ -1,4 +1,4 @@
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IFinancialAssistancePaymentMetadata } from '@/entities/financial-assistance-payment';
 import { IFinancialAssistancePaymentsMetadataService } from './financial-assistance-payments.types';

@@ -1,7 +1,7 @@
-import { Status } from '@/entities/base';
 import { IMultilingual } from '@/types';
 import { IOptionItemData, IOptionSubItem } from '@/entities/optionItem';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export interface IOptionItemBaseService extends IDomainBaseService<IOptionItemData, uuid>{
   createOptionItem(optionItem: IOptionItemData): Promise<IOptionItemData>

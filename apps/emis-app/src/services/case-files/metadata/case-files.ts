@@ -1,5 +1,5 @@
 import { ICaseFileMetadata } from '@/entities/case-file';
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ICaseFilesMetadataService } from './case-files.types';
 

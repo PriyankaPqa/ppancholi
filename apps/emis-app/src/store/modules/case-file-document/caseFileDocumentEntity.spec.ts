@@ -7,7 +7,7 @@ import { OptionItemsService } from '@/services/optionItems';
 
 import { EOptionLists, mockOptionItemData, OptionItem } from '@/entities/optionItem';
 import { mockCaseFileDocumentEntity, ICaseFileDocumentEntity } from '@/entities/case-file-document';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import { CaseFileDocumentEntityModule } from './caseFileDocumentEntity';
 import { ICaseFileDocumentEntityState } from './caseFileDocumentEntity.types';
 import { mockSignalR } from '../../../ui/plugins/signal-r';

@@ -1,5 +1,5 @@
+import { mockBaseData } from '@libs/core-lib/src/entities/base';
 import { i18n } from '../../../ui/plugins/i18n';
-import { mockBaseEntity } from '../../base/base.mock';
 
 import { VersionedEntityCombined } from '.';
 import { mockVersionedEntity } from './versionedEntity.mock';
@@ -58,7 +58,7 @@ describe('>>> Versioned Entity', () => {
 
   describe('getTemplateData', () => {
     it('calls makeEmptyTemplate for the current entity if entity type is not known', () => {
-      const entityData = mockVersionedEntity('household', { entityType: 'household', entity: { ...mockBaseEntity(), lastAction: 'foo' } });
+      const entityData = mockVersionedEntity('household', { entityType: 'household', entity: { ...mockBaseData(), lastAction: 'foo' } });
       const entity = new VersionedEntityCombined(entityData, mockMetadata);
       entity.makeEmptyTemplate = jest.fn();
       entity.getTemplateData([entity], false, i18n);

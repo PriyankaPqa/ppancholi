@@ -1,9 +1,9 @@
+import { IEntity } from '@libs/core-lib/entities/base';
 import { IMultilingual } from '../../../types';
 import { EIndigenousTypes } from '../identity-set/identitySet.types';
 import { IIdentitySet, IIdentitySetCreateRequest } from '../identity-set';
 import { IContactInformation, IContactInformationCreateRequest } from '../contact-information';
 import { ICurrentAddress, ICurrentAddressCreateRequest } from '../current-address/currentAddress.types';
-import { IEntity } from '../../base';
 
 export interface IMemberEntity extends IEntity {
   identitySet: IIdentitySet;

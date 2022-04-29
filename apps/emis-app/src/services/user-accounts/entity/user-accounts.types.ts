@@ -2,7 +2,7 @@ import { IOptionSubItem } from '@/entities/optionItem';
 import {
   IFilter, IUserAccountEntity,
 } from '@/entities/user-account';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface IAddRoleToUserRequest {
   subRole: IOptionSubItem;

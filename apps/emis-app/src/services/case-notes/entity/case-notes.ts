@@ -1,5 +1,5 @@
 import { ICaseNoteEntity, ICaseNoteMetadata } from '@/entities/case-note';
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 
 import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';

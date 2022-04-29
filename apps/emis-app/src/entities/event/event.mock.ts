@@ -1,5 +1,6 @@
 import { ECanadaProvinces, IMultilingual } from '@/types';
 import { IAzureSearchResult } from '@libs/core-lib/types';
+import { IEntity, mockBaseData, Status } from '@libs/core-lib/entities/base';
 import {
   IEventMainInfo,
   EEventCallCentreStatus,
@@ -11,7 +12,6 @@ import {
   IEventLocation,
 } from './event.types';
 /* eslint-disable max-lines-per-function */
-import { IEntity, mockBaseData, Status } from '../base';
 
 export const mockEventMainInfo = (force?: Partial<IEventMainInfo>): IEventMainInfo => ({
   entity: {

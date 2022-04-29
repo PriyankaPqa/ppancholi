@@ -53,4 +53,7 @@ export interface IHttpMock {
   patch: jest.Mock<Promise<any>>
   put: jest.Mock<Promise<any>>
   delete: jest.Mock<Promise<any>>
+  setHeadersLanguage: jest.Mock<void>;
+  setHeadersTenant: jest.Mock<void>;
+  getFormattedError: jest.Mock<string>;
 }

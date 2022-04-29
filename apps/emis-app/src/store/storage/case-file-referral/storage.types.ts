@@ -1,6 +1,6 @@
-import { IEntityCombined } from '@/entities/base';
 import { ICaseFileReferralEntity, ICaseFileReferralMetadata } from '@/entities/case-file-referral';
 import { IOptionItem, IOptionItemData } from '@/entities/optionItem';
+import { IEntityCombined } from '@libs/core-lib/entities/base';
 import {
   IBaseActions, IBaseActionsMock, IBaseGetters, IBaseGettersMock, IBaseMutations, IBaseMutationsMock,
 } from '../base';

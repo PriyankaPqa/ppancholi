@@ -1,8 +1,8 @@
+import { IEntity, IEntityCombined } from '@libs/core-lib/entities/base';
 import { IEventGenericLocation } from '../event/event.types';
 import { IMultilingual } from '../../types/interfaces/IMultilingual';
 import { IPhoneNumber } from '../value-objects/contact-information';
 import { IAddressData } from '../value-objects/address';
-import { IEntity, IEntityCombined } from '../base';
 
 export interface IHouseholdAddress {
   address?: IAddressData;

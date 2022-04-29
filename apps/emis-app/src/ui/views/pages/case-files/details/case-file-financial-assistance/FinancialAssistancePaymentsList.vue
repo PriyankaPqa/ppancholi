@@ -180,7 +180,7 @@ import {
   IFinancialAssistancePaymentEntity,
   PaymentStatus,
 } from '@/entities/financial-assistance-payment';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import ApprovalHistoryDialog from './components/ApprovalHistoryDialog.vue';
 import StatisticsDialog from './components/StatisticsDialog.vue';
 import caseFileDetail from '../caseFileDetail';

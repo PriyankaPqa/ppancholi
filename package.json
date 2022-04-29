@@ -49,7 +49,7 @@
     "clean": "lerna clean",
     "clean:all": "rm -rf node_modules && lerna clean",
     "lerna:list": "lerna list --all",
-    "test": "jest --runInBand",
+    "test": "jest --maxWorkers=3",
     "lint": "yarn workspaces run lint",
     "lerna:update": "lernaupdate",
     "test:parallel": "node ./tools/scripts/parallelize-test.js",

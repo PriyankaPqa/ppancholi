@@ -6,7 +6,7 @@ import {
   IMassActionCombined, IMassActionRun, IMassActionRunMetadataModel, MassActionRunStatus,
 } from '@/entities/mass-action';
 import { IAzureSearchParams } from '@libs/core-lib/types';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
 

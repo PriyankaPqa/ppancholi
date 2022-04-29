@@ -1,7 +1,7 @@
+import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import {
   mockBrandingEntityData, mockFeatures, mockTenantSettingsEntity, mockTenantSettingsEntityData,
 } from '../../../entities/tenantSettings';
-import { mockDomainBaseService } from '../../base/base.mock';
 import { ITenantSettingsServiceMock } from './tenantSettings.types';
 
 export const mockTenantSettingsService = (): ITenantSettingsServiceMock => ({

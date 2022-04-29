@@ -1,5 +1,5 @@
 import { mockUserAccountEntities, mockUserAccountEntity } from '@/entities/user-account';
-import { mockDomainBaseService } from '@/services/base/base.mock';
+import { mockDomainBaseService } from '@libs/core-lib/services/base';
 import { IUserAccountsServiceMock } from './user-accounts.types';
 
 export const mockUserAccountsService = (): IUserAccountsServiceMock => ({

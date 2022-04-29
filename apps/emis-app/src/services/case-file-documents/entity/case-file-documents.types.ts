@@ -1,5 +1,5 @@
 import { ICaseFileDocumentEntity } from '@/entities/case-file-document';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 
 export interface ICaseFileDocumentsService extends IDomainBaseService<ICaseFileDocumentEntity, { id: uuid, caseFileId: uuid }>{
   updateDocument(item: ICaseFileDocumentEntity): Promise<ICaseFileDocumentEntity>;

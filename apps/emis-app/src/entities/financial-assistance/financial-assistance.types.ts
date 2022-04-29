@@ -1,5 +1,5 @@
 import { IMultilingual } from '@/types';
-import { IEntity, IEntityCombined, Status } from '@/entities/base/base.types';
+import { IEntity, IEntityCombined, Status } from '@libs/core-lib/entities/base';
 import { IOptionItem, IOptionSubItem } from '../optionItem';
 
 export enum EFinancialAmountModes {

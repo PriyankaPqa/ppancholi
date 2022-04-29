@@ -5,7 +5,7 @@ import {
   mockOptionItemData, mockSubItem, EOptionLists,
 } from '@/entities/optionItem';
 
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 describe('>>> Option List Module', () => {
   let store: Store<IRootState>;

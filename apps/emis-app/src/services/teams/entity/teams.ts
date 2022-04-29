@@ -1,8 +1,8 @@
 import {
   ITeamEntity, ITeamMember,
 } from '@/entities/team';
-import { DomainBaseService } from '@/services/base';
-import { IAzureCombinedSearchResult, IAzureSearchParams } from '@libs/core-lib/types';
+import { DomainBaseService } from '@libs/core-lib/services/base';
+
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { ITeamsService } from './teams.types';
 
@@ -12,10 +12,6 @@ const CONTROLLER = 'teams';
 export class TeamsService extends DomainBaseService<ITeamEntity, uuid> implements ITeamsService {
   constructor(http: IHttpClient) {
     super(http, API_URL_SUFFIX, CONTROLLER);
-  }
-
-  async search(params: IAzureSearchParams, searchEndpoint: string = null): Promise<IAzureCombinedSearchResult<ITeamEntity, unknown>> {
-    return this.http.get(`${API_URL_SUFFIX}/search/${searchEndpoint ?? CONTROLLER}`, { params, isOData: true });
   }
 
   async getTeamsAssignable(eventId: uuid): Promise<ITeamEntity[]> {

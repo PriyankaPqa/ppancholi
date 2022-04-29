@@ -1,5 +1,5 @@
 import { IMultilingual } from '@/types';
-import { BaseEntity } from '../base';
+import { BaseEntity } from '@libs/core-lib/entities/base';
 import utils from '../utils';
 import {
   EPaymentModalities,

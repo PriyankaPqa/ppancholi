@@ -7,7 +7,7 @@ import {
   ITenantSettingsEntity,
   ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
-import { IDomainBaseService, IDomainBaseServiceMock } from '@/services/base';
+import { IDomainBaseService, IDomainBaseServiceMock } from '@libs/core-lib/services/base';
 import { IMultilingual } from '@libs/registration-lib/types';
 
 export interface ITenantSettingsService extends IDomainBaseService<ITenantSettingsEntity, uuid> {

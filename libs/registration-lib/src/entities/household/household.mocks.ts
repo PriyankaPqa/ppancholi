@@ -1,10 +1,10 @@
+import { IEntity, mockBaseData } from '@libs/core-lib/entities/base';
 import { mockRegistrationLocations } from '../event/event.mock';
 import {
   IHouseholdCombined, IHouseholdEntity, IHouseholdMetadata, IHouseholdMemberMetadata,
   IHouseholdCaseFile,
 } from './household.types';
 /* eslint-disable no-nested-ternary */
-import { IEntity, mockBaseEntity } from '../base';
 
 export const mockHouseholdEntity = (force?: Partial<IHouseholdEntity>): IHouseholdEntity => ({
   id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
@@ -82,7 +82,7 @@ export const mockHouseholdCaseFile = (force?: Partial<IHouseholdCaseFile>): IHou
 });
 
 export const mockHouseholdMetadata = (force?: Partial<IHouseholdMetadata>): IHouseholdMetadata => ({
-  ...mockBaseEntity(),
+  ...mockBaseData(),
   memberMetadata: [mockHouseholdMemberMetadata()],
   eventIds: ['1', '2'],
   caseFiles: [mockHouseholdCaseFile()],

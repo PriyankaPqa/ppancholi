@@ -1,5 +1,4 @@
-import { mockBaseData } from '@/entities/base';
-import { IEntity } from '../base/base.types';
+import { mockBaseData, IEntity } from '@libs/core-lib/entities/base';
 import { ICaseFileReferralCombined, ICaseFileReferralEntity, ICaseFileReferralMetadata } from './case-file-referral.types';
 
 export const mockCaseFileReferralEntity = (force? : Partial<ICaseFileReferralEntity>) : ICaseFileReferralEntity => ({

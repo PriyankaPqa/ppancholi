@@ -3,7 +3,7 @@ import {
   IBrandingEntityData, ICreateTenantSettingsRequest, IEditColoursRequest, IEditTenantDetailsRequest,
   ISetDomainsRequest, ITenantSettingsEntity, ITenantSettingsEntityData,
 } from '@/entities/tenantSettings';
-import { DomainBaseService } from '@/services/base';
+import { DomainBaseService } from '@libs/core-lib/services/base';
 import { IHttpClient } from '@libs/core-lib/services/http-client';
 import { IMultilingual } from '@libs/registration-lib/types';
 import { ITenantSettingsService } from './tenantSettings.types';

@@ -111,7 +111,7 @@ import { TeamType, ITeamEntity, ITeamMember } from '@/entities/team';
 import { ICaseFileEntity } from '@/entities/case-file';
 import helpers from '@/ui/helpers/helpers';
 import { AccountStatus, IUserAccountCombined } from '@/entities/user-account';
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 import AssignedList from './AssignedList.vue';
 
 interface TeamWithCount extends ITeamEntity {

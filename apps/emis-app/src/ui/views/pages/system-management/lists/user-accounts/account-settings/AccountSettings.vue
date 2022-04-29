@@ -175,7 +175,7 @@ import {
 } from '@/entities/optionItem';
 import helpers from '@/ui/helpers/helpers';
 
-import { Status } from '@/entities/base';
+import { Status } from '@libs/core-lib/entities/base';
 
 export default Vue.extend({
   name: 'AccountSettings',

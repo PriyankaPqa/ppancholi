@@ -3,11 +3,11 @@ import { EFilterType } from '@libs/component-lib/types';
 import helpers from '@/ui/helpers/helpers';
 import { createLocalVue, mount } from '@/test/testSetup';
 import { mockUserStateLevel } from '@/test/helpers';
-import { Status } from '@/entities/base';
 import { mockStorage } from '@/store/storage';
 import { mockCombinedFinancialAssistances } from '@/entities/financial-assistance';
 import { mockProgramEntities } from '@/entities/program';
 import routes from '@/constants/routes';
+import { Status } from '@libs/core-lib/entities/base';
 import Component from './FinancialAssistanceTablesTable.vue';
 
 const storage = mockStorage();

@@ -179,13 +179,13 @@ import
   IFinancialAssistanceTableCombined,
   IFinancialAssistanceTableItem,
 } from '@/entities/financial-assistance';
-import { Status } from '@/entities/base/index';
 import { IdentityAuthenticationStatus, ValidationOfImpactStatus } from '@/entities/case-file';
 import MessageBox from '@/ui/shared-components/MessageBox.vue';
 import { IProgramEntity } from '@/entities/program';
 import routes from '@/constants/routes';
 import { VForm } from '@/types';
 import helpers from '@/ui/helpers/helpers';
+import { Status } from '@libs/core-lib/entities/base/index';
 import PaymentLineGroupList from './PaymentLineGroupList.vue';
 import CreateEditFinancialAssistanceForm from './CreateEditFinancialAssistanceForm.vue';
 import ViewFinancialAssistanceDetails from './ViewFinancialAssistanceDetails.vue';
