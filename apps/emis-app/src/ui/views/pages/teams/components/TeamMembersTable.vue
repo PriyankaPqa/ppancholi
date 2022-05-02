@@ -30,6 +30,7 @@
       data-test="teamMembers__table"
       hide-default-footer
       must-sort
+      :loading="loading"
       :headers="headers"
       :items="computedTeamMembers"
       :items-per-page="Math.max(computedTeamMembers.length, 1)"
@@ -48,7 +49,7 @@
         </span>
       </template>
 
-      <template #item.role="{ item }">
+      <template #[`item.metadata.roleName.${i18n.locale}`]="{ item }">
         {{ getRole(item) }}
       </template>
 
@@ -199,6 +200,8 @@ export default Vue.extend({
       showMemberDialog: false,
       clickedMember: null as ITeamMemberAsUser,
       removeLoading: false,
+      i18n: this.$i18n,
+      loading: false,
     };
   },
 
@@ -230,8 +233,8 @@ export default Vue.extend({
           text: this.$t('teams.member_role') as string,
           class: 'team_member_header',
           filterable: false,
-          sortable: false,
-          value: 'role',
+          sortable: true,
+          value: `metadata.roleName.translation.${this.$i18n.locale}`,
         },
         {
           text: this.$t('teams.teams') as string,
@@ -247,6 +250,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'metadata.caseFilesCount',
+          width: '20px',
         },
         {
           text: this.$t('teams.count_file.open') as string,
@@ -254,6 +258,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'metadata.openCaseFilesCount',
+          width: '20px',
         },
         {
           text: this.$t('teams.count_file.inactive') as string,
@@ -261,6 +266,7 @@ export default Vue.extend({
           filterable: false,
           sortable: true,
           value: 'metadata.inactiveCaseFilesCount',
+          width: '20px',
         },
         {
           text: '',
@@ -284,6 +290,7 @@ export default Vue.extend({
       }));
       const direction = this.sortDesc ? 'desc' : 'asc';
       const filtered = helpers.filterCollectionByValue(users, this.search, false, this.searchAmong, true);
+
       return _orderBy(filtered, this.sortBy, direction);
     },
 
@@ -298,7 +305,9 @@ export default Vue.extend({
 
   methods: {
     async loadUsers() {
+      this.loading = true;
       await this.$storage.userAccount.actions.fetchAll();
+      this.loading = false;
     },
 
     showRemoveConfirmationDialog(id: string) {

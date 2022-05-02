@@ -41,7 +41,7 @@ const signalRService = new SignalRService(httpClient);
 SignalR.Initialize({
   service: signalRService,
   storage,
-  showConsole: true,
+  showConsole: false,
 });
 
 applicationInsights.initialize({
