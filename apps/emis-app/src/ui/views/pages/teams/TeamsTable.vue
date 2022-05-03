@@ -104,9 +104,9 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   props: {
-    title: {
-      type: String,
-      default: 'teams.teams',
+    isOnHomepage: {
+      type: Boolean,
+      default: false,
     },
     limitResults: {
       type: Number,
@@ -133,15 +133,15 @@ export default mixins(TablePaginationSearchMixin).extend({
   },
 
   computed: {
-
     tableData(): ITeamCombined[] {
       return this.$storage.team.getters.getByIds(this.searchResultIds, { prependPinnedItems: true, baseDate: this.searchExecutionDate });
     },
 
     labels(): { header: { title: TranslateResult; searchPlaceholder: TranslateResult } } {
+      const title = this.isOnHomepage ? `${this.$t('common.myTeams')} (${this.itemsCount})` : this.$t('teams.teams');
       return {
         header: {
-          title: this.$t(this.title),
+          title,
           searchPlaceholder: this.$t('common.inputs.quick_search'),
         },
       };

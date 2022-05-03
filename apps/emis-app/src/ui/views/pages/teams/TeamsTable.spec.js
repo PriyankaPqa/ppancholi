@@ -106,12 +106,24 @@ describe('TeamsTable.vue', () => {
     });
 
     describe('labels', () => {
-      it('should return the header object with the title received from props', async () => {
-        wrapper.setProps({ title: 'foo' });
+      it('should return the header object with the right title if component is on the homepage', async () => {
+        wrapper.setProps({ isOnHomepage: true, itemsCount: 10 });
+        wrapper.setData({ itemsCount: 10 });
         await wrapper.vm.$nextTick();
         expect(wrapper.vm.labels).toEqual({
           header: {
-            title: 'foo',
+            title: 'common.myTeams (10)',
+            searchPlaceholder: 'common.inputs.quick_search',
+          },
+        });
+      });
+
+      it('should return the header object with the title if component is not on the homepage', async () => {
+        wrapper.setProps({ isOnHomepage: false, itemsCount: 10 });
+        await wrapper.vm.$nextTick();
+        expect(wrapper.vm.labels).toEqual({
+          header: {
+            title: 'teams.teams',
             searchPlaceholder: 'common.inputs.quick_search',
           },
         });

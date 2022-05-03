@@ -18,11 +18,11 @@ describe('HomeLevel4.vue', () => {
       expect(wrapper.findComponent(TeamsTable)).toBeTruthy();
     });
 
-    it('TeamsTable title is linked to the proper key', () => {
+    it('TeamsTable isOnHomepage prop has the right value', () => {
       wrapper = shallowMount(Component, {
         localVue,
       });
-      expect(wrapper.findComponent(TeamsTable).props('title')).toBe('common.myTeams');
+      expect(wrapper.findComponent(TeamsTable).props('isOnHomepage')).toBeTruthy();
     });
 
     it('shows EventStats component', () => {
