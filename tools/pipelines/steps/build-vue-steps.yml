@@ -5,6 +5,7 @@ parameters:
   lokaliseCommand: ''
   lokalise: ''
   nodeJsVersion: ''
+  appVersion: ''
 
 steps:
   - task: NodeTool@0
@@ -16,6 +17,9 @@ steps:
     parameters:
       packageFeed: ${{ parameters.packageFeed }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
+
+  - script: node ./tools/scripts/replace.js emis-app/public/app-details.json "#{VUE_APP_VERSION}#" ${{ parameters.appVersion }}  
+    displayName: 'Inject app version'
 
   - script: yarn ${{ parameters.lokaliseCommand }}
     displayName: 'Lokalise Sync'

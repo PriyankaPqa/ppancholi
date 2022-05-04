@@ -10,6 +10,7 @@ import { i18n } from '@/ui/plugins/i18n';
 import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
 import { ITenantSettingsEntity } from '@/entities/tenantSettings';
 import { httpClient } from '@/services/httpClient';
+import { sessionStorageKeys } from '@/constants/sessionStorage';
 
 Vue.use(VueRouter);
 
@@ -108,6 +109,25 @@ const initializeMSAL = async () => {
   await AuthenticationProvider.loadAuthModule('router');
 };
 
+const checkAppVersion = () => {
+  if (!sessionStorage.getItem(sessionStorageKeys.appVersion.name) || sessionStorage.getItem(sessionStorageKeys.appVersion.name) === 'Local build') {
+    return;
+  }
+  setTimeout(() => {
+    fetch(`/app-details.json?d=${(new Date()).toISOString()}`)
+      .then((response) => response.json())
+      .then((json) => {
+        const newVersion = json.app_version;
+        if (sessionStorage.getItem(sessionStorageKeys.appVersion.name) !== newVersion) {
+          Vue.toasted.global.info(i18n.t('application_update.refreshing'));
+          setTimeout(() => {
+            window.location.reload();
+          }, 3000);
+        }
+      });
+  }, 3000);
+};
+
 router.beforeEach(async (to, from, next) => {
   if (!AuthenticationProvider.msalLibrary) {
     await initializeMSAL();
@@ -132,6 +152,7 @@ router.beforeEach(async (to, from, next) => {
       } else {
         next(from);
       }
+      checkAppVersion();
     }
   } catch (e) {
     applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');

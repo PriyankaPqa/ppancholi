@@ -11,6 +11,7 @@ parameters:
   distDir: ''
   isPullRequest: ''
   nodeJsVersion: ''
+  appVersion: ''
 
 stages:
   # Trigger before the build
@@ -26,6 +27,7 @@ stages:
       workingDir: ${{ parameters.workingDir }}
       distDir: ${{ parameters.distDir }}
       nodeJsVersion: ${{ parameters.nodeJsVersion }}
+      appVersion: ${{ parameters.appVersion }}
 
   # Trigger after the build
   - template: './stages/post-build-stage.yml'

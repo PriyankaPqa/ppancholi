@@ -45,3 +45,4 @@ stages:
     distDir: $(distDir)
     isPullRequest: $(isPullRequest)
     nodeJsVersion: $(nodeJsVersion)
+    appVersion: $(VUE_APP_VERSION)

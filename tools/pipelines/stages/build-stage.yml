@@ -6,6 +6,7 @@ parameters:
   lokaliseCommand: 'lokalise --mode production'
   workingDir: ''
   nodeJsVersion: ''
+  appVersion: ''
 
 stages:
   - stage: 'Build_Stage'
@@ -22,6 +23,7 @@ stages:
               buildCommand: ${{ parameters.buildCommand }}
               workingDir:  ${{ parameters.workingDir }}
               nodeJsVersion:  ${{ parameters.nodeJsVersion }}
+              appVersion: ${{ parameters.appVersion }}
 
           - publish: ${{ parameters.distDir }}
             artifact: dist

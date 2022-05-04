@@ -14,6 +14,7 @@ import {
 import {BrowserAuthOptions} from "@azure/msal-browser/dist/config/Configuration";
 import helpers from '@/ui/helpers/helpers';
 import {localStorageKeys} from "../constants/localStorage";
+import routes from '@/constants/routes';
 
 export interface Options extends Configuration {
   loginRedirectRequest?: RedirectRequest,
@@ -349,7 +350,13 @@ export class MSAL {
         return true;
       }
 
-      return this.msalLibrary.loginRedirect(this.loginRedirectRequest).then(() => {
+      var request = window.location.href.endsWith(routes.loginError.path) ? this.loginRedirectRequest : {
+        ...this.loginRedirectRequest,
+        // when the user gets back from microsoft we want to get them to where they were
+        state: window.location.href,
+      }
+
+      return this.msalLibrary.loginRedirect(request).then(() => {
         this.showConsole && console.debug('isAuthenticated - loginRedirect', true)
         this.enableAppInsights && applicationInsights.trackTrace(
           'isAuthenticated - loginRedirect',
@@ -505,6 +512,10 @@ export class MSAL {
     if (response !== null) { // coming back from a successful authentication redirect
       this.showConsole && console.debug('handleResponse - Set account with using response', response)
       this.account = response.account;
+      // if we have a redirect address we go to it if it isnt the current url but it is for this site
+      if (response.state && response.state !== window.location.href && response.state.startsWith(window.location.origin)) {
+        window.location.href = response.state;
+      }
     } else { // not coming back from an auth redirect
       this.showConsole && console.debug('this.account', this.account)
       this.showConsole && console.debug('handleResponse - Will set account from method getAccount')

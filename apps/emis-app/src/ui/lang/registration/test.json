@@ -48,6 +48,7 @@
     "common.tooltip_label": "common.tooltip_label",
     "common.years": "common.years",
     "common.yes": "common.yes",
+    "error.unexpected_error": "",
     "errors.fresh-address-email-address-not-safe-to-send": "errors.fresh-address-email-address-not-safe-to-send",
     "errors.fresh-address-general-exception": "errors.fresh-address-general-exception",
     "errors.fresh-address-validation-failed": "errors.fresh-address-validation-failed",
