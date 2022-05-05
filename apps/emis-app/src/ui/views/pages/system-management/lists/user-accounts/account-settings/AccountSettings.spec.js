@@ -13,19 +13,24 @@ const mockUser = mockCombinedUserAccount();
 describe('AccountSettings.vue', () => {
   let wrapper;
   storage.userAccount.getters.roles = jest.fn(() => mockOptionItemData());
-  storage.userAccount.actions.fetchUserAccount = jest.fn(() => mockCombinedUserAccount());
+  storage.userAccount.actions.fetch = jest.fn(() => mockCombinedUserAccount());
   storage.userAccount.getters.get = jest.fn(() => mockCombinedUserAccount());
   storage.user.getters.user = jest.fn(() => new User(mockUsersData()[0]));
 
-  const doMount = async () => {
+  const doMount = async (id = null, emptyUser = false) => {
     wrapper = mount(Component, {
       localVue,
       computed: {
-        user: () => mockUser,
+        user: () => (emptyUser ? { entity: {}, metadata: {} } : mockUser),
         basicUserData: () => new User(mockUsersData()[0]),
       },
       mocks: {
         $storage: storage,
+        $route: {
+          params: {
+            id,
+          },
+        },
       },
     });
   };
@@ -61,7 +66,13 @@ describe('AccountSettings.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('contains the right data', () => {
+      it('contains the right data', async () => {
+        expect(element.text()).toEqual(wrapper.vm.user.metadata.givenName);
+      });
+
+      it('contains the right data - no user', async () => {
+        await doMount(null, true);
+        element = wrapper.findDataTest('userAccount-status-firstName');
         expect(element.text()).toEqual(wrapper.vm.basicUserData.firstName);
       });
     });
@@ -76,7 +87,13 @@ describe('AccountSettings.vue', () => {
         expect(element.exists()).toBeTruthy();
       });
 
-      it('contains the right data', () => {
+      it('contains the right data', async () => {
+        expect(element.text()).toEqual(wrapper.vm.user.metadata.surname);
+      });
+
+      it('contains the right data - no user', async () => {
+        await doMount(null, true);
+        element = wrapper.findDataTest('userAccount-status-lastName');
         expect(element.text()).toEqual(wrapper.vm.basicUserData.lastName);
       });
     });
@@ -136,6 +153,14 @@ describe('AccountSettings.vue', () => {
       it('renders', () => {
         expect(element.exists()).toBeTruthy();
       });
+    });
+  });
+
+  describe('Created', () => {
+    it('calls fetch', async () => {
+      jest.clearAllMocks();
+      await doMount('id');
+      expect(storage.userAccount.actions.fetch).toHaveBeenCalled();
     });
   });
 

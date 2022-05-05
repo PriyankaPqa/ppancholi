@@ -30,7 +30,7 @@
                   {{ $t('user.accountSettings.first_name') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-firstName">
-                  {{ basicUserData.firstName }}
+                  {{ user.metadata.givenName || basicUserData.firstName }}
                 </td>
               </tr>
               <tr>
@@ -38,7 +38,7 @@
                   {{ $t('user.accountSettings.last_name') }}
                 </td>
                 <td colspan="2" class="fw-bold" data-test="userAccount-status-lastName">
-                  {{ basicUserData.lastName }}
+                  {{ user.metadata.surname || basicUserData.lastName }}
                 </td>
               </tr>
               <tr>
@@ -131,6 +131,7 @@ import { IUserAccountCombined, AccountStatus } from '@/entities/user-account';
 import StatusChip from '@/ui/shared-components/StatusChip.vue';
 
 import { Status } from '@libs/core-lib/entities/base';
+import { IUser } from '@/entities/user';
 
 export default Vue.extend({
   name: 'AccountSettings',
@@ -149,7 +150,11 @@ export default Vue.extend({
 
   computed: {
     //  Get user data for users without a role, which don't have access to the user-account API
+    //  we'll only fill if we wanted the current user
     basicUserData() {
+      if (this.$route.params.id) {
+        return { roles: [] } as IUser;
+      }
       return this.$storage.user.getters.user();
     },
 
@@ -174,6 +179,12 @@ export default Vue.extend({
 
       return `${this.$t('account_settings.preferredLanguage.notSet')}`;
     },
+  },
+
+  async created() {
+    if (this.$route.params.id) {
+      await this.$storage.userAccount.actions.fetch(this.$route.params.id);
+    }
   },
 });
 </script>
