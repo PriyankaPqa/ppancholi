@@ -38,7 +38,7 @@
         <template #activator="{ on }">
           <div v-on="on">
             <v-switch
-              :input-value="event.selfRegistrationEnabled"
+              v-model="selfRegistrationEnabled"
               :loading="updatingSelfRegistration"
               :disabled="updatingSelfRegistration"
               class="mt-0 pt-0 mr-2"
@@ -77,6 +77,7 @@ export default Vue.extend({
   data() {
     return {
       updatingSelfRegistration: false,
+      selfRegistrationEnabled: this.event.selfRegistrationEnabled,
     };
   },
 
@@ -107,23 +108,24 @@ export default Vue.extend({
     async toggleSelfRegistration(selfRegistrationEnabled: boolean) {
       this.updatingSelfRegistration = true;
 
-      try {
-        await this.$storage.event.actions.toggleSelfRegistration({
-          id: this.event.id,
-          selfRegistrationEnabled,
-        });
-      } catch (e) {
-        this.$appInsights.trackException(e, { id: this.event.id, selfRegistrationEnabled }, 'EventSummaryLink', 'toggleSelfRegistration');
-        return;
-      } finally {
-        this.updatingSelfRegistration = false;
+      const response = await this.$storage.event.actions.toggleSelfRegistration({
+        id: this.event.id,
+        selfRegistrationEnabled,
+      });
+
+      if (response) {
+        if (selfRegistrationEnabled) {
+          this.$toasted.global.success(this.$t('eventSummary.registrationLinkEnabled'));
+        } else {
+          this.$toasted.global.success(this.$t('eventSummary.registrationLinkDisabled'));
+        }
+        this.selfRegistrationEnabled = selfRegistrationEnabled;
+      } else {
+        // Return to original value
+        this.selfRegistrationEnabled = this.event.selfRegistrationEnabled;
       }
 
-      if (selfRegistrationEnabled) {
-        this.$toasted.global.success(this.$t('eventSummary.registrationLinkEnabled'));
-      } else {
-        this.$toasted.global.success(this.$t('eventSummary.registrationLinkDisabled'));
-      }
+      this.updatingSelfRegistration = false;
     },
   },
 });

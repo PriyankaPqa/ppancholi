@@ -195,7 +195,8 @@ describe('EventSummaryLink.vue', () => {
         });
       });
 
-      it('shows a toast notification when toggleSelfRegistration completes', async () => {
+      it('shows a toast notification when toggleSelfRegistration completes successfully', async () => {
+        wrapper.vm.$storage.event.actions.toggleSelfRegistration = jest.fn(() => true);
         await wrapper.vm.toggleSelfRegistration(true);
 
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.registrationLinkEnabled');
@@ -203,6 +204,16 @@ describe('EventSummaryLink.vue', () => {
         await wrapper.vm.toggleSelfRegistration(false);
 
         expect(wrapper.vm.$toasted.global.success).toHaveBeenCalledWith('eventSummary.registrationLinkDisabled');
+      });
+
+      it('resets the value of when toggleSelfRegistration completes successfully', async () => {
+        wrapper.vm.$storage.event.actions.toggleSelfRegistration = jest.fn(() => false);
+        wrapper.setProps({ event: { selfRegistrationEnabled: false } });
+        wrapper.setData({ selfRegistrationEnabled: true });
+
+        await wrapper.vm.toggleSelfRegistration(true);
+
+        expect(wrapper.vm.selfRegistrationEnabled).toEqual(false);
       });
     });
   });

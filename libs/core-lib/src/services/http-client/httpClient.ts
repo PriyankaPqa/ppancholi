@@ -85,7 +85,12 @@ export class HttpClient implements IHttpClient {
   }
 
   private async responseErrorHandler(error: any) {
-    if (!error || !error.response) {
+    if (!error) {
+      return false;
+    }
+
+    if (!error.response?.data) {
+      Vue.toasted.global.error(this.i18n.t('error.unexpected_error'));
       return false;
     }
 
