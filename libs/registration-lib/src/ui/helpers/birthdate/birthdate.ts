@@ -17,11 +17,19 @@ export default {
   },
 
   getBirthDateUTCString(birthdate: IBirthDate) {
-    const year = birthdate.year as number;
-    const month = birthdate.month as number;
-    const day = birthdate.day as number;
+    const year = +birthdate.year;
+    const month = +birthdate.month;
+    const day = +birthdate.day;
 
-    return new Date(Date.UTC(year, +month - 1, day)).toISOString();
+    if (!year || !month || !day) {
+      return null;
+    }
+
+    try {
+      return new Date(Date.UTC(year, month - 1, day)).toISOString();
+    } catch (error) {
+      return null;
+    }
   },
 
   convertBirthDateStringToObject(birthdate: string) {
