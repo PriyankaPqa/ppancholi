@@ -135,6 +135,9 @@ export default {
    */
   // eslint-disable-next-line
   filterCollectionByValue(collection: Array<any>, query: string, searchAll = true, searchAmong: Array<string> = null, deepSearch = false) {
+    if (query == null || query === '') {
+      return collection;
+    }
     return collection.filter((o: Record<string, unknown>) => {
       const flat = deepSearch ? this.flattenObj(o) : o;
       return Object.keys(flat).some((k) => {
