@@ -153,33 +153,33 @@ describe('httpClient', () => {
 
       describe('401', () => {
         it('returns false', async () => {
-          const result = await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 401));
+          const result = await mockHttpClient.responseErrorHandler(mockHttpErrorResponse({}, 401));
 
           expect(result).toBeFalsy();
         });
 
         it('toasts session expired error', async () => {
-          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 401));
+          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse({}, 401));
           expect(Vue.toasted.global.error).toHaveBeenCalledWith(mockI18n.t('error.log_in_again'));
         });
       });
 
       describe('403', () => {
         it('returns false', async () => {
-          const result = await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 403));
+          const result = await mockHttpClient.responseErrorHandler(mockHttpErrorResponse({}, 403));
           expect(result).toBeFalsy();
         });
 
         it('calls error403Handler if global handler', async () => {
           mockHttpClient.error403Handler = jest.fn();
-          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 403));
+          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse({}, 403));
           expect(mockHttpClient.error403Handler).toBeCalled();
         });
 
         it('should not call error403Handler if no global handler', async () => {
           mockHttpClient.isGlobalHandlerEnabled = jest.fn(() => false);
           mockHttpClient.error403Handler = jest.fn();
-          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse('', 403))
+          await mockHttpClient.responseErrorHandler(mockHttpErrorResponse({}, 403))
             .catch(() => ({}));
           expect(mockHttpClient.error403Handler).not.toHaveBeenCalled();
         });
