@@ -69,6 +69,7 @@ export class MSAL {
     authority: 'common',
     redirectUri: window.location.origin,
     navigateToLoginRequestUrl: false,
+    postLogoutRedirectUri: window.location.origin,
   };
 
   private readonly cache: CacheOptions = {
