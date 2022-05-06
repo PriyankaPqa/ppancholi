@@ -10,6 +10,8 @@ import {
   HttpClient, IRestResponse, mockHttp, mockHttpErrorResponse,
 } from '.';
 
+import * as owasp from '../utils/owasp';
+
 jest.mock('uuid');
 jest.mock('@/services/odata-query');
 jest.mock('../../plugins/applicationInsights/applicationInsights');
@@ -299,6 +301,22 @@ describe('httpClient', () => {
         const res = mockHttpClient.requestHandler(request);
 
         expect(res.paramsSerializer).toEqual(mockHttpClient.serializeParams);
+      });
+
+      it('should sanitize932115', () => {
+        const request = {
+          isOData: true,
+          headers: {
+            common: {
+              'X-Request-ID': '',
+              'X-Correlation-ID': '',
+            },
+          },
+          data: {},
+        };
+        const spy = spyOn(owasp, 'sanitize932115');
+        mockHttpClient.requestHandler(request);
+        expect(spy).toBeCalled();
       });
     });
 

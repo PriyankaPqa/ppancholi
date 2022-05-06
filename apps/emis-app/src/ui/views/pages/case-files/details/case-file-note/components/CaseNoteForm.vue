@@ -176,6 +176,8 @@ export default Vue.extend({
       if (result) {
         this.$emit('add-case-note-id', result.id);
         this.closeCaseNoteForm();
+      } else {
+        this.$toasted.global.error(this.$t('caseNote.create.error'));
       }
     },
 
@@ -183,6 +185,8 @@ export default Vue.extend({
       const result = await this.$storage.caseNote.actions.editCaseNote(this.caseFile.entity.id, this.caseNote.id, this.localCaseNote);
       if (result) {
         this.closeCaseNoteForm();
+      } else {
+        this.$toasted.global.error(this.$t('caseNote.update.error'));
       }
     },
 

@@ -7,6 +7,7 @@ import axios, {
 } from 'axios';
 import { camelKeys } from 'js-convert-case';
 import { IAzureSearchParams } from '../../types';
+import { sanitize932115 } from '../utils/owasp';
 import { buildQuery } from '../odata-query';
 import applicationInsights from '../../plugins/applicationInsights/applicationInsights';
 
@@ -155,6 +156,8 @@ export class HttpClient implements IHttpClient {
       // Add what you want when request is sent
       // It is applied globally except when { globalHandler: false }
     }
+
+    sanitize932115(request.data);
 
     if (request.isOData) {
       // build OData search query and remove the '?' that is added by the query building library at the beginning of the string

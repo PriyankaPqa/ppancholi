@@ -32,6 +32,10 @@ export default {
       type: String,
       default: 'aggressive',
     },
+    preventMultipleNewLine: {
+      type: Boolean,
+      default: true,
+    },
   },
   data: () => ({
     innerValue: '',
@@ -39,17 +43,31 @@ export default {
   watch: {
     // Handles internal model changes.
     innerValue(newVal) {
-      this.$emit('input', newVal);
+      if (this.preventMultipleNewLine) {
+        this.$emit('input', this.removeMultipleLine(newVal));
+      } else {
+        this.$emit('input', newVal);
+      }
     },
     // Handles external model changes.
     value(newVal) {
-      this.innerValue = newVal;
+      if (this.preventMultipleNewLine) {
+        this.innerValue = this.removeMultipleLine(newVal);
+      } else {
+        this.innerValue = newVal;
+      }
     },
   },
   created() {
     if (this.value) {
       this.innerValue = this.value;
     }
+  },
+  methods: {
+    removeMultipleLine(text) {
+      // eslint-disable-next-line no-control-regex
+      return text.replace(new RegExp('[\r\n]+', 'gm'), '\n');
+    },
   },
 };
 </script>

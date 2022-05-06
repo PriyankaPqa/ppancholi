@@ -120,32 +120,46 @@ export default Vue.extend({
       });
     },
 
+    async createProgram() {
+      const newProgram = await this.$storage.program.actions.createProgram(this.program);
+      if (newProgram) {
+        this.$toasted.global.success(this.$t('event.programManagement.created'));
+        this.$router.replace({ name: routes.programs.details.name, params: { programId: newProgram.id } });
+      } else {
+        this.$toasted.global.error(this.$t('event.programManagement.create.failed'));
+      }
+    },
+
+    async editProgram() {
+      const res = await this.$storage.program.actions.updateProgram(this.program);
+      if (res) {
+        this.$toasted.global.success(this.$t('event.programManagement.updated'));
+        this.$router.replace({ name: routes.programs.details.name, params: { programId: this.program.id } });
+      } else {
+        this.$toasted.global.error(this.$t('event.programManagement.update.failed'));
+      }
+    },
+
     async submit() {
       const isValid = await (this.$refs.form as VForm).validate();
 
-      if (isValid) {
-        try {
-          this.loading = true;
-          let programId;
-
-          if (this.isEditMode) {
-            await this.$storage.program.actions.updateProgram(this.program);
-            programId = this.program.id;
-            this.$toasted.global.success(this.$t('event.programManagement.updated'));
-          } else {
-            const newProgram = await this.$storage.program.actions.createProgram(this.program);
-            programId = newProgram.id;
-            this.$toasted.global.success(this.$t('event.programManagement.created'));
-          }
-          this.$router.replace({ name: routes.programs.details.name, params: { programId } });
-        } catch (e) {
-          this.$appInsights.trackTrace('Program submit error', { error: e }, 'CreateEditProgram', 'submit');
-          this.handleSubmitError(e);
-        } finally {
-          this.loading = false;
-        }
-      } else {
+      if (!isValid) {
         helpers.scrollToFirstError('scrollAnchor');
+        return;
+      }
+
+      try {
+        this.loading = true;
+        if (this.isEditMode) {
+          await this.editProgram();
+        } else {
+          await this.createProgram();
+        }
+      } catch (e) {
+        this.$appInsights.trackTrace('Program submit error', { error: e }, 'CreateEditProgram', 'submit');
+        this.handleSubmitError(e);
+      } finally {
+        this.loading = false;
       }
     },
   },
