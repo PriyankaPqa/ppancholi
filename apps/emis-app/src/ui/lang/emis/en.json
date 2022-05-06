@@ -557,7 +557,7 @@
     "error.401.refresh": "The page will refresh due to inactivity",
     "error.access_denied": "Access denied. You no longer have permission to perform this action",
     "error.feature_disabled": "Feature is disabled",
-    "error.log_in_again": "Your session expired. Please sign out and in again.",
+    "error.log_in_again": "There was an error during your authentication.",
     "error.no_permission": "You do not have permission to access this page",
     "error.submit_error": "An error occurred while submitting your data. Please try again or send a report.",
     "error.there-are-no-records-to-be-processed": "There are no records to be processed.",

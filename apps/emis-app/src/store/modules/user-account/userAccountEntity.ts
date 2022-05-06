@@ -120,9 +120,11 @@ export class UserAccountEntityModule extends BaseModule <IUserAccountEntity, uui
       context: ActionContext<IUserAccountEntityState, IUserAccountEntityState>,
     ): Promise<IUserAccountEntity> => {
       try {
-        const res = await this.service.fetchCurrentUserAccount();
-        context.commit('setCurrentUserAccount', res);
-        return res;
+        if (!context.state.currentUserAccount) {
+          const res = await this.service.fetchCurrentUserAccount();
+          context.commit('setCurrentUserAccount', res);
+        }
+        return context.state.currentUserAccount;
       } catch (e) {
         applicationInsights.trackException(e, {}, 'module.userAccountEntity', 'fetchCurrentUserAccount');
         return null;

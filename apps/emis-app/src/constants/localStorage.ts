@@ -14,4 +14,7 @@ export const localStorageKeys = {
   msalAccount: {
     name: 'msal-account',
   },
+  signInAttempts: {
+    name: 'sign-in-attempts',
+  },
 };

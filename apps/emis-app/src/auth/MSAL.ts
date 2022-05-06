@@ -62,6 +62,8 @@ export class MSAL {
 
   private readonly tokenRenewalOffsetSeconds: number;
 
+  private readonly maxSignInAttempts = 2;
+
   private readonly auth: BrowserAuthOptions = {
     clientId: '',
     authority: 'common',
@@ -241,15 +243,19 @@ export class MSAL {
       'MSAL',
       'acquireToken'
     );
+
+    const attemptsLocalStorageKey = localStorageKeys.signInAttempts.name +"_"+ this.account.username;
     try {
       const silentRequest = this.getSilentRequest();
       const response = await this.msalLibrary.acquireTokenSilent(silentRequest);
 
       this.accessToken = response.accessToken;
 
+      // Reset the number of sign in attempts in the local storage when user successfully signs in
+      localStorage.setItem(attemptsLocalStorageKey, '0');
+
       // Used by BE for convenience
       localStorage.setItem(localStorageKeys.accessToken.name, this.accessToken);
-
       this.showConsole && console.debug("acquireToken - success", response.accessToken);
 
       return response.accessToken;
@@ -283,7 +289,17 @@ export class MSAL {
           'MSAL',
           'acquireToken'
         );
-        helpers.redirectToLoginErrorPage();
+
+        // Allow only a limited number of sign-in retries, and if they fail, redirect to login error page
+        const signInAttemptsCount =  Number(localStorage.getItem(attemptsLocalStorageKey) || "0");
+
+        if(signInAttemptsCount < this.maxSignInAttempts){
+          localStorage.setItem(attemptsLocalStorageKey, (signInAttemptsCount + 1).toString());
+          this.signIn(this.currentDomainTenant);
+        } else {
+          localStorage.setItem(attemptsLocalStorageKey, '0');
+          helpers.redirectToLoginErrorPage();
+        }
       }
       return null;
     }

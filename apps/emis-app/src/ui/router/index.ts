@@ -7,7 +7,7 @@ import routeConstants from '@/constants/routes';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import store from '@/store/store';
 import { i18n } from '@/ui/plugins/i18n';
-import { TENANT_SETTINGS_ENTITIES } from '@/constants/vuex-modules';
+import { TENANT_SETTINGS_ENTITIES, USER_ACCOUNT_ENTITIES } from '@/constants/vuex-modules';
 import { ITenantSettingsEntity } from '@/entities/tenantSettings';
 import { httpClient } from '@/services/httpClient';
 import { sessionStorageKeys } from '@/constants/sessionStorage';
@@ -47,7 +47,12 @@ const authenticationGuard = async (to: Route) => {
     // Dispatch the action to the store to fetch the user data from the JWT token
     // and store it in module state
     const loggedIn = await store.dispatch('user/fetchUserData');
-    return loggedIn;
+    // if a currentUser is properly fetched, it means the user is allowed access to the app
+    // (in the default tenants, even if the user has no access, his token is valid. Therefore, authentication check
+    // based only on token check will pass, even if the user should not be allowed access)
+    const isAppUser = await store.dispatch(`${USER_ACCOUNT_ENTITIES}/fetchCurrentUserAccount`);
+
+    return loggedIn && isAppUser;
   }
   return true;
 };
@@ -156,6 +161,11 @@ router.beforeEach(async (to, from, next) => {
     }
   } catch (e) {
     applicationInsights.trackException(e, { context: 'route.beforeEach', to, from }, 'router', 'beforeEach');
+    loginError = true;
+  }
+
+  if (loginError) {
+    // If there is an error, redirect to the login error page
     next({
       name: routeConstants.loginError.name,
       params: {
