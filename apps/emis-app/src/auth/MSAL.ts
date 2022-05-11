@@ -245,7 +245,9 @@ export class MSAL {
       'acquireToken'
     );
 
-    const attemptsLocalStorageKey = localStorageKeys.signInAttempts.name +"_"+ this.account.username;
+    const userName = this.account?.username ||"no-account"
+    const attemptsLocalStorageKey = localStorageKeys.signInAttempts.name +"_"+ userName ;
+
     try {
       const silentRequest = this.getSilentRequest();
       const response = await this.msalLibrary.acquireTokenSilent(silentRequest);
