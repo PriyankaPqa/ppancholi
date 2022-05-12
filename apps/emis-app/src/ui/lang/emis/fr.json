@@ -685,6 +685,7 @@
     "errors.exactly-one-role-required": "Un seul rôle est requis.",
     "errors.existing-domain-result-is-null": "Aucun résultat de domaine existant.",
     "errors.field-min-value-invalid": "La valeur doit être supérieure ou égale à {MinValue}.",
+    "errors.file-contains-invalid-data-type": "Le fichier contient un type de données non valide",
     "errors.financial-assistance-payment-approval-status-must-be-approved": "Le statut d’approbation du paiement d’aide financière doit être « Approuvé ».",
     "errors.financial-assistance-payment-approval-status-must-be-new": "Le statut d’approbation du paiement d’aide financière doit être « Nouveau ».",
     "errors.financial-assistance-payment-cannot-be-set-to-approval-status": "Le statut d’approbation du paiement ne peut pas passer de « {FromApprovalStatus}» à « {ToApprovalStatus}».",

@@ -685,6 +685,7 @@
     "errors.exactly-one-role-required": "errors.exactly-one-role-required",
     "errors.existing-domain-result-is-null": "errors.existing-domain-result-is-null",
     "errors.field-min-value-invalid": "errors.field-min-value-invalid",
+    "errors.file-contains-invalid-data-type": "errors.file-contains-invalid-data-type",
     "errors.financial-assistance-payment-approval-status-must-be-approved": "errors.financial-assistance-payment-approval-status-must-be-approved",
     "errors.financial-assistance-payment-approval-status-must-be-new": "errors.financial-assistance-payment-approval-status-must-be-new",
     "errors.financial-assistance-payment-cannot-be-set-to-approval-status": "errors.financial-assistance-payment-cannot-be-set-to-approval-status",

@@ -685,6 +685,7 @@
     "errors.exactly-one-role-required": "Exactly one role required",
     "errors.existing-domain-result-is-null": "Existing domain result is null",
     "errors.field-min-value-invalid": "The Value must be Greater than or equal  {MinValue}",
+    "errors.file-contains-invalid-data-type": "File contains invalid data type",
     "errors.financial-assistance-payment-approval-status-must-be-approved": "Financial assistance payment approval status must be approved",
     "errors.financial-assistance-payment-approval-status-must-be-new": "Financial assistance payment approval status must be new",
     "errors.financial-assistance-payment-cannot-be-set-to-approval-status": "Payment approval status cannot be set from {FromApprovalStatus} to {ToApprovalStatus}",
