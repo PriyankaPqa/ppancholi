@@ -116,6 +116,11 @@ const TeamsHome = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages
 const CreateEditTeam = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/create-edit/CreateEditTeam.vue');
 const TeamDetails = () => import(/* webpackChunkName: "teams" */ '@/ui/views/pages/teams/details/TeamDetails.vue');
 
+// NOTE: Be aware of the importance of routes order. Details pages have the route pattern 'entityName/:entityId'
+// and create pages have the route pattern 'entityName/add'. Therefore, the create pages for an entity need to place before the details pages,
+// otherwise when loading the page the router will first try to go to the details page,
+// which matches the same pattern, and consider the string "add" as the entityId parameter.
+
 export const routes: Array<RouteConfig> = [
   {
     path: '/:lang',
@@ -282,13 +287,6 @@ export const routes: Array<RouteConfig> = [
                     props: true,
                   },
                   {
-                    path: Routes.caseFile.referrals.details.path,
-                    name: Routes.caseFile.referrals.details.name,
-                    component: CaseFileReferralDetails,
-                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
-                    props: true,
-                  },
-                  {
                     path: Routes.caseFile.referrals.edit.path,
                     name: Routes.caseFile.referrals.edit.name,
                     component: CreateEditCaseFileReferral,
@@ -299,6 +297,13 @@ export const routes: Array<RouteConfig> = [
                     path: Routes.caseFile.referrals.add.path,
                     name: Routes.caseFile.referrals.add.name,
                     component: CreateEditCaseFileReferral,
+                    meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
+                    props: true,
+                  },
+                  {
+                    path: Routes.caseFile.referrals.details.path,
+                    name: Routes.caseFile.referrals.details.name,
+                    component: CaseFileReferralDetails,
                     meta: { level: 'level1', roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly'] },
                     props: true,
                   },
