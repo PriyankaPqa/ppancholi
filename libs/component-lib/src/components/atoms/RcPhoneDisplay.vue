@@ -20,8 +20,8 @@ export default Vue.extend({
        * The value for the phone label in E.164 format eg +15149876543
        */
     value: {
-      type: String,
-      required: true,
+      type: [String],
+      default: '',
     },
 
     /**
@@ -43,11 +43,14 @@ export default Vue.extend({
 
   computed: {
     phoneObject(): PhoneNumber {
+      if (!this.value) {
+        return null;
+      }
       return new PhoneNumber(this.value);
     },
 
     formattedPhoneNumber(): string {
-      if (this.phoneObject.isValid()) {
+      if (this.phoneObject && this.phoneObject.isValid()) {
         if (this.showCountryCode) {
           return `${this.phoneObject.getCountryCode()} ${this.phoneObject.getNumber('national')}`;
         }
