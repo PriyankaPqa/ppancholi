@@ -20,7 +20,7 @@ describe('signalR', () => {
       storage,
       showConsole: false,
     });
-    conn.connection = { on: jest.fn() };
+    conn.connection = { on: jest.fn(), stop: jest.fn() };
   });
 
   describe('createBindings', () => {
@@ -737,10 +737,16 @@ describe('signalR', () => {
   });
 
   describe('unsubscribeAll', () => {
-    it('should call unsubscribeAll with connectionId', () => {
-      conn.unsubscribeAll();
+    it('should call unsubscribeAll with connectionId', async () => {
+      await conn.unsubscribeAll();
       expect(conn.service.unsubscribeAll)
         .toHaveBeenCalledWith(conn.connection.connectionId);
+    });
+
+    it('should stop the connection', async () => {
+      await conn.unsubscribeAll();
+      expect(conn.connection.stop)
+        .toBeCalled();
     });
   });
 });

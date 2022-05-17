@@ -97,9 +97,11 @@ export class SignalR implements ISignalR {
         this.createBindings();
 
         window.addEventListener('beforeunload', async (e) => {
-          await this.unsubscribeAll();
-          e.preventDefault();
-          e.returnValue = false;
+          if (this.connection.connectionId) {
+            await this.unsubscribeAll();
+            e.preventDefault();
+            e.returnValue = false;
+          }
         });
 
         this.connection.onreconnected((connectionId) => {
@@ -665,6 +667,7 @@ export class SignalR implements ISignalR {
 
   public async unsubscribeAll() {
     await this.service.unsubscribeAll(this.connection.connectionId);
+    await this.connection.stop();
   }
 }
 
