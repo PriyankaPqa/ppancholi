@@ -4,7 +4,7 @@
       <validation-observer ref="form" v-slot="{ valid }" tag="div" data-test="search_IsRegistered">
         <v-row v-if="!hideTitle">
           <div class="rc-heading-5 ml-4">
-            {{ $t('registration.isRegistered.title') }}
+            {{ $t(title) }}
           </div>
         </v-row>
 
@@ -150,7 +150,7 @@ export default Vue.extend({
     },
     isSplitMode: {
       type: Boolean,
-      required: true,
+      default: false,
     },
     hideTitle: {
       type: Boolean,
@@ -159,6 +159,10 @@ export default Vue.extend({
     sameLine: {
       type: Boolean,
       default: false,
+    },
+    title: {
+      type: String,
+      default: 'registration.isRegistered.title',
     },
   },
   data() {

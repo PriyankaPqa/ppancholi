@@ -167,6 +167,10 @@ const routes = {
       name: 'casefile.householdMembersMove',
     },
   },
+  householdSearch: {
+    path: 'household/search',
+    name: 'householdSearch',
+  },
   loginError: {
     path: 'login-error',
     name: 'Login error',

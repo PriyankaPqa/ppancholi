@@ -2,21 +2,13 @@
 
 import Vue from 'vue';
 import moment from '@/ui/plugins/moment';
-
-export interface ICriteria {
-  firstName: string;
-  lastName: string;
-  emailAddress: string;
-  phone: string;
-  registrationNumber:string;
-  birthDate: string;
-}
+import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 
 export default Vue.extend({
   data() {
     return {
       searchResults: [],
-      criteria: {} as ICriteria,
+      criteria: {} as IHouseholdSearchCriteria,
       searchLoading: false,
     };
   },
@@ -79,7 +71,7 @@ export default Vue.extend({
   },
 
   methods: {
-    async search(criteria: ICriteria) {
+    async search(criteria: IHouseholdSearchCriteria) {
       this.searchLoading = true;
       this.criteria = criteria;
       this.$storage.household.mutations.reset();

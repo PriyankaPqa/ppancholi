@@ -26,9 +26,13 @@ export interface IGetters extends IBaseGetters<IHouseholdEntity, IHouseholdMetad
 
 export interface IGettersMock extends IBaseGettersMock<IHouseholdEntity, IHouseholdMetadata> {}
 
-export interface IMutations extends IBaseMutations<IHouseholdEntity, IHouseholdMetadata> {}
+export interface IMutations extends IBaseMutations<IHouseholdEntity, IHouseholdMetadata> {
+  setSearchResultsShown(payload: boolean): void;
+}
 
-export interface IMutationsMock extends IBaseMutationsMock<IHouseholdEntity, IHouseholdMetadata> {}
+export interface IMutationsMock extends IBaseMutationsMock<IHouseholdEntity, IHouseholdMetadata> {
+  setSearchResultsShown: jest.Mock<void>;
+}
 
 export interface IStorageMake {
   getters: IGetters;

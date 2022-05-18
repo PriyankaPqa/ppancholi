@@ -3,13 +3,15 @@ import { ActionContext } from 'vuex';
 import { HouseholdEntityModule } from '@/store/modules/household/householdEntity';
 import { HouseholdsService } from '@/services/households/entity';
 import { IHouseholdEntity, mockHouseholdEntity } from '@/entities/household';
-import { IState } from '@/store/modules/base';
 import { mockAddress } from '@/entities/value-objects/address';
 import { mockHttp } from '@libs/core-lib/src/services/http-client';
+import { mockStore } from '@/store';
 import { mockVersionedEntityCombined, mockVersionedEntity } from '../../../entities/value-objects/versioned-entity/versionedEntity.mock';
 import utils from '../../../entities/value-objects/versioned-entity/versionedEntityUtils';
+import { IHouseholdEntityState } from './householdEntity.types';
 
 const module = new HouseholdEntityModule(new HouseholdsService(mockHttp()));
+let store = mockStore();
 
 const actionContext = {
   commit: jest.fn(),
@@ -20,7 +22,7 @@ const actionContext = {
   },
   rootState: null,
   rootGetters: {},
-} as ActionContext<IState<IHouseholdEntity>, IState<IHouseholdEntity>>;
+} as ActionContext<IHouseholdEntityState, IHouseholdEntityState>;
 
 describe('Household entity module', () => {
   describe('actions', () => {
@@ -78,6 +80,19 @@ describe('Household entity module', () => {
         expect(utils.combineEntities).toHaveBeenCalledWith([mockVersionedEntity('household', { versionId: '1' })],
           [mockVersionedEntity('household', { versionId: '1' })]);
         expect(expectedRes).toEqual([combinedEntity]);
+      });
+    });
+  });
+
+  describe('mutations', () => {
+    describe('setSearchResultsShown', () => {
+      it('sets registration error', () => {
+        store = mockStore();
+        expect(store.state.household.searchResultsShown).toEqual(false);
+
+        store.commit('household/setSearchResultsShown', true);
+
+        expect(store.state.household.searchResultsShown).toEqual(true);
       });
     });
   });

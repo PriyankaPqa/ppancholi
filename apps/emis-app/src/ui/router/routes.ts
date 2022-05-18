@@ -49,6 +49,7 @@ const HomeLayout = () => import(/* webpackChunkName: "home" */ '@/ui/views/pages
 const HouseholdProfile = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/HouseholdProfile.vue');
 const SplitHousehold = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/split/SplitHousehold.vue');
 const MoveHouseholdMembers = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/move/MoveHouseholdMembers.vue');
+const MainHouseholdSearch = () => import(/* webpackChunkName: "household" */ '@/ui/views/pages/household/search/MainHouseholdSearch.vue');
 
 const FinancialAssistanceLayout = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/layout/FinancialAssistanceLayout.vue');
 const FinancialAssistanceHome = () => import(/* webpackChunkName: "financial-assistance" */ '@/ui/views/pages/financial-assistance/home/FinancialAssistanceHome.vue');
@@ -359,6 +360,13 @@ export const routes: Array<RouteConfig> = [
                 props: true,
               },
             ],
+          },
+          {
+            path: Routes.householdSearch.path,
+            name: Routes.householdSearch.name,
+            component: MainHouseholdSearch,
+            meta: { level: 'level1' },
+            props: true,
           },
           {
             path: Routes.registration.layout.path, // registration

@@ -32,12 +32,13 @@ import LibReviewRegistration from '@libs/registration-lib/components/review/Revi
 import { RcDialog } from '@libs/component-lib/components';
 import { IHouseholdCaseFile } from '@libs/registration-lib/entities/household';
 import mixins from 'vue-typed-mixins';
-import HouseholdSearch from '@/ui/views/pages/registration/is-registered/HouseholdSearch.vue';
-import HouseholdResults from '@/ui/views/pages/registration/is-registered/HouseholdResults.vue';
+import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
+import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
 import { i18n } from '@/ui/plugins';
 import PreviousEventsTemplate from '@/ui/views/pages/registration/review/PreviousEventsTemplate.vue';
+import { IHouseholdSearchCriteria } from '@libs/registration-lib/types';
 
-import searchHousehold, { ICriteria } from '@/ui/mixins/searchHousehold';
+import searchHousehold from '@/ui/mixins/searchHousehold';
 import { FeatureKeys } from '@/entities/tenantSettings';
 
 export default mixins(searchHousehold).extend({
@@ -75,7 +76,7 @@ export default mixins(searchHousehold).extend({
   },
 
   methods: {
-    async onSearch(criteria: ICriteria) {
+    async onSearch(criteria: IHouseholdSearchCriteria) {
       await this.search(criteria);
 
       if (this.isSplitMode) {
@@ -83,6 +84,8 @@ export default mixins(searchHousehold).extend({
       }
 
       this.$storage.registration.mutations.setHouseholdResultsShown(true);
+      // Hide the results on the main household search page, because they use the same store
+      this.$storage.household.mutations.setSearchResultsShown(false);
     },
 
     async showDetails(id:string) {

@@ -11,28 +11,36 @@
       </div>
     </v-col>
     <v-col cols="12">
-      <rc-data-table
+      <v-data-table
         class="elevation-0 full-width"
         data-test="resultsTable"
         :headers="headers"
         :items="formattedItems"
         :hide-toolbar="true"
         :custom-columns="['name', 'actions', 'birthDate', 'phone', 'isRegisteredToEvent', 'registrationNumber', 'emailAddress']"
-        sort-by="name"
+        must-sort
         :hide-header="true"
-        :hide-footer="true"
-        :count="items.length">
+        disable-pagination
+        hide-default-footer
+        :count="items.length"
+        @update:sort-desc="sortDesc = $event">
         <template #item.name="{ item: household }">
-          <div class="no-wrap">
-            <v-icon data-test="iconType" small class="icon success--text mr-2">
+          <div class="mt-1 max-width break-spaces">
+            <v-icon data-test="iconType" small class="icon success--text mr-1">
               mdi-account-box
             </v-icon>
-            <span data-test="name" class="fw-bold no-wrap">
+            <router-link
+              v-if="linkToHousehold"
+              class="rc-link14 font-weight-bold px-1"
+              :to="getHouseholdRoute(household)">
+              {{ household.primaryBeneficiary.firstName }} {{ household.primaryBeneficiary.lastName }}
+            </router-link>
+            <span v-else data-test="name" class="fw-bold">
               {{ household.primaryBeneficiary.firstName }} {{ household.primaryBeneficiary.lastName }}
             </span>
           </div>
-          <div v-for="(member,i) in household.additionalMembers" :key="i">
-            <v-icon data-test="iconType" small color="grey" class="mr-2">
+          <div v-for="(member,i) in household.additionalMembers" :key="i" class="ml-5 my-2">
+            <v-icon data-test="iconType" small color="grey" class="mr-1">
               mdi-account-supervisor
             </v-icon>
             <span :data-test="`name__houseHoldMember_${i}`" class="fw-bold ">
@@ -62,7 +70,7 @@
         </template>
         <template #item.birthDate="{ item: household }">
           <div>
-            <span data-test="birthDate" class=" no-wrap">
+            <span data-test="birthDate" class="no-wrap">
               {{ moment(household.primaryBeneficiary.dateOfBirth).utc().format('ll') }}
             </span>
           </div>
@@ -105,7 +113,7 @@
             </v-btn>
           </div>
         </template>
-      </rc-data-table>
+      </v-data-table>
       <div class="legend">
         <div class="mr-4 rc-body12">
           <v-icon small class="status success--text mr-1">
@@ -119,7 +127,7 @@
           </v-icon>
           {{ $t('registration.isRegistered.household_member') }}
         </div>
-        <div v-if="!isSplitMode" class="rc-body12">
+        <div v-if="!hideEventInfo && !isSplitMode" class="rc-body12">
           <v-icon small color="grey" class="ml-2 mr-1 ">
             mdi-check-circle-outline
           </v-icon>
@@ -151,7 +159,19 @@ export default mixins(household, householdResults).extend({
     },
     isSplitMode: {
       type: Boolean,
-      required: true,
+      default: false,
+    },
+    hideDetailsButton: {
+      type: Boolean,
+      default: false,
+    },
+    linkToHousehold: {
+      type: Boolean,
+      default: false,
+    },
+    hideEventInfo: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
@@ -167,7 +187,7 @@ export default mixins(household, householdResults).extend({
         {
           text: this.$t('registration.isRegistered.table.name'),
           value: 'name',
-          sortable: false,
+          sortable: true,
           width: '30%',
         },
         {
@@ -194,15 +214,9 @@ export default mixins(household, householdResults).extend({
           sortable: false,
           width: '110px',
         },
-        {
-          text: '',
-          value: 'actions',
-          sortable: false,
-          width: '100px',
-        },
       ];
 
-      if (!this.isSplitMode) {
+      if (!this.isSplitMode && !this.hideEventInfo) {
         headers.push({
           text: '',
           value: 'isRegisteredToEvent',
@@ -210,12 +224,23 @@ export default mixins(household, householdResults).extend({
           width: '10px',
         });
       }
+
+      if (!this.hideDetailsButton) {
+        headers.push({
+          text: '',
+          value: 'actions',
+          sortable: false,
+          width: '100px',
+        });
+      }
       return headers;
     },
+
     currentEventId(): string {
       return this.$storage.registration.getters.event().id;
     },
   },
+
   methods: {
     async viewDetails(household: IFormattedHousehold) {
       try {
@@ -268,4 +293,14 @@ export default mixins(household, householdResults).extend({
 .no-wrap{
       white-space: nowrap;
 }
+
+.break-spaces{
+    white-space: break-spaces;
+    word-break: initial;
+}
+
+ .max-width {
+   max-width: 200px;
+ }
+
 </style>

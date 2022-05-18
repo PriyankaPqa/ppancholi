@@ -8,7 +8,7 @@ import { mockStorage } from '@/store/storage';
 import helpers from '@/ui/helpers/helpers';
 
 import HouseholdResults from '@/ui/views/pages/household/move/HouseholdResults.vue';
-import HouseholdSearch from '@/ui/views/pages/registration/is-registered/HouseholdSearch.vue';
+import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
 import Component from './MoveHouseholdMembers.vue';
 
 const localVue = createLocalVue();
@@ -179,6 +179,11 @@ describe('MoveHouseholdMembers.vue', () => {
         expect(wrapper.vm.showResults).toBe(false);
         await wrapper.vm.onSearch(null);
         expect(wrapper.vm.showResults).toBe(true);
+      });
+
+      it('should call setSearchResultsShown mutation with proper parameter', async () => {
+        await wrapper.vm.onSearch({});
+        expect(wrapper.vm.$storage.household.mutations.setSearchResultsShown).toHaveBeenCalledWith(false);
       });
     });
 

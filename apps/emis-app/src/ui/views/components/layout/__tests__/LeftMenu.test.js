@@ -260,6 +260,15 @@ describe('LeftMenu.vue', () => {
 
       test('Item[2]', () => {
         const item = wrapper.vm.items[2];
+        expect(item.to).toBe(routes.householdSearch.name);
+        expect(item.icon).toBe('$rctech-search-person');
+        expect(item.text).toBe('leftMenu.search_household_title');
+        expect(item.test).toBe('search_household');
+        expect(item.level).toBe('level1');
+      });
+
+      test('Item[3]', () => {
+        const item = wrapper.vm.items[3];
         expect(item.to).toBe(routes.events.home.name);
         expect(item.icon).toBe('mdi-calendar');
         expect(item.text).toBe('leftMenu.events_title');
@@ -267,8 +276,8 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe('level4');
       });
 
-      test('Item[3]', () => {
-        const item = wrapper.vm.items[3];
+      test('Item[4]', () => {
+        const item = wrapper.vm.items[4];
         expect(item.to).toBe(routes.teams.home.name);
         expect(item.icon).toBe('mdi-account-multiple-plus');
         expect(item.text).toBe('leftMenu.teams_title');
@@ -276,8 +285,8 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe('level3');
       });
 
-      test('Item[4]', () => {
-        const item = wrapper.vm.items[4];
+      test('Item[5]', () => {
+        const item = wrapper.vm.items[5];
         expect(item.to).toBe(routes.financialAssistance.home.name);
         expect(item.icon).toBe('mdi-currency-usd');
         expect(item.text).toBe('leftMenu.financial_title');
@@ -285,8 +294,8 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe('level6');
       });
 
-      test('Item[5]', () => {
-        const item = wrapper.vm.items[5];
+      test('Item[6]', () => {
+        const item = wrapper.vm.items[6];
         expect(item.to).toBe(wrapper.vm.approvalRedirection);
         expect(item.icon).toBe('mdi-check');
         expect(item.text).toBe('leftMenu.approvals_title');
@@ -294,8 +303,8 @@ describe('LeftMenu.vue', () => {
         expect(item.roles).toEqual(['level3', 'level4', 'level6']);
       });
 
-      test('Item[6]', () => {
-        const item = wrapper.vm.items[6];
+      test('Item[7]', () => {
+        const item = wrapper.vm.items[7];
         expect(item.to).toBe(routes.massActions.home.name);
         expect(item.icon).toBe('mdi-file-document');
         expect(item.text).toBe('leftMenu.mass_actions_title');
@@ -304,8 +313,8 @@ describe('LeftMenu.vue', () => {
         expect(item.roles).toEqual(['contributorIM', 'contributorFinance']);
       });
 
-      test('Item[7]', () => {
-        const item = wrapper.vm.items[7];
+      test('Item[8]', () => {
+        const item = wrapper.vm.items[8];
         expect(item.to).toBe(routes.assessments.home.name);
         expect(item.icon).toBe('mdi-chart-box');
         expect(item.text).toBe('leftMenu.assessments_title');
@@ -313,8 +322,8 @@ describe('LeftMenu.vue', () => {
         expect(item.level).toBe('level6');
       });
 
-      test('Item[8]', () => {
-        const item = wrapper.vm.items[8];
+      test('Item[9]', () => {
+        const item = wrapper.vm.items[9];
         expect(item.to).toBe(routes.systemManagement.home.name);
         expect(item.icon).toBe('dvr');
         expect(item.text).toBe('system_management.leftMenu.title');

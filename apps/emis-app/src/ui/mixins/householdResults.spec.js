@@ -2,6 +2,7 @@ import { mockStorage } from '@libs/registration-lib/store/storage';
 import { mockCombinedHouseholds } from '@libs/registration-lib/entities/household';
 import householdResults from '@/ui/mixins/householdResults';
 import { createLocalVue, shallowMount } from '@/test/testSetup';
+import routes from '@/constants/routes';
 
 const Component = {
   render() {},
@@ -76,6 +77,16 @@ describe('householdResults', () => {
 
         const res = wrapper.vm.getPhone(household);
         expect(res).toEqual(household.primaryBeneficiary.alternatePhoneNumber.number);
+      });
+    });
+
+    describe('getHouseholdRoute', () => {
+      it('should return the right route data', () => {
+        const household = { id: '1234' };
+        expect(wrapper.vm.getHouseholdRoute(household)).toEqual({
+          name: routes.household.householdProfile.name,
+          params: { id: household.id },
+        });
       });
     });
   });

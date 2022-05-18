@@ -30,7 +30,7 @@
             v-on="on"
             @click="onClickOutside">
             <v-list-item-icon>
-              <v-icon color="primary darken-1" :disabled="item.disabled">
+              <v-icon :disabled="item.disabled">
                 {{ item.icon }}
               </v-icon>
             </v-list-item-icon>
@@ -86,6 +86,16 @@ export default Vue.extend({
           level: 'level1',
           disabled: this.$hasRole(NO_ROLE),
           roles: ['contributorIM', 'contributorFinance', 'contributor3', 'readonly', NO_ROLE],
+        },
+        {
+          to: routes.householdSearch.name,
+          icon: '$rctech-search-person',
+          text: 'leftMenu.search_household_title',
+          test: 'search_household',
+          exact: false,
+          level: 'level1',
+          roles: [],
+          feature: FeatureKeys.HouseholdSearch,
         },
         {
           to: routes.events.home.name,
@@ -240,7 +250,16 @@ export default Vue.extend({
   }
 }
 
-.navMenu__active .v-icon {
+.navMenu.v-list-item .v-icon {
+  color: var(--v-primary-darken1);
+}
+
+.navMenu.navMenu__active .v-icon {
   color: var(--v-secondary-base)!important;
+}
+
+.navMenu.navMenu__active .v-icon .custom-icon {
+  color: var(--v-secondary-base)!important;
+  caret-color: var(--v-secondary-base)!important;
 }
 </style>

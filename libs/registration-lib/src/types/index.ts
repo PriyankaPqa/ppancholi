@@ -1,8 +1,7 @@
+import Vue from 'vue';
 /**
  * Interfaces
  */
-
-import Vue from 'vue';
 
 export type VForm = Vue & {
   validate: (type?: { silent?: boolean }) => boolean;
@@ -23,6 +22,7 @@ export type { ISearchData } from './interfaces/ISearchData';
 export type { IEntity } from './interfaces/IEntity';
 export type { IRegistrationMenuItem } from './interfaces/IRegistrationMenuItem';
 export type { IListOption } from './interfaces/IListOption';
+export type { IHouseholdSearchCriteria } from './interfaces/IHouseholdSearchCriteria';
 
 /**
  * Enums

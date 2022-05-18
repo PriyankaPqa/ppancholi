@@ -26,6 +26,8 @@ export class HouseholdStorage extends Base<IHouseholdEntity, IHouseholdMetadata,
 
   private mutations = {
     ...this.baseMutations,
+
+    setSearchResultsShown: (payload: boolean) => this.store.commit(`${this.entityModuleName}/setSearchResultsShown`, payload),
   }
 
   public make = () => ({

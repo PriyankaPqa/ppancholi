@@ -8,6 +8,7 @@ import utils from '../../../entities/value-objects/versioned-entity/versionedEnt
 
 import { IRootState } from '../../store.types';
 import { IVersionedEntity, IVersionedEntityCombined } from '../../../entities/value-objects/versioned-entity/versionedEntity.types';
+import { IHouseholdEntityState } from './householdEntity.types';
 
 export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
   constructor(readonly service: HouseholdsService) {
@@ -24,6 +25,7 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
 
   public state = {
     ...this.baseState,
+    searchResultsShown: false,
   }
 
   public getters = {
@@ -32,13 +34,17 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
 
   public mutations = {
     ...this.baseMutations,
+
+    setSearchResultsShown(state: IHouseholdEntityState, payload: boolean) {
+      state.searchResultsShown = payload;
+    },
   }
 
   public actions = {
     ...this.baseActions,
 
     updateNoFixedHomeAddress: async (
-      context: ActionContext<IState<IHouseholdEntity>, IState<IHouseholdEntity>>,
+      context: ActionContext<IHouseholdEntityState, IHouseholdEntityState>,
       { householdId, observation }: { householdId: string; observation: string },
     ): Promise<IHouseholdEntity> => {
       const res = await this.service.updateNoFixedHomeAddress(householdId, observation);
@@ -49,7 +55,7 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
     },
 
     updateHomeAddress: async (
-      context: ActionContext<IState<IHouseholdEntity>, IState<IHouseholdEntity>>,
+      context: ActionContext<IHouseholdEntityState, IHouseholdEntityState>,
       { householdId, address }: { householdId: string; address: IAddress },
     ): Promise<IHouseholdEntity> => {
       const res = await this.service.updateHomeAddress(householdId, address);
@@ -60,7 +66,7 @@ export class HouseholdEntityModule extends BaseModule <IHouseholdEntity, uuid> {
     },
 
     fetchHouseholdHistory: async (
-      context: ActionContext<IState<IHouseholdEntity>, IState<IHouseholdEntity>>,
+      context: ActionContext<IHouseholdEntityState, IHouseholdEntityState>,
       household: IHouseholdEntity,
     ): Promise<IVersionedEntityCombined[]> => {
       const householdEntityRequest = this.service.getHouseholdHistory(household.id);

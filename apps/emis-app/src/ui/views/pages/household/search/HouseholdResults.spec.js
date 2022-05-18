@@ -7,7 +7,7 @@ import {
 
 import { mockStorage } from '@/store/storage';
 
-import Component from '@/ui/views/pages/registration/is-registered/HouseholdResults.vue';
+import Component from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
 import { tabs } from '@/store/modules/registration/tabs';
 

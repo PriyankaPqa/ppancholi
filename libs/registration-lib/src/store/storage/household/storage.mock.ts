@@ -23,6 +23,7 @@ export class HouseholdStorageMock extends BaseMock<IHouseholdCombined, IHousehol
 
   protected mutations = {
     ...this.baseMutations,
+    setSearchResultsShown: jest.fn(),
   }
 
   public make = () => ({

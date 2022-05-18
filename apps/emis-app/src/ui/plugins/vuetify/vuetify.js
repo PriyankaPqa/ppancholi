@@ -6,6 +6,7 @@ import Vuetify from 'vuetify/lib';
 import fr from '@/ui/plugins/vuetify/locales/fr';
 import DuplicateIcon from '@/ui/shared-components/customIcons/DuplicateIcon.vue';
 import ActionsIcon from '@/ui/shared-components/customIcons/ActionsIcon.vue';
+import SearchPersonIcon from '@/ui/shared-components/customIcons/SearchPersonIcon.vue';
 import { DEFAULT_LANGUAGE } from '@/constants/trans';
 import light from './light-theme';
 import dark from './dark-theme';
@@ -30,6 +31,9 @@ export const options = {
       },
       'rctech-actions': {
         component: ActionsIcon,
+      },
+      'rctech-search-person': {
+        component: SearchPersonIcon,
       },
     },
   },

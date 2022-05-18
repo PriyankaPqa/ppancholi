@@ -32,4 +32,11 @@ describe('>>> Household Storage', () => {
       expect(store.dispatch).toBeCalledWith('household/fetchHouseholdHistory', household);
     });
   });
+
+  describe('Mutations', () => {
+    it('should proxy setSearchResultsShown', () => {
+      storage.mutations.setSearchResultsShown(true);
+      expect(store.commit).toBeCalledWith('household/setSearchResultsShown', true);
+    });
+  });
 });

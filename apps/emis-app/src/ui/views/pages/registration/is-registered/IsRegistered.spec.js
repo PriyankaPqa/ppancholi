@@ -7,10 +7,9 @@ import {
   shallowMount,
 } from '@/test/testSetup';
 
-import HouseholdSearch from '@/ui/views/pages/registration/is-registered/HouseholdSearch.vue';
-import HouseholdResults from '@/ui/views/pages/registration/is-registered/HouseholdResults.vue';
-
 import { mockStorage } from '@/store/storage';
+import HouseholdSearch from '@/ui/views/pages/household/search/HouseholdSearch.vue';
+import HouseholdResults from '@/ui/views/pages/household/search/HouseholdResults.vue';
 
 import Component from './IsRegistered.vue';
 
@@ -123,6 +122,11 @@ describe('IsRegistered.vue', () => {
       it('should call setHouseholdResultsShown mutation with proper parameter', async () => {
         await wrapper.vm.onSearch({});
         expect(wrapper.vm.$storage.registration.mutations.setHouseholdResultsShown).toHaveBeenCalledWith(true);
+      });
+
+      it('should call setSearchResultsShown mutation with proper parameter', async () => {
+        await wrapper.vm.onSearch({});
+        expect(wrapper.vm.$storage.household.mutations.setSearchResultsShown).toHaveBeenCalledWith(false);
       });
 
       it('should call filterOutSplitHousehold if in split mode', async () => {
