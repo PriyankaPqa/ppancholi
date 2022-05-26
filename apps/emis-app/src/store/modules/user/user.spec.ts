@@ -1,10 +1,11 @@
 import { Store } from 'vuex';
+import Vue from 'vue';
 import applicationInsights from '@libs/core-lib/plugins/applicationInsights/applicationInsights';
 import { mockStore, IRootState } from '@/store';
+import { Toasted } from 'vue-toasted';
 import {
   mockUsersData, User,
 } from '@/entities/user';
-import { mockAuthenticationData } from '@/auth/authentication.mock';
 import AuthenticationProvider from '@/auth/AuthenticationProvider';
 import {
   mockStoreUserLevel,
@@ -15,11 +16,19 @@ import {
   mockStoreUserNoRole,
 } from '@/test/helpers';
 import helpers from '@/ui/helpers/helpers';
+import userHelpers from './userHelpers';
 
 jest.mock('@libs/core-lib/plugins/applicationInsights/applicationInsights');
 
 describe('>>> Users Module', () => {
   let store: Store<IRootState>;
+
+  Vue.toasted = {
+    global: {
+      warning: jest.fn(),
+      error: jest.fn(),
+    },
+  } as Toasted;
 
   beforeEach(() => {
     store = mockStoreUserLevel(1);
@@ -194,25 +203,56 @@ describe('>>> Users Module', () => {
     });
 
     describe('fetchUserData', () => {
-      it('calls the acquireToken method of the authentications provider and fetchUser and sets the user data', async () => {
+      it('calls userData with the current roles and it sets the user data into the store, if there are current roles', async () => {
         store = mockStore();
-        const authenticationData = mockAuthenticationData();
-        AuthenticationProvider.account = authenticationData.account;
-        jest.spyOn(helpers, 'decodeJwt').mockImplementation(() => ({
-          roles: ['level3'],
-        }));
+        const user = mockUsersData()[0];
+        const originalFunction = store.dispatch;
+        jest.spyOn(store, 'dispatch')
+          .mockImplementationOnce((args) => Promise.resolve(originalFunction(args))).mockImplementationOnce(() => Promise.resolve(['level5']));
+        userHelpers.getUserData = jest.fn(() => user);
+
         await store.dispatch('user/fetchUserData');
 
-        expect(AuthenticationProvider.acquireToken).toHaveBeenCalledTimes(1);
+        expect(userHelpers.getUserData).toBeCalledWith(['level5']);
 
         expect(store.getters['user/user']).toEqual(new User({
-          oid: authenticationData.account.idTokenClaims.oid as string,
-          email: authenticationData.account.idTokenClaims.email as string,
-          family_name: authenticationData.account.idTokenClaims.family_name as string,
-          given_name: authenticationData.account.idTokenClaims.given_name as string,
-          roles: ['level3'], // level comes from decoded access token
-          homeAccountId: authenticationData.account.homeAccountId,
+          oid: user.oid,
+          email: user.email,
+          family_name: user.family_name,
+          given_name: user.given_name,
+          roles: user.roles,
+          homeAccountId: user.homeAccountId,
         }));
+      });
+
+      it('opens an error toaster and calls sign out if there are no roles', async () => {
+        store = mockStore();
+        Vue.toasted.global.error = jest.fn();
+        AuthenticationProvider.signOut = jest.fn();
+        await store.dispatch('user/fetchUserData');
+
+        expect(Vue.toasted.global.error).toBeCalledWith('Your system access has been changed. You need to sign in again.');
+        expect(AuthenticationProvider.signOut).toBeCalledTimes(1);
+      });
+    });
+
+    describe('getCurrentRoles', () => {
+      it('calls acquire token', async () => {
+        AuthenticationProvider.acquireToken = jest.fn();
+        await store.dispatch('user/getCurrentRoles');
+
+        expect(AuthenticationProvider.acquireToken).toBeCalledTimes(1);
+      });
+
+      it('calls decodeJwt, isSamerole and if role did not change, returns currentRoles', async () => {
+        AuthenticationProvider.acquireToken = jest.fn(() => Promise.resolve('mock-token'));
+        const currentRoles = { roles: ['level1'] };
+
+        helpers.decodeJwt = jest.fn(() => currentRoles);
+        userHelpers.isSameRole = jest.fn(() => true);
+        const result = await store.dispatch('user/getCurrentRoles');
+
+        expect(result).toEqual(currentRoles.roles);
       });
     });
   });

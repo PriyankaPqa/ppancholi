@@ -33,5 +33,7 @@ export const makeStorage = (store: IStore<IState>): IStorage => ({
     fetchUserData() {
       store.dispatch('user/fetchUserData');
     },
+
+    getCurrentRoles: (): Promise<string[]> => store.dispatch('user/getCurrentRoles'),
   },
 });

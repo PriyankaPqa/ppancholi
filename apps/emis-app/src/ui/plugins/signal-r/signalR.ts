@@ -12,6 +12,7 @@ import { i18n } from '@/ui/plugins/i18n';
 import { ISignalRService, ISignalRServiceMock } from '@/services/signal-r';
 import { sub } from 'date-fns';
 import { IEntity } from '@libs/core-lib/entities/base';
+import helpers from '@libs/registration-lib/ui/helpers';
 import { IStorage } from '../../../store/storage/storage.types';
 import { ISignalR } from './signalR.types';
 
@@ -144,6 +145,24 @@ export class SignalR implements ISignalR {
     // Mass actions
     this.listenForMassActionsModuleChanges();
     this.massActionNotifications();
+
+    this.listenForUserRoleChanges();
+  }
+
+  private listenForUserRoleChanges() {
+    this.connection.on('user-account.UserAccountUpdated', async (entity) => {
+      const userId = this.storage.user.getters.userId();
+      if (entity.id === userId) {
+        // Wait for the role change to take effect in the BE and the token to get updated
+        // This code only displays the notification that the role has changed in AD, the log out is done after the page navigation.
+        // Therefore, it is only an additional UX improvement to keep the user aware of the change, it doesn't need to be 100% reliable
+        await helpers.timeout(15000);
+        const roleChanged = !(await this.storage.user.actions.getCurrentRoles());
+        if (roleChanged) {
+          Vue.toasted.global.error(i18n.t('errors.access-change.log-out-on-navigation'));
+        }
+      }
+    });
   }
 
   private massActionNotifications() {

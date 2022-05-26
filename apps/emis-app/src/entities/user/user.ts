@@ -35,7 +35,7 @@ export class User implements IUser {
     this.email = data.email;
     this.lastName = data.family_name;
     this.firstName = data.given_name;
-    this.roles = data?.roles ? data.roles : [NO_ROLE];
+    this.roles = data?.roles ? [...data.roles] : [NO_ROLE];
     this.homeAccountId = data.homeAccountId;
   }
 

@@ -39,6 +39,11 @@ describe('>>> User Storage', () => {
       storage.actions.fetchUserData();
       expect(store.dispatch).toBeCalledWith('user/fetchUserData');
     });
+
+    it('should proxy getCurrentRoles', () => {
+      storage.actions.getCurrentRoles();
+      expect(store.dispatch).toBeCalledWith('user/getCurrentRoles');
+    });
   });
 
   describe('>> Mutations', () => {

@@ -16,6 +16,7 @@ export interface IStorage {
   actions: {
     signOut(): void;
     fetchUserData(): void;
+    getCurrentRoles(): Promise<string[]>;
   }
 }
 
@@ -33,5 +34,6 @@ export interface IStorageMock {
   actions: {
     signOut: jest.Mock<void>
     fetchUserData: jest.Mock<void>
+    getCurrentRoles: jest.Mock<void>
   }
 }

@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import {
   Store, Module, ActionContext, ActionTree,
 } from 'vuex';
@@ -8,11 +9,12 @@ import {
   User,
 } from '@/entities/user';
 import helpers from '@/ui/helpers/helpers';
-import { localStorageKeys } from '@/constants/localStorage';
+import { i18n } from '@/ui/plugins';
 import { IRootState } from '../../store.types';
 import {
   IState,
 } from './user.types';
+import userHelpers from './userHelpers';
 
 const getDefaultState = (): IState => ({
   oid: '',
@@ -73,7 +75,7 @@ const mutations = {
     state.homeAccountId = payload.homeAccountId;
 
     if (payload?.roles && state.roles[0] !== payload.roles[0]) {
-      state.roles = payload.roles;
+      state.roles = [...payload.roles];
       applicationInsights.setBasicContext({ roles: state.roles });
     }
   },
@@ -92,19 +94,42 @@ const actions = {
   },
 
   async fetchUserData(this: Store<IState>, context: ActionContext<IState, IState>) {
-    await AuthenticationProvider.acquireToken('fetchUserData');
-    const accessToken = localStorage.getItem(localStorageKeys.accessToken.name) || AuthenticationProvider.accessToken;
-    if (accessToken) {
-      const account = JSON.parse(localStorage.getItem(localStorageKeys.msalAccount.name)) || AuthenticationProvider.account;
+    const currentRoles = await context.dispatch('getCurrentRoles');
 
-      const userData = { ...account.idTokenClaims, homeAccountId: account.homeAccountId } as IMSALUserData;
-      userData.roles = helpers.decodeJwt(accessToken).roles;
+    if (currentRoles) {
+      const userData = userHelpers.getUserData(currentRoles);
       context.commit('setUser', userData);
-    } else {
-      applicationInsights.trackTrace('User data not found', null, 'user', 'fetchUserData');
+      return !!userData;
     }
-    return !!accessToken;
+
+    applicationInsights.trackTrace('User data not valid', null, 'user', 'fetchUserData');
+    // A user's role is only valid if it is the same as their previous roles. If the current roles are different from the previous roles,
+    // they are not valid, so the user needs to be logged out. An error message will be displayed to the user for 2 seconds before the automatic log out.
+    Vue.toasted.global.error(i18n.t('errors.access-change.log-out'));
+    await helpers.timeout(2000);
+    AuthenticationProvider.signOut();
+    // Add a timer to give time to the sign out page to load, otherwise our own login error page will flicker on the screen right before when this function returns null (bad UX)
+    await helpers.timeout(2000);
+    return null;
   },
+
+  async getCurrentRoles(this: Store<IState>, context: ActionContext<IState, IState>): Promise<string[] | null> {
+    const previousRoles = context.getters.user.roles;
+    const currentToken = await AuthenticationProvider.acquireToken('fetchUserData', true);
+
+    if (currentToken) {
+      const currentRoles = helpers.decodeJwt(currentToken).roles;
+      const roleDidNotChange = userHelpers.isSameRole(currentRoles, previousRoles);
+
+      // A user's roles are only valid if it hasn't changed from their previous roles.
+      if (!previousRoles.length || roleDidNotChange) {
+        return currentRoles;
+      }
+      return null;
+    }
+    return null;
+  },
+
 };
 
 export const user: Module<IState, IRootState> = {

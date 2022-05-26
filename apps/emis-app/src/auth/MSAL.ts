@@ -30,7 +30,7 @@ export interface IMSAL {
   signIn(specificTenant?: string): void
   signOut(): void
   isAuthenticated(): Promise<boolean>
-  acquireToken(caller?: string): Promise<string|null>
+  acquireToken(caller?: string, forceRefresh?: boolean): Promise<string|null>
   startAccessTokenAutoRenewal(interval: number): void;
 }
 
@@ -212,7 +212,7 @@ export class MSAL {
    * If your session on the server is not valid, it will throw an InteractionRequiredAuthError which will force to call an interactive API
    * @param caller
    */
-  public async acquireToken(caller?: string): Promise<string|null> {
+  public async acquireToken(caller?: string, forceRefresh?:boolean): Promise<string|null> {
     this.showConsole && console.debug(`acquireToken called by ${caller}`)
 
     this.showConsole && console.debug('CurrentDomain:' , this.currentDomainTenant)
@@ -249,7 +249,7 @@ export class MSAL {
     const attemptsLocalStorageKey = localStorageKeys.signInAttempts.name +"_"+ userName ;
 
     try {
-      const silentRequest = this.getSilentRequest();
+      const silentRequest = this.getSilentRequest(forceRefresh);
       const response = await this.msalLibrary.acquireTokenSilent(silentRequest);
 
       this.accessToken = response.accessToken;
@@ -400,12 +400,12 @@ export class MSAL {
    * Build silent request for acquireToken
    * @private
    */
-  private getSilentRequest(): SilentRequest {
+  private getSilentRequest(force?: boolean): SilentRequest {
     return {
       account: this.account,
       scopes: this.tokenRequest.scopes,
       authority: `https://login.microsoftonline.com/${this.account.tenantId}`,
-      forceRefresh: false,
+      forceRefresh: force,
       redirectUri: `${window.location.origin}/auth.html` // When doing acquireTokenSilent, redirect to blank page to prevent issues
     }
   }

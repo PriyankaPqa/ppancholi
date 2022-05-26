@@ -37,6 +37,13 @@ const vuetify = new Vuetify({
 
 Vue.use(Vuetify);
 
+Vue.toasted = {
+  global: {
+    warning: jest.fn(),
+    error: jest.fn(),
+  },
+};
+
 // Create a localVue instance used for testing. A localVue prevents the global
 // Vue namespace from being polluted, so tests are isolated.
 
