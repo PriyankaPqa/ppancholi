@@ -410,19 +410,21 @@ export default mixins(caseFileDetail).extend({
     },
 
     async onSubmit() {
-      if (this.showPayee(this.paymentGroup)) {
-        this.currentPaymentLine.address = this.address;
-        this.currentPaymentLine.address.province = this.address.province ?? ECanadaProvinces.OT;
-      } else {
-        // reset non-editable fields if they had been changed
-        this.currentPaymentLine.address = null;
-        this.currentPaymentLine.careOf = null;
-        this.paymentGroup.groupingInformation.payeeType = PayeeType.Beneficiary;
-        this.paymentGroup.groupingInformation.payeeName = this.defaultBeneficiaryData.name;
-      }
+      if (!this.paymentApproved) {
+        if (this.showPayee(this.paymentGroup)) {
+          this.currentPaymentLine.address = this.address;
+          this.currentPaymentLine.address.province = this.address.province ?? ECanadaProvinces.OT;
+        } else {
+          // reset non-editable fields if they had been changed
+          this.currentPaymentLine.address = null;
+          this.currentPaymentLine.careOf = null;
+          this.paymentGroup.groupingInformation.payeeType = PayeeType.Beneficiary;
+          this.paymentGroup.groupingInformation.payeeName = this.defaultBeneficiaryData.name;
+        }
 
-      if (this.currentPaymentLine.amount) {
-        this.currentPaymentLine.amount = Number(this.currentPaymentLine.amount);
+        if (this.currentPaymentLine.amount) {
+          this.currentPaymentLine.amount = Number(this.currentPaymentLine.amount);
+        }
       }
 
       const isValid = await (this.$refs.form as VForm).validate();

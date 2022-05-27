@@ -563,9 +563,7 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         await wrapper.vm.onSubmit();
         expect(wrapper.emitted('submit')).toBeFalsy();
       });
-    });
 
-    describe('onSubmit', () => {
       it('accepts data from payee when Cheque', async () => {
         await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Cheque, payeeType: 99, payeeName: 'manual' } } });
         wrapper.vm.currentPaymentLine.careOf = 'blah';
@@ -593,6 +591,21 @@ describe('CreateEditPaymentLineDialog.vue', () => {
         expect(emitted.groupingInformation.payeeName).not.toEqual('manual');
         expect(emitted.lines[0].address).toBeNull();
         expect(emitted.lines[0].careOf).toBeNull();
+      });
+
+      it('keeps payee info if approved already', async () => {
+        financialAssistance.approvalStatus = ApprovalStatus.Approved;
+        await wrapper.setData({ defaultBeneficiaryData: { name: 'myNewName', address: new Address(mockAddressData()) } });
+        await wrapper.setData({ paymentGroup: { groupingInformation: { modality: EPaymentModalities.Invoice, payeeType: 99, payeeName: 'manual' } } });
+        wrapper.vm.currentPaymentLine.careOf = 'blah';
+        wrapper.vm.$refs.form.validate = jest.fn(() => true);
+        await wrapper.vm.onSubmit();
+        const emitted = wrapper.emitted('submit')[0][0];
+        expect(emitted.groupingInformation.modality).toEqual(EPaymentModalities.Invoice);
+        expect(emitted.groupingInformation.payeeType).toEqual(99);
+        expect(emitted.groupingInformation.payeeName).toEqual('manual');
+        expect(emitted.lines[0].address).toBeNull();
+        expect(emitted.lines[0].careOf).toBe('blah');
       });
 
       it('doesnt proceed unless form validation succeeds', async () => {

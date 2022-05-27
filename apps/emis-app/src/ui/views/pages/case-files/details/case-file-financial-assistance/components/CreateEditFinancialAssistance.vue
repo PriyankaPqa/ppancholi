@@ -1,5 +1,6 @@
 <template>
   <div class="full-height">
+    <rc-page-loading v-if="loading" />
     <validation-observer ref="form" v-slot="{ failed, dirty }" slim>
       <rc-page-content
         v-if="!loading"
@@ -159,7 +160,9 @@
 
 <script lang="ts">
 import mixins from 'vue-typed-mixins';
-import { RcPageContent, RcDialog, VCheckboxWithValidation } from '@libs/component-lib/components';
+import {
+  RcPageContent, RcDialog, VCheckboxWithValidation, RcPageLoading,
+} from '@libs/component-lib/components';
 import { TranslateResult } from 'vue-i18n';
 import _find from 'lodash/find';
 import { Route, NavigationGuardNext } from 'vue-router';
@@ -204,6 +207,7 @@ export default mixins(caseFileDetail).extend({
     ViewFinancialAssistanceDetails,
     RcDialog,
     VCheckboxWithValidation,
+    RcPageLoading,
   },
 
   async beforeRouteLeave(to: Route, from: Route, next: NavigationGuardNext) {
